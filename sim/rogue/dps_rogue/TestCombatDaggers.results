@@ -14,8 +14,8 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 49.6
-  final_stats: 3
-  final_stats: 26
+  final_stats: 8
+  final_stats: 32
   final_stats: 0
   final_stats: 0
   final_stats: 1980.93
@@ -68,8 +68,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0.31623
-  weights: 12.20276
-  weights: 2.17638
+  weights: 12.58204
+  weights: 2.30887
   weights: 0
   weights: 0
   weights: 0
@@ -99,85 +99,85 @@ stat_weights_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 1026.10227
-  tps: 728.53261
+  dps: 1031.1401
+  tps: 732.10947
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 1128.77489
-  tps: 782.38099
+  dps: 1133.68762
+  tps: 785.86903
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 964.47891
-  tps: 684.78003
+  dps: 967.96407
+  tps: 687.25449
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 1034.38556
-  tps: 734.41375
+  dps: 1036.76749
+  tps: 736.10492
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 1034.27029
-  tps: 734.3319
+  dps: 1037.47797
+  tps: 736.60936
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 971.96072
-  tps: 690.09211
+  dps: 974.38085
+  tps: 691.8104
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 991.7104
-  tps: 704.11438
+  dps: 995.62269
+  tps: 706.89211
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 964.47891
-  tps: 684.78003
+  dps: 967.96407
+  tps: 687.25449
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 974.33666
-  tps: 691.77903
+  dps: 976.05825
+  tps: 693.00136
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 973.01125
-  tps: 690.83799
+  dps: 975.76213
+  tps: 692.79112
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 991.7104
-  tps: 704.11438
+  dps: 995.62269
+  tps: 706.89211
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Average-Default"
  value: {
-  dps: 969.92351
-  tps: 688.64569
+  dps: 972.25873
+  tps: 690.3037
  }
 }
 dps_results: {
@@ -225,49 +225,49 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 368.82046
-  tps: 261.86252
+  dps: 367.74711
+  tps: 261.10045
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 309.557
-  tps: 219.78547
+  dps: 308.87365
+  tps: 219.30029
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 397.21636
-  tps: 282.02361
+  dps: 395.59152
+  tps: 280.86998
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 171.22374
-  tps: 121.56885
+  dps: 170.26387
+  tps: 120.88734
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 146.64463
-  tps: 104.11769
+  dps: 146.01787
+  tps: 103.67268
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 189.11889
-  tps: 134.27441
+  dps: 187.60107
+  tps: 133.19676
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 369.06583
-  tps: 262.03674
+  dps: 370.59715
+  tps: 263.12398
  }
 }

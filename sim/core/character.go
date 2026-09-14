@@ -251,7 +251,12 @@ func (character *Character) applyEquipment() {
 	if character.equipStatsApplied {
 		panic("Equipment stats already applied to character!")
 	}
-	character.AddStats(character.EquipStats())
+	equipStats := character.EquipStats()
+	if character.Env.IsForever() {
+		equipStats = character.unifyEquipHitAndCrit(equipStats)
+		equipStats = character.addHealingSpellDamage(equipStats)
+	}
+	character.AddStats(equipStats)
 	character.equipStatsApplied = true
 
 	for _, item := range character.Equipment {

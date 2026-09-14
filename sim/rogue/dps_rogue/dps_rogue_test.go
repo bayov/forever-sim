@@ -16,7 +16,12 @@ func TestCombatSinisterStrike(t *testing.T) {
 		{
 			Class:      proto.Class_ClassRogue,
 			Race:       proto.Race_RaceHuman,
-			OtherRaces: []proto.Race{proto.Race_RaceOrc},
+			// Every rogue race, so each Forever racial gets exercised.
+			OtherRaces: []proto.Race{
+				proto.Race_RaceDwarf, proto.Race_RaceGnome, proto.Race_RaceNightElf, proto.Race_RaceOrc,
+				proto.Race_RaceTroll, proto.Race_RaceUndead,
+				proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper,
+			},
 
 			Talents:     CombatSwordsTalents,
 			GearSet:     core.GetGearSet("../../../ui/rogue/gear_sets", "combat_sinister_strike_prebis"),

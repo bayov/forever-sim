@@ -51,6 +51,10 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Spirit:    0,
 		stats.Stamina:   -1,
 	},
+	// The Skyborne stat offsets have not been published. They sit at the class baseline
+	// until they are, rather than carrying an invented stat line.
+	proto.Race_RaceSkyborneHighOrder:  {},
+	proto.Race_RaceSkyborneWindshaper: {},
 	proto.Race_RaceUndead: {
 		stats.Agility:   -2,
 		stats.Strength:  -1,

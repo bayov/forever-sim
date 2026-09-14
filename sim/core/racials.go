@@ -12,6 +12,13 @@ import (
 func applyRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
 
+	// Forever reworked every race, so it gets its own file (racials_forever.go) and the
+	// Classic racials below stay as they were.
+	if character.Env.IsForever() {
+		applyForeverRaceEffects(agent)
+		return
+	}
+
 	switch character.Race {
 	case proto.Race_RaceDwarf:
 		character.AddStat(stats.FrostResistance, 10)
@@ -249,9 +256,9 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 }
 
 func (character *Character) GetFaction() proto.Faction {
-	if slices.Contains([]proto.Race{proto.Race_RaceHuman, proto.Race_RaceDwarf, proto.Race_RaceGnome, proto.Race_RaceNightElf}, character.Race) {
+	if slices.Contains([]proto.Race{proto.Race_RaceHuman, proto.Race_RaceDwarf, proto.Race_RaceGnome, proto.Race_RaceNightElf, proto.Race_RaceSkyborneHighOrder}, character.Race) {
 		return proto.Faction_Alliance
-	} else if slices.Contains([]proto.Race{proto.Race_RaceOrc, proto.Race_RaceTroll, proto.Race_RaceTauren, proto.Race_RaceUndead}, character.Race) {
+	} else if slices.Contains([]proto.Race{proto.Race_RaceOrc, proto.Race_RaceTroll, proto.Race_RaceTauren, proto.Race_RaceUndead, proto.Race_RaceSkyborneWindshaper}, character.Race) {
 		return proto.Faction_Horde
 	} else {
 		return proto.Faction_Unknown

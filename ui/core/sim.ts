@@ -363,6 +363,7 @@ export class Sim {
 		const req = ComputeStatsRequest.create({
 			raid: this.getModifiedRaidProto(),
 			encounter: this.encounter.toProto(),
+			ruleset: this.getRuleset(),
 		});
 		const result = await this.workerPool.computeStats(req);
 

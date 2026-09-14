@@ -303,3 +303,7 @@ func (rc *RageCost) IssueRefund(sim *Simulation, spell *Spell) {
 		spell.Unit.AddRage(sim, rc.Refund, rc.RefundMetrics)
 	}
 }
+
+func (unit *Unit) MultiplyMaxRage(multiplier float64) {
+	unit.rageBar.maxRage *= multiplier
+}

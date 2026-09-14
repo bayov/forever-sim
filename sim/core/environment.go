@@ -29,6 +29,10 @@ type PrepullAction struct {
 type Environment struct {
 	State EnvironmentState
 
+	// Which set of rules the sim is running under. Read during the build phases as
+	// well as during the sim, so it lives here rather than only on Simulation.
+	Ruleset proto.Ruleset
+
 	// Whether stats are currently being measured. Used to disable some validation
 	// checks which are otherwise helpful.
 	MeasuringStats bool
@@ -47,9 +51,10 @@ type Environment struct {
 	prepullActions []PrepullAction
 }
 
-func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, runFakePrepull bool) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
+func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, ruleset proto.Ruleset, runFakePrepull bool) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
 	env := &Environment{
-		State: Created,
+		State:   Created,
+		Ruleset: ruleset,
 	}
 
 	env.construct(raidProto, encounterProto)

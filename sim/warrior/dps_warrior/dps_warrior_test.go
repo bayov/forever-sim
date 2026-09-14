@@ -18,7 +18,12 @@ func TestP1DPSWarrior(t *testing.T) {
 			Class:      proto.Class_ClassWarrior,
 			Phase:      1,
 			Race:       proto.Race_RaceOrc,
-			OtherRaces: []proto.Race{proto.Race_RaceHuman},
+			// Every warrior race, so each Forever racial gets exercised.
+			OtherRaces: []proto.Race{
+				proto.Race_RaceHuman, proto.Race_RaceDwarf, proto.Race_RaceGnome, proto.Race_RaceNightElf,
+				proto.Race_RaceTauren, proto.Race_RaceTroll, proto.Race_RaceUndead,
+				proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper,
+			},
 
 			Talents:  P1Talents,
 			GearSet:  core.GetGearSet("../../../ui/warrior/gear_sets", "phase_1"),

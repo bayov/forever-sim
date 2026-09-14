@@ -380,3 +380,7 @@ func (spell *Spell) EnergyMetrics() *ResourceMetrics {
 func (spell *Spell) ComboPointMetrics() *ResourceMetrics {
 	return spell.Cost.SpellCostFunctions.(*EnergyCost).ComboPointMetrics
 }
+
+func (unit *Unit) MultiplyMaxEnergy(multiplier float64) {
+	unit.energyBar.maxEnergy *= multiplier
+}

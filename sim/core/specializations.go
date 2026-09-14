@@ -1,5 +1,10 @@
 package core
 
+import (
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
+)
+
 ///////////////////////////////////////////////////////////////////////////
 //                            Weapon Specialization Auras
 ///////////////////////////////////////////////////////////////////////////
@@ -127,4 +132,28 @@ func (character *Character) FeralCombatSpecializationAura() *Aura {
 			character.PseudoStats.FeralCombatSkill += 5
 		},
 	})
+}
+
+// Under Forever the weapon skill racials pay critical strike instead, and only while the
+// matching weapon is held. The tooltips read "spell and ability critical strike chance",
+// so it lands on both pools. Equipment cannot change mid-sim, so this is a flat add at
+// build time rather than an aura.
+func (character *Character) AddWeaponSpecializationCrit(critPercent float64, types ...proto.WeaponType) {
+	if !character.hasWeaponOfType(types...) {
+		return
+	}
+
+	character.AddStat(stats.MeleeCrit, critPercent*CritRatingPerCritChance)
+	character.AddStat(stats.SpellCrit, critPercent*SpellCritRatingPerCritChance)
+}
+
+func (character *Character) hasWeaponOfType(types ...proto.WeaponType) bool {
+	for _, weapon := range []*Item{character.MainHand(), character.OffHand()} {
+		for _, weaponType := range types {
+			if weapon.WeaponType == weaponType {
+				return true
+			}
+		}
+	}
+	return false
 }

@@ -424,6 +424,10 @@ message AbortResponse {
 message ComputeStatsRequest {
 	Raid raid = 1;
 	Encounter encounter = 2;
+
+	// Stats are built differently under each ruleset, so the stat display needs to
+	// know which one it is showing. SimOptions carries this for a full sim.
+	Ruleset ruleset = 3;
 }
 message AuraStats {
 	ActionID id = 1;
