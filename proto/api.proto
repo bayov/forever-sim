@@ -129,11 +129,13 @@ message SimOptions {
 	Ruleset ruleset = 10;
 }
 
-// Which game rules the engine simulates. Classic Era is the baseline; Forever
-// layers its rule changes (periodic crits, etc) on top of it.
+// Which game rules the engine simulates. Forever is the wire default, so anything
+// that never mentions a ruleset (saved settings from an older build, a test config,
+// a plain API request) runs Forever. Classic Era is the opt-in baseline that Forever
+// layers its rule changes (unified hit and crit, periodic crits, etc) on top of.
 enum Ruleset {
-	RulesetClassic = 0;
-	RulesetForever = 1;
+	RulesetForever = 0;
+	RulesetClassic = 1;
 }
 
 // The aggregated results from all uses of a particular action.

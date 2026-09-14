@@ -18,6 +18,8 @@ func TestP1Hunter(t *testing.T) {
 			Class:      proto.Class_ClassHunter,
 			Phase:      1,
 			Race:       proto.Race_RaceOrc,
+			// Not converted to Forever yet, so it keeps running under Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
 			Talents:     P1Talents,

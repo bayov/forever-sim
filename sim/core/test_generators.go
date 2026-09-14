@@ -421,7 +421,7 @@ type CharacterSuiteConfig struct {
 }
 
 func withRuleset(options *proto.SimOptions, ruleset proto.Ruleset) *proto.SimOptions {
-	if ruleset == proto.Ruleset_RulesetClassic {
+	if options.Ruleset == ruleset {
 		return options
 	}
 	options = googleProto.Clone(options).(*proto.SimOptions)

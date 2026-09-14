@@ -722,8 +722,6 @@ export class Sim {
 				iterations: 3000,
 				phase: OtherConstants.CURRENT_PHASE,
 				faction: Faction.Alliance,
-				// RulesetClassic is the wire default, so leaving this out silently runs a
-				// Forever sim under Classic rules for everyone who hasn't chosen otherwise.
 				ruleset: Ruleset.RulesetForever,
 				showDamageMetrics: !isHealingSim,
 				showThreatMetrics: isTankSim,

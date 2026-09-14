@@ -18,6 +18,8 @@ func TestP1Feral(t *testing.T) {
 			Class:      proto.Class_ClassDruid,
 			Phase:      1,
 			Race:       proto.Race_RaceTauren,
+			// Not converted to Forever yet, so it keeps running under Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceNightElf},
 
 			Talents:     P1Talents,

@@ -17,6 +17,8 @@ func TestRetribution(t *testing.T) {
 			Class:      proto.Class_ClassPaladin,
 			Phase:      5,
 			Race:       proto.Race_RaceHuman,
+			// Not converted to Forever yet, so it keeps running under Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
 			Talents:        Phase45RetTalents,

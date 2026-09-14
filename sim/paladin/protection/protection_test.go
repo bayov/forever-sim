@@ -17,6 +17,8 @@ func TestProtection(t *testing.T) {
 			Class:      proto.Class_ClassPaladin,
 			Phase:      4,
 			Race:       proto.Race_RaceHuman,
+			// Not converted to Forever yet, so it keeps running under Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
 			Talents:     Phase4ProtTalents,

@@ -18,6 +18,8 @@ func TestP1Mage(t *testing.T) {
 			Class:      proto.Class_ClassMage,
 			Phase:      1,
 			Race:       proto.Race_RaceTroll,
+			// Not converted to Forever yet, so it keeps running under Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceGnome},
 
 			Talents:     P1Talents,

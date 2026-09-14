@@ -16,6 +16,8 @@ func TestFeralTank(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassDruid,
 		Race:  proto.Race_RaceTauren,
+		// Not converted to Forever yet, so it keeps running under Classic rules.
+		Ruleset: proto.Ruleset_RulesetClassic,
 
 		GearSet:     core.GetGearSet("../../../ui/feral_tank_druid/gear_sets", "p1"),
 		Talents:     StandardTalents,

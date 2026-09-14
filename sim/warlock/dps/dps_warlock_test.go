@@ -18,6 +18,8 @@ func TestWarlockSMRuin(t *testing.T) {
 			Class: proto.Class_ClassWarlock,
 			Phase: 1,
 			Race:  proto.Race_RaceOrc,
+			// Not converted to Forever yet, so it keeps running under Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 
 			Talents:     TalentsSMRuin,
 			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "mc"),
@@ -39,6 +41,8 @@ func TestWarlockDSRuin(t *testing.T) {
 			Class: proto.Class_ClassWarlock,
 			Phase: 1,
 			Race:  proto.Race_RaceOrc,
+			// Not converted to Forever yet, so it keeps running under Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 
 			Talents:     TalentsDSRuin,
 			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "mc"),

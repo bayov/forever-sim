@@ -96,6 +96,9 @@ func SetupFakeSim() *Simulation {
 	sim := NewSim(&proto.RaidSimRequest{
 		SimOptions: &proto.SimOptions{
 			RandomSeed: 100,
+			// The fake spells here have no defense type, and Forever's periodic crit
+			// roll needs one, so this fixture stays on Classic rules.
+			Ruleset: proto.Ruleset_RulesetClassic,
 		},
 		Raid: &proto.Raid{
 			Parties: []*proto.Party{

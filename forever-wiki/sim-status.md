@@ -4,7 +4,7 @@ What this repo's sim models of Forever as of 2026-09-14, and what it assumes whe
 
 ## Ruleset switch
 
-`SimOptions.ruleset` picks `RulesetClassic` (the wire default) or `RulesetForever`. The web UI defaults to Forever and has a "Forever Rules" checkbox in the settings menu. Everything below is gated on Forever, so Classic results are unchanged. The Warrior, Rogue and Shaman trees are Forever only either way, because the talent proto is positional and cannot hold two trees.
+`SimOptions.ruleset` picks `RulesetForever` (the wire default, so anything that never sets it runs Forever) or `RulesetClassic`. The web UI has a "Forever Rules" checkbox in the options menu (cog icon in the top bar). The unconverted classes pin their tests to Classic. Everything below is gated on Forever, so Classic results are unchanged. The Warrior, Rogue and Shaman trees are Forever only either way, because the talent proto is positional and cannot hold two trees.
 
 ## Core mechanics
 
