@@ -32,7 +32,7 @@ What this repo's sim models of Forever as of 2026-09-14, and what it assumes whe
 | Night Elf | Elune's Light: +10% crit for 15 sec, Dodge +1% | 3 min cooldown |
 | Gnome | Eureka!: next 3 abilities +10% damage and cheaper. Max mana, rage and energy +5% | Cost reduction is not on the tooltip, assumed 50%. 3 min cooldown |
 | Orc | 1% crit with axes, Blood Fury +10% AP and SP for 15 sec | 10% of total AP and SP at activation. Command (pet damage) is gone |
-| Undead | Touch of the Grave: 5% chance on spells and attacks to deal Shadow damage and heal for it | Modelled at the 5% max health cap, so this is an upper bound |
+| Undead | Touch of the Grave: 5% chance on spells and attacks to deal Shadow damage and heal for it | Modelled at the 5% max health cap with no internal cooldown, so this is an upper bound. `core.TouchOfTheGraveICD` sets a cooldown for comparisons. On the rogue and warrior presets the racial is 1.7 to 3.0% of damage with no cooldown, 1.3 to 2.2% at 5 sec, 1.0 to 1.7% at 10 sec and 0.8 to 1.4% at 15 sec |
 | Tauren | Health +5%, hit +1% (melee and spell) | |
 | Troll | Berserking flat +10% for 10 sec, +5% vs Beasts | Bow and Throwing Specialization removed |
 | Skyborne | +1% melee, ranged and cast speed, +5% vs Elementals | No offensive active on either half, so High Order and Windshaper sim the same. Base stats sit at the class baseline, none published |

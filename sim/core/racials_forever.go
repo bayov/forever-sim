@@ -243,6 +243,12 @@ func (character *Character) registerEureka() {
 // "Up to" reads as a cap, and the amount under it is not published. The drain is modelled
 // at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
 // damage that cannot crit, cannot proc anything and heals the caster for what it deals.
+//
+// The tooltip has no internal cooldown either. A dual wielding rogue lands enough hits
+// that the cooldown decides whether the racial is worth 1% or 2%, so it is a variable
+// that a comparison harness can sweep. Zero means every hit rolls.
+var TouchOfTheGraveICD time.Duration = 0
+
 func (character *Character) registerTouchOfTheGrave() {
 	actionID := ActionID{SpellID: 460533}
 	healthMetrics := character.NewHealthMetrics(actionID)
@@ -272,6 +278,7 @@ func (character *Character) registerTouchOfTheGrave() {
 		ProcMask:   ProcMaskDirect,
 		Outcome:    OutcomeLanded,
 		ProcChance: 0.05,
+		ICD:        TouchOfTheGraveICD,
 		Handler: func(sim *Simulation, spell *Spell, result *SpellResult) {
 			drain.Cast(sim, result.Target)
 		},
