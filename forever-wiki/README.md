@@ -13,6 +13,7 @@ Everything we could find about World of Warcraft: Forever as of 2026-09-14, two 
 - [professions.md](professions.md): profession perks and the camping system.
 - [legacy-tree.md](legacy-tree.md): the account-wide Legacy Tree nodes.
 - [references.md](references.md): source URLs and related projects (including an existing wowsims fork for Forever).
+- [sim-status.md](sim-status.md): what this repo's sim models of Forever, the assumptions behind it, and how to regenerate the talent trees.
 - [data/](data/): the raw JSON the class files were generated from (`talents.json`, `abilities.json`).
 
 ## How much to trust the numbers
