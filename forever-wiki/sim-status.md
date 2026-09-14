@@ -58,7 +58,7 @@ Per-class assumptions carried over from the fork are marked `TODO` in `sim/warri
 
 ## Gear and buffs
 
-All gear is Classic gear with Classic stats, so Classic phase presets are what you pick from. Blizzard has not published any Forever item. World buffs still exist in the presets and should be turned off for Forever estimates. Raid buff assumptions are Classic 40-man ones, Forever's launch raids are 10 and 20 man plus Onyxia at 40.
+All gear is Classic gear with Classic stats, so Classic phase presets are what you pick from. Blizzard has not published any Forever item. World buffs are all off in the presets, since Forever does not have them at launch. They can still be turned on in the Settings tab. Raid buff assumptions are Classic 40-man ones, Forever's launch raids are 10 and 20 man plus Onyxia at 40.
 
 ## Comparing races
 

@@ -17,7 +17,6 @@ import {
 	Potions,
 	Profession,
 	RaidBuffs,
-	SaygesFortune,
 	SpellPowerBuff,
 	StrengthBuff,
 	TristateEffect,
@@ -126,13 +125,12 @@ export const DefaultConsumes = Consumes.create({
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	fengusFerocity: true,
-	moldarsMoxie: true,
-	rallyingCryOfTheDragonslayer: true,
-	saygesFortune: SaygesFortune.SaygesDamage,
-	slipkiksSavvy: true,
-	songflowerSerenade: true,
-	spiritOfZandalar: true,
+	fengusFerocity: false,
+	moldarsMoxie: false,
+	rallyingCryOfTheDragonslayer: false,
+	slipkiksSavvy: false,
+	songflowerSerenade: false,
+	spiritOfZandalar: false,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({

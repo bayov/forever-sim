@@ -11,7 +11,6 @@ import {
 	IndividualBuffs,
 	Profession,
 	RaidBuffs,
-	SaygesFortune,
 	SpellPowerBuff,
 	StrengthBuff,
 	TristateEffect,
@@ -189,13 +188,12 @@ export const DefaultRaidBuffs = {
 export const P1IndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
-	fengusFerocity: true,
-	rallyingCryOfTheDragonslayer: true,
-	//saygesFortune: SaygesFortune.SaygesDamage,
-	slipkiksSavvy: true,
-	songflowerSerenade: true,
+	fengusFerocity: false,
+	rallyingCryOfTheDragonslayer: false,
+	slipkiksSavvy: false,
+	songflowerSerenade: false,
 	spiritOfZandalar: false,
-	warchiefsBlessing: true,
+	warchiefsBlessing: false,
 });
 
 export const DefaultIndividualBuffs = {
