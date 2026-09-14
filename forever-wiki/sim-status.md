@@ -62,4 +62,4 @@ All gear is Classic gear with Classic stats, so Classic phase presets are what y
 
 ## Comparing races
 
-Racials are the only difference between races, since both factions have blessings and totems. The default APLs cast Blood Fury only in the last 20 sec of a fight (Classic timing), so Orc looks weaker than it would with Blood Fury on cooldown.
+Racials are the only difference between races, since both factions have blessings and totems. The rogue and shaman APLs fire Blood Fury and Berserking as soon as they are ready. The warrior APLs hold them for the last 20 to 30 sec so they stack with Death Wish and Recklessness, which measures the same or slightly better than firing them at the pull on a 2 min fight.
