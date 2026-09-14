@@ -6,42 +6,56 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
 func (shaman *Shaman) ApplyTalents() {
 	// Elemental Talents
 	shaman.applyConcussion()
-	shaman.applyElementalFocus()
+	shaman.applyElementalWarding()
+	shaman.applyCallOfFlame()
 	shaman.applyElementalDevastation()
-	shaman.applyImprovedFireTotems()
+	shaman.applyElementalFocus()
 	shaman.applyElementalFury()
-	shaman.registerElementalMasteryCD()
 
 	// Enhancement Talents
 	shaman.applyFlurry()
+	shaman.applyImprovedStormstrike()
+	shaman.applyMaelstromWeapon()
+	shaman.registerRageOfTheFarseerCD()
 
 	if shaman.Talents.AncestralKnowledge > 0 {
-		shaman.MultiplyStat(stats.Mana, 1.0+0.01*float64(shaman.Talents.AncestralKnowledge))
+		shaman.MultiplyStat(stats.Intellect, 1+.02*float64(shaman.Talents.AncestralKnowledge))
 	}
 
-	shaman.AddStat(stats.Block, 1*float64(shaman.Talents.ShieldSpecialization))
+	if shaman.Talents.MentalDexterity > 0 {
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, .33*float64(shaman.Talents.MentalDexterity))
+	}
 
-	shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
+	if shaman.Talents.MentalQuickness > 0 {
+		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, .15*float64(shaman.Talents.MentalQuickness))
+	}
 
-	shaman.AddStat(stats.Dodge, 1*float64(shaman.Talents.Anticipation))
+	shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(shaman.Talents.ThunderingStrikes))
+	shaman.AddStat(stats.SpellCrit, core.SpellCritRatingPerCritChance*float64(shaman.Talents.ThunderingStrikes))
 
-	shaman.ApplyEquipScaling(stats.Armor, 1+.02*float64(shaman.Talents.Toughness))
+	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(shaman.Talents.Anticipation))
 
-	if shaman.Talents.Parry {
+	if shaman.Talents.Toughness > 0 {
+		shaman.MultiplyStat(stats.Stamina, 1+.02*float64(shaman.Talents.Toughness))
+	}
+
+	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.CanParry = true
-	}
 
-	// TODO: Check whether this does what it should.
-	// From all I've seen this appears to not actually be a school modifier at all, but instead simply applies
-	// to all attacks done with a weapon. The weaponmask seems to take precedence and the school mask is actually ignored.
-	// Will also be the case for similar talents like the one for retribution.
-	shaman.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + (.02 * float64(shaman.Talents.WeaponMastery))
+		// Rockbiter is the tanking imbue, so the threat modifier flips depending on which imbue is up.
+		if shaman.Consumes.MainHandImbue == proto.WeaponImbue_RockbiterWeapon {
+			shaman.PseudoStats.ThreatMultiplier *= 1.30
+		} else {
+			shaman.PseudoStats.ThreatMultiplier *= 0.70
+		}
+	}
 
 	// Restoration Talents
 	// TODO: Healing Way
@@ -49,31 +63,36 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.registerNaturesSwiftnessCD()
 	// shaman.registerManaTideTotemCD()
 
+	shaman.PseudoStats.SpiritRegenRateCasting += []float64{0, .17, .34, .51}[shaman.Talents.Mindfulness]
+
+	if shaman.Talents.ImprovedReincarnation > 0 {
+		shaman.MultiplyStat(stats.Health, 1+.02*float64(shaman.Talents.ImprovedReincarnation))
+	}
+
 	if shaman.Talents.TidalFocus > 0 {
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.Flags.Matches(SpellFlagShaman) && spell.ProcMask.Matches(core.ProcMaskSpellHealing) && spell.Cost != nil {
 				spell.Cost.Multiplier -= shaman.Talents.TidalFocus
 			}
 		})
+
+		shaman.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*float64(shaman.Talents.TidalFocus))
+		shaman.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(shaman.Talents.TidalFocus))
 	}
 
-	shaman.AddStat(stats.MeleeHit, float64(shaman.Talents.NaturesGuidance))
-	shaman.AddStat(stats.SpellHit, float64(shaman.Talents.NaturesGuidance))
-
-	if shaman.Talents.HealingGrace > 0 {
-		threatMultiplier := 1 - .05*float64(shaman.Talents.HealingGrace)
+	if shaman.Talents.NaturalGrace > 0 {
+		threatMultiplier := 1 - .05*float64(shaman.Talents.NaturalGrace)
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.Flags.Matches(SpellFlagShaman) && spell.ProcMask.Matches(core.ProcMaskSpellHealing) {
+			if spell.Flags.Matches(SpellFlagShaman) {
 				spell.ThreatMultiplier *= threatMultiplier
 			}
 		})
 	}
 
 	if shaman.Talents.TidalMastery > 0 {
-		critBonus := float64(shaman.Talents.TidalMastery) * core.CritRatingPerCritChance
+		critBonus := float64(shaman.Talents.TidalMastery) * core.SpellCritRatingPerCritChance
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.Flags.Matches(SpellFlagShaman) && (spell.ProcMask.Matches(core.ProcMaskSpellHealing) ||
-				spell.Flags.Matches(SpellFlagLightning)) {
+			if spell.Flags.Matches(SpellFlagShaman) && spell.ProcMask.Matches(core.ProcMaskSpellHealing) {
 				spell.BonusCritRating += critBonus
 			}
 		})
@@ -86,7 +105,7 @@ func (shaman *Shaman) applyConcussion() {
 	}
 
 	additiveMultiplier := 0.01 * float64(shaman.Talents.Concussion)
-	affectedSpellCodes := []int32{SpellCode_ShamanLightningBolt, SpellCode_ShamanChainLightning, SpellCode_ShamanEarthShock, SpellCode_ShamanFlameShock, SpellCode_ShamanFrostShock}
+	affectedSpellCodes := []int32{SpellCode_ShamanLightningBolt, SpellCode_ShamanChainLightning, SpellCode_ShamanEarthShock}
 
 	shaman.OnSpellRegistered(func(spell *core.Spell) {
 		if slices.Contains(affectedSpellCodes, spell.SpellCode) {
@@ -94,8 +113,54 @@ func (shaman *Shaman) applyConcussion() {
 		}
 	})
 }
+
+func (shaman *Shaman) applyElementalWarding() {
+	if shaman.Talents.ElementalWarding == 0 {
+		return
+	}
+
+	multiplier := 1 - .03*float64(shaman.Talents.ElementalWarding)
+	for _, school := range []stats.SchoolIndex{stats.SchoolIndexFire, stats.SchoolIndexFrost, stats.SchoolIndexNature} {
+		shaman.PseudoStats.SchoolDamageTakenMultiplier[school] *= multiplier
+	}
+}
+
+// The fire totems apply this themselves so that it lands on their base damage.
 func (shaman *Shaman) callOfFlameMultiplier() float64 {
 	return 1 + .05*float64(shaman.Talents.CallOfFlame)
+}
+
+func (shaman *Shaman) applyCallOfFlame() {
+	if shaman.Talents.CallOfFlame == 0 {
+		return
+	}
+
+	affectedSpellCodes := []int32{SpellCode_ShamanFlameShock, SpellCode_ShamanLavaBurst}
+	multiplier := shaman.callOfFlameMultiplier()
+
+	shaman.OnSpellRegistered(func(spell *core.Spell) {
+		if slices.Contains(affectedSpellCodes, spell.SpellCode) {
+			spell.DamageMultiplier *= multiplier
+		}
+	})
+}
+
+func (shaman *Shaman) shamanisticFocusReduction() int32 {
+	return core.TernaryInt32(shaman.Talents.ShamanisticFocus, 45, 0)
+}
+
+// TODO: Only rank 1 was seen, beta will confirm that the ranks stack to 0.51 sec.
+func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
+	return time.Millisecond * 170 * time.Duration(shaman.Talents.ElementalAlacrity)
+}
+
+// TODO: Only rank 1 was seen, beta will confirm that rank 2 doubles both halves.
+func (shaman *Shaman) improvedFireNovaMultiplier() float64 {
+	return 1 + .1*float64(shaman.Talents.ImprovedFireNova)
+}
+
+func (shaman *Shaman) improvedFireNovaCooldownReduction() time.Duration {
+	return time.Second * 2 * time.Duration(shaman.Talents.ImprovedFireNova)
 }
 
 func (shaman *Shaman) applyElementalFocus() {
@@ -190,113 +255,24 @@ func (shaman *Shaman) applyElementalDevastation() {
 		},
 	})
 }
-
-func (shaman *Shaman) applyImprovedFireTotems() {
-	if shaman.Talents.ImprovedFireTotems == 0 {
-		return
-	}
-
-	shaman.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.SpellCode == SpellCode_ShamanFireNovaTotem {
-			for _, dot := range spell.Dots() {
-				if dot == nil {
-					continue
-				}
-
-				dot.TickLength -= time.Second * time.Duration(shaman.Talents.ImprovedFireTotems)
-			}
-		} else if spell.SpellCode == SpellCode_ShamanMagmaTotem {
-			spell.ThreatMultiplier *= 1.0 - (0.25 * float64(shaman.Talents.ImprovedFireTotems))
-		}
-	})
-}
-
 func (shaman *Shaman) applyElementalFury() {
-	if !shaman.Talents.ElementalFury {
+	if shaman.Talents.ElementalFury == 0 {
 		return
 	}
+
+	// TODO: Only rank 1 was seen, beta will confirm that the ranks go up in steps of 20%.
+	critDamageBonus := .2 * float64(shaman.Talents.ElementalFury)
+	affectedSpellCodes := []int32{SpellCode_ShamanSearingTotem, SpellCode_ShamanMagmaTotem}
 
 	shaman.OnSpellRegistered(func(spell *core.Spell) {
-		if (spell.Flags.Matches(SpellFlagShaman) || spell.Flags.Matches(SpellFlagTotem)) && spell.DefenseType == core.DefenseTypeMagic {
-			spell.CritDamageBonus += 1
+		if spell.DefenseType != core.DefenseTypeMagic {
+			return
 		}
-	})
-}
 
-func (shaman *Shaman) registerElementalMasteryCD() {
-	if !shaman.Talents.ElementalMastery {
-		return
-	}
-
-	actionID := core.ActionID{SpellID: 16166}
-
-	cdTimer := shaman.NewTimer()
-	cd := time.Minute * 3
-
-	var affectedSpells []*core.Spell
-
-	emAura := shaman.RegisterAura(core.Aura{
-		Label:    "Elemental Mastery",
-		ActionID: actionID,
-		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = core.FilterSlice(
-				shaman.Spellbook,
-				func(spell *core.Spell) bool { return spell != nil && shaman.isShamanDamagingSpell(spell) },
-			)
-		},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			core.Each(affectedSpells, func(spell *core.Spell) {
-				spell.BonusCritRating += core.CritRatingPerCritChance * 100
-				if spell.Cost != nil {
-					spell.Cost.Multiplier -= 100
-				}
-			})
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			core.Each(affectedSpells, func(spell *core.Spell) {
-				spell.BonusCritRating -= core.CritRatingPerCritChance * 100
-				if spell.Cost != nil {
-					spell.Cost.Multiplier += 100
-				}
-			})
-			shaman.ElementalMastery.CD.Use(sim)
-		},
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if shaman.isShamanDamagingSpell(spell) {
-				// Elemental mastery can be batched
-				core.StartDelayedAction(sim, core.DelayedActionOptions{
-					DoAt: sim.CurrentTime + core.SpellBatchWindow,
-					OnAction: func(sim *core.Simulation) {
-						if aura.IsActive() {
-							// Remove the buff and put skill on CD
-							aura.Deactivate(sim)
-							cdTimer.Set(sim.CurrentTime + cd)
-							shaman.UpdateMajorCooldowns()
-						}
-					},
-				})
-			}
-		},
-	})
-
-	shaman.ElementalMastery = shaman.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
-		Cast: core.CastConfig{
-			CD: core.Cooldown{
-				Timer:    cdTimer,
-				Duration: cd,
-			},
-		},
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			emAura.Activate(sim)
-		},
-	})
-
-	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell: shaman.ElementalMastery,
-		Type:  core.CooldownTypeDPS,
+		isElementalSpell := spell.Flags.Matches(SpellFlagShaman) && spell.SpellSchool.Matches(core.SpellSchoolFire|core.SpellSchoolFrost|core.SpellSchoolNature)
+		if isElementalSpell || slices.Contains(affectedSpellCodes, spell.SpellCode) {
+			spell.CritDamageBonus += critDamageBonus
+		}
 	})
 }
 
@@ -402,7 +378,7 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 	}
 
 	spellID := []int32{16257, 16277, 16278, 16279, 16280}[points-1]
-	attackSpeed := []float64{1.1, 1.15, 1.2, 1.25, 1.3}[points-1]
+	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
 
 	aura := shaman.GetOrRegisterAura(core.Aura{
 		Label:     fmt.Sprintf("Flurry Proc (%d)", spellID),
@@ -443,13 +419,142 @@ func (shaman *Shaman) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *core.
 	}))
 }
 
+func (shaman *Shaman) applyImprovedStormstrike() {
+	if !shaman.Talents.Stormstrike || shaman.Talents.ImprovedStormstrike == 0 {
+		return
+	}
+
+	// TODO: Only rank 1 was seen, beta will confirm whether both chances really double at rank 2.
+	points := float64(shaman.Talents.ImprovedStormstrike)
+	procChance := .5 * points
+	resetChance := .5 * points
+	regenRate := .5 * points
+
+	focusAura := shaman.RegisterAura(core.Aura{
+		Label:    "Improved Stormstrike",
+		ActionID: core.ActionID{SpellID: 51521},
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.PseudoStats.SpiritRegenRateCasting += regenRate
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.PseudoStats.SpiritRegenRateCasting -= regenRate
+		},
+	})
+
+	core.MakePermanent(shaman.RegisterAura(core.Aura{
+		Label: "Improved Stormstrike Trigger",
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanStormstrike && sim.Proc(procChance, "Improved Stormstrike") {
+				focusAura.Activate(sim)
+			}
+		},
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Outcome.Matches(core.OutcomeDodge|core.OutcomeParry) && sim.Proc(resetChance, "Improved Stormstrike Reset") {
+				shaman.Stormstrike.CD.Reset()
+			}
+		},
+	}))
+}
+
+func (shaman *Shaman) applyMaelstromWeapon() {
+	if shaman.Talents.MaelstromWeapon == 0 {
+		return
+	}
+
+	// TODO: The tooltip never showed a proc rate and only rank 1 was seen, beta will confirm both.
+	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
+	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+
+	castTimeReductionPerStack := .04 * float64(shaman.Talents.MaelstromWeapon)
+	costReductionPerStack := 4 * shaman.Talents.MaelstromWeapon
+
+	shaman.MaelstromWeaponAura = shaman.RegisterAura(core.Aura{
+		Label:     "Maelstrom Weapon",
+		ActionID:  core.ActionID{SpellID: 51530},
+		Duration:  time.Second * 30,
+		MaxStacks: 5,
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
+			stacks := newStacks - oldStacks
+			for _, spell := range shaman.LightningBolt {
+				if spell == nil || spell.Cost == nil {
+					continue
+				}
+
+				spell.CastTimeMultiplier -= castTimeReductionPerStack * float64(stacks)
+				spell.Cost.Multiplier -= costReductionPerStack * stacks
+			}
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanLightningBolt {
+				aura.Deactivate(sim)
+			}
+		},
+	})
+
+	core.MakePermanent(shaman.RegisterAura(core.Aura{
+		Label: "Maelstrom Weapon Trigger",
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() && ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon") {
+				shaman.MaelstromWeaponAura.Activate(sim)
+				shaman.MaelstromWeaponAura.AddStack(sim)
+			}
+		},
+	}))
+}
+
+func (shaman *Shaman) registerRageOfTheFarseerCD() {
+	if !shaman.Talents.RageOfTheFarseer {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 2825}
+	multiplier := 1.30
+	// TODO: The tooltip showed no cooldown, beta will confirm it. 3 minutes matches the other class cooldowns of this size.
+	cd := time.Minute * 3
+
+	buffAura := shaman.RegisterAura(core.Aura{
+		Label:    "Rage of the Farseer",
+		ActionID: actionID,
+		Duration: time.Second * 25,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.MultiplyMeleeSpeed(sim, multiplier)
+			shaman.MultiplyCastSpeed(multiplier)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.MultiplyMeleeSpeed(sim, 1/multiplier)
+			shaman.MultiplyCastSpeed(1 / multiplier)
+		},
+	})
+
+	rageSpell := shaman.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete,
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    shaman.NewTimer(),
+				Duration: cd,
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			buffAura.Activate(sim)
+		},
+	})
+
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell: rageSpell,
+		Type:  core.CooldownTypeDPS,
+	})
+}
+
 func (shaman *Shaman) totemManaMultiplier() int32 {
 	return 100 - 5*shaman.Talents.TotemicFocus
 }
 
-// Restorative Totems uses Mod Spell Effectiveness (Base Value)
+// Restorative Totems uses Mod Spell Effectiveness (Base Value). Only the Healing Stream half is
+// modelled here, Mana Spring's value is hard coded in buffs.go.
 func (shaman *Shaman) restorativeTotemsModifier() float64 {
-	return 0.05 * float64(shaman.Talents.RestorativeTotems)
+	return .1 * float64(shaman.Talents.RestorativeTotems)
 }
 
 // Purification uses Mod Spell Effectiveness (Base Healing)

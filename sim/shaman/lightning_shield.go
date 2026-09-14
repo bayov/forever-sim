@@ -107,7 +107,8 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			FlatCost:   manaCost,
+			Multiplier: 100 - shaman.shamanisticFocusReduction(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

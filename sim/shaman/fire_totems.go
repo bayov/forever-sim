@@ -46,6 +46,7 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 	attackInterval := time.Millisecond * 2500
 
 	attackSpell := shaman.RegisterSpell(core.SpellConfig{
+		SpellCode:   SpellCode_ShamanSearingTotem,
 		ActionID:    core.ActionID{SpellID: SearingTotemAttackSpellId[rank]},
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
@@ -246,7 +247,7 @@ func (shaman *Shaman) newFireNovaTotemSpellConfig(rank int) core.SpellConfig {
 	baseDamageLow := FireNovaTotemBaseDamage[rank][0]
 	baseDamageHigh := FireNovaTotemBaseDamage[rank][1]
 	spellCoeff := FireNovaTotemSpellCoeff[rank]
-	cooldown := time.Second * 15
+	cooldown := time.Second*15 - shaman.improvedFireNovaCooldownReduction()
 	manaCost := FireNovaTotemManaCost[rank]
 	level := FireNovaTotemLevel[rank]
 
@@ -260,7 +261,7 @@ func (shaman *Shaman) newFireNovaTotemSpellConfig(rank int) core.SpellConfig {
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskEmpty,
 
-		DamageMultiplier: shaman.callOfFlameMultiplier(),
+		DamageMultiplier: shaman.callOfFlameMultiplier() * shaman.improvedFireNovaMultiplier(),
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {

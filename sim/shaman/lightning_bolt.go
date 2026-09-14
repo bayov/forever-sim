@@ -17,11 +17,14 @@ var LightningBoltLevel = [LightningBoltRanks + 1]int{0, 1, 8, 14, 20, 26, 32, 38
 
 func (shaman *Shaman) registerLightningBoltSpell() {
 	shaman.LightningBolt = make([]*core.Spell, LightningBoltRanks+1)
+	shaman.LightningBoltOverload = make([]*core.Spell, LightningBoltRanks+1)
 
 	for rank := 1; rank <= LightningBoltRanks; rank++ {
 		config := shaman.newLightningBoltSpellConfig(rank)
 
 		if config.RequiredLevel <= int(shaman.Level) {
+			// The overload gets a config of its own so that the two casts share no state.
+			shaman.LightningBoltOverload[rank] = shaman.registerOverloadSpell(shaman.newLightningBoltSpellConfig(rank))
 			shaman.LightningBolt[rank] = shaman.RegisterSpell(config)
 		}
 	}
@@ -54,6 +57,8 @@ func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
 		spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 			spell.DealDamage(sim, result)
 		})
+
+		shaman.tryLightningOverload(sim, target, spell, shaman.LightningBoltOverload[rank])
 	}
 
 	return spell

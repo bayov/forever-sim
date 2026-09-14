@@ -15,7 +15,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 		return core.StormstrikeAura(target)
 	})
 
-	shaman.RegisterSpell(core.SpellConfig{
+	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_ShamanStormstrike,
 		ActionID:    core.ActionID{SpellID: 17364},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -44,7 +44,11 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			if result.Landed() {
-				stormStrikeAuras.Get(target).Activate(sim)
+				// Under Forever the charges are never spent, but the external caster in debuffs.go
+				// applies them the same way so keep the two consistent.
+				aura := stormStrikeAuras.Get(target)
+				aura.Activate(sim)
+				aura.SetStacks(sim, aura.MaxStacks)
 			}
 		},
 	})

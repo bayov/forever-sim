@@ -114,9 +114,7 @@ func (shaman *Shaman) newGraceOfAirTotemSpellConfig(rank int) core.SpellConfig {
 	manaCost := GraceOfAirTotemManaCost[rank]
 	level := GraceOfAirTotemLevel[rank]
 
-	multiplier := []float64{1, 1.08, 1.15}[shaman.Talents.EnhancingTotems]
-
-	buffAura := core.GraceOfAirTotemAura(&shaman.Unit, multiplier)
+	buffAura := core.GraceOfAirTotemAura(&shaman.Unit, enhancingTotemsMultiplier)
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level

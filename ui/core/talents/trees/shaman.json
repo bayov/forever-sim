@@ -1,7 +1,7 @@
 [
   {
-    "name": "Elemental",
-    "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/261.jpg",
+    "name": "Elemental Combat",
+    "backgroundUrl": "",
     "talents": [
       {
         "fieldName": "convection",
@@ -34,22 +34,10 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "earthsGrasp",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 0
-        },
-        "spellIds": [
-          16043,
-          16130
-        ],
-        "maxPoints": 2
-      },
-      {
         "fieldName": "elementalWarding",
         "location": {
           "rowIdx": 1,
-          "colIdx": 1
+          "colIdx": 0
         },
         "spellIds": [
           28996,
@@ -57,6 +45,21 @@
           28998
         ],
         "maxPoints": 3
+      },
+      {
+        "fieldName": "reverberation",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 1
+        },
+        "spellIds": [
+          16040,
+          16113,
+          16114,
+          16115,
+          16116
+        ],
+        "maxPoints": 5
       },
       {
         "fieldName": "callOfFlame",
@@ -72,10 +75,23 @@
         "maxPoints": 3
       },
       {
+        "fieldName": "elementalDevastation",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 3
+        },
+        "spellIds": [
+          30160,
+          29179,
+          29180
+        ],
+        "maxPoints": 3
+      },
+      {
         "fieldName": "elementalFocus",
         "location": {
           "rowIdx": 2,
-          "colIdx": 0
+          "colIdx": 1
         },
         "spellIds": [
           16164
@@ -83,37 +99,18 @@
         "maxPoints": 1
       },
       {
-        "fieldName": "reverberation",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 1
-        },
-        "spellIds": [
-          16040,
-          16113,
-          16114,
-          16115,
-          16116
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "callOfThunder",
+        "fieldName": "elementalFury",
         "location": {
           "rowIdx": 2,
           "colIdx": 2
         },
         "spellIds": [
-          16041,
-          16117,
-          16118,
-          16119,
-          16120
+          16089
         ],
         "maxPoints": 5
       },
       {
-        "fieldName": "improvedFireTotems",
+        "fieldName": "improvedFireNova",
         "location": {
           "rowIdx": 3,
           "colIdx": 0
@@ -138,20 +135,26 @@
         "maxPoints": 3
       },
       {
-        "fieldName": "elementalDevastation",
+        "fieldName": "callOfThunder",
         "location": {
           "rowIdx": 3,
-          "colIdx": 3
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 2
         },
         "spellIds": [
-          30160,
-          29179,
-          29180
+          16041,
+          16117,
+          16118,
+          16119,
+          16120
         ],
-        "maxPoints": 3
+        "maxPoints": 1
       },
       {
-        "fieldName": "stormReach",
+        "fieldName": "elementalReach",
         "location": {
           "rowIdx": 4,
           "colIdx": 0
@@ -163,49 +166,60 @@
         "maxPoints": 2
       },
       {
-        "fieldName": "elementalFury",
+        "fieldName": "lightningOverload",
         "location": {
           "rowIdx": 4,
           "colIdx": 1
         },
         "spellIds": [
-          16089
+          30675,
+          30678,
+          30679
+        ],
+        "maxPoints": 3
+      },
+      {
+        "fieldName": "earthbound",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 3
+        },
+        "spellIds": [
+          2484
         ],
         "maxPoints": 1
       },
       {
-        "fieldName": "lightningMastery",
+        "fieldName": "elementalAlacrity",
         "location": {
           "rowIdx": 5,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
           16578,
           16579,
-          16580,
-          16581,
-          16582
+          16580
         ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 2
-        }
+        "maxPoints": 3
       },
       {
-        "fieldName": "elementalMastery",
+        "fieldName": "lavaBurst",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          16166
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          51505
+        ],
+        "maxPoints": 1
       }
     ]
   },
@@ -214,10 +228,37 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/263.jpg",
     "talents": [
       {
-        "fieldName": "ancestralKnowledge",
+        "fieldName": "earthsGrasp",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 0
+        },
+        "spellIds": [
+          16043,
+          16130
+        ],
+        "maxPoints": 2
+      },
+      {
+        "fieldName": "thunderingStrikes",
         "location": {
           "rowIdx": 0,
           "colIdx": 1
+        },
+        "spellIds": [
+          16255,
+          16302,
+          16303,
+          16304,
+          16305
+        ],
+        "maxPoints": 5
+      },
+      {
+        "fieldName": "ancestralKnowledge",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 2
         },
         "spellIds": [
           17485,
@@ -225,18 +266,6 @@
           17487,
           17488,
           17489
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "shieldSpecialization",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16253,
-          16298
         ],
         "maxPoints": 5
       },
@@ -253,19 +282,17 @@
         "maxPoints": 2
       },
       {
-        "fieldName": "thunderingStrikes",
+        "fieldName": "mentalDexterity",
         "location": {
           "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          16255,
-          16302,
-          16303,
-          16304,
-          16305
+          51883,
+          51884,
+          51885
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "improvedGhostWolf",
@@ -292,25 +319,26 @@
         "maxPoints": 3
       },
       {
-        "fieldName": "enhancingTotems",
+        "fieldName": "elementalWeapons",
         "location": {
           "rowIdx": 2,
           "colIdx": 0
         },
         "spellIds": [
-          16259,
-          16295
+          16266,
+          29079,
+          29080
         ],
-        "maxPoints": 2
+        "maxPoints": 3
       },
       {
-        "fieldName": "twoHandedAxesAndMaces",
+        "fieldName": "shamanisticFocus",
         "location": {
           "rowIdx": 2,
           "colIdx": 2
         },
         "spellIds": [
-          16269
+          43338
         ],
         "maxPoints": 1
       },
@@ -327,32 +355,13 @@
           16273,
           16274
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "flurry",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 1
-        },
-        "spellIds": [
-          16256,
-          16281,
-          16282,
-          16283,
-          16284
-        ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 1,
-          "colIdx": 1
-        }
+        "maxPoints": 3
       },
       {
         "fieldName": "toughness",
         "location": {
           "rowIdx": 3,
-          "colIdx": 2
+          "colIdx": 0
         },
         "spellIds": [
           16252,
@@ -364,35 +373,40 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "improvedWeaponTotems",
+        "fieldName": "flurry",
         "location": {
-          "rowIdx": 4,
-          "colIdx": 0
+          "rowIdx": 3,
+          "colIdx": 1
         },
-        "spellIds": [
-          29192,
-          29193
-        ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "elementalWeapons",
-        "location": {
-          "rowIdx": 4,
+        "prereqLocation": {
+          "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          16266,
-          29079,
-          29080
+          16256,
+          16281,
+          16282,
+          16283,
+          16284
         ],
-        "maxPoints": 3
+        "maxPoints": 5
       },
       {
-        "fieldName": "parry",
+        "fieldName": "stormstrike",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 2
+        },
+        "spellIds": [
+          17364
+        ],
+        "maxPoints": 1
+      },
+      {
+        "fieldName": "spiritWeapons",
         "location": {
           "rowIdx": 4,
-          "colIdx": 2
+          "colIdx": 0
         },
         "spellIds": [
           16268
@@ -400,34 +414,62 @@
         "maxPoints": 1
       },
       {
-        "fieldName": "weaponMastery",
+        "fieldName": "mentalQuickness",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
+        "spellIds": [
+          30812,
+          30813
+        ],
+        "maxPoints": 2
+      },
+      {
+        "fieldName": "improvedStormstrike",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 2
+        },
+        "spellIds": [
+          51521,
+          51522
+        ],
+        "maxPoints": 2
+      },
+      {
+        "fieldName": "maelstromWeapon",
         "location": {
           "rowIdx": 5,
           "colIdx": 2
         },
         "spellIds": [
-          29082,
-          29084,
-          29086,
-          29087,
-          29088
+          51528,
+          51529,
+          51530,
+          51531,
+          51532
         ],
         "maxPoints": 5
       },
       {
-        "fieldName": "stormstrike",
+        "fieldName": "rageOfTheFarseer",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          17364
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          2825
+        ],
+        "maxPoints": 1
       }
     ]
   },
@@ -451,9 +493,50 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "tidalFocus",
+        "fieldName": "tidalMastery",
         "location": {
           "rowIdx": 0,
+          "colIdx": 2
+        },
+        "spellIds": [
+          16194,
+          16218,
+          16219,
+          16220,
+          16221
+        ],
+        "maxPoints": 5
+      },
+      {
+        "fieldName": "mindfulness",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 0
+        },
+        "spellIds": [
+          17106,
+          17107,
+          17108
+        ],
+        "maxPoints": 3
+      },
+      {
+        "fieldName": "naturalGrace",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 1
+        },
+        "spellIds": [
+          29187,
+          29189,
+          29191
+        ],
+        "maxPoints": 3
+      },
+      {
+        "fieldName": "tidalFocus",
+        "location": {
+          "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
@@ -469,7 +552,7 @@
         "fieldName": "improvedReincarnation",
         "location": {
           "rowIdx": 1,
-          "colIdx": 0
+          "colIdx": 3
         },
         "spellIds": [
           16184,
@@ -480,41 +563,13 @@
       {
         "fieldName": "ancestralHealing",
         "location": {
-          "rowIdx": 1,
-          "colIdx": 1
+          "rowIdx": 2,
+          "colIdx": 0
         },
         "spellIds": [
           16176,
           16235,
           16240
-        ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "totemicFocus",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16173,
-          16222,
-          16223,
-          16224,
-          16225
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "naturesGuidance",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 0
-        },
-        "spellIds": [
-          16180,
-          16196,
-          16198
         ],
         "maxPoints": 3
       },
@@ -531,31 +586,33 @@
           16233,
           16234
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
-        "fieldName": "totemicMastery",
+        "fieldName": "waterShield",
         "location": {
           "rowIdx": 2,
           "colIdx": 2
         },
         "spellIds": [
-          16189
+          52127
         ],
         "maxPoints": 1
       },
       {
-        "fieldName": "healingGrace",
+        "fieldName": "totemicFocus",
         "location": {
-          "rowIdx": 2,
-          "colIdx": 3
+          "rowIdx": 3,
+          "colIdx": 0
         },
         "spellIds": [
-          29187,
-          29189,
-          29191
+          16173,
+          16222,
+          16223,
+          16224,
+          16225
         ],
-        "maxPoints": 3
+        "maxPoints": 5
       },
       {
         "fieldName": "restorativeTotems",
@@ -573,25 +630,21 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "tidalMastery",
+        "fieldName": "manaTideTotem",
         "location": {
           "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
-          16194,
-          16218,
-          16219,
-          16220,
-          16221
+          16190
         ],
-        "maxPoints": 5
+        "maxPoints": 1
       },
       {
         "fieldName": "healingWay",
         "location": {
           "rowIdx": 4,
-          "colIdx": 0
+          "colIdx": 1
         },
         "spellIds": [
           29206,
@@ -627,19 +680,19 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "manaTideTotem",
+        "fieldName": "riptide",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          16190
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
-          "rowIdx": 3,
+          "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          61295
+        ],
+        "maxPoints": 1
       }
     ]
   }

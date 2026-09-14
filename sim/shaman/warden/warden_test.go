@@ -29,6 +29,8 @@ func TestWardenShaman(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
@@ -39,7 +41,7 @@ var PlayerOptionsBasic = &proto.Player_WardenShaman{
 	},
 }
 
-var DefaultTalents = "5203015-0505000145503151"
+var DefaultTalents = "3535001-0502303313551102"
 
 var Phase1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

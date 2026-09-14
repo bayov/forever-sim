@@ -33,6 +33,8 @@ func TestEnhancement(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -53,6 +55,8 @@ func TestEnhancement(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -73,6 +77,8 @@ func TestEnhancement(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -93,11 +99,13 @@ func TestEnhancement(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
 
-var DefaultTalents = "05-5025002105023051-05105301"
+var DefaultTalents = "5505301-053030031005112251"
 
 var PlayerOptionsSyncDelayOH = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{

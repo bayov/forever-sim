@@ -35,9 +35,8 @@ func (shaman *Shaman) newStrengthOfEarthTotemSpellConfig(rank int) core.SpellCon
 	level := StrengthOfEarthTotemLevel[rank]
 
 	duration := time.Second * 120
-	multiplier := []float64{1, 1.08, 1.15}[shaman.Talents.EnhancingTotems]
 
-	buffAura := core.StrengthOfEarthTotemAura(&shaman.Unit, multiplier)
+	buffAura := core.StrengthOfEarthTotemAura(&shaman.Unit, enhancingTotemsMultiplier)
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level

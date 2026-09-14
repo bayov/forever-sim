@@ -17,6 +17,7 @@ var ChainLightningLevel = [ChainLightningRanks + 1]int{0, 32, 40, 48, 56}
 
 func (shaman *Shaman) registerChainLightningSpell() {
 	shaman.ChainLightning = make([]*core.Spell, ChainLightningRanks+1)
+	shaman.ChainLightningOverload = make([]*core.Spell, ChainLightningRanks+1)
 
 	cdTimer := shaman.NewTimer()
 
@@ -24,6 +25,8 @@ func (shaman *Shaman) registerChainLightningSpell() {
 		config := shaman.newChainLightningSpellConfig(rank, cdTimer)
 
 		if config.RequiredLevel <= int(shaman.Level) {
+			// The overload gets a config of its own so that the two casts share no bounce results.
+			shaman.ChainLightningOverload[rank] = shaman.registerOverloadSpell(shaman.newChainLightningSpellConfig(rank, cdTimer))
 			shaman.ChainLightning[rank] = shaman.RegisterSpell(config)
 		}
 	}
@@ -61,6 +64,7 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	results := make([]*core.SpellResult, min(targetCount, shaman.Env.GetNumTargets()))
 
 	spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+		primaryTarget := target
 		origMult := spell.DamageMultiplier
 		for hitIndex := range results {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
@@ -74,6 +78,8 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 		}
 
 		spell.DamageMultiplier = origMult
+
+		shaman.tryLightningOverload(sim, primaryTarget, spell, shaman.ChainLightningOverload[rank])
 	}
 
 	return spell

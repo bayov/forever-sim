@@ -4,57 +4,61 @@ package proto;
 option go_package = "./proto";
 
 message ShamanTalents {
-	// Elemental
+	// Elemental Combat
 	int32 convection = 1;
 	int32 concussion = 2;
-	int32 earths_grasp = 3;
-	int32 elemental_warding = 4;
+	int32 elemental_warding = 3;
+	int32 reverberation = 4;
 	int32 call_of_flame = 5;
-	bool elemental_focus = 6;
-	int32 reverberation = 7;
-	int32 call_of_thunder = 8;
-	int32 improved_fire_totems = 9;
+	int32 elemental_devastation = 6;
+	bool elemental_focus = 7;
+	int32 elemental_fury = 8;
+	int32 improved_fire_nova = 9;
 	int32 eye_of_the_storm = 10;
-	int32 elemental_devastation = 11;
-	int32 storm_reach = 12;
-	bool elemental_fury = 13;
-	int32 lightning_mastery = 14;
-	bool elemental_mastery = 15;
+	bool call_of_thunder = 11;
+	int32 elemental_reach = 12;
+	int32 lightning_overload = 13;
+	bool earthbound = 14;
+	int32 elemental_alacrity = 15;
+	bool lava_burst = 16;
 
 	// Enhancement
-	int32 ancestral_knowledge = 16;
-	int32 shield_specialization = 17;
-	int32 guardian_totems = 18;
-	int32 thundering_strikes = 19;
-	int32 improved_ghost_wolf = 20;
-	int32 improved_lightning_shield = 21;
-	int32 enhancing_totems = 22;
-	bool two_handed_axes_and_maces = 23;
-	int32 anticipation = 24;
-	int32 flurry = 25;
-	int32 toughness = 26;
-	int32 improved_weapon_totems = 27;
-	int32 elemental_weapons = 28;
-	bool parry = 29;
-	int32 weapon_mastery = 30;
-	bool stormstrike = 31;
+	int32 earths_grasp = 17;
+	int32 thundering_strikes = 18;
+	int32 ancestral_knowledge = 19;
+	int32 guardian_totems = 20;
+	int32 mental_dexterity = 21;
+	int32 improved_ghost_wolf = 22;
+	int32 improved_lightning_shield = 23;
+	int32 elemental_weapons = 24;
+	bool shamanistic_focus = 25;
+	int32 anticipation = 26;
+	int32 toughness = 27;
+	int32 flurry = 28;
+	bool stormstrike = 29;
+	bool spirit_weapons = 30;
+	int32 mental_quickness = 31;
+	int32 improved_stormstrike = 32;
+	int32 maelstrom_weapon = 33;
+	bool rage_of_the_farseer = 34;
 
 	// Restoration
-	int32 improved_healing_wave = 32;
-	int32 tidal_focus = 33;
-	int32 improved_reincarnation = 34;
-	int32 ancestral_healing = 35;
-	int32 totemic_focus = 36;
-	int32 natures_guidance = 37;
-	int32 healing_focus = 38;
-	bool totemic_mastery = 39;
-	int32 healing_grace = 40;
-	int32 restorative_totems = 41;
-	int32 tidal_mastery = 42;
-	int32 healing_way = 43;
-	bool natures_swiftness = 44;
-	int32 purification = 45;
+	int32 improved_healing_wave = 35;
+	int32 tidal_mastery = 36;
+	int32 mindfulness = 37;
+	int32 natural_grace = 38;
+	int32 tidal_focus = 39;
+	int32 improved_reincarnation = 40;
+	int32 ancestral_healing = 41;
+	int32 healing_focus = 42;
+	bool water_shield = 43;
+	int32 totemic_focus = 44;
+	int32 restorative_totems = 45;
 	bool mana_tide_totem = 46;
+	int32 healing_way = 47;
+	bool natures_swiftness = 48;
+	int32 purification = 49;
+	bool riptide = 50;
 }
 
 enum EarthTotem {

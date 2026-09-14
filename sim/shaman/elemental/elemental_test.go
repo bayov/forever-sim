@@ -30,6 +30,8 @@ func TestElemental(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -47,6 +49,8 @@ func TestElemental(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -64,6 +68,8 @@ func TestElemental(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -81,6 +87,8 @@ func TestElemental(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -98,6 +106,8 @@ func TestElemental(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 		{
 			Class:      proto.Class_ClassShaman,
@@ -115,11 +125,13 @@ func TestElemental(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
 
-var DefaultTalents = "550331050002151--50105301005"
+var DefaultTalents = "5505301500103031--503352001"
 
 var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{

@@ -9,7 +9,7 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-var TalentTreeSizes = [3]int{15, 16, 15}
+var TalentTreeSizes = [3]int{16, 18, 16}
 
 const (
 	SpellFlagShaman    = core.SpellFlagAgentReserved1
@@ -70,12 +70,14 @@ const (
 	SpellCode_ShamanFlameShock
 	SpellCode_ShamanFrostShock
 	SpellCode_ShamanHealingWave
+	SpellCode_ShamanLavaBurst
 	SpellCode_ShamanLesserHealingWave
 	SpellCode_ShamanLightningBolt
 	SpellCode_ShamanLightningShield
 	SpellCode_ShamanMagmaTotem
 	SpellCode_ShamanSearingTotem
 	SpellCode_ShamanStormstrike
+	SpellCode_ShamanWaterShield
 )
 
 // Shaman represents a shaman character.
@@ -85,36 +87,41 @@ type Shaman struct {
 	Talents *proto.ShamanTalents
 
 	// Spells
-	ChainHeal            []*core.Spell
-	ChainLightning       []*core.Spell
-	EarthShield          *core.Spell
-	EarthShock           []*core.Spell
-	ElementalMastery     *core.Spell
-	FireNovaTotem        []*core.Spell
-	FlameShock           []*core.Spell
-	FrostShock           []*core.Spell
-	GraceOfAirTotem      []*core.Spell
-	HealingStreamTotem   []*core.Spell
-	HealingWave          []*core.Spell
-	LesserHealingWave    []*core.Spell
-	LightningBolt        []*core.Spell
-	LightningShield      []*core.Spell
-	LightningShieldProcs []*core.Spell // The damage component of lightning shield is a separate spell
-	MagmaTotem           []*core.Spell
-	ManaSpringTotem      []*core.Spell
-	SearingTotem         []*core.Spell
-	StoneskinTotem       []*core.Spell
-	Stormstrike          *core.Spell
-	StrengthOfEarthTotem []*core.Spell
-	TremorTotem          *core.Spell
-	WindfuryTotem        []*core.Spell
-	WindfuryWeaponMH     *core.Spell
-	WindfuryWeaponOH     *core.Spell
-	WindwallTotem        []*core.Spell
+	ChainHeal              []*core.Spell
+	ChainLightning         []*core.Spell
+	ChainLightningOverload []*core.Spell
+	EarthShield            *core.Spell
+	EarthShock             []*core.Spell
+	FireNovaTotem          []*core.Spell
+	FlameShock             []*core.Spell
+	FrostShock             []*core.Spell
+	GraceOfAirTotem        []*core.Spell
+	HealingStreamTotem     []*core.Spell
+	HealingWave            []*core.Spell
+	LavaBurst              *core.Spell
+	LesserHealingWave      []*core.Spell
+	LightningBolt          []*core.Spell
+	LightningBoltOverload  []*core.Spell
+	LightningShield        []*core.Spell
+	LightningShieldProcs   []*core.Spell // The damage component of lightning shield is a separate spell
+	MagmaTotem             []*core.Spell
+	ManaSpringTotem        []*core.Spell
+	SearingTotem           []*core.Spell
+	StoneskinTotem         []*core.Spell
+	Stormstrike            *core.Spell
+	StrengthOfEarthTotem   []*core.Spell
+	TremorTotem            *core.Spell
+	WaterShield            *core.Spell
+	WindfuryTotem          []*core.Spell
+	WindfuryWeaponMH       *core.Spell
+	WindfuryWeaponOH       *core.Spell
+	WindwallTotem          []*core.Spell
 
 	// Auras
 	ClearcastingAura     *core.Aura
 	LightningShieldAuras []*core.Aura
+	MaelstromWeaponAura  *core.Aura
+	WaterShieldAura      *core.Aura
 
 	// Totems
 	ActiveTotems     [4]*core.Spell
@@ -156,10 +163,12 @@ func (shaman *Shaman) AddRaidBuffs(_ *proto.RaidBuffs) {
 func (shaman *Shaman) Initialize() {
 	// Core abilities
 	shaman.registerChainLightningSpell()
+	shaman.registerLavaBurstSpell()
 	shaman.registerLightningBoltSpell()
 	shaman.registerLightningShieldSpell()
 	shaman.registerShocks()
 	shaman.registerStormstrikeSpell()
+	shaman.registerWaterShieldSpell()
 
 	// Imbues
 	// In the Initialize due to frost brand adding the aura to the enemy

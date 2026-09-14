@@ -71,7 +71,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5203015-0505000145503151' }));
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '3535001-0502303313551102' }));
 
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60],

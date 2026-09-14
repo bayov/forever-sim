@@ -34,7 +34,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				CastTime: baseCastTime - time.Millisecond*200*time.Duration(shaman.Talents.LightningMastery),
+				CastTime: baseCastTime - shaman.elementalAlacrityReduction(),
 				GCD:      core.GCDDefault,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
@@ -43,7 +43,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 			},
 		},
 
-		BonusCritRating: []float64{0, 1, 2, 3, 4, 6}[shaman.Talents.CallOfThunder] * core.CritRatingPerCritChance,
+		BonusCritRating: core.TernaryFloat64(shaman.Talents.CallOfThunder, 3, 0) * core.SpellCritRatingPerCritChance,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
