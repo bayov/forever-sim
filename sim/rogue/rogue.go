@@ -29,13 +29,15 @@ const (
 	SpellCode_RogueGarrote
 	SpellCode_RogueGhostlyStrike
 	SpellCode_RogueHemorrhage
+	SpellCode_RogueMutilate
 	SpellCode_RogueRupture
 	SpellCode_RogueSinisterStrike
 	SpellCode_RogueSliceandDice
 	SpellCode_RogueVanish
+	SpellCode_RogueVenom
 )
 
-var TalentTreeSizes = [3]int{15, 19, 17}
+var TalentTreeSizes = [3]int{17, 17, 19}
 
 type Rogue struct {
 	core.Character
@@ -53,6 +55,8 @@ type Rogue struct {
 	Ambush         *core.Spell
 	Hemorrhage     *core.Spell
 	GhostlyStrike  *core.Spell
+	Mutilate       *core.Spell
+	mutilateOH     *core.Spell
 	SinisterStrike *core.Spell
 	Shadowstep     *core.Spell
 	Preparation    *core.Spell
@@ -64,6 +68,7 @@ type Rogue struct {
 	ExposeArmor  *core.Spell
 	Rupture      *core.Spell
 	SliceAndDice *core.Spell
+	Venom        *core.Spell
 	Finishers    []*core.Spell
 
 	Evasion *core.Spell
@@ -77,11 +82,15 @@ type Rogue struct {
 
 	AdrenalineRushAura *core.Aura
 	BladeFlurryAura    *core.Aura
+	CutthroatAura      *core.Aura
 	ExposeArmorAuras   core.AuraArray
 	EvasionAura        *core.Aura
+	HemorrhageAuras    core.AuraArray
 	SliceAndDiceAura   *core.Aura
 	StealthAura        *core.Aura
+	ThousandCutsAura   *core.Aura
 	VanishAura         *core.Aura
+	VenomAura          *core.Aura
 
 	woundPoisonDebuffAuras core.AuraArray
 }
@@ -112,11 +121,13 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerFeintSpell()
 	rogue.registerGarrote()
 	rogue.registerHemorrhageSpell()
+	rogue.registerMutilateSpell()
 	rogue.registerRupture()
 	rogue.registerSinisterStrikeSpell()
 	rogue.registerSliceAndDice()
 	rogue.registerThistleTeaCD()
 	rogue.registerAmbushSpell()
+	rogue.registerVenom()
 
 	// Poisons
 	rogue.registerInstantPoisonSpell()
@@ -150,10 +161,7 @@ func NewRogue(character *core.Character, options *proto.Player, rogueOptions *pr
 	rogue.PseudoStats.ThreatMultiplier *= 0.71
 	// TODO: Be able to Parry based on results
 	rogue.PseudoStats.CanParry = true
-	maxEnergy := 100.0
-	if rogue.Talents.Vigor {
-		maxEnergy += 10
-	}
+	maxEnergy := 100.0 + 5*float64(rogue.Talents.Vigor)
 	rogue.EnableEnergyBar(maxEnergy)
 
 	rogue.EnableAutoAttacks(rogue, core.AutoAttackOptions{

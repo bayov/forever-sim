@@ -28,8 +28,9 @@ func (rogue *Rogue) RegisterEvasionSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{},
 			CD: core.Cooldown{
-				Timer:    rogue.NewTimer(),
-				Duration: []time.Duration{time.Minute * 5, time.Minute*5 - time.Second*45, time.Second*5 - time.Second*90}[rogue.Talents.Elusiveness],
+				Timer: rogue.NewTimer(),
+				// Endurance shortens Sprint and Evasion, Elusiveness moved to Vanish and Blind.
+				Duration: time.Duration(float64(time.Minute*5) * (1 - 0.3*float64(rogue.Talents.Endurance))),
 			},
 			IgnoreHaste: true,
 		},

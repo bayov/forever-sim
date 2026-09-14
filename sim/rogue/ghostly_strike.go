@@ -50,13 +50,13 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 
 		CritDamageBonus: rogue.lethality(),
 
-		DamageMultiplier: 1.25,
+		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.8, 1.25),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
-			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
+			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target)) * rogue.quietusMultiplier(sim)
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 

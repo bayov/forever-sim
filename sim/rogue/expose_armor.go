@@ -6,9 +6,15 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
+// Improved Expose Armor no longer scales the armor reduction, it discounts the finisher
+// and hands a combo point back on a full spend.
+// TODO: assumed baseline, beta will confirm. The raid reads this debuff, so the Classic
+// 2/2 armor value is treated as baseline rather than deleted.
+const exposeArmorBaselineRank = 2
+
 func (rogue *Rogue) registerExposeArmorSpell() {
 	rogue.ExposeArmorAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.ExposeArmorAura(target, rogue.Talents.ImprovedExposeArmor)
+		return core.ExposeArmorAura(target, exposeArmorBaselineRank)
 	})
 
 	spellID := map[int32]int32{
@@ -25,7 +31,12 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 		60: 340,
 	}[rogue.Level]
 
-	arpenPerCombo *= []float64{1, 1.25, 1.5}[rogue.Talents.ImprovedExposeArmor]
+	arpenPerCombo *= []float64{1, 1.25, 1.5}[exposeArmorBaselineRank]
+
+	// TODO: Only rank 1 was seen, the Energy discount is assumed to scale linearly while the
+	// refund and the 5 combo point trigger stay put. Beta will confirm.
+	energyCost := 25.0 - 5*float64(rogue.Talents.ImprovedExposeArmor)
+	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14169})
 
 	// share ExtraCastCondition() state with ApplyEffects()
 	var arpen float64
@@ -41,7 +52,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   25,
+			Cost:   energyCost,
 			Refund: 0,
 		},
 		Cast: core.CastConfig{
@@ -72,11 +83,16 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
 
+			comboPoints := rogue.ComboPoints()
+
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				eaAura.ExclusiveEffects[0].Priority = arpen
 				eaAura.Activate(sim)
 				rogue.SpendComboPoints(sim, spell)
+				if rogue.Talents.ImprovedExposeArmor > 0 && comboPoints == 5 {
+					rogue.AddComboPoints(sim, 1, target, cpMetrics)
+				}
 			} else {
 				spell.IssueRefund(sim)
 			}

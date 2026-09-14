@@ -26,6 +26,7 @@ import BackstabSweatyAPL from './apls/combat_backstab_sweaty.apl.json';
 import SinisterStrikeAPL from './apls/combat_sinister_strike.apl.json';
 import SinisterStrikeSweatyAPL from './apls/combat_sinister_strike_sweaty.apl.json';
 import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
+import MutilateAPL from './apls/forever_mutilate.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
 import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
@@ -66,10 +67,11 @@ export const ROTATION_PRESET_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation
 export const ROTATION_PRESET_BACKSTAB_SWEATY = PresetUtils.makePresetAPLRotation('Backstab (Sweaty)', BackstabSweatyAPL, {});
 export const ROTATION_PRESET_SINISTER_STRIKE_SWEATY = PresetUtils.makePresetAPLRotation('Sinister Strike (Sweaty)', SinisterStrikeSweatyAPL, {});
 export const ROTATION_PRESET_SINISTER_STRIKE_IEA = PresetUtils.makePresetAPLRotation('Improved Expose Armor (SS)', SinisterStrikeIEAAPL, {});
+export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateAPL, {});
 
 export const APLPresets = {
-	[Phase.Phase1]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA],
-	[Phase.Phase2]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA],
+	[Phase.Phase1]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA, ROTATION_PRESET_MUTILATE],
+	[Phase.Phase2]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA, ROTATION_PRESET_MUTILATE],
 };
 
 //Need to add main hand equip logic or talent/rotation logic to map to Auto APL
@@ -81,6 +83,7 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 export const DefaultAPLBackstab = APLPresets[Phase.Phase2][0];
 export const DefaultAPLSinisterStrike = APLPresets[Phase.Phase2][1];
 export const DefaultAPLIEA = APLPresets[Phase.Phase2][4];
+export const DefaultAPLMutilate = APLPresets[Phase.Phase2][5];
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -93,14 +96,15 @@ export const DefaultAPLIEA = APLPresets[Phase.Phase2][4];
 
 export const CombatBackstabTalents = PresetUtils.makePresetTalents(
 	'Backstab',
-	SavedTalents.create({ talentsString: '005023104-0233050020550100221-05' }),
+	SavedTalents.create({ talentsString: '005302005-30230320201515231-102' }),
 );
-export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents('Sinister Strike', SavedTalents.create({ talentsString: '005323105-0240052020050150231' }));
-export const CombatSinisterStrikeIEATalents = PresetUtils.makePresetTalents('Improved Expose Armor (SS)', SavedTalents.create({ talentsString: '005323123-0240052020050150231' }));
+export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents('Sinister Strike', SavedTalents.create({ talentsString: '00530310501-32003311201515231' }));
+export const CombatSinisterStrikeIEATalents = PresetUtils.makePresetTalents('Improved Expose Armor (SS)', SavedTalents.create({ talentsString: '005303125-32003311201515131' }));
+export const AssassinationMutilateTalents = PresetUtils.makePresetTalents('Mutilate', SavedTalents.create({ talentsString: '00530310551021051-302303202004' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents],
-	[Phase.Phase2]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents],
+	[Phase.Phase1]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents],
+	[Phase.Phase2]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents],
 };
 
 export const DefaultTalentsAssassin = TalentPresets[Phase.Phase2][0];
@@ -110,6 +114,7 @@ export const DefaultTalentsSubtlety = TalentPresets[Phase.Phase2][0];
 export const DefaultTalentsBackstab = TalentPresets[Phase.Phase2][0];
 export const DefaultTalentsSinisterStrike = TalentPresets[Phase.Phase2][1];
 export const DefaultTalentsIEA = TalentPresets[Phase.Phase2][2];
+export const DefaultTalentsMutilate = TalentPresets[Phase.Phase2][3];
 
 export const DefaultTalents = DefaultTalentsSinisterStrike;
 
@@ -130,6 +135,11 @@ export const PresetBuildIEA = PresetUtils.makePresetBuild('IEA', {
 	gear: GearSinisterStrikeP2BiS,
 	talents: DefaultTalentsIEA,
 	rotation: DefaultAPLIEA,
+});
+export const PresetBuildMutilate = PresetUtils.makePresetBuild('Mutilate', {
+	gear: GearBackstabP2BiS,
+	talents: DefaultTalentsMutilate,
+	rotation: DefaultAPLMutilate,
 });
 
 ///////////////////////////////////////////////////////////////////////////

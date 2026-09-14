@@ -3,7 +3,7 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
-import { Class, Faction, ItemSlot, PartyBuffs, PseudoStat, Race, Spec, Stat, Target, WeaponType } from '../core/proto/common.js';
+import { Class, Faction, PartyBuffs, PseudoStat, Race, Spec, Stat, Target } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
 import * as Presets from './presets.js';
@@ -21,25 +21,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 					const hasNoArmor = !!(simUI.sim.encounter.targets ?? []).find((target: Target) => new Stats(target.stats).getStat(Stat.StatArmor) <= 0);
 					if (hasNoArmor) {
 						return 'One or more targets have no armor. Check advanced encounter settings.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getTalents().maceSpecialization) {
-						if (
-							simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeMace ||
-							simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeMace
-						) {
-							return '';
-						} else {
-							return '"Mace Specialization" talent selected, but maces not equipped.';
-						}
 					} else {
 						return '';
 					}
@@ -140,7 +121,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		rotations: [...Presets.APLPresets[Phase.Phase2]],
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase2]],
-		builds: [Presets.PresetBuildBackstab, Presets.PresetBuildSinisterStrike, Presets.PresetBuildIEA],
+		builds: [Presets.PresetBuildBackstab, Presets.PresetBuildSinisterStrike, Presets.PresetBuildIEA, Presets.PresetBuildMutilate],
 	},
 
 	autoRotation: player => {

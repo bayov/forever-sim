@@ -1,10 +1,15 @@
 package rogue
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
 )
+
+// Hemorrhage no longer weakens the target for the whole raid, it makes the rogue's own
+// Rupture hit harder.
+const HemorrhageRuptureMultiplier = 1.15
 
 func (rogue *Rogue) registerHemorrhageSpell() {
 	if !rogue.Talents.Hemorrhage {
@@ -15,9 +20,12 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 
 	actionID := core.ActionID{SpellID: spellID}
 
-	var hemoAuras core.AuraArray
-	hemoAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.HemorrhageAura(target)
+	rogue.HemorrhageAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return target.GetOrRegisterAura(core.Aura{
+			Label:    "Hemorrhage-" + strconv.Itoa(int(rogue.Index)),
+			ActionID: actionID,
+			Duration: time.Second * 15,
+		})
 	})
 
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{
@@ -41,26 +49,27 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 
 		CritDamageBonus: rogue.lethality(),
 
-		DamageMultiplier: 1,
+		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.45, 1),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
-			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
+			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target)) * rogue.quietusMultiplier(sim)
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, target, spell.ComboPointMetrics())
-				if len(hemoAuras) > 0 {
-					hemoAura := hemoAuras.Get(target)
-					hemoAura.Activate(sim)
-					hemoAura.SetStacks(sim, 30)
-				}
+				rogue.HemorrhageAuras.Get(target).Activate(sim)
 			} else {
 				spell.IssueRefund(sim)
 			}
 		},
 	})
+}
+
+// Hemorrhage is optional, so the debuff has to be looked up defensively.
+func (rogue *Rogue) isHemorrhaging(target *core.Unit) bool {
+	return rogue.HemorrhageAuras != nil && rogue.HemorrhageAuras.Get(target).IsActive()
 }

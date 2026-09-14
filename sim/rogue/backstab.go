@@ -21,7 +21,14 @@ func (rogue *Rogue) registerBackstabSpell() {
 		60: core.TernaryInt32(core.IncludeAQ, 25300, 11281),
 	}[rogue.Level]
 
-	damageMultiplier := 1.5 * []float64{1, 1.04, 1.08, 1.12, 1.16, 1.2}[rogue.Talents.Opportunity]
+	damageMultiplier := 1.5 *
+		[]float64{1, 1.05, 1.1}[rogue.Talents.Opportunity] *
+		[]float64{1, 1.02, 1.04, 1.06}[rogue.Talents.Aggression]
+
+	// TODO: Only rank 1 of Puncturing Wounds was seen, the extra combo point chance is
+	// assumed to scale linearly. Beta will confirm.
+	extraComboPointChance := 0.15 * float64(rogue.Talents.PuncturingWounds)
+	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13866})
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_RogueBackstab,
@@ -48,7 +55,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 			return !rogue.PseudoStats.InFrontOfTarget
 		},
 
-		BonusCritRating: 10 * core.CritRatingPerCritChance * float64(rogue.Talents.ImprovedBackstab),
+		BonusCritRating: 10 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
 
 		CritDamageBonus: rogue.lethality(),
 
@@ -63,6 +70,9 @@ func (rogue *Rogue) registerBackstabSpell() {
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, target, spell.ComboPointMetrics())
+				if sim.Proc(extraComboPointChance, "Puncturing Wounds") {
+					rogue.AddComboPoints(sim, 1, target, cpMetrics)
+				}
 			} else {
 				spell.IssueRefund(sim)
 			}

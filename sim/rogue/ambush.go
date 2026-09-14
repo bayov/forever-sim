@@ -21,7 +21,7 @@ func (rogue *Rogue) registerAmbushSpell() {
 		60: 11269,
 	}[rogue.Level]
 
-	damageMultiplier := 2.5 * []float64{1, 1.04, 1.08, 1.12, 1.16, 1.2}[rogue.Talents.Opportunity]
+	damageMultiplier := 2.5 * []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity]
 
 	rogue.Ambush = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_RogueAmbush,
@@ -45,10 +45,8 @@ func (rogue *Rogue) registerAmbushSpell() {
 			if !rogue.HasDagger(core.MainHand) {
 				return false
 			}
-			if rogue.IsStealthed() {
-				return true
-			}
-			return !rogue.PseudoStats.InFrontOfTarget && rogue.IsStealthed()
+			// Cutthroat lets the Stealth requirement slide for a short while after a Backstab.
+			return rogue.IsStealthed() || (rogue.CutthroatAura != nil && rogue.CutthroatAura.IsActive())
 		},
 
 		BonusCritRating:  15 * core.CritRatingPerCritChance * float64(rogue.Talents.ImprovedAmbush),
@@ -58,6 +56,9 @@ func (rogue *Rogue) registerAmbushSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
+			if rogue.CutthroatAura != nil {
+				rogue.CutthroatAura.Deactivate(sim)
+			}
 			baseDamage := (flatDamageBonus + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)

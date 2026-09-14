@@ -29,6 +29,8 @@ func TestCombatSinisterStrike(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
@@ -51,12 +53,39 @@ func TestCombatDaggers(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
 
-var CombatSwordsTalents = "005323105-0240052020050150231"
-var CombatDaggersTalents = "005023104-0233050020550100221-05"
+func TestAssassinationMutilate(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
+		{
+			Class:      proto.Class_ClassRogue,
+			Race:       proto.Race_RaceHuman,
+			OtherRaces: []proto.Race{proto.Race_RaceOrc},
+
+			Talents:     AssassinationMutilateTalents,
+			GearSet:     core.GetGearSet("../../../ui/rogue/gear_sets", "combat_backstab_prebis"),
+			Rotation:    core.GetAplRotation("../../../ui/rogue/apls", "forever_mutilate"),
+			Buffs:       core.FullBuffs,
+			Consumes:    Phase1PoisonConsumes,
+			Phase:       5,
+			SpecOptions: core.SpecOptionsCombo{Label: "Poisons", SpecOptions: DefaultRogue},
+
+			ItemFilter:      ItemFilters,
+			EPReferenceStat: proto.Stat_StatAttackPower,
+			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
+		},
+	}))
+}
+
+var CombatSwordsTalents = "00530310501-32003311201515231"
+var CombatDaggersTalents = "005302005-30230320201515231-102"
+var AssassinationMutilateTalents = "00530310551021051-302303202004"
 
 var DefaultRogue = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{
@@ -93,6 +122,18 @@ var Phase1Consumes = core.ConsumesCombo{
 		AgilityElixir:   proto.AgilityElixir_ElixirOfTheMongoose,
 		MainHandImbue:   proto.WeaponImbue_Windfury,
 		OffHandImbue:    proto.WeaponImbue_InstantPoison,
+		StrengthBuff:    proto.StrengthBuff_JujuPower,
+		AttackPowerBuff: proto.AttackPowerBuff_JujuMight,
+	},
+}
+
+// Venom and Mutilate both key off the poisons, so the Assassination build runs them on both weapons.
+var Phase1PoisonConsumes = core.ConsumesCombo{
+	Label: "P1-Poison-Consumes",
+	Consumes: &proto.Consumes{
+		AgilityElixir:   proto.AgilityElixir_ElixirOfTheMongoose,
+		MainHandImbue:   proto.WeaponImbue_InstantPoison,
+		OffHandImbue:    proto.WeaponImbue_DeadlyPoison,
 		StrengthBuff:    proto.StrengthBuff_JujuPower,
 		AttackPowerBuff: proto.AttackPowerBuff_JujuMight,
 	},

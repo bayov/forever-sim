@@ -1,0 +1,273 @@
+character_stats_results: {
+ key: "TestAssassinationMutilate-Phase5-CharacterStats-Default"
+ value: {
+  final_stats: 249.205
+  final_stats: 461.725
+  final_stats: 507.70775
+  final_stats: 127.765
+  final_stats: 197.90925
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 49.6
+  final_stats: 3
+  final_stats: 26
+  final_stats: 0
+  final_stats: 0
+  final_stats: 1980.93
+  final_stats: 8
+  final_stats: 41.92951
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 2471.45
+  final_stats: 1119.725
+  final_stats: 0
+  final_stats: 5
+  final_stats: 0
+  final_stats: 33.85903
+  final_stats: 5
+  final_stats: 0
+  final_stats: 6720.0775
+  final_stats: 27
+  final_stats: 60
+  final_stats: 60
+  final_stats: 60
+  final_stats: 60
+  final_stats: 384
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+ }
+}
+stat_weights_results: {
+ key: "TestAssassinationMutilate-Phase5-StatWeights-Default"
+ value: {
+  weights: 0.3289
+  weights: 0.62708
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0.26
+  weights: 7.71183
+  weights: 3.6947
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-BloodfangArmor"
+ value: {
+  dps: 887.80267
+  tps: 630.3399
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-BonescytheArmor"
+ value: {
+  dps: 943.6391
+  tps: 668.13213
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-Champion'sGuard"
+ value: {
+  dps: 825.74053
+  tps: 586.27578
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-DarkmantleArmor"
+ value: {
+  dps: 881.24208
+  tps: 625.68188
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-Deathdealer'sEmbrace"
+ value: {
+  dps: 889.19032
+  tps: 631.32513
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-EmblemsofVeiledShadows"
+ value: {
+  dps: 842.52651
+  tps: 598.19382
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-FieldMarshal'sVestments"
+ value: {
+  dps: 858.37713
+  tps: 609.44776
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-LieutenantCommander'sGuard"
+ value: {
+  dps: 825.74053
+  tps: 586.27578
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-Madcap'sOutfit"
+ value: {
+  dps: 846.73827
+  tps: 601.18418
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-NightslayerArmor"
+ value: {
+  dps: 839.46986
+  tps: 596.0236
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-Warlord'sVestments"
+ value: {
+  dps: 858.37713
+  tps: 609.44776
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Average-Default"
+ value: {
+  dps: 838.1327
+  tps: 595.07421
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongMultiTarget"
+ value: {
+  dps: 184.54325
+  tps: 131.02571
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongSingleTarget"
+ value: {
+  dps: 184.54325
+  tps: 131.02571
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-ShortSingleTarget"
+ value: {
+  dps: 198.02317
+  tps: 140.59645
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongMultiTarget"
+ value: {
+  dps: 81.87773
+  tps: 58.13319
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongSingleTarget"
+ value: {
+  dps: 81.87773
+  tps: 58.13319
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-ShortSingleTarget"
+ value: {
+  dps: 90.50869
+  tps: 64.26117
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongMultiTarget"
+ value: {
+  dps: 184.38005
+  tps: 130.90983
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongSingleTarget"
+ value: {
+  dps: 184.38005
+  tps: 130.90983
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-ShortSingleTarget"
+ value: {
+  dps: 198.48196
+  tps: 140.92219
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongMultiTarget"
+ value: {
+  dps: 82.49016
+  tps: 58.56801
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongSingleTarget"
+ value: {
+  dps: 82.49016
+  tps: 58.56801
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-ShortSingleTarget"
+ value: {
+  dps: 91.4007
+  tps: 64.8945
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-SwitchInFrontOfTarget-Default"
+ value: {
+  dps: 655.63465
+  tps: 465.5006
+ }
+}

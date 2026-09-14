@@ -13,21 +13,22 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applyMurder()
 	rogue.applyRelentlessStrikes()
 	rogue.applySealFate()
-	rogue.applyWeaponSpecializations()
+	rogue.applyHackAndSlash()
 	rogue.applyWeaponExpertise()
+	rogue.applyRestlessBlades()
 	rogue.applyInitiative()
+	rogue.applySerratedBlades()
+	rogue.applyCutthroat()
+	rogue.applyThousandCuts()
 
 	rogue.AddStat(stats.Dodge, 1*float64(rogue.Talents.LightningReflexes))
-	rogue.AddStat(stats.Parry, 1*float64(rogue.Talents.Deflection))
+	rogue.AddStat(stats.Parry, 2*float64(rogue.Talents.Deflection))
 	rogue.AddStat(stats.MeleeCrit, 1*float64(rogue.Talents.Malice))
 	rogue.AddStat(stats.MeleeHit, 1*float64(rogue.Talents.Precision))
-	// TODO: Test the Armor reduction amount
-	rogue.AddStat(stats.ArmorPenetration, float64(5/3*rogue.Talents.SerratedBlades*rogue.Level))
+	// Malice and Precision cover Poisons in Forever, and those roll against the spell stats.
+	rogue.AddStat(stats.SpellCrit, 1*float64(rogue.Talents.Malice))
+	rogue.AddStat(stats.SpellHit, 1*float64(rogue.Talents.Precision))
 	rogue.AutoAttacks.OHConfig().DamageMultiplier *= rogue.dwsMultiplier()
-
-	if rogue.Talents.Deadliness > 0 {
-		rogue.MultiplyStat(stats.AttackPower, 1.0+0.02*float64(rogue.Talents.Deadliness))
-	}
 
 	rogue.registerColdBloodCD()
 	rogue.registerBladeFlurryCD()
@@ -40,7 +41,7 @@ func (rogue *Rogue) ApplyTalents() {
 
 // dwsMultiplier returns the offhand damage multiplier
 func (rogue *Rogue) dwsMultiplier() float64 {
-	return 1 + 0.1*float64(rogue.Talents.DualWieldSpecialization)
+	return 1 + 0.05*float64(rogue.Talents.DualWieldSpecialization)
 }
 
 func (rogue *Rogue) applyRuthlessness() {
@@ -67,8 +68,8 @@ func (rogue *Rogue) applyMurder() {
 	rogue.Env.RegisterPostFinalizeEffect(func() {
 		for _, t := range rogue.Env.Encounter.Targets {
 			switch t.MobType {
-			case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeGiant, proto.MobType_MobTypeBeast, proto.MobType_MobTypeDragonkin:
-				multiplier := []float64{1, 1.01, 1.02}[rogue.Talents.Murder]
+			case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeGiant:
+				multiplier := []float64{1, 1.02, 1.04}[rogue.Talents.Murder]
 				for _, at := range rogue.AttackTables[t.UnitIndex] {
 					at.DamageDealtMultiplier *= multiplier
 					at.CritMultiplier *= multiplier
@@ -188,7 +189,7 @@ func (rogue *Rogue) applyInitiative() {
 		return
 	}
 
-	procChance := 0.25 * float64(rogue.Talents.Initiative)
+	procChance := 0.33 * float64(rogue.Talents.Initiative)
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
 
 	rogue.RegisterAura(core.Aura{
@@ -209,74 +210,147 @@ func (rogue *Rogue) applyInitiative() {
 	})
 }
 
-// Rogue weapon specialization talents. Bonus is shown if the main hand is specialized, but not if off hand only
-func (rogue *Rogue) applyWeaponSpecializations() {
-	// Sword specialization. Implemented in 'sword_specialization.go'
-	if swordSpec := rogue.Talents.SwordSpecialization; swordSpec > 0 {
-		if mask := rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeSword); mask != core.ProcMaskUnknown {
-			rogue.registerSwordSpecialization(mask)
-		}
+// Weapon Expertise no longer grants weapon skill, it takes the chance for the rogue's
+// attacks to be dodged or parried off the attack table directly.
+func (rogue *Rogue) applyWeaponExpertise() {
+	if rogue.Talents.WeaponExpertise == 0 {
+		return
 	}
 
-	// Dagger Specialization
-	if daggerSpec := rogue.Talents.DaggerSpecialization; daggerSpec > 0 {
-		switch rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeDagger) {
-		case core.ProcMaskMelee:
-			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(daggerSpec))
-		case core.ProcMaskMeleeMH:
-			// the default character pane displays critical strike chance for main hand only
-			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(daggerSpec))
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating -= core.CritRatingPerCritChance * float64(daggerSpec)
-				}
-			})
-		case core.ProcMaskMeleeOH:
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating += core.CritRatingPerCritChance * float64(daggerSpec)
-				}
-			})
-		}
-	}
-
-	// Fist Weapon Specialization. Same as above but for fists
-	if fistSpec := rogue.Talents.FistWeaponSpecialization; fistSpec > 0 {
-		switch rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeFist) {
-		case core.ProcMaskMelee:
-			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(fistSpec))
-		case core.ProcMaskMeleeMH:
-			// the default character pane displays critical strike chance for main hand only
-			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(fistSpec))
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating -= core.CritRatingPerCritChance * float64(fistSpec)
-				}
-			})
-		case core.ProcMaskMeleeOH:
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating += core.CritRatingPerCritChance * float64(fistSpec)
-				}
-			})
-		}
-	}
-
-	// Mace Specialization. Offers weapon skill for Maces and RNG stun (not implemented for being useless on boss)
-	if maceSpec := rogue.Talents.MaceSpecialization; maceSpec > 0 {
-		if mask := rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeMace); mask != core.ProcMaskUnknown {
-			rogue.PseudoStats.MacesSkill += float64(maceSpec)
-		}
-	}
+	rogue.AddStat(stats.Expertise, float64(rogue.Talents.WeaponExpertise)*core.ExpertiseRatingPerExpertiseChance)
 }
 
-func (rogue *Rogue) applyWeaponExpertise() {
-	if wepExpertise := rogue.Talents.WeaponExpertise; wepExpertise > 0 {
-		wepBonus := []float64{0, 3, 5}
-		rogue.PseudoStats.SwordsSkill += wepBonus[wepExpertise]
-		rogue.PseudoStats.DaggersSkill += wepBonus[wepExpertise]
-		rogue.PseudoStats.UnarmedSkill += wepBonus[wepExpertise]
+// Serrated Blades ignores a share of the target's Armor rather than a flat amount, and the
+// share doesn't grow with the rank. The Rupture bonus lives on the spell itself.
+func (rogue *Rogue) applySerratedBlades() {
+	if rogue.Talents.SerratedBlades == 0 {
+		return
 	}
+
+	rogue.PseudoStats.ArmorIgnorePercent += 0.03
+}
+
+// Restless Blades pulls the rogue's cooldowns in as combo points are spent on a damaging
+// finisher. Sprint isn't simulated, so only the other four are shortened.
+func (rogue *Rogue) applyRestlessBlades() {
+	if !rogue.Talents.RestlessBlades {
+		return
+	}
+
+	var timers []*core.Timer
+	rogue.RegisterAura(core.Aura{
+		Label: "Restless Blades",
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range []*core.Spell{rogue.AdrenalineRush, rogue.BladeFlurry, rogue.Evasion, rogue.Vanish} {
+				if spell != nil {
+					timers = append(timers, spell.CD.Timer)
+				}
+			}
+		},
+	})
+
+	rogue.OnComboPointsSpent(func(sim *core.Simulation, spell *core.Spell, comboPoints int32) {
+		if spell.SpellCode != SpellCode_RogueEviscerate && spell.SpellCode != SpellCode_RogueRupture {
+			return
+		}
+
+		reduction := time.Duration(comboPoints) * time.Second * 2
+		for _, timer := range timers {
+			if !timer.IsReady(sim) {
+				timer.Set(max(sim.CurrentTime, timer.ReadyAt()-reduction))
+			}
+		}
+		rogue.UpdateMajorCooldowns()
+	})
+}
+
+// Cutthroat lets Ambush be used outside of Stealth for a short while after a Backstab.
+func (rogue *Rogue) applyCutthroat() {
+	if rogue.Talents.Cutthroat == 0 {
+		return
+	}
+
+	// TODO: Only rank 1 was seen, the proc chance is assumed to scale linearly. Beta will confirm.
+	procChance := 0.03 * float64(rogue.Talents.Cutthroat)
+
+	rogue.CutthroatAura = rogue.RegisterAura(core.Aura{
+		Label:    "Cutthroat",
+		Duration: time.Second * 10,
+	})
+
+	rogue.RegisterAura(core.Aura{
+		Label:    "Cutthroat Trigger",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.SpellCode != SpellCode_RogueBackstab || !result.Landed() {
+				return
+			}
+
+			if sim.Proc(procChance, "Cutthroat") {
+				rogue.CutthroatAura.Activate(sim)
+			}
+		},
+	})
+}
+
+// Thousand Cuts discounts the next Hemorrhage or Backstab as Rupture ticks.
+func (rogue *Rogue) applyThousandCuts() {
+	if !rogue.Talents.ThousandCuts {
+		return
+	}
+
+	var affectedSpells []*core.Spell
+	rogue.ThousandCutsAura = rogue.RegisterAura(core.Aura{
+		Label:     "Thousand Cuts",
+		Duration:  time.Second * 10,
+		MaxStacks: 5,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = core.FilterSlice([]*core.Spell{rogue.Backstab, rogue.Hemorrhage}, func(spell *core.Spell) bool {
+				return spell != nil
+			})
+		},
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			for _, spell := range affectedSpells {
+				spell.Cost.FlatModifier -= 3 * (newStacks - oldStacks)
+			}
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.SpellCode == SpellCode_RogueBackstab || spell.SpellCode == SpellCode_RogueHemorrhage {
+				aura.Deactivate(sim)
+			}
+		},
+	})
+
+	rogue.RegisterAura(core.Aura{
+		Label:    "Thousand Cuts Trigger",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.SpellCode != SpellCode_RogueRupture {
+				return
+			}
+
+			rogue.ThousandCutsAura.Activate(sim)
+			rogue.ThousandCutsAura.AddStack(sim)
+		},
+	})
+}
+
+// Quietus is an execute range bonus, so it's rolled in as the strike is cast.
+func (rogue *Rogue) quietusMultiplier(sim *core.Simulation) float64 {
+	if rogue.Talents.Quietus == 0 || !sim.IsExecutePhase35() {
+		return 1
+	}
+
+	// TODO: Only rank 1 was seen and the damage bonus is assumed to scale linearly. The
+	// tooltip data extrapolates the health threshold along with it, which it cannot be, so
+	// rank 1's 35% is used for every rank. Beta will confirm.
+	return 1 + 0.02*float64(rogue.Talents.Quietus)
 }
 
 func (rogue *Rogue) registerBladeFlurryCD() {
@@ -391,9 +465,9 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	})
 
 	rogue.AdrenalineRush = rogue.RegisterSpell(core.SpellConfig{
-		SpellCode:   SpellCode_RogueAdrenalineRush,
-		ActionID: 	 AdrenalineRushActionID,
-		Cast: 		 core.CastConfig{
+		SpellCode: SpellCode_RogueAdrenalineRush,
+		ActionID:  AdrenalineRushActionID,
+		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: time.Second,
 			},

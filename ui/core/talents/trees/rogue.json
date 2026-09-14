@@ -4,15 +4,15 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/182.jpg",
     "talents": [
       {
-        "fieldName": "improvedEviscerate",
+        "fieldName": "improvedGouge",
         "location": {
           "rowIdx": 0,
           "colIdx": 0
         },
         "spellIds": [
-          14162,
-          14163,
-          14164
+          13741,
+          13792,
+          13793
         ],
         "maxPoints": 3
       },
@@ -110,6 +110,10 @@
           "rowIdx": 2,
           "colIdx": 2
         },
+        "prereqLocation": {
+          "rowIdx": 0,
+          "colIdx": 2
+        },
         "spellIds": [
           14128,
           14132,
@@ -117,17 +121,13 @@
           14136,
           14137
         ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 0,
-          "colIdx": 2
-        }
+        "maxPoints": 5
       },
       {
         "fieldName": "vilePoisons",
         "location": {
           "rowIdx": 3,
-          "colIdx": 1
+          "colIdx": 0
         },
         "spellIds": [
           16513,
@@ -137,6 +137,17 @@
           16720
         ],
         "maxPoints": 5
+      },
+      {
+        "fieldName": "coldBlood",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 1
+        },
+        "spellIds": [
+          14177
+        ],
+        "maxPoints": 1
       },
       {
         "fieldName": "improvedPoisons",
@@ -154,13 +165,24 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "coldBlood",
+        "fieldName": "vigor",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 0
+        },
+        "spellIds": [
+          14983
+        ],
+        "maxPoints": 2
+      },
+      {
+        "fieldName": "mutilate",
         "location": {
           "rowIdx": 4,
           "colIdx": 1
         },
         "spellIds": [
-          14177
+          0
         ],
         "maxPoints": 1
       },
@@ -175,13 +197,13 @@
           14175,
           14176
         ],
-        "maxPoints": 3
+        "maxPoints": 2
       },
       {
         "fieldName": "sealFate",
         "location": {
           "rowIdx": 5,
-          "colIdx": 1
+          "colIdx": 2
         },
         "spellIds": [
           14186,
@@ -190,20 +212,20 @@
           14194,
           14195
         ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        }
+        "maxPoints": 5
       },
       {
-        "fieldName": "vigor",
+        "fieldName": "venom",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
-          14983
+          0
         ],
         "maxPoints": 1
       }
@@ -214,15 +236,15 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/181.jpg",
     "talents": [
       {
-        "fieldName": "improvedGouge",
+        "fieldName": "improvedEviscerate",
         "location": {
           "rowIdx": 0,
           "colIdx": 0
         },
         "spellIds": [
-          13741,
-          13792,
-          13793
+          14162,
+          14163,
+          14164
         ],
         "maxPoints": 3
       },
@@ -254,15 +276,15 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "improvedBackstab",
+        "fieldName": "puncturingWounds",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
-          13733,
-          13865,
-          13866
+          0,
+          0,
+          0
         ],
         "maxPoints": 3
       },
@@ -279,7 +301,7 @@
           13855,
           13856
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "precision",
@@ -294,7 +316,7 @@
           13844,
           13845
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "endurance",
@@ -314,14 +336,14 @@
           "rowIdx": 2,
           "colIdx": 1
         },
-        "spellIds": [
-          14251
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 1,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          14251
+        ],
+        "maxPoints": 1
       },
       {
         "fieldName": "improvedSprint",
@@ -348,24 +370,24 @@
         "maxPoints": 2
       },
       {
-        "fieldName": "daggerSpecialization",
+        "fieldName": "restlessBlades",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
         },
         "spellIds": [
-          13706,
-          13804,
-          13805,
-          13806,
-          13807
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 1
       },
       {
         "fieldName": "dualWieldSpecialization",
         "location": {
           "rowIdx": 3,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
@@ -374,25 +396,6 @@
           13849,
           13851,
           13852
-        ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 1,
-          "colIdx": 2
-        }
-      },
-      {
-        "fieldName": "maceSpecialization",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 0
-        },
-        "spellIds": [
-          13709,
-          13800,
-          13801,
-          13802,
-          13803
         ],
         "maxPoints": 5
       },
@@ -408,32 +411,17 @@
         "maxPoints": 1
       },
       {
-        "fieldName": "swordSpecialization",
+        "fieldName": "hackAndSlash",
         "location": {
           "rowIdx": 4,
           "colIdx": 2
         },
         "spellIds": [
-          13960,
-          13961,
-          13962,
-          13963,
-          13964
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "fistWeaponSpecialization",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 3
-        },
-        "spellIds": [
-          13707,
-          13966,
-          13967,
-          13968,
-          13969
+          0,
+          0,
+          0,
+          0,
+          0
         ],
         "maxPoints": 5
       },
@@ -443,15 +431,15 @@
           "rowIdx": 5,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
           30919,
           30920
         ],
-        "maxPoints": 2,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        }
+        "maxPoints": 2
       },
       {
         "fieldName": "aggression",
@@ -484,6 +472,21 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/183.jpg",
     "talents": [
       {
+        "fieldName": "camouflage",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 0
+        },
+        "spellIds": [
+          13975,
+          14062,
+          14063,
+          14064,
+          14065
+        ],
+        "maxPoints": 5
+      },
+      {
         "fieldName": "masterOfDeception",
         "location": {
           "rowIdx": 0,
@@ -496,7 +499,7 @@
           13972,
           13973
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "opportunity",
@@ -511,19 +514,20 @@
           14074,
           14075
         ],
-        "maxPoints": 5
+        "maxPoints": 2
       },
       {
-        "fieldName": "sleightOfHand",
+        "fieldName": "setup",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
-          30892,
-          30893
+          13983,
+          14070,
+          14071
         ],
-        "maxPoints": 2
+        "maxPoints": 3
       },
       {
         "fieldName": "elusiveness",
@@ -538,19 +542,29 @@
         "maxPoints": 2
       },
       {
-        "fieldName": "camouflage",
+        "fieldName": "dirtyTricks",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          13975,
-          14062,
-          14063,
-          14064,
-          14065
+          14082,
+          14083
         ],
-        "maxPoints": 5
+        "maxPoints": 2
+      },
+      {
+        "fieldName": "improvedAmbush",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 3
+        },
+        "spellIds": [
+          14079,
+          14080,
+          14081
+        ],
+        "maxPoints": 3
       },
       {
         "fieldName": "initiative",
@@ -577,43 +591,39 @@
         "maxPoints": 1
       },
       {
-        "fieldName": "improvedAmbush",
+        "fieldName": "improvedDistract",
         "location": {
           "rowIdx": 2,
           "colIdx": 2
         },
         "spellIds": [
-          14079,
-          14080,
-          14081
+          0,
+          0
         ],
-        "maxPoints": 3
+        "maxPoints": 2
       },
       {
-        "fieldName": "setup",
+        "fieldName": "heightenedSenses",
         "location": {
           "rowIdx": 3,
           "colIdx": 0
         },
         "spellIds": [
-          13983,
-          14070,
-          14071
+          30894,
+          30895
         ],
-        "maxPoints": 3
+        "maxPoints": 2
       },
       {
-        "fieldName": "improvedSap",
+        "fieldName": "premeditation",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
         },
         "spellIds": [
-          14076,
-          14094,
-          14095
+          14183
         ],
-        "maxPoints": 3
+        "maxPoints": 1
       },
       {
         "fieldName": "serratedBlades",
@@ -629,14 +639,14 @@
         "maxPoints": 3
       },
       {
-        "fieldName": "heightenedSenses",
+        "fieldName": "dirtyDeeds",
         "location": {
           "rowIdx": 4,
           "colIdx": 0
         },
         "spellIds": [
-          30894,
-          30895
+          14082,
+          14083
         ],
         "maxPoints": 2
       },
@@ -652,61 +662,68 @@
         "maxPoints": 1
       },
       {
-        "fieldName": "dirtyDeeds",
+        "fieldName": "hemorrhage",
         "location": {
           "rowIdx": 4,
           "colIdx": 2
         },
-        "spellIds": [
-          14082,
-          14083
-        ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "hemorrhage",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 3
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 2
         },
         "spellIds": [
           16511
         ],
-        "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 2
-        }
+        "maxPoints": 1
       },
       {
-        "fieldName": "deadliness",
+        "fieldName": "quietus",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 0
+        },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 5
+      },
+      {
+        "fieldName": "cutthroat",
         "location": {
           "rowIdx": 5,
           "colIdx": 2
         },
         "spellIds": [
-          30902,
-          30903,
-          30904,
-          30905,
-          30906
+          0,
+          0,
+          0,
+          0,
+          0
         ],
         "maxPoints": 5
       },
       {
-        "fieldName": "premeditation",
+        "fieldName": "thousandCuts",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          14183
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1
       }
     ]
   }

@@ -55,6 +55,15 @@ func (rogue *Rogue) getPoisonDamageMultiplier() float64 {
 	return []float64{1, 1.04, 1.08, 1.12, 1.16, 1.2}[rogue.Talents.VilePoisons]
 }
 
+// Venom lands after the poisons are registered, so the spells are scaled directly.
+func (rogue *Rogue) multiplyPoisonDamage(multiplier float64) {
+	for _, spell := range rogue.Spellbook {
+		if spell.Flags.Matches(SpellFlagRoguePoison) {
+			spell.DamageMultiplier *= multiplier
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //                               Apply Poisons
 ///////////////////////////////////////////////////////////////////////////

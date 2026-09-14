@@ -43,11 +43,12 @@ func (rogue *Rogue) registerGarrote() {
 			if !rogue.IsStealthed() {
 				return false
 			}
-			return !rogue.PseudoStats.InFrontOfTarget
+			// Dirty Deeds drops the positional requirement.
+			return rogue.Talents.DirtyDeeds > 0 || !rogue.PseudoStats.InFrontOfTarget
 		},
 
 		DamageMultiplier: 1 +
-			0.04*float64(rogue.Talents.Opportunity),
+			0.05*float64(rogue.Talents.Opportunity),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
