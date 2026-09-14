@@ -20,9 +20,13 @@ func TestEnhancement(t *testing.T) {
 			Race:       proto.Race_RaceTroll,
 			OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
-			Talents:     DefaultTalents,
-			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_1"),
-			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
+			Talents:  DefaultTalents,
+			GearSet:  core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_1"),
+			Rotation: core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
+			OtherRotations: []core.RotationCombo{
+				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "grace_of_air"),
+				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "windfury"),
+			},
 			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},

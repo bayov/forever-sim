@@ -24,6 +24,8 @@ import {
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import DefaultAPLJSON from './apls/default.apl.json';
+import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
+import WindfuryAPLJSON from './apls/windfury.apl.json';
 import Phase1GearJSON from './gear_sets/phase_1.gear.json';
 import Phase2GearJSON from './gear_sets/phase_2.gear.json';
 import Phase3GearJSON from './gear_sets/phase_3.gear.json';
@@ -56,10 +58,16 @@ export const DefaultGear = GearPresets[Phase.Phase1][0];
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAPLJSON);
+// Three ways to run the air totem. Twisting keeps Windfury Totem up for the melee
+// group and refreshes Grace of Air in between, the way a raid shaman plays, but the
+// sim gives the shaman nothing for its own Windfury Totem (a shaman's Windfury Weapon
+// does not stack with it), so twisting is pure cost here. The other two hold one totem.
+export const APLGraceOfAir = PresetUtils.makePresetAPLRotation('Grace of Air', GraceOfAirAPLJSON);
+export const APLWindfury = PresetUtils.makePresetAPLRotation('Windfury Totem', WindfuryAPLJSON);
+export const APLDefault = PresetUtils.makePresetAPLRotation('Twist WF + GoA', DefaultAPLJSON);
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLDefault],
+	[Phase.Phase1]: [APLGraceOfAir, APLWindfury, APLDefault],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
