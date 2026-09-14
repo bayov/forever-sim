@@ -126,6 +126,14 @@ message SimOptions {
 	bool save_all_values = 7; // Only used internally.
 	bool interactive = 8; // Enables interactive mode.
 	bool use_labeled_rands = 9; // Use test level RNG.
+	Ruleset ruleset = 10;
+}
+
+// Which game rules the engine simulates. Classic Era is the baseline; Forever
+// layers its rule changes (periodic crits, etc) on top of it.
+enum Ruleset {
+	RulesetClassic = 0;
+	RulesetForever = 1;
 }
 
 // The aggregated results from all uses of a particular action.

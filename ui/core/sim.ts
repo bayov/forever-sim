@@ -12,6 +12,7 @@ import {
 	Raid as RaidProto,
 	RaidSimRequest,
 	RaidSimResult,
+	Ruleset,
 	SimOptions,
 	StatWeightsRequest,
 	StatWeightsResult,
@@ -65,6 +66,7 @@ export class Sim {
 	private wasmConcurrency = 0;
 	private showEPValues = false;
 	private language = '';
+	private ruleset = Ruleset.RulesetForever;
 
 	readonly raid: Raid;
 	readonly encounter: Encounter;
@@ -81,6 +83,7 @@ export class Sim {
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
+	readonly rulesetChangeEmitter = new TypedEvent<void>();
 	readonly wasmConcurrencyChangeEmitter = new TypedEvent<void>();
 	readonly showEPValuesChangeEmitter = new TypedEvent<void>();
 	readonly languageChangeEmitter = new TypedEvent<void>();
@@ -152,6 +155,7 @@ export class Sim {
 			this.showExperimentalChangeEmitter,
 			this.showEPValuesChangeEmitter,
 			this.languageChangeEmitter,
+			this.rulesetChangeEmitter,
 		]);
 
 		this.changeEmitter = TypedEvent.onAny([this.settingsChangeEmitter, this.raid.changeEmitter, this.encounter.changeEmitter]);
@@ -221,6 +225,7 @@ export class Sim {
 				iterations: debug ? 1 : this.getIterations(),
 				randomSeed: BigInt(this.nextRngSeed()),
 				debugFirstIteration: true,
+				ruleset: this.getRuleset(),
 			}),
 		});
 	}
@@ -426,6 +431,7 @@ export class Sim {
 					iterations: this.getIterations(),
 					randomSeed: BigInt(this.nextRngSeed()),
 					debug: false,
+					ruleset: this.getRuleset(),
 				}),
 				tanks: tanks,
 
@@ -614,6 +620,16 @@ export class Sim {
 		}
 	}
 
+	getRuleset(): Ruleset {
+		return this.ruleset;
+	}
+	setRuleset(eventID: EventID, newRuleset: Ruleset) {
+		if (newRuleset != this.ruleset) {
+			this.ruleset = newRuleset;
+			this.rulesetChangeEmitter.emit(eventID);
+		}
+	}
+
 	getIterations(): number {
 		return this.iterations;
 	}
@@ -660,6 +676,7 @@ export class Sim {
 			language: this.getLanguage(),
 			faction: this.getFaction(),
 			filters: filters,
+			ruleset: this.getRuleset(),
 		});
 	}
 
@@ -675,6 +692,7 @@ export class Sim {
 			this.setShowEPValues(eventID, proto.showEpValues);
 			this.setLanguage(eventID, proto.language);
 			this.setFaction(eventID, proto.faction || Faction.Alliance);
+			this.setRuleset(eventID, proto.ruleset);
 
 			const filters = proto.filters || Sim.defaultFilters();
 			if (filters.armorTypes.length == 0) {

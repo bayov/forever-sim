@@ -28,7 +28,12 @@ func (spell *Spell) OutcomeAlwaysMiss(_ *Simulation, result *SpellResult, _ *Att
 	spell.SpellMetrics[result.Target.UnitIndex].Misses++
 }
 
-func (dot *Dot) OutcomeTick(_ *Simulation, result *SpellResult, _ *AttackTable) {
+func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	if dot.canCrit(sim) {
+		dot.OutcomeSnapshotCrit(sim, result, attackTable)
+		return
+	}
+
 	isPartialResist := result.DidResist()
 	result.Outcome = OutcomeHit
 	dot.Spell.SpellMetrics[result.Target.UnitIndex].Ticks++

@@ -416,6 +416,17 @@ type CharacterSuiteConfig struct {
 	EPReferenceStat proto.Stat
 
 	Cooldowns *proto.Cooldowns
+
+	Ruleset proto.Ruleset
+}
+
+func withRuleset(options *proto.SimOptions, ruleset proto.Ruleset) *proto.SimOptions {
+	if ruleset == proto.Ruleset_RulesetClassic {
+		return options
+	}
+	options = googleProto.Clone(options).(*proto.SimOptions)
+	options.Ruleset = ruleset
+	return options
 }
 
 func FullCharacterTestSuiteGenerator(configs []CharacterSuiteConfig) []TestGenerator {
@@ -433,6 +444,7 @@ func FullCharacterTestSuiteGenerator(configs []CharacterSuiteConfig) []TestGener
 		allSpecOptions := append(config.OtherSpecOptions, config.SpecOptions)
 		allRotations := append(config.OtherRotations, config.Rotation)
 		allConsumeOptions := append(config.OtherConsumes, config.Consumes)
+		simOptions := withRuleset(DefaultSimTestOptions, config.Ruleset)
 
 		defaultPlayer := WithSpec(
 			&proto.Player{
@@ -495,7 +507,7 @@ func FullCharacterTestSuiteGenerator(configs []CharacterSuiteConfig) []TestGener
 						},
 						IsHealer:   config.IsHealer,
 						Encounters: MakeDefaultEncounterCombos(),
-						SimOptions: DefaultSimTestOptions,
+						SimOptions: simOptions,
 						Cooldowns:  config.Cooldowns,
 					},
 				},
@@ -507,7 +519,7 @@ func FullCharacterTestSuiteGenerator(configs []CharacterSuiteConfig) []TestGener
 						PartyBuffs: config.Buffs.Party,
 						Debuffs:    config.Buffs.Debuffs,
 						Encounter:  MakeSingleTargetEncounter(0),
-						SimOptions: DefaultSimTestOptions,
+						SimOptions: simOptions,
 						ItemFilter: config.ItemFilter,
 						IsHealer:   config.IsHealer,
 					},
@@ -525,14 +537,14 @@ func FullCharacterTestSuiteGenerator(configs []CharacterSuiteConfig) []TestGener
 				Request: &proto.RaidSimRequest{
 					Raid:       newRaid,
 					Encounter:  MakeSingleTargetEncounter(0),
-					SimOptions: DefaultSimTestOptions,
+					SimOptions: simOptions,
 				},
 			},
 		})
 
 		if len(config.StatsToWeigh) > 0 {
 			// Make a copy because the options are halved with each iteration
-			testOptions := *StatWeightsDefaultSimTestOptions
+			testOptions := *withRuleset(StatWeightsDefaultSimTestOptions, config.Ruleset)
 			testOptionsPtr := &testOptions
 
 			generator.subgenerators = append(generator.subgenerators, SubGenerator{
@@ -564,7 +576,7 @@ func FullCharacterTestSuiteGenerator(configs []CharacterSuiteConfig) []TestGener
 				Request: &proto.RaidSimRequest{
 					Raid:       defaultRaid,
 					Encounter:  MakeSingleTargetEncounter(5),
-					SimOptions: AverageDefaultSimTestOptions,
+					SimOptions: withRuleset(AverageDefaultSimTestOptions, config.Ruleset),
 				},
 			},
 		})

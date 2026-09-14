@@ -2,6 +2,7 @@ import tippy from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { wowheadSupportedLanguages } from '../constants/lang.js';
+import { Ruleset } from '../proto/api.js';
 import { Sim } from '../sim.js';
 import { SimUI } from '../sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
@@ -24,6 +25,7 @@ export class SettingsMenu extends BaseModal {
 		const language = ref<HTMLDivElement>();
 		const showThreatMetrics = ref<HTMLDivElement>();
 		const showExperimental = ref<HTMLDivElement>();
+		const foreverRuleset = ref<HTMLDivElement>();
 		const showQuickSwap = ref<HTMLDivElement>();
 		const useConcurrentWorkersWrap = ref<HTMLDivElement>();
 		const useConcurrentWorkers = ref<HTMLDivElement>();
@@ -45,6 +47,7 @@ export class SettingsMenu extends BaseModal {
 				</div>
 				<div ref={showThreatMetrics} className="show-threat-metrics-picker w-50 pe-2"></div>
 				<div ref={showExperimental} className="show-experimental-picker w-50 pe-2"></div>
+				<div ref={foreverRuleset} className="forever-ruleset-picker w-50 pe-2"></div>
 				<div ref={showQuickSwap} className="show-quick-swap-picker w-50 pe-2"></div>
 				<div ref={useConcurrentWorkersWrap} className="use-concurrency-container w-50 pe-2">
 					<div ref={useConcurrentWorkers} className="use-concurrent-workers-picker"></div>
@@ -147,6 +150,19 @@ export class SettingsMenu extends BaseModal {
 				getValue: (sim: Sim) => sim.getShowExperimental(),
 				setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
 					sim.setShowExperimental(eventID, newValue);
+				},
+			});
+
+		if (foreverRuleset.value)
+			new BooleanPicker(foreverRuleset.value, this.simUI.sim, {
+				id: 'simui-forever-ruleset',
+				label: 'Forever Rules',
+				labelTooltip: 'Simulates the WoW: Forever rule changes, such as periodic damage being able to crit. Uncheck for Classic Era rules.',
+				inline: true,
+				changedEvent: (sim: Sim) => sim.rulesetChangeEmitter,
+				getValue: (sim: Sim) => sim.getRuleset() == Ruleset.RulesetForever,
+				setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+					sim.setRuleset(eventID, newValue ? Ruleset.RulesetForever : Ruleset.RulesetClassic);
 				},
 			});
 
