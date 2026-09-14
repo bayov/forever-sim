@@ -31,7 +31,7 @@ const (
 	SpellCode_WarriorWhirlwind
 )
 
-var TalentTreeSizes = [3]int{18, 17, 17}
+var TalentTreeSizes = [3]int{17, 18, 19}
 
 type WarriorInputs struct {
 	QueueDelay     int32
@@ -57,6 +57,7 @@ type Warrior struct {
 	PreviousStance  Stance // Used for Warrior T1 DPS 4P
 	revengeProcAura *core.Aura
 	OverpowerAura   *core.Aura
+	BloodthrillAura *core.Aura
 
 	// Enrage Auras
 	BerserkerRageAura *core.Aura

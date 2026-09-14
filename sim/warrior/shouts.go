@@ -49,7 +49,11 @@ func (warrior *Warrior) registerBattleShout() {
 	has3pcWrath := warrior.HasSetBonus(ItemSetBattleGearOfWrath, 3)
 
 	warrior.BattleShout = warrior.newShoutSpellConfig(core.ActionID{SpellID: actionId}, rank, warrior.NewPartyAuraArray(func(unit *core.Unit) *core.Aura {
-		return core.BattleShoutAura(unit, warrior.Talents.ImprovedBattleShout, warrior.Talents.BoomingVoice, has3pcWrath)
+		// Improved Battle Shout is gone from the Forever tree. It feeds the party's attack power,
+		// so it is assumed to have become baseline at full strength rather than deleted, and
+		// Forever's Booming Voice only widens the radius.
+		// TODO: assumed baseline, beta will confirm
+		return core.BattleShoutAura(unit, 5, 0, has3pcWrath)
 	}))
 }
 

@@ -36,7 +36,9 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 		BerserkerStance: SpellCode_WarriorStanceBerserker,
 	}[stance]
 	actionID := aura.ActionID
-	maxRetainedRage := 5 * float64(warrior.Talents.TacticalMastery)
+	// The tooltip reads as a bonus on top of a baseline Tactical Mastery, but the baseline
+	// retention was never shown, so only the talent's own 3 Rage per point is modelled.
+	maxRetainedRage := 3 * float64(warrior.Talents.ImprovedTacticalMastery)
 	rageMetrics := warrior.NewRageMetrics(actionID)
 
 	stanceSpell := warrior.RegisterSpell(AnyStance, core.SpellConfig{
@@ -97,7 +99,9 @@ func (warrior *Warrior) registerBattleStanceAura() {
 }
 
 func (warrior *Warrior) registerDefensiveStanceAura() {
-	warrior.defensiveStanceThreatMultiplier = 1.3 * []float64{1, 1.03, 1.06, 1.09, 1.12, 1.15}[warrior.Talents.Defiance]
+	// Defiance only pays out with a shield equipped now.
+	defiance := core.TernaryFloat64(warrior.PseudoStats.CanBlock, 0.05*float64(warrior.Talents.Defiance), 0)
+	warrior.defensiveStanceThreatMultiplier = 1.3 * (1 + defiance)
 
 	warrior.DefensiveStanceAura = warrior.RegisterAura(core.Aura{
 		Label:    "Defensive Stance",

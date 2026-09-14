@@ -8,6 +8,13 @@ import (
 
 func (warrior *Warrior) registerWhirlwindSpell() {
 	results := make([]*core.SpellResult, min(4, warrior.Env.GetNumTargets()))
+	ohResults := make([]*core.SpellResult, len(results))
+
+	// Raging Blows adds an off-hand swing to every target Whirlwind hits.
+	var whirlwindOh *core.Spell
+	if warrior.Talents.RagingBlows && warrior.AutoAttacks.IsDualWielding {
+		whirlwindOh = warrior.registerWhirlwindOffHandSpell()
+	}
 
 	warrior.Whirlwind = warrior.RegisterSpell(BerserkerStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorWhirlwind,
@@ -37,15 +44,47 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			mhTarget := target
 			for idx := range results {
 				baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target))
 				results[idx] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 				target = sim.Environment.NextTargetUnit(target)
 			}
 
+			if whirlwindOh != nil {
+				target = mhTarget
+				for idx := range ohResults {
+					baseDamage := whirlwindOh.Unit.OHNormalizedWeaponDamage(sim, whirlwindOh.MeleeAttackPower(target))
+					ohResults[idx] = whirlwindOh.CalcDamage(sim, target, baseDamage, whirlwindOh.OutcomeMeleeWeaponSpecialHitAndCrit)
+					target = sim.Environment.NextTargetUnit(target)
+				}
+			}
+
 			for _, result := range results {
 				spell.DealDamage(sim, result)
 			}
+
+			if whirlwindOh != nil {
+				for _, result := range ohResults {
+					whirlwindOh.DealDamage(sim, result)
+				}
+			}
 		},
 	})
+}
+
+func (warrior *Warrior) registerWhirlwindOffHandSpell() *core.Spell {
+	return warrior.RegisterSpell(BerserkerStance, core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 1680}.WithTag(2),
+		SpellSchool: core.SpellSchoolPhysical,
+		DefenseType: core.DefenseTypeMelee,
+		ProcMask:    core.ProcMaskMeleeOHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+
+		CritDamageBonus: warrior.impale(),
+
+		DamageMultiplier: warrior.AutoAttacks.OHConfig().DamageMultiplier,
+		ThreatMultiplier: 1.25,
+		BonusCoefficient: 1,
+	}).Spell
 }

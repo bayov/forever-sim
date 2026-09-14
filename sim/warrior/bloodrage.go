@@ -10,8 +10,10 @@ func (warrior *Warrior) registerBloodrageCD() {
 	actionID := core.ActionID{SpellID: 2687}
 	rageMetrics := warrior.NewRageMetrics(actionID)
 
-	instantRage := 10.0 + []float64{0, 2, 5}[warrior.Talents.ImprovedBloodrage]
-	ragePerSec := 1.0
+	// Improved Bloodrage scales all of the Rage the ability makes now, not just the instant hit.
+	rageMultiplier := 1 + 0.25*float64(warrior.Talents.ImprovedBloodrage)
+	instantRage := 10.0 * rageMultiplier
+	ragePerSec := 1.0 * rageMultiplier
 
 	warrior.BloodrageAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodrage",

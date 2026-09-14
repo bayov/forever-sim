@@ -21,7 +21,7 @@ func (warrior *Warrior) registerRendSpell() {
 
 	baseDamage := rend.damage
 
-	damageMultiplier := []float64{1, 1.15, 1.25, 1.35}[warrior.Talents.ImprovedRend]
+	damageMultiplier := []float64{1, 1.12, 1.24, 1.36}[warrior.Talents.ImprovedRend]
 
 	warrior.Rend = warrior.RegisterSpell(BattleStance|DefensiveStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorRend,

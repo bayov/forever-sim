@@ -418,6 +418,10 @@ type PseudoStats struct {
 	//  This includes almost all "(Normalized) Weapon Damage", but also some "School Damage (Physical)" abilities.
 	BonusPhysicalDamage float64 // Comes from '+X Weapon Damage' effects
 
+	// Fraction of the target's armor that this unit's attacks ignore, on top of any
+	// ArmorPenetration rating. Used by effects worded as "ignore X% of your target's armor".
+	ArmorIgnorePercent float64
+
 	BonusMHDps     float64
 	BonusOHDps     float64
 	BonusRangedDps float64

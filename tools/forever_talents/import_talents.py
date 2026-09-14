@@ -10,6 +10,8 @@
 # Usage:
 #   tools/forever_talents/import_talents.py warlock            # print the proto message
 #   tools/forever_talents/import_talents.py warlock --write    # also rewrite the tree json
+#   tools/forever_talents/import_talents.py --unranked         # list talents whose per-rank
+#                                                                scaling isn't known for any class
 
 import json
 import os
@@ -113,10 +115,42 @@ def build_proto(data):
 	return '\n'.join(lines)
 
 
+# Talents where the source data repeats rank 1's numbers for every rank, so the real
+# per-rank scaling is unknown. Anything implemented from these is a guess.
+def unranked_talents(data):
+	unranked = []
+	for tree in sorted(data['trees'], key=lambda t: t['order']):
+		for talent in sorted_talents(tree):
+			ranks = talent.get('ranks') or []
+			if talent['maxRank'] > 1 and len(ranks) > 1 and all(r == ranks[0] for r in ranks):
+				unranked.append((tree['name'], talent['name'], talent['maxRank']))
+	return unranked
+
+
+def report_unranked():
+	total = 0
+	for path in sorted(os.listdir(DATA_DIR)):
+		if not path.endswith('.json'):
+			continue
+
+		data = load_class(path[:-len('.json')])
+		unranked = unranked_talents(data)
+		total += len(unranked)
+		print('%s: %d' % (data['className'], len(unranked)))
+		for tree_name, name, max_rank in unranked:
+			print('\t%s, %s, %d ranks' % (tree_name, name, max_rank))
+
+	print('%d talents in total.' % total)
+
+
 def main():
 	if len(sys.argv) < 2:
 		print(__doc__)
 		sys.exit(1)
+
+	if sys.argv[1] == '--unranked':
+		report_unranked()
+		return
 
 	class_name = sys.argv[1]
 	write = '--write' in sys.argv
@@ -152,6 +186,12 @@ def main():
 		print('wrote ' + tree_path)
 
 	print(build_proto(data))
+
+	unranked = unranked_talents(data)
+	if unranked:
+		sys.stderr.write('%d talents have no known per-rank scaling:\n' % len(unranked))
+		for tree_name, name, max_rank in unranked:
+			sys.stderr.write('\t%s, %s, %d ranks\n' % (tree_name, name, max_rank))
 
 
 if __name__ == '__main__':

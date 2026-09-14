@@ -57,38 +57,25 @@
         "maxPoints": 2
       },
       {
-        "fieldName": "tacticalMastery",
+        "fieldName": "improvedTacticalMastery",
         "location": {
           "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          12295,
-          12676,
-          12677,
-          12678,
-          12679
+          0,
+          0,
+          0,
+          0,
+          0
         ],
         "maxPoints": 5
       },
       {
-        "fieldName": "improvedThunderClap",
+        "fieldName": "improvedOverpower",
         "location": {
           "rowIdx": 1,
           "colIdx": 3
-        },
-        "spellIds": [
-          12287,
-          12665,
-          12666
-        ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "improvedOverpower",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 0
         },
         "spellIds": [
           12290,
@@ -102,14 +89,14 @@
           "rowIdx": 2,
           "colIdx": 1
         },
-        "spellIds": [
-          12296
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 1,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          12296
+        ],
+        "maxPoints": 1
       },
       {
         "fieldName": "deepWounds",
@@ -117,16 +104,27 @@
           "rowIdx": 2,
           "colIdx": 2
         },
+        "prereqLocation": {
+          "rowIdx": 0,
+          "colIdx": 2
+        },
         "spellIds": [
           12834,
           12849,
           12867
         ],
-        "maxPoints": 3,
-        "prereqLocation": {
-          "rowIdx": 0,
-          "colIdx": 2
-        }
+        "maxPoints": 3
+      },
+      {
+        "fieldName": "spearingStrike",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1
       },
       {
         "fieldName": "twoHandedWeaponSpecialization",
@@ -141,7 +139,7 @@
           12713,
           12714
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "impale",
@@ -153,24 +151,20 @@
           16493,
           16494
         ],
-        "maxPoints": 2,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 2
-        }
+        "maxPoints": 2
       },
       {
-        "fieldName": "axeSpecialization",
+        "fieldName": "bloodthrill",
         "location": {
           "rowIdx": 4,
           "colIdx": 0
         },
         "spellIds": [
-          12700,
-          12781,
-          12783,
-          12784,
-          12785
+          0,
+          0,
+          0,
+          0,
+          0
         ],
         "maxPoints": 5
       },
@@ -186,49 +180,34 @@
         "maxPoints": 1
       },
       {
-        "fieldName": "maceSpecialization",
+        "fieldName": "weaponmaster",
         "location": {
           "rowIdx": 4,
           "colIdx": 2
         },
         "spellIds": [
-          12284,
-          12701,
-          12702,
-          12703,
-          12704
+          0,
+          0,
+          0,
+          0,
+          0
         ],
         "maxPoints": 5
       },
       {
-        "fieldName": "swordSpecialization",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 3
-        },
-        "spellIds": [
-          12281,
-          12812,
-          12813,
-          12814,
-          12815
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "polearmSpecialization",
+        "fieldName": "improvedSlam",
         "location": {
           "rowIdx": 5,
           "colIdx": 0
         },
         "spellIds": [
-          12165,
-          12830,
-          12831,
-          12832,
-          12833
+          12862,
+          12330,
+          20497,
+          20498,
+          20499
         ],
-        "maxPoints": 5
+        "maxPoints": 2
       },
       {
         "fieldName": "improvedHamstring",
@@ -249,14 +228,14 @@
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          12294
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          12294
+        ],
+        "maxPoints": 1
       }
     ]
   },
@@ -295,17 +274,17 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "improvedDemoralizingShout",
+        "fieldName": "ironWill",
         "location": {
           "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          12324,
-          12876,
-          12877,
-          12878,
-          12879
+          12300,
+          12959,
+          12960,
+          12961,
+          12962
         ],
         "maxPoints": 5
       },
@@ -349,32 +328,30 @@
         "maxPoints": 1
       },
       {
-        "fieldName": "bloodCraze",
+        "fieldName": "bloodCrazed",
         "location": {
           "rowIdx": 2,
           "colIdx": 2
         },
         "spellIds": [
-          16487,
-          16489,
-          16492
+          0,
+          0,
+          0
         ],
         "maxPoints": 3
       },
       {
-        "fieldName": "improvedBattleShout",
+        "fieldName": "boundlessRage",
         "location": {
           "rowIdx": 2,
           "colIdx": 3
         },
         "spellIds": [
-          12318,
-          12857,
-          12858,
-          12860,
-          12861
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "dualWieldSpecialization",
@@ -392,16 +369,15 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "improvedExecute",
+        "fieldName": "ragingBlows",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
         },
         "spellIds": [
-          20502,
-          20503
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 1
       },
       {
         "fieldName": "enrage",
@@ -419,19 +395,29 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "improvedSlam",
+        "fieldName": "improvedExecute",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 3
+        },
+        "spellIds": [
+          20502,
+          20503
+        ],
+        "maxPoints": 2
+      },
+      {
+        "fieldName": "precision",
         "location": {
           "rowIdx": 4,
           "colIdx": 0
         },
         "spellIds": [
-          12862,
-          12330,
-          20497,
-          20498,
-          20499
+          20189,
+          20192,
+          20193
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "deathWish",
@@ -474,6 +460,10 @@
           "rowIdx": 5,
           "colIdx": 2
         },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 2
+        },
         "spellIds": [
           12319,
           12971,
@@ -481,11 +471,7 @@
           12973,
           12974
         ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 2
-        }
+        "maxPoints": 5
       },
       {
         "fieldName": "bloodthirst",
@@ -493,14 +479,14 @@
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          23881
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          23881
+        ],
+        "maxPoints": 1
       }
     ]
   },
@@ -566,19 +552,17 @@
         "maxPoints": 5
       },
       {
-        "fieldName": "ironWill",
+        "fieldName": "improvedThunderClap",
         "location": {
           "rowIdx": 1,
           "colIdx": 3
         },
         "spellIds": [
-          12300,
-          12959,
-          12960,
-          12961,
-          12962
+          12287,
+          12665,
+          12666
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "lastStand",
@@ -586,31 +570,30 @@
           "rowIdx": 2,
           "colIdx": 0
         },
-        "spellIds": [
-          12975
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 1,
           "colIdx": 0
-        }
+        },
+        "spellIds": [
+          12975
+        ],
+        "maxPoints": 1
       },
       {
-        "fieldName": "improvedShieldBlock",
+        "fieldName": "masterOfDefense",
         "location": {
           "rowIdx": 2,
           "colIdx": 1
         },
-        "spellIds": [
-          12945,
-          12307,
-          12944
-        ],
-        "maxPoints": 3,
         "prereqLocation": {
           "rowIdx": 0,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2
       },
       {
         "fieldName": "improvedRevenge",
@@ -638,7 +621,7 @@
           12791,
           12792
         ],
-        "maxPoints": 5
+        "maxPoints": 3
       },
       {
         "fieldName": "improvedSunderArmor",
@@ -667,16 +650,15 @@
         "maxPoints": 3
       },
       {
-        "fieldName": "improvedTaunt",
+        "fieldName": "vanguard",
         "location": {
           "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
-          12302,
-          12765
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 1
       },
       {
         "fieldName": "improvedShieldWall",
@@ -714,17 +696,45 @@
         "maxPoints": 2
       },
       {
-        "fieldName": "oneHandedWeaponSpecialization",
+        "fieldName": "vitality",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 3
+        },
+        "spellIds": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 5
+      },
+      {
+        "fieldName": "focusedRage",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3
+      },
+      {
+        "fieldName": "bastion",
         "location": {
           "rowIdx": 5,
           "colIdx": 2
         },
         "spellIds": [
-          16538,
-          16539,
-          16540,
-          16541,
-          16542
+          0,
+          0,
+          0,
+          0,
+          0
         ],
         "maxPoints": 5
       },
@@ -734,14 +744,14 @@
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          23922
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          23922
+        ],
+        "maxPoints": 1
       }
     ]
   }

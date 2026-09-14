@@ -51,7 +51,9 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 	spellID := int32(20569)
 	threat := 100.0
 
-	flatDamageBonus *= []float64{1, 1.4, 1.8, 2.2}[warrior.Talents.ImprovedCleave]
+	// Improved Cleave discounts Rage in Forever instead of adding damage, and Raging Blows
+	// takes another 2 off the top.
+	rageCost := 20 - float64(warrior.Talents.ImprovedCleave) - core.TernaryFloat64(warrior.Talents.RagingBlows, 2, 0)
 
 	results := make([]*core.SpellResult, min(int32(2), warrior.Env.GetNumTargets()))
 
@@ -63,7 +65,7 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagOffensive,
 
 		RageCost: core.RageCostOptions{
-			Cost: 20,
+			Cost: rageCost,
 		},
 
 		CritDamageBonus: warrior.impale(),

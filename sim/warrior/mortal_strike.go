@@ -11,7 +11,7 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 		return
 	}
 
-	bonusDamage := 160.0
+	bonusDamage := 85.0
 	spellID := int32(21553)
 
 	warrior.MortalStrike = warrior.RegisterSpell(AnyStance, core.SpellConfig{

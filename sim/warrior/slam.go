@@ -11,6 +11,10 @@ func (warrior *Warrior) registerSlamSpell() {
 	spellID := int32(11605)
 	flatDamageBonus := 87.0
 
+	// Improved Slam now takes the same amount off the global cooldown as it does the cast time,
+	// and stops Slam from resetting the swing timer entirely.
+	castReduction := time.Millisecond * 250 * time.Duration(warrior.Talents.ImprovedSlam)
+
 	warrior.Slam = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorSlam,
 		ActionID:    core.ActionID{SpellID: spellID},
@@ -27,11 +31,11 @@ func (warrior *Warrior) registerSlamSpell() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*1500 - time.Millisecond*100*time.Duration(warrior.Talents.ImprovedSlam),
+				GCD:      max(core.GCDDefault-castReduction, core.GCDMin),
+				CastTime: time.Millisecond*1500 - castReduction,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if spell.CastTime() > 0 {
+				if warrior.Talents.ImprovedSlam == 0 && spell.CastTime() > 0 {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, true)
 				}
 			},

@@ -27,7 +27,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		Flags:       core.SpellFlagAPL | SpellFlagOffensive,
 
 		RageCost: core.RageCostOptions{
-			Cost: 20 - []float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap],
+			Cost: 20 - []float64{0, 2, 4, 6}[warrior.Talents.ImprovedThunderClap],
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

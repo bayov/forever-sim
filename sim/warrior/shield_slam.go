@@ -12,8 +12,8 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 	}
 
 	spellID := int32(23925)
-	damageLow := 342.0
-	damageHigh := 358.0
+	damageLow := 421.0
+	damageHigh := 439.0
 	threat := 254.0
 
 	apCoef := 0.15

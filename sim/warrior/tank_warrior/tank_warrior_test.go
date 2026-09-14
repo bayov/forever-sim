@@ -33,11 +33,13 @@ func TestP1TankWarrior(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
 
-var P1Talents = "20304300302-03-55200110530201051"
+var P1Talents = "31--5525312333000105351"
 
 var PlayerOptionsBasic = &proto.Player_TankWarrior{
 	TankWarrior: &proto.TankWarrior{

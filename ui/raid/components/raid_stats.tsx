@@ -461,18 +461,8 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Battle Shout',
 							actionId: ActionId.fromSpellId(12861),
-							playerData: playerClassAndTalent(
+							playerData: playerClass(
 								Class.ClassWarrior,
-								'improvedBattleShout',
-								player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle,
-							),
-						},
-						{
-							label: 'Battle Shout',
-							actionId: ActionId.fromSpellId(47436),
-							playerData: playerClassAndMissingTalent(
-								Class.ClassWarrior,
-								'improvedBattleShout',
 								player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle,
 							),
 						},
@@ -649,12 +639,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Demoralizing Shout',
 							actionId: ActionId.fromSpellId(12879),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'improvedDemoralizingShout'),
-						},
-						{
-							label: 'Demoralizing Shout',
-							actionId: ActionId.fromSpellId(11556),
-							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedDemoralizingShout'),
+							playerData: playerClass(Class.ClassWarrior),
 						},
 						{
 							label: 'Improved Demoralizing Roar',

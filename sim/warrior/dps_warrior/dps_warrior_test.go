@@ -33,11 +33,13 @@ func TestP1DPSWarrior(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
 
-var P1Talents = "30305001302-05050005525010051"
+var P1Talents = "303050130-050520035150310051"
 
 var P1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

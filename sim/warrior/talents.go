@@ -15,20 +15,26 @@ func (warrior *Warrior) ToughnessArmorMultiplier() float64 {
 
 func (warrior *Warrior) ApplyTalents() {
 	warrior.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(warrior.Talents.Cruelty))
+	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
 	warrior.ApplyEquipScaling(stats.Armor, warrior.ToughnessArmorMultiplier())
-	warrior.AddStat(stats.Defense, 2*float64(warrior.Talents.Anticipation))
+	warrior.AddStat(stats.Defense, 4*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Parry, 1*float64(warrior.Talents.Deflection))
+	warrior.AddMaxRage(10 * float64(warrior.Talents.BoundlessRage))
 
+	warrior.applyVitality()
+	warrior.applyBastion()
+	warrior.applyFocusedRage()
 	warrior.applyAngerManagement()
 	warrior.applyDeepWounds()
-	warrior.applyOneHandedWeaponSpecialization()
 	warrior.applyTwoHandedWeaponSpecialization()
-	warrior.applyWeaponSpecializations()
+	warrior.applyWeaponmaster()
+	warrior.applyBloodthrill()
 	warrior.applyUnbridledWrath()
 	warrior.applyDualWieldSpecialization()
 	warrior.applyEnrage()
 	warrior.applyFlurry()
 	warrior.applyShieldSpecialization()
+	warrior.applyMasterOfDefense()
 	warrior.registerDeathWishCD()
 	warrior.registerSweepingStrikesCD()
 	warrior.registerLastStandCD()
@@ -65,79 +71,53 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	})
 }
 
-func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
-	if warrior.Talents.OneHandedWeaponSpecialization == 0 || warrior.MainHand().HandType == proto.HandType_HandTypeTwoHand {
+// Weaponmaster folds the four Classic weapon specialization talents into one talent that pays
+// out differently depending on what is equipped.
+// TODO: only rank 1 was shown, beta will confirm the 1% crit / 3% armor / 1% extra attack per point.
+func (warrior *Warrior) applyWeaponmaster() {
+	points := warrior.Talents.Weaponmaster
+	if points == 0 {
 		return
 	}
 
-	multiplier := 1 + 0.02*float64(warrior.Talents.OneHandedWeaponSpecialization)
-	warrior.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.BonusCoefficient > 0 {
-			spell.DamageMultiplier *= multiplier
-		}
-	})
+	if mask := warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeSword); mask != core.ProcMaskUnknown {
+		warrior.registerWeaponmasterExtraAttack(mask, 0.01*float64(points))
+	}
+
+	if mask := warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeStaff); mask != core.ProcMaskUnknown {
+		// Armor ignore is a character wide modifier here, so an off-hand mace also discounts
+		// armor for main hand attacks.
+		warrior.PseudoStats.ArmorIgnorePercent += 0.03 * float64(points)
+	}
+
+	// the default character panel displays critical strike chance for main hand only
+	switch warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm) {
+	case core.ProcMaskMelee:
+		warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(points))
+	case core.ProcMaskMeleeMH:
+		warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(points))
+		warrior.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+				spell.BonusCritRating -= 1 * core.CritRatingPerCritChance * float64(points)
+			}
+		})
+	case core.ProcMaskMeleeOH:
+		warrior.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+				spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(points)
+			}
+		})
+	}
 }
 
-func (warrior *Warrior) applyWeaponSpecializations() {
-	if ss := warrior.Talents.SwordSpecialization; ss > 0 {
-		if mask := warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeSword); mask != core.ProcMaskUnknown {
-			warrior.registerSwordSpecialization(mask)
-		}
-	}
-
-	if as := warrior.Talents.AxeSpecialization; as > 0 {
-		// the default character panel displays critical strike chance for main hand only
-		switch warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeAxe) {
-		case core.ProcMaskMelee:
-			warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(as))
-		case core.ProcMaskMeleeMH:
-			warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(as))
-			warrior.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating -= 1 * core.CritRatingPerCritChance * float64(as)
-				}
-			})
-		case core.ProcMaskMeleeOH:
-			warrior.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(as)
-				}
-			})
-		}
-	}
-
-	if ps := warrior.Talents.PolearmSpecialization; ps > 0 {
-		// the default character panel displays critical strike chance for main hand only
-		switch warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypePolearm) {
-		case core.ProcMaskMelee:
-			warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(ps))
-		case core.ProcMaskMeleeMH:
-			warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(ps))
-			warrior.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating -= 1 * core.CritRatingPerCritChance * float64(ps)
-				}
-			})
-		case core.ProcMaskMeleeOH:
-			warrior.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(ps)
-				}
-			})
-		}
-	}
-
-}
-
-func (warrior *Warrior) registerSwordSpecialization(procMask core.ProcMask) {
+func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, procChance float64) {
 	icd := core.Cooldown{
 		Timer:    warrior.NewTimer(),
 		Duration: time.Millisecond * 200,
 	}
-	procChance := 0.01 * float64(warrior.Talents.SwordSpecialization)
 
 	warrior.RegisterAura(core.Aura{
-		Label:    "Sword Specialization",
+		Label:    "Weaponmaster",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
@@ -152,7 +132,7 @@ func (warrior *Warrior) registerSwordSpecialization(procMask core.ProcMask) {
 			if !icd.IsReady(sim) {
 				return
 			}
-			if sim.RandomFloat("Sword Specialization") < procChance {
+			if sim.RandomFloat("Weaponmaster") < procChance {
 				icd.Use(sim)
 				warrior.AutoAttacks.ExtraMHAttack(sim, 1, core.ActionID{SpellID: 12815}, spell.ActionID)
 			}
@@ -160,12 +140,46 @@ func (warrior *Warrior) registerSwordSpecialization(procMask core.ProcMask) {
 	})
 }
 
+// Bloodthrill hands out Overpower charges off the back of Rend instead of waiting for a dodge.
+func (warrior *Warrior) applyBloodthrill() {
+	if warrior.Talents.Bloodthrill == 0 {
+		return
+	}
+
+	procChance := 0.02 * float64(warrior.Talents.Bloodthrill)
+
+	warrior.BloodthrillAura = warrior.RegisterAura(core.Aura{
+		Label:    "Bloodthrill",
+		ActionID: core.ActionID{SpellID: 56638},
+		Duration: time.Second * 6,
+	})
+
+	core.MakePermanent(warrior.RegisterAura(core.Aura{
+		Label: "Bloodthrill Trigger",
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+
+			if !warrior.Rend.Dot(result.Target).IsActive() {
+				return
+			}
+
+			if sim.Proc(procChance, "Bloodthrill") {
+				warrior.BloodthrillAura.Activate(sim)
+			}
+		},
+	}))
+}
+
+// TODO: only rank 1 was shown, beta will confirm the 12% per point.
 func (warrior *Warrior) applyUnbridledWrath() {
 	if warrior.Talents.UnbridledWrath == 0 {
 		return
 	}
 
-	procChance := 0.08 * float64(warrior.Talents.UnbridledWrath)
+	procChance := 0.12 * float64(warrior.Talents.UnbridledWrath)
+	rageGain := core.TernaryFloat64(warrior.MainHand().HandType == proto.HandType_HandTypeTwoHand, 2, 1)
 
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12964})
 
@@ -181,121 +195,71 @@ func (warrior *Warrior) applyUnbridledWrath() {
 			}
 
 			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && sim.RandomFloat("Unbrided Wrath") < procChance {
-				warrior.AddRage(sim, 1, rageMetrics)
+				warrior.AddRage(sim, rageGain, rageMetrics)
 			}
 		},
 	})
 }
 
 func (warrior *Warrior) applyDualWieldSpecialization() {
-	if warrior.Talents.DualWieldSpecialization == 0 {
+	points := warrior.Talents.DualWieldSpecialization
+	if points == 0 {
 		return
 	}
 
-	multiplier := 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
+	multiplier := 1 + 0.05*float64(points)
+	bonusHit := 2 * core.MeleeHitRatingPerHitChance * float64(points)
+
+	warrior.AddOffHandDealtRageMultiplier(1 + 0.2*float64(points))
+
 	warrior.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.BonusCoefficient > 0 {
+		if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			return
+		}
+
+		if spell.BonusCoefficient > 0 {
 			spell.DamageMultiplier *= multiplier
 		}
+		spell.BonusHitRating += bonusHit
 	})
 }
 
+// Forever turns Enrage into a chance to gain a flat 2% Physical damage buff from any damage
+// taken, where Classic only fired it on crits and scaled the buff with points.
 func (warrior *Warrior) applyEnrage() {
 	if warrior.Talents.Enrage == 0 {
 		return
 	}
 
+	procChance := min(0.3*float64(warrior.Talents.Enrage), 1)
+
 	warrior.EnrageAura = warrior.GetOrRegisterAura(core.Aura{
-		Label:     "Enrage",
-		ActionID:  core.ActionID{SpellID: 13048},
-		Duration:  time.Second * 12,
-		MaxStacks: 12,
+		Label:    "Enrage",
+		ActionID: core.ActionID{SpellID: 13048},
+		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.05*float64(warrior.Talents.Enrage)
+			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.02
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1 + 0.05*float64(warrior.Talents.Enrage)
+			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.02
 		},
 	})
 
-	warrior.EnrageAura.NewExclusiveEffect("Enrage", true, core.ExclusiveEffect{Priority: 5 * float64(warrior.Talents.Enrage)})
+	warrior.EnrageAura.NewExclusiveEffect("Enrage", true, core.ExclusiveEffect{Priority: 2})
 
-	warrior.RegisterAura(core.Aura{
-		Label:    "Enrage Trigger",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !warrior.EnrageAura.IsActive() {
-				return
-			}
-
-			if spell.ProcMask.Matches(core.ProcMaskMelee) {
-				warrior.EnrageAura.RemoveStack(sim)
-			}
-		},
+	core.MakePermanent(warrior.RegisterAura(core.Aura{
+		Label: "Enrage Trigger",
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if result.Damage <= 0 {
 				return
 			}
 
-			if !result.Outcome.Matches(core.OutcomeCrit) {
-				return
-			}
-
-			warrior.EnrageAura.Activate(sim)
-			if warrior.EnrageAura.IsActive() {
-				warrior.EnrageAura.SetStacks(sim, 12)
+			if sim.Proc(procChance, "Enrage") {
+				warrior.EnrageAura.Activate(sim)
 			}
 		},
-	})
+	}))
 }
-
-// func (warrior *Warrior) applyFlurry() {
-// 	if warrior.Talents.Flurry == 0 {
-// 		return
-// 	}
-
-// 	haste := []float64{1, 1.1, 1.15, 1.2, 1.25, 1.3}[warrior.Talents.Flurry]
-
-// 	procAura := warrior.RegisterAura(core.Aura{
-// 		Label:     "Flurry Proc",
-// 		ActionID:  core.ActionID{SpellID: 12974},
-// 		Duration:  core.NeverExpires,
-// 		MaxStacks: 3,
-// 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-// 			warrior.MultiplyMeleeSpeed(sim, haste)
-// 		},
-// 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-// 			warrior.MultiplyMeleeSpeed(sim, 1/haste)
-// 		},
-// 	})
-
-// 	warrior.RegisterAura(core.Aura{
-// 		Label:    "Flurry",
-// 		Duration: core.NeverExpires,
-// 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-// 			aura.Activate(sim)
-// 		},
-// 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-// 			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
-// 				return
-// 			}
-
-// 			if result.Outcome.Matches(core.OutcomeCrit) {
-// 				procAura.Activate(sim)
-// 				procAura.SetStacks(sim, 3)
-// 				return
-// 			}
-
-// 			// Remove a stack.
-// 			if procAura.IsActive() && spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
-// 				procAura.RemoveStack(sim)
-// 			}
-// 		},
-// 	})
-// }
 
 func (warrior *Warrior) applyFlurry() {
 	if warrior.Talents.Flurry == 0 {
@@ -332,7 +296,7 @@ func (warrior *Warrior) makeFlurryAura(points int32) *core.Aura {
 	}
 
 	spellID := []int32{12319, 12971, 12972, 12973, 12974}[points-1]
-	attackSpeed := []float64{1.1, 1.15, 1.2, 1.25, 1.3}[points-1]
+	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
 
 	aura := warrior.GetOrRegisterAura(core.Aura{
 		Label:     fmt.Sprintf("Flurry Proc (%d)", spellID),
@@ -392,10 +356,70 @@ func (warrior *Warrior) applyShieldSpecialization() {
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.DidBlock() {
 				if sim.Proc(procChance, "Shield Specialization") {
-					warrior.AddRage(sim, 1.0, rageMetrics)
+					warrior.AddRage(sim, 5.0, rageMetrics)
 				}
 			}
 		},
+	})
+}
+
+// TODO: only rank 1 was shown, beta will confirm that rank 2 doubles both the chance and the rage.
+func (warrior *Warrior) applyMasterOfDefense() {
+	if warrior.Talents.MasterOfDefense == 0 || !warrior.PseudoStats.CanBlock {
+		return
+	}
+
+	procChance := min(0.5*float64(warrior.Talents.MasterOfDefense), 1)
+	rageGain := 5.0 * float64(warrior.Talents.MasterOfDefense)
+	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12727, Tag: 1})
+
+	warrior.RegisterAura(core.Aura{
+		Label:    "Master of Defense",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidDodge() || result.DidParry() {
+				if sim.Proc(procChance, "Master of Defense") {
+					warrior.AddRage(sim, rageGain, rageMetrics)
+				}
+			}
+		},
+	})
+}
+
+// TODO: only rank 1 was shown, beta will confirm the 2% per point.
+func (warrior *Warrior) applyVitality() {
+	if warrior.Talents.Vitality == 0 {
+		return
+	}
+
+	multiplier := 1 + 0.02*float64(warrior.Talents.Vitality)
+	warrior.MultiplyStat(stats.Strength, multiplier)
+	warrior.MultiplyStat(stats.Stamina, multiplier)
+}
+
+// TODO: only rank 1 was shown, beta will confirm the 2% per point.
+func (warrior *Warrior) applyBastion() {
+	if warrior.Talents.Bastion == 0 || !warrior.PseudoStats.CanBlock {
+		return
+	}
+
+	warrior.PseudoStats.DamageDealtMultiplier *= 1 + 0.02*float64(warrior.Talents.Bastion)
+}
+
+// TODO: only rank 1 was shown, beta will confirm the 1 Rage per point.
+func (warrior *Warrior) applyFocusedRage() {
+	if warrior.Talents.FocusedRage == 0 {
+		return
+	}
+
+	discount := warrior.Talents.FocusedRage
+	warrior.OnSpellRegistered(func(spell *core.Spell) {
+		if spell.Flags.Matches(SpellFlagOffensive) && spell.Cost != nil {
+			spell.Cost.FlatModifier -= discount
+		}
 	})
 }
 
@@ -412,11 +436,11 @@ func (warrior *Warrior) registerDeathWishCD() {
 		Duration: time.Second * 30,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.2
-			warrior.PseudoStats.ArmorMultiplier *= 0.8
+			warrior.PseudoStats.DamageTakenMultiplier *= 1.05
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
-			warrior.PseudoStats.ArmorMultiplier /= 0.8
+			warrior.PseudoStats.DamageTakenMultiplier /= 1.05
 		},
 	})
 	core.RegisterPercentDamageModifierEffect(deathWishAura, 1.2)

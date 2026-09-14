@@ -49,6 +49,26 @@
       "reason": "audit 2026-09-13 decision 5: a genuine arrow the detector missed (strong arrowhead, ridge coverage 0.08 because the stroke lies on a hard art edge). 28-warrior-22600-median.png shows stroke and arrowhead from Improved Bloodrage (r1c0) to Last Stand (r2c0).",
       "by": "data-audit",
       "at": "2026-09-13T00:00:00Z"
+    },
+    {
+      "talent": "bloodthrill",
+      "tree": "arms",
+      "set": {
+        "ranks": [[2, 1, 6], [4, 1, 6], [6, 1, 6], [8, 1, 6], [10, 1, 6]]
+      },
+      "reason": "per rank proc chance corroborated as 2/4/6/8/10% by the Forever write-ups published after BlizzCon; only rank 1 was shown on camera",
+      "by": "data-audit",
+      "at": "2026-09-14T00:00:00Z"
+    },
+    {
+      "talent": "dual-wield-specialization",
+      "tree": "fury",
+      "set": {
+        "ranks": [[5, 20, 2], [10, 40, 4], [15, 60, 6], [20, 80, 8], [25, 100, 10]]
+      },
+      "reason": "off-hand damage corroborated as 5/10/15/20/25% by the Forever write-ups published after BlizzCon; Rage generation and hit chance still follow the same slope and are unconfirmed",
+      "by": "data-audit",
+      "at": "2026-09-14T00:00:00Z"
     }
   ]
 }
