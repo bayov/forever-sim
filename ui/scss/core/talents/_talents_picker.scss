@@ -324,3 +324,37 @@
 		background-image: url('/classic/assets/talent_calc/right2.png');
 	}
 }
+
+.talent-picker-tooltip {
+	text-align: left;
+
+	.talent-picker-tooltip-name {
+		display: block;
+		font-weight: bold;
+	}
+
+	.talent-picker-tooltip-rank {
+		display: block;
+		color: $gray-400;
+	}
+
+	.talent-picker-tooltip-description {
+		margin: var(--spacer-1) 0 0;
+	}
+}
+
+// A talent the sim does not read. It still takes points, because the talent string has to
+// keep its shape, but it cannot change a result and should not look like it might.
+.talent-picker-root.talent-picker-not-simulated::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border: 1px dashed $gray-500;
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+.talent-picker-tooltip .talent-picker-tooltip-unsimulated {
+	margin: var(--spacer-1) 0 0;
+	font-style: italic;
+}

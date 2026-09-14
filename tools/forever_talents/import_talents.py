@@ -15,15 +15,16 @@
 
 import json
 import os
+import re
 import sys
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 OVERRIDE_DIR = os.path.join(os.path.dirname(__file__), 'overrides')
 TREE_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'ui', 'core', 'talents', 'trees')
+SIM_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'sim')
 
-# Placeholder icons for talents that didn't exist in Classic, so the picker has something to
-# draw. These are ids from later expansions and show the wrong tooltip until the beta client
-# is datamined.
+# Talents that didn't exist in Classic have no spell id to give the picker. They carry their
+# name, icon and tooltip through to the tree json instead, and the picker draws those.
 PLACEHOLDER_SPELL_ID = 0
 
 
@@ -50,6 +51,26 @@ def load_class(class_name):
 	return data
 
 
+def simulated_talents(class_name):
+	"""Field names the class's Go package actually reads.
+
+	A talent the sim never looks at still draws a box the player can spend points in, and
+	since the tooltips landed it describes an effect that isn't modelled. Rather than keep
+	a hand-written list in step with the code, read it back off the source: anything whose
+	Go field name appears nowhere outside the generated protobuf is not simulated.
+	"""
+	seen = set()
+	class_dir = os.path.join(SIM_DIR, class_name)
+	for root, _, files in os.walk(class_dir):
+		if os.sep + 'proto' + os.sep in root + os.sep:
+			continue
+		for name in files:
+			if not name.endswith('.go') or name.startswith('_'):
+				continue
+			with open(os.path.join(root, name)) as f:
+				seen.update(re.findall(r'\b([A-Z][A-Za-z0-9_]*)\b', f.read()))
+	return seen
+
 def sorted_talents(tree):
 	return sorted(tree['talents'], key=lambda talent: (talent['row'], talent['col']))
 
@@ -67,7 +88,7 @@ def spell_ids(talent, existing):
 	return [PLACEHOLDER_SPELL_ID] * talent['maxRank']
 
 
-def build_tree_json(data, existing_by_tree):
+def build_tree_json(data, existing_by_tree, simulated):
 	trees = []
 	for tree in sorted(data['trees'], key=lambda t: t['order']):
 		existing = existing_by_tree.get(tree['name'], {})
@@ -88,6 +109,34 @@ def build_tree_json(data, existing_by_tree):
 
 			entry['spellIds'] = spell_ids(talent, existing)
 			entry['maxPoints'] = talent['maxRank']
+
+			# Every talent carries its Forever name, tooltip and per-rank values, so the picker
+			# can describe what the talent does now rather than what its Classic spell id says
+			# on Wowhead. The spell id is still used for the icon when there is one.
+			entry['name'] = talent['name']
+			if talent.get('description'):
+				entry['description'] = talent['description']
+			ranks = talent.get('ranks')
+			if ranks:
+				# A few talents carry whole tooltips per rank instead of values. Turn those
+				# into a single placeholder so the picker shows the right rank's text.
+				if not all(isinstance(rank, list) for rank in ranks):
+					entry['description'] = '{0}'
+					ranks = [[rank] if not isinstance(rank, list) else rank for rank in ranks]
+				entry['ranks'] = ranks
+			# Only rank 1 was ever on screen. Ranks copied from the Classic talent of the same
+			# name are a fair bet, extrapolated ones are a guess, so say so in the tooltip.
+			if talent['maxRank'] > 1 and talent.get('ranksSource') in ('extrapolated', 'manual'):
+				entry['ranksGuessed'] = True
+			# The icon name is used directly, so the picker never has to ask Wowhead about a
+			# spell id that may not exist in Classic. An icon sourced from 'crop' is the name
+			# of the screenshot the tooltip was read from, not a real icon, so it is left out
+			# and the picker falls back to the spell id, then to its own placeholder.
+			if talent.get('icon') and talent.get('iconSource') != 'crop':
+				entry['icon'] = talent['icon']
+			if entry['fieldName'][0].upper() + entry['fieldName'][1:] not in simulated:
+				entry['notSimulated'] = True
+
 			talents.append(entry)
 
 		trees.append({
@@ -177,7 +226,7 @@ def main():
 					existing_by_tree[tree['name']][talent['name']] = by_field[field_name]
 
 	existing_by_tree['backgroundUrl'] = backgrounds
-	trees = build_tree_json(data, existing_by_tree)
+	trees = build_tree_json(data, existing_by_tree, simulated_talents(class_name))
 
 	if write:
 		with open(tree_path, 'w') as f:

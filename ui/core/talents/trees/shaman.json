@@ -16,7 +16,26 @@
           16111,
           16112
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Convection",
+        "description": "Reduces the mana cost of your Shock, Lightning Bolt, Lava Burst, and Chain Lightning spells by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ]
       },
       {
         "fieldName": "concussion",
@@ -31,7 +50,26 @@
           16107,
           16108
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Concussion",
+        "description": "Increases the damage done by your Lightning Bolt, Chain Lightning, and Earth Shock spells by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ]
       },
       {
         "fieldName": "elementalWarding",
@@ -44,7 +82,21 @@
           28997,
           28998
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Elemental Warding",
+        "description": "Reduces damage taken from Fire, Frost, and Nature effects by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ]
+        ],
+        "icon": "spell_nature_spiritarmor"
       },
       {
         "fieldName": "reverberation",
@@ -59,7 +111,27 @@
           16115,
           16116
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Reverberation",
+        "description": "Reduces the cooldown of your Shock spells by {0} sec.",
+        "ranks": [
+          [
+            0.2
+          ],
+          [
+            0.4
+          ],
+          [
+            0.6
+          ],
+          [
+            0.8
+          ],
+          [
+            1
+          ]
+        ],
+        "icon": "spell_frost_frostward"
       },
       {
         "fieldName": "callOfFlame",
@@ -72,7 +144,21 @@
           16160,
           16161
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Call of Flame",
+        "description": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "spell_fire_immolation"
       },
       {
         "fieldName": "elementalDevastation",
@@ -85,7 +171,20 @@
           29179,
           29180
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Elemental Devastation",
+        "description": "Your offensive spell critical strikes will increase your chance to get a critical strike with melee attacks by {0}% for 10 sec.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ]
+        ]
       },
       {
         "fieldName": "elementalFocus",
@@ -96,7 +195,16 @@
         "spellIds": [
           16164
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Elemental Focus",
+        "description": "Gives you a {0}% chance to enter a Clearcasting state after casting any Fire, Frost, or Nature damage spell. The Clearcasting state reduces the mana cost of your next damage spell by {1}%.",
+        "ranks": [
+          [
+            10,
+            100
+          ]
+        ],
+        "icon": "spell_shadow_manaburn"
       },
       {
         "fieldName": "elementalFury",
@@ -107,7 +215,28 @@
         "spellIds": [
           16089
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Elemental Fury",
+        "description": "Increases the critical strike damage bonus of your Searing and Magma Totems and your Fire, Frost, and Nature spells by {0}%.",
+        "ranks": [
+          [
+            20
+          ],
+          [
+            40
+          ],
+          [
+            60
+          ],
+          [
+            80
+          ],
+          [
+            100
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_fire_volcano"
       },
       {
         "fieldName": "improvedFireNova",
@@ -119,7 +248,21 @@
           16086,
           16544
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Fire Nova",
+        "description": "Increases the damage done by your Fire Nova spell by {0}% and reduces its cooldown by {1} sec.",
+        "ranks": [
+          [
+            10,
+            2
+          ],
+          [
+            10,
+            2
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_fire_sealoffire"
       },
       {
         "fieldName": "eyeOfTheStorm",
@@ -132,7 +275,22 @@
           29064,
           29065
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Eye of the Storm",
+        "description": "Reduces the pushback suffered from damaging attacks while casting Lightning Bolt, Chain Lightning, and Lava Burst by {0}%.",
+        "ranks": [
+          [
+            23
+          ],
+          [
+            46
+          ],
+          [
+            69
+          ]
+        ],
+        "icon": "spell_nature_eyeofthestorm",
+        "notSimulated": true
       },
       {
         "fieldName": "callOfThunder",
@@ -151,7 +309,15 @@
           16119,
           16120
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Call of Thunder",
+        "description": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by {0}%.",
+        "ranks": [
+          [
+            3
+          ]
+        ],
+        "icon": "spell_nature_callstorm"
       },
       {
         "fieldName": "elementalReach",
@@ -163,7 +329,21 @@
           28999,
           29000
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Elemental Reach",
+        "description": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by {0} yards, and increases the range of your Flame Shock spell by {1} yards.",
+        "ranks": [
+          [
+            3,
+            8
+          ],
+          [
+            6,
+            16
+          ]
+        ],
+        "ranksGuessed": true,
+        "notSimulated": true
       },
       {
         "fieldName": "lightningOverload",
@@ -176,7 +356,22 @@
           30678,
           30679
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Lightning Overload",
+        "description": "Gives your Lightning Bolt and Chain Lightning spells a {0}% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_nature_lightningoverload"
       },
       {
         "fieldName": "earthbound",
@@ -187,7 +382,16 @@
         "spellIds": [
           2484
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Earthbound",
+        "description": "Your Earthbind Totem immobilizes nearby targets for {0} sec when cast.",
+        "ranks": [
+          [
+            5
+          ]
+        ],
+        "icon": "spell_nature_stranglevines",
+        "notSimulated": true
       },
       {
         "fieldName": "elementalAlacrity",
@@ -204,7 +408,21 @@
           16579,
           16580
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Elemental Alacrity",
+        "description": "Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by {0} sec.",
+        "ranks": [
+          [
+            0.17
+          ],
+          [
+            0.17
+          ],
+          [
+            0.17
+          ]
+        ],
+        "ranksGuessed": true
       },
       {
         "fieldName": "lavaBurst",
@@ -219,7 +437,17 @@
         "spellIds": [
           51505
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Lava Burst",
+        "description": "You hurl molten lava at the target, dealing {0} to {1} Fire damage. If your Flame Shock is on the target, Lava Burst deals {2}% increased damage.",
+        "ranks": [
+          [
+            158,
+            187,
+            20
+          ]
+        ],
+        "icon": "spell_shaman_lavaburst"
       }
     ]
   },
@@ -237,7 +465,21 @@
           16043,
           16130
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Earth's Grasp",
+        "description": "Increases the health of your Stoneclaw Totem by {0}% and the radius of your Earthbind Totem by {1}%.",
+        "ranks": [
+          [
+            25,
+            10
+          ],
+          [
+            50,
+            20
+          ]
+        ],
+        "icon": "spell_nature_stoneclawtotem",
+        "notSimulated": true
       },
       {
         "fieldName": "thunderingStrikes",
@@ -252,7 +494,27 @@
           16304,
           16305
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Thundering Strikes",
+        "description": "Improves your chance to get a critical strike with all spells and attacks by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "ability_thunderbolt"
       },
       {
         "fieldName": "ancestralKnowledge",
@@ -267,7 +529,27 @@
           17488,
           17489
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Ancestral Knowledge",
+        "description": "Increases your Intellect by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_shadow_grimward"
       },
       {
         "fieldName": "guardianTotems",
@@ -279,7 +561,19 @@
           16258,
           16293
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Guardian Totems",
+        "description": "Increases the amount of damage reduced by your Stoneskin Totem and Windwall Totem by {0}% and reduces the cooldown of your Grounding Totem by {1} sec.",
+        "ranks": [
+          [
+            10,
+            1
+          ],
+          [
+            20,
+            2
+          ]
+        ]
       },
       {
         "fieldName": "mentalDexterity",
@@ -292,7 +586,22 @@
           51884,
           51885
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Mental Dexterity",
+        "description": "Increases your Attack Power by an amount equal to {0}% of your Intellect.",
+        "ranks": [
+          [
+            33
+          ],
+          [
+            66
+          ],
+          [
+            99
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_nature_mentalquickness"
       },
       {
         "fieldName": "improvedGhostWolf",
@@ -304,7 +613,19 @@
           16262,
           16287
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Ghost Wolf",
+        "description": "Reduces the cast time of your Ghost Wolf spell by {0} sec, and Ghost Wolf may be used indoors.",
+        "ranks": [
+          [
+            1.0
+          ],
+          [
+            2
+          ]
+        ],
+        "icon": "spell_nature_spiritwolf",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedLightningShield",
@@ -316,7 +637,20 @@
           16261,
           16290
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Improved Lightning Shield",
+        "description": "Increases the damage done by your Lightning Shield orbs by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ]
+        ]
       },
       {
         "fieldName": "elementalWeapons",
@@ -329,7 +663,27 @@
           29079,
           29080
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Elemental Weapons",
+        "description": "Increases the melee attack power bonus of your Rockbiter Weapon by {0}%, your Windfury Weapon effect by {1}% and increases the damage caused by your Flametongue Weapon and Frostbrand Weapon by {2}%.",
+        "ranks": [
+          [
+            7,
+            13,
+            5
+          ],
+          [
+            14,
+            27,
+            10
+          ],
+          [
+            20,
+            40,
+            15
+          ]
+        ],
+        "icon": "spell_fire_flametounge"
       },
       {
         "fieldName": "shamanisticFocus",
@@ -340,7 +694,15 @@
         "spellIds": [
           43338
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Shamanistic Focus",
+        "description": "Reduces the mana cost of your Shock and Lightning Shield spells by {0}%.",
+        "ranks": [
+          [
+            45
+          ]
+        ],
+        "icon": "spell_nature_elementalabsorption"
       },
       {
         "fieldName": "anticipation",
@@ -355,7 +717,20 @@
           16273,
           16274
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Anticipation",
+        "description": "Increases your chance to dodge by an additional {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ]
+        ]
       },
       {
         "fieldName": "toughness",
@@ -370,7 +745,27 @@
           16308,
           16309
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Toughness",
+        "description": "Increases your Stamina by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_holy_devotion"
       },
       {
         "fieldName": "flurry",
@@ -389,7 +784,27 @@
           16283,
           16284
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Flurry",
+        "description": "Increases your attack speed by {0}% for your next 3 swings after dealing a melee critical strike.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ],
+          [
+            20
+          ],
+          [
+            25
+          ]
+        ],
+        "icon": "ability_ghoulfrenzy"
       },
       {
         "fieldName": "stormstrike",
@@ -400,7 +815,16 @@
         "spellIds": [
           17364
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Stormstrike",
+        "description": "Instantly strike for normal weapon damage and increase Nature damage you deal to the target by {0}% for {1} sec.",
+        "ranks": [
+          [
+            20,
+            12
+          ]
+        ],
+        "icon": "ability_shaman_stormstrike"
       },
       {
         "fieldName": "spiritWeapons",
@@ -411,7 +835,16 @@
         "spellIds": [
           16268
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Spirit Weapons",
+        "description": "Gives a chance to parry enemy melee attacks, reduces all threat generated by your attacks by {0}% while Rockbiter Weapon is not active, and increases all threat generated by {1}% while Rockbiter Weapon is active.",
+        "ranks": [
+          [
+            30,
+            30
+          ]
+        ],
+        "icon": "ability_parry"
       },
       {
         "fieldName": "mentalQuickness",
@@ -423,7 +856,19 @@
           30812,
           30813
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Mental Quickness",
+        "description": "Increases your spell damage and healing by up to {0}% of your Intellect.",
+        "ranks": [
+          [
+            15
+          ],
+          [
+            30
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_nature_sleep"
       },
       {
         "fieldName": "improvedStormstrike",
@@ -439,7 +884,25 @@
           51521,
           51522
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Stormstrike",
+        "description": "When you Stormstrike, you have a {0}% chance to gain {1}% mana regeneration while casting spells for {2} sec, and Stormstrike's cooldown has a {3}% chance to reset each time you Dodge or Parry.",
+        "ranks": [
+          [
+            50,
+            50,
+            15,
+            50
+          ],
+          [
+            50,
+            50,
+            15,
+            50
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_shaman_improvedstormstrike"
       },
       {
         "fieldName": "maelstromWeapon",
@@ -454,7 +917,38 @@
           51531,
           51532
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Maelstrom Weapon",
+        "description": "When you deal damage with a melee attack, you have a chance to reduce the cast time and Mana cost of your next Lightning Bolt spell by {0}%. Stacks up to {1} times. Lasts {2} sec.",
+        "ranks": [
+          [
+            4,
+            5,
+            30
+          ],
+          [
+            4,
+            5,
+            30
+          ],
+          [
+            4,
+            5,
+            30
+          ],
+          [
+            4,
+            5,
+            30
+          ],
+          [
+            4,
+            5,
+            30
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_shaman_maelstromweapon"
       },
       {
         "fieldName": "rageOfTheFarseer",
@@ -469,7 +963,16 @@
         "spellIds": [
           2825
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Rage of the Farseer",
+        "description": "Increases your melee attack speed and spell casting speed by {0}% for {1} sec.",
+        "ranks": [
+          [
+            30,
+            25
+          ]
+        ],
+        "icon": "spell_nature_bloodlust"
       }
     ]
   },
@@ -490,7 +993,27 @@
           16228,
           16229
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Improved Healing Wave",
+        "description": "Reduces the casting time of your Healing Wave spell by {0} sec.",
+        "ranks": [
+          [
+            0.1
+          ],
+          [
+            0.2
+          ],
+          [
+            0.3
+          ],
+          [
+            0.4
+          ],
+          [
+            0.5
+          ]
+        ],
+        "notSimulated": true
       },
       {
         "fieldName": "tidalMastery",
@@ -505,7 +1028,27 @@
           16220,
           16221
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Tidal Mastery",
+        "description": "Increases the critical effect chance of your healing spells by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "spell_nature_tranquility"
       },
       {
         "fieldName": "mindfulness",
@@ -518,7 +1061,21 @@
           17107,
           17108
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Mindfulness",
+        "description": "Allows {0}% of your Mana regeneration to continue while casting.",
+        "ranks": [
+          [
+            17
+          ],
+          [
+            34
+          ],
+          [
+            51
+          ]
+        ],
+        "icon": "spell_nature_sleep"
       },
       {
         "fieldName": "naturalGrace",
@@ -531,7 +1088,21 @@
           29189,
           29191
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Natural Grace",
+        "description": "Reduces the threat generated by your spells by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "spell_nature_healingtouch"
       },
       {
         "fieldName": "tidalFocus",
@@ -546,7 +1117,33 @@
           16216,
           16217
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Tidal Focus",
+        "description": "Reduces the Mana cost of your healing spells by {0}% and increases your chance to hit with all spells and attacks by {1}%.",
+        "ranks": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            5,
+            5
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_frost_manarecharge"
       },
       {
         "fieldName": "improvedReincarnation",
@@ -558,7 +1155,23 @@
           16184,
           16209
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Reincarnation",
+        "description": "Reduces the cooldown of your Reincarnation spell by {0} min, increases your maximum health by {1}%, and increases the amount of health and Mana you reincarnate with by an additional {2}%.",
+        "ranks": [
+          [
+            10,
+            2,
+            10
+          ],
+          [
+            10,
+            2,
+            10
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_nature_reincarnation"
       },
       {
         "fieldName": "ancestralHealing",
@@ -571,7 +1184,22 @@
           16235,
           16240
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Ancestral Healing",
+        "description": "Increases your target's armor value by {0}% for 15 sec after getting a critical effect from one of your healing spells.",
+        "ranks": [
+          [
+            8
+          ],
+          [
+            16
+          ],
+          [
+            25
+          ]
+        ],
+        "icon": "spell_nature_undyingstrength",
+        "notSimulated": true
       },
       {
         "fieldName": "healingFocus",
@@ -586,7 +1214,22 @@
           16233,
           16234
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Healing Focus",
+        "description": "Gives you a {0}% chance to avoid interruption caused by damage while casting any healing spell.",
+        "ranks": [
+          [
+            23
+          ],
+          [
+            46
+          ],
+          [
+            69
+          ]
+        ],
+        "icon": "spell_nature_healingwavelesser",
+        "notSimulated": true
       },
       {
         "fieldName": "waterShield",
@@ -597,7 +1240,17 @@
         "spellIds": [
           52127
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Water Shield",
+        "description": "The caster is surrounded by {0} globes of water. When a spell, melee, or ranged attack hits the caster or when one of the caster's healing spells gets a critical result, {1}% of maximum mana is restored to the caster, expending one water globe. Only one globe will activate every few seconds. Lasts {2} min. Only one Elemental Shield can be active on the Shaman at any one time.",
+        "ranks": [
+          [
+            3,
+            2,
+            10
+          ]
+        ],
+        "icon": "ability_shaman_watershield"
       },
       {
         "fieldName": "totemicFocus",
@@ -612,7 +1265,27 @@
           16224,
           16225
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Totemic Focus",
+        "description": "Reduces the Mana cost of your totems and any spells that summon or move them by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ],
+          [
+            20
+          ],
+          [
+            25
+          ]
+        ],
+        "icon": "spell_nature_moonglow"
       },
       {
         "fieldName": "restorativeTotems",
@@ -627,7 +1300,33 @@
           16207,
           16208
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Restorative Totems",
+        "description": "Increases the effect of your Mana Spring Totem by {0}% and increases the effect of your Healing Stream Totem by {1}%.",
+        "ranks": [
+          [
+            5,
+            10
+          ],
+          [
+            10,
+            20
+          ],
+          [
+            15,
+            30
+          ],
+          [
+            20,
+            40
+          ],
+          [
+            25,
+            50
+          ]
+        ],
+        "ranksGuessed": true,
+        "icon": "spell_nature_manaregentotem"
       },
       {
         "fieldName": "manaTideTotem",
@@ -638,7 +1337,19 @@
         "spellIds": [
           16190
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Mana Tide Totem",
+        "description": "Summons a Mana Tide Totem with {0} health at the feet of the caster for {1} sec that restores {2} mana every {3} seconds to group members within {4} yards.",
+        "ranks": [
+          [
+            5,
+            12,
+            88,
+            3,
+            30
+          ]
+        ],
+        "icon": "spell_frost_summonwaterelemental"
       },
       {
         "fieldName": "healingWay",
@@ -651,7 +1362,22 @@
           29202,
           29205
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Healing Way",
+        "description": "Increases the amount healed by your Healing Wave spell by {0}%.",
+        "ranks": [
+          [
+            8
+          ],
+          [
+            16
+          ],
+          [
+            24
+          ]
+        ],
+        "icon": "spell_nature_healingway",
+        "notSimulated": true
       },
       {
         "fieldName": "naturesSwiftness",
@@ -662,7 +1388,15 @@
         "spellIds": [
           16188
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Nature's Swiftness",
+        "description": "When activated, your next Nature spell with a casting time less than {0} sec becomes an instant cast spell.",
+        "ranks": [
+          [
+            10
+          ]
+        ],
+        "icon": "spell_nature_ravenform"
       },
       {
         "fieldName": "purification",
@@ -677,7 +1411,27 @@
           16212,
           16213
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Purification",
+        "description": "Increases the effectiveness of your healing spells by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_frost_wizardmark"
       },
       {
         "fieldName": "riptide",
@@ -692,7 +1446,19 @@
         "spellIds": [
           61295
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Riptide",
+        "description": "Heals a friendly target for {0} to {1}, an additional {2} over {3} sec, and increases the effectiveness of your Chain Heal casts directly on that target by {4}%.",
+        "ranks": [
+          [
+            479,
+            528,
+            499,
+            15,
+            25
+          ]
+        ],
+        "notSimulated": true
       }
     ]
   }

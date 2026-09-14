@@ -1,4 +1,4 @@
-import tippy from 'tippy.js';
+import tippy, { Instance as TippyInstance } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { Component } from '../components/component.js';
@@ -11,6 +11,12 @@ import { ActionId } from '../proto_utils/action_id.js';
 import { getSpecIcon } from '../proto_utils/utils.js';
 import { TypedEvent } from '../typed_event.js';
 import { isRightClick, sum } from '../utils.js';
+
+// Talents Forever added have no spell id, so their icon is addressed by name instead of
+// resolved through Wowhead. Some are not datamined yet and fall back to the client's own
+// placeholder rather than drawing nothing.
+const UNKNOWN_TALENT_ICON = 'inv_misc_questionmark';
+const talentIconUrl = (icon: string) => `https://wow.zamimg.com/images/wow/icons/large/${icon}.jpg`;
 
 export interface TalentsPickerConfig<TalentsProto> extends InputConfig<Player<Spec>, string> {
 	klass: Class;
@@ -337,6 +343,7 @@ class TalentPicker<TalentsProto> extends Component {
 	private readonly pointsDisplay: HTMLElement;
 
 	private longTouchTimer?: number;
+	private localTooltip?: TippyInstance;
 	private childReqs: TalentReqArrow[];
 	private zIdx: number;
 	parentReq: TalentReqArrow | null;
@@ -354,6 +361,14 @@ class TalentPicker<TalentsProto> extends Component {
 
 		this.rootElem.dataset.maxPoints = String(this.config.maxPoints);
 		this.rootElem.dataset.whtticon = 'false';
+
+		if (this.config.icon || !this.config.spellIds.some(id => id)) {
+			this.rootElem.style.backgroundImage = `url('${talentIconUrl(this.config.icon ?? UNKNOWN_TALENT_ICON)}')`;
+		}
+
+		if (this.config.notSimulated) {
+			this.rootElem.classList.add('talent-picker-not-simulated');
+		}
 
 		this.pointsDisplay = document.createElement('span');
 		this.pointsDisplay.classList.add('talent-picker-points');
@@ -518,24 +533,65 @@ class TalentPicker<TalentsProto> extends Component {
 			this.rootElem.classList.remove('talent-full');
 		}
 
+		// The spell id only buys the icon, and only when the tree json names none. The
+		// tooltip is always the local one, because a Wowhead tooltip would describe the
+		// Classic talent and most of them changed.
 		const spellId = this.getSpellIdForPoints(newPoints);
-		ActionId.fromSpellId(spellId)
-			.fill()
-			.then(actionId => {
-				actionId.setWowheadHref(this.rootElem as HTMLAnchorElement);
-				this.rootElem.style.backgroundImage = `url('${actionId.iconUrl}')`;
-			});
+		if (spellId && !this.config.icon) {
+			ActionId.fromSpellId(spellId)
+				.fill()
+				.then(actionId => {
+					this.rootElem.style.backgroundImage = `url('${actionId.iconUrl}')`;
+				});
+		}
+		this.updateLocalTooltip(newPoints);
 	}
 
+	// The talent tooltip, built from the Forever name and description the tree json
+	// carries. Rank values are substituted into the {n} placeholders so the numbers track
+	// the points actually spent.
+	private updateLocalTooltip(numPoints: number) {
+		const { name, description, ranks } = this.config;
+		if (!name && !description) return;
+
+		const rank = Math.max(0, numPoints - 1);
+		const values = ranks?.[rank] ?? ranks?.[0] ?? [];
+		const text = (description ?? '').replace(/\{(\d+)\}/g, (placeholder, idx) => {
+			const value = values[Number(idx)];
+			return value == undefined ? placeholder : String(value);
+		});
+
+		const content = (
+			<div className="talent-picker-tooltip">
+				{name && <span className="talent-picker-tooltip-name">{name}</span>}
+				<span className="talent-picker-tooltip-rank">
+					Rank {numPoints}/{this.config.maxPoints}
+				</span>
+				{text && <p className="talent-picker-tooltip-description">{text}</p>}
+				{this.config.ranksGuessed && numPoints > 1 && (
+					<p className="talent-picker-tooltip-unsimulated">Only rank 1 was seen at BlizzCon. Higher rank values are extrapolated.</p>
+				)}
+				{this.config.notSimulated && <p className="talent-picker-tooltip-unsimulated">Not simulated yet - points spent here do not affect results.</p>}
+			</div>
+		);
+
+		if (this.localTooltip) {
+			this.localTooltip.setContent(content);
+		} else {
+			this.localTooltip = tippy(this.rootElem, { content });
+		}
+	}
+
+	// Returns 0 for a talent with no spell ID. Forever's new talents do not have one:
+	// they are new abilities, so there is nothing on Wowhead to point at and no icon to
+	// fetch. The caller skips the lookup rather than treating it as an error - throwing
+	// here took the whole talents picker down, and with it the Rotation and Results tabs
+	// of every class that has one.
 	getSpellIdForPoints(numPoints: number): number {
 		// 0-indexed rank of talent
 		const rank = Math.max(0, numPoints - 1);
 
-		if (this.config.spellIds[rank]) {
-			return this.config.spellIds[rank];
-		} else {
-			throw new Error(`No rank ${numPoints} for talent ${String(this.config.fieldName)}`);
-		}
+		return this.config.spellIds[rank] ?? 0;
 	}
 
 	update() {
@@ -583,6 +639,21 @@ export type TalentConfig<TalentsProto> = {
 	spellIds: Array<number>;
 
 	maxPoints: number;
+
+	// Forever name, icon and tooltip, populated by tools/forever_talents/import_talents.py
+	// from the datamined talent data.
+	name?: string;
+	icon?: string;
+	description?: string;
+	// True when the sim's Go package never reads this talent, so spending points in it
+	// changes nothing. Computed by tools/forever_talents/import_talents.py from the source.
+	notSimulated?: boolean;
+	// Only rank 1 of each talent was ever on screen at BlizzCon. Set when the values for
+	// ranks 2 and up are extrapolated rather than copied from the Classic talent.
+	ranksGuessed?: boolean;
+	// Values substituted into the description's {n} placeholders, one row per rank. Strings
+	// occur where a placeholder carries text rather than a number, e.g. a plural suffix.
+	ranks?: Array<Array<number | string>>;
 };
 
 export function newTalentsConfig<TalentsProto>(talents: TalentsConfig<TalentsProto>): TalentsConfig<TalentsProto> {
