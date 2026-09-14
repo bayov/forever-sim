@@ -28,7 +28,7 @@ What this repo's sim models of Forever as of 2026-09-14, and what it assumes whe
 | Race | Modelled | Assumption |
 | --- | --- | --- |
 | Human | 2% crit with swords (melee and spell), Spirit +5% | Weapon crit applies to auto attacks too, not only abilities |
-| Dwarf | 1% crit with maces, +5% vs Beasts | Same |
+| Dwarf | 1% crit with maces, +5% vs Beasts | Same. Creature type bonuses follow the upstream Classic modelling and apply again on crits, so they measure about +8% at 50% crit |
 | Night Elf | Elune's Light: +10% crit for 15 sec, Dodge +1% | 3 min cooldown |
 | Gnome | Eureka!: next 3 abilities +10% damage and cheaper. Max mana, rage and energy +5% | Cost reduction is not on the tooltip, assumed 50%. 3 min cooldown |
 | Orc | 1% crit with axes, Blood Fury +10% AP and SP for 15 sec | 10% of total AP and SP at activation. Command (pet damage) is gone |
@@ -53,8 +53,8 @@ The talent picker shows the Forever tooltip for every talent and marks two thing
 Per-class assumptions carried over from the fork are marked `TODO` in `sim/warrior`, `sim/rogue` and `sim/shaman`. The ones that move DPS:
 
 - Warrior: Weaponmaster scales 1% crit, 3% armor ignore, 1% extra attack per point. Improved Battle Shout and Improved Demoralizing Shout are treated as baseline.
-- Rogue: Hack and Slash scales linearly. Mutilate costs 60 Energy and needs daggers. Venom costs 25 Energy. Improved Expose Armor's Classic 2/2 armor value is treated as baseline.
-- Shaman: Maelstrom Weapon has no published proc rate, modelled as 2 PPM per point. Rage of the Farseer assumes a 3 min cooldown. Lava Burst cast time and cooldown are from the WotLK spell. Enhancing Totems is gone so Strength of Earth and Grace of Air always land improved.
+- Rogue: Hack and Slash scales linearly. Mutilate costs 60 Energy and needs daggers. Venom costs 25 Energy, and as transcribed (30% poison damage, no damage of its own) it is a 3 to 5% DPS loss at any combo point count because the points are worth more as Eviscerate. Improved Expose Armor's Classic 2/2 armor value is treated as baseline.
+- Shaman: The default enhancement APL twists Windfury Totem with Grace of Air the way a raid shaman would, and the sim gives the shaman nothing for its own Windfury Totem, so the twisting costs about 18% of the shaman's own DPS under both rulesets. Maelstrom Weapon has no published proc rate, modelled as 2 PPM per point. Rage of the Farseer assumes a 3 min cooldown. Lava Burst cast time and cooldown are from the WotLK spell. Enhancing Totems is gone so Strength of Earth and Grace of Air always land improved.
 
 ## Gear and buffs
 
