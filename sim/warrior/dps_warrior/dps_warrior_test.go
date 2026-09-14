@@ -26,7 +26,7 @@ func TestP1DPSWarrior(t *testing.T) {
 			OtherRotations: []core.RotationCombo{
 				core.GetAplRotation("../../../ui/warrior/apls", "dps_no_reck"),
 			},
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "DPS", SpecOptions: PlayerOptionsFury},
 

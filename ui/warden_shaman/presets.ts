@@ -138,7 +138,6 @@ export const DefaultDebuffs = Debuffs.create({
 	curseOfRecklessness: true,
 	exposeArmor: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
-	improvedScorch: true,
 	insectSwarm: true,
 	sunderArmor: true,
 	thunderClap: TristateEffect.TristateEffectRegular,

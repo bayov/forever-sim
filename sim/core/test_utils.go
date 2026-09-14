@@ -128,6 +128,17 @@ var FullDebuffs = &proto.Debuffs{
 	WintersChill:           true,
 }
 
+// Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill all became
+// personal buffs on their caster in Forever, so nobody applies them to the raid any more.
+var ForeverDebuffs = func() *proto.Debuffs {
+	debuffs := googleProto.Clone(FullDebuffs).(*proto.Debuffs)
+	debuffs.ImprovedShadowBolt = false
+	debuffs.ShadowWeaving = false
+	debuffs.ImprovedScorch = false
+	debuffs.WintersChill = false
+	return debuffs
+}()
+
 ///////////////////////////////////////////////////////////////////////////
 //                                 Full Buffs
 ///////////////////////////////////////////////////////////////////////////
@@ -136,6 +147,14 @@ var FullBuffs = BuffsCombo{
 	Label: "Phase 5 Buffs",
 
 	Debuffs: FullDebuffs,
+	Party:   FullPartyBuffs,
+	Player:  FullIndividualBuffs,
+	Raid:    FullRaidBuffs,
+}
+
+var ForeverBuffs = BuffsCombo{
+	Label:   "FullBuffs",
+	Debuffs: ForeverDebuffs,
 	Party:   FullPartyBuffs,
 	Player:  FullIndividualBuffs,
 	Raid:    FullRaidBuffs,

@@ -23,7 +23,7 @@ func TestEnhancement(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_1"),
 			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},
 			OtherSpecOptions: []core.SpecOptionsCombo{
@@ -45,7 +45,7 @@ func TestEnhancement(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_2"),
 			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},
 			OtherSpecOptions: []core.SpecOptionsCombo{
@@ -67,7 +67,7 @@ func TestEnhancement(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_3"),
 			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},
 			OtherSpecOptions: []core.SpecOptionsCombo{
@@ -89,7 +89,7 @@ func TestEnhancement(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_5"),
 			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},
 			OtherSpecOptions: []core.SpecOptionsCombo{

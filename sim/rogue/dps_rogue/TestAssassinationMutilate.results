@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestAssassinationMutilate-Phase5-StatWeights-Default"
  value: {
-  weights: 0.3289
-  weights: 0.62708
+  weights: 0.32886
+  weights: 0.62919
   weights: 0
   weights: 0
   weights: 0
@@ -67,9 +67,9 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.26
-  weights: 7.71183
-  weights: 3.6947
+  weights: 0.25997
+  weights: 7.65794
+  weights: 3.52591
   weights: 0
   weights: 0
   weights: 0
@@ -99,175 +99,175 @@ stat_weights_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 887.80267
-  tps: 630.3399
+  dps: 897.02157
+  tps: 636.88531
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 943.6391
-  tps: 668.13213
+  dps: 953.95774
+  tps: 675.45837
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 825.74053
-  tps: 586.27578
+  dps: 836.6612
+  tps: 594.02945
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 881.24208
-  tps: 625.68188
+  dps: 891.55786
+  tps: 633.00608
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 889.19032
-  tps: 631.32513
+  dps: 900.37304
+  tps: 639.26486
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 842.52651
-  tps: 598.19382
+  dps: 853.19102
+  tps: 605.76563
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 858.37713
-  tps: 609.44776
+  dps: 868.77507
+  tps: 616.8303
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 825.74053
-  tps: 586.27578
+  dps: 836.6612
+  tps: 594.02945
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 846.73827
-  tps: 601.18418
+  dps: 857.39448
+  tps: 608.75008
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 839.46986
-  tps: 596.0236
+  dps: 848.94578
+  tps: 602.7515
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 858.37713
-  tps: 609.44776
+  dps: 868.77507
+  tps: 616.8303
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Average-Default"
  value: {
-  dps: 838.1327
-  tps: 595.07421
+  dps: 848.61408
+  tps: 602.516
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 184.54325
-  tps: 131.02571
+  dps: 186.27019
+  tps: 132.25184
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 184.54325
-  tps: 131.02571
+  dps: 186.27019
+  tps: 132.25184
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 198.02317
-  tps: 140.59645
+  dps: 199.93576
+  tps: 141.95439
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 81.87773
-  tps: 58.13319
+  dps: 82.18176
+  tps: 58.34905
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 81.87773
-  tps: 58.13319
+  dps: 82.18176
+  tps: 58.34905
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 90.50869
-  tps: 64.26117
+  dps: 90.92543
+  tps: 64.55706
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 184.38005
-  tps: 130.90983
+  dps: 186.133
+  tps: 132.15443
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 184.38005
-  tps: 130.90983
+  dps: 186.133
+  tps: 132.15443
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 198.48196
-  tps: 140.92219
+  dps: 200.47984
+  tps: 142.34069
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 82.49016
-  tps: 58.56801
+  dps: 82.77895
+  tps: 58.77306
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 82.49016
-  tps: 58.56801
+  dps: 82.77895
+  tps: 58.77306
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 91.4007
-  tps: 64.8945
+  dps: 91.81744
+  tps: 65.19038
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 655.63465
-  tps: 465.5006
+  dps: 665.42388
+  tps: 472.45095
  }
 }

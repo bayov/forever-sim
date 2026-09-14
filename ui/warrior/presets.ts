@@ -138,7 +138,6 @@ export const DefaultDebuffs = Debuffs.create({
 	exposeArmor: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
 	giftOfArthas: true,
-	improvedScorch: true,
 	sunderArmor: true,
 });
 

@@ -29,17 +29,36 @@ func (spell *Spell) OutcomeAlwaysMiss(_ *Simulation, result *SpellResult, _ *Att
 }
 
 func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
-	if dot.canCrit(sim) {
-		dot.OutcomeSnapshotCrit(sim, result, attackTable)
+	isPartialResist := result.DidResist()
+
+	if dot.canCrit(sim) && dot.critCheck(sim, result.Target, attackTable) {
+		result.Outcome = OutcomeCrit
+		result.Damage *= dot.Spell.CritMultiplier(attackTable)
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
+		if isPartialResist {
+			dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
+		}
 		return
 	}
 
-	isPartialResist := result.DidResist()
 	result.Outcome = OutcomeHit
 	dot.Spell.SpellMetrics[result.Target.UnitIndex].Ticks++
 	if isPartialResist {
 		dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedTicks++
 	}
+}
+
+// Dots that roll to hit on every tick instead of once on application need the hit check
+// in front of the shared tick outcome.
+func (dot *Dot) OutcomeMagicHitAndTick(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	if !dot.Spell.MagicHitCheck(sim, attackTable) {
+		result.Outcome = OutcomeMiss
+		result.Damage = 0
+		dot.Spell.SpellMetrics[result.Target.UnitIndex].Misses++
+		return
+	}
+
+	dot.OutcomeTick(sim, result, attackTable)
 }
 
 func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {

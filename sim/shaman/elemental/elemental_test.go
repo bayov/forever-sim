@@ -23,7 +23,7 @@ func TestElemental(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "phase_1"),
 			Rotation:    core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 
@@ -42,7 +42,7 @@ func TestElemental(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "phase_2"),
 			Rotation:    core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase2Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 
@@ -61,7 +61,7 @@ func TestElemental(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "phase_3"),
 			Rotation:    core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase2Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 
@@ -80,7 +80,7 @@ func TestElemental(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "phase_4"),
 			Rotation:    core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase2Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 
@@ -99,7 +99,7 @@ func TestElemental(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "phase_5"),
 			Rotation:    core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase5Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 
@@ -118,7 +118,7 @@ func TestElemental(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "phase_6"),
 			Rotation:    core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase5Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 

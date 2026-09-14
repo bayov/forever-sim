@@ -30,6 +30,7 @@ func (druid *Druid) registerHurricaneSpell() {
 		spell := druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: rank.spellID},
 			SpellSchool: core.SpellSchoolNature,
+			DefenseType: core.DefenseTypeMagic,
 			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagOmen | core.SpellFlagChanneled | core.SpellFlagBinary | core.SpellFlagAPL,
 

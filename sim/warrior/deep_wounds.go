@@ -22,6 +22,7 @@ func (warrior *Warrior) applyDeepWounds() {
 		SpellCode:   SpellCode_WarriorDeepWounds,
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
+		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 

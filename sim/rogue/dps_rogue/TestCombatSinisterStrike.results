@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestCombatSinisterStrike-Phase5-StatWeights-Default"
  value: {
-  weights: 0.4326
-  weights: 0.52955
+  weights: 0.43276
+  weights: 0.54042
   weights: 0
   weights: 0
   weights: 0
@@ -67,9 +67,9 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.34198
-  weights: 12.76697
-  weights: 3.33209
+  weights: 0.3421
+  weights: 13.08184
+  weights: 3.29755
   weights: 0
   weights: 0
   weights: 0
@@ -99,85 +99,85 @@ stat_weights_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 1060.64296
-  tps: 753.0565
+  dps: 1056.87233
+  tps: 750.37935
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 1179.10281
-  tps: 817.51748
+  dps: 1178.39183
+  tps: 817.03768
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 979.53179
-  tps: 695.46757
+  dps: 979.59749
+  tps: 695.51421
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 1065.08625
-  tps: 756.21123
+  dps: 1064.04698
+  tps: 755.47335
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 1074.00363
-  tps: 762.54257
+  dps: 1073.91938
+  tps: 762.48276
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 1000.00939
-  tps: 710.00667
+  dps: 998.03161
+  tps: 708.60244
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 1028.93232
-  tps: 730.54195
+  dps: 1031.12052
+  tps: 732.09557
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 979.53179
-  tps: 695.46757
+  dps: 979.59749
+  tps: 695.51421
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 1007.46103
-  tps: 715.29733
+  dps: 1005.86823
+  tps: 714.16645
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 1003.53345
-  tps: 712.50875
+  dps: 1002.98635
+  tps: 712.12031
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 1028.93232
-  tps: 730.54195
+  dps: 1031.12052
+  tps: 732.09557
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Average-Default"
  value: {
-  dps: 1000.94564
-  tps: 710.6714
+  dps: 1000.7715
+  tps: 710.54777
  }
 }
 dps_results: {
@@ -267,7 +267,7 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 788.18472
-  tps: 559.61115
+  dps: 787.6916
+  tps: 559.26103
  }
 }

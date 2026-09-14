@@ -60,6 +60,7 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 	return core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellId},
 		SpellSchool: core.SpellSchoolFrost,
+		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagMage | core.SpellFlagChanneled | core.SpellFlagAPL,
 

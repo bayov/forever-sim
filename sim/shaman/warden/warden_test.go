@@ -22,7 +22,7 @@ func TestWardenShaman(t *testing.T) {
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/warden_shaman/gear_sets", "blank"),
 			Rotation:    core.GetAplRotation("../../../ui/warden_shaman/apls", "default"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsBasic},
 
