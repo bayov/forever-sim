@@ -19,6 +19,7 @@ What this repo's sim models of Forever as of 2026-09-14, and what it assumes whe
 | Stormstrike | Not consumed by Nature hits, lasts its full duration. | Spellbook transcription |
 | Personal debuffs | Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill are no longer raid debuffs in the test suites and presets. | Talent transcriptions |
 | Windfury | The sim already models Windfury Totem as a main hand only proc that cannot be combined with a shaman's own main hand Windfury Weapon, which is what Forever says. | Spellbook transcription |
+| Faction buffs | Paladin blessings and Shaman totems (including Windfury Totem) apply to every race. Classic gated blessings to Alliance and totems to Horde. | Dwarf Shaman and Undead Paladin exist, so both factions have both classes |
 
 ## Racials
 
@@ -61,4 +62,4 @@ All gear is Classic gear with Classic stats, so Classic phase presets are what y
 
 ## Comparing races
 
-Within a faction the racials are the only difference. Across factions the buffs differ too (Horde gets Windfury Totem and Strength of Earth, Alliance gets Blessings), so a Horde vs Alliance number is a buff comparison as much as a racial one. The default APLs cast Blood Fury only in the last 20 sec of a fight (Classic timing), so Orc looks weaker than it would with Blood Fury on cooldown.
+Racials are the only difference between races, since both factions have blessings and totems. The default APLs cast Blood Fury only in the last 20 sec of a fight (Classic timing), so Orc looks weaker than it would with Blood Fury on cooldown.

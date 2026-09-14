@@ -8,6 +8,7 @@ import {
 	ErrorOutcomeType,
 	Player as PlayerProto,
 	PlayerStats,
+	Ruleset,
 	SpellStats as SpellStatsProto,
 	StatWeightsResult,
 	UnitMetadata as UnitMetadataProto,
@@ -584,6 +585,15 @@ export class Player<SpecType extends Spec> {
 
 	getFaction(): Faction {
 		return raceToFaction[this.getRace()];
+	}
+
+	// Whether a faction's class buffs (Paladin blessings, Shaman totems, Windfury)
+	// can reach this player.
+	//
+	// In Classic that follows the race. Forever has Paladins and Shamans on both sides,
+	// so every raid has both and the race no longer matters.
+	hasFactionBuffs(faction: Faction): boolean {
+		return this.sim.getRuleset() === Ruleset.RulesetForever || this.getFaction() === faction;
 	}
 
 	getBuffs(): IndividualBuffs {

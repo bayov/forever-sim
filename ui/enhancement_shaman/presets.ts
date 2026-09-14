@@ -125,6 +125,8 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
+	blessingOfKings: true,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
 	fengusFerocity: true,
 	moldarsMoxie: true,
 	rallyingCryOfTheDragonslayer: true,

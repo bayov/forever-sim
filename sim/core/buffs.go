@@ -221,6 +221,12 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 	character := agent.GetCharacter()
 	isAlliance := playerFaction == proto.Faction_Alliance
 	isHorde := playerFaction == proto.Faction_Horde
+	// Forever has Paladins and Shamans on both sides (Dwarf Shaman, Undead Paladin), so
+	// blessings and totems reach every raid. The faction only decides which races you
+	// can pick.
+	if character.Env.IsForever() {
+		isAlliance, isHorde = true, true
+	}
 	bonusResist := float64(0)
 
 	if raidBuffs.ArcaneBrilliance {

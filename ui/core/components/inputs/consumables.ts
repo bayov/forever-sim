@@ -76,7 +76,7 @@ function makeConsumeInputFactory<T extends number>(
 			equals: (a: T, b: T) => a == b,
 			zeroValue: 0 as T,
 			changedEvent: (player: Player<any>) =>
-				TypedEvent.onAny([player.consumesChangeEmitter, player.gearChangeEmitter, player.professionChangeEmitter, player.raceChangeEmitter]),
+				TypedEvent.onAny([player.consumesChangeEmitter, player.gearChangeEmitter, player.professionChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 			showWhen: (player: Player<any>) => !args.showWhen || args.showWhen(player),
 			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
@@ -823,7 +823,7 @@ export const Windfury: ConsumableInputConfig<WeaponImbue> = {
 	actionId: () => ActionId.fromSpellId(10614),
 	value: WeaponImbue.Windfury,
 	showWhen: player => {
-		return (player.getFaction() === Faction.Horde) && !player.isSpec(Spec.SpecFeralDruid)
+		return (player.hasFactionBuffs(Faction.Horde)) && !player.isSpec(Spec.SpecFeralDruid)
 	},
 };
 

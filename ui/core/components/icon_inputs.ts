@@ -42,7 +42,7 @@ export function makeBooleanRaidBuffInput<SpecType extends Spec>(
 			getValue: (player: Player<SpecType>) => player.getRaid()!.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
 			changeEmitter: (player: Player<SpecType>) =>
-				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter]),
+				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.fieldName,
@@ -67,7 +67,7 @@ export function makeBooleanIndividualBuffInput<SpecType extends Spec>(
 			showWhen: (player: Player<SpecType>) => !config.showWhen || config.showWhen(player),
 			getValue: (player: Player<SpecType>) => player.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
-			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter]),
+			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.fieldName,
@@ -144,7 +144,7 @@ export function makeBooleanDebuffInput<SpecType extends Spec>(
 			getValue: (player: Player<SpecType>) => player.getRaid()!.getDebuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: Debuffs) => player.getRaid()!.setDebuffs(eventID, newVal),
 			changeEmitter: (player: Player<SpecType>) =>
-				TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter, player.raceChangeEmitter]),
+				TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.fieldName,
@@ -169,7 +169,7 @@ export function makeTristateRaidBuffInput<SpecType extends Spec>(
 			getValue: (player: Player<SpecType>) => player.getRaid()!.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
 			changeEmitter: (player: Player<SpecType>) =>
-				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter]),
+				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.impId,
@@ -186,7 +186,7 @@ export function makeTristateIndividualBuffInput<SpecType extends Spec>(
 			showWhen: (player: Player<SpecType>) => !config.showWhen || config.showWhen(player),
 			getValue: (player: Player<SpecType>) => player.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
-			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter]),
+			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.impId,
@@ -235,11 +235,11 @@ export function makeMultistateRaidBuffInput<SpecType extends Spec>(
 	return InputHelpers.makeMultistateIconInput<any, RaidBuffs, Player<SpecType>>(
 		{
 			getModObject: (player: Player<SpecType>) => player,
-			showWhen: (player: Player<SpecType>) => !config.faction || config.faction == player.getFaction(),
+			showWhen: (player: Player<SpecType>) => !config.faction || player.hasFactionBuffs(config.faction),
 			getValue: (player: Player<SpecType>) => player.getRaid()!.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
 			changeEmitter: (player: Player<SpecType>) =>
-				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter]),
+				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.numStates,
@@ -254,11 +254,11 @@ export function makeMultistatePartyBuffInput<SpecType extends Spec>(
 	return InputHelpers.makeMultistateIconInput<any, PartyBuffs, Player<SpecType>>(
 		{
 			getModObject: (player: Player<SpecType>) => player,
-			showWhen: (player: Player<SpecType>) => !config.faction || config.faction == player.getFaction(),
+			showWhen: (player: Player<SpecType>) => !config.faction || player.hasFactionBuffs(config.faction),
 			getValue: (player: Player<SpecType>) => player.getParty()!.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: PartyBuffs) => player.getParty()!.setBuffs(eventID, newVal),
 			changeEmitter: (player: Player<SpecType>) =>
-				TypedEvent.onAny([player.getParty()!.buffsChangeEmitter, player.raceChangeEmitter]),
+				TypedEvent.onAny([player.getParty()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.numStates,
@@ -273,10 +273,10 @@ export function makeMultistateIndividualBuffInput<SpecType extends Spec>(
 	return InputHelpers.makeMultistateIconInput<any, IndividualBuffs, Player<SpecType>>(
 		{
 			getModObject: (player: Player<SpecType>) => player,
-			showWhen: (player: Player<SpecType>) => !config.faction || config.faction == player.getFaction(),
+			showWhen: (player: Player<SpecType>) => !config.faction || player.hasFactionBuffs(config.faction),
 			getValue: (player: Player<SpecType>) => player.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
-			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter]),
+			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.numStates,
@@ -328,7 +328,7 @@ export function makeEnumIndividualBuffInput<SpecType extends Spec>(
 			showWhen: (player: Player<SpecType>) => !config.showWhen || config.showWhen(player),
 			getValue: (player: Player<SpecType>) => player.getBuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
-			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter]),
+			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.fieldName,
 		config.values,
