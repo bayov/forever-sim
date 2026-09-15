@@ -164,3 +164,23 @@ func prepull(spell *proto.ActionID, secondsBefore float64) *proto.APLPrepullActi
 func spellCurrentCost(spell *proto.ActionID) value {
 	return &proto.APLValue{Value: &proto.APLValue_SpellCurrentCost{SpellCurrentCost: &proto.APLValueSpellCurrentCost{SpellId: spell}}}
 }
+
+// targetAuraIsActive checks a debuff the player put on the current target.
+func targetAuraIsActive(aura *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_AuraIsActive{AuraIsActive: &proto.APLValueAuraIsActive{
+		SourceUnit: &proto.UnitReference{Type: proto.UnitReference_CurrentTarget},
+		AuraId:     aura,
+	}}}
+}
+
+func dotIsActive(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_DotIsActive{DotIsActive: &proto.APLValueDotIsActive{SpellId: spell}}}
+}
+
+func dotRemainingTime(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_DotRemainingTime{DotRemainingTime: &proto.APLValueDotRemainingTime{SpellId: spell}}}
+}
+
+func auraNumStacks(aura *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_AuraNumStacks{AuraNumStacks: &proto.APLValueAuraNumStacks{AuraId: aura}}}
+}

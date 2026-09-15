@@ -35,6 +35,8 @@ func main() {
 	confidence := flag.Float64("confidence", 2, "standard errors of gain a knob change must show to be kept")
 	knobsFlag := flag.String("knobs", "", "starting knob values, name=value,...")
 	race := flag.String("race", "", "override the player's race, e.g. Gnome")
+	talents := flag.String("talents", "", "override the player's talent string")
+	talentSearch := flag.Bool("talent-search", false, "search the talent tree with the starting knobs instead of the knobs (prints the best talent string)")
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
 	outDir := flag.String("out", "", "directory to write <name>[_<dur>s].apl.json into")
 	outName := flag.String("name", "", "file name base for -out, defaults to the template name")
@@ -66,6 +68,9 @@ func main() {
 	if *race != "" {
 		setup.player().Race = proto.Race(proto.Race_value["Race"+*race])
 	}
+	if *talents != "" {
+		setup.player().TalentsString = *talents
+	}
 
 	start := defaultKnobs(template)
 	if *knobsFlag != "" {
@@ -87,6 +92,27 @@ func main() {
 
 	if *timeline {
 		fmt.Print(setup.timeline(template.Build(start), durations[0]))
+		return
+	}
+
+	if *talentSearch {
+		class := strings.ToLower(strings.TrimPrefix(setup.player().Class.String(), "Class"))
+		trees, err := loadTalentTrees(class)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "loading talent trees: %v\n", err)
+			os.Exit(2)
+		}
+		s := &searcher{
+			setup: setup, template: template, durations: durations,
+			iterations: int32(*iterations), confidence: *confidence, cache: map[string]result{},
+		}
+		best, _ := s.searchTalents(trees, setup.player().TalentsString, start)
+		confirm := &searcher{
+			setup: setup, template: template, durations: durations,
+			iterations: int32(*confirmIterations), cache: map[string]result{},
+		}
+		setup.talents = best
+		fmt.Printf("%gs: %s\n  talents %s\n  sim runs %d\n", durations, confirm.score(start), best, s.evals)
 		return
 	}
 

@@ -289,8 +289,11 @@ func (rogue *Rogue) applyCutthroat() {
 	// TODO: Only rank 1 was seen, the proc chance is assumed to scale linearly. Beta will confirm.
 	procChance := 0.03 * float64(rogue.Talents.Cutthroat)
 
+	// The proc has no spell id of its own in the data yet, so it gets a placeholder in the
+	// range the other Forever additions use. A rotation needs an id to check for the buff.
 	rogue.CutthroatAura = rogue.RegisterAura(core.Aura{
 		Label:    "Cutthroat",
+		ActionID: core.ActionID{SpellID: 460534},
 		Duration: time.Second * 10,
 	})
 
@@ -321,6 +324,7 @@ func (rogue *Rogue) applyThousandCuts() {
 	var affectedSpells []*core.Spell
 	rogue.ThousandCutsAura = rogue.RegisterAura(core.Aura{
 		Label:     "Thousand Cuts",
+		ActionID:  core.ActionID{SpellID: 460535},
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {

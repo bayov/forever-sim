@@ -29,7 +29,7 @@ func (s *searcher) score(knobs Knobs) result {
 	rot := s.template.Build(knobs)
 	var sum, variance float64
 	for _, d := range s.durations {
-		key := fmt.Sprintf("%g|%s", d, knobs)
+		key := fmt.Sprintf("%s|%g|%s", s.setup.talents, d, knobs)
 		r, ok := s.cache[key]
 		if !ok {
 			var err error

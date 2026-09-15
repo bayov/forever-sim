@@ -55,6 +55,7 @@ type Template interface {
 
 var templates = map[string]Template{
 	"rogue_ss": rogueSS{},
+	"rogue_bs": rogueBS{},
 }
 
 func defaultKnobs(t Template) Knobs {

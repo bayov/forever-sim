@@ -19,6 +19,8 @@ import (
 // and fight length are replaced per run.
 type setup struct {
 	request *proto.RaidSimRequest
+	// talents replaces the player's talent string when set. The talent search moves it.
+	talents string
 }
 
 func loadSetup(path string) (*setup, error) {
@@ -56,6 +58,15 @@ func (s *setup) player() *proto.Player {
 	return s.request.Raid.Parties[0].Players[0]
 }
 
+// A copy of the request with the talent override applied, for one run to fill in.
+func (s *setup) clone() *proto.RaidSimRequest {
+	request := goproto.Clone(s.request).(*proto.RaidSimRequest)
+	if s.talents != "" {
+		request.Raid.Parties[0].Players[0].TalentsString = s.talents
+	}
+	return request
+}
+
 type result struct {
 	dps    float64
 	stderr float64
@@ -68,7 +79,7 @@ func (r result) String() string {
 // One sim run. The random seed is fixed so two rotations see the same crit rolls and
 // the difference between them is far less noisy than either number alone.
 func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) (result, error) {
-	request := goproto.Clone(s.request).(*proto.RaidSimRequest)
+	request := s.clone()
 	request.Raid.Parties[0].Players[0].Rotation = rot
 	request.Encounter.Duration = duration
 	request.SimOptions.Iterations = iterations
@@ -85,7 +96,7 @@ func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) 
 // One logged iteration, reduced to the casts that are not the filler: cooldowns, items
 // and finishers. For eyeballing whether a rotation does what its knobs say.
 func (s *setup) timeline(rot *proto.APLRotation, duration float64) string {
-	request := goproto.Clone(s.request).(*proto.RaidSimRequest)
+	request := s.clone()
 	request.Raid.Parties[0].Players[0].Rotation = rot
 	request.Encounter.Duration = duration
 	request.Encounter.DurationVariation = 0
@@ -93,12 +104,26 @@ func (s *setup) timeline(rot *proto.APLRotation, duration float64) string {
 	request.SimOptions.RandomSeed = 1
 	request.SimOptions.Debug = true
 
+	var b strings.Builder
+	// The rotation's own warnings first: a line for a spell the build does not have is
+	// dropped, and it should be clear which ones were.
+	stats := core.ComputeStats(&proto.ComputeStatsRequest{Raid: request.Raid, Encounter: request.Encounter, Ruleset: request.SimOptions.Ruleset})
+	if stats.RaidStats != nil {
+		for i, item := range stats.RaidStats.Parties[0].Players[0].RotationStats.PriorityList {
+			for _, w := range item.Warnings {
+				fmt.Fprintf(&b, "line %d: %s\n", i+1, w)
+			}
+		}
+	}
+
 	res := core.RunRaidSim(request)
 	if res.Error != nil {
 		return "sim failed: " + res.Error.Message
 	}
+	if os.Getenv("ROTOPT_FULL_LOG") != "" {
+		return b.String() + res.Logs
+	}
 	filler := regexp.MustCompile(`OtherID|SpellID: (11294|11340|25347|15851|13218)[,}]`)
-	var b strings.Builder
 	for _, line := range strings.Split(res.Logs, "\n") {
 		if strings.Contains(line, "] Casting {") && !filler.MatchString(line) {
 			b.WriteString(line[:strings.Index(line, " (Cost")] + "\n")
