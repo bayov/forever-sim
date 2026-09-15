@@ -996,6 +996,7 @@ func makeHealthConsumableMCD(itemId int32, character *Character, cdTimer *Timer)
 
 func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) MajorCooldown {
 	minRoll := map[int32]float64{
+		3385:  270.0,
 		3827:  455.0,
 		6149:  700.0,
 		4381:  150.0,
@@ -1005,6 +1006,7 @@ func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 	}[itemId]
 
 	maxRoll := map[int32]float64{
+		3385:  330.0,
 		3827:  585.0,
 		6149:  900.0,
 		4381:  250.0,
