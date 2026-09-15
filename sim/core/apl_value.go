@@ -157,6 +157,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellChanneledTicks(config.GetSpellChanneledTicks())
 	case *proto.APLValue_SpellCurrentCost:
 		return rot.newValueSpellCurrentCost(config.GetSpellCurrentCost())
+	case *proto.APLValue_SpellUsesRemaining:
+		return rot.newValueSpellUsesRemaining(config.GetSpellUsesRemaining())
+	case *proto.APLValue_SpellUsesLostByDelay:
+		return rot.newValueSpellUsesLostByDelay(config.GetSpellUsesLostByDelay())
 
 	// Auras
 	case *proto.APLValue_AuraIsKnown:

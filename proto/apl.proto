@@ -139,6 +139,8 @@ message APLValue {
         APLValueSpellIsChanneling spell_is_channeling = 56;
         APLValueSpellChanneledTicks spell_channeled_ticks = 57;
         APLValueSpellCurrentCost spell_current_cost = 62;
+        APLValueSpellUsesRemaining spell_uses_remaining = 78;
+        APLValueSpellUsesLostByDelay spell_uses_lost_by_delay = 79;
 
         // Aura values
         APLValueAuraIsKnown aura_is_known = 67;
@@ -461,6 +463,15 @@ message APLValueSpellChanneledTicks {
 }
 message APLValueSpellCurrentCost {
     ActionID spell_id = 1;
+}
+message APLValueSpellUsesRemaining {
+    ActionID spell_id = 1;
+    APLValue min_time_left = 2;
+}
+message APLValueSpellUsesLostByDelay {
+    ActionID spell_id = 1;
+    APLValue delay = 2;
+    APLValue min_time_left = 3;
 }
 
 message APLValueAuraIsKnown {

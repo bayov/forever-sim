@@ -276,3 +276,107 @@ func (value *APLValueSpellCurrentCost) GetFloat(_ *Simulation) float64 {
 func (value *APLValueSpellCurrentCost) String() string {
 	return fmt.Sprintf("CurrentCost(%s)", value.spell.ActionID)
 }
+
+// Casts of a cooldown that still fit in the fight when the next one waits at least delay
+// and every one after it goes out the moment it is ready. A cast only counts when it
+// lands with minTimeLeft of fight still to go, so a 15s buff can ask for 15s and not
+// count a cast that would run past the end.
+//
+// The live cooldown timer is the estimate for the next cast. It only knows about
+// reductions that already happened, so with Restless Blades the count is pessimistic
+// early in the fight and settles as the cooldown gets closer.
+func spellUsesRemaining(sim *Simulation, spell *Spell, delay time.Duration, minTimeLeft time.Duration) int32 {
+	cooldown := spell.CdSpell.CD.Duration
+	if cooldown == 0 {
+		cooldown = spell.CdSpell.SharedCD.Duration
+	}
+	firstCast := max(spell.TimeToReady(sim), delay)
+	window := sim.GetRemainingDuration() - minTimeLeft - firstCast
+	if window < 0 {
+		return 0
+	}
+	return 1 + int32(window/cooldown)
+}
+
+func (rot *APLRotation) getCooldownSpell(spellId *proto.ActionID) *Spell {
+	spell := rot.GetAPLSpell(spellId)
+	if spell == nil {
+		return nil
+	}
+	if spell.CdSpell.CD.Duration == 0 && spell.CdSpell.SharedCD.Duration == 0 {
+		rot.ValidationWarning("%s has no cooldown, so it has no number of uses", spell.ActionID)
+		return nil
+	}
+	return spell
+}
+
+func (rot *APLRotation) durationValueOrZero(config *proto.APLValue) APLValue {
+	value := rot.coerceTo(rot.newAPLValue(config), proto.APLValueType_ValueTypeDuration)
+	if value == nil {
+		value = rot.newValueConst(&proto.APLValueConst{Val: "0s"})
+	}
+	return value
+}
+
+type APLValueSpellUsesRemaining struct {
+	DefaultAPLValueImpl
+	spell       *Spell
+	minTimeLeft APLValue
+}
+
+func (rot *APLRotation) newValueSpellUsesRemaining(config *proto.APLValueSpellUsesRemaining) APLValue {
+	spell := rot.getCooldownSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellUsesRemaining{
+		spell:       spell,
+		minTimeLeft: rot.durationValueOrZero(config.MinTimeLeft),
+	}
+}
+func (value *APLValueSpellUsesRemaining) GetInnerValues() []APLValue {
+	return []APLValue{value.minTimeLeft}
+}
+func (value *APLValueSpellUsesRemaining) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeInt
+}
+func (value *APLValueSpellUsesRemaining) GetInt(sim *Simulation) int32 {
+	return spellUsesRemaining(sim, value.spell, 0, value.minTimeLeft.GetDuration(sim))
+}
+func (value *APLValueSpellUsesRemaining) String() string {
+	return fmt.Sprintf("Uses Remaining(%s)", value.spell.ActionID)
+}
+
+// How many casts of a cooldown are lost by holding it for delay. Zero means the hold is
+// free, which is the test for lining a short cooldown up with a longer one.
+type APLValueSpellUsesLostByDelay struct {
+	DefaultAPLValueImpl
+	spell       *Spell
+	delay       APLValue
+	minTimeLeft APLValue
+}
+
+func (rot *APLRotation) newValueSpellUsesLostByDelay(config *proto.APLValueSpellUsesLostByDelay) APLValue {
+	spell := rot.getCooldownSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellUsesLostByDelay{
+		spell:       spell,
+		delay:       rot.durationValueOrZero(config.Delay),
+		minTimeLeft: rot.durationValueOrZero(config.MinTimeLeft),
+	}
+}
+func (value *APLValueSpellUsesLostByDelay) GetInnerValues() []APLValue {
+	return []APLValue{value.delay, value.minTimeLeft}
+}
+func (value *APLValueSpellUsesLostByDelay) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeInt
+}
+func (value *APLValueSpellUsesLostByDelay) GetInt(sim *Simulation) int32 {
+	minTimeLeft := value.minTimeLeft.GetDuration(sim)
+	return spellUsesRemaining(sim, value.spell, 0, minTimeLeft) - spellUsesRemaining(sim, value.spell, value.delay.GetDuration(sim), minTimeLeft)
+}
+func (value *APLValueSpellUsesLostByDelay) String() string {
+	return fmt.Sprintf("Uses Lost By Delay(%s, %s)", value.spell.ActionID, value.delay)
+}

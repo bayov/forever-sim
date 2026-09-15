@@ -58,6 +58,8 @@ import {
 	APLValueSpellChanneledTicks,
 	APLValueSpellCPM,
 	APLValueSpellCurrentCost,
+	APLValueSpellUsesRemaining,
+	APLValueSpellUsesLostByDelay,
 	APLValueSpellIsChanneling,
 	APLValueSpellIsKnown,
 	APLValueSpellIsReady,
@@ -746,6 +748,72 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		shortDescription: 'Returns current resource cost of spell',
 		newValue: APLValueSpellCurrentCost.create,
 		fields: [AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', '')],
+	}),
+	spellUsesRemaining: inputBuilder({
+		label: 'Uses Remaining',
+		submenu: ['Spell'],
+		shortDescription: 'How many more casts of this cooldown fit before the fight ends, if it is used as soon as it is ready from now on.',
+		fullDescription: `
+			<p>A cast only counts when it happens with at least <b>Min Time Left</b> of fight remaining, so a 15 second buff can pass 15s and not count a cast that would run past the end.</p>
+			<p>The estimate comes from the live cooldown timer. Effects that shorten cooldowns as the fight goes (Restless Blades) are only counted once they have happened, so early in the fight the number can be one lower than what really fits.</p>
+		`,
+		newValue: () =>
+			APLValueSpellUsesRemaining.create({
+				minTimeLeft: {
+					value: {
+						oneofKind: 'const',
+						const: {
+							val: '0s',
+						},
+					},
+				},
+			}),
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+			valueFieldConfig('minTimeLeft', {
+				label: 'Min Time Left',
+				labelTooltip: 'A cast only counts if it happens with at least this much fight time left.',
+			}),
+		],
+	}),
+	spellUsesLostByDelay: inputBuilder({
+		label: 'Uses Lost By Delay',
+		submenu: ['Spell'],
+		shortDescription: 'How many casts of this cooldown are lost by holding it for <b>Delay</b>. <b>0</b> means the hold is free.',
+		fullDescription: `
+			<p>This is the test for lining a short cooldown up with a longer one. For example Blade Flurry can wait for Adrenaline Rush when <b>Uses Lost By Delay(Blade Flurry, Time To Ready(Adrenaline Rush)) == 0</b>.</p>
+			<p>Same counting rules as <b>Uses Remaining</b>.</p>
+		`,
+		newValue: () =>
+			APLValueSpellUsesLostByDelay.create({
+				delay: {
+					value: {
+						oneofKind: 'const',
+						const: {
+							val: '0s',
+						},
+					},
+				},
+				minTimeLeft: {
+					value: {
+						oneofKind: 'const',
+						const: {
+							val: '0s',
+						},
+					},
+				},
+			}),
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+			valueFieldConfig('delay', {
+				label: 'Delay',
+				labelTooltip: 'How long the cooldown would be held.',
+			}),
+			valueFieldConfig('minTimeLeft', {
+				label: 'Min Time Left',
+				labelTooltip: 'A cast only counts if it happens with at least this much fight time left.',
+			}),
+		],
 	}),
 	spellCanCast: inputBuilder({
 		label: 'Can Cast',

@@ -1,0 +1,146 @@
+package main
+
+import (
+	"strconv"
+
+	"github.com/wowsims/classic/sim/core/proto"
+)
+
+// Small builders for APL protos, so a rotation template reads like the condition it
+// expresses rather than like nested struct literals.
+
+type value = *proto.APLValue
+
+func constant(val string) value {
+	return &proto.APLValue{Value: &proto.APLValue_Const{Const: &proto.APLValueConst{Val: val}}}
+}
+
+func num(v float64) value {
+	return constant(strconv.FormatFloat(v, 'f', -1, 64))
+}
+
+func seconds(v float64) value {
+	return constant(strconv.FormatFloat(v, 'f', -1, 64) + "s")
+}
+
+// and drops nil operands, so a template can pass nil for a rule that is switched off.
+func and(vals ...value) value {
+	return &proto.APLValue{Value: &proto.APLValue_And{And: &proto.APLValueAnd{Vals: nonNil(vals)}}}
+}
+
+func or(vals ...value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Or{Or: &proto.APLValueOr{Vals: nonNil(vals)}}}
+}
+
+func nonNil(vals []value) []value {
+	var out []value
+	for _, v := range vals {
+		if v != nil {
+			out = append(out, v)
+		}
+	}
+	return out
+}
+
+func not(val value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Not{Not: &proto.APLValueNot{Val: val}}}
+}
+
+func cmp(lhs value, op proto.APLValueCompare_ComparisonOperator, rhs value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Cmp{Cmp: &proto.APLValueCompare{Op: op, Lhs: lhs, Rhs: rhs}}}
+}
+
+func ge(lhs, rhs value) value { return cmp(lhs, proto.APLValueCompare_OpGe, rhs) }
+func gt(lhs, rhs value) value { return cmp(lhs, proto.APLValueCompare_OpGt, rhs) }
+func le(lhs, rhs value) value { return cmp(lhs, proto.APLValueCompare_OpLe, rhs) }
+func lt(lhs, rhs value) value { return cmp(lhs, proto.APLValueCompare_OpLt, rhs) }
+func eq(lhs, rhs value) value { return cmp(lhs, proto.APLValueCompare_OpEq, rhs) }
+
+func add(lhs, rhs value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpAdd, Lhs: lhs, Rhs: rhs}}}
+}
+
+func comboPoints() value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentComboPoints{CurrentComboPoints: &proto.APLValueCurrentComboPoints{}}}
+}
+
+func energy() value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentEnergy{CurrentEnergy: &proto.APLValueCurrentEnergy{}}}
+}
+
+func timeToEnergyTick() value {
+	return &proto.APLValue{Value: &proto.APLValue_TimeToEnergyTick{TimeToEnergyTick: &proto.APLValueTimeToEnergyTick{}}}
+}
+
+func remainingTime() value {
+	return &proto.APLValue{Value: &proto.APLValue_RemainingTime{RemainingTime: &proto.APLValueRemainingTime{}}}
+}
+
+func auraIsActive(aura *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_AuraIsActive{AuraIsActive: &proto.APLValueAuraIsActive{AuraId: aura}}}
+}
+
+func auraRemainingTime(aura *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_AuraRemainingTime{AuraRemainingTime: &proto.APLValueAuraRemainingTime{AuraId: aura}}}
+}
+
+func spellIsReady(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellIsReady{SpellIsReady: &proto.APLValueSpellIsReady{SpellId: spell}}}
+}
+
+func spellTimeToReady(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellTimeToReady{SpellTimeToReady: &proto.APLValueSpellTimeToReady{SpellId: spell}}}
+}
+
+func spellUsesRemaining(spell *proto.ActionID, minTimeLeft value) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellUsesRemaining{SpellUsesRemaining: &proto.APLValueSpellUsesRemaining{SpellId: spell, MinTimeLeft: minTimeLeft}}}
+}
+
+func spellUsesLostByDelay(spell *proto.ActionID, delay value, minTimeLeft value) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellUsesLostByDelay{SpellUsesLostByDelay: &proto.APLValueSpellUsesLostByDelay{SpellId: spell, Delay: delay, MinTimeLeft: minTimeLeft}}}
+}
+
+func spellID(id int32) *proto.ActionID {
+	return &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: id}}
+}
+
+func spellIDRank(id int32, rank int32) *proto.ActionID {
+	return &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: id}, Rank: rank}
+}
+
+func spellIDTag(id int32, tag int32) *proto.ActionID {
+	return &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: id}, Tag: tag}
+}
+
+func itemID(id int32) *proto.ActionID {
+	return &proto.ActionID{RawId: &proto.ActionID_ItemId{ItemId: id}}
+}
+
+// cast is one priority list line. A nil condition means always.
+func cast(spell *proto.ActionID, condition value, notes string) *proto.APLListItem {
+	return &proto.APLListItem{
+		Notes: notes,
+		Action: &proto.APLAction{
+			Condition: condition,
+			Action:    &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: spell}},
+		},
+	}
+}
+
+func autocastOtherCooldowns(condition value, notes string) *proto.APLListItem {
+	return &proto.APLListItem{
+		Notes: notes,
+		Action: &proto.APLAction{
+			Condition: condition,
+			Action:    &proto.APLAction_AutocastOtherCooldowns{AutocastOtherCooldowns: &proto.APLActionAutocastOtherCooldowns{}},
+		},
+	}
+}
+
+func rotation(items ...*proto.APLListItem) *proto.APLRotation {
+	return &proto.APLRotation{Type: proto.APLRotation_TypeAPL, PriorityList: items}
+}
+
+func spellCurrentCost(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellCurrentCost{SpellCurrentCost: &proto.APLValueSpellCurrentCost{SpellId: spell}}}
+}
