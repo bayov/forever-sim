@@ -17,6 +17,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	SpellPowerBuff,
 	Stat,
 	StrengthBuff,
@@ -137,26 +138,45 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WindfuryWeapon,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
 	offHandImbue: WeaponImbue.WindfuryWeapon,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
+// The full raid the level 60 numbers were measured under (the same export the rogue
+// search used): a second shaman's totems, both paladin blessings, Judgement of Wisdom and
+// every debuff. Judgement of Wisdom alone is 60 DPS here because without it the shaman
+// is out of mana two minutes in.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
 	divineSpirit: true,
 	fireResistanceAura: true,
 	fireResistanceTotem: true,
+	frostResistanceAura: true,
+	frostResistanceTotem: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectImproved,
 	leaderOfThePack: true,
-	manaSpringTotem: TristateEffect.TristateEffectRegular,
+	manaSpringTotem: TristateEffect.TristateEffectImproved,
+	moonkinAura: true,
+	natureResistanceTotem: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	sanctityAura: true,
+	shadowProtection: true,
+	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	thorns: TristateEffect.TristateEffectImproved,
+	trueshotAura: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	fengusFerocity: false,
 	moldarsMoxie: false,
 	rallyingCryOfTheDragonslayer: false,
@@ -167,15 +187,28 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
+	curseOfElements: true,
 	curseOfRecklessness: true,
+	curseOfShadow: true,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
 	exposeArmor: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
+	insectSwarm: true,
+	judgementOfLight: true,
+	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
+	judgementOfWisdom: true,
+	scorpidSting: true,
+	stormstrike: true,
 	sunderArmor: true,
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
+// Engineering for the Goblin Sapper in the consumes (worth about 1 DPS).
 export const OtherDefaults = {
 	profession1: Profession.Alchemy,
-	profession2: Profession.Enchanting,
+	profession2: Profession.Engineering,
 	race: Race.RaceOrc,
 };
 
