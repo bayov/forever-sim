@@ -16,6 +16,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -43,6 +44,7 @@ func main() {
 	touchICD := flag.Duration("touch-icd", 0, "internal cooldown for the Undead Touch of the Grave racial (the tooltip has none), e.g. 10s")
 	talents := flag.String("talents", "", "override the player's talent string")
 	talentSearch := flag.Bool("talent-search", false, "search the talent tree with the starting knobs instead of the knobs (prints the best talent string)")
+	talentsFile := flag.String("talents-file", "", "score every talent string in this file (one per line) with the starting knobs, best first")
 	gearSearch := flag.Bool("gear-search", false, "search every slot over the items the player can equip at their level, with the starting knobs (prints the gear and writes it to -gear-out)")
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
 	gearQuality := flag.Int("gear-quality", 2, "lowest item quality the gear search considers (2 uncommon, 3 rare)")
@@ -170,6 +172,35 @@ func main() {
 				os.Exit(1)
 			}
 			fmt.Printf("  wrote %s\n", *gearOut)
+		}
+		return
+	}
+
+	if *talentsFile != "" {
+		data, err := os.ReadFile(*talentsFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "reading talents: %v\n", err)
+			os.Exit(2)
+		}
+		s := &searcher{
+			setup: setup, template: template, durations: durations,
+			iterations: int32(*iterations), cache: map[string]result{},
+		}
+		type scored struct {
+			talents string
+			result  result
+		}
+		var results []scored
+		for _, line := range strings.Split(string(data), "\n") {
+			if line = strings.TrimSpace(line); line == "" {
+				continue
+			}
+			setup.talents = line
+			results = append(results, scored{line, s.score(start)})
+		}
+		sort.Slice(results, func(i, j int) bool { return results[i].result.dps > results[j].result.dps })
+		for _, r := range results {
+			fmt.Printf("%s %s\n", r.result, r.talents)
 		}
 		return
 	}

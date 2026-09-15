@@ -138,14 +138,18 @@ export const CombatBackstabTalents = PresetUtils.makePresetTalents(
 export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents('Sinister Strike', SavedTalents.create({ talentsString: '00530310501-32003311201515231' }));
 export const CombatSinisterStrikeIEATalents = PresetUtils.makePresetTalents('Improved Expose Armor (SS)', SavedTalents.create({ talentsString: '005303125-32003311201515131' }));
 export const AssassinationMutilateTalents = PresetUtils.makePresetTalents('Mutilate', SavedTalents.create({ talentsString: '00530310551021051-302303202004' }));
-// The 11 points a level 20 has. Sinister Strike: Malice 5, Imp SnD 2, Murder 2, Imp SS 2.
-// Backstab: Malice 1, Imp Evis 3, Lightning Reflexes 2, Puncturing Wounds 3, Opportunity 2.
+// The 11 points a level 20 has. Sinister Strike: Malice 5, Imp SnD 2, Murder 2, Imp SS 2,
+// and without Murder (anything but Humanoids and Giants) the two points go to Ruthlessness
+// and Relentless Strikes instead. Backstab: Malice 1, Imp Evis 3, Lightning Reflexes 2,
+// Puncturing Wounds 3, Opportunity 2 (the best Backstab build has no Murder, five Combat
+// points are needed to reach Puncturing Wounds and nothing is left for row 2 of Assassination).
 export const Level20SinisterStrikeTalents = PresetUtils.makePresetTalents('Level 20 Sinister Strike', SavedTalents.create({ talentsString: '005022-02' }));
+export const Level20SinisterStrikeNoMurderTalents = PresetUtils.makePresetTalents('Level 20 Sinister Strike (no Murder)', SavedTalents.create({ talentsString: '0053021' }));
 export const Level20BackstabTalents = PresetUtils.makePresetTalents('Level 20 Backstab', SavedTalents.create({ talentsString: '001-3023-002' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents],
-	[Phase.Phase2]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents],
+	[Phase.Phase1]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents, Level20SinisterStrikeNoMurderTalents],
+	[Phase.Phase2]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents, Level20SinisterStrikeNoMurderTalents],
 };
 
 export const DefaultTalentsAssassin = TalentPresets[Phase.Phase2][0];
