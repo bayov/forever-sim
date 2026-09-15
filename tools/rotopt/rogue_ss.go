@@ -26,6 +26,7 @@ var (
 	berserking     = spellIDTag(26297, 2)
 	elunesLight    = spellID(460531)
 	eureka         = spellID(460532)
+	earthstrike    = itemID(21180)
 )
 
 // The 15 second buffs are only worth a cast when the fight lasts that long after it.
@@ -36,12 +37,15 @@ func (rogueSS) Knobs() []Knob {
 		{Name: "sndRefresh", Default: 3, Min: 1, Max: 9, Step: 2},
 		{Name: "arEnergy", Default: 59, Min: 39, Max: 99, Step: 10},
 		{Name: "arSnd", Default: 1, Min: 0, Max: 18, Step: 3},
-		{Name: "bfSnd", Default: 1, Min: 0, Max: 12, Step: 3},
+		{Name: "bfSnd", Default: 1, Min: 0, Max: 24, Step: 3},
 		{Name: "bfHoldForAr", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "cbSnd", Default: 6, Min: 0, Max: 12, Step: 3},
+		{Name: "cbSnd", Default: 6, Min: 0, Max: 24, Step: 3},
 		{Name: "eurekaSnd", Default: 8, Min: 0, Max: 12, Step: 2},
 		{Name: "teaEnergy", Default: 10, Min: 0, Max: 50, Step: 10},
+		{Name: "bloodFurySnd", Default: 0, Min: 0, Max: 24, Step: 4},
 		{Name: "bloodFuryHoldForAr", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "trinketSnd", Default: 0, Min: 0, Max: 24, Step: 4},
+		{Name: "trinketHoldForAr", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "eluneHoldForAr", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "berserkingHoldForBf", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "evisEnergy", Default: 79, Min: 59, Max: 99, Step: 10},
@@ -56,16 +60,31 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 		}
 		return ge(auraRemainingTime(sliceAndDice), seconds(secs))
 	}
-	// When the window wants a long Slice and Dice, a 5 point refresh goes out first so
-	// Adrenaline Rush is not waiting on a 1 point one to run out.
+	// When a cooldown wants a long Slice and Dice, a 5 point refresh goes out first so
+	// the cooldown is not waiting on a 1 point one to run out. Keep the knob at 0 for a
+	// cooldown the character does not have (Blood Fury on a Gnome, no Earthstrike), since
+	// the unknown spell drops out of its clause and only the Slice and Dice check is left.
+	var waiting []value
+	for _, w := range []struct {
+		spell *proto.ActionID
+		snd   float64
+	}{
+		{adrenalineRush, k["arSnd"]},
+		{bladeFlurry, k["bfSnd"]},
+		{bloodFury, k["bloodFurySnd"]},
+		{earthstrike, k["trinketSnd"]},
+	} {
+		if w.snd > 0 {
+			waiting = append(waiting, and(
+				spellIsReady(w.spell),
+				gt(spellUsesRemaining(w.spell, buffDuration), num(0)),
+				lt(auraRemainingTime(sliceAndDice), seconds(w.snd)),
+			))
+		}
+	}
 	var sndForWindow value
-	if k["arSnd"] > 0 {
-		sndForWindow = and(
-			ge(comboPoints(), num(5)),
-			spellIsReady(adrenalineRush),
-			gt(spellUsesRemaining(adrenalineRush, buffDuration), num(0)),
-			lt(auraRemainingTime(sliceAndDice), seconds(k["arSnd"])),
-		)
+	if len(waiting) > 0 {
+		sndForWindow = and(ge(comboPoints(), num(5)), or(waiting...))
 	}
 
 	// Enough for a full Eviscerate. Cold Blood and Eureka! wait for this.
@@ -109,7 +128,7 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 		cast(eureka, and(fivePointEviscerate, sndAtLeast(k["eurekaSnd"]), notRefreshing),
 			"Gnome. Eureka! buffs the next 3 abilities, so right before Eviscerate and the two builders after it. Other races can ignore the warning on this line."),
 
-		cast(bloodFury, holdFor(bloodFury, adrenalineRush, k["bloodFuryHoldForAr"] == 1),
+		cast(bloodFury, and(sndAtLeast(k["bloodFurySnd"]), holdFor(bloodFury, adrenalineRush, k["bloodFuryHoldForAr"] == 1)),
 			"Orc. Blood Fury waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line."),
 
 		cast(elunesLight, holdFor(elunesLight, adrenalineRush, k["eluneHoldForAr"] == 1),
@@ -117,6 +136,9 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 
 		cast(berserking, holdFor(berserking, bladeFlurry, k["berserkingHoldForBf"] == 1),
 			"Troll. Berserking is auto attack speed like Blade Flurry, so it goes on cooldown. Other races can ignore the warning on this line."),
+
+		cast(earthstrike, and(sndAtLeast(k["trinketSnd"]), holdFor(earthstrike, adrenalineRush, k["trinketHoldForAr"] == 1)),
+			"Earthstrike waits for Adrenaline Rush or a long Slice and Dice. Without the trinket ignore the warning on this line."),
 
 		cast(thistleTea, and(le(energy(), num(k["teaEnergy"])), gt(timeToEnergyTick(), seconds(1))),
 			"Thistle Tea when there is room for the 100 energy. Right after a tick, since the next one would go over the cap before the next ability spends any."),
