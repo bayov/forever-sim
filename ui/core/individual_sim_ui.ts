@@ -6,7 +6,13 @@ import * as IconInputs from './components/icon_inputs';
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
 import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualPawnEPExporter } from './components/individual_sim_ui/exporters';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
-import { Individual60UImporter, IndividualAddonImporter, IndividualJsonImporter, IndividualLinkImporter, IndividualTalentsImporter } from './components/individual_sim_ui/importers';
+import {
+	Individual60UImporter,
+	IndividualAddonImporter,
+	IndividualJsonImporter,
+	IndividualLinkImporter,
+	IndividualTalentsImporter,
+} from './components/individual_sim_ui/importers';
 import { ItemSwapConfig } from './components/individual_sim_ui/item_swap_picker';
 import { RotationTab } from './components/individual_sim_ui/rotation_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
@@ -15,7 +21,6 @@ import * as InputHelpers from './components/input_helpers';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
-import { MAX_TALENT_POINTS } from './constants/mechanics';
 import { GLOBAL_DISPLAY_PSEUDO_STATS, GLOBAL_DISPLAY_STATS, GLOBAL_EP_STATS } from './constants/other';
 import { SimSettingCategories } from './constants/sim_settings';
 import * as Tooltips from './constants/tooltips';
@@ -211,16 +216,19 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			},
 		});
 		this.addWarning({
-			updateOn: TypedEvent.onAny([this.player.talentsChangeEmitter]),
+			// The level and the extra talent points both move the cap, and both emit on the
+			// misc options emitter.
+			updateOn: TypedEvent.onAny([this.player.talentsChangeEmitter, this.player.miscOptionsChangeEmitter]),
 			getContent: () => {
 				const talentPoints = getTalentPoints(this.player.getTalentsString());
+				const maxTalentPoints = this.player.getMaxTalentPoints();
 
 				if (talentPoints == 0) {
 					// Just return here, so we don't show a warning during page load.
 					return '';
-				} else if (talentPoints < MAX_TALENT_POINTS) {
+				} else if (talentPoints < maxTalentPoints) {
 					return Tooltips.UNSPECT_TALENT_POINTS_WARNING;
-				} else if (talentPoints > MAX_TALENT_POINTS) {
+				} else if (talentPoints > maxTalentPoints) {
 					return Tooltips.TOO_MANY_TALENT_POINTS_WARNING;
 				} else {
 					return '';
