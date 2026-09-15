@@ -35,7 +35,8 @@ func main() {
 	knobsFlag := flag.String("knobs", "", "starting knob values, name=value,...")
 	race := flag.String("race", "", "override the player's race, e.g. Gnome")
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
-	outDir := flag.String("out", "", "directory to write <template>[_<dur>s].apl.json into")
+	outDir := flag.String("out", "", "directory to write <name>[_<dur>s].apl.json into")
+	outName := flag.String("name", "", "file name base for -out, defaults to the template name")
 	timeline := flag.Bool("timeline", false, "print one iteration's cooldown and finisher casts for the starting knobs at the first fight length, no search")
 	flag.Parse()
 
@@ -111,7 +112,11 @@ func main() {
 		fmt.Printf("  start %s\n  best  %s\n  sim runs %d\n", confirm.score(start), best, s.evals)
 
 		if *outDir != "" {
-			path := filepath.Join(*outDir, *templateName+j.suffix+".apl.json")
+			name := *outName
+			if name == "" {
+				name = *templateName
+			}
+			path := filepath.Join(*outDir, name+j.suffix+".apl.json")
 			if err := os.WriteFile(path, []byte(rotationJSON(template.Build(best))), 0644); err != nil {
 				fmt.Fprintf(os.Stderr, "writing %s: %v\n", path, err)
 				os.Exit(1)

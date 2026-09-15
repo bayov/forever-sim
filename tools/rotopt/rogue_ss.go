@@ -61,9 +61,10 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 		return ge(auraRemainingTime(sliceAndDice), seconds(secs))
 	}
 	// When a cooldown wants a long Slice and Dice, a 5 point refresh goes out first so
-	// the cooldown is not waiting on a 1 point one to run out. Keep the knob at 0 for a
-	// cooldown the character does not have (Blood Fury on a Gnome, no Earthstrike), since
-	// the unknown spell drops out of its clause and only the Slice and Dice check is left.
+	// the cooldown is not waiting on a 1 point one to run out. The Slice and Dice check
+	// goes through the spell's time to ready (zero once it is ready) so that a cooldown the
+	// character does not have (Blood Fury on a Gnome, no Earthstrike) takes its whole
+	// clause out instead of leaving a bare Slice and Dice check behind.
 	var waiting []value
 	for _, w := range []struct {
 		spell *proto.ActionID
@@ -78,7 +79,7 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 			waiting = append(waiting, and(
 				spellIsReady(w.spell),
 				gt(spellUsesRemaining(w.spell, buffDuration), num(0)),
-				lt(auraRemainingTime(sliceAndDice), seconds(w.snd)),
+				lt(add(auraRemainingTime(sliceAndDice), spellTimeToReady(w.spell)), seconds(w.snd)),
 			))
 		}
 	}
