@@ -102,9 +102,11 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // The talent search's best on the Phase 2 gear (tools/rotopt -talent-search). Elemental
 // Fury (+100% spell crit damage) is worth 25 DPS over Convection, Reverberation 26 over
 // Convection, Shamanistic Focus 43, Rage of the Farseer 24, Mental Quickness 11.
-// Improved Stormstrike measured nothing (the boss never dodges or parries a shaman it
-// is not facing, and mana does not run out), so its points went to Ancestral Knowledge.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05052305-055030031005102051' }));
+// Improved Stormstrike is the mana talent: with no Mana Spring the shaman is dry at five
+// minutes, and its two points (taken from Ancestral Knowledge) cost 2 DPS in a 4 minute
+// fight and gain 6 at 8 minutes and 12 at 10. The dodge/parry reset half never fires on
+// a boss the shaman is behind.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05052305-053030031005102251' }));
 export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '-050030201' }));
 
 export const TalentPresets = {
@@ -144,10 +146,11 @@ export const DefaultConsumes = Consumes.create({
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
-// The full raid the level 60 numbers were measured under (the same export the rogue
-// search used): a second shaman's totems, both paladin blessings, Judgement of Wisdom and
-// every debuff. Judgement of Wisdom alone is 60 DPS here because without it the shaman
-// is out of mana two minutes in.
+// The raid the level 60 numbers were measured under (the rogue search's export minus
+// the totems): both paladin blessings, Judgement of Wisdom and every debuff, but no
+// second shaman in the group, so the player's own Strength of Earth and Grace of Air
+// are what the rotation casts and there is no Mana Spring. Judgement of Wisdom alone is
+// 60 DPS here because without it the shaman is out of mana two minutes in.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -155,20 +158,14 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	devotionAura: TristateEffect.TristateEffectImproved,
 	divineSpirit: true,
 	fireResistanceAura: true,
-	fireResistanceTotem: true,
 	frostResistanceAura: true,
-	frostResistanceTotem: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	graceOfAirTotem: TristateEffect.TristateEffectImproved,
 	leaderOfThePack: true,
-	manaSpringTotem: TristateEffect.TristateEffectImproved,
 	moonkinAura: true,
-	natureResistanceTotem: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
 	sanctityAura: true,
 	shadowProtection: true,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
 });
@@ -200,7 +197,6 @@ export const DefaultDebuffs = Debuffs.create({
 	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
 	scorpidSting: true,
-	stormstrike: true,
 	sunderArmor: true,
 	thunderClap: TristateEffect.TristateEffectImproved,
 });

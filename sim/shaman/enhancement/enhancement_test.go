@@ -110,7 +110,7 @@ func TestEnhancement(t *testing.T) {
 	}))
 }
 
-var DefaultTalents = "05052305-055030031005102051"
+var DefaultTalents = "05052305-053030031005102251"
 
 var PlayerOptionsSyncDelayOH = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
