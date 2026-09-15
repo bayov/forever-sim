@@ -60,6 +60,18 @@ func add(lhs, rhs value) value {
 	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpAdd, Lhs: lhs, Rhs: rhs}}}
 }
 
+func sub(lhs, rhs value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpSub, Lhs: lhs, Rhs: rhs}}}
+}
+
+func mainHandTimeToNext() value {
+	return &proto.APLValue{Value: &proto.APLValue_AutoTimeToNext{AutoTimeToNext: &proto.APLValueAutoTimeToNext{AutoType: proto.APLValueAutoTimeToNext_MainHand}}}
+}
+
+func mainHandSwingTime() value {
+	return &proto.APLValue{Value: &proto.APLValue_AutoSwingTime{AutoSwingTime: &proto.APLValueAutoSwingTime{AutoType: proto.APLValueAutoSwingTime_MainHand}}}
+}
+
 func comboPoints() value {
 	return &proto.APLValue{Value: &proto.APLValue_CurrentComboPoints{CurrentComboPoints: &proto.APLValueCurrentComboPoints{}}}
 }
@@ -139,6 +151,14 @@ func autocastOtherCooldowns(condition value, notes string) *proto.APLListItem {
 
 func rotation(items ...*proto.APLListItem) *proto.APLRotation {
 	return &proto.APLRotation{Type: proto.APLRotation_TypeAPL, PriorityList: items}
+}
+
+// prepull casts a spell that many seconds before the pull.
+func prepull(spell *proto.ActionID, secondsBefore float64) *proto.APLPrepullAction {
+	return &proto.APLPrepullAction{
+		Action:    &proto.APLAction{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: spell}}},
+		DoAtValue: seconds(-secondsBefore),
+	}
 }
 
 func spellCurrentCost(spell *proto.ActionID) value {

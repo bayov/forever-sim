@@ -27,6 +27,7 @@ import (
 func main() {
 	templateName := flag.String("template", "", "rotation template, one of: "+strings.Join(templateNames(), ", "))
 	settingsPath := flag.String("settings", "", "RaidSimRequest or IndividualSimSettings JSON")
+	aplPath := flag.String("apl", "", "a rotation JSON to sim as is instead of a template (no knobs, use with -eval or -timeline)")
 	durs := flag.String("durs", "120,300,480", "fight lengths in seconds, one search per length")
 	combined := flag.Bool("combined", false, "one search over the mean of all fight lengths instead of one per length")
 	iterations := flag.Int("iters", 3000, "sim iterations per candidate")
@@ -44,6 +45,15 @@ func main() {
 	sim.RegisterAll()
 
 	template, ok := templates[*templateName]
+	if *aplPath != "" {
+		rot, err := loadRotation(*aplPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "loading rotation: %v\n", err)
+			os.Exit(2)
+		}
+		template, ok = fixedRotation{rot}, true
+		*templateName = strings.TrimSuffix(filepath.Base(*aplPath), ".apl.json")
+	}
 	if !ok {
 		fmt.Fprintf(os.Stderr, "unknown template %q, want one of %s\n", *templateName, strings.Join(templateNames(), ", "))
 		os.Exit(2)

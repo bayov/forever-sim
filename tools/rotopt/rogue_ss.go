@@ -49,6 +49,9 @@ func (rogueSS) Knobs() []Knob {
 		{Name: "eluneHoldForAr", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "berserkingHoldForBf", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "evisEnergy", Default: 79, Min: 59, Max: 99, Step: 10},
+		{Name: "ssAfterSwing", Default: 0.5, Min: 0, Max: 1, Step: 0.25},
+		{Name: "ssEnergy", Default: 79, Min: 0, Max: 100, Step: 10},
+		{Name: "bfPrepull", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -105,7 +108,25 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 		return alignedWith(spell, anchor)
 	}
 
-	return rotation(
+	// Sinister Strike right after a main hand swing, or once energy is pooled. Extra
+	// attacks (Hack and Slash, Hand of Justice) move the main hand swing to now and
+	// restart the timer, so a proc off a Sinister Strike cast late in the swing wins
+	// almost nothing, the swing was about to land anyway. Right after a swing the same
+	// proc is a whole free swing. The energy fallback keeps the wait from capping energy.
+	// Both knobs at 0 means on every GCD it can afford.
+	var ssWhen value
+	if k["ssAfterSwing"] > 0 || k["ssEnergy"] > 0 {
+		var afterSwing, pooled value
+		if k["ssAfterSwing"] > 0 {
+			afterSwing = gt(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(k["ssAfterSwing"])))
+		}
+		if k["ssEnergy"] > 0 {
+			pooled = ge(energy(), num(k["ssEnergy"]))
+		}
+		ssWhen = or(afterSwing, pooled, lt(remainingTime(), seconds(6)))
+	}
+
+	rot := rotation(
 		cast(sliceAndDice, or(
 			and(ge(comboPoints(), num(1)), not(auraIsActive(sliceAndDice)), ge(remainingTime(), seconds(6))),
 			and(ge(comboPoints(), num(5)), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9))),
@@ -151,8 +172,12 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 			or(auraIsActive(sliceAndDice), ge(energy(), num(k["evisEnergy"])), lt(remainingTime(), seconds(6))),
 		), ""),
 
-		cast(sinisterStrike, nil, ""),
+		cast(sinisterStrike, ssWhen, "Sinister Strike right after a main hand swing so an extra attack proc restarts a swing that just happened, or when energy is about to cap."),
 	)
+	if k["bfPrepull"] == 1 {
+		rot.PrepullActions = []*proto.APLPrepullAction{prepull(bladeFlurry, 1)}
+	}
+	return rot
 }
 
 // alignedWith is true when spell can go out now without giving up an overlap with the
