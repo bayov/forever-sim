@@ -3057,6 +3057,7 @@ func init() {
 		spell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 17330},
 			SpellSchool: core.SpellSchoolNature,
+			DefenseType: core.DefenseTypeMagic,
 			ProcMask:    core.ProcMaskEmpty,
 			Flags:       core.SpellFlagPoison | core.SpellFlagPureDot | core.SpellFlagNoOnCastComplete,
 			Cast: core.CastConfig{
