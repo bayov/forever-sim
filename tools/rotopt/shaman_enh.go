@@ -48,8 +48,9 @@ func (shamanEnh) Knobs() []Knob {
 		{Name: "shield", Default: 0, Min: 0, Max: 1, Step: 1},
 		// 0 none, 1 Earth Shock, 2 Flame Shock, 3 Frost Shock, 4 Flame Shock when its DoT
 		// is down and Earth Shock otherwise, 5 Earth Shock while the Stormstrike debuff (20%
-		// Nature damage) is on the target and Frost Shock otherwise.
-		{Name: "shock", Default: 1, Min: 0, Max: 5, Step: 1},
+		// Nature damage) is on the target and Frost Shock otherwise, 6 Flame Shock when its
+		// DoT is down and Frost Shock otherwise.
+		{Name: "shock", Default: 1, Min: 0, Max: 6, Step: 1},
 		// Shocks only above this much mana, so the pool is not gone by the middle of the fight.
 		{Name: "shockMana", Default: 0, Min: 0, Max: 80, Step: 20},
 		// Lightning Bolt at this many Maelstrom Weapon stacks (5 is instant), 0 never.
@@ -166,6 +167,11 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	case 5:
 		items = append(items,
 			cast(earthShock, and(targetAuraIsActive(stormstrike), manaFloor(k["shockMana"])), "Earth Shock while the Stormstrike debuff is up (20% Nature damage)."),
+			cast(frostShock, manaFloor(k["shockMana"]), "Frost Shock otherwise."),
+		)
+	case 6:
+		items = append(items,
+			cast(flameShock, and(not(dotIsActive(flameShock)), manaFloor(k["shockMana"])), "Flame Shock when its DoT is down."),
 			cast(frostShock, manaFloor(k["shockMana"]), "Frost Shock otherwise."),
 		)
 	}
