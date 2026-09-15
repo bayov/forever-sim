@@ -8,7 +8,7 @@ import (
 
 // Enhancement under Forever rules. Every line names the highest rank the player's level
 // knows, so the rotation file reads right in the UI at that level. Lines for spells the
-// level does not have (Stormstrike before 40, Rage of the Farseer without the talent) only
+// level does not have (Stormstrike before 25, Rage of the Farseer without the talent) only
 // warn, and a knob at 0 drops its line entirely.
 //
 // Rage of the Farseer is the anchor of the burst window (30% attack and cast speed for
@@ -121,7 +121,8 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	// Rage of the Farseer takes 31 talent points, so the burst window only exists from
 	// level 40. Below that the racials go last, on a GCD nothing else wants: at 20 Blood
 	// Fury's 10% of 400 attack power is worth about what the GCD it takes from the shocks
-	// costs. Stormstrike is a 15 point talent under Forever, so its line exists from 24.
+	// costs. Stormstrike sits behind 15 talent points under Forever and is the 16th point
+	// itself, so its line exists from 25.
 	if playerLevel >= 40 {
 		items = append(items,
 			cast(rageOfTheFarseer, rageWhen, "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line."),
@@ -132,7 +133,7 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 			autocastOtherCooldowns(nil, "Anything not listed above (Sapper, trinkets, potions)."),
 		)
 	}
-	if playerLevel >= 24 {
+	if playerLevel >= 25 {
 		items = append(items, cast(stormstrike, nil, "Stormstrike on cooldown. Without the talent ignore the warning on this line."))
 	}
 	if k["shield"] == 1 {

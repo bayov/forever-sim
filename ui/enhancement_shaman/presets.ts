@@ -117,7 +117,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // a boss the shaman is behind.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05052305-053030031005102251' }));
 export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '-050030201' }));
-// At 25 the 16 points reach Stormstrike (a 15 point talent under Forever), and it is
+// At 25 the 16th point is Stormstrike (15 points in the tree unlock it under Forever), and it is
 // worth 8 DPS over the best build without it (Flurry 1 in its place). The rest is
 // Thundering Strikes 5, Mental Dexterity 3, Imp Lightning Shield 3, Elemental Weapons 3,
 // Shamanistic Focus 1. Every build with Elemental points scored lower.
