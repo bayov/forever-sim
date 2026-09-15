@@ -434,11 +434,15 @@ func (shaman *Shaman) applyImprovedStormstrike() {
 		Label:    "Improved Stormstrike",
 		ActionID: core.ActionID{SpellID: 51521},
 		Duration: time.Second * 15,
+		// The mana tick amount is cached, so the rate change has to be pushed into it
+		// the way Innervate does. Without this the talent never regenerated anything.
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.PseudoStats.SpiritRegenRateCasting += regenRate
+			shaman.UpdateManaRegenRates()
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.PseudoStats.SpiritRegenRateCasting -= regenRate
+			shaman.UpdateManaRegenRates()
 		},
 	})
 
