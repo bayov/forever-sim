@@ -223,6 +223,17 @@ export const Level20p5SinisterStrikeTalents = PresetUtils.makePresetTalents(
 	SavedTalents.create({ talentsString: '0053231-02' }),
 );
 export const Level20p5BackstabTalents = PresetUtils.makePresetTalents('Level 20 + 5 Backstab', SavedTalents.create({ talentsString: '00502-3023-001' }));
+// Against anything but a Humanoid or a Giant the two Murder points move: Sinister Strike
+// puts them in Lethality (every other home is within 0.2), Backstab puts one in
+// Opportunity 2 and one in Imp Slice and Dice. Scored on an Undead copy of Mutanus.
+export const Level20p5SinisterStrikeNoMurderTalents = PresetUtils.makePresetTalents(
+	'Level 20 + 5 Sinister Strike (no Murder)',
+	SavedTalents.create({ talentsString: '005303102-02' }),
+);
+export const Level20p5BackstabNoMurderTalents = PresetUtils.makePresetTalents(
+	'Level 20 + 5 Backstab (no Murder)',
+	SavedTalents.create({ talentsString: '005001-3023-002' }),
+);
 
 export const TalentPresets = {
 	[Phase.Phase1]: [
@@ -235,6 +246,8 @@ export const TalentPresets = {
 		Level20SinisterStrikeNoMurderTalents,
 		Level20p5BackstabTalents,
 		Level20p5SinisterStrikeTalents,
+		Level20p5BackstabNoMurderTalents,
+		Level20p5SinisterStrikeNoMurderTalents,
 	],
 	[Phase.Phase2]: [
 		CombatBackstabTalents,
@@ -246,6 +259,8 @@ export const TalentPresets = {
 		Level20SinisterStrikeNoMurderTalents,
 		Level20p5BackstabTalents,
 		Level20p5SinisterStrikeTalents,
+		Level20p5BackstabNoMurderTalents,
+		Level20p5SinisterStrikeNoMurderTalents,
 	],
 };
 
@@ -287,39 +302,44 @@ export const PresetBuildMutilate = PresetUtils.makePresetBuild('Mutilate', {
 // The level 20 comparison setup: Mutanus the Devourer's level and armor (a level 22 dungeon
 // boss, VanCleef is 888), 60 second fights, no raid buffs or debuffs since the buff table
 // holds level 60 values, Instant Poison on both weapons and Thistle Tea.
-export const EncounterLevel20 = PresetUtils.makePresetEncounter(
-	'Level 20',
-	Encounter.create({
-		duration: 60,
-		durationVariation: 5,
-		executeProportion20: 0.2,
-		executeProportion25: 0.25,
-		executeProportion35: 0.35,
-		targets: [
-			{
-				id: 3654,
-				name: 'Mutanus the Devourer',
-				level: 22,
-				mobType: MobType.MobTypeHumanoid,
-				stats: new Stats().withStat(Stat.StatArmor, 922).withStat(Stat.StatHealth, 20000).asArray(),
-				minBaseDamage: 40,
-				damageSpread: 0.3333,
-				swingSpeed: 2,
-				parryHaste: true,
-			},
-		],
-	}),
-	{
-		raidBuffs: RaidBuffs.create({}),
-		debuffs: Debuffs.create({}),
-		buffs: IndividualBuffs.create({}),
-		consumes: Consumes.create({
-			defaultConjured: Conjured.ConjuredRogueThistleTea,
-			mainHandImbue: WeaponImbue.InstantPoison,
-			offHandImbue: WeaponImbue.InstantPoison,
+const level20Encounter = (name: string, targetName: string, mobType: MobType) =>
+	PresetUtils.makePresetEncounter(
+		name,
+		Encounter.create({
+			duration: 60,
+			durationVariation: 5,
+			executeProportion20: 0.2,
+			executeProportion25: 0.25,
+			executeProportion35: 0.35,
+			targets: [
+				{
+					id: 3654,
+					name: targetName,
+					level: 22,
+					mobType,
+					stats: new Stats().withStat(Stat.StatArmor, 922).withStat(Stat.StatHealth, 20000).asArray(),
+					minBaseDamage: 40,
+					damageSpread: 0.3333,
+					swingSpeed: 2,
+					parryHaste: true,
+				},
+			],
 		}),
-	},
-);
+		{
+			raidBuffs: RaidBuffs.create({}),
+			debuffs: Debuffs.create({}),
+			buffs: IndividualBuffs.create({}),
+			consumes: Consumes.create({
+				defaultConjured: Conjured.ConjuredRogueThistleTea,
+				mainHandImbue: WeaponImbue.InstantPoison,
+				offHandImbue: WeaponImbue.InstantPoison,
+			}),
+		},
+	);
+export const EncounterLevel20 = level20Encounter('Level 20', 'Mutanus the Devourer', MobType.MobTypeHumanoid);
+// The same boss as an Undead, for the builds that skip Murder (it only works on Humanoids
+// and Giants).
+export const EncounterLevel20Undead = level20Encounter('Level 20 (Undead)', 'Level 22 undead boss', MobType.MobTypeUndead);
 export const PresetBuildLevel20Backstab = PresetUtils.makePresetBuild('Level 20 Backstab', {
 	gear: GearLevel20Backstab,
 	talents: Level20BackstabTalents,
@@ -355,6 +375,26 @@ export const PresetBuildLevel20p5SinisterStrike = PresetUtils.makePresetBuild('L
 	talents: Level20p5SinisterStrikeTalents,
 	rotation: ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
 	encounter: EncounterLevel20,
+	race: Race.RaceHuman,
+	level: 20,
+	bonusTalentPoints: 5,
+});
+// The no Murder builds against the Undead copy of the boss. Same gear and rotations, the
+// knob search found nothing to change without Murder.
+export const PresetBuildLevel20p5BackstabNoMurder = PresetUtils.makePresetBuild('Level 20 + 5 Backstab (no Murder)', {
+	gear: GearLevel20Backstab,
+	talents: Level20p5BackstabNoMurderTalents,
+	rotation: ROTATION_PRESET_LEVEL20P5_BACKSTAB,
+	encounter: EncounterLevel20Undead,
+	race: Race.RaceHuman,
+	level: 20,
+	bonusTalentPoints: 5,
+});
+export const PresetBuildLevel20p5SinisterStrikeNoMurder = PresetUtils.makePresetBuild('Level 20 + 5 Sinister Strike (no Murder)', {
+	gear: GearLevel20SinisterStrike,
+	talents: Level20p5SinisterStrikeNoMurderTalents,
+	rotation: ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
+	encounter: EncounterLevel20Undead,
 	race: Race.RaceHuman,
 	level: 20,
 	bonusTalentPoints: 5,
