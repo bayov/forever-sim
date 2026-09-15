@@ -183,6 +183,48 @@ export const OtherDefaults = {
 //                                 Builds
 ///////////////////////////////////////////////////////////////////////////
 
+// The level 60 raid setup: the sim's default boss (level 63, 3731 armor), a 4 to 5 minute
+// fight, and the default buffs, debuffs and consumes. It is here so switching back from
+// the Level 20 build restores everything that build changed.
+export const EncounterLevel60 = PresetUtils.makePresetEncounter(
+	'Level 60',
+	Encounter.create({
+		duration: 280,
+		durationVariation: 20,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 213336,
+				name: 'Level 60',
+				level: 63,
+				mobType: MobType.MobTypeHumanoid,
+				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+				minBaseDamage: 3000,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		tanks: [],
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: DefaultDebuffs,
+		buffs: DefaultIndividualBuffs,
+		consumes: DefaultConsumes,
+	},
+);
+export const PresetBuildPhase2 = PresetUtils.makePresetBuild('Phase 2', {
+	gear: GearPhase2,
+	talents: TalentsLevel60,
+	rotation: APLOptimized,
+	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+});
+
 // A level 20 shaman soloing an instance boss: no raid buffs or consumes, Rockbiter on
 // the weapon, and the boss hitting the shaman so Lightning Shield gets to fire.
 export const EncounterLevel20 = PresetUtils.makePresetEncounter(
