@@ -35,7 +35,7 @@ func (rogueSS) Knobs() []Knob {
 	return []Knob{
 		{Name: "sndRefresh", Default: 3, Min: 1, Max: 9, Step: 2},
 		{Name: "arEnergy", Default: 59, Min: 39, Max: 99, Step: 10},
-		{Name: "arSnd", Default: 1, Min: 0, Max: 12, Step: 3},
+		{Name: "arSnd", Default: 1, Min: 0, Max: 18, Step: 3},
 		{Name: "bfSnd", Default: 1, Min: 0, Max: 12, Step: 3},
 		{Name: "bfHoldForAr", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "cbSnd", Default: 6, Min: 0, Max: 12, Step: 3},
@@ -56,11 +56,28 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 		}
 		return ge(auraRemainingTime(sliceAndDice), seconds(secs))
 	}
+	// When the window wants a long Slice and Dice, a 5 point refresh goes out first so
+	// Adrenaline Rush is not waiting on a 1 point one to run out.
+	var sndForWindow value
+	if k["arSnd"] > 0 {
+		sndForWindow = and(
+			ge(comboPoints(), num(5)),
+			spellIsReady(adrenalineRush),
+			gt(spellUsesRemaining(adrenalineRush, buffDuration), num(0)),
+			lt(auraRemainingTime(sliceAndDice), seconds(k["arSnd"])),
+		)
+	}
+
 	// Enough for a full Eviscerate. Cold Blood and Eureka! wait for this.
 	fivePointEviscerate := and(
 		ge(comboPoints(), num(5)),
 		ge(energy(), spellCurrentCost(eviscerate)),
 	)
+	// Not when the next finisher is going to be that Slice and Dice refresh instead.
+	var notRefreshing value
+	if sndForWindow != nil {
+		notRefreshing = not(sndForWindow)
+	}
 	holdFor := func(spell *proto.ActionID, anchor *proto.ActionID, hold bool) value {
 		if !hold {
 			return nil
@@ -72,7 +89,8 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 		cast(sliceAndDice, or(
 			and(ge(comboPoints(), num(1)), not(auraIsActive(sliceAndDice)), ge(remainingTime(), seconds(6))),
 			and(ge(comboPoints(), num(5)), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9))),
-		), "Slice and Dice up at any combo points, refresh at 5 when it is about to drop."),
+			sndForWindow,
+		), "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one."),
 
 		cast(adrenalineRush, and(
 			lt(energy(), num(k["arEnergy"])),
@@ -85,10 +103,10 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 			holdFor(bladeFlurry, adrenalineRush, k["bfHoldForAr"] == 1),
 		), "Blade Flurry is auto attack speed and does not feed the energy window, so it goes on cooldown."),
 
-		cast(coldBlood, and(fivePointEviscerate, sndAtLeast(k["cbSnd"])),
+		cast(coldBlood, and(fivePointEviscerate, sndAtLeast(k["cbSnd"]), notRefreshing),
 			"Cold Blood is spent by the next hit, so only ever right before a 5 point Eviscerate."),
 
-		cast(eureka, and(fivePointEviscerate, sndAtLeast(k["eurekaSnd"])),
+		cast(eureka, and(fivePointEviscerate, sndAtLeast(k["eurekaSnd"]), notRefreshing),
 			"Gnome. Eureka! buffs the next 3 abilities, so right before Eviscerate and the two builders after it. Other races can ignore the warning on this line."),
 
 		cast(bloodFury, holdFor(bloodFury, adrenalineRush, k["bloodFuryHoldForAr"] == 1),

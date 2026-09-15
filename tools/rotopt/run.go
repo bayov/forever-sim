@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/wowsims/classic/sim/core"
@@ -79,6 +80,31 @@ func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) 
 	}
 	dps := res.RaidMetrics.Parties[0].Players[0].Dps
 	return result{dps: dps.Avg, stderr: dps.Stdev / math.Sqrt(float64(iterations))}, nil
+}
+
+// One logged iteration, reduced to the casts that are not the filler: cooldowns, items
+// and finishers. For eyeballing whether a rotation does what its knobs say.
+func (s *setup) timeline(rot *proto.APLRotation, duration float64) string {
+	request := goproto.Clone(s.request).(*proto.RaidSimRequest)
+	request.Raid.Parties[0].Players[0].Rotation = rot
+	request.Encounter.Duration = duration
+	request.Encounter.DurationVariation = 0
+	request.SimOptions.Iterations = 1
+	request.SimOptions.RandomSeed = 1
+	request.SimOptions.Debug = true
+
+	res := core.RunRaidSim(request)
+	if res.Error != nil {
+		return "sim failed: " + res.Error.Message
+	}
+	filler := regexp.MustCompile(`OtherID|SpellID: (11294|11340|25347|15851|13218)[,}]`)
+	var b strings.Builder
+	for _, line := range strings.Split(res.Logs, "\n") {
+		if strings.Contains(line, "] Casting {") && !filler.MatchString(line) {
+			b.WriteString(line[:strings.Index(line, " (Cost")] + "\n")
+		}
+	}
+	return b.String()
 }
 
 // Rotation JSON in the layout of the presets under ui/*/apls: one priority list line per

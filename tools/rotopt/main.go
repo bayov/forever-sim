@@ -36,6 +36,7 @@ func main() {
 	race := flag.String("race", "", "override the player's race, e.g. Gnome")
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
 	outDir := flag.String("out", "", "directory to write <template>[_<dur>s].apl.json into")
+	timeline := flag.Bool("timeline", false, "print one iteration's cooldown and finisher casts for the starting knobs at the first fight length, no search")
 	flag.Parse()
 
 	log.SetOutput(io.Discard)
@@ -71,6 +72,11 @@ func main() {
 	for _, d := range strings.Split(*durs, ",") {
 		v, _ := strconv.ParseFloat(d, 64)
 		durations = append(durations, v)
+	}
+
+	if *timeline {
+		fmt.Print(setup.timeline(template.Build(start), durations[0]))
+		return
 	}
 
 	// Each search gets its own fight lengths and output name.
