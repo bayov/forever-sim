@@ -8,19 +8,20 @@ const FlametongueWeaponRanks = 6
 
 var FlametongueWeaponSpellId = [FlametongueWeaponRanks + 1]int32{0, 8024, 8027, 8030, 16339, 16341, 16342}
 var FlametongueWeaponEnchantId = [FlametongueWeaponRanks + 1]int32{0, 5, 4, 3, 523, 1665, 1666}
-var FlametongueWeaponMaxDamage = [FlametongueWeaponRanks + 1]float64{0, 18, 26, 42, 57, 85, 112}
+var FlametongueWeaponLevel = [FlametongueWeaponRanks + 1]int32{0, 10, 18, 26, 36, 46, 56}
 
-var FlametongueWeaponRankByLevel = map[int32]int32{
-	25: 2,
-	40: 4,
-	50: 5,
-	60: 6,
+// Damage per 4 seconds of weapon speed at each rank's cap, and its growth per level.
+var FlametongueWeaponMaxDamage = [FlametongueWeaponRanks + 1]float64{0, 17.6, 26.1, 42, 69.1, 94.9, 112}
+var FlametongueWeaponScaling = [FlametongueWeaponRanks + 1]core.RankScaling{{}, {16, .76}, {24, 1.16}, {34, 1.68}, {44, 2.92}, {54, 2.48}, {60, 3.12}}
+
+func (shaman *Shaman) flametongueRank() int {
+	return core.HighestRankAt(shaman.Level, FlametongueWeaponLevel[:])
 }
 
 func (shaman *Shaman) newFlametongueImbueSpell(weapon *core.Item) *core.Spell {
-	rank := FlametongueWeaponRankByLevel[shaman.Level]
+	rank := shaman.flametongueRank()
 	spellID := FlametongueWeaponSpellId[rank]
-	maxDamage := FlametongueWeaponMaxDamage[rank]
+	maxDamage := FlametongueWeaponScaling[rank].At(FlametongueWeaponMaxDamage[rank], shaman.Level)
 
 	baseDamage := maxDamage / 4
 	spellCoeff := .1
@@ -50,10 +51,11 @@ func (shaman *Shaman) ApplyFlametongueImbueToItem(item *core.Item) {
 		return
 	}
 
-	rank := FlametongueWeaponRankByLevel[shaman.Level]
-	enchantId := FlametongueWeaponEnchantId[rank]
-
-	item.TempEnchant = enchantId
+	rank := shaman.flametongueRank()
+	if rank == 0 {
+		return
+	}
+	item.TempEnchant = FlametongueWeaponEnchantId[rank]
 }
 
 func (shaman *Shaman) ApplyFlametongueImbue(procMask core.ProcMask) {
@@ -67,11 +69,10 @@ func (shaman *Shaman) ApplyFlametongueImbue(procMask core.ProcMask) {
 }
 
 func (shaman *Shaman) RegisterFlametongueImbue(procMask core.ProcMask) {
-	if procMask == core.ProcMaskUnknown && !shaman.ItemSwap.IsEnabled() {
+	rank := shaman.flametongueRank()
+	if procMask == core.ProcMaskUnknown && !shaman.ItemSwap.IsEnabled() || rank == 0 {
 		return
 	}
-
-	rank := FlametongueWeaponRankByLevel[shaman.Level]
 	enchantId := FlametongueWeaponEnchantId[rank]
 
 	mhSpell := shaman.newFlametongueImbueSpell(shaman.MainHand())

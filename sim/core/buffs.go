@@ -1344,11 +1344,20 @@ const ReplenishmentAuraDuration = time.Second * 15
 	})
 } */
 
+// The rank the unit's level can have, so a level 20 character gets the 10 Strength of
+// rank 1 rather than the 60 value.
+var strengthOfEarthTotemLevels = []int32{0, 10, 24, 38, 52, 60}
+var strengthOfEarthTotemStrength = []float64{0, 10, 20, 36, 61, 77}
+
 func StrengthOfEarthTotemAura(unit *Unit, multiplier float64) *Aura {
 	rank := TernaryInt32(IncludeAQ, 5, 4)
+	updateStats := BuffSpellValues[StrengthOfEarth].Multiply(multiplier).Floor()
+	if unit.Level < CharacterMaxLevel {
+		rank = int32(HighestRankAt(unit.Level, strengthOfEarthTotemLevels))
+		updateStats = stats.Stats{stats.Strength: strengthOfEarthTotemStrength[rank]}.Multiply(multiplier).Floor()
+	}
 	spellID := []int32{0, 8075, 8160, 8161, 10442, 25361}[rank]
 	duration := time.Minute * 2
-	updateStats := BuffSpellValues[StrengthOfEarth].Multiply(multiplier).Floor()
 
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Strength of Earth Totem",

@@ -323,15 +323,23 @@ func getBaseStatsCombo(r proto.Race, c proto.Class, level int32) stats.Stats {
 	}
 	attrs, ok := levelAttributes[RaceClass{r, c}]
 	if !ok {
-		// A race and class pairing 1.12 did not have (Tauren rogue, Forever opens some
-		// up). The class row comes from the Human table and the race offset from the
-		// race's warrior row against the Human warrior, every race has a warrior.
-		attrs = levelAttributes[RaceClass{proto.Race_RaceHuman, c}]
+		// A race and class pairing 1.12 did not have (Dwarf shaman, Tauren rogue, Forever
+		// opens some up). The class row comes from a race that has the class (Human when
+		// it does, Orc for a shaman) and the race offset from the race's warrior row
+		// against that race's warrior, every race has a warrior.
+		base := proto.Race_RaceHuman
+		for _, candidate := range []proto.Race{proto.Race_RaceHuman, proto.Race_RaceOrc, proto.Race_RaceNightElf, proto.Race_RaceTauren} {
+			if _, has := levelAttributes[RaceClass{candidate, c}]; has {
+				base = candidate
+				break
+			}
+		}
+		attrs = levelAttributes[RaceClass{base, c}]
 		raceRow := levelAttributes[RaceClass{r, proto.Class_ClassWarrior}]
-		humanRow := levelAttributes[RaceClass{proto.Race_RaceHuman, proto.Class_ClassWarrior}]
+		baseRow := levelAttributes[RaceClass{base, proto.Class_ClassWarrior}]
 		for l := range attrs {
 			for i := range attrs[l] {
-				attrs[l][i] += raceRow[l][i] - humanRow[l][i]
+				attrs[l][i] += raceRow[l][i] - baseRow[l][i]
 			}
 		}
 	}

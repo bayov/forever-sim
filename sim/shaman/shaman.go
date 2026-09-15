@@ -17,6 +17,27 @@ const (
 	SpellFlagLightning = core.SpellFlagAgentReserved3
 )
 
+// Every rank of an ability is one family, so a rotation written at 60 that names the top
+// rank finds the rank a lower level shaman knows.
+func init() {
+	core.RegisterSpellRanks(LightningBoltSpellId[1:]...)
+	core.RegisterSpellRanks(ChainLightningSpellId[1:]...)
+	core.RegisterSpellRanks(EarthShockSpellId[1:]...)
+	core.RegisterSpellRanks(FlameShockSpellId[1:]...)
+	core.RegisterSpellRanks(FrostShockSpellId[1:]...)
+	core.RegisterSpellRanks(LightningShieldSpellId[1:]...)
+	core.RegisterSpellRanks(SearingTotemSpellId[1:]...)
+	core.RegisterSpellRanks(MagmaTotemSpellId[1:]...)
+	core.RegisterSpellRanks(FireNovaTotemSpellId[1:]...)
+	core.RegisterSpellRanks(StrengthOfEarthTotemSpellId[1:]...)
+	core.RegisterSpellRanks(StoneskinTotemSpellId[1:]...)
+	core.RegisterSpellRanks(WindfuryTotemSpellId[1:]...)
+	core.RegisterSpellRanks(GraceOfAirTotemSpellId[1:]...)
+	core.RegisterSpellRanks(WindwallTotemSpellId[1:]...)
+	core.RegisterSpellRanks(HealingStreamTotemSpellId[1:]...)
+	core.RegisterSpellRanks(ManaSpringTotemSpellId[1:]...)
+}
+
 func NewShaman(character *core.Character, talents string) *Shaman {
 	shaman := &Shaman{
 		Character: *character,

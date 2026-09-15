@@ -20,9 +20,10 @@ func (shaman *Shaman) registerHealingStreamTotemSpell() {
 	shaman.HealingStreamTotem = make([]*core.Spell, HealingStreamTotemRanks+1)
 
 	for rank := 1; rank <= HealingStreamTotemRanks; rank++ {
-		config := shaman.newHealingStreamTotemSpellConfig(rank)
-
-		if config.RequiredLevel <= int(shaman.Level) {
+		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
+		// built for a rank the shaman cannot cast.
+		if HealingStreamTotemLevel[rank] <= int(shaman.Level) {
+			config := shaman.newHealingStreamTotemSpellConfig(rank)
 			shaman.HealingStreamTotem[rank] = shaman.RegisterSpell(config)
 		}
 	}
@@ -97,9 +98,10 @@ func (shaman *Shaman) registerManaSpringTotemSpell() {
 	shaman.ManaSpringTotem = make([]*core.Spell, ManaSpringTotemRanks+1)
 
 	for rank := 1; rank <= ManaSpringTotemRanks; rank++ {
-		config := shaman.newManaSpringTotemSpellConfig(rank)
-
-		if config.RequiredLevel <= int(shaman.Level) {
+		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
+		// built for a rank the shaman cannot cast.
+		if ManaSpringTotemLevel[rank] <= int(shaman.Level) {
+			config := shaman.newManaSpringTotemSpellConfig(rank)
 			shaman.ManaSpringTotem[rank] = shaman.RegisterSpell(config)
 		}
 	}
