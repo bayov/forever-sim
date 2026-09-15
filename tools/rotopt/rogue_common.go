@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
@@ -34,6 +36,13 @@ var buffDuration = seconds(15)
 func rogueCooldownKnobs() []Knob {
 	return []Knob{
 		{Name: "sndRefresh", Default: 3, Min: 1, Max: 9, Step: 2},
+		// A fresh Slice and Dice (none up) waits for this many combo points. At 60 a 1 point
+		// one goes up at once. At level 20 a Backstab is 60 energy, so a point comes every
+		// 6 sec and a 1 point Slice and Dice (9 sec) is gone before the next point: the
+		// rogue would refresh it forever and never reach a Rupture. Waiting for 4 points
+		// (18 sec) is worth 1.4 DPS there. The refresh before it drops stays at 5 points,
+		// every lower value lost.
+		{Name: "sndCp", Default: 1, Min: 1, Max: 5, Step: 1},
 		{Name: "arEnergy", Default: 59, Min: 39, Max: 99, Step: 10},
 		{Name: "arSnd", Default: 1, Min: 0, Max: 18, Step: 3},
 		{Name: "bfSnd", Default: 1, Min: 0, Max: 24, Step: 3},
@@ -75,6 +84,8 @@ type rogueCooldowns struct {
 	// ruptureHold is true while Rupture and the Slice and Dice refresh should leave the
 	// points alone, nil when nothing is waiting on them.
 	ruptureHold value
+	// holdNotes is the sentence for the lines ruptureHold is on, empty when it is nil.
+	holdNotes string
 	// prepull holds the Blade Flurry prepull when the knob asks for one.
 	prepull []*proto.APLPrepullAction
 }
@@ -147,11 +158,24 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		return alignedWith(spell, anchor)
 	}
 
+	// The notes say what the knobs made of the line, so the file reads right in the UI.
+	sndNotes := "Slice and Dice up at any combo points, refresh at 5 when it is about to drop"
+	if k["sndCp"] > 1 {
+		sndNotes = fmt.Sprintf("Slice and Dice at %g combo points once it is down (a short one at fewer points would eat every point before a Rupture), refresh at 5 when it is about to drop", k["sndCp"])
+	}
+	if sndForWindow != nil {
+		sndNotes += " or when Adrenaline Rush is waiting on a longer one"
+	}
+	sndNotes += "."
+	if c.ruptureHold != nil {
+		c.holdNotes = " While Cold Blood is ready the points are kept for its Eviscerate. Without the talent ignore the warning on this line."
+		sndNotes += c.holdNotes
+	}
 	c.sliceAndDice = cast(sliceAndDice, or(
-		and(ge(comboPoints(), num(1)), not(auraIsActive(sliceAndDice)), ge(remainingTime(), seconds(6))),
+		and(ge(comboPoints(), num(k["sndCp"])), not(auraIsActive(sliceAndDice)), ge(remainingTime(), seconds(6))),
 		and(ge(comboPoints(), num(5)), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9)), c.ruptureHold),
 		sndForWindow,
-	), "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one.")
+	), sndNotes)
 
 	// Forever regenerates energy continuously, so there is no tick to line Adrenaline
 	// Rush up with: a tick's worth of energy no longer arrives in one lump.
@@ -173,6 +197,10 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		eurekaLine = cast(eureka, sndAtLeast(k["eurekaSnd"]),
 			"Gnome. Eureka! on cooldown, the next 3 abilities cost half. Other races can ignore the warning on this line.")
 	}
+	berserkingNotes := "Berserking is auto attack speed, so it goes on cooldown."
+	if k["berserkingHoldForBf"] == 1 && hasBladeFlurry {
+		berserkingNotes = "Berserking waits for Blade Flurry when the wait costs no use."
+	}
 	c.cooldowns = append(c.cooldowns,
 		cast(coldBlood, and(c.fivePointEviscerate, sndAtLeast(k["cbSnd"]), c.notRefreshing),
 			"Cold Blood is spent by the next hit, so only ever right before a 5 point Eviscerate."),
@@ -180,16 +208,16 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		eurekaLine,
 
 		cast(bloodFury, and(sndAtLeast(k["bloodFurySnd"]), holdFor(bloodFury, adrenalineRush, k["bloodFuryHoldForAr"] == 1)),
-			"Orc. Blood Fury waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line."),
+			"Orc. "+timedBuffNotes("Blood Fury", k["bloodFuryHoldForAr"] == 1 && hasAdrenalineRush, k["bloodFurySnd"])+" Other races can ignore the warning on this line."),
 
 		cast(elunesLight, holdFor(elunesLight, adrenalineRush, k["eluneHoldForAr"] == 1),
-			"Night Elf. Elune's Light waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line."),
+			"Night Elf. "+timedBuffNotes("Elune's Light", k["eluneHoldForAr"] == 1 && hasAdrenalineRush, 0)+" Other races can ignore the warning on this line."),
 
 		cast(berserking, holdFor(berserking, bladeFlurry, k["berserkingHoldForBf"] == 1),
-			"Troll. Berserking is auto attack speed like Blade Flurry, so it goes on cooldown. Other races can ignore the warning on this line."),
+			"Troll. "+berserkingNotes+" Other races can ignore the warning on this line."),
 
 		cast(earthstrike, and(sndAtLeast(k["trinketSnd"]), holdFor(earthstrike, adrenalineRush, k["trinketHoldForAr"] == 1)),
-			"Earthstrike waits for Adrenaline Rush or a long Slice and Dice. Without the trinket ignore the warning on this line."),
+			timedBuffNotes("Earthstrike", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
 
 		cast(thistleTea, le(energy(), num(k["teaEnergy"])),
 			"Thistle Tea when there is room for the 100 energy."),
@@ -206,6 +234,20 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		c.prepull = []*proto.APLPrepullAction{prepull(bladeFlurry, 1)}
 	}
 	return c
+}
+
+// timedBuffNotes says what a timed buff's line waits for, from the same knobs as its
+// condition.
+func timedBuffNotes(name string, holdsForAr bool, snd float64) string {
+	switch {
+	case holdsForAr && snd > 0:
+		return fmt.Sprintf("%s waits for Adrenaline Rush when the wait costs no use, and for a Slice and Dice with %g sec left.", name, snd)
+	case holdsForAr:
+		return name + " waits for Adrenaline Rush when the wait costs no use."
+	case snd > 0:
+		return fmt.Sprintf("%s waits for a Slice and Dice with %g sec left.", name, snd)
+	}
+	return name + " on cooldown."
 }
 
 // builderWhen is the condition for the filler builder: right after a main hand swing,

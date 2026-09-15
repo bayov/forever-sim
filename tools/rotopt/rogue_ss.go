@@ -31,7 +31,7 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 			ge(auraRemainingTime(sliceAndDice), seconds(k["ruptureSnd"])),
 			gt(remainingTime(), seconds(12)),
 			c.ruptureHold,
-		), "Rupture when it is not ticking and Slice and Dice does not need the points."))
+		), "Rupture when it is not ticking and Slice and Dice does not need the points."+c.holdNotes))
 	}
 	items = append(items,
 		cast(eviscerate, c.evisWhen, ""),

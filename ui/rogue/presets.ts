@@ -360,8 +360,8 @@ export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Lev
 // The same at level 20 with the 5 extra talent points the Forever beta is expected to
 // give (16 in all). The gear and encounter are the level 20 ones, only the talents and
 // rotation differ. Gnome is the best race (Eureka! on cooldown, three half price abilities:
-// 71.0 / 69.1), then Night Elf (Elune's Light, 70.6 / 67.0), but the builds keep Human
-// (69.2 / 65.7) so the two compare like for like.
+// 71.0 / 70.7), then Night Elf (Elune's Light, 70.6 / 68.4), but the builds keep Human
+// (69.2 / 67.1) so the two compare like for like.
 export const PresetBuildLevel20p5Backstab = PresetUtils.makePresetBuild('Level 20 + 5 Backstab', {
 	gear: GearLevel20Backstab,
 	talents: Level20p5BackstabTalents,

@@ -44,8 +44,15 @@ gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSn
 # With finishers at 3 points the rotation never sits on 5, so Eureka! goes on cooldown
 # (+3 for a Gnome) and, for anyone who picks Cold Blood, the points are held for its
 # Eviscerate while it is ready (cbPool, free for builds without it).
+#
+# A fresh Slice and Dice waits for 4 points wherever the build lacks Improved Slice and
+# Dice 3 (sndCp, +1.4 for Backstab, +0.4 for the 11 point Sinister Strike build): a 1
+# point one runs out before the next point arrives, so it would take every point and
+# Rupture would never go out. The 16 point Sinister Strike build's 13 sec 1 point Slice and
+# Dice is worth putting up at once. Ghostly Strike and Hemorrhage are out of the Backstab
+# builds' reach, so their lines are left out.
 low="cbPool=1,cbSnd=0,eurekaCp=0"
-gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,$low" -level 20 -bonus-talents 0
-gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0,$low" -level 20 -bonus-talents 0
+gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,sndCp=4,$low" -level 20 -bonus-talents 0
+gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,hemoForRupture=0,sndCp=4,$low" -level 20 -bonus-talents 0
 gen rogue_ss level20p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,teaEnergy=0,$low" -level 20 -bonus-talents 5
-gen rogue_bs level20p5_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,$low" -level 20 -bonus-talents 5
+gen rogue_bs level20p5_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,hemoForRupture=0,sndCp=4,$low" -level 20 -bonus-talents 5
