@@ -26,8 +26,10 @@ gen rogue_ss combat_sinister_strike_snd_window "bloodFurySnd=20,bfSnd=20,cbSnd=1
 
 # The Backstab build the talent search settled on has no Subtlety talents, so the
 # Ghostly Strike line is left out of the shipped presets (it would only warn).
-gen rogue_bs combat_backstab "ghostly=0"
-gen rogue_bs combat_backstab_rupture "ghostly=0,ruptureCp=5"
+# Blade Flurry no longer waits for Slice and Dice. Under Forever's continuous energy that
+# is worth 2 DPS at 300 sec, with ticks it was a tie.
+gen rogue_bs combat_backstab "ghostly=0,bfSnd=0"
+gen rogue_bs combat_backstab_rupture "ghostly=0,bfSnd=0,ruptureCp=5"
 gen rogue_bs combat_backstab_on_cooldown "ghostly=0,arSnd=0,bfSnd=0,cbSnd=0,eurekaSnd=0,bloodFuryHoldForAr=0,eluneHoldForAr=0"
 gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSnd=18,trinketSnd=20"
 
@@ -35,8 +37,9 @@ gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSn
 # settled on, with 11 points and with the Forever beta's 16 (level 20 plus 5 extra talent
 # points). The lines name the level 60 spell ranks and the sim resolves them to the rank
 # the level knows, so the files do not depend on the level. Rupture at 3 points beats
-# Eviscerate at this level.
+# Eviscerate at this level. Thistle Tea goes at 0 energy in the 16 point build: energy
+# arrives continuously under Forever, so nothing is lost by waiting for the bar to empty.
 gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10"
 gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0"
-gen rogue_ss level20p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,teaEnergy=20"
+gen rogue_ss level20p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,teaEnergy=0"
 gen rogue_bs level20p5_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0"

@@ -86,8 +86,10 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', Optim
 export const APLLevel20 = PresetUtils.makePresetAPLRotation('Level 20', Level20APLJSON);
 // Level 20 with the Forever beta's 5 extra talent points: Stormstrike on cooldown, then
 // the level 20 rotation with Strength of Earth added (worth its mana once Stormstrike is
-// eating the pool anyway). Frost Shock still beats Earth Shock rank 3 by 1.6 DPS at this
-// level (at 25 Earth Shock rank 4 turned that around).
+// eating the pool anyway). Flame Shock when its DoT is down and Frost Shock otherwise:
+// Flame Shock rank 2 is the cheapest shock per point of damage, so it edges out Frost
+// Shock alone by 0.5 DPS at 60 sec and by more in longer fights. Earth Shock rank 3
+// loses to both at this level (at 25 Earth Shock rank 4 turned that around).
 export const APLLevel20p5 = PresetUtils.makePresetAPLRotation('Level 20 + 5', Level20p5APLJSON);
 
 export const APLPresets = {

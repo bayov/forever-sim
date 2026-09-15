@@ -148,7 +148,7 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	}
 
 	//reset current mana after applying stats
-	pet.manaBar.reset()
+	pet.manaBar.reset(sim)
 
 	// Call onEnable callbacks before enabling auto swing
 	// to not have to reorder PAs multiple times

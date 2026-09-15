@@ -519,7 +519,7 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 
 	unit.DistanceFromTarget = unit.StartDistanceFromTarget
 
-	unit.manaBar.reset()
+	unit.manaBar.reset(sim)
 	unit.focusBar.reset(sim)
 	unit.healthBar.reset(sim)
 	unit.UpdateManaRegenRates()

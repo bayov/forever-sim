@@ -142,7 +142,7 @@ func rotationJSON(rot *proto.APLRotation) string {
 	if len(rot.PrepullActions) > 0 {
 		b.WriteString("    \"prepullActions\": [\n")
 		for i, item := range rot.PrepullActions {
-			b.WriteString("        " + string(protojson.MarshalOptions{}.Format(item)))
+			b.WriteString("        " + compactJSON(item))
 			if i < len(rot.PrepullActions)-1 {
 				b.WriteString(",")
 			}

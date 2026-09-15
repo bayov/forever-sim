@@ -130,9 +130,10 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	), "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one.")
 
 	c.cooldowns = []*proto.APLListItem{
+		// Forever regenerates energy continuously, so there is no tick to line these
+		// two up with: a tick's worth of energy no longer arrives in one lump.
 		cast(adrenalineRush, and(
 			lt(energy(), num(k["arEnergy"])),
-			lt(timeToEnergyTick(), seconds(1)),
 			sndAtLeast(k["arSnd"]),
 		), "Adrenaline Rush anchors the big window. Cast it low on energy so none of the extra regen is wasted."),
 
@@ -159,8 +160,8 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		cast(earthstrike, and(sndAtLeast(k["trinketSnd"]), holdFor(earthstrike, adrenalineRush, k["trinketHoldForAr"] == 1)),
 			"Earthstrike waits for Adrenaline Rush or a long Slice and Dice. Without the trinket ignore the warning on this line."),
 
-		cast(thistleTea, and(le(energy(), num(k["teaEnergy"])), gt(timeToEnergyTick(), seconds(1))),
-			"Thistle Tea when there is room for the 100 energy. Right after a tick, since the next one would go over the cap before the next ability spends any."),
+		cast(thistleTea, le(energy(), num(k["teaEnergy"])),
+			"Thistle Tea when there is room for the 100 energy."),
 
 		autocastOtherCooldowns(auraIsActive(sliceAndDice), "Anything not listed above (Sapper, trinkets)."),
 	}

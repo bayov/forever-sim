@@ -146,8 +146,8 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerVanishSpell()
 }
 
-func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
-	rogue.EnergyTickMultiplier += multiplier
+func (rogue *Rogue) ApplyEnergyTickMultiplier(sim *core.Simulation, multiplier float64) {
+	rogue.AddEnergyRegenMultiplier(sim, multiplier)
 }
 
 func (rogue *Rogue) Reset(_ *core.Simulation) {

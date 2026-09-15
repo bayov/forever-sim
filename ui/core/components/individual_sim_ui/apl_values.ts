@@ -666,7 +666,7 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 	timeToEnergyTick: inputBuilder({
 		label: 'Time to Next Energy Tick',
 		submenu: ['Resources'],
-		shortDescription: 'Time until the next energy regen tick will happen',
+		shortDescription: 'Time until the next energy regen tick will happen. Always 0 under Forever, where energy regenerates continuously.',
 		newValue: APLValueTimeToEnergyTick.create,
 		fields: [],
 		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassRogue || player.getClass() === Class.ClassDruid,

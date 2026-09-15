@@ -118,13 +118,14 @@ export const ROTATION_PRESET_SINISTER_STRIKE_SWEATY = PresetUtils.makePresetAPLR
 export const ROTATION_PRESET_SINISTER_STRIKE_IEA = PresetUtils.makePresetAPLRotation('Improved Expose Armor (SS)', SinisterStrikeIEAAPL, {});
 export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateAPL, {});
 // Level 20 rotations from the same templates: Slice and Dice, Rupture at 3 points (rank 1
-// Rupture beats rank 3 Eviscerate at this level), builder on every energy tick, Thistle
-// Tea when low. The lines name the level 60 spell ranks and the sim resolves them to the
+// Rupture beats rank 3 Eviscerate at this level), builder whenever the energy is there,
+// Thistle Tea when low. The lines name the level 60 spell ranks and the sim resolves them to the
 // rank the level knows, so the icons show a higher rank than what is cast.
 export const ROTATION_PRESET_LEVEL20_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 20 Backstab', Level20BackstabAPL, {});
 export const ROTATION_PRESET_LEVEL20_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 20 Sinister Strike', Level20SinisterStrikeAPL, {});
 // Level 20 with the Forever beta's 5 extra talent points: the same rotations, only the
-// Thistle Tea threshold moved (20 energy) now that Relentless Strikes is refunding some.
+// Sinister Strike build drinks its Thistle Tea at 0 energy. Energy arrives continuously
+// under Forever, so waiting for an empty bar loses nothing and fits the whole 100.
 export const ROTATION_PRESET_LEVEL20P5_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 20 + 5 Backstab', Level20p5BackstabAPL, {});
 export const ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 20 + 5 Sinister Strike', Level20p5SinisterStrikeAPL, {});
 

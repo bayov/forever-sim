@@ -263,6 +263,10 @@ func (value *APLValueTimeToEnergyTick) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueTimeToEnergyTick) GetDuration(sim *Simulation) time.Duration {
+	// Forever has no ticks, energy is always mid arrival.
+	if value.unit.energyBar.continuous {
+		return 0
+	}
 	return value.unit.NextEnergyTickAt() - sim.CurrentTime
 }
 func (value *APLValueTimeToEnergyTick) String() string {

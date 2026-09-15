@@ -27,6 +27,15 @@ type manaBar struct {
 
 	ReplenishmentAura *Aura
 
+	// Forever regen is a rate rather than a 2 sec tick. Mana is settled up to the current
+	// time in Simulation.advance, so currentMana is always exact when anyone reads it.
+	// The 5 second rule still applies: the stretch of time before
+	// FiveSecondRuleRefreshTime accrues at the casting rate, the rest at the full rate.
+	continuous               bool
+	lastRegenAt              time.Duration
+	regenPerSecondCasting    float64
+	regenPerSecondNotCasting float64
+
 	// For keeping track of OOM status.
 	waitingForMana          float64
 	waitingForManaStartTime time.Duration
@@ -187,8 +196,26 @@ func (unit *Unit) ManaRegenPerSecondWhileNotCasting() float64 {
 }
 
 func (unit *Unit) UpdateManaRegenRates() {
-	unit.manaTickWhileCasting = unit.ManaRegenPerSecondWhileCasting() * 2
-	unit.manaTickWhileNotCasting = unit.ManaRegenPerSecondWhileNotCasting() * 2
+	unit.manaBar.regenPerSecondCasting = unit.ManaRegenPerSecondWhileCasting()
+	unit.manaBar.regenPerSecondNotCasting = unit.ManaRegenPerSecondWhileNotCasting()
+	unit.manaTickWhileCasting = unit.manaBar.regenPerSecondCasting * 2
+	unit.manaTickWhileNotCasting = unit.manaBar.regenPerSecondNotCasting * 2
+}
+
+// Adds the mana accrued since the last settle, split at the 5 second rule boundary.
+func (mb *manaBar) settle(sim *Simulation) {
+	from, to := mb.lastRegenAt, sim.CurrentTime
+	mb.lastRegenAt = to
+	if to <= from || !mb.unit.IsEnabled() {
+		return
+	}
+	fsr := mb.unit.PseudoStats.FiveSecondRuleRefreshTime
+	if casting := min(fsr, to) - from; casting > 0 {
+		mb.unit.AddMana(sim, max(0, mb.regenPerSecondCasting*casting.Seconds()), mb.manaCastingMetrics)
+	}
+	if notCasting := to - max(fsr, from); notCasting > 0 {
+		mb.unit.AddMana(sim, max(0, mb.regenPerSecondNotCasting*notCasting.Seconds()), mb.manaNotCastingMetrics)
+	}
 }
 
 func (unit *Unit) GetManaNotCastingMetrics() *ResourceMetrics {
@@ -234,7 +261,8 @@ func (unit *Unit) TimeUntilManaRegen(desiredMana float64) time.Duration {
 	return regenTime
 }
 
-func (sim *Simulation) initManaTickAction() {
+// Under Forever the mana bars settle continuously. Under Classic they tick every 2 sec.
+func (sim *Simulation) initManaRegen() {
 	var unitsWithManaBars []*Unit
 
 	for _, party := range sim.Raid.Parties {
@@ -256,6 +284,14 @@ func (sim *Simulation) initManaTickAction() {
 		return
 	}
 
+	if sim.IsForever() {
+		for _, unit := range unitsWithManaBars {
+			unit.manaBar.continuous = true
+			sim.addContinuousRegen(&unit.manaBar)
+		}
+		return
+	}
+
 	interval := time.Second * 2
 	pa := &PendingAction{
 		NextActionAt: sim.Environment.PrepullStartTime() + interval,
@@ -274,11 +310,16 @@ func (sim *Simulation) initManaTickAction() {
 	sim.AddPendingAction(pa)
 }
 
-func (mb *manaBar) reset() {
+func (mb *manaBar) reset(sim *Simulation) {
 	if mb.unit == nil {
 		return
 	}
 
+	// Players regenerate through the prepull. A pet enabled mid fight starts from then.
+	mb.lastRegenAt = sim.CurrentTime
+	if mb.unit.Type != PetUnit {
+		mb.lastRegenAt = sim.Environment.PrepullStartTime()
+	}
 	mb.currentMana = mb.unit.MaxMana()
 	mb.waitingForMana = 0
 	mb.waitingForManaStartTime = 0

@@ -100,160 +100,160 @@ dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sEarthshaker"
  value: {
   dps: 419.81989
-  tps: 727.50208
+  tps: 727.18542
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sStormcaller"
  value: {
   dps: 438.52126
-  tps: 752.47322
+  tps: 752.16968
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 580.79698
-  tps: 1082.29872
+  tps: 1081.53645
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Stormcaller'sGarb"
  value: {
   dps: 458.46846
-  tps: 782.88176
+  tps: 782.35557
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheEarthfury"
  value: {
   dps: 418.32195
-  tps: 722.23878
+  tps: 721.82831
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheEarthshatterer"
  value: {
   dps: 436.85977
-  tps: 752.20357
+  tps: 751.69756
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheFiveThunders"
  value: {
   dps: 437.82339
-  tps: 750.90665
+  tps: 750.46214
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheTenStorms"
  value: {
   dps: 437.01953
-  tps: 752.48053
+  tps: 752.01755
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
   dps: 459.80844
-  tps: 783.89796
+  tps: 783.59551
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Average-Default"
  value: {
   dps: 378.7062
-  tps: 667.18223
+  tps: 666.82639
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 170.61326
-  tps: 621.22216
+  dps: 173.22682
+  tps: 659.75349
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 163.66
-  tps: 366.34853
+  dps: 164.6955
+  tps: 370.36532
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
   dps: 166.08754
-  tps: 377.64855
+  tps: 380.42583
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 55.987
-  tps: 264.72213
+  dps: 54.95931
+  tps: 265.00647
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 51.04975
-  tps: 93.75765
+  dps: 50.5505
+  tps: 92.68401
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 109.13299
-  tps: 252.73998
+  dps: 105.51874
+  tps: 243.569
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 172.09719
-  tps: 679.13156
+  dps: 173.52717
+  tps: 678.29654
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 164.69045
-  tps: 371.30753
+  dps: 164.41228
+  tps: 370.69819
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
   dps: 169.80318
-  tps: 386.93594
+  tps: 386.22614
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 60.31287
-  tps: 320.33613
+  dps: 59.24391
+  tps: 311.40144
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 55.50387
-  tps: 107.80986
+  dps: 53.90476
+  tps: 103.20491
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 96.07744
-  tps: 218.43367
+  dps: 97.42878
+  tps: 221.80195
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-SwitchInFrontOfTarget-Default"
  value: {
   dps: 345.36408
-  tps: 628.96161
+  tps: 628.64503
  }
 }

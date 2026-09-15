@@ -80,10 +80,6 @@ func energy() value {
 	return &proto.APLValue{Value: &proto.APLValue_CurrentEnergy{CurrentEnergy: &proto.APLValueCurrentEnergy{}}}
 }
 
-func timeToEnergyTick() value {
-	return &proto.APLValue{Value: &proto.APLValue_TimeToEnergyTick{TimeToEnergyTick: &proto.APLValueTimeToEnergyTick{}}}
-}
-
 func remainingTime() value {
 	return &proto.APLValue{Value: &proto.APLValue_RemainingTime{RemainingTime: &proto.APLValueRemainingTime{}}}
 }

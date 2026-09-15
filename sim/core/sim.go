@@ -61,6 +61,25 @@ type Simulation struct {
 
 	minTaskTime time.Duration
 	tasks       []Task
+
+	// Resource bars that regenerate continuously under Forever. They are settled up to
+	// the current time every time the clock moves, so a current energy or mana read is
+	// always exact without anyone scheduling ticks.
+	continuousRegen []continuousRegen
+}
+
+type continuousRegen interface {
+	settle(sim *Simulation)
+}
+
+func (sim *Simulation) addContinuousRegen(bar continuousRegen) {
+	sim.continuousRegen = append(sim.continuousRegen, bar)
+}
+
+func (sim *Simulation) removeContinuousRegen(bar continuousRegen) {
+	if idx := slices.Index(sim.continuousRegen, bar); idx != -1 {
+		sim.continuousRegen = removeBySwappingToBack(sim.continuousRegen, idx)
+	}
 }
 
 func (sim *Simulation) rescheduleTracker(trackerTime time.Duration) {
@@ -416,10 +435,11 @@ func (sim *Simulation) reset() {
 
 	sim.tasks = sim.tasks[:0]
 	sim.minTaskTime = NeverExpires
+	sim.continuousRegen = sim.continuousRegen[:0]
 
 	sim.Environment.reset(sim)
 
-	sim.initManaTickAction()
+	sim.initManaRegen()
 }
 
 func (sim *Simulation) PrePull() {
@@ -546,6 +566,10 @@ func (sim *Simulation) advanceTasks() {
 // Advance moves time forward counting down auras, CDs, mana regen, etc
 func (sim *Simulation) advance(nextTime time.Duration) {
 	sim.CurrentTime = nextTime
+
+	for _, bar := range sim.continuousRegen {
+		bar.settle(sim)
+	}
 
 	// this is a loop to handle duplicate ExecuteProportions, e.g. if they're all set to 100%, you reach
 	// execute phases 35%, 25%, and 20% in the first advance() call.
