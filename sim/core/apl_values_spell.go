@@ -361,9 +361,22 @@ func (rot *APLRotation) newValueSpellUsesLostByDelay(config *proto.APLValueSpell
 	if spell == nil {
 		return nil
 	}
+	// A delay that is given but does not resolve (the time to ready of a cooldown the
+	// character does not have, like Adrenaline Rush below level 40) takes the whole value
+	// out, the same as a missing spell does. A delay of zero instead would make "uses
+	// lost > 0" false forever, and a Blood Fury waiting on it would never be cast.
+	var delay APLValue
+	if config.Delay != nil {
+		delay = rot.coerceTo(rot.newAPLValue(config.Delay), proto.APLValueType_ValueTypeDuration)
+		if delay == nil {
+			return nil
+		}
+	} else {
+		delay = rot.durationValueOrZero(nil)
+	}
 	return &APLValueSpellUsesLostByDelay{
 		spell:       spell,
-		delay:       rot.durationValueOrZero(config.Delay),
+		delay:       delay,
 		minTimeLeft: rot.durationValueOrZero(config.MinTimeLeft),
 	}
 }
