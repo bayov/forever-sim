@@ -62,6 +62,7 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 			not(dotIsActive(rupture)),
 			ge(auraRemainingTime(sliceAndDice), seconds(k["ruptureSnd"])),
 			gt(remainingTime(), seconds(12)),
+			c.ruptureHold,
 		)
 		if k["hemoForRupture"] == 1 {
 			items = append(items, cast(hemorrhage, and(
@@ -71,6 +72,7 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 				not(targetAuraIsActive(hemorrhage)),
 				ge(auraRemainingTime(sliceAndDice), seconds(k["ruptureSnd"])),
 				gt(remainingTime(), seconds(12)),
+				c.ruptureHold,
 			), "Hemorrhage right before a Rupture when the debuff is missing, Rupture snapshots it."))
 		}
 		items = append(items, cast(rupture, ruptureWhen, "Rupture when it is not ticking and Slice and Dice does not need the points."))

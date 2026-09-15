@@ -13,8 +13,9 @@ gen() {
 	template=$1
 	name=$2
 	knobs=$3
+	shift 3
 	go run --tags=with_db ./tools/rotopt -template "$template" -settings "$settings" -durs 300 \
-		-eval -confirm-iters 100 -out ui/rogue/apls -name "$name" -knobs "$knobs" >/dev/null
+		-eval -confirm-iters 100 -out ui/rogue/apls -name "$name" -knobs "$knobs" "$@" >/dev/null
 	mv "ui/rogue/apls/${name}_300s.apl.json" "ui/rogue/apls/$name.apl.json"
 	echo "wrote ui/rogue/apls/$name.apl.json ($knobs)"
 }
@@ -36,10 +37,15 @@ gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSn
 # The low level presets are the same templates with the knobs the level 20 searches
 # settled on, with 11 points and with the Forever beta's 16 (level 20 plus 5 extra talent
 # points). The lines name the level 60 spell ranks and the sim resolves them to the rank
-# the level knows, so the files do not depend on the level. Rupture at 3 points beats
+# the level knows. The level is passed so the template leaves out Adrenaline Rush and
+# Blade Flurry, which the points cannot reach. Rupture at 3 points beats
 # Eviscerate at this level. Thistle Tea goes at 0 energy in the 16 point build: energy
 # arrives continuously under Forever, so nothing is lost by waiting for the bar to empty.
-gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10"
-gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0"
-gen rogue_ss level20p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,teaEnergy=0"
-gen rogue_bs level20p5_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0"
+# With finishers at 3 points the rotation never sits on 5, so Eureka! goes on cooldown
+# (+3 for a Gnome) and, for anyone who picks Cold Blood, the points are held for its
+# Eviscerate while it is ready (cbPool, free for builds without it).
+low="cbPool=1,cbSnd=0,eurekaCp=0"
+gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,$low" -level 20 -bonus-talents 0
+gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0,$low" -level 20 -bonus-talents 0
+gen rogue_ss level20p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,teaEnergy=0,$low" -level 20 -bonus-talents 5
+gen rogue_bs level20p5_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,$low" -level 20 -bonus-talents 5

@@ -39,7 +39,13 @@ func rogueCooldownKnobs() []Knob {
 		{Name: "bfSnd", Default: 1, Min: 0, Max: 24, Step: 3},
 		{Name: "bfHoldForAr", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "cbSnd", Default: 6, Min: 0, Max: 24, Step: 3},
+		// Build to 5 points for a Cold Blood Eviscerate while Cold Blood is ready, instead
+		// of spending them on a Rupture. Only matters with a Rupture threshold under 5.
+		{Name: "cbPool", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "eurekaSnd", Default: 8, Min: 0, Max: 12, Step: 2},
+		// Eureka! right before a 5 point Eviscerate (5), or on cooldown (0). Below 60 the
+		// finishers go out at 3 points and 5 never comes.
+		{Name: "eurekaCp", Default: 5, Min: 0, Max: 5, Step: 5},
 		{Name: "teaEnergy", Default: 10, Min: 0, Max: 50, Step: 10},
 		{Name: "bloodFurySnd", Default: 0, Min: 0, Max: 24, Step: 4},
 		{Name: "bloodFuryHoldForAr", Default: 1, Min: 0, Max: 1, Step: 1},
@@ -66,6 +72,9 @@ type rogueCooldowns struct {
 	notRefreshing value
 	// evisWhen is the condition on the plain 5 point Eviscerate.
 	evisWhen value
+	// ruptureHold is true while Rupture and the Slice and Dice refresh should leave the
+	// points alone, nil when nothing is waiting on them.
+	ruptureHold value
 	// prepull holds the Blade Flurry prepull when the knob asks for one.
 	prepull []*proto.APLPrepullAction
 }
@@ -78,6 +87,14 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		}
 		return ge(auraRemainingTime(sliceAndDice), seconds(secs))
 	}
+	// Adrenaline Rush is 31 points into Combat and Blade Flurry 21, so their lines only
+	// exist once the build can have them. A line for a spell the character lacks would
+	// only warn, but a condition that mentions one is quietly dropped by the sim, and
+	// the Slice and Dice window clause below would come out as a bare "5 combo points"
+	// once every cooldown in it is missing: at level 20 that refreshed Slice and Dice on
+	// every 5 points and never let Cold Blood fire.
+	hasAdrenalineRush := maxTalentPoints >= 31
+	hasBladeFlurry := maxTalentPoints >= 21
 	// When a cooldown wants a long Slice and Dice, a 5 point refresh goes out first so
 	// the cooldown is not waiting on a 1 point one to run out. The Slice and Dice check
 	// goes through the spell's time to ready (zero once it is ready) so that a cooldown the
@@ -87,13 +104,14 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	for _, w := range []struct {
 		spell *proto.ActionID
 		snd   float64
+		has   bool
 	}{
-		{adrenalineRush, k["arSnd"]},
-		{bladeFlurry, k["bfSnd"]},
-		{bloodFury, k["bloodFurySnd"]},
-		{earthstrike, k["trinketSnd"]},
+		{adrenalineRush, k["arSnd"], hasAdrenalineRush},
+		{bladeFlurry, k["bfSnd"], hasBladeFlurry},
+		{bloodFury, k["bloodFurySnd"], true},
+		{earthstrike, k["trinketSnd"], true},
 	} {
-		if w.snd > 0 {
+		if w.snd > 0 && w.has {
 			waiting = append(waiting, and(
 				spellIsReady(w.spell),
 				gt(spellUsesRemaining(w.spell, buffDuration), num(0)),
@@ -107,6 +125,12 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	}
 
 	c := rogueCooldowns{}
+	// While Cold Blood is ready the 5 points are for its Eviscerate: neither Rupture nor
+	// the Slice and Dice refresh gets them. Slice and Dice goes back up on the point
+	// Ruthlessness leaves after the Eviscerate.
+	if k["cbPool"] == 1 {
+		c.ruptureHold = not(spellIsReady(coldBlood))
+	}
 	// Enough for a full Eviscerate. Cold Blood and Eureka! wait for this.
 	c.fivePointEviscerate = and(
 		ge(comboPoints(), num(5)),
@@ -117,7 +141,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		c.notRefreshing = not(sndForWindow)
 	}
 	holdFor := func(spell *proto.ActionID, anchor *proto.ActionID, hold bool) value {
-		if !hold {
+		if !hold || (anchor == adrenalineRush && !hasAdrenalineRush) || (anchor == bladeFlurry && !hasBladeFlurry) {
 			return nil
 		}
 		return alignedWith(spell, anchor)
@@ -125,28 +149,35 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 
 	c.sliceAndDice = cast(sliceAndDice, or(
 		and(ge(comboPoints(), num(1)), not(auraIsActive(sliceAndDice)), ge(remainingTime(), seconds(6))),
-		and(ge(comboPoints(), num(5)), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9))),
+		and(ge(comboPoints(), num(5)), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9)), c.ruptureHold),
 		sndForWindow,
 	), "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one.")
 
-	c.cooldowns = []*proto.APLListItem{
-		// Forever regenerates energy continuously, so there is no tick to line these
-		// two up with: a tick's worth of energy no longer arrives in one lump.
-		cast(adrenalineRush, and(
+	// Forever regenerates energy continuously, so there is no tick to line Adrenaline
+	// Rush up with: a tick's worth of energy no longer arrives in one lump.
+	if hasAdrenalineRush {
+		c.cooldowns = append(c.cooldowns, cast(adrenalineRush, and(
 			lt(energy(), num(k["arEnergy"])),
 			sndAtLeast(k["arSnd"]),
-		), "Adrenaline Rush anchors the big window. Cast it low on energy so none of the extra regen is wasted."),
-
-		cast(bladeFlurry, and(
+		), "Adrenaline Rush anchors the big window. Cast it low on energy so none of the extra regen is wasted."))
+	}
+	if hasBladeFlurry {
+		c.cooldowns = append(c.cooldowns, cast(bladeFlurry, and(
 			sndAtLeast(k["bfSnd"]),
 			holdFor(bladeFlurry, adrenalineRush, k["bfHoldForAr"] == 1),
-		), "Blade Flurry is auto attack speed and does not feed the energy window, so it goes on cooldown."),
-
+		), "Blade Flurry is auto attack speed and does not feed the energy window, so it goes on cooldown."))
+	}
+	eurekaLine := cast(eureka, and(c.fivePointEviscerate, sndAtLeast(k["eurekaSnd"]), c.notRefreshing),
+		"Gnome. Eureka! buffs the next 3 abilities, so right before Eviscerate and the two builders after it. Other races can ignore the warning on this line.")
+	if k["eurekaCp"] == 0 {
+		eurekaLine = cast(eureka, sndAtLeast(k["eurekaSnd"]),
+			"Gnome. Eureka! on cooldown, the next 3 abilities cost half. Other races can ignore the warning on this line.")
+	}
+	c.cooldowns = append(c.cooldowns,
 		cast(coldBlood, and(c.fivePointEviscerate, sndAtLeast(k["cbSnd"]), c.notRefreshing),
 			"Cold Blood is spent by the next hit, so only ever right before a 5 point Eviscerate."),
 
-		cast(eureka, and(c.fivePointEviscerate, sndAtLeast(k["eurekaSnd"]), c.notRefreshing),
-			"Gnome. Eureka! buffs the next 3 abilities, so right before Eviscerate and the two builders after it. Other races can ignore the warning on this line."),
+		eurekaLine,
 
 		cast(bloodFury, and(sndAtLeast(k["bloodFurySnd"]), holdFor(bloodFury, adrenalineRush, k["bloodFuryHoldForAr"] == 1)),
 			"Orc. Blood Fury waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line."),
@@ -164,7 +195,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 			"Thistle Tea when there is room for the 100 energy."),
 
 		autocastOtherCooldowns(auraIsActive(sliceAndDice), "Anything not listed above (Sapper, trinkets)."),
-	}
+	)
 
 	c.evisWhen = and(
 		ge(comboPoints(), num(5)),

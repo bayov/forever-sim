@@ -20,7 +20,10 @@ var ItemSetNightslayerArmor = core.NewItemSet(core.ItemSet{
 			c.RegisterAura(core.Aura{
 				Label: "Improved Vanish",
 				OnInit: func(aura *core.Aura, sim *core.Simulation) {
-					c.Vanish.CD.Duration -= time.Second * 30
+					// Vanish is a level 22 spell, so a low level character in the set has none.
+					if c.Vanish != nil {
+						c.Vanish.CD.Duration -= time.Second * 30
+					}
 				},
 			})
 		},

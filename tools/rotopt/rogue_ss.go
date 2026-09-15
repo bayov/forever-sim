@@ -30,6 +30,7 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 			not(dotIsActive(rupture)),
 			ge(auraRemainingTime(sliceAndDice), seconds(k["ruptureSnd"])),
 			gt(remainingTime(), seconds(12)),
+			c.ruptureHold,
 		), "Rupture when it is not ticking and Slice and Dice does not need the points."))
 	}
 	items = append(items,
