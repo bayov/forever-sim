@@ -118,10 +118,10 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	if k["rageWithStormstrike"] == 1 {
 		rageWhen = spellIsReady(stormstrike)
 	}
-	// Rage of the Farseer takes 31 talent points, so the burst window and the
-	// Stormstrike line only exist from level 40. Below that the racials go last, on a
-	// GCD nothing else wants: at 20 Blood Fury's 10% of 400 attack power is worth about
-	// what the GCD it takes from the shocks costs.
+	// Rage of the Farseer takes 31 talent points, so the burst window only exists from
+	// level 40. Below that the racials go last, on a GCD nothing else wants: at 20 Blood
+	// Fury's 10% of 400 attack power is worth about what the GCD it takes from the shocks
+	// costs. Stormstrike is a 15 point talent under Forever, so its line exists from 24.
 	if playerLevel >= 40 {
 		items = append(items,
 			cast(rageOfTheFarseer, rageWhen, "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line."),
@@ -130,8 +130,10 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 			cast(berserking, holdFor(berserking, rageOfTheFarseer, k["berserkingHoldForRage"] == 1),
 				"Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line."),
 			autocastOtherCooldowns(nil, "Anything not listed above (Sapper, trinkets, potions)."),
-			cast(stormstrike, nil, "Stormstrike on cooldown."),
 		)
+	}
+	if playerLevel >= 24 {
+		items = append(items, cast(stormstrike, nil, "Stormstrike on cooldown. Without the talent ignore the warning on this line."))
 	}
 	if k["shield"] == 1 {
 		items = append(items, cast(lightningShield, not(auraIsActive(lightningShield)), "Lightning Shield whenever it is down."))

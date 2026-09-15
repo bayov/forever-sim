@@ -30,3 +30,13 @@ gen rogue_bs combat_backstab "ghostly=0"
 gen rogue_bs combat_backstab_rupture "ghostly=0,ruptureCp=5"
 gen rogue_bs combat_backstab_on_cooldown "ghostly=0,arSnd=0,bfSnd=0,cbSnd=0,eurekaSnd=0,bloodFuryHoldForAr=0,eluneHoldForAr=0"
 gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSnd=18,trinketSnd=20"
+
+# The low level presets are the same templates with the knobs the level 20 and 25
+# searches settled on. The lines name the level 60 spell ranks and the sim resolves them
+# to the rank the level knows, so the files do not depend on the level. Rupture at 3
+# points beats Eviscerate at both levels, and at 25 Vanish is up (learned at 22) so it
+# opens an Ambush once at the start of the fight.
+gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10"
+gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0"
+gen rogue_ss level25_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,teaEnergy=20"
+gen rogue_bs level25_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,vanishCp=0"

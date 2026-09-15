@@ -20,5 +20,8 @@ gen() {
 	mv "ui/enhancement_shaman/apls/${name}_300s.apl.json" "ui/enhancement_shaman/apls/$name.apl.json"
 	echo "wrote ui/enhancement_shaman/apls/$name.apl.json ($knobs $*)"
 }
-gen optimized "shock=4"
+gen optimized "shock=4" -level 60
 gen level20 "airTotem=0,strengthOfEarth=0,fireTotemMinTime=10,shield=1,shock=3,maelstromStacks=0" -level 20
+# At 25 Stormstrike is in reach (a 15 point talent under Forever), Earth Shock beats
+# Frost Shock by 7 DPS and the rank 2 Strength of Earth is worth its mana.
+gen level25 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=1,maelstromStacks=0" -level 25

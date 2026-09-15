@@ -63,3 +63,12 @@ All gear is Classic gear with Classic stats, so Classic phase presets are what y
 ## Comparing races
 
 Racials are the only difference between races, since both factions have blessings and totems. The rogue and shaman APLs hold Blood Fury and Berserking for their burst anchor (Adrenaline Rush, Rage of the Farseer) when the wait costs no use, and fire them on cooldown otherwise. The warrior APLs hold them for the last 20 to 30 sec so they stack with Death Wish and Recklessness, which measures the same or slightly better than firing them at the pull on a 2 min fight.
+
+## Low levels
+
+The sim takes a player level (Other settings), with 1.12 base stats and spell ranks per level. The Rogue and Enhancement Shaman UIs ship "Level 20" and "Level 25" builds (gear, talents, rotation, race, level and encounter together) from the tools/rotopt searches: every item the level can equip, every build of the damage talents, then the rotation knobs. The encounter is a dungeon boss two levels up (Mutanus at 20, Twilight Lord Kelris at 25), 60 sec, no raid buffs, the boss hitting the shaman so Lightning Shield fires.
+
+- Level 20: Sinister Strike 64 DPS, Backstab 61, Enhancement 62 (Rockbiter, Frost Shock, Searing Totem, Lightning Shield).
+- Level 25: Sinister Strike 87.5, Backstab 82, Enhancement 95. Stormstrike is a 15 point talent under Forever, so the shaman has it at 24, and it is worth 8 DPS over the best build without it. Earth Shock rank 3 beats Frost Shock by 7 and Strength of Earth rank 2 is worth 3. The rogue takes Assassination rows 1 and 2 (Malice, Ruthlessness, Murder, Imp SnD, Relentless Strikes) plus Imp SS or the dagger talents. Lethality, Cold Blood, Dual Wield Specialization and the poison talents all score lower. Rupture at 3 points beats Eviscerate at both levels.
+- Races at 25: Night Elf leads the rogue by 1.5 DPS (Elune's Light), then Human with swords, Troll, Undead, Gnome, Skyborne, Orc, Dwarf. The shaman races are within 1 DPS (Tauren, Orc, Dwarf, Skyborne, Troll). Blood Fury is a GCD for 10% of a few hundred attack power at these levels.
+- The shaman's 1650 mana is gone after a minute of Earth Shocks and Stormstrikes: 100 DPS in a 30 sec fight, 95 at 60, 79 at 120, 68 at 300. A mana floor on the shocks only loses DPS at 60 sec. The rogue loses less over time (SS 93, 87.5, 84, 82).

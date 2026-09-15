@@ -40,6 +40,8 @@ import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
 import MutilateAPL from './apls/forever_mutilate.apl.json';
 import Level20BackstabAPL from './apls/level20_backstab.apl.json';
 import Level20SinisterStrikeAPL from './apls/level20_sinister_strike.apl.json';
+import Level25BackstabAPL from './apls/level25_backstab.apl.json';
+import Level25SinisterStrikeAPL from './apls/level25_sinister_strike.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
 import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
@@ -49,6 +51,8 @@ import SinisterStrikeGearP1BiS from './gear_sets/combat_sinister_strike_p1_bis.g
 import SinisterStrikeGearP2BiS from './gear_sets/combat_sinister_strike_p2_bis.gear.json';
 import Level20BackstabGear from './gear_sets/level20_backstab.gear.json';
 import Level20SinisterStrikeGear from './gear_sets/level20_sinister_strike.gear.json';
+import Level25BackstabGear from './gear_sets/level25_backstab.gear.json';
+import Level25SinisterStrikeGear from './gear_sets/level25_sinister_strike.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -71,10 +75,16 @@ export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Stri
 // nothing with DPS stats exists at that level. Only the weapons differ between the two.
 export const GearLevel20Backstab = PresetUtils.makePresetGear('Level 20 Backstab', Level20BackstabGear);
 export const GearLevel20SinisterStrike = PresetUtils.makePresetGear('Level 20 Sinister Strike', Level20SinisterStrikeGear);
+// Level 25 sets from the same search: Gnomeregan and BFD blues (Humbert's Helm, Mantle of
+// Thieves, Triprunner Dungarees, Thunderbrow Ring), "of the Tiger" and "of Power" greens
+// and Outlaw Sabre (a BoE sword) in both hands for Sinister Strike, Blackvenom Blade for
+// Backstab. Trinkets and ranged are still empty.
+export const GearLevel25Backstab = PresetUtils.makePresetGear('Level 25 Backstab', Level25BackstabGear);
+export const GearLevel25SinisterStrike = PresetUtils.makePresetGear('Level 25 Sinister Strike', Level25SinisterStrikeGear);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearBackstabPreBiS, GearSinisterStrikePreBiS, GearBackstabP1BiS, GearSinisterStrikeP1BiS, GearLevel20Backstab, GearLevel20SinisterStrike],
-	[Phase.Phase2]: [GearBackstabPreBiS, GearSinisterStrikePreBiS, GearBackstabP2BiS, GearSinisterStrikeP2BiS, GearLevel20Backstab, GearLevel20SinisterStrike],
+	[Phase.Phase1]: [GearBackstabPreBiS, GearSinisterStrikePreBiS, GearBackstabP1BiS, GearSinisterStrikeP1BiS, GearLevel20Backstab, GearLevel20SinisterStrike, GearLevel25Backstab, GearLevel25SinisterStrike],
+	[Phase.Phase2]: [GearBackstabPreBiS, GearSinisterStrikePreBiS, GearBackstabP2BiS, GearSinisterStrikeP2BiS, GearLevel20Backstab, GearLevel20SinisterStrike, GearLevel25Backstab, GearLevel25SinisterStrike],
 };
 
 export const DefaultGear = GearSinisterStrikePreBiS;
@@ -105,10 +115,15 @@ export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutil
 // rank the level knows, so the icons show a higher rank than what is cast.
 export const ROTATION_PRESET_LEVEL20_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 20 Backstab', Level20BackstabAPL, {});
 export const ROTATION_PRESET_LEVEL20_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 20 Sinister Strike', Level20SinisterStrikeAPL, {});
+// Level 25: the same again. Vanish is up from 22, so the Backstab rotation opens an
+// Ambush from it once at the start (the Premeditation and Preparation lines next to it
+// only warn without those talents).
+export const ROTATION_PRESET_LEVEL25_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 25 Backstab', Level25BackstabAPL, {});
+export const ROTATION_PRESET_LEVEL25_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 25 Sinister Strike', Level25SinisterStrikeAPL, {});
 
 export const APLPresets = {
-	[Phase.Phase1]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_BACKSTAB_RUPTURE, ROTATION_PRESET_BACKSTAB_ON_COOLDOWN, ROTATION_PRESET_BACKSTAB_SND_WINDOW, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN, ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR, ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER, ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA, ROTATION_PRESET_MUTILATE, ROTATION_PRESET_LEVEL20_BACKSTAB, ROTATION_PRESET_LEVEL20_SINISTER_STRIKE],
-	[Phase.Phase2]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_BACKSTAB_RUPTURE, ROTATION_PRESET_BACKSTAB_ON_COOLDOWN, ROTATION_PRESET_BACKSTAB_SND_WINDOW, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN, ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR, ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER, ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA, ROTATION_PRESET_MUTILATE, ROTATION_PRESET_LEVEL20_BACKSTAB, ROTATION_PRESET_LEVEL20_SINISTER_STRIKE],
+	[Phase.Phase1]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_BACKSTAB_RUPTURE, ROTATION_PRESET_BACKSTAB_ON_COOLDOWN, ROTATION_PRESET_BACKSTAB_SND_WINDOW, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN, ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR, ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER, ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA, ROTATION_PRESET_MUTILATE, ROTATION_PRESET_LEVEL20_BACKSTAB, ROTATION_PRESET_LEVEL20_SINISTER_STRIKE, ROTATION_PRESET_LEVEL25_BACKSTAB, ROTATION_PRESET_LEVEL25_SINISTER_STRIKE],
+	[Phase.Phase2]: [ROTATION_PRESET_BACKSTAB, ROTATION_PRESET_BACKSTAB_RUPTURE, ROTATION_PRESET_BACKSTAB_ON_COOLDOWN, ROTATION_PRESET_BACKSTAB_SND_WINDOW, ROTATION_PRESET_SINISTER_STRIKE, ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN, ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR, ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER, ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW, ROTATION_PRESET_BACKSTAB_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_SWEATY, ROTATION_PRESET_SINISTER_STRIKE_IEA, ROTATION_PRESET_MUTILATE, ROTATION_PRESET_LEVEL20_BACKSTAB, ROTATION_PRESET_LEVEL20_SINISTER_STRIKE, ROTATION_PRESET_LEVEL25_BACKSTAB, ROTATION_PRESET_LEVEL25_SINISTER_STRIKE],
 };
 
 //Need to add main hand equip logic or talent/rotation logic to map to Auto APL
@@ -146,10 +161,18 @@ export const AssassinationMutilateTalents = PresetUtils.makePresetTalents('Mutil
 export const Level20SinisterStrikeTalents = PresetUtils.makePresetTalents('Level 20 Sinister Strike', SavedTalents.create({ talentsString: '005022-02' }));
 export const Level20SinisterStrikeNoMurderTalents = PresetUtils.makePresetTalents('Level 20 Sinister Strike (no Murder)', SavedTalents.create({ talentsString: '0053021' }));
 export const Level20BackstabTalents = PresetUtils.makePresetTalents('Level 20 Backstab', SavedTalents.create({ talentsString: '001-3023-002' }));
+// The 16 points at level 25, scored over every build of the damage talents. Sinister
+// Strike fills Assassination rows 1 and 2 (Malice 5, Ruthlessness 3, Murder 2, Imp SnD 3,
+// Relentless Strikes 1) with Imp SS 2. Backstab keeps the level 20 dagger build and adds
+// Malice 5: Murder 2, Imp Evis 3, Lightning Reflexes 2, Puncturing Wounds 3, Opportunity 1.
+// The 15 point row (Cold Blood, Dual Wield Specialization) is not worth what it costs to
+// reach, and Lethality loses to Imp SnD.
+export const Level25SinisterStrikeTalents = PresetUtils.makePresetTalents('Level 25 Sinister Strike', SavedTalents.create({ talentsString: '0053231-02' }));
+export const Level25BackstabTalents = PresetUtils.makePresetTalents('Level 25 Backstab', SavedTalents.create({ talentsString: '00502-3023-001' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents, Level20SinisterStrikeNoMurderTalents],
-	[Phase.Phase2]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents, Level20SinisterStrikeNoMurderTalents],
+	[Phase.Phase1]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents, Level20SinisterStrikeNoMurderTalents, Level25BackstabTalents, Level25SinisterStrikeTalents],
+	[Phase.Phase2]: [CombatBackstabTalents, CombatSinisterStrikeTalents, CombatSinisterStrikeIEATalents, AssassinationMutilateTalents, Level20BackstabTalents, Level20SinisterStrikeTalents, Level20SinisterStrikeNoMurderTalents, Level25BackstabTalents, Level25SinisterStrikeTalents],
 };
 
 export const DefaultTalentsAssassin = TalentPresets[Phase.Phase2][0];
@@ -238,6 +261,59 @@ export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Lev
 	encounter: EncounterLevel20,
 	race: Race.RaceHuman,
 	level: 20,
+});
+
+// The level 25 setup is the level 20 one against Twilight Lord Kelris (BFD, level 27,
+// 916 armor). Night Elf is the best race at 25 (Elune's Light) but the builds keep Human
+// so the two levels compare like for like.
+export const EncounterLevel25 = PresetUtils.makePresetEncounter(
+	'Level 25',
+	Encounter.create({
+		duration: 60,
+		durationVariation: 5,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 4832,
+				name: 'Twilight Lord Kelris',
+				level: 27,
+				mobType: MobType.MobTypeHumanoid,
+				stats: new Stats().withStat(Stat.StatArmor, 916).withStat(Stat.StatHealth, 20000).asArray(),
+				minBaseDamage: 45,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		raidBuffs: RaidBuffs.create({}),
+		debuffs: Debuffs.create({}),
+		buffs: IndividualBuffs.create({}),
+		consumes: Consumes.create({
+			defaultConjured: Conjured.ConjuredRogueThistleTea,
+			mainHandImbue: WeaponImbue.InstantPoison,
+			offHandImbue: WeaponImbue.InstantPoison,
+		}),
+	},
+);
+export const PresetBuildLevel25Backstab = PresetUtils.makePresetBuild('Level 25 Backstab', {
+	gear: GearLevel25Backstab,
+	talents: Level25BackstabTalents,
+	rotation: ROTATION_PRESET_LEVEL25_BACKSTAB,
+	encounter: EncounterLevel25,
+	race: Race.RaceHuman,
+	level: 25,
+});
+export const PresetBuildLevel25SinisterStrike = PresetUtils.makePresetBuild('Level 25 Sinister Strike', {
+	gear: GearLevel25SinisterStrike,
+	talents: Level25SinisterStrikeTalents,
+	rotation: ROTATION_PRESET_LEVEL25_SINISTER_STRIKE,
+	encounter: EncounterLevel25,
+	race: Race.RaceHuman,
+	level: 25,
 });
 
 ///////////////////////////////////////////////////////////////////////////
