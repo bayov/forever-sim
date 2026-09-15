@@ -46,6 +46,7 @@ func loadSetup(path string) (*setup, error) {
 		return nil, err
 	}
 	request.Raid = core.SinglePlayerRaidProto(settings.Player, settings.PartyBuffs, settings.RaidBuffs, settings.Debuffs)
+	request.Raid.Tanks = settings.Tanks
 	request.Encounter = settings.Encounter
 	request.SimOptions = &proto.SimOptions{}
 	if settings.Settings != nil {

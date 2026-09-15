@@ -184,3 +184,7 @@ func dotRemainingTime(spell *proto.ActionID) value {
 func auraNumStacks(aura *proto.ActionID) value {
 	return &proto.APLValue{Value: &proto.APLValue_AuraNumStacks{AuraNumStacks: &proto.APLValueAuraNumStacks{AuraId: aura}}}
 }
+
+func currentManaPercent() value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentManaPercent{CurrentManaPercent: &proto.APLValueCurrentManaPercent{}}}
+}

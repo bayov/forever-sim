@@ -30,6 +30,8 @@ import (
 type gearOption struct {
 	spec *proto.ItemSpec
 	name string
+	// twoHand marks a main hand option that leaves no room for an off hand.
+	twoHand bool
 }
 
 var gearSlotNames = []string{"head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2", "mainhand", "offhand", "ranged"}
@@ -57,7 +59,7 @@ func armorTypesFor(class proto.Class, level int32) []proto.ArmorType {
 var weaponTypesFor = map[proto.Class][]proto.WeaponType{
 	proto.Class_ClassRogue:   {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist},
 	proto.Class_ClassWarrior: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},
-	proto.Class_ClassShaman:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeStaff},
+	proto.Class_ClassShaman:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
 }
 
 var rangedTypesFor = map[proto.Class][]proto.RangedWeaponType{
@@ -117,10 +119,15 @@ func loadPvpRankItems(path string) (map[int32]bool, error) {
 	return ranked, nil
 }
 
-// Whether a random suffix does anything for a melee: it has to carry a physical stat.
-func meleeSuffix(s *proto.ItemRandomSuffix) bool {
+// Whether a random suffix does anything for the class: a physical stat for a melee, and
+// for a shaman also the caster stats that feed shocks, Lightning Shield and the mana pool.
+func usefulSuffix(class proto.Class, s *proto.ItemRandomSuffix) bool {
 	st := stats.FromFloatArray(s.Stats)
-	return st[stats.Agility]+st[stats.Strength]+st[stats.AttackPower]+st[stats.MeleeCrit]+st[stats.MeleeHit]+st[stats.Stamina] > 0
+	useful := st[stats.Agility] + st[stats.Strength] + st[stats.AttackPower] + st[stats.MeleeCrit] + st[stats.MeleeHit] + st[stats.Stamina]
+	if class == proto.Class_ClassShaman {
+		useful += st[stats.Intellect] + st[stats.Spirit] + st[stats.MP5] + st[stats.SpellPower] + st[stats.NaturePower] + st[stats.FirePower] + st[stats.SpellCrit] + st[stats.SpellHit]
+	}
+	return useful > 0
 }
 
 // Every option for every slot the player can use at their level.
@@ -148,13 +155,14 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 	pool := make([][]gearOption, len(gearSlotNames))
 
 	add := func(slot proto.ItemSlot, item *proto.UIItem) {
+		twoHand := item.HandType == proto.HandType_HandTypeTwoHand
 		if len(item.RandomSuffixOptions) == 0 {
-			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name})
+			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name, twoHand})
 			return
 		}
 		for _, id := range item.RandomSuffixOptions {
-			if s, ok := suffixes[id]; ok && meleeSuffix(s) {
-				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name})
+			if s, ok := suffixes[id]; ok && usefulSuffix(class, s) {
+				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name, twoHand})
 			}
 		}
 	}
@@ -252,6 +260,19 @@ func (s *searcher) setGear(slots []*proto.ItemSpec) {
 	s.cache = map[string]result{}
 }
 
+// Whether the item in the main hand slot is a two hander, from the pool it came from.
+func isTwoHand(pool [][]gearOption, item *proto.ItemSpec) bool {
+	if item == nil {
+		return false
+	}
+	for _, o := range pool[proto.ItemSlot_ItemSlotMainHand] {
+		if o.spec.Id == item.Id {
+			return o.twoHand
+		}
+	}
+	return false
+}
+
 // Which paired slot shares an item pool with this one, or -1.
 func pairedSlot(slot int) int {
 	switch proto.ItemSlot(slot) {
@@ -282,6 +303,10 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 	s.setGear(best)
 	bestScore := s.score(knobs)
 	fmt.Printf("start: %s\n", bestScore)
+	// The off hand a two hander pushed out, so a one hander tried later is scored with it
+	// back rather than with an empty off hand.
+	var heldOffHand *proto.ItemSpec
+	var heldOffHandName string
 
 	for round := 1; ; round++ {
 		improved := false
@@ -301,8 +326,19 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				if p := pairedSlot(slot); p >= 0 && best[p] != nil && best[p].Id == o.spec.Id {
 					continue
 				}
+				// A two hander empties the off hand, and nothing goes in the off hand next
+				// to one. The one hander plus shield answer is reached through the main
+				// hand slot first.
+				if proto.ItemSlot(slot) == proto.ItemSlot_ItemSlotOffHand && isTwoHand(pool, best[proto.ItemSlot_ItemSlotMainHand]) {
+					continue
+				}
 				candidate := append([]*proto.ItemSpec(nil), best...)
 				candidate[slot] = o.spec
+				if o.twoHand {
+					candidate[proto.ItemSlot_ItemSlotOffHand] = nil
+				} else if proto.ItemSlot(slot) == proto.ItemSlot_ItemSlotMainHand && candidate[proto.ItemSlot_ItemSlotOffHand] == nil {
+					candidate[proto.ItemSlot_ItemSlotOffHand] = heldOffHand
+				}
 				s.setGear(candidate)
 				score := s.score(knobs)
 				gain := score.dps - bestScore.dps
@@ -314,6 +350,16 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 			if bestOption != nil {
 				best[slot] = bestOption.spec
 				names[slot] = bestOption.name
+				if bestOption.twoHand {
+					if best[proto.ItemSlot_ItemSlotOffHand] != nil {
+						heldOffHand, heldOffHandName = best[proto.ItemSlot_ItemSlotOffHand], names[proto.ItemSlot_ItemSlotOffHand]
+					}
+					best[proto.ItemSlot_ItemSlotOffHand] = nil
+					names[proto.ItemSlot_ItemSlotOffHand] = ""
+				} else if proto.ItemSlot(slot) == proto.ItemSlot_ItemSlotMainHand && best[proto.ItemSlot_ItemSlotOffHand] == nil {
+					best[proto.ItemSlot_ItemSlotOffHand] = heldOffHand
+					names[proto.ItemSlot_ItemSlotOffHand] = heldOffHandName
+				}
 				s.setGear(best)
 				bestScore = s.score(knobs)
 				improved = true

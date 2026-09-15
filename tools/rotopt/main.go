@@ -87,6 +87,7 @@ func main() {
 	}
 	if l := setup.player().Level; l > 0 && l < core.CharacterMaxLevel {
 		maxTalentPoints = max(0, int(l)-9)
+		playerLevel = l
 	}
 	if *talents != "" {
 		setup.player().TalentsString = *talents
