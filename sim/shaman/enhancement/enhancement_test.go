@@ -26,6 +26,7 @@ func TestEnhancement(t *testing.T) {
 			OtherRotations: []core.RotationCombo{
 				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "grace_of_air"),
 				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "windfury"),
+				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "optimized"),
 			},
 			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
@@ -109,7 +110,7 @@ func TestEnhancement(t *testing.T) {
 	}))
 }
 
-var DefaultTalents = "5505301-053030031005112251"
+var DefaultTalents = "05052305-055030031005102051"
 
 var PlayerOptionsSyncDelayOH = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{

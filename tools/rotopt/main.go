@@ -16,6 +16,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -48,6 +49,8 @@ func main() {
 	gearSearch := flag.Bool("gear-search", false, "search every slot over the items the player can equip at their level, with the starting knobs (prints the gear and writes it to -gear-out)")
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
 	gearQuality := flag.Int("gear-quality", 2, "lowest item quality the gear search considers (2 uncommon, 3 rare)")
+	gearExclude := flag.String("gear-exclude", "", "item IDs the gear search leaves out, comma separated (Manual Crowd Pummeler and its three charges, say)")
+	gearPhase := flag.Int("gear-phase", 0, "highest raid phase the gear search considers (1 MC, 2 DM, 3 BWL, 4 ZG, 5 AQ, 6 Naxx), 0 for all")
 	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
 	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv", "wago item export, for which items need a PvP rank")
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
@@ -146,10 +149,26 @@ func main() {
 	}
 
 	if *gearSearch {
-		pool, err := loadGearPool(*dbPath, *itemLevelsPath, setup.player(), int32(core.CharacterMaxLevel), proto.ItemQuality(*gearQuality))
+		level := int32(core.CharacterMaxLevel)
 		if l := setup.player().Level; l > 0 {
-			pool, err = loadGearPool(*dbPath, *itemLevelsPath, setup.player(), l, proto.ItemQuality(*gearQuality))
+			level = l
 		}
+		var exclude []int32
+		for _, id := range strings.Split(*gearExclude, ",") {
+			if v, err := strconv.Atoi(id); err == nil {
+				exclude = append(exclude, int32(v))
+			}
+		}
+		// An excluded item the player is wearing comes off first, or the search would
+		// keep it since nothing in the pool is compared against it.
+		if equipment := setup.player().Equipment; equipment != nil {
+			for _, item := range equipment.Items {
+				if item != nil && slices.Contains(exclude, item.Id) {
+					item.Reset()
+				}
+			}
+		}
+		pool, err := loadGearPool(*dbPath, *itemLevelsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), exclude)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "loading items: %v\n", err)
 			os.Exit(2)
@@ -191,9 +210,21 @@ func main() {
 			talents string
 			result  result
 		}
+		class := strings.ToLower(strings.TrimPrefix(setup.player().Class.String(), "Class"))
+		trees, err := loadTalentTrees(class)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "loading talent trees: %v\n", err)
+			os.Exit(2)
+		}
 		var results []scored
 		for _, line := range strings.Split(string(data), "\n") {
 			if line = strings.TrimSpace(line); line == "" {
+				continue
+			}
+			// A hand written build over the point cap or past a row gate would still sim,
+			// and win, so it is refused here instead.
+			if !parseBuild(trees, line).valid(trees) {
+				fmt.Printf("invalid %s\n", line)
 				continue
 			}
 			setup.talents = line

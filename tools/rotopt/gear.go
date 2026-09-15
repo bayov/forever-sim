@@ -131,7 +131,7 @@ func usefulSuffix(class proto.Class, s *proto.ItemRandomSuffix) bool {
 }
 
 // Every option for every slot the player can use at their level.
-func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, minQuality proto.ItemQuality) ([][]gearOption, error) {
+func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase int32, exclude []int32) ([][]gearOption, error) {
 	data, err := os.ReadFile(dbPath)
 	if err != nil {
 		return nil, err
@@ -168,7 +168,18 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 	}
 
 	for _, item := range db.Items {
+		if item.HandType == proto.HandType_HandTypeTwoHand {
+			twoHandItems[item.Id] = true
+		}
 		if item.Quality < minQuality || item.Expansion > proto.Expansion_ExpansionVanilla || item.RequiredLevel > level {
+			continue
+		}
+		// The phase is the raid tier the item drops in (1 MC/Onyxia, 2 Dire Maul, 3 BWL,
+		// 4 ZG, 5 AQ, 6 Naxx), for a "phase 2 BiS" style search.
+		if maxPhase > 0 && item.Phase > maxPhase {
+			continue
+		}
+		if contains(exclude, item.Id) {
 			continue
 		}
 		// A few items have no level of their own (Olmann Sewar, the engineering goggles),
@@ -233,6 +244,16 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 	return pool, nil
 }
 
+// The candidate with the enchant the slot has now, so a swap is not also a lost enchant.
+func withEnchantOf(spec, current *proto.ItemSpec) *proto.ItemSpec {
+	if current == nil || current.Enchant == 0 {
+		return spec
+	}
+	out := goproto.Clone(spec).(*proto.ItemSpec)
+	out.Enchant = current.Enchant
+	return out
+}
+
 // The equipment as a slot-indexed list, padded to every slot.
 func equipmentSlots(e *proto.EquipmentSpec) []*proto.ItemSpec {
 	slots := make([]*proto.ItemSpec, len(gearSlotNames))
@@ -262,16 +283,13 @@ func (s *searcher) setGear(slots []*proto.ItemSpec) {
 
 // Whether the item in the main hand slot is a two hander, from the pool it came from.
 func isTwoHand(pool [][]gearOption, item *proto.ItemSpec) bool {
-	if item == nil {
-		return false
-	}
-	for _, o := range pool[proto.ItemSlot_ItemSlotMainHand] {
-		if o.spec.Id == item.Id {
-			return o.twoHand
-		}
-	}
-	return false
+	return item != nil && twoHandItems[item.Id]
 }
+
+// Every two hander in the item database, so the main hand the player starts with is
+// known as one even when the pool leaves it out (an excluded item, or one below the
+// quality floor).
+var twoHandItems = map[int32]bool{}
 
 // Which paired slot shares an item pool with this one, or -1.
 func pairedSlot(slot int) int {
@@ -333,7 +351,7 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 					continue
 				}
 				candidate := append([]*proto.ItemSpec(nil), best...)
-				candidate[slot] = o.spec
+				candidate[slot] = withEnchantOf(o.spec, current)
 				if o.twoHand {
 					candidate[proto.ItemSlot_ItemSlotOffHand] = nil
 				} else if proto.ItemSlot(slot) == proto.ItemSlot_ItemSlotMainHand && candidate[proto.ItemSlot_ItemSlotOffHand] == nil {
@@ -348,7 +366,7 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				}
 			}
 			if bestOption != nil {
-				best[slot] = bestOption.spec
+				best[slot] = withEnchantOf(bestOption.spec, current)
 				names[slot] = bestOption.name
 				if bestOption.twoHand {
 					if best[proto.ItemSlot_ItemSlotOffHand] != nil {
