@@ -38,6 +38,11 @@ message Player {
 	// Character level, 0 means max level (60). Base stats, ability ranks and the
 	// per-level combat numbers (crit per agility, weapon skill) follow it.
 	int32 level = 49;
+	// Talent points on top of the ones the level grants (level minus 9). The Forever
+	// beta caps at 20 but is expected to hand out 16 points there, so the "Level 20 + 5"
+	// builds set 5. The sim itself never counts points, the UI picker and the rotopt
+	// talent search cap with it.
+	int32 bonus_talent_points = 50;
 	Profession profession1 = 10;
 	Profession profession2 = 11;
 	Cooldowns cooldowns = 12;

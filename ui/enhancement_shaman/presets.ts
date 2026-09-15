@@ -33,11 +33,10 @@ import { Stats } from '../core/proto_utils/stats.js';
 import DefaultAPLJSON from './apls/default.apl.json';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
 import Level20APLJSON from './apls/level20.apl.json';
-import Level25APLJSON from './apls/level25.apl.json';
+import Level20p5APLJSON from './apls/level20p5.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
 import WindfuryAPLJSON from './apls/windfury.apl.json';
 import Level20GearJSON from './gear_sets/level20.gear.json';
-import Level25GearJSON from './gear_sets/level25.gear.json';
 import Phase1GearJSON from './gear_sets/phase_1.gear.json';
 import Phase2GearJSON from './gear_sets/phase_2.gear.json';
 import Phase3GearJSON from './gear_sets/phase_3.gear.json';
@@ -55,13 +54,9 @@ export const GearPhase2 = PresetUtils.makePresetGear('Phase 2', Phase2GearJSON);
 export const GearPhase3 = PresetUtils.makePresetGear('Phase 3', Phase3GearJSON);
 export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
-// Level 25 from the same search: Slaghammer (a Gnomeregan mace, 2H), Shadow Goggles and
-// Abomination Skin Leggings again, Dervish Tunic of Power, Thunderbrow Ring, and the
-// Intellect pieces (Mindthrust Bracers, Advisor's Ring) for Mental Dexterity and mana.
-export const GearLevel25 = PresetUtils.makePresetGear('Level 25', Level25GearJSON);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearPhase1, GearLevel20, GearLevel25],
+	[Phase.Phase1]: [GearPhase1, GearLevel20],
 	[Phase.Phase2]: [GearPhase2],
 	[Phase.Phase3]: [GearPhase3],
 	[Phase.Phase4]: [],
@@ -89,12 +84,14 @@ export const APLDefault = PresetUtils.makePresetAPLRotation('Twist WF + GoA', De
 // Berserking waiting for it when that costs them no use.
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', OptimizedAPLJSON);
 export const APLLevel20 = PresetUtils.makePresetAPLRotation('Level 20', Level20APLJSON);
-// Level 25: Stormstrike on cooldown, Earth Shock (7 DPS over Frost Shock now that Earth
-// Shock rank 3 is known), Strength of Earth rank 2 (+2.7, its mana is worth it now).
-export const APLLevel25 = PresetUtils.makePresetAPLRotation('Level 25', Level25APLJSON);
+// Level 20 with the Forever beta's 5 extra talent points: Stormstrike on cooldown, then
+// the level 20 rotation with Strength of Earth added (worth its mana once Stormstrike is
+// eating the pool anyway). Frost Shock still beats Earth Shock rank 3 by 1.6 DPS at this
+// level (at 25 Earth Shock rank 4 turned that around).
+export const APLLevel20p5 = PresetUtils.makePresetAPLRotation('Level 20 + 5', Level20p5APLJSON);
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLOptimized, APLGraceOfAir, APLWindfury, APLDefault, APLLevel20, APLLevel25],
+	[Phase.Phase1]: [APLOptimized, APLGraceOfAir, APLWindfury, APLDefault, APLLevel20, APLLevel20p5],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -117,14 +114,15 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // a boss the shaman is behind.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05052305-053030031005102251' }));
 export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '-050030201' }));
-// At 25 the 16th point is Stormstrike (15 points in the tree unlock it under Forever), and it is
-// worth 8 DPS over the best build without it (Flurry 1 in its place). The rest is
-// Thundering Strikes 5, Mental Dexterity 3, Imp Lightning Shield 3, Elemental Weapons 3,
-// Shamanistic Focus 1. Every build with Elemental points scored lower.
-export const TalentsLevel25 = PresetUtils.makePresetTalents('Level 25', SavedTalents.create({ talentsString: '-0500303310001' }));
+// With the Forever beta's 16 points at level 20 (5 extra) the 16th point is Stormstrike
+// (15 points in the tree unlock it under Forever), and it is worth 5 DPS over the best
+// build without it (Flurry 1 in its place). The rest is Thundering Strikes 5, Mental
+// Dexterity 3, Imp Lightning Shield 3, Elemental Weapons 3, Shamanistic Focus 1. Every
+// build with Elemental points scored lower.
+export const TalentsLevel20p5 = PresetUtils.makePresetTalents('Level 20 + 5', SavedTalents.create({ talentsString: '-0500303310001' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel20, TalentsLevel25],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel20, TalentsLevel20p5],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -312,47 +310,15 @@ export const PresetBuildLevel20 = PresetUtils.makePresetBuild('Level 20', {
 	level: 20,
 });
 
-// The same at 25 against Twilight Lord Kelris (BFD, level 27, 916 armor). The races are
-// within 1 DPS of each other here (Tauren 95.1, Orc 95.0, Dwarf 94.9, Skyborne 94.7,
-// Troll 94.2).
-export const EncounterLevel25 = PresetUtils.makePresetEncounter(
-	'Level 25',
-	Encounter.create({
-		duration: 60,
-		durationVariation: 5,
-		executeProportion20: 0.2,
-		executeProportion25: 0.25,
-		executeProportion35: 0.35,
-		targets: [
-			{
-				id: 4832,
-				name: 'Twilight Lord Kelris',
-				level: 27,
-				mobType: MobType.MobTypeHumanoid,
-				stats: new Stats().withStat(Stat.StatArmor, 916).withStat(Stat.StatHealth, 20000).asArray(),
-				minBaseDamage: 45,
-				damageSpread: 0.3333,
-				swingSpeed: 2,
-				parryHaste: true,
-				tankIndex: 0,
-			},
-		],
-	}),
-	{
-		tanks: [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })],
-		raidBuffs: RaidBuffs.create({}),
-		debuffs: Debuffs.create({}),
-		buffs: IndividualBuffs.create({}),
-		consumes: Consumes.create({
-			mainHandImbue: WeaponImbue.RockbiterWeapon,
-		}),
-	},
-);
-export const PresetBuildLevel25 = PresetUtils.makePresetBuild('Level 25', {
-	gear: GearLevel25,
-	talents: TalentsLevel25,
-	rotation: APLLevel25,
-	encounter: EncounterLevel25,
+// The same at level 20 with the 5 extra talent points the Forever beta is expected to
+// give (16 in all): the level 20 gear and encounter, Stormstrike in the talents and the
+// rotation. The races are within 1 DPS of each other.
+export const PresetBuildLevel20p5 = PresetUtils.makePresetBuild('Level 20 + 5', {
+	gear: GearLevel20,
+	talents: TalentsLevel20p5,
+	rotation: APLLevel20p5,
+	encounter: EncounterLevel20,
 	race: Race.RaceOrc,
-	level: 25,
+	level: 20,
+	bonusTalentPoints: 5,
 });

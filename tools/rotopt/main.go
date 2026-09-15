@@ -39,6 +39,7 @@ func main() {
 	knobsFlag := flag.String("knobs", "", "starting knob values, name=value,...")
 	race := flag.String("race", "", "override the player's race, e.g. Gnome")
 	level := flag.Int("level", 0, "override the player's level, e.g. 20")
+	bonusTalents := flag.Int("bonus-talents", -1, "override the player's extra talent points beyond what the level grants, e.g. 5 for the Forever beta's 16 points at level 20")
 	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100")
 	printStats := flag.Bool("print-stats", false, "print the player's final stats and exit")
 	weights := flag.Bool("weights", false, "print stat weights for the starting knobs at the first fight length and exit")
@@ -88,10 +89,14 @@ func main() {
 	if *level != 0 {
 		setup.player().Level = int32(*level)
 	}
+	if *bonusTalents >= 0 {
+		setup.player().BonusTalentPoints = int32(*bonusTalents)
+	}
 	if l := setup.player().Level; l > 0 && l < core.CharacterMaxLevel {
 		maxTalentPoints = max(0, int(l)-9)
 		playerLevel = l
 	}
+	maxTalentPoints += int(setup.player().BonusTalentPoints)
 	if *talents != "" {
 		setup.player().TalentsString = *talents
 	}

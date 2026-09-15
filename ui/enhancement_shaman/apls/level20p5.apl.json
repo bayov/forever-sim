@@ -1,15 +1,15 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":8160}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":8075}}},"doAtValue":{"const":{"val":"-3s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":6363}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
-        {"action":{"castSpell":{"spellId":{"spellId":8160}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":8160}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":8075}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":8075}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":6363}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":6363}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}}]}}},"notes":"Searing Totem whenever it is down, unless the fight is about to end."},
         {"action":{"castSpell":{"spellId":{"spellId":17364}}},"notes":"Stormstrike on cooldown. Without the talent ignore the warning on this line."},
-        {"action":{"castSpell":{"spellId":{"spellId":905}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":905}}}}}},"notes":"Lightning Shield whenever it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":8046}}},"notes":"Earth Shock on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":325}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":325}}}}}},"notes":"Lightning Shield whenever it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":8056}}},"notes":"Frost Shock on cooldown."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on a free GCD."}
     ]
 }

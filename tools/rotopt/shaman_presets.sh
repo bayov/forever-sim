@@ -21,7 +21,8 @@ gen() {
 	echo "wrote ui/enhancement_shaman/apls/$name.apl.json ($knobs $*)"
 }
 gen optimized "shock=4" -level 60
-gen level20 "airTotem=0,strengthOfEarth=0,fireTotemMinTime=10,shield=1,shock=3,maelstromStacks=0" -level 20
-# At 25 Stormstrike is in reach (a 15 point talent under Forever), Earth Shock beats
-# Frost Shock by 7 DPS and the rank 2 Strength of Earth is worth its mana.
-gen level25 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=1,maelstromStacks=0" -level 25
+gen level20 "airTotem=0,strengthOfEarth=0,fireTotemMinTime=10,shield=1,shock=3,maelstromStacks=0" -level 20 -bonus-talents 0
+# With the Forever beta's 16 points at level 20 (5 extra) Stormstrike is in reach (a 15
+# point talent under Forever), so its line is emitted. Frost Shock still beats Earth Shock
+# rank 3 at this level, and Strength of Earth is now worth its mana.
+gen level20p5 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=3,maelstromStacks=0" -level 20 -bonus-talents 5

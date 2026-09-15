@@ -79,7 +79,9 @@ export interface PresetEncounter extends PresetBase {
 	consumes?: Consumes;
 }
 // The buffs and consumes can be given directly instead of through an exported link.
-export interface PresetEncounterOptions extends PresetOptionsBase, Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'debuffs' | 'buffs' | 'consumes'> {}
+export interface PresetEncounterOptions
+	extends PresetOptionsBase,
+		Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'debuffs' | 'buffs' | 'consumes'> {}
 
 export interface PresetBuild {
 	name: string;
@@ -93,6 +95,9 @@ export interface PresetBuild {
 	// Character level for a low level build (the level 20 rogue sets for example). Left
 	// out for a level 60 build so applying it does not touch the level.
 	level?: number;
+	// Talent points beyond what the level grants, see Player.bonus_talent_points. Left out
+	// means the build does not touch the setting.
+	bonusTalentPoints?: number;
 	options?: Partial<SpecOptions<any>>;
 }
 
@@ -231,8 +236,11 @@ export const makePresetEncounter = (name: string, encounter?: PresetEncounter['e
 	};
 };
 
-export const makePresetBuild = (name: string, { gear, talents, rotation, epWeights, encounter, race, level, options }: PresetBuildOptions): PresetBuild => {
-	return { name, gear, talents, rotation, epWeights, encounter, race, level, options };
+export const makePresetBuild = (
+	name: string,
+	{ gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, options }: PresetBuildOptions,
+): PresetBuild => {
+	return { name, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, options };
 };
 
 export type SpecCheckWarning = {

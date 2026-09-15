@@ -240,6 +240,7 @@ export class Player<SpecType extends Spec> {
 	private talentsString = '';
 	private specOptions: SpecOptions<SpecType>;
 	private level = 0;
+	private bonusTalentPoints = 0;
 	private reactionTime = 0;
 	private channelClipDelay = 0;
 	private inFrontOfTarget = false;
@@ -936,15 +937,28 @@ export class Player<SpecType extends Spec> {
 		return this.level > 0 && this.level < Mechanics.MAX_CHARACTER_LEVEL ? this.level : Mechanics.MAX_CHARACTER_LEVEL;
 	}
 
-	// Talent points the level grants: one per level from 10.
+	// Talent points to spend: one per level from 10, plus any bonus points.
 	getMaxTalentPoints(): number {
-		return Math.max(0, this.getEffectiveLevel() - 9);
+		return Math.max(0, this.getEffectiveLevel() - 9) + Math.max(0, this.bonusTalentPoints);
 	}
 
 	setLevel(eventID: EventID, newLevel: number) {
 		if (newLevel === this.level) return;
 
 		this.level = newLevel;
+		this.miscOptionsChangeEmitter.emit(eventID);
+	}
+
+	// Talent points on top of what the level grants (the Forever beta is expected to give
+	// 16 at its level 20 cap, 5 more than the level would).
+	getBonusTalentPoints(): number {
+		return this.bonusTalentPoints;
+	}
+
+	setBonusTalentPoints(eventID: EventID, newPoints: number) {
+		if (newPoints === this.bonusTalentPoints) return;
+
+		this.bonusTalentPoints = newPoints;
 		this.miscOptionsChangeEmitter.emit(eventID);
 	}
 
@@ -1433,6 +1447,7 @@ export class Player<SpecType extends Spec> {
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				level: this.getLevel(),
+				bonusTalentPoints: this.getBonusTalentPoints(),
 				reactionTimeMs: this.getReactionTime(),
 				channelClipDelayMs: this.getChannelClipDelay(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
@@ -1493,6 +1508,7 @@ export class Player<SpecType extends Spec> {
 				this.setProfession1(eventID, proto.profession1);
 				this.setProfession2(eventID, proto.profession2);
 				this.setLevel(eventID, proto.level);
+				this.setBonusTalentPoints(eventID, proto.bonusTalentPoints);
 				this.setReactionTime(eventID, proto.reactionTimeMs);
 				this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 				this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);

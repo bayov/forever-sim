@@ -8,8 +8,8 @@ import (
 
 // Enhancement under Forever rules. Every line names the highest rank the player's level
 // knows, so the rotation file reads right in the UI at that level. Lines for spells the
-// level does not have (Stormstrike before 25, Rage of the Farseer without the talent) only
-// warn, and a knob at 0 drops its line entirely.
+// build cannot have (Stormstrike under 16 talent points, Rage of the Farseer without the
+// talent) only warn, and a knob at 0 drops its line entirely.
 //
 // Rage of the Farseer is the anchor of the burst window (30% attack and cast speed for
 // 25 sec). Blood Fury and Berserking multiply with it, so they can wait for it the way
@@ -119,11 +119,12 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		rageWhen = spellIsReady(stormstrike)
 	}
 	// Rage of the Farseer takes 31 talent points, so the burst window only exists from
-	// level 40. Below that the racials go last, on a GCD nothing else wants: at 20 Blood
+	// level 40 (or fewer levels with bonus points). Below that the racials go last, on a GCD nothing else wants: at 20 Blood
 	// Fury's 10% of 400 attack power is worth about what the GCD it takes from the shocks
 	// costs. Stormstrike sits behind 15 talent points under Forever and is the 16th point
-	// itself, so its line exists from 25.
-	if playerLevel >= 40 {
+	// itself, so its line exists once the build has 16 points (level 25, or the Forever
+	// beta's level 20 with 5 extra points).
+	if maxTalentPoints >= 31 {
 		items = append(items,
 			cast(rageOfTheFarseer, rageWhen, "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line."),
 			cast(bloodFury, holdFor(bloodFury, rageOfTheFarseer, k["bloodFuryHoldForRage"] == 1),
@@ -133,7 +134,7 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 			autocastOtherCooldowns(nil, "Anything not listed above (Sapper, trinkets, potions)."),
 		)
 	}
-	if playerLevel >= 25 {
+	if maxTalentPoints >= 16 {
 		items = append(items, cast(stormstrike, nil, "Stormstrike on cooldown. Without the talent ignore the warning on this line."))
 	}
 	if k["shield"] == 1 {
@@ -165,7 +166,7 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	if k["lightningBolt"] == 1 {
 		items = append(items, cast(lightningBolt, manaFloor(k["lightningBoltMana"]), "Lightning Bolt with the mana to spare. It stops the swing timer for the cast."))
 	}
-	if playerLevel < 40 {
+	if maxTalentPoints < 31 {
 		items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on a free GCD."))
 	}
 	rot := rotation(items...)

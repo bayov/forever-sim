@@ -33,7 +33,8 @@ type talentTree struct {
 	talents []talent
 }
 
-// Points the build may spend, one per level from 10. Set from the player's level in main.
+// Points the build may spend, one per level from 10 plus the player's bonus points. Set
+// from the player in main.
 var maxTalentPoints = 51
 
 func loadTalentTrees(class string) ([]talentTree, error) {

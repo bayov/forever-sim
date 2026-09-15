@@ -84,12 +84,13 @@ export class PresetConfigurationPicker extends Component {
 		});
 	}
 
-	private applyBuild({ gear, rotation, rotationType, talents, epWeights, encounter, race, level, options }: PresetBuild) {
+	private applyBuild({ gear, rotation, rotationType, talents, epWeights, encounter, race, level, bonusTalentPoints, options }: PresetBuild) {
 		const eventID = TypedEvent.nextEventID();
 		TypedEvent.freezeAllAndDo(() => {
 			if (gear) this.simUI.player.setGear(eventID, this.simUI.sim.db.lookupEquipmentSpec(gear.gear));
 			if (race) this.simUI.player.setRace(eventID, race);
 			if (level !== undefined) this.simUI.player.setLevel(eventID, level);
+			if (bonusTalentPoints !== undefined) this.simUI.player.setBonusTalentPoints(eventID, bonusTalentPoints);
 			if (talents) this.simUI.player.setTalentsString(eventID, talents.data.talentsString);
 			if (rotationType) {
 				this.simUI.player.aplRotation.type = rotationType;
@@ -116,10 +117,11 @@ export class PresetConfigurationPicker extends Component {
 		});
 	}
 
-	private isBuildActive({ gear, rotation, rotationType, talents, epWeights, encounter, race, level, options }: PresetBuild): boolean {
+	private isBuildActive({ gear, rotation, rotationType, talents, epWeights, encounter, race, level, bonusTalentPoints, options }: PresetBuild): boolean {
 		const hasGear = gear ? EquipmentSpec.equals(gear.gear, this.simUI.player.getGear().asSpec()) : true;
 		const hasRace = typeof race === 'number' ? race === this.simUI.player.getRace() : true;
 		const hasLevel = level !== undefined ? level === this.simUI.player.getLevel() : true;
+		const hasBonusTalentPoints = bonusTalentPoints !== undefined ? bonusTalentPoints === this.simUI.player.getBonusTalentPoints() : true;
 		const hasTalents = talents
 			? SavedTalents.equals(
 					talents.data,
@@ -149,7 +151,7 @@ export class PresetConfigurationPicker extends Component {
 		const hasHealingModel = encounter?.healingModel ? HealingModel.equals(encounter.healingModel, this.simUI.player.getHealingModel()) : true;
 		const hasOptions = options ? this.containsAllFields(this.simUI.player.getSpecOptions(), options) : true;
 
-		return hasGear && hasRace && hasLevel && hasTalents && hasRotation && hasEpWeights && hasEncounter && hasHealingModel && hasOptions;
+		return hasGear && hasRace && hasLevel && hasBonusTalentPoints && hasTalents && hasRotation && hasEpWeights && hasEncounter && hasHealingModel && hasOptions;
 	}
 
 	private containsAllFields<T extends Spec>(full: SpecOptions<T>, partial: Partial<SpecOptions<T>>): boolean {
