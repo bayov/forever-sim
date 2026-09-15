@@ -121,7 +121,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		rotations: [...Presets.APLPresets[Phase.Phase2]],
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase2]],
-		builds: [Presets.PresetBuildBackstab, Presets.PresetBuildSinisterStrike, Presets.PresetBuildIEA, Presets.PresetBuildMutilate],
+		builds: [Presets.PresetBuildBackstab, Presets.PresetBuildSinisterStrike, Presets.PresetBuildIEA, Presets.PresetBuildMutilate, Presets.PresetBuildLevel20Backstab, Presets.PresetBuildLevel20SinisterStrike],
 	},
 
 	autoRotation: player => {
