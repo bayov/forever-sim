@@ -7,19 +7,16 @@ import (
 )
 
 func (rogue *Rogue) registerAmbushSpell() {
-	flatDamageBonus := map[int32]float64{
-		25: 28,
-		40: 50,
-		50: 92,
-		60: 116,
-	}[rogue.Level]
-
-	spellID := map[int32]int32{
-		25: 8676,
-		40: 8725,
-		50: 11268,
-		60: 11269,
-	}[rogue.Level]
+	if rogue.Level < 18 {
+		return
+	}
+	// The tooltip's flat bonus divided by the 250% weapon damage multiplier.
+	flatDamageBonus := rankAt(rogue.Level, map[int32]float64{
+		18: 28, 26: 40, 34: 50, 42: 74, 50: 92, 58: 116,
+	})
+	spellID := rankSpellID(rogue.Level, map[int32]int32{
+		18: 8676, 26: 8724, 34: 8725, 42: 11267, 50: 11268, 58: 11269,
+	})
 
 	damageMultiplier := 2.5 * []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity]
 

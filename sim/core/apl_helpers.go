@@ -97,7 +97,12 @@ func newAuraReferenceHelper(sourceUnit UnitReference, auraId *proto.ActionID, au
 	}
 }
 func NewAuraReference(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
-	return newAuraReferenceHelper(sourceUnit, auraId, func(unit *Unit, actionID ActionID) *Aura { return unit.GetAuraByID(actionID) })
+	return newAuraReferenceHelper(sourceUnit, auraId, func(unit *Unit, actionID ActionID) *Aura {
+		if aura := unit.GetAuraByID(actionID); aura != nil {
+			return aura
+		}
+		return unit.getAuraByRankFamily(actionID)
+	})
 }
 func NewIcdAuraReference(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
 	return newAuraReferenceHelper(sourceUnit, auraId, func(unit *Unit, actionID ActionID) *Aura { return unit.GetIcdAuraByID(actionID) })
@@ -154,6 +159,9 @@ func (rot *APLRotation) GetAPLSpell(spellId *proto.ActionID) *Spell {
 		}
 	} else {
 		spell = rot.unit.GetSpell(actionID)
+		if spell == nil {
+			spell = rot.unit.getSpellByRankFamily(actionID)
+		}
 	}
 
 	if spell == nil {

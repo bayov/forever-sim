@@ -34,6 +34,10 @@ message Player {
 
 	// Talents in wowhead format, e.g. '01102123133-12312312-'
 	string talents_string = 9;
+
+	// Character level, 0 means max level (60). Base stats, ability ranks and the
+	// per-level combat numbers (crit per agility, weapon skill) follow it.
+	int32 level = 49;
 	Profession profession1 = 10;
 	Profession profession2 = 11;
 	Cooldowns cooldowns = 12;

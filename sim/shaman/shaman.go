@@ -28,9 +28,9 @@ func NewShaman(character *core.Character, talents string) *Shaman {
 
 	// Add Shaman stat dependencies
 	shaman.AddStatDependency(stats.Strength, stats.AttackPower, core.APPerStrength[character.Class])
-	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[character.Class]*core.CritRatingPerCritChance)
-	shaman.AddStatDependency(stats.Agility, stats.Dodge, core.DodgePerAgiAtLevel[character.Class]*core.DodgeRatingPerDodgeChance)
-	shaman.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[character.Class]*core.SpellCritRatingPerCritChance)
+	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgi(character.Class, character.Level)*core.CritRatingPerCritChance)
+	shaman.AddStatDependency(stats.Agility, stats.Dodge, core.DodgePerAgi(character.Class, character.Level)*core.DodgeRatingPerDodgeChance)
+	shaman.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerInt(character.Class, character.Level)*core.SpellCritRatingPerCritChance)
 	shaman.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 	shaman.PseudoStats.BlockValuePerStrength = .05 // 20 str = 1 block
 

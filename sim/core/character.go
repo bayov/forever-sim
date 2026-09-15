@@ -102,6 +102,14 @@ type Character struct {
 	NextAbilityBuffCondition CooldownActivationCondition
 }
 
+// The player's level, max level when the proto leaves it unset.
+func playerLevel(player *proto.Player) int32 {
+	if player.Level <= 0 || player.Level > CharacterMaxLevel {
+		return CharacterMaxLevel
+	}
+	return player.Level
+}
+
 func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character {
 	if player.Database != nil {
 		addToDatabase(player.Database)
@@ -111,7 +119,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		Unit: Unit{
 			Type:        PlayerUnit,
 			Index:       int32(party.Index*5 + partyIndex),
-			Level:       CharacterMaxLevel,
+			Level:       playerLevel(player),
 			auraTracker: newAuraTracker(),
 			PseudoStats: stats.NewPseudoStats(),
 			Metrics:     NewUnitMetrics(),
@@ -156,7 +164,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	character.createIsbConfig(player)
 	character.createStormstrikeConfig(player)
 
-	character.baseStats = getBaseStatsCombo(character.Race, character.Class)
+	character.baseStats = getBaseStatsCombo(character.Race, character.Class, character.Level)
 
 	character.AddStats(character.baseStats)
 	character.addUniversalStatDependencies()

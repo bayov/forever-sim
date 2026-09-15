@@ -21,6 +21,7 @@ import (
 
 	"github.com/wowsims/classic/sim"
 	_ "github.com/wowsims/classic/sim/common"
+	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
@@ -35,8 +36,18 @@ func main() {
 	confidence := flag.Float64("confidence", 2, "standard errors of gain a knob change must show to be kept")
 	knobsFlag := flag.String("knobs", "", "starting knob values, name=value,...")
 	race := flag.String("race", "", "override the player's race, e.g. Gnome")
+	level := flag.Int("level", 0, "override the player's level, e.g. 20")
+	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100")
+	printStats := flag.Bool("print-stats", false, "print the player's final stats and exit")
+	weights := flag.Bool("weights", false, "print stat weights for the starting knobs at the first fight length and exit")
+	touchICD := flag.Duration("touch-icd", 0, "internal cooldown for the Undead Touch of the Grave racial (the tooltip has none), e.g. 10s")
 	talents := flag.String("talents", "", "override the player's talent string")
 	talentSearch := flag.Bool("talent-search", false, "search the talent tree with the starting knobs instead of the knobs (prints the best talent string)")
+	gearSearch := flag.Bool("gear-search", false, "search every slot over the items the player can equip at their level, with the starting knobs (prints the gear and writes it to -gear-out)")
+	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
+	gearQuality := flag.Int("gear-quality", 2, "lowest item quality the gear search considers (2 uncommon, 3 rare)")
+	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
+	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv", "wago item export, for the level each item needs")
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
 	outDir := flag.String("out", "", "directory to write <name>[_<dur>s].apl.json into")
 	outName := flag.String("name", "", "file name base for -out, defaults to the template name")
@@ -45,6 +56,7 @@ func main() {
 
 	log.SetOutput(io.Discard)
 	sim.RegisterAll()
+	core.TouchOfTheGraveICD = *touchICD
 
 	template, ok := templates[*templateName]
 	if *aplPath != "" {
@@ -68,8 +80,33 @@ func main() {
 	if *race != "" {
 		setup.player().Race = proto.Race(proto.Race_value["Race"+*race])
 	}
+	if *level != 0 {
+		setup.player().Level = int32(*level)
+	}
+	if l := setup.player().Level; l > 0 && l < core.CharacterMaxLevel {
+		maxTalentPoints = max(0, int(l)-9)
+	}
 	if *talents != "" {
 		setup.player().TalentsString = *talents
+	}
+	if *bonus != "" {
+		p := setup.player()
+		if p.BonusStats == nil {
+			p.BonusStats = &proto.UnitStats{}
+		}
+		for _, kv := range strings.Split(*bonus, ",") {
+			name, val, _ := strings.Cut(kv, "=")
+			stat, ok := proto.Stat_value["Stat"+name]
+			if !ok {
+				fmt.Fprintf(os.Stderr, "unknown stat %q\n", name)
+				os.Exit(2)
+			}
+			for len(p.BonusStats.Stats) <= int(stat) {
+				p.BonusStats.Stats = append(p.BonusStats.Stats, 0)
+			}
+			v, _ := strconv.ParseFloat(val, 64)
+			p.BonusStats.Stats[stat] += v
+		}
 	}
 
 	start := defaultKnobs(template)
@@ -90,8 +127,50 @@ func main() {
 		durations = append(durations, v)
 	}
 
+	if *printStats {
+		fmt.Print(setup.finalStats(template.Build(start)))
+		return
+	}
+
+	if *weights {
+		fmt.Print(setup.statWeights(template.Build(start), durations[0], int32(*confirmIterations)))
+		return
+	}
+
 	if *timeline {
 		fmt.Print(setup.timeline(template.Build(start), durations[0]))
+		return
+	}
+
+	if *gearSearch {
+		pool, err := loadGearPool(*dbPath, *itemLevelsPath, setup.player(), int32(core.CharacterMaxLevel), proto.ItemQuality(*gearQuality))
+		if l := setup.player().Level; l > 0 {
+			pool, err = loadGearPool(*dbPath, *itemLevelsPath, setup.player(), l, proto.ItemQuality(*gearQuality))
+		}
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "loading items: %v\n", err)
+			os.Exit(2)
+		}
+		for slot, options := range pool {
+			fmt.Printf("%s: %d options\n", gearSlotNames[slot], len(options))
+		}
+		s := &searcher{
+			setup: setup, template: template, durations: durations,
+			iterations: int32(*iterations), confidence: *confidence, cache: map[string]result{},
+		}
+		s.searchGear(pool, start)
+		confirm := &searcher{
+			setup: setup, template: template, durations: durations,
+			iterations: int32(*confirmIterations), cache: map[string]result{},
+		}
+		fmt.Printf("%gs: %s\n  sim runs %d\n", durations, confirm.score(start), s.evals)
+		if *gearOut != "" {
+			if err := setup.save(*gearOut); err != nil {
+				fmt.Fprintf(os.Stderr, "writing %s: %v\n", *gearOut, err)
+				os.Exit(1)
+			}
+			fmt.Printf("  wrote %s\n", *gearOut)
+		}
 		return
 	}
 

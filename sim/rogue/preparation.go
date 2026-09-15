@@ -41,7 +41,7 @@ func (rogue *Rogue) registerPreparationCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return !rogue.Vanish.CD.IsReady(sim)
+			return rogue.Vanish != nil && !rogue.Vanish.CD.IsReady(sim)
 		},
 	})
 }

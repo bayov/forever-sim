@@ -239,6 +239,7 @@ export class Player<SpecType extends Spec> {
 	aplRotation: APLRotation = APLRotation.create();
 	private talentsString = '';
 	private specOptions: SpecOptions<SpecType>;
+	private level = 0;
 	private reactionTime = 0;
 	private channelClipDelay = 0;
 	private inFrontOfTarget = false;
@@ -925,6 +926,18 @@ export class Player<SpecType extends Spec> {
 		this.specOptionsChangeEmitter.emit(eventID);
 	}
 
+	// Character level, 0 is max level.
+	getLevel(): number {
+		return this.level;
+	}
+
+	setLevel(eventID: EventID, newLevel: number) {
+		if (newLevel === this.level) return;
+
+		this.level = newLevel;
+		this.miscOptionsChangeEmitter.emit(eventID);
+	}
+
 	getReactionTime(): number {
 		return this.reactionTime;
 	}
@@ -1401,6 +1414,7 @@ export class Player<SpecType extends Spec> {
 				race: this.getRace(),
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
+				level: this.getLevel(),
 				reactionTimeMs: this.getReactionTime(),
 				channelClipDelayMs: this.getChannelClipDelay(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
@@ -1460,6 +1474,7 @@ export class Player<SpecType extends Spec> {
 				this.setRace(eventID, proto.race);
 				this.setProfession1(eventID, proto.profession1);
 				this.setProfession2(eventID, proto.profession2);
+				this.setLevel(eventID, proto.level);
 				this.setReactionTime(eventID, proto.reactionTimeMs);
 				this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 				this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);

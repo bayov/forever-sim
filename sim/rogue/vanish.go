@@ -7,6 +7,9 @@ import (
 )
 
 func (rogue *Rogue) registerVanishSpell() {
+	if rogue.Level < 22 {
+		return
+	}
 	rogue.VanishAura = rogue.RegisterAura(core.Aura{
 		Label:    "Vanish",
 		ActionID: core.ActionID{SpellID: 457437},

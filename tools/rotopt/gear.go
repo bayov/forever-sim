@@ -1,0 +1,342 @@
+package main
+
+import (
+	"encoding/csv"
+	"fmt"
+	"io"
+	"math"
+	"os"
+	"sort"
+	"strconv"
+
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
+	"google.golang.org/protobuf/encoding/protojson"
+	goproto "google.golang.org/protobuf/proto"
+)
+
+// Gear search. Every slot in turn tries each item the player can equip at their level,
+// with the other slots held fixed, and keeps the best one when it beats the current item
+// by more than the noise. That repeats until a full round changes nothing, the same
+// coordinate descent the knobs use. The rotation and talents are held fixed, so run this
+// with a sensible build, then search talents and knobs again on the gear it finds.
+//
+// The item pool comes from the UI database (assets/database/db.json), which has the
+// fields the sim's own item table drops: quality, class limits, faction, random suffixes.
+// The level an item needs is not in either database, so it is read from the wago item
+// export under assets/db_inputs.
+
+// One thing that can go in a slot: an item, possibly with a random suffix.
+type gearOption struct {
+	spec *proto.ItemSpec
+	name string
+}
+
+var gearSlotNames = []string{"head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2", "mainhand", "offhand", "ranged"}
+
+// Armor the class can wear at the level, in order of preference when two items tie.
+func armorTypesFor(class proto.Class, level int32) []proto.ArmorType {
+	switch class {
+	case proto.Class_ClassWarrior, proto.Class_ClassPaladin:
+		if level >= 40 {
+			return []proto.ArmorType{proto.ArmorType_ArmorTypePlate, proto.ArmorType_ArmorTypeMail, proto.ArmorType_ArmorTypeLeather, proto.ArmorType_ArmorTypeCloth}
+		}
+		return []proto.ArmorType{proto.ArmorType_ArmorTypeMail, proto.ArmorType_ArmorTypeLeather, proto.ArmorType_ArmorTypeCloth}
+	case proto.Class_ClassHunter, proto.Class_ClassShaman:
+		if level >= 40 {
+			return []proto.ArmorType{proto.ArmorType_ArmorTypeMail, proto.ArmorType_ArmorTypeLeather, proto.ArmorType_ArmorTypeCloth}
+		}
+		return []proto.ArmorType{proto.ArmorType_ArmorTypeLeather, proto.ArmorType_ArmorTypeCloth}
+	case proto.Class_ClassRogue, proto.Class_ClassDruid:
+		return []proto.ArmorType{proto.ArmorType_ArmorTypeLeather, proto.ArmorType_ArmorTypeCloth}
+	default:
+		return []proto.ArmorType{proto.ArmorType_ArmorTypeCloth}
+	}
+}
+
+var weaponTypesFor = map[proto.Class][]proto.WeaponType{
+	proto.Class_ClassRogue:   {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist},
+	proto.Class_ClassWarrior: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},
+	proto.Class_ClassShaman:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeStaff},
+}
+
+var rangedTypesFor = map[proto.Class][]proto.RangedWeaponType{
+	proto.Class_ClassRogue:   {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
+	proto.Class_ClassWarrior: {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
+	proto.Class_ClassShaman:  {proto.RangedWeaponType_RangedWeaponTypeTotem},
+}
+
+func contains[T comparable](list []T, v T) bool {
+	for _, x := range list {
+		if x == v {
+			return true
+		}
+	}
+	return false
+}
+
+// The level each item needs, from the wago export. Only that file records it.
+func loadRequiredLevels(path string) (map[int32]int32, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	r := csv.NewReader(f)
+	r.LazyQuotes = true
+	header, err := r.Read()
+	if err != nil {
+		return nil, err
+	}
+	idCol, levelCol, rankCol := -1, -1, -1
+	for i, name := range header {
+		switch name {
+		case "ID":
+			idCol = i
+		case "RequiredLevel":
+			levelCol = i
+		case "RequiredPVPRank":
+			rankCol = i
+		}
+	}
+	if idCol < 0 || levelCol < 0 {
+		return nil, fmt.Errorf("%s: no ID/RequiredLevel columns", path)
+	}
+	levels := map[int32]int32{}
+	for {
+		row, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		id, _ := strconv.Atoi(row[idCol])
+		level, _ := strconv.Atoi(row[levelCol])
+		// PvP rank gear is a separate grind, it stays out of the pool.
+		if rankCol >= 0 {
+			if rank, _ := strconv.Atoi(row[rankCol]); rank > 0 {
+				continue
+			}
+		}
+		levels[int32(id)] = int32(level)
+	}
+	return levels, nil
+}
+
+// Whether a random suffix does anything for a melee: it has to carry a physical stat.
+func meleeSuffix(s *proto.ItemRandomSuffix) bool {
+	st := stats.FromFloatArray(s.Stats)
+	return st[stats.Agility]+st[stats.Strength]+st[stats.AttackPower]+st[stats.MeleeCrit]+st[stats.MeleeHit]+st[stats.Stamina] > 0
+}
+
+// Every option for every slot the player can use at their level.
+func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, minQuality proto.ItemQuality) ([][]gearOption, error) {
+	data, err := os.ReadFile(dbPath)
+	if err != nil {
+		return nil, err
+	}
+	db := &proto.UIDatabase{}
+	if err := (protojson.UnmarshalOptions{DiscardUnknown: true}).Unmarshal(data, db); err != nil {
+		return nil, err
+	}
+	required, err := loadRequiredLevels(levelsPath)
+	if err != nil {
+		return nil, err
+	}
+	suffixes := map[int32]*proto.ItemRandomSuffix{}
+	for _, s := range db.RandomSuffixes {
+		suffixes[s.Id] = s
+	}
+
+	class := player.Class
+	horde := contains([]proto.Race{proto.Race_RaceOrc, proto.Race_RaceTroll, proto.Race_RaceTauren, proto.Race_RaceUndead}, player.Race)
+	armor := armorTypesFor(class, level)
+	pool := make([][]gearOption, len(gearSlotNames))
+
+	add := func(slot proto.ItemSlot, item *proto.UIItem) {
+		if len(item.RandomSuffixOptions) == 0 {
+			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name})
+			return
+		}
+		for _, id := range item.RandomSuffixOptions {
+			if s, ok := suffixes[id]; ok && meleeSuffix(s) {
+				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name})
+			}
+		}
+	}
+
+	for _, item := range db.Items {
+		req, known := required[item.Id]
+		if !known || item.Quality < minQuality || item.Expansion > proto.Expansion_ExpansionVanilla {
+			continue
+		}
+		// Quest rewards have no level of their own, the quest is the gate. A quest's
+		// reward sits a few item levels above the quest level, so that stands in.
+		if req == 0 && item.Ilvl > level+6 || req > level {
+			continue
+		}
+		if len(item.ClassAllowlist) > 0 && !contains(item.ClassAllowlist, class) {
+			continue
+		}
+		if item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY && !horde ||
+			item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_ALLIANCE_ONLY && horde {
+			continue
+		}
+		switch item.Type {
+		case proto.ItemType_ItemTypeWeapon:
+			if !contains(weaponTypesFor[class], item.WeaponType) {
+				continue
+			}
+			switch item.HandType {
+			case proto.HandType_HandTypeMainHand:
+				add(proto.ItemSlot_ItemSlotMainHand, item)
+			case proto.HandType_HandTypeOffHand:
+				add(proto.ItemSlot_ItemSlotOffHand, item)
+			case proto.HandType_HandTypeOneHand:
+				add(proto.ItemSlot_ItemSlotMainHand, item)
+				add(proto.ItemSlot_ItemSlotOffHand, item)
+			case proto.HandType_HandTypeTwoHand:
+				if class != proto.Class_ClassRogue {
+					add(proto.ItemSlot_ItemSlotMainHand, item)
+				}
+			}
+		case proto.ItemType_ItemTypeRanged:
+			if contains(rangedTypesFor[class], item.RangedWeaponType) {
+				add(proto.ItemSlot_ItemSlotRanged, item)
+			}
+		case proto.ItemType_ItemTypeFinger:
+			add(proto.ItemSlot_ItemSlotFinger1, item)
+			add(proto.ItemSlot_ItemSlotFinger2, item)
+		case proto.ItemType_ItemTypeTrinket:
+			add(proto.ItemSlot_ItemSlotTrinket1, item)
+			add(proto.ItemSlot_ItemSlotTrinket2, item)
+		case proto.ItemType_ItemTypeNeck, proto.ItemType_ItemTypeBack:
+			add(proto.ItemSlot(item.Type-1), item)
+		default:
+			if item.ArmorType != proto.ArmorType_ArmorTypeUnknown && !contains(armor, item.ArmorType) {
+				continue
+			}
+			if item.Type >= proto.ItemType_ItemTypeHead && item.Type <= proto.ItemType_ItemTypeFeet {
+				add(proto.ItemSlot(item.Type-1), item)
+			}
+		}
+	}
+	for _, options := range pool {
+		sort.Slice(options, func(i, j int) bool { return options[i].name < options[j].name })
+	}
+	return pool, nil
+}
+
+// The equipment as a slot-indexed list, padded to every slot.
+func equipmentSlots(e *proto.EquipmentSpec) []*proto.ItemSpec {
+	slots := make([]*proto.ItemSpec, len(gearSlotNames))
+	if e != nil {
+		for i, item := range e.Items {
+			if i < len(slots) && item != nil && item.Id != 0 {
+				slots[i] = goproto.Clone(item).(*proto.ItemSpec)
+			}
+		}
+	}
+	return slots
+}
+
+func (s *searcher) setGear(slots []*proto.ItemSpec) {
+	e := &proto.EquipmentSpec{}
+	for _, item := range slots {
+		if item == nil {
+			e.Items = append(e.Items, &proto.ItemSpec{})
+		} else {
+			e.Items = append(e.Items, item)
+		}
+	}
+	s.setup.player().Equipment = e
+	// Gear is part of what the cache key leaves out, so it is cleared per gear set.
+	s.cache = map[string]result{}
+}
+
+// Which paired slot shares an item pool with this one, or -1.
+func pairedSlot(slot int) int {
+	switch proto.ItemSlot(slot) {
+	case proto.ItemSlot_ItemSlotFinger1:
+		return int(proto.ItemSlot_ItemSlotFinger2)
+	case proto.ItemSlot_ItemSlotFinger2:
+		return int(proto.ItemSlot_ItemSlotFinger1)
+	case proto.ItemSlot_ItemSlotTrinket1:
+		return int(proto.ItemSlot_ItemSlotTrinket2)
+	case proto.ItemSlot_ItemSlotTrinket2:
+		return int(proto.ItemSlot_ItemSlotTrinket1)
+	}
+	return -1
+}
+
+func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSpec, result) {
+	best := equipmentSlots(s.setup.player().Equipment)
+	names := make([]string, len(best))
+	for slot, item := range best {
+		if item != nil {
+			for _, o := range pool[slot] {
+				if o.spec.Id == item.Id && o.spec.RandomSuffix == item.RandomSuffix {
+					names[slot] = o.name
+				}
+			}
+		}
+	}
+	s.setGear(best)
+	bestScore := s.score(knobs)
+	fmt.Printf("start: %s\n", bestScore)
+
+	for round := 1; ; round++ {
+		improved := false
+		for slot, options := range pool {
+			if len(options) == 0 {
+				continue
+			}
+			current := best[slot]
+			var bestOption *gearOption
+			bestGain := 0.0
+			for i := range options {
+				o := options[i]
+				if current != nil && o.spec.Id == current.Id && o.spec.RandomSuffix == current.RandomSuffix {
+					continue
+				}
+				// Rings and trinkets are mostly unique, so the pair never holds the same item.
+				if p := pairedSlot(slot); p >= 0 && best[p] != nil && best[p].Id == o.spec.Id {
+					continue
+				}
+				candidate := append([]*proto.ItemSpec(nil), best...)
+				candidate[slot] = o.spec
+				s.setGear(candidate)
+				score := s.score(knobs)
+				gain := score.dps - bestScore.dps
+				noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
+				if gain > s.confidence*noise && gain > bestGain {
+					bestGain, bestOption = gain, &o
+				}
+			}
+			if bestOption != nil {
+				best[slot] = bestOption.spec
+				names[slot] = bestOption.name
+				s.setGear(best)
+				bestScore = s.score(knobs)
+				improved = true
+				fmt.Printf("round %d: %s = %s (%+.1f), now %s\n", round, gearSlotNames[slot], bestOption.name, bestGain, bestScore)
+			}
+		}
+		if !improved {
+			break
+		}
+	}
+	s.setGear(best)
+	fmt.Println("gear:")
+	for slot, item := range best {
+		if item != nil {
+			fmt.Printf("  %-9s %s (%d", gearSlotNames[slot], names[slot], item.Id)
+			if item.RandomSuffix != 0 {
+				fmt.Printf(", suffix %d", item.RandomSuffix)
+			}
+			fmt.Println(")")
+		}
+	}
+	return best, bestScore
+}

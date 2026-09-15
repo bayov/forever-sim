@@ -7,19 +7,16 @@ import (
 )
 
 func (rogue *Rogue) registerGarrote() {
-	baseDamage := map[int32]float64{
-		25: 34,
-		40: 59,
-		50: 74,
-		60: 92,
-	}[rogue.Level]
-
-	spellID := map[int32]int32{
-		25: 8631,
-		40: 8633,
-		50: 11289,
-		60: 11290,
-	}[rogue.Level]
+	if rogue.Level < 14 {
+		return
+	}
+	// Damage per tick, the tooltip total over 6 ticks.
+	baseDamage := rankAt(rogue.Level, map[int32]float64{
+		14: 24, 22: 34, 30: 47, 38: 59, 46: 74, 54: 92,
+	})
+	spellID := rankSpellID(rogue.Level, map[int32]int32{
+		14: 703, 22: 8631, 30: 8632, 38: 8633, 46: 11289, 54: 11290,
+	})
 
 	rogue.Garrote = rogue.GetOrRegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_RogueGarrote,

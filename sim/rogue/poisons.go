@@ -77,7 +77,7 @@ func (rogue *Rogue) applyPoisons() {
 // Apply Instant Poison to weapon and enable procs
 func (rogue *Rogue) applyInstantPoison() {
 	procMask := rogue.getImbueProcMask(proto.WeaponImbue_InstantPoison)
-	if procMask == core.ProcMaskUnknown {
+	if procMask == core.ProcMaskUnknown || rogue.Level < 20 {
 		return
 	}
 
@@ -102,7 +102,7 @@ func (rogue *Rogue) applyInstantPoison() {
 // Apply Deadly Poison to weapon and enable procs
 func (rogue *Rogue) applyDeadlyPoison() {
 	procMask := rogue.getImbueProcMask(proto.WeaponImbue_DeadlyPoison)
-	if procMask == core.ProcMaskUnknown {
+	if procMask == core.ProcMaskUnknown || rogue.Level < 30 {
 		return
 	}
 
@@ -126,7 +126,7 @@ func (rogue *Rogue) applyDeadlyPoison() {
 // Apply Wound Poison to weapon and enable procs
 func (rogue *Rogue) applyWoundPoison() {
 	procMask := rogue.getImbueProcMask(proto.WeaponImbue_WoundPoison)
-	if procMask == core.ProcMaskUnknown {
+	if procMask == core.ProcMaskUnknown || rogue.Level < 32 {
 		return
 	}
 
@@ -157,18 +157,13 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 }
 
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
-	baseDamageTick := map[int32]float64{
-		25: 9,
-		40: 13,
-		50: 20,
-		60: core.TernaryFloat64(core.IncludeAQ, 34, 27),
-	}[rogue.Level]
-	spellID := map[int32]int32{
-		25: 2823,
-		40: 2824,
-		50: 11355,
-		60: core.TernaryInt32(core.IncludeAQ, 25347, 11356),
-	}[rogue.Level]
+	baseDamageTick := rankAt(rogue.Level, map[int32]float64{
+		30: 9, 38: 13, 46: 20, 54: 27, 60: core.TernaryFloat64(core.IncludeAQ, 34, 27),
+	})
+	spellID := rankSpellID(rogue.Level, map[int32]int32{
+		30: 2823, 38: 2824, 46: 11355, 54: 11356, 60: core.TernaryInt32(core.IncludeAQ, 25347, 11356),
+	})
+	core.RegisterSpellRanks(11356, 25347)
 
 	rogue.deadlyPoisonTick = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID, Tag: 100},
@@ -239,26 +234,15 @@ func (rogue *Rogue) registerWoundPoisonSpell() {
 
 // Make a source based variant of Instant Poison
 func (rogue *Rogue) makeInstantPoison() *core.Spell {
-	baseDamageByLevel := map[int32]float64{
-		25: 19,
-		40: 44,
-		50: 67,
-		60: 112,
-	}[rogue.Level]
-
-	damageVariance := map[int32]float64{
-		25: 6,
-		40: 12,
-		50: 18,
-		60: 36,
-	}[rogue.Level]
-
-	spellID := map[int32]int32{
-		25: 8679,
-		40: 8688,
-		50: 11338,
-		60: 11340,
-	}[rogue.Level]
+	baseDamageByLevel := rankAt(rogue.Level, map[int32]float64{
+		20: 19, 28: 30, 36: 44, 44: 67, 52: 92, 60: 112,
+	})
+	damageVariance := rankAt(rogue.Level, map[int32]float64{
+		20: 6, 28: 8, 36: 12, 44: 18, 52: 26, 60: 36,
+	})
+	spellID := rankSpellID(rogue.Level, map[int32]int32{
+		20: 8679, 28: 8686, 36: 8688, 44: 11338, 52: 11339, 60: 11340,
+	})
 
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},

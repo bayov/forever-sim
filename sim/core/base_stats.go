@@ -295,8 +295,89 @@ var ClassBaseStats = map[proto.Class]stats.Stats{
 	},
 }
 
-// Retrieves base stats, with race offsets, and crit rating adjustments per level
-func getBaseStatsCombo(r proto.Race, c proto.Class) stats.Stats {
-	starting := ClassBaseStats[c]
-	return starting.Add(RaceOffsets[r]).Add(ClassBaseCrit[c])
+type RaceClass struct {
+	Race  proto.Race
+	Class proto.Class
+}
+
+// Attack power per level, on top of the -20 every class starts from.
+var APPerLevel = map[proto.Class]float64{
+	proto.Class_ClassWarrior: 3,
+	proto.Class_ClassPaladin: 3,
+	proto.Class_ClassHunter:  2,
+	proto.Class_ClassRogue:   2,
+	proto.Class_ClassShaman:  2,
+	proto.Class_ClassDruid:   2,
+}
+
+// Base stats with race offsets and the class base crit. The level 60 tables above are the
+// hand-checked ones, below 60 the rows come from the 1.12 level tables.
+func getBaseStatsCombo(r proto.Race, c proto.Class, level int32) stats.Stats {
+	if level >= CharacterMaxLevel {
+		return ClassBaseStats[c].Add(RaceOffsets[r]).Add(ClassBaseCrit[c])
+	}
+	// The Skyborne stat offsets are not published, so they use the class baseline like
+	// RaceOffsets does.
+	if r == proto.Race_RaceSkyborneHighOrder || r == proto.Race_RaceSkyborneWindshaper {
+		r = proto.Race_RaceHuman
+	}
+	attrs, ok := levelAttributes[RaceClass{r, c}]
+	if !ok {
+		// A race and class pairing 1.12 did not have (Tauren rogue, Forever opens some
+		// up). The class row comes from the Human table and the race offset from the
+		// race's warrior row against the Human warrior, every race has a warrior.
+		attrs = levelAttributes[RaceClass{proto.Race_RaceHuman, c}]
+		raceRow := levelAttributes[RaceClass{r, proto.Class_ClassWarrior}]
+		humanRow := levelAttributes[RaceClass{proto.Race_RaceHuman, proto.Class_ClassWarrior}]
+		for l := range attrs {
+			for i := range attrs[l] {
+				attrs[l][i] += raceRow[l][i] - humanRow[l][i]
+			}
+		}
+	}
+	row := attrs[level-1]
+	hm := levelHealthMana[c][level-1]
+	base := stats.Stats{
+		stats.Strength:  float64(row[0]),
+		stats.Agility:   float64(row[1]),
+		stats.Stamina:   float64(row[2]),
+		stats.Intellect: float64(row[3]),
+		stats.Spirit:    float64(row[4]),
+		stats.Health:    float64(hm[0]),
+		stats.Mana:      float64(hm[1]),
+	}
+	if ap, ok := APPerLevel[c]; ok {
+		base[stats.AttackPower] = ap*float64(level) - 20
+	} else {
+		base[stats.AttackPower] = -10
+	}
+	if c == proto.Class_ClassHunter {
+		base[stats.RangedAttackPower] = base[stats.AttackPower]
+	}
+	return base.Add(ClassBaseCrit[c])
+}
+
+// The level 60 tables above are the ones the sim was checked against, so a lower level
+// gets the 60 value scaled along the client's curve rather than the curve's own number.
+func levelCurve(curve map[proto.Class][60]float64, c proto.Class, level int32) float64 {
+	row, ok := curve[c]
+	if !ok || level >= CharacterMaxLevel || row[CharacterMaxLevel-1] == 0 {
+		return 1
+	}
+	return row[level-1] / row[CharacterMaxLevel-1]
+}
+
+// Melee crit chance per point of Agility at the given level.
+func CritPerAgi(c proto.Class, level int32) float64 {
+	return CritPerAgiAtLevel[c] * levelCurve(meleeCritPerAgiCurve, c, level)
+}
+
+// Dodge chance per point of Agility at the given level. It follows the same curve as crit.
+func DodgePerAgi(c proto.Class, level int32) float64 {
+	return DodgePerAgiAtLevel[c] * levelCurve(meleeCritPerAgiCurve, c, level)
+}
+
+// Spell crit chance per point of Intellect at the given level.
+func CritPerInt(c proto.Class, level int32) float64 {
+	return CritPerIntAtLevel[c] * levelCurve(spellCritPerIntCurve, c, level)
 }

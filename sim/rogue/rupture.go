@@ -7,12 +7,12 @@ import (
 )
 
 func (rogue *Rogue) registerRupture() {
-	spellID := map[int32]int32{
-		25: 1943,
-		40: 8640,
-		50: 11273,
-		60: 11275,
-	}[rogue.Level]
+	if rogue.Level < 20 {
+		return
+	}
+	spellID := rankSpellID(rogue.Level, map[int32]int32{
+		20: 1943, 28: 8639, 36: 8640, 44: 11273, 52: 11274, 60: 11275,
+	})
 
 	rogue.Rupture = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:    SpellCode_RogueRupture,
@@ -81,19 +81,12 @@ func (rogue *Rogue) registerRupture() {
 }
 
 func (rogue *Rogue) RuptureDamage(target *core.Unit, comboPoints int32) float64 {
-	baseTickDamage := map[int32]float64{
-		25: 8,
-		40: 18,
-		50: 27,
-		60: 60,
-	}[rogue.Level]
-
-	comboTickDamage := map[int32]float64{
-		25: 2,
-		40: 4,
-		50: 5,
-		60: 8,
-	}[rogue.Level]
+	baseTickDamage := rankAt(rogue.Level, map[int32]float64{
+		20: 8, 28: 12, 36: 18, 44: 27, 52: 37, 60: 60,
+	})
+	comboTickDamage := rankAt(rogue.Level, map[int32]float64{
+		20: 2, 28: 3, 36: 4, 44: 5, 52: 7, 60: 8,
+	})
 
 	return baseTickDamage + comboTickDamage*float64(comboPoints) +
 		[]float64{0, 0.04 / 4, 0.10 / 5, 0.18 / 6, 0.21 / 7, 0.24 / 8}[comboPoints]*rogue.Rupture.MeleeAttackPower(target)

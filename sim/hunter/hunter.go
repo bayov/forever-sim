@@ -279,8 +279,8 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 	hunter.AddStatDependency(stats.Strength, stats.AttackPower, core.APPerStrength[character.Class])
 	hunter.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	hunter.AddStatDependency(stats.Agility, stats.RangedAttackPower, 2)
-	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[character.Class]*core.CritRatingPerCritChance)
-	hunter.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[character.Class]*core.SpellCritRatingPerCritChance)
+	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgi(character.Class, character.Level)*core.CritRatingPerCritChance)
+	hunter.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerInt(character.Class, character.Level)*core.SpellCritRatingPerCritChance)
 
 	guardians.ConstructGuardians(&hunter.Character)
 

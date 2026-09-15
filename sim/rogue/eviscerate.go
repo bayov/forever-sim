@@ -7,33 +7,23 @@ import (
 )
 
 func (rogue *Rogue) registerEviscerate() {
-	flatDamage := map[int32]float64{
-		25: 10,
-		40: 22,
-		50: 34,
+	flatDamage := rankAt(rogue.Level, map[int32]float64{
+		1: 1, 8: 3, 16: 6, 24: 10, 32: 15, 40: 22, 48: 34, 56: 48,
 		60: core.TernaryFloat64(core.IncludeAQ, 54, 48),
-	}[rogue.Level]
-
-	comboDamageBonus := map[int32]float64{
-		25: 31,
-		40: 77,
-		50: 110,
+	})
+	comboDamageBonus := rankAt(rogue.Level, map[int32]float64{
+		1: 5, 8: 11, 16: 19, 24: 31, 32: 45, 40: 77, 48: 110, 56: 151,
 		60: core.TernaryFloat64(core.IncludeAQ, 170, 151),
-	}[rogue.Level]
-
-	damageVariance := map[int32]float64{
-		25: 20,
-		40: 44,
-		50: 68,
+	})
+	damageVariance := rankAt(rogue.Level, map[int32]float64{
+		1: 4, 8: 8, 16: 14, 24: 20, 32: 30, 40: 44, 48: 68, 56: 96,
 		60: core.TernaryFloat64(core.IncludeAQ, 108, 96),
-	}[rogue.Level]
-
-	spellID := map[int32]int32{
-		25: 6762,
-		40: 8624,
-		50: 11299,
+	})
+	spellID := rankSpellID(rogue.Level, map[int32]int32{
+		1: 2098, 8: 6760, 16: 6761, 24: 6762, 32: 8623, 40: 8624, 48: 11299, 56: 11300,
 		60: core.TernaryInt32(core.IncludeAQ, 31016, 11300),
-	}[rogue.Level]
+	})
+	core.RegisterSpellRanks(11300, 31016)
 
 	rogue.Eviscerate = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:    SpellCode_RogueEviscerate,

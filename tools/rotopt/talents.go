@@ -33,7 +33,8 @@ type talentTree struct {
 	talents []talent
 }
 
-const maxTalentPoints = 51
+// Points the build may spend, one per level from 10. Set from the player's level in main.
+var maxTalentPoints = 51
 
 func loadTalentTrees(class string) ([]talentTree, error) {
 	path := filepath.Join("ui", "core", "talents", "trees", class+".json")

@@ -123,7 +123,8 @@ func (s *setup) timeline(rot *proto.APLRotation, duration float64) string {
 	if os.Getenv("ROTOPT_FULL_LOG") != "" {
 		return b.String() + res.Logs
 	}
-	filler := regexp.MustCompile(`OtherID|SpellID: (11294|11340|25347|15851|13218)[,}]`)
+	// Every rank of the builders and poisons, so the filter holds at any level.
+	filler := regexp.MustCompile(`OtherID|SpellID: (1752|1757|1758|1759|1760|8621|11293|11294|53|2589|2590|2591|8721|11279|11280|11281|25300|8679|8686|8688|11338|11339|11340|2823|2824|11355|11356|25347|15851|13218|13222|13223|13224)[,}]`)
 	for _, line := range strings.Split(res.Logs, "\n") {
 		if strings.Contains(line, "] Casting {") && !filler.MatchString(line) {
 			b.WriteString(line[:strings.Index(line, " (Cost")] + "\n")
@@ -168,4 +169,66 @@ func compactJSON(m goproto.Message) string {
 	json.Unmarshal(data, &v)
 	out, _ := json.Marshal(v)
 	return string(out)
+}
+
+// The player's final stats as the sim sees them, one per line.
+func (s *setup) finalStats(rot *proto.APLRotation) string {
+	request := s.clone()
+	request.Raid.Parties[0].Players[0].Rotation = rot
+	stats := core.ComputeStats(&proto.ComputeStatsRequest{Raid: request.Raid, Encounter: request.Encounter, Ruleset: request.SimOptions.Ruleset})
+	var sb strings.Builder
+	for i, v := range stats.RaidStats.Parties[0].Players[0].FinalStats.Stats {
+		if v != 0 {
+			fmt.Fprintf(&sb, "%s %g\n", strings.TrimPrefix(proto.Stat(i).String(), "Stat"), v)
+		}
+	}
+	return sb.String()
+}
+
+// The setup written back out as a RaidSimRequest JSON, so a later run can start from the
+// gear or talents this one found.
+func (s *setup) save(path string) error {
+	data, err := protojson.MarshalOptions{Multiline: true, Indent: " "}.Marshal(s.clone())
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0644)
+}
+
+// Stat weights on the current gear: DPS per point of each stat, and the same as
+// attack power equivalents. A stat mod of 1 point is tiny at low level, so this asks for
+// many iterations.
+func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations int32) string {
+	request := s.clone()
+	player := request.Raid.Parties[0].Players[0]
+	player.Rotation = rot
+	request.Encounter.Duration = duration
+	res := core.StatWeights(&proto.StatWeightsRequest{
+		Player:     player,
+		RaidBuffs:  request.Raid.Buffs,
+		PartyBuffs: request.Raid.Parties[0].Buffs,
+		Debuffs:    request.Raid.Debuffs,
+		Encounter:  request.Encounter,
+		SimOptions: &proto.SimOptions{Iterations: iterations, RandomSeed: 1, Ruleset: request.SimOptions.Ruleset},
+		StatsToWeigh: []proto.Stat{
+			proto.Stat_StatAgility, proto.Stat_StatStrength, proto.Stat_StatAttackPower,
+			proto.Stat_StatMeleeCrit, proto.Stat_StatMeleeHit, proto.Stat_StatStamina,
+		},
+		PseudoStatsToWeigh: []proto.PseudoStat{proto.PseudoStat_PseudoStatMainHandDps, proto.PseudoStat_PseudoStatOffHandDps},
+		EpReferenceStat:    proto.Stat_StatAttackPower,
+	})
+	if res.Error != nil {
+		return "stat weights failed: " + res.Error.Message
+	}
+	var sb strings.Builder
+	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina"}
+	for _, name := range names {
+		i := proto.Stat_value["Stat"+name]
+		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.Stats[i], res.Dps.EpValues.Stats[i], res.Dps.EpValuesStdev.Stats[i])
+	}
+	for _, name := range []string{"MainHandDps", "OffHandDps"} {
+		i := proto.PseudoStat_value["PseudoStat"+name]
+		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.PseudoStats[i], res.Dps.EpValues.PseudoStats[i], res.Dps.EpValuesStdev.PseudoStats[i])
+	}
+	return sb.String()
 }

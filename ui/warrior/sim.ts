@@ -97,6 +97,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
+			OtherInputs.Level,
 			WarriorInputs.StartingRage<Spec.SpecWarrior>(),
 			WarriorInputs.QueueDelay<Spec.SpecWarrior>(),
 			WarriorInputs.StanceSnapshot<Spec.SpecWarrior>(),
