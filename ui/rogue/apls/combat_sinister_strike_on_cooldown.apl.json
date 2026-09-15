@@ -1,8 +1,5 @@
 {
     "type": "TypeAPL",
-    "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":13877}}}, "doAtValue":{"const":{"val":"-1s"}}}
-    ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"rank":2,"spellId":6774}},"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"lhs":{"currentComboPoints":{}},"op":"OpGe","rhs":{"const":{"val":"1"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"rank":2,"spellId":6774}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"6s"}}}}]}},{"and":{"vals":[{"cmp":{"lhs":{"currentComboPoints":{}},"op":"OpGe","rhs":{"const":{"val":"5"}}}},{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"rank":2,"spellId":6774}}},"op":"OpLt","rhs":{"const":{"val":"3s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"9s"}}}}]}}]}}},"notes":"Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one."},
         {"action":{"castSpell":{"spellId":{"spellId":13750}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpLt","rhs":{"const":{"val":"59"}}}},{"cmp":{"lhs":{"timeToEnergyTick":{}},"op":"OpLt","rhs":{"const":{"val":"1s"}}}}]}}},"notes":"Adrenaline Rush anchors the big window. Cast it low on energy so none of the extra regen is wasted."},

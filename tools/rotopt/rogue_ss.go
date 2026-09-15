@@ -51,7 +51,7 @@ func (rogueSS) Knobs() []Knob {
 		{Name: "evisEnergy", Default: 79, Min: 59, Max: 99, Step: 10},
 		{Name: "ssAfterSwing", Default: 0.5, Min: 0, Max: 1, Step: 0.25},
 		{Name: "ssEnergy", Default: 79, Min: 0, Max: 100, Step: 10},
-		{Name: "bfPrepull", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "bfPrepull", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
