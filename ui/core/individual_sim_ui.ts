@@ -6,7 +6,7 @@ import * as IconInputs from './components/icon_inputs';
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
 import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualPawnEPExporter } from './components/individual_sim_ui/exporters';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
-import { Individual60UImporter, IndividualAddonImporter, IndividualJsonImporter, IndividualLinkImporter } from './components/individual_sim_ui/importers';
+import { Individual60UImporter, IndividualAddonImporter, IndividualJsonImporter, IndividualLinkImporter, IndividualTalentsImporter } from './components/individual_sim_ui/importers';
 import { ItemSwapConfig } from './components/individual_sim_ui/item_swap_picker';
 import { RotationTab } from './components/individual_sim_ui/rotation_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
@@ -376,6 +376,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	private addTopbarComponents() {
 		// TODO: Classic
 		this.simHeader.addImportLink('JSON', new IndividualJsonImporter(this.rootElem, this), true);
+		this.simHeader.addImportLink('Talents', new IndividualTalentsImporter(this.rootElem, this), true);
 		this.simHeader.addImportLink('60U SoD', new Individual60UImporter(this.rootElem, this), true);
 		//this.simHeader.addImportLink('WoWHead', new IndividualWowheadGearPlannerImporter(this.rootElem, this), false);
 		this.simHeader.addImportLink('Addon', new IndividualAddonImporter(this.rootElem, this), true);
