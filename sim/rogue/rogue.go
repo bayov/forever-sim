@@ -126,6 +126,13 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerSinisterStrikeSpell()
 	rogue.registerSliceAndDice()
 	rogue.registerThistleTeaCD()
+
+	// Eureka! buffs the next 3 abilities. Eviscerate and the two builders after it get the
+	// most out of the damage bonus, so we hold it like Cold Blood. 8 seconds of Slice and
+	// Dice covers those three casts.
+	rogue.NextAbilityBuffCondition = func(sim *core.Simulation, _ *core.Character) bool {
+		return rogue.ReadyForEviscerate(sim, time.Second*8)
+	}
 	rogue.registerAmbushSpell()
 	rogue.registerVenom()
 

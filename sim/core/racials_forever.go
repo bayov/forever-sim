@@ -234,6 +234,12 @@ func (character *Character) registerEureka() {
 	character.AddMajorCooldown(MajorCooldown{
 		Spell: spell,
 		Type:  CooldownTypeDPS,
+		ShouldActivate: func(sim *Simulation, character *Character) bool {
+			if character.NextAbilityBuffCondition == nil {
+				return true
+			}
+			return character.NextAbilityBuffCondition(sim, character)
+		},
 	})
 }
 

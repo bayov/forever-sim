@@ -94,6 +94,12 @@ type Character struct {
 	Pets []*Pet // cached in AddPet, for advance()
 
 	ActiveShapeShift *Aura // Some things can't be used in shapeshift forms
+
+	// NextAbilityBuffCondition gates cooldowns that buff the next few abilities rather
+	// than a window of time, like the Gnome racial Eureka!. Those are wasted on filler,
+	// so a spec sets this to say when its best hits are lined up (a rogue at 5 combo
+	// points with the energy for Eviscerate). Nil means use on cooldown.
+	NextAbilityBuffCondition CooldownActivationCondition
 }
 
 func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character {

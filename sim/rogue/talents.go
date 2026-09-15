@@ -143,7 +143,23 @@ func (rogue *Rogue) registerColdBloodCD() {
 	rogue.AddMajorCooldown(core.MajorCooldown{
 		Spell: rogue.ColdBlood,
 		Type:  core.CooldownTypeDPS,
+		// The next Cold Blooded hit spends the buff, and the builders carry that flag too.
+		// Used on cooldown it lands on a Sinister Strike, so we hold it for Eviscerate.
+		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			return rogue.ReadyForEviscerate(sim, time.Second*6)
+		},
 	})
+}
+
+// ReadyForEviscerate is true when the next rotation action is going to be a 5 point
+// Eviscerate: 5 combo points, energy for it, and Slice and Dice not about to run out
+// (a rotation refreshes Slice and Dice with those points instead if it is). Buffs that
+// are spent by the next ability (Cold Blood, Eureka!) wait for this.
+func (rogue *Rogue) ReadyForEviscerate(sim *core.Simulation, minSliceAndDice time.Duration) bool {
+	if rogue.ComboPoints() < 5 || rogue.CurrentEnergy() < rogue.Eviscerate.Cost.GetCurrentCost() {
+		return false
+	}
+	return rogue.SliceAndDiceAura.RemainingDuration(sim) >= minSliceAndDice
 }
 
 // Seal Fate talent
