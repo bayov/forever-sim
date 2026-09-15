@@ -47,7 +47,7 @@ func main() {
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
 	gearQuality := flag.Int("gear-quality", 2, "lowest item quality the gear search considers (2 uncommon, 3 rare)")
 	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
-	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv", "wago item export, for the level each item needs")
+	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv", "wago item export, for which items need a PvP rank")
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
 	outDir := flag.String("out", "", "directory to write <name>[_<dur>s].apl.json into")
 	outName := flag.String("name", "", "file name base for -out, defaults to the template name")

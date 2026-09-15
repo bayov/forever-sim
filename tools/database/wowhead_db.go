@@ -230,6 +230,7 @@ func (wi WowheadItem) ToProto() *proto.UIItem {
 		Name:                wi.Name,
 		Icon:                wi.Icon,
 		Ilvl:                wi.Ilvl,
+		RequiredLevel:       wi.RequiresLevel,
 		Phase:               wi.getPhase(),
 		FactionRestriction:  wi.getFactionRstriction(),
 		ClassAllowlist:      wi.getClassRestriction(),

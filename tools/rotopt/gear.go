@@ -75,8 +75,8 @@ func contains[T comparable](list []T, v T) bool {
 	return false
 }
 
-// The level each item needs, from the wago export. Only that file records it.
-func loadRequiredLevels(path string) (map[int32]int32, error) {
+// The items that need a PvP rank, from the wago export. Only that file records it.
+func loadPvpRankItems(path string) (map[int32]bool, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -88,21 +88,19 @@ func loadRequiredLevels(path string) (map[int32]int32, error) {
 	if err != nil {
 		return nil, err
 	}
-	idCol, levelCol, rankCol := -1, -1, -1
+	idCol, rankCol := -1, -1
 	for i, name := range header {
 		switch name {
 		case "ID":
 			idCol = i
-		case "RequiredLevel":
-			levelCol = i
 		case "RequiredPVPRank":
 			rankCol = i
 		}
 	}
-	if idCol < 0 || levelCol < 0 {
-		return nil, fmt.Errorf("%s: no ID/RequiredLevel columns", path)
+	if idCol < 0 || rankCol < 0 {
+		return nil, fmt.Errorf("%s: no ID/RequiredPVPRank columns", path)
 	}
-	levels := map[int32]int32{}
+	ranked := map[int32]bool{}
 	for {
 		row, err := r.Read()
 		if err == io.EOF {
@@ -111,17 +109,12 @@ func loadRequiredLevels(path string) (map[int32]int32, error) {
 		if err != nil {
 			return nil, err
 		}
-		id, _ := strconv.Atoi(row[idCol])
-		level, _ := strconv.Atoi(row[levelCol])
-		// PvP rank gear is a separate grind, it stays out of the pool.
-		if rankCol >= 0 {
-			if rank, _ := strconv.Atoi(row[rankCol]); rank > 0 {
-				continue
-			}
+		if rank, _ := strconv.Atoi(row[rankCol]); rank > 0 {
+			id, _ := strconv.Atoi(row[idCol])
+			ranked[int32(id)] = true
 		}
-		levels[int32(id)] = int32(level)
 	}
-	return levels, nil
+	return ranked, nil
 }
 
 // Whether a random suffix does anything for a melee: it has to carry a physical stat.
@@ -140,7 +133,7 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 	if err := (protojson.UnmarshalOptions{DiscardUnknown: true}).Unmarshal(data, db); err != nil {
 		return nil, err
 	}
-	required, err := loadRequiredLevels(levelsPath)
+	pvpRank, err := loadPvpRankItems(levelsPath)
 	if err != nil {
 		return nil, err
 	}
@@ -167,13 +160,17 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 	}
 
 	for _, item := range db.Items {
-		req, known := required[item.Id]
-		if !known || item.Quality < minQuality || item.Expansion > proto.Expansion_ExpansionVanilla {
+		if item.Quality < minQuality || item.Expansion > proto.Expansion_ExpansionVanilla || item.RequiredLevel > level {
 			continue
 		}
-		// Quest rewards have no level of their own, the quest is the gate. A quest's
-		// reward sits a few item levels above the quest level, so that stands in.
-		if req == 0 && item.Ilvl > level+6 || req > level {
+		// A few items have no level of their own (Olmann Sewar, the engineering goggles),
+		// the quest or profession is the gate. A quest's reward sits a few item levels above
+		// the quest level, so that stands in.
+		if item.RequiredLevel == 0 && item.Ilvl > level+6 {
+			continue
+		}
+		// PvP rank gear is a separate grind, it stays out of the pool.
+		if pvpRank[item.Id] {
 			continue
 		}
 		if len(item.ClassAllowlist) > 0 && !contains(item.ClassAllowlist, class) {

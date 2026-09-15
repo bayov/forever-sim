@@ -21,6 +21,7 @@ import { MultiIconPicker, MultiIconPickerItemConfig } from '../multi_icon_picker
 import { NumberPicker } from '../number_picker';
 import { SavedDataManager } from '../saved_data_manager';
 import { SimTab } from '../sim_tab';
+import * as OtherInputs from './../other_inputs';
 import { IsbConfig, StormstrikeConfig } from './../other_inputs';
 import { ConsumesPicker } from './consumes_picker';
 import { ItemSwapPicker } from './item_swap_picker';
@@ -179,9 +180,12 @@ export class SettingsTab extends SimTab {
 
 	private buildOtherSettings() {
 		// const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
-		const settings = this.simUI.individualConfig.otherInputs?.inputs.filter(
-			inputs => !inputs.extraCssClasses || !inputs.extraCssClasses?.includes('within-raid-sim-hide'),
-		);
+		// Level is global: every spec gets it first, whatever its own other inputs are.
+		const otherInputs: InputSection = {
+			...this.simUI.individualConfig.otherInputs,
+			inputs: [OtherInputs.Level, ...this.simUI.individualConfig.otherInputs.inputs.filter(input => input !== OtherInputs.Level)],
+		};
+		const settings = otherInputs.inputs.filter(inputs => !inputs.extraCssClasses || !inputs.extraCssClasses?.includes('within-raid-sim-hide'));
 
 		const itemSwapConfig = this.simUI.individualConfig.itemSwapConfig;
 
@@ -191,7 +195,7 @@ export class SettingsTab extends SimTab {
 			});
 
 			if (settings.length) {
-				this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.otherInputs);
+				this.configureInputSection(contentBlock.bodyElement, otherInputs);
 				contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
 					elem.classList.add('input-inline');
 				});
@@ -345,6 +349,7 @@ export class SettingsTab extends SimTab {
 					debuffs: simUI.sim.raid.getDebuffs(),
 					consumes: player.getConsumes(),
 					race: player.getRace(),
+					level: player.getLevel(),
 					professions: player.getProfessions(),
 					enableItemSwap: player.getEnableItemSwap(),
 					itemSwap: player.getItemSwapGear().toProto(),
@@ -366,6 +371,7 @@ export class SettingsTab extends SimTab {
 					simUI.player.setBuffs(eventID, newSettings.playerBuffs || IndividualBuffs.create());
 					simUI.player.setConsumes(eventID, newSettings.consumes || Consumes.create());
 					simUI.player.setRace(eventID, newSettings.race);
+					simUI.player.setLevel(eventID, newSettings.level);
 					simUI.player.setProfessions(eventID, newSettings.professions);
 					simUI.player.setEnableItemSwap(eventID, newSettings.enableItemSwap);
 					simUI.player.setItemSwapGear(eventID, simUI.sim.db.lookupItemSwap(newSettings.itemSwap || ItemSwap.create()));

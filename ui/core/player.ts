@@ -708,7 +708,7 @@ export class Player<SpecType extends Spec> {
 		const has2hWeapon = this.getGear().hasTwoHandedWeapon();
 		const hasOffhandWeapon = this.getGear().hasOffHandWeapon();
 
-		const levelDiff = targetLevel - Mechanics.MAX_CHARACTER_LEVEL;
+		const levelDiff = targetLevel - this.getEffectiveLevel();
 		const defenderDefense = targetLevel * 5;
 		const glancing = (1 + levelDiff) * 10.0;
 		const suppression = levelDiff === 3 ? levelDiff + 1.8 : levelDiff;
@@ -929,6 +929,16 @@ export class Player<SpecType extends Spec> {
 	// Character level, 0 is max level.
 	getLevel(): number {
 		return this.level;
+	}
+
+	// The level with 0 resolved to max level, for anything that compares against it.
+	getEffectiveLevel(): number {
+		return this.level > 0 && this.level < Mechanics.MAX_CHARACTER_LEVEL ? this.level : Mechanics.MAX_CHARACTER_LEVEL;
+	}
+
+	// Talent points the level grants: one per level from 10.
+	getMaxTalentPoints(): number {
+		return Math.max(0, this.getEffectiveLevel() - 9);
 	}
 
 	setLevel(eventID: EventID, newLevel: number) {
@@ -1222,6 +1232,14 @@ export class Player<SpecType extends Spec> {
 
 		if (filters.minIlvl !== 0) {
 			itemData = filterItems(itemData, item => item.ilvl >= filters.minIlvl);
+		}
+
+		// Below max level only what the character can equip. Items without a required level
+		// (some engineering goggles, a few no-level trinkets) stay in, the level is not what
+		// gates them.
+		if (this.getEffectiveLevel() < Mechanics.MAX_CHARACTER_LEVEL) {
+			const level = this.getEffectiveLevel();
+			itemData = filterItems(itemData, item => item.requiredLevel <= level);
 		}
 		if (filters.maxIlvl !== 0) {
 			itemData = filterItems(itemData, item => item.ilvl <= filters.maxIlvl);

@@ -78,7 +78,8 @@ export const Level = {
 	id: 'level',
 	type: 'number' as const,
 	label: 'Level',
-	labelTooltip: 'Character level, 0 for max level. Base stats, ability ranks and the crit each point of Agility gives follow it. Gear is not filtered by level yet, so pick items the level can wear.',
+	labelTooltip:
+		'Character level, 0 for max level. Base stats, ability ranks (rogue only so far), the crit each point of Agility gives, the talent points and the items offered in the gear picker follow it.',
 	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
 	getValue: (player: Player<any>) => player.getLevel(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {

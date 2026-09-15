@@ -690,11 +690,12 @@ func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 		WeaponDamageMax: weaponDamageMax,
 		WeaponSpeed:     item.GetWeaponSpeed(),
 
-		Ilvl:    int32(item.GetItemLevel()),
-		Phase:   int32(item.GetPhase()),
-		Quality: proto.ItemQuality(item.GetQuality()),
-		Unique:  item.GetUnique(),
-		Heroic:  item.IsHeroic(),
+		Ilvl:          int32(item.GetItemLevel()),
+		RequiredLevel: int32(item.GetRequiresLevel()),
+		Phase:         int32(item.GetPhase()),
+		Quality:       proto.ItemQuality(item.GetQuality()),
+		Unique:        item.GetUnique(),
+		Heroic:        item.IsHeroic(),
 
 		RequiredProfession: item.GetRequiredProfession(),
 		SetName:            item.GetItemSetName(),

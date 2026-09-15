@@ -67,6 +67,8 @@ message UIItem {
 
 	int32 ilvl = 16;
 	int32 phase = 17;
+	// Character level needed to equip, 0 when there is none.
+	int32 required_level = 31;
 	ItemQuality quality = 18;
 	bool unique = 19;
 	bool heroic = 20;
@@ -314,6 +316,7 @@ message SavedSettings {
 	ItemSwap item_swap = 17;
 
 	int32 reaction_time_ms = 11;
+	int32 level = 19;
 	int32 channel_clip_delay_ms = 12;
 	bool in_front_of_target = 13;
 	double distance_from_target = 14;
