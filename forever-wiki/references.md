@@ -8,7 +8,11 @@ Collected 2026-09-14.
 - What's Next panel recap: https://news.blizzard.com/en-us/article/24303862/world-of-warcraft-forever-whats-next-panel-recap (dates, zones, dungeons, raids, Skyborne, PvP)
 - Pre-purchase and editions: https://news.blizzard.com/en-us/article/24301508/pre-purchase-world-of-warcraft-forever-upgrades-and-begin-your-next-journey-in-azeroth
 
-## Fan datasets (primary source for the class files)
+## Beta client data (primary source for racials and the Rogue and Shaman trees since 2026-09-17)
+
+- hyjal.cc: talent calculators, racials and Legacy tree read from the beta client tables, with an update log per build. Build 1.60.1.69876 changes: https://hyjal.cc/updates/1.60.1.69876 (calculators at /talent-calculator/rogue etc, racials at /racials). The trees ship in the page's JS bundle and are vendored in the sim repo under `tools/forever_talents/client/`.
+
+## Fan datasets (primary source for the other class files)
 
 - wowforevertalents.com by Milenkas of Nihilum. Talent calculator, spellbooks, racials, professions, Legacy Tree, roadmap. Data is Classic Era 1.15.9.69722 client tables with a per-talent overlay from BlizzCon footage, each change tagged with its screenshot. https://wowforevertalents.com/ (talents at /warrior/ etc, spellbooks at /abilities/warrior/ etc, /racials/, /professions/, /legacy/, /what-to-expect/, /about/)
 - nikftw talent calculator, the screenshot source most of the above cites: https://nikftw.github.io/forevertalent/

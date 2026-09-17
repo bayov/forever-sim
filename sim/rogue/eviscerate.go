@@ -34,8 +34,9 @@ func (rogue *Rogue) registerEviscerate() {
 		Flags:        rogue.finisherFlags() | SpellFlagColdBlooded,
 		MetricSplits: 6,
 
+		// Flawless Execution takes 10 off the cost.
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   35,
+			Cost:   35 - core.TernaryFloat64(rogue.Talents.FlawlessExecution, 10, 0),
 			Refund: 0,
 		},
 		Cast: core.CastConfig{
@@ -52,7 +53,7 @@ func (rogue *Rogue) registerEviscerate() {
 		},
 
 		DamageMultiplier: 1 +
-			[]float64{0, 0.07, 0.14, 0.21}[rogue.Talents.ImprovedEviscerate] +
+			[]float64{0, 0.07, 0.13, 0.20}[rogue.Talents.ImprovedEviscerate] +
 			[]float64{0, 0.02, 0.04, 0.06}[rogue.Talents.Aggression],
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,

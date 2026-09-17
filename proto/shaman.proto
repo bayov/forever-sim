@@ -44,7 +44,7 @@ message ShamanTalents {
 
 	// Restoration
 	int32 improved_healing_wave = 35;
-	int32 tidal_mastery = 36;
+	int32 totemic_focus = 36;
 	int32 mindfulness = 37;
 	int32 natural_grace = 38;
 	int32 tidal_focus = 39;
@@ -52,7 +52,7 @@ message ShamanTalents {
 	int32 ancestral_healing = 41;
 	int32 healing_focus = 42;
 	bool water_shield = 43;
-	int32 totemic_focus = 44;
+	int32 tidal_mastery = 44;
 	int32 restorative_totems = 45;
 	bool mana_tide_totem = 46;
 	int32 healing_way = 47;

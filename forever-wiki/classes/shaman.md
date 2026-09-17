@@ -8,6 +8,18 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.69876 (2026-09-16)
+
+The beta client's shaman tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876), against the BlizzCon data below. Rank counts and prerequisites held. Tidal Mastery and Totemic Focus swapped places (Totemic Focus is row 1, Tidal Mastery row 4). Ranks 2 and up are now real numbers, and `tools/forever_talents/data/shaman.json` in the sim repo is regenerated from the client tree (`client/shaman.json`), so the per-talent text below is superseded where it differs. The sim follows the client.
+
+- Stormstrike: 125 Mana, 8 sec cooldown, and it "increases the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec". One spell, the shaman's own, instead of all Nature damage on a 20 sec cooldown at 21% of base mana.
+- Lightning Overload is 3 / 7 / 10%. Elemental Alacrity is 0.17 / 0.33 / 0.50 sec. Mental Dexterity is 33 / 67 / 100% of Intellect. Elemental Weapons rank 2 is 13% Rockbiter.
+- Lava Burst at 60: 106 to 135 Fire damage, 165 Mana, 2.5 sec cast, 10 sec cooldown, 20% more with Flame Shock up.
+- Improved Fire Nova (20% / 4 sec at rank 2), Improved Stormstrike (100% at rank 2) and Maelstrom Weapon (4% per rank per stack) scale linearly, as the sim assumed.
+- Rage of the Farseer: 30% melee and cast speed for 25 sec, 3 min cooldown (the sim assumed 3 min).
+- Tidal Focus reads "improves your chance to hit by X%". Mindfulness is 17 / 33 / 50%, Healing Way 8 / 17 / 25%, Healing Focus 23 / 47 / 70%, Improved Reincarnation rank 2 doubles rank 1, Riptide 486 to 534 plus 445 over 15 sec, 245 Mana, 6 sec cooldown, Mana Tide Totem 88 mana every 3 sec.
+- Spirit Weapons (Enhancement row 4, 30% less threat) is a must for a raiding enhancement shaman even though the sim scores no threat, so the shipped level 60 build pins it.
+
 ## Spellbook changes (trainer abilities)
 
 10 of 51 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).

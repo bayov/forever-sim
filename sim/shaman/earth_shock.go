@@ -54,7 +54,10 @@ func (shaman *Shaman) newEarthShockSpellConfig(rank int, shockTimer *core.Timer)
 
 	spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
+		stormstrike := shaman.spendStormstrike(sim, target)
+		spell.DamageMultiplier *= stormstrike
 		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+		spell.DamageMultiplier /= stormstrike
 	}
 
 	return spell

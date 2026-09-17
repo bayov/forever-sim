@@ -8,6 +8,21 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.69876 (2026-09-16)
+
+The beta client's rogue tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876), against the BlizzCon data below. Positions, rank counts and prerequisites all held. Ranks 2 and up are now real numbers instead of guesses, and `tools/forever_talents/data/rogue.json` in the sim repo is regenerated from the client tree (`client/rogue.json`), so the per-talent text below is superseded where it differs. The sim follows the client.
+
+- Flawless Execution (Combat, row 4) replaces Restless Blades: reduces the Energy cost of Eviscerate by 10.
+- Lethality is 4% per rank (4 / 8 / 12 / 16 / 20), not Classic's 6%.
+- Improved Eviscerate is 7 / 13 / 20%.
+- Improved Expose Armor rank 2 takes 10 Energy off and refunds 2 combo points at 5.
+- Mutilate's flat bonus is 17.25 per weapon (13 in the level 38 footage). 60 Energy.
+- Puncturing Wounds, Hack and Slash, Serrated Blades (3 / 6 / 9% armor), Cutthroat (3% per rank) scale linearly. Quietus stays at 35% health at every rank.
+- Camouflage's cooldown cut is 2 / 3 / 4 / 5 / 6 sec, Setup and Initiative are 33 / 67 / 100%, Elusiveness rank 2 is 90 sec, Heightened Senses rank 2 is 3 levels, Improved Distract rank 2 is 5 yds.
+- Precision reads "Improves your chance to hit by X%" (no poison wording).
+- Prerequisites the client confirms: Riposte needs Deflection, Dual Wield Specialization needs Precision, Weapon Expertise needs Blade Flurry, Quietus needs Dirty Deeds, Aggression needs nothing.
+- Level 60 costs and cooldowns: Blade Flurry 25 Energy, 2 min. Adrenaline Rush 5 min. Cold Blood 3 min. Ghostly Strike 40 Energy, 20 sec, 125% (180% with a dagger). Hemorrhage 35 Energy, 100% (145% with a dagger), 15% more Rupture damage for 15 sec. Riposte 10 Energy, 6 sec (the disarm duration is "?" in the client data). Premeditation 2 min, Preparation 10 min.
+
 ## Spellbook changes (trainer abilities)
 
 0 of 33 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).

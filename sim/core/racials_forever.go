@@ -7,13 +7,12 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// Forever racials, as transcribed from the BlizzCon 2026 footage (see
+// Forever racials, as read from the beta client tooltips (build 1.60.1.69876, see
 // forever-wiki/racials.md). Every race has two actives and two passives, the resistance
 // racials are gone and the weapon skill racials pay crit instead.
 //
-// Nothing here has a published cooldown. Blood Fury and Berserking keep their Classic
-// cooldowns, and the new actives (Elune's Light, Eureka!) assume 3 minutes.
-const foreverNewRacialCooldown = time.Minute * 3
+// Cooldowns per the client: Blood Fury, Eureka! and the Undead and Gnome utilities 2 min,
+// Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
 
 func applyForeverRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
@@ -140,9 +139,9 @@ func (character *Character) registerForeverBloodFury() {
 	})
 }
 
-// Elune's Light: critical strike chance increased by 10% for 15 sec.
+// Elune's Light: critical strike chance increased by 10% for 15 sec, 3 min cooldown.
 func (character *Character) registerElunesLight() {
-	actionID := ActionID{SpellID: 460531}
+	actionID := ActionID{SpellID: 1259799}
 
 	aura := character.NewTemporaryStatsAura("Elune's Light", actionID, stats.Stats{
 		stats.MeleeCrit: 10 * CritRatingPerCritChance,
@@ -155,7 +154,7 @@ func (character *Character) registerElunesLight() {
 		Cast: CastConfig{
 			CD: Cooldown{
 				Timer:    character.NewTimer(),
-				Duration: foreverNewRacialCooldown,
+				Duration: time.Minute * 3,
 			},
 		},
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -169,15 +168,39 @@ func (character *Character) registerElunesLight() {
 	})
 }
 
-// Eureka!: the next 3 spells or abilities cost less and deal 10% more damage or healing.
+// Eureka!: the next 3 damaging abilities cost less and deal 10% more damage. The beta client
+// gives each class its own discount: Energy 20%, Rage 40%, Mana 50% (Priests 15%, and their
+// healing counts too). 2 min cooldown.
 //
-// The tooltip gives no number for the cost reduction, so half is assumed. It applies to
-// every ability the rotation can cast that has a cost, and a stack is spent on each cast.
-// Auto attacks are not abilities and are left alone.
-const eurekaCostReduction = 0.5
+// A damaging ability is one the rotation can cast, that has a cost and that is set up to
+// deal damage. Slice and Dice, Expose Armor or a shout have no damage multiplier and are
+// left alone. Auto attacks are not abilities. A stack is spent on each cast.
+func (character *Character) eurekaCostReduction() int32 {
+	switch {
+	case character.HasEnergyBar():
+		return 20
+	case character.HasRageBar():
+		return 40
+	case character.Class == proto.Class_ClassPriest:
+		return 15
+	}
+	return 50
+}
 
 func (character *Character) registerEureka() {
-	actionID := ActionID{SpellID: 460532}
+	actionID := ActionID{SpellID: 1259812}
+	costReduction := character.eurekaCostReduction()
+	healingCounts := character.Class == proto.Class_ClassPriest
+
+	affects := func(spell *Spell) bool {
+		if !spell.Flags.Matches(SpellFlagAPL) || spell.Cost == nil {
+			return false
+		}
+		if spell.Flags.Matches(SpellFlagHelpful) {
+			return healingCounts
+		}
+		return spell.DamageMultiplier != 0
+	}
 
 	var affected []*Spell
 	aura := character.RegisterAura(Aura{
@@ -187,7 +210,7 @@ func (character *Character) registerEureka() {
 		MaxStacks: 3,
 		OnInit: func(aura *Aura, sim *Simulation) {
 			for _, spell := range character.Spellbook {
-				if spell.Flags.Matches(SpellFlagAPL) && spell.Cost != nil {
+				if affects(spell) {
 					affected = append(affected, spell)
 				}
 			}
@@ -195,13 +218,13 @@ func (character *Character) registerEureka() {
 		OnGain: func(aura *Aura, sim *Simulation) {
 			for _, spell := range affected {
 				spell.DamageMultiplier *= 1.1
-				spell.Cost.Multiplier -= int32(eurekaCostReduction * 100)
+				spell.Cost.Multiplier -= costReduction
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			for _, spell := range affected {
 				spell.DamageMultiplier /= 1.1
-				spell.Cost.Multiplier += int32(eurekaCostReduction * 100)
+				spell.Cost.Multiplier += costReduction
 			}
 		},
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks, newStacks int32) {
@@ -210,7 +233,7 @@ func (character *Character) registerEureka() {
 			}
 		},
 		OnCastComplete: func(aura *Aura, sim *Simulation, spell *Spell) {
-			if aura.GetStacks() > 0 && spell.Flags.Matches(SpellFlagAPL) && spell.Cost != nil {
+			if aura.GetStacks() > 0 && affects(spell) {
 				aura.RemoveStack(sim)
 			}
 		},
@@ -222,7 +245,7 @@ func (character *Character) registerEureka() {
 		Cast: CastConfig{
 			CD: Cooldown{
 				Timer:    character.NewTimer(),
-				Duration: foreverNewRacialCooldown,
+				Duration: time.Minute * 2,
 			},
 		},
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -243,8 +266,8 @@ func (character *Character) registerEureka() {
 	})
 }
 
-// Touch of the Grave: spells and attacks have a 5% chance to drain health from the
-// target, up to 5% of the caster's maximum health.
+// Touch of the Grave: spells and attacks have a 5% chance (10% for Mages, Priests and
+// Warlocks) to drain health from the target, up to 5% of the caster's maximum health.
 //
 // "Up to" reads as a cap, and the amount under it is not published. The drain is modelled
 // at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
@@ -256,7 +279,13 @@ func (character *Character) registerEureka() {
 var TouchOfTheGraveICD time.Duration = 0
 
 func (character *Character) registerTouchOfTheGrave() {
-	actionID := ActionID{SpellID: 460533}
+	actionID := ActionID{SpellID: 1260189}
+	procChance := 0.05
+	switch character.Class {
+	case proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock:
+		actionID = ActionID{SpellID: 1260201}
+		procChance = 0.10
+	}
 	healthMetrics := character.NewHealthMetrics(actionID)
 
 	drain := character.RegisterSpell(SpellConfig{
@@ -283,7 +312,7 @@ func (character *Character) registerTouchOfTheGrave() {
 		Callback:   CallbackOnSpellHitDealt,
 		ProcMask:   ProcMaskDirect,
 		Outcome:    OutcomeLanded,
-		ProcChance: 0.05,
+		ProcChance: procChance,
 		ICD:        TouchOfTheGraveICD,
 		Handler: func(sim *Simulation, spell *Spell, result *SpellResult) {
 			drain.Cast(sim, result.Target)

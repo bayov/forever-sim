@@ -72,7 +72,11 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 		origMult := spell.DamageMultiplier
 		for hitIndex := range results {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
+			// Each target carries its own Stormstrike mark, so a bounce can spend one too.
+			stormstrike := shaman.spendStormstrike(sim, target)
+			spell.DamageMultiplier *= stormstrike
 			results[hitIndex] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			spell.DamageMultiplier /= stormstrike
 			target = sim.Environment.NextTargetUnit(target)
 			spell.DamageMultiplier *= shaman.ChainLightningBounceCoefficient
 		}

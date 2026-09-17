@@ -11,7 +11,7 @@ import (
 // Hack and Slash folds the four Classic weapon specialization talents into one, and picks
 // its effect from the weapons the rogue has equipped.
 //
-// TODO: Only rank 1 was seen, all three effects are assumed to scale linearly. Beta will confirm.
+// All three effects scale linearly with the rank (beta client tooltips).
 func (rogue *Rogue) applyHackAndSlash() {
 	if rogue.Talents.HackAndSlash == 0 {
 		return

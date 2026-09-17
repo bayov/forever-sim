@@ -130,13 +130,15 @@ type Shaman struct {
 	SearingTotem           []*core.Spell
 	StoneskinTotem         []*core.Spell
 	Stormstrike            *core.Spell
-	StrengthOfEarthTotem   []*core.Spell
-	TremorTotem            *core.Spell
-	WaterShield            *core.Spell
-	WindfuryTotem          []*core.Spell
-	WindfuryWeaponMH       *core.Spell
-	WindfuryWeaponOH       *core.Spell
-	WindwallTotem          []*core.Spell
+	// The Forever Stormstrike mark on each target, nil under Classic.
+	stormstrikeMarks     core.AuraArray
+	StrengthOfEarthTotem []*core.Spell
+	TremorTotem          *core.Spell
+	WaterShield          *core.Spell
+	WindfuryTotem        []*core.Spell
+	WindfuryWeaponMH     *core.Spell
+	WindfuryWeaponOH     *core.Spell
+	WindwallTotem        []*core.Spell
 
 	// Auras
 	ClearcastingAura     *core.Aura

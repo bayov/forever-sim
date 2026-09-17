@@ -1,8 +1,8 @@
 # Racials
 
-Every race gets four racials: two active, two passive. Blizzard's stated goal is similar overall value split differently across offence, defence and utility. Resistance racials are gone. Weapon specializations give crit instead of weapon skill. Values are as shown at level 60 in the BlizzCon 2026 footage. Cooldowns of the actives were not captured.
+Every race gets four racials: two active, two passive. Blizzard's stated goal is similar overall value split differently across offence, defence and utility. Resistance racials are gone. Weapon specializations give crit instead of weapon skill.
 
-Sources: Blizzard Deep Dive recap (Dwarf and Undead examples), wowforevertalents.com racials page, Method and Mobalytics transcriptions. All three fan transcriptions agree on the text below.
+The text below is the beta client's (build 1.60.1.69876, 2026-09-16, read through hyjal.cc's racials page), with the cost line the client shows. A racial that reads differently per class lists each version. Berserking's duration is missing from the client data ("?"), the sim keeps Classic's 10 sec. The earlier BlizzCon transcriptions (wowforevertalents.com, Method, Mobalytics) agreed with this text except for the numbers the client added: Eureka!'s cost cut, Shatter Curse's 15%, Stoneform's 10%, Cannibalize's 7% ticks, Plainsrunning's 1% per 5 sec to 30%, Touch of the Grave's 10% for casters.
 
 Legend: NEW = new in Forever, CHANGED = changed from Classic, same = same as Classic, REMOVED = Classic racial not in Forever.
 
@@ -16,9 +16,9 @@ Six at launch: Gnome Priest, Human Hunter, Dwarf Shaman, Orc Mage, Troll Warlock
 
 Classes: Hunter (new), Mage, Paladin, Priest, Rogue, Warlock, Warrior.
 
-- Will to Survive (active) NEW: Removes all Stun effects.
-- Perception (active) same: Dramatically increases stealth detection for 20 sec.
-- Sword Specialization (passive) CHANGED: Swords increase spell and ability critical strike chance by 2%. Classic: Skill with Swords and Two-Handed Swords increased by 5.
+- Will to Survive (active) NEW: [Instant; 3 min cooldown] Instantly removes all Stun effects.
+- Perception (active) same: [Instant; 3 min cooldown] Dramatically increases stealth detection for 20 sec.
+- Sword Specialization (passive) CHANGED: Increases your critical strike chance with all spells and attacks by 2% while you have a sword or two-handed sword equipped.
 - The Human Spirit (passive) same: Spirit increased by 5%.
 - Diplomacy REMOVED (was: Reputation gains increased by 10%).
 - Mace Specialization REMOVED (was: Skill with Maces and Two-Handed Maces increased by 5).
@@ -27,40 +27,48 @@ Classes: Hunter (new), Mage, Paladin, Priest, Rogue, Warlock, Warrior.
 
 Classes: Hunter, Paladin, Priest, Rogue, Shaman (new), Warrior.
 
-- Find Treasure (active) CHANGED: Allows the dwarf to sense nearby treasure, making it appear on the minimap. Now runs alongside another tracking type (can track treasure and minerals at once).
-- Stoneform (active) CHANGED: Removes all Poison and Disease effects and reduces Physical damage taken for 8 sec. Blizzard's recap says it also removes and grants immunity to Bleeds. Method's transcription reads it as 10% physical reduction. Classic: immunity to Bleed, Poison and Disease, armor +10%, 8 sec.
-- Mace Specialization (passive) NEW: Maces increase spell and ability critical strike chance by 1%.
-- Big Game Hunter (passive) NEW: Damage to Beasts increased by 5%.
+- Stoneform (active) CHANGED: [Instant; 3 min cooldown] Instantly removes and grants immunity to all Bleed, Poison, and Disease effects, and reduces all Physical damage taken by 10% for 8 sec.
+- Find Treasure (active) CHANGED: [Instant] Allows the dwarf to sense nearby treasure, making it appear on the minimap. Lasts until cancelled.
+- Mace Specialization (passive) NEW: Increases your critical strike chance with all spells and attacks by 1% while you have a mace or two-handed mace equipped.
+- Big Game Hunter (passive) NEW: Damage dealt versus Beasts increased by 5%.
 - Frost Resistance REMOVED. Gun Specialization REMOVED.
 
 ### Night Elf
 
 Classes: Druid, Hunter, Priest, Rogue, Warrior.
 
-- Elune's Light (active) NEW: Increases critical strike chance by 10% for 15 sec.
-- Shadowmeld (active) CHANGED: Activate to slip into the shadows, reducing the chance for enemies to detect your presence. Lasts until cancelled or upon moving. Any threat is restored versus enemies still in combat upon cancellation of this effect.
-- Quickness (passive) CHANGED: 1% increased Dodge chance and 2% increased run speed. Classic: dodge +1% only.
-- Wisp Spirit (passive) CHANGED: Transform into a wisp upon death, increasing speed by 75% while dead. Classic: 50%.
+- Elune's Light (active) NEW: [Instant; 3 min cooldown] Increases your critical strike chance with all spells and attacks by 10% for 15 sec.
+- Shadowmeld (active) CHANGED: [Instant; 10 sec cooldown] Activate to slip into the shadows, reducing the chance for enemies to detect your presence. Lasts until cancelled or upon moving. Using this ability in combat discourages enemies from attacking you, but increases the cooldown to 2 min.
+- Quickness (passive) CHANGED: Dodge chance increased by 1% and movement speed increased by 2%. Night Elf Rogues and Druids are harder to detect in Stealth as if they were 1 level higher.
+- Wisp Spirit (passive) CHANGED: Transform into a wisp upon death, increasing movement speed by 75%.
 - Nature Resistance REMOVED.
 
 ### Gnome
 
 Classes: Mage, Priest (new), Rogue, Warlock, Warrior.
 
-- Eureka! (active) NEW: Reduces the cost of your next 3 spells or abilities and increases their damage or healing by 10%.
-- Escape Artist (active) same: Escape the effects of any immobilization or movement speed reduction effect.
-- Expansive Mind (passive) CHANGED: Maximum Mana, Rage, or Energy increased by 5%. Classic: Intelligence increased by 5%.
-- Engineering Specialization (passive) CHANGED: Engineering devices are more reliable. Classic: Engineering skill +15.
+- Escape Artist (active) same: [Instant; 2 min cooldown] Instantly escape the effects of any movement impairing effect and gain immunity to those effects for 3 sec.
+- Eureka! (active) NEW:
+  - Rogue: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Energy cost reduced by 20% and deal 10% more damage.
+  - Warlock: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.
+  - Priest: [Instant; 2 min cooldown] Your next 3 damaging or healing abilities have their Mana cost reduced by 15% and deal 10% more damage or healing.
+  - Mage: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.
+  - Warrior: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Rage cost reduced by 40% and deal 10% more damage.
+- Expansive Mind (passive) CHANGED:
+  - Mage, Priest, Warlock: Maximum Mana increased by 5%.
+  - Rogue: Maximum Energy increased by 5%.
+  - Warrior: Maximum Rage increased by 5%.
+- Engineering Specialization (passive) CHANGED: Your gnomish ingenuity reduces the rate of engineering devices failing or backfiring when you use them by 20%.
 - Arcane Resistance REMOVED.
 
 ### High Order Skyborne (new, Alliance)
 
 Classes: Druid, Hunter, Mage, Rogue, Warrior.
 
-- Walk on Air (active) NEW: Glide downward through the air for 10 sec.
-- Read Ley Line (active) NEW: Activate a ley line to gain 100% increased Health and Mana regeneration. Ley lines are found throughout Azeroth.
-- Wind Blessed (passive) NEW: 1% increased melee, ranged, and spellcasting Haste.
-- Elemental Insight (passive) NEW: Damage to Elementals increased by 5%.
+- Walk on Air (active) NEW: [Instant; 2 min cooldown] Glide downward through the air for 10 sec while controlling your direction of travel.
+- Read Ley Line (active) NEW: [2 sec cast; 2 min cooldown] Attempt to tap into the power of a nearby ley line, increasing your Health and Mana regeneration by 100%. Lasts 15 sec if no ley line is nearby, and 15 min if one is found.
+- Wind Blessed (passive) NEW: Increases your spellcasting, melee, and ranged Haste by 1%.
+- Elemental Insight (passive) NEW: Damage dealt versus Elementals increased by 5%.
 
 ## Horde
 
@@ -68,56 +76,58 @@ Classes: Druid, Hunter, Mage, Rogue, Warrior.
 
 Classes: Hunter, Mage (new), Rogue, Shaman, Warlock, Warrior.
 
-- Blood Fury (active) CHANGED: Increases Attack Power and Spell Power by 10% for 15 sec. Classic: base melee AP +25% for 15 sec and healing on you reduced by 50% for 25 sec. No healing penalty is shown in the Forever text.
-- Shatter Curse (active) NEW: Immunity to Curses and Banes and reduces Magical damage taken for 8 sec.
-- Axe Specialization (passive) CHANGED: Axes increase spell and ability critical strike chance by 1%. Classic: skill with Axes and Two-Handed Axes +5.
-- Hardiness (passive) CHANGED: Duration of Stun effects reduced by 20%. Classic: +25% chance to resist stuns.
+- Blood Fury (active) CHANGED: [Instant; 2 min cooldown] Increases Attack Power and Spell Power by 10% for 15 sec.
+- Shatter Curse (active) NEW: [Instant; 3 min cooldown] Instantly removes and grants immunity to all Curses and Banes, and reduces all Magical damage taken by 15% for 8 sec.
+- Axe Specialization (passive) CHANGED: Increases your critical strike chance with all spells and abilities by 1% while you have an axe or a two-handed axe equipped.
+- Hardiness (passive) CHANGED: Duration of Stun effects on you reduced by 20%.
 - Command REMOVED (was: Hunter and Warlock pet damage +5%).
 
 ### Undead
 
 Classes: Mage, Paladin (new), Priest, Rogue, Warlock, Warrior.
 
-- Will of the Forsaken (active) CHANGED: Removes any Charm, Fear or Sleep effect. No longer grants immunity afterwards. Classic: 5 sec immunity, usable while afflicted.
-- Cannibalize (active) CHANGED: Regenerates 35% of total Health and Mana over 10 sec. Humanoid or Undead corpses within 5 yards. Any movement, action or damage cancels it. Classic: 7% health every 2 sec for 10 sec, health only.
-- Underwater Breathing (passive) same: Underwater breath lasts 300% longer.
-- Touch of the Grave (passive) NEW: Your spells and attacks have a 5% chance to drain Health from the target, up to 5% of your maximum Health.
+- Will of the Forsaken (active) CHANGED: [Instant; 2 min cooldown] Instantly removes all Charm, Fear and Sleep effects.
+- Cannibalize (active) CHANGED: [5 yd range; Instant; 2 min cooldown] When activated, regenerates 7% of total Health and 7% of total Mana every 2 sec for 10 sec. Only works on Humanoid or Undead corpses within 5 yds. Any movement, action, or damage taken while Cannibalizing will cancel the effect.
+- Underwater Breathing (passive) same: Underwater breath lasts 300% longer than normal.
+- Touch of the Grave (passive) NEW:
+  - Warrior, Rogue, Paladin: Your spells and attacks have a 5% chance to drain Health from the target, up to 5% of your maximum Health.
+  - Mage, Priest, Warlock: Your spells and attacks have a 10% chance to drain Health from the target, up to 5% of your maximum Health.
 - Shadow Resistance REMOVED.
 
 ### Tauren
 
 Classes: Druid, Hunter, Shaman, Warrior.
 
-- War Stomp (active) same: Stuns up to 5 enemies within 8 yards for 2 sec.
-- Cultivation (active) CHANGED: Grow bonus herbs that don't require Herbalism to gather. Classic: Herbalism skill +15.
-- Plainsrunning (passive) NEW: Gain increased movement speed the longer you remain moving.
-- Endurance (passive) CHANGED: Total Health increased by 5% and Hit Chance increased by 1%. Classic: health +5% only.
+- War Stomp (active) same: [0.5 sec cast; 2 min cooldown] Stuns up to 5 enemies within 8 yds for 2 sec.
+- Cultivation (active) CHANGED: [Instant] Cultivate a nearby herb, growing a duplicate you can harvest without requiring Herbalism skill. Each herb may only be cultivated once.
+- Plainsrunning (passive) NEW: Gain 1% increased movement speed every 5 sec spent moving, up to a maximum of 30% increase. Taking damage or standing still will reduce this effect.
+- Endurance (passive) CHANGED: Total Health increased by 5% and chance to hit increased by 1%.
 - Nature Resistance REMOVED.
 
 ### Troll
 
 Classes: Hunter, Mage, Priest, Rogue, Shaman, Warlock (new), Warrior.
 
-- Berserking (active) CHANGED: Increases your attack and casting speed by 10% for 10 sec. Classic: 10% to 30% scaling with missing health.
-- Rapid Regeneration (active) NEW: Regenerates 50% of your maximum Health over a short duration.
-- Regeneration (passive) same: Health regeneration rate increased by 10%. 10% of total Health regeneration may continue during combat.
+- Berserking (active) CHANGED: [Instant; 3 min cooldown] Increases your spellcasting and attack speed by 10% for 10 sec.
+- Rapid Regeneration (active) NEW: [Channeled; 3 min cooldown] Regenerate 50% of your maximum Health over 6 sec. Any movement, action, or damage taken will cancel the effect.
 - Beast Slaying (passive) same: Damage dealt versus Beasts increased by 5%.
+- Regeneration (passive) same: Health regeneration rate increased by 10%. In addition, 10% of total Health regeneration will continue during combat.
 - Bow Specialization REMOVED. Throwing Specialization REMOVED.
 
 ### Windshaper Skyborne (new, Horde)
 
 Classes: Druid, Hunter, Mage, Rogue, Shaman, Warrior.
 
-- Walk on Air (active) NEW: Glide downward through the air for 10 sec.
-- Skysight (active) NEW: Receive an Elemental Blessing increasing run speed by 10%.
-- Wind Blessed (passive) NEW: 1% increased melee, ranged, and spellcasting Haste.
-- Elemental Insight (passive) NEW: Damage to Elementals increased by 5%.
+- Walk on Air (active) NEW: [Instant; 2 min cooldown] Glide downward through the air for 10 sec while controlling your direction of travel.
+- Skysight (active) NEW: [0.5 sec cast; 2 min cooldown] Attempt to draw power from a convergence of elements and receive its blessing, increasing your movement and mounted movement speeds by 10%. Lasts 30 sec if no elemental convergence is nearby, and 15 min if one is found.
+- Wind Blessed (passive) NEW: Increases your spellcasting, melee, and ranged Haste by 1%.
+- Elemental Insight (passive) NEW: Damage dealt versus Elementals increased by 5%.
 
 ## DPS-relevant summary
 
 For a melee DPS sim comparing races within a faction:
 
-- Horde: Orc gives 1% crit with axes plus a 10% AP/SP burst every cooldown. Troll gives a 10% haste burst and 5% vs Beasts. Tauren gives a flat 1% hit. Undead gives a 5% proc life drain (its damage value is unknown). Windshaper Skyborne gives a flat 1% haste and 5% vs Elementals.
-- Alliance: Human gives 2% crit with swords. Dwarf gives 1% crit with maces and 5% vs Beasts. Night Elf gives a 10% crit burst for 15 sec. Gnome gives a small burst on 3 abilities and 5% more Energy or Rage pool. High Order Skyborne gives 1% haste and 5% vs Elementals.
+- Horde: Orc gives 1% crit with axes plus a 10% AP/SP burst every 2 min. Troll gives a 10% haste burst every 3 min and 5% vs Beasts. Tauren gives a flat 1% hit. Undead gives a 5% proc life drain (10% for casters, the drain amount under the 5% health cap is unknown). Windshaper Skyborne gives a flat 1% haste and 5% vs Elementals.
+- Alliance: Human gives 2% crit with swords. Dwarf gives 1% crit with maces and 5% vs Beasts. Night Elf gives a 10% crit burst for 15 sec every 3 min. Gnome gives 3 abilities at 20% less Energy (40% Rage, 50% Mana, 15% for Priests) and 10% more damage every 2 min, and 5% more Energy, Rage or Mana pool. High Order Skyborne gives 1% haste and 5% vs Elementals.
 
-The weapon-type crit racials apply to spells too. Nothing here depends on weapon skill any more, so the old Classic reason to pick Orc or Human for weapon skill is gone. How much that matters depends on how much weapon skill Forever puts on gear.
+The weapon-type crit racials apply to spells too. Nothing here depends on weapon skill any more, so the old Classic reason to pick Orc or Human for weapon skill is gone. How much that matters depends on how much weapon skill Forever puts on gear. The sim's numbers per race are in [sim-status.md](sim-status.md).

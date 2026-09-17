@@ -30,4 +30,4 @@ Where the fan dataset marks something as "not yet verified" or "Classic placehol
 
 ## Regenerating the class files
 
-`data/talents.json` and `data/abilities.json` were pulled from wowforevertalents.com (embedded in its page bundle). The generator script lives in the session scratchpad, not the repo. When the beta client is out that site plans to regenerate its dataset from the real client tables, at which point the same extraction can be redone.
+`data/talents.json` and `data/abilities.json` were pulled from wowforevertalents.com (embedded in its page bundle). The generator script lives in the session scratchpad, not the repo. The beta client's trees (build 1.60.1.69876, read through hyjal.cc) are vendored in the sim repo under `tools/forever_talents/client/`, and the Rogue and Shaman pages open with what changed against this data. The other class pages are still the BlizzCon data.

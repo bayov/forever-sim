@@ -43,13 +43,15 @@
         ],
         "maxPoints": 2,
         "name": "Remorseless Attacks",
-        "description": "After killing a non-trivial enemy, gives you a {0}% increased critical strike chance on your next Sinister Strike, Backstab, Ambush, Mutilate, or Ghostly Strike. Lasts 20 sec.",
+        "description": "After killing a non-trivial enemy, gives you a {0}% increased critical strike chance on your next Sinister Strike, Backstab, Ambush, Mutilate, or Ghostly Strike. Lasts {1} sec.",
         "ranks": [
           [
+            20,
             20
           ],
           [
-            40
+            40,
+            20
           ]
         ],
         "icon": "ability_fiegndead",
@@ -199,20 +201,15 @@
         ],
         "maxPoints": 2,
         "name": "Improved Expose Armor",
-        "description": "Reduces the Energy cost of your Expose Armor ability by {0}, and refunds {1} Combo Point when cast with {2} Combo Points.",
+        "description": "{0}",
         "ranks": [
           [
-            5,
-            1,
-            5
+            "Reduces the Energy cost of your Expose Armor ability by 5, and refunds 1 Combo Point when cast with 5 Combo Points."
           ],
           [
-            5,
-            1,
-            5
+            "Reduces the Energy cost of your Expose Armor ability by 10, and refunds 2 Combo Points when cast with 5 Combo Points."
           ]
         ],
-        "ranksGuessed": true,
         "icon": "ability_warrior_riposte"
       },
       {
@@ -237,19 +234,19 @@
         "description": "Increases the critical strike damage bonus of your Sinister Strike, Gouge, Backstab, Mutilate, Ghostly Strike, and Hemorrhage abilities by {0}%.",
         "ranks": [
           [
-            6
+            4
+          ],
+          [
+            8
           ],
           [
             12
           ],
           [
-            18
+            16
           ],
           [
-            24
-          ],
-          [
-            30
+            20
           ]
         ],
         "icon": "ability_criticalstrike"
@@ -351,7 +348,6 @@
             50
           ]
         ],
-        "ranksGuessed": true,
         "icon": "ability_poisons"
       },
       {
@@ -374,7 +370,6 @@
             10
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_nature_earthbindtotem"
       },
       {
@@ -392,7 +387,7 @@
         "ranks": [
           [
             75,
-            13,
+            17.25,
             20,
             2
           ]
@@ -518,10 +513,10 @@
             7
           ],
           [
-            14
+            13
           ],
           [
-            21
+            20
           ]
         ],
         "icon": "ability_rogue_eviscerate"
@@ -605,17 +600,16 @@
             15
           ],
           [
+            20,
             10,
-            5,
-            15
+            30
           ],
           [
-            10,
-            5,
-            15
+            30,
+            15,
+            45
           ]
         ],
-        "ranksGuessed": true,
         "icon": "ability_backstab"
       },
       {
@@ -662,7 +656,7 @@
         ],
         "maxPoints": 3,
         "name": "Precision",
-        "description": "Increases your chance to hit with all attacks and Poisons by {0}%.",
+        "description": "Improves your chance to hit by {0}%.",
         "ranks": [
           [
             1
@@ -697,7 +691,6 @@
             60
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_shadow_shadowward"
       },
       {
@@ -760,20 +753,22 @@
         ],
         "maxPoints": 2,
         "name": "Improved Kick",
-        "description": "Gives your Kick ability a {0}% chance to Silence the target for 2 sec.",
+        "description": "Gives your Kick ability a {0}% chance to Silence the target for {1} sec.",
         "ranks": [
           [
-            50
+            50,
+            2
           ],
           [
-            100
+            100,
+            2
           ]
         ],
         "icon": "ability_kick",
         "notSimulated": true
       },
       {
-        "fieldName": "restlessBlades",
+        "fieldName": "flawlessExecution",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
@@ -782,14 +777,14 @@
           0
         ],
         "maxPoints": 1,
-        "name": "Restless Blades",
-        "description": "Your damaging finishing moves reduce the remaining cooldown of your Adrenaline Rush, Blade Flurry, Evasion, Sprint, and Vanish abilities by {0} sec per combo point.",
+        "name": "Flawless Execution",
+        "description": "Reduces the Energy cost of your Eviscerate ability by {0}.",
         "ranks": [
           [
-            2
+            10
           ]
         ],
-        "icon": "ability_rogue_restlessblades"
+        "icon": "inv_sword_35"
       },
       {
         "fieldName": "dualWieldSpecialization",
@@ -873,27 +868,26 @@
             3
           ],
           [
-            1,
-            1,
-            3
+            2,
+            2,
+            6
           ],
           [
-            1,
-            1,
-            3
+            3,
+            3,
+            9
           ],
           [
-            1,
-            1,
-            3
+            4,
+            4,
+            12
           ],
           [
-            1,
-            1,
-            3
+            5,
+            5,
+            15
           ]
         ],
-        "ranksGuessed": true,
         "icon": "inv_sword_27"
       },
       {
@@ -999,19 +993,19 @@
           ],
           [
             6,
-            4
+            3
           ],
           [
             9,
-            6
+            4
           ],
           [
             12,
-            8
+            5
           ],
           [
             15,
-            10
+            6
           ]
         ],
         "icon": "ability_stealth",
@@ -1032,22 +1026,18 @@
         ],
         "maxPoints": 3,
         "name": "Master of Deception",
-        "description": "Reduces the chance enemies have to detect you while in Stealth mode as if you were {0} level{1} higher.",
+        "description": "{0}",
         "ranks": [
           [
-            1,
-            ""
+            "Reduces the chance enemies have to detect you while in Stealth mode as if you were 1 level higher."
           ],
           [
-            2,
-            "s"
+            "Reduces the chance enemies have to detect you while in Stealth mode as if you were 2 levels higher."
           ],
           [
-            3,
-            "s"
+            "Reduces the chance enemies have to detect you while in Stealth mode as if you were 3 levels higher."
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_shadow_charm",
         "notSimulated": true
       },
@@ -1096,10 +1086,10 @@
             33
           ],
           [
-            66
+            67
           ],
           [
-            99
+            100
           ]
         ],
         "icon": "spell_nature_mirrorimage",
@@ -1117,15 +1107,16 @@
         ],
         "maxPoints": 2,
         "name": "Elusiveness",
-        "description": "{0}",
+        "description": "Reduces the cooldown of your Vanish and Blind abilities by {0} sec.",
         "ranks": [
           [
-            "Reduces the cooldown of your Vanish and Blind abilities by 45 sec."
+            45
           ],
           [
-            "Reduces the cooldown of your Vanish and Blind abilities by 1.5 min."
+            90
           ]
-        ]
+        ],
+        "icon": "spell_magic_lesserinvisibilty"
       },
       {
         "fieldName": "dirtyTricks",
@@ -1197,10 +1188,10 @@
             33
           ],
           [
-            66
+            67
           ],
           [
-            99
+            100
           ]
         ],
         "icon": "spell_shadow_fumble"
@@ -1240,20 +1231,15 @@
         ],
         "maxPoints": 2,
         "name": "Improved Distract",
-        "description": "Increases the radius of your Distract ability by {0} yds, and further reduces the Stealth detection of distracted enemies as though they were an additional {1} level{2} lower.",
+        "description": "{0}",
         "ranks": [
           [
-            3,
-            1,
-            ""
+            "Increases the radius of your Distract ability by 3 yds, and further reduces the Stealth detection of distracted enemies as though they were an additional 1 level lower."
           ],
           [
-            6,
-            2,
-            "s"
+            "Increases the radius of your Distract ability by 5 yds, and further reduces the Stealth detection of distracted enemies as though they were an additional 2 levels lower."
           ]
         ],
-        "ranksGuessed": true,
         "icon": "ability_rogue_distract",
         "notSimulated": true
       },
@@ -1269,20 +1255,15 @@
         ],
         "maxPoints": 2,
         "name": "Heightened Senses",
-        "description": "Increases your Stealth detection as if you were {0} level{1} higher and reduces your chance to be hit by spells and ranged attacks by {2}%.",
+        "description": "{0}",
         "ranks": [
           [
-            1,
-            "",
-            2
+            "Increases your Stealth detection as if you were 1 level higher and reduces your chance to be hit by spells and ranged attacks by 2%."
           ],
           [
-            2,
-            "s",
-            4
+            "Increases your Stealth detection as if you were 3 levels higher and reduces your chance to be hit by spells and ranged attacks by 4%."
           ]
         ],
-        "ranksGuessed": true,
         "icon": "ability_ambush",
         "notSimulated": true
       },
@@ -1319,15 +1300,18 @@
         ],
         "maxPoints": 3,
         "name": "Serrated Blades",
-        "description": "Causes your attacks to ignore 3% of your target's Armor and increases the damage dealt by your Rupture ability by {0}%.",
+        "description": "Causes your attacks to ignore {0}% of your target's Armor and increases the damage dealt by your Rupture ability by {1}%.",
         "ranks": [
           [
+            3,
             10
           ],
           [
+            6,
             20
           ],
           [
+            9,
             30
           ]
         ],
@@ -1427,22 +1411,21 @@
           ],
           [
             4,
-            70
+            35
           ],
           [
             6,
-            105
+            35
           ],
           [
             8,
-            140
+            35
           ],
           [
             10,
-            175
+            35
           ]
         ],
-        "ranksGuessed": true,
         "icon": "ability_rogue_garrote"
       },
       {
@@ -1467,23 +1450,22 @@
             10
           ],
           [
-            3,
+            6,
             10
           ],
           [
-            3,
+            9,
             10
           ],
           [
-            3,
+            12,
             10
           ],
           [
-            3,
+            15,
             10
           ]
         ],
-        "ranksGuessed": true,
         "icon": "classicon_rogue"
       },
       {

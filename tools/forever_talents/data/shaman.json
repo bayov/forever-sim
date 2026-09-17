@@ -1,11 +1,10 @@
 {
-  "$schema": "../schema/class.schema.json",
   "schemaVersion": 1,
   "class": "shaman",
   "className": "Shaman",
-  "dataVersion": 1,
-  "dataSource": "video",
-  "generatedAt": "2026-09-13T16:24:15Z",
+  "dataVersion": 2,
+  "dataSource": "client",
+  "generatedAt": "2026-09-17T15:05:36Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -25,19 +24,9 @@
       "name": "Elemental Combat",
       "page": "primary",
       "order": 0,
-      "icon": "crop-elemental-combat",
+      "icon": "spell_nature_lightning",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 20130.0,
-        "frame": 1207800,
-        "crop": "data/review/shaman/elemental-combat/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "convection",
@@ -45,30 +34,35 @@
           "row": 0,
           "col": 1,
           "maxRank": 5,
-          "icon": "crop-convection",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/elemental-combat/convection.icon.png",
+          "icon": "spell_nature_wispsplode",
+          "iconSource": "client",
           "description": "Reduces the mana cost of your Shock, Lightning Bolt, Lava Burst, and Chain Lightning spells by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 564,
-            "classicSpellIds": [16039, 16109, 16110, 16111, 16112],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Convection (talent 564): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20130.467,
-            "frame": 1207828,
-            "crop": "data/review/shaman/elemental-combat/convection.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16039
         },
         {
           "id": "concussion",
@@ -76,32 +70,35 @@
           "row": 0,
           "col": 2,
           "maxRank": 5,
-          "icon": "crop-concussion",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/elemental-combat/concussion.icon.png",
+          "icon": "spell_nature_earthshock",
+          "iconSource": "client",
           "description": "Increases the damage done by your Lightning Bolt, Chain Lightning, and Earth Shock spells by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 563,
-            "classicSpellIds": [16035, 16105, 16106, 16107, 16108],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Concussion (talent 563): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20137.55,
-            "frame": 1208253,
-            "crop": "data/review/shaman/elemental-combat/concussion.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16035
         },
         {
           "id": "elemental-warding",
@@ -110,28 +107,26 @@
           "col": 0,
           "maxRank": 3,
           "icon": "spell_nature_spiritarmor",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces damage taken from Fire, Frost, and Nature effects by {0}%.",
-          "ranks": [[3], [6], [9]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1640,
-            "classicSpellIds": [28996, 28997, 28998],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Elemental Warding (talent 1640): Classic 4/7/10 is proportional; Forever rank 1 is 3: scaled proportionally (3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20150.267,
-            "frame": 1209016,
-            "crop": "data/review/shaman/elemental-combat/elemental-warding.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              7
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 28996
         },
         {
           "id": "reverberation",
@@ -140,28 +135,34 @@
           "col": 1,
           "maxRank": 5,
           "icon": "spell_frost_frostward",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the cooldown of your Shock spells by {0} sec.",
-          "ranks": [[0.2], [0.4], [0.6], [0.8], [1]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 575,
-            "classicSpellIds": [16040, 16113, 16114, 16115, 16116],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Reverberation (talent 575): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20224.517,
-            "frame": 1213471,
-            "crop": "data/review/shaman/elemental-combat/reverberation.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              0.2
+            ],
+            [
+              0.4
+            ],
+            [
+              0.6
+            ],
+            [
+              0.8
+            ],
+            [
+              1
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16040
         },
         {
           "id": "call-of-flame",
@@ -170,28 +171,26 @@
           "col": 2,
           "maxRank": 3,
           "icon": "spell_fire_immolation",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by {0}%.",
-          "ranks": [[5], [10], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 561,
-            "classicSpellIds": [16038, 16160, 16161],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Call of Flame (talent 561): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20143.167,
-            "frame": 1208590,
-            "crop": "data/review/shaman/elemental-combat/call-of-flame.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 16038
         },
         {
           "id": "elemental-devastation",
@@ -199,32 +198,30 @@
           "row": 1,
           "col": 3,
           "maxRank": 3,
-          "icon": "crop-elemental-devastation",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/elemental-combat/elemental-devastation.icon.png",
-          "description": "Your offensive spell critical strikes will increase your chance to get a critical strike with melee attacks by {0}% for 10 sec.",
-          "ranks": [[3], [6], [9]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1645,
-            "classicSpellIds": [30160, 29179, 29180],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Elemental Devastation (talent 1645): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20142.4,
-            "frame": 1208544,
-            "crop": "data/review/shaman/elemental-combat/elemental-devastation.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "icon": "spell_fire_elementaldevastation",
+          "iconSource": "client",
+          "description": "Your offensive spell critical strikes will increase your chance to get a critical strike with melee attacks by {0}% for {1} sec.",
+          "ranks": [
+            [
+              3,
+              10
+            ],
+            [
+              6,
+              10
+            ],
+            [
+              9,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 30160
         },
         {
           "id": "elemental-focus",
@@ -233,21 +230,19 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_shadow_manaburn",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Gives you a {0}% chance to enter a Clearcasting state after casting any Fire, Frost, or Nature damage spell. The Clearcasting state reduces the mana cost of your next damage spell by {1}%.",
-          "ranks": [[10, 100]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20152.467,
-            "frame": 1209148,
-            "crop": "data/review/shaman/elemental-combat/elemental-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10,
+              100
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 16164
         },
         {
           "id": "elemental-fury",
@@ -256,22 +251,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_fire_volcano",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the critical strike damage bonus of your Searing and Magma Totems and your Fire, Frost, and Nature spells by {0}%.",
-          "ranks": [[20], [40], [60], [80], [100]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match shaman/elemental/Elemental Fury (talent 565) has no alignable slots; proportional x2..x5 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20158.467,
-            "frame": 1209508,
-            "crop": "data/review/shaman/elemental-combat/elemental-fury.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              20
+            ],
+            [
+              40
+            ],
+            [
+              60
+            ],
+            [
+              80
+            ],
+            [
+              100
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16089
         },
         {
           "id": "improved-fire-nova",
@@ -280,22 +287,24 @@
           "col": 0,
           "maxRank": 2,
           "icon": "spell_fire_sealoffire",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the damage done by your Fire Nova spell by {0}% and reduces its cooldown by {1} sec.",
-          "ranks": [[10, 2], [10, 2]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (2 sec) is never extrapolated; rank 2 is a copy of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20222.0,
-            "frame": 1213320,
-            "crop": "data/review/shaman/elemental-combat/improved-fire-nova.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10,
+              2
+            ],
+            [
+              20,
+              4
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 16086
         },
         {
           "id": "eye-of-the-storm",
@@ -304,28 +313,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_nature_eyeofthestorm",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the pushback suffered from damaging attacks while casting Lightning Bolt, Chain Lightning, and Lava Burst by {0}%.",
-          "ranks": [[23], [46], [69]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1642,
-            "classicSpellIds": [29062, 29064, 29065],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Eye of the Storm (talent 1642): Classic 33/66/100 is proportional; Forever rank 1 is 23: scaled proportionally (23 x rank). Rounding: rank 2 46 may read 45, rank 3 69 may read 70 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20164.0,
-            "frame": 1209840,
-            "crop": "data/review/shaman/elemental-combat/eye-of-the-storm.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              23
+            ],
+            [
+              47
+            ],
+            [
+              70
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 29062
         },
         {
           "id": "call-of-thunder",
@@ -334,28 +341,24 @@
           "col": 2,
           "maxRank": 1,
           "icon": "spell_nature_callstorm",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by {0}%.",
-          "ranks": [[3]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "elemental-fury",
               "rank": 5
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20160.733,
-            "frame": 1209644,
-            "crop": "data/review/shaman/elemental-combat/call-of-thunder.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Elemental Fury at rank 5 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites); arrow confidence 0.70"
-          }
+          "spellId": 16120
         },
         {
           "id": "elemental-reach",
@@ -363,24 +366,25 @@
           "row": 4,
           "col": 0,
           "maxRank": 2,
-          "icon": "crop-elemental-reach",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/elemental-combat/elemental-reach.icon.png",
+          "icon": "spell_nature_stormreach",
+          "iconSource": "client",
           "description": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by {0} yards, and increases the range of your Flame Shock spell by {1} yards.",
-          "ranks": [[3, 8], [6, 16]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match shaman/elemental/Storm Reach (talent 1641) has no alignable slots; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20176.0,
-            "frame": 1210560,
-            "crop": "data/review/shaman/elemental-combat/elemental-reach.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3,
+              8
+            ],
+            [
+              6,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 28999
         },
         {
           "id": "lightning-overload",
@@ -389,22 +393,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_nature_lightningoverload",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Gives your Lightning Bolt and Chain Lightning spells a {0}% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.",
-          "ranks": [[3], [6], [9]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x3 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20208.933,
-            "frame": 1212536,
-            "crop": "data/review/shaman/elemental-combat/lightning-overload.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              7
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 408438
         },
         {
           "id": "earthbound",
@@ -413,23 +421,18 @@
           "col": 3,
           "maxRank": 1,
           "icon": "spell_nature_stranglevines",
-          "iconSource": "classic",
-          "description": "Your Earthbind Totem immobilizes nearby targets for {0} sec when cast.",
-          "ranks": [[5]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20204.867,
-            "frame": 1212292,
-            "crop": "data/review/shaman/elemental-combat/earthbound.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "iconSource": "client",
+          "description": "Your Earthbind Totem Immobilizes nearby targets for {0} sec when cast.",
+          "ranks": [
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 1222988
         },
         {
           "id": "elemental-alacrity",
@@ -437,31 +440,33 @@
           "row": 5,
           "col": 2,
           "maxRank": 3,
-          "icon": "crop-elemental-alacrity",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/elemental-combat/elemental-alacrity.icon.png",
+          "icon": "spell_lightning_lightningbolt01",
+          "iconSource": "client",
           "description": "Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by {0} sec.",
-          "ranks": [[0.17], [0.17], [0.17]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (0.17 sec) is never extrapolated; ranks 2..3 are copies of rank 1.",
+          "ranks": [
+            [
+              0.17
+            ],
+            [
+              0.33
+            ],
+            [
+              0.5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "call-of-thunder",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20194.0,
-            "frame": 1211640,
-            "crop": "data/review/shaman/elemental-combat/elemental-alacrity.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Call of Thunder at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 16578
         },
         {
           "id": "lava-burst",
@@ -470,30 +475,27 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_shaman_lavaburst",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "You hurl molten lava at the target, dealing {0} to {1} Fire damage. If your Flame Shock is on the target, Lava Burst deals {2}% increased damage.",
-          "ranks": [[158, 187, 20]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              106,
+              135,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "165 Mana; 30 yd range; 2.5 sec cast; 10 sec cooldown",
           "requires": [
             {
               "talent": "lightning-overload",
               "rank": 3
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20186.333,
-            "frame": 1211180,
-            "crop": "data/review/shaman/elemental-combat/lava-burst.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z",
-            "note": "prerequisite from tree arrow (stage 7): Lightning Overload at rank 3 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 408490
         }
       ]
     },
@@ -502,19 +504,9 @@
       "name": "Enhancement",
       "page": "primary",
       "order": 1,
-      "icon": "crop-enhancement",
+      "icon": "spell_nature_lightningshield",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 19830.0,
-        "frame": 1189800,
-        "crop": "data/review/shaman/enhancement/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "earths-grasp",
@@ -523,28 +515,24 @@
           "col": 0,
           "maxRank": 2,
           "icon": "spell_nature_stoneclawtotem",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the health of your Stoneclaw Totem by {0}% and the radius of your Earthbind Totem by {1}%.",
-          "ranks": [[25, 10], [50, 20]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 572,
-            "classicSpellIds": [16043, 16130],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/elemental/Earth's Grasp (talent 572): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19830.067,
-            "frame": 1189804,
-            "crop": "data/review/shaman/enhancement/earths-grasp.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              25,
+              10
+            ],
+            [
+              50,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 16043
         },
         {
           "id": "thundering-strikes",
@@ -553,28 +541,34 @@
           "col": 1,
           "maxRank": 5,
           "icon": "ability_thunderbolt",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Improves your chance to get a critical strike with all spells and attacks by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 613,
-            "classicSpellIds": [16255, 16302, 16303, 16304, 16305],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Thundering Strikes (talent 613): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19832.067,
-            "frame": 1189924,
-            "crop": "data/review/shaman/enhancement/thundering-strikes.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16255
         },
         {
           "id": "ancestral-knowledge",
@@ -583,28 +577,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_shadow_grimward",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Intellect by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 614,
-            "classicSpellIds": [17485, 17486, 17487, 17488, 17489],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Ancestral Knowledge (talent 614): Classic 1/2/3/4/5 is proportional; Forever rank 1 is 2: scaled proportionally (2 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19841.6,
-            "frame": 1190496,
-            "crop": "data/review/shaman/enhancement/ancestral-knowledge.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 17485
         },
         {
           "id": "guardian-totems",
@@ -612,30 +612,25 @@
           "row": 1,
           "col": 0,
           "maxRank": 2,
-          "icon": "crop-guardian-totems",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/enhancement/guardian-totems.icon.png",
+          "icon": "spell_nature_stoneskintotem",
+          "iconSource": "client",
           "description": "Increases the amount of damage reduced by your Stoneskin Totem and Windwall Totem by {0}% and reduces the cooldown of your Grounding Totem by {1} sec.",
-          "ranks": [[10, 1], [20, 2]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 609,
-            "classicSpellIds": [16258, 16293],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Guardian Totems (talent 609): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19988.2,
-            "frame": 1199292,
-            "crop": "data/review/shaman/enhancement/guardian-totems.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10,
+              1
+            ],
+            [
+              20,
+              2
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 16258
         },
         {
           "id": "mental-dexterity",
@@ -644,22 +639,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_nature_mentalquickness",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Attack Power by an amount equal to {0}% of your Intellect.",
-          "ranks": [[33], [66], [99]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x3 of rank 1 assumed. Rounding: rank 2 66 may read 65, rank 3 99 may read 100 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19872.467,
-            "frame": 1192348,
-            "crop": "data/review/shaman/enhancement/mental-dexterity.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              33
+            ],
+            [
+              67
+            ],
+            [
+              100
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 415140
         },
         {
           "id": "improved-ghost-wolf",
@@ -668,30 +667,22 @@
           "col": 2,
           "maxRank": 2,
           "icon": "spell_nature_spiritwolf",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the cast time of your Ghost Wolf spell by {0} sec, and Ghost Wolf may be used indoors.",
-          "ranks": [[1.0], [2]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 605,
-            "classicSpellIds": [16262, 16287],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Improved Ghost Wolf (talent 605): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19866.8,
-            "frame": 1192008,
-            "crop": "data/review/shaman/enhancement/improved-ghost-wolf.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 16262
         },
         {
           "id": "improved-lightning-shield",
@@ -699,30 +690,27 @@
           "row": 1,
           "col": 3,
           "maxRank": 3,
-          "icon": "crop-improved-lightning-shield",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/enhancement/improved-lightning-shield.icon.png",
+          "icon": "spell_nature_lightningshield",
+          "iconSource": "client",
           "description": "Increases the damage done by your Lightning Shield orbs by {0}%.",
-          "ranks": [[5], [10], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 607,
-            "classicSpellIds": [16261, 16290, 16291],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Improved Lightning Shield (talent 607): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19846.933,
-            "frame": 1190816,
-            "crop": "data/review/shaman/enhancement/improved-lightning-shield.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 16261
         },
         {
           "id": "elemental-weapons",
@@ -731,28 +719,32 @@
           "col": 0,
           "maxRank": 3,
           "icon": "spell_fire_flametounge",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the melee attack power bonus of your Rockbiter Weapon by {0}%, your Windfury Weapon effect by {1}% and increases the damage caused by your Flametongue Weapon and Frostbrand Weapon by {2}%.",
-          "ranks": [[7, 13, 5], [14, 27, 10], [20, 40, 15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 611,
-            "classicSpellIds": [16266, 29079, 29080],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Elemental Weapons (talent 611): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19878.933,
-            "frame": 1192736,
-            "crop": "data/review/shaman/enhancement/elemental-weapons.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              7,
+              13,
+              5
+            ],
+            [
+              13,
+              27,
+              10
+            ],
+            [
+              20,
+              40,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 16266
         },
         {
           "id": "shamanistic-focus",
@@ -761,21 +753,18 @@
           "col": 2,
           "maxRank": 1,
           "icon": "spell_nature_elementalabsorption",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the mana cost of your Shock and Lightning Shield spells by {0}%.",
-          "ranks": [[45]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19884.333,
-            "frame": 1193060,
-            "crop": "data/review/shaman/enhancement/shamanistic-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              45
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 1223030
         },
         {
           "id": "anticipation",
@@ -783,30 +772,27 @@
           "row": 2,
           "col": 3,
           "maxRank": 3,
-          "icon": "crop-anticipation",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/enhancement/anticipation.icon.png",
+          "icon": "spell_nature_mirrorimage",
+          "iconSource": "client",
           "description": "Increases your chance to dodge by an additional {0}%.",
-          "ranks": [[2], [4], [6]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 601,
-            "classicSpellIds": [16254, 16271, 16272, 16273, 16274],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Anticipation (talent 601): Classic 1/2/3/4/5 is proportional, Classic has 5 ranks; Forever rank 1 is 2: scaled proportionally (2 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19886.0,
-            "frame": 1193160,
-            "crop": "data/review/shaman/enhancement/anticipation.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 16254
         },
         {
           "id": "toughness",
@@ -815,28 +801,34 @@
           "col": 0,
           "maxRank": 5,
           "icon": "spell_holy_devotion",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Stamina by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 615,
-            "classicSpellIds": [16252, 16306, 16307, 16308, 16309],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Toughness (talent 615): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19984.4,
-            "frame": 1199064,
-            "crop": "data/review/shaman/enhancement/toughness.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16252
         },
         {
           "id": "flurry",
@@ -845,35 +837,45 @@
           "col": 1,
           "maxRank": 5,
           "icon": "ability_ghoulfrenzy",
-          "iconSource": "classic",
-          "description": "Increases your attack speed by {0}% for your next 3 swings after dealing a melee critical strike.",
-          "ranks": [[5], [10], [15], [20], [25]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 602,
-            "classicSpellIds": [16256, 16281, 16282, 16283, 16284],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/enhancement/Flurry (talent 602): Classic 10/15/20/25/30 is 5 x rank +5, which does not start at Forever's rank 1 (5); Classic's pattern was NOT applied, ranks scaled proportionally (5 x rank).",
+          "iconSource": "client",
+          "description": "Increases your attack speed by {0}% for your next {1} swings after dealing a melee critical strike.",
+          "ranks": [
+            [
+              5,
+              3
+            ],
+            [
+              10,
+              3
+            ],
+            [
+              15,
+              3
+            ],
+            [
+              20,
+              3
+            ],
+            [
+              25,
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "mental-dexterity",
               "rank": 3
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19928.733,
-            "frame": 1195724,
-            "crop": "data/review/shaman/enhancement/flurry.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Mental Dexterity at rank 3 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 16256
         },
         {
           "id": "stormstrike",
@@ -882,21 +884,20 @@
           "col": 2,
           "maxRank": 1,
           "icon": "ability_shaman_stormstrike",
-          "iconSource": "classic",
-          "description": "Instantly strike for normal weapon damage and increase Nature damage you deal to the target by {0}% for {1} sec.",
-          "ranks": [[20, 12]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19892.867,
-            "frame": 1193572,
-            "crop": "data/review/shaman/enhancement/stormstrike.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Instantly strike for normal weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by {0}% for {1} sec.",
+          "ranks": [
+            [
+              20,
+              12
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "125 Mana; Melee Range; Instant; 8 sec cooldown",
+          "spellId": 17364
         },
         {
           "id": "spirit-weapons",
@@ -905,23 +906,19 @@
           "col": 0,
           "maxRank": 1,
           "icon": "ability_parry",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Gives a chance to parry enemy melee attacks, reduces all threat generated by your attacks by {0}% while Rockbiter Weapon is not active, and increases all threat generated by {1}% while Rockbiter Weapon is active.",
-          "ranks": [[30, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19942.067,
-            "frame": 1196524,
-            "crop": "data/review/shaman/enhancement/spirit-weapons.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              30,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 16268
         },
         {
           "id": "mental-quickness",
@@ -930,22 +927,22 @@
           "col": 1,
           "maxRank": 2,
           "icon": "spell_nature_sleep",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your spell damage and healing by up to {0}% of your Intellect.",
-          "ranks": [[15], [30]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20048.133,
-            "frame": 1202888,
-            "crop": "data/review/shaman/enhancement/mental-quickness.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              15
+            ],
+            [
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 30812
         },
         {
           "id": "improved-stormstrike",
@@ -954,29 +951,34 @@
           "col": 2,
           "maxRank": 2,
           "icon": "spell_shaman_improvedstormstrike",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "When you Stormstrike, you have a {0}% chance to gain {1}% mana regeneration while casting spells for {2} sec, and Stormstrike's cooldown has a {3}% chance to reset each time you Dodge or Parry.",
-          "ranks": [[50, 50, 15, 50], [50, 50, 15, 50]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (15 sec) is never extrapolated; rank 2 is a copy of rank 1.",
+          "ranks": [
+            [
+              50,
+              50,
+              15,
+              50
+            ],
+            [
+              100,
+              50,
+              15,
+              100
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "stormstrike",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19944.467,
-            "frame": 1196668,
-            "crop": "data/review/shaman/enhancement/improved-stormstrike.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Stormstrike at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 1223031
         },
         {
           "id": "maelstrom-weapon",
@@ -985,22 +987,44 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_shaman_maelstromweapon",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "When you deal damage with a melee attack, you have a chance to reduce the cast time and Mana cost of your next Lightning Bolt spell by {0}%. Stacks up to {1} times. Lasts {2} sec.",
-          "ranks": [[4, 5, 30], [4, 5, 30], [4, 5, 30], [4, 5, 30], [4, 5, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (30 sec) is never extrapolated; ranks 2..5 are copies of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19974.0,
-            "frame": 1198440,
-            "crop": "data/review/shaman/enhancement/maelstrom-weapon.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              4,
+              5,
+              30
+            ],
+            [
+              8,
+              5,
+              30
+            ],
+            [
+              12,
+              5,
+              30
+            ],
+            [
+              16,
+              5,
+              30
+            ],
+            [
+              20,
+              5,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 408498
         },
         {
           "id": "rage-of-the-farseer",
@@ -1009,28 +1033,26 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_nature_bloodlust",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your melee attack speed and spell casting speed by {0}% for {1} sec.",
-          "ranks": [[30, 25]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              30,
+              25
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "Instant; 3 min cooldown",
           "requires": [
             {
               "talent": "mental-quickness",
               "rank": 2
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19854.8,
-            "frame": 1191288,
-            "crop": "data/review/shaman/enhancement/rage-of-the-farseer.png",
-            "confidence": 0.7,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "readers still differ on name 'Rage of the Farseer' vs 'Rage of the Farseeer'; prerequisite from tree arrow (stage 7): Mental Quickness at rank 2 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 425336
         }
       ]
     },
@@ -1039,19 +1061,9 @@
       "name": "Restoration",
       "page": "primary",
       "order": 2,
-      "icon": "crop-restoration",
+      "icon": "spell_nature_magicimmunity",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 20130.0,
-        "frame": 1207800,
-        "crop": "data/review/shaman/restoration/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "improved-healing-wave",
@@ -1059,60 +1071,71 @@
           "row": 0,
           "col": 1,
           "maxRank": 5,
-          "icon": "crop-improved-healing-wave",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/restoration/improved-healing-wave.icon.png",
+          "icon": "spell_nature_magicimmunity",
+          "iconSource": "client",
           "description": "Reduces the casting time of your Healing Wave spell by {0} sec.",
-          "ranks": [[0.1], [0.2], [0.3], [0.4], [0.5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 586,
-            "classicSpellIds": [16182, 16226, 16227, 16228, 16229],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/restoration/Improved Healing Wave (talent 586): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20272.467,
-            "frame": 1216348,
-            "crop": "data/review/shaman/restoration/improved-healing-wave.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              0.1
+            ],
+            [
+              0.2
+            ],
+            [
+              0.3
+            ],
+            [
+              0.4
+            ],
+            [
+              0.5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16182
         },
         {
           "id": "tidal-mastery",
           "name": "Tidal Mastery",
-          "row": 0,
-          "col": 2,
+          "row": 3,
+          "col": 0,
           "maxRank": 5,
           "icon": "spell_nature_tranquility",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the critical effect chance of your healing spells by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 594,
-            "classicSpellIds": [16194, 16218, 16219, 16220, 16221],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/restoration/Tidal Mastery (talent 594): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20274.467,
-            "frame": 1216468,
-            "crop": "data/review/shaman/restoration/tidal-mastery.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16194
         },
         {
           "id": "mindfulness",
@@ -1121,28 +1144,26 @@
           "col": 0,
           "maxRank": 3,
           "icon": "spell_nature_sleep",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Allows {0}% of your Mana regeneration to continue while casting.",
-          "ranks": [[17], [34], [51]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 829,
-            "classicSpellIds": [17106, 17107, 17108],
-            "match": "description",
-            "similarity": 0.99
-          },
-          "ranksNote": "Classic druid/restoration/Reflection (talent 829) (cross-class), matched on description (0.99): Classic 5/10/15 is proportional; Forever rank 1 is 17: scaled proportionally (17 x rank). Rounding: rank 2 34 may read 35, rank 3 51 may read 50 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20288.0,
-            "frame": 1217280,
-            "crop": "data/review/shaman/restoration/mindfulness.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              17
+            ],
+            [
+              33
+            ],
+            [
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 1223033
         },
         {
           "id": "natural-grace",
@@ -1151,28 +1172,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_nature_healingtouch",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the threat generated by your spells by {0}%.",
-          "ranks": [[5], [10], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1646,
-            "classicSpellIds": [29187, 29189, 29191],
-            "match": "description",
-            "similarity": 0.99
-          },
-          "ranksNote": "Classic shaman/restoration/Healing Grace (talent 1646), matched on description (0.99): Classic 5/10/15 is proportional; Forever rank 1 is 5: scaled proportionally (5 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20286.0,
-            "frame": 1217160,
-            "crop": "data/review/shaman/restoration/natural-grace.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 29187
         },
         {
           "id": "tidal-focus",
@@ -1181,22 +1200,39 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_frost_manarecharge",
-          "iconSource": "classic",
-          "description": "Reduces the Mana cost of your healing spells by {0}% and increases your chance to hit with all spells and attacks by {1}%.",
-          "ranks": [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match shaman/restoration/Tidal Focus (talent 593) has no alignable slots; proportional x2..x5 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20284.333,
-            "frame": 1217060,
-            "crop": "data/review/shaman/restoration/tidal-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Reduces the Mana cost of your healing spells by {0}% and improves your chance to hit by {1}%.",
+          "ranks": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              5,
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16179
         },
         {
           "id": "improved-reincarnation",
@@ -1205,22 +1241,26 @@
           "col": 3,
           "maxRank": 2,
           "icon": "spell_nature_reincarnation",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the cooldown of your Reincarnation spell by {0} min, increases your maximum health by {1}%, and increases the amount of health and Mana you reincarnate with by an additional {2}%.",
-          "ranks": [[10, 2, 10], [10, 2, 10]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: Classic match shaman/restoration/Improved Reincarnation (talent 589) has no alignable slots; rank 2 is a copy of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20280.933,
-            "frame": 1216856,
-            "crop": "data/review/shaman/restoration/improved-reincarnation.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10,
+              2,
+              10
+            ],
+            [
+              20,
+              4,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 16184
         },
         {
           "id": "ancestral-healing",
@@ -1229,28 +1269,29 @@
           "col": 0,
           "maxRank": 3,
           "icon": "spell_nature_undyingstrength",
-          "iconSource": "classic",
-          "description": "Increases your target's armor value by {0}% for 15 sec after getting a critical effect from one of your healing spells.",
-          "ranks": [[8], [16], [25]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 581,
-            "classicSpellIds": [16176, 16235, 16240],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/restoration/Ancestral Healing (talent 581): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20291.533,
-            "frame": 1217492,
-            "crop": "data/review/shaman/restoration/ancestral-healing.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Increases your target's armor value by {0}% for {1} sec after getting a critical effect from one of your healing spells.",
+          "ranks": [
+            [
+              8,
+              15
+            ],
+            [
+              17,
+              15
+            ],
+            [
+              25,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 16176
         },
         {
           "id": "healing-focus",
@@ -1259,28 +1300,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_nature_healingwavelesser",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Gives you a {0}% chance to avoid interruption caused by damage while casting any healing spell.",
-          "ranks": [[23], [46], [69]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 587,
-            "classicSpellIds": [16181, 16230, 16232, 16233, 16234],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/restoration/Healing Focus (talent 587): Classic 14/28/42/56/70 is proportional, Classic has 5 ranks; Forever rank 1 is 23: scaled proportionally (23 x rank). Rounding: rank 2 46 may read 45, rank 3 69 may read 70 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20306.0,
-            "frame": 1218360,
-            "crop": "data/review/shaman/restoration/healing-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              23
+            ],
+            [
+              47
+            ],
+            [
+              70
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 16181
         },
         {
           "id": "water-shield",
@@ -1289,51 +1328,57 @@
           "col": 2,
           "maxRank": 1,
           "icon": "ability_shaman_watershield",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "The caster is surrounded by {0} globes of water. When a spell, melee, or ranged attack hits the caster or when one of the caster's healing spells gets a critical result, {1}% of maximum mana is restored to the caster, expending one water globe. Only one globe will activate every few seconds. Lasts {2} min. Only one Elemental Shield can be active on the Shaman at any one time.",
-          "ranks": [[3, 2, 10]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20302.067,
-            "frame": 1218124,
-            "crop": "data/review/shaman/restoration/water-shield.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3,
+              2,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "Instant; 15 sec cooldown",
+          "spellId": 408510
         },
         {
           "id": "totemic-focus",
           "name": "Totemic Focus",
-          "row": 3,
-          "col": 0,
+          "row": 0,
+          "col": 2,
           "maxRank": 5,
           "icon": "spell_nature_moonglow",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the Mana cost of your totems and any spells that summon or move them by {0}%.",
-          "ranks": [[5], [10], [15], [20], [25]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 595,
-            "classicSpellIds": [16173, 16222, 16223, 16224, 16225],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/restoration/Totemic Focus (talent 595): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20310.0,
-            "frame": 1218600,
-            "crop": "data/review/shaman/restoration/totemic-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ],
+            [
+              15
+            ],
+            [
+              20
+            ],
+            [
+              25
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16173
         },
         {
           "id": "restorative-totems",
@@ -1342,22 +1387,39 @@
           "col": 1,
           "maxRank": 5,
           "icon": "spell_nature_manaregentotem",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the effect of your Mana Spring Totem by {0}% and increases the effect of your Healing Stream Totem by {1}%.",
-          "ranks": [[5, 10], [10, 20], [15, 30], [20, 40], [25, 50]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match shaman/restoration/Restorative Totems (talent 588) has no alignable slots; proportional x2..x5 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20318.0,
-            "frame": 1219080,
-            "crop": "data/review/shaman/restoration/restorative-totems.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5,
+              10
+            ],
+            [
+              10,
+              20
+            ],
+            [
+              15,
+              30
+            ],
+            [
+              20,
+              40
+            ],
+            [
+              25,
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16187
         },
         {
           "id": "mana-tide-totem",
@@ -1366,21 +1428,23 @@
           "col": 2,
           "maxRank": 1,
           "icon": "spell_frost_summonwaterelemental",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Summons a Mana Tide Totem with {0} health at the feet of the caster for {1} sec that restores {2} mana every {3} seconds to group members within {4} yards.",
-          "ranks": [[5, 12, 88, 3, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20296.267,
-            "frame": 1217776,
-            "crop": "data/review/shaman/restoration/mana-tide-totem.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5,
+              12,
+              88,
+              3,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "10 Mana; Instant; 5 min cooldown",
+          "spellId": 16190
         },
         {
           "id": "healing-way",
@@ -1389,30 +1453,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_nature_healingway",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the amount healed by your Healing Wave spell by {0}%.",
-          "ranks": [[8], [16], [24]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1648,
-            "classicSpellIds": [29206, 29205, 29202],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/restoration/Healing Way (talent 1648): Classic 33/66/100 is proportional; Forever rank 1 is 8: scaled proportionally (8 x rank). Rounding: rank 3 24 may read 25 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20317.0,
-            "frame": 1219020,
-            "crop": "data/review/shaman/restoration/healing-way.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              8
+            ],
+            [
+              17
+            ],
+            [
+              25
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 29206
         },
         {
           "id": "natures-swiftness",
@@ -1421,23 +1481,19 @@
           "col": 2,
           "maxRank": 1,
           "icon": "spell_nature_ravenform",
-          "iconSource": "classic",
-          "description": "When activated, your next Nature spell with a casting time less than {0} sec becomes an instant cast spell.",
-          "ranks": [[10]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20316.0,
-            "frame": 1218960,
-            "crop": "data/review/shaman/restoration/natures-swiftness.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "iconSource": "client",
+          "description": "When activated, your next Nature spell with a casting time less than {0} sec. becomes an instant cast spell.",
+          "ranks": [
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "Instant; 3 min cooldown",
+          "spellId": 16188
         },
         {
           "id": "purification",
@@ -1446,28 +1502,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_frost_wizardmark",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the effectiveness of your healing spells by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 592,
-            "classicSpellIds": [16178, 16210, 16211, 16212, 16213],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic shaman/restoration/Purification (talent 592): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20319.0,
-            "frame": 1219140,
-            "crop": "data/review/shaman/restoration/purification.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 16178
         },
         {
           "id": "riptide",
@@ -1475,35 +1537,35 @@
           "row": 6,
           "col": 1,
           "maxRank": 1,
-          "icon": "crop-riptide",
-          "iconSource": "crop",
-          "iconCrop": "data/review/shaman/restoration/riptide.icon.png",
+          "icon": "spell_nature_riptide",
+          "iconSource": "client",
           "description": "Heals a friendly target for {0} to {1}, an additional {2} over {3} sec, and increases the effectiveness of your Chain Heal casts directly on that target by {4}%.",
-          "ranks": [[479, 528, 499, 15, 25]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              486,
+              534,
+              445,
+              15,
+              25
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "245 Mana; 40 yd range; Instant; 6 sec cooldown",
           "requires": [
             {
               "talent": "healing-way",
               "rank": 3
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 20322.0,
-            "frame": 1219320,
-            "crop": "data/review/shaman/restoration/riptide.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Healing Way at rank 3 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 408521
         }
       ]
     }
   ],
   "notes": [
-    "Extracted from BlizzCon 2026 stream footage (rank-0 tooltips only); ranks 2+ are anticipated, point rules assumed from Classic."
+    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17"
   ]
 }

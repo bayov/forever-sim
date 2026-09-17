@@ -92,7 +92,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		}, raid)
 	}
 
-	if debuffs.Stormstrike && targetIdx == 0 {
+	// Under Forever Stormstrike only marks the target for the casting shaman's own spells,
+	// so another shaman's is worth nothing.
+	if debuffs.Stormstrike && targetIdx == 0 && !target.Env.IsForever() {
 		ExternalStormstrikeCaster(debuffs, target)
 	}
 

@@ -82,9 +82,10 @@ func (rogue *Rogue) registerMutilateSpell() {
 }
 
 // Each half strikes for 75% weapon damage plus a flat bonus, and hits harder while one of
-// the rogue's lingering poisons is on the target.
+// the rogue's lingering poisons is on the target. The flat 17.25 is the beta client's
+// tooltip, which is not marked as level scaled.
 func (rogue *Rogue) mutilateDamage(target *core.Unit, weaponDamage float64) float64 {
-	baseDamage := 13 + 0.75*weaponDamage
+	baseDamage := 17.25 + 0.75*weaponDamage
 	if rogue.isPoisoned(target) {
 		baseDamage *= 1.2
 	}

@@ -22,9 +22,9 @@ func (shaman *Shaman) registerOverloadSpell(config core.SpellConfig) *core.Spell
 	return shaman.RegisterSpell(config)
 }
 
-// TODO: Only rank 1 was seen, beta will confirm that the ranks go up in steps of 3%.
+// 3 / 7 / 10% per the beta client.
 func (shaman *Shaman) lightningOverloadChance() float64 {
-	return .03 * float64(shaman.Talents.LightningOverload)
+	return []float64{0, .03, .07, .10}[shaman.Talents.LightningOverload]
 }
 
 func (shaman *Shaman) tryLightningOverload(sim *core.Simulation, target *core.Unit, spell *core.Spell, overload *core.Spell) {

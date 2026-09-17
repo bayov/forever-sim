@@ -35,7 +35,8 @@
           [
             10
           ]
-        ]
+        ],
+        "icon": "spell_nature_wispsplode"
       },
       {
         "fieldName": "concussion",
@@ -69,7 +70,8 @@
           [
             5
           ]
-        ]
+        ],
+        "icon": "spell_nature_earthshock"
       },
       {
         "fieldName": "elementalWarding",
@@ -90,10 +92,10 @@
             3
           ],
           [
-            6
+            7
           ],
           [
-            9
+            10
           ]
         ],
         "icon": "spell_nature_spiritarmor"
@@ -173,18 +175,22 @@
         ],
         "maxPoints": 3,
         "name": "Elemental Devastation",
-        "description": "Your offensive spell critical strikes will increase your chance to get a critical strike with melee attacks by {0}% for 10 sec.",
+        "description": "Your offensive spell critical strikes will increase your chance to get a critical strike with melee attacks by {0}% for {1} sec.",
         "ranks": [
           [
-            3
+            3,
+            10
           ],
           [
-            6
+            6,
+            10
           ],
           [
-            9
+            9,
+            10
           ]
-        ]
+        ],
+        "icon": "spell_fire_elementaldevastation"
       },
       {
         "fieldName": "elementalFocus",
@@ -235,7 +241,6 @@
             100
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_fire_volcano"
       },
       {
@@ -257,11 +262,10 @@
             2
           ],
           [
-            10,
-            2
+            20,
+            4
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_fire_sealoffire"
       },
       {
@@ -283,10 +287,10 @@
             23
           ],
           [
-            46
+            47
           ],
           [
-            69
+            70
           ]
         ],
         "icon": "spell_nature_eyeofthestorm",
@@ -339,10 +343,10 @@
           ],
           [
             6,
-            16
+            15
           ]
         ],
-        "ranksGuessed": true,
+        "icon": "spell_nature_stormreach",
         "notSimulated": true
       },
       {
@@ -364,13 +368,12 @@
             3
           ],
           [
-            6
+            7
           ],
           [
-            9
+            10
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_nature_lightningoverload"
       },
       {
@@ -384,7 +387,7 @@
         ],
         "maxPoints": 1,
         "name": "Earthbound",
-        "description": "Your Earthbind Totem immobilizes nearby targets for {0} sec when cast.",
+        "description": "Your Earthbind Totem Immobilizes nearby targets for {0} sec when cast.",
         "ranks": [
           [
             5
@@ -416,13 +419,13 @@
             0.17
           ],
           [
-            0.17
+            0.33
           ],
           [
-            0.17
+            0.5
           ]
         ],
-        "ranksGuessed": true
+        "icon": "spell_lightning_lightningbolt01"
       },
       {
         "fieldName": "lavaBurst",
@@ -442,8 +445,8 @@
         "description": "You hurl molten lava at the target, dealing {0} to {1} Fire damage. If your Flame Shock is on the target, Lava Burst deals {2}% increased damage.",
         "ranks": [
           [
-            158,
-            187,
+            106,
+            135,
             20
           ]
         ],
@@ -573,7 +576,8 @@
             20,
             2
           ]
-        ]
+        ],
+        "icon": "spell_nature_stoneskintotem"
       },
       {
         "fieldName": "mentalDexterity",
@@ -594,13 +598,12 @@
             33
           ],
           [
-            66
+            67
           ],
           [
-            99
+            100
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_nature_mentalquickness"
       },
       {
@@ -618,10 +621,10 @@
         "description": "Reduces the cast time of your Ghost Wolf spell by {0} sec, and Ghost Wolf may be used indoors.",
         "ranks": [
           [
-            1.0
+            1
           ],
           [
-            2
+            3
           ]
         ],
         "icon": "spell_nature_spiritwolf",
@@ -650,7 +653,8 @@
           [
             15
           ]
-        ]
+        ],
+        "icon": "spell_nature_lightningshield"
       },
       {
         "fieldName": "elementalWeapons",
@@ -673,7 +677,7 @@
             5
           ],
           [
-            14,
+            13,
             27,
             10
           ],
@@ -730,7 +734,8 @@
           [
             6
           ]
-        ]
+        ],
+        "icon": "spell_nature_mirrorimage"
       },
       {
         "fieldName": "toughness",
@@ -786,22 +791,27 @@
         ],
         "maxPoints": 5,
         "name": "Flurry",
-        "description": "Increases your attack speed by {0}% for your next 3 swings after dealing a melee critical strike.",
+        "description": "Increases your attack speed by {0}% for your next {1} swings after dealing a melee critical strike.",
         "ranks": [
           [
-            5
+            5,
+            3
           ],
           [
-            10
+            10,
+            3
           ],
           [
-            15
+            15,
+            3
           ],
           [
-            20
+            20,
+            3
           ],
           [
-            25
+            25,
+            3
           ]
         ],
         "icon": "ability_ghoulfrenzy"
@@ -817,7 +827,7 @@
         ],
         "maxPoints": 1,
         "name": "Stormstrike",
-        "description": "Instantly strike for normal weapon damage and increase Nature damage you deal to the target by {0}% for {1} sec.",
+        "description": "Instantly strike for normal weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by {0}% for {1} sec.",
         "ranks": [
           [
             20,
@@ -867,7 +877,6 @@
             30
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_nature_sleep"
       },
       {
@@ -895,13 +904,12 @@
             50
           ],
           [
-            50,
+            100,
             50,
             15,
-            50
+            100
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_shaman_improvedstormstrike"
       },
       {
@@ -927,27 +935,26 @@
             30
           ],
           [
-            4,
+            8,
             5,
             30
           ],
           [
-            4,
+            12,
             5,
             30
           ],
           [
-            4,
+            16,
             5,
             30
           ],
           [
-            4,
+            20,
             5,
             30
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_shaman_maelstromweapon"
       },
       {
@@ -1013,42 +1020,43 @@
             0.5
           ]
         ],
+        "icon": "spell_nature_magicimmunity",
         "notSimulated": true
       },
       {
-        "fieldName": "tidalMastery",
+        "fieldName": "totemicFocus",
         "location": {
           "rowIdx": 0,
           "colIdx": 2
         },
         "spellIds": [
-          16194,
-          16218,
-          16219,
-          16220,
-          16221
+          16173,
+          16222,
+          16223,
+          16224,
+          16225
         ],
         "maxPoints": 5,
-        "name": "Tidal Mastery",
-        "description": "Increases the critical effect chance of your healing spells by {0}%.",
+        "name": "Totemic Focus",
+        "description": "Reduces the Mana cost of your totems and any spells that summon or move them by {0}%.",
         "ranks": [
           [
-            1
-          ],
-          [
-            2
-          ],
-          [
-            3
-          ],
-          [
-            4
-          ],
-          [
             5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ],
+          [
+            20
+          ],
+          [
+            25
           ]
         ],
-        "icon": "spell_nature_tranquility"
+        "icon": "spell_nature_moonglow"
       },
       {
         "fieldName": "mindfulness",
@@ -1069,10 +1077,10 @@
             17
           ],
           [
-            34
+            33
           ],
           [
-            51
+            50
           ]
         ],
         "icon": "spell_nature_sleep"
@@ -1119,7 +1127,7 @@
         ],
         "maxPoints": 5,
         "name": "Tidal Focus",
-        "description": "Reduces the Mana cost of your healing spells by {0}% and increases your chance to hit with all spells and attacks by {1}%.",
+        "description": "Reduces the Mana cost of your healing spells by {0}% and improves your chance to hit by {1}%.",
         "ranks": [
           [
             1,
@@ -1142,7 +1150,6 @@
             5
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_frost_manarecharge"
       },
       {
@@ -1165,12 +1172,11 @@
             10
           ],
           [
-            10,
-            2,
-            10
+            20,
+            4,
+            20
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_nature_reincarnation"
       },
       {
@@ -1186,16 +1192,19 @@
         ],
         "maxPoints": 3,
         "name": "Ancestral Healing",
-        "description": "Increases your target's armor value by {0}% for 15 sec after getting a critical effect from one of your healing spells.",
+        "description": "Increases your target's armor value by {0}% for {1} sec after getting a critical effect from one of your healing spells.",
         "ranks": [
           [
-            8
+            8,
+            15
           ],
           [
-            16
+            17,
+            15
           ],
           [
-            25
+            25,
+            15
           ]
         ],
         "icon": "spell_nature_undyingstrength",
@@ -1222,10 +1231,10 @@
             23
           ],
           [
-            46
+            47
           ],
           [
-            69
+            70
           ]
         ],
         "icon": "spell_nature_healingwavelesser",
@@ -1253,39 +1262,39 @@
         "icon": "ability_shaman_watershield"
       },
       {
-        "fieldName": "totemicFocus",
+        "fieldName": "tidalMastery",
         "location": {
           "rowIdx": 3,
           "colIdx": 0
         },
         "spellIds": [
-          16173,
-          16222,
-          16223,
-          16224,
-          16225
+          16194,
+          16218,
+          16219,
+          16220,
+          16221
         ],
         "maxPoints": 5,
-        "name": "Totemic Focus",
-        "description": "Reduces the Mana cost of your totems and any spells that summon or move them by {0}%.",
+        "name": "Tidal Mastery",
+        "description": "Increases the critical effect chance of your healing spells by {0}%.",
         "ranks": [
           [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
             5
-          ],
-          [
-            10
-          ],
-          [
-            15
-          ],
-          [
-            20
-          ],
-          [
-            25
           ]
         ],
-        "icon": "spell_nature_moonglow"
+        "icon": "spell_nature_tranquility"
       },
       {
         "fieldName": "restorativeTotems",
@@ -1325,7 +1334,6 @@
             50
           ]
         ],
-        "ranksGuessed": true,
         "icon": "spell_nature_manaregentotem"
       },
       {
@@ -1370,10 +1378,10 @@
             8
           ],
           [
-            16
+            17
           ],
           [
-            24
+            25
           ]
         ],
         "icon": "spell_nature_healingway",
@@ -1390,7 +1398,7 @@
         ],
         "maxPoints": 1,
         "name": "Nature's Swiftness",
-        "description": "When activated, your next Nature spell with a casting time less than {0} sec becomes an instant cast spell.",
+        "description": "When activated, your next Nature spell with a casting time less than {0} sec. becomes an instant cast spell.",
         "ranks": [
           [
             10
@@ -1451,13 +1459,14 @@
         "description": "Heals a friendly target for {0} to {1}, an additional {2} over {3} sec, and increases the effectiveness of your Chain Heal casts directly on that target by {4}%.",
         "ranks": [
           [
-            479,
-            528,
-            499,
+            486,
+            534,
+            445,
             15,
             25
           ]
         ],
+        "icon": "spell_nature_riptide",
         "notSimulated": true
       }
     ]

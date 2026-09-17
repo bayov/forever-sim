@@ -34,7 +34,7 @@ message RogueTalents {
 	bool riposte = 25;
 	int32 improved_sprint = 26;
 	int32 improved_kick = 27;
-	bool restless_blades = 28;
+	bool flawless_execution = 28;
 	int32 dual_wield_specialization = 29;
 	bool blade_flurry = 30;
 	int32 hack_and_slash = 31;

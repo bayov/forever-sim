@@ -30,7 +30,7 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, .33*float64(shaman.Talents.MentalDexterity))
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, .33, .67, 1}[shaman.Talents.MentalDexterity])
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
@@ -149,12 +149,11 @@ func (shaman *Shaman) shamanisticFocusReduction() int32 {
 	return core.TernaryInt32(shaman.Talents.ShamanisticFocus, 45, 0)
 }
 
-// TODO: Only rank 1 was seen, beta will confirm that the ranks stack to 0.51 sec.
+// 0.17 / 0.33 / 0.50 sec per the beta client.
 func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
-	return time.Millisecond * 170 * time.Duration(shaman.Talents.ElementalAlacrity)
+	return []time.Duration{0, 170, 330, 500}[shaman.Talents.ElementalAlacrity] * time.Millisecond
 }
 
-// TODO: Only rank 1 was seen, beta will confirm that rank 2 doubles both halves.
 func (shaman *Shaman) improvedFireNovaMultiplier() float64 {
 	return 1 + .1*float64(shaman.Talents.ImprovedFireNova)
 }
@@ -424,7 +423,6 @@ func (shaman *Shaman) applyImprovedStormstrike() {
 		return
 	}
 
-	// TODO: Only rank 1 was seen, beta will confirm whether both chances really double at rank 2.
 	points := float64(shaman.Talents.ImprovedStormstrike)
 	procChance := .5 * points
 	resetChance := .5 * points
@@ -466,7 +464,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return
 	}
 
-	// TODO: The tooltip never showed a proc rate and only rank 1 was seen, beta will confirm both.
+	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
 	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
 	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 

@@ -29,8 +29,8 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 
 	arpenPerCombo *= []float64{1, 1.25, 1.5}[exposeArmorBaselineRank]
 
-	// TODO: Only rank 1 was seen, the Energy discount is assumed to scale linearly while the
-	// refund and the 5 combo point trigger stay put. Beta will confirm.
+	// Improved Expose Armor takes 5 Energy off per rank and refunds a combo point per rank
+	// when cast at 5 points.
 	energyCost := 25.0 - 5*float64(rogue.Talents.ImprovedExposeArmor)
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14169})
 
@@ -87,7 +87,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 				eaAura.Activate(sim)
 				rogue.SpendComboPoints(sim, spell)
 				if rogue.Talents.ImprovedExposeArmor > 0 && comboPoints == 5 {
-					rogue.AddComboPoints(sim, 1, target, cpMetrics)
+					rogue.AddComboPoints(sim, rogue.Talents.ImprovedExposeArmor, target, cpMetrics)
 				}
 			} else {
 				spell.IssueRefund(sim)

@@ -8,17 +8,17 @@ import (
 
 const LavaBurstFlameShockBonus = .2
 
-// TODO: Only the damage range and the Flame Shock bonus were on the tooltip. The cast time, cooldown,
-// mana cost and coefficient are taken from the spell of the same name, beta will confirm them.
+// Damage, cast time, cooldown and mana cost are the beta client's level 60 tooltip. The
+// coefficient is the WotLK spell's, the tooltip does not show one.
 func (shaman *Shaman) registerLavaBurstSpell() {
 	if !shaman.Talents.LavaBurst {
 		return
 	}
 
-	baseDamageLow := 158.0
-	baseDamageHigh := 187.0
+	baseDamageLow := 106.0
+	baseDamageHigh := 135.0
 	spellCoeff := .5714
-	castTime := time.Second * 2
+	castTime := time.Millisecond * 2500
 
 	shaman.LavaBurst = shaman.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_ShamanLavaBurst,
@@ -31,7 +31,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   .1,
+			FlatCost:   165,
 			Multiplier: 100 - 2*shaman.Talents.Convection,
 		},
 		Cast: core.CastConfig{
@@ -41,7 +41,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Second * 8,
+				Duration: time.Second * 10,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				castTime := shaman.ApplyCastSpeedForSpell(cast.CastTime, spell)

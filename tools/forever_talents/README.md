@@ -5,7 +5,24 @@ talents messages in `proto/*.proto`.
 
 ## Where it comes from
 
-`data/` and `overrides/` are vendored from
+Two sources. `client/` is the beta client's trees (build 1.60.1.69876), and `data/` is what
+the importer reads. For Rogue and Shaman `data/` is generated from `client/` with
+`import_client.py`, so every rank is the client's. The other seven classes still carry the
+BlizzCon transcription described below, and converting one of them means running
+`import_client.py <class>`, diffing the result against the sim code (the ranks 2+ guesses
+the class was implemented with are usually wrong somewhere), then `import_talents.py`.
+
+### The client trees
+
+`client/<class>.json` is the tree hyjal.cc's talent calculator ships in its page bundle,
+read out of the client tables (its `tooltip.source` is `client`, with the build number and
+spell id per talent). One tooltip per rank with the numbers filled in, plus the cost line
+for actives. Two values were unavailable in the client data and show as `?` (the Riposte
+disarm duration, Berserking's duration), `overrides/` keeps Classic's number for those.
+
+### The BlizzCon transcription
+
+`data/` for the unconverted classes and `overrides/` are vendored from
 [Deradon/wow-forever-talent-calc](https://github.com/Deradon/wow-forever-talent-calc) (MIT,
 copy of its licence in `LICENSE.upstream`). That project extracts every talent tooltip from
 the BlizzCon 2026 day 1 stream by hovering each talent on camera, reading the frame with a
@@ -22,7 +39,6 @@ This is pre-beta data and it shows. Read it with the caveats:
 - Rows, columns and prerequisites come from the tree layout rather than the tooltip text and
   have held up against independent transcription of the Warlock tree.
 
-Replace `data/` with the datamined trees once the beta client is out and rerun the importer.
 
 ## Talents whose per-rank scaling is guesswork
 
@@ -51,6 +67,7 @@ as a datamine, and leave the rest alone until there is a client to read.
 
 ## Regenerating a class
 
+	tools/forever_talents/import_client.py rogue                # client/ to data/, client classes only
 	tools/forever_talents/import_talents.py warlock            # print the proto message
 	tools/forever_talents/import_talents.py warlock --write    # also rewrite the tree json
 
