@@ -26,6 +26,7 @@ import { IsbConfig, StormstrikeConfig } from './../other_inputs';
 import { ConsumesPicker } from './consumes_picker';
 import { ItemSwapPicker } from './item_swap_picker';
 import { PresetConfigurationPicker } from './preset_configuration_picker';
+import { RacialsPicker } from './racials_picker';
 
 export class SettingsTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -124,6 +125,7 @@ export class SettingsTab extends SimTab {
 			getValue: player => player.getRace(),
 			setValue: (eventID, player, newValue) => player.setRace(eventID, newValue),
 		});
+		new RacialsPicker(contentBlock.bodyElement, this.simUI.player);
 
 		if (this.simUI.individualConfig.playerInputs?.inputs.length) {
 			this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.playerInputs);

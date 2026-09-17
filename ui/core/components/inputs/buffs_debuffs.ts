@@ -1,3 +1,4 @@
+import { Ruleset } from '../../proto/api';
 import { Faction, SaygesFortune, Stat } from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
 import {
@@ -490,10 +491,13 @@ export const SpellWintersChillDebuff = withLabel(
 	"Winter's Chill",
 );
 
+// Under Forever Stormstrike only marks the target for the casting shaman's own spells,
+// so another shaman's is worth nothing and the sim ignores this debuff there.
 export const SpellStormstrikeDebuff = withLabel(
 	makeBooleanDebuffInput({
 		actionId: () => ActionId.fromSpellId(17364),
 		fieldName: 'stormstrike',
+		showWhen: player => player.sim.getRuleset() !== Ruleset.RulesetForever,
 	}),
 	'Stormstrike',
 );

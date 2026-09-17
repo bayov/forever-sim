@@ -1,0 +1,65 @@
+// The four racials under the race picker: two rows (Active, Passive), an icon and the
+// name each, the client's tooltip on hover.
+.racials-picker-root {
+	margin-bottom: var(--spacer-3);
+
+	.racials-picker-groups {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacer-2);
+	}
+
+	// The title sits beside its two entries.
+	.racials-picker-group {
+		display: grid;
+		grid-template-columns: 3.5rem minmax(0, 1fr);
+		gap: var(--spacer-1) 0;
+	}
+
+	.racials-picker-group-title {
+		grid-row: span 2;
+		color: $gray-400;
+		font-size: 0.875rem;
+	}
+
+	.racials-picker-racial {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-1);
+		cursor: help;
+	}
+
+	.racials-picker-icon {
+		display: inline-block;
+		width: 1.5rem;
+		height: 1.5rem;
+		flex-shrink: 0;
+		border: 1px solid $gray-600;
+		background-size: cover;
+	}
+
+	.racials-picker-name {
+		font-size: 0.875rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.racials-picker-tooltip {
+	text-align: left;
+
+	.racials-picker-tooltip-name {
+		display: block;
+		font-weight: bold;
+	}
+
+	.racials-picker-tooltip-cost {
+		display: block;
+		color: $gray-400;
+	}
+
+	.racials-picker-tooltip-description {
+		margin: var(--spacer-1) 0 0;
+	}
+}

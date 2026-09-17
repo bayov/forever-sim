@@ -1,4 +1,5 @@
 import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
+import { foreverSpellIcons } from '../forever/racials';
 import { Class, EquipmentSpec, ItemRandomSuffix, ItemSlot, ItemSpec, ItemSwap, PresetEncounter, PresetTarget, SimDatabase } from '../proto/common.js';
 import { IconData, UIDatabase, UIEnchant as Enchant, UIFaction as Faction, UIItem as Item, UINPC as Npc, UIZone as Zone } from '../proto/ui.js';
 import { distinct } from '../utils.js';
@@ -113,6 +114,8 @@ export class Database {
 
 		db.itemIcons.forEach(data => (this.itemIcons[data.id] = Promise.resolve(data)));
 		db.spellIcons.forEach(data => (this.spellIcons[data.id] = Promise.resolve(data)));
+		// The Forever racials are not on Wowhead, so their icons come from the client data.
+		foreverSpellIcons.forEach(data => (this.spellIcons[data.id] = Promise.resolve(data)));
 	}
 
 	getAllItems(): Array<Item> {

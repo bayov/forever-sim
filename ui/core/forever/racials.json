@@ -1,0 +1,869 @@
+{
+  "RaceOrc": [
+    {
+      "name": "Blood Fury",
+      "variants": [
+        {
+          "spellId": 20572,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Increases Attack Power and Spell Power by 10% for 15 sec.",
+          "icon": "racial_orc_berserkerstrength",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Shatter Curse",
+      "variants": [
+        {
+          "spellId": 1299026,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Instantly removes and grants immunity to all Curses and Banes, and reduces all Magical damage taken by 15% for 8 sec.",
+          "icon": "spell_nature_removecurse",
+          "passive": false,
+          "cost": "Instant; 3 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Axe Specialization",
+      "variants": [
+        {
+          "spellId": 20574,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Increases your critical strike chance with all spells and abilities by 1% while you have an axe or a two-handed axe equipped.",
+          "icon": "inv_axe_02",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Hardiness",
+      "variants": [
+        {
+          "spellId": 20573,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Duration of Stun effects on you reduced by 20%.",
+          "icon": "inv_helmet_23",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceUndead": [
+    {
+      "name": "Will of the Forsaken",
+      "variants": [
+        {
+          "spellId": 7744,
+          "classes": [
+            "ClassWarrior",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassPaladin"
+          ],
+          "description": "Instantly removes all Charm, Fear and Sleep effects.",
+          "icon": "spell_shadow_raisedead",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Cannibalize",
+      "variants": [
+        {
+          "spellId": 20577,
+          "classes": [
+            "ClassWarrior",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassPaladin"
+          ],
+          "description": "When activated, regenerates 7% of total Health and 7% of total Mana every 2 sec for 10 sec. Only works on Humanoid or Undead corpses within 5 yds. Any movement, action, or damage taken while Cannibalizing will cancel the effect.",
+          "icon": "ability_racial_cannibalize",
+          "passive": false,
+          "cost": "5 yd range; Instant; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Underwater Breathing",
+      "variants": [
+        {
+          "spellId": 5227,
+          "classes": [
+            "ClassWarrior",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassPaladin"
+          ],
+          "description": "Underwater breath lasts 300% longer than normal.",
+          "icon": "spell_shadow_demonbreath",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Touch of the Grave",
+      "variants": [
+        {
+          "spellId": 1260189,
+          "classes": [
+            "ClassWarrior",
+            "ClassRogue",
+            "ClassPaladin"
+          ],
+          "description": "Your spells and attacks have a 5% chance to drain Health from the target, up to 5% of your maximum Health.",
+          "icon": "spell_shadow_fingerofdeath",
+          "passive": true,
+          "cost": null
+        },
+        {
+          "spellId": 1260201,
+          "classes": [
+            "ClassMage",
+            "ClassPriest",
+            "ClassWarlock"
+          ],
+          "description": "Your spells and attacks have a 10% chance to drain Health from the target, up to 5% of your maximum Health.",
+          "icon": "spell_shadow_fingerofdeath",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceTauren": [
+    {
+      "name": "War Stomp",
+      "variants": [
+        {
+          "spellId": 20549,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Stuns up to 5 enemies within 8 yds for 2 sec.",
+          "icon": "ability_warstomp",
+          "passive": false,
+          "cost": "0.5 sec cast; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Cultivation",
+      "variants": [
+        {
+          "spellId": 20552,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Cultivate a nearby herb, growing a duplicate you can harvest without requiring Herbalism skill. Each herb may only be cultivated once.",
+          "icon": "inv_misc_flower_01",
+          "passive": false,
+          "cost": "Instant"
+        }
+      ]
+    },
+    {
+      "name": "Plainsrunning",
+      "variants": [
+        {
+          "spellId": 1259918,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Gain 1% increased movement speed every 5 sec spent moving, up to a maximum of 30% increase. Taking damage or standing still will reduce this effect.",
+          "icon": "achievement_zone_barrens_01",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Endurance",
+      "variants": [
+        {
+          "spellId": 20550,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Total Health increased by 5% and chance to hit increased by 1%.",
+          "icon": "spell_nature_unyeildingstamina",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceTroll": [
+    {
+      "name": "Berserking",
+      "variants": [
+        {
+          "spellId": 20554,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Increases your spellcasting and attack speed by 10% for 10 sec.",
+          "icon": "racial_troll_berserk",
+          "passive": false,
+          "cost": "Instant; 3 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Rapid Regeneration",
+      "variants": [
+        {
+          "spellId": 1260270,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Regenerate 50% of your maximum Health over 6 sec. Any movement, action, or damage taken will cancel the effect.",
+          "icon": "ability_racial_regeneratin",
+          "passive": false,
+          "cost": "Channeled; 3 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Beast Slaying",
+      "variants": [
+        {
+          "spellId": 20557,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Damage dealt versus Beasts increased by 5%.",
+          "icon": "inv_misc_pelt_bear_ruin_02",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Regeneration",
+      "variants": [
+        {
+          "spellId": 20555,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassShaman"
+          ],
+          "description": "Health regeneration rate increased by 10%. In addition, 10% of total Health regeneration will continue during combat.",
+          "icon": "spell_nature_regenerate",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceSkyborneWindshaper": [
+    {
+      "name": "Walk on Air",
+      "variants": [
+        {
+          "spellId": 1259416,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Glide downward through the air for 10 sec while controlling your direction of travel.",
+          "icon": "inv_elemental_primal_air",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Skysight",
+      "variants": [
+        {
+          "spellId": 1259686,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Attempt to draw power from a convergence of elements and receive its blessing, increasing your movement and mounted movement speeds by 10%. Lasts 30 sec if no elemental convergence is nearby, and 15 min if one is found.",
+          "icon": "ability_skyreach_lens_flare",
+          "passive": false,
+          "cost": "0.5 sec cast; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Wind Blessed",
+      "variants": [
+        {
+          "spellId": 1259710,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Increases your spellcasting, melee, and ranged Haste by 1%.",
+          "icon": "inv_misc_volatileair",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Elemental Insight",
+      "variants": [
+        {
+          "spellId": 1259707,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassDruid",
+            "ClassShaman"
+          ],
+          "description": "Damage dealt versus Elementals increased by 5%.",
+          "icon": "achievement_raidprimalist_windelemental",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceHuman": [
+    {
+      "name": "Will to Survive",
+      "variants": [
+        {
+          "spellId": 1259718,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassPaladin"
+          ],
+          "description": "Instantly removes all Stun effects.",
+          "icon": "spell_shadow_charm",
+          "passive": false,
+          "cost": "Instant; 3 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Perception",
+      "variants": [
+        {
+          "spellId": 20600,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassPaladin"
+          ],
+          "description": "Dramatically increases stealth detection for 20 sec.",
+          "icon": "spell_nature_sleep",
+          "passive": false,
+          "cost": "Instant; 3 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Sword Specialization",
+      "variants": [
+        {
+          "spellId": 20597,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassPaladin"
+          ],
+          "description": "Increases your critical strike chance with all spells and attacks by 2% while you have a sword or two-handed sword equipped.",
+          "icon": "ability_meleedamage",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "The Human Spirit",
+      "variants": [
+        {
+          "spellId": 20598,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock",
+            "ClassPaladin"
+          ],
+          "description": "Spirit increased by 5%.",
+          "icon": "inv_enchant_shardbrilliantsmall",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceDwarf": [
+    {
+      "name": "Stoneform",
+      "variants": [
+        {
+          "spellId": 20594,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassPaladin",
+            "ClassShaman"
+          ],
+          "description": "Instantly removes and grants immunity to all Bleed, Poison, and Disease effects, and reduces all Physical damage taken by 10% for 8 sec.",
+          "icon": "spell_shadow_unholystrength",
+          "passive": false,
+          "cost": "Instant; 3 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Find Treasure",
+      "variants": [
+        {
+          "spellId": 2481,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassPaladin",
+            "ClassShaman"
+          ],
+          "description": "Allows the dwarf to sense nearby treasure, making it appear on the minimap. Lasts until cancelled.",
+          "icon": "racial_dwarf_findtreasure",
+          "passive": false,
+          "cost": "Instant"
+        }
+      ]
+    },
+    {
+      "name": "Mace Specialization",
+      "variants": [
+        {
+          "spellId": 1259719,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassPaladin",
+            "ClassShaman"
+          ],
+          "description": "Increases your critical strike chance with all spells and attacks by 1% while you have a mace or two-handed mace equipped.",
+          "icon": "inv_hammer_05",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Big Game Hunter",
+      "variants": [
+        {
+          "spellId": 1259721,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassPaladin",
+            "ClassShaman"
+          ],
+          "description": "Damage dealt versus Beasts increased by 5%.",
+          "icon": "inv_weapon_rifle_05",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceNightElf": [
+    {
+      "name": "Elune's Light",
+      "variants": [
+        {
+          "spellId": 1259799,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassDruid"
+          ],
+          "description": "Increases your critical strike chance with all spells and attacks by 10% for 15 sec.",
+          "icon": "spell_nature_moonglow",
+          "passive": false,
+          "cost": "Instant; 3 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Shadowmeld",
+      "variants": [
+        {
+          "spellId": 20580,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassDruid"
+          ],
+          "description": "Activate to slip into the shadows, reducing the chance for enemies to detect your presence. Lasts until cancelled or upon moving. Using this ability in combat discourages enemies from attacking you, but increases the cooldown to 2 min.",
+          "icon": "ability_ambush",
+          "passive": false,
+          "cost": "Instant; 10 sec cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Quickness",
+      "variants": [
+        {
+          "spellId": 20582,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassDruid"
+          ],
+          "description": "Dodge chance increased by 1% and movement speed increased by 2%. Night Elf Rogues and Druids are harder to detect in Stealth as if they were 1 level higher.",
+          "icon": "ability_racial_shadowmeld",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Wisp Spirit",
+      "variants": [
+        {
+          "spellId": 20585,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassDruid"
+          ],
+          "description": "Transform into a wisp upon death, increasing movement speed by 75%.",
+          "icon": "spell_nature_wispsplode",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceGnome": [
+    {
+      "name": "Escape Artist",
+      "variants": [
+        {
+          "spellId": 20589,
+          "classes": [
+            "ClassWarrior",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock"
+          ],
+          "description": "Instantly escape the effects of any movement impairing effect and gain immunity to those effects for 3 sec.",
+          "icon": "ability_rogue_trip",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Eureka!",
+      "variants": [
+        {
+          "spellId": 1259812,
+          "classes": [
+            "ClassRogue"
+          ],
+          "description": "Your next 3 damaging abilities have their Energy cost reduced by 20% and deal 10% more damage.",
+          "icon": "inv_gnometoy",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        },
+        {
+          "spellId": 1259821,
+          "classes": [
+            "ClassWarlock"
+          ],
+          "description": "Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.",
+          "icon": "inv_gnometoy",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        },
+        {
+          "spellId": 1259823,
+          "classes": [
+            "ClassPriest"
+          ],
+          "description": "Your next 3 damaging or healing abilities have their Mana cost reduced by 15% and deal 10% more damage or healing.",
+          "icon": "inv_gnometoy",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        },
+        {
+          "spellId": 1259817,
+          "classes": [
+            "ClassMage"
+          ],
+          "description": "Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.",
+          "icon": "inv_gnometoy",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        },
+        {
+          "spellId": 1259813,
+          "classes": [
+            "ClassWarrior"
+          ],
+          "description": "Your next 3 damaging abilities have their Rage cost reduced by 40% and deal 10% more damage.",
+          "icon": "inv_gnometoy",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Expansive Mind",
+      "variants": [
+        {
+          "spellId": 20591,
+          "classes": [
+            "ClassMage",
+            "ClassPriest",
+            "ClassWarlock"
+          ],
+          "description": "Maximum Mana increased by 5%.",
+          "icon": "inv_enchant_essenceeternallarge",
+          "passive": true,
+          "cost": null
+        },
+        {
+          "spellId": 1259803,
+          "classes": [
+            "ClassRogue"
+          ],
+          "description": "Maximum Energy increased by 5%.",
+          "icon": "inv_enchant_essenceeternallarge",
+          "passive": true,
+          "cost": null
+        },
+        {
+          "spellId": 1259802,
+          "classes": [
+            "ClassWarrior"
+          ],
+          "description": "Maximum Rage increased by 5%.",
+          "icon": "inv_enchant_essenceeternallarge",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Engineering Specialization",
+      "variants": [
+        {
+          "spellId": 20593,
+          "classes": [
+            "ClassWarrior",
+            "ClassMage",
+            "ClassRogue",
+            "ClassPriest",
+            "ClassWarlock"
+          ],
+          "description": "Your gnomish ingenuity reduces the rate of engineering devices failing or backfiring when you use them by 20%.",
+          "icon": "inv_misc_gear_01",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ],
+  "RaceSkyborneHighOrder": [
+    {
+      "name": "Walk on Air",
+      "variants": [
+        {
+          "spellId": 1259416,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassDruid"
+          ],
+          "description": "Glide downward through the air for 10 sec while controlling your direction of travel.",
+          "icon": "inv_elemental_primal_air",
+          "passive": false,
+          "cost": "Instant; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Read Ley Line",
+      "variants": [
+        {
+          "spellId": 1259705,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassDruid"
+          ],
+          "description": "Attempt to tap into the power of a nearby ley line, increasing your Health and Mana regeneration by 100%. Lasts 15 sec if no ley line is nearby, and 15 min if one is found.",
+          "icon": "ability_mage_incantersabsorbtion",
+          "passive": false,
+          "cost": "2 sec cast; 2 min cooldown"
+        }
+      ]
+    },
+    {
+      "name": "Wind Blessed",
+      "variants": [
+        {
+          "spellId": 1259710,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassDruid"
+          ],
+          "description": "Increases your spellcasting, melee, and ranged Haste by 1%.",
+          "icon": "inv_misc_volatileair",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "name": "Elemental Insight",
+      "variants": [
+        {
+          "spellId": 1259707,
+          "classes": [
+            "ClassWarrior",
+            "ClassHunter",
+            "ClassMage",
+            "ClassRogue",
+            "ClassDruid"
+          ],
+          "description": "Damage dealt versus Elementals increased by 5%.",
+          "icon": "achievement_raidprimalist_windelemental",
+          "passive": true,
+          "cost": null
+        }
+      ]
+    }
+  ]
+}
