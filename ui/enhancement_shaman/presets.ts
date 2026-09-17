@@ -118,6 +118,11 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // fight and gain 6 at 8 minutes and 12 at 10. The dodge/parry reset half never fires on
 // a boss the shaman is behind.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05033305-053030031005112251' }));
+// The same search with Improved Ghost Wolf 2 pinned as well (-require
+// spiritWeapons,improvedGhostWolf). The two points come out of Ancestral Knowledge (5 to
+// 3) and cost 3 DPS at any fight length. Every other place to take them from costs more:
+// Improved Stormstrike is worth 40 once the pool runs low.
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '05033305-051032031005112251' }));
 export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '-050030201' }));
 // With the Forever beta's 16 points at level 20 (5 extra) the 16th point is Stormstrike
 // (15 points in the tree unlock it under Forever). The rest is Ancestral Knowledge 3,
@@ -128,7 +133,7 @@ export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTal
 export const TalentsLevel20p5 = PresetUtils.makePresetTalents('Level 20 + 5', SavedTalents.create({ talentsString: '-0530300310001' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel20, TalentsLevel20p5],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel20, TalentsLevel20p5],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -263,7 +268,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-export const PresetBuildPhase2 = PresetUtils.makePresetBuild('Phase 2', {
+export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	gear: GearPhase2,
 	talents: TalentsLevel60,
 	rotation: APLOptimized,

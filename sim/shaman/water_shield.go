@@ -11,7 +11,9 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 52127}
+	// The beta client's spell (build 1.60.1.69876). It costs no mana and has a 15 sec
+	// cooldown, so once its three globes are spent the shaman waits for the recast.
+	actionID := core.ActionID{SpellID: 408510}
 	manaMetrics := shaman.NewManaMetrics(actionID)
 	globes := int32(3)
 
@@ -58,18 +60,36 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 		},
 	})
 
+	// Raid damage as a steady stream of spell hits. Spells cannot be dodged or parried,
+	// so unlike a boss meleeing the shaman this feeds Water Shield without also firing
+	// Improved Stormstrike's reset or parry haste.
+	if shaman.RaidDamageHitsPerMinute > 0 {
+		period := time.Duration(float64(time.Minute) / shaman.RaidDamageHitsPerMinute)
+		shaman.RegisterResetEffect(func(sim *core.Simulation) {
+			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period: period,
+				OnAction: func(sim *core.Simulation) {
+					if shaman.WaterShieldAura.IsActive() {
+						consumeGlobe(sim)
+					}
+				},
+			})
+		})
+	}
+
 	shaman.WaterShield = shaman.RegisterSpell(core.SpellConfig{
 		SpellCode: SpellCode_ShamanWaterShield,
 		ActionID:  actionID,
 		ProcMask:  core.ProcMaskEmpty,
 		Flags:     core.SpellFlagAPL | SpellFlagShaman,
 
-		ManaCost: core.ManaCostOptions{
-			BaseCost: .06,
-		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    shaman.NewTimer(),
+				Duration: time.Second * 15,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {

@@ -31,6 +31,7 @@ var (
 	maelstromWeapon  = spellID(51530)
 	rageOfTheFarseer = spellID(2825)
 	naturesSwiftness = spellID(16188)
+	waterShield      = spellID(408510)
 )
 
 func (shamanEnh) Knobs() []Knob {
@@ -45,7 +46,9 @@ func (shamanEnh) Knobs() []Knob {
 		{Name: "fireTotem", Default: 1, Min: 0, Max: 2, Step: 1},
 		// No new fire totem with less than this long to go, its mana is better in a shock.
 		{Name: "fireTotemMinTime", Default: 20, Min: 10, Max: 30, Step: 10},
-		{Name: "shield", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 0 none, 1 Lightning Shield, 2 Water Shield (the Restoration talent). Both only do
+		// anything while something hits the shaman.
+		{Name: "shield", Default: 0, Min: 0, Max: 2, Step: 1},
 		// 0 none, 1 Earth Shock, 2 Flame Shock, 3 Frost Shock, 4 Flame Shock when its DoT
 		// is down and Earth Shock otherwise, 5 Earth Shock while the Stormstrike debuff (20%
 		// Nature damage) is on the target and Frost Shock otherwise, 6 Flame Shock when its
@@ -139,9 +142,6 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	if maxTalentPoints >= 16 {
 		items = append(items, cast(stormstrike, nil, "Stormstrike on cooldown. Without the talent ignore the warning on this line."))
 	}
-	if k["shield"] == 1 {
-		items = append(items, cast(lightningShield, not(auraIsActive(lightningShield)), "Lightning Shield whenever it is down."))
-	}
 	if k["maelstromStacks"] > 0 {
 		items = append(items, cast(lightningBolt, ge(auraNumStacks(maelstromWeapon), num(k["maelstromStacks"])),
 			"Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line."))
@@ -177,6 +177,15 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["lightningBolt"] == 1 {
 		items = append(items, cast(lightningBolt, manaFloor(k["lightningBoltMana"]), "Lightning Bolt with the mana to spare. It stops the swing timer for the cast."))
+	}
+	// The shield goes after the shocks, on a GCD nothing else wants. Above them a Water
+	// Shield recast every 15 sec delays enough shocks and Stormstrikes to cost 10 DPS.
+	switch k["shield"] {
+	case 1:
+		items = append(items, cast(lightningShield, not(auraIsActive(lightningShield)), "Lightning Shield whenever it is down."))
+	case 2:
+		items = append(items, cast(waterShield, not(auraIsActive(waterShield)),
+			"Water Shield whenever it is down. Its three globes are 2% mana each when something hits the shaman. Without the talent ignore the warning on this line."))
 	}
 	if maxTalentPoints < 31 {
 		items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on a free GCD."))

@@ -141,9 +141,13 @@ message EnhancementShaman {
 	message Rotation {
 	}
 
-	// NextIndex: 7
+	// NextIndex: 8
 	message Options {
 		ShamanSyncType sync_type = 3;
+		// Spell hits the shaman takes from raid damage per minute, each spending a Water
+		// Shield globe. The boss is behind the tank, so this is the only thing that feeds
+		// Water Shield. Lightning Shield needs melee hits and ignores it.
+		double raid_damage_hits_per_minute = 7;
 	}
 	Options options = 3;
 }

@@ -163,6 +163,9 @@ type Shaman struct {
 	// Shield
 	ActiveShield     *core.Spell // Tracks the Shaman's active shield spell
 	ActiveShieldAura *core.Aura
+	// Spell hits taken from raid damage per minute, each spending a Water Shield globe.
+	// Set from the enhancement options before Initialize.
+	RaidDamageHitsPerMinute float64
 
 	ChainLightningBounceCoefficient float64
 }

@@ -112,7 +112,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	excludeBuffDebuffInputs: [],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
-		inputs: [ShamanInputs.SyncTypeInput, OtherInputs.TankAssignment, OtherInputs.InFrontOfTarget],
+		inputs: [ShamanInputs.SyncTypeInput, ShamanInputs.RaidDamageHitsInput, OtherInputs.TankAssignment, OtherInputs.InFrontOfTarget],
 	},
 	itemSwapConfig: {
 		itemSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand],
@@ -124,7 +124,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildPhase2, Presets.PresetBuildLevel20, Presets.PresetBuildLevel20p5],
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel20, Presets.PresetBuildLevel20p5],
 		talents: [
 			...Presets.TalentPresets[Phase.Phase6],
 			...Presets.TalentPresets[Phase.Phase5],
