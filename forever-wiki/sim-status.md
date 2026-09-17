@@ -66,8 +66,15 @@ Racials are the only difference between races, since both factions have blessing
 
 Level 60, 300 sec, the shipped builds and the `mksettings` raid (2026-09-17, beta client racials):
 
-- Rogue Sinister Strike / Backstab: Human 843.4 / 936.2 (swords in the SS set only), Gnome 838.3 / 949.3 (Eureka! before a 5 point Eviscerate), Undead 836.4 / 944.5 (Touch of the Grave at its cap with the 15 sec cooldown, 844.6 / 956.3 with none), Orc 836.0 / 943.1, Night Elf 835.7 / 944.0, Skyborne 832.3 / 941.8, Troll 832.0 / 940.4, Dwarf 826.7 / 934.5. Gnome fell from the top once Eureka! went from the assumed half price to 20% off.
-- Enhancement: Dwarf 967 (Mace Specialization on Sulfuras), Skyborne 963, Troll 962, Tauren 962, Orc 960 (no axe). Within 7 DPS.
+- Rogue Sinister Strike / Backstab: Human 843.4 / 936.2 (swords in the SS set only), Gnome 838.3 / 949.3 (Eureka! before a 5 point Eviscerate), Undead 836.4 / 944.5 (Touch of the Grave at its cap with the 15 sec cooldown, 844.6 / 956.3 with none), Orc 836.0 / 943.1 (852.8 for Sinister Strike with Deathbringer, see below), Night Elf 835.7 / 944.0, Skyborne 832.3 / 941.8, Troll 832.0 / 940.4, Dwarf 826.7 / 934.5. Gnome fell from the top once Eureka! went from the assumed half price to 20% off.
+- Enhancement: Dwarf 967 (Mace Specialization on Sulfuras), Skyborne 963, Troll 962, Tauren 962, Orc 960 (no axe, 926 with Spinal Reaper). Within 7 DPS.
+
+Orc with an axe. Rogues can wear axes under Forever, so an Orc row without one hides Axe Specialization (1% crit). The sets above carry swords, daggers and Sulfuras, and a same tier axe changes the picture only for Sinister Strike (5 min, 4000 iterations, Night Elf as the control for the weapon swap alone):
+
+- Sinister Strike with Deathbringer (ilvl 75, Ragnaros) in place of Vis'kag: Orc 853 (from 836), the top of the table. The Night Elf control gains 8 from the weapon alone, so the racial is worth about 9.
+- Backstab with Deathbringer in the off hand in place of Core Hound Tooth: Orc 899 (from 943). The slow axe loses the off hand its dagger crit from Hack and Slash and costs 50 DPS on any race, and no fast one hand axe exists at this tier.
+- Enhancement with Spinal Reaper (ilvl 76, Ragnaros) in place of Sulfuras: Orc 926 (from 960). The Tauren control drops 43, so the racial is worth about 9 but Sulfuras is 34 ahead.
+- Level 20 + 5: the enhancement set already wields The Axe of Severing, so Orc's 70.2 counts the racial. The rogue sets do not gain: Guillotine Axe in place of Shadowfang costs the Sinister Strike Orc 2.0 at 60 sec (64.8 from 66.8, the Night Elf control loses 2.8), and Razor's Edge in the Backstab off hand is a wash (64.4 from 64.6).
 
 The order barely moves with the fight length (4000 iterations, standard error under 1). The 2 min column is high for every race because the 3 min cooldowns are up for two thirds of it, and the rogue's 5 min column beats its 8 min one because Adrenaline Rush lands three times in 480 sec and Blood Fury four.
 
