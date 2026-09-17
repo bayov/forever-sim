@@ -937,9 +937,10 @@ export class Player<SpecType extends Spec> {
 		return this.level > 0 && this.level < Mechanics.MAX_CHARACTER_LEVEL ? this.level : Mechanics.MAX_CHARACTER_LEVEL;
 	}
 
-	// Talent points to spend: one per level from 10, plus any bonus points.
+	// Talent points to spend: one per level from 10, plus any bonus points, and never
+	// more than the 51 a level 60 has.
 	getMaxTalentPoints(): number {
-		return Math.max(0, this.getEffectiveLevel() - 9) + Math.max(0, this.bonusTalentPoints);
+		return Math.min(Mechanics.MAX_TALENT_POINTS, Math.max(0, this.getEffectiveLevel() - 9) + Math.max(0, this.bonusTalentPoints));
 	}
 
 	setLevel(eventID: EventID, newLevel: number) {

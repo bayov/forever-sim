@@ -92,7 +92,7 @@ export const BonusTalentPoints = {
 	type: 'number' as const,
 	label: 'Extra Talent Points',
 	labelTooltip:
-		'Talent points on top of the ones the level grants (one per level from 10). The Forever beta caps at level 20 but is expected to give 16 points there, which is 5 extra.',
+		'Talent points on top of the ones the level grants (one per level from 10), never past the 51 a level 60 has. The Forever beta caps at level 20 but is expected to give 16 points there, which is 5 extra.',
 	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
 	getValue: (player: Player<any>) => player.getBonusTalentPoints(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
