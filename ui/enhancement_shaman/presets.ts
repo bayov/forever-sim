@@ -125,15 +125,21 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '05033305-051032031005112251' }));
 export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '-050030201' }));
 // With the Forever beta's 16 points at level 20 (5 extra) the 16th point is Stormstrike
-// (15 points in the tree unlock it under Forever). The rest is Ancestral Knowledge 3,
+// (15 points in the tree unlock it under Forever), and the search pins it (-require
+// stormstrike) since a build without it is not worth playing. The rest is Ancestral Knowledge 3,
 // Thundering Strikes 5, Mental Dexterity 3, Elemental Weapons 3, Shamanistic Focus 1.
 // Stormstrike is a flat 125 Mana in the beta client, a third of the level 20 pool, so
 // Ancestral Knowledge is worth 0.5 over Improved Lightning Shield. Every build with
 // Elemental points scored lower.
 export const TalentsLevel20p5 = PresetUtils.makePresetTalents('Level 20 + 5', SavedTalents.create({ talentsString: '-0530300310001' }));
+// The same with Improved Ghost Wolf 2 pinned (-require stormstrike,improvedGhostWolf).
+// With 16 points the two come out of Elemental Weapons (3 to 0) with Ancestral Knowledge
+// going to 4, and cost 0.8 DPS at 60 sec. Keeping Elemental Weapons and cutting
+// Ancestral Knowledge to 1 instead costs 1.3, Thundering Strikes 3 costs 1.1.
+export const TalentsLevel20p5ImpGW = PresetUtils.makePresetTalents('Level 20 + 5 + Imp GW', SavedTalents.create({ talentsString: '-0540320010001' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel20, TalentsLevel20p5],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel20, TalentsLevel20p5, TalentsLevel20p5ImpGW],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],

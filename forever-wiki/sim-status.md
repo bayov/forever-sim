@@ -69,11 +69,43 @@ Level 60, 300 sec, the shipped builds and the `mksettings` raid (2026-09-17, bet
 - Rogue Sinister Strike / Backstab: Undead 844.6 / 956.3 (Touch of the Grave at its cap with no internal cooldown, 841 / 950 at 5 sec and 838 / 947 at 10 sec), Human 843.4 / 936.2 (swords in the SS set only), Gnome 838.3 / 949.3 (Eureka! before a 5 point Eviscerate), Orc 836.0 / 943.1, Night Elf 835.7 / 944.0, Skyborne 832.3 / 941.8, Troll 832.0 / 940.4, Dwarf 826.7 / 934.5. Gnome fell from the top once Eureka! went from the assumed half price to 20% off.
 - Enhancement: Dwarf 967 (Mace Specialization on Sulfuras), Skyborne 963, Troll 962, Tauren 962, Orc 960 (no axe). Within 7 DPS.
 
+The order barely moves with the fight length (4000 iterations, standard error under 1). The 2 min column is high for every race because the 3 min cooldowns are up for two thirds of it, and the rogue's 5 min column beats its 8 min one because Adrenaline Rush lands three times in 480 sec and Blood Fury four.
+
+| Rogue Sinister Strike | 2 min | 5 min | 8 min | 10 min | 15 min |
+|---|---|---|---|---|---|
+| Undead | 888 | 844 | 845 | 839 | 839 |
+| Human | 886 | 844 | 845 | 838 | 838 |
+| Gnome | 884 | 839 | 840 | 833 | 832 |
+| Orc | 881 | 836 | 836 | 829 | 829 |
+| Night Elf | 881 | 836 | 836 | 830 | 829 |
+| Skyborne | 875 | 833 | 834 | 828 | 827 |
+| Troll | 875 | 832 | 832 | 826 | 826 |
+| Dwarf | 869 | 827 | 828 | 822 | 821 |
+
+| Rogue Backstab | 2 min | 5 min | 8 min | 10 min | 15 min |
+|---|---|---|---|---|---|
+| Undead | 995 | 956 | 956 | 951 | 950 |
+| Gnome | 991 | 950 | 948 | 943 | 942 |
+| Night Elf | 985 | 944 | 942 | 938 | 936 |
+| Orc | 982 | 943 | 941 | 936 | 936 |
+| Skyborne | 981 | 942 | 941 | 937 | 936 |
+| Troll | 980 | 940 | 939 | 935 | 933 |
+| Human | 974 | 936 | 935 | 931 | 930 |
+| Dwarf | 972 | 934 | 933 | 929 | 928 |
+
+| Enhancement | 2 min | 5 min | 8 min | 10 min | 15 min |
+|---|---|---|---|---|---|
+| Dwarf | 979 | 968 | 964 | 965 | 958 |
+| Skyborne | 976 | 964 | 960 | 960 | 954 |
+| Troll | 973 | 962 | 959 | 960 | 953 |
+| Tauren | 973 | 962 | 957 | 958 | 953 |
+| Orc | 969 | 960 | 958 | 959 | 953 |
+
 ## Low levels
 
-The sim takes a player level (Other settings) with 1.12 base stats and spell ranks per level, and an Extra Talent Points setting next to it for the Forever beta, which caps at level 20 but is expected to give 16 talent points there instead of 11. The Rogue and Enhancement Shaman UIs ship "Level 20" and "Level 20 + 5" builds (gear, talents, rotation, race, level, extra points and encounter together) from the tools/rotopt searches: every item the level can equip, every build of the damage talents, then the rotation knobs. The encounter is Mutanus the Devourer (level 22, 922 armor), 60 sec, no raid buffs, the boss hitting the shaman so Lightning Shield fires.
+The sim takes a player level (Other settings) with 1.12 base stats and spell ranks per level, and an Extra Talent Points setting next to it for the Forever beta, which caps at level 20 but is expected to give 16 talent points there instead of 11. Extra points never take a character past the 51 a level 60 has. The Rogue and Enhancement Shaman UIs ship "Level 20" and "Level 20 + 5" builds (gear, talents, rotation, race, level, extra points and encounter together) from the tools/rotopt searches: every item the level can equip, every build of the damage talents, then the rotation knobs. The encounter is Mutanus the Devourer (level 22, 922 armor), 60 sec, no raid buffs, the boss hitting the shaman so Lightning Shield fires.
 
 - Level 20 (11 points): Sinister Strike 64 DPS, Backstab 62, Enhancement 62 (Rockbiter, Frost Shock, Searing Totem, Lightning Shield).
-- Level 20 + 5 (16 points): Sinister Strike 69, Backstab 67, Enhancement 70. Stormstrike sits behind 15 points under Forever, so the 16th point buys it. Its flat 125 Mana is a third of the level 20 pool, so Ancestral Knowledge 3 replaces Improved Lightning Shield 3 (+0.5), and Flame Shock when its DoT is down with Earth Shock otherwise beats the Frost Shock version by 0.5 because Earth Shock spends the Stormstrike mark (+20%). Strength of Earth is worth its mana. The rogue takes Assassination rows 1 and 2 (Malice, Ruthlessness, Murder, Imp SnD, Relentless Strikes) plus Imp SS, or the dagger talents with Malice for Backstab. Lethality, Cold Blood, Dual Wield Specialization and the poison talents all score lower. Rupture at 3 points beats Eviscerate. A Backstab is 60 energy, so a point comes every 6 sec and a 1 point Slice and Dice (9 sec) is gone before the next point: the Backstab rotations wait for 4 points before putting a fresh one up (+1.4 DPS), or the rogue would refresh it forever and never reach a Rupture. The Sinister Strike build has Improved Slice and Dice, whose 13 sec 1 point one is worth putting up at once. The gear search with 16 points settled on the same level 20 sets.
+- Level 20 + 5 (16 points): Sinister Strike 69, Backstab 67, Enhancement 70. Stormstrike sits behind 15 points under Forever, so the 16th point buys it. Its flat 125 Mana is a third of the level 20 pool, so Ancestral Knowledge 3 replaces Improved Lightning Shield 3 (+0.5), and Flame Shock when its DoT is down with Earth Shock otherwise beats the Frost Shock version by 0.5 because Earth Shock spends the Stormstrike mark (+20%). Strength of Earth is worth its mana. A search with Stormstrike pinned (`-require stormstrike`) changes nothing, and "Level 20 + 5 + Imp GW" `-0540320010001` pins Improved Ghost Wolf 2 as well: the points come out of Elemental Weapons with Ancestral Knowledge at 4, for 0.8 DPS at 60 sec. Water Shield needs 11 Restoration points, which leaves no Stormstrike, so it is out. Races at 20 + 5 (30 / 60 / 120 sec): Orc 79.5 / 70.2 / 58.7, Skyborne 77.6 / 69.9 / 58.4, Dwarf 77.3 / 69.3 / 57.9, Tauren 78.1 / 68.7 / 58.0, Troll 78.4 / 68.3 / 57.4. The rogue takes Assassination rows 1 and 2 (Malice, Ruthlessness, Murder, Imp SnD, Relentless Strikes) plus Imp SS, or the dagger talents with Malice for Backstab. Lethality, Cold Blood, Dual Wield Specialization and the poison talents all score lower. Rupture at 3 points beats Eviscerate. A Backstab is 60 energy, so a point comes every 6 sec and a 1 point Slice and Dice (9 sec) is gone before the next point: the Backstab rotations wait for 4 points before putting a fresh one up (+1.4 DPS), or the rogue would refresh it forever and never reach a Rupture. The Sinister Strike build has Improved Slice and Dice, whose 13 sec 1 point one is worth putting up at once. The gear search with 16 points settled on the same level 20 sets.
 - Races at 20 + 5: Night Elf leads the rogue (Elune's Light, SS 70.6 / BS 68.3), then Human with swords (69.2 / 67.1) and Gnome (68.5 / 68.4, Eureka! on cooldown at 20% off, it was 71.0 / 70.7 when half price was assumed), Troll and Undead (68.5 / 66.3), Skyborne (68.1 / 66.1), Dwarf (67.1 / 65.2), Orc (66.8 / 64.6). The shaman races are within 2 DPS: Orc 69.9 (Axe Specialization on The Axe of Severing), Skyborne 68.8, Dwarf 68.8, Tauren 68.6, Troll 68.2. Blood Fury is a GCD for 10% of a few hundred attack power at this level.
 - The shaman's mana is gone after a minute of shocks and Stormstrikes (numbers from before the 125 Mana Stormstrike): 75 DPS in a 30 sec fight, 71 at 60, 60 at 120, 54 at 300. The rogue loses less over time (SS 73, 69, 66, 64.5, Backstab 75, 67, 64, 61.5: its Thistle Tea and the opening Rupture weigh more in a short fight).
