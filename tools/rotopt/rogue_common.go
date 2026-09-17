@@ -25,8 +25,8 @@ var (
 	thistleTea     = itemID(7676)
 	bloodFury      = spellID(20572)
 	berserking     = spellIDTag(26297, 2)
-	elunesLight    = spellID(460531)
-	eureka         = spellID(460532)
+	elunesLight    = spellID(1259799)
+	eureka         = spellID(1259812)
 	earthstrike    = itemID(21180)
 )
 
@@ -195,7 +195,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		"Gnome. Eureka! buffs the next 3 abilities, so right before Eviscerate and the two builders after it. Other races can ignore the warning on this line.")
 	if k["eurekaCp"] == 0 {
 		eurekaLine = cast(eureka, sndAtLeast(k["eurekaSnd"]),
-			"Gnome. Eureka! on cooldown, the next 3 abilities cost half. Other races can ignore the warning on this line.")
+			"Gnome. Eureka! on cooldown, the next 3 abilities cost 20% less and hit 10% harder. Other races can ignore the warning on this line.")
 	}
 	berserkingNotes := "Berserking is auto attack speed, so it goes on cooldown."
 	if k["berserkingHoldForBf"] == 1 && hasBladeFlurry {

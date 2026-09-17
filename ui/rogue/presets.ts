@@ -190,14 +190,14 @@ export const DefaultAPLMutilate = ROTATION_PRESET_MUTILATE;
 
 // Preset name must be unique. Ex: 'Backstab DPS' cannot be used as a name more than once
 
-export const CombatBackstabTalents = PresetUtils.makePresetTalents('Backstab', SavedTalents.create({ talentsString: '005023105-30230320201515231-002' }));
+export const CombatBackstabTalents = PresetUtils.makePresetTalents('Backstab', SavedTalents.create({ talentsString: '005323102-30230320201515231-002' }));
 export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents(
 	'Sinister Strike',
-	SavedTalents.create({ talentsString: '00530310501-32003311201515231' }),
+	SavedTalents.create({ talentsString: '00532310301-32003311201515231' }),
 );
 export const CombatSinisterStrikeIEATalents = PresetUtils.makePresetTalents(
 	'Improved Expose Armor (SS)',
-	SavedTalents.create({ talentsString: '005303125-32003311201515131' }),
+	SavedTalents.create({ talentsString: '005323123-32003311201515131' }),
 );
 export const AssassinationMutilateTalents = PresetUtils.makePresetTalents('Mutilate', SavedTalents.create({ talentsString: '00530310551021051-302303202004' }));
 // The 11 points a level 20 has. Sinister Strike: Malice 5, Imp SnD 2, Murder 2, Imp SS 2,
@@ -359,9 +359,9 @@ export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Lev
 
 // The same at level 20 with the 5 extra talent points the Forever beta is expected to
 // give (16 in all). The gear and encounter are the level 20 ones, only the talents and
-// rotation differ. Gnome is the best race (Eureka! on cooldown, three half price abilities:
-// 71.0 / 70.7), then Night Elf (Elune's Light, 70.6 / 68.4), but the builds keep Human
-// (69.2 / 67.1) so the two compare like for like.
+// rotation differ. Night Elf is the best race (Elune's Light, 70.6 / 68.3), then Human
+// (69.2 / 67.1) and Gnome (Eureka! on cooldown, 68.5 / 68.4). The builds keep Human so
+// the two compare like for like.
 export const PresetBuildLevel20p5Backstab = PresetUtils.makePresetBuild('Level 20 + 5 Backstab', {
 	gear: GearLevel20Backstab,
 	talents: Level20p5BackstabTalents,

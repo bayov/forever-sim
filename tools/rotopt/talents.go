@@ -26,6 +26,9 @@ type talent struct {
 	row          int
 	prereq       int // index in the same tree, or -1
 	notSimulated bool
+	// The search keeps this talent at max rank. For talents the sim gives nothing for but
+	// a player takes anyway, like the threat cut of the shaman's Spirit Weapons.
+	required bool
 }
 
 type talentTree struct {
@@ -140,8 +143,33 @@ func (b build) points() int {
 	return n
 }
 
+// requireTalents marks the named talents (field names, comma separated) as required and
+// says which names matched nothing.
+func requireTalents(trees []talentTree, names string) error {
+	for _, name := range strings.Split(names, ",") {
+		name = strings.TrimSpace(name)
+		if name == "" {
+			continue
+		}
+		found := false
+		for ti := range trees {
+			for i := range trees[ti].talents {
+				if strings.EqualFold(trees[ti].talents[i].name, name) {
+					trees[ti].talents[i].required = true
+					found = true
+				}
+			}
+		}
+		if !found {
+			return fmt.Errorf("no talent named %q", name)
+		}
+	}
+	return nil
+}
+
 // valid checks the tree rules: a row opens at 5 points per row above it in the same
-// tree, a talent with a prerequisite needs that maxed, no talent over its rank count.
+// tree, a talent with a prerequisite needs that maxed, no talent over its rank count,
+// and every required talent is maxed.
 func (b build) valid(trees []talentTree) bool {
 	if b.points() > maxTalentPoints {
 		return false
@@ -151,6 +179,9 @@ func (b build) valid(trees []talentTree) bool {
 		for i, t := range tree.talents {
 			p := b[ti][i]
 			if p < 0 || p > t.maxPoints {
+				return false
+			}
+			if t.required && p < t.maxPoints {
 				return false
 			}
 			if p > 0 && t.prereq >= 0 && b[ti][t.prereq] < tree.talents[t.prereq].maxPoints {

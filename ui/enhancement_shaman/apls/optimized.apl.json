@@ -3,12 +3,12 @@
     "prepullActions": [
         {"action":{"castSpell":{"spellId":{"spellId":25361}}},"doAtValue":{"const":{"val":"-4.5s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":25359}}},"doAtValue":{"const":{"val":"-3s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":10438}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":10587}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":25361}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":25361}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":25359}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":25359}}}}}},"notes":"Grace of Air Totem whenever it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":10438}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10438}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"20s"}}}}]}}},"notes":"Searing Totem whenever it is down, unless the fight is about to end."},
+        {"action":{"castSpell":{"spellId":{"spellId":10587}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10587}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"20s"}}}}]}}},"notes":"Magma Totem whenever it is down, unless the fight is about to end."},
         {"action":{"castSpell":{"spellId":{"spellId":2825}}},"notes":"Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":20572}},"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":2825}}},{"cmp":{"lhs":{"spellUsesRemaining":{"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"spellId":2825}}},"op":"OpEq","rhs":{"const":{"val":"0"}}}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"spellTimeToReady":{"spellId":{"spellId":2825}}},"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"spellId":20572}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}},"notes":"Orc. Blood Fury waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":26297,"tag":2}},"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":2825}}},{"cmp":{"lhs":{"spellUsesRemaining":{"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"spellId":2825}}},"op":"OpEq","rhs":{"const":{"val":"0"}}}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"spellTimeToReady":{"spellId":{"spellId":2825}}},"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"spellId":26297,"tag":2}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}},"notes":"Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line."},

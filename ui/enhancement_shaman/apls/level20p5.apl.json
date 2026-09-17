@@ -10,7 +10,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":17364}}},"notes":"Stormstrike on cooldown. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":325}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":325}}}}}},"notes":"Lightning Shield whenever it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":8052}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":8052}}}}}]}}},"notes":"Flame Shock when its DoT is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":8056}}},"notes":"Frost Shock otherwise."},
+        {"action":{"castSpell":{"spellId":{"spellId":8045}}},"notes":"Earth Shock otherwise."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on a free GCD."}
     ]
 }

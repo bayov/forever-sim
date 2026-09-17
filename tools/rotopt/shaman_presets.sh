@@ -20,11 +20,12 @@ gen() {
 	mv "ui/enhancement_shaman/apls/${name}_300s.apl.json" "ui/enhancement_shaman/apls/$name.apl.json"
 	echo "wrote ui/enhancement_shaman/apls/$name.apl.json ($knobs $*)"
 }
-gen optimized "shock=4" -level 60
+# Magma Totem edges out Searing since Stormstrike went to an 8 sec cooldown (+6 at 300 sec).
+gen optimized "shock=4,fireTotem=2" -level 60
 gen level20 "airTotem=0,strengthOfEarth=0,fireTotemMinTime=10,shield=1,shock=3,maelstromStacks=0" -level 20 -bonus-talents 0
 # With the Forever beta's 16 points at level 20 (5 extra) Stormstrike is in reach (a 15
 # point talent under Forever), so its line is emitted. Flame Shock when its DoT is down
-# and Frost Shock otherwise (shock=6) edges out Frost Shock alone by 0.5 at 60 sec and
-# by more in longer fights, since Flame Shock rank 2 is the cheapest shock per point of
-# damage. Earth Shock rank 3 loses to both. Strength of Earth is now worth its mana.
-gen level20p5 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=6,maelstromStacks=0" -level 20 -bonus-talents 5
+# and Earth Shock otherwise (shock=4) beats the Frost Shock version (shock=6) by 0.5 at 60
+# sec now that Stormstrike marks the target for the next Earth Shock (+20%). Strength of
+# Earth is worth its mana.
+gen level20p5 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4,maelstromStacks=0" -level 20 -bonus-talents 5

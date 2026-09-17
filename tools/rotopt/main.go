@@ -7,6 +7,8 @@
 //	go run --tags=with_db ./tools/rotopt -template rogue_ss -settings ss.json -durs 120,300,480 -out ui/rogue/apls
 //
 // The settings file is a RaidSimRequest or the JSON the UI exports under Export > JSON.
+// tools/rotopt/mksettings builds one from the shipped gear sets, rotations and the UI's
+// default raid, so no export is needed.
 package main
 
 import (
@@ -47,6 +49,7 @@ func main() {
 	talents := flag.String("talents", "", "override the player's talent string")
 	talentSearch := flag.Bool("talent-search", false, "search the talent tree with the starting knobs instead of the knobs (prints the best talent string)")
 	talentsFile := flag.String("talents-file", "", "score every talent string in this file (one per line) with the starting knobs, best first")
+	requiredTalents := flag.String("require", "", "talents the talent search keeps at max rank, by field name, e.g. spiritWeapons for the threat cut the sim does not score")
 	gearSearch := flag.Bool("gear-search", false, "search every slot over the items the player can equip at their level, with the starting knobs (prints the gear and writes it to -gear-out)")
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
 	gearQuality := flag.Int("gear-quality", 2, "lowest item quality the gear search considers (2 uncommon, 3 rare)")
@@ -247,6 +250,10 @@ func main() {
 		trees, err := loadTalentTrees(class)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "loading talent trees: %v\n", err)
+			os.Exit(2)
+		}
+		if err := requireTalents(trees, *requiredTalents); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(2)
 		}
 		s := &searcher{
