@@ -932,8 +932,8 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 292.39627
-  tps: 401.18323
+  dps: 291.52282
+  tps: 400.48447
  }
 }
 dps_results: {
@@ -946,36 +946,36 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 171.71786
-  tps: 161.58646
+  dps: 171.35455
+  tps: 161.29581
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 82.7992
-  tps: 212.38909
+  dps: 82.6719
+  tps: 212.28725
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 24.6803
-  tps: 36.35164
+  dps: 24.6703
+  tps: 36.34364
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 54.97809
-  tps: 69.29257
+  dps: 54.82522
+  tps: 69.17027
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 294.85407
-  tps: 403.14948
+  dps: 293.98062
+  tps: 402.45071
  }
 }
 dps_results: {
@@ -988,29 +988,29 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 184.72805
-  tps: 172.49096
+  dps: 184.36474
+  tps: 172.20032
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 84.22403
-  tps: 213.59469
+  dps: 84.09673
+  tps: 213.49285
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 24.99623
-  tps: 36.62584
+  dps: 24.98623
+  tps: 36.61784
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 63.02608
-  tps: 76.33369
+  dps: 62.87321
+  tps: 76.21139
  }
 }
 dps_results: {

@@ -273,10 +273,11 @@ func (character *Character) registerEureka() {
 // at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
 // damage that cannot crit, cannot proc anything and heals the caster for what it deals.
 //
-// The tooltip has no internal cooldown either. A dual wielding rogue lands enough hits
-// that the cooldown decides whether the racial is worth 1% or 2%, so it is a variable
-// that a comparison harness can sweep. Zero means every hit rolls.
-var TouchOfTheGraveICD time.Duration = 0
+// The tooltip has no internal cooldown either, but a proc like this always has one in
+// practice, and a dual wielding rogue lands enough hits that the cooldown decides whether
+// the racial is worth 1% or 2%. We assume 15 sec until the beta shows the real one. It is
+// a variable so a comparison harness can sweep it, and zero means every hit rolls.
+var TouchOfTheGraveICD = time.Second * 15
 
 func (character *Character) registerTouchOfTheGrave() {
 	actionID := ActionID{SpellID: 1260189}
