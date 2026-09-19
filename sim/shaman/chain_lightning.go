@@ -15,7 +15,9 @@ var ChainLightningSpellId = [ChainLightningRanks + 1]int32{0, 421, 930, 2860, 10
 var ChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {200.5, 226.5}, {288.5, 322.5}, {391.5, 437.5}, {505, 564}}
 var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 1.9}, {45, 2.3}, {53, 2.7}, {60, 3.1}}
 var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, .714, .714, .714, .714}
-var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 280, 380, 490, 605}
+
+// Forever's costs, about 20% under Classic. The cast is 2 sec, down from 2.5.
+var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 225, 305, 390, 485}
 var ChainLightningLevel = [ChainLightningRanks + 1]int{0, 32, 40, 48, 56}
 
 func (shaman *Shaman) registerChainLightningSpell() {
@@ -45,7 +47,7 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	level := ChainLightningLevel[rank]
 
 	cooldown := time.Second * 6
-	castTime := time.Millisecond * 2500
+	castTime := time.Millisecond * 2000
 
 	shaman.ChainLightningBounceCoefficient = .70 // 30% reduction per bounce
 	targetCount := ChainLightningTargetCount

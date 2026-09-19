@@ -13,7 +13,8 @@ var WindfuryWeaponEnchantId = [WindfuryWeaponRanks + 1]int32{0, 283, 284, 525, 1
 var WindfuryWeaponLevel = [WindfuryWeaponRanks + 1]int32{0, 30, 40, 50, 60}
 
 // The extra attack power at each rank's cap and its growth per level, like Rockbiter.
-var WindfuryWeaponBonusAP = [WindfuryWeaponRanks + 1]float64{0, 103.6, 221.4, 315.4, 333}
+// Rank 4 is Forever's 433 (Classic 333), the lower ranks match Classic within a point.
+var WindfuryWeaponBonusAP = [WindfuryWeaponRanks + 1]float64{0, 103.6, 221.4, 315.4, 433}
 var WindfuryWeaponScaling = [WindfuryWeaponRanks + 1]core.RankScaling{{}, {38, 7.2}, {48, 12.8}, {58, 8.3}, {60, 12.5}}
 
 func (shaman *Shaman) windfuryRank() int {

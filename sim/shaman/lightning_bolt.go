@@ -14,8 +14,11 @@ var LightningBoltSpellId = [LightningBoltRanks + 1]int32{0, 403, 529, 548, 915, 
 var LightningBoltBaseDamage = [LightningBoltRanks + 1][]float64{{0}, {15, 17}, {28.5, 32.5}, {48.5, 56.5}, {88, 100}, {131, 149}, {179.5, 201.5}, {235.5, 263.5}, {291.5, 325.5}, {357.5, 399.5}, {428, 477}}
 var LightningBoltScaling = [LightningBoltRanks + 1]core.RankScaling{{}, {6, .4}, {13, .5}, {19, .7}, {25, 1}, {31, 1.2}, {37, 1.5}, {43, 1.7}, {49, 1.9}, {55, 2.1}, {60, 2.4}}
 var LightningBoltSpellCoef = [LightningBoltRanks + 1]float64{0, .1233, .314, .554, .857, .857, .857, .857, .857, .857, .857}
-var LightningBoltCastTime = [LightningBoltRanks + 1]int32{0, 1500, 2000, 2500, 3000, 3000, 3000, 3000, 3000, 3000, 3000}
-var LightningBoltManaCost = [LightningBoltRanks + 1]float64{0, 15, 30, 45, 75, 105, 135, 165, 195, 230, 265}
+
+// Forever caps the cast at 2.5 sec from rank 4 up and takes about 20% off the mana
+// cost of those ranks (wowhead Forever spell data).
+var LightningBoltCastTime = [LightningBoltRanks + 1]int32{0, 1500, 2000, 2500, 2500, 2500, 2500, 2500, 2500, 2500, 2500}
+var LightningBoltManaCost = [LightningBoltRanks + 1]float64{0, 15, 30, 45, 60, 85, 110, 135, 160, 190, 220}
 var LightningBoltLevel = [LightningBoltRanks + 1]int{0, 1, 8, 14, 20, 26, 32, 38, 44, 50, 56}
 
 func (shaman *Shaman) registerLightningBoltSpell() {

@@ -39,7 +39,8 @@ gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSn
 # points). The lines name the level 60 spell ranks and the sim resolves them to the rank
 # the level knows. The level is passed so the template leaves out Adrenaline Rush and
 # Blade Flurry, which the points cannot reach. Rupture at 3 points beats
-# Eviscerate at this level. Thistle Tea goes at 0 energy in the 16 point build: energy
+# Eviscerate at this level, except in the 16 point Sinister Strike build, where the
+# Forever Rupture (60% of Classic) is only worth its finisher at 5 points. Thistle Tea goes at 0 energy in the 16 point build: energy
 # arrives continuously under Forever, so nothing is lost by waiting for the bar to empty.
 # With finishers at 3 points the rotation never sits on 5, so Eureka! goes on cooldown
 # (+3 for a Gnome) and, for anyone who picks Cold Blood, the points are held for its
@@ -54,5 +55,5 @@ gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSn
 low="cbPool=1,cbSnd=0,eurekaCp=0"
 gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,sndCp=4,$low" -level 20 -bonus-talents 0
 gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,hemoForRupture=0,sndCp=4,$low" -level 20 -bonus-talents 0
-gen rogue_ss level20p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,teaEnergy=0,$low" -level 20 -bonus-talents 5
+gen rogue_ss level20p5_sinister_strike "ruptureCp=5,ruptureSnd=0,ssEnergy=10,teaEnergy=0,$low" -level 20 -bonus-talents 5
 gen rogue_bs level20p5_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,hemoForRupture=0,sndCp=4,$low" -level 20 -bonus-talents 5

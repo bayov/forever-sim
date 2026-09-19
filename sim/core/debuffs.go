@@ -672,9 +672,9 @@ func SunderArmorAura(target *Unit) *Aura {
 
 func ExposeArmorAura(target *Unit, improvedEA int32) *Aura {
 	spellID := int32(11198)
-	arpen := 1700.0
-
-	arpen *= []float64{1, 1.25, 1.5}[improvedEA]
+	// Forever's rank 5 gives 450 armor per point. Improved Expose Armor no longer
+	// raises it, so the improved flavor is the same debuff.
+	arpen := 2250.0
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "ExposeArmor",

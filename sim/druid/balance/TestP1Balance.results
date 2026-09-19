@@ -1,8 +1,8 @@
 character_stats_results: {
  key: "TestP1Balance-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 217.35
-  final_stats: 200.1
+  final_stats: 185.15
+  final_stats: 216.2
   final_stats: 333.27
   final_stats: 250.7
   final_stats: 247.25
@@ -18,21 +18,21 @@ character_stats_results: {
   final_stats: 29.98669
   final_stats: 0
   final_stats: 0
-  final_stats: 1144.7
+  final_stats: 1080.3
   final_stats: 0
-  final_stats: 23.905
+  final_stats: 24.71
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 4724.5
   final_stats: 0
   final_stats: 0
-  final_stats: 1341.2
+  final_stats: 1373.4
   final_stats: 440
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 10.905
+  final_stats: 11.71
   final_stats: 5
   final_stats: 0
   final_stats: 5182.485
@@ -99,64 +99,64 @@ stat_weights_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-CenarionRaiment"
  value: {
-  dps: 217.0559
-  tps: 229.23765
+  dps: 217.01269
+  tps: 229.19444
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-Champion'sRefuge"
  value: {
-  dps: 233.73011
-  tps: 248.01956
+  dps: 233.6869
+  tps: 247.97634
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FeralheartRaiment"
  value: {
-  dps: 241.56418
-  tps: 254.90344
+  dps: 241.52097
+  tps: 254.86023
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FieldMarshal'sSanctuary"
  value: {
-  dps: 236.00472
-  tps: 250.25922
+  dps: 235.9591
+  tps: 250.2136
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-LieutenantCommander'sRefuge"
  value: {
-  dps: 233.73011
-  tps: 248.01956
+  dps: 233.6869
+  tps: 247.97634
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-StormrageRaiment"
  value: {
-  dps: 202.06999
-  tps: 211.20024
+  dps: 202.02678
+  tps: 211.15703
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-SymbolsofUnendingLife"
  value: {
-  dps: 263.44233
-  tps: 277.19381
+  dps: 263.39912
+  tps: 277.1506
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-Warlord'sSanctuary"
  value: {
-  dps: 236.00472
-  tps: 250.25922
+  dps: 235.9591
+  tps: 250.2136
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Average-Default"
  value: {
-  dps: 247.53442
-  tps: 262.02335
+  dps: 247.49976
+  tps: 261.98869
  }
 }
 dps_results: {
@@ -246,7 +246,7 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 245.76062
-  tps: 260.13187
+  dps: 245.73211
+  tps: 260.10335
  }
 }

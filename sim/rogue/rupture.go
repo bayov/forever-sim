@@ -80,15 +80,23 @@ func (rogue *Rogue) registerRupture() {
 	rogue.Finishers = append(rogue.Finishers, rogue.Rupture)
 }
 
-func (rogue *Rogue) RuptureDamage(target *core.Unit, comboPoints int32) float64 {
-	baseTickDamage := rankAt(rogue.Level, map[int32]float64{
-		20: 8, 28: 12, 36: 18, 44: 27, 52: 37, 60: 60,
-	})
-	comboTickDamage := rankAt(rogue.Level, map[int32]float64{
-		20: 2, 28: 3, 36: 4, 44: 5, 52: 7, 60: 8,
-	})
+// The Forever tooltip totals per combo point, indexed by points. Forever cut Rupture to
+// about 60% of Classic (469 at 5 points for rank 6, Classic 800). The totals no longer
+// split into a clean base plus per point tick, so we keep the totals and divide by the
+// tick count. The attack power part is the Classic one, the tooltip does not show it.
+var ruptureTotalDamage = map[int32][6]float64{
+	20: {0, 25, 37, 51, 68, 87},
+	28: {0, 35, 53, 74, 99, 127},
+	36: {0, 53, 79, 109, 143, 183},
+	44: {0, 76, 110, 149, 195, 246},
+	52: {0, 105, 151, 207, 270, 342},
+	60: {0, 159, 222, 295, 377, 469},
+}
 
-	return baseTickDamage + comboTickDamage*float64(comboPoints) +
+func (rogue *Rogue) RuptureDamage(target *core.Unit, comboPoints int32) float64 {
+	baseTickDamage := rankAt(rogue.Level, ruptureTotalDamage)[comboPoints] / float64(rogue.RuptureTicks(comboPoints))
+
+	return baseTickDamage +
 		[]float64{0, 0.04 / 4, 0.10 / 5, 0.18 / 6, 0.21 / 7, 0.24 / 8}[comboPoints]*rogue.Rupture.MeleeAttackPower(target)
 }
 

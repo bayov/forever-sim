@@ -84,8 +84,9 @@ var BuffSpellValues = map[BuffName]stats.Stats{
 	DevotionAura: {
 		stats.BonusArmor: 735,
 	},
+	// Forever's rank 3 gives 89 Agility, up from Classic's 77.
 	GraceOfAir: {
-		stats.Agility: TernaryFloat64(IncludeAQ, 77, 67),
+		stats.Agility: 89,
 	},
 	FireResistanceAura: {
 		stats.FireResistance: 60,
@@ -127,8 +128,9 @@ var BuffSpellValues = map[BuffName]stats.Stats{
 	ShadowResistanceAura: {
 		stats.ShadowResistance: 60,
 	},
+	// Forever's rank 5 gives 53 Strength, down from Classic's 77.
 	StrengthOfEarth: {
-		stats.Strength: TernaryFloat64(IncludeAQ, 77, 61),
+		stats.Strength: 53,
 	},
 	ScrollOfAgility: {
 		stats.Agility: 17,
@@ -1347,7 +1349,9 @@ const ReplenishmentAuraDuration = time.Second * 15
 // The rank the unit's level can have, so a level 20 character gets the 10 Strength of
 // rank 1 rather than the 60 value.
 var strengthOfEarthTotemLevels = []int32{0, 10, 24, 38, 52, 60}
-var strengthOfEarthTotemStrength = []float64{0, 10, 20, 36, 61, 77}
+
+// Forever's ranks, Classic gave 10, 20, 36, 61 and 77.
+var strengthOfEarthTotemStrength = []float64{0, 7, 14, 25, 42, 53}
 
 func StrengthOfEarthTotemAura(unit *Unit, multiplier float64) *Aura {
 	rank := TernaryInt32(IncludeAQ, 5, 4)
@@ -1357,7 +1361,7 @@ func StrengthOfEarthTotemAura(unit *Unit, multiplier float64) *Aura {
 		updateStats = stats.Stats{stats.Strength: strengthOfEarthTotemStrength[rank]}.Multiply(multiplier).Floor()
 	}
 	spellID := []int32{0, 8075, 8160, 8161, 10442, 25361}[rank]
-	duration := time.Minute * 2
+	duration := time.Minute * 5 // Forever, Classic 2 min
 
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Strength of Earth Totem",
@@ -1385,7 +1389,7 @@ func StrengthOfEarthTotemAura(unit *Unit, multiplier float64) *Aura {
 func GraceOfAirTotemAura(unit *Unit, multiplier float64) *Aura {
 	rank := TernaryInt32(IncludeAQ, 3, 2)
 	spellID := []int32{0, 8835, 10627, 25359}[rank]
-	duration := time.Minute * 2
+	duration := time.Minute * 5 // Forever, Classic 2 min
 	updateStats := BuffSpellValues[GraceOfAir].Multiply(multiplier).Floor()
 
 	aura := unit.GetOrRegisterAura(Aura{
@@ -1614,7 +1618,8 @@ const WindfuryRanks = 3
 
 var (
 	WindfuryBuffSpellId = [WindfuryRanks + 1]int32{0, 8516, 10608, 10610}
-	WindfuryBuffBonusAP = [WindfuryRanks + 1]float64{0, 122, 229, 315}
+	// Forever's totem gives less than Classic's 122, 229 and 315.
+	WindfuryBuffBonusAP = [WindfuryRanks + 1]float64{0, 95, 179, 246}
 )
 
 func GetWindfuryAP(aura *Aura, rank int32) float64 {

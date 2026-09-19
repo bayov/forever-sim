@@ -7,9 +7,9 @@ import (
 )
 
 // Improved Expose Armor no longer scales the armor reduction, it discounts the finisher
-// and hands a combo point back on a full spend.
-// TODO: assumed baseline, beta will confirm. The raid reads this debuff, so the Classic
-// 2/2 armor value is treated as baseline rather than deleted.
+// and hands a combo point back on a full spend. The Forever ranks carry a bigger armor
+// value instead (450 per point at rank 5, Classic 340 or 425 with the old 2/2 talent).
+// The raid debuff option reads the same value through this rank.
 const exposeArmorBaselineRank = 2
 
 func (rogue *Rogue) registerExposeArmorSpell() {
@@ -24,10 +24,8 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 		14: 8647, 26: 8649, 36: 8650, 46: 11197, 56: 11198,
 	})
 	arpenPerCombo := rankAt(rogue.Level, map[int32]float64{
-		14: 80, 26: 145, 36: 210, 46: 275, 56: 340,
+		14: 90, 26: 180, 36: 270, 46: 360, 56: 450,
 	})
-
-	arpenPerCombo *= []float64{1, 1.25, 1.5}[exposeArmorBaselineRank]
 
 	// Improved Expose Armor takes 5 Energy off per rank and refunds a combo point per rank
 	// when cast at 5 points.

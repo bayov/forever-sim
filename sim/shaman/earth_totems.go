@@ -35,7 +35,7 @@ func (shaman *Shaman) newStrengthOfEarthTotemSpellConfig(rank int) core.SpellCon
 	manaCost := StrengthOfEarthTotemManaCost[rank]
 	level := StrengthOfEarthTotemLevel[rank]
 
-	duration := time.Second * 120
+	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
 
 	buffAura := core.StrengthOfEarthTotemAura(&shaman.Unit, enhancingTotemsMultiplier)
 
@@ -80,7 +80,7 @@ func (shaman *Shaman) newStoneskinTotemSpellConfig(rank int) core.SpellConfig {
 	manaCost := StoneskinTotemManaCost[rank]
 	level := StoneskinTotemLevel[rank]
 
-	duration := time.Second * 120
+	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
@@ -97,7 +97,7 @@ func (shaman *Shaman) newStoneskinTotemSpellConfig(rank int) core.SpellConfig {
 func (shaman *Shaman) registerTremorTotemSpell() {
 	spellId := int32(8143)
 	manaCost := float64(60)
-	duration := time.Second * 120
+	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
 	level := 18
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)

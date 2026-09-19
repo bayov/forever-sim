@@ -18,7 +18,7 @@ Collected 2026-09-14.
 - nikftw talent calculator, the screenshot source most of the above cites: https://nikftw.github.io/forevertalent/
 - classicwowforever.com talent evidence images: https://classicwowforever.com/talents/
 - wowforever.quest change summary (the removed talent lists): https://wowforever.quest/guides/wow-forever-talent-changes
-- Wowhead Forever section and talent calculator (JS driven, not scraped): https://www.wowhead.com/forever and https://www.wowhead.com/forever/talent-calc
+- Wowhead Forever section and talent calculator (JS driven, the listing pages need a browser): https://www.wowhead.com/forever and https://www.wowhead.com/forever/talent-calc. The spell and item tooltips are plain JSON at https://nether.wowhead.com/forever/tooltip/spell/8027?dataEnv=17&locale=0 (Classic: /classic/tooltip/spell/8027?dataEnv=4), populated from the beta 1.60.1 client. Base damage of most direct damage spells shows as a spell power coefficient there.
 - zockify talent calculator: https://www.zockify.com/forever/talents/
 - wowtbc.gg what we know: https://wowtbc.gg/warcraftforever/news/what-we-know/
 

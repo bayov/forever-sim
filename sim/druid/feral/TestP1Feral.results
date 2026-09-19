@@ -1,8 +1,8 @@
 character_stats_results: {
  key: "TestP1Feral-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 365.7
-  final_stats: 242.65
+  final_stats: 327.06
+  final_stats: 258.75
   final_stats: 386.17
   final_stats: 385.02
   final_stats: 336.95
@@ -18,21 +18,21 @@ character_stats_results: {
   final_stats: 29.22983
   final_stats: 0
   final_stats: 0
-  final_stats: 1960.05
+  final_stats: 1898.87
   final_stats: 0
-  final_stats: 34.0325
+  final_stats: 34.8375
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 8739.3
   final_stats: 0
   final_stats: 0
-  final_stats: 2047.3
+  final_stats: 2079.5
   final_stats: 506
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 17.0325
+  final_stats: 17.8375
   final_stats: 5
   final_stats: 0
   final_stats: 5737.935
@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestP1Feral-Phase1-StatWeights-Default"
  value: {
-  weights: 0.4344
-  weights: 0.48475
+  weights: 0.43774
+  weights: 0.43325
   weights: 0
   weights: 0
   weights: 0
@@ -67,9 +67,9 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.15739
+  weights: 0.1586
   weights: 0
-  weights: 4.57194
+  weights: 4.42111
   weights: 0
   weights: 0
   weights: 0
@@ -99,64 +99,64 @@ stat_weights_results: {
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-CenarionRaiment"
  value: {
-  dps: 474.92374
-  tps: 337.19585
+  dps: 468.62463
+  tps: 332.72349
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-Champion'sRefuge"
  value: {
-  dps: 552.22274
-  tps: 392.07815
+  dps: 545.75863
+  tps: 387.48863
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-FeralheartRaiment"
  value: {
-  dps: 567.53112
-  tps: 402.9471
+  dps: 561.96966
+  tps: 398.99846
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-FieldMarshal'sSanctuary"
  value: {
-  dps: 599.21809
-  tps: 425.44484
+  dps: 592.18745
+  tps: 420.45309
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-LieutenantCommander'sRefuge"
  value: {
-  dps: 552.22274
-  tps: 392.07815
+  dps: 545.75863
+  tps: 387.48863
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-StormrageRaiment"
  value: {
-  dps: 473.62692
-  tps: 336.27512
+  dps: 467.32782
+  tps: 331.80275
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-SymbolsofUnendingLife"
  value: {
-  dps: 552.48064
-  tps: 392.26126
+  dps: 546.47626
+  tps: 387.99814
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-Warlord'sSanctuary"
  value: {
-  dps: 599.21809
-  tps: 425.44484
+  dps: 592.18745
+  tps: 420.45309
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-Average-Default"
  value: {
-  dps: 497.25986
-  tps: 353.0545
+  dps: 491.08367
+  tps: 348.66941
  }
 }
 dps_results: {
@@ -288,22 +288,22 @@ dps_results: {
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Default-NoBleed-p1-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 211.31102
-  tps: 150.03082
+  dps: 209.65641
+  tps: 148.85605
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Default-NoBleed-p1-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 197.84854
-  tps: 140.47246
+  dps: 196.19393
+  tps: 139.29769
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Default-NoBleed-p1-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 224.6011
-  tps: 159.46678
+  dps: 222.29328
+  tps: 157.82823
  }
 }
 dps_results: {
@@ -330,22 +330,22 @@ dps_results: {
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Default-p1-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 211.31102
-  tps: 150.03082
+  dps: 209.65641
+  tps: 148.85605
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Default-p1-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 197.84854
-  tps: 140.47246
+  dps: 196.19393
+  tps: 139.29769
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Default-p1-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 224.6011
-  tps: 159.46678
+  dps: 222.29328
+  tps: 157.82823
  }
 }
 dps_results: {
@@ -372,22 +372,22 @@ dps_results: {
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Flower-Aoe-p1-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 211.31102
-  tps: 150.03082
+  dps: 209.65641
+  tps: 148.85605
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Flower-Aoe-p1-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 197.84854
-  tps: 140.47246
+  dps: 196.19393
+  tps: 139.29769
  }
 }
 dps_results: {
  key: "TestP1Feral-Phase1-Settings-Tauren-p0.bis-Flower-Aoe-p1-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 224.6011
-  tps: 159.46678
+  dps: 222.29328
+  tps: 157.82823
  }
 }
 dps_results: {
@@ -414,7 +414,7 @@ dps_results: {
 dps_results: {
  key: "TestP1Feral-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 232.87361
-  tps: 165.34026
+  dps: 227.70723
+  tps: 161.67213
  }
 }
