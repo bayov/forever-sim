@@ -37,6 +37,7 @@ import Level20p5APLJSON from './apls/level20p5.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
 import WindfuryAPLJSON from './apls/windfury.apl.json';
 import Level20GearJSON from './gear_sets/level20.gear.json';
+import Level20p5GearJSON from './gear_sets/level20p5.gear.json';
 import Phase1GearJSON from './gear_sets/phase_1.gear.json';
 import Phase2GearJSON from './gear_sets/phase_2.gear.json';
 import Phase3GearJSON from './gear_sets/phase_3.gear.json';
@@ -53,10 +54,18 @@ export const GearPhase1 = PresetUtils.makePresetGear('Phase 1', Phase1GearJSON);
 export const GearPhase2 = PresetUtils.makePresetGear('Phase 2', Phase2GearJSON);
 export const GearPhase3 = PresetUtils.makePresetGear('Phase 3', Phase3GearJSON);
 export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
+// Both level 20 sets come from the tools/rotopt gear search over every item a level 20
+// can equip, Forever quest rewards included, without the Scourge Invasion drops (The Axe
+// of Severing, Abomination Skin Leggings) the first search picked. With 11 points the
+// search wants Strength and attack power greens with Hammerbone. With 16 points Stormstrike
+// and two shocks drain the mana pool inside a minute, so the same search goes to Intellect
+// cloth (Necrology Robes, Mindthrust Bracers) that Mental Dexterity turns into attack
+// power as well: +4 DPS at 60 sec over the melee set, -1 with the 11 point build.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
+export const GearLevel20p5 = PresetUtils.makePresetGear('Level 20 + 5', Level20p5GearJSON);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearPhase1, GearLevel20],
+	[Phase.Phase1]: [GearPhase1, GearLevel20, GearLevel20p5],
 	[Phase.Phase2]: [GearPhase2],
 	[Phase.Phase3]: [GearPhase3],
 	[Phase.Phase4]: [],
@@ -328,10 +337,10 @@ export const PresetBuildLevel20 = PresetUtils.makePresetBuild('Level 20', {
 });
 
 // The same at level 20 with the 5 extra talent points the Forever beta is expected to
-// give (16 in all): the level 20 gear and encounter, Stormstrike in the talents and the
-// rotation. The races are within 1 DPS of each other.
+// give (16 in all): the level 20 encounter, the Intellect gear set, Stormstrike in the
+// talents and the rotation. The races are within 1 DPS of each other.
 export const PresetBuildLevel20p5 = PresetUtils.makePresetBuild('Level 20 + 5', {
-	gear: GearLevel20,
+	gear: GearLevel20p5,
 	talents: TalentsLevel20p5,
 	rotation: APLLevel20p5,
 	encounter: EncounterLevel20,

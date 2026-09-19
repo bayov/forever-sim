@@ -1,6 +1,6 @@
 # Stats and gear
 
-Blizzard called this "a deliberate un-solving of the Classic gear meta". These are rules, not numbers. No item stats for Forever have been published yet (as of 2026-09-14). The beta client will be the first source.
+Blizzard called this "a deliberate un-solving of the Classic gear meta". These are rules, not numbers. The beta is the first source of Forever item stats: as of 2026-09-19 the low level dungeon quest rewards and reputation gear are visible (wowhead Forever tooltips, wowforevertalents.com), the level 60 reputation gear shows hit and crit as whole numbers that look like ratings, and no raid item has appeared. See [sim-status.md](sim-status.md) for what the sim carries.
 
 ## Combat stat changes (from the Deep Dive panel)
 

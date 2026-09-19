@@ -22,7 +22,7 @@ gen() {
 }
 # Magma Totem edges out Searing since Stormstrike went to an 8 sec cooldown (+6 at 300 sec).
 gen optimized "shock=4,fireTotem=2" -level 60
-gen level20 "airTotem=0,strengthOfEarth=0,fireTotemMinTime=10,shield=1,shock=3,maelstromStacks=0" -level 20 -bonus-talents 0
+gen level20 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=3,maelstromStacks=0" -level 20 -bonus-talents 0
 # With the Forever beta's 16 points at level 20 (5 extra) Stormstrike is in reach (a 15
 # point talent under Forever), so its line is emitted. Flame Shock when its DoT is down
 # and Earth Shock otherwise (shock=4) beats the Frost Shock version (shock=6) by 0.5 at 60
