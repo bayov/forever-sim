@@ -87,6 +87,28 @@ var ItemSetThePostmaster = core.NewItemSet(core.ItemSet{
 //                                 Leather
 ///////////////////////////////////////////////////////////////////////////
 
+// Embrace of the Viper uses the Forever set bonuses (Wailing Caverns leather set).
+//
+// Classic gave it Defense, resistances and a small Intellect bonus. The Forever
+// beta reworked it into a leveling DPS set. The 4 piece heal when below 25%
+// health and the 5 piece Dream Venom stun (1 sec, bosses are immune) do not
+// change damage, so we only model the stat bonuses.
+var ItemSetEmbraceOfTheViper = core.NewItemSet(core.ItemSet{
+	Name: "Embrace of the Viper",
+	Bonuses: map[int32]core.ApplyEffect{
+		// +10 Intellect.
+		2: func(agent core.Agent) {
+			character := agent.GetCharacter()
+			character.AddStat(stats.Intellect, 10)
+		},
+		// +10 Attack Power.
+		3: func(agent core.Agent) {
+			character := agent.GetCharacter()
+			character.AddStat(stats.AttackPower, 10)
+		},
+	},
+})
+
 var ItemSetCadaverousGarb = core.NewItemSet(core.ItemSet{
 	Name: "Cadaverous Garb",
 	Bonuses: map[int32]core.ApplyEffect{
