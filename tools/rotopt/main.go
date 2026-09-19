@@ -87,7 +87,12 @@ func main() {
 		os.Exit(2)
 	}
 	if *race != "" {
-		setup.player().Race = proto.Race(proto.Race_value["Race"+*race])
+		id, ok := proto.Race_value["Race"+*race]
+		if !ok {
+			fmt.Fprintf(os.Stderr, "unknown race %q (SkyborneHighOrder, SkyborneWindshaper, Orc, ...)\n", *race)
+			os.Exit(2)
+		}
+		setup.player().Race = proto.Race(id)
 	}
 	if *level != 0 {
 		setup.player().Level = int32(*level)

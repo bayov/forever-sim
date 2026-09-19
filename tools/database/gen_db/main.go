@@ -160,6 +160,8 @@ func main() {
 	}
 
 	db.MergeItems(database.ItemOverrides)
+	db.MergeItems(database.ForeverItems)
+	db.MergeFactions(database.ForeverFactions)
 	db.MergeEnchants(database.EnchantOverrides)
 	ApplyGlobalFilters(db)
 	AttachFactionInformation(db, wagoItems)
