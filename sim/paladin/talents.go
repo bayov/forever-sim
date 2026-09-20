@@ -8,12 +8,16 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+// The Forever trees from the beta client (build 1.60.1.69876). Talents the sim does not
+// read: Spiritual Focus, Unyielding Faith, Voice of Truth, Infusion of Light,
+// Illumination, Light's Vigil, Guardian's Favor, Improved Seal of Fury, Swift Judgement,
+// Improved Hammer of Justice, Templar's Bulwark, Pursuit of Justice, Eye for an Eye,
+// Repentance, Twist of Light. Healing Light only touches heals.
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeHit, float64(paladin.Talents.Precision)*core.MeleeHitRatingPerHitChance)
-	// TODO: paladin.AddStat(stats.RangedHit, float64(paladin.Talents.Precision)*core.MeleeHitRatingPerHitChance)
-
+	paladin.AddStat(stats.SpellHit, float64(paladin.Talents.DivinePrecision)*6*core.SpellHitRatingPerHitChance)
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
-	// TODO: paladin.AddStat(stats.RangedCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
+	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.HolyPower)*core.SpellCritRatingPerCritChance)
 
 	if paladin.Talents.Toughness > 0 {
 		paladin.ApplyEquipScaling(stats.Armor, 1.0+0.02*float64(paladin.Talents.Toughness))
@@ -22,42 +26,60 @@ func (paladin *Paladin) ApplyTalents() {
 	// These are no-op if untalented.
 	paladin.MultiplyStat(stats.Strength, 1.0+0.02*float64(paladin.Talents.DivineStrength))
 	paladin.MultiplyStat(stats.Intellect, 1.0+0.02*float64(paladin.Talents.DivineIntellect))
-	paladin.AddStat(stats.Defense, 2*float64(paladin.Talents.Anticipation))
+	paladin.MultiplyStat(stats.Stamina, 1.0+0.02*float64(paladin.Talents.SacredDuty))
+	paladin.AddStat(stats.Defense, 4*float64(paladin.Talents.Anticipation))
+	paladin.AddStat(stats.Parry, 1*float64(paladin.Talents.Deflection))
 
 	// Shield Specialization bonus is additive. NOTE: Total SBV will be inflated until
 	// https://github.com/wowsims/sod/issues/1025 gets resolved.
 	paladin.PseudoStats.BlockValueMultiplier += 0.1 * float64(paladin.Talents.ShieldSpecialization)
 
-	paladin.AddStat(stats.Parry, 1*float64(paladin.Talents.Deflection))
+	// Reverence lets part of the mana regeneration through while the paladin is inside
+	// the five second rule, which a paladin that seals and judges always is.
+	paladin.PseudoStats.SpiritRegenRateCasting += 0.1 * float64(paladin.Talents.Reverence)
+
+	// Champion of the Light turns Intellect into spell damage and healing.
+	if paladin.Talents.ChampionOfTheLight > 0 {
+		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, 0.33, 0.66, 1}[paladin.Talents.ChampionOfTheLight])
+	}
 
 	paladin.applyWeaponSpecialization()
-	if paladin.Talents.Vengeance > 0 {
-		paladin.applyVengeance()
-	}
-	if paladin.Talents.Vindication > 0 {
-		paladin.applyVindication()
-	}
-	paladin.PseudoStats.SchoolBonusCritChance[stats.SchoolIndexHoly] += core.SpellCritRatingPerCritChance * float64(paladin.Talents.HolyPower)
-
+	paladin.applyCrusade()
+	paladin.applyVengeance()
+	paladin.applyVindication()
 	paladin.applyRedoubt()
 	paladin.applyReckoning()
-	paladin.applyImprovedLayOnHands()
+	paladin.applyShieldSpecializationMana()
+	paladin.applyConsecratedGround()
 }
 
-func (paladin *Paladin) improvedSoR() float64 {
-	return []float64{1, 1.03, 1.06, 1.09, 1.12, 1.15}[paladin.Talents.ImprovedSealOfRighteousness]
+// Improved Seals raises the damage of every seal proc and judgement.
+func (paladin *Paladin) improvedSeals() float64 {
+	return []float64{1, 1.05, 1.10, 1.15}[paladin.Talents.ImprovedSeals]
 }
 
+// Benediction takes 2% per point off instant spells and abilities.
 func (paladin *Paladin) benediction() int32 {
-	return []int32{100, 97, 94, 91, 88, 85}[paladin.Talents.Benediction]
+	return []int32{100, 98, 96, 94, 92, 90}[paladin.Talents.Benediction]
 }
 
+// Holy Conduit takes 20% per point off Consecration, Holy Wrath, Exorcism and Hammer of Wrath.
+func (paladin *Paladin) holyConduit() int32 {
+	return []int32{100, 80, 60}[paladin.Talents.HolyConduit]
+}
+
+// Purifying Power shortens the Exorcism and Holy Wrath cooldowns by 17% per point.
+func (paladin *Paladin) purifyingPower(cd time.Duration) time.Duration {
+	return time.Duration(float64(cd) * []float64{1, 0.83, 0.67}[paladin.Talents.PurifyingPower])
+}
+
+// Redoubt now procs from any damaging melee attack taken (10% chance), Classic needed a
+// crit. The block bonus is 6% per point for 10 sec or 5 blocks.
 func (paladin *Paladin) applyRedoubt() {
 	if paladin.Talents.Redoubt == 0 {
 		return
 	}
 
-	// Redoubt grants 6% block chance per point.
 	blockBonus := 6.0 * float64(paladin.Talents.Redoubt) * core.BlockRatingPerBlockChance
 
 	paladin.redoubtAura = paladin.RegisterAura(core.Aura{
@@ -78,48 +100,87 @@ func (paladin *Paladin) applyRedoubt() {
 		},
 	})
 
-	paladin.RegisterAura(core.Aura{
-		Label:    "Redoubt Crit Trigger",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.DidCrit() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-				paladin.redoubtAura.Activate(sim)
-				paladin.redoubtAura.SetStacks(sim, 5)
-			}
+	core.MakeProcTriggerAura(&paladin.Unit, core.ProcTrigger{
+		Name:       "Redoubt Trigger",
+		Callback:   core.CallbackOnSpellHitTaken,
+		Outcome:    core.OutcomeLanded,
+		ProcMask:   core.ProcMaskMelee,
+		ProcChance: 0.1,
+		Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			paladin.redoubtAura.Activate(sim)
+			paladin.redoubtAura.SetStacks(sim, 5)
 		},
 	})
 }
 
+// Reckoning gives an extra attack on 20% per point of the crits taken, and on 8% per
+// point of the blocks.
 func (paladin *Paladin) applyReckoning() {
-
 	if paladin.Talents.Reckoning == 0 {
 		return
 	}
 
 	procID := core.ActionID{SpellID: 20178} // Reckoning Proc ID
-	procChance := 0.2 * float64(paladin.Talents.Reckoning)
+	critChance := 0.2 * float64(paladin.Talents.Reckoning)
+	blockChance := 0.08 * float64(paladin.Talents.Reckoning)
 
-	core.MakeProcTriggerAura(&paladin.Unit, core.ProcTrigger{
-		Name:       "Reckoning Crit Trigger",
-		Callback:   core.CallbackOnSpellHitTaken,
-		Outcome:    core.OutcomeCrit,
-		ProcMask:   core.ProcMaskMeleeOrRanged,
-		ProcChance: procChance,
-		Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			paladin.AutoAttacks.ExtraMHAttack(sim, 1, procID, spell.ActionID)
+	paladin.RegisterAura(core.Aura{
+		Label:    "Reckoning Trigger",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				return
+			}
+			if result.DidCrit() && sim.Proc(critChance, "Reckoning") ||
+				result.DidBlock() && sim.Proc(blockChance, "Reckoning") {
+				paladin.AutoAttacks.ExtraMHAttack(sim, 1, procID, spell.ActionID)
+			}
 		},
 	})
 }
 
+// Shield Specialization's second half: a block has a 33% chance per point to restore
+// 6% of the paladin's maximum mana, once every 3 sec.
+func (paladin *Paladin) applyShieldSpecializationMana() {
+	if paladin.Talents.ShieldSpecialization == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 20150}
+	manaMetrics := paladin.NewManaMetrics(actionID)
+	procChance := []float64{0, 0.33, 0.66, 1}[paladin.Talents.ShieldSpecialization]
+	icd := core.Cooldown{
+		Timer:    paladin.NewTimer(),
+		Duration: time.Second * 3,
+	}
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Shield Specialization Mana",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidBlock() && icd.IsReady(sim) && sim.Proc(procChance, "Shield Specialization") {
+				icd.Use(sim)
+				paladin.AddMana(sim, 0.06*paladin.MaxMana(), manaMetrics)
+			}
+		},
+	})
+}
+
+// The one and two handed specializations. Forever's ranks are 3/7/10% for one handers
+// and 3/6/9% for two handers, and they scale everything physical the weapon deals,
+// plus the seal procs and judgements that roll as melee.
 func (paladin *Paladin) getWeaponSpecializationModifier() float64 {
 	handType := paladin.MainHand().HandType
 	if handType == proto.HandType_HandTypeMainHand || handType == proto.HandType_HandTypeOneHand {
-		return 1. + 0.02*float64(paladin.Talents.OneHandedWeaponSpecialization)
+		return []float64{1, 1.03, 1.07, 1.10}[paladin.Talents.OneHandedWeaponSpecialization]
 	} else if handType == proto.HandType_HandTypeTwoHand {
-		return 1. + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
+		return []float64{1, 1.03, 1.06, 1.09}[paladin.Talents.TwoHandedWeaponSpecialization]
 	} else {
 		return 1.
 	}
@@ -130,24 +191,52 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 	paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= paladin.getWeaponSpecializationModifier()
 }
 
+// Crusade is 1% per point on all damage, and as much again against Demons and Undead.
+func (paladin *Paladin) applyCrusade() {
+	if paladin.Talents.Crusade == 0 {
+		return
+	}
+	bonus := 1 + 0.01*float64(paladin.Talents.Crusade)
+	paladin.PseudoStats.DamageDealtMultiplier *= bonus
+	paladin.mobTypeDamageAura(proto.MobType_MobTypeDemon, bonus)
+	paladin.mobTypeDamageAura(proto.MobType_MobTypeUndead, bonus)
+}
+
+// Crusade's creature half, applied to the attack tables the way the racial creature
+// bonuses are (the targets are only known after finalize).
+func (paladin *Paladin) mobTypeDamageAura(mobType proto.MobType, multiplier float64) {
+	paladin.Env.RegisterPostFinalizeEffect(func() {
+		for _, t := range paladin.Env.Encounter.Targets {
+			if t.MobType == mobType {
+				for _, at := range paladin.AttackTables[t.UnitIndex] {
+					at.DamageDealtMultiplier *= multiplier
+					at.CritMultiplier *= multiplier
+				}
+			}
+		}
+	})
+}
+
+// Vengeance stacks 1% per point of Physical and Holy damage for every crit, up to 5
+// stacks, for 30 sec. Classic was a flat 3% per point for 8 sec.
 func (paladin *Paladin) applyVengeance() {
 	if paladin.Talents.Vengeance == 0 {
 		return
 	}
 
-	vengeanceMultiplier := []float64{1, 1.03, 1.06, 1.09, 1.12, 1.15}[paladin.Talents.Vengeance]
+	perStack := 0.01 * float64(paladin.Talents.Vengeance)
+	multiplier := func(stacks int32) float64 {
+		return 1 + perStack*float64(stacks)
+	}
 
 	procAura := paladin.RegisterAura(core.Aura{
-		Label:    "Vengeance Proc",
-		ActionID: core.ActionID{SpellID: 20059},
-		Duration: time.Second * 8,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= vengeanceMultiplier
-			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= vengeanceMultiplier
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] /= vengeanceMultiplier
-			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= vengeanceMultiplier
+		Label:     "Vengeance Proc",
+		ActionID:  core.ActionID{SpellID: 20059},
+		Duration:  time.Second * 30,
+		MaxStacks: 5,
+		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= multiplier(newStacks) / multiplier(oldStacks)
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier(newStacks) / multiplier(oldStacks)
 		},
 	})
 
@@ -160,40 +249,31 @@ func (paladin *Paladin) applyVengeance() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.DidCrit() {
 				procAura.Activate(sim)
+				procAura.AddStack(sim)
 			}
 		},
 	})
 }
 
+// Vindication gives the paladin 1% per point of attack power for 30 sec on a melee hit
+// (and takes attack power from the target, which the sim does not score).
 func (paladin *Paladin) applyVindication() {
 	if paladin.Talents.Vindication == 0 {
 		return
 	}
-	//vindicationMultiplier := []float64{1, 1.05, 1.10, 1.15}[paladin.Talents.Vengeance]
-	vindicationMultiplier := []*stats.StatDependency{
-		paladin.NewDynamicMultiplyStat(stats.AttackPower, 1.00),
-		paladin.NewDynamicMultiplyStat(stats.AttackPower, 1.05),
-		paladin.NewDynamicMultiplyStat(stats.AttackPower, 1.10),
-		paladin.NewDynamicMultiplyStat(stats.AttackPower, 1.15),
-	}
+	vindicationMultiplier := paladin.NewDynamicMultiplyStat(stats.AttackPower, 1+0.01*float64(paladin.Talents.Vindication))
 
 	vindicationAura := paladin.RegisterAura(core.Aura{
 		Label:    "Vindication Proc",
 		ActionID: core.ActionID{SpellID: 26021},
 		Duration: time.Second * 30,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			paladin.EnableDynamicStatDep(sim, vindicationMultiplier[0])
-		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			paladin.EnableDynamicStatDep(sim, vindicationMultiplier[paladin.Talents.Vindication])
+			paladin.EnableDynamicStatDep(sim, vindicationMultiplier)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			paladin.DisableDynamicStatDep(sim, vindicationMultiplier[paladin.Talents.Vindication])
+			paladin.DisableDynamicStatDep(sim, vindicationMultiplier)
 		},
 	})
-	// 	vindicationAuras := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-	// 		return core.VindicationAura(target, paladin.Talents.Vindication)
-	// 	})
 	paladin.RegisterAura(core.Aura{
 		Label:    "Vindication Talent",
 		Duration: core.NeverExpires,
@@ -209,28 +289,23 @@ func (paladin *Paladin) applyVindication() {
 	})
 }
 
-func (paladin *Paladin) applyImprovedLayOnHands() {
-
-	if paladin.Talents.ImprovedLayOnHands > 0 {
-
-		armorMultiplier := []float64{1, 1.15, 1.3}[paladin.Talents.ImprovedLayOnHands]
-		auraID := []int32{0, 20233, 20236}[paladin.Talents.ImprovedLayOnHands]
-
-		paladin.RegisterAura(core.Aura{
-			Label:    "Lay on Hands",
-			ActionID: core.ActionID{SpellID: auraID},
-			Duration: time.Minute * 2,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				paladin.ApplyDynamicEquipScaling(sim, stats.Armor, armorMultiplier)
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				paladin.RemoveDynamicEquipScaling(sim, stats.Armor, armorMultiplier)
-			},
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if spell.SpellCode == SpellCode_PaladinLayOnHands {
-					aura.Activate(sim)
-				}
-			},
-		})
+// Consecrated Ground: Holy spells deal 5% per point more to the first four enemies
+// inside the paladin's Consecration. The sim's targets all stand in it, so the bonus is
+// a paladin buff that Consecration puts up for its 8 sec.
+func (paladin *Paladin) applyConsecratedGround() {
+	if paladin.Talents.ConsecratedGround == 0 {
+		return
 	}
+	multiplier := 1 + 0.05*float64(paladin.Talents.ConsecratedGround)
+	paladin.consecratedGroundAura = paladin.RegisterAura(core.Aura{
+		Label:    "Consecrated Ground",
+		ActionID: core.ActionID{SpellID: 1310905},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= multiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] /= multiplier
+		},
+	})
 }

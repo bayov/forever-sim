@@ -278,10 +278,11 @@ export const RetributionAura = makeTristateRaidBuffInput({
 	showWhen: player => player.hasFactionBuffs(Faction.Alliance),
 });
 
+// Sanctity Aura is not in Forever's Retribution tree, the sim ignores it there.
 export const SanctityAura = makeBooleanRaidBuffInput({
 	actionId: () => ActionId.fromSpellId(20218),
 	fieldName: 'sanctityAura',
-	showWhen: player => player.hasFactionBuffs(Faction.Alliance),
+	showWhen: player => player.hasFactionBuffs(Faction.Alliance) && player.sim.getRuleset() !== Ruleset.RulesetForever,
 });
 
 export const Thorns = makeTristateRaidBuffInput({

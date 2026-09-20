@@ -11,13 +11,8 @@ export const AuraSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 	fieldName: 'aura',
 	values: [
 		{ value: PaladinAura.NoPaladinAura, tooltip: 'No Aura' },
-		{ actionId: () => ActionId.fromSpellId(20218), value: PaladinAura.SanctityAura },
-		//{ actionId: () => ActionId.fromSpellId(10299), value: PaladinAura.DevotionAura },
-		//{ actionId: () => ActionId.fromSpellId(10299), value: PaladinAura.RetributionAura },
-		//{ actionId: () => ActionId.fromSpellId(19746), value: PaladinAura.ConcentrationAura },
-		//{ actionId: () => ActionId.fromSpellId(19888), value: PaladinAura.FrostResistanceAura },
-		//{ actionId: () => ActionId.fromSpellId(19892), value: PaladinAura.ShadowResistanceAura },
-		//{ actionId: () => ActionId.fromSpellId(19891), value: PaladinAura.FireResistanceAura },
+		// Sanctity Aura is not in Forever's Retribution tree.
+		{ actionId: () => ActionId.fromSpellId(10301), value: PaladinAura.RetributionAura },
 	],
 });
 

@@ -25,10 +25,12 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 
 	if targetIdx == 0 {
-		if debuffs.JudgementOfTheCrusader == proto.TristateEffect_TristateEffectRegular {
-			MakePermanent(JudgementOfTheCrusaderAura(nil, target, 1, 0))
-		} else if debuffs.JudgementOfTheCrusader == proto.TristateEffect_TristateEffectImproved {
-			MakePermanent(JudgementOfTheCrusaderAura(nil, target, 1.15, 0))
+		// Forever's judgement carries the old Improved Seal of the Crusader value (161 at
+		// rank 6) whether or not the tristate says improved.
+		if debuffs.JudgementOfTheCrusader == proto.TristateEffect_TristateEffectRegular && !target.Env.IsForever() {
+			MakePermanent(JudgementOfTheCrusaderAura(nil, target, 140, 10*time.Second))
+		} else if debuffs.JudgementOfTheCrusader != proto.TristateEffect_TristateEffectMissing {
+			MakePermanent(JudgementOfTheCrusaderAura(nil, target, 161, 10*time.Second))
 		}
 	}
 
@@ -468,18 +470,16 @@ func JudgementOfLightAura(target *Unit) *Aura {
 	})
 }
 
-func JudgementOfTheCrusaderAura(caster *Unit, target *Unit, mult float64, extraBonus float64) *Aura {
+// bonus is the Holy damage taken the judgement adds, duration how long it lasts before
+// a melee strike of the caster has to refresh it (10 sec in Classic, 40 under Forever).
+func JudgementOfTheCrusaderAura(caster *Unit, target *Unit, bonus float64, duration time.Duration) *Aura {
 	var spellId int32 = 20303
-	var bonus float64 = 140
-
-	bonus *= mult
-	bonus += extraBonus
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Judgement of the Crusader",
 		ActionID: ActionID{SpellID: spellId},
 		Tag:      JudgementAuraTag,
-		Duration: 10 * time.Second,
+		Duration: duration,
 
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] += bonus

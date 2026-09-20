@@ -8,6 +8,18 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.69876 (2026-09-16)
+
+The beta client's paladin tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876), against the BlizzCon data below. Positions, rank counts and prerequisites all held. Ranks 2 and up are now real numbers, and `tools/forever_talents/data/paladin.json` in the sim repo is regenerated from the client tree (`client/paladin.json`) since 2026-09-20, so the per-talent text below is superseded where it differs. The sim follows the client.
+
+- Vengeance is 1 / 2 / 3% per stack (5 stacks, 30 sec), Redoubt 6 to 30% block, Iron Creed 5 to 25% threat and 2 to 10% damage taken, Shield Specialization 10 / 20 / 30% and 33 / 66 / 100% mana chance, Sacred Duty 2 / 4% and 30 / 60 sec, Instrument of Law 0.5 / 1.0 sec: the multi-rank new talents scale linearly where the transcription had rank 1 repeated.
+- One-Handed Weapon Specialization is 3 / 7 / 10%, Champion of the Light 33 / 66 / 100%, Sanctified Judgement 33 / 66 / 100%, Pursuit of Justice 8 / 15%, Purifying Power 17 / 33%.
+- Vindication takes 66.8 / 133.7 / 200.5 attack power off the target (42 in the footage, level 38).
+- Consecrated Ground stays at the first 4 enemies at rank 2 (the transcription scaled it to 8). Improved Seal of Fury restores 60 mana (38 at level 38).
+- Precision reads "Improves your chance to hit by 1%" (the transcription said "with all spells and attacks").
+
+Wowhead's Forever database (2026-09-20) has the trainer abilities, see [../sim-status.md](../sim-status.md) for the numbers the sim took from it (Holy Strike ranks, Judgement, blessings, Consecration, Retribution Aura, Righteous Fury, Holy Shield, Holy Shock). Its talent tooltips show one rank each and disagree with the client on a few values (Improved Seals 3%, Vengeance 5%, One-Handed Weapon Specialization 2%), so the sim keeps the client's.
+
 ## Spellbook changes (trainer abilities)
 
 33 of 51 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).

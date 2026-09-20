@@ -25,7 +25,11 @@ func (paladin *Paladin) registerLayOnHands() {
 	actionID := core.ActionID{SpellID: spellID}
 	layOnHandsManaMetrics := paladin.NewManaMetrics(actionID)
 	layOnHandsHealthMetrics := paladin.NewHealthMetrics(actionID)
-	layOnHands := paladin.RegisterSpell(core.SpellConfig{
+	// Not a major cooldown. It used to fire itself under 10% health, which the sim only
+	// tracks when a healing model is set (the UI always sets one), and then a paladin
+	// taking hits dumped its whole mana pool on a heal the sim does nothing with. A
+	// rotation that wants it casts it by name.
+	paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		ProcMask:    core.ProcMaskSpellHealing,
 		Flags:       core.SpellFlagAPL | core.SpellFlagMCD,
@@ -36,8 +40,9 @@ func (paladin *Paladin) registerLayOnHands() {
 				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
-				Timer:    paladin.NewTimer(),
-				Duration: time.Minute * time.Duration(60-10*paladin.Talents.ImprovedLayOnHands),
+				Timer: paladin.NewTimer(),
+				// Forever cut the cooldown from an hour to 20 min.
+				Duration: time.Minute * 20,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -47,12 +52,4 @@ func (paladin *Paladin) registerLayOnHands() {
 		},
 	})
 
-	paladin.AddMajorCooldown(core.MajorCooldown{
-		Spell:    layOnHands,
-		Priority: core.CooldownPriorityBloodlust,
-		Type:     core.CooldownTypeSurvival,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return character.CurrentHealthPercent() < 0.1 // TODO: better default condition
-		},
-	})
 }

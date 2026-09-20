@@ -332,7 +332,8 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		MakePermanent(BlessingOfKingsAura(character))
 	}
 
-	if raidBuffs.SanctityAura && isAlliance {
+	// Sanctity Aura is not in Forever's Retribution tree.
+	if raidBuffs.SanctityAura && isAlliance && !character.Env.IsForever() {
 		MakePermanent(SanctityAuraAura(character))
 	}
 
@@ -352,7 +353,11 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 	}
 
 	if raidBuffs.RetributionAura != proto.TristateEffect_TristateEffectMissing && isAlliance {
-		RetributionAura(character, GetTristateValueInt32(raidBuffs.RetributionAura, 0, 2))
+		if character.Env.IsForever() {
+			ForeverRetributionAura(character)
+		} else {
+			RetributionAura(character, GetTristateValueInt32(raidBuffs.RetributionAura, 0, 2))
+		}
 	}
 
 	if raidBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
@@ -375,7 +380,10 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 
 	if individualBuffs.BlessingOfWisdom > 0 && isAlliance {
 		updateStats := BuffSpellValues[BlessingOfWisdom]
-		if individualBuffs.BlessingOfWisdom == proto.TristateEffect_TristateEffectImproved {
+		if character.Env.IsForever() {
+			// Forever's ranks by level, Improved Blessing of Wisdom is gone.
+			updateStats = stats.Stats{stats.MP5: foreverBlessingOfWisdomMP5[HighestRankAt(character.Level, foreverBlessingOfWisdomLevel[:])]}
+		} else if individualBuffs.BlessingOfWisdom == proto.TristateEffect_TristateEffectImproved {
 			updateStats = updateStats.Multiply(1.2)
 		}
 		character.AddStats(updateStats)
@@ -602,12 +610,33 @@ func StoneskinTotemAura(unit *Unit, points int32) *Aura {
 	})
 }
 
+// Forever's Retribution Aura ranks (7 / 12 / 18 / 24 / 30, Classic's with Improved
+// Retribution Aura folded in), for another paladin's aura on the character. The paladin's
+// own is in sim/paladin/retribution_aura.go and does not stack with it.
+var ForeverRetributionAuraLevel = [...]int{0, 16, 26, 36, 46, 56}
+var ForeverRetributionAuraSpellId = [...]int32{0, 7294, 10298, 10299, 10300, 10301}
+var ForeverRetributionAuraDamage = [...]float64{0, 7, 12, 18, 24, 30}
+
+func ForeverRetributionAura(character *Character) *Aura {
+	rank := HighestRankAt(character.Level, ForeverRetributionAuraLevel[:])
+	if rank == 0 {
+		return nil
+	}
+	return retributionAura(character, ForeverRetributionAuraSpellId[rank], ForeverRetributionAuraDamage[rank])
+}
+
 func RetributionAura(character *Character, points int32) *Aura {
 	baseDamage := 20.0
-
-	actionID := ActionID{SpellID: 10301}
-
 	damage := float64(baseDamage) * (1 + 0.25*float64(points))
+	return retributionAura(character, 10301, damage)
+}
+
+func retributionAura(character *Character, spellID int32, damage float64) *Aura {
+	// A raid paladin's aura and the character's own (a paladin) are the same buff.
+	if aura := character.GetAura("Retribution Aura"); aura != nil {
+		return aura
+	}
+	actionID := ActionID{SpellID: spellID}
 
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
@@ -1464,10 +1493,25 @@ func TrueshotAura(unit *Unit) *Aura {
 	return aura
 }
 
+// Forever's blessings last an hour and the Improved Blessing talents are gone. Blessing
+// of Might gives 14 / 25 / 40 / 61 / 83 / 112 / 133 attack power by rank, 72% of
+// Classic's, and Blessing of Wisdom 12 / 18 / 24 / 30 / 36 / 40 mana per 5 sec, 120% of
+// Classic's (wowhead's Forever database).
+var foreverBlessingOfMightLevel = [...]int{0, 4, 12, 22, 32, 42, 52, 60}
+var foreverBlessingOfMightSpellId = [...]int32{0, 19740, 19834, 19835, 19836, 19837, 19838, 25291}
+var foreverBlessingOfMightAP = [...]float64{0, 14, 25, 40, 61, 83, 112, 133}
+var foreverBlessingOfWisdomLevel = [...]int{0, 14, 24, 34, 44, 54, 60}
+var foreverBlessingOfWisdomMP5 = [...]float64{0, 12, 18, 24, 30, 36, 40}
+
 func BlessingOfMightAura(unit *Unit, impBomPts int32) *Aura {
 	spellID := TernaryInt32(IncludeAQ, 25291, 19838)
 
 	bonusAP := math.Floor(BuffSpellValues[BlessingOfMight][stats.AttackPower] * (1 + 0.04*float64(impBomPts)))
+	if unit.Env.IsForever() {
+		rank := HighestRankAt(unit.Level, foreverBlessingOfMightLevel[:])
+		spellID = foreverBlessingOfMightSpellId[rank]
+		bonusAP = foreverBlessingOfMightAP[rank]
+	}
 
 	aura := MakePermanent(unit.GetOrRegisterAura(Aura{
 		Label:      "Blessing of Might",

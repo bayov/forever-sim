@@ -7,6 +7,9 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
+// Forever's Exorcism keeps Classic's cost, cooldown and Undead or Demon restriction.
+// Wowhead hides its base damage behind the spell power coefficient, so the Classic
+// numbers stay (the BlizzCon footage read rank 3 about 12% under Classic at level 38).
 func (paladin *Paladin) registerExorcism() {
 	ranks := []struct {
 		level      int32
@@ -46,7 +49,8 @@ func (paladin *Paladin) registerExorcism() {
 
 			SpellCode: SpellCode_PaladinExorcism,
 			ManaCost: core.ManaCostOptions{
-				FlatCost: rank.manaCost,
+				FlatCost:   rank.manaCost,
+				Multiplier: paladin.holyConduit(),
 			},
 
 			Cast: core.CastConfig{
@@ -55,7 +59,7 @@ func (paladin *Paladin) registerExorcism() {
 				},
 				CD: core.Cooldown{
 					Timer:    paladin.NewTimer(),
-					Duration: time.Second * 15,
+					Duration: paladin.purifyingPower(time.Second * 15),
 				},
 			},
 
@@ -64,7 +68,7 @@ func (paladin *Paladin) registerExorcism() {
 
 			BonusCoefficient: 0.429,
 
-			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool { 
+			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 				return target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead
 			},
 

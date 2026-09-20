@@ -45,7 +45,8 @@ func (paladin *Paladin) registerHolyWrath() {
 			Rank:          i + 1,
 
 			ManaCost: core.ManaCostOptions{
-				FlatCost: rank.manaCost,
+				FlatCost:   rank.manaCost,
+				Multiplier: paladin.holyConduit(),
 			},
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -55,7 +56,7 @@ func (paladin *Paladin) registerHolyWrath() {
 
 				CD: core.Cooldown{
 					Timer:    paladin.NewTimer(),
-					Duration: time.Second * 60,
+					Duration: paladin.purifyingPower(time.Second * 60),
 				},
 			},
 

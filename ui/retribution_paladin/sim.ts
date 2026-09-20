@@ -14,8 +14,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	cssScheme: 'paladin',
 	// List any known bugs / issues here and they'll be shown on the site.
 	knownIssues: [
-		`Judgement of the Crusader is currently not implemented; users can manually award themselves the relevant spellpower amount
-		for a dps gain that will be slightly inflated given JotC does not benefit from source damage modifiers.`,
+		`Forever rules: a Judgement does not consume the seal, Judgement of the Crusader lasts 40 sec and melee hits refresh it,
+		Holy Strike is baseline, Consecration is baseline and reworked, and the talent trees are the beta client's. Twist of Light,
+		Seal of Fury and Light's Vigil are not simulated.`,
 		`Be aware that not all item and weapon enchants are currently implemented in the sim, which make some notable Retribution
 		weapons like Pendulum of Doom and The Jackhammer undervalued.`,
 	],
@@ -134,6 +135,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildLevel20],
 		rotations: [
 			...Presets.APLPresets[Phase.Phase4],
 			...Presets.APLPresets[Phase.Phase3],
@@ -148,7 +150,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			...Presets.TalentPresets[Phase.Phase1],
 		],
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.DefaultGear],
+		gear: [Presets.DefaultGear, Presets.GearLevel20],
 	},
 
 	autoRotation: player => {

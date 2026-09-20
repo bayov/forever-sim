@@ -4,6 +4,29 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/382.jpg",
     "talents": [
       {
+        "fieldName": "improvedHolyStrike",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Improved Holy Strike",
+        "description": "Reduces the cooldown of your Holy Strike ability by {0} sec.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "icon": "classicon_paladin"
+      },
+      {
         "fieldName": "divineStrength",
         "location": {
           "rowIdx": 0,
@@ -16,7 +39,27 @@
           20265,
           20266
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Divine Strength",
+        "description": "Increases your Strength by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "ability_golemthunderclap"
       },
       {
         "fieldName": "divineIntellect",
@@ -31,7 +74,55 @@
           20260,
           20261
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Divine Intellect",
+        "description": "Increases your total Intellect by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_nature_sleep"
+      },
+      {
+        "fieldName": "healingLight",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 0
+        },
+        "spellIds": [
+          20237,
+          20238,
+          20239
+        ],
+        "maxPoints": 3,
+        "name": "Healing Light",
+        "description": "Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by {0}%.",
+        "ranks": [
+          [
+            4
+          ],
+          [
+            8
+          ],
+          [
+            12
+          ]
+        ],
+        "icon": "spell_holy_holybolt",
+        "notSimulated": true
       },
       {
         "fieldName": "spiritualFocus",
@@ -46,75 +137,177 @@
           20208,
           20209
         ],
-        "maxPoints": 5
+        "maxPoints": 2,
+        "name": "Spiritual Focus",
+        "description": "Gives your Flash of Light, Holy Light, and Light's Vigil spells a {0}% chance to not lose casting time when you take damage.",
+        "ranks": [
+          [
+            35
+          ],
+          [
+            70
+          ]
+        ],
+        "icon": "spell_arcane_blink",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedSealOfRighteousness",
+        "fieldName": "improvedSeals",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          20224,
-          20225,
-          20330,
-          20331,
-          20332
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "healingLight",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 0
-        },
-        "spellIds": [
-          20237,
-          20238,
-          20239
+        "maxPoints": 3,
+        "name": "Improved Seals",
+        "description": "Increases the damage done by your Seals and Judgements by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ]
         ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "consecration",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 1
-        },
-        "spellIds": [
-          26573
-        ],
-        "maxPoints": 1
-      },
-      {
-        "fieldName": "improvedLayOnHands",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 2
-        },
-        "spellIds": [
-          20234,
-          20235
-        ],
-        "maxPoints": 2
+        "icon": "ability_thunderbolt"
       },
       {
         "fieldName": "unyieldingFaith",
         "location": {
-          "rowIdx": 2,
+          "rowIdx": 1,
           "colIdx": 3
         },
         "spellIds": [
           9453,
           25836
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Unyielding Faith",
+        "description": "Reduces the duration of Fear and Disorient effects on you by {0}%.",
+        "ranks": [
+          [
+            15
+          ],
+          [
+            30
+          ]
+        ],
+        "icon": "spell_holy_unyieldingfaith",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "voiceOfTruth",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1,
+        "name": "Voice of Truth",
+        "description": "Grants you immunity to Silence and Interrupt effects. Lasts {0} sec.",
+        "ranks": [
+          [
+            6
+          ]
+        ],
+        "icon": "inv_misc_horn_03",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "reverence",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 1
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Reverence",
+        "description": "Allows {0}% of your Mana regeneration to continue while casting.",
+        "ranks": [
+          [
+            10
+          ],
+          [
+            20
+          ],
+          [
+            30
+          ]
+        ],
+        "icon": "spell_holy_divineillumination"
+      },
+      {
+        "fieldName": "purifyingPower",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 2
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Purifying Power",
+        "description": "Reduces the mana cost of your Cleanse and Purify spells by {0}% and reduces the cooldown of your Exorcism and Holy Wrath spells by {1}%.",
+        "ranks": [
+          [
+            10,
+            17
+          ],
+          [
+            20,
+            33
+          ]
+        ],
+        "icon": "spell_holy_purifyingpower"
+      },
+      {
+        "fieldName": "infusionOfLight",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Infusion of Light",
+        "description": "Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within {0} sec by {1} sec.",
+        "ranks": [
+          [
+            15,
+            0.5
+          ],
+          [
+            15,
+            1
+          ]
+        ],
+        "icon": "ability_paladin_infusionoflight",
+        "notSimulated": true
       },
       {
         "fieldName": "illumination",
         "location": {
           "rowIdx": 3,
+          "colIdx": 1
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
           "colIdx": 1
         },
         "spellIds": [
@@ -124,47 +317,129 @@
           20214,
           20215
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "improvedBlessingOfWisdom",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 2
-        },
-        "spellIds": [
-          20244,
-          20245
+        "maxPoints": 5,
+        "name": "Illumination",
+        "description": "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a {0}% chance to gain Mana equal to {1}% of the base cost of the spell.",
+        "ranks": [
+          [
+            20,
+            50
+          ],
+          [
+            40,
+            50
+          ],
+          [
+            60,
+            50
+          ],
+          [
+            80,
+            50
+          ],
+          [
+            100,
+            50
+          ]
         ],
-        "maxPoints": 2
+        "icon": "spell_holy_greaterheal"
       },
       {
         "fieldName": "divineFavor",
         "location": {
-          "rowIdx": 4,
-          "colIdx": 1
+          "rowIdx": 3,
+          "colIdx": 2
         },
         "spellIds": [
           20216
         ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 1
-        }
+        "name": "Divine Favor",
+        "description": "When activated, gives your next Flash of Light, Holy Light, or Holy Shock spell a {0}% critical effect chance.",
+        "ranks": [
+          [
+            100
+          ]
+        ],
+        "icon": "spell_holy_heal"
       },
       {
-        "fieldName": "lastingJudgement",
+        "fieldName": "divinePrecision",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 0
+        },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Divine Precision",
+        "description": "Increases your chance to hit with Holy spells by {0}%.",
+        "ranks": [
+          [
+            6
+          ],
+          [
+            12
+          ],
+          [
+            18
+          ]
+        ],
+        "icon": "spell_holy_healingfocus"
+      },
+      {
+        "fieldName": "holyShock",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
+        "spellIds": [
+          20473
+        ],
+        "maxPoints": 1,
+        "name": "Holy Shock",
+        "description": "Blasts the target with Holy energy, causing {0} to {1} Holy damage to an enemy, or {2} to {3} healing to an ally.",
+        "ranks": [
+          [
+            129,
+            139,
+            110,
+            118
+          ]
+        ],
+        "icon": "spell_holy_searinglight"
+      },
+      {
+        "fieldName": "consecratedGround",
         "location": {
           "rowIdx": 4,
           "colIdx": 2
         },
         "spellIds": [
-          20359,
-          20360,
-          20361
+          0,
+          0
         ],
-        "maxPoints": 3
+        "maxPoints": 2,
+        "name": "Consecrated Ground",
+        "description": "Gives your Holy spells {0}% increased damage against the first {1} enemies that enter your Consecration.",
+        "ranks": [
+          [
+            5,
+            4
+          ],
+          [
+            10,
+            4
+          ]
+        ],
+        "icon": "spell_holy_innerfire"
       },
       {
         "fieldName": "holyPower",
@@ -179,22 +454,62 @@
           5926,
           25829
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Holy Power",
+        "description": "Increases the critical strike chance of your Holy Shock spell by {0}%, and all other spells by {1}%.",
+        "ranks": [
+          [
+            3,
+            1
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            9,
+            3
+          ],
+          [
+            12,
+            4
+          ],
+          [
+            15,
+            5
+          ]
+        ],
+        "icon": "spell_holy_power"
       },
       {
-        "fieldName": "holyShock",
+        "fieldName": "lightsVigil",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          20473
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1,
+        "name": "Light's Vigil",
+        "description": "Applies Light's Vigil to the target for {0} sec. Your next Holy Shock cast on them triggers no cooldown and causes friendly targets to heal their party for {1} to {2}, or enemy targets to suffer {3} to {4} Holy damage and refund {5}% of Light's Vigil's Mana cost. You may only have {6} Light's Vigil active per Paladin, per party.",
+        "ranks": [
+          [
+            30,
+            326,
+            344,
+            175,
+            189,
+            75,
+            1
+          ]
+        ],
+        "icon": "ability_paladin_judgementofthepure",
+        "notSimulated": true
       }
     ]
   },
@@ -203,19 +518,39 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/383.jpg",
     "talents": [
       {
-        "fieldName": "improvedDevotionAura",
+        "fieldName": "toughness",
         "location": {
           "rowIdx": 0,
           "colIdx": 1
         },
         "spellIds": [
-          20138,
-          20139,
-          20140,
-          20141,
-          20142
+          20143,
+          20144,
+          20145,
+          20146,
+          20147
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Toughness",
+        "description": "Increases your armor value from items by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_holy_devotion"
       },
       {
         "fieldName": "redoubt",
@@ -230,7 +565,42 @@
           20136,
           20137
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Redoubt",
+        "description": "Damaging melee attacks against you have a {0}% chance to increase your chance to block by {1}%. Lasts {2} sec or {3} blocks.",
+        "ranks": [
+          [
+            10,
+            6,
+            10,
+            5
+          ],
+          [
+            10,
+            12,
+            10,
+            5
+          ],
+          [
+            10,
+            18,
+            10,
+            5
+          ],
+          [
+            10,
+            24,
+            10,
+            5
+          ],
+          [
+            10,
+            30,
+            10,
+            5
+          ]
+        ],
+        "icon": "ability_defend"
       },
       {
         "fieldName": "precision",
@@ -243,7 +613,21 @@
           20192,
           20193
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Precision",
+        "description": "Improves your chance to hit by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ]
+        ],
+        "icon": "ability_rogue_ambush"
       },
       {
         "fieldName": "guardiansFavor",
@@ -255,33 +639,78 @@
           20174,
           20175
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Guardian's Favor",
+        "description": "Reduces the cooldown of your Blessing of Protection by {0} min and increases the duration of your Blessing of Freedom by {1} sec.",
+        "ranks": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            6
+          ]
+        ],
+        "icon": "spell_holy_sealofprotection",
+        "notSimulated": true
       },
       {
-        "fieldName": "toughness",
+        "fieldName": "anticipation",
         "location": {
           "rowIdx": 1,
           "colIdx": 3
         },
         "spellIds": [
-          20143,
-          20144,
-          20145,
-          20146,
-          20147
+          20096,
+          20097,
+          20098,
+          20099,
+          20100
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Anticipation",
+        "description": "Increases your Defense Skill by {0}.",
+        "ranks": [
+          [
+            4
+          ],
+          [
+            8
+          ],
+          [
+            12
+          ],
+          [
+            16
+          ],
+          [
+            20
+          ]
+        ],
+        "icon": "spell_magic_lesserinvisibilty"
       },
       {
-        "fieldName": "blessingOfKings",
+        "fieldName": "improvedSealOfFury",
         "location": {
           "rowIdx": 2,
           "colIdx": 0
         },
         "spellIds": [
-          20217
+          0
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Improved Seal of Fury",
+        "description": "When Seal of Fury's shield is fully absorbed, restore {0} Mana, increased by {1}% per level the attacker is above you, up to {2}%.",
+        "ranks": [
+          [
+            60,
+            15,
+            45
+          ]
+        ],
+        "icon": "spell_holy_righteousnessaura",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedRighteousFury",
@@ -294,12 +723,30 @@
           20469,
           20470
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Improved Righteous Fury",
+        "description": "While Righteous Fury is active, all damage taken is reduced by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ]
+        ],
+        "icon": "spell_holy_sealoffury"
       },
       {
         "fieldName": "shieldSpecialization",
         "location": {
           "rowIdx": 2,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 0,
           "colIdx": 2
         },
         "spellIds": [
@@ -308,62 +755,157 @@
           20150
         ],
         "maxPoints": 3,
-        "prereqLocation": {
-          "rowIdx": 0,
-          "colIdx": 2
-        }
+        "name": "Shield Specialization",
+        "description": "Increases the amount of damage absorbed by your shield by {0}%, and gives your blocks a {1}% chance to restore {2}% of your maximum Mana. May only occur once every {3} sec.",
+        "ranks": [
+          [
+            10,
+            33,
+            6,
+            3
+          ],
+          [
+            20,
+            66,
+            6,
+            3
+          ],
+          [
+            30,
+            100,
+            6,
+            3
+          ]
+        ],
+        "icon": "inv_shield_06"
       },
       {
-        "fieldName": "anticipation",
+        "fieldName": "sacredDuty",
         "location": {
           "rowIdx": 2,
           "colIdx": 3
         },
         "spellIds": [
-          20096,
-          20097,
-          20098,
-          20099,
-          20100
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 2,
+        "name": "Sacred Duty",
+        "description": "Increases your total Stamina by {0}% and reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by {1} sec.",
+        "ranks": [
+          [
+            2,
+            30
+          ],
+          [
+            4,
+            60
+          ]
+        ],
+        "icon": "spell_holy_divineintervention"
+      },
+      {
+        "fieldName": "swiftJudgement",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1,
+        "name": "Swift Judgement",
+        "description": "Finishes the remaining cooldown on your Judgement ability and reduces the Mana cost of your next Judgement by {0}%.",
+        "ranks": [
+          [
+            100
+          ]
+        ],
+        "icon": "ability_paladin_judgementred",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "oneHandedWeaponSpecialization",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 1
+        },
+        "spellIds": [
+          20196,
+          20197,
+          20198,
+          20199,
+          20200
+        ],
+        "maxPoints": 3,
+        "name": "One-Handed Weapon Specialization",
+        "description": "Increases the damage you deal with one-handed melee weapons by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            7
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "inv_sword_20"
       },
       {
         "fieldName": "improvedHammerOfJustice",
         "location": {
           "rowIdx": 3,
-          "colIdx": 1
+          "colIdx": 2
         },
         "spellIds": [
           20487,
           20488,
           20489
         ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "improvedConcentrationAura",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 2
-        },
-        "spellIds": [
-          20254,
-          20255,
-          20256
+        "maxPoints": 3,
+        "name": "Improved Hammer of Justice",
+        "description": "Decreases the cooldown of your Hammer of Justice spell by {0} sec.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ]
         ],
-        "maxPoints": 3
+        "icon": "spell_holy_sealofmight",
+        "notSimulated": true
       },
       {
-        "fieldName": "blessingOfSanctuary",
+        "fieldName": "templarsBulwark",
         "location": {
           "rowIdx": 4,
           "colIdx": 1
         },
         "spellIds": [
-          20911
+          0
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Templar's Bulwark",
+        "description": "When activated, this ability grants you an absorb shield equal to {0}% of your maximum health for {1} sec. Applies Forbearance for {2} min. Cannot be cast while Forbearance is active.",
+        "ranks": [
+          [
+            100,
+            8,
+            1
+          ]
+        ],
+        "icon": "ability_paladin_shieldofthetemplar",
+        "notSimulated": true
       },
       {
         "fieldName": "reckoning",
@@ -378,22 +920,77 @@
           20181,
           20182
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Reckoning",
+        "description": "Gives you a {0}% chance to gain an extra attack after Blocking a melee attack and a {1}% chance to gain an extra attack after being the victim of a non-periodic critical strike.",
+        "ranks": [
+          [
+            8,
+            20
+          ],
+          [
+            16,
+            40
+          ],
+          [
+            24,
+            60
+          ],
+          [
+            32,
+            80
+          ],
+          [
+            40,
+            100
+          ]
+        ],
+        "icon": "spell_holy_blessingofstrength"
       },
       {
-        "fieldName": "oneHandedWeaponSpecialization",
+        "fieldName": "ironCreed",
         "location": {
           "rowIdx": 5,
           "colIdx": 2
         },
         "spellIds": [
-          20196,
-          20197,
-          20198,
-          20199,
-          20200
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Iron Creed",
+        "description": "Increases the threat generated by your Holy Strike ability {0}%. While Righteous Fury is active, Holy Strike also reduces your damage taken by {1}% for {2} sec.",
+        "ranks": [
+          [
+            5,
+            2,
+            6
+          ],
+          [
+            10,
+            4,
+            6
+          ],
+          [
+            15,
+            6,
+            6
+          ],
+          [
+            20,
+            8,
+            6
+          ],
+          [
+            25,
+            10,
+            6
+          ]
+        ],
+        "icon": "spell_holy_improvedresistanceauras"
       },
       {
         "fieldName": "holyShield",
@@ -401,14 +998,26 @@
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
           20925
         ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        }
+        "name": "Holy Shield",
+        "description": "Increases chance to block by {0}% for {1} sec, and deals {2} Holy damage for each attack blocked while active. Damage caused by Holy Shield causes {3}% additional threat. Each block expends a charge. {4} charges.",
+        "ranks": [
+          [
+            20,
+            10,
+            110,
+            20,
+            4
+          ]
+        ],
+        "icon": "spell_holy_blessingofprotection"
       }
     ]
   },
@@ -417,19 +1026,39 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/381.jpg",
     "talents": [
       {
-        "fieldName": "improvedBlessingOfMight",
+        "fieldName": "deflection",
         "location": {
           "rowIdx": 0,
           "colIdx": 1
         },
         "spellIds": [
-          20042,
-          20045,
-          20046,
-          20047,
-          20048
+          20060,
+          20061,
+          20062,
+          20063,
+          20064
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Deflection",
+        "description": "Increases your Parry chance by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "ability_parry"
       },
       {
         "fieldName": "benediction",
@@ -444,7 +1073,27 @@
           20104,
           20105
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Benediction",
+        "description": "Reduces the Mana cost of all instant cast spells and abilities by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_frost_windwalkon"
       },
       {
         "fieldName": "improvedJudgement",
@@ -456,35 +1105,76 @@
           25956,
           25957
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Judgement",
+        "description": "Decreases the cooldown of your Judgement ability by {0} sec.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "icon": "spell_holy_righteousfury"
       },
       {
-        "fieldName": "improvedSealOfTheCrusader",
+        "fieldName": "holyConduit",
         "location": {
           "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          20335,
-          20336,
-          20337
+          0,
+          0
         ],
-        "maxPoints": 3
+        "maxPoints": 2,
+        "name": "Holy Conduit",
+        "description": "Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by {0}%.",
+        "ranks": [
+          [
+            20
+          ],
+          [
+            40
+          ]
+        ],
+        "icon": "spell_holy_devineaegis"
       },
       {
-        "fieldName": "deflection",
+        "fieldName": "conviction",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          20060,
-          20061,
-          20062,
-          20063,
-          20064
+          20117,
+          20118,
+          20119,
+          20120,
+          20121
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Conviction",
+        "description": "Improves your chance to get a critical strike with melee attacks by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "spell_holy_retributionaura"
       },
       {
         "fieldName": "vindication",
@@ -497,22 +1187,57 @@
           26016,
           26021
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Vindication",
+        "description": "Gives your damaging melee attacks a chance to reduce the target's Attack Power by {0}, and increase your Attack Power by {1}% for {2} sec.",
+        "ranks": [
+          [
+            66.833,
+            1,
+            30
+          ],
+          [
+            133.667,
+            2,
+            30
+          ],
+          [
+            200.5,
+            3,
+            30
+          ]
+        ],
+        "icon": "spell_holy_vindication"
       },
       {
-        "fieldName": "conviction",
+        "fieldName": "sanctifiedJudgement",
         "location": {
           "rowIdx": 2,
           "colIdx": 1
         },
         "spellIds": [
-          20117,
-          20118,
-          20119,
-          20120,
-          20121
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Sanctified Judgement",
+        "description": "Gives your Judgement ability a {0}% chance to return {1}% of the Mana cost of the judged seal.",
+        "ranks": [
+          [
+            33,
+            20
+          ],
+          [
+            66,
+            40
+          ],
+          [
+            100,
+            60
+          ]
+        ],
+        "icon": "ability_paladin_judgementblue"
       },
       {
         "fieldName": "sealOfCommand",
@@ -523,7 +1248,20 @@
         "spellIds": [
           20375
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Seal of Command",
+        "description": "Gives the Paladin a chance to deal additional Holy damage equal to {0}% of normal weapon damage. Only one Seal can be active on the Paladin at any one time. Lasts {1} sec. Unleashing this Seal's energy will judge an enemy, instantly causing {2} to {3} Holy damage, {4} to {5} if the target is stunned or incapacitated.",
+        "ranks": [
+          [
+            70,
+            30,
+            69,
+            73,
+            138,
+            146
+          ]
+        ],
+        "icon": "ability_warrior_innerrage"
       },
       {
         "fieldName": "pursuitOfJustice",
@@ -535,7 +1273,19 @@
           26022,
           26023
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Pursuit of Justice",
+        "description": "Increases movement speed and mounted movement speed by {0}%. This does not stack with other movement speed increasing effects.",
+        "ranks": [
+          [
+            8
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "spell_holy_persuitofjustice",
+        "notSimulated": true
       },
       {
         "fieldName": "eyeForAnEye",
@@ -547,19 +1297,65 @@
           9799,
           25988
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Eye for an Eye",
+        "description": "All critical strikes against you cause {0}% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed {1}% of the Paladin's total health.",
+        "ranks": [
+          [
+            5,
+            50
+          ],
+          [
+            10,
+            50
+          ]
+        ],
+        "icon": "spell_holy_eyeforaneye",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedRetributionAura",
+        "fieldName": "sacredArbiter",
         "location": {
           "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
-          20091,
-          20092
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 1,
+        "name": "Sacred Arbiter",
+        "description": "Increases the damage of your Holy Strike ability by {0}% and causes it to refresh all Judgement effects on the target.",
+        "ranks": [
+          [
+            10
+          ]
+        ],
+        "icon": "inv_sword_08"
+      },
+      {
+        "fieldName": "crusade",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 3
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Crusade",
+        "description": "Increases all damage dealt by {0}%. Increased by an additional {1}% against Demon and Undead targets.",
+        "ranks": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "icon": "spell_holy_crusade"
       },
       {
         "fieldName": "twoHandedWeaponSpecialization",
@@ -572,23 +1368,30 @@
           20112,
           20113
         ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "sanctityAura",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 2
-        },
-        "spellIds": [
-          20218
+        "maxPoints": 3,
+        "name": "Two-Handed Weapon Specialization",
+        "description": "Increases the damage you deal with two-handed melee weapons by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ]
         ],
-        "maxPoints": 1
+        "icon": "inv_hammer_04"
       },
       {
         "fieldName": "vengeance",
         "location": {
-          "rowIdx": 5,
+          "rowIdx": 4,
+          "colIdx": 1
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
           "colIdx": 1
         },
         "spellIds": [
@@ -598,22 +1401,116 @@
           20058,
           20059
         ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 1
-        }
+        "maxPoints": 3,
+        "name": "Vengeance",
+        "description": "Increases your Physical and Holy damage dealt by {0}% for {1} sec after landing a critical strike. Stacks up to {2} times.",
+        "ranks": [
+          [
+            1,
+            30,
+            5
+          ],
+          [
+            2,
+            30,
+            5
+          ],
+          [
+            3,
+            30,
+            5
+          ]
+        ],
+        "icon": "ability_racial_avatar"
       },
       {
         "fieldName": "repentance",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 2
+        },
+        "spellIds": [
+          20066
+        ],
+        "maxPoints": 1,
+        "name": "Repentance",
+        "description": "Puts the enemy target in a state of meditation, incapacitating them for up to {0} sec. Any damage caused will awaken the target. Only works against Humanoids.",
+        "ranks": [
+          [
+            6
+          ]
+        ],
+        "icon": "spell_holy_prayerofhealing"
+      },
+      {
+        "fieldName": "championOfTheLight",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 1
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Champion of the Light",
+        "description": "Increases your spell damage and healing by up to {0}% of your Intellect.",
+        "ranks": [
+          [
+            33
+          ],
+          [
+            66
+          ],
+          [
+            100
+          ]
+        ],
+        "icon": "ability_paladin_enlightenedjudgements"
+      },
+      {
+        "fieldName": "instrumentOfLaw",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 2
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Instrument of Law",
+        "description": "Reduces the cast time of your Hammer of Wrath by {0} sec, and reduces all threat you generate by {1}% while Righteous Fury is not active.",
+        "ranks": [
+          [
+            0.5,
+            10
+          ],
+          [
+            1,
+            20
+          ]
+        ],
+        "icon": "spell_holy_divinepurpose"
+      },
+      {
+        "fieldName": "twistOfLight",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
         "spellIds": [
-          20066
+          0
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Twist of Light",
+        "description": "When you replace your Seal of Command, Seal of Righteousness, Seal of Fury, or Seal of Justice with a different Seal, gain an Echo. Your next melee attack applies the replaced Seal's effects, consuming the Echo.",
+        "ranks": [
+          []
+        ],
+        "icon": "spell_holy_blessedresillience",
+        "notSimulated": true
       }
     ]
   }

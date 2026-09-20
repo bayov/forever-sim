@@ -17,9 +17,7 @@ func TestRetribution(t *testing.T) {
 			Class:      proto.Class_ClassPaladin,
 			Phase:      5,
 			Race:       proto.Race_RaceHuman,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
-			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
+			OtherRaces: []proto.Race{proto.Race_RaceDwarf, proto.Race_RaceUndead},
 
 			Talents:        Phase45RetTalents,
 			GearSet:        core.GetGearSet("../../../ui/retribution_paladin/gear_sets", "blank"),
@@ -36,7 +34,12 @@ func TestRetribution(t *testing.T) {
 	}))
 }
 
-var Phase45RetTalents = "500501-503-52230351200315"
+// Forever trees: Improved Holy Strike, Divine Strength and Improved Seals in Holy,
+// Toughness, Precision and a point of Redoubt in Protection, the Retribution tree down to
+// Twist of Light with Benediction, Conviction, Vindication, Sanctified Judgement, Seal of
+// Command, Sacred Arbiter, Crusade, Two-Handed Weapon Specialization, Vengeance and
+// Champion of the Light.
+var Phase45RetTalents = "250003-51300-052053310012330301"
 
 var Phase1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

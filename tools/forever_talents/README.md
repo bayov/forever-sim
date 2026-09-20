@@ -6,8 +6,8 @@ talents messages in `proto/*.proto`.
 ## Where it comes from
 
 Two sources. `client/` is the beta client's trees (build 1.60.1.69876), and `data/` is what
-the importer reads. For Rogue and Shaman `data/` is generated from `client/` with
-`import_client.py`, so every rank is the client's. The other seven classes still carry the
+the importer reads. For Rogue, Shaman and Paladin `data/` is generated from `client/` with
+`import_client.py`, so every rank is the client's. The other six classes still carry the
 BlizzCon transcription described below, and converting one of them means running
 `import_client.py <class>`, diffing the result against the sim code (the ranks 2+ guesses
 the class was implemented with are usually wrong somewhere), then `import_talents.py`.
@@ -53,8 +53,8 @@ before this was measured, so they do not all guess the same way.
 prints the list, per class. The importer also warns on stderr about the class it is importing,
 so regenerating a tree after the beta datamine shows immediately whether the gap has closed.
 
-The count by class today is Warlock 11, Druid 8, Hunter 8, Paladin 8, Mage 5, Priest 5,
-Shaman 5, Rogue 4, Warrior 4. These are the first thing to re-check against the beta client,
+The count by class today is Warlock 11, Druid 8, Hunter 8, Mage 5, Priest 5, Warrior 4
+(Rogue, Shaman and Paladin are on the client data). These are the first thing to re-check against the beta client,
 because a five rank talent read from one rank is the largest single source of error in the
 data.
 

@@ -31,7 +31,11 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 		{level: 52, spellID: 20308, manaCost: 160, scaleLevel: 60, ap: 306, scale: 2.4, judge: judge{spellID: 20303, bonus: 140}},
 	}
 
-	improvedSotC := []float64{1, 1.05, 1.1, 1.15}[paladin.Talents.ImprovedSealOfTheCrusader]
+	// Forever folded the Classic Improved Seal of the Crusader talent into the judgement
+	// (23 / 35 / 58 / 92 / 127 / 161 Holy damage taken, 15% over Classic), and the
+	// judgement lasts 40 sec instead of 10. The seal's attack power is unchanged.
+	improvedSotC := core.TernaryFloat64(paladin.Env.IsForever(), 1.15, 1)
+	judgementDuration := core.TernaryDuration(paladin.Env.IsForever(), time.Second*40, time.Second*10)
 
 	var libramAp, libramBonus float64
 	if paladin.Ranged().ID == LibramOfFervor {
@@ -46,7 +50,7 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 		}
 
 		debuffs := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-			return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, improvedSotC, libramBonus)
+			return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, rank.judge.bonus*improvedSotC+libramBonus, judgementDuration)
 		})
 
 		judgeSpell := paladin.RegisterSpell(core.SpellConfig{
@@ -71,12 +75,12 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 			OnGain: func(_ *core.Aura, sim *core.Simulation) {
 				paladin.MultiplyMeleeSpeed(sim, 1.4)
 				paladin.AutoAttacks.MHAuto().DamageMultiplier /= 1.4
-				paladin.AddStatDynamic(sim, stats.AttackPower, ap*improvedSotC+libramAp)
+				paladin.AddStatDynamic(sim, stats.AttackPower, ap+libramAp)
 			},
 			OnExpire: func(_ *core.Aura, sim *core.Simulation) {
 				paladin.MultiplyMeleeSpeed(sim, 1/1.4)
 				paladin.AutoAttacks.MHAuto().DamageMultiplier *= 1.4
-				paladin.AddStatDynamic(sim, stats.AttackPower, -ap*improvedSotC+libramAp)
+				paladin.AddStatDynamic(sim, stats.AttackPower, -(ap + libramAp))
 			},
 		})
 
@@ -100,8 +104,8 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 				},
 			},
 
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				paladin.applySeal(aura, judgeSpell, sim)
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+				paladin.applySeal(aura, judgeSpell, spell, sim)
 			},
 		})
 

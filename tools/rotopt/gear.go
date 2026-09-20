@@ -60,12 +60,14 @@ var weaponTypesFor = map[proto.Class][]proto.WeaponType{
 	proto.Class_ClassRogue:   {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist},
 	proto.Class_ClassWarrior: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},
 	proto.Class_ClassShaman:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
+	proto.Class_ClassPaladin: {proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
 }
 
 var rangedTypesFor = map[proto.Class][]proto.RangedWeaponType{
 	proto.Class_ClassRogue:   {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
 	proto.Class_ClassWarrior: {proto.RangedWeaponType_RangedWeaponTypeBow, proto.RangedWeaponType_RangedWeaponTypeCrossbow, proto.RangedWeaponType_RangedWeaponTypeGun, proto.RangedWeaponType_RangedWeaponTypeThrown},
 	proto.Class_ClassShaman:  {proto.RangedWeaponType_RangedWeaponTypeTotem},
+	proto.Class_ClassPaladin: {proto.RangedWeaponType_RangedWeaponTypeLibram},
 }
 
 func contains[T comparable](list []T, v T) bool {
@@ -124,7 +126,7 @@ func loadPvpRankItems(path string) (map[int32]bool, error) {
 func usefulSuffix(class proto.Class, s *proto.ItemRandomSuffix) bool {
 	st := stats.FromFloatArray(s.Stats)
 	useful := st[stats.Agility] + st[stats.Strength] + st[stats.AttackPower] + st[stats.MeleeCrit] + st[stats.MeleeHit] + st[stats.Stamina]
-	if class == proto.Class_ClassShaman {
+	if class == proto.Class_ClassShaman || class == proto.Class_ClassPaladin {
 		useful += st[stats.Intellect] + st[stats.Spirit] + st[stats.MP5] + st[stats.SpellPower] + st[stats.NaturePower] + st[stats.FirePower] + st[stats.SpellCrit] + st[stats.SpellHit]
 	}
 	return useful > 0

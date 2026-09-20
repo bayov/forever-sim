@@ -6,24 +6,32 @@ import {
 	Conjured,
 	Consumes,
 	Debuffs,
+	Encounter,
 	Explosive,
 	FirePowerBuff,
 	Flask,
 	Food,
 	IndividualBuffs,
+	MobType,
 	Potions,
 	Profession,
+	Race,
 	RaidBuffs,
 	SpellPowerBuff,
+	Stat,
 	StrengthBuff,
 	TristateEffect,
-	WeaponImbue,
+	UnitReference,
+	UnitReference_Type,
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { PaladinAura, PaladinOptions as RetributionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
+import { Stats } from '../core/proto_utils/stats.js';
 import APLBasicRetJson from './apls/basic_ret.apl.json';
+import Level20APLJSON from './apls/level20.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
+import Level20GearJSON from './gear_sets/level20.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -34,6 +42,11 @@ import BlankGear from './gear_sets/blank.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
+// The tools/rotopt gear search at level 20 over everything a paladin can equip (Scourge
+// Invasion drops left out): Strength and attack power greens, the Wailing Caverns and
+// Deadmines blues, Verigan's Fist from the paladin class quest, and two Intellect pieces
+// (Magician's Mantle, Mindthrust Bracers) for the Consecration mana.
+export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 
 export const GearPresets = {};
 
@@ -44,12 +57,17 @@ export const DefaultGear = GearBlank;
 ///////////////////////////////////////////////////////////////////////////
 
 export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson);
+// The paladin_ret template with the knobs the level 20 search settled on (see
+// tools/rotopt/paladin_presets.sh): Seal of the Crusader judged once for the fight, Seal
+// of Command judged on every cooldown, Holy Strike on cooldown, Consecration down to 20%
+// mana.
+export const APLLevel20 = PresetUtils.makePresetAPLRotation('Level 20', Level20APLJSON);
 
 export const APLPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [APLBasicRet],
+	[Phase.Phase4]: [APLBasicRet, APLLevel20],
 	[Phase.Phase5]: [],
 };
 
@@ -62,14 +80,21 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.
 
-export const P4RetTalents = PresetUtils.makePresetTalents('P4/P5 Ret', SavedTalents.create({ talentsString: '500501-503-52230351200315' }));
-
+// Forever trees (beta client build 1.60.1.69876). Level 60: Improved Holy Strike, Divine
+// Strength and Improved Seals in Holy, Toughness and Precision in Protection, the
+// Retribution tree down to Twist of Light. Not searched yet, the level 60 sets are blank.
+export const P4RetTalents = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '250003-51300-052053310012330301' }));
+// Level 20 (11 points), the best of every 11 point build over the damage talents: Seal
+// of Command with Benediction 5, Improved Judgement 1, Holy Conduit 2 and Conviction 2
+// in front of it. The builds behind it are within 0.5 DPS, Seal of Command itself is
+// worth about 5.
+export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '--50122001' }));
 
 export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [P4RetTalents],
+	[Phase.Phase4]: [P4RetTalents, TalentsLevel20],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase4][0];
@@ -79,7 +104,7 @@ export const DefaultTalents = TalentPresets[Phase.Phase4][0];
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = RetributionPaladinOptions.create({
-	aura: PaladinAura.SanctityAura,
+	aura: PaladinAura.RetributionAura,
 	primarySeal: PaladinSeal.Righteousness,
 });
 
@@ -102,9 +127,9 @@ export const DefaultConsumes = Consumes.create({
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfMight: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectRegular,
 	blessingOfKings: true,
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfWisdom: TristateEffect.TristateEffectRegular,
 	fengusFerocity: false,
 	moldarsMoxie: false,
 	rallyingCryOfTheDragonslayer: false,
@@ -121,7 +146,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	fireResistanceTotem: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	leaderOfThePack: true,
 	moonkinAura: true,
 });
@@ -140,3 +164,55 @@ export const OtherDefaults = {
 	profession1: Profession.Blacksmithing,
 	profession2: Profession.Enchanting,
 };
+
+///////////////////////////////////////////////////////////////////////////
+//                                 Builds
+///////////////////////////////////////////////////////////////////////////
+
+// A level 20 paladin soloing an instance boss: no raid buffs or consumes, its own
+// Blessing of Kings (baseline at 20 under Forever, and 1 DPS ahead of Blessing of Might
+// at 60 sec because the Intellect pays for more Consecrations), and the boss hitting the
+// paladin so Retribution Aura gets to fire.
+export const EncounterLevel20 = PresetUtils.makePresetEncounter(
+	'Level 20',
+	Encounter.create({
+		duration: 60,
+		durationVariation: 5,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 3654,
+				name: 'Mutanus the Devourer',
+				level: 22,
+				mobType: MobType.MobTypeHumanoid,
+				stats: new Stats().withStat(Stat.StatArmor, 922).withStat(Stat.StatHealth, 20000).asArray(),
+				minBaseDamage: 40,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+				tankIndex: 0,
+			},
+		],
+	}),
+	{
+		tanks: [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })],
+		raidBuffs: RaidBuffs.create({}),
+		debuffs: Debuffs.create({}),
+		buffs: IndividualBuffs.create({ blessingOfKings: true }),
+		consumes: Consumes.create({}),
+	},
+);
+export const PresetBuildLevel20 = PresetUtils.makePresetBuild('Level 20', {
+	gear: GearLevel20,
+	talents: TalentsLevel20,
+	rotation: APLLevel20,
+	encounter: EncounterLevel20,
+	race: Race.RaceDwarf,
+	level: 20,
+	options: RetributionPaladinOptions.create({
+		aura: PaladinAura.RetributionAura,
+		primarySeal: PaladinSeal.Command,
+	}),
+});

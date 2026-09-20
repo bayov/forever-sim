@@ -5,7 +5,8 @@
 // The rogue gets the raid's Strength of Earth and Grace of Air on top. The target is the
 // UI's Level 60 boss (level 63, 3731 armor, Humanoid). At -level 20 it is instead the UI's
 // Level 20 build: the level 22 boss soloed with no buffs, Thistle Tea and Instant Poison
-// for the rogue, Rockbiter and the boss on the shaman so Lightning Shield fires.
+// for the rogue, Rockbiter and the boss on the shaman so Lightning Shield fires, the boss
+// on the paladin too (Retribution Aura) with its own Blessing of Might.
 //
 //	go run --tags=with_db ./tools/rotopt/mksettings -spec rogue -gear combat_sinister_strike_p2_bis \
 //	    -apl combat_sinister_strike -talents 00530310501-32003311201515231 -race Human -out ss60.json
@@ -25,7 +26,7 @@ import (
 )
 
 func main() {
-	spec := flag.String("spec", "rogue", "rogue or enh")
+	spec := flag.String("spec", "rogue", "rogue, enh or ret")
 	gear := flag.String("gear", "", "gear set name under ui/<spec>/gear_sets")
 	apl := flag.String("apl", "", "rotation name under ui/<spec>/apls")
 	talents := flag.String("talents", "", "talent string")
@@ -136,6 +137,30 @@ func main() {
 				Options: &proto.EnhancementShaman_Options{SyncType: proto.ShamanSyncType_Auto},
 			}}
 		}
+	case "ret":
+		uiDir = "ui/retribution_paladin"
+		// The paladin is in a melee group with a shaman.
+		raidBuffs.StrengthOfEarthTotem = improved
+		raidBuffs.GraceOfAirTotem = improved
+		consumes = &proto.Consumes{
+			AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
+			AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
+			DefaultPotion:     proto.Potions_MajorManaPotion,
+			DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
+			DragonBreathChili: true,
+			Flask:             proto.Flask_FlaskOfSupremePower,
+			Food:              proto.Food_FoodBlessSunfruit,
+			SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
+			SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
+			StrengthBuff:      proto.StrengthBuff_JujuPower,
+			ZanzaBuff:         proto.ZanzaBuff_ROIDS,
+		}
+		withSpec = func(player *proto.Player) {
+			player.Class = proto.Class_ClassPaladin
+			player.Spec = &proto.Player_RetributionPaladin{RetributionPaladin: &proto.RetributionPaladin{
+				Options: &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness, Aura: proto.PaladinAura_RetributionAura},
+			}}
+		}
 	default:
 		fmt.Fprintf(os.Stderr, "unknown spec %q\n", *spec)
 		os.Exit(1)
@@ -198,6 +223,11 @@ func main() {
 			}
 		case "enh":
 			consumes = &proto.Consumes{MainHandImbue: proto.WeaponImbue_RockbiterWeapon}
+			tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+		case "ret":
+			// One blessing per paladin, Might over Kings at this level (see the wiki).
+			consumes = &proto.Consumes{}
+			individualBuffs = &proto.IndividualBuffs{BlessingOfMight: proto.TristateEffect_TristateEffectRegular}
 			tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 		}
 	}

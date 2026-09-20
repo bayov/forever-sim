@@ -23,6 +23,10 @@ import (
 //   Judgement of Command when it successfully is cast.
 
 func (paladin *Paladin) registerSealOfCommand() {
+	if !paladin.Talents.SealOfCommand {
+		return
+	}
+
 	type judge struct {
 		spellID   int32
 		minDamage float64
@@ -50,6 +54,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 	}
 
 	ppmm := paladin.AutoAttacks.NewPPMManager(7, core.ProcMaskMelee)
+	improvedSeals := paladin.improvedSeals()
 
 	icd := core.Cooldown{
 		Timer:    paladin.NewTimer(),
@@ -73,7 +78,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
-			DamageMultiplier: paladin.getWeaponSpecializationModifier(),
+			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
 
@@ -99,7 +104,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskMeleeProc | core.ProcMaskMeleeDamageProc,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNotAProc,
 
-			DamageMultiplier: 0.7 * paladin.getWeaponSpecializationModifier(),
+			DamageMultiplier: 0.7 * paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: 0.29,
@@ -155,8 +160,8 @@ func (paladin *Paladin) registerSealOfCommand() {
 				},
 			},
 
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				paladin.applySeal(aura, judgeSpell, sim)
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+				paladin.applySeal(aura, judgeSpell, spell, sim)
 			},
 		})
 

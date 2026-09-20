@@ -45,12 +45,14 @@ func (paladin *Paladin) registerHammerOfWrath() {
 			SpellCode:     SpellCode_PaladinHammerOfWrath,
 
 			ManaCost: core.ManaCostOptions{
-				FlatCost: rank.manaCost,
+				FlatCost:   rank.manaCost,
+				Multiplier: paladin.holyConduit(),
 			},
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					GCD:      time.Second,
-					CastTime: time.Second,
+					GCD: time.Second,
+					// Instrument of Law takes half a second per point off the cast.
+					CastTime: time.Second - time.Millisecond*500*time.Duration(paladin.Talents.InstrumentOfLaw),
 				},
 				IgnoreHaste: true,
 				CD:          cd,

@@ -17,8 +17,6 @@ func TestProtection(t *testing.T) {
 			Class:      proto.Class_ClassPaladin,
 			Phase:      4,
 			Race:       proto.Race_RaceHuman,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
 			Talents:     Phase4ProtTalents,
@@ -35,7 +33,9 @@ func TestProtection(t *testing.T) {
 	}))
 }
 
-var Phase4ProtTalents = "-053020335001551-0500535"
+// Forever trees: the Protection tree down to Holy Shield plus Benediction and Improved
+// Judgement.
+var Phase4ProtTalents = "01-5530513321301551-0520"
 
 var Phase4Consumes = core.ConsumesCombo{
 	Label: "P4-Consumes",

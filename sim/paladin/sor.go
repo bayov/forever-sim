@@ -41,7 +41,11 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 		{level: 58, spellID: 20293, manaCost: 200, scaleLevel: 60, proc: proc{spellID: 25713, value: 1786, scale: 47, coeff: 0.1}, judge: judge{spellID: 20286, minDamage: 162, maxDamage: 178, scale: 4.1, coeff: 0.5}},
 	}
 
-	improvedSoR := paladin.improvedSoR()
+	// Improved Seals is Forever's version of Improved Seal of Righteousness, and it scales
+	// the judgement too. The judgement's spell power coefficient is 50% on every rank
+	// under Forever (Classic ramped it up over the first three ranks), its base damage
+	// is Classic's because wowhead hides it behind the coefficient.
+	improvedSoR := paladin.improvedSeals()
 
 	for i, rank := range ranks {
 		rank := rank
@@ -81,7 +85,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			BonusCoefficient: rank.judge.coeff,
+			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.5, rank.judge.coeff),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(minDamage, maxDamage) * improvedSoR
@@ -154,8 +158,8 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 				},
 			},
 
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				paladin.applySeal(aura, judgeSpell, sim)
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+				paladin.applySeal(aura, judgeSpell, spell, sim)
 			},
 		})
 

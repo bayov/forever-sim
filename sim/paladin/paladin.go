@@ -7,7 +7,8 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-var TalentTreeSizes = [3]int{14, 15, 15}
+// The Forever trees (beta client build 1.60.1.69876).
+var TalentTreeSizes = [3]int{18, 16, 18}
 
 const (
 	SpellFlag_Forbearance = core.SpellFlagAgentReserved1
@@ -26,6 +27,7 @@ const (
 	SpellCode_PaladinHolyShieldProc
 	SpellCode_PaladinLayOnHands
 	SpellCode_PaladinHammerOfWrath
+	SpellCode_PaladinHolyStrike
 )
 
 type SealJudgeCode uint8
@@ -54,6 +56,8 @@ type Paladin struct {
 	aurasSotC    []*core.Aura
 
 	currentJudgement *core.Spell
+	// The seal spell whose aura is up, for Sanctified Judgement's refund of its cost.
+	currentSealSpell *core.Spell
 	allJudgeSpells   [][]*core.Spell
 	spellsJoR        []*core.Spell
 	spellsJoC        []*core.Spell
@@ -70,6 +74,9 @@ type Paladin struct {
 	// highest rank seal spell if available
 	sealOfRighteousness *core.Spell
 	sealOfCommand       *core.Spell
+
+	// Consecrated Ground's Holy damage buff, up while Consecration ticks.
+	consecratedGroundAura *core.Aura
 }
 
 // Implemented by each Paladin spec.
@@ -120,6 +127,8 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerHolyShield()
 	paladin.registerBlessingOfSanctuary()
 	paladin.registerLayOnHands()
+	paladin.registerHolyStrike()
+	paladin.registerRetributionAura()
 
 	paladin.registerStopAttackMacros()
 
@@ -140,9 +149,7 @@ func NewPaladin(character *core.Character, options *proto.Player, paladinOptions
 	}
 	core.FillTalentsProto(paladin.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
-	if paladin.Options.Aura == proto.PaladinAura_SanctityAura {
-		paladin.primaryPaladinAura = paladin.Options.Aura
-	}
+	paladin.primaryPaladinAura = paladin.Options.Aura
 
 	paladin.PseudoStats.CanParry = true
 	paladin.EnableManaBar()
@@ -181,9 +188,11 @@ func (paladin *Paladin) registerStopAttackMacros() {
 	}
 }
 
+// Sanctity Aura is gone under Forever (Retribution Aura is the paladin's own damage
+// aura there, see retribution_aura.go), so the option only does something under Classic.
 func (paladin *Paladin) ResetCurrentPaladinAura() {
 	paladin.currentPaladinAura = nil
-	if paladin.primaryPaladinAura == proto.PaladinAura_SanctityAura {
+	if paladin.primaryPaladinAura == proto.PaladinAura_SanctityAura && !paladin.Env.IsForever() {
 		paladin.currentPaladinAura = core.SanctityAuraAura(paladin.GetCharacter())
 	}
 }
@@ -200,13 +209,14 @@ func (paladin *Paladin) getPrimarySealSpell(primarySeal proto.PaladinSeal) *core
 	}
 }
 
-func (paladin *Paladin) applySeal(newSeal *core.Aura, judgement *core.Spell, sim *core.Simulation) {
+func (paladin *Paladin) applySeal(newSeal *core.Aura, judgement *core.Spell, sealSpell *core.Spell, sim *core.Simulation) {
 	if paladin.currentSeal != nil {
 		paladin.currentSeal.Deactivate(sim)
 	}
 
 	paladin.currentSeal = newSeal
 	paladin.currentJudgement = judgement
+	paladin.currentSealSpell = sealSpell
 	paladin.currentSeal.Activate(sim)
 }
 

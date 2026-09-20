@@ -8,7 +8,7 @@ Collected 2026-09-14.
 - What's Next panel recap: https://news.blizzard.com/en-us/article/24303862/world-of-warcraft-forever-whats-next-panel-recap (dates, zones, dungeons, raids, Skyborne, PvP)
 - Pre-purchase and editions: https://news.blizzard.com/en-us/article/24301508/pre-purchase-world-of-warcraft-forever-upgrades-and-begin-your-next-journey-in-azeroth
 
-## Beta client data (primary source for racials and the Rogue and Shaman trees since 2026-09-17)
+## Beta client data (primary source for racials and the Rogue, Shaman and Paladin trees since 2026-09-17, Paladin since 2026-09-20)
 
 - hyjal.cc: talent calculators, racials and Legacy tree read from the beta client tables, with an update log per build. Build 1.60.1.69876 changes: https://hyjal.cc/updates/1.60.1.69876 (calculators at /talent-calculator/rogue etc, racials at /racials). The trees ship in the page's JS bundle and are vendored in the sim repo under `tools/forever_talents/client/`.
 
