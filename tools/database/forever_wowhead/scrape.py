@@ -41,6 +41,8 @@ EXPR = '''(() => {
 TOOLTIP = 'https://nether.wowhead.com/forever/tooltip/item/{}?dataEnv=17&locale=0'
 QUEST = 'https://www.wowhead.com/forever/quest={}'
 BROWSER = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36'
+# Seconds between quest pages. Under a second gets the scrape blocked for an hour.
+QUEST_PAUSE = 2
 
 def mark_bind_on_pickup(items):
     """Set bop on the crafted items that bind when picked up.
@@ -76,8 +78,10 @@ def mark_quest_classes(items):
     vendor also hands the item out, or one of its quests is open to every class, anyone
     can wear it.
 
-    The pages come one at a time with a pause between them. wowhead answers a browser
-    user agent happily, but it cut us off for an hour when we asked eight at a time.
+    The pages come one at a time with a long pause between them. wowhead answers a
+    browser user agent happily, but it cut us off for over an hour when we asked eight at
+    a time, and asking again while cut off only made it last longer. An in-page fetch()
+    from the headless browser is no way around it, that gets a 403 where curl gets a 200.
     """
     by_quest = {}
     for item in items.values():
@@ -88,11 +92,15 @@ def mark_quest_classes(items):
                 by_quest.setdefault(s['ti'], []).append(item)
     classes = {}
     for n, quest in enumerate(sorted(by_quest), 1):
-        time.sleep(0.3)
-        page = subprocess.run(['curl', '-sfL', '-A', BROWSER, QUEST.format(quest)],
-            capture_output=True, text=True, errors='replace')
+        for wait in (QUEST_PAUSE, 60, 300):
+            time.sleep(wait)
+            page = subprocess.run(['curl', '-sfL', '-A', BROWSER, QUEST.format(quest)],
+                capture_output=True, text=True, errors='replace')
+            if page.returncode == 0:
+                break
+            print('quest', quest, 'curl', page.returncode, 'backing off', file=sys.stderr)
         if page.returncode != 0:
-            print('quest failed', quest, 'curl', page.returncode, file=sys.stderr)
+            print('quest failed', quest, file=sys.stderr)
             continue
         facts = page.stdout[page.stdout.find('Quick Facts'):][:2000]
         classes[quest] = sorted({int(c) for c in re.findall(r'\[class=(\d+)\]', facts)})
