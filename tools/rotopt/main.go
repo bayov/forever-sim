@@ -41,6 +41,7 @@ func main() {
 	knobsFlag := flag.String("knobs", "", "starting knob values, name=value,...")
 	race := flag.String("race", "", "override the player's race, e.g. Gnome")
 	level := flag.Int("level", 0, "override the player's level, e.g. 20")
+	targets := flag.Int("targets", 0, "override the number of enemies, copies of the encounter's first target, for AoE rotations")
 	bonusTalents := flag.Int("bonus-talents", -1, "override the player's extra talent points beyond what the level grants, e.g. 5 for the Forever beta's 16 points at level 20")
 	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100")
 	printStats := flag.Bool("print-stats", false, "print the player's final stats and exit")
@@ -108,6 +109,9 @@ func main() {
 	maxTalentPoints = min(51, maxTalentPoints+int(setup.player().BonusTalentPoints))
 	if *talents != "" {
 		setup.player().TalentsString = *talents
+	}
+	if *targets > 0 {
+		setup.setTargets(*targets)
 	}
 	if *bonus != "" {
 		p := setup.player()

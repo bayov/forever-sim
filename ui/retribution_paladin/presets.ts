@@ -32,6 +32,7 @@ import APLBasicRetJson from './apls/basic_ret.apl.json';
 import Level20APLJSON from './apls/level20.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level20GearJSON from './gear_sets/level20.gear.json';
+import Level20AoEGearJSON from './gear_sets/level20_aoe.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -47,6 +48,12 @@ export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 // Deadmines blues, Verigan's Fist from the paladin class quest, and two Intellect pieces
 // (Magician's Mantle, Mindthrust Bracers) for the Consecration mana.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
+// The same search against four enemies, where Consecration is most of the damage and a
+// point of spell power is worth two of Strength: Gnoll Casting Gloves, Dreamer's Leggings
+// and the Silverwing Sentinels ring and cape (Lorekeeper's Ring, Caretaker's Cape) come
+// in for the Strength greens. Worth 3.4 DPS on four targets, 1.8 on three, nothing on two
+// and 1.1 behind on one.
+export const GearLevel20AoE = PresetUtils.makePresetGear('Level 20 AoE', Level20AoEGearJSON);
 
 export const GearPresets = {};
 
@@ -85,9 +92,13 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // Retribution tree down to Twist of Light. Not searched yet, the level 60 sets are blank.
 export const P4RetTalents = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '250003-51300-052053310012330301' }));
 // Level 20 (11 points), the best of every 11 point build over the damage talents: Seal
-// of Command with Benediction 5, Improved Judgement 1, Holy Conduit 2 and Conviction 2
-// in front of it. The builds behind it are within 0.5 DPS, Seal of Command itself is
-// worth about 5.
+// of Command with Deflection 5, Improved Judgement 1, Holy Conduit 2 and Conviction 2 in
+// front of it. Deflection counts because the encounter has the enemies hitting the
+// paladin, and every parry hastes the next swing. The builds behind it are within 0.5
+// DPS (Benediction 5 in place of Deflection is 0.9 behind), Seal of Command itself is
+// worth about 5. The same build wins against two, three and four enemies at 60 sec. Over
+// two minutes of a pack the mana runs dry and Benediction 2 with Holy Conduit 3 gets 1.2
+// ahead.
 export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '--50122001' }));
 
 export const TalentPresets = {
@@ -216,3 +227,39 @@ export const PresetBuildLevel20 = PresetUtils.makePresetBuild('Level 20', {
 		primarySeal: PaladinSeal.Command,
 	}),
 });
+
+// A pack of two, three or four of the same mob, all hitting the paladin. The rotation
+// and talents are the single target ones (Consecration is already on cooldown there, and
+// putting it ahead of the seal and judgement lines loses a little), the gear is the AoE
+// set.
+const level20PackEncounter = (targets: number) =>
+	PresetUtils.makePresetEncounter(
+		`Level 20, ${targets} targets`,
+		Encounter.create({
+			...EncounterLevel20.encounter!,
+			targets: Array.from({ length: targets }, () => EncounterLevel20.encounter!.targets[0]),
+		}),
+		{
+			tanks: EncounterLevel20.tanks,
+			raidBuffs: EncounterLevel20.raidBuffs,
+			debuffs: EncounterLevel20.debuffs,
+			buffs: EncounterLevel20.buffs,
+			consumes: EncounterLevel20.consumes,
+		},
+	);
+const level20PackBuild = (targets: number) =>
+	PresetUtils.makePresetBuild(`Level 20, ${targets} targets`, {
+		gear: GearLevel20AoE,
+		talents: TalentsLevel20,
+		rotation: APLLevel20,
+		encounter: level20PackEncounter(targets),
+		race: Race.RaceDwarf,
+		level: 20,
+		options: RetributionPaladinOptions.create({
+			aura: PaladinAura.RetributionAura,
+			primarySeal: PaladinSeal.Command,
+		}),
+	});
+export const PresetBuildLevel20x2 = level20PackBuild(2);
+export const PresetBuildLevel20x3 = level20PackBuild(3);
+export const PresetBuildLevel20x4 = level20PackBuild(4);

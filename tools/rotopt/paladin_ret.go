@@ -26,6 +26,9 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "jotc", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "holyStrike", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "consecration", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Consecration above the seal and judgement lines, for a pack of enemies where it
+		// is most of the damage and a delayed cast is a lost tick on every one of them.
+		{Name: "consecrationFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Consecration only above this much mana, so the seals and judgements keep going.
 		{Name: "consecrationMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// Exorcism only lands on Undead and Demons, the line is harmless elsewhere.
@@ -57,6 +60,17 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			cast(sealOfTheCrusader, and(not(jotcUp), not(auraIsActive(sealOfTheCrusader))), "Seal of the Crusader when its judgement is not on the target."),
 		)
 	}
+	var consecrationLine *proto.APLListItem
+	if k["consecration"] == 1 {
+		var floor value
+		if k["consecrationMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["consecrationMana"]/100))
+		}
+		consecrationLine = cast(consecration, floor, "Consecration with the mana to spare.")
+	}
+	if consecrationLine != nil && k["consecrationFirst"] == 1 {
+		items = append(items, consecrationLine)
+	}
 	items = append(items,
 		cast(judgement, and(auraIsActive(seal), jotcUp), "Judgement on cooldown."),
 		cast(seal, and(not(auraIsActive(seal)), jotcUp), sealNotes),
@@ -67,12 +81,8 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if k["exorcism"] == 1 {
 		items = append(items, cast(exorcism, nil, "Exorcism on cooldown, only against Undead and Demons."))
 	}
-	if k["consecration"] == 1 {
-		var floor value
-		if k["consecrationMana"] > 0 {
-			floor = ge(currentManaPercent(), num(k["consecrationMana"]/100))
-		}
-		items = append(items, cast(consecration, floor, "Consecration with the mana to spare."))
+	if consecrationLine != nil && k["consecrationFirst"] == 0 {
+		items = append(items, consecrationLine)
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on a free GCD."))
 

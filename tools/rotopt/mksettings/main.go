@@ -23,6 +23,7 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 	"google.golang.org/protobuf/encoding/protojson"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func main() {
@@ -33,6 +34,8 @@ func main() {
 	race := flag.String("race", "Human", "race name as in the proto enum, without the Race prefix")
 	level := flag.Int("level", 60, "player level, 60 or 20")
 	bonusTalents := flag.Int("bonus-talents", 0, "extra talent points beyond the level's, 5 for the Forever beta at level 20")
+	blessing := flag.String("blessing", "kings", "the ret paladin's own blessing at level 20: kings, might or wisdom")
+	targets := flag.Int("targets", 1, "number of enemies, copies of the level's target")
 	duration := flag.Float64("duration", 0, "fight length in seconds, 300 at level 60 and 60 at level 20 when left out")
 	out := flag.String("out", "", "file to write, stdout when empty")
 	flag.Parse()
@@ -225,14 +228,28 @@ func main() {
 			consumes = &proto.Consumes{MainHandImbue: proto.WeaponImbue_RockbiterWeapon}
 			tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 		case "ret":
-			// One blessing per paladin, Might over Kings at this level (see the wiki).
+			// One blessing per paladin. Kings won the level 20 search (see the wiki), the
+			// flag is there to check that again.
 			consumes = &proto.Consumes{}
-			individualBuffs = &proto.IndividualBuffs{BlessingOfMight: proto.TristateEffect_TristateEffectRegular}
+			switch *blessing {
+			case "kings":
+				individualBuffs = &proto.IndividualBuffs{BlessingOfKings: true}
+			case "might":
+				individualBuffs = &proto.IndividualBuffs{BlessingOfMight: proto.TristateEffect_TristateEffectRegular}
+			case "wisdom":
+				individualBuffs = &proto.IndividualBuffs{BlessingOfWisdom: proto.TristateEffect_TristateEffectRegular}
+			default:
+				fmt.Fprintf(os.Stderr, "unknown blessing %q\n", *blessing)
+				os.Exit(1)
+			}
 			tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 		}
 	}
 	if *duration > 0 {
 		encounter.Duration = *duration
+	}
+	for len(encounter.Targets) < *targets {
+		encounter.Targets = append(encounter.Targets, goproto.Clone(encounter.Targets[0]).(*proto.Target))
 	}
 
 	player := &proto.Player{

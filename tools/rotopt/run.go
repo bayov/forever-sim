@@ -55,6 +55,16 @@ func loadSetup(path string) (*setup, error) {
 	return &setup{request: request}, nil
 }
 
+// Replace the encounter with n copies of its first target, so an AoE rotation is scored
+// on a pack of the same mob. Every copy attacks the tank like the original does.
+func (s *setup) setTargets(n int) {
+	first := s.request.Encounter.Targets[0]
+	s.request.Encounter.Targets = nil
+	for i := 0; i < n; i++ {
+		s.request.Encounter.Targets = append(s.request.Encounter.Targets, goproto.Clone(first).(*proto.Target))
+	}
+}
+
 func (s *setup) player() *proto.Player {
 	return s.request.Raid.Parties[0].Players[0]
 }
@@ -214,6 +224,8 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 		StatsToWeigh: []proto.Stat{
 			proto.Stat_StatAgility, proto.Stat_StatStrength, proto.Stat_StatAttackPower,
 			proto.Stat_StatMeleeCrit, proto.Stat_StatMeleeHit, proto.Stat_StatStamina,
+			proto.Stat_StatIntellect, proto.Stat_StatSpellPower, proto.Stat_StatHolyPower,
+			proto.Stat_StatSpellCrit, proto.Stat_StatSpellHit, proto.Stat_StatMP5,
 		},
 		PseudoStatsToWeigh: []proto.PseudoStat{proto.PseudoStat_PseudoStatMainHandDps, proto.PseudoStat_PseudoStatOffHandDps},
 		EpReferenceStat:    proto.Stat_StatAttackPower,
@@ -222,7 +234,7 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 		return "stat weights failed: " + res.Error.Message
 	}
 	var sb strings.Builder
-	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina"}
+	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina", "Intellect", "SpellPower", "HolyPower", "SpellCrit", "SpellHit", "MP5"}
 	for _, name := range names {
 		i := proto.Stat_value["Stat"+name]
 		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.Stats[i], res.Dps.EpValues.Stats[i], res.Dps.EpValuesStdev.Stats[i])
