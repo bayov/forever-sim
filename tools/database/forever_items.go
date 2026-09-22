@@ -414,4 +414,24 @@ var ForeverItems = []*proto.UIItem{
 		Ilvl: 25, RequiredLevel: 20, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Expansion: proto.Expansion_ExpansionVanilla,
 		Sources: []*proto.UIItemSource{foreverRep(470, proto.RepLevel_RepLevelHonored)},
 	},
+	// Undead paladin class quest (level 22, from level 18, Horde).
+	//
+	// wowhead has the quest chain and it has the sword, but no link between them, so the
+	// sword arrives with no required level and the level 20 gear search would take it on
+	// item level 31 and leave it out. The chain opens at the Undead paladin stronghold
+	// with Diplomatic Incident (91858) and ends with The Windshaper's Wrath, which is
+	// where the wind and Holy proc on the sword comes from.
+	//
+	// The proc, 49 Holystorm damage on hit, is not in the sim, so it swings as a plain
+	// weapon and the real thing hits harder.
+	{
+		Id: 267369, Name: "Wolfsbane", Icon: "inv_sword_25",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{stats.Stamina: 9, stats.Intellect: 10}.ToFloatArray(),
+		WeaponDamageMin: 69, WeaponDamageMax: 105, WeaponSpeed: 3.40,
+		Ilvl: 31, RequiredLevel: 18, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Expansion: proto.Expansion_ExpansionVanilla,
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
+		ClassAllowlist:     []proto.Class{proto.Class_ClassPaladin},
+		Sources:            []*proto.UIItemSource{foreverQuest(96204, "The Windshaper's Wrath")},
+	},
 }

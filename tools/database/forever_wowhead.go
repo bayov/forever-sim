@@ -42,9 +42,11 @@ type ForeverWowheadItem struct {
 	// Binds when picked up. Only fetched for crafted items, where it means the crafter
 	// is the only one who can wear it.
 	BindOnPickup bool `json:"bop"`
-	// The classes that can take the quest the item comes from, when the item itself is
-	// open to everyone but the quest is not. wowhead class ids, see mark_quest_classes.
-	QuestClasses []int32 `json:"qclass"`
+	// The classes that can take the quest the item comes from, as a wowhead class mask,
+	// and the side that can take it. Only set when a quest is the item's only source.
+	// See mark_quest_restrictions.
+	QuestClassMask int32 `json:"qclassmask"`
+	QuestSide      int32 `json:"qside"`
 	// The jsonequip block. Stats are numbers, a few keys (appearances) are objects.
 	Eq map[string]json.RawMessage `json:"eq"`
 }
@@ -262,17 +264,24 @@ func (wi ForeverWowheadItem) skillLevel() int32 {
 	}
 }
 
-// Whether wowhead knows a way to get the item.
-func (wi ForeverWowheadItem) Obtainable() bool {
-	return len(wi.Source) > 0
-}
-
 // ToProto builds the item, or nil when it is not gear. The second value is how many
 // rating stats were dropped.
 func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 	itemType, handType, ok := wi.itemType()
 	if !ok {
 		return nil, 0
+	}
+	// The item's own class restriction and the one on the quest that hands it over both
+	// have to let a class through. Forever's Field Researcher's Loop is marked rogue gear
+	// but only a mage can take Greater Friend of the Library, the quest that hands it
+	// over, so nobody can wear it and it is not gear at all.
+	classMask := wi.ReqClass
+	if wi.QuestClassMask != 0 {
+		if classMask == 0 {
+			classMask = wi.QuestClassMask
+		} else if classMask &= wi.QuestClassMask; classMask == 0 {
+			return nil, 0
+		}
 	}
 	reqLevel := wi.ReqLevel
 	if reqLevel > 0 {
@@ -315,18 +324,14 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 			}
 		}
 	}
-	if wi.ReqClass != 0 {
-		item.ClassAllowlist = WowheadItem{ClassMask: uint16(wi.ReqClass)}.getClassRestriction()
-	} else if len(wi.QuestClasses) > 0 {
-		// Forever's Friend of the Library hands a mage an amulet nothing else marks as a
-		// mage item, so the quest's own class flag is the restriction.
-		mask := 0
-		for _, class := range wi.QuestClasses {
-			mask |= 1 << (class - 1)
-		}
-		item.ClassAllowlist = WowheadItem{ClassMask: uint16(mask)}.getClassRestriction()
+	if classMask != 0 {
+		item.ClassAllowlist = WowheadItem{ClassMask: uint16(classMask)}.getClassRestriction()
 	}
-	switch wi.Side {
+	side := wi.Side
+	if side == 0 {
+		side = wi.QuestSide
+	}
+	switch side {
 	case 1:
 		item.FactionRestriction = proto.UIItem_FACTION_RESTRICTION_ALLIANCE_ONLY
 	case 2:

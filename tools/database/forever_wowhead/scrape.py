@@ -9,13 +9,17 @@
 # parsing tooltips. The pages need a real browser (curl gets a 403), so this drives
 # headless Chrome over the DevTools protocol.
 #
+# The quest listing comes along too, because a quest row is the only place that says
+# which classes and which side can take it, and Forever hands out class gear from quests
+# that say nothing about the class on the item itself.
+#
 #   pip install websocket-client
 #   python3 tools/database/forever_wowhead/scrape.py 25
 #   go run ./tools/database/gen_db -outDir=assets -gen=db
 #
 # The argument is the highest required level to scrape. Items with no required level
 # (Forever quest rewards) come along whatever their item level.
-import concurrent.futures, json, os, re, subprocess, sys, time, urllib.request
+import concurrent.futures, json, os, subprocess, sys, time, urllib.request
 import websocket
 
 MAX_REQ_LEVEL = int(sys.argv[1]) if len(sys.argv) > 1 else 25
@@ -39,10 +43,15 @@ EXPR = '''(() => {
 })()'''
 
 TOOLTIP = 'https://nether.wowhead.com/forever/tooltip/item/{}?dataEnv=17&locale=0'
-QUEST = 'https://www.wowhead.com/forever/quest={}'
-BROWSER = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36'
-# Seconds between quest pages. Under a second gets the scrape blocked for an hour.
-QUEST_PAUSE = 2
+# The quest listing builds its rows into the Listview call instead of a variable.
+QUEST_EXPR = '''(() => {
+    const s = [...document.scripts].map(x => x.textContent).join("\\n");
+    const i = s.indexOf("template: 'quest'");
+    if (i < 0) return document.body && document.body.innerText.includes("No quests") ? [] : null;
+    const j = s.indexOf("data:[", i);
+    const k = s.indexOf("]});", j);
+    return JSON.parse(s.slice(j + 5, k + 1));
+})()'''
 
 def mark_bind_on_pickup(items):
     """Set bop on the crafted items that bind when picked up.
@@ -66,56 +75,66 @@ def mark_bind_on_pickup(items):
                 item['bop'] = True
     print(f"{sum(1 for i in crafted if i.get('bop'))} of {len(crafted)} crafted items bind on pickup", file=sys.stderr)
 
-def mark_quest_classes(items):
-    """Set qclass on the items that only one class's quest hands out.
+def scrape_quests(fetch):
+    """Every quest wowhead knows, by id.
+
+    A quest row says which classes and which side can take the quest, and that is the
+    only place the restriction is written down: Forever's Friend of the Library is a
+    mage quest, and the amulet it hands over says nothing about mages.
+    """
+    quests = {}
+    ranges = [(0, 60)]
+    while ranges:
+        lo, hi = ranges.pop()
+        url = f'https://www.wowhead.com/forever/quests/min-req-level:{lo}/max-req-level:{hi}'
+        rows = fetch(url, QUEST_EXPR)
+        if rows is None:
+            print('failed', url, file=sys.stderr)
+            continue
+        # Same 1000 row ceiling as the item listing, so a range that comes back that big
+        # is split by required level and fetched again.
+        if len(rows) >= 1000 and lo < hi:
+            mid = (lo + hi) // 2
+            ranges += [(lo, mid), (mid + 1, hi)]
+            continue
+        for r in rows:
+            quests[r['id']] = r
+        print(f'quests {lo}-{hi}: {len(rows)}', file=sys.stderr)
+    print(f'{len(quests)} quests', file=sys.stderr)
+    return quests
+
+def mark_quest_restrictions(items, quests):
+    """Set qclassmask and qside on the items only one class, or one side, can quest for.
 
     Forever added quests like Friend of the Library that only a mage can take, and their
-    rewards carry no class restriction of their own, so an item like Erudite's Amulet
-    looks wearable by everyone. The quest's own page says which class it is for, in the
-    Quick Facts list it builds from a `[class=8]` markup tag.
+    rewards carry no restriction of their own, so an item like Erudite's Amulet looks
+    wearable by anyone.
 
-    Only items that come from nothing but quests get the restriction. When a drop or a
-    vendor also hands the item out, or one of its quests is open to every class, anyone
-    can wear it.
-
-    The pages come one at a time with a long pause between them. wowhead answers a
-    browser user agent happily, but it cut us off for over an hour when we asked eight at
-    a time, and asking again while cut off only made it last longer. An in-page fetch()
-    from the headless browser is no way around it, that gets a 403 where curl gets a 200.
+    Only items that come from nothing but quests get a restriction, and only when every
+    one of those quests agrees. When a drop or a vendor also hands the item out, or one
+    of the quests is open to everyone, anyone can wear it. A quest wowhead has no row for
+    counts as open, we would rather miss a restriction than invent one.
     """
-    by_quest = {}
+    classes = sides = 0
     for item in items.values():
         if set(item.get('source') or []) != {4}:
             continue
-        for s in item.get('sourcemore') or []:
-            if s.get('t') == 5 and s.get('ti'):
-                by_quest.setdefault(s['ti'], []).append(item)
-    classes = {}
-    for n, quest in enumerate(sorted(by_quest), 1):
-        for wait in (QUEST_PAUSE, 60, 300):
-            time.sleep(wait)
-            page = subprocess.run(['curl', '-sfL', '-A', BROWSER, QUEST.format(quest)],
-                capture_output=True, text=True, errors='replace')
-            if page.returncode == 0:
-                break
-            print('quest', quest, 'curl', page.returncode, 'backing off', file=sys.stderr)
-        if page.returncode != 0:
-            print('quest failed', quest, file=sys.stderr)
+        qs = [quests.get(s['ti']) for s in item.get('sourcemore') or [] if s.get('t') == 5]
+        if not qs or not all(qs):
             continue
-        facts = page.stdout[page.stdout.find('Quick Facts'):][:2000]
-        classes[quest] = sorted({int(c) for c in re.findall(r'\[class=(\d+)\]', facts)})
-        if n % 50 == 0:
-            print(f'quests {n}/{len(by_quest)}', file=sys.stderr)
-    for quest, quest_items in by_quest.items():
-        if not classes.get(quest):
-            continue
-        for item in quest_items:
-            others = [s['ti'] for s in item['sourcemore'] if s.get('t') == 5 and s.get('ti') != quest]
-            if any(not classes.get(q) for q in others):
-                continue
-            item['qclass'] = sorted(set(item.get('qclass', [])) | set(classes[quest]))
-    print(f"{sum(1 for i in items.values() if i.get('qclass'))} items come from a class's own quest", file=sys.stderr)
-
+        if all(q['reqclass'] for q in qs):
+            mask = 0
+            for q in qs:
+                mask |= q['reqclass']
+            item['qclassmask'] = mask
+            classes += 1
+        # 1 Alliance, 2 Horde. wowhead writes 3 for a quest both sides can take, and 0
+        # for one it has not worked out, so only those two values restrict anything.
+        side = {q['side'] for q in qs}
+        if side in ({1}, {2}):
+            item['qside'] = side.pop()
+            sides += 1
+    print(f"{classes} items come from a class's own quest, {sides} from one side's", file=sys.stderr)
 
 def main():
     chrome = subprocess.Popen(['google-chrome', '--headless=new', '--no-sandbox', '--disable-gpu',
@@ -136,12 +155,12 @@ def main():
             while True:
                 m = json.loads(ws.recv())
                 if m.get('id') == seq[0]: return m.get('result', {})
-        def fetch(url):
+        def fetch(url, expr=EXPR):
             send('Page.navigate', url=url)
             for _ in range(60):
                 time.sleep(0.5)
                 try:
-                    val = send('Runtime.evaluate', expression=EXPR, returnByValue=True).get('result', {}).get('value')
+                    val = send('Runtime.evaluate', expression=expr, returnByValue=True).get('result', {}).get('value')
                 except Exception:
                     val = None
                 if val is not None: return val
@@ -169,13 +188,17 @@ def main():
                     g = val['g'].get(str(r['id']))
                     if not g: continue
                     item = {k: r[k] for k in ROW_KEYS if k in r}
+                    # wowhead writes a nonsense side on the rows that carry a bonustree
+                    # (Willow Vest and 145 others), so only the three real values count.
+                    if item.get('side') not in (1, 2, 3):
+                        item.pop('side', None)
                     item['icon'] = g['icon']
                     item['eq'] = {k: v for k, v in (g['eq'] or {}).items() if k not in EQ_SKIP}
                     items[r['id']] = item
                     n += 1
                 print(f'slot {slot} levels {lo}-{hi}: {n} items', file=sys.stderr)
         mark_bind_on_pickup(items)
-        mark_quest_classes(items)
+        mark_quest_restrictions(items, scrape_quests(fetch))
         out = sorted(items.values(), key=lambda x: x['id'])
         # One item per line, so a rescrape diffs item by item.
         with open(OUT, 'w') as f:

@@ -1378,6 +1378,9 @@ export const classToEligibleWeaponTypes: Record<Class, Array<EligibleWeaponType>
 		{ weaponType: WeaponType.WeaponTypeStaff, canUseTwoHand: true },
 	],
 	[Class.ClassRogue]: [
+		// Forever hands the rogue axes, Hack and Slash reads "Axe/Sword" where Classic's
+		// Sword Specialization only reads swords.
+		{ weaponType: WeaponType.WeaponTypeAxe },
 		{ weaponType: WeaponType.WeaponTypeDagger },
 		{ weaponType: WeaponType.WeaponTypeFist },
 		{ weaponType: WeaponType.WeaponTypeMace },

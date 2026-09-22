@@ -44,22 +44,25 @@ import Level20AoEGearJSON from './gear_sets/level20_aoe.gear.json';
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 // The tools/rotopt gear search at level 20 over everything an Undead paladin can equip
-// (Scourge Invasion drops left out), on the wowhead Forever item data. Verigan's Fist
-// and the rest of the Alliance list are gone, so the weapon is Hammerbone out of Wailing
-// Caverns, the neck and the rings come from Warsong Gulch, and most of the armor is the
-// Totemic Leather set the Leatherworker makes for themselves. The rest is Forever's own
-// spell power gear: Spellpower Goggles Xtreme, Technician's Bracers from A Fine Mess in
-// Gnomeregan, Magician's Mantle, Serpent Gloves.
+// (Scourge Invasion drops left out), on the wowhead Forever item data.
+//
+// The weapon is Wolfsbane, the two hander at the end of the Undead paladin quest chain,
+// and it is worth 4 DPS on its own: 69-105 over 3.4 sec where Hammerbone out of Wailing
+// Caverns swings 55-84, and the sim does not even run its Holystorm proc. The neck and
+// the rings come from Warsong Gulch, the shoulders from Allegiance to the Old Gods, and
+// most of the armor is the Totemic Leather set the Leatherworker makes for themselves.
+// The rest is Forever's own spell power gear: Spellpower Goggles Xtreme, Technician's
+// Bracers from A Fine Mess in Gnomeregan, Serpent Gloves.
 //
 // The set assumes Engineering and Leatherworking, which is 4.5 DPS. A level 20 head slot
 // has nothing in it but the goggles, so that is most of the gap.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 // The same search against three enemies, where Consecration is most of the damage and a
-// point of spell power is worth four of Strength. Smite's Mighty Hammer out of the
-// Deadmines swings harder than Hammerbone, and the slots the Totemic Leather set does
-// not win take a spell power piece instead (Heavy Woolen Cloak, Jutebraid Gloves, Dark
-// Ritual Leggings out of Blackfathom Deeps, Spidersilk Boots). Worth 1.6 DPS on four
-// targets and 0.8 on three, 0.8 behind on two and 1.8 behind on one.
+// point of spell power is worth four of Strength. Wolfsbane stays, it is far enough ahead
+// of every other weapon, and the slots the Totemic Leather set does not win take a spell
+// power piece instead (Heavy Woolen Cloak, Stormrider's Leather Armor, Jutebraid Gloves,
+// Dark Ritual Leggings out of Blackfathom Deeps, Loop of Sacrifice). Worth 1.7 DPS on
+// four targets and 0.5 on three, 0.7 behind on two and 1.8 behind on one.
 export const GearLevel20AoE = PresetUtils.makePresetGear('Level 20 AoE', Level20AoEGearJSON);
 
 export const GearPresets = {};

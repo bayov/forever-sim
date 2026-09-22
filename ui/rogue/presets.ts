@@ -71,10 +71,16 @@ export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Stri
 // rogue can equip at 20, on the wowhead Forever item data: dungeon blues (Serpent's
 // Shoulders and Gloves of the Fang from Wailing Caverns, Cultist's Armguards from
 // Blackfathom Deeps, Blackened Defias Belt, Feet of the Lynx), a Scouting Tunic of Power,
-// Band of the Fist from the Blackfathom quest and the Warsong Gulch neck. Both sets
-// assume Engineering and Leatherworking for Gnomish Goggles, Parachute Cloak and
-// Brawler's Leather Pants. Only the weapons differ: Cruel Barb off Edwin VanCleef with an
-// Assassin's Blade behind it for Sinister Strike, two Assassin's Blades for Backstab.
+// Band of the Fist from the Blackfathom quest and the Warsong Gulch neck and ring. Both
+// sets assume Engineering and Leatherworking for Gnomish Goggles, Parachute Cloak and
+// Brawler's Leather Pants. Only the main hand differs: Cruel Barb off Edwin VanCleef for
+// Sinister Strike, an Assassin's Blade for Backstab, and both hold Butcher's Cleaver in
+// the off hand, which Forever lets a rogue wield (its Hack and Slash reads "Axe/Sword").
+//
+// The rogue used to wear Field Researcher's Loop, which is gone: it is marked rogue gear
+// but the only quest that hands it over is the mage's Greater Friend of the Library, so
+// nobody can have it. Losing 7 Strength, 7 Agility and 7 Stamina costs more than the axe
+// wins back, and both sets land 0.6 below where they were.
 //
 // Lil Timmy's Peashooter is in the ranged slot for 0.7 DPS. It is a 1 in several thousand
 // drop off the Defias in Westfall, so take the numbers with that in mind.

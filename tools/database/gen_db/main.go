@@ -246,31 +246,43 @@ func main() {
 // It runs after the Classic inputs and the hand entered Forever items, so its stats,
 // quality and level requirements win: the listing is what the beta client has today.
 // An item already in the database keeps its sources and class list, the listing's
-// entries would only repeat them. A new item needs a source: the beta client holds
-// gear that is nowhere in the world yet (Mark of the Pack Leader and the rest of its
-// set), and a gear search would happily wear it.
+// entries would only repeat them.
+//
+// An item wowhead knows no source for still comes in. Forever is in beta and wowhead
+// has no drop or reward data for half of what it added, which is how Wolfsbane, the
+// two handed sword the Undead paladin quest chain hands over, was missing from every
+// search we ran. The price is that the beta client's unfinished gear comes in too
+// (Mark of the Pack Leader and the rest of its set), so the gear search marks a pick
+// wowhead knows no source for and we check it by hand.
 func MergeForeverWowheadItems(db *database.WowDatabase, whdb database.ForeverWowheadDB) {
-	added, updated, unobtainable, dropped := 0, 0, 0, 0
+	added, updated, unsourced, dropped := 0, 0, 0, 0
 	for _, whItem := range whdb.Items {
 		item, droppedRatings := whItem.ToProto()
 		if item == nil {
 			continue
 		}
 		dropped += droppedRatings
-		if _, ok := db.Items[item.Id]; ok {
+		if have, ok := db.Items[item.Id]; ok {
 			// proto.Merge appends lists, and these two are already on the item.
 			item.Sources = nil
 			item.ClassAllowlist = nil
+			// The listing's side is the last word on faction when it has one, but wowhead
+			// has no side for an item it has not placed in the world, and MergeItem would
+			// take that as "no faction" and drop what we entered by hand. Wolfsbane comes
+			// off an Undead only quest chain and wowhead files it under no side at all.
+			if item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_UNSPECIFIED {
+				item.FactionRestriction = have.FactionRestriction
+			}
 			updated++
-		} else if !whItem.Obtainable() {
-			unobtainable++
-			continue
 		} else {
 			added++
+			if len(item.Sources) == 0 {
+				unsourced++
+			}
 		}
 		db.MergeItem(item)
 	}
-	fmt.Printf("Forever wowhead items: %d updated, %d added, %d left out for having no source, %d rating stats dropped\n", updated, added, unobtainable, dropped)
+	fmt.Printf("Forever wowhead items: %d updated, %d added (%d with no source wowhead knows), %d rating stats dropped\n", updated, added, unsourced, dropped)
 }
 
 func ApplyGlobalFilters(db *database.WowDatabase) {

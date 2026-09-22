@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
 	"math"
@@ -32,6 +33,10 @@ type gearOption struct {
 	name string
 	// twoHand marks a main hand option that leaves no room for an off hand.
 	twoHand bool
+	// unsourced marks an item wowhead lists no way of getting at all. Forever is in beta
+	// and half of what it added has no drop, quest or vendor on wowhead yet, so these are
+	// worth searching over, but a set that picks one needs a look by hand.
+	unsourced bool
 }
 
 var gearSlotNames = []string{"head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2", "mainhand", "offhand", "ranged"}
@@ -57,7 +62,8 @@ func armorTypesFor(class proto.Class, level int32) []proto.ArmorType {
 }
 
 var weaponTypesFor = map[proto.Class][]proto.WeaponType{
-	proto.Class_ClassRogue:   {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist},
+	// The rogue gets axes under Forever, its Hack and Slash reads "Axe/Sword".
+	proto.Class_ClassRogue:   {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe},
 	proto.Class_ClassWarrior: {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeStaff},
 	proto.Class_ClassShaman:  {proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeStaff, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
 	proto.Class_ClassPaladin: {proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeShield, proto.WeaponType_WeaponTypeOffHand},
@@ -132,8 +138,38 @@ func usefulSuffix(class proto.Class, s *proto.ItemRandomSuffix) bool {
 	return useful > 0
 }
 
+// The Forever items wowhead lists no way of getting: not a drop, a quest, a vendor or a
+// recipe, not even an unnamed one.
+//
+// The database carries them anyway, because wowhead has no source for half of what
+// Forever added and leaving them out cost us Wolfsbane, but a set that picks one is
+// worth a look by hand. An item with a source of its own in the database, hand entered
+// in forever_items.go, is not one of these however the listing files it.
+func loadUnsourcedItems(path string) (map[int32]bool, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var listing struct {
+		Items []struct {
+			ID     int32   `json:"id"`
+			Source []int32 `json:"source"`
+		} `json:"items"`
+	}
+	if err := json.Unmarshal(data, &listing); err != nil {
+		return nil, err
+	}
+	unsourced := map[int32]bool{}
+	for _, item := range listing.Items {
+		if len(item.Source) == 0 {
+			unsourced[item.ID] = true
+		}
+	}
+	return unsourced, nil
+}
+
 // Every option for every slot the player can use at their level.
-func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase int32, exclude []int32) ([][]gearOption, error) {
+func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase int32, exclude []int32) ([][]gearOption, error) {
 	data, err := os.ReadFile(dbPath)
 	if err != nil {
 		return nil, err
@@ -143,6 +179,10 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 		return nil, err
 	}
 	pvpRank, err := loadPvpRankItems(levelsPath)
+	if err != nil {
+		return nil, err
+	}
+	unsourcedItems, err := loadUnsourcedItems(foreverPath)
 	if err != nil {
 		return nil, err
 	}
@@ -158,13 +198,14 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 
 	add := func(slot proto.ItemSlot, item *proto.UIItem) {
 		twoHand := item.HandType == proto.HandType_HandTypeTwoHand
+		unsourced := len(item.Sources) == 0 && unsourcedItems[item.Id]
 		if len(item.RandomSuffixOptions) == 0 {
-			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name, twoHand})
+			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name, twoHand, unsourced})
 			return
 		}
 		for _, id := range item.RandomSuffixOptions {
 			if s, ok := suffixes[id]; ok && usefulSuffix(class, s) {
-				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name, twoHand})
+				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name, twoHand, unsourced})
 			}
 		}
 	}
@@ -318,11 +359,12 @@ func pairedSlot(slot int) int {
 func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSpec, result) {
 	best := equipmentSlots(s.setup.player().Equipment)
 	names := make([]string, len(best))
+	unsourced := make([]bool, len(best))
 	for slot, item := range best {
 		if item != nil {
 			for _, o := range pool[slot] {
 				if o.spec.Id == item.Id && o.spec.RandomSuffix == item.RandomSuffix {
-					names[slot] = o.name
+					names[slot], unsourced[slot] = o.name, o.unsourced
 				}
 			}
 		}
@@ -376,7 +418,7 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 			}
 			if bestOption != nil {
 				best[slot] = withEnchantOf(bestOption.spec, current)
-				names[slot] = bestOption.name
+				names[slot], unsourced[slot] = bestOption.name, bestOption.unsourced
 				if bestOption.twoHand {
 					if best[proto.ItemSlot_ItemSlotOffHand] != nil {
 						heldOffHand, heldOffHandName = best[proto.ItemSlot_ItemSlotOffHand], names[proto.ItemSlot_ItemSlotOffHand]
@@ -405,7 +447,11 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 			if item.RandomSuffix != 0 {
 				fmt.Printf(", suffix %d", item.RandomSuffix)
 			}
-			fmt.Println(")")
+			fmt.Print(")")
+			if unsourced[slot] {
+				fmt.Print("  no source wowhead knows, check it by hand")
+			}
+			fmt.Println()
 		}
 	}
 	return best, bestScore
