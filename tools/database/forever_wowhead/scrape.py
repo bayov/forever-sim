@@ -15,7 +15,7 @@
 #
 # The argument is the highest required level to scrape. Items with no required level
 # (Forever quest rewards) come along whatever their item level.
-import concurrent.futures, json, os, subprocess, sys, time, urllib.request
+import concurrent.futures, json, os, re, subprocess, sys, time, urllib.request
 import websocket
 
 MAX_REQ_LEVEL = int(sys.argv[1]) if len(sys.argv) > 1 else 25
@@ -39,6 +39,8 @@ EXPR = '''(() => {
 })()'''
 
 TOOLTIP = 'https://nether.wowhead.com/forever/tooltip/item/{}?dataEnv=17&locale=0'
+QUEST = 'https://www.wowhead.com/forever/quest={}'
+BROWSER = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36'
 
 def mark_bind_on_pickup(items):
     """Set bop on the crafted items that bind when picked up.
@@ -61,6 +63,51 @@ def mark_bind_on_pickup(items):
             if 'Binds when picked up' in tooltip:
                 item['bop'] = True
     print(f"{sum(1 for i in crafted if i.get('bop'))} of {len(crafted)} crafted items bind on pickup", file=sys.stderr)
+
+def mark_quest_classes(items):
+    """Set qclass on the items that only one class's quest hands out.
+
+    Forever added quests like Friend of the Library that only a mage can take, and their
+    rewards carry no class restriction of their own, so an item like Erudite's Amulet
+    looks wearable by everyone. The quest's own page says which class it is for, in the
+    Quick Facts list it builds from a `[class=8]` markup tag.
+
+    Only items that come from nothing but quests get the restriction. When a drop or a
+    vendor also hands the item out, or one of its quests is open to every class, anyone
+    can wear it.
+
+    The pages come one at a time with a pause between them. wowhead answers a browser
+    user agent happily, but it cut us off for an hour when we asked eight at a time.
+    """
+    by_quest = {}
+    for item in items.values():
+        if set(item.get('source') or []) != {4}:
+            continue
+        for s in item.get('sourcemore') or []:
+            if s.get('t') == 5 and s.get('ti'):
+                by_quest.setdefault(s['ti'], []).append(item)
+    classes = {}
+    for n, quest in enumerate(sorted(by_quest), 1):
+        time.sleep(0.3)
+        page = subprocess.run(['curl', '-sfL', '-A', BROWSER, QUEST.format(quest)],
+            capture_output=True, text=True, errors='replace')
+        if page.returncode != 0:
+            print('quest failed', quest, 'curl', page.returncode, file=sys.stderr)
+            continue
+        facts = page.stdout[page.stdout.find('Quick Facts'):][:2000]
+        classes[quest] = sorted({int(c) for c in re.findall(r'\[class=(\d+)\]', facts)})
+        if n % 50 == 0:
+            print(f'quests {n}/{len(by_quest)}', file=sys.stderr)
+    for quest, quest_items in by_quest.items():
+        if not classes.get(quest):
+            continue
+        for item in quest_items:
+            others = [s['ti'] for s in item['sourcemore'] if s.get('t') == 5 and s.get('ti') != quest]
+            if any(not classes.get(q) for q in others):
+                continue
+            item['qclass'] = sorted(set(item.get('qclass', [])) | set(classes[quest]))
+    print(f"{sum(1 for i in items.values() if i.get('qclass'))} items come from a class's own quest", file=sys.stderr)
+
 
 def main():
     chrome = subprocess.Popen(['google-chrome', '--headless=new', '--no-sandbox', '--disable-gpu',
@@ -120,6 +167,7 @@ def main():
                     n += 1
                 print(f'slot {slot} levels {lo}-{hi}: {n} items', file=sys.stderr)
         mark_bind_on_pickup(items)
+        mark_quest_classes(items)
         out = sorted(items.values(), key=lambda x: x['id'])
         # One item per line, so a rescrape diffs item by item.
         with open(OUT, 'w') as f:

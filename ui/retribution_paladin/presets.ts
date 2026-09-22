@@ -43,21 +43,23 @@ import Level20AoEGearJSON from './gear_sets/level20_aoe.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
-// The tools/rotopt gear search at level 20 over everything a paladin can equip (Scourge
-// Invasion drops left out, no profession gear), on the wowhead Forever item data:
-// Strength and attack power greens, the Wailing Caverns blues, Verigan's Fist from the
-// paladin class quest, and the spell power pieces Forever handed out at this level
-// (Technician's Bracers from A Fine Mess in Gnomeregan, Dark Ritual Leggings from
-// Blackfathom Deeps, Disjointed Shoes from the Redridge WANTED poster, Magician's
-// Mantle). Spellpower Goggles Xtreme and the Totemic Leather set add 2.7 DPS for an
-// Engineer and Leatherworker.
+// The tools/rotopt gear search at level 20 over everything an Undead paladin can equip
+// (Scourge Invasion drops left out), on the wowhead Forever item data. Verigan's Fist
+// and the rest of the Alliance list are gone, so the weapon is Hammerbone out of Wailing
+// Caverns, the neck and the rings come from Warsong Gulch, and most of the armor is the
+// Totemic Leather set the Leatherworker makes for themselves. The rest is Forever's own
+// spell power gear: Spellpower Goggles Xtreme, Technician's Bracers from A Fine Mess in
+// Gnomeregan, Magician's Mantle, Serpent Gloves.
+//
+// The set assumes Engineering and Leatherworking, which is 4.5 DPS. A level 20 head slot
+// has nothing in it but the goggles, so that is most of the gap.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 // The same search against three enemies, where Consecration is most of the damage and a
-// point of spell power is worth four of Strength: every slot that has a spell power
-// piece takes it (Gray Woolen Robe, Heavy Woolen Cloak and Spidersilk Boots from
-// tailoring, Serpent Gloves, Heartwood Girdle, Lorekeeper's Ring, Minor Channeling
-// Ring). Worth 7.6 DPS on four targets, 4.8 on three, 1.8 on two and 1.0 behind on one.
-// An Engineer and Leatherworker (goggles, Totemic Leather Armor) gets 6.9 more on three.
+// point of spell power is worth four of Strength. Smite's Mighty Hammer out of the
+// Deadmines swings harder than Hammerbone, and the slots the Totemic Leather set does
+// not win take a spell power piece instead (Heavy Woolen Cloak, Jutebraid Gloves, Dark
+// Ritual Leggings out of Blackfathom Deeps, Spidersilk Boots). Worth 1.6 DPS on four
+// targets and 0.8 on three, 0.8 behind on two and 1.8 behind on one.
 export const GearLevel20AoE = PresetUtils.makePresetGear('Level 20 AoE', Level20AoEGearJSON);
 
 export const GearPresets = {};
@@ -177,8 +179,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
-	profession1: Profession.Blacksmithing,
-	profession2: Profession.Enchanting,
+	profession1: Profession.Engineering,
+	profession2: Profession.Leatherworking,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -225,7 +227,7 @@ export const PresetBuildLevel20 = PresetUtils.makePresetBuild('Level 20', {
 	talents: TalentsLevel20,
 	rotation: APLLevel20,
 	encounter: EncounterLevel20,
-	race: Race.RaceDwarf,
+	race: Race.RaceUndead,
 	level: 20,
 	options: RetributionPaladinOptions.create({
 		aura: PaladinAura.RetributionAura,
@@ -258,7 +260,7 @@ const level20PackBuild = (targets: number) =>
 		talents: TalentsLevel20,
 		rotation: APLLevel20,
 		encounter: level20PackEncounter(targets),
-		race: Race.RaceDwarf,
+		race: Race.RaceUndead,
 		level: 20,
 		options: RetributionPaladinOptions.create({
 			aura: PaladinAura.RetributionAura,

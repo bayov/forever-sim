@@ -113,7 +113,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 		partyBuffs: PartyBuffs.create({}),
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
-		race: Race.RaceHuman,
+		race: Race.RaceUndead,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
@@ -163,10 +163,11 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
+			// Forever gives the Forsaken paladins, so the Horde has one now.
 			defaultFactionRaces: {
 				[Faction.Alliance]: Race.RaceHuman,
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Horde]: Race.RaceUnknown,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
@@ -174,7 +175,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 					1: Presets.DefaultGear.gear,
 					2: Presets.DefaultGear.gear,
 				},
-				[Faction.Horde]: {},
+				[Faction.Horde]: {
+					1: Presets.DefaultGear.gear,
+					2: Presets.DefaultGear.gear,
+				},
 			},
 		},
 	],

@@ -54,13 +54,18 @@ export const GearPhase1 = PresetUtils.makePresetGear('Phase 1', Phase1GearJSON);
 export const GearPhase2 = PresetUtils.makePresetGear('Phase 2', Phase2GearJSON);
 export const GearPhase3 = PresetUtils.makePresetGear('Phase 3', Phase3GearJSON);
 export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
-// Both level 20 sets come from the tools/rotopt gear search over every item a level 20
-// can equip, Forever quest rewards included, without the Scourge Invasion drops (The Axe
-// of Severing, Abomination Skin Leggings) the first search picked. With 11 points the
-// search wants Strength and attack power greens with Hammerbone. With 16 points Stormstrike
-// and two shocks drain the mana pool inside a minute, so the same search goes to Intellect
-// cloth (Necrology Robes, Mindthrust Bracers) that Mental Dexterity turns into attack
-// power as well: +4 DPS at 60 sec over the melee set, -1 with the 11 point build.
+// Both level 20 sets come from the tools/rotopt gear search over every item an Orc
+// shaman can equip, Forever quest rewards included, without the Scourge Invasion drops
+// (The Axe of Severing, Abomination Skin Leggings) the first search picked. Both assume
+// Engineering and Leatherworking: Spellpower Goggles Xtreme is the only head slot worth
+// wearing at 20, and the crafted leather sets take most of the armor slots.
+//
+// With 11 points the search wants Strength and attack power with Hammerbone from Leaders
+// of the Fang. With 16 points Stormstrike and two shocks drain the mana pool inside a
+// minute, so the same search goes to Intellect and spell power that Mental Dexterity
+// turns into attack power as well: the Stormrider's leather pieces over the Totemic
+// ones, and Twisted Chanter's Staff, which swings as hard as Hammerbone and carries 10
+// Intellect. That is 79.2 DPS at 60 sec against 69.3 for the 11 point set.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 export const GearLevel20p5 = PresetUtils.makePresetGear('Level 20 + 5', Level20p5GearJSON);
 
@@ -241,8 +246,8 @@ export const DefaultDebuffs = Debuffs.create({
 
 // Engineering for the Goblin Sapper in the consumes (worth about 1 DPS).
 export const OtherDefaults = {
-	profession1: Profession.Alchemy,
-	profession2: Profession.Engineering,
+	profession1: Profession.Engineering,
+	profession2: Profession.Leatherworking,
 	race: Race.RaceOrc,
 };
 

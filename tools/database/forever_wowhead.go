@@ -42,6 +42,9 @@ type ForeverWowheadItem struct {
 	// Binds when picked up. Only fetched for crafted items, where it means the crafter
 	// is the only one who can wear it.
 	BindOnPickup bool `json:"bop"`
+	// The classes that can take the quest the item comes from, when the item itself is
+	// open to everyone but the quest is not. wowhead class ids, see mark_quest_classes.
+	QuestClasses []int32 `json:"qclass"`
 	// The jsonequip block. Stats are numbers, a few keys (appearances) are objects.
 	Eq map[string]json.RawMessage `json:"eq"`
 }
@@ -314,6 +317,14 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 	}
 	if wi.ReqClass != 0 {
 		item.ClassAllowlist = WowheadItem{ClassMask: uint16(wi.ReqClass)}.getClassRestriction()
+	} else if len(wi.QuestClasses) > 0 {
+		// Forever's Friend of the Library hands a mage an amulet nothing else marks as a
+		// mage item, so the quest's own class flag is the restriction.
+		mask := 0
+		for _, class := range wi.QuestClasses {
+			mask |= 1 << (class - 1)
+		}
+		item.ClassAllowlist = WowheadItem{ClassMask: uint16(mask)}.getClassRestriction()
 	}
 	switch wi.Side {
 	case 1:
