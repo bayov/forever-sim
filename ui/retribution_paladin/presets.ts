@@ -44,15 +44,20 @@ import Level20AoEGearJSON from './gear_sets/level20_aoe.gear.json';
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 // The tools/rotopt gear search at level 20 over everything a paladin can equip (Scourge
-// Invasion drops left out): Strength and attack power greens, the Wailing Caverns and
-// Deadmines blues, Verigan's Fist from the paladin class quest, and two Intellect pieces
-// (Magician's Mantle, Mindthrust Bracers) for the Consecration mana.
+// Invasion drops left out, no profession gear), on the wowhead Forever item data:
+// Strength and attack power greens, the Wailing Caverns blues, Verigan's Fist from the
+// paladin class quest, and the spell power pieces Forever handed out at this level
+// (Technician's Bracers from A Fine Mess in Gnomeregan, Dark Ritual Leggings from
+// Blackfathom Deeps, Disjointed Shoes from the Redridge WANTED poster, Magician's
+// Mantle). Spellpower Goggles Xtreme and the Totemic Leather set add 2.7 DPS for an
+// Engineer and Leatherworker.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
-// The same search against four enemies, where Consecration is most of the damage and a
-// point of spell power is worth two of Strength: Gnoll Casting Gloves, Dreamer's Leggings
-// and the Silverwing Sentinels ring and cape (Lorekeeper's Ring, Caretaker's Cape) come
-// in for the Strength greens. Worth 3.4 DPS on four targets, 1.8 on three, nothing on two
-// and 1.1 behind on one.
+// The same search against three enemies, where Consecration is most of the damage and a
+// point of spell power is worth four of Strength: every slot that has a spell power
+// piece takes it (Gray Woolen Robe, Heavy Woolen Cloak and Spidersilk Boots from
+// tailoring, Serpent Gloves, Heartwood Girdle, Lorekeeper's Ring, Minor Channeling
+// Ring). Worth 7.6 DPS on four targets, 4.8 on three, 1.8 on two and 1.0 behind on one.
+// An Engineer and Leatherworker (goggles, Totemic Leather Armor) gets 6.9 more on three.
 export const GearLevel20AoE = PresetUtils.makePresetGear('Level 20 AoE', Level20AoEGearJSON);
 
 export const GearPresets = {};

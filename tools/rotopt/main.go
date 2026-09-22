@@ -54,6 +54,7 @@ func main() {
 	gearSearch := flag.Bool("gear-search", false, "search every slot over the items the player can equip at their level, with the starting knobs (prints the gear and writes it to -gear-out)")
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
 	gearQuality := flag.Int("gear-quality", 2, "lowest item quality the gear search considers (2 uncommon, 3 rare)")
+	professions := flag.String("professions", "", "override the player's two professions for the gear search, e.g. Engineering,Blacksmithing (bind on pickup crafted gear and goggles need them)")
 	gearExclude := flag.String("gear-exclude", "", "item IDs the gear search leaves out, comma separated (Manual Crowd Pummeler and its three charges, say)")
 	gearPhase := flag.Int("gear-phase", 0, "highest raid phase the gear search considers (1 MC, 2 DM, 3 BWL, 4 ZG, 5 AQ, 6 Naxx), 0 for all")
 	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
@@ -164,6 +165,14 @@ func main() {
 	if *timeline {
 		fmt.Print(setup.timeline(template.Build(start), durations[0]))
 		return
+	}
+
+	if *professions != "" {
+		names := strings.Split(*professions, ",")
+		setup.player().Profession1 = proto.Profession(proto.Profession_value[names[0]])
+		if len(names) > 1 {
+			setup.player().Profession2 = proto.Profession(proto.Profession_value[names[1]])
+		}
 	}
 
 	if *gearSearch {

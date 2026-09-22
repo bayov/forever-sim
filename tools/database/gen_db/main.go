@@ -25,6 +25,7 @@ import (
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells -maxid=31000
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
 // go run ./tools/database/gen_db -outDir=assets -gen=wago-db2-items
+// python3 tools/database/forever_wowhead/scrape.py 25   (wowhead Forever listings, needs Chrome)
 
 // Lastly run the following to generate db.json (ensure to delete cached versions and/or rebuild for copying of assets during local development)
 // Note: This does not make network requests, only regenerates core db binary and json files from existing inputs
@@ -76,6 +77,7 @@ func main() {
 	wowheadDB := database.ParseWowheadDB(tools.ReadFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir)))
 	atlaslootDB := database.ReadDatabaseFromJson(tools.ReadFile(fmt.Sprintf("%s/atlasloot_db.json", inputsDir)))
 	wagoItems := database.ParseWagoDB(tools.ReadFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir)))
+	foreverWowheadDB := database.ParseForeverWowheadDB(tools.ReadFile(fmt.Sprintf("%s/forever_wowhead_items.json", inputsDir)))
 
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
@@ -161,6 +163,7 @@ func main() {
 
 	db.MergeItems(database.ItemOverrides)
 	db.MergeItems(database.ForeverItems)
+	MergeForeverWowheadItems(db, foreverWowheadDB)
 	db.MergeFactions(database.ForeverFactions)
 	db.MergeEnchants(database.EnchantOverrides)
 	ApplyGlobalFilters(db)
@@ -238,6 +241,38 @@ func main() {
 }
 
 // Filters out entities which shouldn't be included anywhere.
+// MergeForeverWowheadItems lays the wowhead Forever listing over the Classic items.
+//
+// It runs after the Classic inputs and the hand entered Forever items, so its stats,
+// quality and level requirements win: the listing is what the beta client has today.
+// An item already in the database keeps its sources and class list, the listing's
+// entries would only repeat them. A new item needs a source: the beta client holds
+// gear that is nowhere in the world yet (Mark of the Pack Leader and the rest of its
+// set), and a gear search would happily wear it.
+func MergeForeverWowheadItems(db *database.WowDatabase, whdb database.ForeverWowheadDB) {
+	added, updated, unobtainable, dropped := 0, 0, 0, 0
+	for _, whItem := range whdb.Items {
+		item, droppedRatings := whItem.ToProto()
+		if item == nil {
+			continue
+		}
+		dropped += droppedRatings
+		if _, ok := db.Items[item.Id]; ok {
+			// proto.Merge appends lists, and these two are already on the item.
+			item.Sources = nil
+			item.ClassAllowlist = nil
+			updated++
+		} else if !whItem.Obtainable() {
+			unobtainable++
+			continue
+		} else {
+			added++
+		}
+		db.MergeItem(item)
+	}
+	fmt.Printf("Forever wowhead items: %d updated, %d added, %d left out for having no source, %d rating stats dropped\n", updated, added, unobtainable, dropped)
+}
+
 func ApplyGlobalFilters(db *database.WowDatabase) {
 	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
 		if _, ok := database.ItemDenyList[item.Id]; ok {

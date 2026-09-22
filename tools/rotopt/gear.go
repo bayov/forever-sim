@@ -197,6 +197,13 @@ func loadGearPool(dbPath, levelsPath string, player *proto.Player, level int32, 
 		if len(item.ClassAllowlist) > 0 && !contains(item.ClassAllowlist, class) {
 			continue
 		}
+		// Engineering goggles and Forever's bind on pickup crafted sets need the profession
+		// on the character. The player's two professions come from the settings or the
+		// -professions flag.
+		if item.RequiredProfession != proto.Profession_ProfessionUnknown &&
+			item.RequiredProfession != player.Profession1 && item.RequiredProfession != player.Profession2 {
+			continue
+		}
 		if item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY && !horde ||
 			item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_ALLIANCE_ONLY && horde {
 			continue

@@ -7,6 +7,10 @@ import (
 
 // ForeverItems are items that exist only in WoW Forever, entered by hand.
 //
+// Since 2026-09-22 the wowhead Forever listing (forever_wowhead.go, required level
+// 25 and under) covers these too and its stats win, this file still gives the quest
+// names and levels wowhead lacks and the items above level 25.
+//
 // The Classic inputs (wowhead dump, atlasloot, wago) know nothing about them,
 // so we type the stats from the wowhead Forever tooltips
 // (https://nether.wowhead.com/forever/tooltip/item/ID?dataEnv=17&locale=0) and
