@@ -67,10 +67,17 @@ export const GearBackstabP1BiS = PresetUtils.makePresetGear('Backstab P1 BiS', B
 export const GearBackstabP2BiS = PresetUtils.makePresetGear('Backstab P2 BiS', BackstabGearP2BiS);
 export const GearSinisterStrikeP1BiS = PresetUtils.makePresetGear('Sinister Strike P1 BiS', SinisterStrikeGearP1BiS);
 export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Strike P2 BiS', SinisterStrikeGearP2BiS);
-// Level 20 sets found by tools/rotopt -level 20 -gear-search over everything a rogue can
-// equip at 20: dungeon blues (SFK, DM, WC, BFD), "of Power" / "of the Tiger" greens and
-// the WSG honored neck and ring. Head, shoulders, trinkets and ranged stay empty because
-// nothing with DPS stats exists at that level. Only the weapons differ between the two.
+// Level 20 sets found by tools/rotopt -level 20 -gear-search over everything a Troll
+// rogue can equip at 20, on the wowhead Forever item data: dungeon blues (Serpent's
+// Shoulders and Gloves of the Fang from Wailing Caverns, Cultist's Armguards from
+// Blackfathom Deeps, Blackened Defias Belt, Feet of the Lynx), a Scouting Tunic of Power,
+// Band of the Fist from the Blackfathom quest and the Warsong Gulch neck. Both sets
+// assume Engineering and Leatherworking for Gnomish Goggles, Parachute Cloak and
+// Brawler's Leather Pants. Only the weapons differ: Cruel Barb off Edwin VanCleef with an
+// Assassin's Blade behind it for Sinister Strike, two Assassin's Blades for Backstab.
+//
+// Lil Timmy's Peashooter is in the ranged slot for 0.7 DPS. It is a 1 in several thousand
+// drop off the Defias in Westfall, so take the numbers with that in mind.
 export const GearLevel20Backstab = PresetUtils.makePresetGear('Level 20 Backstab', Level20BackstabGear);
 export const GearLevel20SinisterStrike = PresetUtils.makePresetGear('Level 20 Sinister Strike', Level20SinisterStrikeGear);
 
@@ -340,12 +347,17 @@ export const EncounterLevel20 = level20Encounter('Level 20', 'Mutanus the Devour
 // The same boss as an Undead, for the builds that skip Murder (it only works on Humanoids
 // and Giants).
 export const EncounterLevel20Undead = level20Encounter('Level 20 (Undead)', 'Level 22 undead boss', MobType.MobTypeUndead);
+// Troll, because the sim is Horde side now. Berserking is a flat 10% under Forever and
+// the three Horde rogues land within 0.2 of each other on both builds: Sinister Strike
+// 67.6 Troll, 67.4 Undead, 66.0 Orc, Backstab 66.4 / 66.5 / 65.0. The Undead row rests on
+// the 15 sec internal cooldown the sim assumes for Touch of the Grave, which the beta
+// tooltip does not give, so Troll is the safer pick.
 export const PresetBuildLevel20Backstab = PresetUtils.makePresetBuild('Level 20 Backstab', {
 	gear: GearLevel20Backstab,
 	talents: Level20BackstabTalents,
 	rotation: ROTATION_PRESET_LEVEL20_BACKSTAB,
 	encounter: EncounterLevel20,
-	race: Race.RaceHuman,
+	race: Race.RaceTroll,
 	level: 20,
 });
 export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Level 20 Sinister Strike', {
@@ -353,21 +365,19 @@ export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Lev
 	talents: Level20SinisterStrikeTalents,
 	rotation: ROTATION_PRESET_LEVEL20_SINISTER_STRIKE,
 	encounter: EncounterLevel20,
-	race: Race.RaceHuman,
+	race: Race.RaceTroll,
 	level: 20,
 });
 
 // The same at level 20 with the 5 extra talent points the Forever beta is expected to
 // give (16 in all). The gear and encounter are the level 20 ones, only the talents and
-// rotation differ. Night Elf is the best race (Elune's Light, 70.6 / 68.3), then Human
-// (69.2 / 67.1) and Gnome (Eureka! on cooldown, 68.5 / 68.4). The builds keep Human so
-// the two compare like for like.
+// rotation differ. The gear search with 16 points changes nothing in either set.
 export const PresetBuildLevel20p5Backstab = PresetUtils.makePresetBuild('Level 20 + 5 Backstab', {
 	gear: GearLevel20Backstab,
 	talents: Level20p5BackstabTalents,
 	rotation: ROTATION_PRESET_LEVEL20P5_BACKSTAB,
 	encounter: EncounterLevel20,
-	race: Race.RaceHuman,
+	race: Race.RaceTroll,
 	level: 20,
 	bonusTalentPoints: 5,
 });
@@ -376,7 +386,7 @@ export const PresetBuildLevel20p5SinisterStrike = PresetUtils.makePresetBuild('L
 	talents: Level20p5SinisterStrikeTalents,
 	rotation: ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
 	encounter: EncounterLevel20,
-	race: Race.RaceHuman,
+	race: Race.RaceTroll,
 	level: 20,
 	bonusTalentPoints: 5,
 });
@@ -387,7 +397,7 @@ export const PresetBuildLevel20p5BackstabNoMurder = PresetUtils.makePresetBuild(
 	talents: Level20p5BackstabNoMurderTalents,
 	rotation: ROTATION_PRESET_LEVEL20P5_BACKSTAB,
 	encounter: EncounterLevel20Undead,
-	race: Race.RaceHuman,
+	race: Race.RaceTroll,
 	level: 20,
 	bonusTalentPoints: 5,
 });
@@ -396,7 +406,7 @@ export const PresetBuildLevel20p5SinisterStrikeNoMurder = PresetUtils.makePreset
 	talents: Level20p5SinisterStrikeNoMurderTalents,
 	rotation: ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
 	encounter: EncounterLevel20Undead,
-	race: Race.RaceHuman,
+	race: Race.RaceTroll,
 	level: 20,
 	bonusTalentPoints: 5,
 });
@@ -472,7 +482,7 @@ export const DefaultDebuffs = {
 
 export const P1OtherDefaults = {
 	profession1: Profession.Engineering,
-	profession2: Profession.ProfessionUnknown,
+	profession2: Profession.Leatherworking,
 };
 
 export const OtherDefaults = {
