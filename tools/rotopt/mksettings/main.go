@@ -4,9 +4,10 @@
 // document (both blessings, Judgement of Wisdom, every debuff, the Phase 1 consumes).
 // The rogue gets the raid's Strength of Earth and Grace of Air on top. The target is the
 // UI's Level 60 boss (level 63, 3731 armor, Humanoid). At -level 20 it is instead the UI's
-// Level 20 build: the level 22 boss soloed with no buffs, Thistle Tea and Instant Poison
-// for the rogue, Rockbiter and the boss on the shaman so Lightning Shield fires, the boss
-// on the paladin too (Retribution Aura) with its own Blessing of Might.
+// Level 20 build: the level 22 boss soloed with no raid buffs or debuffs, Thistle Tea and
+// Instant Poison for the rogue, Rockbiter and the boss on the shaman so Lightning Shield
+// fires, and the boss on the paladin too (Retribution Aura). Everyone gets Blessing of
+// Kings, because a group at that level almost always has a paladin in it.
 //
 //	go run --tags=with_db ./tools/rotopt/mksettings -spec rogue -gear combat_sinister_strike_p2_bis \
 //	    -apl combat_sinister_strike -talents 00530310501-32003311201515231 -race Human -out ss60.json
@@ -194,7 +195,7 @@ func main() {
 	var tanks []*proto.UnitReference
 	if *level == 20 {
 		raidBuffs = &proto.RaidBuffs{}
-		individualBuffs = &proto.IndividualBuffs{}
+		individualBuffs = &proto.IndividualBuffs{BlessingOfKings: true}
 		debuffs = &proto.Debuffs{}
 		encounter = &proto.Encounter{
 			Duration:             60,
@@ -228,8 +229,9 @@ func main() {
 			consumes = &proto.Consumes{MainHandImbue: proto.WeaponImbue_RockbiterWeapon}
 			tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 		case "ret":
-			// One blessing per paladin. Kings won the level 20 search (see the wiki), the
-			// flag is there to check that again.
+			// The paladin's own blessing, one at a time, where everyone else assumes a
+			// paladin in the group and takes Kings. Kings won the level 20 search (see
+			// the wiki), the flag is there to check that again.
 			consumes = &proto.Consumes{}
 			switch *blessing {
 			case "kings":

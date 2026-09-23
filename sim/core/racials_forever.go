@@ -273,12 +273,24 @@ func (character *Character) registerEureka() {
 // at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
 // damage that cannot crit, cannot proc anything and heals the caster for what it deals.
 //
-// The tooltip has no internal cooldown either, but a proc like this always has one in
-// practice, and a dual wielding rogue lands enough hits that the cooldown decides whether
-// the racial is worth 1% or 2%. We assume 15 sec until the beta shows the real one. It is
-// a variable so a comparison harness can sweep it, and zero means every hit rolls.
-var TouchOfTheGraveICD = time.Second * 15
-
+// The beta gives it no internal cooldown, so every roll counts. We assumed 15 sec for a
+// while, on the grounds that a proc like this usually has one, and took the assumption
+// out on 2026-09-23 once the beta showed there is none.
+//
+// The roll happens when a hostile ability is used, not when it lands, so an ability that
+// deals no damage of its own still gets its chance: a Kidney Shot, an Expose Armor, or
+// the cast that puts a paladin's Consecration on the ground. Only the cast rolls there,
+// the eight seconds of ticks that follow roll for nothing.
+//
+// That is what the first trigger below is for. The second one is for everything that
+// lands without announcing a cast: auto attacks, a paladin's judgement, a Windfury
+// attack, anything the engine fires off the back of another spell. SpellFlagNoOnCastComplete
+// is exactly that set, so between them the two triggers give every action one roll and
+// no action two.
+//
+// The split shows up in what a miss does. An ability rolls when you press it, so it rolls
+// whether or not it lands, but a swing only rolls when it connects. We have nothing from
+// the beta on a missed swing and this is the quieter of the two guesses.
 func (character *Character) registerTouchOfTheGrave() {
 	actionID := ActionID{SpellID: 1260189}
 	procChance := 0.05
@@ -308,15 +320,32 @@ func (character *Character) registerTouchOfTheGrave() {
 		},
 	})
 
+	proc := func(sim *Simulation, spell *Spell, result *SpellResult) {
+		// A cast gives the handler no result, so the drain follows the unit the player
+		// is on rather than the one that was hit.
+		target := character.CurrentTarget
+		if result != nil {
+			target = result.Target
+		}
+		if target != nil {
+			drain.Cast(sim, target)
+		}
+	}
+
 	MakeProcTriggerAura(&character.Unit, ProcTrigger{
 		Name:       "Touch of the Grave",
+		Callback:   CallbackOnCastComplete,
+		ProcMask:   ProcMaskDirect,
+		ProcChance: procChance,
+		Handler:    proc,
+	})
+	MakeProcTriggerAura(&character.Unit, ProcTrigger{
+		Name:       "Touch of the Grave (Attacks)",
 		Callback:   CallbackOnSpellHitDealt,
 		ProcMask:   ProcMaskDirect,
+		SpellFlags: SpellFlagNoOnCastComplete,
 		Outcome:    OutcomeLanded,
 		ProcChance: procChance,
-		ICD:        TouchOfTheGraveICD,
-		Handler: func(sim *Simulation, spell *Spell, result *SpellResult) {
-			drain.Cast(sim, result.Target)
-		},
+		Handler:    proc,
 	})
 }

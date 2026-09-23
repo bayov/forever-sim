@@ -46,7 +46,6 @@ func main() {
 	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100")
 	printStats := flag.Bool("print-stats", false, "print the player's final stats and exit")
 	weights := flag.Bool("weights", false, "print stat weights for the starting knobs at the first fight length and exit")
-	touchICD := flag.Duration("touch-icd", core.TouchOfTheGraveICD, "internal cooldown for the Undead Touch of the Grave racial (the tooltip has none, 15s is assumed), 0 for none")
 	talents := flag.String("talents", "", "override the player's talent string")
 	talentSearch := flag.Bool("talent-search", false, "search the talent tree with the starting knobs instead of the knobs (prints the best talent string)")
 	talentsFile := flag.String("talents-file", "", "score every talent string in this file (one per line) with the starting knobs, best first")
@@ -68,7 +67,6 @@ func main() {
 
 	log.SetOutput(io.Discard)
 	sim.RegisterAll()
-	core.TouchOfTheGraveICD = *touchICD
 
 	template, ok := templates[*templateName]
 	if *aplPath != "" {

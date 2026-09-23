@@ -49,20 +49,25 @@ export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 // The weapon is Wolfsbane, the two hander at the end of the Undead paladin quest chain,
 // and it is worth 4 DPS on its own: 69-105 over 3.4 sec where Hammerbone out of Wailing
 // Caverns swings 55-84, and the sim does not even run its Holystorm proc. The neck and
-// the rings come from Warsong Gulch, the shoulders from Allegiance to the Old Gods, and
+// one ring come from Warsong Gulch, the shoulders from Allegiance to the Old Gods, and
 // most of the armor is the Totemic Leather set the Leatherworker makes for themselves.
 // The rest is Forever's own spell power gear: Spellpower Goggles Xtreme, Technician's
 // Bracers from A Fine Mess in Gnomeregan, Serpent Gloves.
 //
 // The set assumes Engineering and Leatherworking, which is 4.5 DPS. A level 20 head slot
 // has nothing in it but the goggles, so that is most of the gap.
+//
+// We searched it again when Touch of the Grave lost its internal cooldown and the other
+// presets took Blessing of Kings. The only slot that moved is a ring. Legionnaire's Band
+// (4 Strength, 4 Agility) took the place of Advisor's Ring (5 spell power, 2 mana per 5
+// sec) and is 0.1 to 0.2 ahead at 30, 60 and 300 sec.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 // The same search against three enemies, where Consecration is most of the damage and a
 // point of spell power is worth four of Strength. Wolfsbane stays, it is far enough ahead
 // of every other weapon, and the slots the Totemic Leather set does not win take a spell
 // power piece instead (Heavy Woolen Cloak, Stormrider's Leather Armor, Jutebraid Gloves,
-// Dark Ritual Leggings out of Blackfathom Deeps, Loop of Sacrifice). Worth 1.7 DPS on
-// four targets and 0.5 on three, 0.7 behind on two and 1.8 behind on one.
+// Dark Ritual Leggings out of Blackfathom Deeps, Loop of Sacrifice). Worth 2.8 DPS on
+// four targets and 1.3 on three at 60 sec, a wash on two and 1.8 behind on one.
 export const GearLevel20AoE = PresetUtils.makePresetGear('Level 20 AoE', Level20AoEGearJSON);
 
 export const GearPresets = {};

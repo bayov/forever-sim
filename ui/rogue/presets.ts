@@ -65,7 +65,7 @@ export const GearBackstabP1BiS = PresetUtils.makePresetGear('Backstab P1 BiS', B
 export const GearBackstabP2BiS = PresetUtils.makePresetGear('Backstab P2 BiS', BackstabGearP2BiS);
 export const GearSinisterStrikeP1BiS = PresetUtils.makePresetGear('Sinister Strike P1 BiS', SinisterStrikeGearP1BiS);
 export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Strike P2 BiS', SinisterStrikeGearP2BiS);
-// Level 20 sets found by tools/rotopt -level 20 -gear-search over everything a Troll
+// Level 20 sets found by tools/rotopt -level 20 -gear-search over everything an Undead
 // rogue can equip at 20, on the wowhead Forever item data: dungeon blues (Serpent's
 // Shoulders and Gloves of the Fang from Wailing Caverns, Cultist's Armguards from
 // Blackfathom Deeps, Blackened Defias Belt, Feet of the Lynx), a Scouting Tunic of Power,
@@ -82,6 +82,10 @@ export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Stri
 //
 // Lil Timmy's Peashooter is in the ranged slot for 0.7 DPS. It is a 1 in several thousand
 // drop off the Defias in Westfall, so take the numbers with that in mind.
+//
+// A search with Blessing of Kings on keeps both sets. The trinket slots stay empty
+// because nothing a rogue can wear there at 20 does anything for damage. The search did
+// put Rune of Duty in for 0.1, but it is 4 Stamina and resistances, so that was noise.
 export const GearLevel20Backstab = PresetUtils.makePresetGear('Level 20 Backstab', Level20BackstabGear);
 export const GearLevel20SinisterStrike = PresetUtils.makePresetGear('Level 20 Sinister Strike', Level20SinisterStrikeGear);
 
@@ -273,6 +277,10 @@ export const PresetBuildMutilate = PresetUtils.makePresetBuild('Mutilate', {
 // The level 20 comparison setup: Mutanus the Devourer's level and armor (a level 22 dungeon
 // boss, VanCleef is 888), 60 second fights, no raid buffs or debuffs since the buff table
 // holds level 60 values, Instant Poison on both weapons and Thistle Tea.
+//
+// Blessing of Kings is the exception. It is 10% of every attribute rather than a number
+// off the level 60 table, so it is right at any level, and a group at 20 almost always
+// has a paladin in it. The gear search ran with it.
 const level20Encounter = (name: string, targetName: string, mobType: MobType) =>
 	PresetUtils.makePresetEncounter(
 		name,
@@ -299,7 +307,7 @@ const level20Encounter = (name: string, targetName: string, mobType: MobType) =>
 		{
 			raidBuffs: RaidBuffs.create({}),
 			debuffs: Debuffs.create({}),
-			buffs: IndividualBuffs.create({}),
+			buffs: IndividualBuffs.create({ blessingOfKings: true }),
 			consumes: Consumes.create({
 				defaultConjured: Conjured.ConjuredRogueThistleTea,
 				mainHandImbue: WeaponImbue.InstantPoison,
@@ -311,17 +319,17 @@ export const EncounterLevel20 = level20Encounter('Level 20', 'Mutanus the Devour
 // The same boss as an Undead, for the builds that skip Murder (it only works on Humanoids
 // and Giants).
 export const EncounterLevel20Undead = level20Encounter('Level 20 (Undead)', 'Level 22 undead boss', MobType.MobTypeUndead);
-// Undead, the rogue we play. The three Horde races land within half a DPS of each other
-// at 60 sec on the shipped sets: Sinister Strike 66.8 Troll, 66.6 Undead, 66.0 Orc,
-// Backstab 65.8 / 65.8 / 65.0, and the Backstab build is a tie at every length we tried.
+// Undead, the rogue we play, and the best of the three Horde races now that Touch of the
+// Grave has no internal cooldown. At 30 / 60 / 300 sec on the shipped sets with Blessing
+// of Kings, Sinister Strike does 77.7 / 70.5 / 65.0 as Undead, 77.5 / 70.1 / 64.4 as a
+// Troll and 76.3 / 69.1 / 63.7 as an Orc. Backstab does 77.2 / 69.6 / 63.6 as Undead,
+// 76.5 / 68.8 / 62.9 as a Troll and 75.5 / 67.8 / 62.3 as an Orc.
 //
-// Berserking is a flat 10% under Forever. What the Undead has against it is Touch of the
-// Grave, whose internal cooldown the beta tooltip never gives, so the sim assumes 15 sec.
-// With no cooldown at all the Undead Sinister Strike build does 67.3 and leads the Troll,
-// with a 60 sec one it does 66.2. The gap between the two races is smaller than what we
-// do not know about that racial. Nothing else moves with the race here: neither has a
-// weapon specialization, so the gear search picks the same sets, and the rotations
-// already carry every race's cooldown line for the others to ignore.
+// The Orc gets Axe Specialization on Butcher's Cleaver in the off hand already. Putting
+// Razor's Edge in the main hand as well costs it 2.7 at 60 sec, because Cruel Barb hits
+// much harder (30-57 against 25-48). Nothing else moves with the race here. The Undead
+// and the Troll have no weapon specialization, and the rotations carry every race's
+// cooldown line for the others to ignore.
 export const PresetBuildLevel20Backstab = PresetUtils.makePresetBuild('Level 20 Backstab', {
 	gear: GearLevel20Backstab,
 	talents: Level20BackstabTalents,

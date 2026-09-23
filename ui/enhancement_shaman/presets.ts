@@ -59,13 +59,19 @@ export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
 // 20, and the crafted leather sets take most of the armor slots. With the 11 points a
 // level 20 has, the search wants Strength and attack power.
 //
+// We searched it again with Blessing of Kings on and nothing moved that we kept. The
+// search wanted the Totemic Leather Belt over the Screecher Belt for 0.1 DPS at 60 sec,
+// but it is 0.6 behind at 300 sec because the shaman runs out of mana, so the Screecher
+// Belt stays.
+//
 // The two hander is the one slot where the race decides it. Forsaken Greataxe (The Wrath
-// of Rath'mael) and Hammerbone (Leaders of the Fang) sit within a tenth of a DPS of each
-// other, and the Orc's Axe Specialization is what separates them: the axe is 0.08 ahead
-// at 60 sec and 0.18 at 300, the mace 0.16 ahead at 30. A Troll or a Tauren wants
-// Hammerbone, which is 0.3 ahead for them. The gear search cannot call this one. It only
-// takes a swap that gains more than twice the noise of its 3000 iteration runs, about
-// 0.2 DPS here, so whichever weapon it starts with is the one it keeps.
+// of Rath'mael) and Hammerbone (Leaders of the Fang) sit within a few tenths of a DPS of
+// each other, and the Orc's Axe Specialization is what separates them. At 300000
+// iterations the axe does 70.7 against 70.6 at 60 sec and 55.9 against 55.7 at 300, and
+// the mace is 0.2 ahead at 30. A Troll or a Tauren has no racial for the axe and wants
+// Hammerbone. The gear search cannot call this one. It only takes a swap that gains more
+// than twice the noise of its runs, about 0.09 DPS at 20000 iterations, so whichever
+// weapon it starts with is the one it keeps.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 
 export const GearPresets = {
@@ -278,7 +284,9 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 });
 
 // A level 20 shaman soloing an instance boss: no raid buffs or consumes, Rockbiter on
-// the weapon, and the boss hitting the shaman so Lightning Shield gets to fire.
+// the weapon, and the boss hitting the shaman so Lightning Shield gets to fire. Blessing
+// of Kings is on because a group at that level almost always has a paladin in it, and the
+// gear search ran with it.
 export const EncounterLevel20 = PresetUtils.makePresetEncounter(
 	'Level 20',
 	Encounter.create({
@@ -306,7 +314,7 @@ export const EncounterLevel20 = PresetUtils.makePresetEncounter(
 		tanks: [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })],
 		raidBuffs: RaidBuffs.create({}),
 		debuffs: Debuffs.create({}),
-		buffs: IndividualBuffs.create({}),
+		buffs: IndividualBuffs.create({ blessingOfKings: true }),
 		consumes: Consumes.create({
 			mainHandImbue: WeaponImbue.RockbiterWeapon,
 		}),
