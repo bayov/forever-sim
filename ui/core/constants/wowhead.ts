@@ -7,3 +7,11 @@
 // embedded tooltip script reads.
 export const WOWHEAD_DOMAIN = 'forever';
 export const WOWHEAD_EXPANSION_ENV = 17;
+
+// Where we look when Forever's database has never heard of an id.
+//
+// Forever's database is missing a few of the spells it reworked (Flurry, Blade Flurry and
+// Elemental Mastery among them), and the tooltip endpoint answers "Entity not found" for
+// them. A Classic tooltip can show numbers Forever has since changed, but that beats the
+// blank icon and empty name we get with no tooltip at all.
+export const WOWHEAD_FALLBACK_DOMAIN = 'classic';

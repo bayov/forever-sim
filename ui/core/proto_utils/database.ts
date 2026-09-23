@@ -1,5 +1,5 @@
 import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
-import { WOWHEAD_DOMAIN } from '../constants/wowhead.js';
+import { WOWHEAD_DOMAIN, WOWHEAD_FALLBACK_DOMAIN } from '../constants/wowhead.js';
 import { foreverSpellIcons } from '../forever/racials';
 import { Class, EquipmentSpec, ItemRandomSuffix, ItemSlot, ItemSpec, ItemSwap, PresetEncounter, PresetTarget, SimDatabase } from '../proto/common.js';
 import { IconData, UIDatabase, UIEnchant as Enchant, UIFaction as Faction, UIItem as Item, UINPC as Npc, UIZone as Zone } from '../proto/ui.js';
@@ -255,10 +255,15 @@ export class Database {
 	private static async getWowheadTooltipData(id: number, tooltipPostfix: string): Promise<IconData> {
 		if (id === 0) return IconData.create();
 
-		const url = `https://nether.wowhead.com/${WOWHEAD_DOMAIN}/tooltip/${tooltipPostfix}/${id}?lvl=${MAX_CHARACTER_LEVEL}`;
+		const tooltipUrl = (domain: string) => `https://nether.wowhead.com/${domain}/tooltip/${tooltipPostfix}/${id}?lvl=${MAX_CHARACTER_LEVEL}`;
+		let url = tooltipUrl(WOWHEAD_DOMAIN);
 		try {
-			const response = await fetch(url);
-			const json = await response.json();
+			let json = await (await fetch(url)).json();
+			// An id Forever's database does not carry, see WOWHEAD_FALLBACK_DOMAIN.
+			if (json['error']) {
+				url = tooltipUrl(WOWHEAD_FALLBACK_DOMAIN);
+				json = await (await fetch(url)).json();
+			}
 			let rank = 0;
 
 			if (tooltipPostfix === 'spell') {
