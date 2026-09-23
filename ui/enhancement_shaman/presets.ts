@@ -57,8 +57,15 @@ export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
 // of Severing, Abomination Skin Leggings) the first search picked. It assumes Engineering
 // and Leatherworking: Spellpower Goggles Xtreme is the only head slot worth wearing at
 // 20, and the crafted leather sets take most of the armor slots. With the 11 points a
-// level 20 has, the search wants Strength and attack power, with Hammerbone from Leaders
-// of the Fang.
+// level 20 has, the search wants Strength and attack power.
+//
+// The two hander is the one slot where the race decides it. Forsaken Greataxe (The Wrath
+// of Rath'mael) and Hammerbone (Leaders of the Fang) sit within a tenth of a DPS of each
+// other, and the Orc's Axe Specialization is what separates them: the axe is 0.08 ahead
+// at 60 sec and 0.18 at 300, the mace 0.16 ahead at 30. A Troll or a Tauren wants
+// Hammerbone, which is 0.3 ahead for them. The gear search cannot call this one. It only
+// takes a swap that gains more than twice the noise of its 3000 iteration runs, about
+// 0.2 DPS here, so whichever weapon it starts with is the one it keeps.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 
 export const GearPresets = {
