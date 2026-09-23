@@ -311,17 +311,23 @@ export const EncounterLevel20 = level20Encounter('Level 20', 'Mutanus the Devour
 // The same boss as an Undead, for the builds that skip Murder (it only works on Humanoids
 // and Giants).
 export const EncounterLevel20Undead = level20Encounter('Level 20 (Undead)', 'Level 22 undead boss', MobType.MobTypeUndead);
-// Troll, because the sim is Horde side now. Berserking is a flat 10% under Forever and
-// the three Horde rogues land within 0.2 of each other on both builds: Sinister Strike
-// 67.6 Troll, 67.4 Undead, 66.0 Orc, Backstab 66.4 / 66.5 / 65.0. The Undead row rests on
-// the 15 sec internal cooldown the sim assumes for Touch of the Grave, which the beta
-// tooltip does not give, so Troll is the safer pick.
+// Undead, the rogue we play. The three Horde races land within half a DPS of each other
+// at 60 sec on the shipped sets: Sinister Strike 66.8 Troll, 66.6 Undead, 66.0 Orc,
+// Backstab 65.8 / 65.8 / 65.0, and the Backstab build is a tie at every length we tried.
+//
+// Berserking is a flat 10% under Forever. What the Undead has against it is Touch of the
+// Grave, whose internal cooldown the beta tooltip never gives, so the sim assumes 15 sec.
+// With no cooldown at all the Undead Sinister Strike build does 67.3 and leads the Troll,
+// with a 60 sec one it does 66.2. The gap between the two races is smaller than what we
+// do not know about that racial. Nothing else moves with the race here: neither has a
+// weapon specialization, so the gear search picks the same sets, and the rotations
+// already carry every race's cooldown line for the others to ignore.
 export const PresetBuildLevel20Backstab = PresetUtils.makePresetBuild('Level 20 Backstab', {
 	gear: GearLevel20Backstab,
 	talents: Level20BackstabTalents,
 	rotation: ROTATION_PRESET_LEVEL20_BACKSTAB,
 	encounter: EncounterLevel20,
-	race: Race.RaceTroll,
+	race: Race.RaceUndead,
 	level: 20,
 });
 export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Level 20 Sinister Strike', {
@@ -329,7 +335,7 @@ export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Lev
 	talents: Level20SinisterStrikeTalents,
 	rotation: ROTATION_PRESET_LEVEL20_SINISTER_STRIKE,
 	encounter: EncounterLevel20,
-	race: Race.RaceTroll,
+	race: Race.RaceUndead,
 	level: 20,
 });
 
