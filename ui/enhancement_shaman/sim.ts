@@ -124,7 +124,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel20, Presets.PresetBuildLevel20p5],
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel20],
 		talents: [
 			...Presets.TalentPresets[Phase.Phase6],
 			...Presets.TalentPresets[Phase.Phase5],

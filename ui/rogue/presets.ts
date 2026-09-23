@@ -40,8 +40,6 @@ import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
 import MutilateAPL from './apls/forever_mutilate.apl.json';
 import Level20BackstabAPL from './apls/level20_backstab.apl.json';
 import Level20SinisterStrikeAPL from './apls/level20_sinister_strike.apl.json';
-import Level20p5BackstabAPL from './apls/level20p5_backstab.apl.json';
-import Level20p5SinisterStrikeAPL from './apls/level20p5_sinister_strike.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
 import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
@@ -136,11 +134,6 @@ export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutil
 // rank the level knows, so the icons show a higher rank than what is cast.
 export const ROTATION_PRESET_LEVEL20_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 20 Backstab', Level20BackstabAPL, {});
 export const ROTATION_PRESET_LEVEL20_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 20 Sinister Strike', Level20SinisterStrikeAPL, {});
-// Level 20 with the Forever beta's 5 extra talent points: the same rotations, only the
-// Sinister Strike build drinks its Thistle Tea at 0 energy. Energy arrives continuously
-// under Forever, so waiting for an empty bar loses nothing and fits the whole 100.
-export const ROTATION_PRESET_LEVEL20P5_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 20 + 5 Backstab', Level20p5BackstabAPL, {});
-export const ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 20 + 5 Sinister Strike', Level20p5SinisterStrikeAPL, {});
 
 export const APLPresets = {
 	[Phase.Phase1]: [
@@ -159,8 +152,6 @@ export const APLPresets = {
 		ROTATION_PRESET_MUTILATE,
 		ROTATION_PRESET_LEVEL20_BACKSTAB,
 		ROTATION_PRESET_LEVEL20_SINISTER_STRIKE,
-		ROTATION_PRESET_LEVEL20P5_BACKSTAB,
-		ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
 	],
 	[Phase.Phase2]: [
 		ROTATION_PRESET_BACKSTAB,
@@ -178,8 +169,6 @@ export const APLPresets = {
 		ROTATION_PRESET_MUTILATE,
 		ROTATION_PRESET_LEVEL20_BACKSTAB,
 		ROTATION_PRESET_LEVEL20_SINISTER_STRIKE,
-		ROTATION_PRESET_LEVEL20P5_BACKSTAB,
-		ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
 	],
 };
 
@@ -224,29 +213,6 @@ export const Level20SinisterStrikeNoMurderTalents = PresetUtils.makePresetTalent
 	SavedTalents.create({ talentsString: '0053021' }),
 );
 export const Level20BackstabTalents = PresetUtils.makePresetTalents('Level 20 Backstab', SavedTalents.create({ talentsString: '001-3023-002' }));
-// The 16 points the Forever beta is expected to give at level 20 (5 extra talent points),
-// scored over every build of the damage talents. Sinister Strike fills Assassination rows
-// 1 and 2 (Malice 5, Ruthlessness 3, Murder 2, Imp SnD 3, Relentless Strikes 1) with Imp
-// SS 2. Backstab keeps the level 20 dagger build and adds Malice 5: Murder 2, Imp Evis 3,
-// Lightning Reflexes 2, Puncturing Wounds 3, Opportunity 1. The 15 point row (Cold Blood,
-// Dual Wield Specialization) is not worth what it costs to reach, and Lethality loses to
-// Imp SnD.
-export const Level20p5SinisterStrikeTalents = PresetUtils.makePresetTalents(
-	'Level 20 + 5 Sinister Strike',
-	SavedTalents.create({ talentsString: '0053231-02' }),
-);
-export const Level20p5BackstabTalents = PresetUtils.makePresetTalents('Level 20 + 5 Backstab', SavedTalents.create({ talentsString: '00502-3023-001' }));
-// Against anything but a Humanoid or a Giant the two Murder points move: Sinister Strike
-// puts them in Lethality (every other home is within 0.2), Backstab puts one in
-// Opportunity 2 and one in Imp Slice and Dice. Scored on an Undead copy of Mutanus.
-export const Level20p5SinisterStrikeNoMurderTalents = PresetUtils.makePresetTalents(
-	'Level 20 + 5 Sinister Strike (no Murder)',
-	SavedTalents.create({ talentsString: '005303102-02' }),
-);
-export const Level20p5BackstabNoMurderTalents = PresetUtils.makePresetTalents(
-	'Level 20 + 5 Backstab (no Murder)',
-	SavedTalents.create({ talentsString: '005001-3023-002' }),
-);
 
 export const TalentPresets = {
 	[Phase.Phase1]: [
@@ -257,10 +223,6 @@ export const TalentPresets = {
 		Level20BackstabTalents,
 		Level20SinisterStrikeTalents,
 		Level20SinisterStrikeNoMurderTalents,
-		Level20p5BackstabTalents,
-		Level20p5SinisterStrikeTalents,
-		Level20p5BackstabNoMurderTalents,
-		Level20p5SinisterStrikeNoMurderTalents,
 	],
 	[Phase.Phase2]: [
 		CombatBackstabTalents,
@@ -270,10 +232,6 @@ export const TalentPresets = {
 		Level20BackstabTalents,
 		Level20SinisterStrikeTalents,
 		Level20SinisterStrikeNoMurderTalents,
-		Level20p5BackstabTalents,
-		Level20p5SinisterStrikeTalents,
-		Level20p5BackstabNoMurderTalents,
-		Level20p5SinisterStrikeNoMurderTalents,
 	],
 };
 
@@ -373,48 +331,6 @@ export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Lev
 	encounter: EncounterLevel20,
 	race: Race.RaceTroll,
 	level: 20,
-});
-
-// The same at level 20 with the 5 extra talent points the Forever beta is expected to
-// give (16 in all). The gear and encounter are the level 20 ones, only the talents and
-// rotation differ. The gear search with 16 points changes nothing in either set.
-export const PresetBuildLevel20p5Backstab = PresetUtils.makePresetBuild('Level 20 + 5 Backstab', {
-	gear: GearLevel20Backstab,
-	talents: Level20p5BackstabTalents,
-	rotation: ROTATION_PRESET_LEVEL20P5_BACKSTAB,
-	encounter: EncounterLevel20,
-	race: Race.RaceTroll,
-	level: 20,
-	bonusTalentPoints: 5,
-});
-export const PresetBuildLevel20p5SinisterStrike = PresetUtils.makePresetBuild('Level 20 + 5 Sinister Strike', {
-	gear: GearLevel20SinisterStrike,
-	talents: Level20p5SinisterStrikeTalents,
-	rotation: ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
-	encounter: EncounterLevel20,
-	race: Race.RaceTroll,
-	level: 20,
-	bonusTalentPoints: 5,
-});
-// The no Murder builds against the Undead copy of the boss. Same gear and rotations, the
-// knob search found nothing to change without Murder.
-export const PresetBuildLevel20p5BackstabNoMurder = PresetUtils.makePresetBuild('Level 20 + 5 Backstab (no Murder)', {
-	gear: GearLevel20Backstab,
-	talents: Level20p5BackstabNoMurderTalents,
-	rotation: ROTATION_PRESET_LEVEL20P5_BACKSTAB,
-	encounter: EncounterLevel20Undead,
-	race: Race.RaceTroll,
-	level: 20,
-	bonusTalentPoints: 5,
-});
-export const PresetBuildLevel20p5SinisterStrikeNoMurder = PresetUtils.makePresetBuild('Level 20 + 5 Sinister Strike (no Murder)', {
-	gear: GearLevel20SinisterStrike,
-	talents: Level20p5SinisterStrikeNoMurderTalents,
-	rotation: ROTATION_PRESET_LEVEL20P5_SINISTER_STRIKE,
-	encounter: EncounterLevel20Undead,
-	race: Race.RaceTroll,
-	level: 20,
-	bonusTalentPoints: 5,
 });
 
 ///////////////////////////////////////////////////////////////////////////

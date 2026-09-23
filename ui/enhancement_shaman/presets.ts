@@ -33,11 +33,9 @@ import { Stats } from '../core/proto_utils/stats.js';
 import DefaultAPLJSON from './apls/default.apl.json';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
 import Level20APLJSON from './apls/level20.apl.json';
-import Level20p5APLJSON from './apls/level20p5.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
 import WindfuryAPLJSON from './apls/windfury.apl.json';
 import Level20GearJSON from './gear_sets/level20.gear.json';
-import Level20p5GearJSON from './gear_sets/level20p5.gear.json';
 import Phase1GearJSON from './gear_sets/phase_1.gear.json';
 import Phase2GearJSON from './gear_sets/phase_2.gear.json';
 import Phase3GearJSON from './gear_sets/phase_3.gear.json';
@@ -54,23 +52,17 @@ export const GearPhase1 = PresetUtils.makePresetGear('Phase 1', Phase1GearJSON);
 export const GearPhase2 = PresetUtils.makePresetGear('Phase 2', Phase2GearJSON);
 export const GearPhase3 = PresetUtils.makePresetGear('Phase 3', Phase3GearJSON);
 export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
-// Both level 20 sets come from the tools/rotopt gear search over every item an Orc
-// shaman can equip, Forever quest rewards included, without the Scourge Invasion drops
-// (The Axe of Severing, Abomination Skin Leggings) the first search picked. Both assume
-// Engineering and Leatherworking: Spellpower Goggles Xtreme is the only head slot worth
-// wearing at 20, and the crafted leather sets take most of the armor slots.
-//
-// With 11 points the search wants Strength and attack power with Hammerbone from Leaders
-// of the Fang. With 16 points Stormstrike and two shocks drain the mana pool inside a
-// minute, so the same search goes to Intellect and spell power that Mental Dexterity
-// turns into attack power as well: the Stormrider's leather pieces over the Totemic
-// ones, and Twisted Chanter's Staff, which swings as hard as Hammerbone and carries 10
-// Intellect. That is 79.2 DPS at 60 sec against 69.3 for the 11 point set.
+// The level 20 set comes from the tools/rotopt gear search over every item an Orc shaman
+// can equip, Forever quest rewards included, without the Scourge Invasion drops (The Axe
+// of Severing, Abomination Skin Leggings) the first search picked. It assumes Engineering
+// and Leatherworking: Spellpower Goggles Xtreme is the only head slot worth wearing at
+// 20, and the crafted leather sets take most of the armor slots. With the 11 points a
+// level 20 has, the search wants Strength and attack power, with Hammerbone from Leaders
+// of the Fang.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
-export const GearLevel20p5 = PresetUtils.makePresetGear('Level 20 + 5', Level20p5GearJSON);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearPhase1, GearLevel20, GearLevel20p5],
+	[Phase.Phase1]: [GearPhase1, GearLevel20],
 	[Phase.Phase2]: [GearPhase2],
 	[Phase.Phase3]: [GearPhase3],
 	[Phase.Phase4]: [],
@@ -99,15 +91,9 @@ export const APLDefault = PresetUtils.makePresetAPLRotation('Twist WF + GoA', De
 // costs them no use.
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', OptimizedAPLJSON);
 export const APLLevel20 = PresetUtils.makePresetAPLRotation('Level 20', Level20APLJSON);
-// Level 20 with the Forever beta's 5 extra talent points: Stormstrike on cooldown, then
-// the level 20 rotation with Strength of Earth added (worth its mana once Stormstrike is
-// eating the pool anyway). Flame Shock when its DoT is down and Earth Shock otherwise:
-// Earth Shock rank 3 lost to Frost Shock on its own, but it is the shock that spends the
-// Stormstrike mark (+20%), which puts it 0.5 DPS ahead at 60 sec.
-export const APLLevel20p5 = PresetUtils.makePresetAPLRotation('Level 20 + 5', Level20p5APLJSON);
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLOptimized, APLGraceOfAir, APLWindfury, APLDefault, APLLevel20, APLLevel20p5],
+	[Phase.Phase1]: [APLOptimized, APLGraceOfAir, APLWindfury, APLDefault, APLLevel20],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -138,22 +124,9 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Improved Stormstrike is worth 40 once the pool runs low.
 export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '05033305-051032031005112251' }));
 export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '-050030201' }));
-// With the Forever beta's 16 points at level 20 (5 extra) the 16th point is Stormstrike
-// (15 points in the tree unlock it under Forever), and the search pins it (-require
-// stormstrike) since a build without it is not worth playing. The rest is Ancestral Knowledge 3,
-// Thundering Strikes 5, Mental Dexterity 3, Elemental Weapons 3, Shamanistic Focus 1.
-// Stormstrike is a flat 125 Mana in the beta client, a third of the level 20 pool, so
-// Ancestral Knowledge is worth 0.5 over Improved Lightning Shield. Every build with
-// Elemental points scored lower.
-export const TalentsLevel20p5 = PresetUtils.makePresetTalents('Level 20 + 5', SavedTalents.create({ talentsString: '-0530300310001' }));
-// The same with Improved Ghost Wolf 2 pinned (-require stormstrike,improvedGhostWolf).
-// With 16 points the two come out of Elemental Weapons (3 to 0) with Ancestral Knowledge
-// going to 4, and cost 0.8 DPS at 60 sec. Keeping Elemental Weapons and cutting
-// Ancestral Knowledge to 1 instead costs 1.3, Thundering Strikes 3 costs 1.1.
-export const TalentsLevel20p5ImpGW = PresetUtils.makePresetTalents('Level 20 + 5 + Imp GW', SavedTalents.create({ talentsString: '-0540320010001' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel20, TalentsLevel20p5, TalentsLevel20p5ImpGW],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel20],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -339,17 +312,4 @@ export const PresetBuildLevel20 = PresetUtils.makePresetBuild('Level 20', {
 	encounter: EncounterLevel20,
 	race: Race.RaceOrc,
 	level: 20,
-});
-
-// The same at level 20 with the 5 extra talent points the Forever beta is expected to
-// give (16 in all): the level 20 encounter, the Intellect gear set, Stormstrike in the
-// talents and the rotation. The races are within 1 DPS of each other.
-export const PresetBuildLevel20p5 = PresetUtils.makePresetBuild('Level 20 + 5', {
-	gear: GearLevel20p5,
-	talents: TalentsLevel20p5,
-	rotation: APLLevel20p5,
-	encounter: EncounterLevel20,
-	race: Race.RaceOrc,
-	level: 20,
-	bonusTalentPoints: 5,
 });
