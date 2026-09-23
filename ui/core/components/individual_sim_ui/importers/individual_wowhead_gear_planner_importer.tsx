@@ -1,3 +1,4 @@
+import { WOWHEAD_DOMAIN } from '../../../constants/wowhead';
 import { IndividualSimUI } from '../../../individual_sim_ui';
 import { Class, EquipmentSpec, ItemSlot, ItemSpec, Race, Spec } from '../../../proto/common';
 import { nameToClass, nameToRace } from '../../../proto_utils/names';
@@ -12,7 +13,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 			<>
 				<p>
 					Import settings from{' '}
-					<a href="https://www.wowhead.com/classic/gear-planner" target="_blank">
+					<a href={`https://www.wowhead.com/${WOWHEAD_DOMAIN}/gear-planner`} target="_blank">
 						Wowhead Gear Planner
 					</a>
 					.
@@ -24,9 +25,10 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 	}
 
 	async onImport(url: string) {
-		const match = url.match(/www\.wowhead\.com\/classic\/gear-planner\/([a-z\-]+)\/([a-z\-]+)\/([a-zA-Z0-9_\-]+)/);
+		// A planner link from either database reads the same, so an old Classic one still imports.
+		const match = url.match(/www\.wowhead\.com\/(?:classic|forever)\/gear-planner\/([a-z\-]+)\/([a-z\-]+)\/([a-zA-Z0-9_\-]+)/);
 		if (!match) {
-			throw new Error(`Invalid WCL URL ${url}, must look like "https://www.wowhead.com/classic/gear-planner/CLASS/RACE/XXXX"`);
+			throw new Error(`Invalid WCL URL ${url}, must look like "https://www.wowhead.com/${WOWHEAD_DOMAIN}/gear-planner/CLASS/RACE/XXXX"`);
 		}
 
 		// Parse all the settings.

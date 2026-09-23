@@ -95,7 +95,7 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 ///////////////////////////////////////////////////////////////////////////
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
+// https://wowhead.com/forever/talent-calc and copy the numbers in the url.
 
 // Forever trees (beta client build 1.60.1.69876). Level 60: Improved Holy Strike, Divine
 // Strength and Improved Seals in Holy, Toughness and Precision in Protection, the

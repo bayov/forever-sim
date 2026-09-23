@@ -2,6 +2,7 @@ import Toast from './components/toast';
 import { getLanguageCode } from './constants/lang.js';
 import * as Mechanics from './constants/mechanics.js';
 import { SimSettingCategories } from './constants/sim_settings';
+import { WOWHEAD_DOMAIN, WOWHEAD_EXPANSION_ENV } from './constants/wowhead.js';
 import { MAX_PARTY_SIZE, Party } from './party.js';
 import {
 	AuraStats as AuraStatsProto,
@@ -1207,7 +1208,8 @@ export class Player<SpecType extends Spec> {
 
 		const lang = getLanguageCode();
 		const langPrefix = lang ? lang + '.' : '';
-		parts.push(`domain=${langPrefix}classic`);
+		parts.push(`domain=${langPrefix}${WOWHEAD_DOMAIN}`);
+		parts.push(`dataEnv=${WOWHEAD_EXPANSION_ENV}`);
 
 		if (equippedItem.enchant !== null) {
 			parts.push('ench=' + equippedItem.enchant.effectId);

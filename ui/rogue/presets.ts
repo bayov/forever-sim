@@ -199,7 +199,7 @@ export const DefaultAPLMutilate = ROTATION_PRESET_MUTILATE;
 ///////////////////////////////////////////////////////////////////////////
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
+// https://wowhead.com/forever/talent-calc and copy the numbers in the url.
 
 // Preset name must be unique. Ex: 'Backstab DPS' cannot be used as a name more than once
 

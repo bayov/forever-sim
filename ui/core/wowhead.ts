@@ -1,5 +1,6 @@
 import { getLanguageCode } from './constants/lang';
 import { MAX_CHARACTER_LEVEL } from './constants/mechanics';
+import { WOWHEAD_DOMAIN, WOWHEAD_EXPANSION_ENV } from './constants/wowhead';
 import { Database } from './proto_utils/database';
 
 export type WowheadTooltipItemParams = {
@@ -78,13 +79,11 @@ export type WowheadTooltipSpellParams = {
 	difficultyId?: 14 | 15 | 16;
 };
 
-export const WOWHEAD_EXPANSION_ENV = 4;
-
 export const buildWowheadTooltipDataset = async (options: WowheadTooltipItemParams | WowheadTooltipSpellParams) => {
 	const lang = getLanguageCode();
 	const params = new URLSearchParams();
 	const langPrefix = lang ? lang + '.' : '';
-	params.set('domain', `${langPrefix}classic`);
+	params.set('domain', `${langPrefix}${WOWHEAD_DOMAIN}`);
 	params.set('dataEnv', String(WOWHEAD_EXPANSION_ENV));
 
 	if (options.level) {

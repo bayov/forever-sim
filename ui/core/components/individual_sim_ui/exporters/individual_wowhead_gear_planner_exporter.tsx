@@ -1,4 +1,5 @@
 import { MAX_CHARACTER_LEVEL } from '../../../constants/mechanics';
+import { WOWHEAD_DOMAIN } from '../../../constants/wowhead';
 import { IndividualSimUI } from '../../../individual_sim_ui';
 import { Spec } from '../../../proto/common';
 import { classNames, raceNames } from '../../../proto_utils/names';
@@ -15,7 +16,7 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 
 		const classStr = classNames.get(player.getClass())!.replaceAll(' ', '-').toLowerCase();
 		const raceStr = raceNames.get(player.getRace())!.replaceAll(' ', '-').toLowerCase();
-		const url = `https://www.wowhead.com/classic/gear-planner/${classStr}/${raceStr}/`;
+		const url = `https://www.wowhead.com/${WOWHEAD_DOMAIN}/gear-planner/${classStr}/${raceStr}/`;
 
 		// See comments on the importer for how the binary formatting is structured.
 		let bytes: Array<number> = [];
