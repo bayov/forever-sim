@@ -54,6 +54,8 @@ func main() {
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
 	gearQuality := flag.Int("gear-quality", 2, "lowest item quality the gear search considers (2 uncommon, 3 rare)")
 	professions := flag.String("professions", "", "override the player's two professions for the gear search, e.g. Engineering,Blacksmithing (bind on pickup crafted gear and goggles need them)")
+	gearScreenIters := flag.Int("gear-screen-iters", 0, "gear search: score every item of a slot at this many iterations first, and only the best -gear-screen-keep at -iters (0 scores all at -iters)")
+	gearScreenKeep := flag.Int("gear-screen-keep", 20, "gear search: how many items per slot survive the screen")
 	gearExclude := flag.String("gear-exclude", "", "item IDs the gear search leaves out, comma separated (Manual Crowd Pummeler and its three charges, say)")
 	gearPhase := flag.Int("gear-phase", 0, "highest raid phase the gear search considers (1 MC, 2 DM, 3 BWL, 4 ZG, 5 AQ, 6 Naxx), 0 for all")
 	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
@@ -205,6 +207,7 @@ func main() {
 		s := &searcher{
 			setup: setup, template: template, durations: durations,
 			iterations: int32(*iterations), confidence: *confidence, cache: map[string]result{},
+			screenIterations: int32(*gearScreenIters), screenKeep: *gearScreenKeep,
 		}
 		s.searchGear(pool, start)
 		confirm := &searcher{

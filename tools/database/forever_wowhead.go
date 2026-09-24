@@ -264,6 +264,34 @@ func (wi ForeverWowheadItem) skillLevel() int32 {
 	}
 }
 
+// Quests wowhead marks for one class that every class can take in the beta.
+//
+// wowhead has the Library quests (Friend of the Library for the necklace at 10 books,
+// Greater Friend of the Library for the ring at 20) as mage only, so Erudite's Amulet
+// and Philanthropist's Ring came out mage gear and the rogue only Field Researcher's
+// Loop came out as gear nobody can wear. A level 1 warrior has taken the first quest
+// in the beta (https://foreverchanges.pro/library-books), and the mages only get a
+// quest of their own on top.
+var foreverOpenQuests = map[int32]bool{
+	78150: true, // Friend of the Library
+	79536: true, // Greater Friend of the Library
+}
+
+// Whether every quest that hands the item over is open to every class.
+func (wi ForeverWowheadItem) fromOpenQuest() bool {
+	quests := 0
+	for _, s := range wi.SourceMore {
+		if s.Type != 5 {
+			continue
+		}
+		if !foreverOpenQuests[s.TargetID] {
+			return false
+		}
+		quests++
+	}
+	return quests > 0
+}
+
 // ToProto builds the item, or nil when it is not gear. The second value is how many
 // rating stats were dropped.
 func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
@@ -272,11 +300,10 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 		return nil, 0
 	}
 	// The item's own class restriction and the one on the quest that hands it over both
-	// have to let a class through. Forever's Field Researcher's Loop is marked rogue gear
-	// but only a mage can take Greater Friend of the Library, the quest that hands it
-	// over, so nobody can wear it and it is not gear at all.
+	// have to let a class through. A quest a class can take and nobody wears the reward
+	// of means the item is not gear at all.
 	classMask := wi.ReqClass
-	if wi.QuestClassMask != 0 {
+	if wi.QuestClassMask != 0 && !wi.fromOpenQuest() {
 		if classMask == 0 {
 			classMask = wi.QuestClassMask
 		} else if classMask &= wi.QuestClassMask; classMask == 0 {

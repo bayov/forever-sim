@@ -59,15 +59,21 @@ export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
 // 20, and the crafted leather sets take most of the armor slots. With the 11 points a
 // level 20 has, the search wants Strength and attack power.
 //
-// We searched it again with Blessing of Kings on and nothing moved that we kept. The
-// search wanted the Totemic Leather Belt over the Screecher Belt for 0.1 DPS at 60 sec,
-// but it is 0.6 behind at 300 sec because the shaman runs out of mana, so the Screecher
-// Belt stays.
+// Two items from outside the dungeons are worth 2.5 DPS together. Philanthropist's Ring
+// (6 Intellect, 10 spell power) is the Greater Friend of the Library reward for 20 books,
+// four of them in level 30 zones, and every class can take it. Mark of the Pack Leader
+// (5 Strength, 5 Intellect) drops off Humar the Pridelord, a rare in the Barrens, which
+// ForeverChanges has from player reports it has not checked.
+//
+// The search still wants the Totemic Leather Belt over the Screecher Belt and Serpent
+// Gloves over Jutebraid Gloves, for 0.1 DPS each at 60 sec. Both lose 0.4 to 0.5 at 300
+// sec because the shaman runs out of mana, so we keep the Screecher Belt and the
+// Jutebraid Gloves.
 //
 // The two hander is the one slot where the race decides it. Forsaken Greataxe (The Wrath
 // of Rath'mael) and Hammerbone (Leaders of the Fang) sit within a few tenths of a DPS of
 // each other, and the Orc's Axe Specialization is what separates them. At 300000
-// iterations the axe does 70.7 against 70.6 at 60 sec and 55.9 against 55.7 at 300, and
+// iterations the axe does 72.6 against 72.5 at 60 sec and 57.7 against 57.5 at 300, and
 // the mace is 0.2 ahead at 30. A Troll or a Tauren has no racial for the axe and wants
 // Hammerbone. The gear search cannot call this one. It only takes a swap that gains more
 // than twice the noise of its runs, about 0.09 DPS at 20000 iterations, so whichever

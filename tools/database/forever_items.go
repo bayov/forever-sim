@@ -38,6 +38,12 @@ func foreverRep(factionId int32, level proto.RepLevel) *proto.UIItemSource {
 	return &proto.UIItemSource{Source: &proto.UIItemSource_Rep{Rep: &proto.RepSource{RepFactionId: factionId, RepLevel: level}}}
 }
 
+// foreverRare is a drop off a rare in the zone. We have no NPC ID for the Forever rares,
+// so the rare goes in by name.
+func foreverRare(zoneId int32, name string) *proto.UIItemSource {
+	return &proto.UIItemSource{Source: &proto.UIItemSource_Drop{Drop: &proto.DropSource{ZoneId: zoneId, OtherName: name + " (rare)"}}}
+}
+
 // ForeverFactions are reputations the Classic inputs do not carry.
 var ForeverFactions = []*proto.UIFaction{
 	{Id: 470, Name: "Ratchet", Expansion: proto.Expansion_ExpansionVanilla},
@@ -414,6 +420,30 @@ var ForeverItems = []*proto.UIItem{
 		Ilvl: 25, RequiredLevel: 20, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Expansion: proto.Expansion_ExpansionVanilla,
 		Sources: []*proto.UIItemSource{foreverRep(470, proto.RepLevel_RepLevelHonored)},
 	},
+	// The Blessing of Kalimdor set, one piece off each of three Forever rares in the
+	// Barrens. wowhead has the items but no source, ForeverChanges has the rares from
+	// player reports it has not checked itself. The set's 2 piece bonus is movement speed
+	// in the Barrens and Stonetalon.
+	{
+		Id: 285331, Name: "Mark of the Pack Leader",
+		Sources: []*proto.UIItemSource{foreverRare(17, "Humar the Pridelord")},
+	},
+	{
+		Id: 285329, Name: "Raptor Hide Cloak",
+		Sources: []*proto.UIItemSource{foreverRare(17, "Takk the Leaper")},
+	},
+	{
+		Id: 285330, Name: "Signet of the Zhevra",
+		Sources: []*proto.UIItemSource{foreverRare(17, "Swiftmane")},
+	},
+	// A Forever rare in the Wetlands. It drops Rotheap Innards, which Rethiel the
+	// Greenwarden (Alliance) trades for the ring, once per character.
+	{
+		Id: 282283, Name: "Malignant Root",
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_ALLIANCE_ONLY,
+		Sources:            []*proto.UIItemSource{foreverRare(11, "Nightveiled Rotheap")},
+	},
+
 	// Undead paladin class quest (level 22, from level 18, Horde).
 	//
 	// wowhead has the quest chain and it has the sword, but no link between them, so the
@@ -433,5 +463,21 @@ var ForeverItems = []*proto.UIItem{
 		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
 		ClassAllowlist:     []proto.Class{proto.Class_ClassPaladin},
 		Sources:            []*proto.UIItemSource{foreverQuest(96204, "The Windshaper's Wrath")},
+	},
+}
+
+// ForeverSeenInGame are items whose stats players recorded in the beta and that differ
+// from wowhead's Forever listing. They are merged after the listing, so they win.
+//
+// The beta server sends some Forever items to the game with stats the client does not
+// hold. wowhead reads the client, ForeverChanges (https://foreverchanges.pro/item/ID)
+// shows what players have seen in game.
+var ForeverSeenInGame = []*proto.UIItem{
+	// wowhead has +2 Agility and no damage at all, in game it is 15 - 28 at 1.70 speed
+	// with +3 Agility.
+	{
+		Id: 285292, Name: "Dull Sawblade",
+		Stats:           stats.Stats{stats.Agility: 3}.ToFloatArray(),
+		WeaponDamageMin: 15, WeaponDamageMax: 28, WeaponSpeed: 1.70,
 	},
 }

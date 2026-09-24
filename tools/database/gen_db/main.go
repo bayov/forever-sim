@@ -78,6 +78,7 @@ func main() {
 	atlaslootDB := database.ReadDatabaseFromJson(tools.ReadFile(fmt.Sprintf("%s/atlasloot_db.json", inputsDir)))
 	wagoItems := database.ParseWagoDB(tools.ReadFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir)))
 	foreverWowheadDB := database.ParseForeverWowheadDB(tools.ReadFile(fmt.Sprintf("%s/forever_wowhead_items.json", inputsDir)))
+	foreverChangesLoot := database.ParseForeverChangesLoot(tools.ReadFile(fmt.Sprintf("%s/foreverchanges_loot.json", inputsDir)))
 
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
@@ -164,6 +165,8 @@ func main() {
 	db.MergeItems(database.ItemOverrides)
 	db.MergeItems(database.ForeverItems)
 	MergeForeverWowheadItems(db, foreverWowheadDB)
+	db.MergeItems(database.ForeverSeenInGame)
+	AttachForeverChangesSources(db, foreverChangesLoot)
 	db.MergeFactions(database.ForeverFactions)
 	db.MergeEnchants(database.EnchantOverrides)
 	ApplyGlobalFilters(db)
@@ -234,10 +237,31 @@ func main() {
 
 	atlasDBProto := atlaslootDB.ToUIProto()
 	db.MergeZones(atlasDBProto.Zones)
+	db.MergeZones(database.ForeverZones)
 	db.MergeNpcs(atlasDBProto.Npcs)
 	db.MergeFactions(atlasDBProto.Factions)
 
 	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
+}
+
+// AttachForeverChangesSources gives the dungeon drops ForeverChanges lists their boss as
+// a source, when the item has no source yet.
+//
+// An item with a source from the Classic inputs or wowhead keeps it: the Classic drop
+// data carries NPC IDs and drop chances, which the ForeverChanges tables do not. So this
+// only reaches the drops Forever added (the Ruins of Lordaeron, Hall of Thanes and the
+// new drops in the Classic dungeons) and the Classic items wowhead lost the drop of.
+func AttachForeverChangesSources(db *database.WowDatabase, loot database.ForeverChangesLoot) {
+	attached := 0
+	for _, drop := range loot.Items {
+		item, ok := db.Items[drop.ID]
+		if !ok || len(item.Sources) > 0 {
+			continue
+		}
+		item.Sources = []*proto.UIItemSource{drop.Source()}
+		attached++
+	}
+	fmt.Printf("ForeverChanges drop sources attached to %d items\n", attached)
 }
 
 // Filters out entities which shouldn't be included anywhere.

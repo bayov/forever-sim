@@ -331,6 +331,39 @@ func (s *searcher) setGear(slots []*proto.ItemSpec) {
 	s.cache = map[string]result{}
 }
 
+// screenGear keeps the options of a slot worth scoring at full iterations.
+//
+// A slot can have hundreds of options (every random suffix of every green), and most of
+// them lose to the item in the slot by a lot. We score them all at screenIterations
+// first and keep the best screenKeep, so only those cost full iterations. The number
+// kept is generous next to the screen's noise: at 1000 iterations a candidate is about
+// 0.4 DPS off, and the options that decide a slot are within a few tenths of each other.
+func (s *searcher) screenGear(options []gearOption, candidateWith func(gearOption) []*proto.ItemSpec, knobs Knobs) []gearOption {
+	if s.screenIterations == 0 || len(options) <= s.screenKeep {
+		return options
+	}
+	type screened struct {
+		option gearOption
+		dps    float64
+	}
+	var scored []screened
+	full := s.iterations
+	s.iterations = s.screenIterations
+	for _, o := range options {
+		if candidate := candidateWith(o); candidate != nil {
+			s.setGear(candidate)
+			scored = append(scored, screened{o, s.score(knobs).dps})
+		}
+	}
+	s.iterations = full
+	sort.Slice(scored, func(i, j int) bool { return scored[i].dps > scored[j].dps })
+	kept := make([]gearOption, 0, s.screenKeep)
+	for i := 0; i < len(scored) && i < s.screenKeep; i++ {
+		kept = append(kept, scored[i].option)
+	}
+	return kept
+}
+
 // Whether the item in the main hand slot is a two hander, from the pool it came from.
 func isTwoHand(pool [][]gearOption, item *proto.ItemSpec) bool {
 	return item != nil && twoHandItems[item.Id]
@@ -384,22 +417,20 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				continue
 			}
 			current := best[slot]
-			var bestOption *gearOption
-			bestGain := 0.0
-			for i := range options {
-				o := options[i]
+			// The gear with option o in this slot, or nil when o cannot go there.
+			candidateWith := func(o gearOption) []*proto.ItemSpec {
 				if current != nil && o.spec.Id == current.Id && o.spec.RandomSuffix == current.RandomSuffix {
-					continue
+					return nil
 				}
 				// Rings and trinkets are mostly unique, so the pair never holds the same item.
 				if p := pairedSlot(slot); p >= 0 && best[p] != nil && best[p].Id == o.spec.Id {
-					continue
+					return nil
 				}
 				// A two hander empties the off hand, and nothing goes in the off hand next
 				// to one. The one hander plus shield answer is reached through the main
 				// hand slot first.
 				if proto.ItemSlot(slot) == proto.ItemSlot_ItemSlotOffHand && isTwoHand(pool, best[proto.ItemSlot_ItemSlotMainHand]) {
-					continue
+					return nil
 				}
 				candidate := append([]*proto.ItemSpec(nil), best...)
 				candidate[slot] = withEnchantOf(o.spec, current)
@@ -407,6 +438,17 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 					candidate[proto.ItemSlot_ItemSlotOffHand] = nil
 				} else if proto.ItemSlot(slot) == proto.ItemSlot_ItemSlotMainHand && candidate[proto.ItemSlot_ItemSlotOffHand] == nil {
 					candidate[proto.ItemSlot_ItemSlotOffHand] = heldOffHand
+				}
+				return candidate
+			}
+			options = s.screenGear(options, candidateWith, knobs)
+			var bestOption *gearOption
+			bestGain := 0.0
+			for i := range options {
+				o := options[i]
+				candidate := candidateWith(o)
+				if candidate == nil {
+					continue
 				}
 				s.setGear(candidate)
 				score := s.score(knobs)

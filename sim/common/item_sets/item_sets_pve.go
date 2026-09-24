@@ -109,6 +109,98 @@ var ItemSetEmbraceOfTheViper = core.NewItemSet(core.ItemSet{
 	},
 })
 
+// Defias Leather uses the Forever set bonuses (the Deadmines leather set).
+//
+// Classic gave it Stamina, Defense and a dodge bonus. Forever made it a rogue set, with
+// Attack Power against Humanoids, a bleed when striking from behind and a point of
+// Dagger skill.
+var ItemSetDefiasLeather = core.NewItemSet(core.ItemSet{
+	Name: "Defias Leather",
+	Bonuses: map[int32]core.ApplyEffect{
+		// +5 Arcane Resistance.
+		2: func(agent core.Agent) {
+			character := agent.GetCharacter()
+			character.AddStat(stats.ArcaneResistance, 5)
+		},
+		// +15 Attack Power against Humanoids.
+		3: func(agent core.Agent) {
+			character := agent.GetCharacter()
+			humanoids := core.FilterSlice(character.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+				return unit.MobType == proto.MobType_MobTypeHumanoid
+			})
+			core.MakePermanent(character.RegisterAura(core.Aura{
+				ActionID: core.ActionID{SpellID: 1292025},
+				Label:    "Humanoid Slaying 15",
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					for _, target := range humanoids {
+						for _, at := range character.AttackTables[target.UnitIndex] {
+							at.BonusAttackPowerTaken += 15
+						}
+					}
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					for _, target := range humanoids {
+						for _, at := range character.AttackTables[target.UnitIndex] {
+							at.BonusAttackPowerTaken -= 15
+						}
+					}
+				},
+			}))
+		},
+		// Grants your melee attacks a 5% chance when striking from behind to hit a vital
+		// point, causing the target to Bleed for 68 to 83 Physical damage over 5 sec.
+		//
+		// The tooltip does not say how the bleed ticks, we assume once a second. A new
+		// proc starts the bleed over with a fresh roll.
+		4: func(agent core.Agent) {
+			character := agent.GetCharacter()
+			bleed := character.RegisterSpell(core.SpellConfig{
+				ActionID:         core.ActionID{SpellID: 1292028},
+				SpellSchool:      core.SpellSchoolPhysical,
+				DefenseType:      core.DefenseTypeMelee,
+				ProcMask:         core.ProcMaskEmpty,
+				Flags:            core.SpellFlagPureDot | core.SpellFlagNoOnCastComplete,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				Dot: core.DotConfig{
+					Aura: core.Aura{
+						Label: "Devious Strike",
+					},
+					NumberOfTicks: 5,
+					TickLength:    time.Second,
+					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+						dot.Snapshot(target, sim.Roll(67.5, 82.5)/5, false)
+					},
+					OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+						dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+					},
+				},
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.Dot(target).Apply(sim)
+				},
+			})
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				ActionID:   core.ActionID{SpellID: 1292028},
+				Name:       "Devious Strike Trigger",
+				Callback:   core.CallbackOnSpellHitDealt,
+				Outcome:    core.OutcomeLanded,
+				ProcMask:   core.ProcMaskMelee,
+				ProcChance: 0.05,
+				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					if !character.PseudoStats.InFrontOfTarget {
+						bleed.Cast(sim, result.Target)
+					}
+				},
+			})
+		},
+		// Increased Daggers +1.
+		5: func(agent core.Agent) {
+			character := agent.GetCharacter()
+			character.PseudoStats.DaggersSkill += 1
+		},
+	},
+})
+
 var ItemSetCadaverousGarb = core.NewItemSet(core.ItemSet{
 	Name: "Cadaverous Garb",
 	Bonuses: map[int32]core.ApplyEffect{

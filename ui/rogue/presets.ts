@@ -66,26 +66,35 @@ export const GearBackstabP2BiS = PresetUtils.makePresetGear('Backstab P2 BiS', B
 export const GearSinisterStrikeP1BiS = PresetUtils.makePresetGear('Sinister Strike P1 BiS', SinisterStrikeGearP1BiS);
 export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Strike P2 BiS', SinisterStrikeGearP2BiS);
 // Level 20 sets found by tools/rotopt -level 20 -gear-search over everything an Undead
-// rogue can equip at 20, on the wowhead Forever item data: dungeon blues (Serpent's
-// Shoulders and Gloves of the Fang from Wailing Caverns, Cultist's Armguards from
-// Blackfathom Deeps, Blackened Defias Belt, Feet of the Lynx), a Scouting Tunic of Power,
-// Band of the Fist from the Blackfathom quest and the Warsong Gulch neck and ring. Both
-// sets assume Engineering and Leatherworking for Gnomish Goggles, Parachute Cloak and
-// Brawler's Leather Pants. Only the main hand differs: Cruel Barb off Edwin VanCleef for
-// Sinister Strike, an Assassin's Blade for Backstab, and both hold Butcher's Cleaver in
-// the off hand, which Forever lets a rogue wield (its Hack and Slash reads "Axe/Sword").
+// rogue can equip at 20, on the wowhead Forever item data. Both are built around four
+// pieces of Defias Leather from the Deadmines (chest, gloves, belt, leggings). Forever
+// reworked the set for rogues: 15 attack power against Humanoids at 3 pieces and a bleed
+// for about 75 over 5 sec on 5% of hits from behind at 4. That is worth 3 DPS over the
+// best single pieces, but only against a Humanoid for the attack power part. The 5th
+// piece is a point of Dagger skill and loses to Feet of the Lynx.
 //
-// The rogue used to wear Field Researcher's Loop, which is gone: it is marked rogue gear
-// but the only quest that hands it over is the mage's Greater Friend of the Library, so
-// nobody can have it. Losing 7 Strength, 7 Agility and 7 Stamina costs more than the axe
-// wins back, and both sets land 0.6 below where they were.
+// The rest is dungeon blues (Serpent's Shoulders from Wailing Caverns, Cultist's
+// Armguards from Blackfathom Deeps, Feet of the Lynx), the Warsong Gulch neck and ring,
+// and Field Researcher's Loop, the rogue ring from Greater Friend of the Library (20
+// books, four of them from level 30 zones). Both sets assume Engineering and
+// Leatherworking for Gnomish Goggles and Parachute Cloak. Only the main hand differs:
+// Cruel Barb off Edwin VanCleef for Sinister Strike, an Assassin's Blade for Backstab,
+// and both hold Butcher's Cleaver in the off hand, which Forever lets a rogue wield (its
+// Hack and Slash reads "Axe/Sword").
 //
 // Lil Timmy's Peashooter is in the ranged slot for 0.7 DPS. It is a 1 in several thousand
 // drop off the Defias in Westfall, so take the numbers with that in mind.
 //
-// A search with Blessing of Kings on keeps both sets. The trinket slots stay empty
-// because nothing a rogue can wear there at 20 does anything for damage. The search did
-// put Rune of Duty in for 0.1, but it is 4 Stamina and resistances, so that was noise.
+// The trinket slots stay empty because nothing a rogue can wear there at 20 does anything
+// for damage. The search puts Rune of Duty in for 0.1, but it is 4 Stamina and
+// resistances, so that is noise.
+//
+// Two items ForeverChanges lists for the rogue carry rating stats, which the sim drops
+// because we do not know what a point of rating is worth at level 20. Pyrewood Signet
+// Ring (4 hit rating) and Fletcher's Gloves (14 critical strike rating, with Defias Boots
+// to keep the 4 pieces) are even with this set if rating converts at the level 60 rate
+// (10 hit or 14 crit for 1%), and 0.8 and 2.5 DPS ahead if it scales down with level the
+// way it does in later expansions.
 export const GearLevel20Backstab = PresetUtils.makePresetGear('Level 20 Backstab', Level20BackstabGear);
 export const GearLevel20SinisterStrike = PresetUtils.makePresetGear('Level 20 Sinister Strike', Level20SinisterStrikeGear);
 
@@ -321,12 +330,12 @@ export const EncounterLevel20 = level20Encounter('Level 20', 'Mutanus the Devour
 export const EncounterLevel20Undead = level20Encounter('Level 20 (Undead)', 'Level 22 undead boss', MobType.MobTypeUndead);
 // Undead, the rogue we play, and the best of the three Horde races now that Touch of the
 // Grave has no internal cooldown. At 30 / 60 / 300 sec on the shipped sets with Blessing
-// of Kings, Sinister Strike does 77.7 / 70.5 / 65.0 as Undead, 77.5 / 70.1 / 64.4 as a
-// Troll and 76.3 / 69.1 / 63.7 as an Orc. Backstab does 77.2 / 69.6 / 63.6 as Undead,
-// 76.5 / 68.8 / 62.9 as a Troll and 75.5 / 67.8 / 62.3 as an Orc.
+// of Kings, Sinister Strike does 82.3 / 75.1 / 69.3 as Undead, 81.7 / 74.1 / 68.3 as a
+// Troll and 80.3 / 73.1 / 67.6 as an Orc. Backstab does 81.4 / 73.6 / 67.8 as Undead,
+// 80.4 / 72.5 / 66.6 as a Troll and 79.1 / 71.4 / 66.0 as an Orc.
 //
 // The Orc gets Axe Specialization on Butcher's Cleaver in the off hand already. Putting
-// Razor's Edge in the main hand as well costs it 2.7 at 60 sec, because Cruel Barb hits
+// Razor's Edge in the main hand as well costs it 2.5 at 60 sec, because Cruel Barb hits
 // much harder (30-57 against 25-48). Nothing else moves with the race here. The Undead
 // and the Troll have no weapon specialization, and the rotations carry every race's
 // cooldown line for the others to ignore.

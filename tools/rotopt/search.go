@@ -20,6 +20,12 @@ type searcher struct {
 	// Standard errors of improvement a change has to show before it is kept.
 	confidence float64
 
+	// The gear search first scores every item of a slot at screenIterations and only
+	// runs the best screenKeep of them again at full iterations. 0 scores all of them
+	// at full iterations.
+	screenIterations int32
+	screenKeep       int
+
 	cache map[string]result
 	evals int
 }

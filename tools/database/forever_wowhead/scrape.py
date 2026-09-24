@@ -79,8 +79,7 @@ def scrape_quests(fetch):
     """Every quest wowhead knows, by id.
 
     A quest row says which classes and which side can take the quest, and that is the
-    only place the restriction is written down: Forever's Friend of the Library is a
-    mage quest, and the amulet it hands over says nothing about mages.
+    only place the restriction is written down when the reward carries none of its own.
     """
     quests = {}
     ranges = [(0, 60)]
@@ -106,9 +105,10 @@ def scrape_quests(fetch):
 def mark_quest_restrictions(items, quests):
     """Set qclassmask and qside on the items only one class, or one side, can quest for.
 
-    Forever added quests like Friend of the Library that only a mage can take, and their
-    rewards carry no restriction of their own, so an item like Erudite's Amulet looks
-    wearable by anyone.
+    Some class quest rewards carry no restriction of their own and would look wearable
+    by anyone. wowhead gets some quests wrong too: it has the Library quests (Friend of
+    the Library) as mage only, when every class can take them. ToProto has a list of
+    those in foreverOpenQuests.
 
     Only items that come from nothing but quests get a restriction, and only when every
     one of those quests agrees. When a drop or a vendor also hands the item out, or one
