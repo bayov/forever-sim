@@ -64,6 +64,8 @@ type Item struct {
 	SetName             string // Empty string if not part of a set.
 	SetID               int32  // 0 if not part of a set.
 	WeaponSkills        stats.WeaponSkills
+	HitRating           float64
+	CritRating          float64
 
 	// Modified for each instance of the item.
 	RandomSuffix RandomSuffix
@@ -91,6 +93,8 @@ func ItemFromProto(pData *proto.SimItem) Item {
 		SetName:             pData.SetName,
 		SetID:               pData.SetId,
 		WeaponSkills:        stats.WeaponSkillsFloatArray(pData.WeaponSkills),
+		HitRating:           pData.HitRating,
+		CritRating:          pData.CritRating,
 	}
 }
 

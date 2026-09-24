@@ -38,6 +38,30 @@ func (character *Character) addHealingSpellDamage(equipStats stats.Stats) stats.
 	return equipStats
 }
 
+// RatingPerPercent is how much rating makes 1% at a level, given what it takes at 60.
+//
+// wowhead's Forever item pages print 4 hit rating as "(0.40% @ L60)", so 10 hit rating
+// and 14 crit rating are 1% at level 60. Those are the TBC client's level 60 values, and
+// nothing we have shows the Forever client's values below 60. So we assume the TBC
+// curve, which takes (level - 8) / 52 of the level 60 value from level 10 on, and 2 / 52
+// below that. At level 20 that makes 14 crit rating on Fletcher's Gloves worth 4.3%.
+func RatingPerPercent(level int32, at60 float64) float64 {
+	return at60 * float64(max(min(level, 60), 10)-8) / 52
+}
+
+const (
+	HitRatingPerPercentAt60  = 10.0
+	CritRatingPerPercentAt60 = 14.0
+)
+
+func (character *Character) addEquipRatings(equipStats stats.Stats) stats.Stats {
+	for _, item := range character.Equipment {
+		equipStats[stats.MeleeHit] += item.HitRating / RatingPerPercent(character.Level, HitRatingPerPercentAt60)
+		equipStats[stats.MeleeCrit] += item.CritRating / RatingPerPercent(character.Level, CritRatingPerPercentAt60)
+	}
+	return equipStats
+}
+
 // Forever pays out hit and critical strike from gear against every kind of attack
 // rather than splitting them into a melee and a spell pool. Attribute conversions are
 // untouched: only the hit and crit an item spells out become universal.

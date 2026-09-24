@@ -169,6 +169,7 @@ func main() {
 	AttachForeverChangesSources(db, foreverChangesLoot)
 	db.MergeFactions(database.ForeverFactions)
 	db.MergeEnchants(database.EnchantOverrides)
+	db.ReplaceForeverEnchants(database.ForeverEnchants)
 	ApplyGlobalFilters(db)
 	AttachFactionInformation(db, wagoItems)
 	AttachItemSetIDs(db, wagoItems)

@@ -10,10 +10,14 @@ const LightningBoltRanks = 10
 
 var LightningBoltSpellId = [LightningBoltRanks + 1]int32{0, 403, 529, 548, 915, 943, 6041, 10391, 10392, 15207, 15208}
 
-// Damage at each rank's cap, and its growth per level up to there (1.12 spell data).
-var LightningBoltBaseDamage = [LightningBoltRanks + 1][]float64{{0}, {15, 17}, {28.5, 32.5}, {48.5, 56.5}, {88, 100}, {131, 149}, {179.5, 201.5}, {235.5, 263.5}, {291.5, 325.5}, {357.5, 399.5}, {428, 477}}
-var LightningBoltScaling = [LightningBoltRanks + 1]core.RankScaling{{}, {6, .4}, {13, .5}, {19, .7}, {25, 1}, {31, 1.2}, {37, 1.5}, {43, 1.7}, {49, 1.9}, {55, 2.1}, {60, 2.4}}
-var LightningBoltSpellCoef = [LightningBoltRanks + 1]float64{0, .1233, .314, .554, .857, .857, .857, .857, .857, .857, .857}
+// Damage at each rank's cap, its growth per level up to there, and the spell power
+// coefficient, from the Forever client data that https://foreverchanges.pro reads
+// (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
+// low ranks close to full coefficients instead of the 1.12 penalty for spells learned
+// below level 20.
+var LightningBoltBaseDamage = [LightningBoltRanks + 1][]float64{{0}, {14.86, 17.14}, {29.25, 33.75}, {34.9, 41.1}, {49.43, 56.57}, {70.43, 80.57}, {108.09, 121.91}, {142.23, 159.77}, {157.51, 176.49}, {172.56, 193.44}, {189.92, 211.68}}
+var LightningBoltScaling = [LightningBoltRanks + 1]core.RankScaling{{}, {6, 0.4}, {13, 0.5}, {19, 0.6}, {25, 0.6}, {31, 0.7}, {37, 0.8}, {43, 0.8}, {49, 1}, {55, 1}, {60, 1.2}}
+var LightningBoltSpellCoef = [LightningBoltRanks + 1]float64{0, 0.429, 0.571, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714}
 
 // Forever caps the cast at 2.5 sec from rank 4 up and takes about 20% off the mana
 // cost of those ranks (wowhead Forever spell data).

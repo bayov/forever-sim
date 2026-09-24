@@ -69,6 +69,11 @@ message UIItem {
 	int32 phase = 17;
 	// Character level needed to equip, 0 when there is none.
 	int32 required_level = 31;
+
+	// Hit and critical strike rating (Forever items). The sim turns them into percent at
+	// the character's level, see core.RatingPerPercent.
+	double hit_rating = 32;
+	double crit_rating = 33;
 	ItemQuality quality = 18;
 	bool unique = 19;
 	bool heroic = 20;

@@ -876,6 +876,9 @@ message SimItem {
 	string set_name = 14;
 	int32 set_id = 18;
 	repeated double weapon_skills = 15;
+
+	double hit_rating = 20;
+	double crit_rating = 21;
 }
 
 // Extra enum for describing which items are eligible for an enchant, when

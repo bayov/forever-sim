@@ -10,8 +10,10 @@ var FlametongueWeaponSpellId = [FlametongueWeaponRanks + 1]int32{0, 8024, 8027, 
 var FlametongueWeaponEnchantId = [FlametongueWeaponRanks + 1]int32{0, 5, 4, 3, 523, 1665, 1666}
 var FlametongueWeaponLevel = [FlametongueWeaponRanks + 1]int32{0, 10, 18, 26, 36, 46, 56}
 
-// Damage per 4 seconds of weapon speed at each rank's cap, and its growth per level.
-var FlametongueWeaponMaxDamage = [FlametongueWeaponRanks + 1]float64{0, 17.6, 26.1, 42, 69.1, 94.9, 112}
+// Damage per 4 seconds of weapon speed at each rank's cap, and its growth per level. The
+// Forever tooltip gives it as N / 25 (440, 653, 1052, 1728, 2372 and 3122), the same as
+// 1.12 except rank 6, which went up from 112.
+var FlametongueWeaponMaxDamage = [FlametongueWeaponRanks + 1]float64{0, 17.6, 26.1, 42, 69.1, 94.9, 124.9}
 var FlametongueWeaponScaling = [FlametongueWeaponRanks + 1]core.RankScaling{{}, {16, .76}, {24, 1.16}, {34, 1.68}, {44, 2.92}, {54, 2.48}, {60, 3.12}}
 
 func (shaman *Shaman) flametongueRank() int {

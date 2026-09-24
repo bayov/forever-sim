@@ -8,10 +8,14 @@ const FrostShockRanks = 4
 
 var FrostShockSpellId = [FrostShockRanks + 1]int32{0, 8056, 8058, 10472, 10473}
 
-// Damage at each rank's cap, and its growth per level up to there (1.12 spell data).
-var FrostShockBaseDamage = [FrostShockRanks + 1][]float64{{0}, {95, 101}, {215.5, 229.5}, {345.5, 365.5}, {492, 520}}
-var FrostShockScaling = [FrostShockRanks + 1]core.RankScaling{{}, {25, 1.2}, {39, 1.9}, {51, 2.5}, {60, 3}}
-var FrostShockSpellCoef = [FrostShockRanks + 1]float64{0, .386, .386, .386, .386}
+// Damage at each rank's cap, its growth per level up to there, and the spell power
+// coefficient, from the Forever client data that https://foreverchanges.pro reads
+// (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
+// low ranks close to full coefficients instead of the 1.12 penalty for spells learned
+// below level 20.
+var FrostShockBaseDamage = [FrostShockRanks + 1][]float64{{0}, {68.2, 72.8}, {126.21, 134.79}, {189.8, 201.2}, {278.58, 294.62}}
+var FrostShockScaling = [FrostShockRanks + 1]core.RankScaling{{}, {25, 0.9}, {39, 1.3}, {51, 1.5}, {60, 1.8}}
+var FrostShockSpellCoef = [FrostShockRanks + 1]float64{0, 0.386, 0.386, 0.386, 0.386}
 var FrostShockManaCost = [FrostShockRanks + 1]float64{0, 115, 225, 325, 430}
 var FrostShockLevel = [FrostShockRanks + 1]int{0, 20, 34, 46, 58}
 

@@ -65,16 +65,23 @@ export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON);
 // (5 Strength, 5 Intellect) drops off Humar the Pridelord, a rare in the Barrens, which
 // ForeverChanges has from player reports it has not checked.
 //
-// The search still wants the Totemic Leather Belt over the Screecher Belt and Serpent
-// Gloves over Jutebraid Gloves, for 0.1 DPS each at 60 sec. Both lose 0.4 to 0.5 at 300
-// sec because the shaman runs out of mana, so we keep the Screecher Belt and the
-// Jutebraid Gloves.
+// Fletcher's Gloves are 14 crit rating, which is 4.3% crit at level 20 if rating scales
+// with level the way we assume (see core.RatingPerPercent). Forever pays crit from gear
+// on spells too, so they beat Jutebraid Gloves by 1 DPS. The search still wants the
+// Totemic Leather Belt over the Screecher Belt for 0.1 DPS at 60 sec, but it loses 0.6
+// at 300 because the shaman runs out of mana, so we keep the Screecher Belt.
+//
+// The enchants are the best a level 20 can get, Enchanting 225 at most, and are worth 7
+// DPS. The shaman takes spell power wherever there is a choice (the Spell Power necklace
+// enchant, Mystic armor kits, Lesser Healing Power on the bracers for its 6 spell damage)
+// because the shocks, Searing Totem and Lightning Shield all scale with it. The two
+// hander takes +15 Strength and the gloves +7 Strength.
 //
 // The two hander is the one slot where the race decides it. Forsaken Greataxe (The Wrath
 // of Rath'mael) and Hammerbone (Leaders of the Fang) sit within a few tenths of a DPS of
 // each other, and the Orc's Axe Specialization is what separates them. At 300000
-// iterations the axe does 72.6 against 72.5 at 60 sec and 57.7 against 57.5 at 300, and
-// the mace is 0.2 ahead at 30. A Troll or a Tauren has no racial for the axe and wants
+// iterations the axe does 75.0 against 74.9 at 60 sec and 61.1 against 60.9 at 300, and
+// the mace is 0.3 ahead at 30. A Troll or a Tauren has no racial for the axe and wants
 // Hammerbone. The gear search cannot call this one. It only takes a swap that gains more
 // than twice the noise of its runs, about 0.09 DPS at 20000 iterations, so whichever
 // weapon it starts with is the one it keeps.

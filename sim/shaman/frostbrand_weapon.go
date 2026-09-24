@@ -12,9 +12,10 @@ var FrostbrandWeaponSpellId = [FrostbrandWeaponRanks + 1]int32{0, 8033, 8038, 10
 var FrostbrandWeaponEnchantId = [FrostbrandWeaponRanks + 1]int32{0, 2, 12, 524, 1667, 1668}
 var FrostbrandWeaponLevel = [FrostbrandWeaponRanks + 1]int32{0, 20, 28, 38, 48, 58}
 
-// Damage per proc at each rank's cap, and its growth per level.
-var FrostbrandWeaponBaseDamage = [FrostbrandWeaponRanks + 1]float64{0, 47.6, 77, 124, 166, 187}
-var FrostbrandWeaponScaling = [FrostbrandWeaponRanks + 1]core.RankScaling{{}, {26, 2.1}, {36, 3}, {46, 5}, {56, 4}, {60, 5.6}}
+// Damage per proc at each rank's cap, and its growth per level. The damage is the Forever
+// tooltip (wowhead). The growth per level is 1.12's, scaled down with the damage.
+var FrostbrandWeaponBaseDamage = [FrostbrandWeaponRanks + 1]float64{0, 45, 72, 117, 159, 203}
+var FrostbrandWeaponScaling = [FrostbrandWeaponRanks + 1]core.RankScaling{{}, {26, 2}, {36, 2.8}, {46, 4.7}, {56, 3.8}, {60, 6.1}}
 
 func (shaman *Shaman) frostbrandRank() int {
 	return core.HighestRankAt(shaman.Level, FrostbrandWeaponLevel[:])

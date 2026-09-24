@@ -19,13 +19,17 @@ func (paladin *Paladin) registerExorcism() {
 		minDamage  float64
 		maxDamage  float64
 		scale      float64
+		// Forever's damage at the learn level, from the client data that
+		// https://foreverchanges.pro reads (downrank calculator). About 5 to 12% under 1.12.
+		foreverMin float64
+		foreverMax float64
 	}{
-		{level: 20, spellID: 879, manaCost: 85, scaleLevel: 25, minDamage: 84, maxDamage: 96, scale: 1.2},
-		{level: 28, spellID: 5614, manaCost: 135, scaleLevel: 33, minDamage: 152, maxDamage: 172, scale: 1.6},
-		{level: 36, spellID: 5615, manaCost: 180, scaleLevel: 41, minDamage: 217, maxDamage: 245, scale: 2.0},
-		{level: 44, spellID: 10312, manaCost: 235, scaleLevel: 49, minDamage: 304, maxDamage: 342, scale: 2.4},
-		{level: 52, spellID: 10313, manaCost: 285, scaleLevel: 57, minDamage: 393, maxDamage: 439, scale: 2.8},
-		{level: 60, spellID: 10314, manaCost: 345, scaleLevel: 60, minDamage: 505, maxDamage: 563, scale: 3.2},
+		{level: 20, spellID: 879, manaCost: 85, scaleLevel: 25, minDamage: 84, maxDamage: 96, scale: 1.2, foreverMin: 73.7, foreverMax: 84.3},
+		{level: 28, spellID: 5614, manaCost: 135, scaleLevel: 33, minDamage: 152, maxDamage: 172, scale: 1.6, foreverMin: 132.3, foreverMax: 149.7},
+		{level: 36, spellID: 5615, manaCost: 180, scaleLevel: 41, minDamage: 217, maxDamage: 245, scale: 2.0, foreverMin: 189.8, foreverMax: 214.2},
+		{level: 44, spellID: 10312, manaCost: 235, scaleLevel: 49, minDamage: 304, maxDamage: 342, scale: 2.4, foreverMin: 273.9, foreverMax: 308.1},
+		{level: 52, spellID: 10313, manaCost: 285, scaleLevel: 57, minDamage: 393, maxDamage: 439, scale: 2.8, foreverMin: 362.8, foreverMax: 405.2},
+		{level: 60, spellID: 10314, manaCost: 345, scaleLevel: 60, minDamage: 505, maxDamage: 563, scale: 3.2, foreverMin: 474.7, foreverMax: 529.3},
 	}
 
 	for i, rank := range ranks {
@@ -34,6 +38,9 @@ func (paladin *Paladin) registerExorcism() {
 			break
 		}
 
+		if paladin.Env.IsForever() {
+			rank.minDamage, rank.maxDamage = rank.foreverMin, rank.foreverMax
+		}
 		minDamage := rank.minDamage + float64(min(paladin.Level, rank.scaleLevel)-rank.level)*rank.scale
 		maxDamage := rank.maxDamage + float64(min(paladin.Level, rank.scaleLevel)-rank.level)*rank.scale
 

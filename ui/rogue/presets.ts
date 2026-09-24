@@ -74,9 +74,9 @@ export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Stri
 // piece is a point of Dagger skill and loses to Feet of the Lynx.
 //
 // The rest is dungeon blues (Serpent's Shoulders from Wailing Caverns, Cultist's
-// Armguards from Blackfathom Deeps, Feet of the Lynx), the Warsong Gulch neck and ring,
-// and Field Researcher's Loop, the rogue ring from Greater Friend of the Library (20
-// books, four of them from level 30 zones). Both sets assume Engineering and
+// Armguards from Blackfathom Deeps, Feet of the Lynx), the Warsong Gulch neck, and two
+// rogue rings: Field Researcher's Loop from Greater Friend of the Library (20 books, four
+// of them from level 30 zones) and Pyrewood Signet Ring from The Horn of Xelthos. Both sets assume Engineering and
 // Leatherworking for Gnomish Goggles and Parachute Cloak. Only the main hand differs:
 // Cruel Barb off Edwin VanCleef for Sinister Strike, an Assassin's Blade for Backstab,
 // and both hold Butcher's Cleaver in the off hand, which Forever lets a rogue wield (its
@@ -89,12 +89,16 @@ export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Stri
 // for damage. The search puts Rune of Duty in for 0.1, but it is 4 Stamina and
 // resistances, so that is noise.
 //
-// Two items ForeverChanges lists for the rogue carry rating stats, which the sim drops
-// because we do not know what a point of rating is worth at level 20. Pyrewood Signet
-// Ring (4 hit rating) and Fletcher's Gloves (14 critical strike rating, with Defias Boots
-// to keep the 4 pieces) are even with this set if rating converts at the level 60 rate
-// (10 hit or 14 crit for 1%), and 0.8 and 2.5 DPS ahead if it scales down with level the
-// way it does in later expansions.
+// Pyrewood Signet Ring is 4 hit rating, which is 1.7% hit at level 20 if rating scales
+// with level the way we assume (see core.RatingPerPercent), and 0.9 DPS over the
+// Legionnaire's Band. Fletcher's Gloves (14 crit rating, 4.3% crit at 20) would break the
+// Defias set, and they lose to it.
+//
+// The enchants are the best a level 20 can get, Enchanting 225 at most: Agility on the
+// neck (a Forever enchant), cloak, bracers, gloves and boots, Lesser Stats on the chest,
+// a Forceful Heavy Armor Kit on the legs and Striking on both weapons. They are worth
+// 9.5 to 10 DPS. The sim has Forever's values for them, which are well above Classic's
+// for the low ones (Gloves Agility +7, Minor Agility +3).
 export const GearLevel20Backstab = PresetUtils.makePresetGear('Level 20 Backstab', Level20BackstabGear);
 export const GearLevel20SinisterStrike = PresetUtils.makePresetGear('Level 20 Sinister Strike', Level20SinisterStrikeGear);
 
@@ -330,12 +334,12 @@ export const EncounterLevel20 = level20Encounter('Level 20', 'Mutanus the Devour
 export const EncounterLevel20Undead = level20Encounter('Level 20 (Undead)', 'Level 22 undead boss', MobType.MobTypeUndead);
 // Undead, the rogue we play, and the best of the three Horde races now that Touch of the
 // Grave has no internal cooldown. At 30 / 60 / 300 sec on the shipped sets with Blessing
-// of Kings, Sinister Strike does 82.3 / 75.1 / 69.3 as Undead, 81.7 / 74.1 / 68.3 as a
-// Troll and 80.3 / 73.1 / 67.6 as an Orc. Backstab does 81.4 / 73.6 / 67.8 as Undead,
-// 80.4 / 72.5 / 66.6 as a Troll and 79.1 / 71.4 / 66.0 as an Orc.
+// of Kings, Sinister Strike does 93.6 / 85.6 / 79.1 as Undead, 93.0 / 84.6 / 78.0 as a
+// Troll and 91.6 / 83.5 / 77.2 as an Orc. Backstab does 92.2 / 83.6 / 77.0 as Undead,
+// 91.1 / 82.3 / 75.8 as a Troll and 89.8 / 81.3 / 75.2 as an Orc.
 //
 // The Orc gets Axe Specialization on Butcher's Cleaver in the off hand already. Putting
-// Razor's Edge in the main hand as well costs it 2.5 at 60 sec, because Cruel Barb hits
+// Razor's Edge in the main hand as well costs it 2.6 at 60 sec, because Cruel Barb hits
 // much harder (30-57 against 25-48). Nothing else moves with the race here. The Undead
 // and the Troll have no weapon specialization, and the rotations carry every race's
 // cooldown line for the others to ignore.

@@ -8,10 +8,14 @@ const EarthShockRanks = 7
 
 var EarthShockSpellId = [EarthShockRanks + 1]int32{0, 8042, 8044, 8045, 8046, 10412, 10413, 10414}
 
-// Damage at each rank's cap, and its growth per level up to there (1.12 spell data).
-var EarthShockBaseDamage = [EarthShockRanks + 1][]float64{{0}, {19.5, 21.5}, {35.5, 37.5}, {65, 69}, {126, 134}, {235, 249}, {372, 394}, {517, 545}}
-var EarthShockScaling = [EarthShockRanks + 1]core.RankScaling{{}, {9, .5}, {13, .7}, {19, 1}, {29, 1.4}, {41, 2}, {53, 2.6}, {60, 3.1}}
-var EarthShockSpellCoef = [EarthShockRanks + 1]float64{0, .154, .212, .299, .386, .386, .386, .386}
+// Damage at each rank's cap, its growth per level up to there, and the spell power
+// coefficient, from the Forever client data that https://foreverchanges.pro reads
+// (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
+// low ranks close to full coefficients instead of the 1.12 penalty for spells learned
+// below level 20.
+var EarthShockBaseDamage = [EarthShockRanks + 1][]float64{{0}, {19.36, 21.64}, {35.39, 37.61}, {51.77, 55.23}, {83.69, 89.31}, {134.32, 142.68}, {206.66, 219.34}, {293.07, 308.93}}
+var EarthShockScaling = [EarthShockRanks + 1]core.RankScaling{{}, {9, 0.5}, {13, 0.7}, {19, 0.9}, {29, 1.1}, {41, 1.3}, {53, 1.6}, {60, 1.9}}
+var EarthShockSpellCoef = [EarthShockRanks + 1]float64{0, 0.386, 0.386, 0.386, 0.386, 0.386, 0.386, 0.386}
 var EarthShockManaCost = [EarthShockRanks + 1]float64{0, 30, 50, 85, 145, 240, 345, 450}
 var EarthShockLevel = [EarthShockRanks + 1]int{0, 4, 8, 14, 24, 36, 48, 60}
 

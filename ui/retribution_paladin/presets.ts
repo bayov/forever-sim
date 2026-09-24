@@ -51,7 +51,7 @@ export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 // Caverns swings 55-84, and the sim does not even run its Holystorm proc. Most of the
 // armor is the Totemic Leather set the Leatherworker makes for themselves, and the rest
 // is Forever's own spell power gear: Spellpower Goggles Xtreme, Technician's Bracers from
-// A Fine Mess in Gnomeregan, Serpent Gloves, and Chestnut Mantle from Allegiance to the
+// A Fine Mess in Gnomeregan, Fletcher's Gloves, and Chestnut Mantle from Allegiance to the
 // Old Gods.
 //
 // The neck and rings are new Forever items. Mark of the Pack Leader drops off Humar the
@@ -67,15 +67,25 @@ export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 // Consecration. Four pieces of Defias Leather are 0.2 ahead on one target but 2 to 6
 // behind once there is a second one, so we leave that set to the rogue.
 //
+// Fletcher's Gloves are 14 crit rating, 4.3% crit at level 20 if rating scales with level
+// the way we assume (see core.RatingPerPercent), and Forever pays that crit on Seal of
+// Command and Consecration too.
+//
+// The enchants are the best a level 20 can get, Enchanting 225 at most, and are worth 9
+// DPS on one target and 15 on three: +15 Strength on Wolfsbane, +7 Strength on the
+// gloves, and spell power everywhere else there is a choice (the Spell Power necklace
+// enchant, Mystic armor kits, Lesser Healing Power on the bracers for its 6 spell damage).
+//
 // The set assumes Engineering and Leatherworking, which is 4.5 DPS. A level 20 head slot
 // has nothing in it but the goggles, so that is most of the gap.
 export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
 // The same search against three enemies, where Consecration is most of the damage and a
 // point of spell power is worth four of Strength. Wolfsbane stays, it is far enough ahead
 // of every other weapon, and the slots the Totemic Leather set does not win take a spell
-// power piece instead (Heavy Woolen Cloak, Jutebraid Gloves, Dark Ritual Leggings out of
-// Blackfathom Deeps, Advisor's Ring). Worth 2.3 DPS on four targets and 1.0 on three at
-// 60 sec, a wash on two and 1.2 behind on one.
+// power piece instead (Heavy Woolen Cloak, Stormrider's Leather Belt, Dark Ritual
+// Leggings out of Blackfathom Deeps, Advisor's Ring), and the gloves take a Mystic Thick
+// Armor Kit instead of Strength. Worth 3.1 DPS on four targets and 1.5 on three at 60 sec,
+// even on two and 1.7 behind on one.
 export const GearLevel20AoE = PresetUtils.makePresetGear('Level 20 AoE', Level20AoEGearJSON);
 
 export const GearPresets = {};

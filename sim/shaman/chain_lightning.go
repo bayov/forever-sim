@@ -11,10 +11,14 @@ const ChainLightningTargetCount = int32(3)
 
 var ChainLightningSpellId = [ChainLightningRanks + 1]int32{0, 421, 930, 2860, 10605}
 
-// Damage at each rank's cap, and its growth per level up to there (1.12 spell data).
-var ChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {200.5, 226.5}, {288.5, 322.5}, {391.5, 437.5}, {505, 564}}
-var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 1.9}, {45, 2.3}, {53, 2.7}, {60, 3.1}}
-var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, .714, .714, .714, .714}
+// Damage at each rank's cap, its growth per level up to there, and the spell power
+// coefficient, from the Forever client data that https://foreverchanges.pro reads
+// (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
+// low ranks close to full coefficients instead of the 1.12 penalty for spells learned
+// below level 20.
+var ChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {85.2, 96.8}, {97.05, 108.95}, {108.88, 122.12}, {119.19, 133.21}}
+var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 0.6}, {45, 0.6}, {53, 0.7}, {60, 0.8}}
+var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, 0.571, 0.571, 0.517, 0.571}
 
 // Forever's costs, about 20% under Classic. The cast is 2 sec, down from 2.5.
 var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 225, 305, 390, 485}

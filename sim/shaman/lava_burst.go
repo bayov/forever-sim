@@ -8,16 +8,23 @@ import (
 
 const LavaBurstFlameShockBonus = .2
 
-// Damage, cast time, cooldown and mana cost are the beta client's level 60 tooltip. The
-// coefficient is the WotLK spell's, the tooltip does not show one.
+// Lava Burst ranks from the Forever client data that https://foreverchanges.pro reads
+// (downrank calculator): damage at each rank's cap, its growth per level up to there, and
+// mana. The talent teaches rank 1 and the trainer the other two at 50 and 60.
+var LavaBurstBaseDamage = [][]float64{{0}, {104.98, 135.42}, {164.02, 211.58}, {192.14, 247.86}}
+var LavaBurstScaling = []core.RankScaling{{}, {48, 0.9}, {58, 1.1}, {60, 1.3}}
+var LavaBurstManaCost = []float64{0, 165, 230, 265}
+var LavaBurstLevel = []int32{0, 40, 50, 60}
+
 func (shaman *Shaman) registerLavaBurstSpell() {
 	if !shaman.Talents.LavaBurst {
 		return
 	}
 
-	baseDamageLow := 106.0
-	baseDamageHigh := 135.0
-	spellCoeff := .5714
+	rank := max(core.HighestRankAt(shaman.Level, LavaBurstLevel), 1)
+	baseDamageLow := LavaBurstScaling[rank].At(LavaBurstBaseDamage[rank][0], shaman.Level)
+	baseDamageHigh := LavaBurstScaling[rank].At(LavaBurstBaseDamage[rank][1], shaman.Level)
+	spellCoeff := 0.714
 	castTime := time.Millisecond * 2500
 
 	shaman.LavaBurst = shaman.RegisterSpell(core.SpellConfig{
@@ -31,7 +38,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost:   165,
+			FlatCost:   LavaBurstManaCost[rank],
 			Multiplier: 100 - 2*shaman.Talents.Convection,
 		},
 		Cast: core.CastConfig{

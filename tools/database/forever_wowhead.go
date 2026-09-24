@@ -14,8 +14,9 @@ import (
 // dungeon weapons hit harder, white items turned green) and added its own, and the
 // Classic inputs know none of that. The listing rows carry the item's slot and quality,
 // the jsonequip block carries its stats, so together they are enough to build a UIItem.
-// Items with rating stats (the level 60 rep gear's "+7 Hit") keep the item but drop
-// the rating, the sim has no unit for it yet.
+// Hit and critical strike rating go on the item as they are, and the sim turns them into
+// percent at the character's level. Other ratings (expertise, defense, dodge) are dropped
+// because the sim has no use for them.
 type ForeverWowheadDB struct {
 	MaxReqLevel int32                `json:"maxReqLevel"`
 	Items       []ForeverWowheadItem `json:"items"`
@@ -92,7 +93,7 @@ var foreverWowheadStats = map[string]proto.Stat{
 }
 
 // Rating stats the sim cannot use. Counted so the run reports how much it dropped.
-var foreverWowheadRatings = []string{"critstrkrtng", "hitrtng", "exprtng", "hastertng", "dodgertng", "parryrtng", "blockrtng", "armorpenrtng"}
+var foreverWowheadRatings = []string{"exprtng", "hastertng", "dodgertng", "parryrtng", "blockrtng", "armorpenrtng"}
 
 func (wi ForeverWowheadItem) num(key string) float64 {
 	v, ok := wi.Eq[key]
@@ -336,6 +337,8 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 		Quality:       proto.ItemQuality(wi.Quality),
 		Expansion:     proto.Expansion_ExpansionVanilla,
 		Sources:       wi.sources(),
+		HitRating:     wi.num("hitrtng"),
+		CritRating:    wi.num("critstrkrtng"),
 	}
 	if itemType == proto.ItemType_ItemTypeWeapon || itemType == proto.ItemType_ItemTypeRanged {
 		item.WeaponDamageMin = wi.num("dmgmin1")

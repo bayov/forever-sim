@@ -119,7 +119,9 @@ const MagmaTotemRanks = 4
 
 var MagmaTotemSpellId = [MagmaTotemRanks + 1]int32{0, 8190, 10585, 10586, 10587}
 var MagmaTotemAoeSpellId = [MagmaTotemRanks + 1]int32{0, 8187, 10579, 10580, 10581}
-var MagmaTotemBaseDamage = [MagmaTotemRanks + 1]float64{0, 22, 37, 54, 75}
+
+// Forever damage per pulse (wowhead Forever tooltips), 2 less than 1.12 at every rank.
+var MagmaTotemBaseDamage = [MagmaTotemRanks + 1]float64{0, 20, 35, 52, 73}
 var MagmaTotemSpellCoeff = [MagmaTotemRanks + 1]float64{0, .033, .033, .033, .033}
 var MagmaTotemManaCost = [MagmaTotemRanks + 1]float64{0, 230, 360, 500, 650}
 var MagmaTotemLevel = [MagmaTotemRanks + 1]int{0, 26, 36, 46, 56}

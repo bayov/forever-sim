@@ -38,6 +38,8 @@ func init() {
 			SetName:             item.SetName,
 			SetId:               item.SetId,
 			WeaponSkills:        item.WeaponSkills,
+			HitRating:           item.HitRating,
+			CritRating:          item.CritRating,
 		}
 	}
 
