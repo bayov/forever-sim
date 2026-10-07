@@ -79,6 +79,7 @@ func main() {
 	wagoItems := database.ParseWagoDB(tools.ReadFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir)))
 	foreverWowheadDB := database.ParseForeverWowheadDB(tools.ReadFile(fmt.Sprintf("%s/forever_wowhead_items.json", inputsDir)))
 	foreverChangesLoot := database.ParseForeverChangesLoot(tools.ReadFile(fmt.Sprintf("%s/foreverchanges_loot.json", inputsDir)))
+	foreverChangesSuffixes := database.ParseForeverChangesSuffixes(tools.ReadFile(fmt.Sprintf("%s/foreverchanges_suffixes.json", inputsDir)))
 
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
@@ -164,9 +165,11 @@ func main() {
 
 	db.MergeItems(database.ItemOverrides)
 	db.MergeItems(database.ForeverItems)
+	db.MergeItems(database.ForeverSyntheticItems)
 	MergeForeverWowheadItems(db, foreverWowheadDB)
 	db.MergeItems(database.ForeverSeenInGame)
 	AttachForeverChangesSources(db, foreverChangesLoot)
+	db.AttachForeverChangesSuffixes(foreverChangesSuffixes)
 	db.MergeFactions(database.ForeverFactions)
 	db.MergeEnchants(database.EnchantOverrides)
 	db.ReplaceForeverEnchants(database.ForeverEnchants)
@@ -298,6 +301,10 @@ func MergeForeverWowheadItems(db *database.WowDatabase, whdb database.ForeverWow
 			if item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_UNSPECIFIED {
 				item.FactionRestriction = have.FactionRestriction
 			}
+			// The listing knows nothing about raid tiers, so a Classic item keeps the phase
+			// it drops in. Otherwise every BWL and Naxxramas item with Forever data would
+			// count as Phase 1 in a "phase 1 BiS" gear search.
+			item.Phase = 0
 			updated++
 		} else {
 			added++

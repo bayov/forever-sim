@@ -1311,6 +1311,17 @@ export const classToMaxArmorType: Record<Class, ArmorType> = {
 	[Class.ClassWarrior]: ArmorType.ArmorTypePlate,
 };
 
+// The heaviest armor a class can wear at a level. Hunters and shamans learn Mail, and
+// warriors and paladins learn Plate, at level 40. The gear search in tools/rotopt
+// (armorTypesFor) uses the same rule.
+export function maxArmorTypeAt(playerClass: Class, level: number): ArmorType {
+	const maxArmorType = classToMaxArmorType[playerClass];
+	if (level < 40 && maxArmorType >= ArmorType.ArmorTypeMail) {
+		return maxArmorType - 1;
+	}
+	return maxArmorType;
+}
+
 export const classToEligibleRangedWeaponTypes: Record<Class, Array<RangedWeaponType>> = {
 	[Class.ClassUnknown]: [],
 	[Class.ClassDruid]: [RangedWeaponType.RangedWeaponTypeIdol],
@@ -1487,7 +1498,7 @@ export function canEquipItem<SpecType extends Spec>(player: Player<SpecType>, it
 	}
 
 	// At this point, we know the item is an armor piece (feet, chest, legs, etc).
-	return classToMaxArmorType[playerClass] >= item.armorType;
+	return maxArmorTypeAt(playerClass, player.getEffectiveLevel()) >= item.armorType;
 }
 
 export const itemTypeToSlotsMap: Partial<Record<ItemType, Array<ItemSlot>>> = {
@@ -1576,6 +1587,14 @@ export function enchantAppliesToItem(enchant: Enchant, item: Item): boolean {
 
 	if (item.weaponType == WeaponType.WeaponTypeOffHand) return false;
 
+	// Forever's Heavy armor kits need an item of level 15 or above and its Thick kits one
+	// of level 25 or above (the rotopt enchant search in tools/rotopt/enchants.go uses the
+	// same rule).
+	if (enchant.enchantType == EnchantType.EnchantTypeKit) {
+		if (enchant.name.endsWith('Heavy Armor Kit') && item.ilvl < 15) return false;
+		if (enchant.name.endsWith('Thick Armor Kit') && item.ilvl < 25) return false;
+	}
+
 	if (sharedSlots.includes(ItemSlot.ItemSlotRanged)) {
 		if (
 			![RangedWeaponType.RangedWeaponTypeBow, RangedWeaponType.RangedWeaponTypeCrossbow, RangedWeaponType.RangedWeaponTypeGun].includes(
@@ -1590,6 +1609,11 @@ export function enchantAppliesToItem(enchant: Enchant, item: Item): boolean {
 
 export function canEquipEnchant(enchant: Enchant, player: Player<any>): boolean {
 	if (enchant.classAllowlist.length > 0 && !enchant.classAllowlist.includes(player.getClass())) {
+		return false;
+	}
+
+	// Armor kits are items the character uses, so they have a level requirement.
+	if (enchant.requiredLevel > player.getEffectiveLevel()) {
 		return false;
 	}
 

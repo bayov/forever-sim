@@ -436,6 +436,42 @@ var ForeverItems = []*proto.UIItem{
 		Id: 285330, Name: "Signet of the Zhevra",
 		Sources: []*proto.UIItemSource{foreverRare(17, "Swiftmane")},
 	},
+	// Items wowhead's Forever listing has with no source, placed by ForeverChanges
+	// (https://foreverchanges.pro/item/ID, checked 2026-10-06). The rares come from player
+	// reports the site has not checked itself.
+	{
+		Id: 285190, Name: "Wyvern Heart Band",
+		Sources: []*proto.UIItemSource{foreverRare(400, "Heartrazor")},
+	},
+	{
+		Id: 284399, Name: "Seared Grove Shoulderpads",
+		Sources: []*proto.UIItemSource{foreverRare(406, "Sister Riven")},
+	},
+	// Brother Ravenoak or Sentinel Amarassan in the north of Stonetalon. The report does not
+	// say which.
+	{
+		Id: 284403, Name: "Shapeshifting Sentinel's Strides",
+		Sources: []*proto.UIItemSource{foreverRare(406, "Brother Ravenoak or Sentinel Amarassan")},
+	},
+	{
+		Id: 285344, Name: "Guard Captain's Barrier",
+		Sources: []*proto.UIItemSource{foreverRare(17, "Captain Gerogg Hammertoe")},
+	},
+	{
+		Id: 274068, Name: "Thermaplugg Medal of Honor",
+		Sources: []*proto.UIItemSource{{Source: &proto.UIItemSource_Drop{Drop: &proto.DropSource{NpcId: 6229, ZoneId: 721}}}},
+	},
+	// Khan Jehn is a new Gelkis quest in Desolace. It needs Honored with the Gelkis and opens
+	// at level 30. The rewards carry no required level, so without one here the gear search
+	// would judge them on item level 43 and leave them out.
+	{
+		Id: 271801, Name: "Abandoned Ferocity", RequiredLevel: 30,
+		Sources: []*proto.UIItemSource{foreverQuest(93128, "Khan Jehn")},
+	},
+	{
+		Id: 271802, Name: "Bludgeon of Betrayed Virtues", RequiredLevel: 30,
+		Sources: []*proto.UIItemSource{foreverQuest(93128, "Khan Jehn")},
+	},
 	// A Forever rare in the Wetlands. It drops Rotheap Innards, which Rethiel the
 	// Greenwarden (Alliance) trades for the ring, once per character.
 	{
@@ -464,20 +500,407 @@ var ForeverItems = []*proto.UIItem{
 		ClassAllowlist:     []proto.Class{proto.Class_ClassPaladin},
 		Sources:            []*proto.UIItemSource{foreverQuest(96204, "The Windshaper's Wrath")},
 	},
+
+	// New in beta build 1.60.1.70009 (https://foreverchanges.pro/beta). These are low level
+	// quest and drop greens from the Horde and Night Elf starting zones, and we know no
+	// source or faction for them yet. Rotmender's Robes, Gloves and Sash from Ruins of
+	// Lordaeron are left out, because nobody has seen their stats yet (the client only
+	// holds their armor).
+	{
+		Id: 286742, Name: "Riptear's Cleaver",
+		Icon: "inv_throwingaxe_02", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{stats.Strength: 3}.ToFloatArray(),
+		WeaponDamageMin: 23, WeaponDamageMax: 36, WeaponSpeed: 3.30,
+		Ilvl: 13, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286730, Name: "Pristine Orcish Dagger",
+		Icon: "inv_weapon_shortblade_14", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeDagger, HandType: proto.HandType_HandTypeOneHand,
+		Stats:           stats.Stats{stats.Agility: 1}.ToFloatArray(),
+		WeaponDamageMin: 10, WeaponDamageMax: 20, WeaponSpeed: 2.40,
+		Ilvl: 12, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286755, Name: "Helm Splitter",
+		Icon: "inv_sword_04", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
+		Stats:           stats.Stats{stats.Strength: 1}.ToFloatArray(),
+		WeaponDamageMin: 10, WeaponDamageMax: 19, WeaponSpeed: 2.40,
+		Ilvl: 11, RequiredLevel: 6, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286744, Name: "Thrice-Stitched Flesh",
+		Icon: "inv_misc_cape_07", Type: proto.ItemType_ItemTypeBack,
+		Stats: stats.Stats{stats.Armor: 12, stats.Agility: 1}.ToFloatArray(),
+		Ilvl:  13, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286752, Name: "Igleggings",
+		Icon: "inv_pants_02", Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Armor: 54, stats.Intellect: 2}.ToFloatArray(),
+		Ilvl:  12, RequiredLevel: 7, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286731, Name: "Aggor's Refitted Belt",
+		Icon: "inv_belt_09", Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Armor: 69, stats.Stamina: 2}.ToFloatArray(),
+		Ilvl:  12, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286754, Name: "Ukta's Conduit",
+		Icon: "inv_staff_07", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{stats.Stamina: 2}.ToFloatArray(),
+		WeaponDamageMin: 19, WeaponDamageMax: 36, WeaponSpeed: 3.30,
+		Ilvl: 12, RequiredLevel: 7, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286753, Name: "Snarlsnout Shooter",
+		Icon: "inv_weapon_rifle_05", Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeGun,
+		Stats:           stats.Stats{stats.Strength: 1}.ToFloatArray(),
+		WeaponDamageMin: 8, WeaponDamageMax: 16, WeaponSpeed: 2.80,
+		Ilvl: 10, RequiredLevel: 5, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286748, Name: "Bristlebark Bow",
+		Icon: "inv_weapon_bow_03", Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
+		Stats:           stats.Stats{stats.Agility: 1}.ToFloatArray(),
+		WeaponDamageMin: 8, WeaponDamageMax: 16, WeaponSpeed: 2.80,
+		Ilvl: 10, RequiredLevel: 5, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286750, Name: "Wisesight Wand",
+		Icon: "inv_wand_01", Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
+		Stats:           stats.Stats{stats.Intellect: 1}.ToFloatArray(),
+		WeaponDamageMin: 8, WeaponDamageMax: 16, WeaponSpeed: 1.70,
+		Ilvl: 10, RequiredLevel: 5, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286743, Name: "Riptear's Spare Arm",
+		Icon: "spell_shadow_fingerofdeath", Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 11, WeaponDamageMax: 21, WeaponSpeed: 1.70,
+		Ilvl: 13, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286751, Name: "Ghostfang's Steps",
+		Icon: "inv_boots_05", Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Armor: 13, stats.Spirit: 1}.ToFloatArray(),
+		Ilvl:  10, RequiredLevel: 5, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286745, Name: "Furlfeather Ring",
+		Icon: "inv_jewelry_ring_12", Type: proto.ItemType_ItemTypeFinger,
+		Stats: stats.Stats{stats.HealingPower: 1}.ToFloatArray(),
+		Ilvl:  12, RequiredLevel: 7, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286746, Name: "Shal'ma's Shawl",
+		Icon: "inv_helmet_48", Type: proto.ItemType_ItemTypeBack,
+		Stats: stats.Stats{stats.Armor: 8}.ToFloatArray(),
+		Ilvl:  9, RequiredLevel: 4, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286749, Name: "Wrathroot",
+		Icon: "inv_staff_02", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 10, WeaponDamageMax: 19, WeaponSpeed: 3.30,
+		Ilvl: 8, RequiredLevel: 3, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286741, Name: "Centaur Skull Basher",
+		Icon: "inv_hammer_09", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 13, WeaponDamageMax: 20, WeaponSpeed: 3.30,
+		Ilvl: 9, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286733, Name: "Fightin' Fish",
+		Icon: "inv_misc_fish_02", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeOneHand,
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 4, WeaponDamageMax: 9, WeaponSpeed: 2.40,
+		Ilvl: 7, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286728, Name: "Kolkar Hammer",
+		Icon: "inv_hammer_16", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeOneHand,
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 5, WeaponDamageMax: 11, WeaponSpeed: 2.40,
+		Ilvl: 8, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286729, Name: "Kolkar Bow",
+		Icon: "inv_weapon_bow_12", Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 5, WeaponDamageMax: 10, WeaponSpeed: 2.80,
+		Ilvl: 8, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286735, Name: "Sentinel's Slasher",
+		Icon: "inv_sword_23", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 6, WeaponDamageMax: 12, WeaponSpeed: 2.40,
+		Ilvl: 9, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286740, Name: "Proud Brave's Guard",
+		Icon: "inv_shield_09", Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeShield, HandType: proto.HandType_HandTypeOffHand,
+		Stats: stats.Stats{stats.Armor: 135, stats.BlockValue: 3}.ToFloatArray(),
+		Ilvl:  9, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286737, Name: "Avala's Binding",
+		Icon: "inv_jewelry_ring_07", Type: proto.ItemType_ItemTypeFinger,
+		Stats: stats.Stats{stats.FrostResistance: 1}.ToFloatArray(),
+		Ilvl:  8, Quality: proto.ItemQuality_ItemQualityCommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	// Quest rewards that wowhead's Forever listing has with no source. The item pages show the
+	// quest (checked 2026-10-04), so we give them the source here and the gear search keeps
+	// them. The Alliance rewards found the same way are left out.
+	//
+	// Dreamer's Chestguard is not in the listing at all, so it goes in with its stats from the
+	// tooltip. Baron Aquanis is the Horde quest in Blackfathom Deeps (quest level 30).
+	{
+		Id: 270043, Name: "Dreamer's Chestguard", Icon: "inv_chest_leather_01",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Strength: 10, stats.Stamina: 5, stats.Spirit: 11, stats.Armor: 106}.ToFloatArray(),
+		Ilvl:  32, Phase: 1, Quality: proto.ItemQuality_ItemQualityRare, Expansion: proto.Expansion_ExpansionVanilla,
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
+		Sources:            []*proto.UIItemSource{foreverQuest(6922, "Baron Aquanis")},
+	},
+	{
+		Id: 271719, Name: "Furs of the Earthen Ring",
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
+		Sources:            []*proto.UIItemSource{foreverQuest(98823, "Earthen Echo")},
+	},
+	{
+		Id: 271732, Name: "Dirt-Heavy Bracers",
+		Sources: []*proto.UIItemSource{foreverQuest(95682, "Open the Maw")},
+	},
+	{
+		Id: 271740, Name: "Knife-Polishing Rag",
+		Sources: []*proto.UIItemSource{foreverQuest(95682, "Open the Maw")},
+	},
+	{
+		Id: 271766, Name: "Heavehammer",
+		Sources: []*proto.UIItemSource{foreverQuest(98823, "Earthen Echo"), foreverQuest(98824, "Prehistoric Prism")},
+	},
+	{
+		Id: 271767, Name: "Healer's Staff",
+		Sources: []*proto.UIItemSource{foreverQuest(98823, "Earthen Echo"), foreverQuest(98824, "Prehistoric Prism")},
+	},
+	{
+		Id: 276727, Name: "Glistening Stompers",
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
+		Sources:            []*proto.UIItemSource{foreverQuest(515, "Elixir of Agony")},
+	},
+	{
+		Id: 276895, Name: "Transformative Cocoon",
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
+		Sources:            []*proto.UIItemSource{foreverQuest(96261, "The Broodmother")},
+	},
+	{
+		Id: 277206, Name: "Brilliant Cloak",
+		Sources: []*proto.UIItemSource{foreverQuest(95534, "Strahnbrad Mystery")},
+	},
+	{
+		Id: 277214, Name: "Crusty Cuffs",
+		Sources: []*proto.UIItemSource{foreverQuest(97048, "Returning to Port")},
+	},
+	{
+		Id: 277224, Name: "Kurzen Headshrinker's Cinch",
+		Sources: []*proto.UIItemSource{foreverQuest(97048, "Returning to Port")},
+	},
+	{
+		Id: 277232, Name: "Jailer's Discarded Chain",
+		Sources: []*proto.UIItemSource{foreverQuest(97048, "Returning to Port")},
+	},
+	{
+		Id: 277254, Name: "Truthseeker's Bow",
+		Sources: []*proto.UIItemSource{foreverQuest(82208, "Greater Friend of the Library")},
+	},
+	{
+		Id: 277514, Name: "Aka'rai's Tattered Vestments",
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
+		Sources:            []*proto.UIItemSource{foreverQuest(97265, "Hate the Hatefury")},
+	},
+	{
+		Id: 277515, Name: "Dagger of Deals",
+		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
+		Sources:            []*proto.UIItemSource{foreverQuest(97265, "Hate the Hatefury")},
+	},
 }
 
-// ForeverSeenInGame are items whose stats players recorded in the beta and that differ
-// from wowhead's Forever listing. They are merged after the listing, so they win.
+// ForeverSeenInGame are items whose stats differ from wowhead's Forever listing. They are
+// merged after the listing, so they win.
 //
 // The beta server sends some Forever items to the game with stats the client does not
 // hold. wowhead reads the client, ForeverChanges (https://foreverchanges.pro/item/ID)
 // shows what players have seen in game.
+//
+// Beta build 1.60.1.70009 (2026-09-24) also changed items that wowhead still shows with
+// the old stats. ForeverChanges lists them at https://foreverchanges.pro/beta. Most are
+// the Deadmines trash drops and Barrens rares, now rare quality with more stats, and low
+// level cloth that swapped Spirit or Stamina for spell power. Dull Sawblade lost a point of
+// Agility for 9 attack power against Humanoids (an item effect in sim/common).
 var ForeverSeenInGame = []*proto.UIItem{
-	// wowhead has +2 Agility and no damage at all, in game it is 15 - 28 at 1.70 speed
-	// with +3 Agility.
+	{
+		Id: 1951, Name: "Blackwater Cutlass",
+		Stats:           stats.Stats{stats.Agility: 4}.ToFloatArray(),
+		WeaponDamageMin: 17, WeaponDamageMax: 32, WeaponSpeed: 1.90,
+		Ilvl: 19, RequiredLevel: 14, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 1936, Name: "Goblin Screwdriver",
+		Stats:           stats.Stats{stats.Agility: 4}.ToFloatArray(),
+		WeaponDamageMin: 12, WeaponDamageMax: 22, WeaponSpeed: 1.40,
+		Ilvl: 18, RequiredLevel: 13, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 1934, Name: "Stonemason Trousers",
+		Stats: stats.Stats{stats.Armor: 75, stats.Agility: 7, stats.Spirit: 7}.ToFloatArray(),
+		Ilvl:  20, RequiredLevel: 15, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 1929, Name: "Silk-threaded Trousers",
+		Stats: stats.Stats{stats.Armor: 31, stats.Agility: 5, stats.SpellPower: 7}.ToFloatArray(),
+		Ilvl:  18, RequiredLevel: 13, Quality: proto.ItemQuality_ItemQualityRare,
+	},
 	{
 		Id: 285292, Name: "Dull Sawblade",
-		Stats:           stats.Stats{stats.Agility: 3}.ToFloatArray(),
+		Stats:           stats.Stats{stats.Agility: 2}.ToFloatArray(),
 		WeaponDamageMin: 15, WeaponDamageMax: 28, WeaponSpeed: 1.70,
+		Ilvl: 21, RequiredLevel: 16, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 5423, Name: "Boahn's Fang",
+		Stats:           stats.Stats{stats.Strength: 10, stats.Spirit: 4}.ToFloatArray(),
+		WeaponDamageMin: 38, WeaponDamageMax: 57, WeaponSpeed: 2.50,
+		Ilvl: 22, RequiredLevel: 17, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 5426, Name: "Serpent's Kiss",
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 24, WeaponDamageMax: 46, WeaponSpeed: 2.50,
+		Ilvl: 21, RequiredLevel: 16, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 5422, Name: "Brambleweed Leggings",
+		Stats: stats.Stats{stats.Armor: 71, stats.Agility: 5, stats.Spirit: 5}.ToFloatArray(),
+		Ilvl:  22, RequiredLevel: 17, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 5425, Name: "Runescale Girdle",
+		Stats: stats.Stats{stats.Armor: 96, stats.Strength: 5}.ToFloatArray(),
+		Ilvl:  21, RequiredLevel: 16, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 4660, Name: "Walking Boots",
+		Stats: stats.Stats{stats.Armor: 23, stats.Intellect: 4, stats.Agility: 3}.ToFloatArray(),
+		Ilvl:  20, RequiredLevel: 15, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 271205, Name: "Abomination Bones",
+		Stats: stats.Stats{stats.Armor: 184, stats.Strength: 9, stats.Intellect: 4, stats.Stamina: 2}.ToFloatArray(),
+		Ilvl:  20, RequiredLevel: 15, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 1557, Name: "Buckler of the Seas",
+		Stats: stats.Stats{stats.Armor: 411, stats.BlockValue: 7, stats.Spirit: 2, stats.SpellPower: 2}.ToFloatArray(),
+		Ilvl:  20, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 1561, Name: "Harvester's Robe",
+		Stats: stats.Stats{stats.Armor: 28, stats.Spirit: 2, stats.SpellPower: 2}.ToFloatArray(),
+		Ilvl:  15, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 3019, Name: "Noble's Robe",
+		Stats: stats.Stats{stats.Armor: 34, stats.Strength: 1, stats.Stamina: 4, stats.Spirit: 4}.ToFloatArray(),
+		Ilvl:  20, RequiredLevel: 15, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 3160, Name: "Ironplate Buckler",
+		Stats: stats.Stats{stats.Armor: 328, stats.BlockValue: 5, stats.SpellPower: 2}.ToFloatArray(),
+		Ilvl:  15, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 3902, Name: "Staff of Nobles",
+		Stats:           stats.Stats{stats.Stamina: 2, stats.Spirit: 5, stats.HealingPower: 22, stats.SpellPower: 7}.ToFloatArray(),
+		WeaponDamageMin: 25, WeaponDamageMax: 38, WeaponSpeed: 3.20,
+		Ilvl: 20, RequiredLevel: 15, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 5967, Name: "Girdle of Nobility",
+		Stats: stats.Stats{stats.Armor: 19, stats.Intellect: 4, stats.Stamina: 3}.ToFloatArray(),
+		Ilvl:  20, RequiredLevel: 15, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 10549, Name: "Rancher's Trousers",
+		Stats: stats.Stats{stats.Armor: 20, stats.Spirit: 1, stats.SpellPower: 1}.ToFloatArray(),
+		Ilvl:  12, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 12295, Name: "Leggings of the People's Militia",
+		Stats: stats.Stats{stats.Armor: 24, stats.Strength: 2, stats.SpellPower: 2}.ToFloatArray(),
+		Ilvl:  15, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 277247, Name: "Mug of Muddled Memories",
+		Stats:           stats.Stats{stats.Spirit: 1, stats.Intellect: 1, stats.SpellPower: 4}.ToFloatArray(),
+		WeaponDamageMin: 8, WeaponDamageMax: 16, WeaponSpeed: 2.80,
+		Ilvl: 12, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 277255, Name: "Misplaced Shooter",
+		Stats:           stats.Stats{stats.Stamina: 1, stats.Strength: 1}.ToFloatArray(),
+		WeaponDamageMin: 9, WeaponDamageMax: 18, WeaponSpeed: 2.80,
+		Ilvl: 12, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 279868, Name: "Duty Bound Leggings",
+		Stats: stats.Stats{stats.Armor: 81, stats.Stamina: 9, stats.Agility: 6, stats.Intellect: 6}.ToFloatArray(),
+		Ilvl:  24, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 279869, Name: "Remembrance Armor",
+		Stats: stats.Stats{stats.Armor: 198, stats.Stamina: 9, stats.Spirit: 6, stats.Strength: 5}.ToFloatArray(),
+		Ilvl:  24, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 279896, Name: "Deepblaze",
+		Stats:           stats.Stats{stats.FireResistance: 3}.ToFloatArray(),
+		WeaponDamageMin: 22, WeaponDamageMax: 41, WeaponSpeed: 1.70,
+		Ilvl: 18, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 282064, Name: "Tim's Lost Rib",
+		Stats:           stats.Stats{stats.Agility: 1, stats.Stamina: 1}.ToFloatArray(),
+		WeaponDamageMin: 7, WeaponDamageMax: 14, WeaponSpeed: 1.70,
+		Ilvl: 12, Quality: proto.ItemQuality_ItemQualityUncommon,
+	},
+	{
+		Id: 270003, Name: "Garrison Cuffs",
+		Stats: stats.Stats{stats.Armor: 78, stats.Spirit: 4, stats.HealingPower: 4, stats.SpellPower: 1}.ToFloatArray(),
+		Ilvl:  18, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 11902, Name: "Linken's Sword of Mastery",
+		Stats:           stats.Stats{}.ToFloatArray(),
+		WeaponDamageMin: 46, WeaponDamageMax: 87, WeaponSpeed: 1.80,
+		Ilvl: 56, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 11904, Name: "Spirit of Aquementas",
+		Stats: stats.Stats{stats.SpellPower: 21}.ToFloatArray(),
+		Ilvl:  56, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 271207, Name: "Rotmender's Leggings",
+		Stats: stats.Stats{stats.Armor: 35, stats.Intellect: 8, stats.Spirit: 5, stats.Stamina: 5}.ToFloatArray(),
+		Ilvl:  22, RequiredLevel: 17, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 271214, Name: "Rotmender's Treads",
+		Stats: stats.Stats{stats.Armor: 29, stats.Intellect: 4, stats.Spirit: 4, stats.Stamina: 7}.ToFloatArray(),
+		Ilvl:  24, RequiredLevel: 19, Quality: proto.ItemQuality_ItemQualityRare,
 	},
 }

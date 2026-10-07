@@ -27,6 +27,8 @@ OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/forever
 # wowhead inventory slots: every slot a character can wear, shirts and tabards left out.
 SLOTS = [1, 2, 3, 16, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 17, 21, 22, 23, 15, 25, 26, 28]
 PORT = 9334
+# CloudFront answers headless Chrome's own user agent with a 403, a desktop one gets through.
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 # Row fields worth keeping, and jsonequip keys that are not stats (prices, looks).
 ROW_KEYS = ['id', 'name', 'quality', 'level', 'reqlevel', 'slot', 'classs', 'subclass', 'reqclass', 'side', 'source', 'sourcemore', 'speed', 'dps', 'armor']
 EQ_SKIP = {'appearances', 'displayid', 'sellprice', 'buyprice', 'avgbuyout', 'dura', 'itemSquishEraId', 'sheathtype', 'maxcount'}
@@ -139,7 +141,7 @@ def mark_quest_restrictions(items, quests):
 def main():
     chrome = subprocess.Popen(['google-chrome', '--headless=new', '--no-sandbox', '--disable-gpu',
         f'--remote-debugging-port={PORT}', '--remote-allow-origins=*', '--window-size=1600,1200',
-        '--user-data-dir=/tmp/forever-wowhead-chrome', 'about:blank'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        '--user-data-dir=/tmp/forever-wowhead-chrome', f'--user-agent={USER_AGENT}', 'about:blank'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         for _ in range(50):
             try:

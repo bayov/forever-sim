@@ -111,6 +111,18 @@ func (db *WowDatabase) MergeEnchant(src *proto.UIEnchant) {
 			dst.Stats = src.Stats
 			src.Stats = nil
 		}
+		// The Forever armor kits merge over the Classic kits, which list the same slots.
+		// Concatenated, every kit showed up twice in the legs, hands and feet enchant lists.
+		if src.ExtraTypes != nil {
+			dst.ExtraTypes = src.ExtraTypes
+			src.ExtraTypes = nil
+		}
+		// The Forever armor kits merge over the Classic kits, which list the same slots.
+		// Concatenated, every kit showed up twice in the legs, hands and feet enchant lists.
+		if src.ExtraTypes != nil {
+			dst.ExtraTypes = src.ExtraTypes
+			src.ExtraTypes = nil
+		}
 		googleProto.Merge(dst, src)
 	} else {
 		db.Enchants[key] = src

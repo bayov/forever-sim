@@ -93,7 +93,7 @@ var foreverWowheadStats = map[string]proto.Stat{
 }
 
 // Rating stats the sim cannot use. Counted so the run reports how much it dropped.
-var foreverWowheadRatings = []string{"exprtng", "hastertng", "dodgertng", "parryrtng", "blockrtng", "armorpenrtng"}
+var foreverWowheadRatings = []string{"hastertng", "dodgertng", "parryrtng", "blockrtng", "armorpenrtng"}
 
 func (wi ForeverWowheadItem) num(key string) float64 {
 	v, ok := wi.Eq[key]
@@ -321,6 +321,9 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 	}
 	// "+12 Attack Power" is ranged attack power too, as the Classic tooltips read it.
 	statsArr[proto.Stat_StatRangedAttackPower] += wi.num("atkpwr")
+	// Expertise is a flat percent like hit and crit: the tooltip shows 10 rating as "1.0%"
+	// less chance to be dodged or parried. The sim's Expertise stat is in percent.
+	statsArr[proto.Stat_StatExpertise] += wi.num("exprtng") / 10
 	dropped := 0
 	for _, key := range foreverWowheadRatings {
 		if wi.num(key) != 0 {
@@ -345,15 +348,12 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 		item.WeaponDamageMax = wi.num("dmgmax1")
 		item.WeaponSpeed = wi.num("speed")
 	}
-	// A bind on pickup crafted item is gated on its profession, the way the tooltip
-	// parser reads "Requires Engineering (225)" on the Classic goggles.
-	if wi.BindOnPickup {
-		for _, s := range wi.SourceMore {
-			if s.Type == 6 {
-				item.RequiredProfession = foreverWowheadSkills[s.Skill]
-			}
-		}
-	}
+	// Only a profession the item needs to be worn counts, like "Requires Engineering (215)"
+	// on Spellpower Goggles Xtreme (its reqskill). Crafting a bind on pickup item does not
+	// count. A player can level the profession, craft the item and then drop the
+	// profession, and still wear it (Polished Driftwood Icon, made with Enchanting).
+	item.RequiredProfession = foreverWowheadSkills[int32(wi.num("reqskill"))]
+	item.BindOnPickup = wi.BindOnPickup
 	if classMask != 0 {
 		item.ClassAllowlist = WowheadItem{ClassMask: uint16(classMask)}.getClassRestriction()
 	}

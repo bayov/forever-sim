@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"slices"
 
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // The dungeon loot tables of https://foreverchanges.pro, scraped by
@@ -54,6 +56,16 @@ var foreverChangesDungeonZones = map[string]int32{
 	"hall-of-thanes":     16919,
 	"ruins-of-lordaeron": 16611,
 	"shadowfang-keep":    209,
+	"blackfathom-deeps":  719,
+	"the-stockade":       717,
+	"gnomeregan":         721,
+	"razorfen-kraul":     491,
+	"razorfen-downs":     722,
+	// The four Scarlet Monastery wings share one zone.
+	"scarlet-monastery-graveyard": 796,
+	"scarlet-monastery-library":   796,
+	"scarlet-monastery-armory":    796,
+	"scarlet-monastery-cathedral": 796,
 }
 
 // ForeverZones are zones the Classic inputs do not carry: the two Forever dungeons, and
@@ -73,4 +85,51 @@ func (d ForeverChangesDrop) Source() *proto.UIItemSource {
 		log.Fatalf("foreverchanges: no zone for dungeon %q", d.Dungeon)
 	}
 	return &proto.UIItemSource{Source: &proto.UIItemSource_Drop{Drop: &proto.DropSource{ZoneId: zone, OtherName: d.Boss}}}
+}
+
+// The random suffixes the beta client gives each item that Classic wowhead never saw on
+// it, scraped by tools/database/foreverchanges/suffixes.py. Suffixes that match no wowhead
+// suffix come with their stats (IDs from 990000 up), the rest are wowhead IDs.
+type ForeverChangesSuffixes struct {
+	Suffixes []struct {
+		ID    int32           `json:"id"`
+		Name  string          `json:"name"`
+		Stats map[int]float64 `json:"stats"`
+	} `json:"suffixes"`
+	Items map[int32][]int32 `json:"items"`
+}
+
+func ParseForeverChangesSuffixes(contents string) ForeverChangesSuffixes {
+	var suffixes ForeverChangesSuffixes
+	if err := json.Unmarshal([]byte(contents), &suffixes); err != nil {
+		log.Fatalf("failed to parse foreverchanges suffixes: %s", err)
+	}
+	return suffixes
+}
+
+// AttachForeverChangesSuffixes adds the suffixes to the items' options and puts the new
+// suffixes in the database. The wowhead ones are filled in with the rest of the item
+// options later.
+func (db *WowDatabase) AttachForeverChangesSuffixes(suffixes ForeverChangesSuffixes) {
+	for _, suffix := range suffixes.Suffixes {
+		var s stats.Stats
+		for stat, value := range suffix.Stats {
+			s[stat] = value
+		}
+		db.RandomSuffixes[suffix.ID] = &proto.ItemRandomSuffix{Id: suffix.ID, Name: suffix.Name, Stats: s.ToFloatArray()}
+	}
+	added := 0
+	for itemID, options := range suffixes.Items {
+		item, ok := db.Items[itemID]
+		if !ok {
+			continue
+		}
+		for _, option := range options {
+			if !slices.Contains(item.RandomSuffixOptions, option) {
+				item.RandomSuffixOptions = append(item.RandomSuffixOptions, option)
+				added++
+			}
+		}
+	}
+	fmt.Printf("ForeverChanges random suffixes added: %d\n", added)
 }

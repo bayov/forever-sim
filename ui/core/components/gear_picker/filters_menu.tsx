@@ -2,7 +2,7 @@ import { Player } from '../../player.js';
 import { ArmorType, ItemSlot } from '../../proto/common.js';
 import { RaidFilterOption, SourceFilterOption, UIItem_FactionRestriction } from '../../proto/ui.js';
 import { armorTypeNames, raidNames, rangedWeaponTypeNames, sourceNames, weaponTypeNames } from '../../proto_utils/names.js';
-import { canDualWield, classToEligibleRangedWeaponTypes, classToEligibleWeaponTypes, classToMaxArmorType } from '../../proto_utils/utils.js';
+import { canDualWield, classToEligibleRangedWeaponTypes, classToEligibleWeaponTypes, maxArmorTypeAt } from '../../proto_utils/utils.js';
 import { Sim } from '../../sim.js';
 import { EventID } from '../../typed_event.js';
 import { getEnumValues } from '../../utils.js';
@@ -117,7 +117,7 @@ export class FiltersMenu extends BaseModal {
 		});
 
 		if (Player.ARMOR_SLOTS.includes(slot)) {
-			const maxArmorType = classToMaxArmorType[player.getClass()];
+			const maxArmorType = maxArmorTypeAt(player.getClass(), player.getEffectiveLevel());
 			if (maxArmorType >= ArmorType.ArmorTypeLeather) {
 				const section = this.newSection('Armor Type');
 				section.classList.add('filters-menu-section-bool-list');

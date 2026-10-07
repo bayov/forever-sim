@@ -100,7 +100,17 @@ var ItemOverrides = []*proto.UIItem{
 }
 
 // Keep these sorted by item ID.
-var ItemAllowList = map[int32]struct{}{}
+// Items the quality filter would drop that we keep anyway.
+//
+// The Engineering trinkets are white, but ForeverChanges puts them in its level 30 shaman
+// lists (2026-10-06), so they show up in the gear picker. Their use effects are not in the
+// sim. Mechanical Dragonling is a pet that fights for 1 min, and the mortar does 85 to 115
+// Fire damage, so the real items do more than the sim shows. The net only roots.
+var ItemAllowList = map[int32]struct{}{
+	4396:   {}, // Mechanical Dragonling
+	10720:  {}, // Gnomish Net-o-Matic Projector
+	260802: {}, // EZ-Thro Bronze Mortar
+}
 
 // Items to remove from the UI
 var ItemDenyList = map[int32]struct{}{

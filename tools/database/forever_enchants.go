@@ -20,20 +20,24 @@ import (
 // the same spell, so the enchant picker shows each enchant once.
 //
 // The armor kits keep the Classic kits' IDs and only gain the Stamina that Forever gave
-// them. Heavy kits need an item of level 15 or above and Thick kits level 25 or above,
-// which the sim does not check.
+// them. Heavy kits need an item of level 15 or above and Thick kits level 25 or above.
+// The kits also need a character level (hyjal.cc recipe pages): the plain Medium,
+// Heavy and Thick kits 5, 20 and 30, the Forceful and Mystic ones 15, 30 and 40. So a
+// level 20 gets the Forceful or Mystic Medium kit or the plain Heavy kit at best. The
+// sim does not check either rule, but the UI enchant picker and the rotopt enchant
+// search do.
 var ForeverEnchants = []*proto.UIEnchant{
 	// Armor kits.
-	foreverKit(15, 2304, 2831, "Light Armor Kit", stats.Stats{stats.Stamina: 1, stats.BonusArmor: 8}),
-	foreverKit(16, 2313, 2832, "Medium Armor Kit", stats.Stats{stats.Stamina: 2, stats.BonusArmor: 16}),
-	foreverKit(17, 4265, 2833, "Heavy Armor Kit", stats.Stats{stats.Stamina: 3, stats.BonusArmor: 24}),
-	foreverKit(18, 8173, 10344, "Thick Armor Kit", stats.Stats{stats.Stamina: 4, stats.BonusArmor: 32}),
-	foreverKit(1255123, 0, 1255123, "Forceful Medium Armor Kit", stats.Stats{stats.AttackPower: 4, stats.RangedAttackPower: 4, stats.BonusArmor: 16}),
-	foreverKit(1255124, 0, 1255124, "Mystic Medium Armor Kit", stats.Stats{stats.SpellPower: 2, stats.BonusArmor: 16}),
-	foreverKit(1255095, 0, 1255095, "Forceful Heavy Armor Kit", stats.Stats{stats.AttackPower: 6, stats.RangedAttackPower: 6, stats.BonusArmor: 24}),
-	foreverKit(1255096, 0, 1255096, "Mystic Heavy Armor Kit", stats.Stats{stats.SpellPower: 4, stats.BonusArmor: 24}),
-	foreverKit(1255073, 0, 1255073, "Forceful Thick Armor Kit", stats.Stats{stats.AttackPower: 8, stats.RangedAttackPower: 8, stats.BonusArmor: 32}),
-	foreverKit(1255074, 0, 1255074, "Mystic Thick Armor Kit", stats.Stats{stats.SpellPower: 5, stats.BonusArmor: 32}),
+	foreverKit(15, 2304, 2831, 1, "Light Armor Kit", stats.Stats{stats.Stamina: 1, stats.BonusArmor: 8}),
+	foreverKit(16, 2313, 2832, 5, "Medium Armor Kit", stats.Stats{stats.Stamina: 2, stats.BonusArmor: 16}),
+	foreverKit(17, 4265, 2833, 20, "Heavy Armor Kit", stats.Stats{stats.Stamina: 3, stats.BonusArmor: 24}),
+	foreverKit(18, 8173, 10344, 30, "Thick Armor Kit", stats.Stats{stats.Stamina: 4, stats.BonusArmor: 32}),
+	foreverKit(1255123, 0, 1255123, 15, "Forceful Medium Armor Kit", stats.Stats{stats.AttackPower: 4, stats.RangedAttackPower: 4, stats.BonusArmor: 16}),
+	foreverKit(1255124, 0, 1255124, 15, "Mystic Medium Armor Kit", stats.Stats{stats.SpellPower: 2, stats.BonusArmor: 16}),
+	foreverKit(1255095, 0, 1255095, 30, "Forceful Heavy Armor Kit", stats.Stats{stats.AttackPower: 6, stats.RangedAttackPower: 6, stats.BonusArmor: 24}),
+	foreverKit(1255096, 0, 1255096, 30, "Mystic Heavy Armor Kit", stats.Stats{stats.SpellPower: 4, stats.BonusArmor: 24}),
+	foreverKit(1255073, 0, 1255073, 40, "Forceful Thick Armor Kit", stats.Stats{stats.AttackPower: 8, stats.RangedAttackPower: 8, stats.BonusArmor: 32}),
+	foreverKit(1255074, 0, 1255074, 40, "Mystic Thick Armor Kit", stats.Stats{stats.SpellPower: 5, stats.BonusArmor: 32}),
 
 	// Necklace, new in Forever (Enchanting 210, formulas for Merchant's Favor).
 	foreverEnchant(1249059, "Enchant Necklace - Agility", proto.ItemType_ItemTypeNeck, stats.Stats{stats.Agility: 5}),
@@ -43,6 +47,9 @@ var ForeverEnchants = []*proto.UIEnchant{
 
 	// Cloak.
 	foreverEnchant(13419, "Enchant Cloak - Minor Agility", proto.ItemType_ItemTypeBack, stats.Stats{stats.Agility: 3}),
+
+	// Chest. Superior Stamina (Enchanting 220) was Superior Health (+50 health) in Classic.
+	foreverEnchant(13858, "Enchant Chest - Superior Stamina", proto.ItemType_ItemTypeChest, stats.Stats{stats.Stamina: 8}),
 
 	// Bracer.
 	foreverEnchant(7779, "Enchant Bracer - Minor Agility", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Agility: 3}),
@@ -67,11 +74,16 @@ var ForeverEnchants = []*proto.UIEnchant{
 	// Weapon. Winter's Might went from +7 to +15 Frost spell damage.
 	foreverEnchant(21931, "Enchant Weapon - Winter's Might", proto.ItemType_ItemTypeWeapon, stats.Stats{stats.FrostPower: 15}),
 
+	// Enchanting 140. The proc is a weapon effect in sim/common.
+	foreverEnchant(1248805, "Enchant Weapon - Revelation", proto.ItemType_ItemTypeWeapon, stats.Stats{}),
+
 	// Two-hand weapon. The Impact enchants are weapon effects in sim/common.
 	foreverTwoHand(7793, "Enchant 2H Weapon - Lesser Intellect", stats.Stats{stats.Intellect: 5}),
 	foreverTwoHand(7745, "Enchant 2H Weapon - Minor Impact", stats.Stats{}),
 	foreverTwoHand(13529, "Enchant 2H Weapon - Lesser Impact", stats.Stats{}),
 	foreverTwoHand(13695, "Enchant 2H Weapon - Impact", stats.Stats{}),
+	// These two are in the client data but not in the beta (user, 2026-10-05), so no preset or
+	// search uses them.
 	foreverTwoHand(1248510, "Enchant 2H Weapon - Lesser Agility", stats.Stats{stats.Agility: 15}),
 	foreverTwoHand(1248511, "Enchant 2H Weapon - Lesser Strength", stats.Stats{stats.Strength: 15}),
 }
@@ -86,12 +98,13 @@ func foreverTwoHand(spellID int32, name string, s stats.Stats) *proto.UIEnchant 
 	return enchant
 }
 
-func foreverKit(effectID int32, itemID int32, spellID int32, name string, s stats.Stats) *proto.UIEnchant {
+func foreverKit(effectID int32, itemID int32, spellID int32, level int32, name string, s stats.Stats) *proto.UIEnchant {
 	return &proto.UIEnchant{
 		EffectId: effectID, ItemId: itemID, SpellId: spellID, Name: name, Quality: proto.ItemQuality_ItemQualityCommon, Stats: s.ToFloatArray(),
-		Type:        proto.ItemType_ItemTypeChest,
-		ExtraTypes:  []proto.ItemType{proto.ItemType_ItemTypeLegs, proto.ItemType_ItemTypeHands, proto.ItemType_ItemTypeFeet},
-		EnchantType: proto.EnchantType_EnchantTypeKit,
+		RequiredLevel: level,
+		Type:          proto.ItemType_ItemTypeChest,
+		ExtraTypes:    []proto.ItemType{proto.ItemType_ItemTypeLegs, proto.ItemType_ItemTypeHands, proto.ItemType_ItemTypeFeet},
+		EnchantType:   proto.EnchantType_EnchantTypeKit,
 	}
 }
 
