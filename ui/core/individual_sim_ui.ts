@@ -275,9 +275,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		this.addSidebarComponents();
 		this.addGearTab();
+		this.addTalentsTab();
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
-		this.addTalentsTab();
 		this.addRotationTab();
 
 		if (!this.isWithinRaidSim) {

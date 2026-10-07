@@ -89,3 +89,10 @@
 		}
 	}
 }
+
+// On narrow screens everything goes in one column, and the rotation comes first.
+@include media-breakpoint-down(xl) {
+	#rotation-tab .tab-pane-content-container .rotation-tab-right {
+		order: 1;
+	}
+}

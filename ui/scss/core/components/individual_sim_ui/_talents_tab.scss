@@ -35,3 +35,10 @@
     }
   }
 }
+
+// On narrow screens everything goes in one column, and the trees come first.
+@include media-breakpoint-down(xl) {
+  #talents-tab .tab-pane-content-container .talents-tab-right {
+    order: 1;
+  }
+}

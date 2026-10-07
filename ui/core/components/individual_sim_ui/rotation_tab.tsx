@@ -35,8 +35,10 @@ export class RotationTab extends SimTab {
 
 		this.leftPanel.appendChild(this.leftCol);
 
-		this.contentContainer.appendChild(this.leftPanel);
+		// The saved rotations come first, to the left of the rotation, like the gear sets in the Gear
+		// tab.
 		this.contentContainer.appendChild(this.rightPanel);
+		this.contentContainer.appendChild(this.leftPanel);
 
 		this.buildTabContent();
 
