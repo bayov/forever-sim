@@ -173,3 +173,84 @@
 		}
 	}
 }
+
+// The gear pane looks like the character pane in the game. The textures in assets/gear_pane
+// are cut from a screenshot of it:
+// - slot_frame.png is the bronze frame around a slot, with a stud on each corner and a
+//   clear middle where the icon shows. It's 140 by 137, and the middle is 85 by 85, 28 from
+//   the left and 27 from the top.
+// - pane_border.png is the bronze border around the pane, for border-image.
+// The dark, foggy backdrop behind the character is gradients.
+// The game draws its empty slots with the gray slot pictures we already use (see utils.ts).
+//
+// We leave out the character model in the middle, and the weapons stay in the left column
+// under the armor, so they have room for their name and enchant.
+$gear-frame-width: 140;
+$gear-frame-height: 137;
+$gear-frame-icon: 85;
+$gear-frame-left: 28;
+$gear-frame-top: 27;
+// In the game the slots in a column touch, and the frames overlap so that each one's bottom
+// band sits under the next one's top band. This is how far apart the slots are there.
+$gear-frame-pitch: 113;
+
+// Light gray fog: fractal noise, stretched so it lies in wide banks, with only its brighter
+// parts showing.
+$gear-fog: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0035 0.009' numOctaves='5' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.52  0.15 0 0 0 -0.0675'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+
+#gear-tab .gear-tab-left {
+	// The pane is as tall as its slots, even when the gear sets and stat weights next to it are
+	// taller.
+	align-self: flex-start;
+}
+
+#gear-tab .gear-picker-root {
+	// The screenshot was taken with the game's UI at about 150%, and the slots here are a bit
+	// smaller than the game's at 100%.
+	--gear-slot-size: 3rem;
+	@include media-breakpoint-down(lg) {
+		--gear-slot-size: 2.5rem;
+	}
+
+	padding: calc(var(--section-spacer) * 0.75) calc(var(--section-spacer) / 3);
+	// Fog drifting over a near black backdrop, like behind the character in the game. The fog
+	// is noise from an SVG filter, stretched wide so it lies in banks. It's thicker low in the
+	// middle, where the game shows the ground, and the edges fade to black.
+	background:
+		radial-gradient(ellipse 55% 75% at 50% 55%, transparent 35%, rgba(0, 0, 0, 0.7)),
+		$gear-fog center / cover no-repeat,
+		radial-gradient(ellipse 60% 28% at 50% 85%, rgba(150, 150, 150, 0.16), transparent 75%),
+		radial-gradient(ellipse 70% 40% at 45% 40%, rgba(120, 120, 120, 0.08), transparent 75%),
+		linear-gradient(#0c0c0c, #161616 55%, #1c1c1c);
+	// The band in the texture is 16 pixels wide, and here it's as much smaller as the slots.
+	border: calc(var(--gear-slot-size) * 16 / 85) solid transparent;
+	border-image: url('/classic/assets/gear_pane/pane_border.png') 16;
+	// The border's beveled corners are clear, and the backdrop stays out of them.
+	background-clip: padding-box;
+	box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.6);
+
+	.gear-picker-left,
+	.gear-picker-right {
+		gap: calc(var(--gear-slot-size) * #{($gear-frame-pitch - $gear-frame-icon) / $gear-frame-icon});
+	}
+
+	.item-picker-icon-wrapper {
+		width: var(--gear-slot-size);
+		height: var(--gear-slot-size);
+		// The frame sticks out around the icon. The margin keeps it off the item name.
+		margin: 0 calc(var(--gear-slot-size) * #{$gear-frame-left / $gear-frame-icon});
+		border: 0;
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: calc(var(--gear-slot-size) * #{-$gear-frame-left / $gear-frame-icon});
+			top: calc(var(--gear-slot-size) * #{-$gear-frame-top / $gear-frame-icon});
+			width: calc(var(--gear-slot-size) * #{$gear-frame-width / $gear-frame-icon});
+			height: calc(var(--gear-slot-size) * #{$gear-frame-height / $gear-frame-icon});
+			background: url('/classic/assets/gear_pane/slot_frame.png') center / 100% 100% no-repeat;
+			pointer-events: none;
+			z-index: 2;
+		}
+	}
+}

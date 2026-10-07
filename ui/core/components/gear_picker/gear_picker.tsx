@@ -13,6 +13,7 @@ import { EventID } from '../../typed_event';
 import { Component } from '../component';
 import { dirtySettings } from '../dirty_settings';
 import { itemLink, enchantLink } from './item_links';
+import { hideTooltipIconsWhileHovered } from './item_comparison';
 import { GearData } from './item_list';
 import SelectorModal, { SelectorModalTabs } from './selector_modal';
 import { getEmptySlotIconUrl } from './utils';
@@ -179,6 +180,7 @@ export class ItemPicker extends Component {
 		this.player = player;
 		this.slot = slot;
 		this.itemElem = new ItemRenderer(parent, this.rootElem, player);
+		hideTooltipIconsWhileHovered(this.rootElem);
 
 		this.item = player.getEquippedItem(slot);
 
