@@ -40,7 +40,7 @@ Collected 2026-09-14.
 
 ElliotWood/Forever (https://github.com/ElliotWood/Forever) is a fork of wowsims/classic already being converted to Forever, active as of 2026-09-14 (50 merged PRs in two days). Worth reading before duplicating effort. What it has:
 
-- A `SimOptions.ruleset` switch (`RulesetClassic` default on the wire, `RulesetForever` default in the UI). Rules gated on it: periodic crits (dots and bleeds roll crit), unified hit and crit from gear, bonus healing grants a third as spell damage, Forever racials, the Skyborne and six new race and class pairings.
+- A `SimOptions.ruleset` switch (`RulesetClassic` default on the wire, `RulesetForever` default in the UI). Rules gated on it: periodic crits (dots and bleeds roll crit), unified hit and crit from gear, Forever racials, the Skyborne and six new race and class pairings.
 - Forever talent trees for all nine classes under both rulesets (talent proto is positional, so trees are not switchable). Imported from the nikftw tooltip dataset via `tools/forever_talents/`. 58 of 469 talents have extrapolated rank scaling.
 - Phases renamed to Forever tiers (Launch, Tier1 to Tier3), every preset at Launch with generated pre-raid gear (`tools/launch_gear`, highest EP per slot from non-raid items, using Classic item stats since Forever has none published).
 - Onyxia as the one tier 1 encounter.

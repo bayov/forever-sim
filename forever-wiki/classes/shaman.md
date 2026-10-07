@@ -8,6 +8,17 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta build 1.60.1.70009 (2026-09-24)
+
+The [development notes of 24 September](https://www.wowhead.com/blue-tracker/topic/us/wow-forever-beta-development-notes-updated-september-24-2360696), with the numbers from the client data on foreverchanges.pro (build 1.60.1.70009, downrank calculator and talent calculator). The sim follows all of it.
+
+- Lightning Bolt rank 3 is 45 average at level 14 (was 35) and rank 4 is 56 at level 20 (was 50), so every rank is an upgrade. Growth per level, coefficients, mana and cast times are unchanged.
+- Lava Burst rank 1 is 164 average at level 40 (was 113) and rank 2 is 196 at level 50 (was 179), about 10% above the Lightning Bolt rank of the same level.
+- Elemental Fury (now row 6, after Call of Thunder) and Elemental Alacrity (now row 3, no prerequisite) swapped places. Call of Thunder now needs Elemental Alacrity. An enhancement build can no longer reach Elemental Fury.
+- Rage of the Farseer is attack speed only (it was attack and cast speed).
+- Windfury, Grace of Air and Tranquil Air Totem no longer stack in a party, even from different shamans, so twisting Windfury with Grace of Air is gone.
+- Flametongue Totem has no duration, does not stack with itself, with Flametongue Weapon or with Windfury Totem. The sim models it since 2026-10-01: a fire totem from level 28 (90 Mana, 5 min) that gives every main hand hit 548 / 25 Fire damage per 4 sec of weapon speed (21.9 on a 4.0 speed weapon, rank 1 does not grow with level), at 10% of spell power. Under Forever a weapon has three slots that all work together: a totem buff (Windfury or Flametongue Totem, one at a time), the shaman's own imbue (Windfury, Rockbiter, Flametongue or Frostbrand Weapon) and an oil or stone. The sim models this since 2026-10-03, for the shaman's own totems and for another shaman's (the raid buffs' Totem Weapon Buff). When both totems stand, the buff of the one placed last holds the slot.
+
 ## Beta client 1.60.1.69876 (2026-09-16)
 
 The beta client's shaman tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876), against the BlizzCon data below. Rank counts and prerequisites held. Tidal Mastery and Totemic Focus swapped places (Totemic Focus is row 1, Tidal Mastery row 4). Ranks 2 and up are now real numbers, and `tools/forever_talents/data/shaman.json` in the sim repo is regenerated from the client tree (`client/shaman.json`), so the per-talent text below is superseded where it differs. The sim follows the client.
@@ -37,6 +48,7 @@ The beta client's shaman tree, read through [hyjal.cc](https://hyjal.cc/updates/
 - **Fire Nova** (elemental-combat)
   - Listed in the Elemental Combat tab of the level 38 demo shaman as Rank 3. Exact effect not yet captured from footage.
   - Note: Takes the place of Fire Nova Totem, which is not in the spellbook, Rank 3 known at level 38, matching the old totem's rank schedule. Tooltip not yet captured.
+  - Beta build 1.60.1.70009 (ForeverChanges spellbook, wowhead spell 408341 to 408345): "Instantly inflicts 48 to 56 fire damage to enemies within 10 yd of your active Fire totem." Instant, 30 yd range, 10 sec cooldown, 95 / 170 / 280 / 395 / 520 Mana at levels 12 / 22 / 32 / 42 / 52. The damage is the old totem's (Classic's 53 to 62 up to 413 to 459, reached five levels after the rank is learned, 10% of spell power at rank 1 and 14.3% after). Totemic Focus no longer applies, Call of Flame and Improved Fire Nova do. The sim casts it this way since 2026-10-01. Totems take a 1 sec global cooldown.
 - **Totemic Recall** (elemental-combat)
   - Listed in the Elemental Combat tab of the level 38 demo shaman. Exact effect not yet captured from footage.
   - Note: Listed without a rank. Tooltip not yet captured from footage.

@@ -48,12 +48,12 @@ Classes: Druid, Hunter, Priest, Rogue, Warrior.
 Classes: Mage, Priest (new), Rogue, Warlock, Warrior.
 
 - Escape Artist (active) same: [Instant; 2 min cooldown] Instantly escape the effects of any movement impairing effect and gain immunity to those effects for 3 sec.
-- Eureka! (active) NEW:
-  - Rogue: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Energy cost reduced by 20% and deal 10% more damage.
-  - Warlock: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.
-  - Priest: [Instant; 2 min cooldown] Your next 3 damaging or healing abilities have their Mana cost reduced by 15% and deal 10% more damage or healing.
-  - Mage: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.
-  - Warrior: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Rage cost reduced by 40% and deal 10% more damage.
+- Eureka! (active) NEW (the 2026-09-24 build set the discount to 10% for every class, it was 20% Energy, 40% Rage, 50% Mana and 15% for Priests):
+  - Rogue: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Energy cost reduced by 10% and deal 10% more damage.
+  - Warlock: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.
+  - Priest: [Instant; 2 min cooldown] Your next 3 damaging or healing abilities have their Mana cost reduced by 10% and deal 10% more damage or healing.
+  - Mage: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.
+  - Warrior: [Instant; 2 min cooldown] Your next 3 damaging abilities have their Rage cost reduced by 10% and deal 10% more damage.
 - Expansive Mind (passive) CHANGED:
   - Mage, Priest, Warlock: Maximum Mana increased by 5%.
   - Rogue: Maximum Energy increased by 5%.
@@ -92,6 +92,7 @@ Classes: Mage, Paladin (new), Priest, Rogue, Warlock, Warrior.
 - Touch of the Grave (passive) NEW:
   - Warrior, Rogue, Paladin: Your spells and attacks have a 5% chance to drain Health from the target, up to 5% of your maximum Health.
   - Mage, Priest, Warlock: Your spells and attacks have a 10% chance to drain Health from the target, up to 5% of your maximum Health.
+  - Since the 2026-09-24 build it does not break crowd control, and abilities with no damage component (Distract, Pick Pocket, Polymorph, Expose Armor) no longer activate it. A damage over time spell activates it on the cast, not on its ticks.
 - Shadow Resistance REMOVED.
 
 ### Tauren

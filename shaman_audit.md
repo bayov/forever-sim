@@ -1,0 +1,344 @@
+# Shaman Mechanics Audit
+
+We go over every shaman mechanic the sim models, one at a time. For each one:
+
+1. Summarize what the sim does today, with file references.
+2. Cross-check it with ForeverChanges (70245), wowhead Forever, the beta client data and the SoD sim.
+3. The user OKs the logic, or we fix it first.
+4. Test the logic and its edge cases in our implementation (a Go test or a focused sim run).
+
+Anything no source settles goes to `notes.md` under `# Need to Verify`, marked "Beta" when we can test it at level 30 or below.
+
+Scope: enhancement shaman under the Forever ruleset, at level 60 (raid), Level 30 + 5 (solo Vishas) and Level 30 PvP. Healing and elemental-only mechanics are out of scope, unless an enhancement build takes the talent.
+
+Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]` OK'd and waiting for its test, `[x]` OK'd and tested.
+
+## 1. Character stats
+
+- [?] 1.1 Base stats by race and level (Orc shaman at 30 and 60): attributes, base health and mana, base attack power, base melee and spell crit, base dodge
+- [ ] 1.2 Strength: attack power, block value
+- [ ] 1.3 Agility: melee crit by level, dodge, armor, attack power (none for a shaman)
+- [ ] 1.4 Stamina: health
+- [ ] 1.5 Intellect: mana, spell crit by level
+- [ ] 1.6 Spirit (the regen formula is 2.2)
+- [ ] 1.7 Forever gear rules: armor listed twice, hit and crit as flat percent, one hit and one crit stat for melee and spells, item haste, school spell power (fire, nature), bonus weapon damage
+- [ ] 1.8 Stat multipliers and their order (Blessing of Kings, Ancestral Knowledge, Toughness)
+- [ ] 1.9 The stats panel: it shows our own Strength of Earth and Grace of Air totems on top of the real stats
+
+## 2. Mana and regen
+
+- [ ] 2.1 Mana pool: base mana by level, Intellect to mana
+- [ ] 2.2 Spirit regen formula, and continuous regen under Forever (no 2 sec ticks)
+- [ ] 2.3 Five second rule: what starts it, regen while casting (Mindfulness, Polished Driftwood Icon, Improved Stormstrike)
+- [ ] 2.4 MP5: gear, Blessing of Wisdom, Mageblood, Mana Spring
+- [ ] 2.5 Mana returns: Judgement of Wisdom on melee hits, Water Shield globes, Mana Tide
+- [ ] 2.6 Potions and Demonic Rune: amounts, shared cooldown, when the rotation uses them
+- [ ] 2.7 Mana costs: base cost by rank, cost modifiers (Totemic Focus, Convection, Shamanistic Focus, Clearcasting, Maelstrom Weapon), what happens when we can't pay
+
+## 3. Timing
+
+- [ ] 3.1 GCD: 1.5 sec for spells, 1 sec for totems, the 1 sec floor, whether spell haste shortens it
+- [ ] 3.2 Cast times (Lightning Bolt, Chain Lightning) and what a cast does to the swing timer
+- [ ] 3.3 How melee haste and cast speed modifiers stack (multiplicative)
+- [ ] 3.4 Prepull: totems, shield and imbue before the pull, the first swing at pull, totem time across the pull
+- [ ] 3.5 Reaction and batching delays (if the sim has any)
+
+## 4. Our white attacks
+
+- [ ] 4.1 Weapon damage: the damage roll, attack power (AP / 14 * weapon speed), normalized damage for specials
+- [ ] 4.2 Swing timer: weapon speed and melee haste (Flurry, Rage of the Farseer, item haste), main hand and off hand sync
+- [ ] 4.3 Attack table: one roll, in the order miss, dodge, parry, glancing, block, crit, hit
+- [ ] 4.4 Miss: base chance against the target's level, weapon skill, hit from gear, the hit cap
+- [ ] 4.5 Enemy dodge and parry: values by level, no parry or block from behind (raid), both from the front (PvP)
+- [ ] 4.6 Glancing blows: chance against a level +3 target, the damage penalty, weapon skill
+- [ ] 4.7 Crit: chance, the crit cap that glancing and miss make, crit damage
+- [ ] 4.8 Weapon skill: base by level, gear skill, its effect on 4.4 to 4.7 (Forever removed the weapon skill racials)
+- [ ] 4.9 Enemy armor: the mitigation formula, armor debuffs and their Forever values (Sunder, Expose Armor, Faerie Fire, Curse of Recklessness)
+- [ ] 4.10 Physical damage modifiers: flat bonus damage, percent modifiers
+- [ ] 4.11 Procs from melee hits: PPM procs (weapon speed), chance procs, which hits can proc what (white, yellow, extra attacks, procs from procs)
+- [ ] 4.12 Extra attacks: Windfury Totem, Hand of Justice, how they line up with the swing timer
+
+## 5. Our spells
+
+- [ ] 5.1 Spell hit: base miss against the target's level (17% at +3), hit from gear, the 1% floor
+- [ ] 5.2 Resistances: target resistance, the level based resistance, average partial resists vs binary spells
+- [ ] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
+- [ ] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
+- [ ] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
+- [ ] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
+- [ ] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
+- [ ] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
+
+## 6. When the enemy hits us
+
+- [ ] 6.1 When the enemy attacks us at all: the tank setting (Level 30 solo, PvP), the boss behind the tank at level 60
+- [ ] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
+- [ ] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
+- [ ] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
+- [ ] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed Water Shield
+- [ ] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
+- [ ] 6.7 PvP mode: the enemy types, time out of melee range
+
+## 7. Shaman abilities
+
+- [ ] 7.1 Rank tables: every spell's ranks, learn levels and values at 30 and 60 (vs the ForeverChanges spellbook)
+
+Weapon imbues
+
+- [ ] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
+- [ ] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
+- [ ] 7.4 Rockbiter Weapon: attack power
+- [ ] 7.5 Frostbrand Weapon: proc rate, damage
+- [ ] 7.6 Imbue rules: the shaman imbue beside an oil or stone (Forever), one imbue per weapon
+
+Strikes and shocks
+
+- [ ] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
+- [ ] 7.8 Earth Shock
+- [ ] 7.9 Flame Shock: direct and DoT parts
+- [ ] 7.10 Frost Shock
+- [ ] 7.11 Shared shock cooldown
+
+Nature spells
+
+- [ ] 7.12 Lightning Bolt
+- [ ] 7.13 Chain Lightning: targets, damage falloff per jump
+- [ ] 7.14 Lava Burst
+
+Shields
+
+- [ ] 7.15 Lightning Shield: orbs, damage, ICD, what triggers it
+- [ ] 7.16 Water Shield (Forever): free, 15 sec cooldown, globes, mana per globe
+
+Totems
+
+- [ ] 7.17 Totem rules: one per element, durations, the 1 sec GCD, totem health ignored, placing them before the pull
+- [ ] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
+- [ ] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
+- [ ] 7.20 Grace of Air Totem
+- [ ] 7.21 Strength of Earth Totem
+- [ ] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
+- [ ] 7.23 Magma Totem
+- [ ] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
+- [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
+- [ ] 7.26 Mana Spring Totem
+- [ ] 7.27 Mana Tide Totem
+- [ ] 7.28 Healing Stream Totem
+- [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
+
+## 8. Talents
+
+Elemental
+
+- [ ] 8.1 Convection
+- [ ] 8.2 Concussion
+- [ ] 8.3 Elemental Warding
+- [ ] 8.4 Reverberation
+- [ ] 8.5 Call of Flame
+- [ ] 8.6 Elemental Devastation
+- [ ] 8.7 Elemental Focus (Clearcasting)
+- [ ] 8.8 Elemental Alacrity
+- [ ] 8.9 Improved Fire Nova
+- [ ] 8.10 Eye of the Storm (not implemented)
+- [ ] 8.11 Call of Thunder
+- [ ] 8.12 Elemental Reach (not implemented)
+- [ ] 8.13 Lightning Overload
+- [ ] 8.14 Earthbound (not implemented)
+- [ ] 8.15 Elemental Fury
+- [ ] 8.16 Lava Burst
+
+Enhancement
+
+- [ ] 8.17 Earth's Grasp (not implemented)
+- [ ] 8.18 Thundering Strikes
+- [ ] 8.19 Ancestral Knowledge
+- [ ] 8.20 Guardian Totems
+- [ ] 8.21 Mental Dexterity
+- [ ] 8.22 Improved Ghost Wolf (not implemented)
+- [ ] 8.23 Improved Lightning Shield
+- [ ] 8.24 Elemental Weapons
+- [ ] 8.25 Shamanistic Focus
+- [ ] 8.26 Anticipation
+- [ ] 8.27 Toughness
+- [ ] 8.28 Flurry
+- [ ] 8.29 Stormstrike
+- [ ] 8.30 Spirit Weapons
+- [ ] 8.31 Mental Quickness
+- [ ] 8.32 Improved Stormstrike
+- [ ] 8.33 Maelstrom Weapon
+- [ ] 8.34 Rage of the Farseer
+
+Restoration
+
+- [ ] 8.35 Improved Healing Wave (not implemented)
+- [ ] 8.36 Totemic Focus
+- [ ] 8.37 Mindfulness
+- [ ] 8.38 Natural Grace
+- [ ] 8.39 Tidal Focus
+- [ ] 8.40 Improved Reincarnation
+- [ ] 8.41 Ancestral Healing (not implemented)
+- [ ] 8.42 Healing Focus (not implemented)
+- [ ] 8.43 Water Shield
+- [ ] 8.44 Tidal Mastery
+- [ ] 8.45 Restorative Totems
+- [ ] 8.46 Mana Tide Totem
+- [ ] 8.47 Healing Way (not implemented)
+- [ ] 8.48 Nature's Swiftness
+- [ ] 8.49 Purification
+- [ ] 8.50 Riptide (not implemented)
+
+Tree rules
+
+- [ ] 8.51 Points per level, the bonus points (Level 30 + 5), tier and prerequisite rules in the talent search
+
+## 9. Race, gear and consumables
+
+- [ ] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe)
+- [ ] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
+- [ ] 9.3 Rage of the Storm (Stormstrike +10%)
+- [ ] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
+- [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth
+- [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants
+- [ ] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
+- [ ] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
+- [ ] 9.9 Weapon oils and stones beside the shaman imbue
+
+## 10. Raid buffs and debuffs (Forever values)
+
+- [ ] 10.1 Blessings: Might, Kings, Wisdom
+- [ ] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
+- [ ] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
+- [ ] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
+
+## 11. Encounter and rotation
+
+- [ ] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
+- [ ] 11.2 Shaman APL values (totem timers, shield charges and the like)
+- [ ] 11.3 APL edge cases: a swing due during a cast, replacing a totem early, Fire Nova on Clearcasting, mana thresholds
+- [ ] 11.4 Movement and range in PvP (time out of melee range)
+
+## Findings
+
+Fixes and open questions found along the way, by item.
+
+### 1.1 Base stats
+
+- The stats panel adds our own Strength of Earth (+53) and Grace of Air (+89) as build-phase auras. Display only.
+- Every character shows 5% parry and 5% block in the panel (`character.go` addUniversalStatDependencies). Item 6.4 checks whether the attack table uses them for a shaman without Spirit Weapons or a shield.
+- Open: Forever calls crit "one stat across melee, ranged and spell". The sim keeps base melee crit (1.7% + Agility) apart from base spell crit (2.3% + Intellect). A beta character sheet shows whether they are one number.
+
+### Pre-checks for 1.2 to 1.9 (not yet shown to the user)
+
+- 1.2 Strength: 2 attack power a point (`base_stats.go` APPerStrength), 1 block value per 20. Same as Classic.
+- 1.3 Agility: no attack power for a shaman (Classic, TBC added it). Crit and dodge per point follow the 1.12 curve, 2 armor a point.
+- 1.4 Stamina: 10 health a point, the first 20 give 1 each.
+- 1.5 Intellect: 15 mana a point, the first 20 give 1 each. Spell crit per point follows the 1.12 curve.
+- 1.7 Only equipment hit and crit are made universal (`ruleset.go` unifyEquipHitAndCrit). Crit from consumes and buffs stays in its own pool: Elixir of the Mongoose and Leader of the Pack are melee only, Moonkin Aura is spell only. Open: under Forever's single crit stat, do they count for both? Items 9.8 and 10.2.
+- 1.7 unifyEquipHitAndCrit sums melee and spell hit from gear. An item that lists both would count twice. Forever items list one hit stat, so this only matters for Classic items.
+- 1.8 Percent stat modifiers multiply each other: Blessing of Kings 10% times Ancestral Knowledge 2% a rank on Intellect, Toughness 2% a rank on Stamina. 1.12 multiplies them too.
+
+### Pre-checks for section 2 (not yet shown to the user)
+
+- 2.2 Spirit regen is 15 + Spirit / 5 per 2 sec (7.5 + Spirit / 10 a second, `mana.go` SpiritManaRegenPerSecondDefault), the 1.12 shaman formula. Under Forever the bar fills continuously (`mana.go` initManaRegen, settle), Classic ticks every 2 sec.
+- 2.3 The five second rule starts when the mana is spent, which is at the end of a cast (`cast.go` hardcast OnComplete, `mana.go` SpendCost). So a Lightning Bolt cast started outside the rule still regens full Spirit until it lands, like 1.12. MP5 always regens. Mindfulness (17 / 33 / 50%), Polished Driftwood Icon (8%) and Improved Stormstrike (50%) add up into one "regen while casting" share of Spirit regen.
+- 2.4 Blessing of Wisdom under Forever is 12 / 18 / 24 / 30 / 36 / 40 MP5 by rank, times 1.2 when improved (`buffs.go` foreverBlessingOfWisdomMP5). Mageblood Potion is 12 MP5 (Classic value).
+- 2.5 Judgement of Wisdom gives 59 mana on a 50% roll from every direct hit, melee or spell (`debuffs.go` JudgementOfWisdomAura, marked "TODO: Classic verify logic"). White swings proc it even when they miss, procs and phantom spells don't. Open: the Forever value and chance. It is worth about 60 DPS in the Level 60 encounter, so it matters.
+
+### Pre-checks for sections 3 and 4 (not yet shown to the user)
+
+- 3.1 Haste never shortens the GCD (`cast.go` has the haste line commented out), like 1.12. Spells and Stormstrike use 1.5 sec, totems 1 sec (`totems.go` totemGCD).
+- 3.2 A spell with a cast time (Lightning Bolt, Chain Lightning, Lava Burst) restarts the swing timer: the next swing comes one full swing after the cast ends (`electric_spell.go` StopMeleeUntil). Instant spells don't touch it.
+- 4.3 White hits roll once. From behind: miss, dodge, glancing, crit, hit. In front (`InFrontOfTarget`): miss, dodge, parry, glancing, block, crit, hit (`spell_outcome.go` outcomeMeleeWhite).
+- 4.4 to 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: 8% miss, and the first 1% of hit from gear does nothing (9% to cap). 6.5% dodge, 14% parry from the front, 40% glancing for 55 to 75% damage (65% on average). Crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
+- Level 30 vs Vishas (level 32) with 150 skill: 6% miss, 6% dodge, 6% parry from the front, 30% glancing for 80 to 90% damage, crit cut by 2%.
+- Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
+- Open: Forever adds an expertise-like stat that lowers dodge and parry, and weapon skill on gear. Neither is in the attack table yet. Items 4.5 and 4.8.
+
+### Pre-checks for sections 5 and 6 (not yet shown to the user)
+
+- 5.1 Spell miss against a target 0 / 1 / 2 / 3 levels above us is 4 / 5 / 6 / 17%, then 11% more a level, at most 99% (`target.go` spellMissChance). Same as 1.12.
+- 5.2 Partial resists follow the royalgiraffe resist guide (`spell_resistances.go`). A target above our level adds 2% average mitigation a level (6% for a level 63 boss, 4% for Vishas), for spells that aren't binary. A DoT with no direct part takes a tenth of the resistance.
+- 5.2 Earth Shock is binary (`earth_shock.go`, SpellFlagBinary), so it takes no level-based partial resist. Frost Shock and Flame Shock aren't. Open: which shaman spells 1.12 treats as binary. Items 7.8 to 7.10.
+- 6.1 The Level 60 encounter has no tank, so the boss never swings at us. The Level 30 encounter makes us the tank (`tankIndex: 0`), so Vishas hits us and Lightning Shield fires. Possible bug: that preset doesn't set "in front of target" (only Level 30 PvP does), so our swings never meet Vishas's 6% parry or block, even though we tank him from the front. Items 4.5 and 6.1.
+
+### Pre-checks for section 7, part 1 (not yet shown to the user)
+
+- 7.1 The 2026-10-07 class audit already checked all 458 shaman, rogue and paladin ranks against wowhead Forever and ForeverChanges 70245 (memory class-audit-2026-10-07). Item 7.1 only needs whatever changed since.
+- 7.7 Stormstrike under Forever (`stormstrike.go`): 125 mana, 8 sec cooldown, 1.5 sec GCD, a main hand hit for normal weapon damage (not normalized) on the special attack table. When it lands it marks the target for 12 sec. Our next Lightning Bolt, Chain Lightning or Earth Shock on that target takes the mark and deals 20% more. Open: is the weapon damage normalized (1.12 Stormstrike isn't)?
+- 7.11 The shocks share one cooldown, 6 sec minus 0.2 sec per point of Reverberation (`shocks.go`), with a 1.5 sec GCD. Cost is cut by 2% per point of Convection and 45% with Shamanistic Focus. The two add up, they don't multiply.
+- 7.9 Flame Shock: the direct part has a 0.214 spell power coefficient and grows with level up to its rank cap. The DoT is 4 ticks every 3 sec (12 sec) with 0.1 per tick, and it doesn't grow with level (`flame_shock.go`). Burning Totem adds 3 sec, one more tick.
+
+### Pre-checks for section 7, part 2 (not yet shown to the user)
+
+- 7.15 Lightning Shield (`lightning_shield.go`): 3 orbs, 10 min. A melee hit on us that lands fires one orb, at most one every 3.5 sec (the ICD is a guess, "TODO: Does vanilla have an ICD?"). 26.7% spell power coefficient on every rank (Forever).
+- 7.16 Water Shield (`water_shield.go`): free, 15 sec cooldown, 3 globes, 10 min. Each globe returns 2% of max mana, at most one every 3.5 sec (a guess borrowed from Lightning Shield). Only the raid damage hits per minute option feeds it at level 60.
+- 7.3 Flametongue Weapon (`flametongue_weapon.go`): a fire hit on each main hand hit for (rank damage / 4) times weapon speed, 112.4 per 4 sec at level 60. Its 0.1 spell power coefficient does not scale with weapon speed. Open: does Forever scale the coefficient with speed? Elemental Weapons adds 5 / 10 / 15%.
+- 7.22 Searing Totem (`fire_totems.go`): a bolt every 2.5 sec for the totem's 30 to 55 sec lifetime, 1.7% coefficient (Forever). The real attack is every 2.2 sec, but the next bolt waits for the last to land, so we use 2.5 sec without a distance option.
+- 7.23 Magma Totem: a pulse every 2 sec for 20 sec, 2 less damage per pulse than 1.12 (Forever).
+- 7.24 Flametongue Totem: 5 min, fire damage per main hand hit by weapon speed (548 / 25 per 4 sec at rank 1, flat by level). It takes the fire slot, and placing another fire totem takes it down.
+- 7.25 Fire Nova (Forever spell): needs a fire totem down, 10 sec cooldown, 1.5 sec GCD, Totemic Focus doesn't discount it. Damage is Classic's (rank 1 grows over 5 levels). Call of Flame and Improved Fire Nova add up.
+- 7.17 Totems last 5 min under Forever (Searing, Magma and Fire Nova keep their own times). The weapon totem slot rules are in `core/totem_weapon_buffs.go` and `shaman.go` setTotemWeaponBuff.
+
+### Pre-checks for section 8 (not yet shown to the user)
+
+What each talent does in the sim today (`talents.go` unless noted). Values are per point.
+
+- Convection: -2% mana cost on Lightning Bolt, Chain Lightning, the shocks and Lava Burst.
+- Concussion: +1% damage on Lightning Bolt, Chain Lightning and Earth Shock, added to the other percent bonuses.
+- Elemental Warding: 3 / 7 / 10% less fire, frost and nature damage taken.
+- Reverberation: -0.2 sec on the shared shock cooldown (`shocks.go`).
+- Call of Flame: +5% on Flame Shock and Lava Burst (multiplied), on the fire totems' base damage, and on Fire Nova added to Improved Fire Nova.
+- Elemental Devastation: a spell crit gives +3% melee crit for 10 sec. Flametongue Weapon and Totem procs don't count (they are procs, not spells).
+- Elemental Focus: 10% chance on each damaging shaman spell cast that the next one costs nothing.
+- Elemental Alacrity: -0.17 / 0.33 / 0.5 sec cast time on Lightning Bolt, Chain Lightning and Lava Burst.
+- Improved Fire Nova: +10% Fire Nova damage and -2 sec on its cooldown.
+- Call of Thunder: +3% crit on Lightning Bolt and Chain Lightning (`electric_spell.go`).
+- Lightning Overload: 3 / 7 / 10% chance to cast a second bolt (`lightning_overload.go`).
+- Elemental Fury: +20% crit damage bonus on shaman fire, frost and nature spells plus the Searing and Magma Totem attacks. Flametongue Totem's attack isn't included.
+- Thundering Strikes: +1% melee and +1% spell crit.
+- Ancestral Knowledge: +2% Intellect.
+- Guardian Totems: Stoneskin Totem (`earth_totems.go`).
+- Mental Dexterity: attack power equal to 33 / 67 / 100% of Intellect. The older wiki tree reads 33 / 66 / 99%, the beta client data 33 / 67 / 100%.
+- Improved Lightning Shield: +5 / 10 / 15% on the whole orb hit (`lightning_shield.go`).
+- Elemental Weapons: Rockbiter +7 / 14 / 20%, Windfury +13 / 27 / 40% applied twice, Flametongue and Frostbrand +5 / 10 / 15%.
+- Shamanistic Focus: -45% cost on the shocks and Lightning Shield. Open: is Lightning Shield in Forever's text?
+- Anticipation: +2% dodge. Toughness: +2% Stamina.
+- Flurry: a melee crit (white, Stormstrike, Windfury attacks) gives 3 charges of 5 to 25% attack speed. White swings use the charges, at most one per 0.5 sec so that both hands don't spend two at once. Windfury Weapon's attacks are yellow, so they don't use charges. Windfury Totem's extra attack is white, so it does. Open: which extra attacks use Flurry charges under Forever.
+- Stormstrike: see 7.7.
+- Spirit Weapons: lets us parry, and threat 0.7 (1.3 with Rockbiter). Small bug: it reads Rockbiter from the consumes imbue, not the Forever shaman imbue. Threat isn't in our DPS numbers.
+- Mental Quickness: spell power equal to 15% of Intellect.
+- Improved Stormstrike: 50% chance a point that Stormstrike gives 50% regen while casting for 15 sec, and 50% a point that a dodge or parry of an enemy attack on us resets Stormstrike.
+- Maelstrom Weapon: 2 procs a minute per point from landed melee hits, at most 5 stacks for 30 sec. Each stack cuts Lightning Bolt's cast time 4% and its cost 4% per point. Lightning Bolt uses all stacks. Chain Lightning doesn't use them. The proc rate is a guess.
+- Rage of the Farseer: +30% attack speed for 25 sec, 3 min cooldown (a guess).
+- Totemic Focus: -5% totem mana cost, not Fire Nova.
+- Mindfulness: 17 / 33 / 50% Spirit regen while casting.
+- Natural Grace: -5% threat on shaman spells.
+- Tidal Focus: -1% healing cost, +1% melee and spell hit.
+- Improved Reincarnation: +2% health.
+- Tidal Mastery: +1% heal crit.
+- Restorative Totems and Purification: Healing Stream and Mana Spring.
+- Water Shield and Mana Tide Totem: see 7.16 and 7.27.
+- Nature's Swiftness: the next nature spell with a cast time is instant, 3 min.
+- Not implemented: Eye of the Storm, Elemental Reach, Earthbound, Earth's Grasp, Improved Ghost Wolf, Improved Healing Wave, Ancestral Healing, Healing Focus, Healing Way, Riptide.
+
+### Pre-checks for sections 9 to 11 (not yet shown to the user)
+
+- 9.1 Orc under Forever (`racials_forever.go`): Axe Specialization gives +1% melee and spell crit while the main or off hand is an axe. It is checked once at the start, so an item swap doesn't update it. Blood Fury: +10% attack power and spell power for 15 sec, 2 min cooldown. Open: the sim takes 10% of our attack power when Blood Fury starts and keeps that amount. A real percent buff would follow our attack power as it changes during the 15 sec, for example when a new Strength of Earth goes down. It also triggers the 1.5 sec GCD. Does Forever's Blood Fury use the GCD?
+- 9.2 Relics (`shaman/items.go`): Burning Totem adds a Flame Shock tick, Polished Driftwood Icon 8% regen while casting, Totem of Rage +30 to shocks, Classic Totem of the Storm +33 to Lightning Bolt and Chain Lightning, Forever Totem of the Storm lets Lightning Bolt proc Maelstrom at half the chance.
+- 9.3 Rage of the Storm: Stormstrike +10%, added to the other percent bonuses.
+- 9.5 Hand of Justice: 2% chance for an extra attack on any melee hit that lands, white or yellow (`common/item_effects.go`).
+- 10 Forever buff values live in `core/buffs.go` behind IsForever (Blessing of Wisdom, Strength of Earth 53, Grace of Air 89, and others). Under Forever both factions get blessings and totems. Judgement of Wisdom is still Classic (see 2.5).
+- 11.1 Level 60: level 63 boss, 3731 armor, 180 sec plus or minus 20, no tank so it never hits us, every debuff on. Level 30: Vishas level 32, 1063 armor, 120 sec plus or minus 5, we are the tank (and the in front bug from 6.1).
+
+### Source checks against the beta client talent texts (`tools/forever_talents/client/shaman.json`)
+
+- Rage of the Farseer: build 70009 says "Instant; 3 min cooldown". That settles the 3 min the sim guessed. The code comment and the notes.md Need to Verify line can be updated at 8.34.
+- Shamanistic Focus: "Reduces the mana cost of your Shock and Lightning Shield spells by 45%." Lightning Shield is in, the sim is right.
+- Mental Dexterity: 33 / 67 / 100% of Intellect, the sim is right (the wiki's 99% was an older tree).
+- Stormstrike: "Instantly strike for normal weapon damage", so not normalized, the sim is right.
+- Elemental Devastation: "Your offensive spell critical strikes". It doesn't say whether Flametongue procs count. Still open.
+- Elemental Focus: "after casting any Fire, Frost, or Nature damage spell", for "your next damage spell". Matches the sim.
+- Improved Reincarnation: +2% max health a point. Matches.
+- Flurry: "your next 3 swings after dealing a melee critical strike". Whether extra attacks count as swings is still open.
+- Blood Fury (9.1): wowhead's Forever tooltip (nether endpoint, dataEnv 17, spell 20572) says "Instant, 2 min cooldown. Increases your attack power by 169 for 15 sec." That is a flat value with no spell power. The sim follows the Forever deep dive's "+10% attack power and spell power". The two disagree, so this goes to the beta check list.
+- Judgement of Wisdom (2.5): wowhead's Forever tooltips for 20186, 20354 and 20355 come back empty, and its search is behind a 403 right now. Still open.

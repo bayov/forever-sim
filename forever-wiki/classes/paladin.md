@@ -8,12 +8,27 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta build 1.60.1.70009 (2026-09-24)
+
+The [development notes of 24 September](https://www.wowhead.com/blue-tracker/topic/us/wow-forever-beta-development-notes-updated-september-24-2360696), with the numbers checked against the client tooltips on foreverchanges.pro (build 1.60.1.70009). The sim follows all of it except Retribution Aura's spell power scaling.
+
+- Holy Strike is 25 / 29 / 32 / 36 / 39 / 43 / 46 / 50% weapon damage by rank (was 25 / 25 / 30 / 30 / 35 / 35 / 40 / 40) and its cooldown is 10 sec baseline (was 12). The flat Holy part is unchanged.
+- Improved Holy Strike is gone from the Holy tree and Crusade from the Retribution tree (both checked in game). Their slots stay empty, so every Holy talent string loses its first digit and the Retribution strings shift after Sacred Arbiter.
+- Holy Power now also gives Holy Strike 3% crit per point.
+- Sacred Arbiter is +20% Holy Strike damage (was 10%).
+- Vengeance stacks 3 times (was 5), and only a non-periodic crit adds a stack.
+- Two-Handed Weapon Specialization is 2 / 4 / 6% (was 3 / 6 / 9%).
+- Twist of Light also takes 20% off the Mana cost of the seals.
+- Retribution Aura scales with the caster's spell power. The coefficient is unknown. The rank 1 tooltip stayed at 7 damage with 18 spell power on, so it is small, and the sim keeps the flat value.
+- Righteous Fury is 60% Holy threat (was 90%).
+- Consecration had targeting fixes, and Echo of Justice (the Twist of Light echo) had its proc chance fixed. Neither changes the sim.
+
 ## Beta client 1.60.1.69876 (2026-09-16)
 
 The beta client's paladin tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876), against the BlizzCon data below. Positions, rank counts and prerequisites all held. Ranks 2 and up are now real numbers, and `tools/forever_talents/data/paladin.json` in the sim repo is regenerated from the client tree (`client/paladin.json`) since 2026-09-20, so the per-talent text below is superseded where it differs. The sim follows the client.
 
 - Vengeance is 1 / 2 / 3% per stack (5 stacks, 30 sec), Redoubt 6 to 30% block, Iron Creed 5 to 25% threat and 2 to 10% damage taken, Shield Specialization 10 / 20 / 30% and 33 / 66 / 100% mana chance, Sacred Duty 2 / 4% and 30 / 60 sec, Instrument of Law 0.5 / 1.0 sec: the multi-rank new talents scale linearly where the transcription had rank 1 repeated.
-- One-Handed Weapon Specialization is 3 / 7 / 10%, Champion of the Light 33 / 66 / 100%, Sanctified Judgement 33 / 66 / 100%, Pursuit of Justice 8 / 15%, Purifying Power 17 / 33%.
+- One-Handed Weapon Specialization is 3 / 7 / 10%, Champion of the Light 20 / 40 / 60% (33 / 66 / 100% before the 2026-10-01 development notes), Sanctified Judgement 33 / 66 / 100%, Pursuit of Justice 8 / 15%, Purifying Power 17 / 33%.
 - Vindication takes 66.8 / 133.7 / 200.5 attack power off the target (42 in the footage, level 38).
 - Consecrated Ground stays at the first 4 enemies at rank 2 (the transcription scaled it to 8). Improved Seal of Fury restores 60 mana (38 at level 38).
 - Precision reads "Improves your chance to hit by 1%" (the transcription said "with all spells and attacks").
