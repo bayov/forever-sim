@@ -6,6 +6,7 @@ import { SimHeader } from './components/sim_header.jsx';
 import { SimTab } from './components/sim_tab.js';
 import { SimTitleDropdown } from './components/sim_title_dropdown.js';
 import { SocialLinks } from './components/social_links.jsx';
+import { installStickyTooltips } from './components/sticky_tooltips';
 import Toast from './components/toast';
 import { LaunchStatus, SimStatus } from './launched_sims.js';
 import { ErrorOutcomeType } from './proto/api';
@@ -59,6 +60,7 @@ export abstract class SimUI extends Component {
 
 	constructor(parentElem: HTMLElement, sim: Sim, config: SimUIConfig) {
 		super(parentElem, 'sim-ui');
+		installStickyTooltips();
 		this.sim = sim;
 		this.cssClass = config.cssClass;
 		this.cssScheme = config.cssScheme;

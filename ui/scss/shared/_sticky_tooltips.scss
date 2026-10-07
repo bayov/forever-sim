@@ -1,0 +1,50 @@
+// A tooltip we pinned with Alt+click, see sticky_tooltips.tsx. It holds a copy of the tooltip
+// and a close button that sits on its top right corner.
+.sticky-tooltip {
+	position: fixed;
+	cursor: move;
+	user-select: none;
+	box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.6);
+
+	&.dragging {
+		cursor: grabbing;
+	}
+
+	// The copies keep the classes of the tooltips, so they look the same. wowhead hides its
+	// tooltips unless it marks them visible, so we show the copy ourselves.
+	> .wowhead-tooltip {
+		visibility: visible !important;
+		display: block;
+	}
+
+	// wowhead gives its tooltips the highest z-index there is (2147483647), and the copy keeps
+	// it. Inside the pinned tooltip we put the copy back to 0, so the close button goes on top.
+	> .wowhead-tooltip,
+	> .tippy-box {
+		z-index: 0 !important;
+	}
+
+	.sticky-tooltip-close {
+		position: absolute;
+		z-index: 1;
+		top: -0.5rem;
+		right: -0.5rem;
+		width: 1.25rem;
+		height: 1.25rem;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.7rem;
+		line-height: 1;
+		color: var(--bs-white);
+		background: var(--bs-danger);
+		border: 1px solid rgba(0, 0, 0, 0.4);
+		border-radius: 50%;
+		cursor: pointer;
+
+		&:hover {
+			background: shade-color($danger, 20%);
+		}
+	}
+}
