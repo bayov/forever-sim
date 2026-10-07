@@ -359,7 +359,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		const gearTab = new GearTab(this.simTabContentsContainer, this);
 		gearTab.rootElem.classList.add('active', 'show');
 		addStatWeightsSection(
-			gearTab.rootElem,
+			gearTab.rightPanel,
 			this,
 			this.individualConfig.epStats.concat(GLOBAL_EP_STATS),
 			this.individualConfig.epPseudoStats,

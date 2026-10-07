@@ -3,5 +3,22 @@
 		.gear-tab-left {
 			grid-template-columns: auto;
 		}
+
+		// The gear sets and the stat weights are only as wide as the stat weights table needs,
+		// and the gear takes the rest. The gear has room to spare between its two columns of
+		// slots.
+		@include media-breakpoint-up(xl) {
+			.gear-tab-right {
+				flex: 0 0 auto;
+				width: auto;
+			}
+		}
+
+		// On narrow screens everything goes in one column, and the gear comes first.
+		@include media-breakpoint-down(xl) {
+			.gear-tab-right {
+				order: 1;
+			}
+		}
 	}
 }

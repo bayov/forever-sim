@@ -3,18 +3,12 @@
 $ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y) * 2 + 2px);
 
 .ep-weights-menu {
-	// The presets, the settings and the buttons on the left, and the table on the right. The
-	// table is only as wide as its columns need, and the left side takes the rest. On narrow
-	// screens the table goes under them.
+	// The section sits in the narrow column under the gear sets, so everything goes in one
+	// column: the presets, the settings and the buttons, then the table under them.
 	.ep-weights-layout {
-		display: grid;
-		grid-template-columns: minmax(14rem, 1fr) auto;
-		gap: var(--section-spacer);
-		align-items: start;
-
-		@include media-breakpoint-down(lg) {
-			grid-template-columns: 1fr;
-		}
+		display: flex;
+		flex-direction: column;
+		gap: var(--block-spacer);
 	}
 
 	.ep-weights-settings {
@@ -27,14 +21,14 @@ $ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y)
 		font-weight: bold;
 	}
 
-	// The Show dropdown and the Show All Stats toggle in one row above the table. The toggle is
-	// as tall as the dropdown and level with it.
 	.ep-weights-results {
 		display: flex;
 		flex-direction: column;
 		gap: var(--block-spacer);
 	}
 
+	// The Show dropdown and the Show All Stats toggle in one row above the table. The toggle is
+	// as tall as the dropdown and level with it.
 	.ep-weights-options {
 		display: flex;
 		align-items: flex-end;
@@ -85,6 +79,7 @@ $ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y)
 			display: inline-flex;
 			align-items: center;
 			gap: var(--spacer-1);
+			white-space: nowrap;
 		}
 	}
 
@@ -312,9 +307,4 @@ $ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y)
 			}
 		}
 	}
-}
-
-// The stat weights section on the Gear tab, under the gear and the gear sets.
-.gear-tab > .ep-weights-menu {
-	margin-top: var(--section-spacer);
 }
