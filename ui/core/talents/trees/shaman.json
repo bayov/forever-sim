@@ -1,7 +1,7 @@
 [
   {
-    "name": "Elemental Combat",
-    "backgroundUrl": "",
+    "name": "Elemental",
+    "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/261.jpg",
     "talents": [
       {
         "fieldName": "convection",

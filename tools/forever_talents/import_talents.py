@@ -88,9 +88,16 @@ def spell_ids(talent, existing):
 	return [PLACEHOLDER_SPELL_ID] * talent['maxRank']
 
 
+# The names we show for trees the client calls differently. The client says 'Elemental Combat'
+# for the shaman's first tree, where the talent UI has always said 'Elemental'.
+TREE_NAMES = {'Elemental Combat': 'Elemental'}
+
+
 def build_tree_json(data, existing_by_tree, simulated):
 	trees = []
-	for tree in sorted(data['trees'], key=lambda t: t['order']):
+	backgrounds = existing_by_tree.get('backgroundUrl', {})
+	backgrounds_in_order = existing_by_tree.get('backgroundUrlInOrder', [])
+	for index, tree in enumerate(sorted(data['trees'], key=lambda t: t['order'])):
 		existing = existing_by_tree.get(tree['name'], {})
 		locations = {talent['id']: talent for talent in tree['talents']}
 
@@ -140,8 +147,10 @@ def build_tree_json(data, existing_by_tree, simulated):
 			talents.append(entry)
 
 		trees.append({
-			'name': tree['name'],
-			'backgroundUrl': existing_by_tree.get('backgroundUrl', {}).get(tree['name'], ''),
+			'name': TREE_NAMES.get(tree['name'], tree['name']),
+			# By name, or by place when Forever renamed the tree (like Elemental to Elemental
+			# Combat), so the tree keeps its background.
+			'backgroundUrl': backgrounds.get(tree['name']) or (backgrounds_in_order[index] if index < len(backgrounds_in_order) else ''),
 			'talents': talents,
 		})
 
@@ -208,11 +217,13 @@ def main():
 	tree_path = os.path.join(TREE_DIR, class_name + '.json')
 	existing_by_tree = {}
 	backgrounds = {}
+	backgrounds_in_order = []
 	if os.path.exists(tree_path):
 		with open(tree_path) as f:
 			for tree in json.load(f):
 				existing_by_tree[tree['name']] = {}
 				backgrounds[tree['name']] = tree.get('backgroundUrl', '')
+				backgrounds_in_order.append(tree.get('backgroundUrl', ''))
 
 		# Index the current spell ids by talent name so they survive a regeneration.
 		with open(tree_path) as f:
@@ -226,6 +237,7 @@ def main():
 					existing_by_tree[tree['name']][talent['name']] = by_field[field_name]
 
 	existing_by_tree['backgroundUrl'] = backgrounds
+	existing_by_tree['backgroundUrlInOrder'] = backgrounds_in_order
 	trees = build_tree_json(data, existing_by_tree, simulated_talents(class_name))
 
 	if write:
