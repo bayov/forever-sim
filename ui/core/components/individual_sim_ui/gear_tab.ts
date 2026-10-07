@@ -6,8 +6,8 @@ import { Stats } from '../../proto_utils/stats';
 import { EventID, TypedEvent } from '../../typed_event';
 import GearPicker from '../gear_picker/gear_picker';
 import { SavedDataManager } from '../saved_data_manager';
+import { presetListTooltip } from '../preset_tree';
 import { SimTab } from '../sim_tab';
-import { PresetConfigurationPicker } from './preset_configuration_picker';
 
 export class GearTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -33,7 +33,6 @@ export class GearTab extends SimTab {
 
 	protected buildTabContent() {
 		this.buildGearPickers();
-		this.buildPresetConfigurationPicker();
 		this.buildSavedGearsetPicker();
 	}
 
@@ -41,13 +40,12 @@ export class GearTab extends SimTab {
 		new GearPicker(this.leftPanel, this.simUI, this.simUI.player);
 	}
 
-	private buildPresetConfigurationPicker() {
-		new PresetConfigurationPicker(this.rightPanel, this.simUI, ['gear']);
-	}
-
 	private buildSavedGearsetPicker() {
 		const savedGearManager = new SavedDataManager<Player<any>, SavedGearSet>(this.rightPanel, this.simUI.player, {
-			header: { title: 'Gear Sets' },
+			header: {
+				title: 'Gear Sets',
+				tooltip: presetListTooltip('Loading a gear set changes:', ['The item in every slot', 'Enchants', 'Random suffixes']),
+			},
 			label: 'Gear Set',
 			storageKey: this.simUI.getSavedGearStorageKey(),
 			getData: (player: Player<any>) => {
@@ -74,6 +72,7 @@ export class GearTab extends SimTab {
 				savedGearManager.addSavedData({
 					name: presetGear.name,
 					tooltip: presetGear.tooltip,
+					group: presetGear.group,
 					isPreset: true,
 					data: SavedGearSet.create({
 						// Convert to gear and back so order is always the same.

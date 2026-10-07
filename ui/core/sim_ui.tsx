@@ -74,6 +74,7 @@ export abstract class SimUI extends Component {
 						<aside className="sim-sidebar">
 							<div className="sim-title" />
 							<div className="sim-sidebar-content">
+								<div className="sim-sidebar-presets within-raid-sim-hide" />
 								<div className="sim-sidebar-actions within-raid-sim-hide" />
 								<div className="sim-sidebar-results within-raid-sim-hide" />
 								<div className="sim-sidebar-stats" />

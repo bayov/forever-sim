@@ -2,7 +2,7 @@ import { ref } from 'tsx-vanilla';
 
 import { setItemQualityCssClass } from '../../css_utils';
 import { Player } from '../../player';
-import { ItemSlot } from '../../proto/common';
+import { ItemSlot, ItemSpec } from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
 import { getEnchantDescription } from '../../proto_utils/enchants';
 import { EquippedItem } from '../../proto_utils/equipped_item';
@@ -11,6 +11,7 @@ import { itemTypeToSlotsMap } from '../../proto_utils/utils.js';
 import { SimUI } from '../../sim_ui';
 import { EventID } from '../../typed_event';
 import { Component } from '../component';
+import { dirtySettings } from '../dirty_settings';
 import { GearData } from './item_list';
 import SelectorModal, { SelectorModalTabs } from './selector_modal';
 import { getEmptySlotIconUrl } from './utils';
@@ -197,6 +198,18 @@ export class ItemPicker extends Component {
 
 		player.gearChangeEmitter.on(() => {
 			this.item = this.player.getEquippedItem(this.slot);
+		});
+
+		dirtySettings.track({
+			elem: this.rootElem,
+			read: () => this.player.getEquippedItem(this.slot)?.asSpec() ?? null,
+			name: () => slotNames.get(this.slot) ?? 'Item',
+			format: spec => {
+				const item = spec ? this.player.sim.db.lookupItemSpec(spec as ItemSpec) : null;
+				if (!item) return 'empty';
+				const name = item.item.name + (item.randomSuffix ? ' ' + item.randomSuffix.name : '');
+				return item.enchant ? `${name} (${item.enchant.name})` : name;
+			},
 		});
 
 		player.professionChangeEmitter.on(() => {

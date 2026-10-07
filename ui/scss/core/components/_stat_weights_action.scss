@@ -1,4 +1,12 @@
 .ep-weights-menu {
+	.ep-weights-presets {
+		margin-bottom: var(--block-spacer);
+
+		> span {
+			font-weight: bold;
+		}
+	}
+
 	.ep-weights-options {
 		margin-bottom: var(--block-spacer);
 	}

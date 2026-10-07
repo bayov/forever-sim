@@ -56,8 +56,11 @@
 			}
 		}
 
+		// Enough for the DPS with the reference comparison under it. Any extra room goes
+		// above the stats, which sit at the bottom, so the open preset folders above don't
+		// push the page into scrolling.
 		.sim-sidebar-results {
-			min-height: 25vh;
+			min-height: 6rem;
 			display: flex;
 			justify-content: center;
 			align-items: center;

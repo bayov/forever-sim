@@ -1,6 +1,7 @@
 import { CharacterStats, StatMods } from './components/character_stats';
 import { ContentBlock } from './components/content_block';
 import { EmbeddedDetailedResults } from './components/detailed_results';
+import { dirtySettings } from './components/dirty_settings';
 import { EncounterPickerConfig } from './components/encounter_picker';
 import * as IconInputs from './components/icon_inputs';
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
@@ -14,6 +15,7 @@ import {
 	IndividualTalentsImporter,
 } from './components/individual_sim_ui/importers';
 import { ItemSwapConfig } from './components/individual_sim_ui/item_swap_picker';
+import { PresetConfigurationPicker } from './components/individual_sim_ui/preset_configuration_picker';
 import { RotationTab } from './components/individual_sim_ui/rotation_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
 import { TalentsTab } from './components/individual_sim_ui/talents_tab';
@@ -24,9 +26,10 @@ import { addStatWeightsAction } from './components/stat_weights_action';
 import { GLOBAL_DISPLAY_PSEUDO_STATS, GLOBAL_DISPLAY_STATS, GLOBAL_EP_STATS } from './constants/other';
 import { SimSettingCategories } from './constants/sim_settings';
 import * as Tooltips from './constants/tooltips';
+import { installItemTooltipFallback } from './item_tooltip_fallback';
 import { simLaunchStatuses } from './launched_sims';
 import { Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
-import { PresetBuild, PresetGear, PresetRotation } from './preset_utils';
+import { PresetBuild, PresetEpWeights, PresetGear, PresetRotation } from './preset_utils';
 import { StatWeightsResult } from './proto/api';
 import { APLRotation, APLRotation_Type as APLRotationType } from './proto/apl';
 import {
@@ -148,6 +151,9 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>;
 		rotations: Array<PresetRotation>;
 		builds?: Array<PresetBuild>;
+		// Stat weights the Stat Weights menu offers at the top, for gear sorting that fits a
+		// build (a PvP build that prices Stamina, say).
+		epWeights?: Array<PresetEpWeights>;
 	};
 
 	raidSimPresets: Array<RaidSimPreset<SpecType>>;
@@ -194,6 +200,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			simStatus: simLaunchStatuses[player.spec],
 		});
 		this.rootElem.classList.add('individual-sim-ui');
+		installItemTooltipFallback();
 		this.player = player;
 		this.individualConfig = config;
 		this.raidSimResultsManager = null;
@@ -318,6 +325,18 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addSidebarComponents() {
+		if (!this.isWithinRaidSim) {
+			new PresetConfigurationPicker(this.rootElem.querySelector('.sim-sidebar-presets') as HTMLElement, this);
+
+			// The dirty marks try each selected preset on the settings and put the settings
+			// back after, see dirtySettings.
+			dirtySettings.setSnapshot(() => {
+				const settings = IndividualSimSettings.clone(this.toProto());
+				return () => this.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(settings));
+			});
+			this.changeEmitter.on(() => dirtySettings.schedule());
+		}
+
 		this.raidSimResultsManager = addRaidSimAction(this);
 		addStatWeightsAction(
 			this,

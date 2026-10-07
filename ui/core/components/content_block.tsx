@@ -7,7 +7,7 @@ export interface ContentBlockHeaderConfig {
 	title: string;
 	extraCssClasses?: Array<string>;
 	titleTag?: string;
-	tooltip?: string;
+	tooltip?: string | HTMLElement;
 }
 
 export interface ContentBlockConfig {

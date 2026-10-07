@@ -2,8 +2,11 @@ import tippy from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { EventID, TypedEvent } from '../typed_event';
+import { BaseModal } from './base_modal';
 import { Component } from './component';
 import { ContentBlock, ContentBlockHeaderConfig } from './content_block';
+import { dirtySettings, PresetSource } from './dirty_settings';
+import { PresetTree } from './preset_tree';
 
 export type SavedDataManagerConfig<ModObject, T> = {
 	label: string;
@@ -23,12 +26,17 @@ export type SavedDataConfig<ModObject, T> = {
 	data: T;
 	tooltip?: string;
 	isPreset?: boolean;
+	// The folder a preset is listed in, like 'Level 30 PvP'. Left out means the top level.
+	group?: string;
 
 	// If set, will automatically hide the saved data when this evaluates to false.
 	enableWhen?: (obj: ModObject) => boolean;
 	// Will execute when the saved data is loaded.
 	onLoad?: (obj: ModObject) => void;
 };
+
+// The folder our own saved presets are listed in.
+const CUSTOM_GROUP = 'Custom';
 
 type SavedData<ModObject, T> = {
 	name: string;
@@ -44,9 +52,8 @@ export class SavedDataManager<ModObject, T> extends Component {
 	private readonly presets: Array<SavedData<ModObject, T>>;
 
 	private readonly savedDataDiv: HTMLElement;
-	private readonly presetDataDiv: HTMLElement;
-	private readonly customDataDiv: HTMLElement;
-	private saveInput?: HTMLInputElement;
+	private readonly presetTree: PresetTree;
+	private readonly dirtySource: PresetSource;
 
 	private frozen: boolean;
 
@@ -63,20 +70,32 @@ export class SavedDataManager<ModObject, T> extends Component {
 
 		const savedDataRef = ref<HTMLDivElement>();
 		const presetDataRef = ref<HTMLDivElement>();
-		const customDataRef = ref<HTMLDivElement>();
 		contentBlock.bodyElement.replaceChildren(
 			<div ref={savedDataRef} className="saved-data-container hide">
 				<div ref={presetDataRef} className="saved-data-presets" />
-				<div ref={customDataRef} className="saved-data-custom" />
 			</div>,
 		);
 
 		this.savedDataDiv = savedDataRef.value!;
-		this.presetDataDiv = presetDataRef.value!;
-		this.customDataDiv = customDataRef.value!;
+		this.presetTree = new PresetTree(`${config.storageKey}__openFolders__`, `${config.storageKey}__selected__`);
+		presetDataRef.value!.appendChild(this.presetTree.rootElem);
+
+		// The saved sets are presets too, so the settings they control are marked when we
+		// change them after loading one.
+		this.dirtySource = {
+			selected: () => {
+				const selected = this.presetTree.selected();
+				const savedData = [...this.presets, ...this.userData].find(data => data.elem === selected?.item);
+				if (!savedData) return undefined;
+				return { apply: () => this.config.setData(TypedEvent.nextEventID(), this.modObject, savedData.data) };
+			},
+		};
+		this.addOnDisposeCallback(dirtySettings.addSource(this.dirtySource));
+
+		this.config.changeEmitters.forEach(emitter => emitter.on(() => this.presetTree.refresh()));
 
 		if (!config.presetsOnly) {
-			contentBlock.bodyElement.appendChild(this.buildCreateContainer());
+			contentBlock.bodyElement.appendChild(this.buildSaveButton());
 		}
 	}
 
@@ -88,39 +107,51 @@ export class SavedDataManager<ModObject, T> extends Component {
 		const oldIdx = dataArr.findIndex(data => data.name == config.name);
 
 		if (oldIdx == -1) {
-			if (config.isPreset) {
-				this.presetDataDiv.appendChild(newData.elem);
-			} else {
-				this.customDataDiv.appendChild(newData.elem);
-			}
+			this.presetTree.add(newData.elem, config.isPreset ? config.group : CUSTOM_GROUP);
 			dataArr.push(newData);
 		} else {
+			this.presetTree.untrack(dataArr[oldIdx].elem);
 			dataArr[oldIdx].elem.replaceWith(newData.elem);
 			dataArr[oldIdx] = newData;
 		}
+		this.presetTree.refresh();
 	}
 
 	private makeSavedData(config: SavedDataConfig<ModObject, T>): SavedData<ModObject, T> {
+		const overrideButtonRef = ref<HTMLAnchorElement>();
 		const deleteButtonRef = ref<HTMLAnchorElement>();
-		const dataElem = (
-			<div className="saved-data-set-chip badge rounded-pill">
-				<a href="javascript:void(0)" className="saved-data-set-name" attributes={{ role: 'button' }}>
-					{config.name}
-				</a>
-				{!config.isPreset && (
-					<a ref={deleteButtonRef} href="javascript:void(0)" className="saved-data-set-delete" attributes={{ role: 'button' }}>
-						<i className="fa fa-times fa-lg"></i>
-					</a>
-				)}
-			</div>
-		) as HTMLElement;
+		const dataElem = PresetTree.makeItem(config.name);
+		if (!config.isPreset) {
+			dataElem.append(
+				<a ref={overrideButtonRef} href="javascript:void(0)" className="saved-data-set-action saved-data-set-override" attributes={{ role: 'button' }}>
+					<i className="fas fa-floppy-disk"></i>
+				</a>,
+				<a ref={deleteButtonRef} href="javascript:void(0)" className="saved-data-set-action saved-data-set-delete" attributes={{ role: 'button' }}>
+					<i className="fa fa-times"></i>
+				</a>,
+			);
+		}
 
-		dataElem.addEventListener('click', () => {
+		this.presetTree.track(dataElem, {
+			name: config.name,
+			matches: () => this.config.equals(config.data, this.config.getData(this.modObject)),
+			enabled: config.enableWhen ? () => config.enableWhen!(this.modObject) : undefined,
+		});
+
+		this.presetTree.onClick(dataElem, () => {
 			this.config.setData(TypedEvent.nextEventID(), this.modObject, config.data);
 
 			config.onLoad?.(this.modObject);
-			if (this.saveInput) this.saveInput.value = config.name;
 		});
+
+		if (!config.isPreset && overrideButtonRef.value) {
+			tippy(overrideButtonRef.value, { content: 'Override with the current settings' });
+			overrideButtonRef.value.addEventListener('click', event => {
+				event.stopPropagation();
+				if (this.frozen || !this.confirmOverride(config.name)) return;
+				this.saveCustom(config.name);
+			});
+		}
 
 		if (!config.isPreset && deleteButtonRef.value) {
 			const tooltip = tippy(deleteButtonRef.value, { content: `Delete saved ${this.config.label}` });
@@ -132,36 +163,14 @@ export class SavedDataManager<ModObject, T> extends Component {
 				tooltip.destroy();
 
 				const idx = this.userData.findIndex(data => data.name == config.name);
+				this.presetTree.untrack(this.userData[idx].elem);
 				this.userData[idx].elem.remove();
 				this.userData.splice(idx, 1);
 				this.saveUserData();
 			});
 		}
 
-		if (config.tooltip) {
-			tippy(dataElem, {
-				content: config.tooltip,
-				placement: 'bottom',
-			});
-		}
-
-		const checkActive = () => {
-			if (this.config.equals(config.data, this.config.getData(this.modObject))) {
-				dataElem.classList.add('active');
-				if (this.saveInput) this.saveInput.value = config.name;
-			} else {
-				dataElem.classList.remove('active');
-			}
-
-			if (config.enableWhen && !config.enableWhen(this.modObject)) {
-				dataElem.classList.add('disabled');
-			} else {
-				dataElem.classList.remove('disabled');
-			}
-		};
-
-		checkActive();
-		this.config.changeEmitters.forEach(emitter => emitter.on(checkActive));
+		this.presetTree.attachTooltip(dataElem, config.tooltip, 'left', () => dirtySettings.changesFor(this.dirtySource));
 
 		return {
 			name: config.name,
@@ -214,40 +223,126 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.rootElem.classList.add('frozen');
 	}
 
-	private buildCreateContainer(): HTMLElement {
-		const saveButtonRef = ref<HTMLButtonElement>();
-		const saveInputRef = ref<HTMLInputElement>();
-		const savedDataCreateFragment = (
-			<div className="saved-data-create-container">
-				<label className="form-label">{this.config.label} Name</label>
-				<input ref={saveInputRef} className="saved-data-save-input form-control" type="text" placeholder="Name" />
-				<button ref={saveButtonRef} className="saved-data-save-button btn btn-primary">
-					Save {this.config.label}
-				</button>
-			</div>
-		) as HTMLElement;
+	// Asks before we replace a custom preset with the current settings.
+	private confirmOverride(name: string): boolean {
+		return confirm(`Override custom ${this.config.label} '${name}' with the current settings?`);
+	}
 
-		this.saveInput = saveInputRef.value!;
-		saveButtonRef.value?.addEventListener('click', () => {
+	// Saves the current settings as a custom preset, or over the one with that name, and
+	// selects it.
+	private saveCustom(name: string) {
+		this.addSavedData({
+			name: name,
+			data: this.config.getData(this.modObject),
+		});
+		this.saveUserData();
+		const saved = this.userData.find(data => data.name == name);
+		if (saved) this.presetTree.select(saved.elem);
+		this.presetTree.openFolder(CUSTOM_GROUP);
+	}
+
+	private buildSaveButton(): HTMLElement {
+		const button = (
+			<button className="saved-data-save-button btn btn-sm btn-outline-primary">
+				<i className="fas fa-plus me-1"></i>
+				Save preset
+			</button>
+		) as HTMLButtonElement;
+		tippy(button, { content: `Save the current ${this.config.label.toLowerCase()} as a custom preset` });
+
+		button.addEventListener('click', () => {
 			if (this.frozen) return;
-
-			const newName = this.saveInput?.value;
-			if (!newName) {
-				alert(`Choose a label for your saved ${this.config.label}!`);
-				return;
-			}
-
-			if (newName in this.presets) {
-				alert(`${this.config.label} with name ${newName} already exists.`);
-				return;
-			}
-			this.addSavedData({
-				name: newName,
-				data: this.config.getData(this.modObject),
-			});
-			this.saveUserData();
+			const selected = this.userData.find(data => data.elem === this.presetTree.selected()?.item);
+			new SavePresetModal(this.rootElem.closest<HTMLElement>('.sim-ui') ?? document.body, {
+				label: this.config.label,
+				// When one of our own presets is selected, we start from its name, so saving
+				// our changes over it is one click.
+				initialName: selected?.name ?? '',
+				customNames: this.userData.map(data => data.name),
+				presetNames: this.presets.map(data => data.name),
+				confirmOverride: name => this.confirmOverride(name),
+				save: name => this.saveCustom(name),
+			}).open();
 		});
 
-		return savedDataCreateFragment;
+		return button;
+	}
+}
+
+type SavePresetModalConfig = {
+	label: string;
+	initialName: string;
+	customNames: string[];
+	presetNames: string[];
+	confirmOverride: (name: string) => boolean;
+	save: (name: string) => void;
+};
+
+// Asks for a name for a new custom preset.
+//
+// A name of one of our custom presets overrides that preset, after we confirm. A name of a
+// built-in preset isn't allowed, because the list selects presets by name and we couldn't
+// tell the two apart.
+class SavePresetModal extends BaseModal {
+	constructor(parent: HTMLElement, config: SavePresetModalConfig) {
+		super(parent, 'save-preset-modal', { title: `Save ${config.label} preset`, footer: true, size: 'md', disposeOnClose: true });
+
+		const inputRef = ref<HTMLInputElement>();
+		const hintRef = ref<HTMLParagraphElement>();
+		const saveButtonRef = ref<HTMLButtonElement>();
+		const listId = `save-preset-names-${Math.random().toString(36).slice(2)}`;
+		this.body.append(
+			<label className="form-label">Name</label>,
+			<input ref={inputRef} className="form-control" type="text" placeholder="Name" attributes={{ list: listId }} />,
+			<datalist id={listId}>
+				{config.customNames.map(name => (
+					<option value={name} />
+				))}
+			</datalist>,
+			<p ref={hintRef} className="save-preset-hint mb-0 mt-2" />,
+		);
+		this.footer!.append(
+			<button className="btn btn-outline-primary me-2" onclick={() => this.close()}>
+				Cancel
+			</button>,
+			<button ref={saveButtonRef} className="btn btn-primary">
+				Save
+			</button>,
+		);
+
+		const input = inputRef.value!;
+		const hint = hintRef.value!;
+		const saveButton = saveButtonRef.value!;
+		input.value = config.initialName;
+
+		const update = () => {
+			const name = input.value.trim();
+			const isPreset = config.presetNames.includes(name);
+			const isCustom = config.customNames.includes(name);
+			hint.textContent = isPreset
+				? 'A built-in preset has this name. Choose another one.'
+				: isCustom
+				? 'A custom preset has this name. Saving overrides it.'
+				: '';
+			hint.classList.toggle('text-danger', isPreset);
+			hint.classList.toggle('save-preset-override', isCustom);
+			saveButton.disabled = !name || isPreset;
+		};
+		update();
+		input.addEventListener('input', update);
+
+		const save = () => {
+			const name = input.value.trim();
+			if (!name || config.presetNames.includes(name)) return;
+			if (config.customNames.includes(name) && !config.confirmOverride(name)) return;
+			config.save(name);
+			this.close();
+		};
+		saveButton.addEventListener('click', save);
+		input.addEventListener('keydown', event => {
+			if (event.key == 'Enter') save();
+		});
+
+		this.rootElem.addEventListener('shown.bs.modal', () => input.select(), { once: true });
 	}
 }

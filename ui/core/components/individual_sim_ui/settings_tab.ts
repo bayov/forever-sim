@@ -20,12 +20,12 @@ import { relevantStatOptions } from '../inputs/stat_options';
 import { MultiIconPicker, MultiIconPickerItemConfig } from '../multi_icon_picker';
 import { NumberPicker } from '../number_picker';
 import { SavedDataManager } from '../saved_data_manager';
+import { presetListTooltip } from '../preset_tree';
 import { SimTab } from '../sim_tab';
 import * as OtherInputs from './../other_inputs';
 import { IsbConfig, StormstrikeConfig } from './../other_inputs';
 import { ConsumesPicker } from './consumes_picker';
 import { ItemSwapPicker } from './item_swap_picker';
-import { PresetConfigurationPicker } from './preset_configuration_picker';
 import { RacialsPicker } from './racials_picker';
 
 export class SettingsTab extends SimTab {
@@ -82,7 +82,6 @@ export class SettingsTab extends SimTab {
 				this.buildBuffsSettings();
 				this.buildWorldBuffsSettings();
 				this.buildDebuffsSettings();
-				this.buildPresetConfigurationPicker();
 				this.buildSavedDataPickers();
 			}
 		});
@@ -325,14 +324,13 @@ export class SettingsTab extends SimTab {
 		this.simUI.player.getRaid()?.debuffsChangeEmitter.emit(TypedEvent.nextEventID());
 	}
 
-	private buildPresetConfigurationPicker() {
-		new PresetConfigurationPicker(this.rightPanel, this.simUI, ['encounter', 'options']);
-	}
-
 	private buildSavedDataPickers() {
 		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI.sim.encounter, {
 			label: 'Encounter',
-			header: { title: 'Saved Encounters' },
+			header: {
+				title: 'Saved Encounters',
+				tooltip: presetListTooltip('Loading an encounter changes:', ['Duration and its variation', 'Execute phases', 'PvP options', 'Targets']),
+			},
 			storageKey: this.simUI.getSavedEncounterStorageKey(),
 			getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
 			setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
@@ -344,7 +342,18 @@ export class SettingsTab extends SimTab {
 
 		const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, {
 			label: 'Settings',
-			header: { title: 'Saved Settings' },
+			header: {
+				title: 'Saved Settings',
+				tooltip: presetListTooltip('Loading saved settings changes:', [
+					'Raid, party and world buffs',
+					'Debuffs',
+					'Consumables',
+					'Race, level, extra talent points and professions',
+					'Item swap',
+					'Reaction time, channel clip delay, position and distance from the target',
+					'Healing model',
+				]),
+			},
 			storageKey: this.simUI.getSavedSettingsStorageKey(),
 			getData: (simUI: IndividualSimUI<any>) => {
 				const player = simUI.player;

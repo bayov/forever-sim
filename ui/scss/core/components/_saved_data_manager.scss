@@ -5,26 +5,172 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--block-spacer);
+	}
 
-		.saved-data-presets,
-		.saved-data-custom {
-			display: flex;
-			flex-wrap: wrap;
-			gap: var(--block-spacer);
+	.saved-data-save-button {
+		align-self: flex-start;
+		margin-top: var(--spacer-2);
+	}
+}
+
+// The hint under the name when saving would override one of our custom presets.
+.save-preset-modal .save-preset-override {
+	color: var(--dirty-color);
+}
+
+// Presets laid out like the file explorer of an IDE, see preset_tree.tsx.
+.preset-tree {
+	display: flex;
+	flex-direction: column;
+	user-select: none;
+
+	.preset-tree-folder {
+		&.hide {
+			display: none;
+		}
+
+		&[open] > .preset-tree-folder-row {
+			.preset-tree-chevron {
+				transform: rotate(90deg);
+			}
+
+			.preset-tree-closed-icon {
+				display: none;
+			}
+		}
+
+		&:not([open]) > .preset-tree-folder-row .preset-tree-open-icon {
+			display: none;
+		}
+
+		// A closed folder that holds the selected preset gets the active color on its name,
+		// or the modified color when we changed the preset since.
+		&.has-active:not([open]) > .preset-tree-folder-row .preset-tree-name {
+			color: var(--bs-primary);
+			font-weight: bold;
+		}
+
+		&.has-dirty > .preset-tree-folder-row .preset-tree-name {
+			color: var(--dirty-color);
 		}
 	}
 
-	.saved-data-create-container {
-		display: flex;
-		flex-direction: column;
+	// A guide line down the folder's presets, like the indent guides of an IDE.
+	.preset-tree-children {
+		margin-left: calc(var(--spacer-2) + 0.4rem);
+		padding-left: var(--spacer-2);
+		border-left: 1px solid var(--bs-gray-700);
+	}
 
-		.saved-data-save-input,
-		.saved-data-save-button {
-			width: 10rem;
+	.preset-tree-folder-row,
+	.preset-tree-item {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+		padding: 0.15rem var(--spacer-2);
+		border-radius: var(--bs-border-radius-sm, 0.2rem);
+		cursor: pointer;
+		color: $body-color;
+		transition: $btn-transition;
+
+		&:hover {
+			background: var(--bs-primary-dampened);
+		}
+	}
+
+	.preset-tree-folder-row {
+		list-style: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+	}
+
+	.preset-tree-chevron {
+		width: 0.75rem;
+		font-size: 0.7rem;
+		transition: transform 0.1s;
+	}
+
+	.preset-tree-icon {
+		width: 1rem;
+		text-align: center;
+		color: var(--bs-gray-500);
+	}
+
+	.preset-tree-folder-row .preset-tree-icon {
+		color: var(--bs-primary);
+	}
+
+	// A preset at the top level lines up with the folder names, past the chevron.
+	.preset-tree-files > .preset-tree-item {
+		padding-left: calc(var(--spacer-2) * 2 + 0.75rem);
+	}
+
+	.preset-tree-item {
+		// The selected preset is told apart by its color, like the open file in an IDE,
+		// and takes the modified color instead when we changed it since.
+		&.active {
+			.preset-tree-name,
+			.preset-tree-icon {
+				color: var(--bs-primary);
+				font-weight: bold;
+			}
+
+			&.dirty {
+				.preset-tree-name,
+				.preset-tree-icon {
+					color: var(--dirty-color);
+				}
+			}
 		}
 
-		.saved-data-save-input {
-			margin-bottom: var(--block-spacer);
+		&.disabled {
+			display: none;
+		}
+
+		.preset-tree-name {
+			flex: 1;
+		}
+
+		// The modified dot, at the end of the row like in an IDE.
+		.preset-tree-dirty {
+			display: none;
+		}
+
+		&.dirty {
+			.preset-tree-name {
+				font-style: italic;
+			}
+
+			.preset-tree-dirty {
+				display: block;
+
+				&::after {
+					content: '\25CF';
+					color: var(--dirty-color);
+				}
+			}
+		}
+
+		// The override and delete buttons of a custom preset show when we hover its row.
+		.saved-data-set-action {
+			visibility: hidden;
+			color: var(--bs-gray-500);
+
+			&:hover {
+				color: $body-color;
+			}
+		}
+
+		&:hover .saved-data-set-action {
+			visibility: visible;
+		}
+
+		// We only offer to override a custom preset when we changed it since we loaded it,
+		// because otherwise saving over it would change nothing.
+		&:not(.dirty) .saved-data-set-override {
+			display: none;
 		}
 	}
 }
@@ -68,16 +214,12 @@
 	}
 }
 
-@include media-breakpoint-down(xxl) {
-	.saved-data-manager-root {
-		.saved-data-create-container {
-			.saved-data-save-input {
-				width: 100%;
-			}
+// The title of the changes in a modified preset's tooltip, in the modified color, and the
+// hint under them.
+.preset-tree-changed-title {
+	color: var(--dirty-color);
+}
 
-			.saved-data-save-button {
-				width: 100%;
-			}
-		}
-	}
+.preset-tree-reset-hint {
+	color: var(--bs-gray-500);
 }

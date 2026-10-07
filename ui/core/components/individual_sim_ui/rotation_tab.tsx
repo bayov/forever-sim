@@ -13,10 +13,10 @@ import * as IconInputs from '../icon_inputs';
 import { Input } from '../input';
 import { NumberPicker } from '../number_picker';
 import { SavedDataManager } from '../saved_data_manager';
+import { presetListTooltip } from '../preset_tree';
 import { SimTab } from '../sim_tab';
 import { APLRotationPicker } from './apl_rotation_picker';
 import { CooldownsPicker } from './cooldowns_picker';
-import { PresetConfigurationPicker } from './preset_configuration_picker';
 
 export class RotationTab extends SimTab {
 	protected simUI: IndividualSimUI<any>;
@@ -51,7 +51,6 @@ export class RotationTab extends SimTab {
 		this.buildAplContent();
 		this.buildSimpleContent();
 
-		this.buildPresetConfigurationPicker();
 		this.buildSavedDataPickers();
 	}
 
@@ -191,14 +190,13 @@ export class RotationTab extends SimTab {
 		}
 	}
 
-	private buildPresetConfigurationPicker() {
-		new PresetConfigurationPicker(this.rightPanel, this.simUI, ['rotation']);
-	}
-
 	private buildSavedDataPickers() {
 		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI.player, {
 			label: 'Rotation',
-			header: { title: 'Saved Rotations' },
+			header: {
+				title: 'Saved Rotations',
+				tooltip: presetListTooltip('Loading a rotation changes:', ['The rotation, with its prepull actions and cooldowns']),
+			},
 			storageKey: this.simUI.getSavedRotationStorageKey(),
 			getData: (player: Player<any>) =>
 				SavedRotation.create({
@@ -229,6 +227,7 @@ export class RotationTab extends SimTab {
 				savedRotationsManager.addSavedData({
 					name: presetRotation.name,
 					tooltip: presetRotation.tooltip,
+					group: presetRotation.group,
 					isPreset: true,
 					data: rotData,
 					enableWhen: presetRotation.enableWhen,

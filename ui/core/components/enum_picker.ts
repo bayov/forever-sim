@@ -49,6 +49,10 @@ export class EnumPicker<ModObject> extends Input<ModObject, number> {
 		return this.selectElem;
 	}
 
+	protected formatPresetValue(value: number): string {
+		return (this.inputConfig as EnumPickerConfig<ModObject>).values.find(v => v.value === value)?.name ?? String(value);
+	}
+
 	getInputValue(): number {
 		return parseInt(this.selectElem.value);
 	}

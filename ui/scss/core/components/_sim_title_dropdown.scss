@@ -44,5 +44,28 @@
 			padding-left: var(--gap-width);
 			padding-right: var(--gap-width);
 		}
+
+		// The title fills the header's height and centers itself. It's smaller than the sim
+		// links in its menu, so its three lines fit the short header with room around them.
+		&[data-bs-toggle='dropdown'] > .sim-link-content {
+			height: 100%;
+			padding-top: 0;
+			padding-bottom: 0;
+			line-height: 1.2;
+
+			.sim-link-icon {
+				width: 2.25rem;
+				height: 2.25rem;
+			}
+
+			.sim-link-label,
+			.launch-status-label {
+				font-size: 0.65rem;
+			}
+
+			.sim-link-title {
+				font-size: 1rem;
+			}
+		}
 	}
 }

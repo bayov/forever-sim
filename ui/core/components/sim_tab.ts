@@ -1,5 +1,6 @@
 import { SimUI } from "../sim_ui";
 import { Component } from "./component";
+import { dirtySettings } from "./dirty_settings";
 
 export interface SimTabConfig {
 	identifier: string,
@@ -23,6 +24,8 @@ export abstract class SimTab extends Component {
 		this.config = config;
 
 		this.rootElem.id = this.config.identifier;
+		// The changes on a modified preset are listed under the tab they're on.
+		this.rootElem.dataset.presetCategory = this.config.title;
 		this.rootElem.classList.add('tab-pane', 'fade');
 
 		if (parentElem.childNodes.length == 0)
@@ -35,6 +38,15 @@ export abstract class SimTab extends Component {
 		this.rootElem.appendChild(this.contentContainer);
 
 		this.simUI.simHeader.addSimTabLink(this);
+
+		// The tab gets a dot when something on it differs from the selected presets, so we
+		// see where our changes are without opening every tab.
+		dirtySettings.onUpdate(() => {
+			const dirty = Array.from(this.rootElem.querySelectorAll('.dirty-setting, .preset-tree-item.dirty')).some(
+				elem => !elem.closest('.hide, .disabled'),
+			);
+			this.navLink.classList.toggle('dirty-tab', dirty);
+		});
 	}
 
 	private buildNavItem(): HTMLElement {

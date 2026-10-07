@@ -11,6 +11,7 @@ import {
 	Faction,
 	HealingModel,
 	IndividualBuffs,
+	Profession,
 	Race,
 	RaidBuffs,
 	Spec,
@@ -23,11 +24,13 @@ import { SpecOptions, SpecRotation, specTypeFunctions } from './proto_utils/util
 interface PresetBase {
 	name: string;
 	tooltip?: string;
+	// The folder the preset is listed in, like 'Level 30 PvP'. Left out means the top level.
+	group?: string;
 	enableWhen?: (obj: Player<any>) => boolean;
 	onLoad?: (player: Player<any>) => void;
 }
 
-interface PresetOptionsBase extends Pick<PresetBase, 'onLoad'> {
+interface PresetOptionsBase extends Pick<PresetBase, 'onLoad' | 'group'> {
 	customCondition?: (player: Player<any>) => boolean;
 }
 
@@ -44,12 +47,12 @@ export interface PresetGearOptions extends PresetOptionsBase, Pick<PresetBase, '
 	customCondition?: (player: Player<any>) => boolean;
 }
 
-export interface PresetTalents {
+export interface PresetTalents extends Pick<PresetBase, 'group' | 'tooltip'> {
 	name: string;
 	data: SavedTalents;
 	enableWhen?: (obj: Player<any>) => boolean;
 }
-export interface PresetTalentsOptions {
+export interface PresetTalentsOptions extends Pick<PresetBase, 'group' | 'tooltip'> {
 	customCondition?: (player: Player<any>) => boolean;
 }
 
@@ -59,7 +62,7 @@ export interface PresetRotation extends PresetBase {
 	tooltip?: string;
 	enableWhen?: (obj: Player<any>) => boolean;
 }
-export interface PresetRotationOptions extends Pick<PresetOptionsBase, 'onLoad'> {
+export interface PresetRotationOptions extends Pick<PresetOptionsBase, 'onLoad' | 'group'>, Pick<PresetBase, 'tooltip'> {
 	talentTree?: number;
 	customCondition?: (player: Player<any>) => boolean;
 }
@@ -67,7 +70,7 @@ export interface PresetRotationOptions extends Pick<PresetOptionsBase, 'onLoad'>
 export interface PresetEpWeights extends PresetBase {
 	epWeights: Stats;
 }
-export interface PresetEpWeightsOptions extends PresetOptionsBase {}
+export interface PresetEpWeightsOptions extends PresetOptionsBase, Pick<PresetBase, 'tooltip'> {}
 
 export interface PresetEncounter extends PresetBase {
 	encounter?: EncounterProto;
@@ -77,14 +80,20 @@ export interface PresetEncounter extends PresetBase {
 	debuffs?: Debuffs;
 	buffs?: IndividualBuffs;
 	consumes?: Consumes;
+	// Whether we attack from in front of the target, where it can parry and block. Left
+	// out means the encounter does not touch the setting.
+	inFrontOfTarget?: boolean;
 }
 // The buffs and consumes can be given directly instead of through an exported link.
 export interface PresetEncounterOptions
 	extends PresetOptionsBase,
-		Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'debuffs' | 'buffs' | 'consumes'> {}
+		Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'debuffs' | 'buffs' | 'consumes' | 'inFrontOfTarget'> {}
 
 export interface PresetBuild {
 	name: string;
+	group?: string;
+	// A short line about the build, shown when we hover it.
+	tooltip?: string;
 	gear?: PresetGear;
 	talents?: PresetTalents;
 	rotation?: PresetRotation;
@@ -98,6 +107,9 @@ export interface PresetBuild {
 	// Talent points beyond what the level grants, see Player.bonus_talent_points. Left out
 	// means the build does not touch the setting.
 	bonusTalentPoints?: number;
+	// The two professions, because some of the gear and consumes need them (Engineering
+	// goggles, Goblin Sapper Charge). Left out means the build does not touch them.
+	professions?: [Profession, Profession];
 	options?: Partial<SpecOptions<any>>;
 }
 
@@ -126,6 +138,7 @@ function makePresetGearHelper(name: string, gear: EquipmentSpec, options: Preset
 	return {
 		name: name,
 		tooltip: options.tooltip || Tooltips.BASIC_BIS_DISCLAIMER,
+		group: options.group,
 		gear: gear,
 		enableWhen: conditions.length > 0 ? (player: Player<any>) => conditions.every(cond => cond(player)) : undefined,
 		onLoad: options?.onLoad,
@@ -140,6 +153,8 @@ export function makePresetTalents(name: string, data: SavedTalents, options?: Pr
 
 	return {
 		name,
+		group: options?.group,
+		tooltip: options?.tooltip,
 		data,
 		enableWhen: conditions.length > 0 ? (player: Player<any>) => conditions.every(cond => cond(player)) : undefined,
 	};
@@ -157,6 +172,8 @@ const makePresetEpWeightHelper = (name: string, epWeights: Stats, options?: Pres
 
 	return {
 		name,
+		tooltip: options?.tooltip,
+		group: options?.group,
 		epWeights,
 		enableWhen: !!conditions.length ? (player: Player<any>) => conditions.every(cond => cond(player)) : undefined,
 		onLoad: options?.onLoad,
@@ -198,6 +215,8 @@ function makePresetRotationHelper(name: string, rotation: SavedRotation, options
 
 	return {
 		name: name,
+		group: options?.group,
+		tooltip: options?.tooltip,
 		rotation: rotation,
 		enableWhen: conditions.length > 0 ? (player: Player<any>) => conditions.every(cond => cond(player)) : undefined,
 		onLoad: options?.onLoad,
@@ -238,9 +257,9 @@ export const makePresetEncounter = (name: string, encounter?: PresetEncounter['e
 
 export const makePresetBuild = (
 	name: string,
-	{ gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, options }: PresetBuildOptions,
+	{ group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options }: PresetBuildOptions,
 ): PresetBuild => {
-	return { name, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, options };
+	return { name, group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options };
 };
 
 export type SpecCheckWarning = {

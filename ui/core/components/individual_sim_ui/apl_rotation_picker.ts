@@ -7,6 +7,7 @@ import { SimUI } from '../../sim_ui';
 import { EventID, TypedEvent } from '../../typed_event';
 import { existsInDOM, randomUUID } from '../../utils';
 import { Component } from '../component';
+import { dirtySettings } from '../dirty_settings';
 import { Input, InputConfig } from '../input';
 import { AdaptiveStringPicker } from '../inputs/string_picker';
 import { ListItemPickerConfig, ListPicker } from '../list_picker';
@@ -16,6 +17,15 @@ import { APLValueImplStruct } from './apl_values';
 export class APLRotationPicker extends Component {
 	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<any>) {
 		super(parent, 'apl-rotation-picker-root');
+
+		// We don't mark the editor's rows, see Input.tracksPresetChanges(), so the editor as a
+		// whole tells the Rotation tab and the presets' tooltips that the rotation changed.
+		dirtySettings.track({
+			elem: this.rootElem,
+			read: () => ({ prepull: modPlayer.aplRotation.prepullActions, priority: modPlayer.aplRotation.priorityList }),
+			name: () => 'Rotation',
+			format: () => '',
+		});
 
 		new ListPicker<Player<any>, APLPrepullAction>(this.rootElem, modPlayer, {
 			extraCssClasses: ['apl-prepull-action-picker'],

@@ -12,6 +12,8 @@ import { RequestTypes } from '../sim_signal_manager';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { stDevToConf90 } from '../utils.js';
 import { BaseModal } from './base_modal.js';
+import { dirtySettings, PresetSource } from './dirty_settings.js';
+import { presetListTooltip, PresetTree } from './preset_tree.js';
 import { ResultsViewer } from './results_viewer.js';
 
 export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat> | undefined, epReferenceStat: Stat) {
@@ -59,6 +61,8 @@ class EpWeightsMenu extends BaseModal {
 
 	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat) {
 		super(simUI.rootElem, 'ep-weights-menu', getModalConfig(simUI));
+		// The changes on a modified preset are listed under this name, like under a tab.
+		this.rootElem.dataset.presetCategory = 'Stat Weights';
 		this.simUI = simUI;
 		this.statsType = 'ep';
 		this.epStats = epStats;
@@ -67,6 +71,10 @@ class EpWeightsMenu extends BaseModal {
 
 		this.header?.insertAdjacentHTML('afterbegin', '<h5 class="modal-title">Calculate Stat Weights</h5>');
 		this.body.innerHTML = `
+			<div class="ep-weights-presets">
+				<span>Presets:</span>
+				<div class="saved-data-presets"></div>
+			</div>
 			<div class="ep-weights-options row">
 				<div class="col col-sm-3">
 					<select class="ep-type-select form-select">
@@ -490,6 +498,7 @@ class EpWeightsMenu extends BaseModal {
 			},
 		});
 
+		this.buildPresets();
 		this.updateTable();
 
 		const makeEpRatioCell = (cell: HTMLElement, idx: number) => {
@@ -548,6 +557,52 @@ class EpWeightsMenu extends BaseModal {
 		});
 	}
 
+	// One row for each of the spec's stat weight presets. A click makes it the Current EP,
+	// and the row stays lit while the Current EP matches it.
+	private buildPresets() {
+		const container = this.body.querySelector('.ep-weights-presets') as HTMLElement;
+		const player = this.simUI.player;
+		const presets = (this.simUI.individualConfig.presets.epWeights ?? []).filter(preset => !preset.enableWhen || preset.enableWhen(player));
+		if (!presets.length) {
+			container.remove();
+			return;
+		}
+
+		const tree = new PresetTree(this.simUI.getStorageKey('__epWeightsOpenFolders__'), this.simUI.getStorageKey('__selectedEpWeights__'));
+		container.querySelector('.saved-data-presets')!.appendChild(tree.rootElem);
+		tippy(container.querySelector('span')!, {
+			content: presetListTooltip('Loading stat weights changes:', ['The weight of every stat, which the EP in the gear picker uses']),
+		});
+
+		const presetByItem = new Map<HTMLElement, (typeof presets)[number]>();
+		const source: PresetSource = {
+			selected: () => {
+				const preset = presetByItem.get(tree.selected()?.item as HTMLElement);
+				return preset && { apply: () => player.setEpWeights(TypedEvent.nextEventID(), preset.epWeights) };
+			},
+		};
+		presets.forEach(preset => {
+			const item = PresetTree.makeItem(preset.name);
+			presetByItem.set(item, preset);
+			tree.onClick(item, () => {
+				player.setEpWeights(TypedEvent.nextEventID(), preset.epWeights);
+				preset.onLoad?.(player);
+				// The preset may weigh stats the table hides, like Stamina for PvP.
+				this.updateTable();
+			});
+			tree.attachTooltip(item, preset.tooltip, 'right', () => dirtySettings.changesFor(source));
+			tree.track(item, { name: preset.name, matches: () => player.getEpWeights().equals(preset.epWeights) });
+			tree.add(item, preset.group);
+		});
+
+		const listener = player.epWeightsChangeEmitter.on(() => tree.refresh());
+		const disposeSource = dirtySettings.addSource(source);
+		this.addOnDisposeCallback(() => {
+			listener.dispose();
+			disposeSource();
+		});
+	}
+
 	private setSimProgress(progress: ProgressMetrics) {
 		this.resultsViewer.setContent(`
 			<div class="results-sim">
@@ -564,8 +619,11 @@ class EpWeightsMenu extends BaseModal {
 
 		EpWeightsMenu.epUnitStats.forEach(stat => {
 			// Don't show extra stats when 'Show all stats' is not selected
+			// A stat the spec doesn't weigh still shows when the Current EP prices it, as the
+			// PvP presets do with Stamina and Armor.
+			const hasCurrentEp = this.simUI.player.getEpWeights().getUnitStat(stat) != 0;
 			if (
-				(!this.showAllStats && stat.isStat() && !this.epStats.includes(stat.getStat())) ||
+				(!this.showAllStats && !hasCurrentEp && stat.isStat() && !this.epStats.includes(stat.getStat())) ||
 				(stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))
 			) {
 				return;

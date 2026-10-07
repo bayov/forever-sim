@@ -3,6 +3,7 @@ import { ref } from 'tsx-vanilla';
 
 import { Component } from '../components/component.js';
 import { CopyButton } from '../components/copy_button.js';
+import { dirtySettings } from '../components/dirty_settings';
 import { Input, InputConfig } from '../components/input.js';
 import { Player } from '../player.js';
 import { Class, Spec } from '../proto/common.js';
@@ -129,6 +130,11 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 
 	getInputElem(): HTMLElement {
 		return this.rootElem;
+	}
+
+	// We mark the talents that differ instead of the whole picker.
+	protected tracksPresetChanges(): boolean {
+		return false;
 	}
 
 	getInputValue(): string {
@@ -372,6 +378,19 @@ class TalentPicker<TalentsProto> extends Component {
 		this.pointsDisplay = document.createElement('span');
 		this.pointsDisplay.classList.add('talent-picker-points');
 		this.rootElem.appendChild(this.pointsDisplay);
+
+		// The talents string has a digit per talent, in the order of the tree's talents, and
+		// the trees are separated by dashes.
+		dirtySettings.track({
+			elem: this.rootElem,
+			read: () => {
+				const treeIdx = this.tree.picker.trees.indexOf(this.tree);
+				const talentIdx = this.tree.talents.indexOf(this);
+				return this.tree.picker.modObject.getTalentsString().split('-')[treeIdx]?.charAt(talentIdx) || '0';
+			},
+			name: () => this.config.name ?? String(this.config.fieldName ?? 'Talent'),
+			format: points => `${points}/${this.config.maxPoints}`,
+		});
 
 		this.rootElem.addEventListener('click', event => {
 			event.preventDefault();

@@ -68,6 +68,8 @@ export class TypedEvent<T> {
 	}
 
 	emit(eventID: EventID, event: T) {
+		if (silentCount > 0) return;
+
 		const originalEvent = this.firedEvents.find(fe => fe.eventID == eventID);
 		if (originalEvent) {
 			if (!thawing) {
@@ -136,6 +138,20 @@ export class TypedEvent<T> {
 		}
 	}
 
+	// Executes the provided callback while every emit() is dropped.
+	//
+	// We use it to try settings out without anyone noticing, like when we apply a preset to
+	// see which settings it would change and then put the old settings back. Nothing is
+	// recorded, so the real changes after it fire as usual.
+	static silentlyDo(func: () => void) {
+		silentCount++;
+		try {
+			func();
+		} finally {
+			silentCount--;
+		}
+	}
+
 	static nextEventID(): EventID {
 		return nextEventID++;
 	}
@@ -149,6 +165,9 @@ export class TypedEvent<T> {
 
 // If this is > 0 then events are frozen.
 let freezeCount = 0;
+
+// If this is > 0 then events are dropped, see silentlyDo().
+let silentCount = 0;
 
 // Indicates whether we are currently in the process of unfreezing. Just used to add a warning.
 let thawing = false;

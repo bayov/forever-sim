@@ -3,6 +3,7 @@ import tippy from 'tippy.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { existsInDOM } from '../utils';
 import { Component } from './component.js';
+import { dirtySettings } from './dirty_settings';
 
 /**
  * Data for creating a new input UI element.
@@ -76,7 +77,28 @@ export abstract class Input<ModObject, T, V = T> extends Component {
 			this.abortController?.abort();
 			event.dispose();
 		});
+
+		const untrack = dirtySettings.track({
+			elem: this.rootElem,
+			read: () => this.getSourceValue(),
+			isTracked: () => this.tracksPresetChanges(),
+			format: this.formatPresetValue ? value => this.formatPresetValue!(value as T) : undefined,
+		});
+		this.addOnDisposeCallback(untrack);
 	}
+
+	// Whether we mark this input when it differs from the selected preset, see dirtySettings.
+	//
+	// The inputs of the APL editor read their part of the rotation by position, so after a
+	// rotation preset they would compare unrelated actions. We leave them out and only mark
+	// the rotation preset itself.
+	protected tracksPresetChanges(): boolean {
+		return !this.rootElem.closest('.apl-rotation-picker-root');
+	}
+
+	// How we write a value in the list of changes on a modified preset. Left out means we
+	// write numbers, strings and on / off as they are.
+	protected formatPresetValue?(value: T): string;
 
 	private buildLabel(config: InputConfig<ModObject, T, V>): JSX.Element {
 		const label = (

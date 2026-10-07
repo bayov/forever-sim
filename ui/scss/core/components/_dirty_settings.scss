@@ -1,0 +1,89 @@
+// Settings that differ from the selected preset, see dirty_settings.ts. They get the color
+// IDEs use for a modified file, and the presets that are modified get it too.
+:root {
+	--dirty-color: #e2c08d;
+}
+
+.dirty-setting {
+	// Fields with a label: the label in the modified color with a dot after it, and the
+	// field's border in the same color.
+	> .form-label,
+	> label {
+		color: var(--dirty-color) !important;
+
+		&::after {
+			content: ' \25CF';
+			font-size: 0.7em;
+			vertical-align: middle;
+		}
+	}
+
+	.form-control,
+	.form-select {
+		border-color: var(--dirty-color);
+	}
+
+	.form-check-input {
+		border-color: var(--dirty-color);
+	}
+
+	// Buffs, consumes and other icons have no label, so the icon gets a ring.
+	&.icon-picker > .icon-picker-button,
+	&.icon-picker > .dropdown-toggle {
+		box-shadow: 0 0 0 2px var(--dirty-color);
+	}
+
+	// Gear slots: a ring on the icon and a dot after the item name.
+	&.item-picker-root {
+		.item-picker-icon {
+			box-shadow: 0 0 0 2px var(--dirty-color);
+		}
+
+		.item-picker-name::after {
+			content: ' \25CF';
+			color: var(--dirty-color);
+			font-size: 0.7em;
+			vertical-align: middle;
+		}
+	}
+
+	// Talents: a ring around the talent and a dot in its corner, because the talent's own
+	// border is already gold when it has points.
+	&.talent-picker-root {
+		outline: 2px solid var(--dirty-color);
+		outline-offset: 1px;
+
+		// ::after already draws the dashed border of a talent we don't simulate.
+		&::before {
+			content: '\25CF';
+			position: absolute;
+			top: -0.55rem;
+			right: -0.35rem;
+			color: var(--dirty-color);
+			font-size: 0.85rem;
+			line-height: 1;
+			text-shadow: 0 0 2px #000;
+			z-index: 30;
+		}
+	}
+}
+
+// A group of icons in one dropdown (the misc buffs) gets a ring when any of them changed.
+.multi-icon-picker-root:has(.dirty-setting) > .icon-picker-button {
+	box-shadow: 0 0 0 2px var(--dirty-color);
+}
+
+// A tab with a changed setting or a modified preset on it gets the modified color and a
+// dot. The active tab draws its underline with ::after, so the dot is ::before, moved after
+// the title (the tab's link is a flex box).
+.sim-header .nav-link.dirty-tab {
+	color: var(--dirty-color);
+}
+
+.nav-link.dirty-tab::before {
+	content: '\25CF';
+	order: 1;
+	margin-left: 0.25em;
+	color: var(--dirty-color);
+	font-size: 0.7em;
+}
