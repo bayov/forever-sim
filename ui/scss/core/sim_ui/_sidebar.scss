@@ -10,6 +10,55 @@
 	// This must be larger than the z-index on .sim-content otherwise the dropdown is overlapped
 	z-index: var(--sidebar-z-index);
 
+	// The sidebar stays in place while the page scrolls, so the character stats at its bottom
+	// are always on screen. The raid sim's player editor shows its sidebar in a dialog, where
+	// it keeps scrolling with the rest.
+	//
+	// When the screen is too short for all of it (a 900px tall window already is, and open
+	// preset folders make it worse), the preset list and the stats get shorter and scroll on
+	// their own. The Simulate button and the results keep their size. When even that isn't
+	// enough, the whole sidebar scrolls.
+	@include media-breakpoint-up(lg) {
+		&:not(.within-raid-sim *) {
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			align-self: flex-start;
+
+			.sim-sidebar-content {
+				flex: 1;
+				min-height: 0;
+				overflow-y: auto;
+				overflow-x: hidden;
+
+				> * {
+					flex-shrink: 0;
+				}
+
+				// Scrolling up and down only. Without overflow-x, the browser would also scroll
+				// them sideways when a row is a little too wide, like with the vertical
+				// scrollbar taking some of the width.
+				.sim-sidebar-presets {
+					flex-shrink: 1;
+					min-height: 7rem;
+					overflow-y: auto;
+					overflow-x: hidden;
+				}
+
+				// The ± buttons at the end of the stat rows stick out a little past the stats,
+				// so the box reaches into the sidebar's padding to keep them whole.
+				.sim-sidebar-stats {
+					flex-shrink: 1;
+					min-height: 8rem;
+					overflow-y: auto;
+					overflow-x: hidden;
+					margin-right: -0.75rem;
+					padding-right: 0.75rem;
+				}
+			}
+		}
+	}
+
 	.sim-sidebar-content {
 		min-height: calc(100vh - var(--sim-header-height) - 1px);
 		padding: var(--gap-width);
@@ -64,6 +113,12 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+
+			// The progress while a sim runs sits at the top, right under the Stat Weights
+			// button, so it needs room from it.
+			.results-content {
+				margin-top: var(--block-spacer);
+			}
 		}
 
 		.sim-sidebar-stats {
