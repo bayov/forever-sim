@@ -15,7 +15,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 ## 1. Character stats
 
-- [?] 1.1 Base stats by race and level (Orc shaman at 30 and 60): attributes, base health and mana, base attack power, base melee and spell crit, base dodge
+- [x] 1.1 Base stats by race and level (Orc shaman at 30 and 60): attributes, base health and mana, base attack power, base melee and spell crit, base dodge
 - [ ] 1.2 Strength: attack power, block value
 - [ ] 1.3 Agility: melee crit by level, dodge, armor, attack power (none for a shaman)
 - [ ] 1.4 Stamina: health
@@ -28,7 +28,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 ## 2. Mana and regen
 
 - [ ] 2.1 Mana pool: base mana by level, Intellect to mana
-- [ ] 2.2 Spirit regen formula, and continuous regen under Forever (no 2 sec ticks)
+- [?] 2.2 Spirit regen formula, and continuous regen under Forever (no 2 sec ticks)
 - [ ] 2.3 Five second rule: what starts it, regen while casting (Mindfulness, Polished Driftwood Icon, Improved Stormstrike)
 - [ ] 2.4 MP5: gear, Blessing of Wisdom, Mageblood, Mana Spring
 - [ ] 2.5 Mana returns: Judgement of Wisdom on melee hits, Water Shield globes, Mana Tide
@@ -223,9 +223,38 @@ Fixes and open questions found along the way, by item.
 
 ### 1.1 Base stats
 
+- Fixed (2026-10-07): the generator takes base mana from the client table for every class, and the Orc shaman's level 1 and 30 attributes from the beta (`tools/gen_level_base_stats.py`). The client table also agrees with the hand-checked level 60 mana of the mage (1213) and the priest (1376), where cmangos was 60 off at most levels. `sim/shaman/enhancement/base_stats_test.go` pins a naked Orc shaman at levels 1, 30 and 60. Troll and Tauren shamans at 30 still use the 1.12 rows.
 - The stats panel adds our own Strength of Earth (+53) and Grace of Air (+89) as build-phase auras. Display only.
 - Every character shows 5% parry and 5% block in the panel (`character.go` addUniversalStatDependencies). Item 6.4 checks whether the attack table uses them for a shaman without Spirit Weapons or a shield.
-- Open: Forever calls crit "one stat across melee, ranged and spell". The sim keeps base melee crit (1.7% + Agility) apart from base spell crit (2.3% + Intellect). A beta character sheet shows whether they are one number.
+- Forever calls crit "one stat across melee, ranged and spell". The beta sheet still shows two numbers, melee 0.38% and spell 3.93%, so the sim is right to keep base melee crit (1.7% + Agility) apart from base spell crit (2.3% + Intellect).
+
+Beta sheet, naked level 30 Orc shaman with no talents (2026-10-07). These come from the panel and its tooltips. The user warned that beta tooltips can be wrong, so we change nothing based on them without asking.
+
+| | Beta | Sim |
+|---|---|---|
+| Str / Agi / Sta / Int / Spi | 51 / 30 / 51 / 46 / 53 | 49 / 31 / 52 / 45 / 56 |
+| Health (base) | 665 (335) | 675 (335) |
+| Mana (base) | 1075 (665) | 1113 (718) |
+| Attack power | 142 | 138 |
+| Melee crit | 0.38% shown, 4.30% before the unarmed skill penalty | 4.39% |
+| Spell crit | 3.93% | 3.90% |
+| Dodge | 4.3% | 4.39% |
+| Armor | 60 | 62 |
+
+- The Lua API (not the tooltips) gives the same numbers: UnitStat 51 / 30 / 51 / 46 / 53, 665 health, 1075 mana, 142 AP, 60 armor, melee crit 0.384, fire and nature spell crit 3.933, dodge 4.304, 0 melee and spell hit. GetParryChance is 0 and GetBlockChance is 5 with no shield. The sim shows 5% parry for everyone, so item 6.4 checks that our attack table doesn't use it. UnitDefense doesn't exist in this client.
+- Fresh level 1 Orc shaman on the beta: 24 / 17 / 22 / 20 / 22 (1.12 table: 24 / 17 / 23 / 18 / 25), 67 health, 75 mana, 30 AP, 4.9% spell crit, 4.3% dodge. Health and AP fit the formulas. Base mana is 55 (the 1.12 table has 53). Spell crit fits the sim's level 1 curve (4.875%). Dodge fits too once the untrained defense (1 of 5) takes 4 × 0.04% off the sim's 4.50%.
+- Stamina is 1 lower and Spirit 3 lower at both levels, so Forever changed the starting stats. The other stats drift differently between level 1 and 30, so the per-level growth changed too. The level 60 row can't be guessed from this.
+- Base mana: the client's base mana table, which we already have in `assets/db_inputs/basestats/octbasempbyclass.txt`, has 55 at level 1 and 665 at level 30, the same as the beta. The original WoW table on warcraft.wiki.gg (Base_mana) agrees. The generator reads base mana from the cmangos table instead, which has 53 and 718. For the shaman, cmangos differs from the client table at levels 1, 22, 26, 30 and 52. For the paladin, hunter, warlock and druid only level 1 differs. For the mage and priest almost every level differs.
+- Early note for 2.2: GetManaRegen gives 12.876 a second at level 30 (53 Spirit, 46 Intellect) and 5.501 at level 1 (22 Spirit, 20 Intellect) while not casting, and 0.001 while casting at both. The 1.12 formula (15 + Spirit / 5 per 2 sec) gives 12.8 and 9.7. So Forever's Spirit regen isn't the 1.12 formula, at least at low level. The 0.001 looks like the modern engine's floor.
+- Every formula matches: 2 AP per Str, 1 block value per 20 Str (rounded down), 0.0868% crit and dodge per Agi at 30, 2 armor per Agi, 1 health for each of the first 20 Sta then 10, 1 mana for each of the first 20 Int then 15, 0.0355% spell crit per Int at 30, base crit 1.7% melee and 2.3% spell, AP base 2 × level − 20, Spirit regen (15 + Spi / 5) per 2 sec = 64 per 5 sec at 53 Spi.
+- Mismatch: the attributes. The sim's level 30 row comes from the cmangos 1.12 table (`tools/gen_level_base_stats.py`). The beta differs by 1 to 3 points in every stat.
+- Mismatch: base mana at 30. The 1.12 table has 718 at level 30, above level 31's 699, and the beta has 665. That is right between the table's 631 at level 29 and 699 at level 31, so the 718 looks like a bad row in the table.
+- The beta's melee crit loses 0.04% per point of weapon skill under 5 × level. With unarmed at 52 of 150 that is 3.92%, which takes 4.30% down to 0.38%. Item 4.8.
+- The crit tooltip says "Most periodic effects can critically strike". Item 5.7 (Flame Shock ticks).
+- Melee crits deal double damage and spell crits 1.5 times. Items 4.7 and 5.3.
+- The armor tooltip matches the 1.12 formula: 60 / (60 + 400 + 85 × 30) = 1.99%. Item 6.3.
+- Creature crits deal double damage. Creatures 3 or more levels above us can crush for 150%. Item 6.4.
+- Players dodge only from the front. Creatures dodge from any direction. Item 4.5.
 
 ### Pre-checks for 1.2 to 1.9 (not yet shown to the user)
 
@@ -236,6 +265,23 @@ Fixes and open questions found along the way, by item.
 - 1.7 Only equipment hit and crit are made universal (`ruleset.go` unifyEquipHitAndCrit). Crit from consumes and buffs stays in its own pool: Elixir of the Mongoose and Leader of the Pack are melee only, Moonkin Aura is spell only. Open: under Forever's single crit stat, do they count for both? Items 9.8 and 10.2.
 - 1.7 unifyEquipHitAndCrit sums melee and spell hit from gear. An item that lists both would count twice. Forever items list one hit stat, so this only matters for Classic items.
 - 1.8 Percent stat modifiers multiply each other: Blessing of Kings 10% times Ancestral Knowledge 2% a rank on Intellect, Toughness 2% a rank on Stamina. 1.12 multiplies them too.
+
+### 2.2 Spirit regen (beta, 2026-10-07)
+
+GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (the 0.001 floor taken off):
+
+| Spirit | Intellect | Beta | Sim today (7.5 + Spirit / 10) | 6.25 + Spirit / 8 |
+|---|---|---|---|---|
+| 53 | 46 | 12.875 | 12.8 | 12.875 |
+| 60 | 46 | 13.75 | 13.5 | 13.75 |
+| 65 | 46 | 14.375 | 14.0 | 14.375 |
+| 69 | 46 | 14.875 | 14.4 | 14.875 |
+| 53 | 72 | 12.875 | 12.8 | 12.875 |
+
+- Every level 30 reading fits 6.25 + Spirit / 8 a second exactly. That is 12.5 + Spirit / 4 per 2 sec, the 1.12 priest and mage formula (`priest.go`, `mage.go`). Intellect plays no part.
+- The level 1 reading (22 Spirit, 5.5) doesn't fit it (9.0). Spirit / 4 a second fits. One shape fits all six readings: each of the first 50 Spirit gives 0.25 a second and each one past 50 gives 0.125. Past 50 that is the same as 6.25 + Spirit / 8. A level 30 or 60 shaman always has more than 50 Spirit, so only low levels would tell the two apart.
+- The Spirit tooltip agrees with the server: 64 per 5 sec at 53 Spirit and 74 at 69 (14.875 × 5 = 74.4). Health regen in the tooltip still fits the 1.12 shaman formula (0.11 × Spirit + 7 per 2 sec).
+- Real regen, sampled every 0.5 sec after a cast: the mana rose about 6 to 7 every half second (continuous, no 2 sec ticks), 51 mana from 6.0 to 10.0 sec, which is 12.75 a second against 12.875 with whole numbers. One step of +14 at 5.5 to 6.0 sec looks like the client catching up with the server once regen started.
 
 ### Pre-checks for section 2 (not yet shown to the user)
 

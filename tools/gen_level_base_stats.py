@@ -3,9 +3,10 @@
 # Generates sim/core/base_stats_levels_auto_gen.go: base attributes, health and mana for
 # every race/class at levels 1-60, and the level curve of crit per agility and intellect.
 #
-# The attribute rows come from the 1.12 world database (player_levelstats and
-# player_classlevelstats, exported to CSV from the cmangos classic-db dump). The crit
-# curves come from the client's gtChanceToMeleeCrit and gtChanceToSpellCrit tables.
+# The attribute rows and base health come from the 1.12 world database (player_levelstats
+# and player_classlevelstats, exported to CSV from the cmangos classic-db dump). Base mana
+# and the crit curves come from the client's gtOCTBaseMPByClass, gtChanceToMeleeCrit and
+# gtChanceToSpellCrit tables.
 #
 #   python3 tools/gen_level_base_stats.py
 
@@ -37,13 +38,33 @@ with open(DIR + "player_levelstats.csv") as f:
         levelstats.setdefault((int(r["race"]), int(r["class"])), {})[int(r["level"])] = (
             int(r["str"]), int(r["agi"]), int(r["sta"]), int(r["int"]), int(r["spi"]))
 
-classstats = {}
-with open(DIR + "player_classlevelstats.csv") as f:
-    for r in csv.DictReader(f):
-        classstats.setdefault(int(r["class"]), {})[int(r["level"])] = (int(r["basehp"]), int(r["basemana"]))
+# Base attributes the Forever beta showed for a naked character with no talents (the Lua
+# UnitStat values, 2026-10-07). Forever changed both the starting stats and the growth per
+# level, so these rows replace the 1.12 ones. The other levels and races stay on 1.12 until
+# we see them on the beta.
+FOREVER_ATTRIBUTES = {
+    (2, 7): {  # Orc shaman
+        1: (24, 17, 22, 20, 22),
+        30: (51, 30, 51, 46, 53),
+    },
+}
+for (race, cls), levels in FOREVER_ATTRIBUTES.items():
+    levelstats[(race, cls)].update(levels)
 
 melee_crit = read_gt("chancetomeleecrit.txt")
 spell_crit = read_gt("chancetospellcrit.txt")
+base_mana = read_gt("octbasempbyclass.txt")
+
+# We take base mana from the client's table rather than cmangos. The cmangos table has wrong
+# rows, for example 718 for a level 30 shaman where the client and the Forever beta have 665.
+classstats = {}
+with open(DIR + "player_classlevelstats.csv") as f:
+    for r in csv.DictReader(f):
+        cls, level = int(r["class"]), int(r["level"])
+        mana = int(r["basemana"])
+        if cls in CLASSES and level <= 60:
+            mana = round(base_mana[level][GT_COLUMNS[CLASSES[cls]] - 1])
+        classstats.setdefault(cls, {})[level] = (int(r["basehp"]), mana)
 
 out = []
 out.append("package core\n")
