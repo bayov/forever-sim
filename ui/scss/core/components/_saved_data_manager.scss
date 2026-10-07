@@ -13,6 +13,11 @@
 	}
 }
 
+// The title in the sidebar goes without the line under it.
+.preset-configuration-picker-root .content-block-header {
+	border-bottom: 0;
+}
+
 // The hint under the name when saving would override one of our custom presets.
 .save-preset-modal .save-preset-override {
 	color: var(--dirty-color);
