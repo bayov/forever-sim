@@ -45,6 +45,13 @@ Some files go with the work that produced them:
 When one file holds two topics, don't try to split it. Put it in the commit it fits
 best.
 
+jj sometimes stops a commit with "Could not acquire lock for index file" (another agent's
+jj command holds `.git/index.lock`). The commit usually went through anyway, but jj
+brings the old working copy back as a second copy of the same change, and the next
+command says the change is divergent. Check with `jj log -r 'master..@'`. When the extra
+copy has no description and `jj diff --from <its commit> --to @` shows no changes, it's
+a leftover and we `jj abandon` it.
+
 Then commit everything that's left, but only when something is left. When
 `jj diff --stat` prints "0 files changed", skip this step, or we push an empty commit.
 
@@ -64,6 +71,9 @@ jj bookmark set master -r @-
 jj git push --remote origin --bookmark master
 jj bookmark list --all master
 ```
+
+Origin is `git@github.com:bayov/forever-sim.git`, over SSH, because git has no
+credentials for the https URL.
 
 The push is done when `master` and `master@origin` show the same commit. Ignore
 `master@upstream`, that's the wowsims repo we forked, and we never push there.
