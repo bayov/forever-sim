@@ -48,7 +48,7 @@ import { ActionId } from './proto_utils/action_id.js';
 import { Database } from './proto_utils/database.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
 import { Gear, ItemSwapGear } from './proto_utils/gear.js';
-import { Stats } from './proto_utils/stats.js';
+import { Stats, UnitStat } from './proto_utils/stats.js';
 import {
 	canEquipEnchant,
 	canEquipItem,
@@ -203,6 +203,28 @@ export type SimpleRotationGenerator<SpecType extends Spec> = (
 export interface PlayerConfig<SpecType extends Spec> {
 	autoRotation: AutoRotationGenerator<SpecType>;
 	simpleRotation?: SimpleRotationGenerator<SpecType>;
+}
+
+// Rating per 1%, matching core.HitRatingPerPercent and core.CritRatingPerPercent.
+export const HIT_RATING_PER_PERCENT = 10;
+export const CRIT_RATING_PER_PERCENT = 14;
+
+// EPContribution is one line of the EP tooltip in the gear picker. It holds how much of a
+// stat the item gives and the stat weight we multiplied it by. Lines like the unique
+// penalty have only the EP.
+//
+// Lines that come from part of the item, like the stats of its best random suffix, name
+// that part in group, and the tooltip shows them under it.
+export interface EPContribution {
+	name: string;
+	amount?: number;
+	weight?: number;
+	ep: number;
+	group?: string;
+}
+
+export function sumEP(lines: Array<EPContribution>): number {
+	return lines.reduce((total, line) => total + line.ep, 0);
 }
 
 const SPEC_CONFIGS: Partial<Record<Spec, PlayerConfig<any>>> = {};
@@ -1121,7 +1143,7 @@ export class Player<SpecType extends Spec> {
 		if (stats === undefined) {
 			return 0;
 		}
-		return stats.computeEP(this.epWeights);
+		return sumEP([...this.computeGearStatsEPBreakdown(stats), ...this.computeHasteEPBreakdown(stats)]);
 	}
 
 	computeEnchantEP(enchant: Enchant): number {
@@ -1129,19 +1151,14 @@ export class Player<SpecType extends Spec> {
 			return this.enchantEPCache.get(enchant.effectId)!;
 		}
 
-		let ep = this.computeStatsEP(new Stats(enchant.stats));
-
-		if (enchant.stats[Stat.StatMeleeHaste] > 0) {
-			ep += this.epWeights.getPseudoStat(PseudoStat.PseudoStatMeleeSpeedMultiplier) * enchant.stats[Stat.StatMeleeHaste];
-			ep += this.epWeights.getPseudoStat(PseudoStat.PseudoStatRangedSpeedMultiplier) * enchant.stats[Stat.StatMeleeHaste];
-		}
-
-		if (enchant.stats[Stat.StatSpellHaste] > 0) {
-			ep += this.epWeights.getPseudoStat(PseudoStat.PseudoStatCastSpeedMultiplier) * enchant.stats[Stat.StatSpellHaste];
-		}
-
+		const ep = sumEP(this.computeEnchantEPBreakdown(enchant));
 		this.enchantEPCache.set(enchant.effectId, ep);
 		return ep;
+	}
+
+	computeEnchantEPBreakdown(enchant: Enchant): Array<EPContribution> {
+		const stats = new Stats(enchant.stats);
+		return [...this.computeGearStatsEPBreakdown(stats), ...this.computeHasteEPBreakdown(stats)];
 	}
 
 	computeRandomSuffixEP(randomSuffix: ItemRandomSuffix): number {
@@ -1149,9 +1166,13 @@ export class Player<SpecType extends Spec> {
 			return this.randomSuffixEPCache.get(randomSuffix.id)!;
 		}
 
-		const ep = this.computeStatsEP(new Stats(randomSuffix.stats));
+		const ep = sumEP(this.computeRandomSuffixEPBreakdown(randomSuffix));
 		this.randomSuffixEPCache.set(randomSuffix.id, ep);
 		return ep;
+	}
+
+	computeRandomSuffixEPBreakdown(randomSuffix: ItemRandomSuffix): Array<EPContribution> {
+		return this.computeGearStatsEPBreakdown(new Stats(randomSuffix.stats));
 	}
 
 	computeItemEP(item: Item, slot: ItemSlot): number {
@@ -1160,6 +1181,12 @@ export class Player<SpecType extends Spec> {
 		const cached = this.itemEPCache[slot].get(item.id);
 		if (cached !== undefined) return cached;
 
+		const ep = sumEP(this.computeItemEPBreakdown(item, slot));
+		this.itemEPCache[slot].set(item.id, ep);
+		return ep;
+	}
+
+	computeItemEPBreakdown(item: Item, slot: ItemSlot): Array<EPContribution> {
 		let itemStats = new Stats(item.stats);
 		if (item.weaponSpeed > 0) {
 			const weaponDps = getWeaponDPS(item);
@@ -1175,32 +1202,84 @@ export class Player<SpecType extends Spec> {
 		// Add pseudo stats that should be included in item EP.
 		itemStats = itemStats.addPseudoStat(PseudoStat.BonusPhysicalDamage, item.bonusPhysicalDamage);
 
+		const lines = [...this.computeGearStatsEPBreakdown(itemStats, item.hitRating, item.critRating), ...this.computeHasteEPBreakdown(itemStats)];
+
 		// For random suffix items, use the suffix option with the highest EP for the purposes of ranking items in the picker.
-		let maxSuffixEP = 0;
-
 		if (item.randomSuffixOptions.length > 0) {
-			const suffixEPs = item.randomSuffixOptions.map(id => this.computeRandomSuffixEP(this.sim.db.getRandomSuffixById(id)!));
-			maxSuffixEP = Math.max(...suffixEPs);
+			const suffixes = item.randomSuffixOptions.map(id => this.sim.db.getRandomSuffixById(id)!);
+			const best = suffixes.reduce((a, b) => (this.computeRandomSuffixEP(b) > this.computeRandomSuffixEP(a) ? b : a));
+			const group = `Best suffix: ${best.name}`;
+			lines.push(...this.computeRandomSuffixEPBreakdown(best).map(line => ({ ...line, group })));
 		}
-
-		let ep = itemStats.computeEP(this.epWeights) + maxSuffixEP;
 
 		// unique items are slightly worse than non-unique because you can have only one.
 		if (item.unique) {
-			ep -= 0.01;
+			lines.push({ name: 'Unique', ep: -0.01 });
 		}
 
-		if (item.stats[Stat.StatMeleeHaste] > 0) {
-			ep += this.epWeights.getPseudoStat(PseudoStat.PseudoStatMeleeSpeedMultiplier) * item.stats[Stat.StatMeleeHaste];
-			ep += this.epWeights.getPseudoStat(PseudoStat.PseudoStatRangedSpeedMultiplier) * item.stats[Stat.StatMeleeHaste];
+		return lines;
+	}
+
+	// computeGearStatsEPBreakdown splits the EP of gear stats into one line per stat.
+	//
+	// Under Forever we value gear stats the way the sim applies them. Gear hit and crit
+	// count for melee and spells both (see unifyEquipHitAndCrit), so we add them up into one
+	// Hit line and one Crit line, after turning any rating into percent.
+	//
+	// Healing gear needs nothing special. A Forever item that reads "healing by up to 21
+	// and damage by up to 7" is already 7 spell power plus 14 healing in the database.
+	//
+	// The stat weights probe +1 Melee Crit as gear, so it already pays out to spells too.
+	// That means the Melee Crit and Spell Crit weights each hold the full value of crit. We
+	// take the larger one rather than adding them up, or every crit item would count twice.
+	//
+	// Some armor pieces list their armor twice, like Tree Bark Jacket with "44 Armor" and then
+	// "+60 Armor". The second one is Bonus Armor in the database, and so are the armor kits.
+	// The sim adds it to armor one for one, and only talents like Toughness that scale the
+	// armor on items leave it out. So when the weights only price one of the two, as most of
+	// them only price Armor, both parts get that price on one Armor line. When both are priced
+	// differently, each part keeps its own line.
+	private computeGearStatsEPBreakdown(stats: Stats, hitRating = 0, critRating = 0): Array<EPContribution> {
+		const lines: Array<EPContribution> = [];
+		const addLine = (name: string, amount: number, weight: number) => {
+			// The pseudo stat enum has gaps (BonusPhysicalDamage is 30), so some reads come back
+			// undefined. We skip those along with the zeros.
+			if (amount && weight) lines.push({ name, amount, weight, ep: amount * weight });
+		};
+		const weight = (stat: Stat) => this.epWeights.getStat(stat);
+
+		if (this.sim.getRuleset() === Ruleset.RulesetForever) {
+			const hit = stats.getStat(Stat.StatMeleeHit) + stats.getStat(Stat.StatSpellHit) + hitRating / HIT_RATING_PER_PERCENT;
+			const crit = stats.getStat(Stat.StatMeleeCrit) + stats.getStat(Stat.StatSpellCrit) + critRating / CRIT_RATING_PER_PERCENT;
+			addLine('Hit (melee and spell)', hit, Math.max(weight(Stat.StatMeleeHit), weight(Stat.StatSpellHit)));
+			addLine('Crit (melee and spell)', crit, Math.max(weight(Stat.StatMeleeCrit), weight(Stat.StatSpellCrit)));
+			stats = stats.withStat(Stat.StatMeleeHit, 0).withStat(Stat.StatSpellHit, 0).withStat(Stat.StatMeleeCrit, 0).withStat(Stat.StatSpellCrit, 0);
 		}
 
-		if (item.stats[Stat.StatSpellHaste] > 0) {
-			ep += this.epWeights.getPseudoStat(PseudoStat.PseudoStatCastSpeedMultiplier) * item.stats[Stat.StatSpellHaste];
+		const armorWeight = weight(Stat.StatArmor);
+		const bonusArmorWeight = weight(Stat.StatBonusArmor);
+		if (!armorWeight || !bonusArmorWeight || armorWeight === bonusArmorWeight) {
+			addLine('Armor', stats.getStat(Stat.StatArmor) + stats.getStat(Stat.StatBonusArmor), armorWeight || bonusArmorWeight);
+			stats = stats.withStat(Stat.StatArmor, 0).withStat(Stat.StatBonusArmor, 0);
 		}
 
-		this.itemEPCache[slot].set(item.id, ep);
-		return ep;
+		for (const unitStat of UnitStat.getAll()) {
+			addLine(unitStat.getName(this.getClass()), stats.getUnitStat(unitStat), this.epWeights.getUnitStat(unitStat));
+		}
+		return lines;
+	}
+
+	// Haste on gear is a percent, so we value it with the speed multiplier weights.
+	private computeHasteEPBreakdown(stats: Stats): Array<EPContribution> {
+		const lines: Array<EPContribution> = [];
+		const addLine = (name: string, amount: number, weight: number) => {
+			if (amount > 0 && weight !== 0) lines.push({ name, amount, weight, ep: amount * weight });
+		};
+		const meleeHaste = stats.getStat(Stat.StatMeleeHaste);
+		addLine('Melee Attack Speed', meleeHaste, this.epWeights.getPseudoStat(PseudoStat.PseudoStatMeleeSpeedMultiplier));
+		addLine('Ranged Attack Speed', meleeHaste, this.epWeights.getPseudoStat(PseudoStat.PseudoStatRangedSpeedMultiplier));
+		addLine('Casting Speed', stats.getStat(Stat.StatSpellHaste), this.epWeights.getPseudoStat(PseudoStat.PseudoStatCastSpeedMultiplier));
+		return lines;
 	}
 
 	setWowheadData(equippedItem: EquippedItem, elem: HTMLElement) {

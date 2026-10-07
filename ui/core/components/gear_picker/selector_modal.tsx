@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import tippy from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
-import { Player } from '../../player';
+import { EPContribution, Player } from '../../player';
 import { ItemRandomSuffix, ItemSlot } from '../../proto/common';
 import { UIEnchant, UIItem } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
@@ -159,6 +159,7 @@ export default class SelectorModal extends BaseModal {
 					};
 				}),
 				computeEP: (item: UIItem) => this.player.computeItemEP(item, selectedSlot),
+				computeEPBreakdown: (item: UIItem) => this.player.computeItemEPBreakdown(item, selectedSlot),
 				equippedToItemFn: (equippedItem: EquippedItem | null) => equippedItem?.item,
 				onRemove: (eventID: number) => {
 					gearData.equipItem(eventID, null);
@@ -192,6 +193,7 @@ export default class SelectorModal extends BaseModal {
 					};
 				}),
 				computeEP: (enchant: UIEnchant) => this.player.computeEnchantEP(enchant),
+				computeEPBreakdown: (enchant: UIEnchant) => this.player.computeEnchantEPBreakdown(enchant),
 				equippedToItemFn: (equippedItem: EquippedItem | null) => equippedItem?.enchant,
 				onRemove: (eventID: number) => {
 					const equippedItem = gearData.getEquippedItem();
@@ -316,6 +318,7 @@ export default class SelectorModal extends BaseModal {
 				};
 			}),
 			computeEP: (randomSuffix: ItemRandomSuffix) => this.player.computeRandomSuffixEP(randomSuffix),
+			computeEPBreakdown: (randomSuffix: ItemRandomSuffix) => this.player.computeRandomSuffixEPBreakdown(randomSuffix),
 			equippedToItemFn: (equippedItem: EquippedItem | null) => equippedItem?.randomSuffix,
 			onRemove: (eventID: number) => {
 				const equippedItem = gearData.getEquippedItem();
@@ -338,6 +341,7 @@ export default class SelectorModal extends BaseModal {
 		gearData,
 		itemData,
 		computeEP,
+		computeEPBreakdown,
 		equippedToItemFn,
 		onRemove,
 		setTabContent,
@@ -347,6 +351,7 @@ export default class SelectorModal extends BaseModal {
 		gearData: GearData;
 		itemData: ItemData<T>[];
 		computeEP: (item: T) => number;
+		computeEPBreakdown: (item: T) => Array<EPContribution>;
 		equippedToItemFn: (equippedItem: EquippedItem | null) => T | null | undefined;
 		onRemove: (eventID: EventID) => void;
 		setTabContent?: (tabElem: HTMLButtonElement) => void;
@@ -393,6 +398,7 @@ export default class SelectorModal extends BaseModal {
 			gearData,
 			itemData,
 			computeEP,
+			computeEPBreakdown,
 			equippedToItemFn,
 			onRemove,
 			itemData => {

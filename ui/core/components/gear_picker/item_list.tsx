@@ -6,7 +6,7 @@ import { SortDirection } from '../../constants/other';
 import { EP_TOOLTIP } from '../../constants/tooltips';
 import { setItemQualityCssClass } from '../../css_utils';
 import { IndividualSimUI } from '../../individual_sim_ui';
-import { Player } from '../../player';
+import { EPContribution, Player } from '../../player';
 import { Class, ItemQuality, ItemRandomSuffix, ItemSlot, ItemSpec } from '../../proto/common';
 import { DatabaseFilters, RepSource, UIEnchant, UIFaction, UIItem, UIItem_FactionRestriction } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
@@ -64,6 +64,7 @@ export default class ItemList<T extends ItemListType> {
 	private currentFilters: DatabaseFilters;
 	private searchInput: HTMLInputElement;
 	private computeEP: (item: T) => number;
+	private computeEPBreakdown: (item: T) => Array<EPContribution>;
 	private equippedToItemFn: (equippedItem: EquippedItem | null) => T | null | undefined;
 	private gearData: GearData;
 	private tabContent: Element;
@@ -86,6 +87,7 @@ export default class ItemList<T extends ItemListType> {
 		gearData: GearData,
 		itemData: Array<ItemData<T>>,
 		computeEP: (item: T) => number,
+		computeEPBreakdown: (item: T) => Array<EPContribution>,
 		equippedToItemFn: (equippedItem: EquippedItem | null) => T | null | undefined,
 		onRemove: (eventID: EventID) => void,
 		onItemClick: (itemData: ItemData<T>) => void,
@@ -96,6 +98,7 @@ export default class ItemList<T extends ItemListType> {
 		this.player = player;
 		this.itemData = itemData;
 		this.computeEP = computeEP;
+		this.computeEPBreakdown = computeEPBreakdown;
 		this.equippedToItemFn = equippedToItemFn;
 		this.onItemClick = onItemClick;
 
@@ -143,13 +146,12 @@ export default class ItemList<T extends ItemListType> {
 					</button>
 				</div>
 				<div className="selector-modal-list-labels">
-					{label === SelectorModalTabs.Items && <h6 className="ilvl-label interactive" onclick={sortByIlvl}>ILvl</h6>}
-					<h6 className="item-label">
-						{
-							label === SelectorModalTabs.Items ? "Item" :
-							label === SelectorModalTabs.Enchants ? "Enchant" : ""
-						}
-					</h6>
+					{label === SelectorModalTabs.Items && (
+						<h6 className="ilvl-label interactive" onclick={sortByIlvl}>
+							ILvl
+						</h6>
+					)}
+					<h6 className="item-label">{label === SelectorModalTabs.Items ? 'Item' : label === SelectorModalTabs.Enchants ? 'Enchant' : ''}</h6>
 					{label === SelectorModalTabs.Items && <h6 className="source-label">Source</h6>}
 					<h6 className="ep-label interactive" onclick={sortByEP}>
 						<span>EP</span>
@@ -404,6 +406,40 @@ export default class ItemList<T extends ItemListType> {
 		}
 	}
 
+	private makeEPBreakdownElem(item: T): JSX.Element {
+		const lines = this.computeEPBreakdown(item);
+		if (!lines.length) return <span>None of these stats has a stat weight</span>;
+
+		const formatNumber = (value: number, digits: number) => parseFloat(value.toFixed(digits)).toString();
+		return (
+			<table className="ep-breakdown">
+				<tbody>
+					{lines.map((line, i) => (
+						<>
+							{line.group && line.group !== lines[i - 1]?.group && (
+								<tr className="ep-breakdown-group">
+									<td colSpan={4}>{line.group}</td>
+								</tr>
+							)}
+							<tr className={clsx(line.group && 'ep-breakdown-grouped')}>
+								<td>{line.amount !== undefined ? formatNumber(line.amount, 2) : ''}</td>
+								<td>{line.name}</td>
+								<td>{line.weight !== undefined ? `x ${formatNumber(line.weight, 2)}` : ''}</td>
+								<td>{formatNumber(line.ep, 2)}</td>
+							</tr>
+						</>
+					))}
+					<tr className="ep-breakdown-total">
+						<td />
+						<td>Total</td>
+						<td />
+						<td>{formatNumber(this.computeEP(item), 2)}</td>
+					</tr>
+				</tbody>
+			</table>
+		);
+	}
+
 	private createItemElem(item: ItemDataWithIdx<T>): JSX.Element {
 		const itemData = item.data;
 		const itemEP = this.computeEP(itemData.item);
@@ -419,6 +455,7 @@ export default class ItemList<T extends ItemListType> {
 		const favoriteIconElem = ref<HTMLElement>();
 		const compareContainer = ref<HTMLDivElement>();
 		const compareButton = ref<HTMLButtonElement>();
+		const epElem = ref<HTMLDivElement>();
 
 		const listItemElem = (
 			<li className={clsx('selector-modal-list-item', equippedItemID === itemData.id && 'active')} dataset={{ idx: item.idx.toString() }}>
@@ -434,12 +471,10 @@ export default class ItemList<T extends ItemListType> {
 					</a>
 				</div>
 				{this.label === SelectorModalTabs.Items && (
-					<div className="selector-modal-list-item-source-container">
-						{this.getSourceInfo(itemData.item as unknown as UIItem, this.player.sim)}
-					</div>
+					<div className="selector-modal-list-item-source-container">{this.getSourceInfo(itemData.item as unknown as UIItem, this.player.sim)}</div>
 				)}
 				{![ItemSlot.ItemSlotTrinket1, ItemSlot.ItemSlotTrinket2].includes(this.slot) && (
-					<div className="selector-modal-list-item-ep">
+					<div className="selector-modal-list-item-ep" ref={epElem}>
 						<span className="selector-modal-list-item-ep-value">
 							{itemEP < 9.95 ? itemEP.toFixed(1).toString() : Math.round(itemEP).toString()}
 						</span>
@@ -509,6 +544,16 @@ export default class ItemList<T extends ItemListType> {
 		} else {
 			favoriteIconElem.value?.classList.add('far');
 			listItemElem.dataset.fav = 'false';
+		}
+
+		if (epElem.value) {
+			// We build the breakdown only when the tooltip opens, because the list can hold
+			// hundreds of items.
+			tippy(epElem.value, {
+				onShow: instance => {
+					instance.setContent(this.makeEPBreakdownElem(itemData.item));
+				},
+			});
 		}
 
 		const favoriteTooltip = tippy(favoriteElem.value!);
