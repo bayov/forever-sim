@@ -84,3 +84,388 @@
 		}
 	}
 }
+
+// The runs under the results of an individual sim, see SimHistory. Each row has the run's name,
+// its DPS, and how the latest run compares with it: green when the latest run did better, red
+// when it did worse.
+// The sections and their rows share the columns of this grid (with subgrid), so the names,
+// the DPS and the differences line up from section to section. A row leaves out the columns
+// it doesn't need, like the handle of a run that isn't pinned.
+.sim-history,
+.sim-history-modal .sim-history-list {
+	display: grid;
+	grid-template-columns:
+		[handle] auto [name] minmax(0, 1fr) [iterations] auto [dps] auto
+		[diff] auto [percent] auto;
+	column-gap: 0;
+}
+
+.sim-history {
+	row-gap: var(--spacer-3);
+	margin-top: var(--spacer-3);
+	text-align: left;
+	font-weight: normal;
+
+	&:empty {
+		display: none;
+	}
+}
+
+.sim-history-section,
+.sim-history .sim-history-list,
+.sim-run {
+	grid-column: 1 / -1;
+	display: grid;
+	grid-template-columns: subgrid;
+}
+
+.sim-history-section-header {
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-bottom: var(--spacer-1);
+
+	.sim-history-section-title {
+		font-family: var(--heading-font-family);
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--gold);
+	}
+
+	.sim-history-open {
+		padding: 0;
+		font-size: 0.75rem;
+		text-decoration: none;
+		color: var(--text-muted-color);
+
+		&:hover {
+			color: var(--bs-link-hover-color);
+		}
+	}
+}
+
+.sim-run {
+	align-items: center;
+	margin: 0 calc(-1 * var(--spacer-2));
+	padding: 0.15rem var(--spacer-2);
+	border-radius: var(--bs-border-radius-sm);
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+
+	&:hover {
+		background: var(--bs-primary-dampened);
+	}
+
+	&[draggable='true'] {
+		cursor: grab;
+	}
+
+	// Ctrl+click loads the run's settings, so the row shows the hand cursor while we hold Ctrl
+	// (see trackModifierKeys).
+	.ctrl-held &:hover {
+		cursor: pointer;
+	}
+
+	// The pin button at the start of the row. It shows the grip of a pinned run in the Pinned
+	// section, a gold pin for a pinned run elsewhere, and a faint dot for the others. When we
+	// hover the row, it turns into a pin for a run we haven't pinned, and into a crossed out
+	// pin (unpin) for one we have.
+	.sim-run-pin {
+		grid-column: handle;
+		position: relative;
+		width: 1em;
+		margin-right: var(--spacer-2);
+		padding: 0;
+		border: 0;
+		background: none;
+		font-size: 0.75em;
+		color: var(--text-muted-color);
+
+		.sim-run-pin-hover {
+			display: none;
+		}
+
+		// A faint dot for a run we haven't pinned, so the rows don't look like they miss
+		// something.
+		.sim-run-pin-placeholder {
+			font-size: 0.35em;
+			vertical-align: middle;
+			opacity: 0.45;
+		}
+
+		&:hover {
+			color: $body-color;
+		}
+
+		&.active {
+			.fa-thumbtack {
+				color: var(--gold);
+			}
+
+			.sim-run-pin-hover::after {
+				content: '';
+				position: absolute;
+				top: 50%;
+				left: -0.15em;
+				right: -0.15em;
+				height: 0.14em;
+				background: currentColor;
+				box-shadow: 0 0 0 0.08em var(--sidebar-bg);
+				transform: rotate(-45deg);
+			}
+
+			&:hover .sim-run-pin-hover {
+				color: $body-color;
+			}
+		}
+	}
+
+	&:hover .sim-run-pin {
+		.sim-run-pin-idle {
+			display: none;
+		}
+
+		.sim-run-pin-hover {
+			display: inline;
+		}
+	}
+
+	// The name, with the rename button right after it.
+	.sim-run-title {
+		grid-column: name;
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+		min-width: 0;
+	}
+
+	&.renaming .sim-run-rename {
+		display: none;
+	}
+
+	.sim-run-name,
+	.sim-run-name-input {
+		font-family: var(--bs-font-monospace);
+		font-size: 0.85em;
+	}
+
+	.sim-run-name {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.sim-run-unnamed {
+		color: var(--text-muted-color);
+	}
+
+	// The text field for a new name takes the place of the name with the same font and
+	// height, so the row doesn't move. Only a line under it tells it apart.
+	.sim-run-name-input {
+		flex: 1;
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		outline: 0;
+		background: none;
+		color: $body-color;
+		line-height: inherit;
+		letter-spacing: inherit;
+		box-shadow: inset 0 -1px 0 var(--gold);
+
+		&::placeholder {
+			color: var(--text-muted-color);
+		}
+	}
+
+	.sim-run-iterations,
+	.sim-run-dps {
+		margin-left: var(--spacer-3);
+		text-align: right;
+		color: var(--text-muted-color);
+	}
+
+	.sim-run-iterations {
+		grid-column: iterations;
+	}
+
+	.sim-run-dps {
+		grid-column: dps;
+	}
+
+	.sim-run-diff,
+	.sim-run-percent {
+		text-align: right;
+	}
+
+	.sim-run-diff {
+		grid-column: diff;
+		margin-left: var(--spacer-2);
+		font-weight: bold;
+	}
+
+	.sim-run-percent {
+		grid-column: percent;
+		margin-left: var(--spacer-1);
+		font-size: 0.85em;
+	}
+
+	// The latest run says so in place of the difference with itself.
+	.sim-run-latest-tag {
+		grid-column: diff / span 2;
+		margin-left: var(--spacer-2);
+		text-align: right;
+		font-size: 0.7em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	// The rename button shows when we hover the row.
+	.sim-run-action {
+		padding: 0;
+		border: 0;
+		background: none;
+		font-size: 0.75em;
+		color: var(--text-muted-color);
+		visibility: hidden;
+
+		&:hover {
+			color: $body-color;
+		}
+	}
+
+	&:hover .sim-run-action {
+		visibility: visible;
+	}
+
+	&.dragging {
+		opacity: 0.4;
+	}
+
+	// A line where the run we drag would go.
+	&.drop-before {
+		box-shadow: inset 0 2px 0 var(--gold);
+	}
+
+	&.drop-after {
+		box-shadow: inset 0 -2px 0 var(--gold);
+	}
+}
+
+// The date and time in a run's tooltip, under its name.
+.sim-run-time {
+	color: var(--text-muted-color);
+}
+
+.sim-run-higher :is(.sim-run-diff, .sim-run-percent),
+.sim-run-verdict.sim-run-higher {
+	color: $success;
+}
+
+.sim-run-lower :is(.sim-run-diff, .sim-run-percent),
+.sim-run-verdict.sim-run-lower {
+	color: $danger;
+}
+
+// The dialog has room for bigger rows, with the iterations of each run.
+.sim-history-modal {
+	.sim-history-modal-intro {
+		color: var(--text-muted-color);
+	}
+
+	.sim-run {
+		margin: 0;
+		padding: var(--spacer-1) var(--spacer-2);
+		font-size: 1rem;
+
+		& + .sim-run {
+			border-top: 1px solid var(--line-color);
+		}
+	}
+}
+
+// The progress bar of a running sim, see sim_progress.tsx. The text sits on the bar: how far
+// along it is on the left, and the time left on the right.
+.sim-progress {
+	position: relative;
+	overflow: hidden;
+	min-height: 1.75rem;
+	border: 1px solid var(--line-color);
+	border-radius: var(--bs-border-radius);
+	background: var(--bs-black-alpha-50, rgba(0, 0, 0, 0.5));
+	font-size: var(--content-font-size);
+
+	.sim-progress-fill {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: 0;
+		background: linear-gradient(90deg, rgba($primary, 0.35), rgba($primary, 0.7));
+		transition: width 0.25s linear;
+
+		// A light that sweeps across the filled part, so we can tell the sim is alive.
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+			transform: translateX(-100%);
+			animation: sim-progress-sweep 1.6s ease-in-out infinite;
+		}
+	}
+
+	.sim-progress-label {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacer-2);
+		padding: 0 var(--spacer-2);
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+		color: $body-color;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+	}
+
+	.sim-progress-done {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.sim-progress-eta {
+		color: var(--bs-gray-400);
+	}
+
+	// Before the iterations start (while the presims run), a short block slides across.
+	&.sim-progress-indeterminate .sim-progress-fill {
+		width: 30% !important;
+		transition: none;
+		animation: sim-progress-slide 1.2s ease-in-out infinite alternate;
+
+		&::after {
+			display: none;
+		}
+	}
+}
+
+@keyframes sim-progress-sweep {
+	to {
+		transform: translateX(100%);
+	}
+}
+
+@keyframes sim-progress-slide {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(233%);
+	}
+}

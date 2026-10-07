@@ -10,40 +10,53 @@ import { RequestTypes } from '../sim_signal_manager';
 import { SimUI } from '../sim_ui';
 import { EventID, TypedEvent } from '../typed_event';
 import { formatDeltaTextElem, formatToNumber, formatToPercent, sum } from '../utils';
+import type { SimHistory } from './sim_history';
+import { SimProgress } from './sim_progress';
 
 export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
-	const resultsViewer = simUI.resultsViewer
 	let isRunning = false;
 	let waitAbort = false;
 
+	// While a sim runs, a progress bar takes the place of the iterations field, and the Simulate
+	// button turns into a Stop button. So the sidebar keeps its layout, and nothing under it moves.
 	simUI.addAction('Simulate', 'dps-action', async ev => {
-		const button = ev.target as HTMLButtonElement;
-		button.disabled = true;
-		if (!isRunning) {
-			isRunning = true;
-
-			resultsViewer.addAbortButton(async () => {
-				if (waitAbort) return;
-				try {
-					waitAbort = true;
-					await simUI.sim.signalManager.abortType(RequestTypes.RaidSim);
-				} catch (error) {
-					console.error('Error on sim abort!');
-					console.error(error);
-				} finally {
-					waitAbort = false;
-					if (!isRunning) button.disabled = false;
-				}
-			});
-
-			await simUI.runSim((progress: ProgressMetrics) => {
-				resultsManager.setSimProgress(progress);
-			});
-
-			resultsViewer.removeAbortButton();
-			if (!waitAbort) button.disabled = false;
-			isRunning = false;
+		const button = ev.currentTarget as HTMLButtonElement;
+		if (isRunning) {
+			if (waitAbort) return;
+			waitAbort = true;
+			button.disabled = true;
+			try {
+				await simUI.sim.signalManager.abortType(RequestTypes.RaidSim);
+			} catch (error) {
+				console.error('Error on sim abort!');
+				console.error(error);
+			} finally {
+				waitAbort = false;
+			}
+			return;
 		}
+		isRunning = true;
+
+		const progressBar = new SimProgress();
+		simUI.iterationsPicker.appendChild(progressBar.rootElem);
+		simUI.simActionsContainer.classList.add('running');
+		// Stop is shorter than Simulate, and the button keeps its width so the bar doesn't grow.
+		button.style.minWidth = `${button.getBoundingClientRect().width}px`;
+		button.replaceChildren(<i className="fas fa-stop me-1" />, 'Stop');
+
+		resultsManager.simHistory?.startRun();
+		await simUI.runSim((progress: ProgressMetrics) => {
+			progressBar.update(progress);
+			resultsManager.setSimProgress(progress);
+		});
+		resultsManager.simHistory?.finishRun();
+
+		progressBar.rootElem.remove();
+		simUI.simActionsContainer.classList.remove('running');
+		button.style.minWidth = '';
+		button.textContent = 'Simulate';
+		button.disabled = false;
+		isRunning = false;
 	});
 
 	const resultsManager = new RaidSimResultsManager(simUI);
@@ -128,6 +141,10 @@ export class RaidSimResultsManager {
 	private currentData: ReferenceData | null = null;
 	private referenceData: ReferenceData | null = null;
 
+	// The individual sims keep a history of runs, with pinned runs as references, instead of
+	// the one reference here. See SimHistory. The raid sim has none.
+	simHistory: SimHistory | null = null;
+
 	constructor(simUI: SimUI) {
 		this.simUI = simUI;
 
@@ -149,11 +166,6 @@ export class RaidSimResultsManager {
 						<span className="topline-result-avg">{progress.hps.toFixed(2)}</span>
 					</div>
 				)}
-				<div>
-					{progress.presimRunning ? 'presimulations running' : `${progress.completedIterations} / ${progress.totalIterations}`}
-					<br />
-					iterations complete
-				</div>
 			</div>,
 		);
 	}
@@ -169,6 +181,11 @@ export class RaidSimResultsManager {
 			encounterProto: EncounterProto.clone(simResult.request.encounter || EncounterProto.create()),
 		};
 		this.currentChangeEmitter.emit(eventID);
+
+		if (this.simHistory) {
+			this.simHistory.showRun(simResult);
+			return;
+		}
 
 		this.simUI.resultsViewer.setContent(
 			<div className="results-sim">
@@ -189,42 +206,7 @@ export class RaidSimResultsManager {
 			</div>,
 		);
 
-		const setResultTooltip = (selector: string, content: Element | HTMLElement | string) => {
-			const resultDivElem = this.simUI.resultsViewer.contentElem.querySelector<HTMLElement>(selector);
-			if (resultDivElem) {
-				tippy(resultDivElem, { content, placement: 'right' });
-			}
-		};
-		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['dps']}`, 'Damage Per Second');
-		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['dpasp']}`, 'Demonic Pact Average Spell Power');
-		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['tto']}`, 'Time To OOM');
-		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['hps']}`, 'Healing+Shielding Per Second, including overhealing.');
-		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['tps']}`, 'Threat Per Second');
-		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['dtps']}`, 'Damage Taken Per Second');
-		setResultTooltip(
-			`.${RaidSimResultsManager.resultMetricClasses['tmi']}`,
-			<>
-				<p>Theck-Meloree Index (TMI)</p>
-				<p>A measure of incoming damage smoothness which combines the benefits of avoidance with effective health.</p>
-				<p className="mb-0">
-					<b>Lower is better.</b> This represents the % of your HP to expect in a 6-second burst window based on the encounter settings.
-				</p>
-			</>,
-		);
-		setResultTooltip(
-			`.${RaidSimResultsManager.resultMetricClasses['cod']}`,
-			<>
-				<p>Chance of Death</p>
-				<p>
-					The percentage of iterations in which the player died, based on incoming damage from the enemies and incoming healing (see the{' '}
-					<b>Incoming HPS</b> and <b>Healing Cadence</b> options).
-				</p>
-				<p className="mb-0">
-					DTPS alone is not a good measure of tankiness because it is not affected by health and ignores damage spikes. Chance of Death attempts to
-					capture overall tankiness.
-				</p>
-			</>,
-		);
+		RaidSimResultsManager.addMetricTooltips(this.simUI.resultsViewer.contentElem);
 
 		if (!this.simUI.isIndividualSim()) {
 			[...this.simUI.resultsViewer.contentElem.querySelectorAll(`.${RaidSimResultsManager.resultMetricClasses['dpasp']}`)].forEach(e => e.remove());
@@ -281,6 +263,48 @@ export class RaidSimResultsManager {
 		});
 
 		this.updateReference();
+	}
+
+	// The tooltips that say what each result in the sidebar is, like 'Time To OOM'. The ones in
+	// skip get their own, like the DPS of an individual sim.
+	static addMetricTooltips(container: HTMLElement, skip: Array<keyof ResultMetrics> = []) {
+		const setResultTooltip = (selector: string, content: Element | HTMLElement | string) => {
+			if (skip.some(metric => selector === `.${RaidSimResultsManager.resultMetricClasses[metric]}`)) return;
+			const resultDivElem = container.querySelector<HTMLElement>(selector);
+			if (resultDivElem) {
+				tippy(resultDivElem, { content, placement: 'right' });
+			}
+		};
+		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['dps']}`, 'Damage Per Second');
+		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['dpasp']}`, 'Demonic Pact Average Spell Power');
+		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['tto']}`, 'Time To OOM');
+		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['hps']}`, 'Healing+Shielding Per Second, including overhealing.');
+		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['tps']}`, 'Threat Per Second');
+		setResultTooltip(`.${RaidSimResultsManager.resultMetricClasses['dtps']}`, 'Damage Taken Per Second');
+		setResultTooltip(
+			`.${RaidSimResultsManager.resultMetricClasses['tmi']}`,
+			<>
+				<p>Theck-Meloree Index (TMI)</p>
+				<p>A measure of incoming damage smoothness which combines the benefits of avoidance with effective health.</p>
+				<p className="mb-0">
+					<b>Lower is better.</b> This represents the % of your HP to expect in a 6-second burst window based on the encounter settings.
+				</p>
+			</>,
+		);
+		setResultTooltip(
+			`.${RaidSimResultsManager.resultMetricClasses['cod']}`,
+			<>
+				<p>Chance of Death</p>
+				<p>
+					The percentage of iterations in which the player died, based on incoming damage from the enemies and incoming healing (see the{' '}
+					<b>Incoming HPS</b> and <b>Healing Cadence</b> options).
+				</p>
+				<p className="mb-0">
+					DTPS alone is not a good measure of tankiness because it is not affected by health and ignores damage spikes. Chance of Death attempts to
+					capture overall tankiness.
+				</p>
+			</>,
+		);
 	}
 
 	private updateReference() {
@@ -415,6 +439,13 @@ export class RaidSimResultsManager {
 	}
 
 	static makeToplineResultsContent(simResult: SimResult, filter?: SimResultFilter, options: ToplineResultOptions = {}) {
+		const resultColumns = this.toplineColumns(simResult, filter, options);
+		if (options.asList) return this.buildResultsList(resultColumns);
+		return this.buildResultsTable(resultColumns);
+	}
+
+	// The results to show for a run, like its DPS and TPS, each with its average and spread.
+	static toplineColumns(simResult: SimResult, filter?: SimResultFilter, options: ToplineResultOptions = {}): ResultMetric[] {
 		const { showOutOfMana = false } = options;
 
 		const players = simResult.getRaidIndexedPlayers(filter);
@@ -558,8 +589,7 @@ export class RaidSimResultsManager {
 			});
 		}
 
-		if (options.asList) return this.buildResultsList(resultColumns);
-		return this.buildResultsTable(resultColumns);
+		return resultColumns;
 	}
 
 	private static getResultsLineClasses(metric: keyof ResultMetrics): string {
@@ -625,7 +655,7 @@ export class RaidSimResultsManager {
 		);
 	}
 
-	private static buildResultsList(data: ResultMetric[]): Element {
+	static buildResultsList(data: ResultMetric[]): Element {
 		return (
 			<>
 				{data.map(column => {
@@ -655,7 +685,7 @@ type ToplineResultOptions = {
 	asList?: boolean;
 };
 
-type ResultMetric = {
+export type ResultMetric = {
 	name: keyof typeof TOOLTIP_METRIC_LABELS;
 	average: number;
 	stdev?: number;

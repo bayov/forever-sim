@@ -120,6 +120,12 @@ $ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y)
 			background: var(--bs-black-alpha-50);
 		}
 
+		// The progress bar over the table, with the Stop button under it.
+		.stat-weights-progress {
+			width: min(22rem, 80vw);
+			margin-bottom: var(--spacer-2);
+		}
+
 		.results-ep-table {
 			width: auto;
 

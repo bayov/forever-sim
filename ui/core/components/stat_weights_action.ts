@@ -13,9 +13,10 @@ import { EventID, TypedEvent } from '../typed_event.js';
 import { stDevToConf90 } from '../utils.js';
 import { Component } from './component.js';
 import { ContentBlock } from './content_block.js';
-import { dirtySettings, PresetSource } from './dirty_settings.js';
-import { presetListTooltip, PresetTree } from './preset_tree.js';
+import { presetListTooltip } from './preset_tree.js';
 import { ResultsViewer } from './results_viewer.js';
+import { SavedDataManager } from './saved_data_manager.js';
+import { SimProgress } from './sim_progress';
 
 // Stat weights are a section of the Gear tab, under the gear, because the weights are for
 // picking gear. The raid sim's player editor leaves it out, like the sidebar actions.
@@ -264,7 +265,8 @@ class EpWeightsMenu extends Component {
 			calcButton.innerHTML = `<i class="fa fa-spinner fa-spin"></i>&nbsp;Running`;
 			this.container.scrollTo({ top: 0 });
 			this.container.classList.add('pending');
-			this.resultsViewer.setPending();
+			const progressBar = new SimProgress('stat-weights-progress');
+			this.resultsViewer.setContent(progressBar.rootElem);
 			const iterations = this.iterations;
 
 			let waitAbort = false;
@@ -290,9 +292,7 @@ class EpWeightsMenu extends Component {
 				this.epStats,
 				this.epPseudoStats,
 				this.epReferenceStat,
-				(progress: ProgressMetrics) => {
-					this.setSimProgress(progress);
-				},
+				(progress: ProgressMetrics) => progressBar.update(progress),
 				iterations,
 			);
 			this.container.classList.remove('pending');
@@ -480,66 +480,45 @@ class EpWeightsMenu extends Component {
 		}
 	}
 
-	// One row for each of the spec's stat weight presets. A click makes it the Current EP,
-	// and the row stays lit while the Current EP matches it.
+	// The spec's stat weight presets and our own, in a list like the other presets. A click
+	// makes one the Current EP, and its row stays lit while the Current EP matches it.
 	private buildPresets() {
 		const container = this.body.querySelector('.ep-weights-presets') as HTMLElement;
 		const player = this.simUI.player;
-		const presets = (this.simUI.individualConfig.presets.epWeights ?? []).filter(preset => !preset.enableWhen || preset.enableWhen(player));
-		if (!presets.length) {
-			container.remove();
-			return;
-		}
-
-		const tree = new PresetTree(this.simUI.getStorageKey('__epWeightsOpenFolders__'), this.simUI.getStorageKey('__selectedEpWeights__'));
-		container.querySelector('.saved-data-presets')!.appendChild(tree.rootElem);
 		tippy(container.querySelector('span')!, {
 			content: presetListTooltip('Loading stat weights changes:', ['The weight of every stat, which the EP in the gear picker uses']),
 		});
 
-		const presetByItem = new Map<HTMLElement, (typeof presets)[number]>();
-		const source: PresetSource = {
-			selected: () => {
-				const preset = presetByItem.get(tree.selected()?.item as HTMLElement);
-				return preset && { apply: () => player.setEpWeights(TypedEvent.nextEventID(), preset.epWeights) };
-			},
-		};
-		presets.forEach(preset => {
-			const item = PresetTree.makeItem(preset.name);
-			presetByItem.set(item, preset);
-			tree.onClick(item, () => {
-				player.setEpWeights(TypedEvent.nextEventID(), preset.epWeights);
-				preset.onLoad?.(player);
-				// The preset may weigh stats the table hides, like Stamina for PvP.
-				this.updateTable();
-			});
-			tree.attachTooltip(item, preset.tooltip, 'right', () => dirtySettings.changesFor(source));
-			tree.track(item, { name: preset.name, matches: () => player.getEpWeights().equals(preset.epWeights) });
-			tree.add(item, preset.group);
+		const manager = new SavedDataManager<Player<any>, Stats>(container.querySelector('.saved-data-presets') as HTMLElement, player, {
+			label: 'Stat Weights',
+			storageKey: this.simUI.getStorageKey('__savedEpWeights__'),
+			changeEmitters: [player.epWeightsChangeEmitter],
+			equals: (a, b) => a.equals(b),
+			getData: player => player.getEpWeights(),
+			setData: (eventID, player, weights) => player.setEpWeights(eventID, weights),
+			toJson: weights => weights.toJson(),
+			fromJson: obj => Stats.fromJson(obj),
 		});
+		manager.loadUserData();
+		(this.simUI.individualConfig.presets.epWeights ?? []).forEach(preset =>
+			manager.addSavedData({
+				name: preset.name,
+				tooltip: preset.tooltip,
+				group: preset.group,
+				isPreset: true,
+				data: preset.epWeights,
+				enableWhen: preset.enableWhen,
+				onLoad: preset.onLoad,
+			}),
+		);
 
 		// The Current EP column follows the weights we load anywhere, like with a preset
-		// configuration.
-		const listener = player.epWeightsChangeEmitter.on(() => {
-			tree.refresh();
-			this.updateTable();
-		});
-		const disposeSource = dirtySettings.addSource(source);
+		// configuration. A preset may weigh stats the table hides, like Stamina for PvP.
+		const listener = player.epWeightsChangeEmitter.on(() => this.updateTable());
 		this.addOnDisposeCallback(() => {
 			listener.dispose();
-			disposeSource();
+			manager.dispose();
 		});
-	}
-
-	private setSimProgress(progress: ProgressMetrics) {
-		this.resultsViewer.setContent(`
-			<div class="results-sim">
-				<div class=""> ${progress.completedSims} / ${progress.totalSims}<br>simulations complete</div>
-				<div class="">
-					${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
-				</div>
-			</div>
-		`);
 	}
 
 	private updateTable() {
