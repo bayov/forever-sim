@@ -12,6 +12,7 @@ import { SimUI } from '../../sim_ui';
 import { EventID } from '../../typed_event';
 import { Component } from '../component';
 import { dirtySettings } from '../dirty_settings';
+import { itemLink, enchantLink } from './item_links';
 import { GearData } from './item_list';
 import SelectorModal, { SelectorModalTabs } from './selector_modal';
 import { getEmptySlotIconUrl } from './utils';
@@ -200,15 +201,28 @@ export class ItemPicker extends Component {
 			this.item = this.player.getEquippedItem(this.slot);
 		});
 
+		// The item and its enchant are two settings, so the changes on a modified preset list
+		// them on their own lines ("Legs" and "Legs Enchant").
+		const slotName = slotNames.get(this.slot) ?? 'Item';
 		dirtySettings.track({
 			elem: this.rootElem,
-			read: () => this.player.getEquippedItem(this.slot)?.asSpec() ?? null,
-			name: () => slotNames.get(this.slot) ?? 'Item',
+			read: () => {
+				const spec = this.player.getEquippedItem(this.slot)?.asSpec();
+				return spec ? ItemSpec.create({ id: spec.id, randomSuffix: spec.randomSuffix }) : null;
+			},
+			name: () => slotName,
 			format: spec => {
 				const item = spec ? this.player.sim.db.lookupItemSpec(spec as ItemSpec) : null;
-				if (!item) return 'empty';
-				const name = item.item.name + (item.randomSuffix ? ' ' + item.randomSuffix.name : '');
-				return item.enchant ? `${name} (${item.enchant.name})` : name;
+				return item ? itemLink(item) : 'empty';
+			},
+		});
+		dirtySettings.track({
+			elem: this.rootElem,
+			read: () => this.player.getEquippedItem(this.slot)?.enchant?.effectId ?? 0,
+			name: () => `${slotName} Enchant`,
+			format: effectId => {
+				const enchant = this.player.sim.db.getEnchants(this.slot).find(enchant => enchant.effectId === effectId);
+				return enchant ? enchantLink(enchant) : 'none';
 			},
 		});
 

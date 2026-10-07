@@ -74,6 +74,10 @@ export class PresetTree {
 	attachTooltip(item: HTMLElement, tooltip: string | undefined, placement: Placement, changes?: () => ChangeCategory[]) {
 		tippy(item, {
 			placement,
+			// The changed items and enchants are links, and we move the mouse onto them to see
+			// their tooltips. The tooltip goes in body, because the sidebar would cut it off.
+			interactive: true,
+			appendTo: () => document.body,
 			onShow: instance => {
 				const modified = this.selected()?.item === item && item.classList.contains('dirty');
 				if (!tooltip && !modified) return false;

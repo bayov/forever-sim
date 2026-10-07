@@ -13,8 +13,9 @@ export interface TrackedSetting {
 	name?: () => string;
 	// The value in the list of changes, like '60' or 'Crown of Destruction'. Left out means
 	// we write simple values as they are, see formatValue(). An empty string means we only
-	// list the name, for values like a whole rotation.
-	format?: (value: unknown) => string;
+	// list the name, for values like a whole rotation. An element goes in as it is, like an
+	// item link we can hover for its tooltip.
+	format?: (value: unknown) => string | HTMLElement;
 }
 
 // A list of presets where one can be selected, like the gear sets or the preset
@@ -27,8 +28,11 @@ export interface PresetSource {
 // a tab carry its name in data-preset-category.
 export interface ChangeCategory {
 	name: string;
-	lines: string[];
+	lines: ChangeLine[];
 }
+
+// A line is plain text, or an element when its values are links.
+export type ChangeLine = string | HTMLElement;
 
 // Takes a copy of every setting and returns a way to put them back.
 export type SettingsSnapshot = () => () => void;
@@ -80,30 +84,28 @@ class DirtySettings {
 	// in lines like 'Duration: 120 → 90', under the tab they're on (Gear, Settings and so
 	// on), in the order of the tabs.
 	changesFor(source: PresetSource): ChangeCategory[] {
-		const categories = new Map<string, Set<string>>();
+		// The lines of each category by their text, because a setting can show twice on one tab.
+		const categories = new Map<string, Map<string, ChangeLine>>();
 		(this.changes.get(source) ?? []).forEach(({ setting, preset, current }) => {
 			const name = setting.name?.() ?? nameFromPage(setting.elem);
 			const format = setting.format ?? formatValue;
-			const from = format(JSON.parse(preset));
-			const to = format(JSON.parse(current));
-			const line = from || to ? `${name}: ${from || 'none'} → ${to || 'none'}` : name;
+			const line = changeLine(name, format(JSON.parse(preset)), format(JSON.parse(current)));
 			const category = setting.elem.closest<HTMLElement>('[data-preset-category]')?.dataset.presetCategory ?? 'Other';
-			// A Set, because a setting can show twice on one tab.
-			if (!categories.has(category)) categories.set(category, new Set());
-			categories.get(category)!.add(line);
+			if (!categories.has(category)) categories.set(category, new Map());
+			categories.get(category)!.set(lineText(line), line);
 		});
 
 		// A setting outside the tabs (in the encounter's Advanced dialog) is listed under
 		// Other, unless it also shows on a tab.
 		const other = categories.get('Other');
-		other?.forEach(line => {
-			if (Array.from(categories).some(([name, lines]) => name !== 'Other' && lines.has(line))) other.delete(line);
+		other?.forEach((_, text) => {
+			if (Array.from(categories).some(([name, lines]) => name !== 'Other' && lines.has(text))) other.delete(text);
 		});
 		if (other?.size === 0) categories.delete('Other');
 
 		const order = Array.from(document.querySelectorAll<HTMLElement>('[data-preset-category]')).map(elem => elem.dataset.presetCategory);
 		const rank = (name: string) => (order.includes(name) ? order.indexOf(name) : order.length);
-		return Array.from(categories, ([name, lines]) => ({ name, lines: Array.from(lines) })).sort((a, b) => rank(a.name) - rank(b.name));
+		return Array.from(categories, ([name, lines]) => ({ name, lines: Array.from(lines.values()) })).sort((a, b) => rank(a.name) - rank(b.name));
 	}
 
 	// Only the individual sims set this. Without it we mark nothing.
@@ -156,7 +158,10 @@ class DirtySettings {
 			}
 		}
 
-		settings.forEach(setting => setting.elem.classList.toggle('dirty-setting', dirty.has(setting)));
+		// Some elements hold more than one setting, like a gear slot with its item and its
+		// enchant. They're marked when any of them changed.
+		const dirtyElems = new Set(Array.from(dirty, setting => setting.elem));
+		settings.forEach(setting => setting.elem.classList.toggle('dirty-setting', dirtyElems.has(setting.elem)));
 		this.listeners.forEach(listener => listener());
 	}
 }
@@ -170,6 +175,21 @@ function readKey(setting: TrackedSetting): string {
 	} catch {
 		return 'null';
 	}
+}
+
+// A line like 'Duration: 120 → 90'. With an element for a value, the line is an element too.
+function changeLine(name: string, from: string | HTMLElement, to: string | HTMLElement): ChangeLine {
+	const isEmpty = (value: string | HTMLElement) => typeof value === 'string' && !value;
+	if (isEmpty(from) && isEmpty(to)) return name;
+	const value = (value: string | HTMLElement) => (isEmpty(value) ? 'none' : value);
+	if (typeof from === 'string' && typeof to === 'string') return `${name}: ${value(from)} → ${value(to)}`;
+	const line = document.createElement('span');
+	line.append(`${name}: `, value(from), ' → ', value(to));
+	return line;
+}
+
+function lineText(line: ChangeLine): string {
+	return typeof line === 'string' ? line : line.textContent ?? '';
 }
 
 function formatValue(value: unknown): string {
