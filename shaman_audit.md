@@ -32,7 +32,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 2.3 Five second rule: what starts it, regen while casting (Mindfulness, Polished Driftwood Icon, Improved Stormstrike)
 - [x] 2.4 MP5: gear, Blessing of Wisdom, Mageblood, Mana Spring
 - [x] 2.5 Mana returns: Judgement of Wisdom on melee hits, Water Shield globes, Mana Tide
-- [ ] 2.6 Potions and Demonic Rune: amounts, shared cooldown, when the rotation uses them
+- [x] 2.6 Potions and Demonic Rune: amounts, shared cooldown, when the rotation uses them
 - [ ] 2.7 Mana costs: base cost by rank, cost modifiers (Totemic Focus, Convection, Shamanistic Focus, Clearcasting, Maelstrom Weapon), what happens when we can't pay
 
 ## 3. Timing
@@ -352,9 +352,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Mana Tide Totem: 88 / 197 / 290 mana every 3 sec, 4 times, to the party members with mana, 5 min cooldown. It takes the water slot and stops Mana Spring Totem. Rank 1 matches the beta client text.
 - `mana_returns_test.go`: TestOrcShamanJudgementOfWisdom (457 procs on 901 unarmed swings at level 60, 50.7%, 135 of them missed or dodged, 59 each, 42.8% if misses didn't roll), TestOrcShamanWaterShield (a hit every 5 sec spends a globe each time, a hit every 3 sec only every other hit), TestOrcShamanManaTide (ticks at 3 / 6 / 9 / 12 sec after the drop, Mana Spring gone). Taking the miss rolls out of Judgement of Wisdom, a 1 sec globe wait, or leaving Mana Spring up under Mana Tide each make the tests fail. Nothing changed in the sim.
 
-### Pre-checks for section 2 (not yet shown to the user)
+### 2.6 Potions and Demonic Rune
 
-- 2.2 Spirit regen is 15 + Spirit / 5 per 2 sec (7.5 + Spirit / 10 a second, `mana.go` SpiritManaRegenPerSecondDefault), the 1.12 shaman formula. Under Forever the bar fills continuously (`mana.go` initManaRegen, settle), Classic ticks every 2 sec.
+- wowhead Forever (2026-10-08, the user's pick of source) has the Classic values for every mana potion (Lesser 280-360, Mana 455-585, Greater 700-900, Superior 900-1500, Major 1350-2250) and for Demonic Rune (900-1500 mana for 600-1000 health). Potions share a 2 min cooldown. Demonic Rune, healthstones and Minor Recombobulator share another one.
+- Fixed (2026-10-08): Lesser Mana Potion gave 270-330. Minor Recombobulator had a 2 min cooldown where both versions say 5 min, and under Forever it gives 96-160 mana (Classic 150-250). No preset uses either, and no golden changed.
+- Demonic Rune doesn't take its health in the sim. Only the Level 60 preset uses it, and nothing hits the shaman there.
+- The rotation uses one once the missing mana is at least its top roll plus 2 sec of regen while casting.
+- `potions_test.go` TestOrcShamanManaConsumables uses each 300 times and checks the roll range, the cooldown and when the rotation uses it. The old Lesser Mana Potion values make it fail.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
