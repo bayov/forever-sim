@@ -1,5 +1,6 @@
 @mixin theme-color($base-color, $opacity, $background-image-url) {
-	$background-color-hex: mix(black, $base-color, 90%);
+	// The page is the theme's slate blue with a touch of the class color.
+	$background-color-hex: mix($body-bg, $base-color, 92%);
 	$hover-color: shade-color($base-color, $btn-hover-bg-shade-amount);
 	$interact-color: shade-color($base-color, $btn-active-bg-shade-amount);
 	$text-color: color-contrast($base-color);
@@ -61,6 +62,16 @@
 	--bs-form-check-radio-bg-image: #{escape-svg(
 			url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{$text-color}'/></svg>")
 		)};
+}
+
+// A dark, see-through card with a thin line around it, for a section that sits on the class
+// art behind the page.
+@mixin panel-card {
+	padding: var(--spacer-3) 0.75rem;
+	background: rgba($panel-bg, 0.82);
+	border: 1px solid var(--line-color);
+	border-radius: var(--panel-radius);
+	box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.35);
 }
 
 @mixin vertical-top {

@@ -12,14 +12,28 @@
 	}
 }
 
+// Unequipping is an outline in red until we point at it, so it doesn't pull the eye from the
+// items.
+.selector-modal-remove-button.btn-danger {
+	--bs-btn-bg: transparent;
+	--bs-btn-color: #f08a80;
+	--bs-btn-border-color: rgba(240, 138, 128, 0.5);
+}
+
 .selector-modal-tab-content {
 	.selector-modal-tab-pane {
 		padding: 0;
 
+		// The search and filters sit together in a darker bar, like the item search on
+		// foreverchanges.pro.
 		.selector-modal-filters {
-			margin-bottom: var(--bs-modal-padding);
+			margin-bottom: var(--spacer-3);
+			padding: var(--spacer-2) var(--spacer-3);
 			display: flex;
 			align-items: center;
+			background: rgba(0, 0, 0, 0.25);
+			border: 1px solid var(--line-color);
+			border-radius: var(--panel-radius);
 
 			& > *:not(:last-child) {
 				margin-right: var(--spacer-2);

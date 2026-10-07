@@ -3,13 +3,13 @@ import { IndividualSimUI } from '../../individual_sim_ui';
 import { PresetBuild } from '../../preset_utils';
 import { APLRotation, APLRotation_Type } from '../../proto/apl';
 import { Consumes, Debuffs, Encounter, EquipmentSpec, HealingModel, IndividualBuffs, RaidBuffs, Spec } from '../../proto/common';
-import { SavedTalents } from '../../proto/ui';
+import { IndividualSimSettings, SavedTalents } from '../../proto/ui';
 import { statNames } from '../../proto_utils/names';
-import { TypedEvent } from '../../typed_event';
+import { EventID, TypedEvent } from '../../typed_event';
 import { Component } from '../component';
-import { ContentBlock } from '../content_block';
-import { ChangeCategory, dirtySettings, PresetSource } from '../dirty_settings';
-import { presetListTooltip, PresetTree } from '../preset_tree';
+import { ChangeCategory } from '../dirty_settings';
+import { presetListTooltip } from '../preset_tree';
+import { SavedDataManager } from '../saved_data_manager';
 
 // What a preset configuration can set, in the order we list it.
 const BUILD_PARTS: Array<{ name: string; has: (build: PresetBuild) => boolean }> = [
@@ -28,7 +28,11 @@ const BUILD_PARTS: Array<{ name: string; has: (build: PresetBuild) => boolean }>
 	{ name: 'Class options', has: build => !!build.options },
 ];
 
-// The preset configurations, in the sidebar above the Simulate button. Each one sets up a
+// A configuration in the list: one of the spec's preset builds, which sets the parts it
+// has, or one we saved, which holds the whole character.
+type SavedConfiguration = { build: PresetBuild; settings?: undefined } | { build?: undefined; settings: IndividualSimSettings };
+
+// The preset configurations, in the sidebar under the Simulate button. Each one sets up a
 // whole character at once (gear, talents, rotation, encounter and so on), so we show them
 // on every tab.
 export class PresetConfigurationPicker extends Component {
@@ -37,18 +41,14 @@ export class PresetConfigurationPicker extends Component {
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
 		super(parentElem, 'preset-configuration-picker-root');
-		this.rootElem.classList.add('saved-data-manager-root');
 
 		this.simUI = simUI;
 		this.builds = this.simUI.individualConfig.presets.builds ?? [];
 
-		if (!this.builds.length) {
-			this.rootElem.classList.add('hide');
-			return;
-		}
-
-		const parts = BUILD_PARTS.filter(part => this.builds.some(part.has));
-		const contentBlock = new ContentBlock(this.rootElem, 'saved-data', {
+		// A configuration we save holds every part, so with no builds we list them all.
+		const parts = this.builds.length ? BUILD_PARTS.filter(part => this.builds.some(part.has)) : BUILD_PARTS;
+		const manager = new SavedDataManager<IndividualSimUI<Spec>, SavedConfiguration>(this.rootElem, simUI, {
+			label: 'Configuration',
 			header: {
 				title: 'Preset Configurations',
 				tooltip: presetListTooltip(
@@ -56,50 +56,52 @@ export class PresetConfigurationPicker extends Component {
 					parts.map(part => part.name),
 				),
 			},
+			storageKey: simUI.getStorageKey('__savedPresetConfigurations__'),
+			changeEmitters: [simUI.player.changeEmitter, simUI.sim.settingsChangeEmitter, simUI.sim.raid.changeEmitter, simUI.sim.encounter.changeEmitter],
+			equals: (a, b) => (a.build ? !this.changedParts(a.build).length : IndividualSimSettings.equals(a.settings!, b.settings!)),
+			getData: () => ({ settings: this.currentSettings() }),
+			setData: (eventID, simUI, data) => {
+				if (data.build) {
+					this.applyBuild(eventID, data.build);
+				} else {
+					// We keep the sim settings we have now, like the iterations and the phase.
+					const settings = IndividualSimSettings.clone(data.settings!);
+					settings.settings = simUI.sim.toProto();
+					simUI.fromProto(eventID, settings);
+				}
+			},
+			toJson: data => IndividualSimSettings.toJson(data.settings!),
+			fromJson: obj => ({ settings: IndividualSimSettings.fromJson(obj) }),
+			listChanges: (data, changes) => (data.build ? this.listChanges(data.build, changes) : changes),
 		});
-
-		const tree = new PresetTree(
-			this.simUI.getStorageKey('__presetConfigurationsOpenFolders__'),
-			this.simUI.getStorageKey('__selectedPresetConfiguration__'),
-		);
-		const container = (
-			<div className="saved-data-container">
-				<div className="saved-data-presets">{tree.rootElem}</div>
-			</div>
-		);
+		this.addOnDisposeCallback(() => manager.dispose());
 
 		this.simUI.sim.waitForInit().then(() => {
-			const builds = new Map<HTMLElement, PresetBuild>();
-			const source: PresetSource = {
-				selected: () => {
-					const build = builds.get(tree.selected()?.item as HTMLElement);
-					return build && { apply: () => this.applyBuild(build) };
-				},
-			};
-			this.builds.forEach(build => {
-				const item = PresetTree.makeItem(build.name);
-				builds.set(item, build);
-				tree.onClick(item, () => this.applyBuild(build));
-				tree.attachTooltip(item, build.tooltip, 'right', () => this.listChanges(build, source));
-				tree.track(item, { name: build.name, matches: () => !this.changedParts(build).length });
-				tree.add(item, build.group);
-			});
-
-			TypedEvent.onAny([
-				this.simUI.player.changeEmitter,
-				this.simUI.sim.settingsChangeEmitter,
-				this.simUI.sim.raid.changeEmitter,
-				this.simUI.sim.encounter.changeEmitter,
-			]).on(() => tree.refresh());
-			tree.refresh();
-
-			dirtySettings.addSource(source);
-			contentBlock.bodyElement.replaceChildren(container);
+			manager.loadUserData();
+			this.builds.forEach(build =>
+				manager.addSavedData({
+					name: build.name,
+					tooltip: build.tooltip,
+					group: build.group,
+					isPreset: true,
+					data: { build },
+				}),
+			);
 		});
 	}
 
-	private applyBuild({ gear, rotation, rotationType, talents, epWeights, encounter, race, level, bonusTalentPoints, professions, options }: PresetBuild) {
-		const eventID = TypedEvent.nextEventID();
+	// The whole character as we save it in a custom configuration. The sim settings, like the
+	// iterations and the phase, stay out, so changing them doesn't change the configuration.
+	private currentSettings(): IndividualSimSettings {
+		const settings = this.simUI.toProto();
+		settings.settings = undefined;
+		return settings;
+	}
+
+	private applyBuild(
+		eventID: EventID,
+		{ gear, rotation, rotationType, talents, epWeights, encounter, race, level, bonusTalentPoints, professions, options }: PresetBuild,
+	) {
 		TypedEvent.freezeAllAndDo(() => {
 			if (gear) this.simUI.player.setGear(eventID, this.simUI.sim.db.lookupEquipmentSpec(gear.gear));
 			if (race) this.simUI.player.setRace(eventID, race);
@@ -137,9 +139,9 @@ export class PresetConfigurationPicker extends Component {
 	// and the stat weights, which we compare here because their dialog is closed. When none
 	// of that changed (a setting without a field, like the tanks) we name the parts that
 	// differ instead.
-	private listChanges(build: PresetBuild, source: PresetSource): ChangeCategory[] {
+	private listChanges(build: PresetBuild, changes: ChangeCategory[]): ChangeCategory[] {
 		const parts = this.changedParts(build);
-		const categories = dirtySettings.changesFor(source).filter(category => category.name !== 'Stat Weights');
+		const categories = changes.filter(category => category.name !== 'Stat Weights');
 		if (parts.includes('stat weights') && build.epWeights) {
 			const preset = build.epWeights.epWeights;
 			const current = this.simUI.player.getEpWeights();

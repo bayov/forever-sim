@@ -9,6 +9,13 @@
 	font-weight: bold;
 }
 
+// Cinzel, the serif with carved capitals that foreverchanges.pro uses for its titles.
+@font-face {
+	font-family: SimHeadingFont;
+	src: url(/classic/assets/fonts/Cinzel.woff2) format('woff2');
+	font-weight: 400 900;
+}
+
 $gray-800: #323232;
 
 :root {
@@ -202,18 +209,25 @@ $gray-800: #323232;
 			border: 0;
 			display: flex;
 			align-items: center;
-			font-weight: bold;
+			font-weight: 600;
 			white-space: nowrap;
 			cursor: pointer;
+			color: $body-color;
+
+			&:hover {
+				color: $white;
+			}
 
 			&.active {
 				position: relative;
+				color: $white;
 
+				// The active tab is underlined in the accent blue, like on foreverchanges.pro.
 				&::after {
 					content: '';
 					position: absolute;
 					height: 2px;
-					background: $nav-tabs-link-active-color;
+					background: var(--accent);
 					bottom: 0;
 					left: 0;
 					right: 0;

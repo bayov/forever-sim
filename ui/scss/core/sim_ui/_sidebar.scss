@@ -2,11 +2,15 @@
 
 .sim-sidebar {
 	position: relative;
-	flex: 1;
+	// A little more than a fifth of the page, next to .sim-content's flex: 4.
+	flex: 1.1;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	background: var(--bs-body-bg);
+	// The darkest panel, like the header bar on foreverchanges.pro, with a line between it and
+	// the page.
+	background: var(--sidebar-bg);
+	border-right: 1px solid var(--line-color);
 	// This must be larger than the z-index on .sim-content otherwise the dropdown is overlapped
 	z-index: var(--sidebar-z-index);
 
@@ -38,11 +42,29 @@
 				// Scrolling up and down only. Without overflow-x, the browser would also scroll
 				// them sideways when a row is a little too wide, like with the vertical
 				// scrollbar taking some of the width.
+				//
+				// Only the list scrolls. The title above it and the Save button under it stay in
+				// view, so every box between them shrinks with it.
 				.sim-sidebar-presets {
 					flex-shrink: 1;
-					min-height: 7rem;
-					overflow-y: auto;
-					overflow-x: hidden;
+					min-height: 9rem;
+					display: flex;
+					flex-direction: column;
+
+					.preset-configuration-picker-root,
+					.saved-data-manager-root,
+					.content-block,
+					.content-block-body {
+						min-height: 0;
+						display: flex;
+						flex-direction: column;
+					}
+
+					.saved-data-container {
+						min-height: 0;
+						overflow-y: auto;
+						overflow-x: hidden;
+					}
 				}
 
 				// The ± buttons at the end of the stat rows stick out a little past the stats,
@@ -52,8 +74,8 @@
 					min-height: 8rem;
 					overflow-y: auto;
 					overflow-x: hidden;
-					margin-right: -0.75rem;
-					padding-right: 0.75rem;
+					margin-right: calc(-1 * var(--sidebar-padding-x));
+					padding-right: var(--sidebar-padding-x);
 				}
 			}
 		}
@@ -61,12 +83,14 @@
 
 	.sim-sidebar-content {
 		min-height: calc(100vh - var(--sim-header-height) - 1px);
-		padding: var(--gap-width);
+		// Less padding than the page's other boxes, so the sidebar has more room for the sim
+		// history and the presets.
+		--sidebar-padding-x: calc(var(--gap-width) * 0.6);
+		padding: calc(var(--gap-width) * 0.6) var(--sidebar-padding-x);
 		display: flex;
 		flex-direction: column;
 		@include media-breakpoint-down(xxl) {
-			padding-left: calc(var(--gap-width-sm) * 2);
-			padding-right: calc(var(--gap-width-sm) * 2);
+			--sidebar-padding-x: calc(var(--gap-width-sm) * 1.25);
 		}
 		@include media-breakpoint-down(lg) {
 			padding: calc(var(--gap-width-sm) * 2) var(--gap-width-sm);
@@ -77,25 +101,18 @@
 			margin-bottom: var(--spacer-4);
 		}
 
+		// The iterations and the Simulate button in one row. The field takes the room, and the
+		// button is as wide as its label and as tall as the field.
 		.sim-sidebar-actions {
-			padding-left: var(--container-padding);
-			padding-right: var(--container-padding);
-			margin-left: calc(var(--gap-width) * -1);
-			margin-right: calc(var(--gap-width) * -1);
 			display: flex;
-			flex-direction: column;
-			align-items: center;
-			@include media-breakpoint-down(xxl) {
-				padding: 0;
-				margin: 0;
-			}
-
-			& > *:not(:last-child) {
-				margin-bottom: var(--block-spacer);
-			}
+			flex-wrap: wrap;
+			align-items: flex-end;
+			gap: var(--block-spacer) var(--spacer-2);
 
 			.iterations-picker {
-				width: 100%;
+				flex: 1;
+				min-width: 0;
+				margin-bottom: 0;
 				flex-flow: column;
 
 				.number-picker-input {
@@ -103,21 +120,96 @@
 					margin: 0;
 				}
 			}
+
+			.dps-action {
+				flex: 0 0 auto;
+				width: auto !important;
+				padding-left: var(--spacer-4);
+				padding-right: var(--spacer-4);
+				height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y) * 2 + 2px);
+				padding-top: 0;
+				padding-bottom: 0;
+			}
+
+			.sim-ui-unlaunched-container {
+				width: 100%;
+			}
+
+			// The progress bar of a running sim, in place of the iterations field, see
+			// raid_sim_action.tsx.
+			.sim-progress {
+				width: 100%;
+				height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y) * 2 + 2px);
+			}
+
+			&.running .iterations-picker .number-picker-input {
+				display: none;
+			}
 		}
 
 		// Enough for the DPS with the reference comparison under it. Any extra room goes
-		// above the stats, which sit at the bottom, so the open preset folders above don't
-		// push the page into scrolling.
+		// above the stats, which sit at the bottom, so the open preset folders don't push the
+		// page into scrolling.
 		.sim-sidebar-results {
 			min-height: 6rem;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 
+			// The rows of the sim history span the sidebar.
+			.results-viewer {
+				width: 100%;
+			}
+
+			// While a sim runs, its progress bar is up in the actions, and the live DPS takes
+			// the place of the latest run's DPS. So the sidebar has no spinner, and before the
+			// first progress comes in, it keeps the latest run's results.
+			.results-pending {
+				display: none !important;
+			}
+
+			.results-content {
+				display: block !important;
+			}
+
+			// The warnings icon goes under the sim history, apart from it.
+			.warning-zone .warning {
+				display: inline-block;
+				margin-top: var(--spacer-3);
+			}
+
 			// The progress while a sim runs sits at the top, right under the Stat Weights
 			// button, so it needs room from it.
 			.results-content {
 				margin-top: var(--block-spacer);
+			}
+
+			// The DPS of the latest run sits in the middle, like the progress.
+			.results-sim-dps {
+				text-align: center;
+			}
+		}
+
+		// A line between each part: the presets, the sim's actions and results, and the stats.
+		// The raid sim has no presets, and its player editor shows only the stats, so they need
+		// no line.
+		.sim-sidebar-presets:not(:empty) {
+			border-bottom: 1px solid var(--line-color);
+			padding-bottom: var(--spacer-4);
+		}
+
+		.sim-sidebar-stats:not(.within-raid-sim *) {
+			border-top: 1px solid var(--line-color);
+			padding-top: var(--spacer-4);
+		}
+
+		// The stats table has a line between its groups. The ones above the first group and
+		// under the last would double the sidebar's own lines, so they go.
+		.sim-sidebar-stats:not(.within-raid-sim *) .character-stats-table {
+			border-bottom: 0;
+
+			tbody:first-child .character-stats-table-row:first-child {
+				border-top: 0;
 			}
 		}
 
@@ -125,15 +217,6 @@
 			margin-top: auto;
 			@include media-breakpoint-down(lg) {
 				margin-top: 0;
-			}
-		}
-
-		.sim-sidebar-socials {
-			display: flex;
-			justify-content: center;
-
-			& > *:not(:last-child) {
-				margin-right: var(--spacer-3);
 			}
 		}
 	}

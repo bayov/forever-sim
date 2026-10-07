@@ -1,12 +1,12 @@
 <!doctype html>
 <html>
 	<head>
-		<title>WoWSims - Classic</title>
+		<title>WoWSims - Forever</title>
 		<meta charset="utf-8" />
 
 		<link rel="icon" href="/classic/assets/favicon_io/favicon.ico" type="image/x-icon" />
 
-		<meta name="description" content="Simulations for World of Warcraft® Classic." />
+		<meta name="description" content="Simulations for World of Warcraft® Forever." />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<link rel="stylesheet" href="/scss/homepage/index.scss" />
@@ -17,7 +17,7 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer" />
 	</head>
-	<body class="bg-black">
+	<body>
 		<div class="homepage-image"></div>
 		<div id="homepage">
 			<header class="homepage-header">
@@ -28,7 +28,7 @@
 								<img class="wowsims-logo" src="/classic/assets/img/WoW-Simulator-Icon.png" />
 								<div class="d-flex flex-column">
 									<h2 class="wowsims-title">WoWSims</h2>
-									<h3 class="expansion-title w-100 mb-0">Classic</h3>
+									<h3 class="expansion-title w-100 mb-0">Forever</h3>
 								</div>
 							</a>
 							<button
@@ -73,248 +73,155 @@
 				<div class="container homepage-content-container">
 					<div class="info-container">
 						<p class="wowsims-info">
-							Welcome to WoWSims - Classic! This is a community-driven project to provide class and raid simulations for World of Warcraft®
-							Classic together with the leading theorycrafters and class representatives.
+							Welcome to WoWSims - Forever! This is a community-driven project to provide class and raid simulations for World of Warcraft®
+							Forever together with the leading theorycrafters and class representatives.
 						</p>
 					</div>
-					<div class="sim-links-container">
-						<!-- <div class="sim-links">
-							<a href="/classicic/raid/" class="sim-link raid-sim-link text-white">
-								<div class="sim-link-content">
-									<img src="/classic/assets/img/raid_icon.png" class="sim-link-icon">
-									<span class="sim-link-title">Full Raid Sim</span>
-								</div>
-							</a>
-						</div> -->
-
-						<div class="sim-links">
-							<a href="/classic/shadow_priest/" class="sim-link text-priest">
-								<div class="sim-link-content">
-									<img src="https://wow.zamimg.com/images/wow/icons/large/class_priest.jpg" class="sim-link-icon" />
-									<div class="d-flex flex-column">
-										<span class="sim-link-title">Priest</span>
-										<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-									</div>
-								</div>
-							</a>
-
-							<div class="dropend sim-link-dropdown">
-								<a href="javascript:void(0)" class="sim-link text-druid" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<div class="sim-link-content">
-										<img src="https://wow.zamimg.com/images/wow/icons/large/class_druid.jpg" class="sim-link-icon" />
-										<div></div>
-										<div class="d-flex flex-column">
-											<span class="sim-link-title">Druid</span>
-										</div>
-									</div>
-								</a>
-								<ul class="dropdown-menu w-100">
-									<li>
-										<a href="/classic/balance_druid/" class="sim-link text-druid">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Druid</span>
-													<span class="sim-link-title">Balance</span>
-													<span class="launch-status-label text-brand">Phase 5 - Beta</span>
-												</div>
-											</div>
-										</a>
-									</li>
-									<li>
-										<a href="/classic/feral_druid/" class="sim-link text-druid">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/ability_druid_catform.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Druid</span>
-													<span class="sim-link-title">Feral DPS</span>
-													<span class="launch-status-label text-brand">Phase 4 - Alpha</span>
-												</div>
-											</div>
-										</a>
-									</li>
-									<li>
-										<!-- <a href="/classic/feral_tank_druid/" class="sim-link text-druid"> -->
-										<a href="#" class="sim-link text-druid">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Druid</span>
-													<span class="sim-link-title">Feral Tank</span>
-													<span class="launch-status-label text-brand">Not Yet Supported</span>
-												</div>
-											</div>
-										</a>
-									</li>
-								</ul>
+					<!-- Every spec we sim, one card per class, like the BiS lists on foreverchanges.pro. -->
+					<h2 class="class-cards-title">Choose your spec</h2>
+					<div class="class-cards">
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/warrior_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_warrior.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-warrior">Warrior</h3>
 							</div>
-
-							<a href="/classic/rogue/" class="sim-link text-rogue">
-								<div class="sim-link-content">
-									<img src="https://wow.zamimg.com/images/wow/icons/large/class_rogue.jpg" class="sim-link-icon" />
-									<div class="d-flex flex-column">
-										<span class="sim-link-title">Rogue</span>
-										<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-									</div>
-								</div>
-							</a>
-
-							<a href="/classic/hunter/" class="sim-link text-hunter">
-								<div class="sim-link-content">
-									<img src="https://wow.zamimg.com/images/wow/icons/large/class_hunter.jpg" class="sim-link-icon" />
-									<div class="d-flex flex-column">
-										<span class="sim-link-title">Hunter</span>
-										<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-									</div>
-								</div>
-							</a>
-
-							<div class="dropend sim-link-dropdown">
-								<a href="javascript:void(0)" class="sim-link text-shaman" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<div class="sim-link-content">
-										<img src="https://wow.zamimg.com/images/wow/icons/large/class_shaman.jpg" class="sim-link-icon" />
-										<div class="d-flex flex-column">
-											<span class="sim-link-title">Shaman</span>
-										</div>
-									</div>
+							<div class="class-card-specs">
+								<a href="/classic/warrior/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/ability_warrior_innerrage.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">DPS</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
 								</a>
-								<ul class="dropdown-menu w-100">
-									<li>
-										<a href="/classic/elemental_shaman/" class="sim-link text-shaman">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightning.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Shaman</span>
-													<span class="sim-link-title">Elemental</span>
-													<span class="launch-status-label text-brand">Phase 2</span>
-												</div>
-											</div>
-										</a>
-									</li>
-									<li>
-										<a href="/classic/enhancement_shaman/" class="sim-link text-shaman">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/ability_shaman_stormstrike.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Shaman</span>
-													<span class="sim-link-title">Enhancement</span>
-													<span class="launch-status-label text-brand">Phase 1</span>
-												</div>
-											</div>
-										</a>
-									</li>
-									<li>
-										<a href="/classic/warden_shaman/" class="sim-link text-shaman">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/spell_shaman_lavaflow.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Shaman</span>
-													<span class="sim-link-title">Warden</span>
-													<span class="launch-status-label text-brand">Phase 1</span>
-												</div>
-											</div>
-										</a>
-									</li>
-								</ul>
-							</div>
-
-							<a href="/classic/mage/" class="sim-link text-mage">
-								<div class="sim-link-content">
-									<img src="https://wow.zamimg.com/images/wow/icons/large/class_mage.jpg" class="sim-link-icon" />
-									<div class="d-flex flex-column">
-										<span class="sim-link-title">Mage</span>
-										<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-									</div>
-								</div>
-							</a>
-
-							<a href="/classic/warlock/" class="sim-link text-warlock">
-								<div class="sim-link-content">
-									<img src="https://wow.zamimg.com/images/wow/icons/large/class_warlock.jpg" class="sim-link-icon" />
-									<div class="d-flex flex-column">
-										<span class="sim-link-label">Warlock</span>
-										<span class="sim-link-title">DPS</span>
-										<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-									</div>
-								</div>
-							</a>
-
-							<div class="dropend sim-link-dropdown">
-								<a href="javascript:void(0)" class="sim-link text-paladin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<div class="sim-link-content">
-										<img src="https://wow.zamimg.com/images/wow/icons/large/class_paladin.jpg" class="sim-link-icon" />
-										<div class="d-flex flex-column">
-											<span class="sim-link-title">Paladin</span>
-										</div>
-									</div>
+								<a href="/classic/tank_warrior/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Tank</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
 								</a>
-								<ul class="dropdown-menu w-100">
-									<li>
-										<a href="/classic/protection_paladin/" class="sim-link text-paladin">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_devotionaura.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Paladin</span>
-													<span class="sim-link-title">Protection</span>
-													<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-												</div>
-											</div>
-										</a>
-									</li>
-									<li>
-										<a href="/classic/retribution_paladin/" class="sim-link text-paladin">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Paladin</span>
-													<span class="sim-link-title">Retribution</span>
-													<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-												</div>
-											</div>
-										</a>
-									</li>
-								</ul>
 							</div>
-
-							<div class="dropend sim-link-dropdown">
-								<a href="javascript:void(0)" class="sim-link text-warrior" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<div class="sim-link-content">
-										<img src="https://wow.zamimg.com/images/wow/icons/large/class_warrior.jpg" class="sim-link-icon" />
-										<div class="d-flex flex-column">
-											<span class="sim-link-title">Warrior</span>
-										</div>
-									</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/hunter_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_hunter.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-hunter">Hunter</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/hunter/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_aimedshot.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">DPS</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
 								</a>
-								<ul class="dropdown-menu w-100">
-									<li>
-										<a href="/classic/warrior/" class="sim-link text-warrior">
-											<div class="sim-link-content">
-												<img src="https://wow.zamimg.com/images/wow/icons/large/class_warrior.jpg" class="sim-link-icon" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Warrior</span>
-													<span class="sim-link-title">DPS</span>
-													<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-												</div>
-											</div>
-										</a>
-									</li>
-									<li>
-										<a href="/classic/tank_warrior/" class="sim-link text-warrior">
-											<div class="sim-link-content">
-												<img
-													src="https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg"
-													class="sim-link-icon rounded-circle" />
-												<div class="d-flex flex-column">
-													<span class="sim-link-label">Warrior</span>
-													<span class="sim-link-title">Tank</span>
-													<span class="launch-status-label text-brand">Phase 1 - Alpha</span>
-												</div>
-											</div>
-										</a>
-									</li>
-								</ul>
 							</div>
-						</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/mage_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_mage.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-mage">Mage</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/mage/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_fire_flamebolt.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">DPS</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
+								</a>
+							</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/rogue_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_rogue.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-rogue">Rogue</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/rogue/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/ability_rogue_eviscerate.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">DPS</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
+								</a>
+							</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/shadow_priest_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_priest.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-priest">Priest</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/shadow_priest/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Shadow</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
+								</a>
+							</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/warlock_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_warlock.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-warlock">Warlock</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/warlock/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowbolt.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">DPS</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
+								</a>
+							</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/holy_paladin_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_paladin.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-paladin">Paladin</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/retribution_paladin/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Retribution</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
+								</a>
+								<a href="/classic/protection_paladin/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_devotionaura.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Protection</span>
+									<span class="spec-link-status">Phase 1 - Alpha</span>
+								</a>
+							</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/balance_druid_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_druid.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-druid">Druid</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/balance_druid/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Balance</span>
+									<span class="spec-link-status">Phase 5 - Beta</span>
+								</a>
+								<a href="/classic/feral_druid/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/ability_druid_catform.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Feral DPS</span>
+									<span class="spec-link-status">Phase 4 - Alpha</span>
+								</a>
+							</div>
+						</section>
+						<section class="class-card" style="--class-card-art: url(/classic/assets/img/enhancement_shaman_background.jpg)">
+							<div class="class-card-header">
+								<img src="https://wow.zamimg.com/images/wow/icons/large/class_shaman.jpg" class="class-card-icon" />
+								<h3 class="class-card-title text-shaman">Shaman</h3>
+							</div>
+							<div class="class-card-specs">
+								<a href="/classic/enhancement_shaman/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/ability_shaman_stormstrike.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Enhancement</span>
+									<span class="spec-link-status">Phase 1</span>
+								</a>
+								<a href="/classic/elemental_shaman/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightning.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Elemental</span>
+									<span class="spec-link-status">Phase 2</span>
+								</a>
+								<a href="/classic/warden_shaman/" class="spec-link">
+									<img src="https://wow.zamimg.com/images/wow/icons/large/spell_shaman_lavaflow.jpg" class="spec-link-icon" />
+									<span class="spec-link-name">Warden</span>
+									<span class="spec-link-status">Phase 1</span>
+								</a>
+							</div>
+						</section>
 					</div>
 				</div>
 			</main>

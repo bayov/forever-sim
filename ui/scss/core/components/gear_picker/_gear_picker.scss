@@ -234,6 +234,14 @@ $gear-fog: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 		gap: calc(var(--gear-slot-size) * #{($gear-frame-pitch - $gear-frame-icon) / $gear-frame-icon});
 	}
 
+	// The item's name starts level with the top of its icon, and the enchant under it. The text
+	// sits right by the slot's frame.
+	.item-picker-labels-container {
+		padding-top: 0;
+		padding-left: var(--spacer-1);
+		padding-right: var(--spacer-1);
+	}
+
 	.item-picker-icon-wrapper {
 		width: var(--gear-slot-size);
 		height: var(--gear-slot-size);

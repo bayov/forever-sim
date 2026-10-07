@@ -53,7 +53,7 @@ class DirtySettings {
 	private readonly listeners: Array<() => void> = [];
 	// For each source with a selected preset, the settings that differ from it. The values
 	// are kept as the JSON we compared, so they don't change under us.
-	private changes = new Map<PresetSource, Array<{ setting: TrackedSetting; preset: string; current: string }>>();
+	private changes = new Map<PresetSource, SettingChange[]>();
 	private snapshot?: SettingsSnapshot;
 	private timer?: number;
 
@@ -84,28 +84,21 @@ class DirtySettings {
 	// in lines like 'Duration: 120 → 90', under the tab they're on (Gear, Settings and so
 	// on), in the order of the tabs.
 	changesFor(source: PresetSource): ChangeCategory[] {
-		// The lines of each category by their text, because a setting can show twice on one tab.
-		const categories = new Map<string, Map<string, ChangeLine>>();
-		(this.changes.get(source) ?? []).forEach(({ setting, preset, current }) => {
-			const name = setting.name?.() ?? nameFromPage(setting.elem);
-			const format = setting.format ?? formatValue;
-			const line = changeLine(name, format(JSON.parse(preset)), format(JSON.parse(current)));
-			const category = setting.elem.closest<HTMLElement>('[data-preset-category]')?.dataset.presetCategory ?? 'Other';
-			if (!categories.has(category)) categories.set(category, new Map());
-			categories.get(category)!.set(lineText(line), line);
-		});
+		return categorize(this.changes.get(source) ?? []);
+	}
 
-		// A setting outside the tabs (in the encounter's Advanced dialog) is listed under
-		// Other, unless it also shows on a tab.
-		const other = categories.get('Other');
-		other?.forEach((_, text) => {
-			if (Array.from(categories).some(([name, lines]) => name !== 'Other' && lines.has(text))) other.delete(text);
+	// The settings that differ from the ones apply() puts in place, like the settings a saved
+	// sim run had. We work them out when asked, the same way as for a selected preset, and
+	// list them like changesFor() does. Without the snapshot (the raid sim) there are none.
+	changesFrom(apply: () => void): ChangeCategory[] {
+		if (!this.snapshot) return [];
+		const settings = this.trackedSettings();
+		const current = settings.map(readKey);
+		let changes: SettingChange[] = [];
+		TypedEvent.silentlyDo(() => {
+			changes = this.compare(settings, current, apply);
 		});
-		if (other?.size === 0) categories.delete('Other');
-
-		const order = Array.from(document.querySelectorAll<HTMLElement>('[data-preset-category]')).map(elem => elem.dataset.presetCategory);
-		const rank = (name: string) => (order.includes(name) ? order.indexOf(name) : order.length);
-		return Array.from(categories, ([name, lines]) => ({ name, lines: Array.from(lines.values()) })).sort((a, b) => rank(a.name) - rank(b.name));
+		return categorize(changes);
 	}
 
 	// Only the individual sims set this. Without it we mark nothing.
@@ -124,8 +117,31 @@ class DirtySettings {
 		}, 50);
 	}
 
+	private trackedSettings(): TrackedSetting[] {
+		return Array.from(this.settings).filter(setting => setting.elem.isConnected && (setting.isTracked?.() ?? true));
+	}
+
+	// Applies the settings with apply(), reads the tracked settings, and puts the old settings
+	// back. current holds what each setting reads now. Call it with every event silenced.
+	private compare(settings: TrackedSetting[], current: string[], apply: () => void): SettingChange[] {
+		const changes: SettingChange[] = [];
+		const restore = this.snapshot!();
+		try {
+			apply();
+			settings.forEach((setting, i) => {
+				const presetKey = readKey(setting);
+				if (presetKey !== current[i]) changes.push({ setting, preset: presetKey, current: current[i] });
+			});
+		} catch (e) {
+			console.warn('Failed to compare settings with a preset: ' + e);
+		} finally {
+			restore();
+		}
+		return changes;
+	}
+
 	private update() {
-		const settings = Array.from(this.settings).filter(setting => setting.elem.isConnected && (setting.isTracked?.() ?? true));
+		const settings = this.trackedSettings();
 		const dirty = new Set<TrackedSetting>();
 		this.changes = new Map();
 
@@ -136,22 +152,9 @@ class DirtySettings {
 				.filter(({ preset }) => !!preset);
 			if (presets.length) {
 				TypedEvent.silentlyDo(() => {
-					const restore = this.snapshot!();
 					presets.forEach(({ source, preset }) => {
-						const changes: Array<{ setting: TrackedSetting; preset: string; current: string }> = [];
-						try {
-							preset!.apply();
-							settings.forEach((setting, i) => {
-								const presetKey = readKey(setting);
-								if (presetKey === current[i]) return;
-								dirty.add(setting);
-								changes.push({ setting, preset: presetKey, current: current[i] });
-							});
-						} catch (e) {
-							console.warn('Failed to compare settings with a preset: ' + e);
-						} finally {
-							restore();
-						}
+						const changes = this.compare(settings, current, () => preset!.apply());
+						changes.forEach(({ setting }) => dirty.add(setting));
 						this.changes.set(source, changes);
 					});
 				});
@@ -164,6 +167,41 @@ class DirtySettings {
 		settings.forEach(setting => setting.elem.classList.toggle('dirty-setting', dirtyElems.has(setting.elem)));
 		this.listeners.forEach(listener => listener());
 	}
+}
+
+// A setting that differs, with both values as the JSON we compared, so they don't change under
+// us.
+interface SettingChange {
+	setting: TrackedSetting;
+	preset: string;
+	current: string;
+}
+
+// The changes in lines like 'Duration: 120 → 90', under the tab they're on (Gear, Settings and
+// so on), in the order of the tabs.
+function categorize(changes: SettingChange[]): ChangeCategory[] {
+	// The lines of each category by their text, because a setting can show twice on one tab.
+	const categories = new Map<string, Map<string, ChangeLine>>();
+	changes.forEach(({ setting, preset, current }) => {
+		const name = setting.name?.() ?? nameFromPage(setting.elem);
+		const format = setting.format ?? formatValue;
+		const line = changeLine(name, format(JSON.parse(preset)), format(JSON.parse(current)));
+		const category = setting.elem.closest<HTMLElement>('[data-preset-category]')?.dataset.presetCategory ?? 'Other';
+		if (!categories.has(category)) categories.set(category, new Map());
+		categories.get(category)!.set(lineText(line), line);
+	});
+
+	// A setting outside the tabs (in the encounter's Advanced dialog) is listed under Other,
+	// unless it also shows on a tab.
+	const other = categories.get('Other');
+	other?.forEach((_, text) => {
+		if (Array.from(categories).some(([name, lines]) => name !== 'Other' && lines.has(text))) other.delete(text);
+	});
+	if (other?.size === 0) categories.delete('Other');
+
+	const order = Array.from(document.querySelectorAll<HTMLElement>('[data-preset-category]')).map(elem => elem.dataset.presetCategory);
+	const rank = (name: string) => (order.includes(name) ? order.indexOf(name) : order.length);
+	return Array.from(categories, ([name, lines]) => ({ name, lines: Array.from(lines.values()) })).sort((a, b) => rank(a.name) - rank(b.name));
 }
 
 // Settings come as numbers, strings, arrays and protos, so we compare them as JSON. A

@@ -5,11 +5,9 @@ import { Class, Spec } from '../proto/common.js';
 import {
 	classIcons,
 	classNames,
-	getSpecSiteUrl,
-	naturalClassOrder,
+	homeSiteUrl,
 	raidSimIcon,
 	raidSimLabel,
-	raidSimSiteUrl,
 	specNames,
 	specToClass,
 	textCssClassForClass,
@@ -36,119 +34,19 @@ type SimTitleDropdownConfig = {
 	noDropdown?: boolean;
 };
 
-// Dropdown menu for selecting a player.
+// The sim's title at the top of the sidebar. Clicking it takes us back to the landing page,
+// where every spec is one click away. In the raid sim's player editor it's only a label.
 export class SimTitleDropdown extends Component {
-	private readonly dropdownMenu: HTMLElement | undefined;
-
-	private readonly specLabels: Record<Spec, string> = {
-		[Spec.SpecBalanceDruid]: 'Balance',
-		[Spec.SpecFeralDruid]: 'Feral DPS',
-		[Spec.SpecFeralTankDruid]: 'Feral Tank',
-		[Spec.SpecRestorationDruid]: 'Restoration',
-		[Spec.SpecElementalShaman]: 'Elemental',
-		[Spec.SpecEnhancementShaman]: 'Enhancement',
-		[Spec.SpecRestorationShaman]: 'Restoration',
-		[Spec.SpecWardenShaman]: 'Warden',
-		[Spec.SpecHunter]: 'Hunter',
-		[Spec.SpecMage]: 'Mage',
-		[Spec.SpecRogue]: 'DPS',
-		[Spec.SpecHolyPaladin]: 'Holy',
-		[Spec.SpecProtectionPaladin]: 'Protection',
-		[Spec.SpecRetributionPaladin]: 'Retribution',
-		[Spec.SpecHealingPriest]: 'Healing',
-		[Spec.SpecShadowPriest]: 'Shadow',
-		[Spec.SpecWarlock]: 'DPS',
-		[Spec.SpecWarrior]: 'DPS',
-		[Spec.SpecTankWarrior]: 'Tank',
-	};
-
 	constructor(parent: HTMLElement, currentSpecIndex: Spec | null, config: SimTitleDropdownConfig = {}) {
 		super(parent, 'sim-title-dropdown-root');
 
 		const rootLinkArgs: SpecOptions | RaidOptions = currentSpecIndex === null ? { type: 'Raid' } : { type: 'Spec', index: currentSpecIndex };
-		const rootLink = this.buildRootSimLink(rootLinkArgs);
-
-		if (config.noDropdown) {
-			this.rootElem.innerHTML = rootLink.outerHTML;
-			return;
-		}
-
-		this.rootElem.innerHTML = `
-      <div class="dropdown sim-link-dropdown">
-        ${rootLink.outerHTML}
-        <ul class="dropdown-menu"></ul>
-      </div>
-    `;
-
-		this.dropdownMenu = this.rootElem.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
-		this.buildDropdown();
-
-		// Prevent Bootstrap from closing the menu instead of opening class menus
-		this.dropdownMenu.addEventListener('click', event => {
-			const target = event.target as HTMLElement;
-			const link = target.closest('a:not([href="javascript:void(0)"]');
-
-			if (!link) {
-				event.stopPropagation();
-				event.preventDefault();
-			}
-		});
+		this.rootElem.appendChild(this.buildRootSimLink(rootLinkArgs, config.noDropdown ? undefined : homeSiteUrl));
 	}
 
-	private buildDropdown() {
-		// TODO Classic
-		// if (raidSimStatus >= LaunchStatus.Alpha) {
-		// 	// Add the raid sim to the top of the dropdown
-		// 	let raidListItem = document.createElement('li');
-		// 	raidListItem.appendChild(this.buildRaidLink());
-		// 	this.dropdownMenu?.appendChild(raidListItem);
-		// }
-
-		naturalClassOrder.forEach(classIndex => {
-			const listItem = document.createElement('li');
-			const sims = getLaunchedSimsForClass(classIndex);
-
-			if (sims.length == 1) {
-				// The class only has one listed sim so make a direct link to the sim
-				listItem.appendChild(this.buildClassLink(classIndex));
-				this.dropdownMenu?.appendChild(listItem);
-			} else if (sims.length > 1) {
-				// Add the class to the dropdown with an additional spec dropdown
-				listItem.appendChild(this.buildClassDropdown(classIndex));
-				this.dropdownMenu?.appendChild(listItem);
-			}
-		});
-	}
-
-	private buildClassDropdown(classIndex: Class) {
-		const sims = getLaunchedSimsForClass(classIndex);
-		const dropdownFragment = document.createElement('fragment');
-		const dropdownMenu = document.createElement('ul');
-		dropdownMenu.classList.add('dropdown-menu');
-
-		// Generate the class link to act as a dropdown toggle for the spec dropdown
-		const classLink = this.buildClassLink(classIndex);
-
-		// Generate links for a class's specs
-		sims.forEach(specIndex => {
-			const listItem = document.createElement('li');
-			const link = this.buildSpecLink(specIndex);
-
-			listItem.appendChild(link);
-			dropdownMenu.appendChild(listItem);
-		});
-
-		dropdownFragment.innerHTML = `
-			<div class="dropend sim-link-dropdown">
-				${classLink.outerHTML}
-				${dropdownMenu.outerHTML}
-			</div>
-    	`;
-
-		return dropdownFragment.children[0] as HTMLElement;
-	}
-
-	private buildRootSimLink(data: SpecOptions | RaidOptions): Element {
+	// When the title is a link, it also holds a second text, which takes the place of the
+	// sim's name when we point at it and says where the link goes.
+	private buildRootSimLink(data: SpecOptions | RaidOptions, href?: string): Element {
 		let label;
 
 		if (data.type == 'Raid') label = raidSimLabel;
@@ -162,72 +60,24 @@ export class SimTitleDropdown extends Component {
 		}
 
 		return (
-			<a href="javascript:void(0)" className={clsx('sim-link', this.getContextualKlass(data))} dataset={{ bsToggle: 'dropdown', bsTrigger: 'click' }}>
+			<a href={href ?? 'javascript:void(0)'} className={clsx('sim-link', href && 'sim-title-home-link', this.getContextualKlass(data))}>
 				<div className="sim-link-content">
 					<img src={this.getSimIconPath(data)} className="sim-link-icon" />
-					<div className="d-flex flex-column">
-						<span className="sim-link-label text-white">WoWSims - Classic</span>
-						<span className="sim-link-title">{label}</span>
-						{this.launchStatusLabel(data)}
-					</div>
-				</div>
-			</a>
-		);
-	}
-
-	private buildRaidLink(): HTMLElement {
-		const textKlass = this.getContextualKlass({ type: 'Raid' });
-		const iconPath = this.getSimIconPath({ type: 'Raid' });
-		const label = raidSimLabel;
-
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-      <a href="${raidSimSiteUrl}" class="sim-link ${textKlass}">
-        <div class="sim-link-content">
-          <img src="${iconPath}" class="sim-link-icon">
-          <div class="d-flex flex-column">
-            <span class="sim-link-title">${label}</span>
-            ${this.launchStatusLabel({ type: 'Raid' })}
-          </div>
-        </div>
-      </a>
-    `;
-
-		return fragment.children[0] as HTMLElement;
-	}
-
-	private buildClassLink(classIndex: Class): Element {
-		const specIndexes = getLaunchedSimsForClass(classIndex);
-		const hasSpecSims = specIndexes.length > 1;
-		const href = hasSpecSims ? 'javascript:void(0)' : getSpecSiteUrl(specIndexes[0]);
-
-		return (
-			<a
-				href={href}
-				className={clsx('sim-link', this.getContextualKlass({ type: 'Class', index: classIndex }))}
-				dataset={hasSpecSims ? { bsToggle: 'dropdown' } : {}}>
-				<div className="sim-link-content">
-					<img src={this.getSimIconPath({ type: 'Class', index: classIndex })} className="sim-link-icon" />
-					<div className="d-flex flex-column">
-						<span className="sim-link-title">{classNames[classIndex]}</span>
-						{!hasSpecSims && this.launchStatusLabel({ type: 'Spec', index: specIndexes[0] })}
-					</div>
-				</div>
-			</a>
-		);
-	}
-
-	private buildSpecLink(specIndex: Spec): Element {
-		const href = getSpecSiteUrl(specIndex);
-
-		return (
-			<a href={href} className={clsx('sim-link', this.getContextualKlass({ type: 'Spec', index: specIndex }))}>
-				<div className="sim-link-content">
-					<img src={this.getSimIconPath({ type: 'Spec', index: specIndex })} className="sim-link-icon" />
-					<div className="d-flex flex-column">
-						<span className="sim-link-label">{classNames[specToClass[specIndex]]}</span>
-						<span className="sim-link-title">{this.specLabels[specIndex]}</span>
-						{this.launchStatusLabel({ type: 'Spec', index: specIndex })}
+					<div className="sim-title-texts">
+						<div className="sim-title-current d-flex flex-column">
+							<span className="sim-link-label text-white">WoWSims - Forever</span>
+							<span className="sim-link-title">{label}</span>
+							{this.launchStatusLabel(data)}
+						</div>
+						{href && (
+							<div className="sim-title-back d-flex flex-column">
+								<span className="sim-title-back-title">
+									<i className="fas fa-arrow-left sim-title-back-arrow" />
+									Change spec
+								</span>
+								<span className="sim-link-label">Back to class & spec list</span>
+							</div>
+						)}
 					</div>
 				</div>
 			</a>

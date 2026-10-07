@@ -1,3 +1,5 @@
+import tippy from 'tippy.js';
+
 import * as Tooltips from '../../constants/tooltips';
 import { Encounter } from '../../encounter';
 import { IndividualSimUI, InputSection } from '../../individual_sim_ui';
@@ -34,6 +36,10 @@ export class SettingsTab extends SimTab {
 	readonly leftPanel: HTMLElement;
 	readonly rightPanel: HTMLElement;
 
+	// The saved encounters, at the top of the Encounter section. The raid sim's player editor
+	// has no Encounter section.
+	private encounterPresets?: HTMLElement;
+
 	readonly column1: HTMLElement = this.buildColumn(1, 'settings-left-col');
 	readonly column2: HTMLElement = this.buildColumn(2, 'settings-left-col');
 	readonly column3: HTMLElement = this.buildColumn(3, 'settings-left-col');
@@ -59,8 +65,10 @@ export class SettingsTab extends SimTab {
 		this.rightPanel = document.createElement('div');
 		this.rightPanel.classList.add('settings-tab-right', 'tab-panel-right', 'within-raid-sim-hide');
 
-		this.contentContainer.appendChild(this.leftPanel);
+		// The saved settings come first, to the left of the settings, like the gear sets in the
+		// Gear tab.
 		this.contentContainer.appendChild(this.rightPanel);
+		this.contentContainer.appendChild(this.leftPanel);
 
 		this.buildTabContent();
 	}
@@ -91,6 +99,11 @@ export class SettingsTab extends SimTab {
 		const contentBlock = new ContentBlock(this.column1, 'encounter-settings', {
 			header: { title: 'Encounter' },
 		});
+
+		this.encounterPresets = document.createElement('div');
+		this.encounterPresets.classList.add('encounter-presets');
+		this.encounterPresets.innerHTML = '<span>Presets:</span><div class="saved-data-presets"></div>';
+		contentBlock.bodyElement.appendChild(this.encounterPresets);
 
 		new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, this.simUI.individualConfig.encounterPicker, this.simUI);
 	}
@@ -325,20 +338,26 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
-		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI.sim.encounter, {
-			label: 'Encounter',
-			header: {
-				title: 'Saved Encounters',
-				tooltip: presetListTooltip('Loading an encounter changes:', ['Duration and its variation', 'Execute phases', 'PvP options', 'Targets']),
-			},
-			storageKey: this.simUI.getSavedEncounterStorageKey(),
-			getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
-			setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
-			changeEmitters: [this.simUI.sim.encounter.changeEmitter],
-			equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
-			toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
-			fromJson: (obj: any) => SavedEncounter.fromJson(obj),
+		// The saved encounters are part of the Encounter section, like the stat weight presets
+		// in the Stat Weights section.
+		const encounterPresets = this.encounterPresets!;
+		tippy(encounterPresets.querySelector('span')!, {
+			content: presetListTooltip('Loading an encounter changes:', ['Duration and its variation', 'Execute phases', 'PvP options', 'Targets']),
 		});
+		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(
+			encounterPresets.querySelector('.saved-data-presets') as HTMLElement,
+			this.simUI.sim.encounter,
+			{
+				label: 'Encounter',
+				storageKey: this.simUI.getSavedEncounterStorageKey(),
+				getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
+				setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
+				changeEmitters: [this.simUI.sim.encounter.changeEmitter],
+				equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
+				toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
+				fromJson: (obj: any) => SavedEncounter.fromJson(obj),
+			},
+		);
 
 		const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, {
 			label: 'Settings',

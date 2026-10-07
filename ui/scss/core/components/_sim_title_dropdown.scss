@@ -8,36 +8,103 @@
 
 	.sim-title-dropdown-root {
 		height: calc(var(--sim-header-height) - 1px);
-
-		.sim-link-dropdown {
-			height: 100%;
-
-			& > .dropdown-menu {
-				width: 100%;
-			}
-		}
 	}
 
-	.dropdown-menu {
-		background: var(--bs-body-bg);
-		border: none;
-		z-index: 1500;
-
-		.dropdown-menu {
-			min-width: 300px;
-		}
-	}
-
+	// The title is the way back to the landing page. When we point at it, a gold glow fades
+	// in from the left, the class icon grows a little with a gold ring, and the site name
+	// turns gold.
 	.sim-link {
-		background: var(--bs-body-bg);
+		position: relative;
+		background: var(--sidebar-bg);
 		height: 100%;
 		width: 100%;
 
-		&:hover,
-		&:focus,
-		&.active,
-		&.show {
-			background: var(--dropdown-link-hover-bg);
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(90deg, rgba($gold, 0.16), rgba($gold, 0.04) 60%, transparent);
+			opacity: 0;
+			transition: opacity 0.25s ease;
+			pointer-events: none;
+		}
+
+		.sim-link-icon {
+			transition:
+				transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+				box-shadow 0.25s ease;
+		}
+
+		.sim-link-label {
+			transition: color 0.25s ease;
+		}
+
+		// The sim's name and the text that says where the link goes take the same place. On
+		// hover the name slides out to the left and the other slides in from the right, and
+		// its arrow keeps nudging left.
+		.sim-title-texts {
+			position: relative;
+			display: grid;
+
+			.sim-title-current,
+			.sim-title-back {
+				grid-area: 1 / 1;
+				justify-content: center;
+				transition:
+					opacity 0.2s ease,
+					transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+			}
+
+			// It keeps some room from the icon, which grows on hover.
+			.sim-title-back {
+				padding-left: var(--spacer-2);
+				opacity: 0;
+				transform: translateX(0.5rem);
+				pointer-events: none;
+
+				.sim-title-back-title {
+					font-size: 1rem;
+					font-weight: bold;
+					color: var(--gold-soft);
+					white-space: nowrap;
+				}
+
+				.sim-title-back-arrow {
+					margin-right: var(--spacer-2);
+				}
+
+				.sim-link-label {
+					color: var(--bs-body-color);
+				}
+			}
+		}
+
+		&.sim-title-home-link:hover,
+		&.sim-title-home-link:focus-visible {
+			&::before {
+				opacity: 1;
+			}
+
+			.sim-link-icon {
+				transform: scale(1.08);
+				box-shadow:
+					0 0 0 2px rgba($gold, 0.7),
+					0 0 0.75rem rgba($gold, 0.35);
+			}
+
+			.sim-title-current {
+				opacity: 0;
+				transform: translateX(-0.5rem);
+			}
+
+			.sim-title-back {
+				opacity: 1;
+				transform: none;
+
+				.sim-title-back-arrow {
+					animation: sim-title-back-nudge 1s ease-in-out infinite;
+				}
+			}
 		}
 
 		.sim-link-content {
@@ -46,8 +113,8 @@
 		}
 
 		// The title fills the header's height and centers itself. It's smaller than the sim
-		// links in its menu, so its three lines fit the short header with room around them.
-		&[data-bs-toggle='dropdown'] > .sim-link-content {
+		// links elsewhere, so its three lines fit the short header with room around them.
+		& > .sim-link-content {
 			height: 100%;
 			padding-top: 0;
 			padding-bottom: 0;
@@ -67,5 +134,15 @@
 				font-size: 1rem;
 			}
 		}
+	}
+}
+
+@keyframes sim-title-back-nudge {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(-0.2rem);
 	}
 }

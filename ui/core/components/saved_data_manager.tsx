@@ -5,7 +5,7 @@ import { EventID, TypedEvent } from '../typed_event';
 import { BaseModal } from './base_modal';
 import { Component } from './component';
 import { ContentBlock, ContentBlockHeaderConfig } from './content_block';
-import { dirtySettings, PresetSource } from './dirty_settings';
+import { ChangeCategory, dirtySettings, PresetSource } from './dirty_settings';
 import { PresetTree } from './preset_tree';
 
 export type SavedDataManagerConfig<ModObject, T> = {
@@ -19,6 +19,9 @@ export type SavedDataManagerConfig<ModObject, T> = {
 	setData: (eventID: EventID, modObject: ModObject, data: T) => void;
 	toJson: (a: T) => any;
 	fromJson: (obj: any) => T;
+	// What the tooltip lists as changed since we loaded a preset. Without it, we list each
+	// setting on the tabs that differs from the preset.
+	listChanges?: (data: T, changes: ChangeCategory[]) => ChangeCategory[];
 };
 
 export type SavedDataConfig<ModObject, T> = {
@@ -35,8 +38,8 @@ export type SavedDataConfig<ModObject, T> = {
 	onLoad?: (obj: ModObject) => void;
 };
 
-// The folder our own saved presets are listed in.
-const CUSTOM_GROUP = 'Custom';
+// The folder our own saved presets are listed in, after the spec's presets.
+const SAVED_GROUP = 'Saved';
 
 type SavedData<ModObject, T> = {
 	name: string;
@@ -77,7 +80,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 		);
 
 		this.savedDataDiv = savedDataRef.value!;
-		this.presetTree = new PresetTree(`${config.storageKey}__openFolders__`, `${config.storageKey}__selected__`);
+		this.presetTree = new PresetTree(`${config.storageKey}__openFolders__`, `${config.storageKey}__selected__`, SAVED_GROUP);
 		presetDataRef.value!.appendChild(this.presetTree.rootElem);
 
 		// The saved sets are presets too, so the settings they control are marked when we
@@ -107,7 +110,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 		const oldIdx = dataArr.findIndex(data => data.name == config.name);
 
 		if (oldIdx == -1) {
-			this.presetTree.add(newData.elem, config.isPreset ? config.group : CUSTOM_GROUP);
+			this.presetTree.add(newData.elem, config.isPreset ? config.group : SAVED_GROUP);
 			dataArr.push(newData);
 		} else {
 			this.presetTree.untrack(dataArr[oldIdx].elem);
@@ -170,7 +173,10 @@ export class SavedDataManager<ModObject, T> extends Component {
 			});
 		}
 
-		this.presetTree.attachTooltip(dataElem, config.tooltip, 'left', () => dirtySettings.changesFor(this.dirtySource));
+		this.presetTree.attachTooltip(dataElem, config.tooltip, () => {
+			const changes = dirtySettings.changesFor(this.dirtySource);
+			return this.config.listChanges ? this.config.listChanges(config.data, changes) : changes;
+		});
 
 		return {
 			name: config.name,
@@ -238,7 +244,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.saveUserData();
 		const saved = this.userData.find(data => data.name == name);
 		if (saved) this.presetTree.select(saved.elem);
-		this.presetTree.openFolder(CUSTOM_GROUP);
+		this.presetTree.openFolder(SAVED_GROUP);
 	}
 
 	private buildSaveButton(): HTMLElement {

@@ -1,6 +1,13 @@
+// The gaps between the lanes of a tab and between the sections in them. They're half the
+// page's padding, because the sections are cards with their own edges.
+:root {
+	--tab-lane-gap: calc(var(--container-padding) / 2);
+	--tab-section-gap: calc(var(--section-spacer) / 2);
+}
+
 .tab-pane-content-container {
 	display: flex;
-	gap: var(--container-padding);
+	gap: var(--tab-lane-gap);
 	flex-wrap: wrap;
 
 	@include media-breakpoint-down(xl) {
@@ -8,7 +15,7 @@
 	}
 
 	@include media-breakpoint-down(lg) {
-		gap: var(--section-spacer);
+		gap: var(--tab-section-gap);
 	}
 
 	.tab-panel-left,
@@ -18,7 +25,7 @@
 
 	.tab-panel-left {
 		display: grid;
-		gap: var(--section-spacer);
+		gap: var(--tab-section-gap);
 		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 		flex: 4;
 
@@ -32,13 +39,13 @@
 		min-width: 200px;
 		display: flex;
 		flex-direction: column;
-		gap: var(--section-spacer);
+		gap: var(--tab-section-gap);
 		flex: 1.25;
 	}
 
 	.tab-panel-col {
 		display: flex;
 		flex-direction: column;
-		gap: var(--section-spacer);
+		gap: var(--tab-section-gap);
 	}
 }

@@ -1,12 +1,12 @@
 .sim-header {
 	position: sticky;
-	top: -1px;
+	top: 0;
 	height: var(--sim-header-height);
 	padding-top: var(--gap-width);
-	padding-left: var(--container-padding);
-	padding-right: var(--container-padding);
-	margin-left: calc(-1 * var(--container-padding));
-	margin-right: calc(-1 * var(--container-padding));
+	padding-left: var(--sim-content-padding-x);
+	padding-right: var(--sim-content-padding-x);
+	margin-left: calc(-1 * var(--sim-content-padding-x));
+	margin-right: calc(-1 * var(--sim-content-padding-x));
 	white-space: nowrap;
 	transition: background-color 0.15s ease-in-out;
 	z-index: var(--header-z-index);
@@ -21,7 +21,7 @@
 		bottom: -1px;
 		left: 0;
 		right: 0;
-		width: calc(100% - 2 * var(--container-padding));
+		width: calc(100% - 2 * var(--sim-content-padding-x));
 		height: 1px;
 		margin-left: auto;
 		margin-right: auto;
@@ -29,18 +29,15 @@
 		transition: width 0.15s ease-in-out;
 	}
 
-	// Once we scroll, the header floats over the page. It takes a lighter gray than the
-	// sidebar, so it reads as its own bar, at half opacity so the page shows through, with a
-	// shadow under it.
+	// Once we scroll, the header floats over the page as a frosted bar: the page shows
+	// through it blurred, with a shadow under it.
 	&.stuck {
-		background: color-mix(in srgb, color-mix(in srgb, var(--bs-body-bg), white 5%) 50%, transparent);
+		background: rgba(11, 15, 21, 0.75);
+		backdrop-filter: blur(8px);
 		box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5);
 
-		// The header sits 1px above the top when stuck (top: -1px is how we tell it's stuck),
-		// so its line goes 1px lower to stay level with the border under the sidebar's logo.
 		&::after {
 			width: 100%;
-			bottom: -2px;
 		}
 	}
 

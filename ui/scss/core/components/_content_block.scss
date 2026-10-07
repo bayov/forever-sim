@@ -3,12 +3,21 @@
 	flex-direction: column;
 	gap: var(--block-spacer);
 
+	// Section titles are gold small capitals, over a gold line that fades out to the right.
 	.content-block-header {
-		border-bottom: $border-default;
 		display: flex;
+		padding-bottom: var(--spacer-2);
+		border-bottom: 1px solid transparent;
+		border-image: linear-gradient(90deg, rgba($gold, 0.6), var(--line-color) 45%, transparent) 1;
 
 		.content-block-title {
-			font-weight: bold;
+			margin-bottom: 0;
+			font-family: var(--heading-font-family);
+			font-variant: small-caps;
+			font-weight: 700;
+			font-size: 1.15rem;
+			letter-spacing: 0.04em;
+			color: var(--gold-soft);
 		}
 	}
 
@@ -17,4 +26,9 @@
 		flex-direction: column;
 		gap: var(--block-spacer);
 	}
+}
+
+// In the tabs every section is a card, so it reads well over the class art behind the page.
+.sim-main .tab-pane .content-block:not(.content-block .content-block) {
+	@include panel-card;
 }

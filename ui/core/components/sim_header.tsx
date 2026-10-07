@@ -1,3 +1,4 @@
+import { Tab } from 'bootstrap';
 import tippy, { ReferenceElement as TippyReferenceElement } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
@@ -21,6 +22,8 @@ interface ToolbarLinkArgs {
 }
 
 export class SimHeader extends Component {
+	static readonly TAB_PARAM = 'tab';
+
 	private simUI: SimUI;
 
 	private simTabsContainer: HTMLElement;
@@ -41,8 +44,33 @@ export class SimHeader extends Component {
 		this.addSimOptionsLink();
 		this.addSocialLinks();
 
-		// Allow styling the sticky header
-		new IntersectionObserver(([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 1), { threshold: [1] }).observe(this.rootElem);
+		// The header floats over the page once we scroll it, see .stuck. The page scrolls in
+		// .sim-ui, and its scroll events don't bubble, so we listen in the capture phase.
+		document.addEventListener(
+			'scroll',
+			() => {
+				const scroller = this.rootElem.closest('.sim-ui');
+				if (scroller) this.rootElem.classList.toggle('stuck', scroller.scrollTop > 0);
+			},
+			{ capture: true, passive: true },
+		);
+	}
+
+	// The URL says which tab is open, like ?tab=talents, so a refresh opens the same tab. The
+	// raid sim's player editor doesn't do this, because the URL is the raid sim's.
+	syncTabWithUrl() {
+		const tabName = (link: Element) => link.textContent!.trim().toLowerCase().replace(/\s+/g, '-');
+		const links = Array.from(this.simTabsContainer.querySelectorAll<HTMLElement>('[data-bs-toggle="tab"]'));
+
+		const wanted = new URLSearchParams(window.location.search).get(SimHeader.TAB_PARAM);
+		const link = links.find(link => tabName(link) === wanted);
+		if (link) Tab.getOrCreateInstance(link).show();
+
+		this.simTabsContainer.addEventListener('shown.bs.tab', event => {
+			const url = new URL(window.location.href);
+			url.searchParams.set(SimHeader.TAB_PARAM, tabName(event.target as Element));
+			window.history.replaceState(window.history.state, '', url);
+		});
 	}
 
 	activateTab(className: string) {

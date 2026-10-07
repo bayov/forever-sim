@@ -14,7 +14,8 @@
 		transition: border-color 0.15s ease-in-out;
 		position: relative;
 		display: block;
-		background-color: grey;
+		// An empty slot is a dark square, a step lighter than the card it's on.
+		background-color: var(--panel-bg-2);
 		filter: grayscale(1);
 
 		&.active {

@@ -11,6 +11,15 @@
 		}
 	}
 
+	// The saved encounters at the top of the Encounter section, like the stat weight presets.
+	.encounter-presets {
+		margin-bottom: var(--block-spacer);
+
+		> span {
+			font-weight: bold;
+		}
+	}
+
 	.rotation-settings,
 	.other-settings {
 		.input-root {
@@ -74,5 +83,12 @@
 				}
 			}
 		}
+	}
+}
+
+// On narrow screens everything goes in one column, and the settings come first.
+@include media-breakpoint-down(xl) {
+	#settings-tab .tab-pane-content-container .settings-tab-right {
+		order: 1;
 	}
 }

@@ -1,5 +1,7 @@
 :root {
 	--sim-header-height: 3.75rem;
+	// The room left and right of the tabs, half the page's usual padding.
+	--sim-content-padding-x: calc(var(--container-padding) / 2);
 
 	@include media-breakpoint-down(lg) {
 		--sim-header-height: 65px;
@@ -15,8 +17,12 @@ th {
 	// Allow for styled scrolling
 	max-height: 100vh;
 	overflow-y: auto;
-	scrollbar-color: var(--bs-primary) var(--bs-body-bg);
+	scrollbar-color: var(--line-color-strong) var(--bs-body-bg);
 	scrollbar-width: thin;
+	// We keep the room for the scrollbar on the tabs that don't scroll too. Otherwise the
+	// sidebar and the tab change width when we go from a short tab like Settings to a tall one
+	// like Gear.
+	scrollbar-gutter: stable;
 
 	&::-webkit-scrollbar {
 		width: 0.2rem;
@@ -27,7 +33,7 @@ th {
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background-color: var(--bs-primary);
+		background-color: var(--line-color-strong);
 	}
 
 	.sim-root {
@@ -59,7 +65,7 @@ th {
 			}
 		}
 		.sim-content {
-			padding: 0 var(--container-padding) var(--container-padding) var(--container-padding);
+			padding: 0 var(--sim-content-padding-x) var(--container-padding);
 			flex: 4;
 			z-index: 1;
 		}

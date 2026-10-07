@@ -312,6 +312,8 @@ export function getSpecSiteUrl(spec: Spec): string {
 	return specSiteUrlTemplate.toString().replace('SPEC', specString);
 }
 export const raidSimSiteUrl = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/raid/`).toString();
+// The landing page, where we pick a spec.
+export const homeSiteUrl = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/`).toString();
 
 export function cssClassForClass(klass: Class): string {
 	return classNames[klass].toLowerCase().replace(/\s/g, '-');

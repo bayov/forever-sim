@@ -5,7 +5,6 @@ import { ResultsViewer } from './components/results_viewer.jsx';
 import { SimHeader } from './components/sim_header.jsx';
 import { SimTab } from './components/sim_tab.js';
 import { SimTitleDropdown } from './components/sim_title_dropdown.js';
-import { SocialLinks } from './components/social_links.jsx';
 import { installStickyTooltips } from './components/sticky_tooltips';
 import Toast from './components/toast';
 import { LaunchStatus, SimStatus } from './launched_sims.js';
@@ -80,7 +79,6 @@ export abstract class SimUI extends Component {
 								<div className="sim-sidebar-actions within-raid-sim-hide" />
 								<div className="sim-sidebar-results within-raid-sim-hide" />
 								<div className="sim-sidebar-stats" />
-								<div className="sim-sidebar-socials" />
 							</div>
 						</aside>
 						<div className="sim-content container-fluid" />
@@ -176,11 +174,6 @@ export abstract class SimUI extends Component {
 
 		const resultsViewerElem = this.rootElem.querySelector('.sim-sidebar-results') as HTMLElement;
 		this.resultsViewer = new ResultsViewer(resultsViewerElem);
-
-		const socialsContainer = this.rootElem.querySelector('.sim-sidebar-socials') as HTMLElement;
-		socialsContainer.appendChild(SocialLinks.buildDiscordLink());
-		socialsContainer.appendChild(SocialLinks.buildGitHubLink());
-		socialsContainer.appendChild(SocialLinks.buildPatreonLink());
 
 		this.simTabContentsContainer = this.rootElem.querySelector('.sim-main.tab-content') as HTMLElement;
 

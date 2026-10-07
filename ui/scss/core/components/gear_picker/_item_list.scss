@@ -21,13 +21,28 @@
 	margin-left: auto;
 }
 
+// The column names are small and quiet, over a line, so the items stand out.
 .selector-modal-list-labels {
 	display: flex;
-	padding-right: var(--spacer-2);
+	align-items: flex-end;
+	padding: 0 var(--spacer-2) var(--spacer-2);
 	margin-right: var(--spacer-3);
-	font-size: 1.125rem;
 	justify-content: space-between; // Ensures labels are evenly spaced
 	gap: var(--spacer-3);
+	border-bottom: 1px solid var(--line-color-strong);
+
+	h6 {
+		margin-bottom: 0;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--text-muted-color);
+	}
+
+	.interactive:hover {
+		color: var(--bs-white);
+	}
 
 	@include media-breakpoint-down(xl) {
 		margin-right: 0;
@@ -71,29 +86,25 @@
 	}
 }
 
+// Rows are split by thin lines instead of stripes. They all have the same height, because the
+// list only draws the rows on screen and works out where they are from the first one.
 .selector-modal-list-item {
-	padding: var(--spacer-2);
+	height: 3.5rem;
+	padding: 0 var(--spacer-2);
 	display: flex;
 	align-items: center;
-	background-color: var(--bs-gray-900);
 	gap: var(--spacer-3);
-
-	&:nth-child(2n) {
-		background: var(--bs-table-row-even-bg);
-	}
-
-	&:nth-child(2n + 1) {
-		background: var(--bs-table-row-odd-bg);
-	}
+	border-bottom: 1px solid var(--line-color);
+	transition: background-color 0.1s ease-in-out;
 
 	&:hover {
-		background: var(--bs-gray-800);
+		background: rgba($accent, 0.07);
 	}
 
+	// The equipped item has a gold bar on its left and a gold tint.
 	&.active {
-		.selector-modal-list-item-icon {
-			outline: 2px solid var(--bs-success);
-		}
+		background: rgba($gold, 0.08);
+		box-shadow: inset 3px 0 0 var(--gold);
 	}
 	.selector-modal-list-item-link {
 		display: flex;
@@ -106,19 +117,55 @@
 		align-items: center;
 	}
 
+	// The icon has a thin edge in the item's quality color.
 	.selector-modal-list-item-icon {
 		@include wowhead-background-icon;
-		width: 3rem;
-		height: 3rem;
-		border: var(--border-default);
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 1px solid var(--line-color-strong);
+		border-radius: 3px;
+	}
+
+	@each $label, $value in $item-quality-colors {
+		.selector-modal-list-item-link:has(.item-quality-#{$label}) .selector-modal-list-item-icon {
+			border-color: rgba($value, 0.75);
+		}
 	}
 
 	.selector-modal-list-item-name {
-		font-size: 1.125rem;
-		margin-left: var(--spacer-2);
+		font-size: 1rem;
+		margin-left: var(--spacer-3);
 		letter-spacing: normal;
-		font-weight: normal;
+		font-weight: 600;
 		cursor: pointer;
+	}
+
+	.selector-modal-list-item-ilvl-container {
+		color: var(--text-muted-color);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.selector-modal-list-item-source-container {
+		font-size: 0.8rem;
+		line-height: 1.25;
+
+		a {
+			color: var(--bs-body-color);
+
+			&:hover {
+				color: var(--accent);
+			}
+		}
+	}
+
+	// The star is quiet until it's a favorite or we point at it.
+	.selector-modal-list-item-favorite {
+		color: var(--text-muted-color);
+
+		&:hover,
+		&:has(.fas) {
+			color: var(--gold-soft);
+		}
 	}
 }
 

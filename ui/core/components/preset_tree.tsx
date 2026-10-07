@@ -1,10 +1,12 @@
-import tippy, { Placement } from 'tippy.js';
+import tippy from 'tippy.js';
 
 import { ChangeCategory, dirtySettings } from './dirty_settings';
+import { keyClickHint } from './sticky_tooltips';
 
 // A list of presets laid out like the file explorer of an IDE. A preset with a group goes
 // in a folder of that name, and the presets without one sit at the top level under the
-// folders. Folders keep the order in which their first preset was added.
+// folders. Folders keep the order in which their first preset was added, except lastFolder,
+// which stays after all the others (our own saved presets).
 //
 // A folder starts closed unless it holds the active preset. When we open or close a folder
 // by hand, we remember that in local storage under storageKey, and from then on it stays
@@ -39,12 +41,14 @@ export class PresetTree {
 	private readonly folders = new Map<string, { elem: HTMLDetailsElement; children: HTMLElement }>();
 	private readonly storageKey?: string;
 	private readonly selectionKey?: string;
+	private readonly lastFolder?: string;
 	private readonly entries = new Map<HTMLElement, PresetTreeEntry>();
 	private selectedName?: string;
 
-	constructor(storageKey?: string, selectionKey?: string) {
+	constructor(storageKey?: string, selectionKey?: string, lastFolder?: string) {
 		this.storageKey = storageKey;
 		this.selectionKey = selectionKey;
+		this.lastFolder = lastFolder;
 		this.selectedName = this.loadSelection();
 		this.foldersElem = (<div className="preset-tree-folders" />) as HTMLElement;
 		this.filesElem = (<div className="preset-tree-files" />) as HTMLElement;
@@ -71,9 +75,23 @@ export class PresetTree {
 	// Shows the preset's tooltip on hover. When it's the selected preset and we changed it
 	// since, the tooltip also lists what changed (from changes(), like 'Duration: 120 → 90')
 	// and how to reset it.
-	attachTooltip(item: HTMLElement, tooltip: string | undefined, placement: Placement, changes?: () => ChangeCategory[]) {
+	attachTooltip(item: HTMLElement, tooltip: string | undefined, changes?: () => ChangeCategory[]) {
 		tippy(item, {
-			placement,
+			// A row is as wide as the list, so the tooltip opens where the mouse came onto the
+			// row instead of past its far end: just under the row, a little right of the
+			// pointer. So it covers neither the row's name nor its save and delete buttons. It
+			// stays there after, so we can move the mouse onto it.
+			placement: 'bottom-start',
+			offset: [12, 4],
+			onTrigger: (instance, event) => {
+				const x = (event as MouseEvent).clientX;
+				instance.setProps({
+					getReferenceClientRect: () => {
+						const row = item.getBoundingClientRect();
+						return new DOMRect(x, row.y, 0, row.height);
+					},
+				});
+			},
 			// The changed items and enchants are links, and we move the mouse onto them to see
 			// their tooltips. The tooltip goes in body, because the sidebar would cut it off.
 			interactive: true,
@@ -90,25 +108,8 @@ export class PresetTree {
 								<p className="mb-1 preset-tree-changed-title">
 									{categories.length ? 'Changed from defaults:' : 'Some of its settings were changed.'}
 								</p>
-								{categories.map(category => {
-									const shown = category.lines.length > MAX_LISTED_CHANGES ? category.lines.slice(0, MAX_LISTED_CHANGES - 1) : category.lines;
-									return (
-										<>
-											<p className="mb-0 fw-bold">{category.name}</p>
-											{shown.length ? (
-												<ul className="mb-1">
-													{shown.map(line => (
-														<li>{line}</li>
-													))}
-													{shown.length < category.lines.length ? (
-														<li>{`and ${category.lines.length - shown.length} more`}</li>
-													) : undefined}
-												</ul>
-											) : undefined}
-										</>
-									);
-								})}
-								<p className="mb-0 mt-1 fst-italic preset-tree-reset-hint">Ctrl+click to reset to preset defaults.</p>
+								{changesList(categories)}
+								{keyClickHint('ctrl', 'restore preset defaults')}
 							</div>
 						) : undefined}
 					</>,
@@ -229,7 +230,8 @@ export class PresetTree {
 
 		const folder = { elem, children };
 		this.folders.set(group, folder);
-		this.foldersElem.appendChild(elem);
+		const last = this.lastFolder !== undefined && group !== this.lastFolder ? this.folders.get(this.lastFolder) : undefined;
+		this.foldersElem.insertBefore(elem, last?.elem ?? null);
 		return folder;
 	}
 
@@ -289,6 +291,31 @@ export class PresetTree {
 			// Without storage the folders still work, they just start over on the next visit.
 		}
 	}
+}
+
+// The changes under the name of each tab they're on, for a tooltip. A long list on one tab
+// shows the first few and says how many more there are.
+export function changesList(categories: ChangeCategory[]): Element {
+	return (
+		<>
+			{categories.map(category => {
+				const shown = category.lines.length > MAX_LISTED_CHANGES ? category.lines.slice(0, MAX_LISTED_CHANGES - 1) : category.lines;
+				return (
+					<>
+						<p className="mb-0 fw-bold">{category.name}</p>
+						{shown.length ? (
+							<ul className="mb-1">
+								{shown.map(line => (
+									<li>{line}</li>
+								))}
+								{shown.length < category.lines.length ? <li>{`and ${category.lines.length - shown.length} more`}</li> : undefined}
+							</ul>
+						) : undefined}
+					</>
+				);
+			})}
+		</>
+	);
 }
 
 // The tooltip on the title of a list of presets. It says what loading one of them changes,

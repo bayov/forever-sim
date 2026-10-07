@@ -17,6 +17,16 @@
 		}
 	}
 
+	// Modal titles look like the section titles in the tabs.
+	.modal-title,
+	.selector-modal-title {
+		font-family: var(--heading-font-family);
+		font-variant: small-caps;
+		font-weight: 700;
+		font-size: 1.35rem;
+		color: var(--gold-soft);
+	}
+
 	.modal-scroll-table {
 		flex: 1;
 		overflow-y: auto;
@@ -31,4 +41,25 @@
 
 .modal-body {
 	gap: var(--bs-modal-padding);
+}
+
+// A modal is a panel lifted off the page: a faint glow at its top, a deep shadow, and the
+// page behind it dimmed and blurred.
+.modal-content {
+	background: linear-gradient(180deg, rgba($accent, 0.05), transparent 8rem), $panel-bg;
+	box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.7);
+}
+
+.modal-header .btn-close {
+	color: var(--text-muted-color);
+
+	&:hover {
+		color: var(--bs-white);
+	}
+}
+
+.modal-backdrop.show {
+	opacity: 1;
+	background: rgba(5, 8, 12, 0.6);
+	backdrop-filter: blur(3px);
 }
