@@ -35,3 +35,18 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Consecrated Ground: all Holy damage and every target?
 * Holy Power scope.
 * Swift Judgement and Pursuit of Justice are not implemented.
+
+## At 60
+
+Things we can only check on release, because the beta stops at level 30.
+
+* Naked level 60 Orc shaman sheet: attributes, health, mana, attack power, melee and spell crit, dodge, and how much crit one point of Agility and Intellect gives at 60. The level 30 sheet only checks the lower level tables.
+* Attack table against a level 63 boss with 300 weapon skill (sim: 8% miss and 9% hit to cap, 6.5% dodge, 40% glancing at 65% damage on average, crit cut by 4.8%). A level 33 mob at level 30 tests the same +3 rules, but with different numbers.
+* Spells against a level 63 boss (sim: 17% miss, 6% average partial resist, crit cut by 2.1%).
+* Every shaman rank above what a level 30 knows, and the spells learned after 30 (in 1.12, Windfury Totem and Chain Lightning at 32, Grace of Air Totem at 42). wowhead shows the imbues at levels 62 to 68, so their level 60 values are our own scaling.
+* Shaman talents in rows 6 and 7 (Elemental Fury, Maelstrom Weapon, Lava Burst, Rage of the Farseer).
+* Blessing of Wisdom at its top rank, and Judgement of Wisdom (1.12 learns it at 38). Both need a paladin past 30.
+* Blood Fury at 60. wowhead shows a flat 169 attack power. The beta tooltip at 30 tells us whether that number grows with level.
+* The level 60 trinkets in the presets (Hand of Justice, Blackhand's Breadth).
+* Raid buffs and totems at their top ranks, at their Forever values.
+* The level 60 raid boss: is it level 63, and its armor (sim: 3731).
