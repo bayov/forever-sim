@@ -2,6 +2,7 @@ package stats
 
 import (
 	"fmt"
+	"math"
 )
 
 // This stat list is arranged such that evaluating dependencies in this order
@@ -73,6 +74,11 @@ type StatDependency struct {
 	// Note that amount is treated differently depending on whether src and dst
 	// stats are the same.
 	amount float64
+
+	// floor marks the step where we drop the fraction from an attribute (see
+	// FloorAttributes). It comes after the attribute's multipliers and before
+	// anything converts it.
+	floor bool
 }
 
 func (sd StatDependency) String() string {
@@ -92,6 +98,15 @@ func (sd StatDependency) String() string {
 type StatDependencyManager struct {
 	deps      []*StatDependency
 	finalized bool
+
+	// FloorAttributes drops the fraction from Strength, Agility, Stamina, Intellect
+	// and Spirit once their multipliers are applied.
+	//
+	// The Forever beta does this. With Ancestral Knowledge 5/5, 137 Intellect became
+	// 150 (not 150.7) and max mana counted 150. With Blessing of Kings on top it
+	// became 165 (137 × 1.10 × 1.10 = 165.77). Health, mana, attack power, crit and
+	// regen all come from the whole number.
+	FloorAttributes bool
 }
 
 func NewStatDependencyManager() StatDependencyManager {
@@ -183,7 +198,7 @@ func (sdm *StatDependencyManager) sortDeps() {
 
 			amount := startAmount
 			for _, dep := range sdm.deps {
-				if dep.src != srcStat || dep.dst != dstStat {
+				if dep.floor || dep.src != srcStat || dep.dst != dstStat {
 					continue
 				}
 
@@ -206,6 +221,17 @@ func (sdm *StatDependencyManager) sortDeps() {
 					src:     srcStat,
 					dst:     dstStat,
 					amount:  amount,
+				})
+			}
+
+			// Every dep into this attribute is in the list by now, because they come
+			// from earlier stats or are its own multipliers.
+			if srcStat == dstStat && sdm.FloorAttributes && srcStat <= Spirit {
+				deps = append(deps, &StatDependency{
+					enabled: true,
+					src:     srcStat,
+					dst:     dstStat,
+					floor:   true,
 				})
 			}
 		}
@@ -237,6 +263,28 @@ func (sdm *StatDependencyManager) IsFinalized() bool {
 func (sdm *StatDependencyManager) ApplyStatDependencies(s Stats) Stats {
 	for _, dep := range sdm.deps {
 		if dep.enabled {
+			if dep.floor {
+				// We add a little before flooring, because 100 × 1.15 comes out as
+				// 114.99999999999999.
+				s[dep.dst] = math.Floor(s[dep.dst] + 1e-6)
+			} else if dep.src == dep.dst {
+				s[dep.dst] *= dep.amount
+			} else {
+				s[dep.dst] += s[dep.src] * dep.amount
+			}
+		}
+	}
+	return s
+}
+
+// ApplyStatDependenciesToBonus converts a stat change rather than a full stat sheet.
+//
+// It skips the floor steps, so it's only exact when the change has no attributes or
+// FloorAttributes is off. Otherwise the caller has to apply the dependencies to the
+// full stats again.
+func (sdm *StatDependencyManager) ApplyStatDependenciesToBonus(s Stats) Stats {
+	for _, dep := range sdm.deps {
+		if dep.enabled && !dep.floor {
 			if dep.src == dep.dst {
 				s[dep.dst] *= dep.amount
 			} else {
@@ -245,6 +293,12 @@ func (sdm *StatDependencyManager) ApplyStatDependencies(s Stats) Stats {
 		}
 	}
 	return s
+}
+
+// HasAttributes reports whether the stats change any of Strength, Agility, Stamina,
+// Intellect or Spirit.
+func (s Stats) HasAttributes() bool {
+	return s[Strength] != 0 || s[Agility] != 0 || s[Stamina] != 0 || s[Intellect] != 0 || s[Spirit] != 0
 }
 
 func (sdm *StatDependencyManager) SortAndApplyStatDependencies(s Stats) Stats {

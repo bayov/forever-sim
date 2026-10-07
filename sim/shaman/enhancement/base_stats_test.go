@@ -67,3 +67,61 @@ func TestOrcShamanBaseStats(t *testing.T) {
 		check("dodge", got[stats.Dodge]/core.DodgeRatingPerDodgeChance, want.dodge, 0.005)
 	}
 }
+
+// TestOrcShamanAttributeRates checks what each attribute gives well above the naked values,
+// against a geared level 30 Orc shaman on the Forever beta (2026-10-08). We give a naked
+// Orc the same attribute bonuses as that gear (+55 Strength, +13 Agility, +55 Stamina, +91
+// Intellect, +30 Spirit) and nothing else.
+//
+// The beta showed 212 AP from Strength, 86 armor from Agility, 880 health from Stamina, 1775
+// mana from Intellect, 5.43% dodge, 5.39% melee crit with a 149 of 150 weapon skill (each
+// missing point takes 0.04% off, so 5.43% at full skill), 7.16% spell crit and 83 mana per 5
+// sec from Spirit. Health and mana add the base 335 and 665.
+//
+// The beta's spell crit is exactly 0.0355% per Intellect at level 30 (GetSpellCritChance on
+// the naked character). The sim scales the level 60 rate along the client's curve and gets
+// 0.03554%, which puts it 0.006% above the beta at 137 Intellect, so spell crit has a looser
+// tolerance than the rest.
+func TestOrcShamanAttributeRates(t *testing.T) {
+	bonus := stats.Stats{
+		stats.Strength:  55,
+		stats.Agility:   13,
+		stats.Stamina:   55,
+		stats.Intellect: 91,
+		stats.Spirit:    30,
+	}
+	player := &proto.Player{
+		Race:       proto.Race_RaceOrc,
+		Class:      proto.Class_ClassShaman,
+		Level:      30,
+		Equipment:  &proto.EquipmentSpec{},
+		BonusStats: &proto.UnitStats{Stats: bonus.ToFloatArray()},
+		Spec: &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
+			Options: &proto.EnhancementShaman_Options{},
+		}},
+	}
+	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+	env, _, _ := core.NewEnvironment(raid, &proto.Encounter{}, proto.Ruleset_RulesetForever, false)
+	character := env.Raid.Parties[0].Players[0].GetCharacter()
+	got := character.GetStats()
+
+	check := func(name string, have, want, tolerance float64) {
+		if math.Abs(have-want) > tolerance {
+			t.Errorf("%s: got %.3f, want %.3f", name, have, want)
+		}
+	}
+	check("Strength", got[stats.Strength], 106, 0)
+	check("Agility", got[stats.Agility], 43, 0)
+	check("Stamina", got[stats.Stamina], 106, 0)
+	check("Intellect", got[stats.Intellect], 137, 0)
+	check("Spirit", got[stats.Spirit], 83, 0)
+	check("attack power", got[stats.AttackPower], 40+212, 0)
+	check("armor", got[stats.Armor], 86, 0)
+	check("health", got[stats.Health], 335+880, 0)
+	check("mana", got[stats.Mana], 665+1775, 0)
+	check("melee crit", got[stats.MeleeCrit]/core.CritRatingPerCritChance, 5.43, 0.005)
+	check("dodge", got[stats.Dodge]/core.DodgeRatingPerDodgeChance, 5.43, 0.005)
+	check("spell crit", got[stats.SpellCrit]/core.CritRatingPerCritChance, 7.16, 0.01)
+	// 83 per 5 sec on the beta's tooltip, 12.5 + 33 / 8 = 16.625 a second.
+	check("mana regen", character.ManaRegenPerSecondWhileNotCasting(), 16.625, 1e-9)
+}

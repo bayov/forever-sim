@@ -237,13 +237,22 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 
 	unit.statsWithoutDeps.AddInplace(&bonus)
 
-	bonus = unit.ApplyStatDependencies(bonus)
+	if unit.FloorAttributes && unit.Env.IsFinalized() && bonus.HasAttributes() {
+		// Dropping the fraction from an attribute depends on the whole value, so we
+		// can't convert the change on its own. 7 Strength under Blessing of Kings adds
+		// 7 or 8 depending on what the character had before.
+		newStats := unit.ApplyStatDependencies(unit.statsWithoutDeps)
+		bonus = newStats.Subtract(unit.stats)
+		unit.stats = newStats
+	} else {
+		bonus = unit.ApplyStatDependenciesToBonus(bonus)
+		unit.stats.AddInplace(&bonus)
+	}
 
 	if sim.Log != nil {
 		unit.Log(sim, "Dynamic stat change: %s", bonus.FlatString())
 	}
 
-	unit.stats.AddInplace(&bonus)
 	unit.processDynamicBonus(sim, bonus)
 }
 

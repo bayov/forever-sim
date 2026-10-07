@@ -1057,7 +1057,7 @@ func makeHealthConsumableMCD(itemId int32, character *Character, cdTimer *Timer)
 
 func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) MajorCooldown {
 	minRoll := map[int32]float64{
-		3385:  270.0,
+		3385:  280.0,
 		3827:  455.0,
 		6149:  700.0,
 		4381:  150.0,
@@ -1067,7 +1067,7 @@ func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 	}[itemId]
 
 	maxRoll := map[int32]float64{
-		3385:  330.0,
+		3385:  360.0,
 		3827:  585.0,
 		6149:  900.0,
 		4381:  250.0,
@@ -1077,6 +1077,14 @@ func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 	}[itemId]
 
 	cdDuration := time.Minute * 2
+	if itemId == 4381 {
+		// Minor Recombobulator is a trinket with a 5 min cooldown. Forever cut its mana to
+		// 96 to 160 (wowhead Forever).
+		cdDuration = time.Minute * 5
+		if character.Env.IsForever() {
+			minRoll, maxRoll = 96, 160
+		}
+	}
 
 	actionID := ActionID{ItemID: itemId}
 	manaMetrics := character.NewManaMetrics(actionID)

@@ -16,6 +16,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * wowhead spell details (rate limited last time): Call of Flame 16038 (does it touch Flametongue Totem, and does it add with Improved Fire Nova), Improved Fire Nova 16086, Elemental Weapons 16266, Concussion 16035.
 * Revelation (weapon enchant): only shocks trigger it, no ICD, flat proc chance (sim: 7.2%).
 * Stacking of the Forever-only elixirs with each other.
+* Beta: Spirit regen of the classes we haven't measured (druid, hunter, mage, priest, warlock). The sim gives every class the shaman and paladin formula under Forever: 0.25 mana a second for each of the first 50 Spirit, 0.125 past that. One GetManaRegen reading below 50 Spirit and one above settles a class.
 * Rage of the Storm (280604) source. We assume a level 30 shaman quest chain.
 
 ## Rogue
@@ -35,6 +36,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Consecrated Ground: all Holy damage and every target?
 * Holy Power scope.
 * Swift Judgement and Pursuit of Justice are not implemented.
+* Beta: Undead paladin base stats. 1.12 has no Undead paladin, so the sim builds the row from the Human paladin and the Undead warrior. The beta shows 34 base Spirit at level 20, the sim has 39. The other four stats are still unchecked.
 
 ## At 60
 
@@ -50,3 +52,4 @@ Things we can only check on release, because the beta stops at level 30.
 * The level 60 trinkets in the presets (Hand of Justice, Blackhand's Breadth).
 * Raid buffs and totems at their top ranks, at their Forever values.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).
+* The 100% cap on mana regen while casting. Mindfulness 3/3, Improved Stormstrike and Polished Driftwood Icon add up to 108%, and the sim caps it at 100% like cmangos.

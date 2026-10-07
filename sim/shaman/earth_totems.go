@@ -37,7 +37,7 @@ func (shaman *Shaman) newStrengthOfEarthTotemSpellConfig(rank int) core.SpellCon
 
 	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
 
-	buffAura := core.StrengthOfEarthTotemAura(&shaman.Unit, 1)
+	buffAura := ownTotemAura(core.StrengthOfEarthTotemAura(&shaman.Unit, 1))
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level

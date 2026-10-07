@@ -86,6 +86,7 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 	for unitIndex, unit := range env.AllUnits {
 		unit.Env = env
 		unit.UnitIndex = int32(unitIndex)
+		unit.FloorAttributes = env.IsForever()
 	}
 
 	for _, unit := range env.Raid.AllUnits {

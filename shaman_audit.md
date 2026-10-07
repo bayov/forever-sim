@@ -16,22 +16,22 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 ## 1. Character stats
 
 - [x] 1.1 Base stats by race and level (Orc shaman at 30 and 60): attributes, base health and mana, base attack power, base melee and spell crit, base dodge
-- [ ] 1.2 Strength: attack power, block value
-- [ ] 1.3 Agility: melee crit by level, dodge, armor, attack power (none for a shaman)
-- [ ] 1.4 Stamina: health
-- [ ] 1.5 Intellect: mana, spell crit by level
-- [ ] 1.6 Spirit (the regen formula is 2.2)
-- [ ] 1.7 Forever gear rules: armor listed twice, hit and crit as flat percent, one hit and one crit stat for melee and spells, item haste, school spell power (fire, nature), bonus weapon damage
-- [ ] 1.8 Stat multipliers and their order (Blessing of Kings, Ancestral Knowledge, Toughness)
-- [ ] 1.9 The stats panel: it shows our own Strength of Earth and Grace of Air totems on top of the real stats
+- [x] 1.2 Strength: attack power, block value
+- [x] 1.3 Agility: melee crit by level, dodge, armor, attack power (none for a shaman)
+- [x] 1.4 Stamina: health
+- [x] 1.5 Intellect: mana, spell crit by level
+- [x] 1.6 Spirit (the regen formula is 2.2)
+- [x] 1.7 Forever gear rules: armor listed twice, hit and crit as flat percent, one hit and one crit stat for melee and spells, item haste, school spell power (fire, nature), bonus weapon damage
+- [x] 1.8 Stat multipliers and their order (Blessing of Kings, Ancestral Knowledge, Toughness)
+- [x] 1.9 The stats panel: it shows our own Strength of Earth and Grace of Air totems on top of the real stats
 
 ## 2. Mana and regen
 
-- [ ] 2.1 Mana pool: base mana by level, Intellect to mana
-- [?] 2.2 Spirit regen formula, and continuous regen under Forever (no 2 sec ticks)
-- [ ] 2.3 Five second rule: what starts it, regen while casting (Mindfulness, Polished Driftwood Icon, Improved Stormstrike)
-- [ ] 2.4 MP5: gear, Blessing of Wisdom, Mageblood, Mana Spring
-- [ ] 2.5 Mana returns: Judgement of Wisdom on melee hits, Water Shield globes, Mana Tide
+- [x] 2.1 Mana pool: base mana by level, Intellect to mana
+- [x] 2.2 Spirit regen formula, and continuous regen under Forever (no 2 sec ticks)
+- [x] 2.3 Five second rule: what starts it, regen while casting (Mindfulness, Polished Driftwood Icon, Improved Stormstrike)
+- [x] 2.4 MP5: gear, Blessing of Wisdom, Mageblood, Mana Spring
+- [x] 2.5 Mana returns: Judgement of Wisdom on melee hits, Water Shield globes, Mana Tide
 - [ ] 2.6 Potions and Demonic Rune: amounts, shared cooldown, when the rotation uses them
 - [ ] 2.7 Mana costs: base cost by rank, cost modifiers (Totemic Focus, Convection, Shamanistic Focus, Clearcasting, Maelstrom Weapon), what happens when we can't pay
 
@@ -256,6 +256,44 @@ Beta sheet, naked level 30 Orc shaman with no talents (2026-10-07). These come f
 - Creature crits deal double damage. Creatures 3 or more levels above us can crush for 150%. Item 6.4.
 - Players dodge only from the front. Creatures dodge from any direction. Item 4.5.
 
+### 1.2 to 1.6 Attributes
+
+Geared level 30 Orc shaman on the beta (2026-10-08): 106 Str, 43 Agi, 106 Sta, 137 Int, 83 Spi. Every rate matches the sim. 212 AP and 5 block value from Strength, 3.7% crit and dodge and 86 armor from Agility, 880 health from Stamina, 1775 mana and 4.9% spell crit from Intellect, 83 mana per 5 sec from Spirit. Melee crit 5.39% (5.43% less 0.04% for a 149 of 150 mace skill), spell crit 7.16%, dodge 5.43%, armor 613 for 17.20% (the 1.12 formula against level 30). `base_stats_test.go` TestOrcShamanAttributeRates gives a naked Orc the same bonuses and checks all of it.
+
+- The beta's spell crit per Intellect at 30 is exactly 0.0355%. The sim scales the level 60 rate along the client curve and gets 0.03554%, 0.006% crit too much at 137 Intellect. Too small to matter, so we left it.
+- For 4.1: the two handed mace shows 172 to 225 at 3.6 speed with 252 AP. 252 / 14 × 3.6 = 64.8 on top of the weapon's own damage. We need the weapon and its enchant to check the rest.
+- For 1.7 and 5.4: the sheet shows 49 spell damage and 59 spell healing. 1.7 below explains the 10 point gap.
+
+### 1.7 Forever gear rules
+
+The beta (2026-10-08) gave 49 for GetSpellBonusDamage on nature and fire, and 59 for GetSpellBonusHealing, from six items and three enchants. Berylline Pads 7, Green Silk Armor 9, Skirmisher's Leather Belt 7, Totemic Leather Leggings 8 and Spidersilk Boots 7 say "damage and healing". Naga Battle Gloves say "healing by up to 15 and damage by up to 5". The Mystic Heavy Armor Kit (legs) adds 4 and the Mystic Medium Armor Kit (feet) adds 2.
+
+- The sim has the same three stats. SpellPower counts for damage and healing, SpellDamage for damage only and HealingPower for healing only (`spell_result.go` GetSchoolDamage and HealingPower). The gloves are stored as 5 SpellPower and 10 HealingPower, so the sim gets 49 and 59 too. `spell_power_test.go` TestOrcShamanSpellPower equips the same gear and checks Lightning Bolt, Flame Shock and Healing Stream Totem, plus 431 armor.
+- Hit and crit: the user says nearly every Forever item with hit or crit means both melee and spell (and healing). The sim already makes hit and crit from gear count for both. We had no hit or crit item on the beta to test it.
+- Armor adds up normally (user). The test above checks the items' armor plus the kits.
+- Crit from consumables and buffs is still in its own pool (Elixir of the Mongoose, Leader of the Pack, Moonkin Aura). That moves to items 9.8 and 10.2.
+- Item haste and bonus weapon damage move to 4.1, 4.2 and 4.10.
+- The sim has no Healing Wave, Lesser Healing Wave or Chain Heal. Healing Stream Totem is the only shaman heal.
+
+### 1.8 Stat multipliers
+
+Beta, geared level 30 Orc shaman with Ancestral Knowledge 5/5 (2026-10-08): UnitStat gives 150 Intellect and UnitPowerMax gives 2635 mana. Without the talent it was 137. 137 × 1.10 = 150.7, so the talent multiplies base and gear Intellect together and the server drops the fraction. The mana agrees, because 665 + 20 + 130 × 15 = 2635. The tooltip shows 5.3% spell crit, and 150 × 0.0355 = 5.33%.
+
+With Blessing of Kings on top the beta showed 165 Intellect and 2860 mana. 137 × 1.10 × 1.10 = 165.77, so Kings and the talent multiply (adding them would give 164), and mana again counts the whole 165.
+
+- Fixed (2026-10-08): the sim kept the fraction (150.7 Intellect and 2645.5 mana). Under Forever we now drop the fraction from all five attributes after their multipliers and before anything converts them (`stats/deps.go` FloorAttributes, set in `environment.go`). An attribute change mid-fight recomputes the whole stat sheet, because the change on its own can't be rounded (`unit.go` AddStatsDynamic). Classic keeps fractions, as upstream does.
+- `stat_multipliers_test.go` TestOrcShamanStatMultipliers checks both beta readings and a +7 Intellect change under both multipliers (165 to 174, not 173.47).
+- Preset DPS drops by about 0.4: Level 60 850.4 / 840.4 / 828.4 at 120 / 180 / 300 sec (was 850.8 / 840.8 / 828.7), Level 30 + 5 217.3 / 208.7 / 182.9 at 60 / 120 / 300 sec (was 217.7 / 209.1 / 183.4). Goldens refreshed for every Forever test that has a multiplier.
+- Toughness uses the same code path but we didn't measure it on the beta. Item 8.27.
+- The other four attributes drop the fraction too (beta, Kings on, same gear as the 1.2 to 1.6 sheet): UnitStat 116 / 47 / 116 / 91 for 116.6 / 47.3 / 116.6 / 91.3. What they convert to agrees: AP 272 (+20 over 252, keeping the fraction gives 273.2), health 1315 (+100, keeping it gives 1321), crit 5.7396 (+4 × 0.0868, keeping it gives 5.7656), GetManaRegen 17.626 (12.5 + 41 × 0.125 + the 0.001 floor). The test checks all of them.
+- The same character without Kings read AP 252, health 1215, crit 5.3924 and GetManaRegen 16.626, so the differences above are measured on both sides.
+- GetManaRegen's casting value read 1.411 with Kings and 1.331 without, where every earlier reading had 0.001. Both are 0.001 plus exactly 8% of the Spirit regen. It went back to 0.001 with no gear, and the source is Polished Driftwood Icon ("Allows 8% of your Mana regeneration to continue while casting"). The sim already has it (`sim/shaman/items.go`), and `mana_regen_test.go` TestOrcShamanDriftwoodIcon checks 16.625 and 1.33. This also shows that casting regen is a share of the full Forever Spirit regen. Item 2.3 still has the five second rule timing.
+
+### 1.9 The stats panel
+
+- Fixed (2026-10-08, user's call): the panel turns on every aura with a build phase after the shaman has registered its spells, so it showed our own Strength of Earth and Grace of Air whenever the shaman knew them. At 60 that was +53 Strength and +89 Agility, though the Level 60 preset puts down Windfury Totem and never Grace of Air. The fight was never affected. Our own totem buffs now have no build phase (`totems.go` ownTotemAura). A totem picked in the raid buffs (another shaman) is already permanent by then and stays on the panel. `stats_panel_test.go` TestOrcShamanStatsPanel checks both. No golden changed.
+- The panel's 5% parry and 5% block for everyone is item 6.4.
+
 ### Pre-checks for 1.2 to 1.9 (not yet shown to the user)
 
 - 1.2 Strength: 2 attack power a point (`base_stats.go` APPerStrength), 1 block value per 20. Same as Classic.
@@ -267,6 +305,8 @@ Beta sheet, naked level 30 Orc shaman with no talents (2026-10-07). These come f
 - 1.8 Percent stat modifiers multiply each other: Blessing of Kings 10% times Ancestral Knowledge 2% a rank on Intellect, Toughness 2% a rank on Stamina. 1.12 multiplies them too.
 
 ### 2.2 Spirit regen (beta, 2026-10-07)
+
+- Fixed (2026-10-07): under Forever every player class uses the measured formula (`mana.go` ForeverSpiritManaRegenPerSecond). Pets keep their own, and the Classic ruleset keeps 1.12. `mana_regen_forever_test.go` pins the 7 Spirit readings and `enhancement/mana_regen_test.go` a naked Orc shaman at 1, 30 and 60. Level 60 preset 850.8 / 840.8 / 828.7 at 120 / 180 / 300 sec (was 850.5 / 839.2 / 825.3), the mana lasts about 30 sec longer. Level 30 + 5 217.7 / 209.1 / 183.4 at 60 / 120 / 300 sec (was 217.6 / 208.6 / 182.0, already with the 1.1 stats).
 
 GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (the 0.001 floor taken off):
 
@@ -280,15 +320,41 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - Every level 30 reading fits 6.25 + Spirit / 8 a second exactly. That is 12.5 + Spirit / 4 per 2 sec, the 1.12 priest and mage formula (`priest.go`, `mage.go`). Intellect plays no part.
 - The level 1 reading (22 Spirit, 5.5) doesn't fit it (9.0). Spirit / 4 a second fits. One shape fits all six readings: each of the first 50 Spirit gives 0.25 a second and each one past 50 gives 0.125. Past 50 that is the same as 6.25 + Spirit / 8. A level 30 or 60 shaman always has more than 50 Spirit, so only low levels would tell the two apart.
+- Level 20 Undead paladin, geared: 34 Spirit gives 8.5 and 42 Spirit gives 10.5, both exactly Spirit / 4. So the paladin has the same formula, the 0.25 a Spirit below 50 holds at level 20 too, and nothing in it depends on level. In 1.12 the paladin and shaman shared 7.5 + Spirit / 10, so Forever replaced it for both.
+- The formula: 0.25 mana a second for each of the first 50 Spirit, and 0.125 for each point past 50. The two parts meet at 50 (12.5 a second), which is why 6.25 + Spirit / 8 fits every reading above 50.
 - The Spirit tooltip agrees with the server: 64 per 5 sec at 53 Spirit and 74 at 69 (14.875 × 5 = 74.4). Health regen in the tooltip still fits the 1.12 shaman formula (0.11 × Spirit + 7 per 2 sec).
 - Real regen, sampled every 0.5 sec after a cast: the mana rose about 6 to 7 every half second (continuous, no 2 sec ticks), 51 mana from 6.0 to 10.0 sec, which is 12.75 a second against 12.875 with whole numbers. One step of +14 at 5.5 to 6.0 sec looks like the client catching up with the server once regen started.
+
+### 2.1 Mana pool
+
+- The beta readings from 1.1, 1.5 and 1.8 cover it: 1075 mana naked at 30, 2440 geared, 2635 with Ancestral Knowledge and 2860 with Kings on top. Base mana comes from the client table (1.1). Intellect gives 1 mana for each of the first 20 points and 15 for each one after. `base_stats_test.go` and `stat_multipliers_test.go` check these numbers. Nothing changed.
+
+### 2.3 Five second rule
+
+- The user OK'd it on 2026-10-08: it works like the other Classic versions. cmangos agrees (`Spell::TakePower`). Spending mana on a spell starts it. A spell with a cast time pays at the end of the cast, so we regen in full during the cast. A spell that costs nothing starts nothing.
+- The sim: `mana.go` SpendCost runs the rule until 5 sec after the mana is paid, and a hardcast pays in its OnComplete (`cast.go`). Water Shield has no cost, and Clearcasting brings the cost to 0. Under Forever the bar settles up to the rule's end, so the casting rate and the full rate split exactly there.
+- What we keep while casting: MP5 in full, plus a share of Spirit regen. Mindfulness gives 17 / 33 / 50% (the beta client text, the forever-wiki has 17 / 34 / 51), Polished Driftwood Icon 8% (beta, 1.8) and Improved Stormstrike 50% at both ranks for 15 sec (the client text).
+- Fixed (2026-10-08): cmangos caps the share at 100% (`Player::UpdateManaRegen`), and the sim had no cap. Only Mindfulness 3/3, Improved Stormstrike and the icon together reach it (108%). No level 60 gear set has the icon, so no preset or golden changed.
+- `five_second_rule_test.go`: TestOrcShamanFiveSecondRule follows the mana of a level 30 shaman with the icon through a Flame Shock, a Lightning Bolt and a free Flame Shock (Clearcasting). TestOrcShamanCastingRegenCap checks that Improved Stormstrike changes the rate the moment it starts and ends, and the cap. Moving the rule's start to the start of the cast, letting free casts start it, or taking out the cap each make the tests fail.
+
+### 2.4 MP5
+
+- MP5 gives MP5 / 5 mana a second, with no pause, and in full during the five second rule. Gear MP5 counts once. Blessing of Wisdom has Forever's ranks by level (12 / 18 / 24 / 30 / 36 / 40), and Improved Blessing of Wisdom does nothing under Forever. Mageblood Potion is 12 MP5 (Classic).
+- Fixed (2026-10-08, user's call): Blessing of Wisdom and another shaman's Mana Spring Totem stack. The sim gave only Blessing of Wisdom when both were picked, because in Classic they came from opposite factions (`buffs.go`).
+- Fixed (2026-10-08, user's call): the Mana Spring raid buff picks its rank by level (10 / 15 / 20 / 25 MP5 at 26 / 36 / 46 / 56, ×1.25 improved). It was always 25.
+- `mp5_test.go` TestOrcShamanMP5Buffs checks levels 20, 30 and 60 under Forever and level 60 under Classic, and that MP5 continues while casting. No preset picks the Mana Spring raid buff. The goldens of the Forever tests with every raid buff changed (the mana users gain 31.25 MP5, up to +130 DPS on multi target, and the others show it only in the stats line).
+- Not checked on the beta: whether GetManaRegen counts MP5. It needs an MP5 item or a Blessing of Wisdom from someone else.
+
+### 2.5 Mana returns
+
+- Judgement of Wisdom: 59 mana (rank 3) on a 50% roll from every direct hit, melee or spell. White swings roll even when they miss or are dodged (Classic). Procs and phantom spells don't. The user keeps rank 3 at every level (2026-10-08), because we only sim a raid at level 60. Its Forever value is still unknown.
+- Water Shield: 3 globes of 2% max mana, free, 15 sec cooldown, 10 min (the beta client text). A landed spell, melee or ranged hit on the shaman or a heal crit spends a globe, at most one every 3.5 sec. The client only says "every few seconds". The user keeps 3.5 sec (2026-10-08): raid damage comes once every 5 to 15 sec and is the user's setting, so the wait never shows at those rates. No preset sets the raid damage rate, so it is 0 by default.
+- Mana Tide Totem: 88 / 197 / 290 mana every 3 sec, 4 times, to the party members with mana, 5 min cooldown. It takes the water slot and stops Mana Spring Totem. Rank 1 matches the beta client text.
+- `mana_returns_test.go`: TestOrcShamanJudgementOfWisdom (457 procs on 901 unarmed swings at level 60, 50.7%, 135 of them missed or dodged, 59 each, 42.8% if misses didn't roll), TestOrcShamanWaterShield (a hit every 5 sec spends a globe each time, a hit every 3 sec only every other hit), TestOrcShamanManaTide (ticks at 3 / 6 / 9 / 12 sec after the drop, Mana Spring gone). Taking the miss rolls out of Judgement of Wisdom, a 1 sec globe wait, or leaving Mana Spring up under Mana Tide each make the tests fail. Nothing changed in the sim.
 
 ### Pre-checks for section 2 (not yet shown to the user)
 
 - 2.2 Spirit regen is 15 + Spirit / 5 per 2 sec (7.5 + Spirit / 10 a second, `mana.go` SpiritManaRegenPerSecondDefault), the 1.12 shaman formula. Under Forever the bar fills continuously (`mana.go` initManaRegen, settle), Classic ticks every 2 sec.
-- 2.3 The five second rule starts when the mana is spent, which is at the end of a cast (`cast.go` hardcast OnComplete, `mana.go` SpendCost). So a Lightning Bolt cast started outside the rule still regens full Spirit until it lands, like 1.12. MP5 always regens. Mindfulness (17 / 33 / 50%), Polished Driftwood Icon (8%) and Improved Stormstrike (50%) add up into one "regen while casting" share of Spirit regen.
-- 2.4 Blessing of Wisdom under Forever is 12 / 18 / 24 / 30 / 36 / 40 MP5 by rank, times 1.2 when improved (`buffs.go` foreverBlessingOfWisdomMP5). Mageblood Potion is 12 MP5 (Classic value).
-- 2.5 Judgement of Wisdom gives 59 mana on a 50% roll from every direct hit, melee or spell (`debuffs.go` JudgementOfWisdomAura, marked "TODO: Classic verify logic"). White swings proc it even when they miss, procs and phantom spells don't. Open: the Forever value and chance. It is worth about 60 DPS in the Level 60 encounter, so it matters.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

@@ -156,8 +156,31 @@ func (unit *Unit) MP5ManaRegenPerSecond() float64 {
 // Returns the rate of mana regen per second from spirit.
 // All classes except Priest and Mage use this.
 func (unit *Unit) SpiritManaRegenPerSecondDefault() float64 {
+	if unit.Env != nil && unit.Env.IsForever() {
+		return ForeverSpiritManaRegenPerSecond(unit.stats[stats.Spirit])
+	}
 	// 15 + Spirit/5 every 2s tick
 	return 7.5 + unit.stats[stats.Spirit]/10
+}
+
+// Forever gives every class one Spirit regen formula. Each of the first 50 Spirit gives
+// 0.25 mana a second and each point past 50 gives 0.125.
+//
+// We measured it on the beta with GetManaRegen (2026-10-07): an Orc shaman at level 1 and
+// 30 and an Undead paladin at level 20, at Spirit from 22 to 69, fit it exactly. Intellect
+// and level play no part. Past 50 Spirit it is the 1.12 priest and mage formula (12.5 +
+// Spirit/4 every 2s tick), so those two classes get the same numbers either way.
+func ForeverSpiritManaRegenPerSecond(spirit float64) float64 {
+	return 0.25*min(spirit, 50) + 0.125*max(spirit-50, 0)
+}
+
+// Returns the rate of mana regen per second from spirit, with the class's own formula when
+// it has one. Under Forever the players all use the default, and only pets keep theirs.
+func (unit *Unit) spiritManaRegenPerSecond() float64 {
+	if unit.SpiritManaRegenPerSecond != nil && !(unit.Type == PlayerUnit && unit.Env != nil && unit.Env.IsForever()) {
+		return unit.SpiritManaRegenPerSecond()
+	}
+	return unit.SpiritManaRegenPerSecondDefault()
 }
 
 // Returns the rate of mana regen per second, assuming this unit is
@@ -165,15 +188,16 @@ func (unit *Unit) SpiritManaRegenPerSecondDefault() float64 {
 func (unit *Unit) ManaRegenPerSecondWhileCasting() float64 {
 	regenRate := unit.MP5ManaRegenPerSecond()
 
-	spiritRegen := unit.SpiritManaRegenPerSecondDefault()
-	if unit.SpiritManaRegenPerSecond != nil {
-		spiritRegen = unit.SpiritManaRegenPerSecond()
-	}
+	spiritRegen := unit.spiritManaRegenPerSecond()
 	spiritRegenRate := 0.0
 	if unit.PseudoStats.SpiritRegenRateCasting != 0 || unit.PseudoStats.ForceFullSpiritRegen {
 		spiritRegenRate = spiritRegen * unit.PseudoStats.SpiritRegenMultiplier
 		if !unit.PseudoStats.ForceFullSpiritRegen {
-			spiritRegenRate *= unit.PseudoStats.SpiritRegenRateCasting
+			// The server caps the share at 100% (cmangos Player::UpdateManaRegen).
+			//
+			// A level 60 shaman with Mindfulness 3/3, Improved Stormstrike and Polished
+			// Driftwood Icon adds up to 108%. That regens the same as not casting.
+			spiritRegenRate *= min(unit.PseudoStats.SpiritRegenRateCasting, 1)
 		}
 	}
 	regenRate += spiritRegenRate
@@ -186,10 +210,7 @@ func (unit *Unit) ManaRegenPerSecondWhileCasting() float64 {
 func (unit *Unit) ManaRegenPerSecondWhileNotCasting() float64 {
 	regenRate := unit.MP5ManaRegenPerSecond()
 
-	spiritRegen := unit.SpiritManaRegenPerSecondDefault()
-	if unit.SpiritManaRegenPerSecond != nil {
-		spiritRegen = unit.SpiritManaRegenPerSecond()
-	}
+	spiritRegen := unit.spiritManaRegenPerSecond()
 	regenRate += spiritRegen * unit.PseudoStats.SpiritRegenMultiplier
 
 	return regenRate

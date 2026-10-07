@@ -24,7 +24,6 @@ const (
 	DevotionAura
 	DivineSpirit
 	GraceOfAir
-	ManaSpring
 	MarkOfTheWild
 	PowerWordFortitude
 	StrengthOfEarth
@@ -99,9 +98,6 @@ var BuffSpellValues = map[BuffName]stats.Stats{
 	},
 	FrostResistanceTotem: {
 		stats.FrostResistance: 60,
-	},
-	ManaSpring: {
-		stats.MP5: 25,
 	},
 	MarkOfTheWild: {
 		stats.BonusArmor:       285,
@@ -417,12 +413,16 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 			updateStats = updateStats.Multiply(1.2)
 		}
 		character.AddStats(updateStats)
-	} else if raidBuffs.ManaSpringTotem > 0 && isHorde {
-		updateStats := BuffSpellValues[ManaSpring]
+	}
+
+	// Under Forever a raid can have both Blessing of Wisdom and another shaman's Mana Spring
+	// Totem, and the two stack.
+	if raidBuffs.ManaSpringTotem > 0 && isHorde {
+		mp5 := manaSpringTotemMP5[HighestRankAt(character.Level, manaSpringTotemLevel[:])]
 		if raidBuffs.ManaSpringTotem == proto.TristateEffect_TristateEffectImproved {
-			updateStats = updateStats.Multiply(1.25)
+			mp5 *= 1.25
 		}
-		character.AddStats(updateStats)
+		character.AddStat(stats.MP5, mp5)
 	}
 
 	if raidBuffs.BattleSquawk > 0 {
@@ -1616,6 +1616,12 @@ var foreverBlessingOfMightSpellId = [...]int32{0, 19740, 19834, 19835, 19836, 19
 var foreverBlessingOfMightAP = [...]float64{0, 14, 25, 40, 61, 83, 112, 133}
 var foreverBlessingOfWisdomLevel = [...]int{0, 14, 24, 34, 44, 54, 60}
 var foreverBlessingOfWisdomMP5 = [...]float64{0, 12, 18, 24, 30, 36, 40}
+
+// Mana Spring Totem gives 4 / 6 / 8 / 10 mana every 2 sec by rank, the same as Classic
+// (ForeverChanges spellbook). That is 10 / 15 / 20 / 25 mana per 5 sec. Improved is
+// Restorative Totems 5/5 (25%).
+var manaSpringTotemLevel = [...]int{0, 26, 36, 46, 56}
+var manaSpringTotemMP5 = [...]float64{0, 10, 15, 20, 25}
 
 func BlessingOfMightAura(unit *Unit, impBomPts int32) *Aura {
 	spellID := TernaryInt32(IncludeAQ, 25291, 19838)
