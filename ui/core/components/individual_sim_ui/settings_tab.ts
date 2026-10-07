@@ -181,12 +181,12 @@ export class SettingsTab extends SimTab {
 
 	private buildOtherSettings() {
 		// const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
-		// Level is global: every spec gets it first, whatever its own other inputs are.
+		// Level is global: every spec gets it first, whatever its own other inputs are. The extra
+		// talent points are in the Talents tab.
 		const otherInputs: InputSection = {
 			...this.simUI.individualConfig.otherInputs,
 			inputs: [
 				OtherInputs.Level,
-				OtherInputs.BonusTalentPoints,
 				...this.simUI.individualConfig.otherInputs.inputs.filter(input => input !== OtherInputs.Level && input !== OtherInputs.BonusTalentPoints),
 			],
 		};

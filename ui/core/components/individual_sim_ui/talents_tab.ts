@@ -5,6 +5,8 @@ import { SavedTalents } from '../../proto/ui';
 import { classTalentsConfig } from '../../talents/factory';
 import { TalentsPicker } from '../../talents/talents_picker';
 import { EventID, TypedEvent } from '../../typed_event';
+import { NumberPicker } from '../number_picker';
+import * as OtherInputs from '../other_inputs';
 import { SavedDataManager } from '../saved_data_manager';
 import { presetListTooltip } from '../preset_tree';
 import { SimTab } from '../sim_tab';
@@ -24,8 +26,10 @@ export class TalentsTab extends SimTab {
 		this.rightPanel = document.createElement('div');
 		this.rightPanel.classList.add('talents-tab-right', 'tab-panel-right', 'within-raid-sim-hide');
 
-		this.contentContainer.appendChild(this.leftPanel);
+		// The saved talents come first, to the left of the trees, like the gear sets in the Gear
+		// tab.
 		this.contentContainer.appendChild(this.rightPanel);
+		this.contentContainer.appendChild(this.leftPanel);
 
 		this.buildTabContent();
 	}
@@ -33,7 +37,14 @@ export class TalentsTab extends SimTab {
 	protected buildTabContent() {
 		this.buildTalentsPicker(this.leftPanel);
 
+		this.buildBonusTalentPoints();
 		this.buildSavedTalentsPicker();
+	}
+
+	// The extra talent points sit above the saved talents, next to the trees they add points to.
+	private buildBonusTalentPoints() {
+		const picker = new NumberPicker(this.rightPanel, this.simUI.player, { ...OtherInputs.BonusTalentPoints, inline: true });
+		picker.rootElem.classList.add('input-inline', 'talents-bonus-points');
 	}
 
 	private buildTalentsPicker(parentElem: HTMLElement) {
