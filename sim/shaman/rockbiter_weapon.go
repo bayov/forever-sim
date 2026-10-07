@@ -17,8 +17,10 @@ var RockbiterWeaponLevel = [RockbiterWeaponRanks + 1]int32{0, 1, 8, 16, 24, 34, 
 // 1.12 the imbue is an attack power aura (spell 16313 for rank 7) that gains a few points
 // per level from the rank's learn level up to the cap, so a level 20 shaman with rank 3
 // has 108 of the 118 it will have at 22.
-// Rank 7 is Forever's 686 (Classic 653), the lower ranks are unchanged.
-var RockbiterWeaponBonusAP = [RockbiterWeaponRanks + 1]float64{0, 49.5, 79, 118, 193.8, 355, 521.8, 686}
+// Forever keeps Classic's values. Rank 7 keeps growing up to level 62 (686 there), so
+// at 60 it is 653, the same as Classic and ForeverChanges' spellbook. wowhead's Forever
+// tooltip shows the level 62 value.
+var RockbiterWeaponBonusAP = [RockbiterWeaponRanks + 1]float64{0, 49.5, 79, 118, 193.8, 355, 521.8, 653}
 var RockbiterWeaponScaling = [RockbiterWeaponRanks + 1]core.RankScaling{{}, {6, 4.1}, {14, 3.5}, {22, 5}, {32, 8.1}, {42, 18}, {52, 16.1}, {60, 16.5}}
 
 func (shaman *Shaman) rockbiterRank() int {

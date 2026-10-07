@@ -14,8 +14,9 @@ var LightningBoltSpellId = [LightningBoltRanks + 1]int32{0, 403, 529, 548, 915, 
 // coefficient, from the Forever client data that https://foreverchanges.pro reads
 // (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
-// below level 20.
-var LightningBoltBaseDamage = [LightningBoltRanks + 1][]float64{{0}, {14.86, 17.14}, {29.25, 33.75}, {34.9, 41.1}, {49.43, 56.57}, {70.43, 80.57}, {108.09, 121.91}, {142.23, 159.77}, {157.51, 176.49}, {172.56, 193.44}, {189.92, 211.68}}
+// below level 20. The 2026-09-24 beta build raised ranks 3 and 4 (35 and 50 at the learn
+// level before, 45 and 56 now) so every rank is an upgrade over the one before.
+var LightningBoltBaseDamage = [LightningBoltRanks + 1][]float64{{0}, {14.86, 17.14}, {29.25, 33.75}, {44.08, 51.92}, {55.02, 62.98}, {70.43, 80.57}, {108.09, 121.91}, {142.23, 159.77}, {157.51, 176.49}, {172.56, 193.44}, {189.92, 211.68}}
 var LightningBoltScaling = [LightningBoltRanks + 1]core.RankScaling{{}, {6, 0.4}, {13, 0.5}, {19, 0.6}, {25, 0.6}, {31, 0.7}, {37, 0.8}, {43, 0.8}, {49, 1}, {55, 1}, {60, 1.2}}
 var LightningBoltSpellCoef = [LightningBoltRanks + 1]float64{0, 0.429, 0.571, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714}
 

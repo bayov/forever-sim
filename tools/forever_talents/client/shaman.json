@@ -1,5 +1,5 @@
 {
- "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17",
+ "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro",
  "class": "shaman",
  "trees": [
   {
@@ -154,7 +154,7 @@
     {
      "name": "Elemental Fury",
      "max": 5,
-     "row": 3,
+     "row": 6,
      "col": 3,
      "passive": true,
      "icon": "spell_fire_volcano",
@@ -168,10 +168,11 @@
      "id": 104766,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70009",
       "spellId": 16089,
       "notes": []
-     }
+     },
+     "req": "Call of Thunder"
     },
     {
      "name": "Improved Fire Nova",
@@ -222,7 +223,7 @@
      "desc": {
       "1": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by 3%."
      },
-     "req": "Elemental Fury",
+     "req": "Elemental Alacrity",
      "id": 104762,
      "tooltip": {
       "source": "client",
@@ -291,7 +292,7 @@
     {
      "name": "Elemental Alacrity",
      "max": 3,
-     "row": 6,
+     "row": 3,
      "col": 3,
      "passive": true,
      "icon": "spell_lightning_lightningbolt01",
@@ -300,11 +301,10 @@
       "2": "Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by 0.33 sec.",
       "3": "Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by 0.50 sec."
      },
-     "req": "Call of Thunder",
      "id": 104765,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70009",
       "spellId": 16578,
       "notes": []
      }
@@ -317,14 +317,14 @@
      "passive": false,
      "icon": "spell_shaman_lavaburst",
      "desc": {
-      "1": "You hurl molten lava at the target, dealing 106 to 135 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage."
+      "1": "You hurl molten lava at the target, dealing 143 to 185 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage."
      },
      "req": "Lightning Overload",
      "cost": "165 Mana; 30 yd range; 2.5 sec cast; 10 sec cooldown",
      "id": 104758,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70009",
       "spellId": 408490,
       "notes": [
        "Values shown at level 60.",
@@ -697,14 +697,14 @@
      "passive": false,
      "icon": "spell_nature_bloodlust",
      "desc": {
-      "1": "Increases your melee attack speed and spell casting speed by 30% for 25 sec."
+      "1": "Increases your attack speed by 30% for 25 sec."
      },
      "req": "Mental Quickness",
      "cost": "Instant; 3 min cooldown",
      "id": 104740,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70009",
       "spellId": 425336,
       "notes": []
      }

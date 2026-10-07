@@ -1,11 +1,14 @@
+import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
-import { Faction, SaygesFortune, Stat } from '../../proto/common';
+import { Faction, RaidBuffs, SaygesFortune, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
+import { EventID, TypedEvent } from '../../typed_event';
 import {
 	makeBooleanDebuffInput,
 	makeBooleanIndividualBuffInput,
 	makeBooleanRaidBuffInput,
 	makeEnumIndividualBuffInput,
+	makeEnumRaidBuffInput,
 	makeMultistateIndividualBuffInput,
 	makeMultistatePartyBuffInput,
 	makeMultistateRaidBuffInput,
@@ -14,6 +17,7 @@ import {
 	makeTristateRaidBuffInput,
 	withLabel,
 } from '../icon_inputs';
+import { IconEnumPicker } from '../icon_enum_picker';
 import { IconPicker, IconPickerDirection } from '../icon_picker';
 import * as InputHelpers from '../input_helpers';
 import { MultiIconPicker } from '../multi_icon_picker';
@@ -163,7 +167,7 @@ export const StrengthBuffHorde = withLabel(
 		actionId: () => ActionId.fromSpellId(25361),
 		impId: ActionId.fromSpellId(16295),
 		fieldName: 'strengthOfEarthTotem',
-		showWhen: player => player.hasFactionBuffs(Faction.Horde),
+		showWhen: player => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() !== Ruleset.RulesetForever,
 	}),
 	'Strength',
 );
@@ -173,9 +177,53 @@ export const GraceOfAir = withLabel(
 		actionId: () => ActionId.fromSpellId(25359),
 		impId: ActionId.fromSpellId(16295),
 		fieldName: 'graceOfAirTotem',
-		showWhen: player => player.hasFactionBuffs(Faction.Horde),
+		showWhen: player => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() !== Ruleset.RulesetForever,
 	}),
 	'Agility',
+);
+
+// The improved Strength of Earth and Grace of Air come from Enhancing Totems, which is not in
+// Forever's tree. So under Forever we show these totems as on or off. An improved value from an
+// older saved setup counts as on, and the sim treats it as a regular totem.
+function makeForeverHordeTotemInput(spellId: number, fieldName: 'strengthOfEarthTotem' | 'graceOfAirTotem') {
+	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<any>>(
+		{
+			getModObject: (player: Player<any>) => player,
+			showWhen: (player: Player<any>) => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() === Ruleset.RulesetForever,
+			getValue: (player: Player<any>) => player.getRaid()!.getBuffs(),
+			setValue: (eventID: EventID, player: Player<any>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
+			changeEmitter: (player: Player<any>) =>
+				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
+			getFieldValue: (player: Player<any>) => player.getRaid()!.getBuffs()[fieldName] !== TristateEffect.TristateEffectMissing,
+			setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+				const buffs = player.getRaid()!.getBuffs();
+				buffs[fieldName] = newValue ? TristateEffect.TristateEffectRegular : TristateEffect.TristateEffectMissing;
+				player.getRaid()!.setBuffs(eventID, buffs);
+			},
+		},
+		() => ActionId.fromSpellId(spellId),
+		fieldName,
+	);
+}
+
+export const StrengthBuffHordeForever = withLabel(makeForeverHordeTotemInput(25361, 'strengthOfEarthTotem'), 'Strength');
+
+export const GraceOfAirForever = withLabel(makeForeverHordeTotemInput(25359, 'graceOfAirTotem'), 'Agility');
+
+// Another shaman's Windfury or Flametongue Totem. Under Forever its buff has a weapon slot
+// of its own, so it works next to a shaman imbue and an oil or stone. Only one of the two
+// totems works at a time.
+export const TotemWeaponBuffInput = withLabel(
+	makeEnumRaidBuffInput({
+		values: [
+			{ value: TotemWeaponBuff.TotemWeaponBuffNone },
+			{ actionId: () => ActionId.fromSpellId(10614), value: TotemWeaponBuff.TotemWeaponBuffWindfury },
+			{ actionId: () => ActionId.fromSpellId(16387), value: TotemWeaponBuff.TotemWeaponBuffFlametongue },
+		],
+		fieldName: 'totemWeaponBuff',
+		showWhen: player => player.hasFactionBuffs(Faction.Horde),
+	}),
+	'Totem Weapon Buff',
 );
 
 export const IntellectBuff = InputHelpers.makeMultiIconInput({
@@ -635,6 +683,11 @@ export const RAID_BUFFS_CONFIG = [
 		stats: [Stat.StatStrength],
 	},
 	{
+		config: StrengthBuffHordeForever,
+		picker: IconPicker,
+		stats: [Stat.StatStrength],
+	},
+	{
 		config: BattleShoutBuff,
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower],
@@ -643,6 +696,16 @@ export const RAID_BUFFS_CONFIG = [
 		config: GraceOfAir,
 		picker: IconPicker,
 		stats: [Stat.StatAgility],
+	},
+	{
+		config: GraceOfAirForever,
+		picker: IconPicker,
+		stats: [Stat.StatAgility],
+	},
+	{
+		config: TotemWeaponBuffInput,
+		picker: IconEnumPicker,
+		stats: [Stat.StatAttackPower],
 	},
 	{
 		config: TrueshotAuraBuff,

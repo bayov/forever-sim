@@ -8,24 +8,14 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
-/**
-Instant Poison: 20% proc chance
-25: 22 +/- 3 damage, 8679 ID, 40 charges
-40: 50 +/- 6 damage, 8688 ID, 70 charges
-50: 76 +/- 9 damage, 11338 ID, 85 charges
-60: 130 =/- 18 damage, 11340 ID, 115 charges
-
-Deadly Poison: 30% proc chance, 5 stacks
-40: 52 damage, 2824 ID, 75 charges
-50: 80 damage, 11355 ID, 90 charges
-60: 108 damage, 11356 ID, 105 charges (Rank 4, Rank 5 is by book)
-
-Wound Poison: 30% proc chance, 5 stacks
-25: x damage, x ID (none, first rank is level 32)
-40: -75 healing, 11325 ID, 75 charges (Rank 2)
-50: -105 healing, 13226 ID, 90 charges (Rank 3)
-60: -135 healing, 13227 ID, 105 charges (Rank 4)
-*/
+// Forever made poisons a secondary skill like First Aid, and each rank does about two
+// thirds of its Classic damage. The ranks below are the Forever tooltips (foreverchanges
+// spellbook, build 70009). Instant Poison procs 20% of the time, Deadly and Wound Poison
+// 30% with 5 stacks.
+//
+// Instant Poison: 13-17 at 20, 20-26 at 28, 29-37 at 36, 45-57 at 44, 62-80 at 52, 76-100 at 60.
+// Deadly Poison over 12 sec: 24 at 30, 36 at 38, 56 at 46, 72 at 54, 92 at 60 (rank 5 is by book).
+// Wound Poison is unchanged from Classic, it only lowers healing.
 
 // TODO: Add charges to poisons
 
@@ -158,7 +148,7 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	baseDamageTick := rankAt(rogue.Level, map[int32]float64{
-		30: 9, 38: 13, 46: 20, 54: 27, 60: core.TernaryFloat64(core.IncludeAQ, 34, 27),
+		30: 6, 38: 9, 46: 14, 54: 18, 60: core.TernaryFloat64(core.IncludeAQ, 23, 18),
 	})
 	spellID := rankSpellID(rogue.Level, map[int32]int32{
 		30: 2823, 38: 2824, 46: 11355, 54: 11356, 60: core.TernaryInt32(core.IncludeAQ, 25347, 11356),
@@ -235,10 +225,10 @@ func (rogue *Rogue) registerWoundPoisonSpell() {
 // Make a source based variant of Instant Poison
 func (rogue *Rogue) makeInstantPoison() *core.Spell {
 	baseDamageByLevel := rankAt(rogue.Level, map[int32]float64{
-		20: 19, 28: 30, 36: 44, 44: 67, 52: 92, 60: 112,
+		20: 13, 28: 20, 36: 29, 44: 45, 52: 62, 60: 76,
 	})
 	damageVariance := rankAt(rogue.Level, map[int32]float64{
-		20: 6, 28: 8, 36: 12, 44: 18, 52: 26, 60: 36,
+		20: 4, 28: 6, 36: 8, 44: 12, 52: 18, 60: 24,
 	})
 	spellID := rankSpellID(rogue.Level, map[int32]int32{
 		20: 8679, 28: 8686, 36: 8688, 44: 11338, 52: 11339, 60: 11340,

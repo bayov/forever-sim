@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -181,4 +182,64 @@ var ItemSetTheEarthshatterer = core.NewItemSet(core.ItemSet{
 			})
 		},
 	},
+})
+
+// spiritcallersRageBonuses are the set bonuses of The Spiritcaller's Rage, Forever's crafted level 60
+// enhancement set (Spiritcaller Leggings 273932, Grips 273933, Spaulders 273934, Treads 273935, from the
+// 1.60.1.70205 client).
+//
+// The client pieces carry no stats yet, so no real set is registered for them. We give the same bonuses to
+// the synthetic Phase 1 enhancement set below, because it is the only enhancement set Forever has at level 60.
+var spiritcallersRageBonuses = map[int32]core.ApplyEffect{
+	// Increases your attack speed and casting speed by 1%.
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.PseudoStats.MeleeSpeedMultiplier *= 1.01
+		c.PseudoStats.RangedSpeedMultiplier *= 1.01
+		c.PseudoStats.CastSpeedMultiplier *= 1.01
+	},
+	// Increases the radius of effect of your beneficial Air and Earth totems by 10 yds.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// +36 Attack Power against Elementals.
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		elementals := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeElemental
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Attack Power against Elementals",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range elementals {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusAttackPowerTaken += 36
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range elementals {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusAttackPowerTaken -= 36
+					}
+				}
+			},
+		}))
+	},
+	// Reduces the cooldown of your Stormstrike ability by 0.5 sec.
+	5: func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanStormstrike {
+				spell.CD.Duration -= time.Millisecond * 500
+			}
+		})
+	},
+}
+
+// ItemSetEnhancementSyntheticPhase1 is the set of the synthetic Phase 1 enhancement items
+// (tools/database/forever_synthetic_items.go), with The Spiritcaller's Rage bonuses.
+var ItemSetEnhancementSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Enhancement Synthetic (Phase 1)",
+	Bonuses: spiritcallersRageBonuses,
 })

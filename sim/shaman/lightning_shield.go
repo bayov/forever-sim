@@ -12,10 +12,11 @@ const LightningShieldRanks = 7
 var LightningShieldSpellId = [LightningShieldRanks + 1]int32{0, 324, 325, 905, 945, 8134, 10431, 10432}
 var LightningShieldProcSpellId = [LightningShieldRanks + 1]int32{0, 26364, 26365, 26366, 26367, 26369, 26370, 26363}
 
-// Forever damage and mana (wowhead Forever tooltips). Rank 2 and up hit for 10 to 20% less
-// than in 1.12.
+// Forever damage, mana and coefficient (wowhead Forever spell pages). Rank 2 and up hit for
+// 10 to 20% less than in 1.12. The coefficient is 26.7% on every rank, where Classic
+// lowered it for the ranks learned before level 20.
 var LightningShieldBaseDamage = [LightningShieldRanks + 1]float64{0, 13, 24, 40, 64, 96, 134, 178}
-var LightningShieldSpellCoef = [LightningShieldRanks + 1]float64{0, .147, .227, .267, .267, .267, .267, .267}
+var LightningShieldSpellCoef = [LightningShieldRanks + 1]float64{0, .267, .267, .267, .267, .267, .267, .267}
 var LightningShieldManaCost = [LightningShieldRanks + 1]float64{0, 45, 80, 125, 180, 240, 305, 370}
 var LightningShieldLevel = [LightningShieldRanks + 1]int{0, 8, 16, 24, 32, 40, 48, 56}
 
@@ -38,7 +39,7 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 
 	spellId := LightningShieldSpellId[rank]
 	procSpellId := LightningShieldProcSpellId[rank]
-	baseDamage := LightningShieldBaseDamage[rank] * impLightningShieldBonus
+	baseDamage := LightningShieldBaseDamage[rank]
 	spellCoeff := LightningShieldSpellCoef[rank]
 	manaCost := LightningShieldManaCost[rank]
 	level := LightningShieldLevel[rank]
@@ -53,7 +54,8 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | SpellFlagShaman | SpellFlagLightning,
 
-		DamageMultiplier: 1,
+		// Improved Lightning Shield raises the whole orb hit, the spell power part too.
+		DamageMultiplier: impLightningShieldBonus,
 		ThreatMultiplier: 1,
 		BonusCoefficient: spellCoeff,
 

@@ -27,6 +27,10 @@ type Encounter struct {
 
 	// Value to multiply by, for damage spells which are subject to the aoe cap.
 	aoeCapMultiplier float64
+
+	// PvP mode, see pvp.go.
+	PvP              bool
+	PvPMeleeDowntime float64
 }
 
 func NewEncounter(options *proto.Encounter) Encounter {
@@ -39,6 +43,8 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		ExecuteProportion_20: max(options.ExecuteProportion_20, 0),
 		ExecuteProportion_25: max(options.ExecuteProportion_25, 0),
 		ExecuteProportion_35: max(options.ExecuteProportion_35, 0),
+		PvP:                  options.Pvp,
+		PvPMeleeDowntime:     min(max(options.PvpMeleeDowntime, 0), 1),
 		Targets:              []*Target{},
 	}
 	// If UseHealth is set, we use the sum of targets health.
@@ -288,6 +294,18 @@ type AttackTable struct {
 	DamageDoneByCasterMultiplier func(spell *Spell, attackTable *AttackTable) float64
 }
 
+// spellMissChance is the chance a spell misses an enemy that many levels above the caster.
+//
+// It is 4%, 5% and 6% up to 2 levels above, 17% at 3 levels, and 11% more for every
+// level past that, up to 99%. So a level 20 misses a level 25 enemy 39% of the time and
+// a level 30 enemy 94% of the time.
+func spellMissChance(levelDiff int32) float64 {
+	if levelDiff <= 3 {
+		return UnitLevelFloat64(levelDiff, 0.04, 0.05, 0.06, 0.17)
+	}
+	return min(0.17+0.11*float64(levelDiff-3), 0.99)
+}
+
 func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
 	// Source: https://github.com/magey/classic-warrior/wiki/Attack-table
 	table := &AttackTable{
@@ -321,10 +339,12 @@ func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
 			table.BaseParryChance = 0.05 + (targetDefense-baseWeaponSkill)*0.001 // = 5 / 5.5 / 6
 		}
 
-		table.BaseSpellMissChance = UnitLevelFloat64(defender.Level-attacker.Level, 0.04, 0.05, 0.06, 0.17)
+		table.BaseSpellMissChance = spellMissChance(defender.Level - attacker.Level)
 		table.BaseBlockChance = 0.05
 		table.BaseDodgeChance = 0.05 + (targetDefense-weaponSkill)*0.001
-		table.BaseGlanceChance = 0.1 + (targetDefense-baseWeaponSkill)*0.02
+		// Glancing blows are capped at 40%, which a level 60 reaches against a level 63 boss.
+		// Without the cap a level 20 against a level 30 enemy would glance 110% of the time.
+		table.BaseGlanceChance = min(0.1+(targetDefense-baseWeaponSkill)*0.02, 0.4)
 
 		table.GlanceMultiplierMin = max(min(1.3-0.05*(targetDefense-weaponSkill), 0.91), 0.01)
 		table.GlanceMultiplierMax = max(min(1.2-0.03*(targetDefense-weaponSkill), 0.99), 0.2)

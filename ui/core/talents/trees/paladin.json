@@ -4,29 +4,6 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/382.jpg",
     "talents": [
       {
-        "fieldName": "improvedHolyStrike",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 0
-        },
-        "spellIds": [
-          0,
-          0
-        ],
-        "maxPoints": 2,
-        "name": "Improved Holy Strike",
-        "description": "Reduces the cooldown of your Holy Strike ability by {0} sec.",
-        "ranks": [
-          [
-            1
-          ],
-          [
-            2
-          ]
-        ],
-        "icon": "classicon_paladin"
-      },
-      {
         "fieldName": "divineStrength",
         "location": {
           "rowIdx": 0,
@@ -456,7 +433,7 @@
         ],
         "maxPoints": 5,
         "name": "Holy Power",
-        "description": "Increases the critical strike chance of your Holy Shock spell by {0}%, and all other spells by {1}%.",
+        "description": "Increases the critical strike chance of your Holy Shock and Holy Strike spells by {0}%, and all other spells by {1}%.",
         "ranks": [
           [
             3,
@@ -496,16 +473,15 @@
         ],
         "maxPoints": 1,
         "name": "Light's Vigil",
-        "description": "Applies Light's Vigil to the target for {0} sec. Your next Holy Shock cast on them triggers no cooldown and causes friendly targets to heal their party for {1} to {2}, or enemy targets to suffer {3} to {4} Holy damage and refund {5}% of Light's Vigil's Mana cost. You may only have {6} Light's Vigil active per Paladin, per party.",
+        "description": "Applies Light's Vigil to the target for {0} sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer {1} to {2} Holy damage and refund {3}% of Light's Vigil's Mana cost, or allied targets to heal their party for {4} to {5}. The Paladin may only have one Light's Vigil active per party.",
         "ranks": [
           [
             30,
-            326,
-            344,
             175,
             189,
             75,
-            1
+            315,
+            333
           ]
         ],
         "icon": "ability_paladin_judgementofthepure",
@@ -571,7 +547,13 @@
         "ranks": [
           [
             10,
-            6,
+            4,
+            10,
+            5
+          ],
+          [
+            10,
+            8,
             10,
             5
           ],
@@ -583,19 +565,13 @@
           ],
           [
             10,
-            18,
+            16,
             10,
             5
           ],
           [
             10,
-            24,
-            10,
-            5
-          ],
-          [
-            10,
-            30,
+            20,
             10,
             5
           ]
@@ -1010,7 +986,7 @@
         "description": "Increases chance to block by {0}% for {1} sec, and deals {2} Holy damage for each attack blocked while active. Damage caused by Holy Shield causes {3}% additional threat. Each block expends a charge. {4} charges.",
         "ranks": [
           [
-            20,
+            30,
             10,
             110,
             20,
@@ -1327,35 +1303,10 @@
         "description": "Increases the damage of your Holy Strike ability by {0}% and causes it to refresh all Judgement effects on the target.",
         "ranks": [
           [
-            10
+            20
           ]
         ],
         "icon": "inv_sword_08"
-      },
-      {
-        "fieldName": "crusade",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 3
-        },
-        "spellIds": [
-          0,
-          0
-        ],
-        "maxPoints": 2,
-        "name": "Crusade",
-        "description": "Increases all damage dealt by {0}%. Increased by an additional {1}% against Demon and Undead targets.",
-        "ranks": [
-          [
-            1,
-            1
-          ],
-          [
-            2,
-            2
-          ]
-        ],
-        "icon": "spell_holy_crusade"
       },
       {
         "fieldName": "twoHandedWeaponSpecialization",
@@ -1373,13 +1324,13 @@
         "description": "Increases the damage you deal with two-handed melee weapons by {0}%.",
         "ranks": [
           [
-            3
+            2
+          ],
+          [
+            4
           ],
           [
             6
-          ],
-          [
-            9
           ]
         ],
         "icon": "inv_hammer_04"
@@ -1403,22 +1354,22 @@
         ],
         "maxPoints": 3,
         "name": "Vengeance",
-        "description": "Increases your Physical and Holy damage dealt by {0}% for {1} sec after landing a critical strike. Stacks up to {2} times.",
+        "description": "Increases your Physical and Holy damage dealt by {0}% for {1} sec after landing a non-periodic critical strike. Stacks up to {2} times.",
         "ranks": [
           [
             1,
             30,
-            5
+            3
           ],
           [
             2,
             30,
-            5
+            3
           ],
           [
             3,
             30,
-            5
+            3
           ]
         ],
         "icon": "ability_racial_avatar"
@@ -1458,13 +1409,13 @@
         "description": "Increases your spell damage and healing by up to {0}% of your Intellect.",
         "ranks": [
           [
-            33
+            20
           ],
           [
-            66
+            40
           ],
           [
-            100
+            60
           ]
         ],
         "icon": "ability_paladin_enlightenedjudgements"
@@ -1505,12 +1456,13 @@
         ],
         "maxPoints": 1,
         "name": "Twist of Light",
-        "description": "When you replace your Seal of Command, Seal of Righteousness, Seal of Fury, or Seal of Justice with a different Seal, gain an Echo. Your next melee attack applies the replaced Seal's effects, consuming the Echo.",
+        "description": "Reduces the Mana cost of your Seal spells by {0}%, and when you replace your Seal of Command, Seal of Righteousness, Seal of Fury, or Seal of Justice with a different Seal, gain an Echo of that Seal. Your next melee attack applies the replaced Seal's effects, consuming the Echo.",
         "ranks": [
-          []
+          [
+            20
+          ]
         ],
-        "icon": "spell_holy_blessedresillience",
-        "notSimulated": true
+        "icon": "spell_holy_blessedresillience"
       }
     ]
   }

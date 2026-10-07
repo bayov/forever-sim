@@ -9,6 +9,10 @@ import (
 )
 
 func (paladin *Paladin) registerHammerOfWrath() {
+	// Forever's damage at level 60, about 5% below Classic. Ranks 1 and 2 are wowhead's
+	// Forever tooltip, which shows them at their cap (level 49 and 57). Rank 3 keeps growing
+	// 3.1 a level up to 65 and wowhead shows it there (489 to 538), so at 60 it is 15.5
+	// lower. ForeverChanges' spellbook agrees (474 to 522).
 	ranks := []struct {
 		level     int32
 		spellID   int32
@@ -16,9 +20,9 @@ func (paladin *Paladin) registerHammerOfWrath() {
 		maxDamage float64
 		manaCost  float64
 	}{
-		{level: 44, spellID: 24275, manaCost: 295, minDamage: 316, maxDamage: 348},
-		{level: 52, spellID: 24274, manaCost: 360, minDamage: 412, maxDamage: 455},
-		{level: 60, spellID: 24239, manaCost: 425, minDamage: 504, maxDamage: 566},
+		{level: 44, spellID: 24275, manaCost: 295, minDamage: 286, maxDamage: 314},
+		{level: 52, spellID: 24274, manaCost: 360, minDamage: 382, maxDamage: 421},
+		{level: 60, spellID: 24239, manaCost: 425, minDamage: 473.5, maxDamage: 522.5},
 	}
 
 	cd := core.Cooldown{
@@ -45,8 +49,9 @@ func (paladin *Paladin) registerHammerOfWrath() {
 			SpellCode:     SpellCode_PaladinHammerOfWrath,
 
 			ManaCost: core.ManaCostOptions{
-				FlatCost:   rank.manaCost,
-				Multiplier: paladin.holyConduit(),
+				FlatCost: rank.manaCost,
+				// Instrument of Law 2 makes it instant, and then Benediction counts too.
+				Multiplier: core.TernaryInt32(paladin.Talents.InstrumentOfLaw == 2, paladin.holyConduitInstant(), paladin.holyConduit()),
 			},
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{

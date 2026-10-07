@@ -8,6 +8,8 @@ const DEFAULT_VARIATION = 15;
 const DEFAULT_EXECUTE_20 = 0.2;
 const DEFAULT_EXECUTE_25 = 0.25;
 const DEFAULT_EXECUTE_35 = 0.35;
+// The share of a PvP fight spent out of melee range, when PvP mode is first turned on.
+const DEFAULT_PVP_MELEE_DOWNTIME = 0.7;
 
 // Manages all the settings for an Encounter.
 export class Encounter {
@@ -19,6 +21,8 @@ export class Encounter {
 	private executeProportion25 = DEFAULT_EXECUTE_25;
 	private executeProportion35 = DEFAULT_EXECUTE_35;
 	private useHealth = false;
+	private pvp = false;
+	private pvpMeleeDowntime = DEFAULT_PVP_MELEE_DOWNTIME;
 
 	targets!: Array<TargetProto>;
 	targetsMetadata: UnitMetadataList;
@@ -109,6 +113,26 @@ export class Encounter {
 		this.executeProportionChangeEmitter.emit(eventID);
 	}
 
+	getPvp(): boolean {
+		return this.pvp;
+	}
+	setPvp(eventID: EventID, newPvp: boolean) {
+		if (newPvp == this.pvp) return;
+
+		this.pvp = newPvp;
+		this.durationChangeEmitter.emit(eventID);
+	}
+
+	getPvpMeleeDowntime(): number {
+		return this.pvpMeleeDowntime;
+	}
+	setPvpMeleeDowntime(eventID: EventID, newDowntime: number) {
+		if (newDowntime == this.pvpMeleeDowntime) return;
+
+		this.pvpMeleeDowntime = newDowntime;
+		this.durationChangeEmitter.emit(eventID);
+	}
+
 	matchesPreset(preset: PresetEncounter): boolean {
 		return preset.targets.length == this.targets.length && this.targets.every((t, i) => TargetProto.equals(t, preset.targets[i].target));
 	}
@@ -131,6 +155,10 @@ export class Encounter {
 			executeProportion25: this.executeProportion25,
 			executeProportion35: this.executeProportion35,
 			useHealth: this.useHealth,
+			pvp: this.pvp,
+			// Only a PvP fight carries the downtime, so a preset encounter without PvP still
+			// matches the settings.
+			pvpMeleeDowntime: this.pvp ? this.pvpMeleeDowntime : 0,
 			targets: this.targets,
 		});
 	}
@@ -143,6 +171,9 @@ export class Encounter {
 			this.setExecuteProportion25(eventID, proto.executeProportion25);
 			this.setExecuteProportion35(eventID, proto.executeProportion35);
 			this.setUseHealth(eventID, proto.useHealth);
+			this.setPvp(eventID, proto.pvp);
+			// Settings without PvP have no downtime saved, so turning PvP on starts from the default.
+			this.setPvpMeleeDowntime(eventID, proto.pvp ? proto.pvpMeleeDowntime : DEFAULT_PVP_MELEE_DOWNTIME);
 			this.targets = proto.targets;
 			this.targetsChangeEmitter.emit(eventID);
 		});

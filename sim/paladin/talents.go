@@ -12,7 +12,7 @@ import (
 // read: Spiritual Focus, Unyielding Faith, Voice of Truth, Infusion of Light,
 // Illumination, Light's Vigil, Guardian's Favor, Improved Seal of Fury, Swift Judgement,
 // Improved Hammer of Justice, Templar's Bulwark, Pursuit of Justice, Eye for an Eye,
-// Repentance, Twist of Light. Healing Light only touches heals.
+// Repentance, and the Echo half of Twist of Light. Healing Light only touches heals.
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeHit, float64(paladin.Talents.Precision)*core.MeleeHitRatingPerHitChance)
 	paladin.AddStat(stats.SpellHit, float64(paladin.Talents.DivinePrecision)*6*core.SpellHitRatingPerHitChance)
@@ -39,12 +39,13 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.PseudoStats.SpiritRegenRateCasting += 0.1 * float64(paladin.Talents.Reverence)
 
 	// Champion of the Light turns Intellect into spell damage and healing.
+	//
+	// The 2026-10-01 development notes cut it to 20 / 40 / 60% (it was 33 / 66 / 100%).
 	if paladin.Talents.ChampionOfTheLight > 0 {
-		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, 0.33, 0.66, 1}[paladin.Talents.ChampionOfTheLight])
+		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, .2, .4, .6}[paladin.Talents.ChampionOfTheLight])
 	}
 
 	paladin.applyWeaponSpecialization()
-	paladin.applyCrusade()
 	paladin.applyVengeance()
 	paladin.applyVindication()
 	paladin.applyRedoubt()
@@ -63,9 +64,27 @@ func (paladin *Paladin) benediction() int32 {
 	return []int32{100, 98, 96, 94, 92, 90}[paladin.Talents.Benediction]
 }
 
+// The seals take Benediction's discount, and since the 2026-09-24 beta build Twist of
+// Light takes another 20% off them. We add the two, the way percent cost reductions
+// usually combine.
+func (paladin *Paladin) sealCostMultiplier() int32 {
+	if paladin.Talents.TwistOfLight {
+		return paladin.benediction() - 20
+	}
+	return paladin.benediction()
+}
+
 // Holy Conduit takes 20% per point off Consecration, Holy Wrath, Exorcism and Hammer of Wrath.
 func (paladin *Paladin) holyConduit() int32 {
 	return []int32{100, 80, 60}[paladin.Talents.HolyConduit]
+}
+
+// holyConduitInstant is Holy Conduit's discount plus Benediction's, for the spells Holy
+// Conduit covers when they are instant (Consecration, Exorcism, and Hammer of Wrath with
+// both points of Instrument of Law). Benediction's text says "all instant cast spells and
+// abilities". We add the two like sealCostMultiplier does.
+func (paladin *Paladin) holyConduitInstant() int32 {
+	return paladin.holyConduit() + paladin.benediction() - 100
 }
 
 // Purifying Power shortens the Exorcism and Holy Wrath cooldowns by 17% per point.
@@ -80,7 +99,8 @@ func (paladin *Paladin) applyRedoubt() {
 		return
 	}
 
-	blockBonus := 6.0 * float64(paladin.Talents.Redoubt) * core.BlockRatingPerBlockChance
+	// Build 70245 gives 4% a rank (Classic and the 69876 beta client 6%).
+	blockBonus := 4.0 * float64(paladin.Talents.Redoubt) * core.BlockRatingPerBlockChance
 
 	paladin.redoubtAura = paladin.RegisterAura(core.Aura{
 		Label:     "Redoubt",
@@ -173,14 +193,15 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 }
 
 // The one and two handed specializations. Forever's ranks are 3/7/10% for one handers
-// and 3/6/9% for two handers, and they scale everything physical the weapon deals,
+// and 2/4/6% for two handers (3/6/9% before the 2026-09-24 beta build), and they scale
+// everything physical the weapon deals,
 // plus the seal procs and judgements that roll as melee.
 func (paladin *Paladin) getWeaponSpecializationModifier() float64 {
 	handType := paladin.MainHand().HandType
 	if handType == proto.HandType_HandTypeMainHand || handType == proto.HandType_HandTypeOneHand {
 		return []float64{1, 1.03, 1.07, 1.10}[paladin.Talents.OneHandedWeaponSpecialization]
 	} else if handType == proto.HandType_HandTypeTwoHand {
-		return []float64{1, 1.03, 1.06, 1.09}[paladin.Talents.TwoHandedWeaponSpecialization]
+		return []float64{1, 1.02, 1.04, 1.06}[paladin.Talents.TwoHandedWeaponSpecialization]
 	} else {
 		return 1.
 	}
@@ -191,34 +212,12 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 	paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= paladin.getWeaponSpecializationModifier()
 }
 
-// Crusade is 1% per point on all damage, and as much again against Demons and Undead.
-func (paladin *Paladin) applyCrusade() {
-	if paladin.Talents.Crusade == 0 {
-		return
-	}
-	bonus := 1 + 0.01*float64(paladin.Talents.Crusade)
-	paladin.PseudoStats.DamageDealtMultiplier *= bonus
-	paladin.mobTypeDamageAura(proto.MobType_MobTypeDemon, bonus)
-	paladin.mobTypeDamageAura(proto.MobType_MobTypeUndead, bonus)
-}
-
-// Crusade's creature half, applied to the attack tables the way the racial creature
-// bonuses are (the targets are only known after finalize).
-func (paladin *Paladin) mobTypeDamageAura(mobType proto.MobType, multiplier float64) {
-	paladin.Env.RegisterPostFinalizeEffect(func() {
-		for _, t := range paladin.Env.Encounter.Targets {
-			if t.MobType == mobType {
-				for _, at := range paladin.AttackTables[t.UnitIndex] {
-					at.DamageDealtMultiplier *= multiplier
-					at.CritMultiplier *= multiplier
-				}
-			}
-		}
-	})
-}
-
-// Vengeance stacks 1% per point of Physical and Holy damage for every crit, up to 5
+// Vengeance stacks 1% per point of Physical and Holy damage for every crit, up to 3
 // stacks, for 30 sec. Classic was a flat 3% per point for 8 sec.
+//
+// The 2026-09-24 beta build cut it from 5 stacks to 3 and made only non-periodic crits
+// count. The hit callback below never sees a periodic tick (those go to the periodic
+// callback), so the second half needs nothing here.
 func (paladin *Paladin) applyVengeance() {
 	if paladin.Talents.Vengeance == 0 {
 		return
@@ -233,7 +232,7 @@ func (paladin *Paladin) applyVengeance() {
 		Label:     "Vengeance Proc",
 		ActionID:  core.ActionID{SpellID: 20059},
 		Duration:  time.Second * 30,
-		MaxStacks: 5,
+		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= multiplier(newStacks) / multiplier(oldStacks)
 			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier(newStacks) / multiplier(oldStacks)

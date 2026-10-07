@@ -338,6 +338,7 @@ message UnitMetrics {
 	DistributionMetrics tmi = 17;
 	DistributionMetrics hps = 14;
 	DistributionMetrics tto = 15; // Time To OOM, in seconds.
+	DistributionMetrics mana_end = 18; // Mana left when the fight ends.
 
 	// average seconds spent oom per iteration
 	double seconds_oom_avg = 3; 

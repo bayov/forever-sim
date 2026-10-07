@@ -9,7 +9,7 @@ import (
 
 // Registers all consume-related effects to the Agent.
 // TODO: Classic Consumes
-func applyConsumeEffects(agent Agent) {
+func applyConsumeEffects(agent Agent, raidBuffs *proto.RaidBuffs) {
 	character := agent.GetCharacter()
 	consumes := character.Consumes
 
@@ -22,7 +22,7 @@ func applyConsumeEffects(agent Agent) {
 	applyFoodConsumes(character, consumes)
 	applyDefensiveBuffConsumes(character, consumes)
 	applyPhysicalBuffConsumes(character, consumes)
-	applySpellBuffConsumes(character, consumes)
+	applySpellBuffConsumes(character, consumes, raidBuffs)
 	applyZanzaBuffConsumes(character, consumes)
 	applyHitConsumableConsumes(character, consumes)
 	applyMiscConsumes(character, consumes.MiscConsumes)
@@ -191,10 +191,11 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 				weapon.BaseDamageMin += 8
 				weapon.BaseDamageMax += 8
 			}
-		// Windfury
+		// Windfury Totem from another shaman. It used to take the main hand imbue slot, and
+		// old settings still carry it there. It is the raid buffs' totem weapon buff now.
 		case proto.WeaponImbue_Windfury:
 			if !character.PseudoStats.FeralCombatEnabled {
-				ApplyWindfury(character)
+				applyRaidTotemWeaponBuff(character, proto.TotemWeaponBuff_TotemWeaponBuffWindfury)
 			}
 		case proto.WeaponImbue_ShadowOil:
 			if !character.PseudoStats.FeralCombatEnabled {
@@ -356,6 +357,27 @@ func applyFoodConsumes(character *Character, consumes *proto.Consumes) {
 			character.AddStats(stats.Stats{
 				stats.Strength: 10,
 			})
+		case proto.Food_FoodBarbecuedBuzzardWing:
+			character.AddStats(stats.Stats{
+				stats.Intellect: 10,
+			})
+		case proto.Food_FoodMithrilHeadTrout:
+			character.AddStats(stats.Stats{
+				stats.AttackPower:       20,
+				stats.RangedAttackPower: 20,
+			})
+		case proto.Food_FoodBearBrisket:
+			character.AddStats(stats.Stats{
+				stats.Strength: 10,
+			})
+		case proto.Food_FoodTastyLionSteak:
+			character.AddStats(stats.Stats{
+				stats.Agility: 10,
+			})
+		case proto.Food_FoodBrinySeafoodStew:
+			character.AddStats(stats.Stats{
+				stats.SpellDamage: 14,
+			})
 		}
 	}
 
@@ -457,7 +479,7 @@ func applyDefensiveBuffConsumes(character *Character, consumes *proto.Consumes) 
 				stats.BonusArmor: 50,
 			})
 		case proto.ArmorElixir_ScrollOfProtection:
-			character.AddStats(BuffSpellValues[ScrollOfProtection])
+			character.AddStat(stats.BonusArmor, scrollOfProtection[HighestRankAt(character.Level, scrollOfProtectionLevel[:])])
 		}
 	}
 
@@ -514,7 +536,7 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 				stats.Agility: 8,
 			})
 		case proto.AgilityElixir_ScrollOfAgility:
-			character.AddStats(BuffSpellValues[ScrollOfAgility])
+			character.AddStat(stats.Agility, scrollValue(character.Level))
 		}
 	}
 
@@ -533,16 +555,32 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 				stats.Strength: 8,
 			})
 		case proto.StrengthBuff_ScrollOfStrength:
-			character.AddStats(BuffSpellValues[ScrollOfStrength])
+			character.AddStat(stats.Strength, scrollValue(character.Level))
+		case proto.StrengthBuff_ElixirOfGiantGrowth:
+			character.AddStat(stats.Strength, 8)
 		}
 	}
 }
+
+// Scrolls of Agility and Strength give 5 / 9 / 13 / 17 at ranks I to IV, which need
+// level 10, 25, 40 and 55. We use the best rank the character can read, so a level 30
+// character gets Scroll of Strength II's 9 rather than rank IV's 17.
+var scrollLevel = [...]int{0, 10, 25, 40, 55}
+var scrollStat = [...]float64{0, 5, 9, 13, 17}
+
+func scrollValue(level int32) float64 {
+	return scrollStat[HighestRankAt(level, scrollLevel[:])]
+}
+
+// Scrolls of Protection give 60 / 120 / 180 / 240 armor and need level 1, 15, 30 and 45.
+var scrollOfProtectionLevel = [...]int{0, 1, 15, 30, 45}
+var scrollOfProtection = [...]float64{0, 60, 120, 180, 240}
 
 ///////////////////////////////////////////////////////////////////////////
 //                             Spell Buff Consumes
 ///////////////////////////////////////////////////////////////////////////
 
-func applySpellBuffConsumes(character *Character, consumes *proto.Consumes) {
+func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raidBuffs *proto.RaidBuffs) {
 	if consumes.SpellPowerBuff != proto.SpellPowerBuff_SpellPowerBuffUnknown {
 		switch consumes.SpellPowerBuff {
 		case proto.SpellPowerBuff_ArcaneElixir:
@@ -552,6 +590,10 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes) {
 		case proto.SpellPowerBuff_GreaterArcaneElixir:
 			character.AddStats(stats.Stats{
 				stats.SpellDamage: 35,
+			})
+		case proto.SpellPowerBuff_LesserArcaneElixir:
+			character.AddStats(stats.Stats{
+				stats.SpellDamage: 15,
 			})
 		}
 	}
@@ -593,6 +635,25 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes) {
 			character.AddStats(stats.Stats{
 				stats.MP5: 12,
 			})
+		case proto.ManaRegenElixir_LesserMagebloodElixir:
+			character.AddStats(stats.Stats{
+				stats.MP5: 6,
+			})
+		}
+	}
+
+	// A stat elixir does not stack with the Scroll of the same stat. Only the higher one
+	// counts, so with a Scroll of Intellect II (8) already on, the elixir's 6 adds nothing.
+	// The buffs went on before the consumes, so we add only what the elixir gives above
+	// the scroll.
+	switch consumes.IntellectElixir {
+	case proto.IntellectElixir_ElixirOfWisdom, proto.IntellectElixir_ElixirOfLesserIntellect:
+		elixir := 6.0
+		if raidBuffs.GetScrollOfIntellect() && !raidBuffs.GetArcaneBrilliance() {
+			elixir -= scrollOfIntellect[HighestRankAt(character.Level, scrollOfIntellectLevel[:])]
+		}
+		if elixir > 0 {
+			character.AddStat(stats.Intellect, elixir)
 		}
 	}
 }
@@ -1163,6 +1224,37 @@ func makeRageConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 	}
 }
 
+// makeStatBuffPotionMCD is one of Forever's potions that raise a stat for 30 sec.
+//
+// Their tooltips list no cooldown, but we assume they share the 2 min potion cooldown
+// with every other potion, the way Classic's potions do.
+func makeStatBuffPotionMCD(itemId int32, label string, buff stats.Stats, character *Character, cdTimer *Timer) MajorCooldown {
+	actionID := ActionID{ItemID: itemId}
+	aura := character.NewTemporaryStatsAura(label, actionID, buff, time.Second*30)
+	return MajorCooldown{
+		Type: CooldownTypeDPS,
+		ShouldActivate: func(sim *Simulation, character *Character) bool {
+			return !character.IsShapeshifted()
+		},
+		Spell: character.GetOrRegisterSpell(SpellConfig{
+			ActionID: actionID,
+			Flags:    SpellFlagNoOnCastComplete,
+			Cast: CastConfig{
+				CD: Cooldown{
+					Timer:    cdTimer,
+					Duration: time.Minute * 2,
+				},
+				ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
+					character.CancelShapeshift(sim)
+				},
+			},
+			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+				aura.Activate(sim)
+			},
+		}),
+	}
+}
+
 func makePotionActivationInternal(potionType proto.Potions, character *Character, potionCD *Timer) MajorCooldown {
 	if potionType == proto.Potions_UnknownPotion {
 		return MajorCooldown{}
@@ -1205,6 +1297,11 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 
 	case proto.Potions_MagicResistancePotion:
 		return makeMagicResistancePotionMCD(character, potionCD)
+
+	case proto.Potions_FrenzyPotion:
+		return makeStatBuffPotionMCD(250940, "Frenzy Potion", stats.Stats{stats.AttackPower: 28, stats.RangedAttackPower: 28}, character, potionCD)
+	case proto.Potions_SpellblastingPotion:
+		return makeStatBuffPotionMCD(250934, "Spellblasting Potion", stats.Stats{stats.SpellDamage: 16}, character, potionCD)
 	// case proto.Potions_GreaterArcaneProtectionPotion:
 	// 	return makeSchoolProtectionConsumableMCD(13461, character, potionCD)
 	// case proto.Potions_GreaterFireProtectionPotion:

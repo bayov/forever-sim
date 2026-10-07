@@ -168,28 +168,16 @@ func (character *Character) registerElunesLight() {
 	})
 }
 
-// Eureka!: the next 3 damaging abilities cost less and deal 10% more damage. The beta client
-// gives each class its own discount: Energy 20%, Rage 40%, Mana 50% (Priests 15%, and their
-// healing counts too). 2 min cooldown.
+// Eureka!: the next 3 damaging abilities cost 10% less and deal 10% more damage, for
+// every class since the 2026-09-24 beta build (before it the discount was Energy 20%,
+// Rage 40%, Mana 50% and Priests 15%). A Priest's healing counts too. 2 min cooldown.
 //
 // A damaging ability is one the rotation can cast, that has a cost and that is set up to
 // deal damage. Slice and Dice, Expose Armor or a shout have no damage multiplier and are
 // left alone. Auto attacks are not abilities. A stack is spent on each cast.
-func (character *Character) eurekaCostReduction() int32 {
-	switch {
-	case character.HasEnergyBar():
-		return 20
-	case character.HasRageBar():
-		return 40
-	case character.Class == proto.Class_ClassPriest:
-		return 15
-	}
-	return 50
-}
-
 func (character *Character) registerEureka() {
 	actionID := ActionID{SpellID: 1259812}
-	costReduction := character.eurekaCostReduction()
+	costReduction := int32(10)
 	healingCounts := character.Class == proto.Class_ClassPriest
 
 	affects := func(spell *Spell) bool {
@@ -277,10 +265,13 @@ func (character *Character) registerEureka() {
 // while, on the grounds that a proc like this usually has one, and took the assumption
 // out on 2026-09-23 once the beta showed there is none.
 //
-// The roll happens when a hostile ability is used, not when it lands, so an ability that
-// deals no damage of its own still gets its chance: a Kidney Shot, an Expose Armor, or
-// the cast that puts a paladin's Consecration on the ground. Only the cast rolls there,
-// the eight seconds of ticks that follow roll for nothing.
+// The roll happens when a hostile ability is used, not when it lands, so an ability rolls
+// whether or not it hits. Since the 2026-09-24 beta build the ability needs a damage
+// component: an Expose Armor or a Kidney Shot no longer rolls, but the cast that puts a
+// paladin's Consecration on the ground does (the way Shadow Word: Pain rolls on its cast
+// in the development notes). Only the cast rolls there, the eight seconds of ticks that
+// follow roll for nothing. We use the same test for a damage component as Eureka!: the
+// spell has a damage multiplier.
 //
 // That is what the first trigger below is for. The second one is for everything that
 // lands without announcing a cast: auto attacks, a paladin's judgement, a Windfury
@@ -333,11 +324,14 @@ func (character *Character) registerTouchOfTheGrave() {
 	}
 
 	MakeProcTriggerAura(&character.Unit, ProcTrigger{
-		Name:       "Touch of the Grave",
-		Callback:   CallbackOnCastComplete,
-		ProcMask:   ProcMaskDirect,
-		ProcChance: procChance,
-		Handler:    proc,
+		Name:     "Touch of the Grave",
+		Callback: CallbackOnCastComplete,
+		ProcMask: ProcMaskDirect,
+		Handler: func(sim *Simulation, spell *Spell, result *SpellResult) {
+			if spell.DamageMultiplier != 0 && sim.Proc(procChance, "Touch of the Grave") {
+				proc(sim, spell, result)
+			}
+		},
 	})
 	MakeProcTriggerAura(&character.Unit, ProcTrigger{
 		Name:       "Touch of the Grave (Attacks)",

@@ -4,7 +4,7 @@
   "className": "Shaman",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-09-17T15:05:36Z",
+  "generatedAt": "2026-09-25T05:41:14Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -247,7 +247,7 @@
         {
           "id": "elemental-fury",
           "name": "Elemental Fury",
-          "row": 2,
+          "row": 5,
           "col": 2,
           "maxRank": 5,
           "icon": "spell_fire_volcano",
@@ -278,6 +278,12 @@
             5
           ],
           "ranksSource": "client",
+          "requires": [
+            {
+              "talent": "call-of-thunder",
+              "rank": 1
+            }
+          ],
           "spellId": 16089
         },
         {
@@ -354,8 +360,8 @@
           "ranksSource": "client",
           "requires": [
             {
-              "talent": "elemental-fury",
-              "rank": 5
+              "talent": "elemental-alacrity",
+              "rank": 3
             }
           ],
           "spellId": 16120
@@ -437,7 +443,7 @@
         {
           "id": "elemental-alacrity",
           "name": "Elemental Alacrity",
-          "row": 5,
+          "row": 2,
           "col": 2,
           "maxRank": 3,
           "icon": "spell_lightning_lightningbolt01",
@@ -460,12 +466,6 @@
             3
           ],
           "ranksSource": "client",
-          "requires": [
-            {
-              "talent": "call-of-thunder",
-              "rank": 1
-            }
-          ],
           "spellId": 16578
         },
         {
@@ -479,8 +479,8 @@
           "description": "You hurl molten lava at the target, dealing {0} to {1} Fire damage. If your Flame Shock is on the target, Lava Burst deals {2}% increased damage.",
           "ranks": [
             [
-              106,
-              135,
+              143,
+              185,
               20
             ]
           ],
@@ -1034,7 +1034,7 @@
           "maxRank": 1,
           "icon": "spell_nature_bloodlust",
           "iconSource": "client",
-          "description": "Increases your melee attack speed and spell casting speed by {0}% for {1} sec.",
+          "description": "Increases your attack speed by {0}% for {1} sec.",
           "ranks": [
             [
               30,
@@ -1566,6 +1566,6 @@
     }
   ],
   "notes": [
-    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17"
+    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro"
   ]
 }

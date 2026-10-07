@@ -1,13 +1,14 @@
 package shaman
 
 import (
+	"time"
+
 	"github.com/wowsims/classic/sim/core"
 )
 
-// Enhancing Totems is gone from the Forever tree, so Strength of Earth and Grace of Air always land
-// at their improved value.
-// TODO: Assumed baseline rather than deleted, beta will confirm it.
-const enhancingTotemsMultiplier = 1.15
+// Totems take a 1 sec global cooldown, not the 1.5 sec of other spells (wowhead's Forever
+// spell pages, Searing and Flametongue Totem among them).
+const totemGCD = time.Second
 
 func (shaman *Shaman) newTotemSpellConfig(flatCost float64, spellID int32) core.SpellConfig {
 	return core.SpellConfig{
@@ -21,7 +22,7 @@ func (shaman *Shaman) newTotemSpellConfig(flatCost float64, spellID int32) core.
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD: totemGCD,
 			},
 		},
 	}

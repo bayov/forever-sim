@@ -204,7 +204,8 @@ func (rogue *Rogue) applyInitiative() {
 		return
 	}
 
-	procChance := 0.33 * float64(rogue.Talents.Initiative)
+	// 33 / 67 / 100% per the beta client, so rank 3 is a sure proc.
+	procChance := []float64{0, .33, .67, 1}[rogue.Talents.Initiative]
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
 
 	rogue.RegisterAura(core.Aura{

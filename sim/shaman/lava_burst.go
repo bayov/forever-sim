@@ -10,8 +10,10 @@ const LavaBurstFlameShockBonus = .2
 
 // Lava Burst ranks from the Forever client data that https://foreverchanges.pro reads
 // (downrank calculator): damage at each rank's cap, its growth per level up to there, and
-// mana. The talent teaches rank 1 and the trainer the other two at 50 and 60.
-var LavaBurstBaseDamage = [][]float64{{0}, {104.98, 135.42}, {164.02, 211.58}, {192.14, 247.86}}
+// mana. The talent teaches rank 1 and the trainer the other two at 50 and 60. The
+// 2026-09-24 beta build raised ranks 1 and 2 (113 and 179 at the learn level before, 164
+// and 196 now) to about 10% above the Lightning Bolt learned around the same level.
+var LavaBurstBaseDamage = [][]float64{{0}, {149.52, 192.88}, {178.86, 230.74}, {192.14, 247.86}}
 var LavaBurstScaling = []core.RankScaling{{}, {48, 0.9}, {58, 1.1}, {60, 1.3}}
 var LavaBurstManaCost = []float64{0, 165, 230, 265}
 var LavaBurstLevel = []int32{0, 40, 50, 60}

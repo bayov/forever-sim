@@ -22,11 +22,10 @@ func TestEnhancement(t *testing.T) {
 
 			Talents:  DefaultTalents,
 			GearSet:  core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_1"),
-			Rotation: core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
+			Rotation: core.GetAplRotation("../../../ui/enhancement_shaman/apls", "optimized"),
 			OtherRotations: []core.RotationCombo{
 				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "grace_of_air"),
 				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "windfury"),
-				core.GetAplRotation("../../../ui/enhancement_shaman/apls", "optimized"),
 			},
 			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
@@ -49,7 +48,7 @@ func TestEnhancement(t *testing.T) {
 
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_2"),
-			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
+			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "optimized"),
 			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},
@@ -71,7 +70,7 @@ func TestEnhancement(t *testing.T) {
 
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_3"),
-			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
+			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "optimized"),
 			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},
@@ -93,7 +92,7 @@ func TestEnhancement(t *testing.T) {
 
 			Talents:     DefaultTalents,
 			GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "phase_5"),
-			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default"),
+			Rotation:    core.GetAplRotation("../../../ui/enhancement_shaman/apls", "optimized"),
 			Buffs:       core.ForeverBuffs,
 			Consumes:    Phase1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Sync Auto", SpecOptions: PlayerOptionsSyncAuto},
@@ -110,7 +109,7 @@ func TestEnhancement(t *testing.T) {
 	}))
 }
 
-var DefaultTalents = "05033305-053030031005112251"
+var DefaultTalents = "0505331-055030031005112251"
 
 var PlayerOptionsSyncDelayOH = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{

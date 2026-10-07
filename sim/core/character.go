@@ -43,6 +43,10 @@ type Character struct {
 
 	// Current gear.
 	Equipment
+
+	// The weapon buff from another shaman's Windfury or Flametongue Totem, nil without
+	// one. A shaman turns it off while their own totem's buff takes the slot.
+	RaidTotemWeaponBuff *Aura
 	//Item Swap Handler
 	ItemSwap ItemSwap
 
@@ -269,7 +273,6 @@ func (character *Character) applyEquipment() {
 	if character.Env.IsForever() {
 		equipStats = character.addEquipRatings(equipStats)
 		equipStats = character.unifyEquipHitAndCrit(equipStats)
-		equipStats = character.addHealingSpellDamage(equipStats)
 	}
 	character.AddStats(equipStats)
 	character.equipStatsApplied = true
@@ -360,7 +363,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBuffs)
 	playerStats.BuffsStats = measureStats()
 
-	applyConsumeEffects(agent)
+	applyConsumeEffects(agent, raidBuffs)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseConsumes)
 	playerStats.ConsumesStats = measureStats()
 	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)

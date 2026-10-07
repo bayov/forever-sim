@@ -135,6 +135,7 @@ func NewMage(character *core.Character, options *proto.Player) *Mage {
 
 	mage.AddStatDependency(stats.Strength, stats.AttackPower, core.APPerStrength[character.Class])
 	mage.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerInt(character.Class, character.Level)*core.SpellCritRatingPerCritChance)
+	mage.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	switch mage.Options.Armor {
 	case proto.Mage_Options_IceArmor:

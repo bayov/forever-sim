@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 const SearingTotemRanks = 6
@@ -12,7 +13,10 @@ const SearingTotemRanks = 6
 var SearingTotemSpellId = [SearingTotemRanks + 1]int32{0, 3599, 6363, 6364, 6365, 10437, 10438}
 var SearingTotemAttackSpellId = [SearingTotemRanks + 1]int32{0, 3606, 6350, 6351, 6352, 10435, 10436}
 var SearingTotemBaseDamage = [SearingTotemRanks + 1][]float64{{0}, {9, 11}, {13, 17}, {19, 25}, {26, 34}, {33, 45}, {40, 54}}
-var SearingTotemSpellCoef = [SearingTotemRanks + 1]float64{0, .052, .083, .083, .083, .083, .083}
+
+// Forever cut the Searing Totem bolt's coefficient to 1.7% on every rank (wowhead Forever
+// spell pages, Classic had 5.2% and 8.3%). The damage is Classic's.
+var SearingTotemSpellCoef = [SearingTotemRanks + 1]float64{0, .017, .017, .017, .017, .017, .017}
 var SearingTotemManaCost = [SearingTotemRanks + 1]float64{0, 25, 45, 75, 110, 145, 170}
 var SearingTotemDuration = [SearingTotemRanks + 1]int{0, 30, 35, 40, 45, 50, 55}
 var SearingTotemLevel = [SearingTotemRanks + 1]int{0, 10, 20, 30, 40, 50, 60}
@@ -80,7 +84,7 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD: totemGCD,
 			},
 			IgnoreHaste: true,
 		},
@@ -189,7 +193,7 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				GCD: totemGCD,
 			},
 			IgnoreHaste: true,
 		},
@@ -220,112 +224,139 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 	return spell
 }
 
-const FireNovaTotemRanks = 5
+// Fire Nova is a spell under Forever, not a totem. It goes off at once around the fire
+// totem the shaman already has down, so without one it cannot be cast. It has a 10 sec
+// cooldown of its own (Classic's totem had 15) and Totemic Focus no longer discounts it.
+//
+// The damage is Classic's (the damage spells 8349 and 8502 on wowhead's Forever pages
+// still carry Classic values and coefficients), except rank 1. It grows for five levels
+// after the rank is learned, from 48 to 56 at level 12 (foreverchanges spellbook) to the 54
+// to 62 below (wowhead at level 60).
+const FireNovaRanks = 5
 
-var FireNovaTotemSpellId = [FireNovaTotemRanks + 1]int32{0, 1535, 8498, 8499, 11314, 11315}
-var FireNovaTotemAoeSpellId = [FireNovaTotemRanks + 1]int32{0, 8349, 8502, 8503, 11306, 11307}
-var FireNovaTotemBaseDamage = [FireNovaTotemRanks + 1][]float64{{0, 0}, {53, 62}, {110, 124}, {195, 219}, {295, 331}, {413, 459}}
-var FireNovaTotemSpellCoeff = [FireNovaTotemRanks + 1]float64{0, .1, .143, .143, .143, .143}
-var FireNovaTotemManaCost = [FireNovaTotemRanks + 1]float64{0, 95, 170, 280, 395, 520}
-var FireNovaTotemLevel = [FireNovaTotemRanks + 1]int{0, 12, 22, 32, 42, 52}
+var FireNovaSpellId = [FireNovaRanks + 1]int32{0, 408341, 408342, 408343, 408344, 408345}
+var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {54, 62}, {110, 124}, {195, 219}, {295, 331}, {413, 459}}
+var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 1.2}, {27, 1.6}, {37, 2.2}, {47, 2.8}, {57, 3.4}}
+var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .1, .143, .143, .143, .143}
+var FireNovaManaCost = [FireNovaRanks + 1]float64{0, 95, 170, 280, 395, 520}
+var FireNovaLevel = [FireNovaRanks + 1]int{0, 12, 22, 32, 42, 52}
 
-func (shaman *Shaman) registerFireNovaTotemSpell() {
-	shaman.FireNovaTotem = make([]*core.Spell, FireNovaTotemRanks+1)
+func (shaman *Shaman) registerFireNovaSpell() {
+	shaman.FireNova = make([]*core.Spell, FireNovaRanks+1)
 
-	for rank := 1; rank <= FireNovaTotemRanks; rank++ {
-		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
-		// built for a rank the shaman cannot cast.
-		if FireNovaTotemLevel[rank] <= int(shaman.Level) {
-			config := shaman.newFireNovaTotemSpellConfig(rank)
-			shaman.FireNovaTotem[rank] = shaman.RegisterSpell(config)
+	for rank := 1; rank <= FireNovaRanks; rank++ {
+		if FireNovaLevel[rank] <= int(shaman.Level) {
+			shaman.FireNova[rank] = shaman.RegisterSpell(shaman.newFireNovaSpellConfig(rank))
+		}
+	}
+}
+
+func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
+	baseDamageLow := FireNovaScaling[rank].At(FireNovaBaseDamage[rank][0], shaman.Level)
+	baseDamageHigh := FireNovaScaling[rank].At(FireNovaBaseDamage[rank][1], shaman.Level)
+
+	return core.SpellConfig{
+		SpellCode:   SpellCode_ShamanFireNova,
+		ActionID:    core.ActionID{SpellID: FireNovaSpellId[rank]},
+		SpellSchool: core.SpellSchoolFire,
+		DefenseType: core.DefenseTypeMagic,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagShaman | core.SpellFlagAPL | core.SpellFlagCastFromTotem,
+
+		RequiredLevel: FireNovaLevel[rank],
+		Rank:          rank,
+
+		ManaCost: core.ManaCostOptions{
+			FlatCost: FireNovaManaCost[rank],
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    shaman.NewTimer(),
+				Duration: time.Second*10 - shaman.improvedFireNovaCooldownReduction(),
+			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, _ *core.Unit) bool {
+			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime
+		},
+
+		// Call of Flame and Improved Fire Nova are both percent damage modifiers on this
+		// spell. In Classic those add together (15% + 20% = 35%) instead of multiplying, and
+		// the SoD sim does the same.
+		DamageMultiplier: shaman.callOfFlameMultiplier() + shaman.improvedFireNovaBonus(),
+		ThreatMultiplier: 1,
+		BonusCoefficient: FireNovaSpellCoeff[rank],
+
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(baseDamageLow, baseDamageHigh), spell.OutcomeMagicHitAndCrit)
+			}
+		},
+	}
+}
+
+// Flametongue Totem gives every main hand hit of the party extra Fire damage, by weapon
+// speed like Flametongue Weapon: the value below per 4 sec of swing time (548 / 25 on
+// wowhead's Forever tooltip for rank 1, which does not grow with level). Forever made it
+// last 5 min.
+//
+// Its buff takes the totem slot of the weapon, so it works next to Windfury, Rockbiter or
+// Frostbrand Weapon and an oil or stone. Flametongue Weapon on the main hand turns it off.
+// It does not work next to the shaman's own Windfury Totem or another shaman's totem buff,
+// see core/totem_weapon_buffs.go.
+const FlametongueTotemRanks = core.FlametongueTotemRanks
+
+var FlametongueTotemSpellId = core.FlametongueTotemSpellId
+var FlametongueTotemManaCost = [FlametongueTotemRanks + 1]float64{0, 90, 140, 200, 275}
+var FlametongueTotemLevel = core.FlametongueTotemLevel
+
+func (shaman *Shaman) registerFlametongueTotemSpell() {
+	shaman.FlametongueTotem = make([]*core.Spell, FlametongueTotemRanks+1)
+
+	for rank := 1; rank <= FlametongueTotemRanks; rank++ {
+		if FlametongueTotemLevel[rank] <= int(shaman.Level) {
+			shaman.FlametongueTotem[rank] = shaman.RegisterSpell(shaman.newFlametongueTotemSpellConfig(rank))
 		}
 	}
 
 	shaman.FireTotems = append(
 		shaman.FireTotems,
-		core.FilterSlice(shaman.FireNovaTotem, func(spell *core.Spell) bool { return spell != nil })...,
+		core.FilterSlice(shaman.FlametongueTotem, func(spell *core.Spell) bool { return spell != nil })...,
 	)
 }
 
-func (shaman *Shaman) newFireNovaTotemSpellConfig(rank int) core.SpellConfig {
-	spellId := FireNovaTotemSpellId[rank]
-	baseDamageLow := FireNovaTotemBaseDamage[rank][0]
-	baseDamageHigh := FireNovaTotemBaseDamage[rank][1]
-	spellCoeff := FireNovaTotemSpellCoeff[rank]
-	cooldown := time.Second*15 - shaman.improvedFireNovaCooldownReduction()
-	manaCost := FireNovaTotemManaCost[rank]
-	level := FireNovaTotemLevel[rank]
+func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig {
+	duration := time.Minute * 5
+	buffAura := core.FlametongueTotemBuffAura(&shaman.Character, rank, "Flametongue Totem", 0)
 
-	duration := time.Second * 5
-	attackInterval := duration
-
-	novaSpell := shaman.RegisterSpell(core.SpellConfig{
-		SpellCode:   SpellCode_ShamanFireNovaTotem,
-		ActionID:    core.ActionID{SpellID: FireNovaTotemAoeSpellId[rank]},
-		SpellSchool: core.SpellSchoolFire,
-		DefenseType: core.DefenseTypeMagic,
-		ProcMask:    core.ProcMaskEmpty,
-
-		DamageMultiplier: shaman.callOfFlameMultiplier() * shaman.improvedFireNovaMultiplier(),
-		BonusCoefficient: spellCoeff,
-
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
-			}
-		},
-	})
-
-	spell := core.SpellConfig{
-		SpellCode:   SpellCode_ShamanFireNovaTotem,
-		ActionID:    core.ActionID{SpellID: spellId},
-		SpellSchool: core.SpellSchoolFire,
-		DefenseType: core.DefenseTypeMagic,
-		ProcMask:    core.ProcMaskEmpty,
-		Flags:       SpellFlagTotem | core.SpellFlagAPL,
-
-		RequiredLevel: level,
-		Rank:          rank,
-
-		ManaCost: core.ManaCostOptions{
-			FlatCost:   manaCost,
-			Multiplier: shaman.totemManaMultiplier(),
-		},
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+	spell := shaman.newTotemSpellConfig(FlametongueTotemManaCost[rank], FlametongueTotemSpellId[rank])
+	spell.RequiredLevel = FlametongueTotemLevel[rank]
+	spell.Rank = rank
+	// The totem is a one tick dot like the other fire totems, so that placing another fire
+	// totem takes this one down the same way.
+	spell.Dot = core.DotConfig{
+		Aura: core.Aura{
+			Label: fmt.Sprintf("Flametongue Totem (Rank %d) Totem", rank),
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_FlametongueWeapon)
 			},
-			IgnoreHaste: true,
-			CD: core.Cooldown{
-				Timer:    shaman.NewTimer(),
-				Duration: cooldown,
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				shaman.clearTotemWeaponBuff(sim, buffAura)
 			},
 		},
-
-		Dot: core.DotConfig{
-			Aura: core.Aura{
-				Label: fmt.Sprintf("Fire Nova Totem (Rank %d)", rank),
-			},
-			NumberOfTicks: 1,
-			TickLength:    attackInterval,
-
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				novaSpell.Cast(sim, target)
-			},
-		},
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if shaman.ActiveTotems[FireTotem] != nil {
-				shaman.ActiveTotems[FireTotem].Dot(sim.GetTargetUnit(0)).Cancel(sim)
-			}
-			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
-			// +1 needed because of rounding issues with totem tick time.
-			shaman.TotemExpirations[FireTotem] = sim.CurrentTime + duration + 1
-			shaman.ActiveTotems[FireTotem] = spell
-		},
+		NumberOfTicks: 1,
+		TickLength:    duration,
+		OnTick:        func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {},
 	}
-
+	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+		if shaman.ActiveTotems[FireTotem] != nil {
+			shaman.ActiveTotems[FireTotem].Dot(sim.GetTargetUnit(0)).Cancel(sim)
+		}
+		spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
+		shaman.TotemExpirations[FireTotem] = sim.CurrentTime + duration
+		shaman.ActiveTotems[FireTotem] = spell
+	}
 	return spell
 }

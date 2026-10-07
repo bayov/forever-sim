@@ -34,12 +34,12 @@ func TestRetribution(t *testing.T) {
 	}))
 }
 
-// Forever trees: Improved Holy Strike, Divine Strength and Improved Seals in Holy,
-// Toughness, Precision and a point of Redoubt in Protection, the Retribution tree down to
-// Twist of Light with Benediction, Conviction, Vindication, Sanctified Judgement, Seal of
-// Command, Sacred Arbiter, Crusade, Two-Handed Weapon Specialization, Vengeance and
-// Champion of the Light.
-var Phase45RetTalents = "250003-51300-052053310012330301"
+// Forever trees: Divine Strength and Improved Seals in Holy, Toughness, Precision and a
+// point of Redoubt in Protection, the Retribution tree down to Twist of Light with
+// Benediction, Conviction, Vindication, Sanctified Judgement, Seal of Command, Sacred
+// Arbiter, Two-Handed Weapon Specialization, Vengeance and Champion of the Light. The
+// points that were in Improved Holy Strike and Crusade went with the talents.
+var Phase45RetTalents = "50003-513-05205331001330301"
 
 var Phase1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

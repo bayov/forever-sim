@@ -319,6 +319,25 @@ interface EnumInputConfig<ModObject, Message, T> {
 	showWhen?: (modObj: ModObject) => boolean;
 }
 
+export function makeEnumRaidBuffInput<SpecType extends Spec>(
+	config: EnumInputConfig<Player<SpecType>, RaidBuffs, number>,
+): InputHelpers.TypedIconEnumPickerConfig<Player<SpecType>, number> {
+	return InputHelpers.makeEnumIconInput<any, RaidBuffs, Player<SpecType>, number>(
+		{
+			getModObject: (player: Player<SpecType>) => player,
+			showWhen: (player: Player<SpecType>) => !config.showWhen || config.showWhen(player),
+			getValue: (player: Player<SpecType>) => player.getRaid()!.getBuffs(),
+			setValue: (eventID: EventID, player: Player<SpecType>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
+			changeEmitter: (player: Player<SpecType>) =>
+				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
+		},
+		config.fieldName,
+		config.values,
+		config.numColumns,
+		config.direction || IconPickerDirection.Vertical,
+	);
+}
+
 export function makeEnumIndividualBuffInput<SpecType extends Spec>(
 	config: EnumInputConfig<Player<SpecType>, IndividualBuffs, number>,
 ): InputHelpers.TypedIconEnumPickerConfig<Player<SpecType>, number> {

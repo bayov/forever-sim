@@ -12,10 +12,13 @@ var FrostbrandWeaponSpellId = [FrostbrandWeaponRanks + 1]int32{0, 8033, 8038, 10
 var FrostbrandWeaponEnchantId = [FrostbrandWeaponRanks + 1]int32{0, 2, 12, 524, 1667, 1668}
 var FrostbrandWeaponLevel = [FrostbrandWeaponRanks + 1]int32{0, 20, 28, 38, 48, 58}
 
-// Damage per proc at each rank's cap, and its growth per level. The damage is the Forever
-// tooltip (wowhead). The growth per level is 1.12's, scaled down with the damage.
-var FrostbrandWeaponBaseDamage = [FrostbrandWeaponRanks + 1]float64{0, 45, 72, 117, 159, 203}
-var FrostbrandWeaponScaling = [FrostbrandWeaponRanks + 1]core.RankScaling{{}, {26, 2}, {36, 2.8}, {46, 4.7}, {56, 3.8}, {60, 6.1}}
+// Damage per proc at each rank's cap, and its growth per level. The growth takes it there
+// from the value at the learn level (foreverchanges spellbook: 32, 48, 77, 127 and 158).
+//
+// Rank 5 keeps growing 5.6 a level up to 66 (its <!--ppl58:66:158:560--> marker), so at 60
+// it is 169.2. wowhead's Forever tooltip shows the level 66 value (203).
+var FrostbrandWeaponBaseDamage = [FrostbrandWeaponRanks + 1]float64{0, 45, 72, 117, 159, 169.2}
+var FrostbrandWeaponScaling = [FrostbrandWeaponRanks + 1]core.RankScaling{{}, {26, 13.0 / 6}, {36, 3}, {46, 5}, {56, 4}, {60, 5.6}}
 
 func (shaman *Shaman) frostbrandRank() int {
 	return core.HighestRankAt(shaman.Level, FrostbrandWeaponLevel[:])
@@ -42,6 +45,9 @@ func (shaman *Shaman) newFrostbrandImbueSpell() *core.Spell {
 		SpellSchool: core.SpellSchoolFrost,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamageProc,
+		// A shaman spell, so Elemental Fury raises its crits. Forever's Elemental Fury lists
+		// Frostbrand Attack among the spells it affects.
+		Flags: SpellFlagShaman,
 
 		DamageMultiplier: []float64{1, 1.05, 1.1, 1.15}[shaman.Talents.ElementalWeapons],
 		ThreatMultiplier: 1,

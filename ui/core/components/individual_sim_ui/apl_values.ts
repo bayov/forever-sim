@@ -34,6 +34,7 @@ import {
 	APLValueDotRemainingTime,
 	APLValueEnergyThreshold,
 	APLValueFrontOfTarget,
+	APLValueInMeleeRange,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueIsExecutePhase,
@@ -598,6 +599,13 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		submenu: ['Encounter'],
 		shortDescription: '<b>True</b> if facing from of target',
 		newValue: APLValueFrontOfTarget.create,
+		fields: [],
+	}),
+	inMeleeRange: inputBuilder({
+		label: 'In Melee Range',
+		submenu: ['Encounter'],
+		shortDescription: '<b>True</b> while you can reach the target in melee. Only PvP mode takes you out of range.',
+		newValue: APLValueInMeleeRange.create,
 		fields: [],
 	}),
 

@@ -167,6 +167,9 @@ const (
 	MarkOfTheChampionSpell     = 23207
 	MisplacedServoArm          = 23221
 	JomGabbar                  = 23570
+
+	// Forever
+	DullSawblade = 285292
 )
 
 func init() {
@@ -834,6 +837,11 @@ func init() {
 			},
 		})
 	})
+
+	// https://foreverchanges.pro/item/285292
+	// Equip: +9 Attack Power Vs Humanoids. Forever build 70009 gave the Deadmines thrown
+	// weapon this in place of a point of Agility.
+	core.NewMobTypeAttackPowerEffect(DullSawblade, []proto.MobType{proto.MobType_MobTypeHumanoid}, 9)
 
 	// https://www.wowhead.com/classic/item=19353/drake-talon-cleaver
 	// Chance on hit: Delivers a fatal wound for 240 damage.

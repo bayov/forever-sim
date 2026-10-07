@@ -15,8 +15,9 @@ var HolyShieldValues = []struct {
 	manaCost float64
 	damage   float64
 }{
-	// Forever: rank 1 at level 40, the block bonus is 20% (Classic 30%) and the damage
-	// per block 110 / 153 / 221 (Classic 65 / 95 / 130).
+	// Forever: rank 1 at level 40, the block bonus is 30% (the 69876 beta client had 20%,
+	// build 70245 is back at Classic's 30%) and the damage per block 110 / 153 / 221
+	// (Classic 65 / 95 / 130).
 	{level: 40, spellID: 20925, procID: 20955, manaCost: 150, damage: 110},
 	{level: 50, spellID: 20927, procID: 20956, manaCost: 195, damage: 153},
 	{level: 60, spellID: 20928, procID: 20957, manaCost: 240, damage: 221},
@@ -28,7 +29,7 @@ func (paladin *Paladin) registerHolyShield() {
 	}
 
 	numCharges := int32(4)
-	blockBonus := 20.0 * core.BlockRatingPerBlockChance
+	blockBonus := 30.0 * core.BlockRatingPerBlockChance
 
 	for i, values := range HolyShieldValues {
 		rank := i + 1
@@ -89,7 +90,8 @@ func (paladin *Paladin) registerHolyShield() {
 			RequiredLevel: int(level),
 			Rank:          rank,
 			ManaCost: core.ManaCostOptions{
-				FlatCost: manaCost,
+				FlatCost:   manaCost,
+				Multiplier: paladin.benediction(),
 			},
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{

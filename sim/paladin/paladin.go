@@ -8,7 +8,7 @@ import (
 )
 
 // The Forever trees (beta client build 1.60.1.69876).
-var TalentTreeSizes = [3]int{18, 16, 18}
+var TalentTreeSizes = [3]int{17, 16, 17}
 
 const (
 	SpellFlag_Forbearance = core.SpellFlagAgentReserved1

@@ -35,7 +35,7 @@ func TestProtection(t *testing.T) {
 
 // Forever trees: the Protection tree down to Holy Shield plus Benediction and Improved
 // Judgement.
-var Phase4ProtTalents = "01-5530513321301551-0520"
+var Phase4ProtTalents = "1-5530513321301551-052"
 
 var Phase4Consumes = core.ConsumesCombo{
 	Label: "P4-Consumes",

@@ -8,6 +8,18 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+// RevelationEffectID is Forever's Enchant Weapon - Revelation, by its spell ID like the other
+// new Forever enchants (tools/database/forever_enchants.go).
+const RevelationEffectID = 1248805
+
+// RevelationProcChance is the chance of a direct spell that lands without a crit to give
+// Revelation. Forever has not published it, see the effect below.
+//
+// We default to the middle of the three guesses we simmed on 2026-10-05. On the Level 30 + 5
+// enhancement preset at 120 sec, 0.147 / 0.072 / 0.048 come out at one proc every 1 / 2 / 3
+// minutes.
+var RevelationProcChance = 0.072
+
 func init() {
 	core.AddEffectsToTest = false
 
@@ -250,6 +262,66 @@ func init() {
 			w.BaseDamageMax += damage
 		})
 	}
+
+	// Forever's Weapon - Revelation (Enchanting 140): a direct spell that lands but does not
+	// crit has a chance to give Revelation, and Revelation gives the next direct spell cast
+	// +100% crit chance for 15 sec.
+	//
+	// We only know how it behaves for an enhancement shaman (user, 2026-10-05). The shocks
+	// trigger it and use it up. Weapon procs (Windfury, Flametongue Weapon), totems and Fire
+	// Nova do neither, so we take spells cast from the rotation and leave out procs and
+	// spells that go off from a totem. A shock that misses while Revelation is up still uses
+	// it up.
+	//
+	// The tooltip says the chance shrinks as the caster's crit chance grows, but not how, and
+	// we know of no cooldown between procs. So the chance is one flat number,
+	// RevelationProcChance, and rotopt's -revelation-chance sets it.
+	core.AddWeaponEffect(RevelationEffectID, func(agent core.Agent, _ proto.ItemSlot) {
+		character := agent.GetCharacter()
+		if character.HasAura("Revelation Weapon") {
+			return
+		}
+
+		isDirectCast := func(spell *core.Spell) bool {
+			return spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.Flags.Matches(core.SpellFlagAPL) &&
+				!spell.Flags.Matches(core.SpellFlagPassiveSpell|core.SpellFlagCastFromTotem)
+		}
+
+		buff := character.RegisterAura(core.Aura{
+			Label:    "Revelation",
+			ActionID: core.ActionID{SpellID: RevelationEffectID},
+			Duration: time.Second * 15,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, spell := range character.Spellbook {
+					if isDirectCast(spell) {
+						spell.BonusCritRating += 100 * core.SpellCritRatingPerCritChance
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, spell := range character.Spellbook {
+					if isDirectCast(spell) {
+						spell.BonusCritRating -= 100 * core.SpellCritRatingPerCritChance
+					}
+				}
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				// The spell that gave Revelation does not use it up.
+				if isDirectCast(spell) && aura.StartedAt() < sim.CurrentTime {
+					aura.Deactivate(sim)
+				}
+			},
+		})
+
+		core.MakePermanent(character.RegisterAura(core.Aura{
+			Label: "Revelation Weapon",
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if isDirectCast(spell) && result.Landed() && !result.DidCrit() && sim.Proc(RevelationProcChance, "Revelation") {
+					buff.Activate(sim)
+				}
+			},
+		}))
+	})
 
 	// Weapon - Superior Striking
 	core.AddWeaponEffect(1897, func(agent core.Agent, slot proto.ItemSlot) {

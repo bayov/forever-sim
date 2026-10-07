@@ -61,9 +61,8 @@ func (shaman *Shaman) ApplyTalents() {
 	// TODO: Healing Way
 	// TODO: Ancestral Healing
 	shaman.registerNaturesSwiftnessCD()
-	// shaman.registerManaTideTotemCD()
 
-	shaman.PseudoStats.SpiritRegenRateCasting += []float64{0, .17, .34, .51}[shaman.Talents.Mindfulness]
+	shaman.PseudoStats.SpiritRegenRateCasting += []float64{0, .17, .33, .50}[shaman.Talents.Mindfulness]
 
 	if shaman.Talents.ImprovedReincarnation > 0 {
 		shaman.MultiplyStat(stats.Health, 1+.02*float64(shaman.Talents.ImprovedReincarnation))
@@ -119,7 +118,8 @@ func (shaman *Shaman) applyElementalWarding() {
 		return
 	}
 
-	multiplier := 1 - .03*float64(shaman.Talents.ElementalWarding)
+	// 3 / 7 / 10% per the beta client.
+	multiplier := 1 - []float64{0, .03, .07, .10}[shaman.Talents.ElementalWarding]
 	for _, school := range []stats.SchoolIndex{stats.SchoolIndexFire, stats.SchoolIndexFrost, stats.SchoolIndexNature} {
 		shaman.PseudoStats.SchoolDamageTakenMultiplier[school] *= multiplier
 	}
@@ -154,8 +154,8 @@ func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
 	return []time.Duration{0, 170, 330, 500}[shaman.Talents.ElementalAlacrity] * time.Millisecond
 }
 
-func (shaman *Shaman) improvedFireNovaMultiplier() float64 {
-	return 1 + .1*float64(shaman.Talents.ImprovedFireNova)
+func (shaman *Shaman) improvedFireNovaBonus() float64 {
+	return .1 * float64(shaman.Talents.ImprovedFireNova)
 }
 
 func (shaman *Shaman) improvedFireNovaCooldownReduction() time.Duration {
@@ -259,7 +259,7 @@ func (shaman *Shaman) applyElementalFury() {
 		return
 	}
 
-	// TODO: Only rank 1 was seen, beta will confirm that the ranks go up in steps of 20%.
+	// 20% per rank, per the beta client.
 	critDamageBonus := .2 * float64(shaman.Talents.ElementalFury)
 	affectedSpellCodes := []int32{SpellCode_ShamanSearingTotem, SpellCode_ShamanMagmaTotem}
 
@@ -423,10 +423,12 @@ func (shaman *Shaman) applyImprovedStormstrike() {
 		return
 	}
 
+	// The proc and reset chances grow with points but the regen does not. Both ranks
+	// give 50% mana regeneration while casting.
 	points := float64(shaman.Talents.ImprovedStormstrike)
 	procChance := .5 * points
 	resetChance := .5 * points
-	regenRate := .5 * points
+	regenRate := .5
 
 	focusAura := shaman.RegisterAura(core.Aura{
 		Label:    "Improved Stormstrike",
@@ -497,7 +499,15 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 	core.MakePermanent(shaman.RegisterAura(core.Aura{
 		Label: "Maelstrom Weapon Trigger",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Landed() && ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon") {
+			if !result.Landed() {
+				return
+			}
+			procced := ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon")
+			if spell.SpellCode == SpellCode_ShamanLightningBolt && shaman.lightningBoltTriggersMaelstrom {
+				// We take the main hand swing chance, so the bolt procs half as often as a white hit would.
+				procced = sim.RandomFloat("Maelstrom Weapon") < 0.5*ppmm.Chance(core.ProcMaskMeleeMHAuto)
+			}
+			if procced {
 				shaman.MaelstromWeaponAura.Activate(sim)
 				shaman.MaelstromWeaponAura.AddStack(sim)
 			}
@@ -519,13 +529,12 @@ func (shaman *Shaman) registerRageOfTheFarseerCD() {
 		Label:    "Rage of the Farseer",
 		ActionID: actionID,
 		Duration: time.Second * 25,
+		// Attack speed only. The 2026-09-24 beta build took the cast speed half away.
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.MultiplyMeleeSpeed(sim, multiplier)
-			shaman.MultiplyCastSpeed(multiplier)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.MultiplyMeleeSpeed(sim, 1/multiplier)
-			shaman.MultiplyCastSpeed(1 / multiplier)
 		},
 	})
 
@@ -563,48 +572,3 @@ func (shaman *Shaman) restorativeTotemsModifier() float64 {
 func (shaman *Shaman) purificationHealingModifier() float64 {
 	return .02 * float64(shaman.Talents.Purification)
 }
-
-// func (shaman *Shaman) registerManaTideTotemCD() {
-// 	if !shaman.Talents.ManaTideTotem {
-// 		return
-// 	}
-
-// 	mttAura := core.ManaTideTotemAura(shaman.GetCharacter(), shaman.Index)
-// 	mttSpell := shaman.RegisterSpell(core.SpellConfig{
-// 		ActionID: core.ManaTideTotemActionID,
-// 		Flags:    core.SpellFlagNoOnCastComplete,
-// 		Cast: core.CastConfig{
-// 			DefaultCast: core.Cast{
-// 				GCD: time.Second,
-// 			},
-// 			IgnoreHaste: true,
-// 			CD: core.Cooldown{
-// 				Timer:    shaman.NewTimer(),
-// 				Duration: time.Minute * 5,
-// 			},
-// 		},
-// 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-// 			mttAura.Activate(sim)
-
-// 			// If healing stream is active, cancel it while mana tide is up.
-// 			if shaman.HealingStreamTotem.Hot(&shaman.Unit).IsActive() {
-// 				for _, agent := range shaman.Party.Players {
-// 					shaman.HealingStreamTotem.Hot(&agent.GetCharacter().Unit).Cancel(sim)
-// 				}
-// 			}
-
-// 			// TODO: Current water totem buff needs to be removed from party/raid.
-// 			if shaman.Totems.Water != proto.WaterTotem_NoWaterTotem {
-// 				shaman.TotemExpirations[WaterTotem] = sim.CurrentTime + time.Second*12
-// 			}
-// 		},
-// 	})
-
-// 	shaman.AddMajorCooldown(core.MajorCooldown{
-// 		Spell: mttSpell,
-// 		Type:  core.CooldownTypeDPS,
-// 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-// 			return sim.CurrentTime > time.Second*30
-// 		},
-// 	})
-// }

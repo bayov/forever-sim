@@ -13,7 +13,8 @@ func (paladin *Paladin) registerHolyShock() {
 
 	// Forever moves the talent to level 30 as rank 1 (129 to 139 on the client tooltip,
 	// 160 mana) with the trainer ranks behind it, and cuts the cooldown from 30 sec to
-	// 10. Wowhead hides the trainer ranks' damage and cost, so those stay Classic.
+	// 10. The trainer ranks do less damage than Classic's 204, 279 and 365 at the low
+	// end (foreverchanges spellbook build 70124 and wowhead agree).
 	ranks := []struct {
 		level     int32
 		spellID   int32
@@ -22,9 +23,9 @@ func (paladin *Paladin) registerHolyShock() {
 		maxDamage float64
 	}{
 		{level: 30, spellID: 1311606, manaCost: 160, minDamage: 129, maxDamage: 139},
-		{level: 40, spellID: 20473, manaCost: 225, minDamage: 204, maxDamage: 220},
-		{level: 48, spellID: 20929, manaCost: 275, minDamage: 279, maxDamage: 301},
-		{level: 56, spellID: 20930, manaCost: 325, minDamage: 365, maxDamage: 395},
+		{level: 40, spellID: 20473, manaCost: 225, minDamage: 175, maxDamage: 189},
+		{level: 48, spellID: 20929, manaCost: 275, minDamage: 248, maxDamage: 268},
+		{level: 56, spellID: 20930, manaCost: 325, minDamage: 334, maxDamage: 362},
 	}
 	// Holy Power gives Holy Shock 3% crit per point where every other spell gets 1%.
 	extraCrit := 2 * float64(paladin.Talents.HolyPower) * core.SpellCritRatingPerCritChance
@@ -48,7 +49,8 @@ func (paladin *Paladin) registerHolyShock() {
 			SpellCode: SpellCode_PaladinHolyShock,
 
 			ManaCost: core.ManaCostOptions{
-				FlatCost: rank.manaCost,
+				FlatCost:   rank.manaCost,
+				Multiplier: paladin.benediction(),
 			},
 
 			Cast: core.CastConfig{

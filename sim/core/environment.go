@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 type EnvironmentState int
@@ -252,6 +253,28 @@ func (env *Environment) setupAttackTables() {
 			} else {
 				attacker.AttackTables[idx][proto.CastType_CastTypeMainHand] = NewAttackTable(attacker, defender, nil)
 			}
+
+			// An enemy player is not a mob, so white hits on it never glance.
+			if env.Encounter.PvP && attacker.Type != EnemyUnit && defender.Type == EnemyUnit {
+				for _, table := range attacker.AttackTables[idx] {
+					table.BaseGlanceChance = 0
+				}
+
+				// A boss dodges, parries and blocks 5% of the time each, from its level. An
+				// enemy player varies a lot more: a level 30 rogue dodges about 14%, a cloth
+				// caster can't parry, and only a shield can block. So when the target has
+				// any of its Dodge, Parry or Block stats set (in percent), we use those
+				// three in place of the level based chances. A target with none of them
+				// set keeps the 5% each.
+				dodge, parry, block := defender.stats[stats.Dodge], defender.stats[stats.Parry], defender.stats[stats.Block]
+				if dodge != 0 || parry != 0 || block != 0 {
+					for _, table := range attacker.AttackTables[idx] {
+						table.BaseDodgeChance = dodge / 100
+						table.BaseParryChance = parry / 100
+						table.BaseBlockChance = block / 100
+					}
+				}
+			}
 		}
 	}
 }
@@ -271,6 +294,8 @@ func (env *Environment) reset(sim *Simulation) {
 	}
 
 	env.Raid.reset(sim)
+
+	env.startPvPDowntime(sim)
 }
 
 // The maximum possible duration for any iteration.

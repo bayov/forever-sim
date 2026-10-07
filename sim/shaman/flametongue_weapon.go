@@ -12,8 +12,11 @@ var FlametongueWeaponLevel = [FlametongueWeaponRanks + 1]int32{0, 10, 18, 26, 36
 
 // Damage per 4 seconds of weapon speed at each rank's cap, and its growth per level. The
 // Forever tooltip gives it as N / 25 (440, 653, 1052, 1728, 2372 and 3122), the same as
-// 1.12 except rank 6, which went up from 112.
-var FlametongueWeaponMaxDamage = [FlametongueWeaponRanks + 1]float64{0, 17.6, 26.1, 42, 69.1, 94.9, 124.9}
+// 1.12.
+//
+// Rank 6 keeps growing up to level 64 and wowhead shows it there (3122 / 25). At level 60
+// it is 2810 / 25 = 112.4, the same as Classic and ForeverChanges' spellbook.
+var FlametongueWeaponMaxDamage = [FlametongueWeaponRanks + 1]float64{0, 17.6, 26.1, 42, 69.1, 94.9, 112.4}
 var FlametongueWeaponScaling = [FlametongueWeaponRanks + 1]core.RankScaling{{}, {16, .76}, {24, 1.16}, {34, 1.68}, {44, 2.92}, {54, 2.48}, {60, 3.12}}
 
 func (shaman *Shaman) flametongueRank() int {
@@ -33,7 +36,9 @@ func (shaman *Shaman) newFlametongueImbueSpell(weapon *core.Item) *core.Spell {
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamageProc,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+		// A shaman spell, so Elemental Fury raises its crits. Forever's Elemental Fury lists
+		// the Flametongue Weapon procs among the spells it affects.
+		Flags: SpellFlagShaman | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 
 		DamageMultiplier: []float64{1, 1.05, 1.1, 1.15}[shaman.Talents.ElementalWeapons],
 		ThreatMultiplier: 1,

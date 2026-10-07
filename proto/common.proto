@@ -363,6 +363,10 @@ enum Potions {
 	GreaterNatureProtectionPotion = 21;
 	GreaterShadowProtectionPotion = 22;
 
+	// Forever's 30 sec buff potions.
+	FrenzyPotion = 23;
+	SpellblastingPotion = 24;
+
 	LesserManaPotion = 1 [deprecated = true];
 }
 
@@ -421,6 +425,9 @@ enum HealthElixir {
 enum ManaRegenElixir {
 	ManaRegenElixirUnknown = 0;
 	MagebloodPotion = 1;
+
+	// Forever's elixirs.
+	LesserMagebloodElixir = 2;
 }
 
 enum StrengthBuff {
@@ -429,6 +436,8 @@ enum StrengthBuff {
 	ElixirOfGiants = 2;
 	ElixirOfOgresStrength = 3;
 	ScrollOfStrength = 4;
+	// +8 Strength for 2 min with no cooldown, so we drink it again and keep it up.
+	ElixirOfGiantGrowth = 5;
 }
 
 enum AttackPowerBuff {
@@ -441,7 +450,8 @@ enum SpellPowerBuff {
 	SpellPowerBuffUnknown = 0;
 	ArcaneElixir = 1;
 	GreaterArcaneElixir = 2;
-	LesserArcaneElixir = 3 [deprecated=true];
+	// Forever's +15 spell damage elixir at level 25.
+	LesserArcaneElixir = 3;
 }
 
 enum ShadowPowerBuff {
@@ -551,6 +561,13 @@ enum Food {
 	FoodTenderWolfSteak = 9;
 	FoodSmokedSagefish = 10;
 	FoodSagefishDelight = 11;
+
+	// Forever's level 25 well fed food.
+	FoodBarbecuedBuzzardWing = 12;
+	FoodMithrilHeadTrout = 13;
+	FoodBearBrisket = 14;
+	FoodTastyLionSteak = 15;
+	FoodBrinySeafoodStew = 16;
 }
 
 enum SaygesFortune {
@@ -562,8 +579,17 @@ enum SaygesFortune {
 	SaygesSpirit = 5;
 }
 
+// The weapon buff from another shaman's Windfury or Flametongue Totem. Under Forever it
+// is its own slot, next to the shaman's own imbue and an oil or stone, and only one of the
+// two totems works at a time.
+enum TotemWeaponBuff {
+	TotemWeaponBuffNone = 0;
+	TotemWeaponBuffWindfury = 1;
+	TotemWeaponBuffFlametongue = 2;
+}
+
 // Buffs that affect the entire raid.
-// NextIndex: 40
+// NextIndex: 41
 message RaidBuffs {
 	reserved 36, 37, 38, 39;
 	reserved "atiesh_druid", "atiesh_mage", "atiesh_priest", "atiesh_warlock";
@@ -627,6 +653,9 @@ message RaidBuffs {
 	TristateEffect retribution_aura = 25;
 	bool sanctity_aura = 33;
 	int32 battle_squawk = 34;
+
+	// Windfury or Flametongue Totem from another shaman, on the main hand.
+	TotemWeaponBuff totem_weapon_buff = 40;
 }
 
 // Buffs that affect a single party.
@@ -668,7 +697,14 @@ message IndividualBuffs {
 	bool slipkiks_savvy = 14;
 }
 
-// NextIndex: 34
+enum IntellectElixir {
+	IntellectElixirUnknown = 0;
+	ElixirOfWisdom = 1;
+	// Forever's +6 Intellect elixir at level 25.
+	ElixirOfLesserIntellect = 2;
+}
+
+// NextIndex: 35
 message Consumes {
 	Flask flask = 1;
 	Food food = 2;
@@ -698,6 +734,7 @@ message Consumes {
 	PetMiscConsumes pet_misc_consumes = 27;
 	SapperExplosive sapper_explosive = 28;
 	HitConsumable hit_consumable = 29;
+	IntellectElixir intellect_elixir = 34;
 }
 
 // NextIndex: 26
@@ -820,6 +857,14 @@ message Encounter {
 
 	// If type != Simple or Custom, then this may be empty.
 	repeated Target targets = 6;
+
+	// PvP mode, for a fight against an enemy player. White hits never glance, and the
+	// players spend random stretches of 1 to 10 sec out of melee range, where they have
+	// no white hits and cannot use melee abilities.
+	bool pvp = 8;
+
+	// The share of the fight PvP mode spends out of melee range, from 0 to 1.
+	double pvp_melee_downtime = 9;
 }
 
 message PresetTarget {

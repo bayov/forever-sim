@@ -90,6 +90,9 @@ type UnitMetrics struct {
 	tmi    DistributionMetrics
 	hps    DistributionMetrics
 	tto    DistributionMetrics
+	// Mana left when the fight ends, so two builds that do the same damage can be told
+	// apart by how much mana they spare.
+	manaEnd DistributionMetrics
 
 	tmiList   []tmiListItem
 	isTanking bool
@@ -272,6 +275,7 @@ func NewUnitMetrics() UnitMetrics {
 		tmi:     NewDistributionMetrics(),
 		hps:     NewDistributionMetrics(),
 		tto:     NewDistributionMetrics(),
+		manaEnd: NewDistributionMetrics(),
 		actions: make(map[ActionID]*ActionMetrics),
 	}
 }
@@ -469,6 +473,7 @@ func (unitMetrics *UnitMetrics) reset() {
 	unitMetrics.tmiList = nil
 	unitMetrics.hps.reset()
 	unitMetrics.tto.reset()
+	unitMetrics.manaEnd.reset()
 	unitMetrics.CharacterIterationMetrics = CharacterIterationMetrics{}
 
 	for _, resourceMetrics := range unitMetrics.resources {
@@ -497,6 +502,9 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 		unitMetrics.tto.Total = timeToOOM.Seconds()
 		// Hack because of the way DistributionMetrics does its calculations.
 		unitMetrics.tto.Total *= encounterDurationSeconds
+
+		// Same hack, DistributionMetrics divides by the fight length.
+		unitMetrics.manaEnd.Total = unit.CurrentMana() * encounterDurationSeconds
 	}
 
 	if unitMetrics.isTanking {
@@ -513,6 +521,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 	unitMetrics.tmi.doneIteration(sim)
 	unitMetrics.hps.doneIteration(sim)
 	unitMetrics.tto.doneIteration(sim)
+	unitMetrics.manaEnd.doneIteration(sim)
 
 	unitMetrics.oomTimeSum += unitMetrics.OOMTime.Seconds()
 	if unitMetrics.Died {
@@ -602,6 +611,7 @@ func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
 		Tmi:           unitMetrics.tmi.ToProto(),
 		Hps:           unitMetrics.hps.ToProto(),
 		Tto:           unitMetrics.tto.ToProto(),
+		ManaEnd:       unitMetrics.manaEnd.ToProto(),
 		SecondsOomAvg: unitMetrics.oomTimeSum / n,
 		ChanceOfDeath: float64(unitMetrics.numItersDead) / n,
 	}

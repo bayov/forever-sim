@@ -13,6 +13,10 @@ const (
 	WushoolaysCharmOfSpirits = 19956
 	TotemOfRage              = 22395
 	TotemOfTheStorm          = 23199
+	PolishedDriftwoodIcon    = 249398
+	ForeverTotemOfTheStorm   = 272432
+	BurningTotem             = 272433
+	RageOfTheStorm           = 280604
 )
 
 func init() {
@@ -67,6 +71,57 @@ func init() {
 			Spell:    spell,
 			Priority: core.CooldownPriorityBloodlust,
 			Type:     core.CooldownTypeDPS,
+		})
+	})
+
+	// https://www.wowhead.com/forever/item=272433/burning-totem
+	// Equip: Increases the duration of your Flame Shock ability by 3 sec.
+	//
+	// Flame Shock ticks every 3 sec, so this is one more tick.
+	core.NewItemEffect(BurningTotem, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		core.MakePermanent(shaman.RegisterAura(core.Aura{
+			Label: "Burning Totem",
+			OnInit: func(aura *core.Aura, sim *core.Simulation) {
+				for _, spell := range shaman.FlameShock {
+					if spell == nil {
+						continue
+					}
+					for _, dot := range spell.Dots() {
+						if dot != nil {
+							dot.NumberOfTicks += 1
+							dot.RecomputeAuraDuration()
+						}
+					}
+				}
+			},
+		}))
+	})
+
+	// https://www.wowhead.com/forever/item=272432/totem-of-the-storm
+	// Equip: Your Lightning Bolt ability can now also trigger the Maelstrom Weapon talent, but with a 50% reduced chance.
+	//
+	// Forever reused the name of the Classic Totem of the Storm (23199) for a new item.
+	core.NewItemEffect(ForeverTotemOfTheStorm, func(agent core.Agent) {
+		agent.(ShamanAgent).GetShaman().lightningBoltTriggersMaelstrom = true
+	})
+
+	// https://www.wowhead.com/forever/item=249398/polished-driftwood-icon
+	// Equip: Allows 8% of your Mana regeneration to continue while casting.
+	//
+	// Enchanters make it (Enchanting, Forever).
+	core.NewItemEffect(PolishedDriftwoodIcon, func(agent core.Agent) {
+		agent.(ShamanAgent).GetShaman().PseudoStats.SpiritRegenRateCasting += .08
+	})
+
+	// https://www.wowhead.com/forever/item=280604/rage-of-the-storm
+	// Equip: Increases the damage dealt by your Stormstrike ability by 10%.
+	core.NewItemEffect(RageOfTheStorm, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanStormstrike {
+				spell.DamageMultiplierAdditive += 0.10
+			}
 		})
 	})
 

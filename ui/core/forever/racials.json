@@ -684,7 +684,7 @@
           "classes": [
             "ClassRogue"
           ],
-          "description": "Your next 3 damaging abilities have their Energy cost reduced by 20% and deal 10% more damage.",
+          "description": "Your next 3 damaging abilities have their Energy cost reduced by 10% and deal 10% more damage.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -694,7 +694,7 @@
           "classes": [
             "ClassWarlock"
           ],
-          "description": "Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.",
+          "description": "Your next 3 damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -704,7 +704,7 @@
           "classes": [
             "ClassPriest"
           ],
-          "description": "Your next 3 damaging or healing abilities have their Mana cost reduced by 15% and deal 10% more damage or healing.",
+          "description": "Your next 3 damaging or healing abilities have their Mana cost reduced by 10% and deal 10% more damage or healing.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -714,7 +714,7 @@
           "classes": [
             "ClassMage"
           ],
-          "description": "Your next 3 damaging abilities have their Mana cost reduced by 50% and deal 10% more damage.",
+          "description": "Your next 3 damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -724,7 +724,7 @@
           "classes": [
             "ClassWarrior"
           ],
-          "description": "Your next 3 damaging abilities have their Rage cost reduced by 40% and deal 10% more damage.",
+          "description": "Your next 3 damaging abilities have their Rage cost reduced by 10% and deal 10% more damage.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"

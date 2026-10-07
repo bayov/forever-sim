@@ -38,7 +38,8 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		ExternalIsbCaster(debuffs, target)
 	}
 
-	if debuffs.ShadowWeaving {
+	// Forever's Shadow Weaving only helps the priest who applies it.
+	if debuffs.ShadowWeaving && !target.Env.IsForever() {
 		aura := ShadowWeavingAura(target, 5)
 		SchedulePeriodicDebuffApplication(aura, PeriodicActionOptions{
 			Period:          time.Millisecond * 1500,

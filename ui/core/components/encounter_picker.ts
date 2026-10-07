@@ -680,6 +680,33 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 		},
 	});
 
+	const pvpGroup = Input.newGroupContainer();
+	rootElem.appendChild(pvpGroup);
+
+	new BooleanPicker<Encounter>(pvpGroup, encounter, {
+		id: 'encounter-pvp',
+		label: 'PvP',
+		labelTooltip:
+			'The target is an enemy player. White hits never glance, and for random stretches of 1 to 10 sec you are out of melee range: no white hits, no melee abilities and no Fire Nova, but spells still go out.',
+		inline: true,
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getPvp(),
+		setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => {
+			encounter.setPvp(eventID, newValue);
+		},
+	});
+	new NumberPicker(pvpGroup, encounter, {
+		id: 'encounter-pvp-melee-downtime',
+		label: 'Out of Melee (%)',
+		labelTooltip: 'In PvP, the share of the fight spent out of melee range.',
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getPvpMeleeDowntime() * 100,
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			encounter.setPvpMeleeDowntime(eventID, newValue / 100);
+		},
+		showWhen: _ => encounter.getPvp(),
+	});
+
 	if (showExecuteProportion) {
 		const executeGroup = Input.newGroupContainer();
 		executeGroup.classList.add('execute-group');
@@ -775,7 +802,22 @@ const ALL_TARGET_STATS: Array<{ stat: Stat; tooltip: string; extraCssClasses: Ar
 	{ stat: Stat.StatNatureResistance, tooltip: '', extraCssClasses: [] },
 	{ stat: Stat.StatShadowResistance, tooltip: '', extraCssClasses: [] },
 	{ stat: Stat.StatAttackPower, tooltip: '', extraCssClasses: ['threat-metrics'] },
-	{ stat: Stat.StatBlockValue, tooltip: '', extraCssClasses: ['threat-metrics'] },
+	{ stat: Stat.StatBlockValue, tooltip: 'Damage a block takes off our hit, for a target with a shield.', extraCssClasses: [] },
+	{
+		stat: Stat.StatDodge,
+		tooltip: "PvP only: the enemy player's dodge chance in percent. When Dodge, Parry or Block is set, the three replace the 5% each a boss has.",
+		extraCssClasses: [],
+	},
+	{
+		stat: Stat.StatParry,
+		tooltip: "PvP only: the enemy player's parry chance in percent, when we attack from the front. 0 for a class that can't parry.",
+		extraCssClasses: [],
+	},
+	{
+		stat: Stat.StatBlock,
+		tooltip: "PvP only: the enemy player's block chance in percent, when we attack from the front. 0 without a shield.",
+		extraCssClasses: [],
+	},
 ];
 
 const mobTypeEnumValues = [

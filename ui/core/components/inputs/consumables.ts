@@ -16,6 +16,7 @@ import {
 	FrostPowerBuff,
 	HealthElixir,
 	HitConsumable,
+	IntellectElixir,
 	ItemSlot,
 	ManaRegenElixir,
 	Potions,
@@ -293,6 +294,27 @@ export const SmokedSagefish: ConsumableInputConfig<Food> = {
 	actionId: () => ActionId.fromItemId(21072),
 	value: Food.FoodSmokedSagefish,
 };
+// Forever's level 25 well fed food.
+export const BarbecuedBuzzardWing: ConsumableInputConfig<Food> = {
+	actionId: () => ActionId.fromItemId(4457),
+	value: Food.FoodBarbecuedBuzzardWing,
+};
+export const MithrilHeadTrout: ConsumableInputConfig<Food> = {
+	actionId: () => ActionId.fromItemId(8364),
+	value: Food.FoodMithrilHeadTrout,
+};
+export const BearBrisket: ConsumableInputConfig<Food> = {
+	actionId: () => ActionId.fromItemId(250074),
+	value: Food.FoodBearBrisket,
+};
+export const TastyLionSteak: ConsumableInputConfig<Food> = {
+	actionId: () => ActionId.fromItemId(3728),
+	value: Food.FoodTastyLionSteak,
+};
+export const BrinySeafoodStew: ConsumableInputConfig<Food> = {
+	actionId: () => ActionId.fromItemId(274971),
+	value: Food.FoodBrinySeafoodStew,
+};
 
 // Ordered by level
 export const FOOD_CONFIG: ConsumableStatOption<Food>[] = [
@@ -307,6 +329,11 @@ export const FOOD_CONFIG: ConsumableStatOption<Food>[] = [
 	{ config: SagefishDelight, stats: [Stat.StatMP5] },
 	{ config: HotWolfRibs, stats: [Stat.StatSpirit] },
 	{ config: SmokedSagefish, stats: [Stat.StatMP5] },
+	{ config: BarbecuedBuzzardWing, stats: [Stat.StatIntellect] },
+	{ config: MithrilHeadTrout, stats: [Stat.StatAttackPower] },
+	{ config: BearBrisket, stats: [Stat.StatStrength] },
+	{ config: TastyLionSteak, stats: [Stat.StatAgility] },
+	{ config: BrinySeafoodStew, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 ];
 
 export const makeFoodInput = makeConsumeInputFactory({ consumesFieldName: 'food' });
@@ -469,11 +496,17 @@ export const ScrollOfStrength: ConsumableInputConfig<StrengthBuff> = {
 	value: StrengthBuff.ScrollOfStrength,
 };
 
+export const ElixirOfGiantGrowth: ConsumableInputConfig<StrengthBuff> = {
+	actionId: () => ActionId.fromItemId(6662),
+	value: StrengthBuff.ElixirOfGiantGrowth,
+};
+
 export const STRENGTH_CONSUMES_CONFIG: ConsumableStatOption<StrengthBuff>[] = [
 	{ config: JujuPower, stats: [Stat.StatStrength] },
 	{ config: ElixirOfGiants, stats: [Stat.StatStrength] },
 	{ config: ElixirOfOgresStrength, stats: [Stat.StatStrength] },
 	{ config: ScrollOfStrength, stats: [Stat.StatStrength] },
+	{ config: ElixirOfGiantGrowth, stats: [Stat.StatStrength] },
 ];
 
 export const makeStrengthConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'strengthBuff' });
@@ -685,6 +718,15 @@ export const RagePotion: ConsumableInputConfig<Potions> = {
 	showWhen: player => player.getClass() == Class.ClassWarrior,
 };
 
+export const FrenzyPotion: ConsumableInputConfig<Potions> = {
+	actionId: () => ActionId.fromItemId(250940),
+	value: Potions.FrenzyPotion,
+};
+export const SpellblastingPotion: ConsumableInputConfig<Potions> = {
+	actionId: () => ActionId.fromItemId(250934),
+	value: Potions.SpellblastingPotion,
+};
+
 export const MagicResistancePotion: ConsumableInputConfig<Potions> = {
 	actionId: () => ActionId.fromItemId(9036),
 	value: Potions.MagicResistancePotion,
@@ -734,6 +776,9 @@ export const POTIONS_CONFIG: ConsumableStatOption<Potions>[] = [
 	{ config: GreaterManaPotion, stats: [Stat.StatIntellect] },
 	{ config: ManaPotion, stats: [Stat.StatIntellect] },
 
+	{ config: FrenzyPotion, stats: [Stat.StatAttackPower] },
+	{ config: SpellblastingPotion, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+
 	{ config: MightRagePotion, stats: [] },
 	{ config: GreatRagePotion, stats: [] },
 	{ config: RagePotion, stats: [] },
@@ -759,9 +804,15 @@ export const ArcaneElixir: ConsumableInputConfig<SpellPowerBuff> = {
 	value: SpellPowerBuff.ArcaneElixir,
 };
 
+export const LesserArcaneElixir: ConsumableInputConfig<SpellPowerBuff> = {
+	actionId: () => ActionId.fromItemId(250342),
+	value: SpellPowerBuff.LesserArcaneElixir,
+};
+
 export const SPELL_POWER_CONFIG: ConsumableStatOption<SpellPowerBuff>[] = [
 	{ config: GreaterArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: ArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: LesserArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 ];
 
 export const makeSpellPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'spellPowerBuff' });
@@ -810,22 +861,38 @@ export const MagebloodPotion: ConsumableInputConfig<ManaRegenElixir> = {
 	value: ManaRegenElixir.MagebloodPotion,
 };
 
-export const MP5_CONFIG: ConsumableStatOption<ManaRegenElixir>[] = [{ config: MagebloodPotion, stats: [Stat.StatMP5] }];
+export const LesserMagebloodElixir: ConsumableInputConfig<ManaRegenElixir> = {
+	actionId: () => ActionId.fromItemId(250340),
+	value: ManaRegenElixir.LesserMagebloodElixir,
+};
+
+export const MP5_CONFIG: ConsumableStatOption<ManaRegenElixir>[] = [
+	{ config: MagebloodPotion, stats: [Stat.StatMP5] },
+	{ config: LesserMagebloodElixir, stats: [Stat.StatMP5] },
+];
 
 export const makeMp5ConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'manaRegenElixir' });
+
+// Intellect
+export const ElixirOfWisdom: ConsumableInputConfig<IntellectElixir> = {
+	actionId: () => ActionId.fromItemId(3383),
+	value: IntellectElixir.ElixirOfWisdom,
+};
+export const ElixirOfLesserIntellect: ConsumableInputConfig<IntellectElixir> = {
+	actionId: () => ActionId.fromItemId(250353),
+	value: IntellectElixir.ElixirOfLesserIntellect,
+};
+
+export const INTELLECT_CONFIG: ConsumableStatOption<IntellectElixir>[] = [
+	{ config: ElixirOfWisdom, stats: [Stat.StatIntellect] },
+	{ config: ElixirOfLesserIntellect, stats: [Stat.StatIntellect] },
+];
+
+export const makeIntellectConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'intellectElixir' });
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Weapon Imbues
 ///////////////////////////////////////////////////////////////////////////
-
-// Windfury (Buff)
-export const Windfury: ConsumableInputConfig<WeaponImbue> = {
-	actionId: () => ActionId.fromSpellId(10614),
-	value: WeaponImbue.Windfury,
-	showWhen: player => {
-		return (player.hasFactionBuffs(Faction.Horde)) && !player.isSpec(Spec.SpecFeralDruid)
-	},
-};
 
 // Other Imbues
 
@@ -1045,7 +1112,6 @@ export const WEAPON_IMBUES_OH_CONFIG: ConsumableStatOption<WeaponImbue>[] = [
 export const WEAPON_IMBUES_MH_CONFIG: ConsumableStatOption<WeaponImbue>[] = [
 	...ROGUE_IMBUES,
 	...SHAMAN_IMBUES(ItemSlot.ItemSlotMainHand),
-	{ config: Windfury, stats: [Stat.StatMeleeHit] },
 	...CONSUMABLES_IMBUES(ItemSlot.ItemSlotMainHand),
 ];
 

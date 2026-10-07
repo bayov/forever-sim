@@ -4,7 +4,7 @@
   "className": "Paladin",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-09-20T08:40:50Z",
+  "generatedAt": "2026-10-01T23:07:22Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -28,30 +28,6 @@
       "rows": 7,
       "cols": 4,
       "talents": [
-        {
-          "id": "improved-holy-strike",
-          "name": "Improved Holy Strike",
-          "row": 0,
-          "col": 0,
-          "maxRank": 2,
-          "icon": "classicon_paladin",
-          "iconSource": "client",
-          "description": "Reduces the cooldown of your Holy Strike ability by {0} sec.",
-          "ranks": [
-            [
-              1
-            ],
-            [
-              2
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 1310902
-        },
         {
           "id": "divine-strength",
           "name": "Divine Strength",
@@ -489,7 +465,7 @@
           "maxRank": 5,
           "icon": "spell_holy_power",
           "iconSource": "client",
-          "description": "Increases the critical strike chance of your Holy Shock spell by {0}%, and all other spells by {1}%.",
+          "description": "Increases the critical strike chance of your Holy Shock and Holy Strike spells by {0}%, and all other spells by {1}%.",
           "ranks": [
             [
               3,
@@ -530,16 +506,15 @@
           "maxRank": 1,
           "icon": "ability_paladin_judgementofthepure",
           "iconSource": "client",
-          "description": "Applies Light's Vigil to the target for {0} sec. Your next Holy Shock cast on them triggers no cooldown and causes friendly targets to heal their party for {1} to {2}, or enemy targets to suffer {3} to {4} Holy damage and refund {5}% of Light's Vigil's Mana cost. You may only have {6} Light's Vigil active per Paladin, per party.",
+          "description": "Applies Light's Vigil to the target for {0} sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer {1} to {2} Holy damage and refund {3}% of Light's Vigil's Mana cost, or allied targets to heal their party for {4} to {5}. The Paladin may only have one Light's Vigil active per party.",
           "ranks": [
             [
               30,
-              326,
-              344,
               175,
               189,
               75,
-              1
+              315,
+              333
             ]
           ],
           "ranksObserved": [
@@ -1405,7 +1380,7 @@
           "description": "Increases the damage of your Holy Strike ability by {0}% and causes it to refresh all Judgement effects on the target.",
           "ranks": [
             [
-              10
+              20
             ]
           ],
           "ranksObserved": [
@@ -1413,32 +1388,6 @@
           ],
           "ranksSource": "client",
           "spellId": 1311087
-        },
-        {
-          "id": "crusade",
-          "name": "Crusade",
-          "row": 3,
-          "col": 3,
-          "maxRank": 2,
-          "icon": "spell_holy_crusade",
-          "iconSource": "client",
-          "description": "Increases all damage dealt by {0}%. Increased by an additional {1}% against Demon and Undead targets.",
-          "ranks": [
-            [
-              1,
-              1
-            ],
-            [
-              2,
-              2
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 1311083
         },
         {
           "id": "two-handed-weapon-specialization",
@@ -1451,13 +1400,13 @@
           "description": "Increases the damage you deal with two-handed melee weapons by {0}%.",
           "ranks": [
             [
-              3
+              2
+            ],
+            [
+              4
             ],
             [
               6
-            ],
-            [
-              9
             ]
           ],
           "ranksObserved": [
@@ -1476,22 +1425,22 @@
           "maxRank": 3,
           "icon": "ability_racial_avatar",
           "iconSource": "client",
-          "description": "Increases your Physical and Holy damage dealt by {0}% for {1} sec after landing a critical strike. Stacks up to {2} times.",
+          "description": "Increases your Physical and Holy damage dealt by {0}% for {1} sec after landing a non-periodic critical strike. Stacks up to {2} times.",
           "ranks": [
             [
               1,
               30,
-              5
+              3
             ],
             [
               2,
               30,
-              5
+              3
             ],
             [
               3,
               30,
-              5
+              3
             ]
           ],
           "ranksObserved": [
@@ -1540,13 +1489,13 @@
           "description": "Increases your spell damage and healing by up to {0}% of your Intellect.",
           "ranks": [
             [
-              33
+              20
             ],
             [
-              66
+              40
             ],
             [
-              100
+              60
             ]
           ],
           "ranksObserved": [
@@ -1591,9 +1540,11 @@
           "maxRank": 1,
           "icon": "spell_holy_blessedresillience",
           "iconSource": "client",
-          "description": "When you replace your Seal of Command, Seal of Righteousness, Seal of Fury, or Seal of Justice with a different Seal, gain an Echo. Your next melee attack applies the replaced Seal's effects, consuming the Echo.",
+          "description": "Reduces the Mana cost of your Seal spells by {0}%, and when you replace your Seal of Command, Seal of Righteousness, Seal of Fury, or Seal of Justice with a different Seal, gain an Echo of that Seal. Your next melee attack applies the replaced Seal's effects, consuming the Echo.",
           "ranks": [
-            []
+            [
+              20
+            ]
           ],
           "ranksObserved": [
             1
@@ -1605,6 +1556,6 @@
     }
   ],
   "notes": [
-    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17"
+    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro, and Champion of the Light from the 2026-10-01 development notes"
   ]
 }

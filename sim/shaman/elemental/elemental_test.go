@@ -131,7 +131,7 @@ func TestElemental(t *testing.T) {
 	}))
 }
 
-var DefaultTalents = "5505301500103031--503352001"
+var DefaultTalents = "5505301300103051--503352001"
 
 var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{

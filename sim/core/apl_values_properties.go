@@ -45,3 +45,23 @@ func (value *APLValueFrontOfTarget) GetBool(sim *Simulation) bool {
 func (value *APLValueFrontOfTarget) String() string {
 	return "Front of Target()"
 }
+
+type APLValueInMeleeRange struct {
+	DefaultAPLValueImpl
+	unit *Unit
+}
+
+func (rot *APLRotation) newValueInMeleeRange(config *proto.APLValueInMeleeRange) APLValue {
+	return &APLValueInMeleeRange{
+		unit: rot.unit,
+	}
+}
+func (value *APLValueInMeleeRange) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueInMeleeRange) GetBool(sim *Simulation) bool {
+	return value.unit.IsInMeleeRange()
+}
+func (value *APLValueInMeleeRange) String() string {
+	return "In Melee Range()"
+}

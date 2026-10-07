@@ -234,12 +234,14 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 	if raidBuffs.ArcaneBrilliance {
 		character.AddStats(BuffSpellValues[ArcaneIntellect])
 	} else if raidBuffs.ScrollOfIntellect {
-		character.AddStats(BuffSpellValues[ScrollOfIntellect])
+		character.AddStat(stats.Intellect, scrollOfIntellect[HighestRankAt(character.Level, scrollOfIntellectLevel[:])])
 	}
 
 	if raidBuffs.GiftOfTheWild > 0 {
 		updateStats := BuffSpellValues[MarkOfTheWild]
-		if raidBuffs.GiftOfTheWild == proto.TristateEffect_TristateEffectImproved {
+		if character.Env.IsForever() {
+			updateStats = foreverMarkOfTheWild(character.Level)
+		} else if raidBuffs.GiftOfTheWild == proto.TristateEffect_TristateEffectImproved {
 			updateStats = updateStats.Multiply(1.35).Floor()
 		}
 		character.AddStats(updateStats)
@@ -280,14 +282,25 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		ThornsAura(character, GetTristateValueInt32(raidBuffs.Thorns, 0, 3))
 	}
 
-	if raidBuffs.MoonkinAura {
-		character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
-	}
+	if character.Env.IsForever() {
+		// Forever's Moonkin Form and Leader of the Pack both give 3% crit to spells and
+		// attacks, and the two do not stack.
+		if raidBuffs.MoonkinAura || raidBuffs.LeaderOfThePack {
+			character.AddStats(stats.Stats{
+				stats.MeleeCrit: 3 * CritRatingPerCritChance,
+				stats.SpellCrit: 3 * SpellCritRatingPerCritChance,
+			})
+		}
+	} else {
+		if raidBuffs.MoonkinAura {
+			character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
+		}
 
-	if raidBuffs.LeaderOfThePack {
-		character.AddStats(stats.Stats{
-			stats.MeleeCrit: 3 * CritRatingPerCritChance,
-		})
+		if raidBuffs.LeaderOfThePack {
+			character.AddStats(stats.Stats{
+				stats.MeleeCrit: 3 * CritRatingPerCritChance,
+			})
+		}
 	}
 
 	if raidBuffs.TrueshotAura {
@@ -296,7 +309,9 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 
 	if raidBuffs.PowerWordFortitude > 0 {
 		updateStats := BuffSpellValues[PowerWordFortitude]
-		if raidBuffs.PowerWordFortitude == proto.TristateEffect_TristateEffectImproved {
+		if character.Env.IsForever() {
+			updateStats = stats.Stats{stats.Stamina: foreverFortitudeStamina[HighestRankAt(character.Level, foreverFortitudeLevel[:])]}
+		} else if raidBuffs.PowerWordFortitude == proto.TristateEffect_TristateEffectImproved {
 			updateStats = updateStats.Multiply(1.3).Floor()
 		}
 		character.AddStats(updateStats)
@@ -323,9 +338,13 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 	}
 
 	if raidBuffs.DivineSpirit {
-		character.AddStats(BuffSpellValues[DivineSpirit])
+		if character.Env.IsForever() {
+			character.AddStat(stats.Spirit, foreverDivineSpirit[HighestRankAt(character.Level, foreverDivineSpiritLevel[:])])
+		} else {
+			character.AddStats(BuffSpellValues[DivineSpirit])
+		}
 	} else if raidBuffs.ScrollOfSpirit {
-		character.AddStats(BuffSpellValues[ScrollOfSpirit])
+		character.AddStat(stats.Spirit, scrollOfSpirit[HighestRankAt(character.Level, scrollOfSpiritLevel[:])])
 	}
 
 	if individualBuffs.BlessingOfKings && isAlliance {
@@ -368,14 +387,25 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 5)))
 	}
 
-	if raidBuffs.StrengthOfEarthTotem != proto.TristateEffect_TristateEffectMissing && isHorde {
-		multiplier := GetTristateValueFloat(raidBuffs.StrengthOfEarthTotem, 1, 1.15)
-		MakePermanent(StrengthOfEarthTotemAura(&character.Unit, multiplier))
+	// The improved Strength of Earth and Grace of Air come from Enhancing Totems. Forever took that
+	// talent out of the tree, so under Forever an improved totem is the same as a regular one.
+	enhancingTotemsMultiplier := func(effect proto.TristateEffect) float64 {
+		if character.Env.IsForever() {
+			return 1
+		}
+		return GetTristateValueFloat(effect, 1, 1.15)
 	}
 
-	if raidBuffs.GraceOfAirTotem > 0 && isHorde {
-		multiplier := GetTristateValueFloat(raidBuffs.GraceOfAirTotem, 1, 1.15)
-		MakePermanent(GraceOfAirTotemAura(&character.Unit, multiplier))
+	if raidBuffs.StrengthOfEarthTotem != proto.TristateEffect_TristateEffectMissing && isHorde {
+		MakePermanent(StrengthOfEarthTotemAura(&character.Unit, enhancingTotemsMultiplier(raidBuffs.StrengthOfEarthTotem)))
+	}
+
+	if raidBuffs.GraceOfAirTotem > 0 && isHorde && character.Level >= graceOfAirTotemLevels[1] {
+		MakePermanent(GraceOfAirTotemAura(&character.Unit, enhancingTotemsMultiplier(raidBuffs.GraceOfAirTotem)))
+	}
+
+	if raidBuffs.TotemWeaponBuff != proto.TotemWeaponBuff_TotemWeaponBuffNone && isHorde && !character.PseudoStats.FeralCombatEnabled {
+		applyRaidTotemWeaponBuff(character, raidBuffs.TotemWeaponBuff)
 	}
 
 	if individualBuffs.BlessingOfWisdom > 0 && isAlliance {
@@ -667,11 +697,26 @@ func retributionAura(character *Character, spellID int32, damage float64) *Aura 
 	})
 }
 
+// Forever's Thorns ranks. Improved Thorns is baseline, so the talent points do nothing
+// under Forever. The 2026-09-24 beta build made Thorns grow with the druid's spell power,
+// but no source gives how much, so we use the base values.
+var foreverThornsLevel = [...]int{0, 6, 14, 24, 34, 44, 54}
+var foreverThornsSpellId = [...]int32{0, 467, 782, 1075, 8914, 9756, 9910}
+var foreverThornsDamage = [...]float64{0, 4, 9, 11, 13, 16, 22}
+
 func ThornsAura(character *Character, points int32) *Aura {
 	baseDamage := 18.0
 
 	actionID := ActionID{SpellID: 9910}
 	damage := float64(baseDamage) * (1 + 0.25*float64(points))
+	if character.Env.IsForever() {
+		rank := HighestRankAt(character.Level, foreverThornsLevel[:])
+		if rank == 0 {
+			return nil
+		}
+		actionID = ActionID{SpellID: foreverThornsSpellId[rank]}
+		damage = foreverThornsDamage[rank]
+	}
 
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    actionID,
@@ -1415,11 +1460,20 @@ func StrengthOfEarthTotemAura(unit *Unit, multiplier float64) *Aura {
 	return aura
 }
 
+// The rank the unit's level can have. Forever's ranks give 49, 77 and 89 Agility, Classic
+// gave 43, 67 and 77.
+var graceOfAirTotemLevels = []int32{0, 42, 56, 60}
+var graceOfAirTotemAgility = []float64{0, 49, 77, 89}
+
 func GraceOfAirTotemAura(unit *Unit, multiplier float64) *Aura {
 	rank := TernaryInt32(IncludeAQ, 3, 2)
+	updateStats := BuffSpellValues[GraceOfAir].Multiply(multiplier).Floor()
+	if unit.Level < CharacterMaxLevel {
+		rank = int32(HighestRankAt(unit.Level, graceOfAirTotemLevels))
+		updateStats = stats.Stats{stats.Agility: graceOfAirTotemAgility[rank]}.Multiply(multiplier).Floor()
+	}
 	spellID := []int32{0, 8835, 10627, 25359}[rank]
 	duration := time.Minute * 5 // Forever, Classic 2 min
-	updateStats := BuffSpellValues[GraceOfAir].Multiply(multiplier).Floor()
 
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Grace of Air Totem",
@@ -1450,10 +1504,21 @@ var BattleShoutSpellId = [BattleShoutRanks + 1]int32{0, 6673, 5242, 6192, 11549,
 var BattleShoutBaseAP = [BattleShoutRanks + 1]float64{0, 20, 40, 57, 93, 138, 193, 232}
 var BattleShoutLevel = [BattleShoutRanks + 1]int{0, 1, 12, 22, 32, 42, 52, 60}
 
+// Forever's Battle Shout gives 60% of Classic's attack power by rank (139 at 60, Classic
+// 232), because both factions now have blessings and totems on top of it. Improved Battle
+// Shout is baseline, so its points do nothing under Forever.
+var foreverBattleShoutAP = [BattleShoutRanks + 1]float64{0, 9, 21, 33, 51, 78, 111, 139}
+
 func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, has3pcWrath bool) *Aura {
 	rank := TernaryInt32(IncludeAQ, 7, 6)
 	spellId := BattleShoutSpellId[rank]
 	baseAP := BattleShoutBaseAP[rank]
+	if unit.Env.IsForever() {
+		rank = int32(HighestRankAt(unit.Level, BattleShoutLevel[:]))
+		spellId = BattleShoutSpellId[rank]
+		baseAP = foreverBattleShoutAP[rank]
+		impBattleShout = 0
+	}
 
 	return unit.GetOrRegisterAura(Aura{
 		Label:      "Battle Shout",
@@ -1473,9 +1538,19 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 	})
 }
 
+// Forever's Trueshot Aura is a Marksmanship talent with five ranks from level 25. It only
+// gives ranged attack power now, so a melee character gets nothing from it. The rank 5
+// tooltip says 50, less than rank 4's 75. We take it as written.
+var foreverTrueshotAuraLevel = [...]int{0, 25, 32, 40, 50, 60}
+var foreverTrueshotAuraRAP = [...]float64{0, 30, 40, 50, 75, 50}
+
 func TrueshotAura(unit *Unit) *Aura {
 	rangedAP := 100.0
 	meleeAP := 100.0
+	if unit.Env.IsForever() {
+		rangedAP = foreverTrueshotAuraRAP[HighestRankAt(unit.Level, foreverTrueshotAuraLevel[:])]
+		meleeAP = 0
+	}
 
 	aura := MakePermanent(unit.RegisterAura(Aura{
 		Label:    "Trueshot Aura",
@@ -1492,6 +1567,45 @@ func TrueshotAura(unit *Unit) *Aura {
 
 	return aura
 }
+
+// Forever's Mark of the Wild and Gift of the Wild ranks, with Improved Mark of the Wild
+// baseline (rank 7 gives 385 armor, 16 to every attribute and 27 to every resistance,
+// Classic 285, 12 and 20). Gift of the Wild has ranks 6 and 7 only, at the same values.
+var foreverMarkOfTheWildLevel = [...]int{0, 1, 10, 20, 30, 40, 50, 60}
+var foreverMarkOfTheWildArmor = [...]float64{0, 34, 88, 142, 203, 263, 324, 385}
+var foreverMarkOfTheWildStats = [...]float64{0, 0, 3, 5, 8, 11, 14, 16}
+var foreverMarkOfTheWildResist = [...]float64{0, 0, 0, 0, 7, 14, 20, 27}
+
+func foreverMarkOfTheWild(level int32) stats.Stats {
+	rank := HighestRankAt(level, foreverMarkOfTheWildLevel[:])
+	attr, resist := foreverMarkOfTheWildStats[rank], foreverMarkOfTheWildResist[rank]
+	return stats.Stats{
+		stats.BonusArmor:       foreverMarkOfTheWildArmor[rank],
+		stats.Stamina:          attr,
+		stats.Agility:          attr,
+		stats.Strength:         attr,
+		stats.Intellect:        attr,
+		stats.Spirit:           attr,
+		stats.ArcaneResistance: resist,
+		stats.ShadowResistance: resist,
+		stats.NatureResistance: resist,
+		stats.FireResistance:   resist,
+		stats.FrostResistance:  resist,
+	}
+}
+
+// Forever's Power Word: Fortitude ranks, with Improved Power Word: Fortitude baseline (70
+// Stamina at 60, Classic 54). Divine Spirit is baseline from level 30 at Classic's values.
+var foreverFortitudeLevel = [...]int{0, 1, 12, 24, 36, 48, 60}
+var foreverFortitudeStamina = [...]float64{0, 4, 10, 26, 42, 56, 70}
+var foreverDivineSpiritLevel = [...]int{0, 30, 40, 50, 60}
+var foreverDivineSpirit = [...]float64{0, 17, 23, 33, 40}
+
+// Scrolls of Intellect and Spirit by rank, at the best rank the character can read.
+var scrollOfIntellectLevel = [...]int{0, 5, 20, 35, 50}
+var scrollOfIntellect = [...]float64{0, 4, 8, 12, 16}
+var scrollOfSpiritLevel = [...]int{0, 1, 15, 30, 45}
+var scrollOfSpirit = [...]float64{0, 3, 7, 11, 15}
 
 // Forever's blessings last an hour and the Improved Blessing talents are gone. Blessing
 // of Might gives 14 / 25 / 40 / 61 / 83 / 112 / 133 attack power by rank, 72% of
@@ -1588,7 +1702,10 @@ func BattleSquawkAura(character *Unit, stackcount int32) *Aura {
 // 	})
 // }
 
-func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, auraLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64) *Aura {
+// CreateExtraAttackAuraCommon returns the aura that procs the extra attacks. It is not
+// active on its own: the caller makes it permanent or turns it on and off. While blocked
+// returns true the aura procs nothing (nil means never blocked).
+func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, auraLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool) *Aura {
 	var bonusAP float64
 
 	apBuffAura := character.GetOrRegisterAura(Aura{
@@ -1622,8 +1739,9 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
 
 	apBuffAura.Icd = &icd
 
-	MakePermanent(character.GetOrRegisterAura(Aura{
-		Label: auraLabel,
+	return character.GetOrRegisterAura(Aura{
+		Label:    auraLabel,
+		Duration: NeverExpires,
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			// charges are removed by every auto or next melee, whether it lands or not
 			//  this directly contradicts https://github.com/magey/classic-warrior/wiki/Windfury-Totem#triggered-by-melee-spell-while-an-on-next-swing-attack-is-queued
@@ -1633,6 +1751,9 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
 			}
 
 			if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMeleeMH) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
+				return
+			}
+			if blocked != nil && blocked() {
 				return
 			}
 
@@ -1649,9 +1770,7 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
 				aura.Unit.AutoAttacks.ExtraMHAttackProc(sim, 1, buffActionID, spell)
 			}
 		},
-	}))
-
-	return apBuffAura
+	})
 }
 
 func GetWildStrikesAP(aura *Aura, rank int32) float64 {
@@ -1670,13 +1789,13 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 	return WindfuryBuffBonusAP[rank]
 }
 
-func ApplyWindfury(character *Character) *Aura {
-	rank := int32(3)
-	spellId := WindfuryBuffSpellId[rank]
-	buffActionID := ActionID{SpellID: spellId}
-
-	return CreateExtraAttackAuraCommon(character, buffActionID, "Windfury", rank, GetWindfuryAP)
-
+// WindfuryTotemBuffAura is the Windfury Totem buff on the main hand at the given rank.
+// It is not active on its own, and Windfury Weapon on the main hand turns it off, see
+// totem_weapon_buffs.go.
+func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura {
+	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
+	blocked := func() bool { return mainHandHasImbue(character, windfuryWeaponEnchantIds) }
+	return CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked)
 }
 
 ///////////////////////////////////////////////////////////////////////////

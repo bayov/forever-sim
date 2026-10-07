@@ -34,7 +34,8 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       rogue.builderFlags(),
+		// Cold Blood only names Sinister Strike, Backstab, Ambush, Eviscerate and Mutilate.
+		Flags: rogue.builderFlags() &^ SpellFlagColdBlooded,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   35.0,

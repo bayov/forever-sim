@@ -77,6 +77,7 @@ func (rsrc *raidSimResultCombiner) newUnitMetrics(baseUnit *proto.UnitMetrics) *
 		Tmi:       rsrc.newDistMetrics(),
 		Hps:       rsrc.newDistMetrics(),
 		Tto:       rsrc.newDistMetrics(),
+		ManaEnd:   rsrc.newDistMetrics(),
 		Actions:   make([]*proto.ActionMetrics, 0, len(baseUnit.Actions)),
 		Auras:     make([]*proto.AuraMetrics, len(baseUnit.Auras)),
 		Resources: make([]*proto.ResourceMetrics, 0, len(baseUnit.Resources)),
@@ -253,6 +254,7 @@ func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, a
 	rsrc.combineDistMetrics(base.Tmi, add.Tmi, isLast, weight)
 	rsrc.combineDistMetrics(base.Hps, add.Hps, isLast, weight)
 	rsrc.combineDistMetrics(base.Tto, add.Tto, isLast, weight)
+	rsrc.combineDistMetrics(base.ManaEnd, add.ManaEnd, isLast, weight)
 
 	base.SecondsOomAvg += add.SecondsOomAvg * weight
 	base.ChanceOfDeath += add.ChanceOfDeath * weight

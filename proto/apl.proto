@@ -82,7 +82,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 78
+// NextIndex: 81
 message APLValue {
     oneof value {
         // Operators
@@ -167,6 +167,7 @@ message APLValue {
         // Properties
         APLValueChannelClipDelay channel_clip_delay = 58;
         APLValueFrontOfTarget front_of_target = 63;
+        APLValueInMeleeRange in_melee_range = 80;
 
         // Class or Spec-specific values
         // Shaman
@@ -444,6 +445,11 @@ message APLValueSpellCastTime {
 message APLValueChannelClipDelay {
 }
 message APLValueFrontOfTarget {
+}
+
+// True while the player can reach the target in melee. Only PvP mode takes the player out
+// of range.
+message APLValueInMeleeRange {
 }
 
 message APLValueSpellTravelTime {

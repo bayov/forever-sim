@@ -7,12 +7,14 @@ import (
 )
 
 func (rogue *Rogue) registerEviscerate() {
+	// Forever only changed rank 6 (level 40). It gives 71 per combo point instead of
+	// Classic's 77 (93-137 at 1 point, foreverchanges spellbook build 70124).
 	flatDamage := rankAt(rogue.Level, map[int32]float64{
 		1: 1, 8: 3, 16: 6, 24: 10, 32: 15, 40: 22, 48: 34, 56: 48,
 		60: core.TernaryFloat64(core.IncludeAQ, 54, 48),
 	})
 	comboDamageBonus := rankAt(rogue.Level, map[int32]float64{
-		1: 5, 8: 11, 16: 19, 24: 31, 32: 45, 40: 77, 48: 110, 56: 151,
+		1: 5, 8: 11, 16: 19, 24: 31, 32: 45, 40: 71, 48: 110, 56: 151,
 		60: core.TernaryFloat64(core.IncludeAQ, 170, 151),
 	})
 	damageVariance := rankAt(rogue.Level, map[int32]float64{

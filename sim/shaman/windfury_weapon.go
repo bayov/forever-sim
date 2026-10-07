@@ -13,8 +13,13 @@ var WindfuryWeaponEnchantId = [WindfuryWeaponRanks + 1]int32{0, 283, 284, 525, 1
 var WindfuryWeaponLevel = [WindfuryWeaponRanks + 1]int32{0, 30, 40, 50, 60}
 
 // The extra attack power at each rank's cap and its growth per level, like Rockbiter.
-// Rank 4 is Forever's 433 (Classic 333), the lower ranks match Classic within a point.
-var WindfuryWeaponBonusAP = [WindfuryWeaponRanks + 1]float64{0, 103.6, 221.4, 315.4, 433}
+// Forever keeps Classic's values: 333 for rank 4 at level 60.
+//
+// wowhead's Forever tooltip shows 433 for rank 4, but that is the value at level 68. The
+// rank grows 12.5 a level from 60 to 68 (its <!--ppl60:68:333:1250--> marker), and
+// wowhead's Forever pages evaluate it at the top of that range while the Classic pages use
+// level 60. ForeverChanges' spellbook says 333.
+var WindfuryWeaponBonusAP = [WindfuryWeaponRanks + 1]float64{0, 103.6, 221.4, 315.4, 333}
 var WindfuryWeaponScaling = [WindfuryWeaponRanks + 1]core.RankScaling{{}, {38, 7.2}, {48, 12.8}, {58, 8.3}, {60, 12.5}}
 
 func (shaman *Shaman) windfuryRank() int {
@@ -48,6 +53,11 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Elemental Weapons applies twice to the extra attack power (1.4 * 1.4 at 3
+			// points). The SoD sim does this on purpose (its commit bc9aa4d3, "update Windfury
+			// Weapon to double dip from Elemental Weapons"), and Forever's mechanics follow
+			// SoD's.
+			// TODO: Beta can confirm it, by comparing Windfury hits with 0 and 3 points.
 			mAP := spell.MeleeAttackPower(target) + bonusAP*ewMultiplier*ewMultiplier
 			baseDamage := weaponDamageFunc(sim, mAP)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)

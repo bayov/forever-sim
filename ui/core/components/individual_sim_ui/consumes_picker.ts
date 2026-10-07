@@ -215,6 +215,7 @@ export class ConsumesPicker extends Component {
 			'Shadow Damage',
 		);
 		const mp5BuffOptions = ConsumablesInputs.makeMp5ConsumeInput(relevantStatOptions(ConsumablesInputs.MP5_CONFIG, this.simUI), 'Mana Regen');
+		const intBuffOptions = ConsumablesInputs.makeIntellectConsumeInput(relevantStatOptions(ConsumablesInputs.INTELLECT_CONFIG, this.simUI), 'Intellect');
 
 		const pickers = [
 			buildIconInput(spellsCnsumesElem, this.simUI.player, spBuffOptions),
@@ -222,6 +223,7 @@ export class ConsumesPicker extends Component {
 			buildIconInput(spellsCnsumesElem, this.simUI.player, frostBuffOptions),
 			buildIconInput(spellsCnsumesElem, this.simUI.player, shadowBuffOptions),
 			buildIconInput(spellsCnsumesElem, this.simUI.player, mp5BuffOptions),
+			buildIconInput(spellsCnsumesElem, this.simUI.player, intBuffOptions),
 		];
 
 		this.updateRow(row, pickers);

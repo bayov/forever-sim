@@ -70,8 +70,8 @@ message UIItem {
 	// Character level needed to equip, 0 when there is none.
 	int32 required_level = 31;
 
-	// Hit and critical strike rating (Forever items). The sim turns them into percent at
-	// the character's level, see core.RatingPerPercent.
+	// Hit and critical strike rating as wowhead lists it on Forever items. The sim turns
+	// them into a flat percent at every level, see core.CritRatingPerPercent.
 	double hit_rating = 32;
 	double crit_rating = 33;
 	ItemQuality quality = 18;
@@ -80,7 +80,11 @@ message UIItem {
 
 	// Classes that are allowed to use the item. Empty indicates no special class restrictions.
 	repeated Class class_allowlist = 21;
+	// The profession the item needs to be worn, like "Requires Engineering (215)".
 	Profession required_profession = 22;
+	// Whether the item binds when picked up. A crafted one then needs its profession to be
+	// made, but not to be worn.
+	bool bind_on_pickup = 34;
 
 	// Name of the item set to which this item belongs, if any.
 	string set_name = 23;
@@ -182,6 +186,10 @@ message UIEnchant {
 	// Classes that are allowed to use the enchant. Empty indicates no special class restrictions.
 	repeated Class class_allowlist = 11;
 	Profession required_profession = 12;
+
+	// Character level needed to use the enchant, 0 when there is none. Only armor kits
+	// have one, since they are items the player uses.
+	int32 required_level = 14;
 }
 
 message IconData {

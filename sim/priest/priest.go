@@ -116,6 +116,7 @@ func New(character *core.Character, talents string) *Priest {
 
 	priest.AddStatDependency(stats.Strength, stats.AttackPower, core.APPerStrength[character.Class])
 	priest.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerInt(character.Class, character.Level)*core.SpellCritRatingPerCritChance)
+	priest.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	// Set mana regen to 12.5 + Spirit/4 each 2s tick
 	priest.SpiritManaRegenPerSecond = func() float64 {

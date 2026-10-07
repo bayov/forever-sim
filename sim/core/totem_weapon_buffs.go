@@ -1,0 +1,108 @@
+package core
+
+import (
+	"fmt"
+	"slices"
+
+	"github.com/wowsims/classic/sim/core/proto"
+)
+
+// Under Forever a main hand holds three weapon buffs at once:
+//   - the buff of a Windfury or Flametongue Totem (only one of the two at a time),
+//   - the shaman's own imbue (Windfury, Rockbiter, Flametongue or Frostbrand Weapon),
+//   - an oil or a stone.
+//
+// They work together, except that the shaman's imbue turns off the totem buff of the same
+// kind. Windfury Weapon's tooltip says "When applied to main hand, disables any benefit
+// you personally receive from Windfury Totem", and Flametongue Weapon says the same about
+// Flametongue Totem. So Windfury Weapon works next to Flametongue Totem, and Flametongue
+// or Rockbiter Weapon next to Windfury Totem, but Windfury Weapon with Windfury Totem only
+// gives the weapon's procs.
+//
+// This file has the totem buffs. The raid buffs give them for another shaman's totem, and
+// the shaman package uses the same auras for the shaman's own totems.
+
+const FlametongueTotemRanks = 4
+
+var FlametongueTotemSpellId = [FlametongueTotemRanks + 1]int32{0, 8227, 8249, 10526, 16387}
+var FlametongueTotemProcSpellId = [FlametongueTotemRanks + 1]int32{0, 8253, 8248, 10523, 16389}
+
+// Fire damage per 4 sec of weapon speed, N / 25 on wowhead's Forever tooltips (548, 781,
+// 1061 and 1363). They do not grow with level.
+var FlametongueTotemMaxDamage = [FlametongueTotemRanks + 1]float64{0, 21.92, 31.24, 42.44, 54.52}
+var FlametongueTotemLevel = [FlametongueTotemRanks + 1]int{0, 28, 38, 48, 58}
+
+var WindfuryTotemLevel = [WindfuryRanks + 1]int{0, 32, 42, 52}
+
+// The temporary enchants of every Windfury Weapon and Flametongue Weapon rank, the same
+// as WindfuryWeaponEnchantId and FlametongueWeaponEnchantId in the shaman package.
+var windfuryWeaponEnchantIds = []int32{283, 284, 525, 1669}
+var flametongueWeaponEnchantIds = []int32{5, 4, 3, 523, 1665, 1666}
+
+// mainHandHasImbue tells whether the main hand carries one of these imbues right now. We
+// look at it on every hit instead of once, because the shaman's imbue goes on the weapon
+// after the raid buffs are applied, and an item swap can change it.
+func mainHandHasImbue(character *Character, enchantIds []int32) bool {
+	mh := character.MainHand()
+	return mh != nil && slices.Contains(enchantIds, mh.TempEnchant)
+}
+
+// FlametongueTotemBuffAura gives every main hand hit that lands extra Fire damage, by
+// weapon speed. The damage is the Flametongue Attack spell at 10% of the wielder's spell
+// power, the same as Flametongue Weapon's.
+//
+// The aura is not active on its own. The caller makes it permanent or turns it on and off
+// with the totem. The label and the tag keep another shaman's totem apart from the
+// shaman's own.
+func FlametongueTotemBuffAura(character *Character, rank int, label string, tag int32) *Aura {
+	damagePerSecond := FlametongueTotemMaxDamage[rank] / 4
+
+	procSpell := character.RegisterSpell(SpellConfig{
+		ActionID:    ActionID{SpellID: FlametongueTotemProcSpellId[rank], Tag: tag},
+		SpellSchool: SpellSchoolFire,
+		DefenseType: DefenseTypeMagic,
+		ProcMask:    ProcMaskSpellDamageProc,
+		Flags:       SpellFlagNoOnCastComplete | SpellFlagPassiveSpell,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		BonusCoefficient: 0.1,
+
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			damage := damagePerSecond * character.MainHand().SwingSpeed
+			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+		},
+	})
+
+	return character.RegisterAura(Aura{
+		Label:    fmt.Sprintf("%s (Rank %d)", label, rank),
+		ActionID: ActionID{SpellID: FlametongueTotemSpellId[rank]},
+		Duration: NeverExpires,
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMeleeMH) || mainHandHasImbue(character, flametongueWeaponEnchantIds) {
+				return
+			}
+			procSpell.Cast(sim, result.Target)
+		},
+	})
+}
+
+// applyRaidTotemWeaponBuff puts another shaman's totem buff on the character's main hand,
+// at the highest rank of that totem the character's level allows. Only the first one
+// applied counts, because the weapon has one slot for it.
+func applyRaidTotemWeaponBuff(character *Character, buff proto.TotemWeaponBuff) {
+	if character.RaidTotemWeaponBuff != nil || !character.HasMHWeapon() {
+		return
+	}
+
+	switch buff {
+	case proto.TotemWeaponBuff_TotemWeaponBuffWindfury:
+		if rank := HighestRankAt(character.Level, WindfuryTotemLevel[:]); rank > 0 {
+			character.RaidTotemWeaponBuff = MakePermanent(WindfuryTotemBuffAura(character, int32(rank), "Windfury Totem Raid"))
+		}
+	case proto.TotemWeaponBuff_TotemWeaponBuffFlametongue:
+		if rank := HighestRankAt(character.Level, FlametongueTotemLevel[:]); rank > 0 {
+			character.RaidTotemWeaponBuff = MakePermanent(FlametongueTotemBuffAura(character, rank, "Flametongue Totem Raid", 1))
+		}
+	}
+}

@@ -27,37 +27,21 @@ func (dot *Dot) critCheck(sim *Simulation, target *Unit, attackTable *AttackTabl
 	return dot.Spell.MagicCritCheck(sim, target)
 }
 
-// Bonus healing on Forever gear carries a damage component with it, so that healing
-// gear is not dead weight outside a raid. Hide of the Wild reads 42 healing and 14
-// damage, which is the only published pair, so a third is the rate used here. It feeds
-// SpellDamage rather than SpellPower because the damage half does not heal.
-const ForeverHealingToSpellDamage = 1.0 / 3.0
-
-func (character *Character) addHealingSpellDamage(equipStats stats.Stats) stats.Stats {
-	equipStats[stats.SpellDamage] += equipStats[stats.HealingPower] * ForeverHealingToSpellDamage
-	return equipStats
-}
-
-// RatingPerPercent is how much rating makes 1% at a level, given what it takes at 60.
+// Forever has no hit or crit rating. Its items give a flat percent, at every level.
 //
-// wowhead's Forever item pages print 4 hit rating as "(0.40% @ L60)", so 10 hit rating
-// and 14 crit rating are 1% at level 60. Those are the TBC client's level 60 values, and
-// nothing we have shows the Forever client's values below 60. So we assume the TBC
-// curve, which takes (level - 8) / 52 of the level 60 value from level 10 on, and 2 / 52
-// below that. At level 20 that makes 14 crit rating on Fletcher's Gloves worth 4.3%.
-func RatingPerPercent(level int32, at60 float64) float64 {
-	return at60 * float64(max(min(level, 60), 10)-8) / 52
-}
-
+// wowhead's Forever item pages still print the stat as TBC style rating, like 4 hit
+// rating "(0.40% @ L60)" on Pyrewood Signet Ring or 14 crit rating on Fletcher's Gloves,
+// which the game shows as "Improves your chance to get a critical strike by 1.0%". So we
+// turn the rating back into percent with TBC's level 60 values.
 const (
-	HitRatingPerPercentAt60  = 10.0
-	CritRatingPerPercentAt60 = 14.0
+	HitRatingPerPercent  = 10.0
+	CritRatingPerPercent = 14.0
 )
 
 func (character *Character) addEquipRatings(equipStats stats.Stats) stats.Stats {
 	for _, item := range character.Equipment {
-		equipStats[stats.MeleeHit] += item.HitRating / RatingPerPercent(character.Level, HitRatingPerPercentAt60)
-		equipStats[stats.MeleeCrit] += item.CritRating / RatingPerPercent(character.Level, CritRatingPerPercentAt60)
+		equipStats[stats.MeleeHit] += item.HitRating / HitRatingPerPercent
+		equipStats[stats.MeleeCrit] += item.CritRating / CritRatingPerPercent
 	}
 	return equipStats
 }

@@ -12,6 +12,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {
 		return
 	}
+	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 17, 40: 25, 50: 36, 60: 50})
 
 	rogue.mutilateOH = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    MutilateActionID.WithTag(2),
@@ -20,6 +21,9 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ProcMask:    core.ProcMaskMeleeOHSpecial,
 		Flags:       SpellFlagBuilder | core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
+		// Puncturing Wounds raises the crit chance of the whole Mutilate, both halves.
+		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
+
 		CritDamageBonus: rogue.lethality(),
 
 		DamageMultiplier: rogue.AutoAttacks.OHConfig().DamageMultiplier * []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity],
@@ -27,7 +31,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := rogue.mutilateDamage(target, rogue.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
+			baseDamage := rogue.mutilateDamage(target, flatDamage, rogue.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
 	})
@@ -68,7 +72,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 			rogue.BreakStealth(sim)
 
 			// Cold Blood is spent on the main hand half, which is the larger of the two.
-			baseDamage := rogue.mutilateDamage(target, rogue.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
+			baseDamage := rogue.mutilateDamage(target, flatDamage, rogue.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			rogue.mutilateOH.Cast(sim, target)
 
@@ -82,10 +86,11 @@ func (rogue *Rogue) registerMutilateSpell() {
 }
 
 // Each half strikes for 75% weapon damage plus a flat bonus, and hits harder while one of
-// the rogue's lingering poisons is on the target. The flat 17.25 is the beta client's
-// tooltip, which is not marked as level scaled.
-func (rogue *Rogue) mutilateDamage(target *core.Unit, weaponDamage float64) float64 {
-	baseDamage := 17.25 + 0.75*weaponDamage
+// the rogue's lingering poisons is on the target. The flat bonus is the Forever rank the
+// level knows (foreverchanges spellbook, build 70009): 17 from the talent, then 25, 36 and
+// 50 from the trainer at 40, 50 and 60.
+func (rogue *Rogue) mutilateDamage(target *core.Unit, flatDamage float64, weaponDamage float64) float64 {
+	baseDamage := flatDamage + 0.75*weaponDamage
 	if rogue.isPoisoned(target) {
 		baseDamage *= 1.2
 	}

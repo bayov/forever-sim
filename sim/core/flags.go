@@ -193,6 +193,7 @@ const (
 	SpellFlagBatchStopAttackMacro                          // Indicates this spell is being cast in a Macro with a stopattack following it
 	SpellFlagNotAProc                                      // Indicates the proc is not treated as a proc (Seal of Command)
 	SpellFlagNoPeriodicCrit                                // Indicates this spell's periodic damage can never crit, even under rulesets where dots normally can
+	SpellFlagCastFromTotem                                 // Indicates this spell goes off from a totem, not the caster (Forever's Fire Nova), so effects on the caster's next spell cast skip it
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

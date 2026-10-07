@@ -41,6 +41,8 @@ func NewEnhancementShaman(character *core.Character, options *proto.Player) *Enh
 
 	enh.ApplySyncType(enhOptions.Options.SyncType)
 	enh.RaidDamageHitsPerMinute = enhOptions.Options.RaidDamageHitsPerMinute
+	enh.ShamanImbue = enhOptions.Options.ShamanImbue
+	enh.ApplyShamanImbue()
 
 	return enh
 }

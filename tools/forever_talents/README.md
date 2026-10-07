@@ -5,7 +5,9 @@ talents messages in `proto/*.proto`.
 
 ## Where it comes from
 
-Two sources. `client/` is the beta client's trees (build 1.60.1.69876), and `data/` is what
+Two sources. `client/` is the beta client's trees (build 1.60.1.69876, with the paladin and
+shaman talents the 2026-09-24 development notes changed brought up to build 1.60.1.70009
+from foreverchanges.pro's talent calculator), and `data/` is what
 the importer reads. For Rogue, Shaman and Paladin `data/` is generated from `client/` with
 `import_client.py`, so every rank is the client's. The other six classes still carry the
 BlizzCon transcription described below, and converting one of them means running

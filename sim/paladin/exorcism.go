@@ -57,7 +57,7 @@ func (paladin *Paladin) registerExorcism() {
 			SpellCode: SpellCode_PaladinExorcism,
 			ManaCost: core.ManaCostOptions{
 				FlatCost:   rank.manaCost,
-				Multiplier: paladin.holyConduit(),
+				Multiplier: paladin.holyConduitInstant(),
 			},
 
 			Cast: core.CastConfig{
