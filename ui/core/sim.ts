@@ -403,6 +403,9 @@ export class Sim {
 		epPseudoStats: Array<PseudoStat>,
 		epReferenceStat: Stat,
 		onProgress: WorkerProgressCallback,
+		// The stat weights have their own iterations, see the Stat Weights section. Left out
+		// means the main sim's.
+		iterations?: number,
 	): Promise<StatWeightsResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
@@ -429,7 +432,7 @@ export class Sim {
 				debuffs: this.raid.getDebuffs(),
 				encounter: this.encounter.toProto(),
 				simOptions: SimOptions.create({
-					iterations: this.getIterations(),
+					iterations: iterations ?? this.getIterations(),
 					randomSeed: BigInt(this.nextRngSeed()),
 					debug: false,
 					ruleset: this.getRuleset(),

@@ -68,6 +68,29 @@
 	}
 }
 
+// A stat in the sidebar whose bonus differs from the selected gear set's.
+.character-stats-table-row.dirty-setting > .character-stats-table-label {
+	color: var(--dirty-color);
+
+	&::after {
+		content: ' \25CF';
+		font-size: 0.7em;
+		vertical-align: middle;
+	}
+}
+
+// A row of the stat weights table whose Current EP changed gets the stat's name in the
+// modified color with a dot after it, like a field's label.
+.results-ep-table tr:has(.dirty-setting) > td:first-child {
+	color: var(--dirty-color);
+
+	&::after {
+		content: ' \25CF';
+		font-size: 0.7em;
+		vertical-align: middle;
+	}
+}
+
 // A group of icons in one dropdown (the misc buffs) gets a ring when any of them changed.
 .multi-icon-picker-root:has(.dirty-setting) > .icon-picker-button {
 	box-shadow: 0 0 0 2px var(--dirty-color);

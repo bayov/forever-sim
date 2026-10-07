@@ -25,8 +25,10 @@ export class GearTab extends SimTab {
 		this.rightPanel = document.createElement('div');
 		this.rightPanel.classList.add('gear-tab-right', 'tab-panel-right');
 
-		this.contentContainer.appendChild(this.leftPanel);
+		// The gear sets come first, to the left of the gear, like the preset lists in the
+		// sidebar sit left of everything.
 		this.contentContainer.appendChild(this.rightPanel);
+		this.contentContainer.appendChild(this.leftPanel);
 
 		this.buildTabContent();
 	}

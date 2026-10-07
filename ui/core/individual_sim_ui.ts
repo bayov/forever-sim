@@ -22,7 +22,7 @@ import { TalentsTab } from './components/individual_sim_ui/talents_tab';
 import * as InputHelpers from './components/input_helpers';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig } from './components/saved_data_manager';
-import { addStatWeightsAction } from './components/stat_weights_action';
+import { addStatWeightsSection } from './components/stat_weights_action';
 import { GLOBAL_DISPLAY_PSEUDO_STATS, GLOBAL_DISPLAY_STATS, GLOBAL_EP_STATS } from './constants/other';
 import { SimSettingCategories } from './constants/sim_settings';
 import * as Tooltips from './constants/tooltips';
@@ -338,12 +338,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		this.raidSimResultsManager = addRaidSimAction(this);
-		addStatWeightsAction(
-			this,
-			this.individualConfig.epStats.concat(GLOBAL_EP_STATS),
-			this.individualConfig.epPseudoStats,
-			this.individualConfig.epReferenceStat,
-		);
 
 		const displayStats: UnitStat[] = [];
 
@@ -364,6 +358,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	private addGearTab() {
 		const gearTab = new GearTab(this.simTabContentsContainer, this);
 		gearTab.rootElem.classList.add('active', 'show');
+		addStatWeightsSection(
+			gearTab.rootElem,
+			this,
+			this.individualConfig.epStats.concat(GLOBAL_EP_STATS),
+			this.individualConfig.epPseudoStats,
+			this.individualConfig.epReferenceStat,
+		);
 	}
 
 	private addBulkTab(): BulkTab {

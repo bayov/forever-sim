@@ -1,14 +1,91 @@
-.ep-weights-menu {
-	.ep-weights-presets {
-		margin-bottom: var(--block-spacer);
+// The height of a field, from the same variables that size them: one line of the content font,
+// the field's padding above and below, and a 1px border on each side.
+$ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y) * 2 + 2px);
 
-		> span {
-			font-weight: bold;
+.ep-weights-menu {
+	// The presets, the settings and the buttons on the left, and the table on the right. The
+	// table is only as wide as its columns need, and the left side takes the rest. On narrow
+	// screens the table goes under them.
+	.ep-weights-layout {
+		display: grid;
+		grid-template-columns: minmax(14rem, 1fr) auto;
+		gap: var(--section-spacer);
+		align-items: start;
+
+		@include media-breakpoint-down(lg) {
+			grid-template-columns: 1fr;
 		}
 	}
 
+	.ep-weights-settings {
+		display: flex;
+		flex-direction: column;
+		gap: var(--block-spacer);
+	}
+
+	.ep-weights-presets > span {
+		font-weight: bold;
+	}
+
+	// The Show dropdown and the Show All Stats toggle in one row above the table. The toggle is
+	// as tall as the dropdown and level with it.
+	.ep-weights-results {
+		display: flex;
+		flex-direction: column;
+		gap: var(--block-spacer);
+	}
+
 	.ep-weights-options {
-		margin-bottom: var(--block-spacer);
+		display: flex;
+		align-items: flex-end;
+		gap: var(--spacer-3);
+
+		.input-root {
+			margin-bottom: 0;
+		}
+
+		.form-select {
+			width: 10rem;
+		}
+
+		.show-all-stats-container .input-root {
+			display: flex;
+			align-items: center;
+			height: $ep-control-height;
+			padding-left: 0;
+
+			.form-check-input {
+				width: $ep-control-height;
+				height: $ep-control-height;
+				margin: 0;
+			}
+		}
+	}
+
+	// Iterations with the Calculate and Apply All buttons in one row, the buttons level with
+	// the field under its label.
+	.ep-weights-actions {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--spacer-2);
+
+		.input-root {
+			margin-bottom: 0;
+		}
+
+		.number-picker-input {
+			width: 6rem;
+		}
+
+		// The buttons are as tall as the Iterations field next to them.
+		.btn {
+			height: $ep-control-height;
+			padding-top: 0;
+			padding-bottom: 0;
+			display: inline-flex;
+			align-items: center;
+			gap: var(--spacer-1);
+		}
 	}
 
 	.ep-reference-options {
@@ -49,7 +126,17 @@
 		}
 
 		.results-ep-table {
-			width: 100%;
+			width: auto;
+
+			th,
+			td {
+				white-space: nowrap;
+			}
+
+			// The Current EP fields keep a fixed width instead of filling their column.
+			.current-ep .number-picker-input {
+				width: 7rem;
+			}
 
 			&.stats-type-ep .type-weight,
 			&.stats-type-weight .type-ep {
@@ -61,6 +148,12 @@
 				&[class*='type-'] {
 					text-align: right;
 				}
+			}
+
+			// The calculated values line up on the left, next to the Current EP they compare to.
+			th.metric-header,
+			td.stdev-cell {
+				text-align: left;
 			}
 
 			th {
@@ -85,28 +178,9 @@
 					text-align: right;
 					max-width: 100px;
 				}
-
-				.compute-ep {
-					white-space: nowrap;
-					.not-tiny {
-						display: inline;
-					}
-					.fas {
-						display: inline;
-						vertical-align: middle;
-					}
-				}
 			}
 
 			tbody {
-				tr:nth-child(even) {
-					background-color: var(--bs-table-row-even-bg);
-				}
-
-				tr:nth-child(odd) {
-					background-color: var(--bs-table-row-odd-bg);
-				}
-
 				td {
 					padding: var(--table-cell-padding);
 					.fas {
@@ -120,7 +194,6 @@
 			}
 
 			.results-avg.notapplicable {
-				padding-right: 25px;
 				font-weight: bold;
 			}
 
@@ -128,8 +201,28 @@
 				font-size: 0.625rem;
 			}
 
-			.col-action {
-				margin-left: var(--spacer-1);
+			// A stat only Show All Stats lists. A changed one still takes the modified color.
+			tr.ep-extra-stat:not(:has(.dirty-setting)) > td:first-child {
+				color: var(--bs-gray-500);
+			}
+
+			// The Current EP field, with the arrow that copies the calculated value into it inside
+			// the field on the right.
+			.current-ep .input-root {
+				position: relative;
+
+				&:has(.ep-apply-row) input {
+					padding-right: 1.75rem;
+				}
+			}
+
+			.ep-apply-row {
+				position: absolute;
+				top: 50%;
+				right: var(--spacer-1);
+				transform: translateY(-50%);
+				padding: 0 var(--spacer-1);
+				line-height: 1;
 			}
 		}
 	}
@@ -219,4 +312,9 @@
 			}
 		}
 	}
+}
+
+// The stat weights section on the Gear tab, under the gear and the gear sets.
+.gear-tab > .ep-weights-menu {
+	margin-top: var(--section-spacer);
 }

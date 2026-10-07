@@ -8,6 +8,7 @@ import { slotNames } from '../proto_utils/names';
 import { Stats, UnitStat } from '../proto_utils/stats.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { Component } from './component.js';
+import { dirtySettings } from './dirty_settings';
 import { NumberPicker } from './number_picker';
 
 export type StatMods = { talents?: Stats; buffs?: Stats };
@@ -97,6 +98,9 @@ export class CharacterStats extends Component {
 
 		const table = <table className="character-stats-table"></table>;
 		this.rootElem.appendChild(table);
+		// The bonus stats are part of a gear set, so a modified gear set lists their changes
+		// with the gear.
+		this.rootElem.dataset.presetCategory = 'Gear';
 
 		this.valueElems = [];
 		statGroups.forEach((groupedStats, _) => {
@@ -117,6 +121,13 @@ export class CharacterStats extends Component {
 					</tr>
 				);
 				body.appendChild(row);
+
+				// The stat's name is marked when its bonus differs from the selected gear set's.
+				dirtySettings.track({
+					elem: row as HTMLElement,
+					read: () => player.getBonusStats().getUnitStat(stat),
+					name: () => `Bonus ${statName}`,
+				});
 
 				const valueElem = row.getElementsByClassName('character-stats-table-value')[0] as HTMLTableCellElement;
 				this.valueElems.push(valueElem);
@@ -637,6 +648,15 @@ export class CharacterStats extends Component {
 		);
 
 		tippy(iconRef.value!, { content: `Bonus ${statName}` });
+
+		// The button is green while the stat has a bonus.
+		const updateColor = () => {
+			const hasBonus = this.player.getBonusStats().getUnitStat(stat) != 0;
+			linkRef.value!.classList.toggle('text-white', !hasBonus);
+			linkRef.value!.classList.toggle('text-success', hasBonus);
+		};
+		updateColor();
+		this.player.bonusStatsChangeEmitter.on(updateColor);
 		tippy(linkRef.value!, {
 			interactive: true,
 			trigger: 'click',

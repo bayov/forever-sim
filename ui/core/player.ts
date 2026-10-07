@@ -497,9 +497,10 @@ export class Player<SpecType extends Spec> {
 		epPseudoStats: Array<PseudoStat>,
 		epReferenceStat: Stat,
 		onProgress: WorkerProgressCallback,
+		iterations?: number,
 	): Promise<StatWeightsResult | null> {
 		try {
-			const result = await this.sim.statWeights(this, epStats, epPseudoStats, epReferenceStat, onProgress);
+			const result = await this.sim.statWeights(this, epStats, epPseudoStats, epReferenceStat, onProgress, iterations);
 			if (result.error) {
 				if (result.error.type === ErrorOutcomeType.ErrorOutcomeAborted) {
 					new Toast({
