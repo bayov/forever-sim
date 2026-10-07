@@ -38,8 +38,8 @@ import SinisterStrikeSndWindowAPL from './apls/combat_sinister_strike_snd_window
 import SinisterStrikeSweatyAPL from './apls/combat_sinister_strike_sweaty.apl.json';
 import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
 import MutilateAPL from './apls/forever_mutilate.apl.json';
-import Level20BackstabAPL from './apls/level20_backstab.apl.json';
-import Level20SinisterStrikeAPL from './apls/level20_sinister_strike.apl.json';
+import Level30p5BackstabAPL from './apls/level30p5_backstab.apl.json';
+import Level30p5SinisterStrikeAPL from './apls/level30p5_sinister_strike.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
 import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
@@ -47,8 +47,8 @@ import BackstabGearP1BiS from './gear_sets/combat_backstab_p1_bis.gear.json';
 import BackstabGearP2BiS from './gear_sets/combat_backstab_p2_bis.gear.json';
 import SinisterStrikeGearP1BiS from './gear_sets/combat_sinister_strike_p1_bis.gear.json';
 import SinisterStrikeGearP2BiS from './gear_sets/combat_sinister_strike_p2_bis.gear.json';
-import Level20BackstabGear from './gear_sets/level20_backstab.gear.json';
-import Level20SinisterStrikeGear from './gear_sets/level20_sinister_strike.gear.json';
+import Level30p5BackstabGear from './gear_sets/level30p5_backstab.gear.json';
+import Level30p5SinisterStrikeGear from './gear_sets/level30p5_sinister_strike.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -58,53 +58,71 @@ import Level20SinisterStrikeGear from './gear_sets/level20_sinister_strike.gear.
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
-export const GearBackstabPreBiS = PresetUtils.makePresetGear('Backstab Pre-BiS', BackstabGearPreBiS);
-export const GearSinisterStrikePreBiS = PresetUtils.makePresetGear('Sinister Strike Pre-BiS', SinisterStrikeGearPreBiS);
-export const GearBackstabP1BiS = PresetUtils.makePresetGear('Backstab P1 BiS', BackstabGearP1BiS);
-export const GearBackstabP2BiS = PresetUtils.makePresetGear('Backstab P2 BiS', BackstabGearP2BiS);
-export const GearSinisterStrikeP1BiS = PresetUtils.makePresetGear('Sinister Strike P1 BiS', SinisterStrikeGearP1BiS);
-export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Strike P2 BiS', SinisterStrikeGearP2BiS);
-// Level 20 sets found by tools/rotopt -level 20 -gear-search over everything an Undead
-// rogue can equip at 20, on the wowhead Forever item data. Both are built around four
-// pieces of Defias Leather from the Deadmines (chest, gloves, belt, leggings). Forever
-// reworked the set for rogues: 15 attack power against Humanoids at 3 pieces and a bleed
-// for about 75 over 5 sec on 5% of hits from behind at 4. That is worth 3 DPS over the
-// best single pieces, but only against a Humanoid for the attack power part. The 5th
-// piece is a point of Dagger skill and loses to Feet of the Lynx.
+export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear, { tooltip: 'No gear equipped.' });
+export const GearBackstabPreBiS = PresetUtils.makePresetGear('Backstab Pre-BiS', BackstabGearPreBiS, {
+	tooltip: 'Level 60 pre-raid gear for Backstab, with daggers.',
+	group: 'Level 60',
+});
+export const GearSinisterStrikePreBiS = PresetUtils.makePresetGear('Sinister Strike Pre-BiS', SinisterStrikeGearPreBiS, {
+	tooltip: 'Level 60 pre-raid gear for Sinister Strike.',
+	group: 'Level 60',
+});
+export const GearBackstabP1BiS = PresetUtils.makePresetGear('Backstab P1 BiS', BackstabGearP1BiS, {
+	tooltip: 'Level 60 Phase 1 BiS for Backstab, with daggers.',
+	group: 'Level 60',
+});
+export const GearBackstabP2BiS = PresetUtils.makePresetGear('Backstab P2 BiS', BackstabGearP2BiS, {
+	tooltip: 'Level 60 Phase 2 BiS for Backstab, with daggers.',
+	group: 'Level 60',
+});
+export const GearSinisterStrikeP1BiS = PresetUtils.makePresetGear('Sinister Strike P1 BiS', SinisterStrikeGearP1BiS, {
+	tooltip: 'Level 60 Phase 1 BiS for Sinister Strike.',
+	group: 'Level 60',
+});
+export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Strike P2 BiS', SinisterStrikeGearP2BiS, {
+	tooltip: 'Level 60 Phase 2 BiS for Sinister Strike.',
+	group: 'Level 60',
+});
+// The gear searches at level 30 with 26 talent points over everything an Undead rogue can
+// equip, with Engineering and Leatherworking and the items no source is known for left
+// out. Each ran from the old level 20 set (which keeps its four Defias pieces, because one
+// slot at a time never breaks a set bonus) and from a seed with level 30 leather in those
+// four slots. The second seed
+// won both times, by 1.9 for Sinister Strike and 1.7 for Backstab.
 //
-// The rest is dungeon blues (Serpent's Shoulders from Wailing Caverns, Cultist's
-// Armguards from Blackfathom Deeps, Feet of the Lynx), the Warsong Gulch neck, and two
-// rogue rings: Field Researcher's Loop from Greater Friend of the Library (20 books, four
-// of them from level 30 zones) and Pyrewood Signet Ring from The Horn of Xelthos. Both sets assume Engineering and
-// Leatherworking for Gnomish Goggles and Parachute Cloak. Only the main hand differs:
-// Cruel Barb off Edwin VanCleef for Sinister Strike, an Assassin's Blade for Backstab,
-// and both hold Butcher's Cleaver in the off hand, which Forever lets a rogue wield (its
-// Hack and Slash reads "Axe/Sword").
-//
-// Lil Timmy's Peashooter is in the ranged slot for 0.7 DPS. It is a 1 in several thousand
-// drop off the Defias in Westfall, so take the numbers with that in mind.
-//
-// The trinket slots stay empty because nothing a rogue can wear there at 20 does anything
-// for damage. The search puts Rune of Duty in for 0.1, but it is 4 Stamina and
-// resistances, so that is noise.
-//
-// Pyrewood Signet Ring is 4 hit rating, which is 1.7% hit at level 20 if rating scales
-// with level the way we assume (see core.RatingPerPercent), and 0.9 DPS over the
-// Legionnaire's Band. Fletcher's Gloves (14 crit rating, 4.3% crit at 20) would break the
-// Defias set, and they lose to it.
-//
-// The enchants are the best a level 20 can get, Enchanting 225 at most: Agility on the
-// neck (a Forever enchant), cloak, bracers, gloves and boots, Lesser Stats on the chest,
-// a Forceful Heavy Armor Kit on the legs and Striking on both weapons. They are worth
-// 9.5 to 10 DPS. The sim has Forever's values for them, which are well above Classic's
-// for the low ones (Gloves Agility +7, Minor Agility +3).
-export const GearLevel20Backstab = PresetUtils.makePresetGear('Level 20 Backstab', Level20BackstabGear);
-export const GearLevel20SinisterStrike = PresetUtils.makePresetGear('Level 20 Sinister Strike', Level20SinisterStrikeGear);
+// Both sets share Pathfinder Hat and Ghostwalker Boots, Ghostshard Talisman and Ironspine's
+// Eye (Scarlet Monastery Graveyard), Unearthed Bands of Power (Uldaman), Infiltrator Armor,
+// Tiger Hunter Gloves (Tiger Mastery), Triprunner Dungarees, Defiler's Chain Girdle (Arathi
+// Basin, Horde) and Parachute Cloak (Engineering). Sinister Strike wields Ironspine's Fist
+// and Silent Hunter (Horde quest Call to Arms). Backstab wields Silent Hunter in the main
+// hand and Scout's Blade (Warsong Gulch, Horde) in the off hand. A quest reward can only
+// be had once, so the search no longer puts Silent Hunter in both hands.
+export const GearLevel30p5Backstab = PresetUtils.makePresetGear('Level 30 + 5 Backstab', Level30p5BackstabGear, {
+	tooltip: "Level 30 Backstab gear with Silent Hunter and Scout's Blade.",
+	group: 'Level 30',
+});
+export const GearLevel30p5SinisterStrike = PresetUtils.makePresetGear('Level 30 + 5 Sinister Strike', Level30p5SinisterStrikeGear, {
+	tooltip: "Level 30 Sinister Strike gear with Ironspine's Fist and Silent Hunter.",
+	group: 'Level 30',
+});
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearBackstabPreBiS, GearSinisterStrikePreBiS, GearBackstabP1BiS, GearSinisterStrikeP1BiS, GearLevel20Backstab, GearLevel20SinisterStrike],
-	[Phase.Phase2]: [GearBackstabPreBiS, GearSinisterStrikePreBiS, GearBackstabP2BiS, GearSinisterStrikeP2BiS, GearLevel20Backstab, GearLevel20SinisterStrike],
+	[Phase.Phase1]: [
+		GearBackstabPreBiS,
+		GearSinisterStrikePreBiS,
+		GearBackstabP1BiS,
+		GearSinisterStrikeP1BiS,
+		GearLevel30p5Backstab,
+		GearLevel30p5SinisterStrike,
+	],
+	[Phase.Phase2]: [
+		GearBackstabPreBiS,
+		GearSinisterStrikePreBiS,
+		GearBackstabP2BiS,
+		GearSinisterStrikeP2BiS,
+		GearLevel30p5Backstab,
+		GearLevel30p5SinisterStrike,
+	],
 };
 
 export const DefaultGear = GearSinisterStrikePreBiS;
@@ -113,44 +131,80 @@ export const DefaultGear = GearSinisterStrikePreBiS;
 //                                 APL Presets[]
 ///////////////////////////////////////////////////////////////////////////
 
-export const ROTATION_PRESET_BACKSTAB = PresetUtils.makePresetAPLRotation('Backstab', BackstabAPL, {});
-export const ROTATION_PRESET_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Sinister Strike', SinisterStrikeAPL, {});
+export const ROTATION_PRESET_BACKSTAB = PresetUtils.makePresetAPLRotation('Backstab', BackstabAPL, {
+	tooltip: "The optimizer's best level 60 Backstab rotation.",
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Sinister Strike', SinisterStrikeAPL, {
+	tooltip: "The optimizer's best level 60 Sinister Strike rotation.",
+	group: 'Level 60',
+});
 // Variants of the Backstab and Sinister Strike rotations, generated by
 // tools/rotopt/rogue_presets.sh. The plain ones are the optimizer's best, these are the
 // alternatives to compare against.
-export const ROTATION_PRESET_BACKSTAB_RUPTURE = PresetUtils.makePresetAPLRotation('Backstab (Rupture at 5 points)', BackstabRuptureAPL, {});
-export const ROTATION_PRESET_BACKSTAB_ON_COOLDOWN = PresetUtils.makePresetAPLRotation('Backstab (cooldowns on cooldown)', BackstabOnCooldownAPL, {});
+export const ROTATION_PRESET_BACKSTAB_RUPTURE = PresetUtils.makePresetAPLRotation('Backstab (Rupture at 5 points)', BackstabRuptureAPL, {
+	tooltip: 'Backstab variant that uses Rupture as a 5 point finisher.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_BACKSTAB_ON_COOLDOWN = PresetUtils.makePresetAPLRotation('Backstab (cooldowns on cooldown)', BackstabOnCooldownAPL, {
+	tooltip: 'Backstab variant that uses every cooldown as soon as it is ready.',
+	group: 'Level 60',
+});
 export const ROTATION_PRESET_BACKSTAB_SND_WINDOW = PresetUtils.makePresetAPLRotation(
 	'Backstab (cooldowns in a 20s Slice and Dice window)',
 	BackstabSndWindowAPL,
-	{},
+	{ tooltip: 'Backstab variant that saves the cooldowns for a window with 20 sec of Slice and Dice.', group: 'Level 60' },
 );
-export const ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN = PresetUtils.makePresetAPLRotation('SS (cooldowns on cooldown)', SinisterStrikeOnCooldownAPL, {});
+export const ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN = PresetUtils.makePresetAPLRotation('SS (cooldowns on cooldown)', SinisterStrikeOnCooldownAPL, {
+	tooltip: 'Sinister Strike variant that uses every cooldown as soon as it is ready.',
+	group: 'Level 60',
+});
 export const ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR = PresetUtils.makePresetAPLRotation(
 	'SS (everything with Adrenaline Rush)',
 	SinisterStrikeHoldForARAPL,
-	{},
+	{ tooltip: 'Sinister Strike variant that holds every cooldown for Adrenaline Rush.', group: 'Level 60' },
 );
 export const ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER = PresetUtils.makePresetAPLRotation(
 	'SS (5 point Slice and Dice before cooldowns)',
 	SinisterStrikeSndOpenerAPL,
-	{},
+	{ tooltip: 'Sinister Strike variant that puts up a 5 point Slice and Dice before the cooldowns.', group: 'Level 60' },
 );
 export const ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW = PresetUtils.makePresetAPLRotation(
 	'SS (cooldowns in a 20s Slice and Dice window)',
 	SinisterStrikeSndWindowAPL,
-	{},
+	{ tooltip: 'Sinister Strike variant that saves the cooldowns for a window with 20 sec of Slice and Dice.', group: 'Level 60' },
 );
-export const ROTATION_PRESET_BACKSTAB_SWEATY = PresetUtils.makePresetAPLRotation('Backstab (Sweaty)', BackstabSweatyAPL, {});
-export const ROTATION_PRESET_SINISTER_STRIKE_SWEATY = PresetUtils.makePresetAPLRotation('Sinister Strike (Sweaty)', SinisterStrikeSweatyAPL, {});
-export const ROTATION_PRESET_SINISTER_STRIKE_IEA = PresetUtils.makePresetAPLRotation('Improved Expose Armor (SS)', SinisterStrikeIEAAPL, {});
-export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateAPL, {});
-// Level 20 rotations from the same templates: Slice and Dice, Rupture at 3 points (rank 1
-// Rupture beats rank 3 Eviscerate at this level), builder whenever the energy is there,
-// Thistle Tea when low. The lines name the level 60 spell ranks and the sim resolves them to the
-// rank the level knows, so the icons show a higher rank than what is cast.
-export const ROTATION_PRESET_LEVEL20_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 20 Backstab', Level20BackstabAPL, {});
-export const ROTATION_PRESET_LEVEL20_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 20 Sinister Strike', Level20SinisterStrikeAPL, {});
+export const ROTATION_PRESET_BACKSTAB_SWEATY = PresetUtils.makePresetAPLRotation('Backstab (Sweaty)', BackstabSweatyAPL, {
+	tooltip: 'Sweaty variant of the Backstab rotation.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_SINISTER_STRIKE_SWEATY = PresetUtils.makePresetAPLRotation('Sinister Strike (Sweaty)', SinisterStrikeSweatyAPL, {
+	tooltip: 'Sweaty variant of the Sinister Strike rotation.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_SINISTER_STRIKE_IEA = PresetUtils.makePresetAPLRotation('Improved Expose Armor (SS)', SinisterStrikeIEAAPL, {
+	tooltip: 'Sinister Strike rotation that also keeps Improved Expose Armor up.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateAPL, {
+	tooltip: 'Level 60 Mutilate rotation.',
+	group: 'Level 60',
+});
+// The level 30 rotations (tools/rotopt/rogue_presets.sh): Slice and Dice, Rupture, the
+// builder whenever the energy is there and Thistle Tea when low. The lines name the level
+// 60 spell ranks and the sim resolves them to the rank the level knows, so the icons show a
+// higher rank than what is cast. Sinister Strike puts Slice and
+// Dice up at 2 points (+0.2 at 60 sec, a 4 point one is 1.5 ahead at 30 sec but 0.4 behind
+// at 60). Backstab Ruptures at 5 points (+0.5) and Vanishes into an Ambush at 3 points or
+// fewer (+0.6).
+export const ROTATION_PRESET_LEVEL30P5_BACKSTAB = PresetUtils.makePresetAPLRotation('Level 30 + 5 Backstab', Level30p5BackstabAPL, {
+	tooltip: 'Level 30 Backstab rotation. It Ruptures at 5 points and Vanishes into Ambush.',
+	group: 'Level 30',
+});
+export const ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Level 30 + 5 Sinister Strike', Level30p5SinisterStrikeAPL, {
+	tooltip: 'Level 30 Sinister Strike rotation with a 2 point Slice and Dice.',
+	group: 'Level 30',
+});
 
 export const APLPresets = {
 	[Phase.Phase1]: [
@@ -167,8 +221,8 @@ export const APLPresets = {
 		ROTATION_PRESET_SINISTER_STRIKE_SWEATY,
 		ROTATION_PRESET_SINISTER_STRIKE_IEA,
 		ROTATION_PRESET_MUTILATE,
-		ROTATION_PRESET_LEVEL20_BACKSTAB,
-		ROTATION_PRESET_LEVEL20_SINISTER_STRIKE,
+		ROTATION_PRESET_LEVEL30P5_BACKSTAB,
+		ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE,
 	],
 	[Phase.Phase2]: [
 		ROTATION_PRESET_BACKSTAB,
@@ -184,8 +238,8 @@ export const APLPresets = {
 		ROTATION_PRESET_SINISTER_STRIKE_SWEATY,
 		ROTATION_PRESET_SINISTER_STRIKE_IEA,
 		ROTATION_PRESET_MUTILATE,
-		ROTATION_PRESET_LEVEL20_BACKSTAB,
-		ROTATION_PRESET_LEVEL20_SINISTER_STRIKE,
+		ROTATION_PRESET_LEVEL30P5_BACKSTAB,
+		ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE,
 	],
 };
 
@@ -209,27 +263,47 @@ export const DefaultAPLMutilate = ROTATION_PRESET_MUTILATE;
 
 // Preset name must be unique. Ex: 'Backstab DPS' cannot be used as a name more than once
 
-export const CombatBackstabTalents = PresetUtils.makePresetTalents('Backstab', SavedTalents.create({ talentsString: '005323102-30230320201515231-002' }));
+export const CombatBackstabTalents = PresetUtils.makePresetTalents('Backstab', SavedTalents.create({ talentsString: '005323102-30230320201515231-002' }), {
+	tooltip: 'Level 60 Combat talents for Backstab with daggers.',
+	group: 'Level 60',
+});
 export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents(
 	'Sinister Strike',
 	SavedTalents.create({ talentsString: '00532310301-32003311201515231' }),
+	{ tooltip: 'Level 60 Combat talents for Sinister Strike.', group: 'Level 60' },
 );
 export const CombatSinisterStrikeIEATalents = PresetUtils.makePresetTalents(
 	'Improved Expose Armor (SS)',
 	SavedTalents.create({ talentsString: '005323123-32003311201515131' }),
+	{ tooltip: 'Level 60 Sinister Strike talents with Improved Expose Armor.', group: 'Level 60' },
 );
-export const AssassinationMutilateTalents = PresetUtils.makePresetTalents('Mutilate', SavedTalents.create({ talentsString: '00530310551021051-302303202004' }));
-// The 11 points a level 20 has. Sinister Strike: Malice 5, Imp SnD 2, Murder 2, Imp SS 2,
-// and without Murder (anything but Humanoids and Giants) the two points go to Ruthlessness
-// and Relentless Strikes instead. Backstab: Malice 1, Imp Evis 3, Lightning Reflexes 2,
-// Puncturing Wounds 3, Opportunity 2 (the best Backstab build has no Murder, five Combat
-// points are needed to reach Puncturing Wounds and nothing is left for row 2 of Assassination).
-export const Level20SinisterStrikeTalents = PresetUtils.makePresetTalents('Level 20 Sinister Strike', SavedTalents.create({ talentsString: '005022-02' }));
-export const Level20SinisterStrikeNoMurderTalents = PresetUtils.makePresetTalents(
-	'Level 20 Sinister Strike (no Murder)',
-	SavedTalents.create({ talentsString: '0053021' }),
+export const AssassinationMutilateTalents = PresetUtils.makePresetTalents(
+	'Mutilate',
+	SavedTalents.create({ talentsString: '00530310551021051-302303202004' }),
+	{ tooltip: 'Level 60 Assassination talents for Mutilate.', group: 'Level 60' },
 );
-export const Level20BackstabTalents = PresetUtils.makePresetTalents('Level 20 Backstab', SavedTalents.create({ talentsString: '001-3023-002' }));
+// Level 30 with 5 extra talent points (26 in all). With 26 points Seal Fate, Mutilate,
+// Blade Flurry, Hack and Slash, Aggression and Weapon Expertise are all in reach, so we
+// scored every build over the damage talents (Malice 5 and Murder 2 kept), split into
+// deep Assassination, deep Combat and the builds in between (23517 for Sinister Strike,
+// 31065 for Backstab). Deep Combat and Seal Fate lose, and so does Mutilate: the best
+// Mutilate build does 107.4 at 60 sec where Backstab does 119.6 on the same daggers.
+//
+// The top builds are within 0.3 DPS of each other. Sinister Strike: Malice 5,
+// Ruthlessness 3, Murder 2, Imp SnD 3, Relentless Strikes, Lethality 1, Vile Poisons 3,
+// Imp Eviscerate 3, Imp SS 2 and Precision 3. Taking Vile Poisons 5, Improved Poisons and
+// Vigor in place of the Combat points ties it. Backstab: Malice 5, Ruthlessness 1, Murder
+// 2, Imp SnD 2, Relentless Strikes, Lethality 2, Imp Eviscerate 3, Lightning Reflexes 2,
+// Puncturing Wounds 3, Precision 3 and Opportunity 2.
+export const Level30p5SinisterStrikeTalents = PresetUtils.makePresetTalents(
+	'Level 30 + 5 Sinister Strike',
+	SavedTalents.create({ talentsString: '0053231013-320003' }),
+	{ tooltip: 'Level 30 with 5 extra talent points for Sinister Strike, mostly Assassination.', group: 'Level 30' },
+);
+export const Level30p5BackstabTalents = PresetUtils.makePresetTalents('Level 30 + 5 Backstab', SavedTalents.create({ talentsString: '005122102-302303-002' }), {
+	tooltip: 'Level 30 with 5 extra talent points for Backstab, split between Assassination and Combat.',
+	group: 'Level 30',
+});
 
 export const TalentPresets = {
 	[Phase.Phase1]: [
@@ -237,18 +311,16 @@ export const TalentPresets = {
 		CombatSinisterStrikeTalents,
 		CombatSinisterStrikeIEATalents,
 		AssassinationMutilateTalents,
-		Level20BackstabTalents,
-		Level20SinisterStrikeTalents,
-		Level20SinisterStrikeNoMurderTalents,
+		Level30p5BackstabTalents,
+		Level30p5SinisterStrikeTalents,
 	],
 	[Phase.Phase2]: [
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
 		CombatSinisterStrikeIEATalents,
 		AssassinationMutilateTalents,
-		Level20BackstabTalents,
-		Level20SinisterStrikeTalents,
-		Level20SinisterStrikeNoMurderTalents,
+		Level30p5BackstabTalents,
+		Level30p5SinisterStrikeTalents,
 	],
 };
 
@@ -267,97 +339,99 @@ export const DefaultTalents = DefaultTalentsSinisterStrike;
 //                                Build Presets
 ///////////////////////////////////////////////////////////////////////////
 export const PresetBuildBackstab = PresetUtils.makePresetBuild('Backstab', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Combat Backstab on Phase 2 BiS daggers.',
 	gear: GearBackstabP2BiS,
 	talents: DefaultTalentsBackstab,
 	rotation: DefaultAPLBackstab,
 });
 export const PresetBuildSinisterStrike = PresetUtils.makePresetBuild('Sinister Strike', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Combat Sinister Strike on Phase 2 BiS gear.',
 	gear: GearSinisterStrikeP2BiS,
 	talents: DefaultTalentsSinisterStrike,
 	rotation: DefaultAPLSinisterStrike,
 });
 export const PresetBuildIEA = PresetUtils.makePresetBuild('IEA', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Sinister Strike with Improved Expose Armor, on Phase 2 BiS gear.',
 	gear: GearSinisterStrikeP2BiS,
 	talents: DefaultTalentsIEA,
 	rotation: DefaultAPLIEA,
 });
 export const PresetBuildMutilate = PresetUtils.makePresetBuild('Mutilate', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Assassination Mutilate on Phase 2 BiS daggers.',
 	gear: GearBackstabP2BiS,
 	talents: DefaultTalentsMutilate,
 	rotation: DefaultAPLMutilate,
 });
 
-// The level 20 comparison setup: Mutanus the Devourer's level and armor (a level 22 dungeon
-// boss, VanCleef is 888), 60 second fights, no raid buffs or debuffs since the buff table
-// holds level 60 values, Instant Poison on both weapons and Thistle Tea.
-//
-// Blessing of Kings is the exception. It is 10% of every attribute rather than a number
-// off the level 60 table, so it is right at any level, and a group at 20 almost always
-// has a paladin in it. The gear search ran with it.
-const level20Encounter = (name: string, targetName: string, mobType: MobType) =>
-	PresetUtils.makePresetEncounter(
-		name,
-		Encounter.create({
-			duration: 60,
-			durationVariation: 5,
-			executeProportion20: 0.2,
-			executeProportion25: 0.25,
-			executeProportion35: 0.35,
-			targets: [
-				{
-					id: 3654,
-					name: targetName,
-					level: 22,
-					mobType,
-					stats: new Stats().withStat(Stat.StatArmor, 922).withStat(Stat.StatHealth, 20000).asArray(),
-					minBaseDamage: 40,
-					damageSpread: 0.3333,
-					swingSpeed: 2,
-					parryHaste: true,
-				},
-			],
+// A level 30 rogue soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32) for
+// 60 sec. There are no raid buffs or debuffs, since the buff table holds level 60 values.
+// Blessing of Kings is the exception: it is 10% of every attribute rather than a number off
+// the level 60 table, so it is right at any level, and a group at 30 almost always has a
+// paladin in it. Deadly Poison (level 30) goes in the main hand and Instant Poison in the
+// off hand. That is 0.3 ahead of Deadly Poison on both weapons at 60 sec, and 0.9 to 4.2
+// ahead of the other pairs. Thistle Tea is the conjured item.
+export const EncounterLevel30 = PresetUtils.makePresetEncounter(
+	'Level 30',
+	Encounter.create({
+		duration: 60,
+		durationVariation: 5,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 3983,
+				name: 'Interrogator Vishas',
+				level: 32,
+				mobType: MobType.MobTypeHumanoid,
+				stats: new Stats().withStat(Stat.StatArmor, 1063).withStat(Stat.StatHealth, 30000).asArray(),
+				minBaseDamage: 52,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		raidBuffs: RaidBuffs.create({}),
+		debuffs: Debuffs.create({}),
+		buffs: IndividualBuffs.create({ blessingOfKings: true }),
+		consumes: Consumes.create({
+			defaultConjured: Conjured.ConjuredRogueThistleTea,
+			mainHandImbue: WeaponImbue.DeadlyPoison,
+			offHandImbue: WeaponImbue.InstantPoison,
 		}),
-		{
-			raidBuffs: RaidBuffs.create({}),
-			debuffs: Debuffs.create({}),
-			buffs: IndividualBuffs.create({ blessingOfKings: true }),
-			consumes: Consumes.create({
-				defaultConjured: Conjured.ConjuredRogueThistleTea,
-				mainHandImbue: WeaponImbue.InstantPoison,
-				offHandImbue: WeaponImbue.InstantPoison,
-			}),
-		},
-	);
-export const EncounterLevel20 = level20Encounter('Level 20', 'Mutanus the Devourer', MobType.MobTypeHumanoid);
-// The same boss as an Undead, for the builds that skip Murder (it only works on Humanoids
-// and Giants).
-export const EncounterLevel20Undead = level20Encounter('Level 20 (Undead)', 'Level 22 undead boss', MobType.MobTypeUndead);
-// Undead, the rogue we play, and the best of the three Horde races now that Touch of the
-// Grave has no internal cooldown. At 30 / 60 / 300 sec on the shipped sets with Blessing
-// of Kings, Sinister Strike does 93.6 / 85.6 / 79.1 as Undead, 93.0 / 84.6 / 78.0 as a
-// Troll and 91.6 / 83.5 / 77.2 as an Orc. Backstab does 92.2 / 83.6 / 77.0 as Undead,
-// 91.1 / 82.3 / 75.8 as a Troll and 89.8 / 81.3 / 75.2 as an Orc.
-//
-// The Orc gets Axe Specialization on Butcher's Cleaver in the off hand already. Putting
-// Razor's Edge in the main hand as well costs it 2.6 at 60 sec, because Cruel Barb hits
-// much harder (30-57 against 25-48). Nothing else moves with the race here. The Undead
-// and the Troll have no weapon specialization, and the rotations carry every race's
-// cooldown line for the others to ignore.
-export const PresetBuildLevel20Backstab = PresetUtils.makePresetBuild('Level 20 Backstab', {
-	gear: GearLevel20Backstab,
-	talents: Level20BackstabTalents,
-	rotation: ROTATION_PRESET_LEVEL20_BACKSTAB,
-	encounter: EncounterLevel20,
+	},
+);
+// Level 30 with 5 extra talent points. At 30 / 60 / 300 sec that is 137.9 / 130.4 / 122.8
+// for Sinister Strike and 155.1 / 141.8 / 132.0 for Backstab. Backstab pulls ahead at 30
+// because the daggers it gets there (Silent Hunter, Scout's Blade) are much better than
+// the level 20 ones were.
+export const PresetBuildLevel30p5Backstab = PresetUtils.makePresetBuild('Level 30 + 5 Backstab', {
+	group: 'Level 30',
+	tooltip: 'Level 30 Undead Backstab with 5 extra talent points, soloing Interrogator Vishas.',
+	gear: GearLevel30p5Backstab,
+	talents: Level30p5BackstabTalents,
+	rotation: ROTATION_PRESET_LEVEL30P5_BACKSTAB,
+	encounter: EncounterLevel30,
 	race: Race.RaceUndead,
-	level: 20,
+	level: 30,
+	bonusTalentPoints: 5,
 });
-export const PresetBuildLevel20SinisterStrike = PresetUtils.makePresetBuild('Level 20 Sinister Strike', {
-	gear: GearLevel20SinisterStrike,
-	talents: Level20SinisterStrikeTalents,
-	rotation: ROTATION_PRESET_LEVEL20_SINISTER_STRIKE,
-	encounter: EncounterLevel20,
+export const PresetBuildLevel30p5SinisterStrike = PresetUtils.makePresetBuild('Level 30 + 5 Sinister Strike', {
+	group: 'Level 30',
+	tooltip: 'Level 30 Undead Sinister Strike with 5 extra talent points, soloing Interrogator Vishas.',
+	gear: GearLevel30p5SinisterStrike,
+	talents: Level30p5SinisterStrikeTalents,
+	rotation: ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE,
+	encounter: EncounterLevel30,
 	race: Race.RaceUndead,
-	level: 20,
+	level: 30,
+	bonusTalentPoints: 5,
 });
 
 ///////////////////////////////////////////////////////////////////////////
@@ -394,8 +468,8 @@ export const P1RaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	fireResistanceTotem: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-	graceOfAirTotem: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	trueshotAura: true,
 });

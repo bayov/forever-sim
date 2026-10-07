@@ -1,14 +1,7 @@
-import {
-	Consumes,
-	Flask,
-	Food,
-} from '../core/proto/common.js';
+import { Consumes, Flask, Food } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
-import {
-	PaladinAura,
-	PaladinOptions as HolyPaladinOptions,
-} from '../core/proto/paladin.js';
+import { PaladinAura, PaladinOptions as HolyPaladinOptions } from '../core/proto/paladin.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
@@ -26,7 +19,7 @@ export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '005320003025101351-500250302003',
+		talentsString: '05320003025101351-500250302003',
 	}),
 };
 

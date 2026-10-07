@@ -126,8 +126,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			Presets.PresetBuildSinisterStrike,
 			Presets.PresetBuildIEA,
 			Presets.PresetBuildMutilate,
-			Presets.PresetBuildLevel20Backstab,
-			Presets.PresetBuildLevel20SinisterStrike,
+			Presets.PresetBuildLevel30p5Backstab,
+			Presets.PresetBuildLevel30p5SinisterStrike,
 		],
 	},
 

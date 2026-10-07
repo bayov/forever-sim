@@ -131,7 +131,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel20, Presets.PresetBuildLevel20x2, Presets.PresetBuildLevel20x3, Presets.PresetBuildLevel20x4],
+		builds: [
+			Presets.PresetBuildLevel30p5,
+		],
 		rotations: [
 			...Presets.APLPresets[Phase.Phase4],
 			...Presets.APLPresets[Phase.Phase3],
@@ -146,7 +148,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			...Presets.TalentPresets[Phase.Phase1],
 		],
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.DefaultGear, Presets.GearLevel20, Presets.GearLevel20AoE],
+		gear: [Presets.DefaultGear, Presets.GearLevel30p5],
 	},
 
 	autoRotation: player => {

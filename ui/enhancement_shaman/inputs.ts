@@ -1,6 +1,6 @@
 import * as InputHelpers from '../core/components/input_helpers.js';
 import { Ruleset } from '../core/proto/api.js';
-import { Spec } from '../core/proto/common.js';
+import { Spec, WeaponImbue } from '../core/proto/common.js';
 import { ShamanSyncType } from '../core/proto/shaman.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
@@ -33,5 +33,21 @@ export const RaidDamageHitsInput = InputHelpers.makeSpecOptionsNumberInput<Spec.
 		'The boss is on the tank, so this is the only thing that feeds Water Shield. Lightning Shield needs melee hits and ignores it.',
 	float: true,
 	positive: true,
+	showWhen: player => player.sim.getRuleset() === Ruleset.RulesetForever,
+});
+
+export const ShamanImbueInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman>({
+	fieldName: 'shamanImbue',
+	label: 'Shaman weapon imbue',
+	labelTooltip:
+		'The main hand imbue. In Forever it no longer takes the weapon enchant slot, ' +
+		'so the main hand imbue under consumables takes an oil or a stone on top of it.',
+	values: [
+		{ name: 'None', value: WeaponImbue.WeaponImbueUnknown },
+		{ name: 'Windfury Weapon', value: WeaponImbue.WindfuryWeapon },
+		{ name: 'Rockbiter Weapon', value: WeaponImbue.RockbiterWeapon },
+		{ name: 'Flametongue Weapon', value: WeaponImbue.FlametongueWeapon },
+		{ name: 'Frostbrand Weapon', value: WeaponImbue.FrostbrandWeapon },
+	],
 	showWhen: player => player.sim.getRuleset() === Ruleset.RulesetForever,
 });

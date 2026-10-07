@@ -23,7 +23,7 @@ import {
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
-import { Blessings, PaladinAura, PaladinOptions as ProtectionPaladinOptions,PaladinSeal } from '../core/proto/paladin.js';
+import { Blessings, PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import APLBasicProtectionJson from './apls/basic_prot.apl.json';
 import APLP5ProtJson from './apls/p5prot.apl.json';
@@ -70,14 +70,14 @@ export const DefaultAPL = APLPresets[Phase.Phase5][0];
 export const P4ProtTalents = {
 	name: 'P4 Prot',
 	data: SavedTalents.create({
-		talentsString: '01-5530513321301551-0520',
+		talentsString: '1-5530513321301551-052',
 	}),
 };
 
 export const P5ProtTalents = {
 	name: 'P5 Prot',
 	data: SavedTalents.create({
-		talentsString: '01-5530513321301551-0520',
+		talentsString: '1-5530513321301551-052',
 	}),
 };
 

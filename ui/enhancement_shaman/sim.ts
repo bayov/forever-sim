@@ -21,6 +21,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	epStats: [
 		// Attributes
 		Stat.StatIntellect,
+		Stat.StatSpirit,
 		Stat.StatAgility,
 		Stat.StatStrength,
 		// Physical
@@ -48,6 +49,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 		Stat.StatStrength,
 		Stat.StatAgility,
 		Stat.StatIntellect,
+		Stat.StatSpirit,
 		// Physical
 		Stat.StatAttackPower,
 		Stat.StatMeleeHit,
@@ -112,7 +114,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	excludeBuffDebuffInputs: [],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
-		inputs: [ShamanInputs.SyncTypeInput, ShamanInputs.RaidDamageHitsInput, OtherInputs.TankAssignment, OtherInputs.InFrontOfTarget],
+		inputs: [
+			ShamanInputs.SyncTypeInput,
+			ShamanInputs.RaidDamageHitsInput,
+			ShamanInputs.ShamanImbueInput,
+			OtherInputs.TankAssignment,
+			OtherInputs.InFrontOfTarget,
+		],
 	},
 	itemSwapConfig: {
 		itemSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand],
@@ -124,7 +132,20 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel20],
+		builds: [
+			Presets.PresetBuildLevel60,
+			Presets.PresetBuildLevel60WaterShield,
+			Presets.PresetBuildLevel60ManaTide,
+			Presets.PresetBuildLevel30p5,
+			Presets.PresetBuildLevel30PvP,
+			Presets.PresetBuildLevel30PvPVsCloth,
+			Presets.PresetBuildLevel30PvPVsHunter,
+			Presets.PresetBuildLevel30PvPVsRogue,
+			Presets.PresetBuildLevel30PvPVsShaman,
+			Presets.PresetBuildLevel30PvPVsWarrior,
+			Presets.PresetBuildLevel30PvPVsProt,
+		],
+		epWeights: Presets.EPPresets,
 		talents: [
 			...Presets.TalentPresets[Phase.Phase6],
 			...Presets.TalentPresets[Phase.Phase5],

@@ -1,0 +1,16 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":20305}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+    ],
+    "priorityList": [
+        {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"auraIsActive":{"auraId":{"spellId":20305}}}},"notes":"Judge Seal of the Crusader first, the judgement lasts 40 sec and every melee hit refreshes it."},
+        {"action":{"castSpell":{"spellId":{"spellId":20305}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":20303},"sourceUnit":{"type":"CurrentTarget"}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":20305}}}}}]}}},"notes":"Seal of the Crusader when its judgement is not on the target."},
+        {"action":{"castSpell":{"spellId":{"spellId":20116}}},"notes":"Consecration on cooldown, down to the last point of mana."},
+        {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20915}}},{"auraIsActive":{"auraId":{"spellId":20303},"sourceUnit":{"type":"CurrentTarget"}}}]}}},"notes":"Judgement on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":20915}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":20915}}}}},{"auraIsActive":{"auraId":{"spellId":20303},"sourceUnit":{"type":"CurrentTarget"}}}]}}},"notes":"Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":680}}},"notes":"Holy Strike on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":5614}}},"notes":"Exorcism on cooldown, only against Undead and Demons."},
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on a free GCD."}
+    ]
+}

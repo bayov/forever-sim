@@ -29,10 +29,9 @@ import { PaladinAura, PaladinOptions as RetributionPaladinOptions, PaladinSeal }
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import APLBasicRetJson from './apls/basic_ret.apl.json';
-import Level20APLJSON from './apls/level20.apl.json';
+import Level30p5APLJSON from './apls/level30p5.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
-import Level20GearJSON from './gear_sets/level20.gear.json';
-import Level20AoEGearJSON from './gear_sets/level20_aoe.gear.json';
+import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -42,51 +41,27 @@ import Level20AoEGearJSON from './gear_sets/level20_aoe.gear.json';
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
-// The tools/rotopt gear search at level 20 over everything an Undead paladin can equip
-// (Scourge Invasion drops left out), on the wowhead Forever item data.
+export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear, { tooltip: 'No gear equipped.' });
+// The gear search at level 30 with 26 talent points and Seal of Command, over everything
+// an Undead paladin can equip, started from the old level 20 set. The professions are
+// Blacksmithing and Enchanting, and the Scourge Invasion drops and the items no source is
+// known for are left out. Corpsemaker (Razorfen Kraul) takes the two hander for 8.8 DPS. Blacksmithing makes
+// the helm, shirt, leggings and belt (the Crusader's chain pieces and Justicar's Belt,
+// bind on pickup) and the Hard Gold Boots. Bloodmage Mantle comes from the Scarlet
+// Monastery Library and Unearthed Bands of Power from Uldaman.
 //
-// The weapon is Wolfsbane, the two hander at the end of the Undead paladin quest chain,
-// and it is worth 4 DPS on its own: 69-105 over 3.4 sec where Hammerbone out of Wailing
-// Caverns swings 55-84, and the sim does not even run its Holystorm proc. Most of the
-// armor is the Totemic Leather set the Leatherworker makes for themselves, and the rest
-// is Forever's own spell power gear: Spellpower Goggles Xtreme, Technician's Bracers from
-// A Fine Mess in Gnomeregan, Fletcher's Gloves, and Chestnut Mantle from Allegiance to the
-// Old Gods.
+// The first search took Scorn's Icy Choker (+0.7). Scorn only spawns in the Scourge
+// Invasion, so we left his drops out and Mark of the Pack Leader keeps the neck. Manual
+// Crowd Pummeler is left out too, see the shaman's Level 30 + 5 set.
 //
-// The neck and rings are new Forever items. Mark of the Pack Leader drops off Humar the
-// Pridelord, a rare in the Barrens (ForeverChanges has it from player reports it has not
-// checked). Philanthropist's Ring is the Greater Friend of the Library reward for 20
-// books, four of them in level 30 zones. First Mate Band drops off Mr. Smite in the
-// Deadmines. Together they are 1.5 DPS over the Warsong Gulch neck and ring and the Coral
-// Band.
-//
-// Mail is open to a paladin at 20, and the search does look at the mail ForeverChanges
-// lists (Veteran's Silvered Chain Helm, Grip of Fear, Vilewalkers, Juggernaut
-// Leggings). It keeps the leather, because the Totemic pieces carry spell power for
-// Consecration. Four pieces of Defias Leather are 0.2 ahead on one target but 2 to 6
-// behind once there is a second one, so we leave that set to the rogue.
-//
-// Fletcher's Gloves are 14 crit rating, 4.3% crit at level 20 if rating scales with level
-// the way we assume (see core.RatingPerPercent), and Forever pays that crit on Seal of
-// Command and Consecration too.
-//
-// The enchants are the best a level 20 can get, Enchanting 225 at most, and are worth 9
-// DPS on one target and 15 on three: +15 Strength on Wolfsbane, +7 Strength on the
-// gloves, and spell power everywhere else there is a choice (the Spell Power necklace
-// enchant, Mystic armor kits, Lesser Healing Power on the bracers for its 6 spell damage).
-//
-// The set assumes Engineering and Leatherworking, which is 4.5 DPS. A level 20 head slot
-// has nothing in it but the goggles, so that is most of the gap.
-export const GearLevel20 = PresetUtils.makePresetGear('Level 20', Level20GearJSON);
-// The same search against three enemies, where Consecration is most of the damage and a
-// point of spell power is worth four of Strength. Wolfsbane stays, it is far enough ahead
-// of every other weapon, and the slots the Totemic Leather set does not win take a spell
-// power piece instead (Heavy Woolen Cloak, Stormrider's Leather Belt, Dark Ritual
-// Leggings out of Blackfathom Deeps, Advisor's Ring), and the gloves take a Mystic Thick
-// Armor Kit instead of Strength. Worth 3.1 DPS on four targets and 1.5 on three at 60 sec,
-// even on two and 1.7 behind on one.
-export const GearLevel20AoE = PresetUtils.makePresetGear('Level 20 AoE', Level20AoEGearJSON);
+// On 2026-10-05 the two-hander went from Lesser Strength (+15 Strength) to Impact (+6 weapon
+// damage), because the +15 Strength and +15 Agility enchants are not in the beta. That is
+// 130.7 against 131.7 at 60 sec. Revelation adds nothing here (128.8, the same as no enchant),
+// because the rotation casts no spell that can trigger it.
+export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p5GearJSON, {
+	tooltip: 'Level 30 gear with Corpsemaker and Blacksmithing crafts.',
+	group: 'Level 30',
+});
 
 export const GearPresets = {};
 
@@ -96,18 +71,25 @@ export const DefaultGear = GearBlank;
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson);
-// The paladin_ret template with the knobs the level 20 search settled on (see
-// tools/rotopt/paladin_presets.sh): Seal of the Crusader judged once for the fight, Seal
-// of Command judged on every cooldown, Holy Strike on cooldown, Consecration down to 20%
-// mana.
-export const APLLevel20 = PresetUtils.makePresetAPLRotation('Level 20', Level20APLJSON);
+export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
+	tooltip: 'Basic level 60 Retribution rotation.',
+	group: 'Level 60',
+});
+// The paladin_ret template with the knobs the level 30 search settled on (see
+// tools/rotopt/paladin_presets.sh), with the level 30 ranks: Seal of the Crusader judged
+// once for the fight, then Consecration whenever it is off cooldown, Seal of Command judged
+// on every cooldown and Holy Strike on cooldown. Consecration goes first and spends the
+// mana to the last point.
+export const APLLevel30p5 = PresetUtils.makePresetAPLRotation('Level 30 + 5', Level30p5APLJSON, {
+	tooltip: 'Level 30 Seal of Command rotation with Consecration and Holy Strike on cooldown.',
+	group: 'Level 30',
+});
 
 export const APLPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [APLBasicRet, APLLevel20],
+	[Phase.Phase4]: [APLBasicRet, APLLevel30p5],
 	[Phase.Phase5]: [],
 };
 
@@ -120,25 +102,38 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/forever/talent-calc and copy the numbers in the url.
 
-// Forever trees (beta client build 1.60.1.69876). Level 60: Improved Holy Strike, Divine
-// Strength and Improved Seals in Holy, Toughness and Precision in Protection, the
-// Retribution tree down to Twist of Light. Not searched yet, the level 60 sets are blank.
-export const P4RetTalents = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '250003-51300-052053310012330301' }));
-// Level 20 (11 points), the best of every 11 point build over the damage talents: Seal
-// of Command with Deflection 5, Improved Judgement 1, Holy Conduit 2 and Conviction 2 in
-// front of it. Deflection counts because the encounter has the enemies hitting the
-// paladin, and every parry hastes the next swing. The builds behind it are within 0.5
-// DPS (Benediction 5 in place of Deflection is 0.9 behind), Seal of Command itself is
-// worth about 5. The same build wins against two, three and four enemies at 60 sec. Over
-// two minutes of a pack the mana runs dry and Benediction 2 with Holy Conduit 3 gets 1.2
-// ahead.
-export const TalentsLevel20 = PresetUtils.makePresetTalents('Level 20', SavedTalents.create({ talentsString: '--50122001' }));
+// Forever trees (beta client build 1.60.1.70009). Level 60: Divine Strength and Improved
+// Seals in Holy, Toughness and Precision in Protection, the Retribution tree down to Twist
+// of Light. Not searched yet, the level 60 sets are blank. The 2026-09-24 build took
+// Improved Holy Strike and Crusade away, and their 4 points went to Deflection 2 and Holy
+// Conduit 2 so Twist of Light still has the 30 Retribution points it needs.
+export const P4RetTalents = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '50003-513-25225331001330301' }), {
+	tooltip: 'Level 60 Retribution talents down to Twist of Light. Not searched yet.',
+	group: 'Level 60',
+});
+// Level 30 with 5 extra talent points (26 in all), Pursuit of Justice 2 pinned. Holy
+// Shock is out of reach with it: Holy Shock needs 20 Holy points and Pursuit of Justice
+// 10 Retribution points. We scored every Seal of Command build over the Retribution
+// damage talents, with up to 8 Holy points in Divine Strength, Divine Intellect and
+// Improved Seals (56865 builds). The best is Deflection 5, Improved Judgement 2, Holy
+// Conduit 2, Conviction 4, Sanctified Judgement 3, Seal of Command, Sacred Arbiter,
+// Two-Handed Weapon Specialization 3, Vengeance 2 and Champion of the Light 1, and it
+// stays on top on the Level 30 + 5 gear.
+//
+// The 2026-10-01 development notes cut Champion of the Light to 20% of Intellect per
+// point (was 33%). We rescored the best 150 builds and every build that moves its point
+// to another talent, and this one is still first. The best build without Champion of
+// the Light is 1.4 DPS behind at 60 sec.
+export const TalentsLevel30p5 = PresetUtils.makePresetTalents('Level 30 + 5', SavedTalents.create({ talentsString: '--502240312013201' }), {
+	tooltip: 'Level 30 with 5 extra talent points, all in Retribution for Seal of Command.',
+	group: 'Level 30',
+});
 
 export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [P4RetTalents, TalentsLevel20],
+	[Phase.Phase4]: [P4RetTalents, TalentsLevel30p5],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase4][0];
@@ -204,21 +199,22 @@ export const DefaultDebuffs = Debuffs.create({
 	improvedScorch: true,
 });
 
+// The paladin is a blacksmith and an enchanter. Gear another profession makes is only in
+// the presets when it binds on equip, so it can be bought.
 export const OtherDefaults = {
-	profession1: Profession.Engineering,
-	profession2: Profession.Leatherworking,
+	profession1: Profession.Blacksmithing,
+	profession2: Profession.Enchanting,
 };
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Builds
 ///////////////////////////////////////////////////////////////////////////
 
-// A level 20 paladin soloing an instance boss: no raid buffs or consumes, its own
-// Blessing of Kings (baseline at 20 under Forever, and 1 DPS ahead of Blessing of Might
-// at 60 sec because the Intellect pays for more Consecrations), and the boss hitting the
-// paladin so Retribution Aura gets to fire.
-export const EncounterLevel20 = PresetUtils.makePresetEncounter(
-	'Level 20',
+// A level 30 paladin soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32):
+// no raid buffs or consumes, its own Blessing of Kings (2.4 DPS ahead of Blessing of Might
+// at 60 sec), and the boss hitting the paladin so Retribution Aura gets to fire.
+export const EncounterLevel30 = PresetUtils.makePresetEncounter(
+	'Level 30',
 	Encounter.create({
 		duration: 60,
 		durationVariation: 5,
@@ -227,12 +223,12 @@ export const EncounterLevel20 = PresetUtils.makePresetEncounter(
 		executeProportion35: 0.35,
 		targets: [
 			{
-				id: 3654,
-				name: 'Mutanus the Devourer',
-				level: 22,
+				id: 3983,
+				name: 'Interrogator Vishas',
+				level: 32,
 				mobType: MobType.MobTypeHumanoid,
-				stats: new Stats().withStat(Stat.StatArmor, 922).withStat(Stat.StatHealth, 20000).asArray(),
-				minBaseDamage: 40,
+				stats: new Stats().withStat(Stat.StatArmor, 1063).withStat(Stat.StatHealth, 30000).asArray(),
+				minBaseDamage: 52,
 				damageSpread: 0.3333,
 				swingSpeed: 2,
 				parryHaste: true,
@@ -248,51 +244,21 @@ export const EncounterLevel20 = PresetUtils.makePresetEncounter(
 		consumes: Consumes.create({}),
 	},
 );
-export const PresetBuildLevel20 = PresetUtils.makePresetBuild('Level 20', {
-	gear: GearLevel20,
-	talents: TalentsLevel20,
-	rotation: APLLevel20,
-	encounter: EncounterLevel20,
+// Level 30 with 5 extra talent points. The optimizer puts Seal of Righteousness 2.6 DPS
+// behind Seal of Command on Corpsemaker, even with its spell power counted twice. At
+// 30 / 60 / 300 sec that is 130.5 / 131.8 / 105.3, and 187.9 on three targets.
+export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', {
+	group: 'Level 30',
+	tooltip: 'Level 30 Undead with 5 extra talent points and Seal of Command, soloing Interrogator Vishas.',
+	gear: GearLevel30p5,
+	talents: TalentsLevel30p5,
+	rotation: APLLevel30p5,
+	encounter: EncounterLevel30,
 	race: Race.RaceUndead,
-	level: 20,
+	level: 30,
+	bonusTalentPoints: 5,
 	options: RetributionPaladinOptions.create({
 		aura: PaladinAura.RetributionAura,
 		primarySeal: PaladinSeal.Command,
 	}),
 });
-
-// A pack of two, three or four of the same mob, all hitting the paladin. The rotation
-// and talents are the single target ones (Consecration is already on cooldown there, and
-// putting it ahead of the seal and judgement lines loses a little), the gear is the AoE
-// set.
-const level20PackEncounter = (targets: number) =>
-	PresetUtils.makePresetEncounter(
-		`Level 20, ${targets} targets`,
-		Encounter.create({
-			...EncounterLevel20.encounter!,
-			targets: Array.from({ length: targets }, () => EncounterLevel20.encounter!.targets[0]),
-		}),
-		{
-			tanks: EncounterLevel20.tanks,
-			raidBuffs: EncounterLevel20.raidBuffs,
-			debuffs: EncounterLevel20.debuffs,
-			buffs: EncounterLevel20.buffs,
-			consumes: EncounterLevel20.consumes,
-		},
-	);
-const level20PackBuild = (targets: number) =>
-	PresetUtils.makePresetBuild(`Level 20, ${targets} targets`, {
-		gear: GearLevel20AoE,
-		talents: TalentsLevel20,
-		rotation: APLLevel20,
-		encounter: level20PackEncounter(targets),
-		race: Race.RaceUndead,
-		level: 20,
-		options: RetributionPaladinOptions.create({
-			aura: PaladinAura.RetributionAura,
-			primarySeal: PaladinSeal.Command,
-		}),
-	});
-export const PresetBuildLevel20x2 = level20PackBuild(2);
-export const PresetBuildLevel20x3 = level20PackBuild(3);
-export const PresetBuildLevel20x4 = level20PackBuild(4);
