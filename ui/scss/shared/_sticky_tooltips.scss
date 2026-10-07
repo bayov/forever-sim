@@ -1,3 +1,67 @@
+// A hint for a key with a click under a tooltip, see keyClickHint().
+// The hints sit apart from the tooltip above them, and close to each other when there are
+// two, like on a modified preset.
+.key-hint {
+	margin: var(--spacer-3) 0 0;
+	display: flex;
+	align-items: center;
+	gap: 0.3em;
+	font-size: 0.75rem;
+	font-weight: normal;
+	color: var(--bs-gray-500);
+
+	.left-click-icon {
+		width: 0.8em;
+		height: 1.2em;
+		flex-shrink: 0;
+		color: var(--bs-gray-400);
+
+		.left-click-icon-button {
+			fill: var(--gold-soft);
+		}
+	}
+}
+
+// While we hold the key of a hint, the hint turns a little green, so we see what a click would
+// do. It fades in and out, so it doesn't blink when we tap the key.
+.key-hint,
+.key-hint kbd {
+	transition:
+		color 0.15s,
+		border-color 0.15s,
+		box-shadow 0.15s;
+}
+
+:root.alt-held .key-hint[data-key='alt'],
+:root.ctrl-held .key-hint[data-key='ctrl'] {
+	color: #a7c4a0;
+
+	// A green tint over the key. It's a shadow on the inside, because the key's gradient can't
+	// fade.
+	kbd {
+		border-color: #4b6b50;
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.08),
+			inset 0 0 0 2em rgba(76, 140, 86, 0.3);
+	}
+}
+
+.key-hint + .key-hint,
+*:has(> .key-hint:last-child) + .key-hint {
+	margin-top: 0.15rem;
+}
+
+// The wowhead tooltips set their own font, so the hint in them keeps ours.
+.wowhead-tooltip .key-hint {
+	font-family: var(--bs-body-font-family);
+	line-height: 1.25;
+}
+
+// A pinned copy doesn't need the hint to pin it. The copy we keep while we hold Alt still does.
+.sticky-tooltip:not(.sticky-tooltip-held) .pin-hint {
+	display: none;
+}
+
 // A tooltip we pinned with Alt+click, see sticky_tooltips.tsx. It holds a copy of the tooltip
 // and a close button that sits on its top right corner.
 .sticky-tooltip {
@@ -8,6 +72,17 @@
 
 	&.dragging {
 		cursor: grabbing;
+	}
+
+	// The copy we keep while we hold Alt looks like the tooltip itself. The mouse goes through
+	// it, and it has no close button until we Alt+click to pin it.
+	&.sticky-tooltip-held {
+		pointer-events: none;
+		box-shadow: none;
+
+		.sticky-tooltip-close {
+			display: none;
+		}
 	}
 
 	// The copies keep the classes of the tooltips, so they look the same. wowhead hides its
@@ -47,4 +122,9 @@
 			background: shade-color($danger, 20%);
 		}
 	}
+}
+
+// The tooltip we just pinned, until the mouse leaves its link, see hidePinnedSources().
+.sticky-tooltip-source-hidden {
+	visibility: hidden !important;
 }
