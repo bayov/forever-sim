@@ -42,3 +42,23 @@
     order: 1;
   }
 }
+
+// The trees get as much width as we can give them, so their talents can grow. When the tab
+// has no room for big trees and the saved talents beside them, the saved talents go below
+// the trees.
+#talents-tab .tab-pane-content-container {
+  container: talents-tab / inline-size;
+}
+
+@container talents-tab (width < 120rem) {
+  #talents-tab .tab-pane-content-container {
+    .talents-tab-left {
+      flex-basis: 100%;
+    }
+
+    .talents-tab-right {
+      order: 1;
+      flex-basis: 100%;
+    }
+  }
+}

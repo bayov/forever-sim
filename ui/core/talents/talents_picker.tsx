@@ -59,7 +59,9 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 					<div className="d-flex">
 						<label>
 							Points Remaining:
-							<span ref={pointsRemainingElemRef}>{getPointsRemaining()}</span>
+							<span ref={pointsRemainingElemRef} className={getPointsRemaining() < 0 ? 'talents-points-negative' : ''}>
+								{getPointsRemaining()}
+							</span>
 						</label>
 					</div>
 					<div className="talents-picker-actions" ref={actionsContainerRef}></div>
@@ -85,6 +87,7 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 		TypedEvent.onAny([player.talentsChangeEmitter, player.miscOptionsChangeEmitter]).on(() => {
 			this.setMaxPoints(getMaxPoints());
 			pointsRemainingElemRef.value!.textContent = `${getPointsRemaining()}`;
+			pointsRemainingElemRef.value!.classList.toggle('talents-points-negative', getPointsRemaining() < 0);
 		});
 
 		new CopyButton(actionsContainerRef.value!, {
@@ -194,12 +197,15 @@ class TalentTreePicker<TalentsProto> extends Component {
 
 		this.rootElem.appendChild(
 			<>
+				{/* Like on foreverchanges.pro, the points we spent in the tree are a badge on its icon. */}
 				<div className="talent-tree-header">
-					<img src={getSpecIcon(klass, specNumber)} className="talent-tree-icon" />
+					<span className="talent-tree-icon">
+						<img src={getSpecIcon(klass, specNumber)} />
+						<label className="talent-tree-points" />
+					</span>
 					<span className="talent-tree-title" />
-					<label className="talent-tree-points" />
-					<button className="talent-tree-reset btn link-danger">
-						<i className="fa fa-times"></i>
+					<button className="talent-tree-reset btn">
+						<i className="fas fa-rotate-left"></i>
 					</button>
 				</div>
 				<div className="talent-tree-background" />
@@ -218,10 +224,11 @@ class TalentTreePicker<TalentsProto> extends Component {
 		// Add 2 for spacing on the sides
 		main.style.gridTemplateColumns = `repeat(${this.picker.numCols}, 1fr)`;
 
-		const iconSize = '3.5rem';
-		main.style.height = `calc(${iconSize} * ${this.picker.numRows})`;
-		main.style.maxWidth = `calc(${iconSize} * ${this.picker.numCols})`;
-		this.rootElem.style.maxWidth = `calc(${iconSize} * ${this.picker.numCols + 2})`;
+		// Each talent takes its icon and a fifth of it on every side. The icons grow with the
+		// width of the tree on wide screens, see --talent-icon-size.
+		const cellSize = 'calc(var(--talent-icon-size) * 1.4)';
+		main.style.height = `calc(${cellSize} * ${this.picker.numRows})`;
+		main.style.maxWidth = `calc(${cellSize} * ${this.picker.numCols})`;
 
 		this.talents = config.talents.map(talent => new TalentPicker(main, talent, this));
 		// Process parent<->child mapping
@@ -257,7 +264,7 @@ class TalentTreePicker<TalentsProto> extends Component {
 
 	update() {
 		this.title.innerHTML = this.config.name;
-		this.pointsElem.textContent = `${this.numPoints} / ${this.getMaxSpendablePoints()}`;
+		this.pointsElem.textContent = String(this.numPoints);
 		this.talents.forEach(talent => talent.update());
 	}
 
@@ -276,10 +283,6 @@ class TalentTreePicker<TalentsProto> extends Component {
 
 	setTalentsString(str: string) {
 		this.talents.forEach((talent, idx) => talent.setPoints(Number(str.charAt(idx)), false));
-	}
-
-	getMaxSpendablePoints() {
-		return this.picker.maxPoints;
 	}
 }
 
@@ -589,7 +592,9 @@ class TalentPicker<TalentsProto> extends Component {
 				{this.config.ranksGuessed && numPoints > 1 && (
 					<p className="talent-picker-tooltip-unsimulated">Only rank 1 was seen at BlizzCon. Higher rank values are extrapolated.</p>
 				)}
-				{this.config.notSimulated && <p className="talent-picker-tooltip-unsimulated">Not simulated yet - points spent here do not affect results.</p>}
+				{this.config.notSimulated && (
+					<p className="talent-picker-tooltip-unsimulated talent-picker-tooltip-warning">Not simulated: Points spent here do not affect results.</p>
+				)}
 			</div>
 		);
 
