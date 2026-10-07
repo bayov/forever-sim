@@ -219,7 +219,7 @@ export class SimHistory {
 			<div className={`sim-run sim-run-${comparison} ${isLatest ? 'sim-run-latest' : ''}`}>
 				{pinButton}
 				<span className="sim-run-title">
-					<span className={`sim-run-name ${run.name ? '' : 'sim-run-unnamed'}`}>{runLabel(run)}</span>
+					<span className={`sim-run-name ${run.name ? '' : 'sim-run-unnamed'}`}>{runLabel(run, place === 'dialog')}</span>
 					{renameButton}
 				</span>
 				{place === 'dialog' ? <span className="sim-run-iterations">{`${run.iterations} it.`}</span> : undefined}
@@ -232,8 +232,8 @@ export class SimHistory {
 		row.dataset.id = run.id;
 
 		pinButton.addEventListener('click', () => this.togglePin(run));
-		renameButton.addEventListener('click', () => this.rename(row, run));
-		row.querySelector('.sim-run-name')!.addEventListener('dblclick', () => this.rename(row, run));
+		renameButton.addEventListener('click', () => this.rename(row, run, place));
+		row.querySelector('.sim-run-name')!.addEventListener('dblclick', () => this.rename(row, run, place));
 		row.addEventListener('click', event => {
 			if ((event.ctrlKey || event.metaKey) && !(event.target as Element).closest('.sim-run-action, .sim-run-pin, input')) this.applySettings(run);
 		});
@@ -269,11 +269,11 @@ export class SimHistory {
 
 	// Puts a text field in place of the name. Enter or a click elsewhere keeps the new name,
 	// and Escape keeps the old one. An empty name goes back to the run's time.
-	private rename(row: HTMLElement, run: SimRun) {
+	private rename(row: HTMLElement, run: SimRun, place: RowPlace) {
 		const nameElem = row.querySelector('.sim-run-name');
 		if (!nameElem) return;
 		const input = (<input className="sim-run-name-input" type="text" value={run.name ?? ''} />) as HTMLInputElement;
-		input.placeholder = defaultLabel(run);
+		input.placeholder = defaultLabel(run, place === 'dialog');
 		row.draggable = false;
 		row.classList.add('renaming');
 		this.tooltips.forEach(tooltip => tooltip.hide());
@@ -483,15 +483,17 @@ function signed(value: number, digits: number): string {
 }
 
 // A run's name, or its date and time when it has none.
-function runLabel(run: SimRun): string {
-	return run.name ?? defaultLabel(run);
+function runLabel(run: SimRun, withYear = true): string {
+	return run.name ?? defaultLabel(run, withYear);
 }
 
-// The date and time of the run, like '2026-05-06 22:33'.
-function defaultLabel(run: SimRun): string {
+// The date and time of the run, like '2026-05-06 22:33'. The sidebar has little room, so its
+// rows leave out the year, like '05-06 22:33'.
+function defaultLabel(run: SimRun, withYear = true): string {
 	const date = new Date(run.time);
 	const pad = (value: number) => String(value).padStart(2, '0');
-	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+	const year = withYear ? `${date.getFullYear()}-` : '';
+	return `${year}${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
 function isLowerHalf(row: HTMLElement, event: DragEvent): boolean {

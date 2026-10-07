@@ -108,6 +108,7 @@
 			flex-wrap: wrap;
 			align-items: flex-end;
 			gap: var(--block-spacer) var(--spacer-2);
+			margin-bottom: 0;
 
 			.iterations-picker {
 				flex: 1;
