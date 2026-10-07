@@ -24,7 +24,7 @@ import (
 	"strings"
 
 	"github.com/wowsims/classic/sim"
-	_ "github.com/wowsims/classic/sim/common"
+	"github.com/wowsims/classic/sim/common"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -57,6 +57,21 @@ func main() {
 	gearScreenIters := flag.Int("gear-screen-iters", 0, "gear search: score every item of a slot at this many iterations first, and only the best -gear-screen-keep at -iters (0 scores all at -iters)")
 	gearScreenKeep := flag.Int("gear-screen-keep", 20, "gear search: how many items per slot survive the screen")
 	gearExclude := flag.String("gear-exclude", "", "item IDs the gear search leaves out, comma separated (Manual Crowd Pummeler and its three charges, say)")
+	minHealth := flag.Float64("min-health", 0, "gear search: the least health the set must have without buffs or consumes, for a PvP set")
+	minArmor := flag.Float64("min-armor", 0, "gear search: the least armor the set must have without buffs or consumes")
+	survivalPenalty := flag.Float64("survival-penalty", 1, "gear search: DPS a set loses for each point of health below -min-health (a fifth of it for each point of armor below -min-armor)")
+	healthWeight := flag.Float64("health-weight", 0, "gear search: DPS that 100 unbuffed health is worth, for a PvP set (the search maximizes DPS plus the worth of the health and armor)")
+	armorWeight := flag.Float64("armor-weight", 0, "gear search: DPS that 100 unbuffed armor is worth, for a PvP set")
+	survival := flag.Bool("survival", false, "gear search: print the health and armor of each set without buffs or consumes, also with no minimum")
+	enchantSearch := flag.Bool("enchant-search", false, "gear search: also search enchants, from the Enchanting 225 list a level 20 can get (enchants.go)")
+	slotTradeoffs := flag.Bool("slot-tradeoffs", false, "gear search: instead of searching, print each slot's swaps that no other swap beats on both DPS and survival (health and armor), with the DPS each step costs per 100 health")
+	enchantsOnly := flag.Bool("enchants-only", false, "gear search: keep every item of the starting gear and only search the enchants (turns on -enchant-search)")
+	enchantExclude := flag.String("enchant-exclude", "", "enchant effect IDs the enchant search leaves out, comma separated (the spell power ones for a no spell power set, say)")
+	revelationChance := flag.Float64("revelation-chance", -1, "chance of a direct spell that lands without a crit to give Revelation (Forever's Enchant Weapon - Revelation, sim/common/enchant_effects.go), -1 keeps the sim's default")
+	spScale := flag.Float64("sp-scale", 1, "multiply the spell power on Forever's new items above level 30, for gear the devs have not tuned like the beta's level 1 to 30 gear yet (see reprice.go)")
+	gearMaxIlvl := flag.Int("gear-max-ilvl", 0, "highest item level the gear search considers, 0 for all (78 keeps to Phase 1 power: Molten Core, Onyxia, no legendary)")
+	gearHitOnly := flag.Bool("gear-hit-only", false, "gear search: only items with melee or spell hit, or weapon skill, for a quick look at what hit is worth against a higher level enemy")
+	gearSynthetic := flag.Bool("gear-synthetic", false, "gear search: also consider the made up Phase 1 items (ids from 990000, tools/database/forever_synthetic_items.go)")
 	gearPhase := flag.Int("gear-phase", 0, "highest raid phase the gear search considers (1 MC, 2 DM, 3 BWL, 4 ZG, 5 AQ, 6 Naxx), 0 for all")
 	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
 	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv", "wago item export, for which items need a PvP rank")
@@ -64,11 +79,21 @@ func main() {
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
 	outDir := flag.String("out", "", "directory to write <name>[_<dur>s].apl.json into")
 	outName := flag.String("name", "", "file name base for -out, defaults to the template name")
+	breakdown := flag.Bool("breakdown", false, "print the damage of every spell and attack for the starting knobs at the first fight length, no search")
 	timeline := flag.Bool("timeline", false, "print one iteration's cooldown and finisher casts for the starting knobs at the first fight length, no search")
 	flag.Parse()
 
 	log.SetOutput(io.Discard)
 	sim.RegisterAll()
+	if *revelationChance >= 0 {
+		common.RevelationProcChance = *revelationChance
+	}
+	if *spScale != 1 {
+		if err := scaleSpellPower(*spScale, *dbPath); err != nil {
+			fmt.Fprintf(os.Stderr, "scaling spell power: %v\n", err)
+			os.Exit(2)
+		}
+	}
 
 	template, ok := templates[*templateName]
 	if *aplPath != "" {
@@ -168,6 +193,16 @@ func main() {
 		return
 	}
 
+	if *breakdown {
+		out, err := setup.breakdown(template.Build(start), durations[0], int32(*confirmIterations))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		fmt.Print(out)
+		return
+	}
+
 	if *professions != "" {
 		names := strings.Split(*professions, ",")
 		setup.player().Profession1 = proto.Profession(proto.Profession_value[names[0]])
@@ -196,10 +231,28 @@ func main() {
 				}
 			}
 		}
-		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), exclude)
+		var excludeEnchants []int32
+		for _, id := range strings.Split(*enchantExclude, ",") {
+			if v, err := strconv.Atoi(id); err == nil {
+				excludeEnchants = append(excludeEnchants, int32(v))
+			}
+		}
+		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), int32(*gearMaxIlvl), exclude, *gearHitOnly, *gearSynthetic)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "loading items: %v\n", err)
 			os.Exit(2)
+		}
+		// With -enchants-only each slot keeps only the item it starts with, so the search
+		// has nothing to swap and only tries the enchants. We run it last, once the items
+		// are settled.
+		if *enchantsOnly {
+			*enchantSearch = true
+			startGear := equipmentSlots(setup.player().Equipment)
+			for slot := range pool {
+				pool[slot] = slices.DeleteFunc(pool[slot], func(o gearOption) bool {
+					return startGear[slot] == nil || o.spec.Id != startGear[slot].Id || o.spec.RandomSuffix != startGear[slot].RandomSuffix
+				})
+			}
 		}
 		for slot, options := range pool {
 			fmt.Printf("%s: %d options\n", gearSlotNames[slot], len(options))
@@ -208,11 +261,20 @@ func main() {
 			setup: setup, template: template, durations: durations,
 			iterations: int32(*iterations), confidence: *confidence, cache: map[string]result{},
 			screenIterations: int32(*gearScreenIters), screenKeep: *gearScreenKeep,
+			enchantSearch: *enchantSearch, enchantExclude: excludeEnchants, level: level,
+			minHealth: *minHealth, minArmor: *minArmor, survivalPenalty: *survivalPenalty, survival: *survival,
+			healthWeight: *healthWeight, armorWeight: *armorWeight,
+		}
+		if *slotTradeoffs {
+			s.survival = true
+			s.slotTradeoffs(pool, start)
+			return
 		}
 		s.searchGear(pool, start)
 		confirm := &searcher{
 			setup: setup, template: template, durations: durations,
 			iterations: int32(*confirmIterations), cache: map[string]result{},
+			survival: *survival || *minHealth > 0 || *minArmor > 0 || *healthWeight != 0 || *armorWeight != 0,
 		}
 		fmt.Printf("%gs: %s\n  sim runs %d\n", durations, confirm.score(start), s.evals)
 		if *gearOut != "" {
@@ -280,6 +342,7 @@ func main() {
 		s := &searcher{
 			setup: setup, template: template, durations: durations,
 			iterations: int32(*iterations), confidence: *confidence, cache: map[string]result{},
+			refineIterations: int32(*confirmIterations),
 		}
 		best, _ := s.searchTalents(trees, setup.player().TalentsString, start)
 		confirm := &searcher{
@@ -317,7 +380,7 @@ func main() {
 
 		confirm := &searcher{
 			setup: setup, template: template, durations: j.durations,
-			iterations: int32(*confirmIterations), cache: map[string]result{},
+			iterations: int32(*confirmIterations), cache: map[string]result{}, survival: *survival,
 		}
 		fmt.Printf("%gs: %s\n", j.durations, confirm.score(best))
 		fmt.Printf("  start %s\n  best  %s\n  sim runs %d\n", confirm.score(start), best, s.evals)

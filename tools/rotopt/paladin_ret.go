@@ -33,6 +33,8 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "consecrationMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// Exorcism only lands on Undead and Demons, the line is harmless elsewhere.
 		{Name: "exorcism", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Holy Shock on cooldown, a 20 point Holy talent from level 30 (10 sec under Forever).
+		{Name: "holyShock", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -43,6 +45,7 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	holyStrike := rankID(paladin.HolyStrikeLevel[:], paladin.HolyStrikeSpellId[:])
 	consecration := rankID(paladin.ConsecrationLevel[:], paladin.ConsecrationSpellId[:])
 	exorcism := rankID(paladin.ExorcismLevel[:], paladin.ExorcismSpellId[:])
+	holyShock := rankID(paladin.HolyShockLevel[:], paladin.HolyShockSpellId[:])
 
 	seal := sealOfRighteousness
 	sealNotes := "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
@@ -63,10 +66,12 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	var consecrationLine *proto.APLListItem
 	if k["consecration"] == 1 {
 		var floor value
+		notes := "Consecration on cooldown, down to the last point of mana."
 		if k["consecrationMana"] > 0 {
 			floor = ge(currentManaPercent(), num(k["consecrationMana"]/100))
+			notes = "Consecration with the mana to spare."
 		}
-		consecrationLine = cast(consecration, floor, "Consecration with the mana to spare.")
+		consecrationLine = cast(consecration, floor, notes)
 	}
 	if consecrationLine != nil && k["consecrationFirst"] == 1 {
 		items = append(items, consecrationLine)
@@ -80,6 +85,9 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["exorcism"] == 1 {
 		items = append(items, cast(exorcism, nil, "Exorcism on cooldown, only against Undead and Demons."))
+	}
+	if k["holyShock"] == 1 {
+		items = append(items, cast(holyShock, nil, "Holy Shock on cooldown. Without the talent ignore the warning on this line."))
 	}
 	if consecrationLine != nil && k["consecrationFirst"] == 0 {
 		items = append(items, consecrationLine)

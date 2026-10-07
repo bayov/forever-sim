@@ -16,6 +16,15 @@ import (
 // until no move helps. The rotation is held fixed at its starting knobs, so this runs
 // first and the knob search after it on the build it finds.
 //
+// A round where no move stands out of the noise is scored again at refineIterations
+// before the search stops, on a short list of the best moves by DPS and by end mana.
+//
+// When no move gains damage, mana is the tie-breaker. A move is kept when its damage is
+// within the noise of the best build seen so far and it ends the fight with more mana by
+// more than the noise. That is how a spare point lands in Elemental Focus or Convection
+// instead of a talent that does nothing. Measuring against the best build seen so far
+// (and not the current one) stops a run of tie-breaks from giving up damage bit by bit.
+//
 // The tree layout (rows, ranks, prerequisites, which talents the sim ignores) comes from
 // the UI's tree data under ui/core/talents/trees, the same file the talent picker draws.
 
@@ -267,6 +276,60 @@ func (b build) diff(trees []talentTree, other build) string {
 	return strings.Join(parts, " ")
 }
 
+type talentCandidate struct {
+	b     build
+	score result
+	gain  float64
+	noise float64
+}
+
+// scoreBuilds scores each build against the current one, best DPS gain first.
+func (s *searcher) scoreBuilds(builds []build, current result, knobs Knobs) []talentCandidate {
+	var cands []talentCandidate
+	for _, c := range builds {
+		s.setup.talents = c.String()
+		score := s.score(knobs)
+		gain := score.dps - current.dps
+		noise := math.Hypot(score.stderr, current.stderr)
+		cands = append(cands, talentCandidate{c, score, gain, noise})
+	}
+	sort.Slice(cands, func(i, j int) bool { return cands[i].gain > cands[j].gain })
+	return cands
+}
+
+// pickTalentMove is the candidate to move to, or nil. A DPS gain beyond the noise wins
+// first. Otherwise, when tieBreak is set, the most end mana among the candidates whose
+// DPS is within the noise of peak and whose mana beats the current build's by more than
+// the noise. A build the search has been at before is never picked again.
+func (s *searcher) pickTalentMove(cands []talentCandidate, current, peak result, tieBreak bool, visited map[string]bool) (*talentCandidate, bool) {
+	var fresh []talentCandidate
+	for _, c := range cands {
+		if !visited[c.b.String()] {
+			fresh = append(fresh, c)
+		}
+	}
+	cands = fresh
+	if len(cands) > 0 && cands[0].gain > s.confidence*cands[0].noise {
+		return &cands[0], false
+	}
+	if !tieBreak {
+		return nil, false
+	}
+	var tie *talentCandidate
+	for i, c := range cands {
+		dpsNoise := math.Hypot(c.score.stderr, peak.stderr)
+		manaGain := c.score.mana - current.mana
+		manaNoise := math.Hypot(c.score.manaStderr, current.manaStderr)
+		if c.score.dps < peak.dps-s.confidence*dpsNoise || manaGain <= s.confidence*manaNoise {
+			continue
+		}
+		if tie == nil || c.score.mana > tie.score.mana {
+			tie = &cands[i]
+		}
+	}
+	return tie, tie != nil
+}
+
 func (s *searcher) searchTalents(trees []talentTree, start string, knobs Knobs) (string, result) {
 	best := parseBuild(trees, start)
 	if !best.valid(trees) {
@@ -276,31 +339,68 @@ func (s *searcher) searchTalents(trees []talentTree, start string, knobs Knobs) 
 	s.setup.talents = best.String()
 	bestScore := s.score(knobs)
 	fmt.Printf("start %s: %s\n", best, bestScore)
+	peakBuild, peak := best, bestScore
+	visited := map[string]bool{best.String(): true}
+
+	// The mana tie-break only runs on scores at refineIterations. At search iterations
+	// the DPS noise is wide enough that a tie-break would undo a move the refined
+	// scores just made (Ancestral Knowledge 4 into Elemental Focus and back).
+	canRefine := s.refineIterations > s.iterations
 
 	for round := 1; ; round++ {
-		type candidate struct {
-			b     build
-			score result
-			gain  float64
-			noise float64
-		}
-		var cands []candidate
-		for _, c := range best.moves(trees) {
-			s.setup.talents = c.String()
-			score := s.score(knobs)
-			gain := score.dps - bestScore.dps
-			noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
-			cands = append(cands, candidate{c, score, gain, noise})
-		}
-		sort.Slice(cands, func(i, j int) bool { return cands[i].gain > cands[j].gain })
+		cands := s.scoreBuilds(best.moves(trees), bestScore, knobs)
 		for _, c := range cands[:min(8, len(cands))] {
 			fmt.Printf("  %s: %s (%+.1f, noise %.1f)\n", best.diff(trees, c.b), c.score, c.gain, c.noise)
 		}
-		if len(cands) == 0 || cands[0].gain <= s.confidence*cands[0].noise {
+		next, tieBreak := s.pickTalentMove(cands, bestScore, peak, !canRefine, visited)
+
+		// Nothing stands out of the noise at search iterations. Before we stop, the
+		// current build, the peak and the best few moves by DPS and by mana are scored
+		// again at refineIterations, where a gain of 1 DPS is no longer lost in the noise.
+		if next == nil && canRefine {
+			short := map[string]build{}
+			for _, c := range cands[:min(8, len(cands))] {
+				short[c.b.String()] = c.b
+			}
+			byMana := append([]talentCandidate(nil), cands...)
+			sort.Slice(byMana, func(i, j int) bool { return byMana[i].score.mana > byMana[j].score.mana })
+			for _, c := range byMana[:min(8, len(byMana))] {
+				short[c.b.String()] = c.b
+			}
+			var builds []build
+			for _, b := range short {
+				builds = append(builds, b)
+			}
+
+			searchIterations := s.iterations
+			s.iterations = s.refineIterations
+			s.setup.talents = best.String()
+			bestScore = s.score(knobs)
+			s.setup.talents = peakBuild.String()
+			peak = s.score(knobs)
+			cands = s.scoreBuilds(builds, bestScore, knobs)
+			s.iterations = searchIterations
+
+			fmt.Printf("  refined at %d iterations, current %s\n", s.refineIterations, bestScore)
+			for _, c := range cands {
+				fmt.Printf("  %s: %s (%+.1f, noise %.1f)\n", best.diff(trees, c.b), c.score, c.gain, c.noise)
+			}
+			next, tieBreak = s.pickTalentMove(cands, bestScore, peak, true, visited)
+		}
+
+		if next == nil {
 			s.setup.talents = best.String()
 			return best.String(), bestScore
 		}
-		fmt.Printf("round %d: %s, now %s %s\n", round, best.diff(trees, cands[0].b), cands[0].b, cands[0].score)
-		best, bestScore = cands[0].b, cands[0].score
+		how := ""
+		if tieBreak {
+			how = " (mana tie-break)"
+		}
+		fmt.Printf("round %d%s: %s, now %s %s\n", round, how, best.diff(trees, next.b), next.b, next.score)
+		best, bestScore = next.b, next.score
+		visited[best.String()] = true
+		if bestScore.dps > peak.dps {
+			peakBuild, peak = best, bestScore
+		}
 	}
 }

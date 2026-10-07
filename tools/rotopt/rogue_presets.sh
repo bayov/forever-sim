@@ -34,8 +34,8 @@ gen rogue_bs combat_backstab_rupture "ghostly=0,bfSnd=0,ruptureCp=5"
 gen rogue_bs combat_backstab_on_cooldown "ghostly=0,arSnd=0,bfSnd=0,cbSnd=0,eurekaSnd=0,bloodFuryHoldForAr=0,eluneHoldForAr=0"
 gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSnd=18,trinketSnd=20"
 
-# The low level presets are the same templates with the knobs the level 20 search settled
-# on, at the 11 talent points a level 20 has. The lines name the level 60 spell ranks and
+# The low level presets are the same templates with the knobs the level 20 and 30 searches
+# settled on. The lines name the level 60 spell ranks and
 # the sim resolves them to the rank the level knows. The level is passed so the template
 # leaves out Adrenaline Rush and Blade Flurry, which the points cannot reach. Rupture at 3
 # points beats Eviscerate at this level. With finishers at 3 points the rotation never
@@ -48,5 +48,8 @@ gen rogue_bs combat_backstab_snd_window "ghostly=0,bloodFurySnd=20,bfSnd=20,cbSn
 # point and Rupture would never go out. Ghostly Strike and Hemorrhage are out of the
 # Backstab build's reach, so their lines are left out.
 low="cbPool=1,cbSnd=0,eurekaCp=0"
-gen rogue_ss level20_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,sndCp=4,$low" -level 20 -bonus-talents 0
-gen rogue_bs level20_backstab "ruptureCp=3,ruptureSnd=0,ghostly=0,hemoForRupture=0,sndCp=4,$low" -level 20 -bonus-talents 0
+# Level 30 with 5 extra talent points (26 in all), on the Level 30 + 5 gear. Sinister
+# Strike puts Slice and Dice up at 2 points, Backstab Ruptures at 5 and Vanishes into an
+# Ambush at 3 points or fewer.
+gen rogue_ss level30p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,sndCp=2,$low" -level 30 -bonus-talents 5 -talents 0053231013-320003
+gen rogue_bs level30p5_backstab "ruptureCp=5,ruptureSnd=0,ghostly=0,hemoForRupture=0,sndCp=4,vanishCp=3,bfSnd=0,$low" -level 30 -bonus-talents 5 -talents 005122102-302303-002

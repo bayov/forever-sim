@@ -7,8 +7,11 @@ import (
 	"io"
 	"math"
 	"os"
+	"regexp"
+	"slices"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
@@ -37,6 +40,10 @@ type gearOption struct {
 	// and half of what it added has no drop, quest or vendor on wowhead yet, so these are
 	// worth searching over, but a set that picks one needs a look by hand.
 	unsourced bool
+	// once marks an item a character can only hold one of: a unique item, or a quest
+	// reward with no other source (Silent Hunter from Call to Arms, say). The main and
+	// off hand never both hold it.
+	once bool
 }
 
 var gearSlotNames = []string{"head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2", "mainhand", "offhand", "ranged"}
@@ -168,8 +175,12 @@ func loadUnsourcedItems(path string) (map[int32]bool, error) {
 	return unsourced, nil
 }
 
+// The PvP rank titles that start the names of Forever's rank gear, with or without
+// "Premier" in front.
+var foreverPvpRankName = regexp.MustCompile(`^(Premier )?(Private|Scout|Corporal|Grunt|Sergeant|Senior Sergeant|Master Sergeant|First Sergeant|Sergeant Major|Stone Guard|Knight|Blood Guard|Knight-Lieutenant|Legionnaire|Knight-Captain|Centurion|Knight-Champion|Champion|Lieutenant Commander|Lieutenant General|Commander|General|Marshal|Warlord|Field Marshal|High Warlord|Grand Marshal)'s `)
+
 // Every option for every slot the player can use at their level.
-func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase int32, exclude []int32) ([][]gearOption, error) {
+func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase, maxIlvl int32, exclude []int32, hitOnly, synthetic bool) ([][]gearOption, error) {
 	data, err := os.ReadFile(dbPath)
 	if err != nil {
 		return nil, err
@@ -199,18 +210,38 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 	add := func(slot proto.ItemSlot, item *proto.UIItem) {
 		twoHand := item.HandType == proto.HandType_HandTypeTwoHand
 		unsourced := len(item.Sources) == 0 && unsourcedItems[item.Id]
+		once := item.Unique || len(item.Sources) > 0 && !slices.ContainsFunc(item.Sources, func(src *proto.UIItemSource) bool {
+			return src.GetQuest() == nil
+		})
+		itemHit := hasHit(item.Stats) || item.HitRating > 0 || slices.ContainsFunc(item.WeaponSkills, func(v float64) bool { return v > 0 })
 		if len(item.RandomSuffixOptions) == 0 {
-			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name, twoHand, unsourced})
+			if hitOnly && !itemHit {
+				return
+			}
+			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name, twoHand, unsourced, once})
 			return
 		}
 		for _, id := range item.RandomSuffixOptions {
-			if s, ok := suffixes[id]; ok && usefulSuffix(class, s) {
-				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name, twoHand, unsourced})
+			if s, ok := suffixes[id]; ok && usefulSuffix(class, s) && (!hitOnly || itemHit || hasHit(s.Stats)) {
+				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name, twoHand, unsourced, once})
 			}
 		}
 	}
 
+	for _, enchant := range db.Enchants {
+		// Classic shares an effect between enchants with the same stats on different
+		// slots (852 is Stamina +5 on bracers, boots and shields). Those print without
+		// the slot, so the boots don't read "Enchant Shield - Stamina".
+		if old, ok := enchantNames[enchant.EffectId]; ok && old != enchant.Name {
+			_, stat, _ := strings.Cut(enchant.Name, " - ")
+			enchantNames[enchant.EffectId] = "Enchant - " + stat
+		} else if !ok {
+			enchantNames[enchant.EffectId] = enchant.Name
+		}
+		enchantLevels[enchant.EffectId] = enchant.RequiredLevel
+	}
 	for _, item := range db.Items {
+		itemsByID[item.Id] = item
 		if item.HandType == proto.HandType_HandTypeTwoHand {
 			twoHandItems[item.Id] = true
 		}
@@ -222,6 +253,20 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 		if maxPhase > 0 && item.Phase > maxPhase {
 			continue
 		}
+		// Forever's new items know no raid tier, so the item level is what keeps a
+		// "phase 1" search to Phase 1 power.
+		if maxIlvl > 0 && item.Ilvl > maxIlvl {
+			continue
+		}
+		// The client carries Season of Discovery's items, with sources, but Forever does
+		// not use them (the item level 98 Scarlet Enclave sets came up in a level 60 search).
+		if isSodItem(item.Id) {
+			continue
+		}
+		// The synthetic Phase 1 items are not in the game. They join only when we ask for them.
+		if isSyntheticItem(item.Id) && !synthetic {
+			continue
+		}
 		if contains(exclude, item.Id) {
 			continue
 		}
@@ -231,18 +276,23 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 		if item.RequiredLevel == 0 && item.Ilvl > level+6 {
 			continue
 		}
-		// PvP rank gear is a separate grind, it stays out of the pool.
-		if pvpRank[item.Id] {
+		// PvP rank gear is a separate grind, it stays out of the pool. Forever's own rank
+		// sets ("Premier High Warlord's Blade", "Warlord's Linked Armor") are not in the wago
+		// export and have no source on wowhead, so their rank title gives them away.
+		if pvpRank[item.Id] || item.Id >= foreverFirstItemID && foreverPvpRankName.MatchString(item.Name) {
 			continue
 		}
 		if len(item.ClassAllowlist) > 0 && !contains(item.ClassAllowlist, class) {
 			continue
 		}
-		// Engineering goggles and Forever's bind on pickup crafted sets need the profession
-		// on the character. The player's two professions come from the settings or the
-		// -professions flag.
-		if item.RequiredProfession != proto.Profession_ProfessionUnknown &&
-			item.RequiredProfession != player.Profession1 && item.RequiredProfession != player.Profession2 {
+		// Engineering goggles need the profession to be worn, and Forever's bind on pickup
+		// crafted sets need it to be made. The player's two professions come from the
+		// settings or the -professions flag. Crafted gear from another profession is only
+		// in when it binds on equip, because then it can be bought.
+		hasProfession := func(prof proto.Profession) bool {
+			return prof == proto.Profession_ProfessionUnknown || prof == player.Profession1 || prof == player.Profession2
+		}
+		if !hasProfession(item.RequiredProfession) || item.BindOnPickup && !hasProfession(craftedProfession(item)) {
 			continue
 		}
 		if item.FactionRestriction == proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY && !horde ||
@@ -294,13 +344,23 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 	return pool, nil
 }
 
+// Whether the stats give melee or spell hit.
+func hasHit(stats []float64) bool {
+	for _, stat := range []proto.Stat{proto.Stat_StatMeleeHit, proto.Stat_StatSpellHit} {
+		if int(stat) < len(stats) && stats[stat] > 0 {
+			return true
+		}
+	}
+	return false
+}
+
 // The candidate with the enchant the slot has now, so a swap is not also a lost enchant.
-func withEnchantOf(spec, current *proto.ItemSpec) *proto.ItemSpec {
+func (s *searcher) withEnchantOf(slot int, spec, current *proto.ItemSpec) *proto.ItemSpec {
 	if current == nil || current.Enchant == 0 {
 		return spec
 	}
 	out := goproto.Clone(spec).(*proto.ItemSpec)
-	out.Enchant = current.Enchant
+	out.Enchant = s.carriedEnchant(slot, spec.Id, current.Enchant)
 	return out
 }
 
@@ -352,7 +412,7 @@ func (s *searcher) screenGear(options []gearOption, candidateWith func(gearOptio
 	for _, o := range options {
 		if candidate := candidateWith(o); candidate != nil {
 			s.setGear(candidate)
-			scored = append(scored, screened{o, s.score(knobs).dps})
+			scored = append(scored, screened{o, s.objective(s.score(knobs))})
 		}
 	}
 	s.iterations = full
@@ -389,8 +449,29 @@ func pairedSlot(slot int) int {
 	return -1
 }
 
+// The other weapon slot, for the items a character can only hold one of.
+func weaponPair(slot int) int {
+	switch proto.ItemSlot(slot) {
+	case proto.ItemSlot_ItemSlotMainHand:
+		return int(proto.ItemSlot_ItemSlotOffHand)
+	case proto.ItemSlot_ItemSlotOffHand:
+		return int(proto.ItemSlot_ItemSlotMainHand)
+	}
+	return -1
+}
+
 func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSpec, result) {
 	best := equipmentSlots(s.setup.player().Equipment)
+	// An enchant the starting gear cannot hold (a Thick kit on an item below level 25)
+	// comes off the same way it would on a swap.
+	for slot, item := range best {
+		if item != nil && item.Enchant != 0 {
+			if e := s.carriedEnchant(slot, item.Id, item.Enchant); e != item.Enchant {
+				fmt.Printf("%s: %s is not usable on this item at this level, now %s\n", gearSlotNames[slot], enchantName(item.Enchant), enchantName(e))
+				item.Enchant = e
+			}
+		}
+	}
 	names := make([]string, len(best))
 	unsourced := make([]bool, len(best))
 	for slot, item := range best {
@@ -426,6 +507,9 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				if p := pairedSlot(slot); p >= 0 && best[p] != nil && best[p].Id == o.spec.Id {
 					return nil
 				}
+				if p := weaponPair(slot); o.once && p >= 0 && best[p] != nil && best[p].Id == o.spec.Id {
+					return nil
+				}
 				// A two hander empties the off hand, and nothing goes in the off hand next
 				// to one. The one hander plus shield answer is reached through the main
 				// hand slot first.
@@ -433,7 +517,7 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 					return nil
 				}
 				candidate := append([]*proto.ItemSpec(nil), best...)
-				candidate[slot] = withEnchantOf(o.spec, current)
+				candidate[slot] = s.withEnchantOf(slot, o.spec, current)
 				if o.twoHand {
 					candidate[proto.ItemSlot_ItemSlotOffHand] = nil
 				} else if proto.ItemSlot(slot) == proto.ItemSlot_ItemSlotMainHand && candidate[proto.ItemSlot_ItemSlotOffHand] == nil {
@@ -452,14 +536,14 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				}
 				s.setGear(candidate)
 				score := s.score(knobs)
-				gain := score.dps - bestScore.dps
+				gain := s.objective(score) - s.objective(bestScore)
 				noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
 				if gain > s.confidence*noise && gain > bestGain {
 					bestGain, bestOption = gain, &o
 				}
 			}
 			if bestOption != nil {
-				best[slot] = withEnchantOf(bestOption.spec, current)
+				best[slot] = s.withEnchantOf(slot, bestOption.spec, current)
 				names[slot], unsourced[slot] = bestOption.name, bestOption.unsourced
 				if bestOption.twoHand {
 					if best[proto.ItemSlot_ItemSlotOffHand] != nil {
@@ -477,6 +561,9 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				fmt.Printf("round %d: %s = %s (%+.1f), now %s\n", round, gearSlotNames[slot], bestOption.name, bestGain, bestScore)
 			}
 		}
+		if s.enchantSearch && s.searchEnchants(best, &bestScore, knobs, s.enchantExclude, round) {
+			improved = true
+		}
 		if !improved {
 			break
 		}
@@ -490,6 +577,9 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				fmt.Printf(", suffix %d", item.RandomSuffix)
 			}
 			fmt.Print(")")
+			if item.Enchant != 0 {
+				fmt.Printf(", %s", enchantName(item.Enchant))
+			}
 			if unsourced[slot] {
 				fmt.Print("  no source wowhead knows, check it by hand")
 			}
@@ -497,4 +587,15 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 		}
 	}
 	return best, bestScore
+}
+
+// craftedProfession is the profession that makes the item, or ProfessionUnknown when no
+// profession does.
+func craftedProfession(item *proto.UIItem) proto.Profession {
+	for _, source := range item.Sources {
+		if crafted := source.GetCrafted(); crafted != nil {
+			return crafted.Profession
+		}
+	}
+	return proto.Profession_ProfessionUnknown
 }

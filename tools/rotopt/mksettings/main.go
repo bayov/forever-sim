@@ -3,16 +3,17 @@
 // the spec's ui folder, a talent string, and the level 60 raid the enhancement presets
 // document (both blessings, Judgement of Wisdom, every debuff, the Phase 1 consumes).
 // The rogue gets the raid's Strength of Earth and Grace of Air on top. The target is the
-// UI's Level 60 boss (level 63, 3731 armor, Humanoid). At -level 20 it is instead the UI's
-// Level 20 build: the level 22 boss soloed with no raid buffs or debuffs, Thistle Tea and
-// Instant Poison for the rogue, Rockbiter and the boss on the shaman so Lightning Shield
-// fires, and the boss on the paladin too (Retribution Aura). Everyone gets Blessing of
-// Kings, because a group at that level almost always has a paladin in it.
+// UI's Level 60 boss (level 63, 3731 armor, Humanoid). Below 60 it is instead the UI's
+// Level 20 build: a boss two levels up (see lowLevelTarget) soloed with no raid buffs or
+// debuffs, Thistle Tea and Instant Poison for the rogue, Rockbiter and the boss on the
+// shaman so Lightning Shield fires, and the boss on the paladin too (Retribution Aura).
+// Everyone gets Blessing of Kings, because a group at that level almost always has a
+// paladin in it.
 //
 //	go run --tags=with_db ./tools/rotopt/mksettings -spec rogue -gear combat_sinister_strike_p2_bis \
 //	    -apl combat_sinister_strike -talents 00530310501-32003311201515231 -race Human -out ss60.json
 //	go run --tags=with_db ./tools/rotopt/mksettings -spec enh -gear phase_2 -apl optimized \
-//	    -talents 05033305-053030031005112251 -race Orc -out enh60.json
+//	    -talents 0505331-055030031005112251 -race Orc -out enh60.json
 package main
 
 import (
@@ -33,7 +34,7 @@ func main() {
 	apl := flag.String("apl", "", "rotation name under ui/<spec>/apls")
 	talents := flag.String("talents", "", "talent string")
 	race := flag.String("race", "Human", "race name as in the proto enum, without the Race prefix")
-	level := flag.Int("level", 60, "player level, 60 or 20")
+	level := flag.Int("level", 60, "player level, 60, 20 or 30")
 	bonusTalents := flag.Int("bonus-talents", 0, "extra talent points beyond the level's, 5 for the Forever beta at level 20")
 	blessing := flag.String("blessing", "kings", "the ret paladin's own blessing at level 20: kings, might or wisdom")
 	targets := flag.Int("targets", 1, "number of enemies, copies of the level's target")
@@ -95,9 +96,10 @@ func main() {
 	switch *spec {
 	case "rogue":
 		uiDir = "ui/rogue"
-		// The rogue is in a melee group with a shaman.
-		raidBuffs.StrengthOfEarthTotem = improved
-		raidBuffs.GraceOfAirTotem = improved
+		// The rogue is in a melee group with a shaman. Enhancing Totems is not in Forever's tree,
+		// so the totems are the regular ones.
+		raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
+		raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 		consumes = &proto.Consumes{
 			AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
 			AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
@@ -143,9 +145,10 @@ func main() {
 		}
 	case "ret":
 		uiDir = "ui/retribution_paladin"
-		// The paladin is in a melee group with a shaman.
-		raidBuffs.StrengthOfEarthTotem = improved
-		raidBuffs.GraceOfAirTotem = improved
+		// The paladin is in a melee group with a shaman. Enhancing Totems is not in Forever's tree,
+		// so the totems are the regular ones.
+		raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
+		raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 		consumes = &proto.Consumes{
 			AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
 			AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
@@ -193,7 +196,7 @@ func main() {
 		}},
 	}
 	var tanks []*proto.UnitReference
-	if *level == 20 {
+	if *level < 60 {
 		raidBuffs = &proto.RaidBuffs{}
 		individualBuffs = &proto.IndividualBuffs{BlessingOfKings: true}
 		debuffs = &proto.Debuffs{}
@@ -203,20 +206,7 @@ func main() {
 			ExecuteProportion_20: 0.2,
 			ExecuteProportion_25: 0.25,
 			ExecuteProportion_35: 0.35,
-			Targets: []*proto.Target{{
-				Id:      3654,
-				Name:    "Mutanus the Devourer",
-				Level:   22,
-				MobType: proto.MobType_MobTypeHumanoid,
-				Stats: stats.Stats{
-					stats.Armor:  922,
-					stats.Health: 20000,
-				}.ToFloatArray(),
-				MinBaseDamage: 40,
-				DamageSpread:  0.3333,
-				SwingSpeed:    2,
-				ParryHaste:    true,
-			}},
+			Targets:              []*proto.Target{lowLevelTarget(int32(*level))},
 		}
 		switch *spec {
 		case "rogue":
@@ -296,4 +286,37 @@ func main() {
 		fmt.Fprintf(os.Stderr, "write: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+// The boss a low level character fights: a dungeon boss two levels above them, with its
+// armor from the 1.12 creature data. Mutanus the Devourer (Wailing Caverns) up to level
+// 25, and Interrogator Vishas (Scarlet Monastery Graveyard) from level 30. Health only
+// sets when the execute phases start, so it is a round number. The melee damage is what
+// Lightning Shield, Retribution Aura and the paladin's Deflection see.
+func lowLevelTarget(level int32) *proto.Target {
+	target := &proto.Target{
+		Id:      3654,
+		Name:    "Mutanus the Devourer",
+		Level:   22,
+		MobType: proto.MobType_MobTypeHumanoid,
+		Stats: stats.Stats{
+			stats.Armor:  922,
+			stats.Health: 20000,
+		}.ToFloatArray(),
+		MinBaseDamage: 40,
+		DamageSpread:  0.3333,
+		SwingSpeed:    2,
+		ParryHaste:    true,
+	}
+	if level >= 30 {
+		target.Id = 3983
+		target.Name = "Interrogator Vishas"
+		target.Level = 32
+		target.Stats = stats.Stats{
+			stats.Armor:  1063,
+			stats.Health: 30000,
+		}.ToFloatArray()
+		target.MinBaseDamage = 52
+	}
+	return target
 }

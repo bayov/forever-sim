@@ -24,7 +24,11 @@ func seconds(v float64) value {
 }
 
 // and drops nil operands, so a template can pass nil for a rule that is switched off.
+// With every rule off it is nil too, so the line has no condition at all.
 func and(vals ...value) value {
+	if len(nonNil(vals)) == 0 {
+		return nil
+	}
 	return &proto.APLValue{Value: &proto.APLValue_And{And: &proto.APLValueAnd{Vals: nonNil(vals)}}}
 }
 
@@ -179,6 +183,11 @@ func dotRemainingTime(spell *proto.ActionID) value {
 
 func auraNumStacks(aura *proto.ActionID) value {
 	return &proto.APLValue{Value: &proto.APLValue_AuraNumStacks{AuraNumStacks: &proto.APLValueAuraNumStacks{AuraId: aura}}}
+}
+
+// inMeleeRange is false only in PvP mode, while the player is out of melee range.
+func inMeleeRange() value {
+	return &proto.APLValue{Value: &proto.APLValue_InMeleeRange{InMeleeRange: &proto.APLValueInMeleeRange{}}}
 }
 
 func currentManaPercent() value {

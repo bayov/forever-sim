@@ -24,6 +24,7 @@ var (
 	stealth       = spellID(1787)
 	cutthroat     = spellID(460534)
 	thousandCuts  = spellID(460535)
+	mutilate      = spellID(1329)
 )
 
 func (rogueBS) Knobs() []Knob {
@@ -36,6 +37,9 @@ func (rogueBS) Knobs() []Knob {
 		Knob{Name: "hemoForRupture", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Hemorrhage as the builder instead of Backstab.
 		Knob{Name: "hemoFiller", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Mutilate as the builder instead of Backstab (a 20 point Assassination talent under
+		// Forever, daggers in both hands).
+		Knob{Name: "mutilate", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Ghostly Strike on cooldown as a builder.
 		Knob{Name: "ghostly", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Vanish for an Ambush (and Premeditation) at this many combo points or fewer, 9 for never.
@@ -115,6 +119,10 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	when := builderWhen(k["bsAfterSwing"], k["bsEnergy"])
 	if k["hemoFiller"] == 1 {
 		items = append(items, cast(hemorrhage, when, "Hemorrhage as the builder."))
+	}
+	if k["mutilate"] == 1 {
+		items = append(items, cast(mutilate, when,
+			"Mutilate as the builder, 2 combo points for the energy of a Backstab. Backstab takes over when the off hand is not a dagger."))
 	}
 	if k["bsStacks"] > 0 {
 		pooled := ge(energy(), num(k["bsEnergy"]))

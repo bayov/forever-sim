@@ -81,10 +81,31 @@ func (s *setup) clone() *proto.RaidSimRequest {
 type result struct {
 	dps    float64
 	stderr float64
+
+	// Mana left when the fight ends, and its standard error. Zero for a class without
+	// mana.
+	mana       float64
+	manaStderr float64
+
+	// Seconds until the first cast that failed for lack of mana, averaged over the
+	// iterations. When an iteration never runs dry, the sim extends it at that
+	// iteration's net mana spend (capped at an hour).
+	tto float64
+
+	// Health and armor without buffs or consumes, as the character sheet shows them.
+	// Only the gear search fills them in, when it is asked to.
+	health, armor float64
 }
 
 func (r result) String() string {
-	return fmt.Sprintf("%.1f(%.1f)", r.dps, r.stderr)
+	out := fmt.Sprintf("%.1f(%.1f)", r.dps, r.stderr)
+	if r.mana != 0 {
+		out += fmt.Sprintf(" mana %.0f(%.0f) tto %.0fs", r.mana, r.manaStderr, r.tto)
+	}
+	if r.health != 0 {
+		out += fmt.Sprintf(" health %.0f armor %.0f", r.health, r.armor)
+	}
+	return out
 }
 
 // One sim run. The random seed is fixed so two rotations see the same crit rolls and
@@ -100,8 +121,74 @@ func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) 
 	if res.Error != nil {
 		return result{}, fmt.Errorf("%s", res.Error.Message)
 	}
-	dps := res.RaidMetrics.Parties[0].Players[0].Dps
-	return result{dps: dps.Avg, stderr: dps.Stdev / math.Sqrt(float64(iterations))}, nil
+	player := res.RaidMetrics.Parties[0].Players[0]
+	n := math.Sqrt(float64(iterations))
+	return result{
+		dps: player.Dps.Avg, stderr: player.Dps.Stdev / n,
+		mana: player.ManaEnd.GetAvg(), manaStderr: player.ManaEnd.GetStdev() / n,
+		tto: player.Tto.GetAvg(),
+	}, nil
+}
+
+// The damage of every spell and attack over a run, per iteration, summed over the
+// targets. For seeing where the damage of a rotation comes from.
+func (s *setup) breakdown(rot *proto.APLRotation, duration float64, iterations int32) (string, error) {
+	request := s.clone()
+	request.Raid.Parties[0].Players[0].Rotation = rot
+	request.Encounter.Duration = duration
+	request.SimOptions.Iterations = iterations
+	request.SimOptions.RandomSeed = 1
+
+	res := core.RunRaidSimConcurrent(request)
+	if res.Error != nil {
+		return "", fmt.Errorf("%s", res.Error.Message)
+	}
+	player := res.RaidMetrics.Parties[0].Players[0]
+	n := float64(iterations)
+	var b strings.Builder
+	fmt.Fprintf(&b, "%-24s %7s %7s %7s %7s %7s %7s %7s %8s\n", "action", "dps", "casts", "hits", "crits", "miss", "dodge", "parry", "avg hit")
+	for _, action := range player.Actions {
+		var m proto.TargetedActionMetrics
+		for _, t := range action.Targets {
+			m.Casts += t.Casts
+			m.Hits += t.Hits
+			m.Crits += t.Crits
+			m.Ticks += t.Ticks
+			m.CritTicks += t.CritTicks
+			m.Misses += t.Misses
+			m.Dodges += t.Dodges
+			m.Parries += t.Parries
+			m.Glances += t.Glances
+			m.Blocks += t.Blocks
+			m.Damage += t.Damage
+			m.CritDamage += t.CritDamage
+			m.TickDamage += t.TickDamage
+		}
+		if m.Damage == 0 {
+			continue
+		}
+		landed := m.Hits + m.Crits + m.Ticks + m.CritTicks + m.Glances + m.Blocks
+		name := fmt.Sprintf("spell %d", action.Id.GetSpellId())
+		if action.Id.GetSpellId() == 0 {
+			name = fmt.Sprintf("other %d", action.Id.GetOtherId())
+		}
+		if action.Id.GetTag() != 0 {
+			name += fmt.Sprintf(" tag %d", action.Id.GetTag())
+		}
+		fmt.Fprintf(&b, "%-24s %7.2f %7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %8.1f\n", name,
+			m.Damage/n/duration, float64(m.Casts)/n,
+			float64(m.Hits+m.Ticks+m.Glances+m.Blocks)/n, float64(m.Crits+m.CritTicks)/n, float64(m.Misses)/n,
+			float64(m.Dodges)/n, float64(m.Parries)/n, m.Damage/float64(max(landed, 1)))
+	}
+	// Proc counts, to see how often a proc like Revelation comes up in a fight.
+	for _, aura := range player.Auras {
+		if aura.ProcsAvg > 0 {
+			fmt.Fprintf(&b, "aura %-19d procs %.2f per fight, %.2f per minute, uptime %.1f%%\n", aura.Id.GetSpellId(),
+				aura.ProcsAvg, aura.ProcsAvg/duration*60, aura.UptimeSecondsAvg/duration*100)
+		}
+	}
+	fmt.Fprintf(&b, "total dps %.2f\n", player.Dps.Avg)
+	return b.String(), nil
 }
 
 // One logged iteration, reduced to the casts that are not the filler: cooldowns, items
@@ -196,6 +283,21 @@ func (s *setup) finalStats(rot *proto.APLRotation) string {
 	return sb.String()
 }
 
+// Health and armor as the character sheet shows them: gear, enchants, talents and the
+// race, but no buffs or consumes.
+func (s *setup) unbuffedStats() (health, armor float64) {
+	request := s.clone()
+	player := request.Raid.Parties[0].Players[0]
+	player.Buffs = nil
+	player.Consumes = nil
+	request.Raid.Buffs = nil
+	request.Raid.Debuffs = nil
+	request.Raid.Parties[0].Buffs = nil
+	stats := core.ComputeStats(&proto.ComputeStatsRequest{Raid: request.Raid, Encounter: request.Encounter, Ruleset: request.SimOptions.Ruleset})
+	final := stats.RaidStats.Parties[0].Players[0].FinalStats.Stats
+	return final[proto.Stat_StatHealth], final[proto.Stat_StatArmor]
+}
+
 // The setup written back out as a RaidSimRequest JSON, so a later run can start from the
 // gear or talents this one found.
 func (s *setup) save(path string) error {
@@ -209,6 +311,9 @@ func (s *setup) save(path string) error {
 // Stat weights on the current gear: DPS per point of each stat, and the same as
 // attack power equivalents. A stat mod of 1 point is tiny at low level, so this asks for
 // many iterations.
+//
+// The ± is the standard error of the mean. The core reports the spread of the per
+// iteration differences, which is about sqrt(iterations) times larger.
 func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations int32) string {
 	request := s.clone()
 	player := request.Raid.Parties[0].Players[0]
@@ -219,13 +324,16 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 		RaidBuffs:  request.Raid.Buffs,
 		PartyBuffs: request.Raid.Parties[0].Buffs,
 		Debuffs:    request.Raid.Debuffs,
+		// Without the tanks the boss stops hitting a shaman who tanks it, and Lightning
+		// Shield and the Improved Stormstrike reset go with it.
+		Tanks:      request.Raid.Tanks,
 		Encounter:  request.Encounter,
 		SimOptions: &proto.SimOptions{Iterations: iterations, RandomSeed: 1, Ruleset: request.SimOptions.Ruleset},
 		StatsToWeigh: []proto.Stat{
 			proto.Stat_StatAgility, proto.Stat_StatStrength, proto.Stat_StatAttackPower,
 			proto.Stat_StatMeleeCrit, proto.Stat_StatMeleeHit, proto.Stat_StatStamina,
 			proto.Stat_StatIntellect, proto.Stat_StatSpellPower, proto.Stat_StatHolyPower,
-			proto.Stat_StatSpellCrit, proto.Stat_StatSpellHit, proto.Stat_StatMP5,
+			proto.Stat_StatSpellCrit, proto.Stat_StatSpellHit, proto.Stat_StatMP5, proto.Stat_StatSpirit,
 		},
 		PseudoStatsToWeigh: []proto.PseudoStat{proto.PseudoStat_PseudoStatMainHandDps, proto.PseudoStat_PseudoStatOffHandDps},
 		EpReferenceStat:    proto.Stat_StatAttackPower,
@@ -233,15 +341,16 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 	if res.Error != nil {
 		return "stat weights failed: " + res.Error.Message
 	}
+	stderr := 1 / math.Sqrt(float64(iterations))
 	var sb strings.Builder
-	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina", "Intellect", "SpellPower", "HolyPower", "SpellCrit", "SpellHit", "MP5"}
+	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina", "Intellect", "SpellPower", "HolyPower", "SpellCrit", "SpellHit", "MP5", "Spirit"}
 	for _, name := range names {
 		i := proto.Stat_value["Stat"+name]
-		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.Stats[i], res.Dps.EpValues.Stats[i], res.Dps.EpValuesStdev.Stats[i])
+		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.Stats[i], res.Dps.EpValues.Stats[i], res.Dps.EpValuesStdev.Stats[i]*stderr)
 	}
 	for _, name := range []string{"MainHandDps", "OffHandDps"} {
 		i := proto.PseudoStat_value["PseudoStat"+name]
-		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.PseudoStats[i], res.Dps.EpValues.PseudoStats[i], res.Dps.EpValuesStdev.PseudoStats[i])
+		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.PseudoStats[i], res.Dps.EpValues.PseudoStats[i], res.Dps.EpValuesStdev.PseudoStats[i]*stderr)
 	}
 	return sb.String()
 }
