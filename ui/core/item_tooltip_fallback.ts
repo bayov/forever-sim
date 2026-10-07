@@ -39,7 +39,7 @@ const PERCENT_STATS = [Stat.StatMeleeHit, Stat.StatMeleeCrit, Stat.StatSpellHit,
 // One lookup per item id, shared by every link to it.
 const wowheadKnows = new Map<number, Promise<boolean>>();
 
-function isOnWowhead(itemId: number): Promise<boolean> {
+export function isOnWowhead(itemId: number): Promise<boolean> {
 	let known = wowheadKnows.get(itemId);
 	if (!known) {
 		const url = `https://nether.wowhead.com/${WOWHEAD_DOMAIN}/tooltip/item/${itemId}?dataEnv=${WOWHEAD_EXPANSION_ENV}`;
@@ -106,7 +106,7 @@ function line(text: string, cssClass = ''): string {
 	return div.outerHTML;
 }
 
-function tooltipContent(itemId: number, item: UIItem | undefined): string {
+export function tooltipContent(itemId: number, item: UIItem | undefined): string {
 	const lines = [line('Not found on wowhead. Stats from the sim’s item database.', 'text-warning small mb-1')];
 	if (!item) {
 		lines.push(line(`Item ${itemId}`));

@@ -22,6 +22,7 @@ import { makePhaseSelector, makeShow1hWeaponsSelector, makeShow2hWeaponsSelector
 import Toast from '../toast';
 import { Clusterize } from '../virtual_scroll/clusterize';
 import { FiltersMenu } from './filters_menu';
+import { attachItemComparison, hideTooltipIconsWhileHovered } from './item_comparison';
 import { SelectorModalTabs } from './selector_modal';
 
 export interface ItemData<T> {
@@ -606,6 +607,15 @@ export default class ItemList<T extends ItemListType> {
 			filledId.setWowheadHref(anchorElem.value!);
 			iconElem.value!.src = filledId.iconUrl;
 		});
+
+		hideTooltipIconsWhileHovered(anchorElem.value!);
+		if (this.label === SelectorModalTabs.Items) {
+			attachItemComparison(
+				anchorElem.value!,
+				() => itemData.item as unknown as UIItem,
+				() => this.gearData.getEquippedItem(),
+			);
+		}
 
 		setItemQualityCssClass(nameElem.value!, itemData.quality);
 

@@ -1,0 +1,29 @@
+// The equipped item's tooltip next to a hovered item, see item_comparison.tsx. The frame and
+// the text inside come from wowhead's tooltip styles, and we only color our own lines the way
+// the game does.
+.item-comparison-tooltip {
+	.item-comparison-label {
+		color: #808080;
+	}
+
+	.item-comparison-changes {
+		margin-top: 0.5rem;
+	}
+
+	.item-comparison-changes-title {
+		color: #ffd100;
+	}
+
+	.item-comparison-gain {
+		color: #1eff00;
+	}
+
+	.item-comparison-loss {
+		color: #ff2020;
+	}
+}
+
+// See hideTooltipIconsWhileHovered().
+body.hide-wowhead-tooltip-icons .wowhead-tooltip .whtt-tooltip-icon {
+	display: none;
+}
