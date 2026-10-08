@@ -15,6 +15,16 @@ import (
 // with two Nature charges.
 const StormstrikeForeverBonus = 1.2
 
+// StormstrikeExtraSpeed is what Forever adds to the normalized weapon speed for Stormstrike's
+// attack power bonus.
+//
+// Forever's spell data says "Normalized Weapon Damage" (Classic's says "Deal Weapon Damage"),
+// so the bonus is AP / 14 times a fixed speed for the weapon type instead of the weapon's own
+// speed. Beta tests on a level 30 Orc hit harder than the usual 3.3 for two-handers and 2.4 for
+// one-handers, and fit 3.6 and 2.7 (see shaman_audit.md 4.1). Daggers aren't tested, and we
+// give them 1.7 + 0.3 too.
+const StormstrikeExtraSpeed = 0.3
+
 func (shaman *Shaman) registerStormstrikeSpell() {
 	if !shaman.Talents.Stormstrike {
 		return
@@ -71,7 +81,12 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := shaman.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
+			var baseDamage float64
+			if forever {
+				baseDamage = shaman.stormstrikeWeaponDamage(sim, spell.MeleeAttackPower(target))
+			} else {
+				baseDamage = shaman.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
+			}
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			if result.Landed() {
@@ -83,6 +98,14 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 			}
 		},
 	})
+}
+
+// stormstrikeWeaponDamage rolls Stormstrike's weapon damage under Forever, see
+// StormstrikeExtraSpeed.
+func (shaman *Shaman) stormstrikeWeaponDamage(sim *core.Simulation, attackPower float64) float64 {
+	weapon := shaman.AutoAttacks.MH()
+	speed := weapon.NormalizedSwingSpeed + StormstrikeExtraSpeed
+	return weapon.BaseDamage(sim) + speed*attackPower/weapon.AttackPowerPerDPS
 }
 
 // spendStormstrike returns the damage multiplier the shaman's Lightning Bolt, Chain
