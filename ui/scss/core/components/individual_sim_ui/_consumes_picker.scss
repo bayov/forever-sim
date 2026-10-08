@@ -100,8 +100,8 @@ $consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/invento
 		pointer-events: none;
 	}
 
-	// A small red "!" on the slot's corner. Its tooltip says which buff is bigger.
-	.consumes-unstacked-badge {
+	// A small "!" on the slot's corner. Its tooltip says what's wrong with the pick.
+	.consumes-slot-badge {
 		position: absolute;
 		top: -0.4rem;
 		right: -0.4rem;
@@ -113,12 +113,46 @@ $consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/invento
 		justify-content: center;
 		border: 1px solid #000;
 		border-radius: 50%;
-		background: #d8342e;
 		color: #fff;
 		font-size: 0.7rem;
 		font-weight: 700;
 		line-height: 1;
 		cursor: help;
+	}
+
+	// Red when a bigger buff takes over, see markUnstacked.
+	.consumes-unstacked-badge {
+		background: #d8342e;
+	}
+
+	// Yellow for a slot the sim doesn't read yet, like Troll's Blood. The slot gets a dashed edge,
+	// like the talents we don't simulate.
+	.consumes-not-simulated-badge {
+		background: $warning;
+		color: #000;
+	}
+
+	.consumes-not-simulated > .icon-picker-button {
+		&,
+		&:hover {
+			outline-style: dashed;
+		}
+	}
+
+	// A slot we changed from the preset gets a dot on its corner, in the color the category's name
+	// takes. The name alone doesn't say which slot changed when the category has several.
+	.consumes-group-slots > :is(.dirty-setting, :has(.dirty-setting))::before {
+		content: '';
+		position: absolute;
+		top: -0.25rem;
+		left: -0.25rem;
+		z-index: 1;
+		width: 0.55rem;
+		height: 0.55rem;
+		border: 1px solid #000;
+		border-radius: 50%;
+		background: var(--dirty-color);
+		pointer-events: none;
 	}
 
 	// The dropdown opens a little below the slot, so the slot stays in view (see ConsumesPicker).
@@ -154,4 +188,9 @@ $consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/invento
 .tippy-box[data-theme='consumes-unstacked'] {
 	border: 1px solid #e0403a;
 	color: #ff9a94;
+}
+
+.tippy-box[data-theme='consumes-not-simulated'] {
+	border: 1px solid $warning;
+	color: $warning;
 }
