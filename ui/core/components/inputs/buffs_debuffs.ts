@@ -1,6 +1,6 @@
 import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
-import { Class, Debuffs, Faction, RaidBuffs, SaygesFortune, Spec, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
+import { Class, Debuffs, Faction, IndividualBuffs, RaidBuffs, SaygesFortune, Spec, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
 import { AirTotem, EnhancementShaman_Options } from '../../proto/shaman';
 import { ActionId } from '../../proto_utils/action_id';
 import { EventID, TypedEvent } from '../../typed_event';
@@ -199,14 +199,16 @@ export const BloodPactBuff = classicTwin(
 	),
 );
 
-export const BlessingOfMight = withLabel(
-	makeTristateIndividualBuffInput({
-		actionId: () => ActionId.fromSpellId(25291),
-		impId: ActionId.fromSpellId(20048),
-		fieldName: 'blessingOfMight',
-		showWhen: player => player.hasFactionBuffs(Faction.Alliance),
-	}),
-	'Blessing of Might',
+export const BlessingOfMight = classicTwin(
+	withLabel(
+		makeTristateIndividualBuffInput({
+			actionId: () => ActionId.fromSpellId(25291),
+			impId: ActionId.fromSpellId(20048),
+			fieldName: 'blessingOfMight',
+			showWhen: player => player.hasFactionBuffs(Faction.Alliance) && notForever(player),
+		}),
+		'Blessing of Might',
+	),
 );
 
 export const StrengthBuffHorde = classicTwin(
@@ -275,6 +277,35 @@ export const BloodPactBuffForever = withLabel(makeForeverPlainBuffInput(11767, '
 
 export const GraceOfAirForever = withLabel(makeForeverPlainBuffInput(25359, 'graceOfAirTotem', isHorde), 'Agility');
 
+// The same for a blessing, which is a buff on us alone. Forever has no Improved Blessing of
+// Might or Improved Blessing of Wisdom any more.
+function makeForeverPlainBlessingInput(spellId: number, fieldName: 'blessingOfMight' | 'blessingOfWisdom') {
+	return foreverTwin(
+		InputHelpers.makeBooleanIconInput<any, IndividualBuffs, Player<any>>(
+			{
+				getModObject: (player: Player<any>) => player,
+				showWhen: (player: Player<any>) => player.hasFactionBuffs(Faction.Alliance) && isForever(player),
+				getValue: (player: Player<any>) => player.getBuffs(),
+				setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
+				changeEmitter: (player: Player<any>) =>
+					TypedEvent.onAny([player.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
+				getFieldValue: (player: Player<any>) => player.getBuffs()[fieldName] !== TristateEffect.TristateEffectMissing,
+				setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+					const buffs = player.getBuffs();
+					buffs[fieldName] = newValue ? TristateEffect.TristateEffectRegular : TristateEffect.TristateEffectMissing;
+					player.setBuffs(eventID, buffs);
+				},
+			},
+			() => ActionId.fromSpellId(spellId),
+			fieldName,
+		),
+	);
+}
+
+export const BlessingOfMightForever = withLabel(makeForeverPlainBlessingInput(25291, 'blessingOfMight'), 'Blessing of Might');
+
+export const BlessingOfWisdomForever = withLabel(makeForeverPlainBlessingInput(25290, 'blessingOfWisdom'), 'Blessing of Wisdom');
+
 // Another shaman's Windfury or Flametongue Totem. Under Forever its buff has a weapon slot
 // of its own, so it works next to a shaman imbue and an oil or stone. Only one of the two
 // totems works at a time.
@@ -333,14 +364,16 @@ export const TrueshotAuraBuff = withLabel(
 	'Trueshot Aura',
 );
 
-export const BlessingOfWisdom = withLabel(
-	makeTristateIndividualBuffInput({
-		actionId: () => ActionId.fromSpellId(25290),
-		impId: ActionId.fromSpellId(20245),
-		fieldName: 'blessingOfWisdom',
-		showWhen: player => player.hasFactionBuffs(Faction.Alliance),
-	}),
-	'Blessing of Wisdom',
+export const BlessingOfWisdom = classicTwin(
+	withLabel(
+		makeTristateIndividualBuffInput({
+			actionId: () => ActionId.fromSpellId(25290),
+			impId: ActionId.fromSpellId(20245),
+			fieldName: 'blessingOfWisdom',
+			showWhen: player => player.hasFactionBuffs(Faction.Alliance) && notForever(player),
+		}),
+		'Blessing of Wisdom',
+	),
 );
 export const ManaSpringTotem = withLabel(
 	makeTristateRaidBuffInput({
@@ -780,6 +813,11 @@ export const RAID_BUFFS_CONFIG = [
 		stats: [Stat.StatAttackPower, Stat.StatStrength, Stat.StatAgility],
 	},
 	{
+		config: BlessingOfMightForever,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower, Stat.StatStrength, Stat.StatAgility],
+	},
+	{
 		config: StrengthBuffHorde,
 		picker: IconPicker,
 		stats: [Stat.StatStrength],
@@ -829,6 +867,11 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: BlessingOfWisdom,
+		picker: IconPicker,
+		stats: [Stat.StatMP5],
+	},
+	{
+		config: BlessingOfWisdomForever,
 		picker: IconPicker,
 		stats: [Stat.StatMP5],
 	},
@@ -999,7 +1042,7 @@ function buffItem(config: unknown): IconSubsectionItem {
 // them.
 export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 	{ label: 'Stats', items: [AllStatsBuff, AllStatsBuffForever, StaminaBuff, StaminaBuffForever, IntellectBuff, SpiritBuff].map(buffItem) },
-	{ label: 'Blessings', items: [BlessingOfKings, BlessingOfMight, BlessingOfWisdom].map(buffItem) },
+	{ label: 'Blessings', items: [BlessingOfKings, BlessingOfMight, BlessingOfMightForever, BlessingOfWisdom, BlessingOfWisdomForever].map(buffItem) },
 	{ label: 'Mana', items: [Innervate].map(buffItem) },
 	{ label: 'Other', items: [PowerInfusion, Thorns].map(buffItem) },
 ];

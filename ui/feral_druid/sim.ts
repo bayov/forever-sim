@@ -111,6 +111,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	includeBuffDebuffInputs: [
 		BuffDebuffInputs.IntellectBuff,
 		BuffDebuffInputs.BlessingOfWisdom,
+		BuffDebuffInputs.BlessingOfWisdomForever,
 		BuffDebuffInputs.ManaSpringTotem,
 		BuffDebuffInputs.JudgementOfWisdom,
 	],
