@@ -11,6 +11,9 @@ export interface EnumValueConfig {
 	// A tooltip for the icon in place of the one with the name, like the game's tooltip of a
 	// shaman weapon imbue. We build it each time it shows, so it can follow the settings.
 	richTooltip?: (modObject: any) => HTMLElement | undefined;
+	// Left out means the value always shows. The row of icons hides the icon otherwise, like a
+	// totem the shaman's level hasn't learned yet.
+	showWhen?: (modObject: any) => boolean;
 }
 
 export interface EnumPickerConfig<ModObject> extends InputConfig<ModObject, number> {

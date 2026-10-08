@@ -189,6 +189,11 @@ export class IconEnumRowPicker<ModObject> extends Input<ModObject, number> {
 		return this.value;
 	}
 
+	update() {
+		super.update();
+		this.values.forEach(value => this.options.get(value.value)?.classList.toggle('hide', value.showWhen?.(this.modObject) === false));
+	}
+
 	setInputValue(newValue: number) {
 		this.value = newValue;
 		this.label.textContent = this.nameOf(newValue);

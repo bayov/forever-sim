@@ -73,8 +73,11 @@ export class SimHeader extends Component {
 		});
 	}
 
+	// Opens the tab, like 'settings-tab'. Bootstrap opens a tab from a click on its link, not on
+	// the list item around it, so we show the link's tab ourselves.
 	activateTab(className: string) {
-		(this.simTabsContainer.getElementsByClassName(className)[0] as HTMLElement).click();
+		const link = this.simTabsContainer.querySelector<HTMLElement>(`.${className} [data-bs-toggle="tab"]`);
+		if (link) Tab.getOrCreateInstance(link).show();
 	}
 
 	addTab(title: string, contentId: string) {

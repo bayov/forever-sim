@@ -64,6 +64,59 @@
 		width: 100%;
 	}
 
+	// The totems the shaman starts the fight with, set in the Settings tab. A click takes us
+	// there, see starting_totems.tsx.
+	.starting-totems-summary {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		width: fit-content;
+		margin-bottom: var(--block-spacer);
+		padding: 0.5rem 0.75rem;
+		border: 1px solid #3c3a35;
+		border-radius: 3px;
+		background: none;
+		color: inherit;
+		text-align: left;
+		transition: border-color 0.15s;
+
+		&:hover {
+			border-color: var(--gold-soft);
+		}
+	}
+
+	.starting-totems-summary-label,
+	.starting-totem-time,
+	.starting-totems-none {
+		color: var(--text-muted-color);
+		font-size: 0.75rem;
+	}
+
+	.starting-totems-icons {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.starting-totem {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.15rem;
+	}
+
+	// Like the buff icons on the Settings tab, zoomed in so the frame on the icon's texture
+	// falls outside the border.
+	.starting-totem-icon {
+		width: 2rem;
+		height: 2rem;
+		border: 1px solid #000;
+		border-radius: 3px;
+		outline: 1px solid #3c3a35;
+		background-color: #0c0c0f;
+		background-size: 120%;
+		background-position: center;
+	}
+
 	.rotation-tab-auto {
 		width: 100%;
 	}

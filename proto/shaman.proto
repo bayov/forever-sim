@@ -81,6 +81,7 @@ enum FireTotem {
 	MagmaTotem = 1;
 	SearingTotem = 2;
 	FireNovaTotem = 3;
+	FlametongueTotem = 4;
 }
 
 enum WaterTotem {
@@ -122,6 +123,21 @@ message ShamanTotems {
 	bool enh_tier_ten_bonus = 11;
 }
 
+// The totems we have standing when the fight starts, one per element, and the seconds each has
+// left. We take them as put down before the pull, so they cost no mana and no global cooldown.
+message StartingTotems {
+	EarthTotem earth = 1;
+	AirTotem air = 2;
+	FireTotem fire = 3;
+	WaterTotem water = 4;
+	// The seconds each totem has left at the pull. 0 means we just put it down, so it has its
+	// full duration.
+	double earth_seconds_left = 5;
+	double air_seconds_left = 6;
+	double fire_seconds_left = 7;
+	double water_seconds_left = 8;
+}
+
 enum ShamanSyncType {
   NoSync = 0;
   SyncMainhandOffhandSwings = 1;
@@ -143,7 +159,7 @@ message EnhancementShaman {
 	message Rotation {
 	}
 
-	// NextIndex: 10
+	// NextIndex: 11
 	message Options {
 		ShamanSyncType sync_type = 3;
 		// Spell hits the shaman takes from raid damage per minute, each spending a Water
@@ -157,6 +173,7 @@ message EnhancementShaman {
 		// Weapon) on the main hand. In Forever it no longer takes the weapon's temporary
 		// enchant, so the main hand imbue in the consumes holds an oil or a stone beside it.
 		WeaponImbue shaman_imbue = 8;
+		StartingTotems starting_totems = 10;
 	}
 	Options options = 3;
 }

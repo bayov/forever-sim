@@ -43,6 +43,7 @@ func NewEnhancementShaman(character *core.Character, options *proto.Player) *Enh
 	enh.RaidDamageHitsPerMinute = enhOptions.Options.RaidDamageHitsPerMinute
 	enh.RaidDamageHitsPerMinuteVariation = enhOptions.Options.RaidDamageHitsPerMinuteVariation
 	enh.ShamanImbue = enhOptions.Options.ShamanImbue
+	enh.StartingTotems = enhOptions.Options.StartingTotems
 	enh.ApplyShamanImbue()
 
 	return enh

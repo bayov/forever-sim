@@ -147,6 +147,12 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 
 	// For when extra sections are needed (e.g. Shaman totems)
 	customSections?: Array<(parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => ContentBlock>;
+	// Settings of the spec's own that need more than one input, built at the end of the Class
+	// Settings section, like the totems an Enhancement shaman starts the fight with.
+	classSettings?: (parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => void;
+	// Built at the top of the Rotation tab, for settings on another tab that the rotation plays
+	// from, like those starting totems.
+	rotationTabHeader?: (parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => void;
 
 	encounterPicker: EncounterPickerConfig;
 

@@ -201,8 +201,9 @@ export class SettingsTab extends SimTab {
 		const settings = otherInputs.inputs.filter(inputs => !inputs.extraCssClasses || !inputs.extraCssClasses?.includes('within-raid-sim-hide'));
 
 		const itemSwapConfig = this.simUI.individualConfig.itemSwapConfig;
+		const classSettings = this.simUI.individualConfig.classSettings;
 
-		if (settings.length || itemSwapConfig?.itemSlots.length) {
+		if (settings.length || itemSwapConfig?.itemSlots.length || classSettings) {
 			const contentBlock = new ContentBlock(this.simUI.isWithinRaidSim ? this.column2 : this.column1, 'other-settings', {
 				header: { title: 'Class Settings' },
 			});
@@ -213,6 +214,8 @@ export class SettingsTab extends SimTab {
 					elem.classList.add('input-inline');
 				});
 			}
+
+			classSettings?.(contentBlock.bodyElement, this.simUI);
 
 			if (itemSwapConfig?.itemSlots.length) {
 				new ItemSwapPicker(contentBlock.bodyElement, this.simUI, this.simUI.player, itemSwapConfig);
@@ -342,7 +345,7 @@ export class SettingsTab extends SimTab {
 			group.classList.add('icon-subsection');
 			const label = document.createElement('label');
 			label.classList.add('icon-subsection-label');
-			label.textContent = subsection.label;
+			label.textContent = typeof subsection.label === 'function' ? subsection.label(player) : subsection.label;
 			const slots = document.createElement('div');
 			slots.classList.add('icon-subsection-slots');
 			group.append(label, slots);

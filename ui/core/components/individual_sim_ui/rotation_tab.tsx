@@ -54,6 +54,8 @@ export class RotationTab extends SimTab {
 		this.buildSimpleContent();
 
 		this.buildSavedDataPickers();
+
+		this.simUI.individualConfig.rotationTabHeader?.(this.leftCol, this.simUI);
 	}
 
 	private updateSections() {

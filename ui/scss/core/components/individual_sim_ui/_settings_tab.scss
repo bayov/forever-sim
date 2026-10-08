@@ -48,6 +48,38 @@
 		}
 	}
 
+	// The totems an Enhancement shaman starts the fight with, see starting_totems.tsx. Each
+	// element's row of totem icons has the seconds its totem has left next to it.
+	.other-settings .starting-totems {
+		margin-top: var(--block-spacer);
+
+		.starting-totem-row {
+			display: flex;
+			align-items: flex-end;
+			gap: 1rem;
+
+			.icon-enum-row-picker {
+				width: auto;
+				margin-bottom: 0;
+			}
+
+			.number-picker-root {
+				flex-direction: column;
+				align-items: flex-start;
+				margin-bottom: 0;
+
+				label {
+					width: auto;
+				}
+
+				input {
+					width: 4rem;
+					min-width: 0;
+				}
+			}
+		}
+	}
+
 	.cooldown-settings {
 		.cooldown-timings-picker {
 			min-width: 40%;

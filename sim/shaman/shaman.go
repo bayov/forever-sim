@@ -238,6 +238,9 @@ type Shaman struct {
 	// The shaman's own main hand imbue in Forever, beside the oil or stone in the
 	// consumes. Set from the enhancement options before Initialize.
 	ShamanImbue proto.WeaponImbue
+	// The totems we have standing when the fight starts. Set from the enhancement options
+	// before Initialize.
+	StartingTotems *proto.StartingTotems
 
 	ChainLightningBounceCoefficient float64
 }
@@ -289,6 +292,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerWindfuryTotemSpell()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerWindwallTotemSpell()
+	shaman.registerStartingTotems()
 }
 
 func (shaman *Shaman) Reset(_ *core.Simulation) {
