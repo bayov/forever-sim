@@ -174,7 +174,11 @@ export class ConsumesPicker extends Component {
 			this.tagSlot(buildIconInput(defensiveConsumesElem, this.simUI.player, armorBuffOptions), 'ARMOR'),
 			this.tagSlot(buildIconInput(defensiveConsumesElem, this.simUI.player, trollsBloodOptions), 'HP5'),
 		];
-		this.markNotSimulated(pickers[2], "Not simulated: The sim has no health regen yet, so Troll's Blood doesn't affect results.");
+		this.markNotSimulated(
+			pickers[2],
+			() => !!this.simUI.player.getConsumes().trollsBloodPotion,
+			"Not simulated: The sim has no health regen yet, so Troll's Blood doesn't affect results.",
+		);
 
 		this.updateRow(row, pickers);
 	}
@@ -264,16 +268,24 @@ export class ConsumesPicker extends Component {
 		return picker;
 	}
 
-	// A slot the sim doesn't read yet, like the talents we don't simulate. It gets a dashed edge
-	// and a yellow "!" whose tooltip says so. The slot keeps the item's tooltip.
-	private markNotSimulated<T extends { rootElem: HTMLElement }>(picker: T, note: string) {
-		picker.rootElem.classList.add('consumes-not-simulated');
+	// A slot the sim doesn't read yet, like the talents we don't simulate. When we pick something
+	// in it, it gets a dashed edge and a yellow "!" whose tooltip says so. The slot keeps the
+	// item's tooltip. An empty slot has no mark, because it can't mislead anyone.
+	private markNotSimulated<T extends { rootElem: HTMLElement }>(picker: T, isPicked: () => boolean, note: string) {
 		const badge = document.createElement('span');
 		badge.classList.add('consumes-slot-badge', 'consumes-not-simulated-badge');
 		badge.textContent = '!';
 		picker.rootElem.appendChild(badge);
 		const tooltip = tippy(badge, { content: note, theme: 'consumes-not-simulated' });
 		this.addOnDisposeCallback(() => tooltip.destroy());
+
+		const update = () => {
+			const picked = isPicked();
+			picker.rootElem.classList.toggle('consumes-not-simulated', picked);
+			badge.classList.toggle('hide', !picked);
+		};
+		update();
+		this.simUI.player.consumesChangeEmitter.on(update);
 	}
 
 	// A category with its name above its slots. The categories sit side by side and wrap, so
