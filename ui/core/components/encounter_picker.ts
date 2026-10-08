@@ -700,13 +700,26 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 		},
 	});
 
+	// The three execute phases share one label. Each field's own label is the health its phase
+	// starts at, and its value is the share of the fight in that phase.
+	const executeSection = document.createElement('div');
+	executeSection.classList.add('execute-section');
+	rootElem.appendChild(executeSection);
+	const executeLabel = document.createElement('label');
+	executeLabel.classList.add('form-label');
+	executeLabel.textContent = 'Execute Duration';
+	executeSection.appendChild(executeLabel);
+	tippy(executeLabel, {
+		content: 'The share of the fight, in percent, that the targets spend under 20%, 25% and 35% health, for effects like Execute or Drain Soul.',
+	});
+
 	const executeGroup = Input.newGroupContainer();
 	executeGroup.classList.add('execute-group');
-	rootElem.appendChild(executeGroup);
+	executeSection.appendChild(executeGroup);
 
 	new NumberPicker(executeGroup, encounter, {
 		id: 'encounter-execute-proportion',
-		label: 'Execute Duration 20 (%)',
+		label: '20%',
 		labelTooltip:
 			'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 20% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
@@ -720,7 +733,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 	});
 	new NumberPicker(executeGroup, encounter, {
 		id: 'encounter-execute-proportion-25',
-		label: 'Execute Duration 25 (%)',
+		label: '25%',
 		labelTooltip:
 			"Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 25% HP) for the purpose of effects like Warlock's Drain Soul.",
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
@@ -734,7 +747,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 	});
 	new NumberPicker(executeGroup, encounter, {
 		id: 'encounter-execute-proportion-35',
-		label: 'Execute Duration 35 (%)',
+		label: '35%',
 		labelTooltip:
 			'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 35% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,

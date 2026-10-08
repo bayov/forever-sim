@@ -4,10 +4,28 @@
 	flex-wrap: wrap;
 	gap: var(--block-spacer);
 
-	.execute-group {
+	// One Execute Duration label over three fields in a row, each labeled with the health its
+	// phase starts at.
+	.execute-section {
 		width: 100%;
-		flex-direction: column;
-		flex-wrap: nowrap;
+
+		> .form-label {
+			margin-bottom: 0.25rem;
+		}
+
+		// The section's label takes the changed color when one of its fields changed.
+		&:has(.dirty-setting) > .form-label {
+			color: var(--dirty-color);
+		}
+	}
+
+	.execute-group {
+		grid-template-columns: repeat(3, 1fr);
+
+		.form-label {
+			color: var(--text-muted-color);
+			font-size: 0.75rem;
+		}
 	}
 
 	.list-picker-compact {
