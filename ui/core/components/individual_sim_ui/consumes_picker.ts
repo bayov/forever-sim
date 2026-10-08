@@ -4,6 +4,7 @@ import { IndividualSimUI } from '../../individual_sim_ui';
 import { Player } from '../../player';
 import { Consumes, Spec, Stat, TristateEffect } from '../../proto/common';
 import { TypedEvent } from '../../typed_event';
+import { badgeTooltip } from '../badge_tooltip';
 import { Component } from '../component';
 import { IconEnumPicker } from '../icon_enum_picker';
 import { buildIconInput } from '../icon_inputs.js';
@@ -321,7 +322,7 @@ export class ConsumesPicker extends Component {
 		badge.classList.add('consumes-slot-badge', 'consumes-not-simulated-badge');
 		badge.textContent = '!';
 		picker.rootElem.appendChild(badge);
-		const tooltip = tippy(badge, { content: note, theme: 'consumes-not-simulated' });
+		const tooltip = badgeTooltip(badge, { content: note, theme: 'consumes-not-simulated' });
 		this.addOnDisposeCallback(() => tooltip.destroy());
 
 		const update = () => {
@@ -392,7 +393,7 @@ export class ConsumesPicker extends Component {
 					elem.classList.add('consumes-slot-badge', 'consumes-unstacked-badge');
 					elem.textContent = '!';
 					picker.rootElem.appendChild(elem);
-					const tooltip = tippy(elem, { theme: 'consumes-unstacked' });
+					const tooltip = badgeTooltip(elem, { theme: 'consumes-unstacked' });
 					this.addOnDisposeCallback(() => tooltip.destroy());
 					badge = { elem, tooltip };
 					badges.set(picker.rootElem, badge);

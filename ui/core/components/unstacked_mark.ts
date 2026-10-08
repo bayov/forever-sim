@@ -1,6 +1,5 @@
-import tippy from 'tippy.js';
-
 import { TypedEvent } from '../typed_event';
+import { badgeTooltip } from './badge_tooltip';
 
 // Marks a buff that doesn't stack with another one that's on, like the consumables mark a
 // scroll next to the raid buff of the same stat (see ConsumesPicker.markUnstacked).
@@ -12,7 +11,7 @@ export function markUnstacked(elem: HTMLElement, note: () => string | undefined,
 	badge.classList.add('unstacked-badge');
 	badge.textContent = '!';
 	elem.appendChild(badge);
-	const tooltip = tippy(badge, { theme: 'consumes-unstacked' });
+	const tooltip = badgeTooltip(badge, { theme: 'consumes-unstacked' });
 
 	const update = () => {
 		const text = note();

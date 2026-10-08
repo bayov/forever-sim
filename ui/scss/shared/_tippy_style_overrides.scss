@@ -26,3 +26,9 @@
 	color: var(--bs-tooltip-body-color);
 	padding: var(--bs-tooltip-body-padding-y) var(--bs-tooltip-body-padding-x);
 }
+
+// While the mouse is on a "!" badge, the spell or item tooltip of its icon stays hidden, see
+// badgeTooltip().
+body.tooltip-badge-hovered > .wowhead-tooltip {
+	visibility: hidden !important;
+}

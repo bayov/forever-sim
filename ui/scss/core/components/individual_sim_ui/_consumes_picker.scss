@@ -180,12 +180,23 @@ body.hide-wowhead-tooltip-sell-price .wowhead-tooltip .whtt-sellprice {
 	display: none;
 }
 
+// The tooltip of a red or yellow "!" badge, see badgeTooltip(). We color the content's own 1px
+// border, in place of the usual gray one, and round it like the box. A second border on the box
+// left the content's square corners poking out of the box's round ones.
 .tippy-box[data-theme='consumes-unstacked'] {
-	border: 1px solid #e0403a;
 	color: #ff9a94;
+
+	.tippy-content {
+		border-color: #e0403a;
+		border-radius: 4px;
+	}
 }
 
 .tippy-box[data-theme='consumes-not-simulated'] {
-	border: 1px solid $warning;
 	color: $warning;
+
+	.tippy-content {
+		border-color: $warning;
+		border-radius: 4px;
+	}
 }
