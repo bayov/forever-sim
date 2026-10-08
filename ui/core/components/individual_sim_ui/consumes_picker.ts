@@ -101,7 +101,7 @@ export class ConsumesPicker extends Component {
 		this.updateRow(row, pickers);
 	}
 
-	// The attributes' elixirs and scrolls in one category, in the order of the character sheet. Each
+	// The attributes' elixirs and scrolls in one category, with Stamina last. Each
 	// attribute has one slot with its elixirs and its scroll, and its short name at the bottom. A
 	// scroll doesn't stack with a raid buff of the same attribute either, see markUnstacked.
 	private buildAttributePickers() {
@@ -125,10 +125,6 @@ export class ConsumesPicker extends Component {
 
 		add(buildIconInput(elem, player, strengthOptions) as IconEnumPicker<Player<Spec>, number>, 'STR');
 		add(buildIconInput(elem, player, agilityOptions) as IconEnumPicker<Player<Spec>, number>, 'AGI');
-		this.staminaSlot = slot(
-			ConsumablesInputs.makeScrollSlotInput({ scrollId: 10307, scrollField: 'scrollOfStamina', showScroll: raidBuffShown(BuffDebuffInputs.StaminaBuff) }),
-			'STA',
-		);
 		this.intellectSlot = slot(
 			ConsumablesInputs.makeScrollSlotInput({
 				scrollId: 10308,
@@ -141,6 +137,10 @@ export class ConsumesPicker extends Component {
 		this.spiritSlot = slot(
 			ConsumablesInputs.makeScrollSlotInput({ scrollId: 10306, scrollField: 'scrollOfSpirit', showScroll: raidBuffShown(BuffDebuffInputs.SpiritBuff) }),
 			'SPI',
+		);
+		this.staminaSlot = slot(
+			ConsumablesInputs.makeScrollSlotInput({ scrollId: 10307, scrollField: 'scrollOfStamina', showScroll: raidBuffShown(BuffDebuffInputs.StaminaBuff) }),
+			'STA',
 		);
 
 		this.updateRow(row, pickers);
