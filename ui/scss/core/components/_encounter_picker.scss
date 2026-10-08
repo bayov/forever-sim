@@ -144,6 +144,11 @@ $target-icon: $target-name-line + $target-summary-line + $target-resistances-gap
 	cursor: help;
 }
 
+// About two thirds of a large modal, since the settings fit in two narrow columns.
+.modal-dialog.target-picker-modal {
+	max-width: 520px;
+}
+
 .target-picker-modal {
 	.modal-body {
 		overflow: auto;
@@ -151,6 +156,12 @@ $target-icon: $target-name-line + $target-summary-line + $target-resistances-gap
 
 	.target-picker-card {
 		margin-bottom: var(--block-spacer);
+	}
+
+	// A bit smaller than the race icons, so the nine mob types fit five to a line.
+	.player-icon-picker.icon-enum-row-picker .player-icon-picker-option {
+		width: 2.4rem;
+		height: 2.4rem;
 	}
 
 	// The five resistances side by side, each with its icon for a label.
@@ -180,35 +191,20 @@ $target-icon: $target-name-line + $target-summary-line + $target-resistances-gap
 		}
 	}
 
+	// The target's settings in two columns with room between them. The tank settings (swing
+	// speed and the like) go under both, and only tanks see them.
 	.target-picker-root {
 		display: grid;
-		gap: var(--block-spacer);
-		grid-template-columns: 1fr;
-		@include media-breakpoint-up(xl) {
-			grid-template-columns: 1fr 1fr 1fr;
+		gap: var(--block-spacer) 2.5rem;
+		grid-template-columns: 1fr 1fr;
+
+		.target-picker-section3 {
+			grid-column: 1 / -1;
 		}
 
 		.input-root:is(:only-child),
 		.input-root:is(:last-child) {
 			margin-bottom: 0;
-		}
-	}
-}
-
-.hide-threat-metrics {
-	.target-picker-modal {
-		// Use visibility to maintain thirds nicely for the modal layout
-		.target-picker-section3.threat-metrics {
-			display: block !important;
-			visibility: hidden;
-
-			@include media-breakpoint-down(xl) {
-				display: none !important;
-			}
-
-			.input-root {
-				display: none;
-			}
 		}
 	}
 }
