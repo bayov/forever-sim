@@ -171,14 +171,21 @@ export const FrostResistanceBuffs: ExclusiveIconRowConfig = {
 };
 
 // The Scrolls of Stamina, Intellect and Spirit are with the consumables, see ScrollOfStamina.
-export const StaminaBuff = withLabel(
-	makeTristateRaidBuffInput({
-		actionId: () => ActionId.fromSpellId(10938),
-		impId: ActionId.fromSpellId(14767),
-		fieldName: 'powerWordFortitude',
-	}),
-	'Power Word: Fortitude',
+export const StaminaBuff = classicTwin(
+	withLabel(
+		makeTristateRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(10938),
+			impId: ActionId.fromSpellId(14767),
+			fieldName: 'powerWordFortitude',
+			showWhen: notForever,
+		}),
+		'Power Word: Fortitude',
+	),
 );
+
+// Forever has no Improved Power Word: Fortitude, but its 30% is baseline, so it's plain on or
+// off there.
+export const StaminaBuffForever = withLabel(makeForeverPlainBuffInput(10938, 'powerWordFortitude'), 'Power Word: Fortitude');
 
 export const BloodPactBuff = classicTwin(
 	withLabel(
@@ -235,7 +242,7 @@ export const GraceOfAir = classicTwin(
 // tree.
 function makeForeverPlainBuffInput(
 	spellId: number,
-	fieldName: 'giftOfTheWild' | 'strengthOfEarthTotem' | 'graceOfAirTotem' | 'bloodPact' | 'battleShout',
+	fieldName: 'giftOfTheWild' | 'powerWordFortitude' | 'strengthOfEarthTotem' | 'graceOfAirTotem' | 'bloodPact' | 'battleShout',
 	showWhen: (player: Player<any>) => boolean = () => true,
 ) {
 	return foreverTwin(
@@ -724,6 +731,11 @@ export const RAID_BUFFS_CONFIG = [
 		stats: [],
 	},
 	{
+		config: StaminaBuffForever,
+		picker: IconPicker,
+		stats: [],
+	},
+	{
 		config: BloodPactBuff,
 		picker: IconPicker,
 		stats: [],
@@ -985,7 +997,7 @@ function buffItem(config: unknown): IconSubsectionItem {
 // The Blessings go here too, even for a paladin, because another paladin in the raid gives
 // them.
 export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
-	{ label: 'Stats', items: [AllStatsBuff, AllStatsBuffForever, StaminaBuff, IntellectBuff, SpiritBuff].map(buffItem) },
+	{ label: 'Stats', items: [AllStatsBuff, AllStatsBuffForever, StaminaBuff, StaminaBuffForever, IntellectBuff, SpiritBuff].map(buffItem) },
 	{ label: 'Blessings', items: [BlessingOfKings, BlessingOfMight, BlessingOfWisdom].map(buffItem) },
 	{ label: 'Mana', items: [Innervate].map(buffItem) },
 	{ label: 'Other', items: [PowerInfusion, Thorns].map(buffItem) },

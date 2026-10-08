@@ -100,6 +100,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 		BuffDebuffInputs.BlessingOfWisdom,
 		BuffDebuffInputs.ManaSpringTotem,
 		BuffDebuffInputs.StaminaBuff,
+		BuffDebuffInputs.StaminaBuffForever,
 		BuffDebuffInputs.SpellWintersChillDebuff,
 	],
 	excludeBuffDebuffInputs: [],
