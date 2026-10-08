@@ -471,6 +471,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - 7.22 Searing Totem (`fire_totems.go`): a bolt every 2.5 sec for the totem's 30 to 55 sec lifetime, 1.7% coefficient (Forever). The real attack is every 2.2 sec, but the next bolt waits for the last to land, so we use 2.5 sec without a distance option.
 - 7.23 Magma Totem: a pulse every 2 sec for 20 sec, 2 less damage per pulse than 1.12 (Forever).
 - 7.24 Flametongue Totem: 5 min, fire damage per main hand hit by weapon speed (548 / 25 per 4 sec at rank 1, flat by level). It takes the fire slot, and placing another fire totem takes it down.
+  - Beta, level 30 (2026-10-08): rank 1 on the 3.6 speed axe hit 19 or 20. The sim gives 548 / 100 * 3.6 = 19.73 plus 10% of spell power. Classic Era's 489 would give 17.6, so Forever's 548 holds. Open: whether spell power adds to it (cmangos says it doesn't scale with gear).
 - 7.25 Fire Nova (Forever spell): needs a fire totem down, 10 sec cooldown, 1.5 sec GCD, Totemic Focus doesn't discount it. Damage is Classic's (rank 1 grows over 5 levels). Call of Flame and Improved Fire Nova add up.
 - 7.17 Totems last 5 min under Forever (Searing, Magma and Fire Nova keep their own times). The weapon totem slot rules are in `core/totem_weapon_buffs.go` and `shaman.go` setTotemWeaponBuff.
 
