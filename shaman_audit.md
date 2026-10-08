@@ -456,6 +456,10 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - 7.15 Lightning Shield (`lightning_shield.go`): 3 orbs, 10 min. A melee hit on us that lands fires one orb, at most one every 3.5 sec (the ICD is a guess, "TODO: Does vanilla have an ICD?"). 26.7% spell power coefficient on every rank (Forever).
 - 7.16 Water Shield (`water_shield.go`): free, 15 sec cooldown, 3 globes, 10 min. Each globe returns 2% of max mana, at most one every 3.5 sec (a guess borrowed from Lightning Shield). Only the raid damage hits per minute option feeds it at level 60.
 - 7.3 Flametongue Weapon (`flametongue_weapon.go`): a fire hit on each main hand hit for (rank damage / 4) times weapon speed, 112.4 per 4 sec at level 60. Its 0.1 spell power coefficient does not scale with weapon speed. Open: does Forever scale the coefficient with speed? Elemental Weapons adds 5 / 10 / 15%.
+- Beta, level 30 with 0/3 Elemental Weapons (2026-10-08):
+  - Rockbiter rank 4 gave 177 AP (sim 177.6).
+  - The Windfury tooltip says 46 AP (sim 46). The log shows two "Windfury Weapon" hits per proc. With the Barbaric Battle Axe of Healing (25 to 38, 3.6 speed) at 198 AP, 9 Windfury hits averaged 75.1 and 16 white hits 65.9, a ratio of 1.140 (sim 1.144).
+  - Flametongue with the same axe and 6 spell power hit 27 or 28 Fire (9 and 8 hits), so about 27.5. The sim gives 35.36 * 3.6 / 4 + 0.6 = 32.4, 15% more. The tooltip's "11 to 36" matches the client's 884 / 77 - 1 and 884 / 25, rounded up. Open: hits with a 2.7 and a 1.6 speed weapon tell a speed cap (about 3.0) from a cut on every weapon.
 - 7.22 Searing Totem (`fire_totems.go`): a bolt every 2.5 sec for the totem's 30 to 55 sec lifetime, 1.7% coefficient (Forever). The real attack is every 2.2 sec, but the next bolt waits for the last to land, so we use 2.5 sec without a distance option.
 - 7.23 Magma Totem: a pulse every 2 sec for 20 sec, 2 less damage per pulse than 1.12 (Forever).
 - 7.24 Flametongue Totem: 5 min, fire damage per main hand hit by weapon speed (548 / 25 per 4 sec at rank 1, flat by level). It takes the fire slot, and placing another fire totem takes it down.

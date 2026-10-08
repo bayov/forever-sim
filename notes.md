@@ -9,6 +9,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 ## Shaman
 
 * Beta: Elemental Weapons on Windfury Weapon applies once or twice (sim: twice, like SoD). With a 3.6 speed weapon, the Windfury hit minus a white hit should be about 11.8 AP worth with 0 points, 16.6 if it applies once and 23.2 if twice (`sim/shaman/windfury_weapon.go`).
+* Beta: Flametongue Weapon's damage per hit. With the Barbaric Battle Axe of Healing (3.6 speed) and 6 spell power at level 30, 17 hits were 27 or 28 Fire (about 27.5), where the sim gives 32.4. Hits with a 2.7 and a 1.6 speed weapon tell a cap on the weapon speed from a cut on every weapon (`sim/shaman/flametongue_weapon.go`).
 * Beta: do Flametongue Weapon and Flametongue Totem procs trigger Elemental Devastation?
 * Beta: Water Shield globe ICD (sim: 3.5 s, the tooltip says "every few seconds").
 * Beta: Lightning Shield orb ICD (sim: 3.5 s, the vanilla value is unknown).
