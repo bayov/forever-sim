@@ -91,6 +91,7 @@ export class SettingsTab extends SimTab {
 			if (!this.simUI.isWithinRaidSim) {
 				this.buildEncounterInputs();
 				this.buildDebuffsSettings();
+				this.buildDefensiveDebuffsSettings();
 				this.buildIsbSettings();
 				this.buildStormstrikeSettings();
 
@@ -300,14 +301,11 @@ export class SettingsTab extends SimTab {
 		const contentBlock = new ContentBlock(this.column3, 'world-buffs-settings', {
 			header: { title: 'World Buffs / Camp', tooltip: Tooltips.WORLD_BUFFS_SECTION },
 		});
-		contentBlock.rootElem.classList.add('buffs-section', 'world-buffs-off');
-
-		const note = document.createElement('p');
-		note.classList.add('world-buffs-note');
-		note.textContent =
-			"Off for now. Forever has no world buffs that we know of. It may have camp buffs or something like them in their place, and they'd go here.";
-		contentBlock.rootElem.insertBefore(note, contentBlock.bodyElement);
-		contentBlock.bodyElement.inert = true;
+		contentBlock.rootElem.classList.add('buffs-section');
+		turnSectionOff(
+			contentBlock,
+			"Off for now. Forever has no world buffs that we know of. It may have camp buffs or something like them in their place, and they'd go here.",
+		);
 
 		const saygesOptions = relevantStatOptions(BuffDebuffInputs.SAYGES_CONFIG, this.simUI);
 		new IconEnumPicker(contentBlock.bodyElement, this.simUI.player, BuffDebuffInputs.SaygesDarkFortune(saygesOptions));
@@ -322,13 +320,13 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildDebuffsSettings() {
-		const debuffOptions = relevantStatOptions(BuffDebuffInputs.DEBUFFS_CONFIG, this.simUI);
+		const debuffOptions = relevantStatOptions(BuffDebuffInputs.OFFENSIVE_DEBUFFS_CONFIG, this.simUI);
 		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.MISC_DEBUFFS_CONFIG, this.simUI);
 
 		if (!debuffOptions.length && !miscDebuffOptions.length) return;
 
 		const contentBlock = new ContentBlock(this.column2, 'debuffs-settings', {
-			header: { title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION },
+			header: { title: 'Offensive Debuffs', tooltip: Tooltips.OFFENSIVE_DEBUFFS_SECTION },
 		});
 
 		this.configureIconSection(
@@ -350,6 +348,23 @@ export class SettingsTab extends SimTab {
 
 		// In case no debuffs are active, this will fire a change event to update the pickers
 		this.simUI.player.getRaid()?.debuffsChangeEmitter.emit(TypedEvent.nextEventID());
+	}
+
+	// The defensive debuffs are off for now, because we don't sim the damage we take yet. We show
+	// the section dimmed, with a note, and Raid.setDebuffs turns them off. We show all of them,
+	// whatever stats the spec cares about, so the section says what's there.
+	private buildDefensiveDebuffsSettings() {
+		const contentBlock = new ContentBlock(this.column2, 'debuffs-settings', {
+			header: { title: 'Defensive Debuffs', tooltip: Tooltips.DEFENSIVE_DEBUFFS_SECTION },
+		});
+		turnSectionOff(contentBlock, "Off for now. They lower the damage the target does, and we don't sim the damage we take yet.");
+
+		this.configureIconSection(
+			contentBlock.bodyElement,
+			BuffDebuffInputs.DEFENSIVE_DEBUFFS_CONFIG.map(
+				options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI),
+			),
+		);
 	}
 
 	private buildSavedDataPickers() {
@@ -513,3 +528,15 @@ function buffSource(config: unknown): BuffSource {
 
 const PARTY_BUFFS_TOOLTIP = 'Buffs the members of our party give us, like totems, auras and Battle Shout.';
 const RAID_BUFFS_TOOLTIP = 'Buffs anyone in the raid can give us, like Mark of the Wild, Fortitude, a Blessing or Innervate.';
+
+// Shows a section dimmed under a note that says why it's off, and makes its pickers ignore
+// clicks. The code that reads the settings turns the section's settings off too, see
+// Player.setBuffs and Raid.setDebuffs.
+function turnSectionOff(contentBlock: ContentBlock, note: string) {
+	contentBlock.rootElem.classList.add('settings-section-off');
+	const noteElem = document.createElement('p');
+	noteElem.classList.add('settings-section-off-note');
+	noteElem.textContent = note;
+	contentBlock.rootElem.insertBefore(noteElem, contentBlock.bodyElement);
+	contentBlock.bodyElement.inert = true;
+}

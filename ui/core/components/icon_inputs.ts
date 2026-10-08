@@ -203,7 +203,8 @@ export function makeTristateDebuffInput<SpecType extends Spec>(
 			showWhen: (player: Player<SpecType>) => !config.showWhen || config.showWhen(player),
 			getValue: (player: Player<SpecType>) => player.getRaid()!.getDebuffs(),
 			setValue: (eventID: EventID, player: Player<SpecType>, newVal: Debuffs) => player.getRaid()!.setDebuffs(eventID, newVal),
-			changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter]),
+			changeEmitter: (player: Player<SpecType>) =>
+				TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
 		},
 		config.actionId,
 		config.impId,

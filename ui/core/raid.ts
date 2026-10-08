@@ -15,6 +15,24 @@ import { sum } from './utils.js';
 
 export const MAX_NUM_PARTIES = 8;
 
+// The debuffs with the defensive ones turned off.
+//
+// They lower the target's attack power, attack speed or chance to hit, which only matters for
+// the damage we take. We don't sim that yet, so the Settings tab shows them dimmed and we turn
+// them off here. Saved settings and presets from before still have them.
+export function withoutDefensiveDebuffs(debuffs: Debuffs): Debuffs {
+	return {
+		...debuffs,
+		demoralizingShout: TristateEffect.TristateEffectMissing,
+		demoralizingRoar: TristateEffect.TristateEffectMissing,
+		thunderClap: TristateEffect.TristateEffectMissing,
+		thunderfury: false,
+		curseOfWeakness: TristateEffect.TristateEffectMissing,
+		insectSwarm: false,
+		scorpidSting: false,
+	};
+}
+
 // Manages all the settings for a single Raid.
 export class Raid {
 	private buffs: RaidBuffs = RaidBuffs.create();
@@ -139,6 +157,7 @@ export class Raid {
 	}
 
 	setDebuffs(eventID: EventID, newDebuffs: Debuffs) {
+		newDebuffs = withoutDefensiveDebuffs(newDebuffs);
 		if (Debuffs.equals(this.debuffs, newDebuffs))
 			return;
 

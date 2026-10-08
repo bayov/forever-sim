@@ -1,6 +1,6 @@
 import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
-import { Faction, RaidBuffs, SaygesFortune, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
+import { Debuffs, Faction, RaidBuffs, SaygesFortune, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
 import { EventID, TypedEvent } from '../../typed_event';
 import {
@@ -423,6 +423,37 @@ export const SlipKiksSavvy = withLabel(
 //                                 DEBUFFS
 ///////////////////////////////////////////////////////////////////////////
 
+const notForever = (player: Player<any>) => player.sim.getRuleset() !== Ruleset.RulesetForever;
+
+// Under Forever these debuffs have no improved version. Improved Expose Armor no longer adds
+// armor, and Improved Seal of the Crusader and Improved Hunter's Mark are out of the trees. So we
+// show them as on or off there. An improved value from an older saved setup counts as on, and
+// the sim treats it as the regular debuff.
+function makeForeverDebuffInput(
+	spellId: number,
+	fieldName: 'exposeArmor' | 'judgementOfTheCrusader' | 'huntersMark',
+	showWhen?: (player: Player<any>) => boolean,
+) {
+	return InputHelpers.makeBooleanIconInput<any, Debuffs, Player<any>>(
+		{
+			getModObject: (player: Player<any>) => player,
+			showWhen: (player: Player<any>) => !notForever(player) && (!showWhen || showWhen(player)),
+			getValue: (player: Player<any>) => player.getRaid()!.getDebuffs(),
+			setValue: (eventID: EventID, player: Player<any>, newVal: Debuffs) => player.getRaid()!.setDebuffs(eventID, newVal),
+			changeEmitter: (player: Player<any>) =>
+				TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
+			getFieldValue: (player: Player<any>) => player.getRaid()!.getDebuffs()[fieldName] !== TristateEffect.TristateEffectMissing,
+			setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+				const debuffs = player.getRaid()!.getDebuffs();
+				debuffs[fieldName] = newValue ? TristateEffect.TristateEffectRegular : TristateEffect.TristateEffectMissing;
+				player.getRaid()!.setDebuffs(eventID, debuffs);
+			},
+		},
+		() => ActionId.fromSpellId(spellId),
+		fieldName,
+	);
+}
+
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput({
 	values: [
 		makeBooleanDebuffInput({
@@ -433,7 +464,9 @@ export const MajorArmorDebuff = InputHelpers.makeMultiIconInput({
 			actionId: () => ActionId.fromSpellId(11198),
 			impId: ActionId.fromSpellId(14169),
 			fieldName: 'exposeArmor',
+			showWhen: notForever,
 		}),
+		makeForeverDebuffInput(11198, 'exposeArmor'),
 	],
 	label: 'Major Armor Penetration',
 });
@@ -505,10 +538,13 @@ export const MeleeHitDebuff = withLabel(
 	'Insect Swarm',
 );
 
+// Under Forever Improved Shadow Bolt, Improved Scorch, Winter's Chill and Shadow Weaving only
+// help the warlock, mage or priest who applies them, so the sim ignores another player's there.
 export const SpellISBDebuff = withLabel(
 	makeBooleanDebuffInput({
 		actionId: () => ActionId.fromSpellId(17803),
 		fieldName: 'improvedShadowBolt',
+		showWhen: notForever,
 	}),
 	'Improved Shadow Bolt',
 );
@@ -517,6 +553,7 @@ export const SpellScorchDebuff = withLabel(
 	makeBooleanDebuffInput({
 		actionId: () => ActionId.fromSpellId(12873),
 		fieldName: 'improvedScorch',
+		showWhen: notForever,
 	}),
 	'Scorch',
 );
@@ -525,6 +562,7 @@ export const SpellWintersChillDebuff = withLabel(
 	makeBooleanDebuffInput({
 		actionId: () => ActionId.fromSpellId(28595),
 		fieldName: 'wintersChill',
+		showWhen: notForever,
 	}),
 	"Winter's Chill",
 );
@@ -544,6 +582,7 @@ export const SpellShadowWeavingDebuff = withLabel(
 	makeBooleanDebuffInput({
 		actionId: () => ActionId.fromSpellId(15334),
 		fieldName: 'shadowWeaving',
+		showWhen: notForever,
 	}),
 	'Shadow Weaving',
 );
@@ -553,9 +592,11 @@ export const CurseOfElements = makeBooleanDebuffInput({
 	fieldName: 'curseOfElements',
 });
 
+// Forever has no Curse of Shadow. Its Curse of the Elements covers every Magic school.
 export const CurseOfShadow = makeBooleanDebuffInput({
 	actionId: () => ActionId.fromSpellId(17937),
 	fieldName: 'curseOfShadow',
+	showWhen: notForever,
 });
 
 export const WarlockCursesConfig = InputHelpers.makeMultiIconInput({ values: [CurseOfElements, CurseOfShadow], label: 'Warlock Curses' });
@@ -565,9 +606,11 @@ export const HuntersMark = withLabel(
 		actionId: () => ActionId.fromSpellId(14325),
 		impId: ActionId.fromSpellId(19425),
 		fieldName: 'huntersMark',
+		showWhen: notForever,
 	}),
 	`Hunter's Mark`,
 );
+export const HuntersMarkForever = withLabel(makeForeverDebuffInput(14325, 'huntersMark'), `Hunter's Mark`);
 export const JudgementOfWisdom = withLabel(
 	makeBooleanDebuffInput({
 		actionId: () => ActionId.fromSpellId(20355),
@@ -581,8 +624,12 @@ export const JudgementOfTheCrusader = withLabel(
 		actionId: () => ActionId.fromSpellId(20303),
 		impId: ActionId.fromSpellId(20337),
 		fieldName: 'judgementOfTheCrusader',
-		showWhen: player => player.hasFactionBuffs(Faction.Alliance),
+		showWhen: player => player.hasFactionBuffs(Faction.Alliance) && notForever(player),
 	}),
+	'Judgement of the Crusader',
+);
+export const JudgementOfTheCrusaderForever = withLabel(
+	makeForeverDebuffInput(20303, 'judgementOfTheCrusader', player => player.hasFactionBuffs(Faction.Alliance)),
 	'Judgement of the Crusader',
 );
 
@@ -840,7 +887,8 @@ export const SAYGES_CONFIG = [
 	},
 ] as ItemStatOption<SaygesFortune>[];
 
-export const DEBUFFS_CONFIG = [
+// The debuffs that raise our damage.
+export const OFFENSIVE_DEBUFFS_CONFIG = [
 	// Standard Debuffs
 	{
 		config: MajorArmorDebuff,
@@ -866,6 +914,11 @@ export const DEBUFFS_CONFIG = [
 	// Magic
 	{
 		config: JudgementOfTheCrusader,
+		picker: IconPicker,
+		stats: [Stat.StatHolyPower],
+	},
+	{
+		config: JudgementOfTheCrusaderForever,
 		picker: IconPicker,
 		stats: [Stat.StatHolyPower],
 	},
@@ -900,7 +953,27 @@ export const DEBUFFS_CONFIG = [
 		stats: [Stat.StatSpellPower, Stat.StatSpellDamage],
 	},
 
-	// Defensive
+	// Other Debuffs
+	{
+		config: HuntersMark,
+		picker: IconPicker,
+		stats: [Stat.StatRangedAttackPower],
+	},
+	{
+		config: HuntersMarkForever,
+		picker: IconPicker,
+		stats: [Stat.StatRangedAttackPower],
+	},
+	{
+		config: JudgementOfWisdom,
+		picker: IconPicker,
+		stats: [Stat.StatMP5, Stat.StatIntellect],
+	},
+] as PickerStatOptions[];
+
+// The debuffs that lower the damage the target does. They're off for now, see
+// withoutDefensiveDebuffs.
+export const DEFENSIVE_DEBUFFS_CONFIG = [
 	{
 		config: AttackPowerDebuff,
 		picker: MultiIconPicker,
@@ -920,18 +993,6 @@ export const DEBUFFS_CONFIG = [
 		config: MeleeHitDebuff,
 		picker: IconPicker,
 		stats: [Stat.StatDodge],
-	},
-
-	// Other Debuffs
-	{
-		config: HuntersMark,
-		picker: IconPicker,
-		stats: [Stat.StatRangedAttackPower],
-	},
-	{
-		config: JudgementOfWisdom,
-		picker: IconPicker,
-		stats: [Stat.StatMP5, Stat.StatIntellect],
 	},
 ] as PickerStatOptions[];
 

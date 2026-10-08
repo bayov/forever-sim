@@ -71,9 +71,10 @@
 		}
 	}
 
-	// The world buffs are off for now, so we show them dimmed, under a note that says why.
-	.world-buffs-off {
-		.world-buffs-note {
+	// A section that's off for now, like the world buffs, shows dimmed under a note that says
+	// why, see turnSectionOff.
+	.settings-section-off {
+		.settings-section-off-note {
 			margin-bottom: var(--block-spacer);
 			font-size: 0.8125rem;
 			color: var(--text-muted-color);
