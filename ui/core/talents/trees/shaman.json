@@ -352,9 +352,9 @@
           "colIdx": 1
         },
         "spellIds": [
-          30675,
-          30678,
-          30679
+          408438,
+          408438,
+          408438
         ],
         "maxPoints": 3,
         "name": "Lightning Overload",
@@ -438,7 +438,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          51505
+          408490
         ],
         "maxPoints": 1,
         "name": "Lava Burst",
@@ -586,9 +586,9 @@
           "colIdx": 1
         },
         "spellIds": [
-          51883,
-          51884,
-          51885
+          415140,
+          415140,
+          415140
         ],
         "maxPoints": 3,
         "name": "Mental Dexterity",
@@ -696,7 +696,7 @@
           "colIdx": 2
         },
         "spellIds": [
-          43338
+          1223030
         ],
         "maxPoints": 1,
         "name": "Shamanistic Focus",
@@ -890,8 +890,8 @@
           "colIdx": 2
         },
         "spellIds": [
-          51521,
-          51522
+          1223031,
+          1223031
         ],
         "maxPoints": 2,
         "name": "Improved Stormstrike",
@@ -919,11 +919,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          51528,
-          51529,
-          51530,
-          51531,
-          51532
+          408498,
+          408498,
+          408498,
+          408498,
+          408498
         ],
         "maxPoints": 5,
         "name": "Maelstrom Weapon",
@@ -968,7 +968,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          2825
+          425336
         ],
         "maxPoints": 1,
         "name": "Rage of the Farseer",
@@ -1247,7 +1247,7 @@
           "colIdx": 2
         },
         "spellIds": [
-          52127
+          408510
         ],
         "maxPoints": 1,
         "name": "Water Shield",
@@ -1452,7 +1452,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          61295
+          408521
         ],
         "maxPoints": 1,
         "name": "Riptide",

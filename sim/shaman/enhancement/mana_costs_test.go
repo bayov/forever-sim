@@ -63,8 +63,7 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 			rankCost(t, "Frost Shock", enh.FrostShock, shaman.FrostShockManaCost[:], c.shock),
 			rankCost(t, "Lightning Bolt", enh.LightningBolt, shaman.LightningBoltManaCost[:], c.bolt),
 			rankCost(t, "Chain Lightning", enh.ChainLightning, shaman.ChainLightningManaCost[:], c.bolt),
-			// Lava Burst has no rank on its spell, and level 60 casts rank 3.
-			{"Lava Burst", enh.LavaBurst, shaman.LavaBurstManaCost[3], c.bolt},
+			rankCost(t, "Lava Burst", []*core.Spell{enh.LavaBurst}, shaman.LavaBurstManaCost, c.bolt),
 			rankCost(t, "Lightning Shield", enh.LightningShield, shaman.LightningShieldManaCost[:], c.shield),
 			rankCost(t, "Searing Totem", enh.SearingTotem, shaman.SearingTotemManaCost[:], c.totem),
 			rankCost(t, "Magma Totem", enh.MagmaTotem, shaman.MagmaTotemManaCost[:], c.totem),
@@ -275,7 +274,7 @@ func TestOrcShamanClearcasting(t *testing.T) {
 			rankCost(t, "Frost Shock", enh.FrostShock, shaman.FrostShockManaCost[:], 100),
 			rankCost(t, "Lightning Bolt", enh.LightningBolt, shaman.LightningBoltManaCost[:], 100),
 			rankCost(t, "Chain Lightning", enh.ChainLightning, shaman.ChainLightningManaCost[:], 100),
-			{"Lava Burst", enh.LavaBurst, shaman.LavaBurstManaCost[3], 100},
+			rankCost(t, "Lava Burst", []*core.Spell{enh.LavaBurst}, shaman.LavaBurstManaCost, 100),
 			rankCost(t, "Fire Nova", enh.FireNova, shaman.FireNovaManaCost[:], 100),
 			rankCost(t, "Lightning Shield", enh.LightningShield, shaman.LightningShieldManaCost[:], 0),
 			rankCost(t, "Searing Totem", enh.SearingTotem, shaman.SearingTotemManaCost[:], 0),

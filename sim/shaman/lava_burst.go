@@ -15,6 +15,9 @@ const LavaBurstFlameShockBonus = .2
 // and 196 now) to about 10% above the Lightning Bolt learned around the same level.
 var LavaBurstBaseDamage = [][]float64{{0}, {149.52, 192.88}, {178.86, 230.74}, {192.14, 247.86}}
 var LavaBurstScaling = []core.RankScaling{{}, {48, 0.9}, {58, 1.1}, {60, 1.3}}
+
+// The spell IDs are Forever's (wowhead Forever), and the talent teaches rank 1.
+var LavaBurstSpellId = []int32{0, 408490, 1238299, 1238300}
 var LavaBurstManaCost = []float64{0, 165, 230, 265}
 var LavaBurstLevel = []int32{0, 40, 50, 60}
 
@@ -31,11 +34,12 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 
 	shaman.LavaBurst = shaman.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_ShamanLavaBurst,
-		ActionID:    core.ActionID{SpellID: 51505},
+		ActionID:    core.ActionID{SpellID: LavaBurstSpellId[rank]},
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagShaman | core.SpellFlagAPL,
+		Rank:        rank,
 
 		MissileSpeed: 20,
 

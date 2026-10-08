@@ -432,7 +432,7 @@ func (shaman *Shaman) applyImprovedStormstrike() {
 
 	focusAura := shaman.RegisterAura(core.Aura{
 		Label:    "Improved Stormstrike",
-		ActionID: core.ActionID{SpellID: 51521},
+		ActionID: core.ActionID{SpellID: 1223031},
 		Duration: time.Second * 15,
 		// The mana tick amount is cached, so the rate change has to be pushed into it
 		// the way Innervate does. Without this the talent never regenerated anything.
@@ -475,7 +475,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 
 	shaman.MaelstromWeaponAura = shaman.RegisterAura(core.Aura{
 		Label:     "Maelstrom Weapon",
-		ActionID:  core.ActionID{SpellID: 51530},
+		ActionID:  core.ActionID{SpellID: 408505},
 		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
@@ -520,7 +520,7 @@ func (shaman *Shaman) registerRageOfTheFarseerCD() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 2825}
+	actionID := core.ActionID{SpellID: 425336}
 	multiplier := 1.30
 	// TODO: The tooltip showed no cooldown, beta will confirm it. 3 minutes matches the other class cooldowns of this size.
 	cd := time.Minute * 3

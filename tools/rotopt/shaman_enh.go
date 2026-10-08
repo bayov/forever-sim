@@ -28,9 +28,9 @@ func rankID[L int | int32](levels []L, ids []int32) *proto.ActionID {
 
 var (
 	stormstrike      = spellID(17364)
-	maelstromWeapon  = spellID(51530)
+	maelstromWeapon  = spellID(408505)
 	clearcasting     = spellID(16246)
-	rageOfTheFarseer = spellID(2825)
+	rageOfTheFarseer = spellID(425336)
 	naturesSwiftness = spellID(16188)
 	waterShield      = spellID(408510)
 )

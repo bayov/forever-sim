@@ -365,10 +365,10 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Every rank's mana cost (95 ranks, totems and Lava Burst included) matches wowhead Forever (2026-10-08). Water Shield shows no cost there and is free in the sim.
 - The user OK'd the modifiers (2026-10-08). Convection takes 2% a point off shocks, Lightning Bolt, Chain Lightning and Lava Burst. Shamanistic Focus takes 45% off shocks and Lightning Shield. Totemic Focus takes 5% a point off totems. Maelstrom Weapon takes 4% a point a stack off the next Lightning Bolt's cost and cast time. The percents add (as in cmangos) and the cost never goes below 0.
 - Clearcasting comes on 10% of the damage spells we cast, Fire Nova included, and makes the next one free. Totem attacks, Lightning Shield orbs and imbue procs don't give it or use it up. A Lightning Bolt uses it up at the end of its cast.
-- Fire Nova isn't a totem under Forever, so Totemic Focus doesn't reach it.
+- Fire Nova isn't a totem under Forever, so Totemic Focus doesn't reach it (the user, 2026-10-08).
 - A spell we can't pay for doesn't cast, and the sim marks us out of mana until we can. The rotation moves on to the next spell.
 - `mana_costs_test.go` has TestOrcShamanManaCostTalents, TestOrcShamanMaelstromWeaponCost, TestOrcShamanClearcasting and TestOrcShamanNotEnoughMana. They fail when Fire Nova stops counting as a damage spell, when Searing Totem's attacks count, when Lightning Bolt doesn't use up Maelstrom Weapon, and when Clearcasting procs 20%.
-- Open: Lava Burst uses 51505 (the Wrath ID) on every rank. Forever has 408490, 1238299 and 1238300. Rage of the Farseer uses 2825 (TBC Bloodlust), Forever has 425336. Both IDs only show in the UI and logs.
+- Fixed (2026-10-08, the user's go): Wrath and TBC spell IDs that wowhead Forever doesn't know. Lava Burst used 51505 on every rank and now has 408490, 1238299 and 1238300 as one rank family (`lava_burst_test.go`). Rage of the Farseer 2825 is now 425336, the Maelstrom Weapon buff 51530 is now 408505, and the Improved Stormstrike buff 51521 is now 1223031. The rotations and rotopt follow. The talent tree also had Wrath IDs for Lightning Overload, Mental Dexterity, Shamanistic Focus, Improved Stormstrike, Maelstrom Weapon, Water Shield and Riptide, and now has the client's Forever IDs. No golden changed.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
