@@ -1,3 +1,4 @@
+// The fight settings, with the targets as a list at the bottom, see EncounterPicker.
 .encounter-picker-root {
 	display: flex;
 	flex-wrap: wrap;
@@ -9,14 +10,6 @@
 		flex-wrap: nowrap;
 	}
 
-	.advanced-button {
-		min-width: calc(50% - 0.5rem);
-
-		@include media-breakpoint-down(xxl) {
-			width: 100%;
-		}
-	}
-
 	.list-picker-compact {
 		.input-root {
 			margin-bottom: 0;
@@ -24,28 +17,85 @@
 	}
 }
 
-.advanced-encounter-picker-modal {
-	.modal-body {
-		overflow: auto;
-		gap: var(--block-spacer);
+.encounter-targets {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+
+	.form-label {
+		margin-bottom: 0;
 	}
 
-	.encounter-header {
+	.encounter-target-list {
 		display: flex;
 		flex-direction: column;
-		gap: var(--block-spacer);
+		gap: 0.4rem;
 	}
 
-	.encounter-picker {
-		width: 33.33%;
+	// A target's row: its mob type's icon, its name with a summary under it, and the edit and
+	// remove buttons on the right.
+	.encounter-target-row {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.35rem 0.5rem;
+		border: 1px solid var(--line-color-strong);
+		border-radius: var(--panel-radius);
+		background: var(--panel-bg-2);
+	}
 
-		@include media-breakpoint-down(sm) {
-			width: 50%;
+	// A target that differs from the preset's, see TargetList.
+	.encounter-target-row.dirty-setting {
+		border-color: var(--dirty-color);
+
+		.encounter-target-name::after {
+			content: ' \25CF';
+			color: var(--dirty-color);
+			font-size: 0.7em;
+			vertical-align: middle;
 		}
 	}
 
-	.execute-group {
-		flex-direction: row;
+	.encounter-target-icon {
+		width: 2rem;
+		height: 2rem;
+		flex-shrink: 0;
+		border: 1px solid #000;
+		border-radius: 3px;
+		outline: 1px solid #3c3a35;
+	}
+
+	.encounter-target-info {
+		flex-grow: 1;
+		min-width: 0;
+	}
+
+	.encounter-target-name,
+	.encounter-target-summary {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.encounter-target-summary {
+		color: var(--text-muted-color);
+		font-size: 0.75rem;
+	}
+
+	.encounter-target-edit,
+	.encounter-target-remove {
+		padding: 0.25rem 0.4rem;
+	}
+
+	.encounter-target-add {
+		align-self: flex-start;
+	}
+}
+
+.target-picker-modal {
+	.modal-body {
+		overflow: auto;
 	}
 
 	.target-picker-root {
@@ -64,7 +114,7 @@
 }
 
 .hide-threat-metrics {
-	.advanced-encounter-picker-modal {
+	.target-picker-modal {
 		// Use visibility to maintain thirds nicely for the modal layout
 		.target-picker-section3.threat-metrics {
 			display: block !important;

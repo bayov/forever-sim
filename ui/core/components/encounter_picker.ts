@@ -1,3 +1,5 @@
+import tippy from 'tippy.js';
+
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { EnumPicker } from '../components/enum_picker.js';
 import { ListItemPickerConfig, ListPicker } from '../components/list_picker.js';
@@ -7,90 +9,64 @@ import { IndividualSimUI } from '../individual_sim_ui.js';
 import { InputType, MobType, SpellSchool, Stat, Target, Target as TargetProto, TargetInput } from '../proto/common.js';
 import { statNames } from '../proto_utils/names.js';
 import { Stats } from '../proto_utils/stats.js';
-import { isHealingSpec, isTankSpec } from '../proto_utils/utils.js';
+import { isHealingSpec } from '../proto_utils/utils.js';
 import { Raid } from '../raid.js';
 import { SimUI } from '../sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { randomUUID } from '../utils.js';
 import { BaseModal } from './base_modal.js';
 import { Component } from './component.js';
+import { dirtySettings } from './dirty_settings.js';
 import { Input } from './input.js';
 
 export interface EncounterPickerConfig {
+	// We show the execute fields for every spec now, so we no longer read this. The specs still
+	// set it.
 	showExecuteProportion: boolean;
 }
 
+// The fight settings: its length, PvP, the execute phases and the targets.
+//
+// Each target is a row with its mob type's icon, its name and a short summary. We edit a
+// target in a modal with only that target's settings, add one with the button under the list
+// and remove one with the button on its row.
 export class EncounterPicker extends Component {
-	constructor(parent: HTMLElement, modEncounter: Encounter, config: EncounterPickerConfig, simUI: SimUI) {
+	constructor(parent: HTMLElement, modEncounter: Encounter, _config: EncounterPickerConfig, simUI: SimUI) {
 		super(parent, 'encounter-picker-root');
 
-		addEncounterFieldPickers(this.rootElem, modEncounter, config.showExecuteProportion);
+		addEncounterFieldPickers(this.rootElem, modEncounter);
+		if (!simUI.isIndividualSim()) {
+			new BooleanPicker<Encounter>(this.rootElem, modEncounter, {
+				id: 'encounter-use-health',
+				label: 'Use Health',
+				labelTooltip: 'Uses a damage limit in place of a duration limit. Damage limit is equal to sum of all targets health.',
+				inline: true,
+				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+				getValue: (encounter: Encounter) => encounter.getUseHealth(),
+				setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => {
+					encounter.setUseHealth(eventID, newValue);
+				},
+			});
+		}
 
 		// Need to wait so that the encounter and target presets will be loaded.
 		modEncounter.sim.waitForInit().then(() => {
-			const presetTargets = modEncounter.sim.db.getAllPresetTargets();
-
-			new EnumPicker<Encounter>(this.rootElem, modEncounter, {
-				id: 'encounter-npc',
-				extraCssClasses: ['damage-metrics', 'npc-picker'],
-				label: 'NPC',
-				labelTooltip: 'Selects a preset NPC configuration.',
-				values: [{ name: 'Custom', value: -1 }].concat(
-					presetTargets.map((pe, i) => {
-						return {
-							name: pe.path,
-							value: i,
-						};
-					}),
-				),
-				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => presetTargets.findIndex(pe => equalTargetsIgnoreInputs(encounter.primaryTarget, pe.target)),
-				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-					if (newValue != -1) {
-						encounter.applyPresetTarget(eventID, presetTargets[newValue], 0);
-					}
-				},
-			});
-
-			//new EnumPicker<Encounter>(this.rootElem, modEncounter, {
-			//	label: 'Target Level',
-			//	values: [
-			//		{ name: '83', value: 83 },
-			//		{ name: '82', value: 82 },
-			//		{ name: '81', value: 81 },
-			//		{ name: '80', value: 80 },
-			//	],
-			//	changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			//	getValue: (encounter: Encounter) => encounter.primaryTarget.getLevel(),
-			//	setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-			//		encounter.primaryTarget.setLevel(eventID, newValue);
-			//	},
-			//});
-
-			//new EnumPicker(this.rootElem, modEncounter, {
-			//	label: 'Mob Type',
-			//	values: mobTypeEnumValues,
-			//	changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			//	getValue: (encounter: Encounter) => encounter.primaryTarget.getMobType(),
-			//	setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-			//		encounter.primaryTarget.setMobType(eventID, newValue);
-			//	},
-			//});
-
-			// Leaving this commented in case we want it later. But it takes up a lot of
-			// screen space and none of these fields get changed much.
-			//if (config.simpleTargetStats) {
-			//	config.simpleTargetStats.forEach(stat => {
-			//		new NumberPicker(this.rootElem, modEncounter, {
-			//			label: statNames[stat],
-			//			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			//			getValue: (encounter: Encounter) => encounter.primaryTarget.getStats().getStat(stat),
-			//			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-			//				encounter.primaryTarget.setStats(eventID, encounter.primaryTarget.getStats().withStat(stat, newValue));
-			//			},
-			//		});
-			//	});
-			//}
+			const presetEncounters = modEncounter.sim.db.getAllPresetEncounters();
+			if (presetEncounters.length) {
+				new EnumPicker<Encounter>(this.rootElem, modEncounter, {
+					id: 'encounter-preset-encouter',
+					extraCssClasses: ['encounter-preset-picker'],
+					label: 'Encounter',
+					values: [{ name: 'Custom', value: -1 }].concat(presetEncounters.map((pe, i) => ({ name: pe.path, value: i }))),
+					changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+					getValue: (encounter: Encounter) => presetEncounters.findIndex(pe => encounter.matchesPreset(pe)),
+					setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+						if (newValue != -1) {
+							encounter.applyPreset(eventID, presetEncounters[newValue]);
+						}
+					},
+				});
+			}
 
 			if (simUI.isIndividualSim() && isHealingSpec((simUI as IndividualSimUI<any>).player.spec)) {
 				new NumberPicker(this.rootElem, simUI.sim.raid, {
@@ -105,116 +81,123 @@ export class EncounterPicker extends Component {
 				});
 			}
 
-			if (simUI.isIndividualSim() && isTankSpec((simUI as IndividualSimUI<any>).player.spec)) {
-				new NumberPicker(this.rootElem, modEncounter, {
-					id: 'encounter-min-base-damage',
-					label: 'Min Base Damage',
-					labelTooltip: 'Base damage for auto attacks, i.e. lowest roll with 0 AP against a 0-armor Player.',
-					changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-					getValue: (encounter: Encounter) => encounter.primaryTarget.minBaseDamage,
-					setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-						encounter.primaryTarget.minBaseDamage = newValue;
-						encounter.targetsChangeEmitter.emit(eventID);
-					},
-				});
-			}
-
-			// Transfer Target Inputs from target Id if they dont match (possible when custom AI is selected)
-			const targetIndex = presetTargets.findIndex(pe => modEncounter.primaryTarget.id == pe.target?.id);
-			const targetInputs = presetTargets[targetIndex]?.target?.targetInputs || [];
-			if (
-				targetInputs.length != modEncounter.primaryTarget.targetInputs.length ||
-				modEncounter.primaryTarget.targetInputs.some((ti, i) => ti.label != targetInputs[i].label)
-			) {
-				modEncounter.primaryTarget.targetInputs = targetInputs;
+			// A target keeps the inputs of the AI it had when we saved it. When its AI has other
+			// inputs now (a custom AI, or one that changed), we give the target the AI's inputs.
+			const presetTargets = modEncounter.sim.db.getAllPresetTargets();
+			let inputsChanged = false;
+			modEncounter.targets.forEach(target => {
+				const targetInputs = presetTargets.find(pe => target.id == pe.target?.id)?.target?.targetInputs || [];
+				if (targetInputs.length != target.targetInputs.length || target.targetInputs.some((ti, i) => ti.label != targetInputs[i].label)) {
+					target.targetInputs = targetInputs.map(ti => TargetInput.clone(ti));
+					inputsChanged = true;
+				}
+			});
+			if (inputsChanged) {
 				modEncounter.targetsChangeEmitter.emit(TypedEvent.nextEventID());
 			}
 
-			makeTargetInputsPicker(this.rootElem, modEncounter, 0);
-
-			const advancedModal = new AdvancedEncounterModal(simUI.rootElem, simUI, modEncounter);
-			const advancedButton = document.createElement('button');
-			advancedButton.classList.add('advanced-button', 'btn', 'btn-primary');
-			advancedButton.textContent = 'Advanced';
-			advancedButton.addEventListener('click', () => advancedModal.open());
-			this.rootElem.appendChild(advancedButton);
+			new TargetList(this.rootElem, modEncounter, simUI);
 		});
 	}
 }
 
-class AdvancedEncounterModal extends BaseModal {
-	private readonly encounter: Encounter;
+// The targets, one row each, and a button to add one. There's always at least one target.
+class TargetList extends Component {
+	constructor(parent: HTMLElement, encounter: Encounter, simUI: SimUI) {
+		super(parent, 'encounter-targets');
 
-	constructor(parent: HTMLElement, simUI: SimUI, encounter: Encounter) {
-		super(parent, 'advanced-encounter-picker-modal');
-
-		this.encounter = encounter;
-
-		this.addHeader();
-		this.body.innerHTML = `
-			<div class="encounter-header"></div>
-			<div class="encounter-targets"></div>
+		this.rootElem.innerHTML = `
+			<label class="form-label">Targets</label>
+			<div class="encounter-target-list"></div>
+			<button class="encounter-target-add btn btn-outline-primary">
+				<i class="fas fa-plus me-1"></i>Add target
+			</button>
 		`;
+		const listElem = this.rootElem.querySelector('.encounter-target-list') as HTMLElement;
 
-		const header = this.rootElem.getElementsByClassName('encounter-header')[0] as HTMLElement;
-		const targetsElem = this.rootElem.getElementsByClassName('encounter-targets')[0] as HTMLElement;
-
-		addEncounterFieldPickers(header, this.encounter, true);
-		if (!simUI.isIndividualSim()) {
-			new BooleanPicker<Encounter>(header, encounter, {
-				id: 'encounter-use-health',
-				label: 'Use Health',
-				labelTooltip: 'Uses a damage limit in place of a duration limit. Damage limit is equal to sum of all targets health.',
-				inline: true,
-				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => encounter.getUseHealth(),
-				setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => {
-					encounter.setUseHealth(eventID, newValue);
-				},
-			});
-		}
-		new ListPicker<Encounter, TargetProto>(targetsElem, this.encounter, {
-			extraCssClasses: ['targets-picker', 'mb-0'],
-			itemLabel: 'Target',
-			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
-			getValue: (encounter: Encounter) => encounter.targets,
-			setValue: (eventID: EventID, encounter: Encounter, newValue: Array<TargetProto>) => {
-				encounter.targets = newValue;
-				encounter.targetsChangeEmitter.emit(eventID);
-			},
-			newItem: () => Encounter.getDefaultTarget(simUI.sim).target!,
-			copyItem: (oldItem: TargetProto) => TargetProto.clone(oldItem),
-			newItemPicker: (
-				parent: HTMLElement,
-				listPicker: ListPicker<Encounter, TargetProto>,
-				index: number,
-				config: ListItemPickerConfig<Encounter, TargetProto>,
-			) => new TargetPicker(parent, encounter, index, config),
-			minimumItems: 1,
+		// We mark the Targets label when the preset has another number of targets, and a target's
+		// row when the preset has another target in its place, see dirtySettings.
+		const untrackList = dirtySettings.track({ elem: this.rootElem, read: () => encounter.targets.length, name: () => 'Targets' });
+		let untrackRows: Array<() => void> = [];
+		this.addOnDisposeCallback(() => {
+			untrackList();
+			untrackRows.forEach(untrack => untrack());
 		});
+
+		const presetTargets = encounter.sim.db.getAllPresetTargets();
+		const render = () => {
+			untrackRows.forEach(untrack => untrack());
+			const rows = encounter.targets.map((target, index) => buildTargetRow(target, index));
+			untrackRows = rows.map((row, index) =>
+				dirtySettings.track({ elem: row, read: () => encounter.targets[index], name: () => `Target ${index + 1}`, format: () => '' }),
+			);
+			listElem.replaceChildren(...rows);
+		};
+
+		const buildTargetRow = (target: TargetProto, index: number): HTMLElement => {
+			const preset = presetTargets.find(pe => equalTargetsIgnoreInputs(target, pe.target));
+			const mobType = mobTypeEnumValues.find(mt => mt.value == target.mobType) ?? mobTypeEnumValues[0];
+			const summary = [`Level ${target.level}`, mobType.name, `${target.stats[Stat.StatArmor]} Armor`];
+			if (target.stats[Stat.StatHealth]) summary.push(`${target.stats[Stat.StatHealth]} Health`);
+
+			const row = document.createElement('div');
+			row.classList.add('encounter-target-row');
+			row.innerHTML = `
+				<img class="encounter-target-icon" src="https://wow.zamimg.com/images/wow/icons/large/${mobType.icon}.jpg" />
+				<div class="encounter-target-info">
+					<div class="encounter-target-name"></div>
+					<div class="encounter-target-summary"></div>
+				</div>
+				<button class="encounter-target-edit btn btn-link" aria-label="Edit target"><i class="fas fa-pen"></i></button>
+				<button class="encounter-target-remove btn btn-link link-danger" aria-label="Remove target"><i class="fas fa-times"></i></button>
+			`;
+			(row.querySelector('.encounter-target-name') as HTMLElement).textContent = preset?.path.split('/').pop() ?? 'Custom';
+			(row.querySelector('.encounter-target-summary') as HTMLElement).textContent = summary.join(' \u00b7 ');
+
+			const icon = row.querySelector('.encounter-target-icon') as HTMLElement;
+			tippy(icon, { content: mobType.name });
+			const editButton = row.querySelector('.encounter-target-edit') as HTMLElement;
+			tippy(editButton, { content: 'Edit target' });
+			editButton.addEventListener('click', () => new TargetModal(simUI.rootElem, encounter, index).open());
+
+			const removeButton = row.querySelector('.encounter-target-remove') as HTMLElement;
+			if (encounter.targets.length > 1) {
+				tippy(removeButton, { content: 'Remove target' });
+				removeButton.addEventListener('click', () => {
+					encounter.targets = encounter.targets.filter((_, i) => i != index);
+					encounter.targetsChangeEmitter.emit(TypedEvent.nextEventID());
+				});
+			} else {
+				removeButton.remove();
+			}
+			return row;
+		};
+
+		// A new target starts as a copy of the last one, since we usually add more of the same mob.
+		this.rootElem.querySelector('.encounter-target-add')!.addEventListener('click', () => {
+			const last = encounter.targets[encounter.targets.length - 1];
+			encounter.targets = [...encounter.targets, TargetProto.clone(last ?? Encounter.getDefaultTarget(simUI.sim).target!)];
+			encounter.targetsChangeEmitter.emit(TypedEvent.nextEventID());
+		});
+
+		render();
+		const event = encounter.targetsChangeEmitter.on(render);
+		this.addOnDisposeCallback(() => event.dispose());
 	}
+}
 
-	private addHeader() {
-		const presetEncounters = this.encounter.sim.db.getAllPresetEncounters();
-
-		new EnumPicker<Encounter>(this.header as HTMLElement, this.encounter, {
-			id: 'encounter-preset-encouter',
-			label: 'Encounter',
-			extraCssClasses: ['encounter-picker', 'mb-0', 'pe-2', 'order-first'],
-			values: [{ name: 'Custom', value: -1 }].concat(
-				presetEncounters.map((pe, i) => {
-					return {
-						name: pe.path,
-						value: i,
-					};
-				}),
-			),
-			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			getValue: (encounter: Encounter) => presetEncounters.findIndex(pe => encounter.matchesPreset(pe)),
-			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-				if (newValue != -1) {
-					encounter.applyPreset(eventID, presetEncounters[newValue]);
-				}
+// One target's settings. We throw the modal away when it closes, so its index never goes
+// stale after we remove a target.
+class TargetModal extends BaseModal {
+	constructor(parent: HTMLElement, encounter: Encounter, index: number) {
+		super(parent, 'target-picker-modal', { title: `Target ${index + 1}`, disposeOnClose: true });
+		new TargetPicker(this.body, encounter, index, {
+			id: `encounter-target-${index}`,
+			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
+			getValue: (encounter: Encounter) => encounter.targets[index],
+			setValue: (eventID: EventID, encounter: Encounter, newValue: TargetProto) => {
+				encounter.targets[index] = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
 	}
@@ -489,8 +472,10 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 		this.init();
 	}
 
+	// We return the root, not null. With null the first change would dispose the picker, as if it
+	// had left the page, and that skips the NPC picker's update for that change.
 	getInputElem(): HTMLElement | null {
-		return null;
+		return this.rootElem;
 	}
 	getInputValue(): TargetProto {
 		return TargetProto.create({
@@ -648,7 +633,7 @@ class TargetInputPicker extends Input<Encounter, TargetInput> {
 	}
 }
 
-function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, showExecuteProportion: boolean) {
+function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 	const durationGroup = Input.newGroupContainer();
 	rootElem.appendChild(durationGroup);
 
@@ -707,54 +692,52 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 		showWhen: _ => encounter.getPvp(),
 	});
 
-	if (showExecuteProportion) {
-		const executeGroup = Input.newGroupContainer();
-		executeGroup.classList.add('execute-group');
-		rootElem.appendChild(executeGroup);
+	const executeGroup = Input.newGroupContainer();
+	executeGroup.classList.add('execute-group');
+	rootElem.appendChild(executeGroup);
 
-		new NumberPicker(executeGroup, encounter, {
-			id: 'encounter-execute-proportion',
-			label: 'Execute Duration 20 (%)',
-			labelTooltip:
-				'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 20% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
-			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			getValue: (encounter: Encounter) => encounter.getExecuteProportion20() * 100,
-			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-				encounter.setExecuteProportion20(eventID, newValue / 100);
-			},
-			enableWhen: _ => {
-				return !encounter.getUseHealth();
-			},
-		});
-		new NumberPicker(executeGroup, encounter, {
-			id: 'encounter-execute-proportion-25',
-			label: 'Execute Duration 25 (%)',
-			labelTooltip:
-				"Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 25% HP) for the purpose of effects like Warlock's Drain Soul.",
-			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			getValue: (encounter: Encounter) => encounter.getExecuteProportion25() * 100,
-			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-				encounter.setExecuteProportion25(eventID, newValue / 100);
-			},
-			enableWhen: _ => {
-				return !encounter.getUseHealth();
-			},
-		});
-		new NumberPicker(executeGroup, encounter, {
-			id: 'encounter-execute-proportion-35',
-			label: 'Execute Duration 35 (%)',
-			labelTooltip:
-				'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 35% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
-			changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-			getValue: (encounter: Encounter) => encounter.getExecuteProportion35() * 100,
-			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-				encounter.setExecuteProportion35(eventID, newValue / 100);
-			},
-			enableWhen: _ => {
-				return !encounter.getUseHealth();
-			},
-		});
-	}
+	new NumberPicker(executeGroup, encounter, {
+		id: 'encounter-execute-proportion',
+		label: 'Execute Duration 20 (%)',
+		labelTooltip:
+			'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 20% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getExecuteProportion20() * 100,
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			encounter.setExecuteProportion20(eventID, newValue / 100);
+		},
+		enableWhen: _ => {
+			return !encounter.getUseHealth();
+		},
+	});
+	new NumberPicker(executeGroup, encounter, {
+		id: 'encounter-execute-proportion-25',
+		label: 'Execute Duration 25 (%)',
+		labelTooltip:
+			"Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 25% HP) for the purpose of effects like Warlock's Drain Soul.",
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getExecuteProportion25() * 100,
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			encounter.setExecuteProportion25(eventID, newValue / 100);
+		},
+		enableWhen: _ => {
+			return !encounter.getUseHealth();
+		},
+	});
+	new NumberPicker(executeGroup, encounter, {
+		id: 'encounter-execute-proportion-35',
+		label: 'Execute Duration 35 (%)',
+		labelTooltip:
+			'Percentage of the total encounter duration, for which the targets will be considered to be in execute range (< 35% HP) for the purpose of effects like Warrior Execute or Mage Molten Fury.',
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getExecuteProportion35() * 100,
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			encounter.setExecuteProportion35(eventID, newValue / 100);
+		},
+		enableWhen: _ => {
+			return !encounter.getUseHealth();
+		},
+	});
 }
 
 function makeTargetInputsPicker(parent: HTMLElement, encounter: Encounter, targetIndex: number) {
@@ -820,14 +803,16 @@ const ALL_TARGET_STATS: Array<{ stat: Stat; tooltip: string; extraCssClasses: Ar
 	},
 ];
 
+// The icons are the hunter's tracking spells for each mob type. There's none for Mechanical, so
+// it gets a gizmo.
 const mobTypeEnumValues = [
-	{ name: 'None', value: MobType.MobTypeUnknown },
-	{ name: 'Beast', value: MobType.MobTypeBeast },
-	{ name: 'Demon', value: MobType.MobTypeDemon },
-	{ name: 'Dragonkin', value: MobType.MobTypeDragonkin },
-	{ name: 'Elemental', value: MobType.MobTypeElemental },
-	{ name: 'Giant', value: MobType.MobTypeGiant },
-	{ name: 'Humanoid', value: MobType.MobTypeHumanoid },
-	{ name: 'Mechanical', value: MobType.MobTypeMechanical },
-	{ name: 'Undead', value: MobType.MobTypeUndead },
+	{ name: 'None', value: MobType.MobTypeUnknown, icon: 'inv_misc_questionmark' },
+	{ name: 'Beast', value: MobType.MobTypeBeast, icon: 'ability_tracking' },
+	{ name: 'Demon', value: MobType.MobTypeDemon, icon: 'spell_shadow_summonfelhunter' },
+	{ name: 'Dragonkin', value: MobType.MobTypeDragonkin, icon: 'inv_misc_head_dragon_01' },
+	{ name: 'Elemental', value: MobType.MobTypeElemental, icon: 'spell_frost_summonwaterelemental' },
+	{ name: 'Giant', value: MobType.MobTypeGiant, icon: 'ability_racial_avatar' },
+	{ name: 'Humanoid', value: MobType.MobTypeHumanoid, icon: 'spell_holy_prayerofhealing' },
+	{ name: 'Mechanical', value: MobType.MobTypeMechanical, icon: 'inv_gizmo_02' },
+	{ name: 'Undead', value: MobType.MobTypeUndead, icon: 'spell_shadow_darksummoning' },
 ];

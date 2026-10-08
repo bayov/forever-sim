@@ -42,7 +42,7 @@ export class Encounter {
 		sim.waitForInit().then(() => {
 			const presetTarget = Encounter.getDefaultTarget(sim);
 
-			this.targets = [presetTarget.target!];
+			this.targets = [TargetProto.clone(presetTarget.target!)];
 
 			[this.targetsChangeEmitter, this.durationChangeEmitter, this.executeProportionChangeEmitter].forEach(emitter =>
 				emitter.on(eventID => this.changeEmitter.emit(eventID)),
@@ -138,12 +138,13 @@ export class Encounter {
 	}
 
 	applyPreset(eventID: EventID, preset: PresetEncounter) {
-		this.targets = preset.targets.map(presetTarget => presetTarget.target || TargetProto.create());
+		// We copy the preset's targets, so editing one later doesn't change the preset.
+		this.targets = preset.targets.map(presetTarget => (presetTarget.target ? TargetProto.clone(presetTarget.target) : TargetProto.create()));
 		this.targetsChangeEmitter.emit(eventID);
 	}
 
 	applyPresetTarget(eventID: EventID, preset: PresetTarget, index: number) {
-		this.targets[index] = preset.target || TargetProto.create();
+		this.targets[index] = preset.target ? TargetProto.clone(preset.target) : TargetProto.create();
 		this.targetsChangeEmitter.emit(eventID);
 	}
 
@@ -174,7 +175,9 @@ export class Encounter {
 			this.setPvp(eventID, proto.pvp);
 			// Settings without PvP have no downtime saved, so turning PvP on starts from the default.
 			this.setPvpMeleeDowntime(eventID, proto.pvp ? proto.pvpMeleeDowntime : DEFAULT_PVP_MELEE_DOWNTIME);
-			this.targets = proto.targets;
+			// We copy the targets, so editing one later doesn't change the preset or the saved
+			// settings they came from.
+			this.targets = proto.targets.map(target => TargetProto.clone(target));
 			this.targetsChangeEmitter.emit(eventID);
 		});
 	}

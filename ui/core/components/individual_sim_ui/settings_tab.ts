@@ -116,27 +116,27 @@ export class SettingsTab extends SimTab {
 	}
 
 	// The player's inputs that describe the fight go in the Encounter section, above the
-	// Advanced button: In Front of Target, and the spec's encounterInputs (like how often raid
-	// damage hits an Enhancement shaman). The encounter picker adds the Advanced button once the
-	// sim loads, which is before we get here.
+	// encounter presets and the targets: In Front of Target, and the spec's encounterInputs (like how often raid damage
+	// hits an Enhancement shaman). The encounter picker adds the targets once the sim loads,
+	// which is before we get here.
 	//
 	// In Front of Target is a checkbox with its label after it, like PvP. The encounterInputs are
 	// numbers side by side with their labels above them, like Duration and Duration +/-.
 	private buildEncounterInputs() {
 		if (!this.encounterPicker) return;
-		const advancedButton = this.encounterPicker.rootElem.querySelector(':scope > .advanced-button');
+		const targets = this.encounterPicker.rootElem.querySelector(':scope > .encounter-preset-picker, :scope > .encounter-targets');
 
 		if (this.simUI.individualConfig.otherInputs.inputs.includes(OtherInputs.InFrontOfTarget)) {
 			const group = Input.newGroupContainer();
 			new BooleanPicker(group, this.simUI.player, { ...OtherInputs.InFrontOfTarget, inline: true });
-			this.encounterPicker.rootElem.insertBefore(group, advancedButton ?? null);
+			this.encounterPicker.rootElem.insertBefore(group, targets ?? null);
 		}
 
 		const encounterInputs = this.simUI.individualConfig.encounterInputs?.inputs ?? [];
 		if (encounterInputs.length) {
 			const group = Input.newGroupContainer();
 			this.configureInputSection(group, { inputs: encounterInputs });
-			this.encounterPicker.rootElem.insertBefore(group, advancedButton ?? null);
+			this.encounterPicker.rootElem.insertBefore(group, targets ?? null);
 		}
 	}
 
