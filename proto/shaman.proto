@@ -123,19 +123,20 @@ message ShamanTotems {
 	bool enh_tier_ten_bonus = 11;
 }
 
-// The totems we have standing when the fight starts, one per element, and the seconds each has
-// left. We take them as put down before the pull, so they cost no mana and no global cooldown.
+// The totems we have standing when the fight starts, one per element, and how long before the
+// pull we put each down. We take them as put down before the sim starts, so they cost no mana
+// and no global cooldown.
 message StartingTotems {
 	EarthTotem earth = 1;
 	AirTotem air = 2;
 	FireTotem fire = 3;
 	WaterTotem water = 4;
-	// The seconds each totem has left at the pull. 0 means we just put it down, so it has its
+	// The seconds before the pull we put each totem down. 0 means at the pull, so it has its
 	// full duration.
-	double earth_seconds_left = 5;
-	double air_seconds_left = 6;
-	double fire_seconds_left = 7;
-	double water_seconds_left = 8;
+	double earth_seconds_before_pull = 5;
+	double air_seconds_before_pull = 6;
+	double fire_seconds_before_pull = 7;
+	double water_seconds_before_pull = 8;
 }
 
 enum ShamanSyncType {

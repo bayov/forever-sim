@@ -11,16 +11,20 @@ import (
 
 // TestOrcShamanStartingTotems checks the totems we start the fight with at level 60.
 //
-// They stand at the pull without costing mana, and each goes away when its time left runs
-// out. Strength of Earth has 20 sec left, Searing Totem 12 sec, and Mana Spring was just put
-// down. Searing Totem attacks every 2.5 sec from the pull, so 4 times before it goes.
+// They stand at the pull without costing mana, and each loses the time since we put it down.
+// Strength of Earth went down 280 sec before the pull, so it has 20 sec left. Searing Totem
+// (55 sec) went down 43 sec before, so it has 12 sec left and attacks every 2.5 sec from the
+// pull, 4 times. Mana Spring went down at the pull. Grace of Air went down 6 min before, so
+// it's gone.
 func TestOrcShamanStartingTotems(t *testing.T) {
 	player := newOrcShaman(60, "", &proto.EnhancementShaman_Options{StartingTotems: &proto.StartingTotems{
-		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
-		EarthSecondsLeft: 20,
-		Fire:             proto.FireTotem_SearingTotem,
-		FireSecondsLeft:  12,
-		Water:            proto.WaterTotem_ManaSpringTotem,
+		Earth:                  proto.EarthTotem_StrengthOfEarthTotem,
+		EarthSecondsBeforePull: 280,
+		Air:                    proto.AirTotem_GraceOfAirTotem,
+		AirSecondsBeforePull:   360,
+		Fire:                   proto.FireTotem_SearingTotem,
+		FireSecondsBeforePull:  43,
+		Water:                  proto.WaterTotem_ManaSpringTotem,
 	}})
 	sim, enh := newShamanSim(player, &proto.Debuffs{}, 30)
 	soe := enh.GetAuraByID(core.ActionID{SpellID: shaman.StrengthOfEarthTotemSpellId[5]})
@@ -40,7 +44,9 @@ func TestOrcShamanStartingTotems(t *testing.T) {
 			want time.Duration
 		}{
 			{"Strength of Earth Totem", shaman.EarthTotem, 20 * time.Second},
-			{"Searing Totem", shaman.FireTotem, 12 * time.Second},
+			// The fire totem gets 1 ns on top, so its last attack lands before it goes.
+			{"Searing Totem", shaman.FireTotem, 12*time.Second + 1},
+			{"Grace of Air Totem", shaman.AirTotem, 0},
 			{"Mana Spring Totem", shaman.WaterTotem, 5 * time.Minute},
 		}
 		for _, e := range expirations {
@@ -50,6 +56,9 @@ func TestOrcShamanStartingTotems(t *testing.T) {
 		}
 		if !soe.IsActive() || soe.ExpiresAt() != 20*time.Second {
 			t.Errorf("the Strength of Earth buff isn't up until 20 sec")
+		}
+		if goa := enh.GetAura("Grace of Air Totem"); goa == nil || goa.IsActive() {
+			t.Errorf("the Grace of Air buff is up, but the totem ran out before the pull")
 		}
 	})
 

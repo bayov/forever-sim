@@ -9,11 +9,12 @@ import (
 
 // registerStartingTotems puts down the totems we have standing when the fight starts.
 //
-// We take them as put down before the pull, so they cost no mana and no global cooldown. Each
-// goes down at the pull at the highest rank we know, and then we cut it short to the time it
-// has left. A Searing Totem with 20 sec left attacks every 2.5 sec from the pull on and goes
-// away at 20 sec. A prepull cast in the rotation that puts a totem in the same element comes
-// first, so the starting totem takes its place.
+// We take them as put down before the sim starts, so they cost no mana and no global
+// cooldown. Each goes down at the pull at the highest rank we know, and then we take off the
+// time that passed since we put it down. A Searing Totem (55 sec) put down 30 sec before the
+// pull has 25 sec left. Its attacks and the other totems' ticks count from the pull. A totem
+// put down longer ago than it lasts is gone by the pull. A prepull cast in the rotation that
+// puts a totem in the same element comes first, so the starting totem takes its place.
 func (shaman *Shaman) registerStartingTotems() {
 	totems := shaman.StartingTotems
 	if totems == nil {
@@ -21,20 +22,20 @@ func (shaman *Shaman) registerStartingTotems() {
 	}
 
 	type startingTotem struct {
-		slot        int
-		ranks       []*core.Spell
-		secondsLeft float64
+		slot              int
+		ranks             []*core.Spell
+		secondsBeforePull float64
 	}
 	var starting []startingTotem
-	add := func(slot int, ranks []*core.Spell, secondsLeft float64) {
+	add := func(slot int, ranks []*core.Spell, secondsBeforePull float64) {
 		if ranks != nil {
-			starting = append(starting, startingTotem{slot, ranks, secondsLeft})
+			starting = append(starting, startingTotem{slot, ranks, secondsBeforePull})
 		}
 	}
-	add(EarthTotem, shaman.earthTotemRanks(totems.Earth), totems.EarthSecondsLeft)
-	add(AirTotem, shaman.airTotemRanks(totems.Air), totems.AirSecondsLeft)
-	add(FireTotem, shaman.fireTotemRanks(totems.Fire), totems.FireSecondsLeft)
-	add(WaterTotem, shaman.waterTotemRanks(totems.Water), totems.WaterSecondsLeft)
+	add(EarthTotem, shaman.earthTotemRanks(totems.Earth), totems.EarthSecondsBeforePull)
+	add(AirTotem, shaman.airTotemRanks(totems.Air), totems.AirSecondsBeforePull)
+	add(FireTotem, shaman.fireTotemRanks(totems.Fire), totems.FireSecondsBeforePull)
+	add(WaterTotem, shaman.waterTotemRanks(totems.Water), totems.WaterSecondsBeforePull)
 	if len(starting) == 0 {
 		return
 	}
@@ -45,19 +46,18 @@ func (shaman *Shaman) registerStartingTotems() {
 			if spell == nil {
 				continue
 			}
-			expiresAt := time.Duration(totem.secondsLeft * float64(time.Second))
-			shaman.putDownStartingTotem(sim, totem.slot, spell, expiresAt)
+			elapsed := time.Duration(totem.secondsBeforePull * float64(time.Second))
+			shaman.putDownStartingTotem(sim, totem.slot, spell, elapsed)
 		}
 	})
 }
 
-// putDownStartingTotem puts the totem down for free and makes it go away at expiresAt.
+// putDownStartingTotem puts the totem down for free, with elapsed taken off its duration.
 //
 // Each totem keeps up its own things: a buff on us, a dot on the target or a heal over time
 // on the party. So we look at every aura in the fight that the totem turned on just now and
-// make it run out at expiresAt instead. When expiresAt is 0 or past the totem's duration, the
-// totem has its full duration.
-func (shaman *Shaman) putDownStartingTotem(sim *core.Simulation, slot int, spell *core.Spell, expiresAt time.Duration) {
+// make it run out with the totem. When the totem has no time left, we take all of it down.
+func (shaman *Shaman) putDownStartingTotem(sim *core.Simulation, slot int, spell *core.Spell, elapsed time.Duration) {
 	startedBefore := map[*core.Aura]bool{}
 	for _, unit := range sim.Environment.AllUnits {
 		for _, aura := range unit.GetAuras() {
@@ -69,16 +69,29 @@ func (shaman *Shaman) putDownStartingTotem(sim *core.Simulation, slot int, spell
 
 	spell.ApplyEffects(sim, shaman.CurrentTarget, spell)
 
-	if expiresAt <= 0 || expiresAt >= shaman.TotemExpirations[slot] {
+	if elapsed <= 0 {
 		return
 	}
-	shaman.TotemExpirations[slot] = expiresAt
+	expiresAt := shaman.TotemExpirations[slot] - elapsed
 	for _, unit := range sim.Environment.AllUnits {
 		for _, aura := range unit.GetAuras() {
-			if aura.IsActive() && aura.TimeActive(sim) == 0 && !startedBefore[aura] && aura.ExpiresAt() > expiresAt {
+			if !aura.IsActive() || aura.TimeActive(sim) != 0 || startedBefore[aura] {
+				continue
+			}
+			if expiresAt <= sim.CurrentTime {
+				aura.Deactivate(sim)
+			} else if aura.ExpiresAt() > expiresAt {
 				aura.UpdateExpires(sim, expiresAt)
 			}
 		}
+	}
+
+	if expiresAt <= sim.CurrentTime {
+		shaman.ActiveTotems[slot] = nil
+		shaman.ActiveTotemBuffs[slot] = nil
+		shaman.TotemExpirations[slot] = 0
+	} else {
+		shaman.TotemExpirations[slot] = expiresAt
 	}
 }
 

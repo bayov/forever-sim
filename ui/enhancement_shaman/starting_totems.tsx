@@ -24,7 +24,10 @@ interface TotemOption {
 interface TotemElement {
 	name: string;
 	field: 'earth' | 'air' | 'fire' | 'water';
-	secondsField: 'earthSecondsLeft' | 'airSecondsLeft' | 'fireSecondsLeft' | 'waterSecondsLeft';
+	secondsField: 'earthSecondsBeforePull' | 'airSecondsBeforePull' | 'fireSecondsBeforePull' | 'waterSecondsBeforePull';
+	// When we pick a totem for an element that had none, it went down this many seconds before
+	// the pull. We put them down one per second, water first.
+	defaultSecondsBeforePull: number;
 	totems: Array<TotemOption>;
 }
 
@@ -34,7 +37,8 @@ const ELEMENTS: Array<TotemElement> = [
 	{
 		name: 'Earth',
 		field: 'earth',
-		secondsField: 'earthSecondsLeft',
+		secondsField: 'earthSecondsBeforePull',
+		defaultSecondsBeforePull: 28,
 		totems: [
 			{
 				name: 'Strength of Earth Totem',
@@ -54,7 +58,8 @@ const ELEMENTS: Array<TotemElement> = [
 	{
 		name: 'Air',
 		field: 'air',
-		secondsField: 'airSecondsLeft',
+		secondsField: 'airSecondsBeforePull',
+		defaultSecondsBeforePull: 27,
 		totems: [
 			{ name: 'Windfury Totem', value: AirTotem.WindfuryTotem, icon: 'spell_nature_windfury', ranks: ranks([32, 42, 52], [8512, 10613, 10614]) },
 			{
@@ -68,7 +73,8 @@ const ELEMENTS: Array<TotemElement> = [
 	{
 		name: 'Fire',
 		field: 'fire',
-		secondsField: 'fireSecondsLeft',
+		secondsField: 'fireSecondsBeforePull',
+		defaultSecondsBeforePull: 29,
 		totems: [
 			{
 				name: 'Searing Totem',
@@ -88,7 +94,8 @@ const ELEMENTS: Array<TotemElement> = [
 	{
 		name: 'Water',
 		field: 'water',
-		secondsField: 'waterSecondsLeft',
+		secondsField: 'waterSecondsBeforePull',
+		defaultSecondsBeforePull: 30,
 		totems: [
 			{
 				name: 'Mana Spring Totem',
@@ -108,12 +115,12 @@ const ELEMENTS: Array<TotemElement> = [
 
 const STARTING_TOTEMS_TOOLTIP =
 	'The totems we have standing when the fight starts, one per element. ' +
-	'We take them as put down before the pull, so they cost no mana and no global cooldown. ' +
+	'We take them as put down before the sim starts, so they cost no mana and no global cooldown. ' +
 	'The sim puts down the highest rank our level knows.';
 
-const SECONDS_LEFT_TOOLTIP =
-	'Seconds the totem has left at the pull. 0 means we just put it down, so it has its full duration ' +
-	'(5 min, Searing Totem 30 to 55 sec by rank, Magma Totem 20 sec).';
+const SECONDS_BEFORE_PULL_TOOLTIP =
+	'How many seconds before the pull we put the totem down. It has that much less time left at the pull ' +
+	'(totems last 5 min, Searing Totem 30 to 55 sec by rank, Magma Totem 20 sec). 0 means at the pull.';
 
 const startingTotems = (player: EnhPlayer): StartingTotems => player.getSpecOptions().startingTotems ?? StartingTotems.create();
 
@@ -134,21 +141,26 @@ function highestRankSpellId(totem: TotemOption, player: Player<any>): number {
 	return totem.ranks.filter(rank => rank.level <= level).pop()?.spellId ?? totem.ranks[0].spellId;
 }
 
-// The totems an Enhancement shaman starts the fight with, in the Class Settings section. Each
-// element has a row of totem icons, like the weapon imbue, and the seconds its totem has left.
-// Clicking the picked totem again leaves the element without one.
+// The totems an Enhancement shaman starts the fight with, in the Class Settings section.
+//
+// It's a table with a row per element: the element's name, its totem icons (like the weapon
+// imbue, clicking the picked one again leaves the element without a totem), and the seconds
+// before the pull we put the totem down. The field is off while the element has no totem.
 export function buildStartingTotemsSettings(parent: HTMLElement, simUI: IndividualSimUI<Spec.SpecEnhancementShaman>) {
 	const player = simUI.player;
-	const root = (<div className="starting-totems"></div>) as HTMLElement;
-	const header = (<div className="starting-totems-header form-label">Starting totems</div>) as HTMLElement;
-	tippy(header, { content: STARTING_TOTEMS_TOOLTIP });
-	root.appendChild(header);
+	const title = (<span className="starting-totems-title form-label">Starting totems</span>) as HTMLElement;
+	const secondsTitle = (<span className="starting-totems-seconds-title form-label">Sec before pull</span>) as HTMLElement;
+	const root = (
+		<div className="starting-totems">
+			{title}
+			{secondsTitle}
+		</div>
+	) as HTMLElement;
+	tippy(title, { content: STARTING_TOTEMS_TOOLTIP });
+	tippy(secondsTitle, { content: SECONDS_BEFORE_PULL_TOOLTIP });
 	parent.appendChild(root);
 
 	ELEMENTS.forEach(totemElement => {
-		const row = (<div className="starting-totem-row"></div>) as HTMLElement;
-		root.appendChild(row);
-
 		const values: Array<EnumValueConfig> = [
 			{ name: 'None', value: 0 },
 			...totemElement.totems.map(totem => ({
@@ -158,24 +170,27 @@ export function buildStartingTotemsSettings(parent: HTMLElement, simUI: Individu
 				showWhen: (player: EnhPlayer) => learned(totem, player),
 			})),
 		];
-		new IconEnumRowPicker(row, player, {
+		new IconEnumRowPicker(root, player, {
 			id: `starting-totem-${totemElement.field}`,
 			label: totemElement.name,
 			values,
 			changedEvent,
 			getValue: player => startingTotems(player)[totemElement.field],
-			setValue: (eventID, player, newValue) => setStartingTotems(eventID, player, totems => ((totems[totemElement.field] as number) = newValue)),
+			setValue: (eventID, player, newValue) =>
+				setStartingTotems(eventID, player, totems => {
+					if (totems[totemElement.field] === 0) totems[totemElement.secondsField] = totemElement.defaultSecondsBeforePull;
+					(totems[totemElement.field] as number) = newValue;
+				}),
 		});
 
-		new NumberPicker(row, player, {
+		new NumberPicker(root, player, {
 			id: `starting-totem-${totemElement.field}-seconds`,
-			label: 'sec left',
-			labelTooltip: SECONDS_LEFT_TOOLTIP,
+			label: `${totemElement.name} totem sec before pull`,
 			positive: true,
 			changedEvent,
 			getValue: player => startingTotems(player)[totemElement.secondsField],
 			setValue: (eventID, player, newValue) => setStartingTotems(eventID, player, totems => (totems[totemElement.secondsField] = newValue)),
-			showWhen: player => startingTotems(player)[totemElement.field] !== 0,
+			enableWhen: player => startingTotems(player)[totemElement.field] !== 0,
 		});
 	});
 }
@@ -200,7 +215,7 @@ export function buildStartingTotemsSummary(parent: HTMLElement, simUI: Individua
 		const totems = startingTotems(player);
 		const picked = ELEMENTS.map(totemElement => ({
 			totem: totemElement.totems.find(totem => totem.value === totems[totemElement.field] && learned(totem, player)),
-			secondsLeft: totems[totemElement.secondsField],
+			secondsBeforePull: totems[totemElement.secondsField],
 		})).filter(picked => picked.totem);
 
 		icons.replaceChildren();
@@ -208,7 +223,7 @@ export function buildStartingTotemsSummary(parent: HTMLElement, simUI: Individua
 			icons.appendChild(<span className="starting-totems-none">None</span>);
 			return;
 		}
-		picked.forEach(({ totem, secondsLeft }) => {
+		picked.forEach(({ totem, secondsBeforePull }) => {
 			const icon = (<span className="starting-totem-icon" aria-label={totem!.name}></span>) as HTMLElement;
 			ActionId.fromSpellId(highestRankSpellId(totem!, player))
 				.fill()
@@ -216,7 +231,7 @@ export function buildStartingTotemsSummary(parent: HTMLElement, simUI: Individua
 			icons.appendChild(
 				<span className="starting-totem">
 					{icon}
-					<span className="starting-totem-time">{secondsLeft > 0 ? `${secondsLeft}s` : 'full'}</span>
+					<span className="starting-totem-time">{secondsBeforePull > 0 ? `-${secondsBeforePull}s` : 'at pull'}</span>
 				</span>,
 			);
 		});

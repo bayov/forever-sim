@@ -48,34 +48,80 @@
 		}
 	}
 
-	// The totems an Enhancement shaman starts the fight with, see starting_totems.tsx. Each
-	// element's row of totem icons has the seconds its totem has left next to it.
+	// The totems an Enhancement shaman starts the fight with, see starting_totems.tsx. It's a
+	// table: the element's name, its totem icons, and the seconds before the pull we put the
+	// totem down, lined up in columns.
 	.other-settings .starting-totems {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
 		margin-top: var(--block-spacer);
 
-		.starting-totem-row {
-			display: flex;
-			align-items: flex-end;
-			gap: 1rem;
+		.starting-totems-title,
+		.starting-totems-seconds-title {
+			margin: 0;
+		}
 
-			.icon-enum-row-picker {
+		.starting-totems-title {
+			grid-column: 1 / 3;
+		}
+
+		.starting-totems-seconds-title {
+			color: var(--text-muted-color);
+			font-size: 0.75rem;
+		}
+
+		// Each element's picker gives its name and its icons to the first two columns. The
+		// totem's name is in the icon's tooltip.
+		.icon-enum-row-picker {
+			display: contents;
+
+			> label {
 				width: auto;
-				margin-bottom: 0;
+				margin: 0;
+				padding: 0;
+				color: var(--text-muted-color);
+				font-size: 0.8125rem;
 			}
 
-			.number-picker-root {
-				flex-direction: column;
-				align-items: flex-start;
-				margin-bottom: 0;
+			.player-icon-picker-value {
+				display: none;
+			}
 
-				label {
-					width: auto;
-				}
+			.player-icon-picker-options {
+				margin-top: 0;
+			}
 
-				input {
-					width: 4rem;
-					min-width: 0;
-				}
+			.player-icon-picker-option {
+				width: 2.25rem;
+				height: 2.25rem;
+			}
+		}
+
+		// The field's label only names it in the list of changes on a modified preset. The
+		// column's title stands for it on the page.
+		.number-picker-root {
+			justify-self: end;
+			margin: 0;
+
+			> label {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip: rect(0 0 0 0);
+				white-space: nowrap;
+			}
+
+			input {
+				width: 3.5rem;
+				min-width: 0;
+				text-align: center;
+			}
+
+			&.disabled input {
+				opacity: 0.35;
 			}
 		}
 	}
@@ -111,6 +157,13 @@
 			background-color: #0c0c0f;
 			background-size: 120%;
 			background-position: center;
+		}
+
+		// The small icon of a buff's improved version, like Restorative Totems on Mana Spring, turns
+		// green once we pick the improved one.
+		.icon-input-improved.active {
+			border-color: $success;
+			box-shadow: 0 0 0 1px $success;
 		}
 
 		// A picker with nothing picked, like Misc Buffs, shows the game's empty bag slot. A picked
