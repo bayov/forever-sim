@@ -255,7 +255,10 @@ func init() {
 
 	// Forever's 2H Minor Impact, Lesser Impact and Impact: +4, +5 and +6 damage, up from 1.12's
 	// +2, +3 and +5. They have effect IDs of their own, see tools/database/forever_enchants.go.
-	for effectID, damage := range map[int32]float64{7745: 4, 13529: 5, 13695: 6} {
+	//
+	// Greater Impact and Superior Impact keep 1.12's +7 and +9 (hyjal.cc recipe pages) and its
+	// effect IDs, 963 and 1896.
+	for effectID, damage := range map[int32]float64{7745: 4, 13529: 5, 13695: 6, 963: 7, 1896: 9} {
 		core.AddWeaponEffect(effectID, func(agent core.Agent, slot proto.ItemSlot) {
 			w := agent.GetCharacter().AutoAttacks.MH()
 			w.BaseDamageMin += damage
