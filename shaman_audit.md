@@ -33,7 +33,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 2.4 MP5: gear, Blessing of Wisdom, Mageblood, Mana Spring
 - [x] 2.5 Mana returns: Judgement of Wisdom on melee hits, Water Shield globes, Mana Tide
 - [x] 2.6 Potions and Demonic Rune: amounts, shared cooldown, when the rotation uses them
-- [ ] 2.7 Mana costs: base cost by rank, cost modifiers (Totemic Focus, Convection, Shamanistic Focus, Clearcasting, Maelstrom Weapon), what happens when we can't pay
+- [x] 2.7 Mana costs: base cost by rank, cost modifiers (Totemic Focus, Convection, Shamanistic Focus, Clearcasting, Maelstrom Weapon), what happens when we can't pay
 
 ## 3. Timing
 
@@ -359,6 +359,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Demonic Rune doesn't take its health in the sim. Only the Level 60 preset uses it, and nothing hits the shaman there.
 - The rotation uses one once the missing mana is at least its top roll plus 2 sec of regen while casting.
 - `potions_test.go` TestOrcShamanManaConsumables uses each 300 times and checks the roll range, the cooldown and when the rotation uses it. The old Lesser Mana Potion values make it fail.
+
+### 2.7 Mana costs
+
+- Every rank's mana cost (95 ranks, totems and Lava Burst included) matches wowhead Forever (2026-10-08). Water Shield shows no cost there and is free in the sim.
+- The user OK'd the modifiers (2026-10-08). Convection takes 2% a point off shocks, Lightning Bolt, Chain Lightning and Lava Burst. Shamanistic Focus takes 45% off shocks and Lightning Shield. Totemic Focus takes 5% a point off totems. Maelstrom Weapon takes 4% a point a stack off the next Lightning Bolt's cost and cast time. The percents add (as in cmangos) and the cost never goes below 0.
+- Clearcasting comes on 10% of the damage spells we cast, Fire Nova included, and makes the next one free. Totem attacks, Lightning Shield orbs and imbue procs don't give it or use it up. A Lightning Bolt uses it up at the end of its cast.
+- Fire Nova isn't a totem under Forever, so Totemic Focus doesn't reach it.
+- A spell we can't pay for doesn't cast, and the sim marks us out of mana until we can. The rotation moves on to the next spell.
+- `mana_costs_test.go` has TestOrcShamanManaCostTalents, TestOrcShamanMaelstromWeaponCost, TestOrcShamanClearcasting and TestOrcShamanNotEnoughMana. They fail when Fire Nova stops counting as a damage spell, when Searing Totem's attacks count, when Lightning Bolt doesn't use up Maelstrom Weapon, and when Clearcasting procs 20%.
+- Open: Lava Burst uses 51505 (the Wrath ID) on every rank. Forever has 408490, 1238299 and 1238300. Rage of the Farseer uses 2825 (TBC Bloodlust), Forever has 425336. Both IDs only show in the UI and logs.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
