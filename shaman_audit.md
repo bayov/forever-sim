@@ -423,12 +423,10 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Fixed (2026-10-08, the user): Greater Impact (+7) and Superior Impact (+9) did nothing in the sim, and upstream wowsims has the same gap. They now add to the weapon's damage. hyjal.cc's recipe pages give the same values as 1.12. The rotopt enchant search stops at Enchanting 225, so it never offered them, and no preset changes. TestP1Hunter's gear has Superior Impact and gains about 1%.
 - Fixed (2026-10-08, the user): flat "+N damage" effects (Bogling Root, Zandalarian Hero Medallion, the Ragehammer and Sword of Zeal procs, Might of Cenarius) reached only white hits. Stormstrike and Windfury now get them too, as in Classic, through BonusCoefficient 1 like the other classes' weapon specials. No preset uses them.
 - `weapon_damage_test.go` TestOrcShamanWeaponDamage fights 30 min at level 60 with Dark Edge of Insanity, Superior Impact and a +20 flat bonus against a target with no armor. Every normal white hit, Windfury hit and Stormstrike lands in its range, and the rolls reach both ends. It runs again with a one-hander, Crul'shorukh, without Impact. It fails without Superior Impact, without the flat bonus on Stormstrike or Windfury, and with Stormstrike's speed 0.1 off on either weapon.
-- The /run lines for the Stormstrike test: one sets up a combat log frame that collects normal white hits and Stormstrikes, and one prints the count, lowest and highest of each, with AP and weapon speed.
+- How we ran the Stormstrike tests: a combat log frame through /run saw no events on the beta client, so the user screenshots the chat combat log instead. The shown amount plus the overkill is the whole hit, and a melee crit is twice a normal hit. This line prints AP (base, plus, minus) and the main hand's damage range at the start:
 
   ```
-  /run G=UnitGUID("player")W,S={},{}function H()local i={CombatLogGetCurrentEventInfo()}if i[4]~=G then return end local e=i[2]if e=="SWING_DAMAGE"and not i[18]and not i[19]then tinsert(W,i[12])elseif e=="SPELL_DAMAGE"and i[13]=="Stormstrike"and not i[21]then tinsert(S,i[15])end end
-  /run F=F or CreateFrame("Frame")F:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")F:SetScript("OnEvent",function()H()end)
-  /run local function m(t)table.sort(t)return #t,t[1],t[#t]end print("white",m(W))print("SS",m(S))print("ap",UnitAttackPower("player"))print("speed",UnitAttackSpeed("player"))
+  /run print("ap", UnitAttackPower("player")) print("dmg", UnitDamage("player"))
   ```
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
