@@ -220,13 +220,12 @@ const professionIcons: Record<Profession, string> = {
 	[Profession.Tailoring]: 'trade_tailoring',
 };
 
-// The order the game lists them in: the crafting professions from A to Z, then the gathering
-// ones.
+// Engineering comes first, then the other crafting professions, then the gathering ones.
 const professionOrder: Array<Profession> = [
-	Profession.Alchemy,
-	Profession.Blacksmithing,
-	Profession.Enchanting,
 	Profession.Engineering,
+	Profession.Alchemy,
+	Profession.Enchanting,
+	Profession.Blacksmithing,
 	Profession.Leatherworking,
 	Profession.Tailoring,
 	Profession.Herbalism,
@@ -289,7 +288,11 @@ export class ProfessionsPicker extends Input<Player<Spec>, Array<Profession>> {
 
 	setInputValue(newValue: Array<Profession>) {
 		this.professions = [...newValue].sort((a, b) => a - b);
-		this.value.textContent = this.professions.map(profession => professionNames.get(profession)).join(', ') || 'None';
+		this.value.textContent =
+			[...this.professions]
+				.sort((a, b) => professionOrder.indexOf(a) - professionOrder.indexOf(b))
+				.map(profession => professionNames.get(profession))
+				.join(', ') || 'None';
 		const full = this.professions.length >= MAX_PROFESSIONS;
 		this.options.forEach((option, profession) => {
 			const active = this.professions.includes(profession);
