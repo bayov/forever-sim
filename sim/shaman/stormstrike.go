@@ -67,6 +67,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
+		// Flat "+N damage" effects like Zandalarian Hero Medallion add to it, as to a white hit.
+		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := shaman.MHWeaponDamage(sim, spell.MeleeAttackPower(target))

@@ -51,6 +51,8 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 
 		DamageMultiplier: damageMultiplier,
 		ThreatMultiplier: 1,
+		// Flat "+N damage" effects like Zandalarian Hero Medallion add to it, as to a white hit.
+		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Elemental Weapons applies twice to the extra attack power (1.4 * 1.4 at 3
