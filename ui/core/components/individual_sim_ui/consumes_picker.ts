@@ -6,7 +6,6 @@ import { Consumes, Spec, Stat, TristateEffect } from '../../proto/common';
 import { TypedEvent } from '../../typed_event';
 import { Component } from '../component';
 import { IconEnumPicker } from '../icon_enum_picker';
-import { hideTooltipIconsWhileHovered } from '../gear_picker/item_comparison';
 import { buildIconInput } from '../icon_inputs.js';
 import { IconPicker } from '../icon_picker';
 import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
@@ -24,7 +23,9 @@ export class ConsumesPicker extends Component {
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
 		super(parentElem, 'consumes-picker-root');
 		this.simUI = simUI;
-		hideTooltipIconsWhileHovered(this.rootElem);
+		// The sell price doesn't matter when we pick a consumable, so its tooltips leave it out.
+		this.rootElem.addEventListener('mouseenter', () => document.body.classList.add('hide-wowhead-tooltip-sell-price'));
+		this.rootElem.addEventListener('mouseleave', () => document.body.classList.remove('hide-wowhead-tooltip-sell-price'));
 
 		this.simUI.sim.waitForInit().then(() => {
 			this.buildPotionsPicker();

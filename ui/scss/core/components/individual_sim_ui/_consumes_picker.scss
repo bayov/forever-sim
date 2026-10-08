@@ -185,6 +185,11 @@ $consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/invento
 	}
 }
 
+// See the ConsumesPicker constructor.
+body.hide-wowhead-tooltip-sell-price .wowhead-tooltip .whtt-sellprice {
+	display: none;
+}
+
 .tippy-box[data-theme='consumes-unstacked'] {
 	border: 1px solid #e0403a;
 	color: #ff9a94;

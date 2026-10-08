@@ -22,9 +22,9 @@ import { statNames } from '../../proto_utils/names';
 // The space between the two tooltips.
 const GAP = 8;
 
-// The item list, the gear pane and the consumable slots already show each item's icon right where
-// we point, so while we hover them the tooltips leave theirs out (wowhead's and ours). Other links,
-// like the items in a modified preset's tooltip, keep the icon.
+// The item list, the gear pane and the Settings tab already show each item's or buff's icon right
+// where we point, so while we hover them the tooltips leave theirs out (wowhead's and ours). Other
+// links, like the items in a modified preset's tooltip, keep the icon.
 export function hideTooltipIconsWhileHovered(elem: HTMLElement) {
 	elem.addEventListener('mouseenter', () => document.body.classList.add('hide-wowhead-tooltip-icons'));
 	elem.addEventListener('mouseleave', () => document.body.classList.remove('hide-wowhead-tooltip-icons'));

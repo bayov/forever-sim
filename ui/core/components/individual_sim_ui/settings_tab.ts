@@ -11,6 +11,7 @@ import { BooleanPicker } from '../boolean_picker';
 import { ContentBlock } from '../content_block';
 import { EncounterPicker } from '../encounter_picker';
 import { EnumPicker } from '../enum_picker';
+import { hideTooltipIconsWhileHovered } from '../gear_picker/item_comparison';
 import { IconEnumPicker } from '../icon_enum_picker';
 import * as IconInputs from '../icon_inputs';
 import { Input } from '../input';
@@ -53,6 +54,7 @@ export class SettingsTab extends SimTab {
 
 		this.leftPanel = document.createElement('div');
 		this.leftPanel.classList.add('settings-tab-left', 'tab-panel-left');
+		hideTooltipIconsWhileHovered(this.leftPanel);
 
 		this.leftPanel.appendChild(this.column1);
 		this.leftPanel.appendChild(this.column2);
