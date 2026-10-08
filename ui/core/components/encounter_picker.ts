@@ -860,7 +860,7 @@ function resistanceIcon(school: string): HTMLElement {
 }
 
 function resistanceTooltip(school: string): string {
-	return `${school} Resistance: the higher it is, the more of our ${school} damage the target resists.`;
+	return `${school} Resistance`;
 }
 
 const ALL_TARGET_STATS: Array<{ stat: Stat; tooltip: string; extraCssClasses: Array<string> }> = [
