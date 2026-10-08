@@ -456,11 +456,17 @@ func (sim *Simulation) PrePull() {
 	if len(sim.prepullActions) > 0 {
 		sim.CurrentTime = sim.prepullActions[0].DoAt
 
+		// What we do before the pull, like the totems we start the fight with, the rotation sees
+		// at once instead of after the reaction time, because we did it ourselves.
 		for i, ppa := range sim.prepullActions {
 			sim.AddPendingAction(&PendingAction{
 				NextActionAt: ppa.DoAt,
 				Priority:     ActionPriorityPrePull + ActionPriority(len(sim.prepullActions)-i),
-				OnAction:     ppa.Action,
+				OnAction: func(sim *Simulation) {
+					sim.noReaction++
+					ppa.Action(sim)
+					sim.noReaction--
+				},
 			})
 		}
 	}
