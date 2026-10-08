@@ -39,6 +39,16 @@ export function normalizeDebuffs(debuffs: Debuffs, ruleset: Ruleset): Debuffs {
 	};
 	if (normalized.sunderArmor) normalized.exposeArmor = TristateEffect.TristateEffectMissing;
 	if (ruleset === Ruleset.RulesetForever && normalized.faerieFire) normalized.curseOfRecklessness = false;
+	// Forever has no Curse of Shadow, and the others only help the player who applies them. Their
+	// icons hide under Forever and turn them off, so a preset that has them still matches.
+	if (ruleset === Ruleset.RulesetForever) {
+		normalized.curseOfShadow = false;
+		normalized.improvedShadowBolt = false;
+		normalized.improvedScorch = false;
+		normalized.wintersChill = false;
+		normalized.stormstrike = false;
+		normalized.shadowWeaving = false;
+	}
 	return normalized;
 }
 
