@@ -96,6 +96,23 @@
 	box-shadow: 0 0 0 2px var(--dirty-color);
 }
 
+// The consumables have a name over each category. A changed one marks that name, like the
+// fields with a label, and its slots keep their normal look.
+.consumes-group:has(.dirty-setting) > .consumes-group-label {
+	color: var(--dirty-color);
+
+	&::after {
+		content: ' \25CF';
+		font-size: 0.7em;
+		vertical-align: middle;
+	}
+}
+
+.consumes-group .dirty-setting > .icon-picker-button,
+.consumes-group .multi-icon-picker-root:has(.dirty-setting) > .icon-picker-button {
+	box-shadow: none;
+}
+
 // A tab with a changed setting or a modified preset on it gets the modified color and a
 // dot. The active tab draws its underline with ::after, so the dot is ::before, moved after
 // the title (the tab's link is a flex box).

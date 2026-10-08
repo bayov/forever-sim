@@ -55,19 +55,22 @@ $consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/invento
 		}
 	}
 
-	.dirty-setting > .icon-picker-button {
-		outline-color: transparent;
+	// The dropdown opens a little below the slot, so the slot stays in view (see ConsumesPicker).
+	// The dropdown closes when the mouse leaves it, so an invisible edge around it covers the gap
+	// and the mouse can cross from the slot to the choices.
+	.dropdown-menu::before {
+		content: '';
+		position: absolute;
+		inset: -0.6rem;
+		z-index: -1;
 	}
 
 	// The empty choice in a dropdown takes us back to an empty slot, so it shows one.
 	.dropdown-menu {
-		.icon-dropdown-option {
+		.icon-dropdown-option .icon-picker-button {
+			background-color: #0c0c0f;
 			background-image: $consumes-empty-slot;
 			background-size: cover;
-
-			.icon-picker-button {
-				background-color: transparent;
-			}
 		}
 
 		// The Misc dropdowns hold consumables we turn on one by one. The ones we haven't picked

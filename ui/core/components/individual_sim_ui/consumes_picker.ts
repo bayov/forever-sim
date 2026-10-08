@@ -1,3 +1,5 @@
+import tippy from 'tippy.js';
+
 import { IndividualSimUI } from '../../individual_sim_ui';
 import { Player } from '../../player';
 import { Spec, Stat } from '../../proto/common';
@@ -29,13 +31,16 @@ export class ConsumesPicker extends Component {
 			this.buildMiscConsumesPickers();
 			this.buildEngPickers();
 			this.buildPetPicker();
+
+			// The dropdowns open 6px below their slot instead of over its bottom edge.
+			this.rootElem.querySelectorAll<HTMLElement>('[data-bs-toggle=dropdown]').forEach(toggle => (toggle.dataset.bsOffset = '0,6'));
 		});
 	}
 
 	private buildPotionsPicker() {
 		const [row, potionsElem] = this.buildGroup('Potion');
 
-		const potionsOptions = ConsumablesInputs.makePotionsInput(relevantStatOptions(ConsumablesInputs.POTIONS_CONFIG, this.simUI), 'Potions');
+		const potionsOptions = ConsumablesInputs.makePotionsInput(relevantStatOptions(ConsumablesInputs.POTIONS_CONFIG, this.simUI));
 
 		const pickers = [buildIconInput(potionsElem, this.simUI.player, potionsOptions)];
 
@@ -46,12 +51,9 @@ export class ConsumesPicker extends Component {
 	// Runes, Thistle Tea and the healthstones don't share the potions' cooldown, so they get their
 	// own slot.
 	private buildConjuredPicker() {
-		const [row, conjuredElem] = this.buildGroup('Special');
+		const [row, conjuredElem] = this.buildGroup('Special', 'Runes, Thistle Tea and healthstones. They have their own cooldown, apart from potions.');
 
-		const conjuredOptions = ConsumablesInputs.makeConjuredInput(
-			relevantStatOptions(ConsumablesInputs.CONJURED_CONFIG, this.simUI),
-			'Runes, Thistle Tea and healthstones (they have their own cooldown, apart from potions)',
-		);
+		const conjuredOptions = ConsumablesInputs.makeConjuredInput(relevantStatOptions(ConsumablesInputs.CONJURED_CONFIG, this.simUI));
 
 		const pickers = [buildIconInput(conjuredElem, this.simUI.player, conjuredOptions)];
 
@@ -73,10 +75,7 @@ export class ConsumesPicker extends Component {
 	private buildWeaponImbuePicker() {
 		const [row, imbuesElem] = this.buildGroup('Weapon');
 
-		const mhImbueOptions = ConsumablesInputs.makeMainHandImbuesInput(
-			relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_MH_CONFIG, this.simUI),
-			'Main-Hand',
-		);
+		const mhImbueOptions = ConsumablesInputs.makeMainHandImbuesInput(relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_MH_CONFIG, this.simUI));
 		const ohImbueOptions = ConsumablesInputs.makeOffHandImbuesInput(relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_OH_CONFIG, this.simUI), 'Off-Hand');
 
 		const pickers = [buildIconInput(imbuesElem, this.simUI.player, mhImbueOptions), buildIconInput(imbuesElem, this.simUI.player, ohImbueOptions)];
@@ -230,7 +229,10 @@ export class ConsumesPicker extends Component {
 
 	// A category with its name above its slots. The categories sit side by side and wrap, so
 	// several of them share a line.
-	private buildGroup(label: string): [HTMLElement, HTMLElement] {
+	//
+	// A category's tooltip shows on both its name and its slots. We give one only when the name
+	// alone doesn't say what goes in it, like the Special slot.
+	private buildGroup(label: string, tooltip?: string): [HTMLElement, HTMLElement] {
 		const group = document.createElement('div');
 		group.classList.add('consumes-group');
 
@@ -243,6 +245,10 @@ export class ConsumesPicker extends Component {
 
 		group.append(labelElem, slots);
 		this.rootElem.appendChild(group);
+		if (tooltip) {
+			const instance = tippy(group, { content: tooltip });
+			this.addOnDisposeCallback(() => instance.destroy());
+		}
 		return [group, slots];
 	}
 

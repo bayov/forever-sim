@@ -51,6 +51,13 @@
 	margin-top: 0.15rem;
 }
 
+// wowhead's tooltip follows the mouse, so the mouse is never meant to be on it. It often lands
+// over the next choice in a dropdown, and moving onto it used to close the dropdown, because
+// the dropdown closes when the mouse leaves it.
+body > .wowhead-tooltip {
+	pointer-events: none;
+}
+
 // The wowhead tooltips set their own font, so the hint in them keeps ours.
 .wowhead-tooltip .key-hint {
 	font-family: var(--bs-body-font-family);

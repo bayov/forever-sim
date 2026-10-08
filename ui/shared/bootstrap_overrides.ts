@@ -28,6 +28,21 @@ if (!hasTouch() || hasHover()) {
 		},
 		true,
 	);
+
+	// The mouse already opened the dropdown, so a click on its toggle would only close it again
+	// (Bootstrap's click toggles it). We keep it open, and it closes when the mouse leaves it.
+	// Bootstrap listens on the document in the capture phase, so we have to be on the window.
+	window.addEventListener(
+		'click',
+		event => {
+			const toggle = (event.target as HTMLElement).closest('[data-bs-toggle=dropdown]:not([data-bs-trigger=click])');
+			if (toggle && !toggle.classList.contains('open-on-click') && toggle.classList.contains('show')) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		},
+		true,
+	);
 }
 
 body.addEventListener(
