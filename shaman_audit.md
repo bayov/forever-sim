@@ -459,7 +459,11 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta, level 30 with 0/3 Elemental Weapons (2026-10-08):
   - Rockbiter rank 4 gave 177 AP (sim 177.6).
   - The Windfury tooltip says 46 AP (sim 46). The log shows two "Windfury Weapon" hits per proc. With the Barbaric Battle Axe of Healing (25 to 38, 3.6 speed) at 198 AP, 9 Windfury hits averaged 75.1 and 16 white hits 65.9, a ratio of 1.140 (sim 1.144).
-  - Flametongue with the same axe and 6 spell power hit 27 or 28 Fire (9 and 8 hits), so about 27.5. The sim gives 35.36 * 3.6 / 4 + 0.6 = 32.4, 15% more. The tooltip's "11 to 36" matches the client's 884 / 77 - 1 and 884 / 25, rounded up. Open: hits with a 2.7 and a 1.6 speed weapon tell a speed cap (about 3.0) from a cut on every weapon.
+  - Flametongue with the same axe and 6 spell power hit 27 or 28 Fire (9 and 8 hits), so about 27.5. The sim gives 35.36 * 3.6 / 4 + 0.6 = 32.4, 15% more. The tooltip's "11 to 36" matches the client's 884 / 77 - 1 and 884 / 25, rounded up. With 0 spell power the tooltip says 10 to 35, so the tooltip rounds to the nearest number and its "+ 0" terms are the spell power part.
+  - Rank 3 with the Twin-bladed Axe of the Owl (2.7) hit 18.6 (sim 23.9) and with Bloody Brass Knuckles (1.6) 9.1 (sim 14.1). So rank 3 grows 8.84 per second of speed like the sim, but every hit is about 5 lower.
+  - Rank 1 with the slow axe hit 16 or 17 (3 and 3, crits 25 and 24 at 1.5x), so 16.5 against the sim's 15.84 + 0.6 = 16.4. Rank 1 has no cut.
+  - Searing Totem rank 3 hit 19 to 24 on the same mobs (client and sim 19 to 25), so the mobs don't take fire damage off.
+  - hyjal.cc's proc spells (client) give the same points as the sim: 326 + 19 a level (rank 1, learned at 10), 479 + 29 (18), 716 + 42 (26), 1144 + 73 (36), 1876 + 62 (46), 2498 + 78 (56), each growing for 6 levels (8 for rank 3 on). vmangos uses points / 100 * speed with 3.85% of spell power per second of speed, and rounds at random. Open: rank 2, and rank 1 on another weapon.
 - 7.22 Searing Totem (`fire_totems.go`): a bolt every 2.5 sec for the totem's 30 to 55 sec lifetime, 1.7% coefficient (Forever). The real attack is every 2.2 sec, but the next bolt waits for the last to land, so we use 2.5 sec without a distance option.
 - 7.23 Magma Totem: a pulse every 2 sec for 20 sec, 2 less damage per pulse than 1.12 (Forever).
 - 7.24 Flametongue Totem: 5 min, fire damage per main hand hit by weapon speed (548 / 25 per 4 sec at rank 1, flat by level). It takes the fire slot, and placing another fire totem takes it down.
