@@ -25,7 +25,7 @@ import * as OtherInputs from './../other_inputs';
 import { IsbConfig, StormstrikeConfig } from './../other_inputs';
 import { ConsumesPicker } from './consumes_picker';
 import { ItemSwapPicker } from './item_swap_picker';
-import { LevelPicker, ProfessionsPicker, RacePicker } from './player_pickers';
+import { IconEnumRowPicker, LevelPicker, ProfessionsPicker, RacePicker } from './player_pickers';
 import { RacialsPicker } from './racials_picker';
 
 export class SettingsTab extends SimTab {
@@ -249,9 +249,16 @@ export class SettingsTab extends SimTab {
 	// One of the three buff sections, with the buffs that go to whom it says, see buffAudience.
 	private buildBuffsSection(column: HTMLElement, cssClass: string, title: string, tooltip: string, audience: BuffAudience) {
 		const ofAudience = (options: { config: unknown }) => buffAudience(options.config) === audience;
-		const buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI).filter(ofAudience);
-		const miscBuffOptions = relevantStatOptions(BuffDebuffInputs.MISC_BUFFS_CONFIG, this.simUI).filter(ofAudience);
+		let buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI).filter(ofAudience);
+		let miscBuffOptions = relevantStatOptions(BuffDebuffInputs.MISC_BUFFS_CONFIG, this.simUI).filter(ofAudience);
 		if (!buffOptions.length && !miscBuffOptions.length) return;
+
+		// The misc buffs go in a dropdown, under the section's other buffs. Personal Buffs has
+		// only misc buffs (Innervate and Power Infusion), so there they show as icons like the rest.
+		if (!buffOptions.length) {
+			buffOptions = miscBuffOptions;
+			miscBuffOptions = [];
+		}
 
 		const contentBlock = new ContentBlock(column, cssClass, {
 			header: { title, tooltip },
@@ -448,6 +455,8 @@ export class SettingsTab extends SimTab {
 				new NumberPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'boolean') {
 				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig, reverse: true });
+			} else if (inputConfig.type == 'enum' && inputConfig.values.some(value => value.icon)) {
+				new IconEnumRowPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			}
@@ -471,17 +480,15 @@ export class SettingsTab extends SimTab {
 // the totems and the auras with the raid buffs, but those only reach the party.
 type BuffAudience = 'personal' | 'party' | 'raid';
 
-// The buffs someone casts on us alone, like a Blessing or an Innervate.
-const PERSONAL_BUFFS: unknown[] = [
+// The buffs someone casts on us alone, like Innervate or Power Infusion.
+const PERSONAL_BUFFS: unknown[] = [BuffDebuffInputs.Innervate, BuffDebuffInputs.PowerInfusion];
+
+// The buffs other members of the raid cast on us, like Mark of the Wild or Fortitude. The
+// Blessings go here too, even for a paladin, because another paladin in the raid gives them.
+const RAID_BUFFS: unknown[] = [
 	BuffDebuffInputs.BlessingOfKings,
 	BuffDebuffInputs.BlessingOfMight,
 	BuffDebuffInputs.BlessingOfWisdom,
-	BuffDebuffInputs.Innervate,
-	BuffDebuffInputs.PowerInfusion,
-];
-
-// The buffs anyone in the raid can cast on us, like Mark of the Wild or Fortitude.
-const RAID_BUFFS: unknown[] = [
 	BuffDebuffInputs.AllStatsBuff,
 	BuffDebuffInputs.StaminaBuff,
 	BuffDebuffInputs.IntellectBuff,
@@ -496,6 +503,6 @@ function buffAudience(config: unknown): BuffAudience {
 	return 'party';
 }
 
-const PERSONAL_BUFFS_TOOLTIP = 'Buffs other players cast on us alone, like a Blessing or an Innervate.';
+const PERSONAL_BUFFS_TOOLTIP = 'Buffs other players cast on us alone, like Innervate or Power Infusion.';
 const PARTY_BUFFS_TOOLTIP = 'Buffs that reach only our party, like totems, auras and Battle Shout.';
-const RAID_BUFFS_TOOLTIP = 'Buffs anyone in the raid can cast on us, like Mark of the Wild or Fortitude.';
+const RAID_BUFFS_TOOLTIP = 'Buffs other members of the raid cast on us, like Mark of the Wild, Fortitude or a Blessing.';

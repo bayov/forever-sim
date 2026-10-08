@@ -38,6 +38,16 @@
 			.picker-group {
 				min-width: 40%;
 			}
+
+			// A row of icons, like the shaman weapon imbue, has what we picked right after
+			// its label.
+			&.player-icon-picker {
+				justify-content: flex-start;
+
+				label {
+					width: auto;
+				}
+			}
 		}
 	}
 

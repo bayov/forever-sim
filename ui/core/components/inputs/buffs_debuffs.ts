@@ -339,17 +339,23 @@ export const Thorns = makeTristateRaidBuffInput({
 	fieldName: 'thorns',
 });
 
-export const Innervate = makeMultistateIndividualBuffInput({
-	actionId: () => ActionId.fromSpellId(29166),
-	numStates: 11,
-	fieldName: 'innervates',
-});
+export const Innervate = withLabel(
+	makeMultistateIndividualBuffInput({
+		actionId: () => ActionId.fromSpellId(29166),
+		numStates: 11,
+		fieldName: 'innervates',
+	}),
+	'Innervate',
+);
 
-export const PowerInfusion = makeMultistateIndividualBuffInput({
-	actionId: () => ActionId.fromSpellId(10060),
-	numStates: 11,
-	fieldName: 'powerInfusions',
-});
+export const PowerInfusion = withLabel(
+	makeMultistateIndividualBuffInput({
+		actionId: () => ActionId.fromSpellId(10060),
+		numStates: 11,
+		fieldName: 'powerInfusions',
+	}),
+	'Power Infusion',
+);
 
 export const BattleSquawkBuff = makeMultistateRaidBuffInput({
 	actionId: () => ActionId.fromSpellId(23060),

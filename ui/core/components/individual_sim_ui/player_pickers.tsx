@@ -3,9 +3,11 @@ import tippy from 'tippy.js';
 import { MAX_CHARACTER_LEVEL } from '../../constants/mechanics';
 import { Player } from '../../player';
 import { Profession, Race, Spec } from '../../proto/common';
+import { ActionId } from '../../proto_utils/action_id';
 import { professionNames, raceNames } from '../../proto_utils/names';
 import { specToEligibleRaces } from '../../proto_utils/utils';
 import { TypedEvent } from '../../typed_event';
+import { EnumPickerConfig, EnumValueConfig } from '../enum_picker';
 import { Input } from '../input';
 
 const iconUrl = (icon: string) => `https://wow.zamimg.com/images/wow/icons/large/${icon}.jpg`;
@@ -113,40 +115,46 @@ const raceIcons: Record<Race, string> = {
 	[Race.RaceSkyborneWindshaper]: 'inv_elemental_primal_air',
 };
 
-// The races our class can be, as icons. The selected one is lit and the others are dimmed,
-// and the label says which one it is.
-export class RacePicker extends Input<Player<Spec>, Race> {
-	private readonly value: HTMLElement;
-	private readonly options = new Map<Race, HTMLButtonElement>();
-	private race = Race.RaceUnknown;
+// An enum input as a row of icons, for the values that have an icon. The selected one is lit
+// and the others are dimmed, and the label says which one it is.
+//
+// A value without an icon, like None for the shaman weapon imbue, gets no icon of its own. We
+// pick it by clicking the selected icon again.
+export class IconEnumRowPicker<ModObject> extends Input<ModObject, number> {
+	private readonly values: Array<EnumValueConfig>;
+	private readonly label: HTMLElement;
+	private readonly options = new Map<number, HTMLElement>();
+	private value = 0;
 
-	constructor(parent: HTMLElement, player: Player<Spec>) {
-		super(parent, 'race-picker-root', player, {
-			label: 'Race',
-			changedEvent: player => player.raceChangeEmitter,
-			getValue: player => player.getRace(),
-			setValue: (eventID, player, newValue) => player.setRace(eventID, newValue),
-		});
+	constructor(parent: HTMLElement, modObject: ModObject, config: EnumPickerConfig<ModObject>, cssClass = 'icon-enum-row-picker-root') {
+		super(parent, cssClass, modObject, config);
 		this.rootElem.classList.add('player-icon-picker');
+		this.values = config.values;
 
-		this.value = (<span className="player-icon-picker-value"></span>) as HTMLElement;
+		this.label = (<span className="player-icon-picker-value"></span>) as HTMLElement;
 		const options = (<div className="player-icon-picker-options"></div>) as HTMLElement;
-		this.rootElem.append(this.value, options);
+		this.rootElem.append(this.label, options);
 
-		specToEligibleRaces[player.spec].forEach(race => {
-			const option = iconOption(raceIcons[race], raceNames.get(race)!);
+		const none = config.values.find(value => !value.icon);
+		config.values.forEach(value => {
+			if (!value.icon) return;
+			const option = iconOption(value.icon, value.name, value.spellId);
 			option.addEventListener(
 				'click',
-				() => {
-					if (race === this.race) return;
-					this.setInputValue(race);
+				event => {
+					event.preventDefault();
+					const newValue = value.value !== this.value ? value.value : none?.value;
+					if (newValue === undefined) return;
+					this.setInputValue(newValue);
 					this.inputChanged(TypedEvent.nextEventID());
 				},
 				{ signal: this.signal },
 			);
-			const tooltip = tippy(option, { content: raceNames.get(race) });
-			this.addOnDisposeCallback(() => tooltip.destroy());
-			this.options.set(race, option);
+			if (!value.spellId) {
+				const tooltip = tippy(option, { content: value.tooltip ? `${value.name}: ${value.tooltip}` : value.name });
+				this.addOnDisposeCallback(() => tooltip.destroy());
+			}
+			this.options.set(value.value, option);
 			options.appendChild(option);
 		});
 
@@ -157,18 +165,41 @@ export class RacePicker extends Input<Player<Spec>, Race> {
 		return this.rootElem;
 	}
 
-	getInputValue(): Race {
-		return this.race;
+	getInputValue(): number {
+		return this.value;
 	}
 
-	setInputValue(newValue: Race) {
-		this.race = newValue;
-		this.value.textContent = raceNames.get(newValue) ?? '';
-		this.options.forEach((option, race) => option.classList.toggle('active', race === newValue));
+	setInputValue(newValue: number) {
+		this.value = newValue;
+		this.label.textContent = this.nameOf(newValue);
+		this.options.forEach((option, value) => option.classList.toggle('active', value === newValue));
 	}
 
-	protected formatPresetValue(value: Race): string {
-		return raceNames.get(value) ?? '';
+	protected formatPresetValue(value: number): string {
+		return this.nameOf(value);
+	}
+
+	private nameOf(value: number): string {
+		return this.values.find(v => v.value === value)?.name ?? '';
+	}
+}
+
+// The races our class can be.
+export class RacePicker extends IconEnumRowPicker<Player<Spec>> {
+	constructor(parent: HTMLElement, player: Player<Spec>) {
+		super(
+			parent,
+			player,
+			{
+				id: 'player-race',
+				label: 'Race',
+				values: specToEligibleRaces[player.spec].map(race => ({ name: raceNames.get(race)!, value: race, icon: raceIcons[race] })),
+				changedEvent: player => player.raceChangeEmitter,
+				getValue: player => player.getRace(),
+				setValue: (eventID, player, newValue) => player.setRace(eventID, newValue),
+			},
+			'race-picker-root',
+		);
 	}
 }
 
@@ -208,7 +239,7 @@ const MAX_PROFESSIONS = 2;
 // in another order doesn't count as a change from the preset.
 export class ProfessionsPicker extends Input<Player<Spec>, Array<Profession>> {
 	private readonly value: HTMLElement;
-	private readonly options = new Map<Profession, HTMLButtonElement>();
+	private readonly options = new Map<Profession, HTMLElement>();
 	private professions: Array<Profession> = [];
 
 	constructor(parent: HTMLElement, player: Player<Spec>) {
@@ -279,8 +310,14 @@ export class ProfessionsPicker extends Input<Player<Spec>, Array<Profession>> {
 	}
 }
 
-function iconOption(icon: string, name: string): HTMLButtonElement {
-	return (
-		<button type="button" className="player-icon-picker-option" aria-label={name} style={{ backgroundImage: `url('${iconUrl(icon)}')` }}></button>
-	) as HTMLButtonElement;
+// An icon to click. With a spell, it's a link to the spell on wowhead, so it shows the spell's
+// wowhead tooltip.
+function iconOption(icon: string, name: string, spellId?: number): HTMLElement {
+	const style = { backgroundImage: `url('${iconUrl(icon)}')` };
+	if (!spellId) {
+		return (<button type="button" className="player-icon-picker-option" aria-label={name} style={style}></button>) as HTMLElement;
+	}
+	const anchor = (<a className="player-icon-picker-option" attributes={{ role: 'button' }} aria-label={name} style={style}></a>) as HTMLAnchorElement;
+	ActionId.fromSpellId(spellId).setWowheadHref(anchor);
+	return anchor;
 }

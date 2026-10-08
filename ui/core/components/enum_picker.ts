@@ -5,6 +5,11 @@ export interface EnumValueConfig {
 	name: string;
 	value: number;
 	tooltip?: string;
+	// A wowhead icon name, like 'spell_nature_cyclone'. When the values have icons, the Settings
+	// tab shows the input as a row of icons, see IconEnumRowPicker.
+	icon?: string;
+	// The spell whose wowhead tooltip the icon shows, in place of a tooltip with the name.
+	spellId?: number;
 }
 
 export interface EnumPickerConfig<ModObject> extends InputConfig<ModObject, number> {

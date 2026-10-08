@@ -114,7 +114,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	excludeBuffDebuffInputs: [],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
-		inputs: [ShamanInputs.SyncTypeInput, ShamanInputs.ShamanImbueInput, OtherInputs.TankAssignment, OtherInputs.InFrontOfTarget],
+		inputs: [ShamanInputs.ShamanImbueInput, OtherInputs.TankAssignment, OtherInputs.InFrontOfTarget],
 	},
 	encounterInputs: {
 		inputs: [ShamanInputs.RaidDamageHitsInput],
