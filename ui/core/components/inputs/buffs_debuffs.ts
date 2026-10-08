@@ -97,7 +97,9 @@ export const PhysDamReductionBuff = withLabel(
 //	'Blessing of Sanctuary',
 //);
 
-type ResistanceField =
+type ExclusiveBuffField =
+	| 'leaderOfThePack'
+	| 'moonkinAura'
 	| 'shadowProtection'
 	| 'shadowResistanceAura'
 	| 'natureResistanceTotem'
@@ -107,8 +109,15 @@ type ResistanceField =
 	| 'frostResistanceAura'
 	| 'frostResistanceTotem';
 
-// A resistance buff. Each school has two that don't stack, so turning one on turns the other off.
-function makeResistanceBuff(spellId: number, fieldName: ResistanceField, other: ResistanceField, faction?: Faction) {
+// A buff that doesn't stack with another, like the two resistance buffs of a school, so turning
+// one on turns the other off. When exclusiveWhen says they stack after all, each works on its own.
+function makeExclusiveBuff(
+	spellId: number,
+	fieldName: ExclusiveBuffField,
+	other: ExclusiveBuffField,
+	faction?: Faction,
+	exclusiveWhen: (player: Player<any>) => boolean = () => true,
+) {
 	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<any>>(
 		{
 			getModObject: (player: Player<any>) => player,
@@ -120,7 +129,7 @@ function makeResistanceBuff(spellId: number, fieldName: ResistanceField, other: 
 			setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
 				const buffs = player.getRaid()!.getBuffs();
 				buffs[fieldName] = newValue;
-				if (newValue) buffs[other] = false;
+				if (newValue && exclusiveWhen(player)) buffs[other] = false;
 				player.getRaid()!.setBuffs(eventID, buffs);
 			},
 		},
@@ -130,27 +139,27 @@ function makeResistanceBuff(spellId: number, fieldName: ResistanceField, other: 
 }
 
 export const ShadowResistanceBuffs: ExclusiveIconRowConfig = {
-	options: [makeResistanceBuff(10958, 'shadowProtection', 'shadowResistanceAura'), makeResistanceBuff(19896, 'shadowResistanceAura', 'shadowProtection')],
+	options: [makeExclusiveBuff(10958, 'shadowProtection', 'shadowResistanceAura'), makeExclusiveBuff(19896, 'shadowResistanceAura', 'shadowProtection')],
 };
 
 export const NatureResistanceBuffs: ExclusiveIconRowConfig = {
 	options: [
-		makeResistanceBuff(10601, 'natureResistanceTotem', 'aspectOfTheWild', Faction.Horde),
-		makeResistanceBuff(20190, 'aspectOfTheWild', 'natureResistanceTotem'),
+		makeExclusiveBuff(10601, 'natureResistanceTotem', 'aspectOfTheWild', Faction.Horde),
+		makeExclusiveBuff(20190, 'aspectOfTheWild', 'natureResistanceTotem'),
 	],
 };
 
 export const FireResistanceBuffs: ExclusiveIconRowConfig = {
 	options: [
-		makeResistanceBuff(19900, 'fireResistanceAura', 'fireResistanceTotem', Faction.Alliance),
-		makeResistanceBuff(10538, 'fireResistanceTotem', 'fireResistanceAura', Faction.Horde),
+		makeExclusiveBuff(19900, 'fireResistanceAura', 'fireResistanceTotem', Faction.Alliance),
+		makeExclusiveBuff(10538, 'fireResistanceTotem', 'fireResistanceAura', Faction.Horde),
 	],
 };
 
 export const FrostResistanceBuffs: ExclusiveIconRowConfig = {
 	options: [
-		makeResistanceBuff(19898, 'frostResistanceAura', 'frostResistanceTotem', Faction.Alliance),
-		makeResistanceBuff(10479, 'frostResistanceTotem', 'frostResistanceAura', Faction.Horde),
+		makeExclusiveBuff(19898, 'frostResistanceAura', 'frostResistanceTotem', Faction.Alliance),
+		makeExclusiveBuff(10479, 'frostResistanceTotem', 'frostResistanceAura', Faction.Horde),
 	],
 };
 
@@ -336,6 +345,16 @@ export const MeleeCritBuff = withLabel(
 );
 
 export const SpellCritBuff = withLabel(makeBooleanRaidBuffInput({ actionId: () => ActionId.fromSpellId(24907), fieldName: 'moonkinAura' }), 'Moonkin Aura');
+
+// Under Forever, Leader of the Pack and Moonkin Aura both give 3% crit to spells and attacks,
+// and they don't stack (see sim/core/buffs.go). In Classic each gives its own kind of crit, so
+// both can be on.
+export const CritAuraBuffs: ExclusiveIconRowConfig = {
+	options: [
+		makeExclusiveBuff(24932, 'leaderOfThePack', 'moonkinAura', undefined, player => isForever(player)),
+		makeExclusiveBuff(24907, 'moonkinAura', 'leaderOfThePack', undefined, player => isForever(player)),
+	],
+};
 
 // Misc Buffs
 export const AtieshMageBuff = makeMultistatePartyBuffInput({
@@ -948,7 +967,6 @@ export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 // A shaman puts down its own totems (see the starting totems in its Class Settings and the
 // rotation), so for a shaman the totems here are the ones the other shamans in the party give.
 export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
-	{ label: 'Stats', items: [BloodPactBuff, BloodPactBuffForever].map(buffItem) },
 	{ label: 'Attack Power', items: [BattleShoutBuff, BattleShoutBuffForever, TrueshotAuraBuff].map(buffItem) },
 	{
 		label: player => (player.getClass() === Class.ClassShaman ? 'Other Shaman Totems' : 'Totems'),
@@ -957,7 +975,7 @@ export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 			{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] },
 		],
 	},
-	{ label: 'Crit', items: [MeleeCritBuff, SpellCritBuff].map(buffItem) },
+	{ label: 'Crit', items: [{ config: CritAuraBuffs, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] }] },
 	{ label: 'Defense', items: [ArmorBuff, RetributionAura].map(buffItem) },
 	{
 		label: 'Resistances',
@@ -968,7 +986,12 @@ export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 			{ config: FrostResistanceBuffs, stats: [Stat.StatFrostResistance] },
 		],
 	},
-	{ label: 'Other', items: [AtieshMageBuff, AtieshWarlockBuff, AtieshPriestBuff, AtieshDruidBuff, SanctityAura, BattleSquawkBuff].map(buffItem) },
+	{
+		label: 'Other',
+		items: [BloodPactBuff, BloodPactBuffForever, AtieshMageBuff, AtieshWarlockBuff, AtieshPriestBuff, AtieshDruidBuff, SanctityAura, BattleSquawkBuff].map(
+			buffItem,
+		),
+	},
 ];
 
 // The debuffs that raise our damage.
