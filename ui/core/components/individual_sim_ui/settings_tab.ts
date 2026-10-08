@@ -4,12 +4,9 @@ import * as Tooltips from '../../constants/tooltips';
 import { Encounter } from '../../encounter';
 import { IndividualSimUI, InputConfig, InputSection } from '../../individual_sim_ui';
 import { Player } from '../../player';
-import { Consumes, Debuffs, HealingModel, IndividualBuffs, ItemSwap, PartyBuffs, Profession, RaidBuffs, Spec } from '../../proto/common';
+import { Consumes, Debuffs, HealingModel, IndividualBuffs, ItemSwap, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
 import { SavedEncounter, SavedSettings } from '../../proto/ui';
-import { professionNames, raceNames } from '../../proto_utils/names';
-import { specToEligibleRaces } from '../../proto_utils/utils';
 import { EventID, TypedEvent } from '../../typed_event';
-import { getEnumValues } from '../../utils';
 import { BooleanPicker } from '../boolean_picker';
 import { ContentBlock } from '../content_block';
 import { EncounterPicker } from '../encounter_picker';
@@ -28,6 +25,7 @@ import * as OtherInputs from './../other_inputs';
 import { IsbConfig, StormstrikeConfig } from './../other_inputs';
 import { ConsumesPicker } from './consumes_picker';
 import { ItemSwapPicker } from './item_swap_picker';
+import { LevelPicker, ProfessionsPicker, RacePicker } from './player_pickers';
 import { RacialsPicker } from './racials_picker';
 
 export class SettingsTab extends SimTab {
@@ -154,59 +152,15 @@ export class SettingsTab extends SimTab {
 
 		// Level is global: every spec has it, whatever its own inputs are. The extra talent points
 		// are in the Talents tab.
-		this.configureInputSection(contentBlock.bodyElement, { inputs: [OtherInputs.Level] });
-
-		const races = specToEligibleRaces[this.simUI.player.spec];
-		new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
-			id: 'player-race',
-			label: 'Race',
-			values: races.map(race => {
-				return {
-					name: raceNames.get(race)!,
-					value: race,
-				};
-			}),
-			changedEvent: player => player.raceChangeEmitter,
-			getValue: player => player.getRace(),
-			setValue: (eventID, player, newValue) => player.setRace(eventID, newValue),
-		});
+		new LevelPicker(contentBlock.bodyElement, this.simUI.player);
+		new RacePicker(contentBlock.bodyElement, this.simUI.player);
 		new RacialsPicker(contentBlock.bodyElement, this.simUI.player);
 
 		if (this.simUI.individualConfig.playerInputs?.inputs.length) {
 			this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.playerInputs);
 		}
 
-		const professionGroup = Input.newGroupContainer();
-		contentBlock.bodyElement.appendChild(professionGroup);
-
-		const professions = getEnumValues(Profession) as Array<Profession>;
-		new EnumPicker(professionGroup, this.simUI.player, {
-			id: 'player-profession-1',
-			label: 'Profession 1',
-			values: professions.map(p => {
-				return {
-					name: professionNames.get(p)!,
-					value: p,
-				};
-			}),
-			changedEvent: player => player.professionChangeEmitter,
-			getValue: player => player.getProfession1(),
-			setValue: (eventID, player, newValue) => player.setProfession1(eventID, newValue),
-		});
-
-		new EnumPicker(professionGroup, this.simUI.player, {
-			id: 'player-profession-2',
-			label: 'Profession 2',
-			values: professions.map(p => {
-				return {
-					name: professionNames.get(p)!,
-					value: p,
-				};
-			}),
-			changedEvent: player => player.professionChangeEmitter,
-			getValue: player => player.getProfession2(),
-			setValue: (eventID, player, newValue) => player.setProfession2(eventID, newValue),
-		});
+		new ProfessionsPicker(contentBlock.bodyElement, this.simUI.player);
 	}
 
 	private buildCustomSettingsSections() {
