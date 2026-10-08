@@ -138,6 +138,9 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 	includeBuffDebuffInputs: Array<any>;
 	excludeBuffDebuffInputs: Array<any>;
 	otherInputs: InputSection;
+	// The spec's inputs that describe the fight, like how often raid damage hits the player. They
+	// show in the Encounter section of the Settings tab.
+	encounterInputs?: InputSection;
 	// Currently, many classes don't support item swapping, and only in certain slots.
 	// So enable it only where it is supported.
 	itemSwapConfig?: ItemSwapConfig;

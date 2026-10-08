@@ -5,9 +5,10 @@
 @import './racials_picker';
 
 .settings-tab {
+	// Three lanes, see SettingsTab: about us, about the target, and the buffs from others.
 	.tab-pane-content-container {
 		.tab-panel-left {
-			grid-template-columns: 2fr 2fr 3fr;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 
@@ -20,8 +21,11 @@
 		}
 	}
 
+	// The player's inputs about the fight, like In Front of Target, sit between the encounter's
+	// own fields and the Advanced button, laid out like the ones in Other.
 	.rotation-settings,
-	.other-settings {
+	.other-settings,
+	.encounter-player-inputs {
 		.input-root {
 			label {
 				width: 60%;
@@ -43,23 +47,33 @@
 		}
 	}
 
-	.buffs-settings,
-	.world-buffs-settings,
+	// Two columns of buffs, so their names fit a third of the tab.
+	.buffs-section,
 	.debuffs-settings {
 		.content-block-body {
 			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 			grid-gap: var(--block-spacer);
-
-			@include media-breakpoint-down(md) {
-				grid-template-columns: repeat(2, minmax(0, 1fr));
-			}
 
 			& > .icon-picker {
 				.form-label {
 					white-space: normal;
 				}
 			}
+		}
+	}
+
+	// The world buffs are off for now, so we show them dimmed, under a note that says why.
+	.world-buffs-off {
+		.world-buffs-note {
+			margin-bottom: var(--block-spacer);
+			font-size: 0.8125rem;
+			color: var(--text-muted-color);
+		}
+
+		.content-block-body {
+			opacity: 0.4;
+			filter: grayscale(1);
 		}
 	}
 }
@@ -83,12 +97,5 @@
 				}
 			}
 		}
-	}
-}
-
-// On narrow screens everything goes in one column, and the settings come first.
-@include media-breakpoint-down(xl) {
-	#settings-tab .tab-pane-content-container .settings-tab-right {
-		order: 1;
 	}
 }

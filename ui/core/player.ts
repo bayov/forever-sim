@@ -28,6 +28,7 @@ import {
 	Profession,
 	PseudoStat,
 	Race,
+	SaygesFortune,
 	SimDatabase,
 	Spec,
 	Stat,
@@ -628,6 +629,19 @@ export class Player<SpecType extends Spec> {
 	}
 
 	setBuffs(eventID: EventID, newBuffs: IndividualBuffs) {
+		// The world buffs are off for now, see the Settings tab. Saved settings and imports from
+		// before still have them, so we turn them off here.
+		newBuffs = {
+			...newBuffs,
+			rallyingCryOfTheDragonslayer: false,
+			saygesFortune: SaygesFortune.SaygesUnknown,
+			spiritOfZandalar: false,
+			songflowerSerenade: false,
+			warchiefsBlessing: false,
+			fengusFerocity: false,
+			moldarsMoxie: false,
+			slipkiksSavvy: false,
+		};
 		if (IndividualBuffs.equals(this.buffs, newBuffs)) return;
 
 		// Make a defensive copy

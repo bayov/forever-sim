@@ -2,7 +2,7 @@ import tippy from 'tippy.js';
 
 import * as Tooltips from '../../constants/tooltips';
 import { Encounter } from '../../encounter';
-import { IndividualSimUI, InputSection } from '../../individual_sim_ui';
+import { IndividualSimUI, InputConfig, InputSection } from '../../individual_sim_ui';
 import { Player } from '../../player';
 import { Consumes, Debuffs, HealingModel, IndividualBuffs, ItemSwap, PartyBuffs, Profession, RaidBuffs, Spec } from '../../proto/common';
 import { SavedEncounter, SavedSettings } from '../../proto/ui';
@@ -39,7 +39,11 @@ export class SettingsTab extends SimTab {
 	// The saved encounters, at the top of the Encounter section. The raid sim's player editor
 	// has no Encounter section.
 	private encounterPresets?: HTMLElement;
+	private encounterPicker?: EncounterPicker;
 
+	// The individual sim has three lanes. The left one is about us: the saved settings, the
+	// Player, Other, our own buffs and the consumables. The middle one is about the target: the
+	// Encounter and the debuffs. The right one has the buffs from the party and the raid.
 	readonly column1: HTMLElement = this.buildColumn(1, 'settings-left-col');
 	readonly column2: HTMLElement = this.buildColumn(2, 'settings-left-col');
 	readonly column3: HTMLElement = this.buildColumn(3, 'settings-left-col');
@@ -62,12 +66,11 @@ export class SettingsTab extends SimTab {
 			this.leftPanel.appendChild(this.column4);
 		}
 
+		// The saved settings are at the top of the left lane. The raid sim's player editor has
+		// none.
 		this.rightPanel = document.createElement('div');
-		this.rightPanel.classList.add('settings-tab-right', 'tab-panel-right', 'within-raid-sim-hide');
-
-		// The saved settings come first, to the left of the settings, like the gear sets in the
-		// Gear tab.
-		this.contentContainer.appendChild(this.rightPanel);
+		this.rightPanel.classList.add('settings-tab-saved', 'within-raid-sim-hide');
+		this.column1.appendChild(this.rightPanel);
 		this.contentContainer.appendChild(this.leftPanel);
 
 		this.buildTabContent();
@@ -78,25 +81,32 @@ export class SettingsTab extends SimTab {
 			this.buildEncounterSettings();
 		}
 
+		// We build the sections of each lane from the top down.
 		this.simUI.sim.waitForInit().then(() => {
 			this.buildPlayerSettings();
 			this.buildCustomSettingsSections();
-			this.buildConsumesSection();
 			this.buildOtherSettings();
-			this.buildIsbSettings();
-			this.buildStormstrikeSettings();
+			if (!this.simUI.isWithinRaidSim) {
+				this.buildBuffsSection(this.column1, 'personal-buffs-settings', 'Personal Buffs', PERSONAL_BUFFS_TOOLTIP, 'personal');
+			}
+			this.buildConsumesSection();
 
 			if (!this.simUI.isWithinRaidSim) {
-				this.buildBuffsSettings();
-				this.buildWorldBuffsSettings();
+				this.buildEncounterInputs();
 				this.buildDebuffsSettings();
+				this.buildIsbSettings();
+				this.buildStormstrikeSettings();
+
+				this.buildBuffsSection(this.column3, 'party-buffs-settings', 'Party Buffs', PARTY_BUFFS_TOOLTIP, 'party');
+				this.buildBuffsSection(this.column3, 'buffs-settings', 'Raid Buffs', RAID_BUFFS_TOOLTIP, 'raid');
+				this.buildWorldBuffsSettings();
 				this.buildSavedDataPickers();
 			}
 		});
 	}
 
 	private buildEncounterSettings() {
-		const contentBlock = new ContentBlock(this.column1, 'encounter-settings', {
+		const contentBlock = new ContentBlock(this.column2, 'encounter-settings', {
 			header: { title: 'Encounter' },
 		});
 
@@ -105,7 +115,26 @@ export class SettingsTab extends SimTab {
 		this.encounterPresets.innerHTML = '<span>Presets:</span><div class="saved-data-presets"></div>';
 		contentBlock.bodyElement.appendChild(this.encounterPresets);
 
-		new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, this.simUI.individualConfig.encounterPicker, this.simUI);
+		this.encounterPicker = new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, this.simUI.individualConfig.encounterPicker, this.simUI);
+	}
+
+	// The player's inputs that describe the fight go in the Encounter section, above the
+	// Advanced button: In Front of Target, and the spec's encounterInputs (like how often raid
+	// damage hits an Enhancement shaman). The encounter picker adds the Advanced button once the
+	// sim loads, which is before we get here.
+	private buildEncounterInputs() {
+		const inputs = [
+			...(this.simUI.individualConfig.otherInputs.inputs.includes(OtherInputs.InFrontOfTarget) ? [OtherInputs.InFrontOfTarget] : []),
+			...(this.simUI.individualConfig.encounterInputs?.inputs ?? []),
+		];
+		if (!inputs.length || !this.encounterPicker) return;
+
+		const container = document.createElement('div');
+		container.classList.add('encounter-player-inputs');
+		this.configureInputSection(container, { inputs });
+		container.querySelectorAll('.input-root').forEach(elem => elem.classList.add('input-inline'));
+		const advancedButton = this.encounterPicker.rootElem.querySelector(':scope > .advanced-button');
+		this.encounterPicker.rootElem.insertBefore(container, advancedButton);
 	}
 
 	private buildPlayerSettings() {
@@ -122,6 +151,10 @@ export class SettingsTab extends SimTab {
 			this.simUI.individualConfig.playerIconInputs.map(iconInput => IconInputs.buildIconInput(playerIconGroup, this.simUI.player, iconInput)),
 			true,
 		);
+
+		// Level is global: every spec has it, whatever its own inputs are. The extra talent points
+		// are in the Talents tab.
+		this.configureInputSection(contentBlock.bodyElement, { inputs: [OtherInputs.Level] });
 
 		const races = specToEligibleRaces[this.simUI.player.spec];
 		new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
@@ -178,13 +211,13 @@ export class SettingsTab extends SimTab {
 
 	private buildCustomSettingsSections() {
 		(this.simUI.individualConfig.customSections || []).forEach(customSection => {
-			const section = customSection(this.column2, this.simUI);
+			const section = customSection(this.simUI.isWithinRaidSim ? this.column2 : this.column1, this.simUI);
 			section.rootElem.classList.add('custom-section');
 		});
 	}
 
 	private buildConsumesSection() {
-		const column = this.simUI.isWithinRaidSim ? this.column3 : this.column2;
+		const column = this.simUI.isWithinRaidSim ? this.column3 : this.column1;
 		const contentBlock = new ContentBlock(column, 'consumes-settings', {
 			header: { title: 'Consumables' },
 		});
@@ -193,22 +226,20 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildOtherSettings() {
-		// const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
-		// Level is global: every spec gets it first, whatever its own other inputs are. The extra
-		// talent points are in the Talents tab.
+		// Level is in the Player section and the extra talent points are in the Talents tab. In the
+		// individual sim, In Front of Target is in the Encounter section.
+		const elsewhere: InputConfig<Player<any>>[] = [OtherInputs.Level, OtherInputs.BonusTalentPoints];
+		if (!this.simUI.isWithinRaidSim) elsewhere.push(OtherInputs.InFrontOfTarget);
 		const otherInputs: InputSection = {
 			...this.simUI.individualConfig.otherInputs,
-			inputs: [
-				OtherInputs.Level,
-				...this.simUI.individualConfig.otherInputs.inputs.filter(input => input !== OtherInputs.Level && input !== OtherInputs.BonusTalentPoints),
-			],
+			inputs: this.simUI.individualConfig.otherInputs.inputs.filter(input => !elsewhere.includes(input)),
 		};
 		const settings = otherInputs.inputs.filter(inputs => !inputs.extraCssClasses || !inputs.extraCssClasses?.includes('within-raid-sim-hide'));
 
 		const itemSwapConfig = this.simUI.individualConfig.itemSwapConfig;
 
 		if (settings.length || itemSwapConfig?.itemSlots.length) {
-			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
+			const contentBlock = new ContentBlock(this.simUI.isWithinRaidSim ? this.column2 : this.column1, 'other-settings', {
 				header: { title: 'Other' },
 			});
 
@@ -227,49 +258,51 @@ export class SettingsTab extends SimTab {
 
 	private buildIsbSettings() {
 		if (!this.simUI.isWithinRaidSim) {
-			const contentBlock = new ContentBlock(this.column1, 'other-settings', {
+			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
 				header: { title: 'Improved Shadow Bolt' },
 			});
 
 			this.configureInputSection(contentBlock.bodyElement, IsbConfig);
 
-			TypedEvent.onAny([this.simUI.player.talentsChangeEmitter, this.simUI.player.getRaid()!.debuffsChangeEmitter]).on(() => {
+			// It shows only with the debuff. We check right away too, because the debuffs are
+			// built before it.
+			const update = () => {
 				const isWlAndIsb = (this.simUI.player as Player<Spec.SpecWarlock>)?.getTalents().improvedShadowBolt > 0;
 				const externalIsb = this.simUI.player.getRaid()?.getDebuffs()?.improvedShadowBolt == true;
-				if (externalIsb || isWlAndIsb) {
-					contentBlock.rootElem.classList.remove('hide');
-				} else {
-					contentBlock.rootElem.classList.add('hide');
-				}
-			});
+				contentBlock.rootElem.classList.toggle('hide', !(externalIsb || isWlAndIsb));
+			};
+			TypedEvent.onAny([this.simUI.player.talentsChangeEmitter, this.simUI.player.getRaid()!.debuffsChangeEmitter]).on(update);
+			update();
 		}
 	}
 
 	private buildStormstrikeSettings() {
 		if (!this.simUI.isWithinRaidSim) {
-			const contentBlock = new ContentBlock(this.column1, 'other-settings', {
+			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
 				header: { title: 'Stormstrike' },
 			});
 
 			this.configureInputSection(contentBlock.bodyElement, StormstrikeConfig);
 
-			this.simUI.player.getRaid()!.debuffsChangeEmitter.on(() => {
-				if (this.simUI.player.getRaid()?.getDebuffs()?.stormstrike) {
-					contentBlock.rootElem.classList.remove('hide');
-				} else {
-					contentBlock.rootElem.classList.add('hide');
-				}
-			});
+			// It shows only with the debuff. We check right away too, because the debuffs are
+			// built before it.
+			const update = () => contentBlock.rootElem.classList.toggle('hide', !this.simUI.player.getRaid()?.getDebuffs()?.stormstrike);
+			this.simUI.player.getRaid()!.debuffsChangeEmitter.on(update);
+			update();
 		}
 	}
 
-	private buildBuffsSettings() {
-		const buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI);
-		const miscBuffOptions = relevantStatOptions(BuffDebuffInputs.MISC_BUFFS_CONFIG, this.simUI);
+	// One of the three buff sections, with the buffs that go to whom it says, see buffAudience.
+	private buildBuffsSection(column: HTMLElement, cssClass: string, title: string, tooltip: string, audience: BuffAudience) {
+		const ofAudience = (options: { config: unknown }) => buffAudience(options.config) === audience;
+		const buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI).filter(ofAudience);
+		const miscBuffOptions = relevantStatOptions(BuffDebuffInputs.MISC_BUFFS_CONFIG, this.simUI).filter(ofAudience);
+		if (!buffOptions.length && !miscBuffOptions.length) return;
 
-		const contentBlock = new ContentBlock(this.column3, 'buffs-settings', {
-			header: { title: 'Raid Buffs', tooltip: Tooltips.BUFFS_SECTION },
+		const contentBlock = new ContentBlock(column, cssClass, {
+			header: { title, tooltip },
 		});
+		contentBlock.rootElem.classList.add('buffs-section');
 
 		this.configureIconSection(
 			contentBlock.bodyElement,
@@ -289,10 +322,22 @@ export class SettingsTab extends SimTab {
 		}
 	}
 
+	// The world buffs are off for now. Forever has no world buffs that we know of, and it may have
+	// something else in their place, like buffs from a camp. We show the section dimmed, with a
+	// note, and Player.setBuffs turns them off, so saved settings or an import with them don't
+	// count them either.
 	private buildWorldBuffsSettings() {
 		const contentBlock = new ContentBlock(this.column3, 'world-buffs-settings', {
-			header: { title: 'World Buffs', tooltip: Tooltips.WORLD_BUFFS_SECTION },
+			header: { title: 'World Buffs / Camp', tooltip: Tooltips.WORLD_BUFFS_SECTION },
 		});
+		contentBlock.rootElem.classList.add('buffs-section', 'world-buffs-off');
+
+		const note = document.createElement('p');
+		note.classList.add('world-buffs-note');
+		note.textContent =
+			"Off for now. Forever has no world buffs that we know of. It may have camp buffs or something like them in their place, and they'd go here.";
+		contentBlock.rootElem.insertBefore(note, contentBlock.bodyElement);
+		contentBlock.bodyElement.inert = true;
 
 		const saygesOptions = relevantStatOptions(BuffDebuffInputs.SAYGES_CONFIG, this.simUI);
 		new IconEnumPicker(contentBlock.bodyElement, this.simUI.player, BuffDebuffInputs.SaygesDarkFortune(saygesOptions));
@@ -312,7 +357,7 @@ export class SettingsTab extends SimTab {
 
 		if (!debuffOptions.length && !miscDebuffOptions.length) return;
 
-		const contentBlock = new ContentBlock(this.column3, 'debuffs-settings', {
+		const contentBlock = new ContentBlock(this.column2, 'debuffs-settings', {
 			header: { title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION },
 		});
 
@@ -467,3 +512,36 @@ export class SettingsTab extends SimTab {
 		}
 	}
 }
+
+// Who gets a buff in the game, for the three buff sections. The protos don't tell: they keep
+// the totems and the auras with the raid buffs, but those only reach the party.
+type BuffAudience = 'personal' | 'party' | 'raid';
+
+// The buffs someone casts on us alone, like a Blessing or an Innervate.
+const PERSONAL_BUFFS: unknown[] = [
+	BuffDebuffInputs.BlessingOfKings,
+	BuffDebuffInputs.BlessingOfMight,
+	BuffDebuffInputs.BlessingOfWisdom,
+	BuffDebuffInputs.Innervate,
+	BuffDebuffInputs.PowerInfusion,
+];
+
+// The buffs anyone in the raid can cast on us, like Mark of the Wild or Fortitude.
+const RAID_BUFFS: unknown[] = [
+	BuffDebuffInputs.AllStatsBuff,
+	BuffDebuffInputs.StaminaBuff,
+	BuffDebuffInputs.IntellectBuff,
+	BuffDebuffInputs.SpiritBuff,
+	BuffDebuffInputs.Thorns,
+];
+
+// The rest only reach the party: the totems, the auras, Battle Shout, Blood Pact and Atiesh.
+function buffAudience(config: unknown): BuffAudience {
+	if (PERSONAL_BUFFS.includes(config)) return 'personal';
+	if (RAID_BUFFS.includes(config)) return 'raid';
+	return 'party';
+}
+
+const PERSONAL_BUFFS_TOOLTIP = 'Buffs other players cast on us alone, like a Blessing or an Innervate.';
+const PARTY_BUFFS_TOOLTIP = 'Buffs that reach only our party, like totems, auras and Battle Shout.';
+const RAID_BUFFS_TOOLTIP = 'Buffs anyone in the raid can cast on us, like Mark of the Wild or Fortitude.';
