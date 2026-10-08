@@ -24,6 +24,8 @@ export interface IconEnumValueConfig<ModObject, T> {
 }
 
 export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObject, T> {
+	// The most choices on one line of the dropdown. With fewer choices shown, it has one column
+	// per choice.
 	numColumns?: number;
 	values: Array<IconEnumValueConfig<ModObject, T>>;
 	// Value that will be considered inactive.
@@ -86,10 +88,6 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.buttonText = this.rootElem.querySelector('label') as HTMLElement;
 		this.dropdownMenu = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
-		if (this.config.numColumns) {
-			this.dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
-		}
-
 		if (this.config.direction == IconPickerDirection.Horizontal) {
 			this.dropdownMenu.style.gridAutoFlow = 'column';
 		}
@@ -138,6 +136,15 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		});
 
 		this.init();
+
+		// This runs after the options above update, so it counts the ones shown now.
+		const updateColumns = () => {
+			if (!this.config.numColumns) return;
+			const shown = this.dropdownMenu.querySelectorAll(':scope > .dropdown-option:not(.hide)').length;
+			this.dropdownMenu.style.gridTemplateColumns = `repeat(${Math.max(1, Math.min(this.config.numColumns, shown))}, 1fr)`;
+		};
+		updateColumns();
+		this.config.changedEvent(this.modObject).on(updateColumns);
 
 		// This must occur after this.init() else the state will not be handled correctly
 		const updateState = () => {

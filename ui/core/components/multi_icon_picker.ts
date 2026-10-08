@@ -15,6 +15,9 @@ export interface MultiIconPickerConfig<ModObject> {
 	categoryId?: ActionId;
 	// The direction the menu will open in relative to the root element
 	direction?: IconPickerDirection;
+	// The most choices on one line of the dropdown. With fewer choices shown, it has one column
+	// per choice.
+	numColumns?: number;
 	label?: string;
 	// Hover tooltip.
 	tooltip?: string;
@@ -98,9 +101,13 @@ export class MultiIconPicker<ModObject> extends Component {
 
 			return new IconPicker(optionContainer, modObj, pickerConfig);
 		});
-		simUI.sim.waitForInit().then(() => this.updateButtonImage());
+		simUI.sim.waitForInit().then(() => {
+			this.updateButtonImage();
+			this.updateColumns();
+		});
 		simUI.changeEmitter.on(() => {
 			this.updateButtonImage();
+			this.updateColumns();
 
 			if (this.showWhen()) {
 				this.rootElem.classList.remove('hide');
@@ -112,6 +119,16 @@ export class MultiIconPicker<ModObject> extends Component {
 
 	showWhen(): boolean {
 		return !this.config.showWhen || (this.config.showWhen(this.simUI.sim.raid.getPlayer(0)!) && !!this.pickers.find(p => p.showWhen()));
+	}
+
+	// The choices fill lines of up to numColumns, counting only the ones shown now. A hidden choice
+	// hides its list item too, so it doesn't leave a hole in the grid.
+	private updateColumns() {
+		if (!this.config.numColumns) return;
+		this.pickers.forEach(picker => picker.rootElem.parentElement?.classList.toggle('hide', !picker.showWhen()));
+		const shown = this.pickers.filter(picker => picker.showWhen()).length + 1;
+		this.dropdownMenu.style.gridAutoFlow = 'row';
+		this.dropdownMenu.style.gridTemplateColumns = `repeat(${Math.min(this.config.numColumns, shown)}, 1fr)`;
 	}
 
 	private buildBlankOption() {

@@ -64,7 +64,7 @@ function makeConsumeInputFactory<T extends number>(
 		return {
 			type: 'iconEnum',
 			tooltip: tooltip,
-			numColumns: options.length > 11 ? 4 : options.length > 8 ? 3 : options.length > 5 ? 2 : 1,
+			numColumns: 4,
 			values: [{ value: 0 } as unknown as IconEnumValueConfig<Player<any>, T>].concat(
 				options.map(option => {
 					return {
@@ -77,7 +77,13 @@ function makeConsumeInputFactory<T extends number>(
 			equals: (a: T, b: T) => a == b,
 			zeroValue: 0 as T,
 			changedEvent: (player: Player<any>) =>
-				TypedEvent.onAny([player.consumesChangeEmitter, player.gearChangeEmitter, player.professionChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
+				TypedEvent.onAny([
+					player.consumesChangeEmitter,
+					player.gearChangeEmitter,
+					player.professionChangeEmitter,
+					player.raceChangeEmitter,
+					player.sim.rulesetChangeEmitter,
+				]),
 			showWhen: (player: Player<any>) => !args.showWhen || args.showWhen(player),
 			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
@@ -591,6 +597,7 @@ export const MISC_OFFENSIVE_CONSUMES_CONFIG: PickerStatOptions[] = [
 
 export const makeMiscOffensiveConsumesInput = makeMultiIconConsumesInputFactory({
 	direction: IconPickerDirection.Vertical,
+	numColumns: 4,
 	tooltip: 'Misc Offensive',
 });
 
@@ -615,6 +622,7 @@ export const MISC_DEFENSIVE_CONSUMES_CONFIG: PickerStatOptions[] = [
 
 export const makeMiscDefensiveConsumesInput = makeMultiIconConsumesInputFactory({
 	direction: IconPickerDirection.Vertical,
+	numColumns: 4,
 	tooltip: 'Misc Defensive',
 });
 
