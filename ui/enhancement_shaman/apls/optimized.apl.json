@@ -1,11 +1,5 @@
 {
     "type": "TypeAPL",
-    "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":25361}}},"doAtValue":{"const":{"val":"-4s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":10614}}},"doAtValue":{"const":{"val":"-3s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":10497}}},"doAtValue":{"const":{"val":"-2s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":16387}}},"doAtValue":{"const":{"val":"-1s"}}}
-    ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":25361}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":25361}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":10614}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10611}}}}}},"notes":"Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman."},

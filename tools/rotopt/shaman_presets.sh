@@ -35,20 +35,27 @@ gen() {
 # lost 2 to 11 at every length, because the mark already lands on about 20 of the 22
 # Stormstrikes. The Water Shield and Mana Tide builds below have no Elemental Focus, and
 # Flame Shock first is within noise there, so they keep the old order.
-gen optimized "shock=4,airTotem=2,fireTotem=3,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2" -level 60
+#
+# Since 2026-10-08 the builds start the fight with their totems already down (the
+# Enhancement option StartingTotems, see the presets), so the rotations leave them out of
+# the prepull actions (prepullTotems=0). A starting totem costs no mana. The Level 30 PvP
+# rotation still puts them down before the pull.
+gen optimized "shock=4,airTotem=2,fireTotem=3,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=0" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
-gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1" -level 60
-# Magma Totem with Mana Tide Totem at 20% mana, for the Mana Tide talent build.
-gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20" -level 60
+gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,prepullTotems=0" -level 60
+# Magma Totem with Mana Tide Totem at 20% mana, for the Mana Tide talent build. Fire Nova
+# goes ahead of the shocks here (fireNova=1): +4.4 at 180 sec and +1.7 at 300 on 2026-10-08.
+# On the Water Shield build that was +1.7 at 180 sec and even at 300, so magma keeps it after.
+gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNovaMana=20,waterTotem=1,manaTideMana=20,prepullTotems=0" -level 60
 # Level 30 with 5 extra talent points (26 in all), tuned for the 120 sec Level 30
 # encounter. Flame Shock when its DoT is down and Earth Shock otherwise (shock=4), because
 # Earth Shock spends the Stormstrike mark (+20%). Windfury Weapon from level 30 and Mana Spring Totem from 26, and shocks only
 # above 10% mana so the pool lasts the fight. Flametongue Totem (level 28) in the fire
 # slot, and Fire Nova after the shocks only while the shaman is above 80% mana. Fire Nova
 # at any mana was 9.6 behind at 120 sec, because the shocks then run dry.
-gen level30p5 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4,shockMana=10,waterTotem=1,maelstromStacks=0,fireTotem=3,fireNova=2,fireNovaMana=80" -level 30 -bonus-talents 5
+gen level30p5 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4,shockMana=10,waterTotem=1,maelstromStacks=0,fireTotem=3,fireNova=2,fireNovaMana=80,prepullTotems=0" -level 30 -bonus-talents 5
 # Level 30 PvP, with the PvP talents and a 60 sec fight against a level 30 player (the
 # "Level 30 PvP" encounter: PvP mode, 30% of the fight out of melee range at the time, 70%
 # since 2026-10-06). The same knobs

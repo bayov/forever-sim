@@ -12,6 +12,7 @@ import {
 	Flask,
 	Food,
 	IndividualBuffs,
+	IntellectElixir,
 	ManaRegenElixir,
 	MobType,
 	Potions,
@@ -20,6 +21,7 @@ import {
 	Race,
 	RaidBuffs,
 	SapperExplosive,
+	ShadowPowerBuff,
 	SpellPowerBuff,
 	Stat,
 	StrengthBuff,
@@ -29,7 +31,15 @@ import {
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
-import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType, StartingTotems } from '../core/proto/shaman.js';
+import {
+	AirTotem,
+	EarthTotem,
+	EnhancementShaman_Options as EnhancementShamanOptions,
+	FireTotem,
+	ShamanSyncType,
+	StartingTotems,
+	WaterTotem,
+} from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
@@ -456,22 +466,66 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	syncType: ShamanSyncType.Auto,
 });
 
-// The class options every preset build sets. The builds start the fight with no totems and put
-// them down in the rotation's prepull actions, and they say so, so loading one clears the
-// starting totems and changing them marks the build as modified.
+// The class options every preset build sets. They always set the starting totems, so loading a
+// build puts its own in place and changing them marks the build as modified.
+//
+// The Level 30 PvP builds start the fight with no totems and put them down in the rotation's
+// prepull actions.
 const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create() };
 
+// The raid and dungeon builds start the fight with their totems already down, each at the
+// default seconds before the pull, one totem GCD apart (see starting_totems.tsx). They cost no
+// mana, so the rotations leave them out of the prepull actions. Totems last 5 min under
+// Forever, so a 3 min fight never puts them down again.
+//
+// On 2026-10-08 that was +0.3 at 180 sec on Level 60 over the old prepull totems, and +0.7
+// at 120 sec on Level 30 + 5. At 300 sec it can be 1 to 2 behind, because the totems run out
+// 30 sec sooner and the rotation puts them down again.
+const startingTotemsLevel60 = StartingTotems.create({
+	earth: EarthTotem.StrengthOfEarthTotem,
+	earthSecondsBeforePull: 28,
+	air: AirTotem.WindfuryTotem,
+	airSecondsBeforePull: 27,
+	fire: FireTotem.FlametongueTotem,
+	fireSecondsBeforePull: 29,
+	water: WaterTotem.ManaSpringTotem,
+	waterSecondsBeforePull: 30,
+});
+const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
+// Magma Totem lasts only 20 sec, so it goes down 1 sec before the pull.
+const PresetBuildOptionsLevel60Magma = {
+	...PresetBuildOptions,
+	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, fire: FireTotem.MagmaTotem, fireSecondsBeforePull: 1 }),
+};
+// Windfury Totem comes at level 32.
+const PresetBuildOptionsLevel30 = {
+	...PresetBuildOptions,
+	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, air: AirTotem.NoAirTotem, airSecondsBeforePull: 0 }),
+};
+
+// The level 60 consumables. On 2026-10-08 we tried every consumable the sim applies in each
+// slot on the Level 60 build at 180 sec. Under Forever the shaman imbue stacks with an oil or a
+// stone, and Shadow Oil was best there (+19.6, Brilliant Wizard Oil and Elemental Sharpening
+// Stone were +10). Goblin Land Mine (+4.1), Elixir of Wisdom (+2.1) and Elixir of Shadow Power
+// (+1.2, for Shadow Oil) were also worth it. Grilled Squid (1% crit under Forever) is +3.4 over
+// Blessed Sunfruit, and even with Smoked Desert Dumpling, which is not out yet.
+//
+// All together with the starting totems the Level 60 build went from 788.4 to 819.6 at 180 sec.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorManaPotion,
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	dragonBreathChili: true,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodBlessSunfruit,
+	food: Food.FoodGrilledSquid,
+	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	mainHandImbue: WeaponImbue.ShadowOil,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.ROIDS,
@@ -580,6 +634,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
+// On 2026-10-08, with the starting totems and the new consumables, Level 60 is 826.5 / 819.6 /
+// 807.7 at 120 / 180 / 300 sec, Level 60 + Water Shield 776.6 / 767.0 / 751.2 and Level 60 +
+// Mana Tide 756.6 / 750.3 / 745.3. A knob search kept every rotation knob but the Mana Tide
+// build's Fire Nova order (see shaman_presets.sh). It wanted Grace of Air in place of Windfury
+// Totem (+23 at 180 sec), but the builds keep Windfury Totem for the group. The talents were
+// not searched again.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',
@@ -591,7 +651,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptions,
+	options: PresetBuildOptionsLevel60,
 });
 export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 60 + Water Shield', {
 	group: 'Level 60',
@@ -604,7 +664,7 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptions,
+	options: PresetBuildOptionsLevel60Magma,
 });
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
@@ -617,7 +677,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptions,
+	options: PresetBuildOptionsLevel60Magma,
 });
 
 // A level 30 shaman soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32)
@@ -943,6 +1003,9 @@ export const EPPresets = [
 	EPLevel30PvPVsProt,
 ];
 
+// On 2026-10-08, with the starting totems, Level 30 + 5 is 209.1 / 201.0 / 174.7 at 60 / 120 /
+// 300 sec. Every consumable the sim applies that a level 30 can use was tried, and the ones
+// here stayed on top. A knob search kept every rotation knob.
 export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', {
 	group: 'Level 30',
 	tooltip: 'Level 30 Orc with 5 extra talent points, soloing Interrogator Vishas for 120 sec with level 30 consumes.',
@@ -955,7 +1018,7 @@ export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', 
 	level: 30,
 	bonusTalentPoints: 5,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptions,
+	options: PresetBuildOptionsLevel30,
 });
 
 // Level 30 PvP is a 60 sec fight against a level 30 player in PvP mode. The enemy keeps us

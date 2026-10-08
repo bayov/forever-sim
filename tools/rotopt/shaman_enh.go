@@ -90,6 +90,10 @@ func (shamanEnh) Knobs() []Knob {
 		// Rage of the Farseer itself waits for Stormstrike to be ready, so the window opens
 		// with it.
 		{Name: "rageWithStormstrike", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 1 puts the totems down in the prepull actions, 0 leaves them out, for settings that
+		// start the fight with them already down (the Enhancement option StartingTotems). A
+		// starting totem would replace the prepull one anyway.
+		{Name: "prepullTotems", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -287,6 +291,9 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on a free GCD."))
 	}
 	rot := rotation(items...)
+	if k["prepullTotems"] == 0 {
+		totems = nil
+	}
 	for i, id := range totems {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(id, float64(len(totems)-i)))
 	}

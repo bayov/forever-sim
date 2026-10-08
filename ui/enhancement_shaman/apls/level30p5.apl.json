@@ -1,14 +1,9 @@
 {
     "type": "TypeAPL",
-    "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":8160}}},"doAtValue":{"const":{"val":"-3s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":5675}}},"doAtValue":{"const":{"val":"-2s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":8227}}},"doAtValue":{"const":{"val":"-1s"}}}
-    ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":8160}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":8160}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":5675}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":5675}}}}}},"notes":"Mana Spring Totem whenever it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":8227}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":8227}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}}]}}},"notes":"Flametongue Totem whenever it is down. Its buff works next to any shaman imbue."},
+        {"action":{"castSpell":{"spellId":{"spellId":8227}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":8227}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}}]}}},"notes":"Flametongue Totem whenever it is down. Flametongue Weapon turns its buff off for the shaman."},
         {"action":{"castSpell":{"spellId":{"spellId":17364}}},"notes":"Stormstrike on cooldown. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":8053}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":8053}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.1"}}}}]}}},"notes":"Flame Shock when its DoT is down."},
         {"action":{"castSpell":{"spellId":{"spellId":8046}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.1"}}}}},"notes":"Earth Shock otherwise."},
