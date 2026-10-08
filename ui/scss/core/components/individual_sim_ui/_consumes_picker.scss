@@ -1,20 +1,83 @@
+// The consumables, in categories that sit side by side and wrap, see ConsumesPicker. Each slot
+// looks like a bag slot in the game, and an empty one shows the game's empty slot texture.
+$consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/inventoryslot_empty.jpg');
+
 .consumes-picker-root {
-	display: grid;
-	gap: var(--block-spacer);
-	@include media-breakpoint-down(lg) {
-		grid-template-columns: repeat(3, 1fr);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.85rem 1.5rem;
+
+	.consumes-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
 	}
 
-	@include media-breakpoint-down(md) {
-		grid-template-columns: repeat(1, 1fr);
+	.consumes-group-label {
+		margin: 0;
+		color: var(--text-muted-color);
+		font-size: 0.75rem;
+		letter-spacing: 0.02em;
+		white-space: nowrap;
 	}
 
-	.consumes-row-inputs {
-		justify-content: flex-end;
+	.consumes-group-slots {
+		gap: 0.3rem;
 	}
 
-	.elixir-space {
-		width: var(--icon-size-md);
-		text-align: center;
+	// The slot has a black border and a thin light edge around it, like the bag slots. We draw the
+	// edge with an outline, because the changed settings ring is a box-shadow.
+	.icon-picker > .icon-picker-button {
+		border: 1px solid #000;
+		border-radius: 3px;
+		outline: 1px solid #3c3a35;
+		background-color: #0c0c0f;
+		background-image: $consumes-empty-slot;
+		background-size: cover;
+		filter: none;
+		transition:
+			filter 0.15s,
+			outline-color 0.15s;
+
+		&:hover {
+			outline-color: var(--gold-soft);
+			filter: brightness(1.15);
+		}
+	}
+
+	// A consumable we turn on with a click, like Dragonbreath Chili, stays gray and dim until we
+	// pick it.
+	.icon-picker-root > .icon-picker-button:not(.active) {
+		filter: grayscale(1) brightness(0.5);
+
+		&:hover {
+			filter: grayscale(0.3) brightness(0.85);
+		}
+	}
+
+	.dirty-setting > .icon-picker-button {
+		outline-color: transparent;
+	}
+
+	// The empty choice in a dropdown takes us back to an empty slot, so it shows one.
+	.dropdown-menu {
+		.icon-dropdown-option {
+			background-image: $consumes-empty-slot;
+			background-size: cover;
+
+			.icon-picker-button {
+				background-color: transparent;
+			}
+		}
+
+		// The Misc dropdowns hold consumables we turn on one by one. The ones we haven't picked
+		// are gray but bright enough to tell apart.
+		.icon-picker-root > .icon-picker-button:not(.active) {
+			filter: grayscale(1) brightness(0.75);
+
+			&:hover {
+				filter: none;
+			}
+		}
 	}
 }

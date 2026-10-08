@@ -19,6 +19,7 @@ export class ConsumesPicker extends Component {
 
 		this.simUI.sim.waitForInit().then(() => {
 			this.buildPotionsPicker();
+			this.buildConjuredPicker();
 			this.buildFlaskPicker();
 			this.buildWeaponImbuePicker();
 			this.buildFoodPicker();
@@ -32,37 +33,34 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildPotionsPicker() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Potions</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-potions"></div>
-			</div>
-    	`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const potionsElem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
+		const [row, potionsElem] = this.buildGroup('Potion');
 
 		const potionsOptions = ConsumablesInputs.makePotionsInput(relevantStatOptions(ConsumablesInputs.POTIONS_CONFIG, this.simUI), 'Potions');
-		const conjuredOptions = ConsumablesInputs.makeConjuredInput(relevantStatOptions(ConsumablesInputs.CONJURED_CONFIG, this.simUI));
 
-		const pickers = [buildIconInput(potionsElem, this.simUI.player, potionsOptions), buildIconInput(potionsElem, this.simUI.player, conjuredOptions)];
+		const pickers = [buildIconInput(potionsElem, this.simUI.player, potionsOptions)];
+
+		TypedEvent.onAny([this.simUI.player.professionChangeEmitter]).on(() => this.updateRow(row, pickers));
+		this.updateRow(row, pickers);
+	}
+
+	// Runes, Thistle Tea and the healthstones don't share the potions' cooldown, so they get their
+	// own slot.
+	private buildConjuredPicker() {
+		const [row, conjuredElem] = this.buildGroup('Special');
+
+		const conjuredOptions = ConsumablesInputs.makeConjuredInput(
+			relevantStatOptions(ConsumablesInputs.CONJURED_CONFIG, this.simUI),
+			'Runes, Thistle Tea and healthstones (they have their own cooldown, apart from potions)',
+		);
+
+		const pickers = [buildIconInput(conjuredElem, this.simUI.player, conjuredOptions)];
 
 		TypedEvent.onAny([this.simUI.player.professionChangeEmitter]).on(() => this.updateRow(row, pickers));
 		this.updateRow(row, pickers);
 	}
 
 	private buildFlaskPicker() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Flasks</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-flasks"></div>
-			</div>
-    	`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const flasksElem = this.rootElem.querySelector('.consumes-flasks') as HTMLElement;
+		const [row, flasksElem] = this.buildGroup('Flask');
 
 		const flasksOptions = ConsumablesInputs.makeFlasksInput(relevantStatOptions(ConsumablesInputs.FLASKS_CONFIG, this.simUI));
 
@@ -73,16 +71,7 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildWeaponImbuePicker() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Weapon Imbues</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-weapon-imbues"></div>
-			</div>
-    	`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const imbuesElem = this.rootElem.querySelector('.consumes-weapon-imbues') as HTMLElement;
+		const [row, imbuesElem] = this.buildGroup('Weapon');
 
 		const mhImbueOptions = ConsumablesInputs.makeMainHandImbuesInput(
 			relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_MH_CONFIG, this.simUI),
@@ -97,16 +86,7 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildFoodPicker() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Food</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-food"></div>
-			</div>
-    	`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const foodsElem = this.rootElem.querySelector('.consumes-food') as HTMLElement;
+		const [row, foodsElem] = this.buildGroup('Food');
 
 		const foodOptions = ConsumablesInputs.makeFoodInput(relevantStatOptions(ConsumablesInputs.FOOD_CONFIG, this.simUI));
 		const alcoholOptions = ConsumablesInputs.makeAlcoholInput(relevantStatOptions(ConsumablesInputs.ALCOHOL_CONFIG, this.simUI));
@@ -127,16 +107,7 @@ export class ConsumesPicker extends Component {
 
 		if (!includeAgi && !includeStr && !includeHit) return;
 
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Physical</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-physical"></div>
-			</div>
-		`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const physicalConsumesElem = this.rootElem.querySelector('.consumes-physical') as HTMLElement;
+		const [row, physicalConsumesElem] = this.buildGroup('Physical');
 
 		const apBuffOptions = ConsumablesInputs.makeAttackPowerConsumeInput(
 			relevantStatOptions(ConsumablesInputs.ATTACK_POWER_CONSUMES_CONFIG, this.simUI),
@@ -147,10 +118,7 @@ export class ConsumesPicker extends Component {
 			relevantStatOptions(ConsumablesInputs.STRENGTH_CONSUMES_CONFIG, this.simUI),
 			'Strength',
 		);
-		const hitConsumableOptions = ConsumablesInputs.makeHitConsumableInput(
-			relevantStatOptions(ConsumablesInputs.HIT_CONSUMABLE_CONFIG, this.simUI),
-			'Hit',
-		);
+		const hitConsumableOptions = ConsumablesInputs.makeHitConsumableInput(relevantStatOptions(ConsumablesInputs.HIT_CONSUMABLE_CONFIG, this.simUI), 'Hit');
 
 		const pickers = [
 			buildIconInput(physicalConsumesElem, this.simUI.player, apBuffOptions),
@@ -163,16 +131,7 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildDefensiveBuffPickers() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Defensive</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-defensive"></div>
-			</div>
-		`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const defensiveConsumesElem = this.rootElem.querySelector('.consumes-defensive') as HTMLElement;
+		const [row, defensiveConsumesElem] = this.buildGroup('Defensive');
 
 		const healthBuffOptions = ConsumablesInputs.makeHealthConsumeInput(relevantStatOptions(ConsumablesInputs.HEALTH_CONSUMES_CONFIG, this.simUI), 'Health');
 
@@ -187,16 +146,7 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildSpellPowerBuffPickers() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Spells</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-spells"></div>
-			</div>
-    	`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const spellsCnsumesElem = this.rootElem.querySelector('.consumes-spells') as HTMLElement;
+		const [row, spellsCnsumesElem] = this.buildGroup('Spell');
 
 		const spBuffOptions = ConsumablesInputs.makeSpellPowerConsumeInput(
 			relevantStatOptions(ConsumablesInputs.SPELL_POWER_CONFIG, this.simUI),
@@ -230,16 +180,7 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildMiscConsumesPickers() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Miscellaneous</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-misc"></div>
-			</div>
-		`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const miscConsumesElem = this.rootElem.querySelector('.consumes-misc') as HTMLElement;
+		const [row, miscConsumesElem] = this.buildGroup('Misc');
 
 		const zanzaBuffOptions = ConsumablesInputs.makeZanzaBuffConsumesInput(
 			relevantStatOptions(ConsumablesInputs.ZANZA_BUFF_CONSUMES_CONFIG, this.simUI),
@@ -258,16 +199,7 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildEngPickers() {
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Engineering</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-engi"></div>
-			</div>
-		`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const engiConsumesElem = this.rootElem.querySelector('.consumes-engi') as HTMLElement;
+		const [row, engiConsumesElem] = this.buildGroup('Engineering');
 
 		const explosiveOptions = ConsumablesInputs.makeExplosivesInput(relevantStatOptions(ConsumablesInputs.EXPLOSIVES_CONFIG, this.simUI), 'Explosives');
 		const sapperOptions = ConsumablesInputs.makeSappersInput(relevantStatOptions(ConsumablesInputs.SAPPER_CONFIG, this.simUI), 'Sappers');
@@ -284,16 +216,7 @@ export class ConsumesPicker extends Component {
 	private buildPetPicker() {
 		if (!this.simUI.individualConfig.petConsumeInputs?.length) return;
 
-		const fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="consumes-row input-root input-inline">
-				<label class="form-label">Pet</label>
-				<div class="picker-group icon-group consumes-row-inputs consumes-pet"></div>
-			</div>
-		`;
-
-		const row = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-		const petConsumesElem = this.rootElem.querySelector('.consumes-pet') as HTMLElement;
+		const [row, petConsumesElem] = this.buildGroup('Pet');
 
 		// const miscPetConsumesOptions = relevantStatOptions(ConsumablesInputs.MISC_PET_CONSUMES, this.simUI);
 
@@ -303,6 +226,24 @@ export class ConsumesPicker extends Component {
 		];
 
 		this.updateRow(row, pickers);
+	}
+
+	// A category with its name above its slots. The categories sit side by side and wrap, so
+	// several of them share a line.
+	private buildGroup(label: string): [HTMLElement, HTMLElement] {
+		const group = document.createElement('div');
+		group.classList.add('consumes-group');
+
+		const labelElem = document.createElement('label');
+		labelElem.classList.add('consumes-group-label');
+		labelElem.textContent = label;
+
+		const slots = document.createElement('div');
+		slots.classList.add('picker-group', 'icon-group', 'consumes-group-slots');
+
+		group.append(labelElem, slots);
+		this.rootElem.appendChild(group);
+		return [group, slots];
 	}
 
 	private updateRow(rowElem: HTMLElement, pickers: (IconPicker<Player<Spec>, any> | IconEnumPicker<Player<Spec>, any> | MultiIconPicker<Player<Spec>>)[]) {

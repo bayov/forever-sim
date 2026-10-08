@@ -238,14 +238,16 @@ function formatValue(value: unknown): string {
 }
 
 // A name for a setting from what the page shows around it: the field's label, the first cell
-// of its table row (the stat weights), or the title of its section (the consumables, which
-// show only icons).
+// of its table row (the stat weights), the name of its consumables category, or the title of
+// its section.
 function nameFromPage(elem: HTMLElement): string {
 	const label = elem.querySelector('label, .form-label')?.textContent?.trim();
 	if (label) return label;
 	const row = elem.closest('tr')?.querySelector('td, th')?.textContent?.trim();
 	if (row) return row;
-	const rowLabel = elem.closest('.picker-group, .consumes-row')?.querySelector('label, .form-label')?.textContent?.trim();
+	const groupLabel =
+		elem.closest('.consumes-group')?.querySelector('.consumes-group-label') ?? elem.closest('.picker-group')?.querySelector('label, .form-label');
+	const rowLabel = groupLabel?.textContent?.trim();
 	if (rowLabel) return rowLabel;
 	const section = elem.closest('.content-block')?.querySelector('.content-block-title')?.textContent?.trim();
 	return section ? `${section} setting` : 'A setting';
