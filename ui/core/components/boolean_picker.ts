@@ -6,7 +6,6 @@ import { Input, InputConfig } from './input.js';
  */
 export interface BooleanPickerConfig<ModObject> extends InputConfig<ModObject, boolean> {
 	id: string;
-	reverse?: boolean;
 }
 
 // UI element for picking an arbitrary number field.
@@ -23,12 +22,8 @@ export class BooleanPicker<ModObject> extends Input<ModObject, boolean> {
 		this.inputElem.id = config.id;
 		this.inputElem.classList.add('boolean-picker-input', 'form-check-input');
 
-		if (config.reverse) {
-			this.rootElem.classList.add('form-check-reverse');
-			this.rootElem.appendChild(this.inputElem);
-		} else {
-			this.rootElem.prepend(this.inputElem);
-		}
+		// The box goes right before its label, like 'Enable Item Swapping'.
+		this.rootElem.prepend(this.inputElem);
 
 		this.init();
 

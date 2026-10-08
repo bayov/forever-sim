@@ -456,7 +456,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			label: 'Dual Wield',
 			labelTooltip: 'Uses 2 separate weapons to attack.',
 			inline: true,
-			reverse: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().dualWield,
 			setValue: (eventID: EventID, _: null, newValue: boolean) => {
@@ -470,7 +469,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			labelTooltip:
 				'Enables the Dual Wield Miss Penalty (+19% chance to miss) if dual wielding. Bosses in Hyjal/BT/SWP usually have this disabled to stop tanks from avoidance stacking.',
 			inline: true,
-			reverse: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().dualWieldPenalty,
 			setValue: (eventID: EventID, _: null, newValue: boolean) => {
@@ -484,7 +482,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			label: 'Parry Haste',
 			labelTooltip: 'Whether this enemy will gain parry haste when parrying attacks.',
 			inline: true,
-			reverse: true,
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().parryHaste,
 			setValue: (eventID: EventID, _: null, newValue: boolean) => {

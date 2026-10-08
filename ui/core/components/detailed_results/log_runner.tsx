@@ -79,7 +79,6 @@ export class LogRunner extends ResultComponent {
 			extraCssClasses: ['show-debug-picker'],
 			label: 'Show Debug Statements',
 			inline: true,
-			reverse: true,
 			changedEvent: () => this.showDebugChangeEmitter,
 			getValue: () => this.showDebug,
 			setValue: (eventID, _logRunner, newValue) => {
