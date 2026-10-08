@@ -150,6 +150,11 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 	// Settings of the spec's own that need more than one input, built at the end of the Class
 	// Settings section, like the totems an Enhancement shaman starts the fight with.
 	classSettings?: (parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => void;
+
+	// Updates settings saved before a change to where a setting lives, like the shaman imbue
+	// that moved from the consumables to the class settings. We call it on every settings we
+	// load (saved in the browser, from a link or from the sim history) before we apply them.
+	migrateSettings?: (settings: IndividualSimSettings) => void;
 	// Built at the top of the Rotation tab, for settings on another tab that the rotation plays
 	// from, like those starting totems.
 	rotationTabHeader?: (parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => void;
@@ -559,6 +564,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				return;
 			}
 
+			this.individualConfig.migrateSettings?.(settings);
 			this.player.fromProto(eventID, settings.player, includeCategories);
 
 			if (loadCategory(SimSettingCategories.Miscellaneous)) {

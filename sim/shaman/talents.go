@@ -50,7 +50,8 @@ func (shaman *Shaman) ApplyTalents() {
 		shaman.PseudoStats.CanParry = true
 
 		// Rockbiter is the tanking imbue, so the threat modifier flips depending on which imbue is up.
-		if shaman.Consumes.MainHandImbue == proto.WeaponImbue_RockbiterWeapon {
+		// Enhancement picks its imbue in the class settings, the other specs in the consumes.
+		if shaman.Consumes.MainHandImbue == proto.WeaponImbue_RockbiterWeapon || shaman.ShamanImbue == proto.WeaponImbue_RockbiterWeapon {
 			shaman.PseudoStats.ThreatMultiplier *= 1.30
 		} else {
 			shaman.PseudoStats.ThreatMultiplier *= 0.70

@@ -452,6 +452,7 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = EnhancementShamanOptions.create({
+	shamanImbue: WeaponImbue.WindfuryWeapon,
 	syncType: ShamanSyncType.Auto,
 });
 
@@ -464,9 +465,7 @@ export const DefaultConsumes = Consumes.create({
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodBlessSunfruit,
-	mainHandImbue: WeaponImbue.WindfuryWeapon,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
-	offHandImbue: WeaponImbue.WindfuryWeapon,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
@@ -587,7 +586,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WeaponImbueUnknown },
+	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
 });
 export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 60 + Water Shield', {
 	group: 'Level 60',
@@ -600,7 +599,7 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WeaponImbueUnknown },
+	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
 });
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
@@ -613,7 +612,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WeaponImbueUnknown },
+	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
 });
 
 // A level 30 shaman soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32)
