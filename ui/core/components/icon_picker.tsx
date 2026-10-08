@@ -29,6 +29,10 @@ export interface IconPickerConfig<ModObject, ValueType> extends InputConfig<ModO
 	reverse?: boolean;
 	// The value increment per state change. Defaults to 1.
 	step?: number;
+	// A hidden icon turns its value off, and turns it back on when it shows again. This keeps
+	// the value instead, for an icon with a twin on the same field that shows in its place, like
+	// the Classic Battle Shout and the plain on or off one under Forever.
+	keepValueWhenHidden?: (modObj: ModObject) => boolean;
 }
 
 // Icon-based UI for picking buffs / consumes / etc
@@ -111,7 +115,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 				this.rootElem.classList.remove('hide');
 				this.restoreValue();
 			} else {
-				this.storeValue();
+				if (!this.config.keepValueWhenHidden?.(this.modObject)) this.storeValue();
 				this.rootElem.classList.add('hide');
 			}
 		};

@@ -25,6 +25,24 @@ import { ItemStatOption, PickerStatOptions } from './stat_options';
 //                                 RAID BUFFS
 ///////////////////////////////////////////////////////////////////////////
 
+const notForever = (player: Player<any>) => player.sim.getRuleset() !== Ruleset.RulesetForever;
+const isForever = (player: Player<any>) => !notForever(player);
+
+// The Classic one of two icons on the same field, where Forever shows a plain on or off icon in
+// its place, like Battle Shout without its improved state. When we hide it under Forever, we
+// keep the value for the Forever icon.
+function classicTwin<T extends object>(config: T): T {
+	(config as Pick<IconPickerConfig<Player<any>, unknown>, 'keepValueWhenHidden'>).keepValueWhenHidden = isForever;
+	return config;
+}
+
+// The Forever one of the two. When we hide it outside Forever, we keep the value for the
+// Classic icon.
+function foreverTwin<T extends object>(config: T): T {
+	(config as Pick<IconPickerConfig<Player<any>, unknown>, 'keepValueWhenHidden'>).keepValueWhenHidden = notForever;
+	return config;
+}
+
 export const AllStatsBuff = withLabel(
 	makeTristateRaidBuffInput({
 		actionId: () => ActionId.fromSpellId(9885),
@@ -146,14 +164,16 @@ export const StaminaBuff = withLabel(
 	'Power Word: Fortitude',
 );
 
-export const BloodPactBuff = withLabel(
-	makeTristateRaidBuffInput({
-		actionId: () => ActionId.fromSpellId(11767),
-		impId: ActionId.fromSpellId(18696),
-		fieldName: 'bloodPact',
-		showWhen: player => player.sim.getRuleset() !== Ruleset.RulesetForever,
-	}),
-	'Blood Pact',
+export const BloodPactBuff = classicTwin(
+	withLabel(
+		makeTristateRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(11767),
+			impId: ActionId.fromSpellId(18696),
+			fieldName: 'bloodPact',
+			showWhen: player => player.sim.getRuleset() !== Ruleset.RulesetForever,
+		}),
+		'Blood Pact',
+	),
 );
 
 export const BlessingOfMight = withLabel(
@@ -166,24 +186,28 @@ export const BlessingOfMight = withLabel(
 	'Blessing of Might',
 );
 
-export const StrengthBuffHorde = withLabel(
-	makeTristateRaidBuffInput({
-		actionId: () => ActionId.fromSpellId(25361),
-		impId: ActionId.fromSpellId(16295),
-		fieldName: 'strengthOfEarthTotem',
-		showWhen: player => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() !== Ruleset.RulesetForever,
-	}),
-	'Strength',
+export const StrengthBuffHorde = classicTwin(
+	withLabel(
+		makeTristateRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(25361),
+			impId: ActionId.fromSpellId(16295),
+			fieldName: 'strengthOfEarthTotem',
+			showWhen: player => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() !== Ruleset.RulesetForever,
+		}),
+		'Strength',
+	),
 );
 
-export const GraceOfAir = withLabel(
-	makeTristateRaidBuffInput({
-		actionId: () => ActionId.fromSpellId(25359),
-		impId: ActionId.fromSpellId(16295),
-		fieldName: 'graceOfAirTotem',
-		showWhen: player => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() !== Ruleset.RulesetForever,
-	}),
-	'Agility',
+export const GraceOfAir = classicTwin(
+	withLabel(
+		makeTristateRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(25359),
+			impId: ActionId.fromSpellId(16295),
+			fieldName: 'graceOfAirTotem',
+			showWhen: player => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() !== Ruleset.RulesetForever,
+		}),
+		'Agility',
+	),
 );
 
 // Some improved buffs are not in Forever's trees, so under Forever we show these buffs as on or
@@ -191,29 +215,32 @@ export const GraceOfAir = withLabel(
 // regular buff.
 //
 // The improved Strength of Earth and Grace of Air come from Enhancing Totems, which is gone.
-// Forever's Improved Imp no longer raises Blood Pact.
+// Forever's Improved Imp no longer raises Blood Pact. Improved Battle Shout is out of the Fury
+// tree.
 function makeForeverPlainBuffInput(
 	spellId: number,
-	fieldName: 'strengthOfEarthTotem' | 'graceOfAirTotem' | 'bloodPact',
+	fieldName: 'strengthOfEarthTotem' | 'graceOfAirTotem' | 'bloodPact' | 'battleShout',
 	showWhen: (player: Player<any>) => boolean = () => true,
 ) {
-	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<any>>(
-		{
-			getModObject: (player: Player<any>) => player,
-			showWhen: (player: Player<any>) => showWhen(player) && player.sim.getRuleset() === Ruleset.RulesetForever,
-			getValue: (player: Player<any>) => player.getRaid()!.getBuffs(),
-			setValue: (eventID: EventID, player: Player<any>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
-			changeEmitter: (player: Player<any>) =>
-				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
-			getFieldValue: (player: Player<any>) => player.getRaid()!.getBuffs()[fieldName] !== TristateEffect.TristateEffectMissing,
-			setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
-				const buffs = player.getRaid()!.getBuffs();
-				buffs[fieldName] = newValue ? TristateEffect.TristateEffectRegular : TristateEffect.TristateEffectMissing;
-				player.getRaid()!.setBuffs(eventID, buffs);
+	return foreverTwin(
+		InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<any>>(
+			{
+				getModObject: (player: Player<any>) => player,
+				showWhen: (player: Player<any>) => showWhen(player) && isForever(player),
+				getValue: (player: Player<any>) => player.getRaid()!.getBuffs(),
+				setValue: (eventID: EventID, player: Player<any>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
+				changeEmitter: (player: Player<any>) =>
+					TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
+				getFieldValue: (player: Player<any>) => player.getRaid()!.getBuffs()[fieldName] !== TristateEffect.TristateEffectMissing,
+				setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+					const buffs = player.getRaid()!.getBuffs();
+					buffs[fieldName] = newValue ? TristateEffect.TristateEffectRegular : TristateEffect.TristateEffectMissing;
+					player.getRaid()!.setBuffs(eventID, buffs);
+				},
 			},
-		},
-		() => ActionId.fromSpellId(spellId),
-		fieldName,
+			() => ActionId.fromSpellId(spellId),
+			fieldName,
+		),
 	);
 }
 
@@ -261,14 +288,19 @@ export const SpiritBuff = withLabel(
 	'Divine Spirit',
 );
 
-export const BattleShoutBuff = withLabel(
-	makeTristateRaidBuffInput({
-		actionId: () => ActionId.fromSpellId(25289),
-		impId: ActionId.fromSpellId(12861),
-		fieldName: 'battleShout',
-	}),
-	'Battle Shout',
+export const BattleShoutBuff = classicTwin(
+	withLabel(
+		makeTristateRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(25289),
+			impId: ActionId.fromSpellId(12861),
+			fieldName: 'battleShout',
+			showWhen: player => player.sim.getRuleset() !== Ruleset.RulesetForever,
+		}),
+		'Battle Shout',
+	),
 );
+
+export const BattleShoutBuffForever = withLabel(makeForeverPlainBuffInput(25289, 'battleShout'), 'Battle Shout');
 
 export const TrueshotAuraBuff = withLabel(
 	makeBooleanRaidBuffInput({
@@ -448,8 +480,6 @@ export const SlipKiksSavvy = withLabel(
 //                                 DEBUFFS
 ///////////////////////////////////////////////////////////////////////////
 
-const notForever = (player: Player<any>) => player.sim.getRuleset() !== Ruleset.RulesetForever;
-
 // A debuff we turn on or off with one icon, even when its field is a tristate. An improved value
 // from an older saved setup counts as on, and the sim treats it as the regular debuff.
 function makeDebuffToggle(
@@ -570,23 +600,29 @@ export const SpellShadowWeavingDebuff = makeBooleanDebuffInput({
 
 // Under Forever Improved Seal of the Crusader and Improved Hunter's Mark are out of the trees,
 // so these two are on or off there.
-export const JudgementOfTheCrusader = makeTristateDebuffInput({
-	actionId: () => ActionId.fromSpellId(20303),
-	impId: ActionId.fromSpellId(20337),
-	fieldName: 'judgementOfTheCrusader',
-	showWhen: player => player.hasFactionBuffs(Faction.Alliance) && notForever(player),
-});
-export const JudgementOfTheCrusaderForever = makeDebuffToggle(20303, 'judgementOfTheCrusader', {
-	showWhen: player => player.hasFactionBuffs(Faction.Alliance) && !notForever(player),
-});
+export const JudgementOfTheCrusader = classicTwin(
+	makeTristateDebuffInput({
+		actionId: () => ActionId.fromSpellId(20303),
+		impId: ActionId.fromSpellId(20337),
+		fieldName: 'judgementOfTheCrusader',
+		showWhen: player => player.hasFactionBuffs(Faction.Alliance) && notForever(player),
+	}),
+);
+export const JudgementOfTheCrusaderForever = foreverTwin(
+	makeDebuffToggle(20303, 'judgementOfTheCrusader', {
+		showWhen: player => player.hasFactionBuffs(Faction.Alliance) && isForever(player),
+	}),
+);
 
-export const HuntersMark = makeTristateDebuffInput({
-	actionId: () => ActionId.fromSpellId(14325),
-	impId: ActionId.fromSpellId(19425),
-	fieldName: 'huntersMark',
-	showWhen: notForever,
-});
-export const HuntersMarkForever = makeDebuffToggle(14325, 'huntersMark', { showWhen: player => !notForever(player) });
+export const HuntersMark = classicTwin(
+	makeTristateDebuffInput({
+		actionId: () => ActionId.fromSpellId(14325),
+		impId: ActionId.fromSpellId(19425),
+		fieldName: 'huntersMark',
+		showWhen: notForever,
+	}),
+);
+export const HuntersMarkForever = foreverTwin(makeDebuffToggle(14325, 'huntersMark', { showWhen: isForever }));
 
 export const JudgementOfWisdom = makeBooleanDebuffInput({
 	actionId: () => ActionId.fromSpellId(20355),
@@ -712,6 +748,11 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: BattleShoutBuff,
+		picker: IconPicker,
+		stats: [Stat.StatAttackPower],
+	},
+	{
+		config: BattleShoutBuffForever,
 		picker: IconPicker,
 		stats: [Stat.StatAttackPower],
 	},
@@ -907,7 +948,7 @@ export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 		label: 'Stats',
 		items: [BloodPactBuff, BloodPactBuffForever, StrengthBuffHorde, StrengthBuffHordeForever, GraceOfAir, GraceOfAirForever].map(buffItem),
 	},
-	{ label: 'Attack Power', items: [BattleShoutBuff, TrueshotAuraBuff].map(buffItem) },
+	{ label: 'Attack Power', items: [BattleShoutBuff, BattleShoutBuffForever, TrueshotAuraBuff].map(buffItem) },
 	{ label: 'Weapon Totem', items: [{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] }] },
 	{ label: 'Crit', items: [MeleeCritBuff, SpellCritBuff].map(buffItem) },
 	{ label: 'Mana', items: [ManaSpringTotem].map(buffItem) },
