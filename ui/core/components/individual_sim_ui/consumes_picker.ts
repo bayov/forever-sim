@@ -158,7 +158,7 @@ export class ConsumesPicker extends Component {
 		const pickers = [
 			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, apBuffOptions), 'AP'),
 			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, hitConsumableOptions), 'HIT'),
-			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, forceElixirOptions), 'FORCE'),
+			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, forceElixirOptions), 'DMG'),
 		];
 		this.markNotSimulated(
 			pickers[2],
