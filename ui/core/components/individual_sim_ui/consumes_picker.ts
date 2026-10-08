@@ -2,7 +2,7 @@ import tippy, { Instance } from 'tippy.js';
 
 import { IndividualSimUI } from '../../individual_sim_ui';
 import { Player } from '../../player';
-import { Spec, Stat, TristateEffect } from '../../proto/common';
+import { Consumes, Spec, Stat, TristateEffect } from '../../proto/common';
 import { TypedEvent } from '../../typed_event';
 import { Component } from '../component';
 import { IconEnumPicker } from '../icon_enum_picker';
@@ -50,6 +50,7 @@ export class ConsumesPicker extends Component {
 		const potionsOptions = ConsumablesInputs.makePotionsInput(relevantStatOptions(ConsumablesInputs.POTIONS_CONFIG, this.simUI));
 
 		const pickers = [buildIconInput(potionsElem, this.simUI.player, potionsOptions)];
+		this.markNotSimulated(pickers[0], 'defaultPotion');
 
 		TypedEvent.onAny([this.simUI.player.professionChangeEmitter]).on(() => this.updateRow(row, pickers));
 		this.updateRow(row, pickers);
@@ -74,6 +75,7 @@ export class ConsumesPicker extends Component {
 		const flasksOptions = ConsumablesInputs.makeFlasksInput(relevantStatOptions(ConsumablesInputs.FLASKS_CONFIG, this.simUI));
 
 		const pickers = [buildIconInput(flasksElem, this.simUI.player, flasksOptions)];
+		this.markNotSimulated(pickers[0], 'flask');
 
 		TypedEvent.onAny([this.simUI.player.professionChangeEmitter]).on(() => this.updateRow(row, pickers));
 		this.updateRow(row, pickers);
@@ -86,6 +88,8 @@ export class ConsumesPicker extends Component {
 		const ohImbueOptions = ConsumablesInputs.makeOffHandImbuesInput(relevantStatOptions(ConsumablesInputs.WEAPON_IMBUES_OH_CONFIG, this.simUI), 'Off-Hand');
 
 		const pickers = [buildIconInput(imbuesElem, this.simUI.player, mhImbueOptions), buildIconInput(imbuesElem, this.simUI.player, ohImbueOptions)];
+		this.markNotSimulated(pickers[0], 'mainHandImbue');
+		this.markNotSimulated(pickers[1], 'offHandImbue');
 
 		TypedEvent.onAny([this.simUI.player.gearChangeEmitter, this.simUI.player.raceChangeEmitter]).on(() => this.updateRow(row, pickers));
 		this.updateRow(row, pickers);
@@ -97,6 +101,7 @@ export class ConsumesPicker extends Component {
 		const foodOptions = ConsumablesInputs.makeFoodInput(relevantStatOptions(ConsumablesInputs.FOOD_CONFIG, this.simUI));
 
 		const pickers = [buildIconInput(foodsElem, this.simUI.player, foodOptions)];
+		this.markNotSimulated(pickers[0], 'food');
 
 		this.updateRow(row, pickers);
 	}
@@ -119,21 +124,30 @@ export class ConsumesPicker extends Component {
 		const slot = (config: ReturnType<typeof ConsumablesInputs.makeScrollSlotInput>, tag: string) =>
 			add(buildIconInput(elem, player, config) as IconEnumPicker<Player<Spec>, number>, tag);
 
-		add(buildIconInput(elem, player, strengthOptions) as IconEnumPicker<Player<Spec>, number>, 'STR');
-		add(buildIconInput(elem, player, agilityOptions) as IconEnumPicker<Player<Spec>, number>, 'AGI');
+		this.markNotSimulated(add(buildIconInput(elem, player, strengthOptions) as IconEnumPicker<Player<Spec>, number>, 'STR'), 'strengthBuff');
+		this.markNotSimulated(add(buildIconInput(elem, player, agilityOptions) as IconEnumPicker<Player<Spec>, number>, 'AGI'), 'agilityElixir');
 		this.intellectSlot = slot(
 			ConsumablesInputs.makeScrollSlotInput({
 				scrollId: 10308,
 				scrollField: 'scrollOfIntellect',
 				showScroll: raidBuffShown(BuffDebuffInputs.IntellectBuff),
 				elixirs: relevantStatOptions(ConsumablesInputs.INTELLECT_CONFIG, this.simUI),
+				elixirField: 'intellectElixir',
 			}),
 			'INT',
 		);
+		this.markNotSimulated(this.intellectSlot, 'intellectElixir');
 		this.spiritSlot = slot(
-			ConsumablesInputs.makeScrollSlotInput({ scrollId: 10306, scrollField: 'scrollOfSpirit', showScroll: raidBuffShown(BuffDebuffInputs.SpiritBuff) }),
+			ConsumablesInputs.makeScrollSlotInput({
+				scrollId: 10306,
+				scrollField: 'scrollOfSpirit',
+				showScroll: raidBuffShown(BuffDebuffInputs.SpiritBuff),
+				elixirs: relevantStatOptions(ConsumablesInputs.SPIRIT_CONFIG, this.simUI),
+				elixirField: 'spiritElixir',
+			}),
 			'SPI',
 		);
+		this.markNotSimulated(this.spiritSlot, 'spiritElixir');
 		this.staminaSlot = slot(
 			ConsumablesInputs.makeScrollSlotInput({ scrollId: 10307, scrollField: 'scrollOfStamina', showScroll: raidBuffShown(BuffDebuffInputs.StaminaBuff) }),
 			'STA',
@@ -160,11 +174,8 @@ export class ConsumesPicker extends Component {
 			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, hitConsumableOptions), 'HIT'),
 			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, forceElixirOptions), 'DMG'),
 		];
-		this.markNotSimulated(
-			pickers[2],
-			() => !!this.simUI.player.getConsumes().forceElixir,
-			"Not simulated: The sim doesn't apply the force elixirs' physical damage yet.",
-		);
+		this.markNotSimulated(pickers[0], 'attackPowerBuff');
+		this.markNotSimulated(pickers[2], 'forceElixir');
 
 		this.updateRow(row, pickers);
 	}
@@ -181,11 +192,9 @@ export class ConsumesPicker extends Component {
 			this.tagSlot(buildIconInput(defensiveConsumesElem, this.simUI.player, armorBuffOptions), 'ARMOR'),
 			this.tagSlot(buildIconInput(defensiveConsumesElem, this.simUI.player, trollsBloodOptions), 'HP5'),
 		];
-		this.markNotSimulated(
-			pickers[2],
-			() => !!this.simUI.player.getConsumes().trollsBloodPotion,
-			"Not simulated: The sim has no health regen yet, so Troll's Blood doesn't affect results.",
-		);
+		this.markNotSimulated(pickers[0], 'healthElixir');
+		this.markNotSimulated(pickers[1], 'armorElixir');
+		this.markNotSimulated(pickers[2], 'trollsBloodElixir', "Not simulated: The sim has no health regen yet, so Troll's Blood doesn't affect results.");
 
 		this.updateRow(row, pickers);
 	}
@@ -197,15 +206,25 @@ export class ConsumesPicker extends Component {
 		const fireBuffOptions = ConsumablesInputs.makeFirePowerConsumeInput(relevantStatOptions(ConsumablesInputs.FIRE_POWER_CONFIG, this.simUI));
 		const frostBuffOptions = ConsumablesInputs.makeFrostPowerConsumeInput(relevantStatOptions(ConsumablesInputs.FROST_POWER_CONFIG, this.simUI));
 		const shadowBuffOptions = ConsumablesInputs.makeShadowPowerConsumeInput(relevantStatOptions(ConsumablesInputs.SHADOW_POWER_CONFIG, this.simUI));
+		const natureBuffOptions = ConsumablesInputs.makeNaturePowerConsumeInput(relevantStatOptions(ConsumablesInputs.NATURE_POWER_CONFIG, this.simUI));
+		const holyBuffOptions = ConsumablesInputs.makeHolyPowerConsumeInput(relevantStatOptions(ConsumablesInputs.HOLY_POWER_CONFIG, this.simUI));
 		const mp5BuffOptions = ConsumablesInputs.makeMp5ConsumeInput(relevantStatOptions(ConsumablesInputs.MP5_CONFIG, this.simUI));
+		const healingBuffOptions = ConsumablesInputs.makeHealingPowerConsumeInput(relevantStatOptions(ConsumablesInputs.HEALING_POWER_CONFIG, this.simUI));
 
 		const pickers = [
 			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, spBuffOptions), 'SP'),
 			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, fireBuffOptions), 'FIRE'),
 			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, frostBuffOptions), 'FROST'),
 			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, shadowBuffOptions), 'SHAD'),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, natureBuffOptions), 'NAT'),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, holyBuffOptions), 'HOLY'),
 			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, mp5BuffOptions), 'MP5'),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, healingBuffOptions), 'HEAL'),
 		];
+		this.markNotSimulated(pickers[0], 'spellPowerBuff');
+		this.markNotSimulated(pickers[4], 'naturePowerBuff');
+		this.markNotSimulated(pickers[6], 'manaRegenElixir');
+		this.markNotSimulated(pickers[7], 'healingPowerBuff');
 
 		this.updateRow(row, pickers);
 	}
@@ -284,10 +303,17 @@ export class ConsumesPicker extends Component {
 		return picker;
 	}
 
-	// A slot the sim doesn't read yet, like the talents we don't simulate. When we pick something
-	// in it, it gets a dashed edge and a yellow "!" whose tooltip says so. The slot keeps the
-	// item's tooltip. An empty slot has no mark, because it can't mislead anyone.
-	private markNotSimulated<T extends { rootElem: HTMLElement }>(picker: T, isPicked: () => boolean, note: string) {
+	// Marks a slot while its pick is a Forever consumable the sim doesn't apply yet (see
+	// NOT_SIMULATED_CONSUMES), like the talents we don't simulate.
+	//
+	// The slot gets a dashed edge and a yellow "!" whose tooltip says so. The slot keeps the item's
+	// tooltip. A slot with a simulated pick or with nothing picked has no mark.
+	private markNotSimulated<T extends { rootElem: HTMLElement }>(
+		picker: T,
+		field: keyof Consumes,
+		note = "Not simulated: The sim doesn't apply this Forever consumable yet.",
+	) {
+		const isPicked = () => !!ConsumablesInputs.NOT_SIMULATED_CONSUMES.get(field)?.has(this.simUI.player.getConsumes()[field] as number);
 		const badge = document.createElement('span');
 		badge.classList.add('consumes-slot-badge', 'consumes-not-simulated-badge');
 		badge.textContent = '!';

@@ -366,6 +366,33 @@ enum Potions {
 	// Forever's 30 sec buff potions.
 	FrenzyPotion = 23;
 	SpellblastingPotion = 24;
+	MinorFrenzyPotion = 25;
+	LesserFrenzyPotion = 26;
+	GreaterFrenzyPotion = 27;
+	SuperiorFrenzyPotion = 28;
+	MajorFrenzyPotion = 29;
+	MinorSpellblastingPotion = 30;
+	LesserSpellblastingPotion = 31;
+	GreaterSpellblastingPotion = 32;
+	SuperiorSpellblastingPotion = 33;
+	MajorSpellblastingPotion = 34;
+	MinorMendersPotion = 35;
+	LesserMendersPotion = 36;
+	MendersPotion = 37;
+	GreaterMendersPotion = 38;
+	SuperiorMendersPotion = 39;
+	MajorMendersPotion = 40;
+	RestoredHealingPotion = 41;
+	RestoredManaPotion = 42;
+	TessasTonic = 43;
+	DragonfirePotion = 44;
+	MinorDiscoloredHealingPotion = 45;
+	LesserDiscoloredHealingPotion = 46;
+	DiscoloredHealingPotion = 47;
+	GreaterDiscoloredHealingPotion = 48;
+	SuperiorDiscoloredHealingPotion = 49;
+	PotionOfBeastSlaying = 50;
+	PotionOfElementalPurging = 51;
 
 	LesserManaPotion = 1 [deprecated = true];
 }
@@ -387,6 +414,12 @@ enum Flask {
 	FlaskOfDistilledWisdom = 2;
 	FlaskOfSupremePower = 3;
 	FlaskOfChromaticResistance = 4;
+	
+	// Forever's flasks. Their bonus beyond Stamina works only in Hyjal and the Barrow Deeps.
+	FlaskOfNaturalAccuracy = 5;
+	FlaskOfNaturalAggression = 6;
+	FlaskOfNaturalPrecision = 7;
+	FlaskOfNaturalSwiftness = 8;
 }
 
 enum Alcohol {
@@ -405,6 +438,9 @@ enum AgilityElixir {
 	ElixirOfLesserAgility = 3;
 	ScrollOfAgility = 4;
 	ElixirOfAgility = 5;
+	
+	// Forever's elixirs.
+	ElixirOfCunning = 6;
 }
 
 enum ArmorElixir {
@@ -414,12 +450,20 @@ enum ArmorElixir {
 	ElixirOfDefense = 3;
 	ElixirOfMinorDefense = 4;
 	ScrollOfProtection = 5;
+	
+	// Forever's +400 health and +500 armor elixir.
+	ElixirOfThePhalanx = 6;
 }
 
 enum HealthElixir {
 	HealthElixirUnknown = 0;
 	ElixirOfFortitude = 1;
 	ElixirOfMinorFortitude = 2;
+	
+	// Forever renamed the +120 health elixir to Lesser Fortitude, so ElixirOfFortitude is that one.
+	// These are Forever's new +200 and +400 ones.
+	ElixirOfFortitudeForever = 3;
+	ElixirOfGreaterFortitude = 4;
 }
 
 // Forever's force elixirs add flat physical damage. We don't know yet which elixirs they
@@ -429,13 +473,40 @@ enum ForceElixir {
 	ElixirOfMinorForce = 1;
 }
 
-// The sim has no health regen yet, so we keep the pick but it doesn't change results.
-enum TrollsBloodPotion {
-	TrollsBloodPotionUnknown = 0;
-	MajorTrollsBloodPotion = 1;
-	MightyTrollsBloodPotion = 2;
-	StrongTrollsBloodPotion = 3;
-	WeakTrollsBloodPotion = 4;
+// Forever turned the Troll's Blood potions into elixirs. The sim has no health regen yet, so we
+// keep the pick but it doesn't change results.
+enum TrollsBloodElixir {
+	TrollsBloodElixirUnknown = 0;
+	MajorTrollsBloodElixir = 1;
+	TrollsBloodElixirRegular = 2;
+	LesserTrollsBloodElixir = 3;
+	MinorTrollsBloodElixir = 4;
+}
+
+// Forever's Spirit elixirs.
+enum SpiritElixir {
+	SpiritElixirUnknown = 0;
+	ElixirOfMinorSpirit = 1;
+	ElixirOfLesserSpirit = 2;
+	ElixirOfSpirit = 3;
+	ElixirOfGreaterSpirit = 4;
+	ElixirOfSages = 5;
+	ElixirOfTheWhale = 6;
+}
+
+// Forever's Nature spell damage elixir.
+enum NaturePowerBuff {
+	NaturePowerBuffUnknown = 0;
+	ElixirOfNaturePower = 1;
+}
+
+// Forever's healing elixirs.
+enum HealingPowerBuff {
+	HealingPowerBuffUnknown = 0;
+	MinorClericsElixir = 1;
+	LesserClericsElixir = 2;
+	ClericsElixir = 3;
+	GreaterClericsElixir = 4;
 }
 
 enum ManaRegenElixir {
@@ -444,6 +515,9 @@ enum ManaRegenElixir {
 
 	// Forever's elixirs.
 	LesserMagebloodElixir = 2;
+	MinorMagebloodElixir = 3;
+	GreaterMagebloodElixir = 4;
+	ElixirOfWickedRegeneration = 5;
 }
 
 enum StrengthBuff {
@@ -454,12 +528,20 @@ enum StrengthBuff {
 	ScrollOfStrength = 4;
 	// +8 Strength for 2 min with no cooldown, so we drink it again and keep it up.
 	ElixirOfGiantGrowth = 5;
+	
+	// Forever's elixirs.
+	ElixirOfStrength = 6;
+	ElixirOfTheGrizzly = 7;
+	ElixirOfFerocity = 8;
 }
 
 enum AttackPowerBuff {
 	AttackPowerBuffUnknown = 0;
 	JujuMight = 1;
 	WinterfallFirewater = 2;
+	
+	// Forever's +35 attack power elixir at level 45.
+	DistilledFirewater = 3;
 }
 
 enum SpellPowerBuff {
@@ -468,6 +550,7 @@ enum SpellPowerBuff {
 	GreaterArcaneElixir = 2;
 	// Forever's +15 spell damage elixir at level 25.
 	LesserArcaneElixir = 3;
+	MinorArcaneElixir = 4;
 }
 
 enum ShadowPowerBuff {
@@ -561,6 +644,24 @@ enum WeaponImbue {
 	InstantPoison = 5;
 	DeadlyPoison = 6;
 	WoundPoison = 7;
+	
+	// Forever's imbue scrolls, for a staff, a dagger or a sword.
+	ScrollOfImbueLesserFlame = 25;
+	ScrollOfImbueFrost = 26;
+	ScrollOfImbueStriking = 27;
+	ScrollOfImbueBaleflame = 28;
+	ScrollOfImbueAccuracy = 29;
+	ScrollOfImbueQuickening = 30;
+	ScrollOfImbueBalefrost = 31;
+	ScrollOfImbueFlame = 32;
+	ScrollOfImbueGreaterFlame = 33;
+	ScrollOfImbueGreaterFrost = 34;
+	ScrollOfImbuePrecision = 35;
+	ScrollOfImbueSpellbreak = 36;
+	ScrollOfImbueChillknife = 37;
+	ScrollOfImbueIceknife = 38;
+	ScrollOfImbueManablade = 39;
+	ScrollOfImbueSpark = 40;
 }
 
 // NextIndex: 13
@@ -584,6 +685,46 @@ enum Food {
 	FoodBearBrisket = 14;
 	FoodTastyLionSteak = 15;
 	FoodBrinySeafoodStew = 16;
+	
+	// Forever's well fed food. Each gives one stat, in tiers by level.
+	FoodPeaceTea = 17;
+	FoodRoyalTea = 18;
+	FoodRootTea = 19;
+	FoodTriageTea = 20;
+	FoodSunnyTea = 21;
+	FoodSagesTea = 22;
+	FoodVenomousSmoothie = 23;
+	FoodSlimySmoothie = 24;
+	FoodMrrgglSmrrthle = 25;
+	FoodCalcifiedSmoothie = 26;
+	FoodSpicySmoothie = 27;
+	FoodWickedSmoothie = 28;
+	FoodTastyRaptorBites = 29;
+	FoodTwiceSpicedRaptorSlice = 30;
+	FoodRoastRaptor = 31;
+	FoodPrehistoricPulledRaptor = 32;
+	FoodSkywallSouffle = 33;
+	FoodBreakfastOmelette = 34;
+	FoodCuriouslyTastyOmelet = 35;
+	FoodGiantScrambledEggs = 36;
+	FoodSpiderSausage = 37;
+	FoodSavoryTurtleStew = 38;
+	FoodRoastedBoarMeat = 39;
+	FoodGoretuskLiverPie = 40;
+	FoodSucculentPorkRibs = 41;
+	FoodSavoryStagSliders = 42;
+	FoodSpicedWolfMeat = 43;
+	FoodCoyoteSteak = 44;
+	FoodSeasonedWolfKabob = 45;
+	FoodFlankAuPoivre = 46;
+	FoodBrilliantSmallfish = 47;
+	FoodSlitherskinMackerel = 48;
+	FoodLongjawMudSnapper = 49;
+	FoodCookedGlossyMightfish = 50;
+	FoodMightfishSteak = 51;
+	FoodRainbowFinAlbacore = 52;
+	FoodLobsterStew = 53;
+	FoodPlatedArmorfish = 54;
 }
 
 enum SaygesFortune {
@@ -718,6 +859,13 @@ enum IntellectElixir {
 	ElixirOfWisdom = 1;
 	// Forever's +6 Intellect elixir at level 25.
 	ElixirOfLesserIntellect = 2;
+	ElixirOfIntellect = 3;
+	ElixirOfTheOwl = 4;
+	
+	// Forever's familiar scrolls summon a pet that gives Intellect.
+	ScrollOfRatFamiliar = 5;
+	ScrollOfFrogFamiliar = 6;
+	ScrollOfCatFamiliar = 7;
 }
 
 // NextIndex: 35
@@ -751,8 +899,11 @@ message Consumes {
 	SapperExplosive sapper_explosive = 28;
 	HitConsumable hit_consumable = 29;
 	IntellectElixir intellect_elixir = 34;
-	TrollsBloodPotion trolls_blood_potion = 35;
+	TrollsBloodElixir trolls_blood_elixir = 35;
 	ForceElixir force_elixir = 36;
+	SpiritElixir spirit_elixir = 37;
+	NaturePowerBuff nature_power_buff = 38;
+	HealingPowerBuff healing_power_buff = 39;
 }
 
 // NextIndex: 26

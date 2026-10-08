@@ -84,27 +84,38 @@ func applyWeaponImbueConsumes(character *Character, consumes *proto.Consumes) {
 	}
 }
 
+// Forever's wizard oils add as much healing as spell damage.
+func addForeverOilHealing(character *Character, amount float64) {
+	if character.Env.IsForever() {
+		character.AddStat(stats.HealingPower, amount)
+	}
+}
+
 func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, shadowOilIcd Cooldown) {
 	if imbue != proto.WeaponImbue_WeaponImbueUnknown {
 		switch imbue {
-		// Wizard Oils
+		// Wizard Oils. Forever's add the same amount of healing.
 		case proto.WeaponImbue_MinorWizardOil:
 			character.AddStats(stats.Stats{
 				stats.SpellPower: 8,
 			})
+			addForeverOilHealing(character, 8)
 		case proto.WeaponImbue_LesserWizardOil:
 			character.AddStats(stats.Stats{
 				stats.SpellPower: 16,
 			})
+			addForeverOilHealing(character, 16)
 		case proto.WeaponImbue_WizardOil:
 			character.AddStats(stats.Stats{
 				stats.SpellPower: 24,
 			})
+			addForeverOilHealing(character, 24)
 		case proto.WeaponImbue_BrilliantWizardOil:
 			character.AddStats(stats.Stats{
 				stats.SpellPower: 36,
 				stats.SpellCrit:  1 * SpellCritRatingPerCritChance,
 			})
+			addForeverOilHealing(character, 36)
 		case proto.WeaponImbue_BlessedWizardOil:
 			character.Env.RegisterPostFinalizeEffect(func() {
 				for _, target := range character.Env.Encounter.TargetUnits {
@@ -118,20 +129,25 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 				}
 			})
 
-		// Mana Oils
+		// Mana Oils. Forever's give more mana and all of them add healing.
 		case proto.WeaponImbue_MinorManaOil:
-			character.AddStats(stats.Stats{
-				stats.MP5: 4,
-			})
+			if character.Env.IsForever() {
+				character.AddStats(stats.Stats{stats.MP5: 5, stats.HealingPower: 10})
+			} else {
+				character.AddStat(stats.MP5, 4)
+			}
 		case proto.WeaponImbue_LesserManaOil:
-			character.AddStats(stats.Stats{
-				stats.MP5: 8,
-			})
+			if character.Env.IsForever() {
+				character.AddStats(stats.Stats{stats.MP5: 10, stats.HealingPower: 20})
+			} else {
+				character.AddStat(stats.MP5, 8)
+			}
 		case proto.WeaponImbue_BrilliantManaOil:
-			character.AddStats(stats.Stats{
-				stats.MP5:          12,
-				stats.HealingPower: 25,
-			})
+			if character.Env.IsForever() {
+				character.AddStats(stats.Stats{stats.MP5: 15, stats.HealingPower: 30})
+			} else {
+				character.AddStats(stats.Stats{stats.MP5: 12, stats.HealingPower: 25})
+			}
 
 		// Sharpening Stones
 		case proto.WeaponImbue_SolidSharpeningStone:
@@ -309,7 +325,9 @@ func registerFrostOil(character *Character, isMh bool) {
 ///////////////////////////////////////////////////////////////////////////
 
 func applyFoodConsumes(character *Character, consumes *proto.Consumes) {
-	if consumes.Food != proto.Food_FoodUnknown {
+	if character.Env.IsForever() && applyForeverFood(character, consumes.Food) {
+		// Forever changed this food, so we skip its Classic stats below.
+	} else if consumes.Food != proto.Food_FoodUnknown {
 		switch consumes.Food {
 		case proto.Food_FoodHotWolfRibs:
 			character.AddStats(stats.Stats{
@@ -410,6 +428,34 @@ func applyFoodConsumes(character *Character, consumes *proto.Consumes) {
 	if consumes.DragonBreathChili {
 		MakePermanent(DragonBreathChiliAura(character))
 	}
+}
+
+// Forever gives each well fed food one stat. Returns whether Forever changed the food, so the caller
+// skips its Classic stats. The other foods are the same in Forever, or new ones the sim doesn't
+// apply yet.
+func applyForeverFood(character *Character, food proto.Food) bool {
+	switch food {
+	case proto.Food_FoodHotWolfRibs:
+		character.AddStat(stats.Agility, 10)
+	case proto.Food_FoodTenderWolfSteak:
+		character.AddStat(stats.Agility, 15)
+	case proto.Food_FoodRunnTumTuberSurprise:
+		character.AddStat(stats.Intellect, 15)
+	case proto.Food_FoodSmokedSagefish:
+		character.AddStat(stats.SpellDamage, 4)
+	case proto.Food_FoodSagefishDelight:
+		character.AddStat(stats.SpellDamage, 7)
+	case proto.Food_FoodNightfinSoup:
+		character.AddStat(stats.SpellDamage, 22)
+	case proto.Food_FoodGrilledSquid:
+		character.AddStats(stats.Stats{
+			stats.MeleeCrit: 1 * CritRatingPerCritChance,
+			stats.SpellCrit: 1 * SpellCritRatingPerCritChance,
+		})
+	default:
+		return false
+	}
+	return true
 }
 
 func DragonBreathChiliAura(character *Character) *Aura {
@@ -605,9 +651,12 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 				stats.FirePower: 10,
 			})
 		case proto.FirePowerBuff_ElixirOfGreaterFirepower:
-			character.AddStats(stats.Stats{
-				stats.FirePower: 40,
-			})
+			// Forever made it the Elixir of Holy Power, +40 Holy instead of Fire.
+			if character.Env.IsForever() {
+				character.AddStat(stats.HolyPower, 40)
+			} else {
+				character.AddStat(stats.FirePower, 40)
+			}
 		}
 	}
 
@@ -1023,6 +1072,13 @@ func makeHealthConsumableMCD(itemId int32, character *Character, cdTimer *Timer)
 		9421:  1200,
 		13446: 1750,
 	}[itemId]
+
+	// Forever's healthstones restore 20% more.
+	if character.Env.IsForever() {
+		if forever, ok := map[int32]float64{5509: 600, 5510: 960, 9421: 1440}[itemId]; ok {
+			minRoll, maxRoll = forever, forever
+		}
+	}
 
 	cdDuration := time.Minute * 2
 

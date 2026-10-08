@@ -9,27 +9,30 @@ import {
 	Conjured,
 	Consumes,
 	Explosive,
-	Faction,
 	FirePowerBuff,
 	Flask,
 	Food,
 	ForceElixir,
 	FrostPowerBuff,
+	HealingPowerBuff,
 	HealthElixir,
 	HitConsumable,
 	IntellectElixir,
 	ItemSlot,
 	ManaRegenElixir,
+	NaturePowerBuff,
 	Potions,
 	Profession,
 	SapperExplosive,
 	ShadowPowerBuff,
 	Spec,
 	SpellPowerBuff,
+	SpiritElixir,
 	Stat,
 	StrengthBuff,
-	TrollsBloodPotion,
+	TrollsBloodElixir,
 	WeaponImbue,
+	WeaponType,
 	ZanzaBuff,
 } from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
@@ -50,6 +53,25 @@ export interface ConsumableInputConfig<T> extends ActionInputConfig<T> {
 
 export interface ConsumableStatOption<T> extends ItemStatOption<T> {
 	config: ConsumableInputConfig<T>;
+}
+
+// The Forever consumables the sim saves but doesn't apply yet, by the Consumes field that holds
+// them. ConsumesPicker marks a slot with a warning when its pick is one of these.
+export const NOT_SIMULATED_CONSUMES = new Map<keyof Consumes, Set<number>>();
+
+// A Forever consumable the sim doesn't apply yet, see NOT_SIMULATED_CONSUMES. A weapon imbue names
+// both hands, because the same imbue shows in each.
+function notSimulated<T extends number>(
+	fields: keyof Consumes | Array<keyof Consumes>,
+	itemId: number,
+	value: T,
+	showWhen?: (player: Player<any>) => boolean,
+): ConsumableInputConfig<T> {
+	for (const field of Array.isArray(fields) ? fields : [fields]) {
+		if (!NOT_SIMULATED_CONSUMES.has(field)) NOT_SIMULATED_CONSUMES.set(field, new Set());
+		NOT_SIMULATED_CONSUMES.get(field)!.add(value);
+	}
+	return { actionId: () => ActionId.fromItemId(itemId), value, showWhen };
 }
 
 export interface ConsumeInputFactoryArgs<T extends number> {
@@ -248,6 +270,10 @@ export const FLASKS_CONFIG: ConsumableStatOption<Flask>[] = [
 	{ config: FlaskOfDistilledWisdom, stats: [Stat.StatIntellect] },
 	{ config: FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: FlaskOfChromaticResistance, stats: [] },
+	{ config: notSimulated('flask', 274273, Flask.FlaskOfNaturalAccuracy), stats: [] },
+	{ config: notSimulated('flask', 274274, Flask.FlaskOfNaturalAggression), stats: [] },
+	{ config: notSimulated('flask', 274275, Flask.FlaskOfNaturalPrecision), stats: [] },
+	{ config: notSimulated('flask', 274276, Flask.FlaskOfNaturalSwiftness), stats: [] },
 ];
 
 export const makeFlasksInput = makeConsumeInputFactory({ consumesFieldName: 'flask' });
@@ -324,24 +350,73 @@ export const BrinySeafoodStew: ConsumableInputConfig<Food> = {
 	value: Food.FoodBrinySeafoodStew,
 };
 
-// Ordered by level
+// Grouped by what the food gives, the biggest first. Forever gives each well fed food one stat,
+// in tiers by level.
 export const FOOD_CONFIG: ConsumableStatOption<Food>[] = [
-	{ config: DirgesKickChimaerokChops, stats: [Stat.StatStamina] },
-	{ config: GrilledSquid, stats: [Stat.StatAgility] },
+	// Strength
 	{ config: SmokedDesertDumpling, stats: [Stat.StatStrength] },
-	{ config: RunnTumTuberSurprise, stats: [Stat.StatIntellect] },
-	{ config: BlessSunfruit, stats: [Stat.StatStrength] },
-	{ config: BlessedSunfruitJuice, stats: [Stat.StatSpirit] },
-	{ config: NightfinSoup, stats: [Stat.StatMP5] },
-	{ config: TenderWolfSteak, stats: [Stat.StatStamina, Stat.StatSpirit] },
-	{ config: SagefishDelight, stats: [Stat.StatMP5] },
-	{ config: HotWolfRibs, stats: [Stat.StatSpirit] },
-	{ config: SmokedSagefish, stats: [Stat.StatMP5] },
-	{ config: BarbecuedBuzzardWing, stats: [Stat.StatIntellect] },
-	{ config: MithrilHeadTrout, stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('food', 250065, Food.FoodSavoryStagSliders), stats: [Stat.StatStrength] },
 	{ config: BearBrisket, stats: [Stat.StatStrength] },
+	{ config: BlessSunfruit, stats: [Stat.StatStrength] },
+	{ config: notSimulated('food', 2685, Food.FoodSucculentPorkRibs), stats: [Stat.StatStrength] },
+	{ config: notSimulated('food', 724, Food.FoodGoretuskLiverPie), stats: [Stat.StatStrength] },
+	{ config: notSimulated('food', 2681, Food.FoodRoastedBoarMeat), stats: [Stat.StatStrength] },
+	// Agility
+	{ config: notSimulated('food', 250069, Food.FoodFlankAuPoivre), stats: [Stat.StatAgility] },
+	{ config: TenderWolfSteak, stats: [Stat.StatAgility] },
 	{ config: TastyLionSteak, stats: [Stat.StatAgility] },
+	{ config: HotWolfRibs, stats: [Stat.StatAgility] },
+	{ config: notSimulated('food', 1017, Food.FoodSeasonedWolfKabob), stats: [Stat.StatAgility] },
+	{ config: notSimulated('food', 2684, Food.FoodCoyoteSteak), stats: [Stat.StatAgility] },
+	{ config: notSimulated('food', 2680, Food.FoodSpicedWolfMeat), stats: [Stat.StatAgility] },
+	// Critical strike
+	{ config: GrilledSquid, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
+	// Attack power
+	{ config: notSimulated('food', 13934, Food.FoodMightfishSteak), stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('food', 13927, Food.FoodCookedGlossyMightfish), stats: [Stat.StatAttackPower] },
+	{ config: MithrilHeadTrout, stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('food', 4592, Food.FoodLongjawMudSnapper), stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('food', 787, Food.FoodSlitherskinMackerel), stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('food', 6290, Food.FoodBrilliantSmallfish), stats: [Stat.StatAttackPower] },
+	// Spell damage
+	{ config: notSimulated('food', 13933, Food.FoodLobsterStew), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: NightfinSoup, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: BrinySeafoodStew, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: SagefishDelight, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: SmokedSagefish, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: notSimulated('food', 5095, Food.FoodRainbowFinAlbacore), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	// Intellect
+	{ config: notSimulated('food', 250075, Food.FoodPrehistoricPulledRaptor), stats: [Stat.StatIntellect] },
+	{ config: RunnTumTuberSurprise, stats: [Stat.StatIntellect] },
+	{ config: BarbecuedBuzzardWing, stats: [Stat.StatIntellect] },
+	{ config: notSimulated('food', 12210, Food.FoodRoastRaptor), stats: [Stat.StatIntellect] },
+	{ config: notSimulated('food', 250077, Food.FoodTwiceSpicedRaptorSlice), stats: [Stat.StatIntellect] },
+	{ config: notSimulated('food', 250079, Food.FoodTastyRaptorBites), stats: [Stat.StatIntellect] },
+	// Spirit
+	{ config: notSimulated('food', 249876, Food.FoodWickedSmoothie), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('food', 249875, Food.FoodSpicySmoothie), stats: [Stat.StatSpirit] },
+	{ config: BlessedSunfruitJuice, stats: [Stat.StatSpirit] },
+	{ config: notSimulated('food', 249874, Food.FoodCalcifiedSmoothie), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('food', 249873, Food.FoodMrrgglSmrrthle), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('food', 249872, Food.FoodSlimySmoothie), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('food', 249871, Food.FoodVenomousSmoothie), stats: [Stat.StatSpirit] },
+	// Stamina
+	{ config: DirgesKickChimaerokChops, stats: [Stat.StatStamina] },
+	{ config: notSimulated('food', 250068, Food.FoodSavoryTurtleStew), stats: [Stat.StatStamina] },
+	{ config: notSimulated('food', 17222, Food.FoodSpiderSausage), stats: [Stat.StatStamina] },
+	{ config: notSimulated('food', 250078, Food.FoodGiantScrambledEggs), stats: [Stat.StatStamina] },
+	{ config: notSimulated('food', 3665, Food.FoodCuriouslyTastyOmelet), stats: [Stat.StatStamina] },
+	{ config: notSimulated('food', 250080, Food.FoodBreakfastOmelette), stats: [Stat.StatStamina] },
+	{ config: notSimulated('food', 263509, Food.FoodSkywallSouffle), stats: [Stat.StatStamina] },
+	// Healing
+	{ config: notSimulated('food', 249870, Food.FoodSagesTea), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('food', 249869, Food.FoodSunnyTea), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('food', 249868, Food.FoodTriageTea), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('food', 249867, Food.FoodRootTea), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('food', 249866, Food.FoodRoyalTea), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('food', 249865, Food.FoodPeaceTea), stats: [Stat.StatHealingPower] },
+	// Armor
+	{ config: notSimulated('food', 286152, Food.FoodPlatedArmorfish), stats: [] },
 ];
 
 export const makeFoodInput = makeConsumeInputFactory({ consumesFieldName: 'food' });
@@ -427,6 +502,7 @@ export const ScrollOfProtection: ConsumableInputConfig<ArmorElixir> = {
 // Every class gets the armor slot, even when its sim doesn't show Armor, because the PvP presets
 // weigh armor.
 export const ARMOR_CONSUMES_CONFIG: ConsumableStatOption<ArmorElixir>[] = [
+	{ config: notSimulated('armorElixir', 250329, ArmorElixir.ElixirOfThePhalanx), stats: [] },
 	{ config: ElixirOfSuperiorDefense, stats: [] },
 	{ config: ElixirOfGreaterDefense, stats: [] },
 	{ config: ElixirOfDefense, stats: [] },
@@ -446,6 +522,8 @@ export const ElixirOfMinorFortitude: ConsumableInputConfig<HealthElixir> = {
 	value: HealthElixir.ElixirOfMinorFortitude,
 };
 export const HEALTH_CONSUMES_CONFIG: ConsumableStatOption<HealthElixir>[] = [
+	{ config: notSimulated('healthElixir', 250335, HealthElixir.ElixirOfGreaterFortitude), stats: [Stat.StatStamina] },
+	{ config: notSimulated('healthElixir', 250334, HealthElixir.ElixirOfFortitudeForever), stats: [Stat.StatStamina] },
 	{ config: ElixirOfFortitude, stats: [Stat.StatStamina] },
 	{ config: ElixirOfMinorFortitude, stats: [Stat.StatStamina] },
 ];
@@ -454,32 +532,16 @@ export const makeHealthConsumeInput = makeConsumeInputFactory({ consumesFieldNam
 
 // Health regen
 //
-// The sim has no health regen, so these don't change results yet. We keep the slot so the pick
-// shows up and is saved with the rest, see ConsumesPicker.
-export const MajorTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
-	actionId: () => ActionId.fromItemId(20004),
-	value: TrollsBloodPotion.MajorTrollsBloodPotion,
-};
-export const MightyTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
-	actionId: () => ActionId.fromItemId(3826),
-	value: TrollsBloodPotion.MightyTrollsBloodPotion,
-};
-export const StrongTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
-	actionId: () => ActionId.fromItemId(3388),
-	value: TrollsBloodPotion.StrongTrollsBloodPotion,
-};
-export const WeakTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
-	actionId: () => ActionId.fromItemId(3382),
-	value: TrollsBloodPotion.WeakTrollsBloodPotion,
-};
-export const TROLLS_BLOOD_CONFIG: ConsumableStatOption<TrollsBloodPotion>[] = [
-	{ config: MajorTrollsBloodPotion, stats: [] },
-	{ config: MightyTrollsBloodPotion, stats: [] },
-	{ config: StrongTrollsBloodPotion, stats: [] },
-	{ config: WeakTrollsBloodPotion, stats: [] },
+// Forever turned the Troll's Blood potions into elixirs. The sim has no health regen, so they
+// don't change results yet.
+export const TROLLS_BLOOD_CONFIG: ConsumableStatOption<TrollsBloodElixir>[] = [
+	{ config: notSimulated('trollsBloodElixir', 20004, TrollsBloodElixir.MajorTrollsBloodElixir), stats: [] },
+	{ config: notSimulated('trollsBloodElixir', 3826, TrollsBloodElixir.TrollsBloodElixirRegular), stats: [] },
+	{ config: notSimulated('trollsBloodElixir', 3388, TrollsBloodElixir.LesserTrollsBloodElixir), stats: [] },
+	{ config: notSimulated('trollsBloodElixir', 3382, TrollsBloodElixir.MinorTrollsBloodElixir), stats: [] },
 ];
 
-export const makeTrollsBloodInput = makeConsumeInputFactory({ consumesFieldName: 'trollsBloodPotion' });
+export const makeTrollsBloodInput = makeConsumeInputFactory({ consumesFieldName: 'trollsBloodElixir' });
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 PHYSICAL DAMAGE CONSUMES
@@ -498,20 +560,17 @@ export const WinterfallFirewater: ConsumableInputConfig<AttackPowerBuff> = {
 export const ATTACK_POWER_CONSUMES_CONFIG: ConsumableStatOption<AttackPowerBuff>[] = [
 	{ config: JujuMight, stats: [Stat.StatAttackPower] },
 	{ config: WinterfallFirewater, stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('attackPowerBuff', 246948, AttackPowerBuff.DistilledFirewater), stats: [Stat.StatAttackPower] },
 ];
 
 export const makeAttackPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'attackPowerBuff' });
 
 // Physical damage
 //
-// Forever's force elixirs add flat damage to every physical hit. The sim doesn't apply them yet,
-// see ConsumesPicker.
-export const ElixirOfMinorForce: ConsumableInputConfig<ForceElixir> = {
-	actionId: () => ActionId.fromItemId(247755),
-	value: ForceElixir.ElixirOfMinorForce,
-};
-
-export const FORCE_ELIXIR_CONFIG: ConsumableStatOption<ForceElixir>[] = [{ config: ElixirOfMinorForce, stats: [Stat.StatAttackPower] }];
+// Forever's force elixirs add flat damage to every physical hit. The sim doesn't apply them yet.
+export const FORCE_ELIXIR_CONFIG: ConsumableStatOption<ForceElixir>[] = [
+	{ config: notSimulated('forceElixir', 247755, ForceElixir.ElixirOfMinorForce), stats: [Stat.StatAttackPower] },
+];
 
 export const makeForceElixirInput = makeConsumeInputFactory({ consumesFieldName: 'forceElixir' });
 
@@ -538,6 +597,7 @@ export const ScrollOfAgility: ConsumableInputConfig<AgilityElixir> = {
 };
 
 export const AGILITY_CONSUMES_CONFIG: ConsumableStatOption<AgilityElixir>[] = [
+	{ config: notSimulated('agilityElixir', 250328, AgilityElixir.ElixirOfCunning), stats: [Stat.StatAgility] },
 	{ config: ElixirOfTheMongoose, stats: [Stat.StatAgility, Stat.StatMeleeCrit] },
 	{ config: ElixirOfGreaterAgility, stats: [Stat.StatAgility] },
 	{ config: ElixirOfAgility, stats: [Stat.StatAgility] },
@@ -571,6 +631,9 @@ export const ElixirOfGiantGrowth: ConsumableInputConfig<StrengthBuff> = {
 };
 
 export const STRENGTH_CONSUMES_CONFIG: ConsumableStatOption<StrengthBuff>[] = [
+	{ config: notSimulated('strengthBuff', 250351, StrengthBuff.ElixirOfTheGrizzly), stats: [Stat.StatStrength] },
+	{ config: notSimulated('strengthBuff', 250350, StrengthBuff.ElixirOfFerocity), stats: [Stat.StatStrength, Stat.StatAgility] },
+	{ config: notSimulated('strengthBuff', 250349, StrengthBuff.ElixirOfStrength), stats: [Stat.StatStrength] },
 	{ config: JujuPower, stats: [Stat.StatStrength] },
 	{ config: ElixirOfGiants, stats: [Stat.StatStrength] },
 	{ config: ElixirOfOgresStrength, stats: [Stat.StatStrength] },
@@ -841,14 +904,44 @@ export const POTIONS_CONFIG: ConsumableStatOption<Potions>[] = [
 	{ config: MajorHealingPotion, stats: [Stat.StatArmor] },
 	{ config: SuperiorHealingPotion, stats: [Stat.StatArmor] },
 	{ config: GreaterHealingPotion, stats: [Stat.StatArmor] },
+	{ config: notSimulated('defaultPotion', 282011, Potions.RestoredHealingPotion), stats: [Stat.StatArmor] },
+	{ config: notSimulated('defaultPotion', 247242, Potions.SuperiorDiscoloredHealingPotion), stats: [Stat.StatArmor] },
+	{ config: notSimulated('defaultPotion', 247241, Potions.GreaterDiscoloredHealingPotion), stats: [Stat.StatArmor] },
+	{ config: notSimulated('defaultPotion', 247240, Potions.DiscoloredHealingPotion), stats: [Stat.StatArmor] },
+	{ config: notSimulated('defaultPotion', 247239, Potions.LesserDiscoloredHealingPotion), stats: [Stat.StatArmor] },
+	{ config: notSimulated('defaultPotion', 4596, Potions.MinorDiscoloredHealingPotion), stats: [Stat.StatArmor] },
 
 	{ config: MajorManaPotion, stats: [Stat.StatIntellect] },
 	{ config: SuperiorManaPotion, stats: [Stat.StatIntellect] },
 	{ config: GreaterManaPotion, stats: [Stat.StatIntellect] },
 	{ config: ManaPotion, stats: [Stat.StatIntellect] },
+	{ config: notSimulated('defaultPotion', 282013, Potions.RestoredManaPotion), stats: [Stat.StatIntellect] },
+	{ config: notSimulated('defaultPotion', 274935, Potions.TessasTonic), stats: [Stat.StatIntellect, Stat.StatArmor] },
 
+	{ config: notSimulated('defaultPotion', 250943, Potions.MajorFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('defaultPotion', 250942, Potions.SuperiorFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('defaultPotion', 250941, Potions.GreaterFrenzyPotion), stats: [Stat.StatAttackPower] },
 	{ config: FrenzyPotion, stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('defaultPotion', 250939, Potions.LesserFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('defaultPotion', 250938, Potions.MinorFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: notSimulated('defaultPotion', 250955, Potions.PotionOfBeastSlaying), stats: [Stat.StatAttackPower] },
+
+	{ config: notSimulated('defaultPotion', 250937, Potions.MajorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: notSimulated('defaultPotion', 250936, Potions.SuperiorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: notSimulated('defaultPotion', 250935, Potions.GreaterSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: SpellblastingPotion, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: notSimulated('defaultPotion', 250933, Potions.LesserSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: notSimulated('defaultPotion', 250932, Potions.MinorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: notSimulated('defaultPotion', 250954, Potions.PotionOfElementalPurging), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+
+	{ config: notSimulated('defaultPotion', 250949, Potions.MajorMendersPotion), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('defaultPotion', 250948, Potions.SuperiorMendersPotion), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('defaultPotion', 250947, Potions.GreaterMendersPotion), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('defaultPotion', 250946, Potions.MendersPotion), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('defaultPotion', 250945, Potions.LesserMendersPotion), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('defaultPotion', 250944, Potions.MinorMendersPotion), stats: [Stat.StatHealingPower] },
+
+	{ config: notSimulated('defaultPotion', 250953, Potions.DragonfirePotion), stats: [] },
 
 	{ config: MightRagePotion, stats: [] },
 	{ config: GreatRagePotion, stats: [] },
@@ -884,6 +977,7 @@ export const SPELL_POWER_CONFIG: ConsumableStatOption<SpellPowerBuff>[] = [
 	{ config: GreaterArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: ArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: LesserArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: notSimulated('spellPowerBuff', 247754, SpellPowerBuff.MinorArcaneElixir), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 ];
 
 export const makeSpellPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'spellPowerBuff' });
@@ -899,12 +993,34 @@ export const ElixirOfFirepower: ConsumableInputConfig<FirePowerBuff> = {
 	value: FirePowerBuff.ElixirOfFirepower,
 };
 
-export const FIRE_POWER_CONFIG: ConsumableStatOption<FirePowerBuff>[] = [
-	{ config: ElixirOfGreaterFirepower, stats: [Stat.StatFirePower] },
-	{ config: ElixirOfFirepower, stats: [Stat.StatFirePower] },
-];
+export const FIRE_POWER_CONFIG: ConsumableStatOption<FirePowerBuff>[] = [{ config: ElixirOfFirepower, stats: [Stat.StatFirePower] }];
 
 export const makeFirePowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'firePowerBuff' });
+
+// Holy
+//
+// Forever made the Elixir of Greater Firepower the Elixir of Holy Power (+40 Holy instead of Fire).
+// It still lives in the fire elixir field, so picking it clears the Elixir of Firepower.
+export const HOLY_POWER_CONFIG: ConsumableStatOption<FirePowerBuff>[] = [{ config: ElixirOfGreaterFirepower, stats: [Stat.StatHolyPower, Stat.StatFirePower] }];
+
+export const makeHolyPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'firePowerBuff' });
+
+// Nature
+export const NATURE_POWER_CONFIG: ConsumableStatOption<NaturePowerBuff>[] = [
+	{ config: notSimulated('naturePowerBuff', 250343, NaturePowerBuff.ElixirOfNaturePower), stats: [Stat.StatNaturePower, Stat.StatSpellPower] },
+];
+
+export const makeNaturePowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'naturePowerBuff' });
+
+// Healing
+export const HEALING_POWER_CONFIG: ConsumableStatOption<HealingPowerBuff>[] = [
+	{ config: notSimulated('healingPowerBuff', 250333, HealingPowerBuff.GreaterClericsElixir), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('healingPowerBuff', 250332, HealingPowerBuff.ClericsElixir), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('healingPowerBuff', 250331, HealingPowerBuff.LesserClericsElixir), stats: [Stat.StatHealingPower] },
+	{ config: notSimulated('healingPowerBuff', 250330, HealingPowerBuff.MinorClericsElixir), stats: [Stat.StatHealingPower] },
+];
+
+export const makeHealingPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'healingPowerBuff' });
 
 // Frost
 export const ElixirOfFrostPower: ConsumableInputConfig<FrostPowerBuff> = {
@@ -938,8 +1054,11 @@ export const LesserMagebloodElixir: ConsumableInputConfig<ManaRegenElixir> = {
 };
 
 export const MP5_CONFIG: ConsumableStatOption<ManaRegenElixir>[] = [
+	{ config: notSimulated('manaRegenElixir', 250341, ManaRegenElixir.GreaterMagebloodElixir), stats: [Stat.StatMP5] },
 	{ config: MagebloodPotion, stats: [Stat.StatMP5] },
+	{ config: notSimulated('manaRegenElixir', 250336, ManaRegenElixir.ElixirOfWickedRegeneration), stats: [Stat.StatMP5] },
 	{ config: LesserMagebloodElixir, stats: [Stat.StatMP5] },
+	{ config: notSimulated('manaRegenElixir', 250339, ManaRegenElixir.MinorMagebloodElixir), stats: [Stat.StatMP5] },
 ];
 
 export const makeMp5ConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'manaRegenElixir' });
@@ -955,8 +1074,23 @@ export const ElixirOfLesserIntellect: ConsumableInputConfig<IntellectElixir> = {
 };
 
 export const INTELLECT_CONFIG: ConsumableStatOption<IntellectElixir>[] = [
+	{ config: notSimulated('intellectElixir', 250337, IntellectElixir.ElixirOfTheOwl), stats: [Stat.StatIntellect] },
+	{ config: notSimulated('intellectElixir', 250354, IntellectElixir.ElixirOfIntellect), stats: [Stat.StatIntellect] },
 	{ config: ElixirOfWisdom, stats: [Stat.StatIntellect] },
 	{ config: ElixirOfLesserIntellect, stats: [Stat.StatIntellect] },
+	{ config: notSimulated('intellectElixir', 277493, IntellectElixir.ScrollOfCatFamiliar), stats: [Stat.StatIntellect] },
+	{ config: notSimulated('intellectElixir', 277483, IntellectElixir.ScrollOfFrogFamiliar), stats: [Stat.StatIntellect] },
+	{ config: notSimulated('intellectElixir', 275069, IntellectElixir.ScrollOfRatFamiliar), stats: [Stat.StatIntellect] },
+];
+
+// Spirit
+export const SPIRIT_CONFIG: ConsumableStatOption<SpiritElixir>[] = [
+	{ config: notSimulated('spiritElixir', 250348, SpiritElixir.ElixirOfTheWhale), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('spiritElixir', 250338, SpiritElixir.ElixirOfSages), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('spiritElixir', 250347, SpiritElixir.ElixirOfGreaterSpirit), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('spiritElixir', 250346, SpiritElixir.ElixirOfSpirit), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('spiritElixir', 250345, SpiritElixir.ElixirOfLesserSpirit), stats: [Stat.StatSpirit] },
+	{ config: notSimulated('spiritElixir', 250344, SpiritElixir.ElixirOfMinorSpirit), stats: [Stat.StatSpirit] },
 ];
 
 export const makeIntellectConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'intellectElixir' });
@@ -978,8 +1112,10 @@ export interface ScrollSlotArgs {
 	scrollId: number;
 	scrollField: 'scrollOfStamina' | 'scrollOfIntellect' | 'scrollOfSpirit';
 	showScroll: boolean;
-	// The stat's elixirs, when it has any (only Intellect does).
-	elixirs?: ConsumableStatOption<IntellectElixir>[];
+	// The stat's elixirs and the Consumes field that holds them, when it has any (Intellect and
+	// Spirit do).
+	elixirs?: ConsumableStatOption<number>[];
+	elixirField?: 'intellectElixir' | 'spiritElixir';
 }
 
 export function makeScrollSlotInput(args: ScrollSlotArgs): InputHelpers.TypedIconEnumPickerConfig<Player<any>, number> {
@@ -999,15 +1135,15 @@ export function makeScrollSlotInput(args: ScrollSlotArgs): InputHelpers.TypedIco
 		changedEvent: (player: Player<any>) =>
 			TypedEvent.onAny([player.consumesChangeEmitter, player.getRaid()!.buffsChangeEmitter, player.sim.rulesetChangeEmitter]),
 		getValue: (player: Player<any>) => {
-			const elixir = args.elixirs ? player.getConsumes().intellectElixir : 0;
+			const elixir = args.elixirField ? player.getConsumes()[args.elixirField] : 0;
 			if (elixir) return elixir;
 			return player.getRaid()!.getBuffs()[args.scrollField] ? SCROLL_VALUE : 0;
 		},
 		setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 			TypedEvent.freezeAllAndDo(() => {
-				if (args.elixirs) {
+				if (args.elixirField) {
 					const consumes = player.getConsumes();
-					consumes.intellectElixir = newValue == SCROLL_VALUE ? IntellectElixir.IntellectElixirUnknown : newValue;
+					(consumes[args.elixirField] as number) = newValue == SCROLL_VALUE ? 0 : newValue;
 					player.setConsumes(eventID, consumes);
 				}
 				const buffs = player.getRaid()!.getBuffs();
@@ -1208,6 +1344,33 @@ const ROGUE_IMBUES: ConsumableStatOption<WeaponImbue>[] = [
 	{ config: WoundPoisonWeaponImbue, stats: [] },
 ];
 
+// Forever's imbue scrolls go on one weapon type each, a staff, a dagger or a sword.
+const scrollImbue = (slot: ItemSlot, itemId: number, value: WeaponImbue, weaponType: WeaponType): ConsumableInputConfig<WeaponImbue> =>
+	notSimulated(['mainHandImbue', 'offHandImbue'], itemId, value, player => player.getEquippedItem(slot)?.item.weaponType == weaponType);
+
+const SCROLL_IMBUES = (slot: ItemSlot): ConsumableStatOption<WeaponImbue>[] => {
+	const staff = (itemId: number, value: WeaponImbue) => scrollImbue(slot, itemId, value, WeaponType.WeaponTypeStaff);
+	const dagger = (itemId: number, value: WeaponImbue) => scrollImbue(slot, itemId, value, WeaponType.WeaponTypeDagger);
+	return [
+		{ config: staff(277500, WeaponImbue.ScrollOfImbueGreaterFlame), stats: [Stat.StatFirePower] },
+		{ config: staff(277497, WeaponImbue.ScrollOfImbueFlame), stats: [Stat.StatFirePower] },
+		{ config: staff(274947, WeaponImbue.ScrollOfImbueLesserFlame), stats: [Stat.StatFirePower] },
+		{ config: staff(277503, WeaponImbue.ScrollOfImbueSpellbreak), stats: [Stat.StatFirePower] },
+		{ config: staff(277501, WeaponImbue.ScrollOfImbueGreaterFrost), stats: [Stat.StatFrostPower] },
+		{ config: staff(277485, WeaponImbue.ScrollOfImbueFrost), stats: [Stat.StatFrostPower] },
+		{ config: staff(277502, WeaponImbue.ScrollOfImbuePrecision), stats: [Stat.StatSpellCrit] },
+		{ config: staff(277494, WeaponImbue.ScrollOfImbueAccuracy), stats: [Stat.StatSpellHit] },
+		{ config: staff(277487, WeaponImbue.ScrollOfImbueBaleflame), stats: [Stat.StatFirePower] },
+		{ config: staff(277496, WeaponImbue.ScrollOfImbueBalefrost), stats: [Stat.StatFrostPower] },
+		{ config: staff(277486, WeaponImbue.ScrollOfImbueStriking), stats: [Stat.StatSpellPower] },
+		{ config: staff(277495, WeaponImbue.ScrollOfImbueQuickening), stats: [Stat.StatSpellPower] },
+		{ config: dagger(277498, WeaponImbue.ScrollOfImbueManablade), stats: [Stat.StatMP5] },
+		{ config: dagger(277488, WeaponImbue.ScrollOfImbueIceknife), stats: [] },
+		{ config: dagger(275067, WeaponImbue.ScrollOfImbueChillknife), stats: [] },
+		{ config: scrollImbue(slot, 277489, WeaponImbue.ScrollOfImbueSpark, WeaponType.WeaponTypeSword), stats: [Stat.StatFirePower] },
+	];
+};
+
 const CONSUMABLES_IMBUES = (slot: ItemSlot): ConsumableStatOption<WeaponImbue>[] => [
 	{ config: BrilliantWizardOil(slot), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: WizardOil(slot), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
@@ -1235,12 +1398,14 @@ export const WEAPON_IMBUES_OH_CONFIG: ConsumableStatOption<WeaponImbue>[] = [
 	...ROGUE_IMBUES,
 	...SHAMAN_IMBUES(ItemSlot.ItemSlotOffHand),
 	...CONSUMABLES_IMBUES(ItemSlot.ItemSlotOffHand),
+	...SCROLL_IMBUES(ItemSlot.ItemSlotOffHand),
 ];
 
 export const WEAPON_IMBUES_MH_CONFIG: ConsumableStatOption<WeaponImbue>[] = [
 	...ROGUE_IMBUES,
 	...SHAMAN_IMBUES(ItemSlot.ItemSlotMainHand),
 	...CONSUMABLES_IMBUES(ItemSlot.ItemSlotMainHand),
+	...SCROLL_IMBUES(ItemSlot.ItemSlotMainHand),
 ];
 
 export const makeMainHandImbuesInput = makeConsumeInputFactory({
