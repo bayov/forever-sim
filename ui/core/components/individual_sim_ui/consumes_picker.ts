@@ -153,11 +153,18 @@ export class ConsumesPicker extends Component {
 
 		const apBuffOptions = ConsumablesInputs.makeAttackPowerConsumeInput(relevantStatOptions(ConsumablesInputs.ATTACK_POWER_CONSUMES_CONFIG, this.simUI));
 		const hitConsumableOptions = ConsumablesInputs.makeHitConsumableInput(relevantStatOptions(ConsumablesInputs.HIT_CONSUMABLE_CONFIG, this.simUI));
+		const forceElixirOptions = ConsumablesInputs.makeForceElixirInput(relevantStatOptions(ConsumablesInputs.FORCE_ELIXIR_CONFIG, this.simUI));
 
 		const pickers = [
 			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, apBuffOptions), 'AP'),
 			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, hitConsumableOptions), 'HIT'),
+			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, forceElixirOptions), 'FORCE'),
 		];
+		this.markNotSimulated(
+			pickers[2],
+			() => !!this.simUI.player.getConsumes().forceElixir,
+			"Not simulated: The sim doesn't apply the force elixirs' physical damage yet.",
+		);
 
 		this.updateRow(row, pickers);
 	}
@@ -226,7 +233,7 @@ export class ConsumesPicker extends Component {
 			),
 			this.tagSlot(
 				ConsumablesInputs.makeMiscOffensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscOffensiveConsumesOptions),
-				'DPS',
+				'DMG',
 			),
 			this.tagSlot(
 				ConsumablesInputs.makeMiscDefensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscDefensiveConsumesOptions),

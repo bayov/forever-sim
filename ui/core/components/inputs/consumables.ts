@@ -13,6 +13,7 @@ import {
 	FirePowerBuff,
 	Flask,
 	Food,
+	ForceElixir,
 	FrostPowerBuff,
 	HealthElixir,
 	HitConsumable,
@@ -483,6 +484,19 @@ export const ATTACK_POWER_CONSUMES_CONFIG: ConsumableStatOption<AttackPowerBuff>
 ];
 
 export const makeAttackPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'attackPowerBuff' });
+
+// Physical damage
+//
+// Forever's force elixirs add flat damage to every physical hit. The sim doesn't apply them yet,
+// see ConsumesPicker.
+export const ElixirOfMinorForce: ConsumableInputConfig<ForceElixir> = {
+	actionId: () => ActionId.fromItemId(247755),
+	value: ForceElixir.ElixirOfMinorForce,
+};
+
+export const FORCE_ELIXIR_CONFIG: ConsumableStatOption<ForceElixir>[] = [{ config: ElixirOfMinorForce, stats: [Stat.StatAttackPower] }];
+
+export const makeForceElixirInput = makeConsumeInputFactory({ consumesFieldName: 'forceElixir' });
 
 // Agility
 export const ElixirOfTheMongoose: ConsumableInputConfig<AgilityElixir> = {

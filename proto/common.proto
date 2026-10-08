@@ -422,6 +422,13 @@ enum HealthElixir {
 	ElixirOfMinorFortitude = 2;
 }
 
+// Forever's force elixirs add flat physical damage. We don't know yet which elixirs they
+// stack with, so we let them stack with everything.
+enum ForceElixir {
+	ForceElixirUnknown = 0;
+	ElixirOfMinorForce = 1;
+}
+
 // The sim has no health regen yet, so we keep the pick but it doesn't change results.
 enum TrollsBloodPotion {
 	TrollsBloodPotionUnknown = 0;
@@ -745,6 +752,7 @@ message Consumes {
 	HitConsumable hit_consumable = 29;
 	IntellectElixir intellect_elixir = 34;
 	TrollsBloodPotion trolls_blood_potion = 35;
+	ForceElixir force_elixir = 36;
 }
 
 // NextIndex: 26
