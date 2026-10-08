@@ -1,6 +1,6 @@
 import { MAX_PARTY_SIZE,Party } from './party.js';
 import { Player } from './player.js';
-import { Raid as RaidProto } from './proto/api.js';
+import { Raid as RaidProto, Ruleset } from './proto/api.js';
 import {
 	Class,
 	Debuffs,
@@ -15,22 +15,31 @@ import { sum } from './utils.js';
 
 export const MAX_NUM_PARTIES = 8;
 
-// The debuffs with the defensive ones turned off.
+// The debuffs as the sim takes them.
 //
-// They lower the target's attack power, attack speed or chance to hit, which only matters for
-// the damage we take. We don't sim that yet, so the Settings tab shows them dimmed and we turn
-// them off here. Saved settings and presets from before still have them.
-export function withoutDefensiveDebuffs(debuffs: Debuffs): Debuffs {
-	return {
+// The defensive ones are off. They lower the target's attack power, attack speed or chance to
+// hit, or heal the players who hit it, which only matters for the damage we take. We don't sim
+// that yet, so the Settings tab shows them dimmed.
+//
+// Sunder Armor and Expose Armor don't stack, and under Forever Faerie Fire and Curse of
+// Recklessness don't either. The Settings tab lets us pick one of each pair. When a preset or
+// saved setting from before has both, we keep the first one: Sunder Armor (it's the bigger one
+// from level 22 to 25) and Faerie Fire.
+export function normalizeDebuffs(debuffs: Debuffs, ruleset: Ruleset): Debuffs {
+	const normalized: Debuffs = {
 		...debuffs,
 		demoralizingShout: TristateEffect.TristateEffectMissing,
 		demoralizingRoar: TristateEffect.TristateEffectMissing,
 		thunderClap: TristateEffect.TristateEffectMissing,
 		thunderfury: false,
+		judgementOfLight: false,
 		curseOfWeakness: TristateEffect.TristateEffectMissing,
 		insectSwarm: false,
 		scorpidSting: false,
 	};
+	if (normalized.sunderArmor) normalized.exposeArmor = TristateEffect.TristateEffectMissing;
+	if (ruleset === Ruleset.RulesetForever && normalized.faerieFire) normalized.curseOfRecklessness = false;
+	return normalized;
 }
 
 // Manages all the settings for a single Raid.
@@ -157,7 +166,7 @@ export class Raid {
 	}
 
 	setDebuffs(eventID: EventID, newDebuffs: Debuffs) {
-		newDebuffs = withoutDefensiveDebuffs(newDebuffs);
+		newDebuffs = normalizeDebuffs(newDebuffs, this.sim.getRuleset());
 		if (Debuffs.equals(this.debuffs, newDebuffs))
 			return;
 

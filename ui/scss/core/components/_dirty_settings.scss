@@ -96,10 +96,11 @@
 	box-shadow: 0 0 0 2px var(--dirty-color);
 }
 
-// The consumables have a name over each category. A changed one marks that name, like the
-// fields with a label. The slot that changed gets a dot instead of the ring (see
+// The consumables and the debuffs have a name over each category. A changed one marks that
+// name, like the fields with a label. The slot that changed gets a dot instead of the ring (see
 // _consumes_picker.scss).
-.consumes-group:has(.dirty-setting) > .consumes-group-label {
+.consumes-group:has(.dirty-setting) > .consumes-group-label,
+.debuffs-group:has(.dirty-setting) > .debuffs-group-label {
 	color: var(--dirty-color);
 
 	&::after {

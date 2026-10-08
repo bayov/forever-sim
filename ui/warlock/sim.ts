@@ -101,8 +101,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	includeBuffDebuffInputs: [
 		// Physical buffs that affect pets
 		BuffDebuffInputs.MajorArmorDebuff,
-		BuffDebuffInputs.CurseOfRecklessness,
-		BuffDebuffInputs.FaerieFire,
+		BuffDebuffInputs.MinorArmorDebuff,
 		BuffDebuffInputs.BlessingOfMight,
 		BuffDebuffInputs.StrengthBuffHorde,
 		BuffDebuffInputs.BattleShoutBuff,

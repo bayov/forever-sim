@@ -5,7 +5,7 @@ import { APLRotation, APLRotation_Type } from '../../proto/apl';
 import { Consumes, Debuffs, Encounter, EquipmentSpec, HealingModel, IndividualBuffs, RaidBuffs, Spec } from '../../proto/common';
 import { IndividualSimSettings, SavedTalents } from '../../proto/ui';
 import { statNames } from '../../proto_utils/names';
-import { withoutDefensiveDebuffs } from '../../raid';
+import { normalizeDebuffs } from '../../raid';
 import { EventID, TypedEvent } from '../../typed_event';
 import { Component } from '../component';
 import { ChangeCategory } from '../dirty_settings';
@@ -212,8 +212,8 @@ export class PresetConfigurationPicker extends Component {
 		const hasBuffs =
 			(encounter?.buffs ? IndividualBuffs.equals(encounter.buffs, player.getBuffs()) : true) &&
 			(encounter?.raidBuffs ? RaidBuffs.equals(encounter.raidBuffs, raid.getBuffs()) : true);
-		// The raid turns the defensive debuffs off, so a preset that has them still matches.
-		const hasDebuffs = encounter?.debuffs ? Debuffs.equals(withoutDefensiveDebuffs(encounter.debuffs), raid.getDebuffs()) : true;
+		// The raid turns some debuffs off, see normalizeDebuffs, so a preset that has them still matches.
+		const hasDebuffs = encounter?.debuffs ? Debuffs.equals(normalizeDebuffs(encounter.debuffs, this.simUI.sim.getRuleset()), raid.getDebuffs()) : true;
 		const hasConsumes = encounter?.consumes ? Consumes.equals(encounter.consumes, player.getConsumes()) : true;
 
 		const changed: Array<[boolean, string]> = [

@@ -57,17 +57,56 @@
 
 	// Two columns of buffs, so their names fit a third of the tab.
 	.buffs-section,
+	// The debuffs in subsections that sit side by side and wrap, like the consumables, see
+	// buildDebuffSubsections.
 	.debuffs-settings {
 		.content-block-body {
-			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			grid-gap: var(--block-spacer);
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.85rem 1.5rem;
+		}
 
-			& > .icon-picker {
-				.form-label {
-					white-space: normal;
-				}
+		.debuffs-group {
+			display: flex;
+			flex-direction: column;
+			gap: 0.35rem;
+		}
+
+		.debuffs-group-label {
+			margin: 0;
+			color: var(--text-muted-color);
+			font-size: 0.75rem;
+			letter-spacing: 0.02em;
+			white-space: nowrap;
+		}
+
+		// A row of debuffs that don't stack sits apart from the next one.
+		.debuffs-group-slots {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.3rem 0.85rem;
+		}
+
+		.exclusive-debuff-row,
+		.debuff-toggles {
+			display: flex;
+			gap: 0.3rem;
+		}
+
+		// A subsection, row or set of icons whose debuffs all hide under this ruleset or faction
+		// hides too. A row's empty slot doesn't count.
+		.debuffs-group,
+		.exclusive-debuff-row,
+		.debuff-toggles {
+			&:not(:has(.icon-picker:not(.hide):not(.exclusive-debuff-none))) {
+				display: none;
 			}
+		}
+
+		// The empty slot shows the game's empty bag slot, like an empty consumable.
+		.exclusive-debuff-none .icon-picker-button {
+			background-image: url('https://wow.zamimg.com/images/wow/icons/large/inventoryslot_empty.jpg');
+			background-size: cover;
 		}
 	}
 

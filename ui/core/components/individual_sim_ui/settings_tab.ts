@@ -12,7 +12,9 @@ import { ContentBlock } from '../content_block';
 import { EncounterPicker } from '../encounter_picker';
 import { EnumPicker } from '../enum_picker';
 import { hideTooltipIconsWhileHovered } from '../gear_picker/item_comparison';
+import { ExclusiveDebuffRow } from '../exclusive_debuff_row';
 import { IconEnumPicker } from '../icon_enum_picker';
+import { IconPicker } from '../icon_picker';
 import * as IconInputs from '../icon_inputs';
 import { Input } from '../input';
 import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
@@ -320,31 +322,16 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildDebuffsSettings() {
-		const debuffOptions = relevantStatOptions(BuffDebuffInputs.OFFENSIVE_DEBUFFS_CONFIG, this.simUI);
-		const miscDebuffOptions = relevantStatOptions(BuffDebuffInputs.MISC_DEBUFFS_CONFIG, this.simUI);
-
-		if (!debuffOptions.length && !miscDebuffOptions.length) return;
+		const subsections = BuffDebuffInputs.OFFENSIVE_DEBUFF_SUBSECTIONS.map(subsection => ({
+			...subsection,
+			items: relevantStatOptions(subsection.items as any, this.simUI) as Array<BuffDebuffInputs.DebuffSubsectionItem>,
+		})).filter(subsection => subsection.items.length);
+		if (!subsections.length) return;
 
 		const contentBlock = new ContentBlock(this.column2, 'debuffs-settings', {
 			header: { title: 'Offensive Debuffs', tooltip: Tooltips.OFFENSIVE_DEBUFFS_SECTION },
 		});
-
-		this.configureIconSection(
-			contentBlock.bodyElement,
-			debuffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
-		);
-
-		if (miscDebuffOptions.length) {
-			new MultiIconPicker(
-				contentBlock.bodyElement,
-				this.simUI.player,
-				{
-					values: miscDebuffOptions.map(options => options.config) as Array<MultiIconPickerItemConfig<Player<Spec>>>,
-					label: 'Misc Debuffs',
-				},
-				this.simUI,
-			);
-		}
+		this.buildDebuffSubsections(contentBlock.bodyElement, subsections);
 
 		// In case no debuffs are active, this will fire a change event to update the pickers
 		this.simUI.player.getRaid()?.debuffsChangeEmitter.emit(TypedEvent.nextEventID());
@@ -358,13 +345,40 @@ export class SettingsTab extends SimTab {
 			header: { title: 'Defensive Debuffs', tooltip: Tooltips.DEFENSIVE_DEBUFFS_SECTION },
 		});
 		turnSectionOff(contentBlock, "Off for now. They lower the damage the target does, and we don't sim the damage we take yet.");
+		this.buildDebuffSubsections(contentBlock.bodyElement, BuffDebuffInputs.DEFENSIVE_DEBUFF_SUBSECTIONS);
+	}
 
-		this.configureIconSection(
-			contentBlock.bodyElement,
-			BuffDebuffInputs.DEFENSIVE_DEBUFFS_CONFIG.map(
-				options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI),
-			),
-		);
+	// Each subsection has a name over its icons, like the consumables. A row of debuffs that
+	// don't stack gets an empty slot first, see ExclusiveDebuffRow. The debuffs that stack with
+	// everything are icons of their own, side by side.
+	private buildDebuffSubsections(parent: HTMLElement, subsections: Array<BuffDebuffInputs.DebuffSubsection>) {
+		const player = this.simUI.player;
+		subsections.forEach(subsection => {
+			const group = document.createElement('div');
+			group.classList.add('debuffs-group');
+			const label = document.createElement('label');
+			label.classList.add('debuffs-group-label');
+			label.textContent = subsection.label;
+			const slots = document.createElement('div');
+			slots.classList.add('debuffs-group-slots');
+			group.append(label, slots);
+			parent.appendChild(group);
+
+			let toggles: HTMLElement | null = null;
+			subsection.items.forEach(item => {
+				if ('options' in item.config) {
+					new ExclusiveDebuffRow(slots, player, item.config);
+					toggles = null;
+					return;
+				}
+				if (!toggles) {
+					toggles = document.createElement('div');
+					toggles.classList.add('debuff-toggles');
+					slots.appendChild(toggles);
+				}
+				new IconPicker(toggles, player, item.config);
+			});
+		});
 	}
 
 	private buildSavedDataPickers() {

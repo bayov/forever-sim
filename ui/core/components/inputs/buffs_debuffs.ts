@@ -18,7 +18,8 @@ import {
 	withLabel,
 } from '../icon_inputs';
 import { IconEnumPicker } from '../icon_enum_picker';
-import { IconPicker, IconPickerDirection } from '../icon_picker';
+import { ExclusiveDebuffRowConfig, DebuffToggleField, isDebuffOn, setDebuffOn } from '../exclusive_debuff_row';
+import { IconPicker, IconPickerConfig, IconPickerDirection } from '../icon_picker';
 import * as InputHelpers from '../input_helpers';
 import { MultiIconPicker } from '../multi_icon_picker';
 import { ItemStatOption, PickerStatOptions } from './stat_options';
@@ -425,27 +426,30 @@ export const SlipKiksSavvy = withLabel(
 
 const notForever = (player: Player<any>) => player.sim.getRuleset() !== Ruleset.RulesetForever;
 
-// Under Forever these debuffs have no improved version. Improved Expose Armor no longer adds
-// armor, and Improved Seal of the Crusader and Improved Hunter's Mark are out of the trees. So we
-// show them as on or off there. An improved value from an older saved setup counts as on, and
-// the sim treats it as the regular debuff.
-function makeForeverDebuffInput(
+// A debuff we turn on or off with one icon, even when its field is a tristate. An improved value
+// from an older saved setup counts as on, and the sim treats it as the regular debuff.
+function makeDebuffToggle(
 	spellId: number,
-	fieldName: 'exposeArmor' | 'judgementOfTheCrusader' | 'huntersMark',
-	showWhen?: (player: Player<any>) => boolean,
+	fieldName: DebuffToggleField,
+	options: {
+		showWhen?: (player: Player<any>) => boolean;
+		// Runs on the debuffs when we turn this one on, before we save them.
+		onTurnOn?: (debuffs: Debuffs, player: Player<any>) => void;
+	} = {},
 ) {
 	return InputHelpers.makeBooleanIconInput<any, Debuffs, Player<any>>(
 		{
 			getModObject: (player: Player<any>) => player,
-			showWhen: (player: Player<any>) => !notForever(player) && (!showWhen || showWhen(player)),
+			showWhen: (player: Player<any>) => !options.showWhen || options.showWhen(player),
 			getValue: (player: Player<any>) => player.getRaid()!.getDebuffs(),
 			setValue: (eventID: EventID, player: Player<any>, newVal: Debuffs) => player.getRaid()!.setDebuffs(eventID, newVal),
 			changeEmitter: (player: Player<any>) =>
 				TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
-			getFieldValue: (player: Player<any>) => player.getRaid()!.getDebuffs()[fieldName] !== TristateEffect.TristateEffectMissing,
+			getFieldValue: (player: Player<any>) => isDebuffOn(player.getRaid()!.getDebuffs(), fieldName),
 			setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
 				const debuffs = player.getRaid()!.getDebuffs();
-				debuffs[fieldName] = newValue ? TristateEffect.TristateEffectRegular : TristateEffect.TristateEffectMissing;
+				setDebuffOn(debuffs, fieldName, newValue);
+				if (newValue) options.onTurnOn?.(debuffs, player);
 				player.getRaid()!.setDebuffs(eventID, debuffs);
 			},
 		},
@@ -454,138 +458,45 @@ function makeForeverDebuffInput(
 	);
 }
 
-export const MajorArmorDebuff = InputHelpers.makeMultiIconInput({
-	values: [
-		makeBooleanDebuffInput({
-			actionId: () => ActionId.fromSpellId(11597),
-			fieldName: 'sunderArmor',
-		}),
-		makeTristateDebuffInput({
-			actionId: () => ActionId.fromSpellId(11198),
-			impId: ActionId.fromSpellId(14169),
-			fieldName: 'exposeArmor',
-			showWhen: notForever,
-		}),
-		makeForeverDebuffInput(11198, 'exposeArmor'),
+// A row of debuffs that don't stack, see ExclusiveDebuffRow. The improved versions are left
+// out, because Forever has none of them and the sim's Expose Armor is the same either way.
+function makeExclusiveDebuffRow(
+	options: Array<{ spellId: number; fieldName: DebuffToggleField }>,
+	exclusiveWhen: (player: Player<any>) => boolean = () => true,
+): ExclusiveDebuffRowConfig {
+	const fields = options.map(option => option.fieldName);
+	return {
+		fields,
+		exclusiveWhen,
+		options: options.map(option =>
+			makeDebuffToggle(option.spellId, option.fieldName, {
+				onTurnOn: (debuffs, player) => {
+					if (!exclusiveWhen(player)) return;
+					fields.filter(field => field !== option.fieldName).forEach(field => setDebuffOn(debuffs, field, false));
+				},
+			}),
+		),
+	};
+}
+
+export const MajorArmorDebuff = makeExclusiveDebuffRow([
+	{ spellId: 11597, fieldName: 'sunderArmor' },
+	{ spellId: 11198, fieldName: 'exposeArmor' },
+]);
+
+// Faerie Fire and Curse of Recklessness stack in Classic but not in Forever.
+export const MinorArmorDebuff = makeExclusiveDebuffRow(
+	[
+		{ spellId: 11717, fieldName: 'curseOfRecklessness' },
+		{ spellId: 9907, fieldName: 'faerieFire' },
 	],
-	label: 'Major Armor Penetration',
+	player => !notForever(player),
+);
+
+export const CrystalYield = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(15235),
+	fieldName: 'crystalYield',
 });
-
-export const CurseOfRecklessness = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(11717),
-		fieldName: 'curseOfRecklessness',
-	}),
-	'Curse of Recklessness',
-);
-
-export const FaerieFire = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(9907),
-		fieldName: 'faerieFire',
-	}),
-	'Faerie Fire',
-);
-
-export const curseOfWeaknessDebuff = withLabel(
-	makeTristateDebuffInput({
-		actionId: () => ActionId.fromSpellId(11708),
-		impId: ActionId.fromSpellId(18181),
-		fieldName: 'curseOfWeakness',
-	}),
-	'Curse of Weakness',
-);
-
-export const AttackPowerDebuff = InputHelpers.makeMultiIconInput({
-	values: [
-		makeTristateDebuffInput({
-			actionId: () => ActionId.fromSpellId(11556),
-			impId: ActionId.fromSpellId(12879),
-			fieldName: 'demoralizingShout',
-		}),
-		makeTristateDebuffInput({
-			actionId: () => ActionId.fromSpellId(9898),
-			impId: ActionId.fromSpellId(16862),
-			fieldName: 'demoralizingRoar',
-		}),
-	],
-	label: 'Attack Power',
-});
-
-// TODO: SoD Mangle
-//export const BleedDebuff = withLabel(makeBooleanDebuffInput({ actionId: () => ActionId.fromSpellId(409828), fieldName: 'mangle' }), 'Bleed');
-
-export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput({
-	values: [
-		makeTristateDebuffInput({
-			actionId: () => ActionId.fromSpellId(6343),
-			impId: ActionId.fromSpellId(26110),
-			fieldName: 'thunderClap',
-		}),
-		makeBooleanDebuffInput({
-			actionId: () => ActionId.fromSpellId(21992),
-			fieldName: 'thunderfury',
-		}),
-	],
-	label: 'Attack Speed',
-});
-
-export const MeleeHitDebuff = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(24977),
-		fieldName: 'insectSwarm',
-	}),
-	'Insect Swarm',
-);
-
-// Under Forever Improved Shadow Bolt, Improved Scorch, Winter's Chill and Shadow Weaving only
-// help the warlock, mage or priest who applies them, so the sim ignores another player's there.
-export const SpellISBDebuff = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(17803),
-		fieldName: 'improvedShadowBolt',
-		showWhen: notForever,
-	}),
-	'Improved Shadow Bolt',
-);
-
-export const SpellScorchDebuff = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(12873),
-		fieldName: 'improvedScorch',
-		showWhen: notForever,
-	}),
-	'Scorch',
-);
-
-export const SpellWintersChillDebuff = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(28595),
-		fieldName: 'wintersChill',
-		showWhen: notForever,
-	}),
-	"Winter's Chill",
-);
-
-// Under Forever Stormstrike only marks the target for the casting shaman's own spells,
-// so another shaman's is worth nothing and the sim ignores this debuff there.
-export const SpellStormstrikeDebuff = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(17364),
-		fieldName: 'stormstrike',
-		showWhen: player => player.sim.getRuleset() !== Ruleset.RulesetForever,
-	}),
-	'Stormstrike',
-);
-
-export const SpellShadowWeavingDebuff = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(15334),
-		fieldName: 'shadowWeaving',
-		showWhen: notForever,
-	}),
-	'Shadow Weaving',
-);
 
 export const CurseOfElements = makeBooleanDebuffInput({
 	actionId: () => ActionId.fromSpellId(11722),
@@ -599,53 +510,103 @@ export const CurseOfShadow = makeBooleanDebuffInput({
 	showWhen: notForever,
 });
 
-export const WarlockCursesConfig = InputHelpers.makeMultiIconInput({ values: [CurseOfElements, CurseOfShadow], label: 'Warlock Curses' });
+// Under Forever Improved Shadow Bolt, Improved Scorch, Winter's Chill, Shadow Weaving and
+// Stormstrike only help the player who applies them, so the sim ignores another player's there.
+export const SpellISBDebuff = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(17803),
+	fieldName: 'improvedShadowBolt',
+	showWhen: notForever,
+});
 
-export const HuntersMark = withLabel(
-	makeTristateDebuffInput({
-		actionId: () => ActionId.fromSpellId(14325),
-		impId: ActionId.fromSpellId(19425),
-		fieldName: 'huntersMark',
-		showWhen: notForever,
-	}),
-	`Hunter's Mark`,
-);
-export const HuntersMarkForever = withLabel(makeForeverDebuffInput(14325, 'huntersMark'), `Hunter's Mark`);
-export const JudgementOfWisdom = withLabel(
-	makeBooleanDebuffInput({
-		actionId: () => ActionId.fromSpellId(20355),
-		fieldName: 'judgementOfWisdom',
-		showWhen: player => player.hasFactionBuffs(Faction.Alliance),
-	}),
-	'Judgement of Wisdom',
-);
-export const JudgementOfTheCrusader = withLabel(
-	makeTristateDebuffInput({
-		actionId: () => ActionId.fromSpellId(20303),
-		impId: ActionId.fromSpellId(20337),
-		fieldName: 'judgementOfTheCrusader',
-		showWhen: player => player.hasFactionBuffs(Faction.Alliance) && notForever(player),
-	}),
-	'Judgement of the Crusader',
-);
-export const JudgementOfTheCrusaderForever = withLabel(
-	makeForeverDebuffInput(20303, 'judgementOfTheCrusader', player => player.hasFactionBuffs(Faction.Alliance)),
-	'Judgement of the Crusader',
-);
+export const SpellScorchDebuff = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(12873),
+	fieldName: 'improvedScorch',
+	showWhen: notForever,
+});
 
-// Misc Debuffs
-export const JudgementOfLight = makeBooleanDebuffInput({
-	actionId: () => ActionId.fromSpellId(20346),
-	fieldName: 'judgementOfLight',
+export const SpellWintersChillDebuff = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(28595),
+	fieldName: 'wintersChill',
+	showWhen: notForever,
+});
+
+export const SpellStormstrikeDebuff = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(17364),
+	fieldName: 'stormstrike',
+	showWhen: notForever,
+});
+
+export const SpellShadowWeavingDebuff = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(15334),
+	fieldName: 'shadowWeaving',
+	showWhen: notForever,
+});
+
+// Under Forever Improved Seal of the Crusader and Improved Hunter's Mark are out of the trees,
+// so these two are on or off there.
+export const JudgementOfTheCrusader = makeTristateDebuffInput({
+	actionId: () => ActionId.fromSpellId(20303),
+	impId: ActionId.fromSpellId(20337),
+	fieldName: 'judgementOfTheCrusader',
+	showWhen: player => player.hasFactionBuffs(Faction.Alliance) && notForever(player),
+});
+export const JudgementOfTheCrusaderForever = makeDebuffToggle(20303, 'judgementOfTheCrusader', {
+	showWhen: player => player.hasFactionBuffs(Faction.Alliance) && !notForever(player),
+});
+
+export const HuntersMark = makeTristateDebuffInput({
+	actionId: () => ActionId.fromSpellId(14325),
+	impId: ActionId.fromSpellId(19425),
+	fieldName: 'huntersMark',
+	showWhen: notForever,
+});
+export const HuntersMarkForever = makeDebuffToggle(14325, 'huntersMark', { showWhen: player => !notForever(player) });
+
+export const JudgementOfWisdom = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(20355),
+	fieldName: 'judgementOfWisdom',
 	showWhen: player => player.hasFactionBuffs(Faction.Alliance),
 });
+
 export const GiftOfArthas = makeBooleanDebuffInput({
 	actionId: () => ActionId.fromSpellId(11374),
 	fieldName: 'giftOfArthas',
 });
-export const CrystalYield = makeBooleanDebuffInput({
-	actionId: () => ActionId.fromSpellId(15235),
-	fieldName: 'crystalYield',
+
+// Defensive debuffs
+
+export const AttackPowerDebuff = makeExclusiveDebuffRow([
+	{ spellId: 11556, fieldName: 'demoralizingShout' },
+	{ spellId: 9898, fieldName: 'demoralizingRoar' },
+]);
+
+export const MeleeAttackSpeedDebuff = makeExclusiveDebuffRow([
+	{ spellId: 6343, fieldName: 'thunderClap' },
+	{ spellId: 21992, fieldName: 'thunderfury' },
+]);
+
+export const MeleeHitDebuff = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(24977),
+	fieldName: 'insectSwarm',
+});
+
+export const ScorpidSting = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(3043),
+	fieldName: 'scorpidSting',
+});
+
+export const curseOfWeaknessDebuff = makeTristateDebuffInput({
+	actionId: () => ActionId.fromSpellId(11708),
+	impId: ActionId.fromSpellId(18181),
+	fieldName: 'curseOfWeakness',
+});
+
+// Judgement of Light heals the players who hit the target, so it only matters for the damage we
+// take.
+export const JudgementOfLight = makeBooleanDebuffInput({
+	actionId: () => ActionId.fromSpellId(20346),
+	fieldName: 'judgementOfLight',
+	showWhen: player => player.hasFactionBuffs(Faction.Alliance),
 });
 
 ///////////////////////////////////////////////////////////////////////////
@@ -887,130 +848,70 @@ export const SAYGES_CONFIG = [
 	},
 ] as ItemStatOption<SaygesFortune>[];
 
+// A debuff in a subsection of the Settings tab: an icon, or a row of debuffs that don't stack.
+// We leave out the ones that raise no stat the spec cares about, like for the other inputs.
+export interface DebuffSubsectionItem {
+	config: IconPickerConfig<Player<any>, any> | ExclusiveDebuffRowConfig;
+	stats: Array<Stat>;
+}
+
+export interface DebuffSubsection {
+	label: string;
+	items: Array<DebuffSubsectionItem>;
+}
+
 // The debuffs that raise our damage.
-export const OFFENSIVE_DEBUFFS_CONFIG = [
-	// Standard Debuffs
+export const OFFENSIVE_DEBUFF_SUBSECTIONS: Array<DebuffSubsection> = [
 	{
-		config: MajorArmorDebuff,
-		stats: [Stat.StatAttackPower],
-		picker: MultiIconPicker,
+		label: 'Armor Penetration',
+		items: [
+			{ config: MajorArmorDebuff, stats: [Stat.StatAttackPower] },
+			{ config: MinorArmorDebuff, stats: [Stat.StatAttackPower] },
+			{ config: CrystalYield, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
+		],
 	},
 	{
-		config: CurseOfRecklessness,
-		picker: IconPicker,
-		stats: [Stat.StatAttackPower],
+		label: 'Spell Damage',
+		items: [
+			{ config: CurseOfElements, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+			{ config: CurseOfShadow, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+			{ config: SpellISBDebuff, stats: [Stat.StatShadowPower] },
+			{ config: SpellScorchDebuff, stats: [Stat.StatFirePower] },
+			{ config: SpellWintersChillDebuff, stats: [Stat.StatFrostPower] },
+			{ config: SpellStormstrikeDebuff, stats: [Stat.StatNaturePower] },
+			{ config: SpellShadowWeavingDebuff, stats: [Stat.StatShadowPower] },
+			{ config: JudgementOfTheCrusader, stats: [Stat.StatHolyPower] },
+			{ config: JudgementOfTheCrusaderForever, stats: [Stat.StatHolyPower] },
+		],
 	},
 	{
-		config: FaerieFire,
-		picker: IconPicker,
-		stats: [Stat.StatAttackPower],
+		label: 'Other',
+		items: [
+			{ config: GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
+			{ config: HuntersMark, stats: [Stat.StatRangedAttackPower] },
+			{ config: HuntersMarkForever, stats: [Stat.StatRangedAttackPower] },
+			{ config: JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
+		],
 	},
-	/* {
-		config: BleedDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower],
-	}, */
-
-	// Magic
-	{
-		config: JudgementOfTheCrusader,
-		picker: IconPicker,
-		stats: [Stat.StatHolyPower],
-	},
-	{
-		config: JudgementOfTheCrusaderForever,
-		picker: IconPicker,
-		stats: [Stat.StatHolyPower],
-	},
-	{
-		config: SpellISBDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatShadowPower],
-	},
-	{
-		config: SpellScorchDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatFirePower],
-	},
-	{
-		config: SpellWintersChillDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatFrostPower],
-	},
-	{
-		config: SpellStormstrikeDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatNaturePower],
-	},
-	{
-		config: SpellShadowWeavingDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatShadowPower],
-	},
-	{
-		config: WarlockCursesConfig,
-		picker: MultiIconPicker,
-		stats: [Stat.StatSpellPower, Stat.StatSpellDamage],
-	},
-
-	// Other Debuffs
-	{
-		config: HuntersMark,
-		picker: IconPicker,
-		stats: [Stat.StatRangedAttackPower],
-	},
-	{
-		config: HuntersMarkForever,
-		picker: IconPicker,
-		stats: [Stat.StatRangedAttackPower],
-	},
-	{
-		config: JudgementOfWisdom,
-		picker: IconPicker,
-		stats: [Stat.StatMP5, Stat.StatIntellect],
-	},
-] as PickerStatOptions[];
+];
 
 // The debuffs that lower the damage the target does. They're off for now, see
-// withoutDefensiveDebuffs.
-export const DEFENSIVE_DEBUFFS_CONFIG = [
+// normalizeDebuffs.
+export const DEFENSIVE_DEBUFF_SUBSECTIONS: Array<DebuffSubsection> = [
+	{ label: 'Attack Power', items: [{ config: AttackPowerDebuff, stats: [Stat.StatArmor] }] },
+	{ label: 'Attack Speed', items: [{ config: MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] }] },
 	{
-		config: AttackPowerDebuff,
-		picker: MultiIconPicker,
-		stats: [Stat.StatArmor],
+		label: 'Chance to Hit',
+		items: [
+			{ config: MeleeHitDebuff, stats: [Stat.StatDodge] },
+			{ config: ScorpidSting, stats: [Stat.StatDodge] },
+		],
 	},
 	{
-		config: MeleeAttackSpeedDebuff,
-		picker: MultiIconPicker,
-		stats: [Stat.StatArmor],
+		label: 'Other',
+		items: [
+			{ config: curseOfWeaknessDebuff, stats: [Stat.StatArmor] },
+			{ config: JudgementOfLight, stats: [Stat.StatStamina] },
+		],
 	},
-	{
-		config: curseOfWeaknessDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatArmor],
-	},
-	{
-		config: MeleeHitDebuff,
-		picker: IconPicker,
-		stats: [Stat.StatDodge],
-	},
-] as PickerStatOptions[];
-
-export const MISC_DEBUFFS_CONFIG = [
-	// Misc Debuffs
-	{
-		config: GiftOfArthas,
-		picker: IconPicker,
-		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower],
-	},
-	{
-		config: CrystalYield,
-		picker: IconPicker,
-		stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower],
-	},
-	{
-		config: JudgementOfLight,
-		picker: IconPicker,
-		stats: [Stat.StatStamina],
-	},
-] as PickerStatOptions[];
+];
