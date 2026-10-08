@@ -5,6 +5,7 @@ import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
 import { Spec } from '../../proto/common';
 import { Component } from '../component';
+import { gameSpellTooltip } from '../game_spell_tooltip';
 
 // The four racials of the selected race, on a piece of parchment like the spellbook in the
 // game. The actives are in the left column with a square frame, and the passives are in the
@@ -56,37 +57,17 @@ export class RacialsPicker extends Component {
 	}
 }
 
-// The tooltip as the game draws it: the name, then the cast time on the left with the cooldown
-// on the right (or Passive), and the description in yellow with its numbers in white.
-//
 // The client data writes the cost line as one string, like "5 yd range; Instant; 2 min
-// cooldown", so we split it. The range goes on its own line on the right, like in the game.
+// cooldown", so we split it. The range goes on its own line on the right, like in the game,
+// then the cast time with the cooldown on its right (or Passive).
 function spellTooltip(racial: Racial): HTMLElement {
 	const parts = racial.cost?.split('; ') ?? [];
 	const range = parts.find(part => part.endsWith('range'));
 	const cooldown = parts.find(part => part.endsWith('cooldown'));
 	const cast = parts.find(part => part !== range && part !== cooldown);
 
-	return (
-		<div className="game-spell-tooltip">
-			<div className="game-spell-tooltip-name">{racial.name}</div>
-			{range && (
-				<div className="game-spell-tooltip-line">
-					<span></span>
-					<span>{range}</span>
-				</div>
-			)}
-			{racial.passive ? (
-				<div className="game-spell-tooltip-line">Passive</div>
-			) : (
-				<div className="game-spell-tooltip-line">
-					<span>{cast ?? ''}</span>
-					<span>{cooldown ?? ''}</span>
-				</div>
-			)}
-			<div className="game-spell-tooltip-description">
-				{racial.description.split(/(\d+(?:\.\d+)?%?)/).map((text, i) => (i % 2 ? <span className="game-spell-tooltip-value">{text}</span> : text))}
-			</div>
-		</div>
-	) as HTMLElement;
+	const lines: Array<[string, string?]> = [];
+	if (range) lines.push(['', range]);
+	lines.push(racial.passive ? ['Passive'] : [cast ?? '', cooldown]);
+	return gameSpellTooltip({ name: racial.name, lines, description: racial.description });
 }

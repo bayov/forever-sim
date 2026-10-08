@@ -3,7 +3,6 @@ import tippy from 'tippy.js';
 import { MAX_CHARACTER_LEVEL } from '../../constants/mechanics';
 import { Player } from '../../player';
 import { Profession, Race, Spec } from '../../proto/common';
-import { ActionId } from '../../proto_utils/action_id';
 import { professionNames, raceNames } from '../../proto_utils/names';
 import { specToEligibleRaces } from '../../proto_utils/utils';
 import { TypedEvent } from '../../typed_event';
@@ -138,7 +137,7 @@ export class IconEnumRowPicker<ModObject> extends Input<ModObject, number> {
 		const none = config.values.find(value => !value.icon);
 		config.values.forEach(value => {
 			if (!value.icon) return;
-			const option = iconOption(value.icon, value.name, value.spellId);
+			const option = iconOption(value.icon, value.name);
 			option.addEventListener(
 				'click',
 				event => {
@@ -150,10 +149,15 @@ export class IconEnumRowPicker<ModObject> extends Input<ModObject, number> {
 				},
 				{ signal: this.signal },
 			);
-			if (!value.spellId) {
-				const tooltip = tippy(option, { content: value.tooltip ? `${value.name}: ${value.tooltip}` : value.name });
-				this.addOnDisposeCallback(() => tooltip.destroy());
-			}
+			const plain = value.tooltip ? `${value.name}: ${value.tooltip}` : value.name;
+			const tooltip = value.richTooltip
+				? tippy(option, {
+						theme: 'game-spell',
+						content: plain,
+						onShow: instance => instance.setContent(value.richTooltip!(this.modObject) ?? plain),
+				  })
+				: tippy(option, { content: plain });
+			this.addOnDisposeCallback(() => tooltip.destroy());
 			this.options.set(value.value, option);
 			options.appendChild(option);
 		});
@@ -310,14 +314,8 @@ export class ProfessionsPicker extends Input<Player<Spec>, Array<Profession>> {
 	}
 }
 
-// An icon to click. With a spell, it's a link to the spell on wowhead, so it shows the spell's
-// wowhead tooltip.
-function iconOption(icon: string, name: string, spellId?: number): HTMLElement {
-	const style = { backgroundImage: `url('${iconUrl(icon)}')` };
-	if (!spellId) {
-		return (<button type="button" className="player-icon-picker-option" aria-label={name} style={style}></button>) as HTMLElement;
-	}
-	const anchor = (<a className="player-icon-picker-option" attributes={{ role: 'button' }} aria-label={name} style={style}></a>) as HTMLAnchorElement;
-	ActionId.fromSpellId(spellId).setWowheadHref(anchor);
-	return anchor;
+function iconOption(icon: string, name: string): HTMLElement {
+	return (
+		<button type="button" className="player-icon-picker-option" aria-label={name} style={{ backgroundImage: `url('${iconUrl(icon)}')` }}></button>
+	) as HTMLElement;
 }

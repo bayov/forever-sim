@@ -8,8 +8,9 @@ export interface EnumValueConfig {
 	// A wowhead icon name, like 'spell_nature_cyclone'. When the values have icons, the Settings
 	// tab shows the input as a row of icons, see IconEnumRowPicker.
 	icon?: string;
-	// The spell whose wowhead tooltip the icon shows, in place of a tooltip with the name.
-	spellId?: number;
+	// A tooltip for the icon in place of the one with the name, like the game's tooltip of a
+	// shaman weapon imbue. We build it each time it shows, so it can follow the settings.
+	richTooltip?: (modObject: any) => HTMLElement | undefined;
 }
 
 export interface EnumPickerConfig<ModObject> extends InputConfig<ModObject, number> {
