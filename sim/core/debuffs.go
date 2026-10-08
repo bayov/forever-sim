@@ -697,6 +697,28 @@ func ExposeArmorAura(target *Unit, improvedEA int32) *Aura {
 }
 
 func CurseOfRecklessnessAura(target *Unit) *Aura {
+	// Forever's curse takes 505 armor and no longer gives the target attack power. It also
+	// doesn't stack with Faerie Fire any more, so the two share the minor armor effect and
+	// only one of them counts.
+	if target.Env.IsForever() {
+		arpen := 505.0
+		aura := target.GetOrRegisterAura(Aura{
+			Label:    "Curse of Recklessness",
+			ActionID: ActionID{SpellID: 11717},
+			Duration: time.Minute * 2,
+		})
+		aura.NewExclusiveEffect(minorArmorReductionEffectCategory, true, ExclusiveEffect{
+			Priority: arpen,
+			OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+				ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, -arpen)
+			},
+			OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+				ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, arpen)
+			},
+		})
+		return aura
+	}
+
 	arpen := float64(640)
 	ap := float64(90)
 
