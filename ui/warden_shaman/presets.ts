@@ -88,6 +88,7 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = EnhancementShamanOptions.create({
+	shamanImbue: WeaponImbue.RockbiterWeapon,
 	syncType: ShamanSyncType.Auto,
 });
 
@@ -103,7 +104,6 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheTitans,
 	food: Food.FoodBlessSunfruit,
 	healthElixir: HealthElixir.ElixirOfFortitude,
-	mainHandImbue: WeaponImbue.RockbiterWeapon,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,

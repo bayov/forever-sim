@@ -1,5 +1,6 @@
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as ConsumesInputs from '../core/components/inputs/consumables';
+import { makeShamanImbueInput, migrateShamanImbue } from '../core/components/inputs/shaman_imbues';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
@@ -145,6 +146,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWardenShaman, {
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
+			makeShamanImbueInput<Spec.SpecWardenShaman>(),
 			OtherInputs.InFrontOfTarget,
 			OtherInputs.TankAssignment,
 			OtherInputs.IncomingHps,
@@ -155,6 +157,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWardenShaman, {
 			OtherInputs.InspirationUptime,
 		],
 	},
+	migrateSettings: migrateShamanImbue,
 	itemSwapConfig: {
 		itemSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand],
 	},

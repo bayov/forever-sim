@@ -150,8 +150,10 @@ message ElementalShaman {
 	message Rotation {
 	}
 
-	// NextIndex: 6
+	// NextIndex: 7
 	message Options {
+		// The shaman's own weapon imbue on the main hand, like EnhancementShaman's.
+		WeaponImbue shaman_imbue = 6;
 	}
 	Options options = 3;
 }
@@ -171,8 +173,9 @@ message EnhancementShaman {
 		// below raid_damage_hits_per_minute, like Duration +/- does for the fight length.
 		double raid_damage_hits_per_minute_variation = 9;
 		// The shaman's own weapon imbue (Windfury, Rockbiter, Flametongue or Frostbrand
-		// Weapon) on the main hand. In Forever it no longer takes the weapon's temporary
-		// enchant, so the main hand imbue in the consumes holds an oil or a stone beside it.
+		// Weapon) on the main hand. In Forever it acts as a buff on the character and no longer
+		// takes the weapon's temporary enchant, so the main hand imbue in the consumes holds an
+		// oil or a stone beside it.
 		WeaponImbue shaman_imbue = 8;
 		StartingTotems starting_totems = 10;
 	}
@@ -203,6 +206,8 @@ message WardenShaman {
 	}
 
 	message Options {
+		// The shaman's own weapon imbue on the main hand, like EnhancementShaman's.
+		WeaponImbue shaman_imbue = 1;
 	}
 	Options options = 1;
 }

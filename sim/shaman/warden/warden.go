@@ -41,6 +41,9 @@ func NewWardenShaman(character *core.Character, options *proto.Player) *WardenSh
 		AutoSwingMelee: true,
 	})
 
+	warden.ShamanImbue = options.GetWardenShaman().GetOptions().GetShamanImbue()
+	warden.ApplyShamanImbue()
+
 	return warden
 }
 

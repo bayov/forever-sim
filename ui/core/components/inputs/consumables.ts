@@ -44,7 +44,6 @@ import { IconPicker, IconPickerDirection } from '../icon_picker';
 import * as InputHelpers from '../input_helpers';
 import { MultiIconPicker, MultiIconPickerConfig, MultiIconPickerItemConfig } from '../multi_icon_picker';
 import { DeadlyPoisonWeaponImbue, InstantPoisonWeaponImbue, WoundPoisonWeaponImbue } from './rogue_imbues';
-import { FlametongueWeaponImbue, FrostbrandWeaponImbue, RockbiterWeaponImbue, WindfuryWeaponImbue } from './shaman_imbues';
 import { ActionInputConfig, ItemStatOption, PickerStatOptions, StatOptions } from './stat_options';
 
 export interface ConsumableInputConfig<T> extends ActionInputConfig<T> {
@@ -1331,13 +1330,6 @@ export const FrostOil = (slot: ItemSlot): ConsumableInputConfig<WeaponImbue> => 
 	};
 };
 
-const SHAMAN_IMBUES = (slot: ItemSlot): ConsumableStatOption<WeaponImbue>[] => [
-	{ config: RockbiterWeaponImbue(slot), stats: [] },
-	{ config: FlametongueWeaponImbue(slot), stats: [] },
-	{ config: FrostbrandWeaponImbue(slot), stats: [] },
-	{ config: WindfuryWeaponImbue(slot), stats: [] },
-];
-
 const ROGUE_IMBUES: ConsumableStatOption<WeaponImbue>[] = [
 	{ config: InstantPoisonWeaponImbue, stats: [] },
 	{ config: DeadlyPoisonWeaponImbue, stats: [] },
@@ -1396,14 +1388,12 @@ const CONSUMABLES_IMBUES = (slot: ItemSlot): ConsumableStatOption<WeaponImbue>[]
 
 export const WEAPON_IMBUES_OH_CONFIG: ConsumableStatOption<WeaponImbue>[] = [
 	...ROGUE_IMBUES,
-	...SHAMAN_IMBUES(ItemSlot.ItemSlotOffHand),
 	...CONSUMABLES_IMBUES(ItemSlot.ItemSlotOffHand),
 	...SCROLL_IMBUES(ItemSlot.ItemSlotOffHand),
 ];
 
 export const WEAPON_IMBUES_MH_CONFIG: ConsumableStatOption<WeaponImbue>[] = [
 	...ROGUE_IMBUES,
-	...SHAMAN_IMBUES(ItemSlot.ItemSlotMainHand),
 	...CONSUMABLES_IMBUES(ItemSlot.ItemSlotMainHand),
 	...SCROLL_IMBUES(ItemSlot.ItemSlotMainHand),
 ];

@@ -1,19 +1,17 @@
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as ConsumesInputs from '../core/components/inputs/consumables';
+import { migrateShamanImbue } from '../core/components/inputs/shaman_imbues';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
 import { APLRotation } from '../core/proto/apl.js';
-import { Class, Faction, ItemSlot, PartyBuffs, PseudoStat, Race, Spec, Stat, WeaponImbue } from '../core/proto/common.js';
-import { EnhancementShaman_Options as EnhancementShamanOptions } from '../core/proto/shaman.js';
+import { Class, Faction, ItemSlot, PartyBuffs, PseudoStat, Race, Spec, Stat } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
 import { buildStartingTotemsSettings, buildStartingTotemsSummary } from './starting_totems';
-
-const SHAMAN_IMBUES = [WeaponImbue.RockbiterWeapon, WeaponImbue.FlametongueWeapon, WeaponImbue.FrostbrandWeapon, WeaponImbue.WindfuryWeapon];
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	cssClass: 'enhancement-shaman-sim-ui',
@@ -128,18 +126,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	},
 	customSections: [],
 	classSettings: buildStartingTotemsSettings,
-	// The shaman imbue used to be a consumable. Under Forever it stacks with an oil or a stone, so
-	// it moved to the class settings, and we move one saved in the consumables there too.
-	migrateSettings: settings => {
-		const player = settings.player!;
-		const consumes = player.consumes;
-		if (!consumes || player.spec.oneofKind !== 'enhancementShaman') return;
-		const options = (player.spec.enhancementShaman.options ??= EnhancementShamanOptions.create());
-		const isShamanImbue = (imbue: WeaponImbue) => SHAMAN_IMBUES.includes(imbue);
-		if (isShamanImbue(consumes.mainHandImbue) && !options.shamanImbue) options.shamanImbue = consumes.mainHandImbue;
-		if (isShamanImbue(consumes.mainHandImbue)) consumes.mainHandImbue = WeaponImbue.WeaponImbueUnknown;
-		if (isShamanImbue(consumes.offHandImbue)) consumes.offHandImbue = WeaponImbue.WeaponImbueUnknown;
-	},
+	migrateSettings: migrateShamanImbue,
 	rotationTabHeader: buildStartingTotemsSummary,
 	encounterPicker: {
 		// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
