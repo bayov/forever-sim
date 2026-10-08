@@ -48,8 +48,12 @@ func mainHandHasImbue(character *Character, enchantIds []int32) bool {
 }
 
 // FlametongueTotemBuffAura gives every main hand hit that lands extra Fire damage, by
-// weapon speed. The damage is the Flametongue Attack spell at 10% of the wielder's spell
-// power, the same as Flametongue Weapon's.
+// weapon speed.
+//
+// Spell power adds nothing to it, unlike Flametongue Weapon. On the beta a level 30 shaman
+// with 55 spell power hit 20 with rank 1 on a 3.6 speed axe (2026-10-08), the 19.73 of the
+// base damage, where 10% of spell power would have made it 25. cmangos doesn't give it
+// spell power either.
 //
 // The aura is not active on its own. The caller makes it permanent or turns it on and off
 // with the totem. The label and the tag keep another shaman's totem apart from the
@@ -66,7 +70,6 @@ func FlametongueTotemBuffAura(character *Character, rank int, label string, tag 
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BonusCoefficient: 0.1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			damage := damagePerSecond * character.MainHand().SwingSpeed

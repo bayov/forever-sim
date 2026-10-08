@@ -57,6 +57,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [ ] 4.10 Physical damage modifiers: flat bonus damage, percent modifiers
 - [ ] 4.11 Procs from melee hits: PPM procs (weapon speed), chance procs, which hits can proc what (white, yellow, extra attacks, procs from procs)
 - [ ] 4.12 Extra attacks: Windfury Totem, Hand of Justice, how they line up with the swing timer
+- [ ] 4.13 Proc matrix (the user, 2026-10-08): for every ability, what it can proc and what it can't. The abilities are white hits, Windfury Weapon and Totem attacks, Stormstrike, the Flametongue Weapon, Flametongue Totem and Frostbrand procs, the shocks, Lightning Bolt, Chain Lightning, Lava Burst, Fire Nova, totem attacks and Lightning Shield orbs. The procs are Windfury Weapon and Totem, Flametongue Weapon and Totem, Frostbrand, Flurry, Maelstrom Weapon, Elemental Devastation, Clearcasting, Judgement of Wisdom, Water Shield, item and enchant procs (PPM and chance) and racials. The weapon imbues get their own pass here, even though 7.2 to 7.4 have beta damage tests already.
 
 ## 5. Our spells
 
@@ -84,6 +85,8 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [ ] 7.1 Rank tables: every spell's ranks, learn levels and values at 30 and 60 (vs the ForeverChanges spellbook)
 
 Weapon imbues
+
+The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (section 7, part 2). Each item is still open until its full summary, OK and test, and what each imbue procs and gets procced by is in 4.13.
 
 - [ ] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
 - [ ] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
@@ -471,7 +474,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - 7.22 Searing Totem (`fire_totems.go`): a bolt every 2.5 sec for the totem's 30 to 55 sec lifetime, 1.7% coefficient (Forever). The real attack is every 2.2 sec, but the next bolt waits for the last to land, so we use 2.5 sec without a distance option.
 - 7.23 Magma Totem: a pulse every 2 sec for 20 sec, 2 less damage per pulse than 1.12 (Forever).
 - 7.24 Flametongue Totem: 5 min, fire damage per main hand hit by weapon speed (548 / 25 per 4 sec at rank 1, flat by level). It takes the fire slot, and placing another fire totem takes it down.
-  - Beta, level 30 (2026-10-08): rank 1 on the 3.6 speed axe hit 19 or 20. The sim gives 548 / 100 * 3.6 = 19.73 plus 10% of spell power. Classic Era's 489 would give 17.6, so Forever's 548 holds. Open: whether spell power adds to it (cmangos says it doesn't scale with gear).
+  - Beta, level 30 (2026-10-08): rank 1 on the 3.6 speed axe hit 19 or 20. The sim gives 548 / 100 * 3.6 = 19.73 plus 10% of spell power. Classic Era's 489 would give 17.6, so Forever's 548 holds.
+  - With 55 spell power it still hit only 20, where 10% of spell power would make 25. Fixed (2026-10-08): spell power no longer adds to Flametongue Totem (cmangos doesn't add it either). `flametongue_totem_test.go` TestOrcShamanFlametongueTotem checks every normal hit is 548 / 100 * 3.5 with 55 spell power, and fails with the old 10%. TestEnhancement's presets lost 25 to 42 DPS.
 - 7.25 Fire Nova (Forever spell): needs a fire totem down, 10 sec cooldown, 1.5 sec GCD, Totemic Focus doesn't discount it. Damage is Classic's (rank 1 grows over 5 levels). Call of Flame and Improved Fire Nova add up.
 - 7.17 Totems last 5 min under Forever (Searing, Magma and Fire Nova keep their own times). The weapon totem slot rules are in `core/totem_weapon_buffs.go` and `shaman.go` setTotemWeaponBuff.
 
