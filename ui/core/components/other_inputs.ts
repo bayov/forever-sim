@@ -104,7 +104,8 @@ export const ReactionTime = {
 	id: 'reaction-time',
 	type: 'number' as const,
 	label: 'Reaction Time',
-	labelTooltip: "Reaction time of the player, in milliseconds. Used with certain APL values (such as 'Aura Is Active With Reaction Time').",
+	labelTooltip:
+		'How long you take to notice a proc, in milliseconds. The rotation sees an aura or stack that a proc gives you (Clearcasting, Maelstrom Weapon, Flurry, trinket procs) only after this delay. Your own casts, GCDs and cooldowns need no reaction time, since you queue the next spell. 0 means the default of 200 ms.',
 	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
 	getValue: (player: Player<any>) => player.getReactionTime(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {

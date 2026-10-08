@@ -256,7 +256,7 @@ func main() {
 		Profession2:        proto.Profession_Alchemy,
 		Rotation:           core.GetAplRotation(uiDir+"/apls", *apl).Rotation,
 		DistanceFromTarget: 5,
-		ReactionTimeMs:     150,
+		ReactionTimeMs:     200,
 		ChannelClipDelayMs: 50,
 	}
 	withSpec(player)

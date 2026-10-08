@@ -61,6 +61,12 @@ type Aura struct {
 	expires   time.Duration // Time at which aura will be removed.
 	fadeTime  time.Duration // Time at which the aura was actually removed.
 
+	// When a proc gave us the aura and the stacks procs gave it since, so a rotation sees
+	// them only after its reaction time. See SeenActive and SeenStacks.
+	procGained     bool
+	procGainedAt   time.Duration
+	procStackGains []procStackGain
+
 	// The unit this aura is attached to.
 	Unit *Unit
 
@@ -125,8 +131,16 @@ func (aura *Aura) init(sim *Simulation) {
 	}
 }
 
+// procStackGain is stacks that a proc gave an aura at a time.
+type procStackGain struct {
+	at     time.Duration
+	stacks int32
+}
+
 func (aura *Aura) reset(sim *Simulation) {
 	aura.init(sim)
+	aura.procGained = false
+	aura.procStackGains = aura.procStackGains[:0]
 
 	if aura.IsActive() {
 		panic("Active aura during reset: " + aura.Label)
@@ -209,6 +223,11 @@ func (aura *Aura) SetStacks(sim *Simulation, newStacks int32) {
 		aura.Unit.Log(sim, "%s stacks: %d --> %d", aura.ActionID, oldStacks, newStacks)
 	}
 	aura.stacks = newStacks
+	if newStacks < oldStacks {
+		aura.procStackGains = aura.procStackGains[:0]
+	} else if sim.noReaction == 0 {
+		aura.procStackGains = append(aura.procStackGains, procStackGain{at: sim.CurrentTime, stacks: newStacks - oldStacks})
+	}
 	if aura.OnStacksChange != nil {
 		aura.OnStacksChange(aura, sim, oldStacks, newStacks)
 	}
@@ -241,6 +260,35 @@ func (aura *Aura) TimeActive(sim *Simulation) time.Duration {
 	} else {
 		return 0
 	}
+}
+
+// SeenActive is whether a rotation with the given reaction time knows the aura is up.
+//
+// We see an aura that a proc gave us only once the reaction time has passed since. One we
+// put up ourselves with a rotation action shows at once, because we pressed the button. One
+// that ends shows at once too, since we either used it up ourselves or knew when it runs out.
+func (aura *Aura) SeenActive(sim *Simulation, reactionTime time.Duration) bool {
+	if !aura.IsActive() {
+		return false
+	}
+	return !aura.procGained || sim.CurrentTime-aura.procGainedAt >= reactionTime
+}
+
+// SeenStacks is how many stacks a rotation with the given reaction time knows the aura has.
+//
+// Stacks a proc gave less than the reaction time ago don't count yet. Losing stacks shows at
+// once, so a Lightning Bolt that uses up Maelstrom Weapon leaves 0 seen stacks right away.
+func (aura *Aura) SeenStacks(sim *Simulation, reactionTime time.Duration) int32 {
+	if !aura.SeenActive(sim, reactionTime) {
+		return 0
+	}
+	stacks := aura.stacks
+	for _, gain := range aura.procStackGains {
+		if sim.CurrentTime-gain.at < reactionTime {
+			stacks -= gain.stacks
+		}
+	}
+	return max(stacks, 0)
 }
 
 func (aura *Aura) RemainingDuration(sim *Simulation) time.Duration {
@@ -592,6 +640,9 @@ func (aura *Aura) Activate(sim *Simulation) {
 	}
 
 	aura.startTime = sim.CurrentTime
+	aura.procGained = sim.noReaction == 0
+	aura.procGainedAt = sim.CurrentTime
+	aura.procStackGains = aura.procStackGains[:0]
 	aura.Refresh(sim)
 	aura.active = true
 

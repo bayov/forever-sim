@@ -22,8 +22,12 @@ func (action *APLAction) IsReady(sim *Simulation) bool {
 	return (action.condition == nil || action.condition.GetBool(sim)) && action.impl.IsReady(sim)
 }
 
+// Execute runs the action. What it does to our auras the rotation sees at once, without a
+// reaction time, because we pressed the button.
 func (action *APLAction) Execute(sim *Simulation) {
+	sim.noReaction++
 	action.impl.Execute(sim)
+	sim.noReaction--
 }
 
 // Returns this Action, along with all inner Actions.

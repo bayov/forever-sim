@@ -158,6 +158,9 @@ export class SettingsTab extends SimTab {
 		}
 
 		new ProfessionsPicker(contentBlock.bodyElement, this.simUI.player);
+
+		// Every spec reacts to procs, so Reaction Time is global too.
+		this.configureInputSection(contentBlock.bodyElement, { inputs: [OtherInputs.ReactionTime] });
 	}
 
 	private buildCustomSettingsSections() {
@@ -177,9 +180,9 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildOtherSettings() {
-		// Level is in the Player section and the extra talent points are in the Talents tab. In the
-		// individual sim, In Front of Target is in the Encounter section.
-		const elsewhere: InputConfig<Player<any>>[] = [OtherInputs.Level, OtherInputs.BonusTalentPoints];
+		// Level and Reaction Time are in the Player section and the extra talent points are in the
+		// Talents tab. In the individual sim, In Front of Target is in the Encounter section.
+		const elsewhere: InputConfig<Player<any>>[] = [OtherInputs.Level, OtherInputs.ReactionTime, OtherInputs.BonusTalentPoints];
 		if (!this.simUI.isWithinRaidSim) elsewhere.push(OtherInputs.InFrontOfTarget);
 		const otherInputs: InputSection = {
 			...this.simUI.individualConfig.otherInputs,

@@ -30,7 +30,8 @@ func (value *APLValueAuraIsKnown) String() string {
 
 type APLValueAuraIsActive struct {
 	DefaultAPLValueImpl
-	aura AuraReference
+	aura         AuraReference
+	reactionTime time.Duration
 }
 
 func (rot *APLRotation) newValueAuraIsActive(config *proto.APLValueAuraIsActive) APLValue {
@@ -41,14 +42,15 @@ func (rot *APLRotation) newValueAuraIsActive(config *proto.APLValueAuraIsActive)
 	}
 
 	return &APLValueAuraIsActive{
-		aura: aura,
+		aura:         aura,
+		reactionTime: rot.unit.ReactionTime,
 	}
 }
 func (value *APLValueAuraIsActive) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
 }
 func (value *APLValueAuraIsActive) GetBool(sim *Simulation) bool {
-	return value.aura.Get().IsActive()
+	return value.aura.Get().SeenActive(sim, value.reactionTime)
 }
 func (value *APLValueAuraIsActive) String() string {
 	return fmt.Sprintf("Aura Active(%s)", value.aura.String())
@@ -83,7 +85,8 @@ func (value *APLValueAuraIsActiveWithReactionTime) String() string {
 
 type APLValueAuraRemainingTime struct {
 	DefaultAPLValueImpl
-	aura AuraReference
+	aura         AuraReference
+	reactionTime time.Duration
 }
 
 func (rot *APLRotation) newValueAuraRemainingTime(config *proto.APLValueAuraRemainingTime) APLValue {
@@ -92,14 +95,21 @@ func (rot *APLRotation) newValueAuraRemainingTime(config *proto.APLValueAuraRema
 		return nil
 	}
 	return &APLValueAuraRemainingTime{
-		aura: aura,
+		aura:         aura,
+		reactionTime: rot.unit.ReactionTime,
 	}
 }
 func (value *APLValueAuraRemainingTime) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
+
+// GetDuration is 0 for a proc's aura the rotation hasn't seen yet.
 func (value *APLValueAuraRemainingTime) GetDuration(sim *Simulation) time.Duration {
-	return value.aura.Get().RemainingDuration(sim)
+	aura := value.aura.Get()
+	if aura.IsActive() && !aura.SeenActive(sim, value.reactionTime) {
+		return 0
+	}
+	return aura.RemainingDuration(sim)
 }
 func (value *APLValueAuraRemainingTime) String() string {
 	return fmt.Sprintf("Aura Remaining Time(%s)", value.aura.String())
@@ -107,7 +117,8 @@ func (value *APLValueAuraRemainingTime) String() string {
 
 type APLValueAuraNumStacks struct {
 	DefaultAPLValueImpl
-	aura AuraReference
+	aura         AuraReference
+	reactionTime time.Duration
 }
 
 func (rot *APLRotation) newValueAuraNumStacks(config *proto.APLValueAuraNumStacks) APLValue {
@@ -120,14 +131,15 @@ func (rot *APLRotation) newValueAuraNumStacks(config *proto.APLValueAuraNumStack
 		return nil
 	}
 	return &APLValueAuraNumStacks{
-		aura: aura,
+		aura:         aura,
+		reactionTime: rot.unit.ReactionTime,
 	}
 }
 func (value *APLValueAuraNumStacks) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeInt
 }
 func (value *APLValueAuraNumStacks) GetInt(sim *Simulation) int32 {
-	return value.aura.Get().GetStacks()
+	return value.aura.Get().SeenStacks(sim, value.reactionTime)
 }
 func (value *APLValueAuraNumStacks) String() string {
 	return fmt.Sprintf("Aura Num Stacks(%s)", value.aura.String())

@@ -243,6 +243,13 @@ export function getSpecConfig<SpecType extends Spec>(spec: SpecType): PlayerConf
 }
 
 // Manages all the gear / consumes / other settings for a single Player.
+// DEFAULT_REACTION_TIME_MS is how long the rotation takes to notice a proc, like Clearcasting or
+// a Maelstrom Weapon stack.
+//
+// We queue our next spell, so GCDs and cooldowns need no reaction time. A saved reaction time
+// of 0 is from before we had a default, so we read it as this default.
+export const DEFAULT_REACTION_TIME_MS = 200;
+
 export class Player<SpecType extends Spec> {
 	readonly sim: Sim;
 	private party: Party | null;
@@ -265,7 +272,7 @@ export class Player<SpecType extends Spec> {
 	private specOptions: SpecOptions<SpecType>;
 	private level = 0;
 	private bonusTalentPoints = 0;
-	private reactionTime = 0;
+	private reactionTime = DEFAULT_REACTION_TIME_MS;
 	private channelClipDelay = 0;
 	private inFrontOfTarget = false;
 	private distanceFromTarget = 0;
@@ -1606,7 +1613,7 @@ export class Player<SpecType extends Spec> {
 				this.setProfession2(eventID, proto.profession2);
 				this.setLevel(eventID, proto.level);
 				this.setBonusTalentPoints(eventID, proto.bonusTalentPoints);
-				this.setReactionTime(eventID, proto.reactionTimeMs);
+				this.setReactionTime(eventID, proto.reactionTimeMs || DEFAULT_REACTION_TIME_MS);
 				this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 				this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 				this.setDistanceFromTarget(eventID, proto.distanceFromTarget);

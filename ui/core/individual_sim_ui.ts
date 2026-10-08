@@ -29,7 +29,7 @@ import { SimSettingCategories } from './constants/sim_settings';
 import * as Tooltips from './constants/tooltips';
 import { installItemTooltipFallback } from './item_tooltip_fallback';
 import { simLaunchStatuses } from './launched_sims';
-import { Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
+import { DEFAULT_REACTION_TIME_MS, Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { PresetBuild, PresetEpWeights, PresetGear, PresetRotation } from './preset_utils';
 import { StatWeightsResult } from './proto/api';
 import { APLRotation, APLRotation_Type as APLRotationType } from './proto/apl';
@@ -457,6 +457,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.ProfessionUnknown);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 			this.player.setChannelClipDelay(eventID, this.individualConfig.defaults.other?.channelClipDelay || 0);
+			this.player.setReactionTime(eventID, DEFAULT_REACTION_TIME_MS);
 
 			if (this.isWithinRaidSim) {
 				this.sim.raid.setTargetDummies(eventID, 0);

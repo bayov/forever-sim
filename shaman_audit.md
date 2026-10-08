@@ -41,7 +41,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 3.2 Cast times (Lightning Bolt, Chain Lightning) and what a cast does to the swing timer
 - [x] 3.3 How melee haste and cast speed modifiers stack (multiplicative)
 - [x] 3.4 Prepull: totems, shield and imbue before the pull, the first swing at pull, totem time across the pull
-- [ ] 3.5 Reaction and batching delays (if the sim has any)
+- [x] 3.5 Reaction and batching delays (if the sim has any)
 
 ## 4. Our white attacks
 
@@ -398,6 +398,12 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - At 0 the auto attacks start and the first swing lands right away. The GCD of a totem cast at -1 sec ends at 0. Cooldowns start at 0. Nothing hits the target before the pull: Searing Totem cast at -1 sec first attacks at +1.5 sec, one 2.5 sec interval after the cast. When the first attack should come is part of 7.22.
 - `prepull_test.go` TestOrcShamanPrepull casts Lightning Shield at -6 sec and Strength of Earth, Mana Spring and Searing Totem after it. It checks the mana after the first cast, the imbue, the GCD and the five second rule at the pull, every shield, totem and buff expiration, the first swing at 0 and the first Searing Totem attack. It fails when the pull comes 0.5 sec late, when the imbue isn't on, when the five second rule is 4 sec, and when Strength of Earth's buff or Mana Spring Totem gets a Classic duration.
 - For the rotation session: the Level 30 presets should cast Lightning Shield before the pull (the user, 2026-10-08). It's in notes.md.
+
+### 3.5 Reaction and batching delays
+
+- The user OK'd it (2026-10-08). White hits roll when they swing and land 10 ms later with their procs, like the 10 ms batch window on Classic Era servers. The user thinks Forever uses 10 ms too, and it's in notes.md Need to Verify. Spells land at once, except that Lightning Bolt and Lava Burst travel at 20 yd/s from the player's distance (0 for enhancement in the UI, 5 yards in rotopt's settings). When the GCD is free and nothing can go, the rotation looks again every 50 ms and after every swing.
+- Changed (2026-10-08, the user): the rotation sees a proc only after the player's reaction time, 200 ms by default. That's an aura or stacks a proc gives us, like Clearcasting, Maelstrom Weapon, Flurry and trinket procs. What a rotation action does shows at once, because we queue spells, and so does losing an aura or stacks. The GCD and cooldowns need no reaction time. It reaches every rotation condition that reads an aura (active, stacks, remaining time). Reaction Time is at the end of the Player section for every spec, a saved 0 reads as the default, and rotopt's mksettings writes 200 ms (was 150). The test suites keep their 150 ms and the shaman mechanics tests 0.
+- `reaction_time_test.go` TestOrcShamanReactionTime casts Lightning Bolt at 5 Maelstrom Weapon stacks and Blood Fury when Rage of the Farseer is up. Each bolt goes 200 to 250 ms after the 5th stack, and Blood Fury goes with Rage of the Farseer. It fails when stacks show at once and when our own casts count as procs.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

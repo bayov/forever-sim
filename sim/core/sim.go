@@ -43,6 +43,12 @@ type Simulation struct {
 
 	Log func(string, ...interface{})
 
+	// noReaction is above 0 while a rotation action runs or the fight is being set up.
+	//
+	// An aura that changes then is one we caused ourselves, so a rotation sees it at once
+	// instead of after the player's reaction time. See Aura.SeenActive.
+	noReaction int32
+
 	executePhase int32 // 20, 25, or 35 for the respective execute range, 100 otherwise
 
 	executePhaseCallbacks []func(*Simulation, int32) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
@@ -437,7 +443,11 @@ func (sim *Simulation) reset() {
 	sim.minTaskTime = NeverExpires
 	sim.continuousRegen = sim.continuousRegen[:0]
 
+	// The auras that start with the fight (imbues, other players' buffs) are known from the
+	// start.
+	sim.noReaction++
 	sim.Environment.reset(sim)
+	sim.noReaction--
 
 	sim.initManaRegen()
 }
