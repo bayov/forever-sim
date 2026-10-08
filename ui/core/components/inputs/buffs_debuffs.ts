@@ -1,6 +1,6 @@
 import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
-import { Debuffs, Faction, RaidBuffs, SaygesFortune, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
+import { Class, Debuffs, Faction, RaidBuffs, SaygesFortune, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
 import { EventID, TypedEvent } from '../../typed_event';
 import {
@@ -919,7 +919,8 @@ export interface IconSubsectionItem {
 }
 
 export interface IconSubsection {
-	label: string;
+	// A label can follow the player, like the totems a shaman gets from the other shamans.
+	label: string | ((player: Player<any>) => string);
 	items: Array<IconSubsectionItem>;
 }
 
@@ -934,25 +935,30 @@ function buffItem(config: unknown): IconSubsectionItem {
 // The Blessings go here too, even for a paladin, because another paladin in the raid gives
 // them.
 export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
-	{ label: 'Stats', items: [AllStatsBuff, BlessingOfKings, StaminaBuff, IntellectBuff, SpiritBuff].map(buffItem) },
-	{ label: 'Attack Power', items: [BlessingOfMight].map(buffItem) },
-	{ label: 'Mana', items: [BlessingOfWisdom, Innervate].map(buffItem) },
+	{ label: 'Stats', items: [AllStatsBuff, StaminaBuff, IntellectBuff, SpiritBuff].map(buffItem) },
+	{ label: 'Blessings', items: [BlessingOfKings, BlessingOfMight, BlessingOfWisdom].map(buffItem) },
+	{ label: 'Mana', items: [Innervate].map(buffItem) },
 	{ label: 'Other', items: [PowerInfusion, Thorns].map(buffItem) },
 ];
 
 // The buffs the members of our party give us: the totems, the auras, Battle Shout, Blood Pact
 // and Atiesh. The protos keep them with the raid buffs, but only our party's shaman or paladin
 // gives them to us.
+//
+// A shaman puts down its own totems (see the starting totems in its Class Settings and the
+// rotation), so for a shaman the totems here are the ones the other shamans in the party give.
 export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
-	{
-		label: 'Stats',
-		items: [BloodPactBuff, BloodPactBuffForever, StrengthBuffHorde, StrengthBuffHordeForever, GraceOfAir, GraceOfAirForever].map(buffItem),
-	},
+	{ label: 'Stats', items: [BloodPactBuff, BloodPactBuffForever].map(buffItem) },
 	{ label: 'Attack Power', items: [BattleShoutBuff, BattleShoutBuffForever, TrueshotAuraBuff].map(buffItem) },
-	{ label: 'Weapon Totem', items: [{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] }] },
+	{
+		label: player => (player.getClass() === Class.ClassShaman ? 'Other Shaman Totems' : 'Totems'),
+		items: [
+			...[StrengthBuffHorde, StrengthBuffHordeForever, GraceOfAir, GraceOfAirForever, ManaSpringTotem, PhysDamReductionBuff].map(buffItem),
+			{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] },
+		],
+	},
 	{ label: 'Crit', items: [MeleeCritBuff, SpellCritBuff].map(buffItem) },
-	{ label: 'Mana', items: [ManaSpringTotem].map(buffItem) },
-	{ label: 'Defense', items: [ArmorBuff, PhysDamReductionBuff, RetributionAura].map(buffItem) },
+	{ label: 'Defense', items: [ArmorBuff, RetributionAura].map(buffItem) },
 	{
 		label: 'Resistances',
 		items: [
