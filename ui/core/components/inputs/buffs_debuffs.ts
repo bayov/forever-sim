@@ -128,20 +128,15 @@ export const ResistanceBuff = InputHelpers.makeMultiIconInput({
 	label: 'Resistances',
 });
 
-export const StaminaBuff = InputHelpers.makeMultiIconInput({
-	values: [
-		makeTristateRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(10938),
-			impId: ActionId.fromSpellId(14767),
-			fieldName: 'powerWordFortitude',
-		}),
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromItemId(10307),
-			fieldName: 'scrollOfStamina',
-		}),
-	],
-	label: 'Stamina',
-});
+// The Scrolls of Stamina, Intellect and Spirit are with the consumables, see ScrollOfStamina.
+export const StaminaBuff = withLabel(
+	makeTristateRaidBuffInput({
+		actionId: () => ActionId.fromSpellId(10938),
+		impId: ActionId.fromSpellId(14767),
+		fieldName: 'powerWordFortitude',
+	}),
+	'Power Word: Fortitude',
+);
 
 export const BloodPactBuff = withLabel(
 	makeTristateRaidBuffInput({
@@ -226,33 +221,21 @@ export const TotemWeaponBuffInput = withLabel(
 	'Totem Weapon Buff',
 );
 
-export const IntellectBuff = InputHelpers.makeMultiIconInput({
-	values: [
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(10157),
-			fieldName: 'arcaneBrilliance',
-		}),
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromItemId(10308),
-			fieldName: 'scrollOfIntellect',
-		}),
-	],
-	label: 'Intellect',
-});
+export const IntellectBuff = withLabel(
+	makeBooleanRaidBuffInput({
+		actionId: () => ActionId.fromSpellId(10157),
+		fieldName: 'arcaneBrilliance',
+	}),
+	'Arcane Intellect',
+);
 
-export const SpiritBuff = InputHelpers.makeMultiIconInput({
-	values: [
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(27841),
-			fieldName: 'divineSpirit',
-		}),
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromItemId(10306),
-			fieldName: 'scrollOfSpirit',
-		}),
-	],
-	label: 'Spirit',
-});
+export const SpiritBuff = withLabel(
+	makeBooleanRaidBuffInput({
+		actionId: () => ActionId.fromSpellId(27841),
+		fieldName: 'divineSpirit',
+	}),
+	'Divine Spirit',
+);
 
 export const BattleShoutBuff = withLabel(
 	makeTristateRaidBuffInput({
@@ -636,7 +619,7 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: StaminaBuff,
-		picker: MultiIconPicker,
+		picker: IconPicker,
 		stats: [],
 	},
 	{
@@ -646,12 +629,12 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: IntellectBuff,
-		picker: MultiIconPicker,
+		picker: IconPicker,
 		stats: [Stat.StatIntellect],
 	},
 	{
 		config: SpiritBuff,
-		picker: MultiIconPicker,
+		picker: IconPicker,
 		stats: [Stat.StatSpirit],
 	},
 

@@ -34,7 +34,13 @@ import { ActionId } from '../../proto_utils/action_id';
 import { isBluntWeaponType, isSharpWeaponType, isWeapon } from '../../proto_utils/utils';
 import { EventID, TypedEvent } from '../../typed_event';
 import { IconEnumValueConfig } from '../icon_enum_picker';
-import { makeBooleanConsumeInput, makeBooleanMiscConsumeInput, makeBooleanPetMiscConsumeInput, makeEnumConsumeInput } from '../icon_inputs';
+import {
+	makeBooleanConsumeInput,
+	makeBooleanMiscConsumeInput,
+	makeBooleanPetMiscConsumeInput,
+	makeBooleanRaidBuffInput,
+	makeEnumConsumeInput,
+} from '../icon_inputs';
 import { IconPicker, IconPickerDirection } from '../icon_picker';
 import * as InputHelpers from '../input_helpers';
 import { MultiIconPicker, MultiIconPickerConfig, MultiIconPickerItemConfig } from '../multi_icon_picker';
@@ -897,6 +903,41 @@ export const INTELLECT_CONFIG: ConsumableStatOption<IntellectElixir>[] = [
 ];
 
 export const makeIntellectConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'intellectElixir' });
+
+///////////////////////////////////////////////////////////////////////////
+//                                 SCROLLS
+///////////////////////////////////////////////////////////////////////////
+
+// The Scrolls of Agility, Strength and Protection are choices in the elixir slot of their stat.
+// The Scrolls of Stamina, Intellect and Spirit are raid buffs in the sim, because it compares
+// them with Fortitude, Arcane Intellect and Divine Spirit. We still show them with the
+// consumables, in the category of their stat.
+export const ScrollOfStamina = makeBooleanRaidBuffInput({
+	actionId: () => ActionId.fromItemId(10307),
+	fieldName: 'scrollOfStamina',
+});
+export const ScrollOfIntellect = makeBooleanRaidBuffInput({
+	actionId: () => ActionId.fromItemId(10308),
+	fieldName: 'scrollOfIntellect',
+});
+export const ScrollOfSpirit = makeBooleanRaidBuffInput({
+	actionId: () => ActionId.fromItemId(10306),
+	fieldName: 'scrollOfSpirit',
+});
+
+// The Intellect a Scroll of Intellect gives at a level, from the best rank we can read. Keep it
+// in sync with scrollOfIntellect in sim/core/buffs.go.
+const scrollOfIntellectRanks = [
+	{ level: 50, intellect: 16 },
+	{ level: 35, intellect: 12 },
+	{ level: 20, intellect: 8 },
+	{ level: 5, intellect: 4 },
+];
+
+export const scrollOfIntellectValue = (level: number) => scrollOfIntellectRanks.find(rank => level >= rank.level)?.intellect ?? 0;
+
+// Both Intellect elixirs give 6.
+export const INTELLECT_ELIXIR_VALUE = 6;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Weapon Imbues
