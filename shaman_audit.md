@@ -40,7 +40,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 3.1 GCD: 1.5 sec for spells, 1 sec for totems, the 1 sec floor, whether spell haste shortens it
 - [x] 3.2 Cast times (Lightning Bolt, Chain Lightning) and what a cast does to the swing timer
 - [x] 3.3 How melee haste and cast speed modifiers stack (multiplicative)
-- [ ] 3.4 Prepull: totems, shield and imbue before the pull, the first swing at pull, totem time across the pull
+- [x] 3.4 Prepull: totems, shield and imbue before the pull, the first swing at pull, totem time across the pull
 - [ ] 3.5 Reaction and batching delays (if the sim has any)
 
 ## 4. Our white attacks
@@ -391,6 +391,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Berserking for mana users cuts attack and cast time by 10 to 30% (30% is +42.9% speed), and for warriors and rogues it adds 10 to 30% speed. That's from wowsims/sod and we found no Classic source. It doesn't matter for an Orc.
 - `haste_test.go` TestOrcShamanHaste stacks Flurry 5/5 and Rage of the Farseer halfway through a swing and drops them one at a time. It checks the swing speed, when the swing in progress lands and that cast speed stays at 1. It fails when the swing in progress doesn't rescale and when Rage of the Farseer gets cast speed.
 - For section 8: Flurry gives 5 / 10 / 15 / 20 / 25% here, where Classic gave 10 to 30%.
+
+### 3.4 Prepull
+
+- The user OK'd it (2026-10-08). The sim starts at the first prepull cast with a full mana bar, and we regen from there. The weapon imbue is on from the start with no cast, mana or GCD. Each prepull cast pays its mana and starts the five second rule, so a totem at -1 sec keeps it going until +4 sec. Shield and totem time counts from the cast: 10 min for Lightning Shield, 5 min for the earth, air and water totems and Flametongue Totem, 30 to 55 sec for Searing Totem and 20 sec for Magma Totem. The totem's buff runs out with it.
+- At 0 the auto attacks start and the first swing lands right away. The GCD of a totem cast at -1 sec ends at 0. Cooldowns start at 0. Nothing hits the target before the pull: Searing Totem cast at -1 sec first attacks at +1.5 sec, one 2.5 sec interval after the cast. When the first attack should come is part of 7.22.
+- `prepull_test.go` TestOrcShamanPrepull casts Lightning Shield at -6 sec and Strength of Earth, Mana Spring and Searing Totem after it. It checks the mana after the first cast, the imbue, the GCD and the five second rule at the pull, every shield, totem and buff expiration, the first swing at 0 and the first Searing Totem attack. It fails when the pull comes 0.5 sec late, when the imbue isn't on, when the five second rule is 4 sec, and when Strength of Earth's buff or Mana Spring Totem gets a Classic duration.
+- For the rotation session: the Level 30 presets should cast Lightning Shield before the pull (the user, 2026-10-08). It's in notes.md.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

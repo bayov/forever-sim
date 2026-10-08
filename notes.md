@@ -1,5 +1,6 @@
 * Which is better, Flame Shock or Earth Shock when Stormstrike debuff is up?
 * Consider rotation with less Fire Nova to be more mana efficient
+* Level 30 + 5 and Level 30 PvP: cast Lightning Shield before the pull (at -4.5 s, ahead of Strength of Earth at -3 s) instead of on a free GCD in the fight (the user, 2026-10-08)
 
 # Need to Verify
 
