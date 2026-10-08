@@ -6,7 +6,7 @@ import { ListItemPickerConfig, ListPicker } from '../components/list_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
 import { Encounter } from '../encounter.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
-import { InputType, MobType, SpellSchool, Stat, Target, Target as TargetProto, TargetInput } from '../proto/common.js';
+import { InputType, MobType, PresetTarget, SpellSchool, Stat, Target, Target as TargetProto, TargetInput } from '../proto/common.js';
 import { statNames } from '../proto_utils/names.js';
 import { Stats } from '../proto_utils/stats.js';
 import { isHealingSpec } from '../proto_utils/utils.js';
@@ -17,6 +17,7 @@ import { randomUUID } from '../utils.js';
 import { BaseModal } from './base_modal.js';
 import { Component } from './component.js';
 import { dirtySettings } from './dirty_settings.js';
+import { IconEnumRowPicker } from './individual_sim_ui/player_pickers.js';
 import { Input } from './input.js';
 
 export interface EncounterPickerConfig {
@@ -145,30 +146,14 @@ class TargetList extends Component {
 		};
 
 		const buildTargetRow = (target: TargetProto, index: number): HTMLElement => {
-			const preset = presetTargets.find(pe => equalTargetsIgnoreInputs(target, pe.target));
-			const mobType = mobTypeEnumValues.find(mt => mt.value == target.mobType) ?? mobTypeEnumValues[0];
-			const summary = [`Level ${target.level}`, mobType.name, `${target.stats[Stat.StatArmor]} Armor`];
-			const resistances = TARGET_RESISTANCES.map(
-				({ stat, school }) => `<span class="encounter-target-resist-${school.toLowerCase()}">${school}</span> ${target.stats[stat]}`,
-			);
-
-			const row = document.createElement('div');
-			row.classList.add('encounter-target-row');
-			row.innerHTML = `
-				<img class="encounter-target-icon" src="https://wow.zamimg.com/images/wow/icons/large/${mobType.icon}.jpg" />
-				<div class="encounter-target-info">
-					<div class="encounter-target-name"></div>
-					<div class="encounter-target-summary"></div>
-					<div class="encounter-target-summary encounter-target-resistances">${resistances.join(' \u00b7 ')}</div>
-				</div>
+			const row = buildTargetCard(target, presetTargets);
+			row.insertAdjacentHTML(
+				'beforeend',
+				`
 				<button class="encounter-target-edit btn btn-link" aria-label="Edit target"><i class="fas fa-pen"></i></button>
 				<button class="encounter-target-remove btn btn-link link-danger" aria-label="Remove target"><i class="fas fa-times"></i></button>
-			`;
-			(row.querySelector('.encounter-target-name') as HTMLElement).textContent = preset?.path.split('/').pop() ?? 'Custom';
-			(row.querySelector('.encounter-target-summary') as HTMLElement).textContent = summary.join(' \u00b7 ');
-
-			const icon = row.querySelector('.encounter-target-icon') as HTMLElement;
-			tippy(icon, { content: mobType.name });
+			`,
+			);
 			const editButton = row.querySelector('.encounter-target-edit') as HTMLElement;
 			tippy(editButton, { content: 'Edit target' });
 			editButton.addEventListener('click', () => new TargetModal(simUI.rootElem, encounter, index).open());
@@ -199,11 +184,56 @@ class TargetList extends Component {
 	}
 }
 
-// One target's settings. We throw the modal away when it closes, so its index never goes
-// stale after we remove a target.
+// A target's icon, name and two lines of its stats, for its row in the list and the top of
+// its settings.
+function buildTargetCard(target: TargetProto, presetTargets: Array<PresetTarget>): HTMLElement {
+	const preset = presetTargets.find(pe => equalTargetsIgnoreInputs(target, pe.target));
+	const mobType = mobTypeEnumValues.find(mt => mt.value == target.mobType) ?? mobTypeEnumValues[0];
+	const summary = [`Level ${target.level}`, mobType.name, `${target.stats[Stat.StatArmor]} Armor`];
+
+	const card = document.createElement('div');
+	card.classList.add('encounter-target-row');
+	card.innerHTML = `
+		<img class="encounter-target-icon" src="https://wow.zamimg.com/images/wow/icons/large/${mobType.icon}.jpg" />
+		<div class="encounter-target-info">
+			<div class="encounter-target-name"></div>
+			<div class="encounter-target-summary"></div>
+			<div class="encounter-target-summary encounter-target-resistances"></div>
+		</div>
+	`;
+	(card.querySelector('.encounter-target-name') as HTMLElement).textContent = preset?.path.split('/').pop() ?? 'Custom';
+	(card.querySelector('.encounter-target-summary') as HTMLElement).textContent = summary.join(' \u00b7 ');
+
+	const resistancesElem = card.querySelector('.encounter-target-resistances') as HTMLElement;
+	TARGET_RESISTANCES.forEach(({ stat, school }) => {
+		const resistance = document.createElement('span');
+		resistance.classList.add('encounter-target-resist');
+		resistance.append(resistanceIcon(school), String(target.stats[stat]));
+		tippy(resistance, { content: resistanceTooltip(school) });
+		resistancesElem.appendChild(resistance);
+	});
+	tippy(card.querySelector('.encounter-target-icon') as HTMLElement, { content: mobType.name });
+	return card;
+}
+
+// One target's settings, under the same card the target has in the list. We throw the modal
+// away when it closes, so its index never goes stale after we remove a target.
 class TargetModal extends BaseModal {
 	constructor(parent: HTMLElement, encounter: Encounter, index: number) {
 		super(parent, 'target-picker-modal', { title: `Target ${index + 1}`, disposeOnClose: true });
+
+		const cardElem = document.createElement('div');
+		cardElem.classList.add('target-picker-card');
+		this.body.appendChild(cardElem);
+		const presetTargets = encounter.sim.db.getAllPresetTargets();
+		const renderCard = () => {
+			const target = encounter.targets[index];
+			if (target) cardElem.replaceChildren(buildTargetCard(target, presetTargets));
+		};
+		renderCard();
+		const event = encounter.targetsChangeEmitter.on(renderCard);
+		this.addOnDisposeCallback(() => event.dispose());
+
 		new TargetPicker(this.body, encounter, index, {
 			id: `encounter-target-${index}`,
 			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
@@ -334,7 +364,8 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		this.mobTypePicker = new EnumPicker(section1, null, {
+		// The mob types as a row of their icons, the same ones the target's card shows.
+		this.mobTypePicker = new IconEnumRowPicker<null>(section1, null, {
 			id: 'encounter-mob-type',
 			label: 'Mob Type',
 			values: mobTypeEnumValues,
@@ -368,14 +399,19 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 
 		this.targetInputPickers = makeTargetInputsPicker(section1, encounter, this.targetIndex);
 
+		// The resistances sit in one row, each under the game's icon for it.
+		const resistancesRow = document.createElement('div');
+		resistancesRow.classList.add('target-picker-resistances');
 		this.statPickers = ALL_TARGET_STATS.map(statData => {
 			const stat = statData.stat;
-			return new NumberPicker(section2, null, {
+			const resistance = TARGET_RESISTANCES.find(r => r.stat == stat);
+			if (resistance && !resistancesRow.parentElement) section2.appendChild(resistancesRow);
+			const picker = new NumberPicker(resistance ? resistancesRow : section2, null, {
 				id: `target-picker-stats-${statData.stat}`,
-				inline: true,
+				inline: !resistance,
 				extraCssClasses: statData.extraCssClasses,
 				label: statNames.get(stat),
-				labelTooltip: statData.tooltip,
+				labelTooltip: resistance ? resistanceTooltip(resistance.school) : statData.tooltip,
 				changedEvent: () => encounter.targetsChangeEmitter,
 				getValue: () => this.getTarget().stats[stat],
 				setValue: (eventID: EventID, _: null, newValue: number) => {
@@ -383,6 +419,16 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 					encounter.targetsChangeEmitter.emit(eventID);
 				},
 			});
+			// A resistance's label is the game's icon for it. We keep the name for screen readers
+			// and for the list of changes on a modified preset.
+			if (resistance) {
+				const label = picker.rootElem.querySelector('label')!;
+				const name = document.createElement('span');
+				name.classList.add('visually-hidden');
+				name.textContent = statNames.get(stat) ?? '';
+				label.replaceChildren(resistanceIcon(resistance.school), name);
+			}
+			return picker;
 		});
 
 		this.swingSpeedPicker = new NumberPicker(section3, null, {
@@ -797,7 +843,7 @@ function equalTargetsIgnoreInputs(target1: TargetProto | undefined, target2: Tar
 	return TargetProto.equals(target1, modTarget2);
 }
 
-// The resistances on a target's second summary line, each school's name in its color.
+// The resistances on a target's second summary line, and in the target's settings.
 const TARGET_RESISTANCES = [
 	{ stat: Stat.StatArcaneResistance, school: 'Arcane' },
 	{ stat: Stat.StatFireResistance, school: 'Fire' },
@@ -805,6 +851,17 @@ const TARGET_RESISTANCES = [
 	{ stat: Stat.StatNatureResistance, school: 'Nature' },
 	{ stat: Stat.StatShadowResistance, school: 'Shadow' },
 ];
+
+// The resistance icons of the game's character sheet, see .resistance-icon.
+function resistanceIcon(school: string): HTMLElement {
+	const icon = document.createElement('span');
+	icon.classList.add('resistance-icon', `resistance-icon-${school.toLowerCase()}`);
+	return icon;
+}
+
+function resistanceTooltip(school: string): string {
+	return `${school} Resistance: the higher it is, the more of our ${school} damage the target resists.`;
+}
 
 const ALL_TARGET_STATS: Array<{ stat: Stat; tooltip: string; extraCssClasses: Array<string> }> = [
 	{ stat: Stat.StatHealth, tooltip: '', extraCssClasses: [] },
