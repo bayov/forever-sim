@@ -251,7 +251,10 @@ export function buildStartingTotemsSettings(parent: HTMLElement, simUI: Individu
 			getValue: player => startingTotems(player)[totemElement.field],
 			setValue: (eventID, player, newValue) =>
 				setStartingTotems(eventID, player, totems => {
-					if (totems[totemElement.field] === 0) totems[totemElement.secondsField] = totemElement.defaultSecondsBeforePull;
+					// An element without a totem goes back to 0 seconds, so it reads like it never had
+					// one and a preset without it isn't marked as changed.
+					if (newValue === 0) totems[totemElement.secondsField] = 0;
+					else if (totems[totemElement.field] === 0) totems[totemElement.secondsField] = totemElement.defaultSecondsBeforePull;
 					(totems[totemElement.field] as number) = newValue;
 				}),
 		});

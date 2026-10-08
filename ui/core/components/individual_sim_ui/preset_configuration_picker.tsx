@@ -233,7 +233,20 @@ export class PresetConfigurationPicker extends Component {
 		return changed.filter(([matches]) => !matches).map(([_, name]) => name);
 	}
 
+	// A field can be a message of its own, like an Enhancement shaman's starting totems, so we
+	// compare those by their fields.
 	private containsAllFields<T extends Spec>(full: SpecOptions<T>, partial: Partial<SpecOptions<T>>): boolean {
-		return Object.keys(partial).every(key => key in full && full[key as keyof SpecOptions<T>] === partial[key as keyof SpecOptions<T>]);
+		return Object.keys(partial).every(key => key in full && sameValue(full[key as keyof SpecOptions<T>], partial[key as keyof SpecOptions<T>]));
 	}
+}
+
+function sameValue(a: unknown, b: unknown): boolean {
+	if (a === b) {
+		return true;
+	}
+	if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) {
+		return false;
+	}
+	const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+	return [...keys].every(key => sameValue((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]));
 }

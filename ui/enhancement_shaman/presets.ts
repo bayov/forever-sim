@@ -29,7 +29,7 @@ import {
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
-import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
+import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType, StartingTotems } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
@@ -456,6 +456,11 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	syncType: ShamanSyncType.Auto,
 });
 
+// The class options every preset build sets. The builds start the fight with no totems and put
+// them down in the rotation's prepull actions, and they say so, so loading one clears the
+// starting totems and changing them marks the build as modified.
+const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create() };
+
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -586,7 +591,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
+	options: PresetBuildOptions,
 });
 export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 60 + Water Shield', {
 	group: 'Level 60',
@@ -599,7 +604,7 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
+	options: PresetBuildOptions,
 });
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
@@ -612,7 +617,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
+	options: PresetBuildOptions,
 });
 
 // A level 30 shaman soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32)
@@ -950,7 +955,7 @@ export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', 
 	level: 30,
 	bonusTalentPoints: 5,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
+	options: PresetBuildOptions,
 });
 
 // Level 30 PvP is a 60 sec fight against a level 30 player in PvP mode. The enemy keeps us
@@ -1014,7 +1019,7 @@ export const PresetBuildLevel30PvP = PresetUtils.makePresetBuild('Level 30 PvP',
 	level: 30,
 	bonusTalentPoints: 5,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: { shamanImbue: WeaponImbue.WindfuryWeapon },
+	options: PresetBuildOptions,
 });
 
 // Level 30 PvP against each kind of enemy player, with the High HP set and its stat
@@ -1079,7 +1084,7 @@ const makeLevel30PvPBuild = (name: string, tooltip: string, encounter: PresetUti
 		level: 30,
 		bonusTalentPoints: 5,
 		professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-		options: { shamanImbue: WeaponImbue.WindfuryWeapon },
+		options: PresetBuildOptions,
 	});
 
 // 126.5 DPS. Lightning Shield never fires, because a caster doesn't hit us in melee.
