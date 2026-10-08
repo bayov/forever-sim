@@ -258,8 +258,9 @@
 
 		// The row's buttons, quiet until we hover the row. A warning always shows.
 		> .list-picker-items > .list-picker-item-container > .list-picker-item-header {
+			align-self: flex-start;
+			padding-top: 0.8rem;
 			gap: 0.65rem;
-			padding-top: 0.2rem;
 
 			.list-picker-item-action {
 				color: var(--text-muted-color);
@@ -319,7 +320,8 @@
 			&::before {
 				content: counter(apl-row);
 				flex: 0 0 1.5rem;
-				padding-top: 0.15rem;
+				align-self: flex-start;
+				padding-top: 0.75rem;
 				color: var(--text-muted-color);
 				font-size: 0.8rem;
 				font-variant-numeric: tabular-nums;
@@ -327,12 +329,156 @@
 		}
 	}
 
-	// What the row does comes first, and its condition goes under it.
-	.apl-list-item-picker-root > .apl-action-picker-root {
-		gap: 0.25rem;
+	// Each row is split in two. On the left is what the row does: a large icon, the kind of
+	// action ("Cast") and the spell under it. On the right is the condition, or for a prepull
+	// action the time before the pull. When the row is too narrow for both, the right side
+	// goes under the left one.
+	.apl-list-item-picker-root {
+		align-items: flex-start;
+		gap: 0.75rem;
+		min-width: 0;
 
-		> .apl-action-picker-action {
-			order: -1;
+		& > :not(:last-child) {
+			margin-right: 0;
+		}
+
+		> .apl-action-picker-root {
+			flex: 1;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: stretch;
+			gap: 0.4rem 1rem;
+			min-width: 0;
+		}
+	}
+
+	.apl-row-icon {
+		flex: 0 0 auto;
+		width: 2.75rem;
+		height: 2.75rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid #000;
+		border-radius: 4px;
+		outline: 1px solid #3c3a35;
+		background-color: #0c0c0f;
+		background-size: 120%;
+		background-position: center;
+		color: var(--text-muted-color);
+		font-size: 1.1rem;
+	}
+
+	.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-picker-action {
+		order: -1;
+		flex: 0 0 21.5rem;
+		align-self: flex-start;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		gap: 0;
+		min-width: 0;
+		min-height: 2.75rem;
+
+		// The kind of action, like Cast, is a small line over the spell.
+		> .dropdown-picker-root > .dropdown-picker-button {
+			font-size: 0.75rem;
+			line-height: 1.2;
+		}
+
+		> .apl-picker-builder-root {
+			flex-wrap: nowrap;
+			align-items: center;
+			gap: 0.4rem;
+			max-width: 100%;
+
+			// The spell's name, the biggest text in the row. Its small icon is the large one on
+			// the left.
+			> .dropdown-picker-root:first-child > .dropdown-picker-button {
+				min-width: 0;
+				color: var(--bs-white);
+				font-size: 0.95rem;
+				font-weight: 600;
+				line-height: 1.25;
+				white-space: normal;
+				text-align: left;
+
+				.apl-actionid-item-icon {
+					display: none;
+				}
+			}
+		}
+
+		// An action with no spell, like Wait or Autocast Other Cooldowns, is named by its kind.
+		&:not(:has(.apl-actionid-item-icon)) > .dropdown-picker-root > .dropdown-picker-button {
+			color: var(--bs-white);
+			font-size: 1rem;
+			font-weight: 600;
+		}
+	}
+
+	.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-condition,
+	.apl-prepull-actions-doat {
+		flex: 1 1 18rem;
+		flex-wrap: wrap;
+		align-items: center;
+		align-content: center;
+		min-width: 0;
+		min-height: 2.75rem;
+		padding-left: 1rem;
+		border-left: 1px solid var(--line-color);
+	}
+
+	// A long condition wraps inside the condition column instead of running past the row's
+	// right edge. Each value's details stay on its line, next to its kind ("Compare"), and wrap
+	// within the space that's left, but never narrower than their widest dropdown.
+	.apl-action-condition .apl-value-picker-root {
+		flex-wrap: wrap;
+
+		> .apl-picker-builder-root {
+			flex: 1 1 0;
+		}
+	}
+
+	// A condition with three levels of "Any of" and "All of", like the rogue's Slice and Dice
+	// checks, needs the whole row, so it goes under the action.
+	.apl-list-item-picker-root
+		> .apl-action-picker-root
+		> .apl-action-condition:has(.apl-picker-builder-multi .apl-picker-builder-multi .apl-picker-builder-multi) {
+		flex-basis: 100%;
+		min-height: 0;
+		padding-left: 0;
+		border-left: 0;
+	}
+
+	// In a narrow row, like on a small screen, the condition goes under the action, so it needs
+	// no line between them.
+	.apl-list-item-picker > .list-picker-items > .list-picker-item-container > .list-picker-item {
+		container-type: inline-size;
+	}
+
+	@container (max-width: 44rem) {
+		.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-condition {
+			flex-basis: 100%;
+			min-height: 0;
+			padding-left: 0;
+			border-left: 0;
+		}
+	}
+
+	// The prepull action's time goes on the right, where a condition would be.
+	.apl-prepull-action-picker .apl-list-item-picker-root > .apl-action-picker-root {
+		flex: 0 0 auto;
+		width: auto;
+	}
+
+	.apl-prepull-actions-doat {
+		order: 2;
+		flex: 0 1 auto;
+		gap: 0.5rem;
+
+		> .form-label {
+			font-size: 0.8125rem;
 		}
 	}
 

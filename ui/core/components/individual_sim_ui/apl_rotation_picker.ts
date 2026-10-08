@@ -2,6 +2,7 @@ import tippy, { Instance as TippyInstance } from 'tippy.js';
 
 import { Player } from '../../player';
 import { APLAction, APLListItem, APLPrepullAction, APLValue } from '../../proto/apl';
+import { ActionID as ActionIdProto } from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
 import { SimUI } from '../../sim_ui';
 import { EventID, TypedEvent } from '../../typed_event';
@@ -107,6 +108,7 @@ class APLPrepullActionPicker extends Input<Player<any>, APLPrepullAction> {
 
 		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
 		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.prepullActions[index]?.warnings || []);
+		makeActionIcon(this.rootElem, player, () => this.getItem().action);
 
 		this.hidePicker = new HidePicker(itemHeaderElem, player, {
 			changedEvent: () => this.player.rotationChangeEmitter,
@@ -207,6 +209,7 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 
 		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
 		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.priorityList[index]?.warnings || []);
+		makeActionIcon(this.rootElem, player, () => this.getItem().action);
 
 		this.hidePicker = new HidePicker(itemHeaderElem, player, {
 			changedEvent: () => this.player.rotationChangeEmitter,
@@ -286,6 +289,98 @@ function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, 
 	updateWarnings();
 	player.currentStatsEmitter.on(updateWarnings);
 }
+
+// The large icon on the left of a row, for what the row does.
+//
+// A row that casts a spell or uses an aura shows that spell's icon, with its wowhead tooltip. A
+// Scheduled Action shows the icon of the action it schedules. Other actions, like Wait or
+// Autocast Other Cooldowns, show a plain icon for their kind.
+function makeActionIcon(parent: HTMLElement, player: Player<any>, getAction: () => APLAction | undefined) {
+	const iconElem = document.createElement('a');
+	iconElem.classList.add('apl-row-icon');
+	iconElem.dataset.whtticon = 'false';
+	parent.prepend(iconElem);
+
+	let shownKey = '';
+	const update = () => {
+		if (!existsInDOM(iconElem)) {
+			player.rotationChangeEmitter.off(update);
+			return;
+		}
+		let action = getAction();
+		while (action?.action.oneofKind === 'schedule' && action.action.schedule.innerAction) {
+			action = action.action.schedule.innerAction;
+		}
+		const kind = action?.action.oneofKind;
+		const idProto = actionIdOf(action);
+		const key = `${kind}:${idProto ? ActionIdProto.toJsonString(idProto) : ''}`;
+		if (key === shownKey) {
+			return;
+		}
+		shownKey = key;
+
+		iconElem.replaceChildren();
+		iconElem.style.backgroundImage = '';
+		iconElem.removeAttribute('href');
+		delete iconElem.dataset.wowhead;
+		const actionId = idProto ? ActionId.fromProto(idProto) : undefined;
+		if (actionId && actionId.anyId()) {
+			iconElem.classList.remove('apl-row-icon-kind');
+			actionId.fillAndSet(iconElem, true, true).then(filled => {
+				if (shownKey === key) {
+					filled.setWowheadDataset(iconElem, { useBuffAura: kind !== 'castSpell' && kind !== 'channelSpell' });
+				}
+			});
+		} else {
+			iconElem.classList.add('apl-row-icon-kind');
+			const fontIcon = document.createElement('i');
+			fontIcon.classList.add('fa', ACTION_KIND_ICONS[kind ?? ''] ?? 'fa-question');
+			iconElem.appendChild(fontIcon);
+		}
+	};
+	update();
+	player.rotationChangeEmitter.on(update);
+}
+
+function actionIdOf(action: APLAction | undefined): ActionIdProto | undefined {
+	const impl = action?.action;
+	switch (impl?.oneofKind) {
+		case 'castSpell':
+			return impl.castSpell.spellId;
+		case 'channelSpell':
+			return impl.channelSpell.spellId;
+		case 'multidot':
+			return impl.multidot.spellId;
+		case 'multishield':
+			return impl.multishield.spellId;
+		case 'activateAura':
+			return impl.activateAura.auraId;
+		case 'activateAuraWithStacks':
+			return impl.activateAuraWithStacks.auraId;
+		case 'cancelAura':
+			return impl.cancelAura.auraId;
+		case 'triggerIcd':
+			return impl.triggerIcd.auraId;
+	}
+	return undefined;
+}
+
+const ACTION_KIND_ICONS: Record<string, string> = {
+	autocastOtherCooldowns: 'fa-bolt',
+	wait: 'fa-hourglass-half',
+	waitUntil: 'fa-hourglass-half',
+	schedule: 'fa-clock',
+	sequence: 'fa-list-ol',
+	strictSequence: 'fa-list-ol',
+	resetSequence: 'fa-rotate-left',
+	changeTarget: 'fa-crosshairs',
+	itemSwap: 'fa-right-left',
+	move: 'fa-person-running',
+	addComboPoints: 'fa-plus',
+	catOptimalRotationAction: 'fa-gears',
+	customRotation: 'fa-gears',
+	castPaladinPrimarySeal: 'fa-certificate',
+};
 
 class HidePicker extends Input<Player<any>, boolean> {
 	private readonly inputElem: HTMLElement;
