@@ -185,6 +185,20 @@ const professionIcons: Record<Profession, string> = {
 	[Profession.Tailoring]: 'trade_tailoring',
 };
 
+// The order the game lists them in: the crafting professions from A to Z, then the gathering
+// ones.
+const professionOrder: Array<Profession> = [
+	Profession.Alchemy,
+	Profession.Blacksmithing,
+	Profession.Enchanting,
+	Profession.Engineering,
+	Profession.Leatherworking,
+	Profession.Tailoring,
+	Profession.Herbalism,
+	Profession.Mining,
+	Profession.Skinning,
+];
+
 const MAX_PROFESSIONS = 2;
 
 // The professions as icons, where we pick up to two.
@@ -210,24 +224,22 @@ export class ProfessionsPicker extends Input<Player<Spec>, Array<Profession>> {
 		const options = (<div className="player-icon-picker-options"></div>) as HTMLElement;
 		this.rootElem.append(this.value, options);
 
-		Object.values(Profession)
-			.filter((profession): profession is Profession => typeof profession === 'number' && profession !== Profession.ProfessionUnknown)
-			.forEach(profession => {
-				const option = iconOption(professionIcons[profession], professionNames.get(profession)!);
-				option.addEventListener('click', () => this.toggle(profession), { signal: this.signal });
-				const tooltip = tippy(option, {
-					content: professionNames.get(profession),
-					onShow: instance => {
-						const full = this.professions.length >= MAX_PROFESSIONS && !this.professions.includes(profession);
-						instance.setContent(
-							full ? `${professionNames.get(profession)} (drop one of your two professions first)` : professionNames.get(profession)!,
-						);
-					},
-				});
-				this.addOnDisposeCallback(() => tooltip.destroy());
-				this.options.set(profession, option);
-				options.appendChild(option);
+		professionOrder.forEach(profession => {
+			const option = iconOption(professionIcons[profession], professionNames.get(profession)!);
+			option.addEventListener('click', () => this.toggle(profession), { signal: this.signal });
+			const tooltip = tippy(option, {
+				content: professionNames.get(profession),
+				onShow: instance => {
+					const full = this.professions.length >= MAX_PROFESSIONS && !this.professions.includes(profession);
+					instance.setContent(
+						full ? `${professionNames.get(profession)} (drop one of your two professions first)` : professionNames.get(profession)!,
+					);
+				},
 			});
+			this.addOnDisposeCallback(() => tooltip.destroy());
+			this.options.set(profession, option);
+			options.appendChild(option);
+		});
 
 		this.init();
 	}
