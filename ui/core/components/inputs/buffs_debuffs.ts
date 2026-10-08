@@ -1,6 +1,7 @@
 import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
-import { Class, Debuffs, Faction, RaidBuffs, SaygesFortune, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
+import { Class, Debuffs, Faction, RaidBuffs, SaygesFortune, Spec, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
+import { AirTotem, EnhancementShaman_Options } from '../../proto/shaman';
 import { ActionId } from '../../proto_utils/action_id';
 import { EventID, TypedEvent } from '../../typed_event';
 import {
@@ -43,14 +44,20 @@ function foreverTwin<T extends object>(config: T): T {
 	return config;
 }
 
-export const AllStatsBuff = withLabel(
-	makeTristateRaidBuffInput({
-		actionId: () => ActionId.fromSpellId(9885),
-		impId: ActionId.fromSpellId(17055),
-		fieldName: 'giftOfTheWild',
-	}),
-	'Mark of the Wild',
+export const AllStatsBuff = classicTwin(
+	withLabel(
+		makeTristateRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(9885),
+			impId: ActionId.fromSpellId(17055),
+			fieldName: 'giftOfTheWild',
+			showWhen: notForever,
+		}),
+		'Mark of the Wild',
+	),
 );
+
+// Forever has no Improved Mark of the Wild, so it's plain on or off there.
+export const AllStatsBuffForever = withLabel(makeForeverPlainBuffInput(9885, 'giftOfTheWild'), 'Mark of the Wild');
 
 // Separate Strength buffs allow us to use a boolean pickers for Horde specifically
 export const BlessingOfKings = withLabel(
@@ -228,7 +235,7 @@ export const GraceOfAir = classicTwin(
 // tree.
 function makeForeverPlainBuffInput(
 	spellId: number,
-	fieldName: 'strengthOfEarthTotem' | 'graceOfAirTotem' | 'bloodPact' | 'battleShout',
+	fieldName: 'giftOfTheWild' | 'strengthOfEarthTotem' | 'graceOfAirTotem' | 'bloodPact' | 'battleShout',
 	showWhen: (player: Player<any>) => boolean = () => true,
 ) {
 	return foreverTwin(
@@ -702,6 +709,11 @@ export const RAID_BUFFS_CONFIG = [
 		stats: [],
 	},
 	{
+		config: AllStatsBuffForever,
+		picker: IconPicker,
+		stats: [],
+	},
+	{
 		config: BlessingOfKings,
 		picker: IconPicker,
 		stats: [],
@@ -935,12 +947,31 @@ export const SAYGES_CONFIG = [
 export interface IconSubsectionItem {
 	config: IconPickerConfig<Player<any>, any> | ExclusiveIconRowConfig;
 	stats: Array<Stat>;
+	// Why the buff doesn't stack with another one that's on, see markUnstacked. Nothing while
+	// it's fine.
+	unstackedNote?: (player: Player<any>) => string | undefined;
 }
 
 export interface IconSubsection {
 	// A label can follow the player, like the totems a shaman gets from the other shamans.
 	label: string | ((player: Player<any>) => string);
 	items: Array<IconSubsectionItem>;
+}
+
+// Another shaman's Windfury Totem in the party buffs, under Forever.
+export function otherShamanWindfuryTotem(player: Player<any>): boolean {
+	return isForever(player) && player.getRaid()!.getBuffs().totemWeaponBuff === TotemWeaponBuff.TotemWeaponBuffWindfury;
+}
+
+// Under Forever, Grace of Air doesn't stack with Windfury Totem for now (the user, 2026-10-08).
+// We name the Windfury Totem that's on: another shaman's, or the one an Enhancement shaman
+// starts the fight with.
+function graceOfAirUnstackedNote(player: Player<any>): string | undefined {
+	if (player.getRaid()!.getBuffs().graceOfAirTotem === TristateEffect.TristateEffectMissing) return undefined;
+	const startingAir = player.spec === Spec.SpecEnhancementShaman ? (player.getSpecOptions() as EnhancementShaman_Options).startingTotems?.air : undefined;
+	if (otherShamanWindfuryTotem(player)) return "Doesn't stack with another shaman's Windfury Totem under Forever for now.";
+	if (isForever(player) && startingAir === AirTotem.WindfuryTotem) return "Doesn't stack with our starting Windfury Totem under Forever for now.";
+	return undefined;
 }
 
 // A buff from RAID_BUFFS_CONFIG or MISC_BUFFS_CONFIG, with the stats it has there.
@@ -954,15 +985,15 @@ function buffItem(config: unknown): IconSubsectionItem {
 // The Blessings go here too, even for a paladin, because another paladin in the raid gives
 // them.
 export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
-	{ label: 'Stats', items: [AllStatsBuff, StaminaBuff, IntellectBuff, SpiritBuff].map(buffItem) },
+	{ label: 'Stats', items: [AllStatsBuff, AllStatsBuffForever, StaminaBuff, IntellectBuff, SpiritBuff].map(buffItem) },
 	{ label: 'Blessings', items: [BlessingOfKings, BlessingOfMight, BlessingOfWisdom].map(buffItem) },
 	{ label: 'Mana', items: [Innervate].map(buffItem) },
 	{ label: 'Other', items: [PowerInfusion, Thorns].map(buffItem) },
 ];
 
-// The buffs the members of our party give us: the totems, the auras, Battle Shout, Blood Pact
-// and Atiesh. The protos keep them with the raid buffs, but only our party's shaman or paladin
-// gives them to us.
+// The buffs the members of our party give us: the totems, the auras, Battle Shout and Blood
+// Pact. The protos keep them with the raid buffs, but only our party's shaman or paladin gives
+// them to us. We leave out Atiesh's Power of the Guardian.
 //
 // A shaman puts down its own totems (see the starting totems in its Class Settings and the
 // rotation), so for a shaman the totems here are the ones the other shamans in the party give.
@@ -971,7 +1002,9 @@ export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 	{
 		label: player => (player.getClass() === Class.ClassShaman ? 'Other Shaman Totems' : 'Totems'),
 		items: [
-			...[StrengthBuffHorde, StrengthBuffHordeForever, GraceOfAir, GraceOfAirForever, ManaSpringTotem, PhysDamReductionBuff].map(buffItem),
+			...[StrengthBuffHorde, StrengthBuffHordeForever].map(buffItem),
+			...[GraceOfAir, GraceOfAirForever].map(config => ({ ...buffItem(config), unstackedNote: graceOfAirUnstackedNote })),
+			...[ManaSpringTotem, PhysDamReductionBuff].map(buffItem),
 			{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] },
 		],
 	},
@@ -988,9 +1021,7 @@ export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 	},
 	{
 		label: 'Other',
-		items: [BloodPactBuff, BloodPactBuffForever, AtieshMageBuff, AtieshWarlockBuff, AtieshPriestBuff, AtieshDruidBuff, SanctityAura, BattleSquawkBuff].map(
-			buffItem,
-		),
+		items: [BloodPactBuff, BloodPactBuffForever, SanctityAura, BattleSquawkBuff].map(buffItem),
 	},
 ];
 

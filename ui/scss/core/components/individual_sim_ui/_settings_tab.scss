@@ -126,6 +126,47 @@
 		}
 	}
 
+	// A buff that doesn't stack with another one that's on, like Grace of Air next to Windfury
+	// Totem, see markUnstacked. Like a scroll in the consumables, it gets a red edge, a red tint
+	// and a "!" badge with the reason.
+	.buff-unstacked {
+		position: relative;
+
+		> .icon-picker-button,
+		&.player-icon-picker-option {
+			position: relative;
+			outline: 2px solid #e0403a !important;
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: rgba(200, 30, 30, 0.35);
+				pointer-events: none;
+			}
+		}
+	}
+
+	.unstacked-badge {
+		position: absolute;
+		top: -0.4rem;
+		right: -0.4rem;
+		z-index: 1;
+		width: 1rem;
+		height: 1rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid #000;
+		border-radius: 50%;
+		background: #d8342e;
+		color: #fff;
+		font-size: 0.7rem;
+		font-weight: 700;
+		line-height: 1;
+		cursor: help;
+	}
+
 	.cooldown-settings {
 		.cooldown-timings-picker {
 			min-width: 40%;

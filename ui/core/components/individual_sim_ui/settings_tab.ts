@@ -23,6 +23,7 @@ import { NumberPicker } from '../number_picker';
 import { SavedDataManager } from '../saved_data_manager';
 import { presetListTooltip } from '../preset_tree';
 import { SimTab } from '../sim_tab';
+import { markUnstacked } from '../unstacked_mark';
 import * as OtherInputs from './../other_inputs';
 import { IsbConfig, StormstrikeConfig } from './../other_inputs';
 import { ConsumesPicker } from './consumes_picker';
@@ -363,7 +364,9 @@ export class SettingsTab extends SimTab {
 					toggles.classList.add('icon-subsection-toggles');
 					slots.appendChild(toggles);
 				}
-				new IconPicker(toggles, player, { ...item.config, label: undefined });
+				const picker = new IconPicker(toggles, player, { ...item.config, label: undefined });
+				const note = item.unstackedNote;
+				if (note) markUnstacked(picker.rootElem, () => note(player), this.simUI.changeEmitter);
 			});
 		});
 	}
