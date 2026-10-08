@@ -39,7 +39,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 - [x] 3.1 GCD: 1.5 sec for spells, 1 sec for totems, the 1 sec floor, whether spell haste shortens it
 - [x] 3.2 Cast times (Lightning Bolt, Chain Lightning) and what a cast does to the swing timer
-- [ ] 3.3 How melee haste and cast speed modifiers stack (multiplicative)
+- [x] 3.3 How melee haste and cast speed modifiers stack (multiplicative)
 - [ ] 3.4 Prepull: totems, shield and imbue before the pull, the first swing at pull, totem time across the pull
 - [ ] 3.5 Reaction and batching delays (if the sim has any)
 
@@ -383,6 +383,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The user OK'd the swing timer (2026-10-08). We don't swing during a cast, and the swing timer starts over when it ends, so the next swing comes one full swing after the cast. Instant spells don't touch it.
 - Fixed (2026-10-08, the user): an instant Lightning Bolt (5 Maelstrom Weapon stacks or Nature's Swiftness) leaves the swing timer alone, like a shock. It used to start the swing timer over too (`electric_spell.go` stopMeleeForCast). TestEnhancement goes up about 3%. The Level 60 preset is 872.9 / 864.3 / 853.4 at 120 / 180 / 300 sec (was 850.4 / 840.4 / 828.4). Level 30 + 5 has no Maelstrom Weapon and doesn't change. The rotation knobs were tuned on the old behavior.
 - `swing_timer_test.go` TestOrcShamanCastSwingTimer casts 0.4 sec before a swing and checks the next swing after Lightning Bolt, Chain Lightning, a 3 stack bolt, a 5 stack bolt, a Nature's Swiftness bolt and Earth Shock. The old behavior fails it.
+
+### 3.3 Haste
+
+- The user OK'd it (2026-10-08). It matches Classic Era and wowsims/sod. Attack speed effects multiply (Slice and Dice 40% with Blade Flurry 20% and Juju Flurry 3% is 73%). Our sources are Flurry, Rage of the Farseer (attack speed only since the 2026-09-24 beta build), Berserking, Battle Squawk, Juju Flurry and haste on gear, which multiplies per item. Cast speed is kept apart and multiplies too (Berserking, spell haste on gear, the 1% set bonus).
+- When attack speed changes mid-swing, the rest of the swing scales with the new speed, both when an effect comes up and when it drops. A cast in progress keeps the cast time it started with. Ranged attacks don't rescale mid-shot.
+- Berserking for mana users cuts attack and cast time by 10 to 30% (30% is +42.9% speed), and for warriors and rogues it adds 10 to 30% speed. That's from wowsims/sod and we found no Classic source. It doesn't matter for an Orc.
+- `haste_test.go` TestOrcShamanHaste stacks Flurry 5/5 and Rage of the Farseer halfway through a swing and drops them one at a time. It checks the swing speed, when the swing in progress lands and that cast speed stays at 1. It fails when the swing in progress doesn't rescale and when Rage of the Farseer gets cast speed.
+- For section 8: Flurry gives 5 / 10 / 15 / 20 / 25% here, where Classic gave 10 to 30%.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
