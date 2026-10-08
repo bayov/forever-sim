@@ -1,7 +1,18 @@
 import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 import { WOWHEAD_DOMAIN, WOWHEAD_FALLBACK_DOMAIN } from '../constants/wowhead.js';
 import { foreverSpellIcons } from '../forever/racials';
-import { Class, EquipmentSpec, ItemRandomSuffix, ItemSlot, ItemSpec, ItemSwap, PresetEncounter, PresetTarget, SimDatabase } from '../proto/common.js';
+import {
+	Class,
+	EquipmentSpec,
+	ItemQuality,
+	ItemRandomSuffix,
+	ItemSlot,
+	ItemSpec,
+	ItemSwap,
+	PresetEncounter,
+	PresetTarget,
+	SimDatabase,
+} from '../proto/common.js';
 import { IconData, UIDatabase, UIEnchant as Enchant, UIFaction as Faction, UIItem as Item, UINPC as Npc, UIZone as Zone } from '../proto/ui.js';
 import { distinct } from '../utils.js';
 import { EquippedItem } from './equipped_item.js';
@@ -230,6 +241,30 @@ export class Database {
 		return await db.itemIcons[itemId];
 	}
 
+	// The quality of an item the item list doesn't carry, like a consumable, once we know it. See
+	// loadItemQuality().
+	static itemQuality(itemId: number): ItemQuality | undefined {
+		return Database.itemQualities.get(itemId);
+	}
+
+	// Fetches an item's quality from wowhead's tooltip data, once per item. Our database has the
+	// consumables' names and icons but not their quality, and we need it to show them in their
+	// color, like in the list of changes on a modified preset.
+	static loadItemQuality(itemId: number): Promise<ItemQuality | undefined> {
+		if (!Database.pendingQualities.has(itemId)) {
+			Database.pendingQualities.set(
+				itemId,
+				Database.itemQualities.has(itemId)
+					? Promise.resolve(Database.itemQualities.get(itemId))
+					: Database.getWowheadItemTooltipData(itemId).then(() => Database.itemQualities.get(itemId)),
+			);
+		}
+		return Database.pendingQualities.get(itemId)!;
+	}
+
+	private static readonly itemQualities = new Map<number, ItemQuality>();
+	private static readonly pendingQualities = new Map<number, Promise<ItemQuality | undefined>>();
+
 	static async getSpellIconData(spellId: number): Promise<IconData> {
 		const db = await Database.get();
 		if (!db.spellIcons[spellId]) {
@@ -266,6 +301,9 @@ export class Database {
 			}
 			let rank = 0;
 
+			if (tooltipPostfix === 'item' && typeof json['quality'] === 'number') {
+				Database.itemQualities.set(id, json['quality']);
+			}
 			if (tooltipPostfix === 'spell') {
 				const rankMatches = Array.from(json['tooltip'].matchAll(RANK_REGEX) as RegExpMatchArray[]);
 				rank = rankMatches.length ? parseInt(rankMatches[0][1]) : 0;

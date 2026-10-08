@@ -1,4 +1,5 @@
 import { setItemQualityCssClass } from '../../css_utils';
+import { Database } from '../../proto_utils/database';
 import { UIEnchant } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
 import { EquippedItem } from '../../proto_utils/equipped_item';
@@ -28,8 +29,10 @@ export function enchantLink(enchant: UIEnchant): HTMLElement {
 	return link;
 }
 
-// A link to a buff, a debuff or a consumable in the game's light blue for spells, like
-// [Blessing of Might], with wowhead's tooltip on hover.
+// A link to a buff, a debuff or a consumable, like [Blessing of Might], with wowhead's tooltip
+// on hover. A spell is in the game's light blue for spells, and an item like a consumable is in
+// its quality color. We may not know the item's quality yet, so the link turns that color once
+// it comes in.
 //
 // We leave out the rank, like in 'Sunder Armor (Rank 5)', because we always get the highest
 // rank our level has.
@@ -39,7 +42,16 @@ export function actionLink(actionId: ActionId): HTMLElement {
 	actionId.setWowheadHref(link);
 	link.target = '_blank';
 	link.dataset.whtticon = 'false';
-	link.classList.add('action-link');
+	if (!actionId.itemId) {
+		link.classList.add('action-link');
+	} else {
+		const quality = Database.itemQuality(actionId.itemId);
+		if (quality !== undefined) {
+			setItemQualityCssClass(link, quality);
+		} else {
+			Database.loadItemQuality(actionId.itemId).then(quality => quality !== undefined && setItemQualityCssClass(link, quality));
+		}
+	}
 	return link;
 }
 

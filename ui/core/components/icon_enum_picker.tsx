@@ -2,6 +2,7 @@
 import tippy from 'tippy.js';
 
 import { ActionId } from '../proto_utils/action_id.js';
+import { Database } from '../proto_utils/database.js';
 import { TypedEvent } from '../typed_event.js';
 import { actionLink } from './gear_picker/item_links.js';
 import { IconPickerDirection } from './icon_picker.jsx';
@@ -236,6 +237,9 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		const valueConfig = this.config.values.find(valueConfig => this.config.equals(valueConfig.value, this.currentValue))!;
 		if (valueConfig) {
 			this.setImage(this.buttonElem, valueConfig);
+			// The chosen item's quality, for its color in the list of changes on a modified preset.
+			const itemId = valueConfig.actionId?.(this.modObject)?.itemId;
+			if (itemId) Database.loadItemQuality(itemId);
 			if (valueConfig.text != undefined) {
 				this.buttonText.style.display = 'block';
 				this.buttonText.textContent = valueConfig.text;
