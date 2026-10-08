@@ -52,7 +52,6 @@
 		// or the modified color when we changed the preset since.
 		&.has-active:not([open]) > .preset-tree-folder-row .preset-tree-name {
 			color: var(--bs-primary);
-			font-weight: bold;
 		}
 
 		&.has-dirty > .preset-tree-folder-row .preset-tree-name {
@@ -119,7 +118,6 @@
 			.preset-tree-name,
 			.preset-tree-icon {
 				color: var(--bs-primary);
-				font-weight: bold;
 			}
 
 			&.dirty {
