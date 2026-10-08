@@ -2,7 +2,7 @@ import tippy, { Instance } from 'tippy.js';
 
 import { IndividualSimUI } from '../../individual_sim_ui';
 import { Player } from '../../player';
-import { IntellectElixir, Spec, Stat, TristateEffect } from '../../proto/common';
+import { Spec, Stat, TristateEffect } from '../../proto/common';
 import { TypedEvent } from '../../typed_event';
 import { Component } from '../component';
 import { IconEnumPicker } from '../icon_enum_picker';
@@ -16,10 +16,9 @@ import { MultiIconPicker } from '../multi_icon_picker';
 export class ConsumesPicker extends Component {
 	protected simUI: IndividualSimUI<Spec>;
 
-	private intellectElixir?: IconEnumPicker<Player<Spec>, number>;
-	private scrollOfStamina?: IconPicker<Player<Spec>, boolean>;
-	private scrollOfIntellect?: IconPicker<Player<Spec>, boolean>;
-	private scrollOfSpirit?: IconPicker<Player<Spec>, boolean>;
+	private staminaSlot?: IconEnumPicker<Player<Spec>, number>;
+	private intellectSlot?: IconEnumPicker<Player<Spec>, number>;
+	private spiritSlot?: IconEnumPicker<Player<Spec>, number>;
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
 		super(parentElem, 'consumes-picker-root');
@@ -96,50 +95,55 @@ export class ConsumesPicker extends Component {
 		const [row, foodsElem] = this.buildGroup('Food');
 
 		const foodOptions = ConsumablesInputs.makeFoodInput(relevantStatOptions(ConsumablesInputs.FOOD_CONFIG, this.simUI));
-		const alcoholOptions = ConsumablesInputs.makeAlcoholInput(relevantStatOptions(ConsumablesInputs.ALCOHOL_CONFIG, this.simUI));
 
-		const pickers = [buildIconInput(foodsElem, this.simUI.player, foodOptions), buildIconInput(foodsElem, this.simUI.player, alcoholOptions)];
+		const pickers = [buildIconInput(foodsElem, this.simUI.player, foodOptions)];
 
 		this.updateRow(row, pickers);
 	}
 
-	// A category for each attribute, with its elixirs and its scroll. A scroll doesn't stack with
-	// an elixir or a raid buff of the same attribute, see markUnstacked.
+	// The attributes' elixirs and scrolls in one category, in the order of the character sheet. Each
+	// attribute has one slot with its elixirs and its scroll, and its short name at the bottom. A
+	// scroll doesn't stack with a raid buff of the same attribute either, see markUnstacked.
 	private buildAttributePickers() {
 		const player = this.simUI.player;
 		const raidBuffShown = (config: unknown) => relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI).some(option => option.config == config);
+		const [row, elem] = this.buildGroup('Attributes');
+		const pickers: Array<IconPicker<Player<Spec>, any> | IconEnumPicker<Player<Spec>, any>> = [];
+		const add = <T extends IconPicker<Player<Spec>, any> | IconEnumPicker<Player<Spec>, any>>(picker: T, tag: string): T => {
+			const tagElem = document.createElement('span');
+			tagElem.classList.add('consumes-slot-tag');
+			tagElem.textContent = tag;
+			picker.rootElem.appendChild(tagElem);
+			pickers.push(picker);
+			return picker;
+		};
 
-		const [strengthRow, strengthElem] = this.buildGroup('Strength');
 		const strengthOptions = ConsumablesInputs.makeStrengthConsumeInput(relevantStatOptions(ConsumablesInputs.STRENGTH_CONSUMES_CONFIG, this.simUI));
-		this.updateRow(strengthRow, [buildIconInput(strengthElem, player, strengthOptions)]);
-
-		const [agilityRow, agilityElem] = this.buildGroup('Agility');
 		const agilityOptions = ConsumablesInputs.makeAgilityConsumeInput(relevantStatOptions(ConsumablesInputs.AGILITY_CONSUMES_CONFIG, this.simUI));
-		this.updateRow(agilityRow, [buildIconInput(agilityElem, player, agilityOptions)]);
+		const slot = (config: ReturnType<typeof ConsumablesInputs.makeScrollSlotInput>, tag: string) =>
+			add(buildIconInput(elem, player, config) as IconEnumPicker<Player<Spec>, number>, tag);
 
-		const [staminaRow, staminaElem] = this.buildGroup('Stamina');
-		if (raidBuffShown(BuffDebuffInputs.StaminaBuff)) {
-			this.scrollOfStamina = buildIconInput(staminaElem, player, ConsumablesInputs.ScrollOfStamina) as IconPicker<Player<Spec>, boolean>;
-		}
-		this.updateRow(staminaRow, this.scrollOfStamina ? [this.scrollOfStamina] : []);
+		add(buildIconInput(elem, player, strengthOptions) as IconEnumPicker<Player<Spec>, number>, 'STR');
+		add(buildIconInput(elem, player, agilityOptions) as IconEnumPicker<Player<Spec>, number>, 'AGI');
+		this.staminaSlot = slot(
+			ConsumablesInputs.makeScrollSlotInput({ scrollId: 10307, scrollField: 'scrollOfStamina', showScroll: raidBuffShown(BuffDebuffInputs.StaminaBuff) }),
+			'STA',
+		);
+		this.intellectSlot = slot(
+			ConsumablesInputs.makeScrollSlotInput({
+				scrollId: 10308,
+				scrollField: 'scrollOfIntellect',
+				showScroll: raidBuffShown(BuffDebuffInputs.IntellectBuff),
+				elixirs: relevantStatOptions(ConsumablesInputs.INTELLECT_CONFIG, this.simUI),
+			}),
+			'INT',
+		);
+		this.spiritSlot = slot(
+			ConsumablesInputs.makeScrollSlotInput({ scrollId: 10306, scrollField: 'scrollOfSpirit', showScroll: raidBuffShown(BuffDebuffInputs.SpiritBuff) }),
+			'SPI',
+		);
 
-		const [intellectRow, intellectElem] = this.buildGroup('Intellect');
-		const intellectOptions = ConsumablesInputs.makeIntellectConsumeInput(relevantStatOptions(ConsumablesInputs.INTELLECT_CONFIG, this.simUI));
-		this.intellectElixir = buildIconInput(intellectElem, player, intellectOptions) as IconEnumPicker<Player<Spec>, number>;
-		if (raidBuffShown(BuffDebuffInputs.IntellectBuff)) {
-			this.scrollOfIntellect = buildIconInput(intellectElem, player, ConsumablesInputs.ScrollOfIntellect) as IconPicker<Player<Spec>, boolean>;
-		}
-		this.updateRow(intellectRow, this.scrollOfIntellect ? [this.intellectElixir, this.scrollOfIntellect] : [this.intellectElixir]);
-
-		const [spiritRow, spiritElem] = this.buildGroup('Spirit');
-		if (raidBuffShown(BuffDebuffInputs.SpiritBuff)) {
-			this.scrollOfSpirit = buildIconInput(spiritElem, player, ConsumablesInputs.ScrollOfSpirit) as IconPicker<Player<Spec>, boolean>;
-		}
-		this.updateRow(spiritRow, this.scrollOfSpirit ? [this.scrollOfSpirit] : []);
-
-		const [armorRow, armorElem] = this.buildGroup('Armor');
-		const armorOptions = ConsumablesInputs.makeArmorConsumeInput(relevantStatOptions(ConsumablesInputs.ARMOR_CONSUMES_CONFIG, this.simUI));
-		this.updateRow(armorRow, [buildIconInput(armorElem, player, armorOptions)]);
+		this.updateRow(row, pickers);
 	}
 
 	private buildPhysicalBuffPickers() {
@@ -168,9 +172,13 @@ export class ConsumesPicker extends Component {
 	private buildDefensiveBuffPickers() {
 		const [row, defensiveConsumesElem] = this.buildGroup('Defensive');
 
-		const healthBuffOptions = ConsumablesInputs.makeHealthConsumeInput(relevantStatOptions(ConsumablesInputs.HEALTH_CONSUMES_CONFIG, this.simUI));
+		const healthBuffOptions = ConsumablesInputs.makeHealthConsumeInput(relevantStatOptions(ConsumablesInputs.HEALTH_CONSUMES_CONFIG, this.simUI), 'Health');
+		const armorBuffOptions = ConsumablesInputs.makeArmorConsumeInput(relevantStatOptions(ConsumablesInputs.ARMOR_CONSUMES_CONFIG, this.simUI), 'Armor');
 
-		const pickers = [buildIconInput(defensiveConsumesElem, this.simUI.player, healthBuffOptions)];
+		const pickers = [
+			buildIconInput(defensiveConsumesElem, this.simUI.player, healthBuffOptions),
+			buildIconInput(defensiveConsumesElem, this.simUI.player, armorBuffOptions),
+		];
 
 		this.updateRow(row, pickers);
 	}
@@ -220,6 +228,11 @@ export class ConsumesPicker extends Component {
 		const pickers = [
 			buildIconInput(miscConsumesElem, this.simUI.player, zanzaBuffOptions),
 			buildIconInput(miscConsumesElem, this.simUI.player, ConsumablesInputs.DragonBreathChili),
+			buildIconInput(
+				miscConsumesElem,
+				this.simUI.player,
+				ConsumablesInputs.makeAlcoholInput(relevantStatOptions(ConsumablesInputs.ALCOHOL_CONFIG, this.simUI), 'Alcohol'),
+			),
 			ConsumablesInputs.makeMiscOffensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscOffensiveConsumesOptions),
 			ConsumablesInputs.makeMiscDefensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscDefensiveConsumesOptions),
 		];
@@ -282,43 +295,30 @@ export class ConsumesPicker extends Component {
 		return [group, slots];
 	}
 
-	// We mark a pick in red when the sim ignores it, because a bigger buff of the same stat is on
-	// and they don't stack. Its tooltip names that buff. Keep the rules in sync with the raid
-	// buffs in sim/core/buffs.go and applySpellBuffConsumes in sim/core/consumes.go.
+	// We mark a scroll in red when the sim ignores it, because the raid buff of the same stat is on
+	// and is bigger. The badge's tooltip names that buff. Keep the rules in sync with the raid
+	// buffs in sim/core/buffs.go.
 	private markUnstacked() {
-		const marks = new Map<IconPicker<Player<Spec>, any> | IconEnumPicker<Player<Spec>, any>, string>();
+		const marks = new Map<IconEnumPicker<Player<Spec>, number>, string>();
 		const badges = new Map<HTMLElement, { elem: HTMLElement; tooltip: Instance }>();
 
 		const update = () => {
 			const player = this.simUI.player;
 			const buffs = player.getRaid()!.getBuffs();
-			const consumes = player.getConsumes();
 			marks.clear();
 
 			const replaces = (bigger: string) => `Doesn't stack with ${bigger}, which is bigger, so this adds nothing.`;
-			if (this.scrollOfStamina && buffs.scrollOfStamina && buffs.powerWordFortitude != TristateEffect.TristateEffectMissing) {
-				marks.set(this.scrollOfStamina, replaces('Power Word: Fortitude'));
+			if (this.staminaSlot && buffs.scrollOfStamina && buffs.powerWordFortitude != TristateEffect.TristateEffectMissing) {
+				marks.set(this.staminaSlot, replaces('Power Word: Fortitude'));
 			}
-			if (this.scrollOfSpirit && buffs.scrollOfSpirit && buffs.divineSpirit) {
-				marks.set(this.scrollOfSpirit, replaces('Divine Spirit'));
+			if (this.intellectSlot && buffs.scrollOfIntellect && buffs.arcaneBrilliance) {
+				marks.set(this.intellectSlot, replaces('Arcane Intellect'));
 			}
-			if (this.scrollOfIntellect && buffs.scrollOfIntellect) {
-				if (buffs.arcaneBrilliance) {
-					marks.set(this.scrollOfIntellect, replaces('Arcane Intellect'));
-				} else if (this.intellectElixir && consumes.intellectElixir != IntellectElixir.IntellectElixirUnknown) {
-					// The sim keeps the bigger of the two. A Scroll of Intellect I gives 4, under
-					// the elixir's 6, and the later ranks give more.
-					const scroll = ConsumablesInputs.scrollOfIntellectValue(player.getEffectiveLevel());
-					const elixir = ConsumablesInputs.INTELLECT_ELIXIR_VALUE;
-					if (scroll >= elixir) {
-						marks.set(this.intellectElixir, replaces(`the Scroll of Intellect (${scroll} Intellect)`));
-					} else {
-						marks.set(this.scrollOfIntellect, replaces(`the Intellect elixir (${elixir} Intellect)`));
-					}
-				}
+			if (this.spiritSlot && buffs.scrollOfSpirit && buffs.divineSpirit) {
+				marks.set(this.spiritSlot, replaces('Divine Spirit'));
 			}
 
-			[this.scrollOfStamina, this.scrollOfIntellect, this.scrollOfSpirit, this.intellectElixir].forEach(picker => {
+			[this.staminaSlot, this.intellectSlot, this.spiritSlot].forEach(picker => {
 				if (!picker) return;
 				const note = marks.get(picker);
 				picker.rootElem.classList.toggle('consumes-unstacked', !!note);

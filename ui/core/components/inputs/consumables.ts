@@ -34,13 +34,7 @@ import { ActionId } from '../../proto_utils/action_id';
 import { isBluntWeaponType, isSharpWeaponType, isWeapon } from '../../proto_utils/utils';
 import { EventID, TypedEvent } from '../../typed_event';
 import { IconEnumValueConfig } from '../icon_enum_picker';
-import {
-	makeBooleanConsumeInput,
-	makeBooleanMiscConsumeInput,
-	makeBooleanPetMiscConsumeInput,
-	makeBooleanRaidBuffInput,
-	makeEnumConsumeInput,
-} from '../icon_inputs';
+import { makeBooleanConsumeInput, makeBooleanMiscConsumeInput, makeBooleanPetMiscConsumeInput, makeEnumConsumeInput } from '../icon_inputs';
 import { IconPicker, IconPickerDirection } from '../icon_picker';
 import * as InputHelpers from '../input_helpers';
 import { MultiIconPicker, MultiIconPickerConfig, MultiIconPickerItemConfig } from '../multi_icon_picker';
@@ -910,34 +904,56 @@ export const makeIntellectConsumeInput = makeConsumeInputFactory({ consumesField
 
 // The Scrolls of Agility, Strength and Protection are choices in the elixir slot of their stat.
 // The Scrolls of Stamina, Intellect and Spirit are raid buffs in the sim, because it compares
-// them with Fortitude, Arcane Intellect and Divine Spirit. We still show them with the
-// consumables, in the category of their stat.
-export const ScrollOfStamina = makeBooleanRaidBuffInput({
-	actionId: () => ActionId.fromItemId(10307),
-	fieldName: 'scrollOfStamina',
-});
-export const ScrollOfIntellect = makeBooleanRaidBuffInput({
-	actionId: () => ActionId.fromItemId(10308),
-	fieldName: 'scrollOfIntellect',
-});
-export const ScrollOfSpirit = makeBooleanRaidBuffInput({
-	actionId: () => ActionId.fromItemId(10306),
-	fieldName: 'scrollOfSpirit',
-});
+// them with Fortitude, Arcane Intellect and Divine Spirit.
+//
+// We still show each of those three scrolls in one slot with its stat's elixirs, like the other
+// scrolls. The slot's value is the elixir, or SCROLL_VALUE for the scroll. Picking one clears the
+// other, because a scroll and an elixir of the same stat don't stack.
+export const SCROLL_VALUE = 1000;
 
-// The Intellect a Scroll of Intellect gives at a level, from the best rank we can read. Keep it
-// in sync with scrollOfIntellect in sim/core/buffs.go.
-const scrollOfIntellectRanks = [
-	{ level: 50, intellect: 16 },
-	{ level: 35, intellect: 12 },
-	{ level: 20, intellect: 8 },
-	{ level: 5, intellect: 4 },
-];
+export interface ScrollSlotArgs {
+	scrollId: number;
+	scrollField: 'scrollOfStamina' | 'scrollOfIntellect' | 'scrollOfSpirit';
+	showScroll: boolean;
+	// The stat's elixirs, when it has any (only Intellect does).
+	elixirs?: ConsumableStatOption<IntellectElixir>[];
+}
 
-export const scrollOfIntellectValue = (level: number) => scrollOfIntellectRanks.find(rank => level >= rank.level)?.intellect ?? 0;
+export function makeScrollSlotInput(args: ScrollSlotArgs): InputHelpers.TypedIconEnumPickerConfig<Player<any>, number> {
+	const elixirValues = (args.elixirs ?? []).map(option => ({
+		actionId: option.config.actionId,
+		value: option.config.value as number,
+		showWhen: (player: Player<any>) => !option.config.showWhen || option.config.showWhen(player),
+	}));
+	const scrollValues = args.showScroll ? [{ actionId: () => ActionId.fromItemId(args.scrollId), value: SCROLL_VALUE }] : [];
 
-// Both Intellect elixirs give 6.
-export const INTELLECT_ELIXIR_VALUE = 6;
+	return {
+		type: 'iconEnum',
+		numColumns: 4,
+		values: [{ value: 0 } as IconEnumValueConfig<Player<any>, number>, ...elixirValues, ...scrollValues],
+		equals: (a: number, b: number) => a == b,
+		zeroValue: 0,
+		changedEvent: (player: Player<any>) =>
+			TypedEvent.onAny([player.consumesChangeEmitter, player.getRaid()!.buffsChangeEmitter, player.sim.rulesetChangeEmitter]),
+		getValue: (player: Player<any>) => {
+			const elixir = args.elixirs ? player.getConsumes().intellectElixir : 0;
+			if (elixir) return elixir;
+			return player.getRaid()!.getBuffs()[args.scrollField] ? SCROLL_VALUE : 0;
+		},
+		setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+			TypedEvent.freezeAllAndDo(() => {
+				if (args.elixirs) {
+					const consumes = player.getConsumes();
+					consumes.intellectElixir = newValue == SCROLL_VALUE ? IntellectElixir.IntellectElixirUnknown : newValue;
+					player.setConsumes(eventID, consumes);
+				}
+				const buffs = player.getRaid()!.getBuffs();
+				buffs[args.scrollField] = newValue == SCROLL_VALUE;
+				player.getRaid()!.setBuffs(eventID, buffs);
+			});
+		},
+	};
+}
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Weapon Imbues
