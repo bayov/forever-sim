@@ -20,7 +20,6 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Beta: Spirit regen of the classes we haven't measured (druid, hunter, mage, priest, warlock). The sim gives every class the shaman and paladin formula under Forever: 0.25 mana a second for each of the first 50 Spirit, 0.125 past that. One GetManaRegen reading below 50 Spirit and one above settles a class.
 * Rage of the Storm (280604) source. We assume a level 30 shaman quest chain.
 * Beta: is Stormstrike normalized? Forever's spell data says "Normalized Weapon Damage", Classic's says "Deal Weapon Damage", and the sim uses the weapon's speed. With a 3.6 speed two-hander, a normalized Stormstrike hits 0.3 x AP / 14 below a normal white hit's range. The /run lines are in shaman_audit.md 4.1.
-* Stormstrike mark: 20% (sim, client tree) or 21% (Forever's spell data on wowhead).
 * Server batch window (sim: white hits land with their procs 10 ms after the swing, like Classic Era servers). The user thinks Forever uses 10 ms too. A 400 ms window like the 1.12 servers would change how procs line up.
 
 ## Rogue
