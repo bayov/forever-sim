@@ -351,6 +351,23 @@ export const DragonBreathChili = makeBooleanConsumeInput({
 	fieldName: 'dragonBreathChili',
 });
 
+// Dragonbreath Chili as a slot with a dropdown like the other consumables, where we pick the
+// chili or nothing. The sim still reads it as an on or off consumable.
+export const DragonBreathChiliSlot: InputHelpers.TypedIconEnumPickerConfig<Player<any>, number> = {
+	type: 'iconEnum',
+	numColumns: 4,
+	values: [{ value: 0 }, { actionId: () => ActionId.fromItemId(12217), value: 1 }],
+	equals: (a: number, b: number) => a == b,
+	zeroValue: 0,
+	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
+	getValue: (player: Player<any>) => (player.getConsumes().dragonBreathChili ? 1 : 0),
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		const consumes = player.getConsumes();
+		consumes.dragonBreathChili = newValue == 1;
+		player.setConsumes(eventID, consumes);
+	},
+};
+
 export const RumseyRumBlackLabel: ConsumableInputConfig<Alcohol> = {
 	actionId: () => ActionId.fromItemId(21151),
 	value: Alcohol.AlcoholRumseyRumBlackLabel,

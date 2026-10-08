@@ -222,7 +222,7 @@ export class ConsumesPicker extends Component {
 
 		const pickers = [
 			this.tagSlot(buildIconInput(miscConsumesElem, this.simUI.player, zanzaBuffOptions), 'ZANZA'),
-			this.tagSlot(buildIconInput(miscConsumesElem, this.simUI.player, ConsumablesInputs.DragonBreathChili), 'CHILI'),
+			this.tagSlot(buildIconInput(miscConsumesElem, this.simUI.player, ConsumablesInputs.DragonBreathChiliSlot), 'CHILI'),
 			this.tagSlot(
 				buildIconInput(
 					miscConsumesElem,
