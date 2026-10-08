@@ -214,15 +214,24 @@ export class ConsumesPicker extends Component {
 		const miscDefensiveConsumesOptions = relevantStatOptions(ConsumablesInputs.MISC_DEFENSIVE_CONSUMES_CONFIG, this.simUI);
 
 		const pickers = [
-			buildIconInput(miscConsumesElem, this.simUI.player, zanzaBuffOptions),
-			buildIconInput(miscConsumesElem, this.simUI.player, ConsumablesInputs.DragonBreathChili),
-			buildIconInput(
-				miscConsumesElem,
-				this.simUI.player,
-				ConsumablesInputs.makeAlcoholInput(relevantStatOptions(ConsumablesInputs.ALCOHOL_CONFIG, this.simUI), 'Alcohol'),
+			this.tagSlot(buildIconInput(miscConsumesElem, this.simUI.player, zanzaBuffOptions), 'ZANZA'),
+			this.tagSlot(buildIconInput(miscConsumesElem, this.simUI.player, ConsumablesInputs.DragonBreathChili), 'CHILI'),
+			this.tagSlot(
+				buildIconInput(
+					miscConsumesElem,
+					this.simUI.player,
+					ConsumablesInputs.makeAlcoholInput(relevantStatOptions(ConsumablesInputs.ALCOHOL_CONFIG, this.simUI), 'Alcohol'),
+				),
+				'DRINK',
 			),
-			ConsumablesInputs.makeMiscOffensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscOffensiveConsumesOptions),
-			ConsumablesInputs.makeMiscDefensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscDefensiveConsumesOptions),
+			this.tagSlot(
+				ConsumablesInputs.makeMiscOffensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscOffensiveConsumesOptions),
+				'DPS',
+			),
+			this.tagSlot(
+				ConsumablesInputs.makeMiscDefensiveConsumesInput(miscConsumesElem, this.simUI.player, this.simUI, miscDefensiveConsumesOptions),
+				'DEF',
+			),
 		];
 
 		this.updateRow(row, pickers);
