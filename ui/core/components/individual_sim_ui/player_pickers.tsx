@@ -128,7 +128,7 @@ export class IconEnumRowPicker<ModObject> extends Input<ModObject, number> {
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: EnumPickerConfig<ModObject>, cssClass = 'icon-enum-row-picker-root') {
 		super(parent, cssClass, modObject, config);
-		this.rootElem.classList.add('player-icon-picker');
+		this.rootElem.classList.add('player-icon-picker', 'icon-enum-row-picker');
 		this.values = config.values;
 
 		this.label = (<span className="player-icon-picker-value"></span>) as HTMLElement;

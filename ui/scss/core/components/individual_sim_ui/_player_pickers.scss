@@ -113,8 +113,9 @@
 		margin-bottom: 0;
 	}
 
-	// Few races to pick from, so their icons get more room than the professions.
-	&.race-picker-root .player-icon-picker-option {
+	// A row with one pick, like the race or the shaman weapon imbue, has few icons, so they get
+	// more room than the professions.
+	&.icon-enum-row-picker .player-icon-picker-option {
 		width: 3rem;
 		height: 3rem;
 	}

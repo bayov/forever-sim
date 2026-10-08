@@ -40,8 +40,8 @@ export class SettingsTab extends SimTab {
 	private encounterPicker?: EncounterPicker;
 
 	// The individual sim has three lanes. The left one is about us: the saved settings, the
-	// Player, Other, our own buffs and the consumables. The middle one is about the target: the
-	// Encounter and the debuffs. The right one has the buffs from the party and the raid.
+	// Player, the Class Settings and the consumables. The middle one is about the target: the
+	// Encounter and the debuffs. The right one has the buffs the party and the raid give us.
 	readonly column1: HTMLElement = this.buildColumn(1, 'settings-left-col');
 	readonly column2: HTMLElement = this.buildColumn(2, 'settings-left-col');
 	readonly column3: HTMLElement = this.buildColumn(3, 'settings-left-col');
@@ -84,9 +84,6 @@ export class SettingsTab extends SimTab {
 			this.buildPlayerSettings();
 			this.buildCustomSettingsSections();
 			this.buildOtherSettings();
-			if (!this.simUI.isWithinRaidSim) {
-				this.buildBuffsSection(this.column1, 'personal-buffs-settings', 'Personal Buffs', PERSONAL_BUFFS_TOOLTIP, 'personal');
-			}
 			this.buildConsumesSection();
 
 			if (!this.simUI.isWithinRaidSim) {
@@ -194,7 +191,7 @@ export class SettingsTab extends SimTab {
 
 		if (settings.length || itemSwapConfig?.itemSlots.length) {
 			const contentBlock = new ContentBlock(this.simUI.isWithinRaidSim ? this.column2 : this.column1, 'other-settings', {
-				header: { title: 'Other' },
+				header: { title: 'Class Settings' },
 			});
 
 			if (settings.length) {
@@ -246,19 +243,20 @@ export class SettingsTab extends SimTab {
 		}
 	}
 
-	// One of the three buff sections, with the buffs that go to whom it says, see buffAudience.
-	private buildBuffsSection(column: HTMLElement, cssClass: string, title: string, tooltip: string, audience: BuffAudience) {
-		const ofAudience = (options: { config: unknown }) => buffAudience(options.config) === audience;
-		let buffOptions = relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI).filter(ofAudience);
-		let miscBuffOptions = relevantStatOptions(BuffDebuffInputs.MISC_BUFFS_CONFIG, this.simUI).filter(ofAudience);
+	// One of the two buff sections, with the buffs that the party or the raid gives us, see
+	// buffSource.
+	//
+	// The misc buffs go in a dropdown under the others, except for Innervate and Power Infusion.
+	// They are buffs of their own, so they get an icon like the rest of the raid buffs.
+	private buildBuffsSection(column: HTMLElement, cssClass: string, title: string, tooltip: string, source: BuffSource) {
+		const fromSource = (options: { config: unknown }) => buffSource(options.config) === source;
+		const miscOptions = relevantStatOptions(BuffDebuffInputs.MISC_BUFFS_CONFIG, this.simUI).filter(fromSource);
+		const buffOptions = [
+			...relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI).filter(fromSource),
+			...miscOptions.filter(options => RAID_BUFFS.includes(options.config)),
+		];
+		const miscBuffOptions = miscOptions.filter(options => !RAID_BUFFS.includes(options.config));
 		if (!buffOptions.length && !miscBuffOptions.length) return;
-
-		// The misc buffs go in a dropdown, under the section's other buffs. Personal Buffs has
-		// only misc buffs (Innervate and Power Infusion), so there they show as icons like the rest.
-		if (!buffOptions.length) {
-			buffOptions = miscBuffOptions;
-			miscBuffOptions = [];
-		}
 
 		const contentBlock = new ContentBlock(column, cssClass, {
 			header: { title, tooltip },
@@ -476,15 +474,14 @@ export class SettingsTab extends SimTab {
 	}
 }
 
-// Who gets a buff in the game, for the three buff sections. The protos don't tell: they keep
-// the totems and the auras with the raid buffs, but those only reach the party.
-type BuffAudience = 'personal' | 'party' | 'raid';
+// Who gives us a buff in the game: someone in our party, or anyone in the raid. It's about who
+// casts it, not who it reaches, so Innervate is a raid buff even though it lands on us alone.
+// The protos don't tell: they keep the totems and the auras with the raid buffs, but only our
+// party's shaman or paladin gives them to us.
+type BuffSource = 'party' | 'raid';
 
-// The buffs someone casts on us alone, like Innervate or Power Infusion.
-const PERSONAL_BUFFS: unknown[] = [BuffDebuffInputs.Innervate, BuffDebuffInputs.PowerInfusion];
-
-// The buffs other members of the raid cast on us, like Mark of the Wild or Fortitude. The
-// Blessings go here too, even for a paladin, because another paladin in the raid gives them.
+// The buffs anyone in the raid can give us, like Mark of the Wild or Fortitude. The Blessings
+// go here too, even for a paladin, because another paladin in the raid gives them.
 const RAID_BUFFS: unknown[] = [
 	BuffDebuffInputs.BlessingOfKings,
 	BuffDebuffInputs.BlessingOfMight,
@@ -494,15 +491,14 @@ const RAID_BUFFS: unknown[] = [
 	BuffDebuffInputs.IntellectBuff,
 	BuffDebuffInputs.SpiritBuff,
 	BuffDebuffInputs.Thorns,
+	BuffDebuffInputs.Innervate,
+	BuffDebuffInputs.PowerInfusion,
 ];
 
-// The rest only reach the party: the totems, the auras, Battle Shout, Blood Pact and Atiesh.
-function buffAudience(config: unknown): BuffAudience {
-	if (PERSONAL_BUFFS.includes(config)) return 'personal';
-	if (RAID_BUFFS.includes(config)) return 'raid';
-	return 'party';
+// The rest come from our party: the totems, the auras, Battle Shout, Blood Pact and Atiesh.
+function buffSource(config: unknown): BuffSource {
+	return RAID_BUFFS.includes(config) ? 'raid' : 'party';
 }
 
-const PERSONAL_BUFFS_TOOLTIP = 'Buffs other players cast on us alone, like Innervate or Power Infusion.';
-const PARTY_BUFFS_TOOLTIP = 'Buffs that reach only our party, like totems, auras and Battle Shout.';
-const RAID_BUFFS_TOOLTIP = 'Buffs other members of the raid cast on us, like Mark of the Wild, Fortitude or a Blessing.';
+const PARTY_BUFFS_TOOLTIP = 'Buffs the members of our party give us, like totems, auras and Battle Shout.';
+const RAID_BUFFS_TOOLTIP = 'Buffs anyone in the raid can give us, like Mark of the Wild, Fortitude, a Blessing or Innervate.';
