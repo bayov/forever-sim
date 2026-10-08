@@ -110,11 +110,7 @@ export class ConsumesPicker extends Component {
 		const [row, elem] = this.buildGroup('Attributes');
 		const pickers: Array<IconPicker<Player<Spec>, any> | IconEnumPicker<Player<Spec>, any>> = [];
 		const add = <T extends IconPicker<Player<Spec>, any> | IconEnumPicker<Player<Spec>, any>>(picker: T, tag: string): T => {
-			const tagElem = document.createElement('span');
-			tagElem.classList.add('consumes-slot-tag');
-			tagElem.textContent = tag;
-			picker.rootElem.appendChild(tagElem);
-			pickers.push(picker);
+			pickers.push(this.tagSlot(picker, tag));
 			return picker;
 		};
 
@@ -155,15 +151,12 @@ export class ConsumesPicker extends Component {
 
 		const [row, physicalConsumesElem] = this.buildGroup('Physical');
 
-		const apBuffOptions = ConsumablesInputs.makeAttackPowerConsumeInput(
-			relevantStatOptions(ConsumablesInputs.ATTACK_POWER_CONSUMES_CONFIG, this.simUI),
-			'Attack Power',
-		);
-		const hitConsumableOptions = ConsumablesInputs.makeHitConsumableInput(relevantStatOptions(ConsumablesInputs.HIT_CONSUMABLE_CONFIG, this.simUI), 'Hit');
+		const apBuffOptions = ConsumablesInputs.makeAttackPowerConsumeInput(relevantStatOptions(ConsumablesInputs.ATTACK_POWER_CONSUMES_CONFIG, this.simUI));
+		const hitConsumableOptions = ConsumablesInputs.makeHitConsumableInput(relevantStatOptions(ConsumablesInputs.HIT_CONSUMABLE_CONFIG, this.simUI));
 
 		const pickers = [
-			buildIconInput(physicalConsumesElem, this.simUI.player, apBuffOptions),
-			buildIconInput(physicalConsumesElem, this.simUI.player, hitConsumableOptions),
+			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, apBuffOptions), 'AP'),
+			this.tagSlot(buildIconInput(physicalConsumesElem, this.simUI.player, hitConsumableOptions), 'HIT'),
 		];
 
 		this.updateRow(row, pickers);
@@ -172,12 +165,12 @@ export class ConsumesPicker extends Component {
 	private buildDefensiveBuffPickers() {
 		const [row, defensiveConsumesElem] = this.buildGroup('Defensive');
 
-		const healthBuffOptions = ConsumablesInputs.makeHealthConsumeInput(relevantStatOptions(ConsumablesInputs.HEALTH_CONSUMES_CONFIG, this.simUI), 'Health');
-		const armorBuffOptions = ConsumablesInputs.makeArmorConsumeInput(relevantStatOptions(ConsumablesInputs.ARMOR_CONSUMES_CONFIG, this.simUI), 'Armor');
+		const healthBuffOptions = ConsumablesInputs.makeHealthConsumeInput(relevantStatOptions(ConsumablesInputs.HEALTH_CONSUMES_CONFIG, this.simUI));
+		const armorBuffOptions = ConsumablesInputs.makeArmorConsumeInput(relevantStatOptions(ConsumablesInputs.ARMOR_CONSUMES_CONFIG, this.simUI));
 
 		const pickers = [
-			buildIconInput(defensiveConsumesElem, this.simUI.player, healthBuffOptions),
-			buildIconInput(defensiveConsumesElem, this.simUI.player, armorBuffOptions),
+			this.tagSlot(buildIconInput(defensiveConsumesElem, this.simUI.player, healthBuffOptions), 'HP'),
+			this.tagSlot(buildIconInput(defensiveConsumesElem, this.simUI.player, armorBuffOptions), 'ARMOR'),
 		];
 
 		this.updateRow(row, pickers);
@@ -186,30 +179,18 @@ export class ConsumesPicker extends Component {
 	private buildSpellPowerBuffPickers() {
 		const [row, spellsCnsumesElem] = this.buildGroup('Spell');
 
-		const spBuffOptions = ConsumablesInputs.makeSpellPowerConsumeInput(
-			relevantStatOptions(ConsumablesInputs.SPELL_POWER_CONFIG, this.simUI),
-			'Spell Damage',
-		);
-		const fireBuffOptions = ConsumablesInputs.makeFirePowerConsumeInput(
-			relevantStatOptions(ConsumablesInputs.FIRE_POWER_CONFIG, this.simUI),
-			'Fire Damage',
-		);
-		const frostBuffOptions = ConsumablesInputs.makeFrostPowerConsumeInput(
-			relevantStatOptions(ConsumablesInputs.FROST_POWER_CONFIG, this.simUI),
-			'Frost Damage',
-		);
-		const shadowBuffOptions = ConsumablesInputs.makeShadowPowerConsumeInput(
-			relevantStatOptions(ConsumablesInputs.SHADOW_POWER_CONFIG, this.simUI),
-			'Shadow Damage',
-		);
-		const mp5BuffOptions = ConsumablesInputs.makeMp5ConsumeInput(relevantStatOptions(ConsumablesInputs.MP5_CONFIG, this.simUI), 'Mana Regen');
+		const spBuffOptions = ConsumablesInputs.makeSpellPowerConsumeInput(relevantStatOptions(ConsumablesInputs.SPELL_POWER_CONFIG, this.simUI));
+		const fireBuffOptions = ConsumablesInputs.makeFirePowerConsumeInput(relevantStatOptions(ConsumablesInputs.FIRE_POWER_CONFIG, this.simUI));
+		const frostBuffOptions = ConsumablesInputs.makeFrostPowerConsumeInput(relevantStatOptions(ConsumablesInputs.FROST_POWER_CONFIG, this.simUI));
+		const shadowBuffOptions = ConsumablesInputs.makeShadowPowerConsumeInput(relevantStatOptions(ConsumablesInputs.SHADOW_POWER_CONFIG, this.simUI));
+		const mp5BuffOptions = ConsumablesInputs.makeMp5ConsumeInput(relevantStatOptions(ConsumablesInputs.MP5_CONFIG, this.simUI));
 
 		const pickers = [
-			buildIconInput(spellsCnsumesElem, this.simUI.player, spBuffOptions),
-			buildIconInput(spellsCnsumesElem, this.simUI.player, fireBuffOptions),
-			buildIconInput(spellsCnsumesElem, this.simUI.player, frostBuffOptions),
-			buildIconInput(spellsCnsumesElem, this.simUI.player, shadowBuffOptions),
-			buildIconInput(spellsCnsumesElem, this.simUI.player, mp5BuffOptions),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, spBuffOptions), 'SP'),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, fireBuffOptions), 'FIRE'),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, frostBuffOptions), 'FROST'),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, shadowBuffOptions), 'SHAD'),
+			this.tagSlot(buildIconInput(spellsCnsumesElem, this.simUI.player, mp5BuffOptions), 'MP5'),
 		];
 
 		this.updateRow(row, pickers);
@@ -268,6 +249,16 @@ export class ConsumesPicker extends Component {
 		];
 
 		this.updateRow(row, pickers);
+	}
+
+	// A slot's short name along its bottom, like STR or AP, so we can tell the slots of a category
+	// apart without hovering them.
+	private tagSlot<T extends { rootElem: HTMLElement }>(picker: T, tag: string): T {
+		const tagElem = document.createElement('span');
+		tagElem.classList.add('consumes-slot-tag');
+		tagElem.textContent = tag;
+		picker.rootElem.appendChild(tagElem);
+		return picker;
 	}
 
 	// A category with its name above its slots. The categories sit side by side and wrap, so

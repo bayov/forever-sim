@@ -76,8 +76,7 @@ $consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/invento
 		position: relative;
 	}
 
-	// The attribute's short name, like STR, along the bottom of its slot in the Attributes
-	// category.
+	// A slot's short name, like STR or AP, along its bottom, see tagSlot.
 	.consumes-slot-tag {
 		position: absolute;
 		left: 1px;
