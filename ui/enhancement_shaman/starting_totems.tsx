@@ -7,6 +7,7 @@ import { NumberPicker } from '../core/components/number_picker';
 import { markUnstacked } from '../core/components/unstacked_mark';
 import { IndividualSimUI } from '../core/individual_sim_ui';
 import { Player } from '../core/player';
+import { APLPrepullAction, APLRotation_Type as APLRotationType } from '../core/proto/apl';
 import { Spec } from '../core/proto/common';
 import { AirTotem, EarthTotem, FireTotem, StartingTotems, WaterTotem } from '../core/proto/shaman';
 import { ActionId } from '../core/proto_utils/action_id';
@@ -143,6 +144,76 @@ function highestRankSpellId(totem: TotemOption, player: Player<any>): number {
 	return totem.ranks.filter(rank => rank.level <= level).pop()?.spellId ?? totem.ranks[0].spellId;
 }
 
+// Totems the rotation can put down that we can't start the fight with, by element.
+const OTHER_TOTEMS: Record<TotemElement['field'], Array<{ name: string; spellIds: Array<number> }>> = {
+	earth: [],
+	air: [{ name: 'Windwall Totem', spellIds: [15107, 15111, 15112] }],
+	fire: [],
+	water: [{ name: 'Mana Tide Totem', spellIds: [16190, 17354, 17359] }],
+};
+
+// The element and name of the totem a spell puts down, or nothing when it isn't a totem.
+function totemOfSpell(spellId: number): { element: TotemElement; name: string } | undefined {
+	for (const element of ELEMENTS) {
+		const totem =
+			element.totems.find(totem => totem.ranks.some(rank => rank.spellId === spellId)) ??
+			OTHER_TOTEMS[element.field].find(totem => totem.spellIds.includes(spellId));
+		if (totem) {
+			return { element, name: totem.name };
+		}
+	}
+	return undefined;
+}
+
+// The totem a prepull action in the rotation puts down, when a starting totem replaces it.
+//
+// The sim puts the starting totems down at the pull, after the rotation's prepull actions. So
+// with Grace of Air as the starting air totem, a prepull Windfury Totem at -3s is replaced at
+// the pull and never stands in the fight. Our level has to know the starting totem, or the sim
+// doesn't put it down.
+function replacedPrepullTotem(player: EnhPlayer, action: APLPrepullAction) {
+	if (player.getRotationType() !== APLRotationType.TypeAPL || action.hide) {
+		return undefined;
+	}
+	const cast = action.action?.action;
+	const id = cast?.oneofKind === 'castSpell' ? cast.castSpell.spellId?.rawId : undefined;
+	const totem = id?.oneofKind === 'spellId' ? totemOfSpell(id.spellId) : undefined;
+	if (!totem) {
+		return undefined;
+	}
+	const value = startingTotems(player)[totem.element.field];
+	const starting = totem.element.totems.find(option => option.value === value && learned(option, player));
+	return starting ? { ...totem, starting } : undefined;
+}
+
+const doAt = (action: APLPrepullAction) => (action.doAtValue?.value.oneofKind === 'const' ? action.doAtValue.value.const.val : '');
+
+// The note on a prepull totem in the Rotation tab that a starting totem replaces.
+export function startingTotemPrepullNote(player: EnhPlayer, action: APLPrepullAction): string | undefined {
+	const replaced = replacedPrepullTotem(player, action);
+	if (!replaced) {
+		return undefined;
+	}
+	return (
+		`At the pull, the starting ${replaced.starting.name} replaces this ${replaced.name}, so this action does nothing. ` +
+		`Remove it, or set the ${replaced.element.name} starting totem to None in the Settings tab, under Class Settings.`
+	);
+}
+
+// The note on an element's seconds before the pull, when its starting totem replaces prepull
+// totems in the rotation.
+function replacedPrepullNote(player: EnhPlayer, totemElement: TotemElement): string | undefined {
+	const replaced = player.aplRotation.prepullActions.flatMap(action => {
+		const totem = replacedPrepullTotem(player, action);
+		return totem?.element === totemElement ? [`${totem.name} at ${doAt(action)}`] : [];
+	});
+	if (!replaced.length) {
+		return undefined;
+	}
+	const actions = replaced.length > 1 ? 'actions do' : 'action does';
+	return `At the pull, this starting totem replaces the rotation's prepull ${replaced.join(', ')}, so that ${actions} nothing.`;
+}
+
 // The totems an Enhancement shaman starts the fight with, in the Class Settings section.
 //
 // It's a table with a row per element: the element's name, its totem icons (like the weapon
@@ -199,7 +270,7 @@ export function buildStartingTotemsSettings(parent: HTMLElement, simUI: Individu
 			);
 		}
 
-		new NumberPicker(root, player, {
+		const secondsPicker = new NumberPicker(root, player, {
 			id: `starting-totem-${totemElement.field}-seconds`,
 			label: `${totemElement.name} totem sec before pull`,
 			positive: true,
@@ -208,6 +279,7 @@ export function buildStartingTotemsSettings(parent: HTMLElement, simUI: Individu
 			setValue: (eventID, player, newValue) => setStartingTotems(eventID, player, totems => (totems[totemElement.secondsField] = newValue)),
 			enableWhen: player => startingTotems(player)[totemElement.field] !== 0,
 		});
+		markUnstacked(secondsPicker.rootElem, () => replacedPrepullNote(player, totemElement), player.changeEmitter);
 	});
 }
 

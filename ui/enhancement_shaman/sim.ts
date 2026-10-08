@@ -11,7 +11,7 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { buildStartingTotemsSettings, buildStartingTotemsSummary } from './starting_totems';
+import { buildStartingTotemsSettings, buildStartingTotemsSummary, startingTotemPrepullNote } from './starting_totems';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	cssClass: 'enhancement-shaman-sim-ui',
@@ -128,6 +128,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	classSettings: buildStartingTotemsSettings,
 	migrateSettings: migrateShamanImbue,
 	rotationTabHeader: buildStartingTotemsSummary,
+	prepullActionNote: startingTotemPrepullNote,
 	encounterPicker: {
 		// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 		showExecuteProportion: false,

@@ -32,7 +32,7 @@ import { simLaunchStatuses } from './launched_sims';
 import { DEFAULT_REACTION_TIME_MS, Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { PresetBuild, PresetEpWeights, PresetGear, PresetRotation } from './preset_utils';
 import { StatWeightsResult } from './proto/api';
-import { APLRotation, APLRotation_Type as APLRotationType } from './proto/apl';
+import { APLPrepullAction, APLRotation, APLRotation_Type as APLRotationType } from './proto/apl';
 import {
 	Consumes,
 	Debuffs,
@@ -158,6 +158,10 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 	// Built at the top of the Rotation tab, for settings on another tab that the rotation plays
 	// from, like those starting totems.
 	rotationTabHeader?: (parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => void;
+	// A note on a prepull action in the rotation that won't happen as written, like a totem that
+	// an Enhancement shaman's starting totem replaces at the pull. The Rotation tab marks the
+	// action red with the note in its tooltip.
+	prepullActionNote?: (player: Player<SpecType>, action: APLPrepullAction) => string | undefined;
 
 	encounterPicker: EncounterPickerConfig;
 

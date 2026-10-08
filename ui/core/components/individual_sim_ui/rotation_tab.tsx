@@ -138,7 +138,7 @@ export class RotationTab extends SimTab {
 		const contentRef = ref<HTMLDivElement>();
 		this.leftCol.appendChild(<div ref={contentRef} className="rotation-tab-apl" />);
 
-		new APLRotationPicker(contentRef.value!, this.simUI, this.simUI.player);
+		new APLRotationPicker(contentRef.value!, this.simUI, this.simUI.player, this.simUI.individualConfig.prepullActionNote);
 	}
 
 	private buildSimpleContent() {
