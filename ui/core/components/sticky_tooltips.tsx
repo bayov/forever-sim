@@ -153,11 +153,29 @@ function afterNextPaint(callback: () => void) {
 	requestAnimationFrame(() => requestAnimationFrame(callback));
 }
 
+// wowhead's tooltips link their set pieces and item effects with paths of its own site, like
+// '/forever/item=11729/savage-gladiator-helm'. On our page that path points to us, so a click
+// on one would open our own page. When the mouse comes onto such a link (in a tooltip, or in a
+// pinned copy of one), we point it at wowhead and open it in a new tab, like a click on an icon.
+function fixWowheadTooltipLinks() {
+	window.addEventListener(
+		'mouseover',
+		event => {
+			const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('.wowhead-tooltip a[href^="/"]');
+			if (!link) return;
+			link.href = `https://www.wowhead.com${link.getAttribute('href')}`;
+			link.target = '_blank';
+		},
+		{ capture: true, passive: true },
+	);
+}
+
 export function installStickyTooltips() {
 	if (installed) return;
 	installed = true;
 	addPinHints();
 	trackModifierKeys();
+	fixWowheadTooltipLinks();
 
 	let mouseTarget: Element | null = null;
 	window.addEventListener('mouseover', event => (mouseTarget = event.target as Element | null), { capture: true, passive: true });
@@ -313,12 +331,12 @@ function hidePinnedSources(target: Element | null): () => void {
 	};
 }
 
-// Drags the pinned tooltip by any part of it except the close button. We keep at least a corner
-// of it on the screen, so we can always grab it again.
+// Drags the pinned tooltip by any part of it except the close button and its links, which we
+// click to open. We keep at least a corner of it on the screen, so we can always grab it again.
 function makeDraggable(sticky: HTMLElement) {
 	const MIN_VISIBLE = 24;
 	sticky.addEventListener('pointerdown', event => {
-		if (event.button !== 0 || (event.target as Element).closest('.sticky-tooltip-close')) return;
+		if (event.button !== 0 || (event.target as Element).closest('.sticky-tooltip-close, a[href]')) return;
 		event.preventDefault();
 		sticky.style.zIndex = String(++topZIndex);
 		sticky.classList.add('dragging');
