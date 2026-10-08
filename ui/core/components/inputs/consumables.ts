@@ -27,6 +27,7 @@ import {
 	SpellPowerBuff,
 	Stat,
 	StrengthBuff,
+	TrollsBloodPotion,
 	WeaponImbue,
 	ZanzaBuff,
 } from '../../proto/common';
@@ -432,6 +433,35 @@ export const HEALTH_CONSUMES_CONFIG: ConsumableStatOption<HealthElixir>[] = [
 ];
 
 export const makeHealthConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'healthElixir' });
+
+// Health regen
+//
+// The sim has no health regen, so these don't change results yet. We keep the slot so the pick
+// shows up and is saved with the rest, see ConsumesPicker.
+export const MajorTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
+	actionId: () => ActionId.fromItemId(20004),
+	value: TrollsBloodPotion.MajorTrollsBloodPotion,
+};
+export const MightyTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
+	actionId: () => ActionId.fromItemId(3826),
+	value: TrollsBloodPotion.MightyTrollsBloodPotion,
+};
+export const StrongTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
+	actionId: () => ActionId.fromItemId(3388),
+	value: TrollsBloodPotion.StrongTrollsBloodPotion,
+};
+export const WeakTrollsBloodPotion: ConsumableInputConfig<TrollsBloodPotion> = {
+	actionId: () => ActionId.fromItemId(3382),
+	value: TrollsBloodPotion.WeakTrollsBloodPotion,
+};
+export const TROLLS_BLOOD_CONFIG: ConsumableStatOption<TrollsBloodPotion>[] = [
+	{ config: MajorTrollsBloodPotion, stats: [] },
+	{ config: MightyTrollsBloodPotion, stats: [] },
+	{ config: StrongTrollsBloodPotion, stats: [] },
+	{ config: WeakTrollsBloodPotion, stats: [] },
+];
+
+export const makeTrollsBloodInput = makeConsumeInputFactory({ consumesFieldName: 'trollsBloodPotion' });
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 PHYSICAL DAMAGE CONSUMES

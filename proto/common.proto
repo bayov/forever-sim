@@ -422,6 +422,15 @@ enum HealthElixir {
 	ElixirOfMinorFortitude = 2;
 }
 
+// The sim has no health regen yet, so we keep the pick but it doesn't change results.
+enum TrollsBloodPotion {
+	TrollsBloodPotionUnknown = 0;
+	MajorTrollsBloodPotion = 1;
+	MightyTrollsBloodPotion = 2;
+	StrongTrollsBloodPotion = 3;
+	WeakTrollsBloodPotion = 4;
+}
+
 enum ManaRegenElixir {
 	ManaRegenElixirUnknown = 0;
 	MagebloodPotion = 1;
@@ -735,6 +744,7 @@ message Consumes {
 	SapperExplosive sapper_explosive = 28;
 	HitConsumable hit_consumable = 29;
 	IntellectElixir intellect_elixir = 34;
+	TrollsBloodPotion trolls_blood_potion = 35;
 }
 
 // NextIndex: 26
