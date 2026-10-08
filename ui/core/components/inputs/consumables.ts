@@ -405,12 +405,14 @@ export const ScrollOfProtection: ConsumableInputConfig<ArmorElixir> = {
 	actionId: () => ActionId.fromItemId(10305),
 	value: ArmorElixir.ScrollOfProtection,
 };
+// Every class gets the armor slot, even when its sim doesn't show Armor, because the PvP presets
+// weigh armor.
 export const ARMOR_CONSUMES_CONFIG: ConsumableStatOption<ArmorElixir>[] = [
-	{ config: ElixirOfSuperiorDefense, stats: [Stat.StatArmor] },
-	{ config: ElixirOfGreaterDefense, stats: [Stat.StatArmor] },
-	{ config: ElixirOfDefense, stats: [Stat.StatArmor] },
-	{ config: ElixirOfMinorDefense, stats: [Stat.StatArmor] },
-	{ config: ScrollOfProtection, stats: [Stat.StatArmor] },
+	{ config: ElixirOfSuperiorDefense, stats: [] },
+	{ config: ElixirOfGreaterDefense, stats: [] },
+	{ config: ElixirOfDefense, stats: [] },
+	{ config: ElixirOfMinorDefense, stats: [] },
+	{ config: ScrollOfProtection, stats: [] },
 ];
 
 export const makeArmorConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'armorElixir' });
