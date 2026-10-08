@@ -284,12 +284,8 @@
 				flex: 0 0 auto;
 			}
 
-			// The row we would drop a dragged row on.
-			&.dragto {
-				border-color: var(--gold-soft);
-			}
-
-			// The handle on the far left. We drag it, or the action's icon, to move the row.
+			// The handle on the far left. We drag the row from it or from any part of the row that
+			// isn't an input, a dropdown or a button, and the handle lights up while we hover one.
 			> .list-picker-item-move {
 				order: -1;
 				align-self: stretch;
@@ -312,8 +308,11 @@
 				}
 			}
 
-			&:hover > .list-picker-item-move {
-				opacity: 0.8;
+			&:hover:not(:has(:is(input, textarea, select, button, .dropdown-menu, a:not(.list-picker-drag-handle):not(.list-picker-item-move)):hover))
+				> .list-picker-item-move,
+			&.list-picker-dragging > .list-picker-item-move {
+				opacity: 1;
+				color: var(--bs-white);
 			}
 
 			// A row we turned off with the eye button stays in the list, faded out.
@@ -420,6 +419,7 @@
 	}
 
 	.apl-row-icon {
+		position: relative;
 		flex: 0 0 auto;
 		cursor: grab;
 		width: 2.75rem;
@@ -435,6 +435,20 @@
 		background-position: center;
 		color: var(--text-muted-color);
 		font-size: 1.1rem;
+	}
+
+	// A prepull totem that a starting totem replaces, see startingTotemPrepullNote. Like a buff
+	// that doesn't stack, it gets a red edge, a red tint and a "!" badge with the reason.
+	.apl-row-icon.buff-unstacked {
+		outline: 2px solid #e0403a;
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: rgba(200, 30, 30, 0.35);
+			pointer-events: none;
+		}
 	}
 
 	.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-picker-action {

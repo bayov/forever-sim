@@ -111,3 +111,41 @@
 		}
 	}
 }
+
+// A list we sort by dragging its items, see ListPicker.makeSortable. We drag an item from any
+// part of it that isn't an input, a dropdown or a button.
+.list-picker-sortable {
+	cursor: grab;
+	user-select: none;
+
+	:is(input, textarea, select, [contenteditable]) {
+		cursor: text;
+		user-select: text;
+	}
+
+	:is(button, .dropdown-menu, a:not(.list-picker-drag-handle):not(.list-picker-item-move)) {
+		cursor: pointer;
+	}
+}
+
+// While we drag, the items around the dragged one slide to make room for it.
+.list-picker-sorting > .list-picker-item-container {
+	transition: transform 0.15s ease;
+}
+
+.list-picker-items .list-picker-dragging,
+.list-picker-items .list-picker-settling {
+	position: relative;
+	z-index: 2;
+	box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.55);
+}
+
+.list-picker-items .list-picker-dragging {
+	transition: none;
+	cursor: grabbing;
+}
+
+// Keep in sync with SETTLE_MS in list_picker.tsx.
+.list-picker-items .list-picker-settling {
+	transition: transform 0.15s ease;
+}

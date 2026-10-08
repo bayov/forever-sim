@@ -12,11 +12,17 @@ import { dirtySettings } from '../dirty_settings';
 import { Input, InputConfig } from '../input';
 import { AdaptiveStringPicker } from '../inputs/string_picker';
 import { LIST_PICKER_DRAG_HANDLE, ListItemPickerConfig, ListPicker } from '../list_picker';
+import { markUnstacked } from '../unstacked_mark';
 import { APLActionPicker } from './apl_actions';
 import { APLValueImplStruct } from './apl_values';
 
 export class APLRotationPicker extends Component {
-	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<any>) {
+	constructor(
+		parent: HTMLElement,
+		simUI: SimUI,
+		modPlayer: Player<any>,
+		prepullActionNote?: (player: Player<any>, action: APLPrepullAction) => string | undefined,
+	) {
 		super(parent, 'apl-rotation-picker-root');
 
 		// We don't mark the editor's rows, see Input.tracksPresetChanges(), so the editor as a
@@ -52,9 +58,9 @@ export class APLRotationPicker extends Component {
 				listPicker: ListPicker<Player<any>, APLPrepullAction>,
 				index: number,
 				config: ListItemPickerConfig<Player<any>, APLPrepullAction>,
-			) => new APLPrepullActionPicker(parent, modPlayer, config, index),
+			) => new APLPrepullActionPicker(parent, modPlayer, config, index, prepullActionNote),
 			inlineMenuBar: true,
-			moveHandleFirst: true,
+			dragWholeItem: true,
 		});
 
 		new ListPicker<Player<any>, APLListItem>(this.rootElem, modPlayer, {
@@ -80,7 +86,7 @@ export class APLRotationPicker extends Component {
 				config: ListItemPickerConfig<Player<any>, APLListItem>,
 			) => new APLListItemPicker(parent, modPlayer, config, index),
 			inlineMenuBar: true,
-			moveHandleFirst: true,
+			dragWholeItem: true,
 		});
 
 		//modPlayer.rotationChangeEmitter.on(() => console.log('APL: ' + APLRotation.toJsonString(modPlayer.aplRotation)))
@@ -103,14 +109,23 @@ class APLPrepullActionPicker extends Input<Player<any>, APLPrepullAction> {
 		);
 	}
 
-	constructor(parent: HTMLElement, player: Player<any>, config: ListItemPickerConfig<Player<any>, APLPrepullAction>, index: number) {
+	constructor(
+		parent: HTMLElement,
+		player: Player<any>,
+		config: ListItemPickerConfig<Player<any>, APLPrepullAction>,
+		index: number,
+		prepullActionNote?: (player: Player<any>, action: APLPrepullAction) => string | undefined,
+	) {
 		config.enableWhen = () => !this.getItem().hide;
 		super(parent, 'apl-list-item-picker-root', player, config);
 		this.player = player;
 
 		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
 		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.prepullActions[index]?.warnings || []);
-		makeActionIcon(this.rootElem, player, () => this.getItem().action);
+		const iconElem = makeActionIcon(this.rootElem, player, () => this.getItem().action);
+		if (prepullActionNote) {
+			markUnstacked(iconElem, () => prepullActionNote(player, this.getItem()), player.changeEmitter);
+		}
 
 		this.hidePicker = new HidePicker(itemHeaderElem, player, {
 			changedEvent: () => this.player.rotationChangeEmitter,
@@ -298,12 +313,11 @@ function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, 
 // Scheduled Action shows the icon of the action it schedules. Other actions, like Wait or
 // Autocast Other Cooldowns, show a plain icon for their kind. We can drag the icon to move the
 // row, like the handle on its left, and a click opens the spell on wowhead.
-function makeActionIcon(parent: HTMLElement, player: Player<any>, getAction: () => APLAction | undefined) {
+function makeActionIcon(parent: HTMLElement, player: Player<any>, getAction: () => APLAction | undefined): HTMLElement {
 	const iconElem = document.createElement('a');
 	iconElem.classList.add('apl-row-icon', LIST_PICKER_DRAG_HANDLE);
 	iconElem.dataset.whtticon = 'false';
 	iconElem.target = '_blank';
-	iconElem.draggable = true;
 	parent.prepend(iconElem);
 
 	let shownKey = '';
@@ -324,7 +338,7 @@ function makeActionIcon(parent: HTMLElement, player: Player<any>, getAction: () 
 		}
 		shownKey = key;
 
-		iconElem.replaceChildren();
+		iconElem.querySelector(':scope > i.fa')?.remove();
 		iconElem.style.backgroundImage = '';
 		iconElem.removeAttribute('href');
 		delete iconElem.dataset.wowhead;
@@ -345,6 +359,7 @@ function makeActionIcon(parent: HTMLElement, player: Player<any>, getAction: () 
 	};
 	update();
 	player.rotationChangeEmitter.on(update);
+	return iconElem;
 }
 
 function actionIdOf(action: APLAction | undefined): ActionIdProto | undefined {
