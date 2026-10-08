@@ -6,6 +6,7 @@ import { Consumes, Spec, Stat, TristateEffect } from '../../proto/common';
 import { TypedEvent } from '../../typed_event';
 import { Component } from '../component';
 import { IconEnumPicker } from '../icon_enum_picker';
+import { hideTooltipIconsWhileHovered } from '../gear_picker/item_comparison';
 import { buildIconInput } from '../icon_inputs.js';
 import { IconPicker } from '../icon_picker';
 import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
@@ -23,6 +24,7 @@ export class ConsumesPicker extends Component {
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
 		super(parentElem, 'consumes-picker-root');
 		this.simUI = simUI;
+		hideTooltipIconsWhileHovered(this.rootElem);
 
 		this.simUI.sim.waitForInit().then(() => {
 			this.buildPotionsPicker();
