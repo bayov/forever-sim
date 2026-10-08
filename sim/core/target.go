@@ -28,7 +28,7 @@ type Encounter struct {
 	// Value to multiply by, for damage spells which are subject to the aoe cap.
 	aoeCapMultiplier float64
 
-	// PvP mode, see pvp.go.
+	// PvP mode, and the share of the fight out of melee range (in PvP or not), see pvp.go.
 	PvP              bool
 	PvPMeleeDowntime float64
 }

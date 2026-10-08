@@ -4,10 +4,11 @@ import (
 	"time"
 )
 
-// PvP mode (Encounter.pvp) is a fight against an enemy player.
+// Time out of melee range (Encounter.pvp_melee_downtime), in PvP or not.
 //
 // An enemy player does not stand still in melee range the way a boss does. They kite,
-// they run behind a pillar, and they stun or root us. So we take every player out of
+// they run behind a pillar, and they stun or root us. A boss can also make us move, like
+// when we run out of a fire or the boss knocks us back. So we take every player out of
 // melee range for random stretches of 1 to 10 sec. While out of range, a player has no
 // white hits and cannot use melee abilities, but spells still go out (a shock reaches 20
 // yards). Fire Nova goes off around the fire totem, which the enemy has left as well, so
@@ -16,7 +17,7 @@ import (
 // The stretches in melee range are drawn so that the share of the fight spent out of
 // range comes to Encounter.pvp_melee_downtime on average. A fight starts at a random
 // point of that cycle, so a short fight is out of range for the same share as a long
-// one.
+// one. With no downtime we never move anyone, and that's the default.
 const (
 	pvpMinDowntime = time.Second
 	pvpMaxDowntime = time.Second * 10
@@ -24,16 +25,16 @@ const (
 	pvpOutOfRangeDistance = 20
 )
 
-// Whether the unit can reach its target in melee. Only PvP mode moves a player out of
-// range during the fight.
+// Whether the unit can reach its target in melee. Only the melee downtime moves a player
+// out of range during the fight.
 func (unit *Unit) IsInMeleeRange() bool {
 	return unit.DistanceFromTarget <= MaxMeleeAttackDistance
 }
 
-// Whether PvP mode keeps this spell from being cast right now: a melee ability, or a
-// spell that goes off from a totem, while the player is out of melee range.
+// Whether the melee downtime keeps this spell from being cast right now: a melee ability,
+// or a spell that goes off from a totem, while the player is out of melee range.
 func (spell *Spell) outOfPvPRange() bool {
-	if !spell.Unit.Env.Encounter.PvP || spell.Unit.IsInMeleeRange() {
+	if spell.Unit.Env.Encounter.PvPMeleeDowntime <= 0 || spell.Unit.IsInMeleeRange() {
 		return false
 	}
 	return spell.ProcMask.Matches(ProcMaskMelee) || spell.Flags.Matches(SpellFlagCastFromTotem)
@@ -41,7 +42,7 @@ func (spell *Spell) outOfPvPRange() bool {
 
 func (env *Environment) startPvPDowntime(sim *Simulation) {
 	downtime := env.Encounter.PvPMeleeDowntime
-	if !env.Encounter.PvP || downtime <= 0 {
+	if downtime <= 0 {
 		return
 	}
 	for _, unit := range env.Raid.AllPlayerUnits {

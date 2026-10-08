@@ -27,7 +27,7 @@ export interface EncounterPickerConfig {
 
 // The fight settings: its length, PvP, the execute phases and the targets.
 //
-// Each target is a row with its mob type's icon, its name and a short summary. We edit a
+// Each target is a row with its mob type's icon, its name and two lines of its stats. We edit a
 // target in a modal with only that target's settings, add one with the button under the list
 // and remove one with the button on its row.
 export class EncounterPicker extends Component {
@@ -51,22 +51,32 @@ export class EncounterPicker extends Component {
 
 		// Need to wait so that the encounter and target presets will be loaded.
 		modEncounter.sim.waitForInit().then(() => {
+			// The Encounter Type comes first. PvP is one of its choices, beside the preset
+			// encounters, and picking anything else turns PvP off.
 			const presetEncounters = modEncounter.sim.db.getAllPresetEncounters();
-			if (presetEncounters.length) {
-				new EnumPicker<Encounter>(this.rootElem, modEncounter, {
-					id: 'encounter-preset-encouter',
-					extraCssClasses: ['encounter-preset-picker'],
-					label: 'Encounter',
-					values: [{ name: 'Custom', value: -1 }].concat(presetEncounters.map((pe, i) => ({ name: pe.path, value: i }))),
-					changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-					getValue: (encounter: Encounter) => presetEncounters.findIndex(pe => encounter.matchesPreset(pe)),
-					setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-						if (newValue != -1) {
+			const typeGroup = this.rootElem.querySelector(':scope > .encounter-type-group') as HTMLElement;
+			const typePicker = new EnumPicker<Encounter>(typeGroup, modEncounter, {
+				id: 'encounter-type',
+				label: 'Encounter Type',
+				labelTooltip:
+					'A preset fight, or PvP. In PvP the target is an enemy player, and white hits never glance. How long we spend out of melee range is Out of Melee (%), in PvP or not.',
+				values: [
+					{ name: 'Custom', value: ENCOUNTER_TYPE_CUSTOM },
+					{ name: 'PvP', value: ENCOUNTER_TYPE_PVP },
+					...presetEncounters.map((pe, i) => ({ name: pe.path, value: i })),
+				],
+				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+				getValue: (encounter: Encounter) => (encounter.getPvp() ? ENCOUNTER_TYPE_PVP : presetEncounters.findIndex(pe => encounter.matchesPreset(pe))),
+				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+					TypedEvent.freezeAllAndDo(() => {
+						encounter.setPvp(eventID, newValue == ENCOUNTER_TYPE_PVP);
+						if (newValue >= 0) {
 							encounter.applyPreset(eventID, presetEncounters[newValue]);
 						}
-					},
-				});
-			}
+					});
+				},
+			});
+			typeGroup.prepend(typePicker.rootElem);
 
 			if (simUI.isIndividualSim() && isHealingSpec((simUI as IndividualSimUI<any>).player.spec)) {
 				new NumberPicker(this.rootElem, simUI.sim.raid, {
@@ -138,7 +148,9 @@ class TargetList extends Component {
 			const preset = presetTargets.find(pe => equalTargetsIgnoreInputs(target, pe.target));
 			const mobType = mobTypeEnumValues.find(mt => mt.value == target.mobType) ?? mobTypeEnumValues[0];
 			const summary = [`Level ${target.level}`, mobType.name, `${target.stats[Stat.StatArmor]} Armor`];
-			if (target.stats[Stat.StatHealth]) summary.push(`${target.stats[Stat.StatHealth]} Health`);
+			const resistances = TARGET_RESISTANCES.map(
+				({ stat, school }) => `<span class="encounter-target-resist-${school.toLowerCase()}">${school}</span> ${target.stats[stat]}`,
+			);
 
 			const row = document.createElement('div');
 			row.classList.add('encounter-target-row');
@@ -147,6 +159,7 @@ class TargetList extends Component {
 				<div class="encounter-target-info">
 					<div class="encounter-target-name"></div>
 					<div class="encounter-target-summary"></div>
+					<div class="encounter-target-summary encounter-target-resistances">${resistances.join(' \u00b7 ')}</div>
 				</div>
 				<button class="encounter-target-edit btn btn-link" aria-label="Edit target"><i class="fas fa-pen"></i></button>
 				<button class="encounter-target-remove btn btn-link link-danger" aria-label="Remove target"><i class="fas fa-times"></i></button>
@@ -633,7 +646,17 @@ class TargetInputPicker extends Input<Encounter, TargetInput> {
 	}
 }
 
+// The Encounter Type picker's choices besides the preset encounters, which use their index.
+const ENCOUNTER_TYPE_CUSTOM = -1;
+const ENCOUNTER_TYPE_PVP = -2;
+
+// The fight's fields. The EncounterPicker puts the Encounter Type in front of the PvP field,
+// once the sim has loaded the preset encounters.
 function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
+	const typeGroup = Input.newGroupContainer();
+	typeGroup.classList.add('encounter-type-group');
+	rootElem.appendChild(typeGroup);
+
 	const durationGroup = Input.newGroupContainer();
 	rootElem.appendChild(durationGroup);
 
@@ -665,31 +688,16 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 		},
 	});
 
-	const pvpGroup = Input.newGroupContainer();
-	rootElem.appendChild(pvpGroup);
-
-	new BooleanPicker<Encounter>(pvpGroup, encounter, {
-		id: 'encounter-pvp',
-		label: 'PvP',
-		labelTooltip:
-			'The target is an enemy player. White hits never glance, and for random stretches of 1 to 10 sec you are out of melee range: no white hits, no melee abilities and no Fire Nova, but spells still go out.',
-		inline: true,
-		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-		getValue: (encounter: Encounter) => encounter.getPvp(),
-		setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => {
-			encounter.setPvp(eventID, newValue);
-		},
-	});
-	new NumberPicker(pvpGroup, encounter, {
+	new NumberPicker(typeGroup, encounter, {
 		id: 'encounter-pvp-melee-downtime',
 		label: 'Out of Melee (%)',
-		labelTooltip: 'In PvP, the share of the fight spent out of melee range.',
+		labelTooltip:
+			'The share of the fight spent out of melee range, in PvP or not. Out of range we have no white hits and no melee abilities, but spells still go out.',
 		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 		getValue: (encounter: Encounter) => encounter.getPvpMeleeDowntime() * 100,
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 			encounter.setPvpMeleeDowntime(eventID, newValue / 100);
 		},
-		showWhen: _ => encounter.getPvp(),
 	});
 
 	const executeGroup = Input.newGroupContainer();
@@ -775,6 +783,15 @@ function equalTargetsIgnoreInputs(target1: TargetProto | undefined, target2: Tar
 	modTarget2.targetInputs = target1.targetInputs;
 	return TargetProto.equals(target1, modTarget2);
 }
+
+// The resistances on a target's second summary line, each school's name in its color.
+const TARGET_RESISTANCES = [
+	{ stat: Stat.StatArcaneResistance, school: 'Arcane' },
+	{ stat: Stat.StatFireResistance, school: 'Fire' },
+	{ stat: Stat.StatFrostResistance, school: 'Frost' },
+	{ stat: Stat.StatNatureResistance, school: 'Nature' },
+	{ stat: Stat.StatShadowResistance, school: 'Shadow' },
+];
 
 const ALL_TARGET_STATS: Array<{ stat: Stat; tooltip: string; extraCssClasses: Array<string> }> = [
 	{ stat: Stat.StatHealth, tooltip: '', extraCssClasses: [] },

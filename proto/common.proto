@@ -1027,12 +1027,12 @@ message Encounter {
 	// If type != Simple or Custom, then this may be empty.
 	repeated Target targets = 6;
 
-	// PvP mode, for a fight against an enemy player. White hits never glance, and the
-	// players spend random stretches of 1 to 10 sec out of melee range, where they have
-	// no white hits and cannot use melee abilities.
+	// PvP mode, for a fight against an enemy player. White hits never glance.
 	bool pvp = 8;
 
-	// The share of the fight PvP mode spends out of melee range, from 0 to 1.
+	// The share of the fight out of melee range, from 0 to 1, in PvP or not. The players
+	// spend random stretches of 1 to 10 sec out of melee range, where they have no white
+	// hits and cannot use melee abilities.
 	double pvp_melee_downtime = 9;
 }
 

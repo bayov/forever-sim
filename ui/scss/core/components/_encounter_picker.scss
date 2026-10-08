@@ -33,13 +33,13 @@
 		gap: 0.4rem;
 	}
 
-	// A target's row: its mob type's icon, its name with a summary under it, and the edit and
-	// remove buttons on the right.
+	// A target's row: its mob type's icon, its name with two lines of stats under it, and the
+	// edit and remove buttons on the right.
 	.encounter-target-row {
 		display: flex;
 		align-items: center;
-		gap: 0.6rem;
-		padding: 0.35rem 0.5rem;
+		gap: 0.75rem;
+		padding: 0.5rem 0.6rem;
 		border: 1px solid var(--line-color-strong);
 		border-radius: var(--panel-radius);
 		background: var(--panel-bg-2);
@@ -58,8 +58,8 @@
 	}
 
 	.encounter-target-icon {
-		width: 2rem;
-		height: 2rem;
+		width: 3rem;
+		height: 3rem;
 		flex-shrink: 0;
 		border: 1px solid #000;
 		border-radius: 3px;
@@ -81,6 +81,28 @@
 	.encounter-target-summary {
 		color: var(--text-muted-color);
 		font-size: 0.75rem;
+		line-height: 1.35;
+	}
+
+	// The school names in the colors the game gives them.
+	.encounter-target-resist-arcane {
+		color: #ff80ff;
+	}
+
+	.encounter-target-resist-fire {
+		color: #ff8000;
+	}
+
+	.encounter-target-resist-frost {
+		color: #80ffff;
+	}
+
+	.encounter-target-resist-nature {
+		color: #4dff4d;
+	}
+
+	.encounter-target-resist-shadow {
+		color: #8080ff;
 	}
 
 	.encounter-target-edit,

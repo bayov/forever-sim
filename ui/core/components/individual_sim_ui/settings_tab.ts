@@ -116,7 +116,7 @@ export class SettingsTab extends SimTab {
 	}
 
 	// The player's inputs that describe the fight go in the Encounter section, above the
-	// encounter presets and the targets: In Front of Target, and the spec's encounterInputs (like how often raid damage
+	// targets: In Front of Target, and the spec's encounterInputs (like how often raid damage
 	// hits an Enhancement shaman). The encounter picker adds the targets once the sim loads,
 	// which is before we get here.
 	//
@@ -124,7 +124,7 @@ export class SettingsTab extends SimTab {
 	// numbers side by side with their labels above them, like Duration and Duration +/-.
 	private buildEncounterInputs() {
 		if (!this.encounterPicker) return;
-		const targets = this.encounterPicker.rootElem.querySelector(':scope > .encounter-preset-picker, :scope > .encounter-targets');
+		const targets = this.encounterPicker.rootElem.querySelector(':scope > .encounter-targets');
 
 		if (this.simUI.individualConfig.otherInputs.inputs.includes(OtherInputs.InFrontOfTarget)) {
 			const group = Input.newGroupContainer();

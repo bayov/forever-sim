@@ -8,8 +8,8 @@ const DEFAULT_VARIATION = 15;
 const DEFAULT_EXECUTE_20 = 0.2;
 const DEFAULT_EXECUTE_25 = 0.25;
 const DEFAULT_EXECUTE_35 = 0.35;
-// The share of a PvP fight spent out of melee range, when PvP mode is first turned on.
-const DEFAULT_PVP_MELEE_DOWNTIME = 0.7;
+// The share of the fight spent out of melee range, in PvP or not.
+const DEFAULT_PVP_MELEE_DOWNTIME = 0;
 
 // Manages all the settings for an Encounter.
 export class Encounter {
@@ -157,9 +157,7 @@ export class Encounter {
 			executeProportion35: this.executeProportion35,
 			useHealth: this.useHealth,
 			pvp: this.pvp,
-			// Only a PvP fight carries the downtime, so a preset encounter without PvP still
-			// matches the settings.
-			pvpMeleeDowntime: this.pvp ? this.pvpMeleeDowntime : 0,
+			pvpMeleeDowntime: this.pvpMeleeDowntime,
 			targets: this.targets,
 		});
 	}
@@ -173,8 +171,7 @@ export class Encounter {
 			this.setExecuteProportion35(eventID, proto.executeProportion35);
 			this.setUseHealth(eventID, proto.useHealth);
 			this.setPvp(eventID, proto.pvp);
-			// Settings without PvP have no downtime saved, so turning PvP on starts from the default.
-			this.setPvpMeleeDowntime(eventID, proto.pvp ? proto.pvpMeleeDowntime : DEFAULT_PVP_MELEE_DOWNTIME);
+			this.setPvpMeleeDowntime(eventID, proto.pvpMeleeDowntime);
 			// We copy the targets, so editing one later doesn't change the preset or the saved
 			// settings they came from.
 			this.targets = proto.targets.map(target => TargetProto.clone(target));
