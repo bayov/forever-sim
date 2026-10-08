@@ -9,8 +9,9 @@ export interface TrackedSetting {
 	// themselves, because we mark their parts instead.
 	isTracked?: () => boolean;
 	// The setting's name in the list of changes on a modified preset. Left out means we
-	// find it on the page, see nameFromPage().
-	name?: () => string;
+	// find it on the page, see nameFromPage(). An element goes in as it is, like a link to a
+	// buff we can hover for its tooltip.
+	name?: () => string | HTMLElement;
 	// The value in the list of changes, like '60' or 'Crown of Destruction'. Left out means
 	// we write simple values as they are, see formatValue(). An empty string means we only
 	// list the name, for values like a whole rotation. An element goes in as it is, like an
@@ -179,16 +180,24 @@ interface SettingChange {
 
 // The changes in lines like 'Duration: 120 → 90', under the tab they're on (Gear, Settings and
 // so on), in the order of the tabs.
+//
+// A tab with sections, like Settings, has its changes under each section, like 'Settings:
+// Raid Buffs' and 'Settings: Consumables', in the order they're on the page.
 function categorize(changes: SettingChange[]): ChangeCategory[] {
 	// The lines of each category by their text, because a setting can show twice on one tab.
 	const categories = new Map<string, Map<string, ChangeLine>>();
+	// Where each category's first setting is, to put the sections of a tab in page order.
+	const firstElems = new Map<string, HTMLElement>();
 	changes.forEach(({ setting, preset, current }) => {
 		const name = setting.name?.() ?? nameFromPage(setting.elem);
 		const format = setting.format ?? formatValue;
 		const line = changeLine(name, format(JSON.parse(preset)), format(JSON.parse(current)));
-		const category = setting.elem.closest<HTMLElement>('[data-preset-category]')?.dataset.presetCategory ?? 'Other';
+		const tab = setting.elem.closest<HTMLElement>('[data-preset-category]')?.dataset.presetCategory ?? 'Other';
+		const section = setting.elem.closest('.content-block')?.querySelector('.content-block-title')?.textContent?.trim();
+		const category = section && tab !== 'Other' && section !== tab ? `${tab}: ${section}` : tab;
 		if (!categories.has(category)) categories.set(category, new Map());
 		categories.get(category)!.set(lineText(line), line);
+		if (!firstElems.has(category)) firstElems.set(category, setting.elem);
 	});
 
 	// A setting outside the tabs (in the encounter's Advanced dialog) is listed under Other,
@@ -200,8 +209,15 @@ function categorize(changes: SettingChange[]): ChangeCategory[] {
 	if (other?.size === 0) categories.delete('Other');
 
 	const order = Array.from(document.querySelectorAll<HTMLElement>('[data-preset-category]')).map(elem => elem.dataset.presetCategory);
-	const rank = (name: string) => (order.includes(name) ? order.indexOf(name) : order.length);
-	return Array.from(categories, ([name, lines]) => ({ name, lines: Array.from(lines.values()) })).sort((a, b) => rank(a.name) - rank(b.name));
+	const tabOf = (name: string) => name.split(': ')[0];
+	const rank = (name: string) => (order.includes(tabOf(name)) ? order.indexOf(tabOf(name)) : order.length);
+	const pageOrder = (a: string, b: string) => {
+		const position = firstElems.get(a)!.compareDocumentPosition(firstElems.get(b)!);
+		return position & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : position & Node.DOCUMENT_POSITION_PRECEDING ? 1 : 0;
+	};
+	return Array.from(categories, ([name, lines]) => ({ name, lines: Array.from(lines.values()) })).sort(
+		(a, b) => rank(a.name) - rank(b.name) || pageOrder(a.name, b.name),
+	);
 }
 
 // Settings come as numbers, strings, arrays and protos, so we compare them as JSON. A
@@ -215,14 +231,15 @@ function readKey(setting: TrackedSetting): string {
 	}
 }
 
-// A line like 'Duration: 120 → 90'. With an element for a value, the line is an element too.
-function changeLine(name: string, from: string | HTMLElement, to: string | HTMLElement): ChangeLine {
+// A line like 'Duration: 120 → 90'. With an element for the name or a value, the line is an
+// element too.
+function changeLine(name: string | HTMLElement, from: string | HTMLElement, to: string | HTMLElement): ChangeLine {
 	const isEmpty = (value: string | HTMLElement) => typeof value === 'string' && !value;
 	if (isEmpty(from) && isEmpty(to)) return name;
 	const value = (value: string | HTMLElement) => (isEmpty(value) ? 'none' : value);
-	if (typeof from === 'string' && typeof to === 'string') return `${name}: ${value(from)} → ${value(to)}`;
+	if (typeof name === 'string' && typeof from === 'string' && typeof to === 'string') return `${name}: ${value(from)} → ${value(to)}`;
 	const line = document.createElement('span');
-	line.append(`${name}: `, value(from), ' → ', value(to));
+	line.append(name, ': ', value(from), ' → ', value(to));
 	return line;
 }
 

@@ -3,6 +3,7 @@ import tippy from 'tippy.js';
 
 import { ActionId } from '../proto_utils/action_id.js';
 import { TypedEvent } from '../typed_event.js';
+import { actionLink } from './gear_picker/item_links.js';
 import { IconPickerDirection } from './icon_picker.jsx';
 import { Input, InputConfig } from './input.js';
 
@@ -51,6 +52,9 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 	private readonly buttonElem: HTMLAnchorElement;
 	private readonly buttonText: HTMLElement;
 	private readonly dropdownMenu: HTMLElement;
+	// Each choice, like Elixir of the Mongoose, once wowhead's data has its name. We link to
+	// the choices in the list of changes on a modified preset.
+	private readonly filledActions = new Map<IconEnumValueConfig<ModObject, T>, ActionId>();
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconEnumPickerConfig<ModObject, T>) {
 		super(parent, 'icon-enum-picker-root', modObj, config);
@@ -184,8 +188,8 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.storedValue = undefined;
 	}
 
-	private setActionImage(elem: HTMLAnchorElement, actionId: ActionId) {
-		actionId.fillAndSet(elem, true, true);
+	private setActionImage(elem: HTMLAnchorElement, actionId: ActionId): Promise<ActionId> {
+		return actionId.fillAndSet(elem, true, true);
 	}
 
 	private setImage(elem: HTMLAnchorElement, valueConfig: IconEnumValueConfig<ModObject, T>) {
@@ -196,7 +200,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 		const actionId = valueConfig.actionId?.(this.modObject);
 		if (actionId) {
-			this.setActionImage(elem, actionId);
+			this.setActionImage(elem, actionId).then(filled => this.filledActions.set(valueConfig, filled));
 			elem.style.filter = '';
 		} else if (valueConfig.iconUrl) {
 			elem.style.backgroundImage = `url(${valueConfig.iconUrl})`;
@@ -246,6 +250,19 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 	setActive(active: boolean) {
 		if (active) this.buttonElem.classList.add('active');
 		else this.buttonElem.classList.remove('active');
+	}
+
+	// A hidden picker doesn't count, like a scroll slot while its raid buff isn't shown.
+	protected tracksPresetChanges(): boolean {
+		return super.tracksPresetChanges() && !this.rootElem.classList.contains('hide');
+	}
+
+	protected formatPresetValue(value: T): string | HTMLElement {
+		if (this.config.equals(value, this.config.zeroValue)) return 'none';
+		const valueConfig = this.config.values.find(valueConfig => this.config.equals(valueConfig.value, value));
+		const filled = valueConfig && this.filledActions.get(valueConfig);
+		if (filled?.name) return actionLink(filled);
+		return valueConfig?.tooltip || valueConfig?.text || String(value);
 	}
 
 	showWhen(): boolean {

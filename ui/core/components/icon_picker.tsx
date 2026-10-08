@@ -3,6 +3,7 @@ import { ref } from 'tsx-vanilla';
 import { ActionId } from '../proto_utils/action_id.js';
 import { TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
+import { actionLink } from './gear_picker/item_links.js';
 import { Input, InputConfig } from './input.js';
 
 export enum IconPickerDirection {
@@ -50,6 +51,12 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 	private currentValue: number;
 	private storedValue: ValueType | undefined;
 	private step: number;
+	// The icon and its improved versions, like Mana Spring Totem and Restorative Totems, once
+	// wowhead's data has their names. We link to them in the list of changes on a modified
+	// preset.
+	private filledAction?: ActionId;
+	private filledImproved?: ActionId;
+	private filledImproved2?: ActionId;
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconPickerConfig<ModObject, ValueType>) {
 		super(parent, 'icon-picker-root', modObj, config);
@@ -99,17 +106,20 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		this.counterElem = ce.value!;
 
 		if (this.config.states >= 3 && this.config.improvedId) {
-			this.config.improvedId.fillAndSet(this.improvedAnchor, true, true);
+			this.config.improvedId.fillAndSet(this.improvedAnchor, true, true).then(filled => (this.filledImproved = filled));
 		}
 		if (this.config.states >= 4 && this.config.improvedId2) {
-			this.config.improvedId2.fillAndSet(this.improvedAnchor2, true, true);
+			this.config.improvedId2.fillAndSet(this.improvedAnchor2, true, true).then(filled => (this.filledImproved2 = filled));
 		}
 
 		this.init();
 
 		// This must occur after this.init() else the state will not be handled correctly
 		const updateState = () => {
-			this.config.actionId(this.modObject)?.fillAndSet(this.rootAnchor, true, true);
+			this.config
+				.actionId(this.modObject)
+				?.fillAndSet(this.rootAnchor, true, true)
+				.then(filled => (this.filledAction = filled));
 
 			if (this.showWhen()) {
 				this.rootElem.classList.remove('hide');
@@ -252,6 +262,31 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		this.setInputValue(this.storedValue);
 		this.inputChanged(TypedEvent.nextEventID());
 		this.storedValue = undefined;
+	}
+
+	protected presetName(): string | HTMLElement {
+		return this.filledAction?.name ? actionLink(this.filledAction) : this.config.label || 'An icon';
+	}
+
+	// A hidden icon doesn't count, like the Classic Battle Shout with its improved state that
+	// the plain one under Forever stands in for.
+	protected tracksPresetChanges(): boolean {
+		return super.tracksPresetChanges() && !this.rootElem.classList.contains('hide');
+	}
+
+	// Off, on, or the improved version by name. An icon with a counter, like the number of
+	// Sunder Armor stacks, writes the count.
+	protected formatPresetValue(value: ValueType): string | HTMLElement {
+		const state = Number(value);
+		if (state === 0) return 'off';
+		if (state === 1 && (this.config.states === 2 || this.config.improvedId)) return 'on';
+		const isImproved = (state === 2 && this.config.improvedId) || (state === 3 && this.config.improvedId2);
+		if (!isImproved) return String(state);
+		const improved = state === 2 ? this.filledImproved : this.filledImproved2;
+		if (!improved?.name) return 'improved';
+		const elem = document.createElement('span');
+		elem.append('improved ', actionLink(improved));
+		return elem;
 	}
 
 	showWhen() {

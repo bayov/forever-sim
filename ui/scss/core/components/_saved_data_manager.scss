@@ -225,3 +225,13 @@
 	color: var(--dirty-color);
 }
 
+// A buff, debuff or consumable in the list of changes, in the light blue the game uses for
+// spell links, like [Blessing of Might]. Items keep their quality color.
+.preset-tree-dirty-note .action-link {
+	color: #71d5ff;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}

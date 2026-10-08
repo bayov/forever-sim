@@ -32,7 +32,7 @@ export interface PresetTreeEntry {
 }
 
 // A long list on one tab (a whole other gear set) is cut short in the tooltip.
-const MAX_LISTED_CHANGES = 8;
+const MAX_LISTED_CHANGES = 12;
 
 export class PresetTree {
 	readonly rootElem: HTMLElement;

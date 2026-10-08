@@ -82,6 +82,7 @@ export abstract class Input<ModObject, T, V = T> extends Component {
 			elem: this.rootElem,
 			read: () => this.getSourceValue(),
 			isTracked: () => this.tracksPresetChanges(),
+			name: this.presetName ? () => this.presetName!() : undefined,
 			format: this.formatPresetValue ? value => this.formatPresetValue!(value as T) : undefined,
 		});
 		this.addOnDisposeCallback(untrack);
@@ -98,7 +99,11 @@ export abstract class Input<ModObject, T, V = T> extends Component {
 
 	// How we write a value in the list of changes on a modified preset. Left out means we
 	// write numbers, strings and on / off as they are.
-	protected formatPresetValue?(value: T): string;
+	protected formatPresetValue?(value: T): string | HTMLElement;
+
+	// The input's name in the list of changes on a modified preset, like 'Mark of the Wild'
+	// for a buff icon. Left out means we find it on the page, see dirtySettings.
+	protected presetName?(): string | HTMLElement;
 
 	private buildLabel(config: InputConfig<ModObject, T, V>): JSX.Element {
 		const label = (
