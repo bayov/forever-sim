@@ -82,6 +82,9 @@ func (shaman *Shaman) newStoneskinTotemSpellConfig(rank int) core.SpellConfig {
 
 	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
 
+	// We build the buff now, because the sim can't add an aura once the fight has started.
+	buffAura := core.StoneskinTotemAura(&shaman.Unit, shaman.Talents.GuardianTotems)
+
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
 	spell.Rank = rank
@@ -89,7 +92,7 @@ func (shaman *Shaman) newStoneskinTotemSpellConfig(rank int) core.SpellConfig {
 		shaman.TotemExpirations[EarthTotem] = sim.CurrentTime + duration
 		shaman.ActiveTotems[EarthTotem] = spell
 
-		core.StoneskinTotemAura(&shaman.Unit, shaman.Talents.GuardianTotems).Activate(sim)
+		buffAura.Activate(sim)
 	}
 	return spell
 }

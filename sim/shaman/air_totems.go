@@ -8,8 +8,15 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
+// setActiveAirTotem puts the totem in the air slot and swaps in its buff.
+//
+// Windwall Totem has no buff in the sim, so it comes with a nil aura.
 func (shaman *Shaman) setActiveAirTotem(sim *core.Simulation, spell *core.Spell, aura *core.Aura) {
-	shaman.TotemExpirations[AirTotem] = sim.CurrentTime + aura.Duration
+	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
+	if aura != nil {
+		duration = aura.Duration
+	}
+	shaman.TotemExpirations[AirTotem] = sim.CurrentTime + duration
 	shaman.ActiveTotems[AirTotem] = spell
 
 	if shaman.ActiveTotemBuffs[AirTotem] != nil {
@@ -17,7 +24,9 @@ func (shaman *Shaman) setActiveAirTotem(sim *core.Simulation, spell *core.Spell,
 	}
 
 	shaman.ActiveTotemBuffs[AirTotem] = aura
-	aura.Activate(sim)
+	if aura != nil {
+		aura.Activate(sim)
+	}
 }
 
 const WindfuryTotemRanks = 3

@@ -37,7 +37,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 ## 3. Timing
 
-- [ ] 3.1 GCD: 1.5 sec for spells, 1 sec for totems, the 1 sec floor, whether spell haste shortens it
+- [x] 3.1 GCD: 1.5 sec for spells, 1 sec for totems, the 1 sec floor, whether spell haste shortens it
 - [ ] 3.2 Cast times (Lightning Bolt, Chain Lightning) and what a cast does to the swing timer
 - [ ] 3.3 How melee haste and cast speed modifiers stack (multiplicative)
 - [ ] 3.4 Prepull: totems, shield and imbue before the pull, the first swing at pull, totem time across the pull
@@ -370,9 +370,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - `mana_costs_test.go` has TestOrcShamanManaCostTalents, TestOrcShamanMaelstromWeaponCost, TestOrcShamanClearcasting and TestOrcShamanNotEnoughMana. They fail when Fire Nova stops counting as a damage spell, when Searing Totem's attacks count, when Lightning Bolt doesn't use up Maelstrom Weapon, and when Clearcasting procs 20%.
 - Fixed (2026-10-08, the user's go): Wrath and TBC spell IDs that wowhead Forever doesn't know. Lava Burst used 51505 on every rank and now has 408490, 1238299 and 1238300 as one rank family (`lava_burst_test.go`). Rage of the Farseer 2825 is now 425336, the Maelstrom Weapon buff 51530 is now 408505, and the Improved Stormstrike buff 51521 is now 1223031. The rotations and rotopt follow. The talent tree also had Wrath IDs for Lightning Overload, Mental Dexterity, Shamanistic Focus, Improved Stormstrike, Maelstrom Weapon, Water Shield and Riptide, and now has the client's Forever IDs. No golden changed.
 
+### 3.1 GCD
+
+- The user OK'd it (2026-10-08). wowhead Forever's spell pages give 1.5 sec for Earth Shock, Stormstrike, Water Shield and Fire Nova, and 0 for Rage of the Farseer and Nature's Swiftness. Totems take 1 sec. Haste never shortens the GCD, as in 1.12, so the 1 sec floor never comes into play. A cast longer than 1.5 sec holds the GCD until it ends, and a shorter one (Maelstrom Weapon, haste) still holds it for 1.5 sec.
+- `gcd_test.go` TestOrcShamanGCD casts every shaman spell and totem at level 60, Lightning Bolt at 0, 25 and 100% haste and with 3 Maelstrom Weapon stacks, and the two off-GCD spells during the GCD. It fails when haste shortens the GCD, when totems take 1.5 sec, and when Rage of the Farseer goes on the GCD.
+- Fixed (2026-10-08): casting Stoneskin Totem or Windwall Totem from a rotation crashed the sim. Stoneskin built its buff on the first cast, and Windwall has no buff and the air slot code expected one. Stoneskin's buff also added its -30 a second time when it ended. `stoneskin_test.go` checks the buff. No golden changed.
+- For 7.17: the earth totems don't take the old totem's buff away, so Stoneskin and Strength of Earth can both be up. Only the air totems swap the buff. Stoneskin also always gives rank 6's -30, whatever the level.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
-- 3.1 Haste never shortens the GCD (`cast.go` has the haste line commented out), like 1.12. Spells and Stormstrike use 1.5 sec, totems 1 sec (`totems.go` totemGCD).
 - 3.2 A spell with a cast time (Lightning Bolt, Chain Lightning, Lava Burst) restarts the swing timer: the next swing comes one full swing after the cast ends (`electric_spell.go` StopMeleeUntil). Instant spells don't touch it.
 - 4.3 White hits roll once. From behind: miss, dodge, glancing, crit, hit. In front (`InFrontOfTarget`): miss, dodge, parry, glancing, block, crit, hit (`spell_outcome.go` outcomeMeleeWhite).
 - 4.4 to 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: 8% miss, and the first 1% of hit from gear does nothing (9% to cap). 6.5% dodge, 14% parry from the front, 40% glancing for 55 to 75% damage (65% on average). Crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
