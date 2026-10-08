@@ -54,8 +54,6 @@ export class RotationTab extends SimTab {
 		this.buildSimpleContent();
 
 		this.buildSavedDataPickers();
-
-		this.simUI.individualConfig.rotationTabHeader?.(this.leftCol, this.simUI);
 	}
 
 	private updateSections() {
@@ -82,15 +80,21 @@ export class RotationTab extends SimTab {
 		const headerRef = ref<HTMLDivElement>();
 		const resetButtonRef = ref<HTMLButtonElement>();
 		const rotationTypeSelectRef = ref<HTMLDivElement>();
+		const extrasRef = ref<HTMLDivElement>();
 		this.leftCol.appendChild(
-			<div ref={headerRef} className="rotation-tab-header d-flex justify-content-between align-items-baseline">
+			<div ref={headerRef} className="rotation-tab-header">
 				<div ref={rotationTypeSelectRef} />
+				<div ref={extrasRef} className="rotation-tab-header-extras" />
 				<button ref={resetButtonRef} className="btn btn-sm btn-link btn-reset summary-table-reset-button">
 					<i className="fas fa-times me-1"></i>
 					Reset APL
 				</button>
 			</div>,
 		);
+
+		// The spec's own things next to the rotation type, like the Enhancement shaman's starting
+		// totems.
+		this.simUI.individualConfig.rotationTabHeader?.(extrasRef.value!, this.simUI);
 
 		resetButtonRef.value!.addEventListener('click', () => {
 			this.simUI.applyEmptyAplRotation(TypedEvent.nextEventID());

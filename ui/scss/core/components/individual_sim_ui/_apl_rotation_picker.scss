@@ -205,3 +205,259 @@
 .apl-action-schedule .apl-action-condition {
 	display: none;
 }
+
+// The rotation editor, laid out so we can read the priority list top to bottom.
+//
+// Each row shows what it does first ("Cast Stormstrike") and its condition under it, like a
+// line of a SimulationCraft action list. Rows get their number in the priority list. The
+// words that pick a kind of value ("Aura Active", "Compare", "Not") are dimmer than the
+// spells they point at, so the spells stand out. The row's buttons (enable, move, copy,
+// delete) stay dim until we hover the row.
+.apl-rotation-picker-root {
+	.list-picker-title {
+		font-family: var(--heading-font-family);
+		font-variant: small-caps;
+		font-weight: 700;
+		font-size: 1.15rem;
+		letter-spacing: 0.04em;
+		color: var(--gold-soft);
+	}
+
+	.apl-list-item-picker,
+	.apl-prepull-action-picker {
+		.list-picker-items {
+			gap: 0.35rem;
+		}
+
+		> .list-picker-items > .list-picker-item-container {
+			align-items: flex-start;
+			padding: 0.45rem 0.6rem;
+			border: 1px solid var(--line-color);
+			border-radius: 3px;
+			background-color: color-mix(in srgb, var(--panel-bg) 85%, transparent);
+			transition: border-color 0.15s;
+
+			&:hover {
+				border-color: var(--line-color-strong);
+			}
+
+			// A long condition wraps inside the row, so the row's buttons stay in the card.
+			> .list-picker-item {
+				min-width: 0;
+			}
+
+			> .list-picker-item-header {
+				flex: 0 0 auto;
+			}
+
+			// A row we turned off with the eye button stays in the list, faded out.
+			&:has(> .list-picker-item > .apl-list-item-picker-root.disabled) > .list-picker-item {
+				opacity: 0.4;
+			}
+		}
+
+		// The row's buttons, quiet until we hover the row. A warning always shows.
+		> .list-picker-items > .list-picker-item-container > .list-picker-item-header {
+			gap: 0.65rem;
+			padding-top: 0.2rem;
+
+			.list-picker-item-action {
+				color: var(--text-muted-color);
+				opacity: 0.45;
+				transition:
+					opacity 0.15s,
+					color 0.15s;
+
+				i.fa-xl {
+					font-size: 0.95rem;
+					line-height: 1;
+					vertical-align: 0;
+				}
+
+				&:hover {
+					color: var(--bs-white);
+				}
+
+				&.list-picker-item-delete:hover {
+					color: var(--bs-danger);
+				}
+
+				&.apl-warnings {
+					color: var(--bs-warning);
+					opacity: 1;
+				}
+			}
+		}
+
+		> .list-picker-items > .list-picker-item-container:hover > .list-picker-item-header .list-picker-item-action {
+			opacity: 1;
+		}
+
+		// "New Action" sits under the list as a quiet dashed row.
+		& > .list-picker-new-button {
+			width: 100%;
+			padding: 0.35rem;
+			border: 1px dashed var(--line-color-strong);
+			background: none;
+			color: var(--text-muted-color);
+			font-size: 0.875rem;
+
+			&:hover {
+				border-color: var(--gold-soft);
+				color: var(--gold-soft);
+			}
+		}
+	}
+
+	// Each row's number in the priority list.
+	.apl-list-item-picker > .list-picker-items {
+		counter-reset: apl-row;
+
+		> .list-picker-item-container {
+			counter-increment: apl-row;
+
+			&::before {
+				content: counter(apl-row);
+				flex: 0 0 1.5rem;
+				padding-top: 0.15rem;
+				color: var(--text-muted-color);
+				font-size: 0.8rem;
+				font-variant-numeric: tabular-nums;
+			}
+		}
+	}
+
+	// What the row does comes first, and its condition goes under it.
+	.apl-list-item-picker-root > .apl-action-picker-root {
+		gap: 0.25rem;
+
+		> .apl-action-picker-action {
+			order: -1;
+		}
+	}
+
+	// The condition is a bit smaller than the action, so long ones fit on fewer lines.
+	.apl-action-condition {
+		font-size: 0.8125rem;
+
+		.dropdown-picker-button,
+		.form-label {
+			font-size: inherit;
+		}
+
+		> .form-label {
+			flex-shrink: 0;
+		}
+
+		// A row with no condition shows "If: <None>" faintly, so we can still add one.
+		&:not(:has(> .apl-picker-builder-root)) {
+			opacity: 0.35;
+		}
+	}
+
+	.form-label {
+		color: var(--text-muted-color);
+	}
+
+	.dropdown-picker-button {
+		color: #a9b6c6;
+	}
+
+	// The action's kind, like Cast, reads as a verb next to the spell.
+	.apl-action-picker-action > .dropdown-picker-root > .dropdown-picker-button {
+		color: var(--text-muted-color);
+	}
+
+	// A spell, item or aura is what we look for when we read the row.
+	.dropdown-picker-button:has(.apl-actionid-item-icon) {
+		color: var(--bs-white);
+	}
+
+	.dropdown-toggle::after {
+		opacity: 0.4;
+	}
+
+	// Self and target are the usual units, so their icons stay dim.
+	.apl-unit-picker .dropdown-picker-button {
+		opacity: 0.5;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	// A plain number, like "15s", is the common case, so we hide the word "Const" in front of it
+	// and keep only its arrow to switch to another kind of value.
+	.apl-value-picker-root:has(> .apl-picker-builder-root > .adaptive-string-picker-root) > .dropdown-picker-root > .dropdown-picker-button {
+		height: 1.25rem;
+		font-size: 0 !important;
+
+		&::after {
+			margin-left: 0;
+			font-size: 0.8125rem;
+		}
+	}
+
+	.adaptive-string-picker-root > input {
+		width: auto;
+		min-width: 2.75rem;
+		padding: 0.05rem 0.3rem;
+		border-color: var(--line-color-strong);
+		background-color: rgba(0, 0, 0, 0.3);
+		color: var(--gold-soft);
+		font-size: 0.8125rem;
+
+		&:focus {
+			border-color: var(--gold-soft);
+			box-shadow: none;
+		}
+	}
+
+	// The values of an "Any of" or "All of" condition, one per line under a gold line on the left.
+	.apl-picker-builder-multi {
+		gap: 0.2rem;
+		border-left: 2px solid rgba($gold, 0.35) !important;
+
+		.list-picker-items {
+			gap: 0.2rem;
+		}
+
+		// Each value's delete button sits right after it and shows when we hover the value.
+		.list-picker-item-container {
+			align-items: center;
+			gap: 0.4rem;
+
+			> .list-picker-item {
+				flex-grow: 0;
+			}
+
+			&:hover > .list-picker-item-header .list-picker-item-action {
+				opacity: 0.6;
+			}
+		}
+
+		.list-picker-item-action {
+			opacity: 0;
+
+			i.fa-xl {
+				font-size: 0.85rem;
+			}
+
+			&:hover {
+				opacity: 1 !important;
+			}
+		}
+
+		> .list-picker-new-button {
+			opacity: 0.5;
+
+			i.fa-xl {
+				font-size: 0.85rem;
+			}
+
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
+}
