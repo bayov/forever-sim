@@ -4,6 +4,22 @@
 	--dirty-color: #e2c08d;
 }
 
+// The dot on the corner of a changed icon, like a buff, a consumable or a talent. The icon keeps
+// its own border, so we see whether it's on, and the dot says it changed.
+@mixin dirty-icon-dot {
+	content: '';
+	position: absolute;
+	top: -0.25rem;
+	right: -0.25rem;
+	z-index: 1;
+	width: 0.55rem;
+	height: 0.55rem;
+	border: 1px solid #000;
+	border-radius: 50%;
+	background: var(--dirty-color);
+	pointer-events: none;
+}
+
 .dirty-setting {
 	// Fields with a label: the label in the modified color with a dot after it, and the
 	// field's border in the same color.
@@ -27,18 +43,17 @@
 		border-color: var(--dirty-color);
 	}
 
-	// Buffs, consumes and other icons have no label, so the icon gets a ring.
-	&.icon-picker > .icon-picker-button,
-	&.icon-picker > .dropdown-toggle {
-		box-shadow: 0 0 0 2px var(--dirty-color);
+	// Buffs, consumes and other icons have no label, so the icon gets a dot on its corner.
+	&.icon-picker {
+		position: relative;
+
+		&::before {
+			@include dirty-icon-dot;
+		}
 	}
 
-	// Gear slots: a ring on the icon and a dot after the item name.
+	// Gear slots: a dot after the item name.
 	&.item-picker-root {
-		.item-picker-icon {
-			box-shadow: 0 0 0 2px var(--dirty-color);
-		}
-
 		.item-picker-name::after {
 			content: ' \25CF';
 			color: var(--dirty-color);
@@ -47,12 +62,8 @@
 		}
 	}
 
-	// Talents: a ring around the talent and a dot in its corner, because the talent's own
-	// border is already gold when it has points.
+	// Talents: a dot in the talent's corner.
 	&.talent-picker-root {
-		outline: 2px solid var(--dirty-color);
-		outline-offset: 1px;
-
 		// ::after already draws the dashed border of a talent we don't simulate.
 		&::before {
 			content: '\25CF';
@@ -91,14 +102,17 @@
 	}
 }
 
-// A group of icons in one dropdown (the misc buffs) gets a ring when any of them changed.
-.multi-icon-picker-root:has(.dirty-setting) > .icon-picker-button {
-	box-shadow: 0 0 0 2px var(--dirty-color);
+// A group of icons in one dropdown (the misc buffs) gets a dot when any of them changed.
+.multi-icon-picker-root:has(.dirty-setting) {
+	position: relative;
+
+	&::before {
+		@include dirty-icon-dot;
+	}
 }
 
 // The consumables, the buffs and the debuffs have a name over each category. A changed one marks that
-// name, like the fields with a label. The slot that changed gets a dot instead of the ring (see
-// _consumes_picker.scss).
+// name, like the fields with a label, and the icon that changed gets its dot.
 //
 // The settings tab gives the buff and debuff names their muted color with a longer selector, so we need
 // !important to win over it.
@@ -111,11 +125,6 @@
 		font-size: 0.7em;
 		vertical-align: middle;
 	}
-}
-
-.consumes-group .dirty-setting > .icon-picker-button,
-.consumes-group .multi-icon-picker-root:has(.dirty-setting) > .icon-picker-button {
-	box-shadow: none;
 }
 
 // A tab with a changed setting or a modified preset on it gets the modified color and a

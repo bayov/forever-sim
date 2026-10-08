@@ -142,17 +142,7 @@ $consumes-empty-slot: url('https://wow.zamimg.com/images/wow/icons/large/invento
 	// A slot we changed from the preset gets a dot on its corner, in the color the category's name
 	// takes. The name alone doesn't say which slot changed when the category has several.
 	.consumes-group-slots > :is(.dirty-setting, :has(.dirty-setting))::before {
-		content: '';
-		position: absolute;
-		top: -0.25rem;
-		left: -0.25rem;
-		z-index: 1;
-		width: 0.55rem;
-		height: 0.55rem;
-		border: 1px solid #000;
-		border-radius: 50%;
-		background: var(--dirty-color);
-		pointer-events: none;
+		@include dirty-icon-dot;
 	}
 
 	// The dropdown opens a little below the slot, so the slot stays in view (see ConsumesPicker).
