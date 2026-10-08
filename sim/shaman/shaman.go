@@ -232,6 +232,9 @@ type Shaman struct {
 	// Spell hits taken from raid damage per minute, each spending a Water Shield globe.
 	// Set from the enhancement options before Initialize.
 	RaidDamageHitsPerMinute float64
+	// Each iteration's rate is up to this many hits per minute above or below
+	// RaidDamageHitsPerMinute, like Duration +/- for the fight length.
+	RaidDamageHitsPerMinuteVariation float64
 	// The shaman's own main hand imbue in Forever, beside the oil or stone in the
 	// consumes. Set from the enhancement options before Initialize.
 	ShamanImbue proto.WeaponImbue

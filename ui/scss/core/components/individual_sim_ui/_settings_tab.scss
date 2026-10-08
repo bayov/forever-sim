@@ -22,11 +22,8 @@
 		}
 	}
 
-	// The player's inputs about the fight, like In Front of Target, sit between the encounter's
-	// own fields and the Advanced button, laid out like the ones in Other.
 	.rotation-settings,
-	.other-settings,
-	.encounter-player-inputs {
+	.other-settings {
 		.input-root {
 			label {
 				width: 60%;

@@ -63,9 +63,19 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 	// Raid damage as a steady stream of spell hits. Spells cannot be dodged or parried,
 	// so unlike a boss meleeing the shaman this feeds Water Shield without also firing
 	// Improved Stormstrike's reset or parry haste.
+	//
+	// With a variation, each iteration picks its own rate between the rate minus the
+	// variation and the rate plus it, the way Duration +/- picks each fight's length.
 	if shaman.RaidDamageHitsPerMinute > 0 {
-		period := time.Duration(float64(time.Minute) / shaman.RaidDamageHitsPerMinute)
 		shaman.RegisterResetEffect(func(sim *core.Simulation) {
+			hitsPerMinute := shaman.RaidDamageHitsPerMinute
+			if variation := shaman.RaidDamageHitsPerMinuteVariation; variation > 0 {
+				hitsPerMinute += (sim.RandomFloat("Raid Damage Hits")*2 - 1) * variation
+			}
+			if hitsPerMinute <= 0 {
+				return
+			}
+			period := time.Duration(float64(time.Minute) / hitsPerMinute)
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period: period,
 				OnAction: func(sim *core.Simulation) {
