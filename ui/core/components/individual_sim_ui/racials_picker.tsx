@@ -52,7 +52,7 @@ export class RacialsPicker extends Component {
 			this.tooltips.push(tippy(entry, { theme: 'game-spell', content: spellTooltip(racial) }));
 		});
 
-		this.rootElem.append(<label className="form-label">Racials</label>, parchment);
+		this.rootElem.appendChild(parchment);
 	}
 }
 

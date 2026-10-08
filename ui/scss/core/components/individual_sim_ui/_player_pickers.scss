@@ -102,6 +102,18 @@
 	column-gap: var(--spacer-2);
 	margin-bottom: var(--block-spacer);
 
+	// The racials sit right under the race icons, with no title of their own. The section
+	// already puts a gap between its fields, so we take that gap back to keep them close.
+	&.race-picker-root:has(+ .racials-picker-root:not(:empty)) {
+		margin-bottom: calc(var(--spacer-1) - var(--block-spacer));
+	}
+
+	// Few races to pick from, so their icons get more room than the professions.
+	&.race-picker-root .player-icon-picker-option {
+		width: 3rem;
+		height: 3rem;
+	}
+
 	.player-icon-picker-value {
 		color: var(--text-muted-color);
 		font-size: 0.875rem;
