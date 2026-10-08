@@ -38,7 +38,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 ## 3. Timing
 
 - [x] 3.1 GCD: 1.5 sec for spells, 1 sec for totems, the 1 sec floor, whether spell haste shortens it
-- [ ] 3.2 Cast times (Lightning Bolt, Chain Lightning) and what a cast does to the swing timer
+- [x] 3.2 Cast times (Lightning Bolt, Chain Lightning) and what a cast does to the swing timer
 - [ ] 3.3 How melee haste and cast speed modifiers stack (multiplicative)
 - [ ] 3.4 Prepull: totems, shield and imbue before the pull, the first swing at pull, totem time across the pull
 - [ ] 3.5 Reaction and batching delays (if the sim has any)
@@ -377,9 +377,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Fixed (2026-10-08): casting Stoneskin Totem or Windwall Totem from a rotation crashed the sim. Stoneskin built its buff on the first cast, and Windwall has no buff and the air slot code expected one. Stoneskin's buff also added its -30 a second time when it ended. `stoneskin_test.go` checks the buff. No golden changed.
 - For 7.17: the earth totems don't take the old totem's buff away, so Stoneskin and Strength of Earth can both be up. Only the air totems swap the buff. Stoneskin also always gives rank 6's -30, whatever the level.
 
+### 3.2 Cast times and the swing timer
+
+- Cast times match wowhead Forever (2026-10-08): Lightning Bolt 1.5 / 2 sec at ranks 1 and 2 and 2.5 sec from rank 3, Chain Lightning 2 sec and Lava Burst 2.5 sec at every rank.
+- The user OK'd the swing timer (2026-10-08). We don't swing during a cast, and the swing timer starts over when it ends, so the next swing comes one full swing after the cast. Instant spells don't touch it.
+- Fixed (2026-10-08, the user): an instant Lightning Bolt (5 Maelstrom Weapon stacks or Nature's Swiftness) leaves the swing timer alone, like a shock. It used to start the swing timer over too (`electric_spell.go` stopMeleeForCast). TestEnhancement goes up about 3%. The Level 60 preset is 872.9 / 864.3 / 853.4 at 120 / 180 / 300 sec (was 850.4 / 840.4 / 828.4). Level 30 + 5 has no Maelstrom Weapon and doesn't change. The rotation knobs were tuned on the old behavior.
+- `swing_timer_test.go` TestOrcShamanCastSwingTimer casts 0.4 sec before a swing and checks the next swing after Lightning Bolt, Chain Lightning, a 3 stack bolt, a 5 stack bolt, a Nature's Swiftness bolt and Earth Shock. The old behavior fails it.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
-- 3.2 A spell with a cast time (Lightning Bolt, Chain Lightning, Lava Burst) restarts the swing timer: the next swing comes one full swing after the cast ends (`electric_spell.go` StopMeleeUntil). Instant spells don't touch it.
 - 4.3 White hits roll once. From behind: miss, dodge, glancing, crit, hit. In front (`InFrontOfTarget`): miss, dodge, parry, glancing, block, crit, hit (`spell_outcome.go` outcomeMeleeWhite).
 - 4.4 to 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: 8% miss, and the first 1% of hit from gear does nothing (9% to cap). 6.5% dodge, 14% parry from the front, 40% glancing for 55 to 75% damage (65% on average). Crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
 - Level 30 vs Vishas (level 32) with 150 skill: 6% miss, 6% dodge, 6% parry from the front, 30% glancing for 80 to 90% damage, crit cut by 2%.

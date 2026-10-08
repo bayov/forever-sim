@@ -56,10 +56,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 				Timer:    shaman.NewTimer(),
 				Duration: time.Second * 10,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				castTime := shaman.ApplyCastSpeedForSpell(cast.CastTime, spell)
-				shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+castTime, false)
-			},
+			ModifyCast: shaman.stopMeleeForCast,
 		},
 
 		DamageMultiplier: 1,

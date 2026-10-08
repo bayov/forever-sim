@@ -18,6 +18,17 @@ const (
 )
 
 // Shared precomputation logic for LB and CL.
+// stopMeleeForCast holds our swings until a spell's cast ends, and the swing timer starts
+// over from there.
+//
+// An instant cast leaves the swing timer alone, like a shock (the user, 2026-10-08). That's
+// Lightning Bolt with 5 Maelstrom Weapon stacks or Nature's Swiftness.
+func (shaman *Shaman) stopMeleeForCast(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+	if castTime := shaman.ApplyCastSpeedForSpell(cast.CastTime, spell); castTime > 0 {
+		shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+castTime, false)
+	}
+}
+
 func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost float64, baseCastTime time.Duration) core.SpellConfig {
 	spell := core.SpellConfig{
 		ActionID:     actionID,
@@ -37,10 +48,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 				CastTime: baseCastTime - shaman.elementalAlacrityReduction(),
 				GCD:      core.GCDDefault,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				castTime := shaman.ApplyCastSpeedForSpell(cast.CastTime, spell)
-				shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+castTime, false)
-			},
+			ModifyCast: shaman.stopMeleeForCast,
 		},
 
 		BonusCritRating: core.TernaryFloat64(shaman.Talents.CallOfThunder, 3, 0) * core.SpellCritRatingPerCritChance,
