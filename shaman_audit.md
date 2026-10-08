@@ -46,7 +46,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 ## 4. Our white attacks
 
 - [x] 4.1 Weapon damage: the damage roll, attack power (AP / 14 * weapon speed), normalized damage for specials
-- [ ] 4.2 Swing timer: weapon speed and melee haste (Flurry, Rage of the Farseer, item haste), main hand and off hand sync
+- [x] 4.2 Swing timer: weapon speed and melee haste (Flurry, Rage of the Farseer, item haste), main hand and off hand sync
 - [ ] 4.3 Attack table: one roll, in the order miss, dodge, parry, glancing, block, crit, hit
 - [ ] 4.4 Miss: base chance against the target's level, weapon skill, hit from gear, the hit cap
 - [ ] 4.5 Enemy dodge and parry: values by level, no parry or block from behind (raid), both from the front (PvP)
@@ -431,6 +431,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   ```
   /run print("ap", UnitAttackPower("player")) print("dmg", UnitDamage("player"))
   ```
+
+### 4.2 Swing timer
+
+- The user OK'd it (2026-10-08). The main hand swings every weapon speed divided by our attack speed. The haste rules, the cast pause, the first swing and the 10 ms landing are in 3.2 to 3.5.
+- Shamans and paladins can't hold a weapon in the off hand under Forever (the user, 2026-10-08), so main hand and off hand sync doesn't apply. Shields and items held in the off hand stay. The UI already blocked off-hand weapons, but the sim swung one that a gear set had, and rotopt's gear search offered one-handers in the off hand to every class. No preset had one.
+- Fixed (2026-10-08): `core.CanDualWield` lets only warriors, rogues and hunters hold an off-hand weapon, like the UI's canDualWield. NewCharacter drops an off-hand weapon from the other classes, so it adds no stats, swings, procs or dual wield miss penalty. rotopt offers the off hand only shields and held items for them. No golden result changed.
+- `off_hand_test.go` TestOrcShamanOffHandWeapon runs Deathbringer with and without Crul'shorukh in the off hand on the same seed. It checks the main hand swings every 2.9 sec, the off hand never swings, the stats match and both fights deal the same main hand damage. It fails without the fix.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

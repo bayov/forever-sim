@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -304,14 +305,22 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 			if !contains(weaponTypesFor[class], item.WeaponType) {
 				continue
 			}
+			// A class that can't dual wield holds only a shield or an item held in the off hand
+			// there, see core.CanDualWield.
+			offHandWeapon := item.WeaponType != proto.WeaponType_WeaponTypeShield && item.WeaponType != proto.WeaponType_WeaponTypeOffHand
+			canHoldInOffHand := !offHandWeapon || core.CanDualWield(class)
 			switch item.HandType {
 			case proto.HandType_HandTypeMainHand:
 				add(proto.ItemSlot_ItemSlotMainHand, item)
 			case proto.HandType_HandTypeOffHand:
-				add(proto.ItemSlot_ItemSlotOffHand, item)
+				if canHoldInOffHand {
+					add(proto.ItemSlot_ItemSlotOffHand, item)
+				}
 			case proto.HandType_HandTypeOneHand:
 				add(proto.ItemSlot_ItemSlotMainHand, item)
-				add(proto.ItemSlot_ItemSlotOffHand, item)
+				if canHoldInOffHand {
+					add(proto.ItemSlot_ItemSlotOffHand, item)
+				}
 			case proto.HandType_HandTypeTwoHand:
 				if class != proto.Class_ClassRogue {
 					add(proto.ItemSlot_ItemSlotMainHand, item)

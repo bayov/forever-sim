@@ -154,6 +154,13 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		majorCooldownManager: newMajorCooldownManager(player.Cooldowns),
 	}
 
+	// We drop an off-hand weapon from a class that can't hold one, so it adds no stats, swings
+	// or procs. The UI doesn't let us pick one, but a gear set from elsewhere can have it, like
+	// the one-handers rotopt's gear search put in a shaman's off hand before 2026-10-08.
+	if !CanDualWield(character.Class) && character.HasOHWeapon() {
+		character.Equipment[proto.ItemSlot_ItemSlotOffHand] = Item{}
+	}
+
 	character.GCD = character.NewTimer()
 
 	character.Label = fmt.Sprintf("%s (#%d)", character.Name, character.Index+1)
@@ -583,6 +590,16 @@ func (character *Character) GetOHWeapon() *Item {
 }
 func (character *Character) HasOHWeapon() bool {
 	return character.GetOHWeapon() != nil
+}
+
+// CanDualWield tells whether the class can hold a weapon in the off hand.
+//
+// Only warriors, rogues and hunters can. The other classes hold only a shield or an item held
+// in the off hand there. Forever keeps this for shamans and paladins (the user, 2026-10-08),
+// and its shaman tree has no Dual Wield talent. The UI's canDualWield in
+// ui/core/proto_utils/utils.ts has the same list.
+func CanDualWield(class proto.Class) bool {
+	return class == proto.Class_ClassWarrior || class == proto.Class_ClassRogue || class == proto.Class_ClassHunter
 }
 
 // Returns the ranged weapon if one is equipped, and null otherwise.
