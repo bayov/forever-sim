@@ -4,6 +4,7 @@ import { BooleanPicker } from '../components/boolean_picker.js';
 import { EnumPicker } from '../components/enum_picker.js';
 import { ListItemPickerConfig, ListPicker } from '../components/list_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
+import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 import { Encounter } from '../encounter.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { InputType, MobType, PresetTarget, SpellSchool, Stat, Target, Target as TargetProto, TargetInput } from '../proto/common.js';
@@ -17,7 +18,7 @@ import { randomUUID } from '../utils.js';
 import { BaseModal } from './base_modal.js';
 import { Component } from './component.js';
 import { dirtySettings } from './dirty_settings.js';
-import { IconEnumRowPicker } from './individual_sim_ui/player_pickers.js';
+import { IconEnumRowPicker, LevelSlider } from './individual_sim_ui/player_pickers.js';
 import { Input } from './input.js';
 
 export interface EncounterPickerConfig {
@@ -205,10 +206,10 @@ function buildTargetCard(target: TargetProto, presetTargets: Array<PresetTarget>
 	(card.querySelector('.encounter-target-summary') as HTMLElement).textContent = summary.join(' \u00b7 ');
 
 	const resistancesElem = card.querySelector('.encounter-target-resistances') as HTMLElement;
-	TARGET_RESISTANCES.forEach(({ stat, school }) => {
+	TARGET_RESISTANCES.forEach(({ stat, school, icon }) => {
 		const resistance = document.createElement('span');
 		resistance.classList.add('encounter-target-resist');
-		resistance.append(resistanceIcon(school), String(target.stats[stat]));
+		resistance.append(resistanceIcon(icon), String(target.stats[stat]));
 		tippy(resistance, { content: resistanceTooltip(school) });
 		resistancesElem.appendChild(resistance);
 	});
@@ -336,27 +337,11 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			},
 		});
 
-		this.levelPicker = new EnumPicker<null>(section1, null, {
+		// A raid boss is 3 levels above the players' highest level.
+		this.levelPicker = new LevelSlider<null>(section1, null, {
 			id: 'encounter-level-picker',
 			label: 'Level',
-			values: [
-				{ name: '63', value: 63 },
-				{ name: '62', value: 62 },
-				{ name: '61', value: 61 },
-				{ name: '60', value: 60 },
-				{ name: '53', value: 53 },
-				{ name: '52', value: 52 },
-				{ name: '51', value: 51 },
-				{ name: '50', value: 50 },
-				{ name: '43', value: 43 },
-				{ name: '42', value: 42 },
-				{ name: '41', value: 41 },
-				{ name: '40', value: 40 },
-				{ name: '28', value: 28 },
-				{ name: '27', value: 27 },
-				{ name: '26', value: 26 },
-				{ name: '25', value: 25 },
-			],
+			max: MAX_CHARACTER_LEVEL + 3,
 			changedEvent: () => encounter.targetsChangeEmitter,
 			getValue: () => this.getTarget().level,
 			setValue: (eventID: EventID, _: null, newValue: number) => {
@@ -399,7 +384,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 
 		this.targetInputPickers = makeTargetInputsPicker(section1, encounter, this.targetIndex);
 
-		// The resistances sit in one row, each under the game's icon for it.
+		// The resistances sit in one row, each under its icon.
 		const resistancesRow = document.createElement('div');
 		resistancesRow.classList.add('target-picker-resistances');
 		this.statPickers = ALL_TARGET_STATS.map(statData => {
@@ -419,14 +404,14 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 					encounter.targetsChangeEmitter.emit(eventID);
 				},
 			});
-			// A resistance's label is the game's icon for it. We keep the name for screen readers
+			// A resistance's label is its icon. We keep the name for screen readers
 			// and for the list of changes on a modified preset.
 			if (resistance) {
 				const label = picker.rootElem.querySelector('label')!;
 				const name = document.createElement('span');
 				name.classList.add('visually-hidden');
 				name.textContent = statNames.get(stat) ?? '';
-				label.replaceChildren(resistanceIcon(resistance.school), name);
+				label.replaceChildren(resistanceIcon(resistance.icon), name);
 			}
 			return picker;
 		});
@@ -844,19 +829,22 @@ function equalTargetsIgnoreInputs(target1: TargetProto | undefined, target2: Tar
 }
 
 // The resistances on a target's second summary line, and in the target's settings.
+//
+// Each school gets a wowhead icon with one simple shape in the school's color, so the five tell
+// apart at the size of a line of text.
 const TARGET_RESISTANCES = [
-	{ stat: Stat.StatArcaneResistance, school: 'Arcane' },
-	{ stat: Stat.StatFireResistance, school: 'Fire' },
-	{ stat: Stat.StatFrostResistance, school: 'Frost' },
-	{ stat: Stat.StatNatureResistance, school: 'Nature' },
-	{ stat: Stat.StatShadowResistance, school: 'Shadow' },
+	{ stat: Stat.StatArcaneResistance, school: 'Arcane', icon: 'spell_nature_starfall' },
+	{ stat: Stat.StatFireResistance, school: 'Fire', icon: 'spell_fire_fire' },
+	{ stat: Stat.StatFrostResistance, school: 'Frost', icon: 'spell_frost_frostward' },
+	{ stat: Stat.StatNatureResistance, school: 'Nature', icon: 'spell_nature_protectionformnature' },
+	{ stat: Stat.StatShadowResistance, school: 'Shadow', icon: 'spell_shadow_antishadow' },
 ];
 
-// The resistance icons of the game's character sheet, see .resistance-icon.
-function resistanceIcon(school: string): HTMLElement {
-	const icon = document.createElement('span');
-	icon.classList.add('resistance-icon', `resistance-icon-${school.toLowerCase()}`);
-	return icon;
+function resistanceIcon(icon: string): HTMLElement {
+	const img = document.createElement('img');
+	img.classList.add('resistance-icon');
+	img.src = `https://wow.zamimg.com/images/wow/icons/large/${icon}.jpg`;
+	return img;
 }
 
 function resistanceTooltip(school: string): string {

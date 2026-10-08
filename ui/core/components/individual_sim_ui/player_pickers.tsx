@@ -7,45 +7,45 @@ import { professionNames, raceNames } from '../../proto_utils/names';
 import { specToEligibleRaces } from '../../proto_utils/utils';
 import { TypedEvent } from '../../typed_event';
 import { EnumPickerConfig, EnumValueConfig } from '../enum_picker';
-import { Input } from '../input';
+import { Input, InputConfig } from '../input';
 
 const iconUrl = (icon: string) => `https://wow.zamimg.com/images/wow/icons/large/${icon}.jpg`;
 
-// The level as a slider from 1 to 60, with a button on each side to step it by one and a
-// field to type it in.
+export interface LevelSliderConfig<ModObject> extends InputConfig<ModObject, number> {
+	id: string;
+	// The highest level, like 60 for a player or 63 for a raid boss.
+	max: number;
+}
+
+// A level as a slider from 1 to the highest level, with a button on each side to step it by one
+// and a field to type it in. The player's level and the targets' levels use it.
 //
-// A level of 0 means max level, so we show it as 60. The slider moves the field while we drag
-// it, but we only set the level when we let go, because each change of level reloads the
-// gear picker and runs a new sim.
-export class LevelPicker extends Input<Player<Spec>, number> {
+// A level of 0 means the highest level. The slider moves the field while we drag it, but we only
+// set the level when we let go, because each change of level runs a new sim (and for the player,
+// reloads the gear picker).
+export class LevelSlider<ModObject> extends Input<ModObject, number> {
+	private readonly max: number;
 	private readonly slider: HTMLInputElement;
 	private readonly field: HTMLInputElement;
 	private readonly down: HTMLButtonElement;
 	private readonly up: HTMLButtonElement;
 
-	constructor(parent: HTMLElement, player: Player<Spec>) {
-		super(parent, 'level-picker-root', player, {
-			id: 'level',
-			label: 'Level',
-			labelTooltip:
-				'Character level. Base stats, ability ranks, the crit each point of Agility gives, the talent points and the items offered in the gear picker follow it.',
-			changedEvent: player => player.miscOptionsChangeEmitter,
-			getValue: player => player.getLevel(),
-			setValue: (eventID, player, newValue) => player.setLevel(eventID, newValue),
-		});
+	constructor(parent: HTMLElement, modObject: ModObject, config: LevelSliderConfig<ModObject>) {
+		super(parent, 'level-picker-root', modObject, config);
+		this.max = config.max;
 
 		this.down = (
 			<button type="button" className="level-picker-step" aria-label="One level down">
 				<i className="fas fa-minus"></i>
 			</button>
 		) as HTMLButtonElement;
-		this.slider = (<input type="range" className="level-picker-slider" min="1" max={String(MAX_CHARACTER_LEVEL)} step="1" />) as HTMLInputElement;
+		this.slider = (<input type="range" className="level-picker-slider" min="1" max={String(this.max)} step="1" />) as HTMLInputElement;
 		this.up = (
 			<button type="button" className="level-picker-step" aria-label="One level up">
 				<i className="fas fa-plus"></i>
 			</button>
 		) as HTMLButtonElement;
-		this.field = (<input type="text" id="level" inputMode="numeric" className="form-control level-picker-field" />) as HTMLInputElement;
+		this.field = (<input type="text" id={config.id} inputMode="numeric" className="form-control level-picker-field" />) as HTMLInputElement;
 
 		this.rootElem.appendChild(
 			<div className="level-picker-controls">
@@ -74,17 +74,17 @@ export class LevelPicker extends Input<Player<Spec>, number> {
 	}
 
 	setInputValue(newValue: number) {
-		this.show(newValue > 0 && newValue < MAX_CHARACTER_LEVEL ? newValue : MAX_CHARACTER_LEVEL);
+		this.show(newValue > 0 && newValue < this.max ? newValue : this.max);
 	}
 
-	// A typed level outside 1 to 60 goes to the nearest end, and anything that isn't a number
-	// puts back the level we had.
+	// A typed level outside 1 to the highest level goes to the nearest end, and anything that
+	// isn't a number puts back the level we had.
 	private commit(level: number) {
 		if (isNaN(level)) {
 			this.setInputValue(this.getSourceValue());
 			return;
 		}
-		this.show(Math.min(MAX_CHARACTER_LEVEL, Math.max(1, Math.round(level))));
+		this.show(Math.min(this.max, Math.max(1, Math.round(level))));
 		this.inputChanged(TypedEvent.nextEventID());
 	}
 
@@ -92,9 +92,25 @@ export class LevelPicker extends Input<Player<Spec>, number> {
 		this.slider.value = String(level);
 		this.field.value = String(level);
 		this.down.disabled = level <= 1;
-		this.up.disabled = level >= MAX_CHARACTER_LEVEL;
+		this.up.disabled = level >= this.max;
 		// The part of the track left of the thumb is filled, see .level-picker-slider.
-		this.slider.style.setProperty('--fill', `${((level - 1) / (MAX_CHARACTER_LEVEL - 1)) * 100}%`);
+		this.slider.style.setProperty('--fill', `${((level - 1) / (this.max - 1)) * 100}%`);
+	}
+}
+
+// The player's level, from 1 to 60.
+export class LevelPicker extends LevelSlider<Player<Spec>> {
+	constructor(parent: HTMLElement, player: Player<Spec>) {
+		super(parent, player, {
+			id: 'level',
+			label: 'Level',
+			labelTooltip:
+				'Character level. Base stats, ability ranks, the crit each point of Agility gives, the talent points and the items offered in the gear picker follow it.',
+			max: MAX_CHARACTER_LEVEL,
+			changedEvent: player => player.miscOptionsChangeEmitter,
+			getValue: player => player.getLevel(),
+			setValue: (eventID, player, newValue) => player.setLevel(eventID, newValue),
+		});
 	}
 }
 

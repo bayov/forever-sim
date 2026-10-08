@@ -51,9 +51,14 @@
 		gap: 0.4rem;
 	}
 
+	// The buttons stay shorter than the target's text, so the text sets the row's height and the
+	// icon takes it.
 	.encounter-target-edit,
 	.encounter-target-remove {
+		height: auto;
+		min-height: 0;
 		padding: 0.25rem 0.4rem;
+		line-height: 1;
 	}
 
 	.encounter-target-add {
@@ -64,11 +69,20 @@
 // A target's card: its mob type's icon and its name with two lines of stats under it. In the
 // targets list it's the target's row, with the edit and remove buttons on the right. The
 // target's settings show it on top, see TargetModal.
+//
+// The icon is as tall as the name and the two lines under it, so its bottom lines up with the
+// resistance icons. We add up their heights from these.
+$target-name-line: 1.25rem;
+$target-summary-line: 0.75rem * 1.35;
+$target-resistances-gap: 0.175rem;
+$target-resistance-icon: 1.1rem;
+$target-icon: $target-name-line + $target-summary-line + $target-resistances-gap + $target-resistance-icon;
+
 .encounter-target-row {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
-	padding: 0.5rem 0.6rem;
+	gap: 0.85rem;
+	padding: 0.7rem 0.75rem;
 	border: 1px solid var(--line-color-strong);
 	border-radius: var(--panel-radius);
 	background: var(--panel-bg-2);
@@ -87,8 +101,8 @@
 }
 
 .encounter-target-icon {
-	width: 3rem;
-	height: 3rem;
+	width: $target-icon;
+	height: $target-icon;
 	flex-shrink: 0;
 	border: 1px solid #000;
 	border-radius: 3px;
@@ -98,6 +112,10 @@
 .encounter-target-info {
 	flex-grow: 1;
 	min-width: 0;
+}
+
+.encounter-target-name {
+	line-height: $target-name-line;
 }
 
 .encounter-target-name,
@@ -110,12 +128,13 @@
 .encounter-target-summary {
 	color: var(--text-muted-color);
 	font-size: 0.75rem;
-	line-height: 1.35;
+	line-height: $target-summary-line;
 }
 
 .encounter-target-resistances {
 	display: flex;
 	gap: 0.6rem;
+	margin-top: $target-resistances-gap;
 }
 
 .encounter-target-resist {
@@ -134,7 +153,7 @@
 		margin-bottom: var(--block-spacer);
 	}
 
-	// The five resistances side by side, each with the game's icon for a label.
+	// The five resistances side by side, each with its icon for a label.
 	.target-picker-resistances {
 		display: grid;
 		grid-template-columns: repeat(5, 1fr);
@@ -153,6 +172,7 @@
 
 		.resistance-icon {
 			width: 1.6rem;
+			height: 1.6rem;
 		}
 
 		input {
@@ -193,37 +213,12 @@
 	}
 }
 
-// The game's resistance icons from the character sheet. They're one 32 x 256 texture with the
-// five icons stacked from the top, 29 pixels each: Fire, Nature, Arcane, Frost and Shadow. The
-// game picks one with the same steps of 29 / 256.
+// A resistance's icon, see TARGET_RESISTANCES.
 .resistance-icon {
-	display: inline-block;
-	width: 1.1rem;
-	aspect-ratio: 32 / 29;
+	width: $target-resistance-icon;
+	height: $target-resistance-icon;
 	flex-shrink: 0;
 	vertical-align: middle;
-	background: url('/classic/assets/img/resistance_icons.png') no-repeat;
-	background-size: 100% calc(100% * 256 / 29);
-}
-
-// A background position in percent moves the image by that share of (its height minus the
-// element's height), which is 227 of the texture's pixels.
-.resistance-icon-fire {
-	background-position: 0 0;
-}
-
-.resistance-icon-nature {
-	background-position: 0 calc(100% * 29 / 227);
-}
-
-.resistance-icon-arcane {
-	background-position: 0 calc(100% * 58 / 227);
-}
-
-.resistance-icon-frost {
-	background-position: 0 calc(100% * 87 / 227);
-}
-
-.resistance-icon-shadow {
-	background-position: 0 calc(100% * 116 / 227);
+	border: 1px solid #000;
+	border-radius: 2px;
 }
