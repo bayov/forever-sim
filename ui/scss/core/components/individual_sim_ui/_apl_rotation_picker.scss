@@ -206,6 +206,40 @@
 	display: none;
 }
 
+// A row whose condition goes under its action. It needs no line between them, and the left
+// side, the row's number and its buttons stay at the top, next to the action.
+@mixin apl-row-stacked {
+	> .list-picker-item-move {
+		align-items: flex-start;
+		padding-top: 1.25rem;
+	}
+
+	&::before {
+		align-self: flex-start;
+		padding-top: 0.75rem;
+	}
+
+	> .list-picker-item-header {
+		align-self: flex-start;
+		padding-top: 0.8rem;
+	}
+
+	.apl-list-item-picker-root {
+		align-items: flex-start;
+
+		> .apl-action-picker-root > .apl-action-picker-action {
+			align-self: flex-start;
+		}
+
+		> .apl-action-picker-root > .apl-action-condition {
+			flex-basis: 100%;
+			min-height: 0;
+			padding-left: 0;
+			border-left: 0;
+		}
+	}
+}
+
 // The rotation editor, laid out so we can read the priority list top to bottom.
 //
 // Each row shows what it does first ("Cast Stormstrike") and its condition under it, like a
@@ -250,6 +284,38 @@
 				flex: 0 0 auto;
 			}
 
+			// The row we would drop a dragged row on.
+			&.dragto {
+				border-color: var(--gold-soft);
+			}
+
+			// The handle on the far left. We drag it, or the action's icon, to move the row.
+			> .list-picker-item-move {
+				order: -1;
+				align-self: stretch;
+				display: flex;
+				align-items: center;
+				margin: -0.45rem 0 -0.45rem -0.6rem;
+				padding: 0 0.35rem 0 0.5rem;
+				color: var(--text-muted-color);
+				opacity: 0.35;
+				cursor: grab;
+				transition: opacity 0.15s;
+
+				i.fa-xl {
+					font-size: 0.9rem;
+				}
+
+				&:hover {
+					opacity: 1;
+					color: var(--bs-white);
+				}
+			}
+
+			&:hover > .list-picker-item-move {
+				opacity: 0.8;
+			}
+
 			// A row we turned off with the eye button stays in the list, faded out.
 			&:has(> .list-picker-item > .apl-list-item-picker-root.disabled) > .list-picker-item {
 				opacity: 0.4;
@@ -258,8 +324,7 @@
 
 		// The row's buttons, quiet until we hover the row. A warning always shows.
 		> .list-picker-items > .list-picker-item-container > .list-picker-item-header {
-			align-self: flex-start;
-			padding-top: 0.8rem;
+			align-self: center;
 			gap: 0.65rem;
 
 			.list-picker-item-action {
@@ -320,8 +385,7 @@
 			&::before {
 				content: counter(apl-row);
 				flex: 0 0 1.5rem;
-				align-self: flex-start;
-				padding-top: 0.75rem;
+				align-self: center;
 				color: var(--text-muted-color);
 				font-size: 0.8rem;
 				font-variant-numeric: tabular-nums;
@@ -333,8 +397,11 @@
 	// action ("Cast") and the spell under it. On the right is the condition, or for a prepull
 	// action the time before the pull. When the row is too narrow for both, the right side
 	// goes under the left one.
+	//
+	// The left side, the row's number and its buttons sit in the middle of the row's height, so
+	// a long condition on the right doesn't leave them at the top.
 	.apl-list-item-picker-root {
-		align-items: flex-start;
+		align-items: center;
 		gap: 0.75rem;
 		min-width: 0;
 
@@ -354,6 +421,7 @@
 
 	.apl-row-icon {
 		flex: 0 0 auto;
+		cursor: grab;
 		width: 2.75rem;
 		height: 2.75rem;
 		display: flex;
@@ -372,7 +440,7 @@
 	.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-picker-action {
 		order: -1;
 		flex: 0 0 21.5rem;
-		align-self: flex-start;
+		align-self: center;
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: center;
@@ -441,28 +509,19 @@
 	}
 
 	// A condition with three levels of "Any of" and "All of", like the rogue's Slice and Dice
-	// checks, needs the whole row, so it goes under the action.
-	.apl-list-item-picker-root
-		> .apl-action-picker-root
-		> .apl-action-condition:has(.apl-picker-builder-multi .apl-picker-builder-multi .apl-picker-builder-multi) {
-		flex-basis: 100%;
-		min-height: 0;
-		padding-left: 0;
-		border-left: 0;
-	}
-
-	// In a narrow row, like on a small screen, the condition goes under the action, so it needs
-	// no line between them.
-	.apl-list-item-picker > .list-picker-items > .list-picker-item-container > .list-picker-item {
+	// checks, needs the whole row, so it goes under the action. In a narrow row, like on a small
+	// screen, every condition goes under the action.
+	.apl-list-item-picker > .list-picker-items {
 		container-type: inline-size;
+
+		> .list-picker-item-container:has(.apl-action-condition .apl-picker-builder-multi .apl-picker-builder-multi .apl-picker-builder-multi) {
+			@include apl-row-stacked;
+		}
 	}
 
-	@container (max-width: 44rem) {
-		.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-condition {
-			flex-basis: 100%;
-			min-height: 0;
-			padding-left: 0;
-			border-left: 0;
+	@container (max-width: 54rem) {
+		.apl-list-item-picker > .list-picker-items > .list-picker-item-container {
+			@include apl-row-stacked;
 		}
 	}
 

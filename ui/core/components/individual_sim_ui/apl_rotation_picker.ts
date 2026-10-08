@@ -11,7 +11,7 @@ import { Component } from '../component';
 import { dirtySettings } from '../dirty_settings';
 import { Input, InputConfig } from '../input';
 import { AdaptiveStringPicker } from '../inputs/string_picker';
-import { ListItemPickerConfig, ListPicker } from '../list_picker';
+import { LIST_PICKER_DRAG_HANDLE, ListItemPickerConfig, ListPicker } from '../list_picker';
 import { APLActionPicker } from './apl_actions';
 import { APLValueImplStruct } from './apl_values';
 
@@ -54,6 +54,7 @@ export class APLRotationPicker extends Component {
 				config: ListItemPickerConfig<Player<any>, APLPrepullAction>,
 			) => new APLPrepullActionPicker(parent, modPlayer, config, index),
 			inlineMenuBar: true,
+			moveHandleFirst: true,
 		});
 
 		new ListPicker<Player<any>, APLListItem>(this.rootElem, modPlayer, {
@@ -79,6 +80,7 @@ export class APLRotationPicker extends Component {
 				config: ListItemPickerConfig<Player<any>, APLListItem>,
 			) => new APLListItemPicker(parent, modPlayer, config, index),
 			inlineMenuBar: true,
+			moveHandleFirst: true,
 		});
 
 		//modPlayer.rotationChangeEmitter.on(() => console.log('APL: ' + APLRotation.toJsonString(modPlayer.aplRotation)))
@@ -294,11 +296,14 @@ function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, 
 //
 // A row that casts a spell or uses an aura shows that spell's icon, with its wowhead tooltip. A
 // Scheduled Action shows the icon of the action it schedules. Other actions, like Wait or
-// Autocast Other Cooldowns, show a plain icon for their kind.
+// Autocast Other Cooldowns, show a plain icon for their kind. We can drag the icon to move the
+// row, like the handle on its left, and a click opens the spell on wowhead.
 function makeActionIcon(parent: HTMLElement, player: Player<any>, getAction: () => APLAction | undefined) {
 	const iconElem = document.createElement('a');
-	iconElem.classList.add('apl-row-icon');
+	iconElem.classList.add('apl-row-icon', LIST_PICKER_DRAG_HANDLE);
 	iconElem.dataset.whtticon = 'false';
+	iconElem.target = '_blank';
+	iconElem.draggable = true;
 	parent.prepend(iconElem);
 
 	let shownKey = '';

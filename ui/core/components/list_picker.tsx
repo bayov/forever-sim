@@ -36,7 +36,13 @@ export interface ListPickerConfig<ModObject, ItemType> extends Omit<InputConfig<
 	minimumItems?: number;
 	// If set, only actions included in the list are allowed. Otherwise, all actions are allowed.
 	allowedActions?: Array<ListItemAction>;
+	// If set, the move handle goes first in the item, on its left, instead of with the other
+	// buttons. Other elements in the item can start a move too when they have the
+	// LIST_PICKER_DRAG_HANDLE class, like the rotation editor's action icon.
+	moveHandleFirst?: boolean;
 }
+
+export const LIST_PICKER_DRAG_HANDLE = 'list-picker-drag-handle';
 
 const DEFAULT_CONFIG = {
 	actions: {
@@ -201,8 +207,12 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		const item: ItemPickerPair<ItemType> = { elem: itemContainer, picker: itemPicker, idx: index };
 
 		if (this.actionEnabled('move')) {
-			const moveButton = ListPicker.makeActionElem('list-picker-item-move', 'fa-arrows-up-down');
-			itemHeader.appendChild(moveButton);
+			const moveButton = ListPicker.makeActionElem('list-picker-item-move', this.config.moveHandleFirst ? 'fa-grip-vertical' : 'fa-arrows-up-down');
+			if (this.config.moveHandleFirst) {
+				itemContainer.prepend(moveButton);
+			} else {
+				itemHeader.appendChild(moveButton);
+			}
 
 			const moveButtonTooltip = tippy(moveButton, {
 				allowHTML: false,
@@ -221,12 +231,23 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			});
 
 			moveButton.draggable = true;
-			moveButton.addEventListener(
+			// We listen on the item, so a drag handle anywhere in it starts the move. A handle in a
+			// nested list, like a condition's values, belongs to its own item.
+			itemContainer.addEventListener(
 				'dragstart',
 				event => {
-					if (event.target == moveButton) {
+					const target = event.target as HTMLElement;
+					const isHandle =
+						target == moveButton ||
+						(this.config.moveHandleFirst &&
+							target.classList?.contains(LIST_PICKER_DRAG_HANDLE) &&
+							target.closest('.list-picker-item-container') == itemContainer);
+					if (isHandle) {
 						event.dataTransfer!.dropEffect = 'move';
 						event.dataTransfer!.effectAllowed = 'move';
+						if (this.config.moveHandleFirst) {
+							event.dataTransfer!.setDragImage(itemContainer, 16, 16);
+						}
 						itemContainer.classList.add('dragfrom');
 						curDragData = {
 							listPicker: this,
