@@ -69,6 +69,41 @@
 			gap: 0.85rem 1.5rem;
 		}
 
+		// The buff and debuff icons look like the consumable slots (see _consumes_picker.scss).
+		//
+		// We zoom the icon in by a fifth, so the frame drawn on the icon's texture falls outside
+		// the slot's 1px black border.
+		.icon-picker > .icon-picker-button,
+		.icon-input-improved {
+			border: 1px solid #000;
+			border-radius: 3px;
+			background-color: #0c0c0f;
+			background-size: 120%;
+			background-position: center;
+		}
+
+		.icon-picker > .icon-picker-button {
+			outline: 1px solid #3c3a35;
+			filter: none;
+			transition:
+				filter 0.15s,
+				outline-color 0.15s;
+
+			&:hover {
+				outline-color: var(--gold-soft);
+				filter: brightness(1.15);
+			}
+
+			// A buff or debuff that's off stays gray and dim until we turn it on.
+			&:not(.active) {
+				filter: grayscale(1) brightness(0.5);
+
+				&:hover {
+					filter: grayscale(0.3) brightness(0.85);
+				}
+			}
+		}
+
 		.debuffs-group {
 			display: flex;
 			flex-direction: column;
@@ -97,19 +132,13 @@
 		}
 
 		// A subsection, row or set of icons whose debuffs all hide under this ruleset or faction
-		// hides too. A row's empty slot doesn't count.
+		// hides too.
 		.debuffs-group,
 		.exclusive-debuff-row,
 		.debuff-toggles {
-			&:not(:has(.icon-picker:not(.hide):not(.exclusive-debuff-none))) {
+			&:not(:has(.icon-picker:not(.hide))) {
 				display: none;
 			}
-		}
-
-		// The empty slot shows the game's empty bag slot, like an empty consumable.
-		.exclusive-debuff-none .icon-picker-button {
-			background-image: url('https://wow.zamimg.com/images/wow/icons/large/inventoryslot_empty.jpg');
-			background-size: cover;
 		}
 	}
 
