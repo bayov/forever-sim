@@ -976,13 +976,14 @@ export function otherShamanWindfuryTotem(player: Player<any>): boolean {
 }
 
 // Under Forever, Grace of Air doesn't stack with Windfury Totem for now (the user, 2026-10-08).
-// We name the Windfury Totem that's on: another shaman's, or the one an Enhancement shaman
-// starts the fight with.
+// The sim turns Grace of Air off while a Windfury Totem buff is up. We name the Windfury Totem
+// that's on: another shaman's, or the one an Enhancement shaman starts the fight with.
 function graceOfAirUnstackedNote(player: Player<any>): string | undefined {
 	if (player.getRaid()!.getBuffs().graceOfAirTotem === TristateEffect.TristateEffectMissing) return undefined;
 	const startingAir = player.spec === Spec.SpecEnhancementShaman ? (player.getSpecOptions() as EnhancementShaman_Options).startingTotems?.air : undefined;
-	if (otherShamanWindfuryTotem(player)) return "Doesn't stack with another shaman's Windfury Totem under Forever for now.";
-	if (isForever(player) && startingAir === AirTotem.WindfuryTotem) return "Doesn't stack with our starting Windfury Totem under Forever for now.";
+	if (otherShamanWindfuryTotem(player)) return "Gives no Agility while another shaman's Windfury Totem is up. Under Forever they don't stack for now.";
+	if (isForever(player) && startingAir === AirTotem.WindfuryTotem)
+		return "Gives no Agility while our starting Windfury Totem stands. Under Forever they don't stack for now.";
 	return undefined;
 }
 

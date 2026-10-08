@@ -193,7 +193,7 @@ export function buildStartingTotemsSettings(parent: HTMLElement, simUI: Individu
 				graceOfAir,
 				() =>
 					startingTotems(player).air === AirTotem.GraceOfAirTotem && otherShamanWindfuryTotem(player)
-						? "Doesn't stack with another shaman's Windfury Totem under Forever for now."
+						? "Gives no Agility while another shaman's Windfury Totem is up. Under Forever they don't stack for now."
 						: undefined,
 				simUI.changeEmitter,
 			);

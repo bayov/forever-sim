@@ -1480,23 +1480,26 @@ func GraceOfAirTotemAura(unit *Unit, multiplier float64) *Aura {
 		ActionID:   ActionID{SpellID: spellID},
 		Duration:   duration,
 		BuildPhase: CharacterBuildPhaseBuffs,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			if aura.Unit.Env.MeasuringStats && aura.Unit.Env.State != Finalized {
-				unit.AddStats(updateStats)
-			} else {
-				unit.AddStatsDynamic(sim, updateStats)
-			}
+	})
+	aura.NewExclusiveEffect(graceOfAirWindfuryCategory, false, ExclusiveEffect{
+		Priority: 1,
+		OnGain: func(_ *ExclusiveEffect, sim *Simulation) {
+			unit.AddBuildPhaseStatsDynamic(sim, updateStats)
 		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			if aura.Unit.Env.MeasuringStats && aura.Unit.Env.State != Finalized {
-				unit.AddStats(updateStats.Multiply(-1))
-			} else {
-				unit.AddStatsDynamic(sim, updateStats.Multiply(-1))
-			}
+		OnExpire: func(_ *ExclusiveEffect, sim *Simulation) {
+			unit.AddBuildPhaseStatsDynamic(sim, updateStats.Multiply(-1))
 		},
 	})
 	return aura
 }
+
+// graceOfAirWindfuryCategory holds Grace of Air's Agility and, under Forever, the Windfury
+// Totem buff.
+//
+// For now Forever doesn't let the two stack. While a Windfury Totem buff is up, from our own
+// totem or another shaman's, Grace of Air gives no Agility, and it comes back when the
+// Windfury Totem goes down. Outside Forever the Windfury Totem buff isn't in the category.
+const graceOfAirWindfuryCategory = "GraceOfAirWindfury"
 
 const BattleShoutRanks = 7
 
@@ -1801,7 +1804,12 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	blocked := func() bool { return mainHandHasImbue(character, windfuryWeaponEnchantIds) }
-	return CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked)
+	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked)
+	if character.Env.IsForever() {
+		// It has nothing of its own to give, but it's above Grace of Air, so it turns it off.
+		aura.NewExclusiveEffect(graceOfAirWindfuryCategory, false, ExclusiveEffect{Priority: 2})
+	}
+	return aura
 }
 
 ///////////////////////////////////////////////////////////////////////////
