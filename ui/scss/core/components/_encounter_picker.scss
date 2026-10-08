@@ -209,12 +209,13 @@ $target-icon: $target-name-line + $target-summary-line + $target-resistances-gap
 	}
 }
 
-// A resistance's icon, see TARGET_RESISTANCES.
+// A resistance's icon, a circle to tell it apart from the square mob type icons, see
+// TARGET_RESISTANCES.
 .resistance-icon {
 	width: $target-resistance-icon;
 	height: $target-resistance-icon;
 	flex-shrink: 0;
 	vertical-align: middle;
 	border: 1px solid #000;
-	border-radius: 2px;
+	border-radius: 50%;
 }
