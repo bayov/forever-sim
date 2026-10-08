@@ -45,7 +45,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 ## 4. Our white attacks
 
-- [ ] 4.1 Weapon damage: the damage roll, attack power (AP / 14 * weapon speed), normalized damage for specials
+- [x] 4.1 Weapon damage: the damage roll, attack power (AP / 14 * weapon speed), normalized damage for specials
 - [ ] 4.2 Swing timer: weapon speed and melee haste (Flurry, Rage of the Farseer, item haste), main hand and off hand sync
 - [ ] 4.3 Attack table: one roll, in the order miss, dodge, parry, glancing, block, crit, hit
 - [ ] 4.4 Miss: base chance against the target's level, weapon skill, hit from gear, the hit cap
@@ -404,6 +404,21 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The user OK'd it (2026-10-08). White hits roll when they swing and land 10 ms later with their procs, like the 10 ms batch window on Classic Era servers. The user thinks Forever uses 10 ms too, and it's in notes.md Need to Verify. Spells land at once, except that Lightning Bolt and Lava Burst travel at 20 yd/s from the player's distance (0 for enhancement in the UI, 5 yards in rotopt's settings). When the GCD is free and nothing can go, the rotation looks again every 50 ms and after every swing.
 - Changed (2026-10-08, the user): the rotation sees a proc only after the player's reaction time, 200 ms by default. That's an aura or stacks a proc gives us, like Clearcasting, Maelstrom Weapon, Flurry and trinket procs. What a rotation action does shows at once, because we queue spells, and so does losing an aura or stacks. The GCD and cooldowns need no reaction time. It reaches every rotation condition that reads an aura (active, stacks, remaining time). Reaction Time is at the end of the Player section for every spec, a saved 0 reads as the default, and rotopt's mksettings writes 200 ms (was 150). The test suites keep their 150 ms and the shaman mechanics tests 0.
 - `reaction_time_test.go` TestOrcShamanReactionTime casts Lightning Bolt at 5 Maelstrom Weapon stacks and Blood Fury when Rage of the Farseer is up. Each bolt goes 200 to 250 ms after the 5th stack, and Blood Fury goes with Rage of the Farseer. It fails when stacks show at once and when our own casts count as procs.
+
+### 4.1 Weapon damage
+
+- A white hit's base damage is a random number between the weapon's min and max damage, plus AP / 14 times the weapon's speed (`attack.go` CalculateWeaponDamage). The AP is ours plus any attack power the target gives us. Striking and Impact add to the weapon's min and max damage, so white hits, Windfury and Stormstrike all get them. Windfury's extra attack uses the weapon's speed and adds its bonus AP. Normalized speeds are 1.7 for daggers, 2.4 for one-handers, 3.3 for two-handers and 2.8 for ranged, and no shaman attack uses them.
+- Open: Stormstrike uses the weapon's speed, like the SoD sim. Forever's spell data on wowhead lists it as "Normalized Weapon Damage" and Classic's as "Deal Weapon Damage" (both fetched again 2026-10-08). It's in notes.md Need to Verify with a beta test. The same Forever data gives the mark 21% where the sim has 20% from the client tree, for section 5.
+- Fixed (2026-10-08, the user): Greater Impact (+7) and Superior Impact (+9) did nothing in the sim, and upstream wowsims has the same gap. They now add to the weapon's damage. hyjal.cc's recipe pages give the same values as 1.12. The rotopt enchant search stops at Enchanting 225, so it never offered them, and no preset changes. TestP1Hunter's gear has Superior Impact and gains about 1%.
+- Fixed (2026-10-08, the user): flat "+N damage" effects (Bogling Root, Zandalarian Hero Medallion, the Ragehammer and Sword of Zeal procs, Might of Cenarius) reached only white hits. Stormstrike and Windfury now get them too, as in Classic, through BonusCoefficient 1 like the other classes' weapon specials. No preset uses them.
+- `weapon_damage_test.go` TestOrcShamanWeaponDamage fights 30 min at level 60 with Dark Edge of Insanity, Superior Impact and a +20 flat bonus against a target with no armor. Every normal white hit, Windfury hit and Stormstrike lands in its range, and the rolls reach both ends. It fails without Superior Impact, without the flat bonus on Stormstrike or Windfury, and with Stormstrike normalized.
+- The /run lines for the Stormstrike test: one sets up a combat log frame that collects normal white hits and Stormstrikes, and one prints the count, lowest and highest of each, with AP and weapon speed.
+
+  ```
+  /run G=UnitGUID("player")W,S={},{}function H()local i={CombatLogGetCurrentEventInfo()}if i[4]~=G then return end local e=i[2]if e=="SWING_DAMAGE"and not i[18]and not i[19]then tinsert(W,i[12])elseif e=="SPELL_DAMAGE"and i[13]=="Stormstrike"and not i[21]then tinsert(S,i[15])end end
+  /run F=F or CreateFrame("Frame")F:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")F:SetScript("OnEvent",function()H()end)
+  /run local function m(t)table.sort(t)return #t,t[1],t[#t]end print("white",m(W))print("SS",m(S))print("ap",UnitAttackPower("player"))print("speed",UnitAttackSpeed("player"))
+  ```
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
