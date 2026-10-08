@@ -12,14 +12,13 @@ import { ContentBlock } from '../content_block';
 import { EncounterPicker } from '../encounter_picker';
 import { EnumPicker } from '../enum_picker';
 import { hideTooltipIconsWhileHovered } from '../gear_picker/item_comparison';
-import { ExclusiveDebuffRow } from '../exclusive_debuff_row';
+import { ExclusiveIconRow } from '../exclusive_debuff_row';
 import { IconEnumPicker } from '../icon_enum_picker';
 import { IconPicker } from '../icon_picker';
 import * as IconInputs from '../icon_inputs';
 import { Input } from '../input';
 import * as BuffDebuffInputs from '../inputs/buffs_debuffs';
 import { relevantStatOptions } from '../inputs/stat_options';
-import { MultiIconPicker, MultiIconPickerItemConfig } from '../multi_icon_picker';
 import { NumberPicker } from '../number_picker';
 import { SavedDataManager } from '../saved_data_manager';
 import { presetListTooltip } from '../preset_tree';
@@ -97,8 +96,8 @@ export class SettingsTab extends SimTab {
 				this.buildIsbSettings();
 				this.buildStormstrikeSettings();
 
-				this.buildBuffsSection(this.column3, 'party-buffs-settings', 'Party Buffs', PARTY_BUFFS_TOOLTIP, 'party');
-				this.buildBuffsSection(this.column3, 'buffs-settings', 'Raid Buffs', RAID_BUFFS_TOOLTIP, 'raid');
+				this.buildBuffsSection(this.column3, 'party-buffs-settings', 'Party Buffs', PARTY_BUFFS_TOOLTIP, BuffDebuffInputs.PARTY_BUFF_SUBSECTIONS);
+				this.buildBuffsSection(this.column3, 'buffs-settings', 'Raid Buffs', RAID_BUFFS_TOOLTIP, BuffDebuffInputs.RAID_BUFF_SUBSECTIONS);
 				this.buildWorldBuffsSettings();
 				this.buildSavedDataPickers();
 			}
@@ -257,42 +256,17 @@ export class SettingsTab extends SimTab {
 		}
 	}
 
-	// One of the two buff sections, with the buffs that the party or the raid gives us, see
-	// buffSource.
-	//
-	// The misc buffs go in a dropdown under the others, except for Innervate and Power Infusion.
-	// They are buffs of their own, so they get an icon like the rest of the raid buffs.
-	private buildBuffsSection(column: HTMLElement, cssClass: string, title: string, tooltip: string, source: BuffSource) {
-		const fromSource = (options: { config: unknown }) => buffSource(options.config) === source;
-		const miscOptions = relevantStatOptions(BuffDebuffInputs.MISC_BUFFS_CONFIG, this.simUI).filter(fromSource);
-		const buffOptions = [
-			...relevantStatOptions(BuffDebuffInputs.RAID_BUFFS_CONFIG, this.simUI).filter(fromSource),
-			...miscOptions.filter(options => RAID_BUFFS.includes(options.config)),
-		];
-		const miscBuffOptions = miscOptions.filter(options => !RAID_BUFFS.includes(options.config));
-		if (!buffOptions.length && !miscBuffOptions.length) return;
+	// One of the two buff sections, with the buffs that the party or the raid gives us, in
+	// subsections like the debuffs.
+	private buildBuffsSection(column: HTMLElement, cssClass: string, title: string, tooltip: string, subsections: Array<BuffDebuffInputs.IconSubsection>) {
+		const relevant = this.relevantSubsections(subsections);
+		if (!relevant.length) return;
 
 		const contentBlock = new ContentBlock(column, cssClass, {
 			header: { title, tooltip },
 		});
 		contentBlock.rootElem.classList.add('buffs-section');
-
-		this.configureIconSection(
-			contentBlock.bodyElement,
-			buffOptions.map(options => options.picker && new options.picker(contentBlock.bodyElement, this.simUI.player, options.config as any, this.simUI)),
-		);
-
-		if (miscBuffOptions.length) {
-			new MultiIconPicker(
-				contentBlock.bodyElement,
-				this.simUI.player,
-				{
-					values: miscBuffOptions.map(options => options.config) as Array<MultiIconPickerItemConfig<Player<Spec>>>,
-					label: 'Misc Buffs',
-				},
-				this.simUI,
-			);
-		}
+		this.buildIconSubsections(contentBlock.bodyElement, relevant);
 	}
 
 	// The world buffs are off for now. Forever has no world buffs that we know of, and it may have
@@ -322,16 +296,13 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildDebuffsSettings() {
-		const subsections = BuffDebuffInputs.OFFENSIVE_DEBUFF_SUBSECTIONS.map(subsection => ({
-			...subsection,
-			items: relevantStatOptions(subsection.items as any, this.simUI) as Array<BuffDebuffInputs.DebuffSubsectionItem>,
-		})).filter(subsection => subsection.items.length);
+		const subsections = this.relevantSubsections(BuffDebuffInputs.OFFENSIVE_DEBUFF_SUBSECTIONS);
 		if (!subsections.length) return;
 
 		const contentBlock = new ContentBlock(this.column2, 'debuffs-settings', {
 			header: { title: 'Offensive Debuffs', tooltip: Tooltips.OFFENSIVE_DEBUFFS_SECTION },
 		});
-		this.buildDebuffSubsections(contentBlock.bodyElement, subsections);
+		this.buildIconSubsections(contentBlock.bodyElement, subsections);
 
 		// In case no debuffs are active, this will fire a change event to update the pickers
 		this.simUI.player.getRaid()?.debuffsChangeEmitter.emit(TypedEvent.nextEventID());
@@ -345,38 +316,51 @@ export class SettingsTab extends SimTab {
 			header: { title: 'Defensive Debuffs', tooltip: Tooltips.DEFENSIVE_DEBUFFS_SECTION },
 		});
 		turnSectionOff(contentBlock, "Off for now. They lower the damage the target does, and we don't sim the damage we take yet.");
-		this.buildDebuffSubsections(contentBlock.bodyElement, BuffDebuffInputs.DEFENSIVE_DEBUFF_SUBSECTIONS);
+		this.buildIconSubsections(contentBlock.bodyElement, BuffDebuffInputs.DEFENSIVE_DEBUFF_SUBSECTIONS);
 	}
 
 	// Each subsection has a name over its icons, like the consumables. A row of debuffs that
 	// don't stack gets an empty slot first, see ExclusiveDebuffRow. The debuffs that stack with
 	// everything are icons of their own, side by side.
-	private buildDebuffSubsections(parent: HTMLElement, subsections: Array<BuffDebuffInputs.DebuffSubsection>) {
+	// The subsections without the icons that raise no stat the spec cares about, and without
+	// the subsections that have none left.
+	private relevantSubsections(subsections: Array<BuffDebuffInputs.IconSubsection>): Array<BuffDebuffInputs.IconSubsection> {
+		return subsections
+			.map(subsection => ({
+				...subsection,
+				items: relevantStatOptions(subsection.items as any, this.simUI) as Array<BuffDebuffInputs.IconSubsectionItem>,
+			}))
+			.filter(subsection => subsection.items.length);
+	}
+
+	// Each subsection has its name over a row of icons, like the consumables. The icons have no
+	// names of their own, their tooltips say what they are.
+	private buildIconSubsections(parent: HTMLElement, subsections: Array<BuffDebuffInputs.IconSubsection>) {
 		const player = this.simUI.player;
 		subsections.forEach(subsection => {
 			const group = document.createElement('div');
-			group.classList.add('debuffs-group');
+			group.classList.add('icon-subsection');
 			const label = document.createElement('label');
-			label.classList.add('debuffs-group-label');
+			label.classList.add('icon-subsection-label');
 			label.textContent = subsection.label;
 			const slots = document.createElement('div');
-			slots.classList.add('debuffs-group-slots');
+			slots.classList.add('icon-subsection-slots');
 			group.append(label, slots);
 			parent.appendChild(group);
 
 			let toggles: HTMLElement | null = null;
 			subsection.items.forEach(item => {
 				if ('options' in item.config) {
-					new ExclusiveDebuffRow(slots, player, item.config);
+					new ExclusiveIconRow(slots, player, item.config);
 					toggles = null;
 					return;
 				}
 				if (!toggles) {
 					toggles = document.createElement('div');
-					toggles.classList.add('debuff-toggles');
+					toggles.classList.add('icon-subsection-toggles');
 					slots.appendChild(toggles);
 				}
-				new IconPicker(toggles, player, item.config);
+				new IconPicker(toggles, player, { ...item.config, label: undefined });
 			});
 		});
 	}
@@ -512,32 +496,6 @@ export class SettingsTab extends SimTab {
 			}
 		}
 	}
-}
-
-// Who gives us a buff in the game: someone in our party, or anyone in the raid. It's about who
-// casts it, not who it reaches, so Innervate is a raid buff even though it lands on us alone.
-// The protos don't tell: they keep the totems and the auras with the raid buffs, but only our
-// party's shaman or paladin gives them to us.
-type BuffSource = 'party' | 'raid';
-
-// The buffs anyone in the raid can give us, like Mark of the Wild or Fortitude. The Blessings
-// go here too, even for a paladin, because another paladin in the raid gives them.
-const RAID_BUFFS: unknown[] = [
-	BuffDebuffInputs.BlessingOfKings,
-	BuffDebuffInputs.BlessingOfMight,
-	BuffDebuffInputs.BlessingOfWisdom,
-	BuffDebuffInputs.AllStatsBuff,
-	BuffDebuffInputs.StaminaBuff,
-	BuffDebuffInputs.IntellectBuff,
-	BuffDebuffInputs.SpiritBuff,
-	BuffDebuffInputs.Thorns,
-	BuffDebuffInputs.Innervate,
-	BuffDebuffInputs.PowerInfusion,
-];
-
-// The rest come from our party: the totems, the auras, Battle Shout, Blood Pact and Atiesh.
-function buffSource(config: unknown): BuffSource {
-	return RAID_BUFFS.includes(config) ? 'raid' : 'party';
 }
 
 const PARTY_BUFFS_TOOLTIP = 'Buffs the members of our party give us, like totems, auras and Battle Shout.';

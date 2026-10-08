@@ -96,14 +96,14 @@
 	box-shadow: 0 0 0 2px var(--dirty-color);
 }
 
-// The consumables and the debuffs have a name over each category. A changed one marks that
+// The consumables, the buffs and the debuffs have a name over each category. A changed one marks that
 // name, like the fields with a label. The slot that changed gets a dot instead of the ring (see
 // _consumes_picker.scss).
 //
-// The settings tab gives the debuff names their muted color with a longer selector, so we need
+// The settings tab gives the buff and debuff names their muted color with a longer selector, so we need
 // !important to win over it.
 .consumes-group:has(.dirty-setting) > .consumes-group-label,
-.debuffs-group:has(.dirty-setting) > .debuffs-group-label {
+.icon-subsection:has(.dirty-setting) > .icon-subsection-label {
 	color: var(--dirty-color) !important;
 
 	&::after {

@@ -8,7 +8,6 @@ import {
 	makeBooleanIndividualBuffInput,
 	makeBooleanRaidBuffInput,
 	makeEnumIndividualBuffInput,
-	makeEnumRaidBuffInput,
 	makeMultistateIndividualBuffInput,
 	makeMultistatePartyBuffInput,
 	makeMultistateRaidBuffInput,
@@ -17,11 +16,9 @@ import {
 	makeTristateRaidBuffInput,
 	withLabel,
 } from '../icon_inputs';
-import { IconEnumPicker } from '../icon_enum_picker';
-import { ExclusiveDebuffRowConfig, DebuffToggleField, isDebuffOn, setDebuffOn } from '../exclusive_debuff_row';
+import { DebuffToggleField, ExclusiveDebuffRowConfig, ExclusiveIconRowConfig, isDebuffOn, setDebuffOn } from '../exclusive_debuff_row';
 import { IconPicker, IconPickerConfig, IconPickerDirection } from '../icon_picker';
 import * as InputHelpers from '../input_helpers';
-import { MultiIconPicker } from '../multi_icon_picker';
 import { ItemStatOption, PickerStatOptions } from './stat_options';
 
 ///////////////////////////////////////////////////////////////////////////
@@ -82,52 +79,62 @@ export const PhysDamReductionBuff = withLabel(
 //	'Blessing of Sanctuary',
 //);
 
-export const ResistanceBuff = InputHelpers.makeMultiIconInput({
-	values: [
-		// Shadow
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(10958),
-			fieldName: 'shadowProtection',
-		}),
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(19896),
-			fieldName: 'shadowResistanceAura',
-		}),
-		// Nature
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(10601),
-			fieldName: 'natureResistanceTotem',
-			showWhen: player => player.hasFactionBuffs(Faction.Horde),
-		}),
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(20190),
-			fieldName: 'aspectOfTheWild',
-		}),
-		// Fire
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(19900),
-			fieldName: 'fireResistanceAura',
-			showWhen: player => player.hasFactionBuffs(Faction.Alliance),
-		}),
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(10538),
-			fieldName: 'fireResistanceTotem',
-			showWhen: player => player.hasFactionBuffs(Faction.Horde),
-		}),
-		// Frost
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(19898),
-			fieldName: 'frostResistanceAura',
-			showWhen: player => player.hasFactionBuffs(Faction.Alliance),
-		}),
-		makeBooleanRaidBuffInput({
-			actionId: () => ActionId.fromSpellId(10479),
-			fieldName: 'frostResistanceTotem',
-			showWhen: player => player.hasFactionBuffs(Faction.Horde),
-		}),
+type ResistanceField =
+	| 'shadowProtection'
+	| 'shadowResistanceAura'
+	| 'natureResistanceTotem'
+	| 'aspectOfTheWild'
+	| 'fireResistanceAura'
+	| 'fireResistanceTotem'
+	| 'frostResistanceAura'
+	| 'frostResistanceTotem';
+
+// A resistance buff. Each school has two that don't stack, so turning one on turns the other off.
+function makeResistanceBuff(spellId: number, fieldName: ResistanceField, other: ResistanceField, faction?: Faction) {
+	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<any>>(
+		{
+			getModObject: (player: Player<any>) => player,
+			showWhen: (player: Player<any>) => !faction || player.hasFactionBuffs(faction),
+			getValue: (player: Player<any>) => player.getRaid()!.getBuffs(),
+			setValue: (eventID: EventID, player: Player<any>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
+			changeEmitter: (player: Player<any>) =>
+				TypedEvent.onAny([player.getRaid()!.buffsChangeEmitter, player.raceChangeEmitter, player.sim.rulesetChangeEmitter]),
+			setFieldValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+				const buffs = player.getRaid()!.getBuffs();
+				buffs[fieldName] = newValue;
+				if (newValue) buffs[other] = false;
+				player.getRaid()!.setBuffs(eventID, buffs);
+			},
+		},
+		() => ActionId.fromSpellId(spellId),
+		fieldName,
+	);
+}
+
+export const ShadowResistanceBuffs: ExclusiveIconRowConfig = {
+	options: [makeResistanceBuff(10958, 'shadowProtection', 'shadowResistanceAura'), makeResistanceBuff(19896, 'shadowResistanceAura', 'shadowProtection')],
+};
+
+export const NatureResistanceBuffs: ExclusiveIconRowConfig = {
+	options: [
+		makeResistanceBuff(10601, 'natureResistanceTotem', 'aspectOfTheWild', Faction.Horde),
+		makeResistanceBuff(20190, 'aspectOfTheWild', 'natureResistanceTotem'),
 	],
-	label: 'Resistances',
-});
+};
+
+export const FireResistanceBuffs: ExclusiveIconRowConfig = {
+	options: [
+		makeResistanceBuff(19900, 'fireResistanceAura', 'fireResistanceTotem', Faction.Alliance),
+		makeResistanceBuff(10538, 'fireResistanceTotem', 'fireResistanceAura', Faction.Horde),
+	],
+};
+
+export const FrostResistanceBuffs: ExclusiveIconRowConfig = {
+	options: [
+		makeResistanceBuff(19898, 'frostResistanceAura', 'frostResistanceTotem', Faction.Alliance),
+		makeResistanceBuff(10479, 'frostResistanceTotem', 'frostResistanceAura', Faction.Horde),
+	],
+};
 
 // The Scrolls of Stamina, Intellect and Spirit are with the consumables, see ScrollOfStamina.
 export const StaminaBuff = withLabel(
@@ -221,18 +228,22 @@ export const GraceOfAirForever = withLabel(makeForeverPlainBuffInput(25359, 'gra
 // Another shaman's Windfury or Flametongue Totem. Under Forever its buff has a weapon slot
 // of its own, so it works next to a shaman imbue and an oil or stone. Only one of the two
 // totems works at a time.
-export const TotemWeaponBuffInput = withLabel(
-	makeEnumRaidBuffInput({
-		values: [
-			{ value: TotemWeaponBuff.TotemWeaponBuffNone },
-			{ actionId: () => ActionId.fromSpellId(10614), value: TotemWeaponBuff.TotemWeaponBuffWindfury },
-			{ actionId: () => ActionId.fromSpellId(16387), value: TotemWeaponBuff.TotemWeaponBuffFlametongue },
-		],
-		fieldName: 'totemWeaponBuff',
-		showWhen: player => player.hasFactionBuffs(Faction.Horde),
-	}),
-	'Totem Weapon Buff',
-);
+export const TotemWeaponBuffs: ExclusiveIconRowConfig = {
+	options: [
+		makeBooleanRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(10614),
+			fieldName: 'totemWeaponBuff',
+			value: TotemWeaponBuff.TotemWeaponBuffWindfury,
+			showWhen: player => player.hasFactionBuffs(Faction.Horde),
+		}),
+		makeBooleanRaidBuffInput({
+			actionId: () => ActionId.fromSpellId(16387),
+			fieldName: 'totemWeaponBuff',
+			value: TotemWeaponBuff.TotemWeaponBuffFlametongue,
+			showWhen: player => player.hasFactionBuffs(Faction.Horde),
+		}),
+	],
+};
 
 export const IntellectBuff = withLabel(
 	makeBooleanRaidBuffInput({
@@ -682,11 +693,6 @@ export const RAID_BUFFS_CONFIG = [
 	// 	picker: IconPicker,
 	// 	stats: [Stat.StatArmor],
 	// },
-	{
-		config: ResistanceBuff,
-		picker: MultiIconPicker,
-		stats: [Stat.StatNatureResistance, Stat.StatShadowResistance, Stat.StatFireResistance, Stat.StatFrostResistance],
-	},
 
 	// Physical Damage Buffs
 	{
@@ -718,11 +724,6 @@ export const RAID_BUFFS_CONFIG = [
 		config: GraceOfAirForever,
 		picker: IconPicker,
 		stats: [Stat.StatAgility],
-	},
-	{
-		config: TotemWeaponBuffInput,
-		picker: IconEnumPicker,
-		stats: [Stat.StatAttackPower],
 	},
 	{
 		config: TrueshotAuraBuff,
@@ -868,20 +869,63 @@ export const SAYGES_CONFIG = [
 	},
 ] as ItemStatOption<SaygesFortune>[];
 
-// A debuff in a subsection of the Settings tab: an icon, or a row of debuffs that don't stack.
-// We leave out the ones that raise no stat the spec cares about, like for the other inputs.
-export interface DebuffSubsectionItem {
-	config: IconPickerConfig<Player<any>, any> | ExclusiveDebuffRowConfig;
+// A buff or debuff in a subsection of the Settings tab: an icon, or a row of icons that don't
+// stack. We leave out the ones that raise no stat the spec cares about, like for the other
+// inputs.
+export interface IconSubsectionItem {
+	config: IconPickerConfig<Player<any>, any> | ExclusiveIconRowConfig;
 	stats: Array<Stat>;
 }
 
-export interface DebuffSubsection {
+export interface IconSubsection {
 	label: string;
-	items: Array<DebuffSubsectionItem>;
+	items: Array<IconSubsectionItem>;
 }
 
+// A buff from RAID_BUFFS_CONFIG or MISC_BUFFS_CONFIG, with the stats it has there.
+function buffItem(config: unknown): IconSubsectionItem {
+	const option = [...RAID_BUFFS_CONFIG, ...MISC_BUFFS_CONFIG].find(option => option.config === config)!;
+	return { config: option.config as IconPickerConfig<Player<any>, any>, stats: option.stats };
+}
+
+// The buffs anyone in the raid can give us, like Mark of the Wild or Fortitude. It's about who
+// casts it, not who it reaches, so Innervate is a raid buff even though it lands on us alone.
+// The Blessings go here too, even for a paladin, because another paladin in the raid gives
+// them.
+export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
+	{ label: 'Stats', items: [AllStatsBuff, BlessingOfKings, StaminaBuff, IntellectBuff, SpiritBuff].map(buffItem) },
+	{ label: 'Attack Power', items: [BlessingOfMight].map(buffItem) },
+	{ label: 'Mana', items: [BlessingOfWisdom, Innervate].map(buffItem) },
+	{ label: 'Other', items: [PowerInfusion, Thorns].map(buffItem) },
+];
+
+// The buffs the members of our party give us: the totems, the auras, Battle Shout, Blood Pact
+// and Atiesh. The protos keep them with the raid buffs, but only our party's shaman or paladin
+// gives them to us.
+export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
+	{
+		label: 'Stats',
+		items: [BloodPactBuff, BloodPactBuffForever, StrengthBuffHorde, StrengthBuffHordeForever, GraceOfAir, GraceOfAirForever].map(buffItem),
+	},
+	{ label: 'Attack Power', items: [BattleShoutBuff, TrueshotAuraBuff].map(buffItem) },
+	{ label: 'Weapon Totem', items: [{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] }] },
+	{ label: 'Crit', items: [MeleeCritBuff, SpellCritBuff].map(buffItem) },
+	{ label: 'Mana', items: [ManaSpringTotem].map(buffItem) },
+	{ label: 'Defense', items: [ArmorBuff, PhysDamReductionBuff, RetributionAura].map(buffItem) },
+	{
+		label: 'Resistances',
+		items: [
+			{ config: ShadowResistanceBuffs, stats: [Stat.StatShadowResistance] },
+			{ config: NatureResistanceBuffs, stats: [Stat.StatNatureResistance] },
+			{ config: FireResistanceBuffs, stats: [Stat.StatFireResistance] },
+			{ config: FrostResistanceBuffs, stats: [Stat.StatFrostResistance] },
+		],
+	},
+	{ label: 'Other', items: [AtieshMageBuff, AtieshWarlockBuff, AtieshPriestBuff, AtieshDruidBuff, SanctityAura, BattleSquawkBuff].map(buffItem) },
+];
+
 // The debuffs that raise our damage.
-export const OFFENSIVE_DEBUFF_SUBSECTIONS: Array<DebuffSubsection> = [
+export const OFFENSIVE_DEBUFF_SUBSECTIONS: Array<IconSubsection> = [
 	{ label: 'Sunder / Expose', items: [{ config: MajorArmorDebuff, stats: [Stat.StatAttackPower] }] },
 	{ label: 'CoR / FF', items: [{ config: MinorArmorDebuff, stats: [Stat.StatAttackPower] }] },
 	{ label: 'CoE', items: [{ config: CurseOfElements, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] }] },
@@ -907,7 +951,7 @@ export const OFFENSIVE_DEBUFF_SUBSECTIONS: Array<DebuffSubsection> = [
 
 // The debuffs that lower the damage the target does. They're off for now, see
 // normalizeDebuffs.
-export const DEFENSIVE_DEBUFF_SUBSECTIONS: Array<DebuffSubsection> = [
+export const DEFENSIVE_DEBUFF_SUBSECTIONS: Array<IconSubsection> = [
 	{ label: 'Attack Power', items: [{ config: AttackPowerDebuff, stats: [Stat.StatArmor] }] },
 	{ label: 'Attack Speed', items: [{ config: MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] }] },
 	{

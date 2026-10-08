@@ -55,10 +55,9 @@
 		}
 	}
 
-	// Two columns of buffs, so their names fit a third of the tab.
+	// The buffs and debuffs in subsections that sit side by side and wrap, like the consumables,
+	// see buildIconSubsections.
 	.buffs-section,
-	// The debuffs in subsections that sit side by side and wrap, like the consumables, see
-	// buildDebuffSubsections.
 	.debuffs-settings {
 		// A content block lays out its body in a column, so we turn it back to a row.
 		.content-block-body {
@@ -110,13 +109,13 @@
 			}
 		}
 
-		.debuffs-group {
+		.icon-subsection {
 			display: flex;
 			flex-direction: column;
 			gap: 0.35rem;
 		}
 
-		.debuffs-group-label {
+		.icon-subsection-label {
 			margin: 0;
 			color: var(--text-muted-color);
 			font-size: 0.75rem;
@@ -124,24 +123,24 @@
 			white-space: nowrap;
 		}
 
-		// A row of debuffs that don't stack sits apart from the next one.
-		.debuffs-group-slots {
+		// A row of buffs or debuffs that don't stack sits apart from the next one.
+		.icon-subsection-slots {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.3rem 0.85rem;
 		}
 
-		.exclusive-debuff-row,
-		.debuff-toggles {
+		.exclusive-icon-row,
+		.icon-subsection-toggles {
 			display: flex;
 			gap: 0.3rem;
 		}
 
-		// A subsection, row or set of icons whose debuffs all hide under this ruleset or faction
-		// hides too.
-		.debuffs-group,
-		.exclusive-debuff-row,
-		.debuff-toggles {
+		// A subsection, row or set of icons whose buffs or debuffs all hide under this ruleset or
+		// faction hides too.
+		.icon-subsection,
+		.exclusive-icon-row,
+		.icon-subsection-toggles {
 			&:not(:has(.icon-picker:not(.hide))) {
 				display: none;
 			}
