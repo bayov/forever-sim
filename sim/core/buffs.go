@@ -315,9 +315,10 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		character.AddStats(BuffSpellValues[ScrollOfStamina])
 	}
 
+	// Forever's Improved Imp no longer raises Blood Pact, so we take an improved one as regular.
 	if raidBuffs.BloodPact > 0 {
 		updateStats := BuffSpellValues[BloodPact]
-		if raidBuffs.BloodPact == proto.TristateEffect_TristateEffectImproved {
+		if raidBuffs.BloodPact == proto.TristateEffect_TristateEffectImproved && !character.Env.IsForever() {
 			updateStats = updateStats.Multiply(1.3).Floor()
 		}
 		character.AddStats(updateStats)

@@ -144,6 +144,7 @@ export const BloodPactBuff = withLabel(
 		actionId: () => ActionId.fromSpellId(11767),
 		impId: ActionId.fromSpellId(18696),
 		fieldName: 'bloodPact',
+		showWhen: player => player.sim.getRuleset() !== Ruleset.RulesetForever,
 	}),
 	'Blood Pact',
 );
@@ -178,14 +179,21 @@ export const GraceOfAir = withLabel(
 	'Agility',
 );
 
-// The improved Strength of Earth and Grace of Air come from Enhancing Totems, which is not in
-// Forever's tree. So under Forever we show these totems as on or off. An improved value from an
-// older saved setup counts as on, and the sim treats it as a regular totem.
-function makeForeverHordeTotemInput(spellId: number, fieldName: 'strengthOfEarthTotem' | 'graceOfAirTotem') {
+// Some improved buffs are not in Forever's trees, so under Forever we show these buffs as on or
+// off. An improved value from an older saved setup counts as on, and the sim treats it as the
+// regular buff.
+//
+// The improved Strength of Earth and Grace of Air come from Enhancing Totems, which is gone.
+// Forever's Improved Imp no longer raises Blood Pact.
+function makeForeverPlainBuffInput(
+	spellId: number,
+	fieldName: 'strengthOfEarthTotem' | 'graceOfAirTotem' | 'bloodPact',
+	showWhen: (player: Player<any>) => boolean = () => true,
+) {
 	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<any>>(
 		{
 			getModObject: (player: Player<any>) => player,
-			showWhen: (player: Player<any>) => player.hasFactionBuffs(Faction.Horde) && player.sim.getRuleset() === Ruleset.RulesetForever,
+			showWhen: (player: Player<any>) => showWhen(player) && player.sim.getRuleset() === Ruleset.RulesetForever,
 			getValue: (player: Player<any>) => player.getRaid()!.getBuffs(),
 			setValue: (eventID: EventID, player: Player<any>, newVal: RaidBuffs) => player.getRaid()!.setBuffs(eventID, newVal),
 			changeEmitter: (player: Player<any>) =>
@@ -202,9 +210,13 @@ function makeForeverHordeTotemInput(spellId: number, fieldName: 'strengthOfEarth
 	);
 }
 
-export const StrengthBuffHordeForever = withLabel(makeForeverHordeTotemInput(25361, 'strengthOfEarthTotem'), 'Strength');
+const isHorde = (player: Player<any>) => player.hasFactionBuffs(Faction.Horde);
 
-export const GraceOfAirForever = withLabel(makeForeverHordeTotemInput(25359, 'graceOfAirTotem'), 'Agility');
+export const StrengthBuffHordeForever = withLabel(makeForeverPlainBuffInput(25361, 'strengthOfEarthTotem', isHorde), 'Strength');
+
+export const BloodPactBuffForever = withLabel(makeForeverPlainBuffInput(11767, 'bloodPact'), 'Blood Pact');
+
+export const GraceOfAirForever = withLabel(makeForeverPlainBuffInput(25359, 'graceOfAirTotem', isHorde), 'Agility');
 
 // Another shaman's Windfury or Flametongue Totem. Under Forever its buff has a weapon slot
 // of its own, so it works next to a shaman imbue and an oil or stone. Only one of the two
@@ -267,7 +279,8 @@ export const BlessingOfWisdom = withLabel(
 export const ManaSpringTotem = withLabel(
 	makeTristateRaidBuffInput({
 		actionId: () => ActionId.fromSpellId(10497),
-		impId: ActionId.fromSpellId(16208),
+		// Restorative Totems. wowhead Forever only knows its first rank.
+		impId: ActionId.fromSpellId(16187),
 		fieldName: 'manaSpringTotem',
 		showWhen: player => player.hasFactionBuffs(Faction.Horde),
 	}),
@@ -498,8 +511,10 @@ export const CrystalYield = makeBooleanDebuffInput({
 	fieldName: 'crystalYield',
 });
 
+// Forever gave Curse of the Elements new spell IDs and a fourth rank (1311680 at level 50).
+// wowhead Forever doesn't know the Classic ID, so its tooltip says the spell isn't found.
 export const CurseOfElements = makeBooleanDebuffInput({
-	actionId: () => ActionId.fromSpellId(11722),
+	actionId: player => ActionId.fromSpellId(notForever(player) ? 11722 : 1311680),
 	fieldName: 'curseOfElements',
 });
 
@@ -632,6 +647,11 @@ export const RAID_BUFFS_CONFIG = [
 	},
 	{
 		config: BloodPactBuff,
+		picker: IconPicker,
+		stats: [],
+	},
+	{
+		config: BloodPactBuffForever,
 		picker: IconPicker,
 		stats: [],
 	},
@@ -862,18 +882,13 @@ export interface DebuffSubsection {
 
 // The debuffs that raise our damage.
 export const OFFENSIVE_DEBUFF_SUBSECTIONS: Array<DebuffSubsection> = [
+	{ label: 'Sunder / Expose', items: [{ config: MajorArmorDebuff, stats: [Stat.StatAttackPower] }] },
+	{ label: 'CoR / FF', items: [{ config: MinorArmorDebuff, stats: [Stat.StatAttackPower] }] },
+	{ label: 'CoE', items: [{ config: CurseOfElements, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] }] },
 	{
-		label: 'Armor Penetration',
+		label: 'Other',
 		items: [
-			{ config: MajorArmorDebuff, stats: [Stat.StatAttackPower] },
-			{ config: MinorArmorDebuff, stats: [Stat.StatAttackPower] },
 			{ config: CrystalYield, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-		],
-	},
-	{
-		label: 'Spell Damage',
-		items: [
-			{ config: CurseOfElements, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 			{ config: CurseOfShadow, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 			{ config: SpellISBDebuff, stats: [Stat.StatShadowPower] },
 			{ config: SpellScorchDebuff, stats: [Stat.StatFirePower] },
@@ -882,11 +897,6 @@ export const OFFENSIVE_DEBUFF_SUBSECTIONS: Array<DebuffSubsection> = [
 			{ config: SpellShadowWeavingDebuff, stats: [Stat.StatShadowPower] },
 			{ config: JudgementOfTheCrusader, stats: [Stat.StatHolyPower] },
 			{ config: JudgementOfTheCrusaderForever, stats: [Stat.StatHolyPower] },
-		],
-	},
-	{
-		label: 'Other',
-		items: [
 			{ config: GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ config: HuntersMark, stats: [Stat.StatRangedAttackPower] },
 			{ config: HuntersMarkForever, stats: [Stat.StatRangedAttackPower] },

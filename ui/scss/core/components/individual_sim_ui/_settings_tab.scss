@@ -82,6 +82,12 @@
 			background-position: center;
 		}
 
+		// A picker with nothing picked, like Misc Buffs, shows the game's empty bag slot. A picked
+		// icon sets its own image on the element, which wins over this one.
+		.icon-picker > .icon-picker-button {
+			background-image: url('https://wow.zamimg.com/images/wow/icons/large/inventoryslot_empty.jpg');
+		}
+
 		.icon-picker > .icon-picker-button {
 			outline: 1px solid #3c3a35;
 			filter: none;
