@@ -17,29 +17,43 @@ const (
 )
 
 func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, raid *proto.Raid) {
+	forever := target.Env.IsForever()
+	level := raidLevel(target)
+
 	if debuffs.JudgementOfWisdom && targetIdx == 0 {
-		jowAura := JudgementOfWisdomAura(target)
-		if jowAura != nil {
-			MakePermanent(jowAura)
+		mana := 59.0
+		if forever {
+			mana = foreverJudgementOfWisdomMana[HighestRankAt(level, foreverJudgementOfWisdomLevel[:])]
+		}
+		if mana > 0 {
+			MakePermanent(judgementOfWisdomAura(target, mana))
 		}
 	}
 
 	if targetIdx == 0 {
 		// Forever's judgement carries the old Improved Seal of the Crusader value (161 at
 		// rank 6) whether or not the tristate says improved.
-		if debuffs.JudgementOfTheCrusader == proto.TristateEffect_TristateEffectRegular && !target.Env.IsForever() {
+		if debuffs.JudgementOfTheCrusader == proto.TristateEffect_TristateEffectRegular && !forever {
 			MakePermanent(JudgementOfTheCrusaderAura(nil, target, 140, 10*time.Second))
 		} else if debuffs.JudgementOfTheCrusader != proto.TristateEffect_TristateEffectMissing {
-			MakePermanent(JudgementOfTheCrusaderAura(nil, target, 161, 10*time.Second))
+			bonus := 161.0
+			if forever {
+				bonus = foreverJudgementOfTheCrusaderBonus[HighestRankAt(level, foreverJudgementOfTheCrusaderLevel[:])]
+			}
+			if bonus > 0 {
+				MakePermanent(JudgementOfTheCrusaderAura(nil, target, bonus, 10*time.Second))
+			}
 		}
 	}
 
-	if debuffs.ImprovedShadowBolt && targetIdx == 0 {
+	// Under Forever Improved Shadow Bolt, Improved Scorch and Winter's Chill only help the
+	// warlock or mage who applies them, so another player's is worth nothing to us.
+	if debuffs.ImprovedShadowBolt && targetIdx == 0 && !forever {
 		ExternalIsbCaster(debuffs, target)
 	}
 
 	// Forever's Shadow Weaving only helps the priest who applies it.
-	if debuffs.ShadowWeaving && !target.Env.IsForever() {
+	if debuffs.ShadowWeaving && !forever {
 		aura := ShadowWeavingAura(target, 5)
 		SchedulePeriodicDebuffApplication(aura, PeriodicActionOptions{
 			Period:          time.Millisecond * 1500,
@@ -56,14 +70,19 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 
 	if debuffs.CurseOfElements {
-		MakePermanent(CurseOfElementsAura(target))
+		if !forever {
+			MakePermanent(CurseOfElementsAura(target))
+		} else if rank := HighestRankAt(level, foreverCurseOfElementsLevel[:]); rank > 0 {
+			MakePermanent(foreverCurseOfElementsAura(target, rank))
+		}
 	}
 
-	if debuffs.CurseOfShadow {
+	// Forever has no Curse of Shadow. Its Curse of the Elements covers Shadow and Arcane.
+	if debuffs.CurseOfShadow && !forever {
 		MakePermanent(CurseOfShadowAura(target))
 	}
 
-	if debuffs.ImprovedScorch && targetIdx == 0 {
+	if debuffs.ImprovedScorch && targetIdx == 0 && !forever {
 		aura := ImprovedScorchAura(target)
 		SchedulePeriodicDebuffApplication(aura, PeriodicActionOptions{
 			Period:          time.Millisecond * 1500,
@@ -79,7 +98,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		}, raid)
 	}
 
-	if debuffs.WintersChill && targetIdx == 0 {
+	if debuffs.WintersChill && targetIdx == 0 && !forever {
 		aura := WintersChillAura(target)
 		SchedulePeriodicDebuffApplication(aura, PeriodicActionOptions{
 			Period:          time.Millisecond * 1500,
@@ -97,11 +116,12 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 
 	// Under Forever Stormstrike only marks the target for the casting shaman's own spells,
 	// so another shaman's is worth nothing.
-	if debuffs.Stormstrike && targetIdx == 0 && !target.Env.IsForever() {
+	if debuffs.Stormstrike && targetIdx == 0 && !forever {
 		ExternalStormstrikeCaster(debuffs, target)
 	}
 
-	if debuffs.GiftOfArthas {
+	// Gift of Arthas needs level 45 to drink.
+	if debuffs.GiftOfArthas && (!forever || level >= 45) {
 		MakePermanent(GiftOfArthasAura(target))
 	}
 
@@ -115,8 +135,12 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 
 	// Major Armor Debuffs
 	if targetIdx == 0 {
-		if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
-			aura := ExposeArmorAura(target, TernaryInt32(debuffs.ExposeArmor == proto.TristateEffect_TristateEffectRegular, 0, 2))
+		exposeArmor := 2250.0
+		if forever {
+			exposeArmor = 5 * foreverExposeArmorPerPoint[HighestRankAt(level, foreverExposeArmorLevel[:])]
+		}
+		if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing && exposeArmor > 0 {
+			aura := exposeArmorAura(target, exposeArmor)
 			SchedulePeriodicDebuffApplication(aura, PeriodicActionOptions{
 				Period:   time.Second * 3,
 				NumTicks: 1,
@@ -126,9 +150,12 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 			}, raid)
 		}
 
-		if debuffs.SunderArmor {
-			// Sunder Armor
-			aura := SunderArmorAura(target)
+		sunderArmor := 450.0
+		if forever {
+			sunderArmor = foreverSunderArmor[HighestRankAt(level, foreverSunderArmorLevel[:])]
+		}
+		if debuffs.SunderArmor && sunderArmor > 0 {
+			aura := sunderArmorAura(target, sunderArmor)
 			SchedulePeriodicDebuffApplication(aura, PeriodicActionOptions{
 				Period:          time.Millisecond * 200,
 				NumTicks:        5,
@@ -145,11 +172,19 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 
 	if debuffs.CurseOfRecklessness {
-		MakePermanent(CurseOfRecklessnessAura(target))
+		if !forever {
+			MakePermanent(CurseOfRecklessnessAura(target))
+		} else if armor := foreverMinorArmor[HighestRankAt(level, foreverCurseOfRecklessnessLevel[:])]; armor > 0 {
+			MakePermanent(foreverCurseOfRecklessnessAura(target, armor))
+		}
 	}
 
 	if debuffs.FaerieFire {
-		MakePermanent(FaerieFireAura(target))
+		if !forever {
+			MakePermanent(FaerieFireAura(target))
+		} else if armor := foreverMinorArmor[HighestRankAt(level, foreverFaerieFireLevel[:])]; armor > 0 {
+			MakePermanent(faerieFireAuraInternal(target, "Faerie Fire", 9907, armor))
+		}
 	}
 
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
@@ -163,7 +198,11 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
 	}
 	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(HuntersMarkAura(target, GetTristateValueInt32(debuffs.HuntersMark, 0, 5)))
+		if !forever {
+			MakePermanent(HuntersMarkAura(target, GetTristateValueInt32(debuffs.HuntersMark, 0, 5)))
+		} else if bonus := foreverHuntersMark[HighestRankAt(level, foreverHuntersMarkLevel[:])]; bonus > 0 {
+			MakePermanent(huntersMarkAura(target, bonus))
+		}
 	}
 
 	// Atk spd reduction
@@ -183,6 +222,54 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(ScorpidStingAura(target))
 	}
 }
+
+// raidLevel is the level of the highest player in the raid.
+//
+// Under Forever we take each raid debuff at the rank a player of that level has, because the
+// players who put the debuffs up are about our level. A level 30 raid's Sunder Armor takes 180
+// armor per stack, not the 450 of level 60.
+func raidLevel(target *Unit) int32 {
+	level := int32(0)
+	for _, unit := range target.Env.Raid.AllUnits {
+		if unit.Type == PlayerUnit && unit.Level > level {
+			level = unit.Level
+		}
+	}
+	if level == 0 {
+		return CharacterMaxLevel
+	}
+	return level
+}
+
+// Forever's raid debuffs by rank, from the ForeverChanges spellbook (build 70245), with the
+// level each rank is learned at. Index 0 is a level too low for the first rank.
+var (
+	foreverSunderArmorLevel = [...]int{0, 10, 22, 34, 46, 58}
+	foreverSunderArmor      = [...]float64{0, 90, 180, 270, 360, 450} // per stack
+
+	foreverExposeArmorLevel    = [...]int{0, 14, 26, 36, 46, 56}
+	foreverExposeArmorPerPoint = [...]float64{0, 90, 180, 270, 360, 450}
+
+	// Faerie Fire and Curse of Recklessness take the same armor at each rank, but learn
+	// their ranks at different levels.
+	foreverMinorArmor               = [...]float64{0, 175, 285, 395, 505}
+	foreverFaerieFireLevel          = [...]int{0, 18, 30, 42, 54}
+	foreverCurseOfRecklessnessLevel = [...]int{0, 14, 28, 42, 56}
+
+	foreverCurseOfElementsLevel      = [...]int{0, 20, 30, 40, 50}
+	foreverCurseOfElementsResistance = [...]float64{0, 30, 45, 60, 75}
+	foreverCurseOfElementsDamage     = [...]float64{0, 0.04, 0.06, 0.08, 0.10}
+
+	foreverJudgementOfTheCrusaderLevel = [...]int{0, 6, 12, 22, 32, 42, 52}
+	foreverJudgementOfTheCrusaderBonus = [...]float64{0, 23, 35, 58, 92, 127, 161}
+
+	foreverJudgementOfWisdomLevel = [...]int{0, 38, 48, 58}
+	foreverJudgementOfWisdomMana  = [...]float64{0, 33, 46, 59}
+
+	// wowhead and ForeverChanges both list rank 4 below rank 3, so we keep their numbers.
+	foreverHuntersMarkLevel = [...]int{0, 6, 22, 40, 58}
+	foreverHuntersMark      = [...]float64{0, 26, 59, 98, 71}
+)
 
 type StormstrikeConfig struct {
 	stormstrikeFrequency     float64
@@ -416,9 +503,12 @@ const JudgementAuraTag = "Judgement"
 
 // TODO: Classic verify logic
 func JudgementOfWisdomAura(target *Unit) *Aura {
-	actionID := ActionID{SpellID: 20355}
+	return judgementOfWisdomAura(target, 59)
+}
 
-	jowMana := 59.0
+// jowMana is the mana each proc gives back.
+func judgementOfWisdomAura(target *Unit, jowMana float64) *Aura {
+	actionID := ActionID{SpellID: 20355}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    "Judgement of Wisdom",
@@ -513,6 +603,27 @@ func CurseOfElementsAura(target *Unit) *Aura {
 
 	spellSchoolResistanceEffect(aura, stats.SchoolIndexFire, resistance, 0.0, false)
 	spellSchoolResistanceEffect(aura, stats.SchoolIndexFrost, resistance, 0.0, false)
+
+	return aura
+}
+
+// foreverCurseOfElementsAura is Forever's curse. It takes resistance and adds damage taken
+// for every Magic school, Nature and Holy too, because Forever folded Curse of Shadow into it.
+// wowhead lists its effects as "Mod Resistance (All)" and "Mod % Damage Taken (All)".
+func foreverCurseOfElementsAura(target *Unit, rank int) *Aura {
+	resistance := foreverCurseOfElementsResistance[rank]
+	dmgMod := 1 + foreverCurseOfElementsDamage[rank]
+
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Curse of Elements",
+		ActionID: ActionID{SpellID: 11722},
+		Duration: time.Minute * 5,
+	})
+	for _, school := range []stats.SchoolIndex{stats.SchoolIndexArcane, stats.SchoolIndexFire, stats.SchoolIndexFrost, stats.SchoolIndexHoly, stats.SchoolIndexNature, stats.SchoolIndexShadow} {
+		spellSchoolDamageEffect(aura, school, dmgMod, 0.0, false)
+	}
+	// One effect takes the resistance off every school.
+	spellSchoolResistanceEffect(aura, stats.SchoolIndexArcane, resistance, 0.0, false)
 
 	return aura
 }
@@ -645,8 +756,11 @@ var majorArmorReductionEffectCategory = "MajorArmorReduction"
 var minorArmorReductionEffectCategory = "MinorArmorReduction"
 
 func SunderArmorAura(target *Unit) *Aura {
-	arpen := 450.0
+	return sunderArmorAura(target, 450)
+}
 
+// arpen is the armor each stack takes.
+func sunderArmorAura(target *Unit, arpen float64) *Aura {
 	var effect *ExclusiveEffect
 	aura := target.GetOrRegisterAura(Aura{
 		Label:     "Sunder Armor",
@@ -672,10 +786,13 @@ func SunderArmorAura(target *Unit) *Aura {
 }
 
 func ExposeArmorAura(target *Unit, improvedEA int32) *Aura {
-	spellID := int32(11198)
 	// Forever's rank 5 gives 450 armor per point. Improved Expose Armor no longer
 	// raises it, so the improved flavor is the same debuff.
-	arpen := 2250.0
+	return exposeArmorAura(target, 2250)
+}
+
+func exposeArmorAura(target *Unit, arpen float64) *Aura {
+	spellID := int32(11198)
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "ExposeArmor",
@@ -701,22 +818,7 @@ func CurseOfRecklessnessAura(target *Unit) *Aura {
 	// doesn't stack with Faerie Fire any more, so the two share the minor armor effect and
 	// only one of them counts.
 	if target.Env.IsForever() {
-		arpen := 505.0
-		aura := target.GetOrRegisterAura(Aura{
-			Label:    "Curse of Recklessness",
-			ActionID: ActionID{SpellID: 11717},
-			Duration: time.Minute * 2,
-		})
-		aura.NewExclusiveEffect(minorArmorReductionEffectCategory, true, ExclusiveEffect{
-			Priority: arpen,
-			OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
-				ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, -arpen)
-			},
-			OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-				ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, arpen)
-			},
-		})
-		return aura
+		return foreverCurseOfRecklessnessAura(target, 505)
 	}
 
 	arpen := float64(640)
@@ -738,19 +840,35 @@ func CurseOfRecklessnessAura(target *Unit) *Aura {
 	return aura
 }
 
+func foreverCurseOfRecklessnessAura(target *Unit, arpen float64) *Aura {
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Curse of Recklessness",
+		ActionID: ActionID{SpellID: 11717},
+		Duration: time.Minute * 2,
+	})
+	aura.NewExclusiveEffect(minorArmorReductionEffectCategory, true, ExclusiveEffect{
+		Priority: arpen,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, -arpen)
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, arpen)
+		},
+	})
+	return aura
+}
+
 // Decreases the armor of the target by X for 40 sec.
 // Improved: Your Faerie Fire and Faerie Fire (Feral) also increase the chance for all attacks to hit that target by 1% for 40 sec.
 func FaerieFireAura(target *Unit) *Aura {
-	return faerieFireAuraInternal(target, "Faerie Fire", 9907)
+	return faerieFireAuraInternal(target, "Faerie Fire", 9907, 505)
 }
 
 func FaerieFireFeralAura(target *Unit) *Aura {
-	return faerieFireAuraInternal(target, "Faerie Fire (Feral)", 17392)
+	return faerieFireAuraInternal(target, "Faerie Fire (Feral)", 17392, 505)
 }
 
-func faerieFireAuraInternal(target *Unit, label string, spellID int32) *Aura {
-	arPen := float64(505)
-
+func faerieFireAuraInternal(target *Unit, label string, spellID int32, arPen float64) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    label,
 		ActionID: ActionID{SpellID: spellID},
@@ -793,10 +911,11 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 const HuntersMarkAuraTag = "HuntersMark"
 
 func HuntersMarkAura(target *Unit, points int32) *Aura {
-	bonus := 110.0
+	return huntersMarkAura(target, 110.0*(1+0.03*float64(points)))
+}
 
-	bonus *= 1 + 0.03*float64(points)
-
+// bonus is the ranged attack power every attacker gains against the target.
+func huntersMarkAura(target *Unit, bonus float64) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "HuntersMark-" + strconv.Itoa(int(bonus)),
 		Tag:      HuntersMarkAuraTag,
