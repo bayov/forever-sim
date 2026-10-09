@@ -52,7 +52,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 4.5 Enemy dodge and parry: values by level, no parry or block from behind (raid), both from the front (PvP)
 - [x] 4.6 Glancing blows: chance against a level +3 target, the damage penalty, weapon skill
 - [x] 4.7 Crit: chance, the crit cap that glancing and miss make, crit damage
-- [ ] 4.8 Weapon skill: base by level, gear skill, its effect on 4.4 to 4.7 (Forever removed the weapon skill racials)
+- [x] 4.8 Weapon skill: base by level, gear skill, its effect on 4.4 to 4.7 (Forever removed the weapon skill racials)
 - [ ] 4.9 Enemy armor: the mitigation formula, armor debuffs and their Forever values (Sunder, Expose Armor, Faerie Fire, Curse of Recklessness)
 - [ ] 4.10 Physical damage modifiers: flat bonus damage, percent modifiers
 - [ ] 4.11 Procs from melee hits: PPM procs (weapon speed), chance procs, which hits can proc what (white, yellow, extra attacks, procs from procs)
@@ -477,10 +477,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Blizzard's 2019 Classic posts give 1% less crit a level and one more cut on crit from auras against mobs 3 levels up, which magey measured at 1.8%. The SoD sim has the same code as ours. Blizzard's cut only comes off crit from auras (talents, Equip: crit on gear, buffs, consumables), not base crit or Agility, and the sim takes it off all crit (the TODO in `target.go`). That only differs with less than 1.8% crit from auras. Level 60 builds have Thundering Strikes and Leader of the Pack, and Vishas is 2 levels up, so we keep it. Crit lost to weapon skill under level times 5 is 4.8.
 - `crit_test.go` TestOrcShamanMeleeCrit checks the crit chance of white hits and Stormstrike against levels 25 to 34 at level 30 and against a level 63 at 60, once with Huge Thorium Battleaxe's 310 skill, and that white and Stormstrike crits deal twice a normal hit. It fails without the 1.8%, when gear skill adds crit, without the bonus against lower mobs and with 1.5x melee crits. The crit cap is in TestOrcShamanAttackTable.
 
+### 4.8 Weapon skill
+
+- The user OK'd it (2026-10-09). Our base skill is our level times 5, a fully trained weapon, and skill from gear adds to it by weapon type, one-handed and two-handed apart (`target.go` GetWeaponSkill). No racial gives skill under Forever (the Orc axe racial is crit, 4.4). Skill from gear lowers miss (4.4) and dodge (4.5) and raises glancing damage (4.6). It doesn't change parry (4.5), the glancing chance (4.6) or crit against mobs (4.7).
+- Fixed (2026-10-09, the user): Forever made weapon skill a plain item stat with much smaller amounts, and moved some of it to the expertise-like stat. The client's ItemSparse (70291) has stat type 90 for two-handed axes, 91 for two-handed maces and 96 for daggers, and wowhead's Forever tooltips give the amounts. Our item import kept Classic's skill, because the listing's jsonequip has none of it. `forever_wowhead.go` foreverWeaponSkills now sets it on the 7 Forever items that had Classic skill: Dwarven Tree Chopper none (0.6% expertise only, Classic +2), Servomechanic Sledgehammer +1 two-handed maces (Classic +7), Skilled Fighting Blade +1 daggers (+4), Huge Thorium Battleaxe +2 two-handed axes (+10), Flawless Arcanite Rifle none (+4 guns), Death's Sting +3 and The Hungering Cold +6 (unchanged). MergeItem replaces an item's weapon skill instead of adding to it, and gen_db prints any Forever item that keeps Classic skill without an entry. The other 17 Classic skill items (Edgemaster's Handguards and the rest) aren't in the Forever client or on wowhead Forever yet, so they keep Classic's. No preset uses any of them, and no test suite result changed.
+- Left alone (the user, 2026-10-09): skill under level times 5. The beta's sheet loses 0.04% crit per missing point, and 1.12 also adds miss, dodge and glancing, but the sim and the presets assume a trained weapon. Also, 2019 Classic uses 0.04% a point of skill difference against players, and PvP mode uses the mob formulas. At the same level with trained skill both give the same, and no PvP set has skill gear.
+- Tests: the 4.4 to 4.7 tests give skill through the player's bonus two-handed axe skill instead of items, so item changes don't move them. TestOrcShamanMissChance checks Huge Thorium Battleaxe's +2 (7.6% miss against a level 63) and TestOrcShamanEnemyAvoidance Dwarven Tree Chopper's 0.6% expertise and no skill. Both fail on the old item data.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
-- Open: Forever keeps weapon skill on gear. Item 4.8.
 
 ### Pre-checks for sections 5 and 6 (not yet shown to the user)
 

@@ -20,20 +20,20 @@ func TestOrcShamanMeleeCrit(t *testing.T) {
 		name               string
 		level, targetLevel int32
 		weapon             int32
-		lost               float64
+		skill, lost        float64
 	}{
-		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0.048},
-		{"310 skill against the boss", 60, 63, thorium, 0.048},
-		{"level 30 against a level 34", 30, 34, whirlwind, 0.058},
-		{"level 30 against a level 33", 30, 33, whirlwind, 0.048},
-		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0.02},
-		{"a level 31", 30, 31, whirlwind, 0.01},
-		{"the same level", 30, 30, whirlwind, 0},
-		{"5 levels below us", 30, 25, whirlwind, -0.01},
+		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0, 0.048},
+		{"310 skill against the boss", 60, 63, darkEdge, 10, 0.048},
+		{"level 30 against a level 34", 30, 34, whirlwind, 0, 0.058},
+		{"level 30 against a level 33", 30, 33, whirlwind, 0, 0.048},
+		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0, 0.02},
+		{"a level 31", 30, 31, whirlwind, 0, 0.01},
+		{"the same level", 30, 30, whirlwind, 0, 0},
+		{"5 levels below us", 30, 25, whirlwind, 0, -0.01},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, stormstrike)
+			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, c.skill, stormstrike)
 			white := enh.AutoAttacks.MHAuto()
 			attackTable := enh.AttackTables[enh.CurrentTarget.UnitIndex][white.CastType]
 			ours := enh.GetStat(stats.MeleeCrit) / (core.CritRatingPerCritChance * 100)

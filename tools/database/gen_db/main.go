@@ -284,6 +284,7 @@ func AttachForeverChangesSources(db *database.WowDatabase, loot database.Forever
 // wowhead knows no source for and we check it by hand.
 func MergeForeverWowheadItems(db *database.WowDatabase, whdb database.ForeverWowheadDB) {
 	added, updated, unsourced, dropped := 0, 0, 0, 0
+	var classicSkill []string
 	for _, whItem := range whdb.Items {
 		item, droppedRatings := whItem.ToProto()
 		if item == nil {
@@ -305,6 +306,11 @@ func MergeForeverWowheadItems(db *database.WowDatabase, whdb database.ForeverWow
 			// it drops in. Otherwise every BWL and Naxxramas item with Forever data would
 			// count as Phase 1 in a "phase 1 BiS" gear search.
 			item.Phase = 0
+			// The listing has no weapon skill, so an item with Classic skill that
+			// foreverWeaponSkills doesn't list keeps it. We print those to look up.
+			if item.WeaponSkills == nil && slices.ContainsFunc(have.WeaponSkills, func(v float64) bool { return v != 0 }) {
+				classicSkill = append(classicSkill, fmt.Sprintf("%d %s", item.Id, item.Name))
+			}
 			updated++
 		} else {
 			added++
@@ -315,6 +321,9 @@ func MergeForeverWowheadItems(db *database.WowDatabase, whdb database.ForeverWow
 		db.MergeItem(item)
 	}
 	fmt.Printf("Forever wowhead items: %d updated, %d added (%d with no source wowhead knows), %d rating stats dropped\n", updated, added, unsourced, dropped)
+	if len(classicSkill) > 0 {
+		fmt.Printf("Forever wowhead items keeping Classic weapon skill (add them to foreverWeaponSkills): %s\n", strings.Join(classicSkill, ", "))
+	}
 }
 
 func ApplyGlobalFilters(db *database.WowDatabase) {

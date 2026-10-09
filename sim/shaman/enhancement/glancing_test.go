@@ -20,20 +20,21 @@ func TestOrcShamanGlancing(t *testing.T) {
 		name               string
 		level, targetLevel int32
 		weapon             int32
+		skill              float64
 		chance, low, high  float64
 	}{
-		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0.4, 0.55, 0.75},
-		{"310 skill against the boss", 60, 63, thorium, 0.4, 0.91, 0.99},
-		{"level 30 against a level 34", 30, 34, whirlwind, 0.4, 0.3, 0.6},
-		{"152 skill against a level 33", 30, 33, treeChop, 0.4, 0.65, 0.81},
-		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0.3, 0.8, 0.9},
-		{"a level 31", 30, 31, whirlwind, 0.2, 0.91, 0.99},
-		{"the same level", 30, 30, whirlwind, 0.1, 0.91, 0.99},
-		{"a level 29", 30, 29, whirlwind, 0, 0, 0},
+		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0, 0.4, 0.55, 0.75},
+		{"310 skill against the boss", 60, 63, darkEdge, 10, 0.4, 0.91, 0.99},
+		{"level 30 against a level 34", 30, 34, whirlwind, 0, 0.4, 0.3, 0.6},
+		{"152 skill against a level 33", 30, 33, whirlwind, 2, 0.4, 0.65, 0.81},
+		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0, 0.3, 0.8, 0.9},
+		{"a level 31", 30, 31, whirlwind, 0, 0.2, 0.91, 0.99},
+		{"the same level", 30, 30, whirlwind, 0, 0.1, 0.91, 0.99},
+		{"a level 29", 30, 29, whirlwind, 0, 0, 0, 0},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, stormstrike)
+			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, c.skill, stormstrike)
 			white := enh.AutoAttacks.MHAuto()
 
 			// A normal hit always deals the same here, so each glancing blow's share of it is

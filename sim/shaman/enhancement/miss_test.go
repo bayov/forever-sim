@@ -21,33 +21,36 @@ import (
 // table tests, and the 1% Blizzard described).
 //
 // Forever's Orc Axe Specialization is crit, not skill, so our axes add no skill here.
-// Dwarven Tree Chopper gives 2 two-handed axe skill, and Tidal Focus 1% hit a point.
+// Huge Thorium Battleaxe gives 2 two-handed axe skill under Forever (10 in Classic), and
+// Tidal Focus 1% hit a point.
 func TestOrcShamanMissChance(t *testing.T) {
 	cases := []struct {
 		name               string
 		level, targetLevel int32
 		weapon             int32
+		skill              float64
 		talents            string
 		hit                float64
 		want               float64
 	}{
-		{"level 60 against a level 63 boss", 60, 63, darkEdge, stormstrike, 0, 0.08},
-		{"the first 1% of hit does nothing against the boss", 60, 63, darkEdge, stormstrike, 1, 0.08},
-		{"5% hit against the boss", 60, 63, darkEdge, stormstrike, 5, 0.04},
-		{"the 9% hit cap", 60, 63, darkEdge, stormstrike, 9, 0},
-		{"hit over the cap", 60, 63, darkEdge, stormstrike, 12, 0},
-		{"Tidal Focus 5/5 against the boss", 60, 63, darkEdge, stormstrike + "-00005", 0, 0.04},
-		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, stormstrike, 0, 0.06},
-		{"1% hit against Vishas", 30, 32, whirlwind, stormstrike, 1, 0.05},
-		{"level 30 against a level 33", 30, 33, whirlwind, stormstrike, 0, 0.08},
-		{"152 skill against a level 33", 30, 33, treeChop, stormstrike, 0, 0.076},
-		{"152 skill and 1% hit against a level 33", 30, 33, treeChop, stormstrike, 1, 0.072},
-		{"the same level", 30, 30, whirlwind, stormstrike, 0, 0.05},
-		{"5 levels below us", 30, 25, whirlwind, stormstrike, 0, 0.025},
+		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0, stormstrike, 0, 0.08},
+		{"the first 1% of hit does nothing against the boss", 60, 63, darkEdge, 0, stormstrike, 1, 0.08},
+		{"5% hit against the boss", 60, 63, darkEdge, 0, stormstrike, 5, 0.04},
+		{"the 9% hit cap", 60, 63, darkEdge, 0, stormstrike, 9, 0},
+		{"hit over the cap", 60, 63, darkEdge, 0, stormstrike, 12, 0},
+		{"Tidal Focus 5/5 against the boss", 60, 63, darkEdge, 0, stormstrike + "-00005", 0, 0.04},
+		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0, stormstrike, 0, 0.06},
+		{"1% hit against Vishas", 30, 32, whirlwind, 0, stormstrike, 1, 0.05},
+		{"level 30 against a level 33", 30, 33, whirlwind, 0, stormstrike, 0, 0.08},
+		{"152 skill against a level 33", 30, 33, whirlwind, 2, stormstrike, 0, 0.076},
+		{"152 skill and 1% hit against a level 33", 30, 33, whirlwind, 2, stormstrike, 1, 0.072},
+		{"Huge Thorium Battleaxe's +2 skill against the boss", 60, 63, thorium, 0, stormstrike, 0, 0.076},
+		{"the same level", 30, 30, whirlwind, 0, stormstrike, 0, 0.05},
+		{"5 levels below us", 30, 25, whirlwind, 0, stormstrike, 0, 0.025},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, c.talents)
+			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, c.skill, c.talents)
 			enh.AddStatDynamic(sim, stats.MeleeHit, c.hit*core.MeleeHitRatingPerHitChance)
 
 			if enh.Talents.TidalFocus > 0 {
@@ -75,15 +78,21 @@ func TestOrcShamanMissChance(t *testing.T) {
 const (
 	darkEdge    = 21134 // Dark Edge of Insanity, a level 60 two-handed axe.
 	whirlwind   = 6975  // Whirlwind Axe, a level 30 two-handed axe.
-	treeChop    = 2907  // Dwarven Tree Chopper, a two-handed axe with +2 skill and 0.6% expertise.
-	thorium     = 12775 // Huge Thorium Battleaxe, a two-handed axe with +10 skill.
+	treeChop    = 2907  // Dwarven Tree Chopper, a two-handed axe with 0.6% expertise and no skill.
+	thorium     = 12775 // Huge Thorium Battleaxe, a two-handed axe with +2 skill under Forever.
 	stormstrike = "-0000000000001"
 )
 
 // newTargetLevelSim starts a Forever sim of an Orc shaman at level, holding weapon, against
-// one target of targetLevel.
-func newTargetLevelSim(level, targetLevel, weapon int32, talents string) (*core.Simulation, *EnhancementShaman) {
+// one target of targetLevel. skill is extra two-handed axe skill on top of the weapon's.
+//
+// Most tests give the skill this way rather than through an item, so that they don't
+// change when Forever changes an item's skill.
+func newTargetLevelSim(level, targetLevel, weapon int32, skill float64, talents string) (*core.Simulation, *EnhancementShaman) {
 	player := newOrcShaman(level, talents, &proto.EnhancementShaman_Options{})
+	pseudoStats := make([]float64, len(proto.PseudoStat_name))
+	pseudoStats[proto.PseudoStat_PseudoStatTwoHandedAxesSkill] = skill
+	player.BonusStats = &proto.UnitStats{PseudoStats: pseudoStats}
 	for range proto.ItemSlot_ItemSlotMainHand {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
 	}

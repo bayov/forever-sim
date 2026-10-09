@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // The wowhead Forever item listing, scraped by tools/database/forever_wowhead/scrape.py.
@@ -94,6 +95,35 @@ var foreverWowheadStats = map[string]proto.Stat{
 
 // Rating stats the sim cannot use. Counted so the run reports how much it dropped.
 var foreverWowheadRatings = []string{"hastertng", "dodgertng", "parryrtng", "blockrtng", "armorpenrtng"}
+
+// Weapon skill on the Forever items that had it in Classic, from wowhead's Forever
+// tooltips (2026-10-09).
+//
+// Forever made weapon skill a plain item stat with much smaller amounts (Huge Thorium
+// Battleaxe went from +10 to +2), and moved some of it to the expertise-like stat. The
+// client's ItemSparse (1.60.1.70291) confirms which items have it: stat type 90 is
+// two-handed axes, 91 two-handed maces, 96 daggers, and Dwarven Tree Chopper only has
+// expertise (type 37). But jsonequip carries none of it, so without this table an item
+// keeps its Classic skill. An entry with no skills takes the skill off.
+var foreverWeaponSkills = map[int32]map[proto.WeaponSkill]float64{
+	2907:  {},                                               // Dwarven Tree Chopper, Classic +2 two-handed axes.
+	4548:  {proto.WeaponSkill_WeaponSkillTwoHandedMaces: 1}, // Servomechanic Sledgehammer, Classic +7.
+	12062: {proto.WeaponSkill_WeaponSkillDaggers: 1},        // Skilled Fighting Blade, Classic +4.
+	12775: {proto.WeaponSkill_WeaponSkillTwoHandedAxes: 2},  // Huge Thorium Battleaxe, Classic +10.
+	16007: {},                                               // Flawless Arcanite Rifle, Classic +4 guns.
+	21126: {proto.WeaponSkill_WeaponSkillDaggers: 3},        // Death's Sting, the same as Classic.
+	23577: {proto.WeaponSkill_WeaponSkillSwords: 6},         // The Hungering Cold, the same as Classic.
+}
+
+// foreverWeaponSkillSlice turns an entry of foreverWeaponSkills into the item's list of
+// skill by weapon type.
+func foreverWeaponSkillSlice(skills map[proto.WeaponSkill]float64) []float64 {
+	slice := make([]float64, stats.WeaponSkillLen)
+	for skill, amount := range skills {
+		slice[skill] = amount
+	}
+	return slice
+}
 
 func (wi ForeverWowheadItem) num(key string) float64 {
 	v, ok := wi.Eq[key]
@@ -342,6 +372,9 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 		Sources:       wi.sources(),
 		HitRating:     wi.num("hitrtng"),
 		CritRating:    wi.num("critstrkrtng"),
+	}
+	if skills, ok := foreverWeaponSkills[wi.ID]; ok {
+		item.WeaponSkills = foreverWeaponSkillSlice(skills)
 	}
 	if itemType == proto.ItemType_ItemTypeWeapon || itemType == proto.ItemType_ItemTypeRanged {
 		item.WeaponDamageMin = wi.num("dmgmin1")

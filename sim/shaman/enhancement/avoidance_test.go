@@ -19,7 +19,7 @@ import (
 // from the front (TestOrcShamanAttackTable).
 //
 // Forever's expertise-like stat takes 1% off dodge and parry for each 1% of it. Dwarven
-// Tree Chopper carries 0.6% of it with its 2 skill.
+// Tree Chopper carries 0.6% of it under Forever, in place of Classic's 2 skill.
 //
 // We roll the white and the yellow table from the front, where all three can happen.
 func TestOrcShamanEnemyAvoidance(t *testing.T) {
@@ -27,21 +27,22 @@ func TestOrcShamanEnemyAvoidance(t *testing.T) {
 		name               string
 		level, targetLevel int32
 		weapon             int32
-		expertise          float64
+		skill, expertise   float64
 		dodge, parry       float64
 	}{
-		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0, 0.065, 0.14},
-		{"310 skill against the boss", 60, 63, thorium, 0, 0.055, 0.14},
-		{"2% expertise against the boss", 60, 63, darkEdge, 2, 0.045, 0.12},
-		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0, 0.06, 0.06},
-		{"Dwarven Tree Chopper against Vishas", 30, 32, treeChop, 0, 0.052, 0.054},
-		{"a level 31", 30, 31, whirlwind, 0, 0.055, 0.055},
-		{"the same level", 30, 30, whirlwind, 0, 0.05, 0.05},
-		{"5 levels below us", 30, 25, whirlwind, 0, 0.025, 0.025},
+		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0, 0, 0.065, 0.14},
+		{"310 skill against the boss", 60, 63, darkEdge, 10, 0, 0.055, 0.14},
+		{"2% expertise against the boss", 60, 63, darkEdge, 0, 2, 0.045, 0.12},
+		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0, 0, 0.06, 0.06},
+		{"152 skill and 0.6% expertise against Vishas", 30, 32, whirlwind, 2, 0.6, 0.052, 0.054},
+		{"Dwarven Tree Chopper's 0.6% expertise against Vishas", 30, 32, treeChop, 0, 0, 0.054, 0.054},
+		{"a level 31", 30, 31, whirlwind, 0, 0, 0.055, 0.055},
+		{"the same level", 30, 30, whirlwind, 0, 0, 0.05, 0.05},
+		{"5 levels below us", 30, 25, whirlwind, 0, 0, 0.025, 0.025},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, stormstrike)
+			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, c.skill, stormstrike)
 			enh.AddStatDynamic(sim, stats.Expertise, c.expertise)
 			enh.PseudoStats.InFrontOfTarget = true
 
