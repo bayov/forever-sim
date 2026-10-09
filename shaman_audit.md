@@ -420,7 +420,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   | Barbaric Battle Axe of Healing (2H, 25-38, 3.6) | 390 | 8 to 10 | 16 | 19 | 0.977 |
   | Twin-bladed Axe of the Owl | 195 | 8 to 10 | 22 | 12 | 1.200 |
   | Twin-bladed Axe of the Owl | 195 | 9 only | 34 | 18 | 1.171 |
-  | Bloody Brass Knuckles (1H, 24-46, 1.6) | 204 | 8 only | 27 | 14 | 1.277 |
+  | Bloody Brass Knuckles (1H, 24-46, 1.6) | 204 | 8 only | 27 | 13 | 1.277 |
 
   The weapon's own speed is far off (ratio 1 every time). So is the usual 3.3 for two-handers. On boars of one level the armor is the same, so the lowest and highest hits count too. In the level 9 run, a 53 white hit and two 75 Stormstrikes rule out every two-hand speed below 3.55. In the level 8 run the one-hand speed fits from 2.28 to 2.87, best 2.72, and plain 2.4 is 2 standard errors low. Speed 3.6 misses only the slow axe session, where Stormstrike averaged 2.3% below white (2.4 standard errors). Two other models fit every session as well: the usual speed then 6.4% more, or the usual speed then 5 more flat. The user picked 3.6, and the one-hander's 2.7 makes it "plus 0.3". At level 60 with the 3.4 speed Synthetic two-hander, 3.6 adds about 4% to Stormstrike damage, about the same as 6.4% more, while 5 more flat would take away 1%. notes.md Need to Verify has the test that tells them apart.
 - Fixed (2026-10-08, the user): Greater Impact (+7) and Superior Impact (+9) did nothing in the sim, and upstream wowsims has the same gap. They now add to the weapon's damage. hyjal.cc's recipe pages give the same values as 1.12. The rotopt enchant search stops at Enchanting 225, so it never offered them, and no preset changes. TestP1Hunter's gear has Superior Impact and gains about 1%.

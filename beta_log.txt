@@ -1,0 +1,212 @@
+Forever beta test log, level 30 Orc shaman
+==========================================
+
+Every result from the beta tests for the shaman audit (shaman_audit.md), with the raw hits
+from the combat log screenshots.
+
+How to read the hits:
+- Each number is the whole hit: the shown amount plus the overkill.
+- Crits are listed apart, at their full value. Melee crits are 2x a normal hit and spell
+  crits 1.5x.
+- Glancing blows are left out.
+- "Normal" means not a crit and not glancing.
+
+
+Weapons used
+------------
+- Barbaric Battle Axe of Healing: two-hand axe, 25 - 38, 3.6 speed, +5 Int, +6 spell damage,
+  +19 healing
+- Twin-bladed Axe of the Owl: two-hand axe, 23 - 35, 2.7 speed, +3 Int, +3 Spi
+- Bloody Brass Knuckles: one-hand fist, 24 - 46, 1.6 speed, +12 AP (+15 more vs humanoids)
+
+"ap X Y Z" lines are UnitAttackPower: base, plus, minus.
+
+
+2026-10-08  Stormstrike vs white hits (0/3 Elemental Weapons, no totems, no buffs)
+--------------------------------------------------------------------------------
+The ratio is average Stormstrike over average white hit, with crits counted as half.
+Armor doesn't change the ratio, because both hit the same mobs.
+
+Run 1: Twin-bladed Axe (2.7), AP 388, Elder Mottled Boars level 8 to 10
+  White, normal (9):  89 97 91 89 89 98 92 96 88
+  White, crit (1):    179
+  Stormstrike, normal (9): 117 113 118 108 115 114 113 118 108
+  Stormstrike, crit (3):   235 234 234
+  Average white 91.85, Stormstrike 114.62, ratio 1.248
+
+Run 2: Barbaric Battle Axe (3.6), AP 390, Elder Mottled Boars level 8 to 10
+  White, normal (16): 123 120 121 122 125 117 124 115 122 120 119 116 121 124 116 118
+  Stormstrike, normal (14): 114 125 118 119 124 122 118 115 114 113 120 114 119 114
+  Stormstrike, crit (5):    227 232 235 240 232
+  Average white 120.19, Stormstrike 117.47, ratio 0.977
+
+Run 3: Twin-bladed Axe (2.7), AP 195, Elder Mottled Boars level 8 to 10
+  White, normal (19): 58 63 62 57 54 62 55 64 63 62 62 54 61 61 56 57 60 55 58
+  White, crit (3):    130 125 107
+  Stormstrike, normal (11): 65 66 68 74 73 74 71 75 72 74 73
+  Stormstrike, crit (1):    139
+  Average white 59.32, Stormstrike 71.21, ratio 1.200
+
+Run 4: Twin-bladed Axe (2.7), AP 195, level 9 Elder Mottled Boars only
+  White, normal (30): 55 60 62 60 62 54 62 56 55 63 55 63 59 58 60 56 63 58 53 63
+                      62 60 58 62 58 58 54 62 58 58
+  White, crit (4):    109 113 119 119
+  Stormstrike, normal (18): 69 68 68 67 65 67 68 66 69 65 75 73 72 65 71 65 70 75
+  Average white 58.74, Stormstrike 68.78, ratio 1.171
+
+Run 5: Bloody Brass Knuckles (1.6), ap 192 12 0 (204), level 8 Elder Mottled Boars only
+  Character sheet damage: 47.3 - 69.3
+  White, normal (25): 47 53 53 60 46 58 44 53 44 55 49 57 49 62 49 54 46 49 50 57
+                      62 60 57 47 52
+  White, crit (2):    96 89
+  Stormstrike, normal (12): 60 67 69 65 67 71 64 71 67 71 75 58
+  Stormstrike, crit (1):    118
+  Average white 52.06, Stormstrike 66.46, ratio 1.277
+
+What it showed: Stormstrike uses a normalized speed plus 0.3 (3.6 for two-handers, 2.7 for
+one-handers), not the weapon's own speed.
+
+
+2026-10-08  Weapon imbues, 0/3 Elemental Weapons
+-------------------------------------------------
+Rockbiter Weapon rank 4
+  Without: ap 363 6 0
+  With:    ap 363 183 0
+  Rockbiter gives +177 AP (sim 177.6)
+
+Windfury Weapon rank 1, Barbaric Battle Axe (3.6), ap 198 0 0
+  Tooltip: "2 extra attacks with 46 extra melee attack power"
+  Mobs: Barrens Giraffes and Hecklefang Hyenas, level 13 to 16
+  White, normal (16):    69 62 63 62 62 65 66 71 64 63 63 67 68 71 71 67
+  Windfury, normal (9):  74 71 72 81 72 79 75 76 76
+  Average white 65.88, Windfury 75.11, ratio 1.140 (sim 1.144)
+  The log shows two "Windfury Weapon" hits per proc.
+
+Flametongue Weapon rank 3, Barbaric Battle Axe (3.6), 6 spell power
+  Tooltip: "11 to 36 additional Fire damage" (10 to 35 with 0 spell power)
+  Mobs: Elder Mottled Boars, Venomtail Scorpids, Bloodtalon Scythemaws, Barrens Giraffes,
+  Sunscale Screechers
+  Hits (17): 28 27 27 27 28 28 28 27 28 28 27 28 27 28 28 27 27
+  9 x 28 and 8 x 27, average 27.53 (sim 32.4)
+
+Flametongue Weapon rank 3, Twin-bladed Axe (2.7), 0 spell power, ap 195 0 0
+  Mobs: Savannah Prowlers
+  Hits (5): 19 18 19 19 18
+  Average 18.6 (sim 23.9)
+
+Flametongue Weapon rank 3, Bloody Brass Knuckles (1.6), 0 spell power, ap 192 12 0
+  Mobs: Barrens Giraffes
+  Hits (7): 9 10 9 9 9 9 9
+  Average 9.14 (sim 14.1)
+
+Flametongue Weapon rank 1, Barbaric Battle Axe (3.6), 6 spell power
+  Tooltip: "5 to 18 additional Fire damage"
+  Mobs: Hecklefang Hyenas, Savannah Prowlers
+  Normal (6): 16 17 17 16 17 16
+  Crit (2):   25 24
+  Average 16.5 (sim 16.4)
+
+Flametongue Weapon rank 1, Bloody Brass Knuckles (1.6), 0 spell power
+  Hits: 7 (sim 7.0)
+
+Flametongue Weapon rank 2, Barbaric Battle Axe (3.6), 6 spell power
+  Hits: 22 (sim 24.1)
+
+Flametongue Weapon rank 2, Bloody Brass Knuckles (1.6), 0 spell power
+  Hits: 8 or 9 (sim 10.4)
+
+What it showed: Flametongue scales with the weapon's real speed, like the tooltip. But every
+hit of rank 2 loses about 2 and every hit of rank 3 about 5, the same on every weapon. Rank 1
+loses nothing.
+
+
+2026-10-08  Totems
+------------------
+Searing Totem rank 3
+  Hits: 19 to 24 (20, 21, 22 and so on). Client and sim 19 to 25.
+
+Flametongue Totem rank 1, Barbaric Battle Axe (3.6)
+  Hits: 19 or 20 (sim 548 / 100 x 3.6 = 19.7)
+  With 55 spell power: still 20. So spell power doesn't add to it.
+
+
+2026-10-09  Weapon imbues, 3/3 Elemental Weapons
+-------------------------------------------------
+Rockbiter Weapon rank 4
+  Without: ap 198 0 0
+  With:    ap 198 213 0
+  Rockbiter gives +213 AP (177.6 x 1.2 = 213.1)
+
+Windfury Weapon rank 1, Barbaric Battle Axe (3.6), ap 198 0 0
+  Tooltip: "2 extra attacks with 64 extra melee attack power" (46 x 1.4)
+  Mobs: boars and scorpids, level 8 to 10
+  White, normal (91): 77 73 68 73 77 72 70 74 66 72 75 72 73 70 72 68 78 69 75 69
+                      76 76 76 79 74 70 74 72 70 67 68 75 75 75 69 77 76 76 75 76
+                      74 71 79 70 66 71 77 77 76 74 73 73 71 66 75 70 78 72 73 72
+                      67 77 68 69 67 71 67 75 68 73 73 75 70 77 67 75 75 71 71 74
+                      76 74 70 69 73 71 72 69 76 74 70
+  Windfury, normal (28): 85 91 80 82 79 85 90 82 83 89 87 81 87 85 86 95 93 88 90 92
+                         88 88 86 88 90 86 81 92
+  Average white 72.54 (66 to 79), Windfury 86.75 (79 to 95), ratio 1.196 +- 0.012
+  Elemental Weapons applied once predicts 1.201, twice 1.281, not at all 1.144.
+
+Flametongue Weapon, Barbaric Battle Axe (3.6), 6 spell power
+  Rank 1 tooltip still says "5 to 18" (it leaves the talent out)
+  Rank 1 hits: 19 every time ((15.84 + 0.6) x 1.15 = 18.9)
+  Rank 3 hits: 31 or 32 (27.5 x 1.15 = 31.6)
+
+What it showed: Elemental Weapons adds 20% to Rockbiter, 40% once to Windfury's extra attack
+power, and 15% to the whole Flametongue hit, after the per-rank cut.
+
+
+Flametongue Weapon formula that fits every hit so far
+-----------------------------------------------------
+hit = (tooltip max x weapon speed / 4 - cut + 10% of spell power)
+      x (1 + 5% per Elemental Weapons point)
+
+- Tooltip max is the second number of the tooltip with 0 spell power.
+- Cut at level 30: rank 1 0, rank 2 about 2, rank 3 about 5. Ranks 4 to 6 are unknown.
+- The 10% of spell power is the sim's value. 6 spell power is too little to confirm it.
+
+
+2026-10-07 and 2026-10-08  Character sheet readings
+---------------------------------------------------
+Naked level 30, no talents, no buffs
+  Str / Agi / Sta / Int / Spi: 51 / 30 / 51 / 46 / 53
+  Health 665, mana 1075, AP 142, armor 60
+  Melee crit 0.384% (4.30% before the unarmed skill penalty), spell crit 3.933%, dodge 4.304%
+  Parry 0, block 5 (no shield), melee and spell hit 0
+
+Fresh level 1
+  Str / Agi / Sta / Int / Spi: 24 / 17 / 22 / 20 / 22
+  Health 67, mana 75, AP 30, spell crit 4.9%, dodge 4.3%
+
+Geared level 30
+  Str / Agi / Sta / Int / Spi: 106 / 43 / 106 / 137 / 83
+  AP 252 (212 from Strength), health 1215, mana 2440, block value 5, armor 613 (17.20%)
+  Melee crit 5.39% (149 of 150 mace skill), spell crit 7.16%, dodge 5.43%
+  Two-hand mace 172 - 225 at 3.6 speed with 252 AP
+  Spell damage 49, healing 59
+
+Geared, Ancestral Knowledge 5/5
+  Int 150 (137 x 1.10 = 150.7), mana 2635, spell crit tooltip 5.3%
+
+Geared, Ancestral Knowledge 5/5 and Blessing of Kings
+  Int 165 (137 x 1.10 x 1.10 = 165.77), mana 2860
+  Str / Agi / Sta / Spi: 116 / 47 / 116 / 91 (from 116.6 / 47.3 / 116.6 / 91.3)
+  AP 272, health 1315, crit 5.7396, GetManaRegen 17.626, while casting 1.411
+
+Geared, Ancestral Knowledge 5/5, no Kings
+  AP 252, health 1215, crit 5.3924, GetManaRegen 16.626, while casting 1.331
+
+GetManaRegen while not casting, in mana a second (the 0.001 floor taken off)
+  Level 30, 53 Spirit, 46 Int: 12.875
+  Level 30, 60 Spirit, 46 Int: 13.75
+  Level 30, 65 Spirit, 46 Int: 14.375
+  Level 30, 69 Spirit, 46 Int: 14.875
+  Level 30, 53 Spirit, 72 Int: 12.875
+  Level 1, 22 Spirit, 20 Int: 5.501
+  Level 20 Undead paladin: 34 Spirit 8.5, 42 Spirit 10.5
+  While casting: 0.001 (1.331 and 1.411 with Polished Driftwood Icon, 8% of Spirit regen)
+  Mana sampled every 0.5 sec after a cast rose 6 to 7 each step, 51 mana from 6.0 to 10.0
+  sec (12.75 a second)
