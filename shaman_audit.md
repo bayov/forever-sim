@@ -159,7 +159,7 @@ Enhancement
 - [ ] 8.21 Mental Dexterity
 - [ ] 8.22 Improved Ghost Wolf (not implemented)
 - [ ] 8.23 Improved Lightning Shield
-- [ ] 8.24 Elemental Weapons
+- [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
 - [ ] 8.25 Shamanistic Focus
 - [ ] 8.26 Anticipation
 - [ ] 8.27 Toughness
@@ -482,7 +482,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Rockbiter rank 4 gave 213 AP (sim 177.6 * 1.2 = 213.1).
   - The Windfury tooltip says 64 AP (46 * 1.4). On mixed level 8 to 10 boars and scorpids, 28 normal Windfury hits averaged 86.75 and 91 normal white hits 72.54, a ratio of 1.196 +- 0.012. Elemental Weapons applied once gives 1.201, twice 1.281 and not at all 1.144. Seven Windfury hits (79 to 83) were below the lowest a twice hit could do.
   - Fixed (2026-10-09): Elemental Weapons adds to Windfury's extra attack power once. The sim applied it twice, like the SoD sim. `elemental_weapons_test.go` TestOrcShamanElementalWeapons pins the weapon roll and checks every normal Windfury hit with 0 and 3 points, and Rockbiter's attack power. It fails with the double dip. TestEnhancement's results dropped about 1% (the default 1233.1 to 1218.7).
-  - Still open: Flametongue Weapon with 3/3 (sim 15% more), rank 1 on the same axe.
+  - Flametongue Weapon with 6 spell power on the same axe: rank 1 hit 19 every time, where (15.84 + 0.6) * 1.15 is 18.9 (16 or 17 with no points). Rank 3 hit 31 or 32, where its 27.5 with no points times 1.15 is 31.6, and the sim without the cut times 1.15 would be 37.3. So the 15% is on the whole hit, like the sim, and the per-rank cut comes off before it. The tooltip still says 5 to 18 for rank 1, so it leaves the talent out.
+  - TestOrcShamanElementalWeapons also checks every normal rank 3 Flametongue hit with 0 and 3 points. Frostbrand's 15% uses the same multiplier and isn't tested on the beta.
 - 7.22 Searing Totem (`fire_totems.go`): a bolt every 2.5 sec for the totem's 30 to 55 sec lifetime, 1.7% coefficient (Forever). The real attack is every 2.2 sec, but the next bolt waits for the last to land, so we use 2.5 sec without a distance option.
 - 7.23 Magma Totem: a pulse every 2 sec for 20 sec, 2 less damage per pulse than 1.12 (Forever).
 - 7.24 Flametongue Totem: 5 min, fire damage per main hand hit by weapon speed (548 / 25 per 4 sec at rank 1, flat by level). It takes the fire slot, and placing another fire totem takes it down.
