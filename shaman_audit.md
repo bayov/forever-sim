@@ -478,6 +478,11 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Other sources (2026-10-08) all give the client's points: Classic Era 1.15.9 (wago.tools SpellEffect), vmangos's 1.10 to 1.12 rows, wowhead's Classic, TBC and Forever tooltips, and ForeverChanges. vmangos's pre-1.10 rows are about 10% lower (296 + 17, 435 + 26, 651 + 38) but don't fit either, because rank 1 would hit 14.3 on the slow axe. vmangos, cmangos and mangoszero all use points / 100 * speed with no cut. Forever's dev notes only change Flametongue Totem, and its downranking change only takes gear bonus off low ranks. We found no report of Flametongue hitting below its tooltip, so the cut is likely a Forever server change or bug.
   - Decision (user, 2026-10-08): the sim keeps the client's points for every rank for now, and we check rank 6 at level 60 (notes.md Need to Verify).
   - Flametongue Totem's procs are 489, 697, 947 and 1217 in Classic Era. Forever's (wowhead, and the sim) are 548, 781, 1061 and 1363.
+- Beta, level 30 with 3/3 Elemental Weapons (2026-10-09), same Barbaric Battle Axe of Healing at 198 AP:
+  - Rockbiter rank 4 gave 213 AP (sim 177.6 * 1.2 = 213.1).
+  - The Windfury tooltip says 64 AP (46 * 1.4). On mixed level 8 to 10 boars and scorpids, 28 normal Windfury hits averaged 86.75 and 91 normal white hits 72.54, a ratio of 1.196 +- 0.012. Elemental Weapons applied once gives 1.201, twice 1.281 and not at all 1.144. Seven Windfury hits (79 to 83) were below the lowest a twice hit could do.
+  - Fixed (2026-10-09): Elemental Weapons adds to Windfury's extra attack power once. The sim applied it twice, like the SoD sim. `elemental_weapons_test.go` TestOrcShamanElementalWeapons pins the weapon roll and checks every normal Windfury hit with 0 and 3 points, and Rockbiter's attack power. It fails with the double dip. TestEnhancement's results dropped about 1% (the default 1233.1 to 1218.7).
+  - Still open: Flametongue Weapon with 3/3 (sim 15% more), rank 1 on the same axe.
 - 7.22 Searing Totem (`fire_totems.go`): a bolt every 2.5 sec for the totem's 30 to 55 sec lifetime, 1.7% coefficient (Forever). The real attack is every 2.2 sec, but the next bolt waits for the last to land, so we use 2.5 sec without a distance option.
 - 7.23 Magma Totem: a pulse every 2 sec for 20 sec, 2 less damage per pulse than 1.12 (Forever).
 - 7.24 Flametongue Totem: 5 min, fire damage per main hand hit by weapon speed (548 / 25 per 4 sec at rank 1, flat by level). It takes the fire slot, and placing another fire totem takes it down.
@@ -507,7 +512,7 @@ What each talent does in the sim today (`talents.go` unless noted). Values are p
 - Guardian Totems: Stoneskin Totem (`earth_totems.go`).
 - Mental Dexterity: attack power equal to 33 / 67 / 100% of Intellect. The older wiki tree reads 33 / 66 / 99%, the beta client data 33 / 67 / 100%.
 - Improved Lightning Shield: +5 / 10 / 15% on the whole orb hit (`lightning_shield.go`).
-- Elemental Weapons: Rockbiter +7 / 14 / 20%, Windfury +13 / 27 / 40% applied twice, Flametongue and Frostbrand +5 / 10 / 15%.
+- Elemental Weapons: Rockbiter +7 / 14 / 20%, Windfury +13 / 27 / 40% applied once (applied twice before 2026-10-09, see section 7 part 2), Flametongue and Frostbrand +5 / 10 / 15%.
 - Shamanistic Focus: -45% cost on the shocks and Lightning Shield. Open: is Lightning Shield in Forever's text?
 - Anticipation: +2% dodge. Toughness: +2% Stamina.
 - Flurry: a melee crit (white, Stormstrike, Windfury attacks) gives 3 charges of 5 to 25% attack speed. White swings use the charges, at most one per 0.5 sec so that both hands don't spend two at once. Windfury Weapon's attacks are yellow, so they don't use charges. Windfury Totem's extra attack is white, so it does. Open: which extra attacks use Flurry charges under Forever.

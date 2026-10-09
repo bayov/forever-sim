@@ -55,12 +55,13 @@ func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// Elemental Weapons applies twice to the extra attack power (1.4 * 1.4 at 3
-			// points). The SoD sim does this on purpose (its commit bc9aa4d3, "update Windfury
-			// Weapon to double dip from Elemental Weapons"), and Forever's mechanics follow
-			// SoD's.
-			// TODO: Beta can confirm it, by comparing Windfury hits with 0 and 3 points.
-			mAP := spell.MeleeAttackPower(target) + bonusAP*ewMultiplier*ewMultiplier
+			// Elemental Weapons adds its 13 / 27 / 40% to the extra attack power once.
+			//
+			// The SoD sim applies it twice on purpose (its commit bc9aa4d3), and we did too. But
+			// on the beta (2026-10-09) rank 1's tooltip says 64 with 3 points (46 * 1.4), and with
+			// a 3.6 speed axe at 198 AP, 28 normal Windfury hits averaged 1.196 times 91 normal
+			// white hits. Once gives 1.201 and twice 1.281.
+			mAP := spell.MeleeAttackPower(target) + bonusAP*ewMultiplier
 			baseDamage := weaponDamageFunc(sim, mAP)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
