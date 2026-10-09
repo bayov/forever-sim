@@ -12,7 +12,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 102
+  final_stats: 161
   final_stats: 41.25
   final_stats: 0
   final_stats: 32.35455
@@ -53,18 +53,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.30582
+  weights: 0.71741
   weights: 0
-  weights: 0.76648
-  weights: 0
-  weights: 0
+  weights: 0.93766
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
-  weights: 9.7233
-  weights: 4.78412
+  weights: 0
+  weights: 0
+  weights: 12.12176
+  weights: 5.11895
   weights: 0
   weights: 0
   weights: 0
@@ -113,15 +113,15 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-AllItems-Demoniac'sThreads"
  value: {
-  dps: 865.61246
-  tps: 929.20927
+  dps: 888.45243
+  tps: 951.70988
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 924.05676
-  tps: 980.31462
+  dps: 951.30992
+  tps: 1006.16603
  }
 }
 dps_results: {
@@ -141,8 +141,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-AllItems-Hazza'rah'sCharmofDestruction-19957"
  value: {
-  dps: 868.72368
-  tps: 932.41813
+  dps: 898.91134
+  tps: 962.60875
  }
 }
 dps_results: {
@@ -176,8 +176,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-AllItems-TheBlackBook-19337"
  value: {
-  dps: 863.93373
-  tps: 926.93484
+  dps: 897.09795
+  tps: 959.78827
  }
 }
 dps_results: {
@@ -190,56 +190,56 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-Average-Default"
  value: {
-  dps: 897.12212
-  tps: 959.9971
+  dps: 934.60193
+  tps: 997.86164
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-Settings-Orc-mc-DS/Ruin Warlock-rotation-FullBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 891.01643
-  tps: 2094.93777
+  dps: 923.13074
+  tps: 2132.46057
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-Settings-Orc-mc-DS/Ruin Warlock-rotation-FullBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 891.01643
-  tps: 953.07558
+  dps: 923.13074
+  tps: 986.58293
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-Settings-Orc-mc-DS/Ruin Warlock-rotation-FullBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 925.60198
-  tps: 972.0581
+  dps: 959.76666
+  tps: 1006.76015
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-Settings-Orc-mc-DS/Ruin Warlock-rotation-NoBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 513.6402
-  tps: 1803.17869
+  dps: 536.35949
+  tps: 1827.09391
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-Settings-Orc-mc-DS/Ruin Warlock-rotation-NoBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 513.6402
-  tps: 579.59063
+  dps: 536.35949
+  tps: 602.22281
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-Settings-Orc-mc-DS/Ruin Warlock-rotation-NoBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 547.32594
-  tps: 600.22454
+  dps: 568.93544
+  tps: 620.43744
  }
 }
 dps_results: {
  key: "TestWarlockDSRuin-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 891.01643
-  tps: 953.07558
+  dps: 923.13074
+  tps: 986.58293
  }
 }
