@@ -3,7 +3,7 @@ character_stats_results: {
  value: {
   final_stats: 308
   final_stats: 265
-  final_stats: 385
+  final_stats: 367
   final_stats: 166
   final_stats: 193
   final_stats: 150
@@ -35,7 +35,7 @@ character_stats_results: {
   final_stats: 14.909
   final_stats: 5.8
   final_stats: 0
-  final_stats: 5351
+  final_stats: 5171
   final_stats: 27
   final_stats: 60
   final_stats: 60
@@ -50,26 +50,26 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtection-Phase4-StatWeights-Default"
  value: {
-  weights: 0.17706
-  weights: 0.08767
+  weights: 0.17701
+  weights: 0.0907
   weights: 0
-  weights: 0.01128
+  weights: 0.01154
   weights: 0
-  weights: 0.42905
-  weights: 0
-  weights: 0
-  weights: 0
-  weights: 0.36763
+  weights: 0.45793
   weights: 0
   weights: 0
   weights: 0
-  weights: 3.5338
-  weights: 2.37186
+  weights: 0.4044
   weights: 0
   weights: 0
-  weights: 0.08853
-  weights: 3.5338
-  weights: 2.37186
+  weights: 0
+  weights: 3.7071
+  weights: 2.4699
+  weights: 0
+  weights: 0
+  weights: 0.08851
+  weights: 3.7071
+  weights: 2.4699
   weights: 0
   weights: 0
   weights: 0
@@ -99,92 +99,92 @@ stat_weights_results: {
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Avenger'sBattlegear"
  value: {
-  dps: 422.38357
-  tps: 590.91088
+  dps: 442.75244
+  tps: 625.48118
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-BattlegearofEternalJustice"
  value: {
-  dps: 375.2509
-  tps: 477.15223
+  dps: 388.31228
+  tps: 498.93731
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-FieldMarshal'sAegis"
  value: {
-  dps: 408.77839
-  tps: 571.20466
+  dps: 428.29808
+  tps: 604.34061
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Freethinker'sArmor"
  value: {
-  dps: 328.74196
-  tps: 458.92371
+  dps: 343.9324
+  tps: 484.42946
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-JudgementArmor"
  value: {
-  dps: 419.25426
-  tps: 592.21882
+  dps: 440.12248
+  tps: 627.77583
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LawbringerArmor"
  value: {
-  dps: 331.25765
-  tps: 460.53881
+  dps: 346.43275
+  tps: 486.02558
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LieutenantCommander'sRedoubt"
  value: {
-  dps: 392.60931
-  tps: 552.54415
+  dps: 411.6232
+  tps: 584.81632
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-RedemptionArmor"
  value: {
-  dps: 325.57996
-  tps: 456.15907
+  dps: 341.15651
+  tps: 482.33257
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-SanctifiedOrb-20512"
  value: {
-  dps: 310.6136
-  tps: 439.85467
+  dps: 325.61826
+  tps: 465.04823
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Average-Default"
  value: {
-  dps: 311.89441
-  tps: 441.42241
+  dps: 326.92572
+  tps: 466.67409
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Settings-Dwarf-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-LongMultiTarget"
  value: {
-  dps: 592.70533
-  tps: 953.83519
+  dps: 651.97586
+  tps: 1048.66804
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Settings-Dwarf-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-LongSingleTarget"
  value: {
-  dps: 46.16713
-  tps: 74.17716
+  dps: 50.78384
+  tps: 81.5639
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Settings-Dwarf-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-ShortSingleTarget"
  value: {
-  dps: 81.16486
-  tps: 130.15878
+  dps: 89.28135
+  tps: 143.14516
  }
 }
 dps_results: {
@@ -211,22 +211,22 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Phase4-Settings-Human-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-LongMultiTarget"
  value: {
-  dps: 600.03304
-  tps: 966.0512
+  dps: 660.03635
+  tps: 1062.05649
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Settings-Human-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-LongSingleTarget"
  value: {
-  dps: 46.99685
-  tps: 75.50963
+  dps: 51.69654
+  tps: 83.02913
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Settings-Human-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-ShortSingleTarget"
  value: {
-  dps: 81.16486
-  tps: 130.15878
+  dps: 89.28135
+  tps: 143.14516
  }
 }
 dps_results: {
@@ -253,7 +253,7 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Phase4-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 279.44876
-  tps: 398.78045
+  dps: 293.01622
+  tps: 421.64334
  }
 }
