@@ -48,7 +48,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 4.1 Weapon damage: the damage roll, attack power (AP / 14 * weapon speed), normalized damage for specials
 - [x] 4.2 Swing timer: weapon speed and melee haste (Flurry, Rage of the Farseer, item haste), main hand and off hand sync
 - [x] 4.3 Attack table: one roll, in the order miss, dodge, parry, glancing, block, crit, hit
-- [ ] 4.4 Miss: base chance against the target's level, weapon skill, hit from gear, the hit cap
+- [x] 4.4 Miss: base chance against the target's level, weapon skill, hit from gear, the hit cap
 - [ ] 4.5 Enemy dodge and parry: values by level, no parry or block from behind (raid), both from the front (PvP)
 - [ ] 4.6 Glancing blows: chance against a level +3 target, the damage penalty, weapon skill
 - [ ] 4.7 Crit: chance, the crit cap that glancing and miss make, crit damage
@@ -447,10 +447,18 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Settled (the user, 2026-10-09): Windfury Weapon's attacks are yellow. The client (wago 70291, the same as Era) gives spell 8233 2 extra attacks plus 46 attack power for 1.5 sec, and 1.12 servers swing those white, so they could glance. The beta log names them "Windfury Weapon" hits, where a white swing reads "Melee". The sim already rolled them yellow, like the SoD sim, so only the TODO in `windfury_weapon.go` changed.
 - `attack_table_test.go` TestOrcShamanAttackTable fights a level 63 boss for 20 hours at level 60 with Dark Edge of Insanity and 20% extra crit, from behind and in front, then with 60% extra crit from behind to pass the crit cap. It counts every white hit, Stormstrike and Windfury attack: 8% miss, 6.5% dodge, 14% parry and 5% block in front only, 40% glancing on white hits only, crits at the full chance on white hits and from the second roll on yellow ones. It fails when Windfury rolls white, when crit comes before glancing, when yellow crits share the first roll, and when white hits can be parried from behind.
 
+### 4.4 Miss
+
+- The user OK'd it (2026-10-09) and skipped the beta test for now. Miss is 5% plus 0.1% for each point the target's defense (its level times 5) is above our weapon skill, or 0.2% a point when the gap is more than 10 (`target.go` NewAttackTable). Our hit comes off it, and miss never goes below 0. White hits and yellow attacks miss the same, and a shaman has no dual wield penalty (4.2). When the gap is more than 10, (gap - 10) * 0.2% of our hit does nothing. That's 1% for 300 skill against a level 63 boss, so the hit cap is 9%. Level 30 against Vishas (level 32) misses 6%, with no hit ignored.
+- Hit comes from gear (one stat for melee and spells) and Tidal Focus. Weapon skill is level times 5 plus skill from gear. Forever's Orc Axe Specialization is +1% crit with axes, not +5 skill (client spell 20574, `racials_forever.go`).
+- vmangos (`SpellCaster.cpp` GetMeleeMissChance) has the same steps, but it ignores a flat 1% of hit for any gap over 10. The two agree at 300 skill against a level 63, and differ only at 301 to 304 skill or 4 or more levels up. We keep magey's per point version. vmangos also scales miss down against mobs below level 10 (miss times level / 10), which only matters for reading beta logs.
+- Tidal Focus gives 1% hit a point. Forever's talents use the trait system: client 70291 has only rank 1 (16179), with the top rank's +5, and TraitDefinitionEffectPoints and CurvePoint give 1 to 5% by rank. ForeverChanges agrees.
+- `miss_test.go` TestOrcShamanMissChance checks the miss chance of white hits and Stormstrike in 13 cases: level 60 against a level 63 boss with 0, 1, 5, 9 and 12% hit and with Tidal Focus 5/5, level 30 against levels 25, 30, 32 and 33, and Dwarven Tree Chopper's +2 skill against a level 33. It fails without the ignored hit, with vmangos's flat 1%, with the Classic Orc +5 axe skill and without Tidal Focus's hit.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
-- 4.4 to 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: 8% miss, and the first 1% of hit from gear does nothing (9% to cap). 6.5% dodge, 14% parry from the front, 40% glancing for 55 to 75% damage (65% on average). Crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
-- Level 30 vs Vishas (level 32) with 150 skill: 6% miss, 6% dodge, 6% parry from the front, 30% glancing for 80 to 90% damage, crit cut by 2%.
+- 4.5 to 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: 6.5% dodge, 14% parry from the front, 40% glancing for 55 to 75% damage (65% on average). Crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
+- Level 30 vs Vishas (level 32) with 150 skill: 6% dodge, 6% parry from the front, 30% glancing for 80 to 90% damage, crit cut by 2%.
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
 - Open: Forever adds an expertise-like stat that lowers dodge and parry, and weapon skill on gear. Neither is in the attack table yet. Items 4.5 and 4.8.
 
