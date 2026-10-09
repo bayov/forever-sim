@@ -169,6 +169,15 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // shaman is mostly shocking. In a one on one fight, a set wins when our damage times our
 // health is higher, so 1% of damage is worth 1% of health, about 6 DPS for 100 health here.
 // By that measure (health with buffs) this set is 17% ahead of the old one.
+//
+// On 2026-10-09 we searched again on the items of the 8 October beta build, which made Rage
+// of the Storm and several quest rewards weaker. The old set fell to 136.5 with 2385 health
+// and 788 armor. A weighted search and two slot by slot passes changed two slots: Wyvern
+// Heart Band (Heartrazor, a rare in Thousand Needles) for Nogg's Gold Ring, and Enchanted
+// Sandals (Heart of Disruption) with a Thick kit for Gnomebot Operating Boots. The set is
+// 138.9 with 2345 health and 808 armor. Several other swaps are ties at this price, within
+// 0.3 DPS once health and armor are counted: Watchman Pauldrons, Ebon Vise, Unearthed Bands
+// of the Bandit and Plains Ring. We kept the old pick in those slots.
 export const GearLevel30PvP = PresetUtils.makePresetGear('Level 30 PvP', Level30PvPGearJSON, {
 	tooltip: 'Level 30 PvP gear that gives up some damage for more health, at up to 3.5 DPS per 100 health.',
 	group: 'Level 30 PvP',
@@ -181,6 +190,12 @@ export const GearLevel30PvP = PresetUtils.makePresetGear('Level 30 PvP', Level30
 //
 // No two pieces in either set come from the same quest. Traveled Gloves and Determined Band
 // both come from No Honor Among Thieves, and the gloves are out now.
+//
+// On 2026-10-09 we searched again on the 8 October build's items, where the old set fell to
+// 128.6 with 2545 health and 831 armor. Grimsteel Cape and Nogg's Gold Ring both turned
+// green and lost stats, so Brilliant Cloak (Strahnbrad Mystery) and Plains Ring (Razorfen
+// Kraul) took their slots. The set is 131.5 with 2535 health and 831 armor. Ebon Vise and
+// Enchanted Sandals are ties here, within 0.2 DPS once health and armor are counted.
 export const GearLevel30PvPHighHP = PresetUtils.makePresetGear('Level 30 PvP (High HP)', Level30PvPHighHPGearJSON, {
 	tooltip: 'Level 30 PvP gear with more health and armor than Level 30 PvP, for about 8 DPS less.',
 	group: 'Level 30 PvP',
@@ -1042,7 +1057,8 @@ export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', 
 // We attack from in front, as in any duel, so the enemy can parry. It dodges and parries
 // 5% each and has no shield. Since 2026-10-07, before that we attacked from behind. From
 // the front, Level 30 PvP does 143.1 (148.8 from behind) and Level 30 PvP (High HP) 135.0
-// (140.4). The gear numbers above are from behind.
+// (140.4). The gear numbers above are from behind, except the 2026-10-09 ones, which are
+// from the front.
 export const EncounterLevel30PvP = PresetUtils.makePresetEncounter(
 	'Level 30 PvP',
 	Encounter.create({
