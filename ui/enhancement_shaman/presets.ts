@@ -121,6 +121,17 @@ export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON, 
 // it. Nothing else changed, enchants included. Defender's Leather Helm is 3.7 behind Enduring
 // Cap, and Totemic Leather Leggings are 0.9 behind Ferine Leggings. The set is 239.6 / 217.7
 // / 209.0 / 182.6 at 30 / 60 / 120 / 300 sec.
+//
+// On 2026-10-09 we searched again on the items of the 8 October beta build. Rage of the
+// Storm got weaker (94-141 at 3.3 speed and 12 Intellect, was 102-154 at 3.6 and 16), and
+// several quest rewards lost stats, so the old set fell to 195.6 at 120 sec. It is still
+// our best weapon. Three slots changed: Kaleidoscope Chain (world drop) for Mark of the
+// Pack Leader, Batwing Mantle (Blind Hunter, Razorfen Kraul, now with 6 spell power) for
+// Bloodmage Mantle, and Garb of Florid Feathers (Excavation Site, now 9 Agility and 15
+// Intellect) for Zealot's Robe, which went from 10 / 10 / 15 Intellect, Spirit and spell
+// power to 7 / 7 / 11. The Gelkis and Magram rewards in Desolace are left out, because their quests
+// need level 35 now. Enchants did not change. The set is 228.9 / 207.2 / 199.0 / 172.2 at
+// 30 / 60 / 120 / 300 sec.
 export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p5GearJSON, {
 	tooltip: 'Level 30 gear with Rage of the Storm, searched for the 120 sec Level 30 encounter.',
 	group: 'Level 30',
@@ -1003,8 +1014,9 @@ export const EPPresets = [
 	EPLevel30PvPVsProt,
 ];
 
-// On 2026-10-08, with the starting totems, Level 30 + 5 is 209.1 / 201.0 / 174.7 at 60 / 120 /
-// 300 sec. Every consumable the sim applies that a level 30 can use was tried, and the ones
+// On 2026-10-08, with the starting totems, Level 30 + 5 was 209.1 / 201.0 / 174.7 at 60 / 120 /
+// 300 sec. After the 2026-10-09 regear on the 8 October build's items it is 207.2 / 199.0 /
+// 172.2. Every consumable the sim applies that a level 30 can use was tried, and the ones
 // here stayed on top. A knob search kept every rotation knob.
 export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', {
 	group: 'Level 30',
