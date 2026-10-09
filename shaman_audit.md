@@ -47,7 +47,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 - [x] 4.1 Weapon damage: the damage roll, attack power (AP / 14 * weapon speed), normalized damage for specials
 - [x] 4.2 Swing timer: weapon speed and melee haste (Flurry, Rage of the Farseer, item haste), main hand and off hand sync
-- [ ] 4.3 Attack table: one roll, in the order miss, dodge, parry, glancing, block, crit, hit
+- [x] 4.3 Attack table: one roll, in the order miss, dodge, parry, glancing, block, crit, hit
 - [ ] 4.4 Miss: base chance against the target's level, weapon skill, hit from gear, the hit cap
 - [ ] 4.5 Enemy dodge and parry: values by level, no parry or block from behind (raid), both from the front (PvP)
 - [ ] 4.6 Glancing blows: chance against a level +3 target, the damage penalty, weapon skill
@@ -420,7 +420,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   | Barbaric Battle Axe of Healing (2H, 25-38, 3.6) | 390 | 8 to 10 | 16 | 19 | 0.977 |
   | Twin-bladed Axe of the Owl | 195 | 8 to 10 | 22 | 12 | 1.200 |
   | Twin-bladed Axe of the Owl | 195 | 9 only | 34 | 18 | 1.171 |
-  | Bloody Brass Knuckles (1H, 24-46, 1.6) | 204 | 8 only | 27 | 13 | 1.277 |
+  | Bloody Brass Knuckles (1H, 24-46, 1.6) | 204 | 8 only | 27 | 14 | 1.277 |
 
   The weapon's own speed is far off (ratio 1 every time). So is the usual 3.3 for two-handers. On boars of one level the armor is the same, so the lowest and highest hits count too. In the level 9 run, a 53 white hit and two 75 Stormstrikes rule out every two-hand speed below 3.55. In the level 8 run the one-hand speed fits from 2.28 to 2.87, best 2.72, and plain 2.4 is 2 standard errors low. Speed 3.6 misses only the slow axe session, where Stormstrike averaged 2.3% below white (2.4 standard errors). Two other models fit every session as well: the usual speed then 6.4% more, or the usual speed then 5 more flat. The user picked 3.6, and the one-hander's 2.7 makes it "plus 0.3". At level 60 with the 3.4 speed Synthetic two-hander, 3.6 adds about 4% to Stormstrike damage, about the same as 6.4% more, while 5 more flat would take away 1%. notes.md Need to Verify has the test that tells them apart.
 - Fixed (2026-10-08, the user): Greater Impact (+7) and Superior Impact (+9) did nothing in the sim, and upstream wowsims has the same gap. They now add to the weapon's damage. hyjal.cc's recipe pages give the same values as 1.12. The rotopt enchant search stops at Enchanting 225, so it never offered them, and no preset changes. TestP1Hunter's gear has Superior Impact and gains about 1%.
@@ -439,9 +439,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Fixed (2026-10-08): `core.CanDualWield` lets only warriors, rogues and hunters hold an off-hand weapon, like the UI's canDualWield. NewCharacter drops an off-hand weapon from the other classes, so it adds no stats, swings, procs or dual wield miss penalty. rotopt offers the off hand only shields and held items for them. No golden result changed.
 - `off_hand_test.go` TestOrcShamanOffHandWeapon runs Deathbringer with and without Crul'shorukh in the off hand on the same seed. It checks the main hand swings every 2.9 sec, the off hand never swings, the stats match and both fights deal the same main hand damage. It fails without the fix.
 
+### 4.3 Attack table
+
+- The user OK'd it (2026-10-09). White hits (auto attacks and Windfury Totem's extra attack) roll once on one table (`spell_outcome.go` outcomeMeleeWhite). From behind: miss, dodge, glancing, crit, hit. In front of the target: miss, dodge, parry, glancing, block, crit, hit. Crits only get what the outcomes before them leave (the crit cap, 4.7).
+- Stormstrike and Windfury Weapon's attacks are yellow (outcomeMeleeWeaponSpecialHitAndCrit). The first roll is miss, dodge, then parry and block in front, then hit. A second roll decides the crit. They never glance, and in front a blocked one can't crit.
+- vmangos (`SpellCaster.cpp` RollMeleeOutcomeAgainst) has the same white order. Creatures dodge from any side, parry and block need the front, and only white swings and extra attacks glance. vmangos puts a yellow attack's crit in the same roll. We keep the second roll, like the upstream wowsims Classic sim. Against a level 63 boss that gives Stormstrike about 15% fewer crits than one roll would. We can't tell them apart at level 30.
+- Settled (the user, 2026-10-09): Windfury Weapon's attacks are yellow. The client (wago 70291, the same as Era) gives spell 8233 2 extra attacks plus 46 attack power for 1.5 sec, and 1.12 servers swing those white, so they could glance. The beta log names them "Windfury Weapon" hits, where a white swing reads "Melee". The sim already rolled them yellow, like the SoD sim, so only the TODO in `windfury_weapon.go` changed.
+- `attack_table_test.go` TestOrcShamanAttackTable fights a level 63 boss for 20 hours at level 60 with Dark Edge of Insanity and 20% extra crit, from behind and in front, then with 60% extra crit from behind to pass the crit cap. It counts every white hit, Stormstrike and Windfury attack: 8% miss, 6.5% dodge, 14% parry and 5% block in front only, 40% glancing on white hits only, crits at the full chance on white hits and from the second roll on yellow ones. It fails when Windfury rolls white, when crit comes before glancing, when yellow crits share the first roll, and when white hits can be parried from behind.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
-- 4.3 White hits roll once. From behind: miss, dodge, glancing, crit, hit. In front (`InFrontOfTarget`): miss, dodge, parry, glancing, block, crit, hit (`spell_outcome.go` outcomeMeleeWhite).
 - 4.4 to 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: 8% miss, and the first 1% of hit from gear does nothing (9% to cap). 6.5% dodge, 14% parry from the front, 40% glancing for 55 to 75% damage (65% on average). Crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
 - Level 30 vs Vishas (level 32) with 150 skill: 6% miss, 6% dodge, 6% parry from the front, 30% glancing for 80 to 90% damage, crit cut by 2%.
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
