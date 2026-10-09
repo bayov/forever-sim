@@ -13,7 +13,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Beta: Water Shield globe ICD (sim: 3.5 s, the tooltip says "every few seconds").
 * Beta: Lightning Shield orb ICD (sim: 3.5 s, the vanilla value is unknown).
 * Maelstrom Weapon proc rate (sim: 2 PPM per point). The talent needs level 34+.
-* Rage of the Farseer cooldown (sim: 3 min, from client data, the tooltip shows none).
+* Weapon Mastery (+10% damage with all weapons, the sim doesn't give it). Blizzard's Mage and Shaman deep dive (2026-10-07) says it moved to baseline, with Enhancing Totems, Two-Handed Axes and Maces and Improved Weapon Totems. The other two totem talents are already part of the client's values: Grace of Air is 77 * 1.15 = 89 and Flametongue Totem 489 * 1.12 = 548, and the beta's Flametongue Totem hits showed nothing on top. But the client (1.60.1.70291, wago.tools) has no baseline spell for Weapon Mastery, only the old talent ranks, and ForeverChanges lists it as removed. At level 30 the beta sheet showed no bonus: UnitDamage gave 97.83 to 109.83 with a percent of 1, exactly the 23-35 axe plus 2.7 * 388 / 14. It could still come at a higher level, because the talent was in row 6. Beta: white hits on critters (almost no armor, and the overkill gives the whole hit) above the UnitDamage range would show it.
 * wowhead spell details (rate limited last time): Call of Flame 16038 (does it touch Flametongue Totem, and does it add with Improved Fire Nova), Improved Fire Nova 16086, Elemental Weapons 16266, Concussion 16035.
 * Revelation (weapon enchant): only shocks trigger it, no ICD, flat proc chance (sim: 7.2%).
 * Stacking of the Forever-only elixirs with each other.
