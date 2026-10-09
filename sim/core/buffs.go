@@ -370,7 +370,7 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 
 	if raidBuffs.RetributionAura != proto.TristateEffect_TristateEffectMissing && isAlliance {
 		if character.Env.IsForever() {
-			ForeverRetributionAura(character)
+			ForeverRetributionAura(character, 0)
 		} else {
 			RetributionAura(character, GetTristateValueInt32(raidBuffs.RetributionAura, 0, 2))
 		}
@@ -640,30 +640,46 @@ func StoneskinTotemAura(unit *Unit, points int32) *Aura {
 	})
 }
 
-// Forever's Retribution Aura ranks (7 / 12 / 18 / 24 / 30, Classic's with Improved
-// Retribution Aura folded in), for another paladin's aura on the character. The paladin's
-// own is in sim/paladin/retribution_aura.go and does not stack with it.
+// Forever's Retribution Aura ranks, for another paladin's aura on the character. The
+// paladin's own is in sim/paladin/retribution_aura.go and does not stack with it.
+//
+// The 2026-10-08 beta build put the damage back to Vanilla's 5 / 8 / 12 / 16 / 20 (it was
+// 7 / 12 / 18 / 24 / 30, Classic's with Improved Retribution Aura folded in), plus 6% of
+// the paladin's spell power. Forever has no Improved Retribution Aura talent. We don't know
+// another paladin's spell power, so their aura gets only the base damage.
 var ForeverRetributionAuraLevel = [...]int{0, 16, 26, 36, 46, 56}
 var ForeverRetributionAuraSpellId = [...]int32{0, 7294, 10298, 10299, 10300, 10301}
-var ForeverRetributionAuraDamage = [...]float64{0, 7, 12, 18, 24, 30}
+var ForeverRetributionAuraDamage = [...]float64{0, 5, 8, 12, 16, 20}
 
-func ForeverRetributionAura(character *Character) *Aura {
+// ForeverRetributionAuraCoefficient is the share of the paladin's spell power the aura adds
+// to each hit. The 2026-10-08 build cut it from 13.3% to 6%, and it now uses the casting
+// paladin's spell power instead of the spell power of whoever was struck.
+const ForeverRetributionAuraCoefficient = 0.06
+
+// ForeverRetributionAura is the aura on the character. bonusCoefficient is
+// ForeverRetributionAuraCoefficient when the character is the paladin who casts it, and 0
+// for another paladin's aura.
+func ForeverRetributionAura(character *Character, bonusCoefficient float64) *Aura {
 	rank := HighestRankAt(character.Level, ForeverRetributionAuraLevel[:])
 	if rank == 0 {
 		return nil
 	}
-	return retributionAura(character, ForeverRetributionAuraSpellId[rank], ForeverRetributionAuraDamage[rank])
+	return retributionAura(character, ForeverRetributionAuraSpellId[rank], ForeverRetributionAuraDamage[rank], bonusCoefficient)
 }
 
 func RetributionAura(character *Character, points int32) *Aura {
 	baseDamage := 20.0
 	damage := float64(baseDamage) * (1 + 0.25*float64(points))
-	return retributionAura(character, 10301, damage)
+	return retributionAura(character, 10301, damage, 0)
 }
 
-func retributionAura(character *Character, spellID int32, damage float64) *Aura {
-	// A raid paladin's aura and the character's own (a paladin) are the same buff.
+func retributionAura(character *Character, spellID int32, damage float64, bonusCoefficient float64) *Aura {
+	// A raid paladin's aura and the character's own (a paladin) are the same buff. When
+	// the raid buff came first, our own aura still adds our spell power to it.
 	if aura := character.GetAura("Retribution Aura"); aura != nil {
+		if spell := character.GetSpell(aura.ActionID); spell != nil && bonusCoefficient > 0 {
+			spell.BonusCoefficient = bonusCoefficient
+		}
 		return aura
 	}
 	actionID := ActionID{SpellID: spellID}
@@ -676,6 +692,7 @@ func retributionAura(character *Character, spellID int32, damage float64) *Aura 
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
+		BonusCoefficient: bonusCoefficient,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHit)
@@ -697,12 +714,15 @@ func retributionAura(character *Character, spellID int32, damage float64) *Aura 
 	})
 }
 
-// Forever's Thorns ranks. Improved Thorns is baseline, so the talent points do nothing
-// under Forever. The 2026-09-24 beta build made Thorns grow with the druid's spell power,
-// but no source gives how much, so we use the base values.
+// Forever's Thorns ranks. Forever has no Improved Thorns talent, so the talent points do
+// nothing under Forever.
+//
+// The 2026-10-08 beta build put the damage back to Vanilla's 3 / 6 / 9 / 12 / 15 / 18 (it
+// was 4 / 9 / 11 / 13 / 16 / 22), plus 6% of the druid's spell power. We don't know the
+// druid's spell power, so we use the base damage.
 var foreverThornsLevel = [...]int{0, 6, 14, 24, 34, 44, 54}
 var foreverThornsSpellId = [...]int32{0, 467, 782, 1075, 8914, 9756, 9910}
-var foreverThornsDamage = [...]float64{0, 4, 9, 11, 13, 16, 22}
+var foreverThornsDamage = [...]float64{0, 3, 6, 9, 12, 15, 18}
 
 func ThornsAura(character *Character, points int32) *Aura {
 	baseDamage := 18.0
