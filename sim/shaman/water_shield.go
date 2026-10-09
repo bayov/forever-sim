@@ -11,8 +11,9 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 		return
 	}
 
-	// The beta client's spell (build 1.60.1.69876). It costs no mana and has a 15 sec
-	// cooldown, so once its three globes are spent the shaman waits for the recast.
+	// The beta client's spell (build 1.60.1.69876). It costs no mana. Its tooltip said it
+	// had a 15 sec cooldown, but the 2026-10-08 beta build notes say it never had one, so
+	// we recast it as soon as its three globes are spent.
 	actionID := core.ActionID{SpellID: 408510}
 	manaMetrics := shaman.NewManaMetrics(actionID)
 	globes := int32(3)
@@ -96,10 +97,6 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
-			},
-			CD: core.Cooldown{
-				Timer:    shaman.NewTimer(),
-				Duration: time.Second * 15,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {

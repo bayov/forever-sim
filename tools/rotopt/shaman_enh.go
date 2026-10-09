@@ -279,7 +279,8 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 			"Lightning Bolt with the mana to spare while the enemy is out of melee range (PvP mode), when there is no swing to lose."))
 	}
 	// The shield goes after the shocks, on a GCD nothing else wants. Above them a Water
-	// Shield recast every 15 sec delays enough shocks and Stormstrikes to cost 10 DPS.
+	// Shield recast every 15 sec delayed enough shocks and Stormstrikes to cost 10 DPS
+	// (measured while it still had a 15 sec cooldown, which the 2026-10-08 build removed).
 	switch k["shield"] {
 	case 1:
 		items = append(items, cast(lightningShield, not(auraIsActive(lightningShield)), "Lightning Shield whenever it is down."))

@@ -16,8 +16,12 @@ var LightningBoltSpellId = [LightningBoltRanks + 1]int32{0, 403, 529, 548, 915, 
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
 // below level 20. The 2026-09-24 beta build raised ranks 3 and 4 (35 and 50 at the learn
 // level before, 45 and 56 now) so every rank is an upgrade over the one before.
-var LightningBoltBaseDamage = [LightningBoltRanks + 1][]float64{{0}, {14.86, 17.14}, {29.25, 33.75}, {44.08, 51.92}, {55.02, 62.98}, {70.43, 80.57}, {108.09, 121.91}, {142.23, 159.77}, {157.51, 176.49}, {172.56, 193.44}, {189.92, 211.68}}
-var LightningBoltScaling = [LightningBoltRanks + 1]core.RankScaling{{}, {6, 0.4}, {13, 0.5}, {19, 0.6}, {25, 0.6}, {31, 0.7}, {37, 0.8}, {43, 0.8}, {49, 1}, {55, 1}, {60, 1.2}}
+//
+// The 2026-10-08 beta build (1.60.1.70291) set ranks 1 to 5 again, so they grow more
+// evenly into rank 6. Rank 5, the top rank at level 30, went from 75.5 to 84.5 on average
+// at level 31, and rank 2 fell from 31.5 to 27.5.
+var LightningBoltBaseDamage = [LightningBoltRanks + 1][]float64{{0}, {14.39, 16.61}, {25.54, 29.46}, {42.70, 50.30}, {58.75, 67.25}, {78.83, 90.17}, {108.09, 121.91}, {142.23, 159.77}, {157.51, 176.49}, {172.56, 193.44}, {189.92, 211.68}}
+var LightningBoltScaling = [LightningBoltRanks + 1]core.RankScaling{{}, {6, 0.1}, {13, 0.1}, {19, 0.3}, {25, 0.4}, {31, 0.5}, {37, 0.8}, {43, 0.8}, {49, 1}, {55, 1}, {60, 1.2}}
 var LightningBoltSpellCoef = [LightningBoltRanks + 1]float64{0, 0.429, 0.571, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714, 0.714}
 
 // Forever caps the cast at 2.5 sec from rank 4 up and takes about 20% off the mana
