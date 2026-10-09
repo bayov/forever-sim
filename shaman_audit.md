@@ -50,7 +50,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 4.3 Attack table: one roll, in the order miss, dodge, parry, glancing, block, crit, hit
 - [x] 4.4 Miss: base chance against the target's level, weapon skill, hit from gear, the hit cap
 - [x] 4.5 Enemy dodge and parry: values by level, no parry or block from behind (raid), both from the front (PvP)
-- [ ] 4.6 Glancing blows: chance against a level +3 target, the damage penalty, weapon skill
+- [x] 4.6 Glancing blows: chance against a level +3 target, the damage penalty, weapon skill
 - [ ] 4.7 Crit: chance, the crit cap that glancing and miss make, crit damage
 - [ ] 4.8 Weapon skill: base by level, gear skill, its effect on 4.4 to 4.7 (Forever removed the weapon skill racials)
 - [ ] 4.9 Enemy armor: the mitigation formula, armor debuffs and their Forever values (Sunder, Expose Armor, Faerie Fire, Curse of Recklessness)
@@ -464,10 +464,17 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Fixed (2026-10-09): glancing went negative against mobs 2 or more levels below us (-40% at level 30 against a level 25). On the one roll white table that ate the block and crit chances after it, so white hits there never blocked and almost never crit. We clamp it at 0 now (`target.go`). The SoD sim has the same gap. No preset fights a lower level mob, and no test suite result changed. It does change sim numbers for the beta's low level mobs.
 - `avoidance_test.go` TestOrcShamanEnemyAvoidance rolls the white table and Stormstrike's table 200,000 times each from the front in 8 cases: level 60 against a level 63 boss with Dark Edge of Insanity, with Huge Thorium Battleaxe's 10 skill and with 2% expertise, and level 30 against levels 25, 30, 31 and 32, once with Dwarven Tree Chopper (2 skill, 0.6% expertise). It checks dodge, parry and the 5% block. It fails when gear skill lowers parry, when gear skill doesn't lower dodge, with 0.2% parry a point, when expertise doesn't lower parry and without the glancing fix.
 
+### 4.6 Glancing blows
+
+- The user OK'd it (2026-10-09). Only white hits glance (auto attacks and Windfury Totem's extra attack), only against mobs, and from any side. Yellow attacks never do (4.3), and nothing glances in PvP mode. The chance is 10% plus 2% for each point the mob's defense is above our level times 5, from 0 to 40% (`target.go` NewAttackTable). Skill from gear doesn't lower it. A glancing blow deals a random part of the hit between 1.3 - 0.05 * (defense - skill), at most 0.91, and 1.2 - 0.03 * (defense - skill), from 0.2 to 0.99. Here skill from gear counts. Glancing comes before crit on the one roll, so a glancing blow can't crit.
+- Level 60 with 300 skill against a level 63 boss: 40% for 55 to 75% of the hit (65% on average). With Huge Thorium Battleaxe's 310 skill: 91 to 99%. Level 30 against Vishas (level 32): 30% for 80 to 90%. The same level: 10% for 91 to 99%. Mobs below our level: none.
+- magey's 2019 Classic tests measured 10.1, 20.3, 29.2 and 40.4% for 0 to 3 levels up, and about 5, 5, 14 and 35% damage lost (27% and 15% at 3 levels up with +2 and +5 skill). Beaza's formulas, which the sim uses, give the same. Their chance takes the lower of our level times 5 and our skill, so a weapon skill below the cap glances more. The sim always uses level times 5 (4.8), and every preset has the cap. The SoD sim has the same formulas without the 40% cap and the 0 floor. Mages, priests and warlocks get a harsher damage penalty in both sims, and the shaman uses the melee one.
+- `glancing_test.go` TestOrcShamanGlancing rolls the white table 20,000 times in 8 cases (level 60 against a level 63 with 300 and 310 skill, level 30 against levels 29 to 34, once with Dwarven Tree Chopper's 152 skill) and checks the glance chance and the lowest and highest glancing damage. It fails when gear skill lowers the chance, when gear skill doesn't help the damage, without the 40% cap and without the 0.91 cap on the low end. All the shaman mechanics tests (TestOrcShaman*) take about 0.3 sec together.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
-- 4.6 and 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: 40% glancing for 55 to 75% damage (65% on average). Crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
-- Level 30 vs Vishas (level 32) with 150 skill: 30% glancing for 80 to 90% damage, crit cut by 2%.
+- 4.7 (`target.go` NewAttackTable), level 60 with 300 skill vs a level 63 boss: crit is cut by 4.8% (3% from the level gap, 1.8% aura suppression, taken off all crit rather than only crit from auras, see the TODO).
+- Level 30 vs Vishas (level 32) with 150 skill: crit cut by 2%.
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
 - Open: Forever keeps weapon skill on gear. Item 4.8.
 
