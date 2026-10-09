@@ -344,7 +344,11 @@ func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
 		table.BaseDodgeChance = 0.05 + (targetDefense-weaponSkill)*0.001
 		// Glancing blows are capped at 40%, which a level 60 reaches against a level 63 boss.
 		// Without the cap a level 20 against a level 30 enemy would glance 110% of the time.
-		table.BaseGlanceChance = min(0.1+(targetDefense-baseWeaponSkill)*0.02, 0.4)
+		//
+		// They also can't go below 0. Against a mob 2 or more levels below us the formula
+		// turns negative (-40% at level 30 against a level 25), and on the one roll white
+		// table that ate the block and crit chances after it. The SoD sim has the same gap.
+		table.BaseGlanceChance = max(min(0.1+(targetDefense-baseWeaponSkill)*0.02, 0.4), 0)
 
 		table.GlanceMultiplierMin = max(min(1.3-0.05*(targetDefense-weaponSkill), 0.91), 0.01)
 		table.GlanceMultiplierMax = max(min(1.2-0.03*(targetDefense-weaponSkill), 0.99), 0.2)

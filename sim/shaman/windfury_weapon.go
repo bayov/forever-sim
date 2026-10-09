@@ -119,10 +119,10 @@ func (shaman *Shaman) RegisterWindfuryImbue(procMask core.ProcMask) {
 
 				// We swing two yellow attacks.
 				//
-				// The client still gives Windfury Weapon 2 extra attacks, like Era, and 1.12
-				// servers swing those as white hits that can glance. On Forever they show in the
-				// combat log as "Windfury Weapon" hits, not "Melee", and they're yellow (the
-				// user, 2026-10-09). TestOrcShamanAttackTable checks they never glance.
+				// The client still gives Windfury Weapon 2 extra attacks, like Era, where extra
+				// attacks are white swings that can glance. On Forever they show in the combat
+				// log as "Windfury Weapon" hits, not "Melee", and they're yellow like in the SoD
+				// sim (the user, 2026-10-09). TestOrcShamanAttackTable checks they never glance.
 				shaman.WindfuryWeaponMH.Cast(sim, result.Target)
 				shaman.WindfuryWeaponMH.Cast(sim, result.Target)
 			}

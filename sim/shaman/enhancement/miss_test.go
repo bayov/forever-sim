@@ -17,19 +17,12 @@ import (
 // Miss is 5% plus 0.1% for each point the target's defense (its level times 5) is above
 // our weapon skill, or 0.2% a point when that gap is more than 10. Our hit comes off it.
 // When the gap is more than 10, the first (gap - 10) * 0.2% of our hit does nothing, so a
-// level 60 with 300 skill needs 9% hit against a level 63 boss (magey's attack table wiki,
-// and the 1% Blizzard described). vmangos takes off a flat 1% for any gap over 10, which
-// only differs at 301 to 304 skill or more than 3 levels up.
+// level 60 with 300 skill needs 9% hit against a level 63 boss (magey's 2019 Classic attack
+// table tests, and the 1% Blizzard described).
 //
 // Forever's Orc Axe Specialization is crit, not skill, so our axes add no skill here.
 // Dwarven Tree Chopper gives 2 two-handed axe skill, and Tidal Focus 1% hit a point.
 func TestOrcShamanMissChance(t *testing.T) {
-	const (
-		darkEdge    = 21134 // Dark Edge of Insanity, a level 60 two-handed axe.
-		whirlwind   = 6975  // Whirlwind Axe, a level 30 two-handed axe.
-		treeChop    = 2907  // Dwarven Tree Chopper, a two-handed axe with +2 skill.
-		stormstrike = "-0000000000001"
-	)
 	cases := []struct {
 		name               string
 		level, targetLevel int32
@@ -54,20 +47,7 @@ func TestOrcShamanMissChance(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			player := newOrcShaman(c.level, c.talents, &proto.EnhancementShaman_Options{})
-			for range proto.ItemSlot_ItemSlotMainHand {
-				player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
-			}
-			player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: c.weapon})
-			target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
-			target.Level = c.targetLevel
-			sim := core.NewSim(&proto.RaidSimRequest{
-				Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-				Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
-				SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
-			}, simsignals.CreateSignals())
-			sim.Reset()
-			enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+			sim, enh := newTargetLevelSim(c.level, c.targetLevel, c.weapon, c.talents)
 			enh.AddStatDynamic(sim, stats.MeleeHit, c.hit*core.MeleeHitRatingPerHitChance)
 
 			if enh.Talents.TidalFocus > 0 {
@@ -89,4 +69,32 @@ func TestOrcShamanMissChance(t *testing.T) {
 			}
 		})
 	}
+}
+
+// The two-handed axes and the talents the attack table tests use.
+const (
+	darkEdge    = 21134 // Dark Edge of Insanity, a level 60 two-handed axe.
+	whirlwind   = 6975  // Whirlwind Axe, a level 30 two-handed axe.
+	treeChop    = 2907  // Dwarven Tree Chopper, a two-handed axe with +2 skill and 0.6% expertise.
+	thorium     = 12775 // Huge Thorium Battleaxe, a two-handed axe with +10 skill.
+	stormstrike = "-0000000000001"
+)
+
+// newTargetLevelSim starts a Forever sim of an Orc shaman at level, holding weapon, against
+// one target of targetLevel.
+func newTargetLevelSim(level, targetLevel, weapon int32, talents string) (*core.Simulation, *EnhancementShaman) {
+	player := newOrcShaman(level, talents, &proto.EnhancementShaman_Options{})
+	for range proto.ItemSlot_ItemSlotMainHand {
+		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
+	}
+	player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: weapon})
+	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+	target.Level = targetLevel
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
 }
