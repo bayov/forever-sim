@@ -126,7 +126,7 @@ Totems
 - [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [ ] 7.26 Mana Spring Totem
 - [ ] 7.27 Mana Tide Totem
-- [ ] 7.28 Healing Stream Totem. To check: the Forever client's Purification (16178) lists Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one spell in the third mask word (0x10), but not Healing Stream (0x2000), but the sim gives Healing Stream Purification's 2% a point. Restorative Totems (16187) gives 5 a rank to both Mana Spring and Healing Stream in the client, and the sim gives Mana Spring 5% a point but Healing Stream 10%.
+- [ ] 7.28 Healing Stream Totem. To check: Purification (16178) says "your healing spells" on the beta tooltip (the user, 2026-10-10), but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients, so neither client gives it Purification. The sim gives it 2% a point. Restorative Totems is right in the sim: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says (the spell's own base points of 5 and 5 aren't the rank values).
 - [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
 
 ## 8. Talents
