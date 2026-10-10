@@ -75,7 +75,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 6.1 When the enemy attacks us at all: the tank setting (Level 30 solo, PvP), the boss behind the tank at level 60
 - [x] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
 - [x] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
-- [ ] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
+- [?] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
 - [ ] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
 - [ ] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
 - [ ] 6.7 PvP mode: the enemy types, time out of melee range
@@ -710,6 +710,30 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Proposed to the user: keep the armor formula and our armor as they are (the beta fits them). Record the Stoneskin difference with the rest of the enemy damage to us, for when the user takes that up.
 - The user OK'd it (2026-10-10): keep the armor formula and our armor, and record the Stoneskin difference only.
 - `armor_test.go` TestOrcShamanArmorTaken gives a level 30 shaman 482 armor, the export gear's, tanking a level 34 enemy. It checks that our armor is that plus 2 a point of Agility, that 10 Agility adds 20, and that a 100 damage hit loses armor / (armor + 400 + 85 * 34).
+
+### 6.4 Our miss, dodge, parry and block
+
+- Shown to the user (2026-10-10), waiting for the OK. An enemy swing at us rolls one table, in the order miss, dodge, parry, block, crit, crush and hit (`spell_outcome.go` outcomeEnemyMeleeWhite). Each of miss, dodge, parry and block is 0.2% lower a level the enemy is above us, and 0.2% higher a level below (`target.go`).
+  - Miss: 5% at our level.
+  - Dodge: our sheet dodge from base and Agility (1.3), plus Anticipation's 2% a point (`talents.go`, the Forever text says 2%, 4% and 6%).
+  - Parry: 5%, only with Spirit Weapons.
+  - Block: only with a shield, so never for us.
+  - While we cast, we can't dodge, parry or block. Only a miss stops the swing then.
+  - Every enemy swing comes from the front.
+- What it changes for us: an avoided swing doesn't fire Lightning Shield, and a parry gives us parry haste (6.2). The rest is damage taken.
+- Beta (our count from the whole log, 1,107 mob swings at us, the 14:50 export with 5.43% dodge, 5% parry and Defense 150 of 150):
+
+  | Mob levels | Swings | Miss | Dodge | Parry |
+  |---|---|---|---|---|
+  | Below us (-6 to -1) | 380 | 4.2% | 6.1% | 4.7% |
+  | +1 and +2 | 192 | 7.3% | 3.6% | 3.1% |
+  | +3 to +5 (mostly +4) | 506 | 4.2% | 5.7% | 2.8% |
+
+  - The sim expects about 5.4%, 5.8% and 5.4% at -2, and 4.2%, 4.6% and 4.2% at +4. Miss and dodge fit.
+  - Parry is low above our level: 20 of 698 (2.9%), where the sim expects about 30 (1 time in 30 by chance). Below our level it fits (18 of 380). Some of those swings may have come from our side or back, where we can't parry. The log doesn't show facing.
+  - No swing was blocked, as in the sim.
+  - Only 16 swings came while we cast (all Healing Wave and Lesser Healing Wave): 1 miss, no dodge or parry. That's too few to tell whether we can dodge while casting.
+- Proposed to the user: no change. Record the low parry with the rest of the enemy damage to us.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
