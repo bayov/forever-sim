@@ -804,3 +804,27 @@ scratchpad cl/parry.py. Each mob's speed is its most common swing interval (2.0 
   The other 2 swings came later than an unhasted swing would (19:49:02 and 19:52:01), so
   something else held the swing there.
 The rule holds.
+
+
+2026-10-10  Saltstone Crystalhides, a Scorpid Reaver and a Saltstone Basilisk (20:09:25 to 20:18:26)
+--------------------------------------------------------------------------------------------------
+Combat log WoWCombatLog-101026_150733.txt, Windfury Weapon and Flametongue Totem. Levels 31
+and 32 (+1 and +2).
+  - Glancing (4.6): level 31 1 of 9, level 32 20 of 50. The whole log at level 32 is now
+    23 of 60 (38%, 95% range 27 to 51%). The sim gives 30% and the rule on our real skill
+    gives 32%. 23 or more of 60 comes about 1 time in 10 at 30% and 1 time in 6 at 32%, so
+    both still fit. Level 31 is new: the sim gives 20% and the real-skill rule 22%.
+    scratchpad cl/glance.py counts it, with the mob's level from its spell lines too.
+  - Stormstrike raw 221 to 265 on 5 hits, inside 220.0 to 271.7. The Improved Stormstrike
+    buff and the mark came on all 5.
+  - White raw 191 to 237, but one crit at 20:12:36 had raw 185, under the 191.7 floor. The
+    Scorpid Reaver's Withering Poison was on us then, and it lowers Strength and Agility
+    (wowhead Classic 13884), so the recheck holds.
+  - Flametongue Totem: 38 of 38 landed swings in range procced. None of the 13 misses,
+    dodges and parries or the 5 Stormstrikes did. The 7 kills and 1 swing on a mob that died
+    within 130 ms had no proc. Crits 6 of 38, so the whole log is 18 of 182 (9.9%).
+  - Orbs: no crit, 3 MISS in 15. The whole log at level 32 is 3 of 17, against 6% at +2 in
+    Classic. That comes about 1 time in 12, and levels 33 and 34 (4 of 28, 37 of 146) sit
+    near Classic's 17% and 28%.
+  - No partial resists in 65 spell hits at levels 31 and 32.
+  - Parry haste: 6 of 6 mob parries within 0.1 sec.
