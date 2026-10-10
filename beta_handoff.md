@@ -323,6 +323,14 @@ Keep this current as you go.
   Another shaman ("Szm" in the 15:07 log) had raw 63 on two rank 2 hits, which fits no cut,
   but we don't know their level or talents. No rush: fit it in when the user plays with
   Frostbrand.
+- [ ] 15. Does a shaman imbue stack with an oil or a sharpening stone (notes.md, added by the
+  audit session 2026-10-11)? The sim says yes under Forever. The client puts shaman imbues
+  in a new kind of weapon enchant (effect 360), and oils and stones keep the old one (54).
+  Test: put a stone or an oil on the weapon, then Rockbiter or Windfury Weapon, and check
+  that both stay. The ENCHANT_APPLIED and ENCHANT_REMOVED lines name the enchant ("Windfury
+  1") and the weapon. We already know a second shaman imbue replaces the first (Flametongue
+  came off when Windfury went on at 19:28:26 on 2026-10-10), and an imbue lasts 60 min. No
+  oil or stone shows in our logs so far. Low priority.
 
 ## Recheck with every new log
 
