@@ -78,7 +78,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
 - [x] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
 - [x] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
-- [ ] 6.7 PvP mode: the enemy types, time out of melee range
+- [?] 6.7 PvP mode: the enemy types, time out of melee range
 
 ## 7. Shaman abilities
 
@@ -780,6 +780,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Proposed to the user: no change. A beta check would be the sheet's health with Toughness or Improved Reincarnation, if a respec takes either.
 - OK from the user (2026-10-10, "Ok on 6.6").
 - `base_stats_test.go` TestOrcShamanHealthTalents checks a naked level 30 Orc: 51 Stamina and 665 health with no talents, 56 and 715 with Toughness 5/5, 665 * 1.04 with Improved Reincarnation 2/2 and 715 * 1.04 with both. It fails when Toughness keeps the fraction and when Improved Reincarnation leaves out Stamina's health.
+
+### 6.7 PvP mode
+
+- Shown to the user (2026-10-10), waiting for the OK. PvP mode (the encounter's PvP switch) changes two things in our attack table against the enemy player (`environment.go`). White hits never glance, because the enemy isn't a mob. When the enemy has any of Dodge, Parry or Block set, those replace the level based 5% each. The Level 30 PvP presets attack from in front, so parry and block count. Everything else is the same as against a mob of that level: the miss chances, crit, armor and spell hit (4% miss at the same level).
+- The Forever client (70338) has no PvP damage rule for us. Every spell effect's PvpMultiplier is 1 (or 0 on 8 effects), so no shaman spell deals a different amount to a player.
+- Time out of melee range (`pvp.go`, Encounter "melee downtime", PvP or not): we go out of range for random stretches of 1 to 10 sec, and the stretches in range are drawn so that the share out of range comes to the setting on average. A fight starts at a random point of that cycle. Out of range we have no white hits, no melee abilities (Stormstrike) and no Fire Nova (the enemy has left the totem). Shocks, Lightning Bolt and our totems' buffs keep going. Searing Totem would keep attacking too, but the PvP rotation doesn't use it.
+- The enemy types (`presets.ts`, 2026-10-07): the Level 30 PvP preset fights a "Level 30 Player" (600 armor, 5% dodge, 5% parry), 70% out of range. The six stat weight presets each fight one kind of player built from median level 25 to 30 gear and the class's base dodge: cloth 320 armor and 4.5% dodge, no melee (70% out of range), hunter 770 / 7% / 5% parry (70%), rogue 790 / 14% / 5% (30%), shaman 700 / 6.5% / no parry (30%), warrior or paladin with a two hander 1320 / 4.5% / 5% (30%), and with a shield 2000 / 5.5% / 6% / 12% block (30%). These are our estimates, not beta numbers.
+- Found, about the enemy hitting us (recorded only, the user's call on 6.2 to iron out enemy damage later): the enemy never leaves melee range. So it keeps swinging at us, and firing our Lightning Shield, while we are out of range. That's right when it stuns or roots us, but not when it kites us. Its crit is the mob rule (5% at the same level), not a player's crit from Agility. A player's resistances aren't modeled, so none of our spells is partly resisted.
+- Proposed to the user: no change. After the OK, a test checks the PvP table (no glancing, the enemy's own dodge, parry and block) and that being out of range stops white hits, Stormstrike and Fire Nova but not the shocks, at the set share of the fight.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
