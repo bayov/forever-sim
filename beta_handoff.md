@@ -186,7 +186,11 @@ Maelstrom Weapon 34, everything under "At 60").
 
 Keep this current as you go.
 
-- [ ] 1. Windfury Weapon attacks and Flametongue Totem
+- [x] 1. Windfury Weapon attacks and Flametongue Totem. Settled 2026-10-10: Flametongue Totem
+  procs only on white swings. The client (70291 and 70338) gives its buff ProcTypeMask 0x4,
+  and the user saw no proc from Stormstrike on the beta. The audit session made the sim
+  change. Windfury Weapon's attacks weren't counted on their own, so the item 2 run checks
+  them on the side (it uses Windfury Weapon with Flametongue Totem).
 - [ ] 2. Flametongue procs on a miss, dodge, parry or block
 - [ ] 3. Windfury Weapon attacks and the swing timer
 - [ ] 4. Stormstrike damage model, dagger, Rage of the Storm
