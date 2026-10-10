@@ -792,3 +792,15 @@ amount 140. The sim can't glance below our level, so that one breaks the recheck
 on our real weapon skill with no 40% cap fits every row. The level field on our own lines
 is our item level (33), not our level. No sim change yet: the user waits for more data, and
 the sims only meet +2 and +3.
+
+
+2026-10-10  Parry haste recheck, the whole log up to 20:09 (audit 6.2)
+----------------------------------------------------------------------
+Classic's rule, as the audit session put it in the sim (5740215a), checked with
+scratchpad cl/parry.py. Each mob's speed is its most common swing interval (2.0 for most,
+3.05 for Thundering Boulderkin, 1.2 for Needles Cougar).
+  Mob parries of our swings: 63 of 64 within 0.1 sec of the rule, the other 0.11 off.
+  Our parries: 22 of 27 within 0.1 sec. 3 more within 0.16, where Flurry changed our speed.
+  The other 2 swings came later than an unhasted swing would (19:49:02 and 19:52:01), so
+  something else held the swing there.
+The rule holds.

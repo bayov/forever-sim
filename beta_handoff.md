@@ -322,6 +322,11 @@ combat log, run these checks on it too, and tell the user when one breaks.
   swing sooner. With 20 to 60% left, it comes 20% of the swing after the parry. With 20% or
   less left, nothing changes. Base counts up to the audit session's read: 58 of 58 mob
   parries within 0.1 sec, and 23 of our 25 within 0.16 sec (the other 2 waited on a cast).
+  scratchpad cl/parry.py (from the audit session's enemy/fit.py) takes each mob's speed from
+  its most common swing interval, so the 3.05 sec Boulderkin and the 1.2 sec Needles Cougar
+  fit too. The whole log up to 20:09: mobs 63 of 64 within 0.1 sec (largest 0.11), us 22 of
+  27 within 0.1 sec, 3 more within 0.16 (Flurry changed our speed), and 2 swings that came
+  later than an unhasted swing would (19:49:02 and 19:52:01, the swing was held).
 - Glancing by mob level (audit 4.6, the user keeps the sim's 40% cap for now, 2026-10-10).
   Count our white swings that glanced out of all our white swings (misses, dodges and
   parries included), per target level. The mob's level is the field just before the damage
