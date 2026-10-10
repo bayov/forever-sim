@@ -18,16 +18,19 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 	manaMetrics := shaman.NewManaMetrics(actionID)
 	globes := int32(3)
 
-	// We use at most one globe every 3.5 sec.
+	// We use a globe when an enemy lands a direct hit on us or we crit with a heal, at most one
+	// globe every 3.5 sec.
 	//
-	// The tooltip only says "Only one globe will activate every few seconds", but the client
-	// (70291) gives the spell a 3500 ms proc cooldown, like Lightning Shield's.
+	// Like Lightning Shield, melee, ranged attacks and harmful spells all count, AoE too, but
+	// damage over time ticks don't. The tooltip only says "Only one globe will activate every
+	// few seconds", but the client (70291) gives the spell a 3500 ms proc cooldown, like
+	// Lightning Shield's, and the same proc flags plus our heals (0x262a8).
 	icd := core.Cooldown{
 		Timer:    shaman.NewTimer(),
 		Duration: time.Millisecond * 3500,
 	}
 
-	consumeGlobe := func(sim *core.Simulation) {
+	consumeGlobe := func(sim *core.Simulation, _ *core.Unit) {
 		if !icd.IsReady(sim) {
 			return
 		}
@@ -52,43 +55,17 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 			}
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Landed() {
-				consumeGlobe(sim)
+			if result.Landed() && spell.Unit.IsOpponent(&shaman.Unit) {
+				consumeGlobe(sim, spell.Unit)
 			}
 		},
 		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.DidCrit() {
-				consumeGlobe(sim)
+				consumeGlobe(sim, nil)
 			}
 		},
 	})
-
-	// Raid damage as a steady stream of spell hits. Spells cannot be dodged or parried,
-	// so unlike a boss meleeing the shaman this feeds Water Shield without also firing
-	// Improved Stormstrike's reset or parry haste.
-	//
-	// With a variation, each iteration picks its own rate between the rate minus the
-	// variation and the rate plus it, the way Duration +/- picks each fight's length.
-	if shaman.RaidDamageHitsPerMinute > 0 {
-		shaman.RegisterResetEffect(func(sim *core.Simulation) {
-			hitsPerMinute := shaman.RaidDamageHitsPerMinute
-			if variation := shaman.RaidDamageHitsPerMinuteVariation; variation > 0 {
-				hitsPerMinute += (sim.RandomFloat("Raid Damage Hits")*2 - 1) * variation
-			}
-			if hitsPerMinute <= 0 {
-				return
-			}
-			period := time.Duration(float64(time.Minute) / hitsPerMinute)
-			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period: period,
-				OnAction: func(sim *core.Simulation) {
-					if shaman.WaterShieldAura.IsActive() {
-						consumeGlobe(sim)
-					}
-				},
-			})
-		})
-	}
+	shaman.shieldHitTaken[shaman.WaterShieldAura] = consumeGlobe
 
 	shaman.WaterShield = shaman.RegisterSpell(core.SpellConfig{
 		SpellCode: SpellCode_ShamanWaterShield,

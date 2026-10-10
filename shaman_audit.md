@@ -76,7 +76,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [ ] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
 - [ ] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
 - [ ] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
-- [ ] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed Water Shield
+- [ ] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
 - [ ] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
 - [ ] 6.7 PvP mode: the enemy types, time out of melee range
 
@@ -533,7 +533,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-10). Judgement of Wisdom on the target gives us mana (59 at rank 3) on half of our white hits, even the misses, and on half of our landed Stormstrikes, Windfury Weapon attacks and spells (`debuffs.go`). Proc damage, totem attacks and Lightning Shield orbs never give it. Lightning Shield and Water Shield only take hits on us, at most one orb or globe every 3.5 sec. Our attacks never touch them. The melee item procs (Crusader, Hand of Justice, Sulfuras) trigger on landed white hits, Stormstrikes and Windfury Weapon attacks, never on spells or proc damage, and their own proc damage triggers nothing. Revelation triggers on landed direct spells that don't crit (whether only shocks count is in Need to Verify). The Orc has no proc racials.
 - Client 70291 (Era 1.15.9 the same): Judgement of Wisdom triggers when the target takes melee swings, melee abilities, ranged attacks and harmful spells. The 50% and the white misses come from the server (Era, the SoD sim). Every Lightning Shield rank and Water Shield (408510) have 3 charges and a 3500 ms proc cooldown, so we took "Water Shield globe ICD" and "Lightning Shield orb ICD" off the Need to Verify list and updated the code comments.
-- Found: the client's Lightning Shield also fires on ranged attacks and harmful spells we take, and the sim only on melee hits (`lightning_shield.go`). The raid damage stream (raidDamageHitsPerMinute) only feeds Water Shield. Asked the user.
+- Fixed (2026-10-10, the user's go): the client's Lightning Shield also fires on ranged attacks and harmful spells we take (0x222a8, no damage over time ticks), and the sim only fired it on melee hits. The user: shields pop on any damage from an enemy, AoE included, and the raid damage hits per minute stand in for the encounter damage we don't sim. Both shields now go off on any direct hit an enemy lands on us, and the raid damage stream (`shields.go`) fires Lightning Shield orbs at our target as well as spending Water Shield globes. No preset sets the raid damage rate, so no golden changed.
+- `shields_test.go` TestOrcShamanShieldTriggers lands an enemy melee hit, a melee miss, a ranged hit, a spell hit, a damage over time tick and our own spell on a fresh Lightning Shield and Water Shield, and checks which ones use a charge. TestOrcShamanRaidDamageLightningShield checks that 12 raid hits a minute fire 3 orbs at the target in 15 sec. They fail when Lightning Shield needs melee hits, when our own damage sets the shields off and when the raid damage only feeds Water Shield.
 - `other_procs_test.go` TestOrcShamanOtherProcs puts Crusader and Hand of Justice on a level 60 shaman with Judgement of Wisdom on the target, and forces hits and misses on white hits, Stormstrikes, Windfury attacks, the six damage spells, the Flametongue Totem damage, Searing Totem attacks and Lightning Shield orbs, 2000 times each 2 sec apart (Hand of Justice's 1% with its cooldown). It queues one roll at a time, because 32000 queued actions took the sim 14 sec. It fails when Judgement of Wisdom needs white hits to land, when it comes from proc damage and totems, when Crusader procs from spells and when Hand of Justice only procs from white hits.
 - The shaman tests share `weaponSim` (`damage_modifiers_test.go`) for these setups now.
 
@@ -557,8 +558,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### Pre-checks for section 7, part 2 (not yet shown to the user)
 
-- 7.15 Lightning Shield (`lightning_shield.go`): 3 orbs, 10 min. A melee hit on us that lands fires one orb, at most one every 3.5 sec (the ICD is a guess, "TODO: Does vanilla have an ICD?"). 26.7% spell power coefficient on every rank (Forever).
-- 7.16 Water Shield (`water_shield.go`): free, 15 sec cooldown, 3 globes, 10 min. Each globe returns 2% of max mana, at most one every 3.5 sec (a guess borrowed from Lightning Shield). Only the raid damage hits per minute option feeds it at level 60.
+- 7.15 Lightning Shield (`lightning_shield.go`): 3 orbs, 10 min. Any direct hit an enemy lands on us (melee, ranged or spell) and each raid damage hit fire one orb, at most one every 3.5 sec (client 3500 ms, settled in 4.13). 26.7% spell power coefficient on every rank (Forever).
+- 7.16 Water Shield (`water_shield.go`): free, 15 sec cooldown, 3 globes, 10 min. Each globe returns 2% of max mana, at most one every 3.5 sec (client 3500 ms, settled in 4.13). Only the raid damage hits per minute option feeds it at level 60.
 - 7.3 Flametongue Weapon (`flametongue_weapon.go`): a fire hit on each main hand hit for (rank damage / 4) times weapon speed, 112.4 per 4 sec at level 60. Its 0.1 spell power coefficient does not scale with weapon speed. Open: does Forever scale the coefficient with speed? Elemental Weapons adds 5 / 10 / 15%.
 - Beta, level 30 with 0/3 Elemental Weapons (2026-10-08):
   - Rockbiter rank 4 gave 177 AP (sim 177.6).

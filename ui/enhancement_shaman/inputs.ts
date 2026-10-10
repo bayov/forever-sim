@@ -10,8 +10,8 @@ export const RaidDamageHitsInput = InputHelpers.makeSpecOptionsNumberInput<Spec.
 	fieldName: 'raidDamageHitsPerMinute',
 	label: 'Raid hits per minute',
 	labelTooltip:
-		'Spell hits the shaman takes from raid damage per minute. Each spends a Water Shield globe (2% mana, one every 3.5 sec at most). ' +
-		'The boss is on the tank, so this is the only thing that feeds Water Shield. Lightning Shield needs melee hits and ignores it.',
+		'Hits the shaman takes from raid damage per minute. Each one fires a Lightning Shield orb at the target or spends a Water Shield globe (2% mana). ' +
+		'Both shields go off at most once every 3.5 sec. The boss is on the tank, so this is the only thing that sets off your shield.',
 	float: true,
 	positive: true,
 	showWhen: player => player.sim.getRuleset() === Ruleset.RulesetForever,

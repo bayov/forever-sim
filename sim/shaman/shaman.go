@@ -229,8 +229,10 @@ type Shaman struct {
 	// Shield
 	ActiveShield     *core.Spell // Tracks the Shaman's active shield spell
 	ActiveShieldAura *core.Aura
-	// Spell hits taken from raid damage per minute, each spending a Water Shield globe.
-	// Set from the enhancement options before Initialize.
+	// What each shield's aura does when an enemy lands a direct hit on us.
+	shieldHitTaken map[*core.Aura]func(sim *core.Simulation, attacker *core.Unit)
+	// Direct hits taken from raid damage per minute, each one reaching our shield. Set from
+	// the enhancement options before Initialize.
 	RaidDamageHitsPerMinute float64
 	// Each iteration's rate is up to this many hits per minute above or below
 	// RaidDamageHitsPerMinute, like Duration +/- for the fight length.
@@ -266,10 +268,12 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerChainLightningSpell()
 	shaman.registerLavaBurstSpell()
 	shaman.registerLightningBoltSpell()
+	shaman.shieldHitTaken = map[*core.Aura]func(*core.Simulation, *core.Unit){}
 	shaman.registerLightningShieldSpell()
 	shaman.registerShocks()
 	shaman.registerStormstrikeSpell()
 	shaman.registerWaterShieldSpell()
+	shaman.registerRaidDamageHits()
 
 	// Imbues
 	// In the Initialize due to frost brand adding the aura to the enemy

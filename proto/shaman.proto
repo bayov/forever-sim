@@ -165,9 +165,10 @@ message EnhancementShaman {
 	// NextIndex: 11
 	message Options {
 		ShamanSyncType sync_type = 3;
-		// Spell hits the shaman takes from raid damage per minute, each spending a Water
-		// Shield globe. The boss is behind the tank, so this is the only thing that feeds
-		// Water Shield. Lightning Shield needs melee hits and ignores it.
+		// Direct hits the shaman takes from raid damage per minute. Each one fires a
+		// Lightning Shield orb at the target or spends a Water Shield globe, like any hit an
+		// enemy lands on us. The boss is on the tank, so this is the only thing that sets off
+		// our shield.
 		double raid_damage_hits_per_minute = 7;
 		// Each sim iteration takes a random rate up to this many hits per minute above or
 		// below raid_damage_hits_per_minute, like Duration +/- does for the fight length.

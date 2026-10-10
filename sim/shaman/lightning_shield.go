@@ -65,13 +65,20 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 		},
 	})
 
-	// We fire at most one orb every 3.5 sec.
+	// We fire an orb at any enemy that lands a direct hit on us, at most one orb every 3.5 sec.
 	//
-	// Every rank has a 3500 ms proc cooldown in both the Forever (70291) and Era (1.15.9)
-	// clients.
+	// Melee, ranged attacks and harmful spells all count, AoE too, but damage over time ticks
+	// don't. Every rank has those proc flags (0x222a8) and a 3500 ms proc cooldown in both the
+	// Forever (70291) and Era (1.15.9) clients.
 	icd := core.Cooldown{
 		Timer:    shaman.NewTimer(),
 		Duration: time.Millisecond * 3500,
+	}
+	hitTaken := func(sim *core.Simulation, attacker *core.Unit) {
+		if icd.IsReady(sim) {
+			icd.Use(sim)
+			shaman.LightningShieldProcs[rank].Cast(sim, attacker)
+		}
 	}
 
 	shaman.LightningShieldAuras[rank] = shaman.RegisterAura(core.Aura{
@@ -98,12 +105,12 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 			}
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.ProcMask.Matches(core.ProcMaskMelee) && result.Landed() && icd.IsReady(sim) {
-				icd.Use(sim)
-				shaman.LightningShieldProcs[rank].Cast(sim, spell.Unit)
+			if result.Landed() && spell.Unit.IsOpponent(&shaman.Unit) {
+				hitTaken(sim, spell.Unit)
 			}
 		},
 	})
+	shaman.shieldHitTaken[shaman.LightningShieldAuras[rank]] = hitTaken
 
 	shaman.LightningShield[rank] = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:  core.ActionID{SpellID: spellId},
