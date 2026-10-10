@@ -1,11 +1,13 @@
 package enhancement
 
 import (
+	"math"
 	"testing"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sim/shaman"
 )
 
 // TestOrcShamanSpellPower checks spell damage and healing from gear against a level 30 Orc
@@ -65,4 +67,81 @@ func TestOrcShamanSpellPower(t *testing.T) {
 	check("healing", topRank("Healing Stream Totem", enh.HealingStreamTotem).HealingPower(self), 59)
 	// 367 from the items and kits, and 2 Agility per point on 30 + 2 Agility.
 	check("armor", enh.GetStats()[stats.Armor], 367+64)
+}
+
+// TestOrcShamanSpellPowerBeta checks our spell hits at level 30 with 91 spell power against
+// the Forever beta's combat log (Shimmering Flats, 2026-10-10).
+//
+// Each spell hits for its base damage plus its coefficient times 91: 26.7% for Lightning
+// Shield's orbs, 38.6% for Earth Shock, 21.4% for Flame Shock and 10% for each of its ticks,
+// and 1.7% for Searing Totem. The log's raw field drops the fraction, so each raw number the
+// beta showed must be the whole part of a hit the sim can roll. The log also shows rank 1 of
+// Earth Shock and Flame Shock at their full coefficient, so Forever has no penalty for spells
+// learned below level 20.
+//
+// One rank 1 Earth Shock hit raw 57, 0.23 over the sim's top of 56.77. We leave that one hit
+// out.
+func TestOrcShamanSpellPowerBeta(t *testing.T) {
+	sim, enh := newTargetLevelSim(30, 30, whirlwind, 0, "")
+	sim.PrePull()
+	enh.AddStatDynamic(sim, stats.SpellPower, 91)
+
+	shield := topRank(t, "Lightning Shield", enh.LightningShield)
+	flameShock := []*core.Spell{enh.FlameShock[1], topRank(t, "Flame Shock", enh.FlameShock)}
+	cases := []struct {
+		name               string
+		spell              *core.Spell
+		low, high          float64
+		betaLow, betaHigh  float64
+		betaTick, wantTick float64
+	}{
+		{"Lightning Shield rank 3", topRank(t, "Lightning Shield orb", enh.LightningShieldProcs), 64.30, 64.30, 64, 64, 0, 0},
+		{"Earth Shock rank 4", topRank(t, "Earth Shock", enh.EarthShock), 118.82, 124.44, 118, 123, 0, 0},
+		{"Earth Shock rank 1", enh.EarthShock[1], 54.49, 56.77, 0, 0, 0, 0},
+		{"Flame Shock rank 1", flameShock[0], 43.47, 43.47, 43, 43, 16, 16.1},
+		{"Flame Shock rank 3", flameShock[1], 64.87, 64.87, 64, 64, 23, 23.1},
+		{"Searing Totem rank 3", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), 20.55, 26.55, 20, 26, 0, 0},
+	}
+	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 {
+		t.Fatalf("the level 30 ranks changed")
+	}
+	at(sim, 1, func(sim *core.Simulation) {
+		for _, c := range cases {
+			metrics := &c.spell.SpellMetrics[enh.CurrentTarget.UnitIndex]
+			low, high := math.Inf(1), math.Inf(-1)
+			for range 2000 {
+				// An orb takes a charge, so we put the shield up again before each one.
+				if c.spell.ActionID.SpellID == shaman.LightningShieldProcSpellId[3] {
+					shield.ApplyEffects(sim, enh.CurrentTarget, shield)
+				}
+				damage, critDamage := metrics.TotalDamage, metrics.TotalCritDamage
+				c.spell.ApplyEffects(sim, enh.CurrentTarget, c.spell)
+				if damage = metrics.TotalDamage - damage; damage > 0 && metrics.TotalCritDamage == critDamage {
+					low, high = min(low, damage), max(high, damage)
+				}
+			}
+			if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
+				t.Errorf("%s hit %.2f to %.2f, want %.2f to %.2f", c.name, low, high, c.low, c.high)
+			}
+			if c.betaHigh > 0 && (math.Floor(low) > c.betaLow || math.Floor(high) < c.betaHigh) {
+				t.Errorf("%s hit %.2f to %.2f, which can't show the beta's raw %.0f to %.0f", c.name, low, high, c.betaLow, c.betaHigh)
+			}
+		}
+	})
+	runSim(sim)
+
+	// The last Flame Shocks went out at 1 sec, so their ticks ran in the 12 sec after.
+	for _, c := range cases {
+		if c.wantTick == 0 {
+			continue
+		}
+		metrics := c.spell.SpellMetrics[enh.CurrentTarget.UnitIndex]
+		if metrics.Ticks == 0 {
+			t.Fatalf("%s didn't tick", c.name)
+		}
+		tick := metrics.TotalTickDamage / float64(metrics.Ticks)
+		if math.Abs(tick-c.wantTick) > 1e-9 || math.Floor(tick) != c.betaTick {
+			t.Errorf("%s ticked for %.2f, want %.2f (raw %.0f on the beta)", c.name, tick, c.wantTick, c.betaTick)
+		}
+	}
 }

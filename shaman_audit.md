@@ -64,7 +64,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 5.1 Spell hit: base miss against the target's level (17% at +3), hit from gear, the 1% floor
 - [?] 5.2 Resistances: target resistance, the level based resistance, average partial resists vs binary spells
 - [x] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
-- [?] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
+- [x] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
 - [ ] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
 - [ ] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
 - [ ] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
@@ -578,7 +578,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 5.4 Spell power
 
-- Shown to the user (2026-10-10), waiting for the OK. A spell hits for its base damage plus its coefficient times our spell power for its school, which is spell power ("damage and healing"), spell damage ("damage" only) and fire or nature power added together (`spell_result.go` GetSchoolDamage). Healing takes spell power and healing power. The percent modifiers then multiply the whole hit (5.6). Stormstrike and Windfury get no spell power. Their coefficient of 1 is for flat "+N damage" effects (4.10).
+- The user OK'd it (2026-10-10). A spell hits for its base damage plus its coefficient times our spell power for its school, which is spell power ("damage and healing"), spell damage ("damage" only) and fire or nature power added together (`spell_result.go` GetSchoolDamage). Healing takes spell power and healing power. The percent modifiers then multiply the whole hit (5.6). Stormstrike and Windfury get no spell power. Their coefficient of 1 is for flat "+N damage" effects (4.10).
 - Coefficients, the sim and the Forever client (70338, wago.tools SpellEffect) alike: Lightning Bolt 42.9%, 57.1% and then 71.4% from rank 3, Chain Lightning 57.1% (rank 3 51.7%), Earth Shock and Frost Shock 38.6%, Flame Shock 21.4% and 10% a tick, Lightning Shield orbs 26.7%, Searing Totem 1.7%, Magma Totem 3.3%, Fire Nova 10% (rank 1) and 14.3%, Flametongue Weapon and Frostbrand 10% a hit, Flametongue Totem none, Healing Stream 2.2% a tick, Lava Burst 71.4%. Low ranks keep their full coefficient (5.5).
 - Beta (our count from the Shimmering Flats log, 91 spell power, the same the beta session used for Searing Totem). The log's raw field drops the fraction, and the shown amount rounds it up at random by its size. Every hit fits the sim:
   - Lightning Shield rank 3: 40 + 26.7% of 91 = 64.30. All 94 hits were raw 64, and 27 of them (29%) were shown as 65.
@@ -593,6 +593,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Open: Fire Nova's damage spell. Forever's Fire Nova (408341 to 408345) does nothing itself in the client, so the server picks the damage spell. The client has two sets. One is the old totem's (8349, 8502, 8503, 11306, 11307), 10% and 14.3%, which the sim and the SoD sim use. The other is SoD's Fire Nova (408423 to 408428), 21.4%, with a few points less base damage (50, 102, 183, 284 and 403 against 52, 109, 196, 299 and 419). At level 30 rank 2 with 91 spell power the two are almost the same (122.5 to 137.5 against 122.4 to 136.5). At 60 rank 5 they're equal at 225 spell power, and SoD's is 5 more at 300. The combat log names the damage spell, so one cast on the beta answers it.
   - The beta tooltip for rank 2 (408342, 2026-10-10) says 123 to 138. The client's text for it reads $8502s1, so it shows the old totem's damage spell (all five ranks point at 8349, 8502, 8503, 11306 and 11307). At 91 spell power that's 122.5 to 137.5, and SoD's would be 122.4 to 136.5 (122 to 137). So the client agrees with the sim. Only a combat log shows what the server uses, so one cast still confirms it.
 - Proposed to the user: no change. Fire Nova's damage spell goes on the beta list (notes.md).
+- `spell_power_test.go` TestOrcShamanSpellPowerBeta gives a level 30 Orc 91 spell power and rolls Lightning Shield rank 3, Earth Shock ranks 1 and 4, Flame Shock ranks 1 and 3 and Searing Totem rank 3 2000 times each. It checks the sim's lowest and highest normal hit and Flame Shock's ticks, and that every raw number the beta showed can come out of them (the one rank 1 Earth Shock at 57 left out). It fails with a 25% orb coefficient.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
