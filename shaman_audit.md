@@ -91,7 +91,7 @@ The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (sect
 - [x] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
 - [x] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
 - [ ] 7.4 Rockbiter Weapon: attack power
-- [ ] 7.5 Frostbrand Weapon: proc rate, damage
+- [?] 7.5 Frostbrand Weapon: proc rate, damage
 - [ ] 7.6 Imbue rules: the shaman imbue beside an oil or stone (Forever), one imbue per weapon
 
 Strikes and shocks
@@ -871,6 +871,18 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Tests:
   - `flametongue_weapon_test.go` TestOrcShamanFlametongueWeapon checks every rank 3 hit at 30 with 91 spell power on Rage of the Storm (3.3) and Bloody Brass Knuckles (1.6): 8.84 a second of speed, minus 5, plus 9.1, and crits at 1.5 times. Rage of the Storm gives 33.27, where the beta averaged 33.3.
   - `spell_ranks_test.go` TestOrcShamanImbueDamage takes 2 and 5 off ranks 2 and 3, and `elemental_weapons_test.go` wants (35.36 / 4 * 3.5 - 5) * 1.15 with 3 points.
+
+### 7.5 Frostbrand Weapon
+
+- Shown to the user (2026-10-10), waiting for the OK.
+- The sim (`frostbrand_weapon.go`): ranks at 20, 28, 38, 48 and 58. It procs at 9 PPM on landed main hand melee hits (white swings, Stormstrike and Windfury Weapon's attacks, blocks included, 4.13), so a hit's chance is 9 * weapon speed / 60 (54% on a 3.6 speed weapon). A proc is a frost hit for a flat amount that doesn't depend on weapon speed: 44.6 for rank 1 at 26, 72 for rank 2 at 36, 117 for rank 3 at 46, 159 for rank 4 at 56 and 169.2 for rank 5 at 60. Rank 2 is 54 at 30. It adds 10% of spell power.
+- The hit rolls spell hit and spell crit (5.1, 5.3), and a crit deals 1.5 times (Elemental Fury raises it, section 8). Elemental Weapons multiplies it by 1.05, 1.1 or 1.15 (8.24). Like Flametongue Weapon, it doesn't trigger Elemental Devastation or Clearcasting (its proc mask isn't a spell's). It puts an 8 sec debuff on the target that does nothing in the sim. There's no level based partial resist under Forever (5.2).
+- Client 70338 (wago.tools): the enchants (2, 12, 524, 1667, 1668) are the old "combat spell" kind with no chance of their own, so the server sets the proc rate. Each casts its rank's Frostbrand Attack (8034, 8037, 10458, 16352, 16353): a 25% movement slow for 8 sec and a frost hit of 32 + 2.1, 48 + 3, 77 + 5, 127 + 4 and 158 + 5.6 a level, growing for 6 levels on rank 1 and 8 on the others, with a 0.1 coefficient. That's the sim's damage (7.1). The enchants last 60 min.
+- Cross-check: the SoD sim uses 9 PPM and 0.1 too. Its damage table differs from the client and isn't used.
+- Beta: we've never used Frostbrand. Another shaman ("Szm", 20:57 to 21:10 in WoWCombatLog-101026_150733.txt) used rank 2. Its log shows 5 procs (2 hits, 3 misses) on 10 landed melee hits, which fits 9 PPM on a slow weapon but is too few to say. Both hits had raw 63. That fits rank 2 at 30 with Elemental Weapons 3/3 and the 12 spell power in their logged stats, (54 + 1.2) * 1.15 = 63.5, with no Flametongue style cut (2 less would give 61). But we don't know their level or talents.
+- The sim's Frostbrand Attack lacks the "passive" and "no cast complete" flags that Flametongue Weapon's hit has, so each proc counts as a cast. No shaman talent reacts to it, because they check for spell damage, so this changes nothing we know of.
+- Already tested: `spell_ranks_test.go` (rank 1 at 20, 26 and 27, no spell power) and `proc_matrix_test.go` (which hits proc it). Nothing tests the proc rate, ranks 2 to 5, spell power or Elemental Weapons.
+- Proposed: give the hit the same two flags as Flametongue Weapon's. Add notes.md Need to Verify, Beta: Frostbrand rank 2's proc rate and damage at 30. A new test checks 9 PPM per landed hit, each rank at its top level with spell power, and Elemental Weapons 3/3.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
