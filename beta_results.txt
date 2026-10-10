@@ -357,3 +357,32 @@ The rest, from the beta's attributes:
 What it showed: the Forever Undead paladin is the sim's row + 3 Strength + 1 Agility - 5
 Spirit, at least from level 1 to 20. Whether the Undead race changed too (and so the Undead
 rogue) still needs an Undead level 1 of another class.
+
+
+2026-10-10  Level 1 Undead mage (items 8 and 7)
+-----------------------------------------------
+`/bayov export` at 17:12, a new character in its starting gear (no stats but armor, every
+"pos" 0). No talents. Staves 1 of 5, Defense 1 of 5.
+
+  Attributes (Str / Agi / Sta / Int / Spi):
+    beta Undead mage          22 / 19 / 21 / 21 / 22
+    sim (1.12 Undead mage)    19 / 18 / 21 / 27 / 21  (cmangos' row has Int and Spirit odd)
+    1.12 Human mage           20 / 20 / 20 / 23 / 22
+
+The Undead race itself changed, not only the paladin. Against the 1.12 Human of the same
+class, at level 1:
+                      1.12 Undead (warrior, rogue, priest, warlock)   Forever Undead
+                      -1 / -2 / +1 / -2 / +4 or +5                    paladin +2 / -1 / +1 / -2 / -1
+                                                                      mage    +2 / -1 / +1 / -2 /  0
+So Forever's Undead has about 3 more Strength, 1 more Agility and 5 less Spirit than 1.12's,
+for every class. The paladin and the mage disagree by 1 Spirit.
+
+The rest, from the beta's attributes:
+  Mana 135 = 100 + 20 + 1 x 15. Attack power 12 = 22 - 10.
+  Crit and dodge 4.750%: the sim gives 3.2 + 19 x 0.0899 = 4.908, less 0.16% for Staves and
+  Defense at 1 of 5.
+  Spell crit 4.232% (sim 0.2 + 21 x 0.1923 = 4.239).
+  Health 62, where the sim gives 61 = 31 + 20 + 10. The paladin was 10 under at level 1, so
+  the level 1 base health is off for both, in different directions. No preset uses it.
+  Mana regen 5.501 a sec = 22 Spirit x 0.25. That is the shaman and paladin formula, so the
+  mage follows it under 50 Spirit (item 7). The 1.12 mage formula would give 9 a sec.

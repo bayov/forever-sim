@@ -210,13 +210,16 @@ Keep this current as you go.
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
 - [ ] 5. Flametongue procs and Elemental Devastation
 - [ ] 6. Weapon Mastery baseline
-- [ ] 7. Spirit regen of the other classes
+- [ ] 7. Spirit regen of the other classes. Mage under 50 Spirit matches (5.5 a sec at 22
+  Spirit, level 1 Undead, 2026-10-10). Mage over 50, druid, hunter, priest, warlock to go.
 - [ ] 8. Undead paladin base stats. Measured 2026-10-10 at level 1 (24 / 19 / 23 / 18 / 21)
   and level 20 (44 / 30 / 42 / 30 / 34). Both are the sim's row + 3 Str + 1 Agi - 5 Spi, so
   the 1.12 paladin gains hold and only the starting row differs. Health, mana, AP, crit,
   dodge and spell crit follow the sim's formulas (level 1 health is 10 under, no preset uses
-  it). The sim change was shown to the user. An Undead level 1 of another class (with item
-  7) tells whether the Undead race changed too, which would move the Undead rogue.
+  it). A level 1 Undead mage (2026-10-10) shows the same shift, so Forever changed the
+  Undead race: about +3 Str, +1 Agi and -5 Spi against 1.12's Undead, for every class (the
+  Undead rogue too). The paladin and the mage disagree by 1 Spirit. Asked for level 1
+  Undead priest, warlock and rogue exports before the sim change.
 - [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
   Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and
