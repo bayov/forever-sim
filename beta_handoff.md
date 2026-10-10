@@ -222,10 +222,11 @@ Keep this current as you go.
   (paladin 10 under, mage and priest 1 over), and no preset uses it.
 - [ ] 10. Forever's other races (added 2026-10-10). At level 1 the Orc is 0 / 0 / -1 / +2 / -3
   off 1.12 (shaman and warlock), the Tauren -3 / +3 / 0 / +3 / -2 (hunter and druid), and the
-  Windshaper -1 / +1 / -1 / +1 / -1 off the sim's Human baseline (hunter). Each Forever race
+  Troll 0 / 0 / -1 / +1 / -1 (priest), and the Windshaper -1 / +1 / -1 / +1 / -1 off the
+  sim's Human baseline (hunter). Each Forever race
   adds up to 100 with 20 Spirit once the class bonus is off. The sim change (all levels, 60
   included, so the level 60 Orc shaman gets -1 Sta, +2 Int, -3 Spi) plus the druid's attack
-  power below 60 is shown to the user, waiting for the OK. Troll is the one Horde race left.
+  power below 60 is shown to the user, waiting for the OK. Every Horde race is seen.
   The warrior, hunter and warlock crit per Agility at level 1 are off (beta_results.txt).
 - [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.

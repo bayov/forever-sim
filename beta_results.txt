@@ -523,3 +523,31 @@ The rest, from the beta's attributes:
   now follows the shaman formula under 50 Spirit (item 7).
 
 What it showed: Forever changed the Orc and Tauren races too, the same way for every class.
+
+
+2026-10-10  Level 1 Troll priest (items 10 and 7)
+-------------------------------------------------
+`/bayov export` at 18:04, a new character in its starting gear (no stats but armor, every
+"pos" 0). No talents. Maces 1 of 5, Defense 1 of 5.
+
+  Attributes (Str / Agi / Sta / Int / Spi):
+    beta Troll priest         21 / 22 / 20 / 19 / 23
+    1.12 Troll priest         21 / 22 / 21 / 18 / 24
+    difference                 0 /  0 / -1 / +1 / -1
+
+With the priest's 1.12 bonus (0 / 0 / 0 / +2 / +3) off, the Forever Troll is 21 / 22 / 20 /
+17 / 20, again 100 with 20 Spirit. Every Horde race is now seen. Each Forever race is 20 in
+every attribute plus a small offset that adds up to 0 and leaves Spirit alone:
+    Orc +3 / -3 / +1 / -1, Undead +2 / -1 / +1 / -2, Tauren +2 / -2 / +2 / -2,
+    Troll +1 / +2 / 0 / -3, Windshaper -1 / +1 / -1 / +1 (Str / Agi / Sta / Int).
+
+The rest, from the beta's attributes:
+  Mana 129 = 110 + 19. Attack power 11 = 21 - 10.
+  Crit and dodge 5.040% = 3.0 + 22 x 0.1 - 0.16 (the sim's numbers).
+  Spell crit 4.427%. With the Undead priest's 4.618% at 20 Int that's 0.80 + 0.1909 x Int,
+  where the sim has 0.1903.
+  Health 52, where the sim gives 51 = 31 + 20 (level 1 base health 1 over, as for the
+  Undead priest).
+  Mana regen 5.751 a sec at 23 Spirit = 0.25 x Spirit.
+
+What it showed: the Troll changed too, the same way as the others.
