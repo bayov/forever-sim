@@ -196,6 +196,11 @@ Maelstrom Weapon 34, everything under "At 60").
 
 Keep this current as you go.
 
+Open on 2026-10-11, all saved by the user for a later session: Frostbrand Weapon (14), dagger
+Stormstrike (4) and Spirit regen of the other classes (7). Every other item is settled or
+parked. Also watch Healing Stream crits on every new log (the recheck list): the 23:25 log
+had 8.3%, over the sim's flat 5%.
+
 - [x] 1. Windfury Weapon attacks and Flametongue Totem. Settled 2026-10-10: Flametongue Totem
   procs only on white swings. The client (70291 and 70338) gives its buff ProcTypeMask 0x4,
   and the user saw no proc from Stormstrike on the beta. The audit session made the sim
@@ -207,12 +212,13 @@ Keep this current as you go.
 - [x] 3. Windfury Weapon attacks and the swing timer. Settled 2026-10-10 in the sim's favor:
   after 3 Windfury procs from Stormstrike, the next swing came on the old schedule (within
   36 ms), so the attacks don't restart it.
-- [ ] 4. Stormstrike damage model, dagger. The model is settled (2026-10-10): 30 Stormstrikes
-  with Rage of the Storm fit the sim's normalized 3.6, and the other two models each had hits
-  outside their range. Only the dagger is left. Rage of the Storm's +10% is off the list: the user
-  said to assume it works (2026-10-10), because it only matters at level 30 and the sims we
-  care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
-  only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
+- [ ] 4. Stormstrike damage model, dagger. Saved for a later session (the user, 2026-10-11).
+  The model is settled (2026-10-10): 30 Stormstrikes with Rage of the Storm fit the sim's
+  normalized 3.6, and the other two models each had hits outside their range. Only the dagger
+  is left. Rage of the Storm's +10% is off the list: the user said to assume it works
+  (2026-10-10), because it only matters at level 30 and the sims we care about most are level
+  60. The client agrees (item spell 1309422, +10% to Stormstrike only). We count it in when we
+  read the user's Stormstrikes with Rage of the Storm.
 - [x] 5. Flametongue procs and Elemental Devastation. Settled 2026-10-11 in the sim's favor:
   9 Flametongue Weapon crits on the fist (00:20 to 00:30) gave no buff, so no Flametongue
   crit triggers it (beta_results.txt). 2026-10-10 respec run up to 21:25: the
@@ -231,9 +237,9 @@ Keep this current as you go.
   15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would put 55 of
   them too low. The sheet's damage percent is 1. The user said to assume Weapon Mastery no
   longer exists, at any level.
-- [ ] 7. Spirit regen of the other classes. Every class with mana matches under 50 Spirit
-  (0.25 x Spirit at level 1, 2026-10-10). Over 50 is only checked for the shaman and
-  paladin, and it needs a caster with 50+ Spirit.
+- [ ] 7. Spirit regen of the other classes. Saved for a later session (the user, 2026-10-11).
+  Every class with mana matches under 50 Spirit (0.25 x Spirit at level 1, 2026-10-10). Over
+  50 is only checked for the shaman and paladin, and it needs a caster with 50+ Spirit.
 - [x] 8. Undead base stats. Settled 2026-10-10: Forever's Undead race is 1.12's + 3 Str + 1
   Agi - 5 Spi for every class. The level 1 rogue and priest match exactly against their 1.12
   rows, the paladin at levels 1 and 20 against the row the sim builds, and the level 1 mage
@@ -319,16 +325,16 @@ Keep this current as you go.
   So glancing goes by real skill when it's under the most for our level. That only matters
   with low skill, so still no sim change. Leave out fist swings from the glancing counts
   until Unarmed is 150.
-- [ ] 14. Frostbrand Weapon rank 2 at level 30 (audit 7.5, notes.md, added by the audit
-  session 2026-10-10). The sim gives it 9 procs a minute, so 49.5% a landed main hand hit on
-  Rage of the Storm (3.3) and 24% on the 1.6 fist. It hits a flat 54 + 10% of spell power,
-  times 1.15 with Elemental Weapons 3/3, with no weapon speed term. At 49 spell power and no
-  Elemental Weapons that's 58.9. About 100 landed hits on Rage of the Storm show the rate,
-  and the hits show whether rank 2 loses a flat amount like Flametongue Weapon ranks 2 and 3
-  (about 2 and 5). Rank 2's proc is spell 8037 (the others are 8034, 10458, 16352 and 16353).
-  Another shaman ("Szm" in the 15:07 log) had raw 63 on two rank 2 hits, which fits no cut,
-  but we don't know their level or talents. No rush: fit it in when the user plays with
-  Frostbrand.
+- [ ] 14. Saved for a later session (the user, 2026-10-11). Frostbrand Weapon rank 2 at level
+  30 (audit 7.5, notes.md, added by the audit session 2026-10-10). The sim gives it 9 procs a
+  minute, so 49.5% a landed main hand hit on Rage of the Storm (3.3) and 24% on the 1.6 fist.
+  It hits a flat 54 + 10% of spell power, times 1.15 with Elemental Weapons 3/3, with no
+  weapon speed term. At 49 spell power and no Elemental Weapons that's 58.9. About 100 landed
+  hits on Rage of the Storm show the rate, and the hits show whether rank 2 loses a flat
+  amount like Flametongue Weapon ranks 2 and 3 (about 2 and 5). Rank 2's proc is spell 8037
+  (the others are 8034, 10458, 16352 and 16353). Another shaman ("Szm" in the 15:07 log) had
+  raw 63 on two rank 2 hits, which fits no cut, but we don't know their level or talents. No
+  rush: fit it in when the user plays with Frostbrand.
 - [x] 15. Does a shaman imbue stack with an oil or a sharpening stone (notes.md, added by the
   audit session 2026-10-11)? Settled 2026-10-11 in the sim's favor: the user says it stacks.
   The notes.md bullet is gone. The sim says yes under Forever. The client puts shaman imbues
