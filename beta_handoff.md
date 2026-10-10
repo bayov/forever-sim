@@ -265,8 +265,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Searing Totem's bolt gap (audit 7.22, the user waits for more data). The cast takes 2.21
   sec, and the next cast starts about 0.22 sec after it, or about 0.6 sec in a quarter of
   the gaps. It doesn't wait for the bolt to land, which flies 19 yards a second: the gap is
-  the same with the totem 2 or 19 yards away. Over 72 gaps up to 16:16 the mean is 2.527 sec
-  (sim 2.5), and a 40 sec totem fires 16 bolts. scratchpad cl/searing.py leaves out gaps
+  the same with the totem 2 or 19 yards away. Over 72 gaps up to 16:16 the mean is 2.527 sec,
+  plus 21 gaps from 18:27 to 18:42 at 2.480, so 2.516 over 93 (sim 2.5), and a 40 sec totem fires 16 bolts. scratchpad cl/searing.py leaves out gaps
   where the mob moved or the totem switched mobs.
 - Partial resists on our spells, by mob level (audit 5.2, the audit session proposed to drop
   the sim's level based partial resists under Forever). Count the landed hits of spells
@@ -284,7 +284,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
   is row[-4], because of the trailing "ST". Base counts (the whole log up to 16:21, 12.3%
   spell crit on the sheet): level 33 15/115 (13.0%), level 34 4/95 (4.2%), level 35 1/5. By
   spell: Searing 12/77, Flametongue procs 5/103 (Weapon and Totem together, 1/63 at level
-  34), shocks 1/18. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7). The sim lets every
+  34), shocks 1/18. Plus 18:27 to 18:42 (Thousand Needles): level 27 to 29 18/149 (12.1%),
+  Flametongue Weapon 5/60, Searing 8/55, Fire Nova 2/17, shocks 3/17, Flame Shock ticks 5/36. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7). The sim lets every
   player DoT tick crit under Forever, at the crit chance of the moment (ruleset.go canCrit). Most proc hits are on level 34 mobs and most Searing hits on level 33, so the spell
   and the level are mixed up. Flametongue Weapon on level 30 mobs or Searing on level 34s
   would tell them apart.
@@ -298,4 +299,5 @@ combat log, run these checks on it too, and tell the user when one breaks.
   Note our weapon skill from the latest `/bayov export` too (Two-Handed Maces was 149 of 150
   at 14:50 and still at 18:21 on 2026-10-10). Base totals (WoWCombatLog-101026_150733.txt up to 15:51, the
   audit session's count), plus 16:04 to 16:16: level 33 23/55 (42%), level 34 66/111 (59%),
-  level 35 6/8. Add each new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.
+  level 35 6/8. Plus 18:27 to 18:42: levels 27 to 29 0/61, where the sim gives 0. Add each
+  new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.
