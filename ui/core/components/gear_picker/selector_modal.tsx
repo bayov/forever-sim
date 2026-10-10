@@ -10,7 +10,7 @@ import { EquippedItem } from '../../proto_utils/equipped_item';
 import { slotNames } from '../../proto_utils/names';
 import { Stats } from '../../proto_utils/stats';
 import { SimUI } from '../../sim_ui';
-import { EventID, TypedEvent } from '../../typed_event';
+import { Disposable, EventID, TypedEvent } from '../../typed_event';
 import { mod, randomUUID, sanitizeId } from '../../utils';
 import { BaseModal } from '../base_modal';
 import GearPicker from './gear_picker';
@@ -49,6 +49,12 @@ export default class SelectorModal extends BaseModal {
 	private readonly titleElem: HTMLElement;
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
+	private readonly weightsElem: HTMLElement;
+
+	// Where the Stat Weights section sits on the Gear tab while we hold it, and the listener
+	// that sorts the lists again when its weights change.
+	private weightsHome: { parent: HTMLElement; next: Node | null } | null = null;
+	private weightsListener: Disposable | null = null;
 
 	private currentSlot: ItemSlot = ItemSlot.ItemSlotHead;
 	private currentTab: SelectorModalTabs = SelectorModalTabs.Items;
@@ -74,13 +80,23 @@ export default class SelectorModal extends BaseModal {
 			</div>,
 		);
 
-		this.body.appendChild(<div className="tab-content selector-modal-tab-content" />);
+		// The Stat Weights section from the Gear tab sits on the left while the modal is open,
+		// so we can change the weights and see the items sort by them, see showStatWeights.
+		this.body.appendChild(
+			<div className="selector-modal-layout">
+				<aside className="selector-modal-weights" />
+				<div className="selector-modal-main">
+					<div className="tab-content selector-modal-tab-content" />
+				</div>
+			</div>,
+		);
 
 		this.titleElem = this.rootElem.querySelector<HTMLElement>('.selector-modal-title')!;
 		this.tabsElem = this.rootElem.querySelector<HTMLElement>('.selector-modal-tabs')!;
 		this.contentElem = this.rootElem.querySelector<HTMLElement>('.selector-modal-tab-content')!;
+		this.weightsElem = this.rootElem.querySelector<HTMLElement>('.selector-modal-weights')!;
 
-		this.body.appendChild(
+		this.rootElem.querySelector<HTMLElement>('.selector-modal-main')!.appendChild(
 			<div className="d-flex align-items-center form-text mt-auto pt-3">
 				<i className="fas fa-circle-exclamation fa-xl me-2"></i>
 				<span>
@@ -98,7 +114,48 @@ export default class SelectorModal extends BaseModal {
 		this.titleElem.textContent = slotNames.get(selectedSlot) ?? '';
 		this.setData(selectedSlot, selectedTab, gearData);
 		this.setActiveItemSlotTab(selectedSlot);
+		this.showStatWeights();
 		this.open();
+	}
+
+	// We move the Gear tab's Stat Weights section into the modal, and put it back when the
+	// modal closes. It's the same section, so its presets, its results and a running
+	// calculation all carry on. The raid sim has no such section, and then the modal keeps
+	// its usual width.
+	private showStatWeights() {
+		if (!this.weightsHome) {
+			const weights = this.simUI.rootElem.querySelector<HTMLElement>('.ep-weights-menu');
+			if (weights?.parentElement) {
+				this.weightsHome = { parent: weights.parentElement, next: weights.nextSibling };
+				this.weightsElem.appendChild(weights);
+			}
+		}
+		this.dialog.classList.toggle('with-stat-weights', !!this.weightsHome);
+
+		if (this.weightsHome && !this.weightsListener) {
+			this.weightsListener = this.player.epWeightsChangeEmitter.on(() => {
+				this.ilists.forEach(list => {
+					list.applyFilters();
+					list.updateSelected();
+				});
+			});
+		}
+	}
+
+	private restoreStatWeights() {
+		this.weightsListener?.dispose();
+		this.weightsListener = null;
+		const weights = this.weightsElem.firstElementChild;
+		if (this.weightsHome && weights) {
+			const { parent, next } = this.weightsHome;
+			parent.insertBefore(weights, next?.parentNode === parent ? next : null);
+		}
+		this.weightsHome = null;
+	}
+
+	protected onHide(e: Event) {
+		super.onHide(e);
+		this.restoreStatWeights();
 	}
 
 	onShow() {

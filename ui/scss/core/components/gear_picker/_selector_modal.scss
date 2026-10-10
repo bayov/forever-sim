@@ -48,3 +48,48 @@
 		}
 	}
 }
+
+// With the Stat Weights section on the left (see SelectorModal.showStatWeights), the modal
+// grows wider than Bootstrap's xl, so the item list keeps its usual width next to it.
+.modal-dialog.selector-modal.with-stat-weights {
+	max-width: min(1720px, calc(100vw - 2 * var(--bs-modal-margin)));
+}
+
+.selector-modal-layout {
+	display: flex;
+	gap: var(--spacer-4);
+	align-items: flex-start;
+
+	.selector-modal-weights {
+		flex: 0 0 auto;
+		width: 34rem;
+		max-height: calc(65vh + 4.5rem);
+		overflow-y: auto;
+		padding-right: var(--spacer-2);
+
+		&:empty {
+			display: none;
+		}
+
+		.ep-weights-menu {
+			margin: 0;
+		}
+	}
+
+	.selector-modal-main {
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	// On a narrow screen the weights go above the items.
+	@include media-breakpoint-down(xl) {
+		flex-direction: column;
+
+		.selector-modal-weights {
+			width: 100%;
+			max-height: 40vh;
+		}
+	}
+}
