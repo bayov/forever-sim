@@ -380,10 +380,15 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 	spellID := []int32{16257, 16277, 16278, 16279, 16280}[points-1]
 	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
 
+	// The buff lasts 15 sec when we don't use up its 3 charges.
+	//
+	// It's 15 sec in both the Forever (70291) and Era (1.15.9) clients. We kept it forever
+	// before, which only showed when white swings stop for long, like out of melee range in
+	// PvP.
 	aura := shaman.GetOrRegisterAura(core.Aura{
 		Label:     fmt.Sprintf("Flurry Proc (%d)", spellID),
 		ActionID:  core.ActionID{SpellID: spellID},
-		Duration:  core.NeverExpires,
+		Duration:  time.Second * 15,
 		MaxStacks: 3,
 	})
 
