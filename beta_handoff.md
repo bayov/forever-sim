@@ -196,9 +196,13 @@ Keep this current as you go.
   and the user saw no proc from Stormstrike on the beta. The audit session made the sim
   change. Windfury Weapon's attacks weren't counted on their own, so the item 2 run checks
   them on the side (it uses Windfury Weapon with Flametongue Totem).
-- [ ] 2. Flametongue procs on a miss, dodge, parry or block
+- [ ] 2. Flametongue procs on a miss, dodge, parry or block. The Flametongue Totem half is
+  settled (2026-10-10, matches the sim). Flametongue Weapon is left: a run with it and no
+  totems.
 - [ ] 3. Windfury Weapon attacks and the swing timer
-- [ ] 4. Stormstrike damage model, dagger. Rage of the Storm's +10% is off the list: the user
+- [ ] 4. Stormstrike damage model, dagger. The model is settled (2026-10-10): 30 Stormstrikes
+  with Rage of the Storm fit the sim's normalized 3.6, and the other two models each had hits
+  outside their range. Only the dagger is left. Rage of the Storm's +10% is off the list: the user
   said to assume it works (2026-10-10), because it only matters at level 30 and the sims we
   care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
@@ -208,3 +212,5 @@ Keep this current as you go.
 - [ ] 8. Undead paladin base stats
 - [ ] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
+  Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The sim change (spell
+  hit roll, no crit) waits for the user's OK.
