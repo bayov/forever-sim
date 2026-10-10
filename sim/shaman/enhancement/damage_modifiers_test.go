@@ -30,7 +30,7 @@ func TestOrcShamanDamageModifiers(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sim, enh := newWeaponSim(30, &proto.ItemSpec{Id: c.weapon}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 60)
+			sim, enh := newWeaponSim(30, stormstrike, &proto.ItemSpec{Id: c.weapon}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 60)
 			enh.PseudoStats.BonusPhysicalDamage += flatBonus
 			if enh.Stormstrike == nil || enh.WindfuryWeaponMH == nil {
 				t.Fatalf("missing Stormstrike or Windfury Weapon")
@@ -62,12 +62,12 @@ func TestOrcShamanDamageModifiers(t *testing.T) {
 	}
 }
 
-// newWeaponSim starts a Forever sim of seconds of an Orc shaman of level with Stormstrike,
+// newWeaponSim starts a Forever sim of seconds of an Orc shaman of level with talents,
 // holding weapon with imbue on it, against a target 2 levels up with no armor. Another
 // shaman gives us totem (Windfury or Flametongue Totem), and a trinket that isn't 0 goes in
 // the first trinket slot.
-func newWeaponSim(level int32, weapon *proto.ItemSpec, imbue proto.WeaponImbue, totem proto.TotemWeaponBuff, trinket int32, seconds float64) (*core.Simulation, *EnhancementShaman) {
-	player := newOrcShaman(level, stormstrike, &proto.EnhancementShaman_Options{ShamanImbue: imbue})
+func newWeaponSim(level int32, talents string, weapon *proto.ItemSpec, imbue proto.WeaponImbue, totem proto.TotemWeaponBuff, trinket int32, seconds float64) (*core.Simulation, *EnhancementShaman) {
+	player := newOrcShaman(level, talents, &proto.EnhancementShaman_Options{ShamanImbue: imbue})
 	for range proto.ItemSlot_ItemSlotMainHand {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
 	}

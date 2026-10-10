@@ -69,9 +69,9 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 		ignore  string // a proc this attack never meets in a fight, see below
 	}
 
-	sim, enh := newWeaponSim(level, &proto.ItemSpec{Id: weapon}, imbue, totem, 0, 1)
+	sim, enh := newWeaponSim(level, stormstrike, &proto.ItemSpec{Id: weapon}, imbue, totem, 0, 1)
 	white := enh.AutoAttacks.MHAuto()
-	stormstrike := enh.Stormstrike
+	strike := enh.Stormstrike
 	attacks := []attack{
 		{"white hit", white, core.OutcomeHit, landed, ""},
 		{"white crit", white, core.OutcomeCrit, landed, ""},
@@ -80,11 +80,11 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 		{"white miss", white, core.OutcomeMiss, nil, ""},
 		{"dodged white hit", white, core.OutcomeDodge, nil, ""},
 		{"parried white hit", white, core.OutcomeParry, nil, ""},
-		{"Stormstrike", stormstrike, core.OutcomeHit, landed, ""},
-		{"blocked Stormstrike", stormstrike, core.OutcomeBlock, landed, ""},
-		{"missed Stormstrike", stormstrike, core.OutcomeMiss, nil, ""},
-		{"dodged Stormstrike", stormstrike, core.OutcomeDodge, nil, ""},
-		{"parried Stormstrike", stormstrike, core.OutcomeParry, nil, ""},
+		{"Stormstrike", strike, core.OutcomeHit, landed, ""},
+		{"blocked Stormstrike", strike, core.OutcomeBlock, landed, ""},
+		{"missed Stormstrike", strike, core.OutcomeMiss, nil, ""},
+		{"dodged Stormstrike", strike, core.OutcomeDodge, nil, ""},
+		{"parried Stormstrike", strike, core.OutcomeParry, nil, ""},
 		{"Earth Shock", topRank(t, "Earth Shock", enh.EarthShock), core.OutcomeHit, nil, ""},
 		{"Lightning Bolt", topRank(t, "Lightning Bolt", enh.LightningBolt), core.OutcomeHit, nil, ""},
 		{"Fire Nova", topRank(t, "Fire Nova", enh.FireNova), core.OutcomeHit, nil, ""},
@@ -113,9 +113,10 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 			attacks[len(attacks)-1].procs = []string{flametongueTotem}
 		}
 	}
-	sim, enh = newWeaponSim(level, &proto.ItemSpec{Id: weapon}, imbue, totem, 0, every*float64(rolls*len(attacks)+1))
+	sim, enh = newWeaponSim(level, stormstrike, &proto.ItemSpec{Id: weapon}, imbue, totem, 0, every*float64(rolls*len(attacks)+1))
 	sim.PrePull()
-	enh.AutoAttacks.CancelAutoSwing(sim)
+	// Combat start turns the swings on, so we turn them off after it.
+	at(sim, 0.5, enh.AutoAttacks.CancelAutoSwing)
 	// We rebuilt the sim to make it long enough, so we take the spells again.
 	for i := range attacks {
 		attacks[i].spell = enh.GetSpell(attacks[i].spell.ActionID)
@@ -155,20 +156,12 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 		trigger(aura, sim, spell, result)
 	}
 
-	forced := func(outcome core.HitOutcome) core.OutcomeApplier {
-		return func(sim *core.Simulation, result *core.SpellResult, attackTable *core.AttackTable) {
-			result.Outcome = outcome
-			if !result.Landed() {
-				result.Damage = 0
-			}
-		}
-	}
 	for i, a := range attacks {
 		seen := map[string]bool{}
 		for r := range rolls {
 			at(sim, every*float64(1+i*rolls+r), func(sim *core.Simulation) {
 				counts, rolled = map[string]int{}, a.spell
-				a.spell.CalcAndDealDamage(sim, enh.CurrentTarget, 100, forced(a.outcome))
+				a.spell.CalcAndDealDamage(sim, enh.CurrentTarget, 100, forcedOutcome(a.outcome))
 				// A Windfury Totem proc moves the next swing to right now.
 				if enh.AutoAttacks.MainhandSwingAt() == sim.CurrentTime {
 					counts[windfuryTotem]++
