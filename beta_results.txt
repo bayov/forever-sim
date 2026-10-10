@@ -853,3 +853,22 @@ Combat log WoWCombatLog-101026_150733.txt, Windfury Weapon and Flametongue Totem
     at 20:19:40, logged just before its own swing in the same ms. The whole log is now 72 of
     73 mob parries within 0.1 sec. The earlier entry's "up to 20:09" counted up to about
     20:14, because the log grew while we read it: up to 20:09:26 it's 60 of 61.
+
+
+2026-10-10  Export after the Elemental respec (20:42:34)
+-------------------------------------------------------
+Talents (beta_handoff.md item 12): Elemental Convection 5, Elemental Warding 3, Call of
+Flame 3, Elemental Devastation 3, Elemental Focus 1, Improved Fire Nova 2, Enhancement
+Ancestral Knowledge 5, Mental Dexterity 3, Improved Ghost Wolf 1. Gear unchanged from 14:50.
+  - Melee crit 10.39 to 5.39 and spell crit 12.31 to 7.41: Thundering Strikes was 5% of
+    both. The other 0.11 spell crit comes from the 3 more Intellect.
+  - Intellect 141 to 144 and mana 2500 to 2545: Ancestral Knowledge's fifth point is 2% more
+    Intellect, as in the sim.
+  - Spell power 91 to 49: Mental Quickness 2 was 42, which is 30% of 141 Intellect, as in
+    the sim (15% a point). Attack power 389 to 392 from the 3 Intellect (Mental Dexterity 3).
+  - Expected at 49 spell power (the raw field drops the fraction):
+      Fire Nova rank 2: 113.43 to 127.55 before talents. If Call of Flame and Improved Fire
+      Nova add (x1.35, the sim) 153.1 to 172.2, if they multiply (x1.38) 156.5 to 176.0.
+      Raw 155 or less means add, raw 173 or more means multiply.
+      Searing Totem rank 3: 22.8 to 29.7 with Call of Flame (the sim), 19.8 to 25.8 without.
+      Flametongue Totem: 18 without Call of Flame (the sim), 20 with it.

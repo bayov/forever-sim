@@ -252,7 +252,9 @@ Keep this current as you go.
   Enhancement, the user). The filler talents don't change damage. With no Thundering Strikes (all crit, 1% a point in the client), spell crit drops
   from 12.3% to about 7.3%. No Stormstrike or Flurry, because Enhancement's row 4 needs 15
   points. The same run shows whether Call of Flame touches Flametongue Totem (sim: no, raw
-  18 would become 20) and Searing Totem (sim: yes, 23.6 to 30.5 at 91 spell power). The
+  18 would become 20) and Searing Totem (sim: yes). The 20:42 export after the respec has
+  7.41% spell crit and 49 spell power (no Mental Quickness), and beta_results.txt has the
+  expected Fire Nova, Searing and Flametongue Totem numbers at 49. The
   steps: a `/bayov export`, 5 to 10 Fire Novas into packs of 3 or more mobs, then about 500
   Flametongue Totem procs with Windfury Weapon (shocks are fine, Searing Totem is the same
   element), then optionally about 150 landed swings with Flametongue Weapon for item 5.
