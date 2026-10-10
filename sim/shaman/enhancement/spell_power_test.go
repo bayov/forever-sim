@@ -139,7 +139,8 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		if metrics.Ticks == 0 {
 			t.Fatalf("%s didn't tick", c.name)
 		}
-		tick := metrics.TotalTickDamage / float64(metrics.Ticks)
+		// Ticks can crit under Forever, and Ticks counts only the normal ones.
+		tick := (metrics.TotalTickDamage - metrics.TotalCritTickDamage) / float64(metrics.Ticks)
 		if math.Abs(tick-c.wantTick) > 1e-9 || math.Floor(tick) != c.betaTick {
 			t.Errorf("%s ticked for %.2f, want %.2f (raw %.0f on the beta)", c.name, tick, c.wantTick, c.betaTick)
 		}
