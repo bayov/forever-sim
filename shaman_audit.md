@@ -74,7 +74,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 - [x] 6.1 When the enemy attacks us at all: the tank setting (Level 30 solo, PvP), the boss behind the tank at level 60
 - [x] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
-- [?] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
+- [x] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
 - [ ] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
 - [ ] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
 - [ ] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
@@ -477,6 +477,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta, level 34 again (the beta session, 7ae7dd85, Sparkleshell Snappers 18:57 to 19:06): 10 of 21 glanced, so 76 of 132 (58%) in all at level 34.
 - Beta, the whole log up to 20:09 (the beta session, 8515a72c): glances out of all white swings were 0 of 175 on level 24 to 28 mobs, 1 of 68 at 29, 0 of 7 at 30, 3 of 11 at 32, 23 of 57 at 33, 102 of 187 at 34 and 6 of 8 at 35. The first glance below our level came on a level 29 Thundering Boulderkin at 19:58. The sim never glances below our level and stops at 40%. One rule fits every row: the chance from our real Two-Handed Maces skill (149, not 150) with no 40% cap, so 2% at -1, 32% at +2, 42% at +3, 52% at +4 and 62% at +5. No sim change yet, because the user waits for more data. The next run is about 150 swings at +2 and about 100 at +3. The level field on our own swings' advanced log lines is our item level (33), not our level, so mob levels have to come from the mobs' own lines.
 - Beta, up to 20:18 (the beta session, 905e293a): 1 of 9 white swings glanced at +1 (level 31) and 20 of 50 at +2, so 23 of 60 (38%, 95% range 27 to 51%) at +2 over the whole log. Both the sim's 30% and the real skill rule's 32% fit. No sim change.
+- Beta, the whole log up to 20:25 (the beta session, 9435c80b): 3 of 33 at +1 (9%), 25 of 72 at +2 (35%) and 26 of 66 at +3 (39%). The sim's 30% and 40% fit, and so do the real skill rule's 32% and 42%. Telling those apart would take about 2000 swings a level. +1 is low for both rules (3 or fewer of 33 comes 1 time in 12 at 20%). No sim change. The beta session asks the user whether to stop collecting at +2 and +3.
 - `glancing_test.go` TestOrcShamanGlancing rolls the white table 20,000 times in 8 cases (level 60 against a level 63 with 300 and 310 skill, level 30 against levels 29 to 34, once with Dwarven Tree Chopper's 152 skill) and checks the glance chance and the lowest and highest glancing damage. It fails when gear skill lowers the chance, when gear skill doesn't help the damage, without the 40% cap and without the 0.91 cap on the low end. All the shaman mechanics tests (TestOrcShaman*) take about 0.3 sec together.
 
 ### 4.7 Crit
@@ -591,6 +592,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Settled (the beta session, the log up to 19:52, 9c188238): Flametongue Totem rose to 12 of 127 (9.4%). That comes 1 time in 5 at our 12.3% and 1 time in 38 at a flat 5%, so its first 82 procs were low by chance, like Flametongue Weapon's. Both procs crit at our full chance, as in the sim, so nothing changes. Telling 12.3% from 7.3% would take about 500 procs, for well under 1% of DPS. The beta session keeps counting it with every new log.
 - Open again (the user, through the beta session, 392ead78): the user wants it confirmed that Flametongue Totem's crit chance moves with our spell crit. 12 of 127 fits our crit, but one crit chance can't show that. The plan is about 500 procs at a second crit chance, from the Elemental respec without Thundering Strikes (with Elemental Devastation and 5.6). It's in notes.md Need to Verify and `beta_handoff.md` item 12. The sim keeps rolling our spell crit for it.
 - Beta, whole log up to 20:18 (905e293a): Flametongue Totem crit on 18 of 182 (9.9%), still at one crit chance.
+- Beta, whole log up to 20:25 (9435c80b): 22 of 206 (10.7%). The totem procced on 63 of 63 swings in range from 20:09 to 20:25.
 - `crit_test.go` TestOrcShamanSpellCrit checks that Lightning Bolt, Earth Shock, Flame Shock and a Searing Totem attack crit at our full chance from 5 levels below us to 4 above, and against the level 63 boss at 60. With 20% more crit at our own level, each crit deals 1.5 times its hit.
 
 ### 5.4 Spell power
@@ -687,7 +689,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The normal hits of each mob span 1.22 to 1.37 times their lowest, so the 1.33 spread fits. The log also shows each mob's attack power: 93 to 118 at levels 27 to 35.
   - Mobs almost never crit us: 3 crits in 819 swings (0.4%), where Classic's 5% gives about 41. None of our talents lowers it. So Forever seems to take most crits away from mobs.
   - Crushing blows come from mobs 3 or more levels above us only: 18 of 137 swings at +3 (13.1%) and 89 of 331 at +4 (26.9%). That fits Classic's rule of 15% at +3 and 10% more a level (25% at +4). The sim stops at 15%.
-  - Parry haste works the Classic way, for mobs and for us. When more than 60% of the swing is left, the next swing comes 40% of the swing sooner. When 20% to 60% is left, it comes 20% of the swing after the parry. When less than 20% is left, nothing changes. For example, a 2.0 sec mob parried us 1.44 sec after its swing and swung again at 1.85. We parried 2.46 sec into our 3.3 sec swing and swung at 3.13. In 58 parries by mobs, every next swing fits this rule within 0.1 sec. In 25 parries by us, 20 fit within 0.1 sec and 3 within 0.16 (Flurry changes our speed). The other 2 swings came later than an unhasted swing would. Something held them, and with only instant casts around them it may not be a cast. The beta session's recheck on the log up to 20:09 (0193ac04), with each mob's real swing speed: 63 of 64 mob parries within 0.1 sec (the largest miss 0.11), and 22 of 27 of ours, 3 more within 0.16.
+  - Parry haste works the Classic way, for mobs and for us. When more than 60% of the swing is left, the next swing comes 40% of the swing sooner. When 20% to 60% is left, it comes 20% of the swing after the parry. When less than 20% is left, nothing changes. For example, a 2.0 sec mob parried us 1.44 sec after its swing and swung again at 1.85. We parried 2.46 sec into our 3.3 sec swing and swung at 3.13. In 58 parries by mobs, every next swing fits this rule within 0.1 sec. In 25 parries by us, 20 fit within 0.1 sec and 3 within 0.16 (Flurry changes our speed). The other 2 swings came later than an unhasted swing would. Something held them, and with only instant casts around them it may not be a cast. The beta session's recheck with each mob's real swing speed (0193ac04, corrected in 9435c80b): 60 of 61 mob parries within 0.1 sec up to 20:09:26, and 72 of 73 up to 20:25 once a parry logged in the same ms as its swing counts in file order. Ours were 22 of 27 within 0.1 sec, 3 more within 0.16.
 - Found: the sim's parry haste always moves the next swing 40% sooner, however little of the swing is left. It only stops the swing from coming earlier than 20% after the last swing, where the Classic rule counts that 20% from the parry. So a parry late in the swing makes the next swing come at once. Our 2.46 sec parry above would give a swing at 2.46 sec in the sim, not 3.13.
 - Proposed to the user: fix parry haste to the rule above, leave the mob crit and crushing rules and only record them, and add Vishas' swing to notes.md Need to Verify.
 - The user (2026-10-10): fix parry haste. Leave enemy damage to the player as it is and only record what we see, until we have a lot more data. Don't add single mobs to Need to Verify for now.
@@ -696,7 +698,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 6.3 Our armor
 
-- Shown to the user (2026-10-10), waiting for the OK. Armor takes armor / (armor + 400 + 85 * the attacker's level) off physical damage, the Classic formula for attackers below level 60 (`spell_resistances.go` GetArmorDamageModifier). Our armor is the gear's armor (both numbers each piece lists, 1.7) plus 2 a point of Agility. Only physical damage uses it.
+- The user OK'd it (2026-10-10). Armor takes armor / (armor + 400 + 85 * the attacker's level) off physical damage, the Classic formula for attackers below level 60 (`spell_resistances.go` GetArmorDamageModifier). Our armor is the gear's armor (both numbers each piece lists, 1.7) plus 2 a point of Agility. Only physical damage uses it.
 - Stoneskin Totem takes a flat 30 off each melee hit after armor, and after a crit doubles the hit. Guardian Totems adds 10% a point (rounded down). It's 30 for every rank, our own totem and another shaman's in the raid buffs alike (`buffs.go` StoneskinTotemAura). No preset puts it down.
 - Devotion Aura from the raid buffs gives armor, but only to Alliance characters. We're Horde, so it never reaches us.
 - None of this changes our DPS. It only changes damage taken.
@@ -706,6 +708,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Found: the sim's Stoneskin is 30 for every rank, and it comes off after armor. On Forever it's the rank's value (11 at level 30), before armor. It's damage taken only.
 - Devotion Aura in the Forever client keeps Classic's armor (55 to 735) under a new aura type (674, Classic's is 22). It doesn't reach us either way.
 - Proposed to the user: keep the armor formula and our armor as they are (the beta fits them). Record the Stoneskin difference with the rest of the enemy damage to us, for when the user takes that up.
+- The user OK'd it (2026-10-10): keep the armor formula and our armor, and record the Stoneskin difference only.
+- `armor_test.go` TestOrcShamanArmorTaken gives a level 30 shaman 482 armor, the export gear's, tanking a level 34 enemy. It checks that our armor is that plus 2 a point of Agility, that 10 Agility adds 20, and that a 100 damage hit loses armor / (armor + 400 + 85 * 34).
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

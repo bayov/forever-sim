@@ -7,6 +7,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -88,4 +89,34 @@ func TestOrcShamanArmor(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestOrcShamanArmorTaken checks our armor and how much of an enemy's hit it takes.
+//
+// Our armor is the gear's plus 2 a point of Agility, and a hit loses armor / (armor + 400 +
+// 85 * the enemy's level). The beta fits both (shaman_audit.md 6.3). The 14:50 export's gear
+// gives 568 armor, and 558 hits from level 25 to 35 mobs fit 568 at every level. We give 482
+// armor, the export gear's, and take a 100 damage hit from a level 34 enemy.
+func TestOrcShamanArmorTaken(t *testing.T) {
+	player := newOrcShaman(30, "", &proto.EnhancementShaman_Options{})
+	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.Armor: 482}.ToFloatArray()}
+	sim, enh := newTankSim(player, 34)
+
+	at(sim, 1, func(sim *core.Simulation) {
+		armor := enh.GetStat(stats.Armor)
+		if want := 482 + 2*enh.GetStat(stats.Agility); math.Abs(armor-want) > 1e-9 {
+			t.Errorf("got %.1f armor, want %.1f (482 plus 2 a point of Agility)", armor, want)
+		}
+		enh.AddStatDynamic(sim, stats.Agility, 10)
+		if got := enh.GetStat(stats.Armor); math.Abs(got-armor-20) > 1e-9 {
+			t.Errorf("10 Agility added %.1f armor, want 20", got-armor)
+		}
+		armor += 20
+
+		hit := enh.CurrentTarget.AutoAttacks.MHAuto().CalcDamage(sim, &enh.Unit, 100, forcedOutcome(core.OutcomeHit))
+		if want := 100 * (1 - armor/(armor+400+85*34)); math.Abs(hit.Damage-want) > 1e-9 {
+			t.Errorf("a 100 damage hit from level 34 dealt %.3f through %.0f armor, want %.3f", hit.Damage, armor, want)
+		}
+	})
+	runSim(sim)
 }

@@ -33,7 +33,7 @@ func TestOrcShamanParryHaste(t *testing.T) {
 	}
 	for _, c := range cases {
 		for _, enemyParries := range []bool{true, false} {
-			sim, enh := newParryHasteSim()
+			sim, enh := newTankSim(newOrcShaman(30, spiritWeapons, &proto.EnhancementShaman_Options{}), 30)
 			parrier, attack := enh.CurrentTarget, enh.AutoAttacks.MHAuto()
 			who := "the enemy"
 			if !enemyParries {
@@ -62,16 +62,15 @@ func TestOrcShamanParryHaste(t *testing.T) {
 	}
 }
 
-// newParryHasteSim starts a level 30 Orc shaman with Whirlwind Axe and Spirit Weapons, tanking
-// a level 30 enemy who swings every 2.0 sec.
-func newParryHasteSim() (*core.Simulation, *EnhancementShaman) {
-	player := newOrcShaman(30, spiritWeapons, &proto.EnhancementShaman_Options{})
+// newTankSim starts the player with Whirlwind Axe, tanking an enemy of targetLevel who swings
+// every 2.0 sec.
+func newTankSim(player *proto.Player, targetLevel int32) (*core.Simulation, *EnhancementShaman) {
 	for range proto.ItemSlot_ItemSlotMainHand {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
 	}
 	player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: whirlwind})
 	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
-	target.Level = 30
+	target.Level = targetLevel
 	target.MinBaseDamage = 52
 	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
 	raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
