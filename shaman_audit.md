@@ -721,7 +721,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - While we cast, we can't dodge, parry or block. Only a miss stops the swing then.
   - Every enemy swing comes from the front.
 - What it changes for us: an avoided swing doesn't fire Lightning Shield, and a parry gives us parry haste (6.2). The rest is damage taken.
-- Beta (our count from the whole log, 1,107 mob swings at us, the 14:50 export with 5.43% dodge, 5% parry and Defense 150 of 150):
+- Beta (our count from the whole log up to about 20:25, 1,094 mob swings at us, the 14:50 export with 5.43% dodge, 5% parry and Defense 150 of 150):
 
   | Mob levels | Swings | Miss | Dodge | Parry |
   |---|---|---|---|---|
