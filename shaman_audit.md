@@ -98,7 +98,7 @@ Strikes and shocks
 
 - [x] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
 - [x] 7.8 Earth Shock
-- [?] 7.9 Flame Shock: direct and DoT parts
+- [x] 7.9 Flame Shock: direct and DoT parts
 - [ ] 7.10 Frost Shock
 - [ ] 7.11 Shared shock cooldown
 
@@ -946,7 +946,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.9 Flame Shock
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "right".
 - The sim (`flame_shock.go`, `shocks.go`): 6 ranks, learned at 10, 18, 28, 40, 52 and 60. A Fire hit plus a DoT of 4 ticks, 3 sec apart, over 12 sec. The hit has no damage range and grows for 5 levels after the rank is learned: 24, 38, 49, 89, 136.5 and 166 at the top. The DoT doesn't grow: 28, 32, 56, 84, 136 and 176 in all, a quarter a tick. The hit gets 21.4% of spell power and each tick 10% (5.4). 55 / 95 / 160 / 250 / 345 / 410 mana, a 1.5 sec GCD and the shared 6 sec shock cooldown (7.11).
   - One hit roll decides both parts. A miss puts no DoT up, and a running DoT from an earlier cast keeps going.
   - The hit rolls spell crit (5.3). Each tick rolls our spell crit at the time of the tick under Forever, for 1.5 times (5.7). The DoT takes its spell power when it goes up.
@@ -959,7 +959,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - None of the 6 misses on a mob without the DoT put one up. One miss at 19:52:10 on a Thundering Boulderkin that had the DoT left it running, and its last tick came on time at 12 sec.
   - The one landed recast while the DoT was up (21:14:52 on a Pesterhide Snarler) came with the second tick. The log shows SPELL_AURA_REFRESH, and the next tick came 3.05 sec later. The mob died before the old DoT would have ended, so this one doesn't show how many ticks a recast gives. 5.7's run did.
 - Already tested: `periodic_test.go` TestOrcShamanFlameShockTicks (tick times, a recast, crit ticks), `spell_power_test.go` (ranks 1 and 3 against the beta), `mana_costs_test.go`, `crit_test.go`, `damage_modifiers_test.go` (Call of Flame) and `stormstrike_test.go` (it leaves the mark up).
-- Proposed: no sim change. A small test that a missed Flame Shock puts no DoT up, and leaves a running one alone.
+- No sim change.
+- Tests: `periodic_test.go` TestOrcShamanFlameShockMiss casts rank 3 every 0.25 sec at a level 35 target and takes the DoT down before every other cast. The 18 misses without the DoT put none up, and the 12 misses with it left its end time and tick count alone. Each landed cast put it up for 12 sec. It fails when a miss puts the DoT up and when a miss takes a running one down.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

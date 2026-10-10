@@ -74,6 +74,53 @@ func TestOrcShamanFlameShockTicks(t *testing.T) {
 	}
 }
 
+// TestOrcShamanFlameShockMiss checks that a missed Flame Shock puts no DoT up and leaves a
+// running one alone (shaman_audit.md 7.9).
+//
+// On the beta none of 6 misses on a mob without the DoT put one up. One miss on a Thundering
+// Boulderkin that had the DoT left it running, and its last tick came on time. We cast every
+// 0.25 sec at a level 35 target, which our spells miss 39% of the time, and take the DoT down
+// before every other cast.
+func TestOrcShamanFlameShockMiss(t *testing.T) {
+	sim, enh := newTargetLevelSim(30, 35, whirlwind, 0, "")
+	sim.PrePull()
+	flameShock := topRank(t, "Flame Shock", enh.FlameShock)
+	dot := flameShock.Dot(enh.CurrentTarget)
+	metrics := &flameShock.SpellMetrics[enh.CurrentTarget.UnitIndex]
+
+	missesWithoutDot, missesWithDot := 0, 0
+	for i := range 100 {
+		at(sim, 1+0.25*float64(i), func(sim *core.Simulation) {
+			if i%2 == 0 {
+				dot.Deactivate(sim)
+			}
+			up, expiresAt, tickCount, misses := dot.IsActive(), dot.ExpiresAt(), dot.TickCount, metrics.Misses
+			flameShock.ApplyEffects(sim, enh.CurrentTarget, flameShock)
+			switch {
+			case metrics.Misses == misses:
+				if !dot.IsActive() || dot.ExpiresAt() != sim.CurrentTime+12*time.Second {
+					t.Errorf("at %s: a landed Flame Shock didn't put the DoT up for 12 sec", sim.CurrentTime)
+				}
+			case up:
+				missesWithDot++
+				if !dot.IsActive() || dot.ExpiresAt() != expiresAt || dot.TickCount != tickCount {
+					t.Errorf("at %s: a missed Flame Shock changed the running DoT", sim.CurrentTime)
+				}
+			default:
+				missesWithoutDot++
+				if dot.IsActive() {
+					t.Errorf("at %s: a missed Flame Shock put the DoT up", sim.CurrentTime)
+				}
+			}
+		})
+	}
+	runSim(sim)
+
+	if missesWithoutDot == 0 || missesWithDot == 0 {
+		t.Errorf("%d misses without the DoT and %d with it, want some of each", missesWithoutDot, missesWithDot)
+	}
+}
+
 // TestOrcShamanHealingStreamCrits checks that Healing Stream's heal crits 5% of the time under
 // Forever, whatever our spell crit, and that its crits leave Water Shield's globes alone.
 //
