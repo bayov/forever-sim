@@ -64,7 +64,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 5.1 Spell hit: base miss against the target's level (17% at +3), hit from gear, the 1% floor
 - [?] 5.2 Resistances: target resistance, the level based resistance, average partial resists vs binary spells
 - [x] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
-- [ ] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
+- [?] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
 - [ ] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
 - [ ] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
 - [ ] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
@@ -576,6 +576,23 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The user OK'd waiting, and the two runs are in notes.md (Need to Verify) and in `beta_handoff.md` "Recheck with every new log".
 - `crit_test.go` TestOrcShamanSpellCrit checks that Lightning Bolt, Earth Shock, Flame Shock and a Searing Totem attack crit at our full chance from 5 levels below us to 4 above, and against the level 63 boss at 60. With 20% more crit at our own level, each crit deals 1.5 times its hit.
 
+### 5.4 Spell power
+
+- Shown to the user (2026-10-10), waiting for the OK. A spell hits for its base damage plus its coefficient times our spell power for its school, which is spell power ("damage and healing"), spell damage ("damage" only) and fire or nature power added together (`spell_result.go` GetSchoolDamage). Healing takes spell power and healing power. The percent modifiers then multiply the whole hit (5.6). Stormstrike and Windfury get no spell power. Their coefficient of 1 is for flat "+N damage" effects (4.10).
+- Coefficients, the sim and the Forever client (70338, wago.tools SpellEffect) alike: Lightning Bolt 42.9%, 57.1% and then 71.4% from rank 3, Chain Lightning 57.1% (rank 3 51.7%), Earth Shock and Frost Shock 38.6%, Flame Shock 21.4% and 10% a tick, Lightning Shield orbs 26.7%, Searing Totem 1.7%, Magma Totem 3.3%, Fire Nova 10% (rank 1) and 14.3%, Flametongue Weapon and Frostbrand 10% a hit, Flametongue Totem none, Healing Stream 2.2% a tick, Lava Burst 71.4%. Low ranks keep their full coefficient (5.5).
+- Beta (our count from the Shimmering Flats log, 91 spell power, the same the beta session used for Searing Totem). The log's raw field drops the fraction, and the shown amount rounds it up at random by its size. Every hit fits the sim:
+  - Lightning Shield rank 3: 40 + 26.7% of 91 = 64.30. All 94 hits were raw 64, and 27 of them (29%) were shown as 65.
+  - Flame Shock rank 3: 45.4 + 19.47 = 64.87. All 5 were raw 64, and 4 were shown as 65. Its ticks are 14 + 9.1 = 23.1: raw 23 on all 15, shown 24 once.
+  - Flame Shock rank 1: ticks 7 + 9.1 = 16.1 (raw 16 on all 4), and one crit of raw 43 (24 + 19.47 = 43.47).
+  - Earth Shock rank 4: 83.69 to 89.31 + 35.13 = 118.8 to 124.4. The 15 hits were raw 118 to 123.
+  - Searing Totem rank 3 (raw 20 to 26) and Flametongue Totem (raw 18 every time, 548 / 100 * 3.3 = 18.08 with no spell power) fit too.
+  - Spell power from 90 to 91.5 fits all the raw numbers, and only 91 fits how often the orbs rounded up (90 would round up 3% of the time).
+- The beta also shows no penalty for low ranks. Earth Shock rank 1 is learned at level 4 and Flame Shock rank 1 at 10, and both get their full coefficient. 1.12's penalty for spells learned below level 20 would take Earth Shock rank 1 to 15.4%, about 35 damage instead of 57. The TBC penalty for ranks far below our level would take it to 19.3%. Item 5.5.
+- One rank 1 Earth Shock hit raw 57, where the sim's top is 21.64 + 35.13 = 56.77. It's one hit, 0.23 over.
+- Flametongue Weapon rank 3 hit raw 33 every time (50 hits) on Rage of the Storm (3.3 speed) with 91 spell power. Without the per-rank cut (7.3) the sim gives 884 / 100 * 3.3 + 9.1 = 38.3, so the cut is 4.3 to 5.3, the same about 5 we saw on three weapons with 6 spell power. With a coefficient that grows with weapon speed (10% * speed / 4) the cut would be 2.7 to 3.7, and with vmangos's 3.85% a second of speed 6.7 to 7.7. So the 10% doesn't grow with speed, as in the sim. This answers the open question in 7.3.
+- Open: Fire Nova's damage spell. Forever's Fire Nova (408341 to 408345) does nothing itself in the client, so the server picks the damage spell. The client has two sets. One is the old totem's (8349, 8502, 8503, 11306, 11307), 10% and 14.3%, which the sim and the SoD sim use. The other is SoD's Fire Nova (408423 to 408428), 21.4%, with a few points less base damage (50, 102, 183, 284 and 403 against 52, 109, 196, 299 and 419). At level 30 rank 2 with 91 spell power the two are almost the same (122.5 to 137.5 against 122.4 to 136.5). At 60 rank 5 they're equal at 225 spell power, and SoD's is 5 more at 300. The combat log names the damage spell, so one cast on the beta answers it.
+- Proposed to the user: no change. Fire Nova's damage spell goes on the beta list (notes.md).
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
@@ -608,6 +625,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Rank 1 on the knuckles hit 7 (sim 7.04). Rank 2 hit 22 on the slow axe (sim 23.5 + 0.6) and 8 or 9 on the knuckles (sim 10.45), so about 2 lower at both speeds. Each rank loses a flat amount per hit, the same on every weapon: 0 for rank 1, about 2 for rank 2 and about 5 for rank 3. (L - 326) / 77 fits (2.0 and 5.1), where L is the rank's points at its learn level, but we know no reason for it.
   - Other sources (2026-10-08) all give the client's points: Classic Era 1.15.9 (wago.tools SpellEffect), vmangos's 1.10 to 1.12 rows, wowhead's Classic, TBC and Forever tooltips, and ForeverChanges. vmangos's pre-1.10 rows are about 10% lower (296 + 17, 435 + 26, 651 + 38) but don't fit either, because rank 1 would hit 14.3 on the slow axe. vmangos, cmangos and mangoszero all use points / 100 * speed with no cut. Forever's dev notes only change Flametongue Totem, and its downranking change only takes gear bonus off low ranks. We found no report of Flametongue hitting below its tooltip, so the cut is likely a Forever server change or bug.
   - Decision (user, 2026-10-08): the sim keeps the client's points for every rank for now, and we check rank 6 at level 60 (notes.md Need to Verify).
+  - Beta (2026-10-10, Shimmering Flats log): rank 3 on Rage of the Storm (3.3 speed) with 91 spell power hit raw 33 every time (50 hits), a cut of 4.3 to 5.3 against the sim's 38.3. That fits a flat 10% coefficient and rules out one that grows with weapon speed (5.4).
   - Flametongue Totem's procs are 489, 697, 947 and 1217 in Classic Era. Forever's (wowhead, and the sim) are 548, 781, 1061 and 1363.
 - Beta, level 30 with 3/3 Elemental Weapons (2026-10-09), same Barbaric Battle Axe of Healing at 198 AP:
   - Rockbiter rank 4 gave 213 AP (sim 177.6 * 1.2 = 213.1).
