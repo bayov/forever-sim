@@ -264,8 +264,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
   attack or an orb killed the mob within 130 ms (the proc comes 0 to 10 or 90 to 127 ms
   after the swing). The buff stays a few seconds after we run 40 or more yards from the
   totem. scratchpad cl/ftt.py sorts every landed swing by the totem's state. Up to 19:52 all
-  67 swings in range of a live totem on a mob that lived procced, and 38 of 38 from 20:09 to
-  20:18.
+  67 swings in range of a live totem on a mob that lived procced, and 63 of 63 from 20:09 to
+  20:25.
 - Flametongue Weapon procs on every landed swing and Stormstrike (blocks too) and never on a
   miss, dodge or parry (item 2). Leave out a hit that kills the mob, and the swing that
   breaks Ghost Wolf (it lands in the form, without the weapon).
@@ -325,9 +325,10 @@ combat log, run these checks on it too, and tell the user when one breaks.
   parries within 0.1 sec, and 23 of our 25 within 0.16 sec (the other 2 waited on a cast).
   scratchpad cl/parry.py (from the audit session's enemy/fit.py) takes each mob's speed from
   its most common swing interval, so the 3.05 sec Boulderkin and the 1.2 sec Needles Cougar
-  fit too. The whole log up to 20:09: mobs 63 of 64 within 0.1 sec (largest 0.11), us 22 of
-  27 within 0.1 sec, 3 more within 0.16 (Flurry changed our speed), and 2 swings that came
-  later than an unhasted swing would (19:49:02 and 19:52:01, the swing was held).
+  fit too. It breaks ties in the same ms by file order. The whole log up to 20:25: mobs 72
+  of 73 within 0.1 sec (largest 0.11), us 23 of 29 within 0.1 sec, 3 more within 0.16
+  (Flurry changed our speed), and 3 swings that were already late (19:49:02, 19:52:01 and
+  20:21:01, the swing was held).
 - Glancing by mob level (audit 4.6, the user keeps the sim's 40% cap for now, 2026-10-10).
   Count our white swings that glanced out of all our white swings (misses, dodges and
   parries included), per target level. The mob's level is the field just before the damage
@@ -340,8 +341,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
   26/55 and levels 27 to 29 0/68. So level 34 is 102/187 (55%) and levels 27 to 29 0/129.
   Whole log up to 20:09 by mob level: 0/175 at levels 24 to 28, 1/68 at 29 (a Thundering
   Boulderkin at 19:58, the first glance below our level), 0/7 at 30, 3/11 at 32, 23/57 at 33,
-  102/187 at 34, 6/8 at 35. Plus 20:09 to 20:18: 1/9 at 31 and 20/50 at 32, so level 32 is
-  23/60 (38%). scratchpad cl/glance.py counts by level, with the mob's level from its spell
+  102/187 at 34, 6/8 at 35. Plus 20:09 to 20:18: 1/9 at 31 and 20/50 at 32. Whole log up
+  to 20:25: 3/33 at 31, 25/72 at 32 (35%), 26/66 at 33 (39%). scratchpad cl/glance.py counts by level, with the mob's level from its spell
   lines too. The level field on our own lines is our item level (33), not our level. Add
   each new log to these. Without the cap the sim would give 50% at +4 and 60% at
   +5. The glance at -1 fits glancing on our real weapon skill (149): 10% plus 2% a point of

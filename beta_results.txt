@@ -828,3 +828,28 @@ and 32 (+1 and +2).
     near Classic's 17% and 28%.
   - No partial resists in 65 spell hits at levels 31 and 32.
   - Parry haste: 6 of 6 mob parries within 0.1 sec.
+
+
+2026-10-10  Salt Flats mobs, levels 31 to 33 (20:18:26 to 20:25:53)
+------------------------------------------------------------------
+Combat log WoWCombatLog-101026_150733.txt, Windfury Weapon and Flametongue Totem.
+  - Glancing (4.6): 2 of 24 at level 31, 2 of 12 at 32, 3 of 9 at 33. The whole log by level:
+      Mob level   diff   glanced      95% range   sim   on skill 149, no cap
+      31          +1     3 of 33      3 to 24%    20%   22%
+      32          +2    25 of 72     25 to 46%    30%   32%
+      33          +3    26 of 66     29 to 51%    40%   42%
+    +2 and +3 fit both rules. The two differ by only 2 points there, and telling them apart
+    takes about 2000 swings a level. +1 is low for both: 3 or fewer of 33 comes about 1 time
+    in 12 at 20% and 1 time in 20 at 22%.
+  - Stormstrike raw 225 to 268 on 6 hits, inside 220.0 to 271.7. The buff and the mark came
+    on all 6. White raw 192 to 237.
+  - Flametongue Totem: 25 of 25 landed swings in range procced, and none of the 13 misses,
+    dodges and parries or the 6 Stormstrikes. 2 kills and 4 swings on mobs that died within
+    130 ms had no proc. Crits 4 of 24, so the whole log is 22 of 206 (10.7%).
+  - No partial resists in 29 spell hits at levels 31 to 33. No Lightning Shield in this run.
+  - Parry haste: 6 of 6 mob parries within 0.1 sec. Our 2 parries: 1 within 0.1 sec, and at
+    20:21:01 our swing was already 0.05 sec late when we parried, so something held it.
+    parry.py now breaks ties in the same ms by file order. That fixes a Swirling Vortex parry
+    at 20:19:40, logged just before its own swing in the same ms. The whole log is now 72 of
+    73 mob parries within 0.1 sec. The earlier entry's "up to 20:09" counted up to about
+    20:14, because the log grew while we read it: up to 20:09:26 it's 60 of 61.
