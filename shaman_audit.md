@@ -104,7 +104,7 @@ Strikes and shocks
 
 Nature spells
 
-- [?] 7.12 Lightning Bolt
+- [x] 7.12 Lightning Bolt
 - [ ] 7.13 Chain Lightning: targets, damage falloff per jump
 - [ ] 7.14 Lava Burst
 
@@ -991,7 +991,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.12 Lightning Bolt
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "right".
 - The sim (`lightning_bolt.go`, `electric_spell.go`): 10 ranks, learned at 1, 8, 14, 20, 26, 32, 38, 44, 50 and 56. A Nature bolt that grows for 5 levels after the rank is learned, from 14.4 to 16.6 for rank 1 up to 189.9 to 211.7 for rank 10 at 60 (78.3 to 89.7 for rank 5 at 30). Rank 1 gets 42.9% of spell power, rank 2 57.1% and the others 71.4% (5.4). The cast takes 1.5 sec for rank 1, 2 sec for rank 2 and 2.5 sec from rank 3. 15 to 220 mana, a 1.5 sec GCD.
   - The bolt flies at 20 yards a second, so its damage lands after the cast by our distance from the target.
   - It rolls spell hit and crit (5.1, 5.3). It holds our swings during the cast, and the swing timer starts over when it ends (3.2).
@@ -1000,7 +1000,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools, 403 to 15208): the same levels, damage, growth, damage range, coefficients, mana, GCD and missile speed (20). 7.1's check matched the cast times.
 - Beta: no Lightning Bolt in any of the four logs, the 23:25 log included up to 01:04. We play melee, so nothing about it is checked on the beta yet.
 - Already tested: `spell_ranks_test.go` (rank 5 at 30), `swing_timer_test.go` (the swing timer after a cast), `gcd_test.go`, `mana_costs_test.go`, `crit_test.go`, `miss_test.go`, `stormstrike_test.go` (the mark), `talent_procs_test.go` (Maelstrom Weapon, Clearcasting), `five_second_rule_test.go` and `reaction_time_test.go`.
-- Proposed: no sim change. A Need to Verify (Beta) item for a few rank 5 bolts at level 30: raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast, 85 mana, and the swing timer starting over after the cast.
+- No sim change. notes.md Need to Verify (Beta) asks for a few rank 5 bolts at level 30: raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast, 85 mana, and the swing timer starting over after the cast.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
