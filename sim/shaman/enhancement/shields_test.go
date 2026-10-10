@@ -3,6 +3,7 @@ package enhancement
 import (
 	"math"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -90,34 +91,32 @@ func TestOrcShamanShieldTriggers(t *testing.T) {
 	runSim(sim)
 }
 
-// TestOrcShamanRaidDamageLightningShield checks that the raid damage we take fires Lightning
-// Shield's orbs at our target, the same way it spends Water Shield's globes.
+// TestOrcShamanRaidDamageHits checks that the raid damage we take fires Lightning Shield's
+// orbs at our target, and that the hits land at random times.
 //
-// A hit every 5 sec (5, 10, 15) fires an orb each time, and the third orb uses up the shield.
-func TestOrcShamanRaidDamageLightningShield(t *testing.T) {
-	sim, enh := newShamanSim(newOrcShaman(60, "", &proto.EnhancementShaman_Options{RaidDamageHitsPerMinute: 12}), &proto.Debuffs{}, 30)
+// We take 15 hits a minute. A hit every 4 sec would fire an orb each time, 15 orbs a minute.
+// Random hits at the same rate often come during the 3.5 sec wait after an orb. Then the next
+// orb comes after the wait plus the wait for the next hit (4 sec on average), so 60 / 7.5 = 8
+// orbs a minute. We keep the shield at 3 orbs and count them over 9 min (the shield lasts 10).
+func TestOrcShamanRaidDamageHits(t *testing.T) {
+	const minutes, hitsPerMinute = 9, 15
+	player := newOrcShaman(60, "", &proto.EnhancementShaman_Options{RaidDamageHitsPerMinute: hitsPerMinute})
+	sim, enh := newShamanSim(player, &proto.Debuffs{}, minutes*60)
 	shield := topRank(t, "Lightning Shield", enh.LightningShield)
 	orb := topRank(t, "Lightning Shield", enh.LightningShieldProcs)
-	at(sim, 0.5, func(sim *core.Simulation) { castNow(t, sim, enh, shield) })
-	for _, check := range []struct {
-		at      float64
-		charges int32
-	}{{4, 3}, {6, 2}, {11, 1}, {16, 0}} {
-		at(sim, check.at, func(sim *core.Simulation) {
-			charges := int32(0)
-			if aura := enh.ActiveShieldAura; aura != nil && aura.IsActive() {
-				charges = aura.GetStacks()
-			}
-			if charges != check.charges {
-				t.Errorf("at %s: %d charges left, want %d", sim.CurrentTime, charges, check.charges)
-			}
+	at(sim, 0.5, func(sim *core.Simulation) {
+		castNow(t, sim, enh, shield)
+		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+			Period:   time.Second,
+			OnAction: func(sim *core.Simulation) { enh.ActiveShieldAura.SetStacks(sim, 3) },
 		})
-	}
+	})
 	runSim(sim)
 	// An orb can miss (TestOrcShamanLightningShieldOrbOutcome), so we count misses too.
 	metrics := orb.SpellMetrics[enh.CurrentTarget.UnitIndex]
-	if fired := metrics.Hits + metrics.Misses; fired != 3 {
-		t.Errorf("%d orbs fired at our target, want 3", fired)
+	fired := metrics.Hits + metrics.Misses
+	if want := minutes * 60 / (3.5 + 60.0/hitsPerMinute); math.Abs(float64(fired)-want) > 15 {
+		t.Errorf("%d orbs fired at our target, want about %.0f", fired, want)
 	}
 }
 

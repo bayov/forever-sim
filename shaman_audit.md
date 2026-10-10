@@ -76,7 +76,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
 - [x] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
 - [x] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
-- [?] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
+- [x] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
 - [ ] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
 - [ ] 6.7 PvP mode: the enemy types, time out of melee range
 
@@ -739,7 +739,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 6.5 Spell damage to us and the raid damage hits
 
-- Shown to the user (2026-10-10), waiting for the OK. No enemy casts at us, because no preset encounter has an AI (6.1). So Elemental Warding (3, 7 and 10% less Fire, Frost and Nature damage taken, as the Forever text says, `talents.go`) and our resistances never do anything in our sims.
+- Shown to the user (2026-10-10). No enemy casts at us, because no preset encounter has an AI (6.1). So Elemental Warding (3, 7 and 10% less Fire, Frost and Nature damage taken, as the Forever text says, `talents.go`) and our resistances never do anything in our sims.
 - Raid damage hits (`shields.go`, Enhancement options "Raid hits per minute" and its +/-): the user sets how many direct hits a minute the raid's enemies land on us. Each one fires our Lightning Shield orb at our target or spends a Water Shield globe, the same as a real hit. Both shields still wait 3.5 sec between procs (the client's 3500 ms proc cooldown, 7.15 and 7.16). Nothing else that reacts to a hit taken sees them. With a +/-, each iteration picks its own rate in that range. No preset sets it.
 - Found: the hits come at an even pace (one every 60 / rate sec). Real raid damage comes at random times, and with the 3.5 sec wait an even pace gives more procs than random hits at the same rate:
 
@@ -753,6 +753,11 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
   Random hits average one proc every 3.5 sec plus the mean gap between hits. An even pace just above 3.5 sec procs on every hit, and one just below it procs on every second hit.
 - Proposed to the user: make the hits come at random times (each gap drawn at random, with the same average rate). It only changes sims that set the option.
+- OK from the user (2026-10-10, "make hits land at randomized times around a specific chosen setting for average hits per minute").
+- Fixed: each wait for the next hit is drawn from an exponential spread with the set average (60 / rate sec), so the hits land at random times. The +/- still picks each iteration's rate. The "Raid hits per minute" tooltip now says the rate is an average and the hits land at random times.
+- Tests:
+  - TestOrcShamanRaidDamageHits (replaces TestOrcShamanRaidDamageLightningShield) keeps Lightning Shield at 3 orbs for 9 min at 15 hits a minute. It wants about 72 orbs (8 a minute), within 15. It got 78. The old even pace gives 135 and fails it.
+  - TestOrcShamanWaterShield now lands enemy melee hits at set times (every 5 sec, then every 3 sec) instead of using the option, so it still checks each globe and the 3.5 sec wait.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

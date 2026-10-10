@@ -44,10 +44,10 @@ func TestOrcShamanJudgementOfWisdom(t *testing.T) {
 // Each globe gives 2% of max mana (the beta client text) and there are 3. The client says
 // only one globe activates "every few seconds" and doesn't say how long, so we use 3.5 sec.
 // Raid damage comes once every 5 to 15 sec (the user, 2026-10-08), so that wait only shows
-// when hits come faster than that.
+// when hits come faster than that. The enemy lands a melee hit on us at set times.
 func TestOrcShamanWaterShield(t *testing.T) {
 	cases := []struct {
-		hitsPerMinute float64
+		every float64 // Seconds between the enemy's hits, from the first one.
 		// The globes left just after each check time, and how many we spent by then.
 		checks []struct {
 			at     float64
@@ -55,23 +55,32 @@ func TestOrcShamanWaterShield(t *testing.T) {
 		}
 	}{
 		// A hit every 5 sec (5, 10, 15): every hit spends a globe.
-		{12, []struct {
+		{5, []struct {
 			at     float64
 			stacks int32
 		}{{4, 3}, {6, 2}, {11, 1}, {16, 0}}},
 		// A hit every 3 sec (3, 6, 9, 12, 15): the hits at 6 and 12 come too soon after a
 		// globe and do nothing.
-		{20, []struct {
+		{3, []struct {
 			at     float64
 			stacks int32
 		}{{2, 3}, {4, 2}, {7, 2}, {10, 1}, {13, 1}, {16, 0}}},
 	}
 	for _, c := range cases {
 		// Water Shield.
-		player := newOrcShaman(60, "--000000001", &proto.EnhancementShaman_Options{RaidDamageHitsPerMinute: c.hitsPerMinute})
-		sim, enh := newShamanSim(player, &proto.Debuffs{}, 30)
+		sim, enh := newShamanSim(newOrcShaman(60, "--000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 30)
 		full := enh.ManaRegenPerSecondWhileNotCasting()
 		globe := 0.02 * enh.MaxMana()
+		melee := enh.CurrentTarget.RegisterSpell(core.SpellConfig{
+			ActionID:         core.ActionID{SpellID: 1},
+			SpellSchool:      core.SpellSchoolPhysical,
+			DefenseType:      core.DefenseTypeMelee,
+			ProcMask:         core.ProcMaskMeleeMHAuto,
+			DamageMultiplier: 1,
+		})
+		for hitAt := c.every; hitAt < 16; hitAt += c.every {
+			at(sim, hitAt, func(sim *core.Simulation) { melee.CalcAndDealDamage(sim, &enh.Unit, 1, forcedOutcome(core.OutcomeHit)) })
+		}
 
 		// Water Shield is free, so the five second rule never starts and we regen in full.
 		var start float64
@@ -87,11 +96,11 @@ func TestOrcShamanWaterShield(t *testing.T) {
 					stacks = enh.WaterShieldAura.GetStacks()
 				}
 				if stacks != check.stacks {
-					t.Errorf("%.0f hits a minute, at %s: got %d globes, want %d", c.hitsPerMinute, sim.CurrentTime, stacks, check.stacks)
+					t.Errorf("a hit every %.0f sec, at %s: got %d globes, want %d", c.every, sim.CurrentTime, stacks, check.stacks)
 				}
 				want := start + (check.at-0.5)*full + float64(3-check.stacks)*globe
 				if have := enh.CurrentMana(); math.Abs(have-want) > 1e-6 {
-					t.Errorf("%.0f hits a minute, at %s: got %.3f mana, want %.3f", c.hitsPerMinute, sim.CurrentTime, have, want)
+					t.Errorf("a hit every %.0f sec, at %s: got %.3f mana, want %.3f", c.every, sim.CurrentTime, have, want)
 				}
 			})
 		}
