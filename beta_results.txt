@@ -440,3 +440,51 @@ to +2 / -1 / +1 / -2 / 0. cmangos' level 1 Undead mage row had Intellect and Spi
 so the generator swaps them back, and the beta's mage matches that row. A new test
 (TestForeverUndeadBaseAttributes) checks the five beta sheets. The ret, shadow priest,
 Sinister Strike rogue and warrior goldens moved.
+
+
+2026-10-10  Level 1 Undead warrior, Tauren hunter and Windshaper Skyborne hunter (items 8 and 7)
+------------------------------------------------------------------------------------------------
+`/bayov export` at 17:37, 17:38 and 17:39, new characters in their starting gear (no stats
+but armor, every "pos" 0). No talents. Every weapon skill and Defense 1 of 5.
+
+  Attributes (Str / Agi / Sta / Int / Spi):
+                       beta                  sim                   difference
+    Undead warrior     25 / 19 / 23 / 18 / 20  25 / 19 / 23 / 18 / 20  none (the new Undead rows)
+    Tauren hunter      22 / 21 / 23 / 18 / 21  25 / 18 / 23 / 15 / 23  -3 / +3 /  0 / +3 / -2
+    Windshaper hunter  19 / 24 / 20 / 21 / 21  20 / 23 / 21 / 20 / 22  -1 / +1 / -1 / +1 / -1
+
+The sim's Tauren hunter is the 1.12 row. Its Windshaper hunter is a Human hunter built from
+the Orc hunter and the warriors, because the Skyborne offsets weren't published.
+
+Take the 1.12 class bonus off each level 1 row (warrior +3 / 0 / +2 / 0 / 0, hunter 0 / +3 /
++1 / 0 / +1, shaman +1 / 0 / +1 / +1 / +2) and every Forever race we've seen adds up to 100
+with 20 Spirit:
+    Undead       22 / 19 / 21 / 18 / 20   (1.12: 19 / 18 / 21 / 18 / 25)
+    Tauren       22 / 18 / 22 / 18 / 20   (1.12: 25 / 15 / 22 / 15 / 22)
+    Windshaper   19 / 21 / 19 / 21 / 20
+    Orc          23 / 17 / 21 / 19 / 20   (1.12: 23 / 17 / 22 / 17 / 23), from the shaman,
+                                          if the shaman's own level 1 bonus didn't change
+So Forever looks to have reworked every race, not only the Undead. The Orc part matters at
+60: if it's the race and not the shaman, the level 60 Orc shaman has 1 less Stamina, 2 more
+Intellect and 3 less Spirit than the sim gives. A level 1 Orc of another class tells.
+
+The rest, from the beta's attributes:
+  Health: warrior 70 = 20 + 20 + 3 x 10. Tauren hunter 80 = (26 + 20 + 3 x 10) x 1.05.
+  Windshaper hunter 46 = 26 + 20.
+  Mana: Tauren hunter 83 = 65 + 18, Windshaper hunter 100 = 65 + 20 + 15.
+  Attack power: warrior 33 = 3 - 20 + 2 x 25. Hunters 25 = 2 - 20 + Str + Agi, ranged 24 and
+  30 = 2 - 20 + 2 x Agi.
+  Spell crit: 4.860% and 5.070%, so 3.6 + 0.0700 x Int (sim 3.6 + 0.0703 x Int).
+  Hit: the Tauren hunter has 1% melee and spell hit (Forever's Endurance, the sim has it).
+  Mana regen 5.251 a sec at 21 Spirit for both hunters = 0.25 x Spirit. The hunter follows
+  the shaman formula under 50 Spirit (item 7).
+
+  Crit and dodge per Agility don't match for these two classes:
+    warrior  crit and dodge 4.590% = 19 x 0.2500 - 0.16. The sim gives 0.2572 a point.
+    hunter   crit 4.405% and 5.058%, so 0.2174 a point (half the rogue's 0.4350), and dodge
+             8.971% and 10.275%, so 0.4348 a point. The sim gives 0.1783 and 0.3567.
+  The paladin, rogue, priest and mage matched. The warrior is 3% off and the hunter 22% off.
+  One level can't tell what they are at 60, and neither class is one of our sims.
+
+What it showed: the Undead rows hold for a sixth class. The Tauren and Windshaper changed
+too, and the Orc may have.
