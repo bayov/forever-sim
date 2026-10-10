@@ -410,3 +410,33 @@ The rest matches the sim from the beta's attributes:
 
 What it showed: Forever's Undead race is 1.12's + 3 Strength + 1 Agility - 5 Spirit, for the
 paladin, rogue and mage alike.
+
+
+2026-10-10  Level 1 Undead priest (items 8 and 7)
+-------------------------------------------------
+`/bayov export` at 17:29, a new character in its starting gear (no stats but armor, every
+"pos" 0). No talents. Maces 1 of 5, Defense 1 of 5.
+
+  Attributes (Str / Agi / Sta / Int / Spi):
+    beta Undead priest        22 / 19 / 21 / 20 / 23
+    1.12 Undead priest        19 / 18 / 21 / 20 / 28
+
+Again exactly +3 / +1 / 0 / 0 / -5.
+
+The rest, from the beta's attributes:
+  Mana 130 = 110 + 20. Attack power 12 = 22 - 10.
+  Crit and dodge 4.740%: the sim gives 3.0 + 19 x 0.1 = 4.9, less 0.16% for Maces and
+  Defense at 1 of 5.
+  Spell crit 4.618% (sim 0.8 + 20 x 0.1903 = 4.605).
+  Health 62, where the sim gives 61 = 31 + 20 + 10. The same 1 over as the mage.
+  Mana regen 5.751 a sec = 23 Spirit x 0.25. That is the shaman and paladin formula, so the
+  priest follows it under 50 Spirit (item 7). The 1.12 priest formula would give 9.4 a sec.
+
+What it showed: the fourth Undead class with the same shift.
+
+Sim change (the user OK'd it, 2026-10-10): every Undead row in tools/gen_level_base_stats.py
+gets +3 Str, +1 Agi and -5 Spi, and the level 60 RaceOffsets go from -1 / -2 / +1 / -2 / +5
+to +2 / -1 / +1 / -2 / 0. cmangos' level 1 Undead mage row had Intellect and Spirit swapped,
+so the generator swaps them back, and the beta's mage matches that row. A new test
+(TestForeverUndeadBaseAttributes) checks the five beta sheets. The ret, shadow priest,
+Sinister Strike rogue and warrior goldens moved.

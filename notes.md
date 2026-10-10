@@ -18,7 +18,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * wowhead spell details (rate limited last time): Call of Flame 16038 (does it touch Flametongue Totem, and does it add with Improved Fire Nova), Improved Fire Nova 16086, Elemental Weapons 16266, Concussion 16035.
 * Revelation (weapon enchant): only shocks trigger it, no ICD, flat proc chance (sim: 7.2%).
 * Stacking of the Forever-only elixirs with each other.
-* Beta: Spirit regen of the classes we haven't measured (druid, hunter, mage, priest, warlock). A level 1 Undead mage gave 5.5 a sec at 22 Spirit, which fits the formula below (2026-10-10). The sim gives every class the shaman and paladin formula under Forever: 0.25 mana a second for each of the first 50 Spirit, 0.125 past that. One GetManaRegen reading below 50 Spirit and one above settles a class.
+* Beta: Spirit regen of the classes we haven't measured (druid, hunter, warlock, and mage and priest past 50 Spirit). A level 1 Undead mage gave 5.5 a sec at 22 Spirit and a level 1 Undead priest 5.75 at 23, which fits the formula below (2026-10-10). The sim gives every class the shaman and paladin formula under Forever: 0.25 mana a second for each of the first 50 Spirit, 0.125 past that. One GetManaRegen reading below 50 Spirit and one above settles a class.
 * Rage of the Storm (280604) source. We assume a level 30 shaman quest chain.
 * Beta: Stormstrike with a dagger. We give daggers the normalized 1.7 plus 0.3, so 2.0, but only two-handers and one-handers are tested. The test is the same as the one-hander's: a dagger with no Stormstrike bonus, boars of one level, and about 30 normal Stormstrikes and 30 normal white hits. The /run line for AP and weapon damage is in shaman_audit.md 4.1.
 * Server batch window (sim: white hits land with their procs 10 ms after the swing, like Classic Era servers). The user thinks Forever uses 10 ms too. A 400 ms window like the 1.12 servers would change how procs line up.
@@ -44,13 +44,12 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Consecrated Ground: all Holy damage and every target?
 * Holy Power scope.
 * Swift Judgement and Pursuit of Justice are not implemented.
-* Beta: Undead paladin base stats. 1.12 has no Undead paladin, so the sim builds the row from the Human paladin and the Undead warrior. A naked level 20 Undead paladin on the beta (2026-10-10) has Str 44, Agi 30, Sta 42, Int 30, Spi 34, and the sim has 41 / 29 / 42 / 30 / 39. Everything built from them (health, mana, AP, crit, dodge) follows the sim's formulas. A level 1 Undead paladin and mage show the same shift, so Forever changed the Undead race: about +3 Str, +1 Agi and -5 Spi against 1.12's Undead for every class, the Undead rogue too A level 1 Undead rogue gives exactly +3 / +1 / 0 / 0 / -5 against the 1.12 Undead rogue.
 
 ## At 60
 
 Things we can only check on release, because the beta stops at level 30.
 
-* Naked level 60 Orc shaman sheet: attributes, health, mana, attack power, melee and spell crit, dodge, and how much crit one point of Agility and Intellect gives at 60. The level 30 sheet only checks the lower level tables.
+* Naked level 60 Orc shaman sheet: attributes, health, mana, attack power, melee and spell crit, dodge, and how much crit one point of Agility and Intellect gives at 60. The level 30 sheet only checks the lower level tables. A naked level 60 Undead paladin or rogue too: the sim assumes the Undead shift seen at levels 1 and 20 (+3 Str, +1 Agi, -5 Spi against 1.12) holds at 60.
 * Attack table against a level 63 boss with 300 weapon skill (sim: 8% miss and 9% hit to cap, 6.5% dodge, 40% glancing at 65% damage on average, crit cut by 4.8%). A level 33 mob at level 30 tests the same +3 rules, but with different numbers.
 * Spells against a level 63 boss (sim: 17% miss, 6% average partial resist, no crit cut).
 * Every shaman rank above what a level 30 knows, and the spells learned after 30 (in 1.12, Windfury Totem and Chain Lightning at 32, Grace of Air Totem at 42). wowhead shows the imbues at levels 62 to 68, so their level 60 values are our own scaling.

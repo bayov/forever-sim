@@ -175,6 +175,7 @@ the answer moves the sim's DPS, with what I know beyond the bullet.
    warlock). Needs those characters. One GetManaRegen reading below 50 Spirit and one above
    settles a class.
 8. **Undead paladin base stats** (paladin section of the list). Needs an Undead paladin.
+   Settled, see the status.
 
 Not marked Beta, but maybe testable at level 30. Ask the user whether they're worth it:
 
@@ -210,17 +211,15 @@ Keep this current as you go.
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
 - [ ] 5. Flametongue procs and Elemental Devastation
 - [ ] 6. Weapon Mastery baseline
-- [ ] 7. Spirit regen of the other classes. Mage under 50 Spirit matches (5.5 a sec at 22
-  Spirit, level 1 Undead, 2026-10-10). Mage over 50, druid, hunter, priest, warlock to go.
-- [ ] 8. Undead paladin base stats. Measured 2026-10-10 at level 1 (24 / 19 / 23 / 18 / 21)
-  and level 20 (44 / 30 / 42 / 30 / 34). Both are the sim's row + 3 Str + 1 Agi - 5 Spi, so
-  the 1.12 paladin gains hold and only the starting row differs. Health, mana, AP, crit,
-  dodge and spell crit follow the sim's formulas (level 1 health is 10 under, no preset uses
-  it). A level 1 Undead mage (2026-10-10) shows the same shift, so Forever changed the
-  Undead race: about +3 Str, +1 Agi and -5 Spi against 1.12's Undead, for every class (the
-  Undead rogue too). A level 1 Undead rogue gives exactly +3 / +1 / 0 / 0 / -5 against the
-  1.12 Undead rogue, and the mage fits if cmangos' Undead mage row has Int and Spi swapped.
-  The sim change was shown to the user.
+- [ ] 7. Spirit regen of the other classes. Mage and priest under 50 Spirit match (5.5 a
+  sec at 22 Spirit and 5.75 at 23, level 1 Undead, 2026-10-10). Mage and priest over 50,
+  druid, hunter, warlock to go.
+- [x] 8. Undead base stats. Settled 2026-10-10: Forever's Undead race is 1.12's + 3 Str + 1
+  Agi - 5 Spi for every class. The level 1 rogue and priest match exactly against their 1.12
+  rows, the paladin at levels 1 and 20 against the row the sim builds, and the level 1 mage
+  once cmangos' swapped Int and Spi are put back. The user OK'd the sim change (generator
+  shift, level 60 RaceOffsets, TestForeverUndeadBaseAttributes). Level 1 base health is off
+  (paladin 10 under, mage and priest 1 over), and no preset uses it.
 - [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
   Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and
