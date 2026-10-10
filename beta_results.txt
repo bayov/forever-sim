@@ -581,3 +581,39 @@ Storm's +10% (9 of 30 Stormstrikes above the 247 a no-bonus Stormstrike can reac
 What it showed: no Weapon Mastery at level 30, in the hits or on the sheet. The sim doesn't
 give it, so nothing changes. The user said to assume Weapon Mastery no longer exists, at any
 level, so it's off the notes.md list.
+
+
+2026-10-10  Thousand Needles run: Fire Nova's damage spell (audit 5.4)
+-----------------------------------------------------------------------
+Combat log WoWCombatLog-101026_150733.txt from 18:27:55, build 70338, the same character as
+the 18:21 export (91 spell power on the sheet). Level 27 to 29 mobs (Needles Cougar,
+Thundering Boulderkin, Pesterhide Snarler, Gravelsnout Digger). Flametongue Weapon, Lightning
+Shield and Searing Totem. Strength of Earth Totem went down at 18:31:20.
+
+Fire Nova, 16 casts up to 18:42 (cast spell 408342, rank 2). Every hit names damage spell
+408424, SoD's rank 2 Fire Nova, not the old totem's 8502. Raw (c = crit, L = mob level):
+  18:29:13 129 L28   18:29:30 132 L28   18:29:48 127c L27  18:30:05 129 L27
+  18:30:20 134 L28   18:30:20 133 L27   18:31:47 127 L29   18:32:00 135 L29
+  18:32:00 124 L29   18:32:20 130 L28   18:38:37 136 L29   18:38:55 135 L28
+  18:39:11 136 L29   18:39:29 129 L28   18:39:47 125 L28   18:39:47 124c L29
+  18:41:04 130 L29
+  Two misses (18:31:47 Thundering Boulderkin, 18:40:46 Gravelsnout Digger).
+Client 70338: 408424 is 102 base, 12.84% variance, +1.6 a level from 22 to 27, 21.4%
+coefficient. At 91 spell power that's 122.41 to 136.53. The old 8502 is 109 base, the same
+variance and growth, 14.3%, so 123.01 to 137.01. Every hit fits both, because at 91 spell
+power the two are almost the same. The log's spell ID is what settles it.
+
+Recheck on this run up to 18:32, all holding:
+  7 Lightning Shield orbs on Thundering Boulderkin came back IMMUNE (an earth elemental), not
+  MISS. The other 14 orbs all hit, with no crit.
+  Flametongue Weapon procced on every landed swing and Stormstrike, except 4 killing blows
+  and the swing at 18:31:43.429 that broke Ghost Wolf (Ghost Wolf removed 2 ms later). A
+  swing in Ghost Wolf form doesn't use the weapon.
+
+What it showed: Forever's Fire Nova uses SoD's damage spells.
+
+Sim change (the user OK'd it, 2026-10-10): Fire Nova takes SoD's damage (408423 to 408428),
+21.4% at every rank and each rank's range at its fifth level from the client
+(fire_totems.go). TestOrcShamanSpellPowerBeta has a Fire Nova rank 2 case at 91 spell power
+(122.41 to 136.53), which fails on the old numbers. The enhancement averages moved by +0.02%
+to +0.07%, and elemental and warden didn't change.

@@ -235,6 +235,10 @@ Keep this current as you go.
   Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and
   under Forever an orb now rolls spell hit and never crits (`lightning_shield.go`,
   `TestOrcShamanLightningShieldOrbOutcome`).
+- [x] 11. Fire Nova's damage spell (audit 5.4, from notes.md). Settled 2026-10-10: the beta's
+  log names SoD's 408424 on every rank 2 hit, not the old totem's 8502. The user OK'd the sim
+  change: SoD's base damage and 21.4% at every rank (`fire_totems.go`, a Fire Nova case in
+  `TestOrcShamanSpellPowerBeta`).
 
 ## Recheck with every new log
 
@@ -243,7 +247,8 @@ release (2026-10-10). Each one is a hypothesis that held on one run. When you re
 combat log, run these checks on it too, and tell the user when one breaks.
 
 - Lightning Shield orbs miss at the spell miss rate for the mob's level and never crit
-  (item 9). A crit, or a miss rate far from the spell table, breaks it.
+  (item 9). A crit, or a miss rate far from the spell table, breaks it. Count only MISS. An
+  IMMUNE is a mob immune to Nature, like Thundering Boulderkin.
 - Stormstrike's raw damage stays inside (weapon roll + AP / 14 x 3.6) x the percent bonuses,
   with 2.7 for one-handers (item 4). Rage of the Storm's +10% is assumed. Read AP from the
   white hits in the same log, not the sheet. A hit outside the range breaks it.
@@ -251,7 +256,10 @@ combat log, run these checks on it too, and tell the user when one breaks.
   never on a miss, dodge, parry, Stormstrike or Windfury Weapon attack (items 1 and 2).
   Leave out swings where the totem wasn't up or in range.
 - Flametongue Weapon procs on every landed swing and Stormstrike (blocks too) and never on a
-  miss, dodge or parry (item 2). Leave out a hit that kills the mob.
+  miss, dodge or parry (item 2). Leave out a hit that kills the mob, and the swing that
+  breaks Ghost Wolf (it lands in the form, without the weapon).
+- Fire Nova hits name damage spell 408424 at rank 2 and do 102.94 to 117.06 + 21.4% of spell
+  power (item 11). The raw field drops the fraction.
 - Searing Totem's bolts do 19 to 25 + 1.7% of spell power at rank 3 and use our spell hit
   and crit (audit 7.22). The log's raw damage drops the fraction.
 - Searing Totem's bolt gap (audit 7.22, the user waits for more data). The cast takes 2.21
