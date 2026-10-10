@@ -1138,3 +1138,17 @@ spell crit again, as outside Forever, and the flat 8% from 79450996 is gone.
 TestOrcShamanFlametongueTotemCrits now wants about 960 crits in 1000 procs at 100% spell crit
 (4% miss on a level 30 target) and none at 0%. Only the TestEnhancement golden moved. The
 notes.md Need to Verify bullet is gone.
+
+
+2026-10-11  Flametongue Totem crit at 469 procs (item 12, audit 5.3)
+--------------------------------------------------------------------
+Same log, up to 00:16:54, same fist setup. 12 crits in the 69 procs after 00:09:59.
+  - 58 of 469 (12.4%). Our spell crit (11.81%) expects 55.4 +- 7.0, melee crit 48.7 and a
+    flat 8% 37.5. This run favors our spell crit over a flat 8% 180 to 1, and over melee crit
+    2.4 to 1. Pooled with the earlier runs, our spell crit leads every flat rate at least 12
+    to 1 (9% 21 to 1, 10% 12 to 1). It backs the change in 36fcd02f.
+  - Elemental Devastation: still none from 58 totem crits, 11 Flame Shock tick crits, 1 Fire
+    Nova crit, 81 white crits or 17 Windfury Weapon attack crits. The direct Flame Shock crit
+    at 00:05:01 gave it, like the Earth Shock crit at 23:28:14.
+  - Rechecks: 426 of 426 landed swings in range procced the totem. No partial resists. Orbs 0
+    misses and 0 crits in 20. Fire Nova raw 115 to 127 (17 hits). Fist raw 68 to 90.
