@@ -934,3 +934,34 @@ Same build and log as the first part. Mobs of level 28 and 29.
   - Rechecks: white raw 200 to 238 (limit 238.7). Flametongue Totem procced on 11 of 11
     landed swings in range, none on the 3 killing blows. Mob parry haste 2 of 2 within 0.1
     sec. Glancing 0 of 18 at 28 and 29. No partial resists.
+
+
+2026-10-10  Elemental respec run, third part (21:10:07 to 21:25:36)
+-----------------------------------------------------------------
+Same build and log. Mobs of level 27 to 29, Elder Cloud Serpents among them.
+  - Elemental Devastation (item 5): the talent works. Both direct Flame Shock crits gave the
+    buff (30165), at 21:16:13.9 (same ms) and 21:24:07.9 (96 ms later), and each lasted 10.0
+    sec. Nothing else gave it:
+      Fire Nova: 4 crits in the first part and no buff, so Fire Nova's damage doesn't trigger
+      it. The sim says it does (talents.go procs on any spell damage crit, and Fire Nova has
+      that proc mask). One more Fire Nova crit is the log's last line (21:25:36), so its
+      answer is in the next copy.
+      Flametongue Totem: 3 crits (21:14:47, 21:24:06 and 21:24:50) with the buff down each
+      time, and no buff from them. The sim agrees (its proc mask is a proc's, not a spell's).
+      Flame Shock ticks: 2 more crits with the buff down, no buff. The sim agrees (it only
+      procs on direct hits).
+    Implied sim change: Elemental Devastation leaves out Fire Nova (talents.go). Waiting for
+    the user's OK. Flametongue Weapon is still untested (Windfury Weapon was on).
+  - Fire Nova (audit 5.6): 16 more hits, 41 since the respec. Raw 157 to 175, and 5 are over
+    the add limit. Multipliers from 1.373 to 1.392 fit every hit, x1.35 fits none. The
+    average hit before and after the respec gives x1.372 +- 0.012.
+  - Flametongue Totem crit (item 12): 3 of 28 here, 3 of 57 (5.3%) since the respec at 7.41%
+    spell crit. Before the respec it was 12 of 127 (9.4%) at 12.31%.
+  - Elder Cloud Serpents again resisted part of our Nature hits (Earth Shock 104 and 108 raw,
+    30% and 20% resisted) and 2 Earth Shocks in full, and no Fire hit, as at 19:30.
+  - Rechecks: white raw 194 to 239. The 389 attack power model allows 238.7, but this build
+    has 392, which allows 239.5. Flametongue Totem procced on 28 of 28 landed swings in range.
+    The others were killing blows (5), swings where the mob died within 130 ms (1 of 4
+    procced) and one over 30 yards. Mob parry haste 3 of 3 within 0.1 sec. Glancing 1 of 8
+    at 29 (the whole log at -1 is now 2 of 103), 0 of 35 at 27 and 28. No partial resists
+    other than the serpents'.

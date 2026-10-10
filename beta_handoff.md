@@ -209,13 +209,12 @@ Keep this current as you go.
   said to assume it works (2026-10-10), because it only matters at level 30 and the sims we
   care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
-- [ ] 5. Flametongue procs and Elemental Devastation. 2026-10-10 respec run up to 21:10: 4
-  Fire Nova crits gave no Elemental Devastation buff (the sim says Fire Nova does), and no
-  direct shock or Lightning Bolt crit yet to show the talent works at all (shocks 0 of 8, no
-  Lightning Bolt cast). A Flame Shock tick crit doesn't count, because the talent's client
-  trigger (0x10000) is direct spell damage and periodic damage has its own flag (0x40000).
-  The buff (30165) isn't hidden in the client, so the log would show it. Next: about 3
-  direct shock or Lightning Bolt crits.
+- [ ] 5. Flametongue procs and Elemental Devastation. 2026-10-10 respec run up to 21:25: the
+  talent works on direct spell crits (2 of 2 Flame Shock crits gave the buff). Flametongue
+  Totem crits (3) and Flame Shock tick crits don't give it, as in the sim. Fire Nova crits
+  (4) don't either, but the sim says they do, so that sim change waits for the user's OK.
+  Still open: Flametongue Weapon (about 150 landed swings with it, optional). One Fire Nova
+  crit at 21:25:36 is the log's last line, so check the lines after it in the next copy.
 - [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor: 128 white hits in the
   15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would put 55 of
   them too low. The sheet's damage percent is 1. The user said to assume Weapon Mastery no
@@ -270,6 +269,8 @@ Keep this current as you go.
   Second part, 21:02 to 21:10: Fire Nova 4 of 25 over the add range, and the average hit
   before and after the respec gives x1.377 +- 0.013 without the client's base. Flametongue
   Totem crit 0 of 29.
+  Third part, 21:10 to 21:25: Fire Nova 5 of 41 over the add range. Flametongue Totem crit 3
+  of 57 (5.3%) since the respec.
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to
