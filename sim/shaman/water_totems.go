@@ -208,9 +208,13 @@ var ManaTideTotemManaRestore = [ManaTideTotemRanks + 1]float64{0, 88, 197, 290}
 var ManaTideTotemManaCost = [ManaTideTotemRanks + 1]float64{0, 10, 30, 60}
 var ManaTideTotemLevel = [ManaTideTotemRanks + 1]int{0, 25, 48, 58}
 
-// Mana Tide Totem is a water totem that stands for 12 sec and gives the group its mana every
+// Mana Tide Totem is a water totem that stands for 13 sec and gives the group its mana every
 // 3 sec, 4 times. It takes the water slot, so Mana Spring Totem goes away and has to be put
 // down again once the tide is over. All ranks share the 5 min cooldown.
+//
+// The Forever client (70338) gives every rank 13 sec, where Classic's last 12. The ticks
+// still come at 3, 6, 9 and 12 sec, so the extra second only keeps the water slot taken
+// (shaman_audit.md 7.1).
 func (shaman *Shaman) registerManaTideTotemSpell() {
 	shaman.ManaTideTotem = make([]*core.Spell, ManaTideTotemRanks+1)
 	if !shaman.Talents.ManaTideTotem {
@@ -233,7 +237,7 @@ func (shaman *Shaman) registerManaTideTotemSpell() {
 func (shaman *Shaman) newManaTideTotemSpellConfig(rank int, cooldown *core.Timer) core.SpellConfig {
 	spellId := ManaTideTotemSpellId[rank]
 	manaRestore := ManaTideTotemManaRestore[rank]
-	duration := time.Second * 12
+	duration := core.ManaTideTotemDuration
 
 	var players []*core.Character
 	var metrics []*core.ResourceMetrics
@@ -251,7 +255,7 @@ func (shaman *Shaman) newManaTideTotemSpellConfig(rank int, cooldown *core.Timer
 		Duration: duration,
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period:   time.Second * 3,
+				Period:   core.ManaTideTotemTickPeriod,
 				NumTicks: 4,
 				OnAction: func(sim *core.Simulation) {
 					for i, char := range players {

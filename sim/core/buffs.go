@@ -1327,7 +1327,12 @@ func InnervateAura(character *Character, actionTag int32) *Aura {
 var ManaTideTotemActionID = ActionID{SpellID: 16190}
 var ManaTideTotemAuraTag = "ManaTideTotem"
 
-const ManaTideTotemDuration = time.Second * 12
+// Mana Tide Totem stands for 13 sec under Forever and ticks every 3 sec, 4 times.
+//
+// The Forever client (70338) gives every rank 13 sec, where Classic's last 12. The ticks
+// still come at 3, 6, 9 and 12 sec (shaman_audit.md 7.1).
+const ManaTideTotemDuration = time.Second * 13
+const ManaTideTotemTickPeriod = time.Second * 3
 const ManaTideTotemCD = time.Minute * 5
 
 func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
@@ -1384,7 +1389,7 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 		Duration: ManaTideTotemDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			StartPeriodicAction(sim, PeriodicActionOptions{
-				Period:   ManaTideTotemDuration / 4,
+				Period:   ManaTideTotemTickPeriod,
 				NumTicks: 4,
 				OnAction: func(sim *Simulation) {
 					for i, player := range character.Party.Players {

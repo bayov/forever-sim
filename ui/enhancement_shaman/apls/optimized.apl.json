@@ -2,7 +2,7 @@
     "type": "TypeAPL",
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":25361}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":25361}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":10614}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10611}}}}}},"notes":"Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman."},
+        {"action":{"castSpell":{"spellId":{"spellId":10614}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10612}}}}}},"notes":"Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman."},
         {"action":{"castSpell":{"spellId":{"spellId":10497}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10497}}}}}},"notes":"Mana Spring Totem whenever it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":16387}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":16387}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"20s"}}}}]}}},"notes":"Flametongue Totem whenever it is down. Flametongue Weapon turns its buff off for the shaman."},
         {"action":{"castSpell":{"spellId":{"spellId":425336}}},"notes":"Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line."},

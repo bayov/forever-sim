@@ -1,6 +1,7 @@
 package shaman
 
 import (
+	"slices"
 	"time"
 
 	"github.com/wowsims/classic/sim/common/guardians"
@@ -33,6 +34,7 @@ func init() {
 	core.RegisterSpellRanks(StrengthOfEarthTotemSpellId[1:]...)
 	core.RegisterSpellRanks(StoneskinTotemSpellId[1:]...)
 	core.RegisterSpellRanks(WindfuryTotemSpellId[1:]...)
+	core.RegisterSpellRanks(slices.Concat(WindfuryBuffAuraId[1:], oldWindfuryBuffAuraId[1:])...)
 	core.RegisterSpellRanks(GraceOfAirTotemSpellId[1:]...)
 	core.RegisterSpellRanks(WindwallTotemSpellId[1:]...)
 	core.RegisterSpellRanks(HealingStreamTotemSpellId[1:]...)

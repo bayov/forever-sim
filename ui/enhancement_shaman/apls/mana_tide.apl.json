@@ -2,7 +2,7 @@
     "type": "TypeAPL",
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":25361}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":25361}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":10614}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10611}}}}}},"notes":"Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman."},
+        {"action":{"castSpell":{"spellId":{"spellId":10614}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10612}}}}}},"notes":"Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman."},
         {"action":{"castSpell":{"spellId":{"spellId":17359}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Mana Tide Totem once the mana runs low. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10497}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10497}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":17359}}}}}]}}},"notes":"Mana Spring Totem whenever it is down and Mana Tide Totem is not up."},
         {"action":{"castSpell":{"spellId":{"spellId":10587}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10587}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}}]}}},"notes":"Magma Totem whenever it is down, unless the fight is about to end."},

@@ -34,7 +34,17 @@ const WindfuryTotemRanks = 3
 var WindfuryTotemSpellId = [WindfuryTotemRanks + 1]int32{0, 8512, 10613, 10614}
 
 // The rotations ask for this aura to see whether the totem stands.
-var WindfuryBuffAuraId = [WindfuryTotemRanks + 1]int32{0, 8514, 10607, 10611}
+//
+// It's the party aura each rank gives in the Forever client (70338), which procs the attack
+// power buff. We used Classic's 8514, 10607 and 10611 before, which the Forever client doesn't
+// have (shaman_audit.md 7.1).
+var WindfuryBuffAuraId = [WindfuryTotemRanks + 1]int32{0, 8515, 10609, 10612}
+
+// Rotations saved before the rename still ask for 10611.
+//
+// We keep the old IDs in the same rank family as the new ones, so a custom preset that asks
+// for 10611 still finds whichever Windfury Totem aura we have.
+var oldWindfuryBuffAuraId = [WindfuryTotemRanks + 1]int32{0, 8514, 10607, 10611}
 var WindfuryTotemManaCost = [WindfuryTotemRanks + 1]float64{0, 115, 175, 250}
 var WindfuryTotemLevel = core.WindfuryTotemLevel
 

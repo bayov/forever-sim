@@ -3,9 +3,11 @@ package enhancement
 import (
 	"math"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/shaman"
 )
 
 // TestOrcShamanJudgementOfWisdom checks Judgement of Wisdom on the boss: 59 mana on a 50%
@@ -110,6 +112,9 @@ func TestOrcShamanWaterShield(t *testing.T) {
 
 // TestOrcShamanManaTide checks Mana Tide Totem at level 60: 290 mana every 3 sec, 4 times,
 // starting 3 sec after we put it down. It takes the water slot, so Mana Spring Totem stops.
+//
+// The totem stands for 13 sec, as in the Forever client (shaman_audit.md 7.1), so the water
+// slot stays taken a second after the last tick, with no fifth tick.
 func TestOrcShamanManaTide(t *testing.T) {
 	// Mana Tide Totem.
 	sim, enh := newShamanSim(newOrcShaman(60, "--000000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 30)
@@ -117,6 +122,7 @@ func TestOrcShamanManaTide(t *testing.T) {
 	manaSpring := enh.ManaSpringTotem[4]
 	manaSpringAura := enh.GetAura("Mana Spring Totem (Rank 4)")
 	manaTide := enh.ManaTideTotem[3]
+	manaTideAura := enh.GetAura("Mana Tide Totem (Rank 3)")
 
 	checkMana := func(sim *core.Simulation, want float64) {
 		if have := enh.CurrentMana(); math.Abs(have-want) > 1e-6 {
@@ -146,7 +152,17 @@ func TestOrcShamanManaTide(t *testing.T) {
 	// Mana Spring would have ticked at 3 sec.
 	at(sim, 4.5, func(sim *core.Simulation) { checkMana(sim, mana) })
 	at(sim, 5.5, func(sim *core.Simulation) { checkMana(sim, mana+290) })
-	at(sim, 14.5, func(sim *core.Simulation) { checkMana(sim, mana+4*290+7.5*full) })
+	at(sim, 14.5, func(sim *core.Simulation) {
+		checkMana(sim, mana+4*290+7.5*full)
+		if !manaTideAura.IsActive() || enh.TotemExpirations[shaman.WaterTotem] != 15*time.Second {
+			t.Errorf("at 14.5 sec: Mana Tide Totem is up %v until %s, want up until 15s", manaTideAura.IsActive(), enh.TotemExpirations[shaman.WaterTotem])
+		}
+	})
+	at(sim, 15.5, func(sim *core.Simulation) {
+		if manaTideAura.IsActive() {
+			t.Errorf("at 15.5 sec: Mana Tide Totem is still up")
+		}
+	})
 	at(sim, 18, func(sim *core.Simulation) { checkMana(sim, mana+4*290+11*full) })
 	runSim(sim)
 }

@@ -1,10 +1,14 @@
 package enhancement
 
 import (
+	"math"
 	"testing"
 
+	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/shaman"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 // TestOrcShamanSpellRanks checks that a rotation naming a spell's top rank casts the highest
@@ -58,6 +62,120 @@ func TestOrcShamanSpellRanks(t *testing.T) {
 				t.Errorf("level %d: %s cast nothing, want rank %d", level, c.name, want)
 			case spell.Rank != want || spell.ActionID.SpellID != c.ids[want]:
 				t.Errorf("level %d: %s cast %d rank %d, want %d rank %d", level, c.name, spell.ActionID.SpellID, spell.Rank, c.ids[want], want)
+			}
+		}
+	}
+}
+
+// TestOrcShamanImbueDamage checks a Flametongue Weapon and a Frostbrand hit at some levels
+// against the Forever client (70338, shaman_audit.md 7.1).
+//
+// Flametongue Weapon deals N / 25 per 4 sec of weapon speed at a rank's top level, and 1.68 a
+// level less for rank 3 below it. Frostbrand rank 1 grows 2.1 a level from 32 at 20 to 44.6 at
+// 26. We have no spell power and the target is our level, so every hit that doesn't crit deals
+// exactly that.
+func TestOrcShamanImbueDamage(t *testing.T) {
+	flametongue, frostbrand := proto.WeaponImbue_FlametongueWeapon, proto.WeaponImbue_FrostbrandWeapon
+	cases := []struct {
+		name     string
+		imbue    proto.WeaponImbue
+		level    int32
+		spellID  int32
+		damage   float64
+		perSpeed bool
+	}{
+		{"Flametongue rank 1 at 16", flametongue, 16, shaman.FlametongueWeaponSpellId[1], 440.0 / 25, true},
+		{"Flametongue rank 2 at 24", flametongue, 24, shaman.FlametongueWeaponSpellId[2], 653.0 / 25, true},
+		{"Flametongue rank 3 at 30", flametongue, 30, shaman.FlametongueWeaponSpellId[3], 1052.0/25 - 4*1.68, true},
+		{"Flametongue rank 3 at 34", flametongue, 34, shaman.FlametongueWeaponSpellId[3], 1052.0 / 25, true},
+		{"Flametongue rank 4 at 44", flametongue, 44, shaman.FlametongueWeaponSpellId[4], 1728.0 / 25, true},
+		{"Flametongue rank 5 at 54", flametongue, 54, shaman.FlametongueWeaponSpellId[5], 2372.0 / 25, true},
+		{"Flametongue rank 6 at 60", flametongue, 60, shaman.FlametongueWeaponSpellId[6], 2810.0 / 25, true},
+		{"Frostbrand rank 1 at 20", frostbrand, 20, shaman.FrostbrandWeaponSpellId[1], 32, false},
+		{"Frostbrand rank 1 at 26", frostbrand, 26, shaman.FrostbrandWeaponSpellId[1], 44.6, false},
+		{"Frostbrand rank 1 at 27", frostbrand, 27, shaman.FrostbrandWeaponSpellId[1], 44.6, false},
+	}
+	for _, c := range cases {
+		player := newOrcShaman(c.level, "", &proto.EnhancementShaman_Options{ShamanImbue: c.imbue})
+		for range proto.ItemSlot_ItemSlotMainHand {
+			player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
+		}
+		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: whirlwind})
+		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+		target.Level = c.level
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 10, Targets: []*proto.Target{target}},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		}, simsignals.CreateSignals())
+		sim.Reset()
+		sim.PrePull()
+		enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+
+		want := c.damage
+		if c.perSpeed {
+			want *= enh.MainHand().SwingSpeed / 4
+		}
+		spell := enh.GetSpell(core.ActionID{SpellID: c.spellID})
+		if spell == nil {
+			t.Fatalf("%s: no spell %d", c.name, c.spellID)
+		}
+		var hits []float64
+		imbue := enh.GetAura(map[proto.WeaponImbue]string{flametongue: "Flametongue Imbue", frostbrand: "Frostbrand Imbue"}[c.imbue])
+		imbue.OnSpellHitDealt = func(_ *core.Aura, _ *core.Simulation, s *core.Spell, result *core.SpellResult) {
+			if s == spell && result.Outcome == core.OutcomeHit {
+				hits = append(hits, result.Damage)
+			}
+		}
+		for range 20 {
+			spell.Cast(sim, enh.CurrentTarget)
+		}
+		if len(hits) == 0 {
+			t.Errorf("%s: no normal hits in 20 casts", c.name)
+		}
+		for _, damage := range hits {
+			if math.Abs(damage-want) > 1e-9 {
+				t.Errorf("%s: hit for %.4f, want %.4f", c.name, damage, want)
+				break
+			}
+		}
+	}
+}
+
+// TestOrcShamanWindfuryTotemAura checks that a rotation finds the Windfury Totem aura of the
+// rank our level knows.
+//
+// Our rotations ask for rank 3's aura, 10612, the party aura in the Forever client (70338).
+// Rotations saved before shaman_audit.md 7.1 ask for 10611, which isn't in the client. Both
+// should find rank 1's 8515 at 40, rank 2's 10609 at 50 and rank 3's 10612 at 60. When the
+// rotation finds the aura, it puts the totem down once in 30 sec, as the totem lasts 5 min.
+func TestOrcShamanWindfuryTotemAura(t *testing.T) {
+	cases := []struct {
+		level int32
+		rank  int
+	}{{40, 1}, {50, 2}, {60, 3}}
+	for _, c := range cases {
+		for _, auraID := range []int32{10612, 10611} {
+			player := newOrcShaman(c.level, "", &proto.EnhancementShaman_Options{})
+			isActive := &proto.APLValue{Value: &proto.APLValue_AuraIsActive{AuraIsActive: &proto.APLValueAuraIsActive{
+				AuraId: &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: auraID}},
+			}}}
+			player.Rotation = &proto.APLRotation{PriorityList: []*proto.APLListItem{{Action: &proto.APLAction{
+				Condition: &proto.APLValue{Value: &proto.APLValue_Not{Not: &proto.APLValueNot{Val: isActive}}},
+				Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{
+					SpellId: &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: shaman.WindfuryTotemSpellId[3]}},
+				}},
+			}}}}
+			sim, enh := newShamanSim(player, &proto.Debuffs{}, 30)
+			runSim(sim)
+
+			aura := enh.GetAuraByID(core.ActionID{SpellID: shaman.WindfuryBuffAuraId[c.rank]})
+			if aura == nil || !aura.IsActive() {
+				t.Errorf("level %d, asking for %d: aura %d isn't up", c.level, auraID, shaman.WindfuryBuffAuraId[c.rank])
+			}
+			totem := enh.WindfuryTotem[c.rank]
+			if casts := totem.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts; casts != 1 {
+				t.Errorf("level %d, asking for %d: Windfury Totem rank %d cast %d times, want 1", c.level, auraID, c.rank, casts)
 			}
 		}
 	}

@@ -26,7 +26,7 @@ import (
 //
 // We pin Dark Edge of Insanity's damage roll to its minimum and take the level 30 target's
 // armor away, so every normal Windfury hit deals exactly 242 + 3.5 * (AP + 64.4) / 14. Every
-// normal Flametongue hit (rank 3, no spell power) deals 35.28 / 4 * 3.5 * 1.15.
+// normal Flametongue hit (rank 3, no spell power) deals 35.36 / 4 * 3.5 * 1.15.
 func TestOrcShamanElementalWeapons(t *testing.T) {
 	newSim := func(talents string, imbue proto.WeaponImbue) (*core.Simulation, *EnhancementShaman) {
 		items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotMainHand+1)
@@ -101,7 +101,7 @@ func TestOrcShamanElementalWeapons(t *testing.T) {
 				t.Fatalf("fire spell power is %.0f, want 0", sp)
 			}
 
-			want := 35.28 / 4 * 3.5 * c.multiplier
+			want := 35.36 / 4 * 3.5 * c.multiplier
 			hits := 0
 			imbue := enh.GetAura("Flametongue Imbue")
 			onHit := imbue.OnSpellHitDealt
