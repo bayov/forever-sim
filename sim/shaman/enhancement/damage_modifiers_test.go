@@ -30,21 +30,7 @@ func TestOrcShamanDamageModifiers(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			player := newOrcShaman(30, stormstrike, &proto.EnhancementShaman_Options{ShamanImbue: proto.WeaponImbue_WindfuryWeapon})
-			for range proto.ItemSlot_ItemSlotMainHand {
-				player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
-			}
-			player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: c.weapon})
-			target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
-			target.Level = 32
-			target.Stats[proto.Stat_StatArmor] = 0
-			sim := core.NewSim(&proto.RaidSimRequest{
-				Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-				Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
-				SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
-			}, simsignals.CreateSignals())
-			sim.Reset()
-			enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+			sim, enh := newLevel30Sim(&proto.ItemSpec{Id: c.weapon}, proto.WeaponImbue_WindfuryWeapon)
 			enh.PseudoStats.BonusPhysicalDamage += flatBonus
 			if enh.Stormstrike == nil || enh.WindfuryWeaponMH == nil {
 				t.Fatalf("missing Stormstrike or Windfury Weapon")
@@ -74,4 +60,24 @@ func TestOrcShamanDamageModifiers(t *testing.T) {
 			}
 		})
 	}
+}
+
+// newLevel30Sim starts a Forever sim of a level 30 Orc shaman with Stormstrike, holding weapon
+// with imbue on it, against a level 32 target with no armor.
+func newLevel30Sim(weapon *proto.ItemSpec, imbue proto.WeaponImbue) (*core.Simulation, *EnhancementShaman) {
+	player := newOrcShaman(30, stormstrike, &proto.EnhancementShaman_Options{ShamanImbue: imbue})
+	for range proto.ItemSlot_ItemSlotMainHand {
+		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
+	}
+	player.Equipment.Items = append(player.Equipment.Items, weapon)
+	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+	target.Level = 32
+	target.Stats[proto.Stat_StatArmor] = 0
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
 }
