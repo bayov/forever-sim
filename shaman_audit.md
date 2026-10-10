@@ -97,7 +97,7 @@ The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (sect
 Strikes and shocks
 
 - [x] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
-- [ ] 7.8 Earth Shock
+- [?] 7.8 Earth Shock
 - [ ] 7.9 Flame Shock: direct and DoT parts
 - [ ] 7.10 Frost Shock
 - [ ] 7.11 Shared shock cooldown
@@ -925,6 +925,19 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Tests:
   - `stormstrike_test.go` TestOrcShamanStormstrikeMark casts the same spells 100 times in two level 60 sims with the same seed, one with the mark and one without, against the level 63 boss. Each marked Earth Shock and Lightning Bolt takes the mark off and deals exactly 1.2 times its twin, and 15 of the 100 marked Earth Shocks missed and still took it. The Earth Shock after it, Flame Shock (with its ticks), Frost Shock, Flametongue Weapon and Lightning Shield orbs leave the mark up and deal the same as their twins. The mark lasts 12 sec from the last time it went up.
   - It fails when Lightning Bolt ignores the mark, when nothing uses it up, when a missed Earth Shock leaves it, when it lasts 13 sec, and when the bonus is 25%.
+
+### 7.8 Earth Shock
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`earth_shock.go`, `shocks.go`): 7 ranks, learned at 4, 8, 14, 24, 36, 48 and 60. Each rank's damage grows for 5 levels after it's learned (7.1). It's an instant Nature hit with a 38.6% spell power coefficient on every rank (5.4), 30 / 50 / 85 / 145 / 240 / 345 / 450 mana, a 1.5 sec GCD and the 6 sec cooldown it shares with the other shocks (7.11). It rolls spell hit and crit (5.1, 5.3) and uses the Stormstrike mark (7.7). It's our one binary spell, so it's never partly resisted (5.2). Its threat is doubled, which our DPS doesn't use, and its interrupt does nothing because our targets don't cast.
+- Client 70338 (wago.tools, 8042 to 10414): the same levels, damage, growth, coefficient, mana, school and GCD. The cooldown is the 6000 ms of the shock category (19). Effect 2 is the interrupt.
+- Beta, all four logs (our count):
+  - 113 casts, 108 of rank 4 and 5 of rank 1. Rank 4 cost 145 mana every time and rank 1 cost 30, except 3 casts that cost nothing. Each of those came under Elemental Focus's Clearcasting (16246), which the cast used up.
+  - Earth Shocks came at least 5.91 sec apart, and any two shocks at least 5.9 sec apart, so the shared 6 sec holds with the log's 0.1 sec jitter.
+  - Outcomes: 89 hits, 7 crits, 12 misses, 3 full resists, 1 immune and 1 absorb. Rank 4 with 91 spell power hit raw 118 to 123, inside the sim's 118.8 to 124.4 (5.4).
+  - Not binary: the Elder Cloud Serpents took 30% off all 4 Earth Shocks that landed on them (5.2). So the server partly resists Earth Shock like our other spells, and the sim doesn't.
+- Already tested: `spell_power_test.go` (rank 1 and 4 damage against the beta), `mana_costs_test.go` (cost by rank, Convection, Shamanistic Focus, Clearcasting), `crit_test.go`, `gcd_test.go`, `swing_timer_test.go`, `damage_modifiers_test.go` and `stormstrike_test.go` (the mark), `spell_ranks_test.go` (rank 4 at 30), `other_procs_test.go`, `proc_matrix_test.go` and `talent_procs_test.go` (what it procs).
+- Proposed: under Forever, drop Earth Shock's binary flag, since the beta resisted part of it. With no target resistance it only matters while the sim keeps the level part of partial resists (5.2, waiting for the dungeon logs). Until then Earth Shock would lose the same 6% against the level 63 boss as our other spells, and 4% against Vishas. Classic keeps it binary.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
