@@ -641,3 +641,34 @@ The rest of the run, 18:27:55 to 18:42:23 (the log ends there):
 What it showed: below our level every spell crits at our full chance, the Flametongue procs
 included. The level 34 drop in the Shimmering Flats run is still open (5.3). Glancing is 0
 below our level, as in the sim.
+
+
+2026-10-10  Shimmering Flats run on level 34 mobs: spell crit (audit 5.3)
+--------------------------------------------------------------------------
+Combat log WoWCombatLog-101026_150733.txt, 18:57:45 to 19:06:11, level 34 Sparkleshell
+Snappers only. Same character as the 18:21 export. Flametongue Weapon, Searing Totem and
+Lightning Shield.
+
+Spell crits (crits / landed hits) and misses:
+  Flametongue Weapon 2/15 (6 misses), Searing 2/13 (2 misses), Earth Shock 0/5 (2 misses),
+  Flame Shock 0/2, Flame Shock ticks 0/8. All direct 4/35.
+Recheck, all holding: orbs 4 MISS of 17, no crit. Flametongue Weapon procced on every
+landed swing and Stormstrike but one killing blow, and on no miss, dodge or parry.
+Stormstrike raw 224 to 252, inside 220.0 to 271.7. White raw 191 to 236. Searing raw 20
+to 26. No partial resists (56 hits). The Improved Stormstrike buff came on all 10 casts,
+the mark on the 8 landed non-killing ones. Glancing 10 of 21 white swings.
+
+Whole log so far by spell and mob level (Windfury Weapon's attacks left out, they're melee):
+                         L27-29    L33     L34    L35    all
+  Searing                 8/55   11/64    3/26    -    22/145 (15.2%)
+  Shocks                  3/17    1/7     1/20   0/1    5/45
+  Fire Nova               2/17     -       -      -     2/17
+  Flametongue Weapon      5/60    2/27    3/46    -    10/133 (7.5%)
+  Flametongue Totem        -      1/10    1/43   1/4    3/57  (5.3%)
+  Searing, shocks and Fire Nova together: 29/207 (14.0%). Flametongue procs: 13/190 (6.8%).
+  Two-proportion z = 2.3 between them (about 1 time in 50 by chance).
+
+What it showed: the level 34 drop came mostly from the Flametongue procs, which made up
+most of the level 34 hits. The other spells crit on 4 of 46 there (8.7%, 5.7 expected at
+12.3%). The leading idea is now that the Flametongue procs crit less at every level (about 5
+to 8%), close to Healing Stream's 5.1%. It needs more procs to settle.

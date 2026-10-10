@@ -285,7 +285,11 @@ combat log, run these checks on it too, and tell the user when one breaks.
   spell crit on the sheet): level 33 15/115 (13.0%), level 34 4/95 (4.2%), level 35 1/5. By
   spell: Searing 12/77, Flametongue procs 5/103 (Weapon and Totem together, 1/63 at level
   34), shocks 1/18. Plus 18:27 to 18:42 (Thousand Needles): level 27 to 29 18/149 (12.1%),
-  Flametongue Weapon 5/60, Searing 8/55, Fire Nova 2/17, shocks 3/17, Flame Shock ticks 5/36. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7). The sim lets every
+  Flametongue Weapon 5/60, Searing 8/55, Fire Nova 2/17, shocks 3/17, Flame Shock ticks 5/36.
+  Plus 18:57 to 19:06 (level 34 only): Flametongue Weapon 2/15, Searing 2/13, shocks 0/7,
+  ticks 0/8. Leave Windfury Weapon's attacks out, they're melee. Whole log up to 19:06:
+  Searing, shocks and Fire Nova 29/207 (14.0%), Flametongue Weapon 10/133 (7.5%) and Totem
+  3/57 (5.3%). So the open question is now the procs at every level, not level 34. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7). The sim lets every
   player DoT tick crit under Forever, at the crit chance of the moment (ruleset.go canCrit). Most proc hits are on level 34 mobs and most Searing hits on level 33, so the spell
   and the level are mixed up. Flametongue Weapon on level 30 mobs or Searing on level 34s
   would tell them apart.
@@ -310,5 +314,6 @@ combat log, run these checks on it too, and tell the user when one breaks.
   Note our weapon skill from the latest `/bayov export` too (Two-Handed Maces was 149 of 150
   at 14:50 and still at 18:21 on 2026-10-10). Base totals (WoWCombatLog-101026_150733.txt up to 15:51, the
   audit session's count), plus 16:04 to 16:16: level 33 23/55 (42%), level 34 66/111 (59%),
-  level 35 6/8. Plus 18:27 to 18:42: levels 27 to 29 0/61, where the sim gives 0. Add each
+  level 35 6/8. Plus 18:27 to 18:42: levels 27 to 29 0/61, where the sim gives 0. Plus 18:57
+  to 19:06: level 34 10/21, so level 34 is 76/132 (58%). Add each
   new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.
