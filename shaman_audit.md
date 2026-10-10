@@ -98,7 +98,7 @@ Strikes and shocks
 
 - [x] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
 - [x] 7.8 Earth Shock
-- [ ] 7.9 Flame Shock: direct and DoT parts
+- [?] 7.9 Flame Shock: direct and DoT parts
 - [ ] 7.10 Frost Shock
 - [ ] 7.11 Shared shock cooldown
 
@@ -943,6 +943,23 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Proposed: under Forever, drop Earth Shock's binary flag, since the beta resisted part of it. With no target resistance it only matters while the sim keeps the level part of partial resists (5.2, waiting for the dungeon logs). Until then Earth Shock would lose the same 6% against the level 63 boss as our other spells, and 4% against Vishas. Classic keeps it binary.
 - Changed (2026-10-11): under Forever, Earth Shock isn't binary (`earth_shock.go`). Classic keeps the flag. On mksettings' Level 60 build (Phase 2 gear, the Level 60 talents, the optimized rotation) it went from 723.2 to 719.6 DPS at 180 sec, and on the Level 30 + 5 build from 136.8 to 136.5 at 120 sec. The enhancement and warden goldens fell up to 2.5%. The phase 1 to 3 golden characters are below 60 and fight the level 63 test boss, so the level part takes much more off there.
 - Tests: `resist_test.go` TestOrcShamanEarthShockResists rolls 2000 Earth Shocks at a level 30 target with 75 Nature resistance, half the cap at our level. Under Forever 96% land and 88% of those lose part of their damage. Under Classic 60% land (96% times 1 - 0.75 * 0.5) and none lose part. It fails with the binary flag under Forever.
+
+### 7.9 Flame Shock
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`flame_shock.go`, `shocks.go`): 6 ranks, learned at 10, 18, 28, 40, 52 and 60. A Fire hit plus a DoT of 4 ticks, 3 sec apart, over 12 sec. The hit has no damage range and grows for 5 levels after the rank is learned: 24, 38, 49, 89, 136.5 and 166 at the top. The DoT doesn't grow: 28, 32, 56, 84, 136 and 176 in all, a quarter a tick. The hit gets 21.4% of spell power and each tick 10% (5.4). 55 / 95 / 160 / 250 / 345 / 410 mana, a 1.5 sec GCD and the shared 6 sec shock cooldown (7.11).
+  - One hit roll decides both parts. A miss puts no DoT up, and a running DoT from an earlier cast keeps going.
+  - The hit rolls spell crit (5.3). Each tick rolls our spell crit at the time of the tick under Forever, for 1.5 times (5.7). The DoT takes its spell power when it goes up.
+  - A landed recast drops the old DoT and starts 4 new ticks, the first 3 sec later (5.7). Our rotations only cast it while the DoT is down.
+  - Call of Flame adds 5% a point to both parts (8.5), and Burning Totem adds a fifth tick (9.2).
+- Client 70338 (wago.tools, 8050 to 29228): the same levels, hit and growth, ticks (7, 8, 14, 21, 34 and 44 every 3000 ms for 12 sec), coefficients, mana, GCD and shock cooldown. Its "periodic can crit" flag is the one 5.7 found.
+- Beta, all four logs (our count):
+  - 109 casts: rank 3 cost 160 mana 107 times, once nothing (Clearcasting), and rank 1 cost 55 once. 89 hits, 13 crits and 7 misses.
+  - Every DoT that ran its course without the mob dying or a recast ticked exactly 4 times (61 of 61). The first tick came 2.91 to 3.11 sec after the cast and the others 2.90 to 3.10 sec apart, so 3 sec with the log's jitter.
+  - None of the 6 misses on a mob without the DoT put one up. One miss at 19:52:10 on a Thundering Boulderkin that had the DoT left it running, and its last tick came on time at 12 sec.
+  - The one landed recast while the DoT was up (21:14:52 on a Pesterhide Snarler) came with the second tick. The log shows SPELL_AURA_REFRESH, and the next tick came 3.05 sec later. The mob died before the old DoT would have ended, so this one doesn't show how many ticks a recast gives. 5.7's run did.
+- Already tested: `periodic_test.go` TestOrcShamanFlameShockTicks (tick times, a recast, crit ticks), `spell_power_test.go` (ranks 1 and 3 against the beta), `mana_costs_test.go`, `crit_test.go`, `damage_modifiers_test.go` (Call of Flame) and `stormstrike_test.go` (it leaves the mark up).
+- Proposed: no sim change. A small test that a missed Flame Shock puts no DoT up, and leaves a running one alone.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
