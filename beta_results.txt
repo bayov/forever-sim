@@ -326,3 +326,34 @@ What it showed: the beta's Undead paladin has 3 more Strength, 1 more Agility an
 Spirit at level 20 than the sim builds. One level can't tell whether Forever changed the
 Undead race (which would also change the Undead rogue) or the paladin's growth. A level 1
 Undead paladin and a level 1 Undead caster would tell them apart. No sim change yet.
+
+
+2026-10-10  Level 1 Undead paladin (item 8)
+-------------------------------------------
+`/bayov export` at 17:09, a new character in its starting gear (Brawler's Harness, Pants
+and Boots, Battleworn Hammer, no stats but armor, every "pos" 0). No talents. Two-Handed
+Maces 1 of 5, Defense 1 of 5.
+
+              beta    sim
+  Strength     24     21
+  Agility      19     18
+  Stamina      23     23
+  Intellect    18     18
+  Spirit       21     26
+
+The gap is the same as at level 20: 3 more Strength, 1 more Agility, 5 less Spirit. So the
+gains from level 1 to 20 are the 1.12 paladin's (20 / 11 / 19 / 12 / 13), and only the
+starting row differs.
+
+The rest, from the beta's attributes:
+  Mana 78 = 60 + 18. Attack power 31 = 3 - 20 + 2 x 24. Spell crit 4.850% (sim 4.852).
+  Mana regen 5.251 a sec = 21 Spirit x 0.25.
+  Crit and dodge 4.625% both. The sim gives 4.787, less 0.16% for 4 points of skill under
+  5 x level: the mace skill (1 of 5) for crit and Defense (1 of 5) for dodge.
+  Health 68, where the sim gives 78 = 28 + 20 + 3 x 10. At level 20 it matched (431). Either
+  the level 1 base health is 18 instead of 28 or Stamina counts differently at level 1. No
+  preset is below level 20, so it doesn't matter to the sims.
+
+What it showed: the Forever Undead paladin is the sim's row + 3 Strength + 1 Agility - 5
+Spirit, at least from level 1 to 20. Whether the Undead race changed too (and so the Undead
+rogue) still needs an Undead level 1 of another class.

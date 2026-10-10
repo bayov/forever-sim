@@ -211,10 +211,12 @@ Keep this current as you go.
 - [ ] 5. Flametongue procs and Elemental Devastation
 - [ ] 6. Weapon Mastery baseline
 - [ ] 7. Spirit regen of the other classes
-- [ ] 8. Undead paladin base stats. Level 20 measured 2026-10-10: Str 44, Agi 30, Sta 42,
-  Int 30, Spi 34 against the sim's 41 / 29 / 42 / 30 / 39. Health, mana, AP, crit, dodge and
-  spell crit all follow the sim's formulas. To tell a race change from a class change, we
-  asked for a naked level 1 Undead paladin and Undead level 1 casters (with item 7).
+- [ ] 8. Undead paladin base stats. Measured 2026-10-10 at level 1 (24 / 19 / 23 / 18 / 21)
+  and level 20 (44 / 30 / 42 / 30 / 34). Both are the sim's row + 3 Str + 1 Agi - 5 Spi, so
+  the 1.12 paladin gains hold and only the starting row differs. Health, mana, AP, crit,
+  dodge and spell crit follow the sim's formulas (level 1 health is 10 under, no preset uses
+  it). The sim change was shown to the user. An Undead level 1 of another class (with item
+  7) tells whether the Undead race changed too, which would move the Undead rogue.
 - [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
   Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and
