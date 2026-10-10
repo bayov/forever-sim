@@ -66,7 +66,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
 - [x] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
 - [x] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
-- [ ] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
+- [?] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
 - [ ] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
 - [ ] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
 
@@ -603,6 +603,23 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Forever has a penalty of its own. The dev notes of 1 October say spells cast with ranks "vastly below your current level" get less from spell power, and have a lower chance to trigger class abilities and talents (a rank 1 Frostbolt at 60 never procs Frostbite). The character sheet's Spell Damage tooltip explains it. The sim has no such penalty. On the beta, Earth Shock rank 1 and Flame Shock rank 1 got their full spell power at level 30, 21 and 15 levels past the level they stop growing at, so the penalty starts further down than that. It doesn't touch the sim, because our rotations always cast the top rank. It would matter if a rotation ever cast a low rank to save mana.
 - Proposed to the user: no change. The sheet tooltip's exact text could tell us where the penalty starts.
 - `spell_ranks_test.go` TestOrcShamanSpellRanks names the top rank of each of 17 spells and checks the rank a level 20, 30 and 60 shaman casts, from the client's learn levels. It also checks that a spell we haven't learned yet (Chain Lightning, Windfury Totem at 30) casts nothing.
+
+### 5.6 How damage modifiers stack
+
+- Shown to the user (2026-10-10), waiting for the OK. A spell hit is its base damage plus spell power (5.4), times our own percent bonuses, times the target's, and then partial resists (5.2) and crit (5.3) (`spell_result.go` CalcDamage). Every bonus multiplies the whole hit, spell power part included. Each spell keeps two kinds of bonus. Bonuses of the same kind add up (DamageMultiplierAdditive), and the kinds multiply each other (DamageMultiplier and the rest).
+- Our talent and item bonuses on a spell's damage. In the Forever client (70338, wago.tools SpellEffect) each one is the same kind, a percent modifier on the spell's damage (aura 108):
+  - Concussion, 1% a point on Lightning Bolt, Chain Lightning and Earth Shock. The client's spell mask has only those three, as the tooltip says.
+  - Call of Flame, 5% a point on Searing and Magma Totem, Fire Nova, Flame Shock (direct part and ticks) and Lava Burst.
+  - Improved Fire Nova, 10% a point on Fire Nova.
+  - Improved Lightning Shield, 5% a point on the orbs.
+  - Elemental Weapons, 5% a point on the Flametongue and Frostbrand procs.
+  - Rage of the Storm, 10% on Stormstrike (4.10).
+- Only Fire Nova gets two of them. The sim adds them, so the Level 60 talents (Call of Flame 3, Improved Fire Nova 2) give 1 + 15% + 20% = 1.35. 1.12 adds percent modifiers of the same kind, and the SoD sim adds its talent bonuses too (Concussion, Call of Flame). If Forever multiplied them, it would be 1.15 * 1.2 = 1.38, 2.2% more Fire Nova damage at 60. Our Level 30 talents have none of these talents, so at Level 30 no two bonuses meet on one spell.
+- The Stormstrike mark is another kind. The client puts it on the target as 20% more damage taken from us (aura 271) for Lightning Bolt, Chain Lightning and Earth Shock. So it multiplies with Concussion: 1.05 * 1.2 = 1.26 at 5 points. The sim multiplies them.
+- Curse of the Elements under Forever: the client's 440892, 1311676, 1311677 and 1311680, learned at 20, 30, 40 and 50, give 4, 6, 8 and 10% more damage taken from every magic school (aura 87, all schools but Physical) and take 30, 45, 60 and 75 off every resistance. The sim has the same (`debuffs.go` foreverCurseOfElementsAura), by the raid's level. It multiplies with all of the above, so a Level 60 Earth Shock on a marked target deals 1.2 * 1.1 = 1.32 times its hit. Our Level 60 presets have it, and the Level 30 ones have no debuffs. Curse of Shadow and Improved Scorch are gone under Forever, and the sim skips them.
+- Bonuses on all our spells of a school (Natural Alignment Crystal, Power Infusion, Sayge's Fortune) multiply with the rest, as in 1.12. None are in our presets.
+- Lava Burst gets Call of Flame times its own 20% with Flame Shock on the target (1.15 * 1.2 = 1.38). The client's 20% is a script effect, so the server decides how it stacks. Lava Burst is a level 40 talent and isn't in our presets.
+- Proposed to the user: no change. A beta respec settles add or multiply: Call of Flame 3 and Improved Fire Nova 2 need 15 points in Elemental, and Stormstrike fits in the other 15. With 91 spell power, Fire Nova rank 2 hits 165.4 to 185.6 if they add and 169.1 to 189.8 if they multiply, so a few casts on a group of mobs tell them apart.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
