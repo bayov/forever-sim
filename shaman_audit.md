@@ -82,7 +82,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 ## 7. Shaman abilities
 
-- [?] 7.1 Rank tables: every spell's ranks, learn levels and values at 30 and 60 (vs the ForeverChanges spellbook)
+- [x] 7.1 Rank tables: every spell's ranks, learn levels and values at 30 and 60 (vs the ForeverChanges spellbook)
 
 Weapon imbues
 
@@ -589,7 +589,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 5.3 Spell crit
 
-- The user OK'd it (2026-10-10). Our spell crit is 2.3% base plus Intellect (0.0355% a point at 30, item 1.5), crit from gear (one pool with melee crit under Forever, `ruleset.go` unifyEquipHitAndCrit), Thundering Strikes (1% a point), the Orc axe racial (1%) and buffs. Talents that add crit to some spells only (Call of Thunder, Tidal Mastery) are section 8. The shocks, Lightning Bolt, Chain Lightning, Lava Burst, Fire Nova, Searing and Magma Totem attacks and the Flametongue Weapon, Flametongue Totem and Frostbrand procs roll it (`spell_outcome.go` outcomeMagicHitAndCrit), after they land. Lightning Shield orbs never crit (5.1). Flame Shock's ticks roll their own crit under Forever (5.7). A spell crit deals 1.5 times a hit. Elemental Fury adds 20% of that bonus a point (1.6 times at 1/1, section 8).
+- The user OK'd it (2026-10-10). Our spell crit is 2.3% base plus Intellect (0.0355% a point at 30, item 1.5), crit from gear (one pool with melee crit under Forever, `ruleset.go` unifyEquipHitAndCrit), Thundering Strikes (1% a point), the Orc axe racial (1%) and buffs. Talents that add crit to some spells only (Call of Thunder, Tidal Mastery) are section 8. The shocks, Lightning Bolt, Chain Lightning, Lava Burst, Fire Nova, Searing and Magma Totem attacks and the Flametongue Weapon and Frostbrand procs roll it (`spell_outcome.go` outcomeMagicHitAndCrit), after they land. Flametongue Totem's procs roll a flat 8% since 2026-10-10 (below). Lightning Shield orbs never crit (5.1). Flame Shock's ticks roll their own crit under Forever (5.7). A spell crit deals 1.5 times a hit. Elemental Fury adds 20% of that bonus a point (1.6 times at 1/1, section 8).
 - Against a target above our level spell crit isn't cut. The sim works out a 0.3% and 2.1% cut at +2 and +3 (`target.go` SpellCritSuppression), but nothing uses it (`spell_result.go` SpellCritChance, "TODO: Classic verify crit suppression"). Melee crit is cut (4.7).
 - Cross-check: the royalgiraffe resist guide (2019 Classic) rolls spell crit apart from hit and resists and mentions no cut against bosses. We found no source for a spell crit cut in Classic.
 - Beta (our count from the Shimmering Flats log up to 16:21, with 12.3% spell crit on the sheet and no buffs that add crit): every crit was 1.5 times the hit (Searing Totem, Flametongue Weapon 27 of 18 and 50 of 33, Flame Shock ticks 34 and 35 of 23). Crits by mob level were 15 of 115 hits at level 33 (13.0%), 4 of 95 at level 34 (4.2%, 1 time in 150 by chance at 12.3%) and 1 of 5 at level 35. By spell, Searing Totem crit on 12 of 77 (15.6%) and the Flametongue Weapon and Totem procs on 5 of 103 (4.9%, 1 time in 100 by chance), with 1 of 63 at level 34. The shocks crit on 1 of 18. Most proc hits are at level 34 and most Searing hits at level 33, so we can't tell whether the low numbers come from the level or from the procs.
@@ -605,6 +605,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Elemental respec (7.41% spell crit): 3 crits in 57 procs up to 21:25 (49b5cce8), 5.3%, with 4.2 expected at our crit. That fits our crit, and fits 5% too. With the fist weapon run (2ae6ffc0, 7.16% after 7 less Intellect) it's 5 of 83 (6.0%). Up to 22:16 (9294818f) it's 18 of 284 (6.3%) at 7.16 to 7.41%.
   - Both crit chances together (2026-10-10): 12 of 127 at 12.3% and 18 of 284 at about 7.3%. Our crit expects 15.6 and 20.7, and a flat 5% expects 6.4 and 14.2. 12 or more of 127 has a chance of 0.026 at 5% and 0.87 at our crit, and the two counts together are 6.7 times as likely with our crit as with 5%. So a flat 5% is unlikely. But a flat 7.3% (the two runs pooled, 30 of 411) fits both counts as well as our crit does, and the two rates (9.4% and 6.3%) are only 1.1 standard errors apart, where following our crit predicts a 5 point gap (the beta session's point, c9d3119c). So the data doesn't yet show the rate moving with our crit. The weak side is the 127 procs at 12.3%. About 400 more after the respec back to Enhancement would make the expected gap about 2.7 standard errors. Still open until the user calls it. The sim keeps rolling our spell crit, which no count so far rules out.
   - Up to 22:18 (the beta session, 57459eea): 13 more crits in 133 procs, so 31 of 417 (7.4%) since the respec at 7.2 to 7.4%. With the 12 of 127 at 12.3%, a flat 5% is now 48 times less likely than our crit. But a flat 7.9% (all 43 of 544) still fits as well as our crit (1.3 to 1). The Enhancement build at 12% is the next step.
+  - Changed (the user, 2026-10-10, through the beta session, 79450996): under Forever, Flametongue Totem's procs crit a flat 8% of the time, whatever our crit (`totem_weapon_buffs.go` FlametongueTotemCritChance), until more beta data comes in. `flametongue_totem_test.go` TestOrcShamanFlametongueTotemCrits wants about 77 crits in 1000 procs at both 100% and 0% spell crit. The next run is about 400 procs at the Enhancement build's 12% spell crit, where our spell crit predicts about 49 crits and a flat 8% about 32. It stays in notes.md Need to Verify.
 - Beta, whole log up to 20:18 (905e293a): Flametongue Totem crit on 18 of 182 (9.9%), still at one crit chance.
 - Beta, whole log up to 20:25 (9435c80b): 22 of 206 (10.7%). The totem procced on 63 of 63 swings in range from 20:09 to 20:25.
 - `crit_test.go` TestOrcShamanSpellCrit checks that Lightning Bolt, Earth Shock, Flame Shock and a Searing Totem attack crit at our full chance from 5 levels below us to 4 above, and against the level 63 boss at 60. With 20% more crit at our own level, each crit deals 1.5 times its hit.
@@ -801,7 +802,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.1 Rank tables
 
-- Shown to the user (2026-10-10), waiting for the OK. A background agent compared every shaman rank in the sim against the newest Forever client on wago.tools (1.60.1.70338, the SpellEffect, SpellLevels, SpellMisc, SpellPower, SpellCooldowns, SpellDuration, SpellCastTimes, SpellAuraOptions and SkillLineAbility tables), 1,025 field checks in all: spell ID, learn level, the level a rank stops growing at, damage or amount (low and high), growth by level, coefficient, mana, cast time, cooldown, duration and ticks. It checked its formula on Fire Nova rank 2 first (408424 gives the sim's 102.94 to 117.06 at 27). We checked the new mismatches in the client tables ourselves.
+- The user OK'd it (2026-10-10), and asked to rename the Windfury aura IDs as well ("so why not fix it as well?"). A background agent compared every shaman rank in the sim against the newest Forever client on wago.tools (1.60.1.70338, the SpellEffect, SpellLevels, SpellMisc, SpellPower, SpellCooldowns, SpellDuration, SpellCastTimes, SpellAuraOptions and SkillLineAbility tables), 1,025 field checks in all: spell ID, learn level, the level a rank stops growing at, damage or amount (low and high), growth by level, coefficient, mana, cast time, cooldown, duration and ticks. It checked its formula on Fire Nova rank 2 first (408424 gives the sim's 102.94 to 117.06 at 27). We checked the new mismatches in the client tables ourselves.
 - Everything matches for Lightning Bolt (ranks 1 to 10), Chain Lightning (1 to 4), Earth Shock (1 to 7), Flame Shock (1 to 6, hit and DoT), Frost Shock (1 to 4), Lightning Shield (1 to 7, orbs included), Water Shield, Searing Totem (1 to 6), Magma Totem (1 to 4), Fire Nova (1 to 5), Flametongue Totem (1 to 4), Grace of Air (1 to 3), Strength of Earth (1 to 5), Mana Spring (1 to 4), Healing Stream (1 to 5), Windfury Weapon (1 to 4), Rockbiter (1 to 7), Stormstrike and Lava Burst (1 to 3). Every totem has a 1 sec GCD. No client rank is missing from the sim.
 - Mismatches we already know about, with the user's decisions:
   - Stoneskin Totem: the sim gives every rank rank 6's -30. The client has -4, -7, -11, -16, -22 and -30 (6.3, recorded only).
@@ -824,6 +825,18 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Flametongue Weapon: the exact points / 25 at every rank.
   - Leave the rest: the Windfury aura names, the range offset below the top level, Stoneskin and Windfury Totem's wait (decided earlier).
   - notes.md Need to Verify: Flametongue Totem rank 2 (At 40) and the overload damage (At 60).
+- Changed (2026-10-10):
+  - Mana Tide Totem lasts 13 sec (`buffs.go` ManaTideTotemDuration, which the shaman's own totem uses now too). The ticks keep their 3 sec period, where the party buff from another shaman used to take a quarter of the duration.
+  - Frostbrand rank 1 is 44.6 at 26 and grows 2.1 a level (`frostbrand_weapon.go`).
+  - Flametongue Weapon uses the exact N / 25 at every rank (`flametongue_weapon.go`). At 30, rank 3 deals 35.36 per 4 sec of weapon speed (was 35.28).
+  - The Windfury Totem aura is 8515, 10609 and 10612, the client's party auras (`air_totems.go` WindfuryBuffAuraId). The five shaman rotations that asked for 10611 ask for 10612. The new and old IDs are one rank family, so a rotation saved before the rename still finds the aura, and a rotation that names rank 3 finds rank 1 or 2 at a lower level (it found nothing below 52 before). The UI database has the three new spell icons in place of the old ones, patched in without regenerating the items.
+  - Both rank family items are in notes.md Need to Verify, At 60.
+  - The goldens didn't move. We didn't rerun the presets.
+- Tests:
+  - `spell_ranks_test.go` TestOrcShamanImbueDamage checks a normal Flametongue Weapon hit at each rank's top level (and rank 3 at 30), and Frostbrand rank 1 at 20, 26 and 27, with no spell power. It fails with the old tables (23.49 for 23.51 at rank 2, 45 for 44.6).
+  - `spell_ranks_test.go` TestOrcShamanWindfuryTotemAura has a rotation put Windfury Totem down when its aura isn't up, at 40, 50 and 60, asking for 10612 and for 10611. It casts once in 30 sec each time. Without the old IDs in the family, asking for 10611 cast it 11 to 14 times.
+  - `mana_returns_test.go` TestOrcShamanManaTide now also wants the totem up until 15 sec after a drop at 2 sec, gone at 15.5 sec, and still 4 ticks.
+  - `elemental_weapons_test.go` wants rank 3's 35.36.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
