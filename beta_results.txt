@@ -908,3 +908,29 @@ spell power), Windfury Weapon and Flametongue Totem, mobs of level 27 to 29. Som
     One white hit at 20:27:45 had raw 241, over the 238.7 limit at 389 attack power. Our
     Strength of Earth Totem went down at 20:27:17, and totem buffs don't show as auras in
     the log, so it holds. Orbs: no crit, 3 IMMUNE (Thundering Boulderkin).
+
+
+2026-10-10  Elemental respec run, second part (21:02:47 to 21:10:07)
+------------------------------------------------------------------
+Same build and log as the first part. Mobs of level 28 and 29.
+  - Fire Nova (audit 5.6): 8 more hits, 25 in all since the respec. Raw 160 to 175, and 4
+    hits are over the add limit (173 and 175 normal, 173 and 174 before the crit). Every
+    multiplier from 1.373 to 1.419 fits all 25, and x1.35 fits none. At x1.38 a hit logs
+    173 or more 15.5% of the time (3.9 expected in 25, 4 seen).
+    How the add limit is set: rank 2 is learned at 22 and grows 1.6 a level for five
+    levels, so 102 + 1.6 x 5 = 110 on average. The client's variance (12.84%) gives 102.94
+    to 117.06. 21.4% of 49 spell power adds 10.49, and x1.35 makes 153.1 to 172.2. The raw
+    field drops the fraction, so adding can't log over 172.
+    A check that doesn't lean on the client's base: the average hit before the respec (23
+    hits at 91 spell power, x1) puts the base at 111.0 on average, and the average after it
+    (167.3) is 1.377 times that base plus 10.49, give or take 0.013. That's 2 standard
+    errors from 1.35 and right on 1.38.
+  - Elemental Devastation (item 5): still no buff in the log. No spell crit in this part.
+    The one Flame Shock tick crit from the first part doesn't test the talent: its client
+    trigger (0x10000) is direct harmful spell damage, and periodic damage is its own flag
+    (0x40000). Direct shocks have crit 0 of 8 (4 Flame Shock, 4 Frost Shock), and no
+    Lightning Bolt was cast since the respec.
+  - Flametongue Totem crit (item 12): 0 of 29 since the respec.
+  - Rechecks: white raw 200 to 238 (limit 238.7). Flametongue Totem procced on 11 of 11
+    landed swings in range, none on the 3 killing blows. Mob parry haste 2 of 2 within 0.1
+    sec. Glancing 0 of 18 at 28 and 29. No partial resists.
