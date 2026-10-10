@@ -103,3 +103,61 @@ What it showed:
 - Item 2, the Flametongue Totem half: it procs on landed and blocked swings, not on misses,
   dodges or parries. That matches the sim.
 - Item 1 again: one Flametongue Totem proc per Windfury Weapon proc, none from Stormstrike.
+
+
+2026-10-10  Flametongue Weapon run with Searing Totem (items 2, 9 recheck, 4 recheck, audit 7.22)
+-------------------------------------------------------------------------------------------------
+Same combat log (WoWCombatLog-101026_150733.txt), 15:41:20 to 15:46:22. Silithid Hive Drones,
+level 33 and 34, fought from the front. Same character as the run above, with Flametongue
+Weapon (its proc is Flametongue Attack 10444), Lightning Shield and Searing Totem rank 3
+(6364, bolt 6351). No Flametongue or Windfury Totem. The user also put down Stoneclaw,
+Stoneskin and Healing Stream Totems.
+
+Flametongue Weapon (each proc matched to the closest swing or Stormstrike before it, within
+300 ms, almost all 0 to 3 ms after it)
+  Landed swings: 30 of 30 procced (21 glancing, 4 blocked, 1 crit, 4 normal).
+  Landed Stormstrikes: 12 of 12 procced. A 13th killed the mob and had no proc, so it's
+  left out.
+  Missed, dodged or parried swings: 0 of 10 (2 miss, 3 dodge, 5 parry).
+  Parried Stormstrikes: 0 of 8. No Stormstrike was blocked.
+  42 procs in all, 13 of them missed as spells.
+
+Searing Totem rank 3 (three totems, 23 bolts)
+  Each bolt is a cast of 2.22 sec on average (2.13 to 2.29). The bolt then flies 0.23 sec on
+  average (0 to 0.22 sec, and once 1.11). The totem then waits 0.26 sec on average (0 to 0.95)
+  before it starts the next cast.
+  Bolt to bolt, while on one mob: 2.62 sec on average over 19 gaps.
+    2.35 2.39 2.41 2.41 2.42 2.43 2.43 2.44 2.46 2.47 2.48 2.79 2.81 2.82 2.82 2.83 2.84
+    2.88 3.22
+  First bolt: the totem started casting 3 ms after it went down, and the bolt went out
+  2.23 and 2.25 sec after it was put down (two totems). The other totem went down before the
+  mob was in range.
+  Raw damage of the 20 hits: 20 to 26, mean 23.2 (crits listed at their raw value).
+    Normal: 21 21 22 22 23 23 23 23 24 24 25 25 25 26 26 26
+    Crits (raw, shown): (20, 30) (20, 31) (23, 35) (22, 34)
+  The sim has 19 to 25 + 91 spell power x 1.7% = 20.55 to 26.55, which comes to 20 to 26
+  when the log drops the fraction.
+  4 crits in 20 hits (20%) at 12.3% spell crit happens 22% of the time by chance.
+  3 misses in 23 bolts (13%).
+  Lifetime: not seen, because the user put down a new totem every time before it ran out
+  (31 and 38 sec).
+
+Rechecks
+  Lightning Shield: 30 orbs, 5 MISS (17%), 25 hits, 0 crits. All runs so far: 101 orbs, 19
+  misses, 0 crits in 82 hits.
+  White raw: 191 to 238 (30 hits), mean 212.5, in the 191.7 to 238.7 range. 191 says the
+  log drops the fraction rather than rounding.
+    191 192 195 195 196 198 200 200 202 209 210 210 210 212 214 214 214 216 216 217 218 220
+    220 220 225 225 227 234 238 238
+  Stormstrike raw (13 landed): 225 264 242 241 244 253 265 242 235 271 223 270 236, all inside
+  the 3.6 range (220.0 to 271.7). 223 is again below the "6.4% more" range, and 270 and 271
+  above the "+5 flat" range.
+
+What it showed:
+- Item 2, the Flametongue Weapon half: it procs on every landed hit, swings and Stormstrikes,
+  blocks included, and never on a miss, dodge or parry. That matches the sim, so item 2 is
+  settled.
+- Searing Totem (audit 7.22): damage, crit and miss match the sim. The bolts come 2.62 sec
+  apart on average, against the sim's 2.5 sec, and the first one 2.25 sec after the totem
+  goes down, against the sim's 2.5 sec.
+- The recheck list holds.

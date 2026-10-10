@@ -196,9 +196,9 @@ Keep this current as you go.
   and the user saw no proc from Stormstrike on the beta. The audit session made the sim
   change. Windfury Weapon's attacks weren't counted on their own, so the item 2 run checks
   them on the side (it uses Windfury Weapon with Flametongue Totem).
-- [ ] 2. Flametongue procs on a miss, dodge, parry or block. The Flametongue Totem half is
-  settled (2026-10-10, matches the sim). Flametongue Weapon is left: a run with it and no
-  totems.
+- [x] 2. Flametongue procs on a miss, dodge, parry or block. Settled 2026-10-10 in the sim's
+  favor: Flametongue Totem and Flametongue Weapon proc on every landed hit (blocks included)
+  and never on a miss, dodge or parry.
 - [ ] 3. Windfury Weapon attacks and the swing timer
 - [ ] 4. Stormstrike damage model, dagger. The model is settled (2026-10-10): 30 Stormstrikes
   with Rage of the Storm fit the sim's normalized 3.6, and the other two models each had hits
@@ -230,3 +230,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Flametongue Totem procs on every landed white swing (blocks and glancing blows too) and
   never on a miss, dodge, parry, Stormstrike or Windfury Weapon attack (items 1 and 2).
   Leave out swings where the totem wasn't up or in range.
+- Flametongue Weapon procs on every landed swing and Stormstrike (blocks too) and never on a
+  miss, dodge or parry (item 2). Leave out a hit that kills the mob.
+- Searing Totem's bolts do 19 to 25 + 1.7% of spell power at rank 3 and use our spell hit
+  and crit (audit 7.22). The log's raw damage drops the fraction.
