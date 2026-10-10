@@ -20,7 +20,7 @@ func TestOrcShamanSpiritRegen(t *testing.T) {
 	}{
 		{proto.Ruleset_RulesetForever, 1, 5.5},
 		{proto.Ruleset_RulesetForever, 30, 12.875},
-		{proto.Ruleset_RulesetForever, 60, 19.125},
+		{proto.Ruleset_RulesetForever, 60, 18.75},
 		{proto.Ruleset_RulesetClassic, 30, 12.8},
 	}
 	for _, c := range cases {

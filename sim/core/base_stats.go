@@ -27,15 +27,19 @@ var BaseStats = map[BaseStatsKey]stats.Stats{}
 // These are also scattered in various dbc/casc files,
 // `octbasempbyclass.txt`, `combatratings.txt`, `chancetospellcritbase.txt`, etc.
 
+// Forever reworked the Horde races. On the beta (2026-10-10) each of them is 20 in every
+// attribute at level 1, plus an offset that adds up to 0 and leaves Spirit alone. We assume the
+// offsets hold at 60, and the lower levels have them too (tools/gen_level_base_stats.py). The
+// Alliance races keep 1.12's offsets.
 var RaceOffsets = map[proto.Race]stats.Stats{
 	proto.Race_RaceUnknown: {},
 	proto.Race_RaceHuman:   {},
 	proto.Race_RaceOrc: {
 		stats.Agility:   -3,
 		stats.Strength:  3,
-		stats.Intellect: -3,
-		stats.Spirit:    3,
-		stats.Stamina:   2,
+		stats.Intellect: -1,
+		stats.Spirit:    0,
+		stats.Stamina:   1,
 	},
 	proto.Race_RaceDwarf: {
 		stats.Agility:   -4,
@@ -51,13 +55,16 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Spirit:    0,
 		stats.Stamina:   -1,
 	},
-	// The Skyborne stat offsets have not been published. They sit at the class baseline
+	// The High Order's stat offsets have not been published. It sits at the class baseline
 	// until they are, rather than carrying an invented stat line.
-	proto.Race_RaceSkyborneHighOrder:  {},
-	proto.Race_RaceSkyborneWindshaper: {},
-	// Forever's Undead have 3 more Strength, 1 more Agility and 5 less Spirit than 1.12's
-	// (-1, -2, +1, -2, +5). The beta showed it at levels 1 and 20, and we assume it holds at
-	// 60 too (tools/gen_level_base_stats.py has the lower levels).
+	proto.Race_RaceSkyborneHighOrder: {},
+	proto.Race_RaceSkyborneWindshaper: {
+		stats.Agility:   1,
+		stats.Strength:  -1,
+		stats.Intellect: 1,
+		stats.Spirit:    0,
+		stats.Stamina:   -1,
+	},
 	proto.Race_RaceUndead: {
 		stats.Agility:   -1,
 		stats.Strength:  2,
@@ -66,10 +73,10 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Stamina:   1,
 	},
 	proto.Race_RaceTauren: {
-		stats.Agility:   -5,
-		stats.Strength:  5,
-		stats.Intellect: -5,
-		stats.Spirit:    2,
+		stats.Agility:   -2,
+		stats.Strength:  2,
+		stats.Intellect: -2,
+		stats.Spirit:    0,
 		stats.Stamina:   2,
 	},
 	proto.Race_RaceGnome: {
@@ -82,9 +89,9 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 	proto.Race_RaceTroll: {
 		stats.Agility:   2,
 		stats.Strength:  1,
-		stats.Intellect: -4,
-		stats.Spirit:    1,
-		stats.Stamina:   1,
+		stats.Intellect: -3,
+		stats.Spirit:    0,
+		stats.Stamina:   0,
 	},
 }
 
@@ -303,14 +310,15 @@ type RaceClass struct {
 	Class proto.Class
 }
 
-// Attack power per level, on top of the -20 every class starts from.
+// Attack power per level for the classes that gain it, on top of a flat -20. The other classes
+// have the flat value of their level 60 table at every level. A level 1 Tauren druid on the
+// beta (2026-10-10) had 2 x Strength - 20, so the druid gains none.
 var APPerLevel = map[proto.Class]float64{
 	proto.Class_ClassWarrior: 3,
 	proto.Class_ClassPaladin: 3,
 	proto.Class_ClassHunter:  2,
 	proto.Class_ClassRogue:   2,
 	proto.Class_ClassShaman:  2,
-	proto.Class_ClassDruid:   2,
 }
 
 // Base stats with race offsets and the class base crit. The level 60 tables above are the
@@ -319,10 +327,17 @@ func getBaseStatsCombo(r proto.Race, c proto.Class, level int32) stats.Stats {
 	if level >= CharacterMaxLevel {
 		return ClassBaseStats[c].Add(RaceOffsets[r]).Add(ClassBaseCrit[c])
 	}
-	// The Skyborne stat offsets are not published, so they use the class baseline like
-	// RaceOffsets does.
-	if r == proto.Race_RaceSkyborneHighOrder || r == proto.Race_RaceSkyborneWindshaper {
+	// 1.12 has no Skyborne rows. The High Order's offsets are not published, so it uses the
+	// Human rows like RaceOffsets does. The Windshaper's we saw on the beta, so we build its
+	// rows from the Undead ones and the gap between the two races in RaceOffsets. The Undead
+	// rows don't have the Human's Spirit racial baked in like 1.12's Human rows do.
+	var raceShift stats.Stats
+	switch r {
+	case proto.Race_RaceSkyborneHighOrder:
 		r = proto.Race_RaceHuman
+	case proto.Race_RaceSkyborneWindshaper:
+		raceShift = RaceOffsets[r].Subtract(RaceOffsets[proto.Race_RaceUndead])
+		r = proto.Race_RaceUndead
 	}
 	attrs, ok := levelAttributes[RaceClass{r, c}]
 	if !ok {
@@ -356,11 +371,11 @@ func getBaseStatsCombo(r proto.Race, c proto.Class, level int32) stats.Stats {
 		stats.Spirit:    float64(row[4]),
 		stats.Health:    float64(hm[0]),
 		stats.Mana:      float64(hm[1]),
-	}
+	}.Add(raceShift)
 	if ap, ok := APPerLevel[c]; ok {
 		base[stats.AttackPower] = ap*float64(level) - 20
 	} else {
-		base[stats.AttackPower] = -10
+		base[stats.AttackPower] = ClassBaseStats[c][stats.AttackPower]
 	}
 	if c == proto.Class_ClassHunter {
 		base[stats.RangedAttackPower] = base[stats.AttackPower]

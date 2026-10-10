@@ -44,24 +44,31 @@ with open(DIR + "player_levelstats.csv") as f:
 s, a, st, i, sp = levelstats[(5, 8)][1]
 levelstats[(5, 8)][1] = (s, a, st, sp, i)
 
-# Forever changed the Undead race. A naked Undead on the beta (2026-10-10) has 3 more Strength,
-# 1 more Agility and 5 less Spirit than the 1.12 Undead of the same class and level. The level 1
-# rogue matched exactly, and so did the level 1 and level 20 paladin, whose row the sim builds
-# from the Undead warrior. We assume the same shift at every level, 60 included (RaceOffsets in
-# base_stats.go).
-UNDEAD_FOREVER_SHIFT = (3, 1, 0, 0, -5)
+# Forever reworked the races. On the beta (2026-10-10) a naked level 1 character of each Horde
+# race has these attributes more than the 1.12 row of the same race and class. Every class we
+# saw got the same shift: the Undead on seven classes (and a level 20 paladin), the Orc on the
+# shaman and warlock, the Tauren on the hunter and druid, the Troll on the priest. With the class
+# bonus taken off, each Forever race is 20 in every attribute plus a small offset that adds up
+# to 0 and leaves Spirit at 20. We assume the shift holds at every level, 60 included
+# (RaceOffsets in base_stats.go). The Alliance races keep 1.12's rows.
+FOREVER_RACE_SHIFT = {
+    2: (0, 0, -1, 2, -3),  # Orc
+    5: (3, 1, 0, 0, -5),  # Undead
+    6: (-3, 3, 0, 3, -2),  # Tauren
+    8: (0, 0, -1, 1, -1),  # Troll
+}
 for (race, cls), levels in levelstats.items():
-    if race == 5:
+    if race in FOREVER_RACE_SHIFT:
         for level, row in levels.items():
-            levels[level] = tuple(a + b for a, b in zip(row, UNDEAD_FOREVER_SHIFT))
+            levels[level] = tuple(a + b for a, b in zip(row, FOREVER_RACE_SHIFT[race]))
 
 # Base attributes the Forever beta showed for a naked character with no talents (the Lua
-# UnitStat values, 2026-10-07). Forever changed both the starting stats and the growth per
-# level, so these rows replace the 1.12 ones. The other levels and races stay on 1.12 until
-# we see them on the beta.
+# UnitStat values, 2026-10-07). On top of the Orc's race shift, the Forever shaman gains 2 more
+# Strength, 1 less Agility and 1 less Intellect from level 1 to 30 than 1.12's, so this row
+# replaces the shifted 1.12 one. The other levels stay on the shifted 1.12 rows until we see
+# them on the beta.
 FOREVER_ATTRIBUTES = {
     (2, 7): {  # Orc shaman
-        1: (24, 17, 22, 20, 22),
         30: (51, 30, 51, 46, 53),
     },
 }

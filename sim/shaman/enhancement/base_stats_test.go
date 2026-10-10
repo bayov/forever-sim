@@ -13,8 +13,9 @@ import (
 //
 // The level 1 and 30 numbers come from the beta's Lua API (UnitStat, UnitHealthMax,
 // UnitPowerMax, UnitAttackPower, UnitArmor, GetSpellCritChance, GetDodgeChance) on
-// 2026-10-07. The beta stops at level 30, so level 60 pins the 1.12 values until we can
-// check them on release.
+// 2026-10-07. The beta stops at level 30, so level 60 pins the 1.12 values with Forever's
+// Orc shift (1 less Stamina, 2 more Intellect, 3 less Spirit, seen on a level 1 Orc shaman
+// and warlock on 2026-10-10) until we can check them on release.
 //
 // The beta's level 1 dodge reads 4.3% because the new character has 1 of 5 defense, and
 // each missing point takes 0.04% off. The sim doesn't model defense skill, so we pin the
@@ -29,7 +30,7 @@ func TestOrcShamanBaseStats(t *testing.T) {
 	cases := []expected{
 		{1, 24, 17, 22, 20, 22, 67, 75, 30, 34, 4.504, 4.875, 4.504},
 		{30, 51, 30, 51, 46, 53, 665, 1075, 142, 60, 4.304, 3.933, 4.304},
-		{60, 88, 52, 97, 87, 103, 2070, 2545, 276, 104, 4.342, 3.770, 4.342},
+		{60, 88, 52, 96, 89, 100, 2060, 2575, 276, 104, 4.342, 3.804, 4.342},
 	}
 
 	for _, want := range cases {
