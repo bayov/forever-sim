@@ -574,8 +574,3 @@ func (shaman *Shaman) totemManaMultiplier() int32 {
 func (shaman *Shaman) restorativeTotemsModifier() float64 {
 	return .1 * float64(shaman.Talents.RestorativeTotems)
 }
-
-// Purification uses Mod Spell Effectiveness (Base Healing)
-func (shaman *Shaman) purificationHealingModifier() float64 {
-	return .02 * float64(shaman.Talents.Purification)
-}

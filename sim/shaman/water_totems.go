@@ -39,7 +39,12 @@ func (shaman *Shaman) registerHealingStreamTotemSpell() {
 func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfig {
 	spellId := HealingStreamTotemSpellId[rank]
 	healId := HealingStreamTotemHealId[rank]
-	baseHealing := HealingStreamTotemBaseHealing[rank] * (1 + shaman.purificationHealingModifier() + shaman.restorativeTotemsModifier())
+	// Restorative Totems adds 10% a point, but Purification adds nothing.
+	//
+	// Purification's tooltip says "your healing spells", but in the Forever client (70291) and
+	// the Classic Era client (1.15.9) it only lists Healing Wave, Lesser Healing Wave and Chain
+	// Heal, and we have none of those. Healing Stream's heal isn't on the list in either client.
+	baseHealing := HealingStreamTotemBaseHealing[rank] * (1 + shaman.restorativeTotemsModifier())
 	spellCoeff := HealingStreamTotemSpellCoeff[rank]
 	manaCost := HealingStreamTotemManaCost[rank]
 	level := HealingStreamTotemLevel[rank]

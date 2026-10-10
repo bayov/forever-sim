@@ -110,3 +110,29 @@ func TestOrcShamanHealingStreamCrits(t *testing.T) {
 		t.Errorf("Water Shield has %d globes, want 3", stacks)
 	}
 }
+
+// TestOrcShamanHealingStreamTalents checks the talents that raise Healing Stream's heal.
+//
+// Restorative Totems adds 10% a point and Purification nothing, so with 5 points in each rank
+// 2 heals for 6 * 1.5 = 9. Purification only lists Healing Wave, Lesser Healing Wave and Chain
+// Heal in the client.
+func TestOrcShamanHealingStreamTalents(t *testing.T) {
+	// Restorative Totems 5 and Purification 5.
+	sim, enh := newShamanSim(newOrcShaman(30, "--000000000050005", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 6)
+	if enh.Talents.RestorativeTotems != 5 || enh.Talents.Purification != 5 {
+		t.Fatalf("got Restorative Totems %d and Purification %d, want 5 and 5", enh.Talents.RestorativeTotems, enh.Talents.Purification)
+	}
+	stream := topRank(t, "Healing Stream Totem", enh.HealingStreamTotem)
+	heal := enh.GetSpell(core.ActionID{SpellID: shaman.HealingStreamTotemHealId[2]})
+
+	at(sim, 1, func(sim *core.Simulation) {
+		// No crits.
+		enh.AddStatDynamic(sim, stats.SpellCrit, -100*core.SpellCritRatingPerCritChance)
+		castNow(t, sim, enh, stream)
+	})
+	runSim(sim)
+
+	if metrics := heal.SpellMetrics[enh.UnitIndex]; metrics.Hits != 2 || math.Abs(metrics.TotalHealing-18) > 1e-9 {
+		t.Errorf("got %d heals for %.2f, want 2 for 18", metrics.Hits, metrics.TotalHealing)
+	}
+}
