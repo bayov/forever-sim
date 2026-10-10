@@ -672,3 +672,65 @@ What it showed: the level 34 drop came mostly from the Flametongue procs, which 
 most of the level 34 hits. The other spells crit on 4 of 46 there (8.7%, 5.7 expected at
 12.3%). The leading idea is now that the Flametongue procs crit less at every level (about 5
 to 8%), close to Healing Stream's 5.1%. It needs more procs to settle.
+
+
+2026-10-10  Thousand Needles run, Flametongue Weapon then Flametongue Totem: spell crit (audit 5.3)
+---------------------------------------------------------------------------------------------------
+Combat log WoWCombatLog-101026_150733.txt, 19:06:12 to 19:32:39. Same character as the 18:21
+export. Level 34 Sparkleshell Snappers up to 19:17, then level 27 to 29 mobs in Thousand
+Needles from 19:18. Flametongue Weapon and Searing Totem up to 19:28, then Windfury Weapon
+and Flametongue Totem.
+
+Spell crits by spell and mob level, the whole log up to 19:32:39 (crits / landed hits,
+Lightning Shield and the melee hits left out):
+                  L27-30    L33     L34     L35    all
+  Searing          10/81   11/64    6/69     -    27/215 (12.6%)
+  Shocks            4/40    1/8     3/33    0/1    8/82
+  Fire Nova         4/23     -       -       -     4/23
+  Flametongue Wpn  10/93    2/27   12/78     -    24/198 (12.1%)
+  Flametongue Tot   2/25    1/11    1/43    1/4    5/82  (6.1%)
+  Flame Shock ticks 11/72   1/13    3/37     -    15/122
+  Searing, shocks and Fire Nova together: 39/320 (12.2%). Sheet spell crit 12.3%.
+  Our own Healing Stream heals: 27 crits of 549 (4.9%).
+The new part alone (19:06:12 on): Flametongue Weapon 15/73, Flametongue Totem 2/26, Searing,
+shocks and Fire Nova 10/113. (The earlier entry's whole log Flametongue Weapon count, 10/133,
+recounts as 9/125 with the same cut.)
+
+Odds of a count this low or lower:
+  Flametongue Totem 5 of 82: 0.053 at 12.3%, 0.44 at 7.3%, 0.77 at 5%.
+  Healing Stream 27 of 549: under 0.0001 at 12.3%, 0.018 at 7.3%, 0.53 at 5%.
+
+Recheck, all holding:
+  - Orbs: no crit in 89. Misses: level 34 15 of 44 (37 of 146 over the whole log, 25%, the
+    table gives 28% at +4), none of 43 at levels 27 to 30. One IMMUNE (Thundering Boulderkin).
+  - Flametongue Weapon: a proc on all 57 landed swings and 25 landed Stormstrikes, except 5
+    killing blows, and none on 35 misses, dodges and parries. Two procs looked like they came
+    from a dodged or parried swing in the same ms as a landed Stormstrike. The proc is logged
+    before the swing there, so it was the Stormstrike's. recheck.py now goes by file order.
+  - Flametongue Totem: a proc on 26 of 33 landed non-killing white swings, and on none of 11
+    landed Stormstrikes or 12 Windfury Weapon attacks. Each of 3 Windfury procs from a swing
+    brought exactly one, and a Windfury proc from a Stormstrike brought none. The 7 swings
+    without one: 3 where a Windfury Weapon attack or an orb killed the mob 1 to 2 ms after
+    the swing, 3 at 45 yards from the totem, 1 right after Totemic Recall. The buff lasted a
+    few seconds after we ran 40 or more yards away: swings at 42, 41 and 44.7 yards still
+    procced, and the swings 3 sec after the last one at 44.7 didn't.
+  - Windfury Weapon: a proc whose first attack killed the mob brought only that one attack.
+  - Stormstrike raw 220 to 268 on 36 hits, inside 220.0 to 271.7. White raw 191 to 237.
+  - The Improved Stormstrike buff came on all 49 casts, the mark on the 36 landed ones.
+  - Fire Nova: 408424, normal raw 125 to 130 (sim 122.41 to 136.53).
+  - Searing Totem: normal raw 20 to 26.
+  - Glancing: levels 27 to 29 0 of 68, level 34 26 of 55. Whole log: level 34 102/187 (55%).
+
+Partial resists: none on mobs without resistance (levels 27 to 34). The level 29 Elder Cloud
+Serpent resisted part of every Nature hit: 9 of 9 orbs (20% 4 times, 30% 5 times) and 4 of 4
+Earth Shocks (all 30% of raw), plus one Earth Shock resisted in full. Fire wasn't resisted
+(22 Flame Shock hits and ticks, 10 Flametongue procs). So the server does resist by the mob's
+school resistance, in 10% steps here, not 1.12's 25%. The resisted field is in raw units: an
+Earth Shock under the Stormstrike mark showed raw 119, resisted 36 (30% of 119) and amount
+100 (119 x 1.2 x 0.7). Our sim targets have no resistance, so no sim change.
+
+What it showed: Flametongue Weapon crits at our full chance (24 of 198), so its earlier 7.5%
+was chance and the sim is right. Flametongue Totem is still low (5 of 82), 1 time in 19 at
+the full chance, so it stays open. Healing Stream crits at about 5%, well under our 12.3%,
+and the audit session holds that question (5.7). About 150 more Flametongue Totem procs
+settle the totem.

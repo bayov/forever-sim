@@ -254,7 +254,9 @@ combat log, run these checks on it too, and tell the user when one breaks.
   white hits in the same log, not the sheet. A hit outside the range breaks it.
 - Flametongue Totem procs on every landed white swing (blocks and glancing blows too) and
   never on a miss, dodge, parry, Stormstrike or Windfury Weapon attack (items 1 and 2).
-  Leave out swings where the totem wasn't up or in range.
+  Leave out swings where the totem wasn't up or in range, and swings where a Windfury Weapon
+  attack or an orb killed the mob a ms or two later. The buff stays a few seconds after we
+  run 40 or more yards from the totem (19:30 to 19:32).
 - Flametongue Weapon procs on every landed swing and Stormstrike (blocks too) and never on a
   miss, dodge or parry (item 2). Leave out a hit that kills the mob, and the swing that
   breaks Ghost Wolf (it lands in the form, without the weapon).
@@ -278,21 +280,20 @@ combat log, run these checks on it too, and tell the user when one breaks.
   (the audit session, notes.md Need to Verify), because Forever could keep the rule for
   them only. Under Classic rules about 24% of hits would be partly resisted at +4 and 12% at
   +2. The log has no elite flag, so tell them apart by name (Bloodmage Thalnos 34, Vishas 32)
-  or by the max HP in the advanced fields.
+  or by the max HP in the advanced fields. Leave out mobs with a school resistance: the
+  level 29 Elder Cloud Serpent resisted 20% or 30% of every Nature hit and no Fire (19:30).
+  Up to 19:32 no other mob of level 27 to 35 resisted any part of a hit.
 - Spell crits by spell and by mob level (audit 5.3, the audit session). Count crits out of
   landed hits, Lightning Shield left out because it never crits. On spell lines the crit flag
-  is row[-4], because of the trailing "ST". Base counts (the whole log up to 16:21, 12.3%
-  spell crit on the sheet): level 33 15/115 (13.0%), level 34 4/95 (4.2%), level 35 1/5. By
-  spell: Searing 12/77, Flametongue procs 5/103 (Weapon and Totem together, 1/63 at level
-  34), shocks 1/18. Plus 18:27 to 18:42 (Thousand Needles): level 27 to 29 18/149 (12.1%),
-  Flametongue Weapon 5/60, Searing 8/55, Fire Nova 2/17, shocks 3/17, Flame Shock ticks 5/36.
-  Plus 18:57 to 19:06 (level 34 only): Flametongue Weapon 2/15, Searing 2/13, shocks 0/7,
-  ticks 0/8. Leave Windfury Weapon's attacks out, they're melee. Whole log up to 19:06:
-  Searing, shocks and Fire Nova 29/207 (14.0%), Flametongue Weapon 10/133 (7.5%) and Totem
-  3/57 (5.3%). So the open question is now the procs at every level, not level 34. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7). The sim lets every
-  player DoT tick crit under Forever, at the crit chance of the moment (ruleset.go canCrit). Most proc hits are on level 34 mobs and most Searing hits on level 33, so the spell
-  and the level are mixed up. Flametongue Weapon on level 30 mobs or Searing on level 34s
-  would tell them apart.
+  is row[-4], because of the trailing "ST". Leave Windfury Weapon's attacks out, they're
+  melee. scratchpad cl/crit.py counts by spell group and level. Base totals, the whole
+  WoWCombatLog-101026_150733.txt up to 19:32:39 (12.3% spell crit on the sheet): Searing
+  27/215, shocks 8/82, Fire Nova 4/23 (together 39/320, 12.2%), Flametongue Weapon 24/198
+  (12.1%), Flametongue Totem 5/82 (6.1%), Flame Shock ticks 15/122 (at 1.5x, audit 5.7).
+  Flametongue Weapon's early 7.5% was chance, so it's settled at the full chance. Flametongue
+  Totem is still open: 5 of 82 or fewer comes 1 time in 19 at 12.3%. About 150 more of its
+  procs settle it. The sim lets every player DoT tick crit under Forever, at the crit chance
+  of the moment (ruleset.go canCrit).
 - Improved Stormstrike's regen buff (1238931) comes on every Stormstrike cast, missed,
   dodged and parried ones too (the audit session, 93 of 93 in the Shimmering Flats log, 17 of
   17 from 18:27). It comes with the cast, so a hit that lands late (105 ms once) shows it
@@ -301,7 +302,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   too, and not with a killing blow, a miss, a dodge or a parry (55 of 55 landed non-killing
   ones up to 18:42, and none of the 30 misses, dodges and parries or the 8 killing blows).
 - Healing Stream crits under Forever (the audit session's sim change). Our own totems' heals
-  crit on 23 of 449 up to 18:42 (5.1%), well under the sheet's 12.3% spell crit, while
+  crit on 27 of 549 up to 19:32 (4.9%), well under the sheet's 12.3% spell crit, while
   Searing Totem's bolts crit at the full chance. Count only heals from our own totems: the
   log has other shamans' totems too.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
@@ -315,5 +316,6 @@ combat log, run these checks on it too, and tell the user when one breaks.
   at 14:50 and still at 18:21 on 2026-10-10). Base totals (WoWCombatLog-101026_150733.txt up to 15:51, the
   audit session's count), plus 16:04 to 16:16: level 33 23/55 (42%), level 34 66/111 (59%),
   level 35 6/8. Plus 18:27 to 18:42: levels 27 to 29 0/61, where the sim gives 0. Plus 18:57
-  to 19:06: level 34 10/21, so level 34 is 76/132 (58%). Add each
-  new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.
+  to 19:06: level 34 10/21, so level 34 is 76/132 (58%). Plus 19:06 to 19:32: level 34
+  26/55 and levels 27 to 29 0/68. So level 34 is 102/187 (55%) and levels 27 to 29 0/129.
+  Add each new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.
