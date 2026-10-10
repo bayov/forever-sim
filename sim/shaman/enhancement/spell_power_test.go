@@ -83,6 +83,9 @@ func TestOrcShamanSpellPower(t *testing.T) {
 //
 // One rank 1 Earth Shock hit raw 57, 0.23 over the sim's top of 56.77. We leave that one hit
 // out.
+//
+// Frost Shock rank 1 (38.6%) hit raw 88 to 91 later in the 15:07 log, when our cast lines showed
+// 49 spell power. So we check it last, at 49 (shaman_audit.md 7.10).
 func TestOrcShamanSpellPowerBeta(t *testing.T) {
 	sim, enh := newTargetLevelSim(30, 30, whirlwind, 0, "")
 	sim.PrePull()
@@ -90,13 +93,14 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 
 	shield := topRank(t, "Lightning Shield", enh.LightningShield)
 	flameShock := []*core.Spell{enh.FlameShock[1], topRank(t, "Flame Shock", enh.FlameShock)}
-	cases := []struct {
+	type rollCase struct {
 		name               string
 		spell              *core.Spell
 		low, high          float64
 		betaLow, betaHigh  float64
 		betaTick, wantTick float64
-	}{
+	}
+	cases := []rollCase{
 		{"Lightning Shield rank 3", topRank(t, "Lightning Shield orb", enh.LightningShieldProcs), 64.30, 64.30, 64, 64, 0, 0},
 		{"Earth Shock rank 4", topRank(t, "Earth Shock", enh.EarthShock), 118.82, 124.44, 118, 123, 0, 0},
 		{"Earth Shock rank 1", enh.EarthShock[1], 54.49, 56.77, 0, 0, 0, 0},
@@ -106,31 +110,39 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		// The old totem's damage spell would hit 123.01 to 137.01.
 		{"Fire Nova rank 2", topRank(t, "Fire Nova", enh.FireNova), 122.41, 136.53, 124, 135, 0, 0},
 	}
-	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 || cases[6].spell.Rank != 2 {
+	frostShock := rollCase{"Frost Shock rank 1", topRank(t, "Frost Shock", enh.FrostShock), 87.11, 91.71, 88, 91, 0, 0}
+	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 || cases[6].spell.Rank != 2 || frostShock.spell.Rank != 1 {
 		t.Fatalf("the level 30 ranks changed")
+	}
+	check := func(sim *core.Simulation, c rollCase) {
+		metrics := &c.spell.SpellMetrics[enh.CurrentTarget.UnitIndex]
+		low, high := math.Inf(1), math.Inf(-1)
+		for range 2000 {
+			// An orb takes a charge, so we put the shield up again before each one.
+			if c.spell.ActionID.SpellID == shaman.LightningShieldProcSpellId[3] {
+				shield.ApplyEffects(sim, enh.CurrentTarget, shield)
+			}
+			damage, critDamage := metrics.TotalDamage, metrics.TotalCritDamage
+			c.spell.ApplyEffects(sim, enh.CurrentTarget, c.spell)
+			if damage = metrics.TotalDamage - damage; damage > 0 && metrics.TotalCritDamage == critDamage {
+				low, high = min(low, damage), max(high, damage)
+			}
+		}
+		if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
+			t.Errorf("%s hit %.2f to %.2f, want %.2f to %.2f", c.name, low, high, c.low, c.high)
+		}
+		if c.betaHigh > 0 && (math.Floor(low) > c.betaLow || math.Floor(high) < c.betaHigh) {
+			t.Errorf("%s hit %.2f to %.2f, which can't show the beta's raw %.0f to %.0f", c.name, low, high, c.betaLow, c.betaHigh)
+		}
 	}
 	at(sim, 1, func(sim *core.Simulation) {
 		for _, c := range cases {
-			metrics := &c.spell.SpellMetrics[enh.CurrentTarget.UnitIndex]
-			low, high := math.Inf(1), math.Inf(-1)
-			for range 2000 {
-				// An orb takes a charge, so we put the shield up again before each one.
-				if c.spell.ActionID.SpellID == shaman.LightningShieldProcSpellId[3] {
-					shield.ApplyEffects(sim, enh.CurrentTarget, shield)
-				}
-				damage, critDamage := metrics.TotalDamage, metrics.TotalCritDamage
-				c.spell.ApplyEffects(sim, enh.CurrentTarget, c.spell)
-				if damage = metrics.TotalDamage - damage; damage > 0 && metrics.TotalCritDamage == critDamage {
-					low, high = min(low, damage), max(high, damage)
-				}
-			}
-			if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
-				t.Errorf("%s hit %.2f to %.2f, want %.2f to %.2f", c.name, low, high, c.low, c.high)
-			}
-			if c.betaHigh > 0 && (math.Floor(low) > c.betaLow || math.Floor(high) < c.betaHigh) {
-				t.Errorf("%s hit %.2f to %.2f, which can't show the beta's raw %.0f to %.0f", c.name, low, high, c.betaLow, c.betaHigh)
-			}
+			check(sim, c)
 		}
+		// The Flame Shock DoTs took their spell power when they went up, so this leaves them
+		// alone.
+		enh.AddStatDynamic(sim, stats.SpellPower, 49-91)
+		check(sim, frostShock)
 	})
 	runSim(sim)
 

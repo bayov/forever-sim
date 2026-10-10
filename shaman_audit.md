@@ -99,7 +99,7 @@ Strikes and shocks
 - [x] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
 - [x] 7.8 Earth Shock
 - [x] 7.9 Flame Shock: direct and DoT parts
-- [?] 7.10 Frost Shock
+- [x] 7.10 Frost Shock
 - [ ] 7.11 Shared shock cooldown
 
 Nature spells
@@ -964,7 +964,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.10 Frost Shock
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11).
 - The sim (`frost_shock.go`, `shocks.go`): 4 ranks, learned at 20, 34, 46 and 58. An instant Frost hit that grows for 5 levels after the rank is learned: 68.2 to 72.8 for rank 1 from 25, and 278.6 to 294.6 for rank 4 at 60. It gets 38.6% of spell power on every rank (5.4). 115 / 225 / 325 / 430 mana, a 1.5 sec GCD and the shared 6 sec shock cooldown (7.11). It rolls spell hit and crit (5.1, 5.3), and it can be partly resisted (it isn't binary, 5.2). Its 8 sec slow does nothing in the sim. It leaves the Stormstrike mark up (7.7). No preset casts it.
 - Client 70338 (wago.tools, 8056 to 10473): the same levels, damage, growth, coefficient, mana, GCD and shock cooldown. Effect 1 is the 50% slow for 8 sec.
 - Beta, all four logs (our count): 11 casts of rank 1, all in the 15:07 log (20:50 to 22:06), on 2 players, a Salt Flats Vulture and Thundering Boulderkins.
@@ -973,7 +973,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The slow on a player lasted 8.00 sec (20:54:51.586 to 20:54:59.589).
   - Whether it's binary is open (notes.md Need to Verify, the resistance item). No Frost Shock landed on a mob with resistance.
 - Already tested: `mana_costs_test.go`, `gcd_test.go`, `spell_ranks_test.go`, `stormstrike_test.go` (the mark), `other_procs_test.go` and `talent_procs_test.go`. Nothing tests its damage.
-- Proposed: no sim change. Add rank 1 at 49 spell power to `spell_power_test.go` TestOrcShamanSpellPowerBeta, with the beta's raw 88 to 91.
+- No sim change.
+- Tests: `spell_power_test.go` TestOrcShamanSpellPowerBeta now also rolls rank 1 2000 times at 49 spell power. It wants 87.11 to 91.71, which can show the beta's raw 88 to 91. It fails with a 35% coefficient.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
