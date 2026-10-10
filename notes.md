@@ -18,7 +18,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * wowhead spell details (rate limited last time): Call of Flame 16038 (does it touch Flametongue Totem, and does it add with Improved Fire Nova), Improved Fire Nova 16086, Elemental Weapons 16266, Concussion 16035.
 * Revelation (weapon enchant): only shocks trigger it, no ICD, flat proc chance (sim: 7.2%).
 * Stacking of the Forever-only elixirs with each other.
-* Beta: Spirit regen of the classes we haven't measured (druid, warlock, and mage, priest and hunter past 50 Spirit). Level 1 mage, priest and hunter all gave 0.25 a sec per Spirit, which fits the formula below (2026-10-10). The sim gives every class the shaman and paladin formula under Forever: 0.25 mana a second for each of the first 50 Spirit, 0.125 past that. One GetManaRegen reading below 50 Spirit and one above settles a class.
+* Beta: Spirit regen past 50 Spirit for the classes other than the shaman and paladin. Under 50, every class with mana gave 0.25 a sec per Spirit at level 1, which fits the formula below (2026-10-10). The sim gives every class the shaman and paladin formula under Forever: 0.25 mana a second for each of the first 50 Spirit, 0.125 past that. One GetManaRegen reading below 50 Spirit and one above settles a class.
 * Rage of the Storm (280604) source. We assume a level 30 shaman quest chain.
 * Beta: Stormstrike with a dagger. We give daggers the normalized 1.7 plus 0.3, so 2.0, but only two-handers and one-handers are tested. The test is the same as the one-hander's: a dagger with no Stormstrike bonus, boars of one level, and about 30 normal Stormstrikes and 30 normal white hits. The /run line for AP and weapon damage is in shaman_audit.md 4.1.
 * Server batch window (sim: white hits land with their procs 10 ms after the swing, like Classic Era servers). The user thinks Forever uses 10 ms too. A 400 ms window like the 1.12 servers would change how procs line up.
@@ -29,8 +29,9 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## All classes
 
-* Beta: Forever's race base stats. The sim has 1.12's for every race but the Undead. A level 1 Tauren hunter has -3 Str, +3 Agi, +3 Int and -2 Spi against 1.12, and a level 1 Windshaper hunter -1 / +1 / -1 / +1 / -1 against the sim's Human baseline (2026-10-10). Every Forever race seen so far adds up to 100 with 20 Spirit at level 1 once the class bonus is off. The Orc shaman fits that if the change is in the Orc race, and then the level 60 Orc shaman has 1 less Stamina, 2 more Intellect and 3 less Spirit than the sim gives. A level 1 Orc of another class settles it.
-* Beta: crit and dodge per Agility of the warrior and hunter. At level 1 the warrior gets 0.2500 a point (sim 0.2572) and the hunter 0.2174 crit and 0.4348 dodge (sim 0.1783 and 0.3567). The paladin, rogue, priest and mage match the sim at level 1 (2026-10-10).
+* Beta: Forever's race base stats. Against 1.12 at level 1, the Orc has 0 / 0 / -1 / +2 / -3 (Str / Agi / Sta / Int / Spi, shaman and warlock alike), the Undead +3 / +1 / 0 / 0 / -5 (seven classes, in the sim), the Tauren -3 / +3 / 0 / +3 / -2 (hunter and druid), and the Windshaper -1 / +1 / -1 / +1 / -1 against the sim's Human baseline (hunter) (2026-10-10). Every Forever race seen adds up to 100 with 20 Spirit once the class bonus is off. Troll, the Alliance races and the High Order are unseen. For the level 60 Orc shaman that's 1 less Stamina, 2 more Intellect and 3 less Spirit than the sim gives, if the shift holds to 60.
+* Beta: crit and dodge per Agility of the warrior, hunter and warlock. At level 1 the warrior gets 0.2500 a point (sim 0.2572), the hunter 0.2174 crit and 0.4348 dodge (sim 0.1783 and 0.3567), and the warlock 0.15 (sim 0.1249). The paladin, rogue, priest, mage and druid match the sim at level 1 (2026-10-10).
+* Beta: druid attack power below 60. A level 1 Tauren druid has 2 x Str - 20, and the sim adds 2 a level on top below 60 (its level 60 table has the flat -20).
 
 ## Rogue
 

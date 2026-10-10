@@ -211,22 +211,22 @@ Keep this current as you go.
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
 - [ ] 5. Flametongue procs and Elemental Devastation
 - [ ] 6. Weapon Mastery baseline
-- [ ] 7. Spirit regen of the other classes. Mage, priest and hunter under 50 Spirit match
-  (0.25 x Spirit at level 1, 2026-10-10). Mage, priest and hunter over 50, druid and warlock
-  to go.
+- [ ] 7. Spirit regen of the other classes. Every class with mana matches under 50 Spirit
+  (0.25 x Spirit at level 1, 2026-10-10). Over 50 is only checked for the shaman and
+  paladin, and it needs a caster with 50+ Spirit.
 - [x] 8. Undead base stats. Settled 2026-10-10: Forever's Undead race is 1.12's + 3 Str + 1
   Agi - 5 Spi for every class. The level 1 rogue and priest match exactly against their 1.12
   rows, the paladin at levels 1 and 20 against the row the sim builds, and the level 1 mage
   once cmangos' swapped Int and Spi are put back. The user OK'd the sim change (generator
   shift, level 60 RaceOffsets, TestForeverUndeadBaseAttributes). Level 1 base health is off
   (paladin 10 under, mage and priest 1 over), and no preset uses it.
-- [ ] 10. Forever's other races (added 2026-10-10). A level 1 Tauren hunter is -3 / +3 / 0 /
-  +3 / -2 off the 1.12 row, and a level 1 Windshaper hunter -1 / +1 / -1 / +1 / -1 off the
-  sim's Human baseline. Each Forever race seen so far adds up to 100 with 20 Spirit once the
-  class bonus is off, the Orc too if the shaman's level 1 bonus is 1.12's. Asked for: a level
-  1 Orc of another class (decides the level 60 Orc shaman: -1 Sta, +2 Int, -3 Spi), a Tauren
-  druid (a second Tauren class, and item 7). Not shown to the user as a sim change yet. The
-  warrior and hunter crit per Agility at level 1 are off too (beta_results.txt), not our sims.
+- [ ] 10. Forever's other races (added 2026-10-10). At level 1 the Orc is 0 / 0 / -1 / +2 / -3
+  off 1.12 (shaman and warlock), the Tauren -3 / +3 / 0 / +3 / -2 (hunter and druid), and the
+  Windshaper -1 / +1 / -1 / +1 / -1 off the sim's Human baseline (hunter). Each Forever race
+  adds up to 100 with 20 Spirit once the class bonus is off. The sim change (all levels, 60
+  included, so the level 60 Orc shaman gets -1 Sta, +2 Int, -3 Spi) plus the druid's attack
+  power below 60 is shown to the user, waiting for the OK. Troll is the one Horde race left.
+  The warrior, hunter and warlock crit per Agility at level 1 are off (beta_results.txt).
 - [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
   Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and

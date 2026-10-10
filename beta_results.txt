@@ -488,3 +488,38 @@ The rest, from the beta's attributes:
 
 What it showed: the Undead rows hold for a sixth class. The Tauren and Windshaper changed
 too, and the Orc may have.
+
+
+2026-10-10  Level 1 Orc warlock, Tauren druid and Undead warlock (items 10, 8 and 7)
+-------------------------------------------------------------------------------------
+`/bayov export` at 17:46, 17:49 and 17:51, new characters in their starting gear (no stats
+but armor, every "pos" 0). No talents. Every weapon skill and Defense 1 of 5.
+
+  Attributes (Str / Agi / Sta / Int / Spi):
+                     beta                    sim (1.12 rows)          difference
+    Orc warlock      23 / 17 / 22 / 21 / 22  23 / 17 / 23 / 19 / 25   0 /  0 / -1 / +2 / -3
+    Tauren druid     23 / 18 / 22 / 20 / 22  26 / 15 / 22 / 17 / 24  -3 / +3 /  0 / +3 / -2
+    Undead warlock   22 / 19 / 22 / 20 / 22  22 / 19 / 22 / 20 / 22   none (the new Undead rows)
+
+The Orc warlock has the same shift as the Orc shaman at level 1, so it's the Orc race that
+changed, not the shaman. The Tauren druid has the same shift as the Tauren hunter. Forever's
+race bases at level 1, with the 1.12 class bonus off, each 100 with 20 Spirit:
+    Orc 23 / 17 / 21 / 19 / 20, Undead 22 / 19 / 21 / 18 / 20, Tauren 22 / 18 / 22 / 18 / 20,
+    Windshaper 19 / 21 / 19 / 21 / 20.
+The Orc shaman's level 30 row then has the shaman's own growth change on top: 2 more
+Strength, 1 less Agility and 1 less Intellect from level 1 to 30 than 1.12.
+
+The rest, from the beta's attributes:
+  Health: warlocks 63 = 23 + 20 + 2 x 10. Druid 78, where the sim gives (33 + 20 + 20) x 1.05
+  = 76.7 (level 1 base health again, 1 over like the mage and priest).
+  Mana: Orc warlock 125 = 90 + 20 + 15, Undead warlock 110 = 90 + 20, druid 70 = 50 + 20.
+  Attack power: warlocks 13 and 12 = Str - 10. Druid 26 = 2 x 23 - 20, where the sim gives
+  28: below 60 it adds 2 a level for the druid, but its level 60 table has a flat -20 too.
+  Spell crit: warlocks 4.850% and 4.700% = 1.7 + 0.15 x Int (sim the same). Druid 4.710%
+  (sim 1.8 + 20 x 0.1457 = 4.714).
+  Melee crit and dodge: druid 4.430% (sim 0.9 + 18 x 0.2049 - 0.16 = 4.428). Warlocks 4.390%
+  and 4.690%, so 2.0 + 0.15 a point of Agility - 0.16, where the sim gives 0.1249 a point.
+  Mana regen 5.501 a sec at 22 Spirit for all three = 0.25 x Spirit. Every class with mana
+  now follows the shaman formula under 50 Spirit (item 7).
+
+What it showed: Forever changed the Orc and Tauren races too, the same way for every class.
