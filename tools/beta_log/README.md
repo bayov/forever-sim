@@ -42,6 +42,8 @@ each line's time of day. They import `cl.py` from their own directory, so `pytho
   crits and raw, the auras on us, and the auras that came with each of our spell crits.
 - `searing.py` times Searing Totem's bolts against the totem to mob distance.
 - `resists.py` lists partial and full resists of our spells on one mob name.
+- `gear.py` prints our logged max health, spell power, armor, max mana and item level from
+  our casts whenever they change, which shows gear swaps and stat buffs or debuffs.
 - `client_spell.py` prints the client's rows for spell IDs from a directory of wago.tools
   CSVs (SpellName, SpellAuraOptions, SpellClassOptions, SpellEffect). Fetch each table from
   `https://wago.tools/db2/<Table>/csv?build=1.60.1.70338` with a desktop user agent.

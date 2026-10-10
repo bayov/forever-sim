@@ -1021,8 +1021,11 @@ Weapon and Flametongue Totem, mobs of level 27 to 32. The user leveled Unarmed f
   - One Salt Flats Scavenger fight (level 30, 22:12:10 to 22:12:22) had every shock 1 raw
     higher: Flame Shock 65 and ticks 22 (64 and 21 on every other mob since the respec),
     Earth Shock 109 (102 to 108 elsewhere). That fits about 2% more damage, or 3 to 5 more
-    spell power, for that fight only. No aura on us or the mob shows in the log. Another
-    Salt Flats Scavenger at 20:23 took the usual 64 and 23. One fight, so it's recorded only.
+    spell power, for that fight only. The user said they may have swapped gear then, and our
+    cast lines show it: from 22:11:30 to 22:13:05 the logged spell power is 53, not 49 (max
+    health 1505 then 1445, max mana 2275 then 2170). At 53, Flame Shock is (45.4 + 0.214 x 53)
+    x 1.15 = 65.3 and its ticks (14 + 5.3) x 1.15 = 22.2, as logged. Explained, nothing new
+    (tools/beta_log/gear.py finds such swaps).
   - Rechecks: white raw on the fist 69 to 91 (69.4 to 91.4, the raw drops the fraction).
     Flametongue Totem procced on 208 of 208 landed swings in range, none on the 11 killing
     blows. Mob parry haste fits 39 of 39 single parries within 0.1 sec. The one exception is
