@@ -327,6 +327,11 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Flametongue Weapon procs on every landed swing and Stormstrike (blocks too) and never on a
   miss, dodge or parry (item 2). Leave out a hit that kills the mob, and the swing that
   breaks Ghost Wolf (it lands in the form, without the weapon).
+- Flametongue Weapon rank 3 hits 5 below the client's points at level 30 (audit 7.3, in the
+  sim since 74d6e639): 884 / 100 x weapon speed - 5 + about 10% of spell power, times
+  Elemental Weapons when we have it. At 49 spell power and no Elemental Weapons that's 14.0
+  on the 1.6 fist and 29.1 on Rage of the Storm. Average the normal unresisted hits on each
+  weapon. An average more than about 0.5 off breaks it.
 - Fire Nova hits name damage spell 408424 at rank 2 and do 102.94 to 117.06 + 21.4% of spell
   power (item 11). The raw field drops the fraction. With Call of Flame 3 and Improved Fire
   Nova 2 that's times 1.15 x 1.2 (audit 5.6, 156.5 to 176.0 at 49 spell power). A hit over
