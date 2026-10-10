@@ -75,7 +75,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 6.1 When the enemy attacks us at all: the tank setting (Level 30 solo, PvP), the boss behind the tank at level 60
 - [x] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
 - [x] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
-- [?] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
+- [x] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
 - [ ] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
 - [ ] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
 - [ ] 6.7 PvP mode: the enemy types, time out of melee range
@@ -714,7 +714,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 6.4 Our miss, dodge, parry and block
 
-- Shown to the user (2026-10-10), waiting for the OK. An enemy swing at us rolls one table, in the order miss, dodge, parry, block, crit, crush and hit (`spell_outcome.go` outcomeEnemyMeleeWhite). Each of miss, dodge, parry and block is 0.2% lower a level the enemy is above us, and 0.2% higher a level below (`target.go`).
+- The user OK'd it (2026-10-10). An enemy swing at us rolls one table, in the order miss, dodge, parry, block, crit, crush and hit (`spell_outcome.go` outcomeEnemyMeleeWhite). Each of miss, dodge, parry and block is 0.2% lower a level the enemy is above us, and 0.2% higher a level below (`target.go`).
   - Miss: 5% at our level.
   - Dodge: our sheet dodge from base and Agility (1.3), plus Anticipation's 2% a point (`talents.go`, the Forever text says 2%, 4% and 6%).
   - Parry: 5%, only with Spirit Weapons.
@@ -734,7 +734,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Parry is low above our level: 20 of 698 (2.9%), where the sim expects about 30 (1 time in 30 by chance). Below our level it fits (18 of 380). Some of those swings may have come from our side or back, where we can't parry. The log doesn't show facing.
   - No swing was blocked, as in the sim.
   - Only 16 swings came while we cast (all Healing Wave and Lesser Healing Wave): 1 miss, no dodge or parry. That's too few to tell whether we can dodge while casting.
-- Proposed to the user: no change. Record the low parry with the rest of the enemy damage to us.
+- Proposed to the user: no change. Record the low parry with the rest of the enemy damage to us. The user OK'd it (2026-10-10).
+- `avoidance_test.go` TestOrcShamanOurAvoidance rolls a level 34 mob's swing at a level 30 shaman with Anticipation 3/3 and Spirit Weapons 20,000 times, and again while we cast. It checks that Anticipation adds 6% dodge, miss and parry are 4.2%, dodge is our sheet dodge less 0.8%, nothing is blocked, and only misses happen while we cast.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

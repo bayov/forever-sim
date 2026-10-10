@@ -3,8 +3,10 @@ package enhancement
 import (
 	"math"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -74,4 +76,57 @@ func TestOrcShamanEnemyAvoidance(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestOrcShamanOurAvoidance checks how often a mob's swing misses us, or we dodge, parry or
+// block it.
+//
+// Miss is 5%, dodge is our sheet dodge and parry is 5% with Spirit Weapons. Each is 0.2%
+// lower a level the mob is above us. We have no shield, so we never block. Anticipation adds
+// 2% dodge a point, as its Forever text says. While we cast, only a miss stops a swing. The
+// beta fits miss and dodge against level 25 to 35 mobs (shaman_audit.md 6.4). We roll a level
+// 34 mob's swing 20,000 times with Anticipation 3/3 and Spirit Weapons, and again while we
+// cast.
+func TestOrcShamanOurAvoidance(t *testing.T) {
+	_, plain := newTankSim(newOrcShaman(30, spiritWeapons, &proto.EnhancementShaman_Options{}), 34)
+	// Anticipation 3/3 and Spirit Weapons.
+	sim, enh := newTankSim(newOrcShaman(30, "-00000000030001", &proto.EnhancementShaman_Options{}), 34)
+	if got := enh.GetStat(stats.Dodge) - plain.GetStat(stats.Dodge); math.Abs(got-6) > 1e-9 {
+		t.Errorf("Anticipation 3/3 added %.2f%% dodge, want 6%%", got)
+	}
+
+	const rolls = 20000
+	swing := enh.CurrentTarget.AutoAttacks.MHAuto()
+	roll := func(sim *core.Simulation) map[core.HitOutcome]float64 {
+		counts := map[core.HitOutcome]float64{}
+		for range rolls {
+			result := swing.CalcDamage(sim, &enh.Unit, 100, swing.OutcomeEnemyMeleeWhite)
+			counts[result.Outcome&(core.OutcomeMiss|core.OutcomeDodge|core.OutcomeParry|core.OutcomeBlock)]++
+		}
+		return counts
+	}
+	check := func(name string, counts map[core.HitOutcome]float64, miss, dodge, parry float64) {
+		for _, c := range []struct {
+			outcome core.HitOutcome
+			label   string
+			want    float64
+		}{{core.OutcomeMiss, "miss", miss}, {core.OutcomeDodge, "dodge", dodge}, {core.OutcomeParry, "parry", parry}, {core.OutcomeBlock, "block", 0}} {
+			if got := counts[c.outcome] / rolls; math.Abs(got-c.want) > 0.006 {
+				t.Errorf("%s: %s %.2f%%, want %.2f%%", name, c.label, 100*got, 100*c.want)
+			}
+		}
+	}
+
+	var free, casting map[core.HitOutcome]float64
+	at(sim, 1, func(sim *core.Simulation) {
+		free = roll(sim)
+		enh.Hardcast.Expires = sim.CurrentTime + time.Second
+		casting = roll(sim)
+		enh.Hardcast.Expires = sim.CurrentTime
+	})
+	runSim(sim)
+
+	dodge := enh.GetStat(stats.Dodge) / 100
+	check("not casting", free, 0.042, dodge-0.008, 0.042)
+	check("casting", casting, 0.042, 0, 0)
 }
