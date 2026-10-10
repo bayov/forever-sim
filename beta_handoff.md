@@ -199,3 +199,5 @@ Keep this current as you go.
 - [ ] 6. Weapon Mastery baseline
 - [ ] 7. Spirit regen of the other classes
 - [ ] 8. Undead paladin base stats
+- [ ] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
+  It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
