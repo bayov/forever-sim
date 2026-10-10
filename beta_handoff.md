@@ -210,7 +210,10 @@ Keep this current as you go.
   care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
 - [ ] 5. Flametongue procs and Elemental Devastation
-- [ ] 6. Weapon Mastery baseline
+- [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor for level 30: 128 white
+  hits in the 15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would
+  put 55 of them too low. The sheet's damage percent is 1. It moved to notes.md "At 60",
+  because it could still come at a higher level.
 - [ ] 7. Spirit regen of the other classes. Every class with mana matches under 50 Spirit
   (0.25 x Spirit at level 1, 2026-10-10). Over 50 is only checked for the shaman and
   paladin, and it needs a caster with 50+ Spirit.
@@ -285,6 +288,6 @@ combat log, run these checks on it too, and tell the user when one breaks.
   parries included), per target level. The mob's level is the field just before the damage
   suffix on the mob's own SWING_DAMAGE lines (row[-11]), matched to our target by GUID.
   Note our weapon skill from the latest `/bayov export` too (Two-Handed Maces was 149 of 150
-  at 14:50 on 2026-10-10). Base totals (WoWCombatLog-101026_150733.txt up to 15:51, the
+  at 14:50 and still at 18:21 on 2026-10-10). Base totals (WoWCombatLog-101026_150733.txt up to 15:51, the
   audit session's count), plus 16:04 to 16:16: level 33 23/55 (42%), level 34 66/111 (59%),
   level 35 6/8. Add each new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.

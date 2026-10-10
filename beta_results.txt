@@ -561,3 +561,23 @@ power is a flat -20 at every level. TestForeverRaceBaseAttributes checks all 14 
 The level 60 Orc shaman in TestOrcShamanBaseStats and TestOrcShamanSpiritRegen now has 96 Sta,
 89 Int, 100 Spi and 18.75 mana a sec. The shaman, druid, hunter, mage, warlock and warrior
 goldens moved, the shaman ones by less than 1.5% a case (+0.03% on the enhancement average).
+
+
+2026-10-10  Level 30 Orc shaman export at 18:21 and Weapon Mastery (item 6)
+---------------------------------------------------------------------------
+/bayov export at 18:21:42, build 70338. Same gear, talents and sheet as the 14:50 export:
+Rage of the Storm with Weapon Damage +6, AP 389, UnitDamage 191.69 to 238.69 at 3.3 speed,
+percent 1. Two-Handed Maces is still 149 of 150. The only change is ranged crit, 2.83% where
+the 14:50 export had 7.83%. We don't use ranged crit.
+
+Weapon Mastery from the white hits already in WoWCombatLog-101026_150733.txt (15:07 to 16:16,
+no Strength of Earth or other attack power buff, Rage of the Storm the whole time):
+  128 white hits, raw 191 to 238, mean 213.3.
+  No bonus: 191.7 to 238.7 (raw drops the fraction), mean 215.2.
+  +10%:     210.9 to 262.6. 55 of the 128 hits are below 210.9, and none is above 238.7.
+The raw field does include percent bonuses, because Stormstrike's raw shows Rage of the
+Storm's +10% (9 of 30 Stormstrikes above the 247 a no-bonus Stormstrike can reach).
+
+What it showed: no Weapon Mastery at level 30, in the hits or on the sheet. The sim doesn't
+give it, so nothing changes. It could still come at a higher level (the talent was in row 6),
+so the notes.md bullet moved to "At 60".
