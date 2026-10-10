@@ -161,3 +161,23 @@ What it showed:
   apart on average, against the sim's 2.5 sec, and the first one 2.25 sec after the totem
   goes down, against the sim's 2.5 sec.
 - The recheck list holds.
+
+
+2026-10-10  Windfury Weapon's attacks and the swing timer (item 3)
+-----------------------------------------------------------------
+Same combat log, the Windfury Weapon fights (15:07 to 15:33). Only a Windfury proc from a
+Stormstrike shows it, because one from a white swing lands with the swing. The swing is
+3.3 sec, and a Flurry change in between would muddle it, so these are the procs with no
+Flurry around them and a white swing before and after on the same mob.
+
+  Windfury proc     previous swing   next swing     old schedule (prev + 3.3)   restarted (proc + 3.3)
+  15:09:05.743      15:09:02.924     15:09:06.232   15:09:06.224                15:09:09.043
+  15:30:21.033      15:30:19.863     15:30:23.164   15:30:23.163                15:30:24.333
+  15:32:16.113      15:32:15.238     15:32:18.574   15:32:18.538                15:32:19.413
+
+Left out: 15:29:55.502 (Flurry came up with the proc) and 15:22:45.731 (the next swing was
+on a new mob 13 sec later).
+
+What it showed: the next swing comes on the old schedule, within 36 ms, and 0.9 to 2.8 sec
+before a restarted timer would allow. Windfury Weapon's attacks don't restart the swing
+timer. That matches the sim (two yellow attacks), so item 3 is settled.

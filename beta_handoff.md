@@ -199,7 +199,9 @@ Keep this current as you go.
 - [x] 2. Flametongue procs on a miss, dodge, parry or block. Settled 2026-10-10 in the sim's
   favor: Flametongue Totem and Flametongue Weapon proc on every landed hit (blocks included)
   and never on a miss, dodge or parry.
-- [ ] 3. Windfury Weapon attacks and the swing timer
+- [x] 3. Windfury Weapon attacks and the swing timer. Settled 2026-10-10 in the sim's favor:
+  after 3 Windfury procs from Stormstrike, the next swing came on the old schedule (within
+  36 ms), so the attacks don't restart it.
 - [ ] 4. Stormstrike damage model, dagger. The model is settled (2026-10-10): 30 Stormstrikes
   with Rage of the Storm fit the sim's normalized 3.6, and the other two models each had hits
   outside their range. Only the dagger is left. Rage of the Storm's +10% is off the list: the user
@@ -234,3 +236,6 @@ combat log, run these checks on it too, and tell the user when one breaks.
   miss, dodge or parry (item 2). Leave out a hit that kills the mob.
 - Searing Totem's bolts do 19 to 25 + 1.7% of spell power at rank 3 and use our spell hit
   and crit (audit 7.22). The log's raw damage drops the fraction.
+- After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
+  schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
+  between.
