@@ -18,6 +18,23 @@ var HealingStreamTotemSpellCoeff = [HealingStreamTotemRanks + 1]float64{0, .022,
 var HealingStreamTotemManaCost = [HealingStreamTotemRanks + 1]float64{0, 40, 50, 60, 70, 80}
 var HealingStreamTotemLevel = [HealingStreamTotemRanks + 1]int{0, 20, 30, 40, 50, 60}
 
+// The chance a Healing Stream heal crits under Forever, whatever our spell crit.
+const HealingStreamTotemCritChance = 0.05
+
+func outcomeHealingStreamCrit(spell *core.Spell) core.OutcomeApplier {
+	return func(sim *core.Simulation, result *core.SpellResult, attackTable *core.AttackTable) {
+		metrics := &spell.SpellMetrics[result.Target.UnitIndex]
+		if sim.RandomFloat("Healing Stream Crit Roll") < HealingStreamTotemCritChance {
+			result.Outcome = core.OutcomeCrit
+			result.Damage *= spell.CritMultiplier(attackTable)
+			metrics.Crits++
+		} else {
+			result.Outcome = core.OutcomeHit
+			metrics.Hits++
+		}
+	}
+}
+
 func (shaman *Shaman) registerHealingStreamTotemSpell() {
 	shaman.HealingStreamTotem = make([]*core.Spell, HealingStreamTotemRanks+1)
 
@@ -67,17 +84,20 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 		ThreatMultiplier: 1,
 		BonusCoefficient: spellCoeff,
 
-		// Under Forever each heal can crit for 1.5 times, at our spell crit at the time of the heal.
+		// Under Forever each heal can crit for 1.5 times, 5% of the time whatever our spell crit.
 		//
 		// The Forever client (70338) gives the heal the flag that lets periodic effects crit,
-		// like Flame Shock's ticks (shaman_audit.md 5.7). Classic Era's client doesn't. Tidal
-		// Mastery and Elemental Fury don't list Healing Stream in the client, so they don't
-		// touch its crits. The heal is a periodic aura in the client, and Water Shield's proc
-		// flags leave periodic heals out, so a crit here never spends a Water Shield globe.
+		// like Flame Shock's ticks (shaman_audit.md 5.7). Classic Era's client doesn't. But on
+		// the beta our totems' heals crit on 27 of 549 (4.9%) with 12.3% spell crit on the
+		// sheet, where Searing Totem and Flametongue Weapon crit at the full 12.3%. So we give
+		// the heal a flat 5% until we know Forever's rule. Tidal Mastery and Elemental Fury
+		// don't list Healing Stream in the client either. The heal is a periodic aura in the
+		// client, and Water Shield's proc flags leave periodic heals out, so a crit here never
+		// spends a Water Shield globe.
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			outcome := spell.OutcomeHealing
 			if sim.IsForever() {
-				outcome = spell.OutcomeHealingCrit
+				outcome = outcomeHealingStreamCrit(spell)
 			}
 			spell.DealPeriodicHealing(sim, spell.CalcHealing(sim, target, baseHealing, outcome))
 		},

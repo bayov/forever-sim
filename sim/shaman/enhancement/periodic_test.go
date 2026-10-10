@@ -74,37 +74,49 @@ func TestOrcShamanFlameShockTicks(t *testing.T) {
 	}
 }
 
-// TestOrcShamanHealingStreamCrits checks that Healing Stream's heal crits for 1.5 times under
-// Forever, at our spell crit at the time of the heal, and that its crits leave Water Shield's
-// globes alone.
+// TestOrcShamanHealingStreamCrits checks that Healing Stream's heal crits 5% of the time under
+// Forever, whatever our spell crit, and that its crits leave Water Shield's globes alone.
 //
-// Rank 2 heals for 6 every 2 sec with no healing power. We give 100% crit for the heals at 3
-// and 5 sec and take it all away before the ones at 7 and 9. Water Shield's proc flags in
-// the client leave periodic heals out, and Forever's Healing Stream is a periodic heal.
+// On the beta our totems' heals crit on 27 of 549 with 12.3% spell crit on the sheet
+// (shaman_audit.md 5.7). We heal 1000 times with 100% spell crit and 1000 times with none, and
+// expect about 50 crits each time. Rank 2 heals for 6 with no healing power, and 9 on a crit.
+// Water Shield's proc flags in the client leave periodic heals out, and Forever's Healing
+// Stream is a periodic heal.
 func TestOrcShamanHealingStreamCrits(t *testing.T) {
 	// Water Shield.
 	sim, enh := newShamanSim(newOrcShaman(30, "--000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
-	stream := topRank(t, "Healing Stream Totem", enh.HealingStreamTotem)
 	heal := enh.GetSpell(core.ActionID{SpellID: shaman.HealingStreamTotemHealId[2]})
-	if stream.Rank != 2 || heal == nil || enh.WaterShield == nil {
+	if heal == nil || enh.WaterShield == nil {
 		t.Fatalf("no Healing Stream Totem rank 2 or no Water Shield at level 30")
 	}
+	metrics := &heal.SpellMetrics[enh.UnitIndex]
 
+	heals := func(sim *core.Simulation) int32 {
+		crits := metrics.Crits
+		for range 1000 {
+			heal.Cast(sim, &enh.Unit)
+		}
+		return metrics.Crits - crits
+	}
 	allCrit := 100.0 * core.SpellCritRatingPerCritChance
+	var withCrit, withoutCrit int32
 	at(sim, 1, func(sim *core.Simulation) {
-		enh.AddStatDynamic(sim, stats.SpellCrit, allCrit)
 		castNow(t, sim, enh, enh.WaterShield)
-		castNow(t, sim, enh, stream)
-	})
-	at(sim, 6, func(sim *core.Simulation) {
+		enh.AddStatDynamic(sim, stats.SpellCrit, allCrit)
+		withCrit = heals(sim)
 		enh.AddStatDynamic(sim, stats.SpellCrit, -2*allCrit)
+		withoutCrit = heals(sim)
 	})
 	runSim(sim)
 
-	metrics := heal.SpellMetrics[enh.UnitIndex]
-	if metrics.Crits != 2 || metrics.Hits != 2 || metrics.TotalCritHealing != 18 || metrics.TotalHealing != 30 {
-		t.Errorf("got %d crits and %d normal heals for %.1f (%.1f from crits), want 2 and 2 for 30 (18)",
-			metrics.Crits, metrics.Hits, metrics.TotalHealing, metrics.TotalCritHealing)
+	// 50 crits give or take 7.
+	if withCrit < 25 || withCrit > 75 || withoutCrit < 25 || withoutCrit > 75 {
+		t.Errorf("got %d crits in 1000 heals with 100%% spell crit and %d with none, want about 50 each", withCrit, withoutCrit)
+	}
+	crits, hits := float64(metrics.Crits), float64(metrics.Hits)
+	if crits+hits != 2000 || math.Abs(metrics.TotalCritHealing-9*crits) > 1e-6 || math.Abs(metrics.TotalHealing-9*crits-6*hits) > 1e-6 {
+		t.Errorf("got %.0f crits and %.0f normal heals for %.1f (%.1f from crits), want 9 a crit and 6 a normal heal",
+			crits, hits, metrics.TotalHealing, metrics.TotalCritHealing)
 	}
 	if stacks := enh.WaterShieldAura.GetStacks(); stacks != 3 {
 		t.Errorf("Water Shield has %d globes, want 3", stacks)
@@ -126,13 +138,13 @@ func TestOrcShamanHealingStreamTalents(t *testing.T) {
 	heal := enh.GetSpell(core.ActionID{SpellID: shaman.HealingStreamTotemHealId[2]})
 
 	at(sim, 1, func(sim *core.Simulation) {
-		// No crits.
-		enh.AddStatDynamic(sim, stats.SpellCrit, -100*core.SpellCritRatingPerCritChance)
 		castNow(t, sim, enh, stream)
 	})
 	runSim(sim)
 
-	if metrics := heal.SpellMetrics[enh.UnitIndex]; metrics.Hits != 2 || math.Abs(metrics.TotalHealing-18) > 1e-9 {
-		t.Errorf("got %d heals for %.2f, want 2 for 18", metrics.Hits, metrics.TotalHealing)
+	// A crit heals for 13.5.
+	metrics := heal.SpellMetrics[enh.UnitIndex]
+	if want := 9*float64(metrics.Hits) + 13.5*float64(metrics.Crits); metrics.Hits+metrics.Crits != 2 || math.Abs(metrics.TotalHealing-want) > 1e-9 {
+		t.Errorf("got %d normal heals and %d crits for %.2f, want 2 heals for 9 each (13.5 on a crit)", metrics.Hits, metrics.Crits, metrics.TotalHealing)
 	}
 }
