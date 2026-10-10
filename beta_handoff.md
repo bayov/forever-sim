@@ -289,6 +289,17 @@ combat log, run these checks on it too, and tell the user when one breaks.
   player DoT tick crit under Forever, at the crit chance of the moment (ruleset.go canCrit). Most proc hits are on level 34 mobs and most Searing hits on level 33, so the spell
   and the level are mixed up. Flametongue Weapon on level 30 mobs or Searing on level 34s
   would tell them apart.
+- Improved Stormstrike's regen buff (1238931) comes on every Stormstrike cast, missed,
+  dodged and parried ones too (the audit session, 93 of 93 in the Shimmering Flats log, 17 of
+  17 from 18:27). It comes with the cast, so a hit that lands late (105 ms once) shows it
+  before the damage.
+- The Stormstrike mark (aura 17364 on the mob) comes only with a landed Stormstrike, blocks
+  too, and not with a killing blow, a miss, a dodge or a parry (55 of 55 landed non-killing
+  ones up to 18:42, and none of the 30 misses, dodges and parries or the 8 killing blows).
+- Healing Stream crits under Forever (the audit session's sim change). Our own totems' heals
+  crit on 23 of 449 up to 18:42 (5.1%), well under the sheet's 12.3% spell crit, while
+  Searing Totem's bolts crit at the full chance. Count only heals from our own totems: the
+  log has other shamans' totems too.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
   between.
