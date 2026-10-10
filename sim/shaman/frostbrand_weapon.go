@@ -50,7 +50,7 @@ func (shaman *Shaman) newFrostbrandImbueSpell() *core.Spell {
 		ProcMask:    core.ProcMaskSpellDamageProc,
 		// A shaman spell, so Elemental Fury raises its crits. Forever's Elemental Fury lists
 		// Frostbrand Attack among the spells it affects.
-		Flags: SpellFlagShaman,
+		Flags: SpellFlagShaman | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 
 		DamageMultiplier: []float64{1, 1.05, 1.1, 1.15}[shaman.Talents.ElementalWeapons],
 		ThreatMultiplier: 1,
