@@ -1002,3 +1002,30 @@ is leveling Unarmed (85 at the 21:30 export).
   - Rechecks: white raw 198 to 238 on the mace, 75 to 91 on the fist (69.4 to 91.4).
     Flametongue Totem procced on 24 of 24 landed swings in range. Mob parry haste 11 of 11
     within 0.1 sec. Orbs 3 IMMUNE, no crit.
+
+
+2026-10-10  Fist weapon run (21:32:25 to 22:16:13)
+--------------------------------------------------
+Bloody Brass Knuckles from 21:32:45 (the 21:30 export's build, 7.16% spell crit), Windfury
+Weapon and Flametongue Totem, mobs of level 27 to 32. The user leveled Unarmed from 85.
+  - Elemental Devastation (item 5): every direct shock crit gave the buff, Earth Shock 1,
+    Flame Shock 4 and Frost Shock 2 (one of them a refresh). So 9 of 9 since the respec.
+    No buff from 2 more Fire Nova crits (0 of 7 now), 12 Flametongue Totem crits with the buff
+    down, or 3 Flame Shock tick crits.
+  - Fire Nova (audit 5.6): 50 more hits. Since the respec, leaving out one fight (below), 104
+    hits, raw 157 to 175, and 12 over the add limit. Multipliers from 1.373 to 1.392 fit
+    every hit. The average is 1.377 times the client's base (1.366 +- 0.011 on the base the
+    23 hits before the respec give), so the multiply in the sim holds.
+  - Flametongue Totem crit (item 12): 13 of 209 on the fist, 18 of 284 (6.3%) since the
+    respec. The proc hit raw 8 every time. Crits showed 13 (11 times) and 14 (twice).
+  - One Salt Flats Scavenger fight (level 30, 22:12:10 to 22:12:22) had every shock 1 raw
+    higher: Flame Shock 65 and ticks 22 (64 and 21 on every other mob since the respec),
+    Earth Shock 109 (102 to 108 elsewhere). That fits about 2% more damage, or 3 to 5 more
+    spell power, for that fight only. No aura on us or the mob shows in the log. Another
+    Salt Flats Scavenger at 20:23 took the usual 64 and 23. One fight, so it's recorded only.
+  - Rechecks: white raw on the fist 69 to 91 (69.4 to 91.4, the raw drops the fraction).
+    Flametongue Totem procced on 208 of 208 landed swings in range, none on the 11 killing
+    blows. Mob parry haste fits 39 of 39 single parries within 0.1 sec. The one exception is
+    the log's only double parry: both Windfury attacks parried in the same ms at 21:53:22.8,
+    and the Pesterhide Snarler swung 2 ms later. The rule gives 0.4 sec or more even when
+    applied twice. Glancing: the fist swings are left out (low skill). No partial resists.
