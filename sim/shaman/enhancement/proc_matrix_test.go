@@ -69,7 +69,7 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 		ignore  string // a proc this attack never meets in a fight, see below
 	}
 
-	sim, enh := newWeaponSim(level, stormstrike, &proto.ItemSpec{Id: weapon}, imbue, totem, 0, 1)
+	sim, enh := weaponSim{level: level, weapon: &proto.ItemSpec{Id: weapon}, imbue: imbue, totem: totem, seconds: 1}.start()
 	white := enh.AutoAttacks.MHAuto()
 	strike := enh.Stormstrike
 	attacks := []attack{
@@ -113,7 +113,7 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 			attacks[len(attacks)-1].procs = []string{flametongueTotem}
 		}
 	}
-	sim, enh = newWeaponSim(level, stormstrike, &proto.ItemSpec{Id: weapon}, imbue, totem, 0, every*float64(rolls*len(attacks)+1))
+	sim, enh = weaponSim{level: level, weapon: &proto.ItemSpec{Id: weapon}, imbue: imbue, totem: totem, seconds: every * float64(rolls*len(attacks)+1)}.start()
 	sim.PrePull()
 	// Combat start turns the swings on, so we turn them off after it.
 	at(sim, 0.5, enh.AutoAttacks.CancelAutoSwing)

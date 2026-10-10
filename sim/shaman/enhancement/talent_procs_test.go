@@ -36,7 +36,7 @@ func TestOrcShamanTalentProcs(t *testing.T) {
 // Lightning Bolt without Forever's Totem of the Storm. We force each outcome 60 times.
 func testTalentProcTriggers(t *testing.T) {
 	const rolls = 60
-	sim, enh := newWeaponSim(60, talentProcTalents, &proto.ItemSpec{Id: darkEdge}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffFlametongue, 0, 60)
+	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, totem: proto.TotemWeaponBuff_TotemWeaponBuffFlametongue, seconds: 60}.start()
 	procs := map[string]*core.Aura{
 		flurry:               enh.GetAura("Flurry Proc (16280)"),
 		maelstromWeapon:      enh.MaelstromWeaponAura,
@@ -114,7 +114,7 @@ func testTalentProcTriggers(t *testing.T) {
 // client 70291, and the same spells give it when we cast them. Totems, Lightning Shield and
 // Stormstrike still cost mana.
 func testClearcastingSpells(t *testing.T) {
-	sim, enh := newWeaponSim(60, talentProcTalents, &proto.ItemSpec{Id: darkEdge}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 60)
+	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, seconds: 60}.start()
 	enh.ClearcastingAura.Activate(sim)
 	for _, spell := range []struct {
 		name  string
@@ -143,7 +143,7 @@ func testClearcastingSpells(t *testing.T) {
 // Weapon's attacks don't. A white crit uses a charge and then gives all 3 back. The buff
 // runs out after 15 sec when we don't swing (clients 70291 and 1.15.9).
 func testFlurryCharges(t *testing.T) {
-	sim, enh := newWeaponSim(60, talentProcTalents, &proto.ItemSpec{Id: darkEdge}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 25)
+	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, seconds: 25}.start()
 	sim.PrePull()
 	// Combat start turns the swings on, so we turn them off after it.
 	at(sim, 0.5, enh.AutoAttacks.CancelAutoSwing)
@@ -186,7 +186,7 @@ func testFlurryCharges(t *testing.T) {
 
 // Lightning Bolt uses all the Maelstrom Weapon stacks, and Chain Lightning uses none.
 func testMaelstromWeaponStacks(t *testing.T) {
-	sim, enh := newWeaponSim(60, talentProcTalents, &proto.ItemSpec{Id: darkEdge}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 10)
+	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, seconds: 10}.start()
 	sim.PrePull()
 	// Combat start turns the swings on, so we turn them off after it.
 	at(sim, 0.5, enh.AutoAttacks.CancelAutoSwing)
