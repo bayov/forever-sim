@@ -284,10 +284,13 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime
 		},
 
-		// Call of Flame and Improved Fire Nova are both percent damage modifiers on this
-		// spell. In Classic those add together (15% + 20% = 35%) instead of multiplying, and
-		// the SoD sim does the same.
-		DamageMultiplier: shaman.callOfFlameMultiplier() + shaman.improvedFireNovaBonus(),
+		// Call of Flame and Improved Fire Nova multiply each other under Forever.
+		//
+		// Classic adds percent modifiers of the same kind, and the SoD sim adds these two
+		// (15% + 20% = 35% at the top ranks). But on the beta 4 of 25 Fire Nova hits with
+		// both talents were over the most that adding allows, and all 25 fit 1.15 * 1.2 =
+		// 1.38 (shaman_audit.md 5.6). We use that until more beta data says otherwise.
+		DamageMultiplier: shaman.callOfFlameMultiplier() * (1 + shaman.improvedFireNovaBonus()),
 		ThreatMultiplier: 1,
 		BonusCoefficient: FireNovaSpellCoeff[rank],
 

@@ -107,9 +107,10 @@ func (ws weaponSim) start() (*core.Simulation, *EnhancementShaman) {
 // TestOrcShamanSpellDamageModifiers checks how the percent bonuses on our spells combine, for a
 // level 60 Orc shaman.
 //
-// Talent bonuses on the same spell add up, so Call of Flame 3 and Improved Fire Nova 2 give
-// Fire Nova 1 + 15% + 20%. The Stormstrike mark and Curse of the Elements are other kinds, and
-// they multiply with the talents and with each other. Forever's Curse of the Elements adds 10%
+// Fire Nova is the only spell with two talent bonuses. Call of Flame 3 and Improved Fire Nova 2
+// multiply under Forever (1.15 * 1.2), as the beta showed (shaman_audit.md 5.6). The Stormstrike
+// mark and Curse of the Elements are other kinds, and they multiply with the talents and with
+// each other. Forever's Curse of the Elements adds 10%
 // to every magic school at level 60. So Earth Shock on a marked target deals 1.05 * 1.2 * 1.1
 // with Concussion 5.
 //
@@ -182,7 +183,7 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 	}{
 		{"Earth Shock", 1.05 * 1.2 * 1.1, 0},
 		{"Flame Shock", 1.15 * 1.1, 1.15 * 1.1},
-		{"Fire Nova", (1 + .15 + .2) * 1.1, 0},
+		{"Fire Nova", 1.15 * 1.2 * 1.1, 0},
 		{"Searing Totem", 1.15 * 1.1, 0},
 		{"Lightning Shield orb", 1.15 * 1.1, 0},
 	}
