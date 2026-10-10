@@ -126,3 +126,33 @@ func TestOrcShamanAttributeRates(t *testing.T) {
 	// 83 per 5 sec on the beta's tooltip, 12.5 + 33 / 8 = 16.625 a second.
 	check("mana regen", character.ManaRegenPerSecondWhileNotCasting(), 16.625, 1e-9)
 }
+
+// TestOrcShamanHealthTalents checks Toughness and Improved Reincarnation on a naked level 30
+// Orc shaman.
+//
+// Toughness gives 2% more Stamina a point and drops the fraction, so 5/5 turns 51 Stamina
+// into 56. Improved Reincarnation gives 2% more max health a point, Stamina's part included.
+// Both are the Forever client's values (shaman_audit.md 6.6). Base health is 335, the first
+// 20 Stamina give 1 health each and the rest 10.
+func TestOrcShamanHealthTalents(t *testing.T) {
+	cases := []struct {
+		name    string
+		talents string
+		stamina float64
+		health  float64
+	}{
+		{"no talents", "", 51, 665},
+		{"Toughness 5/5", "-00000000005", 56, 715},
+		{"Improved Reincarnation 2/2", "--000002", 51, 665 * 1.04},
+		{"both", "-00000000005-000002", 56, 715 * 1.04},
+	}
+	for _, c := range cases {
+		_, enh := newShamanSim(newOrcShaman(30, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+		if got := enh.GetStat(stats.Stamina); got != c.stamina {
+			t.Errorf("%s: %.2f Stamina, want %.0f", c.name, got, c.stamina)
+		}
+		if got := enh.MaxHealth(); math.Abs(got-c.health) > 1e-6 {
+			t.Errorf("%s: %.2f health, want %.2f", c.name, got, c.health)
+		}
+	}
+}
