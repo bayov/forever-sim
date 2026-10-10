@@ -99,7 +99,7 @@ Strikes and shocks
 - [x] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
 - [x] 7.8 Earth Shock
 - [x] 7.9 Flame Shock: direct and DoT parts
-- [ ] 7.10 Frost Shock
+- [?] 7.10 Frost Shock
 - [ ] 7.11 Shared shock cooldown
 
 Nature spells
@@ -961,6 +961,19 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Already tested: `periodic_test.go` TestOrcShamanFlameShockTicks (tick times, a recast, crit ticks), `spell_power_test.go` (ranks 1 and 3 against the beta), `mana_costs_test.go`, `crit_test.go`, `damage_modifiers_test.go` (Call of Flame) and `stormstrike_test.go` (it leaves the mark up).
 - No sim change.
 - Tests: `periodic_test.go` TestOrcShamanFlameShockMiss casts rank 3 every 0.25 sec at a level 35 target and takes the DoT down before every other cast. The 18 misses without the DoT put none up, and the 12 misses with it left its end time and tick count alone. Each landed cast put it up for 12 sec. It fails when a miss puts the DoT up and when a miss takes a running one down.
+
+### 7.10 Frost Shock
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`frost_shock.go`, `shocks.go`): 4 ranks, learned at 20, 34, 46 and 58. An instant Frost hit that grows for 5 levels after the rank is learned: 68.2 to 72.8 for rank 1 from 25, and 278.6 to 294.6 for rank 4 at 60. It gets 38.6% of spell power on every rank (5.4). 115 / 225 / 325 / 430 mana, a 1.5 sec GCD and the shared 6 sec shock cooldown (7.11). It rolls spell hit and crit (5.1, 5.3), and it can be partly resisted (it isn't binary, 5.2). Its 8 sec slow does nothing in the sim. It leaves the Stormstrike mark up (7.7). No preset casts it.
+- Client 70338 (wago.tools, 8056 to 10473): the same levels, damage, growth, coefficient, mana, GCD and shock cooldown. Effect 1 is the 50% slow for 8 sec.
+- Beta, all four logs (our count): 11 casts of rank 1, all in the 15:07 log (20:50 to 22:06), on 2 players, a Salt Flats Vulture and Thundering Boulderkins.
+  - Each cost 115 mana. 9 hits, 2 crits and no misses.
+  - Raw 89 to 92 on the normal hits. The cast lines show 49 spell power, and 53 for the two raw 91 and 92 hits at 20:54 and 20:55. The sim gives 87.1 to 91.7 at 49 and 88.7 to 93.3 at 53, so every hit fits. The two crits did 132 and 136 from raw 88 and 91, 1.5 times.
+  - The slow on a player lasted 8.00 sec (20:54:51.586 to 20:54:59.589).
+  - Whether it's binary is open (notes.md Need to Verify, the resistance item). No Frost Shock landed on a mob with resistance.
+- Already tested: `mana_costs_test.go`, `gcd_test.go`, `spell_ranks_test.go`, `stormstrike_test.go` (the mark), `other_procs_test.go` and `talent_procs_test.go`. Nothing tests its damage.
+- Proposed: no sim change. Add rank 1 at 49 spell power to `spell_power_test.go` TestOrcShamanSpellPowerBeta, with the beta's raw 88 to 91.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
