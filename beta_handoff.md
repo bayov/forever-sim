@@ -255,8 +255,10 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Flametongue Totem procs on every landed white swing (blocks and glancing blows too) and
   never on a miss, dodge, parry, Stormstrike or Windfury Weapon attack (items 1 and 2).
   Leave out swings where the totem wasn't up or in range, and swings where a Windfury Weapon
-  attack or an orb killed the mob a ms or two later. The buff stays a few seconds after we
-  run 40 or more yards from the totem (19:30 to 19:32).
+  attack or an orb killed the mob within 130 ms (the proc comes 0 to 10 or 90 to 127 ms
+  after the swing). The buff stays a few seconds after we run 40 or more yards from the
+  totem. scratchpad cl/ftt.py sorts every landed swing by the totem's state. Up to 19:52 all
+  67 swings in range of a live totem on a mob that lived procced.
 - Flametongue Weapon procs on every landed swing and Stormstrike (blocks too) and never on a
   miss, dodge or parry (item 2). Leave out a hit that kills the mob, and the swing that
   breaks Ghost Wolf (it lands in the form, without the weapon).
@@ -290,10 +292,11 @@ combat log, run these checks on it too, and tell the user when one breaks.
   WoWCombatLog-101026_150733.txt up to 19:32:39 (12.3% spell crit on the sheet): Searing
   27/215, shocks 8/82, Fire Nova 4/23 (together 39/320, 12.2%), Flametongue Weapon 24/198
   (12.1%), Flametongue Totem 5/82 (6.1%), Flame Shock ticks 15/122 (at 1.5x, audit 5.7).
-  Flametongue Weapon's early 7.5% was chance, so it's settled at the full chance. Flametongue
-  Totem is still open: 5 of 82 or fewer comes 1 time in 19 at 12.3%. About 150 more of its
-  procs settle it. The sim lets every player DoT tick crit under Forever, at the crit chance
-  of the moment (ruleset.go canCrit).
+  Plus 19:32 to 19:52: Flametongue Totem 7/45, so 12/127 (9.4%). Both Flametongue procs
+  started low by chance and came up, so the sim keeps the full chance for them (settled
+  2026-10-10). A flat 5% for the totem is 1 time in 38, but 12.3% and 7.3% need about 500
+  procs to tell apart. The sim lets every player DoT tick crit under Forever, at the crit
+  chance of the moment (ruleset.go canCrit).
 - Improved Stormstrike's regen buff (1238931) comes on every Stormstrike cast, missed,
   dodged and parried ones too (the audit session, 93 of 93 in the Shimmering Flats log, 17 of
   17 from 18:27). It comes with the cast, so a hit that lands late (105 ms once) shows it
@@ -302,7 +305,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   too, and not with a killing blow, a miss, a dodge or a parry (55 of 55 landed non-killing
   ones up to 18:42, and none of the 30 misses, dodges and parries or the 8 killing blows).
 - Healing Stream crits under Forever (the audit session's sim change). Our own totems' heals
-  crit on 27 of 549 up to 19:32 (4.9%), well under the sheet's 12.3% spell crit, while
+  crit on 29 of 605 up to 19:52 (4.8%), well under the sheet's 12.3% spell crit, while
   Searing Totem's bolts crit at the full chance. Count only heals from our own totems: the
   log has other shamans' totems too.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
