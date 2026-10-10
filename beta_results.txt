@@ -1043,10 +1043,12 @@ to 29.
     respec that makes 31 of 417 (7.4%). With the 12 of 127 at 12.3% before it, our spell crit
     is 48 times as likely as a flat 5%, and a flat 7.9% is 1.3 times as likely as our spell
     crit. Only the 12% build can split those two.
-  - Flametongue Totem lasts 5 minutes, as in the sim. The totem from 22:20:20 procced until
-    22:24:18, then 8 landed swings from 22:26:28 got no proc with no totem death logged. That
-    is 368 sec after the summon, and the new totem at 22:26:42 procced again. ftt.py now
-    calls swings over 5 minutes after the summon "totem expired".
+  - Flametongue Totem duration fits 5 minutes (the client's duration index 5, and the sim).
+    The totem from 22:20:20 last procced at 22:24:18 (238 sec), and the next landed swing at
+    241 sec was a killing blow. The next fight's 8 landed swings from 22:26:28 (368 sec) got
+    no proc, with no totem death logged and no summon in between. So the totem ran out
+    between 241 and 368 sec. The new totem at 22:26:42 procced again. ftt.py now calls swings
+    over 5 minutes after the summon "totem expired".
   - Rechecks: white raw on the fist 69 to 91. Flametongue Totem procced on 120 of 120 landed
     swings in range, none on the 8 killing blows. Mob parry haste fits 15 of 15 within
     0.1 sec. Lightning Shield: 5 orbs IMMUNE on Thundering Boulderkin (an earth elemental),
