@@ -98,8 +98,9 @@ commit ID and message.
 
 ## How beta testing has worked so far
 
-- The user plays a level 30 Orc shaman on the beta. Ask what other characters they have
-  before planning the other-class items.
+- The user plays a level 30 Orc shaman on the beta. They also have a level 20 Undead
+  paladin and an Undead rogue around level 15, and can make level 1 characters of any
+  class (2026-10-10).
 - We read hits from screenshots of the chat combat log. A combat log frame made through
   /run saw no events on the beta client (shaman_audit.md 4.1). It may be worth asking the
   user whether `/combatlog` writes `Logs/WoWCombatLog.txt` on the beta. A log file has
@@ -119,9 +120,8 @@ commit ID and message.
 
 ## Recording results
 
-- Raw data (every hit, every timestamp, the /run output) goes in a beta results log. Ask the
-  user first whether to bring `beta_log.txt` back (`jj restore beta_log.txt`) and append to
-  it, or to start a new file. Don't do either without their answer.
+- Raw data (every hit, every timestamp, the /run output) goes in `beta_results.txt`. The
+  user chose a new file over bringing `beta_log.txt` back (2026-10-10).
 - A settled item comes off the Need to Verify list in `notes.md`. When it settles in the
   sim's favor, remove the bullet. When the sim changes, remove it once the change is in.
   When it only narrows down, rewrite the bullet with what's left.

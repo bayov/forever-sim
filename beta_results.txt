@@ -1,0 +1,30 @@
+Forever beta test results, from 2026-10-10
+=========================================
+
+Every result from the beta verification session (beta_handoff.md), with the raw data. The
+results before 2026-10-10 are in beta_log.txt on master (`jj file show -r master
+beta_log.txt`), and the way to read hits is the same as there:
+- Each number is the whole hit: the shown amount plus the overkill.
+- Crits are listed apart, at their full value. Melee crits are 2x a normal hit and spell
+  crits 1.5x.
+- Glancing blows are left out.
+
+
+2026-10-10  Flametongue Totem and melee abilities (item 1)
+---------------------------------------------------------
+Client 1.60.1.70291 and 1.60.1.70338 (wago.tools SpellEffect and SpellAuraOptions)
+  Flametongue Totem's buff (8230, 8250, 10521, 15036) is a party aura that triggers the
+  proc spell (aura 42), with ProcChance 100, no proc cooldown and ProcTypeMask 0x4 (white
+  melee swings only).
+  Windfury Weapon (439431) and Flametongue Weapon (436519) have mask 0x14 (white swings and
+  melee abilities).
+  The Era client (1.15.x, 70003) still has the old form: Flametongue Totem enchants the
+  held item (effect 92), and the server decides which hits trigger it.
+
+Beta
+  The user saw that Stormstrike never procs Flametongue Totem, and remembers only one
+  Flametongue Totem hit per Windfury proc.
+
+What it showed: Flametongue Totem procs on white swings only. The audit session changed
+the sim (5229ae79). Windfury Weapon's own two attacks weren't counted apart, so the item 2
+run checks them on the side.
