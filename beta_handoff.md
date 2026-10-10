@@ -389,7 +389,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Partial resists on our spells, by mob level (audit 5.2, the audit session proposed to drop
   the sim's level based partial resists under Forever). Count the landed hits of spells
   that can partially resist (Flametongue Weapon, Lightning Shield orbs, Searing Totem, Flame
-  Shock) and how many had a resisted amount. On SPELL_DAMAGE the resisted field is row[-7],
+  Shock, and Earth Shock under Forever since audit 7.8) and how many had a resisted amount. On SPELL_DAMAGE the resisted field is row[-7],
   because spell lines end with an extra "ST" field. Base total (the audit session, up to
   16:05): 0 of 257 on level 33 to 35 mobs, where the sim expects about 57. Plus 16:05 to
   16:16: 0 of 38 on level 33. Count dungeon bosses and elites apart from regular mobs
@@ -399,6 +399,15 @@ combat log, run these checks on it too, and tell the user when one breaks.
   or by the max HP in the advanced fields. Leave out mobs with a school resistance: the
   level 29 Elder Cloud Serpent resisted 20% or 30% of every Nature hit and no Fire (19:30).
   Up to 19:32 no other mob of level 27 to 35 resisted any part of a hit.
+- School resistance (notes.md Need to Verify, audits 5.2 and 7.8; the user wants it explored
+  more later, 2026-10-11). Whenever a log has mobs that resist a school, count each school's
+  resist steps per mob name: the share each hit lost, and full resists (RESIST, not MISS).
+  recheck.py prints a "resisted:" line for each mob and school with any. The resisted field
+  is a share of the raw field (before the Stormstrike mark), not of the amount. Up to
+  2026-10-11 only the level 29 Elder Cloud Serpents (Nature: 5 hits at 20% off, 10 at 30%
+  off, 3 Earth Shocks fully resisted) and one Crocolisk Lightning Shield orb (30% off) did,
+  all in 10% steps where Classic uses 25%. Also watch whether Frost Shock and Frostbrand
+  ever partly resist (they slow, so they might be binary).
 - Spell crits by spell and by mob level (audit 5.3, the audit session). Count crits out of
   landed hits, Lightning Shield left out because it never crits. On spell lines the crit flag
   is row[-4], because of the trailing "ST". Leave Windfury Weapon's attacks out, they're

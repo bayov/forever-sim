@@ -43,8 +43,8 @@ Some scripts hold numbers from one character and one day, like the weapon models
   reads a miss type. `cl.ME` is our character's name prefix ("Bayov-").
 - `recheck.py` runs most of the recheck list over a window: white and Stormstrike raw against
   the weapon models, Lightning Shield orbs, Flametongue procs per trigger, Searing bolts,
-  glancing and partial resists by mob level, Fire Nova's spell id and raw, the Stormstrike
-  buff and mark, and Healing Stream crits.
+  glancing and partial resists by mob level, resist steps per mob and school, Fire Nova's
+  spell id and raw, the Stormstrike buff and mark, and Healing Stream crits.
 - `ftt.py` sorts every landed white swing by the Flametongue Totem's state (in range, a kill,
   the mob dying within 130 ms, the totem down, past its 5 minutes or over 30 yards) and
   whether it procced.

@@ -82,6 +82,29 @@ for e in [x for x in win if (x.src.startswith(cl.ME) or x.srcGUID in tot) and x.
     if d['resisted']: pr[(e.spell, L)][0] += 1
 print('partial resists (resisted, hits) by spell and level', dict(pr))
 
+# School resistance (notes.md Need to Verify, audits 5.2 and 7.8). On each mob name and school
+# where something was resisted, how much each hit lost and the misses by type. A full resist
+# logs as RESIST, a real miss as MISS. The resisted field is a share of the raw field, before
+# the mob's other modifiers: a marked Earth Shock logged raw 119, resisted 36 (30%) and amount
+# 100 (119 x 0.7 x 1.2). We haven't seen a resisted crit yet, so a crit's share assumes 1.5
+# times raw, and its key says crit.
+SCHOOL = {2: 'Holy', 4: 'Fire', 8: 'Nature', 16: 'Frost', 32: 'Shadow', 64: 'Arcane'}
+rs = collections.defaultdict(collections.Counter)
+for e in [x for x in win if (x.src.startswith(cl.ME) or x.srcGUID in tot) and x.ev.startswith('SPELL_') and ('DAMAGE' in x.ev or 'MISSED' in x.ev)]:
+    school = SCHOOL.get(int(e.f[11], 16))
+    if school is None: continue
+    if 'MISSED' in e.ev:
+        rs[(e.dst, school)][cl.miss(e)] += 1
+        continue
+    d = cl.dmg(e)
+    r = d['resisted'] or 0
+    base = d['raw'] * (1.5 if d['crit'] else 1)
+    key = f'{round(100 * r / base)}% off' if r else 'none off'
+    rs[(e.dst, school)][key + (' crit' if d['crit'] and r else '')] += 1
+for (mob, school), c in sorted(rs.items()):
+    if any('% off' in k or k == 'RESIST' for k in c):
+        print(f'resisted: {mob} {school} {dict(sorted(c.items()))}')
+
 # Fire Nova: damage spell id and normal raw range (rank 2 at 91 spell power: 122.41 to 136.53).
 fn = [e for e in me if e.spell == 'Fire Nova' and e.ev == 'SPELL_DAMAGE']
 if fn:
