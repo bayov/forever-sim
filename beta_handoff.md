@@ -301,8 +301,11 @@ Keep this current as you go.
   swap at 23:26:33 lowered max mana by 90 and max health by 60, so the spell crit is a bit
   under 12% (export pending). Up to 23:49, on the fist: 24 of 202 (11.9%), where our spell
   crit expects 24.2 +- 4.6, melee crit 21.0 and a flat 8% 16.2. Pooled with the earlier runs,
-  our spell crit leads a flat 8% about 5 to 1 and the best flat rate (9%) about 3 to 1. The
-  user keeps going to about 400.
+  our spell crit leads a flat 8% about 5 to 1 and the best flat rate (9%) about 3 to 1.
+  At 00:09:59 (2026-10-11): 46 of 400 at 11.81% spell crit (23:54 export), where our spell
+  crit expects 47.2 and a flat 8% 32.0. Our spell crit leads a flat 8% 15 to 1 pooled, and
+  the rate moved with our crit (11.0% near 12%, 7.4% at 7.3%). Proposed to the user: back to
+  our spell crit (beta_results.txt).
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to

@@ -1099,3 +1099,26 @@ fist from 23:26:33, mobs of level 27 to 29):
     live totem on a mob that lived. The 35 without a proc were 13 killing blows, 6 swings on
     a mob that died within 130 ms and 16 over 30 yards. No partial resists. Fist raw 68 to
     90, inside the model at 387 AP.
+
+
+2026-10-11  Flametongue Totem crit at 400 procs (item 12, audit 5.3)
+--------------------------------------------------------------------
+Log WoWCombatLog-101026_232548.txt up to 00:09:59, all on the fist with Windfury Weapon and
+Flametongue Totem since 23:26:33. Spell crit 11.81%, melee crit 10.39% (23:54 export). Mobs of
+level 27 to 29.
+  - Flametongue Totem crit 46 of 400 (11.5%). Our spell crit expects 47.2 +- 6.5, melee crit
+    41.6 +- 6.1 and a flat 8% 32.0 +- 5.4 (2.6 standard errors below 46). This run favors our
+    spell crit over a flat 8% 19 to 1. Pooled with the two earlier runs, our spell crit leads
+    a flat 8% 15 to 1 and the best flat rate (9.4%) 4.3 to 1. The two runs near 12% gave 11.0%
+    (58 of 527) and the Elemental run at 7.3% gave 7.4% (31 of 417), 1.9 standard errors
+    apart, so the rate moves with our crit. Melee crit is only 1.3 to 1 behind in this run,
+    but it lost about 3 to 1 over all the runs.
+  - Elemental Devastation (item 5): none of the 46 totem crits gave the buff, nor 6 Flame
+    Shock tick crits, 1 Fire Nova crit, 76 white crits or 16 Windfury Weapon attack crits.
+    One Earth Shock crit and one direct Flame Shock crit did. All as in the sim. Still no
+    Flametongue Weapon hits.
+  - Rechecks: the totem procced on 381 of 381 landed swings in range. The no-proc swings were
+    killing blows, swings on a mob that died within 130 ms, or over 30 yards. 22 swings over
+    30 yards still procced (the buff stays a few seconds out of range). No partial resists in
+    about 500 spell hits. Fire Nova raw 115 to 127 (12 hits, range 113 to 128 at 49 spell
+    power). Lightning Shield orbs 0 misses and 0 crits in 11. Fist raw 68 to 90.
