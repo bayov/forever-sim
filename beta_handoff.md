@@ -198,7 +198,10 @@ Keep this current as you go.
   them on the side (it uses Windfury Weapon with Flametongue Totem).
 - [ ] 2. Flametongue procs on a miss, dodge, parry or block
 - [ ] 3. Windfury Weapon attacks and the swing timer
-- [ ] 4. Stormstrike damage model, dagger, Rage of the Storm
+- [ ] 4. Stormstrike damage model, dagger. Rage of the Storm's +10% is off the list: the user
+  said to assume it works (2026-10-10), because it only matters at level 30 and the sims we
+  care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
+  only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
 - [ ] 5. Flametongue procs and Elemental Devastation
 - [ ] 6. Weapon Mastery baseline
 - [ ] 7. Spirit regen of the other classes
