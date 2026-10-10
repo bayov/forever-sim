@@ -221,6 +221,10 @@ Keep this current as you go.
   and no Fire Nova crit (7), Flametongue Totem crit (15) or Flame Shock tick crit did.
   Still open: Flametongue Weapon (about 150 landed swings with it,
   optional).
+  Back on Enhancement with Elemental Devastation 3 (23:14:55 export), up to 23:49: no
+  Flametongue Totem crit (24), Flame Shock tick crit (2), white crit (42) or Windfury Weapon
+  attack crit (6) gave the buff, and the one Earth Shock crit did (tools/combat_log/
+  devastation.py). Flametongue Weapon is next, about 150 landed swings on the fist.
 - [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor: 128 white hits in the
   15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would put 55 of
   them too low. The sheet's damage percent is 1. The user said to assume Weapon Mastery no
@@ -293,6 +297,12 @@ Keep this current as you go.
   user is back on the Enhancement build, count about 400 procs at 12% spell crit. Our spell
   crit predicts about 49 crits there and a flat 8% about 32. Near 12% means back to our spell
   crit (with the user's OK), near 8% settles it.
+  Back on Enhancement (23:14:55 export, 12.02% spell crit), new log from 23:25:48. A weapon
+  swap at 23:26:33 lowered max mana by 90 and max health by 60, so the spell crit is a bit
+  under 12% (export pending). Up to 23:49, on the fist: 24 of 202 (11.9%), where our spell
+  crit expects 24.2 +- 4.6, melee crit 21.0 and a flat 8% 16.2. Pooled with the earlier runs,
+  our spell crit leads a flat 8% about 5 to 1 and the best flat rate (9%) about 3 to 1. The
+  user keeps going to about 400.
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to
@@ -303,6 +313,16 @@ Keep this current as you go.
   So glancing goes by real skill when it's under the most for our level. That only matters
   with low skill, so still no sim change. Leave out fist swings from the glancing counts
   until Unarmed is 150.
+- [ ] 14. Frostbrand Weapon rank 2 at level 30 (audit 7.5, notes.md, added by the audit
+  session 2026-10-10). The sim gives it 9 procs a minute, so 49.5% a landed main hand hit on
+  Rage of the Storm (3.3) and 24% on the 1.6 fist. It hits a flat 54 + 10% of spell power,
+  times 1.15 with Elemental Weapons 3/3, with no weapon speed term. At 49 spell power and no
+  Elemental Weapons that's 58.9. About 100 landed hits on Rage of the Storm show the rate,
+  and the hits show whether rank 2 loses a flat amount like Flametongue Weapon ranks 2 and 3
+  (about 2 and 5). Rank 2's proc is spell 8037 (the others are 8034, 10458, 16352 and 16353).
+  Another shaman ("Szm" in the 15:07 log) had raw 63 on two rank 2 hits, which fits no cut,
+  but we don't know their level or talents. No rush: fit it in when the user plays with
+  Frostbrand.
 
 ## Recheck with every new log
 
