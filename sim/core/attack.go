@@ -1018,22 +1018,27 @@ func (unit *Unit) applyParryHaste() {
 				return
 			}
 
-			currentSwingTime := aura.Unit.AutoAttacks.mh.swingAt - aura.Unit.AutoAttacks.mh.lastSwingAt
-			swingSpeed := aura.Unit.AutoAttacks.mh.curSwingDuration
-			minRemainingTime := time.Duration(float64(swingSpeed) * 0.2) // 20% of Swing Speed
-			defaultReduction := minRemainingTime * 2                     // 40% of Swing Speed
-
-			if currentSwingTime <= minRemainingTime {
+			// A parry brings our next swing 40% of the swing sooner, but never closer than 20% of
+			// the swing after the parry.
+			//
+			// So with more than 60% of the swing left it comes 40% sooner, with 20 to 60% left
+			// it comes 20% of the swing after the parry, and with 20% or less left nothing
+			// changes. That's the Classic rule, and the beta log follows it for mobs and for us
+			// (shaman_audit.md 6.2). A mob with a 2.0 sec swing that parried us 1.44 sec after
+			// its swing swung again at 1.85 sec, where 40% sooner would have been 1.2 sec, before
+			// the parry.
+			mh := &aura.Unit.AutoAttacks.mh
+			minRemainingTime := time.Duration(float64(mh.curSwingDuration) * 0.2)
+			if mh.swingAt-sim.CurrentTime <= minRemainingTime {
 				return
 			}
 
-			newReadyAt := max(aura.Unit.AutoAttacks.mh.swingAt-defaultReduction, aura.Unit.AutoAttacks.mh.lastSwingAt+minRemainingTime)
-			parryHasteReduction := newReadyAt - aura.Unit.AutoAttacks.mh.swingAt
+			newReadyAt := max(mh.swingAt-2*minRemainingTime, sim.CurrentTime+minRemainingTime)
 			if sim.Log != nil {
-				aura.Unit.Log(sim, "MH Swing reduced by %s due to parry haste, will now occur at %s", parryHasteReduction, newReadyAt)
+				aura.Unit.Log(sim, "MH Swing reduced by %s due to parry haste, will now occur at %s", mh.swingAt-newReadyAt, newReadyAt)
 			}
 
-			aura.Unit.AutoAttacks.mh.swingAt = newReadyAt
+			mh.swingAt = newReadyAt
 			sim.rescheduleWeaponAttack(newReadyAt)
 		},
 	})
