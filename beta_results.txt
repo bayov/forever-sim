@@ -181,3 +181,23 @@ on a new mob 13 sec later).
 What it showed: the next swing comes on the old schedule, within 36 ms, and 0.9 to 2.8 sec
 before a restarted timer would allow. Windfury Weapon's attacks don't restart the swing
 timer. That matches the sim (two yellow attacks), so item 3 is settled.
+
+
+2026-10-10  Flametongue Weapon run, 15:46 to 15:51 (rechecks, Searing Totem lifetime)
+-------------------------------------------------------------------------------------
+Same log and setup as the Flametongue Weapon run above.
+
+Searing Totem lifetime: put down at 15:46:49.458. Its last bolt hit at 15:47:28.882 (39.4
+sec), and the next would have come 2.4 to 2.9 sec later. We were still fighting then
+(Stormstrike at 15:47:33.60), so the totem was gone between 39.4 and about 41.9 sec. The sim
+has 40 sec for rank 3. Its first bolt hit at 15:46:51.719, 2.26 sec after it went down.
+
+Rechecks
+  Lightning Shield: 11 orbs, 3 MISS, 8 hits, 0 crits. All runs so far: 112 orbs, 22 misses,
+  0 crits in 90 hits.
+  Stormstrike raw (5): 235 233 265 235 270, inside the 3.6 range (220.0 to 271.7).
+  White raw (6): 192 to 237.
+  Flametongue Weapon: 11 procs for 11 landed hits (6 swings, 5 Stormstrikes). 8 swings and 1
+  Stormstrike missed, dodged or were parried.
+  Glancing (the audit session's count over the whole log up to 15:51): level 33 13/37,
+  level 34 66/111, level 35 6/8.

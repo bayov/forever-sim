@@ -244,5 +244,6 @@ combat log, run these checks on it too, and tell the user when one breaks.
   parries included), per target level. The mob's level is the field just before the damage
   suffix on the mob's own SWING_DAMAGE lines (row[-11]), matched to our target by GUID.
   Note our weapon skill from the latest `/bayov export` too (Two-Handed Maces was 149 of 150
-  at 14:50 on 2026-10-10). So far: level 33 13/35 (37%), level 34 63/103 (61%), level 35
-  6/8. Without the cap the sim would give 50% at +4 and 60% at +5.
+  at 14:50 on 2026-10-10). Base totals (WoWCombatLog-101026_150733.txt up to 15:51, the
+  audit session's count): level 33 13/37 (35%), level 34 66/111 (59%), level 35 6/8. Add
+  each new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.
