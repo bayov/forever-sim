@@ -26,6 +26,13 @@ python3 -I tools/combat_log/recheck.py /tmp/log.txt 21:32:25 [22:16:00]
 Every script takes the log and an optional window, as `HH:MM:SS` strings compared against
 each line's time of day. They import `cl.py` from their own directory, so `python3 -I` works.
 
+The raw damage field is the hit before the target's armor, the crit and any damage taken
+modifier on the target, and the amount has all of them. A marked Earth Shock (the Stormstrike
+mark) logs raw 120 and amount 145, and a plain one logs the same raw and amount (the audit
+session, 2026-10-11). So raw compares straight to the sim's damage before the target's
+modifiers. On a killing Earth Shock the server removes the mark 1 ms before the damage line,
+so a script that checks the mark at the damage line calls those hits unmarked.
+
 Some scripts hold numbers from one character and one day, like the weapon models in
 `recheck.py` and the fist weapon cutoff in `glance.py`. The last section lists them.
 
