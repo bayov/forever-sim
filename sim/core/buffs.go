@@ -1828,6 +1828,14 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
 	if character.Env.IsForever() {
 		// It has nothing of its own to give, but it's above Grace of Air, so it turns it off.
 		aura.NewExclusiveEffect(graceOfAirWindfuryCategory, false, ExclusiveEffect{Priority: 2})
+
+		// The attack power lasts 1 sec under Forever.
+		//
+		// The Forever client (70291) gives the buff spells 8516, 10608 and 10610 a 1 sec
+		// duration, where the Era client (1.15.9) has 1.5 sec. The extra swing comes right
+		// away and gets it either way. The second charge, when a yellow attack triggered the
+		// proc, only reaches a white swing that comes within the window.
+		character.GetAura(label + " Buff").Duration = time.Second
 	}
 	return aura
 }
