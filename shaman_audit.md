@@ -73,7 +73,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 ## 6. When the enemy hits us
 
 - [x] 6.1 When the enemy attacks us at all: the tank setting (Level 30 solo, PvP), the boss behind the tank at level 60
-- [ ] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
+- [?] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
 - [ ] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
 - [ ] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
 - [ ] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
@@ -668,6 +668,24 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Found: the PvP melee downtime moves only us (`pvp.go`). The enemy's own distance never changes, so its swings go on while we're out of melee range (`attack.go` checks the attacker's distance). On the default Level 30 PvP encounter we're out of range 70% of the fight, and the enemy hits us all that time and fires Lightning Shield. On the melee enemies it's 30%. Only the hunter's swing, which stands for its pet, should go on.
 - Proposed to the user: stop the enemy's swings while we're out of melee range, except the hunter's. It lowers the PvP numbers, mostly through fewer Lightning Shield orbs.
 - Set aside (the user, 2026-10-10). The PvP enemies only swing at us and cast nothing (no encounter AI, `target_ai.go`), so we don't simulate other specs' rotations against us. We leave their swings as they are for now.
+
+### 6.2 Enemy damage
+
+- Shown to the user (2026-10-10), waiting for the OK. An enemy swing deals its minimum damage times 1 to 1.33, plus the minimum times attack power / (14 * 177) (`attack.go` EnemyWeaponDamage). Vishas deals 52 to 69 every 2.0 sec, with no attack power. His numbers come from the 1.12 creature data, and we haven't seen him on Forever. Every PvP enemy uses the same 52 to 69 at its own swing speed. The Level 60 boss (3000, 805 attack power) never swings at us (6.1).
+- An enemy crits for 2 times, 5% of the time plus 0.2% a level above us. It crushes for 1.5 times, 15% of the time at 3 or more levels above us and never below (`target.go`). Vishas crits 5.4% and never crushes.
+- After a unit parries, its next swing comes sooner (`attack.go` applyParryHaste). Vishas has it, and so do we, because every character that can parry has it. We only parry with Spirit Weapons. Vishas never parries us, because the preset puts us behind him. The PvP enemies don't have it.
+- None of this changes our DPS, except how often the enemy swings (each hit can fire Lightning Shield) and our own parry haste. The damage only shows in damage taken.
+- Beta (our count from the whole Shimmering Flats and Thousand Needles log, 819 mob swings at us from level 24 to 35 mobs, 2026-10-10):
+  - Swing speeds are round numbers: 2.00 sec for most mobs, 1.21 for the Needles Cougar and 3.01 for the Thundering Boulderkin.
+  - The normal hits of each mob span 1.22 to 1.37 times their lowest, so the 1.33 spread fits. The log also shows each mob's attack power: 93 to 118 at levels 27 to 35.
+  - Mobs almost never crit us: 3 crits in 819 swings (0.4%), where Classic's 5% gives about 41. None of our talents lowers it. So Forever seems to take most crits away from mobs.
+  - Crushing blows come from mobs 3 or more levels above us only: 18 of 137 swings at +3 (13.1%) and 89 of 331 at +4 (26.9%). That fits Classic's rule of 15% at +3 and 10% more a level (25% at +4). The sim stops at 15%.
+  - Parry haste works the Classic way, for mobs and for us. When more than 60% of the swing is left, the next swing comes 40% of the swing sooner. When 20% to 60% is left, it comes 20% of the swing after the parry. When less than 20% is left, nothing changes. For example, a 2.0 sec mob parried us 1.44 sec after its swing and swung again at 1.85. We parried 2.46 sec into our 3.3 sec swing and swung at 3.13. In 58 parries by mobs, every next swing fits this rule within 0.1 sec. In 25 parries by us, 20 fit within 0.1 sec and 3 within 0.16 (Flurry changes our speed). The other 2 swings came late because a cast held them.
+- Found: the sim's parry haste always moves the next swing 40% sooner, however little of the swing is left. It only stops the swing from coming earlier than 20% after the last swing, where the Classic rule counts that 20% from the parry. So a parry late in the swing makes the next swing come at once. Our 2.46 sec parry above would give a swing at 2.46 sec in the sim, not 3.13.
+- Proposed to the user:
+  - Fix parry haste to the rule above. It changes our DPS a little against Vishas and the PvP melee enemies, through our own parries with Spirit Weapons.
+  - Leave the mob crit and crushing rules as they are, because they only change damage taken. Record them here.
+  - Add Vishas' swing speed and damage to notes.md Need to Verify (Beta), for a Scarlet Monastery Graveyard log. Only his swing speed matters to us (Lightning Shield).
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
