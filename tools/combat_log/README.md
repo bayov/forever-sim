@@ -12,6 +12,9 @@ The user turns logging on with `/combatlog` in the game, and the file lands in t
 `Logs` directory as `WoWCombatLog-MMDDYY_HHMMSS.txt`. For the beta that is
 `/mnt/d/Gaming/World of Warcraft/_classic_beta_/Logs/`.
 
+Each client start begins a new file (on 2026-10-10, `WoWCombatLog-101026_150733.txt` up to
+22:16 and `WoWCombatLog-101026_221851.txt` after a restart), so take the newest one.
+
 The file grows while the user plays. Copy it to a scratch file first and run every script on
 that copy, or two scripts can read different data:
 
