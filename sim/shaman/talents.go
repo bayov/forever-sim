@@ -248,8 +248,13 @@ func (shaman *Shaman) applyElementalDevastation() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
+		// Fire Nova's crits don't give the buff.
+		//
+		// On the beta (2026-10-10) both direct Flame Shock crits gave it, but 4 Fire Nova crits
+		// gave none (shaman_audit.md 4.13). Forever's Fire Nova deals its damage through a
+		// second spell that the cast triggers, which may be why.
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && result.Outcome.Matches(core.OutcomeCrit) {
+			if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.SpellCode != SpellCode_ShamanFireNova && result.Outcome.Matches(core.OutcomeCrit) {
 				procAura.Activate(sim)
 			}
 		},

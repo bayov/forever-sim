@@ -31,9 +31,10 @@ func TestOrcShamanTalentProcs(t *testing.T) {
 
 // A melee crit (white hit, Stormstrike or Windfury Weapon attack) gives Flurry, and any
 // landed melee hit can give a Maelstrom Weapon stack (10 a minute at 5/5, 58% a hit with
-// a 3.5 sec weapon). A spell crit gives Elemental Devastation. The Flametongue damage,
-// Searing Totem attacks and Lightning Shield orbs give none of them, and neither does
-// Lightning Bolt without Forever's Totem of the Storm. We force each outcome 60 times.
+// a 3.5 sec weapon). A spell crit gives Elemental Devastation, but not a Fire Nova crit (the
+// beta, shaman_audit.md 4.13). The Flametongue damage, Searing Totem attacks and Lightning
+// Shield orbs give none of them, and neither does Lightning Bolt without Forever's Totem of
+// the Storm. We force each outcome 60 times.
 func testTalentProcTriggers(t *testing.T) {
 	const rolls = 60
 	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, totem: proto.TotemWeaponBuff_TotemWeaponBuffFlametongue, seconds: 60}.start()
@@ -82,13 +83,13 @@ func testTalentProcTriggers(t *testing.T) {
 		{"Lightning Bolt", enh.LightningBolt},
 		{"Chain Lightning", enh.ChainLightning},
 		{"Lava Burst", []*core.Spell{enh.LavaBurst}},
-		{"Fire Nova", enh.FireNova},
 	} {
 		top := topRank(t, spell.name, spell.ranks)
 		attacks = append(attacks,
 			attack{spell.name, top, core.OutcomeHit, nil},
 			attack{spell.name + " crit", top, core.OutcomeCrit, []string{elementalDevastation}})
 	}
+	attacks = append(attacks, attack{"Fire Nova crit", topRank(t, "Fire Nova", enh.FireNova), core.OutcomeCrit, nil})
 
 	for _, a := range attacks {
 		seen := map[string]bool{}
