@@ -82,7 +82,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 ## 7. Shaman abilities
 
-- [ ] 7.1 Rank tables: every spell's ranks, learn levels and values at 30 and 60 (vs the ForeverChanges spellbook)
+- [?] 7.1 Rank tables: every spell's ranks, learn levels and values at 30 and 60 (vs the ForeverChanges spellbook)
 
 Weapon imbues
 
@@ -797,6 +797,32 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - `pvp_test.go`:
   - TestOrcShamanPvPTable rolls 20,000 white hits from in front of a level 30 enemy player with Whirlwind Axe. With the enemy's own 14% dodge, 5% parry and 12% block it got 4.9% miss, 14.7% dodge, 5.0% parry, 12.4% block and no glancing. With none set it got 5.2%, 5.2% and 5.3%, the level based 5% each.
   - TestOrcShamanMeleeDowntime looks every 0.1 sec for an hour at half the fight out of range. We were out 49.7% of the time, and no white swing happened while out. Out of range, Stormstrike and Fire Nova couldn't be cast and Earth Shock could. Back in range all three could. The swing timer keeps running while we're out, so the held swing goes off as soon as we're back (662 swings in about 1800 sec in range with a 3.6 sec axe, about 2 for each time we come back).
+
+### 7.1 Rank tables
+
+- Shown to the user (2026-10-10), waiting for the OK. A background agent compared every shaman rank in the sim against the newest Forever client on wago.tools (1.60.1.70338, the SpellEffect, SpellLevels, SpellMisc, SpellPower, SpellCooldowns, SpellDuration, SpellCastTimes, SpellAuraOptions and SkillLineAbility tables), 1,025 field checks in all: spell ID, learn level, the level a rank stops growing at, damage or amount (low and high), growth by level, coefficient, mana, cast time, cooldown, duration and ticks. It checked its formula on Fire Nova rank 2 first (408424 gives the sim's 102.94 to 117.06 at 27). We checked the new mismatches in the client tables ourselves.
+- Everything matches for Lightning Bolt (ranks 1 to 10), Chain Lightning (1 to 4), Earth Shock (1 to 7), Flame Shock (1 to 6, hit and DoT), Frost Shock (1 to 4), Lightning Shield (1 to 7, orbs included), Water Shield, Searing Totem (1 to 6), Magma Totem (1 to 4), Fire Nova (1 to 5), Flametongue Totem (1 to 4), Grace of Air (1 to 3), Strength of Earth (1 to 5), Mana Spring (1 to 4), Healing Stream (1 to 5), Windfury Weapon (1 to 4), Rockbiter (1 to 7), Stormstrike and Lava Burst (1 to 3). Every totem has a 1 sec GCD. No client rank is missing from the sim.
+- Mismatches we already know about, with the user's decisions:
+  - Stoneskin Totem: the sim gives every rank rank 6's -30. The client has -4, -7, -11, -16, -22 and -30 (6.3, recorded only).
+  - Windfury Totem's proc wait: 100 ms in the client, 1.5 sec in the sim. The sim keeps 1.5 sec until it's checked at level 32 (4.12).
+- New mismatches:
+  - Mana Tide Totem lasts 13 sec in the client (16190, 17354, 17359, duration index 1073), 12 sec in the sim (`water_totems.go` and `buffs.go` ManaTideTotemDuration). It still ticks 4 times every 3 sec, so only the water slot stays taken 1 sec longer.
+  - Frostbrand Weapon rank 1 (8034) is 32 at 20 plus 2.1 a level to 26, so 44.6. The sim has 45 and 13/6 a level (`frostbrand_weapon.go`). Ranks 2 to 5 match. No preset uses Frostbrand.
+  - Flametongue Weapon (`flametongue_weapon.go`): the sim rounds each rank's damage (the client's points / 25) to one decimal. Rank 2 is 26.1 for 26.12, rank 3 42 for 42.08, rank 4 69.1 for 69.12 and rank 5 94.9 for 94.88. Ranks 1 and 6 are exact.
+  - The Windfury Totem aura IDs the sim uses as names (8514, 10607, 10611) aren't spells in the client. The client's are 8515, 10609 and 10612 (the party auras) and 8516, 10608 and 10610 (the attack power buffs). The rotations look the aura up by 10611, so a rename would have to change them too. It's only a name.
+- Small offsets, counted as matches:
+  - Below a rank's top level, the sim takes the growth off both ends of the damage range. The client takes it off the base and then spreads it. The average is the same, but the sim's range is a little wider at the learn level (by up to 0.3 a side for Lightning Bolt, 0.9 for Fire Nova and 1.1 for Lava Burst). At the top level they agree.
+  - Some ranks keep growing past 60 in the client (Lightning Bolt 10 to 61, Earth Shock 7 to 65, Flame Shock 6 to 67 and others). The sim stops them at 60, which is the same at a level 60 cap.
+- Client oddities, for Need to Verify:
+  - Flametongue Totem rank 2's party aura (8250) triggers a spell with 0 for its ID, where ranks 1, 3 and 4 name their proc spell. On the beta, rank 2 (levels 38 to 47) may proc nothing.
+  - Lightning Overload: the client has its own overload spells, and some don't deal half of the main spell, as the sim does. Lightning Bolt ranks 1 to 5 give 0.52, 0.57, 0.52, 0.47 and 0.45 of the main hit, ranks 6 to 10 about 0.50, and Chain Lightning about 0.53. Chain Lightning rank 3's overload has a 0.2855 coefficient, half of 0.571, where the main spell has 0.517. So the 0.517 may be a client typo. No preset takes Lightning Overload.
+- Not in the client tables, so not compared: Searing Totem's fire rate (2.5 sec from the beta logs), the Flametongue Weapon damage formula (a server script), Frostbrand's 9 PPM, which orb each Lightning Shield rank fires, and imbue mana (the sim puts imbues on before the fight).
+- Proposed to the user:
+  - Mana Tide Totem lasts 13 sec.
+  - Frostbrand rank 1: 44.6 at 26 and 2.1 a level.
+  - Flametongue Weapon: the exact points / 25 at every rank.
+  - Leave the rest: the Windfury aura names, the range offset below the top level, Stoneskin and Windfury Totem's wait (decided earlier).
+  - notes.md Need to Verify: Flametongue Totem rank 2 (At 40) and the overload damage (At 60).
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
