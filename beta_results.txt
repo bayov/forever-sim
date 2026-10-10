@@ -753,6 +753,8 @@ So a flat 5% is unlikely, and the counts can't tell 12.3% from 7.3%. Telling tho
 takes about 500 procs, and it's worth well under 1% of DPS. Its first 82 procs were low by
 chance, as Flametongue Weapon's were. The sim keeps the full chance, and the question is off
 the notes.md list. The recheck list keeps counting it.
+Later the same day the user asked to keep one part open: whether the totem's crit chance
+moves with our crit. It's back in notes.md and is beta_handoff.md item 12.
 
 Recheck, all holding:
   - Flametongue Totem procced on all 67 landed white swings from 19:28 to 19:52 that were in

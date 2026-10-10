@@ -239,6 +239,12 @@ Keep this current as you go.
   log names SoD's 408424 on every rank 2 hit, not the old totem's 8502. The user OK'd the sim
   change: SoD's base damage and 21.4% at every rank (`fire_totems.go`, a Fire Nova case in
   `TestOrcShamanSpellPowerBeta`).
+- [ ] 12. Does Flametongue Totem's proc crit chance follow our crit (audit 5.3, notes.md)? The
+  user wants it settled eventually (2026-10-10). Its rate fits our crit (12 of 127 at 12.3%
+  spell crit) and a flat 5% is unlikely, but that doesn't show the rate moves with our crit.
+  Count it again at a second crit chance, about 500 procs each. The Elemental respec without
+  Thundering Strikes (5% less crit) is the cheapest way, together with item 5 (Elemental
+  Devastation) and audit 5.6 (Call of Flame with Improved Fire Nova).
 
 ## Recheck with every new log
 
@@ -293,8 +299,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
   27/215, shocks 8/82, Fire Nova 4/23 (together 39/320, 12.2%), Flametongue Weapon 24/198
   (12.1%), Flametongue Totem 5/82 (6.1%), Flame Shock ticks 15/122 (at 1.5x, audit 5.7).
   Plus 19:32 to 19:52: Flametongue Totem 7/45, so 12/127 (9.4%). Both Flametongue procs
-  started low by chance and came up, so the sim keeps the full chance for them (settled
-  2026-10-10). A flat 5% for the totem is 1 time in 38, but 12.3% and 7.3% need about 500
+  started low by chance and came up, so the sim keeps the full chance for them (2026-10-10).
+  Whether the totem's rate moves with our crit is item 12. A flat 5% for the totem is 1 time in 38, but 12.3% and 7.3% need about 500
   procs to tell apart. The sim lets every player DoT tick crit under Forever, at the crit
   chance of the moment (ruleset.go canCrit).
 - Improved Stormstrike's regen buff (1238931) comes on every Stormstrike cast, missed,
