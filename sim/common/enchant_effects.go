@@ -388,8 +388,12 @@ func init() {
 		procMask := character.GetProcMaskForEnchant(1900)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
-		// -4 str per level over 60
-		strBonus := 100.0 - 4.0*float64(character.Level-60)
+		// We give 100 Strength at level 60 and below, and 4 less a level over 60.
+		//
+		// Below 60 the old formula grew instead, so a level 30 proc gave 220 Strength. The
+		// Forever client's Holy Strength (20007, build 70291) is 100 with nothing per level, and
+		// level 19 twinks got the full 100 in 2019 Classic.
+		strBonus := 100.0 - 4.0*float64(max(character.Level-60, 0))
 		mhAura := character.NewTemporaryStatsAura("Crusader Enchant MH", core.ActionID{SpellID: 20007, Tag: 1}, stats.Stats{stats.Strength: strBonus}, time.Second*15)
 		ohAura := character.NewTemporaryStatsAura("Crusader Enchant OH", core.ActionID{SpellID: 20007, Tag: 2}, stats.Stats{stats.Strength: strBonus}, time.Second*15)
 
