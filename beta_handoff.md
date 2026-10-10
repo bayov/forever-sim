@@ -210,7 +210,23 @@ Keep this current as you go.
 - [ ] 6. Weapon Mastery baseline
 - [ ] 7. Spirit regen of the other classes
 - [ ] 8. Undead paladin base stats
-- [ ] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
+- [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
-  Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The sim change (spell
-  hit roll, no crit) waits for the user's OK.
+  Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and
+  under Forever an orb now rolls spell hit and never crits (`lightning_shield.go`,
+  `TestOrcShamanLightningShieldOrbOutcome`).
+
+## Recheck with every new log
+
+The user wants the settled answers checked again as more data comes in, now and after
+release (2026-10-10). Each one is a hypothesis that held on one run. When you read a new
+combat log, run these checks on it too, and tell the user when one breaks.
+
+- Lightning Shield orbs miss at the spell miss rate for the mob's level and never crit
+  (item 9). A crit, or a miss rate far from the spell table, breaks it.
+- Stormstrike's raw damage stays inside (weapon roll + AP / 14 x 3.6) x the percent bonuses,
+  with 2.7 for one-handers (item 4). Rage of the Storm's +10% is assumed. Read AP from the
+  white hits in the same log, not the sheet. A hit outside the range breaks it.
+- Flametongue Totem procs on every landed white swing (blocks and glancing blows too) and
+  never on a miss, dodge, parry, Stormstrike or Windfury Weapon attack (items 1 and 2).
+  Leave out swings where the totem wasn't up or in range.

@@ -47,6 +47,13 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 	baseCharges := int32(3)
 	maxCharges := int32(3)
 
+	// Under Forever an orb rolls spell hit like our other spells, but it never crits.
+	//
+	// On the beta (2026-10-10) 14 of 71 orbs missed level 33 to 35 mobs, and none of the 57
+	// that hit was a crit at 12.3% spell crit. A missed orb still uses up its charge, as here.
+	// Under Classic it keeps the old always hit.
+	forever := shaman.Env.IsForever()
+
 	shaman.LightningShieldProcs[rank] = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: procSpellId},
 		SpellSchool: core.SpellSchoolNature,
@@ -60,7 +67,11 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
+			outcome := spell.OutcomeAlwaysHit
+			if forever {
+				outcome = spell.OutcomeMagicHit
+			}
+			spell.CalcAndDealDamage(sim, target, baseDamage, outcome)
 			shaman.ActiveShieldAura.RemoveStack(sim)
 		},
 	})

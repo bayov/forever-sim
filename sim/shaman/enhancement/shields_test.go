@@ -1,10 +1,12 @@
 package enhancement
 
 import (
+	"math"
 	"testing"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // TestOrcShamanShieldTriggers checks what makes Lightning Shield fire an orb and Water Shield
@@ -112,7 +114,38 @@ func TestOrcShamanRaidDamageLightningShield(t *testing.T) {
 		})
 	}
 	runSim(sim)
-	if hits := orb.SpellMetrics[enh.CurrentTarget.UnitIndex].Hits; hits != 3 {
-		t.Errorf("%d orbs hit our target, want 3", hits)
+	// An orb can miss (TestOrcShamanLightningShieldOrbOutcome), so we count misses too.
+	metrics := orb.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	if fired := metrics.Hits + metrics.Misses; fired != 3 {
+		t.Errorf("%d orbs fired at our target, want 3", fired)
+	}
+}
+
+// TestOrcShamanLightningShieldOrbOutcome checks that under Forever an orb misses as often as
+// our spells do and never crits.
+//
+// A level 30 against a level 33 misses spells 17% of the time (TestOrcShamanSpellMissChance).
+// We fire 3000 orbs from a full shield with 100% spell crit, so a crit would show at once.
+func TestOrcShamanLightningShieldOrbOutcome(t *testing.T) {
+	sim, enh := newTargetLevelSim(30, 33, whirlwind, 0, "")
+	shield := topRank(t, "Lightning Shield", enh.LightningShield)
+	orb := topRank(t, "Lightning Shield", enh.LightningShieldProcs)
+	const orbs = 3000
+	at(sim, 1, func(sim *core.Simulation) {
+		enh.AddStatDynamic(sim, stats.SpellCrit, 100*core.SpellCritRatingPerCritChance)
+		castNow(t, sim, enh, shield)
+		for range orbs {
+			enh.ActiveShieldAura.SetStacks(sim, 3)
+			orb.Cast(sim, enh.CurrentTarget)
+		}
+	})
+	runSim(sim)
+
+	metrics := orb.SpellMetrics[enh.CurrentTarget.UnitIndex]
+	if missed := float64(metrics.Misses) / orbs; math.Abs(missed-0.17) > 0.025 {
+		t.Errorf("%.1f%% of orbs missed, want 17%%", 100*missed)
+	}
+	if metrics.Crits != 0 {
+		t.Errorf("%d orbs crit, want none", metrics.Crits)
 	}
 }
