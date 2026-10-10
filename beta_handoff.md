@@ -212,9 +212,9 @@ Keep this current as you go.
 - [ ] 5. Flametongue procs and Elemental Devastation. 2026-10-10 respec run up to 21:25: the
   talent works on direct spell crits (2 of 2 Flame Shock crits gave the buff). Flametongue
   Totem crits (3) and Flame Shock tick crits don't give it, as in the sim. Fire Nova crits
-  (4) don't either, but the sim says they do, so that sim change waits for the user's OK.
-  Still open: Flametongue Weapon (about 150 landed swings with it, optional). One Fire Nova
-  crit at 21:25:36 is the log's last line, so check the lines after it in the next copy.
+  (5) don't either, but the sim says they do, so that sim change waits for the user's OK
+  (asked in both sessions). Still open: Flametongue Weapon (about 150 landed swings with it,
+  optional).
 - [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor: 128 white hits in the
   15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would put 55 of
   them too low. The sheet's damage percent is 1. The user said to assume Weapon Mastery no
@@ -271,11 +271,19 @@ Keep this current as you go.
   Totem crit 0 of 29.
   Third part, 21:10 to 21:25: Fire Nova 5 of 41 over the add range. Flametongue Totem crit 3
   of 57 (5.3%) since the respec.
+  Fist weapon from 21:31:52 (21:30 export: Bloody Brass Knuckles 1.6, spell crit 7.16): the
+  user is leveling Unarmed and then keeps going for the 500. Flametongue Totem crit 5 of 83
+  (6.0%) since the respec. The proc hits 8 on the fist (18 on Rage of the Storm).
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to
   tell apart. The -1 glance, the low +1 and +4 and +5 over the cap don't touch any sim we
   run. No sim change. Keep counting it on new logs (the recheck list).
+  2026-10-10 21:31: with a fist weapon at Unarmed 85 (of 150), all 8 landed swings on a level
+  29 mob glanced. The sim's rule uses our level times 5, not our skill, so it gives 0 there.
+  So glancing goes by real skill when it's under the most for our level. That only matters
+  with low skill, so still no sim change. Leave out fist swings from the glancing counts
+  until Unarmed is 150.
 
 ## Recheck with every new log
 

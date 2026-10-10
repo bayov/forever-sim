@@ -966,3 +966,39 @@ Same build and log. Mobs of level 27 to 29, Elder Cloud Serpents among them.
     procced) and one over 30 yards. Mob parry haste 3 of 3 within 0.1 sec. Glancing 1 of 8
     at 29 (the whole log at -1 is now 2 of 103), 0 of 35 at 27 and 28. No partial resists
     other than the serpents'.
+
+
+2026-10-10  Export with a fist weapon (21:30:31), for faster Flametongue Totem procs
+---------------------------------------------------------------------------------
+Same talents as the 20:42 export. Rage of the Storm (3.3, enchant 8205) is swapped for Bloody
+Brass Knuckles (7683, 1.6 speed, 24 to 46) and Elementalist's Guard (280696, a shield). No
+imbue. Unarmed 85 of 150.
+  - Spell crit 7.41 to 7.16 and Intellect 144 to 137, mana 2545 to 2440. That's 0.036 crit a
+    point of Intellect, the same as the 0.037 between the 14:50 and 20:42 exports.
+  - Attack power 397 (385 + 12): 7 less from Mental Dexterity, and +12 attack power from the
+    new gear. Strength and Agility are unchanged.
+  - Melee crit 5.39 to 2.83. The 2.56 is (149 - 85) x 0.04, so the sheet's melee crit counts
+    the weapon skill under our level times 5, and fist weapons use the Unarmed skill.
+  - Expected: white raw 69.4 to 91.4 (24 to 46 + 397 / 14 x 1.6), Flametongue Totem 548 / 100
+    x 1.6 = 8.77 a proc.
+
+
+2026-10-10  Fist weapon, first minutes (21:25:36 to 21:32:25)
+-------------------------------------------------------------
+Rage of the Storm up to the first fist swing at 21:31:52, then Bloody Brass Knuckles. The user
+is leveling Unarmed (85 at the 21:30 export).
+  - The Fire Nova crit at 21:25:36 gave no Elemental Devastation buff, so Fire Nova is 0 of 5.
+  - Flametongue Totem on the fist hit raw 8 on all 8 procs (8.77 expected, and the raw field
+    drops the fraction). So the proc goes by weapon speed, as in the sim: 18 on 3.3 and 8 on
+    1.6.
+  - Flametongue Totem crit (item 12): 2 of 26 here (both on the mace), 5 of 83 (6.0%) since
+    the respec.
+  - Glancing at low skill: all 8 landed fist swings on a level 29 Pesterhide Snarler glanced,
+    and 13 of the 21 swings missed (1), were dodged (2) or parried (10). The sim's rule uses
+    our level times 5 in place of our skill, so it never glances below our level. So the
+    glancing chance goes by our real weapon skill when it's under the most for our level.
+    With full skill, which all sims assume, nothing changes. With 62% of swings avoided, the
+    rest fits a 40% cap or none, so this doesn't tell about the cap.
+  - Rechecks: white raw 198 to 238 on the mace, 75 to 91 on the fist (69.4 to 91.4).
+    Flametongue Totem procced on 24 of 24 landed swings in range. Mob parry haste 11 of 11
+    within 0.1 sec. Orbs 3 IMMUNE, no crit.
