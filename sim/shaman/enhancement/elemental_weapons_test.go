@@ -46,16 +46,25 @@ func TestOrcShamanElementalWeapons(t *testing.T) {
 		return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
 	}
 
+	// We also check each Rockbiter rank at the level it stops growing, and rank 3 at 20 while it
+	// still grows (shaman_audit.md 7.4). Windfury Weapon adds no attack power, so it gives the
+	// attack power we have without Rockbiter.
 	t.Run("Rockbiter", func(t *testing.T) {
-		_, none := newSim("", proto.WeaponImbue_WindfuryWeapon)
-		_, rockbiter := newSim("", proto.WeaponImbue_RockbiterWeapon)
-		_, talented := newSim("-00000003", proto.WeaponImbue_RockbiterWeapon)
-		base := none.GetStat(stats.AttackPower)
-		if got := rockbiter.GetStat(stats.AttackPower) - base; math.Abs(got-177.6) > 1e-9 {
-			t.Errorf("Rockbiter gives %.2f attack power with 0 points, want 177.6", got)
-		}
-		if got := talented.GetStat(stats.AttackPower) - base; math.Abs(got-177.6*1.2) > 1e-9 {
-			t.Errorf("Rockbiter gives %.2f attack power with 3 points, want %.2f", got, 177.6*1.2)
+		for _, c := range []struct {
+			level   int32
+			talents string
+			want    float64
+		}{
+			{6, "", 49.5}, {14, "", 79}, {20, "", 108}, {22, "", 118}, {32, "", 193.8}, {42, "", 355}, {52, "", 521.8}, {60, "", 653},
+			{30, "", 177.6}, {30, "-00000001", 177.6 * 1.07}, {30, "-00000002", 177.6 * 1.13}, {30, "-00000003", 177.6 * 1.2},
+		} {
+			attackPower := func(imbue proto.WeaponImbue) float64 {
+				_, enh := weaponSim{level: c.level, talents: c.talents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: imbue, seconds: 10}.start()
+				return enh.GetStat(stats.AttackPower)
+			}
+			if got := attackPower(proto.WeaponImbue_RockbiterWeapon) - attackPower(proto.WeaponImbue_WindfuryWeapon); math.Abs(got-c.want) > 1e-9 {
+				t.Errorf("at %d with talents %q: Rockbiter gives %.2f attack power, want %.2f", c.level, c.talents, got, c.want)
+			}
 		}
 	})
 

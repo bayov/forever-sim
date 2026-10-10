@@ -90,7 +90,7 @@ The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (sect
 
 - [x] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
 - [x] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
-- [?] 7.4 Rockbiter Weapon: attack power
+- [x] 7.4 Rockbiter Weapon: attack power
 - [x] 7.5 Frostbrand Weapon: proc rate, damage
 - [ ] 7.6 Imbue rules: the shaman imbue beside an oil or stone (Forever), one imbue per weapon
 
@@ -874,14 +874,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.4 Rockbiter Weapon
 
-- Shown to the user (2026-10-10), waiting for the OK.
+- The user OK'd it (2026-10-11): "sounds right".
 - The sim (`rockbiter_weapon.go`): ranks at 1, 8, 16, 24, 34, 44 and 54. It only adds attack power while the weapon is in hand. Each rank grows a few points a level from its learn level for 6 levels (ranks 1 to 3) or 8 (ranks 4 to 7): 49.5 for rank 1 at 6, 79 for rank 2 at 14, 118 for rank 3 at 22, 193.8 for rank 4 at 32, 355 for rank 5 at 42, 521.8 for rank 6 at 52 and 653 for rank 7 at 60 (it grows on to 686 at 62). Rank 4 is 177.6 at 30.
 - Elemental Weapons multiplies the attack power by 1.07, 1.13 or 1.2 (8.24). It also adds flat threat to every main hand hit, which Spirit Weapons turns into 30% more threat instead of 30% less. Threat isn't in our DPS.
 - Client 70338 (wago.tools): the enchants (29, 6, 1, 503, 1663, 683, 1664) each hold one passive (10400, 15567, 15568, 15569, 16311, 16312, 16313). Each passive is attack power of 29 + 4.1, 58 + 3.5, 88 + 5, 129 + 8.1, 211 + 18, 393 + 16.1 and 554 + 16.5 a level, growing to level 6, 14, 22, 32, 42, 52 and 62, plus a threat aura with 0 points that the server fills. That's the sim's attack power for every rank. Elemental Weapons (16266, client text) gives Rockbiter 7, 13 and 20%, the sim's numbers. The enchants last 60 min.
 - Cross-check: the SoD sim has the same ranks and threat, but cuts the attack power by 90% (a SoD phase 3 change) and uses 14% for Elemental Weapons 2/3. Forever has neither.
 - Beta (2026-10-08 and 2026-10-09, part 2 pre-checks): rank 4 at 30 gave 177 attack power on the sheet with no talent points (sim 177.6) and 213 with Elemental Weapons 3/3 (sim 213.1). So no SoD cut.
 - Already tested: `elemental_weapons_test.go` (rank 4 at 30 with 0 and 3 points). Nothing tests the other ranks, the growth inside a rank, or Elemental Weapons 1/3 and 2/3.
-- Proposed: no sim change. Extend the Rockbiter test in `elemental_weapons_test.go` with each rank at its top level, rank 3 at 20 (108, still growing), and 1 and 2 points at 30.
+- No sim change. Tests: `elemental_weapons_test.go` TestOrcShamanElementalWeapons/Rockbiter checks the attack power of each rank at the level it stops growing, rank 3 at 20 (108, still growing), and rank 4 at 30 with 0, 1, 2 and 3 points of Elemental Weapons (177.6 times 1, 1.07, 1.13 and 1.2). It fails with SoD's 14% for 2 points.
 
 ### 7.5 Frostbrand Weapon
 
