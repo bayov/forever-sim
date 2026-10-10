@@ -54,6 +54,7 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 	healSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: healId},
 		SpellSchool: core.SpellSchoolNature,
+		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellHealing,
 		Flags:       core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete | core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
 
@@ -61,8 +62,19 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 		ThreatMultiplier: 1,
 		BonusCoefficient: spellCoeff,
 
+		// Under Forever each heal can crit for 1.5 times, at our spell crit at the time of the heal.
+		//
+		// The Forever client (70338) gives the heal the flag that lets periodic effects crit,
+		// like Flame Shock's ticks (shaman_audit.md 5.7). Classic Era's client doesn't. Tidal
+		// Mastery and Elemental Fury don't list Healing Stream in the client, so they don't
+		// touch its crits. The heal is a periodic aura in the client, and Water Shield's proc
+		// flags leave periodic heals out, so a crit here never spends a Water Shield globe.
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealHealing(sim, target, baseHealing, spell.OutcomeHealing)
+			outcome := spell.OutcomeHealing
+			if sim.IsForever() {
+				outcome = spell.OutcomeHealingCrit
+			}
+			spell.DealPeriodicHealing(sim, spell.CalcHealing(sim, target, baseHealing, outcome))
 		},
 	})
 

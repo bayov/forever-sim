@@ -67,7 +67,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
 - [x] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
 - [x] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
-- [?] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
+- [x] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
 - [ ] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
 
 ## 6. When the enemy hits us
@@ -126,7 +126,7 @@ Totems
 - [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [ ] 7.26 Mana Spring Totem
 - [ ] 7.27 Mana Tide Totem
-- [ ] 7.28 Healing Stream Totem
+- [ ] 7.28 Healing Stream Totem. To check: the Forever client's Purification (16178) lists Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one spell in the third mask word (0x10), but not Healing Stream (0x2000), but the sim gives Healing Stream Purification's 2% a point. Restorative Totems (16187) gives 5 a rank to both Mana Spring and Healing Stream in the client, and the sim gives Mana Spring 5% a point but Healing Stream 10%.
 - [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
 
 ## 8. Talents
@@ -626,15 +626,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 5.7 DoTs
 
-- Shown to the user (2026-10-10), waiting for the OK. Flame Shock is our only DoT (Lava Burst and the totems hit directly). In the sim its DoT goes up only when the direct hit lands, and its ticks never miss (`flame_shock.go`). It ticks 4 times, every 3 sec from the cast, so the last tick comes at 12 sec. Each tick deals the rank's points (14 for rank 3, the client's, with no growth by level) plus 10% of spell power.
+- The user OK'd it (2026-10-10). Flame Shock is our only DoT (Lava Burst and the totems hit directly). In the sim its DoT goes up only when the direct hit lands, and its ticks never miss (`flame_shock.go`). It ticks 4 times, every 3 sec from the cast, so the last tick comes at 12 sec. Each tick deals the rank's points (14 for rank 3, the client's, with no growth by level) plus 10% of spell power.
 - Beta, our count from the Shimmering Flats log (WoWCombatLog-101026_150733.txt). It has our Flame Shocks and those of another shaman in the group (Melba), 42 ticks in all. The first tick came 2.92 to 3.10 sec after the DoT went up (3.02 on average over 11), and the next ones 2.93 to 3.09 sec apart (3.01 over 27). The 7 DoTs that ran out ended on their 4th tick, 11.99 to 12.10 sec after they went up. A miss put no DoT up.
 - A Flame Shock on a target that has ours already starts it over. The sim drops the old DoT, and the new one ticks 3 sec later, 4 more times (`dot.go` Apply). So the time since the last tick is lost. Melba's two recasts in the log did the same. One came 0.82 sec after a tick, and the next tick came 3.10 sec after the recast. If the old tick timer had kept going, it would have come after 2.18 sec. Then 4 ticks followed, and the old DoT's last tick never came. Our rotations only cast Flame Shock when its DoT is down, so this doesn't change our numbers.
 - The sim takes our spell power and our own percent bonuses when the DoT goes up, and the target's (Curse of the Elements) on each tick (`spell_result.go` Snapshot). The log can't tell us what Forever does, because our spell power didn't change during a DoT. It doesn't matter for our rotations either, because nothing in our presets changes spell power or our percent bonuses during a fight.
 - Ticks can crit under Forever. The Forever client gives every player DoT the flag that lets its ticks crit (Attributes_8 0x200, "periodic can crit"), and the Classic Era client (1.15.9) gives it to none. That's Flame Shock, and also Rupture, Garrote, Deadly Poison, Rend, Corruption and the others, and the Healing Stream heal. The beta sheet's crit tooltip says "Most periodic effects can critically strike". Since 2026-09-14 the sim rolls crit on every Forever DoT tick, at our crit chance at the time of the tick (`ruleset.go` canCrit). A spell tick crit deals 1.5 times, and Elemental Fury adds to it like any other crit.
   - Beta: 3 of the 42 ticks crit, 2 of our 19 (12.3% spell crit on the sheet, so 2.3 expected), all at 1.5 times (34 and 35 from 23, and 23 from Melba's 15).
   - Our 5.3 write-up said the sim never lets ticks crit. That was wrong, and it's corrected there. `spell_power_test.go` averaged the ticks with crits counted in, so it now leaves crit ticks out.
-- Open, not in our sims: Forever's flag also lets the Healing Stream heal crit, and the sim's Healing Stream never crits. It only matters for our health in PvP mode.
-- Proposed to the user: no change.
+- Fixed (2026-10-10, the user's go): Forever's flag also lets the Healing Stream heal crit, and the sim's Healing Stream never crit. Now each heal can crit for 1.5 times under Forever, at our spell crit at the time of the heal (`water_totems.go`). Tidal Mastery and Elemental Fury don't list Healing Stream (class mask 0x2000) in the Forever client, so neither touches its crits, the same as before. The client makes the heal a periodic aura, and Water Shield's proc flags (0x262a8) leave periodic heals out. So the sim now deals it as a periodic heal, and its crits never spend a Water Shield globe. No preset puts down Healing Stream, so no number changed. It only matters for our health in PvP mode.
+- `periodic_test.go` TestOrcShamanFlameShockTicks puts rank 3's DoT up at 1 sec with 100% spell crit and puts it up again at 8.5 sec with none. It checks ticks at 4 and 7 sec for 21 (crits), none at 10 and 13, and then ticks at 11.5, 14.5, 17.5 and 20.5 for 14. TestOrcShamanHealingStreamCrits does the same with rank 2's heal (9 on a crit, 6 otherwise) and checks that Water Shield keeps its 3 globes.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
