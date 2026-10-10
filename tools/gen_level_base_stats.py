@@ -38,6 +38,23 @@ with open(DIR + "player_levelstats.csv") as f:
         levelstats.setdefault((int(r["race"]), int(r["class"])), {})[int(r["level"])] = (
             int(r["str"]), int(r["agi"]), int(r["sta"]), int(r["int"]), int(r["spi"]))
 
+# cmangos has the level 1 Undead mage's Intellect and Spirit swapped (27 and 21). At every other
+# level, and for the other Undead classes, the Undead has 2 less Intellect and more Spirit than
+# the Human. The beta's level 1 Undead mage fits the swapped back row.
+s, a, st, i, sp = levelstats[(5, 8)][1]
+levelstats[(5, 8)][1] = (s, a, st, sp, i)
+
+# Forever changed the Undead race. A naked Undead on the beta (2026-10-10) has 3 more Strength,
+# 1 more Agility and 5 less Spirit than the 1.12 Undead of the same class and level. The level 1
+# rogue matched exactly, and so did the level 1 and level 20 paladin, whose row the sim builds
+# from the Undead warrior. We assume the same shift at every level, 60 included (RaceOffsets in
+# base_stats.go).
+UNDEAD_FOREVER_SHIFT = (3, 1, 0, 0, -5)
+for (race, cls), levels in levelstats.items():
+    if race == 5:
+        for level, row in levels.items():
+            levels[level] = tuple(a + b for a, b in zip(row, UNDEAD_FOREVER_SHIFT))
+
 # Base attributes the Forever beta showed for a naked character with no talents (the Lua
 # UnitStat values, 2026-10-07). Forever changed both the starting stats and the growth per
 # level, so these rows replace the 1.12 ones. The other levels and races stay on 1.12 until

@@ -55,11 +55,14 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 	// until they are, rather than carrying an invented stat line.
 	proto.Race_RaceSkyborneHighOrder:  {},
 	proto.Race_RaceSkyborneWindshaper: {},
+	// Forever's Undead have 3 more Strength, 1 more Agility and 5 less Spirit than 1.12's
+	// (-1, -2, +1, -2, +5). The beta showed it at levels 1 and 20, and we assume it holds at
+	// 60 too (tools/gen_level_base_stats.py has the lower levels).
 	proto.Race_RaceUndead: {
-		stats.Agility:   -2,
-		stats.Strength:  -1,
+		stats.Agility:   -1,
+		stats.Strength:  2,
 		stats.Intellect: -2,
-		stats.Spirit:    5,
+		stats.Spirit:    0,
 		stats.Stamina:   1,
 	},
 	proto.Race_RaceTauren: {
