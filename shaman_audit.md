@@ -66,7 +66,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
 - [x] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
 - [x] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
-- [?] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
+- [x] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
 - [ ] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
 - [ ] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
 
@@ -606,7 +606,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 5.6 How damage modifiers stack
 
-- Shown to the user (2026-10-10), waiting for the OK. A spell hit is its base damage plus spell power (5.4), times our own percent bonuses, times the target's, and then partial resists (5.2) and crit (5.3) (`spell_result.go` CalcDamage). Every bonus multiplies the whole hit, spell power part included. Each spell keeps two kinds of bonus. Bonuses of the same kind add up (DamageMultiplierAdditive), and the kinds multiply each other (DamageMultiplier and the rest).
+- The user OK'd it (2026-10-10). A spell hit is its base damage plus spell power (5.4), times our own percent bonuses, times the target's, and then partial resists (5.2) and crit (5.3) (`spell_result.go` CalcDamage). Every bonus multiplies the whole hit, spell power part included. Each spell keeps two kinds of bonus. Bonuses of the same kind add up (DamageMultiplierAdditive), and the kinds multiply each other (DamageMultiplier and the rest).
 - Our talent and item bonuses on a spell's damage. In the Forever client (70338, wago.tools SpellEffect) each one is the same kind, a percent modifier on the spell's damage (aura 108):
   - Concussion, 1% a point on Lightning Bolt, Chain Lightning and Earth Shock. The client's spell mask has only those three, as the tooltip says.
   - Call of Flame, 5% a point on Searing and Magma Totem, Fire Nova, Flame Shock (direct part and ticks) and Lava Burst.
@@ -620,6 +620,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Bonuses on all our spells of a school (Natural Alignment Crystal, Power Infusion, Sayge's Fortune) multiply with the rest, as in 1.12. None are in our presets.
 - Lava Burst gets Call of Flame times its own 20% with Flame Shock on the target (1.15 * 1.2 = 1.38). The client's 20% is a script effect, so the server decides how it stacks. Lava Burst is a level 40 talent and isn't in our presets.
 - Proposed to the user: no change. A beta respec settles add or multiply: Call of Flame 3 and Improved Fire Nova 2 need 15 points in Elemental, and Stormstrike fits in the other 15. With 91 spell power, Fire Nova rank 2 hits 165.4 to 185.6 if they add and 169.1 to 189.8 if they multiply, so a few casts on a group of mobs tell them apart.
+- The user OK'd adding Fire Nova's add or multiply and Lava Burst's stacking to notes.md (Need to Verify, the Beta list and At 60).
+- `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers runs two level 60 sims with the same seed, one with no bonuses and one with Concussion 5, Call of Flame 3, Improved Fire Nova 2, Improved Lightning Shield 3, Curse of the Elements and the Stormstrike mark. Both roll the same hits and crits, so each spell's damage ratio is its multiplier: Earth Shock 1.05 * 1.2 * 1.1, Flame Shock (hit and ticks), Searing Totem and the orbs 1.15 * 1.1, and Fire Nova 1.35 * 1.1. It fails when Fire Nova's two talents multiply.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
