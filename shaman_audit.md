@@ -104,7 +104,7 @@ Strikes and shocks
 
 Nature spells
 
-- [ ] 7.12 Lightning Bolt
+- [?] 7.12 Lightning Bolt
 - [ ] 7.13 Chain Lightning: targets, damage falloff per jump
 - [ ] 7.14 Lava Burst
 
@@ -939,6 +939,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Earth Shocks came at least 5.91 sec apart, and any two shocks at least 5.9 sec apart, so the shared 6 sec holds with the log's 0.1 sec jitter.
   - Outcomes: 89 hits, 7 crits, 12 misses, 3 full resists, 1 immune and 1 absorb. Rank 4 with 91 spell power hit raw 118 to 123, inside the sim's 118.8 to 124.4 (5.4).
   - Not binary: the Elder Cloud Serpents took 30% off all 4 Earth Shocks that landed on them (5.2). So the server partly resists Earth Shock like our other spells, and the sim doesn't.
+  - Rechecked (2026-10-11) with the 23:25 log up to 01:04: 116 casts (111 of rank 4), 4 free under Clearcasting, 90 hits, 7 crits, 13 misses, 3 full resists, 2 immune and 1 absorb. Shocks were still never under 5.9 sec apart.
 - Already tested: `spell_power_test.go` (rank 1 and 4 damage against the beta), `mana_costs_test.go` (cost by rank, Convection, Shamanistic Focus, Clearcasting), `crit_test.go`, `gcd_test.go`, `swing_timer_test.go`, `damage_modifiers_test.go` and `stormstrike_test.go` (the mark), `spell_ranks_test.go` (rank 4 at 30), `other_procs_test.go`, `proc_matrix_test.go` and `talent_procs_test.go` (what it procs).
 - Proposed: under Forever, drop Earth Shock's binary flag, since the beta resisted part of it. With no target resistance it only matters while the sim keeps the level part of partial resists (5.2, waiting for the dungeon logs). Until then Earth Shock would lose the same 6% against the level 63 boss as our other spells, and 4% against Vishas. Classic keeps it binary.
 - Changed (2026-10-11): under Forever, Earth Shock isn't binary (`earth_shock.go`). Classic keeps the flag. On mksettings' Level 60 build (Phase 2 gear, the Level 60 talents, the optimized rotation) it went from 723.2 to 719.6 DPS at 180 sec, and on the Level 30 + 5 build from 136.8 to 136.5 at 120 sec. The enhancement and warden goldens fell up to 2.5%. The phase 1 to 3 golden characters are below 60 and fight the level 63 test boss, so the level part takes much more off there.
@@ -957,6 +958,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - 109 casts: rank 3 cost 160 mana 107 times, once nothing (Clearcasting), and rank 1 cost 55 once. 89 hits, 13 crits and 7 misses.
   - Every DoT that ran its course without the mob dying or a recast ticked exactly 4 times (61 of 61). The first tick came 2.91 to 3.11 sec after the cast and the others 2.90 to 3.10 sec apart, so 3 sec with the log's jitter.
   - None of the 6 misses on a mob without the DoT put one up. One miss at 19:52:10 on a Thundering Boulderkin that had the DoT left it running, and its last tick came on time at 12 sec.
+  - Rechecked (2026-10-11) with the 23:25 log up to 01:04: 114 casts, 66 of 66 full DoTs ticked 4 times, and the same 7 misses.
   - The one landed recast while the DoT was up (21:14:52 on a Pesterhide Snarler) came with the second tick. The log shows SPELL_AURA_REFRESH, and the next tick came 3.05 sec later. The mob died before the old DoT would have ended, so this one doesn't show how many ticks a recast gives. 5.7's run did.
 - Already tested: `periodic_test.go` TestOrcShamanFlameShockTicks (tick times, a recast, crit ticks), `spell_power_test.go` (ranks 1 and 3 against the beta), `mana_costs_test.go`, `crit_test.go`, `damage_modifiers_test.go` (Call of Flame) and `stormstrike_test.go` (it leaves the mark up).
 - No sim change.
@@ -986,6 +988,19 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Already tested: `mana_costs_test.go` (Convection, Shamanistic Focus and both together on each shock) and `gcd_test.go` (the 1.5 sec GCD). Nothing tests the shared cooldown or Reverberation.
 - No sim change.
 - Tests: `shocks_test.go` TestOrcShamanSharedShockCooldown casts each shock at level 60 and checks that all three are ready 6 sec later, and 5 sec later with Reverberation 5/5. It fails without the shared cooldown and with 0.1 sec a point.
+
+### 7.12 Lightning Bolt
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`lightning_bolt.go`, `electric_spell.go`): 10 ranks, learned at 1, 8, 14, 20, 26, 32, 38, 44, 50 and 56. A Nature bolt that grows for 5 levels after the rank is learned, from 14.4 to 16.6 for rank 1 up to 189.9 to 211.7 for rank 10 at 60 (78.3 to 89.7 for rank 5 at 30). Rank 1 gets 42.9% of spell power, rank 2 57.1% and the others 71.4% (5.4). The cast takes 1.5 sec for rank 1, 2 sec for rank 2 and 2.5 sec from rank 3. 15 to 220 mana, a 1.5 sec GCD.
+  - The bolt flies at 20 yards a second, so its damage lands after the cast by our distance from the target.
+  - It rolls spell hit and crit (5.1, 5.3). It holds our swings during the cast, and the swing timer starts over when it ends (3.2).
+  - Talents and others: Convection (7.11), Concussion and the Stormstrike mark (7.7, 8.2), Call of Thunder's 3% crit, Elemental Alacrity's shorter cast, Lightning Overload, Maelstrom Weapon (instant at 5 stacks) and Nature's Swiftness (section 8).
+  - The Level 60 rotations cast it only with 5 Maelstrom Weapon stacks. The Level 30 rotation doesn't cast it.
+- Client 70338 (wago.tools, 403 to 15208): the same levels, damage, growth, damage range, coefficients, mana, GCD and missile speed (20). 7.1's check matched the cast times.
+- Beta: no Lightning Bolt in any of the four logs, the 23:25 log included up to 01:04. We play melee, so nothing about it is checked on the beta yet.
+- Already tested: `spell_ranks_test.go` (rank 5 at 30), `swing_timer_test.go` (the swing timer after a cast), `gcd_test.go`, `mana_costs_test.go`, `crit_test.go`, `miss_test.go`, `stormstrike_test.go` (the mark), `talent_procs_test.go` (Maelstrom Weapon, Clearcasting), `five_second_rule_test.go` and `reaction_time_test.go`.
+- Proposed: no sim change. A Need to Verify (Beta) item for a few rank 5 bolts at level 30: raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast, 85 mana, and the swing timer starting over after the cast.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
