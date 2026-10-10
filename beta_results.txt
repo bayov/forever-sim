@@ -954,7 +954,8 @@ Same build and log. Mobs of level 27 to 29, Elder Cloud Serpents among them.
     the user's OK. Flametongue Weapon is still untested (Windfury Weapon was on).
   - Fire Nova (audit 5.6): 16 more hits, 41 since the respec. Raw 157 to 175, and 5 are over
     the add limit. Multipliers from 1.373 to 1.392 fit every hit, x1.35 fits none. The
-    average hit before and after the respec gives x1.372 +- 0.012.
+    average hit before and after the respec gives x1.372 +- 0.012. The user OK'd the multiply
+    in the audit session, and the sim has it since ce6aeeb9.
   - Flametongue Totem crit (item 12): 3 of 28 here, 3 of 57 (5.3%) since the respec at 7.41%
     spell crit. Before the respec it was 12 of 127 (9.4%) at 12.31%.
   - Elder Cloud Serpents again resisted part of our Nature hits (Earth Shock 104 and 108 raw,

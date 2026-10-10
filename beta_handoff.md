@@ -264,8 +264,8 @@ Keep this current as you go.
   Flametongue Totem procs with Windfury Weapon (shocks are fine, Searing Totem is the same
   element), then optionally about 150 landed swings with Flametongue Weapon for item 5.
   First part, 20:42 to 21:02 (beta_results.txt): Fire Nova multiplies Call of Flame and
-  Improved Fire Nova (3 of 17 hits over the add range, a sim change waiting for the user's
-  OK), Call of Flame doesn't touch Flametongue Totem, and Flametongue Totem crit 0 of 18.
+  Improved Fire Nova (3 of 17 hits over the add range, in the sim since ce6aeeb9 with the
+  user's OK), Call of Flame doesn't touch Flametongue Totem, and Flametongue Totem crit 0 of 18.
   Second part, 21:02 to 21:10: Fire Nova 4 of 25 over the add range, and the average hit
   before and after the respec gives x1.377 +- 0.013 without the client's base. Flametongue
   Totem crit 0 of 29.
@@ -301,7 +301,9 @@ combat log, run these checks on it too, and tell the user when one breaks.
   miss, dodge or parry (item 2). Leave out a hit that kills the mob, and the swing that
   breaks Ghost Wolf (it lands in the form, without the weapon).
 - Fire Nova hits name damage spell 408424 at rank 2 and do 102.94 to 117.06 + 21.4% of spell
-  power (item 11). The raw field drops the fraction.
+  power (item 11). The raw field drops the fraction. With Call of Flame 3 and Improved Fire
+  Nova 2 that's times 1.15 x 1.2 (audit 5.6, 156.5 to 176.0 at 49 spell power). A hit over
+  that range, or an average far off 1.38 times the base, breaks it.
 - Searing Totem's bolts do 19 to 25 + 1.7% of spell power at rank 3 and use our spell hit
   and crit (audit 7.22). The log's raw damage drops the fraction.
 - Searing Totem's bolt gap (audit 7.22, the user waits for more data). The cast takes 2.21
