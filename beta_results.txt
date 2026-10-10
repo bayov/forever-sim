@@ -872,3 +872,39 @@ Ancestral Knowledge 5, Mental Dexterity 3, Improved Ghost Wolf 1. Gear unchanged
       Raw 155 or less means add, raw 173 or more means multiply.
       Searing Totem rank 3: 22.8 to 29.7 with Call of Flame (the sim), 19.8 to 25.8 without.
       Flametongue Totem: 18 without Call of Flame (the sim), 20 with it.
+
+
+2026-10-10  Elemental respec run, first part (20:42:34 to 21:02:47)
+-----------------------------------------------------------------
+Combat log WoWCombatLog-101026_150733.txt, the 20:42 export's build (7.41% spell crit, 49
+spell power), Windfury Weapon and Flametongue Totem, mobs of level 27 to 29. Some PvP too.
+  - Fire Nova (audit 5.6): 17 hits of 408424 (cast 408342, a dummy that triggers it). Raw
+    160 to 175, crits included (raw is before the crit). Adding Call of Flame and Improved
+    Fire Nova (x1.35, the sim) allows 153.1 to 172.2, multiplying them (x1.38) 156.5 to
+    176.0. Raw 173, 174 and 175 are over the add range, so they multiply. Any x from 1.372
+    to 1.419 fits all 17. Before the respec, 23 hits at 91 spell power had raw 124 to 136,
+    inside the 122.4 to 136.5 the sim gives, so the base and the 21.4% hold. Implied sim
+    change: Fire Nova's damage multiplier is Call of Flame times Improved Fire Nova
+    (fire_totems.go). Waiting for the user's OK.
+  - Call of Flame doesn't touch Flametongue Totem: raw 18 on all 18 hits (20 with it). The
+    sim agrees.
+  - Call of Flame does raise Flame Shock, the hit and the ticks, as in the sim. Before the
+    respec the hit had raw 64 (55 of 55, one 65) and the ticks 23 (169). After it, the hit
+    is 64 on 3 and the ticks 21 on 12: (45.4 + 0.214 x 49) x 1.15 = 64.3 and (14 + 0.1 x 49)
+    x 1.15 = 21.7. Without Call of Flame they would be 55 and 18.
+  - Elemental Devastation (item 5): 4 Fire Nova crits and 1 Flame Shock tick crit, and no
+    Elemental Devastation aura anywhere in the log. Its buff (30165) has no hide or no-log
+    flag in the client (70338), the same as Flurry's, which the log shows. The talent
+    (30160) triggers on any harmful spell (ProcTypeMask 0x10000, no spell family mask)
+    through a server script. So Fire Nova's triggered damage doesn't give it (the sim says it
+    does), or the talent doesn't work at all. A shock or Lightning Bolt crit tells them apart.
+    No shock crit yet (3 Flame Shock and 4 Frost Shock hits, 1 Earth Shock absorbed).
+  - Flametongue Totem crit (item 12): 0 of 18 so far, against 7.41% spell crit.
+  - Rechecks from 20:25:53 (the old build up to the respec): Stormstrike raw 231 to 235 on 3
+    hits, the buff on all 5 casts and the mark on the 3 landed. Flametongue Totem procced on
+    24 of 24 landed swings in range, and on 2 swings a player's shield fully absorbed
+    (ABSORB). No proc on misses, dodges, parries, Stormstrikes or the Ghost Wolf swing. Mob
+    parry haste 11 of 11 within 0.1 sec. Glancing 0 of 43 at levels 27 to 29, 4 of 10 at 34.
+    One white hit at 20:27:45 had raw 241, over the 238.7 limit at 389 attack power. Our
+    Strength of Earth Totem went down at 20:27:17, and totem buffs don't show as auras in
+    the log, so it holds. Orbs: no crit, 3 IMMUNE (Thundering Boulderkin).

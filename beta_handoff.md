@@ -209,7 +209,10 @@ Keep this current as you go.
   said to assume it works (2026-10-10), because it only matters at level 30 and the sims we
   care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
-- [ ] 5. Flametongue procs and Elemental Devastation
+- [ ] 5. Flametongue procs and Elemental Devastation. 2026-10-10 respec run up to 21:02: 4
+  Fire Nova crits gave no Elemental Devastation buff (the sim says Fire Nova does), and no
+  shock or Lightning Bolt crit yet to show the talent works at all. The buff (30165) isn't
+  hidden in the client, so the log would show it. Next: about 3 shock or Lightning Bolt crits.
 - [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor: 128 white hits in the
   15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would put 55 of
   them too low. The sheet's damage percent is 1. The user said to assume Weapon Mastery no
@@ -258,6 +261,9 @@ Keep this current as you go.
   steps: a `/bayov export`, 5 to 10 Fire Novas into packs of 3 or more mobs, then about 500
   Flametongue Totem procs with Windfury Weapon (shocks are fine, Searing Totem is the same
   element), then optionally about 150 landed swings with Flametongue Weapon for item 5.
+  First part, 20:42 to 21:02 (beta_results.txt): Fire Nova multiplies Call of Flame and
+  Improved Fire Nova (3 of 17 hits over the add range, a sim change waiting for the user's
+  OK), Call of Flame doesn't touch Flametongue Totem, and Flametongue Totem crit 0 of 18.
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to
