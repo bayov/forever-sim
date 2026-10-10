@@ -436,9 +436,10 @@ func (shaman *Shaman) applyImprovedStormstrike() {
 	resetChance := .5 * points
 	regenRate := .5
 
+	// The buff's own spell (client 70338), where the talent is 1223031.
 	focusAura := shaman.RegisterAura(core.Aura{
 		Label:    "Improved Stormstrike",
-		ActionID: core.ActionID{SpellID: 1223031},
+		ActionID: core.ActionID{SpellID: 1238931},
 		Duration: time.Second * 15,
 		// The mana tick amount is cached, so the rate change has to be pushed into it
 		// the way Innervate does. Without this the talent never regenerated anything.
