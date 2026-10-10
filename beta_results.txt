@@ -579,5 +579,5 @@ The raw field does include percent bonuses, because Stormstrike's raw shows Rage
 Storm's +10% (9 of 30 Stormstrikes above the 247 a no-bonus Stormstrike can reach).
 
 What it showed: no Weapon Mastery at level 30, in the hits or on the sheet. The sim doesn't
-give it, so nothing changes. It could still come at a higher level (the talent was in row 6),
-so the notes.md bullet moved to "At 60".
+give it, so nothing changes. The user said to assume Weapon Mastery no longer exists, at any
+level, so it's off the notes.md list.

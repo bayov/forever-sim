@@ -210,10 +210,10 @@ Keep this current as you go.
   care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
 - [ ] 5. Flametongue procs and Elemental Devastation
-- [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor for level 30: 128 white
-  hits in the 15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would
-  put 55 of them too low. The sheet's damage percent is 1. It moved to notes.md "At 60",
-  because it could still come at a higher level.
+- [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor: 128 white hits in the
+  15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would put 55 of
+  them too low. The sheet's damage percent is 1. The user said to assume Weapon Mastery no
+  longer exists, at any level.
 - [ ] 7. Spirit regen of the other classes. Every class with mana matches under 50 Spirit
   (0.25 x Spirit at level 1, 2026-10-10). Over 50 is only checked for the shaman and
   paladin, and it needs a caster with 50+ Spirit.
