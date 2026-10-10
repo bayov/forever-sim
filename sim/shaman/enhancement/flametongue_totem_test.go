@@ -66,3 +66,47 @@ func TestOrcShamanFlametongueTotem(t *testing.T) {
 		t.Errorf("only %d normal Flametongue Totem hits", hits)
 	}
 }
+
+// TestOrcShamanFlametongueTotemCrits checks that Flametongue Totem's proc crits 8% of the
+// time under Forever, whatever our spell crit.
+//
+// We proc it 1000 times with 100% spell crit and 1000 times with none. The target is level
+// 30, so 4% of the procs miss, and we expect about 77 crits each time.
+func TestOrcShamanFlametongueTotemCrits(t *testing.T) {
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 10, Targets: []*proto.Target{{Level: 30, MobType: proto.MobType_MobTypeBeast}}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+
+	proc := enh.GetSpell(core.ActionID{SpellID: core.FlametongueTotemProcSpellId[1]})
+	if proc == nil {
+		t.Fatalf("no Flametongue Totem rank 1 proc")
+	}
+	metrics := &proc.SpellMetrics[enh.CurrentTarget.UnitIndex]
+
+	procs := func(sim *core.Simulation) int32 {
+		crits := metrics.Crits
+		for range 1000 {
+			proc.Cast(sim, enh.CurrentTarget)
+		}
+		return metrics.Crits - crits
+	}
+	allCrit := 100.0 * core.SpellCritRatingPerCritChance
+	var withCrit, withoutCrit int32
+	at(sim, 1, func(sim *core.Simulation) {
+		enh.AddStatDynamic(sim, stats.SpellCrit, allCrit)
+		withCrit = procs(sim)
+		enh.AddStatDynamic(sim, stats.SpellCrit, -2*allCrit)
+		withoutCrit = procs(sim)
+	})
+	runSim(sim)
+
+	// 77 crits give or take 8.
+	if withCrit < 45 || withCrit > 110 || withoutCrit < 45 || withoutCrit > 110 {
+		t.Errorf("got %d crits in 1000 procs with 100%% spell crit and %d with none, want about 77 each", withCrit, withoutCrit)
+	}
+}
