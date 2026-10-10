@@ -551,3 +551,13 @@ The rest, from the beta's attributes:
   Mana regen 5.751 a sec at 23 Spirit = 0.25 x Spirit.
 
 What it showed: the Troll changed too, the same way as the others.
+
+Sim change (the user OK'd it, 2026-10-10): tools/gen_level_base_stats.py shifts every Orc,
+Undead, Tauren and Troll row by its race's numbers above. The level 60 RaceOffsets are the
+Forever offsets (Orc +3 / -3 / +1 / -1 / 0, Undead +2 / -1 / +1 / -2 / 0, Tauren +2 / -2 / +2 /
+-2 / 0, Troll +1 / +2 / 0 / -3 / 0, Windshaper -1 / +1 / -1 / +1 / 0). The Windshaper's rows
+below 60 are the Undead's plus the gap between the two in RaceOffsets. The druid's base attack
+power is a flat -20 at every level. TestForeverRaceBaseAttributes checks all 14 beta sheets.
+The level 60 Orc shaman in TestOrcShamanBaseStats and TestOrcShamanSpiritRegen now has 96 Sta,
+89 Int, 100 Spi and 18.75 mana a sec. The shaman, druid, hunter, mage, warlock and warrior
+goldens moved, the shaman ones by less than 1.5% a case (+0.03% on the enhancement average).

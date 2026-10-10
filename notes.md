@@ -30,9 +30,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## All classes
 
-* Beta: Forever's race base stats. Against 1.12 at level 1, the Orc has 0 / 0 / -1 / +2 / -3 (Str / Agi / Sta / Int / Spi, shaman and warlock alike), the Undead +3 / +1 / 0 / 0 / -5 (seven classes, in the sim), the Tauren -3 / +3 / 0 / +3 / -2 (hunter and druid), the Troll 0 / 0 / -1 / +1 / -1 (priest), and the Windshaper -1 / +1 / -1 / +1 / -1 against the sim's Human baseline (hunter) (2026-10-10). Every Forever race seen adds up to 100 with 20 Spirit once the class bonus is off. The Alliance races and the High Order are unseen. For the level 60 Orc shaman that's 1 less Stamina, 2 more Intellect and 3 less Spirit than the sim gives, if the shift holds to 60.
 * Beta: crit and dodge per Agility of the warrior, hunter and warlock. At level 1 the warrior gets 0.2500 a point (sim 0.2572), the hunter 0.2174 crit and 0.4348 dodge (sim 0.1783 and 0.3567), and the warlock 0.15 (sim 0.1249). The paladin, rogue, priest, mage and druid match the sim at level 1 (2026-10-10).
-* Beta: druid attack power below 60. A level 1 Tauren druid has 2 x Str - 20, and the sim adds 2 a level on top below 60 (its level 60 table has the flat -20).
 
 ## Rogue
 
@@ -56,7 +54,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 Things we can only check on release, because the beta stops at level 30.
 
-* Naked level 60 Orc shaman sheet: attributes, health, mana, attack power, melee and spell crit, dodge, and how much crit one point of Agility and Intellect gives at 60. The level 30 sheet only checks the lower level tables. A naked level 60 Undead paladin or rogue too: the sim assumes the Undead shift seen at levels 1 and 20 (+3 Str, +1 Agi, -5 Spi against 1.12) holds at 60.
+* Naked level 60 Orc shaman sheet: attributes, health, mana, attack power, melee and spell crit, dodge, and how much crit one point of Agility and Intellect gives at 60. The level 30 sheet only checks the lower level tables. The race offsets too: the sim assumes the Forever Horde race offsets seen at level 1 (2026-10-10) hold at 60, so a naked level 60 Orc shaman, Undead paladin or Undead rogue checks them. The Alliance races and the High Order still have 1.12's or none.
 * Attack table against a level 63 boss with 300 weapon skill (sim: 8% miss and 9% hit to cap, 6.5% dodge, 40% glancing at 65% damage on average, crit cut by 4.8%). A level 33 mob at level 30 tests the same +3 rules, but with different numbers.
 * Spells against a level 63 boss (sim: 17% miss, 6% average partial resist, no crit cut).
 * Every shaman rank above what a level 30 knows, and the spells learned after 30 (in 1.12, Windfury Totem and Chain Lightning at 32, Grace of Air Totem at 42). wowhead shows the imbues at levels 62 to 68, so their level 60 values are our own scaling.
