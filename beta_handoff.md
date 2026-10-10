@@ -304,8 +304,9 @@ Keep this current as you go.
   our spell crit leads a flat 8% about 5 to 1 and the best flat rate (9%) about 3 to 1.
   At 00:09:59 (2026-10-11): 46 of 400 at 11.81% spell crit (23:54 export), where our spell
   crit expects 47.2 and a flat 8% 32.0. Our spell crit leads a flat 8% 15 to 1 pooled, and
-  the rate moved with our crit (11.0% near 12%, 7.4% at 7.3%). Proposed to the user: back to
-  our spell crit (beta_results.txt).
+  the rate moved with our crit (11.0% near 12%, 7.4% at 7.3%). Settled 2026-10-11: the user
+  OK'd our spell crit, and the flat 8% (FlametongueTotemCritChance) is gone. The notes.md
+  bullet is gone too.
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to

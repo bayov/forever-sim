@@ -67,11 +67,11 @@ func TestOrcShamanFlametongueTotem(t *testing.T) {
 	}
 }
 
-// TestOrcShamanFlametongueTotemCrits checks that Flametongue Totem's proc crits 8% of the
-// time under Forever, whatever our spell crit.
+// TestOrcShamanFlametongueTotemCrits checks that Flametongue Totem's proc crits at our spell
+// crit under Forever, as the beta showed.
 //
 // We proc it 1000 times with 100% spell crit and 1000 times with none. The target is level
-// 30, so 4% of the procs miss, and we expect about 77 crits each time.
+// 30, so 4% of the procs miss, and we expect about 960 crits and then none.
 func TestOrcShamanFlametongueTotemCrits(t *testing.T) {
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
@@ -105,8 +105,8 @@ func TestOrcShamanFlametongueTotemCrits(t *testing.T) {
 	})
 	runSim(sim)
 
-	// 77 crits give or take 8.
-	if withCrit < 45 || withCrit > 110 || withoutCrit < 45 || withoutCrit > 110 {
-		t.Errorf("got %d crits in 1000 procs with 100%% spell crit and %d with none, want about 77 each", withCrit, withoutCrit)
+	// 960 crits give or take 6.
+	if withCrit < 930 || withoutCrit != 0 {
+		t.Errorf("got %d crits in 1000 procs with 100%% spell crit and %d with none, want about 960 and 0", withCrit, withoutCrit)
 	}
 }

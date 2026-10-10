@@ -1129,3 +1129,12 @@ level 27 to 29.
 The user says a shaman imbue and an oil or a sharpening stone stay on the weapon together, as
 the sim has it under Forever. Settled, no sim change. The notes.md Need to Verify bullet is
 gone.
+
+
+2026-10-11  Flametongue Totem crit uses our spell crit (item 12, audit 5.3)
+---------------------------------------------------------------------------
+The user OK'd it after the 400 procs at 11.81% spell crit. Under Forever the proc rolls our
+spell crit again, as outside Forever, and the flat 8% from 79450996 is gone.
+TestOrcShamanFlametongueTotemCrits now wants about 960 crits in 1000 procs at 100% spell crit
+(4% miss on a level 30 target) and none at 0%. Only the TestEnhancement golden moved. The
+notes.md Need to Verify bullet is gone.

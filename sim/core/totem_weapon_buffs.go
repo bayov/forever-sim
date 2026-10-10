@@ -47,46 +47,6 @@ func mainHandHasImbue(character *Character, enchantIds []int32) bool {
 	return mh != nil && slices.Contains(enchantIds, mh.TempEnchant)
 }
 
-// FlametongueTotemCritChance is the chance a Flametongue Totem proc crits under Forever,
-// whatever our crit.
-//
-// It's our best guess until more beta data comes in (the user, 2026-10-10). On the beta the
-// proc crit on 12 of 127 with 12.3% spell crit on the sheet, and on 31 of 417 after the
-// Elemental respec, with about 7.3%. A crit hit for 1.5 times a normal hit, like a spell
-// crit. A flat 5% is about 47 times less likely than our spell crit. But a flat 8% fits the
-// two counts as well as our spell crit does, and better than our melee crit. About 400
-// procs at 12% spell crit would tell a flat 8% and our spell crit apart (notes.md Need to
-// Verify, shaman_audit.md 5.3).
-const FlametongueTotemCritChance = 0.08
-
-// outcomeFlametongueTotemCrit rolls a Flametongue Totem proc like any of our spells, but
-// with FlametongueTotemCritChance in place of our spell crit.
-func outcomeFlametongueTotemCrit(spell *Spell) OutcomeApplier {
-	return func(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
-		metrics := &spell.SpellMetrics[result.Target.UnitIndex]
-		isPartialResist := result.DidResist()
-		switch {
-		case !spell.MagicHitCheck(sim, attackTable):
-			result.Outcome = OutcomeMiss
-			result.Damage = 0
-			metrics.Misses++
-		case sim.RandomFloat("Flametongue Totem Crit Roll") < FlametongueTotemCritChance:
-			result.Outcome = OutcomeCrit
-			result.Damage *= spell.CritMultiplier(attackTable)
-			metrics.Crits++
-			if isPartialResist {
-				metrics.ResistedCrits++
-			}
-		default:
-			result.Outcome = OutcomeHit
-			metrics.Hits++
-			if isPartialResist {
-				metrics.ResistedHits++
-			}
-		}
-	}
-}
-
 // FlametongueTotemBuffAura gives our landed white swings extra Fire damage, by weapon speed.
 //
 // Under Forever only white swings proc it, extra swings included. The Forever client
@@ -104,8 +64,9 @@ func outcomeFlametongueTotemCrit(spell *Spell) OutcomeApplier {
 // base damage, where 10% of spell power would have made it 25. cmangos doesn't give it
 // spell power either.
 //
-// Under Forever the proc crits a flat 8% of the time, whatever our crit
-// (FlametongueTotemCritChance).
+// The proc crits at our spell crit, for 1.5 times a normal hit. On the beta at level 30 it crit
+// on 46 of 400 procs with 11.81% spell crit on the sheet, and on 31 of 417 with about 7.3% after
+// an Elemental respec (2026-10-10 and 11). A flat 8% would have given about 32 of the 400.
 //
 // The aura is not active on its own. The caller makes it permanent or turns it on and off
 // with the totem. The label and the tag keep another shaman's totem apart from the
@@ -113,7 +74,6 @@ func outcomeFlametongueTotemCrit(spell *Spell) OutcomeApplier {
 func FlametongueTotemBuffAura(character *Character, rank int, label string, tag int32) *Aura {
 	damagePerSecond := FlametongueTotemMaxDamage[rank] / 4
 	var weaponSpeed float64
-	var outcome OutcomeApplier
 
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    ActionID{SpellID: FlametongueTotemProcSpellId[rank], Tag: tag},
@@ -127,14 +87,9 @@ func FlametongueTotemBuffAura(character *Character, rank int, label string, tag 
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			damage := damagePerSecond * weaponSpeed
-			spell.CalcAndDealDamage(sim, target, damage, outcome)
+			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
-
-	outcome = procSpell.OutcomeMagicHitAndCrit
-	if character.Env.IsForever() {
-		outcome = outcomeFlametongueTotemCrit(procSpell)
-	}
 
 	procMask := ProcMaskMeleeMH
 	if character.Env.IsForever() {
