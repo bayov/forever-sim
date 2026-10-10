@@ -1122,3 +1122,10 @@ level 27 to 29.
     30 yards still procced (the buff stays a few seconds out of range). No partial resists in
     about 500 spell hits. Fire Nova raw 115 to 127 (12 hits, range 113 to 128 at 49 spell
     power). Lightning Shield orbs 0 misses and 0 crits in 11. Fist raw 68 to 90.
+
+
+2026-10-11  A shaman imbue stacks with an oil or a stone (item 15, audit 7.6)
+-----------------------------------------------------------------------------
+The user says a shaman imbue and an oil or a sharpening stone stay on the weapon together, as
+the sim has it under Forever. Settled, no sim change. The notes.md Need to Verify bullet is
+gone.
