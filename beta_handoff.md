@@ -247,9 +247,9 @@ Keep this current as you go.
   Devastation) and audit 5.6 (Call of Flame with Improved Fire Nova).
   The respec (given to the user 2026-10-10), 26 points: Elemental Convection 5, Elemental
   Warding 3, Call of Flame 3, Elemental Devastation 3, Elemental Focus 1 and Improved Fire
-  Nova 2 (17, Improved Fire Nova's row needs 15), then Enhancement Ancestral Knowledge 4,
-  Mental Dexterity 3 and Improved Ghost Wolf 2 (9, as now). The filler talents don't change
-  damage. With no Thundering Strikes (all crit, 1% a point in the client), spell crit drops
+  Nova 2 (17, Improved Fire Nova's row needs 15), then Enhancement Ancestral Knowledge 5,
+  Mental Dexterity 3 and Improved Ghost Wolf 1 (9, Mental Dexterity's row needs 5 in
+  Enhancement, the user). The filler talents don't change damage. With no Thundering Strikes (all crit, 1% a point in the client), spell crit drops
   from 12.3% to about 7.3%. No Stormstrike or Flurry, because Enhancement's row 4 needs 15
   points. The same run shows whether Call of Flame touches Flametongue Totem (sim: no, raw
   18 would become 20) and Searing Totem (sim: yes, 23.6 to 30.5 at 91 spell power). The
