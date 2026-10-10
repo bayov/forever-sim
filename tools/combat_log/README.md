@@ -50,6 +50,9 @@ Some scripts hold numbers from one character and one day, like the weapon models
 - `parry.py` checks the mob's next swing after each parry against Classic's parry haste rule.
 - `respec.py` reports the Elemental respec run (item 12): each fire and shock spell's hits,
   crits and raw, the auras on us, and the auras that came with each of our spell crits.
+- `devastation.py` checks which of our crits give Elemental Devastation (aura 30165): for
+  each source, the crits followed by the buff within 0.2 sec, and each buff event with the
+  crits before it.
 - `searing.py` times Searing Totem's bolts against the totem to mob distance.
 - `resists.py` lists partial and full resists of our spells on one mob name.
 - `gear.py` prints our logged max health, spell power, armor, max mana and item level from
