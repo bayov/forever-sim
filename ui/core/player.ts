@@ -465,13 +465,15 @@ export class Player<SpecType extends Spec> {
 
 	setEpWeights(eventID: EventID, newEpWeights: Stats) {
 		this.epWeights = newEpWeights;
-		this.epWeightsChangeEmitter.emit(eventID);
 
+		// We clear the EP caches before we tell anyone, because the item picker sorts its
+		// list again on this event, and it would read the old EP of every item it cached.
 		this.enchantEPCache = new Map();
 		this.randomSuffixEPCache = new Map();
 		for (let i = 0; i < ItemSlot.ItemSlotRanged + 1; ++i) {
 			this.itemEPCache[i] = new Map();
 		}
+		this.epWeightsChangeEmitter.emit(eventID);
 	}
 
 	getDefaultEpRatios(isTankSpec: boolean, isHealingSpec: boolean): Array<number> {

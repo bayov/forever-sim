@@ -98,7 +98,14 @@ export class TypedEvent<T> {
 	}
 
 	private fireEventInternal(eventID: EventID, event: T) {
-		this.listeners.forEach(listener => listener(eventID, event));
+		// A listener may add or remove listeners, like the Stat Weights table that builds its
+		// rows again and drops the old rows' listeners. Removing one from the array we loop over
+		// would skip the next listener, so we loop over a copy. We still skip the ones removed
+		// along the way, and the ones added wait for the next event.
+		const listeners = this.listeners.slice();
+		listeners.forEach(listener => {
+			if (this.listeners.includes(listener)) listener(eventID, event);
+		});
 	}
 
 	// Executes the provided callback while all TypedEvents are frozen.
