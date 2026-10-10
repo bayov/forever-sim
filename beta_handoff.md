@@ -236,6 +236,17 @@ combat log, run these checks on it too, and tell the user when one breaks.
   miss, dodge or parry (item 2). Leave out a hit that kills the mob.
 - Searing Totem's bolts do 19 to 25 + 1.7% of spell power at rank 3 and use our spell hit
   and crit (audit 7.22). The log's raw damage drops the fraction.
+- Searing Totem's bolt gap (audit 7.22, the user waits for more data). The cast takes 2.21
+  sec, and the next cast starts when the bolt lands. In 9 of 42 gaps it started about 0.4
+  sec later. Over all 42 gaps up to 16:05 the mean is 2.511 sec (sim 2.5). Leave out gaps
+  over 3 sec, where the totem switched mobs. The bolt flies at 19 yards a second (client),
+  so a totem far from the mob should give longer gaps.
+- Partial resists on our spells, by mob level (audit 5.2, the audit session proposed to drop
+  the sim's level based partial resists under Forever). Count the landed hits of spells
+  that can partially resist (Flametongue Weapon, Lightning Shield orbs, Searing Totem, Flame
+  Shock) and how many had a resisted amount. On SPELL_DAMAGE the resisted field is row[-7],
+  because spell lines end with an extra "ST" field. Base total (the audit session, up to
+  16:05): 0 of 257 on level 33 to 35 mobs, where the sim expects about 57.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
   between.
