@@ -63,7 +63,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 - [x] 5.1 Spell hit: base miss against the target's level (17% at +3), hit from gear, the 1% floor
 - [?] 5.2 Resistances: target resistance, the level based resistance, average partial resists vs binary spells
-- [?] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
+- [x] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
 - [ ] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
 - [ ] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
 - [ ] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
@@ -567,12 +567,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 5.3 Spell crit
 
-- Shown to the user (2026-10-10), waiting for the OK. Our spell crit is 2.3% base plus Intellect (0.0355% a point at 30, item 1.5), crit from gear (one pool with melee crit under Forever, `ruleset.go` unifyEquipHitAndCrit), Thundering Strikes (1% a point), the Orc axe racial (1%) and buffs. Talents that add crit to some spells only (Call of Thunder, Tidal Mastery) are section 8. The shocks, Lightning Bolt, Chain Lightning, Lava Burst, Fire Nova, Searing and Magma Totem attacks and the Flametongue Weapon, Flametongue Totem and Frostbrand procs roll it (`spell_outcome.go` outcomeMagicHitAndCrit), after they land. Lightning Shield orbs never crit (5.1) and neither do Flame Shock's ticks (5.7). A spell crit deals 1.5 times a hit. Elemental Fury adds 20% of that bonus a point (1.6 times at 1/1, section 8).
+- The user OK'd it (2026-10-10). Our spell crit is 2.3% base plus Intellect (0.0355% a point at 30, item 1.5), crit from gear (one pool with melee crit under Forever, `ruleset.go` unifyEquipHitAndCrit), Thundering Strikes (1% a point), the Orc axe racial (1%) and buffs. Talents that add crit to some spells only (Call of Thunder, Tidal Mastery) are section 8. The shocks, Lightning Bolt, Chain Lightning, Lava Burst, Fire Nova, Searing and Magma Totem attacks and the Flametongue Weapon, Flametongue Totem and Frostbrand procs roll it (`spell_outcome.go` outcomeMagicHitAndCrit), after they land. Lightning Shield orbs never crit (5.1) and neither do Flame Shock's ticks (5.7). A spell crit deals 1.5 times a hit. Elemental Fury adds 20% of that bonus a point (1.6 times at 1/1, section 8).
 - Against a target above our level spell crit isn't cut. The sim works out a 0.3% and 2.1% cut at +2 and +3 (`target.go` SpellCritSuppression), but nothing uses it (`spell_result.go` SpellCritChance, "TODO: Classic verify crit suppression"). Melee crit is cut (4.7).
 - Cross-check: the royalgiraffe resist guide (2019 Classic) rolls spell crit apart from hit and resists and mentions no cut against bosses. We found no source for a spell crit cut in Classic.
 - Beta (our count from the Shimmering Flats log up to 16:21, with 12.3% spell crit on the sheet and no buffs that add crit): every crit was 1.5 times the hit (Searing Totem, Flametongue Weapon 27 of 18 and 50 of 33, Flame Shock ticks 34 and 35 of 23). Crits by mob level were 15 of 115 hits at level 33 (13.0%), 4 of 95 at level 34 (4.2%, 1 time in 150 by chance at 12.3%) and 1 of 5 at level 35. By spell, Searing Totem crit on 12 of 77 (15.6%) and the Flametongue Weapon and Totem procs on 5 of 103 (4.9%, 1 time in 100 by chance), with 1 of 63 at level 34. The shocks crit on 1 of 18. Most proc hits are at level 34 and most Searing hits at level 33, so we can't tell whether the low numbers come from the level or from the procs.
 - Beta: Flame Shock's ticks crit on 2 of 19 (1.5 times), where the sim never lets ticks crit. Item 5.7.
 - Proposed to the user: no change yet. The beta session counts spell crits by spell and mob level in every new log. Flametongue Weapon on mobs of our own level would show whether the procs crit at our full chance, and Searing Totem on level 34 mobs whether +4 cuts it.
+- The user OK'd waiting, and the two runs are in notes.md (Need to Verify) and in `beta_handoff.md` "Recheck with every new log".
+- `crit_test.go` TestOrcShamanSpellCrit checks that Lightning Bolt, Earth Shock, Flame Shock and a Searing Totem attack crit at our full chance from 5 levels below us to 4 above, and against the level 63 boss at 60. With 20% more crit at our own level, each crit deals 1.5 times its hit.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
