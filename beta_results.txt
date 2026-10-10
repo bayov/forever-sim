@@ -233,3 +233,27 @@ Glancing: 7 of 12 swings on the level 33 mob.
 What it showed: Searing Totem's bolts average 2.48 sec on this mob, against 2.62 sec on the
 earlier ones, and 2.56 sec over both. The sim's 2.5 sec is within that spread. Its lifetime
 is 40 sec, give or take one server tick.
+
+
+2026-10-10  Searing Totem bolt timing, all five totems (audit 7.22)
+--------------------------------------------------------------------
+The user asked whether the 16:04 fight should count most, because they stood next to the mob
+and mobs moving around could slow the totem down. I split every bolt gap of our five totems
+(15:43:40, 15:44:11, 15:44:49, 15:46:49 and 16:04:26) into its parts. Gaps over 3 sec, where
+the totem changed mobs, are left out.
+
+  The cast takes 2.21 sec (median over all bolts).
+  The bolt then flies about 0.1 to 0.27 sec. The next cast starts on the same log line as the
+  bolt's damage, so the totem waits for its bolt to land, as the comment in fire_totems.go
+  says. A normal gap is 2.43 sec (median).
+  In 9 of 42 gaps the next cast started about 0.4 sec later (0.61 sec after the cast finished
+  instead of 0.21). The rate changes from fight to fight: 0 of 4 at 15:43, 3 of 6 at 15:44:11,
+  4 of 8 at 15:44:49, 0 of 9 at 15:46 and 2 of 15 at 16:04.
+  The log has the mob's and our map position on every line. Neither moved during any of these
+  gaps, the long ones included, so movement isn't what makes the long gaps.
+  Mean over all 42 gaps: 2.511 sec. The 16:04 fight alone: 2.484 sec.
+
+The 16:04 totem fired 16 bolts in its 40 sec, the same 16 ticks the sim gives (40 / 2.5).
+
+What it showed: the sim's 2.5 sec fits both the 16:04 fight and all fights together. No
+change.
