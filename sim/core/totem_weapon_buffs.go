@@ -47,8 +47,7 @@ func mainHandHasImbue(character *Character, enchantIds []int32) bool {
 	return mh != nil && slices.Contains(enchantIds, mh.TempEnchant)
 }
 
-// FlametongueTotemBuffAura gives our landed main hand white swings extra Fire damage, by
-// weapon speed.
+// FlametongueTotemBuffAura gives our landed white swings extra Fire damage, by weapon speed.
 //
 // Under Forever only white swings proc it, extra swings included. The Forever client
 // (70291) makes the totem's buff a proc aura that triggers on melee swings alone
@@ -56,6 +55,9 @@ func mainHandHasImbue(character *Character, enchantIds []int32) bool {
 // (0x14). On the beta Stormstrike never procced it (the user, 2026-10-10), and the user
 // remembers one proc for each Windfury Weapon proc, from the swing and not the two attacks.
 // In Era the totem put an enchant on the main hand, which procced on every main hand hit.
+//
+// Nothing in the Forever client ties the aura to a weapon, so off-hand swings proc it too,
+// as the user expects (2026-10-10). We assume an off-hand proc goes by the off hand's speed.
 //
 // Spell power adds nothing to it, unlike Flametongue Weapon. On the beta a level 30 shaman
 // with 55 spell power hit 20 with rank 1 on a 3.6 speed axe (2026-10-08), the 19.73 of the
@@ -67,6 +69,7 @@ func mainHandHasImbue(character *Character, enchantIds []int32) bool {
 // shaman's own.
 func FlametongueTotemBuffAura(character *Character, rank int, label string, tag int32) *Aura {
 	damagePerSecond := FlametongueTotemMaxDamage[rank] / 4
+	var weaponSpeed float64
 
 	procSpell := character.RegisterSpell(SpellConfig{
 		ActionID:    ActionID{SpellID: FlametongueTotemProcSpellId[rank], Tag: tag},
@@ -79,14 +82,14 @@ func FlametongueTotemBuffAura(character *Character, rank int, label string, tag 
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			damage := damagePerSecond * character.MainHand().SwingSpeed
+			damage := damagePerSecond * weaponSpeed
 			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 
 	procMask := ProcMaskMeleeMH
 	if character.Env.IsForever() {
-		procMask = ProcMaskMeleeMHAuto
+		procMask = ProcMaskMeleeWhiteHit
 	}
 
 	return character.RegisterAura(Aura{
@@ -96,6 +99,10 @@ func FlametongueTotemBuffAura(character *Character, rank int, label string, tag 
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if !result.Landed() || !spell.ProcMask.Matches(procMask) || mainHandHasImbue(character, flametongueWeaponEnchantIds) {
 				return
+			}
+			weaponSpeed = character.MainHand().SwingSpeed
+			if spell.ProcMask.Matches(ProcMaskMeleeOH) {
+				weaponSpeed = character.OffHand().SwingSpeed
 			}
 			procSpell.Cast(sim, result.Target)
 		},

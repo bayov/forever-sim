@@ -1733,8 +1733,9 @@ func BattleSquawkAura(character *Unit, stackcount int32) *Aura {
 
 // CreateExtraAttackAuraCommon returns the aura that procs the extra attacks. It is not
 // active on its own: the caller makes it permanent or turns it on and off. While blocked
-// returns true the aura procs nothing (nil means never blocked).
-func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, auraLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool) *Aura {
+// returns true the aura procs nothing (nil means never blocked). Only landed hits that
+// match procMask roll for a proc.
+func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, auraLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool, procMask ProcMask) *Aura {
 	var bonusAP float64
 
 	apBuffAura := character.GetOrRegisterAura(Aura{
@@ -1779,7 +1780,7 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
 				apBuffAura.RemoveStack(sim)
 			}
 
-			if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMeleeMH) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
 				return
 			}
 			if blocked != nil && blocked() {
@@ -1790,7 +1791,7 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
 				icd.Use(sim)
 				apBuffAura.Activate(sim)
 				// aura is up _before_ the triggering swing lands, so if triggered by an auto attack, the aura fades right after the extra attack lands.
-				if spell.ProcMask == ProcMaskMeleeMHAuto {
+				if spell.ProcMask == ProcMaskMeleeMHAuto || spell.ProcMask == ProcMaskMeleeOHAuto {
 					apBuffAura.SetStacks(sim, 1)
 				} else {
 					apBuffAura.SetStacks(sim, 2)
@@ -1818,13 +1819,22 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 	return WindfuryBuffBonusAP[rank]
 }
 
-// WindfuryTotemBuffAura is the Windfury Totem buff on the main hand at the given rank.
-// It is not active on its own, and Windfury Weapon on the main hand turns it off, see
-// totem_weapon_buffs.go.
+// WindfuryTotemBuffAura is the Windfury Totem buff at the given rank. It is not active on
+// its own, and Windfury Weapon on the main hand turns it off, see totem_weapon_buffs.go.
+//
+// In Era the totem put an enchant on the main hand, so only main hand hits procced it. Under
+// Forever it's a party aura that procs on our melee swings and abilities (ProcTypeMask 0x14
+// in the Forever client 70291 and 70338), with nothing that ties it to a weapon. So we let
+// off-hand hits proc it too, as the user expects (2026-10-10). The extra swing is always a
+// main hand one.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	blocked := func() bool { return mainHandHasImbue(character, windfuryWeaponEnchantIds) }
-	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked)
+	procMask := ProcMaskMeleeMH
+	if character.Env.IsForever() {
+		procMask = ProcMaskMelee
+	}
+	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked, procMask)
 	if character.Env.IsForever() {
 		// It has nothing of its own to give, but it's above Grace of Air, so it turns it off.
 		aura.NewExclusiveEffect(graceOfAirWindfuryCategory, false, ExclusiveEffect{Priority: 2})
