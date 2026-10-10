@@ -327,4 +327,9 @@ combat log, run these checks on it too, and tell the user when one breaks.
   level 35 6/8. Plus 18:27 to 18:42: levels 27 to 29 0/61, where the sim gives 0. Plus 18:57
   to 19:06: level 34 10/21, so level 34 is 76/132 (58%). Plus 19:06 to 19:32: level 34
   26/55 and levels 27 to 29 0/68. So level 34 is 102/187 (55%) and levels 27 to 29 0/129.
-  Add each new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.
+  Whole log up to 20:09 by mob level: 0/175 at levels 24 to 28, 1/68 at 29 (a Thundering
+  Boulderkin at 19:58, the first glance below our level), 0/7 at 30, 3/11 at 32, 23/57 at 33,
+  102/187 at 34, 6/8 at 35. The level field on our own lines is our item level (33), not our
+  level. Add each new log to these. Without the cap the sim would give 50% at +4 and 60% at
+  +5. The glance at -1 fits glancing on our real weapon skill (149): 10% plus 2% a point of
+  the mob's defense over 149 gives 2% at -1.
