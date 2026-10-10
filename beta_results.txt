@@ -201,3 +201,35 @@ Rechecks
   Stormstrike missed, dodged or were parried.
   Glancing (the audit session's count over the whole log up to 15:51): level 33 13/37,
   level 34 66/111, level 35 6/8.
+
+
+2026-10-10  Searing Totem left up on one mob, 16:04 to 16:05 (audit 7.22)
+------------------------------------------------------------------------
+Same log, now written up to 16:05:11. One level 33 Saltstone Crystalhide, fought from the
+front with Flametongue Weapon. The user put Searing Totem rank 3 down next to the mob at
+16:04:26.858 and left it up.
+
+Bolts (cast finished, seconds after the totem went down): 3.274 5.693 8.514 10.966 13.389
+15.827 18.247 20.674 23.121 25.538 27.982 30.405 32.837 35.262 38.104 40.538
+  The first cast started 1.04 sec after the totem went down. In the earlier run it started
+  3 ms after.
+  Bolt to bolt: 13 gaps of 2.42 to 2.45 and 2 of 2.82 and 2.84, mean 2.484 sec over 15. The
+  long gaps are the ones where the totem waited about 0.4 sec after the bolt landed before
+  its next cast.
+  Both runs together: 2.558 sec over 34 gaps.
+  Raw damage (13 hits): 23 20 21 21 25 23 23 24 26 20 24 20 24, no crits. 2 MISS. The bolt at
+  40.538 has no damage line because the user's swing killed the mob at the same moment.
+  Totals over both runs: 4 crits in 33 hits (12%), 5 misses in 38 bolts.
+
+Lifetime: the totem finished a cast at 40.538 sec, so it was still up past 40 sec. Two
+earlier totems (ours at 15:46:49 and Melba's at 15:07:34) started a cast at 39.58 and 39.67
+sec and never finished it, so they were gone before about 41.8 sec. The client (70291,
+SpellMisc and SpellDuration) gives rank 3 40000 ms, and the sim 40 sec.
+
+Flametongue Weapon: 8 procs for 9 landed swings. The 9th killed the mob. None on the 3
+parries.
+Glancing: 7 of 12 swings on the level 33 mob.
+
+What it showed: Searing Totem's bolts average 2.48 sec on this mob, against 2.62 sec on the
+earlier ones, and 2.56 sec over both. The sim's 2.5 sec is within that spread. Its lifetime
+is 40 sec, give or take one server tick.
