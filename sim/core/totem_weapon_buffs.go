@@ -47,8 +47,15 @@ func mainHandHasImbue(character *Character, enchantIds []int32) bool {
 	return mh != nil && slices.Contains(enchantIds, mh.TempEnchant)
 }
 
-// FlametongueTotemBuffAura gives every main hand hit that lands extra Fire damage, by
+// FlametongueTotemBuffAura gives our landed main hand white swings extra Fire damage, by
 // weapon speed.
+//
+// Under Forever only white swings proc it, extra swings included. The Forever client
+// (70291) makes the totem's buff a proc aura that triggers on melee swings alone
+// (ProcTypeMask 0x4), where Windfury Totem and the Forever imbues also take melee abilities
+// (0x14). On the beta Stormstrike never procced it (the user, 2026-10-10), and the user
+// remembers one proc for each Windfury Weapon proc, from the swing and not the two attacks.
+// In Era the totem put an enchant on the main hand, which procced on every main hand hit.
 //
 // Spell power adds nothing to it, unlike Flametongue Weapon. On the beta a level 30 shaman
 // with 55 spell power hit 20 with rank 1 on a 3.6 speed axe (2026-10-08), the 19.73 of the
@@ -77,12 +84,17 @@ func FlametongueTotemBuffAura(character *Character, rank int, label string, tag 
 		},
 	})
 
+	procMask := ProcMaskMeleeMH
+	if character.Env.IsForever() {
+		procMask = ProcMaskMeleeMHAuto
+	}
+
 	return character.RegisterAura(Aura{
 		Label:    fmt.Sprintf("%s (Rank %d)", label, rank),
 		ActionID: ActionID{SpellID: FlametongueTotemSpellId[rank]},
 		Duration: NeverExpires,
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMeleeMH) || mainHandHasImbue(character, flametongueWeaponEnchantIds) {
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || mainHandHasImbue(character, flametongueWeaponEnchantIds) {
 				return
 			}
 			procSpell.Cast(sim, result.Target)

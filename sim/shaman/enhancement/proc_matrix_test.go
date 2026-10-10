@@ -20,11 +20,12 @@ const (
 // TestOrcShamanImbueProcs checks which of our attacks trigger the weapon imbues and the
 // weapon totems.
 //
-// Windfury Weapon, Windfury Totem, Flametongue Weapon, Flametongue Totem and Frostbrand all
-// need a landed main hand melee hit, white or yellow, and a blocked hit counts as landed.
-// Misses, dodges, parries, spells, totem attacks, Lightning Shield orbs and the Flametongue
-// and Frostbrand damage never trigger them. Flametongue Weapon blocks Flametongue Totem, and
-// a Windfury proc's two attacks can't proc Windfury again, because of its 1.5 sec cooldown.
+// Windfury Weapon, Windfury Totem, Flametongue Weapon and Frostbrand all need a landed main
+// hand melee hit, white or yellow, and a blocked hit counts as landed. Flametongue Totem needs
+// a landed white swing, so Stormstrike and Windfury Weapon's attacks never proc it. Misses,
+// dodges, parries, spells, totem attacks, Lightning Shield orbs and the Flametongue and
+// Frostbrand damage never trigger them. Flametongue Weapon blocks Flametongue Totem, and a
+// Windfury proc's two attacks can't proc Windfury again, because of its 1.5 sec cooldown.
 //
 // We force each outcome and roll each attack 60 times, 2 sec apart so that the cooldowns are
 // always ready. A proc that can trigger shows up in 60 rolls (Windfury's 20% misses all 60
@@ -37,26 +38,27 @@ func TestOrcShamanImbueProcs(t *testing.T) {
 		imbue  proto.WeaponImbue
 		totem  proto.TotemWeaponBuff
 		aura   string
-		landed []string // what a landed white hit or Stormstrike triggers
+		white  []string // what a landed white hit triggers
+		strike []string // what a landed Stormstrike triggers
 	}{
 		{"Windfury Weapon and Flametongue Totem", 30, whirlwind, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffFlametongue,
-			"Windfury Imbue", []string{windfuryWeapon, flametongueTotem}},
+			"Windfury Imbue", []string{windfuryWeapon, flametongueTotem}, []string{windfuryWeapon}},
 		{"Flametongue Weapon and Flametongue Totem", 30, whirlwind, proto.WeaponImbue_FlametongueWeapon, proto.TotemWeaponBuff_TotemWeaponBuffFlametongue,
-			"Flametongue Imbue", []string{flametongueWeapon}},
+			"Flametongue Imbue", []string{flametongueWeapon}, []string{flametongueWeapon}},
 		{"Frostbrand", 30, whirlwind, proto.WeaponImbue_FrostbrandWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone,
-			"Frostbrand Imbue", []string{frostbrand}},
+			"Frostbrand Imbue", []string{frostbrand}, []string{frostbrand}},
 		// Windfury Totem needs level 32.
 		{"Flametongue Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_FlametongueWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
-			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}},
+			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}, []string{flametongueWeapon, windfuryTotem}},
 	}
 	for _, setup := range setups {
 		t.Run(setup.name, func(t *testing.T) {
-			testImbueProcs(t, setup.level, setup.weapon, setup.imbue, setup.totem, setup.aura, setup.landed)
+			testImbueProcs(t, setup.level, setup.weapon, setup.imbue, setup.totem, setup.aura, setup.white, setup.strike)
 		})
 	}
 }
 
-func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, totem proto.TotemWeaponBuff, auraLabel string, landed []string) {
+func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, totem proto.TotemWeaponBuff, auraLabel string, white, strike []string) {
 	const (
 		rolls = 60
 		every = 2.0
@@ -70,21 +72,21 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 	}
 
 	sim, enh := weaponSim{level: level, weapon: &proto.ItemSpec{Id: weapon}, imbue: imbue, totem: totem, seconds: 1}.start()
-	white := enh.AutoAttacks.MHAuto()
-	strike := enh.Stormstrike
+	swing := enh.AutoAttacks.MHAuto()
+	stormstrikeSpell := enh.Stormstrike
 	attacks := []attack{
-		{"white hit", white, core.OutcomeHit, landed, ""},
-		{"white crit", white, core.OutcomeCrit, landed, ""},
-		{"glancing blow", white, core.OutcomeGlance, landed, ""},
-		{"blocked white hit", white, core.OutcomeBlock, landed, ""},
-		{"white miss", white, core.OutcomeMiss, nil, ""},
-		{"dodged white hit", white, core.OutcomeDodge, nil, ""},
-		{"parried white hit", white, core.OutcomeParry, nil, ""},
-		{"Stormstrike", strike, core.OutcomeHit, landed, ""},
-		{"blocked Stormstrike", strike, core.OutcomeBlock, landed, ""},
-		{"missed Stormstrike", strike, core.OutcomeMiss, nil, ""},
-		{"dodged Stormstrike", strike, core.OutcomeDodge, nil, ""},
-		{"parried Stormstrike", strike, core.OutcomeParry, nil, ""},
+		{"white hit", swing, core.OutcomeHit, white, ""},
+		{"white crit", swing, core.OutcomeCrit, white, ""},
+		{"glancing blow", swing, core.OutcomeGlance, white, ""},
+		{"blocked white hit", swing, core.OutcomeBlock, white, ""},
+		{"white miss", swing, core.OutcomeMiss, nil, ""},
+		{"dodged white hit", swing, core.OutcomeDodge, nil, ""},
+		{"parried white hit", swing, core.OutcomeParry, nil, ""},
+		{"Stormstrike", stormstrikeSpell, core.OutcomeHit, strike, ""},
+		{"blocked Stormstrike", stormstrikeSpell, core.OutcomeBlock, strike, ""},
+		{"missed Stormstrike", stormstrikeSpell, core.OutcomeMiss, nil, ""},
+		{"dodged Stormstrike", stormstrikeSpell, core.OutcomeDodge, nil, ""},
+		{"parried Stormstrike", stormstrikeSpell, core.OutcomeParry, nil, ""},
 		{"Earth Shock", topRank(t, "Earth Shock", enh.EarthShock), core.OutcomeHit, nil, ""},
 		{"Lightning Bolt", topRank(t, "Lightning Bolt", enh.LightningBolt), core.OutcomeHit, nil, ""},
 		{"Fire Nova", topRank(t, "Fire Nova", enh.FireNova), core.OutcomeHit, nil, ""},
@@ -109,9 +111,6 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 		// Its attacks only come right after a proc, inside the cooldown. We check that with
 		// the white hits and Stormstrikes, which always bring both attacks and never more.
 		attacks = append(attacks, attack{"Windfury Weapon attack", enh.WindfuryWeaponMH, core.OutcomeHit, nil, windfuryWeapon})
-		if slices.Contains(landed, flametongueTotem) {
-			attacks[len(attacks)-1].procs = []string{flametongueTotem}
-		}
 	}
 	sim, enh = weaponSim{level: level, weapon: &proto.ItemSpec{Id: weapon}, imbue: imbue, totem: totem, seconds: every * float64(rolls*len(attacks)+1)}.start()
 	sim.PrePull()
