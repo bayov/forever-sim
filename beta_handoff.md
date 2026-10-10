@@ -101,10 +101,11 @@ commit ID and message.
 - The user plays a level 30 Orc shaman on the beta. They also have a level 20 Undead
   paladin and an Undead rogue around level 15, and can make level 1 characters of any
   class (2026-10-10).
-- We read hits from screenshots of the chat combat log. A combat log frame made through
-  /run saw no events on the beta client (shaman_audit.md 4.1). It may be worth asking the
-  user whether `/combatlog` writes `Logs/WoWCombatLog.txt` on the beta. A log file has
-  millisecond timestamps and would make counting procs and timing swings much easier.
+- Before 2026-10-10 we read hits from screenshots of the chat combat log. Now the user types
+  `/combatlog` before and after a run, and we read the file it writes in
+  `/mnt/d/Gaming/World of Warcraft/_classic_beta_/Logs/WoWCombatLog-*.txt`. It has 0.1 ms
+  timestamps, every miss, dodge and parry, and a raw damage field that looks like the hit
+  before armor and crit. Count SWING_DAMAGE lines, not their SWING_DAMAGE_LANDED copies.
 - The user runs /run lines and screenshots what they print. Ones we've used:
   - `/run for i=1,5 do print(i, UnitStat("player",i)) end`
   - `/run print("ap", UnitAttackPower("player")) print("hp", UnitHealthMax("player")) print("crit", GetCritChance()) print("regen", GetManaRegen())`
