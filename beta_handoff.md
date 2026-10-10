@@ -35,7 +35,8 @@ The user's standing rules apply to you too:
 
 ## Who else is working here
 
-The audit session (`forever-sim-1c` in ListAgents as of 2026-10-10) keeps going through
+The audit session (`forever-sim-1c` in ListAgents, likely `forever-sim-c3` after a restart
+on 2026-10-10. Names change on restart, so check ListAgents) keeps going through
 `shaman_audit.md` sections 5 to 11 at the same time, in the same jj working copy. It edits
 the sim's Go code and tests, `shaman_audit.md`, and adds new items to Need to Verify. Some
 of those new items will be marked Beta and become yours. There is also an older idle
