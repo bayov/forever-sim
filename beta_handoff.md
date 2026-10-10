@@ -273,8 +273,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
   is row[-4], because of the trailing "ST". Base counts (the whole log up to 16:21, 12.3%
   spell crit on the sheet): level 33 15/115 (13.0%), level 34 4/95 (4.2%), level 35 1/5. By
   spell: Searing 12/77, Flametongue procs 5/103 (Weapon and Totem together, 1/63 at level
-  34), shocks 1/18. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7, the sim never lets
-  them). Most proc hits are on level 34 mobs and most Searing hits on level 33, so the spell
+  34), shocks 1/18. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7). The sim lets every
+  player DoT tick crit under Forever, at the crit chance of the moment (ruleset.go canCrit). Most proc hits are on level 34 mobs and most Searing hits on level 33, so the spell
   and the level are mixed up. Flametongue Weapon on level 30 mobs or Searing on level 34s
   would tell them apart.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
