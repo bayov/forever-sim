@@ -65,7 +65,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [?] 5.2 Resistances: target resistance, the level based resistance, average partial resists vs binary spells
 - [x] 5.3 Spell crit: base, Intellect, gear, the 1.5 crit multiplier
 - [x] 5.4 Spell power: coefficients, school power (fire, nature), spell damage vs spell power under Forever
-- [ ] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
+- [?] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
 - [ ] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
 - [ ] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
 - [ ] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
@@ -594,6 +594,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The beta tooltip for rank 2 (408342, 2026-10-10) says 123 to 138. The client's text for it reads $8502s1, so it shows the old totem's damage spell (all five ranks point at 8349, 8502, 8503, 11306 and 11307). At 91 spell power that's 122.5 to 137.5, and SoD's would be 122.4 to 136.5 (122 to 137). So the client agrees with the sim. Only a combat log shows what the server uses, so one cast still confirms it.
 - Proposed to the user: no change. Fire Nova's damage spell goes on the beta list (notes.md).
 - `spell_power_test.go` TestOrcShamanSpellPowerBeta gives a level 30 Orc 91 spell power and rolls Lightning Shield rank 3, Earth Shock ranks 1 and 4, Flame Shock ranks 1 and 3 and Searing Totem rank 3 2000 times each. It checks the sim's lowest and highest normal hit and Flame Shock's ticks, and that every raw number the beta showed can come out of them (the one rank 1 Earth Shock at 57 left out). It fails with a 25% orb coefficient.
+
+### 5.5 Spell ranks
+
+- Shown to the user (2026-10-10), waiting for the OK. Every rank of every shaman spell in the sim has the learn level of the Forever client (70338, wago.tools SpellLevels), 107 ranks in 23 spells. Each rank's growth per level and the level it stops growing at match the client too, up to level 60. The client lets some top ranks grow past 60 (Lightning Bolt rank 10 to 61, Lava Burst rank 3 to 68), which a level 60 never reaches.
+- A rotation names the top rank, and a lower level character casts the highest rank it knows of the same spell (`spell_ranks.go` rank families). The Level 30 rotations cast Lightning Shield rank 3, Earth Shock rank 4, Flame Shock rank 3, Strength of Earth rank 2, Mana Spring rank 1, Flametongue Totem rank 1 and Fire Nova rank 2, the top rank of each at 30.
+- 1.12's penalty for spells learned below level 20 is gone under Forever. The client gives each rank its own coefficient instead: Lightning Bolt rank 1 42.9% and rank 2 57.1%, every other rank the full one. The beta showed Earth Shock rank 1 and Flame Shock rank 1 with full spell power at level 30 (5.4).
+- Forever has a penalty of its own. The dev notes of 1 October say spells cast with ranks "vastly below your current level" get less from spell power, and have a lower chance to trigger class abilities and talents (a rank 1 Frostbolt at 60 never procs Frostbite). The character sheet's Spell Damage tooltip explains it. The sim has no such penalty. On the beta, Earth Shock rank 1 and Flame Shock rank 1 got their full spell power at level 30, 21 and 15 levels past the level they stop growing at, so the penalty starts further down than that. It doesn't touch the sim, because our rotations always cast the top rank. It would matter if a rotation ever cast a low rank to save mana.
+- Proposed to the user: no change. The sheet tooltip's exact text could tell us where the penalty starts.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
