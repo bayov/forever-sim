@@ -105,7 +105,7 @@ Strikes and shocks
 Nature spells
 
 - [x] 7.12 Lightning Bolt
-- [?] 7.13 Chain Lightning: targets, damage falloff per jump
+- [x] 7.13 Chain Lightning: targets, damage falloff per jump
 - [ ] 7.14 Lava Burst
 
 Shields
@@ -1004,7 +1004,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.13 Chain Lightning
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "ok, no need to verify". So no Need to Verify item for level 32.
 - The sim (`chain_lightning.go`): 4 ranks, learned at 32, 40, 48 and 56. A 2 sec cast with a 6 sec cooldown of its own, a 1.5 sec GCD and 225 / 305 / 390 / 485 mana. It hits the target and jumps to 2 more, each jump dealing 70% of the one before (100%, 70%, 49%). Each hit rolls its own damage, hit and crit. Rank 4 deals 119.2 to 133.2 at 60, and rank 1 85.2 to 96.8 from 37. Ranks 1, 2 and 4 get 57.1% of spell power and rank 3 51.7% (the client's number, maybe a typo, 7.1). There's no travel time.
   - Each target's own Stormstrike mark counts for the hit on it, and that hit uses it up (7.7).
   - It jumps to the next targets in the encounter's order, where the game picks the nearest ones within reach.
@@ -1013,7 +1013,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools, 421, 930, 2860, 10605): the same levels, damage, growth, damage range, coefficients, mana and GCD. 3 targets with a 0.7 chain amplitude, which is the 70% a jump. The 6000 ms cooldown is its own category (85), so it doesn't share the shocks' cooldown. Cast index 5 is 2 sec, and missile speed 0.
 - Beta: none. We learn it at 32, and the character is 30.
 - Already tested: `mana_costs_test.go` (cost, Convection, Maelstrom Weapon), `spell_ranks_test.go`, `talent_procs_test.go` and `other_procs_test.go`. Nothing tests the jumps, the cast time or the cooldown.
-- Proposed: no sim change. A small test with 4 targets at our level: every cast hits 3 of them for 100%, 70% and 49% of a roll (at 0 spell power the three ranges don't overlap), the fourth never, a 2 sec cast and a 6 sec cooldown, and a mark on the second target goes to the jump. And a Need to Verify item for when the character reaches 32.
+- No sim change. `chain_lightning_test.go` (TestOrcShamanChainLightningJumps): 4 targets at our level and no spell crit. 200 casts hit the first three for 100%, 70% and 49% of a roll and never the fourth, and some hits miss. A mark on the second target goes to its jump, which deals 84%. A real cast lands all three hits at the end of its 2 sec, and the 6 sec cooldown starts there. Breaking the 70%, the target count, the mark on jumps, the cooldown or the cast time each fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
