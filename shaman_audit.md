@@ -96,7 +96,7 @@ The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (sect
 
 Strikes and shocks
 
-- [ ] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
+- [?] 7.7 Stormstrike: weapon damage, the nature mark (Forever: personal), its charges and duration, cooldown
 - [ ] 7.8 Earth Shock
 - [ ] 7.9 Flame Shock: direct and DoT parts
 - [ ] 7.10 Frost Shock
@@ -906,7 +906,21 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim also stacks the imbue and an oil or stone under the Classic ruleset, where a 1.12 weapon has one temporary enchant. We only sim Forever.
 - Client 70338 (wago.tools): the shaman imbues use a new enchant effect (360), as do the rogue poisons, the warlock's Firestone and Spellstone and Forever's "Imbue" scrolls. Oils and sharpening stones keep the old temporary enchant effect (54). So the client keeps them in two places, which fits the stacking.
 - Beta (WoWCombatLog-101026_150733.txt): at 19:28:26 Windfury Weapon went on Rage of the Storm and Flametongue 3 came off at the same moment, so a weapon holds one shaman imbue. Windfury put on at 20:54:18 ran out at 21:54:21, so it lasts 60 min (the cast spells say 1800 sec, the enchants 3600). We've never had an oil or stone on beside an imbue.
+- Beta (the beta session, dbc2c5f6, 2026-10-11): the user saw a shaman imbue stack with an oil and a sharpening stone, as the sim has it. The Need to Verify item is gone.
 - No sim change. Tests: `imbue_rules_test.go` TestOrcShamanImbueRules checks at 30 that Rockbiter in the class settings and Brilliant Wizard Oil in the consumables both apply (177.6 attack power, 36 spell power and 1% spell crit), and that Rockbiter in both places or only in the consumables adds 177.6 once. It fails without the guard in ApplyShamanImbue (355.2).
+
+### 7.7 Stormstrike
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`stormstrike.go`) under Forever: 125 mana, 8 sec cooldown, 1.5 sec GCD. A main hand hit for weapon damage on the special attack table, with attack power at the weapon type's normalized speed plus 0.3 (4.1). When it lands, blocks included, it marks the target for 12 sec (5.8). The mark is ours only. Our next Lightning Bolt, Chain Lightning or Earth Shock on that target uses it up and deals 20% more, whether it hits or not. A Chain Lightning bounce uses the mark of the target it bounces to. Nothing else uses it. A new Stormstrike starts the 12 sec again. Under Classic it keeps the 1.12 rules (21% of base mana, 20 sec, the shared Nature debuff with 2 charges).
+- Client 70338 (wago.tools, 17364): 125 mana, 8000 ms cooldown, 1500 ms GCD, 12 sec. Effect 1 is normalized weapon damage. Effect 2 is 20% more damage taken from the caster (aura 271), so the mark counts only for us, for Lightning Bolt, Chain Lightning and Earth Shock (shaman spell mask 0x100003). It has 1 charge, and the aura is set to go off when the target takes a harmful magic spell, so one of those three uses it up. This is the sim's rule.
+- Beta, all four logs (101026_135035, _150733, _221851 and _232548, our count):
+  - All 194 casts cost 125 mana (the log's power cost field).
+  - 24 casts came less than 8 sec after the last one (the shortest 2.3 sec). Every one of them had a dodge or parry of ours since the last cast, which is Improved Stormstrike's reset (8.32). The others are 8 sec apart or more, give or take the log's 0.1 sec jitter.
+  - Every time the mark came off, it was an Earth Shock (sometimes 100 ms later), a death, or 12 sec running out. All 12 Earth Shocks that missed took it, as the sim does. Flame Shock's hits and ticks, Fire Nova, Flametongue Weapon, Flametongue Totem's attacks, Lightning Shield, Windfury's attacks and white swings never took it (over 500 hits on marked mobs).
+  - Marked Earth Shocks (rank 4, 8046) dealt 1.2 times the log's raw damage (raw 120, 145 dealt), and unmarked ones dealt their raw. So raw leaves out modifiers on the target, and the mark gives 20%. Crits under it dealt 1.8 times raw (1.5 * 1.2). We never cast Lightning Bolt on a marked mob, and Chain Lightning comes at 32.
+- Already tested: `stormstrike_test.go` (cost, cooldown, and the mark after each outcome), `damage_modifiers_test.go` (the mark with Concussion on Earth Shock), `weapon_damage_test.go` and the 4.1 tests (damage).
+- Proposed: no sim change. A new test checks the mark's life: it lasts 12 sec, Earth Shock uses it up whether it hits or misses, the next one gets nothing, Lightning Bolt uses it too, and Flame Shock, Frost Shock, a Flametongue Weapon hit and a Lightning Shield orb leave it up.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
