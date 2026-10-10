@@ -950,8 +950,8 @@ Same build and log. Mobs of level 27 to 29, Elder Cloud Serpents among them.
       time, and no buff from them. The sim agrees (its proc mask is a proc's, not a spell's).
       Flame Shock ticks: 2 more crits with the buff down, no buff. The sim agrees (it only
       procs on direct hits).
-    Implied sim change: Elemental Devastation leaves out Fire Nova (talents.go). Waiting for
-    the user's OK. Flametongue Weapon is still untested (Windfury Weapon was on).
+    Implied sim change: Elemental Devastation leaves out Fire Nova (talents.go). The user
+    OK'd it in the audit session, and the sim has it since 620a81c2. Flametongue Weapon is still untested (Windfury Weapon was on).
   - Fire Nova (audit 5.6): 16 more hits, 41 since the respec. Raw 157 to 175, and 5 are over
     the add limit. Multipliers from 1.373 to 1.392 fit every hit, x1.35 fits none. The
     average hit before and after the respec gives x1.372 +- 0.012. The user OK'd the multiply

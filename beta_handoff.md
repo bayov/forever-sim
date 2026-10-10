@@ -212,8 +212,8 @@ Keep this current as you go.
 - [ ] 5. Flametongue procs and Elemental Devastation. 2026-10-10 respec run up to 21:25: the
   talent works on direct spell crits (2 of 2 Flame Shock crits gave the buff). Flametongue
   Totem crits (3) and Flame Shock tick crits don't give it, as in the sim. Fire Nova crits
-  (5) don't either, but the sim says they do, so that sim change waits for the user's OK
-  (asked in both sessions). Still open: Flametongue Weapon (about 150 landed swings with it,
+  (5) don't either. The sim gave them the buff until 620a81c2 (the user's OK, 2026-10-10).
+  Still open: Flametongue Weapon (about 150 landed swings with it,
   optional).
 - [x] 6. Weapon Mastery baseline. Settled 2026-10-10 in the sim's favor: 128 white hits in the
   15:07 log had raw 191 to 238, inside the sheet's 191.7 to 238.7, and +10% would put 55 of
