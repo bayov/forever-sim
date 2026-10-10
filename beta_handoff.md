@@ -248,7 +248,11 @@ combat log, run these checks on it too, and tell the user when one breaks.
   Shock) and how many had a resisted amount. On SPELL_DAMAGE the resisted field is row[-7],
   because spell lines end with an extra "ST" field. Base total (the audit session, up to
   16:05): 0 of 257 on level 33 to 35 mobs, where the sim expects about 57. Plus 16:05 to
-  16:16: 0 of 38 on level 33.
+  16:16: 0 of 38 on level 33. Count dungeon bosses and elites apart from regular mobs
+  (the audit session, notes.md Need to Verify), because Forever could keep the rule for
+  them only. Under Classic rules about 24% of hits would be partly resisted at +4 and 12% at
+  +2. The log has no elite flag, so tell them apart by name (Bloodmage Thalnos 34, Vishas 32)
+  or by the max HP in the advanced fields.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
   between.
