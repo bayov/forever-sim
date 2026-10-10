@@ -70,14 +70,16 @@ func TestOrcShamanSpellPower(t *testing.T) {
 }
 
 // TestOrcShamanSpellPowerBeta checks our spell hits at level 30 with 91 spell power against
-// the Forever beta's combat log (Shimmering Flats, 2026-10-10).
+// the Forever beta's combat log (Shimmering Flats, and Thousand Needles for Fire Nova,
+// 2026-10-10).
 //
 // Each spell hits for its base damage plus its coefficient times 91: 26.7% for Lightning
 // Shield's orbs, 38.6% for Earth Shock, 21.4% for Flame Shock and 10% for each of its ticks,
-// and 1.7% for Searing Totem. The log's raw field drops the fraction, so each raw number the
-// beta showed must be the whole part of a hit the sim can roll. The log also shows rank 1 of
-// Earth Shock and Flame Shock at their full coefficient, so Forever has no penalty for spells
-// learned below level 20.
+// 1.7% for Searing Totem and 21.4% for Fire Nova (SoD's damage spell 408424, which the log
+// names). The log's raw field drops the fraction, so each raw number the beta showed must be
+// the whole part of a hit the sim can roll. The log also shows rank 1 of Earth Shock and
+// Flame Shock at their full coefficient, so Forever has no penalty for spells learned below
+// level 20.
 //
 // One rank 1 Earth Shock hit raw 57, 0.23 over the sim's top of 56.77. We leave that one hit
 // out.
@@ -101,8 +103,10 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		{"Flame Shock rank 1", flameShock[0], 43.47, 43.47, 43, 43, 16, 16.1},
 		{"Flame Shock rank 3", flameShock[1], 64.87, 64.87, 64, 64, 23, 23.1},
 		{"Searing Totem rank 3", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), 20.55, 26.55, 20, 26, 0, 0},
+		// The old totem's damage spell would hit 123.01 to 137.01.
+		{"Fire Nova rank 2", topRank(t, "Fire Nova", enh.FireNova), 122.41, 136.53, 124, 135, 0, 0},
 	}
-	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 {
+	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 || cases[6].spell.Rank != 2 {
 		t.Fatalf("the level 30 ranks changed")
 	}
 	at(sim, 1, func(sim *core.Simulation) {

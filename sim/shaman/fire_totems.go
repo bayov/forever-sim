@@ -228,16 +228,18 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 // totem the shaman already has down, so without one it cannot be cast. It has a 10 sec
 // cooldown of its own (Classic's totem had 15) and Totemic Focus no longer discounts it.
 //
-// The damage is Classic's (the damage spells 8349 and 8502 on wowhead's Forever pages
-// still carry Classic values and coefficients), except rank 1. It grows for five levels
-// after the rank is learned, from 48 to 56 at level 12 (foreverchanges spellbook) to the 54
-// to 62 below (wowhead at level 60).
+// The damage comes from SoD's Fire Nova damage spells (408423 to 408428), not the old
+// totem's (8349, 8502, 8503, 11306 and 11307). The client's tooltip still reads the old
+// totem's numbers, but the beta's combat log names 408424 on every rank 2 hit (2026-10-10).
+// Every rank has a 21.4% coefficient, where the old totem had 10% and 14.3%, and a few
+// points less base damage. A rank grows for five levels after it's learned, and the ranges
+// below are at that fifth level (client 70338).
 const FireNovaRanks = 5
 
 var FireNovaSpellId = [FireNovaRanks + 1]int32{0, 408341, 408342, 408343, 408344, 408345}
-var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {54, 62}, {110, 124}, {195, 219}, {295, 331}, {413, 459}}
-var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 1.2}, {27, 1.6}, {37, 2.2}, {47, 2.8}, {57, 3.4}}
-var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .1, .143, .143, .143, .143}
+var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {51.23, 59.77}, {102.94, 117.06}, {182.12, 205.88}, {280.06, 315.94}, {396.95, 443.05}}
+var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 1.1}, {27, 1.6}, {37, 2.2}, {47, 2.8}, {57, 3.4}}
+var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .214, .214, .214, .214, .214}
 var FireNovaManaCost = [FireNovaRanks + 1]float64{0, 95, 170, 280, 395, 520}
 var FireNovaLevel = [FireNovaRanks + 1]int{0, 12, 22, 32, 42, 52}
 
