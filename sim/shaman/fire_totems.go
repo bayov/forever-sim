@@ -93,11 +93,11 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 			Aura: core.Aura{
 				Label: fmt.Sprintf("Searing Totem (Rank %d)", rank),
 			},
-			// These are the real tick values, but searing totem doesn't start its next
-			// cast until the previous missile hits the target. We don't have an option
-			// for target distance yet so just pretend the tick rate is lower.
-			// https://wotlk.wowhead.com/spell=25530/attack
-			//TickLength:           time.Second * 2.2,
+			// The totem casts its 2.2 sec bolt again and again. On the Forever beta (2026-10-10) the next
+			// cast started about 0.2 sec after the last one finished, or about 0.6 sec in a quarter of
+			// the gaps. It didn't wait for the bolt to land, because the gaps were the same with the
+			// totem 2 or 19 yards from the mob. The gap averaged 2.53 sec over 72 gaps, and a 40 sec
+			// totem fired 16 bolts, which 2.5 sec ticks give too.
 			NumberOfTicks: int32(duration / attackInterval),
 			TickLength:    attackInterval,
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
