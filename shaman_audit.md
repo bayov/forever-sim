@@ -72,7 +72,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 
 ## 6. When the enemy hits us
 
-- [ ] 6.1 When the enemy attacks us at all: the tank setting (Level 30 solo, PvP), the boss behind the tank at level 60
+- [?] 6.1 When the enemy attacks us at all: the tank setting (Level 30 solo, PvP), the boss behind the tank at level 60
 - [ ] 6.2 Enemy damage: weapon damage, attack power, swing speed, parry haste
 - [ ] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
 - [ ] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
@@ -650,6 +650,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Proposed to the user: no change.
 - Improved Stormstrike's regen buff comes on every Stormstrike cast, landed or not (the user asked, 2026-10-10). The sim rolls it when the cast completes (`talents.go` applyImprovedStormstrike). Beta: all 93 of our casts in the log gave the buff (1238931, 50% regen while casting), the 8 misses, 3 dodges and 19 parries too, 1 to 21 ms before the hit or miss. So the character had both points (100%). The client's buff is 1238931, and the sim's buff carried the talent's ID (1223031). It has the buff's ID now (the user's go), which only changes the name and icon the sim shows.
 - `stormstrike_test.go` TestOrcShamanStormstrikeOutcomes casts 400 Stormstrikes at level 60 from in front of a level 63 boss. Every one costs 125 mana and starts the 8 sec cooldown, and the mark is up after a hit, a crit or a block and not after a miss, dodge or parry. It fails when a miss leaves the mark.
+
+### 6.1 When the enemy attacks us at all
+
+- Shown to the user (2026-10-10), waiting for the OK. A target swings at a player only when the encounter names that player as its tank (`environment.go`, the target's tankIndex into the raid's tanks).
+- Level 60: no tank, so the boss never swings at us, as when it faces the raid's tank and we stand behind it. Lightning Shield and Water Shield only take the raid damage hits (the class option raidDamageHitsPerMinute, item 6.5), and no preset sets them.
+- Level 30: we solo Interrogator Vishas, so we're his tank. He's level 32 and swings every 2.0 sec for 52 to 69 before our armor, with parry haste on (6.2). Each hit can fire Lightning Shield. The preset doesn't put us in front of him, so our own swings never meet his parry or block (the user, 4.5).
+- Level 30 PvP: every enemy is our tank too, from in front. The enemy types swing at 1.3 to 3.5 sec, and the caster has no swing at all, so Lightning Shield never fires there.
+- Found: the PvP melee downtime moves only us (`pvp.go`). The enemy's own distance never changes, so its swings go on while we're out of melee range (`attack.go` checks the attacker's distance). On the default Level 30 PvP encounter we're out of range 70% of the fight, and the enemy hits us all that time and fires Lightning Shield. On the melee enemies it's 30%. Only the hunter's swing, which stands for its pet, should go on.
+- Proposed to the user: stop the enemy's swings while we're out of melee range, except the hunter's. It lowers the PvP numbers, mostly through fewer Lightning Shield orbs.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
