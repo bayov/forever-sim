@@ -90,7 +90,7 @@ The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (sect
 
 - [x] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
 - [x] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
-- [ ] 7.4 Rockbiter Weapon: attack power
+- [?] 7.4 Rockbiter Weapon: attack power
 - [x] 7.5 Frostbrand Weapon: proc rate, damage
 - [ ] 7.6 Imbue rules: the shaman imbue beside an oil or stone (Forever), one imbue per weapon
 
@@ -872,6 +872,17 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - `flametongue_weapon_test.go` TestOrcShamanFlametongueWeapon checks every rank 3 hit at 30 with 91 spell power on Rage of the Storm (3.3) and Bloody Brass Knuckles (1.6): 8.84 a second of speed, minus 5, plus 9.1, and crits at 1.5 times. Rage of the Storm gives 33.27, where the beta averaged 33.3.
   - `spell_ranks_test.go` TestOrcShamanImbueDamage takes 2 and 5 off ranks 2 and 3, and `elemental_weapons_test.go` wants (35.36 / 4 * 3.5 - 5) * 1.15 with 3 points.
 
+### 7.4 Rockbiter Weapon
+
+- Shown to the user (2026-10-10), waiting for the OK.
+- The sim (`rockbiter_weapon.go`): ranks at 1, 8, 16, 24, 34, 44 and 54. It only adds attack power while the weapon is in hand. Each rank grows a few points a level from its learn level for 6 levels (ranks 1 to 3) or 8 (ranks 4 to 7): 49.5 for rank 1 at 6, 79 for rank 2 at 14, 118 for rank 3 at 22, 193.8 for rank 4 at 32, 355 for rank 5 at 42, 521.8 for rank 6 at 52 and 653 for rank 7 at 60 (it grows on to 686 at 62). Rank 4 is 177.6 at 30.
+- Elemental Weapons multiplies the attack power by 1.07, 1.13 or 1.2 (8.24). It also adds flat threat to every main hand hit, which Spirit Weapons turns into 30% more threat instead of 30% less. Threat isn't in our DPS.
+- Client 70338 (wago.tools): the enchants (29, 6, 1, 503, 1663, 683, 1664) each hold one passive (10400, 15567, 15568, 15569, 16311, 16312, 16313). Each passive is attack power of 29 + 4.1, 58 + 3.5, 88 + 5, 129 + 8.1, 211 + 18, 393 + 16.1 and 554 + 16.5 a level, growing to level 6, 14, 22, 32, 42, 52 and 62, plus a threat aura with 0 points that the server fills. That's the sim's attack power for every rank. Elemental Weapons (16266, client text) gives Rockbiter 7, 13 and 20%, the sim's numbers. The enchants last 60 min.
+- Cross-check: the SoD sim has the same ranks and threat, but cuts the attack power by 90% (a SoD phase 3 change) and uses 14% for Elemental Weapons 2/3. Forever has neither.
+- Beta (2026-10-08 and 2026-10-09, part 2 pre-checks): rank 4 at 30 gave 177 attack power on the sheet with no talent points (sim 177.6) and 213 with Elemental Weapons 3/3 (sim 213.1). So no SoD cut.
+- Already tested: `elemental_weapons_test.go` (rank 4 at 30 with 0 and 3 points). Nothing tests the other ranks, the growth inside a rank, or Elemental Weapons 1/3 and 2/3.
+- Proposed: no sim change. Extend the Rockbiter test in `elemental_weapons_test.go` with each rank at its top level, rank 3 at 20 (108, still growing), and 1 and 2 points at 30.
+
 ### 7.5 Frostbrand Weapon
 
 - The user OK'd it (2026-10-10): "We might test at level 60 later, otherwise sounds good". The proc rate and rank 2's damage are in notes.md Need to Verify.
@@ -961,7 +972,7 @@ What each talent does in the sim today (`talents.go` unless noted). Values are p
 - Guardian Totems: Stoneskin Totem (`earth_totems.go`).
 - Mental Dexterity: attack power equal to 33 / 67 / 100% of Intellect. The older wiki tree reads 33 / 66 / 99%, the beta client data 33 / 67 / 100%.
 - Improved Lightning Shield: +5 / 10 / 15% on the whole orb hit (`lightning_shield.go`).
-- Elemental Weapons: Rockbiter +7 / 14 / 20%, Windfury +13 / 27 / 40% applied once (applied twice before 2026-10-09, see section 7 part 2), Flametongue and Frostbrand +5 / 10 / 15%.
+- Elemental Weapons: Rockbiter +7 / 13 / 20%, Windfury +13 / 27 / 40% applied once (applied twice before 2026-10-09, see section 7 part 2), Flametongue and Frostbrand +5 / 10 / 15%.
 - Shamanistic Focus: -45% cost on the shocks and Lightning Shield. Open: is Lightning Shield in Forever's text?
 - Anticipation: +2% dodge. Toughness: +2% Stamina.
 - Flurry: a melee crit (white, Stormstrike, Windfury attacks) gives 3 charges of 5 to 25% attack speed. White swings use the charges, at most one per 0.5 sec so that both hands don't spend two at once. Windfury Weapon's attacks are yellow, so they don't use charges. Windfury Totem's extra attack is white, so it does. The client's Flurry buff is used by auto attacks only, so extra swings use charges (4.13 part 2). The buff lasts 15 sec (fixed 2026-10-10).
