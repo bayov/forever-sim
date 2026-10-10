@@ -250,7 +250,7 @@ Keep this current as you go.
   log names SoD's 408424 on every rank 2 hit, not the old totem's 8502. The user OK'd the sim
   change: SoD's base damage and 21.4% at every rank (`fire_totems.go`, a Fire Nova case in
   `TestOrcShamanSpellPowerBeta`).
-- [ ] 12. Does Flametongue Totem's proc crit chance follow our crit (audit 5.3, notes.md)? The
+- [x] 12. Does Flametongue Totem's proc crit chance follow our crit (audit 5.3, notes.md)? The
   user wants it settled eventually (2026-10-10). Its rate fits our crit (12 of 127 at 12.3%
   spell crit) and a flat 5% is unlikely, but that doesn't show the rate moves with our crit.
   Count it again at a second crit chance, about 500 procs each. The Elemental respec without
@@ -288,6 +288,11 @@ Keep this current as you go.
   New log from 22:18:51 (client restart), up to 22:33: 13 of 133 on the fist, so 31 of 417
   (7.4%) since the respec. Against a flat 5% our spell crit is now 48 to 1, but a flat 7.9%
   fits all three counts as well (1.3 to 1). The Enhancement 12% build is still the next step.
+  Parked 2026-10-10: the user said to assume a flat 8% for now and test more later. The sim
+  gives the proc a flat 8% under Forever since 79450996 (FlametongueTotemCritChance). When the
+  user is back on the Enhancement build, count about 400 procs at 12% spell crit. Our spell
+  crit predicts about 49 crits there and a flat 8% about 32. Near 12% means back to our spell
+  crit (with the user's OK), near 8% settles it.
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to
