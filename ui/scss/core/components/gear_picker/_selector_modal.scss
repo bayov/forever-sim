@@ -61,10 +61,14 @@
 	align-items: flex-start;
 
 	.selector-modal-weights {
+		// As wide as the weights table and no wider, so the item list gets the rest. We keep
+		// room for the vertical scrollbar, so it never pushes the table into a horizontal one.
 		flex: 0 0 auto;
-		width: 34rem;
+		width: max-content;
 		max-height: calc(65vh + 4.5rem);
+		overflow-x: hidden;
 		overflow-y: auto;
+		scrollbar-gutter: stable;
 		padding-right: var(--spacer-2);
 
 		&:empty {
@@ -73,6 +77,11 @@
 
 		.ep-weights-menu {
 			margin: 0;
+		}
+
+		// The Current EP fields are narrower here than on the Gear tab, where the column has room.
+		.results-ep-table .current-ep .number-picker-input {
+			width: 5.5rem;
 		}
 	}
 
@@ -90,6 +99,7 @@
 		.selector-modal-weights {
 			width: 100%;
 			max-height: 40vh;
+			overflow-x: auto;
 		}
 	}
 }
