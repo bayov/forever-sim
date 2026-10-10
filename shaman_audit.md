@@ -68,7 +68,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
 - [x] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
 - [x] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
-- [ ] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
+- [?] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
 
 ## 6. When the enemy hits us
 
@@ -635,6 +635,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Our 5.3 write-up said the sim never lets ticks crit. That was wrong, and it's corrected there. `spell_power_test.go` averaged the ticks with crits counted in, so it now leaves crit ticks out.
 - Fixed (2026-10-10, the user's go): Forever's flag also lets the Healing Stream heal crit, and the sim's Healing Stream never crit. Now each heal can crit for 1.5 times under Forever, at our spell crit at the time of the heal (`water_totems.go`). Tidal Mastery and Elemental Fury don't list Healing Stream (class mask 0x2000) in the Forever client, so neither touches its crits, the same as before. The client makes the heal a periodic aura, and Water Shield's proc flags (0x262a8) leave periodic heals out. So the sim now deals it as a periodic heal, and its crits never spend a Water Shield globe. No preset puts down Healing Stream, so no number changed. It only matters for our health in PvP mode.
 - `periodic_test.go` TestOrcShamanFlameShockTicks puts rank 3's DoT up at 1 sec with 100% spell crit and puts it up again at 8.5 sec with none. It checks ticks at 4 and 7 sec for 21 (crits), none at 10 and 13, and then ticks at 11.5, 14.5, 17.5 and 20.5 for 14. TestOrcShamanHealingStreamCrits does the same with rank 2's heal (9 on a crit, 6 otherwise) and checks that Water Shield keeps its 3 globes.
+
+### 5.8 Abilities that use the melee table
+
+- Shown to the user (2026-10-10), waiting for the OK. Stormstrike and Windfury Weapon's two attacks are our only melee abilities. Flametongue Weapon and Frostbrand procs are spells and roll the spell table (5.1, 5.3). Rockbiter Weapon only adds attack power. A shaman can't dual wield under Forever, so both always hit with the main hand and never take the dual wield miss penalty.
+- Both are yellow (4.3). The first roll is miss, dodge, and in front of the target also parry and block. A second roll decides the crit, at twice a normal hit (4.7). They never glance. Our hit and weapon skill work as for white hits (4.4, 4.8).
+- Both deal physical damage, so armor counts as for white hits (4.9). Flat "+N damage" effects add to them as to a white hit. Stormstrike's damage is the weapon roll plus attack power at the normalized speed plus 0.3 (4.1). Windfury's attacks use the weapon's own speed with the extra attack power, which Elemental Weapons raises once (4.12).
+- Stormstrike costs its mana and starts its 8 sec cooldown whatever the outcome (`stormstrike.go`, the cast pays before the roll). Beta: a parried Stormstrike at 15:08:03 took 125 mana (2412 to 2287), and the next one came 8.02 sec later.
+- The mark only goes up when Stormstrike lands, and a blocked one counts as landed (`stormstrike.go` result.Landed). Beta, our 93 Stormstrikes in the Shimmering Flats log: none of the 8 misses, 3 dodges and 19 parries put the mark up. The one blocked Stormstrike did, and so did all 4 crits and the 50 normal hits that left the target alive. The 8 that killed the target put none up, because it was dead. Another shaman's (Backtofront) 2 hits put it up, and their 1 dodge didn't. The client's Stormstrike (17364) is physical (school mask 1), with Normalized Weapon Damage and the mark as its two effects, and nothing for an off hand.
+- Proposed to the user: no change. The test would check that a missed, dodged and parried Stormstrike each cost 125 mana, start the cooldown and leave no mark, and that a blocked one leaves it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
