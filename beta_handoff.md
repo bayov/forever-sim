@@ -211,7 +211,10 @@ Keep this current as you go.
 - [ ] 5. Flametongue procs and Elemental Devastation
 - [ ] 6. Weapon Mastery baseline
 - [ ] 7. Spirit regen of the other classes
-- [ ] 8. Undead paladin base stats
+- [ ] 8. Undead paladin base stats. Level 20 measured 2026-10-10: Str 44, Agi 30, Sta 42,
+  Int 30, Spi 34 against the sim's 41 / 29 / 42 / 30 / 39. Health, mana, AP, crit, dodge and
+  spell crit all follow the sim's formulas. To tell a race change from a class change, we
+  asked for a naked level 1 Undead paladin and Undead level 1 casters (with item 7).
 - [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
   Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and
@@ -253,6 +256,15 @@ combat log, run these checks on it too, and tell the user when one breaks.
   them only. Under Classic rules about 24% of hits would be partly resisted at +4 and 12% at
   +2. The log has no elite flag, so tell them apart by name (Bloodmage Thalnos 34, Vishas 32)
   or by the max HP in the advanced fields.
+- Spell crits by spell and by mob level (audit 5.3, the audit session). Count crits out of
+  landed hits, Lightning Shield left out because it never crits. On spell lines the crit flag
+  is row[-4], because of the trailing "ST". Base counts (the whole log up to 16:21, 12.3%
+  spell crit on the sheet): level 33 15/115 (13.0%), level 34 4/95 (4.2%), level 35 1/5. By
+  spell: Searing 12/77, Flametongue procs 5/103 (Weapon and Totem together, 1/63 at level
+  34), shocks 1/18. Flame Shock ticks crit 2/19 at 1.5x (audit 5.7, the sim never lets
+  them). Most proc hits are on level 34 mobs and most Searing hits on level 33, so the spell
+  and the level are mixed up. Flametongue Weapon on level 30 mobs or Searing on level 34s
+  would tell them apart.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
   between.

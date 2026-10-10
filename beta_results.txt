@@ -298,3 +298,31 @@ Rechecks, 16:05 to 16:16:
   Searing Totem: 38 bolts, 4 MISS, 7 crits in 34 hits, normal raw 20 to 26.
   Glancing: 3 of 6 swings on level 33.
   Partial resists: 0 of 38 (34 Searing, 3 Flametongue Weapon, 1 Earth Shock), all on level 33.
+
+
+2026-10-10  Naked level 20 Undead paladin (item 8)
+--------------------------------------------------
+`/bayov export` at 16:53, build 70338. No gear, no buffs on any stat (every "pos" is 0).
+Talents: Retribution 13 (Deflection 5, Improved Judgement 2, Conviction 3, Seal of Command,
+Pursuit of Justice 2). Unarmed 88 of 100.
+
+              beta    sim (Human paladin row + Undead warrior - Human warrior)
+  Strength     44     41
+  Agility      30     29
+  Stamina      42     42
+  Intellect    30     30
+  Spirit       34     39
+
+Everything built from those matches the sim's formulas once the beta's attributes go in:
+  Health 431 = 191 + 20 + 22 x 10. Mana 582 = 412 + 20 + 10 x 15.
+  Attack power 128 = 3 x 20 - 20 + 2 x 44 (the sim's 41 Strength gives 122).
+  Dodge 4.387%: the sim gives 0.7 + 30 x 0.1230 = 4.389.
+  Melee crit 3.907%: the same 4.389, less 0.48% for unarmed at 88 of 100 (0.04% a point).
+  Conviction adds nothing with no weapon, as in Classic, where it needs a melee weapon.
+  Spell crit 4.751%: the sim gives 3.5 + 30 x 0.0418 = 4.751.
+  Parry 10% (5 + Deflection 5). Block 5%. Mana regen 8.501 a sec = 34 Spirit x 0.25.
+
+What it showed: the beta's Undead paladin has 3 more Strength, 1 more Agility and 5 less
+Spirit at level 20 than the sim builds. One level can't tell whether Forever changed the
+Undead race (which would also change the Undead rogue) or the paladin's growth. A level 1
+Undead paladin and a level 1 Undead caster would tell them apart. No sim change yet.

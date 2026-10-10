@@ -42,7 +42,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Consecrated Ground: all Holy damage and every target?
 * Holy Power scope.
 * Swift Judgement and Pursuit of Justice are not implemented.
-* Beta: Undead paladin base stats. 1.12 has no Undead paladin, so the sim builds the row from the Human paladin and the Undead warrior. The beta shows 34 base Spirit at level 20, the sim has 39. The other four stats are still unchecked.
+* Beta: Undead paladin base stats. 1.12 has no Undead paladin, so the sim builds the row from the Human paladin and the Undead warrior. A naked level 20 Undead paladin on the beta (2026-10-10) has Str 44, Agi 30, Sta 42, Int 30, Spi 34, and the sim has 41 / 29 / 42 / 30 / 39. Everything built from them (health, mana, AP, crit, dodge) follows the sim's formulas. A level 1 Undead paladin and an Undead level 1 caster would show whether Forever changed the Undead race (the Undead rogue too) or the paladin's growth.
 
 ## At 60
 
