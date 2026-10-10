@@ -18,8 +18,10 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 	manaMetrics := shaman.NewManaMetrics(actionID)
 	globes := int32(3)
 
-	// TODO: "Only one globe will activate every few seconds", the tooltip never said how long.
-	// Lightning Shield's ICD is used until beta shows otherwise.
+	// We use at most one globe every 3.5 sec.
+	//
+	// The tooltip only says "Only one globe will activate every few seconds", but the client
+	// (70291) gives the spell a 3500 ms proc cooldown, like Lightning Shield's.
 	icd := core.Cooldown{
 		Timer:    shaman.NewTimer(),
 		Duration: time.Millisecond * 3500,

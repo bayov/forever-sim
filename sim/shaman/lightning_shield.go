@@ -65,7 +65,10 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 		},
 	})
 
-	// TODO: Does vanilla have an ICD?
+	// We fire at most one orb every 3.5 sec.
+	//
+	// Every rank has a 3500 ms proc cooldown in both the Forever (70291) and Era (1.15.9)
+	// clients.
 	icd := core.Cooldown{
 		Timer:    shaman.NewTimer(),
 		Duration: time.Millisecond * 3500,
