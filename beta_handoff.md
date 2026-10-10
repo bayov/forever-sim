@@ -245,6 +245,22 @@ Keep this current as you go.
   Count it again at a second crit chance, about 500 procs each. The Elemental respec without
   Thundering Strikes (5% less crit) is the cheapest way, together with item 5 (Elemental
   Devastation) and audit 5.6 (Call of Flame with Improved Fire Nova).
+  The respec (given to the user 2026-10-10), 26 points: Elemental Convection 5, Elemental
+  Warding 3, Call of Flame 3, Elemental Devastation 3, Elemental Focus 1 and Improved Fire
+  Nova 2 (17, Improved Fire Nova's row needs 15), then Enhancement Ancestral Knowledge 4,
+  Mental Dexterity 3 and Improved Ghost Wolf 2 (9, as now). The filler talents don't change
+  damage. With no Thundering Strikes (all crit, 1% a point in the client), spell crit drops
+  from 12.3% to about 7.3%. No Stormstrike or Flurry, because Enhancement's row 4 needs 15
+  points. The same run shows whether Call of Flame touches Flametongue Totem (sim: no, raw
+  18 would become 20) and Searing Totem (sim: yes, 23.6 to 30.5 at 91 spell power). The
+  steps: a `/bayov export`, 5 to 10 Fire Novas into packs of 3 or more mobs, then about 500
+  Flametongue Totem procs with Windfury Weapon (shocks are fine, Searing Totem is the same
+  element), then optionally about 150 landed swings with Flametongue Weapon for item 5.
+- [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
+  for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
+  the rule on our real skill (32% and 42%), which would take about 2000 swings a level to
+  tell apart. The -1 glance, the low +1 and +4 and +5 over the cap don't touch any sim we
+  run. No sim change. Keep counting it on new logs (the recheck list).
 
 ## Recheck with every new log
 
@@ -329,7 +345,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   of 73 within 0.1 sec (largest 0.11), us 23 of 29 within 0.1 sec, 3 more within 0.16
   (Flurry changed our speed), and 3 swings that were already late (19:49:02, 19:52:01 and
   20:21:01, the swing was held).
-- Glancing by mob level (audit 4.6, the user keeps the sim's 40% cap for now, 2026-10-10).
+- Glancing by mob level (audit 4.6, parked as good enough with the sim's rule, 2026-10-10).
   Count our white swings that glanced out of all our white swings (misses, dodges and
   parries included), per target level. The mob's level is the field just before the damage
   suffix on the mob's own SWING_DAMAGE lines (row[-11]), matched to our target by GUID.
