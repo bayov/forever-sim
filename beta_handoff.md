@@ -106,7 +106,13 @@ commit ID and message.
   `/mnt/d/Gaming/World of Warcraft/_classic_beta_/Logs/WoWCombatLog-*.txt`. It has 0.1 ms
   timestamps, every miss, dodge and parry, and a raw damage field that looks like the hit
   before armor and crit. Count SWING_DAMAGE lines, not their SWING_DAMAGE_LANDED copies.
-- The user runs /run lines and screenshots what they print. Ones we've used:
+- For the character's setup, the user types `/bayov export` and then `/reload` (their
+  BayovCore addon, since 2026-10-10). We read race, level, gear, imbues, talents, skills and
+  sheet stats from
+  `/mnt/d/Gaming/World of Warcraft/_classic_beta_/WTF/Account/405385253#1/SavedVariables/BayovCore.lua`,
+  under `BayovCoreDB.modules.export.characters["Name-Realm"]`. It leaves buffs out on
+  purpose. The memory `bayov-export` has the layout.
+- Before that, the user ran /run lines and screenshotted what they printed. Ones we've used:
   - `/run for i=1,5 do print(i, UnitStat("player",i)) end`
   - `/run print("ap", UnitAttackPower("player")) print("hp", UnitHealthMax("player")) print("crit", GetCritChance()) print("regen", GetManaRegen())`
   - `/run print(UnitDamage("player"))` for the weapon damage range and the damage percent.
