@@ -68,7 +68,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 5.5 Spell ranks: the rank each level knows, the penalty for spells learned below level 20
 - [x] 5.6 How damage modifiers stack: same kind add (the 1.12 rule), different kinds multiply, target debuffs (Curse of the Elements, the Stormstrike mark)
 - [x] 5.7 DoTs: tick timing, what snapshots, refresh, crits on ticks (Flame Shock)
-- [?] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
+- [x] 5.8 Abilities that use the melee table (Stormstrike, Windfury attacks, the imbue attacks)
 
 ## 6. When the enemy hits us
 
@@ -126,7 +126,7 @@ Totems
 - [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [ ] 7.26 Mana Spring Totem
 - [ ] 7.27 Mana Tide Totem
-- [ ] 7.28 Healing Stream Totem. To check: Purification (16178) says "your healing spells" on the beta tooltip (the user, 2026-10-10), but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients, so neither client gives it Purification. The sim gives it 2% a point. Restorative Totems is right in the sim: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says (the spell's own base points of 5 and 5 aren't the rank values).
+- [ ] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
 - [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
 
 ## 8. Talents
@@ -639,12 +639,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 5.8 Abilities that use the melee table
 
-- Shown to the user (2026-10-10), waiting for the OK. Stormstrike and Windfury Weapon's two attacks are our only melee abilities. Flametongue Weapon and Frostbrand procs are spells and roll the spell table (5.1, 5.3). Rockbiter Weapon only adds attack power. A shaman can't dual wield under Forever, so both always hit with the main hand and never take the dual wield miss penalty.
+- The user OK'd it (2026-10-10). Stormstrike and Windfury Weapon's two attacks are our only melee abilities. Flametongue Weapon and Frostbrand procs are spells and roll the spell table (5.1, 5.3). Rockbiter Weapon only adds attack power. A shaman can't dual wield under Forever, so both always hit with the main hand and never take the dual wield miss penalty.
 - Both are yellow (4.3). The first roll is miss, dodge, and in front of the target also parry and block. A second roll decides the crit, at twice a normal hit (4.7). They never glance. Our hit and weapon skill work as for white hits (4.4, 4.8).
 - Both deal physical damage, so armor counts as for white hits (4.9). Flat "+N damage" effects add to them as to a white hit. Stormstrike's damage is the weapon roll plus attack power at the normalized speed plus 0.3 (4.1). Windfury's attacks use the weapon's own speed with the extra attack power, which Elemental Weapons raises once (4.12).
 - Stormstrike costs its mana and starts its 8 sec cooldown whatever the outcome (`stormstrike.go`, the cast pays before the roll). Beta: a parried Stormstrike at 15:08:03 took 125 mana (2412 to 2287), and the next one came 8.02 sec later.
 - The mark only goes up when Stormstrike lands, and a blocked one counts as landed (`stormstrike.go` result.Landed). Beta, our 93 Stormstrikes in the Shimmering Flats log: none of the 8 misses, 3 dodges and 19 parries put the mark up. The one blocked Stormstrike did, and so did all 4 crits and the 50 normal hits that left the target alive. The 8 that killed the target put none up, because it was dead. Another shaman's (Backtofront) 2 hits put it up, and their 1 dodge didn't. The client's Stormstrike (17364) is physical (school mask 1), with Normalized Weapon Damage and the mark as its two effects, and nothing for an off hand.
-- Proposed to the user: no change. The test would check that a missed, dodged and parried Stormstrike each cost 125 mana, start the cooldown and leave no mark, and that a blocked one leaves it.
+- Proposed to the user: no change.
+- Improved Stormstrike's regen buff comes on every Stormstrike cast, landed or not (the user asked, 2026-10-10). The sim rolls it when the cast completes (`talents.go` applyImprovedStormstrike). Beta: all 93 of our casts in the log gave the buff (1238931, 50% regen while casting), the 8 misses, 3 dodges and 19 parries too, 1 to 21 ms before the hit or miss. So the character had both points (100%). The client's buff is 1238931, and the sim's buff carries the talent's ID (1223031), which only changes the name and icon the sim shows.
+- `stormstrike_test.go` TestOrcShamanStormstrikeOutcomes casts 400 Stormstrikes at level 60 from in front of a level 63 boss. Every one costs 125 mana and starts the 8 sec cooldown, and the mark is up after a hit, a crit or a block and not after a miss, dodge or parry. It fails when a miss leaves the mark.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
