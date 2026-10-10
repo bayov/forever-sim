@@ -77,7 +77,7 @@ Status: `[ ]` not started, `[?]` summarized and waiting for the user's OK, `[t]`
 - [x] 6.3 Our armor: mitigation, Stoneskin Totem, Devotion Aura
 - [x] 6.4 Our miss, dodge, parry and block: base values, Agility, Anticipation, parry only with Spirit Weapons, block only with a shield, enemy crits and crushing blows
 - [x] 6.5 Spell damage to us: Elemental Warding, resistance auras, the raid damage hits that feed our shield
-- [ ] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
+- [?] 6.6 Health: Stamina, Toughness, Improved Reincarnation, healing (Healing Stream)
 - [ ] 6.7 PvP mode: the enemy types, time out of melee range
 
 ## 7. Shaman abilities
@@ -543,6 +543,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70291: Flurry (16256) triggers on white hits and melee abilities, 5 to 25% by rank. Its buff (16257) has 3 charges that only auto attacks use, 500 ms apart, and lasts 15 sec (the Era client 1.15.9 has the same). Clearcasting's (16246) spell family mask covers exactly Lightning Bolt, Chain Lightning, the three shocks, Lava Burst and Fire Nova. The Maelstrom Weapon buff (408505) lasts 30 sec and changes Lightning Bolt only, the talent (408498) is -4% a point and can trigger from offensive spells too (for Totem of the Storm). Elemental Devastation is 3 / 6 / 9%, its buff (30165) 10 sec, triggered by offensive spells.
 - Fixed (2026-10-10, the user's go): Flurry's buff now runs out after 15 sec, for every ruleset, as in both clients. We kept it until the charges were gone. That only showed when white swings stop for long, like out of melee range in PvP. No golden changed.
 - Open (Need to Verify): Maelstrom Weapon's proc rate (level 34+), and whether the Flametongue procs trigger Elemental Devastation (Beta).
+- Beta (the beta session's Elemental respec, 67c6efc8, 2026-10-10): 4 Fire Nova crits and 1 Flame Shock tick crit gave no Elemental Devastation, and the log would show its buff (30165 has no hide or no-log flag in client 70338). The talent (30160) triggers on any harmful spell through a server script, and Fire Nova's damage (408424) is triggered by the cast's dummy effect. So either Fire Nova's damage doesn't give it (the sim says it does) or the talent doesn't work at all. A shock or Lightning Bolt crit tells them apart. No sim change until then.
+- Beta (the same run): Flametongue Totem procced on 2 swings that a player's shield fully absorbed (ABSORB), with the 24 of 24 landed swings in range.
 - `talent_procs_test.go` TestOrcShamanTalentProcs, on a level 60 shaman with all four talents: forces hits and crits on white hits, Stormstrikes, Windfury attacks, every damage spell, the Flametongue Totem damage, Searing Totem attacks and Lightning Shield orbs, 60 times each, and checks what triggers Flurry, Maelstrom Weapon and Elemental Devastation. It checks which spells cost nothing under Clearcasting, Flurry's charges (white swings only, 0.5 sec apart, a crit refills) and its 15 sec, and that Chain Lightning keeps Maelstrom Weapon's stacks and Lightning Bolt uses them. It fails when spell crits give Flurry, when proc damage gives Elemental Devastation, when Flurry never runs out, when yellow attacks use its charges, without the 0.5 sec gap, when Chain Lightning uses Maelstrom Weapon and when Clearcasting covers every shaman spell.
 
 ### 4.13 Proc matrix, part 3: Judgement of Wisdom, shields, items and racials
@@ -642,6 +644,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Lava Burst gets Call of Flame times its own 20% with Flame Shock on the target (1.15 * 1.2 = 1.38). The client's 20% is a script effect, so the server decides how it stacks. Lava Burst is a level 40 talent and isn't in our presets.
 - Proposed to the user: no change. A beta respec settles add or multiply: Call of Flame 3 and Improved Fire Nova 2 need 15 points in Elemental, and Stormstrike fits in the other 15. With 91 spell power, Fire Nova rank 2 hits 165.4 to 185.6 if they add and 169.1 to 189.8 if they multiply, so a few casts on a group of mobs tell them apart.
 - The user OK'd adding Fire Nova's add or multiply and Lava Burst's stacking to notes.md (Need to Verify, the Beta list and At 60).
+- Beta (the beta session's Elemental respec, 67c6efc8, checked by us, 2026-10-10): with Call of Flame 3 and Improved Fire Nova 2 at 49 spell power (the 20:42 export), 25 Fire Nova hits (408424) had raw 160 to 175. Adding the two (x1.35, the sim) allows 153.1 to 172.2, and multiplying them (x1.15 x 1.2 = x1.38) allows 156.5 to 176.0. Raw 173, 173, 174 and 175 are over the add range, so Forever multiplies them. The 23 hits before the respec (91 spell power, no talents) had raw 124 to 136, inside the sim's 122.4 to 136.5. Call of Flame raised Flame Shock's hit and ticks as the sim does (raw 64 and 21), and didn't touch Flametongue Totem (raw 18 on 18 of 18), as in the sim.
+- Proposed to the user: Fire Nova's damage takes Call of Flame times Improved Fire Nova (`fire_totems.go`), 2.2% more Fire Nova damage at Level 60. The test then wants 1.15 * 1.2 * 1.1.
 - `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers runs two level 60 sims with the same seed, one with no bonuses and one with Concussion 5, Call of Flame 3, Improved Fire Nova 2, Improved Lightning Shield 3, Curse of the Elements and the Stormstrike mark. Both roll the same hits and crits, so each spell's damage ratio is its multiplier: Earth Shock 1.05 * 1.2 * 1.1, Flame Shock (hit and ticks), Searing Totem and the orbs 1.15 * 1.1, and Fire Nova 1.35 * 1.1. It fails when Fire Nova's two talents multiply.
 
 ### 5.7 DoTs
@@ -758,6 +762,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Tests:
   - TestOrcShamanRaidDamageHits (replaces TestOrcShamanRaidDamageLightningShield) keeps Lightning Shield at 3 orbs for 9 min at 15 hits a minute. It wants about 72 orbs (8 a minute), within 15. It got 78. The old even pace gives 135 and fails it.
   - TestOrcShamanWaterShield now lands enemy melee hits at set times (every 5 sec, then every 3 sec) instead of using the option, so it still checks each globe and the 3.5 sec wait.
+
+### 6.6 Health
+
+- Shown to the user (2026-10-10), waiting for the OK. Our health is base health plus 10 a point of Stamina (the first 20 give 1 each), settled and tested in 1.4. It only counts when an enemy attacks us (the Level 30 encounter and PvP, 6.1). Then each hit takes health, healing gives it back, and the sim counts the iterations where we die (Chance of Death in the results). Dying doesn't stop our damage, so health never changes DPS. The gear searches value it through the PvP presets' health weight.
+- Toughness (`talents.go`): 2% more Stamina a point, 10% at 5. The Forever client (70291 trait curve 85301 on 16252, aura 137 on Stamina) gives 2, 4, 6, 8 and 10%. The Classic Era client has the old armor from items talent (aura 142). It multiplies our whole Stamina, base and gear, with Blessing of Kings, and drops the fraction (1.8). A naked level 30 Orc goes from 51 to 56 Stamina (56.1) and 665 to 715 health. Not measured on the beta.
+- Improved Reincarnation (`talents.go`): 2% more max health a point. The client (curve 85310 on effect 1 of 16184, aura 133) gives 2 and 4%. The sim multiplies our whole health, Stamina's part included: 665 to 691.6 at 2 points. The game keeps whole health, so it would show 691. The other two parts, 10 and 20 min off Reincarnation's cooldown and 10 and 20% more health and mana on a Reincarnation, never come up in a fight. Not measured on the beta.
+- Healing on us: Healing Stream (5.7, 5% crit under Forever) and the healing model in the settings (a set heal per second at random times). Only the Level 30 and PvP presets get hit, and neither puts down Healing Stream.
+- Proposed to the user: no change. A beta check would be the sheet's health with Toughness or Improved Reincarnation, if a respec takes either.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
