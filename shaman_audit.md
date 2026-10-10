@@ -100,7 +100,7 @@ Strikes and shocks
 - [x] 7.8 Earth Shock
 - [x] 7.9 Flame Shock: direct and DoT parts
 - [x] 7.10 Frost Shock
-- [ ] 7.11 Shared shock cooldown
+- [?] 7.11 Shared shock cooldown
 
 Nature spells
 
@@ -975,6 +975,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Already tested: `mana_costs_test.go`, `gcd_test.go`, `spell_ranks_test.go`, `stormstrike_test.go` (the mark), `other_procs_test.go` and `talent_procs_test.go`. Nothing tests its damage.
 - No sim change.
 - Tests: `spell_power_test.go` TestOrcShamanSpellPowerBeta now also rolls rank 1 2000 times at 49 spell power. It wants 87.11 to 91.71, which can show the beta's raw 88 to 91. It fails with a 35% coefficient.
+
+### 7.11 Shared shock cooldown
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`shocks.go`): Earth, Flame and Frost Shock share one 6 sec cooldown, less 0.2 sec a point of Reverberation (5 sec at 5/5). Each has a 1.5 sec GCD that haste doesn't shorten (3.1). Convection takes 2% a point off their cost and Shamanistic Focus 45%, and the two add up (55% at both).
+- Client 70338 (wago.tools): all three shocks are in category 19 with a 6000 ms category cooldown. Reverberation (16040) takes 200 ms a point off the cooldown of the three shocks (class mask 0x90100000). Convection (16039) takes 2% a point off the cost of the shocks, Lightning Bolt, Chain Lightning and Lava Burst. Shamanistic Focus (1223030, Forever's own spell) takes 45% off the shocks and Lightning Shield. Both cost talents are the same kind of percent modifier, and the client adds those, as the sim does.
+- Beta, all four logs (our count): two different shocks never came less than 5.9 sec apart. Flame then Earth Shock came 5.90 to 6.5 sec apart 9 times, Earth then Flame once (5.95) and Frost then Flame once (6.01). Our rotation casts a shock as soon as it can, so without a shared cooldown we'd see gaps near the 1.5 sec GCD. The same shock again was also never under 5.91 sec.
+- Not seen on the beta: the user never had Reverberation, Convection or Shamanistic Focus. Every shock cost its full mana (7.8, 7.9, 7.10), and no gap was under 5.9 sec.
+- Already tested: `mana_costs_test.go` (Convection, Shamanistic Focus and both together on each shock) and `gcd_test.go` (the 1.5 sec GCD). Nothing tests the shared cooldown or Reverberation.
+- Proposed: no sim change. A small test that after any shock the other two wait 6 sec, and 5 sec with Reverberation 5/5.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
