@@ -88,7 +88,7 @@ Weapon imbues
 
 The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (section 7, part 2). Each item is still open until its full summary, OK and test, and what each imbue procs and gets procced by is in 4.13.
 
-- [?] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
+- [x] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
 - [ ] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
 - [ ] 7.4 Rockbiter Weapon: attack power
 - [ ] 7.5 Frostbrand Weapon: proc rate, damage
@@ -840,7 +840,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.2 Windfury Weapon
 
-- Shown to the user (2026-10-10), waiting for the OK.
+- The user OK'd it (2026-10-10). No change to the sim.
 - The sim (`windfury_weapon.go`): ranks at 30, 40, 50 and 60, with 46, 119, 249 and 333 bonus attack power at the learn level, growing 7.2, 12.8 and 8.3 a level for 8 levels (rank 4 stays 333 at 60). These match the client (7.1).
 - It procs on 20% of landed main hand melee hits: white swings (glancing, crits and blocks included), extra swings like Hand of Justice's, and Stormstrike. Misses, dodges, parries, spells and proc damage don't proc it (4.13). After a proc it can't proc again for 1.5 sec, so its own attacks never proc it.
 - A proc makes two yellow main hand attacks right away, each weapon damage plus (attack power + bonus) / 14 times the weapon's own speed, not normalized. They roll the special attack table (no glancing, 4.7), don't restart the swing timer (4.11), don't use Flurry charges but give them on a crit, and proc Flametongue Weapon and the other on-hit effects (4.13). Elemental Weapons multiplies the bonus by 1.13, 1.27 or 1.4, once (8.24). The bonus only goes to the two attacks. On the same weapon it turns Windfury Totem off (7.19).
@@ -852,7 +852,9 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Damage: 9 Windfury hits averaged 1.140 times 16 white hits on a 3.6 speed axe at 198 attack power (section 7 part 2). The sim gives 1.144 with the weapon's own speed, and the normalized 3.3 would give 1.080.
   - In 6 of 38 procs both attacks landed about 100 ms after the hit (4.11). We only record it.
 - Already tested: `elemental_weapons_test.go` (a normal hit's damage at rank 1 with 0 and 3 points), `attack_table_test.go` (yellow), `proc_matrix_test.go` (which hits proc it), `extra_attacks_test.go` (the swing timer), `damage_modifiers_test.go` (flat damage) and `talent_procs_test.go` (Flurry and the other talents).
-- Proposed: no change. A new test checks the proc chance (20% of landed hits off cooldown), that no proc comes within 1.5 sec of the last, two attacks per proc, and a normal hit's damage at ranks 2 to 4 (40, 50 and 60).
+- Tests: `windfury_weapon_test.go` TestOrcShamanWindfuryWeapon.
+  - In a 2 hour fight at 60 with Stormstrike on cooldown, 457 of 2404 landed hits off cooldown procced (19.0%), within 4 standard errors (3.3%) of 20%. No proc came within 1.5 sec of the last, and every proc made two attacks. With a 100 ms cooldown the test fails 22 times, and with a 25% chance it sees 26.6%.
+  - A normal hit with the weapon roll pinned and no armor deals the weapon's minimum plus (AP + 119, 249 or 333) / 14 times its speed, at 40, 50 and 60.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
