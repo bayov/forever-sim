@@ -317,6 +317,11 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
   between.
+- Parry haste follows Classic's rule, for mobs and for us (audit 6.2, the audit session's sim
+  change, 5740215a). With more than 60% of the swing left, the next swing comes 40% of the
+  swing sooner. With 20 to 60% left, it comes 20% of the swing after the parry. With 20% or
+  less left, nothing changes. Base counts up to the audit session's read: 58 of 58 mob
+  parries within 0.1 sec, and 23 of our 25 within 0.16 sec (the other 2 waited on a cast).
 - Glancing by mob level (audit 4.6, the user keeps the sim's 40% cap for now, 2026-10-10).
   Count our white swings that glanced out of all our white swings (misses, dodges and
   parries included), per target level. The mob's level is the field just before the damage
