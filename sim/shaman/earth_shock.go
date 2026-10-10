@@ -47,7 +47,15 @@ func (shaman *Shaman) newEarthShockSpellConfig(rank int, shockTimer *core.Timer)
 		shockTimer,
 	)
 
-	spell.Flags |= core.SpellFlagBinary
+	// Earth Shock is binary under Classic, so a target's resistance makes it miss in full more
+	// often instead of taking part of its damage.
+	//
+	// Under Forever the beta's Elder Cloud Serpents took 30% off every Earth Shock that landed on
+	// them, as they did with our other Nature spells (shaman_audit.md 7.8). So it can be partly
+	// resisted like Lightning Bolt, and the level part of partial resists counts for it too (5.2).
+	if !shaman.Env.IsForever() {
+		spell.Flags |= core.SpellFlagBinary
+	}
 
 	spell.SpellCode = SpellCode_ShamanEarthShock
 	spell.RequiredLevel = level

@@ -78,8 +78,7 @@ func TestOrcShamanMeleeCrit(t *testing.T) {
 // Melee crit is cut against higher mobs (TestOrcShamanMeleeCrit), but spell crit isn't. On
 // the beta our spells crit on 13% of hits against level 33 mobs with 12.3% on the sheet, but
 // on only 4% against level 34 mobs. So a cut at 4 levels up is still open (notes.md). We
-// check Lightning Bolt, Earth Shock (our one binary spell), Flame Shock's direct part and a
-// Searing Totem attack.
+// check Lightning Bolt, Earth Shock, Flame Shock's direct part and a Searing Totem attack.
 func TestOrcShamanSpellCrit(t *testing.T) {
 	cases := []struct {
 		name               string
