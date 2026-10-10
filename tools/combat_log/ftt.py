@@ -1,9 +1,9 @@
-"""Flametongue Totem procs per landed white swing, with the totem's state. Usage: python3 -I ftt.py LOG FROM [TO]"""
+"""Flametongue Totem procs per landed white swing, with the totem's state. Usage: python3 -I ftt.py LOG [FROM] [TO]"""
 import sys, os, math, collections
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cl
 evs = cl.load(sys.argv[1]); evs.sort(key=lambda e: e.t)
-lo = sys.argv[2]; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
+lo = sys.argv[2] if len(sys.argv) > 2 else '00'; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 pos = {id(e): i for i, e in enumerate(evs)}
 def xy(e):
     try:
@@ -14,13 +14,15 @@ died = collections.defaultdict(list)
 for e in evs:
     if e.ev in ('UNIT_DIED', 'PARTY_KILL'): died[e.dstGUID].append(e.t)
 ft = [e for e in evs if e.src.startswith(cl.ME) and e.spellId == 16368]
-fire = None  # (name, xy, guid)
+fire = None  # (name, xy, summon time)
+# The totem lasts 5 minutes and logs no death when it runs out (seen 2026-10-10 22:26:28).
+FT_DURATION = 300
 totem_guid = {}
 res = collections.Counter()
 for e in evs:
     if not (lo <= e.ts < hi): continue
     if e.src.startswith(cl.ME) and e.ev == 'SPELL_CAST_SUCCESS':
-        if e.spell == 'Flametongue Totem': fire = ('FT', xy(e))
+        if e.spell == 'Flametongue Totem': fire = ('FT', xy(e), e.t)
         elif e.spell and e.spell.startswith('Searing Totem'): fire = ('Searing', None)
         elif e.spell == 'Totemic Recall': fire = None
     if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME) and 'Flametongue' in e.dst: totem_guid[e.dstGUID] = 1
@@ -32,6 +34,7 @@ for e in evs:
         elif any(0 <= t - e.t <= 0.13 for t in died[e.dstGUID]): why = 'mob died within 130 ms'
         elif fire is None: why = 'no fire totem'
         elif fire[0] != 'FT': why = 'Searing down'
+        elif e.t - fire[2] > FT_DURATION: why = 'totem expired'
         else:
             dist = math.dist(xy(e), fire[1]) if xy(e) and fire[1] else -1
             why = 'in range' if dist <= 30 else 'over 30 yd'

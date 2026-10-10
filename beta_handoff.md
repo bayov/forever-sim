@@ -285,6 +285,9 @@ Keep this current as you go.
   as well: 9.4% and 6.3% are only 1.1 standard errors apart. The 127 procs at 12.3% are the
   weak side, so the next step is about 400 procs after the respec back to Enhancement (12%
   spell crit), not more at this build.
+  New log from 22:18:51 (client restart), up to 22:33: 13 of 133 on the fist, so 31 of 417
+  (7.4%) since the respec. Against a flat 5% our spell crit is now 48 to 1, but a flat 7.9%
+  fits all three counts as well (1.3 to 1). The Enhancement 12% build is still the next step.
 - [x] 13. Glancing by mob level (audit 4.6). Parked 2026-10-10: the user called it good enough
   for now. Up to 20:25, +2 (25 of 72) and +3 (26 of 66) fit the sim's 30% and 40%, and also
   the rule on our real skill (32% and 42%), which would take about 2000 swings a level to

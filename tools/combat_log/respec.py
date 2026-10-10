@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cl
 
 evs = cl.load(sys.argv[1]); evs.sort(key=lambda e: e.t)
-lo = sys.argv[2]; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
+lo = sys.argv[2] if len(sys.argv) > 2 else '00'; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 win = [e for e in evs if lo <= e.ts < hi]
 me = [e for e in win if e.src.startswith(cl.ME)]
 lvl = {}

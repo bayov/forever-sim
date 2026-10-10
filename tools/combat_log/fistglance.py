@@ -3,7 +3,7 @@ import sys, os, collections
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cl
 evs = cl.load(sys.argv[1]); evs.sort(key=lambda e: e.t)
-lo = sys.argv[2]; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
+lo = sys.argv[2] if len(sys.argv) > 2 else '00'; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 lvl = {}
 for e in evs:
     if e.srcGUID.startswith('Creature') and e.ev in ('SWING_DAMAGE', 'SPELL_DAMAGE', 'SPELL_PERIODIC_DAMAGE'):

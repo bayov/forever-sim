@@ -36,7 +36,8 @@ Some scripts hold numbers from one character and one day, like the weapon models
   glancing and partial resists by mob level, Fire Nova's spell id and raw, the Stormstrike
   buff and mark, and Healing Stream crits.
 - `ftt.py` sorts every landed white swing by the Flametongue Totem's state (in range, a kill,
-  the mob dying within 130 ms, the totem down or over 30 yards) and whether it procced.
+  the mob dying within 130 ms, the totem down, past its 5 minutes or over 30 yards) and
+  whether it procced.
 - `crit.py` counts spell crits by group (Flametongue Totem, Flametongue Weapon, orbs, the
   rest) and mob level.
 - `glance.py` counts glancing blows by mob level. It leaves out fist weapon swings from

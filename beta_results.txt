@@ -1032,3 +1032,24 @@ Weapon and Flametongue Totem, mobs of level 27 to 32. The user leveled Unarmed f
     the log's only double parry: both Windfury attacks parried in the same ms at 21:53:22.8,
     and the Pesterhide Snarler swung 2 ms later. The rule gives 0.4 sec or more even when
     applied twice. Glancing: the fist swings are left out (low skill). No partial resists.
+
+
+2026-10-10  New log after a client restart (22:18:51 to 22:33:05)
+-----------------------------------------------------------------
+The client started WoWCombatLog-101026_221851.txt. Same Elemental build and fist weapon
+(spell power 49 and max mana 2440 on every cast, as in the 21:30 export). Mobs of level 27
+to 29.
+  - Flametongue Totem crit (item 12): 13 of 133 hits (9.8%), plus one spell miss. Since the
+    respec that makes 31 of 417 (7.4%). With the 12 of 127 at 12.3% before it, our spell crit
+    is 48 times as likely as a flat 5%, and a flat 7.9% is 1.3 times as likely as our spell
+    crit. Only the 12% build can split those two.
+  - Flametongue Totem lasts 5 minutes, as in the sim. The totem from 22:20:20 procced until
+    22:24:18, then 8 landed swings from 22:26:28 got no proc with no totem death logged. That
+    is 368 sec after the summon, and the new totem at 22:26:42 procced again. ftt.py now
+    calls swings over 5 minutes after the summon "totem expired".
+  - Rechecks: white raw on the fist 69 to 91. Flametongue Totem procced on 120 of 120 landed
+    swings in range, none on the 8 killing blows. Mob parry haste fits 15 of 15 within
+    0.1 sec. Lightning Shield: 5 orbs IMMUNE on Thundering Boulderkin (an earth elemental),
+    1 real miss in 14. No partial resists. Fire Nova raw 168 and 172 (2 hits).
+  - Fist glancing, Unarmed skill unknown (leveled since 21:31): 0 of 25 at level 27, 2 of
+    104 at 28, 5 of 58 at 29. Record only (item 13 is parked).

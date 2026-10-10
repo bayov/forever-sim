@@ -6,7 +6,7 @@ import cl
 evs = cl.load(sys.argv[1]); evs.sort(key=lambda e: e.t)
 # File order breaks ties: a proc logged before a swing in the same ms didn't come from that swing.
 pos = {id(e): i for i, e in enumerate(evs)}
-lo = sys.argv[2]; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
+lo = sys.argv[2] if len(sys.argv) > 2 else '00'; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 win = [e for e in evs if lo <= e.ts < hi]
 me = [e for e in win if e.src.startswith(cl.ME)]
 print(f'window {lo} to {win[-1].ts if win else "-"}, {len(win)} lines')
