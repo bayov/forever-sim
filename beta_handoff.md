@@ -237,16 +237,18 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Searing Totem's bolts do 19 to 25 + 1.7% of spell power at rank 3 and use our spell hit
   and crit (audit 7.22). The log's raw damage drops the fraction.
 - Searing Totem's bolt gap (audit 7.22, the user waits for more data). The cast takes 2.21
-  sec, and the next cast starts when the bolt lands. In 9 of 42 gaps it started about 0.4
-  sec later. Over all 42 gaps up to 16:05 the mean is 2.511 sec (sim 2.5). Leave out gaps
-  over 3 sec, where the totem switched mobs. The bolt flies at 19 yards a second (client),
-  so a totem far from the mob should give longer gaps.
+  sec, and the next cast starts about 0.22 sec after it, or about 0.6 sec in a quarter of
+  the gaps. It doesn't wait for the bolt to land, which flies 19 yards a second: the gap is
+  the same with the totem 2 or 19 yards away. Over 72 gaps up to 16:16 the mean is 2.527 sec
+  (sim 2.5), and a 40 sec totem fires 16 bolts. scratchpad cl/searing.py leaves out gaps
+  where the mob moved or the totem switched mobs.
 - Partial resists on our spells, by mob level (audit 5.2, the audit session proposed to drop
   the sim's level based partial resists under Forever). Count the landed hits of spells
   that can partially resist (Flametongue Weapon, Lightning Shield orbs, Searing Totem, Flame
   Shock) and how many had a resisted amount. On SPELL_DAMAGE the resisted field is row[-7],
   because spell lines end with an extra "ST" field. Base total (the audit session, up to
-  16:05): 0 of 257 on level 33 to 35 mobs, where the sim expects about 57.
+  16:05): 0 of 257 on level 33 to 35 mobs, where the sim expects about 57. Plus 16:05 to
+  16:16: 0 of 38 on level 33.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
   between.
@@ -256,5 +258,5 @@ combat log, run these checks on it too, and tell the user when one breaks.
   suffix on the mob's own SWING_DAMAGE lines (row[-11]), matched to our target by GUID.
   Note our weapon skill from the latest `/bayov export` too (Two-Handed Maces was 149 of 150
   at 14:50 on 2026-10-10). Base totals (WoWCombatLog-101026_150733.txt up to 15:51, the
-  audit session's count), plus 16:04 to 16:05: level 33 20/49 (41%), level 34 66/111 (59%),
+  audit session's count), plus 16:04 to 16:16: level 33 23/55 (42%), level 34 66/111 (59%),
   level 35 6/8. Add each new log to these. Without the cap the sim would give 50% at +4 and 60% at +5.

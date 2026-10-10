@@ -257,3 +257,44 @@ The 16:04 totem fired 16 bolts in its 40 sec, the same 16 ticks the sim gives (4
 
 What it showed: the sim's 2.5 sec fits both the 16:04 fight and all fights together. No
 change.
+
+
+2026-10-10  Searing Totem far from the mob, 16:14 to 16:16 (audit 7.22)
+-----------------------------------------------------------------------
+Same log, now written up to 16:16:32. The user put Searing Totem rank 3 down away from a
+level 33 Silithid Hive Drone three times and fought the mob where it stood, moving it a few
+times in between. The totem's own map position is on its cast lines and the mob's on its
+lines, so I measured the distance. scratchpad cl/searing.py drops the gaps where the mob
+moved half a yard or more, or the totem switched mobs (gaps over 3 sec).
+
+  16:14:35  13.2 yards, 12 bolts, 11 clean gaps, 4 with the 0.4 sec wait. Flight 0.60 to 0.72.
+  16:15:15  the mob moved from 5.6 to 16.2 yards. 5 clean gaps, 1 with the wait. Flight 0.78
+            to 0.91 at 16.2 yards.
+  16:15:49  the mob moved from 2 to 19.3 yards. 12 clean gaps at 19.3 yards, 4 with the wait.
+            Flight 0.93 to 1.06. 16 bolts in all, the last cast finished at 40.25 sec.
+
+The bolt flies at about 19 yards a second, as the client says (flight over distance / 19 has
+a median of 0.93 over 44 bolts). But the totem doesn't wait for it to land. The next cast
+starts about 0.22 sec after the last one finished at every distance:
+
+  All eight of our totems, 72 clean gaps: mean 2.527 sec. A normal gap is 2.426 sec (median),
+  and 18 gaps (25%) had the extra 0.4 sec.
+  Totem under 6 yards from the mob: 43 gaps, mean 2.508, normal 2.424, 9 with the wait.
+  Totem 12 yards or more: 28 gaps, mean 2.560, normal 2.431, 9 with the wait.
+
+The extra 0.4 sec wait happens with the mob and the user standing still, so moving the mob
+isn't the cause.
+
+What it showed: the gap doesn't depend on the distance, and the sim's 2.5 sec still fits
+(2.53 mean). Both 40 sec totems fired 16 bolts, which is what 2.5 sec ticks give. 2.53 would
+give 15. The comment in sim/shaman/fire_totems.go says the totem waits for the missile to
+land, which the beta shows is wrong. The damage itself lands 0.2 to 1 sec after the cast
+ends, which the sim leaves out.
+
+Rechecks, 16:05 to 16:16:
+  Stormstrike raw (1): 261, inside 220.0 to 271.7. White raw (4): 192 to 213.
+  Flametongue Weapon: every landed swing and Stormstrike procced (one proc missed). The
+  swing that killed the mob didn't.
+  Searing Totem: 38 bolts, 4 MISS, 7 crits in 34 hits, normal raw 20 to 26.
+  Glancing: 3 of 6 swings on level 33.
+  Partial resists: 0 of 38 (34 Searing, 3 Flametongue Weapon, 1 Earth Shock), all on level 33.
