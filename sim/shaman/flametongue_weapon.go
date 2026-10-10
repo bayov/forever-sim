@@ -22,6 +22,15 @@ var FlametongueWeaponLevel = [FlametongueWeaponRanks + 1]int32{0, 10, 18, 26, 36
 var FlametongueWeaponMaxDamage = [FlametongueWeaponRanks + 1]float64{0, 440.0 / 25, 653.0 / 25, 1052.0 / 25, 1728.0 / 25, 2372.0 / 25, 2810.0 / 25}
 var FlametongueWeaponScaling = [FlametongueWeaponRanks + 1]core.RankScaling{{}, {16, .76}, {24, 1.16}, {34, 1.68}, {44, 2.92}, {54, 2.48}, {60, 3.12}}
 
+// The flat damage each rank's hit loses under Forever.
+//
+// On the beta at level 30, rank 3 hits 5.0 below the client's points on every weapon we tried
+// (Rage of the Storm at 3.3 speed hit 33.3 for our 38.3 in 230 hits), rank 2 about 2 below
+// and rank 1 not at all. No database or server core has this, so it's likely a Forever server
+// change, and Classic keeps the full points. We haven't seen ranks 4 to 6 yet, so they keep
+// the client's points until a check at 36 or above (shaman_audit.md 7.3).
+var FlametongueWeaponCut = [FlametongueWeaponRanks + 1]float64{0, 0, 2, 5, 0, 0, 0}
+
 func (shaman *Shaman) flametongueRank() int {
 	return core.HighestRankAt(shaman.Level, FlametongueWeaponLevel[:])
 }
@@ -32,6 +41,10 @@ func (shaman *Shaman) newFlametongueImbueSpell(weapon *core.Item) *core.Spell {
 	maxDamage := FlametongueWeaponScaling[rank].At(FlametongueWeaponMaxDamage[rank], shaman.Level)
 
 	baseDamage := maxDamage / 4
+	cut := 0.0
+	if shaman.Env.IsForever() {
+		cut = FlametongueWeaponCut[rank]
+	}
 	spellCoeff := .1
 
 	return shaman.RegisterSpell(core.SpellConfig{
@@ -49,7 +62,7 @@ func (shaman *Shaman) newFlametongueImbueSpell(weapon *core.Item) *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if weapon.SwingSpeed != 0 {
-				damage := (baseDamage * weapon.SwingSpeed)
+				damage := baseDamage*weapon.SwingSpeed - cut
 				spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 			}
 		},

@@ -21,12 +21,12 @@ import (
 //
 // It adds 15% to the whole Flametongue Weapon hit. On the beta with 6 spell power and a 3.6
 // speed axe, rank 1 hit 19 every time, where (15.84 + 0.6) * 1.15 is 18.9 (16 or 17 with no
-// points). Rank 3 hit 31 or 32, where its 27.5 with no points times 1.15 is 31.6. So the per-rank
-// cut we see on the beta (shaman_audit.md 7.3) comes off before the 15%.
+// points). Rank 3 hit 31 or 32, where its 27.5 with no points times 1.15 is 31.6. So rank 3's
+// cut of 5 a hit (shaman_audit.md 7.3) comes off before the 15%.
 //
 // We pin Dark Edge of Insanity's damage roll to its minimum and take the level 30 target's
 // armor away, so every normal Windfury hit deals exactly 242 + 3.5 * (AP + 64.4) / 14. Every
-// normal Flametongue hit (rank 3, no spell power) deals 35.36 / 4 * 3.5 * 1.15.
+// normal Flametongue hit (rank 3, no spell power) deals (35.36 / 4 * 3.5 - 5) * 1.15.
 func TestOrcShamanElementalWeapons(t *testing.T) {
 	newSim := func(talents string, imbue proto.WeaponImbue) (*core.Simulation, *EnhancementShaman) {
 		items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotMainHand+1)
@@ -101,7 +101,7 @@ func TestOrcShamanElementalWeapons(t *testing.T) {
 				t.Fatalf("fire spell power is %.0f, want 0", sp)
 			}
 
-			want := 35.36 / 4 * 3.5 * c.multiplier
+			want := (35.36/4*3.5 - 5) * c.multiplier
 			hits := 0
 			imbue := enh.GetAura("Flametongue Imbue")
 			onHit := imbue.OnSpellHitDealt

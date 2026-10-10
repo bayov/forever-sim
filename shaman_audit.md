@@ -89,7 +89,7 @@ Weapon imbues
 The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (section 7, part 2). Each item is still open until its full summary, OK and test, and what each imbue procs and gets procced by is in 4.13.
 
 - [x] 7.2 Windfury Weapon: proc chance, ICD, two attacks, bonus attack power, which hits proc it
-- [?] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
+- [x] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
 - [ ] 7.4 Rockbiter Weapon: attack power
 - [ ] 7.5 Frostbrand Weapon: proc rate, damage
 - [ ] 7.6 Imbue rules: the shaman imbue beside an oil or stone (Forever), one imbue per weapon
@@ -858,7 +858,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.3 Flametongue Weapon
 
-- Shown to the user (2026-10-10), waiting for the OK.
+- The user OK'd the cut (2026-10-10): "put the cut but we need to remember to verify later ranks in the future". Ranks 4 to 6 are in notes.md Need to Verify.
 - The sim (`flametongue_weapon.go`): ranks at 10, 18, 26, 36, 46 and 56. Every landed main hand melee hit (white swings, Stormstrike and Windfury Weapon's attacks, blocks included, 4.13) makes a fire hit for the rank's points / 100 times the weapon's own speed, plus 10% of spell power that doesn't grow with speed (5.4). Rank 3 is 884 points at 30 (8.84 per second of speed), and rank 6 is 2810 at 60. The points grow for 6 levels on ranks 1 and 2 and 8 on the others, as in the client (7.1).
 - The hit rolls spell hit and spell crit (5.1, 5.3), and a crit deals 1.5 times (Elemental Fury raises it, section 8). Elemental Weapons multiplies the whole hit by 1.05, 1.1 or 1.15 (8.24). The hit doesn't trigger Elemental Devastation (section 8, beta untested in notes.md). On the same weapon it turns Flametongue Totem off (4.13). There's no level based partial resist under Forever (5.2).
 - Client 70338 (wago.tools): the six enchants (5, 4, 3, 523, 1665, 1666) have one effect each, the proc aura 436519 (SoD's spell, 100%, white swings and melee abilities). The hit is 10444 "Flametongue Attack", a fire hit with no points of its own and a 0.1 coefficient, so the server fills in each rank's amount. The rank spells "Flametongue Weapon Proc" (8026, 8028, 8029, 10445, 16343, 16344) hold the points the sim uses. The enchants last 60 min.
@@ -867,7 +867,10 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The sim gives 884 / 100 * 3.3 + 9.13 = 38.30, so rank 3 hits 5.0 below it. With only the 49 from gear it would give 34.07 and a cut of 0.8. But the 2026-10-08 hits at 6 spell power showed about 5 on the 3.6 speed axe, so the 10% goes on all our spell power and the cut is 5.0 on both weapons.
   - The cut on ranks 1 and 2 (0 and about 2) and the other weapons are in the part 2 pre-checks. The user kept the client's points for every rank on 2026-10-08, and notes.md Need to Verify has rank 6 at 60.
 - Already tested: `spell_ranks_test.go` (a normal hit at each rank's top level and rank 3 at 30, no spell power), `elemental_weapons_test.go` (rank 3 with 0 and 3 points) and `proc_matrix_test.go` (which hits proc it, and it turns Flametongue Totem off). Nothing tests the spell power part or the crit.
-- Proposed: put the measured cut in for ranks 2 and 3 (2 and 5 a hit, before Elemental Weapons), and keep ranks 4 to 6 on the client's points until a check at 36 or above. No preset uses Flametongue Weapon, so no preset moves. A new test checks a normal rank 3 hit at 30 with spell power on two weapon speeds (8.84 a second of speed, minus 5, plus 10% of spell power) and a crit at 1.5 times.
+- Changed (2026-10-10): under Forever, ranks 2 and 3 lose 2 and 5 a hit (`flametongue_weapon.go` FlametongueWeaponCut), before Elemental Weapons. Ranks 1 and 4 to 6 lose nothing until we see them at 36 or above. Classic keeps the full points. The goldens didn't move, and no preset uses Flametongue Weapon.
+- Tests:
+  - `flametongue_weapon_test.go` TestOrcShamanFlametongueWeapon checks every rank 3 hit at 30 with 91 spell power on Rage of the Storm (3.3) and Bloody Brass Knuckles (1.6): 8.84 a second of speed, minus 5, plus 9.1, and crits at 1.5 times. Rage of the Storm gives 33.27, where the beta averaged 33.3.
+  - `spell_ranks_test.go` TestOrcShamanImbueDamage takes 2 and 5 off ranks 2 and 3, and `elemental_weapons_test.go` wants (35.36 / 4 * 3.5 - 5) * 1.15 with 3 points.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

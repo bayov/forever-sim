@@ -71,9 +71,9 @@ func TestOrcShamanSpellRanks(t *testing.T) {
 // against the Forever client (70338, shaman_audit.md 7.1).
 //
 // Flametongue Weapon deals N / 25 per 4 sec of weapon speed at a rank's top level, and 1.68 a
-// level less for rank 3 below it. Frostbrand rank 1 grows 2.1 a level from 32 at 20 to 44.6 at
-// 26. We have no spell power and the target is our level, so every hit that doesn't crit deals
-// exactly that.
+// level less for rank 3 below it. Ranks 2 and 3 then lose the 2 and 5 a hit we see on the beta
+// (7.3). Frostbrand rank 1 grows 2.1 a level from 32 at 20 to 44.6 at 26. We have no spell
+// power and the target is our level, so every hit that doesn't crit deals exactly that.
 func TestOrcShamanImbueDamage(t *testing.T) {
 	flametongue, frostbrand := proto.WeaponImbue_FlametongueWeapon, proto.WeaponImbue_FrostbrandWeapon
 	cases := []struct {
@@ -83,17 +83,18 @@ func TestOrcShamanImbueDamage(t *testing.T) {
 		spellID  int32
 		damage   float64
 		perSpeed bool
+		cut      float64
 	}{
-		{"Flametongue rank 1 at 16", flametongue, 16, shaman.FlametongueWeaponSpellId[1], 440.0 / 25, true},
-		{"Flametongue rank 2 at 24", flametongue, 24, shaman.FlametongueWeaponSpellId[2], 653.0 / 25, true},
-		{"Flametongue rank 3 at 30", flametongue, 30, shaman.FlametongueWeaponSpellId[3], 1052.0/25 - 4*1.68, true},
-		{"Flametongue rank 3 at 34", flametongue, 34, shaman.FlametongueWeaponSpellId[3], 1052.0 / 25, true},
-		{"Flametongue rank 4 at 44", flametongue, 44, shaman.FlametongueWeaponSpellId[4], 1728.0 / 25, true},
-		{"Flametongue rank 5 at 54", flametongue, 54, shaman.FlametongueWeaponSpellId[5], 2372.0 / 25, true},
-		{"Flametongue rank 6 at 60", flametongue, 60, shaman.FlametongueWeaponSpellId[6], 2810.0 / 25, true},
-		{"Frostbrand rank 1 at 20", frostbrand, 20, shaman.FrostbrandWeaponSpellId[1], 32, false},
-		{"Frostbrand rank 1 at 26", frostbrand, 26, shaman.FrostbrandWeaponSpellId[1], 44.6, false},
-		{"Frostbrand rank 1 at 27", frostbrand, 27, shaman.FrostbrandWeaponSpellId[1], 44.6, false},
+		{"Flametongue rank 1 at 16", flametongue, 16, shaman.FlametongueWeaponSpellId[1], 440.0 / 25, true, 0},
+		{"Flametongue rank 2 at 24", flametongue, 24, shaman.FlametongueWeaponSpellId[2], 653.0 / 25, true, 2},
+		{"Flametongue rank 3 at 30", flametongue, 30, shaman.FlametongueWeaponSpellId[3], 1052.0/25 - 4*1.68, true, 5},
+		{"Flametongue rank 3 at 34", flametongue, 34, shaman.FlametongueWeaponSpellId[3], 1052.0 / 25, true, 5},
+		{"Flametongue rank 4 at 44", flametongue, 44, shaman.FlametongueWeaponSpellId[4], 1728.0 / 25, true, 0},
+		{"Flametongue rank 5 at 54", flametongue, 54, shaman.FlametongueWeaponSpellId[5], 2372.0 / 25, true, 0},
+		{"Flametongue rank 6 at 60", flametongue, 60, shaman.FlametongueWeaponSpellId[6], 2810.0 / 25, true, 0},
+		{"Frostbrand rank 1 at 20", frostbrand, 20, shaman.FrostbrandWeaponSpellId[1], 32, false, 0},
+		{"Frostbrand rank 1 at 26", frostbrand, 26, shaman.FrostbrandWeaponSpellId[1], 44.6, false, 0},
+		{"Frostbrand rank 1 at 27", frostbrand, 27, shaman.FrostbrandWeaponSpellId[1], 44.6, false, 0},
 	}
 	for _, c := range cases {
 		player := newOrcShaman(c.level, "", &proto.EnhancementShaman_Options{ShamanImbue: c.imbue})
@@ -116,6 +117,7 @@ func TestOrcShamanImbueDamage(t *testing.T) {
 		if c.perSpeed {
 			want *= enh.MainHand().SwingSpeed / 4
 		}
+		want -= c.cut
 		spell := enh.GetSpell(core.ActionID{SpellID: c.spellID})
 		if spell == nil {
 			t.Fatalf("%s: no spell %d", c.name, c.spellID)
