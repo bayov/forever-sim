@@ -30,7 +30,7 @@ func TestOrcShamanDamageModifiers(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sim, enh := newLevel30Sim(&proto.ItemSpec{Id: c.weapon}, proto.WeaponImbue_WindfuryWeapon, 0, 60)
+			sim, enh := newWeaponSim(30, &proto.ItemSpec{Id: c.weapon}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 60)
 			enh.PseudoStats.BonusPhysicalDamage += flatBonus
 			if enh.Stormstrike == nil || enh.WindfuryWeaponMH == nil {
 				t.Fatalf("missing Stormstrike or Windfury Weapon")
@@ -62,21 +62,22 @@ func TestOrcShamanDamageModifiers(t *testing.T) {
 	}
 }
 
-// newLevel30Sim starts a Forever sim of seconds of a level 30 Orc shaman with Stormstrike,
-// holding weapon with imbue on it, against a level 32 target with no armor. A trinket that
-// isn't 0 goes in the first trinket slot.
-func newLevel30Sim(weapon *proto.ItemSpec, imbue proto.WeaponImbue, trinket int32, seconds float64) (*core.Simulation, *EnhancementShaman) {
-	player := newOrcShaman(30, stormstrike, &proto.EnhancementShaman_Options{ShamanImbue: imbue})
+// newWeaponSim starts a Forever sim of seconds of an Orc shaman of level with Stormstrike,
+// holding weapon with imbue on it, against a target 2 levels up with no armor. Another
+// shaman gives us totem (Windfury or Flametongue Totem), and a trinket that isn't 0 goes in
+// the first trinket slot.
+func newWeaponSim(level int32, weapon *proto.ItemSpec, imbue proto.WeaponImbue, totem proto.TotemWeaponBuff, trinket int32, seconds float64) (*core.Simulation, *EnhancementShaman) {
+	player := newOrcShaman(level, stormstrike, &proto.EnhancementShaman_Options{ShamanImbue: imbue})
 	for range proto.ItemSlot_ItemSlotMainHand {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
 	}
 	player.Equipment.Items = append(player.Equipment.Items, weapon)
 	player.Equipment.Items[proto.ItemSlot_ItemSlotTrinket1].Id = trinket
 	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
-	target.Level = 32
+	target.Level = level + 2
 	target.Stats[proto.Stat_StatArmor] = 0
 	sim := core.NewSim(&proto.RaidSimRequest{
-		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{TotemWeaponBuff: totem}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: seconds, Targets: []*proto.Target{target}},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())

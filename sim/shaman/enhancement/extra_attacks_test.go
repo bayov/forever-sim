@@ -37,7 +37,7 @@ func TestOrcShamanExtraAttacks(t *testing.T) {
 // sec after it. Windfury Weapon's two attacks at 10 sec are yellow attacks, not extra
 // attacks, so the next swing stays where it was.
 func testExtraAttackSwingTimer(t *testing.T) {
-	sim, enh := newLevel30Sim(&proto.ItemSpec{Id: whirlwind}, proto.WeaponImbue_WindfuryWeapon, 0, 17)
+	sim, enh := newWeaponSim(30, &proto.ItemSpec{Id: whirlwind}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 17)
 	sim.PrePull()
 
 	// We take over the imbue's hit callback, so Windfury Weapon procs only when we cast it.
@@ -81,7 +81,7 @@ func testExtraAttackSwingTimer(t *testing.T) {
 // swing comes 10 ms after the proc, during the cooldown, so we leave it out.
 func testHandOfJustice(t *testing.T) {
 	const chance = 0.01
-	sim, enh := newLevel30Sim(&proto.ItemSpec{Id: whirlwind}, proto.WeaponImbue_WeaponImbueUnknown, common.HandOfJustice, 36000)
+	sim, enh := newWeaponSim(30, &proto.ItemSpec{Id: whirlwind}, proto.WeaponImbue_WeaponImbueUnknown, proto.TotemWeaponBuff_TotemWeaponBuffNone, common.HandOfJustice, 36000)
 	sim.PrePull()
 	hoj := enh.GetAura("Hand of Justice")
 	if hoj == nil {

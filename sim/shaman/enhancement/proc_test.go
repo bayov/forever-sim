@@ -22,7 +22,7 @@ func TestOrcShamanMeleeProcs(t *testing.T) {
 		rolls    = 40000
 		chance   = 3.6 / 60
 	)
-	sim, enh := newLevel30Sim(&proto.ItemSpec{Id: whirlwind, Enchant: crusader}, proto.WeaponImbue_WindfuryWeapon, 0, 60)
+	sim, enh := newWeaponSim(30, &proto.ItemSpec{Id: whirlwind, Enchant: crusader}, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone, 0, 60)
 	holyStrength := enh.GetAura("Crusader Enchant MH")
 	if holyStrength == nil || enh.Stormstrike == nil || enh.WindfuryWeaponMH == nil {
 		t.Fatalf("missing Crusader, Stormstrike or Windfury Weapon")
