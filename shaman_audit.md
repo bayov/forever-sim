@@ -92,7 +92,7 @@ The level 30 beta damage tests for 7.2 to 7.4 and 7.24 are in the Findings (sect
 - [x] 7.3 Flametongue Weapon: fire damage per hit by weapon speed, coefficient
 - [x] 7.4 Rockbiter Weapon: attack power
 - [x] 7.5 Frostbrand Weapon: proc rate, damage
-- [ ] 7.6 Imbue rules: the shaman imbue beside an oil or stone (Forever), one imbue per weapon
+- [?] 7.6 Imbue rules: the shaman imbue beside an oil or stone (Forever), one imbue per weapon
 
 Strikes and shocks
 
@@ -897,6 +897,17 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Tests: `frostbrand_weapon_test.go` TestOrcShamanFrostbrandWeapon.
   - In a 2 hour fight at 30 against a level 32 target, Rage of the Storm (3.3) procced on 937 of 1916 landed hits (48.9%, want 49.5%) and Bloody Brass Knuckles (1.6) on 989 of 3967 (24.9%, want 24%). Both must be within 4 standard errors. At 10 PPM the test fails on the Knuckles, and a flat chance would fail one of the two.
   - A normal hit with 100 spell power and Elemental Weapons 3/3 deals (flat damage + 10) * 1.15 for rank 2 at 30 (54) and 36 (72), rank 3 at 46 (117), rank 4 at 56 (159) and rank 5 at 60 (169.2).
+
+### 7.6 Imbue rules
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`shaman.go` getImbueProcMask and ApplyShamanImbue, `consumes.go`): we pick one shaman imbue in the class settings, and it goes on the main hand. A shaman can't dual wield under Forever, so there's no off hand imbue. A shaman imbue in the consumables' main hand slot (old saved settings, and the TestEnhancement golden) works the same way, and when both name the same imbue it applies once, so Rockbiter's attack power isn't added twice. An oil or stone in the consumables' main hand slot stacks with the shaman imbue. Which totems the imbue turns off is 4.13 and 7.19.
+- When the consumables and the class settings name two different shaman imbues, the sim applies both. The UI moves a shaman imbue saved in the consumables to the class settings, so only an old request sent straight to the sim can do this.
+- The sim also stacks the imbue and an oil or stone under the Classic ruleset, where a 1.12 weapon has one temporary enchant. We only sim Forever.
+- Client 70338 (wago.tools): the shaman imbues use a new enchant effect (360), as do the rogue poisons, the warlock's Firestone and Spellstone and Forever's "Imbue" scrolls. Oils and sharpening stones keep the old temporary enchant effect (54). So the client keeps them in two places, which fits the stacking.
+- Beta (WoWCombatLog-101026_150733.txt): at 19:28:26 Windfury Weapon went on Rage of the Storm and Flametongue 3 came off at the same moment, so a weapon holds one shaman imbue. Windfury put on at 20:54:18 ran out at 21:54:21, so it lasts 60 min (the cast spells say 1800 sec, the enchants 3600). We've never had an oil or stone on beside an imbue.
+- Already tested: nothing checks the stacking, the one imbue per weapon or the double Rockbiter guard.
+- Proposed: no change for Forever. Add a Beta item to notes.md Need to Verify: put a sharpening stone or an oil on, then an imbue, and check both stay. A new test checks that Rockbiter and a Brilliant Wizard Oil both give their stats, and that Rockbiter in both places adds its attack power once. Optional: when the class settings have a shaman imbue, ignore a different one in the consumables.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
