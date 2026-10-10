@@ -23,7 +23,6 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Beta: Stormstrike with a dagger. We give daggers the normalized 1.7 plus 0.3, so 2.0, but only two-handers and one-handers are tested. The test is the same as the one-hander's: a dagger with no Stormstrike bonus, boars of one level, and about 30 normal Stormstrikes and 30 normal white hits. The /run line for AP and weapon damage is in shaman_audit.md 4.1.
 * Server batch window (sim: white hits land with their procs 10 ms after the swing, like Classic Era servers). The user thinks Forever uses 10 ms too. A 400 ms window like the 1.12 servers would change how procs line up.
 * Beta: the glancing chance against mobs 4 or more levels above us (sim: at most 40%). At level 30 the beta glanced on 66 of 111 white swings against level 34 mobs (59%) and 6 of 8 against level 35. Without the cap the sim would give 50% and 60%. The user waits for more data (2026-10-10). Item 4.6.
-* Beta: Searing Totem's time between bolts (sim: 2.5 sec). The beta averages 2.558 sec across 34 gaps (2.42 to 2.88). The user waits for more data (2026-10-10). Item 7.22.
 
 ## Rogue
 
