@@ -213,7 +213,9 @@ Keep this current as you go.
   said to assume it works (2026-10-10), because it only matters at level 30 and the sims we
   care about most are level 60. The client agrees (item spell 1309422, +10% to Stormstrike
   only). We count it in when we read the user's Stormstrikes with Rage of the Storm.
-- [ ] 5. Flametongue procs and Elemental Devastation. 2026-10-10 respec run up to 21:25: the
+- [x] 5. Flametongue procs and Elemental Devastation. Settled 2026-10-11 in the sim's favor:
+  9 Flametongue Weapon crits on the fist (00:20 to 00:30) gave no buff, so no Flametongue
+  crit triggers it (beta_results.txt). 2026-10-10 respec run up to 21:25: the
   talent works on direct spell crits (2 of 2 Flame Shock crits gave the buff). Flametongue
   Totem crits (3) and Flame Shock tick crits don't give it, as in the sim. Fire Nova crits
   (5) don't either. The sim gave them the buff until 620a81c2 (the user's OK, 2026-10-10).
@@ -364,7 +366,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
   sim since 74d6e639): 884 / 100 x weapon speed - 5 + about 10% of spell power, times
   Elemental Weapons when we have it. At 49 spell power and no Elemental Weapons that's 14.0
   on the 1.6 fist and 29.1 on Rage of the Storm. Average the normal unresisted hits on each
-  weapon. An average more than about 0.5 off breaks it.
+  weapon. An average more than about 0.5 off breaks it. The fist averaged 14.03 over 117 hits
+  (2026-10-11).
 - Fire Nova hits name damage spell 408424 at rank 2 and do 102.94 to 117.06 + 21.4% of spell
   power (item 11). The raw field drops the fraction. With Call of Flame 3 and Improved Fire
   Nova 2 that's times 1.15 x 1.2 (audit 5.6, 156.5 to 176.0 at 49 spell power). A hit over
@@ -411,7 +414,9 @@ combat log, run these checks on it too, and tell the user when one breaks.
   ones up to 18:42, and none of the 30 misses, dodges and parries or the 8 killing blows).
 - Healing Stream crits under Forever (the audit session's sim change). Our own totems' heals
   crit on 29 of 605 up to 19:52 (4.8%), well under the sheet's 12.3% spell crit, while
-  Searing Totem's bolts crit at the full chance. Count only heals from our own totems: the
+  Searing Totem's bolts crit at the full chance. The 23:25 log (2026-10-11) had 32 of 384
+  (8.3%) at 11.81%, 3 standard errors over the sim's flat 5%, so 61 of 989 (6.2%) together.
+  Heals on the totem itself count too (14 of the 32). Count only heals from our own totems: the
   log has other shamans' totems too.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in

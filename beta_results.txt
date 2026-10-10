@@ -1152,3 +1152,35 @@ Same log, up to 00:16:54, same fist setup. 12 crits in the 69 procs after 00:09:
     at 00:05:01 gave it, like the Earth Shock crit at 23:28:14.
   - Rechecks: 426 of 426 landed swings in range procced the totem. No partial resists. Orbs 0
     misses and 0 crits in 20. Fire Nova raw 115 to 127 (17 hits). Fist raw 68 to 90.
+
+
+2026-10-11  Flametongue Weapon and Elemental Devastation (item 5, audits 4.13 and 7.3)
+--------------------------------------------------------------------------------------
+Same log, 00:20:22 to 00:30:37. Flametongue Weapon rank 3 ("Flametongue 3") on the fist
+(Bloody Brass Knuckles, 1.6), same talents and gear as the 23:54 export (49 spell power, 11.81%
+spell crit, Elemental Devastation 3, no Elemental Weapons). Mobs of level 27 to 29.
+  - Elemental Devastation: Flametongue Weapon crit 9 times in 126 hits, 7 with no other crit of
+    ours within 0.2 sec, and none of the 9 gave the buff. No buff came at all in the window
+    (no shock crit either). The talent worked in the same log on direct shock crits (23:28:14
+    and 00:05:01). So Flametongue Weapon crits don't trigger it, as in the sim. Item 5 is
+    settled: Flametongue Weapon, Flametongue Totem, Fire Nova and Flame Shock tick crits don't
+    give it, and direct shock crits do.
+  - Flametongue Weapon damage (audit 7.3): 117 normal hits averaged 14.03 (113 at 14 and 4 at
+    15, raw 14 on all), where the sim's 884 / 100 x 1.6 - 5 + 4.9 = 14.04. Crits did 21 and 22,
+    1.5 times. This is the second weapon speed after Rage of the Storm's 3.3 that fits the
+    flat 5 cut.
+  - Flametongue Weapon crit 9 of 126 (7.1%), where 11.81% expects 14.9 +- 3.6 (1.6 below).
+    With the 24 of 198 at 12.3% from 2026-10-10, 33 of 324 against 39.2 expected (1.0 below).
+    Record only, the sim gives it our spell crit.
+  - Flametongue Weapon procced on 127 of 135 landed swings (one proc missed). The other 8 were
+    all killing blows. None on the 20 missed, dodged or parried swings.
+  - Flametongue Totem (cast 00:30:11) gave no proc on the 12 landed swings in range while the
+    imbue was on, as in the sim (the same kind of imbue turns the totem's buff off).
+  - Rechecks: Searing Totem bolts raw 20 to 25 (11 hits, 3 crits). Orbs: 2 IMMUNE on a
+    Thundering Boulderkin, no real miss in 8. Fire Nova raw 114 to 126 (4 hits). Fist raw 68 to
+    90. No partial resists.
+  - Healing Stream crits, the whole log: 32 of 384 heals from our totem (8.3%), 18 of 168 on us
+    and 14 of 216 on the totem itself. The sim's flat 5% expects 19.2 +- 4.3, 3.0 standard
+    errors below. Our spell crit (11.81%) expects 45.4, 2.1 above. The 15:07 log had 29 of 605
+    (4.8%) at 12.3% up to 19:52, so the two runs together are 61 of 989 (6.2%), 1.7 above a
+    flat 5%. Not a break yet. Keep counting.
