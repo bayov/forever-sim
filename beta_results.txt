@@ -1075,3 +1075,27 @@ Ghost Wolf 2, Shamanistic Focus 1, Anticipation 3). Rage of the Storm (3.3 on th
 crit 12.02%, melee crit 10.43%, spell power 49, max mana 2380, no imbue yet. Unarmed 147.
   - Expected for item 12 in 400 Flametongue Totem procs: 48 crits with our spell crit, 42 with
     our melee crit, 32 with a flat 8% (each give or take about 6).
+
+
+2026-10-10  Export with the fist and shield (23:54:05)
+------------------------------------------------------
+Same talents as the 23:14:55 export. Bloody Brass Knuckles (1.6) with Elementalist's Guard
+(shield) and Polished Driftwood Icon, since a weapon swap at 23:26:33. Spell crit 11.81%,
+melee crit 10.39%, spell power 49, attack power 387, Intellect 127, max mana 2290, max health
+1115, Unarmed 149. The sheet's damage 68.23 to 90.23 is the fist's 24 to 46 + 387 / 14 x 1.6.
+  - Expected for item 12 in 400 Flametongue Totem procs: 47.2 +- 6.5 crits with our spell
+    crit, 41.6 +- 6.1 with our melee crit, 32.0 +- 5.4 with a flat 8%.
+
+Log WoWCombatLog-101026_232548.txt up to 23:53:58 (Windfury Weapon and Flametongue Totem on the
+fist from 23:26:33, mobs of level 27 to 29):
+  - Flametongue Totem crit (item 12): 29 of 229 (12.7%). Our spell crit expects 27.0, melee
+    crit 23.8 and a flat 8% 18.3. This run favors our spell crit over a flat 8% 17 to 1, and
+    over melee crit 1.7 to 1. Pooled with the two earlier runs, our spell crit leads a flat
+    8% 13 to 1 and the best flat rate (9%) 5.8 to 1. The user keeps going to about 400.
+  - Elemental Devastation (item 5): none of the 29 Flametongue Totem crits, 2 Flame Shock tick
+    crits, 50 white crits or 7 Windfury Weapon attack crits gave the buff. The one Earth Shock
+    crit (23:28:14) did. All as in the sim. No Flametongue Weapon hits yet.
+  - Rechecks: the totem procced only on landed white swings, on 229 of 229 in range of a
+    live totem on a mob that lived. The 35 without a proc were 13 killing blows, 6 swings on
+    a mob that died within 130 ms and 16 over 30 yards. No partial resists. Fist raw 68 to
+    90, inside the model at 387 AP.

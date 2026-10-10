@@ -64,6 +64,6 @@ Some scripts hold numbers from one character and one day, like the weapon models
 ## Things that are fixed in the code
 
 - The weapon models in `recheck.py`: Rage of the Storm (3.3) at 389 and 392 attack power,
-  and Bloody Brass Knuckles (1.6, 24 to 46) at 397. Update them from a new `/bayov export`.
+  and Bloody Brass Knuckles (1.6, 24 to 46) at 397 and 387. Update them from a new `/bayov export`.
 - The mob's level is the level field on lines the mob is the source of (`f[-11]` on
   SWING_DAMAGE, `f[-12]` on SPELL_DAMAGE). On our own lines that field is our item level.

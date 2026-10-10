@@ -25,11 +25,11 @@ print(f'swings {len(swings)} (landed {len(landed)}), Stormstrike {len(ss)}')
 
 # White raw range and Stormstrike raw vs the weapon models. Rage of the Storm (3.3, 2H) at sheet
 # AP 389 up to the respec and 392 after it. Bloody Brass Knuckles (1.6, 24-46) at 397 AP from
-# the 21:30 export, so a raw under 150 is the fist.
+# the 21:30 export and 387 from the 23:54 export, so a raw under 150 is the fist.
 wr = sorted(cl.dmg(e)['raw'] for e in landed)
 big = [r for r in wr if r >= 150]; fist = [r for r in wr if r < 150]
 if big: print(f'white raw, Rage of the Storm {big[0]} to {big[-1]} (model at 389 AP: 191.7 to 238.7, at 392: 192.4 to 239.4)')
-if fist: print(f'white raw, Bloody Brass Knuckles {fist[0]} to {fist[-1]} (model at 397 AP: 69.4 to 91.4)')
+if fist: print(f'white raw, Bloody Brass Knuckles {fist[0]} to {fist[-1]} (model at 397 AP: 69.4 to 91.4, at 387: 68.2 to 90.2)')
 ssr = [cl.dmg(e)['raw'] for e in ss if e.ev == 'SPELL_DAMAGE']
 bad = [r for r in ssr if not 220 <= r <= 272]
 print(f'Stormstrike raw {sorted(ssr)}  outside 220.0-271.7: {bad}')
