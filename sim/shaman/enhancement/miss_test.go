@@ -107,3 +107,90 @@ func newTargetLevelSim(level, targetLevel, weapon int32, skill float64, talents 
 	sim.Reset()
 	return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
 }
+
+// TestOrcShamanSpellMissChance checks the chance our spells miss, by the target's level and
+// our spell hit.
+//
+// It's 4% against our level, 1% less for every level below us and never under 1%. Above us
+// it's 5% and 6% at 1 and 2 levels, 17% at 3 levels and 11% more for every level past that.
+// Our spell hit comes off it, down to the 1% floor. Under Forever the hit on our gear counts
+// for spells too, so Tarnished Elven Ring's 1% melee hit helps Lightning Bolt. Tidal Focus
+// gives 1% spell hit a point.
+func TestOrcShamanSpellMissChance(t *testing.T) {
+	const tarnishedElvenRing = 18500
+	const tidalFocus = "--00005"
+	cases := []struct {
+		name               string
+		level, targetLevel int32
+		talents            string
+		ring               int32
+		hit                float64
+		want               float64
+	}{
+		{"5 levels below us", 30, 25, "", 0, 0, 0.01},
+		{"3 levels below us", 30, 27, "", 0, 0, 0.01},
+		{"2 levels below us", 30, 28, "", 0, 0, 0.02},
+		{"1 level below us", 30, 29, "", 0, 0, 0.03},
+		{"the same level", 30, 30, "", 0, 0, 0.04},
+		{"1 level above us", 30, 31, "", 0, 0, 0.05},
+		{"Vishas (2 levels above us)", 30, 32, "", 0, 0, 0.06},
+		{"3 levels above us", 30, 33, "", 0, 0, 0.17},
+		{"4 levels above us", 30, 34, "", 0, 0, 0.28},
+		{"5 levels above us", 30, 35, "", 0, 0, 0.39},
+		{"level 60 against a level 63 boss", 60, 63, "", 0, 0, 0.17},
+		{"Tidal Focus 5/5 against the boss", 60, 63, tidalFocus, 0, 0, 0.12},
+		{"a ring's 1% melee hit against the boss", 60, 63, "", tarnishedElvenRing, 0, 0.16},
+		{"Tidal Focus 5/5 at the same level", 30, 30, tidalFocus, 0, 0, 0.01},
+		{"20% hit against the boss", 60, 63, "", 0, 20, 0.01},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			player := newOrcShaman(c.level, c.talents, &proto.EnhancementShaman_Options{})
+			for range proto.ItemSlot_ItemSlotFinger1 {
+				player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
+			}
+			player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: c.ring})
+			target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+			target.Level = c.targetLevel
+			sim := core.NewSim(&proto.RaidSimRequest{
+				Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+				Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
+				SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+			}, simsignals.CreateSignals())
+			sim.Reset()
+			enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+			enh.AddStatDynamic(sim, stats.SpellHit, c.hit*core.SpellHitRatingPerHitChance)
+
+			bolt := topRank(t, "Lightning Bolt", enh.LightningBolt)
+			attackTable := enh.AttackTables[enh.CurrentTarget.UnitIndex][bolt.CastType]
+			if got := bolt.SpellChanceToMiss(attackTable); math.Abs(got-c.want) > 1e-9 {
+				t.Errorf("Lightning Bolt misses %.4f, want %.4f", got, c.want)
+			}
+		})
+	}
+}
+
+// TestOrcShamanSpellMissRolls checks that Lightning Bolt really misses a level 63 boss 17% of
+// the time at level 60, over 40000 rolls (within 4 standard errors, 0.75%).
+func TestOrcShamanSpellMissRolls(t *testing.T) {
+	sim, enh := newShamanSim(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+	if level := enh.CurrentTarget.Level; level != 63 {
+		t.Fatalf("the target is level %d, want 63", level)
+	}
+	bolt := topRank(t, "Lightning Bolt", enh.LightningBolt)
+	const rolls = 40000
+	misses := 0
+	at(sim, 1, func(sim *core.Simulation) {
+		for range rolls {
+			if result := bolt.CalcDamage(sim, enh.CurrentTarget, 1, bolt.OutcomeMagicHitAndCrit); !result.Landed() {
+				misses++
+			}
+		}
+	})
+	runSim(sim)
+
+	got := float64(misses) / rolls
+	if limit := 4 * math.Sqrt(0.17*0.83/rolls); math.Abs(got-0.17) > limit {
+		t.Errorf("Lightning Bolt missed %.4f of %d rolls, want 0.17 within %.4f", got, rolls, limit)
+	}
+}

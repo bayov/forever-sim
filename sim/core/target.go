@@ -296,10 +296,16 @@ type AttackTable struct {
 
 // spellMissChance is the chance a spell misses an enemy that many levels above the caster.
 //
-// It is 4%, 5% and 6% up to 2 levels above, 17% at 3 levels, and 11% more for every
-// level past that, up to 99%. So a level 20 misses a level 25 enemy 39% of the time and
-// a level 30 enemy 94% of the time.
+// It is 4% at our level, 5% and 6% at 1 and 2 levels above, 17% at 3 levels, and 11% more
+// for every level past that, up to 99%. So a level 20 misses a level 25 enemy 39% of the
+// time and a level 30 enemy 94% of the time.
+//
+// Below our level it drops 1% a level, to 3%, 2% and 1% at 1, 2 and 3 levels below, and
+// it never goes under 1%.
 func spellMissChance(levelDiff int32) float64 {
+	if levelDiff < 0 {
+		return max(0.04+0.01*float64(levelDiff), 0.01)
+	}
 	if levelDiff <= 3 {
 		return UnitLevelFloat64(levelDiff, 0.04, 0.05, 0.06, 0.17)
 	}
