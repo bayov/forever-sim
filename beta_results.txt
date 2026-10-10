@@ -1025,7 +1025,7 @@ Weapon and Flametongue Totem, mobs of level 27 to 32. The user leveled Unarmed f
     cast lines show it: from 22:11:30 to 22:13:05 the logged spell power is 53, not 49 (max
     health 1505 then 1445, max mana 2275 then 2170). At 53, Flame Shock is (45.4 + 0.214 x 53)
     x 1.15 = 65.3 and its ticks (14 + 5.3) x 1.15 = 22.2, as logged. Explained, nothing new
-    (tools/beta_log/gear.py finds such swaps).
+    (tools/combat_log/gear.py finds such swaps).
   - Rechecks: white raw on the fist 69 to 91 (69.4 to 91.4, the raw drops the fraction).
     Flametongue Totem procced on 208 of 208 landed swings in range, none on the 11 killing
     blows. Mob parry haste fits 39 of 39 single parries within 0.1 sec. The one exception is

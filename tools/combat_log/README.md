@@ -1,24 +1,30 @@
-# Beta combat log helpers
+# Combat log helpers
 
-Scripts the beta verification session uses to read the Forever beta's combat log
-(`beta_handoff.md` has the tests and the recheck list they serve). They started in a
-session scratchpad, and moved here when `/tmp` was wiped on 2026-10-10.
+Scripts that read a WoW Forever combat log: the parser, damage and proc counts, glancing,
+parry haste, partial resists and gear swaps. They started in the beta verification session
+(`beta_handoff.md` has the tests and the recheck list they served), but they work on any log
+from the beta or the live game. They moved here from a session scratchpad when `/tmp` was
+wiped on 2026-10-10.
 
 ## Reading the log
 
-The user turns logging on with `/combatlog` in the beta client, and the file lands in
-`/mnt/d/Gaming/World of Warcraft/_classic_beta_/Logs/WoWCombatLog-MMDDYY_HHMMSS.txt`.
+The user turns logging on with `/combatlog` in the game, and the file lands in the client's
+`Logs` directory as `WoWCombatLog-MMDDYY_HHMMSS.txt`. For the beta that is
+`/mnt/d/Gaming/World of Warcraft/_classic_beta_/Logs/`.
 
 The file grows while the user plays. Copy it to a scratch file first and run every script on
 that copy, or two scripts can read different data:
 
 ```sh
 cp "/mnt/d/Gaming/World of Warcraft/_classic_beta_/Logs/WoWCombatLog-101026_150733.txt" /tmp/log.txt
-python3 -I tools/beta_log/recheck.py /tmp/log.txt 21:32:25 [22:16:00]
+python3 -I tools/combat_log/recheck.py /tmp/log.txt 21:32:25 [22:16:00]
 ```
 
 Every script takes the log and an optional window, as `HH:MM:SS` strings compared against
 each line's time of day. They import `cl.py` from their own directory, so `python3 -I` works.
+
+Some scripts hold numbers from one character and one day, like the weapon models in
+`recheck.py` and the fist weapon cutoff in `glance.py`. The last section lists them.
 
 ## The scripts
 

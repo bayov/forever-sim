@@ -128,7 +128,7 @@ commit ID and message.
 
 - Raw data (every hit, every timestamp, the /run output) goes in `beta_results.txt`. The
   user chose a new file over bringing `beta_log.txt` back (2026-10-10).
-- The log reading scripts are in `tools/beta_log/` (its README says how to run them). Copy the
+- The log reading scripts are in `tools/combat_log/` (its README says how to run them). Copy the
   log to a scratch file first, because it grows while the user plays. Keep the scripts there,
   not in a scratchpad: `/tmp` was wiped once (2026-10-10) and took them with it.
 - A settled item comes off the Need to Verify list in `notes.md`. When it settles in the
@@ -313,7 +313,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   Leave out swings where the totem wasn't up or in range, and swings where a Windfury Weapon
   attack or an orb killed the mob within 130 ms (the proc comes 0 to 10 or 90 to 127 ms
   after the swing). The buff stays a few seconds after we run 40 or more yards from the
-  totem. tools/beta_log/ftt.py sorts every landed swing by the totem's state. Up to 19:52 all
+  totem. tools/combat_log/ftt.py sorts every landed swing by the totem's state. Up to 19:52 all
   67 swings in range of a live totem on a mob that lived procced, and 63 of 63 from 20:09 to
   20:25.
 - Flametongue Weapon procs on every landed swing and Stormstrike (blocks too) and never on a
@@ -329,7 +329,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   sec, and the next cast starts about 0.22 sec after it, or about 0.6 sec in a quarter of
   the gaps. It doesn't wait for the bolt to land, which flies 19 yards a second: the gap is
   the same with the totem 2 or 19 yards away. Over 72 gaps up to 16:16 the mean is 2.527 sec,
-  plus 21 gaps from 18:27 to 18:42 at 2.480, so 2.516 over 93 (sim 2.5), and a 40 sec totem fires 16 bolts. tools/beta_log/searing.py leaves out gaps
+  plus 21 gaps from 18:27 to 18:42 at 2.480, so 2.516 over 93 (sim 2.5), and a 40 sec totem fires 16 bolts. tools/combat_log/searing.py leaves out gaps
   where the mob moved or the totem switched mobs.
 - Partial resists on our spells, by mob level (audit 5.2, the audit session proposed to drop
   the sim's level based partial resists under Forever). Count the landed hits of spells
@@ -347,7 +347,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Spell crits by spell and by mob level (audit 5.3, the audit session). Count crits out of
   landed hits, Lightning Shield left out because it never crits. On spell lines the crit flag
   is row[-4], because of the trailing "ST". Leave Windfury Weapon's attacks out, they're
-  melee. tools/beta_log/crit.py counts by spell group and level. Base totals, the whole
+  melee. tools/combat_log/crit.py counts by spell group and level. Base totals, the whole
   WoWCombatLog-101026_150733.txt up to 19:32:39 (12.3% spell crit on the sheet): Searing
   27/215, shocks 8/82, Fire Nova 4/23 (together 39/320, 12.2%), Flametongue Weapon 24/198
   (12.1%), Flametongue Totem 5/82 (6.1%), Flame Shock ticks 15/122 (at 1.5x, audit 5.7).
@@ -375,7 +375,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   swing sooner. With 20 to 60% left, it comes 20% of the swing after the parry. With 20% or
   less left, nothing changes. Base counts up to the audit session's read: 58 of 58 mob
   parries within 0.1 sec, and 23 of our 25 within 0.16 sec (the other 2 waited on a cast).
-  tools/beta_log/parry.py (from the audit session's enemy/fit.py) takes each mob's speed from
+  tools/combat_log/parry.py (from the audit session's enemy/fit.py) takes each mob's speed from
   its most common swing interval, so the 3.05 sec Boulderkin and the 1.2 sec Needles Cougar
   fit too. It breaks ties in the same ms by file order. The whole log up to 20:25: mobs 72
   of 73 within 0.1 sec (largest 0.11), us 23 of 29 within 0.1 sec, 3 more within 0.16
@@ -394,7 +394,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   Whole log up to 20:09 by mob level: 0/175 at levels 24 to 28, 1/68 at 29 (a Thundering
   Boulderkin at 19:58, the first glance below our level), 0/7 at 30, 3/11 at 32, 23/57 at 33,
   102/187 at 34, 6/8 at 35. Plus 20:09 to 20:18: 1/9 at 31 and 20/50 at 32. Whole log up
-  to 20:25: 3/33 at 31, 25/72 at 32 (35%), 26/66 at 33 (39%). tools/beta_log/glance.py counts by level, with the mob's level from its spell
+  to 20:25: 3/33 at 31, 25/72 at 32 (35%), 26/66 at 33 (39%). tools/combat_log/glance.py counts by level, with the mob's level from its spell
   lines too. The level field on our own lines is our item level (33), not our level. Add
   each new log to these. Without the cap the sim would give 50% at +4 and 60% at
   +5. The glance at -1 fits glancing on our real weapon skill (149): 10% plus 2% a point of
