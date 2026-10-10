@@ -218,8 +218,9 @@ Keep this current as you go.
   dodge and spell crit follow the sim's formulas (level 1 health is 10 under, no preset uses
   it). A level 1 Undead mage (2026-10-10) shows the same shift, so Forever changed the
   Undead race: about +3 Str, +1 Agi and -5 Spi against 1.12's Undead, for every class (the
-  Undead rogue too). The paladin and the mage disagree by 1 Spirit. Asked for level 1
-  Undead priest, warlock and rogue exports before the sim change.
+  Undead rogue too). A level 1 Undead rogue gives exactly +3 / +1 / 0 / 0 / -5 against the
+  1.12 Undead rogue, and the mage fits if cmangos' Undead mage row has Int and Spi swapped.
+  The sim change was shown to the user.
 - [x] 9. Can Lightning Shield's orbs miss (audit 5.1, added by the audit session 2026-10-10).
   It rides along with item 2's run: Lightning Shield up, part of the fights on level 33 mobs.
   Answered 2026-10-10: 14 of 71 orbs missed and none of 57 hits crit. The user OK'd it, and

@@ -44,7 +44,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Consecrated Ground: all Holy damage and every target?
 * Holy Power scope.
 * Swift Judgement and Pursuit of Justice are not implemented.
-* Beta: Undead paladin base stats. 1.12 has no Undead paladin, so the sim builds the row from the Human paladin and the Undead warrior. A naked level 20 Undead paladin on the beta (2026-10-10) has Str 44, Agi 30, Sta 42, Int 30, Spi 34, and the sim has 41 / 29 / 42 / 30 / 39. Everything built from them (health, mana, AP, crit, dodge) follows the sim's formulas. A level 1 Undead paladin and mage show the same shift, so Forever changed the Undead race: about +3 Str, +1 Agi and -5 Spi against 1.12's Undead for every class, the Undead rogue too (the paladin and mage disagree by 1 Spirit). Level 1 Undead priest, warlock and rogue exports would pin it down.
+* Beta: Undead paladin base stats. 1.12 has no Undead paladin, so the sim builds the row from the Human paladin and the Undead warrior. A naked level 20 Undead paladin on the beta (2026-10-10) has Str 44, Agi 30, Sta 42, Int 30, Spi 34, and the sim has 41 / 29 / 42 / 30 / 39. Everything built from them (health, mana, AP, crit, dodge) follows the sim's formulas. A level 1 Undead paladin and mage show the same shift, so Forever changed the Undead race: about +3 Str, +1 Agi and -5 Spi against 1.12's Undead for every class, the Undead rogue too A level 1 Undead rogue gives exactly +3 / +1 / 0 / 0 / -5 against the 1.12 Undead rogue.
 
 ## At 60
 

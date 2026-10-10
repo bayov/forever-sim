@@ -386,3 +386,27 @@ The rest, from the beta's attributes:
   the level 1 base health is off for both, in different directions. No preset uses it.
   Mana regen 5.501 a sec = 22 Spirit x 0.25. That is the shaman and paladin formula, so the
   mage follows it under 50 Spirit (item 7). The 1.12 mage formula would give 9 a sec.
+
+
+2026-10-10  Level 1 Undead rogue (item 8)
+-----------------------------------------
+`/bayov export` at 17:25, a new character in its starting gear (no stats but armor, every
+"pos" 0). No talents. Daggers 1 of 5, Defense 1 of 5.
+
+  Attributes (Str / Agi / Sta / Int / Spi):
+    beta Undead rogue         23 / 22 / 22 / 18 / 20
+    sim (1.12 Undead rogue)   20 / 21 / 22 / 18 / 25
+
+The same +3 Str, +1 Agi, -5 Spi as the paladin, here against a real 1.12 Undead row. The mage
+fits too if cmangos' level 1 Undead mage row has Intellect and Spirit swapped (19 / 18 / 21 /
+27 / 21, where the race and class add up to 21 Int and 26 or 27 Spi). So the paladin and mage
+gap of 1 Spirit came from comparing against the Human, whose Spirit gap to the 1.12 Undead
+changes by class.
+
+The rest matches the sim from the beta's attributes:
+  Health 65 = 25 + 20 + 2 x 10. Attack power 27 = 2 - 20 + 23 + 22.
+  Crit 9.406%: 22 x 0.4350 = 9.570, less 0.16% for Daggers at 1 of 5.
+  Dodge 18.971%: 22 x 0.8699 = 19.138, less 0.16% for Defense at 1 of 5.
+
+What it showed: Forever's Undead race is 1.12's + 3 Strength + 1 Agility - 5 Spirit, for the
+paladin, rogue and mage alike.
