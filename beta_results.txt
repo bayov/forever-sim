@@ -1438,3 +1438,25 @@ Quickness. Unarmed 150 of 150.
     sqrt 12), so 2.6 and 2.7 need about 50 Stormstrikes without Blood Fury to separate at
     3 standard errors. About 12 rule out 2.4.
   - First ones: 104 and 104 without Blood Fury, 123 with it up.
+  - Result to 00:54:27 on the fist. 45 Stormstrikes without Blood Fury, raw 97 to 121, mean
+    111.83 +- 0.95. Split by the cast line's AP field (583), so Blood Fury (641) and the 4
+    Venture Co. Enforcer Disarms (402) are left out.
+    - With the sheet's 395 attack power the speed is 2.72 +- 0.03. 2.7 is 0.7 standard
+      errors off, 2.6 is 3.7 and 2.4 is 9.6.
+    - Stormstrike minus the white hits' mean (any flat extra per hit cancels) gives 2.67 +-
+      0.04. 2.7 is 0.8 off, 2.6 is 1.9.
+    - The ranges: 120, 121 and 121 are past 2.6's top (119.4), and 97 (00:27:47) is under
+      2.7's floor (100.2). Nothing in the log explains the 97.
+    - Tonight's 188 white hits average 81.64 against the model's 80.14 (+3.2 standard
+      errors), raw 69 to 92 where the model allows 69 to 91. Windfury attacks (56) average
+      86.96 against 85.40. The 720 fist hits on 2026-10-10 matched the sheet. Read as
+      attack power, the white hits give 408, and then the speed is 2.64 +- 0.04.
+    - So 2.4 is out and 2.7 is ahead of 2.6, but 2.6 isn't ruled out while the white hits
+      run high.
+  - Blood Fury on the fist: 9 Stormstrikes, mean 120.83 +- 2.12. At 2.7 the weapon part
+    gives 122.30 (0.7 under) and +10% attack power alone 118.80 (1.0 over). 30 white hits
+    average 89.73: the weapon part gives 88.16, attack power alone 84.66.
+  - Disarmed (AP field 402): every white swing is a flat 59 every 2.0 sec, and both
+    Stormstrikes were 59 too.
+  - Implied sim change, waiting for the user's OK: the dagger's Stormstrike speed 2.0 to
+    1.8. One-handers stay at 2.7 and two-handers at 3.6.

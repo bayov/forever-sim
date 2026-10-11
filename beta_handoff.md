@@ -196,8 +196,9 @@ Maelstrom Weapon 34, everything under "At 60").
 
 Keep this current as you go.
 
-Saved by the user for a later session (2026-10-11): Frostbrand Weapon (14), dagger
-Stormstrike (4, with Stormstrike under Blood Fury) and Spirit regen of the other classes (7).
+Saved by the user for a later session (2026-10-11): Frostbrand Weapon (14) and Spirit regen
+of the other classes (7). Dagger and fist Stormstrike (4) ran on 2026-10-12, and the dagger
+change waits for the user's OK.
 Every other item is settled, parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
 23:25 log had 8.3%, over the sim's flat 5%.
 
@@ -226,8 +227,13 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   client's dagger speed) fits, 1.7 is 2.9 standard errors off. Asked for about 15 more to
   settle 1.8 against 1.7. One-hand 2.6 against 2.7 needs a one-hander that isn't a dagger.
   To 00:09 on 2026-10-12: 27 Stormstrikes fit 1.792 +- 0.016, so 1.8 (1.7 is 5.7 standard
-  errors off). 7 with Blood Fury up lean toward its weapon part. Sim change proposed,
-  waiting for the user's OK: 1.8 for daggers, and 2.6 for one-handers by the same rule.
+  errors off). 7 with Blood Fury up lean toward its weapon part.
+  2026-10-12 00:17 to 00:54, the fist (Bloody Brass Knuckles, 1.6): 45 Stormstrikes fit 2.72
+  +- 0.03 at the sheet's 395 attack power, so 2.7 leads 2.6 (3.7 standard errors) and 2.4 is
+  out. Tonight's white hits run 1.5 over the model (+3.2 standard errors), and read as
+  attack power they'd give 2.64, so 2.6 isn't fully out. Blood Fury on Stormstrike fits its
+  weapon part on both weapons. Sim change proposed, waiting for the user's OK: 1.8 for
+  daggers only. One-handers stay at 2.7.
 - [x] 5. Flametongue procs and Elemental Devastation. Settled 2026-10-11 in the sim's favor:
   9 Flametongue Weapon crits on the fist (00:20 to 00:30) gave no buff, so no Flametongue
   crit triggers it (beta_results.txt). 2026-10-10 respec run up to 21:25: the
@@ -412,7 +418,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   (item 9). A crit, or a miss rate far from the spell table, breaks it. Count only MISS. An
   IMMUNE is a mob immune to Nature, like Thundering Boulderkin.
 - Stormstrike's raw damage stays inside (weapon roll + AP / 14 x 3.6) x the percent bonuses,
-  with 2.7 for one-handers (item 4). Rage of the Storm's +10% is assumed. Read AP from the
+  with 2.7 for one-handers and 1.8 for daggers (item 4). Rage of the Storm's +10% is assumed. Read AP from the
   white hits in the same log, not the sheet. A hit outside the range breaks it.
 - Blood Fury: white hits and Windfury attacks with it up average 1.1 times the ones without
   it (+10% attack power plus 10% of the weapon's average, item 18). A Stormstrike with it up
