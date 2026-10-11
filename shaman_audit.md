@@ -133,7 +133,7 @@ Totems
 
 Elemental
 
-- [ ] 8.1 Convection
+- [?] 8.1 Convection
 - [ ] 8.2 Concussion
 - [ ] 8.3 Elemental Warding
 - [ ] 8.4 Reverberation
@@ -1245,6 +1245,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - A test: at level 30 a 100 raw hit from a level 30 mob loses 11 before our armor, at level 60 30, and none once a Tremor Totem takes the earth slot.
 - Changed (2026-10-11): under Forever, Stoneskin takes the top rank's amount at our level (4, 7, 11, 16, 22 or 30) off each physical hit on us before armor (`buffs.go` foreverStoneskinTotemAura). Core has a new flat reduction for that, `BonusPhysicalDamageTakenBeforeArmor`, applied just before armor (`spell_resistances.go`). It leaves periodic damage alone, because no enemy in the sim deals physical damage over time. Another shaman's totem gives the same amount. Guardian Totems adds 10% a point and keeps the fraction. Classic keeps its 30 after armor. No golden changed.
 - `stoneskin_test.go` TestOrcShamanStoneskinTotem, with 572 armor at level 30 like the first log: a 100 raw hit loses 11 before armor at 30, 30 at 60, 13.2 with Guardian Totems 2, and 11 from another shaman's totem at 30. A hit smaller than the reduction deals nothing, and Tremor Totem ends it. Taking it off after armor, 30 at every rank, ignoring Guardian Totems or rank 6 at every level each fails it.
+
+### 8.1 Convection
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`shocks.go`, `electric_spell.go`, `lava_burst.go`): 5 points. Each takes 2% off the mana cost of Earth, Flame and Frost Shock, Lightning Bolt, Chain Lightning and Lava Burst, so 10% at 5/5. It adds to Shamanistic Focus's 45% on the shocks and to Maelstrom Weapon on Lightning Bolt (2.7, 7.11).
+  - The Level 60 enhancement preset has 5/5, and the Level 30 presets have none.
+- Client 70338 (wago.tools 16039 and its talent curve 85214): 5 ranks, -2, -4, -6, -8 and -10% on the spell cost, for the shocks, Lightning Bolt, Chain Lightning and Lava Burst (class mask 0x90100003 and 0x1000). It's the same kind of percent modifier as Shamanistic Focus, and the client adds those.
+- Beta: the user never had it (7.11).
+- Already tested: `mana_costs_test.go` TestOrcShamanManaCostTalents (5/5 on every shock, Lightning Bolt, Chain Lightning and Lava Burst, and not on totems, Lightning Shield or Fire Nova, with Shamanistic Focus too) and TestOrcShamanMaelstromWeaponCost. Nothing tests fewer than 5 points.
+- Proposed: no sim change. Add a 2/5 case (4% off) to TestOrcShamanManaCostTalents.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
