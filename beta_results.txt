@@ -1481,3 +1481,10 @@ Blood Fury scales it by 1.1.
   - The user's /run print(UnitAttackPower("player")) agrees, first value: 383 with nothing
     up, 421 with Blood Fury (383 x 1.1 = 421.3), 441 with Blood Fury and the scroll (401 x
     1.1 = 441.1, a snapshot gives 439), 401 with the scroll alone (383 + 18).
+  - Sim changed (2026-10-12, the user's OK): Blood Fury is a x1.1 multiplier on attack power,
+    ranged attack power, spell power and healing while it's up (racials_forever.go), and
+    blood_fury_test.go adds 18 attack power during it. Only Orc golden entries moved, all by
+    under 0.1%.
+  - Sim changed the same day: Stormstrike with a dagger uses 1.8 (StormstrikeSpeed in
+    stormstrike.go, a Perdition's Blade case in weapon_damage_test.go). One-handers stay at
+    2.7 and two-handers at 3.6. No preset uses a dagger, so no golden moved.

@@ -197,8 +197,8 @@ Maelstrom Weapon 34, everything under "At 60").
 Keep this current as you go.
 
 Saved by the user for a later session (2026-10-11): Frostbrand Weapon (14) and Spirit regen
-of the other classes (7). Dagger and fist Stormstrike (4) ran on 2026-10-12, and the dagger
-change waits for the user's OK.
+of the other classes (7). Dagger and fist Stormstrike (4) ran on 2026-10-12, and the dagger's
+1.8 is in the sim.
 Every other item is settled, parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
 23:25 log had 8.3%, over the sim's flat 5%.
 
@@ -213,7 +213,8 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
 - [x] 3. Windfury Weapon attacks and the swing timer. Settled 2026-10-10 in the sim's favor:
   after 3 Windfury procs from Stormstrike, the next swing came on the old schedule (within
   36 ms), so the attacks don't restart it.
-- [ ] 4. Stormstrike damage model, dagger. Saved for a later session (the user, 2026-10-11).
+- [x] 4. Stormstrike damage model, dagger. Settled 2026-10-12, sim changed: daggers 1.8,
+  one-handers 2.7, two-handers 3.6. The one-hander's 2.7 leads 2.6 but isn't proven (below).
   The model is settled (2026-10-10): 30 Stormstrikes with Rage of the Storm fit the sim's
   normalized 3.6, and the other two models each had hits outside their range. Only the dagger
   is left. Rage of the Storm's +10% is off the list: the user said to assume it works
@@ -232,8 +233,8 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   +- 0.03 at the sheet's 395 attack power, so 2.7 leads 2.6 (3.7 standard errors) and 2.4 is
   out. Tonight's white hits run 1.5 over the model (+3.2 standard errors), and read as
   attack power they'd give 2.64, so 2.6 isn't fully out. Blood Fury on Stormstrike fits its
-  weapon part on both weapons. Sim change proposed, waiting for the user's OK: 1.8 for
-  daggers only. One-handers stay at 2.7.
+  weapon part on both weapons. The user OK'd 1.8 for daggers only, and it's in the sim
+  (StormstrikeSpeed). One-handers stay at 2.7.
 - [x] 5. Flametongue procs and Elemental Devastation. Settled 2026-10-11 in the sim's favor:
   9 Flametongue Weapon crits on the fist (00:20 to 00:30) gave no buff, so no Flametongue
   crit triggers it (beta_results.txt). 2026-10-10 respec run up to 21:25: the
@@ -421,7 +422,7 @@ combat log, run these checks on it too, and tell the user when one breaks.
   with 2.7 for one-handers and 1.8 for daggers (item 4). Rage of the Storm's +10% is assumed. Read AP from the
   white hits in the same log, not the sheet. A hit outside the range breaks it.
 - Blood Fury follows attack power while it's up (2026-10-12 00:59: a +18 scroll added 20 under
-  it, beta_results.txt). Sim change waits for the user's OK.
+  it, beta_results.txt). The sim makes it a x1.1 multiplier since then.
 - Blood Fury: white hits and Windfury attacks with it up average 1.1 times the ones without
   it (+10% attack power plus 10% of the weapon's average, item 18). A Stormstrike with it up
   should too. Both ends of the white range move up together, by about 8 on the fist.
