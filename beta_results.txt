@@ -1488,3 +1488,22 @@ Blood Fury scales it by 1.1.
   - Sim changed the same day: Stormstrike with a dagger uses 1.8 (StormstrikeSpeed in
     stormstrike.go, a Perdition's Blade case in weapon_damage_test.go). One-handers stay at
     2.7 and two-handers at 3.6. No preset uses a dagger, so no golden moved.
+
+
+2026-10-12  One-hander Stormstrike, more fist data to 01:59 (item 4)
+--------------------------------------------------------------------
+Same log, the fist from 00:17. Blood Fury Stormstrikes now count too: each hit's model is
+35 (+3.5 with Blood Fury) + (1.1 with Blood Fury) x base AP x speed / 14, with base AP from
+the cast line's AP field (field / 1.1 with Blood Fury, minus 188). Disarmed hits are left
+out. 74 Stormstrikes: 62 at field 583, 1 at 601 (the scroll), 11 at 641 (Blood Fury).
+  - White hits run over the model: 263 without Blood Fury +1.16 +- 0.39, 39 with it +0.99.
+  - Sheet attack power: 2.730 +- 0.026 (2.6 is 5.0 standard errors off, 2.7 is 1.2). The 11
+    with Blood Fury alone give 2.659 +- 0.062.
+  - The white hits' +1.14 taken off each Stormstrike (a flat extra): 2.690 +- 0.026 (2.6 3.5
+    off, 2.7 0.4).
+  - Attack power scaled by 1.0248 so the white hits fit: 2.664 +- 0.025 (2.6 2.5 off, 2.7
+    1.5).
+  - Ranges: 6 hits (120, 120, 120, 121, 121, 121) are past 2.6's top of 119.4. Only the 97
+    at 00:27:47 is under 2.7's floor.
+  - So 2.7 fits under each reading of the white hits, and 2.6 is at least 2.5 standard
+    errors off. The sim already has 2.7.
