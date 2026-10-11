@@ -225,6 +225,9 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   61, all under the sim's 2.0 range (61.7 to 69.7). Fit 1.77 +- 0.03: 1.8 (the modern
   client's dagger speed) fits, 1.7 is 2.9 standard errors off. Asked for about 15 more to
   settle 1.8 against 1.7. One-hand 2.6 against 2.7 needs a one-hander that isn't a dagger.
+  To 00:09 on 2026-10-12: 27 Stormstrikes fit 1.792 +- 0.016, so 1.8 (1.7 is 5.7 standard
+  errors off). 7 with Blood Fury up lean toward its weapon part. Sim change proposed,
+  waiting for the user's OK: 1.8 for daggers, and 2.6 for one-handers by the same rule.
 - [x] 5. Flametongue procs and Elemental Devastation. Settled 2026-10-11 in the sim's favor:
   9 Flametongue Weapon crits on the fist (00:20 to 00:30) gave no buff, so no Flametongue
   crit triggers it (beta_results.txt). 2026-10-10 respec run up to 21:25: the
