@@ -1478,3 +1478,6 @@ Blood Fury scales it by 1.1.
     10% at the start and keeps it. Implied sim change, waiting for the user's OK: make it
     x1.1 on attack power, ranged attack power, spell power and healing while it's up. The
     weapon part (10% of the weapon's average) stays.
+  - The user's /run print(UnitAttackPower("player")) agrees, first value: 383 with nothing
+    up, 421 with Blood Fury (383 x 1.1 = 421.3), 441 with Blood Fury and the scroll (401 x
+    1.1 = 441.1, a snapshot gives 439), 401 with the scroll alone (383 + 18).
