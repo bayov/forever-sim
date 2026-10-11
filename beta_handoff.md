@@ -198,7 +198,9 @@ Keep this current as you go.
 
 Saved by the user for a later session (2026-10-11): Frostbrand Weapon (14) and Spirit regen
 of the other classes (7). Dagger and fist Stormstrike (4) ran on 2026-10-12, and the dagger's
-1.8 is in the sim.
+1.8 is in the sim. Also saved (the user, 2026-10-12): Stormstrike's one-hander speed, 2.7 or
+2.6 (notes.md Need to Verify). Use a one-hander with a narrow damage range, or about 50
+Stormstrikes on a night when the white hits match the sheet.
 Every other item is settled, parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
 23:25 log had 8.3%, over the sim's flat 5%.
 
