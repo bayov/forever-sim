@@ -198,6 +198,54 @@ func TestOrcShamanHealingStreamTalents(t *testing.T) {
 	}
 }
 
+// TestOrcShamanHealingStreamHeals checks when Healing Stream heals us and for how much
+// (shaman_audit.md 7.28).
+//
+// It heals every 2 sec from 2 sec after the drop. Rank 2 heals for 6 plus 2.2% of our healing
+// power, and spell power counts as healing power. With the sheet's 91 spell power that's 8.002,
+// and 12.003 on a crit. On the beta 1329 heals came 1.9 to 2.1 sec apart. Our own totems
+// healed for 8.21 on average there, which fits about 10 more healing power than the sheet
+// shows, and notes.md asks to check that.
+func TestOrcShamanHealingStreamHeals(t *testing.T) {
+	sim, enh := newShamanSim(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 12)
+	stream := topRank(t, "Healing Stream Totem", enh.HealingStreamTotem)
+	if stream.Rank != 2 {
+		t.Fatalf("level 30 casts Healing Stream Totem rank %d, want 2", stream.Rank)
+	}
+	heal := enh.GetSpell(core.ActionID{SpellID: shaman.HealingStreamTotemHealId[2]})
+	metrics := &heal.SpellMetrics[enh.UnitIndex]
+
+	type tick struct {
+		at      time.Duration
+		healing float64
+	}
+	var ticks []tick
+	hot := stream.Hot(&enh.Unit)
+	onTick := hot.OnTick
+	hot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+		healing := metrics.TotalHealing
+		onTick(sim, target, dot)
+		ticks = append(ticks, tick{sim.CurrentTime, metrics.TotalHealing - healing})
+	}
+	at(sim, 1, func(sim *core.Simulation) {
+		enh.AddStatDynamic(sim, stats.SpellPower, 91-heal.HealingPower(&enh.Unit))
+		castNow(t, sim, enh, stream)
+	})
+	runSim(sim)
+
+	if len(ticks) != 5 {
+		t.Fatalf("Healing Stream healed us %d times in 11 sec, want 5", len(ticks))
+	}
+	for i, tick := range ticks {
+		if want := time.Second + time.Duration(i+1)*2*time.Second; tick.at != want {
+			t.Errorf("heal %d at %s, want %s", i+1, tick.at, want)
+		}
+		if math.Abs(tick.healing-8.002) > 1e-9 && math.Abs(tick.healing-12.003) > 1e-9 {
+			t.Errorf("heal %d healed us for %.4f, want 8.002 (12.003 on a crit)", i+1, tick.healing)
+		}
+	}
+}
+
 // TestOrcShamanSearingTotemBolts checks how many bolts a Searing Totem fires and when
 // (shaman_audit.md 7.22).
 //
