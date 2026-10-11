@@ -620,7 +620,18 @@ func DevotionAuraAura(unit *Unit, points int32) *Aura {
 	})
 }
 
+var stoneskinTotemLevels = []int32{0, 4, 14, 24, 34, 44, 54}
+
+// Forever's ranks take 4, 7, 11, 16, 22 or 30 off each physical hit, where Classic took 30 off
+// at every rank.
+var stoneskinTotemReduction = []float64{0, 4, 7, 11, 16, 22, 30}
+var stoneskinTotemAuraSpellId = []int32{0, 8072, 8156, 8157, 10403, 10404, 10405}
+
 func StoneskinTotemAura(unit *Unit, points int32) *Aura {
+	if unit.Env.IsForever() {
+		return foreverStoneskinTotemAura(unit, points)
+	}
+
 	meleeDamageReduction := -30.0
 	meleeDamageReduction *= 1 + .1*float64(points)
 	meleeDamageReduction = math.Floor(meleeDamageReduction)
@@ -636,6 +647,31 @@ func StoneskinTotemAura(unit *Unit, points int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusDamageTakenAfterModifiers[DefenseTypeMelee] -= meleeDamageReduction
+		},
+	})
+}
+
+// foreverStoneskinTotemAura takes the rank's amount off each physical hit on us, before armor.
+//
+// The Forever client (70338) gives each rank its own amount on all Physical damage taken, so
+// ranged hits too. On the beta our rank 3 totem's 11 fit the hits we took only when it comes
+// off before armor, so a crit doubles what's left (shaman_audit.md 7.29). We give the top rank
+// at our level, for our own totem and another shaman's alike, like Strength of Earth. Guardian
+// Totems adds 10% a point, and we keep the fraction because we don't know how the server
+// rounds it.
+func foreverStoneskinTotemAura(unit *Unit, points int32) *Aura {
+	rank := HighestRankAt(unit.Level, stoneskinTotemLevels)
+	reduction := stoneskinTotemReduction[rank] * (1 + .1*float64(points))
+
+	return unit.GetOrRegisterAura(Aura{
+		Label:    "Stoneskin",
+		ActionID: ActionID{SpellID: stoneskinTotemAuraSpellId[rank]},
+		Duration: time.Minute * 5,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor -= reduction
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor += reduction
 		},
 	})
 }

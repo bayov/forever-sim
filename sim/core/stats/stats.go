@@ -487,8 +487,9 @@ type PseudoStats struct {
 
 	BonusHealingTaken float64 // Talisman of Troll Divinity
 
-	BonusDamageTakenBeforeModifiers [DefenseTypeLen]float64 // Flat damage reduction values BEFORE Modifiers like Blessing of Sanctuary
-	BonusDamageTakenAfterModifiers  [DefenseTypeLen]float64 // Flat damage reduction values AFTER Modifiers like Stoneskin Totem, Windwall Totem, etc.
+	BonusDamageTakenBeforeModifiers     [DefenseTypeLen]float64 // Flat damage reduction values BEFORE Modifiers like Blessing of Sanctuary
+	BonusDamageTakenAfterModifiers      [DefenseTypeLen]float64 // Flat damage reduction values AFTER Modifiers like Stoneskin Totem, Windwall Totem, etc.
+	BonusPhysicalDamageTakenBeforeArmor float64                 // Flat physical damage reduction BEFORE armor, like Forever's Stoneskin Totem
 
 	DamageTakenMultiplier       float64                   // All damage
 	SchoolDamageTakenMultiplier SchoolValueArray[float64] // For specific spell schools. DO NOT use with multi school index! See helper functions on Unit!

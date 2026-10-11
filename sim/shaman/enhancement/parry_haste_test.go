@@ -65,6 +65,11 @@ func TestOrcShamanParryHaste(t *testing.T) {
 // newTankSim starts the player with Whirlwind Axe, tanking an enemy of targetLevel who swings
 // every 2.0 sec.
 func newTankSim(player *proto.Player, targetLevel int32) (*core.Simulation, *EnhancementShaman) {
+	return newTankSimWithBuffs(player, targetLevel, &proto.RaidBuffs{})
+}
+
+// newTankSimWithBuffs is newTankSim with raid buffs on us.
+func newTankSimWithBuffs(player *proto.Player, targetLevel int32, raidBuffs *proto.RaidBuffs) (*core.Simulation, *EnhancementShaman) {
 	for range proto.ItemSlot_ItemSlotMainHand {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
 	}
@@ -72,7 +77,7 @@ func newTankSim(player *proto.Player, targetLevel int32) (*core.Simulation, *Enh
 	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
 	target.Level = targetLevel
 	target.MinBaseDamage = 52
-	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, raidBuffs, &proto.Debuffs{})
 	raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       raid,

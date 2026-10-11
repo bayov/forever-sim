@@ -5,6 +5,16 @@ import (
 )
 
 func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPeriodic bool, attackTable *AttackTable) {
+	// Forever's Stoneskin Totem takes a flat amount off each physical hit before armor.
+	//
+	// On the beta our rank 3 totem's 11 fit the hits we took only when it comes off before armor
+	// (shaman_audit.md 7.29). We leave periodic damage alone, because no enemy in the sim deals
+	// physical damage over time.
+	if bonus := attackTable.Defender.PseudoStats.BonusPhysicalDamageTakenBeforeArmor; bonus != 0 && !isPeriodic &&
+		spell.SpellSchool.Matches(SpellSchoolPhysical) && !spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+		result.Damage = max(0, result.Damage+bonus)
+	}
+
 	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
 
 	result.Damage *= resistanceMultiplier

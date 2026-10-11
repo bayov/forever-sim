@@ -127,7 +127,7 @@ Totems
 - [x] 7.26 Mana Spring Totem
 - [x] 7.27 Mana Tide Totem
 - [x] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
-- [?] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
+- [x] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
 
 ## 8. Talents
 
@@ -1003,6 +1003,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Already tested: `spell_ranks_test.go` (rank 5 at 30), `swing_timer_test.go` (the swing timer after a cast), `gcd_test.go`, `mana_costs_test.go`, `crit_test.go`, `miss_test.go`, `stormstrike_test.go` (the mark), `talent_procs_test.go` (Maelstrom Weapon, Clearcasting), `five_second_rule_test.go` and `reaction_time_test.go`.
 - No sim change. notes.md Need to Verify (Beta) asks for a few rank 5 bolts at level 30: raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast and 85 mana.
 - The user confirmed from play (2026-10-11, via the beta session, 82f9c67e) that the swing timer starts over after a bolt with a cast time (3.2), so the beta session took that check out of the notes.md item.
+- The user said to assume Lightning Bolt's damage works as intended (2026-10-11, via the beta session, bae4792a). The beta session removed the notes.md item, and its recheck list checks the damage, cast time, mana and next swing whenever a log has a bolt.
 
 ### 7.13 Chain Lightning
 
@@ -1218,7 +1219,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.29 Stoneskin, Tremor and Windwall Totems
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "sg".
 - The sim:
   - Stoneskin Totem (`earth_totems.go`, `buffs.go` StoneskinTotemAura): 6 ranks at 4, 14, 24, 34, 44 and 54 for 30 to 210 mana, a 1 sec GCD and 5 min in the earth slot (7.17). Every rank takes a flat 30 off each melee hit, after armor and after a crit doubles the hit. Guardian Totems adds 10% a point, rounded away from zero. Another shaman's totem in the raid buffs is the same 30, for Horde only, with 0 or 2 points of Guardian Totems.
   - Tremor Totem: level 18, 60 mana, a 1 sec GCD and 5 min in the earth slot. It does nothing else in the sim.
@@ -1242,6 +1243,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Guardian Totems adds 10% a point to the rank's value. We keep the fraction (13.2 at rank 3 with 2 points), because the beta can't tell us how the server rounds it.
   - Tremor and Windwall stay as they are.
   - A test: at level 30 a 100 raw hit from a level 30 mob loses 11 before our armor, at level 60 30, and none once a Tremor Totem takes the earth slot.
+- Changed (2026-10-11): under Forever, Stoneskin takes the top rank's amount at our level (4, 7, 11, 16, 22 or 30) off each physical hit on us before armor (`buffs.go` foreverStoneskinTotemAura). Core has a new flat reduction for that, `BonusPhysicalDamageTakenBeforeArmor`, applied just before armor (`spell_resistances.go`). It leaves periodic damage alone, because no enemy in the sim deals physical damage over time. Another shaman's totem gives the same amount. Guardian Totems adds 10% a point and keeps the fraction. Classic keeps its 30 after armor. No golden changed.
+- `stoneskin_test.go` TestOrcShamanStoneskinTotem, with 572 armor at level 30 like the first log: a 100 raw hit loses 11 before armor at 30, 30 at 60, 13.2 with Guardian Totems 2, and 11 from another shaman's totem at 30. A hit smaller than the reduction deals nothing, and Tremor Totem ends it. Taking it off after armor, 30 at every rank, ignoring Guardian Totems or rank 6 at every level each fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
