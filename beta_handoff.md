@@ -196,7 +196,7 @@ Maelstrom Weapon 34, everything under "At 60").
 
 Keep this current as you go.
 
-Open on 2026-10-11: Blood Fury (18), the next test. Saved by the user for a later session:
+Open on 2026-10-11: Blood Fury's weapon damage (18). Its GCD and healing are in the sim. Saved by the user for a later session:
 Frostbrand Weapon (14), dagger Stormstrike (4) and Spirit regen of the other classes (7).
 Every other item is settled, parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
 23:25 log had 8.3%, over the sim's flat 5%.
@@ -379,6 +379,11 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   went off 0.245 sec after Blood Fury, so no GCD (the earlier waits were the shocks' GCD).
   Unchecked: Stormstrike and Windfury attacks with Blood Fury up (fits the dagger
   Stormstrike session, item 4).
+  Sim change OK'd by the user on 2026-10-11 and done: no GCD, and +10% of the healing-only
+  stat too (`racials_forever.go`, test `blood_fury_test.go`). Worth +1.4% to +2% at level 60
+  in a 60 sec fight and about +0.1 DPS on the Level 30 preset. Still open: the weapon part
+  (+10% attack power plus 10% of the weapon's average damage). The user is collecting more
+  fist hits first. At 22:05:09 the log had 81 fist hits with it up, ratio 1.099 +- 0.009.
 
 ## Recheck with every new log
 

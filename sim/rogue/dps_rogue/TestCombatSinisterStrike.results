@@ -351,43 +351,43 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Orc-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 307.5323
-  tps: 218.34793
+  dps: 308.70082
+  tps: 219.17758
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Orc-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 265.87475
-  tps: 188.77107
+  dps: 266.01477
+  tps: 188.87049
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Orc-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 346.90598
-  tps: 246.30324
+  dps: 346.76082
+  tps: 246.20019
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Orc-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 150.50391
-  tps: 106.85777
+  dps: 151.19041
+  tps: 107.34519
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Orc-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 130.53829
-  tps: 92.68218
+  dps: 130.56283
+  tps: 92.69961
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Orc-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 175.27492
-  tps: 124.44519
+  dps: 175.22236
+  tps: 124.40787
  }
 }
 dps_results: {

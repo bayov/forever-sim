@@ -96,10 +96,15 @@ func (character *Character) mobTypeDamageAura(mobType proto.MobType, multiplier 
 // Blood Fury: Attack Power and Spell Power increased by 10% for 15 sec. The Classic
 // healing penalty is gone. The 10% is taken from the character's total AP and SP at
 // activation, which includes gear and buffs.
+//
+// On the beta (2026-10-11, beta_results.txt) bonus healing also goes up 10% of its total,
+// from 59 to 65 with 49 spell power and the +10 healing gloves. So we add 10% of the
+// healing-only stat on top of the spell power. Blood Fury is also off the GCD: Lightning
+// Shield went out 0.245 sec after it, and the client gives it no GCD category.
 func (character *Character) registerForeverBloodFury() {
 	actionID := ActionID{SpellID: 20572}
 
-	var bonusAP, bonusSP float64
+	var bonusAP, bonusSP, bonusHealing float64
 	aura := character.RegisterAura(Aura{
 		Label:    "Blood Fury",
 		ActionID: actionID,
@@ -107,12 +112,15 @@ func (character *Character) registerForeverBloodFury() {
 		OnGain: func(aura *Aura, sim *Simulation) {
 			bonusAP = character.GetStat(stats.AttackPower) * 0.1
 			bonusSP = character.GetStat(stats.SpellPower) * 0.1
+			bonusHealing = character.GetStat(stats.HealingPower) * 0.1
 			character.AddStatDynamic(sim, stats.AttackPower, bonusAP)
 			character.AddStatDynamic(sim, stats.SpellPower, bonusSP)
+			character.AddStatDynamic(sim, stats.HealingPower, bonusHealing)
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.AddStatDynamic(sim, stats.AttackPower, -bonusAP)
 			character.AddStatDynamic(sim, stats.SpellPower, -bonusSP)
+			character.AddStatDynamic(sim, stats.HealingPower, -bonusHealing)
 		},
 	})
 
@@ -120,9 +128,6 @@ func (character *Character) registerForeverBloodFury() {
 		ActionID: actionID,
 		Flags:    SpellFlagNoOnCastComplete,
 		Cast: CastConfig{
-			DefaultCast: Cast{
-				GCD: GCDDefault,
-			},
 			CD: Cooldown{
 				Timer:    character.NewTimer(),
 				Duration: time.Minute * 2,

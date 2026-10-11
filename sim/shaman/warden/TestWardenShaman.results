@@ -176,43 +176,43 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 122.84409
-  tps: 475.08603
+  dps: 125.02409
+  tps: 490.82962
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 112.67121
-  tps: 222.53984
+  dps: 115.50208
+  tps: 230.68289
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 114.61822
-  tps: 226.24748
+  dps: 123.75882
+  tps: 253.06558
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 40.49808
-  tps: 213.02401
+  dps: 41.5601
+  tps: 230.9238
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 33.21238
-  tps: 47.22818
+  dps: 34.37213
+  tps: 50.79381
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 57.0702
-  tps: 115.87055
+  dps: 58.13368
+  tps: 118.97604
  }
 }
 dps_results: {
