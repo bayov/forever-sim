@@ -133,7 +133,7 @@ Totems
 
 Elemental
 
-- [x] 8.1 Convection
+- [?] 8.1 Convection
 - [ ] 8.2 Concussion
 - [ ] 8.3 Elemental Warding
 - [ ] 8.4 Reverberation
@@ -1255,6 +1255,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: the user never had it (7.11).
 - Already tested: `mana_costs_test.go` TestOrcShamanManaCostTalents (5/5 on every shock, Lightning Bolt, Chain Lightning and Lava Burst, and not on totems, Lightning Shield or Fire Nova, with Shamanistic Focus too) and TestOrcShamanMaelstromWeaponCost. Nothing tests fewer than 5 points.
 - No sim change. TestOrcShamanManaCostTalents has a 2/5 case now: 4% off every shock, Lightning Bolt, Chain Lightning and Lava Burst. A flat 10% for any points fails it.
+- Reopened (2026-10-11), shown to the user, waiting for the OK. The user did have Convection, and the beta shows it multiplies with Shamanistic Focus where the sim adds them.
+  - The log's cost field on a cast is the base cost (Earth Shock rank 4 always logs 145). Our mana on the cast line is from before we pay, so the cost is the drop to our next event. Mana regen in between can only make a drop look smaller. 7.8 to 7.11 read the cost field, so "every shock cost its full mana" and "the user never had Convection or Shamanistic Focus" there are wrong.
+  - Shamanistic Focus only (the 14:50 build in WoWCombatLog-101026_150733.txt): Earth Shock dropped 80 (145 * 0.55 = 79.75), Flame Shock 88 (160 * 0.55) and Lightning Shield 69 (125 * 0.55 = 68.75).
+  - Convection 5 only (the Elemental respec, 20:42 to 22:16): Earth Shock dropped 130 on 7 of 7 (145 * 0.9 = 130.5), Flame Shock 144 (160 * 0.9) and Frost Shock 104 on 3 of 3 (115 * 0.9 = 103.5).
+  - Both (the 23:14 build, the 23:25 log): Earth Shock dropped 72 on 4 of 4 and Flame Shock 79 on 7 of 13 (the rest 77 to 78, or 60 when a regen tick came in between). Multiplied, that's 145 * 0.9 * 0.55 = 71.8 and 160 * 0.9 * 0.55 = 79.2. Added (55% off, the sim), it would be 65.25 and 72, and a drop can't come out higher than the cost.
+  - The client gives Convection, Shamanistic Focus, Clearcasting and the Maelstrom Weapon buff (408505, -20% a stack on Lightning Bolt) the same kind of cost modifier. Fire Nova's two damage talents of one kind multiply too (5.6).
+  - Proposed: multiply the cost modifiers on a spell instead of adding them. On the Level 60 preset (Convection 5 and Shamanistic Focus) a shock costs 49.5% of its base instead of 45%. Lightning Bolt is free at 5 Maelstrom Weapon stacks either way, and the presets only cast it then. Clearcasting stays free. A test with both talents: Earth Shock rank 4 costs 71.775 at level 30.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
