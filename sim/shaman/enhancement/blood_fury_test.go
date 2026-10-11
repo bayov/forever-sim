@@ -17,15 +17,25 @@ import (
 // healing. The character sheet went from 59 to 65 healing with 49 spell power and the +10
 // healing gloves, so the healing-only stat gets its 10% too. We give the character the same
 // spell power and gloves.
+//
+// The weapon's damage range also goes up by 10% of its average, with the same spread. With
+// Bloody Brass Knuckles (24 to 46) that's 27.5 to 49.5, as on the character sheet, and the
+// average hit with attack power comes out 1.1 times bigger.
 func TestOrcShamanBloodFury(t *testing.T) {
 	player := newOrcShaman(30, "", &proto.EnhancementShaman_Options{})
 	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.SpellPower: 49, stats.HealingPower: 10}.ToFloatArray()}
+	for range proto.ItemSlot_ItemSlotMainHand {
+		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
+	}
+	player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: 7683})
 	sim, enh := newShamanSim(player, &proto.Debuffs{}, 30)
 	bloodFury := enh.GetSpell(core.ActionID{SpellID: 20572})
 	aura := enh.GetAuraByID(core.ActionID{SpellID: 20572})
+	mh := enh.AutoAttacks.MH()
 
 	healing := func() float64 { return enh.GetStat(stats.SpellPower) + enh.GetStat(stats.HealingPower) }
 	ap, sp, heal := enh.GetStat(stats.AttackPower), enh.GetStat(stats.SpellPower), healing()
+	hit := mh.CalculateAverageWeaponDamage(ap)
 	check := func(label string, got, want float64) {
 		if math.Abs(got-want) > 1e-6 {
 			t.Errorf("%s: %s is %.2f, want %.2f", sim.CurrentTime, label, got, want)
@@ -46,6 +56,9 @@ func TestOrcShamanBloodFury(t *testing.T) {
 		check("attack power", enh.GetStat(stats.AttackPower), ap*1.1)
 		check("spell power", enh.GetStat(stats.SpellPower), sp*1.1)
 		check("healing", healing(), heal*1.1)
+		check("weapon minimum", mh.BaseDamageMin, 27.5)
+		check("weapon maximum", mh.BaseDamageMax, 49.5)
+		check("average hit", mh.CalculateAverageWeaponDamage(enh.GetStat(stats.AttackPower)), hit*1.1)
 	})
 	if heal != 59 {
 		t.Fatalf("healing is %.2f before Blood Fury, want the beta's 59", heal)
@@ -58,6 +71,8 @@ func TestOrcShamanBloodFury(t *testing.T) {
 		check("attack power", enh.GetStat(stats.AttackPower), ap)
 		check("spell power", enh.GetStat(stats.SpellPower), sp)
 		check("healing", healing(), heal)
+		check("weapon minimum", mh.BaseDamageMin, 24)
+		check("weapon maximum", mh.BaseDamageMax, 46)
 	})
 	runSim(sim)
 }

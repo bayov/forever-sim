@@ -196,8 +196,8 @@ Maelstrom Weapon 34, everything under "At 60").
 
 Keep this current as you go.
 
-Open on 2026-10-11: Blood Fury's weapon damage (18). Its GCD and healing are in the sim. Saved by the user for a later session:
-Frostbrand Weapon (14), dagger Stormstrike (4) and Spirit regen of the other classes (7).
+Saved by the user for a later session (2026-10-11): Frostbrand Weapon (14), dagger
+Stormstrike (4, with Stormstrike under Blood Fury) and Spirit regen of the other classes (7).
 Every other item is settled, parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
 23:25 log had 8.3%, over the sim's flat 5%.
 
@@ -218,7 +218,9 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   is left. Rage of the Storm's +10% is off the list: the user said to assume it works
   (2026-10-10), because it only matters at level 30 and the sims we care about most are level
   60. The client agrees (item spell 1309422, +10% to Stormstrike only). We count it in when we
-  read the user's Stormstrikes with Rage of the Storm.
+  read the user's Stormstrikes with Rage of the Storm. In the same session, check Stormstrike
+  under Blood Fury (item 18): the sim gives it 10% of the weapon's average, as white hits and
+  Windfury attacks get on the beta.
 - [x] 5. Flametongue procs and Elemental Devastation. Settled 2026-10-11 in the sim's favor:
   9 Flametongue Weapon crits on the fist (00:20 to 00:30) gave no buff, so no Flametongue
   crit triggers it (beta_results.txt). 2026-10-10 respec run up to 21:25: the
@@ -356,7 +358,7 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   power and 59 at 49. Naga Battle Gloves give +10 healing, and the sim's database has it.
   Rank 2 heals 6 + 2.2% of healing: 8.22 at 101, where 750 heals in the 15:07 log averaged
   8.21, and 7.30 at 59, where 404 heals in the 23:25 log averaged 7.29. No sim change.
-- [ ] 18. Blood Fury (audit 9.1, notes.md). The sim gives +10% attack power and spell power
+- [x] 18. Blood Fury (audit 9.1, notes.md). Settled 2026-10-11, sim changed. The sim gives +10% attack power and spell power
   for 15 sec, from our totals when it starts, with the 1.5 sec GCD. wowhead's Forever tooltip
   says a flat 169 attack power and no spell power. Test: two `/bayov export`s with the same
   buffs, one before Blood Fury and one within its 15 sec. At the 23:54 export (387 attack
@@ -387,8 +389,11 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   Final run to 22:58 (beta_results.txt): 163 white hits at 1.107 times, and 27 Windfury
   attacks with it up at mean raw 93.4, where +10% attack power plus 10% of the weapon's
   average gives 92.4 and +10% attack power alone 88.9. So Windfury attacks get the weapon
-  part too. Windfury Weapon's bonus from every log is 50 +- 3 (rank 1 gives 46). Waiting for
-  the user's OK on the weapon part. Stormstrike under it is still unchecked.
+  part too. Windfury Weapon's bonus from every log is 50 +- 3 (rank 1 gives 46). To 23:08:
+  187 white hits at 1.105 times, 34 Windfury attacks at 93.6. The user OK'd the weapon part
+  and the sim has it: each weapon's range goes up by 10% of its average while Blood Fury is
+  up (`racials_forever.go`), +0.5 to +1.1 DPS on the Level 30 preset. Stormstrike gets it
+  too, unchecked (item 4).
 
 ## Recheck with every new log
 
@@ -402,6 +407,9 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Stormstrike's raw damage stays inside (weapon roll + AP / 14 x 3.6) x the percent bonuses,
   with 2.7 for one-handers (item 4). Rage of the Storm's +10% is assumed. Read AP from the
   white hits in the same log, not the sheet. A hit outside the range breaks it.
+- Blood Fury: white hits and Windfury attacks with it up average 1.1 times the ones without
+  it (+10% attack power plus 10% of the weapon's average, item 18). A Stormstrike with it up
+  should too. Both ends of the white range move up together, by about 8 on the fist.
 - Flametongue Totem procs on every landed white swing (blocks and glancing blows too) and
   never on a miss, dodge, parry, Stormstrike or Windfury Weapon attack (items 1 and 2).
   Leave out swings where the totem wasn't up or in range, and swings where a Windfury Weapon

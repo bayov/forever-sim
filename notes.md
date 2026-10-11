@@ -60,7 +60,6 @@ Things we can only check on release, because the beta stops at level 30.
 * Lightning Overload's damage (sim: half of the main hit). The Forever client (70338) has its own overload spells, and they deal 0.52, 0.57, 0.52, 0.47 and 0.45 of the main hit for Lightning Bolt ranks 1 to 5, about 0.50 for ranks 6 to 10 and about 0.53 for Chain Lightning. Chain Lightning rank 3's overload has a 0.2855 coefficient, half of 0.571, where the main spell has 0.517, so the 0.517 may be a client typo. No preset takes the talent. shaman_audit.md 7.1.
 * Shaman talents in rows 6 and 7 (Elemental Fury, Maelstrom Weapon, Lava Burst, Rage of the Farseer). Lava Burst's 20% with Flame Shock on the target is up to the server, and the sim multiplies it with Call of Flame (1.15 * 1.2 = 1.38 at 3 points, 1.35 if they add, item 5.6).
 * Blessing of Wisdom at its top rank, and Judgement of Wisdom (1.12 learns it at 38). Both need a paladin past 30.
-* Blood Fury at 60. wowhead shows a flat 169 attack power. The beta tooltip at 30 tells us whether that number grows with level.
 * The level 60 trinkets in the presets (Hand of Justice, Blackhand's Breadth).
 * Raid buffs and totems at their top ranks, at their Forever values.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).

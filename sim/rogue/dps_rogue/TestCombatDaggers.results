@@ -225,43 +225,43 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 359.4368
-  tps: 255.20013
+  dps: 361.05652
+  tps: 256.35013
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 304.63212
-  tps: 216.28881
+  dps: 305.52465
+  tps: 216.9225
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 380.1187
-  tps: 269.88428
+  dps: 382.39649
+  tps: 271.50151
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 185.29793
-  tps: 131.56153
+  dps: 186.38444
+  tps: 132.33295
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 157.88098
-  tps: 112.09549
+  dps: 158.47748
+  tps: 112.51901
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Settings-Orc-combat_backstab_prebis-No Poisons-combat_backstab-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 195.99087
-  tps: 139.15352
+  dps: 197.51222
+  tps: 140.23368
  }
 }
 dps_results: {

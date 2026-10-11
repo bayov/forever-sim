@@ -101,10 +101,23 @@ func (character *Character) mobTypeDamageAura(mobType proto.MobType, multiplier 
 // from 59 to 65 with 49 spell power and the +10 healing gloves. So we add 10% of the
 // healing-only stat on top of the spell power. Blood Fury is also off the GCD: Lightning
 // Shield went out 0.245 sec after it, and the client gives it no GCD category.
+//
+// Each weapon hit also gets 10% of the weapon's average damage, so the average hit is 1.1
+// times bigger. The character sheet showed it first: the main hand range went up by 12.35 on
+// Rage of the Storm (100 to 147) and 3.5 on Bloody Brass Knuckles (24 to 46), with the same
+// spread, and the off-hand and ranged lines went up 10% too. The log agreed: 187 fist hits
+// came out 1.105 times bigger and 34 Windfury attacks fit the weapon part too, where +10%
+// attack power alone gives 1.056. Stormstrike rolls the same weapon, so it gets it too
+// (unchecked on the beta). We add it to each weapon's damage range, after the weapon
+// enchants and stones.
 func (character *Character) registerForeverBloodFury() {
 	actionID := ActionID{SpellID: 20572}
 
 	var bonusAP, bonusSP, bonusHealing float64
+	var bonusWeaponDamage [3]float64
+	weapons := func() [3]*Weapon {
+		return [3]*Weapon{character.AutoAttacks.MH(), character.AutoAttacks.OH(), character.AutoAttacks.Ranged()}
+	}
 	aura := character.RegisterAura(Aura{
 		Label:    "Blood Fury",
 		ActionID: actionID,
@@ -116,11 +129,20 @@ func (character *Character) registerForeverBloodFury() {
 			character.AddStatDynamic(sim, stats.AttackPower, bonusAP)
 			character.AddStatDynamic(sim, stats.SpellPower, bonusSP)
 			character.AddStatDynamic(sim, stats.HealingPower, bonusHealing)
+			for i, weapon := range weapons() {
+				bonusWeaponDamage[i] = weapon.AverageDamage() * 0.1
+				weapon.BaseDamageMin += bonusWeaponDamage[i]
+				weapon.BaseDamageMax += bonusWeaponDamage[i]
+			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.AddStatDynamic(sim, stats.AttackPower, -bonusAP)
 			character.AddStatDynamic(sim, stats.SpellPower, -bonusSP)
 			character.AddStatDynamic(sim, stats.HealingPower, -bonusHealing)
+			for i, weapon := range weapons() {
+				weapon.BaseDamageMin -= bonusWeaponDamage[i]
+				weapon.BaseDamageMax -= bonusWeaponDamage[i]
+			}
 		},
 	})
 
