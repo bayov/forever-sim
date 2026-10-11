@@ -7,7 +7,8 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
-// Under Forever a main hand holds three weapon buffs at once:
+// Under Forever a main hand holds four things at once:
+//   - its permanent enchant, from the gear,
 //   - the buff of a Windfury or Flametongue Totem (only one of the two at a time),
 //   - the shaman's own imbue (Windfury, Rockbiter, Flametongue or Frostbrand Weapon),
 //   - an oil or a stone.

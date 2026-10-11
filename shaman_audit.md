@@ -116,7 +116,7 @@ Shields
 Totems
 
 - [x] 7.17 Totem rules: one per element, durations, the 1 sec GCD, totem health ignored, placing them before the pull
-- [?] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
+- [x] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
 - [ ] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
 - [ ] 7.20 Grace of Air Totem
 - [ ] 7.21 Strength of Earth Totem
@@ -1084,8 +1084,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.18 The weapon totem slot
 
-- Shown to the user (2026-10-11), waiting for the OK.
-- The sim (`core/totem_weapon_buffs.go`, `shaman.go` setTotemWeaponBuff and clearTotemWeaponBuff): under Forever a main hand holds three weapon buffs at once. One is a Windfury or Flametongue Totem buff (only one of the two), one is our imbue and one is an oil or stone (7.6).
+- The user OK'd it (2026-10-11): "Sounds good. Also note our weapon has 4 things on it, the 3 you mentioned and a permanent Enchant (from gear section). Mostly semantics."
+- The sim (`core/totem_weapon_buffs.go`, `shaman.go` setTotemWeaponBuff and clearTotemWeaponBuff): under Forever a main hand holds four things at once. They are its permanent enchant from the gear, a Windfury or Flametongue Totem buff (only one of the two), our imbue and an oil or stone (7.6).
   - Our imbue turns off the totem buff of the same kind for us. Windfury Weapon on the main hand stops Windfury Totem's procs, and Flametongue Weapon stops Flametongue Totem's, whether the totem is ours or another shaman's. Then our own totem of that kind doesn't take the slot either. The default Level 60 preset relies on this. It puts Windfury Totem down for the group and Flametongue Totem for us, next to our Windfury Weapon.
   - Another shaman's totem in the raid buffs (Windfury or Flametongue, one of them) holds the slot until we put down a weapon totem of our own. Ours takes the slot while it stands, and the other shaman's comes back when ours goes.
   - Two of our own weapon totems can stand at once, Windfury in the air slot and Flametongue in the fire slot. The last one we put down holds the weapon slot.
@@ -1093,7 +1093,12 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 tooltips: every Windfury Weapon rank says "When applied to main hand, disables any benefit you personally receive from Windfury Totem", and every Flametongue Weapon rank says the same about Flametongue Totem. The client has nothing about one totem buff a weapon, which comes from the October 8 beta notes (Flametongue Totem doesn't stack with Flametongue Weapon or Windfury Totem). The totem tooltips say "each main hand hit". The sim lets off-hand hits proc both totems, as the user chose on 2026-10-10, because the client's proc auras aren't tied to a weapon.
 - Beta: nothing new. The character is 30 and Windfury Totem comes at 32. Flametongue Totem with Windfury Weapon was played on the beta (4.13).
 - Already tested: `proc_matrix_test.go` (Flametongue Weapon blocks Flametongue Totem, Windfury Weapon works next to Flametongue Totem, Flametongue Weapon next to Windfury Totem), `grace_of_air_test.go` and `damage_modifiers_test.go`. Nothing tests Windfury Weapon blocking Windfury Totem, our totem taking the slot from another shaman's and giving it back, or two of our own weapon totems.
-- Proposed: when the totem holding the slot goes, our other weapon totem's buff comes back if that totem still stands, and another shaman's after that. And a small test with three parts. Windfury Weapon on the main hand gives no Windfury Totem procs, from our totem or another shaman's. With Rockbiter on, our Flametongue Totem takes the slot from another shaman's Windfury Totem and gives it back when a Searing Totem replaces it. And our own Windfury Totem's buff comes back when our Flametongue Totem goes.
+- Fixed (2026-10-11): when the totem holding the slot goes, our other weapon totem's buff takes it back if that totem still stands, and another shaman's after that (`shaman.go` clearTotemWeaponBuff). The comment in `totem_weapon_buffs.go` now counts the permanent enchant too. No golden changed.
+- `weapon_totem_slot_test.go` TestOrcShamanWeaponTotemSlot, at level 60:
+  - With Windfury Weapon and another shaman's Windfury Totem, our Windfury Totem doesn't take the slot, and 100 landed white hits bring no Windfury Totem proc. With Rockbiter in its place they bring some (30 in this seed), and our totem takes the slot.
+  - With Rockbiter, our Flametongue Totem takes the slot from another shaman's Windfury Totem, and gives it back when a Searing Totem replaces it.
+  - Our Windfury Totem, then our Flametongue Totem. A Searing Totem in Flametongue's place gives the slot back to Windfury, and a Grace of Air Totem in Windfury's place leaves it empty.
+  - The old code fails the third part. Taking out Windfury Weapon's block, letting our Windfury Totem take the slot next to Windfury Weapon, or not giving another shaman's buff back each fails it too.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

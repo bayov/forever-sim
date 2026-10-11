@@ -89,6 +89,8 @@ func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura, 
 	if shaman.getImbueProcMask(sameKindImbue) != core.ProcMaskUnknown {
 		return
 	}
+	shaman.standingTotemWeaponBuffs = slices.DeleteFunc(shaman.standingTotemWeaponBuffs, func(a *core.Aura) bool { return a == aura })
+	shaman.standingTotemWeaponBuffs = append(shaman.standingTotemWeaponBuffs, aura)
 	if shaman.totemWeaponBuff != nil && shaman.totemWeaponBuff != aura {
 		shaman.totemWeaponBuff.Deactivate(sim)
 	}
@@ -99,15 +101,23 @@ func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura, 
 	}
 }
 
-// clearTotemWeaponBuff takes the buff off when its totem goes down. When it still held the
-// slot, another shaman's totem buff from the raid buffs comes back.
+// clearTotemWeaponBuff takes the buff off when its totem goes down.
+//
+// When it held the slot, the buff of our other weapon totem takes it back if that totem
+// still stands. Say we put down Windfury Totem and then Flametongue Totem with Rockbiter on,
+// and a Searing Totem takes Flametongue's place. Windfury Totem's buff comes back for the
+// rest of its 5 min. Without one, another shaman's totem buff from the raid buffs comes back.
 func (shaman *Shaman) clearTotemWeaponBuff(sim *core.Simulation, aura *core.Aura) {
 	aura.Deactivate(sim)
+	shaman.standingTotemWeaponBuffs = slices.DeleteFunc(shaman.standingTotemWeaponBuffs, func(a *core.Aura) bool { return a == aura })
 	if shaman.totemWeaponBuff != aura {
 		return
 	}
 	shaman.totemWeaponBuff = nil
-	if shaman.RaidTotemWeaponBuff != nil {
+	if n := len(shaman.standingTotemWeaponBuffs); n > 0 {
+		shaman.totemWeaponBuff = shaman.standingTotemWeaponBuffs[n-1]
+		shaman.totemWeaponBuff.Activate(sim)
+	} else if shaman.RaidTotemWeaponBuff != nil {
 		shaman.RaidTotemWeaponBuff.Activate(sim)
 	}
 }
@@ -225,6 +235,9 @@ type Shaman struct {
 	// The buff of the shaman's own Windfury or Flametongue Totem that holds the weapon's
 	// totem slot, nil without one.
 	totemWeaponBuff *core.Aura
+	// The buffs of our weapon totems that stand and can take the slot, the last one placed
+	// at the end.
+	standingTotemWeaponBuffs []*core.Aura
 
 	// Shield
 	ActiveShield     *core.Spell // Tracks the Shaman's active shield spell
@@ -303,6 +316,7 @@ func (shaman *Shaman) Reset(_ *core.Simulation) {
 	shaman.ActiveShield = nil
 	shaman.ActiveShieldAura = nil
 	shaman.totemWeaponBuff = nil
+	shaman.standingTotemWeaponBuffs = shaman.standingTotemWeaponBuffs[:0]
 
 	for i := range []int{EarthTotem, FireTotem, WaterTotem, AirTotem} {
 		shaman.ActiveTotems[i] = nil
