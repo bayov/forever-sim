@@ -196,7 +196,7 @@ Tree rules
 
 ## 9. Race, gear and consumables
 
-- [ ] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). Blood Fury is settled on the beta (the beta session, `beta_results.txt`) and changed with the user's OK, in 8c54b27d and 18e72fdb (`blood_fury_test.go`). It's off the GCD: on a clean try Lightning Shield went off 0.245 sec after it, and client 70338 has StartRecoveryTime 0 and no GCD category. It adds 10% to spell power (49 to 54) and to bonus healing (59 to 65 with the gloves' +10), where the sim used to add 10% of spell power only. It adds 10% to attack power, and each weapon hit also gets 10% of the weapon's average damage, so the average hit is 1.1 times bigger. The sheet showed it first (Rage of the Storm 213.31 to 234.64, x1.100, fist 79.23 to 87.15, where +10% attack power alone gives 83.65). In the log up to 23:08, 187 fist white hits under it came out 1.105 +- 0.009 times the 182 without it, where attack power alone gives 1.056. 34 Windfury attacks under it averaged raw 93.6, against 92.4 for the weapon part and 88.9 for attack power alone, and five were past the most attack power alone allows. The sim adds it to each weapon's damage range after enchants and stones, so white hits, Windfury attacks and Stormstrike all get it. Orc goldens and the Level 30 preset moved (+0.5 to +1.1 DPS). Still unchecked on the beta: Stormstrike under Blood Fury (beta item 4, the dagger Stormstrike session). Axe Specialization still needs its write-up.
+- [?] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). See the 9.1 write-up below.
 - [ ] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
 - [ ] 9.3 Rage of the Storm (Stormstrike +10%)
 - [ ] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
@@ -1276,6 +1276,22 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16035 and its talent curve 85215): 5 ranks, 1 to 5% more damage (aura 108, a percent modifier). The class mask 0x100003 is Lightning Bolt, Chain Lightning and Earth Shock only, as the tooltip says. Flame Shock and Frost Shock aren't in it.
 - Beta: the user never had it.
 - No sim change. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers had Concussion 5 on Earth Shock only. Now it also wants Lightning Bolt and Chain Lightning at 1.05 * 1.2 * 1.1 on a marked target with Curse of the Elements, and Frost Shock at 1.1 (Flame Shock was already in it at 1.15 * 1.1). Taking Lightning Bolt or Chain Lightning out of Concussion's spell list, or putting Frost Shock in, fails it.
+
+### 9.1 Orc racials
+
+- The sim (`racials_forever.go`, `specializations.go`):
+  - Axe Specialization: +1% melee and spell crit when the main or off hand is an axe or a two-handed axe. We check it once at the start, and shamans don't swap weapons in a fight.
+  - Blood Fury (after 8c54b27d and 18e72fdb, both with the user's OK): 15 sec, 2 min cooldown, off the GCD. It takes 10% of our attack power, spell power and healing-only stat when it starts and keeps that amount for the 15 sec. Each weapon's damage range goes up by 10% of its average, after enchants and stones, so white hits, Windfury attacks and Stormstrike all get it.
+- Client 70338:
+  - Axe Specialization (20574): aura 290, +1% crit chance "with all spells and abilities while you have an axe or a two-handed axe equipped". That matches the sim.
+  - Blood Fury (20572): aura 166 (attack power percent), 167 (ranged attack power percent) and 317 (spell power percent), 10 each, 15 sec, 2 min cooldown, no GCD. These are percent auras. The server keeps them on our current total, so the bonus follows our attack power while it's up. When a trinket procs or a new Strength of Earth goes down 5 sec in, the beta gives 10% of the new total, where the sim keeps the amount from the start.
+- Beta data:
+  - Axe Specialization: no sheet or log has an axe in hand. Every export since 2026-10-10 is Rage of the Storm (a two-handed mace), the fist or the dagger, and the 2026-10-08 axe runs have no crit readings. But every sheet without an axe fits the sim without the 1%. Melee crit is our Agility less the weapon skill penalty (5.39 = 5.43 - 0.04 on the mace at 149 skill, 2.83 on the fist at Unarmed 85), and spell crit moves only with Intellect (7.41 to 7.16 for 7 less Intellect on the fist). So we know it's off without an axe. That it's +1% with one comes from the client.
+  - Blood Fury following our attack power: in none of the Blood Fury windows in the logs did anything else change our attack power, so the logs can't tell. The client's percent auras are what we have.
+  - Stormstrike under Blood Fury (WoWCombatLog-101126_202029.txt up to 00:39). On the dagger, 9 hits averaged raw 66.83 +- 0.88 with it and 27 averaged 59.98 +- 0.36 without. The weapon part gives 66.27 and +10% attack power alone 65.17. On the fist at 395 attack power, 7 hits averaged 120.64 +- 1.56 with it and 19 averaged 111.55 +- 1.31 without. At the sim's 2.7 speed the weapon part gives 122.30, attack power alone 118.80, and no Blood Fury 111.18. Together the two weapons favor the weapon part about 5 to 1. White hits and Windfury attacks already showed it on the same weapons, so the sim gives it to Stormstrike too. The beta session keeps counting fist Stormstrikes (its item 4, which also checks the one-hand speed, 2.7 against 2.6).
+- Proposed:
+  - Axe Specialization: no change. A test that an axe gives 1% more melee and spell crit than Rage of the Storm.
+  - Blood Fury: 10% of our current attack power, ranged attack power, spell power and healing-only stat while it's up, instead of 10% of what we had at the start. The weapon part stays as it is.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
