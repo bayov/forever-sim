@@ -1260,7 +1260,8 @@ Improved Ghost Wolf 2, Shamanistic Focus 1, Anticipation 3). Nothing else change
   Earthbind, Mana Spring, Grounding) give no attack power. So 8 hits with Blood Fury up:
   225, 226, 233, 234, 248, 248, 248 and 255, 4 past the 245.8 that +10% attack power
   allows. They average 239.6, where +10% attack power gives 222.3 and the whole hit times
-  1.1 gives 234.6 (4.8 standard error each way for 8 hits).
+  1.1 gives 234.6. The standard error for 8 hits is 4.8, so that's 3.6 above the first and
+  1.0 above the second.
   - GCD, second try: Earth Shock at 20:38:15.655, Blood Fury 0.21 sec later, Lightning
     Shield at 17.231, 1.58 sec after Earth Shock and 1.37 sec after Blood Fury. The user
     says Blood Fury does start a GCD. The client (70338 SpellCooldowns and SpellCategories)
