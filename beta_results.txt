@@ -1210,3 +1210,25 @@ database has it as healing power, which the sim adds to spell power for heals.
     23:25 log averaged 7.29.
   - So the extra 10 was the gloves. The sim is right. No sim change, and the notes.md bullet
     is gone.
+
+
+2026-10-11  Blood Fury, the exports (item 18, audit 9.1)
+-------------------------------------------------------
+Two /bayov exports 11 sec apart, 20:20:23 before Blood Fury and 20:20:34 during it. Rage of
+the Storm (3.3, enchant 8205), same gear as the 23:54 export with the fist swapped out.
+Talents: Elemental 11 (Convection 5, Reverberation 2, Elemental Devastation 3, Elemental
+Focus 1), Enhancement 15 (Thundering Strikes 5, Ancestral Knowledge 1, Mental Dexterity 3,
+Improved Ghost Wolf 2, Shamanistic Focus 1, Anticipation 3). Nothing else changed.
+  - Attack power 381 to 419 (+38, 10% is 38.1). Spell power 49 to 54 (+5, 10% is 4.9). So
+    Blood Fury is +10% attack power and spell power, as in the sim, and not wowhead's flat
+    169 attack power.
+  - Healing 59 to 65 (+6). That's 10% of the healing (59), with the gloves' +10 healing in
+    it. The sim adds 10% of spell power only, so it gives 63.9. Heals only, record only.
+  - The sheet's main hand damage went from 189.8 to 236.8 up to 211.1 to 258.1 (+21.3). At
+    381 attack power the weapon part is 100 to 147 (94 to 141 plus 6, probably the enchant).
+    38 attack power at 3.3 speed adds only 9.0, so 12.4 is unexplained. The off-hand and
+    ranged numbers (no weapon there) went up by exactly 10% (27.71 to 30.49, 1 to 1.1).
+    White hits with Blood Fury up will show whether the hits follow the sheet: raw 198.8 to
+    245.8 at 419 attack power, and 211.1 to 258.1 if the sheet is right.
+  - The combat log from 20:20 (WoWCombatLog-101126_202029.txt) came out empty, so the GCD
+    check waits for the next log.

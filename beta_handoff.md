@@ -364,6 +364,11 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   Shield right after Blood Fury: a gap of 1.5 sec or more between the two casts means Blood
   Fury uses the GCD. Whether the 10% follows our attack power during the 15 sec is left out
   (a new Strength of Earth would move it by about 4).
+  2026-10-11 20:20 exports: attack power 381 to 419 and spell power 49 to 54, so +10% of
+  both, as in the sim. Healing went up 10% of the healing (59 to 65), where the sim gives
+  10% of spell power (heals only). The sheet's main hand damage went up 21.3, where 38
+  attack power gives 9.0. Still open: the GCD (the 20:20 log came out empty) and whether
+  white hits with Blood Fury up reach past 245.8 raw (the sheet says up to 258.1).
 
 ## Recheck with every new log
 
