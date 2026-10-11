@@ -195,3 +195,39 @@ func TestOrcShamanHealingStreamTalents(t *testing.T) {
 		t.Errorf("got %d normal heals and %d crits for %.2f, want 2 heals for 9 each (13.5 on a crit)", metrics.Hits, metrics.Crits, metrics.TotalHealing)
 	}
 }
+
+// TestOrcShamanSearingTotemBolts checks how many bolts a Searing Totem fires and when
+// (shaman_audit.md 7.22).
+//
+// Rank 3 lasts 40 sec and shoots every 2.5 sec from 2.5 sec after the drop, so it fires 16
+// bolts and the last one as it runs out. On the beta 72 gaps averaged 2.53 sec, and the
+// longest run of a rank 3 totem was 16 bolts.
+func TestOrcShamanSearingTotemBolts(t *testing.T) {
+	sim, enh := newShamanSim(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 50)
+	searing := topRank(t, "Searing Totem", enh.SearingTotem)
+	if searing.Rank != 3 {
+		t.Fatalf("level 30 casts Searing Totem rank %d, want 3", searing.Rank)
+	}
+	bolt := enh.GetSpell(core.ActionID{SpellID: shaman.SearingTotemAttackSpellId[3]})
+	var bolts []time.Duration
+	dot := searing.Dot(enh.CurrentTarget)
+	onTick := dot.OnTick
+	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+		casts := bolt.SpellMetrics[target.UnitIndex].Casts
+		onTick(sim, target, dot)
+		if bolt.SpellMetrics[target.UnitIndex].Casts == casts+1 {
+			bolts = append(bolts, sim.CurrentTime)
+		}
+	}
+	at(sim, 1, func(sim *core.Simulation) { castNow(t, sim, enh, searing) })
+	runSim(sim)
+
+	if len(bolts) != 16 {
+		t.Fatalf("Searing Totem fired %d bolts at %v, want 16", len(bolts), bolts)
+	}
+	for i, at := range bolts {
+		if want := time.Second + time.Duration(i+1)*2500*time.Millisecond; at != want {
+			t.Errorf("bolt %d at %s, want %s", i+1, at, want)
+		}
+	}
+}
