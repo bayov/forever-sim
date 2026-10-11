@@ -1197,3 +1197,16 @@ Later the same day the user said to assume the damage works as intended. So item
 settled without a log: the sim's raw 78.3 to 89.7 plus 71.4% of spell power stands, and the
 2.5 sec cast and 85 mana match the client (70338). A bolt in a later log is on the recheck
 list.
+
+
+2026-10-11  Healing Stream's healing power (item 17, audit 7.28)
+---------------------------------------------------------------
+From the exports already pasted, no new play. The sheet's healing is spell power plus 10 in
+every export: 101 at 91 spell power (Mental Quickness 2) and 59 at 49 (after the Elemental
+respec, and in the 23:54 export). Naga Battle Gloves (888) give +10 healing, and the sim's
+database has it as healing power, which the sim adds to spell power for heals.
+  - Rank 2 heals 6 + 0.022 x healing. At 101 that's 8.22, and our totems' 750 heals in the
+    15:07 log averaged 8.21 (589 of 8, 161 of 9). At 59 it's 7.30, and 404 heals in the
+    23:25 log averaged 7.29.
+  - So the extra 10 was the gloves. The sim is right. No sim change, and the notes.md bullet
+    is gone.

@@ -196,9 +196,9 @@ Maelstrom Weapon 34, everything under "At 60").
 
 Keep this current as you go.
 
-Open on 2026-10-11, all saved by the user for a later session: Frostbrand Weapon (14), dagger
-Stormstrike (4) and Spirit regen of the other classes (7). Every other item is settled,
-parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
+Open on 2026-10-11: Blood Fury (18), the next test. Saved by the user for a later session:
+Frostbrand Weapon (14), dagger Stormstrike (4) and Spirit regen of the other classes (7).
+Every other item is settled, parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
 23:25 log had 8.3%, over the sim's flat 5%.
 
 - [x] 1. Windfury Weapon attacks and Flametongue Totem. Settled 2026-10-10: Flametongue Totem
@@ -351,6 +351,19 @@ parked or assumed. Also watch Healing Stream crits on every new log (the recheck
   assume the damage works as intended, so the sim's raw 78.3 to 89.7 plus 71.4% of spell
   power stands. The 2.5 sec cast and 85 mana match the client (70338). The notes.md bullet is
   gone. A bolt in a later log goes on the recheck list.
+- [x] 17. Healing Stream's healing power (audit 7.28, notes.md). Settled 2026-10-11 from the
+  exports, in the sim's favor. The sheet's healing is spell power plus 10: 101 at 91 spell
+  power and 59 at 49. Naga Battle Gloves give +10 healing, and the sim's database has it.
+  Rank 2 heals 6 + 2.2% of healing: 8.22 at 101, where 750 heals in the 15:07 log averaged
+  8.21, and 7.30 at 59, where 404 heals in the 23:25 log averaged 7.29. No sim change.
+- [ ] 18. Blood Fury (audit 9.1, notes.md). The sim gives +10% attack power and spell power
+  for 15 sec, from our totals when it starts, with the 1.5 sec GCD. wowhead's Forever tooltip
+  says a flat 169 attack power and no spell power. Test: two `/bayov export`s with the same
+  buffs, one before Blood Fury and one within its 15 sec. At the 23:54 export (387 attack
+  power, 49 spell power) 10% gives about +39 and +5. With the combat log on, spam Lightning
+  Shield right after Blood Fury: a gap of 1.5 sec or more between the two casts means Blood
+  Fury uses the GCD. Whether the 10% follows our attack power during the 15 sec is left out
+  (a new Strength of Earth would move it by about 4).
 
 ## Recheck with every new log
 
