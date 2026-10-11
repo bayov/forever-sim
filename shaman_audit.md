@@ -110,7 +110,7 @@ Nature spells
 
 Shields
 
-- [ ] 7.15 Lightning Shield: orbs, damage, ICD, what triggers it
+- [?] 7.15 Lightning Shield: orbs, damage, ICD, what triggers it
 - [ ] 7.16 Water Shield (Forever): free, 15 sec cooldown, globes, mana per globe
 
 Totems
@@ -1027,6 +1027,23 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: none. Lava Burst is a level 40 talent, and the character is 30.
 - Already tested: `lava_burst_test.go` (the rank by level), `mana_costs_test.go` (cost, Convection) and `talent_procs_test.go` (Clearcasting, Elemental Devastation). Nothing tests the damage, the Flame Shock bonus, the cast time, the cooldown or the travel time.
 - No sim change. `lava_burst_test.go` (TestOrcShamanLavaBurstDamage): at level 60 with no spell power and no crit, against a target at our level, 1000 hits land in rank 3's range, or 1.2 times it with Flame Shock up, and the two averages come out near 220 and 264. A real cast from 20 yards rolls at the end of its 2.5 sec cast and lands 1 sec later, and the 10 sec cooldown counts from the end of the cast. Breaking the 20%, the cast time, the cooldown, the travel speed, the damage range or the roll each fails it.
+
+### 7.15 Lightning Shield
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`lightning_shield.go`, `shields.go`): 7 ranks, learned at 8, 16, 24, 32, 40, 48 and 56, for 45 to 370 mana and a 1.5 sec GCD. The shield has 3 orbs and lasts 10 min. Casting it, or Water Shield, replaces the shield we have.
+  - Any direct hit an enemy lands on us fires one orb at that enemy, at most one every 3.5 sec. Melee, ranged and spell hits count, and a blocked hit too. Misses, dodges, parries and damage over time ticks don't. At level 60 only the raid damage hits option (6.5) feeds it.
+  - An orb deals 13, 24, 40, 64, 96, 134 or 178 Nature damage by rank, plus 26.7% of spell power on every rank. It rolls spell hit under Forever, and a miss still uses its orb. It never crits (5.1). The target's Nature resistance takes part of it (7.8). Improved Lightning Shield adds 5% a point to the whole orb (section 8). Shamanistic Focus takes 45% off the cost (7.11).
+  - The shield goes away with its last orb.
+- Found: when the shield reaches 3 orbs, which is every time we cast it, the sim resets Earth Shock's own cooldown. That code came from upstream (2024-09-04) and isn't a Forever or Classic rule. It never changes anything, because Earth Shock still waits for the cooldown it shares with the other shocks, and that one always ends at the same time or later. Removing it changes no golden.
+- Client 70338 (wago.tools, 324 to 10432 and the orbs 26364 to 26363): the same levels, mana, GCD, orb damage and 26.7% coefficient. Every rank has 3 charges, a 100% proc chance, a 3500 ms proc cooldown, the proc flags 0x222a8 (melee, ranged and harmful spells taken, no ticks) and a 10 min duration. All ranks trigger 26545, which the server maps to the rank's orb, and each rank's tooltip names its orb (rank 1 26364 up to rank 7 26363), as the sim has them.
+- Beta, all four logs (2026-10-11, 389 orbs, all rank 3):
+  - Orbs never came less than 3.5 sec apart. The shortest gaps were 3.551, 3.557 and 3.567 sec.
+  - Each shield fired 3 orbs. The server takes the shield off just before it logs the third orb, in 115 of 117 shields that ran out. In the other 2 a melee hit took the shield off and no orb was logged.
+  - What fired the orbs: 378 melee hits, 5 spell hits and 2 blocked swings. With the 3.5 sec wait over, 26 dodges, 23 misses, 13 parries and 18 damage over time ticks fired nothing.
+  - 310 hits, 49 misses, 30 immune, 0 crits. Raw 64 at 91 spell power (257 hits), and 53 or 54 at the earlier 49 to 52 (53 hits). 10 hits lost part of their damage to resistance.
+- Already tested: `shields_test.go` (what fires an orb, raid damage hits, orb misses and no crits), `spell_power_test.go` (rank 3 at 91 spell power), `damage_modifiers_test.go` (Improved Lightning Shield), `mana_costs_test.go`, `prepull_test.go`, `talent_procs_test.go` and `stormstrike_test.go` (orbs don't use the mark). Nothing tests the 3.5 sec wait for orbs, the shield going away with its last orb, the orb hitting the enemy that hit us, or the 10 min.
+- Proposed: remove the Earth Shock reset. And a small test: an enemy that isn't our target hits us every 0.5 sec. Its orbs come at 1, 4.5 and 8 sec and hit it, a missed orb counts, and the shield is gone after the third. A fresh shield with no hits lasts 10 min.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
