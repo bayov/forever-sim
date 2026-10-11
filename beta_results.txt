@@ -1319,3 +1319,25 @@ the same as the 20:20 exports.
     part 24 to 46 became 27.5 to 49.5 (+3.5, 10% of 35).
   - So Blood Fury is +10% attack power plus a flat 10% of the weapon's average damage on
     the hit. That keeps the spread and makes the average exactly 1.1 times.
+
+
+2026-10-11  Blood Fury, more white hits (20:48 to 21:19)
+-------------------------------------------------------
+Same log, now to 21:19:47. Blood Fury at 20:48:50 (Rage of the Storm), and at 21:16:45 and
+21:18:50 with the fist (Windfury Weapon on it from 21:15:20). The last one has no removed
+line in the log, so its window is taken as 15.1 sec. No Strength of Earth of ours, no other
+aura on us. The 21:00 and 21:04 uses were the /run checks, with no swings.
+  - Rage of the Storm with Blood Fury: 13 hits, raw 225 to 258, mean 241.2 +- 3.8. 6 are past
+    245.8, the most +10% attack power allows, and the top one (258) sits on the sheet's
+    258.1. +10% attack power gives a mean of 222.3 (5.0 standard errors under), and +10%
+    attack power plus 10% of the weapon gives 234.6 (1.7 under). Without it: 7 hits, mean
+    214.6, model 213.3.
+  - Fist with Blood Fury: 14 hits, raw 81 to 97, mean 88.5 +- 1.7. Two 97s are past 94.7,
+    the most +10% attack power allows on the fist. +10% attack power gives a mean of 83.65
+    (2.9 under), +10% plus 10% of the weapon gives 87.15 (0.8 under), and the extra attack
+    power that fits Rage of the Storm gives about 89.5 (0.6 over). Without it: 33 hits, mean
+    78.65, model 79.23.
+  - So the log alone now shows more than +10% attack power on both weapons. It fits +10%
+    plus 10% of the weapon, but 14 fist hits can't yet tell that from extra attack power
+    (the averages are 2 apart). About 70 fist hits with Blood Fury would. The sheet already
+    splits them: +3.5 on the fist and +12.35 on Rage of the Storm, 10% of each weapon.
