@@ -135,7 +135,7 @@ Elemental
 
 - [x] 8.1 Convection
 - [x] 8.2 Concussion
-- [ ] 8.3 Elemental Warding
+- [x] 8.3 Elemental Warding
 - [ ] 8.4 Reverberation
 - [ ] 8.5 Call of Flame
 - [ ] 8.6 Elemental Devastation
@@ -1296,6 +1296,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The user (2026-10-12): "whether BF snapshots is something we need to verify". So the sim keeps the amount from the start for now, and the question is in notes.md Need to Verify with a beta test: Blood Fury, then Strength of Earth Totem, and UnitAttackPower before and after the totem.
 - Beta (the beta session, 000d75ca, 2026-10-12): Blood Fury follows our attack power. A Scroll of Strength II (+9 Strength, +18 attack power) read while Blood Fury was up added 20. UnitAttackPower went 383, then 421 with Blood Fury, then 441 with the scroll too, and 401 with the scroll alone after Blood Fury ended. 401 x 1.1 = 441.1, where a snapshot gives 439. The log's attack power field agrees (641 to 661, where a snapshot gives 659). The user OK'd the change, and the beta session made it in fd3f3f4e: while Blood Fury is up, attack power, ranged attack power, spell power and the healing-only stat are each x1.1 of their current total (NewDynamicMultiplyStat), and the weapon part is unchanged. The notes.md item is gone. Only the Orc goldens moved, all under 0.1%.
 - `crit_test.go` TestOrcShamanAxeSpecialization: a level 30 Orc with Barbarian War Axe has exactly 1% more melee and spell crit than with Battering Hammer (a two-handed mace). Neither weapon has stats. Taking out the melee or the spell part of the 1% fails it. The Blood Fury tests are the beta session's `blood_fury_test.go`.
+
+### 8.3 Elemental Warding
+
+- The user OK'd it (2026-10-12): "sg on 8.3".
+- The sim (`talents.go` applyElementalWarding): 1, 2 and 3 points take 3, 7 and 10% off the Fire, Frost and Nature damage we take, direct and periodic.
+- Client 70338 (wago.tools 28996 and its talent curve 85216): -3, -7 and -10% damage taken (aura 87) for school mask 28, which is Fire, Nature and Frost. That matches the sim.
+- Beta: the 20:42 respec had 3 points, but we measured no enemy spell on us.
+- It does nothing in our sims today. No preset encounter casts at us (6.5), Vishas and the level 63 boss only melee, and the PvP mode has no enemy spells. No enhancement preset has points in it.
+- No sim change. `elemental_warding_test.go` TestOrcShamanElementalWarding: with 1, 2 and 3 points an enemy's 100 damage Fire, Frost and Nature hits deal 97, 93 and 90, and Arcane, Shadow and physical hits deal 100. A wrong rank value, a missing school or an extra school fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
