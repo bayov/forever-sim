@@ -198,9 +198,8 @@ Keep this current as you go.
 
 Saved by the user for a later session (2026-10-11): Frostbrand Weapon (14) and Spirit regen
 of the other classes (7). Dagger and fist Stormstrike (4) ran on 2026-10-12, and the dagger's
-1.8 is in the sim. Also saved (the user, 2026-10-12): Stormstrike's one-hander speed, 2.7 or
-2.6 (notes.md Need to Verify). Use a one-hander with a narrow damage range, or about 50
-Stormstrikes on a night when the white hits match the sheet.
+1.8 is in the sim. The one-hander's 2.7 was verified the same night (the user, 74 fist
+Stormstrikes).
 Every other item is settled, parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
 23:25 log had 8.3%, over the sim's flat 5%.
 
@@ -216,7 +215,8 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   after 3 Windfury procs from Stormstrike, the next swing came on the old schedule (within
   36 ms), so the attacks don't restart it.
 - [x] 4. Stormstrike damage model, dagger. Settled 2026-10-12, sim changed: daggers 1.8,
-  one-handers 2.7, two-handers 3.6. The one-hander's 2.7 leads 2.6 but isn't proven (below).
+  one-handers 2.7, two-handers 3.6. The user called the one-hander's 2.7 verified after 74
+  fist Stormstrikes to 01:59 (2.6 is at least 2.5 standard errors off, beta_results.txt).
   The model is settled (2026-10-10): 30 Stormstrikes with Rage of the Storm fit the sim's
   normalized 3.6, and the other two models each had hits outside their range. Only the dagger
   is left. Rage of the Storm's +10% is off the list: the user said to assume it works

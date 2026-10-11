@@ -1507,3 +1507,4 @@ out. 74 Stormstrikes: 62 at field 583, 1 at 601 (the scroll), 11 at 641 (Blood F
     at 00:27:47 is under 2.7's floor.
   - So 2.7 fits under each reading of the white hits, and 2.6 is at least 2.5 standard
     errors off. The sim already has 2.7.
+  - The user called 2.7 verified (2026-10-12). No sim change, and the notes.md item is gone.
