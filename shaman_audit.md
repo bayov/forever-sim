@@ -118,7 +118,7 @@ Totems
 - [x] 7.17 Totem rules: one per element, durations, the 1 sec GCD, totem health ignored, placing them before the pull
 - [x] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
 - [x] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
-- [ ] 7.20 Grace of Air Totem
+- [?] 7.20 Grace of Air Totem
 - [ ] 7.21 Strength of Earth Totem
 - [ ] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
 - [ ] 7.23 Magma Totem
@@ -1112,6 +1112,18 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Already tested: `extra_attacks_test.go` (the swing timer and the 1 sec buff), `proc_matrix_test.go` (which hits trigger it), `weapon_totem_slot_test.go` (Windfury Weapon turns it off), `grace_of_air_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the 20%, the 1.5 sec wait, the attack power by rank or off-hand procs.
 - No sim change. `windfury_totem_test.go` TestOrcShamanWindfuryTotem, with another shaman's totem and Rockbiter: the buff gives 95, 179 and 246 attack power at levels 32, 42 and 52. 500 landed white hits 2 sec apart proc it about 100 times, and 400 hits 0.5 sec apart never proc it twice within 1.5 sec. Changing the 20%, the 1.5 sec, the rank 3 attack power or the rank 2 level each fails it.
 - We left out the off-hand proc we proposed. Forever's shamans can't dual wield (the user, 2026-10-08, `off_hand_test.go`), so only a dual wielding party member like a rogue meets it.
+
+### 7.20 Grace of Air Totem
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`air_totems.go`, `core/buffs.go` GraceOfAirTotemAura): ranks at 42, 56 and 60 for 155, 250 and 310 mana, a 1 sec GCD, 5 min in the air slot (7.17). It gives the party 49, 77 or 89 Agility by our level's rank.
+  - A Windfury Totem buff turns its Agility off while it's up, ours or another shaman's, and it comes back when that goes (the user, 2026-10-08: Forever doesn't stack the two for now). Our own two can't meet, because they share the air slot.
+  - Enhancing Totems is gone under Forever, so an "improved" Grace of Air in the raid buffs gives the same 89.
+  - The Level 60 Grace of Air rotation puts it down in place of Windfury Totem. The other Level 60 presets have Windfury Totem, and the Level 30 presets can't have it. The stats panel only shows it once we cast it (1.9).
+- Client 70338 (wago.tools 8835, 10627, 25359 and their party auras 8836, 10626, 25360): the same levels, mana, 1000 ms GCD, 5 min and air slot. The party auras give 49, 77 and 89 Agility. Nothing in the client says it doesn't stack with Windfury Totem.
+- Beta: none. Grace of Air comes at 42, and the character is 30.
+- Already tested: `grace_of_air_test.go` (no Agility with a Windfury Totem buff up, back when ours runs out), `totem_slots_test.go` (the air slot, 5 min), `stats_panel_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the Agility of our own totem by rank.
+- Proposed: no sim change. A small test that our own totem gives 49, 77 and 89 Agility at levels 42, 56 and 60, and none once a Windwall Totem takes its place.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
