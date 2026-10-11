@@ -1304,3 +1304,18 @@ of Earth, Blood Fury and glancing blows, gives back the sheet's attack power:
     speed for a one-hander (2.4) would put the fist at 90 to 112.
   - The one hit under the minimum (185 at 20:12:36) came under a mob's Withering Poison.
 The sim uses the same rule.
+
+
+2026-10-11  Blood Fury, how the sheet's damage range splits
+----------------------------------------------------------
+The user ran a /run line (UnitAttackPower, GetSpellBonusDamage(4), GetSpellBonusHealing,
+UnitDamage) at 21:04 before and during Blood Fury on Rage of the Storm: AP 381 to 419, SP 49
+to 54, healing 59 to 65, damage 189.8 to 236.8 (avg 213.31) to 211.1 to 258.1 (avg 234.64),
+the same as the 20:20 exports.
+  - The range is weapon roll plus attack power x speed / 14. Before: 100 to 147 plus 89.8.
+    During: 112.35 to 159.35 plus 98.8 (419.1 attack power). So the weapon part moved up a
+    flat 12.35 on both ends, 10% of its average roll (123.5).
+  - The fist exports split the same way, exactly: 425.7 x 1.6 / 14 = 48.65, and the weapon
+    part 24 to 46 became 27.5 to 49.5 (+3.5, 10% of 35).
+  - So Blood Fury is +10% attack power plus a flat 10% of the weapon's average damage on
+    the hit. That keeps the spread and makes the average exactly 1.1 times.
