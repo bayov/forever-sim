@@ -110,9 +110,11 @@ func (ws weaponSim) start() (*core.Simulation, *EnhancementShaman) {
 // Fire Nova is the only spell with two talent bonuses. Call of Flame 3 and Improved Fire Nova 2
 // multiply under Forever (1.15 * 1.2), as the beta showed (shaman_audit.md 5.6). The Stormstrike
 // mark and Curse of the Elements are other kinds, and they multiply with the talents and with
-// each other. Forever's Curse of the Elements adds 10%
-// to every magic school at level 60. So Earth Shock on a marked target deals 1.05 * 1.2 * 1.1
-// with Concussion 5.
+// each other. Forever's Curse of the Elements adds 10% to every magic school at level 60.
+//
+// Concussion is 1% a point on Lightning Bolt, Chain Lightning and Earth Shock only, as the client
+// data says (shaman_audit.md 8.2). The Stormstrike mark is on the same three. So each of them on
+// a marked target deals 1.05 * 1.2 * 1.1 with Concussion 5, and Frost Shock gets only the 1.1.
 //
 // We run two sims with the same seed, one with none of the bonuses and one with all of them.
 // No bonus changes a roll, so both sims roll the same hits, crits and damage in the same order,
@@ -138,23 +140,28 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 		sim, enh := newSim(talents, debuffs)
 		shield := topRank(t, "Lightning Shield", enh.LightningShield)
 		mark := enh.CurrentTarget.GetAuraByID(enh.Stormstrike.ActionID)
+		// takesMark is true for the spells that use the Stormstrike mark up.
 		spells := []struct {
-			name  string
-			spell *core.Spell
+			name      string
+			spell     *core.Spell
+			takesMark bool
 		}{
-			{"Earth Shock", topRank(t, "Earth Shock", enh.EarthShock)},
-			{"Flame Shock", topRank(t, "Flame Shock", enh.FlameShock)},
-			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNova)},
-			{"Searing Totem", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0)},
-			{"Lightning Shield orb", topRank(t, "Lightning Shield orb", enh.LightningShieldProcs)},
+			{"Earth Shock", topRank(t, "Earth Shock", enh.EarthShock), true},
+			{"Lightning Bolt", topRank(t, "Lightning Bolt", enh.LightningBolt), true},
+			{"Chain Lightning", topRank(t, "Chain Lightning", enh.ChainLightning), true},
+			{"Frost Shock", topRank(t, "Frost Shock", enh.FrostShock), false},
+			{"Flame Shock", topRank(t, "Flame Shock", enh.FlameShock), false},
+			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNova), false},
+			{"Searing Totem", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), false},
+			{"Lightning Shield orb", topRank(t, "Lightning Shield orb", enh.LightningShieldProcs), false},
 		}
 		at(sim, 1, func(sim *core.Simulation) {
 			for range 500 {
 				for _, s := range spells {
-					// Earth Shock takes the mark, and an orb takes a charge of the shield.
-					if s.name == "Earth Shock" && marked {
+					if marked && s.takesMark {
 						mark.Activate(sim)
 					}
+					// An orb takes a charge of the shield.
 					if s.name == "Lightning Shield orb" {
 						shield.ApplyEffects(sim, enh.CurrentTarget, shield)
 					}
@@ -162,7 +169,7 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 				}
 			}
 			if marked && mark.IsActive() {
-				t.Errorf("Earth Shock didn't take the Stormstrike mark")
+				t.Errorf("Chain Lightning didn't take the Stormstrike mark")
 			}
 		})
 		// The last Flame Shock ticks over the next 12 sec.
@@ -182,6 +189,9 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 		tick float64
 	}{
 		{"Earth Shock", 1.05 * 1.2 * 1.1, 0},
+		{"Lightning Bolt", 1.05 * 1.2 * 1.1, 0},
+		{"Chain Lightning", 1.05 * 1.2 * 1.1, 0},
+		{"Frost Shock", 1.1, 0},
 		{"Flame Shock", 1.15 * 1.1, 1.15 * 1.1},
 		{"Fire Nova", 1.15 * 1.2 * 1.1, 0},
 		{"Searing Totem", 1.15 * 1.1, 0},

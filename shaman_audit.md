@@ -134,7 +134,7 @@ Totems
 Elemental
 
 - [x] 8.1 Convection
-- [ ] 8.2 Concussion
+- [x] 8.2 Concussion
 - [ ] 8.3 Elemental Warding
 - [ ] 8.4 Reverberation
 - [ ] 8.5 Call of Flame
@@ -1267,6 +1267,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The Level 60 preset (mksettings, Phase 2 gear, Level 60 talents, the optimized rotation, 20,000 iterations) went from 719.6 to 716.8 DPS at 180 sec. Mana left at the end went from 1282 to 1220, and it runs out of mana at 252 sec instead of 260.
   - The enhancement and elemental goldens didn't move. The warden golden did, from -3.6% to +2% DPS and up to +43% TPS, because its talents have Convection 3 and Shamanistic Focus. Its Phase 1 blank gear, no buffs, 60 sec case went from 35.7 to 45.6 DPS. That rotation casts Earth Shock only above 50% mana and uses the Demonic Rune once enough mana is missing. With dearer shocks the rune came at 49.5 sec instead of 57.5 sec, which left time for two Earth Shocks after it instead of one.
 - `mana_costs_test.go`: TestOrcShamanManaCostTalents now wants 0.9 * 0.55 of a shock's cost with Convection 5 and Shamanistic Focus. TestOrcShamanCostTalentsOnTheBeta checks the beta's costs at level 30: Earth Shock rank 4 at 79.75, 130.5 and 71.775, Flame Shock rank 3 at 88, 144 and 79.2 and Lightning Shield rank 3 at 68.75. TestOrcShamanMaelstromWeaponCost has Maelstrom Weapon times Convection. Adding the two talents again fails them.
+
+### 8.2 Concussion
+
+- The user OK'd it (2026-10-12): "8.2 sg".
+- The sim (`talents.go` applyConcussion): 5 points, 1% more damage a point on Lightning Bolt, Chain Lightning and Earth Shock. It's added to the other percent bonuses of the same kind, but none of those spells has another one, so adding and multiplying give the same. It multiplies with the Stormstrike mark and Curse of the Elements. Lightning Overload's copies of Lightning Bolt and Chain Lightning get it too.
+  - The elemental preset has 5/5. The Level 60 and Level 30 enhancement presets have none, so it doesn't move their DPS.
+- Client 70338 (wago.tools 16035 and its talent curve 85215): 5 ranks, 1 to 5% more damage (aura 108, a percent modifier). The class mask 0x100003 is Lightning Bolt, Chain Lightning and Earth Shock only, as the tooltip says. Flame Shock and Frost Shock aren't in it.
+- Beta: the user never had it.
+- No sim change. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers had Concussion 5 on Earth Shock only. Now it also wants Lightning Bolt and Chain Lightning at 1.05 * 1.2 * 1.1 on a marked target with Curse of the Elements, and Frost Shock at 1.1 (Flame Shock was already in it at 1.15 * 1.1). Taking Lightning Bolt or Chain Lightning out of Concussion's spell list, or putting Frost Shock in, fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
