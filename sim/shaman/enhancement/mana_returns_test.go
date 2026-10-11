@@ -175,6 +175,48 @@ func TestOrcShamanWaterShieldRecast(t *testing.T) {
 	runSim(sim)
 }
 
+// TestOrcShamanManaSpring checks the mana our own Mana Spring Totem gives at level 30
+// (shaman_audit.md 7.26).
+//
+// Rank 1 gives 4 mana every 2 sec from 2 sec after the drop. On the beta all 26 ticks on us
+// were 4 mana, 1.91 to 2.08 sec apart. Restorative Totems adds 5% a point, so 5/5 makes it 5.
+// We look at the mana a moment before and after each time a tick could come, so the regen in
+// between is under 0.1 mana.
+func TestOrcShamanManaSpring(t *testing.T) {
+	for _, c := range []struct {
+		talents string
+		tick    float64
+	}{{"", 4}, {"--00000000005", 5}} {
+		sim, enh := newShamanSim(newOrcShaman(30, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+		if c.talents != "" && enh.Talents.RestorativeTotems != 5 {
+			t.Fatalf("got Restorative Totems %d, want 5", enh.Talents.RestorativeTotems)
+		}
+		manaSpring := topRank(t, "Mana Spring Totem", enh.ManaSpringTotem)
+		if manaSpring.Rank != 1 {
+			t.Fatalf("level 30 casts Mana Spring Totem rank %d, want 1", manaSpring.Rank)
+		}
+		at(sim, 1, func(sim *core.Simulation) {
+			enh.SpendMana(sim, enh.CurrentMana()-200, enh.GetManaNotCastingMetrics())
+			castNow(t, sim, enh, manaSpring)
+		})
+		var before float64
+		jump := func(seconds, want float64) {
+			at(sim, seconds-0.001, func(sim *core.Simulation) { before = enh.CurrentMana() })
+			at(sim, seconds+0.001, func(sim *core.Simulation) {
+				if got := enh.CurrentMana() - before; math.Abs(got-want) > 0.1 {
+					t.Errorf("talents %q, at %.0f sec: mana went up %.2f, want %.0f", c.talents, seconds, got, want)
+				}
+			})
+		}
+		jump(2, 0)
+		jump(3, c.tick)
+		jump(4, 0)
+		jump(5, c.tick)
+		jump(7, c.tick)
+		runSim(sim)
+	}
+}
+
 // TestOrcShamanManaTide checks Mana Tide Totem at level 60: 290 mana every 3 sec, 4 times,
 // starting 3 sec after we put it down. It takes the water slot, so Mana Spring Totem stops.
 //
