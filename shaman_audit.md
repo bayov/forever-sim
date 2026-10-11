@@ -1233,7 +1233,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Windwall takes 32, 50 or 64 off ranged damage taken by rank (15108 to 15110).
 - Beta (our own rank 3 Stoneskin, rechecked on the newer log):
   - WoWCombatLog-101026_150733.txt (6.3, armor 572 by the hits): of 77 normal mob hits on us with the totem down, 66 fit 11 off before armor, 5 fit 11 after armor and 9 fit nothing off.
-  - The 23:25 log (other gear, 1686 armor on the sheet, 1637 by 416 of 431 hits without the totem): of 221 hits with the totem down, 132 fit 11 before armor, none fit 11 after and 86 fit nothing off. The last are probably hits out of the totem's range.
+  - The 23:25 log (other gear, 1686 armor on the sheet, 1637 by 416 of 431 hits without the totem): of 221 hits with the totem down, 132 fit 11 before armor, none fit 11 after and 86 fit nothing off. The last are probably hits out of the totem's range. At this armor 7 off after armor fits 131, about the same as 11 before, so only the first log tells before and after armor apart (the beta session, 5832c194).
   - We put down Tremor Totem 3 times. There's nothing to measure. Windwall needs level 36.
 - Already tested: `stoneskin_test.go` (the -30 comes and goes with the buff), `totem_slots_test.go`, `gcd_test.go`, `mana_costs_test.go` and `spell_ranks_test.go`.
 - Found: the sim's Stoneskin is 30 at every rank, on melee only, after armor. Forever's is the rank's value, on all physical hits, before armor. 6.3 only recorded this (the user, 2026-10-10).

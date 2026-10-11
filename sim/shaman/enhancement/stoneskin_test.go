@@ -14,7 +14,7 @@ import (
 //
 // Under Forever each rank takes its own flat amount off each physical hit, before armor: 11
 // for rank 3 at level 30 and 30 for rank 6 at 60. On the beta our rank 3 totem's 11 fit the
-// hits we took only before armor, in two logs with 572 and 1637 armor. Guardian Totems adds
+// hits we took in two logs. With 572 armor it fit only before armor. Guardian Totems adds
 // 10% a point, so 2 points make it 13.2. Another shaman's totem in the raid buffs gives the top
 // rank at our level too. A hit smaller than the reduction deals nothing, and the reduction
 // goes when a Tremor Totem takes the earth slot. We wear 512 armor, which makes 572 at level 30
