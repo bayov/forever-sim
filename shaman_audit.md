@@ -139,7 +139,7 @@ Elemental
 - [x] 8.4 Reverberation
 - [x] 8.5 Call of Flame
 - [x] 8.6 Elemental Devastation
-- [ ] 8.7 Elemental Focus (Clearcasting)
+- [x] 8.7 Elemental Focus (Clearcasting)
 - [ ] 8.8 Elemental Alacrity
 - [ ] 8.9 Improved Fire Nova
 - [ ] 8.10 Eye of the Storm (not implemented)
@@ -1333,6 +1333,17 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta (4.13 and the beta session's item 5): every direct shock crit gave the buff (more than 10), and it lasted 10.0 sec. Fire Nova (0 of 7), Flametongue Totem (more than 50), Flametongue Weapon (0 of 9) and Flame Shock tick crits never did. The size isn't settled. In every log with 3/3, 56 white swings with the buff up crit 14.3% +- 4.7 and 1836 with it down 10.4%. +9% would give about 19.4% and +3% about 13.4%, so the 9% rests on the client.
 - Changed (2026-10-12, the user's OK): the buff is 30165 at every rank under Forever (`talents.go`). Classic keeps a buff for each rank. Only the buff's ID in the timeline and metrics changes.
 - `talent_procs_test.go` TestOrcShamanElementalDevastationBuff: an Earth Shock crit at level 60 gives +3% melee crit with 1 point and +9% with 3, as buff 30165, and it's gone 10 sec later. A 2% step, a 12 sec buff or the old rank 3 ID fails it. TestOrcShamanTalentProcs already covers what gives the buff.
+
+### 8.7 Elemental Focus (Clearcasting)
+
+- The user OK'd it (2026-10-12), and said to assume heals never give Clearcasting and aren't made free by it.
+- The sim (`talents.go` applyElementalFocus): each damage spell we cast (the shocks, Lightning Bolt, Chain Lightning, Fire Nova and Lava Burst) has a 10% chance to give Clearcasting (16246) for 15 sec. It makes the next of those spells free, and that cast uses it up. Totem attacks, imbue procs, Lightning Shield orbs, heals and totems neither give it nor use it. Only the elemental presets have it.
+- Client 70338: the talent (16164) has a 10% chance. Its buff lasts 15 sec, has 1 charge, and takes 100% off the cost of Lightning Bolt, Chain Lightning, the three shocks, Fire Nova's cast and Lava Burst. That matches the sim.
+- Beta (2026-10-10 from 20:42, and 2026-10-11 from 20:20 to 23:15):
+  - The shocks gave it on 13 of 132 casts (9.8%).
+  - 38 heals, 30 Lightning Shields and the totem drops never gave it. The next Fire Nova, Earth Shock or Flame Shock used it, never a heal. Unused ones ran out at 15.0 sec.
+  - Fire Nova gave it on 28 of 135 casts (21%). Forever's Fire Nova is a cast (408342) that triggers a separate damage spell (408424), and both seem to roll the 10%. In 10 of the 28 the same Fire Nova's damage used it up 1 to 2 ms later, which saves no mana. The other 18 (13.3% +- 2.9 of casts) lasted to the next spell, which fits the sim's 10%. The Oct 8 dev notes say this "activated and immediately consumed" bug was fixed, but the Oct 10 and 11 logs still show it.
+- No sim change. `mana_costs_test.go` TestOrcShamanClearcasting covers the 10% on Earth Shock and Fire Nova, the free cast, using it up, the 15 sec, and Searing Totem neither giving nor using it. `talent_procs_test.go` testClearcastingSpells covers which spells it makes free.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
