@@ -18,6 +18,10 @@ import (
 // healing gloves, so the healing-only stat gets its 10% too. We give the character the same
 // spell power and gloves.
 //
+// The 10% follows the total while it's up. On the beta (2026-10-12) a Scroll of Strength II
+// (+9 Strength, 18 attack power) used during Blood Fury took attack power from 421 to 441, and
+// it was 401 after Blood Fury ended. We add the same 18 attack power during it.
+//
 // The weapon's damage range also goes up by 10% of its average, with the same spread. With
 // Bloody Brass Knuckles (24 to 46) that's 27.5 to 49.5, as on the character sheet, and the
 // average hit with attack power comes out 1.1 times bigger.
@@ -59,6 +63,9 @@ func TestOrcShamanBloodFury(t *testing.T) {
 		check("weapon minimum", mh.BaseDamageMin, 27.5)
 		check("weapon maximum", mh.BaseDamageMax, 49.5)
 		check("average hit", mh.CalculateAverageWeaponDamage(enh.GetStat(stats.AttackPower)), hit*1.1)
+
+		enh.AddStatDynamic(sim, stats.AttackPower, 18)
+		check("attack power with the scroll", enh.GetStat(stats.AttackPower), (ap+18)*1.1)
 	})
 	if heal != 59 {
 		t.Fatalf("healing is %.2f before Blood Fury, want the beta's 59", heal)
@@ -68,7 +75,7 @@ func TestOrcShamanBloodFury(t *testing.T) {
 		if aura.IsActive() {
 			t.Errorf("Blood Fury is still up after 15 sec")
 		}
-		check("attack power", enh.GetStat(stats.AttackPower), ap)
+		check("attack power", enh.GetStat(stats.AttackPower), ap+18)
 		check("spell power", enh.GetStat(stats.SpellPower), sp)
 		check("healing", healing(), heal)
 		check("weapon minimum", mh.BaseDamageMin, 24)

@@ -94,26 +94,33 @@ func (character *Character) mobTypeDamageAura(mobType proto.MobType, multiplier 
 }
 
 // Blood Fury: Attack Power and Spell Power increased by 10% for 15 sec. The Classic
-// healing penalty is gone. The 10% is taken from the character's total AP and SP at
-// activation, which includes gear and buffs.
+// healing penalty is gone. The client gives it percent auras for attack power, ranged attack
+// power and spell power, so the 10% follows the total while it's up. On the beta (2026-10-12)
+// a Scroll of Strength used during Blood Fury added 20 attack power, where it adds 18 on its
+// own.
 //
 // On the beta (2026-10-11, beta_results.txt) bonus healing also goes up 10% of its total,
-// from 59 to 65 with 49 spell power and the +10 healing gloves. So we add 10% of the
-// healing-only stat on top of the spell power. Blood Fury is also off the GCD: Lightning
-// Shield went out 0.245 sec after it, and the client gives it no GCD category.
+// from 59 to 65 with 49 spell power and the +10 healing gloves. So the healing-only stat
+// gets its 10% too. Blood Fury is also off the GCD: Lightning Shield went out 0.245 sec after
+// it, and the client gives it no GCD category.
 //
 // Each weapon hit also gets 10% of the weapon's average damage, so the average hit is 1.1
 // times bigger. The character sheet showed it first: the main hand range went up by 12.35 on
 // Rage of the Storm (100 to 147) and 3.5 on Bloody Brass Knuckles (24 to 46), with the same
 // spread, and the off-hand and ranged lines went up 10% too. The log agreed: 187 fist hits
 // came out 1.105 times bigger and 34 Windfury attacks fit the weapon part too, where +10%
-// attack power alone gives 1.056. Stormstrike rolls the same weapon, so it gets it too
-// (unchecked on the beta). We add it to each weapon's damage range, after the weapon
-// enchants and stones.
+// attack power alone gives 1.056. Stormstrike rolls the same weapon, so it gets it too, and
+// Stormstrikes with Blood Fury up fit that on a dagger and on a fist (2026-10-12). We add it
+// to each weapon's damage range, after the weapon enchants and stones.
 func (character *Character) registerForeverBloodFury() {
 	actionID := ActionID{SpellID: 20572}
 
-	var bonusAP, bonusSP, bonusHealing float64
+	statDeps := []*stats.StatDependency{
+		character.NewDynamicMultiplyStat(stats.AttackPower, 1.1),
+		character.NewDynamicMultiplyStat(stats.RangedAttackPower, 1.1),
+		character.NewDynamicMultiplyStat(stats.SpellPower, 1.1),
+		character.NewDynamicMultiplyStat(stats.HealingPower, 1.1),
+	}
 	var bonusWeaponDamage [3]float64
 	weapons := func() [3]*Weapon {
 		return [3]*Weapon{character.AutoAttacks.MH(), character.AutoAttacks.OH(), character.AutoAttacks.Ranged()}
@@ -123,12 +130,9 @@ func (character *Character) registerForeverBloodFury() {
 		ActionID: actionID,
 		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			bonusAP = character.GetStat(stats.AttackPower) * 0.1
-			bonusSP = character.GetStat(stats.SpellPower) * 0.1
-			bonusHealing = character.GetStat(stats.HealingPower) * 0.1
-			character.AddStatDynamic(sim, stats.AttackPower, bonusAP)
-			character.AddStatDynamic(sim, stats.SpellPower, bonusSP)
-			character.AddStatDynamic(sim, stats.HealingPower, bonusHealing)
+			for _, dep := range statDeps {
+				character.EnableDynamicStatDep(sim, dep)
+			}
 			for i, weapon := range weapons() {
 				bonusWeaponDamage[i] = weapon.AverageDamage() * 0.1
 				weapon.BaseDamageMin += bonusWeaponDamage[i]
@@ -136,9 +140,9 @@ func (character *Character) registerForeverBloodFury() {
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			character.AddStatDynamic(sim, stats.AttackPower, -bonusAP)
-			character.AddStatDynamic(sim, stats.SpellPower, -bonusSP)
-			character.AddStatDynamic(sim, stats.HealingPower, -bonusHealing)
+			for _, dep := range statDeps {
+				character.DisableDynamicStatDep(sim, dep)
+			}
 			for i, weapon := range weapons() {
 				weapon.BaseDamageMin -= bonusWeaponDamage[i]
 				weapon.BaseDamageMax -= bonusWeaponDamage[i]

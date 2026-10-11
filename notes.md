@@ -29,7 +29,6 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 ## All classes
 
 * Beta: crit and dodge per Agility of the warrior, hunter and warlock. At level 1 the warrior gets 0.2500 a point (sim 0.2572), the hunter 0.2174 crit and 0.4348 dodge (sim 0.1783 and 0.3567), and the warlock 0.15 (sim 0.1249). The paladin, rogue, priest, mage and druid match the sim at level 1 (2026-10-10).
-* Beta: does Orc Blood Fury follow our attack power while it's up (the user, 2026-10-12)? The sim takes 10% of our attack power, spell power and healing when it starts and keeps that amount for the 15 sec. The client gives it percent auras (166, 167 and 317), which would follow our current total. In no logged Blood Fury did anything else change our attack power, so the logs can't tell. The test: cast Blood Fury, then drop Strength of Earth Totem (+14 Strength at level 30, +28 attack power) and read UnitAttackPower before and after the totem. If it follows, the totem adds about 31 (28 times 1.1), and with a snapshot it adds 28. Worth little either way (shaman_audit.md 9.1).
 
 ## Rogue
 
