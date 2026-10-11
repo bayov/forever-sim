@@ -217,6 +217,43 @@ func TestOrcShamanManaSpring(t *testing.T) {
 	}
 }
 
+// TestOrcShamanManaTideRanks checks the mana of Mana Tide Totem's first tick by rank and its
+// cooldown (shaman_audit.md 7.27).
+//
+// Ranks 1 to 3 come at levels 25, 48 and 58 and give 88, 197 and 290 mana a tick, the first 3
+// sec after the drop, as the Forever client's party auras do. The totem is ready again 5 min
+// after the cast. We look at the mana a moment before and after the tick, so the regen in
+// between is under 0.1 mana.
+func TestOrcShamanManaTideRanks(t *testing.T) {
+	for _, c := range []struct {
+		level int32
+		rank  int
+		tick  float64
+	}{{25, 1, 88}, {48, 2, 197}, {58, 3, 290}} {
+		// Mana Tide Totem.
+		sim, enh := newShamanSim(newOrcShaman(c.level, "--000000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+		manaTide := topRank(t, "Mana Tide Totem", enh.ManaTideTotem)
+		if manaTide.Rank != c.rank {
+			t.Fatalf("level %d casts Mana Tide Totem rank %d, want %d", c.level, manaTide.Rank, c.rank)
+		}
+		at(sim, 1, func(sim *core.Simulation) {
+			enh.SpendMana(sim, enh.CurrentMana()-100, enh.GetManaNotCastingMetrics())
+			castNow(t, sim, enh, manaTide)
+			if readyAt, want := manaTide.ReadyAt(), sim.CurrentTime+5*time.Minute; readyAt != want {
+				t.Errorf("level %d: Mana Tide Totem is ready again at %s, want %s", c.level, readyAt, want)
+			}
+		})
+		var before float64
+		at(sim, 3.999, func(sim *core.Simulation) { before = enh.CurrentMana() })
+		at(sim, 4.001, func(sim *core.Simulation) {
+			if got := enh.CurrentMana() - before; math.Abs(got-c.tick) > 0.1 {
+				t.Errorf("level %d: the first tick gave %.2f mana, want %.0f", c.level, got, c.tick)
+			}
+		})
+		runSim(sim)
+	}
+}
+
 // TestOrcShamanManaTide checks Mana Tide Totem at level 60: 290 mana every 3 sec, 4 times,
 // starting 3 sec after we put it down. It takes the water slot, so Mana Spring Totem stops.
 //
