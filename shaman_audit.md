@@ -137,7 +137,7 @@ Elemental
 - [x] 8.2 Concussion
 - [x] 8.3 Elemental Warding
 - [x] 8.4 Reverberation
-- [ ] 8.5 Call of Flame
+- [x] 8.5 Call of Flame
 - [ ] 8.6 Elemental Devastation
 - [ ] 8.7 Elemental Focus (Clearcasting)
 - [ ] 8.8 Elemental Alacrity
@@ -1314,6 +1314,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16040 and its talent curve 85220): 5 ranks, -200 ms each, on the cooldown (aura 107, misc 11) of the three shocks (class mask 0x90100000). That matches.
 - Beta: the Elemental build of 2026-10-11 (20:20 to about 23:10) had Reverberation 2. In WoWCombatLog-101126_202029.txt the shortest gaps between two of our shocks were 5.503, 5.605 and 5.624 sec, from 22:29 to 22:41. Without Reverberation, 44 gaps on 2026-10-10 never went under 5.904. Both come out about 0.1 sec under the cooldown, which fits 5.6 sec at 2 points.
 - No sim change. `shocks_test.go` TestOrcShamanSharedShockCooldown now has a 2 point case at 5.6 sec next to 6 sec and 5/5 at 5 sec. A rank 2 value of 0.5 sec fails it.
+
+### 8.5 Call of Flame
+
+- The user OK'd it (2026-10-12): "sg".
+- The sim (`talents.go`, `fire_totems.go`): 5% a point (3 ranks) on Searing Totem, Magma Totem, Fire Nova, Flame Shock (the hit and the ticks) and Lava Burst. On Fire Nova it multiplies with Improved Fire Nova (5.6), and on Lava Burst with the spell's own 20% when Flame Shock is on the target (still in Need to Verify). It leaves Flametongue Totem and Flametongue Weapon alone.
+  - The Level 60 enhancement preset has 3/3. The Level 30 presets have none.
+- Client 70338 (wago.tools 16038, talent curves 85218 and 85217): 5, 10 and 15% (aura 108). The damage effect has class mask 0x50000000 and 0x1000 in the second word, which is the Searing Totem attack, Magma Totem, Fire Nova (408424), Flame Shock and Lava Burst. The periodic effect has 0x10000000, Flame Shock's ticks. Flametongue Totem's proc (0x4 in the second word) and Flametongue Weapon's (0x200000) aren't in either. That matches the sim.
+- Beta (the Call of Flame 3 build, 2026-10-10 20:42 to 23:14, `beta_results.txt`): the Flame Shock hit was 64 and its ticks 21 at 49 spell power, where x1.15 gives 64.3 and 21.7 and no Call of Flame 55 and 18. Fire Nova took Call of Flame times Improved Fire Nova (5.6). Flametongue Totem hit raw 18 on all 18 procs, where Call of Flame would have made it 20. That build dropped no Searing or Magma Totem and has no Lava Burst, so those rest on the client data.
+- No sim change. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers now has Lava Burst and Magma Totem at 1.15 * 1.1 next to Flame Shock, Fire Nova and Searing Totem. Both sims now have the Lava Burst talent, and the bonus one adds Call of Flame 3. TestOrcShamanCallOfFlameLeavesFlametongue rolls every Flametongue Weapon and Flametongue Totem proc at level 60 with and without Call of Flame 3 and wants the same damage. Taking Lava Burst or Magma Totem out of Call of Flame, or putting the Flametongue procs in, fails them.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
