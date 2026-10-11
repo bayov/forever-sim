@@ -1417,3 +1417,24 @@ formula holds). Mobs of level 6 to 10.
     10% of the weapon's average (1.1 on Poniard) the model gives 66.27 (0.8 standard errors),
     and +10% attack power alone 65.17 (2.0 under). On a dagger the weapon part is small, so
     this only leans toward it, like the 29 white hits and 4 Windfury attacks with it up.
+  - Update to 00:14:48: the same 27 without Blood Fury, and 9 with it up (raw 62 63 64 67 67
+    68 68 69 69, mean 66.83 +- 0.77). The weapon part's 66.27 is 0.7 standard errors off,
+    and +10% attack power alone (65.17) is 2.2. The last Poniard swing was at 00:14:51.
+
+
+2026-10-12  Export with the fist (00:17:50), Stormstrike with a one-hander (item 4)
+------------------------------------------------------------------------------------
+Bloody Brass Knuckles (7683, 24 to 46, 1.6) from 00:17:09, with Elementalist's Guard
+(shield). 16 Enhancement points (Thundering Strikes 5, Ancestral Knowledge 4, Mental
+Dexterity 3, Improved Ghost Wolf 2, Shamanistic Focus 1, Stormstrike 1), no Mental
+Quickness. Unarmed 150 of 150.
+  - Attack power 395 (383 + 12). The 383 is 30 x 2 + 104 Strength x 2 - 20 + 135 Intellect
+    from Mental Dexterity, and the +12 comes with the fist (the dagger sheet had 383).
+  - The sheet's damage 69.14 to 91.14 is 24 to 46 + 395 x 1.6 / 14.
+  - The log's AP field is 583 with the fist (641 with Blood Fury). It was 575 with 8 less
+    Intellect on 2026-10-10.
+  - Stormstrike's mean raw at 395 attack power: 102.7 for Classic's 2.4, 108.4 for modern
+    2.6, 111.2 for the sim's 2.7. A single Stormstrike's standard deviation is 6.35 (22 /
+    sqrt 12), so 2.6 and 2.7 need about 50 Stormstrikes without Blood Fury to separate at
+    3 standard errors. About 12 rule out 2.4.
+  - First ones: 104 and 104 without Blood Fury, 123 with it up.
