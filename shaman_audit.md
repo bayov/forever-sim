@@ -115,7 +115,7 @@ Shields
 
 Totems
 
-- [ ] 7.17 Totem rules: one per element, durations, the 1 sec GCD, totem health ignored, placing them before the pull
+- [?] 7.17 Totem rules: one per element, durations, the 1 sec GCD, totem health ignored, placing them before the pull
 - [ ] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
 - [ ] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
 - [ ] 7.20 Grace of Air Totem
@@ -1060,6 +1060,22 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Recasts came 6.4 sec apart at the least, so there's no 15 sec cooldown. A recast with globes left brought it back to 3.
 - Already tested: `mana_returns_test.go` (2% a globe, 3 globes, the 3.5 sec wait, no five second rule), `shields_test.go` (what spends a globe), `periodic_test.go` (Healing Stream crits leave the globes alone), `gcd_test.go` and `prepull_test.go`. Nothing tests a heal crit spending a globe, a recast right away refilling it, the wait across a recast, or the 10 min.
 - No sim change. `mana_returns_test.go` TestOrcShamanWaterShieldRecast: a heal of ours that crits spends a globe for 2% of max mana and a normal one doesn't. A recast right after fills it back to 3, an enemy hit 1 sec later does nothing and one 3.5 sec after the crit spends a globe. A shield with no hits lasts 10 min. Breaking the 10 min, the 2%, the crit check (either way), the wait across a recast or adding a 15 sec cooldown each fails it.
+
+### 7.17 Totem rules
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`totems.go` and the four element files): each totem takes a 1 sec GCD (3.4) and goes in its element's slot. Most last 5 min under Forever (Classic 2 min). Searing Totem lasts 30 to 55 sec by rank, Magma Totem 20 sec and Mana Tide 13 sec with a 5 min cooldown. Nothing attacks our totems, so their health never matters. We can put them down before the pull, paying their mana (`prepull_test.go`).
+- Found: only the fire and air slots replace the totem that's there.
+  - Fire: Searing, Magma and Flametongue Totem each take down the fire totem before them.
+  - Air: Windfury, Grace of Air and Windwall swap their buffs.
+  - Earth: Strength of Earth, Stoneskin and Tremor don't end each other. With Strength of Earth down, a Stoneskin Totem leaves the Strength on us for the rest of its 5 min, and the other way round.
+  - Water: Mana Tide stops Mana Spring and Healing Stream, but Mana Spring and Healing Stream don't stop each other or Mana Tide. A Mana Spring placed during Mana Tide leaves both ticking.
+  - And our own Stoneskin Totem's buff never expires, where the totem lasts 5 min.
+  - No preset hits any of these. Each one puts down one totem per element, except fire (Searing or Magma with Fire Nova), air (Warden's Grace of Air and Windfury) and water in the Mana Tide rotation, which only casts Mana Spring while Mana Tide is down. So only custom rotations would see them.
+- Client 70338 (wago.tools SpellMisc, SpellCooldowns, SpellEffect, all 49 totem ranks in the sim): every totem has a 1000 ms GCD in the usual GCD category. They last 300000 ms, except Searing Totem (30000 to 55000 by rank), Magma Totem (20000) and Mana Tide (13000, with a 300000 ms cooldown). Each one summons into its element's slot (SummonProperties 63 fire, 81 earth, 82 water, 83 air), and a totem in a slot replaces the one there.
+- Beta (all four logs): all 514 Healing Stream heals on us came while Healing Stream was the last water totem we put down, and all 26 Mana Spring ticks while Mana Spring was. So putting down the other one stopped them. The logs show no totem buff auras on us, so we can't see the earth slot this way.
+- Already tested: `gcd_test.go` (1 sec for every totem), `prepull_test.go`, `starting_totems_test.go`, `grace_of_air_test.go` (the air swap) and `mana_returns_test.go` (Mana Tide stops Mana Spring).
+- Proposed: give the earth and water slots the same rule as fire and air. Putting down a totem ends what the totem in its slot was doing (its buff, its heals, its mana ticks). And our own Stoneskin Totem's buff ends with the totem after 5 min. No preset changes, so no DPS change. A test puts down two totems of each element in turn and checks the first one's effect ends, and that each kind of totem's effect ends when its time is up.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
