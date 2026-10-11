@@ -369,6 +369,11 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   10% of spell power (heals only). The sheet's main hand damage went up 21.3, where 38
   attack power gives 9.0. Still open: the GCD (the 20:20 log came out empty) and whether
   white hits with Blood Fury up reach past 245.8 raw (the sheet says up to 258.1).
+  20:25 log: Blood Fury went off inside Flame Shock's GCD and Lightning Shield came 1.42 sec
+  after it, so it's off the GCD. White hits with it up had raw 255, 248, 225 and 248, so 3
+  of 4 are past 245.8. The client gives it only the three 10% auras, so the server puts the
+  10% on the weapon's damage too. Implied sim change, waiting for the user's OK: the whole
+  weapon hit times 1.1 in place of +10% attack power, +10% spell power, and no GCD.
 
 ## Recheck with every new log
 
