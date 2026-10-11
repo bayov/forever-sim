@@ -121,7 +121,7 @@ Totems
 - [x] 7.20 Grace of Air Totem
 - [x] 7.21 Strength of Earth Totem
 - [x] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
-- [ ] 7.23 Magma Totem
+- [?] 7.23 Magma Totem
 - [ ] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
 - [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [ ] 7.26 Mana Spring Totem
@@ -1148,6 +1148,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Damage, spell power and crits checked in 5.5 and 5.3 (raw 20 to 26 at 91 spell power).
 - Already tested: `spell_power_test.go` (rank 3 at 91 spell power), `crit_test.go`, `prepull_test.go` (first attack 2.5 sec after the drop), `totem_slots_test.go` (55 sec for rank 6, the fire slot), `damage_modifiers_test.go` (Call of Flame), `mana_costs_test.go`, `talent_procs_test.go` and `other_procs_test.go`. Nothing counts the bolts a totem fires.
 - No sim change. `periodic_test.go` TestOrcShamanSearingTotemBolts: rank 3 at level 30 fires 16 bolts 2.5 sec apart, the first 2.5 sec after the drop and the last as it runs out at 40 sec. A 2 sec rate or a 45 sec rank 3 each fails it.
+
+### 7.23 Magma Totem
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`fire_totems.go`): 4 ranks at 26, 36, 46 and 56, for 230, 360, 500 and 650 mana, a 1 sec GCD, 20 sec in the fire slot (7.17). Every 2 sec from 2 sec after the drop, 10 pulses in all, it hits every target in the fight for 20, 35, 52 or 73 Fire damage by rank, plus 3.3% of spell power. The damage doesn't grow with level. Each hit rolls our spell hit and crit (5.1, 5.3), and Call of Flame adds 5% a point (section 8). Totem range is ignored, so every target counts as close to it.
+  - The Level 60 Water Shield and Mana Tide presets put it down in place of Searing Totem, for Fire Nova's sake (7.25).
+- Client 70338 (wago.tools 8190, 10585, 10586, 10587, the passives 8188, 10582, 10583, 10584 and the pulses 8187, 10579, 10580, 10581): the same levels, mana, 1000 ms GCD, 20 sec and fire slot. Each passive triggers its pulse every 2000 ms. The pulse deals 20, 35, 52 or 73 with a 0.033 coefficient to the enemies around the totem.
+- Beta: another player put down rank 1 at 19:42:33 in WoWCombatLog-101026_150733.txt, but no Magma Totem damage is in the log. We haven't used it.
+- Already tested: `totem_slots_test.go` (20 sec, the fire slot), `mana_costs_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the pulses or their damage.
+- Proposed: no sim change. A small test of rank 4 at level 60 with no spell power and no crit, against 3 targets at our level. It pulses 10 times 2 sec apart from 2 sec after the drop, and each pulse hits all 3 targets for 73 or misses.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
