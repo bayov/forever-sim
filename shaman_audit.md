@@ -106,7 +106,7 @@ Nature spells
 
 - [x] 7.12 Lightning Bolt
 - [x] 7.13 Chain Lightning: targets, damage falloff per jump
-- [ ] 7.14 Lava Burst
+- [?] 7.14 Lava Burst
 
 Shields
 
@@ -1014,6 +1014,19 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: none. We learn it at 32, and the character is 30.
 - Already tested: `mana_costs_test.go` (cost, Convection, Maelstrom Weapon), `spell_ranks_test.go`, `talent_procs_test.go` and `other_procs_test.go`. Nothing tests the jumps, the cast time or the cooldown.
 - No sim change. `chain_lightning_test.go` (TestOrcShamanChainLightningJumps): 4 targets at our level and no spell crit. 200 casts hit the first three for 100%, 70% and 49% of a roll and never the fourth, and some hits miss. A mark on the second target goes to its jump, which deals 84%. A real cast lands all three hits at the end of its 2 sec, and the 6 sec cooldown starts there. Breaking the 70%, the target count, the mark on jumps, the cooldown or the cast time each fails it.
+
+### 7.14 Lava Burst
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`lava_burst.go`): the Elemental talent teaches rank 1 at 40, and the trainer has rank 2 at 50 and rank 3 at 60. A Fire spell with a 2.5 sec cast, a 10 sec cooldown of its own, a 1.5 sec GCD and 165 / 230 / 265 mana. Rank 1 deals 142.3 to 185.7 at 40 and grows 0.9 a level up to 149.5 to 192.9 at 48. Rank 2 reaches 178.9 to 230.7 at 58, and rank 3 deals 192.1 to 247.9 at 60. It gets 71.4% of spell power on every rank and flies at 20 yards a second. With our Flame Shock on the target it deals 20% more.
+  - It rolls spell hit and crit (5.1, 5.3). It holds our swings during the cast, and the swing timer starts over when it ends (3.2).
+  - Talents: Convection, Call of Flame (times the 20%, Need to Verify since 5.6), Clearcasting, Elemental Fury, Elemental Alacrity's shorter cast and Elemental Devastation (section 8). The Stormstrike mark, Maelstrom Weapon and Lightning Overload don't touch it.
+  - Only the Elemental default rotation casts it. No enhancement preset does.
+- Client 70338 (wago.tools, 408490, 1238299, 1238300): the same levels, base damage (164, 196, 220), growth (0.9, 1.1, 1.3 up to 48, 58 and 68), 25.3% damage range, coefficient, mana, GCD, Fire school and missile speed (20). Cast index 19 is 2500 ms, and category 1224 has its own 10000 ms cooldown. Its second effect is a dummy of 20, and the tooltip says "If your Flame Shock is on the target, Lava Burst deals 20% increased damage". The SoD rune it came from had a 2 sec cast, an 8 sec cooldown and a sure crit with Flame Shock, so Forever changed all three.
+  - The client's spell masks give Lava Burst to Clearcasting, Call of Flame, Convection, Elemental Fury and Elemental Alacrity, as the sim does. The other spells that list it are SoD runes and SoD set bonuses that Forever's tree doesn't have, and Forever's Tier 1 Elemental 5 piece (1 sec off the cooldown), which the sim doesn't have.
+- Beta: none. Lava Burst is a level 40 talent, and the character is 30.
+- Already tested: `lava_burst_test.go` (the rank by level), `mana_costs_test.go` (cost, Convection) and `talent_procs_test.go` (Clearcasting, Elemental Devastation). Nothing tests the damage, the Flame Shock bonus, the cast time, the cooldown or the travel time.
+- Proposed: no sim change. A small test at level 60 with no spell power and no crit, against a target at our level: every hit lands in rank 3's range, or 1.2 times it with Flame Shock up, and the two averages come out near 220 and 264. And a real cast from 20 yards lands 1 sec after its 2.5 sec cast, with the 10 sec cooldown counting from the end of the cast.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
