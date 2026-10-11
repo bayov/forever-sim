@@ -136,7 +136,7 @@ Elemental
 - [x] 8.1 Convection
 - [x] 8.2 Concussion
 - [x] 8.3 Elemental Warding
-- [ ] 8.4 Reverberation
+- [x] 8.4 Reverberation
 - [ ] 8.5 Call of Flame
 - [ ] 8.6 Elemental Devastation
 - [ ] 8.7 Elemental Focus (Clearcasting)
@@ -1305,6 +1305,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: the 20:42 respec had 3 points, but we measured no enemy spell on us.
 - It does nothing in our sims today. No preset encounter casts at us (6.5), Vishas and the level 63 boss only melee, and the PvP mode has no enemy spells. No enhancement preset has points in it.
 - No sim change. `elemental_warding_test.go` TestOrcShamanElementalWarding: with 1, 2 and 3 points an enemy's 100 damage Fire, Frost and Nature hits deal 97, 93 and 90, and Arcane, Shadow and physical hits deal 100. A wrong rank value, a missing school or an extra school fails it.
+
+### 8.4 Reverberation
+
+- The user OK'd it (2026-10-12): "sg".
+- The sim (`shocks.go`): 0.2 sec a point off the 6 sec cooldown Earth, Flame and Frost Shock share, so 5 sec at 5/5 (7.11).
+  - The Level 60 enhancement preset has 5/5. The Level 30 presets have none.
+- Client 70338 (wago.tools 16040 and its talent curve 85220): 5 ranks, -200 ms each, on the cooldown (aura 107, misc 11) of the three shocks (class mask 0x90100000). That matches.
+- Beta: the Elemental build of 2026-10-11 (20:20 to about 23:10) had Reverberation 2. In WoWCombatLog-101126_202029.txt the shortest gaps between two of our shocks were 5.503, 5.605 and 5.624 sec, from 22:29 to 22:41. Without Reverberation, 44 gaps on 2026-10-10 never went under 5.904. Both come out about 0.1 sec under the cooldown, which fits 5.6 sec at 2 points.
+- No sim change. `shocks_test.go` TestOrcShamanSharedShockCooldown now has a 2 point case at 5.6 sec next to 6 sec and 5/5 at 5 sec. A rank 2 value of 0.5 sec fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

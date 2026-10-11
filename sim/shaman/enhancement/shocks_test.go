@@ -11,15 +11,16 @@ import (
 // TestOrcShamanSharedShockCooldown checks that Earth, Flame and Frost Shock share one cooldown
 // (shaman_audit.md 7.11).
 //
-// After any shock all three wait 6 sec, and 5 sec with Reverberation 5/5. The client gives the
-// three shocks one 6 sec cooldown, and Reverberation takes 0.2 sec a point off it. On the beta
-// two different shocks never came less than 5.9 sec apart, though our rotation casts a shock as
-// soon as it can.
+// After any shock all three wait 6 sec, 5.6 sec with Reverberation 2 and 5 sec with 5/5. The
+// client gives the three shocks one 6 sec cooldown, and Reverberation takes 0.2 sec a point off
+// it (8.4). On the beta two shocks never came less than 5.9 sec apart without Reverberation, in
+// 44 tries. With Reverberation 2 the shortest gaps were 5.50, 5.61 and 5.62 sec, the same 0.1 sec
+// under the cooldown.
 func TestOrcShamanSharedShockCooldown(t *testing.T) {
 	for _, c := range []struct {
 		talents  string
 		cooldown time.Duration
-	}{{"", 6 * time.Second}, {"0005", 5 * time.Second}} {
+	}{{"", 6 * time.Second}, {"0002", 5600 * time.Millisecond}, {"0005", 5 * time.Second}} {
 		sim, enh := newShamanSim(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
 		shocks := []*core.Spell{
 			topRank(t, "Earth Shock", enh.EarthShock),
