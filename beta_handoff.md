@@ -196,10 +196,10 @@ Maelstrom Weapon 34, everything under "At 60").
 
 Keep this current as you go.
 
-Open on 2026-10-11: Lightning Bolt (16), for the next time the user plays. Saved by the user
-for a later session: Frostbrand Weapon (14), dagger Stormstrike (4) and Spirit regen of the
-other classes (7). Every other item is settled or parked. Also watch Healing Stream crits on every new log (the recheck list): the 23:25 log
-had 8.3%, over the sim's flat 5%.
+Open on 2026-10-11, all saved by the user for a later session: Frostbrand Weapon (14), dagger
+Stormstrike (4) and Spirit regen of the other classes (7). Every other item is settled,
+parked or assumed. Also watch Healing Stream crits on every new log (the recheck list): the
+23:25 log had 8.3%, over the sim's flat 5%.
 
 - [x] 1. Windfury Weapon attacks and Flametongue Totem. Settled 2026-10-10: Flametongue Totem
   procs only on white swings. The client (70291 and 70338) gives its buff ProcTypeMask 0x4,
@@ -344,21 +344,13 @@ had 8.3%, over the sim's flat 5%.
   1") and the weapon. We already know a second shaman imbue replaces the first (Flametongue
   came off when Windfury went on at 19:28:26 on 2026-10-10), and an imbue lasts 60 min. No
   oil or stone shows in our logs so far. Low priority.
-- [ ] 16. Lightning Bolt rank 5 at level 30 (audit 7.12, notes.md, added by the audit session
-  2026-10-11). No log has a Lightning Bolt yet, because we play melee. The sim gives rank 5
-  (spell 943) raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast and 85 mana. The
-  swing timer is settled: the user has seen a bolt with a cast time start the swing timer
-  over (2026-10-11), as in the sim (audit 3.2). An instant bolt leaving it alone stays the
-  user's call from 2026-10-08 (Maelstrom Weapon needs level 34).
-  Test: with the combat log on, cast 5 to 10 rank 5 bolts on a mob. Leave out Elemental
-  Alacrity (it shortens the cast). Then:
-  - Raw on the normal hits. The raw field is before the crit and the Stormstrike mark. The
-    spell power is the cast line's field plus Mental Quickness (15% of Intellect a point),
-    because the field leaves Mental Quickness out. At 49 in the field and Mental Quickness 2
-    with 141 Intellect (91 in all) that's 143.3 to 154.7, times Concussion if taken.
-  - The cast time, from SPELL_CAST_START to SPELL_CAST_SUCCESS.
-  - The mana. The cast success line logs the cost right after our max mana (Earth Shock rank
-    1 logs 30 there).
+- [x] 16. Lightning Bolt rank 5 at level 30 (audit 7.12, notes.md, added by the audit session
+  2026-10-11). Settled 2026-10-11 without a log. The user has seen a bolt with a cast time
+  start the swing timer over, as in the sim (audit 3.2). An instant bolt leaving it alone
+  stays the user's call from 2026-10-08 (Maelstrom Weapon needs level 34). The user said to
+  assume the damage works as intended, so the sim's raw 78.3 to 89.7 plus 71.4% of spell
+  power stands. The 2.5 sec cast and 85 mana match the client (70338). The notes.md bullet is
+  gone. A bolt in a later log goes on the recheck list.
 
 ## Recheck with every new log
 
@@ -423,6 +415,13 @@ combat log, run these checks on it too, and tell the user when one breaks.
   off, 3 Earth Shocks fully resisted) and one Crocolisk Lightning Shield orb (30% off) did,
   all in 10% steps where Classic uses 25%. Also watch whether Frost Shock and Frostbrand
   ever partly resist (they slow, so they might be binary).
+- Lightning Bolt rank 5 (spell 943, audit 7.12, assumed by the user 2026-10-11), whenever a
+  log has one. Raw on the normal hits should be 78.3 to 89.7 plus 71.4% of spell power. The
+  spell power is the cast line's field plus Mental Quickness (15% of Intellect a point),
+  because the field leaves Mental Quickness out: 143.3 to 154.7 at 49 plus 42, times
+  Concussion if taken. The cast takes 2.5 sec from SPELL_CAST_START to SPELL_CAST_SUCCESS
+  (without Elemental Alacrity). The cast success line logs the cost (85) right after our max
+  mana. Our next Melee comes a full swing after the cast ends.
 - Spell crits by spell and by mob level (audit 5.3, the audit session). Count crits out of
   landed hits, Lightning Shield left out because it never crits. On spell lines the crit flag
   is row[-4], because of the trailing "ST". Leave Windfury Weapon's attacks out, they're

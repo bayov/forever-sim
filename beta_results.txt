@@ -1193,3 +1193,7 @@ The sim agrees (we don't swing during a cast, and the next swing comes a full sw
 ends). An instant bolt (Maelstrom Weapon or Nature's Swiftness) leaving the swing timer alone
 stays the user's call from 2026-10-08. No sim change. The bolt's damage, cast time and mana
 are still open (no bolt in any log yet).
+Later the same day the user said to assume the damage works as intended. So item 16 is
+settled without a log: the sim's raw 78.3 to 89.7 plus 71.4% of spell power stands, and the
+2.5 sec cast and 85 mana match the client (70338). A bolt in a later log is on the recheck
+list.
