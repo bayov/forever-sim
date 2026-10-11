@@ -106,7 +106,7 @@ Nature spells
 
 - [x] 7.12 Lightning Bolt
 - [x] 7.13 Chain Lightning: targets, damage falloff per jump
-- [?] 7.14 Lava Burst
+- [x] 7.14 Lava Burst
 
 Shields
 
@@ -1017,7 +1017,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.14 Lava Burst
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "sg".
 - The sim (`lava_burst.go`): the Elemental talent teaches rank 1 at 40, and the trainer has rank 2 at 50 and rank 3 at 60. A Fire spell with a 2.5 sec cast, a 10 sec cooldown of its own, a 1.5 sec GCD and 165 / 230 / 265 mana. Rank 1 deals 142.3 to 185.7 at 40 and grows 0.9 a level up to 149.5 to 192.9 at 48. Rank 2 reaches 178.9 to 230.7 at 58, and rank 3 deals 192.1 to 247.9 at 60. It gets 71.4% of spell power on every rank and flies at 20 yards a second. With our Flame Shock on the target it deals 20% more.
   - It rolls spell hit and crit (5.1, 5.3). It holds our swings during the cast, and the swing timer starts over when it ends (3.2).
   - Talents: Convection, Call of Flame (times the 20%, Need to Verify since 5.6), Clearcasting, Elemental Fury, Elemental Alacrity's shorter cast and Elemental Devastation (section 8). The Stormstrike mark, Maelstrom Weapon and Lightning Overload don't touch it.
@@ -1026,7 +1026,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The client's spell masks give Lava Burst to Clearcasting, Call of Flame, Convection, Elemental Fury and Elemental Alacrity, as the sim does. The other spells that list it are SoD runes and SoD set bonuses that Forever's tree doesn't have, and Forever's Tier 1 Elemental 5 piece (1 sec off the cooldown), which the sim doesn't have.
 - Beta: none. Lava Burst is a level 40 talent, and the character is 30.
 - Already tested: `lava_burst_test.go` (the rank by level), `mana_costs_test.go` (cost, Convection) and `talent_procs_test.go` (Clearcasting, Elemental Devastation). Nothing tests the damage, the Flame Shock bonus, the cast time, the cooldown or the travel time.
-- Proposed: no sim change. A small test at level 60 with no spell power and no crit, against a target at our level: every hit lands in rank 3's range, or 1.2 times it with Flame Shock up, and the two averages come out near 220 and 264. And a real cast from 20 yards lands 1 sec after its 2.5 sec cast, with the 10 sec cooldown counting from the end of the cast.
+- No sim change. `lava_burst_test.go` (TestOrcShamanLavaBurstDamage): at level 60 with no spell power and no crit, against a target at our level, 1000 hits land in rank 3's range, or 1.2 times it with Flame Shock up, and the two averages come out near 220 and 264. A real cast from 20 yards rolls at the end of its 2.5 sec cast and lands 1 sec later, and the 10 sec cooldown counts from the end of the cast. Breaking the 20%, the cast time, the cooldown, the travel speed, the damage range or the roll each fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
