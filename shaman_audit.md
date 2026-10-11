@@ -120,7 +120,7 @@ Totems
 - [x] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
 - [x] 7.20 Grace of Air Totem
 - [x] 7.21 Strength of Earth Totem
-- [ ] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
+- [?] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
 - [ ] 7.23 Magma Totem
 - [ ] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
 - [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
@@ -1134,6 +1134,20 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta (all four logs, 2026-10-11): the log has our attack power on each line. Twice our cast line showed 869 attack power and our next swing 897 (19:57:24 and 20:27:17 in WoWCombatLog-101026_150733.txt). That's +28, rank 2's 14 Strength at 2 attack power each, as the sim gives at level 30.
 - Already tested: `prepull_test.go`, `starting_totems_test.go`, `totem_slots_test.go` (the earth slot, 5 min, another shaman's buff), `stats_panel_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the Strength by rank.
 - No sim change. `strength_of_earth_test.go` TestOrcShamanStrengthOfEarthRanks: our own totem gives 7, 14, 25, 42 and 53 Strength at levels 10, 24, 38, 52 and 60, 14 Strength and 28 attack power at 30 as on the beta, and none once a Tremor Totem takes its place (from 18). Changing rank 2's Strength, rank 3's level or the level 60 value each fails it.
+
+### 7.22 Searing Totem
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`fire_totems.go`): 6 ranks at 10, 20, 30, 40, 50 and 60, for 25 to 170 mana, a 1 sec GCD, in the fire slot (7.17). Rank 1 lasts 30 sec and each rank 5 sec more, up to 55 sec. It shoots our first target every 2.5 sec from 2.5 sec after the drop, so rank 3 fires 16 bolts in its 40 sec. A bolt deals 9 to 11 up to 40 to 54 Fire damage by rank (19 to 25 for rank 3), plus 1.7% of spell power on every rank. It rolls our spell hit and crit (5.1, 5.3), and Call of Flame adds 5% a point (section 8). Fire Nova needs it or another fire totem (7.25).
+  - The Level 60 Searing rotations and Warden put it down. The other presets use Flametongue or Magma Totem.
+- Client 70338: the same levels, mana, 1000 ms GCD, durations (30000 to 55000 ms), fire slot, bolt damage and 1.7% coefficient (5.5, 7.1, 7.17). The bolt rate isn't in the client tables.
+- Beta (all four logs, 2026-10-11, rank 3):
+  - Rate (the beta session, 2026-10-10, kept by the user at 2.5 sec): 72 gaps averaged 2.53 sec.
+  - The first bolt came 2.23 sec after the drop at the earliest, 2.7 sec in the median of 50 totems. The later ones had no mob in range at the drop.
+  - The longest run fired 16 bolts, the last 41.8 sec after the drop, as many as the sim's 16.
+  - Damage, spell power and crits checked in 5.5 and 5.3 (raw 20 to 26 at 91 spell power).
+- Already tested: `spell_power_test.go` (rank 3 at 91 spell power), `crit_test.go`, `prepull_test.go` (first attack 2.5 sec after the drop), `totem_slots_test.go` (55 sec for rank 6, the fire slot), `damage_modifiers_test.go` (Call of Flame), `mana_costs_test.go`, `talent_procs_test.go` and `other_procs_test.go`. Nothing counts the bolts a totem fires.
+- Proposed: no sim change. A small test that rank 3 at level 30 fires 16 bolts 2.5 sec apart, the first 2.5 sec after the drop, and none after its 40 sec.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
