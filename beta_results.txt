@@ -1390,3 +1390,22 @@ log's own attack power field is 575 with the fist all session and 632 with Blood
     1.13 (2.9 over). 34 Windfury attacks with it, mean 93.56 +- 1.09: 92.41 with the weapon
     part (1.1 standard errors), 88.91 without (4.3 under). Two of them are 104, about one
     over the 103.4 top we worked out, the same offset the white hits have.
+
+
+2026-10-11  Stormstrike with a dagger (item 4), 23:24 to 23:29
+---------------------------------------------------------------
+Same log. Poniard (7 to 15, 1.3 dagger, Daggers skill 5 of 150) with Windfury Weapon, a
+shield in the off hand, no Rage of the Storm, no Strength of Earth, no Blood Fury. Sheet at
+23:33: 383 attack power, damage 42.6 to 50.6 (7 + 383 x 1.3 / 14 = 42.56, so the white
+formula holds). Mobs of level 6 to 10.
+  - White hits: 64, raw 42 to 50, mean 46.20 +- 0.29, so 379 +- 3 attack power.
+  - Windfury attacks: 19, mean 50.87, model 50.84 at 383 attack power with rank 1's 46.
+  - Stormstrike: 14 landed, raw 56 57 57 57 59 59 59 59 59 59 60 60 61 61, mean 59.29 +- 0.62.
+  - The sim's dagger speed, 2.0 (1.7 + 0.3), gives 61.7 to 69.7. All 14 are under it.
+  - The speed that fits the mean is 1.77 +- 0.03 (1.78 from the white hits' attack power).
+    1.8 gives 56.2 to 64.2, mean 60.24 (1.5 standard errors over the data). 1.7 gives 53.5
+    to 61.5, mean 57.51 (2.9 under it).
+  - So the sim's +0.3 doesn't hold for daggers. The modern client's normalized speeds (3.6
+    two-hand, 2.6 one-hand, 1.8 dagger) fit both this and the two-hander's 3.6. Classic's
+    (3.3, 2.4, 1.7) don't fit the two-hander. No log has a Stormstrike with a one-hander that
+    isn't a dagger, so 2.6 against the sim's 2.7 is untested.

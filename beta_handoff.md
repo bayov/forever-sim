@@ -221,6 +221,10 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   read the user's Stormstrikes with Rage of the Storm. In the same session, check Stormstrike
   under Blood Fury (item 18): the sim gives it 10% of the weapon's average, as white hits and
   Windfury attacks get on the beta.
+  2026-10-11 23:24 (beta_results.txt): 14 Stormstrikes with Poniard (7 to 15, 1.3), raw 56 to
+  61, all under the sim's 2.0 range (61.7 to 69.7). Fit 1.77 +- 0.03: 1.8 (the modern
+  client's dagger speed) fits, 1.7 is 2.9 standard errors off. Asked for about 15 more to
+  settle 1.8 against 1.7. One-hand 2.6 against 2.7 needs a one-hander that isn't a dagger.
 - [x] 5. Flametongue procs and Elemental Devastation. Settled 2026-10-11 in the sim's favor:
   9 Flametongue Weapon crits on the fist (00:20 to 00:30) gave no buff, so no Flametongue
   crit triggers it (beta_results.txt). 2026-10-10 respec run up to 21:25: the
