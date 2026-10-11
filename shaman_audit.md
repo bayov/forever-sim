@@ -386,6 +386,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Cast times match wowhead Forever (2026-10-08): Lightning Bolt 1.5 / 2 sec at ranks 1 and 2 and 2.5 sec from rank 3, Chain Lightning 2 sec and Lava Burst 2.5 sec at every rank.
 - The user OK'd the swing timer (2026-10-08). We don't swing during a cast, and the swing timer starts over when it ends, so the next swing comes one full swing after the cast. Instant spells don't touch it.
 - Fixed (2026-10-08, the user): an instant Lightning Bolt (5 Maelstrom Weapon stacks or Nature's Swiftness) leaves the swing timer alone, like a shock. It used to start the swing timer over too (`electric_spell.go` stopMeleeForCast). TestEnhancement goes up about 3%. The Level 60 preset is 872.9 / 864.3 / 853.4 at 120 / 180 / 300 sec (was 850.4 / 840.4 / 828.4). Level 30 + 5 has no Maelstrom Weapon and doesn't change. The rotation knobs were tuned on the old behavior.
+- Confirmed (2026-10-11, the user's play, passed on by the beta session in 82f9c67e): a Lightning Bolt with a cast time starts the swing timer over. The instant bolt rule is still the user's 2026-10-08 call.
 - `swing_timer_test.go` TestOrcShamanCastSwingTimer casts 0.4 sec before a swing and checks the next swing after Lightning Bolt, Chain Lightning, a 3 stack bolt, a 5 stack bolt, a Nature's Swiftness bolt and Earth Shock. The old behavior fails it.
 
 ### 3.3 Haste
@@ -1000,7 +1001,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools, 403 to 15208): the same levels, damage, growth, damage range, coefficients, mana, GCD and missile speed (20). 7.1's check matched the cast times.
 - Beta: no Lightning Bolt in any of the four logs, the 23:25 log included up to 01:04. We play melee, so nothing about it is checked on the beta yet.
 - Already tested: `spell_ranks_test.go` (rank 5 at 30), `swing_timer_test.go` (the swing timer after a cast), `gcd_test.go`, `mana_costs_test.go`, `crit_test.go`, `miss_test.go`, `stormstrike_test.go` (the mark), `talent_procs_test.go` (Maelstrom Weapon, Clearcasting), `five_second_rule_test.go` and `reaction_time_test.go`.
-- No sim change. notes.md Need to Verify (Beta) asks for a few rank 5 bolts at level 30: raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast, 85 mana, and the swing timer starting over after the cast.
+- No sim change. notes.md Need to Verify (Beta) asks for a few rank 5 bolts at level 30: raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast and 85 mana.
+- The user confirmed from play (2026-10-11, via the beta session, 82f9c67e) that the swing timer starts over after a bolt with a cast time (3.2), so the beta session took that check out of the notes.md item.
 
 ### 7.13 Chain Lightning
 
