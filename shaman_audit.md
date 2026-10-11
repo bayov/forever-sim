@@ -1216,6 +1216,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Already tested: `periodic_test.go` (5% crits, Water Shield, Restorative Totems and Purification), `totem_slots_test.go`, `starting_totems_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the heal with spell power or its 2 sec.
 - No sim change. `periodic_test.go` TestOrcShamanHealingStreamHeals: rank 2 at level 30 with 91 spell power heals us for 8.002 (12.003 on a crit) every 2 sec from 2 sec after the drop, 5 times in 11 sec. A 0.02 coefficient, a 2.5 sec period or 7 base healing each fails it.
 - notes.md Need to Verify (Beta): compare the sheet's bonus healing in the next export with Healing Stream's heals, which point to about 10 more healing power than spell power.
+- Settled (2026-10-11, the beta session, 87c3673a): the sheet's healing is spell power plus 10, 101 at 91 and 59 at 49. The 10 is Naga Battle Gloves' +10 healing, which our db has as healing power. 6 + 0.022 times that gives 8.22 and 7.30, against 8.21 over 750 heals in the 15:07 log and 7.29 over 404 in the 23:25 log. The sim was right, and the beta session removed the notes.md item.
 
 ### 7.29 Stoneskin, Tremor and Windwall Totems
 

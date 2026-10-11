@@ -204,8 +204,8 @@ func TestOrcShamanHealingStreamTalents(t *testing.T) {
 // It heals every 2 sec from 2 sec after the drop. Rank 2 heals for 6 plus 2.2% of our healing
 // power, and spell power counts as healing power. With the sheet's 91 spell power that's 8.002,
 // and 12.003 on a crit. On the beta 1329 heals came 1.9 to 2.1 sec apart. Our own totems
-// healed for 8.21 on average there, which fits about 10 more healing power than the sheet
-// shows, and notes.md asks to check that.
+// healed for 8.21 on average there. That fits the sheet's 101 healing, the 91 spell power
+// plus 10 healing from Naga Battle Gloves, which gives 8.22.
 func TestOrcShamanHealingStreamHeals(t *testing.T) {
 	sim, enh := newShamanSim(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 12)
 	stream := topRank(t, "Healing Stream Totem", enh.HealingStreamTotem)
