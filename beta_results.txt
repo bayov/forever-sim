@@ -1255,3 +1255,26 @@ Improved Ghost Wolf 2, Shamanistic Focus 1, Anticipation 3). Nothing else change
     doesn't use the GCD. White hits gain about 21 a swing instead of 9 on Rage of the Storm.
     Not seen yet: Stormstrike and Windfury attacks with Blood Fury up (no Stormstrike in this
     build).
+  More white hits in the same log (20:38:15 Blood Fury, level 10 Swine): raw 248, 226, 233
+  (a crit) and 234 with it up, and 216, 199 and 219 after. Others' totems nearby (Searing,
+  Earthbind, Mana Spring, Grounding) give no attack power. So 8 hits with Blood Fury up:
+  225, 226, 233, 234, 248, 248, 248 and 255, 4 past the 245.8 that +10% attack power
+  allows. They average 239.6, where +10% attack power gives 222.3 and the whole hit times
+  1.1 gives 234.6 (4.8 standard error each way for 8 hits).
+  - GCD, second try: Earth Shock at 20:38:15.655, Blood Fury 0.21 sec later, Lightning
+    Shield at 17.231, 1.58 sec after Earth Shock and 1.37 sec after Blood Fury. The user
+    says Blood Fury does start a GCD. The client (70338 SpellCooldowns and SpellCategories)
+    gives Blood Fury no GCD (StartRecoveryTime 0, no GCD category) and a 120 sec cooldown,
+    where Lightning Shield and the shocks have 1500 ms in GCD category 133. In both tries a
+    shock came right before Blood Fury, so Lightning Shield waited on the shock's GCD
+    either way. A 1.5 sec GCD from Blood Fury would have held it 0.08 and 0.13 sec longer.
+    A clean try (nothing cast before Blood Fury) is next.
+  - Fist exports at 20:43:48 and 20:44:05 (Bloody Brass Knuckles 24 to 46, 1.6, shield).
+    Attack power 387 to 425 (375 + 12 to 412 + 13). The average main hand damage went from
+    79.23 to 87.15, 1.1000 times. +10% attack power would make it 83.65, and the extra
+    attack power that fits Rage of the Storm (+90) would make it 89.5. Ranged went 2.371 to
+    2.609, 1.1000 times. The spread stayed 22 again.
+  - So on two weapons with very different weapon and attack power shares, Blood Fury makes
+    the average melee hit 1.1 times bigger. The sheet keeps the spread and moves min and max
+    by 10% of the average, which leaves the average the same as the whole hit times 1.1.
+    Not seen yet: Stormstrike and Windfury attacks with Blood Fury up.
