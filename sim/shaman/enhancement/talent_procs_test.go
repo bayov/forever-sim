@@ -1,11 +1,15 @@
 package enhancement
 
 import (
+	"fmt"
+	"math"
 	"slices"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/shaman"
 )
 
@@ -219,5 +223,45 @@ func forcedOutcome(outcome core.HitOutcome) core.OutcomeApplier {
 		if !result.Landed() {
 			result.Damage = 0
 		}
+	}
+}
+
+// TestOrcShamanElementalDevastationBuff checks what Elemental Devastation's buff gives (shaman_audit.md
+// 8.6).
+//
+// A spell crit gives 3% melee crit a point for 10 sec. The client has one buff, 30165, for every
+// rank, and its talent curve gives 3, 6 and 9%. On the beta the buff lasted 10.0 sec. We crit
+// with Earth Shock at 1 sec and look at our melee crit until the buff is gone.
+func TestOrcShamanElementalDevastationBuff(t *testing.T) {
+	for _, points := range []int{1, 3} {
+		// Elemental Devastation.
+		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("00000%d", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 15)
+		buff := enh.GetAura("Elemental Devastation Proc")
+		if buff == nil {
+			t.Fatalf("%d points: no Elemental Devastation Proc", points)
+		}
+		if buff.ActionID.SpellID != 30165 {
+			t.Errorf("%d points: the buff is %s, want 30165", points, buff.ActionID)
+		}
+		crit := func() float64 { return enh.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance }
+		base := crit()
+		check := func(label string, want float64) {
+			if got := crit() - base; math.Abs(got-want) > 1e-9 {
+				t.Errorf("%d points, %s: melee crit is up %.2f%%, want %.2f%%", points, label, got, want)
+			}
+		}
+		earthShock := topRank(t, "Earth Shock", enh.EarthShock)
+		at(sim, 1, func(sim *core.Simulation) {
+			earthShock.CalcAndDealDamage(sim, enh.CurrentTarget, 100, forcedOutcome(core.OutcomeCrit))
+			check("after the crit", 3*float64(points))
+		})
+		at(sim, 10.99, func(sim *core.Simulation) { check("at 9.99 sec", 3*float64(points)) })
+		at(sim, 11.01, func(sim *core.Simulation) {
+			check("at 10.01 sec", 0)
+			if buff.IsActive() {
+				t.Errorf("%d points: the buff is still up after %s", points, 10*time.Second)
+			}
+		})
+		runSim(sim)
 	}
 }

@@ -249,7 +249,12 @@ func (shaman *Shaman) applyElementalDevastation() {
 		return
 	}
 
+	// Forever has one buff (30165) for every rank, and the talent's rank sets its size. Classic
+	// has a buff for each rank.
 	spellID := []int32{0, 30165, 29177, 29178}[shaman.Talents.ElementalDevastation]
+	if shaman.Env.IsForever() {
+		spellID = 30165
+	}
 	critBonus := 3.0 * float64(shaman.Talents.ElementalDevastation) * core.CritRatingPerCritChance
 	procAura := shaman.NewTemporaryStatsAura("Elemental Devastation Proc", core.ActionID{SpellID: spellID}, stats.Stats{stats.MeleeCrit: critBonus}, time.Second*10)
 

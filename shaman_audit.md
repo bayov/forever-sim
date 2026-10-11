@@ -138,7 +138,7 @@ Elemental
 - [x] 8.3 Elemental Warding
 - [x] 8.4 Reverberation
 - [x] 8.5 Call of Flame
-- [ ] 8.6 Elemental Devastation
+- [x] 8.6 Elemental Devastation
 - [ ] 8.7 Elemental Focus (Clearcasting)
 - [ ] 8.8 Elemental Alacrity
 - [ ] 8.9 Improved Fire Nova
@@ -1323,6 +1323,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16038, talent curves 85218 and 85217): 5, 10 and 15% (aura 108). The damage effect has class mask 0x50000000 and 0x1000 in the second word, which is the Searing Totem attack, Magma Totem, Fire Nova (408424), Flame Shock and Lava Burst. The periodic effect has 0x10000000, Flame Shock's ticks. Flametongue Totem's proc (0x4 in the second word) and Flametongue Weapon's (0x200000) aren't in either. That matches the sim.
 - Beta (the Call of Flame 3 build, 2026-10-10 20:42 to 23:14, `beta_results.txt`): the Flame Shock hit was 64 and its ticks 21 at 49 spell power, where x1.15 gives 64.3 and 21.7 and no Call of Flame 55 and 18. Fire Nova took Call of Flame times Improved Fire Nova (5.6). Flametongue Totem hit raw 18 on all 18 procs, where Call of Flame would have made it 20. That build dropped no Searing or Magma Totem and has no Lava Burst, so those rest on the client data.
 - No sim change. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers now has Lava Burst and Magma Totem at 1.15 * 1.1 next to Flame Shock, Fire Nova and Searing Totem. Both sims now have the Lava Burst talent, and the bonus one adds Call of Flame 3. TestOrcShamanCallOfFlameLeavesFlametongue rolls every Flametongue Weapon and Flametongue Totem proc at level 60 with and without Call of Flame 3 and wants the same damage. Taking Lava Burst or Magma Totem out of Call of Flame, or putting the Flametongue procs in, fails them.
+
+### 8.6 Elemental Devastation
+
+- The user OK'd it (2026-10-12): "g".
+- The sim (`talents.go` applyElementalDevastation): a crit on the direct hit of an offensive spell gives +3% melee crit a point for 10 sec. Fire Nova crits don't (4.13, 620a81c2), and neither do Flame Shock tick crits, the Flametongue Weapon and Totem procs, Searing and Magma Totem or the Lightning Shield orbs. Only the elemental presets have it.
+- Client 70338: the talent (30160) has a trait curve of 3, 6 and 9% and triggers on harmful spells. Its buff (30165) is +melee crit (aura 52) for 10 sec. Forever has that one buff for every rank. Classic's rank 2 and 3 buffs (29177 and 29178) aren't in the client, but the sim used them.
+- Beta (4.13 and the beta session's item 5): every direct shock crit gave the buff (more than 10), and it lasted 10.0 sec. Fire Nova (0 of 7), Flametongue Totem (more than 50), Flametongue Weapon (0 of 9) and Flame Shock tick crits never did. The size isn't settled. In every log with 3/3, 56 white swings with the buff up crit 14.3% +- 4.7 and 1836 with it down 10.4%. +9% would give about 19.4% and +3% about 13.4%, so the 9% rests on the client.
+- Changed (2026-10-12, the user's OK): the buff is 30165 at every rank under Forever (`talents.go`). Classic keeps a buff for each rank. Only the buff's ID in the timeline and metrics changes.
+- `talent_procs_test.go` TestOrcShamanElementalDevastationBuff: an Earth Shock crit at level 60 gives +3% melee crit with 1 point and +9% with 3, as buff 30165, and it's gone 10 sec later. A 2% step, a 12 sec buff or the old rank 3 ID fails it. TestOrcShamanTalentProcs already covers what gives the buff.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
