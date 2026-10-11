@@ -6,15 +6,14 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
-	"github.com/wowsims/classic/sim/shaman"
 )
 
 // TestOrcShamanWeaponDamage checks the damage of our white hits, Windfury attacks and
-// Stormstrikes at level 60, with a two-hander and a one-hander.
+// Stormstrikes at level 60, with a two-hander, a one-hander and a dagger.
 //
 // Each one rolls between the weapon's min and max damage and adds AP / 14 times the weapon's
-// speed. Stormstrike uses the weapon type's normalized speed plus 0.3 there (3.6 for a
-// two-hander, 2.7 for a one-hander), not the weapon's own. Superior Impact adds 9 to the
+// speed. Stormstrike uses a fixed speed for the weapon type there (3.6 for a two-hander, 2.7
+// for a one-hander and 1.8 for a dagger), not the weapon's own. Superior Impact adds 9 to the
 // two-hander's damage, and a flat "+N damage" effect like Zandalarian Hero Medallion adds to
 // every hit. Windfury adds its 333 AP at level 60.
 //
@@ -22,20 +21,22 @@ import (
 // We check that every normal hit is in its range, and that the rolls reach both ends of it.
 func TestOrcShamanWeaponDamage(t *testing.T) {
 	weapons := []struct {
-		name                   string
-		item                   *proto.ItemSpec
-		weaponMin, weaponMax   float64
-		speed, normalizedSpeed float64
-		impact                 float64
+		name                    string
+		item                    *proto.ItemSpec
+		weaponMin, weaponMax    float64
+		speed, stormstrikeSpeed float64
+		impact                  float64
 	}{
 		// Dark Edge of Insanity with Superior Impact.
-		{"two-hander", &proto.ItemSpec{Id: 21134, Enchant: 1896}, 242, 364, 3.5, 3.3, 9},
+		{"two-hander", &proto.ItemSpec{Id: 21134, Enchant: 1896}, 242, 364, 3.5, 3.6, 9},
 		// Crul'shorukh, Edge of Chaos.
-		{"one-hander", &proto.ItemSpec{Id: 19363}, 101, 188, 2.3, 2.4, 0},
+		{"one-hander", &proto.ItemSpec{Id: 19363}, 101, 188, 2.3, 2.7, 0},
+		// Perdition's Blade.
+		{"dagger", &proto.ItemSpec{Id: 18816}, 73, 137, 1.8, 1.8, 0},
 	}
 	for _, w := range weapons {
 		t.Run(w.name, func(t *testing.T) {
-			testWeaponDamage(t, w.item, w.weaponMin, w.weaponMax, w.speed, w.normalizedSpeed+shaman.StormstrikeExtraSpeed, w.impact)
+			testWeaponDamage(t, w.item, w.weaponMin, w.weaponMax, w.speed, w.stormstrikeSpeed, w.impact)
 		})
 	}
 }
