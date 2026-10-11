@@ -7,6 +7,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -146,5 +147,99 @@ func TestOrcShamanLightningShieldOrbOutcome(t *testing.T) {
 	}
 	if metrics.Crits != 0 {
 		t.Errorf("%d orbs crit, want none", metrics.Crits)
+	}
+}
+
+// TestOrcShamanLightningShieldOrbs checks when the orbs fire, whom they hit, and how long the
+// shield lasts (shaman_audit.md 7.15).
+//
+// An enemy that isn't our target hits us every 0.5 sec. The orbs hit that enemy, at most one
+// every 3.5 sec, so a fresh shield fires at 0, 3.5 and 7 sec and goes away with its third orb.
+// A missed orb uses up its orb too. A shield we cast inside the wait still waits, so the
+// recast at 8 sec fires its first orb at 10.5 sec. On the beta (all four logs) the orbs never
+// came less than 3.5 sec apart, each shield fired 3, and about 50 enemy hits on a shield cast
+// inside the wait fired nothing.
+//
+// The enemy is level 63, which our orbs miss 17% of the time. We repeat this 16 times so that
+// some orbs miss. Then a shield that takes no hits lasts 10 min.
+func TestOrcShamanLightningShieldOrbs(t *testing.T) {
+	const cycles, cycle = 16, 15.0
+	target := core.NewDefaultTarget()
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 900, Targets: []*proto.Target{target, target}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+	shield := topRank(t, "Lightning Shield", enh.LightningShield)
+	aura := enh.LightningShieldAuras[shield.Rank]
+	orb := enh.LightningShieldProcs[shield.Rank]
+	enemy := sim.Encounter.TargetUnits[1]
+	melee := enemy.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 1},
+		SpellSchool:      core.SpellSchoolPhysical,
+		DefenseType:      core.DefenseTypeMelee,
+		ProcMask:         core.ProcMaskMeleeMHAuto,
+		DamageMultiplier: 1,
+	})
+	cast := func(sim *core.Simulation) {
+		enh.AddMana(sim, enh.MaxMana()-enh.CurrentMana(), enh.GetManaNotCastingMetrics())
+		castNow(t, sim, enh, shield)
+	}
+	fired := func() int32 {
+		m := orb.SpellMetrics[enemy.UnitIndex]
+		return m.Hits + m.Misses
+	}
+
+	var orbs []time.Duration
+	for i := range cycles {
+		start := 1 + cycle*float64(i)
+		at(sim, start, cast)
+		at(sim, start+8, func(sim *core.Simulation) {
+			if aura.IsActive() {
+				t.Errorf("at %s: the shield is still up after its third orb", sim.CurrentTime)
+			}
+			cast(sim)
+		})
+		for k := range 23 {
+			at(sim, start+0.5*float64(k), func(sim *core.Simulation) {
+				before := fired()
+				melee.CalcAndDealDamage(sim, &enh.Unit, 1, forcedOutcome(core.OutcomeHit))
+				if fired() > before {
+					orbs = append(orbs, sim.CurrentTime-core.DurationFromSeconds(start))
+				}
+			})
+		}
+	}
+	tenMinutes := 1 + cycle*cycles
+	at(sim, tenMinutes, cast)
+	at(sim, tenMinutes+599.9, func(sim *core.Simulation) {
+		if !aura.IsActive() {
+			t.Errorf("the shield is gone 599.9 sec after we cast it")
+		}
+	})
+	at(sim, tenMinutes+600.1, func(sim *core.Simulation) {
+		if aura.IsActive() {
+			t.Errorf("the shield is still up 600.1 sec after we cast it")
+		}
+	})
+	runSim(sim)
+
+	want := []time.Duration{0, 3500 * time.Millisecond, 7 * time.Second, 10500 * time.Millisecond}
+	if len(orbs) != cycles*len(want) {
+		t.Fatalf("got %d orbs at %v, want %d", len(orbs), orbs, cycles*len(want))
+	}
+	for i, got := range orbs {
+		if got != want[i%len(want)] {
+			t.Errorf("cycle %d: orb %d at %s, want %s", i/len(want)+1, i%len(want)+1, got, want[i%len(want)])
+		}
+	}
+	if m := orb.SpellMetrics[enemy.UnitIndex]; m.Misses == 0 {
+		t.Errorf("none of %d orbs missed", len(orbs))
+	}
+	if m := orb.SpellMetrics[enh.CurrentTarget.UnitIndex]; m.Hits+m.Misses > 0 {
+		t.Errorf("%d orbs hit our target, which never hit us", m.Hits+m.Misses)
 	}
 }

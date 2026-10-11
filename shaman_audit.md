@@ -110,7 +110,7 @@ Nature spells
 
 Shields
 
-- [?] 7.15 Lightning Shield: orbs, damage, ICD, what triggers it
+- [x] 7.15 Lightning Shield: orbs, damage, ICD, what triggers it
 - [ ] 7.16 Water Shield (Forever): free, 15 sec cooldown, globes, mana per globe
 
 Totems
@@ -1030,7 +1030,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.15 Lightning Shield
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "ok".
 - The sim (`lightning_shield.go`, `shields.go`): 7 ranks, learned at 8, 16, 24, 32, 40, 48 and 56, for 45 to 370 mana and a 1.5 sec GCD. The shield has 3 orbs and lasts 10 min. Casting it, or Water Shield, replaces the shield we have.
   - Any direct hit an enemy lands on us fires one orb at that enemy, at most one every 3.5 sec. Melee, ranged and spell hits count, and a blocked hit too. Misses, dodges, parries and damage over time ticks don't. At level 60 only the raid damage hits option (6.5) feeds it.
   - An orb deals 13, 24, 40, 64, 96, 134 or 178 Nature damage by rank, plus 26.7% of spell power on every rank. It rolls spell hit under Forever, and a miss still uses its orb. It never crits (5.1). The target's Nature resistance takes part of it (7.8). Improved Lightning Shield adds 5% a point to the whole orb (section 8). Shamanistic Focus takes 45% off the cost (7.11).
@@ -1043,7 +1043,9 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - What fired the orbs: 378 melee hits, 5 spell hits and 2 blocked swings. With the 3.5 sec wait over, 26 dodges, 23 misses, 13 parries and 18 damage over time ticks fired nothing.
   - 310 hits, 49 misses, 30 immune, 0 crits. Raw 64 at 91 spell power (257 hits), and 53 or 54 at the earlier 49 to 52 (53 hits). 10 hits lost part of their damage to resistance.
 - Already tested: `shields_test.go` (what fires an orb, raid damage hits, orb misses and no crits), `spell_power_test.go` (rank 3 at 91 spell power), `damage_modifiers_test.go` (Improved Lightning Shield), `mana_costs_test.go`, `prepull_test.go`, `talent_procs_test.go` and `stormstrike_test.go` (orbs don't use the mark). Nothing tests the 3.5 sec wait for orbs, the shield going away with its last orb, the orb hitting the enemy that hit us, or the 10 min.
-- Proposed: remove the Earth Shock reset. And a small test: an enemy that isn't our target hits us every 0.5 sec. Its orbs come at 1, 4.5 and 8 sec and hit it, a missed orb counts, and the shield is gone after the third. A fresh shield with no hits lasts 10 min.
+- Beta, a shield cast inside the wait (all four logs, 2026-10-11): about 50 times an enemy landed a hit on a fresh shield less than 3.5 sec after the last orb of the one before, and none of them fired an orb. So the wait carries over to the new shield, as in the sim, where it belongs to the rank and not to the cast.
+- Removed the Earth Shock reset. No golden changed.
+- `shields_test.go` TestOrcShamanLightningShieldOrbs: an enemy that isn't our target hits us every 0.5 sec, 16 times over. The orbs hit it at 0, 3.5 and 7 sec, and the shield is gone after the third. A recast at 8 sec fires its first orb at 10.5 sec. Some orbs miss and still count, and none hit our target. Then a shield with no hits lasts 10 min. Breaking the 10 min, the 3.5 sec, the 3 orbs, the orb's target, the wait across a recast or a missed orb's charge each fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
