@@ -293,3 +293,61 @@ func TestOrcShamanMagmaTotemPulses(t *testing.T) {
 		}
 	}
 }
+
+// TestOrcShamanFireNova checks when we can cast Fire Nova and whom it hits (shaman_audit.md
+// 7.25).
+//
+// It goes off around our fire totem, so it can't be cast without one. With a Magma Totem down
+// it hits all 3 targets and waits 10 sec, or 6 sec with Improved Fire Nova 2/2. On the beta
+// the shortest gaps between casts were 9.99 sec and, with the talent, 5.92 sec. Once the
+// Magma Totem's 20 sec are up, it can't be cast again.
+func TestOrcShamanFireNova(t *testing.T) {
+	for _, c := range []struct {
+		talents  string
+		cooldown time.Duration
+	}{{"", 10 * time.Second}, {"000000002", 6 * time.Second}} {
+		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+		target.Level = 60
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 30, Targets: []*proto.Target{target, target, target}},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		}, simsignals.CreateSignals())
+		sim.Reset()
+		sim.PrePull()
+		enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+		fireNova := topRank(t, "Fire Nova", enh.FireNova)
+		magma := topRank(t, "Magma Totem", enh.MagmaTotem)
+		targets := sim.Encounter.TargetUnits
+
+		at(sim, 1, func(sim *core.Simulation) {
+			if fireNova.CanCast(sim, enh.CurrentTarget) {
+				t.Errorf("talents %q: Fire Nova can be cast without a fire totem", c.talents)
+			}
+			castNow(t, sim, enh, magma)
+			castNow(t, sim, enh, fireNova)
+			for i, u := range targets {
+				if m := fireNova.SpellMetrics[u.UnitIndex]; m.Hits+m.Crits+m.Misses != 1 {
+					t.Errorf("talents %q: Fire Nova rolled %d times on target %d, want 1", c.talents, m.Hits+m.Crits+m.Misses, i+1)
+				}
+			}
+			if readyAt, want := fireNova.ReadyAt(), sim.CurrentTime+c.cooldown; readyAt != want {
+				t.Errorf("talents %q: Fire Nova is ready at %s, want %s", c.talents, readyAt, want)
+			}
+		})
+		// The Magma Totem went down at 1 sec.
+		at(sim, 20.9, func(sim *core.Simulation) {
+			enh.SetGCDTimer(sim, sim.CurrentTime)
+			if !fireNova.CanCast(sim, enh.CurrentTarget) {
+				t.Errorf("talents %q: Fire Nova can't be cast with the Magma Totem still down", c.talents)
+			}
+		})
+		at(sim, 21.1, func(sim *core.Simulation) {
+			enh.SetGCDTimer(sim, sim.CurrentTime)
+			if fireNova.CanCast(sim, enh.CurrentTarget) {
+				t.Errorf("talents %q: Fire Nova can be cast after the Magma Totem ran out", c.talents)
+			}
+		})
+		runSim(sim)
+	}
+}
