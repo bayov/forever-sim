@@ -106,13 +106,9 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			if shaman.ActiveTotems[FireTotem] != nil {
-				shaman.ActiveTotems[FireTotem].Dot(sim.GetTargetUnit(0)).Cancel(sim)
-			}
-			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
 			// +1 needed because of rounding issues with totem tick time.
-			shaman.TotemExpirations[FireTotem] = sim.CurrentTime + duration + 1
-			shaman.ActiveTotems[FireTotem] = spell
+			shaman.placeTotem(sim, FireTotem, spell, duration+1, shaman.endFireTotem(spell))
+			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
 		},
 	}
 
@@ -211,13 +207,9 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if shaman.ActiveTotems[FireTotem] != nil {
-				shaman.ActiveTotems[FireTotem].Dot(sim.GetTargetUnit(0)).Cancel(sim)
-			}
-			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
 			// +1 needed because of rounding issues with totem tick time.
-			shaman.TotemExpirations[FireTotem] = sim.CurrentTime + duration + 1
-			shaman.ActiveTotems[FireTotem] = spell
+			shaman.placeTotem(sim, FireTotem, spell, duration+1, shaman.endFireTotem(spell))
+			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
 		},
 	}
 
@@ -356,12 +348,15 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 		OnTick:        func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {},
 	}
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		if shaman.ActiveTotems[FireTotem] != nil {
-			shaman.ActiveTotems[FireTotem].Dot(sim.GetTargetUnit(0)).Cancel(sim)
-		}
+		shaman.placeTotem(sim, FireTotem, spell, duration, shaman.endFireTotem(spell))
 		spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
-		shaman.TotemExpirations[FireTotem] = sim.CurrentTime + duration
-		shaman.ActiveTotems[FireTotem] = spell
 	}
 	return spell
+}
+
+// endFireTotem ends a fire totem, which the sim runs as a dot on the first target.
+func (shaman *Shaman) endFireTotem(spell *core.Spell) func(sim *core.Simulation) {
+	return func(sim *core.Simulation) {
+		spell.Dot(sim.GetTargetUnit(0)).Cancel(sim)
+	}
 }

@@ -115,9 +115,11 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 	}
 
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.TotemExpirations[WaterTotem] = sim.CurrentTime + duration
-		shaman.ActiveTotems[WaterTotem] = spell
-
+		shaman.placeTotem(sim, WaterTotem, spell, duration, func(sim *core.Simulation) {
+			for _, agent := range shaman.Party.Players {
+				spell.Hot(&agent.GetCharacter().Unit).Deactivate(sim)
+			}
+		})
 		for _, agent := range shaman.Party.Players {
 			spell.Hot(&agent.GetCharacter().Unit).Activate(sim)
 		}
@@ -183,16 +185,12 @@ func (shaman *Shaman) newManaSpringTotemSpellConfig(rank int) core.SpellConfig {
 		},
 	})
 
-	shaman.manaSpringAuras = append(shaman.manaSpringAuras, aura)
-
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.TotemExpirations[WaterTotem] = sim.CurrentTime + aura.Duration
-		shaman.ActiveTotems[WaterTotem] = spell
-		// A new water totem replaces the old one, so we restart the ticks from the drop.
-		aura.Deactivate(sim)
+		// The ticks start over from the drop.
+		shaman.placeTotem(sim, WaterTotem, spell, aura.Duration, endTotemBuff(aura))
 		aura.Activate(sim)
 	}
 	return spell
@@ -249,12 +247,13 @@ func (shaman *Shaman) newManaTideTotemSpellConfig(rank int, cooldown *core.Timer
 		}
 	}
 
+	var tick *core.PendingAction
 	aura := shaman.RegisterAura(core.Aura{
 		Label:    fmt.Sprintf("Mana Tide Totem (Rank %d)", rank),
 		ActionID: core.ActionID{SpellID: spellId},
 		Duration: duration,
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
-			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+			tick = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:   core.ManaTideTotemTickPeriod,
 				NumTicks: 4,
 				OnAction: func(sim *core.Simulation) {
@@ -263,6 +262,9 @@ func (shaman *Shaman) newManaTideTotemSpellConfig(rank int, cooldown *core.Timer
 					}
 				},
 			})
+		},
+		OnExpire: func(_ *core.Aura, sim *core.Simulation) {
+			tick.Cancel(sim)
 		},
 	})
 
@@ -274,19 +276,7 @@ func (shaman *Shaman) newManaTideTotemSpellConfig(rank int, cooldown *core.Timer
 		Duration: time.Minute * 5,
 	}
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.TotemExpirations[WaterTotem] = sim.CurrentTime + duration
-		shaman.ActiveTotems[WaterTotem] = spell
-		for _, manaSpring := range shaman.manaSpringAuras {
-			manaSpring.Deactivate(sim)
-		}
-		for _, healingStream := range shaman.HealingStreamTotem {
-			if healingStream == nil {
-				continue
-			}
-			for _, agent := range shaman.Party.Players {
-				healingStream.Hot(&agent.GetCharacter().Unit).Deactivate(sim)
-			}
-		}
+		shaman.placeTotem(sim, WaterTotem, spell, duration, endTotemBuff(aura))
 		aura.Activate(sim)
 	}
 	return config

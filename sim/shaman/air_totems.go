@@ -13,20 +13,12 @@ import (
 // Windwall Totem has no buff in the sim, so it comes with a nil aura.
 func (shaman *Shaman) setActiveAirTotem(sim *core.Simulation, spell *core.Spell, aura *core.Aura) {
 	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
-	if aura != nil {
-		duration = aura.Duration
+	if aura == nil {
+		shaman.placeTotem(sim, AirTotem, spell, duration, nil)
+		return
 	}
-	shaman.TotemExpirations[AirTotem] = sim.CurrentTime + duration
-	shaman.ActiveTotems[AirTotem] = spell
-
-	if shaman.ActiveTotemBuffs[AirTotem] != nil {
-		shaman.ActiveTotemBuffs[AirTotem].Deactivate(sim)
-	}
-
-	shaman.ActiveTotemBuffs[AirTotem] = aura
-	if aura != nil {
-		aura.Activate(sim)
-	}
+	shaman.placeTotem(sim, AirTotem, spell, duration, endTotemBuff(aura))
+	aura.Activate(sim)
 }
 
 const WindfuryTotemRanks = 3

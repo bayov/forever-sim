@@ -88,7 +88,7 @@ func (shaman *Shaman) putDownStartingTotem(sim *core.Simulation, slot int, spell
 
 	if expiresAt <= sim.CurrentTime {
 		shaman.ActiveTotems[slot] = nil
-		shaman.ActiveTotemBuffs[slot] = nil
+		shaman.totemEnds[slot] = nil
 		shaman.TotemExpirations[slot] = 0
 	} else {
 		shaman.TotemExpirations[slot] = expiresAt

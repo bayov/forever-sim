@@ -207,16 +207,14 @@ type Shaman struct {
 	LightningShieldAuras []*core.Aura
 	MaelstromWeaponAura  *core.Aura
 	WaterShieldAura      *core.Aura
-	// One per Mana Spring rank, so Mana Tide Totem can take its place.
-	manaSpringAuras []*core.Aura
 
 	// Set by Forever's Totem of the Storm, Lightning Bolt then also triggers Maelstrom Weapon at half the chance.
 	lightningBoltTriggersMaelstrom bool
 
 	// Totems
 	ActiveTotems     [4]*core.Spell
-	ActiveTotemBuffs [4]*core.Aura
-	TotemExpirations [4]time.Duration // The expiration time of each totem (earth, air, fire, water).
+	totemEnds        [4]func(sim *core.Simulation) // How to end each slot's totem when the next one comes down.
+	TotemExpirations [4]time.Duration              // The expiration time of each totem (earth, air, fire, water).
 
 	EarthTotems []*core.Spell
 	FireTotems  []*core.Spell
@@ -309,6 +307,6 @@ func (shaman *Shaman) Reset(_ *core.Simulation) {
 	for i := range []int{EarthTotem, FireTotem, WaterTotem, AirTotem} {
 		shaman.ActiveTotems[i] = nil
 		shaman.TotemExpirations[i] = 0
-		shaman.ActiveTotemBuffs[i] = nil
+		shaman.totemEnds[i] = nil
 	}
 }

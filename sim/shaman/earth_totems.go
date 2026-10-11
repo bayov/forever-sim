@@ -43,9 +43,7 @@ func (shaman *Shaman) newStrengthOfEarthTotemSpellConfig(rank int) core.SpellCon
 	spell.RequiredLevel = level
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.TotemExpirations[EarthTotem] = sim.CurrentTime + duration
-		shaman.ActiveTotems[EarthTotem] = spell
-
+		shaman.placeTotem(sim, EarthTotem, spell, duration, endTotemBuff(buffAura))
 		buffAura.Activate(sim)
 	}
 	return spell
@@ -89,9 +87,7 @@ func (shaman *Shaman) newStoneskinTotemSpellConfig(rank int) core.SpellConfig {
 	spell.RequiredLevel = level
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.TotemExpirations[EarthTotem] = sim.CurrentTime + duration
-		shaman.ActiveTotems[EarthTotem] = spell
-
+		shaman.placeTotem(sim, EarthTotem, spell, duration, endTotemBuff(buffAura))
 		buffAura.Activate(sim)
 	}
 	return spell
@@ -106,8 +102,7 @@ func (shaman *Shaman) registerTremorTotemSpell() {
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.TotemExpirations[EarthTotem] = sim.CurrentTime + duration
-		shaman.ActiveTotems[EarthTotem] = spell
+		shaman.placeTotem(sim, EarthTotem, spell, duration, nil)
 	}
 	shaman.TremorTotem = shaman.RegisterSpell(spell)
 	shaman.EarthTotems = append(shaman.EarthTotems, shaman.TremorTotem)
