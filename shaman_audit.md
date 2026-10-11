@@ -123,7 +123,7 @@ Totems
 - [x] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
 - [x] 7.23 Magma Totem
 - [x] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
-- [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
+- [?] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [ ] 7.26 Mana Spring Totem
 - [ ] 7.27 Mana Tide Totem
 - [ ] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
@@ -1169,6 +1169,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta, the full 23:25 log rechecked (`ftt.py`, 2026-10-11): 426 procs on landed swings in range. 17 swings in range didn't proc it, at 00:20 and 00:30, and each one came with a Flametongue Weapon proc, up to 120 ms later. So the user had Flametongue Weapon on then, and it turned the totem off, as the sim and the tooltip have it (7.18).
 - Already tested: `flametongue_totem_test.go` (rank 1 by weapon speed, no spell power, crits), `proc_matrix_test.go` (white swings only, Flametongue Weapon turns it off), `weapon_totem_slot_test.go`, `totem_slots_test.go`, `talent_procs_test.go`, `other_procs_test.go`, `mana_costs_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests ranks 2 to 4.
 - No sim change. `flametongue_totem_test.go` TestOrcShamanFlametongueTotem now runs every rank: 548, 781, 1061 and 1363 / 100 per second of weapon speed at levels 30, 38, 48 and 58, with 55 spell power that adds nothing. A wrong rank 3 value fails it.
+
+### 7.25 Fire Nova
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`fire_totems.go`): a spell under Forever, not a totem. 5 ranks at 12, 22, 32, 42 and 52 for 95, 170, 280, 395 and 520 mana, a 1.5 sec GCD and a 10 sec cooldown of its own (2 sec less a point of Improved Fire Nova, section 8). It needs a fire totem of ours down (Searing, Magma or Flametongue) and goes off at once around it, hitting every target in the fight. Each rank grows for 5 levels after it's learned, up to 51.2 to 59.8 for rank 1 and 397 to 443 for rank 5, plus 21.4% of spell power (5.4). Each hit rolls our spell hit and crit. Call of Flame and Improved Fire Nova multiply its damage (5.6). Totemic Focus doesn't make it cheaper (2.3), and its Clearcasting proc stays for the next spell (2.7). It doesn't trigger Elemental Devastation (4.13). In PvP it can't reach an enemy that left our fire totem (6.7).
+  - The Level 30 presets cast it above 80% mana. The default Level 60 rotation and the Magma and Mana Tide rotations cast it too.
+- Client 70338 (wago.tools 408341 to 408345 and the damage spells 408423, 408424, 408426, 408427, 408428): the same levels, mana, 1500 ms GCD and a 10000 ms cooldown (category 35). The cast is a script that deals the damage spell "to enemies within 10 yd of your active Fire totem", so it needs one. The damage spells match the ranges, the growth (1.1 to 3.4 a level for 5 levels) and the 0.214 coefficient.
+- Beta (all four logs, 2026-10-11): 152 casts, 129 with Flametongue Totem down and 23 with Searing Totem. In the 23:25 log, without Improved Fire Nova, the shortest gap between casts was 9.99 sec. After the Elemental respec with Improved Fire Nova 2/2 it was 5.92 sec, against 6 sec, as close as the shocks came to their 6 sec (7.11). Damage and the talents were checked in 5.4 and 5.6.
+- Already tested: `spell_power_test.go` (rank 2 at 91 spell power), `damage_modifiers_test.go` (Call of Flame times Improved Fire Nova), `mana_costs_test.go` (cost, Clearcasting), `gcd_test.go`, `talent_procs_test.go`, `other_procs_test.go`, `proc_matrix_test.go`, `pvp_test.go` and `spell_ranks_test.go`. Nothing tests the cooldown, the need for a fire totem or that it hits every target.
+- Proposed: no sim change. A small test at level 60 against 3 targets: no Fire Nova without a fire totem. With a Magma Totem down it hits all 3 and waits 10 sec, or 6 sec with Improved Fire Nova 2/2 as on the beta. Once the Magma Totem's 20 sec are up it can't be cast again.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
