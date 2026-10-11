@@ -124,7 +124,7 @@ Totems
 - [x] 7.23 Magma Totem
 - [x] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
 - [x] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
-- [ ] 7.26 Mana Spring Totem
+- [?] 7.26 Mana Spring Totem
 - [ ] 7.27 Mana Tide Totem
 - [ ] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
 - [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
@@ -1179,6 +1179,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta (all four logs, 2026-10-11): 152 casts, 129 with Flametongue Totem down and 23 with Searing Totem. In the 23:25 log, without Improved Fire Nova, the shortest gap between casts was 9.99 sec. After the Elemental respec with Improved Fire Nova 2/2 it was 5.92 sec, against 6 sec, as close as the shocks came to their 6 sec (7.11). Damage and the talents were checked in 5.4 and 5.6.
 - Already tested: `spell_power_test.go` (rank 2 at 91 spell power), `damage_modifiers_test.go` (Call of Flame times Improved Fire Nova), `mana_costs_test.go` (cost, Clearcasting), `gcd_test.go`, `talent_procs_test.go`, `other_procs_test.go`, `proc_matrix_test.go`, `pvp_test.go` and `spell_ranks_test.go`. Nothing tests the cooldown, the need for a fire totem or that it hits every target.
 - No sim change. `periodic_test.go` TestOrcShamanFireNova, at level 60 against 3 targets: no Fire Nova without a fire totem. With a Magma Totem down it rolls once on each of the 3 and waits 10 sec, or 6 sec with Improved Fire Nova 2/2. It can still be cast at 20.9 sec and not at 21.1, after the Magma Totem's 20 sec. An 8 sec cooldown, 1 sec a point of Improved Fire Nova, no need for a fire totem or a hit on the first target only each fails it.
+
+### 7.26 Mana Spring Totem
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`water_totems.go`): 4 ranks at 26, 36, 46 and 56 for 40, 60, 80 and 100 mana, a 1 sec GCD, 5 min in the water slot (7.17). It gives us 4, 6, 8 or 10 mana every 2 sec from 2 sec after the drop. Restorative Totems adds 5% a point (7.28's talent curves). Another shaman's Mana Spring in the raid buffs is 10 to 25 MP5 by level instead (`mp5_test.go`).
+  - Every preset with a water totem puts it down. The Mana Tide rotation puts it back once Mana Tide is down.
+- Client 70338 (wago.tools 5675, 10495, 10496, 10497 and the party auras 5677, 10491, 10493, 10494): the same levels, mana, 1000 ms GCD, 5 min and water slot. The party aura gives 4, 6, 8 or 10 mana every 2000 ms.
+- Beta (all four logs, 2026-10-11): 26 Mana Spring ticks on us, each 4 mana (rank 1, no Restorative Totems), 1.91 to 2.08 sec apart.
+- Already tested: `mana_returns_test.go` (rank 4's ticks, and Mana Tide taking its place), `mp5_test.go` (another shaman's), `totem_slots_test.go`, `starting_totems_test.go`, `prepull_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests rank 1 or Restorative Totems on it.
+- Proposed: no sim change. A small test at level 30: our rank 1 gives 4 mana every 2 sec from 2 sec after the drop, as on the beta, and 5 with Restorative Totems 5/5.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
