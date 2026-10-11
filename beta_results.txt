@@ -1234,7 +1234,7 @@ Improved Ghost Wolf 2, Shamanistic Focus 1, Anticipation 3). Nothing else change
     check waits for the next log.
   Combat log WoWCombatLog-101126_202029.txt (20:20:29 to 20:26:11, the client wrote the 20:20
   part only with the rest). Blood Fury at 20:20:32 in Orgrimmar and at 20:25:52 in a fight
-  with level 9 to 10 mobs in Durotar. No other aura on us and no totem of anyone's in the log.
+  with level 10 mobs in Durotar. No other aura on us and no totem of anyone's in the log.
   - The GCD: Flame Shock at 20:25:52.553, Blood Fury at 52.677 (0.12 sec later, inside Flame
     Shock's GCD), Lightning Shield failed "Not yet recovered" at 53.357 and went off at
     54.093. That's 1.54 sec after Flame Shock and 1.42 sec after Blood Fury. So Blood Fury
