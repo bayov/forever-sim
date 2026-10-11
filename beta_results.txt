@@ -1341,3 +1341,21 @@ aura on us. The 21:00 and 21:04 uses were the /run checks, with no swings.
     plus 10% of the weapon, but 14 fist hits can't yet tell that from extra attack power
     (the averages are 2 apart). About 70 fist hits with Blood Fury would. The sheet already
     splits them: +3.5 on the fist and +12.35 on Rage of the Storm, 10% of each weapon.
+
+
+2026-10-11  Blood Fury on the fist, 72 hits (21:15 to 21:58)
+-----------------------------------------------------------
+Same log, Bloody Brass Knuckles (24 to 46, 1.6) with Windfury Weapon, 387 attack power on
+the sheet, mobs of level 10 or so, no Strength of Earth of ours, no other aura on us. Ten
+Blood Fury uses, each counted from its applied line to its removed line (15.1 sec when the
+log has no removed line).
+  - With Blood Fury: 72 hits, raw 76 to 97, mean 86.40 +- 0.75 (the raw field drops the
+    fraction, so +0.5 is added). Without it: 90 hits, mean 79.10, where the model gives 79.23.
+  - So the average hit is 1.091 +- 0.009 times bigger. +10% attack power plus 10% of the
+    weapon's average (87.15, 1.100) is 1.0 standard error away. +10% attack power alone
+    (83.65, 1.056) is 3.9 standard errors under, and 12 hits are past its 94.65 maximum.
+    Extra attack power that fits Rage of the Storm (about 89.5, 1.13) is 4.3 over.
+  - Every hit is inside 76.15 to 98.15, the range of +10% attack power plus 10% of the
+    weapon's average. A 76 is 76.15 with the fraction dropped.
+  - So the log alone now shows the same as the sheet: Blood Fury is +10% attack power plus
+    10% of the weapon's average damage, which makes the average hit 1.1 times bigger.
