@@ -384,6 +384,11 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   in a 60 sec fight and about +0.1 DPS on the Level 30 preset. Still open: the weapon part
   (+10% attack power plus 10% of the weapon's average damage). The user is collecting more
   fist hits first. At 22:05:09 the log had 81 fist hits with it up, ratio 1.099 +- 0.009.
+  Final run to 22:58 (beta_results.txt): 163 white hits at 1.107 times, and 27 Windfury
+  attacks with it up at mean raw 93.4, where +10% attack power plus 10% of the weapon's
+  average gives 92.4 and +10% attack power alone 88.9. So Windfury attacks get the weapon
+  part too. Windfury Weapon's bonus from every log is 50 +- 3 (rank 1 gives 46). Waiting for
+  the user's OK on the weapon part. Stormstrike under it is still unchecked.
 
 ## Recheck with every new log
 
