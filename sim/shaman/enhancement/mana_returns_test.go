@@ -110,6 +110,71 @@ func TestOrcShamanWaterShield(t *testing.T) {
 	}
 }
 
+// TestOrcShamanWaterShieldRecast checks what our heals do to Water Shield, what a recast does,
+// and how long it lasts (shaman_audit.md 7.16).
+//
+// A heal of ours that crits spends a globe for 2% of max mana, and one that doesn't crit
+// leaves it alone. Water Shield has no cooldown, so we cast it again right away and it's back
+// to 3 globes. The 3.5 sec wait carries over to the new shield, as Lightning Shield's does on
+// the beta (7.15), so an enemy hit 1 sec later spends nothing and one 3.5 sec after the crit
+// spends a globe. Then a shield that takes no hits lasts 10 min.
+func TestOrcShamanWaterShieldRecast(t *testing.T) {
+	// Water Shield.
+	sim, enh := newShamanSim(newOrcShaman(60, "--000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 620)
+	aura := enh.WaterShieldAura
+	heal := enh.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 1},
+		SpellSchool:      core.SpellSchoolNature,
+		DefenseType:      core.DefenseTypeMagic,
+		ProcMask:         core.ProcMaskSpellHealing,
+		DamageMultiplier: 1,
+	})
+	melee := enh.CurrentTarget.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 2},
+		SpellSchool:      core.SpellSchoolPhysical,
+		DefenseType:      core.DefenseTypeMelee,
+		ProcMask:         core.ProcMaskMeleeMHAuto,
+		DamageMultiplier: 1,
+	})
+	globes := func(sim *core.Simulation, label string, want int32) {
+		got := int32(0)
+		if aura.IsActive() {
+			got = aura.GetStacks()
+		}
+		if got != want {
+			t.Errorf("at %s, after %s: %d globes, want %d", sim.CurrentTime, label, got, want)
+		}
+	}
+	hit := func(label string, want int32) func(sim *core.Simulation) {
+		return func(sim *core.Simulation) {
+			melee.CalcAndDealDamage(sim, &enh.Unit, 1, forcedOutcome(core.OutcomeHit))
+			globes(sim, label, want)
+		}
+	}
+
+	at(sim, 1, func(sim *core.Simulation) {
+		castNow(t, sim, enh, enh.WaterShield)
+		enh.SpendMana(sim, enh.MaxMana()/2, enh.GetManaNotCastingMetrics())
+		heal.CalcAndDealHealing(sim, &enh.Unit, 10, forcedOutcome(core.OutcomeHit))
+		globes(sim, "a heal", 3)
+		mana := enh.CurrentMana()
+		heal.CalcAndDealHealing(sim, &enh.Unit, 10, forcedOutcome(core.OutcomeCrit))
+		globes(sim, "a heal crit", 2)
+		if got, want := enh.CurrentMana()-mana, 0.02*enh.MaxMana(); math.Abs(got-want) > 1e-6 {
+			t.Errorf("the heal crit's globe gave %.3f mana, want %.3f", got, want)
+		}
+		castNow(t, sim, enh, enh.WaterShield)
+		globes(sim, "the recast", 3)
+	})
+	at(sim, 2, hit("an enemy hit 1 sec after the globe", 3))
+	at(sim, 4.5, hit("an enemy hit 3.5 sec after the globe", 2))
+
+	at(sim, 5, func(sim *core.Simulation) { castNow(t, sim, enh, enh.WaterShield) })
+	at(sim, 604.9, func(sim *core.Simulation) { globes(sim, "599.9 sec", 3) })
+	at(sim, 605.1, func(sim *core.Simulation) { globes(sim, "600.1 sec", 0) })
+	runSim(sim)
+}
+
 // TestOrcShamanManaTide checks Mana Tide Totem at level 60: 290 mana every 3 sec, 4 times,
 // starting 3 sec after we put it down. It takes the water slot, so Mana Spring Totem stops.
 //

@@ -111,7 +111,7 @@ Nature spells
 Shields
 
 - [x] 7.15 Lightning Shield: orbs, damage, ICD, what triggers it
-- [?] 7.16 Water Shield (Forever): free, 15 sec cooldown, globes, mana per globe
+- [x] 7.16 Water Shield (Forever): free, 15 sec cooldown, globes, mana per globe
 
 Totems
 
@@ -1049,7 +1049,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.16 Water Shield
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "sg".
 - The sim (`water_shield.go`): a Restoration talent (level 20). It's free, has a 1.5 sec GCD and no cooldown, and lasts 10 min with 3 globes. Casting it, or Lightning Shield, replaces the shield we have, so a recast fills it back to 3.
   - A globe gives 2% of our max mana. We spend one when an enemy lands a direct hit on us (the same hits as Lightning Shield, 7.15) or when one of our heals crits, at most one every 3.5 sec. Healing Stream's crits don't spend one, because it heals over time (5.7). At level 60 only the raid damage hits option (6.5) feeds it.
   - No rotation casts it. The Level 60 + Water Shield talent preset takes it, but it gives nothing in the Level 60 encounter, where nothing hits us.
@@ -1059,7 +1059,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The globes never came less than 3.5 sec apart (the shortest gap 3.771 sec). Every one followed a melee hit on that shaman.
   - Recasts came 6.4 sec apart at the least, so there's no 15 sec cooldown. A recast with globes left brought it back to 3.
 - Already tested: `mana_returns_test.go` (2% a globe, 3 globes, the 3.5 sec wait, no five second rule), `shields_test.go` (what spends a globe), `periodic_test.go` (Healing Stream crits leave the globes alone), `gcd_test.go` and `prepull_test.go`. Nothing tests a heal crit spending a globe, a recast right away refilling it, the wait across a recast, or the 10 min.
-- Proposed: no sim change. A small test: a heal crit spends a globe and a normal heal doesn't, a recast right after a globe fills it back to 3 but the next hit inside the 3.5 sec still does nothing, and a shield with no hits lasts 10 min.
+- No sim change. `mana_returns_test.go` TestOrcShamanWaterShieldRecast: a heal of ours that crits spends a globe for 2% of max mana and a normal one doesn't. A recast right after fills it back to 3, an enemy hit 1 sec later does nothing and one 3.5 sec after the crit spends a globe. A shield with no hits lasts 10 min. Breaking the 10 min, the 2%, the crit check (either way), the wait across a recast or adding a 15 sec cooldown each fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
