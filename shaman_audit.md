@@ -126,7 +126,7 @@ Totems
 - [x] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [x] 7.26 Mana Spring Totem
 - [x] 7.27 Mana Tide Totem
-- [ ] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
+- [?] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
 - [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
 
 ## 8. Talents
@@ -1199,6 +1199,19 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: none. Nobody cast it in our logs, and our character has no Restoration points.
 - Already tested: `mana_returns_test.go` (rank 3's 290 at 3, 6, 9 and 12 sec, taking Mana Spring's place, 13 sec), `totem_slots_test.go` (its ticks stop when Healing Stream takes its place), `mana_costs_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests ranks 1 and 2 or the 5 min cooldown.
 - No sim change. `mana_returns_test.go` TestOrcShamanManaTideRanks: the first tick, 3 sec after the drop, is 88 at level 25, 197 at 48 and 290 at 58, and the totem is ready again 5 min after the cast. Classic's 170 for rank 1, rank 2 at 50 or a 3 min cooldown each fails it.
+
+### 7.28 Healing Stream Totem
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`water_totems.go`): 5 ranks at 20, 30, 40, 50 and 60 for 40 to 80 mana, a 1 sec GCD, 5 min in the water slot (7.17). Every 2 sec from 2 sec after the drop it heals everyone in the party for 5, 6, 7, 9 or 11 plus 2.2% of healing power (spell power counts). Restorative Totems adds 10% a point and Purification nothing (fixed 2026-10-10). Each heal crits 5% of the time for 1.5 times, whatever our spell crit, and a crit doesn't spend a Water Shield globe (5.7).
+  - No preset puts it down. It only changes health, not DPS.
+- Client 70338 (wago.tools 5394 to 10463 and the heals 5672, 6371, 6372, 10460, 10461): the same levels, mana, 1000 ms GCD, 5 min and water slot. The heal is a periodic heal every 2000 ms of 5, 6, 7, 9 or 11 with a 0.022 coefficient, and it doesn't grow with level.
+- Beta (all four logs, 2026-10-11, rank 2):
+  - 1329 heals from Healing Stream totems, 514 on us and 815 on party members, 1.9 to 2.1 sec apart.
+  - From our own totems: 750 in WoWCombatLog-101026_150733.txt averaged 8.21 (589 of 8 and 161 of 9), and 404 in the 23:25 log averaged 7.29. Crits were 10 to 13, 1.5 times those.
+  - With the sheet's 91 spell power the sim gives 8.00 a heal. The 8.21 fits about 100 healing power, so the heal seems to count about 10 more than the sheet's spell power. It could be a healing-only stat on the gear. The log's spell power field leaves out Mental Quickness, and we don't know the sheet's spell power in the 23:25 log, so it can't settle this.
+- Already tested: `periodic_test.go` (5% crits, Water Shield, Restorative Totems and Purification), `totem_slots_test.go`, `starting_totems_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the heal with spell power or its 2 sec.
+- Proposed: no sim change. A small test that rank 2 at level 30 with 91 spell power heals us for 8.002 every 2 sec from 2 sec after the drop. And a notes.md Need to Verify (Beta) item: compare the sheet's bonus healing in the next export with Healing Stream's heals, which point to about 10 more healing power than spell power.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
