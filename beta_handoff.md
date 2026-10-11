@@ -447,6 +447,13 @@ combat log, run these checks on it too, and tell the user when one breaks.
   (8.3%) at 11.81%, 3 standard errors over the sim's flat 5%, so 61 of 989 (6.2%) together.
   Heals on the totem itself count too (14 of the 32). Count only heals from our own totems: the
   log has other shamans' totems too.
+- Stoneskin Totem (audit 7.29, the sim since 91217b13). Rank 3 takes 11 off each mob swing
+  on us before armor at level 30. The old sim took 30 off after armor. Run
+  tools/combat_log/stoneskin.py: it finds our armor from the hits outside Stoneskin, then
+  counts the hits inside it that fit each reduction. Base: the 15:07 log (572 armor) had 66
+  of 77 fit 11 before armor and 5 fit 11 after. The 23:25 log (1637 armor) had 132 of 221 fit
+  11 before armor, and 86 fit nothing off (probably out of the totem's range). At high armor
+  11 before armor looks the same as about 7 after it, so a low armor log tells them apart.
 - After a Windfury Weapon proc from a Stormstrike, the next white swing comes on the old
   schedule, not a full swing after the proc (item 3). Skip procs with a Flurry change in
   between.

@@ -62,6 +62,8 @@ Some scripts hold numbers from one character and one day, like the weapon models
   crits before it.
 - `searing.py` times Searing Totem's bolts against the totem to mob distance.
 - `resists.py` lists partial and full resists of our spells on one mob name.
+- `stoneskin.py` counts how much our Stoneskin Totem takes off mob swings on us: before or
+  after armor, and how much, with our armor fitted from the hits outside the totem.
 - `gear.py` prints our logged max health, spell power, armor, max mana and item level from
   our casts whenever they change, which shows gear swaps and stat buffs or debuffs.
 - `client_spell.py` prints the client's rows for spell IDs from a directory of wago.tools
