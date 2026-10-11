@@ -7,8 +7,10 @@ import (
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/shaman"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 // TestOrcShamanFlameShockTicks checks when Flame Shock's DoT ticks, what a recast does to it,
@@ -228,6 +230,66 @@ func TestOrcShamanSearingTotemBolts(t *testing.T) {
 	for i, at := range bolts {
 		if want := time.Second + time.Duration(i+1)*2500*time.Millisecond; at != want {
 			t.Errorf("bolt %d at %s, want %s", i+1, at, want)
+		}
+	}
+}
+
+// TestOrcShamanMagmaTotemPulses checks when Magma Totem pulses, whom it hits and for how much
+// (shaman_audit.md 7.23).
+//
+// It pulses every 2 sec from 2 sec after the drop, 10 times in its 20 sec, as the client's
+// passive triggers its pulse every 2000 ms. Each pulse rolls on every target in the fight.
+// Rank 4 deals 73 with no spell power. We take all our spell crit away, and the 3 targets are
+// at our level, so a pulse deals 73 to each or misses.
+func TestOrcShamanMagmaTotemPulses(t *testing.T) {
+	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+	target.Level = 60
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 30, Targets: []*proto.Target{target, target, target}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+	magma := topRank(t, "Magma Totem", enh.MagmaTotem)
+	if magma.Rank != 4 {
+		t.Fatalf("level 60 casts Magma Totem rank %d, want 4", magma.Rank)
+	}
+	pulse := enh.GetSpell(core.ActionID{SpellID: shaman.MagmaTotemAoeSpellId[4]})
+	targets := sim.Encounter.TargetUnits
+
+	var pulses []time.Duration
+	dot := magma.Dot(enh.CurrentTarget)
+	onTick := dot.OnTick
+	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+		var before []core.SpellMetrics
+		for _, u := range targets {
+			before = append(before, pulse.SpellMetrics[u.UnitIndex])
+		}
+		onTick(sim, target, dot)
+		pulses = append(pulses, sim.CurrentTime)
+		for i, u := range targets {
+			m, b := pulse.SpellMetrics[u.UnitIndex], before[i]
+			hits, misses, damage := m.Hits-b.Hits, m.Misses-b.Misses, m.TotalDamage-b.TotalDamage
+			if hits+misses != 1 || m.Crits != b.Crits || math.Abs(damage-73*float64(hits)) > 1e-9 {
+				t.Errorf("at %s, target %d: %d hits and %d misses for %.2f, want one hit for 73 or one miss",
+					sim.CurrentTime, i+1, hits, misses, damage)
+			}
+		}
+	}
+	at(sim, 1, func(sim *core.Simulation) {
+		enh.AddStatDynamic(sim, stats.SpellCrit, -100*core.SpellCritRatingPerCritChance)
+		castNow(t, sim, enh, magma)
+	})
+	runSim(sim)
+
+	if len(pulses) != 10 {
+		t.Fatalf("Magma Totem pulsed %d times at %v, want 10", len(pulses), pulses)
+	}
+	for i, at := range pulses {
+		if want := time.Second + time.Duration(i+1)*2*time.Second; at != want {
+			t.Errorf("pulse %d at %s, want %s", i+1, at, want)
 		}
 	}
 }
