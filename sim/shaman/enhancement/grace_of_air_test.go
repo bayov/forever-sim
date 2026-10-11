@@ -62,3 +62,29 @@ func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 	})
 	runSim(sim)
 }
+
+// TestOrcShamanGraceOfAirRanks checks the Agility our own Grace of Air Totem gives by rank
+// (shaman_audit.md 7.20).
+//
+// Ranks 1 to 3 come at levels 42, 56 and 60 and give 49, 77 and 89 Agility, as the Forever
+// client's party auras do. The Agility goes when a Windwall Totem takes the air slot.
+func TestOrcShamanGraceOfAirRanks(t *testing.T) {
+	for _, c := range []struct {
+		level   int32
+		agility float64
+	}{{42, 49}, {56, 77}, {60, 89}} {
+		sim, enh := newShamanSim(newOrcShaman(c.level, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 5)
+		at(sim, 1, func(sim *core.Simulation) {
+			agility := enh.GetStat(stats.Agility)
+			castNow(t, sim, enh, topRank(t, "Grace of Air Totem", enh.GraceOfAirTotem))
+			if got := enh.GetStat(stats.Agility) - agility; got != c.agility {
+				t.Errorf("level %d: Grace of Air Totem gave %.0f Agility, want %.0f", c.level, got, c.agility)
+			}
+			castNow(t, sim, enh, topRank(t, "Windwall Totem", enh.WindwallTotem))
+			if got := enh.GetStat(stats.Agility) - agility; got != 0 {
+				t.Errorf("level %d: %.0f Agility left after Windwall Totem took the air slot", c.level, got)
+			}
+		})
+		runSim(sim)
+	}
+}

@@ -118,7 +118,7 @@ Totems
 - [x] 7.17 Totem rules: one per element, durations, the 1 sec GCD, totem health ignored, placing them before the pull
 - [x] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
 - [x] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
-- [?] 7.20 Grace of Air Totem
+- [x] 7.20 Grace of Air Totem
 - [ ] 7.21 Strength of Earth Totem
 - [ ] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
 - [ ] 7.23 Magma Totem
@@ -1115,7 +1115,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.20 Grace of Air Totem
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "sg".
 - The sim (`air_totems.go`, `core/buffs.go` GraceOfAirTotemAura): ranks at 42, 56 and 60 for 155, 250 and 310 mana, a 1 sec GCD, 5 min in the air slot (7.17). It gives the party 49, 77 or 89 Agility by our level's rank.
   - A Windfury Totem buff turns its Agility off while it's up, ours or another shaman's, and it comes back when that goes (the user, 2026-10-08: Forever doesn't stack the two for now). Our own two can't meet, because they share the air slot.
   - Enhancing Totems is gone under Forever, so an "improved" Grace of Air in the raid buffs gives the same 89.
@@ -1123,7 +1123,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 8835, 10627, 25359 and their party auras 8836, 10626, 25360): the same levels, mana, 1000 ms GCD, 5 min and air slot. The party auras give 49, 77 and 89 Agility. Nothing in the client says it doesn't stack with Windfury Totem.
 - Beta: none. Grace of Air comes at 42, and the character is 30.
 - Already tested: `grace_of_air_test.go` (no Agility with a Windfury Totem buff up, back when ours runs out), `totem_slots_test.go` (the air slot, 5 min), `stats_panel_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the Agility of our own totem by rank.
-- Proposed: no sim change. A small test that our own totem gives 49, 77 and 89 Agility at levels 42, 56 and 60, and none once a Windwall Totem takes its place.
+- No sim change. `grace_of_air_test.go` TestOrcShamanGraceOfAirRanks: our own totem gives 49, 77 and 89 Agility at levels 42, 56 and 60, and none once a Windwall Totem takes its place. Changing rank 1's Agility, rank 2's level or the level 60 value each fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
