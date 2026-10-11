@@ -1288,3 +1288,19 @@ Improved Ghost Wolf 2, Shamanistic Focus 1, Anticipation 3). Nothing else change
     average melee hit 1.1 times bigger (the same as +10% attack power plus 10% more weapon
     damage). Implied sim change, waiting for the user's OK: take it off the GCD and add the
     weapon's 10%. Unchecked: Stormstrike and Windfury attacks (assumed to get it too).
+
+
+2026-10-11  Attack power in white hits (the user asked)
+------------------------------------------------------
+A white hit's raw is the weapon roll plus attack power x weapon speed / 14, with the real
+speed, not the normalized one. The mean raw of each weapon and period, left without Strength
+of Earth, Blood Fury and glancing blows, gives back the sheet's attack power:
+  - Rage of the Storm (100 to 147 with the +6 enchant, 3.3): 302 hits at 389 on the sheet
+    give 385 +- 3, and 100 hits at 392 give 402 +- 6.
+  - Bloody Brass Knuckles (24 to 46, 1.6): 112 hits at 397 give 396 +- 6, and 720 hits at
+    387 (the 23:25 log) give 385 +- 3 and 382 +- 3.
+  - The ranges sit on the model's ends (the raw field drops the fraction): 191 to 239 at
+    392 on Rage of the Storm, and 68 to 90 at 387 on the fist (68.2 to 90.2). The normalized
+    speed for a one-hander (2.4) would put the fist at 90 to 112.
+  - The one hit under the minimum (185 at 20:12:36) came under a mob's Withering Poison.
+The sim uses the same rule.
