@@ -117,7 +117,7 @@ Totems
 
 - [x] 7.17 Totem rules: one per element, durations, the 1 sec GCD, totem health ignored, placing them before the pull
 - [x] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
-- [?] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
+- [x] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
 - [ ] 7.20 Grace of Air Totem
 - [ ] 7.21 Strength of Earth Totem
 - [ ] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
@@ -1102,7 +1102,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.19 Windfury Totem
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "sg".
 - The sim (`air_totems.go`, `core/buffs.go` WindfuryTotemBuffAura and CreateExtraAttackAuraCommon): ranks at 32, 42 and 52 for 115, 175 and 250 mana, a 1 sec GCD, 5 min in the air slot. Its buff takes the weapon's totem slot (7.18).
   - Each landed melee hit, white or yellow, main hand or off hand under Forever, has a 20% chance to give one extra main hand swing, at most once every 1.5 sec. The extra swing gets 95, 179 or 246 attack power by rank from a buff that lasts 1 sec. The buff has 1 charge when a white swing triggered it, because that swing takes the other, and 2 when Stormstrike or a Windfury Weapon attack did. White swings use the charges up.
   - Our Windfury Weapon on the main hand turns it off for us (7.18). It turns off Grace of Air's Agility while it's up (7.20).
@@ -1110,7 +1110,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 8512, 10613, 10614, their party auras 8515, 10609, 10612 and the buffs 8516, 10608, 10610): the same levels, mana, 1000 ms GCD, 5 min and air slot. The party aura procs 20% of the time on melee swings and melee abilities (0x14). The buff gives 95, 179 or 246 attack power and 1 extra attack, lasts 1000 ms and has 2 charges that only white swings use (0x4). The one difference is the proc cooldown, 100 ms in the client where the sim has 1.5 sec. That's already in notes.md Need to Verify (the user, 2026-10-10), with the swing timer after an extra swing and off-hand procs, for when the character reaches 32.
 - Beta: none. The character is 30.
 - Already tested: `extra_attacks_test.go` (the swing timer and the 1 sec buff), `proc_matrix_test.go` (which hits trigger it), `weapon_totem_slot_test.go` (Windfury Weapon turns it off), `grace_of_air_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the 20%, the 1.5 sec wait, the attack power by rank or off-hand procs.
-- Proposed: no sim change. A small test: the extra swing gets 95, 179 and 246 attack power at levels 32, 42 and 52. About 20% of landed white hits 2 sec apart proc it, and hits 0.5 sec apart never proc it twice within 1.5 sec. And an off-hand hit procs it with a main hand swing.
+- No sim change. `windfury_totem_test.go` TestOrcShamanWindfuryTotem, with another shaman's totem and Rockbiter: the buff gives 95, 179 and 246 attack power at levels 32, 42 and 52. 500 landed white hits 2 sec apart proc it about 100 times, and 400 hits 0.5 sec apart never proc it twice within 1.5 sec. Changing the 20%, the 1.5 sec, the rank 3 attack power or the rank 2 level each fails it.
+- We left out the off-hand proc we proposed. Forever's shamans can't dual wield (the user, 2026-10-08, `off_hand_test.go`), so only a dual wielding party member like a rogue meets it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
