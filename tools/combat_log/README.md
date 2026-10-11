@@ -12,6 +12,13 @@ The user turns logging on with `/combatlog` in the game, and the file lands in t
 `Logs` directory as `WoWCombatLog-MMDDYY_HHMMSS.txt`. For the beta that is
 `/mnt/d/Gaming/World of Warcraft/_classic_beta_/Logs/`.
 
+The client holds lines in memory and writes them in pieces (measured 2026-10-11 and 12).
+While we fight it writes every 4 to 8 sec, and the newest line in each piece is about 1 sec
+old. When we stop fighting it can hold lines for minutes: nothing from 00:01:12 to 00:04:18,
+then 31 KB at once. So the end of a test may only show up after the next fight. Read the
+file's own write time (`stat -c %y`) against the last line's time. WSL's `date` ran about 7
+sec ahead of the Windows clock that the log uses.
+
 Each client start begins a new file (on 2026-10-10, `WoWCombatLog-101026_150733.txt` up to
 22:16 and `WoWCombatLog-101026_221851.txt` after a restart), so take the newest one.
 
