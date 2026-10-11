@@ -119,7 +119,7 @@ Totems
 - [x] 7.18 The weapon totem slot: one totem buff per weapon, our imbue turns off the same kind of totem buff, another shaman's totem in the raid buffs
 - [x] 7.19 Windfury Totem: extra attack, bonus attack power, proc chance, ICD, which hits proc it
 - [x] 7.20 Grace of Air Totem
-- [?] 7.21 Strength of Earth Totem
+- [x] 7.21 Strength of Earth Totem
 - [ ] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
 - [ ] 7.23 Magma Totem
 - [ ] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
@@ -1127,13 +1127,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 7.21 Strength of Earth Totem
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "sg".
 - The sim (`earth_totems.go`, `core/buffs.go` StrengthOfEarthTotemAura): ranks at 10, 24, 38, 52 and 60 for 25, 65, 125, 225 and 275 mana, a 1 sec GCD, 5 min in the earth slot (7.17). It gives the party 7, 14, 25, 42 or 53 Strength by our level's rank. Enhancing Totems is gone under Forever, so an "improved" one in the raid buffs gives the same.
   - Every preset puts it down, before the pull or at the start (`prepull_test.go`, `starting_totems_test.go`). The stats panel only shows it once we cast it (1.9).
 - Client 70338 (wago.tools 8075 to 25361 and their party auras 8076, 8162, 8163, 10441, 25362): the same levels, mana, 1000 ms GCD, 5 min and earth slot. The party auras give 7, 14, 25, 42 and 53 Strength.
 - Beta (all four logs, 2026-10-11): the log has our attack power on each line. Twice our cast line showed 869 attack power and our next swing 897 (19:57:24 and 20:27:17 in WoWCombatLog-101026_150733.txt). That's +28, rank 2's 14 Strength at 2 attack power each, as the sim gives at level 30.
 - Already tested: `prepull_test.go`, `starting_totems_test.go`, `totem_slots_test.go` (the earth slot, 5 min, another shaman's buff), `stats_panel_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the Strength by rank.
-- Proposed: no sim change. A small test that our own totem gives 7, 14, 25, 42 and 53 Strength at levels 10, 24, 38, 52 and 60 (and 28 attack power at 30, as on the beta), and none once a Tremor Totem takes its place.
+- No sim change. `strength_of_earth_test.go` TestOrcShamanStrengthOfEarthRanks: our own totem gives 7, 14, 25, 42 and 53 Strength at levels 10, 24, 38, 52 and 60, 14 Strength and 28 attack power at 30 as on the beta, and none once a Tremor Totem takes its place (from 18). Changing rank 2's Strength, rank 3's level or the level 60 value each fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
