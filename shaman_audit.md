@@ -122,7 +122,7 @@ Totems
 - [x] 7.21 Strength of Earth Totem
 - [x] 7.22 Searing Totem: attack rate, damage, coefficient, lifetime
 - [x] 7.23 Magma Totem
-- [ ] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
+- [?] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
 - [ ] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [ ] 7.26 Mana Spring Totem
 - [ ] 7.27 Mana Tide Totem
@@ -1158,6 +1158,17 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: another player put down rank 1 at 19:42:33 in WoWCombatLog-101026_150733.txt, but no Magma Totem damage is in the log. We haven't used it.
 - Already tested: `totem_slots_test.go` (20 sec, the fire slot), `mana_costs_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the pulses or their damage.
 - No sim change. `periodic_test.go` TestOrcShamanMagmaTotemPulses: rank 4 at level 60 with no spell power and no crit, against 3 targets at our level, pulses 10 times 2 sec apart from 2 sec after the drop, and each pulse rolls once on each target for 73 or a miss. A 2.5 sec pulse, 75 damage or a pulse on the first target only each fails it.
+
+### 7.24 Flametongue Totem
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`fire_totems.go`, `core/totem_weapon_buffs.go`): 4 ranks at 28, 38, 48 and 58 for 90, 140, 200 and 275 mana, a 1 sec GCD, 5 min in the fire slot (7.17), and its buff in the weapon's totem slot (7.18). Each landed white swing, extra swings included, deals 548, 781, 1061 or 1363 / 100 Fire damage per second of weapon speed by rank (19.73 for rank 1 on a 3.6 speed axe). Spell power adds nothing. The proc rolls our spell hit and crit (5.3, crits for 1.5 times). Stormstrike and Windfury Weapon's attacks don't proc it (4.13), and our Flametongue Weapon turns it off (7.18).
+  - The Level 30 presets and the default Level 60 preset put it down.
+- Client 70338 (wago.tools 8227, 8249, 10526, 16387, the party auras 8230, 8250, 10521, 15036 and the procs 8253, 8248, 10523, 16389): the same levels, mana, 1000 ms GCD, 5 min and fire slot. The party aura procs 100% of the time on melee swings only (0x4) with no cooldown. The proc's value is 548, 781, 1061 or 1363, and the server turns it into damage by weapon speed.
+- Beta (settled 2026-10-08 to 10): rank 1 hit 18 at 3.3 speed and 20 at 3.6, with no spell power in it. It procced on every landed swing in range, glancing blows, blocks and crits included, and on none of the misses, dodges, parries or Stormstrikes. It crit on 46 of 400 at 11.81% spell crit.
+- Beta, the full 23:25 log rechecked (`ftt.py`, 2026-10-11): 426 procs on landed swings in range. 17 swings in range didn't proc it, at 00:20 and 00:30, and each one came with a Flametongue Weapon proc, up to 120 ms later. So the user had Flametongue Weapon on then, and it turned the totem off, as the sim and the tooltip have it (7.18).
+- Already tested: `flametongue_totem_test.go` (rank 1 by weapon speed, no spell power, crits), `proc_matrix_test.go` (white swings only, Flametongue Weapon turns it off), `weapon_totem_slot_test.go`, `totem_slots_test.go`, `talent_procs_test.go`, `other_procs_test.go`, `mana_costs_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests ranks 2 to 4.
+- Proposed: no sim change. Add ranks 2 to 4 to the damage test: 781, 1061 and 1363 / 100 per second of weapon speed at levels 38, 48 and 58.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
