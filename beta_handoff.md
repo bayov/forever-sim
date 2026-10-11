@@ -346,10 +346,12 @@ had 8.3%, over the sim's flat 5%.
   oil or stone shows in our logs so far. Low priority.
 - [ ] 16. Lightning Bolt rank 5 at level 30 (audit 7.12, notes.md, added by the audit session
   2026-10-11). No log has a Lightning Bolt yet, because we play melee. The sim gives rank 5
-  (spell 943) raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast and 85 mana, and our
-  next swing comes a full swing after the cast ends.
-  Test: with the combat log on, stand in melee with a mob and cast 5 to 10 rank 5 bolts. Let
-  a swing land before each cast. Leave out Elemental Alacrity (it shortens the cast). Then:
+  (spell 943) raw 78.3 to 89.7 plus 71.4% of spell power, a 2.5 sec cast and 85 mana. The
+  swing timer is settled: the user has seen a bolt with a cast time start the swing timer
+  over (2026-10-11), as in the sim (audit 3.2). An instant bolt leaving it alone stays the
+  user's call from 2026-10-08 (Maelstrom Weapon needs level 34).
+  Test: with the combat log on, cast 5 to 10 rank 5 bolts on a mob. Leave out Elemental
+  Alacrity (it shortens the cast). Then:
   - Raw on the normal hits. The raw field is before the crit and the Stormstrike mark. The
     spell power is the cast line's field plus Mental Quickness (15% of Intellect a point),
     because the field leaves Mental Quickness out. At 49 in the field and Mental Quickness 2
@@ -357,8 +359,6 @@ had 8.3%, over the sim's flat 5%.
   - The cast time, from SPELL_CAST_START to SPELL_CAST_SUCCESS.
   - The mana. The cast success line logs the cost right after our max mana (Earth Shock rank
     1 logs 30 there).
-  - Our first Melee after each cast success, against a full swing speed after it (the sim)
-    or the old swing schedule.
 
 ## Recheck with every new log
 

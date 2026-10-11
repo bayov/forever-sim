@@ -1184,3 +1184,12 @@ spell crit, Elemental Devastation 3, no Elemental Weapons). Mobs of level 27 to 
     errors below. Our spell crit (11.81%) expects 45.4, 2.1 above. The 15:07 log had 29 of 605
     (4.8%) at 12.3% up to 19:52, so the two runs together are 61 of 989 (6.2%), 1.7 above a
     flat 5%. Not a break yet. Keep counting.
+
+
+2026-10-11  Lightning Bolt and the swing timer (item 16, audits 3.2 and 7.12)
+---------------------------------------------------------------------------
+The user has seen it in play: a Lightning Bolt with a cast time starts the swing timer over.
+The sim agrees (we don't swing during a cast, and the next swing comes a full swing after it
+ends). An instant bolt (Maelstrom Weapon or Nature's Swiftness) leaving the swing timer alone
+stays the user's call from 2026-10-08. No sim change. The bolt's damage, cast time and mana
+are still open (no bolt in any log yet).
