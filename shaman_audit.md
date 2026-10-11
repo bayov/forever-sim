@@ -125,7 +125,7 @@ Totems
 - [x] 7.24 Flametongue Totem: the weapon buff and its own attack (16389)
 - [x] 7.25 Fire Nova (Forever spell): damage, cooldown, targets, needs a fire totem or not
 - [x] 7.26 Mana Spring Totem
-- [ ] 7.27 Mana Tide Totem
+- [?] 7.27 Mana Tide Totem
 - [ ] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
 - [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
 
@@ -1189,6 +1189,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta (all four logs, 2026-10-11): 26 Mana Spring ticks on us, each 4 mana (rank 1, no Restorative Totems), 1.91 to 2.08 sec apart.
 - Already tested: `mana_returns_test.go` (rank 4's ticks, and Mana Tide taking its place), `mp5_test.go` (another shaman's), `totem_slots_test.go`, `starting_totems_test.go`, `prepull_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests rank 1 or Restorative Totems on it.
 - No sim change. `mana_returns_test.go` TestOrcShamanManaSpring: at level 30 our rank 1 gives 4 mana at 2, 4 and 6 sec after the drop and nothing in between, as on the beta, and 5 with Restorative Totems 5/5. A 5 mana rank 1, 10% a point of Restorative Totems or a 1 sec tick each fails it.
+
+### 7.27 Mana Tide Totem
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim (`water_totems.go`): a Restoration talent. Ranks at 25, 48 and 58 for 10, 30 and 60 mana, a 1 sec GCD and a 5 min cooldown that all ranks share. It stands 13 sec in the water slot (7.17), so Mana Spring goes, and gives everyone in the party with mana 88, 197 or 290 mana at 3, 6, 9 and 12 sec. Since 7.17 its ticks stop when another water totem takes its place.
+  - The Level 60 Mana Tide preset casts it under 20% mana and puts Mana Spring back once it's gone.
+- Client 70338 (wago.tools 16190, 17354, 17359 and the party auras 16191, 17355, 17360): the same levels, mana, 1000 ms GCD, 13000 ms, water slot and a 300000 ms cooldown. The party aura gives 88, 197 or 290 mana every 3000 ms.
+- Beta: none. Nobody cast it in our logs, and our character has no Restoration points.
+- Already tested: `mana_returns_test.go` (rank 3's 290 at 3, 6, 9 and 12 sec, taking Mana Spring's place, 13 sec), `totem_slots_test.go` (its ticks stop when Healing Stream takes its place), `mana_costs_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests ranks 1 and 2 or the 5 min cooldown.
+- Proposed: no sim change. A small test that the first tick, 3 sec after the drop, is 88 at level 25, 197 at 48 and 290 at 58, and that the totem is ready again 5 min after the cast.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
