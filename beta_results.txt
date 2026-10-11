@@ -1384,3 +1384,9 @@ log's own attack power field is 575 with the fist all session and 632 with Blood
   - So Windfury attacks get the weapon part too. Blood Fury is +10% attack power plus 10%
     of the weapon's average damage on white hits and Windfury attacks. Stormstrike is
     still unchecked.
+  - Update to 23:08:42: 187 white hits with Blood Fury (mean 88.00 +- 0.46) against 182
+    without (79.67 +- 0.47), 1.105 +- 0.009 times. 10% of the weapon's average gives 1.100
+    (0.5 standard errors), +10% attack power alone 1.056 (5.6 under), extra attack power
+    1.13 (2.9 over). 34 Windfury attacks with it, mean 93.56 +- 1.09: 92.41 with the weapon
+    part (1.1 standard errors), 88.91 without (4.3 under). Two of them are 104, about one
+    over the 103.4 top we worked out, the same offset the white hits have.
