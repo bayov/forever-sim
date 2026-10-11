@@ -133,7 +133,7 @@ Totems
 
 Elemental
 
-- [?] 8.1 Convection
+- [x] 8.1 Convection
 - [ ] 8.2 Concussion
 - [ ] 8.3 Elemental Warding
 - [ ] 8.4 Reverberation
@@ -1248,13 +1248,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 8.1 Convection
 
-- Shown to the user (2026-10-11), waiting for the OK.
+- The user OK'd it (2026-10-11): "sg".
 - The sim (`shocks.go`, `electric_spell.go`, `lava_burst.go`): 5 points. Each takes 2% off the mana cost of Earth, Flame and Frost Shock, Lightning Bolt, Chain Lightning and Lava Burst, so 10% at 5/5. It adds to Shamanistic Focus's 45% on the shocks and to Maelstrom Weapon on Lightning Bolt (2.7, 7.11).
   - The Level 60 enhancement preset has 5/5, and the Level 30 presets have none.
 - Client 70338 (wago.tools 16039 and its talent curve 85214): 5 ranks, -2, -4, -6, -8 and -10% on the spell cost, for the shocks, Lightning Bolt, Chain Lightning and Lava Burst (class mask 0x90100003 and 0x1000). It's the same kind of percent modifier as Shamanistic Focus, and the client adds those.
 - Beta: the user never had it (7.11).
 - Already tested: `mana_costs_test.go` TestOrcShamanManaCostTalents (5/5 on every shock, Lightning Bolt, Chain Lightning and Lava Burst, and not on totems, Lightning Shield or Fire Nova, with Shamanistic Focus too) and TestOrcShamanMaelstromWeaponCost. Nothing tests fewer than 5 points.
-- Proposed: no sim change. Add a 2/5 case (4% off) to TestOrcShamanManaCostTalents.
+- No sim change. TestOrcShamanManaCostTalents has a 2/5 case now: 4% off every shock, Lightning Bolt, Chain Lightning and Lava Burst. A flat 10% for any points fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

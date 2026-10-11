@@ -50,6 +50,7 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 	}{
 		// Every case has Lava Burst.
 		{"no cost talents", "0000000000000001", 0, 0, 0, 0},
+		{"Convection 2/5", "2000000000000001", 4, 4, 0, 0},
 		{"Convection 5/5", "5000000000000001", 10, 10, 0, 0},
 		{"Shamanistic Focus", "0000000000000001-000000001", 45, 0, 45, 0},
 		{"Totemic Focus 5/5", "0000000000000001--05", 0, 0, 0, 25},
