@@ -1279,3 +1279,12 @@ Improved Ghost Wolf 2, Shamanistic Focus 1, Anticipation 3). Nothing else change
     the average melee hit 1.1 times bigger. The sheet keeps the spread and moves min and max
     by 10% of the average, which leaves the average the same as the whole hit times 1.1.
     Not seen yet: Stormstrike and Windfury attacks with Blood Fury up.
+  - GCD, clean try (20:48:50, nothing cast in the 6 sec before): Blood Fury at 50.310,
+    Lightning Shield went off at 50.555 (0.245 sec later), and the next Lightning Shield
+    press failed "Not yet recovered" at 50.607 (Lightning Shield's own GCD). So Blood Fury
+    doesn't start a GCD, as the client says. The waits in the first two tries came from the
+    shock cast right before Blood Fury.
+  - Settled: Blood Fury is off the GCD, lasts 15 sec, gives +10% spell power, and makes the
+    average melee hit 1.1 times bigger (the same as +10% attack power plus 10% more weapon
+    damage). Implied sim change, waiting for the user's OK: take it off the GCD and add the
+    weapon's 10%. Unchecked: Stormstrike and Windfury attacks (assumed to get it too).

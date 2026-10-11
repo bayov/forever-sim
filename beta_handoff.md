@@ -374,6 +374,11 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   of 4 are past 245.8. The client gives it only the three 10% auras, so the server puts the
   10% on the weapon's damage too. Implied sim change, waiting for the user's OK: the whole
   weapon hit times 1.1 in place of +10% attack power, +10% spell power, and no GCD.
+  Fist exports (20:43 and 20:44): the average main hand went 1.1000 times too (79.23 to
+  87.15, where +10% attack power gives 83.65). Clean GCD try at 20:48:50: Lightning Shield
+  went off 0.245 sec after Blood Fury, so no GCD (the earlier waits were the shocks' GCD).
+  Unchecked: Stormstrike and Windfury attacks with Blood Fury up (fits the dagger
+  Stormstrike session, item 4).
 
 ## Recheck with every new log
 
