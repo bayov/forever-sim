@@ -127,7 +127,7 @@ Totems
 - [x] 7.26 Mana Spring Totem
 - [x] 7.27 Mana Tide Totem
 - [x] 7.28 Healing Stream Totem. Fixed ahead of the item (2026-10-10, the user's go): Purification no longer raises Healing Stream. Its beta tooltip says "your healing spells", but its spell modifiers list only Healing Wave, Lesser Healing Wave and Chain Heal (class mask 0x1C0) and one Forever spell in the third mask word (0x10). Healing Stream's heal is 0x2000 in both the Forever (70291) and Era (1.15.9) clients. Restorative Totems is right: its talent curves give Mana Spring 5% and Healing Stream 10% a rank, as the beta tooltip says. `periodic_test.go` TestOrcShamanHealingStreamTalents checks 9 a heal at rank 2 with 5 points in each.
-- [ ] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
+- [?] 7.29 Utility totems the rotation may place: Stoneskin, Tremor, Windwall
 
 ## 8. Talents
 
@@ -1213,6 +1213,33 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Already tested: `periodic_test.go` (5% crits, Water Shield, Restorative Totems and Purification), `totem_slots_test.go`, `starting_totems_test.go`, `gcd_test.go` and `spell_ranks_test.go`. Nothing tests the heal with spell power or its 2 sec.
 - No sim change. `periodic_test.go` TestOrcShamanHealingStreamHeals: rank 2 at level 30 with 91 spell power heals us for 8.002 (12.003 on a crit) every 2 sec from 2 sec after the drop, 5 times in 11 sec. A 0.02 coefficient, a 2.5 sec period or 7 base healing each fails it.
 - notes.md Need to Verify (Beta): compare the sheet's bonus healing in the next export with Healing Stream's heals, which point to about 10 more healing power than spell power.
+
+### 7.29 Stoneskin, Tremor and Windwall Totems
+
+- Shown to the user (2026-10-11), waiting for the OK.
+- The sim:
+  - Stoneskin Totem (`earth_totems.go`, `buffs.go` StoneskinTotemAura): 6 ranks at 4, 14, 24, 34, 44 and 54 for 30 to 210 mana, a 1 sec GCD and 5 min in the earth slot (7.17). Every rank takes a flat 30 off each melee hit, after armor and after a crit doubles the hit. Guardian Totems adds 10% a point, rounded away from zero. Another shaman's totem in the raid buffs is the same 30, for Horde only, with 0 or 2 points of Guardian Totems.
+  - Tremor Totem: level 18, 60 mana, a 1 sec GCD and 5 min in the earth slot. It does nothing else in the sim.
+  - Windwall Totem (`air_totems.go`): 3 ranks at 36, 46 and 56 for 115, 170 and 225 mana, a 1 sec GCD and 5 min in the air slot. It does nothing else in the sim.
+  - No preset puts any of them down. They only change damage taken, not DPS.
+- Client 70338 (wago.tools 8071 to 10408, 8143, 15107 to 15112 and their auras):
+  - The same levels, mana, 1000 ms GCD, 5 min and slots.
+  - Stoneskin's party aura takes 4, 7, 11, 16, 22 or 30 off Physical damage taken by rank (8072, 8156, 8157, 10403, 10404, 10405). That's melee and ranged. A second effect changes damage taken by 0%, so it does nothing.
+  - Guardian Totems (16258) adds 10% a point to that first effect, for Stoneskin and Windwall.
+  - Tremor (8145) removes Fear, Charm and Sleep from the party every 4 sec.
+  - Windwall takes 32, 50 or 64 off ranged damage taken by rank (15108 to 15110).
+- Beta (our own rank 3 Stoneskin, rechecked on the newer log):
+  - WoWCombatLog-101026_150733.txt (6.3, armor 572 by the hits): of 77 normal mob hits on us with the totem down, 66 fit 11 off before armor, 5 fit 11 after armor and 9 fit nothing off.
+  - The 23:25 log (other gear, 1686 armor on the sheet, 1637 by 416 of 431 hits without the totem): of 221 hits with the totem down, 132 fit 11 before armor, none fit 11 after and 86 fit nothing off. The last are probably hits out of the totem's range.
+  - We put down Tremor Totem 3 times. There's nothing to measure. Windwall needs level 36.
+- Already tested: `stoneskin_test.go` (the -30 comes and goes with the buff), `totem_slots_test.go`, `gcd_test.go`, `mana_costs_test.go` and `spell_ranks_test.go`.
+- Found: the sim's Stoneskin is 30 at every rank, on melee only, after armor. Forever's is the rank's value, on all physical hits, before armor. 6.3 only recorded this (the user, 2026-10-10).
+- Proposed (damage taken only, no DPS or golden change):
+  - Stoneskin gives each rank its own value and takes it off physical hits before armor. That needs a new flat reduction in core that comes before armor, since the sim's existing ones come after it.
+  - Another shaman's Stoneskin gives the top rank at our level, like the other raid totems under Forever.
+  - Guardian Totems adds 10% a point to the rank's value. We keep the fraction (13.2 at rank 3 with 2 points), because the beta can't tell us how the server rounds it.
+  - Tremor and Windwall stay as they are.
+  - A test: at level 30 a 100 raw hit from a level 30 mob loses 11 before our armor, at level 60 30, and none once a Tremor Totem takes the earth slot.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
