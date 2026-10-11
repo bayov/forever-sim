@@ -420,6 +420,8 @@ combat log, run these checks on it too, and tell the user when one breaks.
 - Stormstrike's raw damage stays inside (weapon roll + AP / 14 x 3.6) x the percent bonuses,
   with 2.7 for one-handers and 1.8 for daggers (item 4). Rage of the Storm's +10% is assumed. Read AP from the
   white hits in the same log, not the sheet. A hit outside the range breaks it.
+- Blood Fury follows attack power while it's up (2026-10-12 00:59: a +18 scroll added 20 under
+  it, beta_results.txt). Sim change waits for the user's OK.
 - Blood Fury: white hits and Windfury attacks with it up average 1.1 times the ones without
   it (+10% attack power plus 10% of the weapon's average, item 18). A Stormstrike with it up
   should too. Both ends of the white range move up together, by about 8 on the fist.

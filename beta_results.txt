@@ -1460,3 +1460,21 @@ Quickness. Unarmed 150 of 150.
     Stormstrikes were 59 too.
   - Implied sim change, waiting for the user's OK: the dagger's Stormstrike speed 2.0 to
     1.8. One-handers stay at 2.7 and two-handers at 3.6.
+
+
+2026-10-12  Does Blood Fury follow attack power while it's up? (00:59)
+---------------------------------------------------------------------
+The audit's notes.md item (dfdeeddd), run by the user with a Scroll of Strength II (+9
+Strength) used during Blood Fury. Read from the log's AP field on our cast and swing lines
+(fist on, 583 with nothing up). The field moves 1 for 1 with the sheet's attack power, and
+Blood Fury scales it by 1.1.
+  - 00:59:49.9 Blood Fury: 583 to 641.
+  - 00:59:54.4 the scroll (its own cast line): 641 to 661.
+  - 01:00:04.9 Blood Fury ends, next swing 01:00:10.0: 661 to 601.
+  - So the scroll alone adds 18 (583 to 601, 9 Strength x 2), and with Blood Fury up it
+    added 20 (601 x 1.1 = 661.1). A snapshot would have given 659.
+  - So Blood Fury's attack power part follows the current total, like the client's percent
+    auras. Spell power and healing are taken to work the same way (aura 317). The sim takes
+    10% at the start and keeps it. Implied sim change, waiting for the user's OK: make it
+    x1.1 on attack power, ranged attack power, spell power and healing while it's up. The
+    weapon part (10% of the weapon's average) stays.
