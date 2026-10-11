@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/shaman"
 )
@@ -130,5 +131,29 @@ func TestOrcShamanSpellCrit(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// TestOrcShamanAxeSpecialization checks Forever's Orc Axe Specialization (shaman_audit.md 9.1).
+//
+// With an axe in hand we get 1% more crit on every melee attack and spell, as the client's
+// spell says (20574). We compare a two-handed axe with a two-handed mace, and neither has any
+// stats, so the 1% is the whole difference.
+func TestOrcShamanAxeSpecialization(t *testing.T) {
+	const (
+		barbarianWarAxe = 3201
+		batteringHammer = 3198
+	)
+	crit := func(weapon int32) (melee, spell float64) {
+		_, enh := weaponSim{level: 30, weapon: &proto.ItemSpec{Id: weapon}, seconds: 1}.start()
+		return enh.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance, enh.GetStat(stats.SpellCrit) / core.SpellCritRatingPerCritChance
+	}
+	axeMelee, axeSpell := crit(barbarianWarAxe)
+	maceMelee, maceSpell := crit(batteringHammer)
+	if got := axeMelee - maceMelee; math.Abs(got-1) > 1e-9 {
+		t.Errorf("the axe gives %.4f%% more melee crit than the mace, want 1%%", got)
+	}
+	if got := axeSpell - maceSpell; math.Abs(got-1) > 1e-9 {
+		t.Errorf("the axe gives %.4f%% more spell crit than the mace, want 1%%", got)
 	}
 }

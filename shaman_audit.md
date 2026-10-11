@@ -196,7 +196,7 @@ Tree rules
 
 ## 9. Race, gear and consumables
 
-- [?] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). See the 9.1 write-up below.
+- [x] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). See the 9.1 write-up below. Whether Blood Fury follows our attack power is in notes.md Need to Verify.
 - [ ] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
 - [ ] 9.3 Rage of the Storm (Stormstrike +10%)
 - [ ] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
@@ -1292,6 +1292,8 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Proposed:
   - Axe Specialization: no change. A test that an axe gives 1% more melee and spell crit than Rage of the Storm.
   - Blood Fury: 10% of our current attack power, ranged attack power, spell power and healing-only stat while it's up, instead of 10% of what we had at the start. The weapon part stays as it is.
+- The user (2026-10-12): "whether BF snapshots is something we need to verify". So the sim keeps the amount from the start for now, and the question is in notes.md Need to Verify with a beta test: Blood Fury, then Strength of Earth Totem, and UnitAttackPower before and after the totem.
+- `crit_test.go` TestOrcShamanAxeSpecialization: a level 30 Orc with Barbarian War Axe has exactly 1% more melee and spell crit than with Battering Hammer (a two-handed mace). Neither weapon has stats. Taking out the melee or the spell part of the 1% fails it. The Blood Fury tests are the beta session's `blood_fury_test.go`.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
