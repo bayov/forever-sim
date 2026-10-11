@@ -140,12 +140,12 @@ var ItemSetGiftOfTheGatheringStorm = core.NewItemSet(core.ItemSet{
 var ItemSetTheEarthshatterer = core.NewItemSet(core.ItemSet{
 	Name: "The Earthshatterer",
 	Bonuses: map[int32]core.ApplyEffect{
-		// Reduces the mana cost of your totem spells by 12%.
+		// Reduces the mana cost of your totem spells by 12%. It multiplies with Totemic Focus.
 		2: func(agent core.Agent) {
 			shaman := agent.(ShamanAgent).GetShaman()
 			shaman.OnSpellRegistered(func(spell *core.Spell) {
 				if spell.Flags.Matches(SpellFlagTotem) {
-					spell.Cost.Multiplier -= 12
+					spell.Cost.Factor *= .88
 				}
 			})
 		},

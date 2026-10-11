@@ -274,6 +274,7 @@ func newRageCost(spell *Spell, options RageCostOptions) *SpellCost {
 		spell:      spell,
 		BaseCost:   options.Cost,
 		Multiplier: 100,
+		Factor:     1,
 		SpellCostFunctions: &RageCost{
 			Refund:          options.Refund * options.Cost,
 			RefundMetrics:   options.RefundMetrics,

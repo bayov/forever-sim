@@ -72,7 +72,7 @@ func (shaman *Shaman) ApplyTalents() {
 	if shaman.Talents.TidalFocus > 0 {
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.Flags.Matches(SpellFlagShaman) && spell.ProcMask.Matches(core.ProcMaskSpellHealing) && spell.Cost != nil {
-				spell.Cost.Multiplier -= shaman.Talents.TidalFocus
+				spell.Cost.Factor *= 1 - .01*float64(shaman.Talents.TidalFocus)
 			}
 		})
 
@@ -146,8 +146,19 @@ func (shaman *Shaman) applyCallOfFlame() {
 	})
 }
 
-func (shaman *Shaman) shamanisticFocusReduction() int32 {
-	return core.TernaryInt32(shaman.Talents.ShamanisticFocus, 45, 0)
+// Our cost talents multiply each other, each one a factor on the spell's cost.
+//
+// On the beta, with Convection 5 and Shamanistic Focus, Earth Shock rank 4 cost 72 of its 145
+// (145 * 0.9 * 0.55) and Flame Shock rank 3 79 of its 160. Added up, they would cost 65 and 72
+// (shaman_audit.md 8.1). The client gives them, Totemic Focus, Tidal Focus, Clearcasting and
+// the Maelstrom Weapon buff the same kind of percent modifier. Clearcasting and Maelstrom
+// Weapon stay in the cost multiplier, because at full they make the spell free either way.
+func (shaman *Shaman) convectionFactor() float64 {
+	return 1 - .02*float64(shaman.Talents.Convection)
+}
+
+func (shaman *Shaman) shamanisticFocusFactor() float64 {
+	return core.TernaryFloat64(shaman.Talents.ShamanisticFocus, .55, 1)
 }
 
 // 0.17 / 0.33 / 0.50 sec per the beta client.
@@ -571,8 +582,8 @@ func (shaman *Shaman) registerRageOfTheFarseerCD() {
 	})
 }
 
-func (shaman *Shaman) totemManaMultiplier() int32 {
-	return 100 - 5*shaman.Talents.TotemicFocus
+func (shaman *Shaman) totemicFocusFactor() float64 {
+	return 1 - .05*float64(shaman.Talents.TotemicFocus)
 }
 
 // Restorative Totems uses Mod Spell Effectiveness (Base Value). Only the Healing Stream half is

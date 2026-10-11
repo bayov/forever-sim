@@ -671,6 +671,7 @@ type SpellCost struct {
 	BaseCost     float64 // The base power cost before all modifiers.
 	FlatModifier int32   // Flat value added to base cost before pct mods
 	Multiplier   int32   // Multiplier for cost, stored as an int, e.g. 0.5 is stored as 50
+	Factor       float64 // Multiplies the cost after Multiplier, for cost modifiers that multiply each other. 1 by default.
 	spell        *Spell
 	SpellCostFunctions
 }
@@ -679,7 +680,7 @@ func (sc *SpellCost) ApplyCostModifiers(cost float64) float64 {
 	spell := sc.spell
 	cost = max(0, cost+float64(sc.FlatModifier))
 	cost = max(0, cost*float64(spell.Unit.GetSchoolCostModifier(spell))/100)
-	return max(0, cost*float64(sc.Multiplier)/100)
+	return max(0, cost*float64(sc.Multiplier)/100*sc.Factor)
 }
 
 // Get power cost after all modifiers.

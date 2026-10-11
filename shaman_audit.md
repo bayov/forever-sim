@@ -133,7 +133,7 @@ Totems
 
 Elemental
 
-- [?] 8.1 Convection
+- [x] 8.1 Convection
 - [ ] 8.2 Concussion
 - [ ] 8.3 Elemental Warding
 - [ ] 8.4 Reverberation
@@ -367,7 +367,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 2.7 Mana costs
 
 - Every rank's mana cost (95 ranks, totems and Lava Burst included) matches wowhead Forever (2026-10-08). Water Shield shows no cost there and is free in the sim.
-- The user OK'd the modifiers (2026-10-08). Convection takes 2% a point off shocks, Lightning Bolt, Chain Lightning and Lava Burst. Shamanistic Focus takes 45% off shocks and Lightning Shield. Totemic Focus takes 5% a point off totems. Maelstrom Weapon takes 4% a point a stack off the next Lightning Bolt's cost and cast time. The percents add (as in cmangos) and the cost never goes below 0.
+- The user OK'd the modifiers (2026-10-08). Convection takes 2% a point off shocks, Lightning Bolt, Chain Lightning and Lava Burst. Shamanistic Focus takes 45% off shocks and Lightning Shield. Totemic Focus takes 5% a point off totems. Maelstrom Weapon takes 4% a point a stack off the next Lightning Bolt's cost and cast time. The percents add (as in cmangos) and the cost never goes below 0. Changed in 8.1 (2026-10-11, the user's go): the cost talents multiply each other, as the beta showed.
 - Clearcasting comes on 10% of the damage spells we cast, Fire Nova included, and makes the next one free. Totem attacks, Lightning Shield orbs and imbue procs don't give it or use it up. A Lightning Bolt uses it up at the end of its cast.
 - Fire Nova isn't a totem under Forever, so Totemic Focus doesn't reach it (the user, 2026-10-08).
 - A spell we can't pay for doesn't cast, and the sim marks us out of mana until we can. The rotation moves on to the next spell.
@@ -936,7 +936,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim (`earth_shock.go`, `shocks.go`): 7 ranks, learned at 4, 8, 14, 24, 36, 48 and 60. Each rank's damage grows for 5 levels after it's learned (7.1). It's an instant Nature hit with a 38.6% spell power coefficient on every rank (5.4), 30 / 50 / 85 / 145 / 240 / 345 / 450 mana, a 1.5 sec GCD and the 6 sec cooldown it shares with the other shocks (7.11). It rolls spell hit and crit (5.1, 5.3) and uses the Stormstrike mark (7.7). It's our one binary spell, so it's never partly resisted (5.2). Its threat is doubled, which our DPS doesn't use, and its interrupt does nothing because our targets don't cast.
 - Client 70338 (wago.tools, 8042 to 10414): the same levels, damage, growth, coefficient, mana, school and GCD. The cooldown is the 6000 ms of the shock category (19). Effect 2 is the interrupt.
 - Beta, all four logs (our count):
-  - 113 casts, 108 of rank 4 and 5 of rank 1. Rank 4 cost 145 mana every time and rank 1 cost 30, except 3 casts that cost nothing. Each of those came under Elemental Focus's Clearcasting (16246), which the cast used up.
+  - 113 casts, 108 of rank 4 and 5 of rank 1. Rank 4 cost 145 mana every time and rank 1 cost 30, except 3 casts that cost nothing. Each of those came under Elemental Focus's Clearcasting (16246), which the cast used up. (Corrected in 8.1, 2026-10-11: the log's cost field is the base cost. Our mana dropped by less, because we had Shamanistic Focus, Convection or both.)
   - Earth Shocks came at least 5.91 sec apart, and any two shocks at least 5.9 sec apart, so the shared 6 sec holds with the log's 0.1 sec jitter.
   - Outcomes: 89 hits, 7 crits, 12 misses, 3 full resists, 1 immune and 1 absorb. Rank 4 with 91 spell power hit raw 118 to 123, inside the sim's 118.8 to 124.4 (5.4).
   - Not binary: the Elder Cloud Serpents took 30% off all 4 Earth Shocks that landed on them (5.2). So the server partly resists Earth Shock like our other spells, and the sim doesn't.
@@ -956,7 +956,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Call of Flame adds 5% a point to both parts (8.5), and Burning Totem adds a fifth tick (9.2).
 - Client 70338 (wago.tools, 8050 to 29228): the same levels, hit and growth, ticks (7, 8, 14, 21, 34 and 44 every 3000 ms for 12 sec), coefficients, mana, GCD and shock cooldown. Its "periodic can crit" flag is the one 5.7 found.
 - Beta, all four logs (our count):
-  - 109 casts: rank 3 cost 160 mana 107 times, once nothing (Clearcasting), and rank 1 cost 55 once. 89 hits, 13 crits and 7 misses.
+  - 109 casts: rank 3 cost 160 mana 107 times, once nothing (Clearcasting), and rank 1 cost 55 once. (Corrected in 8.1, 2026-10-11: the log's cost field is the base cost. Our mana dropped by less, because we had Shamanistic Focus, Convection or both.) 89 hits, 13 crits and 7 misses.
   - Every DoT that ran its course without the mob dying or a recast ticked exactly 4 times (61 of 61). The first tick came 2.91 to 3.11 sec after the cast and the others 2.90 to 3.10 sec apart, so 3 sec with the log's jitter.
   - None of the 6 misses on a mob without the DoT put one up. One miss at 19:52:10 on a Thundering Boulderkin that had the DoT left it running, and its last tick came on time at 12 sec.
   - Rechecked (2026-10-11) with the 23:25 log up to 01:04: 114 casts, 66 of 66 full DoTs ticked 4 times, and the same 7 misses.
@@ -971,7 +971,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim (`frost_shock.go`, `shocks.go`): 4 ranks, learned at 20, 34, 46 and 58. An instant Frost hit that grows for 5 levels after the rank is learned: 68.2 to 72.8 for rank 1 from 25, and 278.6 to 294.6 for rank 4 at 60. It gets 38.6% of spell power on every rank (5.4). 115 / 225 / 325 / 430 mana, a 1.5 sec GCD and the shared 6 sec shock cooldown (7.11). It rolls spell hit and crit (5.1, 5.3), and it can be partly resisted (it isn't binary, 5.2). Its 8 sec slow does nothing in the sim. It leaves the Stormstrike mark up (7.7). No preset casts it.
 - Client 70338 (wago.tools, 8056 to 10473): the same levels, damage, growth, coefficient, mana, GCD and shock cooldown. Effect 1 is the 50% slow for 8 sec.
 - Beta, all four logs (our count): 11 casts of rank 1, all in the 15:07 log (20:50 to 22:06), on 2 players, a Salt Flats Vulture and Thundering Boulderkins.
-  - Each cost 115 mana. 9 hits, 2 crits and no misses.
+  - Each cost 115 mana. (Corrected in 8.1, 2026-10-11: the log's cost field is the base cost. Our mana dropped by less, because we had Shamanistic Focus, Convection or both.) 9 hits, 2 crits and no misses.
   - Raw 89 to 92 on the normal hits. The cast lines show 49 spell power, and 53 for the two raw 91 and 92 hits at 20:54 and 20:55. The sim gives 87.1 to 91.7 at 49 and 88.7 to 93.3 at 53, so every hit fits. The two crits did 132 and 136 from raw 88 and 91, 1.5 times.
   - The slow on a player lasted 8.00 sec (20:54:51.586 to 20:54:59.589).
   - Whether it's binary is open (notes.md Need to Verify, the resistance item). No Frost Shock landed on a mob with resistance.
@@ -985,7 +985,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim (`shocks.go`): Earth, Flame and Frost Shock share one 6 sec cooldown, less 0.2 sec a point of Reverberation (5 sec at 5/5). Each has a 1.5 sec GCD that haste doesn't shorten (3.1). Convection takes 2% a point off their cost and Shamanistic Focus 45%, and the two add up (55% at both).
 - Client 70338 (wago.tools): all three shocks are in category 19 with a 6000 ms category cooldown. Reverberation (16040) takes 200 ms a point off the cooldown of the three shocks (class mask 0x90100000). Convection (16039) takes 2% a point off the cost of the shocks, Lightning Bolt, Chain Lightning and Lava Burst. Shamanistic Focus (1223030, Forever's own spell) takes 45% off the shocks and Lightning Shield. Both cost talents are the same kind of percent modifier, and the client adds those, as the sim does.
 - Beta, all four logs (our count): two different shocks never came less than 5.9 sec apart. Flame then Earth Shock came 5.90 to 6.5 sec apart 9 times, Earth then Flame once (5.95) and Frost then Flame once (6.01). Our rotation casts a shock as soon as it can, so without a shared cooldown we'd see gaps near the 1.5 sec GCD. The same shock again was also never under 5.91 sec.
-- Not seen on the beta: the user never had Reverberation, Convection or Shamanistic Focus. Every shock cost its full mana (7.8, 7.9, 7.10), and no gap was under 5.9 sec.
+- Not seen on the beta: the user never had Reverberation before the 23:14 build, and no gap was under 5.9 sec. Corrected in 8.1 (2026-10-11): the user did have Shamanistic Focus, Convection or both, and the shocks cost less than their base. The log's cost field is the base cost.
 - Already tested: `mana_costs_test.go` (Convection, Shamanistic Focus and both together on each shock) and `gcd_test.go` (the 1.5 sec GCD). Nothing tests the shared cooldown or Reverberation.
 - No sim change.
 - Tests: `shocks_test.go` TestOrcShamanSharedShockCooldown casts each shock at level 60 and checks that all three are ready 6 sec later, and 5 sec later with Reverberation 5/5. It fails without the shared cooldown and with 0.1 sec a point.
@@ -1256,13 +1256,17 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: the user never had it (7.11).
 - Already tested: `mana_costs_test.go` TestOrcShamanManaCostTalents (5/5 on every shock, Lightning Bolt, Chain Lightning and Lava Burst, and not on totems, Lightning Shield or Fire Nova, with Shamanistic Focus too) and TestOrcShamanMaelstromWeaponCost. Nothing tests fewer than 5 points.
 - No sim change. TestOrcShamanManaCostTalents has a 2/5 case now: 4% off every shock, Lightning Bolt, Chain Lightning and Lava Burst. A flat 10% for any points fails it.
-- Reopened (2026-10-11), shown to the user, waiting for the OK. The user did have Convection, and the beta shows it multiplies with Shamanistic Focus where the sim adds them.
+- Reopened (2026-10-11), and the user OK'd multiplying: "Sounds good on cost multiply instead of additive". The user did have Convection, and the beta shows it multiplies with Shamanistic Focus where the sim adds them.
   - The log's cost field on a cast is the base cost (Earth Shock rank 4 always logs 145). Our mana on the cast line is from before we pay, so the cost is the drop to our next event. Mana regen in between can only make a drop look smaller. 7.8 to 7.11 read the cost field, so "every shock cost its full mana" and "the user never had Convection or Shamanistic Focus" there are wrong.
   - Shamanistic Focus only (the 14:50 build in WoWCombatLog-101026_150733.txt): Earth Shock dropped 80 (145 * 0.55 = 79.75), Flame Shock 88 (160 * 0.55) and Lightning Shield 69 (125 * 0.55 = 68.75).
   - Convection 5 only (the Elemental respec, 20:42 to 22:16): Earth Shock dropped 130 on 7 of 7 (145 * 0.9 = 130.5), Flame Shock 144 (160 * 0.9) and Frost Shock 104 on 3 of 3 (115 * 0.9 = 103.5).
   - Both (the 23:14 build, the 23:25 log): Earth Shock dropped 72 on 4 of 4 and Flame Shock 79 on 7 of 13 (the rest 77 to 78, or 60 when a regen tick came in between). Multiplied, that's 145 * 0.9 * 0.55 = 71.8 and 160 * 0.9 * 0.55 = 79.2. Added (55% off, the sim), it would be 65.25 and 72, and a drop can't come out higher than the cost.
   - The client gives Convection, Shamanistic Focus, Clearcasting and the Maelstrom Weapon buff (408505, -20% a stack on Lightning Bolt) the same kind of cost modifier. Fire Nova's two damage talents of one kind multiply too (5.6).
   - Proposed: multiply the cost modifiers on a spell instead of adding them. On the Level 60 preset (Convection 5 and Shamanistic Focus) a shock costs 49.5% of its base instead of 45%. Lightning Bolt is free at 5 Maelstrom Weapon stacks either way, and the presets only cast it then. Clearcasting stays free. A test with both talents: Earth Shock rank 4 costs 71.775 at level 30.
+- Changed (2026-10-11): our cost talents multiply each other. Each one is a factor on the spell's cost (a new float `Factor` on every cost in core, 1 by default): Convection, Shamanistic Focus, Totemic Focus, Tidal Focus and The Earthshatterer's 2 piece. Clearcasting and Maelstrom Weapon stay in the integer cost percent, because at full they make the spell free either way. So Maelstrom Weapon multiplies with Convection on Lightning Bolt (2 stacks: 0.9 * 0.6 of the cost).
+  - The Level 60 preset (mksettings, Phase 2 gear, Level 60 talents, the optimized rotation, 20,000 iterations) went from 719.6 to 716.8 DPS at 180 sec. Mana left at the end went from 1282 to 1220, and it runs out of mana at 252 sec instead of 260.
+  - The enhancement and elemental goldens didn't move. The warden golden did, from -3.6% to +2% DPS and up to +43% TPS, because its talents have Convection 3 and Shamanistic Focus. Its Phase 1 blank gear, no buffs, 60 sec case went from 35.7 to 45.6 DPS. That rotation casts Earth Shock only above 50% mana and uses the Demonic Rune once enough mana is missing. With dearer shocks the rune came at 49.5 sec instead of 57.5 sec, which left time for two Earth Shocks after it instead of one.
+- `mana_costs_test.go`: TestOrcShamanManaCostTalents now wants 0.9 * 0.55 of a shock's cost with Convection 5 and Shamanistic Focus. TestOrcShamanCostTalentsOnTheBeta checks the beta's costs at level 30: Earth Shock rank 4 at 79.75, 130.5 and 71.775, Flame Shock rank 3 at 88, 144 and 79.2 and Lightning Shield rank 3 at 68.75. TestOrcShamanMaelstromWeaponCost has Maelstrom Weapon times Convection. Adding the two talents again fails them.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

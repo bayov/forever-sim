@@ -16,8 +16,8 @@ func (shaman *Shaman) newTotemSpellConfig(flatCost float64, spellID int32) core.
 		Flags:    SpellFlagShaman | SpellFlagTotem | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost:   flatCost,
-			Multiplier: shaman.totemManaMultiplier(),
+			FlatCost: flatCost,
+			Factor:   shaman.totemicFocusFactor(),
 		},
 
 		Cast: core.CastConfig{

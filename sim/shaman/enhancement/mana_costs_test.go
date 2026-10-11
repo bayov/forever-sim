@@ -10,23 +10,23 @@ import (
 	"github.com/wowsims/classic/sim/shaman"
 )
 
-// manaCostCheck is a spell, its cost and the percent our talents should take off it.
+// manaCostCheck is a spell, its cost and the share of it we should pay.
 type manaCostCheck struct {
 	name  string
 	spell *core.Spell
 	cost  float64
-	off   int32
+	pays  float64
 }
 
 // rankCost checks the top rank of a spell against its cost table.
-func rankCost(t *testing.T, name string, ranks []*core.Spell, costs []float64, off int32) manaCostCheck {
+func rankCost(t *testing.T, name string, ranks []*core.Spell, costs []float64, pays float64) manaCostCheck {
 	spell := topRank(t, name, ranks)
-	return manaCostCheck{name, spell, costs[spell.Rank], off}
+	return manaCostCheck{name, spell, costs[spell.Rank], pays}
 }
 
 func checkManaCosts(t *testing.T, label string, checks []manaCostCheck) {
 	for _, c := range checks {
-		want := c.cost * float64(100-c.off) / 100
+		want := c.cost * c.pays
 		if got := c.spell.Cost.GetCurrentCost(); math.Abs(got-want) > 1e-9 {
 			t.Errorf("%s: %s costs %.2f, want %.2f", label, c.name, got, want)
 		}
@@ -38,23 +38,24 @@ func checkManaCosts(t *testing.T, label string, checks []manaCostCheck) {
 //
 // Convection takes 2% a point off shocks, Lightning Bolt, Chain Lightning and Lava Burst.
 // Shamanistic Focus takes 45% off shocks and Lightning Shield. Totemic Focus takes 5% a point
-// off totems. That's what the beta client texts say. The percents add (as in cmangos), so
-// Convection 5/5 and Shamanistic Focus take 55% off a shock.
+// off totems. That's what the beta client texts say. They multiply, as the beta showed
+// (shaman_audit.md 8.1), so with Convection 5/5 and Shamanistic Focus we pay 0.9 * 0.55 of a
+// shock's cost, 49.5%. Added up, it would be 45%.
 //
 // Fire Nova is a spell and not a totem under Forever, so none of them reach it.
 func TestOrcShamanManaCostTalents(t *testing.T) {
 	cases := []struct {
 		name                       string
 		talents                    string
-		shock, bolt, shield, totem int32
+		shock, bolt, shield, totem float64
 	}{
 		// Every case has Lava Burst.
-		{"no cost talents", "0000000000000001", 0, 0, 0, 0},
-		{"Convection 2/5", "2000000000000001", 4, 4, 0, 0},
-		{"Convection 5/5", "5000000000000001", 10, 10, 0, 0},
-		{"Shamanistic Focus", "0000000000000001-000000001", 45, 0, 45, 0},
-		{"Totemic Focus 5/5", "0000000000000001--05", 0, 0, 0, 25},
-		{"all three", "5000000000000001-000000001-05", 55, 10, 45, 25},
+		{"no cost talents", "0000000000000001", 1, 1, 1, 1},
+		{"Convection 2/5", "2000000000000001", .96, .96, 1, 1},
+		{"Convection 5/5", "5000000000000001", .9, .9, 1, 1},
+		{"Shamanistic Focus", "0000000000000001-000000001", .55, 1, .55, 1},
+		{"Totemic Focus 5/5", "0000000000000001--05", 1, 1, 1, .75},
+		{"all three", "5000000000000001-000000001-05", .9 * .55, .9, .55, .75},
 	}
 	for _, c := range cases {
 		_, enh := newShamanSim(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
@@ -77,16 +78,54 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 			rankCost(t, "Mana Spring Totem", enh.ManaSpringTotem, shaman.ManaSpringTotemManaCost[:], c.totem),
 			rankCost(t, "Healing Stream Totem", enh.HealingStreamTotem, shaman.HealingStreamTotemManaCost[:], c.totem),
 			{"Tremor Totem", enh.TremorTotem, 60, c.totem},
-			rankCost(t, "Fire Nova", enh.FireNova, shaman.FireNovaManaCost[:], 0),
+			rankCost(t, "Fire Nova", enh.FireNova, shaman.FireNovaManaCost[:], 1),
 		})
+	}
+}
+
+// TestOrcShamanCostTalentsOnTheBeta checks the costs our beta character paid at level 30
+// (shaman_audit.md 8.1).
+//
+// The log logs each cast's base cost, so the cost is how much our mana dropped by our next
+// event. With Shamanistic Focus, Earth Shock rank 4 dropped 80, Flame Shock rank 3 88 and
+// Lightning Shield rank 3 69. With Convection 5, Earth Shock dropped 130 and Flame Shock 144.
+// With both, Earth Shock dropped 72 and Flame Shock 79, so the two talents multiply. Added up
+// they would cost 65.25 and 72. The sim doesn't round costs.
+func TestOrcShamanCostTalentsOnTheBeta(t *testing.T) {
+	for _, c := range []struct {
+		name, talents        string
+		earth, flame, shield float64
+	}{
+		{"Shamanistic Focus", "-000000001", 145 * .55, 160 * .55, 125 * .55},
+		{"Convection 5", "5", 145 * .9, 160 * .9, 125},
+		{"both", "5-000000001", 145 * .9 * .55, 160 * .9 * .55, 125 * .55},
+	} {
+		_, enh := newShamanSim(newOrcShaman(30, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+		for _, check := range []struct {
+			name  string
+			spell *core.Spell
+			rank  int
+			want  float64
+		}{
+			{"Earth Shock", topRank(t, "Earth Shock", enh.EarthShock), 4, c.earth},
+			{"Flame Shock", topRank(t, "Flame Shock", enh.FlameShock), 3, c.flame},
+			{"Lightning Shield", topRank(t, "Lightning Shield", enh.LightningShield), 3, c.shield},
+		} {
+			if check.spell.Rank != check.rank {
+				t.Fatalf("level 30 casts %s rank %d, want %d", check.name, check.spell.Rank, check.rank)
+			}
+			if got := check.spell.Cost.GetCurrentCost(); math.Abs(got-check.want) > 1e-9 {
+				t.Errorf("%s: %s costs %.3f, want %.3f", c.name, check.name, got, check.want)
+			}
+		}
 	}
 }
 
 // TestOrcShamanMaelstromWeaponCost checks Maelstrom Weapon 5/5 with Convection 5/5 at level
 // 60.
 //
-// Each stack takes 20% off the next Lightning Bolt's cost and cast time, on top of
-// Convection's 10%. So 5 stacks make the bolt instant and free. The bolt uses up the stacks,
+// Each stack takes 20% off the next Lightning Bolt's cost and cast time, and the cost multiplies
+// with Convection's 0.9. So 5 stacks make the bolt instant and free. The bolt uses up the stacks,
 // and Chain Lightning doesn't get them.
 func TestOrcShamanMaelstromWeaponCost(t *testing.T) {
 	sim, enh := newShamanSim(newOrcShaman(60, "5-00000000000000005", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 30)
@@ -98,7 +137,7 @@ func TestOrcShamanMaelstromWeaponCost(t *testing.T) {
 	mw := enh.MaelstromWeaponAura
 
 	checkLightningBolt := func(sim *core.Simulation, stacks int) {
-		want := max(0, lbCost*float64(90-20*stacks)/100)
+		want := lbCost * 0.9 * max(0, 1-0.2*float64(stacks))
 		if got := lb.Cost.GetCurrentCost(); math.Abs(got-want) > 1e-9 {
 			t.Errorf("%d stacks: Lightning Bolt costs %.2f, want %.2f", stacks, got, want)
 		}
@@ -125,7 +164,7 @@ func TestOrcShamanMaelstromWeaponCost(t *testing.T) {
 		checkLightningBolt(sim, 0)
 	})
 
-	// 2 stacks: a 1.5 sec cast for half the cost.
+	// 2 stacks: a 1.5 sec cast for 0.9 * 0.6 of the cost.
 	var mana float64
 	at(sim, 2, func(sim *core.Simulation) {
 		mw.Activate(sim)
@@ -134,7 +173,7 @@ func TestOrcShamanMaelstromWeaponCost(t *testing.T) {
 		castNow(t, sim, enh, lb)
 	})
 	at(sim, 3.6, func(sim *core.Simulation) {
-		want := mana + 1.5*full - lbCost*0.5
+		want := mana + 1.5*full - lbCost*0.54
 		if got := enh.CurrentMana(); math.Abs(got-want) > 1e-6 {
 			t.Errorf("after a 2 stack bolt: got %.3f mana, want %.3f", got, want)
 		}
@@ -270,18 +309,18 @@ func TestOrcShamanClearcasting(t *testing.T) {
 	at(sim, 3360, func(sim *core.Simulation) {
 		giveClearcasting(sim)
 		checkManaCosts(t, "Clearcasting", []manaCostCheck{
-			rankCost(t, "Earth Shock", enh.EarthShock, shaman.EarthShockManaCost[:], 100),
-			rankCost(t, "Flame Shock", enh.FlameShock, shaman.FlameShockManaCost[:], 100),
-			rankCost(t, "Frost Shock", enh.FrostShock, shaman.FrostShockManaCost[:], 100),
-			rankCost(t, "Lightning Bolt", enh.LightningBolt, shaman.LightningBoltManaCost[:], 100),
-			rankCost(t, "Chain Lightning", enh.ChainLightning, shaman.ChainLightningManaCost[:], 100),
-			rankCost(t, "Lava Burst", []*core.Spell{enh.LavaBurst}, shaman.LavaBurstManaCost, 100),
-			rankCost(t, "Fire Nova", enh.FireNova, shaman.FireNovaManaCost[:], 100),
-			rankCost(t, "Lightning Shield", enh.LightningShield, shaman.LightningShieldManaCost[:], 0),
-			rankCost(t, "Searing Totem", enh.SearingTotem, shaman.SearingTotemManaCost[:], 0),
-			rankCost(t, "Magma Totem", enh.MagmaTotem, shaman.MagmaTotemManaCost[:], 0),
-			rankCost(t, "Windfury Totem", enh.WindfuryTotem, shaman.WindfuryTotemManaCost[:], 0),
-			rankCost(t, "Mana Spring Totem", enh.ManaSpringTotem, shaman.ManaSpringTotemManaCost[:], 0),
+			rankCost(t, "Earth Shock", enh.EarthShock, shaman.EarthShockManaCost[:], 0),
+			rankCost(t, "Flame Shock", enh.FlameShock, shaman.FlameShockManaCost[:], 0),
+			rankCost(t, "Frost Shock", enh.FrostShock, shaman.FrostShockManaCost[:], 0),
+			rankCost(t, "Lightning Bolt", enh.LightningBolt, shaman.LightningBoltManaCost[:], 0),
+			rankCost(t, "Chain Lightning", enh.ChainLightning, shaman.ChainLightningManaCost[:], 0),
+			rankCost(t, "Lava Burst", []*core.Spell{enh.LavaBurst}, shaman.LavaBurstManaCost, 0),
+			rankCost(t, "Fire Nova", enh.FireNova, shaman.FireNovaManaCost[:], 0),
+			rankCost(t, "Lightning Shield", enh.LightningShield, shaman.LightningShieldManaCost[:], 1),
+			rankCost(t, "Searing Totem", enh.SearingTotem, shaman.SearingTotemManaCost[:], 1),
+			rankCost(t, "Magma Totem", enh.MagmaTotem, shaman.MagmaTotemManaCost[:], 1),
+			rankCost(t, "Windfury Totem", enh.WindfuryTotem, shaman.WindfuryTotemManaCost[:], 1),
+			rankCost(t, "Mana Spring Totem", enh.ManaSpringTotem, shaman.ManaSpringTotemManaCost[:], 1),
 		})
 	})
 

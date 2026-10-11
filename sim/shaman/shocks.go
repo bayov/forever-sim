@@ -18,8 +18,8 @@ func (shaman *Shaman) newShockSpellConfig(actionId core.ActionID, spellSchool co
 		Flags:       SpellFlagShaman | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost:   baseCost,
-			Multiplier: 100 - 2*shaman.Talents.Convection - shaman.shamanisticFocusReduction(),
+			FlatCost: baseCost,
+			Factor:   shaman.convectionFactor() * shaman.shamanisticFocusFactor(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

@@ -44,8 +44,8 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost:   LavaBurstManaCost[rank],
-			Multiplier: 100 - 2*shaman.Talents.Convection,
+			FlatCost: LavaBurstManaCost[rank],
+			Factor:   shaman.convectionFactor(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

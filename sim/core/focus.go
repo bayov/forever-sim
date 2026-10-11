@@ -150,6 +150,7 @@ func newFocusCost(spell *Spell, options FocusCostOptions) *SpellCost {
 		spell:      spell,
 		BaseCost:   options.Cost,
 		Multiplier: 100,
+		Factor:     1,
 		SpellCostFunctions: &FocusCost{
 			Refund:          options.Refund,
 			RefundMetrics:   options.RefundMetrics,

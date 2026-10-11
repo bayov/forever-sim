@@ -418,6 +418,7 @@ func newEnergyCost(spell *Spell, options EnergyCostOptions) *SpellCost {
 		spell:      spell,
 		BaseCost:   options.Cost,
 		Multiplier: 100,
+		Factor:     1,
 		SpellCostFunctions: &EnergyCost{
 			Refund:            options.Refund,
 			RefundMetrics:     options.RefundMetrics,

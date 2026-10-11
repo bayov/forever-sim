@@ -367,6 +367,7 @@ type ManaCostOptions struct {
 	BaseCost   float64
 	FlatCost   float64 // Alternative to BaseCost for giving a flat value.
 	Multiplier int32   // Will default to 100. Multiplier stored as an int, e.g. 0.6 is 60.
+	Factor     float64 // Will default to 1. Cost modifiers that multiply each other, e.g. 0.9 * 0.55.
 }
 type ManaCost struct {
 	ResourceMetrics *ResourceMetrics
@@ -377,6 +378,7 @@ func newManaCost(spell *Spell, options ManaCostOptions) *SpellCost {
 		spell:      spell,
 		BaseCost:   TernaryFloat64(options.FlatCost > 0, options.FlatCost, options.BaseCost*spell.Unit.BaseMana),
 		Multiplier: TernaryInt32(options.Multiplier == 0, 100, options.Multiplier),
+		Factor:     TernaryFloat64(options.Factor == 0, 1, options.Factor),
 		SpellCostFunctions: &ManaCost{
 			ResourceMetrics: spell.Unit.NewManaMetrics(spell.ActionID),
 		},
