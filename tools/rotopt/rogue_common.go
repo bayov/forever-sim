@@ -43,6 +43,9 @@ func rogueCooldownKnobs() []Knob {
 		// (18 sec) is worth 1.4 DPS there. The refresh before it drops stays at 5 points,
 		// every lower value lost.
 		{Name: "sndCp", Default: 1, Min: 1, Max: 5, Step: 1},
+		// The refresh before Slice and Dice drops waits for this many combo points. Below 5
+		// a short refresh goes out instead of letting Slice and Dice drop and come back at 1.
+		{Name: "sndRefreshCp", Default: 5, Min: 2, Max: 5, Step: 1},
 		{Name: "arEnergy", Default: 59, Min: 39, Max: 99, Step: 10},
 		{Name: "arSnd", Default: 1, Min: 0, Max: 18, Step: 3},
 		{Name: "bfSnd", Default: 1, Min: 0, Max: 24, Step: 3},
@@ -163,9 +166,9 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	}
 
 	// The notes say what the knobs made of the line, so the file reads right in the UI.
-	sndNotes := "Slice and Dice up at any combo points, refresh at 5 when it is about to drop"
+	sndNotes := fmt.Sprintf("Slice and Dice up at any combo points, refresh at %g when it is about to drop", k["sndRefreshCp"])
 	if k["sndCp"] > 1 {
-		sndNotes = fmt.Sprintf("Slice and Dice at %g combo points once it is down (a short one at fewer points would eat every point before a Rupture), refresh at 5 when it is about to drop", k["sndCp"])
+		sndNotes = fmt.Sprintf("Slice and Dice at %g combo points once it is down (a short one at fewer points would eat every point before a Rupture), refresh at %g when it is about to drop", k["sndCp"], k["sndRefreshCp"])
 	}
 	if sndForWindow != nil {
 		sndNotes += " or when Adrenaline Rush is waiting on a longer one"
@@ -177,7 +180,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	}
 	c.sliceAndDice = cast(sliceAndDice, or(
 		and(ge(comboPoints(), num(k["sndCp"])), not(auraIsActive(sliceAndDice)), ge(remainingTime(), seconds(6))),
-		and(ge(comboPoints(), num(5)), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9)), c.ruptureHold),
+		and(ge(comboPoints(), num(k["sndRefreshCp"])), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9)), c.ruptureHold),
 		sndForWindow,
 	), sndNotes)
 

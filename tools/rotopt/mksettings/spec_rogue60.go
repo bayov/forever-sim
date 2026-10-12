@@ -18,24 +18,26 @@ func rogueLevel60Raid(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *p
 // rogueLevel60Consumes are the level 60 consumes, each kept because it helps (Sinister
 // Strike on the synthetic swords, 180 sec, 10000 iterations, against the set without it):
 // Dragonbreath Chili +10.5, Thistle Tea +10.6, Goblin Land Mine +5.2 on top of the Goblin
-// Sapper +3.8, Frenzy Potion +2.4. Ground Scorpok Assay is 4.9 ahead of R.O.I.D.S., Grilled
-// Squid 0.9 ahead of Smoked Desert Dumplings and Juju Power 1.1 ahead of Elixir of Giants.
-// The caster elixirs are left out: Flask of Supreme Power and Greater Arcane Elixir add 8
-// DPS, all of it through Dragonbreath Chili scaling with spell power, and no rogue drinks
-// them. The poisons are set per spec.
+// Sapper +3.8. Among Forever's consumables (2026-10-12) Elixir of Ferocity is 5.4 ahead of
+// Juju Power (3.3 for Backstab), Major Frenzy Potion 4.7 ahead of the Frenzy Potion (which
+// is 2.4 over none), and Flank au Poivre 3.5 ahead of Grilled Squid and 0.3 ahead of
+// Mightfish Steak. Elixir of Cunning loses 12 to the Elixir of the Mongoose. Ground Scorpok
+// Assay is 4.9 ahead of R.O.I.D.S. The caster elixirs are left out: Flask of Supreme Power
+// and Greater Arcane Elixir add 8 DPS, all of it through Dragonbreath Chili scaling with
+// spell power, and no rogue drinks them. The poisons are set per spec.
 func rogueLevel60Consumes(mainHand, offHand proto.WeaponImbue) *proto.Consumes {
 	return &proto.Consumes{
 		AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
 		AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 		DefaultConjured:   proto.Conjured_ConjuredRogueThistleTea,
-		DefaultPotion:     proto.Potions_FrenzyPotion,
+		DefaultPotion:     proto.Potions_MajorFrenzyPotion,
 		DragonBreathChili: true,
 		FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
-		Food:              proto.Food_FoodGrilledSquid,
+		Food:              proto.Food_FoodFlankAuPoivre,
 		MainHandImbue:     mainHand,
 		OffHandImbue:      offHand,
 		SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
-		StrengthBuff:      proto.StrengthBuff_JujuPower,
+		StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 		ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 	}
 }
