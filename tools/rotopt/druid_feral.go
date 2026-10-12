@@ -50,7 +50,7 @@ func (druidFeral) Knobs() []Knob {
 		// The builder: 0 Shred (from behind), 1 Claw.
 		{Name: "builder", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Shifting Power at or below this much Energy, 0 never.
-		{Name: "shiftEnergy", Default: 30, Min: 0, Max: 60, Step: 10},
+		{Name: "shiftEnergy", Default: 50, Min: 0, Max: 60, Step: 10},
 		// Shifting Power only above this much mana, so the pool lasts the fight.
 		{Name: "shiftMana", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Tiger's Fury: 1 on cooldown, 2 only at or below tigersFuryEnergy too, 0 never.
