@@ -122,7 +122,8 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
 // Heroic Strike from 70 Rage instead of 40 (a slow two-hander makes less Rage), Bloodrage under 70
-// and Death Wish for the last 36 sec. The second potion is held for the last 30 sec. Holding it
+// and Death Wish for the last 36 sec (+3.5 at 180 sec, but -4 at 120 sec, where the execute phase
+// starts later). The second potion is held for the last 30 sec. Holding it
 // for Death Wish skipped the pull potion, so it drank one a fight (+7.2 at 180 sec).
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
