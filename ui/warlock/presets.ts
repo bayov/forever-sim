@@ -231,13 +231,12 @@ const PresetBuildOptionsSuccubus = {
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
 // on the Demonology build at 180 sec: Goblin Sapper +4.1 (Engineering), Cerebral Cortex Compound
 // +10.7 (a Blasted Lands quest), Demonic Rune +15.8, Elixir of Shadow Power +23.3 and Wizard Oil
-// +15.7. With Forever's elixirs and foods simulated: Elixir of the Owl +27.9 (Elixir of Greater
-// Intellect +9.2), Elixir of Sages +21.3 (its Spirit feeds Life Tap), Greater Mageblood Elixir +1.9
+// +15.7. With Forever's elixirs and foods simulated: a character takes one of the five +2% crit
+// elixirs (Mongoose, Grizzly, Owl, Sages, Whale are role variants of one elixir), and Elixir of
+// Sages with Elixir of Greater Intellect is 0.1 to 0.6 ahead of Elixir of the Owl with Elixir of
+// Greater Spirit on every build (Sages' Spirit feeds Life Tap). Greater Mageblood Elixir is +1.9
 // over Mageblood Potion, Lobster Stew +3.9 over Nightfin Soup, and Major Spellblasting Potion 12.9
-// behind Major Mana Potion. Together the new ones are +55 on Demonology and +40 to +52 on the other
-// builds. The sim stacks the Owl and Sages (both 2% crit, separate slots), as ruled for every
-// class; if Forever makes them exclusive, drop Sages: -21 on Demonology, -20 on Destruction and
-// Affliction (notes.md). Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
+// behind Major Mana Potion. Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
 // Forever's launch Phase 1, when no vanilla raid is open, so Brilliant Wizard Oil (a Zandalar
 // recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain
 // Elixir of Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and
@@ -248,7 +247,7 @@ export const DefaultConsumes = Consumes.create({
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
-	intellectElixir: IntellectElixir.ElixirOfTheOwl,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,

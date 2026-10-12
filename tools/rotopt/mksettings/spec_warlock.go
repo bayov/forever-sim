@@ -17,8 +17,10 @@ func init() {
 			// Every consumable the sim applies was tried in its slot on the Demonology build at
 			// 180 sec (2026-10-12): Goblin Sapper +4.1 (Engineering), Cerebral Cortex Compound +10.7
 			// (a Blasted Lands quest), Demonic Rune +15.8, Wizard Oil +15.7, Elixir of Shadow Power
-			// +23.3. With Forever's elixirs and foods simulated: Elixir of the Owl +27.9 (Elixir of
-			// Greater Intellect +9.2), Elixir of Sages +21.3 (its Spirit feeds Life Tap), Greater
+			// +23.3. With Forever's elixirs and foods simulated: one of the five +2% crit elixirs (they
+			// are role variants of one elixir), Elixir of Sages with Elixir of Greater Intellect, which
+			// is 0.1 to 0.6 ahead of Elixir of the Owl with Elixir of Greater Spirit on every build
+			// (Sages' Spirit feeds Life Tap), Greater
 			// Mageblood Elixir +1.9 over Mageblood Potion, Lobster Stew +3.9 over Nightfin Soup, and
 			// Major Spellblasting Potion 12.9 behind Major Mana Potion. Forever's Phase 1 has no
 			// vanilla raid open, so Brilliant Wizard Oil (a Zandalar recipe) is out. Elixir of
@@ -31,7 +33,7 @@ func init() {
 					FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 					Flask:           proto.Flask_FlaskOfSupremePower,
 					Food:            proto.Food_FoodLobsterStew,
-					IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
+					IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 					MainHandImbue:   proto.WeaponImbue_WizardOil,
 					ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 					SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,

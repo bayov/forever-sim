@@ -103,7 +103,7 @@ var Consumes = core.ConsumesCombo{
 		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 		Food:            proto.Food_FoodLobsterStew,
-		IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
+		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
 		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
