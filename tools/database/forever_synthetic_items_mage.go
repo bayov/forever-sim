@@ -23,25 +23,27 @@ import (
 //
 // The main hand's budget is Azuresong Mageblade's own stats at Era's prices (7 Stamina, 12
 // Intellect, 40 spell power at Era's 0.857 a point and 1% crit), 46.2, spent at Forever's 0.55
-// like every other slot. The off hand is at 71, so the two weapon slots come to about 73, what a
-// caster's staff gets. The wand is 0.32 of the value at 71, 15.6. Weapon damage and speed are
-// the Era items' (Azuresong, Bonecreeper Stylus) and are not charged to the budget.
+// like every other slot. The off hand is at 71, so the two weapon slots come to about 73. The
+// staff takes both budgets, 73.7, and the presets use it: with Forever's 2H Spellblasting (+65
+// spell power) it is 16 to 40 dps ahead of the sword and off hand. The wand is 0.32 of the value
+// at 71, 15.6. Weapon damage and speed are the Era items' (Azuresong, Staff of Dominance,
+// Bonecreeper Stylus) and are not charged to the budget.
 //
 // Per slot, budget and the points the stats below add up to:
 //   head 42.8 (43.0), neck 27.5 (27.5), shoulders 33.0 (33.0), back 27.5 (27.4), chest 42.8
 //   (42.7), wrist 27.5 (27.2), hands 33.0 (32.9), waist 37.6 (37.5), legs 42.8 (42.8), feet 33.0
-//   (33.2), finger 27.5 (27.6), second finger 27.5 (28.1), main hand 46.2 (45.9), off hand 27.5
-//   (27.2), wand 15.6 (15.6).
+//   (33.2), finger 27.5 (27.6), second finger 27.5 (27.4), main hand 46.2 (45.9), off hand 27.5
+//   (27.2), staff 73.7 (73.7), wand 15.6 (15.6).
 // For example the head: 13^1.5 + 10^1.5 + 10^1.5 + (44 * 0.55)^1.5 + 14^1.5 = 43.0^1.5.
 //
 // The stat mix differs by slot:
-//   - Spirit is on 9 of the 15 pieces, 10% of the set's budget (79 Spirit), because Spirit should
+//   - Spirit is on 9 of the 14 pieces the presets wear, 10% of the set's budget (80 Spirit), because Spirit should
 //     matter again under Forever.
-//   - Spell power is 36% of the budget (509). The first ring and the main hand lean on it, the
-//     second ring and the off hand on Intellect and Spirit.
+//   - Spell power is 37% of the budget (526 with the staff). The first ring and the weapons lean
+//     on it, the second ring on Intellect and Spirit.
 //   - Hit is at the cap against a level 63 boss (16% spell miss): 100 hit rating (10%) on nine
 //     pieces, with 5% from Elemental Precision or Arcane Focus and Manaflare's 2 piece 1%.
-//   - Crit is 84 rating (6%, on six pieces), about what the Era Phase 1 BiS carries.
+//   - Crit is 84 rating (6%, on six pieces with the staff), about what the Era Phase 1 BiS carries.
 //
 // Only the head and chest carry the Manaflare Regalia set (Forever's level 60 mage set, see
 // sim/mage/item_sets_pve.go), so only its 2 piece bonus is live, the same for every class's
@@ -161,7 +163,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996012, Name: "Mage Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_39",
 		Type:  proto.ItemType_ItemTypeFinger,
-		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 11, stats.Spirit: 12, stats.SpellPower: 24}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 11, stats.Spirit: 11, stats.SpellPower: 24}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
