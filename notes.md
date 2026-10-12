@@ -62,7 +62,20 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Mage
 
-* (nothing yet)
+* Ice Lance's spell power coefficient (sim: 42.9%, the SoD sim's). The Forever client has none on the damage effect (neither had SoD's, whose damage is a server script), and wowhead shows no SP mod. Two Ice Lances at different spell power (or one with and one without a Flask of Supreme Power) settle it. It needs the talent (20 Frost points), so level 30 on the beta.
+* Ice Lance against a Frozen target (sim: 4 times, the tooltip's "300% increased"). The client's dummy effect is 300 where SoD's was 400. An Ice Lance on a Frost Nova'd mob settles it (beta, level 20+).
+* Ice Lance's two other dummy effects, 20 and 5. They look like SoD's Glaciate (20% more Ice Lance damage per Winter's Chill stack, 5 stacks), which no Forever tooltip mentions. The sim leaves them out. Ice Lance on a target with and without Winter's Chill stacks settles it (needs 25 Frost points).
+* Arcane Blast's bonus on Arcane Missiles (sim: 10% a stack, the tooltip's "all your other spells"). The client's stack buff 400573 leaves Arcane Missiles out of its damage part, and a second buff, 400586 (15% a stack on Arcane Missiles only), is still in the client from SoD. A missile after one Arcane Blast and one without settles it (beta, level 20+).
+* Ignite (sim: SoD's rolling Ignite, each crit adds 8% a rank to what is left and starts the 4 sec over, with no cap). Classic Era's servers stopped adding after 5 crits. Since 2026-09-24 the sim takes no damage bonus on the ticks ("no longer counts damage bonuses twice"). A log with several crits within 4 sec settles both.
+* Arcane Concentration on Arcane Missiles (sim: every missile rolls, with the client's 1 sec internal cooldown). Classic rolled the missiles at a much lower rate.
+* Missile Barrage (sim: rolls on the finished cast of Arcane Blast, Fireball, Frostbolt and Frostfire Bolt, as in the SoD sim) and its free cost adding up with Arcane Power's 30% (the sim pays 30%, the two are percent cost modifiers in the client).
+* Fingers of Frost (sim: a charge goes when a damage spell finishes casting, Frostbolt included, and the proc comes when the chill lands, so it never uses itself up). Whether a Frostbolt in flight when the proc comes can use it is open.
+* Frostfire Bolt's DoT (sim: 19 a tick at rank 3, no coefficient, the client's) and that Frostfire Bolt takes both schools' talents (Fire Power, Critical Mass, Piercing Ice, Ice Shards, Ignite). The client masks of Ice Shards, Piercing Ice, Fire Power and Critical Mass name it, Frost Channeling's does not.
+* Heating Up (sim: one Pyroblast uses up all 3 stacks, from the buff's one charge) and whether a Pyroblast started before a stack lands gets it.
+* Arcane Mind's crit damage (sim: +20% of the crit bonus a rank, like Ice Shards, so 2 times damage at 5/5).
+* Pyroblast's DoT coefficient (sim: 15% a tick, 60% in all, the client's on the periodic effect).
+* A raid boss can't be frozen (sim), so Frostbite, Frost Nova and Shatter only count through Fingers of Frost.
+* Manaflare Regalia's 2 piece bonus (sim: 1% hit, the tooltip). wowhead's spell page shows 2% on the same effect.
 
 ## Warlock
 
@@ -88,3 +101,4 @@ Things we can only check on release, because the beta stops at level 30.
 * Raid buffs and totems at their top ranks, at their Forever values.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).
 * The 100% cap on mana regen while casting. Mindfulness 3/3, Improved Stormstrike and Polished Driftwood Icon add up to 108%, and the sim caps it at 100% like cmangos.
+* Mage: every rank above what a level 30 knows. The sim takes the client's values (wago.tools 1.60.1.70338), which matched every shaman rank we could test. The deep mage talents (Arcane Power, Combustion, Fingers of Frost, Winter's Chill, the Heating Up and Missile Barrage procs at raid gear) can only be checked at 60.

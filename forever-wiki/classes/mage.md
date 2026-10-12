@@ -8,6 +8,46 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.69876 to 1.60.1.70338 (2026-10-12)
+
+The beta client's mage tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876) (1.60.1.69876), with the talents later builds changed brought up to 1.60.1.70338 from [foreverchanges.pro](https://foreverchanges.pro/talents/mage). Positions, rank counts and prerequisites match the BlizzCon data below. Ranks 2 and up are real numbers now, and `tools/forever_talents/data/mage.json` in the sim repo is regenerated from the client tree (`client/mage.json`), so the per-talent text below is superseded where the two differ. The spells are from the client's spell tables (wago.tools DB2, 1.60.1.70338).
+
+Talents (client ranks where the BlizzCon data guessed):
+
+- Arcane Focus and Elemental Precision are 1% hit per rank to 5%. Arcane Impact is 2 / 4 / 6% crit on all Arcane spells. Arcane Subtlety is 8 / 15 resistance. Magic Absorption is 5 / 10 resistance.
+- Arcane Meditation is 17 / 33 / 50% casting regen (Classic 5 / 10 / 15%). Arcane Resilience is 25 / 50% of Intellect as armor.
+- Arcane Mind is 2% Intellect and 20% Arcane crit damage bonus per rank (Classic gave max mana). Arcane Instability is 1% damage and 1% crit per rank on every spell.
+- Arcane Concentration has a 1 sec internal cooldown in the client (11213), so one Arcane Missiles can't roll it five times.
+- Improved Channeling (new) is 20% Arcane Missiles and 14% Arcane Blast pushback protection per rank. Arcane Geometry (new) is 3 / 6 yds of Arcane range.
+- Arcane Blast (talent, then trainer ranks at 30, 40, 50 and 60): 364 to 424 at 60 with a 71.4% coefficient, 2.5 sec, 15% of base mana. Each cast is a stack (8 sec, 4 stacks) worth 10% more damage on the mage's other spells and 175% more mana on Arcane Blast. Any other damage spell ends them.
+- Missile Barrage (new): Arcane Blast 40%, Fireball, Frostbolt and Frostfire Bolt 20%, to make the next Arcane Missiles within 15 sec free and twice as fast.
+- Wake of Fire (new): Fire Blast 1 / 2 sec shorter, and 25 / 50% crit on the next Fire Blast after a kill (30 sec since 2026-10-08, 20 before).
+- Incineration has 3 ranks (2 / 4 / 6%) and covers Fire Blast, Scorch, Ice Lance and Arcane Blast. Improved Fireball covers Frostfire Bolt. Impact is 3 / 7 / 10%, Burning Soul 23 / 47 / 70% with 10% less threat per rank.
+- Improved Scorch is 33 / 67 / 100%, and the vulnerability (22959) counts only for the mage who put it up ("all Fire damage you deal to your target").
+- Heating Up (Hot Streak until 2026-10-08, new): non-periodic crits with Fireball, Frostfire Bolt, Fire Blast and Scorch take 25% off the next Pyroblast's cast within 20 sec (15 sec before 2026-10-08), stacking to 3. The buff (400625) has one charge and a -25% cast time modifier per stack.
+- Combustion: 3 non-periodic Fire crits again since 2026-10-08 (4 on the beta before).
+- Ignite: "no longer counts damage bonuses twice" since 2026-09-24.
+- Permafrost is 11 / 22 / 33% longer chills, Improved Blizzard 15 / 25 / 40% slower, Improved Cone of Cold 12 / 23 / 35%, Frost Channeling 5% cheaper Frost spells and 10% less threat per rank.
+- Shatter has 3 ranks: 17 / 33 / 50% crit against Frozen targets.
+- Ice Lance (talent, then trainer ranks at 28, 34, 42, 48 and 56): 136 to 161 at 60, instant, 160 mana, 300% more damage to Frozen targets. The client has no spell power coefficient on it.
+- Fingers of Frost (new): chills have a 15% chance to make the next spell (two at rank 2) act as if the target were Frozen, for 15 sec.
+- Winter's Chill: 20% per rank, at most one stack per rank, and each stack is 2% crit for the mage's own Frostbolt and Ice Lance only (12579's crit aura is from the caster).
+- Ice Barrier rank 1 is 448 at 46 and rank 4 819 at 60.
+
+Spells at level 60 (client, top rank):
+
+- Fireball 425 to 541 plus 60 over 8 sec (Classic 596 to 760 plus 76), 100% coefficient, 410 mana.
+- Frostbolt 457 to 493 (Classic 515 to 555), 81.4%, 290 mana.
+- Frostfire Bolt (new trainer spell at 40, 50 and 60): Fire and Frost, 270 to 314 plus 57 over 9 sec, 81.4%, 3 sec, 370 mana, chills.
+- Arcane Missiles 209 a missile (Classic 230), 28.6% a missile (143% for the channel, Classic 120%), 655 mana.
+- Scorch 166 to 196 (Classic 237 to 280), Fire Blast 415 to 491 (Classic 446 to 524), both 42.9% on every rank.
+- Pyroblast 520 to 646 plus 212 over 12 sec (Classic 716 to 890 plus 268). Rank 1 comes with the talent at 20, ranks 2 to 8 from the trainer.
+- Arcane Explosion 239 to 258, Flamestrike 381 to 466 plus 332, Blizzard 1168 over 8 sec (3% a tick), Blast Wave 453 to 533, Cone of Cold 328 to 358.
+- Mage Armor gives 50% casting regen at every rank (Classic 30%). Evocation and the mana gems are unchanged.
+- The low ranks of the damage spells have close to full coefficients, not the 1.12 penalty for spells learned below 20.
+
+Manaflare Regalia (280450 to 280455, item level 65, no stats in the client yet) is Forever's level 60 mage set: 2 pieces 1% hit, 3 Counterspell 5 sec shorter, 4 up to 21 spell damage against Elementals, 5 Frostfire Bolt gets 10% more chance at Missile Barrage and Fingers of Frost and 10% crit during Combustion.
+
 ## Spellbook changes (trainer abilities)
 
 0 of 48 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
