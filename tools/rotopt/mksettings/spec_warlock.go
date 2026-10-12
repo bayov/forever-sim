@@ -14,8 +14,9 @@ func init() {
 			},
 			// Every consumable the sim applies was tried in its slot on the Demonology build at
 			// 180 sec (2026-10-12): Nightfin Soup +7.8 over Runn Tum Tuber Surprise, Goblin Sapper
-			// +4.1 (Engineering), Mageblood Potion +4.4, Cerebral Cortex Compound +10.7, Demonic Rune
-			// +15.8, Major Mana Potion +23.7, Brilliant Wizard Oil +32.5, Elixir of Shadow Power +23.3.
+			// +4.1 (Engineering), Mageblood Potion +4.4, Demonic Rune +15.8, Major Mana Potion +23.7,
+			// Wizard Oil +15.7, Elixir of Shadow Power +23.3. Forever's Phase 1 has no vanilla raid open,
+			// so Brilliant Wizard Oil (+32.5) and the Zul'Gurub Zanza buffs (+10.7) are out.
 			// Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of
 			// Firepower takes the slot. Goblin Land Mine (-7) and Flask of Distilled Wisdom (-88) lost.
 			consumes: func() *proto.Consumes {
@@ -25,12 +26,11 @@ func init() {
 					FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 					Flask:           proto.Flask_FlaskOfSupremePower,
 					Food:            proto.Food_FoodNightfinSoup,
-					MainHandImbue:   proto.WeaponImbue_BrilliantWizardOil,
+					MainHandImbue:   proto.WeaponImbue_WizardOil,
 					ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 					SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 					ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 					SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-					ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 				}
 			},
 			professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Tailoring},

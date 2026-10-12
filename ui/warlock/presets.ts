@@ -20,7 +20,6 @@ import {
 	Stat,
 	TristateEffect,
 	WeaponImbue,
-	ZanzaBuff,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import {
@@ -220,24 +219,24 @@ const PresetBuildOptionsSuccubus = {
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
 // on the Demonology build at 180 sec: Nightfin Soup +7.8 over Runn Tum Tuber Surprise, Goblin
-// Sapper +4.1 (Engineering), Mageblood Potion +4.4, Cerebral Cortex Compound +10.7, Demonic Rune
-// +15.8, Major Mana Potion +23.7, Elixir of Shadow Power +23.3 and Brilliant Wizard Oil +32.5
-// (Wizard Oil +15.7). Under Forever the Spellstone is an imbue that stacks with an oil. Elixir of
-// Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of Firepower takes the
-// slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and Flask of Distilled Wisdom (-88)
-// lost.
+// Sapper +4.1 (Engineering), Mageblood Potion +4.4, Demonic Rune +15.8, Major Mana Potion +23.7,
+// Elixir of Shadow Power +23.3 and Wizard Oil +15.7. Under Forever the Spellstone is an imbue that
+// stacks with an oil. The presets model Forever's launch Phase 1, when no vanilla raid is open, so
+// Brilliant Wizard Oil (+32.5, Molten Core) and Cerebral Cortex Compound (+10.7, Zul'Gurub) are
+// out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of
+// Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and Flask of
+// Distilled Wisdom (-88) lost.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodNightfinSoup,
-	mainHandImbue: WeaponImbue.BrilliantWizardOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
-	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
 // The shared level 60 raid (tools/rotopt/mksettings): both paladin blessings, Judgement of Wisdom,

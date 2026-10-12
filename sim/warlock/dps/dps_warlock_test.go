@@ -103,10 +103,9 @@ var Consumes = core.ConsumesCombo{
 		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 		Food:            proto.Food_FoodNightfinSoup,
-		MainHandImbue:   proto.WeaponImbue_BrilliantWizardOil,
+		MainHandImbue:   proto.WeaponImbue_WizardOil,
 		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},
 }
 
