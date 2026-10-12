@@ -139,8 +139,7 @@
             5
           ]
         ],
-        "icon": "spell_shadow_curseofachimonde",
-        "notSimulated": true
+        "icon": "spell_shadow_curseofachimonde"
       },
       {
         "fieldName": "soulHarvest",
@@ -195,8 +194,7 @@
             20
           ]
         ],
-        "icon": "spell_shadow_haunting",
-        "notSimulated": true
+        "icon": "spell_shadow_haunting"
       },
       {
         "fieldName": "improvedBaneOfAgony",
@@ -219,8 +217,7 @@
             10
           ]
         ],
-        "icon": "spell_shadow_curseofsargeras",
-        "notSimulated": true
+        "icon": "spell_shadow_curseofsargeras"
       },
       {
         "fieldName": "felConcentration",
@@ -298,8 +295,7 @@
             100
           ]
         ],
-        "icon": "spell_shadow_unstableaffliction_2",
-        "notSimulated": true
+        "icon": "spell_shadow_unstableaffliction_2"
       },
       {
         "fieldName": "malevolence",
@@ -334,8 +330,7 @@
             5
           ]
         ],
-        "icon": "spell_shadow_focusedpower",
-        "notSimulated": true
+        "icon": "spell_shadow_focusedpower"
       },
       {
         "fieldName": "nightfall",
@@ -436,8 +431,7 @@
             36
           ]
         ],
-        "icon": "spell_shadow_lifedrain02",
-        "notSimulated": true
+        "icon": "spell_shadow_lifedrain02"
       },
       {
         "fieldName": "shadowMastery",
@@ -498,8 +492,7 @@
             6
           ]
         ],
-        "icon": "ability_deathknight_hemorrhagicfever",
-        "notSimulated": true
+        "icon": "ability_deathknight_hemorrhagicfever"
       }
     ]
   },
@@ -715,8 +708,7 @@
             15
           ]
         ],
-        "icon": "spell_shadow_demonictactics",
-        "notSimulated": true
+        "icon": "spell_shadow_demonictactics"
       },
       {
         "fieldName": "demonicEnergies",
@@ -741,8 +733,7 @@
             100
           ]
         ],
-        "icon": "spell_shadow_felmending",
-        "notSimulated": true
+        "icon": "spell_shadow_felmending"
       },
       {
         "fieldName": "improvedSayaad",
@@ -853,8 +844,7 @@
             40
           ]
         ],
-        "icon": "spell_fire_fireball02",
-        "notSimulated": true
+        "icon": "spell_fire_fireball02"
       },
       {
         "fieldName": "felDomination",
@@ -917,8 +907,7 @@
             68
           ]
         ],
-        "icon": "ability_demonhunter_chaoticimprint_fire",
-        "notSimulated": true
+        "icon": "ability_demonhunter_chaoticimprint_fire"
       },
       {
         "fieldName": "improvedFelhunter",
@@ -1000,8 +989,7 @@
             100
           ]
         ],
-        "icon": "spell_shadow_improvedvampiricembrace",
-        "notSimulated": true
+        "icon": "spell_shadow_improvedvampiricembrace"
       },
       {
         "fieldName": "masterDemonologist",
@@ -1072,8 +1060,7 @@
         "ranks": [
           []
         ],
-        "icon": "inv_ability_soulharvesterwarlock_demonicsoul",
-        "notSimulated": true
+        "icon": "inv_ability_soulharvesterwarlock_demonicsoul"
       }
     ]
   },
@@ -1298,8 +1285,7 @@
             5
           ]
         ],
-        "icon": "spell_fire_fire",
-        "notSimulated": true
+        "icon": "spell_fire_fire"
       },
       {
         "fieldName": "ruin",
@@ -1408,8 +1394,7 @@
             10
           ]
         ],
-        "icon": "spell_fire_soulburn",
-        "notSimulated": true
+        "icon": "spell_fire_soulburn"
       },
       {
         "fieldName": "conflagrate",
@@ -1516,8 +1501,7 @@
             25
           ]
         ],
-        "icon": "spell_fire_meteorstorm",
-        "notSimulated": true
+        "icon": "spell_fire_meteorstorm"
       },
       {
         "fieldName": "shadowAndFlame",
@@ -1577,8 +1561,7 @@
             100
           ]
         ],
-        "icon": "spell_fire_playingwithfire",
-        "notSimulated": true
+        "icon": "spell_fire_playingwithfire"
       },
       {
         "fieldName": "incinerate",
@@ -1603,8 +1586,7 @@
             25
           ]
         ],
-        "icon": "spell_fire_burnout",
-        "notSimulated": true
+        "icon": "spell_fire_burnout"
       }
     ]
   }

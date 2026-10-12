@@ -1,0 +1,172 @@
+package main
+
+import (
+	"github.com/wowsims/classic/sim/core/proto"
+)
+
+// The warlock under Forever rules, one template for the three specs. A bane and a curse are
+// two slots now, so the bane line (Agony or Doom) and the curse line (the warlock's own
+// Curse of the Elements or Recklessness, for when the raid has none) are separate knobs. The
+// damage over time spells go up when they are down and there is time left for most of their
+// ticks, then the procs and cooldowns, then the filler. Lines for spells the build cannot
+// have (Conflagrate, Shadowburn, Incinerate and Wrack are talents) only warn, and a knob at 0
+// drops its line. The demon, Demonic Sacrifice and the weapon imbue are WarlockOptions, not
+// knobs.
+//
+// Every line names the top rank at level 60.
+type warlockRotation struct{}
+
+func init() {
+	templates["warlock"] = warlockRotation{}
+}
+
+var (
+	lockShadowBolt     = spellID(25307)
+	lockIncinerate     = spellID(1293813)
+	lockSearingPain    = spellID(17923)
+	lockImmolate       = spellID(25309)
+	lockCorruption     = spellID(25311)
+	lockBaneOfAgony    = spellID(11713)
+	lockBaneOfDoom     = spellID(603)
+	lockSiphonLife     = spellID(18881)
+	lockConflagrate    = spellID(18932)
+	lockShadowburn     = spellID(18871)
+	lockSoulFire       = spellID(17924)
+	lockDeathCoil      = spellID(17926)
+	lockWrack          = spellID(1316697)
+	lockLifeTap        = spellID(11689)
+	lockAmplifyCurse   = spellID(18288)
+	lockSoulLink       = spellID(19028)
+	lockCurseOfElement = spellID(1311680)
+	lockCurseOfReckl   = spellID(11717)
+	lockDecimation     = spellID(440873)
+	lockShadowTrance   = spellID(17941)
+)
+
+func (warlockRotation) Knobs() []Knob {
+	return []Knob{
+		// 0 no bane, 1 Bane of Agony, 2 Bane of Doom with Bane of Agony while Doom is on
+		// cooldown or the fight ends before Doom would land.
+		{Name: "bane", Default: 2, Min: 0, Max: 2, Step: 1},
+		// Amplify Curse ahead of each Bane of Agony (the Affliction talent, 3 min cooldown).
+		{Name: "amplifyCurse", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 0 no curse, 1 the warlock's own Curse of the Elements, 2 Curse of Recklessness. A
+		// raid with another warlock's Curse of the Elements has no need for ours.
+		{Name: "curse", Default: 0, Min: 0, Max: 2, Step: 1},
+		{Name: "corruption", Default: 1, Min: 0, Max: 1, Step: 1},
+		// A new Corruption only with this many seconds left in the fight (its 6 ticks take 18).
+		{Name: "corruptionMinTime", Default: 9, Min: 3, Max: 18, Step: 3},
+		{Name: "immolate", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "immolateMinTime", Default: 6, Min: 3, Max: 15, Step: 3},
+		// Siphon Life (the Affliction talent) when its 30 sec are down.
+		{Name: "siphonLife", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Conflagrate on cooldown while Immolate is up.
+		{Name: "conflagrate", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Shadowburn: 0 never, 1 on cooldown, 2 only in the last 20% of the boss's health.
+		// Each costs a Soul Shard, which the sim does not count.
+		{Name: "shadowburn", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Soul Fire: 0 never, 1 on cooldown, 2 only while Decimation (the Demonology talent)
+		// cuts its cast.
+		{Name: "soulFire", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Death Coil on cooldown.
+		{Name: "deathCoil", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Wrack (the Affliction capstone) while Corruption and the bane are both up.
+		{Name: "wrack", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The filler: 1 Shadow Bolt, 2 Incinerate while Immolate is up and Shadow Bolt
+		// otherwise, 3 Searing Pain.
+		{Name: "filler", Default: 1, Min: 1, Max: 3, Step: 1},
+		// Life Tap below this much mana.
+		{Name: "lifeTapMana", Default: 20, Min: 5, Max: 50, Step: 5},
+		// Life Tap anyway in the last seconds when the mana is no use any more: 0 never.
+		{Name: "lifeTapEnd", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Soul Link before the pull (the Demonology talent).
+		{Name: "soulLink", Default: 0, Min: 0, Max: 1, Step: 1},
+	}
+}
+
+func (warlockRotation) Build(k Knobs) *proto.APLRotation {
+	var items []*proto.APLListItem
+	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on cooldown."))
+
+	items = append(items, cast(lockLifeTap, lt(currentManaPercent(), num(k["lifeTapMana"]/100)), "Life Tap when the mana runs low."))
+
+	switch k["bane"] {
+	case 1:
+		if k["amplifyCurse"] == 1 {
+			items = append(items, cast(lockAmplifyCurse, not(dotIsActive(lockBaneOfAgony)), "Amplify Curse ahead of Bane of Agony."))
+		}
+		items = append(items, cast(lockBaneOfAgony, and(not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(12))), "Bane of Agony when it is down."))
+	case 2:
+		items = append(items,
+			cast(lockBaneOfDoom, and(not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(60))), "Bane of Doom when it lands before the fight ends."),
+			cast(lockBaneOfAgony, and(not(dotIsActive(lockBaneOfDoom)), not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(12)),
+				or(gt(spellTimeToReady(lockBaneOfDoom), seconds(12)), le(remainingTime(), seconds(60)))),
+				"Bane of Agony while Bane of Doom is on cooldown or would not land."),
+		)
+	}
+	switch k["curse"] {
+	case 1:
+		items = append(items, cast(lockCurseOfElement, not(targetAuraIsActive(spellID(11722))), "Our own Curse of the Elements when the raid has none."))
+	case 2:
+		items = append(items, cast(lockCurseOfReckl, not(targetAuraIsActive(lockCurseOfReckl)), "Curse of Recklessness when it is down."))
+	}
+	if k["corruption"] == 1 {
+		items = append(items, cast(lockCorruption, and(not(dotIsActive(lockCorruption)), gt(remainingTime(), seconds(k["corruptionMinTime"]))), "Corruption when it is down."))
+	}
+	if k["siphonLife"] == 1 {
+		items = append(items, cast(lockSiphonLife, and(not(dotIsActive(lockSiphonLife)), gt(remainingTime(), seconds(9))), "Siphon Life when it is down."))
+	}
+	if k["immolate"] == 1 {
+		items = append(items, cast(lockImmolate, and(not(dotIsActive(lockImmolate)), gt(remainingTime(), seconds(k["immolateMinTime"]))), "Immolate when it is down."))
+	}
+	if k["conflagrate"] == 1 {
+		items = append(items, cast(lockConflagrate, dotIsActive(lockImmolate), "Conflagrate on cooldown."))
+	}
+	switch k["shadowburn"] {
+	case 1:
+		items = append(items, cast(lockShadowburn, nil, "Shadowburn on cooldown."))
+	case 2:
+		items = append(items, cast(lockShadowburn, isExecutePhase(proto.APLValueIsExecutePhase_E20), "Shadowburn in the last 20% of the boss."))
+	}
+	if k["deathCoil"] == 1 {
+		items = append(items, cast(lockDeathCoil, nil, "Death Coil on cooldown."))
+	}
+	switch k["soulFire"] {
+	case 1:
+		items = append(items, cast(lockSoulFire, nil, "Soul Fire on cooldown."))
+	case 2:
+		items = append(items, cast(lockSoulFire, auraIsActive(lockDecimation), "Soul Fire while Decimation cuts its cast."))
+	}
+	if k["wrack"] == 1 {
+		items = append(items, cast(lockWrack, and(dotIsActive(lockCorruption), or(dotIsActive(lockBaneOfAgony), dotIsActive(lockBaneOfDoom))), "Wrack while Corruption and the bane are up."))
+	}
+	if k["lifeTapEnd"] == 1 {
+		items = append(items, cast(lockLifeTap, and(lt(remainingTime(), seconds(3)), lt(currentManaPercent(), num(0.5))), "Life Tap at the very end is free."))
+	}
+	switch k["filler"] {
+	case 2:
+		items = append(items,
+			cast(lockIncinerate, dotIsActive(lockImmolate), "Incinerate while Immolate is up."),
+			cast(lockShadowBolt, nil, "Shadow Bolt otherwise."))
+	case 3:
+		items = append(items, cast(lockSearingPain, nil, "Searing Pain as the filler."))
+	default:
+		items = append(items, cast(lockShadowBolt, nil, "Shadow Bolt as the filler."))
+	}
+
+	rot := rotation(items...)
+	if k["soulLink"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockSoulLink, 4.5))
+	}
+	opener := lockShadowBolt
+	switch k["filler"] {
+	case 3:
+		opener = lockSearingPain
+	}
+	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 3))
+	return rot
+}
+
+func isExecutePhase(threshold proto.APLValueIsExecutePhase_ExecutePhaseThreshold) value {
+	return &proto.APLValue{Value: &proto.APLValue_IsExecutePhase{IsExecutePhase: &proto.APLValueIsExecutePhase{Threshold: threshold}}}
+}
