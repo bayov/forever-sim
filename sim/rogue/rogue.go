@@ -63,7 +63,6 @@ type Rogue struct {
 	Premeditation  *core.Spell
 	ColdBlood      *core.Spell
 	Vanish         *core.Spell
-	Stealth        *core.Spell
 
 	Eviscerate   *core.Spell
 	ExposeArmor  *core.Spell

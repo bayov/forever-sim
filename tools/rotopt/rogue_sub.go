@@ -24,10 +24,10 @@ func (rogueSub) Knobs() []Knob {
 		// No Adrenaline Rush or Blade Flurry in the build, see rogue_mut.go.
 		"arSnd": 0,
 		"bfSnd": 0,
-		// Open from Stealth, and keep the energy for an Ambush while Vanish is ready (+7 DPS,
-		// rotation audit 2026-10-12).
-		"stealthOpener": 1,
-		"vanishPool":    1,
+		// Keep the energy for an Ambush while Vanish is ready (rotation audit 2026-10-12). The
+		// fight does not open from Stealth (the user's ruling, a raid rogue rarely does), so
+		// Stealth only comes from Vanish.
+		"vanishPool": 1,
 	})
 }
 

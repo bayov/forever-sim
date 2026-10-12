@@ -22,7 +22,6 @@ var (
 	premeditation = spellID(14183)
 	preparation   = spellID(14185)
 	stealth       = spellID(1787)
-	stealthSpell  = spellID(1787)
 	cutthroat     = spellID(460534)
 	thousandCuts  = spellID(460535)
 	mutilate      = spellID(1329)
@@ -57,8 +56,6 @@ func (rogueBS) Knobs() []Knob {
 		// Pool energy for the Ambush while Vanish is ready, so the builders do not keep it
 		// below 60 (an energy starved build otherwise leaves Vanish idle).
 		Knob{Name: "vanishPool", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Open from Stealth (a prepull Stealth) with Premeditation and an Ambush.
-		Knob{Name: "stealthOpener", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Backstab only at this many Thousand Cuts stacks, or when energy is pooled. 0 ignores stacks.
 		Knob{Name: "bsStacks", Default: 0, Min: 0, Max: 5, Step: 1},
 		Knob{Name: "bsAfterSwing", Default: 0, Min: 0, Max: 1, Step: 0.25},
@@ -69,9 +66,9 @@ func (rogueBS) Knobs() []Knob {
 func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	c := buildRogueCooldowns(k)
 	var items []*proto.APLListItem
-	// Out of Stealth the Ambush goes first, before anything breaks it.
-	if k["stealthOpener"] == 1 {
-		items = append(items, cast(ambush, auraIsActive(stealth), "Ambush out of Stealth (the opener or a Vanish) before anything else."))
+	// Out of a Vanish the Ambush goes first, before anything breaks the Stealth.
+	if k["vanishCp"] < 9 {
+		items = append(items, cast(ambush, auraIsActive(stealth), "Ambush out of a Vanish before anything else."))
 	}
 	items = append(items, c.sliceAndDice)
 	items = append(items, c.cooldowns...)
@@ -172,8 +169,5 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 
 	rot := rotation(items...)
 	rot.PrepullActions = c.prepull
-	if k["stealthOpener"] == 1 {
-		rot.PrepullActions = append([]*proto.APLPrepullAction{prepull(stealthSpell, 2)}, rot.PrepullActions...)
-	}
 	return rot
 }
