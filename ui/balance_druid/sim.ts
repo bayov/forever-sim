@@ -110,7 +110,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60],
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60Wrath],
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		rotations: [...Presets.APLPresets[Phase.Phase1]],
 		gear: [...Presets.GearPresets[Phase.Phase1], ...Presets.GearPresets[Phase.Phase5]],

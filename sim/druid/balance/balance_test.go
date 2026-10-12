@@ -17,12 +17,15 @@ func TestP1Balance(t *testing.T) {
 		{
 			Class:      proto.Class_ClassDruid,
 			Phase:      1,
-			Race:       proto.Race_RaceTauren,
-			OtherRaces: []proto.Race{proto.Race_RaceNightElf},
+			Race:       proto.Race_RaceNightElf,
+			OtherRaces: []proto.Race{proto.Race_RaceTauren},
 
-			Talents:     P1Talents,
-			GearSet:     core.GetGearSet("../../../ui/balance_druid/gear_sets", "p0.bis"),
-			Rotation:    core.GetAplRotation("../../../ui/balance_druid/apls", "p1"),
+			Talents:  P1Talents,
+			GearSet:  core.GetGearSet("../../../ui/balance_druid/gear_sets", "level60_phase1_synthetic"),
+			Rotation: core.GetAplRotation("../../../ui/balance_druid/apls", "level60"),
+			OtherRotations: []core.RotationCombo{
+				core.GetAplRotation("../../../ui/balance_druid/apls", "level60_wrath"),
+			},
 			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
@@ -36,7 +39,7 @@ func TestP1Balance(t *testing.T) {
 	}))
 }
 
-var P1Talents = "5032220115501351--505203"
+var P1Talents = "5532220115501351--505"
 
 var P1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

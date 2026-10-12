@@ -5,7 +5,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":24977}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":24977}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Insect Swarm whenever it is down. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":9835}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":9835}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Moonfire whenever its dot is down."},
         {"action":{"castSpell":{"spellId":{"spellId":25298}},"condition":{"auraIsActive":{"auraId":{"spellId":16870}}}},"notes":"A free Starfire on Clearcasting, which Wrath does not use up."},
-        {"action":{"castSpell":{"spellId":{"spellId":25298}},"condition":{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":408255}}},"op":"OpGe","rhs":{"const":{"val":"1"}}}}},"notes":"Starfire once Eclipse has enough charges."},
+        {"action":{"castSpell":{"spellId":{"spellId":25298}},"condition":{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":408255}}},"op":"OpGe","rhs":{"const":{"val":"1"}}}}},"notes":"Starfire once Eclipse has enough charges, or a Wrath that will give them is on its way."},
         {"action":{"castSpell":{"spellId":{"spellId":9912}}},"notes":"Wrath for Eclipse charges."}
     ]
 }
