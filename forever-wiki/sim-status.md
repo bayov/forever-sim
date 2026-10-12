@@ -158,19 +158,26 @@ Rotation audit (the rotations auditor and our own timelines and breakdowns): Sli
 
 Races (180 sec, 120 / 300 sec in the same order):
 
-| Race | Combat Daggers | Combat Swords | Mutilate | Subtlety |
-| --- | --- | --- | --- | --- |
-| Undead | 673.0 | 639.2 | 642.1 | 613.4 |
-| Orc | 661.4 | 631.5 | 626.9 | 601.8 |
-| Gnome | 656.6 | 627.8 | 626.1 | 598.1 |
-| Night Elf | 656.6 | 629.2 | 624.9 | 597.7 |
-| Troll | 656.4 | 626.4 | 623.3 | 595.8 |
-| Skyborne (Windshaper) | 655.6 | 626.0 | 623.0 | 595.6 |
-| Skyborne (High Order) | 655.4 | 625.4 | 622.8 | 595.5 |
-| Human | 652.2 | 633.5 | 619.5 | 592.8 |
-| Dwarf | 651.1 | 620.8 | 618.3 | 592.1 |
+| Race | Combat Daggers | Seal Fate Daggers | Combat Swords | Seal Fate Swords | Mutilate | Subtlety |
+| --- | --- | --- | --- | --- | --- | --- |
+| Undead | 673.0 | 644.9 | 639.2 | 606.5 | 642.1 | 613.4 |
+| Orc | 661.4 | 631.9 | 631.5 | 598.5 | 626.9 | 601.8 |
+| Gnome | 656.6 | 632.0 | 627.8 | 596.5 | 626.1 | 598.1 |
+| Night Elf | 656.6 | 630.4 | 629.2 | 597.7 | 624.9 | 597.7 |
+| Troll | 656.4 | 628.1 | 626.4 | 594.5 | 623.3 | 595.8 |
+| Skyborne (Windshaper) | 655.6 | 627.9 | 626.0 | 594.3 | 623.0 | 595.6 |
+| Skyborne (High Order) | 655.4 | 627.8 | 625.4 | 593.7 | 622.8 | 595.5 |
+| Human | 652.2 | 624.3 | 633.5 | 602.3 | 619.5 | 592.8 |
+| Dwarf | 651.1 | 623.2 | 620.8 | 588.8 | 618.3 | 592.1 |
 
-Best overall and best Horde is Undead for every spec (Touch of the Grave, 6 ahead of the Human on swords and 12 to 15 ahead of the next race on daggers), best Alliance is Gnome on daggers (Eureka!, level with the Night Elf at 180 sec on Combat Daggers and 0.2 to 0.3 ahead at 120 and 300) and Human on swords (+2% crit with swords). The weapons are the Era Phase 1 BiS types (swords and daggers), so the only weapon racial in play is the Human's swords. Undead has none, so with the weapon racials off the order of the specs is the same. The 120 and 300 sec columns keep the order but for near ties (Gnome and Night Elf within 0.3 on daggers).
+Best overall and best Horde is Undead for every build (Touch of the Grave): 6 and 4 ahead of the Human on Combat and Seal Fate Swords, 12 to 15 ahead of the next race on the dagger builds. Best Alliance:
+- Combat Daggers: Gnome (Eureka!), level with the Night Elf at 180 sec and 0.2 to 0.3 ahead at 120 and 300.
+- Seal Fate Daggers: Gnome, by 1.6.
+- Mutilate: Gnome, by 1.2.
+- Subtlety: Gnome, 0.4 ahead of the Night Elf at 120 and 180 sec, 0.3 behind at 300.
+- Combat Swords and Seal Fate Swords: Human (+2% crit with swords).
+
+The weapons are the Era Phase 1 BiS types (swords and daggers), so the only weapon racial in play is the Human's swords. Undead has none, so with the weapon racials off the order of the specs is the same. The 120 and 300 sec columns keep the order but for near ties (within 0.3).
 
 Talent verification (2026-10-12): every talent with points in the six builds was checked from runs rather than the code:
 - Debug logs: the attacker modifier and crit multiplier on each hit, the energy costs, the aura times.
