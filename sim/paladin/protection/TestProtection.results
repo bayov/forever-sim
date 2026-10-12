@@ -153,6 +153,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-Phase4-AllItems-RetributionSynthetic(Phase1)"
+ value: {
+  dps: 462.01061
+  tps: 656.35716
+ }
+}
+dps_results: {
  key: "TestProtection-Phase4-AllItems-SanctifiedOrb-20512"
  value: {
   dps: 329.27872
