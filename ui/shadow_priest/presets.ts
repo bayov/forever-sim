@@ -151,8 +151,8 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // Talent searches (tools/rotopt -talent-search, 3000 iterations a move, 20000 to confirm) on
 // the synthetic Phase 1 set at 180 sec, then again at 300 sec and after every knob search,
 // from deep Shadow with Discipline, deep Shadow with Holy, and 31 Discipline (Power Infusion)
-// with 20 Shadow. On 2026-10-12 the build is 882.7 / 882.1 / 883.5 at 120 / 180 / 300 sec as a
-// Human (882.2 / 881.9 / 882.5 Undead).
+// with 20 Shadow. On 2026-10-12 the build is 868.8 / 868.2 / 869.7 at 120 / 180 / 300 sec as a
+// Human (868.6 / 868.2 / 867.7 Undead).
 // - Shadow 33: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
 //   Shadow Affinity and a point of Shadow Reach only fill the rows (threat and range).
@@ -170,7 +170,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // The same Shadow points with 20 in Holy instead of Discipline (Twilight Focus, Spell Warding,
 // Inspiration, Improved Healing and the rest of the healing utility a raid may ask for). None of
 // the Holy talents adds Shadow damage, so it gives up Twin Disciplines and Mental Strength:
-// 852.3 / 850.4 / 852.0 at 120 / 180 / 300 sec as a Human on its own consumes (see the build),
+// 838.7 / 836.9 / 838.4 at 120 / 180 / 300 sec as a Human on its own consumes (see the build),
 // 3.6% behind at 180 sec.
 export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011323-500321501201302051' }), {
 	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 32 DPS behind.',
@@ -186,9 +186,9 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // (Holy Specialization 5, Divine Fury 5, Searing Light 2) with 3 points of Shadow Focus for
 // Shadow Word: Pain's hit. The deep Holy start ends at 608.9.
 //
-// On its own set with its own consumes (see the build) it is 707.3 / 702.8 / 689.0 at 120 / 180
+// On its own set with its own consumes (see the build) it is 701.1 / 696.6 / 682.7 at 120 / 180
 // / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. That is 20% behind
-// Shadow at 180 sec and 22% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
+// Shadow at 180 sec and 21% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
 export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525030231305001001-00505113002-3' }), {
 	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light).',
@@ -217,8 +217,9 @@ export const DefaultOptions = Options.create({
 //   7.9 ahead of Runn Tum Tuber Surprise and 3.1 ahead of Grilled Squid.
 // - Goblin Sapper Charge +3.7. A filler explosive takes a GCD and costs 4.
 // - Elixir of the Owl (25 Intellect, 2% crit) +16.4 over the Elixir of Wisdom, the Elixir of
-//   Greater Intellect only +2.8 (Arcane Brilliance is on). Elixir of Sages (25 Spirit, 2% crit)
-//   +13.6 on top. Greater Arcane Elixir is worth 16.0, Elixir of Shadow Power 18.3.
+//   Greater Intellect only +2.8 (Arcane Brilliance is on). A character takes one of the five 2%
+//   crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale); the Elixir of Sages on top of the Owl
+//   would add 13.9. Spirit adds nothing, so the Spirit elixir slot stays empty. Greater Arcane Elixir is worth 16.0, Elixir of Shadow Power 18.3.
 // - Major Spellblasting Potion (47 spell damage for 30 sec) +8.2 over the Major Mana Potion.
 // - Wizard Oil +11. Brilliant Wizard Oil would be 12.5 ahead, but it is a Zul'Gurub recipe.
 //   Shadow Oil and Dragonbreath Chili add nothing.
@@ -341,13 +342,13 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // Every race a priest can be under Forever, on the Level 60 build with the same seed (20000
 // iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-12):
-//   Human     882.7 / 882.1 / 883.5  (best overall and Alliance)
-//   Undead    882.2 / 881.9 / 882.5  (best Horde)
-//   Gnome     878.1 / 877.7 / 877.6
-//   Night Elf 877.1 / 875.3 / 876.7
-//   Dwarf     868.7 / 868.1 / 869.5
-//   Troll     868.2 / 867.8 / 869.3
-// Human and Undead are level within the noise. Human's 2% crit with swords comes from the main
+//   Human     868.8 / 868.2 / 869.7  (best overall and Alliance)
+//   Undead    868.6 / 868.2 / 867.7  (best Horde)
+//   Gnome     864.0 / 863.6 / 863.6
+//   Night Elf 863.3 / 861.4 / 862.9
+//   Dwarf     855.0 / 854.3 / 855.7
+//   Troll     854.5 / 854.1 / 855.5
+// Human and Undead tie at 180 sec, Human is ahead at 120 and 300 sec. Human's 2% crit with swords comes from the main
 // hand, a sword like Azuresong Mageblade, the Era Phase 1 BiS. With a staff (Staff of Dominance)
 // a Human ties a Dwarf at 805 and an Undead is 14 ahead of both (on the earlier consumes). Undead's Touch of the Grave is
 // 14, Gnome's Eureka! 9, Night Elf's Elune's Light 7. Troll's Berserking only speeds up Mind
@@ -367,7 +368,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 });
 // Without Twin Disciplines and Mental Strength the Holy build runs dry on a long fight, so it
 // keeps the Major Mana Potion and adds the Greater Mageblood Elixir: on the Spellblasting
-// potion it is 859.4 / 854.7 / 728.2 at 120 / 180 / 300 sec, with these 852.3 / 850.4 / 852.0.
+// potion it is 859.4 / 854.7 / 728.2 at 120 / 180 / 300 sec, with these 838.7 / 836.9 / 838.4.
 export const ConsumesHoly = Consumes.create({
 	...DefaultConsumes,
 	defaultPotion: Potions.MajorManaPotion,
@@ -399,7 +400,8 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Ho
 // Spellblasting Potion is 8 behind at 180 sec) and add the Greater Mageblood Elixir and Kreeg's
 // Stout Beatdown (25 Spirit, 5 Intellect). Forever turns the Elixir of Greater Firepower into
 // the Elixir of Holy Power (40 Holy damage) for Smite and Holy Fire: +15.8 at 180 sec. The
-// Elixir of Sages adds 7.0 on top of the Owl, Kreeg's 0.2 (1.0 at 300 sec). The Flask of
+// Elixir of Greater Spirit adds 0.2 (1.1 at 300 sec), the Elixir of Sages would add 6.4 but is a
+// second crit elixir. Kreeg's adds 0.2 (1.0 at 300 sec). The Flask of
 // Distilled Wisdom is 71 behind the Flask of Supreme Power even here.
 export const ConsumesSmite = Consumes.create({
 	...DefaultConsumes,
@@ -407,6 +409,7 @@ export const ConsumesSmite = Consumes.create({
 	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
+	spiritElixir: SpiritElixir.ElixirOfGreaterSpirit,
 });
 
 export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 Smite', EncounterLevel60.encounter, {
@@ -418,12 +421,12 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 });
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec):
-//   Undead    707.3 / 702.8 / 689.0  (best overall and Horde)
-//   Gnome     711.9 / 700.1 / 682.4  (best Alliance)
-//   Human     711.2 / 697.7 / 682.7
-//   Night Elf 709.2 / 694.3 / 679.0
-//   Troll     707.5 / 693.0 / 677.2
-//   Dwarf     696.0 / 682.3 / 668.8
+//   Undead    701.1 / 696.6 / 682.7  (best overall and Horde)
+//   Gnome     705.5 / 693.4 / 675.8  (best Alliance)
+//   Human     704.9 / 691.1 / 676.2
+//   Night Elf 702.8 / 687.8 / 672.6
+//   Troll     701.0 / 686.4 / 670.6
+//   Dwarf     689.7 / 675.9 / 662.4
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
