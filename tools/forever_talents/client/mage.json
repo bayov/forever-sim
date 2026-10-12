@@ -1,5 +1,5 @@
 {
- "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17",
+ "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-10-01 and 2026-10-08 development notes changed (Wake of Fire, Hot Streak renamed Heating Up, Combustion) updated to build 1.60.1.70338 from foreverchanges.pro",
  "class": "mage",
  "trees": [
   {
@@ -391,13 +391,13 @@
      "passive": true,
      "icon": "spell_fire_lavaspawn",
      "desc": {
-      "1": "Reduces the cooldown of your Fire Blast spell by 1 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 20 sec by 25%.",
-      "2": "Reduces the cooldown of your Fire Blast spell by 2 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 20 sec by 50%."
+      "1": "Reduces the cooldown of your Fire Blast spell by 1 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 30 sec by 25%.",
+      "2": "Reduces the cooldown of your Fire Blast spell by 2 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 30 sec by 50%."
      },
      "id": 105797,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 11078,
       "notes": []
      }
@@ -607,20 +607,20 @@
      }
     },
     {
-     "name": "Hot Streak",
+     "name": "Heating Up",
      "max": 1,
      "row": 4,
      "col": 3,
      "passive": true,
      "icon": "ability_mage_hotstreak",
      "desc": {
-      "1": "Your non-periodic critical strikes with Fireball, Frostfire Bolt, Fire Blast, and Scorch grant Hot Streak for 15 sec. Hot Streak reduces the cast time of Pyroblast by 25%, stacking up to 3 times."
+      "1": "Non-periodic critical strikes with Fireball, Frostfire Bolt, Fire Blast, and Scorch reduce the cast time of your next Pyroblast cast within 20 sec by 25%, stacking up to 3 times."
      },
      "req": "Pyroblast",
      "id": 105786,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 400624,
       "notes": []
      }
@@ -717,14 +717,14 @@
      "passive": false,
      "icon": "spell_fire_sealoffire",
      "desc": {
-      "1": "When activated, this spell causes each of your Fire damage spell hits to increase your critical strike chance with Fire damage spells by 10%. This effect lasts until you have caused 4 non-periodic critical strikes with Fire spells."
+      "1": "When activated, this spell causes each of your Fire damage spell hits to increase your critical strike chance with Fire damage spells by 10%. This effect lasts until you have caused 3 non-periodic critical strikes with Fire spells."
      },
      "req": "Critical Mass",
      "cost": "Instant; 3 min cooldown",
      "id": 105781,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 11129,
       "notes": []
      }

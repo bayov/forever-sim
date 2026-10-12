@@ -74,7 +74,8 @@ func (mage *Mage) applyMageArmor() {
 		ActionID:   core.ActionID{SpellID: spellID},
 		BuildPhase: core.CharacterBuildPhaseBuffs,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.SpiritRegenRateCasting += .3
+			// 50% under Forever (Classic 30%), every rank.
+			mage.PseudoStats.SpiritRegenRateCasting += .5
 
 			if aura.Unit.Env.MeasuringStats && aura.Unit.Env.State != core.Finalized {
 				mage.AddResistances(spellRes)
@@ -83,7 +84,7 @@ func (mage *Mage) applyMageArmor() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.PseudoStats.SpiritRegenRateCasting -= .3
+			mage.PseudoStats.SpiritRegenRateCasting -= .5
 
 			if aura.Unit.Env.MeasuringStats && aura.Unit.Env.State != core.Finalized {
 				mage.AddResistances(-1 * spellRes)

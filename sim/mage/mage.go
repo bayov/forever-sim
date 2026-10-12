@@ -24,9 +24,13 @@ const (
 	SpellCode_MageFrostbolt
 	SpellCode_MageIgnite
 	SpellCode_MageScorch
+	SpellCode_MageArcaneBlast
+	SpellCode_MageIceLance
+	SpellCode_MageFrostfireBolt
+	SpellCode_MagePyroblast
 )
 
-var TalentTreeSizes = [3]int{16, 16, 17}
+var TalentTreeSizes = [3]int{18, 17, 19}
 
 func RegisterMage() {
 	core.RegisterAgentFactory(
@@ -53,32 +57,48 @@ type Mage struct {
 
 	activeBarrier *core.Aura
 
+	ArcaneBlast             []*core.Spell
 	ArcaneExplosion         []*core.Spell
 	ArcaneMissiles          []*core.Spell
 	ArcaneMissilesTickSpell []*core.Spell
 	BlastWave               []*core.Spell
 	Blizzard                []*core.Spell
-	Counterspell			*core.Spell
-	Evocation				*core.Spell
+	Counterspell            *core.Spell
+	Evocation               *core.Spell
 	Fireball                []*core.Spell
 	FireBlast               []*core.Spell
 	Flamestrike             []*core.Spell
 	Frostbolt               []*core.Spell
+	FrostfireBolt           []*core.Spell
 	IceBarrier              []*core.Spell
+	IceLance                []*core.Spell
 	Ignite                  *core.Spell
-	igniteTick		 		*core.Spell
 	ManaGem                 []*core.Spell
 	PresenceOfMind          *core.Spell
 	Pyroblast               []*core.Spell
 	Scorch                  []*core.Spell
 
+	ArcaneBlastAura     *core.Aura
 	ArcanePowerAura     *core.Aura
 	ClearcastingAura    *core.Aura
 	CombustionAura      *core.Aura
+	FingersOfFrostAura  *core.Aura
+	HeatingUpAura       *core.Aura
 	IceArmorAura        *core.Aura
 	IceBarrierAuras     []*core.Aura
 	ImprovedScorchAuras core.AuraArray
 	MageArmorAura       *core.Aura
+	MissileBarrageAura  *core.Aura
+	WintersChillAuras   core.AuraArray
+
+	// Chances added up by the talents and the Manaflare set, read when the proc rolls.
+	fingersOfFrostChance         float64
+	frostfireMissileBarrageBonus float64
+	frostfireFingersOfFrostBonus float64
+	frostfireCombustionCrit      float64
+
+	// The Arcane Blast bonus the running Arcane Missiles channel took at its start.
+	arcaneMissilesBlastBonus float64
 }
 
 // Agent is a generic way to access underlying mage on any of the agents.
@@ -107,6 +127,9 @@ func (mage *Mage) Initialize() {
 	mage.registerFrostboltSpell()
 	mage.registerPyroblastSpell()
 	mage.registerScorchSpell()
+	mage.registerArcaneBlastSpell()
+	mage.registerIceLanceSpell()
+	mage.registerFrostfireBoltSpell()
 
 	mage.registerArcaneExplosionSpell()
 	mage.registerBlastWaveSpell()

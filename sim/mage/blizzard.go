@@ -10,7 +10,10 @@ import (
 const BlizzardRanks = 6
 
 var BlizzardSpellId = [BlizzardRanks + 1]int32{0, 10, 6141, 8427, 10185, 10186, 10187}
-var BlizzardBaseDamage = [BlizzardRanks + 1]float64{0, 200, 352, 520, 720, 936, 1192}
+
+// The whole channel's damage, from the Forever tooltips (1.60.1.70338): rank 6 is 1168 (Classic 1192).
+// The tick coefficient is the client's 3% (Classic 4.2%).
+var BlizzardBaseDamage = [BlizzardRanks + 1]float64{0, 200, 344, 504, 712, 928, 1168}
 var BlizzardManaCost = [BlizzardRanks + 1]float64{0, 320, 520, 720, 935, 1160, 1400}
 var BlizzardLevel = [BlizzardRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
 
@@ -35,9 +38,10 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 	manaCost := BlizzardManaCost[rank]
 	level := BlizzardLevel[rank]
 
-	spellCoeff := .042
+	spellCoeff := .03
 
 	var improvedBlizzardProcApplication *core.Spell
+	// Improved Blizzard's chill matters for Fingers of Frost.
 	if mage.Talents.ImprovedBlizzard > 0 {
 		impId := []int32{0, 11185, 12487, 12488}[mage.Talents.ImprovedBlizzard]
 		auras := mage.NewEnemyAuraArray(func(unit *core.Unit) *core.Aura {
@@ -53,6 +57,7 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 			Flags:    SpellFlagMage | core.SpellFlagNoLogs | SpellFlagChillSpell,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				auras.Get(target).Activate(sim)
+				mage.procFingersOfFrost(sim, spell)
 			},
 		})
 	}

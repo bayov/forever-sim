@@ -15,15 +15,15 @@ func init() {
 func TestP1Mage(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		{
-			Class:      proto.Class_ClassMage,
-			Phase:      1,
-			Race:       proto.Race_RaceTroll,
+			Class: proto.Class_ClassMage,
+			Phase: 1,
+			Race:  proto.Race_RaceTroll,
 			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
+			Ruleset:    proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceGnome},
 
 			Talents:     P1Talents,
-			GearSet:     core.GetGearSet("../../ui/mage/gear_sets", "p0.bis"),
+			GearSet:     core.GetGearSet("../../ui/mage/gear_sets", "level60_phase1_synthetic"),
 			Rotation:    core.GetAplRotation("../../ui/mage/apls", "p1"),
 			Buffs:       core.FullBuffs,
 			Consumes:    P1Consumes,
@@ -36,7 +36,7 @@ func TestP1Mage(t *testing.T) {
 	}))
 }
 
-var P1Talents = "-0550320003021-2035020310035105"
+var P1Talents = "050005--0555300331301301251"
 
 var PlayerOptions = &proto.Player_Mage{
 	Mage: &proto.Mage{

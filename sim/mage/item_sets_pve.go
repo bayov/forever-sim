@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -443,4 +444,68 @@ var ItemSetFrostfireRegalia = core.NewItemSet(core.ItemSet{
 			})
 		},
 	},
+})
+
+///////////////////////////////////////////////////////////////////////////
+//                            Forever crafted
+///////////////////////////////////////////////////////////////////////////
+
+// manaflareRegaliaBonuses are the set bonuses of the Manaflare Regalia, Forever's level 60 mage set
+// (Manaflare Crown, Mantle, Robes, Gloves, Pants and Boots, 280450 to 280455, item level 65, from
+// the 1.60.1.70338 client and wowhead's Forever tooltips).
+//
+// The client pieces carry no stats yet, so no real set is registered for them. We give the same
+// bonuses to the synthetic Phase 1 mage set below, because it is the only mage set Forever has at
+// level 60.
+var manaflareRegaliaBonuses = map[int32]core.ApplyEffect{
+	// Improves your chance to hit by 1.0%.
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.AddStat(stats.SpellHit, 1*core.SpellHitRatingPerHitChance)
+		c.AddStat(stats.MeleeHit, 1*core.MeleeHitRatingPerHitChance)
+	},
+	// Reduces the cooldown of your Counterspell by 5 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// Increases damage done by your spells and effects by up to 21 when fighting Elementals.
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		elementals := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeElemental
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Spell Power against Elementals",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range elementals {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken += 21
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range elementals {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken -= 21
+					}
+				}
+			},
+		}))
+	},
+	// Your Frostfire Bolt spell has a 10% increased chance to trigger Missile Barrage, gains 10%
+	// increased critical strike chance while your Combustion spell is active, and has a 10%
+	// increased chance to trigger Fingers of Frost.
+	5: func(agent core.Agent) {
+		mage := agent.(MageAgent).GetMage()
+		mage.frostfireMissileBarrageBonus += 0.10
+		mage.frostfireFingersOfFrostBonus += 0.10
+		mage.frostfireCombustionCrit += 10 * core.SpellCritRatingPerCritChance
+	},
+}
+
+// ItemSetMageSyntheticPhase1 is the set of the synthetic Phase 1 mage items
+// (tools/database/forever_synthetic_items_mage.go), with the Manaflare Regalia bonuses.
+var ItemSetMageSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Mage Synthetic (Phase 1)",
+	Bonuses: manaflareRegaliaBonuses,
 })

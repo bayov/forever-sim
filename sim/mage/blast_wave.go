@@ -9,7 +9,11 @@ import (
 const BlastWaveRanks = 5
 
 var BlastWaveSpellId = [BlastWaveRanks + 1]int32{0, 11113, 13018, 13019, 13020, 13021}
-var BlastWaveBaseDamage = [BlastWaveRanks + 1][]float64{{0}, {160, 192}, {205, 246}, {285, 338}, {374, 443}, {462, 544}}
+
+// Damage at each rank's cap (or at 60) and its growth per level up to there, from the Forever
+// client (1.60.1.70338). Rank 5 is 453 to 533 (Classic 462 to 544).
+var BlastWaveBaseDamage = [BlastWaveRanks + 1][]float64{{0}, {153.09, 184.91}, {199.36, 239.04}, {275.54, 327.26}, {364.63, 432.57}, {452.82, 533.18}}
+var BlastWaveScaling = [BlastWaveRanks + 1]core.RankScaling{{}, {36, 1}, {42, 1.2}, {50, 1.4}, {58, 1.6}, {}}
 var BlastWaveManaCost = [BlastWaveRanks + 1]float64{0, 215, 270, 355, 450, 545}
 var BlastWaveLevel = [BlastWaveRanks + 1]int{0, 30, 36, 44, 52, 60}
 
@@ -32,8 +36,8 @@ func (mage *Mage) registerBlastWaveSpell() {
 
 func (mage *Mage) newBlastWaveSpellConfig(rank int, cooldownTimer *core.Timer) core.SpellConfig {
 	spellId := BlastWaveSpellId[rank]
-	baseDamageLow := BlastWaveBaseDamage[rank][0]
-	baseDamageHigh := BlastWaveBaseDamage[rank][1]
+	baseDamageLow := BlastWaveScaling[rank].At(BlastWaveBaseDamage[rank][0], mage.Level)
+	baseDamageHigh := BlastWaveScaling[rank].At(BlastWaveBaseDamage[rank][1], mage.Level)
 	manaCost := BlastWaveManaCost[rank]
 	level := BlastWaveLevel[rank]
 
