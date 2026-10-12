@@ -28,8 +28,6 @@ var (
 	druidTigersFury    = spellID(5217)
 	druidShiftingPower = spellID(1322605)
 	druidBerserk       = spellID(417141)
-	druidProwl         = spellID(9913)
-	druidRavage        = spellID(9867)
 )
 
 func (druidFeral) Knobs() []Knob {
@@ -69,8 +67,6 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "berserk", Default: 1, Min: 0, Max: 2, Step: 1},
 		// Tiger's Fury before the pull, so it is ready again sooner, 0/1.
 		{Name: "prepullTigersFury", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Prowl before the pull and open with Ravage (from Prowl and behind the target), 0/1.
-		{Name: "prowl", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -99,9 +95,6 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(druidBerserk, nil, "Berserk on cooldown. Without the talent ignore the warning on this line."))
 	case 2:
 		items = append(items, cast(druidBerserk, auraIsActive(druidTigersFury), "Berserk with Tiger's Fury."))
-	}
-	if k["prowl"] == 1 {
-		items = append(items, cast(druidRavage, nil, "Ravage from Prowl, the opener."))
 	}
 	if k["shiftEnergy"] > 0 {
 		cond := le(energy(), num(k["shiftEnergy"]))
@@ -148,9 +141,6 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 	items = append(items, cast(builder, lt(comboPoints(), num(5)), "The builder."))
 
 	rot := rotation(items...)
-	if k["prowl"] == 1 {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(druidProwl, 1))
-	}
 	if k["prepullTigersFury"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(druidTigersFury, 1))
 	}

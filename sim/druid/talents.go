@@ -295,7 +295,7 @@ func (druid *Druid) applyNaturalInstinct() {
 		return
 	}
 	druid.onInit("Natural Instinct", func() {
-		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Ravage, druid.FerociousBite} {
+		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.FerociousBite} {
 			if spell != nil {
 				spell.CritDamageBonus += 0.1 * points
 			}

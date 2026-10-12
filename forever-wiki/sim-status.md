@@ -162,14 +162,14 @@ Both DPS playstyles have their own gear, talents, rotation and build: Balance (m
 | Windshaper Skyborne | 792.1 | 793.9 | 790.3 | |
 | High Order Skyborne | 792.0 | 793.7 | 790.0 | |
 
-**Feral.** Gear: 998101-998113, 189 Agility, 166 Strength, 75 attack power, no Spirit, 90 hit rating (the 9% cap) and 56 crit rating, the two-hander at item level 76, Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Prowl before the pull and open with Ravage, then Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Tiger's Fury and Berserk on cooldown, no new Rip in the last 8 sec and Bite at any combo points in the last 2, no Rake (keeping it up costs 33).
+**Feral.** Gear: 998101-998113, 189 Agility, 166 Strength, 75 attack power, no Spirit, 90 hit rating (the 9% cap) and 56 crit rating, the two-hander at item level 76, Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Tiger's Fury and Berserk on cooldown, no new Rip in the last 8 sec and Bite at any combo points in the last 2, no Rake (keeping it up costs 33).
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 659.5 | 651.3 | 639.7 | best overall and Alliance |
-| High Order Skyborne | 657.7 | 649.7 | 638.7 | |
-| Windshaper Skyborne | 657.8 | 649.8 | 638.8 | best Horde |
-| Tauren | 655.3 | 647.3 | 635.9 | |
+| Night Elf | 654.4 | 648.0 | 637.8 | best overall and Alliance |
+| High Order Skyborne | 653.0 | 646.7 | 636.9 | |
+| Windshaper Skyborne | 653.0 | 646.7 | 636.9 | best Horde |
+| Tauren | 650.3 | 644.1 | 634.0 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 

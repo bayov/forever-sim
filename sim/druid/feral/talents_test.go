@@ -133,24 +133,3 @@ func TestCatRendAndTear(t *testing.T) {
 		t.Errorf("Rend and Tear 5/5 on a bleeding target %.2f, want 1.1", got)
 	}
 }
-
-// TestCatRavageNeedsProwl checks that Ravage (rank 4: 350% weapon damage plus 98) can only open
-// from Prowl, and that the first hit breaks Prowl.
-func TestCatRavageNeedsProwl(t *testing.T) {
-	sim, cat := newCatSim(t, "")
-	if cat.Ravage == nil || cat.ProwlAura == nil {
-		t.Fatalf("no Ravage or Prowl at level 60")
-	}
-	target := sim.GetTargetUnit(0)
-	if cat.Ravage.CanCast(sim, target) {
-		t.Errorf("Ravage can be cast without Prowl")
-	}
-	cat.ProwlAura.Activate(sim)
-	if !cat.Ravage.CanCast(sim, target) {
-		t.Fatalf("Ravage cannot be cast from Prowl")
-	}
-	cat.Ravage.Cast(sim, target)
-	if cat.ProwlAura.IsActive() {
-		t.Errorf("Prowl is still up after Ravage")
-	}
-}

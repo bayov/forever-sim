@@ -37,6 +37,4 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=
 # search kept that at 120 and 180 sec; at 300 sec Shifting Power at 40 Energy is 1 ahead.
 # At the end of the fight: no new Rip in the last 8 sec, and Ferocious Bite at any combo points
 # in the last 2 sec (0.6 to 1.4 together, the rogue's end-of-fight Eviscerate idea).
-# The opener: Prowl a second before the pull, Tiger's Fury and Berserk, then Ravage from Prowl
-# (+1.9 to +5.1 over opening with Shred).
-gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,prowl=1"
+gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6"
