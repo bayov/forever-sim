@@ -33,6 +33,7 @@ import Balance from './apls/balance.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
 import Level60WrathAPLJSON from './apls/level60_wrath.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticWrathGearJSON from './gear_sets/level60_phase1_synthetic_wrath.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
 import P2BISGear from './gear_sets/p2.bis.gear.json';
@@ -75,8 +76,15 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 P
 	group: 'Level 60',
 });
 
+// The same set for the Wrath build, with Natural Power (+20 Nature damage) on the gloves in place
+// of Arcane Power, 8.1 ahead for Wrath (762.2 against 754.1 at 180 sec).
+export const GearLevel60Phase1SyntheticWrath = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Wrath', Level60Phase1SyntheticWrathGearJSON, {
+	tooltip: 'The synthetic Phase 1 set with Natural Power on the gloves, for the Wrath build.',
+	group: 'Level 60',
+});
+
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic],
+	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticWrath],
 	[Phase.Phase5]: [GearP0BIS, GearP1BIS, GearP2BIS, GearP3BIS, GearP4BIS, GearP5BIS],
 };
 
@@ -103,8 +111,9 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
-// before the pull, for a moonkin that would rather not weave: 751.0 / 751.5 / 751.9 at 120 /
-// 180 / 300 sec, 8.4% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath).
+// before the pull, for a moonkin that would rather not weave: 761.8 / 762.2 / 762.7 at 120 /
+// 180 / 300 sec, 7.1% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
+// and gear (GearLevel60Phase1SyntheticWrath).
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Level 60',
@@ -300,7 +309,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wrath', {
 	group: 'Level 60',
 	tooltip: 'The Level 60 build with Wrath as the only filler.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticWrath,
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
 	encounter: EncounterLevel60,
