@@ -218,6 +218,10 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 // against 1537 melee), so the pet takes 10% of that. The inheritance also runs on every stat change
 // in the fight, so it has to stay linear: a max() of the two would keep each proc's gain and
 // drop its loss.
+// The pet also takes the hunter's hit. Blizzard's 09-17 beta known issues say "Pet Hit chance for
+// both Hunters and Warlocks do not display the master's scaling coefficient", so it inherits by some
+// coefficient Forever hasn't published. We use Season of Discovery's Hunter Pet Scaling (the same
+// aura 415429 Forever carries; wowsims/sod sim/hunter/pet.go) as a placeholder: 1:1 melee hit.
 // Classic pets inherit nothing.
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
@@ -227,6 +231,7 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 		return stats.Stats{
 			stats.AttackPower: 0.1 * ownerStats[stats.RangedAttackPower],
 			stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
+			stats.MeleeHit:    ownerStats[stats.MeleeHit],
 		}
 	}
 }
