@@ -173,7 +173,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 });
 // Fire (16/31/4): every Fire damage talent to Combustion, with Arcane Concentration and Missile
 // Barrage (Fireball has 20% to make Arcane Missiles free and fast) and Elemental Precision 4.
-// Arcane Impact 3 over Improved Channeling is 1 ahead. It is 900.1 / 884.2 / 873.7 (Undead), 2%
+// Arcane Impact 3 over Improved Channeling is 1 ahead. It is 899.8 / 883.7 / 872.9 (Undead), 2%
 // behind Frostfire. Fire with Frost (Elemental Precision, Ice Shards) was 740 at 180 sec on the
 // old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
@@ -184,8 +184,8 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
 // 3 (it covers Arcane Blast). The 15 Frost points do nothing for Arcane Blast and Arcane Missiles:
 // the trees have nothing else they can buy, so they sit where a Frost filler would use them. Three
-// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 864.0 /
-// 852.9 / 842.9 (Undead, on the Arcane gear), 5% behind Frostfire.
+// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 863.3 /
+// 852.3 / 842.4 (Undead, on the Arcane gear), 5% behind Frostfire.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
 	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
 	group: 'Level 60',
@@ -345,11 +345,11 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // racials off. Undead (Touch of the Grave at 10% for mages) is best on every build and the best
 // Horde race. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana)
 // on Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome is ahead at 120 and 300 sec
-// (927.0 and 890.4 against Undead's 923.2 and 888.6).
-//   Frostfire: Undead 903.4, High Order 901.6, Orc 901.6, Troll 898.1, Gnome 896.5, Human 893.5.
-//   Fire:      Undead 884.2, Gnome 881.8, Orc 878.9, High Order 875.9, Human 873.8, Troll 872.0.
-//   Arcane:    Undead 852.9, Orc 843.7, Gnome 842.9, Troll 840.1, Human 836.9, High Order 833.9.
-//   Frost:     Undead 793.6, High Order 793.2, Troll 792.2, Gnome 792.1, Orc 791.2, Human 785.3.
+// (927.0 and 890.2 against Undead's 923.2 and 888.6).
+//   Frostfire: Undead 903.4, High Order 901.6, Orc 901.6, Troll 897.2, Gnome 896.5, Human 893.5.
+//   Fire:      Undead 883.7, Gnome 881.8, Orc 878.9, High Order 875.9, Human 873.8, Troll 872.8.
+//   Arcane:    Undead 852.3, Orc 843.7, Gnome 842.8, Troll 839.8, Human 836.9, High Order 833.9.
+//   Frost:     Undead 793.6, High Order 793.2, Gnome 792.1, Troll 791.5, Orc 791.2, Human 785.3.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,
