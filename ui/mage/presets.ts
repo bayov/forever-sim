@@ -147,14 +147,14 @@ export const DefaultAPL = APLLevel60Frostfire;
 // again on the final rotation over 120, 180 and 300 sec.
 //
 // Frostfire (0/29/22): Wake of Fire, Incineration, Improved Fireball, Ignite, Pyroblast, Improved
-// Scorch, Heating Up, Master of Elements, Critical Mass and Fire Power 3 in Fire, Elemental
+// Scorch, Heating Up, Master of Elements, Critical Mass and Fire Power 4 in Fire, Elemental
 // Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
 // Frost (Ice Lance only because Fingers of Frost needs it). Frostfire Bolt is Fire and Frost at
 // once, so it gets Fire Power, Ignite and Critical Mass and also Ice Shards, Piercing Ice and
 // Shatter. foreverchanges.pro's popular Fire build is the same split. It is 923.2 / 903.4 / 888.6
-// at 120 / 180 / 300 sec (Undead). Master of Elements 3
-// and Frost Channeling 3 are for the mana: on the first gear they cost 2.4 at 180 sec and were worth
-// 30 at 300.
+// at 120 / 180 / 300 sec (Undead). Frost Channeling 3 does nothing for this build (the client
+// leaves Frostfire Bolt out of it, the talent verification shows 0.0 either way): the points are
+// the 20 in Frost that Fingers of Frost needs.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	'Level 60 Frostfire',
 	SavedTalents.create({ talentsString: '-1355000013013304-00550003310003002' }),
