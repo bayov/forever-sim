@@ -151,12 +151,12 @@ Talents were searched (`tools/rotopt -talent-search`) from several seeds per spe
 
 | Build | Talents | Rotation | 120 | 180 | 300 |
 |---|---|---|---|---|---|
-| Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost | 959.0 | 937.0 | 893.6 |
-| Fire | `05120500200001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage | 860.3 | 847.1 | 840.1 |
-| Arcane | `051225003100311531-03-02550003` | Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4 | 799.5 | 790.0 | 785.2 |
-| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 750.4 | 745.1 | 746.2 |
+| Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost, rank 2 Frostfire Bolt when the mana won't last | 927.9 | 891.1 | 893.1 |
+| Fire | `05120500200001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage, Combustion after 5 Scorch stacks | 849.1 | 827.4 | 817.2 |
+| Arcane | `051225003100311531-03-02550003` | Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4 | 787.8 | 778.5 | 773.8 |
+| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 740.2 | 735.0 | 736.0 |
 
-Frostfire Bolt is Fire and Frost at once, so it takes Fire Power, Ignite and Critical Mass along with Ice Shards, Piercing Ice and Shatter, and its crits and chills feed both Heating Up and Fingers of Frost. foreverchanges.pro's popular Fire build is the same 29 / 22 split. Evocation waits for 30 sec of the fight left (Fire 90 sec): an 8 sec channel late in a 2 minute fight cost up to 70.
+Frostfire Bolt is Fire and Frost at once, so it takes Fire Power, Ignite and Critical Mass along with Ice Shards, Piercing Ice and Shatter, and its crits and chills feed both Heating Up and Fingers of Frost. foreverchanges.pro's popular Fire build is the same 29 / 22 split. Evocation waits for 30 sec of the fight left (Fire 90 sec): an 8 sec channel late in a 2 minute fight cost up to 70. Frostfire runs out of mana first, so once Evocation is spent (or under 60 sec are left) and the mana is under 60 a second of the fight left it casts rank 2 Frostfire Bolt (285 mana for 9% less damage). That and the 3 min fight's Evocation landing late is why its 180 sec number is below its 300 sec one. Ignite's ticks never crit (the crit they come from already did). Mana gems share the Demonic Rune's 2 min cooldown in the client (item category 1153), and the rune gives more, so Frostfire and Fire skip the gems; Frost and Arcane are within noise either way and keep them. Fire holds Combustion and the Talisman until Fire Vulnerability has 5 stacks.
 
 Ice Lance takes no spell power: the 70338 client has a 0 coefficient on all six ranks, where every other new Forever damage spell carries its own. At 0 it costs Frost 20 and Frostfire 55 to 65 a fight to cast it on the Fingers of Frost charges, so neither rotation casts it, and the charges' Shatter crit goes to the bolts. Frost keeps its talents (Ice Lance only as the way to Fingers of Frost; a Frost build without that branch is 64 behind) and drops from second to last. With SoD's 42.9% Frostfire and Frost were about 165 higher at 180 sec. That is the largest open number for the mage (notes.md).
 
@@ -164,15 +164,15 @@ Races (180 sec, each build on its rotation):
 
 | Race | Frostfire | Fire | Arcane | Frost |
 |---|---|---|---|---|
-| Human | 937.0 | 847.1 | 787.0 | 745.1 |
-| Gnome | 917.7 | 837.6 | 781.9 | 741.4 |
-| High Order | 925.0 | 832.7 | 780.0 | 744.2 |
-| Orc | 923.8 | 836.0 | 782.2 | 740.7 |
-| Undead | 923.1 | 840.2 | 790.0 | 743.6 |
-| Troll | 919.3 | 828.0 | 778.9 | 742.2 |
-| Windshaper | 924.7 | 833.0 | 780.2 | 744.3 |
+| Human | 891.1 | 827.4 | 775.5 | 735.0 |
+| Gnome | 877.8 | 819.8 | 770.4 | 731.1 |
+| High Order | 880.4 | 811.9 | 768.4 | 733.8 |
+| Orc | 877.4 | 816.9 | 770.6 | 730.3 |
+| Undead | 879.2 | 821.6 | 778.5 | 733.4 |
+| Troll | 874.9 | 809.9 | 767.3 | 731.8 |
+| Windshaper | 880.4 | 812.2 | 768.6 | 733.9 |
 
-Best overall and best Alliance is Human for Frostfire, Fire and Frost, Undead and Human for Arcane. Best Horde is Undead for Fire and Arcane, Windshaper for Frostfire and Frost (each within 1.6 of Orc and Undead). Human's lead is its 2% crit with a sword: the synthetic main hand is a sword because Azuresong Mageblade is the Era Phase 1 BiS, and with that crit taken off Human falls to 915.6 / 830.0 / 775.5 / 735.0, behind Undead and Windshaper on every build. The best race holds at 120 and 300 sec (Human 959.0 and 893.6 on Frostfire, Undead 799.5 and 785.2 on Arcane). At 300 sec Gnome moves up to second on Frostfire (879.6), the build that runs lowest on mana, from its 5% more mana.
+Best overall and best Alliance is Human for Frostfire, Fire and Frost, Undead and Human for Arcane. Best Horde is Undead for Fire and Arcane, Windshaper for Frostfire and Frost (each within 1.2 of Undead). Human's lead is its 2% crit with a sword: the synthetic main hand is a sword because Azuresong Mageblade is the Era Phase 1 BiS, and with that crit taken off Human falls to 870.7 / 811.9 / 763.9 / 724.7, behind Undead and Windshaper on every build. The best race holds at 120 and 300 sec (Human 927.9 and 893.1 on Frostfire, Undead 787.8 and 773.8 on Arcane). At 300 sec Gnome moves up to second on Frostfire (880.5), the build that runs lowest on mana, from its 5% more mana.
 
 The consumables model Forever's launch, with no raid open. A character takes one of the +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale). Elixir of Sages with Elixir of Greater Intellect is 0.3 to 1 ahead of the Owl with Greater Spirit, and the Owl on top would add 10 to 21 at 180 sec if the two stacked, which is open (notes.md).
 
