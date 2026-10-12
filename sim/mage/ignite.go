@@ -17,7 +17,8 @@ const IgniteTicks = 2
 //
 // Since the 2026-09-24 build Ignite "no longer counts damage bonuses twice". The crit it comes
 // from already has every damage bonus, on the mage and on the target, so the ticks take none of
-// them again. The SoD sim still multiplied the mage's bonuses in, and the fork both sides.
+// them again. The SoD sim still multiplied the mage's bonuses in, and the fork both sides. For the
+// same reason its ticks never crit, though Forever lets other periodic damage crit.
 func (mage *Mage) applyIgnite() {
 	if mage.Talents.Ignite == 0 {
 		return
@@ -31,7 +32,7 @@ func (mage *Mage) applyIgnite() {
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellProc,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagIgnoreModifiers | SpellFlagMage,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagIgnoreModifiers | core.SpellFlagNoPeriodicCrit | SpellFlagMage,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

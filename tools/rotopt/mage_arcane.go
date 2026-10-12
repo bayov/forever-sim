@@ -27,6 +27,9 @@ func (mageArcane) Knobs() []Knob {
 		Knob{Name: "filler", Default: 1, Min: 1, Max: 3, Step: 1},
 		// Missile Barrage procs are used right away, before more Arcane Blasts.
 		Knob{Name: "barrageFirst", Default: 1, Min: 0, Max: 1, Step: 1},
+		// With barrageFirst, the Missile Barrage missiles wait for this many stacks, 0 the stack
+		// target.
+		Knob{Name: "barrageStacks", Default: 0, Min: 0, Max: 4, Step: 1},
 	)
 }
 
@@ -45,7 +48,11 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 		)
 	}
 	if k["barrageFirst"] == 1 {
-		items = append(items, cast(s.arcaneMissiles, and(abKnown, auraIsKnown(missileBarrage), auraIsActive(missileBarrage), ge(stacks, maxStacks)), "Arcane Missiles on Missile Barrage once the stacks are up."))
+		barrageStacks := maxStacks
+		if k["barrageStacks"] > 0 {
+			barrageStacks = num(k["barrageStacks"])
+		}
+		items = append(items, cast(s.arcaneMissiles, and(abKnown, auraIsKnown(missileBarrage), auraIsActive(missileBarrage), ge(stacks, barrageStacks)), "Arcane Missiles on Missile Barrage once the stacks are up."))
 	}
 	if k["missilesNeedBarrage"] == 0 {
 		items = append(items, cast(s.arcaneMissiles, and(abKnown, ge(stacks, maxStacks)), "Arcane Missiles at the stack target, it ends the stacks and takes their bonus."))

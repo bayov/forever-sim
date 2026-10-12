@@ -1,6 +1,9 @@
 package main
 
-import "github.com/wowsims/classic/sim/core/proto"
+import (
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/mage"
+)
 
 // Frostfire under Forever rules: Frostfire Bolt as the filler, a Fire and Frost spell at once, so
 // it takes the talents of both trees. Its crits build Heating Up for Pyroblast, its chill rolls
@@ -30,6 +33,11 @@ func (mageFrostfire) Knobs() []Knob {
 		Knob{Name: "fireBlastMana", Default: 20, Min: 0, Max: 80, Step: 20},
 		// Precast the filler so the first one lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
+		scorchFirstKnob(),
+		// Rank 2 Frostfire Bolt (285 mana instead of 370, about 9% less damage) once Evocation is
+		// spent or less than 60 sec are left, and the mana is under this many per second of the
+		// fight left. 0 never.
+		Knob{Name: "lowManaRank", Default: 0, Min: 0, Max: 90, Step: 30},
 	)
 }
 
@@ -55,6 +63,14 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["fireBlastMana"] > 0 {
 		items = append(items, cast(s.fireBlast, ge(currentManaPercent(), num(k["fireBlastMana"]/100)), "Fire Blast on cooldown with the mana to spare."))
+	}
+	if k["lowManaRank"] > 0 {
+		rank2 := spellID(mage.FrostfireBoltSpellId[2])
+		items = append(items, cast(rank2, and(
+			or(not(spellIsReady(evocation)), lt(remainingTime(), seconds(60))),
+			lt(currentMana(), mul(remainingTime(), num(k["lowManaRank"]))),
+			gt(remainingTime(), seconds(10)),
+		), "Rank 2 Frostfire Bolt when the mana will not last the fight."))
 	}
 	items = append(items, cast(s.frostfireBolt, nil, "Frostfire Bolt."))
 	rot := rotation(items...)

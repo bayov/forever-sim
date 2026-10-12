@@ -19,6 +19,9 @@ var (
 	fireVulnerability = spellID(22959)
 	wintersChill      = spellID(12579)
 	mageClearcasting  = spellID(12536)
+	talismanOfEP      = itemID(18820)
+	// Mana Agate, Jade, Citrine and Ruby.
+	manaGems = []*proto.ActionID{itemID(5514), itemID(5513), itemID(8007), itemID(8008)}
 )
 
 type mageSpells struct {
@@ -71,6 +74,14 @@ func known(aura *proto.ActionID, v value) value {
 	return and(auraIsKnown(aura), v)
 }
 
+func currentMana() value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentMana{CurrentMana: &proto.APLValueCurrentMana{}}}
+}
+
+func mul(lhs, rhs value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpMul, Lhs: lhs, Rhs: rhs}}}
+}
+
 // manaAbove is a mana floor in percent, nil (no condition) at 0.
 func manaAbove(percent float64) value {
 	if percent <= 0 {
@@ -92,7 +103,17 @@ func mageCommonKnobs() []Knob {
 		{Name: "cooldownsTogether", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Presence of Mind on Pyroblast (1) or on the next spell whatever it is (0).
 		{Name: "pomPyroblast", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The mana gems (1), or none so the Demonic Rune gets the cooldown they share (0). The
+		// client puts gems and runes in one category with a 2 min cooldown, and the sim's
+		// autocast takes the smallest gem first.
+		{Name: "gems", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
+}
+
+// scorchFirstKnob holds Combustion and the Talisman of Ephemeral Power until Scorch has 5 stacks of
+// Fire Vulnerability up, so their crits and spell power go on the spells that take all 15%.
+func scorchFirstKnob() Knob {
+	return Knob{Name: "cooldownsAfterScorch", Default: 0, Min: 0, Max: 1, Step: 1}
 }
 
 // mageCooldowns is the cooldown line, ahead of the spells.
@@ -107,6 +128,13 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 	if k["cooldownsTogether"] == 1 {
 		items = append(items, cast(arcanePower, nil, "Arcane Power on cooldown, ahead of the trinkets and racials. Without the talent ignore the warning on this line."))
 	}
+	if k["cooldownsAfterScorch"] == 1 {
+		fullStacks := and(targetAuraIsKnown(fireVulnerability), ge(targetAuraNumStacks(fireVulnerability), num(5)))
+		items = append(items,
+			cast(combustion, fullStacks, "Combustion once Fire Vulnerability has 5 stacks. Without the talent ignore the warning on this line."),
+			cast(talismanOfEP, fullStacks, "The Talisman once Fire Vulnerability has 5 stacks."),
+		)
+	}
 	items = append(items, autocastOtherCooldowns(nil, "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."))
 	if k["evocationMana"] > 0 {
 		var timeLeft value
@@ -114,6 +142,11 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 			timeLeft = gt(remainingTime(), seconds(k["evocationMinTime"]))
 		}
 		items = append(items, cast(evocation, and(lt(currentManaPercent(), num(k["evocationMana"]/100)), timeLeft), "Evocation once the mana runs low, with enough of the fight left to spend it."))
+	}
+	if k["gems"] == 0 {
+		for _, gem := range manaGems {
+			items = append(items, cast(gem, gt(num(0), num(1)), "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."))
+		}
 	}
 	return items
 }

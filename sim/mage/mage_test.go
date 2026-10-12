@@ -17,9 +17,9 @@ func TestP1Mage(t *testing.T) {
 		{
 			Class: proto.Class_ClassMage,
 			Phase: 1,
-			Race:  proto.Race_RaceTroll,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset:    proto.Ruleset_RulesetClassic,
+			Race:  proto.Race_RaceHuman,
+			// The Level 60 Frostfire preset, under Forever rules.
+			Ruleset:    proto.Ruleset_RulesetForever,
 			OtherRaces: []proto.Race{proto.Race_RaceUndead},
 
 			Talents:     P1Talents,
@@ -53,12 +53,13 @@ var P1Consumes = core.ConsumesCombo{
 		DefaultPotion:   proto.Potions_MajorManaPotion,
 		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 		Flask:           proto.Flask_FlaskOfSupremePower,
-		Food:            proto.Food_FoodNightfinSoup,
+		Food:            proto.Food_FoodLobsterStew,
 		FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
-		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+		IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
-		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+		SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 	},
 }
 
