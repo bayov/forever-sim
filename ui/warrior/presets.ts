@@ -77,8 +77,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // outside raids. Trinkets are excluded until Forever's launch trinkets are simulated: client 70338
 // has no Hand of Justice or Blackhand's Breadth, so both slots are empty for every class.
 //
-// On 2026-10-12 the Level 60 Fury build (Human, 180 sec) does 946.0 on the Fury set, where the Era
-// Phase 1 set (phase_1.gear.json) does 997.3 with the same talents and rotation. The Era set has
+// On 2026-10-12 the Level 60 Fury build (Human, 180 sec) does 953.8 on the Fury set, where the Era
+// Phase 1 set (phase_1.gear.json) does 1008.1 with the same talents and rotation. The Era set has
 // Molten Core items above the shared item levels, its trinkets, the Molten Core 4-piece and
 // Edgemaster's Handguards' weapon skill.
 export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Fury)', Level60Phase1SyntheticFuryGearJSON, {
@@ -111,23 +111,27 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, Human, 180 sec: Bloodthirst, then Whirlwind with 25 Rage, Execute first in the
-// execute phase, Heroic Strike queued from 20 Rage, and Hamstring as a filler from 10 Rage (its hits
+// execute phase, Heroic Strike queued from 40 Rage, and Hamstring as a filler from 10 Rage (its hits
 // proc Windfury Totem's extra attacks and Flurry). Death Wish waits for the last 33 sec,
 // Recklessness for the last 25, both inside the execute phase. Bloodrage under 40 Rage, no
-// Berserker Rage (one point of the talent is not worth the GCD), the Mighty Rage Potion at the pull.
-// It is 946.0 where the old DPS (With Reck) rotation is 930.5. Slam on its 18 sec cooldown and
+// Berserker Rage (one point of the talent is not worth the GCD). The Mighty Rage Potion goes at the
+// pull and the second is held for the last 30 sec (+6.4 at 180 sec, -3.0 at 120). Heroic Strike from
+// 20 Rage starved Bloodthirst and Whirlwind (40 is +3.4 at 180 sec, the rotation auditor's pass 2).
+// It is 953.8 where the old DPS (With Reck) rotation is 930.5. Slam on its 18 sec cooldown and
 // holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
-// Heroic Strike from 70 Rage instead of 20 (a slow two-hander makes less Rage), Bloodrage under 70
-// and Death Wish for the last 30 sec.
+// Heroic Strike from 70 Rage instead of 40 (a slow two-hander makes less Rage), Bloodrage under 70
+// and Death Wish for the last 30 sec. The second potion is held for the last 30 sec too. Holding it
+// for Death Wish skipped the pull potion, so it drank one a fight (+7.2 at 180 sec).
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
-// set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 30 Rage (15 sec cooldown with
+// set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
 // Improved Slam), Overpower on dodges and Bloodthrill procs, Rend kept up for Bloodthrill, Execute
-// after them in the execute phase, Heroic Strike from 70 Rage and Hamstring from 10 Rage as a filler.
+// after them in the execute phase, Heroic Strike from 70 Rage and Hamstring from 20 Rage as a filler.
 // With 20 sec left and Recklessness ready it moves to Berserker Stance for Recklessness (no more
-// Rage than Tactical Mastery keeps) and stays there. The rotation audit found the stance swap and
+// Rage than Tactical Mastery keeps) and stays there. The second potion is held for that window
+// (with Slam and Hamstring at 20, +6.9 at 180 sec, the rotation auditor's pass 2). The rotation audit found the stance swap and
 // the Hamstring filler missing: without them Arms did 811.9, with them 868.7 (the auditor's
 // numbers, on the earlier gear). Berserker Stance with Whirlwind in place of Overpower and
 // Rend for the whole fight was 790.0 with its own talents on the earlier gear, 90 behind. Spearing Strike is worth
@@ -155,7 +159,7 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury',
 	group: 'Level 60',
 });
 // Two-hand Fury from the same search on the two-hand set: Two-Handed Weapon Specialization in place
-// of Dual Wield Specialization and Furious Precision. 831.7 at 180 sec (Human), 12% behind dual wield
+// of Dual Wield Specialization and Furious Precision. 838.9 at 180 sec (Human), 12% behind dual wield
 // Fury but its own way to play, so it gets its own preset.
 export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 	'Level 60 Fury (Two-Hand)',
@@ -166,7 +170,7 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 // Weaponmaster (1% extra attacks a point with a sword), Improved Slam and Impale, and Cruelty,
 // Unbridled Wrath and Booming Voice in Fury. Arms cannot reach Death Wish. Booming Voice does
 // nothing here, since the raid has Battle Shout, but no other talent in reach does better with those
-// points. 840.0 at 180 sec (Human), 11% behind dual wield Fury and just ahead of two-hand Fury, its
+// points. 847.0 at 180 sec (Human), 11% behind dual wield Fury and just ahead of two-hand Fury, its
 // own preset as the Mortal Strike spec.
 export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Level 60 Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
@@ -336,9 +340,9 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-12 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1010.8 / 956.3 /
-// 934.2, Level 60 Fury (Two-Hand) (Undead) 887.0 / 836.8 / 815.1 and Level 60 Arms (Undead) 870.2 /
-// 845.4 / 827.5. Undead has no weapon racial, so these are also the numbers with weapon racials off.
+// On 2026-10-12 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1012.8 / 966.1 /
+// 940.1, Level 60 Fury (Two-Hand) (Undead) 889.1 / 844.0 / 815.4 and Level 60 Arms (Undead) 871.1 /
+// 852.3 / 831.1. Undead has no weapon racial, so these are also the numbers with weapon racials off.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
