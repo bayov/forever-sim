@@ -140,15 +140,15 @@ Elemental
 - [x] 8.5 Call of Flame
 - [x] 8.6 Elemental Devastation
 - [x] 8.7 Elemental Focus (Clearcasting)
-- [ ] 8.8 Elemental Alacrity
-- [ ] 8.9 Improved Fire Nova
-- [ ] 8.10 Eye of the Storm (not implemented)
-- [ ] 8.11 Call of Thunder
-- [ ] 8.12 Elemental Reach (not implemented)
-- [ ] 8.13 Lightning Overload
-- [ ] 8.14 Earthbound (not implemented)
-- [ ] 8.15 Elemental Fury
-- [ ] 8.16 Lava Burst
+- [x] 8.8 Elemental Alacrity (checked against client 70338 for the Level 60 Elemental presets, not yet shown to the user)
+- [x] 8.9 Improved Fire Nova (same)
+- [x] 8.10 Eye of the Storm (not implemented)
+- [x] 8.11 Call of Thunder (same)
+- [x] 8.12 Elemental Reach (not implemented)
+- [x] 8.13 Lightning Overload (same)
+- [x] 8.14 Earthbound (not implemented)
+- [x] 8.15 Elemental Fury (same)
+- [x] 8.16 Lava Burst (same)
 
 Enhancement
 
@@ -1344,6 +1344,22 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - 38 heals, 30 Lightning Shields and the totem drops never gave it. The next Fire Nova, Earth Shock or Flame Shock used it, never a heal. Unused ones ran out at 15.0 sec.
   - Fire Nova gave it on 28 of 135 casts (21%). Forever's Fire Nova is a cast (408342) that triggers a separate damage spell (408424), and both seem to roll the 10%. In 10 of the 28 the same Fire Nova's damage used it up 1 to 2 ms later, which saves no mana. The other 18 (13.3% +- 2.9 of casts) lasted to the next spell, which fits the sim's 10%. The Oct 8 dev notes say this "activated and immediately consumed" bug was fixed, but the Oct 10 and 11 logs still show it.
 - No sim change. `mana_costs_test.go` TestOrcShamanClearcasting covers the 10% on Earth Shock and Fire Nova, the free cast, using it up, the 15 sec, and Searing Totem neither giving nor using it. `talent_procs_test.go` testClearcastingSpells covers which spells it makes free.
+
+### 8.8 to 8.16, the rest of the Elemental tree (2026-10-12, the level 60 preset work)
+
+Checked for the Level 60 Elemental presets, against the 70338 talent tree on foreverchanges.pro (its calculator reads wago.tools TraitNode, every rank) and the client's SpellEffect rows. The tree has the same talents, rows, ranks and prerequisites as `ui/core/talents/trees/shaman.json`. Not yet shown to the user.
+
+- 8.8 Elemental Alacrity: 0.17 / 0.33 / 0.50 sec off Lightning Bolt, Chain Lightning and Lava Burst (16578, aura 107 on cast time, class mask 0x3 and 0x1000 in the second word). The sim takes it off all three. Matches.
+- 8.9 Improved Fire Nova: 10 / 20% damage and 2 / 4 sec cooldown (16086, aura 108 and 107 on Fire Nova). Matches. The Elemental presets don't cast Fire Nova (it hits around the fire totem, and a caster stands at range).
+- 8.10 Eye of the Storm: 23 / 47 / 70% less pushback on Lightning Bolt, Chain Lightning and Lava Burst. The sim has no pushback, so it stays not simulated.
+- 8.11 Call of Thunder: 1 rank, +3% crit on Lightning Bolt and Chain Lightning (`electric_spell.go`). Matches.
+- 8.12 Elemental Reach: range only, not simulated.
+- 8.13 Lightning Overload: 3 / 7 / 10% for a free copy of Lightning Bolt or Chain Lightning at half damage and no threat. Matches. The client's own overload spells deal about 0.50 of the main hit at Lightning Bolt rank 10 and about 0.53 for Chain Lightning (At 60 in notes.md), the sim takes half.
+- 8.14 Earthbound: Earthbind Totem roots, not simulated.
+- 8.15 Elemental Fury: 5 ranks of 20% on the crit damage bonus (16089, aura 108 misc 15 with 100 at 5/5), on our Fire, Frost and Nature spells and the Searing and Magma Totem attacks. At 5/5 a spell crit does 2.0 times the hit, which is the sim's 1 + 0.5 * (1 + 1.0).
+- 8.16 Lava Burst: 7.14 has the spell. The talent teaches rank 1, the trainer ranks 2 and 3, and the sim casts the highest the level knows. Its 20% with our Flame Shock up multiplies with Call of Flame (At 60 in notes.md).
+- New in 70338: The Spiritcaller's Storm (item set 2111), the elemental Tier 1 set: 2 pieces +1% hit (1300959, melee and spell hit auras of 1), 3 pieces Earthbind Totem cooldown -2 sec, 4 pieces +21 spell damage against Elementals, 5 pieces Lava Burst cooldown -1 sec (1301711). The crafted Spiritcaller Kilt, Gloves, Mantle and Boots (276538 to 276541, no stats yet) link to it. The sim gives the bonuses to the synthetic Phase 1 elemental set (`item_sets_pve.go`).
+- The 7 October deep dive (worldofwarcraft.com news 24302097) adds that Elemental Focus gives Clearcasting less often on low ranks. The sim keeps 10% on every rank, since the Elemental presets cast the top ranks. Elemental Mastery and Nature's Guidance are gone, as in our tree.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
