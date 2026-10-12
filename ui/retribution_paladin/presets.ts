@@ -86,7 +86,7 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // chest carry Justice Battlegear, Forever's Tier 1 retribution set, so only its 2-piece bonus (1%
 // attack and cast speed) is live, the same shape as every class's preset. The 4-piece (36 attack
 // power against Undead) adds nothing on the raid boss, and the 5-piece (0.5 sec off Judgement)
-// would add 5.4 at 180 sec on the Level 60 build, 5.8 on sub Holy and 8.7 on Shock. The file has
+// would add 5.4 at 180 sec on the Level 60 build, 5.8 on sub Holy and 8.8 on Shock. The file has
 // the budget math. 9% hit is the melee cap from gear. The Level 60 build's Precision takes it to
 // 12%, which only its spells use (they miss up to 16%): trading 1% of it for 10 Strength or 18
 // spell power moved every build by 4 DPS or less.
@@ -200,9 +200,9 @@ export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 // Strength 5, Divine Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2, Illumination 1
 // (to reach row 5), Divine Favor, Holy Shock, Divine Precision 2, Consecrated Ground 2, Holy
 // Power 5 and Light's Vigil, with Benediction, Improved Judgement, Holy Conduit, Conviction,
-// Vindication 2, Sanctified Judgement 3 and Sacred Arbiter in Retribution. 954.6 / 936.6 / 899.4
-// at 120 / 180 / 300 sec on the final set (Spellblasting and Holy Power favour it), 2.6% behind
-// Level 60 at 180 sec and 5.8% at 300 (Divine Precision does not cover its judgements): without Twist of Light it has nothing for the free GCDs
+// Vindication 2, Sanctified Judgement 3 and Sacred Arbiter in Retribution. 961.3 / 943.3 / 906.1
+// at 120 / 180 / 300 sec on the final set (Spellblasting and Holy Power favour it), 1.9% behind
+// Level 60 at 180 sec and 5.1% at 300 (Divine Precision does not cover its judgements): without Twist of Light it has nothing for the free GCDs
 // between its cooldowns, and it runs out of mana in long fights. Light's Vigil is worth 64 and Holy Shock 148.
 export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock', SavedTalents.create({ talentsString: '55003003201121251--05225230001' }), {
 	tooltip: "Level 60 Holy Shock talents: deep Holy to Light's Vigil with Holy Power, and Retribution to Sacred Arbiter.",
@@ -262,7 +262,7 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // counts). We take the Elixir of the Owl in the Intellect slot (980.5), on the Shock build too
 // (937.1, Sages is 0.5 ahead there, inside the noise). These were on the earlier set with
 // trinkets. On the final set, a second crit elixir (Mongoose in place of Greater Agility) would add
-// 14.8 on the Level 60 build at 180 sec and 11.6 on Shock (Forever's Mongoose gives spell crit too). Elixir of
+// 14.8 on the Level 60 build at 180 sec and 11.8 on Shock (Forever's Mongoose gives spell crit too). Elixir of
 // Giants is 1 to 2 behind Juju Power, and Elixir of Ferocity (18 Strength and Agility) beats Juju
 // Power on the final set by 1.6 / 1.5 / 0.8 at 180 sec (twist / sub Holy / Shock). Greater Spirit is worth 1.3 on Shock and nothing on the
 // twist build, Greater Agility 9 and 5. Lobster Stew beats Nightfin Soup by 3 (Mightfish Steak
@@ -431,8 +431,8 @@ export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (
 });
 
 // Level 60 Shock: the Holy Shock talents and rotation on Seal of Righteousness. Races at 120 /
-// 180 / 300 sec (50000 iterations): Undead 954.6 / 936.6 / 899.4, Human 939.4 / 922.1 / 886.1,
-// Dwarf 938.4 / 920.9 / 884.3.
+// 180 / 300 sec (50000 iterations): Undead 961.3 / 943.3 / 906.1, Human 946.1 / 928.9 / 892.8,
+// Dwarf 945.1 / 927.7 / 891.0.
 export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Shock', {
 	group: 'Level 60',
 	tooltip: "Level 60 Undead Holy Shock build with Light's Vigil, on the synthetic Phase 1 gear.",
