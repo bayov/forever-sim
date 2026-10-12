@@ -33,15 +33,15 @@ func newSyntheticSetSim(items []*proto.ItemSpec) *ElementalShaman {
 	return sim.Raid.Parties[0].Players[0].(*ElementalShaman)
 }
 
-// TestSpiritcallersStormBonuses checks The Spiritcaller's Storm bonuses on the synthetic
-// Phase 1 elemental set: 1% hit at 2 pieces and Lava Burst's cooldown 1 sec shorter at 5.
+// TestSpiritcallersStormBonuses checks The Spiritcaller's Storm on the synthetic Phase 1
+// elemental set: the hands and legs are its only pieces, so it gives the 2 piece bonus (1% melee
+// and spell hit) and never reaches the 5 piece one (Lava Burst 1 sec sooner).
 func TestSpiritcallersStormBonuses(t *testing.T) {
-	// Head, shoulders, chest and feet carry no hit of their own. Hands and legs have 10 hit
-	// rating each.
-	head, shoulder, chest, hands, legs, feet := int32(990101), int32(990103), int32(990105), int32(990107), int32(990109), int32(990110)
+	// The hands and legs have 10 hit rating each, the back none and no set.
+	back, hands, legs := int32(990104), int32(990107), int32(990109)
 	equip := func(ids ...int32) []*proto.ItemSpec {
 		items := make([]*proto.ItemSpec, 17)
-		slots := map[int32]int{head: 0, shoulder: 2, chest: 4, hands: 6, legs: 8, feet: 9}
+		slots := map[int32]int{back: 3, hands: 6, legs: 8}
 		for i := range items {
 			items[i] = &proto.ItemSpec{}
 		}
@@ -52,27 +52,25 @@ func TestSpiritcallersStormBonuses(t *testing.T) {
 	}
 
 	for _, tc := range []struct {
-		name      string
-		items     []*proto.ItemSpec
-		spellHit  float64
-		meleeHit  float64
-		lavaBurst time.Duration
+		name     string
+		items    []*proto.ItemSpec
+		hit      float64
+		cooldown time.Duration
 	}{
-		{"1 piece", equip(head), 0, 0, 10 * time.Second},
-		{"2 pieces", equip(head, shoulder), 1, 1, 10 * time.Second},
-		{"4 pieces", equip(head, shoulder, chest, feet), 1, 1, 10 * time.Second},
-		{"5 pieces", equip(head, shoulder, chest, feet, hands), 2, 2, 9 * time.Second},
-		{"6 pieces", equip(head, shoulder, chest, feet, hands, legs), 3, 3, 9 * time.Second},
+		{"back", equip(back), 0, 10 * time.Second},
+		{"hands", equip(hands), 1, 10 * time.Second},
+		{"hands and back", equip(hands, back), 1, 10 * time.Second},
+		{"hands and legs", equip(hands, legs), 3, 10 * time.Second},
 	} {
 		ele := newSyntheticSetSim(tc.items)
-		if got := ele.GetStat(stats.SpellHit) / core.SpellHitRatingPerHitChance; got != tc.spellHit {
-			t.Errorf("%s: spell hit %.2f%%, want %.2f%%", tc.name, got, tc.spellHit)
+		if got := ele.GetStat(stats.SpellHit) / core.SpellHitRatingPerHitChance; got != tc.hit {
+			t.Errorf("%s: spell hit %.2f%%, want %.2f%%", tc.name, got, tc.hit)
 		}
-		if got := ele.GetStat(stats.MeleeHit) / core.MeleeHitRatingPerHitChance; got != tc.meleeHit {
-			t.Errorf("%s: melee hit %.2f%%, want %.2f%%", tc.name, got, tc.meleeHit)
+		if got := ele.GetStat(stats.MeleeHit) / core.MeleeHitRatingPerHitChance; got != tc.hit {
+			t.Errorf("%s: melee hit %.2f%%, want %.2f%%", tc.name, got, tc.hit)
 		}
-		if got := ele.LavaBurst.CD.Duration; got != tc.lavaBurst {
-			t.Errorf("%s: Lava Burst cooldown %v, want %v", tc.name, got, tc.lavaBurst)
+		if got := ele.LavaBurst.CD.Duration; got != tc.cooldown {
+			t.Errorf("%s: Lava Burst cooldown %v, want %v", tc.name, got, tc.cooldown)
 		}
 	}
 }

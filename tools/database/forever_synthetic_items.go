@@ -14,10 +14,17 @@ import (
 //
 // The pieces take the place of Era Phase 1 items an enhancement shaman would wear (Crown of Destruction,
 // the Scholomance Bloodmail set, Death's Clutch and Wristguards of True Flight). Each one gets the full epic
-// budget of its slot at the Phase 1 item level (Molten Core tier at 66, or the Era Phase 1 BiS item level
-// where that is higher). The budget is the Classic formula, with spell power at Forever's tuned price. A point of spell power costs 0.55 of a
-// Strength point there, which is 0.73 of what Era pays at the same item level (the ratio on Forever's tuned
-// gear at item level 25 to 54). Hit and crit are rating at 10 and 14 per percent, the Forever ratio.
+// budget of its slot. Since 2026-10-12 every class's synthetic set follows one standard
+// (orchestration/standards.md on the coordination branch): an epic piece is worth 1.2 * item level -
+// 36.4, times 1 for the head, chest, legs and two-hander, 0.77 for the shoulders, hands, waist and feet and
+// 0.5625 for the neck, back, wrist and rings. The head, shoulders, chest, hands, legs and feet are item
+// level 66, the neck, back, wrist, waist and rings 71, and two-handers 76. The stats on a piece add up as
+// (sum of (weight * amount)^1.5)^(2/3), with Strength, Agility, Stamina, Intellect and Spirit at 1, attack
+// power at 0.5 and spell power at Forever's tuned price. A point of spell power costs 0.55 of a Strength
+// point there, which is 0.73 of what Era pays at the same item level (the ratio on Forever's tuned gear
+// at item level 25 to 54). Hit and crit are rating at 10 and 14 per percent, the Forever ratio, at 1 a
+// point. For the legs: 1.2 * 66 - 36.4 = 42.8, from 17 Strength, 13 Stamina, 13 Intellect, 10 Spirit, 25
+// spell power and 10 hit rating. Armor is free.
 //
 // We then hand pick a stat mix per slot, so the pieces are not all the same:
 //   - Spirit is on 9 of the 13 pieces, about 10% of the set's budget. The Forever devs said they want Spirit
@@ -26,13 +33,13 @@ import (
 //     and some on Strength (the hands) or Intellect and Spirit (the second ring).
 //   - Not every piece has every stat. The neck and wrist have no Intellect, the wrist has attack power
 //     instead of Strength, and the shoulders and hands carry the set's crit.
-//   - The set as a whole has 100 hit rating, the 10% melee hit the Era Phase 1 BiS carries (Truestrike
-//     Shoulders, Onyxia Tooth Pendant, Wristguards of True Flight, the Devilsaur set). It sits on 9 pieces.
-//     Without it the set misses 7% of its white swings, and a gear search swaps the hit items back in.
+//   - The set as a whole has 90 hit rating, the 9% melee hit cap against a level 63 boss (it had the 10%
+//     the Era Phase 1 BiS carries before 2026-10-12). It sits on 9 pieces.
 //
-// The head, shoulders, chest, hands, legs and feet form a set with the bonuses of The Spiritcaller's Rage,
-// Forever's crafted level 60 enhancement set (see sim/shaman/item_sets_pve.go). The generator script lived
-// in the session scratchpad (synth.py), the numbers below are its output.
+// The hands and legs carry The Spiritcaller's Rage, Forever's level 60 enhancement set (see
+// sim/shaman/item_sets_pve.go). The standard keeps only its 2 piece bonus live (1% attack and cast speed),
+// so exactly two pieces are in the set. The generator script lived in the session scratchpad (synth.py,
+// rebudgeted with synth_enh2.py), the numbers below are its output.
 //
 // The other specs' synthetic items live in forever_synthetic_items_<class>.go, one file per class,
 // and add themselves to this list from an init function. Each class has its own block of ids, all
@@ -43,41 +50,39 @@ import (
 //	996000-996999 Mage        997000-997999 Warlock    998000-998999 Druid
 
 var ForeverSyntheticItems = []*proto.UIItem{
-	// Head, item level 76, in place of Crown of Destruction (76, 18817).
+	// Head, item level 66, in place of Crown of Destruction (76, 18817).
 	{
 		Id: 990001, Name: "Enhancement Synthetic Head (Phase 1)", Icon: "inv_crown_02",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Strength: 16, stats.Stamina: 16, stats.Intellect: 12, stats.Spirit: 12, stats.SpellPower: 42, stats.Armor: 392}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Strength: 11, stats.Stamina: 11, stats.Intellect: 9, stats.Spirit: 9, stats.SpellPower: 30, stats.Armor: 392}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
-		Ilvl: 76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
-		SetName:        "Enhancement Synthetic (Phase 1)",
 	},
-	// Neck, item level 66.
+	// Neck, item level 71.
 	{
 		Id: 990002, Name: "Enhancement Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Agility: 10, stats.Stamina: 7, stats.SpellPower: 20}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 12, stats.Stamina: 8, stats.SpellPower: 24}.ToFloatArray(),
 		HitRating: 10,
-		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 	// Shoulder, item level 66, in place of Death's Clutch (62, 14503).
 	{
 		Id: 990003, Name: "Enhancement Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_25",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Strength: 11, stats.Stamina: 9, stats.Intellect: 8, stats.SpellPower: 27, stats.Armor: 317}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Strength: 11, stats.Stamina: 9, stats.Intellect: 8, stats.SpellPower: 26, stats.Armor: 317}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
-		SetName:        "Enhancement Synthetic (Phase 1)",
 	},
-	// Back, item level 66.
+	// Back, item level 71.
 	{
 		Id: 990004, Name: "Enhancement Synthetic Back (Phase 1)", Icon: "inv_misc_cape_05",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Stamina: 10, stats.Intellect: 8, stats.Spirit: 9, stats.SpellPower: 21, stats.Armor: 54}.ToFloatArray(),
-		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 9, stats.Spirit: 10, stats.SpellPower: 24, stats.Armor: 54}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 	// Chest, item level 66, in place of Bloodmail Hauberk (61, 14611).
@@ -88,13 +93,12 @@ var ForeverSyntheticItems = []*proto.UIItem{
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
-		SetName:        "Enhancement Synthetic (Phase 1)",
 	},
 	// Wrist, item level 71, in place of Wristguards of True Flight (71, 18812).
 	{
 		Id: 990006, Name: "Enhancement Synthetic Wrist (Phase 1)", Icon: "inv_bracer_02",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.AttackPower: 26, stats.Stamina: 6, stats.SpellPower: 23, stats.Armor: 198}.ToFloatArray(),
+		Stats:     stats.Stats{stats.AttackPower: 27, stats.Stamina: 6, stats.SpellPower: 24, stats.Armor: 198}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -122,8 +126,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990009, Name: "Enhancement Synthetic Legs (Phase 1)", Icon: "inv_pants_06",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Strength: 16, stats.Stamina: 12, stats.Intellect: 12, stats.Spirit: 9, stats.SpellPower: 23, stats.Armor: 369}.ToFloatArray(),
-		HitRating: 15,
+		Stats:     stats.Stats{stats.Strength: 17, stats.Stamina: 13, stats.Intellect: 13, stats.Spirit: 10, stats.SpellPower: 25, stats.Armor: 369}.ToFloatArray(),
+		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		SetName:        "Enhancement Synthetic (Phase 1)",
@@ -132,34 +136,33 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990010, Name: "Enhancement Synthetic Feet (Phase 1)", Icon: "inv_boots_01",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Agility: 12, stats.Stamina: 14, stats.Intellect: 9, stats.Spirit: 11, stats.SpellPower: 21, stats.Armor: 290}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 12, stats.Stamina: 14, stats.Intellect: 9, stats.Spirit: 11, stats.SpellPower: 20, stats.Armor: 290}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
-		SetName:        "Enhancement Synthetic (Phase 1)",
 	},
-	// Finger, item level 72.
+	// Finger, item level 71.
 	{
 		Id: 990011, Name: "Enhancement Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_07",
 		Type:      proto.ItemType_ItemTypeFinger,
 		Stats:     stats.Stats{stats.Strength: 10, stats.Stamina: 6, stats.SpellPower: 30}.ToFloatArray(),
 		HitRating: 10,
-		Ilvl:      72, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
-	// Second finger, item level 72. This is the caster ring of the two.
+	// Second finger, item level 71. This is the caster ring of the two.
 	{
 		Id: 990013, Name: "Enhancement Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:  proto.ItemType_ItemTypeFinger,
 		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 13, stats.Spirit: 11, stats.SpellPower: 16}.ToFloatArray(),
-		Ilvl:  72, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 	// Two-Hand, item level 76.
 	{
 		Id: 990012, Name: "Enhancement Synthetic Two-Hand (Phase 1)", Icon: "inv_axe_09",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
-		Stats:     stats.Stats{stats.Strength: 22, stats.Agility: 13, stats.Stamina: 18, stats.Intellect: 13, stats.Spirit: 9, stats.SpellPower: 25}.ToFloatArray(),
-		HitRating: 15,
+		Stats:     stats.Stats{stats.Strength: 23, stats.Agility: 14, stats.Stamina: 19, stats.Intellect: 14, stats.Spirit: 9, stats.SpellPower: 26}.ToFloatArray(),
+		HitRating: 10,
 		// Spinal Reaper damage and speed.
 		WeaponDamageMin: 203, WeaponDamageMax: 305, WeaponSpeed: 3.4,
 		Ilvl: 76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
