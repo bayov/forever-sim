@@ -15,7 +15,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 81.25
   final_stats: 8.3
-  final_stats: 32
+  final_stats: 34
   final_stats: 0
   final_stats: 0
   final_stats: 1796
@@ -68,8 +68,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0.32756
-  weights: 11.91057
-  weights: 2.22788
+  weights: 11.91408
+  weights: 2.22171
   weights: 0
   weights: 0
   weights: 0
@@ -99,99 +99,99 @@ stat_weights_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 973.24642
-  tps: 691.00496
+  dps: 973.732
+  tps: 691.34972
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 1072.77736
-  tps: 742.44853
+  dps: 1072.90977
+  tps: 742.54253
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 905.19066
-  tps: 642.68537
+  dps: 905.39716
+  tps: 642.83198
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 942.79709
-  tps: 669.38593
+  dps: 942.97213
+  tps: 669.51021
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 930.80008
-  tps: 660.86806
+  dps: 930.96419
+  tps: 660.98457
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 983.09479
-  tps: 697.9973
+  dps: 983.2161
+  tps: 698.08343
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 978.36854
-  tps: 694.64166
+  dps: 978.54925
+  tps: 694.76997
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 914.63628
-  tps: 649.39176
+  dps: 914.81481
+  tps: 649.51852
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 934.51109
-  tps: 663.50287
+  dps: 934.68752
+  tps: 663.62814
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 905.19066
-  tps: 642.68537
+  dps: 905.39716
+  tps: 642.83198
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 917.2509
-  tps: 651.24814
+  dps: 917.36328
+  tps: 651.32793
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 913.0282
-  tps: 648.25002
+  dps: 913.21342
+  tps: 648.38153
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 934.51109
-  tps: 663.50287
+  dps: 934.68752
+  tps: 663.62814
  }
 }
 dps_results: {
  key: "TestCombatDaggers-Phase5-Average-Default"
  value: {
-  dps: 909.0834
-  tps: 645.44922
+  dps: 909.25041
+  tps: 645.56779
  }
 }
 dps_results: {
@@ -281,7 +281,7 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 346.98746
-  tps: 246.3611
+  dps: 347.0993
+  tps: 246.4405
  }
 }
