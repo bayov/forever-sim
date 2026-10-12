@@ -1,7 +1,8 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":25296}}},"doAtValue":{"const":{"val":"-3s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":25296}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":3045}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [
         {"action":{"condition":{"inMeleeRange":{}},"move":{"rangeFromTarget":{"const":{"val":"25"}}}},"notes":"Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum."},
@@ -12,6 +13,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":20904}}},"notes":"Aimed Shot on the cooldown it shares with Multi-Shot."},
         {"action":{"castSpell":{"spellId":{"spellId":2643}}},"notes":"Multi-Shot when Aimed Shot is not taken."},
         {"action":{"castSpell":{"spellId":{"spellId":25295}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":25295}}}}}]}}},"notes":"Serpent Sting when it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":1310786}}},"notes":"Sniper Shot on cooldown, with the talent."}
+        {"action":{"castSpell":{"spellId":{"spellId":1310786}},"condition":{"cmp":{"lhs":{"currentMana":{}},"op":"OpGe","rhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"25"}}}}}}},"notes":"Sniper Shot on cooldown, with the talent, while the mana lasts the fight."}
     ]
 }

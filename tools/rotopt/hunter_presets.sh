@@ -20,11 +20,15 @@ gen() {
 }
 # The ranged specs, from the knob searches on the standard gear (2026-10-12). Marksmanship and Lone
 # Wolf put the Arcane Shot cooldown above Aimed Shot and drop the mana floors (Lone Wolf also casts
-# Serpent Sting after Aimed Shot, +1.7). Beast Mastery keeps Aimed Shot first and the floors. Summon
-# Hawk while fewer than 2 hawks are out (hawk=2) only matters with the talent, which no build takes.
-ranged="aimed=1,aimedMana=0,hawk=2,intimidation=0,serpent=1,sniper=1,sniperFirst=0"
+# Serpent Sting after Aimed Shot, +1.7). Beast Mastery keeps Aimed Shot first and the floors. All three
+# cast Rapid Fire 0.1 sec before the pull (+2 at 120 sec), and Marksmanship and Lone Wolf cast Sniper
+# Shot only while the mana covers 25 a second of the fight left (+8 and +11 at 300 sec, nothing at 180;
+# both from the rotation auditor). Summon Hawk while fewer than 2 hawks are out (hawk=2) only matters
+# with the talent, which no build takes.
+ranged="aimed=1,aimedMana=0,hawk=2,intimidation=0,serpent=1,sniper=1,sniperFirst=0,rapidPrepull=1"
 gen hunter_ranged bm "$ranged,arcaneFirst=0,arcaneMana=20,serpentLate=0,serpentMana=30"
-gen hunter_ranged mm "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=0,serpentMana=0"
-gen hunter_ranged lw "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0"
-# Survival: Wing Clip in every free global cooldown, +31 at 180 sec.
-gen hunter_sv sv "lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50"
+gen hunter_ranged mm "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=0,serpentMana=0,sniperManaPerSec=25"
+gen hunter_ranged lw "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,sniperManaPerSec=25"
+# Survival: Wing Clip in every free global cooldown (+31 at 180 sec), held when Mongoose Bite or
+# Strider Kick is about ready (+0.4).
+gen hunter_sv sv "lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=1"

@@ -214,7 +214,10 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 // Forever's pets scale with the hunter's gear (Blizzard's hunter deep dive). The numbers are beta
 // testing on the forever-hunter wiki: 10% of the hunter's highest attack power and all of the
 // hunter's crit chance (and 2 health a Stamina point and 30% of armor, which change no damage). The
-// hunter's ranged attack power is the highest in every build here, so the pet takes 10% of that.
+// hunter's ranged attack power is the highest at the pull in every build here (Survival's 1619
+// against 1537 melee), so the pet takes 10% of that. The inheritance also runs on every stat change
+// in the fight, so it has to stay linear: a max() of the two would keep each proc's gain and
+// drop its loss.
 // Classic pets inherit nothing.
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {

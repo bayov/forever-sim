@@ -22,6 +22,8 @@ func (hunterSV) Knobs() []Knob {
 		{Name: "lacerateMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "trapMana", Default: 30, Min: 0, Max: 60, Step: 10},
 		{Name: "wingClipMana", Default: 50, Min: 0, Max: 80, Step: 10},
+		// Hold Wing Clip when Mongoose Bite (opened) or Strider Kick is ready within 1 sec.
+		{Name: "wingClipHold", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "strikerMana", Default: 0, Min: 0, Max: 40, Step: 10},
 	}
 }
@@ -55,7 +57,14 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(hunterImmolationTrap, floor("trapMana"), "Immolation Trap at the hunter's feet on cooldown."))
 	}
 	if k["wingClip"] == 1 {
-		items = append(items, cast(hunterWingClip, floor("wingClipMana"), "Wing Clip as a filler with the mana to spare."))
+		var hold value
+		if k["wingClipHold"] == 1 {
+			hold = and(
+				not(and(auraIsActive(spellID(1310726)), lt(spellTimeToReady(hunterMongooseBite), seconds(1)))),
+				ge(spellTimeToReady(hunterStriderKick), seconds(1)),
+			)
+		}
+		items = append(items, cast(hunterWingClip, and(floor("wingClipMana"), hold), "Wing Clip as a filler with the mana to spare, held when Mongoose Bite or Strider Kick is about ready."))
 	}
 
 	rot := rotation(items...)

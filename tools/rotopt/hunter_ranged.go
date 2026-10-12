@@ -48,6 +48,11 @@ func (hunterRanged) Knobs() []Knob {
 		{Name: "sniperFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// The Arcane Shot cooldown above Aimed Shot when both are ready.
 		{Name: "arcaneFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Sniper Shot only while the mana covers this much a second of the fight left (0 off). It is
+		// the least mana efficient shot, so in a long fight it goes first when mana runs short.
+		{Name: "sniperManaPerSec", Default: 0, Min: 0, Max: 40, Step: 5},
+		// Rapid Fire 0.1 sec before the pull, so the second Auto Shot is already hasted.
+		{Name: "rapidPrepull", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Serpent Sting below Aimed Shot, so a refresh never delays Aimed Shot's cooldown, which starts
 		// when the cast ends.
 		{Name: "serpentLate", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -101,7 +106,11 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	if k["arcaneFirst"] == 1 {
 		items = append(items, arcane...)
 	}
-	sniper := cast(hunterSniperShot, nil, "Sniper Shot on cooldown, with the talent.")
+	var sniperGate value
+	if k["sniperManaPerSec"] > 0 {
+		sniperGate = ge(hunterCurrentMana(), hunterMul(remainingTime(), num(k["sniperManaPerSec"])))
+	}
+	sniper := cast(hunterSniperShot, sniperGate, "Sniper Shot on cooldown, with the talent, while the mana lasts the fight.")
 	if k["sniper"] == 1 && k["sniperFirst"] == 1 {
 		items = append(items, sniper)
 	}
@@ -121,5 +130,16 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 
 	rot := rotation(items...)
 	rot.PrepullActions = append(rot.PrepullActions, prepull(hunterAspectOfTheHawk, 3))
+	if k["rapidPrepull"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(hunterRapidFire, 0.1))
+	}
 	return rot
+}
+
+func hunterCurrentMana() value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentMana{CurrentMana: &proto.APLValueCurrentMana{}}}
+}
+
+func hunterMul(lhs, rhs value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpMul, Lhs: lhs, Rhs: rhs}}}
 }
