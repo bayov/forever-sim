@@ -146,7 +146,7 @@ func (s *setup) breakdown(rot *proto.APLRotation, duration float64, iterations i
 	player := res.RaidMetrics.Parties[0].Players[0]
 	n := float64(iterations)
 	var b strings.Builder
-	fmt.Fprintf(&b, "%-24s %7s %7s %7s %7s %7s %7s %7s %8s\n", "action", "dps", "casts", "hits", "crits", "miss", "dodge", "parry", "avg hit")
+	fmt.Fprintf(&b, "%-24s %7s %7s %7s %7s %7s %7s %7s %8s %8s %8s\n", "action", "dps", "casts", "hits", "crits", "miss", "dodge", "parry", "avg hit", "avg norm", "avg crit")
 	actions := player.Actions
 	for _, pet := range player.Pets {
 		fmt.Fprintf(&b, "pet %s dps %.2f\n", pet.Name, pet.Dps.Avg)
@@ -180,16 +180,26 @@ func (s *setup) breakdown(rot *proto.APLRotation, duration float64, iterations i
 		if action.Id.GetTag() != 0 {
 			name += fmt.Sprintf(" tag %d", action.Id.GetTag())
 		}
-		fmt.Fprintf(&b, "%-24s %7.2f %7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %8.1f\n", name,
+		crits := m.Crits + m.CritTicks
+		fmt.Fprintf(&b, "%-24s %7.2f %7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %8.1f %8.1f %8.1f\n", name,
 			m.Damage/n/duration, float64(m.Casts)/n,
-			float64(m.Hits+m.Ticks+m.Glances+m.Blocks)/n, float64(m.Crits+m.CritTicks)/n, float64(m.Misses)/n,
-			float64(m.Dodges)/n, float64(m.Parries)/n, m.Damage/float64(max(landed, 1)))
+			float64(m.Hits+m.Ticks+m.Glances+m.Blocks)/n, float64(crits)/n, float64(m.Misses)/n,
+			float64(m.Dodges)/n, float64(m.Parries)/n, m.Damage/float64(max(landed, 1)),
+			(m.Damage-m.CritDamage)/float64(max(landed-crits, 1)), m.CritDamage/float64(max(crits, 1)))
 	}
 	// Proc counts, to see how often a proc like Revelation comes up in a fight.
 	for _, aura := range player.Auras {
 		if aura.ProcsAvg > 0 {
 			fmt.Fprintf(&b, "aura %-19d procs %.2f per fight, %.2f per minute, uptime %.1f%%\n", aura.Id.GetSpellId(),
 				aura.ProcsAvg, aura.ProcsAvg/duration*60, aura.UptimeSecondsAvg/duration*100)
+		}
+	}
+	for _, pet := range player.Pets {
+		for _, aura := range pet.Auras {
+			if aura.ProcsAvg > 0 {
+				fmt.Fprintf(&b, "pet aura %-15d procs %.2f per fight, %.2f per minute, uptime %.1f%%\n", aura.Id.GetSpellId(),
+					aura.ProcsAvg, aura.ProcsAvg/duration*60, aura.UptimeSecondsAvg/duration*100)
+			}
 		}
 	}
 	fmt.Fprintf(&b, "total dps %.2f\n", player.Dps.Avg)
