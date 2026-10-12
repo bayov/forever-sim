@@ -81,7 +81,7 @@ var rogueSyntheticItems = []*proto.UIItem{
 	{
 		Id: 994004, Name: "Combat Swords Synthetic Back (Phase 1)", Icon: "inv_misc_cape_18",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Agility: 20, stats.Stamina: 12, stats.AttackPower: 12, stats.Armor: 48, stats.RangedAttackPower: 12}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 20, stats.Stamina: 12, stats.AttackPower: 12, stats.Armor: 54, stats.RangedAttackPower: 12}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
@@ -220,7 +220,7 @@ var rogueSyntheticItems = []*proto.UIItem{
 	{
 		Id: 994104, Name: "Daggers Synthetic Back (Phase 1)", Icon: "inv_misc_cape_18",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Agility: 20, stats.Stamina: 10, stats.AttackPower: 16, stats.Armor: 48, stats.RangedAttackPower: 16}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 20, stats.Stamina: 10, stats.AttackPower: 16, stats.Armor: 54, stats.RangedAttackPower: 16}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
