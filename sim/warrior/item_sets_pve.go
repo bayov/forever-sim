@@ -4,6 +4,7 @@ import (
 	"slices"
 	"time"
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -767,3 +768,62 @@ var ItemSetBattlegearOfUnyieldingStrength = core.NewItemSet(core.ItemSet{
 	},
 })
 */
+// battlegearOfGloryBonuses are the set bonuses of Battlegear of Glory, Forever's Molten Core tier set for
+// Arms and Fury (set 2102, Gauntlets, Greaves, Legplates, Breastplate, Shoulders and Helm of Glory, items
+// 280899 to 280904, client 1.60.1.70338, spells 1300968, 1301069, 1301095 and 1301721).
+//
+// The client pieces carry no stats yet, so no real set is registered for them. We give the same bonuses to
+// the synthetic Phase 1 warrior set below.
+var battlegearOfGloryBonuses = map[int32]core.ApplyEffect{
+	// Increases your attack speed and casting speed by 1%.
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.PseudoStats.MeleeSpeedMultiplier *= 1.01
+		c.PseudoStats.RangedSpeedMultiplier *= 1.01
+		c.PseudoStats.CastSpeedMultiplier *= 1.01
+	},
+	// Reduces the cooldown of your Intimidating Shout ability by 30 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// +36 Attack Power against Humanoids.
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		humanoids := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeHumanoid
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Attack Power against Humanoids",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range humanoids {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusAttackPowerTaken += 36
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range humanoids {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusAttackPowerTaken -= 36
+					}
+				}
+			},
+		}))
+	},
+	// Reduces the cooldown of your Recklessness ability by 30 sec.
+	5: func(agent core.Agent) {
+		warrior := agent.(WarriorAgent).GetWarrior()
+		warrior.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.ActionID.SpellID == 1719 {
+				spell.CD.Duration -= time.Second * 30
+			}
+		})
+	},
+}
+
+// ItemSetWarriorSyntheticPhase1 is the set of the synthetic Phase 1 warrior items
+// (tools/database/forever_synthetic_items_warrior.go), with the Battlegear of Glory bonuses.
+var ItemSetWarriorSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Warrior Synthetic (Phase 1)",
+	Bonuses: battlegearOfGloryBonuses,
+})
