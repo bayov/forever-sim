@@ -84,10 +84,10 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Clearcasting (Wrath does not use it up), then Wrath when Eclipse is down to 2 charges or fewer
 // and no Wrath is in flight, Starfire otherwise. That spends every Eclipse charge (each makes a
 // Starfire 0.5 sec shorter) without throwing Wraths at a full stack. The knob search kept it at
-// 120 and 180 sec (757.7 at 180, 40,000 iterations). Dropping Moonfire costs 54 DPS at 180 sec,
-// Insect Swarm 62, and casting only Starfire 67. Innervate is left to its own trigger (at 500
+// 120 and 180 sec (744.1 at 180, 40,000 iterations). Dropping Moonfire costs 53 DPS at 180 sec,
+// Insect Swarm 61, and casting only Starfire 66. Innervate is left to its own trigger (at 500
 // mana), 2 ahead of casting it at 40% mana. At 300 sec the mana runs out: Innervate at 40% and
-// the old weave (Wrath until Eclipse has a charge) are 7 ahead there (756.5 against 749.6).
+// the old weave (Wrath until Eclipse has a charge) are 6 ahead there (743.0 against 736.7).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -95,9 +95,9 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana), for a moonkin that
-// would rather not weave: 708.5 / 705.2 / 708.8 at 120 / 180 / 300 sec, 7% behind the Level 60
+// would rather not weave: 695.8 / 692.4 / 696.1 at 120 / 180 / 300 sec, 7% behind the Level 60
 // rotation. A talent search with this rotation found the same talents (Eclipse and Improved
-// Starfire still pay for the free Clearcasting Starfires). Starfire alone is 690.7 at 180 sec.
+// Starfire still pay for the free Clearcasting Starfires). Starfire alone is 678.5 at 180 sec.
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Level 60',
@@ -139,20 +139,22 @@ export const DefaultOptions = BalanceDruidOptions.create({
 });
 
 // The level 60 consumables, Forever launch Phase 1 only (nothing from Molten Core, Zul'Gurub,
-// Blackwing Lair, Ahn'Qiraj or Naxxramas, so Wizard Oil and not Brilliant Wizard Oil). Elixirs
-// in different slots stack in the sim; that is our reading of Forever's elixir rules and is
-// listed in notes.md. Together they take the Level 60 build from 705 to 756 at 180 sec. Taking
-// each one out costs: Flask of Supreme Power the most (Distilled Wisdom is 6 behind, the moonkin
-// does not run dry in a raid fight), Elixir of the Owl 15, Elixir of Sages 14, Elixir of Nature
+// Blackwing Lair, Ahn'Qiraj or Naxxramas, so Wizard Oil and not Brilliant Wizard Oil). The five
+// +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale) are one elixir in the client, so the
+// moonkin takes one: Elixir of Sages with Elixir of Greater Intellect, level with the Owl and
+// Greater Spirit at 120 and 180 sec and 1.3 ahead at 300. If both crit elixirs stacked, the Owl
+// would add 13.6 at 180 sec. Other elixirs in different slots stack in the sim (notes.md).
+// Taking each one out costs, at 180 sec: Flask of Supreme Power the most (Distilled Wisdom is 6
+// behind, the moonkin does not run dry in a raid fight), Elixir of Sages 14, Elixir of Nature
 // Power 9, Major Spellblasting Potion 9 (over a Major Mana Potion), Lobster Stew 4, Goblin
 // Sapper Charge 3.9, Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater Mageblood
-// Elixir is within the noise and stays for longer fights.
+// Elixir and Greater Intellect are within the noise and stay for longer fights.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorSpellblastingPotion,
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
-	intellectElixir: IntellectElixir.ElixirOfTheOwl,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
@@ -259,14 +261,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 763.9 / 757.9 / 749.9 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 750.0 / 744.1 / 736.8 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             763.9    757.9    749.9   best overall and Alliance
-//	Tauren                761.7    757.3    750.4   best Horde (0.5 ahead at 300 sec)
-//	Windshaper Skyborne   758.9    754.5    745.6
-//	High Order Skyborne   758.8    754.4    745.2
+//	Night Elf             750.0    744.1    736.8   best overall and Alliance
+//	Tauren                747.9    743.9    737.5   best Horde (0.7 ahead at 300 sec)
+//	Windshaper Skyborne   744.9    740.6    732.3
+//	High Order Skyborne   744.8    740.5    732.1
 //
 // No racial goes by weapon type, so the staff changes nothing here.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
