@@ -53,18 +53,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.18393
+  weights: 0.1831
   weights: 0
-  weights: 0.96212
-  weights: 0
-  weights: 0
+  weights: 0.94797
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
-  weights: 12.06205
+  weights: 0
+  weights: 0
+  weights: 10.94408
   weights: 0
   weights: 0
   weights: 0
@@ -99,154 +99,154 @@ stat_weights_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Champion'sDreadgear"
  value: {
-  dps: 1156.51824
-  tps: 860.85817
+  dps: 1120.87451
+  tps: 863.5531
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-DeathmistRaiment"
  value: {
-  dps: 1043.15245
-  tps: 774.52892
+  dps: 1002.63552
+  tps: 770.66988
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Demoniac'sThreads"
  value: {
-  dps: 1206.4788
-  tps: 901.27466
+  dps: 1169.42291
+  tps: 900.52947
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1286.31171
-  tps: 954.76093
+  dps: 1244.43453
+  tps: 953.0009
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 1070.58726
-  tps: 790.15535
+  dps: 1030.55654
+  tps: 787.78004
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1183.90358
-  tps: 881.92337
+  dps: 1152.95898
+  tps: 886.94463
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Hazza'rah'sCharmofDestruction-19957"
  value: {
-  dps: 1316.37542
+  dps: 1277.82294
   tps: 984.17725
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 917.48131
-  tps: 682.09903
+  dps: 873.10311
+  tps: 672.98148
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-LieutenantCommander'sDreadgear"
  value: {
-  dps: 1156.51824
-  tps: 860.85817
+  dps: 1120.87451
+  tps: 863.5531
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-NemesisRaiment"
  value: {
-  dps: 1141.67417
-  tps: 741.01521
+  dps: 1099.68372
+  tps: 739.75826
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1265.80781
-  tps: 868.19064
+  dps: 1206.51954
+  tps: 857.16806
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-TheBlackBook-19337"
  value: {
-  dps: 1320.14737
+  dps: 1277.58171
   tps: 976.45607
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1286.23664
+  dps: 1248.01134
   tps: 961.14725
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1183.90358
-  tps: 881.92337
+  dps: 1152.95898
+  tps: 886.94463
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-Average-Default"
  value: {
-  dps: 1316.65199
+  dps: 1278.01303
   tps: 984.09716
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-FullBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 1310.174
+  dps: 1271.69024
   tps: 1734.57238
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-FullBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 1310.174
+  dps: 1271.69024
   tps: 979.36044
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-FullBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 1305.87201
+  dps: 1266.54612
   tps: 956.13412
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-NoBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 812.14902
+  dps: 801.55758
   tps: 1480.38679
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-NoBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 812.14902
+  dps: 801.55758
   tps: 621.25195
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-NoBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 837.98525
+  dps: 826.11257
   tps: 616.72701
  }
 }
 dps_results: {
  key: "TestWarlockAffliction-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1306.72395
+  dps: 1268.17147
   tps: 976.45607
  }
 }
