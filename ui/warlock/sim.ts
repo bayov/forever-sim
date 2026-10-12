@@ -54,21 +54,23 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	displayPseudoStats: [],
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 
-		// Default EP weights for sorting gear in the gear picker.
+		// Default EP weights for sorting gear in the gear picker, measured on the Level 60
+		// Demonology build (Human, 180 sec, 2026-10-12) in spell power.
 		epWeights: Stats.fromMap({
 			[Stat.StatMana]: 0.01,
-			[Stat.StatIntellect]: 0.23,
-			[Stat.StatSpirit]: 0.0,
-			[Stat.StatMP5]: 0.14,
+			[Stat.StatIntellect]: 0.67,
+			[Stat.StatSpirit]: 0.3,
+			[Stat.StatMP5]: 0.58,
 			[Stat.StatSpellPower]: 1,
 			[Stat.StatSpellDamage]: 1,
 			[Stat.StatFirePower]: 0.1,
 			[Stat.StatShadowPower]: 0.9,
-			[Stat.StatSpellHit]: 12.79,
-			[Stat.StatSpellCrit]: 7.92,
+			[Stat.StatSpellHit]: 14.6,
+			[Stat.StatSpellCrit]: 13.8,
 			[Stat.StatSpellHaste]: 7.83,
 			[Stat.StatStamina]: 0.01,
 			[Stat.StatFireResistance]: 0.0,
@@ -133,6 +135,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	},
 
 	presets: {
+		builds: Presets.PresetBuilds,
 		// Preset talents that the user can quickly select.
 		talents: Presets.TalentPresets,
 		// Preset rotations that the user can quickly select.
@@ -148,9 +151,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Destruction DPS',
-			defaultName: 'Destruction',
-			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
+			tooltip: 'Demonology DPS',
+			defaultName: 'Demonology',
+			iconUrl: getSpecIcon(Class.ClassWarlock, 1),
 
 			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
@@ -158,7 +161,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

@@ -12,19 +12,20 @@ func init() {
 	RegisterDpsWarlock()
 }
 
-func TestWarlockDestruction(t *testing.T) {
+// The three Level 60 builds of ui/warlock/presets.ts on the synthetic Phase 1 set.
+func warlockSuite(t *testing.T, talents string, apl string, label string, options *proto.Player_Warlock) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		{
 			Class: proto.Class_ClassWarlock,
 			Phase: 1,
-			Race:  proto.Race_RaceOrc,
+			Race:  proto.Race_RaceHuman,
 
-			Talents:     TalentsDestruction,
-			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "mc"),
-			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", "rotation"),
+			Talents:     talents,
+			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "level60_phase1_synthetic"),
+			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", apl),
 			Buffs:       core.FullBuffs,
 			Consumes:    Consumes,
-			SpecOptions: core.SpecOptionsCombo{Label: "Destruction Warlock", SpecOptions: DefaultDestroWarlock},
+			SpecOptions: core.SpecOptionsCombo{Label: label, SpecOptions: options},
 
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
@@ -34,39 +35,21 @@ func TestWarlockDestruction(t *testing.T) {
 }
 
 func TestWarlockDemonology(t *testing.T) {
-	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		{
-			Class: proto.Class_ClassWarlock,
-			Phase: 1,
-			Race:  proto.Race_RaceOrc,
+	warlockSuite(t, TalentsDemonology, "level60_demonology", "Demonology Warlock", DemonologyWarlock)
+}
 
-			Talents:     TalentsDemonology,
-			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "mc"),
-			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", "rotation"),
-			Buffs:       core.FullBuffs,
-			Consumes:    Consumes,
-			SpecOptions: core.SpecOptionsCombo{Label: "Demonology Warlock", SpecOptions: DemonologyWarlock},
+func TestWarlockDestruction(t *testing.T) {
+	warlockSuite(t, TalentsDestruction, "level60_destruction", "Destruction Warlock", SuccubusWarlock)
+}
 
-			ItemFilter:      ItemFilters,
-			EPReferenceStat: proto.Stat_StatSpellPower,
-			StatsToWeigh:    Stats,
-		},
-	}))
+func TestWarlockAffliction(t *testing.T) {
+	warlockSuite(t, TalentsAffliction, "level60_affliction", "Affliction Warlock", SuccubusWarlock)
 }
 
 // Forever tree (tools/forever_talents/client/warlock.json).
-var TalentsDestruction = "05550000003--0550305103101351"
-var TalentsDemonology = "-0305003131221001351-0550305101"
-
-var DefaultDestroWarlock = &proto.Player_Warlock{
-	Warlock: &proto.Warlock{
-		Options: &proto.WarlockOptions{
-			Armor:       proto.WarlockOptions_DemonArmor,
-			Summon:      proto.WarlockOptions_Succubus,
-			WeaponImbue: proto.WarlockOptions_NoWeaponImbue,
-		},
-	},
-}
+var TalentsDemonology = "011-0305003131221001351-0550005003"
+var TalentsDestruction = "25510000035--055030500310035"
+var TalentsAffliction = "2553000003520005--0550305003"
 
 // Sacrifices the Imp before the pull and keeps the Succubus out, which Demonic Pact allows.
 var DemonologyWarlock = &proto.Player_Warlock{
@@ -80,16 +63,29 @@ var DemonologyWarlock = &proto.Player_Warlock{
 	},
 }
 
+var SuccubusWarlock = &proto.Player_Warlock{
+	Warlock: &proto.Warlock{
+		Options: &proto.WarlockOptions{
+			Armor:       proto.WarlockOptions_DemonArmor,
+			Summon:      proto.WarlockOptions_Succubus,
+			WeaponImbue: proto.WarlockOptions_Spellstone,
+		},
+	},
+}
+
 var Consumes = core.ConsumesCombo{
 	Label: "Consumes",
 	Consumes: &proto.Consumes{
 		DefaultPotion:   proto.Potions_MajorManaPotion,
+		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 		Flask:           proto.Flask_FlaskOfSupremePower,
-		FirePowerBuff:   proto.FirePowerBuff_ElixirOfGreaterFirepower,
+		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
-		Food:            proto.Food_FoodTenderWolfSteak,
-		MainHandImbue:   proto.WeaponImbue_WizardOil,
+		Food:            proto.Food_FoodNightfinSoup,
+		MainHandImbue:   proto.WeaponImbue_BrilliantWizardOil,
+		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},
 }
 
