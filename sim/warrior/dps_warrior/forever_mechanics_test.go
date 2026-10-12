@@ -86,3 +86,22 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 		t.Errorf("Slam has a %s cooldown, want 18s", got)
 	}
 }
+
+// TestForeverWarriorDeepWoundsAndFlurry checks two client 70338 values: Deep Wounds' damage spell
+// (412613) cannot crit, so its ticks never do, and the Flurry buff (12966) lasts 15 sec.
+func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
+	_, war := newForeverWarrior(t, "30305013002-25053005112110501-2")
+	if war.DeepWounds == nil {
+		t.Fatal("the talents should give Deep Wounds")
+	}
+	if !war.DeepWounds.Flags.Matches(core.SpellFlagNoPeriodicCrit) {
+		t.Error("Deep Wounds ticks should not be able to crit under Forever")
+	}
+	flurry := war.GetAura("Flurry Proc (12974)")
+	if flurry == nil {
+		t.Fatal("the talents should give 5 points of Flurry")
+	}
+	if flurry.Duration != 15*time.Second {
+		t.Errorf("Flurry lasts %v, want 15s", flurry.Duration)
+	}
+}

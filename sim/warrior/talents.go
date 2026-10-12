@@ -309,9 +309,10 @@ func (warrior *Warrior) makeFlurryAura(points int32) *core.Aura {
 	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
 
 	aura := warrior.GetOrRegisterAura(core.Aura{
-		Label:     fmt.Sprintf("Flurry Proc (%d)", spellID),
-		ActionID:  core.ActionID{SpellID: spellID},
-		Duration:  core.NeverExpires,
+		Label:    fmt.Sprintf("Flurry Proc (%d)", spellID),
+		ActionID: core.ActionID{SpellID: spellID},
+		// Forever's Flurry buff (12966, client 70338) lasts 15 sec.
+		Duration:  core.TernaryDuration(warrior.Env.IsForever(), time.Second*15, core.NeverExpires),
 		MaxStacks: 3,
 	})
 

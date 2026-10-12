@@ -24,7 +24,9 @@ func (warrior *Warrior) applyDeepWounds() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+		// Forever's Deep Wounds (412609) deals its damage through 412613, which cannot crit
+		// (client 70338: SPELL_ATTR2_CANT_CRIT, and no Attributes_8 0x200 like the DoTs that crit).
+		Flags: core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagNoPeriodicCrit,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
