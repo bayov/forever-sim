@@ -26,7 +26,7 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "penance", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "swp", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "swpMana", Default: 20, Min: 0, Max: 60, Step: 10},
-		{Name: "dp", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "dp", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "dpMana", Default: 40, Min: 0, Max: 80, Step: 10},
 		{Name: "mb", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},

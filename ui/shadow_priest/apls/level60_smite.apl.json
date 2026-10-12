@@ -6,6 +6,7 @@
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":15261}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":15261}}}}}]}}},"notes":"Holy Fire whenever its damage over time is down, for Power in Light."},
         {"action":{"castSpell":{"spellId":{"spellId":10894}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10894}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"9s"}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}]}}},"notes":"Shadow Word: Pain whenever it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":19280}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":19280}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"12s"}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.4"}}}}]}}},"notes":"Devouring Plague whenever it is down and off cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":1277335}}},"notes":"Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":14751}}},"notes":"Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10934}}},"notes":"Smite fills."}

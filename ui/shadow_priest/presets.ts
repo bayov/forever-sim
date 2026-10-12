@@ -29,6 +29,7 @@ import { Stats } from '../core/proto_utils/stats.js';
 import Level60APL from './apls/level60.apl.json';
 import Level60SmiteAPL from './apls/level60_smite.apl.json';
 import P1APL from './apls/p1.apl.json';
+import Level60Phase1SmiteGear from './gear_sets/level60_phase1_smite.gear.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
@@ -60,14 +61,23 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // legs, Forever's Enchant Necklace - Spell Power, Greater Stats, Greater Intellect on the
 // wrists, Spirit on the boots and Spell Power on the weapon. The main hand is a sword like
 // Azuresong Mageblade, which is what puts a Human level with an Undead (see the build). The
-// Smite build wears the same set: its stats want the same spell power, Intellect, hit and crit.
+// Smite build wants the same stats and wears the same pieces with another set bonus (below).
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 
+// The same set for the Smite build, with its six armor pieces swapped for copies that carry
+// Vestments of Conviction, Forever's Tier 1 Discipline and Holy set (10 Spirit, 9 spell damage,
+// Penance 1 sec shorter), in place of Raiments of Conviction. For the Smite build it is 4.1 DPS
+// ahead at 180 sec and 7.8 at 300 (the gear auditor's A/B).
+export const GearLevel60Phase1Smite = PresetUtils.makePresetGear('Level 60 Phase 1 Smite', Level60Phase1SmiteGear, {
+	tooltip: 'The synthetic Phase 1 set with the Discipline and Holy Tier 1 bonuses, for the Smite build.',
+	group: 'Level 60',
+});
+
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1Smite, GearP0BIS, GearP1BIS],
 };
 
 export const DefaultGear = GearPresets[Phase.Phase1][0];
@@ -387,7 +397,7 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Undead Holy damage priest (Smite, Holy Fire, Power Infusion) on the synthetic Phase 1 gear, 23% behind Shadow.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1Smite,
 	talents: TalentsLevel60Smite,
 	rotation: APLLevel60Smite,
 	encounter: EncounterLevel60Smite,
