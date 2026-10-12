@@ -23,8 +23,8 @@ gen() {
 gen mage_arcane level60_arcane "blastStacks=2,missilesNeedBarrage=1,barrageFirst=1,conserveMana=30,evocationMana=0,filler=1,gems=0,prepull=1"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating
 # Up stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 20% mana,
-# Fireball. Evocation below 20% mana with 90 sec of the fight left. Combustion and the Talisman wait
-# for the 5th stack, so their crits and spell power go on spells that take all 15%. No mana gems:
+# Fireball. Evocation below 20% mana with 90 sec of the fight left. Combustion waits
+# for the 5th stack, so its crits go on spells that take all 15%. No mana gems:
 # they share the Demonic Rune's 2 min cooldown, and the rune gives more.
 gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,gems=0"
 # Frostbolt, with Fingers of Frost's Shatter crit on the next bolts. Ice Lance takes no spell

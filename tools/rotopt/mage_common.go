@@ -19,7 +19,6 @@ var (
 	fireVulnerability = spellID(22959)
 	wintersChill      = spellID(12579)
 	mageClearcasting  = spellID(12536)
-	talismanOfEP      = itemID(18820)
 	// Mana Agate, Jade, Citrine and Ruby.
 	manaGems = []*proto.ActionID{itemID(5514), itemID(5513), itemID(8007), itemID(8008)}
 )
@@ -110,8 +109,8 @@ func mageCommonKnobs() []Knob {
 	}
 }
 
-// scorchFirstKnob holds Combustion and the Talisman of Ephemeral Power until Scorch has 5 stacks of
-// Fire Vulnerability up, so their crits and spell power go on the spells that take all 15%.
+// scorchFirstKnob holds Combustion until Scorch has 5 stacks of Fire Vulnerability up, so its
+// crits go on the spells that take all 15%.
 func scorchFirstKnob() Knob {
 	return Knob{Name: "cooldownsAfterScorch", Default: 0, Min: 0, Max: 1, Step: 1}
 }
@@ -132,7 +131,6 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 		fullStacks := and(targetAuraIsKnown(fireVulnerability), ge(targetAuraNumStacks(fireVulnerability), num(5)))
 		items = append(items,
 			cast(combustion, fullStacks, "Combustion once Fire Vulnerability has 5 stacks. Without the talent ignore the warning on this line."),
-			cast(talismanOfEP, fullStacks, "The Talisman once Fire Vulnerability has 5 stacks."),
 		)
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."))
