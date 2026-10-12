@@ -73,6 +73,10 @@ function notSimulated<T extends number>(
 	return { actionId: () => ActionId.fromItemId(itemId), value, showWhen };
 }
 
+function consumable<T extends number>(itemId: number, value: T): ConsumableInputConfig<T> {
+	return { actionId: () => ActionId.fromItemId(itemId), value };
+}
+
 export interface ConsumeInputFactoryArgs<T extends number> {
 	consumesFieldName: keyof Consumes;
 	// Additional callback if logic besides syncing consumes is required
@@ -354,68 +358,68 @@ export const BrinySeafoodStew: ConsumableInputConfig<Food> = {
 export const FOOD_CONFIG: ConsumableStatOption<Food>[] = [
 	// Strength
 	{ config: SmokedDesertDumpling, stats: [Stat.StatStrength] },
-	{ config: notSimulated('food', 250065, Food.FoodSavoryStagSliders), stats: [Stat.StatStrength] },
+	{ config: consumable(250065, Food.FoodSavoryStagSliders), stats: [Stat.StatStrength] },
 	{ config: BearBrisket, stats: [Stat.StatStrength] },
 	{ config: BlessSunfruit, stats: [Stat.StatStrength] },
-	{ config: notSimulated('food', 2685, Food.FoodSucculentPorkRibs), stats: [Stat.StatStrength] },
-	{ config: notSimulated('food', 724, Food.FoodGoretuskLiverPie), stats: [Stat.StatStrength] },
-	{ config: notSimulated('food', 2681, Food.FoodRoastedBoarMeat), stats: [Stat.StatStrength] },
+	{ config: consumable(2685, Food.FoodSucculentPorkRibs), stats: [Stat.StatStrength] },
+	{ config: consumable(724, Food.FoodGoretuskLiverPie), stats: [Stat.StatStrength] },
+	{ config: consumable(2681, Food.FoodRoastedBoarMeat), stats: [Stat.StatStrength] },
 	// Agility
-	{ config: notSimulated('food', 250069, Food.FoodFlankAuPoivre), stats: [Stat.StatAgility] },
+	{ config: consumable(250069, Food.FoodFlankAuPoivre), stats: [Stat.StatAgility] },
 	{ config: TenderWolfSteak, stats: [Stat.StatAgility] },
 	{ config: TastyLionSteak, stats: [Stat.StatAgility] },
 	{ config: HotWolfRibs, stats: [Stat.StatAgility] },
-	{ config: notSimulated('food', 1017, Food.FoodSeasonedWolfKabob), stats: [Stat.StatAgility] },
-	{ config: notSimulated('food', 2684, Food.FoodCoyoteSteak), stats: [Stat.StatAgility] },
-	{ config: notSimulated('food', 2680, Food.FoodSpicedWolfMeat), stats: [Stat.StatAgility] },
+	{ config: consumable(1017, Food.FoodSeasonedWolfKabob), stats: [Stat.StatAgility] },
+	{ config: consumable(2684, Food.FoodCoyoteSteak), stats: [Stat.StatAgility] },
+	{ config: consumable(2680, Food.FoodSpicedWolfMeat), stats: [Stat.StatAgility] },
 	// Critical strike
 	{ config: GrilledSquid, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
 	// Attack power
-	{ config: notSimulated('food', 13934, Food.FoodMightfishSteak), stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('food', 13927, Food.FoodCookedGlossyMightfish), stats: [Stat.StatAttackPower] },
+	{ config: consumable(13934, Food.FoodMightfishSteak), stats: [Stat.StatAttackPower] },
+	{ config: consumable(13927, Food.FoodCookedGlossyMightfish), stats: [Stat.StatAttackPower] },
 	{ config: MithrilHeadTrout, stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('food', 4592, Food.FoodLongjawMudSnapper), stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('food', 787, Food.FoodSlitherskinMackerel), stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('food', 6290, Food.FoodBrilliantSmallfish), stats: [Stat.StatAttackPower] },
+	{ config: consumable(4592, Food.FoodLongjawMudSnapper), stats: [Stat.StatAttackPower] },
+	{ config: consumable(787, Food.FoodSlitherskinMackerel), stats: [Stat.StatAttackPower] },
+	{ config: consumable(6290, Food.FoodBrilliantSmallfish), stats: [Stat.StatAttackPower] },
 	// Spell damage
-	{ config: notSimulated('food', 13933, Food.FoodLobsterStew), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(13933, Food.FoodLobsterStew), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: NightfinSoup, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: BrinySeafoodStew, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: SagefishDelight, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: SmokedSagefish, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
-	{ config: notSimulated('food', 5095, Food.FoodRainbowFinAlbacore), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(5095, Food.FoodRainbowFinAlbacore), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	// Intellect
-	{ config: notSimulated('food', 250075, Food.FoodPrehistoricPulledRaptor), stats: [Stat.StatIntellect] },
+	{ config: consumable(250075, Food.FoodPrehistoricPulledRaptor), stats: [Stat.StatIntellect] },
 	{ config: RunnTumTuberSurprise, stats: [Stat.StatIntellect] },
 	{ config: BarbecuedBuzzardWing, stats: [Stat.StatIntellect] },
-	{ config: notSimulated('food', 12210, Food.FoodRoastRaptor), stats: [Stat.StatIntellect] },
-	{ config: notSimulated('food', 250077, Food.FoodTwiceSpicedRaptorSlice), stats: [Stat.StatIntellect] },
-	{ config: notSimulated('food', 250079, Food.FoodTastyRaptorBites), stats: [Stat.StatIntellect] },
+	{ config: consumable(12210, Food.FoodRoastRaptor), stats: [Stat.StatIntellect] },
+	{ config: consumable(250077, Food.FoodTwiceSpicedRaptorSlice), stats: [Stat.StatIntellect] },
+	{ config: consumable(250079, Food.FoodTastyRaptorBites), stats: [Stat.StatIntellect] },
 	// Spirit
-	{ config: notSimulated('food', 249876, Food.FoodWickedSmoothie), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('food', 249875, Food.FoodSpicySmoothie), stats: [Stat.StatSpirit] },
+	{ config: consumable(249876, Food.FoodWickedSmoothie), stats: [Stat.StatSpirit] },
+	{ config: consumable(249875, Food.FoodSpicySmoothie), stats: [Stat.StatSpirit] },
 	{ config: BlessedSunfruitJuice, stats: [Stat.StatSpirit] },
-	{ config: notSimulated('food', 249874, Food.FoodCalcifiedSmoothie), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('food', 249873, Food.FoodMrrgglSmrrthle), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('food', 249872, Food.FoodSlimySmoothie), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('food', 249871, Food.FoodVenomousSmoothie), stats: [Stat.StatSpirit] },
+	{ config: consumable(249874, Food.FoodCalcifiedSmoothie), stats: [Stat.StatSpirit] },
+	{ config: consumable(249873, Food.FoodMrrgglSmrrthle), stats: [Stat.StatSpirit] },
+	{ config: consumable(249872, Food.FoodSlimySmoothie), stats: [Stat.StatSpirit] },
+	{ config: consumable(249871, Food.FoodVenomousSmoothie), stats: [Stat.StatSpirit] },
 	// Stamina
 	{ config: DirgesKickChimaerokChops, stats: [Stat.StatStamina] },
-	{ config: notSimulated('food', 250068, Food.FoodSavoryTurtleStew), stats: [Stat.StatStamina] },
-	{ config: notSimulated('food', 17222, Food.FoodSpiderSausage), stats: [Stat.StatStamina] },
-	{ config: notSimulated('food', 250078, Food.FoodGiantScrambledEggs), stats: [Stat.StatStamina] },
-	{ config: notSimulated('food', 3665, Food.FoodCuriouslyTastyOmelet), stats: [Stat.StatStamina] },
-	{ config: notSimulated('food', 250080, Food.FoodBreakfastOmelette), stats: [Stat.StatStamina] },
-	{ config: notSimulated('food', 263509, Food.FoodSkywallSouffle), stats: [Stat.StatStamina] },
+	{ config: consumable(250068, Food.FoodSavoryTurtleStew), stats: [Stat.StatStamina] },
+	{ config: consumable(17222, Food.FoodSpiderSausage), stats: [Stat.StatStamina] },
+	{ config: consumable(250078, Food.FoodGiantScrambledEggs), stats: [Stat.StatStamina] },
+	{ config: consumable(3665, Food.FoodCuriouslyTastyOmelet), stats: [Stat.StatStamina] },
+	{ config: consumable(250080, Food.FoodBreakfastOmelette), stats: [Stat.StatStamina] },
+	{ config: consumable(263509, Food.FoodSkywallSouffle), stats: [Stat.StatStamina] },
 	// Healing
-	{ config: notSimulated('food', 249870, Food.FoodSagesTea), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('food', 249869, Food.FoodSunnyTea), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('food', 249868, Food.FoodTriageTea), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('food', 249867, Food.FoodRootTea), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('food', 249866, Food.FoodRoyalTea), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('food', 249865, Food.FoodPeaceTea), stats: [Stat.StatHealingPower] },
+	{ config: consumable(249870, Food.FoodSagesTea), stats: [Stat.StatHealingPower] },
+	{ config: consumable(249869, Food.FoodSunnyTea), stats: [Stat.StatHealingPower] },
+	{ config: consumable(249868, Food.FoodTriageTea), stats: [Stat.StatHealingPower] },
+	{ config: consumable(249867, Food.FoodRootTea), stats: [Stat.StatHealingPower] },
+	{ config: consumable(249866, Food.FoodRoyalTea), stats: [Stat.StatHealingPower] },
+	{ config: consumable(249865, Food.FoodPeaceTea), stats: [Stat.StatHealingPower] },
 	// Armor
-	{ config: notSimulated('food', 286152, Food.FoodPlatedArmorfish), stats: [] },
+	{ config: consumable(286152, Food.FoodPlatedArmorfish), stats: [] },
 ];
 
 export const makeFoodInput = makeConsumeInputFactory({ consumesFieldName: 'food' });
@@ -501,7 +505,7 @@ export const ScrollOfProtection: ConsumableInputConfig<ArmorElixir> = {
 // Every class gets the armor slot, even when its sim doesn't show Armor, because the PvP presets
 // weigh armor.
 export const ARMOR_CONSUMES_CONFIG: ConsumableStatOption<ArmorElixir>[] = [
-	{ config: notSimulated('armorElixir', 250329, ArmorElixir.ElixirOfThePhalanx), stats: [] },
+	{ config: consumable(250329, ArmorElixir.ElixirOfThePhalanx), stats: [] },
 	{ config: ElixirOfSuperiorDefense, stats: [] },
 	{ config: ElixirOfGreaterDefense, stats: [] },
 	{ config: ElixirOfDefense, stats: [] },
@@ -521,8 +525,8 @@ export const ElixirOfMinorFortitude: ConsumableInputConfig<HealthElixir> = {
 	value: HealthElixir.ElixirOfMinorFortitude,
 };
 export const HEALTH_CONSUMES_CONFIG: ConsumableStatOption<HealthElixir>[] = [
-	{ config: notSimulated('healthElixir', 250335, HealthElixir.ElixirOfGreaterFortitude), stats: [Stat.StatStamina] },
-	{ config: notSimulated('healthElixir', 250334, HealthElixir.ElixirOfFortitudeForever), stats: [Stat.StatStamina] },
+	{ config: consumable(250335, HealthElixir.ElixirOfGreaterFortitude), stats: [Stat.StatStamina] },
+	{ config: consumable(250334, HealthElixir.ElixirOfFortitudeForever), stats: [Stat.StatStamina] },
 	{ config: ElixirOfFortitude, stats: [Stat.StatStamina] },
 	{ config: ElixirOfMinorFortitude, stats: [Stat.StatStamina] },
 ];
@@ -559,7 +563,7 @@ export const WinterfallFirewater: ConsumableInputConfig<AttackPowerBuff> = {
 export const ATTACK_POWER_CONSUMES_CONFIG: ConsumableStatOption<AttackPowerBuff>[] = [
 	{ config: JujuMight, stats: [Stat.StatAttackPower] },
 	{ config: WinterfallFirewater, stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('attackPowerBuff', 246948, AttackPowerBuff.DistilledFirewater), stats: [Stat.StatAttackPower] },
+	{ config: consumable(246948, AttackPowerBuff.DistilledFirewater), stats: [Stat.StatAttackPower] },
 ];
 
 export const makeAttackPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'attackPowerBuff' });
@@ -596,7 +600,7 @@ export const ScrollOfAgility: ConsumableInputConfig<AgilityElixir> = {
 };
 
 export const AGILITY_CONSUMES_CONFIG: ConsumableStatOption<AgilityElixir>[] = [
-	{ config: notSimulated('agilityElixir', 250328, AgilityElixir.ElixirOfCunning), stats: [Stat.StatAgility] },
+	{ config: consumable(250328, AgilityElixir.ElixirOfCunning), stats: [Stat.StatAgility] },
 	{ config: ElixirOfTheMongoose, stats: [Stat.StatAgility, Stat.StatMeleeCrit] },
 	{ config: ElixirOfGreaterAgility, stats: [Stat.StatAgility] },
 	{ config: ElixirOfAgility, stats: [Stat.StatAgility] },
@@ -630,9 +634,9 @@ export const ElixirOfGiantGrowth: ConsumableInputConfig<StrengthBuff> = {
 };
 
 export const STRENGTH_CONSUMES_CONFIG: ConsumableStatOption<StrengthBuff>[] = [
-	{ config: notSimulated('strengthBuff', 250351, StrengthBuff.ElixirOfTheGrizzly), stats: [Stat.StatStrength] },
-	{ config: notSimulated('strengthBuff', 250350, StrengthBuff.ElixirOfFerocity), stats: [Stat.StatStrength, Stat.StatAgility] },
-	{ config: notSimulated('strengthBuff', 250349, StrengthBuff.ElixirOfStrength), stats: [Stat.StatStrength] },
+	{ config: consumable(250351, StrengthBuff.ElixirOfTheGrizzly), stats: [Stat.StatStrength] },
+	{ config: consumable(250350, StrengthBuff.ElixirOfFerocity), stats: [Stat.StatStrength, Stat.StatAgility] },
+	{ config: consumable(250349, StrengthBuff.ElixirOfStrength), stats: [Stat.StatStrength] },
 	{ config: JujuPower, stats: [Stat.StatStrength] },
 	{ config: ElixirOfGiants, stats: [Stat.StatStrength] },
 	{ config: ElixirOfOgresStrength, stats: [Stat.StatStrength] },
@@ -917,20 +921,20 @@ export const POTIONS_CONFIG: ConsumableStatOption<Potions>[] = [
 	{ config: notSimulated('defaultPotion', 282013, Potions.RestoredManaPotion), stats: [Stat.StatIntellect] },
 	{ config: notSimulated('defaultPotion', 274935, Potions.TessasTonic), stats: [Stat.StatIntellect, Stat.StatArmor] },
 
-	{ config: notSimulated('defaultPotion', 250943, Potions.MajorFrenzyPotion), stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('defaultPotion', 250942, Potions.SuperiorFrenzyPotion), stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('defaultPotion', 250941, Potions.GreaterFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: consumable(250943, Potions.MajorFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: consumable(250942, Potions.SuperiorFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: consumable(250941, Potions.GreaterFrenzyPotion), stats: [Stat.StatAttackPower] },
 	{ config: FrenzyPotion, stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('defaultPotion', 250939, Potions.LesserFrenzyPotion), stats: [Stat.StatAttackPower] },
-	{ config: notSimulated('defaultPotion', 250938, Potions.MinorFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: consumable(250939, Potions.LesserFrenzyPotion), stats: [Stat.StatAttackPower] },
+	{ config: consumable(250938, Potions.MinorFrenzyPotion), stats: [Stat.StatAttackPower] },
 	{ config: notSimulated('defaultPotion', 250955, Potions.PotionOfBeastSlaying), stats: [Stat.StatAttackPower] },
 
-	{ config: notSimulated('defaultPotion', 250937, Potions.MajorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
-	{ config: notSimulated('defaultPotion', 250936, Potions.SuperiorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
-	{ config: notSimulated('defaultPotion', 250935, Potions.GreaterSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(250937, Potions.MajorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(250936, Potions.SuperiorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(250935, Potions.GreaterSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: SpellblastingPotion, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
-	{ config: notSimulated('defaultPotion', 250933, Potions.LesserSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
-	{ config: notSimulated('defaultPotion', 250932, Potions.MinorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(250933, Potions.LesserSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(250932, Potions.MinorSpellblastingPotion), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: notSimulated('defaultPotion', 250954, Potions.PotionOfElementalPurging), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 
 	{ config: notSimulated('defaultPotion', 250949, Potions.MajorMendersPotion), stats: [Stat.StatHealingPower] },
@@ -976,7 +980,7 @@ export const SPELL_POWER_CONFIG: ConsumableStatOption<SpellPowerBuff>[] = [
 	{ config: GreaterArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: ArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: LesserArcaneElixir, stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
-	{ config: notSimulated('spellPowerBuff', 247754, SpellPowerBuff.MinorArcaneElixir), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
+	{ config: consumable(247754, SpellPowerBuff.MinorArcaneElixir), stats: [Stat.StatSpellPower, Stat.StatSpellDamage] },
 ];
 
 export const makeSpellPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'spellPowerBuff' });
@@ -1006,17 +1010,17 @@ export const makeHolyPowerConsumeInput = makeConsumeInputFactory({ consumesField
 
 // Nature
 export const NATURE_POWER_CONFIG: ConsumableStatOption<NaturePowerBuff>[] = [
-	{ config: notSimulated('naturePowerBuff', 250343, NaturePowerBuff.ElixirOfNaturePower), stats: [Stat.StatNaturePower, Stat.StatSpellPower] },
+	{ config: consumable(250343, NaturePowerBuff.ElixirOfNaturePower), stats: [Stat.StatNaturePower, Stat.StatSpellPower] },
 ];
 
 export const makeNaturePowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'naturePowerBuff' });
 
 // Healing
 export const HEALING_POWER_CONFIG: ConsumableStatOption<HealingPowerBuff>[] = [
-	{ config: notSimulated('healingPowerBuff', 250333, HealingPowerBuff.GreaterClericsElixir), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('healingPowerBuff', 250332, HealingPowerBuff.ClericsElixir), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('healingPowerBuff', 250331, HealingPowerBuff.LesserClericsElixir), stats: [Stat.StatHealingPower] },
-	{ config: notSimulated('healingPowerBuff', 250330, HealingPowerBuff.MinorClericsElixir), stats: [Stat.StatHealingPower] },
+	{ config: consumable(250333, HealingPowerBuff.GreaterClericsElixir), stats: [Stat.StatHealingPower] },
+	{ config: consumable(250332, HealingPowerBuff.ClericsElixir), stats: [Stat.StatHealingPower] },
+	{ config: consumable(250331, HealingPowerBuff.LesserClericsElixir), stats: [Stat.StatHealingPower] },
+	{ config: consumable(250330, HealingPowerBuff.MinorClericsElixir), stats: [Stat.StatHealingPower] },
 ];
 
 export const makeHealingPowerConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'healingPowerBuff' });
@@ -1053,11 +1057,11 @@ export const LesserMagebloodElixir: ConsumableInputConfig<ManaRegenElixir> = {
 };
 
 export const MP5_CONFIG: ConsumableStatOption<ManaRegenElixir>[] = [
-	{ config: notSimulated('manaRegenElixir', 250341, ManaRegenElixir.GreaterMagebloodElixir), stats: [Stat.StatMP5] },
+	{ config: consumable(250341, ManaRegenElixir.GreaterMagebloodElixir), stats: [Stat.StatMP5] },
 	{ config: MagebloodPotion, stats: [Stat.StatMP5] },
-	{ config: notSimulated('manaRegenElixir', 250336, ManaRegenElixir.ElixirOfWickedRegeneration), stats: [Stat.StatMP5] },
+	{ config: consumable(250336, ManaRegenElixir.ElixirOfWickedRegeneration), stats: [Stat.StatMP5] },
 	{ config: LesserMagebloodElixir, stats: [Stat.StatMP5] },
-	{ config: notSimulated('manaRegenElixir', 250339, ManaRegenElixir.MinorMagebloodElixir), stats: [Stat.StatMP5] },
+	{ config: consumable(250339, ManaRegenElixir.MinorMagebloodElixir), stats: [Stat.StatMP5] },
 ];
 
 export const makeMp5ConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'manaRegenElixir' });
@@ -1073,8 +1077,9 @@ export const ElixirOfLesserIntellect: ConsumableInputConfig<IntellectElixir> = {
 };
 
 export const INTELLECT_CONFIG: ConsumableStatOption<IntellectElixir>[] = [
-	{ config: notSimulated('intellectElixir', 250337, IntellectElixir.ElixirOfTheOwl), stats: [Stat.StatIntellect] },
-	{ config: notSimulated('intellectElixir', 250354, IntellectElixir.ElixirOfIntellect), stats: [Stat.StatIntellect] },
+	{ config: consumable(250337, IntellectElixir.ElixirOfTheOwl), stats: [Stat.StatIntellect] },
+	{ config: consumable(9179, IntellectElixir.ElixirOfGreaterIntellect), stats: [Stat.StatIntellect] },
+	{ config: consumable(250354, IntellectElixir.ElixirOfIntellect), stats: [Stat.StatIntellect] },
 	{ config: ElixirOfWisdom, stats: [Stat.StatIntellect] },
 	{ config: ElixirOfLesserIntellect, stats: [Stat.StatIntellect] },
 	{ config: notSimulated('intellectElixir', 277493, IntellectElixir.ScrollOfCatFamiliar), stats: [Stat.StatIntellect] },
@@ -1084,12 +1089,12 @@ export const INTELLECT_CONFIG: ConsumableStatOption<IntellectElixir>[] = [
 
 // Spirit
 export const SPIRIT_CONFIG: ConsumableStatOption<SpiritElixir>[] = [
-	{ config: notSimulated('spiritElixir', 250348, SpiritElixir.ElixirOfTheWhale), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('spiritElixir', 250338, SpiritElixir.ElixirOfSages), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('spiritElixir', 250347, SpiritElixir.ElixirOfGreaterSpirit), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('spiritElixir', 250346, SpiritElixir.ElixirOfSpirit), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('spiritElixir', 250345, SpiritElixir.ElixirOfLesserSpirit), stats: [Stat.StatSpirit] },
-	{ config: notSimulated('spiritElixir', 250344, SpiritElixir.ElixirOfMinorSpirit), stats: [Stat.StatSpirit] },
+	{ config: consumable(250348, SpiritElixir.ElixirOfTheWhale), stats: [Stat.StatSpirit] },
+	{ config: consumable(250338, SpiritElixir.ElixirOfSages), stats: [Stat.StatSpirit] },
+	{ config: consumable(250347, SpiritElixir.ElixirOfGreaterSpirit), stats: [Stat.StatSpirit] },
+	{ config: consumable(250346, SpiritElixir.ElixirOfSpirit), stats: [Stat.StatSpirit] },
+	{ config: consumable(250345, SpiritElixir.ElixirOfLesserSpirit), stats: [Stat.StatSpirit] },
+	{ config: consumable(250344, SpiritElixir.ElixirOfMinorSpirit), stats: [Stat.StatSpirit] },
 ];
 
 export const makeIntellectConsumeInput = makeConsumeInputFactory({ consumesFieldName: 'intellectElixir' });
