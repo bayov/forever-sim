@@ -8,11 +8,13 @@ import "github.com/wowsims/classic/sim/core/proto"
 // Earth and Windfury Totem. Under Forever only one air totem works in a party, and
 // Windfury Totem is 24 DPS ahead of Grace of Air for a Sinister Strike rogue (180 sec).
 // The rest of the shared raid stays: both blessings (Wisdom does nothing for a rogue),
-// every debuff (Sunder Armor, Faerie Fire and Curse of Recklessness are the ones that
-// matter, Expose Armor does not stack with Sunder).
-func rogueLevel60Raid(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *proto.Debuffs) {
+// every debuff but Curse of Shadow, which Forever folds into Curse of the Elements (Sunder
+// Armor, Faerie Fire and Curse of Recklessness are the ones that matter to the rogue,
+// Expose Armor does not stack with Sunder).
+func rogueLevel60Raid(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 	raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
+	debuffs.CurseOfShadow = false
 }
 
 // rogueLevel60Consumes are the level 60 consumes, each kept because it helps (Sinister
@@ -22,9 +24,11 @@ func rogueLevel60Raid(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *p
 // Juju Power (3.3 for Backstab), Major Frenzy Potion 4.7 ahead of the Frenzy Potion (which
 // is 2.4 over none), and Flank au Poivre 3.5 ahead of Grilled Squid and 0.3 ahead of
 // Mightfish Steak. Elixir of Cunning loses 12 to the Elixir of the Mongoose. Ground Scorpok
-// Assay is 4.9 ahead of R.O.I.D.S. The caster elixirs are left out: Flask of Supreme Power
-// and Greater Arcane Elixir add 8 DPS, all of it through Dragonbreath Chili scaling with
-// spell power, and no rogue drinks them. The poisons are set per spec.
+// Assay is 4.9 ahead of R.O.I.D.S. Flask of Supreme Power and Greater Arcane Elixir add 8
+// DPS, all of it through Dragonbreath Chili scaling with spell power. No other flask or
+// spell power elixir does anything for a rogue, so they take those slots (every spec
+// gets the full raid treatment, orchestration/standards.md). The Elixir of the Mongoose is
+// the one +2% crit elixir. The poisons are set per spec.
 func rogueLevel60Consumes(mainHand, offHand proto.WeaponImbue) *proto.Consumes {
 	return &proto.Consumes{
 		AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
@@ -33,10 +37,12 @@ func rogueLevel60Consumes(mainHand, offHand proto.WeaponImbue) *proto.Consumes {
 		DefaultPotion:     proto.Potions_MajorFrenzyPotion,
 		DragonBreathChili: true,
 		FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
+		Flask:             proto.Flask_FlaskOfSupremePower,
 		Food:              proto.Food_FoodFlankAuPoivre,
 		MainHandImbue:     mainHand,
 		OffHandImbue:      offHand,
 		SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
+		SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
 		StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 		ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 	}
