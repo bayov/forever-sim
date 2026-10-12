@@ -9,19 +9,11 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-func (warrior *Warrior) ToughnessArmorMultiplier() float64 {
-	return 1.0 + 0.02*float64(warrior.Talents.Toughness)
-}
-
 func (warrior *Warrior) ApplyTalents() {
 	warrior.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(warrior.Talents.Cruelty))
-	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
-	warrior.ApplyEquipScaling(stats.Armor, warrior.ToughnessArmorMultiplier())
 	warrior.AddStat(stats.Defense, 4*float64(warrior.Talents.Anticipation))
 	warrior.AddStat(stats.Parry, 1*float64(warrior.Talents.Deflection))
-	warrior.AddMaxRage(10 * float64(warrior.Talents.BoundlessRage))
 
-	warrior.applyVitality()
 	warrior.applyBastion()
 	warrior.applyFocusedRage()
 	warrior.applyAngerManagement()
@@ -31,6 +23,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyBloodthrill()
 	warrior.applyUnbridledWrath()
 	warrior.applyDualWieldSpecialization()
+	warrior.applyFuriousPrecision()
 	warrior.applyEnrage()
 	warrior.applyFlurry()
 	warrior.applyShieldSpecialization()
@@ -72,8 +65,8 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 }
 
 // Weaponmaster folds the four Classic weapon specialization talents into one talent that pays
-// out differently depending on what is equipped.
-// TODO: only rank 1 was shown, beta will confirm the 1% crit / 3% armor / 1% extra attack per point.
+// out differently depending on what is equipped: 1% crit, 3% armor ignored or a 1% extra attack
+// chance per point (client 1.60.1.70338, TraitDefinitionEffectPoints curves of spell 1290261).
 func (warrior *Warrior) applyWeaponmaster() {
 	points := warrior.Talents.Weaponmaster
 	if points == 0 {
@@ -141,12 +134,14 @@ func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, 
 }
 
 // Bloodthrill hands out Overpower charges off the back of Rend instead of waiting for a dodge.
+// 4% a point from main hand white hits and abilities (client 70338: curve 4 to 20, proc types
+// melee auto and melee ability, and the tooltip says main hand).
 func (warrior *Warrior) applyBloodthrill() {
 	if warrior.Talents.Bloodthrill == 0 {
 		return
 	}
 
-	procChance := 0.02 * float64(warrior.Talents.Bloodthrill)
+	procChance := 0.04 * float64(warrior.Talents.Bloodthrill)
 
 	warrior.BloodthrillAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodthrill",
@@ -157,7 +152,7 @@ func (warrior *Warrior) applyBloodthrill() {
 	core.MakePermanent(warrior.RegisterAura(core.Aura{
 		Label: "Bloodthrill Trigger",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 				return
 			}
 
@@ -172,14 +167,16 @@ func (warrior *Warrior) applyBloodthrill() {
 	}))
 }
 
-// TODO: only rank 1 was shown, beta will confirm the 12% per point.
+// 12% a point for 1 Rage on white hits, whatever the weapon. The 1 October build took away the
+// 2 Rage two-handers got (client 70338: curve 12 to 60, spell 12964 gives 1 Rage, proc type
+// melee auto attack).
 func (warrior *Warrior) applyUnbridledWrath() {
 	if warrior.Talents.UnbridledWrath == 0 {
 		return
 	}
 
 	procChance := 0.12 * float64(warrior.Talents.UnbridledWrath)
-	rageGain := core.TernaryFloat64(warrior.MainHand().HandType == proto.HandType_HandTypeTwoHand, 2, 1)
+	rageGain := 1.0
 
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12964})
 
@@ -201,6 +198,8 @@ func (warrior *Warrior) applyUnbridledWrath() {
 	})
 }
 
+// 5% off-hand damage and 10% off-hand Rage a point. The hit chance it had went to Furious
+// Precision on 1 October (client 70338 curves, and Aidan Moon's 50% at 5 points).
 func (warrior *Warrior) applyDualWieldSpecialization() {
 	points := warrior.Talents.DualWieldSpecialization
 	if points == 0 {
@@ -208,40 +207,51 @@ func (warrior *Warrior) applyDualWieldSpecialization() {
 	}
 
 	multiplier := 1 + 0.05*float64(points)
-	bonusHit := 2 * core.MeleeHitRatingPerHitChance * float64(points)
 
-	warrior.AddOffHandDealtRageMultiplier(1 + 0.2*float64(points))
+	warrior.AddOffHandDealtRageMultiplier(1 + 0.1*float64(points))
 
 	warrior.OnSpellRegistered(func(spell *core.Spell) {
-		if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-			return
-		}
-
-		if spell.BonusCoefficient > 0 {
+		if spell.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.BonusCoefficient > 0 {
 			spell.DamageMultiplier *= multiplier
 		}
-		spell.BonusHitRating += bonusHit
 	})
 }
 
-// Forever turns Enrage into a chance to gain a flat 2% Physical damage buff from any damage
-// taken, where Classic only fired it on crits and scaled the buff with points.
+// Furious Precision gives the off hand 4, 7 or 10% hit (client 70338, curve of spell 1323963).
+func (warrior *Warrior) applyFuriousPrecision() {
+	if warrior.Talents.FuriousPrecision == 0 {
+		return
+	}
+
+	bonusHit := []float64{0, 4, 7, 10}[warrior.Talents.FuriousPrecision] * core.MeleeHitRatingPerHitChance
+	warrior.OnSpellRegistered(func(spell *core.Spell) {
+		if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			spell.BonusHitRating += bonusHit
+		}
+	})
+}
+
+// Forever turns Enrage into a 30% chance to gain 2% Physical damage a point for 12 sec from any
+// damage taken, where Classic only fired it on crits (client 70338: 30% proc chance on spell
+// 12317, curve 2 to 10 for the damage). We read the BlizzCon tooltip the other way round, a
+// chance growing by points for a flat 2%, until the client tree came in.
 func (warrior *Warrior) applyEnrage() {
 	if warrior.Talents.Enrage == 0 {
 		return
 	}
 
-	procChance := min(0.3*float64(warrior.Talents.Enrage), 1)
+	procChance := 0.3
+	multiplier := 1 + 0.02*float64(warrior.Talents.Enrage)
 
 	warrior.EnrageAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Enrage",
-		ActionID: core.ActionID{SpellID: 13048},
+		ActionID: core.ActionID{SpellID: 12880},
 		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.02
+			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.02
+			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= multiplier
 		},
 	})
 
@@ -363,14 +373,14 @@ func (warrior *Warrior) applyShieldSpecialization() {
 	})
 }
 
-// TODO: only rank 1 was shown, beta will confirm that rank 2 doubles both the chance and the rage.
+// 50% a point for 5 Rage (client 70338: curve 50 to 100, spell 23602 gives 5 Rage).
 func (warrior *Warrior) applyMasterOfDefense() {
 	if warrior.Talents.MasterOfDefense == 0 || !warrior.PseudoStats.CanBlock {
 		return
 	}
 
-	procChance := min(0.5*float64(warrior.Talents.MasterOfDefense), 1)
-	rageGain := 5.0 * float64(warrior.Talents.MasterOfDefense)
+	procChance := 0.5 * float64(warrior.Talents.MasterOfDefense)
+	rageGain := 5.0
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12727, Tag: 1})
 
 	warrior.RegisterAura(core.Aura{
@@ -389,18 +399,7 @@ func (warrior *Warrior) applyMasterOfDefense() {
 	})
 }
 
-// TODO: only rank 1 was shown, beta will confirm the 2% per point.
-func (warrior *Warrior) applyVitality() {
-	if warrior.Talents.Vitality == 0 {
-		return
-	}
-
-	multiplier := 1 + 0.02*float64(warrior.Talents.Vitality)
-	warrior.MultiplyStat(stats.Strength, multiplier)
-	warrior.MultiplyStat(stats.Stamina, multiplier)
-}
-
-// TODO: only rank 1 was shown, beta will confirm the 2% per point.
+// 2% a point with a shield (client 70338, curve of spell 16538).
 func (warrior *Warrior) applyBastion() {
 	if warrior.Talents.Bastion == 0 || !warrior.PseudoStats.CanBlock {
 		return
@@ -409,7 +408,7 @@ func (warrior *Warrior) applyBastion() {
 	warrior.PseudoStats.DamageDealtMultiplier *= 1 + 0.02*float64(warrior.Talents.Bastion)
 }
 
-// TODO: only rank 1 was shown, beta will confirm the 1 Rage per point.
+// 1 Rage a point off the offensive abilities (client 70338, curve of spell 29787).
 func (warrior *Warrior) applyFocusedRage() {
 	if warrior.Talents.FocusedRage == 0 {
 		return
@@ -502,7 +501,7 @@ func (warrior *Warrior) registerLastStandCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Minute * 10,
+				Duration: core.TernaryDuration(warrior.Env.IsForever(), time.Minute*3, time.Minute*10),
 			},
 		},
 

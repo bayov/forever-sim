@@ -20,7 +20,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | core.SpellFlagPassiveSpell | SpellFlagOffensive,
 
 		RageCost: core.RageCostOptions{
-			Cost:   15 - []float64{0, 3, 6}[warrior.Talents.ImprovedExecute],
+			Cost:   15 - []float64{0, 3, 5}[warrior.Talents.ImprovedExecute], // client 70338: 3 and 5
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{

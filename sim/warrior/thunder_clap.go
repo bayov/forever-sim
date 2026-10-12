@@ -12,6 +12,14 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	has5pcConq := warrior.HasSetBonus(ItemSetConquerorsBattleGear, 5)
 	attackSpeedReduction := core.TernaryInt32(has5pcConq, 15, 10)
 	stanceMask := BattleStance
+	cooldown := time.Second * 4
+	// Forever's Thunder Clap slows by 20% on a 6 sec cooldown and works in Defensive Stance too
+	// (client 70338, spell 11581).
+	if warrior.Env.IsForever() {
+		attackSpeedReduction += 10
+		stanceMask |= DefensiveStance
+		cooldown = time.Second * 6
+	}
 
 	warrior.ThunderClapAuras = warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return core.ThunderClapAura(target, spellID, attackSpeedReduction)
@@ -36,7 +44,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Second * 4,
+				Duration: cooldown,
 			},
 		},
 

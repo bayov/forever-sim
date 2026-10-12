@@ -31,7 +31,7 @@ const (
 	SpellCode_WarriorWhirlwind
 )
 
-var TalentTreeSizes = [3]int{17, 18, 19}
+var TalentTreeSizes = [3]int{17, 17, 18}
 
 type WarriorInputs struct {
 	QueueDelay     int32
@@ -99,6 +99,7 @@ type Warrior struct {
 	DeepWounds        *WarriorSpell
 	ConcussionBlow    *WarriorSpell
 	Hamstring         *WarriorSpell
+	SpearingStrike    *WarriorSpell
 
 	HeroicStrike       *WarriorSpell
 	HeroicStrikeQueue  *WarriorSpell
@@ -168,6 +169,12 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.reactionTime = time.Millisecond * 500
 
+	// A critical white hit gives 100% more Rage under Forever (75% from the 1 October build,
+	// 100% from its second warrior pass the same day).
+	if warrior.Env.IsForever() {
+		warrior.AddCritDealtRageMultiplier(2)
+	}
+
 	warrior.registerShouts()
 	warrior.registerStances()
 	warrior.registerBerserkerRageSpell()
@@ -185,6 +192,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerRendSpell()
 	warrior.registerHamstringSpell()
 	warrior.registerPummelSpell()
+	warrior.registerSpearingStrikeSpell()
 
 	// The sim often re-enables heroic strike in an unrealistic amount of time.
 	// This can cause an unrealistic immediate double-hit around wild strikes procs

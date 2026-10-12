@@ -15,6 +15,18 @@ func (warrior *Warrior) registerSlamSpell() {
 	// and stops Slam from resetting the swing timer entirely.
 	castReduction := time.Millisecond * 250 * time.Duration(warrior.Talents.ImprovedSlam)
 
+	// Forever gives Slam an 18 sec cooldown, and Improved Slam takes 3 sec off it (client
+	// 70338: category cooldown 18000 on every rank, and effect 3 of spell 12862 is -3000 with no
+	// rank curve, so 3 sec at either rank. ForeverChanges reads it as 3 sec a point).
+	// TODO: rank 2 of Improved Slam may take 6 sec off, see notes.md.
+	var cooldown core.Cooldown
+	if warrior.Env.IsForever() {
+		cooldown = core.Cooldown{
+			Timer:    warrior.NewTimer(),
+			Duration: time.Second*18 - core.TernaryDuration(warrior.Talents.ImprovedSlam > 0, time.Second*3, 0),
+		}
+	}
+
 	warrior.Slam = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorSlam,
 		ActionID:    core.ActionID{SpellID: spellID},
@@ -34,6 +46,7 @@ func (warrior *Warrior) registerSlamSpell() {
 				GCD:      max(core.GCDDefault-castReduction, core.GCDMin),
 				CastTime: time.Millisecond*1500 - castReduction,
 			},
+			CD: cooldown,
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if warrior.Talents.ImprovedSlam == 0 && spell.CastTime() > 0 {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, true)

@@ -19,6 +19,7 @@ type rageBar struct {
 	damageDealtMultiplier  float64 // Multiplier for rage generation from damage dealt
 	damageTakenMultiplier  float64 // Multiplier for rage generation from damage taken
 	offHandDealtMultiplier float64 // Extra multiplier for rage generation from off-hand damage dealt
+	critDealtMultiplier    float64 // Extra multiplier for rage generation from critical auto attacks
 
 	flatDamageDealtBonusRage float64
 	flatDamageTakenBonusRage float64
@@ -96,6 +97,9 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			if spell.ProcMask == ProcMaskMeleeOHAuto {
 				generatedRage *= unit.rageBar.offHandDealtMultiplier
 			}
+			if result.Outcome.Matches(OutcomeCrit) {
+				generatedRage *= unit.rageBar.critDealtMultiplier
+			}
 			generatedRage += unit.rageBar.flatDamageDealtBonusRage
 
 			var metrics *ResourceMetrics
@@ -132,6 +136,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 		damageDealtMultiplier:  options.DamageDealtMultiplier,
 		damageTakenMultiplier:  options.DamageTakenMultiplier,
 		offHandDealtMultiplier: 1,
+		critDealtMultiplier:    1,
 		startingRage:           max(0, min(options.StartingRage, MaxRage)),
 		maxRage:                MaxRage,
 		RageRefundMetrics:      unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
@@ -148,6 +153,12 @@ func (unit *Unit) AddDamageDealtRageMultiplier(multi float64) {
 
 func (unit *Unit) AddOffHandDealtRageMultiplier(multi float64) {
 	unit.rageBar.offHandDealtMultiplier *= multi
+}
+
+// Forever gives Rage users more Rage from a critical auto attack (the 1 October development
+// notes: 100% more for warriors).
+func (unit *Unit) AddCritDealtRageMultiplier(multi float64) {
+	unit.rageBar.critDealtMultiplier *= multi
 }
 
 func (unit *Unit) AddMaxRage(amount float64) {

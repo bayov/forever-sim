@@ -1577,17 +1577,20 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 	rank := TernaryInt32(IncludeAQ, 7, 6)
 	spellId := BattleShoutSpellId[rank]
 	baseAP := BattleShoutBaseAP[rank]
+	duration := time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts)))
 	if unit.Env.IsForever() {
 		rank = int32(HighestRankAt(unit.Level, BattleShoutLevel[:]))
 		spellId = BattleShoutSpellId[rank]
 		baseAP = foreverBattleShoutAP[rank]
 		impBattleShout = 0
+		// 3 min (client 70338, spell 25289), and Booming Voice no longer adds to it.
+		duration = time.Minute * 3
 	}
 
 	return unit.GetOrRegisterAura(Aura{
 		Label:      "Battle Shout",
 		ActionID:   ActionID{SpellID: spellId},
-		Duration:   time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts))),
+		Duration:   duration,
 		BuildPhase: CharacterBuildPhaseBuffs,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{

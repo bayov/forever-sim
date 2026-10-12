@@ -17,7 +17,7 @@ func (warrior *Warrior) newShoutSpellConfig(actionID core.ActionID, rank int32, 
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL | core.SpellFlagHelpful,
 
 		RageCost: core.RageCostOptions{
-			Cost: 10,
+			Cost: warrior.shoutRageCost(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -49,12 +49,16 @@ func (warrior *Warrior) registerBattleShout() {
 	has3pcWrath := warrior.HasSetBonus(ItemSetBattleGearOfWrath, 3)
 
 	warrior.BattleShout = warrior.newShoutSpellConfig(core.ActionID{SpellID: actionId}, rank, warrior.NewPartyAuraArray(func(unit *core.Unit) *core.Aura {
-		// Improved Battle Shout is gone from the Forever tree. It feeds the party's attack power,
-		// so it is assumed to have become baseline at full strength rather than deleted, and
-		// Forever's Booming Voice only widens the radius.
-		// TODO: assumed baseline, beta will confirm
+		// Improved Battle Shout is gone from the Forever tree. Under Forever BattleShoutAura uses
+		// the client's 139 at 60 and ignores the talent points passed here.
 		return core.BattleShoutAura(unit, 5, 0, has3pcWrath)
 	}))
+}
+
+// Forever's Booming Voice takes 5% a point off the shouts' Rage cost (client 70338: curve -5 to
+// -25 on spell 12321, on the shout spell mask).
+func (warrior *Warrior) shoutRageCost() float64 {
+	return 10 * (1 - 0.05*float64(warrior.Talents.BoomingVoice))
 }
 
 func (warrior *Warrior) registerShouts() {
