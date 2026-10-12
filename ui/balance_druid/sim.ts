@@ -52,6 +52,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	displayPseudoStats: [],
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
@@ -109,9 +110,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildLevel60],
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		rotations: [...Presets.APLPresets[Phase.Phase1]],
-		gear: [...Presets.GearPresets[Phase.Phase5]],
+		gear: [...Presets.GearPresets[Phase.Phase1], ...Presets.GearPresets[Phase.Phase5]],
 	},
 
 	autoRotation: player => {
