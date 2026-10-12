@@ -120,8 +120,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FeralSynthetic(Phase1)"
  value: {
-  dps: 905.11371
-  tps: 921.7473
+  dps: 903.79568
+  tps: 920.4391
  }
 }
 dps_results: {

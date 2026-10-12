@@ -35,11 +35,11 @@ import (
 // gets the casters' weapon budget, 73.0, what a caster's main hand (Azuresong Mageblade's stats at Era
 // prices, 46.2) and an item level 71 off-hand (26.8) have together. Spell power is the all-school kind.
 //
-// Feral cat (leather, ids 998101 to 998113) totals 178 Agility, 170 Strength, 151 Stamina, 76 attack
+// Feral cat (leather, ids 998101 to 998113) totals 189 Agility, 166 Strength, 149 Stamina, 75 attack
 // power, 90 hit rating (9%, the cat's special attack hit cap against a level 63 boss), 56 crit rating
-// (4%), 21 Intellect and 16 Spirit. The cat fights on Energy, but Shifting Power, which replaced
-// powershifting, costs mana (55% of base mana for 40 Energy), so the set gives about 5% of its budget to
-// Intellect and Spirit. Agility and Strength split the rest about evenly with Stamina next, and the
+// (4%) and 21 Intellect. The cat fights on Energy, so no Spirit (the cross-class rule for Energy and
+// Rage users), but Shifting Power, which replaced powershifting, costs mana (55% of base mana for 40
+// Energy), so the set gives about 3% of its budget to Intellect. Agility and Strength split the rest about evenly with Stamina next, and the
 // back, the first ring and the weapon put part of theirs into attack power (plain attack power, priced
 // as such). The two-hander is at 76 like every class's.
 //
@@ -218,7 +218,7 @@ var foreverSyntheticDruidItems = []*proto.UIItem{
 	{
 		Id: 998105, Name: "Feral Synthetic Chest (Phase 1)", Icon: "inv_chest_leather_08",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats:      stats.Stats{stats.Strength: 21, stats.Agility: 15, stats.Stamina: 15, stats.Spirit: 5, stats.Armor: 200}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Strength: 19, stats.Agility: 19, stats.Stamina: 15, stats.Armor: 200}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
@@ -264,7 +264,7 @@ var foreverSyntheticDruidItems = []*proto.UIItem{
 	{
 		Id: 998110, Name: "Feral Synthetic Feet (Phase 1)", Icon: "inv_boots_08",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats: stats.Stats{stats.Strength: 13, stats.Agility: 18, stats.Stamina: 13, stats.Spirit: 6, stats.Armor: 138}.ToFloatArray(),
+		Stats: stats.Stats{stats.Strength: 12, stats.Agility: 22, stats.Stamina: 12, stats.Armor: 138}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
 	},
@@ -290,7 +290,7 @@ var foreverSyntheticDruidItems = []*proto.UIItem{
 	{
 		Id: 998113, Name: "Feral Synthetic Two-Hand (Phase 1)", Icon: "inv_mace_25",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeTwoHand,
-		Stats:     stats.Stats{stats.Strength: 24, stats.Agility: 20, stats.Stamina: 20, stats.Intellect: 5, stats.Spirit: 5, stats.AttackPower: 29}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Strength: 23, stats.Agility: 23, stats.Stamina: 19, stats.Intellect: 5, stats.AttackPower: 28}.ToFloatArray(),
 		HitRating: 10,
 		// Earthshaker damage and speed.
 		WeaponDamageMin: 175, WeaponDamageMax: 263, WeaponSpeed: 3.5,
