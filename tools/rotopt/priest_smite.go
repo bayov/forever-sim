@@ -47,6 +47,8 @@ func (priestSmite) Knobs() []Knob {
 		// default is rank 4, which no such rule reaches.
 		{Name: "smiteDownrank", Default: 4, Min: 0, Max: 7, Step: 1},
 		{Name: "smiteManaRate", Default: 20, Min: 15, Max: 45, Step: 5},
+		// A Smite 2 sec before the pull (Divine Fury 5/5), landing at 0.
+		{Name: "prepullSmite", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -111,5 +113,9 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	} else {
 		items = append(items, cast(smite, nil, "Smite fills."))
 	}
-	return rotation(items...)
+	rot := rotation(items...)
+	if k["prepullSmite"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(smite, 2))
+	}
+	return rot
 }

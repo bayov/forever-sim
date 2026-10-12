@@ -69,6 +69,9 @@ func (priestShadow) Knobs() []Knob {
 		// Power Infusion on cooldown (needs the 31 point Discipline talent, which no level 60
 		// build takes).
 		{Name: "powerInfusion", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Before the pull: 0 Shadowform only (1.5 sec out), 1 Shadowform 3 sec out and a Mind
+		// Blast 1.5 sec out that lands at 0, 2 the same with Inner Focus on that Mind Blast.
+		{Name: "prepull", Default: 1, Min: 0, Max: 2, Step: 1},
 	}
 }
 
@@ -189,7 +192,15 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	items = append(items, channel(mindFlay, nil, clip, mfNotes))
 
 	rot := rotation(items...)
-	rot.PrepullActions = append(rot.PrepullActions, prepull(shadowform, 1.5))
+	if k["prepull"] == 0 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(shadowform, 1.5))
+	} else {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(shadowform, 3))
+		if k["prepull"] == 2 {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(innerFocus, 1.5))
+		}
+		rot.PrepullActions = append(rot.PrepullActions, prepull(mindBlast, 1.5))
+	}
 	return rot
 }
 
