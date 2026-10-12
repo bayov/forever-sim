@@ -66,7 +66,21 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Warlock
 
-* (nothing yet)
+The warlock runs the Forever client tree and spell ranks since 2026-10-12. What the client leaves to the server, and what we assumed for it:
+
+* Soul Siphon's count. The client gives only "4% per each of your other Affliction effects active on the target, up to a maximum increase of 12%" a rank. The sim counts Corruption, the bane, Siphon Life and the curse, snapshots the count when the drain starts, and multiplies it with Improved Drains and the other bonuses. A Drain Life with and without Corruption up (one rank of the talent, combat log) settles the count and whether it adds.
+* Decimation's damage part. Only the tooltip says "they deal 3% increased damage" (Shadow Bolt and Searing Pain on a target below 35%), the client's effect has 0 points. The sim gives the two spells 3% a rank against a target in the 35% execute phase. Needs a level 40 Demonology warlock and a mob under 35%.
+* Demonic Brand's damage. The 69876 client tooltip says 65 to 68 a hit, 70338 shows a placeholder. The sim has 65 to 68, no spell power, and lets it crit. Needs a level 40 Demonology warlock.
+* The demons don't scale with the warlock. Firebolt and Lash of Pain have spell power coefficients in the client (57.1% and 42.9%), and Demonic Knowledge gives the demon spell damage, so Forever may give the demons some of the warlock's spell power. The sim gives them none, as in 1.12, and keeps the 1.12 demon stats and melee damage (server side). A Firebolt with and without a spell power item on the warlock settles it (beta, any level).
+* Demonic Embrace's Spirit. The tooltip lost 1.12's Spirit cost, but the client still has a Spirit effect on the talent with the server filling in its value. The sim takes no Spirit. One look at the character sheet with the talent settles it (beta, level 10).
+* Two Demonic Sacrifice buffs at once. With Demonic Pact a warlock could sacrifice the Imp, summon the Succubus and sacrifice it too. The sim keeps one buff (a new sacrifice replaces the old one), like 1.12's mutually exclusive buffs. Needs a level 60 Demonology warlock.
+* Incinerate's 25% with Immolate up. The client's second effect is a script with 25 in it, the sim takes 25% more of the whole hit, spell power part included. The beta's level 40 Incinerate on a mob with and without Immolate settles it.
+* Soul Shards are not counted. Shadowburn and Soul Fire cost one, Decimation and Shadow and Flame give some back. The presets assume the warlock brings enough to a raid fight.
+* Improved Shadow Bolt's Shadow Vulnerability counts for every Shadow hit and tick of the warlock (aura 270, damage taken from the caster), not for the demon.
+* Wrack's 10% (aura 271 on Corruption and Bane of Agony) multiplies with the other bonuses, and only while the channel runs.
+* Rain of Fire and Hellfire keep their 1.12 numbers. Forever's Rain of Fire is an area trigger the client does not fill in. No preset uses either.
+* Life Tap costs health the sim does not track unless the warlock is the tank, so the presets tap as much as they like.
+
 
 ## Druid
 

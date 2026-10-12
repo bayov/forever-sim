@@ -8,6 +8,38 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The beta client's warlock tree (hyjal.cc's bundle of build 1.60.1.69876, `tools/forever_talents/client/warlock.json` in the sim repo) and spells (wago.tools DB2 tables of build 1.60.1.70338, ForeverChanges' talent calculator and spellbook for the same build), against the BlizzCon data below. The sim follows the client since 2026-10-12, and `tools/forever_talents/data/warlock.json` is generated from the client tree. The per-talent text further down is superseded where it differs.
+
+Tree:
+
+- Positions, rank counts and prerequisites held, except that Drain Hope became Wrack before the beta opened (build 1.60.1.69893): a 6 sec channel of 36 Shadow damage a second (14.3% coefficient a tick, 200 mana) that makes the warlock's Corruption and Bane of Agony deal 10% more while it lasts. Soul Harvesting is Soul Harvest since 1.60.1.70338.
+- Ranks 2 and up are real numbers now. Improved Drains is 7 / 13 / 20% on Drain Life, Drain Soul and Wrack (no per-effect bonus any more, that moved to Soul Siphon: 4 / 8 / 12% for each other Affliction effect on the target, up to 3). Fel Concentration and Intensity are 23 / 47 / 70%. Pandemic is 33 / 67 / 100% more critical strike bonus. Nightfall is 2 / 4%. Soul Harvest is 50 / 100% for 10 sec at both ranks. Improved Bane of Agony is 5 / 10%. Shadow Mastery is 1% a rank.
+- Demonology: Unholy Power is 2% a rank on all pet damage, Fel Vitality 5% a rank (pet health and mana, and the warlock's mana), Demonic Energies 8 / 15% and 50 / 100%, Master Summoner 2 / 4 sec and 20 / 40%, Decimation 45 / 90% off Soul Fire's cooldown and 20 / 40% off its cast (10 sec at both ranks, below 35% health at both ranks), Demonic Brand 2 / 4 / 6 pet attacks of 65 to 68 (10 sec at every rank, 17 / 33 / 50% less threat), Improved Felhunter 2 / 4 / 6 sec, Demonic Knowledge 33 / 67 / 100% of the level as spell damage for the warlock and the demon, Master Demonologist 2% a rank.
+- Destruction: Improved Shadow Bolt is 4% a rank for 12 sec at every rank, from the warlock's own attacks only and with no charges (Shadow Vulnerability, 17794, "damage taken from caster"). Cataclysm is 3 / 6 / 10%, Aftermath 10% a rank on Immolate's direct damage, Ruin 20% a rank, Agonizing Flames 3 / 7 / 10%, Fire and Brimstone 8 / 17 / 25%, Shadow and Flame 2% a rank and 20% a rank, 20 sec at every rank.
+
+Spells at level 60 (client SpellEffect, SpellLevels, SpellPower, SpellMisc; most damage is about half of 1.12, the damage over time coefficients went up):
+
+- Shadow Bolt rank 10 253 to 283 (1.12 482 to 538), 85.7%. Rank 9 237 to 265.
+- Immolate rank 8 158 and 5 ticks of 55 (1.12 279 and 510), 20% and 13% a tick.
+- Corruption rank 7 6 ticks of 73 (1.12 822 in all), 20% a tick (1.12 16.7%). Ranks 1 and 2 last 12 and 15 sec.
+- Bane of Agony (was Curse of Agony) rank 6 552 over 24 sec (1.12 1044), 13.3% a tick (1.12 8.3%).
+- Bane of Doom (was Curse of Doom) 1742 after 1 min (1.12 3200), 400% (1.12 100%).
+- Siphon Life is a talent with trainer ranks behind it, 11 / 19 / 29 / 41 every 3 sec at 30 / 38 / 48 / 58, 5% a tick.
+- Drain Life rank 6 51 a second, Drain Soul rank 4 84 every 3 sec (1.12 91), both 10% a tick.
+- Searing Pain rank 6 107 to 126 (1.12 208 to 244), Soul Fire rank 2 389 to 488 (1.12 715 to 894), Death Coil rank 3 460 for 600 mana.
+- Shadowburn is a talent with trainer ranks from 20 (rank 6 258 to 288, 1.12 462 to 514), 8 sec shard window.
+- Conflagrate is a row 4 talent with trainer ranks from 25 (rank 6 251 to 313, 1.12 447 to 557), 10 sec cooldown.
+- Incinerate is the Destruction capstone with trainer ranks at 40, 50 and 60 (rank 3 201 to 233, 71.4%, 2.5 sec, 325 mana), 25% more with the warlock's Immolate on the target.
+- Life Tap converts its points plus one health a point of Spirit, times Improved Life Tap ($m1 + $SPI), 424 at rank 6 and level 60, and no longer scales with spell power.
+- Banes and curses are two slots: one bane (Agony, Doom, Havoc) and one curse per warlock on a target. Curse of Shadow is gone. Curse of the Elements is a trainer spell from 20 with 4 ranks, 30 / 45 / 60 / 75 resistance and 4 / 6 / 8 / 10% more damage taken from every magic school. Curse of Recklessness takes 505 armor and gives no attack power.
+- Firestone and Spellstone are weapon imbues now (the same enchant effect as the shaman imbues, so they stack with an oil): Major Firestone gives Fire damage up to 21 and 2% spell crit, Major Spellstone Shadow damage up to 21 and 2% spell haste.
+- The demons hit for about half too: Firebolt rank 7 43 to 48, Lash of Pain rank 6 50.
+- Demonic Sacrifice swapped its schools and lasts 2 hours: the Imp gives 15% Shadow damage, the Succubus 15% Fire damage, the Voidwalker 2% of maximum mana every 4 sec, the Felhunter 3% of maximum health every 4 sec.
+- Demonheart Raiment (item set 2100) is Forever's warlock Tier 1: 2 pieces 1% hit, 3 pieces Banish 1.5 sec faster, 4 pieces up to 21 spell damage against Demons, 5 pieces 20% more mana from Life Tap at no extra health. Its pieces carry no stats in the client yet.
+- 2026-10-08 build: Hellfire can crit, Soul Harvest really gives its regeneration, and Drain Soul stops when another spell is cast. 2026-09-24: Eureka! (Gnome) costs 10% less for every class.
+
 ## Spellbook changes (trainer abilities)
 
 0 of 65 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
