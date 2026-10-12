@@ -5,16 +5,19 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
+	Explosive,
 	FirePowerBuff,
 	Flask,
 	Food,
 	IndividualBuffs,
+	IntellectElixir,
 	ManaRegenElixir,
 	MobType,
 	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	SpellPowerBuff,
 	Stat,
 	TristateEffect,
@@ -144,15 +147,26 @@ export const DefaultTalents = TalentsLevel60;
 
 export const DefaultOptions = ElementalShamanOptions.create({});
 
-// CONSUMES_NUMBERS
+// The level 60 consumables. On 2026-10-12 we tried each candidate in its slot on the Level 60
+// build, as the mean DPS at 120, 180 and 300 sec (585.5 with the first pick): Goblin Sapper
+// Charge +4.3, Goblin Land Mine +1.2 and Elixir of Wisdom +0.9 went in. Demonic Rune is worth
+// 9.6, Flask of Supreme Power 71 over Flask of Distilled Wisdom, Cerebral Cortex Compound 3.4
+// (Spirit of Zanza 2.2), Mageblood Potion 2.3, Elixir of Firepower 1.6 (Flame Shock, Lava Burst
+// and Searing Totem), Wizard Oil 11.9 and Nightfin Soup (22 spell damage under Forever) 6.1
+// over Grilled Squid. Brilliant Wizard Oil would be 10.8 more, but it comes in Era Phase 4.
+// Elixir of the Sages, Elixir of Greater Firepower and Greater Mageblood Elixir do nothing in
+// the sim yet. All together the build is 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodNightfinSoup,
+	intellectElixir: IntellectElixir.ElixirOfWisdom,
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });

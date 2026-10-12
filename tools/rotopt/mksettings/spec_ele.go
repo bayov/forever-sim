@@ -13,15 +13,19 @@ func init() {
 			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
 			debuffs.CurseOfShadow = false
 		},
+		// The Level 60 preset's consumes (ui/elemental_shaman/presets.ts has what each is worth).
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
 				DefaultPotion:   proto.Potions_MajorManaPotion,
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
+				FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
 				FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodNightfinSoup,
+				IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
