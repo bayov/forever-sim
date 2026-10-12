@@ -38,7 +38,7 @@ func init() {
 				ShadowPowerBuff:   proto.ShadowPowerBuff_ElixirOfShadowPower,
 				SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
 				SpiritElixir:      proto.SpiritElixir_ElixirOfGreaterSpirit,
-				StrengthBuff:      proto.StrengthBuff_JujuPower,
+				StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
 			}
 		},

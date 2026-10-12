@@ -263,7 +263,8 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // (937.1, Sages is 0.5 ahead there, inside the noise). These were on the earlier set with
 // trinkets. On the final set, a second crit elixir (Mongoose in place of Greater Agility) would add
 // 12.4 on the Level 60 build (968.6 to 981.0 at 180 sec) and 7.6 on Shock (955.1 to 962.7). Elixir of
-// Giants is 1 to 2 behind Juju Power, Greater Spirit is worth 1.3 on Shock and nothing on the
+// Giants is 1 to 2 behind Juju Power, and Elixir of Ferocity (18 Strength and Agility) beats Juju
+// Power on the final set by 1.6 / 1.5 / 0.8 at 180 sec (twist / sub Holy / Shock). Greater Spirit is worth 1.3 on Shock and nothing on the
 // twist build, Greater Agility 9 and 5. Lobster Stew beats Nightfin Soup by 3 (Mightfish Steak
 // and Flank au Poivre are 3 to 4 behind), and Greater Mageblood Elixir takes the Mageblood
 // Potion's place (the same at 180 sec, 3.3 at 300).
@@ -284,7 +285,7 @@ export const DefaultConsumes = Consumes.create({
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfGreaterSpirit,
-	strengthBuff: StrengthBuff.JujuPower,
+	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
