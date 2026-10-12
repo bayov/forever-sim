@@ -178,7 +178,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 // old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 	'Level 60 Fire',
-	SavedTalents.create({ talentsString: '05020500300001-13550000130133051-004' }),
+	SavedTalents.create({ talentsString: '05020500300001-23550000130123051-004' }),
 	{ tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.', group: 'Level 60' },
 );
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
