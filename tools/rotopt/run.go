@@ -147,7 +147,12 @@ func (s *setup) breakdown(rot *proto.APLRotation, duration float64, iterations i
 	n := float64(iterations)
 	var b strings.Builder
 	fmt.Fprintf(&b, "%-24s %7s %7s %7s %7s %7s %7s %7s %8s\n", "action", "dps", "casts", "hits", "crits", "miss", "dodge", "parry", "avg hit")
-	for _, action := range player.Actions {
+	actions := player.Actions
+	for _, pet := range player.Pets {
+		fmt.Fprintf(&b, "pet %s dps %.2f\n", pet.Name, pet.Dps.Avg)
+		actions = append(actions, pet.Actions...)
+	}
+	for _, action := range actions {
 		var m proto.TargetedActionMetrics
 		for _, t := range action.Targets {
 			m.Casts += t.Casts
