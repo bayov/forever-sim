@@ -25,7 +25,7 @@ func init() {
 				DragonBreathChili: true,
 				Flask:             proto.Flask_FlaskOfDistilledWisdom,
 				Food:              proto.Food_FoodFlankAuPoivre,
-				StrengthBuff:      proto.StrengthBuff_JujuPower,
+				StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 				ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 			}
 		},

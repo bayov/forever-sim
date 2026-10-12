@@ -46,6 +46,11 @@ func (druidBalance) Knobs() []Knob {
 		{Name: "wrathBelowMana", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Innervate on ourself below this much mana, 0 never.
 		{Name: "innervateMana", Default: 40, Min: 0, Max: 80, Step: 10},
+		// A pre-pull cast timed to land at 0: 0 none, 1 Starfire, 2 Wrath, cast prepullTime
+		// seconds before the pull (3 for Starfire with Improved Starfire, 1.5 for Wrath with
+		// Improved Wrath, so the spell lands at 0 plus its travel time).
+		{Name: "prepull", Default: 1, Min: 0, Max: 2, Step: 1},
+		{Name: "prepullTime", Default: 3, Min: 1.5, Max: 3.5, Step: 0.5},
 	}
 }
 
@@ -101,7 +106,14 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 			cast(starfire, ready, "Starfire once Eclipse has enough charges, or a Wrath that will give them is on its way."),
 			cast(wrath, nil, "Wrath for Eclipse charges."))
 	}
-	return rotation(items...)
+	rot := rotation(items...)
+	switch k["prepull"] {
+	case 1:
+		rot.PrepullActions = append(rot.PrepullActions, prepull(starfire, k["prepullTime"]))
+	case 2:
+		rot.PrepullActions = append(rot.PrepullActions, prepull(wrath, k["prepullTime"]))
+	}
+	return rot
 }
 
 func spellInFlight(spell *proto.ActionID) value {
