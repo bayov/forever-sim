@@ -22,6 +22,7 @@ import {
 	Stat,
 	TristateEffect,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common';
 import { Mage_Options as MageOptions, Mage_Options_ArmorType as ArmorType } from '../core/proto/mage';
 import { SavedTalents } from '../core/proto/ui';
@@ -189,8 +190,8 @@ export const DefaultOptions = MageOptions.create({
 // Forever (+40 Holy), so the Fire elixir is the plain Elixir of Firepower (+1 to +5). Nightfin
 // Soup beats Runn Tum Tuber Surprise by 7 to 15 and Grilled Squid by 3 to 7, the Goblin Sapper adds
 // 4 (Engineering), and Elixir of Wisdom 1. The presets model Forever's launch, with no raid open,
-// so nothing that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe),
-// and no Cerebral Cortex Compound (Zul'Gurub). Flask of Supreme Power is 75 to 90 ahead of
+// so nothing that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe).
+// Cerebral Cortex Compound is a Blasted Lands quest. Flask of Supreme Power is 75 to 90 ahead of
 // Distilled Wisdom. The Goblin Land Mine costs 2 to 11, because throwing it takes a GCD.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
@@ -204,6 +205,7 @@ export const DefaultConsumes = Consumes.create({
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
 // A mage stands in a caster group: Arcane Brilliance, Divine Spirit, Gift of the Wild, Power Word:

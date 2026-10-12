@@ -12,8 +12,8 @@ import "github.com/wowsims/classic/sim/core/proto"
 // Firepower is the Elixir of Holy Power under Forever (+40 Holy), so the Fire elixir is the plain
 // Elixir of Firepower. Nightfin Soup beats Runn Tum Tuber Surprise by 7 to 15, the Goblin Sapper
 // adds 4 and Elixir of Wisdom 1. The presets model Forever's launch, with no raid open, so nothing
-// that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe), and no
-// Cerebral Cortex Compound (Zul'Gurub). Flask of Distilled Wisdom is 75 to 90 behind Supreme
+// that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe). Cerebral
+// Cortex Compound is a Blasted Lands quest. Flask of Distilled Wisdom is 75 to 90 behind Supreme
 // Power. A Goblin Land Mine costs 2 to 11 (its throw takes a GCD), and Mage Armor is 8 to 17
 // ahead of Ice Armor.
 func mageSpec() *specSetup {
@@ -36,6 +36,7 @@ func mageSpec() *specSetup {
 				ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
 		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Tailoring},
