@@ -34,8 +34,9 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "swdMana", Default: 20, Min: 0, Max: 60, Step: 10},
-		// Inner Focus: 0 never, 1 on Holy Fire, 2 on Smite, 3 on Mind Blast.
-		{Name: "innerFocus", Default: 2, Min: 0, Max: 3, Step: 1},
+		// Inner Focus: 0 never, 1 on Holy Fire, 2 on Smite, 3 on Mind Blast, 4 on Devouring Plague
+		// (the most mana it can save) with a last one on Smite near the end of the fight.
+		{Name: "innerFocus", Default: 4, Min: 0, Max: 4, Step: 1},
 		{Name: "powerInfusion", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "chastise", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
@@ -85,7 +86,14 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(shadowWordPain, and(not(dotIsActive(shadowWordPain)), ge(remainingTime(), seconds(9)), manaAbove(k["swpMana"])), "Shadow Word: Pain whenever it is down."))
 	}
 	if k["dp"] == 1 {
-		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), manaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
+		dpMana := manaAbove(k["dpMana"])
+		if k["innerFocus"] == 4 {
+			items = append(items, cast(innerFocus, and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), spellIsReady(devouringPlague)), "Inner Focus right before Devouring Plague, the priest's most expensive spell. Without the talent ignore the warning on this line."))
+			if dpMana != nil {
+				dpMana = or(dpMana, auraIsActive(innerFocus))
+			}
+		}
+		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), dpMana), "Devouring Plague whenever it is down and off cooldown."))
 	}
 	if k["chastise"] == 1 {
 		items = append(items, cast(chastise, nil, "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."))
@@ -101,6 +109,8 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["innerFocus"] == 2 {
 		items = append(items, cast(innerFocus, nil, "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."))
+	} else if k["innerFocus"] == 4 {
+		items = append(items, cast(innerFocus, lt(remainingTime(), seconds(15)), "Inner Focus on a Smite once no Devouring Plague is left to take it. Without the talent ignore the warning on this line."))
 	}
 	if rank := int(k["smiteDownrank"]); rank >= 3 && rank < priest.SmiteRanks {
 		lasts := ge(&proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{

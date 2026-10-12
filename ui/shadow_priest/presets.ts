@@ -139,7 +139,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Infusion on cooldown after a Smite 2 sec before the pull that lands at 0 (+6.0), Holy Fire
 // whenever its damage over time is down (Power in Light gives
 // Smite 10% while it is up), Shadow Word: Pain, Devouring Plague above 20% mana, Chastise for a
-// Dwarf, Inner Focus on cooldown for a Smite, then rank 8 Smite while the mana lasts the fight
+// Dwarf, Inner Focus on Devouring Plague (the most mana it can save; +1.6 at 300 sec over Inner
+// Focus on Smite, from the rotation audit) with a last one on Smite near the end, then rank 8 Smite while the mana lasts the fight
 // at 20 mana a second and rank 4 Smite after. Forever gives Smite ranks 3 and up the full
 // coefficient, so the low rank keeps most of the damage for a third of the mana (from the
 // rotation audit): +1.8 at 180 sec and +10 at 300 over rank 8 alone. Rank 3 is 0.9 ahead at 300
@@ -185,10 +186,10 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // The same Shadow points with 20 in Holy instead of Discipline (Twilight Focus, Spell Warding,
 // Inspiration, Improved Healing and the rest of the healing utility a raid may ask for). None of
 // the Holy talents adds Shadow damage, so it gives up Twin Disciplines and Mental Strength:
-// 839.9 / 837.7 / 835.4 at 120 / 180 / 300 sec as an Undead on its own consumes (see the build),
-// 3.1% behind at 180 sec.
+// 844.5 / 840.5 / 840.2 at 120 / 180 / 300 sec as an Undead on its own consumes (see the build),
+// 2.8% behind at 180 sec.
 export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011323-500321501201302051' }), {
-	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 27 DPS behind.',
+	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 24 DPS behind.',
 	group: 'Level 60',
 });
 
@@ -201,7 +202,7 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // (Holy Specialization 5, Divine Fury 5, Searing Light 2) with 3 points of Shadow Focus for
 // Shadow Word: Pain's hit. The deep Holy start ends at 608.9.
 //
-// On its own set with its own consumes (see the build) it is 722.5 / 719.0 / 700.4 at 120 / 180
+// On its own set with its own consumes (see the build) it is 722.5 / 719.0 / 702.0 at 120 / 180
 // / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. That is 20% behind
 // Shadow at 180 sec and 21% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
@@ -380,13 +381,12 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
-// Without Twin Disciplines and Mental Strength the Holy build runs dry on a long fight, so it
-// keeps the Major Mana Potion and adds the Greater Mageblood Elixir: on the Spellblasting
-// potion it fell to 728.2 at 300 sec (on the earlier set), with these it is 839.9 / 837.7 /
-// 835.4 at 120 / 180 / 300 sec.
+// Without Twin Disciplines and Mental Strength the Holy build runs low on a long fight, so it
+// adds the Greater Mageblood Elixir (without it 300 sec falls to 821). With it the Major
+// Spellblasting Potion beats the Major Mana Potion at every length (844.5 / 840.5 / 840.2 at 120
+// / 180 / 300 sec against 839.9 / 837.7 / 835.4, from the rotation audit).
 export const ConsumesHoly = Consumes.create({
 	...DefaultConsumes,
-	defaultPotion: Potions.MajorManaPotion,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 });
 
@@ -400,7 +400,7 @@ export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Level 60 + 
 
 export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Holy', {
 	group: 'Level 60',
-	tooltip: 'Level 60 with the Holy sub tree talents and mana consumes, 27 DPS behind Level 60.',
+	tooltip: 'Level 60 with the Holy sub tree talents and Greater Mageblood, 24 DPS behind Level 60.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Holy,
 	rotation: APLLevel60,
@@ -436,12 +436,12 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 });
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec):
-//   Undead    722.5 / 719.0 / 700.4  (best overall and Horde)
-//   Gnome     726.7 / 713.9 / 694.0  (best Alliance)
-//   Night Elf 723.9 / 708.4 / 690.7
-//   Troll     722.8 / 707.4 / 689.0
-//   Human     719.9 / 705.8 / 688.6
-//   Dwarf     712.0 / 697.1 / 680.5
+//   Undead    722.5 / 719.0 / 702.0  (best overall and Horde)
+//   Gnome     726.7 / 713.9 / 695.9  (best Alliance)
+//   Night Elf 723.9 / 708.4 / 692.8
+//   Troll     722.8 / 707.4 / 690.9
+//   Human     719.9 / 705.8 / 690.4
+//   Dwarf     712.0 / 697.1 / 682.3
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
