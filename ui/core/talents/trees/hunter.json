@@ -10,11 +10,11 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          19552,
+          19552,
+          19552,
+          19552,
+          19552
         ],
         "maxPoints": 5,
         "name": "Deadly Aspects",
@@ -105,8 +105,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          1223755,
+          1223755
         ],
         "maxPoints": 2,
         "name": "Focused Fire",
@@ -331,7 +331,7 @@
           "colIdx": 3
         },
         "spellIds": [
-          0
+          1293241
         ],
         "maxPoints": 1,
         "name": "Summon Hawk",
@@ -575,11 +575,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          19426,
+          19426,
+          19426,
+          19426,
+          19426
         ],
         "maxPoints": 5,
         "name": "Lethal Attacks",
@@ -610,9 +610,9 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0
+          1310661,
+          1310661,
+          1310661
         ],
         "maxPoints": 3,
         "name": "Improved Stings",
@@ -678,11 +678,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1223984,
+          1223984,
+          1223984,
+          1223984,
+          1223984
         ],
         "maxPoints": 5,
         "name": "Careful Aim",
@@ -713,8 +713,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          415405,
+          415405
         ],
         "maxPoints": 2,
         "name": "Rapid Killing",
@@ -775,7 +775,7 @@
           "colIdx": 3
         },
         "spellIds": [
-          0
+          415370
         ],
         "maxPoints": 1,
         "name": "Lone Wolf",
@@ -858,8 +858,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          1223987,
+          1223987
         ],
         "maxPoints": 2,
         "name": "Rapid Recuperation",
@@ -972,7 +972,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          1310687
         ],
         "maxPoints": 1,
         "name": "Sniper Shot",
@@ -1000,11 +1000,11 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          24293,
+          24293,
+          24293,
+          24293,
+          24293
         ],
         "maxPoints": 5,
         "name": "Improved Tracking",
@@ -1274,8 +1274,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          19376,
+          19376
         ],
         "maxPoints": 2,
         "name": "Survival Tactics",
@@ -1297,11 +1297,11 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1310627,
+          1310627,
+          1310627,
+          1310627,
+          1310627
         ],
         "maxPoints": 5,
         "name": "Predator's Edge",
@@ -1363,8 +1363,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          440529,
+          440529
         ],
         "maxPoints": 2,
         "name": "Resourcefulness",
@@ -1392,8 +1392,8 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0
+          1310532,
+          1310532
         ],
         "maxPoints": 2,
         "name": "Expose Prey",
@@ -1417,8 +1417,8 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0
+          1310496,
+          1310496
         ],
         "maxPoints": 2,
         "name": "Survivalist's Discipline",
@@ -1440,7 +1440,7 @@
           "colIdx": 3
         },
         "spellIds": [
-          0
+          1317257
         ],
         "maxPoints": 1,
         "name": "Strider Kick",
@@ -1500,7 +1500,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          1310533
         ],
         "maxPoints": 1,
         "name": "Lacerating Strikes",

@@ -21,17 +21,20 @@ import (
 // Every piece has the full epic budget of its slot at item level 66, or the replaced item's level
 // where that is higher.
 //
-// The budget is Classic's: an epic's slot value is (item level - 1.3) / 1.3, times the slot
-// modifier (1 for head, chest, legs and two-handers, 0.77 for shoulders, hands, waist and feet,
-// 0.56 for neck, wrist, back and rings, 0.42 for a one-hander, 0.32 for a ranged weapon). The stats
-// on an item add up as the sum of (points * price)^1.5, and that sum equals the slot value to the
-// 1.5. A point of Strength, Agility, Stamina, Intellect or Spirit costs 1, attack power 0.5, ranged
-// attack power only 0.4, hit and crit rating 1 at Forever's 10 rating per 1% hit and 14 per 1% crit.
-// So a head at item level 66 has (64.7 / 1.3)^1.5 = 351 to spend: the Ranged Hunter head's 22
-// Agility, 16 Stamina, 12 Intellect, 12 Spirit, 19 ranged attack power (7.6 points), 10 hit and 14
-// crit rating come to 355. The same formula gives Giantstalker's Helmet 354 for its 23 Agility, 23
-// Stamina, 15 Intellect, 8 Spirit and 1% crit. Hit and crit go on first, the rest of the budget is
-// split by hand picked shares per slot (the generator was a script in the session scratchpad).
+// The budget is the standard all the synthetic sets share. An epic item at level L is worth
+// V = 1.2 * L - 36.4 (42.8 at 66, 48.8 at 71, 52.4 at 74, 53.6 at 75), times the slot modifier: 1 for
+// head, chest, legs and two-handers, 0.77 for shoulders, hands, waist and feet, 0.5625 for neck,
+// wrist, back and rings, 0.42 for a one-hander, 0.32 for a ranged weapon. The stats on an item add up
+// as (sum (points * price)^1.5)^(2/3), which equals the slot's value. A point of Strength, Agility,
+// Stamina, Intellect or Spirit costs 1, attack power 0.5, ranged attack power only 0.4, hit and crit
+// rating 1 at Forever's 10 rating per 1% hit and 14 per 1% crit. Armor is free.
+//
+// So a head at item level 66 has 42.8, or 280 to spend in the 1.5 power: the Ranged Hunter head's 17
+// Agility, 13 Stamina, 10 Intellect, 10 Spirit, 15 ranged attack power (6 points), 10 hit and 14
+// crit rating come to 279. A ring at 67 has 0.5625 * 44.0 = 24.8 (123), the bow at 75 has
+// 0.32 * 53.6 = 17.2 (71), more than Rhok'delar's own 17 ranged attack power. Hit and crit go on
+// first, the rest is split by hand picked shares per slot, rounded, and trimmed back to within 1% of
+// the slot's value (the generator was a script in the session scratchpad).
 //
 // The stat mix:
 //   - Spirit is about 10% of each set's points, on 7 pieces, as for every mana user.
@@ -62,7 +65,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993001, Name: "Ranged Hunter Synthetic Head (Phase 1)", Icon: "inv_helmet_05",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 22, stats.Stamina: 16, stats.Intellect: 12, stats.Spirit: 12, stats.RangedAttackPower: 19, stats.Armor: 343}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Intellect: 10, stats.Spirit: 10, stats.RangedAttackPower: 15, stats.Armor: 343}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -71,7 +74,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993002, Name: "Ranged Hunter Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Agility: 15, stats.Stamina: 10}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 13, stats.Stamina: 9}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
 		Ilvl: 74, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -80,7 +83,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993003, Name: "Ranged Hunter Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 13, stats.Intellect: 8, stats.RangedAttackPower: 32, stats.Armor: 317}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 16, stats.Stamina: 11, stats.Intellect: 7, stats.RangedAttackPower: 27, stats.Armor: 317}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -89,7 +92,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993004, Name: "Ranged Hunter Synthetic Back (Phase 1)", Icon: "inv_misc_cape_18",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Agility: 14, stats.Stamina: 11, stats.Spirit: 7, stats.RangedAttackPower: 28, stats.Armor: 54}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 12, stats.Stamina: 10, stats.Spirit: 6, stats.RangedAttackPower: 24, stats.Armor: 54}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -97,7 +100,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993005, Name: "Ranged Hunter Synthetic Chest (Phase 1)", Icon: "inv_chest_chain_03",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Agility: 25, stats.Stamina: 18, stats.Intellect: 14, stats.Spirit: 14, stats.Armor: 422}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Agility: 21, stats.Stamina: 15, stats.Intellect: 11, stats.Spirit: 11, stats.Armor: 422}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -106,7 +109,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993006, Name: "Ranged Hunter Synthetic Wrist (Phase 1)", Icon: "inv_bracer_17",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 18, stats.Stamina: 11, stats.Intellect: 7, stats.Armor: 198}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 16, stats.Stamina: 10, stats.Intellect: 6, stats.Armor: 198}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -115,7 +118,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993007, Name: "Ranged Hunter Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 10, stats.RangedAttackPower: 50, stats.Armor: 264}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 8, stats.RangedAttackPower: 41, stats.Armor: 264}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -124,7 +127,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993008, Name: "Ranged Hunter Synthetic Waist (Phase 1)", Icon: "inv_belt_28",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Intellect: 8, stats.Spirit: 13, stats.Armor: 237}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Agility: 13, stats.Stamina: 11, stats.Intellect: 7, stats.Spirit: 11, stats.Armor: 237}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -133,7 +136,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993009, Name: "Ranged Hunter Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_03",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 25, stats.Stamina: 16, stats.Spirit: 10, stats.RangedAttackPower: 52, stats.Armor: 369}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 21, stats.Stamina: 14, stats.Spirit: 9, stats.RangedAttackPower: 44, stats.Armor: 369}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -142,7 +145,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993010, Name: "Ranged Hunter Synthetic Feet (Phase 1)", Icon: "inv_boots_chain_04",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Agility: 22, stats.Stamina: 14, stats.Intellect: 9, stats.Spirit: 14, stats.Armor: 290}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 19, stats.Stamina: 12, stats.Intellect: 8, stats.Spirit: 12, stats.Armor: 290}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -150,7 +153,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993011, Name: "Ranged Hunter Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:      proto.ItemType_ItemTypeFinger,
-		Stats:     stats.Stats{stats.Agility: 13, stats.Stamina: 8, stats.RangedAttackPower: 33}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 11, stats.Stamina: 7, stats.RangedAttackPower: 28}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      67, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -159,7 +162,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993012, Name: "Ranged Hunter Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:       proto.ItemType_ItemTypeFinger,
-		Stats:      stats.Stats{stats.Agility: 7, stats.Stamina: 7, stats.Intellect: 7, stats.Spirit: 11}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Agility: 6, stats.Stamina: 6, stats.Intellect: 6, stats.Spirit: 8}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -168,7 +171,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993013, Name: "Ranged Hunter Synthetic Two-Hand (Phase 1)", Icon: "inv_sword_50",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeTwoHand,
-		Stats:     stats.Stats{stats.Agility: 24, stats.Stamina: 19, stats.RangedAttackPower: 61}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 16, stats.RangedAttackPower: 51}.ToFloatArray(),
 		HitRating: 10,
 		// Barbarous Blade damage and speed.
 		WeaponDamageMin: 138, WeaponDamageMax: 207, WeaponSpeed: 3.2,
@@ -179,7 +182,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993014, Name: "Ranged Hunter Synthetic Ranged (Phase 1)", Icon: "inv_weapon_bow_01",
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
-		Stats:     stats.Stats{stats.Agility: 11, stats.RangedAttackPower: 13}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 9, stats.RangedAttackPower: 11}.ToFloatArray(),
 		HitRating: 10,
 		// Rhok'delar damage and speed.
 		WeaponDamageMin: 89, WeaponDamageMax: 166, WeaponSpeed: 2.9,
@@ -191,7 +194,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993101, Name: "Survival Synthetic Head (Phase 1)", Icon: "inv_helmet_05",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 22, stats.Stamina: 16, stats.Intellect: 12, stats.Spirit: 12, stats.Strength: 8, stats.Armor: 343}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Intellect: 10, stats.Spirit: 10, stats.Strength: 6, stats.Armor: 343}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -200,7 +203,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993102, Name: "Survival Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Agility: 15, stats.Stamina: 10}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 13, stats.Stamina: 9}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
 		Ilvl: 74, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -209,7 +212,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993103, Name: "Survival Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 13, stats.Intellect: 8, stats.AttackPower: 26, stats.RangedAttackPower: 26, stats.Armor: 317}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 11, stats.Intellect: 7, stats.AttackPower: 21, stats.RangedAttackPower: 21, stats.Armor: 317}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -218,7 +221,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993104, Name: "Survival Synthetic Back (Phase 1)", Icon: "inv_misc_cape_18",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Agility: 14, stats.Stamina: 11, stats.Spirit: 7, stats.AttackPower: 22, stats.RangedAttackPower: 22, stats.Armor: 54}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 12, stats.Stamina: 10, stats.Spirit: 6, stats.AttackPower: 19, stats.RangedAttackPower: 19, stats.Armor: 54}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -226,7 +229,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993105, Name: "Survival Synthetic Chest (Phase 1)", Icon: "inv_chest_chain_03",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Agility: 25, stats.Stamina: 18, stats.Strength: 14, stats.Spirit: 14, stats.Armor: 422}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Agility: 21, stats.Stamina: 15, stats.Strength: 11, stats.Spirit: 11, stats.Armor: 422}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -235,7 +238,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993106, Name: "Survival Synthetic Wrist (Phase 1)", Icon: "inv_bracer_17",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 18, stats.Stamina: 11, stats.Intellect: 7, stats.Armor: 198}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 16, stats.Stamina: 10, stats.Intellect: 6, stats.Armor: 198}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -244,7 +247,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993107, Name: "Survival Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 10, stats.AttackPower: 40, stats.RangedAttackPower: 40, stats.Armor: 264}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 16, stats.Stamina: 8, stats.AttackPower: 33, stats.RangedAttackPower: 33, stats.Armor: 264}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -253,7 +256,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993108, Name: "Survival Synthetic Waist (Phase 1)", Icon: "inv_belt_28",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Strength: 8, stats.Spirit: 13, stats.Armor: 237}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Agility: 13, stats.Stamina: 11, stats.Strength: 7, stats.Spirit: 11, stats.Armor: 237}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -262,7 +265,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993109, Name: "Survival Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_03",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 25, stats.Stamina: 16, stats.Spirit: 10, stats.AttackPower: 42, stats.RangedAttackPower: 42, stats.Armor: 369}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 21, stats.Stamina: 14, stats.Spirit: 9, stats.AttackPower: 35, stats.RangedAttackPower: 35, stats.Armor: 369}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -271,7 +274,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993110, Name: "Survival Synthetic Feet (Phase 1)", Icon: "inv_boots_chain_04",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Agility: 22, stats.Stamina: 14, stats.Intellect: 9, stats.Spirit: 14, stats.Armor: 290}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 19, stats.Stamina: 12, stats.Intellect: 8, stats.Spirit: 12, stats.Armor: 290}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -279,7 +282,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993111, Name: "Survival Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:  proto.ItemType_ItemTypeFinger,
-		Stats: stats.Stats{stats.Agility: 14, stats.Stamina: 9, stats.Strength: 9, stats.AttackPower: 27, stats.RangedAttackPower: 27}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 12, stats.Stamina: 7, stats.Strength: 7, stats.AttackPower: 24, stats.RangedAttackPower: 24}.ToFloatArray(),
 		Ilvl:  67, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -287,7 +290,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993112, Name: "Survival Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:       proto.ItemType_ItemTypeFinger,
-		Stats:      stats.Stats{stats.Agility: 7, stats.Stamina: 7, stats.Intellect: 7, stats.Spirit: 11}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Agility: 6, stats.Stamina: 6, stats.Intellect: 6, stats.Spirit: 8}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -296,7 +299,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993113, Name: "Survival Synthetic Main Hand (Phase 1)", Icon: "inv_sword_39",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
-		Stats:     stats.Stats{stats.Agility: 11, stats.Strength: 8, stats.Stamina: 5}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 9, stats.Strength: 7, stats.Stamina: 5}.ToFloatArray(),
 		HitRating: 10,
 		// Brutality Blade damage and speed.
 		WeaponDamageMin: 90, WeaponDamageMax: 168, WeaponSpeed: 2.5,
@@ -307,7 +310,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993114, Name: "Survival Synthetic Off Hand (Phase 1)", Icon: "inv_sword_39",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
-		Stats:     stats.Stats{stats.Agility: 11, stats.Strength: 8, stats.Stamina: 5}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 9, stats.Strength: 7, stats.Stamina: 5}.ToFloatArray(),
 		HitRating: 10,
 		// Brutality Blade damage and speed.
 		WeaponDamageMin: 90, WeaponDamageMax: 168, WeaponSpeed: 2.5,
@@ -318,7 +321,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993115, Name: "Survival Synthetic Ranged (Phase 1)", Icon: "inv_weapon_bow_01",
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
-		Stats: stats.Stats{stats.Agility: 15, stats.Stamina: 7}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 14, stats.Stamina: 7}.ToFloatArray(),
 		// Rhok'delar damage and speed.
 		WeaponDamageMin: 89, WeaponDamageMax: 166, WeaponSpeed: 2.9,
 		Ilvl: 75, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
