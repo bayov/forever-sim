@@ -107,8 +107,12 @@ func (shamanEnh) Knobs() []Knob {
 }
 
 func (shamanEnh) Build(k Knobs) *proto.APLRotation {
-	strengthOfEarth := rankID(shaman.StrengthOfEarthTotemLevel[:], shaman.StrengthOfEarthTotemSpellId[:])
-	graceOfAir := rankID(shaman.GraceOfAirTotemLevel[:], shaman.GraceOfAirTotemSpellId[:])
+	// The rotations are for Forever sims, which leave out the Ahn'Qiraj book ranks (Strength of
+	// Earth Totem V, Grace of Air Totem III), so the tables stop one rank short.
+	soeLevels, soeIDs := shaman.StrengthOfEarthTotemLevel[:], shaman.StrengthOfEarthTotemSpellId[:]
+	goaLevels, goaIDs := shaman.GraceOfAirTotemLevel[:], shaman.GraceOfAirTotemSpellId[:]
+	strengthOfEarth := rankID(soeLevels[:len(soeLevels)-1], soeIDs[:len(soeIDs)-1])
+	graceOfAir := rankID(goaLevels[:len(goaLevels)-1], goaIDs[:len(goaIDs)-1])
 	windfuryTotem := rankID(shaman.WindfuryTotemLevel[:], shaman.WindfuryTotemSpellId[:])
 	// An aura that is up while the totem stands.
 	windfuryTotemAura := rankID(shaman.WindfuryTotemLevel[:], shaman.WindfuryBuffAuraId[:])

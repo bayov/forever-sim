@@ -11,7 +11,7 @@ import (
 // TestOrcShamanStatsPanel checks that the stats panel leaves out the totems we put down
 // ourselves.
 //
-// A level 60 shaman knows Strength of Earth (53 Strength) and Grace of Air (89 Agility),
+// A level 60 shaman knows Strength of Earth (42 Strength) and Grace of Air (77 Agility),
 // but the fight only gets them once the rotation casts them. When another shaman's
 // Strength of Earth is picked in the raid buffs, the panel should still show it.
 func TestOrcShamanStatsPanel(t *testing.T) {
@@ -42,6 +42,6 @@ func TestOrcShamanStatsPanel(t *testing.T) {
 	check("Agility with our own totems", own[stats.Agility], 52)
 
 	raid := finalStats(&proto.RaidBuffs{StrengthOfEarthTotem: proto.TristateEffect_TristateEffectRegular})
-	check("Strength with a raid Strength of Earth", raid[stats.Strength], 88+53)
+	check("Strength with a raid Strength of Earth", raid[stats.Strength], 88+42)
 	check("Agility with a raid Strength of Earth", raid[stats.Agility], 52)
 }

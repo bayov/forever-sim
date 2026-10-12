@@ -1,8 +1,8 @@
 character_stats_results: {
  key: "TestElementalLevel60-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 217
-  final_stats: 217
+  final_stats: 203
+  final_stats: 202
   final_stats: 523
   final_stats: 442
   final_stats: 347
@@ -18,21 +18,21 @@ character_stats_results: {
   final_stats: 42.7698
   final_stats: 0
   final_stats: 0
-  final_stats: 1146
+  final_stats: 1094
   final_stats: 16
-  final_stats: 37.7236
+  final_stats: 36.9616
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 7870
   final_stats: 0
   final_stats: 0
-  final_stats: 3520
+  final_stats: 3490
   final_stats: 390
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 12.7236
+  final_stats: 11.9616
   final_stats: 5
   final_stats: 0
   final_stats: 6630
@@ -123,16 +123,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 825.46673
-  tps: 779.29966
+  dps: 825.13256
+  tps: 778.96549
   dtps: 1.76797
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 783.28169
-  tps: 740.33595
+  dps: 783.1284
+  tps: 740.18267
   dtps: 1.76797
  }
 }
