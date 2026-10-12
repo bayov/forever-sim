@@ -81,6 +81,7 @@ The warlock runs the Forever client tree and spell ranks since 2026-10-12. What 
 * Wrack's 10% (aura 271 on Corruption and Bane of Agony) multiplies with the other bonuses, and only while the channel runs.
 * Rain of Fire and Hellfire keep their 1.12 numbers. Forever's Rain of Fire is an area trigger the client does not fill in. No preset uses either.
 * Life Tap costs health the sim does not track unless the warlock is the tank, so the presets tap as much as they like.
+* Elixir of the Owl and Elixir of Sages at once. They are separate slots in the sim, so both 25 stat + 2% crit auras apply (the orchestrator's ruling for every class: follow the sim). If Forever makes them exclusive (both are battle elixirs in later expansions), the presets drop Sages: 1017.9 instead of 1039.0 on Demonology at 180 sec (-21), about -19 to -20 on the other Shadow Bolt builds. Two elixirs on a beta character settle it.
 
 
 ## Druid

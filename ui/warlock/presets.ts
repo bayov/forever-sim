@@ -227,7 +227,9 @@ const PresetBuildOptionsSuccubus = {
 // Intellect +9.2), Elixir of Sages +21.3 (its Spirit feeds Life Tap), Greater Mageblood Elixir +1.9
 // over Mageblood Potion, Lobster Stew +3.9 over Nightfin Soup, and Major Spellblasting Potion 12.9
 // behind Major Mana Potion. Together the new ones are +55 on Demonology and +40 to +52 on the other
-// builds. Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
+// builds. The sim stacks the Owl and Sages (both 2% crit, separate slots), as ruled for every
+// class; if Forever makes them exclusive, drop Sages: -21 on Demonology, -20 on Destruction and
+// Affliction (notes.md). Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
 // Forever's launch Phase 1, when no vanilla raid is open, so Brilliant Wizard Oil (a Zandalar
 // recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain
 // Elixir of Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and
