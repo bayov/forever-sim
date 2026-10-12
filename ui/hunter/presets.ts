@@ -23,6 +23,7 @@ import {
 	StrengthBuff,
 	TotemWeaponBuff,
 	TristateEffect,
+	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import {
@@ -219,7 +220,8 @@ export const DefaultConsumes = Consumes.create({
 });
 
 // Survival never runs short of mana, so the potions, runes, Mageblood and the flask do nothing for
-// it. It takes Juju Power (+6.7) and Dragonbreath Chili (+3.2) instead. Fire-toasted Bun's 2% hit
+// it. It takes Juju Power (+6.7) and Dragonbreath Chili (+3.2) instead, and a Dense Sharpening
+// Stone on each sword (+9.2; Elemental Sharpening Stone's plans only drop in Molten Core). Fire-toasted Bun's 2% hit
 // would add 9, but Forever's is a seasonal item that expires 14 days after looting (item 23327).
 export const SurvivalConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
@@ -227,6 +229,8 @@ export const SurvivalConsumes = Consumes.create({
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	food: Food.FoodGrilledSquid,
+	mainHandImbue: WeaponImbue.DenseSharpeningStone,
+	offHandImbue: WeaponImbue.DenseSharpeningStone,
 	intellectElixir: IntellectElixir.ElixirOfWisdom,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,

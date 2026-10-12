@@ -66,6 +66,9 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 // Distilled Wisdom is +1.1. Survival never runs low on mana and gets nothing from those, but
 // Juju Power's Strength (+6.7) and Dragonbreath Chili (+3.2). Fire-toasted Bun's 2% hit
 // (+9) is left out: Forever's is a seasonal item that expires 14 days after looting (item 23327).
+// Survival puts a Dense Sharpening Stone (Blacksmithing trainer) on each sword, +9.2 (the sim keeps
+// Windfury Totem in its own slot); Elemental Sharpening Stone's plans only drop in Molten Core. The
+// ranged specs have no imbue: the two-hander never swings and a bow takes none.
 // No pet consumables: Forever pets take no player buffs, and Juju and the scrolls are player-cast
 // buffs on the pet (orchestrator ruling; they were +17 for Beast Mastery).
 func hunterConsumes(melee bool) *proto.Consumes {
@@ -81,6 +84,8 @@ func hunterConsumes(melee bool) *proto.Consumes {
 	if melee {
 		consumes.StrengthBuff = proto.StrengthBuff_JujuPower
 		consumes.DragonBreathChili = true
+		consumes.MainHandImbue = proto.WeaponImbue_DenseSharpeningStone
+		consumes.OffHandImbue = proto.WeaponImbue_DenseSharpeningStone
 	} else {
 		consumes.DefaultPotion = proto.Potions_MajorManaPotion
 		consumes.DefaultConjured = proto.Conjured_ConjuredDemonicRune

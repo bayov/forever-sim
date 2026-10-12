@@ -91,6 +91,8 @@ var SurvivalConsumes = core.ConsumesCombo{
 		AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
 		AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 		DragonBreathChili: true,
+		MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
+		OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,
 		FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
 		Food:              proto.Food_FoodGrilledSquid,
 		IntellectElixir:   proto.IntellectElixir_ElixirOfWisdom,
