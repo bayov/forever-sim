@@ -188,14 +188,19 @@ const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStanc
 // Mighty Rage Potion (+16) and Dragonbreath Chili (+3). A filler explosive costs a GCD for nothing.
 // Flask of Supreme Power is +7, all of it Dragonbreath Chili scaling with spell power, so it stays
 // out.
+//
+// The presets only take what Phase 1 can get without a raid that is not open yet. Elemental
+// Sharpening Stone's plans drop only in Molten Core, so the swords get Dense Sharpening Stones. The
+// Smoked Desert Dumplings come from an AQ quest. They stand in for Forever's own +20 Strength foods
+// (Bear Bruscitti and Steaming Stag Steak in client 70338), which the sim does not have yet.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
 	food: Food.FoodSmokedDesertDumpling,
-	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
-	offHandImbue: WeaponImbue.ElementalSharpeningStone,
+	mainHandImbue: WeaponImbue.DenseSharpeningStone,
+	offHandImbue: WeaponImbue.DenseSharpeningStone,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.ROIDS,
