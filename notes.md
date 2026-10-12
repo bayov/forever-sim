@@ -48,7 +48,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Light's Vigil (sim since 2026-10-12): does a Holy Shock that misses use the Vigil up and still skip its cooldown? The sim says yes, with no detonation and no refund. The 30 sec mark is one per paladin.
 * Seal of Righteousness's spell power: the sim takes 2 x 10% (2 x 11% on a two-hander) from the SoD sim's tests, and the Forever client has the same data as SoD's (the judgement's dummy effect at 20%, the proc at 10%). Seal of Command is 29% on the proc and 42.9% on the judgement. This decides Seal of Righteousness against Seal of Command at 60, see sim-status.md.
 * Improved Seals: the client makes it a damage modifier on the seal procs and judgements, so it scales the spell power part too (sim since 2026-10-12). Its spell carries 3% where the talent tooltips say 5 / 10 / 15%, the sim takes the tooltips.
-* Crit elixirs (all classes, the orchestrator's ruling 2026-10-12): a character takes at most one of the five 2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale), which the client presents as role variants of one elixir (item level 55, category 2593). If they do stack in separate slots, each further one is worth about 14 DPS on the Level 60 retribution build and 10 on Shock at 180 sec.
+* Crit elixirs (all classes, the orchestrator's ruling 2026-10-12): a character takes at most one of the five 2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale), which the client presents as role variants of one elixir (item level 55, category 2593). If they do stack in separate slots, a second one is worth 12.4 DPS on the Level 60 retribution build and 7.6 on Shock at 180 sec (final set).
 * Consecrated Ground: all Holy damage and every target?
 * Swift Judgement and Pursuit of Justice are not implemented.
 
@@ -88,7 +88,7 @@ Things we can only check on release, because the beta stops at level 30.
 * Lightning Overload's damage (sim: half of the main hit). The Forever client (70338) has its own overload spells, and they deal 0.52, 0.57, 0.52, 0.47 and 0.45 of the main hit for Lightning Bolt ranks 1 to 5, about 0.50 for ranks 6 to 10 and about 0.53 for Chain Lightning. Chain Lightning rank 3's overload has a 0.2855 coefficient, half of 0.571, where the main spell has 0.517, so the 0.517 may be a client typo. No preset takes the talent. shaman_audit.md 7.1.
 * Shaman talents in rows 6 and 7 (Elemental Fury, Maelstrom Weapon, Lava Burst, Rage of the Farseer). Lava Burst's 20% with Flame Shock on the target is up to the server, and the sim multiplies it with Call of Flame (1.15 * 1.2 = 1.38 at 3 points, 1.35 if they add, item 5.6).
 * Blessing of Wisdom at its top rank, and Judgement of Wisdom (1.12 learns it at 38). Both need a paladin past 30.
-* The level 60 trinkets in the presets (Hand of Justice, Blackhand's Breadth).
+* Forever's launch trinkets: not simulated, so the level 60 presets leave the trinket slots empty (Hand of Justice and Blackhand's Breadth are not in client 70338).
 * Raid buffs and totems at their top ranks, at their Forever values.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).
 * Paladin: Justice Battlegear's real stats (the client pieces have none yet, the synthetic set carries its bonuses), Holy Strike rank 8 and Seal of Righteousness rank 8 hits with known spell power, and Twist of Light at 31 Retribution points (whether two Echoes can be up at once).
