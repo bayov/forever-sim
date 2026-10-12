@@ -29,16 +29,16 @@ Settings: 180 sec, 5000 iterations, seed 1, standard error about 0.5 to 1. Each 
 | 17 | Survival | Human | 778.3 | Orc / Human | Night Elf 773.5 |
 | 18 | Frost | Undead | 743.4 | Undead / High Order 742.8 | same |
 | 19 | Elemental | Orc | 690.8 | Orc / Dwarf 684.2 | same |
-| 20 | Rogue Combat Daggers | Undead | 690.2 | Undead / Gnome 677.0 | same |
-| 21 | Smite | Undead | 684.9 | Undead / Gnome 679.9 | same |
-| 22 | Rogue Mutilate | Undead | 658.2 | Undead / Gnome 641.7 | same |
-| 23 | Rogue Seal Fate Daggers | Undead | 657.0 | Undead / Gnome 645.7 | same |
-| 24 | Rogue Combat Swords | Undead | 653.1 | Undead / Human 648.3 (635.8 off) | same |
-| 25 | Feral | Night Elf | 648.6 | Windshaper 646.8 / Night Elf | same |
-| 26 | Rogue Subtlety | Undead | 627.1 | Undead / Orc 615.8 | same |
-| 27 | Rogue Seal Fate Swords | Undead | 619.2 | Undead / Human 616.6 | same |
+| 20 | Smite | Undead | 684.9 | Undead / Gnome 679.9 | same |
+| 21 | Rogue Combat Daggers | Undead | 671.4 | Undead / Gnome 657.9 | same |
+| 22 | Feral | Night Elf | 648.6 | Windshaper 646.8 / Night Elf | same |
+| 23 | Rogue Mutilate | Undead | 642.7 | Undead / Gnome 626.1 | same |
+| 24 | Rogue Seal Fate Daggers | Undead | 639.7 | Undead / Gnome 628.1 | same |
+| 25 | Rogue Combat Swords | Undead | 638.9 | Undead / Human 633.2 (621.6 off) | same |
+| 26 | Rogue Subtlety | Undead | 613.0 | Undead / Night Elf 597.7 | same |
+| 27 | Rogue Seal Fate Swords | Undead | 605.9 | Undead / Human 602.4 | same |
 
-The Mutilate + Venom build was dropped after this sweep (7a6b0d4): Venom loses DPS at every combo point count as modelled.
+The rogue rows are re-swept on edd0ff7 (Murder no longer raises crit damage, −15 to −19 per build). The Mutilate + Venom build was dropped (7a6b0d4): Venom loses DPS at every combo point count as modelled.
 
 Every preset's race matches the sweep. The one exception is Destruction Fire, where Gnome and Undead are 0.4 apart, within noise. Weapon racials now move only two specs:
 - Enhancement: the Orc axe is worth 7.9 DPS.
