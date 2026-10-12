@@ -1,5 +1,5 @@
 import { Player } from '../../player.js';
-import { ItemSlot } from '../../proto/common.js';
+import { TypedEvent } from '../../typed_event.js';
 import {
 	WarlockOptions_Armor as Armor,
 	WarlockOptions_MaxFireboltRank as MaxFireboltRank,
@@ -32,15 +32,14 @@ export const WeaponImbueInput = <SpecType extends WarlockSpecs>() =>
 		values: [
 			{ value: WeaponImbue.NoWeaponImbue, tooltip: 'No Weapon Stone' },
 			{
-				actionId: () => ActionId.fromSpellId(13701),
+				actionId: () => ActionId.fromSpellId(17949),
 				value: WeaponImbue.Firestone,
 			},
 			{
-				actionId: () => ActionId.fromSpellId(13603),
+				actionId: () => ActionId.fromSpellId(17728),
 				value: WeaponImbue.Spellstone,
 			},
 		],
-		showWhen: player => player.getEquippedItem(ItemSlot.ItemSlotOffHand) == null,
 		changeEmitter: (player: Player<SpecType>) => player.changeEmitter,
 	});
 
@@ -55,6 +54,22 @@ export const PetInput = <SpecType extends WarlockSpecs>() =>
 			{ actionId: () => ActionId.fromSpellId(691), value: Summon.Felhunter },
 		],
 		changeEmitter: (player: Player<SpecType>) => player.changeEmitter,
+	});
+
+// The demon Demonic Sacrifice took before the pull. With Demonic Pact its buff stays while
+// another demon is out.
+export const SacrificedPetInput = <SpecType extends WarlockSpecs>() =>
+	InputHelpers.makeSpecOptionsEnumIconInput<SpecType, Summon>({
+		fieldName: 'sacrificedPet',
+		showWhen: player => player.getTalents().demonicSacrifice,
+		values: [
+			{ value: Summon.NoSummon, tooltip: 'No Demonic Sacrifice before the pull' },
+			{ actionId: () => ActionId.fromSpellId(18789), value: Summon.Imp },
+			{ actionId: () => ActionId.fromSpellId(18792), value: Summon.Voidwalker },
+			{ actionId: () => ActionId.fromSpellId(18791), value: Summon.Succubus },
+			{ actionId: () => ActionId.fromSpellId(18790), value: Summon.Felhunter },
+		],
+		changeEmitter: (player: Player<SpecType>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
 	});
 
 export const ImpFireboltRank = <SpecType extends WarlockSpecs>() =>

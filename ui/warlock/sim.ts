@@ -58,23 +58,21 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		gear: Presets.DefaultGear.gear,
 
 		// Default EP weights for sorting gear in the gear picker.
-		epWeights: Stats.fromMap(
-			{
-				[Stat.StatMana]: 0.01,
-				[Stat.StatIntellect]: 0.23,
-				[Stat.StatSpirit]: 0.0,
-				[Stat.StatMP5]: 0.14,
-				[Stat.StatSpellPower]: 1,
-				[Stat.StatSpellDamage]: 1,
-				[Stat.StatFirePower]: 0.1,
-				[Stat.StatShadowPower]: 0.9,
-				[Stat.StatSpellHit]: 12.79,
-				[Stat.StatSpellCrit]: 7.92,
-				[Stat.StatSpellHaste]: 7.83,
-				[Stat.StatStamina]: 0.01,
-				[Stat.StatFireResistance]: 0.0,
-			},
-		),
+		epWeights: Stats.fromMap({
+			[Stat.StatMana]: 0.01,
+			[Stat.StatIntellect]: 0.23,
+			[Stat.StatSpirit]: 0.0,
+			[Stat.StatMP5]: 0.14,
+			[Stat.StatSpellPower]: 1,
+			[Stat.StatSpellDamage]: 1,
+			[Stat.StatFirePower]: 0.1,
+			[Stat.StatShadowPower]: 0.9,
+			[Stat.StatSpellHit]: 12.79,
+			[Stat.StatSpellCrit]: 7.92,
+			[Stat.StatSpellHaste]: 7.83,
+			[Stat.StatStamina]: 0.01,
+			[Stat.StatFireResistance]: 0.0,
+		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default talents.
@@ -95,7 +93,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
-	playerIconInputs: [WarlockInputs.PetInput(), WarlockInputs.ImpFireboltRank(), WarlockInputs.ArmorInput(), WarlockInputs.WeaponImbueInput()],
+	playerIconInputs: [
+		WarlockInputs.PetInput(),
+		WarlockInputs.SacrificedPetInput(),
+		WarlockInputs.ImpFireboltRank(),
+		WarlockInputs.ArmorInput(),
+		WarlockInputs.WeaponImbueInput(),
+	],
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
