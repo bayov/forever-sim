@@ -5,10 +5,12 @@ import (
 )
 
 func (warrior *Warrior) registerHeroicStrikeSpell(realismICD *core.Cooldown) {
-	flatDamageBonus := core.TernaryFloat64(core.IncludeAQ, 157, 138)
-	spellID := core.TernaryInt32(core.IncludeAQ, 25286, 11567)
+	// Ranks from the Ahn'Qiraj books are out under Forever (no source in client 70338).
+	aq := warrior.Env.IncludeAQRanks()
+	flatDamageBonus := core.TernaryFloat64(aq, 157, 138)
+	spellID := core.TernaryInt32(aq, 25286, 11567)
 	// No known equation
-	threat := core.TernaryFloat64(core.IncludeAQ, 173, 145)
+	threat := core.TernaryFloat64(aq, 173, 145)
 
 	warrior.HeroicStrike = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},

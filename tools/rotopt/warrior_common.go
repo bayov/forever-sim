@@ -7,7 +7,7 @@ import (
 // Shared pieces of the Arms and Fury templates (warrior_arms.go, warrior_fury.go). The spells are
 // the level 60 ranks, the warrior templates only build level 60 rotations.
 var (
-	battleShout      = spellIDRank(25289, 7)
+	battleShout      = spellIDRank(11551, 6)
 	battleStance     = spellID(2457)
 	berserkerStance  = spellID(2458)
 	bloodrage        = spellID(2687)
@@ -23,7 +23,7 @@ var (
 	rend             = spellIDRank(11574, 7)
 	hamstring        = spellIDRank(7373, 3)
 	spearingStrike   = spellID(1310222)
-	heroicStrikeNext = &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: 25286}, Tag: 1, Rank: 9}
+	heroicStrikeNext = &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: 11567}, Tag: 1, Rank: 8}
 	potion           = &proto.ActionID{RawId: &proto.ActionID_OtherId{OtherId: proto.OtherAction_OtherActionPotion}}
 )
 

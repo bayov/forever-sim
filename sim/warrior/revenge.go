@@ -13,11 +13,13 @@ var RevengeBaseDamage = [RevengeRanks + 1][]float64{{0, 0}, {12, 14}, {18, 22}, 
 var RevengeLevel = [RevengeRanks + 1]int{0, 14, 24, 34, 44, 54, 60}
 
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
-	actionID := core.ActionID{SpellID: core.TernaryInt32(core.IncludeAQ, 25288, 11601)}
+	// Ranks from the Ahn'Qiraj books are out under Forever (no source in client 70338).
+	aq := warrior.Env.IncludeAQRanks()
+	actionID := core.ActionID{SpellID: core.TernaryInt32(aq, 25288, 11601)}
 	has2pcDreadnaught := warrior.HasSetBonus(ItemSetDreadnaughtsBattlegear, 2)
-	basedamageLow := core.TernaryFloat64(core.IncludeAQ, 81, 64) + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
-	basedamageHigh := core.TernaryFloat64(core.IncludeAQ, 99, 78) + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
-	revengeLevel := core.TernaryFloat64(core.IncludeAQ, 60.0, 54.0)
+	basedamageLow := core.TernaryFloat64(aq, 81, 64) + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
+	basedamageHigh := core.TernaryFloat64(aq, 99, 78) + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
+	revengeLevel := core.TernaryFloat64(aq, 60.0, 54.0)
 
 	warrior.revengeProcAura = warrior.RegisterAura(core.Aura{
 		Label:    "Revenge",

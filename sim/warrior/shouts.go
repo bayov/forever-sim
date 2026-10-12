@@ -44,7 +44,9 @@ func (warrior *Warrior) newShoutSpellConfig(actionID core.ActionID, rank int32, 
 }
 
 func (warrior *Warrior) registerBattleShout() {
-	rank := core.TernaryInt32(core.IncludeAQ, 7, 6)
+	// Ranks from the Ahn'Qiraj books are out under Forever (no source in client 70338).
+	aq := warrior.Env.IncludeAQRanks()
+	rank := core.TernaryInt32(aq, 7, 6)
 	actionId := core.BattleShoutSpellId[rank]
 	has3pcWrath := warrior.HasSetBonus(ItemSetBattleGearOfWrath, 3)
 
