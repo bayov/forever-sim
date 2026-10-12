@@ -80,16 +80,22 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // three keep Bane of Doom up when it lands before the fight ends and Bane of Agony otherwise,
 // then Corruption and Immolate when they are down, Shadow Bolt as the filler, and Life Tap only
 // under 5% mana. A knob search kept every one of those. Against them, at 180 sec on Demonology:
-// Bane of Agony alone is 36 behind, no bane 118, no Corruption 53, no Immolate 8, Soul Fire
-// during Decimation 12, Death Coil on cooldown 9, Curse of Recklessness 9, Life Tap at 20% mana
-// 8. Searing Pain as the filler is 221 behind. Wrack, Incinerate, Siphon Life, the drains and
-// Shadowburn never made a build, Shadow Bolt does more with the same time.
+// Bane of Agony alone is 36 behind, no bane 119, no Corruption 52, no Immolate 9, Soul Fire
+// during Decimation 11, Death Coil on cooldown 9, Curse of Recklessness 9, Life Tap at 20% mana
+// 8. Searing Pain as the filler is 230 behind. Wrack, Incinerate, Siphon Life, the drains and
+// Shadowburn never made a build, Shadow Bolt does more with the same time. The opening Shadow Bolt
+// starts 2.5 sec before the pull so it lands just after it (damage before the pull does not
+// count), Life Tap also goes out when the filler costs more than the mana left, and Demonology
+// recasts Corruption and Immolate 1.5 sec early and taps once before the pull to pay for Soul
+// Link (the rotation audit's fixes, +10 to +14 at 180 sec).
 export const RotationLevel60Demonology = PresetUtils.makePresetAPLRotation('Level 60 Demonology', Level60DemonologyAPL, {
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Soul Link before the pull, for the Demonology talents.',
 });
 // Destruction adds Conflagrate on cooldown while Immolate is up. Shadow and Flame 5/5 keeps the
-// Immolate every time.
+// Immolate every time. Destruction and Affliction recast Immolate once it has less left than its
+// own cast time, which clips no tick, and Corruption only when it is gone (an early instant
+// Corruption clips its last tick).
 export const RotationLevel60Destruction = PresetUtils.makePresetAPLRotation('Level 60 Destruction', Level60DestructionAPL, {
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Conflagrate, for the Destruction talents.',
@@ -99,7 +105,8 @@ export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Leve
 	tooltip: 'The Level 60 rotation for the Affliction talents.',
 });
 // Destruction fire: Incinerate while Immolate is up (25% more), Conflagrate on cooldown, Immolate
-// opens the fight and is recast 2 sec before it runs out.
+// opens the fight (started 1.5 sec before the pull, so it lands as the fight starts) and is
+// recast 2 sec before it runs out.
 export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation('Level 60 Destruction Fire', Level60DestructionFireAPL, {
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
@@ -107,7 +114,8 @@ export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation(
 // Affliction damage over time: Siphon Life on top, and Wrack while Corruption and Bane of Agony are
 // both up (its 10% only counts on those two, so in practice at the end of the fight, when Bane of
 // Doom would not land). Wrack whenever the damage over time spells are up was 17 behind, never
-// casting it 0.5 ahead (inside the noise).
+// casting it 0.5 ahead (inside the noise). Its 2.94 sec opening Shadow Bolt starts 3 sec before
+// the pull, and Immolate is recast below its cast time as on Destruction.
 export const RotationLevel60AfflictionDoT = PresetUtils.makePresetAPLRotation('Level 60 Affliction DoT', Level60AfflictionDoTAPL, {
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Siphon Life and Wrack, for the Affliction damage over time talents.',
@@ -160,7 +168,7 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone and Shadow and Flame,
 // with the Succubus sacrificed before the pull for 15% Fire damage and no demon out, and
 // Firestone. Searched with Incinerate and Conflagrate kept (-require). The Succubus out instead was
-// 30 behind, the Imp 75, and Spellstone in place of Firestone 16.
+// 32 behind, the Imp 76, and Spellstone in place of Firestone 23.
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
 	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
@@ -353,18 +361,19 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Human, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 1052.7 / 1039.0 / 1025.4, Destruction 963.5 / 955.4 / 949.7, Affliction 957.4 / 949.7 / 944.2,
-// Destruction fire 949.8 / 938.1 / 929.2, Affliction damage over time 783.5 / 768.4 / 759.9.
+// 1068.2 / 1049.2 / 1032.1, Destruction 977.7 / 966.2 / 957.5, Affliction 976.7 / 963.5 / 954.3,
+// Destruction fire 959.6 / 944.8 / 933.3, Affliction damage over time 785.4 / 770.7 / 762.9.
 // Destruction and Affliction are inside 10% of Demonology, Destruction fire and Affliction damage
 // over time play differently and ship as specs of their own.
 //
 // Human is the best warlock race overall (first on Demonology, Destruction and Affliction), then
-// Gnome, Undead, Orc and Troll. Gnome is 2.9 ahead on Affliction damage over time and Undead 1.1
+// Gnome, Undead, Orc and Troll. Gnome is 3.0 ahead on Affliction damage over time and Undead 1.1
 // on Destruction fire. The Human's 2% crit comes from Sword Specialization with the synthetic
 // Azuresong Mageblade, the Era Phase 1 sword. Without that crit the Human Demonology warlock is
-// 1020.3 at 180 sec, level with the Troll at the bottom, so a staff or a dagger would put the
-// Gnome on top. The best Horde race is the Undead, 6.5 behind the Human on Demonology at 180 sec.
-// The full table is in forever-wiki/sim-status.md.
+// 1030.2 at 180 sec, level with the Troll at the bottom, so a staff or a dagger would put the
+// Gnome on top. The best Horde race is the Undead, 6.9 behind the Human on Demonology at 180 sec
+// (the Orc is within 0.4 there and ahead on the two Affliction builds). The full table is in
+// forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
