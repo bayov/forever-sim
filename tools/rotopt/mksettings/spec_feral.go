@@ -24,8 +24,8 @@ func init() {
 				DefaultPotion:     proto.Potions_MajorManaPotion,
 				DragonBreathChili: true,
 				Flask:             proto.Flask_FlaskOfDistilledWisdom,
-				Food:              proto.Food_FoodGrilledSquid,
-				StrengthBuff:      proto.StrengthBuff_JujuPower,
+				Food:              proto.Food_FoodFlankAuPoivre,
+				StrengthBuff:      proto.StrengthBuff_ElixirOfTheGrizzly,
 				ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 			}
 		},

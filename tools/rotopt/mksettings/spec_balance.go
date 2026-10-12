@@ -20,14 +20,16 @@ func init() {
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
-				DefaultPotion:   proto.Potions_MajorManaPotion,
+				DefaultPotion:   proto.Potions_MajorSpellblastingPotion,
 				Flask:           proto.Flask_FlaskOfSupremePower,
-				Food:            proto.Food_FoodNightfinSoup,
-				IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+				Food:            proto.Food_FoodLobsterStew,
+				IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
-				ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
+				NaturePowerBuff: proto.NaturePowerBuff_ElixirOfNaturePower,
 				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
