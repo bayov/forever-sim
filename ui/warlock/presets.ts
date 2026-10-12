@@ -344,18 +344,18 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Human, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 988.1 / 976.5 / 964.9, Destruction 903.9 / 897.4 / 891.8, Affliction 897.3 / 889.5 / 884.3,
-// Destruction fire 891.8 / 881.6 / 873.9, Affliction damage over time 747.0 / 732.6 / 724.4.
+// 963.8 / 952.4 / 941.1, Destruction 881.5 / 875.1 / 869.6, Affliction 874.6 / 866.8 / 861.7,
+// Destruction fire 877.3 / 867.1 / 859.7, Affliction damage over time 729.1 / 714.7 / 706.7.
 // Destruction and Affliction are inside 10% of Demonology, Destruction fire and Affliction damage
 // over time play differently and ship as specs of their own.
 //
 // Human is the best warlock race overall (first on Demonology, Destruction and Affliction), then
-// Gnome, Undead, Orc and Troll. Gnome is 3.8 ahead on Affliction damage over time and Undead 0.7
+// Gnome, Undead, Orc and Troll. Gnome is 3.6 ahead on Affliction damage over time and Undead 1.0
 // on Destruction fire. The Human's 2% crit comes from Sword Specialization with the synthetic
 // Azuresong Mageblade, the Era Phase 1 sword. Without that crit the Human Demonology warlock is
-// 934.7 at 180 sec, last of the five, so a staff or a dagger would put the Gnome on top. The best
-// Horde race is the Undead, 7.7 behind the Human on Demonology at 180 sec. The full table is in
-// forever-wiki/sim-status.md.
+// 934.5 at 180 sec, level with the Troll at the bottom, so a staff or a dagger would put the Gnome
+// on top. The best Horde race is the Undead, 7.5 behind the Human on Demonology at 180 sec. The
+// full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
