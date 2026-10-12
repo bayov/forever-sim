@@ -151,7 +151,25 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 ### Druid
 
-(not done yet)
+Both DPS playstyles have their own gear, talents, rotation and build: Balance (moonkin) and Feral (cat). A Wrath-only moonkin rotation is a second Balance preset. Numbers are the shared Level 60 boss and raid, 40,000 iterations (standard error 0.1 to 0.2), with the Phase 1 consumes in each spec's presets; elixirs in different slots stack.
+
+**Balance.** Gear: `tools/database/forever_synthetic_items_druid.go` 998001-998013 on the shared item budget, 471 spell power, 138 Intellect, 30 hit and 56 crit rating in total, with 2 pieces of Grovekeeper Eclipse (Forever's crafted Balance set), Talisman of Ephemeral Power and Briarwood Reed. Talents `5532220115501351--505` (41 Balance and Naturalist 5); 31 / 0 / 20 is 10% behind and 41 / 10 / 0 4%. Rotation (`ui/balance_druid/apls/level60.apl.json`): Insect Swarm and Moonfire whenever they are down, a free Starfire on Clearcasting, then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in flight, Starfire otherwise. At 300 sec Innervate at 40% mana and the plain Wrath and Starfire weave are 7 ahead, because the mana runs out. The Wrath-only rotation (`level60_wrath.apl.json`) is 705.2 at 180 sec, 7% behind.
+
+| Race | 120 sec | 180 sec | 300 sec | |
+|---|---|---|---|---|
+| Night Elf | 763.9 | 757.9 | 749.9 | best overall and Alliance |
+| Tauren | 761.7 | 757.3 | 750.4 | best Horde |
+| Windshaper Skyborne | 758.9 | 754.5 | 745.6 | |
+| High Order Skyborne | 758.8 | 754.4 | 745.2 | |
+
+**Feral.** Gear: 998101-998113, 166 Agility, 157 Strength, 63 attack power, 90 hit and 56 crit rating in total, with 2 pieces of Grovekeeper Ferocity, Hand of Justice and Blackhand's Breadth. Talents `05002-05200332021032212041-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, Shifting Power at 50 Energy or less, Tiger's Fury and Berserk on cooldown, no Rake (keeping it up costs 30).
+
+| Race | 120 sec | 180 sec | 300 sec | |
+|---|---|---|---|---|
+| Night Elf | 666.7 | 660.6 | 650.0 | best overall and Alliance |
+| High Order Skyborne | 663.7 | 658.3 | 648.3 | |
+| Windshaper Skyborne | 663.4 | 658.0 | 648.1 | best Horde |
+| Tauren | 661.3 | 655.7 | 645.3 | |
 
 ## Low levels
 
