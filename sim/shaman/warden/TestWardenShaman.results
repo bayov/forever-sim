@@ -111,6 +111,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-ElementalSynthetic(Phase1)"
+ value: {
+  dps: 341.12871
+  tps: 571.12112
+ }
+}
+dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
   dps: 361.91227

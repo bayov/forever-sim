@@ -405,6 +405,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-ElementalSynthetic(Phase1)"
+ value: {
+  dps: 1137.09465
+  tps: 870.45168
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
   dps: 1204.47009
@@ -993,6 +1000,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-ElementalSynthetic(Phase1)"
+ value: {
+  dps: 1174.89242
+  tps: 903.10465
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSynthetic(Phase1)"
  value: {
   dps: 1220.83629
@@ -1245,6 +1259,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-ElementalSynthetic(Phase1)"
+ value: {
+  dps: 1184.62511
+  tps: 904.29591
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSynthetic(Phase1)"
  value: {
   dps: 1249.03058
@@ -1494,6 +1515,13 @@ dps_results: {
  value: {
   dps: 1177.69599
   tps: 893.44305
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-ElementalSynthetic(Phase1)"
+ value: {
+  dps: 1212.7696
+  tps: 926.45483
  }
 }
 dps_results: {

@@ -69,7 +69,10 @@ export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, 
 // (Arcanum of Focus, Greater Stats, Greater Intellect, Enchant Weapon - Spell Power) and
 // Forever's Enchant Necklace - Spell Power.
 //
-// GEAR_NUMBERS
+// On 2026-10-12 the Level 60 build is 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec on it. The
+// trinkets beat Weakness Analyzer (3.4 behind), Eye of the Beast, Burst of Knowledge, Shard of
+// the Scale and Hand of Justice, and Burning Totem is 7.1 ahead of no relic and 4.8 ahead of
+// Polished Driftwood Icon. The set stays fixed, it was not gear searched.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -92,12 +95,17 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 
 export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAPLJson, { group: 'Era' });
 
-// ROTATION_NUMBERS
+// The tools/rotopt shaman_ele search on the Level 60 talents, over the mean of 120, 180 and
+// 300 sec: Mana Spring and Searing Totem, Flame Shock whenever its DoT is down, Lava Burst on
+// cooldown, Lightning Bolt, and Lightning Bolt rank 7 below 20% mana (+2 over the top rank).
+// Chain Lightning on cooldown cost 38 on one target, because it spends too much mana for its
+// damage. Earth Shock, mana floors on the shocks and holding Lava Burst for Flame Shock changed
+// nothing. A caster stands at range, so the rotation has no Magma Totem or Fire Nova.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJson, {
 	tooltip: 'The tools/rotopt search result for the Level 60 talents.',
 	group: 'Level 60',
 });
-// MANA_TIDE_ROTATION_NUMBERS
+// The same with Mana Tide Totem at 20% mana. At 40, 60 and 80% it is 1.1, 2.7 and 5.7 behind.
 export const APLLevel60ManaTide = PresetUtils.makePresetAPLRotation('Level 60 + Mana Tide', Level60ManaTideAPLJson, {
 	tooltip: 'The Level 60 rotation with Mana Tide Totem, for the Level 60 + Mana Tide talents.',
 	group: 'Level 60',
@@ -118,12 +126,20 @@ export const DefaultAPL = APLLevel60;
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// TALENT_NUMBERS
+// The talent search (tools/rotopt -talent-search) on the synthetic set, from four seeds (deep
+// Elemental with Restoration, with Enhancement, and two mixes), then the knob search, then the
+// talent search again from three seeds on the new knobs, as the mean of 120, 180 and 300 sec.
+// It is 585.5 with the first consumes. Thundering Strikes 5 and Tidal Focus 5 (5% hit, Forever
+// took Nature's Guidance away) are the big ones. The next best build moves 4 points into
+// Ancestral Knowledge and Shamanistic Focus out of Mindfulness and Tidal Focus and is 15 behind.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5504301300103051-052-05305' }), {
 	tooltip: 'Level 60 talents from the talent search: Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus.',
 	group: 'Level 60',
 });
-// MANA_TIDE_TALENT_NUMBERS
+// Mana Tide Totem for the group's mana: Totemic Focus 5, Mindfulness 3, Tidal Focus 5 and the
+// Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge.
+// The talent search with Mana Tide Totem pinned found it. It is 579.7 with the first consumes,
+// 1.0% behind Level 60.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '5504301300103051-04-053150001001' }),
@@ -224,7 +240,9 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// PROFESSIONS_NUMBERS
+// The shaman is an engineer for the Goblin Sapper Charge and Goblin Land Mine (4.3 and 1.2)
+// and an alchemist. The race is Orc: Orc and Tauren tie for the best race (594.2 and 594.0 at
+// 180 sec, Tauren 1.0 ahead at 300), see the race table in forever-wiki/sim-status.md.
 export const OtherDefaults = {
 	distanceFromTarget: 20,
 	profession1: Profession.Engineering,
@@ -270,7 +288,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// BUILD_NUMBERS
+// On 2026-10-12, Level 60 is 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',

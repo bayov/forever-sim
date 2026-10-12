@@ -131,7 +131,55 @@ func TestElemental(t *testing.T) {
 	}))
 }
 
+// TestElementalLevel60 is the Level 60 preset (ui/elemental_shaman/presets.ts): the synthetic
+// Phase 1 set with the Level 60 talents, rotation and consumes.
+func TestElementalLevel60(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
+		{
+			Class:      proto.Class_ClassShaman,
+			Phase:      1,
+			Race:       proto.Race_RaceOrc,
+			OtherRaces: []proto.Race{proto.Race_RaceTauren},
+
+			Talents:     Level60Talents,
+			GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "level60_phase1_synthetic"),
+			Rotation:    core.GetAplRotation("../../../ui/elemental_shaman/apls", "level60"),
+			Buffs:       core.ForeverBuffs,
+			Consumes:    Level60Consumes,
+			SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
+
+			ItemFilter:      ItemFilters,
+			EPReferenceStat: proto.Stat_StatSpellPower,
+			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
+		},
+	}))
+}
+
 var DefaultTalents = "5505301300103051--503352001"
+
+// The Level 60 preset's talents, rotation and consumes (ui/elemental_shaman/presets.ts) on the
+// synthetic Phase 1 set.
+var Level60Talents = "5504301300103051-052-05305"
+
+var Level60Consumes = core.ConsumesCombo{
+	Label: "Level60-Consumes",
+	Consumes: &proto.Consumes{
+		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
+		DefaultPotion:   proto.Potions_MajorManaPotion,
+		FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
+		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
+		Flask:           proto.Flask_FlaskOfSupremePower,
+		Food:            proto.Food_FoodNightfinSoup,
+		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+		MainHandImbue:   proto.WeaponImbue_WizardOil,
+		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
+		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
+	},
+}
 
 var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
