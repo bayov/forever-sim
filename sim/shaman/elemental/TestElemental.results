@@ -1,8 +1,8 @@
 character_stats_results: {
  key: "TestElemental-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 220
-  final_stats: 228
+  final_stats: 206
+  final_stats: 213
   final_stats: 456
   final_stats: 363
   final_stats: 293
@@ -18,21 +18,21 @@ character_stats_results: {
   final_stats: 34.4347
   final_stats: 0
   final_stats: 0
-  final_stats: 1152
+  final_stats: 1100
   final_stats: 5
-  final_stats: 31.2824
+  final_stats: 30.5204
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 6685
   final_stats: 0
   final_stats: 0
-  final_stats: 2574
+  final_stats: 2544
   final_stats: 390
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 13.2824
+  final_stats: 12.5204
   final_stats: 5
   final_stats: 0
   final_stats: 6198.4
@@ -50,8 +50,8 @@ character_stats_results: {
 character_stats_results: {
  key: "TestElemental-Phase2-CharacterStats-Default"
  value: {
-  final_stats: 220
-  final_stats: 228
+  final_stats: 206
+  final_stats: 213
   final_stats: 459
   final_stats: 350
   final_stats: 284
@@ -67,21 +67,21 @@ character_stats_results: {
   final_stats: 34.215
   final_stats: 0
   final_stats: 0
-  final_stats: 1152
+  final_stats: 1100
   final_stats: 5
-  final_stats: 31.2824
+  final_stats: 30.5204
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 6490
   final_stats: 0
   final_stats: 0
-  final_stats: 2312
+  final_stats: 2282
   final_stats: 390
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 13.2824
+  final_stats: 12.5204
   final_stats: 5
   final_stats: 0
   final_stats: 6229.6
@@ -99,8 +99,8 @@ character_stats_results: {
 character_stats_results: {
  key: "TestElemental-Phase3-CharacterStats-Default"
  value: {
-  final_stats: 220
-  final_stats: 228
+  final_stats: 206
+  final_stats: 213
   final_stats: 525
   final_stats: 423
   final_stats: 297
@@ -116,21 +116,21 @@ character_stats_results: {
   final_stats: 36.4487
   final_stats: 0
   final_stats: 0
-  final_stats: 1152
+  final_stats: 1100
   final_stats: 10
-  final_stats: 32.2824
+  final_stats: 31.5204
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 7585
   final_stats: 0
   final_stats: 0
-  final_stats: 2169
+  final_stats: 2139
   final_stats: 390
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 13.2824
+  final_stats: 12.5204
   final_stats: 5
   final_stats: 0
   final_stats: 6916
@@ -148,8 +148,8 @@ character_stats_results: {
 character_stats_results: {
  key: "TestElemental-Phase4-CharacterStats-Default"
  value: {
-  final_stats: 220
-  final_stats: 228
+  final_stats: 206
+  final_stats: 213
   final_stats: 484
   final_stats: 465
   final_stats: 264
@@ -165,21 +165,21 @@ character_stats_results: {
   final_stats: 33.1585
   final_stats: 0
   final_stats: 0
-  final_stats: 1152
+  final_stats: 1100
   final_stats: 16
-  final_stats: 28.2824
+  final_stats: 27.5204
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 8215
   final_stats: 0
   final_stats: 0
-  final_stats: 1805
+  final_stats: 1775
   final_stats: 390
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 13.2824
+  final_stats: 12.5204
   final_stats: 5
   final_stats: 0
   final_stats: 6489.6
@@ -197,8 +197,8 @@ character_stats_results: {
 character_stats_results: {
  key: "TestElemental-Phase5-CharacterStats-Default"
  value: {
-  final_stats: 220
-  final_stats: 228
+  final_stats: 206
+  final_stats: 213
   final_stats: 597
   final_stats: 455
   final_stats: 261
@@ -214,21 +214,21 @@ character_stats_results: {
   final_stats: 37.9895
   final_stats: 0
   final_stats: 0
-  final_stats: 1152
+  final_stats: 1100
   final_stats: 15
-  final_stats: 32.2824
+  final_stats: 31.5204
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 8065
   final_stats: 0
   final_stats: 0
-  final_stats: 1898
+  final_stats: 1868
   final_stats: 390
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 13.2824
+  final_stats: 12.5204
   final_stats: 5
   final_stats: 0
   final_stats: 7664.8
@@ -246,8 +246,8 @@ character_stats_results: {
 character_stats_results: {
  key: "TestElemental-Phase6-CharacterStats-Default"
  value: {
-  final_stats: 220
-  final_stats: 228
+  final_stats: 206
+  final_stats: 213
   final_stats: 613
   final_stats: 442
   final_stats: 232
@@ -263,21 +263,21 @@ character_stats_results: {
   final_stats: 41.7698
   final_stats: 0
   final_stats: 0
-  final_stats: 1152
+  final_stats: 1100
   final_stats: 14
-  final_stats: 36.2824
+  final_stats: 35.5204
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 7870
   final_stats: 0
   final_stats: 0
-  final_stats: 1917
+  final_stats: 1887
   final_stats: 390
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 13.2824
+  final_stats: 12.5204
   final_stats: 5
   final_stats: 0
   final_stats: 7831.2
@@ -298,7 +298,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.25483
+  weights: -0.25466
   weights: 0
   weights: 0.57471
   weights: 0
@@ -308,8 +308,8 @@ stat_weights_results: {
   weights: 0.39446
   weights: 0
   weights: 0
-  weights: 5.05447
-  weights: 3.90419
+  weights: 5.04943
+  weights: 3.90849
   weights: 0
   weights: 0
   weights: 0
@@ -347,7 +347,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 1.04028
+  weights: 1.03691
   weights: 0
   weights: 0.5722
   weights: 0
@@ -357,8 +357,8 @@ stat_weights_results: {
   weights: 0.3902
   weights: 0
   weights: 0
-  weights: 6.65296
-  weights: 4.25815
+  weights: 6.67236
+  weights: 4.22946
   weights: 0
   weights: 0
   weights: 0
@@ -396,7 +396,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.40374
+  weights: 0.40002
   weights: 0
   weights: 0.6247
   weights: 0
@@ -406,8 +406,8 @@ stat_weights_results: {
   weights: 0.42592
   weights: 0
   weights: 0
-  weights: 6.15136
-  weights: 4.52488
+  weights: 6.1481
+  weights: 4.52095
   weights: 0
   weights: 0
   weights: 0
@@ -445,7 +445,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.29754
+  weights: 0.29536
   weights: 0
   weights: 0.65107
   weights: 0
@@ -456,7 +456,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 5.02056
+  weights: 5.01634
   weights: 0
   weights: 0
   weights: 0
@@ -494,7 +494,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.1138
+  weights: -0.11454
   weights: 0
   weights: 0.66589
   weights: 0
@@ -504,8 +504,8 @@ stat_weights_results: {
   weights: 0.45632
   weights: 0
   weights: 0
-  weights: 7.61642
-  weights: 5.55208
+  weights: 7.61605
+  weights: 5.54805
   weights: 0
   weights: 0
   weights: 0
@@ -543,7 +543,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 1.38225
+  weights: 1.38189
   weights: 0
   weights: 0.67697
   weights: 0
@@ -553,8 +553,8 @@ stat_weights_results: {
   weights: 0.46445
   weights: 0
   weights: 0
-  weights: 9.80311
-  weights: 5.81439
+  weights: 9.80454
+  weights: 5.81355
   weights: 0
   weights: 0
   weights: 0
@@ -589,78 +589,78 @@ stat_weights_results: {
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 481.834
-  tps: 392.14752
+  dps: 481.79605
+  tps: 392.10958
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Champion'sStormcaller"
  value: {
-  dps: 485.36102
-  tps: 395.07655
+  dps: 485.3233
+  tps: 395.03884
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 585.6579
-  tps: 476.48963
+  dps: 585.56944
+  tps: 476.40118
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 540.15121
-  tps: 440.13494
+  dps: 540.06474
+  tps: 440.04847
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 566.6729
-  tps: 460.66518
+  dps: 566.63496
+  tps: 460.62723
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheEarthfury"
  value: {
-  dps: 452.98776
-  tps: 368.98451
+  dps: 452.94981
+  tps: 368.94656
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheEarthshatterer"
  value: {
-  dps: 423.56455
-  tps: 345.05155
+  dps: 423.5266
+  tps: 345.0136
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 494.4944
-  tps: 402.65397
+  dps: 494.45645
+  tps: 402.61602
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheTenStorms"
  value: {
-  dps: 499.59791
-  tps: 406.28183
+  dps: 499.55997
+  tps: 406.24388
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 509.84952
-  tps: 414.27551
+  dps: 509.81157
+  tps: 414.23757
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Average-Default"
  value: {
-  dps: 546.75464
-  tps: 444.46703
+  dps: 546.70099
+  tps: 444.41338
  }
 }
 dps_results: {
@@ -750,85 +750,85 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 539.69258
-  tps: 439.27469
+  dps: 539.66794
+  tps: 439.25005
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 510.7395
-  tps: 420.59204
+  dps: 510.16011
+  tps: 420.01266
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sStormcaller"
  value: {
-  dps: 515.54482
-  tps: 424.17022
+  dps: 514.94563
+  tps: 423.57103
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 606.65345
-  tps: 497.29831
+  dps: 605.93963
+  tps: 496.58449
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 566.18888
-  tps: 460.32906
+  dps: 566.10338
+  tps: 460.24356
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 592.45828
-  tps: 485.71894
+  dps: 591.81505
+  tps: 485.07572
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheEarthfury"
  value: {
-  dps: 474.47282
-  tps: 390.07817
+  dps: 473.8515
+  tps: 389.45684
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheEarthshatterer"
  value: {
-  dps: 445.99236
-  tps: 367.31291
+  dps: 445.34187
+  tps: 366.66241
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheFiveThunders"
  value: {
-  dps: 516.43558
-  tps: 425.13265
+  dps: 515.80799
+  tps: 424.50507
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheTenStorms"
  value: {
-  dps: 521.00003
-  tps: 427.28133
+  dps: 520.40389
+  tps: 426.68519
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 535.56426
-  tps: 439.70619
+  dps: 535.01205
+  tps: 439.15398
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Average-Default"
  value: {
-  dps: 589.3438
-  tps: 483.13791
+  dps: 588.7026
+  tps: 482.49671
  }
 }
 dps_results: {
@@ -918,85 +918,85 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 575.8061
-  tps: 470.73412
+  dps: 575.25103
+  tps: 470.17905
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 540.5366
-  tps: 439.64448
+  dps: 540.41031
+  tps: 439.51819
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Champion'sStormcaller"
  value: {
-  dps: 548.38857
-  tps: 445.71075
+  dps: 548.3092
+  tps: 445.63139
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 642.59692
-  tps: 520.05
+  dps: 642.55284
+  tps: 520.00592
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 605.71805
-  tps: 492.52923
+  dps: 605.51379
+  tps: 492.32497
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 627.58844
-  tps: 510.78808
+  dps: 627.39969
+  tps: 510.59934
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheEarthfury"
  value: {
-  dps: 493.49278
-  tps: 401.81919
+  dps: 493.35686
+  tps: 401.68326
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheEarthshatterer"
  value: {
-  dps: 460.7966
-  tps: 375.19851
+  dps: 460.71108
+  tps: 375.11299
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheFiveThunders"
  value: {
-  dps: 537.14788
-  tps: 437.27246
+  dps: 537.07001
+  tps: 437.19458
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheTenStorms"
  value: {
-  dps: 548.24323
-  tps: 446.14489
+  dps: 548.15554
+  tps: 446.0572
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 569.3501
-  tps: 463.6053
+  dps: 569.26214
+  tps: 463.51734
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Average-Default"
  value: {
-  dps: 640.35445
-  tps: 519.18838
+  dps: 640.25169
+  tps: 519.08562
  }
 }
 dps_results: {
@@ -1086,85 +1086,85 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase3-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 634.2536
-  tps: 515.32777
+  dps: 634.18318
+  tps: 515.25736
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 548.13234
-  tps: 445.89796
+  dps: 548.04973
+  tps: 445.81534
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Champion'sStormcaller"
  value: {
-  dps: 550.7177
-  tps: 447.00588
+  dps: 550.64148
+  tps: 446.92966
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 648.84759
-  tps: 525.4737
+  dps: 648.75169
+  tps: 525.37781
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 643.61654
-  tps: 522.93346
+  dps: 643.48054
+  tps: 522.79745
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 637.15658
-  tps: 517.87758
+  dps: 637.07123
+  tps: 517.79223
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheEarthfury"
  value: {
-  dps: 498.49778
-  tps: 405.93759
+  dps: 498.41248
+  tps: 405.85229
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheEarthshatterer"
  value: {
-  dps: 465.64339
-  tps: 379.89651
+  dps: 465.51825
+  tps: 379.77136
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheFiveThunders"
  value: {
-  dps: 542.24036
-  tps: 441.44033
+  dps: 542.15912
+  tps: 441.35909
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheTenStorms"
  value: {
-  dps: 550.46605
-  tps: 448.13264
+  dps: 550.33955
+  tps: 448.00614
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 574.76328
-  tps: 467.3342
+  dps: 574.68675
+  tps: 467.25767
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Average-Default"
  value: {
-  dps: 680.75678
-  tps: 551.28018
+  dps: 680.66473
+  tps: 551.18813
  }
 }
 dps_results: {
@@ -1254,85 +1254,85 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase4-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 674.75055
-  tps: 546.53229
+  dps: 674.63571
+  tps: 546.41745
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 603.06466
-  tps: 489.25383
+  dps: 602.98562
+  tps: 489.17479
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Champion'sStormcaller"
  value: {
-  dps: 612.445
-  tps: 496.92631
+  dps: 612.36356
+  tps: 496.84486
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 710.86797
-  tps: 575.40325
+  dps: 710.70048
+  tps: 575.23576
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 715.5331
-  tps: 579.87003
+  dps: 715.33236
+  tps: 579.66929
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 708.55419
-  tps: 574.58451
+  dps: 708.46717
+  tps: 574.49749
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheEarthfury"
  value: {
-  dps: 547.85349
-  tps: 445.13357
+  dps: 547.71824
+  tps: 444.99832
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheEarthshatterer"
  value: {
-  dps: 509.45649
-  tps: 414.65345
+  dps: 509.37483
+  tps: 414.57179
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheFiveThunders"
  value: {
-  dps: 591.57723
-  tps: 480.40842
+  dps: 591.44599
+  tps: 480.27718
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheTenStorms"
  value: {
-  dps: 602.66068
-  tps: 489.39555
+  dps: 602.57069
+  tps: 489.30556
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 633.29416
-  tps: 513.56387
+  dps: 633.20508
+  tps: 513.47479
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Average-Default"
  value: {
-  dps: 763.32467
-  tps: 617.22688
+  dps: 763.22367
+  tps: 617.12588
  }
 }
 dps_results: {
@@ -1422,85 +1422,85 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 762.2535
-  tps: 617.51488
+  dps: 762.18587
+  tps: 617.44725
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 638.48637
-  tps: 518.50658
+  dps: 638.36787
+  tps: 518.38808
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Champion'sStormcaller"
  value: {
-  dps: 641.93623
-  tps: 519.59804
+  dps: 641.86604
+  tps: 519.52785
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 745.83294
-  tps: 603.7335
+  dps: 745.75839
+  tps: 603.65896
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 753.27061
-  tps: 610.47147
+  dps: 753.11887
+  tps: 610.31973
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 743.04768
-  tps: 602.79165
+  dps: 742.96363
+  tps: 602.70759
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheEarthfury"
  value: {
-  dps: 578.63616
-  tps: 470.16303
+  dps: 578.55695
+  tps: 470.08382
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheEarthshatterer"
  value: {
-  dps: 536.09715
-  tps: 436.3304
+  dps: 535.97794
+  tps: 436.21119
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheFiveThunders"
  value: {
-  dps: 624.84882
-  tps: 507.79603
+  dps: 624.76446
+  tps: 507.71167
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheTenStorms"
  value: {
-  dps: 634.00557
-  tps: 514.27167
+  dps: 633.87695
+  tps: 514.14305
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 664.55311
-  tps: 538.83113
+  dps: 664.47103
+  tps: 538.74905
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Average-Default"
  value: {
-  dps: 819.43348
-  tps: 662.02728
+  dps: 819.33488
+  tps: 661.92868
  }
 }
 dps_results: {
@@ -1590,7 +1590,7 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase6-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 813.97692
-  tps: 658.10249
+  dps: 813.86217
+  tps: 657.98774
  }
 }

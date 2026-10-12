@@ -11,7 +11,8 @@ import (
 // TestOrcShamanStrengthOfEarthRanks checks the Strength our own Strength of Earth Totem gives
 // by rank (shaman_audit.md 7.21).
 //
-// Ranks 1 to 5 come at levels 10, 24, 38, 52 and 60 and give 7, 14, 25, 42 and 53 Strength, as
+// Ranks 1 to 5 come at levels 10, 24, 38, 52 and 60 and give 7, 14, 25, 42 and 53 Strength (rank 5
+// is an Ahn'Qiraj tablet, so a Forever launch sim stops at rank 4's 42), as
 // the Forever client's party auras do. At level 30 rank 2's 14 Strength is 28 attack power. On
 // the beta our attack power went from 869 to 897 when we put it down. The Strength goes when a
 // Tremor Totem takes the earth slot.
@@ -19,7 +20,7 @@ func TestOrcShamanStrengthOfEarthRanks(t *testing.T) {
 	for _, c := range []struct {
 		level    int32
 		strength float64
-	}{{10, 7}, {24, 14}, {30, 14}, {38, 25}, {52, 42}, {60, 53}} {
+	}{{10, 7}, {24, 14}, {30, 14}, {38, 25}, {52, 42}, {60, 42}} {
 		sim, enh := newShamanSim(newOrcShaman(c.level, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 5)
 		at(sim, 1, func(sim *core.Simulation) {
 			strength, ap := enh.GetStat(stats.Strength), enh.GetStat(stats.AttackPower)

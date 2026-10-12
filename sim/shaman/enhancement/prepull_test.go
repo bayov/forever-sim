@@ -22,7 +22,7 @@ func TestOrcShamanPrepull(t *testing.T) {
 		at      string
 	}{
 		{shaman.LightningShieldSpellId[7], "-6s"},
-		{shaman.StrengthOfEarthTotemSpellId[5], "-4.5s"},
+		{shaman.StrengthOfEarthTotemSpellId[4], "-4.5s"},
 		{shaman.ManaSpringTotemSpellId[4], "-3.5s"},
 		{shaman.SearingTotemSpellId[6], "-1s"},
 	}
@@ -87,7 +87,7 @@ func TestOrcShamanPrepull(t *testing.T) {
 			buff int32
 			want time.Duration
 		}{
-			{"Strength of Earth Totem", shaman.EarthTotem, shaman.StrengthOfEarthTotemSpellId[5], 5*time.Minute - 4500*time.Millisecond},
+			{"Strength of Earth Totem", shaman.EarthTotem, shaman.StrengthOfEarthTotemSpellId[4], 5*time.Minute - 4500*time.Millisecond},
 			{"Mana Spring Totem", shaman.WaterTotem, shaman.ManaSpringTotemSpellId[4], 5*time.Minute - 3500*time.Millisecond},
 			// The fire totem gets 1 ns on top, so its last attack lands before it goes.
 			{"Searing Totem", shaman.FireTotem, 0, 55*time.Second - time.Second + 1},

@@ -42,6 +42,8 @@ func TestOrcShamanSpellRanks(t *testing.T) {
 		{"Healing Stream Totem", shaman.HealingStreamTotemSpellId[:], 1, 2},
 		{"Mana Spring Totem", shaman.ManaSpringTotemSpellId[:], 0, 1},
 	}
+	// Their top ranks are taught by Ahn'Qiraj tablets, which Forever's launch doesn't have.
+	aqTop := map[string]bool{"Strength of Earth Totem": true, "Grace of Air Totem": true}
 	for _, level := range []int32{20, 30, 60} {
 		_, enh := newTargetLevelSim(level, level, whirlwind, 0, "")
 		for _, c := range cases {
@@ -51,8 +53,15 @@ func TestOrcShamanSpellRanks(t *testing.T) {
 				want = c.at20
 			case 30:
 				want = c.at30
+			default:
+				if aqTop[c.name] {
+					want--
+				}
 			}
 			top := &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: c.ids[len(c.ids)-1]}}
+			if aqTop[c.name] {
+				top = &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: c.ids[len(c.ids)-2]}}
+			}
 			spell := enh.Rotation.GetAPLSpell(top)
 			switch {
 			case want == 0 && spell != nil:
