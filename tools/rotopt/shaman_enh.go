@@ -81,6 +81,10 @@ func (shamanEnh) Knobs() []Knob {
 		{Name: "earthShockHold", Default: 0, Min: 0, Max: 4, Step: 1},
 		// With shock 4, Flame Shock goes ahead of the Maelstrom Weapon Lightning Bolt.
 		{Name: "flameShockFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// With shock 4, Earth Shock only goes while Flame Shock's DoT has more than this many
+		// seconds left, so the shared shock cooldown is back when the DoT runs out. 0 never
+		// holds.
+		{Name: "earthShockFlameShockLeft", Default: 0, Min: 0, Max: 8, Step: 1},
 		// Hard cast Lightning Bolt with the mana to spare, on top of the Maelstrom ones: 0
 		// never, 1 any time, 2 only while out of melee range (PvP mode).
 		{Name: "lightningBolt", Default: 0, Min: 0, Max: 2, Step: 1},
@@ -256,7 +260,11 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		if !flameShockFirst {
 			items = append(items, flameShockLine())
 		}
-		items = append(items, cast(earthShock, earthShockWhen(), "Earth Shock otherwise."))
+		when := earthShockWhen()
+		if left := k["earthShockFlameShockLeft"]; left > 0 {
+			when = and(when, gt(dotRemainingTime(flameShock), seconds(left)))
+		}
+		items = append(items, cast(earthShock, when, "Earth Shock otherwise, unless Flame Shock runs out before the shock cooldown is back."))
 	case 5:
 		items = append(items,
 			cast(earthShock, and(targetAuraIsActive(stormstrike), manaFloor(k["shockMana"])), "Earth Shock while the Stormstrike debuff is up (20% Nature damage)."),
