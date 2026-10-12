@@ -195,6 +195,13 @@ Hits that are not real inversions: the Lightning Bolt / Chain Lightning / Lava B
 
 One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (20419, L34) procs 74 with a 0.900 coefficient, against 35 and 0.000 for rank 7 (20423). That's the client error noted in pass 1. Retribution doesn't use Seal of Fury, but if a build ever did, "strongest learned rank" would pick the broken rank 4.
 
+## Pass 3 (16:15 UTC)
+
+- No Forever build newer than 1.60.1.70338 on wago.tools. The class branch commits since 15:35 are talent-verification and rotation fixes (warlock pre-pull Demonic Sacrifice, paladin Holy Power / Consecrated Ground, rogue Murder, hunter Expose Prey and Efficiency, shaman and warrior talent checks). None touches rank data, so the sensitivities above stand as percentages.
+- Succubus Lash of Pain (11780, 2–2.5% of the warlock builds): **tuned**, 0.48–0.51× Era at every rank (16 / 22 / 30 / 36 / 43 / 50), coefficient unchanged.
+- Venom (1310703: +30% via two damage-percent auras, plus a 10 flat modifier), Thousand Cuts (1310723: −3 flat modifier) and Lacerating Strikes (1310533: 40, with a 1-a-tick periodic): one rank each, never changed in any beta build. **Untested**, with no Era or SoD counterpart to compare against.
+- The orchestrator's rule (89729b6) excludes client data errors such as Seal of Fury rank 4 from the strongest-rank ruling.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
