@@ -356,7 +356,7 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured without trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 878.0 / 870.7 / 863.6 at 120 / 180 / 300 sec (20000 iterations). The pet deals 25% of it.
+// 895.4 / 888.0 / 878.8 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -368,8 +368,8 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 912.7 / 907.7 / 877.6 at 120 / 180 / 300 sec, 37 ahead of Beast Mastery at 180. The pet deals
-// 14% of it. It runs short of mana in a 5 minute fight.
+// 922.7 / 916.8 / 880.0 at 120 / 180 / 300 sec, 29 ahead of Beast Mastery at 180. The pet deals
+// 15% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -381,8 +381,8 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 931.2 / 922.1 / 896.8 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
-// than a pet that takes no player buffs. Runs short of mana in a 5 minute fight.
+// 931.3 / 921.8 / 888.9 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// than a pet that takes no player buffs (5 ahead of Marksmanship at 180). Runs short of mana in a 5 minute fight.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -394,7 +394,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 755.1 / 748.4 / 745.5 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
+// 774.8 / 767.7 / 764.6 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
