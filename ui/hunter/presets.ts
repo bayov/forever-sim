@@ -99,18 +99,18 @@ export const DefaultGear = GearLevel60Ranged;
 // Summon Hawk), Sniper Shot on its own, Rapid Fire, Bestial Wrath and the racials at the pull and
 // on cooldown. The knob searches on each build (2026-10-12, 180 sec, on the standard gear): Marksmanship
 // and Lone Wolf put Arcane Shot above Aimed Shot and spend their mana with no floors (+15 with
-// Improved Arcane Shot 5), and Lone Wolf casts Serpent Sting after Aimed Shot (+1.7). Beast Mastery
+// Improved Arcane Shot 5), and both cast Serpent Sting after Aimed Shot (+1.7 and +2.1). Beast Mastery
 // keeps Aimed Shot first and its floors.
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {
 	tooltip: 'Serpent Sting when down, Aimed Shot, Sniper Shot and Arcane Shot on cooldown, Bestial Wrath and Rapid Fire on cooldown.',
 	group: 'Level 60',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
-	tooltip: 'Serpent Sting when down, Arcane Shot, Aimed Shot and Sniper Shot on cooldown, Rapid Fire on cooldown, no mana floors.',
+	tooltip: 'Arcane Shot, Aimed Shot, Serpent Sting when down and Sniper Shot on cooldown, Rapid Fire on cooldown, no mana floors.',
 	group: 'Level 60',
 });
 export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWolfAPL, {
-	tooltip: 'The Marksmanship rotation with Serpent Sting after Aimed Shot.',
+	tooltip: 'The Marksmanship rotation, for no pet.',
 	group: 'Level 60',
 });
 // Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Raptor Strike on
