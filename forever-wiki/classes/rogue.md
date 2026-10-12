@@ -37,9 +37,11 @@ What the client data says where the tooltips are vague, and what the sim does wi
 - Venom (1310703) is 25 Energy and a combo point, raises poison damage 30% (direct and periodic) and the chance to apply poisons by 10 points.
 - Talent damage bonuses are percent modifiers on the spell (aura 108): Improved Eviscerate, Aggression (Sinister Strike, Backstab, Eviscerate), Opportunity (Backstab, Ambush, Mutilate, and Garrote's ticks), Vile Poisons, Serrated Blades' Rupture part. The sim multiplies them, like Call of Flame and Improved Fire Nova on the shaman beta test.
 - Seal Fate and Ruthlessness have a 500 ms internal cooldown, Hack and Slash's extra attack 200 ms. Thousand Cuts procs off Rupture ticks with a 1.9 sec cooldown and stacks a 3 Energy discount on Backstab and Hemorrhage 5 times for 10 sec.
-- Poisons: Instant Poison VI 76 to 100 at 20%, Deadly Poison V 23 a tick (92 over 12 sec, 5 stacks) at 30%, Wound Poison 30%. Deadly Poison V and Backstab and Eviscerate rank 9 are the Ahn'Qiraj ranks in Era, the sim includes them (`core.IncludeAQ`).
+- Poisons: Instant Poison VI 76 to 100 at 20%, Deadly Poison V 23 a tick (92 over 12 sec, 5 stacks) at 30%, Wound Poison 30%. Deadly Poison V and Backstab and Eviscerate rank 9 are Ahn'Qiraj books in Era and in the client, with no source or trainer, so the sim leaves them out under Forever (`env.IncludeAQRanks()`): ranks 4, 8 and 8 at 60.
 
 Grimstitch Armor (item set 2099) is Forever's crafted level 60 rogue set (Leatherworking, Grimstitch Mask, Spaulders, Chestpiece, Gloves, Pants and Boots, item level 65, named "Tier 1" in the client): 2 pieces 1% hit, 3 Kidney Shot 3 sec shorter, 4 +36 attack power against Humanoids, 5 Eviscerate (and Envenom) 5 Energy cheaper. The pieces carry no stats yet.
+
+The Level 60 builds (Combat Daggers, Combat Swords, Mutilate, Subtlety and three variants), their gear, rotations and races are in [../sim-status.md](../sim-status.md#rogue).
 
 ## Spellbook changes (trainer abilities)
 
