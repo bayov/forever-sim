@@ -11,6 +11,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":1317257}}},"notes":"Strider Kick on cooldown, with the talent."},
         {"action":{"castSpell":{"spellId":{"spellId":14266,"tag":3}}},"notes":"Queue Raptor Strike on the next swing when it is ready."},
         {"action":{"castSpell":{"spellId":{"spellId":1299332}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":1299332}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}]}}},"notes":"Lacerate when it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":14305}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}}},"notes":"Immolation Trap at the hunter's feet on cooldown."}
+        {"action":{"castSpell":{"spellId":{"spellId":14305}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}}},"notes":"Immolation Trap at the hunter's feet on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":14268}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.5"}}}}},"notes":"Wing Clip as a filler with the mana to spare."}
     ]
 }
