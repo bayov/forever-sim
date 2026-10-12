@@ -116,15 +116,15 @@ export const DefaultAPL = APLLevel60;
 ///////////////////////////////////////////////////////////////////////////
 
 // TALENT_NUMBERS
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5504301300103051-055000001-05301' }), {
-	tooltip: 'Level 60 talents from the talent search: Lava Burst, Thundering Strikes and Ancestral Knowledge, Mindfulness.',
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5504301300103051-052-05305' }), {
+	tooltip: 'Level 60 talents from the talent search: Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus.',
 	group: 'Level 60',
 });
 // MANA_TIDE_TALENT_NUMBERS
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
-	SavedTalents.create({ talentsString: '5504301300103051--053150001041' }),
-	{ tooltip: 'Level 60 talents with 20 Restoration points for Mana Tide Totem.', group: 'Level 60' },
+	SavedTalents.create({ talentsString: '5504301300103051-04-053150001001' }),
+	{ tooltip: 'Level 60 talents with 16 Restoration points for Mana Tide Totem.', group: 'Level 60' },
 );
 
 export const TalentPresets = {
