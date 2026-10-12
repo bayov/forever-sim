@@ -40,3 +40,19 @@ func TestHolyPowerOnItsSpellsOnly(t *testing.T) {
 		}
 	}
 }
+
+// TestConsecratedGroundOnConsecration checks that Consecrated Ground (client 1310905, 5% a
+// point to Holy spells against targets in the Consecration) reaches Consecration's own ticks:
+// at 2 points the ticks snapshot 10% more than without the talent.
+func TestConsecratedGroundOnConsecration(t *testing.T) {
+	snapshot := func(talents string) float64 {
+		sim, ret := retSim(t, talents, arcaniteReaper)
+		castByID(sim, ret, 20924)
+		return ret.GetSpell(core.ActionID{SpellID: 20924}).AOEDot().SnapshotAttackerMultiplier
+	}
+	with := snapshot("55003003201121251--05225230001")
+	without := snapshot("55003003201121051--05225230001")
+	if ratio := with / without; ratio < 1.0999 || ratio > 1.1001 {
+		t.Errorf("Consecration tick multiplier with Consecrated Ground 2 / without = %.4f, want 1.1000", ratio)
+	}
+}
