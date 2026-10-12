@@ -7,15 +7,18 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
+	Explosive,
 	Flask,
 	Food,
 	IndividualBuffs,
 	MobType,
+	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
 	SpellPowerBuff,
 	StrengthBuff,
+	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 	ZanzaBuff,
@@ -40,6 +43,11 @@ import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
 import MutilateAPL from './apls/forever_mutilate.apl.json';
 import Level30p5BackstabAPL from './apls/level30p5_backstab.apl.json';
 import Level30p5SinisterStrikeAPL from './apls/level30p5_sinister_strike.apl.json';
+import Level60CombatSwordsAPL from './apls/level60_combat_swords.apl.json';
+import Level60CombatDaggersAPL from './apls/level60_combat_daggers.apl.json';
+import Level60MutilateAPL from './apls/level60_mutilate.apl.json';
+import Level60MutilateVenomAPL from './apls/level60_mutilate_venom.apl.json';
+import Level60SubtletyAPL from './apls/level60_subtlety.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
 import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
@@ -49,6 +57,8 @@ import SinisterStrikeGearP1BiS from './gear_sets/combat_sinister_strike_p1_bis.g
 import SinisterStrikeGearP2BiS from './gear_sets/combat_sinister_strike_p2_bis.gear.json';
 import Level30p5BackstabGear from './gear_sets/level30p5_backstab.gear.json';
 import Level30p5SinisterStrikeGear from './gear_sets/level30p5_sinister_strike.gear.json';
+import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swords.gear.json';
+import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -106,8 +116,38 @@ export const GearLevel30p5SinisterStrike = PresetUtils.makePresetGear('Level 30 
 	group: 'Level 30',
 });
 
+// A guess at Phase 1 BiS under Forever, made of the synthetic items in
+// tools/database/forever_synthetic_items_rogue.go (ids from 994000, not in the game).
+//
+// Forever's level 60 client gear is not tuned yet, and Molten Core and Onyxia have no Forever
+// data. So, as for the enhancement shaman, each piece takes the place of an Era Phase 1 BiS item
+// (the Nightslayer and Devilsaur sets, Onyxia Tooth Pendant, Cape of the Black Baron, Quick Strike
+// Ring, Don Julio's Band, Striker's Mark) at the Phase 1 epic budget of its slot, on the shared
+// item level table (66 for the tier slots, 71 for the rest). The swords set leans on attack power
+// and Strength for Sinister Strike, the daggers set on Agility and crit for Backstab, Mutilate and
+// Subtlety. Both carry 5% hit, the 9% cap with Precision 3/3 and the hands and legs, which carry
+// the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). The 4 and 5 piece
+// bonuses (36 attack power against Humanoids, Eviscerate 5 Energy cheaper) are not live, see
+// PresetBuildLevel60CombatSwords. The trinket slots are empty: Forever removed Hand of Justice and
+// Blackhand's Breadth, and the sim does not model its launch trinkets yet.
+//
+// The enchants are the best non-raid ones: Lesser Arcanum of Voracity (Agility) on head and legs,
+// Enchant Necklace - Agility, Cloak - Agility (+5), Chest - Greater Stats, Superior Strength on
+// bracers (+9) and gloves (+15, 1.3 DPS ahead of Greater Agility for Backstab), Boots - Greater
+// Agility and Crusader on both weapons (3 ahead of Weapon - Agility).
+export const GearLevel60SyntheticSwords = PresetUtils.makePresetGear('Level 60 Synthetic Swords', Level60SyntheticSwordsGear, {
+	tooltip: 'A guess at Phase 1 BiS under Forever for Sinister Strike, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+export const GearLevel60SyntheticDaggers = PresetUtils.makePresetGear('Level 60 Synthetic Daggers', Level60SyntheticDaggersGear, {
+	tooltip: 'A guess at Phase 1 BiS under Forever for Backstab, Mutilate and Subtlety, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+
 export const GearPresets = {
 	[Phase.Phase1]: [
+		GearLevel60SyntheticSwords,
+		GearLevel60SyntheticDaggers,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
 		GearBackstabP1BiS,
@@ -116,6 +156,8 @@ export const GearPresets = {
 		GearLevel30p5SinisterStrike,
 	],
 	[Phase.Phase2]: [
+		GearLevel60SyntheticSwords,
+		GearLevel60SyntheticDaggers,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
 		GearBackstabP2BiS,
@@ -125,7 +167,7 @@ export const GearPresets = {
 	],
 };
 
-export const DefaultGear = GearSinisterStrikePreBiS;
+export const DefaultGear = GearLevel60SyntheticDaggers;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets[]
@@ -206,8 +248,38 @@ export const ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE = PresetUtils.makePresetA
 	group: 'Level 30',
 });
 
+// The Level 60 rotations, from the tools/rotopt searches on the synthetic Phase 1 sets with the
+// talents below (knob search, talent search, knob search again, 180 sec, see rogue_presets.sh).
+// Seal Fate Swords and Seal Fate Daggers use the Combat Swords and Combat Daggers rotations, the
+// knob search kept every knob.
+export const ROTATION_PRESET_LEVEL60_COMBAT_SWORDS = PresetUtils.makePresetAPLRotation('Level 60 Combat Swords', Level60CombatSwordsAPL, {
+	tooltip: 'Sinister Strike, Slice and Dice and 5 point Eviscerates, Blade Flurry before the pull. Also the Seal Fate Swords rotation.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS = PresetUtils.makePresetAPLRotation('Level 60 Combat Daggers', Level60CombatDaggersAPL, {
+	tooltip: 'Backstab, Slice and Dice and 5 point Eviscerates, Blade Flurry before the pull. Also the Seal Fate Daggers rotation.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_LEVEL60_MUTILATE = PresetUtils.makePresetAPLRotation('Level 60 Mutilate', Level60MutilateAPL, {
+	tooltip: 'Mutilate, Slice and Dice and 5 point Eviscerates.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_LEVEL60_MUTILATE_VENOM = PresetUtils.makePresetAPLRotation('Level 60 Mutilate + Venom', Level60MutilateVenomAPL, {
+	tooltip: 'Mutilate with Venom kept up at 5 points next to Slice and Dice and Eviscerate.',
+	group: 'Level 60',
+});
+export const ROTATION_PRESET_LEVEL60_SUBTLETY = PresetUtils.makePresetAPLRotation('Level 60 Subtlety', Level60SubtletyAPL, {
+	tooltip: 'Hemorrhage, Ghostly Strike on cooldown, a 3 point Rupture, Premeditation and Vanish into Ambush at 3 points or fewer.',
+	group: 'Level 60',
+});
+
 export const APLPresets = {
 	[Phase.Phase1]: [
+		ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+		ROTATION_PRESET_LEVEL60_MUTILATE,
+		ROTATION_PRESET_LEVEL60_MUTILATE_VENOM,
+		ROTATION_PRESET_LEVEL60_SUBTLETY,
 		ROTATION_PRESET_BACKSTAB,
 		ROTATION_PRESET_BACKSTAB_RUPTURE,
 		ROTATION_PRESET_BACKSTAB_ON_COOLDOWN,
@@ -225,6 +297,11 @@ export const APLPresets = {
 		ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE,
 	],
 	[Phase.Phase2]: [
+		ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+		ROTATION_PRESET_LEVEL60_MUTILATE,
+		ROTATION_PRESET_LEVEL60_MUTILATE_VENOM,
+		ROTATION_PRESET_LEVEL60_SUBTLETY,
 		ROTATION_PRESET_BACKSTAB,
 		ROTATION_PRESET_BACKSTAB_RUPTURE,
 		ROTATION_PRESET_BACKSTAB_ON_COOLDOWN,
@@ -245,8 +322,8 @@ export const APLPresets = {
 
 //Need to add main hand equip logic or talent/rotation logic to map to Auto APL
 export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
-	[0]: ROTATION_PRESET_SINISTER_STRIKE,
-	[1]: ROTATION_PRESET_BACKSTAB,
+	[0]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+	[1]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 };
 
 export const DefaultAPLBackstab = ROTATION_PRESET_BACKSTAB;
@@ -305,8 +382,61 @@ export const Level30p5BackstabTalents = PresetUtils.makePresetTalents('Level 30 
 	group: 'Level 30',
 });
 
+// The Level 60 talents, from the tools/rotopt talent searches on the synthetic Phase 1 sets (180 sec,
+// 3000 iterations a candidate, the best moves checked again at 10000), seeded from each archetype
+// and alternated with the knob search until neither moved. See PresetBuildLevel60CombatDaggers for
+// the numbers.
+export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
+	'Level 60 Combat Swords',
+	SavedTalents.create({ talentsString: '00532310301-32003311201515231' }),
+	{ tooltip: 'Deep Combat for Sinister Strike: Adrenaline Rush, Blade Flurry, Hack and Slash, Cold Blood.', group: 'Level 60' },
+);
+export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
+	'Level 60 Seal Fate Swords',
+	SavedTalents.create({ talentsString: '0053231025130005-3220132020141' }),
+	{ tooltip: 'Seal Fate and Cold Blood in Assassination with Blade Flurry and Hack and Slash, for Sinister Strike.', group: 'Level 60' },
+);
+export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
+	'Level 60 Combat Daggers',
+	SavedTalents.create({ talentsString: '00532310301-30230320201513231-002' }),
+	{ tooltip: 'Deep Combat for Backstab: Adrenaline Rush, Blade Flurry, Puncturing Wounds, Hack and Slash, Opportunity.', group: 'Level 60' },
+);
+export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
+	'Level 60 Seal Fate Daggers',
+	SavedTalents.create({ talentsString: '0053231053120005-322303200013-002' }),
+	{ tooltip: 'Seal Fate and Cold Blood in Assassination with Puncturing Wounds and Blade Flurry, for Backstab.', group: 'Level 60' },
+);
+export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents(
+	'Level 60 Mutilate',
+	SavedTalents.create({ talentsString: '0053231013150103-302303202015-002' }),
+	{
+		tooltip: 'Assassination for Mutilate: Seal Fate, Cold Blood, Vile Poisons, with Precision and Puncturing Wounds in Combat.',
+		group: 'Level 60',
+	},
+);
+export const TalentsLevel60MutilateVenom = PresetUtils.makePresetTalents(
+	'Level 60 Mutilate + Venom',
+	SavedTalents.create({ talentsString: '00532310150401051-302303202014' }),
+	{
+		tooltip: 'Deep Assassination for Mutilate and Venom.',
+		group: 'Level 60',
+	},
+);
+export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents(
+	'Level 60 Subtlety',
+	SavedTalents.create({ talentsString: '0053231015140004--3021203310113011' }),
+	{ tooltip: 'Subtlety for Hemorrhage, Ghostly Strike, Premeditation and Preparation, with Seal Fate in Assassination.', group: 'Level 60' },
+);
+
 export const TalentPresets = {
 	[Phase.Phase1]: [
+		TalentsLevel60CombatSwords,
+		TalentsLevel60SealFateSwords,
+		TalentsLevel60CombatDaggers,
+		TalentsLevel60SealFateDaggers,
+		TalentsLevel60Mutilate,
+		TalentsLevel60MutilateVenom,
+		TalentsLevel60Subtlety,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
 		CombatSinisterStrikeIEATalents,
@@ -315,6 +445,13 @@ export const TalentPresets = {
 		Level30p5SinisterStrikeTalents,
 	],
 	[Phase.Phase2]: [
+		TalentsLevel60CombatSwords,
+		TalentsLevel60SealFateSwords,
+		TalentsLevel60CombatDaggers,
+		TalentsLevel60SealFateDaggers,
+		TalentsLevel60Mutilate,
+		TalentsLevel60MutilateVenom,
+		TalentsLevel60Subtlety,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
 		CombatSinisterStrikeIEATalents,
@@ -324,16 +461,16 @@ export const TalentPresets = {
 	],
 };
 
-export const DefaultTalentsAssassin = TalentPresets[Phase.Phase2][0];
-export const DefaultTalentsCombat = TalentPresets[Phase.Phase2][0];
-export const DefaultTalentsSubtlety = TalentPresets[Phase.Phase2][0];
+export const DefaultTalentsAssassin = TalentsLevel60Mutilate;
+export const DefaultTalentsCombat = TalentsLevel60CombatDaggers;
+export const DefaultTalentsSubtlety = TalentsLevel60Subtlety;
 
-export const DefaultTalentsBackstab = TalentPresets[Phase.Phase2][0];
-export const DefaultTalentsSinisterStrike = TalentPresets[Phase.Phase2][1];
-export const DefaultTalentsIEA = TalentPresets[Phase.Phase2][2];
-export const DefaultTalentsMutilate = TalentPresets[Phase.Phase2][3];
+export const DefaultTalentsBackstab = CombatBackstabTalents;
+export const DefaultTalentsSinisterStrike = CombatSinisterStrikeTalents;
+export const DefaultTalentsIEA = CombatSinisterStrikeIEATalents;
+export const DefaultTalentsMutilate = AssassinationMutilateTalents;
 
-export const DefaultTalents = DefaultTalentsSinisterStrike;
+export const DefaultTalents = TalentsLevel60CombatDaggers;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                Build Presets
@@ -444,33 +581,52 @@ export const DefaultOptions = RogueOptions.create({});
 //                         Consumes/Buffs/Debuffs
 ///////////////////////////////////////////////////////////////////////////
 
+// The level 60 consumes the Level 60 builds were searched with (tools/rotopt/mksettings/spec_rogue60.go
+// has the measurements): Elixir of the Mongoose (the one +2% crit elixir) and Elixir of Ferocity, Juju
+// Might, Ground Scorpok Assay, Flank au Poivre, Dragonbreath Chili, Major Frenzy Potion, Thistle Tea,
+// the Goblin Sapper Charge and Goblin Land Mine (Engineering), Deadly Poison on the main hand and
+// Instant Poison on the off hand (ahead of every other pair for every spec, by 3 to 44). The caster
+// flask and elixir are left out, though Dragonbreath Chili makes them worth 8 DPS.
 export const P1Consumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
+	defaultPotion: Potions.MajorFrenzyPotion,
 	dragonBreathChili: true,
-	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodGrilledSquid,
-	mainHandImbue: WeaponImbue.InstantPoison,
-	offHandImbue: WeaponImbue.DeadlyPoison,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
-	strengthBuff: StrengthBuff.JujuPower,
-	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	food: Food.FoodFlankAuPoivre,
+	mainHandImbue: WeaponImbue.DeadlyPoison,
+	offHandImbue: WeaponImbue.InstantPoison,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	strengthBuff: StrengthBuff.ElixirOfFerocity,
+	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
 export const DefaultConsumes = {
 	[Phase.Phase1]: P1Consumes,
 };
 
+// The shared level 60 raid (both blessings, every debuff but Curse of Shadow), with the rogue in a melee
+// group: Battle Shout, Strength of Earth and Windfury Totem, 24 DPS ahead of Grace of Air (Forever lets
+// one air totem work in a party).
 export const P1RaidBuffs = RaidBuffs.create({
+	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
+	divineSpirit: true,
 	fireResistanceAura: true,
-	fireResistanceTotem: true,
+	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
-	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
+	moonkinAura: true,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	sanctityAura: true,
+	shadowProtection: true,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	thorns: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
 });
 
@@ -481,6 +637,7 @@ export const DefaultRaidBuffs = {
 export const P1IndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	fengusFerocity: false,
 	rallyingCryOfTheDragonslayer: false,
 	slipkiksSavvy: false,
@@ -494,9 +651,20 @@ export const DefaultIndividualBuffs = {
 };
 
 export const P1DefaultDebuffs = Debuffs.create({
+	curseOfElements: true,
 	curseOfRecklessness: true,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
+	exposeArmor: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
+	insectSwarm: true,
+	judgementOfLight: true,
+	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
+	judgementOfWisdom: true,
+	scorpidSting: true,
 	sunderArmor: true,
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = {
@@ -506,8 +674,113 @@ export const DefaultDebuffs = {
 export const P1OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Leatherworking,
+	race: Race.RaceUndead,
 };
 
 export const OtherDefaults = {
 	[Phase.Phase1]: P1OtherDefaults,
 };
+
+///////////////////////////////////////////////////////////////////////////
+//                                 Level 60
+///////////////////////////////////////////////////////////////////////////
+
+// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, Humanoid), a 3 minute
+// fight, and the default buffs, debuffs and consumes above. It is here so switching back from the
+// Level 30 builds restores everything they changed.
+export const EncounterLevel60 = PresetUtils.makePresetEncounter(
+	'Level 60',
+	Encounter.create({
+		duration: 180,
+		durationVariation: 20,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 213336,
+				name: 'Level 60',
+				level: 63,
+				mobType: MobType.MobTypeHumanoid,
+				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+				minBaseDamage: 3000,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		tanks: [],
+		raidBuffs: P1RaidBuffs,
+		debuffs: P1DefaultDebuffs,
+		buffs: P1IndividualBuffs,
+		consumes: P1Consumes,
+	},
+);
+
+// The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
+// encounter and the best race, Undead (Touch of the Grave), for every spec. The numbers are in the
+// Rogue section of forever-wiki/sim-status.md.
+const level60Build = (name: string, tooltip: string, gear: PresetUtils.PresetGear, talents: PresetUtils.PresetTalents, rotation: PresetUtils.PresetRotation) =>
+	PresetUtils.makePresetBuild(name, {
+		group: 'Level 60',
+		tooltip,
+		gear,
+		talents,
+		rotation,
+		encounter: EncounterLevel60,
+		race: Race.RaceUndead,
+		level: 60,
+		bonusTalentPoints: 0,
+		professions: [P1OtherDefaults.profession1, P1OtherDefaults.profession2],
+	});
+export const PresetBuildLevel60CombatDaggers = level60Build(
+	'Level 60 Combat Daggers',
+	'Level 60 Undead Combat Backstab on the synthetic Phase 1 daggers, in a 3 minute raid fight.',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60CombatDaggers,
+	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+);
+export const PresetBuildLevel60SealFateDaggers = level60Build(
+	'Level 60 Seal Fate Daggers',
+	'Level 60 Undead Seal Fate Backstab on the synthetic Phase 1 daggers.',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60SealFateDaggers,
+	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+);
+export const PresetBuildLevel60CombatSwords = level60Build(
+	'Level 60 Combat Swords',
+	'Level 60 Undead Combat Sinister Strike on the synthetic Phase 1 swords.',
+	GearLevel60SyntheticSwords,
+	TalentsLevel60CombatSwords,
+	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+);
+export const PresetBuildLevel60SealFateSwords = level60Build(
+	'Level 60 Seal Fate Swords',
+	'Level 60 Undead Seal Fate Sinister Strike on the synthetic Phase 1 swords.',
+	GearLevel60SyntheticSwords,
+	TalentsLevel60SealFateSwords,
+	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+);
+export const PresetBuildLevel60Mutilate = level60Build(
+	'Level 60 Mutilate',
+	'Level 60 Undead Assassination Mutilate on the synthetic Phase 1 daggers.',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60Mutilate,
+	ROTATION_PRESET_LEVEL60_MUTILATE,
+);
+export const PresetBuildLevel60MutilateVenom = level60Build(
+	'Level 60 Mutilate + Venom',
+	'Level 60 Undead Assassination Mutilate with Venom on the synthetic Phase 1 daggers.',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60MutilateVenom,
+	ROTATION_PRESET_LEVEL60_MUTILATE_VENOM,
+);
+export const PresetBuildLevel60Subtlety = level60Build(
+	'Level 60 Subtlety',
+	'Level 60 Undead Subtlety (Hemorrhage, Ghostly Strike, Premeditation) on the synthetic Phase 1 daggers.',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60Subtlety,
+	ROTATION_PRESET_LEVEL60_SUBTLETY,
+);

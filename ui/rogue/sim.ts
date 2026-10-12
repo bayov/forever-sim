@@ -57,6 +57,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	displayPseudoStats: [PseudoStat.PseudoStatMeleeSpeedMultiplier],
 
 	defaults: {
+		race: Presets.P1OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
@@ -122,6 +123,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase2]],
 		builds: [
+			Presets.PresetBuildLevel60CombatDaggers,
+			Presets.PresetBuildLevel60SealFateDaggers,
+			Presets.PresetBuildLevel60CombatSwords,
+			Presets.PresetBuildLevel60SealFateSwords,
+			Presets.PresetBuildLevel60Mutilate,
+			Presets.PresetBuildLevel60MutilateVenom,
+			Presets.PresetBuildLevel60Subtlety,
 			Presets.PresetBuildBackstab,
 			Presets.PresetBuildSinisterStrike,
 			Presets.PresetBuildIEA,
@@ -153,7 +161,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
@@ -176,8 +184,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			consumes: Presets.DefaultConsumes[Phase.Phase1],
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Alliance]: Race.RaceGnome,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
