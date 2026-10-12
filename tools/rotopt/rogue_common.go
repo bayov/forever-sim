@@ -130,9 +130,13 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 			))
 		}
 	}
+	// The sim drops a clause that names a spell the character does not know, so with none of
+	// the waiting cooldowns in the build every clause would go and leave a bare "5 combo
+	// points" that takes every finisher (a Mutilate or Seal Fate build has no Adrenaline
+	// Rush). The constant false keeps the window rule false then.
 	var sndForWindow value
 	if len(waiting) > 0 {
-		sndForWindow = and(ge(comboPoints(), num(5)), or(waiting...))
+		sndForWindow = and(ge(comboPoints(), num(5)), or(append(waiting, lt(num(1), num(0)))...))
 	}
 
 	c := rogueCooldowns{}

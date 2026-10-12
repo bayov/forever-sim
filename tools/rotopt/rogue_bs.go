@@ -25,6 +25,7 @@ var (
 	cutthroat     = spellID(460534)
 	thousandCuts  = spellID(460535)
 	mutilate      = spellID(1329)
+	venom         = spellID(32645)
 )
 
 func (rogueBS) Knobs() []Knob {
@@ -40,6 +41,14 @@ func (rogueBS) Knobs() []Knob {
 		// Mutilate as the builder instead of Backstab (a 20 point Assassination talent under
 		// Forever, daggers in both hands).
 		Knob{Name: "mutilate", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Venom at this many combo points or more when it has under venomRefresh sec left, 0 for
+		// never. A 31 point Assassination talent.
+		Knob{Name: "venomCp", Default: 0, Min: 0, Max: 5, Step: 1},
+		Knob{Name: "venomRefresh", Default: 2, Min: 0, Max: 8, Step: 2},
+		// Premeditation (no longer needs Stealth under Forever) at this many combo points or
+		// fewer, so the 2 points it adds are not lost over 5. 9 leaves it to the cooldown rule
+		// in the sim, which uses it at 3 or fewer.
+		Knob{Name: "premedCp", Default: 9, Min: 0, Max: 9, Step: 1},
 		// Ghostly Strike on cooldown as a builder.
 		Knob{Name: "ghostly", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Vanish for an Ambush (and Premeditation) at this many combo points or fewer, 9 for never.
@@ -82,13 +91,24 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(rupture, ruptureWhen, "Rupture when it is not ticking and Slice and Dice does not need the points."+c.holdNotes))
 	}
 
+	if k["venomCp"] > 0 {
+		items = append(items, cast(venom, and(
+			ge(comboPoints(), num(k["venomCp"])),
+			lt(auraRemainingTime(venom), seconds(k["venomRefresh"])),
+			gt(remainingTime(), seconds(6)),
+			c.ruptureHold,
+		), "Venom, 30% more poison damage and 10% more poison procs, refreshed when it is about to drop."+c.holdNotes))
+	}
+	if k["premedCp"] < 9 {
+		items = append(items, cast(premeditation, le(comboPoints(), num(k["premedCp"])),
+			"Premeditation needs no Stealth under Forever, so it goes out whenever the 2 points fit."))
+	}
+
 	items = append(items, cast(eviscerate, c.evisWhen, ""))
 
-	// Vanish is only an Ambush (and Premeditation, which needs stealth) at a low combo
-	// count, so the points are not wasted over 5. Premeditation has no GCD, Ambush breaks
-	// the stealth right after. Preparation gives a second Vanish once the first is spent,
-	// which with Restless Blades pulling Vanish in anyway is the one use it gets. Cutthroat
-	// Ambushes ride on the same line.
+	// Vanish is only an Ambush at a low combo count, so the points are not wasted over 5.
+	// Ambush breaks the stealth right after. Preparation gives a second Vanish once the
+	// first is spent. Cutthroat Ambushes ride on the same line.
 	if k["vanishCp"] < 9 {
 		items = append(items,
 			cast(vanish, and(
@@ -96,8 +116,7 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 				ge(energy(), spellCurrentCost(ambush)),
 				auraIsActive(sliceAndDice),
 				gt(remainingTime(), seconds(10)),
-			), "Vanish for an Ambush at low combo points. Premeditation goes out in the stealth first."),
-			cast(premeditation, auraIsActive(stealth), "Premeditation needs stealth, so right after Vanish."),
+			), "Vanish for an Ambush at low combo points."),
 			cast(ambush, or(auraIsActive(stealth), auraIsActive(cutthroat)),
 				"Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab."),
 			cast(preparation, and(
