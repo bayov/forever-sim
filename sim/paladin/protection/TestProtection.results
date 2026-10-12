@@ -155,8 +155,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Phase4-AllItems-RetributionSynthetic(Phase1)"
  value: {
-  dps: 462.01061
-  tps: 656.35716
+  dps: 446.81081
+  tps: 634.71898
  }
 }
 dps_results: {
