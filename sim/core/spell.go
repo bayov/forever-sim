@@ -525,7 +525,7 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 	}
 
 	// While casting no other action is possible except rare cast-while-casting spells
-	if spell.Unit.IsCasting(sim) {
+	if spell.Unit.IsCasting(sim) && !spell.Flags.Matches(SpellFlagCastWhileCasting) {
 		//if sim.Log != nil {
 		//	sim.Log("Cant cast because already casting")
 		//}

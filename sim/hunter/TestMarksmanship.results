@@ -253,85 +253,85 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-mm-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1296.27732
-  tps: 1399.03367
+  dps: 1400.02806
+  tps: 1523.26698
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-mm-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1295.30838
-  tps: 1024.33542
+  dps: 1396.87075
+  tps: 1127.07731
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-mm-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1392.31656
-  tps: 1127.32047
+  dps: 1541.23387
+  tps: 1280.77232
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-mm-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 586.78726
-  tps: 652.84647
+  dps: 612.13709
+  tps: 678.47167
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-mm-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 521.39044
-  tps: 415.54232
+  dps: 542.40868
+  tps: 436.09955
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-mm-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 650.58932
-  tps: 548.86681
+  dps: 717.82033
+  tps: 615.62893
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-mm-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1290.583
-  tps: 1393.51758
+  dps: 1392.28309
+  tps: 1515.50702
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-mm-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1289.69207
-  tps: 1019.50731
+  dps: 1389.75036
+  tps: 1120.16717
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-mm-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1375.8567
-  tps: 1111.75392
+  dps: 1529.34082
+  tps: 1269.37878
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-mm-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 581.89505
-  tps: 648.87627
+  dps: 608.09647
+  tps: 674.63672
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-mm-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 518.87781
-  tps: 414.31916
+  dps: 537.66485
+  tps: 432.64693
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-mm-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 639.67342
-  tps: 540.21239
+  dps: 707.29897
+  tps: 608.16996
  }
 }
 dps_results: {

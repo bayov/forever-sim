@@ -155,6 +155,7 @@ func (hunter *Hunter) Initialize() {
 		// clip: it goes off every weapon swing, whatever the hunter is doing.
 		ranged := hunter.AutoAttacks.RangedConfig()
 		ranged.Flags &^= core.SpellFlagCastTimeNoGCD
+		ranged.Flags |= core.SpellFlagCastWhileCasting
 		ranged.Cast = core.CastConfig{}
 		ranged.ExtraCastCondition = nil
 

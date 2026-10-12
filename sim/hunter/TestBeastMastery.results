@@ -253,85 +253,85 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-bm-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1393.57717
-  tps: 1158.89037
+  dps: 1423.62784
+  tps: 1195.4971
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-bm-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1393.57717
-  tps: 930.43145
+  dps: 1423.62784
+  tps: 966.11384
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-bm-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1436.11575
-  tps: 944.15267
+  dps: 1485.24536
+  tps: 990.4318
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-bm-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 627.86126
-  tps: 608.05046
+  dps: 632.16945
+  tps: 613.09927
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-bm-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 583.92166
-  tps: 392.16479
+  dps: 593.7039
+  tps: 401.61441
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Cat-bm-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 690.32423
-  tps: 485.85837
+  dps: 707.80589
+  tps: 503.01225
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-bm-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1392.37661
-  tps: 1157.54785
+  dps: 1423.21609
+  tps: 1194.91324
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-bm-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1392.37661
-  tps: 929.08893
+  dps: 1423.21609
+  tps: 965.52998
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-bm-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1428.12913
-  tps: 936.49605
+  dps: 1480.19598
+  tps: 985.64187
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-bm-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 622.22296
-  tps: 604.32098
+  dps: 631.7503
+  tps: 614.69825
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-bm-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 579.9147
-  tps: 390.24294
+  dps: 589.62555
+  tps: 399.46037
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Cat-bm-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 682.49079
-  tps: 484.04765
+  dps: 698.81555
+  tps: 500.22538
  }
 }
 dps_results: {
