@@ -29,12 +29,29 @@ func (warriorArms) Knobs() []Knob {
 		Knob{Name: "wwRage", Default: 25, Min: 0, Max: 55, Step: 10},
 		// Mortal Strike ahead of Whirlwind and Slam (1), or Slam first (0).
 		Knob{Name: "msFirst", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Hamstring as a filler above this much Rage outside the execute phase, 0 never. Its hits
+		// proc Windfury Totem, the sword's extra attacks and Deep Wounds.
+		Knob{Name: "hamstringRage", Default: 0, Min: 0, Max: 60, Step: 10},
+		// Battle Stance only: switch to Berserker Stance for Recklessness (it needs Berserker Stance)
+		// when recklessAt seconds are left, Recklessness is ready and the Rage fits in what Tactical
+		// Mastery keeps, and stay there for the rest of the fight.
+		Knob{Name: "reckSwap", Default: 0, Min: 0, Max: 1, Step: 1},
 	)
 }
 
 func (warriorArms) Build(k Knobs) *proto.APLRotation {
-	items := warriorCooldowns(k)
 	battle := k["stance"] == 1
+	reckSwap := battle && k["reckSwap"] == 1 && k["recklessness"] == 2
+	var items []*proto.APLListItem
+	if reckSwap {
+		items = append(items, cast(berserkerStance, and(
+			le(remainingTime(), seconds(k["recklessAt"])),
+			not(auraIsActive(berserkerStance)),
+			spellIsReady(recklessness),
+			le(currentRage(), num(25)),
+		), "Berserker Stance for Recklessness at the end of the fight, with no more Rage than Tactical Mastery keeps."))
+	}
+	items = append(items, warriorCooldowns(k)...)
 
 	if k["executeFirst"] == 1 {
 		items = append(items, cast(execute, nil, "Execute in the execute phase."))
@@ -73,11 +90,18 @@ func (warriorArms) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(execute, nil, "Execute in the execute phase."))
 	}
 	items = append(items, heroicStrikeLine(k))
+	if k["hamstringRage"] > 0 {
+		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase())), "Hamstring with Rage to spare, for the procs."))
+	}
 	stance := battleStance
 	if !battle {
 		stance = berserkerStance
 	}
-	items = append(items, cast(stance, not(auraIsActive(stance)), "Back to the rotation's stance."))
+	var back value = not(auraIsActive(stance))
+	if reckSwap {
+		back = and(back, gt(remainingTime(), seconds(k["recklessAt"])))
+	}
+	items = append(items, cast(stance, back, "Back to the rotation's stance."))
 	rot := rotation(items...)
 	rot.PrepullActions = append(rot.PrepullActions, prepull(stance, 1))
 	return rot
