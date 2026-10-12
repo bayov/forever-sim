@@ -1,6 +1,6 @@
 #!/bin/sh
 # Regenerates the mage's Level 60 rotations in ui/mage/apls from the mage_arcane, mage_fire,
-# mage_frost and mage_frostfire templates, with the knobs the 180 sec searches settled on. Run
+# mage_frost and mage_frostfire templates, with the knobs the searches over 120, 180 and 300 sec together settled on. Run
 # from the repo root with a settings file for the spec (tools/rotopt/mksettings -spec mage_<spec>).
 # The rotation itself does not depend on the settings, only the one sanity sim does.
 #
@@ -16,17 +16,18 @@ gen() {
 	mv "ui/mage/apls/${name}_180s.apl.json" "ui/mage/apls/$name.apl.json"
 	echo "wrote ui/mage/apls/$name.apl.json ($knobs)"
 }
-# Three Arcane Blasts, then Arcane Missiles, which ends the stacks and takes their bonus. A
-# Missile Barrage proc goes on the missiles as soon as the stacks are up. Below 30% mana one
-# Arcane Blast, then the missiles. Four stacks and waiting for Missile Barrage both lost.
-gen mage_arcane level60_arcane "blastStacks=3,missilesNeedBarrage=0,barrageFirst=1,conserveMana=30,evocationMana=20,filler=1"
+# Arcane Blast to 2 stacks, then Arcane Missiles on a Missile Barrage proc. Without one, Arcane
+# Blast goes on to 4 stacks and the missiles go anyway. The missiles end the stacks and take
+# their bonus. Below 30% mana one Arcane Blast, then the missiles. No Evocation.
+gen mage_arcane level60_arcane "blastStacks=2,missilesNeedBarrage=1,barrageFirst=1,conserveMana=30,evocationMana=0,filler=1"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating
 # Up stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 20% mana,
-# Fireball. No Evocation: the mage does not run dry in 3 minutes.
-gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=0"
-# Frostbolt, and Ice Lance on every Fingers of Frost charge. Frost never runs low on mana, so
-# no Evocation.
-gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=0"
-# The Fire Mage rotation with Frostfire Bolt as the filler and Ice Lance on Fingers of Frost.
-# Evocation at 30% mana.
-gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,iceLance=1,missileBarrage=1,fireBlastMana=20,evocationMana=30"
+# Fireball. Evocation below 20% mana with 30 sec of the fight left.
+gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=30"
+# Frostbolt, and Ice Lance on every Fingers of Frost charge. Frost rarely runs low on mana, so
+# Evocation (below 20% with 30 sec left) almost never goes.
+gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=30"
+# Scorch to 5 Fire Vulnerability stacks, Pyroblast at 3 Heating Up stacks, Ice Lance on every
+# Fingers of Frost charge, Frostfire Bolt. No Fire Blast: its mana is worth more as Frostfire
+# Bolts over a 5 minute fight. Evocation below 10% mana with 30 sec of the fight left.
+gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,pyroMana=0,iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=10,evocationMinTime=30"
