@@ -21,6 +21,7 @@ func init() {
 				DefaultPotion:     proto.Potions_MightyRagePotion,
 				DragonBreathChili: true,
 				FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
+				Flask:             proto.Flask_FlaskOfTheTitans,
 				Food:              proto.Food_FoodSmokedDesertDumpling,
 				MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
 				OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,
