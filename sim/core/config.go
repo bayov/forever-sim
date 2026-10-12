@@ -6,6 +6,9 @@ package core
 // TODO: add phase switch instead of hardcoded const later?
 const IncludeAQ = true
 
-// IncludeAQRanks reports whether spell ranks taught only by Ahn'Qiraj books are available. Forever
-// launches before Molten Core, and its client has the AQ books with no source.
-func (env *Environment) IncludeAQRanks() bool { return IncludeAQ && !env.IsForever() }
+// IncludeAQRanks is IncludeAQ for this sim's ruleset. Forever is set before Molten Core, and
+// its client (1.60.1.70338) has the Ahn'Qiraj books that teach these ranks with no source and no
+// trainer, so a Forever sim uses the ranks before them.
+func (env *Environment) IncludeAQRanks() bool {
+	return IncludeAQ && !env.IsForever()
+}

@@ -1,8 +1,8 @@
 character_stats_results: {
  key: "TestMarksmanship-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 184
-  final_stats: 741
+  final_stats: 170
+  final_stats: 726
   final_stats: 564
   final_stats: 244
   final_stats: 275
@@ -13,22 +13,22 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 81.25
+  final_stats: 101.25
   final_stats: 9
-  final_stats: 39.626
+  final_stats: 41.626
   final_stats: 0
   final_stats: 0
-  final_stats: 1921
+  final_stats: 1868
   final_stats: 9
-  final_stats: 40.0049
+  final_stats: 39.7214
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 7100
   final_stats: 0
   final_stats: 0
-  final_stats: 4361
-  final_stats: 2519
+  final_stats: 4331
+  final_stats: 2489
   final_stats: 0
   final_stats: 5
   final_stats: 0
@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestMarksmanship-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 0.81422
+  weights: 1.20908
   weights: 0
   weights: 0
   weights: 0
@@ -69,7 +69,7 @@ stat_weights_results: {
   weights: 0
   weights: 0.00104
   weights: 0
-  weights: 11.77394
+  weights: 11.89675
   weights: 0
   weights: 0
   weights: 0
@@ -77,7 +77,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.30793
+  weights: 0.30784
   weights: 0
   weights: 0
   weights: 0
@@ -99,296 +99,296 @@ stat_weights_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-BeastmasterArmor"
  value: {
-  dps: 1258.46382
-  tps: 1115.90973
+  dps: 1257.31879
+  tps: 1115.06516
   dtps: 1.68302
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
-  dps: 1330.0692
-  tps: 1177.11281
+  dps: 1330.42534
+  tps: 1178.97789
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-BloodGuard'sChainVices-22862"
  value: {
-  dps: 1331.23912
-  tps: 1178.33129
+  dps: 1332.66674
+  tps: 1180.07559
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Champion'sPursuance"
  value: {
-  dps: 1298.86841
-  tps: 1145.29785
+  dps: 1294.85459
+  tps: 1142.70872
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1206.37809
-  tps: 1061.16107
+  dps: 1200.05871
+  tps: 1056.93629
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-CryptstalkerArmor"
  value: {
-  dps: 1492.59878
-  tps: 1337.87986
+  dps: 1477.38762
+  tps: 1320.70189
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-DevilsaurEye-19991"
  value: {
-  dps: 1374.84366
-  tps: 1219.51975
+  dps: 1366.95782
+  tps: 1212.53787
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-DevilsaurTooth-19992"
  value: {
-  dps: 1365.07074
-  tps: 1210.12774
+  dps: 1357.20066
+  tps: 1203.15669
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-DragonstalkerArmor"
  value: {
-  dps: 1387.53861
-  tps: 1233.82074
+  dps: 1382.31469
+  tps: 1229.84214
   dtps: 1.49708
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1385.31379
-  tps: 1229.10183
+  dps: 1370.27617
+  tps: 1215.26013
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-General'sChainGloves-16571"
  value: {
-  dps: 1350.60895
-  tps: 1195.48076
+  dps: 1346.72379
+  tps: 1193.5757
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-GiantstalkerArmor"
  value: {
-  dps: 1310.78786
-  tps: 1158.34809
+  dps: 1305.7276
+  tps: 1153.34909
   dtps: 1.58673
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-HunterSyntheticRanged(Phase1)"
  value: {
-  dps: 1347.89635
-  tps: 1193.84827
+  dps: 1343.43616
+  tps: 1189.25763
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-HunterSyntheticSurvival(Phase1)"
  value: {
-  dps: 1335.73924
-  tps: 1182.03418
+  dps: 1335.09426
+  tps: 1180.94962
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Knight-Lieutenant'sChainGauntlets-16403"
  value: {
-  dps: 1330.0692
-  tps: 1177.11281
+  dps: 1330.42534
+  tps: 1178.97789
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Knight-Lieutenant'sChainVices-23279"
  value: {
-  dps: 1331.23912
-  tps: 1178.33129
+  dps: 1332.66674
+  tps: 1180.07559
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-LieutenantCommander'sPursuance"
  value: {
-  dps: 1298.86841
-  tps: 1145.29785
+  dps: 1294.85459
+  tps: 1142.70872
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1206.37809
-  tps: 1061.16107
+  dps: 1200.05871
+  tps: 1056.93629
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Marshal'sChainGrips-16463"
  value: {
-  dps: 1350.60895
-  tps: 1195.48076
+  dps: 1346.72379
+  tps: 1193.5757
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Predator'sArmor"
  value: {
-  dps: 1345.6185
-  tps: 1199.24192
+  dps: 1339.67441
+  tps: 1193.35521
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Renataki'sCharmofBeasts-19953"
  value: {
-  dps: 1364.42865
-  tps: 1209.2166
+  dps: 1356.25114
+  tps: 1201.84263
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Striker'sGarb"
  value: {
-  dps: 1415.81306
-  tps: 1261.59847
+  dps: 1406.24652
+  tps: 1254.48605
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1385.31379
-  tps: 1229.10183
+  dps: 1370.27617
+  tps: 1215.26013
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Average-Default"
  value: {
-  dps: 1363.16176
-  tps: 1208.30258
-  dtps: 1.91651
+  dps: 1359.28388
+  tps: 1205.24383
+  dtps: 1.92795
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1486.77868
-  tps: 1803.98755
+  dps: 1487.86869
+  tps: 1805.66478
   dtps: 1.74354
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1376.81842
-  tps: 1222.39988
+  dps: 1379.79214
+  tps: 1225.45169
   dtps: 1.77831
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1443.47977
-  tps: 1284.21642
+  dps: 1430.57404
+  tps: 1269.679
   dtps: 8.89155
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 675.32742
-  tps: 851.59204
+  dps: 682.36238
+  tps: 858.33617
   dtps: 1.77651
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 592.40237
-  tps: 487.68249
-  dtps: 1.72864
+  dps: 599.80611
+  tps: 494.1458
+  dtps: 1.76066
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 740.66138
-  tps: 640.34817
-  dtps: 8.64319
+  dps: 740.90596
+  tps: 640.59276
+  dtps: 8.80329
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1478.33366
-  tps: 1797.22423
-  dtps: 1.66949
+  dps: 1481.47616
+  tps: 1801.30687
+  dtps: 1.69866
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1373.27
-  tps: 1220.23778
+  dps: 1374.47101
+  tps: 1221.96748
   dtps: 1.7308
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1425.36818
-  tps: 1269.02055
+  dps: 1413.43739
+  tps: 1255.50816
   dtps: 8.65402
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 667.45869
-  tps: 844.5806
+  dps: 673.00824
+  tps: 849.96811
   dtps: 1.74112
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 588.45095
-  tps: 484.94771
-  dtps: 1.64425
+  dps: 591.55579
+  tps: 487.07174
+  dtps: 1.68105
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 728.22006
-  tps: 630.507
-  dtps: 8.22127
+  dps: 728.82822
+  tps: 631.11517
+  dtps: 8.40525
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1364.8601
-  tps: 1209.91709
+  dps: 1356.99423
+  tps: 1202.95026
   dtps: 1.7308
  }
 }
