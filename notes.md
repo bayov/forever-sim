@@ -70,7 +70,19 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Druid
 
-* (nothing yet)
+* Omen of Clarity's proc chance. The client (70338, 16864) leaves it to the server and only gives the 10 sec cooldown. The sim keeps 1.12's 2 procs a minute on melee hits (weapon speed based) and gives a damage spell that lands the same rate over its cast time, 2 * max(cast time, 1.5 sec) / 60 a cast. Moonkin Form's two modifiers on it (+100% chance, -50% of the cooldown by our reading of modifier 38) double the chance and halve the cooldown. Counting Clearcasting procs over a few hundred Wraths and Starfires in and out of Moonkin Form settles it (beta, from level 20).
+* Shred's flat bonus. The client's effects are 80 and 155% weapon damage, which the sim reads as (weapon damage + 80) * 1.55, 124 extra. The tooltip still says "plus 180", 1.12's 80 * 2.25. A few Shreds against a target with known armor settle it (beta, rank 1 at 22: 24 * 1.55 = 37 extra).
+* The attack power on Rip (sim: 1.12's 6% a combo point up to 24% at 4 and 5 points, over the whole Rip) and Ferocious Bite (3% a point). The client leaves both to the server. Rip and Bite on the beta with two attack power values settle it.
+* Tiger's Fury's 15% is a dummy aura the server applies. The sim multiplies all Physical damage with it, white hits and bleeds included. A few white hits and Rip ticks with it up and down settle it (beta, level 24).
+* Rend and Tear (row 6): a dummy aura. The sim gives the hits of Claw, Shred, Rake and Ferocious Bite 2% a point more damage, multiplied with the other modifiers, while our Rake or Rip is on the target (or the spec's "assume bleed" option is on), and nothing to bleeds or white hits. Needs level 50.
+* Eclipse gives its charges when a Wrath lands (the client's proc flag is a magic damage hit), not when the cast ends. It matters for the Wrath that is still flying when the Starfire starts.
+* Nature's Grace takes 10% off the global cooldown of the Balance spells it names. The sim takes the 10% off 1.5 sec (1.35 sec) and lets the 10% cast speed shorten the casts, not the GCD.
+* Furor under Forever: the sim gives back 20% a point of the Energy we left Cat Form with plus 2 Energy a point for each second out of it, up to 20 a point, as the tooltip says. No preset leaves Cat Form.
+* Faerie Fire (Feral) is a trainer spell under Forever (foreverchanges.pro lists it at level 25). The sim lets every cat and bear cast it from 25.
+* The cat's claws: the sim keeps 1.12's paw, 43.8 to 65.8 damage every 1.0 sec at 60. A white hit on the beta with a known attack power settles it.
+* Windfury Totem gives a cat nothing in the sim (no weapon in Cat Form), as in 1.12. The Feral preset takes Grace of Air from the shaman.
+* Thick Hide: the sim gives 1 base armor a level a point in Cat, Bear and Moonkin Form, and leaves out the defense part and the form multipliers. Only a tank needs it.
+* Starfire rank 7 and Ferocious Bite rank 5 were Era AQ ranks. The Forever client teaches both at 60, so the sim has them.
 
 ## At 60
 

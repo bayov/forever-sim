@@ -8,6 +8,33 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The druid tree and spells from the newest beta client on [wago.tools](https://wago.tools/db2) (TraitNode, TraitNodeEntry, TraitDefinition and TraitEdge for the tree, TraitDefinitionEffectPoints and the curves behind it for every rank, SpellEffect, SpellMisc, SpellPower, SpellCooldowns and SpellLevels for the spells), checked against [foreverchanges.pro](https://foreverchanges.pro/talents/druid)'s talent calculator for the same build. `tools/forever_talents/client/druid.json` and the sim follow it, so the BlizzCon text below is superseded where it differs.
+
+Talent tree changes against the BlizzCon data (and the hyjal.cc tree for build 69876):
+
+- Feral row 3 is Shredding Attacks (3 ranks, 6 / 12 / 18 Energy off Shred), Savage Fury, Feral Charge and Sharpened Claws. Row 4 is Shifting Power, Primal Bite, Predatory Strikes and Blood Frenzy. Row 5 is Improved Shifting Power, Leader of the Pack and Natural Instinct. Row 6 Natural Reaction and Rend and Tear, row 7 Berserk.
+- Mangle, Primal Fury, Predatory Instincts and King of the Jungle are gone. Primal Bite (the old Mangle, bear only: 20 Rage, 100% weapon damage plus 26 to 77 by rank, 6 sec cooldown) takes Mangle's place, Blood Frenzy is Primal Fury (50 / 100% to gain 5 Rage on a bear crit, and the same chance of an extra combo point on a crit from a combo point builder), Natural Instinct is Predatory Instincts (10 / 20% more crit damage bonus on the melee abilities, plus 12 / 25% of Intellect as spell healing).
+- Shifting Power (new, needs Shredding Attacks 3/3): Cat Form only, turns 55% of base mana into 40 Energy, 16 sec cooldown, 1 sec global cooldown. Natural Shapeshifter takes 10% a point off its cost. Improved Shifting Power (new, 2 ranks) takes 4 sec a point off the cooldown. It replaces powershifting, which Forever's Furor ends (shifting into Cat Form gives back 20% a point of the Energy we left with, plus 2 Energy a point a second out of form, up to 20 a point).
+- Berserk: Claw, Rake, Shred, Ravage and Pounce get 100% more crit chance for 15 sec, 3 min cooldown, off the global cooldown. Primal Bite hits 3 targets with no cooldown.
+- Tiger's Fury is a single trainer rank at level 24: 15% more Physical damage for 6 sec, 30 sec cooldown, no cost, off the global cooldown (1.12's ranks cost 30 Energy for 10 to 40 more damage a hit). King of the Jungle's 60 Energy on it is gone with the talent.
+- Every rank of every talent is in the client now. The values the BlizzCon data guessed that were wrong: Moonglow 8 / 17 / 25% off every damage spell, Improved Moonfire 5 / 10% damage, periodic damage and crit, Nature's Majesty 2 / 4% crit, Moonfury 2% a point on all Arcane and Nature damage, Eclipse 0.17 / 0.33 / 0.5 sec off each of the next 2 Starfires a Wrath gives (4 charges at most, 15 sec), Feral Instinct 10 / 20 / 30% Swipe damage, Heart of the Wild 2% Intellect and Cat Form Strength a point, Reflection 17 / 33 / 50% regen while casting, Living Spirit 5% Spirit a point, Naturalist 1% damage a point.
+- Nature's Grace is now 10% cast speed and 10% off the Balance spells' global cooldown for 3 sec after a spell crit that is not periodic (1.12 took 0.5 sec off the next cast).
+- Moonkin Form costs 35% of base mana, gives the party 3% crit with spells and attacks (exclusive with Leader of the Pack), and makes Omen of Clarity proc twice as often with half its 10 sec cooldown. Omen of Clarity is a baseline passive from level 20 and procs from spells too. The chance is the server's, the client has none.
+
+Spell values at level 60 (1.12 in brackets):
+
+- Wrath rank 8: 92 to 102 Nature (248 to 277), 120 mana (180), 2 sec, 57.1%.
+- Starfire rank 7: 350 to 412 Arcane (496 to 584), 340 mana, 3.5 sec, 100%. Rank 6 313 to 370.
+- Moonfire rank 10: 129 to 150 (195 to 228) and 60 a tick for 12 sec (384 over 12 sec), 375 mana, 15% and 13% a tick on every rank.
+- Insect Swarm rank 5: 31 a tick for 12 sec, 186 (324), 160 mana, 15.8% a tick. It is a Balance talent now (row 4).
+- Hurricane rank 3: 132 a tick (134), no cooldown (1 min).
+- Shred rank 5: 155% weapon damage (225%) on the weapon damage plus 80, so 124 extra. The tooltip still says "plus 180", 1.12's 80 times 2.25. 60 Energy.
+- Claw rank 5: 110% weapon damage plus 115 (100%). Rake rank 4: 61 and 34 a tick for 9 sec (58 and 32). Rip rank 6: 15 plus 25.5 a combo point a tick for 12 sec (17 plus 28). Ferocious Bite rank 5 is unchanged.
+
+Forever's crafted level 60 druid sets (item sets 2114 and 2115, leather head, shoulders, chest, hands, legs and feet): Grovekeeper Eclipse gives 1% hit (2), Nature's Grasp's cooldown 15 sec shorter (3), 21 spell damage against Demons (4) and 3 sec more Insect Swarm (5). Grovekeeper Ferocity gives 1% attack and cast speed (2), Hibernate in Cat Form (3), 36 attack power against Demons (4) and 1 sec off Shifting Power's cooldown (5). The pieces carry no stats in the client yet.
+
 ## Spellbook changes (trainer abilities)
 
 6 of 53 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
