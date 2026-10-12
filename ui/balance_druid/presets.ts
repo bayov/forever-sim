@@ -55,14 +55,21 @@ export const GearP4BIS = PresetUtils.makePresetGear('P4 BiS', P4BISGear);
 export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
 
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
-// (tools/database/forever_synthetic_items_druid.go, which has the budget math). Each piece
-// takes an Era Phase 1 BiS item's place at its item level: 474 spell power, 11% of the budget
-// on Spirit, 3% hit and 4% crit. The head, shoulders, chest, hands, legs and feet carry the
-// bonuses of Grovekeeper Eclipse, Forever's crafted level 60 Balance set (1% hit at 2 pieces
-// and 3 sec more Insect Swarm at 5). The trinkets are real: Talisman of Ephemeral Power and
-// Briarwood Reed. Enchants are the Phase 1 ones a caster takes: Lesser Arcanum of Voracity
-// (Intellect) on the head and legs, Forever's +6 spell power on the neck, Greater Stats, +7
-// Intellect, +5 Spirit on the boots and Spell Power on the staff.
+// (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
+// item level table (66 for the armor, 71 for the jewelry, belt, back and wrist) and the
+// casters' weapon budget for the staff: 465 spell power, 10% of the budget on Spirit, 4% crit
+// and 11% hit, which with Nature's Reach and the 2 piece is the 16% spell hit cap against a
+// level 63 boss. Hit to the cap sims best at budget prices: taking 10 hit off a piece frees
+// about 4 spell power and costs about 5 DPS (835.0 at 110 hit, 825.7 at 90, 784.2 at 10). Only
+// the head and chest carry Grovekeeper Eclipse, Forever's crafted Balance set, so only its 2
+// piece (1% hit) is live, like every class's set; the 5 piece (3 sec more Insect Swarm) would
+// add 12.6 at 180 sec. Swarming Idol (Insect Swarm 2 sec longer, a real Forever Phase 1 idol)
+// is worth 3.3. No trinkets: Forever removed the old dungeon trinkets, and its launch trinkets
+// are excluded until the sim models them. Enchants are the best Phase 1 ones a moonkin can
+// get, nothing from a raid: Lesser Arcanum of Voracity on the head, Forever's +6 spell power on
+// the neck, Mystic Rugged Armor Kit on the chest, legs and feet, Greater Spellpower on the
+// wrist, Arcane Power on the gloves (4.7 ahead of Natural Power, Starfire is Arcane) and
+// Spellblasting on the staff (6.9 ahead of Mighty Spell Power).
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -80,24 +87,24 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 ///////////////////////////////////////////////////////////////////////////
 
 // The tools/rotopt druid_balance template's best (druid_presets.sh) on the synthetic set and
-// the Level 60 talents: Insect Swarm and Moonfire whenever they are down, a free Starfire on
-// Clearcasting (Wrath does not use it up), then Wrath when Eclipse is down to 2 charges or fewer
-// and no Wrath is in flight, Starfire otherwise. That spends every Eclipse charge (each makes a
-// Starfire 0.5 sec shorter) without throwing Wraths at a full stack. The knob search kept it at
-// 120 and 180 sec (744.1 at 180, 40,000 iterations). Dropping Moonfire costs 53 DPS at 180 sec,
-// Insect Swarm 61, and casting only Starfire 66. Innervate is left to its own trigger (at 500
-// mana), 2 ahead of casting it at 40% mana. At 300 sec the mana runs out: Innervate at 40% and
-// the old weave (Wrath until Eclipse has a charge) are 6 ahead there (743.0 against 736.7).
+// the Level 60 talents: a Starfire cast 3 sec before the pull (it lands at 0, worth 9.9),
+// Insect Swarm and Moonfire whenever they are down, a free Starfire on Clearcasting (Wrath does
+// not use it up), then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in
+// flight, Starfire otherwise. That spends every Eclipse charge (each makes a Starfire 0.5 sec
+// shorter) without throwing Wraths at a full stack. The knob search kept it at 120 and 180 sec
+// (821.2 at 180, 20,000 iterations). Dropping Moonfire costs 54 DPS at 180 sec, Insect Swarm
+// 61, and casting only Starfire 73. Innervate is left to its own trigger (at 500 mana), 2
+// ahead of casting it at 40% mana. At 300 sec the mana runs out: the old weave (Wrath until
+// Eclipse has a charge) without the Clearcasting Starfire is 12 ahead there.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
 });
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
-// Wrath as the only filler (1.5 sec with Improved Wrath, half the mana), for a moonkin that
-// would rather not weave: 695.8 / 692.4 / 696.1 at 120 / 180 / 300 sec, 7% behind the Level 60
-// rotation. A talent search with this rotation found the same talents (Eclipse and Improved
-// Starfire still pay for the free Clearcasting Starfires). Starfire alone is 678.5 at 180 sec.
+// Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
+// before the pull, for a moonkin that would rather not weave: 751.0 / 751.5 / 751.9 at 120 /
+// 180 / 300 sec, 8.5% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath).
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Level 60',
@@ -114,18 +121,24 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 
 // The talent search's best (tools/rotopt -talent-search) on the synthetic set with the Level 60
 // rotation at 180 sec: 41 Balance (everything that does damage, Genesis 5 and Moonglow 3) and
-// Naturalist 5 (1% damage a point) from Restoration. Searches started from that build with
-// Reflection and Subtlety and from 41 / 10 / 0 with Heart of the Wild, and the last moves traded
-// Moonglow, Genesis and Heart of the Wild points within the noise. The other archetypes are well
-// behind at 180 sec: 31 / 0 / 20 (Reflection and Tranquil Spirit, no Moonfury)
-// 642.8, 41 / 10 / 0 685.0, against 715.2 (Tauren, before the Level 60 consumes below).
+// Naturalist 5 (1% damage a point) from Restoration. A search on the final set only traded
+// Genesis, Moonglow and Reflection points within the noise. The other archetypes were well
+// behind on the first set at 180 sec: 31 / 0 / 20 (Reflection and Tranquil Spirit, no Moonfury)
+// 10% and 41 / 10 / 0 4%.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5532220115501351--505' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set: 41 Balance, Naturalist from Restoration.',
 	group: 'Level 60',
 });
+// The Wrath rotation's own search: Heart of the Wild 3 (Intellect) in place of Moonglow 3, 2.6
+// ahead with Wrath as the filler (754.1 against 751.5 at 180 sec), because Wrath's mana cost is
+// already low.
+export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Level 60 Wrath', SavedTalents.create({ talentsString: '5502220115501351-03-505' }), {
+	tooltip: 'The Wrath rotation talent search best: Heart of the Wild in place of Moonglow.',
+	group: 'Level 60',
+});
 
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Wrath],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase1][0];
@@ -142,13 +155,13 @@ export const DefaultOptions = BalanceDruidOptions.create({
 // Blackwing Lair, Ahn'Qiraj or Naxxramas, so Wizard Oil and not Brilliant Wizard Oil). The five
 // +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale) are one elixir in the client, so the
 // moonkin takes one: Elixir of Sages with Elixir of Greater Intellect, level with the Owl and
-// Greater Spirit at 120 and 180 sec and 1.3 ahead at 300. If both crit elixirs stacked, the Owl
-// would add 13.6 at 180 sec. Other elixirs in different slots stack in the sim (notes.md).
-// Taking each one out costs, at 180 sec: Flask of Supreme Power the most (Distilled Wisdom is 6
-// behind, the moonkin does not run dry in a raid fight), Elixir of Sages 14, Elixir of Nature
-// Power 9, Major Spellblasting Potion 9 (over a Major Mana Potion), Lobster Stew 4, Goblin
-// Sapper Charge 3.9, Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater Mageblood
-// Elixir and Greater Intellect are within the noise and stay for longer fights.
+// Greater Spirit at 180 sec and 1.3 ahead at 300. If both crit elixirs stacked, the Owl would
+// add 15.1 at 180 sec. Other elixirs in different slots stack in the sim (notes.md). Taking
+// each one out costs, at 180 sec on the first set: Flask of Supreme Power the most (Distilled
+// Wisdom is 6 behind, the moonkin does not run dry in a raid fight), Elixir of Sages 14, Elixir
+// of Nature Power 9, Major Spellblasting Potion 9 (over a Major Mana Potion), Lobster Stew 4,
+// Goblin Sapper Charge 3.9, Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater
+// Mageblood Elixir and Greater Intellect are within the noise and stay for longer fights.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorSpellblastingPotion,
@@ -261,16 +274,17 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 750.0 / 744.1 / 736.8 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 826.3 / 821.3 / 807.9 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             750.0    744.1    736.8   best overall and Alliance
-//	Tauren                747.9    743.9    737.5   best Horde (0.7 ahead at 300 sec)
-//	Windshaper Skyborne   744.9    740.6    732.3
-//	High Order Skyborne   744.8    740.5    732.1
+//	Night Elf             826.3    821.3    807.9   best overall and Alliance
+//	Tauren                816.7    813.4    800.4   best Horde (its 1% hit is past the cap)
+//	Windshaper Skyborne   806.2    807.8    796.9
+//	High Order Skyborne   806.1    807.6    796.6
 //
-// No racial goes by weapon type, so the staff changes nothing here.
+// No racial goes by weapon type, so the staff changes nothing here, and the ranking with
+// weapon type racials off is the same.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
@@ -287,7 +301,7 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wra
 	group: 'Level 60',
 	tooltip: 'The Level 60 build with Wrath as the only filler.',
 	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsLevel60,
+	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
 	encounter: EncounterLevel60,
 	race: Race.RaceNightElf,

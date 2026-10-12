@@ -51,15 +51,20 @@ export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
 export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
-// (tools/database/forever_synthetic_items_druid.go, which has the budget math). Each piece
-// takes an Era Phase 1 BiS item's place at its item level: Agility and Strength about evenly,
-// 9% hit, 4% crit and about 5% of the budget on Intellect and Spirit for Shifting Power's mana.
-// The head, shoulders, chest, hands, legs and feet carry the bonuses of Grovekeeper Ferocity,
-// Forever's crafted level 60 Feral set (1% attack speed at 2 pieces and 1 sec off Shifting
-// Power at 5). The trinkets are real: Hand of Justice and Blackhand's Breadth. Enchants are the
-// Phase 1 ones a cat takes: Lesser Arcanum of Voracity (Agility) on the head and legs, Forever's
-// +5 Agility on the neck, +3 Agility on the back, Greater Stats, +9 Strength, +7 Agility on the
-// hands and feet and +25 Agility on the weapon.
+// (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
+// item level table (66 for the armor, 71 for the jewelry, belt, back and wrist, 76 for the
+// two-hander): Agility and Strength about evenly, 9% hit (the special attack hit cap against a
+// level 63 boss, more does nothing), 4% crit and about 5% of the budget on Intellect and Spirit
+// for Shifting Power's mana. Only the head and chest carry Grovekeeper Ferocity, Forever's
+// crafted Feral set, so only its 2 piece (1% attack speed) is live, like every class's set; the
+// 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec. Howling Idol (1 sec off Shifting
+// Power, a real Forever Phase 1 idol) is worth 12.5. No trinkets: Forever removed the old
+// dungeon trinkets (Hand of Justice, Blackhand's Breadth), and its launch trinkets are excluded
+// until the sim models them. Enchants are the best Phase 1 ones a cat can get, nothing from a
+// raid: Lesser Arcanum of Voracity (Agility) on the head and legs, Forever's +5 Agility on the
+// neck, Agility on the back, Greater Stats, +9 Strength on the wrist, Superior Strength on the
+// gloves (3.2 ahead of Greater Agility), +7 Agility on the feet and +25 Agility on the weapon.
+// Forceful Rugged Armor Kit (+10 attack power) is 1.5 to 2.2 behind each of them.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -83,9 +88,9 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 // Level 60 talents: Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip
 // has 4 sec left, Shred, Shifting Power at 50 Energy or less, Tiger's Fury and Berserk on
 // cooldown. No Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend
-// and Tear's bleed up on its own (keeping Rake up costs 30 at every length). Rip at 5 combo
-// points is 1 to 3 behind, Ferocious Bite at full Energy while waiting on Rip 2 to 5 behind.
-// The search kept that at 120 and 180 sec, and Shifting Power at 40 Energy at 300 sec (2 DPS).
+// and Tear's bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
+// points is 1 to 2 behind. The search kept that at 120 and 180 sec, and Shifting Power at 40
+// Energy is 1 ahead at 300 sec (2.9 behind at 180).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power, Tiger's Fury and Berserk on cooldown.",
 	group: 'Level 60',
@@ -115,14 +120,15 @@ export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Sim
 // The talent search's best (tools/rotopt -talent-search) on the synthetic set with the Level 60
 // rotation at 180 sec: Genesis 5 (Rip's ticks) and Nature's Majesty 2 (crit) from Balance, 34
 // Feral with Shredding Attacks, Savage Fury, Sharpened Claws, Shifting Power and Improved
-// Shifting Power, Predatory Strikes, Blood Frenzy, Leader of the Pack, Natural Instinct, Rend
-// and Tear 4 and Berserk, and Furor 5, Naturalist 5 and Natural Shapeshifter 1 in Restoration.
+// Shifting Power, Predatory Strikes, Blood Frenzy 1, Leader of the Pack, Natural Instinct, Rend
+// and Tear 5 and Berserk, and Furor 5, Naturalist 5 and Natural Shapeshifter 1 in Restoration.
 // Searches started from pure Feral builds (0 / 35 / 16 with Ferocity and Reflection, 0 / 33 / 18
 // with Heart of the Wild and Thick Hide) and from the Balance split, and all of them moved
-// their spare points into Genesis and Nature's Majesty and ended here within the noise.
+// their spare points into Genesis and Nature's Majesty. On the final set the fifth point of
+// Rend and Tear is 1.5 ahead of the second point of Blood Frenzy (659.3 against 657.8).
 // Ferocity buys nothing once the rotation drops Rake, so its row 1 points sit in Feral
 // Swiftness and Thick Hide for the same DPS.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-05200332021032212041-05501' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-05200332021031212051-05501' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set.',
 	group: 'Level 60',
 });
@@ -143,17 +149,18 @@ export const DefaultOptions = FeralDruidOptions.create({
 
 // The level 60 consumables, Forever launch Phase 1 only (nothing from Molten Core, Zul'Gurub,
 // Blackwing Lair, Ahn'Qiraj or Naxxramas). The five +2% crit elixirs (Mongoose, Grizzly, Owl,
-// Sages, Whale) are one elixir in the client, so the cat takes one: Elixir of the Mongoose with
-// Juju Power, 2.2 ahead of the Grizzly with Greater Agility at 180 sec. If both stacked, the
-// Grizzly would add 7.3. Other elixirs in different slots stack in the sim (notes.md). We
-// tried every consumable the sim applies in each slot, first on an early Level 60 build at 180
-// sec (608 DPS): taking each one out costs Elixir of the Mongoose 19.7 (Greater Agility is 9.5 behind),
-// Dragonbreath Chili 9.8 and Juju Might 6.1, and Ground Scorpok Assay is 1.3 ahead of R.O.I.D.S.
-// On the final build Juju Power is 2.2 ahead of the Elixir of Giants and Flank au Poivre 4
-// ahead of Grilled Squid. Flask of Distilled Wisdom keeps Shifting Power in mana; Flask
-// of Supreme Power is 6 ahead only through the chili's fire damage. A shapeshifted druid can use
-// no explosives and no weapon stone or oil, and drinks no potion in form, so those do nothing.
-// The Major Mana Potion and Demonic Rune stay for longer fights.
+// Sages, Whale) are one elixir in the client, so the cat takes one: Elixir of the Mongoose,
+// with Forever's Elixir of Ferocity (18 Strength and 18 Agility, no crit) in the Strength slot,
+// 2.6 ahead of Juju Power and 4.7 ahead of the Grizzly with Greater Agility at 180 sec. If two
+// crit elixirs stacked, the Grizzly in place of Ferocity would add 4.9. Other elixirs in
+// different slots stack in the sim (notes.md). We tried every consumable the sim applies in
+// each slot, first on an early Level 60 build at 180 sec (608 DPS): taking each one out costs
+// Elixir of the Mongoose 19.7 (Greater Agility is 9.5 behind), Dragonbreath Chili 9.8 and Juju
+// Might 6.1, and Ground Scorpok Assay is 1.3 ahead of R.O.I.D.S. Flank au Poivre is 4 ahead of
+// Grilled Squid. Flask of Distilled Wisdom keeps Shifting Power in mana; Flask of Supreme Power
+// is 6 ahead only through the chili's fire damage. A shapeshifted druid can use no explosives
+// and no weapon stone or oil, and drinks no potion in form, so those do nothing. The Major Mana
+// Potion and Demonic Rune stay for longer fights.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -162,7 +169,7 @@ export const DefaultConsumes = Consumes.create({
 	dragonBreathChili: true,
 	flask: Flask.FlaskOfDistilledWisdom,
 	food: Food.FoodFlankAuPoivre,
-	strengthBuff: StrengthBuff.JujuPower,
+	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
@@ -261,16 +268,17 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 659.4 / 653.2 / 642.6 at 120 / 180 / 300 sec. Every race a druid can be
-// under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
+// The Level 60 build, 665.5 / 659.3 / 647.1 at 120 / 180 / 300 sec. Every race a druid can be
+// under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             659.4    653.2    642.6   best overall and Alliance
-//	High Order Skyborne   655.9    650.5    640.5
-//	Windshaper Skyborne   655.6    650.2    640.3   best Horde
-//	Tauren                653.5    648.0    637.6
+//	Night Elf             665.5    659.3    647.1   best overall and Alliance
+//	High Order Skyborne   663.6    657.8    646.0
+//	Windshaper Skyborne   663.6    657.8    646.2   best Horde
+//	Tauren                660.9    655.2    643.1
 //
-// Night Elf's lead is its Agility. No racial goes by weapon type, so the staff changes nothing.
+// Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
+// nothing, and the ranking with weapon type racials off is the same.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',

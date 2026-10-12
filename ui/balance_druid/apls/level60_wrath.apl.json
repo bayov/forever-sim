@@ -1,5 +1,8 @@
 {
     "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":9912}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+    ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions and runes."},
         {"action":{"castSpell":{"spellId":{"spellId":24977}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":24977}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Insect Swarm whenever it is down. Without the talent ignore the warning on this line."},
