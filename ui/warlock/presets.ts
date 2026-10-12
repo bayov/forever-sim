@@ -134,9 +134,10 @@ export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation(
 });
 // Affliction damage over time: Siphon Life on top, and Wrack while Corruption and Bane of Agony are
 // both up (its 10% only counts on those two, so in practice at the end of the fight, when Bane of
-// Doom would not land). Wrack whenever the damage over time spells are up was 17 behind, never
-// casting it 0.5 ahead (inside the noise). Its 2.94 sec opening Shadow Bolt starts 3 sec before
-// the pull, and Immolate is recast below its cast time as on Destruction.
+// Doom would not land). Wrack whenever the damage over time spells are up was 241 behind. Never
+// casting Wrack would be 34 ahead: the channel costs Shadow Bolts and their Improved Shadow Bolt,
+// so the spec keeps Wrack for its playstyle and the Level 60 Affliction build is the stronger
+// choice. Immolate is recast below its cast time as on Destruction.
 export const RotationLevel60AfflictionDoT = PresetUtils.makePresetAPLRotation('Level 60 Affliction DoT', Level60AfflictionDoTAPL, {
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Siphon Life and Wrack, for the Affliction damage over time talents.',
@@ -196,14 +197,15 @@ export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for Fire damage.' },
 );
 // Affliction damage over time, its own spec: everything down to Wrack, with Siphon Life, Soul
-// Siphon, Improved Drains and Malediction. Searched with Wrack and Siphon Life kept (-require).
-// Drain Life as the filler was 55 behind Shadow Bolt and Drain Soul 162, Drain Soul only below 25%
-// of the boss's health lost too. The client gives the drains 10% a tick (Drain Soul 10% every 3
-// sec), so Shadow Bolt stays the filler.
+// Siphon, Shadow Mastery, Malediction and Pandemic, and Improved Shadow Bolt, Bane and Ruin.
+// Searched with Wrack and Siphon Life kept (-require) on the staff set; the earlier Improved Drains
+// build was 124 behind. Drain Life as the filler was 55 behind Shadow Bolt and Drain Soul 162 on
+// that build, and the client gives the drains 10% a tick (Drain Soul 10% every 3 sec), so Shadow
+// Bolt stays the filler.
 export const TalentsLevel60AfflictionDoT = PresetUtils.makePresetTalents(
 	'Level 60 Affliction DoT',
-	SavedTalents.create({ talentsString: '05550320035201351-0005003-03' }),
-	{ group: 'Level 60', tooltip: 'Siphon Life, Soul Siphon and Wrack.' },
+	SavedTalents.create({ talentsString: '25530000035001351--0550005003' }),
+	{ group: 'Level 60', tooltip: 'Siphon Life, Soul Siphon and Wrack, with Improved Shadow Bolt.' },
 );
 
 export const TalentPresets = [

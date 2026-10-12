@@ -59,7 +59,7 @@ var TalentsDemonology = "011-0305003131221001351-0550005003"
 var TalentsDestruction = "25510000035--055030500310035"
 var TalentsAffliction = "2553000003520005--0550305003"
 var TalentsDestructionFire = "252-0050003201-0050345003101351"
-var TalentsAfflictionDoT = "05550320035201351-0005003-03"
+var TalentsAfflictionDoT = "25530000035001351--0550005003"
 
 // Sacrifices the Succubus before the pull for 15% Fire damage and keeps no demon out.
 var FireWarlock = &proto.Player_Warlock{

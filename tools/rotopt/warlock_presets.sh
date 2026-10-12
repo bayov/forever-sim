@@ -36,5 +36,4 @@ gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dot
 # sec early.
 gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5"
 # Affliction damage over time: Siphon Life, and Wrack while Corruption and Bane of Agony are up.
-# Its Shadow Bolt takes 2.94 sec, so the opener starts 3 sec before the pull.
-gen level60_affliction_dot "$base,filler=1,conflagrate=0,siphonLife=1,wrack=2,soulLink=0,dotLead=0,immolateLead=1,prepullAt=3"
+gen level60_affliction_dot "$base,filler=1,conflagrate=0,siphonLife=1,wrack=2,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
