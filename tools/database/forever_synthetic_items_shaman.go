@@ -73,7 +73,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990103, Name: "Elemental Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_29",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 11, stats.Spirit: 8, stats.SpellPower: 48, stats.Armor: 335}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 11, stats.Spirit: 8, stats.SpellPower: 48, stats.Armor: 399}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		SetName:        "Elemental Synthetic (Phase 1)",
