@@ -48,9 +48,12 @@ func init() {
 		}
 	}
 
-	specs["affliction"] = warlockSpec(proto.WarlockOptions_Imp, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
+	// The Level 60 builds' demons and imbues (ui/warlock/presets.ts).
 	specs["demonology"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_Imp, proto.WarlockOptions_Spellstone)
-	specs["destruction"] = warlockSpec(proto.WarlockOptions_Imp, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
+	specs["destruction"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
+	specs["affliction"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
+	specs["destruction_fire"] = warlockSpec(proto.WarlockOptions_NoSummon, proto.WarlockOptions_Succubus, proto.WarlockOptions_Firestone)
+	specs["affliction_dot"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
 
 	// Every demon and sacrifice pair for the talent searches, as warlock_<demon out>_<demon
 	// sacrificed>_<imbue>, warlock_succubus_imp_spellstone say.
