@@ -50,6 +50,10 @@ import (
 // The head, shoulders, chest, hands, legs and feet form a set with the bonuses of Raiments of
 // Conviction, Forever's Tier 1 shadow set (see sim/priest/item_sets_pve.go). The generator
 // script lived in the session scratchpad (synth.py), the numbers below are its output.
+//
+// The Smite build wants the same stats, so it wears the same pieces, but its six armor pieces
+// are copies (995016-995021) that form a set with the bonuses of Vestments of Conviction,
+// Forever's Tier 1 Discipline and Holy set, which beat Raiments of Conviction for it.
 
 func init() {
 	ForeverSyntheticItems = append(ForeverSyntheticItems, foreverSyntheticPriestItems...)
@@ -84,11 +88,11 @@ var foreverSyntheticPriestItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
 		SetName:        "Shadow Synthetic (Phase 1)",
 	},
-	// Back, item level 66, a Molten Core cloak. Budget 24.08, uses 23.26.
+	// Back, item level 66, a Molten Core cloak. Budget 24.08, uses 23.79.
 	{
 		Id: 995004, Name: "Shadow Synthetic Back (Phase 1)", Icon: "inv_misc_cape_16",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 6, stats.Spirit: 7, stats.SpellPower: 28, stats.Armor: 55}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 7, stats.Spirit: 7, stats.SpellPower: 28, stats.Armor: 55}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
 	},
@@ -191,5 +195,61 @@ var foreverSyntheticPriestItems = []*proto.UIItem{
 		WeaponDamageMin: 83, WeaponDamageMax: 155, WeaponSpeed: 1.9,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+	},
+	// Head for the Smite set: the same stats as 995001, with Vestments of Conviction.
+	{
+		Id: 995016, Name: "Smite Synthetic Head (Phase 1)", Icon: "inv_helmet_34",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 13, stats.Spirit: 7, stats.SpellPower: 45, stats.Armor: 83}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Smite Synthetic (Phase 1)",
+	},
+	// Shoulder for the Smite set: the same stats as 995003, with Vestments of Conviction.
+	{
+		Id: 995017, Name: "Smite Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_02",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Stamina: 10, stats.Intellect: 11, stats.Spirit: 7, stats.SpellPower: 39, stats.Armor: 76}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Smite Synthetic (Phase 1)",
+	},
+	// Chest for the Smite set: the same stats as 995005, with Vestments of Conviction.
+	{
+		Id: 995018, Name: "Smite Synthetic Chest (Phase 1)", Icon: "inv_chest_cloth_08",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 13, stats.Spirit: 9, stats.SpellPower: 43, stats.Armor: 102}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Smite Synthetic (Phase 1)",
+	},
+	// Hands for the Smite set: the same stats as 995007, with Vestments of Conviction.
+	{
+		Id: 995019, Name: "Smite Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_14",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 10, stats.SpellPower: 47, stats.Armor: 63}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Smite Synthetic (Phase 1)",
+	},
+	// Legs for the Smite set: the same stats as 995009, with Vestments of Conviction.
+	{
+		Id: 995020, Name: "Smite Synthetic Legs (Phase 1)", Icon: "inv_pants_08",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Stamina: 13, stats.Intellect: 13, stats.Spirit: 11, stats.SpellPower: 51, stats.Armor: 89}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Smite Synthetic (Phase 1)",
+	},
+	// Feet for the Smite set: the same stats as 995010, with Vestments of Conviction.
+	{
+		Id: 995021, Name: "Smite Synthetic Feet (Phase 1)", Icon: "inv_boots_cloth_05",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 10, stats.Spirit: 10, stats.SpellPower: 36, stats.Armor: 70}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Smite Synthetic (Phase 1)",
 	},
 }

@@ -1,6 +1,7 @@
 package priest
 
 import (
+	"slices"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -199,4 +200,40 @@ var raimentsOfConvictionBonuses = map[int32]core.ApplyEffect{
 var ItemSetShadowSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Shadow Synthetic (Phase 1)",
 	Bonuses: raimentsOfConvictionBonuses,
+})
+
+// vestmentsOfConvictionBonuses are the set bonuses of Vestments of Conviction, Forever's
+// Tier 1 Discipline and Holy set (ItemSet 2104 in the 1.60.1.70338 client, spells 1300954,
+// 1301041, 1301085, 1301703). Like Raiments of Conviction, its client pieces carry no stats.
+var vestmentsOfConvictionBonuses = map[int32]core.ApplyEffect{
+	// Increased Spirit +10.
+	2: func(agent core.Agent) {
+		agent.GetCharacter().AddStat(stats.Spirit, 10)
+	},
+	// Reduces the cooldown of your Fear Ward spell by 60 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// Increases healing done by up to 26 and damage done by up to 9 for all magical spells
+	// and effects.
+	4: func(agent core.Agent) {
+		agent.GetCharacter().AddStats(stats.Stats{stats.SpellDamage: 9, stats.HealingPower: 26})
+	},
+	// Reduces the cooldown of your Penance and Prayer of Mending spells by 1 sec.
+	5: func(agent core.Agent) {
+		priest := agent.(PriestAgent).GetPriest()
+		priest.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.CD.Timer != nil && slices.Contains(PenanceSpellId[:], spell.SpellID) {
+				spell.CD.Duration -= time.Second
+			}
+		})
+	},
+}
+
+// ItemSetSmiteSyntheticPhase1 is the set of the synthetic Phase 1 Smite items, the shadow
+// set's armor pieces with the Vestments of Conviction bonuses: 10 Spirit and 9 spell damage
+// beat Raiments' 1% hit by 4.1 DPS at 180 sec and 7.8 at 300 for the Smite build.
+var ItemSetSmiteSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Smite Synthetic (Phase 1)",
+	Bonuses: vestmentsOfConvictionBonuses,
 })
