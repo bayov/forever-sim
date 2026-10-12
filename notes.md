@@ -67,6 +67,8 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Chastise's "very low threat" has no number, the sim gives it normal threat.
 * Power in Light needs the priest's own Holy Fire on the target (the tooltip says "your Holy Fire").
 * Searing Light's free Holy Nova, Twin Disciplines on healing and the other healer talents are not simulated.
+* Elixir stacking: the Level 60 consumes take the Elixir of the Owl (Intellect slot) and the Elixir of Sages (Spirit slot) together, and the sim stacks their 2% crits, by the shared ruling that separate slots stack. If they share a Battle or Guardian slot on Forever, only one goes. On the Shadow build Sages adds 13.6 DPS with Owl already in (Owl alone 16.4 over the Elixir of Wisdom).
+* Smite's low ranks: the client gives Smite ranks 3 to 8 the same 0.714 coefficient, and the sim applies no downrank penalty. The Smite rotation falls back to rank 4 (level 22) once the mana would not last the fight. Rank 3 (level 14) would be 0.9 better at 300 sec, but a Classic style penalty for spells learned below level 20 would cut it, so whether Forever keeps that penalty decides between them.
 * Raiments of Conviction (Tier 1 shadow set, ItemSet 2105): the client's six pieces have no stats or sources yet. The sim gives its bonuses to the synthetic Phase 1 shadow set. Which pieces form the set, and whether it is crafted (Tailoring lists the "Raiments of Conviction" hands, shoulders, legs and feet, 273920 to 273923) or a raid drop, is open.
 
 ## Mage

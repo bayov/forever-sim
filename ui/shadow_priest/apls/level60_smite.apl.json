@@ -10,6 +10,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":1277335}}},"notes":"Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":14751}}},"notes":"Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10934}},"condition":{"cmp":{"lhs":{"math":{"lhs":{"currentMana":{}},"op":"OpDiv","rhs":{"const":{"val":"20"}}}},"op":"OpGe","rhs":{"remainingTime":{}}}}},"notes":"Smite while the mana lasts the fight at 20 mana a second."},
-        {"action":{"castSpell":{"spellId":{"spellId":598}}},"notes":"Rank 3 Smite once it would not: most of the damage for far less mana."}
+        {"action":{"castSpell":{"spellId":{"spellId":984}}},"notes":"Rank 4 Smite once it would not: most of the damage for far less mana."}
     ]
 }

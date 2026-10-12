@@ -41,9 +41,11 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
 		// Smite of this rank (0 never) once the mana would no longer last the fight at
 		// smiteManaRate mana a second. Ranks 3 and up keep the full coefficient under Forever,
-		// so a lower rank keeps most of the damage for far less mana. Rank 3 below 20 mana a
-		// second came out best at every fight length (2026-10-12).
-		{Name: "smiteDownrank", Default: 3, Min: 0, Max: 7, Step: 1},
+		// so a lower rank keeps most of the damage for far less mana. Below 20 mana a second,
+		// rank 3 is best at every fight length (2026-10-12), rank 4 only 0.9 behind at 300 sec.
+		// Rank 3 is learned at level 14, and Classic cuts spells learned below 20, so the
+		// default is rank 4, which no such rule reaches.
+		{Name: "smiteDownrank", Default: 4, Min: 0, Max: 7, Step: 1},
 		{Name: "smiteManaRate", Default: 20, Min: 15, Max: 45, Step: 5},
 	}
 }
