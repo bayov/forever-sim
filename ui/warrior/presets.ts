@@ -74,9 +74,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // the neck (+3.7 against +2.9 for Agility on Fury), Forever's Cloak - Agility (5), Greater Stats,
 // Superior Strength on the bracers, Forever's Gloves - Superior Strength (15), Greater Agility on the
 // boots (a Forceful Rugged Armor Kit there is within 0.3) and Crusader. Nothing for the shoulders
-// outside raids. The trinkets are Blackhand's Breadth and Forever's Adaptive Combat Assistant (2
-// expertise, a world drop), 10.0 ahead of Hand of Justice on Fury and 4.6 on two-hand Fury, and 0.7
-// behind on Arms (inside the noise). Raid trinkets are out.
+// outside raids. Trinkets are excluded until Forever's launch trinkets are simulated: client 70338
+// has no Hand of Justice or Blackhand's Breadth, so both slots are empty for every class.
 //
 // On 2026-10-12 the Level 60 Fury build (Human, 180 sec) does 995.2 on the Fury set, where the Era
 // Phase 1 set (phase_1.gear.json) does 1010.8 with the same talents and rotation. The synthetic set
