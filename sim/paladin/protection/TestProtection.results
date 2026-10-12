@@ -1,8 +1,8 @@
 character_stats_results: {
  key: "TestProtection-Phase4-CharacterStats-Default"
  value: {
-  final_stats: 308
-  final_stats: 265
+  final_stats: 294
+  final_stats: 250
   final_stats: 367
   final_stats: 166
   final_stats: 193
@@ -18,21 +18,21 @@ character_stats_results: {
   final_stats: 29.2722
   final_stats: 0
   final_stats: 0
-  final_stats: 1428
+  final_stats: 1376
   final_stats: 3
-  final_stats: 29.109
+  final_stats: 28.35
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 3722
   final_stats: 0
   final_stats: 0
-  final_stats: 915
+  final_stats: 885
   final_stats: 430
   final_stats: 20
   final_stats: 5.8
   final_stats: 0
-  final_stats: 14.909
+  final_stats: 14.15
   final_stats: 5.8
   final_stats: 0
   final_stats: 5171
@@ -50,26 +50,26 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtection-Phase4-StatWeights-Default"
  value: {
-  weights: 0.17701
-  weights: 0.0907
+  weights: 0.26357
+  weights: 0.08593
   weights: 0
   weights: 0.01406
   weights: 0
-  weights: 0.46651
+  weights: 0.46493
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.40999
+  weights: 0.40842
   weights: 0
   weights: 0
   weights: 0
-  weights: 3.77016
-  weights: 2.48585
+  weights: 3.73654
+  weights: 2.43525
   weights: 0
   weights: 0
-  weights: 0.08851
-  weights: 3.77016
-  weights: 2.48585
+  weights: 0.08786
+  weights: 3.73654
+  weights: 2.43525
   weights: 0
   weights: 0
   weights: 0
@@ -99,78 +99,78 @@ stat_weights_results: {
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Avenger'sBattlegear"
  value: {
-  dps: 448.27987
-  tps: 634.39003
+  dps: 441.04973
+  tps: 626.57054
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-BattlegearofEternalJustice"
  value: {
-  dps: 392.49378
-  tps: 505.64535
+  dps: 385.08751
+  tps: 497.98393
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-FieldMarshal'sAegis"
  value: {
-  dps: 433.71857
-  tps: 613.14242
+  dps: 426.676
+  tps: 605.44325
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-Freethinker'sArmor"
  value: {
-  dps: 348.55417
-  tps: 491.84024
+  dps: 342.11432
+  tps: 484.98687
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-JudgementArmor"
  value: {
-  dps: 446.12257
-  tps: 637.32142
+  dps: 439.64278
+  tps: 630.27295
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LawbringerArmor"
  value: {
-  dps: 350.98482
-  tps: 493.30454
+  dps: 344.47461
+  tps: 486.41521
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-LieutenantCommander'sRedoubt"
  value: {
-  dps: 417.05313
-  tps: 593.52793
+  dps: 410.26186
+  tps: 586.20999
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-RedemptionArmor"
  value: {
-  dps: 346.01764
-  tps: 490.23069
+  dps: 339.36558
+  tps: 483.3358
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-RetributionSynthetic(Phase1)"
  value: {
-  dps: 377.19511
-  tps: 538.07673
+  dps: 370.46049
+  tps: 530.87114
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-AllItems-SanctifiedOrb-20512"
  value: {
-  dps: 330.06814
-  tps: 472.14898
+  dps: 324.22754
+  tps: 465.94903
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Average-Default"
  value: {
-  dps: 331.61279
-  tps: 473.79531
+  dps: 325.46548
+  tps: 467.28389
  }
 }
 dps_results: {
@@ -260,7 +260,7 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Phase4-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 297.5944
-  tps: 428.69609
+  dps: 292.07926
+  tps: 422.88556
  }
 }
