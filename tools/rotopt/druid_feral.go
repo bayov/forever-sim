@@ -41,6 +41,10 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "biteRipTime", Default: 4, Min: 0, Max: 10, Step: 2},
 		// Bite only with this much Energy, its extra Energy turns into damage.
 		{Name: "biteEnergy", Default: 35, Min: 35, Max: 75, Step: 10},
+		// With 1, Ferocious Bite at 5 combo points anyway once the Energy reaches
+		// biteCapEnergy, so a cat waiting on Rip does not sit at full Energy. 0 never.
+		{Name: "biteAtCap", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "biteCapEnergy", Default: 90, Min: 60, Max: 100, Step: 10},
 		// Keep Rake up, 0/1.
 		{Name: "rake", Default: 1, Min: 0, Max: 1, Step: 1},
 		// The builder: 0 Shred (from behind), 1 Claw.
@@ -102,7 +106,10 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		if k["ripCP"] > 0 {
 			cond = and(cond, or(ge(dotRemainingTime(rip), seconds(k["biteRipTime"])), le(remainingTime(), seconds(k["ripMinTime"]))))
 		}
-		items = append(items, cast(bite, cond, "Ferocious Bite at 5 combo points while Rip has time left."))
+		if k["biteAtCap"] == 1 {
+			cond = or(cond, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteCapEnergy"]))))
+		}
+		items = append(items, cast(bite, cond, "Ferocious Bite at 5 combo points while Rip has time left, or at full Energy."))
 	case 2:
 		items = append(items, cast(bite, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteEnergy"]))), "Ferocious Bite at 5 combo points."))
 	}
