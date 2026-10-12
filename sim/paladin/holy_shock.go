@@ -29,6 +29,9 @@ func (paladin *Paladin) registerHolyShock() {
 	}
 	// Holy Power gives Holy Shock 3% crit per point where every other spell gets 1%.
 	extraCrit := 2 * float64(paladin.Talents.HolyPower) * core.SpellCritRatingPerCritChance
+	if paladin.Ranged().ID == LibramOfInfusion {
+		extraCrit += 6 * core.SpellCritRatingPerCritChance
+	}
 
 	for i, rank := range ranks {
 		rank := rank

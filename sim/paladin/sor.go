@@ -88,7 +88,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressWeaponProcs | core.SpellFlagSuppressEquipProcs | core.SpellFlagBinary,
 
-			DamageMultiplier: improvedSoR,
+			DamageMultiplier: improvedSoR * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.5, rank.judge.coeff),
