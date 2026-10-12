@@ -43,6 +43,9 @@ type Druid struct {
 
 	StartingForm DruidForm
 
+	// Item bonuses that make Insect Swarm last longer, the Grovekeeper Eclipse 5 piece.
+	InsectSwarmBonusDuration time.Duration
+
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool

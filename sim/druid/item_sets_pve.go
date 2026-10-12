@@ -1,7 +1,10 @@
 package druid
 
 import (
+	"time"
+
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -191,4 +194,102 @@ var ItemSetSymbolsOfUnendingLife = core.NewItemSet(core.ItemSet{
 			})
 		},
 	},
+})
+
+// mobTypeBonus adds attack power or spell damage against every target of one creature type,
+// for the Grovekeeper 4 piece bonuses.
+func mobTypeBonus(c *core.Character, label string, mobType proto.MobType, attackPower, spellDamage float64) {
+	targets := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+		return unit.MobType == mobType
+	})
+	core.MakePermanent(c.RegisterAura(core.Aura{
+		Label: label,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, target := range targets {
+				for _, at := range c.AttackTables[target.UnitIndex] {
+					at.BonusAttackPowerTaken += attackPower
+					at.BonusSpellDamageTaken += spellDamage
+				}
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, target := range targets {
+				for _, at := range c.AttackTables[target.UnitIndex] {
+					at.BonusAttackPowerTaken -= attackPower
+					at.BonusSpellDamageTaken -= spellDamage
+				}
+			}
+		},
+	}))
+}
+
+// grovekeeperEclipseBonuses are the set bonuses of Grovekeeper Eclipse, Forever's crafted level 60
+// Balance set (item set 2114, leather head, shoulders, chest, hands, legs and feet 280998 to 281003,
+// in the 1.60.1.70338 client).
+//
+// The client pieces carry no stats yet, so no real set is registered for them. We give the same bonuses to
+// the synthetic Phase 1 Balance set below, the way the enhancement shaman's carries The Spiritcaller's Rage.
+var grovekeeperEclipseBonuses = map[int32]core.ApplyEffect{
+	// Improves your chance to hit by 1%.
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.AddStats(stats.Stats{
+			stats.MeleeHit: core.MeleeHitRatingPerHitChance,
+			stats.SpellHit: core.SpellHitRatingPerHitChance,
+		})
+	},
+	// Reduces the cooldown of your Nature's Grasp spell by 15 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// Increases damage done by your spells and effects by up to 21 when fighting Demons.
+	4: func(agent core.Agent) {
+		mobTypeBonus(agent.GetCharacter(), "Spell Damage against Demons", proto.MobType_MobTypeDemon, 0, 21)
+	},
+	// Increases the duration of your Insect Swarm spell by 3 sec.
+	5: func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		druid.InsectSwarmBonusDuration += time.Second * 3
+	},
+}
+
+// grovekeeperFerocityBonuses are the set bonuses of Grovekeeper Ferocity, Forever's crafted level 60
+// Feral set (item set 2115, leather head, shoulders, chest, hands, legs and feet 280992 to 280997, in the
+// 1.60.1.70338 client). The synthetic Phase 1 Feral set below carries them.
+var grovekeeperFerocityBonuses = map[int32]core.ApplyEffect{
+	// Increases your attack speed and casting speed by 1%.
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.PseudoStats.MeleeSpeedMultiplier *= 1.01
+		c.PseudoStats.RangedSpeedMultiplier *= 1.01
+		c.PseudoStats.CastSpeedMultiplier *= 1.01
+	},
+	// Hibernate can be cast in Cat Form, faster, with a 15 sec cooldown.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// +36 Attack Power against Demons.
+	4: func(agent core.Agent) {
+		mobTypeBonus(agent.GetCharacter(), "Attack Power against Demons", proto.MobType_MobTypeDemon, 36, 0)
+	},
+	// Reduces the cooldown of your Shifting Power ability by 1 sec.
+	5: func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		druid.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_DruidShiftingPower {
+				spell.CD.Duration -= time.Second
+			}
+		})
+	},
+}
+
+// The sets of the synthetic Phase 1 druid items (tools/database/forever_synthetic_items_druid.go).
+var ItemSetBalanceSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Balance Synthetic (Phase 1)",
+	Bonuses: grovekeeperEclipseBonuses,
+})
+
+var ItemSetFeralSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Feral Synthetic (Phase 1)",
+	Bonuses: grovekeeperFerocityBonuses,
 })

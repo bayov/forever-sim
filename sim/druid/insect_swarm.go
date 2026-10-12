@@ -28,11 +28,13 @@ func (druid *Druid) registerInsectSwarmSpell() {
 	for rank := 1; rank <= InsectSwarmRanks; rank++ {
 		level := InsectSwarmLevel[rank]
 		if int32(level) <= druid.Level {
-			numTicks := int32(6)
-			// Nature's Splendor makes it 2 sec longer, one more tick.
+			// 12 sec in 2 sec ticks. Nature's Splendor makes it 2 sec longer and the
+			// Grovekeeper Eclipse 5 piece 3 sec, and a part of a tick left over does nothing.
+			duration := time.Second*12 + druid.InsectSwarmBonusDuration
 			if druid.Talents.NaturesSplendor {
-				numTicks++
+				duration += time.Second * 2
 			}
+			numTicks := int32(duration / (time.Second * 2))
 			tickLength := time.Second * 2
 
 			spellID := InsectSwarmSpellId[rank]
