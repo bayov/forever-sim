@@ -53,7 +53,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.86231
+  weights: -0.86608
   weights: 0
   weights: 0.9582
   weights: 0
@@ -63,8 +63,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 6.28406
-  weights: 15.49287
+  weights: 6.28783
+  weights: 15.4891
   weights: 0
   weights: 0
   weights: 0
@@ -106,8 +106,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-Champion'sArcanum"
  value: {
-  dps: 1015.81452
-  tps: 1040.09391
+  dps: 1015.78247
+  tps: 1040.06302
  }
 }
 dps_results: {
@@ -134,8 +134,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-Illusionist'sAttire"
  value: {
-  dps: 1078.82658
-  tps: 1103.55075
+  dps: 1078.76497
+  tps: 1103.48914
  }
 }
 dps_results: {
@@ -148,8 +148,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-LieutenantCommander'sArcanum"
  value: {
-  dps: 1015.81452
-  tps: 1040.09391
+  dps: 1015.78247
+  tps: 1040.06302
  }
 }
 dps_results: {
@@ -183,8 +183,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-Average-Default"
  value: {
-  dps: 1211.43129
-  tps: 1237.00255
+  dps: 1211.41998
+  tps: 1236.99123
  }
 }
 dps_results: {
@@ -232,22 +232,22 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-Settings-Undead-level60_phase1_synthetic-DPS-level60_frostfire-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1194.63699
-  tps: 1697.0344
+  dps: 1194.58053
+  tps: 1696.97793
  }
 }
 dps_results: {
  key: "TestP1Mage-Phase1-Settings-Undead-level60_phase1_synthetic-DPS-level60_frostfire-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1194.63699
-  tps: 1219.75686
+  dps: 1194.58053
+  tps: 1219.7004
  }
 }
 dps_results: {
  key: "TestP1Mage-Phase1-Settings-Undead-level60_phase1_synthetic-DPS-level60_frostfire-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1205.32002
-  tps: 1239.93002
+  dps: 1205.03768
+  tps: 1239.64769
  }
 }
 dps_results: {

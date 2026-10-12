@@ -236,16 +236,29 @@ export const DefaultConsumes = Consumes.create({
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
-// A mage stands in a caster group: Arcane Brilliance, Divine Spirit, Gift of the Wild, Power Word:
-// Fortitude, a shaman's Mana Spring Totem and Moonkin Aura. Both factions have paladins and
-// shamans under Forever.
+// The shared level 60 raid of tools/rotopt/mksettings (every class's presets use it), with the mage's
+// changes: a shaman's Mana Spring Totem, and Blessing of Wisdom in place of Might. Only Arcane
+// Brilliance, Divine Spirit, Gift of the Wild, Fortitude, Mana Spring and Moonkin Aura move a
+// mage's damage; the rest are there so the raid matches the other classes'. Both factions have
+// paladins and shamans under Forever.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
+	battleShout: TristateEffect.TristateEffectImproved,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
 	divineSpirit: true,
+	fireResistanceAura: true,
+	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	leaderOfThePack: true,
 	manaSpringTotem: TristateEffect.TristateEffectRegular,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	sanctityAura: true,
+	shadowProtection: true,
+	thorns: TristateEffect.TristateEffectImproved,
+	trueshotAura: true,
 });
 
 // Blessings of Kings and Wisdom.
@@ -259,12 +272,26 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 	warchiefsBlessing: false,
 });
 
-// Curse of the Elements covers Arcane, Fire and Frost under Forever (Curse of Shadow is gone), and
-// Judgement of Wisdom gives mana back on spell hits too. Improved Scorch and Winter's Chill are
+// The shared raid's debuffs. Curse of the Elements covers Arcane, Fire and Frost under Forever
+// (Curse of Shadow is gone, so it is left out here; the sim ignores it under Forever), and
+// Judgement of Wisdom gives mana back on spell hits too. The armor and attack power debuffs
+// don't touch spells. Improved Scorch and Winter's Chill are
 // the mage's own debuffs under Forever and the rotations put them up.
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
+	curseOfRecklessness: true,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
+	exposeArmor: TristateEffect.TristateEffectImproved,
+	faerieFire: true,
+	insectSwarm: true,
+	judgementOfLight: true,
+	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
+	scorpidSting: true,
+	sunderArmor: true,
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
 // Engineering is for the Goblin Sapper. Tailoring makes the Manaflare Regalia, the set the
