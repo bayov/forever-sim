@@ -62,4 +62,6 @@ The spec names are in tools/rotopt/mksettings/spec_*.go on each branch. **Don't 
 
 ## Your specific job
 
+(Fairness auditor: the fifth auditor, session listed by the orchestrator; read auditor_fairness.md.)
+
 See your own brief file (auditor_<role>.md, same folder).
