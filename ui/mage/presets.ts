@@ -56,11 +56,11 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // serves all four builds, because every mage spec wore the same Era Phase 1 BiS (Arcanist,
 // Robe of Volatile Power, Mana Igniting Cord, Netherwind Pants, Azuresong Mageblade, Fire Runed
 // Grimoire) and wants the same stats. Each piece has the full epic budget of its slot at Forever's
-// cheaper spell power: 518 spell power, 147 Intellect, 73 Spirit (10% of the budget), 2% hit and
+// cheaper spell power: 543 spell power, 153 Intellect, 76 Spirit (10% of the budget), 2% hit and
 // 7% crit, and six of them carry the Manaflare Regalia bonuses (Forever's level 60 mage set, 1%
 // hit at 2 pieces). The main hand is a sword like Azuresong, which Human's sword crit (2%) counts
-// on. The trinkets are Talisman of Ephemeral Power and Briarwood Reed, the wand Bonecreeper
-// Stylus. The enchants are the Era Phase 1 ones (Lesser Arcanum of Voracity, Greater Stats,
+// on, and the wand a synthetic one with Bonecreeper Stylus's damage. The trinkets are Talisman of
+// Ephemeral Power and Briarwood Reed. The enchants are the Era Phase 1 ones (Lesser Arcanum of Voracity, Greater Stats,
 // Greater Intellect, Spirit on the boots, Spell Power on the sword) and Forever's +6 spell power
 // necklace enchant.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGear, {

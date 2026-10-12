@@ -22,22 +22,25 @@ import (
 // higher. Era Phase 1 has no caster cloak above 63, so the cloak takes the tier's 66.
 //
 // The main hand is the exception. A one-hander's 0.42 would give it about 20 spell power, where
-// every Era caster sword carries 40 or more, so it keeps Azuresong Mageblade's own Era budget,
-// 42.5 (its 7 Stamina, 12 Intellect, 40 spell power at Era's 0.75 a point and 1% crit).
+// every Era caster sword carries 40 or more, so its budget is Azuresong Mageblade's own stats at
+// Era's prices (7 Stamina, 12 Intellect, 40 spell power at Era's 0.857 a point and 1% crit), 46.2,
+// spent at Forever's 0.55 like every other slot. The priest's set uses the same number. The wand
+// takes the 0.32 of the item value at 66, 13.7, and keeps Bonecreeper Stylus's damage and speed,
+// which are not charged to the budget.
 //
 // Per slot, budget and the points the stats below add up to:
 //   head 42.8 (42.7), neck 57.2 * 0.5625 = 32.2 (32.0), shoulders 33.0 (32.8), back 24.1 (24.4),
 //   chest 42.8 (42.2), wrist 24.1 (24.1), hands 33.0 (33.2), waist 48.8 * 0.77 = 37.6 (37.7),
 //   legs 54.8 (55.2), feet 33.0 (32.8), finger 24.1 (24.1), second finger 48.8 * 0.5625 = 27.5
-//   (27.4), main hand 42.5 (42.6), off hand 47.6 * 0.5625 = 26.8 (26.6).
+//   (27.4), main hand 46.2 (45.9), off hand 47.6 * 0.5625 = 26.8 (26.6), wand 13.7 (13.6).
 // For example the head: 14^1.5 + 10^1.5 + 10^1.5 + (47 * 0.55)^1.5 + 10^1.5 = 42.7^1.5.
 //
 // The stat mix differs by slot:
-//   - Spirit is on 8 of the 14 pieces, 10% of the set's budget (73 Spirit), because Spirit should
+//   - Spirit is on 9 of the 15 pieces, 10% of the set's budget (76 Spirit), because Spirit should
 //     matter again under Forever.
-//   - Spell power is 39% of the budget (518). The first ring and the main hand lean on it, the
+//   - Spell power is 40% of the budget (543). The first ring and the main hand lean on it, the
 //     second ring and the off hand on Intellect and Spirit.
-//   - The neck, waist, hands and the first ring have no Spirit, the wrist no Stamina.
+//   - The neck, waist, hands and the first ring have no Spirit, the wrist and wand no Stamina.
 //   - The set has 20 hit rating (2%, on the head and hands) and 98 crit rating (7%, on six pieces),
 //     about what the Era Phase 1 BiS carries (Arcanist Crown's 1% hit, the robe's 2% crit and 1%
 //     on the belt, legs, boots and sword). Manaflare's 2 piece bonus adds 1% hit.
@@ -164,7 +167,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996013, Name: "Mage Synthetic Main Hand (Phase 1)", Icon: "inv_sword_39",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeMainHand,
-		Stats:      stats.Stats{stats.Stamina: 7, stats.Intellect: 9, stats.SpellPower: 58}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 7, stats.Intellect: 10, stats.SpellPower: 64}.ToFloatArray(),
 		CritRating: 14,
 		// Azuresong Mageblade damage and speed.
 		WeaponDamageMin: 64, WeaponDamageMax: 140, WeaponSpeed: 2.4,
@@ -177,6 +180,16 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeOffHand, HandType: proto.HandType_HandTypeOffHand,
 		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 15, stats.Spirit: 8, stats.SpellPower: 19}.ToFloatArray(),
 		Ilvl:  70, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Wand, item level 66, in place of Bonecreeper Stylus (62, 13938).
+	{
+		Id: 996015, Name: "Mage Synthetic Wand (Phase 1)", Icon: "inv_wand_07",
+		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
+		Stats: stats.Stats{stats.Intellect: 5, stats.Spirit: 3, stats.SpellPower: 19}.ToFloatArray(),
+		// Bonecreeper Stylus damage and speed.
+		WeaponDamageMin: 83, WeaponDamageMax: 155, WeaponSpeed: 1.9,
+		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
 }
