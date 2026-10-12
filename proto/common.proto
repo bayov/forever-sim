@@ -866,6 +866,9 @@ enum IntellectElixir {
 	ScrollOfRatFamiliar = 5;
 	ScrollOfFrogFamiliar = 6;
 	ScrollOfCatFamiliar = 7;
+
+	// +25 Intellect.
+	ElixirOfGreaterIntellect = 8;
 }
 
 // NextIndex: 35
