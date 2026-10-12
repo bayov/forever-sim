@@ -342,16 +342,19 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// The three Level 60 builds, Human, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12):
-// Demonology 983.5 / 970.7 / 959.9, Destruction 903.9 / 897.4 / 891.8, Affliction 897.3 / 889.5
-// / 884.3. Destruction and Affliction are 7.5% and 8.4% behind Demonology at 180 sec, inside the
-// 10% that earns a build of its own, and each is deep in a tree of its own.
+// The Level 60 builds, Human, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
+// 988.1 / 976.5 / 964.9, Destruction 903.9 / 897.4 / 891.8, Affliction 897.3 / 889.5 / 884.3,
+// Destruction fire 891.8 / 881.6 / 873.9, Affliction damage over time 747.0 / 732.6 / 724.4.
+// Destruction and Affliction are inside 10% of Demonology, Destruction fire and Affliction damage
+// over time play differently and ship as specs of their own.
 //
-// Human is the best warlock race for all three, then Gnome, Undead, Orc and Troll. Its 2% crit
-// comes from Sword Specialization with the synthetic Azuresong Mageblade, the Era Phase 1 sword.
-// Without that crit the Human Demonology warlock is 934.7 at 180 sec, last of the five, so a
-// staff or a dagger would put the Gnome on top. The best Horde race is the Undead, 6.0 behind the
-// Human on Demonology at 180 sec. The full table is in forever-wiki/sim-status.md.
+// Human is the best warlock race overall (first on Demonology, Destruction and Affliction), then
+// Gnome, Undead, Orc and Troll. Gnome is 3.8 ahead on Affliction damage over time and Undead 0.7
+// on Destruction fire. The Human's 2% crit comes from Sword Specialization with the synthetic
+// Azuresong Mageblade, the Era Phase 1 sword. Without that crit the Human Demonology warlock is
+// 934.7 at 180 sec, last of the five, so a staff or a dagger would put the Gnome on top. The best
+// Horde race is the Undead, 7.7 behind the Human on Demonology at 180 sec. The full table is in
+// forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
