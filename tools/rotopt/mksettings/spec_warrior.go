@@ -24,7 +24,7 @@ func init() {
 				MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
 				OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,
 				SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
-				StrengthBuff:      proto.StrengthBuff_JujuPower,
+				StrengthBuff:      proto.StrengthBuff_ElixirOfTheGrizzly,
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
 			}
 			if twoHand {

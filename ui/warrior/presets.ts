@@ -182,17 +182,18 @@ const PresetBuildOptionsFury = { queueDelay: 250, startingRage: 0, shout: Warrio
 const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStance.WarriorStanceBattle };
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot on
-// the Level 60 Fury build at 180 sec, and the set we started from won every slot: Juju Power (+23
-// over none), Elixir of the Mongoose (+28), Juju Might (+14), Smoked Desert Dumplings (+7 over
-// Blessed Sunfruit), R.O.I.D.S. (+19), Elemental Sharpening Stones (+10 and +13 over Dense), the
-// Mighty Rage Potion (+16) and Dragonbreath Chili (+3). A filler explosive costs a GCD for nothing.
-// Flask of Supreme Power is +7, all of it Dragonbreath Chili scaling with spell power, so it stays
-// out.
+// the Level 60 Fury build at 180 sec. Forever's Elixir of the Grizzly (25 Strength and 2% crit) is
+// +17.8 over Juju Power. The rest of the set we started from won its slot: Elixir of the Mongoose
+// (+34 over none), Juju Might (+13), Smoked Desert Dumplings (+2 over Mightfish Steak, +3 over Flank
+// au Poivre), the Mighty Rage Potion (+5 over the Major Frenzy Potion), R.O.I.D.S. (+19) and
+// Dragonbreath Chili (+3). A filler explosive costs a GCD for nothing. Flask of Supreme Power is +7,
+// all of it Dragonbreath Chili scaling with spell power, so it stays out.
 //
 // The presets only take what Phase 1 can get without a raid that is not open yet. Elemental
-// Sharpening Stone's plans drop only in Molten Core, so the swords get Dense Sharpening Stones. The
-// Smoked Desert Dumplings come from an AQ quest. They stand in for Forever's own +20 Strength foods
-// (Bear Bruscitti and Steaming Stag Steak in client 70338), which the sim does not have yet.
+// Sharpening Stone's plans drop only in Molten Core, so the swords get Dense Sharpening Stones (10
+// and 13 behind). The Smoked Desert Dumplings come from an AQ quest. They stand in for Forever's own
+// +20 Strength foods (Bear Bruscitti and Steaming Stag Steak in client 70338), which the sim does not
+// have yet.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -202,7 +203,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	offHandImbue: WeaponImbue.DenseSharpeningStone,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
-	strengthBuff: StrengthBuff.JujuPower,
+	strengthBuff: StrengthBuff.ElixirOfTheGrizzly,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
