@@ -16,8 +16,9 @@ import (
 //
 // Budget. Each piece gets the full epic budget of its slot at the Phase 1 item level: 66 (Molten Core
 // tier), or the Era item's level where that is higher (Onyxia Tooth Pendant 74, Wristguards of True
-// Flight 71, Onslaught Girdle and Band of Accuria 78, Quick Strike Ring 67, Spinal Reaper 76). This is
-// the budget standard all the classes' synthetic sets use, backed out of the enhancement items:
+// Flight 71, Flameguard Gauntlets 69, Onslaught Girdle and Band of Accuria 78, Quick Strike Ring 67,
+// Spinal Reaper 76). This is the budget standard all the classes' synthetic sets use, backed out of
+// the enhancement items:
 //
 //	value = 1.2 * ilvl - 36.4,   budget = value * slot,   (sum over stats of (price * amount)^1.5)^(2/3) = budget
 //
@@ -32,7 +33,7 @@ import (
 //	back     66  24.08  24.07      finger   78  32.17  32.05
 //	chest    66  42.80  42.84      finger2  67  24.75  24.75
 //	wrist    71  27.45  27.43      two-hand 76  54.80  54.76
-//	hands    66  32.96  33.04
+//	hands    69  35.73  35.78
 //
 // The head, for example: (1.2 * 66 - 36.4) * 1 = 42.80, and (12^1.5 + 11^1.5 + 9^1.5 + 9^1.5 +
 // (29 * 0.55)^1.5 + 10^1.5 + 14^1.5)^(2/3) = 42.77.
@@ -51,7 +52,7 @@ import (
 //     hands and rings no Spirit, and the back, waist, feet and weapon carry the Agility.
 //
 // Armor is the Battlegear of Might piece's of the slot (plate, item level 66), scaled by item level
-// for the wrist and waist. The two-hander has Spinal Reaper's damage and speed. It is an axe like
+// for the wrist, hands and waist. The two-hander has Spinal Reaper's damage and speed. It is an axe like
 // Spinal Reaper, so no paladin race gets a weapon racial from it.
 //
 // The head, shoulders, chest, hands, legs and feet form a set with the bonuses of Justice
@@ -115,13 +116,13 @@ func init() {
 			HitRating: 10,
 			Ilvl:      71,
 		}),
-		// Hands, item level 66, in place of Flameguard Gauntlets.
+		// Hands, item level 69, in place of Flameguard Gauntlets.
 		retribution(&proto.UIItem{
 			Id: 992007, Name: "Retribution Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
 			Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Strength: 12, stats.Stamina: 7, stats.Intellect: 6, stats.SpellPower: 18, stats.Armor: 468}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 14, stats.Stamina: 8, stats.Intellect: 7, stats.SpellPower: 20, stats.Armor: 489}.ToFloatArray(),
 			HitRating: 10, CritRating: 14,
-			Ilvl: 66, SetName: set,
+			Ilvl: 69, SetName: set,
 		}),
 		// Waist, item level 78, in place of Onslaught Girdle.
 		retribution(&proto.UIItem{
