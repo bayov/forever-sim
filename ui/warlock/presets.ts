@@ -204,7 +204,11 @@ export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 export const TalentsLevel60AfflictionDoT = PresetUtils.makePresetTalents(
 	'Level 60 Affliction DoT',
 	SavedTalents.create({ talentsString: '25530000035001351--0550005003' }),
-	{ group: 'Level 60', tooltip: 'Siphon Life, Soul Siphon and Wrack, with Improved Shadow Bolt.' },
+	{
+		group: 'Level 60',
+		tooltip:
+			'A playstyle preset, not a DPS pick: Level 60 Affliction with Siphon Life, Soul Siphon and Wrack woven in. It is 55 behind Level 60 Affliction, and never casting Wrack would be 34 ahead.',
+	},
 );
 
 export const TalentPresets = [
