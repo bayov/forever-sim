@@ -77,5 +77,4 @@ gen60() {
 gen60 rogue_combat level60_phase1_synthetic_swords rogue_ss level60_combat_swords 00532310301-32003311201515231 "arEnergy=39,bfPrepull=1"
 gen60 rogue_combat level60_phase1_synthetic_daggers rogue_bs level60_combat_daggers 00532310301-30230320201513231-002 "arEnergy=39,bfPrepull=1,bfSnd=0,bsAfterSwing=0.25,ghostly=0"
 gen60 rogue_assassination level60_phase1_synthetic_daggers rogue_mut level60_mutilate 0053231013150103-302303202015-002 "bsAfterSwing=0.75,sndRefresh=1,evisCp=4"
-gen60 rogue_assassination level60_phase1_synthetic_daggers rogue_mut level60_mutilate_venom 00532310150401051-302303202014 "bsAfterSwing=0.75,sndRefresh=1,venomCp=4,evisCp=4"
 gen60 rogue_subtlety level60_phase1_synthetic_daggers rogue_sub level60_subtlety 0053231015140004--3021203310113011 "bsAfterSwing=0.25,hemoFiller=1,ruptureCp=3,ruptureSnd=0,vanishCp=3,vanishPool=1"

@@ -128,7 +128,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			Presets.PresetBuildLevel60CombatSwords,
 			Presets.PresetBuildLevel60SealFateSwords,
 			Presets.PresetBuildLevel60Mutilate,
-			Presets.PresetBuildLevel60MutilateVenom,
 			Presets.PresetBuildLevel60Subtlety,
 			Presets.PresetBuildBackstab,
 			Presets.PresetBuildSinisterStrike,

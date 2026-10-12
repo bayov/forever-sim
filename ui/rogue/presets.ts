@@ -44,7 +44,6 @@ import Level30p5SinisterStrikeAPL from './apls/level30p5_sinister_strike.apl.jso
 import Level60CombatDaggersAPL from './apls/level60_combat_daggers.apl.json';
 import Level60CombatSwordsAPL from './apls/level60_combat_swords.apl.json';
 import Level60MutilateAPL from './apls/level60_mutilate.apl.json';
-import Level60MutilateVenomAPL from './apls/level60_mutilate_venom.apl.json';
 import Level60SubtletyAPL from './apls/level60_subtlety.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import BackstabGearP1BiS from './gear_sets/combat_backstab_p1_bis.gear.json';
@@ -262,10 +261,6 @@ export const ROTATION_PRESET_LEVEL60_MUTILATE = PresetUtils.makePresetAPLRotatio
 	tooltip: 'Mutilate, Slice and Dice and 5 point Eviscerates.',
 	group: 'Level 60',
 });
-export const ROTATION_PRESET_LEVEL60_MUTILATE_VENOM = PresetUtils.makePresetAPLRotation('Level 60 Mutilate + Venom', Level60MutilateVenomAPL, {
-	tooltip: 'Mutilate with Venom kept up at 5 points next to Slice and Dice and Eviscerate.',
-	group: 'Level 60',
-});
 export const ROTATION_PRESET_LEVEL60_SUBTLETY = PresetUtils.makePresetAPLRotation('Level 60 Subtlety', Level60SubtletyAPL, {
 	tooltip: 'Hemorrhage, Ghostly Strike on cooldown, a 3 point Rupture, Premeditation and Vanish into Ambush at 3 points or fewer.',
 	group: 'Level 60',
@@ -276,7 +271,6 @@ export const APLPresets = {
 		ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 		ROTATION_PRESET_LEVEL60_MUTILATE,
-		ROTATION_PRESET_LEVEL60_MUTILATE_VENOM,
 		ROTATION_PRESET_LEVEL60_SUBTLETY,
 		ROTATION_PRESET_BACKSTAB,
 		ROTATION_PRESET_BACKSTAB_RUPTURE,
@@ -298,7 +292,6 @@ export const APLPresets = {
 		ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 		ROTATION_PRESET_LEVEL60_MUTILATE,
-		ROTATION_PRESET_LEVEL60_MUTILATE_VENOM,
 		ROTATION_PRESET_LEVEL60_SUBTLETY,
 		ROTATION_PRESET_BACKSTAB,
 		ROTATION_PRESET_BACKSTAB_RUPTURE,
@@ -412,14 +405,6 @@ export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents(
 		group: 'Level 60',
 	},
 );
-export const TalentsLevel60MutilateVenom = PresetUtils.makePresetTalents(
-	'Level 60 Mutilate + Venom',
-	SavedTalents.create({ talentsString: '00532310150401051-302303202014' }),
-	{
-		tooltip: 'Deep Assassination for Mutilate and Venom.',
-		group: 'Level 60',
-	},
-);
 export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents(
 	'Level 60 Subtlety',
 	SavedTalents.create({ talentsString: '0053231015140004--3021203310113011' }),
@@ -433,7 +418,6 @@ export const TalentPresets = {
 		TalentsLevel60CombatDaggers,
 		TalentsLevel60SealFateDaggers,
 		TalentsLevel60Mutilate,
-		TalentsLevel60MutilateVenom,
 		TalentsLevel60Subtlety,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
@@ -448,7 +432,6 @@ export const TalentPresets = {
 		TalentsLevel60CombatDaggers,
 		TalentsLevel60SealFateDaggers,
 		TalentsLevel60Mutilate,
-		TalentsLevel60MutilateVenom,
 		TalentsLevel60Subtlety,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
@@ -726,8 +709,8 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 //   Combat Swords       676.6 / 653.4 / 638.0
 //   Subtlety            642.1 / 627.5 / 620.1
 //   Seal Fate Swords    630.4 / 619.7 / 613.0, 5.2% behind Combat Swords
-//   Mutilate + Venom    625.9 / 617.0 / 611.2, 6.2% behind Mutilate
-// Undead is the best race for every build, 5 (swords) to 15 ahead of the next. The best Alliance
+// Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
+// no Venom build. Undead is the best race for every build, 5 (swords) to 15 ahead of the next. The best Alliance
 // race is the Gnome on daggers and the Human on swords. Grimstitch Armor's 4 and 5 piece bonuses
 // would add 8.1 and 6.5 to Combat Daggers. The trinket slots are empty (no Forever trinket is
 // simulated yet), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety
@@ -779,13 +762,6 @@ export const PresetBuildLevel60Mutilate = level60Build(
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60Mutilate,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
-);
-export const PresetBuildLevel60MutilateVenom = level60Build(
-	'Level 60 Mutilate + Venom',
-	'Level 60 Undead Assassination Mutilate with Venom on the synthetic Phase 1 daggers.',
-	GearLevel60SyntheticDaggers,
-	TalentsLevel60MutilateVenom,
-	ROTATION_PRESET_LEVEL60_MUTILATE_VENOM,
 );
 export const PresetBuildLevel60Subtlety = level60Build(
 	'Level 60 Subtlety',
