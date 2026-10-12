@@ -54,8 +54,8 @@ func (shamanEle) Knobs() []Knob {
 		{Name: "lightningBoltDownrankMana", Default: 20, Min: 10, Max: 60, Step: 10},
 		// 1 puts the totems down in the prepull actions.
 		{Name: "prepullTotems", Default: 1, Min: 0, Max: 1, Step: 1},
-		// 1 starts a Lightning Bolt 2 sec before the pull, so it lands as the fight starts. The
-		// totems go down before it.
+		// 1 starts a Lightning Bolt 2.5 sec before the pull, so it lands just after the fight
+		// starts. The totems go down before it.
 		{Name: "prepullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Lava Burst waits while Flame Shock has this many seconds or less left, since the 20%
 		// counts when the cast ends. 0 never waits.
@@ -160,19 +160,29 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	items = append(items, cast(lightningBolt, nil, "Lightning Bolt."))
 
 	rot := rotation(items...)
-	// The bolt is cast 2 sec before the pull (its cast time with Elemental Alacrity 3), and the
-	// totems one totem GCD (1 sec) apart before it.
+	// The bolt starts 2.5 sec before the pull. Its 2 sec cast (Elemental Alacrity 3) ends 0.5 sec
+	// before the pull, and the missile flies 1 sec from 20 yards, so it lands 0.5 sec into the
+	// fight. The totems go down one totem GCD (1 sec) apart before it.
 	boltLead := 0.0
 	if k["prepullBolt"] == 1 {
-		boltLead = 2
+		boltLead = 2.5
 	}
 	if k["prepullTotems"] == 1 {
-		for i, id := range totems {
-			rot.PrepullActions = append(rot.PrepullActions, prepull(id, boltLead+float64(len(totems)-i)))
+		// With the bolt, Searing Totem waits for the pull: put down before the bolt it would attack
+		// before the pull, and the standard only counts damage from the pull on.
+		var early []*proto.ActionID
+		for _, id := range totems {
+			if k["prepullBolt"] == 1 && id == searingTotem {
+				continue
+			}
+			early = append(early, id)
+		}
+		for i, id := range early {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(id, boltLead+float64(len(early)-i)))
 		}
 	}
 	if k["prepullBolt"] == 1 {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(lightningBolt, 2))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lightningBolt, boltLead))
 	}
 	return rot
 }
