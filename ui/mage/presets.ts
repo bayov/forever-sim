@@ -34,6 +34,7 @@ import Level60FrostAPL from './apls/level60_frost.apl.json';
 import Level60FrostfireAPL from './apls/level60_frostfire.apl.json';
 import P1APL from './apls/p1.apl.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticArcaneGear from './gear_sets/level60_phase1_synthetic_arcane.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
 
@@ -53,24 +54,35 @@ export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
 export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
-// tools/database/forever_synthetic_items_mage.go (ids from 996001, not in the game). One set
-// serves all four builds, because every mage spec wore the same Era Phase 1 BiS (Arcanist,
-// Robe of Volatile Power, Mana Igniting Cord, Netherwind Pants, Azuresong Mageblade, Fire Runed
-// Grimoire) and wants the same stats. Each piece has the full epic budget of its slot at Forever's
-// cheaper spell power: 543 spell power, 153 Intellect, 76 Spirit (10% of the budget), 2% hit and
-// 7% crit, and six of them carry the Manaflare Regalia bonuses (Forever's level 60 mage set, 1%
-// hit at 2 pieces). The main hand is a sword like Azuresong, which Human's sword crit (2%) counts
-// on, and the wand a synthetic one with Bonecreeper Stylus's damage. The trinkets are Talisman of
-// Ephemeral Power and Briarwood Reed. The enchants are the Era Phase 1 ones (Lesser Arcanum of Voracity, Greater Stats,
-// Greater Intellect, Spirit on the boots, Spell Power on the sword) and Forever's +6 spell power
-// necklace enchant.
+// tools/database/forever_synthetic_items_mage.go (ids from 996001, not in the game), on the
+// cross-class standards every class's Level 60 preset follows. Each piece has the full epic
+// budget of its slot at Forever's cheaper spell power, at one item level table for everyone (66
+// for head, shoulders, chest, hands, legs and feet, 71 for the rest): 526 spell power, 137
+// Intellect, 80 Spirit (10% of the budget), 10% hit and 6% crit. With Elemental Precision or
+// Arcane Focus and Manaflare Regalia's 2 piece bonus (1% hit, on the head and chest only) that is
+// the 16% cap against a level 63 boss. The 4 and 5 piece bonuses would add 62.9 (7%) to Frostfire
+// at 180 sec and nothing to the others (the 5 piece is all Frostfire Bolt, the 4 piece only
+// against Elementals).
+//
+// The weapon is a staff with Staff of Dominance's damage and the budget of Azuresong Mageblade
+// and an off hand together. With Forever's 2H Spellblasting (+65 spell power) it is 16 to 40
+// ahead of the sword and off hand, so Human's sword crit no longer counts. No trinkets: Forever
+// removed the old dungeon ones and its launch trinkets aren't simulated yet. The enchants are the
+// best Phase 1 ones without a raid source: Lesser Arcanum of Voracity (Intellect), +6 spell power
+// on the neck, Mystic Rugged Armor Kits (+6 spell power) on chest, hands, legs and feet, Greater
+// Spellpower (+16) on the wrist and Spellblasting on the staff. Arcane wears Gloves - Arcane Power
+// (+20 Arcane) instead of the kit, 7.6 ahead.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
+export const GearLevel60Phase1SyntheticArcane = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Arcane)', Level60Phase1SyntheticArcaneGear, {
+	tooltip: 'The Level 60 synthetic set with Gloves - Arcane Power, for Arcane.',
+	group: 'Level 60',
+});
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticArcane, GearP0BIS, GearP1BIS],
 };
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
@@ -164,7 +176,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 // old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 	'Level 60 Fire',
-	SavedTalents.create({ talentsString: '05120500200001-23550000130123051-004' }),
+	SavedTalents.create({ talentsString: '05020500300001-13550000130133051-004' }),
 	{ tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.', group: 'Level 60' },
 );
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
@@ -343,6 +355,7 @@ export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Level 60 Fire
 export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Level 60 Arcane', {
 	...buildCommon,
 	tooltip: 'Level 60 Undead Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1SyntheticArcane,
 	talents: TalentsLevel60Arcane,
 	rotation: APLLevel60Arcane,
 	race: Race.RaceUndead,
