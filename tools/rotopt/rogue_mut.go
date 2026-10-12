@@ -15,7 +15,7 @@ func init() {
 }
 
 func (rogueMut) Knobs() []Knob {
-	return withDefaults(rogueBS{}.Knobs(), map[string]float64{
+	knobs := withDefaults(rogueBS{}.Knobs(), map[string]float64{
 		"mutilate": 1,
 		"ghostly":  0,
 		"venomCp":  0,
@@ -25,6 +25,14 @@ func (rogueMut) Knobs() []Knob {
 		"arSnd": 0,
 		"bfSnd": 0,
 	})
+	// Mutilate stays the builder: the knob search would rather Backstab with the same
+	// talents (the Seal Fate dagger build), which is a different spec.
+	for i := range knobs {
+		if knobs[i].Name == "mutilate" {
+			knobs[i].Min = 1
+		}
+	}
+	return knobs
 }
 
 func (rogueMut) Build(k Knobs) *proto.APLRotation {
