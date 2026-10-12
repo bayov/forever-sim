@@ -165,7 +165,7 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // casts; no other place for the 3 points gains anything either (the search found no move above
 // +0.0). Four seeds (deep Frost, Frost with
 // Arcane Meditation, Frost with Incineration and a 51 point Frost build) all ended within 0.2.
-// It is 794.8 / 793.6 / 793.4 (Undead), 12% behind Frostfire, and last of the four now that Ice
+// It is 744.7 / 743.6 / 744.0 (Undead), 18% behind Frostfire, and last of the four now that Ice
 // Lance takes no spell power (with SoD's 42.9% it was second).
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost', SavedTalents.create({ talentsString: '050005-03-0555300331001301251' }), {
 	tooltip: "Deep Frost: Frostbolt, Fingers of Frost, Shatter, Winter's Chill.",
@@ -173,7 +173,8 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 });
 // Fire (16/31/4): every Fire damage talent to Combustion, with Arcane Concentration and Missile
 // Barrage (Fireball has 20% to make Arcane Missiles free and fast) and Elemental Precision 4.
-// Arcane Impact 3 over Improved Channeling is 1 ahead. It is 899.8 / 883.7 / 872.9 (Undead), 2%
+// Arcane Impact 3 over Improved Channeling and Wake of Fire 2 over Master of Elements 3 are 1 and
+// 3 ahead. It is 886.5 / 867.2 / 857.3 (Undead), 4%
 // behind Frostfire. Fire with Frost (Elemental Precision, Ice Shards) was 740 at 180 sec on the
 // old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
@@ -184,8 +185,8 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
 // 3 (it covers Arcane Blast). The 15 Frost points do nothing for Arcane Blast and Arcane Missiles:
 // the trees have nothing else they can buy, so they sit where a Frost filler would use them. Three
-// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 863.3 /
-// 852.3 / 842.4 (Undead, on the Arcane gear), 5% behind Frostfire.
+// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 833.3 /
+// 822.2 / 812.1 (Undead, on the Arcane gear), 9% behind Frostfire.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
 	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
 	group: 'Level 60',
@@ -347,9 +348,9 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // on Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome is ahead at 120 and 300 sec
 // (927.0 and 890.2 against Undead's 923.2 and 888.6).
 //   Frostfire: Undead 903.4, High Order 901.6, Orc 901.6, Troll 897.2, Gnome 896.5, Human 893.5.
-//   Fire:      Undead 883.7, Gnome 881.8, Orc 878.9, High Order 875.9, Human 873.8, Troll 872.8.
-//   Arcane:    Undead 852.3, Orc 843.7, Gnome 842.8, Troll 839.8, Human 836.9, High Order 833.9.
-//   Frost:     Undead 793.6, High Order 793.2, Gnome 792.1, Troll 791.5, Orc 791.2, Human 785.3.
+//   Fire:      Undead 867.2, Gnome 866.0, Orc 862.7, Human 857.5, Troll 856.2, High Order 856.1.
+//   Arcane:    Undead 822.2, Orc 813.9, Gnome 813.0, Troll 809.7, Human 807.0, High Order 804.1.
+//   Frost:     Undead 743.6, High Order 742.4, Gnome 741.4, Orc 740.9, Troll 740.8, Human 735.1.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,

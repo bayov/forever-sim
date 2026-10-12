@@ -42,6 +42,7 @@ Spells at level 60 (client, top rank):
 - Frostbolt 457 to 493 (Classic 515 to 555), 81.4%, 290 mana.
 - Frostfire Bolt (new trainer spell at 40, 50 and 60): Fire and Frost, 270 to 314 plus 57 over 9 sec, 81.4%, 3 sec, 370 mana, chills.
 - Arcane Missiles 209 a missile (Classic 230), 28.6% a missile (143% for the channel, Classic 120%), 655 mana.
+- Those three are the Ahn'Qiraj book ranks (Fireball XII, Frostbolt XI, Arcane Missiles VIII). The 70338 client has the books with no source and Forever starts before Molten Core, so the sim's Forever ruleset stops at the ranks before them: Fireball XI (397 to 505), Frostbolt X (382 to 413) and Arcane Missiles VII (175 a missile), at their caps.
 - Scorch 166 to 196 (Classic 237 to 280), Fire Blast 415 to 491 (Classic 446 to 524), both 42.9% on every rank.
 - Pyroblast 520 to 646 plus 212 over 12 sec (Classic 716 to 890 plus 268). Rank 1 comes with the talent at 20, ranks 2 to 8 from the trainer.
 - Arcane Explosion 239 to 258, Flamestrike 381 to 466 plus 332, Blizzard 1168 over 8 sec (3% a tick), Blast Wave 453 to 533, Cone of Cold 328 to 358.

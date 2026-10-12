@@ -154,11 +154,13 @@ Talents were searched (`tools/rotopt -talent-search`) from several seeds per spe
 | Build | Talents | Rotation | 120 | 180 | 300 |
 |---|---|---|---|---|---|
 | Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost, rank 2 Frostfire Bolt when the mana won't last, Fire Blast with spare mana | 923.2 | 903.4 | 888.6 |
-| Fire | `05020500300001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage, Combustion after 5 Scorch stacks | 899.8 | 883.7 | 872.9 |
-| Arcane | `051225003100311531-03-02550003` | Arcane Blast precast, Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4 | 863.3 | 852.3 | 842.4 |
-| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 794.8 | 793.6 | 793.4 |
+| Fire | `05020500300001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage, Combustion after 5 Scorch stacks | 886.5 | 867.2 | 857.3 |
+| Arcane | `051225003100311531-03-02550003` | Arcane Blast precast, Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4 | 833.3 | 822.2 | 812.1 |
+| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 744.7 | 743.6 | 744.0 |
 
 Frostfire Bolt is Fire and Frost at once, so it takes Fire Power, Ignite and Critical Mass along with Ice Shards, Piercing Ice and Shatter, and its crits and chills feed both Heating Up and Fingers of Frost. foreverchanges.pro's popular Fire build is the same 29 / 22 split. Evocation waits for 30 sec of the fight left (Fire 90 sec). Frostfire runs out of mana first, so once Evocation is spent (or under 60 sec are left) and the mana is under 60 a second of the fight left it casts rank 2 Frostfire Bolt (285 mana for 9% less damage). Ignite's ticks never crit (the crit they come from already did). Mana gems share the Demonic Rune's 2 min cooldown in the client (item category 1153), and the rune gives more, so Frostfire, Fire and Arcane skip the gems. Fire holds Combustion until Fire Vulnerability has 5 stacks.
+
+No Ahn'Qiraj book ranks: Forever is set before Molten Core and the 70338 client has the books with no source, so Frostbolt stops at X, Fireball at XI and Arcane Missiles at VII. That costs Frost 50, Arcane 30 and Fire 17 at 180 sec, and Frostfire nothing.
 
 Ice Lance takes no spell power: the 70338 client has a 0 coefficient on all six ranks, where every other new Forever damage spell carries its own. Casting it on the Fingers of Frost charges loses, so no rotation casts it, and the charges' Shatter crit goes to the bolts. With SoD's 42.9% Frostfire and Frost were about 165 higher at 180 sec. That is the largest open number for the mage (notes.md).
 
@@ -166,12 +168,12 @@ Races (180 sec, each build on its rotation). The staff has no racial, so the tab
 
 | Race | Frostfire | Fire | Arcane | Frost |
 |---|---|---|---|---|
-| Undead | 903.4 | 883.7 | 852.3 | 793.6 |
-| High Order | 901.6 | 875.9 | 833.9 | 793.2 |
-| Orc | 901.6 | 878.9 | 843.7 | 791.2 |
-| Troll | 897.2 | 872.8 | 839.8 | 791.5 |
-| Gnome | 896.5 | 881.8 | 842.8 | 792.1 |
-| Human | 893.5 | 873.8 | 836.9 | 785.3 |
+| Undead | 903.4 | 867.2 | 822.2 | 743.6 |
+| High Order | 901.6 | 856.1 | 804.1 | 742.4 |
+| Orc | 901.6 | 862.7 | 813.9 | 740.9 |
+| Troll | 897.2 | 856.2 | 809.7 | 740.8 |
+| Gnome | 896.5 | 866.0 | 813.0 | 741.4 |
+| Human | 893.5 | 857.5 | 807.0 | 735.1 |
 
 Undead (Touch of the Grave, 10% for mages) is best on every build, overall and for the Horde. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on Fire and Arcane. The best race holds at 120 and 300 sec except on Frostfire, where Gnome's extra mana puts it ahead of Undead at both (927.0 and 890.2 against 923.2 and 888.6); the preset keeps Undead, best at the 3 minute fight.
 
