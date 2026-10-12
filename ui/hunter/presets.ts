@@ -246,7 +246,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	graceOfAirTotem: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	manaSpringTotem: TristateEffect.TristateEffectRegular,
 	moonkinAura: true,
@@ -262,7 +262,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 export const SurvivalRaidBuffs = RaidBuffs.create({
 	...DefaultRaidBuffs,
 	graceOfAirTotem: TristateEffect.TristateEffectMissing,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 });
 

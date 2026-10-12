@@ -18,7 +18,7 @@ func init() {
 // physical shots go through armor.
 func hunterRangedRaid(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 	raidBuffs.TrueshotAura = false
-	raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectImproved
+	raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
 	debuffs.HuntersMark = proto.TristateEffect_TristateEffectImproved
 }
@@ -28,7 +28,7 @@ func hunterRangedRaid(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, 
 func hunterMeleeRaid(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 	raidBuffs.TrueshotAura = false
 	raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
-	raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectImproved
+	raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
 	debuffs.HuntersMark = proto.TristateEffect_TristateEffectImproved
 }
