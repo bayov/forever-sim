@@ -66,7 +66,7 @@ Gear up to required level 25 is what wowhead's Forever database shows (scraped 2
 
 ## Comparing races
 
-Racials are the only difference between races, since both factions have blessings and totems. The rogue and shaman APLs hold Blood Fury and Berserking for their burst anchor (Adrenaline Rush, Rage of the Farseer) when the wait costs no use, and fire them on cooldown otherwise. The warrior APLs hold them for the last 20 to 30 sec so they stack with Death Wish and Recklessness, which measures the same or slightly better than firing them at the pull on a 2 min fight.
+Racials are the only difference between races, since both factions have blessings and totems. The rogue and shaman APLs hold Blood Fury and Berserking for their burst anchor (Adrenaline Rush, Rage of the Farseer) when the wait costs no use, and fire them on cooldown otherwise. The Level 60 warrior rotations hold them for Death Wish when the wait costs no use, and Death Wish and Recklessness wait for the last 25 to 36 sec of the fight, the execute phase.
 
 Level 60, 300 sec, the shipped builds and the `mksettings` raid (2026-09-17, beta client racials):
 
@@ -118,7 +118,31 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 ### Warrior
 
-(not done yet)
+Three builds, each its own spec: dual wield Fury (Bloodthirst), two-hand Fury (Bloodthirst) and Arms (Mortal Strike). The tree is the 1.60.1.70338 client's and the spells were fixed against it first (see [classes/warrior.md](classes/warrior.md)). Searched on 2026-10-12 against the `mksettings` raid (`-spec fury` / `arms`): the shared level 60 raid with a shaman in the group for Strength of Earth and Windfury Totem, Kings and Might, the Level 60 boss, 180 sec.
+
+- Gear: synthetic Phase 1 items 991001 to 991016 (`tools/database/forever_synthetic_items_warrior.go`) in place of the Era Phase 1 DPS warrior BiS, at the shared budget (epic value 1.2 * ilvl - 36.4 times the slot modifier). Arms and Fury share the armor, rings and bow (Strength, Agility, Stamina, some attack power, 90 hit rating and 112 crit rating), Fury dual wields swords with Vis'kag's and Brutality Blade's damage, Arms and two-hand Fury a sword with Bonereaver's Edge's. Each set has 10% hit and 9% crit from gear. The tier slots carry Battlegear of Glory's bonuses (Forever's Molten Core set: 1% attack speed, +36 attack power against Humanoids). The Era Phase 1 set itself is 1048.1 against the synthetic set's 1031.0 on the Fury build, because the synthetic items have no weapon skill.
+- Talents (the talent search and the rotation search one after the other until neither moved): Fury `30305013002-25053005112110501-2` (Bloodthirst, Flurry, Furious Precision, Dual Wield Specialization, Impale), two-hand Fury `30305013032-25053000152110501` (Two-Handed Weapon Specialization in place of the off hand talents), Arms `20305213032515201-55050000001` (Mortal Strike, Bloodthrill, Weaponmaster, Improved Slam, Impale, then Cruelty and Unbridled Wrath). Arms cannot reach Death Wish. Weaponmaster hybrids for dual wield (25 Arms, no Bloodthirst) are 847.5 against 1031.0, Arms in Berserker Stance with Whirlwind 778.3 against 822.9.
+- Rotations (`tools/rotopt` templates `warrior_fury` and `warrior_arms`, `warrior_presets.sh`): Fury is Bloodthirst, Whirlwind, Execute first in the execute phase, Heroic Strike from 20 Rage (70 for two-hand) and Hamstring as a filler for Windfury Totem procs (+18). Arms is Mortal Strike, Slam on its 15 sec cooldown, Overpower on dodges and Bloodthrill procs, Rend up, Heroic Strike from 50 Rage, all in Battle Stance. Death Wish and Recklessness go in the last 25 to 36 sec. Slam on Fury's rotation costs about 40, so no build is built around it: an 18 sec cooldown (15 with Improved Slam) makes it a filler under Forever.
+- Consumes: Juju Power, Elixir of the Mongoose, Juju Might, Smoked Desert Dumplings, R.O.I.D.S., Elemental Sharpening Stones, Mighty Rage Potion, Dragonbreath Chili and the Goblin Sapper. Each won its slot in a sweep over every consumable the sim applies. Flask of Supreme Power's +7 is only Dragonbreath Chili scaling with spell power, so it is out.
+
+Races, 20,000 iterations, the final builds, 120 / 180 / 300 sec. The weapons are swords like the Era Phase 1 ones, so Human gets its 2% crit and Orc and Dwarf get nothing from their axe and mace racials. Touch of the Grave rolls on every ability press, and the Fury rotations press Hamstring about 60 times a fight.
+
+| Race | Fury | Fury (Two-Hand) | Arms |
+|---|---|---|---|
+| Undead (H) | **1096.8 / 1040.4 / 1016.3** | **943.9 / 893.8 / 875.0** | 828.4 / 820.0 / 816.8 |
+| Human (A) | 1087.5 / 1031.0 / 1007.7 | 940.4 / 891.0 / 872.7 | **831.0 / 822.7 / 819.0** |
+| Orc (H) | 1085.6 / 1023.0 / 1004.7 | 937.4 / 883.7 / 868.8 | 828.5 / 819.6 / 815.4 |
+| Tauren (H) | 1080.6 / 1022.9 / 998.6 | 927.5 / 877.8 / 858.1 | 816.7 / 807.8 / 804.5 |
+| Troll (H) | 1080.3 / 1021.4 / 998.2 | 936.2 / 885.7 / 864.4 | 819.9 / 811.3 / 807.4 |
+| High Order Skyborne (A) | 1078.1 / 1021.3 / 997.8 | 930.6 / 880.9 / 860.7 | 820.6 / 811.6 / 808.2 |
+| Windshaper Skyborne (H) | 1077.5 / 1020.9 / 997.4 | 930.4 / 880.6 / 860.5 | 820.5 / 811.6 / 808.1 |
+| Night Elf (A) | 1078.6 / 1019.8 / 999.0 | 931.5 / 881.7 / 864.7 | 826.1 / 817.0 / 811.3 |
+| Gnome (A) | 1077.7 / 1017.6 / 994.6 | 937.2 / 885.1 / 864.6 | 822.4 / 812.5 / 809.2 |
+| Dwarf (A) | 1071.7 / 1013.4 / 990.2 | 927.0 / 877.3 / 857.3 | 816.0 / 807.0 / 803.9 |
+
+Best overall, best Horde and best Alliance: Fury Undead, Undead, Human. Two-hand Fury Undead, Undead, Human. Arms Human, Undead (Orc within noise), Human. The builds use the best overall race. The standard error is 0.3 to 0.6.
+
+Rotation audit (one iteration's timeline, the breakdown and the uptimes of each final build): Bloodthirst goes on cooldown unless Rage is short, which the search prefers over holding the fillers (holding them costs 10 to 55). Whirlwind is cast 12 times in 180 sec of 18 possible for the same reason. For Fury, Execute replaces everything in the last 36 sec (Arms keeps Mortal Strike ahead of it), and Death Wish and Recklessness land there. Flurry is up 94 to 96% for Fury. Arms has idle GCDs while it waits for Rage, with no Rage capping (Heroic Strike from 50). Overpower comes off dodges and Bloodthrill (22 procs a fight), and Rend is up for Bloodthrill. Nothing is cast that should not be. The racial and Death Wish lines only warn when a race or build lacks them.
 
 ### Paladin
 
