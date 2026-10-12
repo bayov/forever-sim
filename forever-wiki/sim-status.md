@@ -152,7 +152,7 @@ Talents were searched (`tools/rotopt -talent-search`) from several seeds per spe
 | Build | Talents | Rotation | 120 | 180 | 300 |
 |---|---|---|---|---|---|
 | Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost | 959.0 | 937.0 | 893.6 |
-| Fire | `05120500200001-13550000130133051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage | 860.3 | 847.1 | 840.1 |
+| Fire | `05120500200001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage | 860.3 | 847.1 | 840.1 |
 | Arcane | `051225003100311531-03-02550003` | Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4 | 799.5 | 790.0 | 785.2 |
 | Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 750.4 | 745.1 | 746.2 |
 

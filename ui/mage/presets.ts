@@ -164,7 +164,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 // Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 	'Level 60 Fire',
-	SavedTalents.create({ talentsString: '05120500200001-13550000130133051-004' }),
+	SavedTalents.create({ talentsString: '05120500200001-23550000130123051-004' }),
 	{ tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.', group: 'Level 60' },
 );
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
