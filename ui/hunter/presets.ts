@@ -202,6 +202,8 @@ export const LoneWolfOptions = HunterOptions.create({
 // nothing for them: Strength is melee attack power only, and the ranged set is at the 9% cap.
 // Mageblood Potion's recipe only comes from Zandalar, so it stands in for Greater Mageblood Elixir
 // until the sim has that.
+// No pet consumables: Forever pets take no player buffs, and Juju and the pet scrolls are player-
+// cast buffs on the pet (they would add 17 to Beast Mastery if Forever allows them).
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -212,9 +214,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodGrilledSquid,
 	intellectElixir: IntellectElixir.ElixirOfWisdom,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
-	petAgilityConsumable: 1,
-	petAttackPowerConsumable: 1,
-	petStrengthConsumable: 1,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
@@ -229,9 +228,6 @@ export const SurvivalConsumes = Consumes.create({
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	food: Food.FoodGrilledSquid,
 	intellectElixir: IntellectElixir.ElixirOfWisdom,
-	petAgilityConsumable: 1,
-	petAttackPowerConsumable: 1,
-	petStrengthConsumable: 1,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,

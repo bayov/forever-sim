@@ -65,19 +65,18 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 // also need Major Mana Potion (+31), Demonic Rune (+28) and Mageblood (+2.4), and Flask of
 // Distilled Wisdom is +1.1. Survival never runs low on mana and gets nothing from those, but
 // Juju Power's Strength (+6.7) and Dragonbreath Chili (+3.2). Fire-toasted Bun's 2% hit
-// (+9) is left out: Forever's is a seasonal item that expires 14 days after looting (item 23327). The pet gets the pet scrolls and Juju.
+// (+9) is left out: Forever's is a seasonal item that expires 14 days after looting (item 23327).
+// No pet consumables: Forever pets take no player buffs, and Juju and the scrolls are player-cast
+// buffs on the pet (orchestrator ruling; they were +17 for Beast Mastery).
 func hunterConsumes(melee bool) *proto.Consumes {
 	consumes := &proto.Consumes{
-		AgilityElixir:            proto.AgilityElixir_ElixirOfTheMongoose,
-		AttackPowerBuff:          proto.AttackPowerBuff_JujuMight,
-		FillerExplosive:          proto.Explosive_ExplosiveGoblinLandMine,
-		Food:                     proto.Food_FoodGrilledSquid,
-		IntellectElixir:          proto.IntellectElixir_ElixirOfWisdom,
-		SapperExplosive:          proto.SapperExplosive_SapperGoblinSapper,
-		ZanzaBuff:                proto.ZanzaBuff_GroundScorpokAssay,
-		PetAttackPowerConsumable: 1,
-		PetAgilityConsumable:     1,
-		PetStrengthConsumable:    1,
+		AgilityElixir:   proto.AgilityElixir_ElixirOfTheMongoose,
+		AttackPowerBuff: proto.AttackPowerBuff_JujuMight,
+		FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
+		Food:            proto.Food_FoodGrilledSquid,
+		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
+		ZanzaBuff:       proto.ZanzaBuff_GroundScorpokAssay,
 	}
 	if melee {
 		consumes.StrengthBuff = proto.StrengthBuff_JujuPower
