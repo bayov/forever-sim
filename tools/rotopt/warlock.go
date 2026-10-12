@@ -34,6 +34,8 @@ var (
 	lockSoulFire       = spellID(17924)
 	lockDeathCoil      = spellID(17926)
 	lockWrack          = spellID(1316697)
+	lockDrainLife      = spellID(11700)
+	lockDrainSoul      = spellID(11675)
 	lockLifeTap        = spellID(11689)
 	lockAmplifyCurse   = spellID(18288)
 	lockSoulLink       = spellID(19028)
@@ -58,6 +60,11 @@ func (warlockRotation) Knobs() []Knob {
 		{Name: "corruptionMinTime", Default: 9, Min: 3, Max: 18, Step: 3},
 		{Name: "immolate", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "immolateMinTime", Default: 6, Min: 3, Max: 15, Step: 3},
+		// Recast Corruption and Immolate this many seconds before they run out, so the new one
+		// lands as the old one ends instead of after the filler that was being cast (0 waits for
+		// them to fall off). About their cast time: 1.6 sec for Corruption with one point of
+		// Improved Corruption and 1.5 for Immolate with Bane 5/5.
+		{Name: "dotLead", Default: 0, Min: 0, Max: 2.5, Step: 0.5},
 		// Siphon Life (the Affliction talent) when its 30 sec are down.
 		{Name: "siphonLife", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Conflagrate on cooldown while Immolate is up.
@@ -70,11 +77,15 @@ func (warlockRotation) Knobs() []Knob {
 		{Name: "soulFire", Default: 0, Min: 0, Max: 2, Step: 1},
 		// Death Coil on cooldown.
 		{Name: "deathCoil", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Wrack (the Affliction capstone) while Corruption and the bane are both up.
-		{Name: "wrack", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Wrack (the Affliction capstone): 0 never, 1 while Corruption and the bane are both up, 2
+		// only while Corruption and Bane of Agony are up (its 10% counts on those two).
+		{Name: "wrack", Default: 0, Min: 0, Max: 2, Step: 1},
 		// The filler: 1 Shadow Bolt, 2 Incinerate while Immolate is up and Shadow Bolt
-		// otherwise, 3 Searing Pain.
-		{Name: "filler", Default: 1, Min: 1, Max: 3, Step: 1},
+		// otherwise, 3 Searing Pain, 4 Drain Life, 5 Drain Soul.
+		{Name: "filler", Default: 1, Min: 1, Max: 5, Step: 1},
+		// Drain Soul in place of the filler below this much of the boss's health: 0 never, 1
+		// below 25%, 2 below 20%. Soul Siphon and Improved Drains make it the Affliction execute.
+		{Name: "drainSoulExecute", Default: 0, Min: 0, Max: 2, Step: 1},
 		// Life Tap below this much mana.
 		{Name: "lifeTapMana", Default: 20, Min: 5, Max: 50, Step: 5},
 		// Life Tap anyway in the last seconds when the mana is no use any more: 0 never.
@@ -111,13 +122,13 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(lockCurseOfReckl, not(targetAuraIsActive(lockCurseOfReckl)), "Curse of Recklessness when it is down."))
 	}
 	if k["corruption"] == 1 {
-		items = append(items, cast(lockCorruption, and(not(dotIsActive(lockCorruption)), gt(remainingTime(), seconds(k["corruptionMinTime"]))), "Corruption when it is down."))
+		items = append(items, cast(lockCorruption, and(dotDown(lockCorruption, k["dotLead"]), gt(remainingTime(), seconds(k["corruptionMinTime"]))), "Corruption when it is down."))
 	}
 	if k["siphonLife"] == 1 {
 		items = append(items, cast(lockSiphonLife, and(not(dotIsActive(lockSiphonLife)), gt(remainingTime(), seconds(9))), "Siphon Life when it is down."))
 	}
 	if k["immolate"] == 1 {
-		items = append(items, cast(lockImmolate, and(not(dotIsActive(lockImmolate)), gt(remainingTime(), seconds(k["immolateMinTime"]))), "Immolate when it is down."))
+		items = append(items, cast(lockImmolate, and(dotDown(lockImmolate, k["dotLead"]), gt(remainingTime(), seconds(k["immolateMinTime"]))), "Immolate when it is down."))
 	}
 	if k["conflagrate"] == 1 {
 		items = append(items, cast(lockConflagrate, dotIsActive(lockImmolate), "Conflagrate on cooldown."))
@@ -137,13 +148,26 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	case 2:
 		items = append(items, cast(lockSoulFire, auraIsActive(lockDecimation), "Soul Fire while Decimation cuts its cast."))
 	}
-	if k["wrack"] == 1 {
+	switch k["wrack"] {
+	case 1:
 		items = append(items, cast(lockWrack, and(dotIsActive(lockCorruption), or(dotIsActive(lockBaneOfAgony), dotIsActive(lockBaneOfDoom))), "Wrack while Corruption and the bane are up."))
+	case 2:
+		items = append(items, cast(lockWrack, and(dotIsActive(lockCorruption), dotIsActive(lockBaneOfAgony)), "Wrack while Corruption and Bane of Agony are up."))
 	}
 	if k["lifeTapEnd"] == 1 {
 		items = append(items, cast(lockLifeTap, and(lt(remainingTime(), seconds(3)), lt(currentManaPercent(), num(0.5))), "Life Tap at the very end is free."))
 	}
+	switch k["drainSoulExecute"] {
+	case 1:
+		items = append(items, cast(lockDrainSoul, isExecutePhase(proto.APLValueIsExecutePhase_E25), "Drain Soul in the last 25% of the boss."))
+	case 2:
+		items = append(items, cast(lockDrainSoul, isExecutePhase(proto.APLValueIsExecutePhase_E20), "Drain Soul in the last 20% of the boss."))
+	}
 	switch k["filler"] {
+	case 4:
+		items = append(items, cast(lockDrainLife, nil, "Drain Life as the filler."))
+	case 5:
+		items = append(items, cast(lockDrainSoul, nil, "Drain Soul as the filler."))
 	case 2:
 		items = append(items,
 			cast(lockIncinerate, dotIsActive(lockImmolate), "Incinerate while Immolate is up."),
@@ -165,6 +189,15 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 3))
 	return rot
+}
+
+// dotDown is true when the damage over time spell is off the target, or has less than lead
+// seconds left.
+func dotDown(spell *proto.ActionID, lead float64) value {
+	if lead == 0 {
+		return not(dotIsActive(spell))
+	}
+	return or(not(dotIsActive(spell)), lt(dotRemainingTime(spell), seconds(lead)))
 }
 
 func isExecutePhase(threshold proto.APLValueIsExecutePhase_ExecutePhaseThreshold) value {
