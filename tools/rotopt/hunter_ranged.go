@@ -64,6 +64,13 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	}
 
 	items := []*proto.APLListItem{
+		{
+			Notes: "Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum.",
+			Action: &proto.APLAction{
+				Condition: inMeleeRange(),
+				Action:    &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(25)}},
+			},
+		},
 		cast(hunterAspectOfTheHawk, not(auraIsActive(hunterAspectOfTheHawk)), "Aspect of the Hawk if it ever drops."),
 		autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."),
 	}

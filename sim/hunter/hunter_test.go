@@ -14,25 +14,32 @@ func init() {
 
 func TestBeastMastery(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(BeastMasteryTalents, "level60_phase1_synthetic_ranged", "bm"),
+		hunterSuite(BeastMasteryTalents, "level60_phase1_synthetic_ranged", "bm", RangedConsumes, PlayerOptionsCat),
 	}))
 }
 
 func TestMarksmanship(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm"),
+		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm", RangedConsumes, PlayerOptionsCat),
 	}))
 }
 
-// Survival melees under Forever. The test suite puts every player 30 yards out, so the rotation
-// walks in first.
+// Lone Wolf is Marksmanship without a pet, on the same rotation.
+func TestLoneWolf(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
+		hunterSuite(LoneWolfTalents, "level60_phase1_synthetic_ranged", "mm", RangedConsumes, PlayerOptionsNoPet),
+	}))
+}
+
+// The test suite puts every player 5 yards from the target. The ranged rotations step back to 25
+// yards first (8 yards is the minimum range), Survival melees from there.
 func TestSurvival(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(SurvivalTalents, "level60_phase1_synthetic_survival", "sv"),
+		hunterSuite(SurvivalTalents, "level60_phase1_synthetic_survival", "sv", SurvivalConsumes, PlayerOptionsCat),
 	}))
 }
 
-func hunterSuite(talents string, gear string, apl string) core.CharacterSuiteConfig {
+func hunterSuite(talents string, gear string, apl string, consumes core.ConsumesCombo, options *proto.Player_Hunter) core.CharacterSuiteConfig {
 	return core.CharacterSuiteConfig{
 		Class:      proto.Class_ClassHunter,
 		Phase:      1,
@@ -43,8 +50,8 @@ func hunterSuite(talents string, gear string, apl string) core.CharacterSuiteCon
 		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", gear),
 		Rotation:    core.GetAplRotation("../../ui/hunter/apls", apl),
 		Buffs:       core.ForeverBuffs,
-		Consumes:    Phase1Consumes,
-		SpecOptions: core.SpecOptionsCombo{Label: "Cat", SpecOptions: PlayerOptionsCat},
+		Consumes:    consumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Options", SpecOptions: options},
 
 		ItemFilter:      ItemFilters,
 		EPReferenceStat: proto.Stat_StatRangedAttackPower,
@@ -54,19 +61,49 @@ func hunterSuite(talents string, gear string, apl string) core.CharacterSuiteCon
 	}
 }
 
-var BeastMasteryTalents = "5020021505121251-0050551"
-var MarksmanshipTalents = "502002-0053552501523051"
-var SurvivalTalents = "2-0050552-500230031050222151"
+// The level 60 builds in ui/hunter/presets.ts.
+var BeastMasteryTalents = "5020121505021241-00520503014"
+var MarksmanshipTalents = "502-005355250150305-5"
+var LoneWolfTalents = "5-005355251151305-5"
+var SurvivalTalents = "502-005005-500230230250122151"
 
-var Phase1Consumes = core.ConsumesCombo{
-	Label: "P1-Consumes",
+// The level 60 consumes from ui/hunter/presets.ts.
+var RangedConsumes = core.ConsumesCombo{
+	Label: "Ranged",
 	Consumes: &proto.Consumes{
-		AgilityElixir:   proto.AgilityElixir_ElixirOfTheMongoose,
-		AttackPowerBuff: proto.AttackPowerBuff_JujuMight,
-		DefaultPotion:   proto.Potions_MajorManaPotion,
-		Food:            proto.Food_FoodGrilledSquid,
-		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
-		ZanzaBuff:       proto.ZanzaBuff_GroundScorpokAssay,
+		AgilityElixir:            proto.AgilityElixir_ElixirOfTheMongoose,
+		AttackPowerBuff:          proto.AttackPowerBuff_JujuMight,
+		DefaultConjured:          proto.Conjured_ConjuredDemonicRune,
+		DefaultPotion:            proto.Potions_MajorManaPotion,
+		FillerExplosive:          proto.Explosive_ExplosiveGoblinLandMine,
+		Flask:                    proto.Flask_FlaskOfDistilledWisdom,
+		Food:                     proto.Food_FoodGrilledSquid,
+		IntellectElixir:          proto.IntellectElixir_ElixirOfWisdom,
+		ManaRegenElixir:          proto.ManaRegenElixir_MagebloodPotion,
+		PetAgilityConsumable:     1,
+		PetAttackPowerConsumable: 1,
+		PetStrengthConsumable:    1,
+		SapperExplosive:          proto.SapperExplosive_SapperGoblinSapper,
+		ZanzaBuff:                proto.ZanzaBuff_GroundScorpokAssay,
+	},
+}
+
+var SurvivalConsumes = core.ConsumesCombo{
+	Label: "Survival",
+	Consumes: &proto.Consumes{
+		AgilityElixir:            proto.AgilityElixir_ElixirOfTheMongoose,
+		AttackPowerBuff:          proto.AttackPowerBuff_JujuMight,
+		DragonBreathChili:        true,
+		FillerExplosive:          proto.Explosive_ExplosiveGoblinLandMine,
+		Food:                     proto.Food_FoodGrilledSquid,
+		HitConsumable:            proto.HitConsumable_FireToastedBun,
+		IntellectElixir:          proto.IntellectElixir_ElixirOfWisdom,
+		PetAgilityConsumable:     1,
+		PetAttackPowerConsumable: 1,
+		PetStrengthConsumable:    1,
+		SapperExplosive:          proto.SapperExplosive_SapperGoblinSapper,
+		StrengthBuff:             proto.StrengthBuff_JujuPower,
+		ZanzaBuff:                proto.ZanzaBuff_GroundScorpokAssay,
 	},
 }
 
@@ -78,6 +115,16 @@ var PlayerOptionsCat = &proto.Player_Hunter{
 			PetType:        proto.Hunter_Options_Cat,
 			PetUptime:      1,
 			PetAttackSpeed: proto.Hunter_Options_One,
+		},
+	},
+}
+
+var PlayerOptionsNoPet = &proto.Player_Hunter{
+	Hunter: &proto.Hunter{
+		Options: &proto.Hunter_Options{
+			Ammo:        proto.Hunter_Options_ThoriumHeadedArrow,
+			QuiverBonus: proto.Hunter_Options_Speed15,
+			PetType:     proto.Hunter_Options_PetNone,
 		},
 	},
 }
