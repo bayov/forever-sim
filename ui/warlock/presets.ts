@@ -392,7 +392,8 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Horde race is the Undead, 4.5 behind the Gnome on Demonology at 180 sec (2.8 ahead of the Orc,
 // level with it on the Affliction builds). With the staff no warlock race has a weapon racial;
 // on the old Azuresong sword the Human's Sword Specialization had put it first. The full table is
-// in forever-wiki/sim-status.md.
+// in forever-wiki/sim-status.md. Each preset takes its build's best race: Gnome, and Undead for
+// Destruction fire.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
@@ -435,12 +436,12 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Gnome Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed and no demon out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed and no demon out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
 	encounter: EncounterLevel60,
-	race: Race.RaceGnome,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
