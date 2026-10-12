@@ -175,8 +175,9 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
 // Aftermath, with Malediction and Pandemic and the Succubus out, and Firestone. Searched with
 // Incinerate and Conflagrate kept (-require). Since the demons scale from the warlock's stats the
-// Succubus out beats the earlier build that sacrificed it for 15% Fire damage (957.8) by 41; the
-// Felhunter out is 24 behind, the Imp 44, and Spellstone in place of Firestone 23. Bane of Havoc's
+// Succubus out beats the earlier build that sacrificed it for 15% Fire damage (957.8) by 25; the
+// Felhunter out is 25 behind, the Imp 34, and Spellstone in place of Firestone 23. Without the owner
+// scaling (notes.md) the sacrifice build would be the pick again. Bane of Havoc's
 // point does nothing in the sim (it is the one point left over).
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
@@ -194,7 +195,7 @@ export const DefaultTalents = TalentsLevel60Demonology;
 
 // The Succubus is out for every Level 60 build. Forever's demons take no player buffs and scale
 // from the warlock's stats (Season of Discovery's coefficients as a placeholder, notes.md), and the
-// Succubus's melee gets the most from it: on Destruction it is 23 ahead of the Felhunter and 43 of
+// Succubus's melee gets the most from it: on Destruction it is 24 ahead of the Felhunter and 34 of
 // the Imp. Spellstone and Firestone are within 1 there.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
@@ -354,14 +355,15 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Gnome, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 1128.1 / 1114.1 / 1087.8, Destruction 1019.7 / 1012.2 / 995.5, Affliction 1011.3 / 1004.0 / 987.3,
-// Destruction fire 1004.0 / 999.0 / 984.8. The demons take no player buffs and scale from the
-// warlock's stats with Season of Discovery's coefficients as a placeholder (notes.md): the buffs
-// off cost 6, the scaling adds 56 to 69, together +48 to +59 at 180 sec.
+// 1111.8 / 1097.7 / 1071.4, Destruction 1004.5 / 997.0 / 980.3, Affliction 996.1 / 988.9 / 972.1,
+// Destruction fire 988.2 / 983.1 / 969.0. The demons take no player buffs and scale from the
+// warlock's stats with Season of Discovery's numbers as a placeholder (notes.md). The demon is the
+// least sourced input: at 180 sec, without the owner scaling Demonology is 1048.3 and the other
+// builds 944 to 958, with the Succubus's melee halved 1055.0 and 944 to 960.
 //
 // Gnome is the best warlock race overall and the best Alliance one, first on every build, then
-// Undead, Orc, Troll and Human. The best Horde race is the Undead, 4.7 behind the Gnome on
-// Demonology at 180 sec and 1.0 to 2.8 ahead of the Orc. With the staff no warlock race has a
+// Undead, Orc, Troll and Human. The best Horde race is the Undead, 4.5 behind the Gnome on
+// Demonology at 180 sec and 0.8 to 2.4 ahead of the Orc. With the staff no warlock race has a
 // weapon racial; on the old Azuresong sword the Human's Sword Specialization had put it first. The
 // full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {

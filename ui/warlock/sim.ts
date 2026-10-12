@@ -71,7 +71,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			[Stat.StatFirePower]: 0.1,
 			[Stat.StatShadowPower]: 0.9,
 			[Stat.StatSpellHit]: 15.2,
-			[Stat.StatSpellCrit]: 14.7,
+			[Stat.StatSpellCrit]: 13.3,
 			[Stat.StatSpellHaste]: 7.83,
 			[Stat.StatStamina]: 0.01,
 			[Stat.StatFireResistance]: 0.0,
