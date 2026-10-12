@@ -118,6 +118,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestCombatSinisterStrike-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
+ value: {
+  dps: 863.03844
+  tps: 612.75729
+ }
+}
+dps_results: {
+ key: "TestCombatSinisterStrike-Phase5-AllItems-DaggersSynthetic(Phase1)"
+ value: {
+  dps: 859.0635
+  tps: 609.93508
+ }
+}
+dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DarkmantleArmor"
  value: {
   dps: 893.02571
