@@ -35,6 +35,7 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import BeastMasteryAPL from './apls/bm.apl.json';
+import LoneWolfAPL from './apls/lw.apl.json';
 import MarksmanshipAPL from './apls/mm.apl.json';
 import SurvivalAPL from './apls/sv.apl.json';
 import Level60RangedGear from './gear_sets/level60_phase1_synthetic_ranged.gear.json';
@@ -89,27 +90,35 @@ export const DefaultGear = GearLevel60Ranged;
 // tools/rotopt/hunter_presets.sh. Auto Shot keeps firing through casts under Forever, so the
 // ranged rotations only weigh the shots against each other: Serpent Sting when it is down,
 // Aimed Shot on the cooldown it shares with Multi-Shot, Arcane Shot on its own (shared with
-// Summon Hawk), Rapid Fire, Bestial Wrath and the racials at the pull and on cooldown. A knob
-// search on each searched build (2026-10-12, 180 sec) kept the starting knobs.
+// Summon Hawk), Sniper Shot on its own, Rapid Fire, Bestial Wrath and the racials at the pull and
+// on cooldown. The knob searches on each build (2026-10-12, 180 sec, with the Wildstalker bonuses)
+// changed two things: Beast Mastery puts Arcane Shot above Aimed Shot (+5, once the 5 piece bonus
+// makes Aimed Shot's cooldown 5 sec), and Lone Wolf casts Serpent Sting at any mana (+2). Serpent
+// Sting after Aimed Shot was within noise on every build.
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {
-	tooltip: 'Serpent Sting, Aimed Shot and Arcane Shot on cooldown, Bestial Wrath and Rapid Fire on cooldown.',
+	tooltip: 'Serpent Sting when down, Arcane Shot, Aimed Shot and Sniper Shot on cooldown, Bestial Wrath and Rapid Fire on cooldown.',
 	group: 'Level 60',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
-	tooltip: 'Serpent Sting, Aimed Shot and Arcane Shot on cooldown, Rapid Fire on cooldown. Also the Lone Wolf rotation.',
+	tooltip: 'Serpent Sting when down, Aimed Shot, Sniper Shot and Arcane Shot on cooldown, Rapid Fire on cooldown.',
+	group: 'Level 60',
+});
+export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWolfAPL, {
+	tooltip: 'The Marksmanship rotation with Serpent Sting at any mana.',
 	group: 'Level 60',
 });
 // Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Raptor Strike on
 // cooldown, Lacerate kept up, Immolation Trap on cooldown and Wing Clip in every free global
 // cooldown. The Wing Clip filler was the knob search's one change (+31 at 180 sec): Survival
-// runs out of global cooldowns long before it runs out of mana.
+// runs out of global cooldowns long before it runs out of mana. It walks in 6 sec before the
+// pull, since the fight starts at 25 yards.
 export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', SurvivalAPL, {
 	tooltip: 'Melee: Mongoose Bite, Strider Kick, Raptor Strike, Lacerate, Immolation Trap, Wing Clip filler.',
 	group: 'Level 60',
 });
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLBeastMastery, APLMarksmanship, APLSurvival],
+	[Phase.Phase1]: [APLBeastMastery, APLMarksmanship, APLLoneWolf, APLSurvival],
 };
 
 export const DefaultAPL = APLBeastMastery;
@@ -119,29 +128,30 @@ export const DefaultAPL = APLBeastMastery;
 ///////////////////////////////////////////////////////////////////////////
 
 // The talent searches (tools/rotopt -talent-search, a hill climb) ran on the synthetic sets in
-// the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12.
+// the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12, and again
+// with the Wildstalker bonuses and the pet without player buffs (the searches before had it
+// buffed).
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
-// Deadly Aspects, and Careful Aim, Lethal Attacks, Trueshot Aura and Mortal Shots 4 in
-// Marksmanship. Both Beast Mastery searches dropped Summon Hawk: on the cooldown it shares with
-// Arcane Shot, the hawk deals less than the shot. A 22/24/5 hybrid without Bestial Wrath and
-// Frenzy (50201205050002-0053050301502-5) ended 25 behind with the same rotation.
-export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503014' }), {
+// Deadly Aspects, and Careful Aim, Lethal Attacks, Rapid Killing, Trueshot Aura and Mortal Shots
+// 4 in Marksmanship. The Beast Mastery searches dropped Summon Hawk: on the cooldown it shares
+// with Arcane Shot, the hawk deals less than the shot.
+export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00530520014' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
 	group: 'Level 60',
 });
-// Marksmanship 7/39/5 with a pet: Efficiency, Careful Aim, Rapid Killing, Improved Arcane Shot,
-// Trueshot Aura, Mortal Shots, Barrage, Ranged Weapon Specialization, and Improved Tracking 5.
-// The search drops Sniper Shot: its 4 sec cast is worth about as much as the Aimed and Arcane
-// Shots it pushes back. A search from a ranged Survival build ended on this one too.
-export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '502-005355250150305-5' }), {
-	tooltip: 'Level 60 Marksmanship 7/39/5 from the talent search, with a pet.',
+// Marksmanship 8/38/5 with a pet: Efficiency, Careful Aim, Rapid Killing, Improved Arcane Shot 3,
+// Trueshot Aura, Mortal Shots, Barrage, Ranged Weapon Specialization, Sniper Shot, Improved
+// Stings, Deadly Aspects, Focused Fire and Improved Tracking 5. With the Wildstalker bonuses the
+// search takes Sniper Shot. A search from a ranged Survival build ended on Marksmanship too.
+export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '50201-0053552301503051-5' }), {
+	tooltip: 'Level 60 Marksmanship 8/38/5 from the talent search, with a pet.',
 	group: 'Level 60',
 });
-// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: the same
-// shots, Rapid Recuperation 1 for the mana the Serpent Sting regen gives.
-export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedTalents.create({ talentsString: '5-005355251151305-5' }), {
-	tooltip: 'Level 60 Marksmanship 5/41/5 with Lone Wolf, played without a pet.',
+// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: the
+// Marksmanship build with Lone Wolf in place of Pathfinding.
+export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedTalents.create({ talentsString: '502-0053552311503051-5' }), {
+	tooltip: 'Level 60 Marksmanship 7/39/5 with Lone Wolf, played without a pet.',
 	group: 'Level 60',
 });
 // Survival 7/10/34, the melee spec: Predator's Edge, Expose Prey, Strider Kick, Lightning
@@ -368,7 +378,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
 	gear: GearLevel60Ranged,
 	talents: TalentsLoneWolf,
-	rotation: APLMarksmanship,
+	rotation: APLLoneWolf,
 	encounter: EncounterLevel60,
 	race: Race.RaceNightElf,
 	professions,

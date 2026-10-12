@@ -1,6 +1,7 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
+        {"action":{"move":{"rangeFromTarget":{"const":{"val":"0"}}}},"doAtValue":{"const":{"val":"-6s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":1299447}}},"doAtValue":{"const":{"val":"-3s"}}}
     ],
     "priorityList": [
