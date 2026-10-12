@@ -21,7 +21,6 @@ func (paladin *Paladin) ApplyTalents() {
 		paladin.AddStat(stats.SpellHit, float64(paladin.Talents.Precision)*core.SpellHitRatingPerHitChance)
 	}
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
-	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.HolyPower)*core.SpellCritRatingPerCritChance)
 
 	if paladin.Talents.Toughness > 0 {
 		paladin.ApplyEquipScaling(stats.Armor, 1.0+0.02*float64(paladin.Talents.Toughness))
@@ -67,8 +66,8 @@ func (paladin *Paladin) improvedSeals() float64 {
 // a crit modifier on a list of the paladin's spells (client 1.60.1.70338, spell 5923):
 // 3% per point for Holy Shock and Holy Strike, and 1% per point for the rest, which takes
 // in Consecration, Exorcism, Holy Wrath, Hammer of Wrath, the Seal of Command and Seal of
-// Righteousness procs and their judgements. The spells on the spell table get the 1% from
-// the spell crit ApplyTalents adds, this is for the others.
+// Righteousness procs and their judgements. It goes on those spells only, so the
+// consumables' and racials' spells (Dragonbreath Chili, Shadow Oil, the Sapper) get none.
 func (paladin *Paladin) holyPowerCrit() float64 {
 	return float64(paladin.Talents.HolyPower) * core.CritRatingPerCritChance
 }

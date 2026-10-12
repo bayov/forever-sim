@@ -92,6 +92,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.5, rank.judge.coeff),
+			BonusCritRating:  paladin.holyPowerCrit(),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(minDamage, maxDamage)
