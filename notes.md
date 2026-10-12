@@ -105,4 +105,4 @@ Things we can only check on release, because the beta stops at level 30.
 * Raid buffs and totems at their top ranks, at their Forever values.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).
 * The 100% cap on mana regen while casting. Mindfulness 3/3, Improved Stormstrike and Polished Driftwood Icon add up to 108%, and the sim caps it at 100% like cmangos.
-* Mage: every rank above what a level 30 knows. The sim takes the client's values (wago.tools 1.60.1.70338), which matched every shaman rank we could test. The deep mage talents (Arcane Power, Combustion, Fingers of Frost, Winter's Chill, the Heating Up and Missile Barrage procs at raid gear) can only be checked at 60.
+* Mage: every spell rank above what a level 30 knows (the talent ranks are settled: every multi-rank talent matches the 70338 trait curves, 2026-10-12). The sim takes the client's values (wago.tools 1.60.1.70338), which matched every shaman rank we could test. The deep mage talents (Arcane Power, Combustion, Fingers of Frost, Winter's Chill, the Heating Up and Missile Barrage procs at raid gear) can only be checked at 60.
