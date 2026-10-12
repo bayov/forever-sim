@@ -285,9 +285,11 @@ func init() {
 			return
 		}
 
+		// Channels and spells that only tick are not direct spells: under Forever their ticks
+		// roll crit live, so the buff would make every tick crit until a direct spell used it.
 		isDirectCast := func(spell *core.Spell) bool {
 			return spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.Flags.Matches(core.SpellFlagAPL) &&
-				!spell.Flags.Matches(core.SpellFlagPassiveSpell|core.SpellFlagCastFromTotem)
+				!spell.Flags.Matches(core.SpellFlagPassiveSpell|core.SpellFlagCastFromTotem|core.SpellFlagChanneled|core.SpellFlagPureDot)
 		}
 
 		buff := character.RegisterAura(core.Aura{
