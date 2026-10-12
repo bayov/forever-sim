@@ -166,10 +166,10 @@ Both DPS playstyles have their own gear, talents, rotation and build: Balance (m
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 669.3 | 662.8 | 652.5 | best overall and Alliance |
-| High Order Skyborne | 667.5 | 661.1 | 651.2 | |
-| Windshaper Skyborne | 667.6 | 661.2 | 651.3 | best Horde |
-| Tauren | 665.2 | 658.9 | 648.7 | |
+| Night Elf | 654.4 | 648.0 | 637.8 | best overall and Alliance |
+| High Order Skyborne | 653.0 | 646.7 | 636.9 | |
+| Windshaper Skyborne | 653.0 | 646.7 | 636.9 | best Horde |
+| Tauren | 650.3 | 644.1 | 634.0 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 

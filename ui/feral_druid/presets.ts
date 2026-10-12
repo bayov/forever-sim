@@ -178,7 +178,8 @@ export const DefaultConsumes = Consumes.create({
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec feral): the
 // shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and Grace
 // of Air (Windfury Totem does nothing in Cat Form), every blessing, and its own Leader of the
-// Pack.
+// Pack. Under Forever the totems and Battle Shout are capped below their Ahn'Qiraj book ranks
+// (Strength of Earth 42, Grace of Air 77, Battle Shout 115), which costs the cat 14.8 at 180 sec.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -270,14 +271,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 669.3 / 662.8 / 652.5 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 654.4 / 648.0 / 637.8 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             669.3    662.8    652.5   best overall and Alliance
-//	High Order Skyborne   667.5    661.1    651.2
-//	Windshaper Skyborne   667.6    661.2    651.3   best Horde
-//	Tauren                665.2    658.9    648.7
+//	Night Elf             654.4    648.0    637.8   best overall and Alliance
+//	High Order Skyborne   653.0    646.7    636.9
+//	Windshaper Skyborne   653.0    646.7    636.9   best Horde
+//	Tauren                650.3    644.1    634.0
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.
