@@ -100,9 +100,9 @@ export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
 // three keep Bane of Doom up when it lands before the fight ends and Bane of Agony otherwise,
 // then Corruption and Immolate when they are down, Shadow Bolt as the filler, and Life Tap only
 // under 5% mana. A knob search kept every one of those. Against them, at 180 sec on Demonology:
-// Bane of Agony alone is 41 behind, no bane 118, no Corruption 48, no Immolate 8, Soul Fire
+// Bane of Agony alone is 41 behind, no bane 118, no Corruption 45, no Immolate 7, Soul Fire
 // during Decimation 11, Death Coil on cooldown 9, Curse of Recklessness 6, Life Tap at 20% mana
-// 10. Searing Pain as the filler is 232 behind. Wrack, Incinerate, Siphon Life, the drains and
+// 10. Searing Pain as the filler is 229 behind. Wrack, Incinerate, Siphon Life, the drains and
 // Shadowburn never made a build, Shadow Bolt does more with the same time. The opening Shadow Bolt
 // starts 2.5 sec before the pull so it lands just after it (damage before the pull does not
 // count), Life Tap also goes out when the filler costs more than the mana left, and Demonology
@@ -175,8 +175,8 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
 // Aftermath, with Malediction and Pandemic and the Succubus out, and Firestone. Searched with
 // Incinerate and Conflagrate kept (-require). Since the demons scale from the warlock's stats the
-// Succubus out beats the earlier build that sacrificed it for 15% Fire damage (957.8) by 25; the
-// Felhunter out is 25 behind, the Imp 34, and Spellstone in place of Firestone 23. Without the owner
+// Succubus out beats the earlier build that sacrificed it for 15% Fire damage (950.8) by 25; the
+// Felhunter out is 25 behind, the Imp 35, and Spellstone in place of Firestone 24. Without the owner
 // scaling (notes.md) the sacrifice build would be the pick again. Bane of Havoc's
 // point does nothing in the sim (it is the one point left over).
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
@@ -195,7 +195,7 @@ export const DefaultTalents = TalentsLevel60Demonology;
 
 // The Succubus is out for every Level 60 build. Forever's demons take no player buffs and scale
 // from the warlock's stats (Season of Discovery's coefficients as a placeholder, notes.md), and the
-// Succubus's melee gets the most from it: on Destruction it is 24 ahead of the Felhunter and 34 of
+// Succubus's melee gets the most from it: on Destruction it is 25 ahead of the Felhunter and 34 of
 // the Imp. Spellstone and Firestone are within 1 there.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
@@ -355,17 +355,18 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Gnome, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 1111.8 / 1097.7 / 1071.4, Destruction 1004.5 / 997.0 / 980.3, Affliction 996.1 / 988.9 / 972.1,
-// Destruction fire 988.2 / 983.1 / 969.0. The demons take no player buffs and scale from the
+// 1100.9 / 1087.2 / 1060.6, Destruction 992.3 / 984.9 / 968.7, Affliction 983.5 / 976.2 / 959.6,
+// Destruction fire 981.3 / 976.2 / 962.2. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt
+// is rank IX, Immolate VII and Corruption VI. The demons take no player buffs and scale from the
 // warlock's stats with Season of Discovery's numbers as a placeholder (notes.md). The demon is the
-// least sourced input: at 180 sec, without the owner scaling Demonology is 1048.3 and the other
-// builds 944 to 958, with the Succubus's melee halved 1055.0 and 944 to 960.
+// least sourced input: at 180 sec, without the owner scaling Demonology is 1037.8 and the other
+// builds 937 to 946, with the Succubus's melee halved 1044.5 and 937 to 947.
 //
-// Gnome is the best warlock race overall and the best Alliance one, first on every build, then
-// Undead, Orc, Troll and Human. The best Horde race is the Undead, 4.5 behind the Gnome on
-// Demonology at 180 sec and 0.8 to 2.4 ahead of the Orc. With the staff no warlock race has a
-// weapon racial; on the old Azuresong sword the Human's Sword Specialization had put it first. The
-// full table is in forever-wiki/sim-status.md.
+// Gnome is the best warlock race overall and the best Alliance one, first on every build at 180
+// sec (level with the Undead on Destruction fire), then Undead, Orc, Troll and Human. The best
+// Horde race is the Undead, 4.2 behind the Gnome on Demonology at 180 sec and 0.7 to 2.5 ahead of
+// the Orc. With the staff no warlock race has a weapon racial; on the old Azuresong sword the
+// Human's Sword Specialization had put it first. The full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
