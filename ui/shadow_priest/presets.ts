@@ -54,35 +54,38 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // Forever's level 60 gear in the client is not tuned yet, and Molten Core and Onyxia have no
 // Forever data, so a gear search on real items ends up in Classic gear. The synthetic items
 // take the place of the Era Phase 1 shadow BiS (the Molten Core tier, Choker of the Fire Lord,
-// Mana Igniting Cord, Azuresong Mageblade, Fire Runed Grimoire, the Molten Core rings) by the
-// cross-class standard (orchestration/standards.md): one item level table (66 for the tier
-// slots, 71 for neck, back, wrist, waist, rings, off hand and wand), Azuresong's own budget for
-// the main hand, Forever's cheaper spell power. The set has 544 spell power, 71 Spirit (about
-// 10%), 4% crit and 10% hit, which with Shadow Focus and the 2 piece bonus is the 16% a level 63
-// boss needs. Only the head and shoulders carry Raiments of Conviction, Forever's Tier 1 shadow
-// set, so only its 2 piece (1% hit) is live. Its 4 and 5 piece (21 spell power against Undead,
-// Devouring Plague without a cooldown) would add 45.4 DPS at 180 sec (5.3%). The trinkets are
-// Talisman of Ephemeral Power and Briarwood Reed. The file has the budget math.
+// Mana Igniting Cord, the Molten Core rings) by the cross-class standard
+// (orchestration/standards.md): one item level table (66 for the tier slots, 71 for neck, back,
+// wrist, waist, rings and wand), Forever's cheaper spell power. The weapon is a staff at a
+// caster's weapon budget (Azuresong Mageblade's 46.2 plus an off hand at 71), which with
+// Forever's Enchant 2H Weapon - Spellblasting (+65 spell power) is 28.2 ahead of the sword and
+// off hand with Mighty Intellect at 180 sec. The set has about 560 spell power with the staff,
+// 4% crit and 10% hit, which with Shadow Focus and the 2 piece bonus is the 16% a level 63 boss
+// needs. Only the head and shoulders carry Raiments of Conviction, Forever's Tier 1 shadow set,
+// so only its 2 piece (1% hit) is live. Its 4 and 5 piece (21 spell power against Undead,
+// Devouring Plague without a cooldown) would add 45.4 DPS at 180 sec (5.3%, measured on the
+// earlier weapon). No trinkets: Forever has none of the old dungeon trinkets (Briarwood Reed is
+// not in the client), Talisman of Ephemeral Power is a Molten Core drop, and the sim does not
+// have Forever's launch trinkets yet, so trinkets are left out until it does. The file has the
+// budget math.
 //
-// The enchants are the best that Phase 1 has outside the raids: Lesser Arcanum of Voracity
-// (Intellect) on the head, Forever's Enchant Necklace - Spell Power, the Mystic Thick Armor Kit
-// (5 spell power) on chest, hands, legs and feet (+8.3 over Greater Stats, Voracity on the legs
-// and Spirit on the boots), Lesser Healing Power (6 spell damage) on the wrists (+2.1 over
-// Greater Intellect) and Mighty Intellect on the main hand (Thorium Brotherhood). Enchant
-// Weapon - Spell Power is a Molten Core formula; Forever's Revelation would be 6.3 ahead of
-// Mighty Intellect, but its proc model is a guess made for shaman shocks. No Phase 1 shoulder or
-// cloak enchant does anything for a caster outside the raids. The main hand is a sword like
-// Azuresong Mageblade, which puts a Human level with an Undead (see the build).
+// The enchants are the best that Phase 1 has outside the raids (7.5 ahead of the earlier
+// picks): Lesser Arcanum of Voracity (Intellect) on the head, Forever's Enchant Necklace - Spell
+// Power, the Mystic Rugged Armor Kit (6 spell power) on chest, hands, legs and feet, Enchant
+// Bracer - Greater Spellpower (16) and Spellblasting on the staff. Forever's Revelation is not
+// used: its proc model is a guess made for shaman shocks. No Phase 1 shoulder or cloak enchant
+// does anything for a caster outside the raids.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 
 // The same set for the Smite build without hit rating: Holy Precision gives Smite, Holy Fire and
-// Penance 18%, so its neck, back, wrist, waist, off hand and wand are copies with the hit's
-// budget in spell power, Intellect and Spirit (589 spell power). Its head and shoulders carry
-// Vestments of Conviction, Forever's Tier 1 Discipline and Holy set, so only its 2 piece (10
-// Spirit) is live; the 4 and 5 piece (9 spell damage, Penance 1 sec shorter) would add 4.7.
+// Penance 18%, so its neck, back, wrist, waist, staff and wand are copies with the hit's budget
+// in spell power, Intellect and Spirit. Its hands take Forever's Enchant Gloves - Holy Power (+20
+// Holy damage, 5.1 ahead of the armor kit). Its head and shoulders carry Vestments of
+// Conviction, Forever's Tier 1 Discipline and Holy set, so only its 2 piece (10 Spirit) is live;
+// the 4 and 5 piece (9 spell damage, Penance 1 sec shorter) would add 4.7.
 export const GearLevel60Phase1Smite = PresetUtils.makePresetGear('Level 60 Phase 1 Smite', Level60Phase1SmiteGear, {
 	tooltip: 'The synthetic Phase 1 set with the Discipline and Holy Tier 1 bonuses, for the Smite build.',
 	group: 'Level 60',
@@ -108,6 +111,8 @@ export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
 // - Mind Flay is not clipped for Mind Blast. Mind Blast's 5.5 sec cooldown against back to back
 //   3 sec channels rarely comes up mid channel, so clipping gives up ticks for half a Mind Blast
 //   more a fight: 10.6 behind after the first tick at 180 sec.
+//   At 120 sec clipping it after its second tick is 2.5 ahead; the rotation keeps the 180 sec
+//   answer, which 300 sec agrees with.
 // - Mind Flay is clipped after its second tick when Shadow Word: Pain or Devouring Plague fell
 //   off during it, so the damage over time spell goes back up sooner (+3.6 at 180 sec). Without
 //   it a 3 sec channel left either one down for up to 3 sec.
@@ -161,8 +166,8 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // Talent searches (tools/rotopt -talent-search, 3000 iterations a move, 20000 to confirm) on
 // the synthetic Phase 1 set at 180 sec, then again at 300 sec and after every knob search,
 // from deep Shadow with Discipline, deep Shadow with Holy, and 31 Discipline (Power Infusion)
-// with 20 Shadow. On 2026-10-12 the build is 866.7 / 860.3 / 860.4 at 120 / 180 / 300 sec as a
-// Human (866.8 / 860.3 / 860.3 Undead).
+// with 20 Shadow. On 2026-10-12 the build is 866.0 / 864.8 / 864.1 at 120 / 180 / 300 sec as an
+// Undead.
 // - Shadow 33: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
 //   Shadow Affinity and a point of Shadow Reach only fill the rows (threat and range).
@@ -180,10 +185,10 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // The same Shadow points with 20 in Holy instead of Discipline (Twilight Focus, Spell Warding,
 // Inspiration, Improved Healing and the rest of the healing utility a raid may ask for). None of
 // the Holy talents adds Shadow damage, so it gives up Twin Disciplines and Mental Strength:
-// 839.3 / 832.3 / 833.0 at 120 / 180 / 300 sec as a Human on its own consumes (see the build),
-// 3.3% behind at 180 sec.
+// 839.9 / 837.7 / 835.4 at 120 / 180 / 300 sec as an Undead on its own consumes (see the build),
+// 3.1% behind at 180 sec.
 export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011323-500321501201302051' }), {
-	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 28 DPS behind.',
+	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 27 DPS behind.',
 	group: 'Level 60',
 });
 
@@ -196,7 +201,7 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // (Holy Specialization 5, Divine Fury 5, Searing Light 2) with 3 points of Shadow Focus for
 // Shadow Word: Pain's hit. The deep Holy start ends at 608.9.
 //
-// On its own set with its own consumes (see the build) it is 714.3 / 706.4 / 689.3 at 120 / 180
+// On its own set with its own consumes (see the build) it is 722.5 / 719.0 / 700.4 at 120 / 180
 // / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. That is 20% behind
 // Shadow at 180 sec and 21% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
@@ -352,22 +357,20 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // Every race a priest can be under Forever, on the Level 60 build with the same seed (20000
 // iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-12):
-//   Human     866.7 / 860.3 / 860.4  (best overall and Alliance)
-//   Undead    866.8 / 860.3 / 860.3  (best Horde)
-//   Gnome     861.9 / 856.5 / 855.6
-//   Night Elf 861.2 / 853.6 / 853.6
-//   Dwarf     852.8 / 846.4 / 846.5
-//   Troll     852.7 / 846.3 / 846.4
-// Human and Undead tie within 0.1 at every length. With the weapon racials off (Human's sword
-// crit, 2%) a Human is 846.7 at 180 sec, so the best race without them is Undead, 860.3. Human's 2% crit with swords comes from the main
-// hand, a sword like Azuresong Mageblade, the Era Phase 1 BiS. With a staff (Staff of Dominance)
-// a Human ties a Dwarf at 805 and an Undead is 14 ahead of both (on the earlier consumes). Undead's Touch of the Grave is
-// 14, Gnome's Eureka! 9, Night Elf's Elune's Light 7. Troll's Berserking only speeds up Mind
-// Blast's cast, channels and the GCD do not speed up, so it is worth nothing. Starshards and
+//   Undead    866.0 / 864.8 / 864.1  (best overall and Horde)
+//   Gnome     860.7 / 860.7 / 859.3  (best Alliance)
+//   Night Elf 860.1 / 857.8 / 857.1
+//   Human     852.4 / 851.2 / 850.5
+//   Dwarf     852.1 / 851.0 / 850.3
+//   Troll     852.0 / 850.9 / 850.2
+// Undead's Touch of the Grave is 14, Gnome's Eureka! 9, Night Elf's Elune's Light 7. With the
+// staff no priest race has a weapon type racial, so the table is the same with them off (with
+// the earlier sword a Human's 2% crit tied it with an Undead). Troll's Berserking only speeds up
+// Mind Blast's cast, channels and the GCD do not speed up, so it is worth nothing. Starshards and
 // Chastise lose DPS (see the rotation).
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Human on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
@@ -379,8 +382,8 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 });
 // Without Twin Disciplines and Mental Strength the Holy build runs dry on a long fight, so it
 // keeps the Major Mana Potion and adds the Greater Mageblood Elixir: on the Spellblasting
-// potion it fell to 728.2 at 300 sec (on the earlier set), with these it is 839.3 / 832.3 /
-// 833.0 at 120 / 180 / 300 sec.
+// potion it fell to 728.2 at 300 sec (on the earlier set), with these it is 839.9 / 837.7 /
+// 835.4 at 120 / 180 / 300 sec.
 export const ConsumesHoly = Consumes.create({
 	...DefaultConsumes,
 	defaultPotion: Potions.MajorManaPotion,
@@ -397,7 +400,7 @@ export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Level 60 + 
 
 export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Holy', {
 	group: 'Level 60',
-	tooltip: 'Level 60 with the Holy sub tree talents and mana consumes, 28 DPS behind Level 60.',
+	tooltip: 'Level 60 with the Holy sub tree talents and mana consumes, 27 DPS behind Level 60.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Holy,
 	rotation: APLLevel60,
@@ -433,17 +436,17 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 });
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec):
-//   Undead    714.3 / 706.4 / 689.3  (best overall and Horde)
-//   Gnome     719.2 / 703.3 / 682.8  (best Alliance)
-//   Human     718.6 / 701.1 / 683.3
-//   Night Elf 716.5 / 697.6 / 679.6
-//   Troll     715.2 / 696.3 / 677.5
-//   Dwarf     703.3 / 685.6 / 669.1
+//   Undead    722.5 / 719.0 / 700.4  (best overall and Horde)
+//   Gnome     726.7 / 713.9 / 694.0  (best Alliance)
+//   Night Elf 723.9 / 708.4 / 690.7
+//   Troll     722.8 / 707.4 / 689.0
+//   Human     719.9 / 705.8 / 688.6
+//   Dwarf     712.0 / 697.1 / 680.5
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Holy damage priest (Smite, Holy Fire, Power Infusion) on the synthetic Phase 1 gear, 18% behind Shadow.',
+	tooltip: 'Level 60 Undead Holy damage priest (Smite, Holy Fire, Power Infusion) on the synthetic Phase 1 gear, 17% behind Shadow.',
 	gear: GearLevel60Phase1Smite,
 	talents: TalentsLevel60Smite,
 	rotation: APLLevel60Smite,
