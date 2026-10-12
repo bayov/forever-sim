@@ -66,32 +66,37 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 }
 
 // The level 60 consumes. On 2026-10-12 we tried every consumable the sim applies in each slot,
-// one at a time, on the Beast Mastery and Survival builds at 180 sec. Both keep Elixir of the
-// Mongoose (+27 over none, +13 over Greater Agility), Ground Scorpok Assay (+14, +11 for
-// Survival), Juju Might (+8), Grilled Squid (+6 over Smoked Desert Dumpling), Elixir of Wisdom
-// (+1.4) and Engineering's Goblin Land Mine (+7.6) and Goblin Sapper (+4.8). The ranged specs
-// also need Major Mana Potion (+31) and Demonic Rune (+28), and Flask of Distilled Wisdom is +1.1.
-// Mageblood Potion was +2.4, but its recipe only comes from Zandalar: Greater Mageblood Elixir
-// takes the slot (simulated on the shared consumables branch). Survival never runs low on mana and gets nothing from those, but
-// Juju Power's Strength (+6.7) and Dragonbreath Chili (+3.2). Fire-toasted Bun's 2% hit
-// (+9) is left out: Forever's is a seasonal item that expires 14 days after looting (item 23327).
-// Survival puts a Dense Sharpening Stone (Blacksmithing trainer) on each sword, +9.2 (the sim keeps
-// Windfury Totem in its own slot); Elemental Sharpening Stone's plans only drop in Molten Core. The
-// ranged specs have no imbue: the two-hander never swings and a bow takes none.
-// No pet consumables: Forever pets take no player buffs, and Juju and the scrolls are player-cast
-// buffs on the pet (orchestrator ruling; they were +17 for Beast Mastery).
+// one at a time, on the Beast Mastery, Lone Wolf and Survival builds at 180 sec, and again with
+// Forever's consumables after the shared consumables merge. All keep Elixir of the Mongoose (their
+// one +2% crit elixir; +27 over none), Ground Scorpok Assay (+14), Juju Might (+8) and
+// Engineering's Goblin Land Mine (+7.6) and Goblin Sapper (+4.8), and take Forever's Elixir of
+// Ferocity (18 Strength and Agility, no crit: +11 Beast Mastery, +13 Lone Wolf, +4.8 Survival over
+// Juju Power), Flank au Poivre (20 Agility: +4 to +6 over Grilled Squid; Mightfish Steak +0.2 to
+// +1.6) and Elixir of Greater Intellect (+4 to +5 over Elixir of Wisdom). The ranged specs need
+// Major Mana Potion and Demonic Rune (+28): Major Frenzy Potion is +5 at 120 and 180 sec for Beast
+// Mastery but 19 behind at 300 sec once the mana runs out, and behind for Lone Wolf at every
+// length. They take Greater Mageblood Elixir (Mageblood Potion's recipe only comes from Zandalar)
+// and Flask of Distilled Wisdom (+1.1). Survival never runs low on mana, takes Major Frenzy
+// Potion (+5.9), Dragonbreath Chili (+3.2) and a Dense Sharpening Stone on each sword (+9.2; the
+// sim keeps Windfury Totem in its own slot, and Elemental Sharpening Stone's plans only drop in
+// Molten Core). The ranged specs have no imbue: the two-hander never swings and a bow takes none.
+// Fire-toasted Bun (+9 for Survival) is left out: Forever's is a seasonal item that expires 14
+// days after looting (item 23327). No pet consumables: Forever pets take no player buffs, and
+// Juju and the scrolls are player-cast buffs on the pet (orchestrator ruling; they were +17 for
+// Beast Mastery).
 func hunterConsumes(melee bool) *proto.Consumes {
 	consumes := &proto.Consumes{
 		AgilityElixir:   proto.AgilityElixir_ElixirOfTheMongoose,
 		AttackPowerBuff: proto.AttackPowerBuff_JujuMight,
 		FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
-		Food:            proto.Food_FoodGrilledSquid,
-		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+		Food:            proto.Food_FoodFlankAuPoivre,
+		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
+		StrengthBuff:    proto.StrengthBuff_ElixirOfFerocity,
 		ZanzaBuff:       proto.ZanzaBuff_GroundScorpokAssay,
 	}
 	if melee {
-		consumes.StrengthBuff = proto.StrengthBuff_JujuPower
+		consumes.DefaultPotion = proto.Potions_MajorFrenzyPotion
 		consumes.DragonBreathChili = true
 		consumes.MainHandImbue = proto.WeaponImbue_DenseSharpeningStone
 		consumes.OffHandImbue = proto.WeaponImbue_DenseSharpeningStone

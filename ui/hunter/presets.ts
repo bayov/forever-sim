@@ -194,18 +194,16 @@ export const LoneWolfOptions = HunterOptions.create({
 	petType: PetType.PetNone,
 });
 
-// The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each
-// slot, one at a time, on the Beast Mastery and Survival builds at 180 sec (the list is in
-// tools/rotopt/mksettings/spec_hunter.go). Both keep Elixir of the Mongoose (+27), Ground Scorpok
-// Assay, Juju Might, Grilled Squid, Elixir of Wisdom and the Engineering explosives (Goblin Land
-// Mine +7.6, Goblin Sapper +4.8). The ranged specs need Major Mana Potions (+31), Demonic Runes
-// (+28) and Mageblood, and take Flask of Distilled Wisdom (+1.1). Juju Power and the hit food do
-// nothing for them: Strength is melee attack power only, and the ranged set is at the 9% cap.
-// Greater Mageblood Elixir in place of Mageblood Potion (its recipe only comes from Zandalar). It
-// is simulated on the shared consumables branch; until that is merged it adds nothing here, and the
-// numbers below are without it.
-// No pet consumables: Forever pets take no player buffs, and Juju and the pet scrolls are player-
-// cast buffs on the pet (they would add 17 to Beast Mastery if Forever allows them).
+// The level 60 consumables, tried one at a time on the Beast Mastery, Lone Wolf and Survival builds
+// at 180 sec, last after the shared consumables merge (the list and the numbers are in
+// tools/rotopt/mksettings/spec_hunter.go). Every build keeps Elixir of the Mongoose as its one +2%
+// crit elixir, Ground Scorpok Assay, Juju Might and the Engineering explosives, and takes Elixir
+// of Ferocity (+11 to +13 for the ranged specs), Flank au Poivre and Elixir of Greater Intellect.
+// The ranged specs take Major Mana Potion (Major Frenzy Potion falls behind once the mana runs
+// out), Demonic Rune, Greater Mageblood Elixir (Mageblood Potion's recipe only comes from
+// Zandalar) and Flask of Distilled Wisdom. No pet consumables: Forever pets take no player buffs,
+// and Juju and the pet scrolls are player-cast buffs on the pet (they would add 17 to Beast
+// Mastery if Forever allows them).
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -213,28 +211,30 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.MajorManaPotion,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	flask: Flask.FlaskOfDistilledWisdom,
-	food: Food.FoodGrilledSquid,
-	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	food: Food.FoodFlankAuPoivre,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
-// Survival never runs short of mana, so the potions, runes, Mageblood and the flask do nothing for
-// it. It takes Juju Power (+6.7) and Dragonbreath Chili (+3.2) instead, and a Dense Sharpening
-// Stone on each sword (+9.2; Elemental Sharpening Stone's plans only drop in Molten Core). Fire-toasted Bun's 2% hit
-// would add 9, but Forever's is a seasonal item that expires 14 days after looting (item 23327).
+// Survival never runs short of mana, so the rune, Mageblood and the flask do nothing for it. It
+// takes Major Frenzy Potion (+5.9), Dragonbreath Chili (+3.2) and a Dense Sharpening Stone on each
+// sword (+9.2; Elemental Sharpening Stone's plans only drop in Molten Core). Fire-toasted Bun's 2%
+// hit would add 9, but Forever's is a seasonal item that expires 14 days after looting.
 export const SurvivalConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
+	defaultPotion: Potions.MajorFrenzyPotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
-	food: Food.FoodGrilledSquid,
+	food: Food.FoodFlankAuPoivre,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	offHandImbue: WeaponImbue.DenseSharpeningStone,
-	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
-	strengthBuff: StrengthBuff.JujuPower,
+	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
