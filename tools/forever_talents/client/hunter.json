@@ -1,5 +1,5 @@
 {
- "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17",
+ "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17; Deflection, Expose Prey, Strider Kick, Sniper Shot and Resourcefulness brought up to build 1.60.1.70338 from wago.tools on 2026-10-12",
  "class": "hunter",
  "trees": [
   {
@@ -673,17 +673,19 @@
      "passive": false,
      "icon": "hunter_pvp_snipershot",
      "desc": {
-      "1": "A steady snipe that increases ranged damage by 160."
+      "1": "A long-range shot that deals ranged damage plus 160 and increases the range of your next 3 Shots by 10 yards for 10 sec."
      },
      "req": "Trueshot Aura",
-     "cost": "365 Mana; 8\u201335 yd range; 4 sec cast; 15 sec cooldown",
+     "cost": "365 Mana; 8–45 yd range; 4 sec cast; 15 sec cooldown",
      "id": 104997,
      "reqText": "Requires Bow, Gun, Crossbow",
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 1310687,
-      "notes": []
+      "notes": [
+       "Brought up to build 1.60.1.70338 from wago.tools (TraitDefinitionEffectPoints curves, SpellMisc durations, SpellRange) on 2026-10-12."
+      ]
      }
     }
    ],
@@ -737,18 +739,20 @@
      "passive": true,
      "icon": "ability_parry",
      "desc": {
-      "1": "Increases your Parry chance by 2%.",
-      "2": "Increases your Parry chance by 4%.",
-      "3": "Increases your Parry chance by 6%.",
-      "4": "Increases your Parry chance by 8%.",
-      "5": "Increases your Parry chance by 10%."
+      "1": "Increases your Parry chance by 1%.",
+      "2": "Increases your Parry chance by 2%.",
+      "3": "Increases your Parry chance by 3%.",
+      "4": "Increases your Parry chance by 4%.",
+      "5": "Increases your Parry chance by 5%."
      },
      "id": 104995,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 19295,
-      "notes": []
+      "notes": [
+       "Brought up to build 1.60.1.70338 from wago.tools (TraitDefinitionEffectPoints curves, SpellMisc durations, SpellRange) on 2026-10-12."
+      ]
      }
     },
     {
@@ -964,16 +968,17 @@
      "passive": true,
      "icon": "ability_hunter_resourcefulness",
      "desc": {
-      "1": "Reduces the mana cost of your Trap abilities and melee abilities by 30%. In addition, your critical strikes have a ?% chance to allow 50% of your Mana regeneration to continue while casting for 30 sec.",
-      "2": "Reduces the mana cost of your Trap abilities and melee abilities by 60%. In addition, your critical strikes have a ?% chance to allow 50% of your Mana regeneration to continue while casting for 30 sec."
+      "1": "Reduces the mana cost of your Trap abilities and melee abilities by 30%. In addition, your critical strikes have a 50% chance to allow 50% of your Mana regeneration to continue while casting for 30 sec.",
+      "2": "Reduces the mana cost of your Trap abilities and melee abilities by 60%. In addition, your critical strikes have a 100% chance to allow 50% of your Mana regeneration to continue while casting for 30 sec."
      },
      "id": 104983,
      "tooltip": {
       "source": "client-partial",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 440529,
       "notes": [
-       "Some client values are unavailable (?)."
+       "Some client values are unavailable (?).",
+       "Brought up to build 1.60.1.70338 from wago.tools (TraitDefinitionEffectPoints curves, SpellMisc durations, SpellRange) on 2026-10-12."
       ]
      }
     },
@@ -985,15 +990,17 @@
      "passive": true,
      "icon": "ability_hunter_swiftstrike",
      "desc": {
-      "1": "Your attacks against targets with Hunter's Mark have a 5% chance to activate your Mongoose Bite for 5 sec.",
-      "2": "Your attacks against targets with Hunter's Mark have a 10% chance to activate your Mongoose Bite for 5 sec."
+      "1": "Your attacks against targets with Hunter's Mark have a 5% chance to activate your Mongoose Bite for 10 sec.",
+      "2": "Your attacks against targets with Hunter's Mark have a 10% chance to activate your Mongoose Bite for 10 sec."
      },
      "id": 104985,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 1310532,
-      "notes": []
+      "notes": [
+       "Brought up to build 1.60.1.70338 from wago.tools (TraitDefinitionEffectPoints curves, SpellMisc durations, SpellRange) on 2026-10-12."
+      ]
      }
     },
     {
@@ -1023,17 +1030,18 @@
      "passive": false,
      "icon": "ability_hunter_pet_tallstrider",
      "desc": {
-      "1": "A powerful kick that deals 100% melee weapon damage."
+      "1": "A powerful kick that deals 100% melee weapon damage and increases movement speed by 30% for 3 sec."
      },
      "cost": "5.81% base Mana; Melee Range; Instant; 8 sec cooldown",
      "id": 104981,
      "reqText": "Requires Melee Weapon",
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 1317257,
       "notes": [
-       "Excludes spell power, attack power and other bonuses."
+       "Excludes spell power, attack power and other bonuses.",
+       "Brought up to build 1.60.1.70338 from wago.tools (TraitDefinitionEffectPoints curves, SpellMisc durations, SpellRange) on 2026-10-12."
       ]
      }
     },

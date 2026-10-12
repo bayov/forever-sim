@@ -4,19 +4,64 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/361.jpg",
     "talents": [
       {
-        "fieldName": "improvedAspectOfTheHawk",
+        "fieldName": "deadlyAspects",
         "location": {
           "rowIdx": 0,
           "colIdx": 1
         },
         "spellIds": [
-          19552,
-          19553,
-          19554,
-          19555,
-          19556
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Deadly Aspects",
+        "description": "While Aspect of the Hawk is active, Auto Shot has a {0}% chance of increasing ranged attack speed by {1}% for {2} sec. While Aspect of the Beast is active, all melee auto attacks have a {3}% chance of increasing melee attack speed by {4}% for {5} sec.",
+        "ranks": [
+          [
+            2,
+            30,
+            12,
+            2,
+            30,
+            12
+          ],
+          [
+            4,
+            30,
+            12,
+            4,
+            30,
+            12
+          ],
+          [
+            6,
+            30,
+            12,
+            6,
+            30,
+            12
+          ],
+          [
+            8,
+            30,
+            12,
+            8,
+            30,
+            12
+          ],
+          [
+            10,
+            30,
+            12,
+            10,
+            30,
+            12
+          ]
+        ],
+        "icon": "spell_nature_ravenform"
       },
       {
         "fieldName": "enduranceTraining",
@@ -31,19 +76,50 @@
           19586,
           19587
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Endurance Training",
+        "description": "Increases the Health and Armor of your pets by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ],
+          [
+            12
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "spell_nature_reincarnation"
       },
       {
-        "fieldName": "improvedEyesOfTheBeast",
+        "fieldName": "focusedFire",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
-          19557,
-          19558
+          0,
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Focused Fire",
+        "description": "Increases all damage you and your pet deal by {0}% while your pet is active.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "icon": "inv_weapon_crossbow_10"
       },
       {
         "fieldName": "improvedAspectOfTheMonkey",
@@ -58,20 +134,49 @@
           24386,
           24387
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Improved Aspect of the Monkey",
+        "description": "Increases the Dodge bonus of your Aspect of the Monkey by {0}%. Additionally, your pet gains {1}% of the effect of your Aspect of the Monkey ability.",
+        "ranks": [
+          [
+            2,
+            50
+          ],
+          [
+            4,
+            50
+          ],
+          [
+            6,
+            50
+          ]
+        ],
+        "icon": "ability_hunter_aspectofthemonkey",
+        "notSimulated": true
       },
       {
-        "fieldName": "thickHide",
+        "fieldName": "pathfinding",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          19609,
-          19610,
-          19612
+          19559,
+          19560
         ],
-        "maxPoints": 3
+        "maxPoints": 2,
+        "name": "Pathfinding",
+        "description": "Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ]
+        ],
+        "icon": "ability_mount_jungletiger",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedRevivePet",
@@ -83,19 +188,23 @@
           24443,
           19575
         ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "pathfinding",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 0
-        },
-        "spellIds": [
-          19559,
-          19560
+        "maxPoints": 2,
+        "name": "Improved Revive Pet",
+        "description": "Revive Pet's casting time is reduced by {0} sec, mana cost is reduced by {1}%, and increases the health your pet returns with by an additional {2}%.",
+        "ranks": [
+          [
+            3,
+            20,
+            15
+          ],
+          [
+            6,
+            40,
+            30
+          ]
         ],
-        "maxPoints": 2
+        "icon": "ability_hunter_beastsoothe",
+        "notSimulated": true
       },
       {
         "fieldName": "bestialSwiftness",
@@ -106,7 +215,16 @@
         "spellIds": [
           19596
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Bestial Swiftness",
+        "description": "Increases the movement speed of your pets by {0}%.",
+        "ranks": [
+          [
+            30
+          ]
+        ],
+        "icon": "ability_druid_dash",
+        "notSimulated": true
       },
       {
         "fieldName": "unleashedFury",
@@ -121,19 +239,55 @@
           19619,
           19620
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Unleashed Fury",
+        "description": "Increases the damage done by your pets and hawks by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ],
+          [
+            12
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "ability_bullrush"
       },
       {
         "fieldName": "improvedMendPet",
         "location": {
           "rowIdx": 3,
-          "colIdx": 1
+          "colIdx": 0
         },
         "spellIds": [
           19572,
           19573
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Mend Pet",
+        "description": "Gives your Mend Pet spell a {0}% chance of cleansing {1} Curse, Disease, Magic, or Poison effect from your pet each time it heals and reduces the Mana cost by {2}%.",
+        "ranks": [
+          [
+            15,
+            1,
+            10
+          ],
+          [
+            50,
+            1,
+            20
+          ]
+        ],
+        "icon": "ability_hunter_mendpet",
+        "notSimulated": true
       },
       {
         "fieldName": "ferocity",
@@ -148,7 +302,48 @@
           19601,
           19602
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Ferocity",
+        "description": "Increases the critical strike chance of your pets and hawks by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "inv_misc_monsterclaw_04"
+      },
+      {
+        "fieldName": "summonHawk",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 3
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1,
+        "name": "Summon Hawk",
+        "description": "Command a hawk to dive-bomb your targeted enemy, dealing {0} Physical damage and continuing its assault for {1} sec. Only {2} hawks can be active at once. Summon Hawk shares its cooldown with Arcane Shot.",
+        "ranks": [
+          [
+            32,
+            18,
+            2
+          ]
+        ],
+        "icon": "ability_hunter_animalhandler"
       },
       {
         "fieldName": "spiritBond",
@@ -160,7 +355,21 @@
           19578,
           20895
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Spirit Bond",
+        "description": "While your pet is active, you and your pet will regenerate {0}% of total health every {1} sec.",
+        "ranks": [
+          [
+            1,
+            10
+          ],
+          [
+            1,
+            5
+          ]
+        ],
+        "icon": "ability_druid_demoralizingroar",
+        "notSimulated": true
       },
       {
         "fieldName": "intimidation",
@@ -168,10 +377,23 @@
           "rowIdx": 4,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 1
+        },
         "spellIds": [
           19577
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Intimidation",
+        "description": "Command your pet to Stun the target for {0} sec on its next successful attack, which also gains {1}% increased critical strike chance. Generates high threat.",
+        "ranks": [
+          [
+            3,
+            100
+          ]
+        ],
+        "icon": "ability_devour"
       },
       {
         "fieldName": "bestialDiscipline",
@@ -183,12 +405,29 @@
           19590,
           19592
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Bestial Discipline",
+        "description": "Increases the Focus regeneration of your pets by {0}% and allows {1}% of your Mana regeneration to continue while casting.",
+        "ranks": [
+          [
+            10,
+            25
+          ],
+          [
+            20,
+            50
+          ]
+        ],
+        "icon": "spell_nature_abolishmagic"
       },
       {
         "fieldName": "frenzy",
         "location": {
           "rowIdx": 5,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
@@ -199,10 +438,36 @@
           19625
         ],
         "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 2
-        }
+        "name": "Frenzy",
+        "description": "Gives your pet a {0}% chance to gain a {1}% attack speed increase for {2} sec after dealing a critical strike.",
+        "ranks": [
+          [
+            20,
+            30,
+            8
+          ],
+          [
+            40,
+            30,
+            8
+          ],
+          [
+            60,
+            30,
+            8
+          ],
+          [
+            80,
+            30,
+            8
+          ],
+          [
+            100,
+            30,
+            8
+          ]
+        ],
+        "icon": "inv_misc_monsterclaw_03"
       },
       {
         "fieldName": "bestialWrath",
@@ -210,14 +475,23 @@
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
           19574
         ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        }
+        "name": "Bestial Wrath",
+        "description": "Send your pet into a rage causing {0}% additional damage for {1} sec. While enraged, the beast does not feel pity or remorse or fear and it cannot be stopped unless killed.",
+        "ranks": [
+          [
+            50,
+            18
+          ]
+        ],
+        "icon": "ability_druid_ferociousbite"
       }
     ]
   },
@@ -225,6 +499,34 @@
     "name": "Marksmanship",
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/363.jpg",
     "talents": [
+      {
+        "fieldName": "hawkEye",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 0
+        },
+        "spellIds": [
+          19498,
+          19499,
+          19500
+        ],
+        "maxPoints": 3,
+        "name": "Hawk Eye",
+        "description": "Increases the range of your ranged weapons by {0} yards.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ]
+        ],
+        "icon": "ability_townwatch",
+        "notSimulated": true
+      },
       {
         "fieldName": "improvedConcussiveShot",
         "location": {
@@ -238,13 +540,107 @@
           19414,
           19415
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Improved Concussive Shot",
+        "description": "Gives your Concussive Shot a {0}% chance to stun the target for {1} sec.",
+        "ranks": [
+          [
+            4,
+            3
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            12,
+            3
+          ],
+          [
+            16,
+            3
+          ],
+          [
+            20,
+            3
+          ]
+        ],
+        "icon": "spell_frost_stun",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "lethalAttacks",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 2
+        },
+        "spellIds": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 5,
+        "name": "Lethal Attacks",
+        "description": "Increases your critical strike chance with all attacks by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "ability_searingarrow"
+      },
+      {
+        "fieldName": "improvedStings",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Improved Stings",
+        "description": "Increased the damage of your Serpent Sting ability by {0}%, reduces the cooldown of your Viper Sting ability by {1} sec, and increases the duration of your Scorpid Sting ability by {2} sec.",
+        "ranks": [
+          [
+            6,
+            2,
+            15
+          ],
+          [
+            13,
+            4,
+            30
+          ],
+          [
+            20,
+            6,
+            45
+          ]
+        ],
+        "icon": "hunter_pvp_spidersting"
       },
       {
         "fieldName": "efficiency",
         "location": {
-          "rowIdx": 0,
-          "colIdx": 2
+          "rowIdx": 1,
+          "colIdx": 1
         },
         "spellIds": [
           19416,
@@ -253,48 +649,89 @@
           19419,
           19420
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "improvedHuntersMark",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 1
-        },
-        "spellIds": [
-          19421,
-          19422,
-          19423,
-          19424,
-          19425
+        "maxPoints": 5,
+        "name": "Efficiency",
+        "description": "Reduces the Mana cost of your Shots, Stings, and melee abilities by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ],
+          [
+            12
+          ],
+          [
+            15
+          ]
         ],
-        "maxPoints": 5
+        "icon": "spell_frost_wizardmark"
       },
       {
-        "fieldName": "lethalShots",
+        "fieldName": "carefulAim",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          19426,
-          19427,
-          19429,
-          19430,
-          19431
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Careful Aim",
+        "description": "Increases your Attack Power by {0}% of your Intellect.",
+        "ranks": [
+          [
+            20
+          ],
+          [
+            40
+          ],
+          [
+            60
+          ],
+          [
+            80
+          ],
+          [
+            100
+          ]
+        ],
+        "icon": "ability_hunter_zenarchery"
       },
       {
-        "fieldName": "aimedShot",
+        "fieldName": "rapidKilling",
         "location": {
           "rowIdx": 2,
           "colIdx": 0
         },
         "spellIds": [
-          19434
+          0,
+          0
         ],
-        "maxPoints": 1
+        "maxPoints": 2,
+        "name": "Rapid Killing",
+        "description": "Reduces the cooldown on your Rapid Fire ability by {0} min. In addition, when you kill a non-trivial enemy or it dies while afflicted by your Serpent Sting, you gain Rapid Killing, increasing the damage of your next Shot ability within {1} sec by {2}%.",
+        "ranks": [
+          [
+            1,
+            20,
+            10
+          ],
+          [
+            2,
+            20,
+            20
+          ]
+        ],
+        "icon": "ability_hunter_rapidkilling"
       },
       {
         "fieldName": "improvedArcaneShot",
@@ -309,40 +746,76 @@
           19457,
           19458
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Improved Arcane Shot",
+        "description": "Reduces the cooldown of your Arcane Shot by {0} sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.",
+        "ranks": [
+          [
+            0.3
+          ],
+          [
+            0.6
+          ],
+          [
+            0.9
+          ],
+          [
+            1.2
+          ],
+          [
+            1.5
+          ]
+        ],
+        "icon": "ability_impalingbolt"
       },
       {
-        "fieldName": "hawkEye",
+        "fieldName": "loneWolf",
         "location": {
           "rowIdx": 2,
           "colIdx": 3
         },
         "spellIds": [
-          19498,
-          19499,
-          19500
+          0
         ],
-        "maxPoints": 3
+        "maxPoints": 1,
+        "name": "Lone Wolf",
+        "description": "You deal {0}% increased damage with all attacks while you do not have an active pet.",
+        "ranks": [
+          [
+            20
+          ]
+        ],
+        "icon": "ability_mount_whitedirewolf"
       },
       {
-        "fieldName": "improvedSerpentSting",
+        "fieldName": "trueshotAura",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
         },
         "spellIds": [
-          19464,
-          19465,
-          19466,
-          19467,
-          19468
+          19506
         ],
-        "maxPoints": 5
+        "maxPoints": 1,
+        "name": "Trueshot Aura",
+        "description": "Increases the Ranged Attack Power of party members within {0} yards by {1}. Lasts {2} min.",
+        "ranks": [
+          [
+            45,
+            30,
+            30
+          ]
+        ],
+        "icon": "ability_trueshot"
       },
       {
         "fieldName": "mortalShots",
         "location": {
           "rowIdx": 3,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
@@ -353,47 +826,105 @@
           19490
         ],
         "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 1,
-          "colIdx": 2
-        }
+        "name": "Mortal Shots",
+        "description": "Increases the critical strike damage bonus on all ranged abilities by {0}%.",
+        "ranks": [
+          [
+            6
+          ],
+          [
+            12
+          ],
+          [
+            18
+          ],
+          [
+            24
+          ],
+          [
+            30
+          ]
+        ],
+        "icon": "ability_piercedamage"
       },
       {
-        "fieldName": "scatterShot",
+        "fieldName": "rapidRecuperation",
         "location": {
           "rowIdx": 4,
           "colIdx": 0
         },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 0
+        },
         "spellIds": [
-          19503
+          0,
+          0
         ],
-        "maxPoints": 1
+        "maxPoints": 2,
+        "name": "Rapid Recuperation",
+        "description": "Hitting a target with your Serpent Sting ability grants you {0}% and consuming Rapid Killing grants you {1}% of your Mana regeneration while casting for the next {2} sec.",
+        "ranks": [
+          [
+            25,
+            50,
+            15
+          ],
+          [
+            50,
+            100,
+            15
+          ]
+        ],
+        "icon": "ability_hunter_rapidregeneration"
       },
       {
         "fieldName": "barrage",
         "location": {
           "rowIdx": 4,
-          "colIdx": 1
+          "colIdx": 2
         },
         "spellIds": [
           19461,
           19462,
           24691
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Barrage",
+        "description": "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            7
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "ability_upgrademoonglaive"
       },
       {
-        "fieldName": "improvedScorpidSting",
+        "fieldName": "scatterShot",
         "location": {
           "rowIdx": 4,
-          "colIdx": 2
+          "colIdx": 3
         },
         "spellIds": [
-          19491,
-          19493,
-          19494
+          19503
         ],
-        "maxPoints": 3
+        "maxPoints": 1,
+        "name": "Scatter Shot",
+        "description": "A short-range shot that deals {0}% weapon damage and disorients the target for {1} sec. Any damage caused will remove the effect. Turns off your attack when used.",
+        "ranks": [
+          [
+            50,
+            4
+          ]
+        ],
+        "icon": "ability_golemstormbolt",
+        "notSimulated": true
       },
       {
         "fieldName": "rangedWeaponSpecialization",
@@ -408,22 +939,53 @@
           19510,
           19511
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Ranged Weapon Specialization",
+        "description": "Increases the damage you deal with ranged weapons by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "inv_weapon_rifle_06"
       },
       {
-        "fieldName": "trueshotAura",
+        "fieldName": "sniperShot",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 1
+        },
         "spellIds": [
-          19506
+          0
         ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        }
+        "name": "Sniper Shot",
+        "description": "A long-range shot that deals ranged damage plus {0} and increases the range of your next {1} Shots by {2} yards for {3} sec.",
+        "ranks": [
+          [
+            160,
+            3,
+            10,
+            10
+          ]
+        ],
+        "icon": "hunter_pvp_snipershot"
       }
     ]
   },
@@ -432,30 +994,39 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/362.jpg",
     "talents": [
       {
-        "fieldName": "monsterSlaying",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 0
-        },
-        "spellIds": [
-          24293,
-          24294,
-          24295
-        ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "humanoidSlaying",
+        "fieldName": "improvedTracking",
         "location": {
           "rowIdx": 0,
           "colIdx": 1
         },
         "spellIds": [
-          19151,
-          19152,
-          19153
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 3
+        "maxPoints": 5,
+        "name": "Improved Tracking",
+        "description": "While tracking Beasts, Demons, Dragonkin, Elementals, Giants, Humanoids, or Undead, all damage you deal to the tracked creature type is increased by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "inv_misc_head_dragon_black"
       },
       {
         "fieldName": "deflection",
@@ -470,7 +1041,28 @@
           19300,
           19301
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Deflection",
+        "description": "Increases your Parry chance by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "ability_parry",
+        "notSimulated": true
       },
       {
         "fieldName": "entrapment",
@@ -485,7 +1077,28 @@
           19389,
           19390
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Entrapment",
+        "description": "When your traps are triggered, all affected targets are Entrapped, preventing them from moving for {0} sec.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "spell_nature_stranglevines",
+        "notSimulated": true
       },
       {
         "fieldName": "savageStrikes",
@@ -497,13 +1110,59 @@
           19159,
           19160
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Savage Strikes",
+        "description": "Increases the critical strike chance of all your melee abilities by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ]
+        ],
+        "icon": "ability_racial_bloodrage"
+      },
+      {
+        "fieldName": "survivalist",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 2
+        },
+        "spellIds": [
+          19255,
+          19256,
+          19257,
+          19258,
+          19259
+        ],
+        "maxPoints": 5,
+        "name": "Survivalist",
+        "description": "Increases your total Health by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_shadow_twilight"
       },
       {
         "fieldName": "improvedWingClip",
         "location": {
           "rowIdx": 1,
-          "colIdx": 2
+          "colIdx": 3
         },
         "spellIds": [
           19228,
@@ -512,7 +1171,25 @@
           19234,
           19235
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Improved Wing Clip",
+        "description": "Gives your Wing Clip ability a {0}% chance to immobilize the target for {1} sec.",
+        "ranks": [
+          [
+            7,
+            5
+          ],
+          [
+            13,
+            5
+          ],
+          [
+            20,
+            5
+          ]
+        ],
+        "icon": "ability_rogue_trip",
+        "notSimulated": true
       },
       {
         "fieldName": "cleverTraps",
@@ -524,22 +1201,50 @@
           19239,
           19245
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Clever Traps",
+        "description": "Increases the duration of Freezing and Frost trap effects by {0}% and the damage of Immolation and Explosive trap effects by {1}%.",
+        "ranks": [
+          [
+            15,
+            15
+          ],
+          [
+            30,
+            30
+          ]
+        ],
+        "icon": "spell_nature_timestop"
       },
       {
-        "fieldName": "survivalist",
+        "fieldName": "surefooted",
         "location": {
           "rowIdx": 2,
           "colIdx": 1
         },
         "spellIds": [
-          19255,
-          19256,
-          19257,
-          19258,
-          19259
+          19290,
+          19294,
+          24283
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Surefooted",
+        "description": "Increases your hit chance by {0}% and reduces the duration of movement impairing effects on you by {1}%.",
+        "ranks": [
+          [
+            1,
+            10
+          ],
+          [
+            2,
+            20
+          ],
+          [
+            3,
+            30
+          ]
+        ],
+        "icon": "ability_kick"
       },
       {
         "fieldName": "deterrence",
@@ -550,72 +1255,204 @@
         "spellIds": [
           19263
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Deterrence",
+        "description": "When activated, increases your Dodge and Parry chance by {0}% for {1} sec.",
+        "ranks": [
+          [
+            25,
+            10
+          ]
+        ],
+        "icon": "ability_whirlwind",
+        "notSimulated": true
       },
       {
-        "fieldName": "trapMastery",
+        "fieldName": "survivalTactics",
         "location": {
           "rowIdx": 3,
           "colIdx": 0
         },
         "spellIds": [
-          19376,
-          19377
+          0,
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Survival Tactics",
+        "description": "Increases your chance to hit with your Trap and Feign Death abilities by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "ability_ensnare"
       },
       {
-        "fieldName": "surefooted",
+        "fieldName": "predatorsEdge",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
         },
         "spellIds": [
-          19290,
-          19294,
-          24283
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "improvedFeignDeath",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 3
-        },
-        "spellIds": [
-          19286,
-          19287
+        "maxPoints": 5,
+        "name": "Predator's Edge",
+        "description": "Increases your melee critical strike damage by {0}% and your offhand weapon damage by {1}%.",
+        "ranks": [
+          [
+            6,
+            10
+          ],
+          [
+            12,
+            20
+          ],
+          [
+            18,
+            30
+          ],
+          [
+            24,
+            40
+          ],
+          [
+            30,
+            50
+          ]
         ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "killerInstinct",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 1
-        },
-        "spellIds": [
-          19370,
-          19371,
-          19373
-        ],
-        "maxPoints": 3
+        "icon": "ability_hunter_hatchettoss"
       },
       {
         "fieldName": "counterattack",
         "location": {
-          "rowIdx": 4,
+          "rowIdx": 3,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
           "colIdx": 2
         },
         "spellIds": [
           19306
         ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 2,
+        "name": "Counterattack",
+        "description": "A strike that becomes active after parrying an opponent's attack. This attack deals {0}% weapon damage plus {1} and immobilizes the target for {2} sec. Counterattack cannot be blocked, dodged, or parried.",
+        "ranks": [
+          [
+            50,
+            26,
+            5
+          ]
+        ],
+        "icon": "ability_warrior_challange",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "resourcefulness",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Resourcefulness",
+        "description": "Reduces the mana cost of your Trap abilities and melee abilities by {0}%. In addition, your critical strikes have a {1}% chance to allow {2}% of your Mana regeneration to continue while casting for {3} sec.",
+        "ranks": [
+          [
+            30,
+            50,
+            50,
+            30
+          ],
+          [
+            60,
+            100,
+            50,
+            30
+          ]
+        ],
+        "icon": "ability_hunter_resourcefulness"
+      },
+      {
+        "fieldName": "exposePrey",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Expose Prey",
+        "description": "Your attacks against targets with Hunter's Mark have a {0}% chance to activate your Mongoose Bite for {1} sec.",
+        "ranks": [
+          [
+            5,
+            10
+          ],
+          [
+            10,
+            10
+          ]
+        ],
+        "icon": "ability_hunter_swiftstrike"
+      },
+      {
+        "fieldName": "survivalistsDiscipline",
+        "location": {
+          "rowIdx": 4,
           "colIdx": 2
-        }
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Survivalist's Discipline",
+        "description": "Reduces the cooldown of your Trap and Deterrence abilities by {0}%.",
+        "ranks": [
+          [
+            20
+          ],
+          [
+            40
+          ]
+        ],
+        "icon": "ability_hunter_mastertactitian"
+      },
+      {
+        "fieldName": "striderKick",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 3
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1,
+        "name": "Strider Kick",
+        "description": "A powerful kick that deals {0}% melee weapon damage and increases movement speed by {1}% for {2} sec.",
+        "ranks": [
+          [
+            100,
+            30,
+            3
+          ]
+        ],
+        "icon": "ability_hunter_pet_tallstrider"
       },
       {
         "fieldName": "lightningReflexes",
@@ -630,22 +1467,51 @@
           24296,
           24297
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Lightning Reflexes",
+        "description": "Increases your Agility by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_nature_invisibilty"
       },
       {
-        "fieldName": "wyvernSting",
+        "fieldName": "laceratingStrikes",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          19386
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1,
+        "name": "Lacerating Strikes",
+        "description": "Your Mongoose Bite also causes the target to Bleed for damage over {0} sec equal to {1}% of the damage done by Mongoose Bite.",
+        "ranks": [
+          [
+            21,
+            40
+          ]
+        ],
+        "icon": "ability_gouge"
       }
     ]
   }

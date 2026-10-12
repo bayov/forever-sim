@@ -1,11 +1,10 @@
 {
-  "$schema": "../schema/class.schema.json",
   "schemaVersion": 1,
   "class": "hunter",
   "className": "Hunter",
-  "dataVersion": 1,
-  "dataSource": "video",
-  "generatedAt": "2026-09-13T16:24:13Z",
+  "dataVersion": 2,
+  "dataSource": "client",
+  "generatedAt": "2026-10-12T07:05:51Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -25,19 +24,9 @@
       "name": "Beast Mastery",
       "page": "primary",
       "order": 0,
-      "icon": "crop-beast-mastery",
+      "icon": "ability_hunter_beasttaming",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 21030.0,
-        "frame": 1261800,
-        "crop": "data/review/hunter/beast-mastery/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "deadly-aspects",
@@ -45,30 +34,60 @@
           "row": 0,
           "col": 1,
           "maxRank": 5,
-          "icon": "crop-deadly-aspects",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/beast-mastery/deadly-aspects.icon.png",
-          "description": "While Aspect of the Hawk is active, all normal ranged attacks have a {0}% chance of increasing ranged attack speed by {1}% for {2} sec. While Aspect of the Beast is active, all melee auto attacks have a {3}% chance of increasing melee attack speed by {4}% for {5} sec.",
+          "icon": "spell_nature_ravenform",
+          "iconSource": "client",
+          "description": "While Aspect of the Hawk is active, Auto Shot has a {0}% chance of increasing ranged attack speed by {1}% for {2} sec. While Aspect of the Beast is active, all melee auto attacks have a {3}% chance of increasing melee attack speed by {4}% for {5} sec.",
           "ranks": [
-            [2, 30, 12, 2, 30, 12],
-            [2, 30, 12, 2, 30, 12],
-            [2, 30, 12, 2, 30, 12],
-            [2, 30, 12, 2, 30, 12],
-            [2, 30, 12, 2, 30, 12]
+            [
+              2,
+              30,
+              12,
+              2,
+              30,
+              12
+            ],
+            [
+              4,
+              30,
+              12,
+              4,
+              30,
+              12
+            ],
+            [
+              6,
+              30,
+              12,
+              6,
+              30,
+              12
+            ],
+            [
+              8,
+              30,
+              12,
+              8,
+              30,
+              12
+            ],
+            [
+              10,
+              30,
+              12,
+              10,
+              30,
+              12
+            ]
           ],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: Classic match hunter/beast-mastery/Improved Aspect of the Hawk (talent 1382) has no alignable slots; ranks 2..5 are copies of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21030.333,
-            "frame": 1261820,
-            "crop": "data/review/hunter/beast-mastery/deadly-aspects.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19552
         },
         {
           "id": "endurance-training",
@@ -76,30 +95,35 @@
           "row": 0,
           "col": 2,
           "maxRank": 5,
-          "icon": "crop-endurance-training",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/beast-mastery/endurance-training.icon.png",
+          "icon": "spell_nature_reincarnation",
+          "iconSource": "client",
           "description": "Increases the Health and Armor of your pets by {0}%.",
-          "ranks": [[3], [6], [9], [12], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1389,
-            "classicSpellIds": [19583, 19584, 19585, 19586, 19587],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/beast-mastery/Endurance Training (talent 1389): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21032.333,
-            "frame": 1261940,
-            "crop": "data/review/hunter/beast-mastery/endurance-training.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ],
+            [
+              9
+            ],
+            [
+              12
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19583
         },
         {
           "id": "focused-fire",
@@ -108,22 +132,22 @@
           "col": 0,
           "maxRank": 2,
           "icon": "inv_weapon_crossbow_10",
-          "iconSource": "classic",
-          "description": "Increases all damage you deal by {0}% while your pet is active.",
-          "ranks": [[1], [2]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21034.533,
-            "frame": 1262072,
-            "crop": "data/review/hunter/beast-mastery/focused-fire.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Increases all damage you and your pet deal by {0}% while your pet is active.",
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1223755
         },
         {
           "id": "improved-aspect-of-the-monkey",
@@ -132,22 +156,29 @@
           "col": 1,
           "maxRank": 3,
           "icon": "ability_hunter_aspectofthemonkey",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the Dodge bonus of your Aspect of the Monkey by {0}%. Additionally, your pet gains {1}% of the effect of your Aspect of the Monkey ability.",
-          "ranks": [[2, 50], [4, 100], [6, 150]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match hunter/beast-mastery/Improved Aspect of the Monkey (talent 1381) has no alignable slots; proportional x2..x3 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21036.4,
-            "frame": 1262184,
-            "crop": "data/review/hunter/beast-mastery/improved-aspect-of-the-monkey.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2,
+              50
+            ],
+            [
+              4,
+              50
+            ],
+            [
+              6,
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 19549
         },
         {
           "id": "pathfinding",
@@ -156,28 +187,22 @@
           "col": 2,
           "maxRank": 2,
           "icon": "ability_mount_jungletiger",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by {0}%.",
-          "ranks": [[3], [6]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1384,
-            "classicSpellIds": [19559, 19560],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/beast-mastery/Pathfinding (talent 1384): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21038.0,
-            "frame": 1262280,
-            "crop": "data/review/hunter/beast-mastery/pathfinding.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19559
         },
         {
           "id": "improved-revive-pet",
@@ -186,30 +211,26 @@
           "col": 3,
           "maxRank": 2,
           "icon": "ability_hunter_beastsoothe",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Revive Pet's casting time is reduced by {0} sec, mana cost is reduced by {1}%, and increases the health your pet returns with by an additional {2}%.",
-          "ranks": [[3, 20, 15], [6, 40, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1625,
-            "classicSpellIds": [24443, 19575],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/beast-mastery/Improved Revive Pet (talent 1625): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21039.0,
-            "frame": 1262340,
-            "crop": "data/review/hunter/beast-mastery/improved-revive-pet.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              3,
+              20,
+              15
+            ],
+            [
+              6,
+              40,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 24443
         },
         {
           "id": "bestial-swiftness",
@@ -218,21 +239,18 @@
           "col": 1,
           "maxRank": 1,
           "icon": "ability_druid_dash",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the movement speed of your pets by {0}%.",
-          "ranks": [[30]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21040.4,
-            "frame": 1262424,
-            "crop": "data/review/hunter/beast-mastery/bestial-swiftness.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 19596
         },
         {
           "id": "unleashed-fury",
@@ -241,28 +259,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "ability_bullrush",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the damage done by your pets and hawks by {0}%.",
-          "ranks": [[3], [6], [9], [12], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1396,
-            "classicSpellIds": [19616, 19617, 19618, 19619, 19620],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/beast-mastery/Unleashed Fury (talent 1396): Classic 4/8/12/16/20 is proportional; Forever rank 1 is 3: scaled proportionally (3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21042.0,
-            "frame": 1262520,
-            "crop": "data/review/hunter/beast-mastery/unleashed-fury.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ],
+            [
+              9
+            ],
+            [
+              12
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19616
         },
         {
           "id": "improved-mend-pet",
@@ -271,22 +295,26 @@
           "col": 0,
           "maxRank": 2,
           "icon": "ability_hunter_mendpet",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Gives your Mend Pet spell a {0}% chance of cleansing {1} Curse, Disease, Magic, or Poison effect from your pet each time it heals and reduces the Mana cost by {2}%.",
-          "ranks": [[15, 1, 10], [15, 1, 10]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: Classic match hunter/beast-mastery/Improved Mend Pet (talent 1385) has no alignable slots; rank 2 is a copy of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21043.267,
-            "frame": 1262596,
-            "crop": "data/review/hunter/beast-mastery/improved-mend-pet.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              15,
+              1,
+              10
+            ],
+            [
+              50,
+              1,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19572
         },
         {
           "id": "ferocity",
@@ -295,28 +323,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "inv_misc_monsterclaw_04",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the critical strike chance of your pets and hawks by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1393,
-            "classicSpellIds": [19598, 19599, 19600, 19601, 19602],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/beast-mastery/Ferocity (talent 1393): Classic 3/6/9/12/15 is proportional; Forever rank 1 is 2: scaled proportionally (2 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21044.0,
-            "frame": 1262640,
-            "crop": "data/review/hunter/beast-mastery/ferocity.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19598
         },
         {
           "id": "summon-hawk",
@@ -325,21 +359,21 @@
           "col": 3,
           "maxRank": 1,
           "icon": "ability_hunter_animalhandler",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Command a hawk to dive-bomb your targeted enemy, dealing {0} Physical damage and continuing its assault for {1} sec. Only {2} hawks can be active at once. Summon Hawk shares its cooldown with Arcane Shot.",
-          "ranks": [[53, 18, 2]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21080.0,
-            "frame": 1264800,
-            "crop": "data/review/hunter/beast-mastery/summon-hawk.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              32,
+              18,
+              2
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "80 Mana; 35 yd range; Instant; 6 sec cooldown",
+          "spellId": 1293241
         },
         {
           "id": "spirit-bond",
@@ -347,29 +381,25 @@
           "row": 4,
           "col": 0,
           "maxRank": 2,
-          "icon": "classic_ability_druid_demoralizingroar",
-          "iconSource": "classic",
-          "description": "While your pet is active, you and your pet will regenerate {0}% of total health every 10 sec.",
-          "ranks": [[1], [2]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1388,
-            "classicSpellIds": [19578, 20895],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/beast-mastery/Spirit Bond (talent 1388): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21067.0,
-            "frame": 1264020,
-            "crop": "data/review/hunter/beast-mastery/spirit-bond.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "icon": "ability_druid_demoralizingroar",
+          "iconSource": "client",
+          "description": "While your pet is active, you and your pet will regenerate {0}% of total health every {1} sec.",
+          "ranks": [
+            [
+              1,
+              10
+            ],
+            [
+              1,
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19578
         },
         {
           "id": "intimidation",
@@ -378,30 +408,26 @@
           "col": 1,
           "maxRank": 1,
           "icon": "ability_devour",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Command your pet to Stun the target for {0} sec on its next successful attack, which also gains {1}% increased critical strike chance. Generates high threat.",
-          "ranks": [[3, 100]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              3,
+              100
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "8% base Mana; 100 yd range; Instant; 1 min cooldown",
           "requires": [
             {
               "talent": "bestial-swiftness",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21064.467,
-            "frame": 1263868,
-            "crop": "data/review/hunter/beast-mastery/intimidation.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z",
-            "note": "prerequisite from tree arrow (stage 7): Bestial Swiftness at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 19577
         },
         {
           "id": "bestial-discipline",
@@ -410,22 +436,24 @@
           "col": 3,
           "maxRank": 2,
           "icon": "spell_nature_abolishmagic",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the Focus regeneration of your pets by {0}% and allows {1}% of your Mana regeneration to continue while casting.",
-          "ranks": [[10, 25], [20, 50]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match hunter/beast-mastery/Bestial Discipline (talent 1390) has no alignable slots; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21048.333,
-            "frame": 1262900,
-            "crop": "data/review/hunter/beast-mastery/bestial-discipline.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10,
+              25
+            ],
+            [
+              20,
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19590
         },
         {
           "id": "frenzy",
@@ -434,35 +462,50 @@
           "col": 2,
           "maxRank": 5,
           "icon": "inv_misc_monsterclaw_03",
-          "iconSource": "classic",
-          "description": "Gives your pet a {0}% chance to gain a 30% attack speed increase for 8 sec after dealing a critical strike.",
-          "ranks": [[20], [40], [60], [80], [100]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1397,
-            "classicSpellIds": [19621, 19622, 19623, 19624, 19625],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/beast-mastery/Frenzy (talent 1397): ranks copied.",
+          "iconSource": "client",
+          "description": "Gives your pet a {0}% chance to gain a {1}% attack speed increase for {2} sec after dealing a critical strike.",
+          "ranks": [
+            [
+              20,
+              30,
+              8
+            ],
+            [
+              40,
+              30,
+              8
+            ],
+            [
+              60,
+              30,
+              8
+            ],
+            [
+              80,
+              30,
+              8
+            ],
+            [
+              100,
+              30,
+              8
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "ferocity",
               "rank": 5
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21061.0,
-            "frame": 1263660,
-            "crop": "data/review/hunter/beast-mastery/frenzy.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Ferocity at rank 5 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 19621
         },
         {
           "id": "bestial-wrath",
@@ -471,28 +514,26 @@
           "col": 1,
           "maxRank": 1,
           "icon": "ability_druid_ferociousbite",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Send your pet into a rage causing {0}% additional damage for {1} sec. While enraged, the beast does not feel pity or remorse or fear and it cannot be stopped unless killed.",
-          "ranks": [[50, 18]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              50,
+              18
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "12% base Mana; 100 yd range; Instant; 2 min cooldown",
           "requires": [
             {
               "talent": "intimidation",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21060.6,
-            "frame": 1263636,
-            "crop": "data/review/hunter/beast-mastery/bestial-wrath.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Intimidation at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 19574
         }
       ]
     },
@@ -501,19 +542,9 @@
       "name": "Marksmanship",
       "page": "primary",
       "order": 1,
-      "icon": "crop-marksmanship",
+      "icon": "ability_marksmanship",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 21060.0,
-        "frame": 1263600,
-        "crop": "data/review/hunter/marksmanship/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "hawk-eye",
@@ -522,28 +553,26 @@
           "col": 0,
           "maxRank": 3,
           "icon": "ability_townwatch",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the range of your ranged weapons by {0} yards.",
-          "ranks": [[2], [4], [6]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1352,
-            "classicSpellIds": [19498, 19499, 19500],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/marksmanship/Hawk Eye (talent 1352): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21103.067,
-            "frame": 1266184,
-            "crop": "data/review/hunter/marksmanship/hawk-eye.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 19498
         },
         {
           "id": "improved-concussive-shot",
@@ -552,28 +581,39 @@
           "col": 1,
           "maxRank": 5,
           "icon": "spell_frost_stun",
-          "iconSource": "classic",
-          "description": "Gives your Concussive Shot a {0}% chance to stun the target for 3 sec.",
-          "ranks": [[4], [8], [12], [16], [20]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1341,
-            "classicSpellIds": [19407, 19412, 19413, 19414, 19415],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/marksmanship/Improved Concussive Shot (talent 1341): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21104.133,
-            "frame": 1266248,
-            "crop": "data/review/hunter/marksmanship/improved-concussive-shot.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Gives your Concussive Shot a {0}% chance to stun the target for {1} sec.",
+          "ranks": [
+            [
+              4,
+              3
+            ],
+            [
+              8,
+              3
+            ],
+            [
+              12,
+              3
+            ],
+            [
+              16,
+              3
+            ],
+            [
+              20,
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19407
         },
         {
           "id": "lethal-attacks",
@@ -582,28 +622,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "ability_searingarrow",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your critical strike chance with all attacks by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1311,
-            "classicSpellIds": [19295, 19297, 19298, 19301, 19300],
-            "match": "description",
-            "similarity": 0.9
-          },
-          "ranksNote": "Classic hunter/survival/Deflection (talent 1311), matched on description (0.90): Classic 1/2/3/4/5 is proportional; Forever rank 1 is 1: scaled proportionally (1 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21105.267,
-            "frame": 1266316,
-            "crop": "data/review/hunter/marksmanship/lethal-attacks.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19426
         },
         {
           "id": "improved-stings",
@@ -611,26 +657,33 @@
           "row": 1,
           "col": 0,
           "maxRank": 3,
-          "icon": "crop-improved-stings",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/marksmanship/improved-stings.icon.png",
+          "icon": "hunter_pvp_spidersting",
+          "iconSource": "client",
           "description": "Increased the damage of your Serpent Sting ability by {0}%, reduces the cooldown of your Viper Sting ability by {1} sec, and increases the duration of your Scorpid Sting ability by {2} sec.",
-          "ranks": [[6, 2, 15], [6, 2, 15], [6, 2, 15]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (2 sec) is never extrapolated; ranks 2..3 are copies of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21108.333,
-            "frame": 1266500,
-            "crop": "data/review/hunter/marksmanship/improved-stings.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              6,
+              2,
+              15
+            ],
+            [
+              13,
+              4,
+              30
+            ],
+            [
+              20,
+              6,
+              45
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 1310661
         },
         {
           "id": "efficiency",
@@ -639,28 +692,34 @@
           "col": 1,
           "maxRank": 5,
           "icon": "spell_frost_wizardmark",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the Mana cost of your Shots, Stings, and melee abilities by {0}%.",
-          "ranks": [[3], [6], [9], [12], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1342,
-            "classicSpellIds": [19416, 19417, 19418, 19419, 19420],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/marksmanship/Efficiency (talent 1342): Classic 2/4/6/8/10 is proportional; Forever rank 1 is 3: scaled proportionally (3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21107.133,
-            "frame": 1266428,
-            "crop": "data/review/hunter/marksmanship/efficiency.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ],
+            [
+              9
+            ],
+            [
+              12
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19416
         },
         {
           "id": "careful-aim",
@@ -669,28 +728,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "ability_hunter_zenarchery",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Attack Power by {0}% of your Intellect.",
-          "ranks": [[20], [40], [60], [80], [100]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1702,
-            "classicSpellIds": [30902, 30903, 30904, 30905, 30906],
-            "match": "description",
-            "similarity": 0.94
-          },
-          "ranksNote": "Classic rogue/subtlety/Deadliness (talent 1702) (cross-class), matched on description (0.94): Classic 2/4/6/8/10 is proportional; Forever rank 1 is 20: scaled proportionally (20 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21106.0,
-            "frame": 1266360,
-            "crop": "data/review/hunter/marksmanship/careful-aim.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              20
+            ],
+            [
+              40
+            ],
+            [
+              60
+            ],
+            [
+              80
+            ],
+            [
+              100
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 1223984
         },
         {
           "id": "rapid-killing",
@@ -698,24 +763,27 @@
           "row": 2,
           "col": 0,
           "maxRank": 2,
-          "icon": "crop-rapid-killing",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/marksmanship/rapid-killing.icon.png",
-          "description": "Reduces the cooldown on your Rapid Fire ability by {0} min. In addition, when you kill a non-trivial enemy or it dies while afflicted by your Serpent Sting, you gain Rapid Killing, increasing the damage of your next shot ability within {1} sec by {2}%.",
-          "ranks": [[1, 20, 10], [1, 20, 10]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: Classic match warrior/protection/Improved Taunt (talent 143) has no alignable slots; rank 2 is a copy of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21109.267,
-            "frame": 1266556,
-            "crop": "data/review/hunter/marksmanship/rapid-killing.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "icon": "ability_hunter_rapidkilling",
+          "iconSource": "client",
+          "description": "Reduces the cooldown on your Rapid Fire ability by {0} min. In addition, when you kill a non-trivial enemy or it dies while afflicted by your Serpent Sting, you gain Rapid Killing, increasing the damage of your next Shot ability within {1} sec by {2}%.",
+          "ranks": [
+            [
+              1,
+              20,
+              10
+            ],
+            [
+              2,
+              20,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 415405
         },
         {
           "id": "improved-arcane-shot",
@@ -724,28 +792,34 @@
           "col": 1,
           "maxRank": 5,
           "icon": "ability_impalingbolt",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the cooldown of your Arcane Shot by {0} sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.",
-          "ranks": [[0.3], [0.6], [0.9], [1.2], [1.5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1346,
-            "classicSpellIds": [19454, 19455, 19456, 19457, 19458],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/marksmanship/Improved Arcane Shot (talent 1346): Classic 0.2/0.4/0.6/0.8/1 is proportional; Forever rank 1 is 0.3: scaled proportionally (0.3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21110.733,
-            "frame": 1266644,
-            "crop": "data/review/hunter/marksmanship/improved-arcane-shot.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              0.3
+            ],
+            [
+              0.6
+            ],
+            [
+              0.9
+            ],
+            [
+              1.2
+            ],
+            [
+              1.5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19454
         },
         {
           "id": "lone-wolf",
@@ -754,23 +828,18 @@
           "col": 3,
           "maxRank": 1,
           "icon": "ability_mount_whitedirewolf",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "You deal {0}% increased damage with all attacks while you do not have an active pet.",
-          "ranks": [[20]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21312.133,
-            "frame": 1278728,
-            "crop": "data/review/hunter/marksmanship/lone-wolf.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 415370
         },
         {
           "id": "trueshot-aura",
@@ -779,21 +848,21 @@
           "col": 1,
           "maxRank": 1,
           "icon": "ability_trueshot",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the Ranged Attack Power of party members within {0} yards by {1}. Lasts {2} min.",
-          "ranks": [[45, 30, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21113.8,
-            "frame": 1266828,
-            "crop": "data/review/hunter/marksmanship/trueshot-aura.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              45,
+              30,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "180 Mana; Instant",
+          "spellId": 1299346
         },
         {
           "id": "mortal-shots",
@@ -802,35 +871,40 @@
           "col": 2,
           "maxRank": 5,
           "icon": "ability_piercedamage",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the critical strike damage bonus on all ranged abilities by {0}%.",
-          "ranks": [[6], [12], [18], [24], [30]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1349,
-            "classicSpellIds": [19485, 19487, 19488, 19489, 19490],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/marksmanship/Mortal Shots (talent 1349): ranks copied.",
+          "ranks": [
+            [
+              6
+            ],
+            [
+              12
+            ],
+            [
+              18
+            ],
+            [
+              24
+            ],
+            [
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "careful-aim",
               "rank": 5
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21115.0,
-            "frame": 1266900,
-            "crop": "data/review/hunter/marksmanship/mortal-shots.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Careful Aim at rank 5 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 19485
         },
         {
           "id": "rapid-recuperation",
@@ -839,29 +913,32 @@
           "col": 0,
           "maxRank": 2,
           "icon": "ability_hunter_rapidregeneration",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Hitting a target with your Serpent Sting ability grants you {0}% and consuming Rapid Killing grants you {1}% of your Mana regeneration while casting for the next {2} sec.",
-          "ranks": [[25, 50, 15], [25, 50, 15]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (15 sec) is never extrapolated; rank 2 is a copy of rank 1.",
+          "ranks": [
+            [
+              25,
+              50,
+              15
+            ],
+            [
+              50,
+              100,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "rapid-killing",
               "rank": 2
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21116.2,
-            "frame": 1266972,
-            "crop": "data/review/hunter/marksmanship/rapid-recuperation.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Rapid Killing at rank 2 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites); arrow confidence 0.70"
-          }
+          "spellId": 1223987
         },
         {
           "id": "barrage",
@@ -870,28 +947,26 @@
           "col": 2,
           "maxRank": 3,
           "icon": "ability_upgrademoonglaive",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by {0}%.",
-          "ranks": [[3], [6], [9]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1347,
-            "classicSpellIds": [19461, 19462, 24691],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/marksmanship/Barrage (talent 1347): Classic 5/10/15 is proportional; Forever rank 1 is 3: scaled proportionally (3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21118.867,
-            "frame": 1267132,
-            "crop": "data/review/hunter/marksmanship/barrage.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              7
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 19461
         },
         {
           "id": "scatter-shot",
@@ -900,21 +975,20 @@
           "col": 3,
           "maxRank": 1,
           "icon": "ability_golemstormbolt",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "A short-range shot that deals {0}% weapon damage and disorients the target for {1} sec. Any damage caused will remove the effect. Turns off your attack when used.",
-          "ranks": [[50, 4]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21121.133,
-            "frame": 1267268,
-            "crop": "data/review/hunter/marksmanship/scatter-shot.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              50,
+              4
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "8% base Mana; 15 yd range; Instant; 30 sec cooldown",
+          "spellId": 19503
         },
         {
           "id": "ranged-weapon-specialization",
@@ -923,28 +997,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "inv_weapon_rifle_06",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the damage you deal with ranged weapons by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1362,
-            "classicSpellIds": [19507, 19508, 19509, 19510, 19511],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/marksmanship/Ranged Weapon Specialization (talent 1362): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21122.0,
-            "frame": 1267320,
-            "crop": "data/review/hunter/marksmanship/ranged-weapon-specialization.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19507
         },
         {
           "id": "sniper-shot",
@@ -952,30 +1032,29 @@
           "row": 6,
           "col": 1,
           "maxRank": 1,
-          "icon": "crop-sniper-shot",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/marksmanship/sniper-shot.icon.png",
-          "description": "A steady snipe that increases ranged damage by {0}.",
-          "ranks": [[160]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "icon": "hunter_pvp_snipershot",
+          "iconSource": "client",
+          "description": "A long-range shot that deals ranged damage plus {0} and increases the range of your next {1} Shots by {2} yards for {3} sec.",
+          "ranks": [
+            [
+              160,
+              3,
+              10,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "365 Mana; 8\u201345 yd range; 4 sec cast; 15 sec cooldown",
           "requires": [
             {
               "talent": "trueshot-aura",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21141.2,
-            "frame": 1268472,
-            "crop": "data/review/hunter/marksmanship/sniper-shot.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Trueshot Aura at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites); arrow confidence 0.70"
-          }
+          "spellId": 1310687
         }
       ]
     },
@@ -984,19 +1063,9 @@
       "name": "Survival",
       "page": "primary",
       "order": 2,
-      "icon": "crop-survival",
+      "icon": "ability_hunter_swiftstrike",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 21060.0,
-        "frame": 1263600,
-        "crop": "data/review/hunter/survival/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "improved-tracking",
@@ -1005,22 +1074,34 @@
           "col": 1,
           "maxRank": 5,
           "icon": "inv_misc_head_dragon_black",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "While tracking Beasts, Demons, Dragonkin, Elementals, Giants, Humanoids, or Undead, all damage you deal to the tracked creature type is increased by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x5 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21154.067,
-            "frame": 1269244,
-            "crop": "data/review/hunter/survival/improved-tracking.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 24293
         },
         {
           "id": "deflection",
@@ -1029,28 +1110,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "ability_parry",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Parry chance by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1311,
-            "classicSpellIds": [19295, 19297, 19298, 19301, 19300],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/survival/Deflection (talent 1311): Classic 1/2/3/4/5 is proportional; Forever rank 1 is 2: scaled proportionally (2 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21156.933,
-            "frame": 1269416,
-            "crop": "data/review/hunter/survival/deflection.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19295
         },
         {
           "id": "entrapment",
@@ -1059,22 +1146,34 @@
           "col": 0,
           "maxRank": 5,
           "icon": "spell_nature_stranglevines",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "When your traps are triggered, all affected targets are Entrapped, preventing them from moving for {0} sec.",
-          "ranks": [[1], [1], [1], [1], [1]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: Classic hunter/survival/Entrapment (talent 1304) has 5/10/15/20/25 without unit where Forever rank 1 has 1 sec; units differ; ranks 2..5 are copies of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21256.933,
-            "frame": 1275416,
-            "crop": "data/review/hunter/survival/entrapment.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19184
         },
         {
           "id": "savage-strikes",
@@ -1083,28 +1182,22 @@
           "col": 1,
           "maxRank": 2,
           "icon": "ability_racial_bloodrage",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the critical strike chance of all your melee abilities by {0}%.",
-          "ranks": [[2], [4]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1621,
-            "classicSpellIds": [19159, 19160],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/survival/Savage Strikes (talent 1621): Classic 10/20 is proportional; Forever rank 1 is 2: scaled proportionally (2 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21194.467,
-            "frame": 1271668,
-            "crop": "data/review/hunter/survival/savage-strikes.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19159
         },
         {
           "id": "survivalist",
@@ -1113,28 +1206,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_shadow_twilight",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your total Health by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1622,
-            "classicSpellIds": [19255, 19256, 19257, 19258, 19259],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/survival/Survivalist (talent 1622): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21162.4,
-            "frame": 1269744,
-            "crop": "data/review/hunter/survival/survivalist.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19255
         },
         {
           "id": "improved-wing-clip",
@@ -1142,30 +1241,30 @@
           "row": 1,
           "col": 3,
           "maxRank": 3,
-          "icon": "crop-improved-wing-clip",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/improved-wing-clip.icon.png",
-          "description": "Gives your Wing Clip ability a {0}% chance to immobilize the target for 5 sec.",
-          "ranks": [[7], [14], [21]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1305,
-            "classicSpellIds": [19228, 19232, 19233, 19234, 19235],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/survival/Improved Wing Clip (talent 1305): Classic 4/8/12/16/20 is proportional, Classic has 5 ranks; Forever rank 1 is 7: scaled proportionally (7 x rank). Rounding: rank 3 21 may read 20 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21196.0,
-            "frame": 1271760,
-            "crop": "data/review/hunter/survival/improved-wing-clip.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "icon": "ability_rogue_trip",
+          "iconSource": "client",
+          "description": "Gives your Wing Clip ability a {0}% chance to immobilize the target for {1} sec.",
+          "ranks": [
+            [
+              7,
+              5
+            ],
+            [
+              13,
+              5
+            ],
+            [
+              20,
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 19228
         },
         {
           "id": "clever-traps",
@@ -1174,30 +1273,24 @@
           "col": 0,
           "maxRank": 2,
           "icon": "spell_nature_timestop",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the duration of Freezing and Frost trap effects by {0}% and the damage of Immolation and Explosive trap effects by {1}%.",
-          "ranks": [[15, 15], [30, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1306,
-            "classicSpellIds": [19239, 19245],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/survival/Clever Traps (talent 1306): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21188.067,
-            "frame": 1271284,
-            "crop": "data/review/hunter/survival/clever-traps.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              15,
+              15
+            ],
+            [
+              30,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19239
         },
         {
           "id": "surefooted",
@@ -1206,28 +1299,29 @@
           "col": 1,
           "maxRank": 3,
           "icon": "ability_kick",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your hit chance by {0}% and reduces the duration of movement impairing effects on you by {1}%.",
-          "ranks": [[1, 10], [2, 20], [3, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1310,
-            "classicSpellIds": [19290, 19294, 24283],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/survival/Surefooted (talent 1310): Classic 5/10/15 is proportional; Forever rank 1 is 10: scaled proportionally (10 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21248.0,
-            "frame": 1274880,
-            "crop": "data/review/hunter/survival/surefooted.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1,
+              10
+            ],
+            [
+              2,
+              20
+            ],
+            [
+              3,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 19290
         },
         {
           "id": "deterrence",
@@ -1235,23 +1329,21 @@
           "row": 2,
           "col": 2,
           "maxRank": 1,
-          "icon": "crop-deterrence",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/deterrence.icon.png",
+          "icon": "ability_whirlwind",
+          "iconSource": "client",
           "description": "When activated, increases your Dodge and Parry chance by {0}% for {1} sec.",
-          "ranks": [[25, 10]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21200.267,
-            "frame": 1272016,
-            "crop": "data/review/hunter/survival/deterrence.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              25,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "Instant; 5 min cooldown",
+          "spellId": 19263
         },
         {
           "id": "survival-tactics",
@@ -1259,24 +1351,23 @@
           "row": 3,
           "col": 0,
           "maxRank": 2,
-          "icon": "crop-survival-tactics",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/survival-tactics.icon.png",
+          "icon": "ability_ensnare",
+          "iconSource": "client",
           "description": "Increases your chance to hit with your Trap and Feign Death abilities by {0}%.",
-          "ranks": [[5], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21191.2,
-            "frame": 1271472,
-            "crop": "data/review/hunter/survival/survival-tactics.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19376
         },
         {
           "id": "predators-edge",
@@ -1284,24 +1375,40 @@
           "row": 3,
           "col": 1,
           "maxRank": 5,
-          "icon": "crop-predators-edge",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/predators-edge.icon.png",
+          "icon": "ability_hunter_hatchettoss",
+          "iconSource": "client",
           "description": "Increases your melee critical strike damage by {0}% and your offhand weapon damage by {1}%.",
-          "ranks": [[6, 10], [12, 20], [18, 30], [24, 40], [30, 50]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match hunter/marksmanship/Mortal Shots (talent 1349) has no alignable slots; proportional x2..x5 of rank 1 assumed. Rounding: {0} rank 4 24 may read 25 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21198.067,
-            "frame": 1271884,
-            "crop": "data/review/hunter/survival/predators-edge.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              6,
+              10
+            ],
+            [
+              12,
+              20
+            ],
+            [
+              18,
+              30
+            ],
+            [
+              24,
+              40
+            ],
+            [
+              30,
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 1310627
         },
         {
           "id": "counterattack",
@@ -1309,30 +1416,28 @@
           "row": 3,
           "col": 2,
           "maxRank": 1,
-          "icon": "crop-counterattack",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/counterattack.icon.png",
+          "icon": "ability_warrior_challange",
+          "iconSource": "client",
           "description": "A strike that becomes active after parrying an opponent's attack. This attack deals {0}% weapon damage plus {1} and immobilizes the target for {2} sec. Counterattack cannot be blocked, dodged, or parried.",
-          "ranks": [[50, 13, 5]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              50,
+              26,
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "30 Mana; Melee Range; Instant; 5 sec cooldown",
           "requires": [
             {
               "talent": "deterrence",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21246.667,
-            "frame": 1274800,
-            "crop": "data/review/hunter/survival/counterattack.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Deterrence at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 19306
         },
         {
           "id": "resourcefulness",
@@ -1341,22 +1446,28 @@
           "col": 0,
           "maxRank": 2,
           "icon": "ability_hunter_resourcefulness",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the mana cost of your Trap abilities and melee abilities by {0}%. In addition, your critical strikes have a {1}% chance to allow {2}% of your Mana regeneration to continue while casting for {3} sec.",
-          "ranks": [[30, 30, 50, 30], [30, 30, 50, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (30 sec) is never extrapolated; rank 2 is a copy of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21180.067,
-            "frame": 1270804,
-            "crop": "data/review/hunter/survival/resourcefulness.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              30,
+              50,
+              50,
+              30
+            ],
+            [
+              60,
+              100,
+              50,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 440529
         },
         {
           "id": "expose-prey",
@@ -1365,22 +1476,24 @@
           "col": 1,
           "maxRank": 2,
           "icon": "ability_hunter_swiftstrike",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Your attacks against targets with Hunter's Mark have a {0}% chance to activate your Mongoose Bite for {1} sec.",
-          "ranks": [[5, 5], [5, 5]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (5 sec) is never extrapolated; rank 2 is a copy of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21238.0,
-            "frame": 1274280,
-            "crop": "data/review/hunter/survival/expose-prey.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5,
+              10
+            ],
+            [
+              10,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1310532
         },
         {
           "id": "survivalists-discipline",
@@ -1388,24 +1501,23 @@
           "row": 4,
           "col": 2,
           "maxRank": 2,
-          "icon": "crop-survivalists-discipline",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/survivalists-discipline.icon.png",
+          "icon": "ability_hunter_mastertactitian",
+          "iconSource": "client",
           "description": "Reduces the cooldown of your Trap and Deterrence abilities by {0}%.",
-          "ranks": [[20], [40]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21224.0,
-            "frame": 1273440,
-            "crop": "data/review/hunter/survival/survivalists-discipline.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              20
+            ],
+            [
+              40
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1310496
         },
         {
           "id": "strider-kick",
@@ -1413,23 +1525,22 @@
           "row": 4,
           "col": 3,
           "maxRank": 1,
-          "icon": "crop-strider-kick",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/strider-kick.icon.png",
-          "description": "A powerful kick that deals {0}% melee weapon damage.",
-          "ranks": [[100]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21214.933,
-            "frame": 1272896,
-            "crop": "data/review/hunter/survival/strider-kick.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "icon": "ability_hunter_pet_tallstrider",
+          "iconSource": "client",
+          "description": "A powerful kick that deals {0}% melee weapon damage and increases movement speed by {1}% for {2} sec.",
+          "ranks": [
+            [
+              100,
+              30,
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "5.81% base Mana; Melee Range; Instant; 8 sec cooldown",
+          "spellId": 1317257
         },
         {
           "id": "lightning-reflexes",
@@ -1438,28 +1549,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_nature_invisibilty",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Agility by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1303,
-            "classicSpellIds": [19168, 19180, 19181, 24296, 24297],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic hunter/survival/Lightning Reflexes (talent 1303): Classic 3/6/9/12/15 is proportional; Forever rank 1 is 2: scaled proportionally (2 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21233.6,
-            "frame": 1274016,
-            "crop": "data/review/hunter/survival/lightning-reflexes.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 19168
         },
         {
           "id": "lacerating-strikes",
@@ -1467,35 +1584,31 @@
           "row": 6,
           "col": 1,
           "maxRank": 1,
-          "icon": "crop-lacerating-strikes",
-          "iconSource": "crop",
-          "iconCrop": "data/review/hunter/survival/lacerating-strikes.icon.png",
-          "description": "Your Mongoose Bite also causes the target to bleed for damage over {0} sec equal to {1}% of the damage done by Mongoose Bite.",
-          "ranks": [[21, 40]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "icon": "ability_gouge",
+          "iconSource": "client",
+          "description": "Your Mongoose Bite also causes the target to Bleed for damage over {0} sec equal to {1}% of the damage done by Mongoose Bite.",
+          "ranks": [
+            [
+              21,
+              40
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "expose-prey",
               "rank": 2
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 21304.6,
-            "frame": 1278276,
-            "crop": "data/review/hunter/survival/lacerating-strikes.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Expose Prey at rank 2 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 1310533
         }
       ]
     }
   ],
   "notes": [
-    "Extracted from BlizzCon 2026 stream footage (rank-0 tooltips only); ranks 2+ are anticipated, point rules assumed from Classic."
+    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17; Deflection, Expose Prey, Strider Kick, Sniper Shot and Resourcefulness brought up to build 1.60.1.70338 from wago.tools on 2026-10-12"
   ]
 }
