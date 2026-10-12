@@ -80,9 +80,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // three keep Bane of Doom up when it lands before the fight ends and Bane of Agony otherwise,
 // then Corruption and Immolate when they are down, Shadow Bolt as the filler, and Life Tap only
 // under 5% mana. A knob search kept every one of those. Against them, at 180 sec on Demonology:
-// Bane of Agony alone is 34 behind, no bane 111, no Corruption 45, no Immolate 9, Soul Fire
-// during Decimation 9, Death Coil on cooldown 6, Curse of Recklessness 8, Life Tap at 20% mana
-// 9. Searing Pain as the filler is 185 behind. Wrack, Incinerate, Siphon Life, the drains and
+// Bane of Agony alone is 36 behind, no bane 118, no Corruption 53, no Immolate 8, Soul Fire
+// during Decimation 12, Death Coil on cooldown 9, Curse of Recklessness 9, Life Tap at 20% mana
+// 8. Searing Pain as the filler is 221 behind. Wrack, Incinerate, Siphon Life, the drains and
 // Shadowburn never made a build, Shadow Bolt does more with the same time.
 export const RotationLevel60Demonology = PresetUtils.makePresetAPLRotation('Level 60 Demonology', Level60DemonologyAPL, {
 	group: 'Level 60',
@@ -160,7 +160,7 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone and Shadow and Flame,
 // with the Succubus sacrificed before the pull for 15% Fire damage and no demon out, and
 // Firestone. Searched with Incinerate and Conflagrate kept (-require). The Succubus out instead was
-// 17 behind, the Imp 67.
+// 30 behind, the Imp 75, and Spellstone in place of Firestone 16.
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
 	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
@@ -192,8 +192,8 @@ export const DefaultTalents = TalentsLevel60Demonology;
 ///////////////////////////////////////////////////////////////////////////
 
 // The Succubus is out for every Level 60 build. Forever halved Firebolt, but the demons' melee
-// is still 1.12's in the sim, so the Succubus is about 55 DPS ahead of the Imp on the
-// Destruction and Affliction builds (notes.md). Spellstone and Firestone are within 3.
+// is still 1.12's in the sim, so the Succubus is about 47 DPS ahead of the Imp on the
+// Destruction and Affliction builds (notes.md). Spellstone and Firestone are within 1 there.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
 	summon: Summon.Succubus,
@@ -351,18 +351,18 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Human, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 963.8 / 952.4 / 941.1, Destruction 881.5 / 875.1 / 869.6, Affliction 874.6 / 866.8 / 861.7,
-// Destruction fire 877.3 / 867.1 / 859.7, Affliction damage over time 729.1 / 714.7 / 706.7.
+// 1052.7 / 1039.0 / 1025.4, Destruction 963.5 / 955.4 / 949.7, Affliction 957.4 / 949.7 / 944.2,
+// Destruction fire 949.8 / 938.1 / 929.2, Affliction damage over time 783.5 / 768.4 / 759.9.
 // Destruction and Affliction are inside 10% of Demonology, Destruction fire and Affliction damage
 // over time play differently and ship as specs of their own.
 //
 // Human is the best warlock race overall (first on Demonology, Destruction and Affliction), then
-// Gnome, Undead, Orc and Troll. Gnome is 3.6 ahead on Affliction damage over time and Undead 1.0
+// Gnome, Undead, Orc and Troll. Gnome is 2.9 ahead on Affliction damage over time and Undead 1.1
 // on Destruction fire. The Human's 2% crit comes from Sword Specialization with the synthetic
 // Azuresong Mageblade, the Era Phase 1 sword. Without that crit the Human Demonology warlock is
-// 934.5 at 180 sec, level with the Troll at the bottom, so a staff or a dagger would put the Gnome
-// on top. The best Horde race is the Undead, 7.5 behind the Human on Demonology at 180 sec. The
-// full table is in forever-wiki/sim-status.md.
+// 1020.3 at 180 sec, level with the Troll at the bottom, so a staff or a dagger would put the
+// Gnome on top. The best Horde race is the Undead, 6.5 behind the Human on Demonology at 180 sec.
+// The full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
