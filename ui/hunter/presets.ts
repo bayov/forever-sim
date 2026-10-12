@@ -352,7 +352,7 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // swords), 4 ahead of the Night Elf and 7 ahead of the Orc. With the Wildstalker Armor 4 and 5
 // piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class does),
 // Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
-// rotations re-tuned for the shorter Aimed Shot cooldown (measured with the old trinkets on).
+// rotations re-tuned for the shorter Aimed Shot cooldown (measured without trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
 // 878.0 / 870.7 / 863.6 at 120 / 180 / 300 sec (20000 iterations). The pet deals 25% of it.
