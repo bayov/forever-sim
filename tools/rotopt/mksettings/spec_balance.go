@@ -23,7 +23,7 @@ func init() {
 				DefaultPotion:   proto.Potions_MajorSpellblastingPotion,
 				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodLobsterStew,
-				IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
+				IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				NaturePowerBuff: proto.NaturePowerBuff_ElixirOfNaturePower,
