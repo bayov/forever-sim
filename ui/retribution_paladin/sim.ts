@@ -16,7 +16,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	knownIssues: [
 		`Forever rules: a Judgement does not consume the seal, Judgement of the Crusader lasts 40 sec and melee hits refresh it,
 		Holy Strike is baseline, Consecration is baseline and reworked, and the talent trees are the beta client's. Twist of Light's
-		Echo is simulated. Seal of Fury and Light's Vigil are not.`,
+		Echo and Light's Vigil are simulated. Seal of Fury is not.`,
 		`The Level 60 gear is synthetic: items that are not in the game, built to Phase 1 budgets, with Justice Battlegear's set bonuses.`,
 		`Be aware that not all item and weapon enchants are currently implemented in the sim, which make some notable Retribution
 		weapons like Pendulum of Doom and The Jackhammer undervalued.`,
@@ -132,7 +132,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60SubHoly, Presets.PresetBuildLevel30p5],
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60SubHoly, Presets.PresetBuildLevel60Shock, Presets.PresetBuildLevel30p5],
 		rotations: [
 			...Presets.APLPresets[Phase.Phase4],
 			...Presets.APLPresets[Phase.Phase3],

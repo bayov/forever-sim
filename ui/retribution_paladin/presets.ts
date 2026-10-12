@@ -37,6 +37,7 @@ import { Stats } from '../core/proto_utils/stats.js';
 import APLBasicRetJson from './apls/basic_ret.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
+import Level60ShockAPLJSON from './apls/level60_shock.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
@@ -113,6 +114,15 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 	tooltip: 'Level 60 rotation: Consecration, Seal of Command twisted with Seal of Righteousness before every swing, Judgement and Holy Strike on cooldown.',
 	group: 'Level 60',
 });
+// The rotation for the Level 60 Shock talents (paladin_presets.sh, searched the same way): no
+// Twist of Light, so no twisting. Consecration first down to the last point of mana, Judgement on
+// cooldown on Seal of Righteousness, Holy Strike on cooldown (90 DPS), Light's Vigil above 40%
+// mana just before Holy Shock is ready (64), so the Holy Shock after it detonates it and starts no
+// cooldown, then Holy Shock (148), and Hammer of Wrath below 20% health (23).
+export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Level 60 Shock', Level60ShockAPLJSON, {
+	tooltip: "Level 60 Holy Shock rotation: Consecration, Light's Vigil and Holy Shock, Judgement and Holy Strike on cooldown.",
+	group: 'Level 60',
+});
 export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
 	tooltip: 'Basic level 60 Retribution rotation.',
 	group: 'Level 60',
@@ -131,7 +141,7 @@ export const APLPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [APLLevel60, APLBasicRet, APLLevel30p5],
+	[Phase.Phase4]: [APLLevel60, APLLevel60Shock, APLBasicRet, APLLevel30p5],
 	[Phase.Phase5]: [],
 };
 
@@ -170,6 +180,18 @@ export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 	SavedTalents.create({ talentsString: '550030032--05215331001330321' }),
 	{ tooltip: 'Level 60 talents with the side points in Holy instead of Protection.', group: 'Level 60' },
 );
+// Level 60 Shock: the Holy Shock playstyle, its own talent and rotation search from a 31 Holy
+// seed (Holy Shock, Divine Precision, Consecrated Ground, Holy Power, Light's Vigil). Divine
+// Strength 5, Divine Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2, Illumination 1
+// (to reach row 5), Divine Favor, Holy Shock, Divine Precision 2, Consecrated Ground 2, Holy
+// Power 5 and Light's Vigil, with Benediction, Improved Judgement, Holy Conduit, Conviction,
+// Vindication 2, Sanctified Judgement 3 and Sacred Arbiter in Retribution. 927.8 / 903.7 / 880.6
+// at 120 / 180 / 300 sec, 6% behind Level 60 at 180 sec: without Twist of Light it has nothing
+// for the free GCDs between its cooldowns. Light's Vigil is worth 64 and Holy Shock 148.
+export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock', SavedTalents.create({ talentsString: '55003003201121251--05225230001' }), {
+	tooltip: "Level 60 Holy Shock talents: deep Holy to Light's Vigil with Holy Power, and Retribution to Sacred Arbiter.",
+	group: 'Level 60',
+});
 // Level 30 with 5 extra talent points (26 in all), Pursuit of Justice 2 pinned. Holy
 // Shock is out of reach with it: Holy Shock needs 20 Holy points and Pursuit of Justice
 // 10 Retribution points. We scored every Seal of Command build over the Retribution
@@ -192,7 +214,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel30p5],
+	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel30p5],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase4][0];
@@ -373,6 +395,26 @@ export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: DefaultOptions,
+});
+
+// Level 60 Shock: the Holy Shock talents and rotation on Seal of Righteousness. Races at 120 /
+// 180 / 300 sec (50000 iterations): Undead 927.8 / 903.7 / 880.6, Human 910.7 / 887.4 / 864.8,
+// Dwarf 909.9 / 886.2 / 863.1.
+export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Shock', {
+	group: 'Level 60',
+	tooltip: "Level 60 Undead Holy Shock build with Light's Vigil, on the synthetic Phase 1 gear.",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60Shock,
+	rotation: APLLevel60Shock,
+	encounter: EncounterLevel60,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: RetributionPaladinOptions.create({
+		aura: PaladinAura.RetributionAura,
+		primarySeal: PaladinSeal.Righteousness,
+	}),
 });
 
 // A level 30 paladin soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32):

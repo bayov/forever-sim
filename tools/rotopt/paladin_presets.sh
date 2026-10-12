@@ -31,6 +31,12 @@ gen() {
 # cooldown (99), Hammer of Wrath below 20% health at any mana (29). Seal of Righteousness
 # as the primary seal is 1.5 behind, since both seals proc every swing either way.
 gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0" -level 60
+# Level 60 Shock, for the Holy Shock talents (no Twist of Light, so no twisting): Consecration
+# first down to the last point of mana (2 ahead of a 20% floor), Judgement on cooldown on Seal of
+# Righteousness, Holy Strike on cooldown (90), Light's Vigil above 40% mana just before Holy
+# Shock is ready (64), so the Holy Shock after it detonates it and starts no cooldown, Holy Shock
+# after Holy Strike (148, 6.7 ahead of before it), Hammer of Wrath at any mana (23).
+gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=40,hammerOfWrathMana=0" -level 60
 # Level 30 with 5 extra talent points (26 in all). The old level 20 rotation still wins,
 # and Seal of Command stays ahead of Seal of Righteousness on Corpsemaker.
 gen level30p5 "seal=2,consecration=1,consecrationFirst=1,consecrationMana=0" -level 30 -bonus-talents 5 -talents --502240312013201
