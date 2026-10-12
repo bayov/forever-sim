@@ -67,6 +67,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Volley's attack power share (sim: none, the client's 0.03 spell power is a placeholder). The forever-hunter wiki says "likely scales with attack power, TBD".
 * Devilsaur Tooth makes the next Revive Pet free under Forever (the forever-hunter wiki), so the sim gives it nothing in a fight.
 * Wildstalker Armor's 5 piece bonus (spell 1301252) is named "Aimed and Multi-Shot", but its cooldown effect's class mask (131072) matches only Aimed Shot (Multi-Shot is 4096, client 1.60.1.70338). The sim cuts only Aimed Shot's cooldown, to 5 sec; Multi-Shot shares it. Its 2 piece 1% attack speed is taken as melee and ranged attack speed and cast speed (auras 342 and 65). Beta: the cooldown after a Multi-Shot with 5 pieces on. The presets carry the 2 piece only (cross-class standard).
+* Level 31+ ranks (the rank tuning auditor, orchestration/rank_tuning.md): Raptor Strike's flat bonus is tuned to 0.88 of Era at level 24 but the client's 32 to 56 ranks (35 / 40 / 55 / 70) sit at 0.50 to 0.70 of Era, so they may still be untuned; holding them at 0.88 would give Survival about +1.2%. Arcane Shot, Aimed Shot, Serpent Sting and Mongoose Bite are tuned at every rank; Sniper Shot's 160 / 225 / 295 has never changed in a beta build. The sim takes the client's numbers. Beta: a Raptor Strike at 32+ with the weapon damage known.
 * Trueshot Aura is a party aura under Forever; the sim only has a raid wide switch, so the hunter's own talent turns it on for the raid.
 
 ## Priest
