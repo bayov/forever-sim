@@ -56,6 +56,9 @@ func (druidFeral) Knobs() []Knob {
 		// Hold Shifting Power while a Ferocious Bite is due (5 combo points with Rip up for
 		// biteRipTime), so the Energy it gives goes into Shreds and not into the Bite, 0/1.
 		{Name: "shiftHoldForBite", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Ferocious Bite at any combo points in the last endBite seconds of the fight, so they
+		// are not wasted, 0 never.
+		{Name: "endBite", Default: 0, Min: 0, Max: 4, Step: 1},
 		// Tiger's Fury: 1 on cooldown, 2 only at or below tigersFuryEnergy too, 0 never.
 		{Name: "tigersFury", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "tigersFuryEnergy", Default: 40, Min: 20, Max: 80, Step: 20},
@@ -105,6 +108,10 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 			note = "Shifting Power once the Energy is low, but not while a Ferocious Bite is due (its Energy goes into Shreds). Without the talent ignore the warning on this line."
 		}
 		items = append(items, cast(druidShiftingPower, cond, note))
+	}
+	if k["endBite"] > 0 {
+		items = append(items, cast(bite, and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(k["endBite"]))),
+			"Ferocious Bite at any combo points in the last seconds of the fight."))
 	}
 	if k["ripCP"] > 0 {
 		items = append(items, cast(rip, and(ge(comboPoints(), num(k["ripCP"])), not(dotIsActive(rip)), gt(remainingTime(), seconds(k["ripMinTime"]))),

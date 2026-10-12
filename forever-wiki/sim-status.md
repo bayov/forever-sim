@@ -162,14 +162,14 @@ Both DPS playstyles have their own gear, talents, rotation and build: Balance (m
 | Windshaper Skyborne | 806.0 | 806.6 | 786.9 | |
 | High Order Skyborne | 805.9 | 806.5 | 786.4 | |
 
-**Feral.** Gear: 998101-998113, 189 Agility, 166 Strength, 75 attack power, no Spirit, 90 hit rating (the 9% cap) and 56 crit rating, the two-hander at item level 76, Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Tiger's Fury and Berserk on cooldown, no Rake (keeping it up costs 33).
+**Feral.** Gear: 998101-998113, 189 Agility, 166 Strength, 75 attack power, no Spirit, 90 hit rating (the 9% cap) and 56 crit rating, the two-hander at item level 76, Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Tiger's Fury and Berserk on cooldown, no new Rip in the last 8 sec and Bite at any combo points in the last 2, no Rake (keeping it up costs 33).
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 669.6 | 663.2 | 650.3 | best overall and Alliance |
-| High Order Skyborne | 667.4 | 661.3 | 649.1 | |
-| Windshaper Skyborne | 667.4 | 661.4 | 649.1 | best Horde |
-| Tauren | 665.1 | 659.0 | 646.3 | |
+| Night Elf | 671.0 | 664.0 | 650.9 | best overall and Alliance |
+| High Order Skyborne | 668.8 | 662.0 | 649.6 | |
+| Windshaper Skyborne | 668.8 | 662.1 | 649.7 | best Horde |
+| Tauren | 666.5 | 659.8 | 646.9 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 
