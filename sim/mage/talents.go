@@ -445,6 +445,8 @@ func (mage *Mage) applyImprovedScorch() {
 			ActionID:  core.ActionID{SpellID: 22959},
 			Duration:  time.Second * 30,
 			MaxStacks: 5,
+			// The mage's own Scorch puts it up, so the rotation knows the stacks at once.
+			NoReaction: true,
 		})
 	})
 
