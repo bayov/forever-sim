@@ -7,14 +7,19 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
+	Explosive,
+	Flask,
 	Food,
+	HitConsumable,
 	IndividualBuffs,
+	IntellectElixir,
 	ManaRegenElixir,
 	MobType,
 	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	Stat,
 	StrengthBuff,
 	TotemWeaponBuff,
@@ -175,16 +180,45 @@ export const LoneWolfOptions = HunterOptions.create({
 	petType: PetType.PetNone,
 });
 
+// The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each
+// slot, one at a time, on the Beast Mastery and Survival builds at 180 sec (the list is in
+// tools/rotopt/mksettings/spec_hunter.go). Both keep Elixir of the Mongoose (+27), Ground Scorpok
+// Assay, Juju Might, Grilled Squid, Elixir of Wisdom and the Engineering explosives (Goblin Land
+// Mine +7.6, Goblin Sapper +4.8). The ranged specs need Major Mana Potions (+31), Demonic Runes
+// (+28) and Mageblood, and take Flask of Distilled Wisdom (+1.1). Juju Power and the hit food do
+// nothing for them: Strength is melee attack power only, and the ranged set is at the 9% cap.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	flask: Flask.FlaskOfDistilledWisdom,
 	food: Food.FoodGrilledSquid,
+	intellectElixir: IntellectElixir.ElixirOfWisdom,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
 	petAgilityConsumable: 1,
 	petAttackPowerConsumable: 1,
 	petStrengthConsumable: 1,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
+});
+
+// Survival never runs short of mana, so the potions, runes, Mageblood and the flask do nothing for
+// it. It takes Juju Power (+6.7), Fire-Toasted Bun (+9, 1% hit for the dual wield swings) and
+// Dragonbreath Chili (+3.2) instead.
+export const SurvivalConsumes = Consumes.create({
+	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	attackPowerBuff: AttackPowerBuff.JujuMight,
+	dragonBreathChili: true,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	food: Food.FoodGrilledSquid,
+	hitConsumable: HitConsumable.FireToastedBun,
+	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	petAgilityConsumable: 1,
+	petAttackPowerConsumable: 1,
+	petStrengthConsumable: 1,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
@@ -247,11 +281,13 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
+// The hunter is an engineer for the Goblin Sapper and Land Mine (+12 together) and an alchemist.
+// The synthetic gear is fixed, so no gear needs a profession.
 export const OtherDefaults = {
 	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceOrc,
+	race: Race.RaceNightElf,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -293,11 +329,16 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 	raidBuffs: SurvivalRaidBuffs,
 	debuffs: DefaultDebuffs,
 	buffs: DefaultIndividualBuffs,
-	consumes: DefaultConsumes,
+	consumes: SurvivalConsumes,
 });
 
+// Races, 20000 iterations at 180 sec (forever-wiki/sim-status.md has 120 and 300 too): the Night
+// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 3 to 6
+// ahead of the Orc, the best Horde race. For Survival the Human is best (2% crit with its two
+// swords), 7 ahead of the Orc.
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
+// 958.5 / 953.1 / 946.1 at 120 / 180 / 300 sec (20000 iterations), the best of the four.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -305,10 +346,11 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMastery,
 	encounter: EncounterLevel60,
-	race: Race.RaceOrc,
+	race: Race.RaceNightElf,
 	professions,
 	options: DefaultOptions,
 });
+// 929.1 / 924.6 / 921.7 at 120 / 180 / 300 sec, 29 behind Beast Mastery at 180.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -316,10 +358,11 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanship,
 	encounter: EncounterLevel60,
-	race: Race.RaceOrc,
+	race: Race.RaceNightElf,
 	professions,
 	options: DefaultOptions,
 });
+// 881.4 / 877.3 / 874.7 at 120 / 180 / 300 sec, 47 behind Marksmanship with the cat.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -327,10 +370,12 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	talents: TalentsLoneWolf,
 	rotation: APLMarksmanship,
 	encounter: EncounterLevel60,
-	race: Race.RaceOrc,
+	race: Race.RaceNightElf,
 	professions,
 	options: LoneWolfOptions,
 });
+// 830.8 / 823.1 / 819.9 at 120 / 180 / 300 sec in the mksettings raid at 5 yards. In the UI the
+// fight starts at the distance in the settings and the rotation walks in first.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
 	tooltip: 'Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group.',
@@ -338,7 +383,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	talents: TalentsSurvival,
 	rotation: APLSurvival,
 	encounter: EncounterLevel60Melee,
-	race: Race.RaceOrc,
+	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,
 });
