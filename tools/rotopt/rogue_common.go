@@ -232,9 +232,14 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		autocastOtherCooldowns(auraIsActive(sliceAndDice), "Anything not listed above (Sapper, trinkets)."),
 	)
 
-	c.evisWhen = and(
-		ge(comboPoints(), num(5)),
-		or(auraIsActive(sliceAndDice), ge(energy(), num(k["evisEnergy"])), lt(remainingTime(), seconds(6))),
+	// A 5 point Eviscerate, or whatever points are left in the last seconds of the fight,
+	// which are lost otherwise (+4 DPS at 180 sec, rotation audit 2026-10-12).
+	c.evisWhen = or(
+		and(
+			ge(comboPoints(), num(5)),
+			or(auraIsActive(sliceAndDice), ge(energy(), num(k["evisEnergy"])), lt(remainingTime(), seconds(6))),
+		),
+		and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(3))),
 	)
 
 	if k["bfPrepull"] == 1 {
