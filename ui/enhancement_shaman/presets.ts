@@ -233,6 +233,20 @@ export const GearLevel30PvPHighHP = PresetUtils.makePresetGear('Level 30 PvP (Hi
 // that date are on the old set. A gear search over the new set swaps the neck, cloak and
 // both rings for real items (+23 at 180 sec), and keeps every other synthetic piece. The
 // preset stays all synthetic.
+//
+// On 2026-10-12 every class's synthetic set moved to one cross-class standard
+// (orchestration/standards.md): item level 66 for the head, shoulders, chest, hands, legs and
+// feet, 71 for the neck, back, wrist, waist and rings, 76 for the two-hander, hit to the 9% melee
+// cap against a level 63 boss (90 rating), and The Spiritcaller's Rage on only the hands and legs,
+// so its 2 piece bonus (1% attack and cast speed) is the only one live. The 4 and 5 piece bonuses
+// (36 attack power against Elementals, Stormstrike 0.5 sec sooner) would add more. The preset
+// wears the synthetic chest instead of Timbermaw Tunic. The enchants are the best outside the
+// raids: Crusader on the two-hander (+9.0 over Enchant Weapon - Strength, ahead of 2H Agility and
+// Revelation), Gloves - Superior Strength (+2.8), Cloak - Agility (+0.5), Enchant Necklace -
+// Strength (+2.1), Boots - Greater Agility (+2.2). Forceful Rugged Armor Kits lose to the chest,
+// leg and boot enchants. No trinkets: Forever removed Hand of Justice and Blackhand's Breadth
+// (they aren't in the 70338 client), and the sim doesn't model Forever's launch trinkets yet.
+// Trinkets excluded until they are.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -404,7 +418,9 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // mean of 120, 180 and 300 sec, and it swapped Convection 5 for Concussion 5 (+3.0, 795.7 at
 // 20000 iterations). The mana the sim gives now (Spirit on the synthetic set, Mana Spring Totem)
 // is enough without the cheaper shocks. A tie-break on mana that moves 2 points from Elemental
-// Weapons to Ancestral Knowledge is 0.8 behind. The knob search kept the Optimized rotation.
+// Weapons to Ancestral Knowledge is 0.8 behind. The knob search kept the Optimized rotation. On
+// the standard gear and consumes the search only made such tie-breaks on mana (795.9 against
+// 796.1), so the build stays: 811.0 / 799.6 / 778.6 at 120 / 180 / 300 sec.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '050533102-053030031005112251' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
@@ -419,7 +435,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // found nothing better. It is 894.0 at 300 sec, 3.4 behind Level 60.
 //
 // On 2026-10-12 it takes Concussion 5 in place of Convection 5 like Level 60 (+2.8). It is
-// 806.6 / 794.7 / 775.5 at 120 / 180 / 300 sec, 3.6 behind Level 60 at 180.
+// 807.8 / 796.0 / 774.8 at 120 / 180 / 300 sec on the standard gear, 3.6 behind Level 60 at 180.
 export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '050533102-051032031005112251' }), {
 	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
 	group: 'Level 60',
@@ -442,8 +458,10 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // Magma Totem rotation, as the mean of 120, 180 and 300 sec. It moved Elemental Devastation's
 // points to Call of Flame 3 and Convection to Concussion, and one point from Tidal Focus to
 // Mindfulness: 758.6 from 749.9. With Fire Nova ahead of the shocks and the 1 sec Earth Shock
-// hold in the Magma Totem rotation it is 773.5 / 764.5 / 748.9 at 120 / 180 / 300 sec, 4.2%
-// behind Level 60 at 180.
+// hold in the Magma Totem rotation it was 773.5 / 764.5 / 748.9 at 120 / 180 / 300 sec. On the
+// standard gear and consumes it is 766.6 / 759.2 / 746.9, 5.1% behind Level 60 at 180. The search
+// there only moved 2 points from Elemental Weapons to Ancestral Knowledge on a mana tie-break
+// (757.3 against 758.6), so the build stays.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
 	SavedTalents.create({ talentsString: '050031-053030031005112151-052030001' }),
@@ -461,8 +479,8 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // Maelstrom Weapon points, and every such build we tried was 25 to 35 behind.
 //
 // On 2026-10-12 the search on the current sim (Mana Tide Totem and Water Shield pinned) found
-// nothing better: 750.4 / 743.9 / 737.9 at 120 / 180 / 300 sec with the Mana Tide rotation,
-// 6.8% behind Level 60 at 180.
+// nothing better: 750.4 / 743.9 / 737.9 at 120 / 180 / 300 sec with the Mana Tide rotation. On
+// the standard gear and consumes it is 743.1 / 736.2 / 731.9, 7.9% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '02-055030031005112151-053051001001' }),
@@ -553,12 +571,17 @@ const PresetBuildOptionsLevel30 = {
 
 // The level 60 consumables. On 2026-10-08 we tried every consumable the sim applies in each
 // slot on the Level 60 build at 180 sec. Under Forever the shaman imbue stacks with an oil or a
-// stone, and Shadow Oil was best there (+19.6, Brilliant Wizard Oil and Elemental Sharpening
-// Stone were +10). Goblin Land Mine (+4.1), Elixir of Wisdom (+2.1) and Elixir of Shadow Power
-// (+1.2, for Shadow Oil) were also worth it. Grilled Squid (1% crit under Forever) is +3.4 over
-// Blessed Sunfruit, and even with Smoked Desert Dumpling, which is not out yet.
+// stone, and Shadow Oil was best there (+19.6, Elemental Sharpening Stone was +10). Goblin Land
+// Mine (+4.1) and Elixir of Shadow Power (+1.2, for Shadow Oil) were also worth it. Grilled Squid
+// (1% crit under Forever) is +3.4 over Blessed Sunfruit.
 //
-// All together with the starting totems the Level 60 build went from 788.4 to 819.6 at 180 sec.
+// On 2026-10-12 Forever's Phase 1 consumables came in (the shared consumables branch), tried the
+// same way as the mean of 120, 180 and 300 sec: Elixir of Nature Power +4.5 (Lightning Bolt and
+// the shocks), Greater Mageblood Elixir +1.6, Elixir of Greater Intellect and Greater Agility in
+// place of Wisdom and the Mongoose. A character takes one of the five 2% crit elixirs (the
+// standard): Elixir of the Sages is best (815.8 on the earlier gear, the Owl 815.6, the Grizzly
+// 814.0, the Mongoose 811.1). If Forever lets them stack, the Mongoose, the Grizzly and the Owl on
+// top would add about 36. Major Frenzy Potion, Mightfish Steak and Flank au Poivre lose.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfGreaterAgility,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -693,14 +716,17 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 //
 // On 2026-10-12, after the shaman audit fixes since 2026-10-08 (the sim had moved Level 60 to
 // 805.6 / 795.7 / 778.7), the talent and knob searches ran again (see the talent presets and
-// shaman_presets.sh). Level 60 is 809.7 / 798.2 / 779.2 at 120 / 180 / 300 sec, Level 60 + Water
-// Shield 773.5 / 764.5 / 748.9 and Level 60 + Mana Tide 750.4 / 743.9 / 737.9.
+// shaman_presets.sh). They ran once more on the standard gear and Phase 1 consumables and kept
+// every build. There (20000 iterations) Level 60 is 811.0 / 799.6 / 778.6 at 120 / 180 / 300
+// sec, Level 60 + Imp GW 807.8 / 796.0 / 774.8, Level 60 + Water Shield 766.6 / 759.2 / 746.9
+// and Level 60 + Mana Tide 743.1 / 736.2 / 731.9.
 //
-// The races on Level 60 (20000 iterations, standard error 0.4): Orc 809.7 / 798.2 / 779.2,
-// Windshaper Skyborne 796.9 / 785.5 / 767.6, Troll 796.8 / 784.9 / 766.3, Tauren 795.9 / 784.2 /
-// 766.0, Dwarf (the only Alliance shaman) 792.3 / 780.7 / 762.5. The Orc's lead is mostly Axe
+// The races on Level 60 (20000 iterations, standard error 0.4): Orc 811.0 / 799.6 / 778.6,
+// Windshaper Skyborne 798.7 / 787.1 / 767.8, Troll 798.4 / 785.8 / 765.6, Tauren 797.3 / 785.3 /
+// 765.9, Dwarf (the only Alliance shaman) 793.0 / 781.0 / 761.3. The Orc's lead is mostly Axe
 // Specialization: the synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon
-// it stands in for. A mace would give the Dwarf its 1% instead.
+// it stands in for. Without it the Orc is 795.1 / 783.7 / 763.3 and Windshaper Skyborne leads. A
+// mace would give the Dwarf its 1% instead.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',
