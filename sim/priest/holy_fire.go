@@ -87,7 +87,15 @@ func (priest *Priest) getHolyFireConfig(rank int) core.SpellConfig {
 			},
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// A waiting Inner Focus is only for the direct hit of the next spell.
+				innerFocus := priest.InnerFocusAura != nil && priest.InnerFocusAura.IsActive()
+				if innerFocus {
+					dot.Spell.BonusCritRating -= 25 * core.SpellCritRatingPerCritChance
+				}
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				if innerFocus {
+					dot.Spell.BonusCritRating += 25 * core.SpellCritRatingPerCritChance
+				}
 			},
 		},
 

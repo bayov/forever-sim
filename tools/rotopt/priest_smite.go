@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/priest"
 )
@@ -37,6 +39,11 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "powerInfusion", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "chastise", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
+		// Smite of this rank (0 never) once the mana would no longer last the fight at
+		// smiteManaRate mana a second. Ranks 3 and up keep the full coefficient under Forever,
+		// so rank 5 does about 88% of rank 8's damage at 800 spell power for half the mana.
+		{Name: "smiteDownrank", Default: 5, Min: 0, Max: 7, Step: 1},
+		{Name: "smiteManaRate", Default: 30, Min: 15, Max: 45, Step: 5},
 	}
 }
 
@@ -90,6 +97,16 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	if k["innerFocus"] == 2 {
 		items = append(items, cast(innerFocus, nil, "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."))
 	}
-	items = append(items, cast(smite, nil, "Smite fills."))
+	if rank := int(k["smiteDownrank"]); rank >= 3 && rank < priest.SmiteRanks {
+		lasts := ge(&proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{
+			Op:  proto.APLValueMath_OpDiv,
+			Lhs: &proto.APLValue{Value: &proto.APLValue_CurrentMana{CurrentMana: &proto.APLValueCurrentMana{}}},
+			Rhs: num(k["smiteManaRate"]),
+		}}}, remainingTime())
+		items = append(items, cast(smite, lasts, fmt.Sprintf("Smite while the mana lasts the fight at %.0f mana a second.", k["smiteManaRate"])))
+		items = append(items, cast(spellID(priest.SmiteSpellId[rank]), nil, fmt.Sprintf("Rank %d Smite once it would not: most of the damage for half the mana.", rank)))
+	} else {
+		items = append(items, cast(smite, nil, "Smite fills."))
+	}
 	return rotation(items...)
 }

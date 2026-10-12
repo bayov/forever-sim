@@ -39,14 +39,15 @@ var P1Talents = "005030211305--500321501201302051"
 var P1Consumes = core.ConsumesCombo{
 	Label: "Level60-Consumes",
 	Consumes: &proto.Consumes{
-		DefaultPotion:   proto.Potions_MajorManaPotion,
+		DefaultPotion:   proto.Potions_MajorSpellblastingPotion,
 		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 		Flask:           proto.Flask_FlaskOfSupremePower,
-		Food:            proto.Food_FoodNightfinSoup,
-		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+		Food:            proto.Food_FoodLobsterStew,
+		IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
 		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+		SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},

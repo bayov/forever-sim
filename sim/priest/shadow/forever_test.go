@@ -94,3 +94,32 @@ func TestDevouringPlagueCooldown(t *testing.T) {
 		t.Errorf("Devouring Plague cooldown %s, want %s", got, priest.DevouringPlagueCooldown)
 	}
 }
+
+// TestInnerFocusCrit checks that a waiting Inner Focus adds 25% crit to the direct spells
+// it can be spent on but not to Shadow Word: Death or to spells that only tick (Shadow Word:
+// Pain, Devouring Plague, Mind Flay), whose ticks roll crit live under Forever.
+func TestInnerFocusCrit(t *testing.T) {
+	sim, sp := newShadowPriestSim(t, "005030211305--500321501201302051")
+	checks := []struct {
+		name  string
+		spell *core.Spell
+		bonus float64
+	}{
+		{"Mind Blast", topRank(t, "Mind Blast", sp.MindBlast), 25},
+		{"Shadow Word: Death", topRank(t, "Shadow Word: Death", sp.ShadowWordDeath), 0},
+		{"Shadow Word: Pain", topRank(t, "Shadow Word: Pain", sp.ShadowWordPain), 0},
+		{"Devouring Plague", topRank(t, "Devouring Plague", sp.DevouringPlague), 0},
+		{"Mind Flay", topRank(t, "Mind Flay", sp.MindFlay), 0},
+	}
+	before := make([]float64, len(checks))
+	for i, c := range checks {
+		before[i] = c.spell.BonusCritRating
+	}
+	sp.InnerFocusAura.Activate(sim)
+	for i, c := range checks {
+		want := before[i] + c.bonus*core.SpellCritRatingPerCritChance
+		if got := c.spell.BonusCritRating; math.Abs(got-want) > 1e-9 {
+			t.Errorf("%s has %.2f bonus crit rating under Inner Focus, want %.2f", c.name, got, want)
+		}
+	}
+}

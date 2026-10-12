@@ -266,8 +266,12 @@ func (priest *Priest) registerInnerFocus() {
 
 	actionID := core.ActionID{SpellID: 14751}
 
+	// Ticks roll crit live under Forever, so the bonus stays off the periodic spells and
+	// channels, or their ticks would crit more while Inner Focus waits to be used. Holy Fire's
+	// own ticks take the bonus back off (holy_fire.go).
 	critSpell := func(spell *core.Spell) bool {
-		return spell.Flags.Matches(SpellFlagPriest) && spell.SpellCode != SpellCode_PriestShadowWordDeath
+		return spell.Flags.Matches(SpellFlagPriest) && spell.SpellCode != SpellCode_PriestShadowWordDeath &&
+			!spell.Flags.Matches(core.SpellFlagPureDot|core.SpellFlagChanneled)
 	}
 
 	priest.InnerFocusAura = priest.RegisterAura(core.Aura{

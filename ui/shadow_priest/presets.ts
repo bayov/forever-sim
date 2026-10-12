@@ -20,6 +20,7 @@ import {
 	SapperExplosive,
 	ShadowPowerBuff,
 	SpellPowerBuff,
+	SpiritElixir,
 	Stat,
 	TristateEffect,
 	WeaponImbue,
@@ -222,14 +223,15 @@ export const DefaultOptions = Options.create({
 //   The potion and the rune are kept for longer fights.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	defaultPotion: Potions.MajorManaPotion,
+	defaultPotion: Potions.MajorSpellblastingPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodNightfinSoup,
-	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	food: Food.FoodLobsterStew,
+	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.WizardOil,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
@@ -383,8 +385,9 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Ho
 export const ConsumesSmite = Consumes.create({
 	...DefaultConsumes,
 	alcohol: Alcohol.AlcoholKreegsStoutBeatdown,
+	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 });
 
 export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 Smite', EncounterLevel60.encounter, {
