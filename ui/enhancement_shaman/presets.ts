@@ -420,7 +420,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // is enough without the cheaper shocks. A tie-break on mana that moves 2 points from Elemental
 // Weapons to Ancestral Knowledge is 0.8 behind. The knob search kept the Optimized rotation. On
 // the standard gear and consumes the search only made such tie-breaks on mana (795.9 against
-// 796.1), so the build stays: 811.0 / 799.6 / 778.6 at 120 / 180 / 300 sec.
+// 796.1), so the build stays: 803.2 / 791.9 / 771.1 at 120 / 180 / 300 sec.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '050533102-053030031005112251' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
@@ -435,7 +435,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // found nothing better. It is 894.0 at 300 sec, 3.4 behind Level 60.
 //
 // On 2026-10-12 it takes Concussion 5 in place of Convection 5 like Level 60 (+2.8). It is
-// 807.8 / 796.0 / 774.8 at 120 / 180 / 300 sec on the standard gear, 3.6 behind Level 60 at 180.
+// 800.0 / 788.3 / 767.3 at 120 / 180 / 300 sec on the standard gear, 3.6 behind Level 60 at 180.
 export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '050533102-051032031005112251' }), {
 	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
 	group: 'Level 60',
@@ -459,7 +459,7 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // points to Call of Flame 3 and Convection to Concussion, and one point from Tidal Focus to
 // Mindfulness: 758.6 from 749.9. With Fire Nova ahead of the shocks and the 1 sec Earth Shock
 // hold in the Magma Totem rotation it was 773.5 / 764.5 / 748.9 at 120 / 180 / 300 sec. On the
-// standard gear and consumes it is 766.6 / 759.2 / 746.9, 5.1% behind Level 60 at 180. The search
+// standard gear and consumes it is 758.3 / 750.8 / 738.9, 5.2% behind Level 60 at 180. The search
 // there only moved 2 points from Elemental Weapons to Ancestral Knowledge on a mana tie-break
 // (757.3 against 758.6), so the build stays.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
@@ -480,7 +480,7 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 //
 // On 2026-10-12 the search on the current sim (Mana Tide Totem and Water Shield pinned) found
 // nothing better: 750.4 / 743.9 / 737.9 at 120 / 180 / 300 sec with the Mana Tide rotation. On
-// the standard gear and consumes it is 743.1 / 736.2 / 731.9, 7.9% behind Level 60 at 180.
+// the standard gear and consumes it is 735.5 / 728.8 / 724.6, 8.0% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '02-055030031005112151-053051001001' }),
@@ -717,15 +717,20 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // On 2026-10-12, after the shaman audit fixes since 2026-10-08 (the sim had moved Level 60 to
 // 805.6 / 795.7 / 778.7), the talent and knob searches ran again (see the talent presets and
 // shaman_presets.sh). They ran once more on the standard gear and Phase 1 consumables and kept
-// every build. There (20000 iterations) Level 60 is 811.0 / 799.6 / 778.6 at 120 / 180 / 300
-// sec, Level 60 + Imp GW 807.8 / 796.0 / 774.8, Level 60 + Water Shield 766.6 / 759.2 / 746.9
-// and Level 60 + Mana Tide 743.1 / 736.2 / 731.9.
+// every build. There (20000 iterations) Level 60 is 803.2 / 791.9 / 771.1 at 120 / 180 / 300
+// sec, Level 60 + Imp GW 800.0 / 788.3 / 767.3, Level 60 + Water Shield 758.3 / 750.8 / 738.9
+// and Level 60 + Mana Tide 735.5 / 728.8 / 724.6.
 //
-// The races on Level 60 (20000 iterations, standard error 0.4): Orc 811.0 / 799.6 / 778.6,
-// Windshaper Skyborne 798.7 / 787.1 / 767.8, Troll 798.1 / 785.5 / 765.6, Tauren 797.3 / 785.3 /
-// 765.9, Dwarf (the only Alliance shaman) 793.0 / 781.0 / 761.3. The Orc's lead is mostly Axe
+// Those are after the shared change that leaves out the Ahn'Qiraj book ranks under Forever:
+// Strength of Earth Totem IV (42 Strength, was 53) and the raid's Battle Shout VI. It costs every
+// build about 7.7 DPS (Level 60 was 811.0 / 799.6 / 778.6). The talent and knob searches ran again
+// on it and kept every build, with only mana tie-breaks inside the noise.
+//
+// The races on Level 60 (20000 iterations, standard error 0.4): Orc 803.2 / 791.9 / 771.1,
+// Windshaper Skyborne 791.4 / 779.9 / 760.8, Troll 790.8 / 778.3 / 758.6, Tauren 790.0 / 778.1 /
+// 759.0, Dwarf (the only Alliance shaman) 785.8 / 773.8 / 754.3. The Orc's lead is mostly Axe
 // Specialization: the synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon
-// it stands in for. Without it the Orc is 795.1 / 783.7 / 763.3 and Windshaper Skyborne leads. A
+// it stands in for. Without it the Orc is 787.6 / 776.2 / 756.0 and Windshaper Skyborne leads. A
 // mace would give the Dwarf its 1% instead.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',

@@ -104,16 +104,16 @@ The order barely moves with the fight length (4000 iterations, standard error un
 | Human | 974 | 936 | 935 | 931 | 930 |
 | Dwarf | 972 | 934 | 933 | 929 | 928 |
 
-| Enhancement (2026-10-12, synthetic Phase 1 set on the standard, 3 min raid, 20000 iterations) | 2 min | 3 min | 5 min |
+| Enhancement (2026-10-12, synthetic Phase 1 set on the standard, no Ahn'Qiraj ranks, 3 min raid, 20000 iterations) | 2 min | 3 min | 5 min |
 |---|---|---|---|
-| Orc | 811.0 | 799.6 | 778.6 |
-| Orc without Axe Specialization | 795.1 | 783.7 | 763.3 |
-| Windshaper Skyborne | 798.7 | 787.1 | 767.8 |
-| Troll | 798.1 | 785.5 | 765.6 |
-| Tauren | 797.3 | 785.3 | 765.9 |
-| Dwarf | 793.0 | 781.0 | 761.3 |
+| Orc | 803.2 | 791.9 | 771.1 |
+| Orc without Axe Specialization | 787.6 | 776.2 | 756.0 |
+| Windshaper Skyborne | 791.4 | 779.9 | 760.8 |
+| Troll | 790.8 | 778.3 | 758.6 |
+| Tauren | 790.0 | 778.1 | 759.0 |
+| Dwarf | 785.8 | 773.8 | 754.3 |
 
-The synthetic two-hander is an axe (Spinal Reaper's damage and speed), so the Orc's 12.5 DPS lead is Axe Specialization's 1% crit: without it Windshaper Skyborne leads. Dwarf is the only Alliance shaman.
+The synthetic two-hander is an axe (Spinal Reaper's damage and speed), so the Orc's 12.0 DPS lead is Axe Specialization's 1% crit: without it Windshaper Skyborne leads. Dwarf is the only Alliance shaman.
 
 ## Level 60 presets
 
@@ -171,8 +171,9 @@ Both specs follow the cross-class standard (orchestration/standards.md on the co
 - The sim moved since the 2026-10-08 presets (the audit fixes): Level 60 measured 805.6 / 795.7 / 778.7 against the 826.5 / 819.6 / 807.7 in the presets. The talent search (Spirit Weapons pinned, the mean of the three lengths) then swapped Convection 5 for Concussion 5: `050533102-053030031005112251`, +3.0. It ran again on the standard gear and only made tie-breaks on mana. The knob search keeps the Optimized rotation once Windfury Totem stays up for the group (it prefers Grace of Air for the shaman alone, as before).
 - Level 60 + Water Shield (sub Restoration): `050031-053030031005112151-052030001`, from a search with Water Shield pinned, +8.7 over the old build. Its Magma Totem rotation casts Fire Nova ahead of the shocks (+2.7), holds Earth Shock while Flame Shock has 1 sec or less left (+1.0), and puts Water Shield up before the pull and below 50% mana (inert at the preset's 0 raid hits, up to +4.1 at 6 a minute). Level 60 + Mana Tide: the search found nothing better. Level 60 + Imp GW takes Concussion like Level 60.
 - Consumes: Forever's Phase 1 set with Elixir of the Sages as the one crit elixir (the Owl, Grizzly and Mongoose are 0.2 to 4.7 behind), Elixir of Greater Agility, Juju Power and Might, Elixir of Greater Intellect, Elixir of Nature Power, Greater Mageblood Elixir, Shadow Oil, Grilled Squid. Stacking the Mongoose, Grizzly and Owl on top would add about 36 if Forever allows it.
-- DPS: Level 60 811.0 / 799.6 / 778.6, Imp GW 807.8 / 796.0 / 774.8, Water Shield 766.6 / 759.2 / 746.9 (5.1% behind at 3 min), Mana Tide 743.1 / 736.2 / 731.9 (7.9% behind).
-- Races: the table under Comparing races. Orc is the best race and the best Horde race, Dwarf the only Alliance one. With weapon-type racials off (no Axe Specialization), the Orc is 795.1 / 783.7 / 763.3 and Windshaper Skyborne leads at 798.7 / 787.1 / 767.8.
+- Forever leaves out the Ahn'Qiraj book ranks of the raid totems (shared head cfb2dac): the shaman puts down Strength of Earth Totem IV (42 Strength, was 53) and the raid's Battle Shout is rank VI. That costs every Enhancement build about 7.7 DPS (Level 60 was 811.0 / 799.6 / 778.6). The searches ran again on it and kept every build and rotation (only mana tie-breaks inside the noise).
+- DPS: Level 60 803.2 / 791.9 / 771.1, Imp GW 800.0 / 788.3 / 767.3, Water Shield 758.3 / 750.8 / 738.9 (5.2% behind at 3 min), Mana Tide 735.5 / 728.8 / 724.6 (8.0% behind).
+- Races: the table under Comparing races. Orc is the best race and the best Horde race, Dwarf the only Alliance one. With weapon-type racials off (no Axe Specialization), the Orc is 787.6 / 776.2 / 756.0 and Windshaper Skyborne leads at 791.4 / 779.9 / 760.8.
 
 ### Mage
 
