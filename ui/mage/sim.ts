@@ -134,7 +134,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Alliance]: Race.RaceGnome,
 				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
@@ -159,7 +159,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Alliance]: Race.RaceGnome,
 				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
@@ -184,8 +184,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceSkyborneWindshaper,
+				[Faction.Alliance]: Race.RaceSkyborneHighOrder,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

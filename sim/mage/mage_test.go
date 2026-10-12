@@ -17,10 +17,10 @@ func TestP1Mage(t *testing.T) {
 		{
 			Class: proto.Class_ClassMage,
 			Phase: 1,
-			Race:  proto.Race_RaceHuman,
+			Race:  proto.Race_RaceUndead,
 			// The Level 60 Frostfire preset, under Forever rules.
 			Ruleset:    proto.Ruleset_RulesetForever,
-			OtherRaces: []proto.Race{proto.Race_RaceUndead},
+			OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 			Talents:     P1Talents,
 			GearSet:     core.GetGearSet("../../ui/mage/gear_sets", "level60_phase1_synthetic"),
