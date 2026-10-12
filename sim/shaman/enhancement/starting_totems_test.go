@@ -27,10 +27,10 @@ func TestOrcShamanStartingTotems(t *testing.T) {
 		Water:                  proto.WaterTotem_ManaSpringTotem,
 	}})
 	sim, enh := newShamanSim(player, &proto.Debuffs{}, 30)
-	soe := enh.GetAuraByID(core.ActionID{SpellID: shaman.StrengthOfEarthTotemSpellId[5]})
+	soe := enh.GetAuraByID(core.ActionID{SpellID: shaman.StrengthOfEarthTotemSpellId[4]})
 	searing := enh.GetSpell(core.ActionID{SpellID: shaman.SearingTotemAttackSpellId[6]})
 	if soe == nil || searing == nil {
-		t.Fatalf("missing Strength of Earth rank 5 or Searing Totem rank 6")
+		t.Fatalf("missing Strength of Earth rank 4 or Searing Totem rank 6")
 	}
 	casts := func(spell *core.Spell) int32 { return spell.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts }
 
