@@ -333,7 +333,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// Every race a priest can be under Forever, on the Level 60 build with the same seed (40000
+// Every race a priest can be under Forever, on the Level 60 build with the same seed (20000
 // iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-12):
 //   Human     843.8 / 841.7 / 843.9  (best overall and Alliance)
 //   Undead    843.8 / 841.6 / 843.7  (best Horde)
