@@ -355,7 +355,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Gnome, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 1100.9 / 1087.2 / 1060.6, Destruction 992.3 / 984.9 / 968.7, Affliction 983.5 / 976.2 / 959.6,
+// 1102.9 / 1088.5 / 1061.4, Destruction 992.3 / 984.9 / 968.7, Affliction 983.5 / 976.2 / 959.6,
 // Destruction fire 981.3 / 976.2 / 962.2. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt
 // is rank IX, Immolate VII and Corruption VI. The demons take no player buffs and scale from the
 // warlock's stats with Season of Discovery's numbers as a placeholder (notes.md). The demon is the
