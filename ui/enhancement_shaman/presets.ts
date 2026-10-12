@@ -722,7 +722,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // and Level 60 + Mana Tide 743.1 / 736.2 / 731.9.
 //
 // The races on Level 60 (20000 iterations, standard error 0.4): Orc 811.0 / 799.6 / 778.6,
-// Windshaper Skyborne 798.7 / 787.1 / 767.8, Troll 798.4 / 785.8 / 765.6, Tauren 797.3 / 785.3 /
+// Windshaper Skyborne 798.7 / 787.1 / 767.8, Troll 798.1 / 785.5 / 765.6, Tauren 797.3 / 785.3 /
 // 765.9, Dwarf (the only Alliance shaman) 793.0 / 781.0 / 761.3. The Orc's lead is mostly Axe
 // Specialization: the synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon
 // it stands in for. Without it the Orc is 795.1 / 783.7 / 763.3 and Windshaper Skyborne leads. A

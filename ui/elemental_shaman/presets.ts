@@ -311,7 +311,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // 690.3 / 680.4 at 120 / 180 / 300 sec and Level 60 + Mana Tide 686.4 / 682.0 / 673.7.
 //
 // The races (same settings and seed): Orc 693.3 / 690.3 / 680.4, Windshaper Skyborne 693.1 /
-// 689.5 / 679.8, Troll 691.7 / 687.2 / 677.1, Dwarf (the only Alliance shaman) 687.3 / 683.7 /
+// 689.5 / 679.8, Troll 691.2 / 687.1 / 677.6, Dwarf (the only Alliance shaman) 687.3 / 683.7 /
 // 674.4, Tauren 687.2 / 683.6 / 674.3. Orc is the best race and the best Horde race. The staff
 // is the Era Phase 1 weapon type and no race has a staff racial; Tauren's 1% hit is wasted at
 // the hit cap.

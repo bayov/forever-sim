@@ -15,7 +15,7 @@ What this repo's sim models of Forever as of 2026-09-20, and what it assumes whe
 | Bonus healing | Nothing extra. Forever's healing gear prints its damage part on the tooltip ("healing by up to 21 and damage by up to 7"), and the item data already has it as spell power plus healing. | Item tooltips |
 | Weapon skill | Still Classic. Forever thins it out on gear, but the Forever items seen so far (low level quest rewards) carry none. | Deep Dive panel, no numbers |
 | Avoidance reduction stat | Not modelled. No item carries it. | Deep Dive panel |
-| Periodic crits | Dot ticks roll against the caster's crit chance by school. | ElliotWood/Forever's reading, not confirmed by Blizzard |
+| Periodic crits | Dot ticks roll against the caster's crit chance by school. | Verified in beta combat logs: Flame Shock ticks crit 15 of 122 |
 | Stormstrike | Marks the target for the shaman's next Lightning Bolt, Chain Lightning or Earth Shock (+20%, 12 sec). One charge, the shaman's own, so the external Stormstrike debuff does nothing under Forever. 125 Mana, 8 sec cooldown. | Beta client tooltip |
 | Personal debuffs | Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill are no longer raid debuffs in the test suites and presets. | Talent transcriptions |
 | Windfury | The sim already models Windfury Totem as a main hand only proc that cannot be combined with a shaman's own main hand Windfury Weapon, which is what Forever says. | Spellbook transcription |
@@ -109,7 +109,7 @@ The order barely moves with the fight length (4000 iterations, standard error un
 | Orc | 811.0 | 799.6 | 778.6 |
 | Orc without Axe Specialization | 795.1 | 783.7 | 763.3 |
 | Windshaper Skyborne | 798.7 | 787.1 | 767.8 |
-| Troll | 798.4 | 785.8 | 765.6 |
+| Troll | 798.1 | 785.5 | 765.6 |
 | Tauren | 797.3 | 785.3 | 765.9 |
 | Dwarf | 793.0 | 781.0 | 761.3 |
 
@@ -159,7 +159,7 @@ Both specs follow the cross-class standard (orchestration/standards.md on the co
 |---|---|---|---|
 | Orc (Horde) | 693.3 | 690.3 | 680.4 |
 | Windshaper Skyborne (Horde) | 693.1 | 689.5 | 679.8 |
-| Troll (Horde) | 691.7 | 687.2 | 677.1 |
+| Troll (Horde) | 691.2 | 687.1 | 677.6 |
 | Dwarf (Alliance) | 687.3 | 683.7 | 674.4 |
 | Tauren (Horde) | 687.2 | 683.6 | 674.3 |
 

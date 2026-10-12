@@ -633,10 +633,15 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 	if consumes.AgilityElixir != proto.AgilityElixir_AgilityElixirUnknown {
 		switch consumes.AgilityElixir {
 		case proto.AgilityElixir_ElixirOfTheMongoose:
-			character.AddStats(stats.Stats{
-				stats.Agility:   25,
-				stats.MeleeCrit: 2 * CritRatingPerCritChance,
-			})
+			if character.Env.IsForever() {
+				// Forever's Mongoose (17538) is all crit (aura 290), like the other +2% elixirs.
+				character.AddStats(foreverElixirCrit.Add(stats.Stats{stats.Agility: 25}))
+			} else {
+				character.AddStats(stats.Stats{
+					stats.Agility:   25,
+					stats.MeleeCrit: 2 * CritRatingPerCritChance,
+				})
+			}
 		case proto.AgilityElixir_ElixirOfGreaterAgility:
 			character.AddStats(stats.Stats{
 				stats.Agility: 25,
