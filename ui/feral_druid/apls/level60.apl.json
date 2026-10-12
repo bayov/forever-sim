@@ -1,9 +1,13 @@
 {
     "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":9913}}},"doAtValue":{"const":{"val":"-1s"}}}
+    ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions and runes."},
         {"action":{"castSpell":{"spellId":{"spellId":5217}}},"notes":"Tiger's Fury on cooldown, it is free and off the global cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":417141}}},"notes":"Berserk on cooldown. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":9867}}},"notes":"Ravage from Prowl, the opener."},
         {"action":{"castSpell":{"spellId":{"spellId":1322605}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpLe","rhs":{"const":{"val":"50"}}}},{"not":{"val":{"and":{"vals":[{"cmp":{"lhs":{"currentComboPoints":{}},"op":"OpEq","rhs":{"const":{"val":"5"}}}},{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":9896}}},"op":"OpGe","rhs":{"const":{"val":"6s"}}}}]}}}}]}}},"notes":"Shifting Power once the Energy is low, but not while a Ferocious Bite is due (its Energy goes into Shreds). Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":22829}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentComboPoints":{}},"op":"OpGe","rhs":{"const":{"val":"1"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"const":{"val":"2s"}}}}]}}},"notes":"Ferocious Bite at any combo points in the last seconds of the fight."},
         {"action":{"castSpell":{"spellId":{"spellId":9896}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentComboPoints":{}},"op":"OpGe","rhs":{"const":{"val":"4"}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":9896}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Rip whenever it is down."},

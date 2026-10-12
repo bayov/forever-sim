@@ -26,6 +26,7 @@ const (
 	SpellCode_DruidInsectSwarm
 	SpellCode_DruidMoonfire
 	SpellCode_DruidRake
+	SpellCode_DruidRavage
 	SpellCode_DruidRip
 	SpellCode_DruidShiftingPower
 	SpellCode_DruidShred
@@ -69,7 +70,9 @@ type Druid struct {
 	MaulQueueSpell       *DruidSpell
 	Moonfire             []*DruidSpell
 	Rebirth              *DruidSpell
+	Prowl                *DruidSpell
 	Rake                 *DruidSpell
+	Ravage               *DruidSpell
 	Rip                  *DruidSpell
 	ShiftingPower        *DruidSpell
 	Shred                *DruidSpell
@@ -99,6 +102,7 @@ type Druid struct {
 	MoonkinFormAura          *core.Aura
 	NaturesGraceProcAura     *core.Aura
 	PredatoryInstinctsAura   *core.Aura
+	ProwlAura                *core.Aura
 	TigersFuryAura           *core.Aura
 
 	BleedCategories core.ExclusiveCategoryArray
@@ -192,6 +196,8 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerRipSpell()
 	druid.registerShredSpell()
 	druid.registerClawSpell()
+	druid.registerProwlSpell()
+	druid.registerRavageSpell()
 	// druid.registerSwipeBearSpell()
 	druid.registerTigersFurySpell()
 	druid.registerShiftingPowerSpell()
