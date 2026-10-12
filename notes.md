@@ -32,13 +32,16 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Rogue
 
-* Opportunity x Aggression on Backstab: add or multiply (sim: multiply, 1.12 rules say add).
-* Venom x Vile Poisons: add or multiply.
+* Talent damage bonuses on one spell: add or multiply? Opportunity and Aggression on Backstab, Improved Eviscerate and Aggression on Eviscerate, Venom and Vile Poisons on the poisons. The client has them all as the same percent modifier (aura 108), which 1.12 adds. The sim multiplies them since 2026-10-12, like Call of Flame and Improved Fire Nova on the shaman's beta test (shaman_audit.md 5.6). A Backstab with Opportunity 2 and Aggression 3 against one without either settles it for the rogue (1.166 if they multiply, 1.16 if they add), but Aggression is a Combat row 6 talent, out of reach at 30.
 * Murder crit bonus double dip (deliberate in `target.go`).
 * Blade Flurry: does the copied hit take the damage modifiers a second time?
-* Cutthroat, Puncturing Wounds and Quietus: only rank 1 was seen, the sim scales them linearly.
-* Mutilate dagger requirement (the tooltip doesn't repeat it, the sim assumes it still applies).
-* Preparation resets only Cold Blood, Shadowstep and Vanish.
+* Beta: Mutilate with an off hand that is not a dagger. The client asks for a dagger on the cast and the main hand strike only (SpellEquippedItems, 1.60.1.70338), so the sim lets any off hand weapon strike. Mutilate is a 20 point talent, so a level 30 rogue can try it with a sword in the off hand.
+* Beta: Preparation resets every other rogue cooldown in the sim (Adrenaline Rush, Blade Flurry, Cold Blood, Premeditation, Ghostly Strike, Vanish, Evasion), as the tooltip says and Classic did. The client spell is a dummy effect, so the list is the server's. Preparation is a 20 point Subtlety talent: a level 30 rogue can use Evasion, Sprint, Ghostly Strike and Premeditation and press it.
+* Beta: Premeditation out of Stealth. The client spell no longer has the stealth only attribute, and foreverchanges reads the tooltip the same way, so the sim lets it go out in combat. A 15 point Subtlety talent, so a level 30 rogue can try it.
+* Beta: Backstab's flat bonus. Forever's tooltip says "150% weapon damage plus 150" at rank 9, Era's "plus 225", but the client effect data is the same as Era's (150 added to the weapon damage before the 150%). The sim keeps 225. At level 28 the tooltip shows "plus 46" (Era 69): a few Backstabs with a known dagger and attack power settle it.
+* Deadly Poison takes a new snapshot of the whole stack on every application (since 2026-10-12), so Venom or Blood Fury coming up later reaches a poison already at 5 stacks. Before, only the first stack took one. The modern client recomputes an aura's amount when it is applied again, but the server could keep the old one.
+* The Ahn'Qiraj ranks (Backstab and Eviscerate rank 9, Deadly Poison V) are in the Phase 1 presets because `core.IncludeAQ` is on for every class. Forever has not said when they come.
+* Grimstitch Armor's bonuses (1% hit, 36 attack power against Humanoids, Eviscerate 5 Energy cheaper) sit on the synthetic Phase 1 sets, the client pieces have no stats yet.
 * Precision scope.
 
 ## Paladin

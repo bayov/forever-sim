@@ -23,6 +23,24 @@ The beta client's rogue tree, read through [hyjal.cc](https://hyjal.cc/updates/1
 - Prerequisites the client confirms: Riposte needs Deflection, Dual Wield Specialization needs Precision, Weapon Expertise needs Blade Flurry, Quietus needs Dirty Deeds, Aggression needs nothing.
 - Level 60 costs and cooldowns: Blade Flurry 25 Energy, 2 min. Adrenaline Rush 5 min. Cold Blood 3 min. Ghostly Strike 40 Energy, 20 sec, 125% (180% with a dagger). Hemorrhage 35 Energy, 100% (145% with a dagger), 15% more Rupture damage for 15 sec. Riposte 10 Energy, 6 sec (the disarm duration is "?" in the client data). Premeditation 2 min, Preparation 10 min.
 
+## Beta client 1.60.1.70338 (2026-10-12)
+
+Checked against the client tables on wago.tools (build 1.60.1.70338, the newest on 2026-10-12: Talent, SpellEffect, SpellMisc, SpellCooldowns, SpellPower, SpellEquippedItems, SpellItemEnchantment, ItemSet, ItemSetSpell) and foreverchanges.pro (talents, spellbook and patch notes up to 70338). The tree has not moved since 69876, only Setup's tooltip changed wording ("after Dodging one of their attacks or fully resisting one of their spells"). The patch notes list two rogue changes since then, both from the 2026-10-08 build: a missed Expose Armor no longer costs the combo points, and Setup only adds points to the enemy whose attack was dodged.
+
+What the client data says where the tooltips are vague, and what the sim does with it:
+
+- Hemorrhage (16511) deals normalized weapon damage (effect 121, like Sinister Strike and Mutilate), 100% or 145% with a dagger, 35 Energy, and the target takes 15% more Rupture damage from the rogue for 15 sec.
+- Premeditation (14183) no longer needs Stealth: the client spell drops the stealth only attribute that Ambush and Garrote keep. 2 combo points that last 20 sec, 2 min cooldown, off the GCD.
+- Preparation (14185) is a dummy effect, so which cooldowns it resets is the server's. The tooltip says "your other Rogue abilities", which in Classic was every rogue cooldown (Adrenaline Rush, Blade Flurry, Cold Blood, Premeditation, Ghostly Strike, Vanish, Evasion, Sprint). 10 min cooldown.
+- Mutilate (1310707) asks for a dagger on the cast and its main hand strike, but not on the off hand strike (SpellEquippedItems), so the off hand can be any weapon. Each strike adds 23 (talent rank), 33, 48 and 67 (trainer ranks at 40, 50 and 60) to the weapon damage before the 75%, so 17.25, 24.75, 36 and 50.25. 60 Energy.
+- Backstab rank 9 (25300) has the same effect data as Era (150% weapon damage plus 150 added before the 150%, so 225), but Forever's tooltip says "plus 150" where Era's says "plus 225". The sim keeps 225.
+- Venom (1310703) is 25 Energy and a combo point, raises poison damage 30% (direct and periodic) and the chance to apply poisons by 10 points.
+- Talent damage bonuses are percent modifiers on the spell (aura 108): Improved Eviscerate, Aggression (Sinister Strike, Backstab, Eviscerate), Opportunity (Backstab, Ambush, Mutilate, and Garrote's ticks), Vile Poisons, Serrated Blades' Rupture part. The sim multiplies them, like Call of Flame and Improved Fire Nova on the shaman beta test.
+- Seal Fate and Ruthlessness have a 500 ms internal cooldown, Hack and Slash's extra attack 200 ms. Thousand Cuts procs off Rupture ticks with a 1.9 sec cooldown and stacks a 3 Energy discount on Backstab and Hemorrhage 5 times for 10 sec.
+- Poisons: Instant Poison VI 76 to 100 at 20%, Deadly Poison V 23 a tick (92 over 12 sec, 5 stacks) at 30%, Wound Poison 30%. Deadly Poison V and Backstab and Eviscerate rank 9 are the Ahn'Qiraj ranks in Era, the sim includes them (`core.IncludeAQ`).
+
+Grimstitch Armor (item set 2099) is Forever's crafted level 60 rogue set (Leatherworking, Grimstitch Mask, Spaulders, Chestpiece, Gloves, Pants and Boots, item level 65, named "Tier 1" in the client): 2 pieces 1% hit, 3 Kidney Shot 3 sec shorter, 4 +36 attack power against Humanoids, 5 Eviscerate (and Envenom) 5 Energy cheaper. The pieces carry no stats yet.
+
 ## Spellbook changes (trainer abilities)
 
 0 of 33 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
