@@ -63,9 +63,9 @@ func spellIn(spell *core.Spell, codes ...int32) bool {
 	return spell.Flags.Matches(SpellFlagPriest) && slices.Contains(codes, spell.SpellCode)
 }
 
-// Twin Disciplines: 1% a rank more damage on the instant priest spells in its class mask.
-// Of the damage spells the sim has that is Shadow Word: Pain and Devouring Plague (the
-// periodic part) and Chastise.
+// Twin Disciplines: 1% a rank more damage on the instant priest spells in its class mask
+// (client 1225132). Of the damage spells the sim has that is Shadow Word: Pain (the periodic
+// mask) and Chastise. Devouring Plague's class bit (25) is in neither mask.
 func (priest *Priest) applyTwinDisciplines() {
 	if priest.Talents.TwinDisciplines == 0 {
 		return
@@ -73,7 +73,7 @@ func (priest *Priest) applyTwinDisciplines() {
 
 	bonus := 0.01 * float64(priest.Talents.TwinDisciplines)
 	priest.OnSpellRegistered(func(spell *core.Spell) {
-		if spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestDevouringPlague, SpellCode_PriestChastise) {
+		if spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestChastise) {
 			spell.DamageMultiplierAdditive += bonus
 		}
 	})
@@ -269,6 +269,11 @@ func (priest *Priest) registerInnerFocus() {
 	// Ticks roll crit live under Forever, so the bonus stays off the periodic spells and
 	// channels, or their ticks would crit more while Inner Focus waits to be used. Holy Fire's
 	// own ticks take the bonus back off (holy_fire.go).
+	// The free cast's class mask (client 14751, effect 0) leaves out Devouring Plague, so it
+	// neither costs nothing under Inner Focus nor uses it up.
+	freeSpell := func(spell *core.Spell) bool {
+		return spell.Flags.Matches(SpellFlagPriest) && spell.Cost != nil && spell.SpellCode != SpellCode_PriestDevouringPlague
+	}
 	critSpell := func(spell *core.Spell) bool {
 		return spell.Flags.Matches(SpellFlagPriest) && spell.SpellCode != SpellCode_PriestShadowWordDeath &&
 			!spell.Flags.Matches(core.SpellFlagPureDot|core.SpellFlagChanneled)
@@ -280,7 +285,7 @@ func (priest *Priest) registerInnerFocus() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range priest.Spellbook {
-				if spell.Flags.Matches(SpellFlagPriest) && spell.Cost != nil {
+				if freeSpell(spell) {
 					spell.Cost.Multiplier -= 100
 				}
 				if critSpell(spell) {
@@ -290,7 +295,7 @@ func (priest *Priest) registerInnerFocus() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range priest.Spellbook {
-				if spell.Flags.Matches(SpellFlagPriest) && spell.Cost != nil {
+				if freeSpell(spell) {
 					spell.Cost.Multiplier += 100
 				}
 				if critSpell(spell) {
@@ -299,7 +304,7 @@ func (priest *Priest) registerInnerFocus() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell.Flags.Matches(SpellFlagPriest) && spell.Cost != nil {
+			if freeSpell(spell) {
 				// Remove the buff and put skill on CD
 				aura.Deactivate(sim)
 				priest.InnerFocus.CD.Use(sim)

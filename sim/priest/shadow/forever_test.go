@@ -123,3 +123,19 @@ func TestInnerFocusCrit(t *testing.T) {
 		}
 	}
 }
+
+// TestInnerFocusCost checks that Inner Focus makes Mind Blast free but not Devouring Plague,
+// which the free cast's class mask leaves out.
+func TestInnerFocusCost(t *testing.T) {
+	sim, sp := newShadowPriestSim(t, "005030211305--500321501201302051")
+	mindBlast := topRank(t, "Mind Blast", sp.MindBlast)
+	plague := topRank(t, "Devouring Plague", sp.DevouringPlague)
+	plagueCost := plague.Cost.GetCurrentCost()
+	sp.InnerFocusAura.Activate(sim)
+	if got := mindBlast.Cost.GetCurrentCost(); got != 0 {
+		t.Errorf("Mind Blast costs %.2f under Inner Focus, want 0", got)
+	}
+	if got := plague.Cost.GetCurrentCost(); math.Abs(got-plagueCost) > 1e-9 {
+		t.Errorf("Devouring Plague costs %.2f under Inner Focus, want %.2f", got, plagueCost)
+	}
+}
