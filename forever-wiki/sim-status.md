@@ -74,7 +74,7 @@ Level 60, 300 sec, the shipped builds and the `mksettings` raid (2026-09-17, bet
 - Rogue Sinister Strike / Backstab: Undead 844.6 / 956.3 (Touch of the Grave at its cap with no internal cooldown, which is what the beta has, 836.4 / 944.5 under the 15 sec we used to assume), Human 843.4 / 936.2 (swords in the SS set only), Gnome 838.3 / 949.3 (Eureka! before a 5 point Eviscerate), Orc 836.0 / 943.1 (852.8 for Sinister Strike with Deathbringer, see below), Night Elf 835.7 / 944.0, Skyborne 832.3 / 941.8, Troll 832.0 / 940.4, Dwarf 826.7 / 934.5. Gnome fell from the top once Eureka! went from the assumed half price to 20% off. The Undead numbers are from before Touch of the Grave rolled on the press of an ability rather than on the hit. A run on the press model (`mksettings` p2 BiS sets, 50000 iterations) gives absolute numbers about 60 below this line, so it is not directly comparable, but it has the Undead 9.8 / 13.8 ahead of the Orc and 13.3 / 16.0 ahead of the Troll, a bit more than the 8.6 / 13.2 over the Orc above.
 - Enhancement: Dwarf 967 (Mace Specialization on Sulfuras), Skyborne 963, Troll 962, Tauren 962, Orc 960 (no axe, 926 with Spinal Reaper). Within 7 DPS.
 
-- Hunter (2026-10-12, 180 sec, 20000 iterations, the four Level 60 builds): Night Elf is best for Lone Wolf, Marksmanship and Beast Mastery (916.1 / 912.2 / 881.5), Orc the best Horde race (6 behind). Survival: Human 773.6 (swords), Night Elf 769.5, Orc 767.2. The full table is under [Level 60 presets](#hunter).
+- Hunter (2026-10-12, 180 sec, 20000 iterations, the four Level 60 builds): Night Elf is best for Lone Wolf, Marksmanship and Beast Mastery (916.1 / 912.2 / 881.5), Orc the best Horde race (6 behind). Survival: Human 778.1 (swords), Night Elf 774.0, Orc 771.5. The full table is under [Level 60 presets](#hunter).
 
 Orc with an axe. Rogues can wear axes under Forever, so an Orc row without one hides Axe Specialization (1% crit). The sets above carry swords, daggers and Sulfuras, and a same tier axe changes the picture only for Sinister Strike (5 min, 4000 iterations, Night Elf as the control for the weapon swap alone):
 
@@ -138,25 +138,25 @@ Four specs, each with its own talents, rotation and preset build in `ui/hunter/p
 - Lone Wolf, Marksmanship 5/41/5 with no pet (`5-0053552511503051-5`), 916.1 on a Night Elf, the best of the four. Lone Wolf's 20% damage is worth more than a pet that takes no player buffs.
 - Marksmanship 7/39/5 with a cat (`502-0053452501503051-5`), 912.2. The pet deals 15% of the damage. Both Marksmanship builds take Improved Arcane Shot 5 and Sniper Shot, put Arcane Shot above Aimed Shot and spend mana with no floors and cast Serpent Sting after Aimed Shot. At 300 sec they hold up (900 and 893) with Sniper Shot held back when the mana would not last the fight.
 - Beast Mastery 31/20 (`5020121505021241-00520503014`), 881.5. A 1.0 sec cat: Forever pets hit as hard at any speed, so the fastest pet deals the most. The pet deals 26% of the damage. The searches drop Summon Hawk: on the cooldown it shares with Arcane Shot the hawk deals less than the shot.
-- Survival 7/10/34, the melee spec (`502-005005-500230230250122151`), 773.6 on a Human, with a Dense Sharpening Stone on each sword (+9): Mongoose Bite whenever Expose Prey opens it (for 10 sec), Strider Kick and Raptor Strike on cooldown, Lacerate kept up, Immolation Trap on cooldown, Wing Clip in every free global cooldown (+31), held when Mongoose Bite or Strider Kick is about ready. It walks in 6 sec before the pull. Survival runs out of global cooldowns, not mana, so Efficiency and the cost half of Resourcefulness are worth nothing. A ranged Survival build with Lightning Reflexes kept plays like Marksmanship and its free search ends on the Marksmanship build, so it is not a spec of its own. Fire-toasted Bun (+9) is left out: Forever's is a seasonal item.
+- Survival 7/10/34, the melee spec (`502-005005-500230230250122151`), 778.1 on a Human, with a Dense Sharpening Stone on each sword (+9): Mongoose Bite whenever Expose Prey opens it (for 10 sec), Strider Kick and Raptor Strike on cooldown, Lacerate kept up, Immolation Trap on cooldown, Wing Clip in every free global cooldown (+31), held when Mongoose Bite or Strider Kick is about ready. It walks in 6 sec before the pull. Survival runs out of global cooldowns, not mana, so Efficiency and the cost half of Resourcefulness are worth nothing. A ranged Survival build with Lightning Reflexes kept plays like Marksmanship and its free search ends on the Marksmanship build, so it is not a spec of its own. Fire-toasted Bun (+9) is left out: Forever's is a seasonal item.
 - The rotations (`tools/rotopt/hunter_presets.sh`): Serpent Sting when it is down, Aimed Shot on the cooldown it shares with Multi-Shot, Arcane Shot on its own, Sniper Shot, Rapid Fire 0.1 sec before the pull, Bestial Wrath and the racials at the pull and on cooldown. The hand audits found every shot and cooldown on time; the ranged specs have idle global cooldowns only when every shot is on cooldown (Volley would hold Auto Shot for 6 sec).
 
 Races, 20000 iterations (standard error about 0.2), at 120 / 180 / 300 sec. Measured without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8; Multi-Shot has one rank) and with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115), and with Forever's consumables (Elixir of Ferocity, Flank au Poivre, Elixir of Greater Intellect, Greater Mageblood Elixir, Major Frenzy Potion for Survival) and Enchant Cloak - Agility. The two Skyborne halves differ only in noise. The synthetic weapons are swords (Barbarous Blade, Brutality Blade) and a bow, as in Era's Phase 1 BiS. Forever's weapon racials give no ranged crit, so for the ranged specs a sword stat stick only helps the Human's pet; an axe would give the Orc pet 1% crit, a mace the Dwarf's.
 
 | Race | Lone Wolf | Marksmanship | Beast Mastery | Survival |
 |---|---|---|---|---|
-| Night Elf | 924.7 / 916.1 / 899.5 | 920.7 / 912.2 / 892.5 | 889.2 / 881.5 / 874.7 | 778.1 / 769.5 / 764.7 |
-| Orc | 916.4 / 910.1 / 892.4 | 912.0 / 905.7 / 885.3 | 880.5 / 875.6 / 868.6 | 773.8 / 767.2 / 762.3 |
-| Skyborne (Windshaper) | 914.3 / 908.1 / 891.7 | 910.0 / 903.8 / 884.5 | 878.4 / 873.3 / 867.4 | 769.7 / 763.2 / 759.3 |
-| Skyborne (High Order) | 913.3 / 907.1 / 890.8 | 909.1 / 902.9 / 883.5 | 877.6 / 872.6 / 866.6 | 769.0 / 762.4 / 758.6 |
-| Troll | 913.1 / 906.1 / 889.6 | 909.3 / 902.7 / 883.1 | 877.8 / 872.1 / 866.0 | 768.9 / 762.0 / 757.8 |
-| Human | 907.8 / 901.6 / 886.0 | 907.0 / 900.8 / 882.2 | 877.7 / 872.6 / 866.8 | 780.2 / 773.6 / 769.8 |
-| Tauren | 905.8 / 899.6 / 883.5 | 902.8 / 896.6 / 877.5 | 872.5 / 867.5 / 861.6 | 767.7 / 761.1 / 757.5 |
-| Dwarf | 904.1 / 897.9 / 882.0 | 901.2 / 895.0 / 876.1 | 871.0 / 866.0 / 860.2 | 763.4 / 756.9 / 753.3 |
+| Night Elf | 924.7 / 916.1 / 899.5 | 920.7 / 912.2 / 892.5 | 889.2 / 881.5 / 874.7 | 782.6 / 774.0 / 769.2 |
+| Orc | 916.4 / 910.1 / 892.4 | 912.0 / 905.7 / 885.3 | 880.5 / 875.6 / 868.6 | 778.2 / 771.5 / 766.5 |
+| Skyborne (Windshaper) | 914.3 / 908.1 / 891.7 | 910.0 / 903.8 / 884.5 | 878.4 / 873.3 / 867.4 | 774.3 / 767.7 / 763.7 |
+| Skyborne (High Order) | 913.3 / 907.1 / 890.8 | 909.1 / 902.9 / 883.5 | 877.6 / 872.6 / 866.6 | 773.5 / 766.9 / 763.0 |
+| Troll | 913.1 / 906.1 / 889.6 | 909.3 / 902.7 / 883.1 | 877.8 / 872.1 / 866.0 | 773.4 / 766.5 / 762.3 |
+| Human | 907.8 / 901.6 / 886.0 | 907.0 / 900.8 / 882.2 | 877.7 / 872.6 / 866.8 | 784.7 / 778.1 / 774.3 |
+| Tauren | 905.8 / 899.6 / 883.5 | 902.8 / 896.6 / 877.5 | 872.5 / 867.5 / 861.6 | 772.2 / 765.6 / 762.0 |
+| Dwarf | 904.1 / 897.9 / 882.0 | 901.2 / 895.0 / 876.1 | 871.0 / 866.0 / 860.2 | 767.7 / 761.1 / 757.5 |
 
 Night Elf is the best race for the three ranged specs (Elune's Light's 10% crit, which the pet inherits too), Orc the best Horde race (Blood Fury). For Survival the Human is best (2% crit with its swords), the Night Elf the next Alliance race, the Orc the best Horde race. Tauren's 1% hit is wasted at the hit cap the sets carry. The presets use Night Elf for the ranged builds and Human for Survival.
 
-With weapon racials off (fairness rule 16): the only weapon racial the hunter's weapons meet is the Human's swords, so the best race without one is the Night Elf for all four specs: Lone Wolf 916.1, Marksmanship 912.2, Beast Mastery 881.5, Survival 769.5 at 180 sec. The spec order is the same either way.
+With weapon racials off (fairness rule 16): the only weapon racial the hunter's weapons meet is the Human's swords, so the best race without one is the Night Elf for all four specs: Lone Wolf 916.1, Marksmanship 912.2, Beast Mastery 881.5, Survival 774.0 at 180 sec. The spec order is the same either way.
 
 ### Rogue
 

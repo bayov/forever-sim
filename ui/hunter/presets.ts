@@ -396,7 +396,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 780.2 / 773.6 / 769.8 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
+// 784.7 / 778.1 / 774.3 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
