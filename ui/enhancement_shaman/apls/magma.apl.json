@@ -11,8 +11,8 @@
         {"action":{"autocastOtherCooldowns":{}},"notes":"Anything not listed above (Sapper, trinkets, potions)."},
         {"action":{"castSpell":{"spellId":{"spellId":17364}}},"notes":"Stormstrike on cooldown. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":15208}},"condition":{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":408505}}},"op":"OpGe","rhs":{"const":{"val":"5"}}}}},"notes":"Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place."},
         {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}},"notes":"Flame Shock when its DoT is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":10414}}},"notes":"Earth Shock otherwise."},
-        {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place."}
+        {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":29228}}},"op":"OpGt","rhs":{"const":{"val":"1s"}}}}]}}},"notes":"Earth Shock otherwise, unless Flame Shock is about to run out."}
     ]
 }

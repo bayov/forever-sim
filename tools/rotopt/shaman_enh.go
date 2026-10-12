@@ -260,11 +260,12 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		if !flameShockFirst {
 			items = append(items, flameShockLine())
 		}
-		when := earthShockWhen()
+		when, notes := earthShockWhen(), "Earth Shock otherwise."
 		if left := k["earthShockFlameShockLeft"]; left > 0 {
 			when = and(when, gt(dotRemainingTime(flameShock), seconds(left)))
+			notes = "Earth Shock otherwise, unless Flame Shock is about to run out."
 		}
-		items = append(items, cast(earthShock, when, "Earth Shock otherwise, unless Flame Shock runs out before the shock cooldown is back."))
+		items = append(items, cast(earthShock, when, notes))
 	case 5:
 		items = append(items,
 			cast(earthShock, and(targetAuraIsActive(stormstrike), manaFloor(k["shockMana"])), "Earth Shock while the Stormstrike debuff is up (20% Nature damage)."),
