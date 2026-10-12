@@ -211,16 +211,19 @@ export const DefaultOptions = Options.create({
 
 // The level 60 consumes, tried in and out of the set on the Level 60 talents (180 sec, 20000
 // iterations, 2026-10-12, before Inner Focus joined the build):
-// - Nightfin Soup (22 spell damage under Forever) is 7.9 ahead of Runn Tum Tuber Surprise and
-//   3.1 ahead of Grilled Squid.
+// - Lobster Stew (28 spell damage under Forever) is 2.8 ahead of Nightfin Soup (22), which is
+//   7.9 ahead of Runn Tum Tuber Surprise and 3.1 ahead of Grilled Squid.
 // - Goblin Sapper Charge +3.7. A filler explosive takes a GCD and costs 4.
-// - Elixir of Wisdom +0.9. Greater Arcane Elixir is worth 16.0, Elixir of Shadow Power 18.3.
+// - Elixir of the Owl (25 Intellect, 2% crit) +16.4 over the Elixir of Wisdom, the Elixir of
+//   Greater Intellect only +2.8 (Arcane Brilliance is on). Elixir of Sages (25 Spirit, 2% crit)
+//   +13.6 on top. Greater Arcane Elixir is worth 16.0, Elixir of Shadow Power 18.3.
+// - Major Spellblasting Potion (47 spell damage for 30 sec) +8.2 over the Major Mana Potion.
 // - Wizard Oil +11. Brilliant Wizard Oil would be 12.5 ahead, but it is a Zul'Gurub recipe.
 //   Shadow Oil and Dragonbreath Chili add nothing.
 // - Flask of Supreme Power is 68 ahead of the Flask of Distilled Wisdom.
 // - Cerebral Cortex Compound (25 Intellect, a Blasted Lands quest) +3.2 at 120 / 180 / 300 sec.
 // - Mana never runs out (about 25 min to empty), so Mageblood adds nothing and is left out.
-//   The potion and the rune are kept for longer fights.
+//   The rune is kept for longer fights.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorSpellblastingPotion,

@@ -16,13 +16,13 @@ func init() {
 			debuffs.CurseOfShadow = false
 		},
 		// Each consume was tried in and out of the set on the Level 60 build (180 sec, 20000
-		// iterations, 2026-10-12): Nightfin Soup (22 spell damage under Forever) is 7.9 ahead
-		// of Runn Tum Tuber Surprise and 3.1 ahead of Grilled Squid, the Goblin Sapper Charge
-		// adds 3.7 (a filler explosive costs a GCD and loses 4), Elixir of Wisdom 0.9.
-		// Brilliant Wizard Oil would be 12.5 ahead of Wizard Oil but is a Zul'Gurub recipe,
-		// Shadow Oil and Dragonbreath Chili add nothing, Cerebral Cortex Compound +3.2. Mana never runs out in a raid fight
-		// (about 25 min to empty), so Mageblood is left out, the potion and rune are kept for
-		// longer fights.
+		// iterations, 2026-10-12): Lobster Stew (28 spell damage under Forever) is 2.8 ahead of
+		// Nightfin Soup, the Goblin Sapper Charge adds 3.7 (a filler explosive costs a GCD and
+		// loses 4), the Elixir of the Owl 16.4 over the Elixir of Wisdom, the Elixir of Sages
+		// 13.6, the Major Spellblasting Potion 8.2 over the Major Mana Potion and Cerebral
+		// Cortex Compound 3.2. Brilliant Wizard Oil would be 12.5 ahead of Wizard Oil but is a
+		// Zul'Gurub recipe, Shadow Oil and Dragonbreath Chili add nothing. Mana never runs out
+		// in a raid fight (about 25 min to empty), so Mageblood is left out.
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
 				DefaultPotion:   proto.Potions_MajorSpellblastingPotion,
