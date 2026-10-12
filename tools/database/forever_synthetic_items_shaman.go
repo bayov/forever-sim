@@ -13,28 +13,30 @@ import (
 // Volatile Power (66), Mana Igniting Cord (71), Ring of Spell Power (66) and Staff of Dominance (70). The
 // cloak takes Molten Core's 66. Each piece gets the full epic budget of its slot at that item level.
 //
-// The budget is the Classic formula. A slot is worth (0.77 * item level - 1) * slot modifier, with the
-// modifier 1 for the head, chest, legs and two-hander, 0.75 for the shoulders, hands, waist and feet and
-// 0.5625 for the neck, back, wrist and fingers. The stats on a piece add up as (sum of value^1.5)^(2/3),
-// where a point of Stamina, Intellect or Spirit is worth 1, a point of spell power 0.55 (Forever's tuned
-// price, see forever_synthetic_items.go) and a point of hit or crit rating 1 (10 hit rating is 1% hit,
-// 14 crit rating 1% crit). We pick the Stamina, Intellect, Spirit, hit and crit of each piece, and spell
-// power fills the rest. For the chest: (0.77 * 66 - 1) * 1 = 49.8, and 14 Stamina, 17 Intellect, 10
-// Spirit and 28 crit rating leave room for 24 spell power: (14^1.5 + 17^1.5 + 10^1.5 + 28^1.5 +
-// (24 * 0.55)^1.5)^(2/3) = 49.7. The generator script lived in the session scratchpad (synth_ele.py), the
-// numbers below are its output.
+// The budget is the one the enhancement set in forever_synthetic_items.go reproduces, shared by every
+// class's synthetic set. An epic piece is worth V = 1.2 * item level - 36.4 (42.8 at 66, 48.8 at 71, 47.6
+// at 70, 57.2 at 78), times the slot modifier: 1 for the head, chest, legs and two-hander, 0.77 for the
+// shoulders, hands, waist and feet, and 0.5625 for the neck, back, wrist and fingers. The stats on a piece
+// add up as (sum of (weight * amount)^1.5)^(2/3), where a point of Stamina, Intellect or Spirit weighs 1, a
+// point of spell power 0.55 (Forever's tuned price, see forever_synthetic_items.go) and a point of hit or
+// crit rating 1 (10 hit rating is 1% hit, 14 crit rating 1% crit). Armor is free. We pick the Stamina,
+// Intellect, Spirit, hit and crit of each piece, and spell power fills the rest. For the chest: 42.8 * 1,
+// and 12 Stamina, 15 Intellect, 9 Spirit and 14 crit rating leave room for 39 spell power: (12^1.5 + 15^1.5
+// + 9^1.5 + 14^1.5 + (39 * 0.55)^1.5)^(2/3) = 42.6. For the waist: 48.8 * 0.77 = 37.6, from 10 Stamina, 11
+// Intellect, 8 Spirit, 14 crit rating and 36 spell power. The generator script lived in the session
+// scratchpad (synth_ele2.py), the numbers below are its output.
 //
-// The set comes to 531 spell power, 149 Intellect, 145 Stamina, 91 Spirit, 84 crit rating (6%) and 30 hit
-// rating (3%). As shares of the budget (a stat times its price, added up) that is 37% spell power, 19%
-// Intellect, 18% Stamina, 11.5% Spirit, 11% crit and 4% hit:
+// The set comes to 477 spell power, 133 Intellect, 127 Stamina, 81 Spirit, 70 crit rating (5%) and 30 hit
+// rating (3%). As shares of the budget (a stat times its weight, added up) that is 37% spell power, 19%
+// Intellect, 18% Stamina, 11.5% Spirit, 10% crit and 4% hit:
 //   - Spirit is on 9 of the 13 pieces, about 10% of the budget, as on the enhancement set.
-//   - The crit sits where the Era pieces had it: 2% on the chest (Robe of Volatile Power), 1% each on the
-//     head, waist (Mana Igniting Cord), staff (Staff of Dominance) and the first ring.
+//   - The crit sits where the Era pieces had it: 1% each on the chest (Robe of Volatile Power), waist (Mana
+//     Igniting Cord), staff (Staff of Dominance), head and the first ring.
 //   - 3% hit on the neck, hands and legs. The Era Phase 1 caster gear had little hit, the elemental
 //     shaman took 3% from Nature's Guidance, which Forever removed (and since gear hit is unified, the
 //     same rating would also count for melee). The set's 2 piece bonus adds 1% more.
-//   - Not every piece has every stat: the wrist and neck have no Spirit, the first ring no Intellect, and
-//     the hands no Spirit.
+//   - Not every piece has every stat: the wrist, neck and hands have no Spirit, and the first ring no
+//     Intellect.
 //
 // The head, shoulders, chest, hands, legs and feet form a set with the bonuses of The Spiritcaller's
 // Storm, Forever's elemental Tier 1 set (item set 2111, see sim/shaman/item_sets_pve.go).
@@ -52,7 +54,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990101, Name: "Elemental Synthetic Head (Phase 1)", Icon: "inv_helmet_09",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Stamina: 15, stats.Intellect: 16, stats.Spirit: 11, stats.SpellPower: 49, stats.Armor: 343}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 14, stats.Spirit: 10, stats.SpellPower: 38, stats.Armor: 343}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -62,7 +64,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990102, Name: "Elemental Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_17",
 		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Stamina: 9, stats.Intellect: 10, stats.SpellPower: 39}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Stamina: 8, stats.Intellect: 9, stats.SpellPower: 39}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      78, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -71,7 +73,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990103, Name: "Elemental Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_29",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Stamina: 12, stats.Intellect: 12, stats.Spirit: 9, stats.SpellPower: 50, stats.Armor: 335}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 11, stats.Spirit: 8, stats.SpellPower: 48, stats.Armor: 335}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		SetName:        "Elemental Synthetic (Phase 1)",
@@ -80,7 +82,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990104, Name: "Elemental Synthetic Back (Phase 1)", Icon: "inv_misc_cape_16",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 7, stats.Spirit: 8, stats.SpellPower: 35, stats.Armor: 54}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 6, stats.Spirit: 7, stats.SpellPower: 30, stats.Armor: 54}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -88,8 +90,8 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990105, Name: "Elemental Synthetic Chest (Phase 1)", Icon: "inv_chest_chain_11",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 17, stats.Spirit: 10, stats.SpellPower: 24, stats.Armor: 422}.ToFloatArray(),
-		CritRating: 28,
+		Stats:      stats.Stats{stats.Stamina: 12, stats.Intellect: 15, stats.Spirit: 9, stats.SpellPower: 39, stats.Armor: 422}.ToFloatArray(),
+		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		SetName:        "Elemental Synthetic (Phase 1)",
@@ -98,7 +100,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990106, Name: "Elemental Synthetic Wrist (Phase 1)", Icon: "inv_bracer_16",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 10, stats.SpellPower: 38, stats.Armor: 185}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 9, stats.SpellPower: 32, stats.Armor: 185}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -106,7 +108,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990107, Name: "Elemental Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_11",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 10, stats.SpellPower: 48, stats.Armor: 264}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.SpellPower: 40, stats.Armor: 264}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -116,7 +118,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990108, Name: "Elemental Synthetic Waist (Phase 1)", Icon: "inv_belt_14",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 12, stats.Spirit: 9, stats.SpellPower: 39, stats.Armor: 255}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 10, stats.Intellect: 11, stats.Spirit: 8, stats.SpellPower: 36, stats.Armor: 255}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -125,7 +127,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990109, Name: "Elemental Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_15",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Stamina: 15, stats.Intellect: 16, stats.Spirit: 14, stats.SpellPower: 50, stats.Armor: 369}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Stamina: 13, stats.Intellect: 14, stats.Spirit: 12, stats.SpellPower: 41, stats.Armor: 369}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -135,7 +137,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990110, Name: "Elemental Synthetic Feet (Phase 1)", Icon: "inv_boots_plate_06",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Stamina: 12, stats.Intellect: 10, stats.Spirit: 10, stats.SpellPower: 45, stats.Armor: 290}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 10, stats.Intellect: 9, stats.Spirit: 9, stats.SpellPower: 40, stats.Armor: 290}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		SetName:        "Elemental Synthetic (Phase 1)",
@@ -144,7 +146,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990111, Name: "Elemental Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_38",
 		Type:       proto.ItemType_ItemTypeFinger,
-		Stats:      stats.Stats{stats.Stamina: 7, stats.SpellPower: 33}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 6, stats.SpellPower: 25}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -153,7 +155,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990112, Name: "Elemental Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_29",
 		Type:  proto.ItemType_ItemTypeFinger,
-		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 9, stats.Spirit: 8, stats.SpellPower: 33}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 8, stats.Spirit: 7, stats.SpellPower: 27}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -161,7 +163,7 @@ var elementalSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990113, Name: "Elemental Synthetic Staff (Phase 1)", Icon: "inv_staff_13",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
-		Stats:      stats.Stats{stats.Stamina: 16, stats.Intellect: 20, stats.Spirit: 12, stats.SpellPower: 48}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 18, stats.Spirit: 11, stats.SpellPower: 42}.ToFloatArray(),
 		CritRating: 14,
 		// Staff of Dominance (70, 18842) damage and speed.
 		WeaponDamageMin: 126, WeaponDamageMax: 205, WeaponSpeed: 2.9,
