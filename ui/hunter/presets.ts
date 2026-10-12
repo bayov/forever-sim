@@ -66,6 +66,8 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // attack power and all of its crit. About 10% of the points are Spirit, 9% hit (the ranged hit
 // cap against a level 63 boss) and 5% crit. The head and chest carry Wildstalker Armor, so only
 // its 2 piece bonus (1% attack and cast speed) is live.
+// No trinkets: Forever removed the old dungeon trinkets (Hand of Justice and Blackhand's Breadth
+// are not in client 70338), and trinkets stay out until Forever's launch trinkets are simulated.
 export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Ranged', Level60RangedGear, {
 	tooltip: 'A guess at Phase 1 BiS for a ranged hunter under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
