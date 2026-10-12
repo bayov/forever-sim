@@ -13,7 +13,8 @@ import (
 // drops its line. The demon, Demonic Sacrifice and the weapon imbue are WarlockOptions, not
 // knobs.
 //
-// Every line names the top rank at level 60.
+// Every line names the top rank at level 60 that Forever teaches (no Ahn'Qiraj book ranks:
+// Shadow Bolt IX, Immolate VII, Corruption VI).
 type warlockRotation struct{}
 
 func init() {
@@ -21,11 +22,11 @@ func init() {
 }
 
 var (
-	lockShadowBolt     = spellID(25307)
+	lockShadowBolt     = spellID(11661)
 	lockIncinerate     = spellID(1293813)
 	lockSearingPain    = spellID(17923)
-	lockImmolate       = spellID(25309)
-	lockCorruption     = spellID(25311)
+	lockImmolate       = spellID(11668)
+	lockCorruption     = spellID(11672)
 	lockBaneOfAgony    = spellID(11713)
 	lockBaneOfDoom     = spellID(603)
 	lockSiphonLife     = spellID(18881)

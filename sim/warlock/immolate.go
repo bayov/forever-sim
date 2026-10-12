@@ -88,7 +88,7 @@ func (warlock *Warlock) getActiveImmolateSpell(target *core.Unit) *core.Spell {
 func (warlock *Warlock) registerImmolateSpell() {
 	warlock.Immolate = make([]*core.Spell, 0)
 
-	maxRank := core.TernaryInt(core.IncludeAQ, len(immolateRanks)-1, len(immolateRanks)-2)
+	maxRank := core.TernaryInt(warlock.Env.IncludeAQRanks(), len(immolateRanks)-1, len(immolateRanks)-2)
 	for rank := 1; rank <= maxRank; rank++ {
 		config := warlock.getImmolateConfig(rank)
 

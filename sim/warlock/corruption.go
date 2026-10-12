@@ -77,7 +77,7 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 func (warlock *Warlock) registerCorruptionSpell() {
 	warlock.Corruption = make([]*core.Spell, 0)
 
-	maxRank := core.TernaryInt(core.IncludeAQ, len(corruptionRanks)-1, len(corruptionRanks)-2)
+	maxRank := core.TernaryInt(warlock.Env.IncludeAQRanks(), len(corruptionRanks)-1, len(corruptionRanks)-2)
 	for rank := 1; rank <= maxRank; rank++ {
 		config := warlock.getCorruptionConfig(rank)
 
