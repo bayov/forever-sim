@@ -12,20 +12,30 @@ import (
 // they want the same stats, spell power first, then hit and crit, then Intellect and Spirit for the
 // mana. So the set carries plain spell power and no school power.
 //
-// Each piece gets the full epic budget of its slot, (item level - 1.3) / 1.3 times the Classic slot
-// modifier (1 for head, chest and legs, 0.77 for shoulders, hands, waist and feet, 0.56 for neck,
-// back, wrist, finger and off hand). For the one-hand caster weapon we fit the modifier to
-// Azuresong Mageblade itself (0.79, its Era stats at Era's 0.75 a point of spell power). The points
-// add up the Classic way, (sum of points^1.5)^(2/3), with spell power at 0.55 a point, and hit and
-// crit rating at 1 a point (10 rating is 1% hit, 14 rating 1% crit). The item level is the Era
-// Phase 1 BiS item's, or Molten Core tier's 66 where that is higher. Era Phase 1 has no caster
-// cloak above 63, so the cloak takes the tier's 66. For example the head: (66 - 1.3) / 1.3 = 49.8,
-// and 16^1.5 + 12^1.5 + 11^1.5 + (56 * 0.55)^1.5 + 10^1.5 = 49.2^1.5.
+// Each piece gets the full epic budget of its slot, the standard all the synthetic sets share:
+// the epic item value V = 1.2 * item level - 36.4 (42.8 at 66, 48.8 at 71, 54.8 at 76, 57.2 at
+// 78) times the slot modifier (1 for head, chest and legs, 0.77 for shoulders, hands, waist and
+// feet, 0.5625 for neck, back, wrist, finger and off hand). The points add up as
+// (sum of (weight * amount)^1.5)^(2/3), with 1 a point of Intellect, Stamina and Spirit, 0.55 a
+// point of spell power, and 1 a point of hit and crit rating (10 rating is 1% hit, 14 rating 1%
+// crit). The item level is the Era Phase 1 BiS item's, or Molten Core tier's 66 where that is
+// higher. Era Phase 1 has no caster cloak above 63, so the cloak takes the tier's 66.
+//
+// The main hand is the exception. A one-hander's 0.42 would give it about 20 spell power, where
+// every Era caster sword carries 40 or more, so it keeps Azuresong Mageblade's own Era budget,
+// 42.5 (its 7 Stamina, 12 Intellect, 40 spell power at Era's 0.75 a point and 1% crit).
+//
+// Per slot, budget and the points the stats below add up to:
+//   head 42.8 (42.7), neck 57.2 * 0.5625 = 32.2 (32.0), shoulders 33.0 (32.8), back 24.1 (24.4),
+//   chest 42.8 (42.2), wrist 24.1 (24.1), hands 33.0 (33.2), waist 48.8 * 0.77 = 37.6 (37.7),
+//   legs 54.8 (55.2), feet 33.0 (32.8), finger 24.1 (24.1), second finger 48.8 * 0.5625 = 27.5
+//   (27.4), main hand 42.5 (42.6), off hand 47.6 * 0.5625 = 26.8 (26.6).
+// For example the head: 14^1.5 + 10^1.5 + 10^1.5 + (47 * 0.55)^1.5 + 10^1.5 = 42.7^1.5.
 //
 // The stat mix differs by slot:
-//   - Spirit is on 8 of the 14 pieces, 10.2% of the set's budget (83 Spirit), because Spirit should
+//   - Spirit is on 8 of the 14 pieces, 10% of the set's budget (73 Spirit), because Spirit should
 //     matter again under Forever.
-//   - Spell power is 40% of the budget (588). The first ring and the main hand lean on it, the
+//   - Spell power is 39% of the budget (518). The first ring and the main hand lean on it, the
 //     second ring and the off hand on Intellect and Spirit.
 //   - The neck, waist, hands and the first ring have no Spirit, the wrist no Stamina.
 //   - The set has 20 hit rating (2%, on the head and hands) and 98 crit rating (7%, on six pieces),
@@ -45,7 +55,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996001, Name: "Mage Synthetic Head (Phase 1)", Icon: "inv_helmet_53",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:     stats.Stats{stats.Stamina: 12, stats.Intellect: 16, stats.Spirit: 11, stats.SpellPower: 56, stats.Armor: 83}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 14, stats.Spirit: 10, stats.SpellPower: 47, stats.Armor: 83}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
@@ -55,7 +65,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996002, Name: "Mage Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_17",
 		Type:  proto.ItemType_ItemTypeNeck,
-		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 9, stats.SpellPower: 49}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 9, stats.SpellPower: 48}.ToFloatArray(),
 		Ilvl:  78, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
@@ -63,7 +73,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996003, Name: "Mage Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_02",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 13, stats.SpellPower: 42, stats.Armor: 76}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 8, stats.Intellect: 10, stats.SpellPower: 34, stats.Armor: 76}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
@@ -73,7 +83,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996004, Name: "Mage Synthetic Back (Phase 1)", Icon: "inv_misc_cape_16",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Stamina: 7, stats.Intellect: 9, stats.Spirit: 9, stats.SpellPower: 33, stats.Armor: 54}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 6, stats.Intellect: 8, stats.Spirit: 8, stats.SpellPower: 28, stats.Armor: 54}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
@@ -81,7 +91,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996005, Name: "Mage Synthetic Chest (Phase 1)", Icon: "inv_chest_cloth_03",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 10, stats.Intellect: 14, stats.Spirit: 10, stats.SpellPower: 36, stats.Armor: 102}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 7, stats.Intellect: 10, stats.Spirit: 7, stats.SpellPower: 27, stats.Armor: 102}.ToFloatArray(),
 		CritRating: 28,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
@@ -91,7 +101,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996006, Name: "Mage Synthetic Wrist (Phase 1)", Icon: "inv_bracer_09",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Intellect: 12, stats.Spirit: 9, stats.SpellPower: 34, stats.Armor: 44}.ToFloatArray(),
+		Stats: stats.Stats{stats.Intellect: 10, stats.Spirit: 8, stats.SpellPower: 29, stats.Armor: 44}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
@@ -99,7 +109,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996007, Name: "Mage Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_14",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:     stats.Stats{stats.Stamina: 9, stats.Intellect: 14, stats.SpellPower: 46, stats.Armor: 63}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Stamina: 8, stats.Intellect: 12, stats.SpellPower: 38, stats.Armor: 63}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
@@ -109,7 +119,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996008, Name: "Mage Synthetic Waist (Phase 1)", Icon: "inv_belt_22",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 13, stats.SpellPower: 47, stats.Armor: 61}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 10, stats.Intellect: 11, stats.SpellPower: 42, stats.Armor: 61}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
@@ -118,7 +128,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996009, Name: "Mage Synthetic Legs (Phase 1)", Icon: "inv_pants_08",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 15, stats.Intellect: 20, stats.Spirit: 13, stats.SpellPower: 60, stats.Armor: 101}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 15, stats.Intellect: 19, stats.Spirit: 12, stats.SpellPower: 57, stats.Armor: 101}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
@@ -128,7 +138,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996010, Name: "Mage Synthetic Feet (Phase 1)", Icon: "inv_boots_07",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 12, stats.Intellect: 12, stats.Spirit: 10, stats.SpellPower: 32, stats.Armor: 70}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.Spirit: 9, stats.SpellPower: 26, stats.Armor: 70}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
@@ -138,7 +148,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996011, Name: "Mage Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_38",
 		Type:  proto.ItemType_ItemTypeFinger,
-		Stats: stats.Stats{stats.Stamina: 5, stats.SpellPower: 48}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 5, stats.SpellPower: 41}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
@@ -146,7 +156,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996012, Name: "Mage Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_39",
 		Type:  proto.ItemType_ItemTypeFinger,
-		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 12, stats.Spirit: 12, stats.SpellPower: 26}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 11, stats.Spirit: 11, stats.SpellPower: 24}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
@@ -165,7 +175,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996014, Name: "Mage Synthetic Off Hand (Phase 1)", Icon: "inv_misc_book_09",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeOffHand, HandType: proto.HandType_HandTypeOffHand,
-		Stats: stats.Stats{stats.Stamina: 9, stats.Intellect: 16, stats.Spirit: 9, stats.SpellPower: 21}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 8, stats.Intellect: 15, stats.Spirit: 8, stats.SpellPower: 19}.ToFloatArray(),
 		Ilvl:  70, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
