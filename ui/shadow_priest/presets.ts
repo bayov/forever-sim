@@ -120,11 +120,13 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // The tools/rotopt priest_smite template after a knob search on the Smite talents (3000
 // iterations a candidate, 20000 to confirm, at 120, 180 and 300 sec, 2026-10-12): Power
 // Infusion on cooldown, Holy Fire whenever its damage over time is down (Power in Light gives
-// Smite 10% while it is up), Shadow Word: Pain above 20% mana, Chastise for a Dwarf, Inner Focus
-// on cooldown for a Smite, Smite to fill. Without Shadowform every spell costs full mana and
-// the priest is dry about 130 sec in, so the search drops the spells that give the least damage
-// for their mana: Mind Blast, Shadow Word: Death, Devouring Plague and even Penance (385 mana for
-// three 92 damage bolts). A timeline shows Smite every 2 sec (Divine Fury), Holy Fire back up
+// Smite 10% while it is up), Shadow Word: Pain above 20% mana, Devouring Plague above 40% mana,
+// Chastise for a Dwarf, Inner Focus on cooldown for a Smite, Smite to fill. Without Shadowform
+// every spell costs full mana and the priest is dry about 200 sec in, so the search drops the
+// spells that give the least damage for their mana: Mind Blast, Shadow Word: Death and even
+// Penance (385 mana for three 92 damage bolts). Devouring Plague was dropped too until the
+// build got its own set and consumes; at 300 sec dropping it is still 10 ahead (574.2), the
+// rotation keeps the 180 sec answer. A timeline shows Smite every 2 sec (Divine Fury), Holy Fire back up
 // within a cast of falling off and no idle GCD until the mana runs out.
 export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Level 60 Smite', Level60SmiteAPL, {
 	tooltip: "The optimizer's best rotation for the Smite talents: Holy Fire up for Power in Light, Shadow Word: Pain, Smite to fill.",
@@ -144,8 +146,8 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // Talent searches (tools/rotopt -talent-search, 3000 iterations a move, 20000 to confirm) on
 // the synthetic Phase 1 set at 180 sec, then again at 300 sec and after every knob search,
 // from deep Shadow with Discipline, deep Shadow with Holy, and 31 Discipline (Power Infusion)
-// with 20 Shadow. On 2026-10-12 the build is 840.0 / 837.7 / 840.1 at 120 / 180 / 300 sec as a
-// Human (839.9 / 837.6 / 839.9 Undead).
+// with 20 Shadow. On 2026-10-12 the build is 840.2 / 838.0 / 840.3 at 120 / 180 / 300 sec as a
+// Human (840.0 / 837.8 / 840.0 Undead).
 // - Shadow 33: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
 //   Shadow Affinity and a point of Shadow Reach only fill the rows (threat and range).
@@ -163,7 +165,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // The same Shadow points with 20 in Holy instead of Discipline (Twilight Focus, Spell Warding,
 // Inspiration, Improved Healing and the rest of the healing utility a raid may ask for). None of
 // the Holy talents adds Shadow damage, so it gives up Twin Disciplines and Mental Strength:
-// 816.8 / 815.3 / 789.6 at 120 / 180 / 300 sec as a Human, 2.7% behind at 180 sec. It also
+// 817.0 / 815.5 / 790.6 at 120 / 180 / 300 sec as a Human, 2.7% behind at 180 sec. It also
 // runs out of mana about 250 sec in.
 export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011323-500321501201302051' }), {
 	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 22 DPS behind.',
@@ -179,10 +181,9 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // (Holy Specialization 5, Divine Fury 5, Searing Light 2) with 3 points of Shadow Focus for
 // Shadow Word: Pain's hit. The deep Holy start ends at 608.9.
 //
-// It is 657.4 / 609.3 / 517.1 at 120 / 180 / 300 sec as a Human and 657.8 / 648.5 / 547.9 as an
-// Undead, whose Dark Sacrifice comes when the mana runs out (with Mageblood and Kreeg's Stout
-// Beatdown, see the build, 651.5 / 564.8 at 180 / 300 sec). That is 23% behind Shadow at 180 sec
-// and 35% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
+// On its own set with its own consumes (see the build) it is 673.4 / 660.3 / 564.1 at 120 / 180
+// / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs out. That is 21% behind
+// Shadow at 180 sec and 33% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
 export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525030231305001001-00505113002-3' }), {
 	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light).',
@@ -330,12 +331,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // Every race a priest can be under Forever, on the Level 60 build with the same seed (40000
 // iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-12):
-//   Human     840.0 / 837.7 / 840.1  (best overall and Alliance)
-//   Undead    839.9 / 837.6 / 839.9  (best Horde)
-//   Gnome     834.9 / 832.9 / 833.8
-//   Night Elf 834.3 / 830.8 / 833.2
-//   Dwarf     826.2 / 823.9 / 826.1
-//   Troll     825.1 / 823.3 / 825.5
+//   Human     840.2 / 838.0 / 840.3  (best overall and Alliance)
+//   Undead    840.0 / 837.8 / 840.0  (best Horde)
+//   Gnome     835.0 / 833.0 / 833.9
+//   Night Elf 834.5 / 831.1 / 833.4
+//   Dwarf     826.3 / 824.0 / 826.2
+//   Troll     825.3 / 823.4 / 825.6
 // Human and Undead are level within the noise. Human's 2% crit with swords comes from the main
 // hand, a sword like Azuresong Mageblade, the Era Phase 1 BiS. With a staff (Staff of Dominance)
 // a Human ties a Dwarf at 805 and an Undead is 14 ahead of both. Undead's Touch of the Grave is
@@ -385,18 +386,18 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 	consumes: ConsumesSmite,
 });
 
-// Smite as every race (20000 iterations, 120 / 180 / 300 sec, the Level 60 consumes):
-//   Undead    657.8 / 648.5 / 547.9  (best overall and Horde)
-//   Gnome     660.0 / 620.5 / 523.1  (best Alliance)
-//   Human     657.4 / 609.3 / 517.1
-//   Night Elf 655.0 / 603.5 / 511.0
-//   Troll     652.1 / 596.1 / 503.5
-//   Dwarf     642.1 / 591.6 / 501.3
+// Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec):
+//   Undead    673.4 / 660.3 / 564.1  (best overall and Horde)
+//   Gnome     674.9 / 629.5 / 539.7  (best Alliance)
+//   Human     670.8 / 618.2 / 533.8
+//   Night Elf 667.5 / 612.0 / 527.0
+//   Troll     663.2 / 605.4 / 520.1
+//   Dwarf     655.1 / 600.5 / 518.1
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
-// most once the mana runs out. With the Smite consumes the Undead is 651.5 / 564.8 at 180 / 300.
+// most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Holy damage priest (Smite, Holy Fire, Power Infusion) on the synthetic Phase 1 gear, 23% behind Shadow.',
+	tooltip: 'Level 60 Undead Holy damage priest (Smite, Holy Fire, Power Infusion) on the synthetic Phase 1 gear, 21% behind Shadow.',
 	gear: GearLevel60Phase1Smite,
 	talents: TalentsLevel60Smite,
 	rotation: APLLevel60Smite,
