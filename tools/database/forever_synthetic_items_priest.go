@@ -52,7 +52,8 @@ import (
 // sim/priest/item_sets_pve.go). The 4 and 5 piece bonuses are measured apart in the presets.
 //
 // The main hand is a sword, like Azuresong Mageblade, so a Human gets their 2% crit with
-// swords. The generator lived in the session scratchpad (synth3.py); the numbers below are its
+// swords. A staff for each set (995028, 995029) takes the place of the main hand and off hand at
+// the same weapon budget, for the 2H enchants. The generator lived in the session scratchpad (synth3.py); the numbers below are its
 // output.
 
 func init() {
@@ -299,6 +300,30 @@ var foreverSyntheticPriestItems = []*proto.UIItem{
 		Stats: stats.Stats{stats.Intellect: 5, stats.Spirit: 4, stats.SpellPower: 22}.ToFloatArray(),
 		// Bonecreeper Stylus damage and speed.
 		WeaponDamageMin: 83, WeaponDamageMax: 155, WeaponSpeed: 1.9,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+	},
+	// Staff for the Shadow set, item level 71, in place of the main hand and off hand: a caster's
+	// weapon slots total the same budget either way (46.22 + 27.45 = 73.67), uses 73.25.
+	{
+		Id: 995028, Name: "Shadow Synthetic Staff (Phase 1)", Icon: "inv_staff_13",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:     stats.Stats{stats.Stamina: 14, stats.Intellect: 23, stats.Spirit: 14, stats.SpellPower: 90}.ToFloatArray(),
+		HitRating: 5, CritRating: 14,
+		// A caster staff's damage and speed, which do nothing for a priest.
+		WeaponDamageMin: 105, WeaponDamageMax: 197, WeaponSpeed: 2.9,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+	},
+	// Staff for the Smite set, item level 71, in place of the main hand and off hand: a caster's
+	// weapon slots total the same budget either way (46.22 + 27.45 = 73.67), uses 73.27.
+	{
+		Id: 995029, Name: "Smite Synthetic Staff (Phase 1)", Icon: "inv_staff_13",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:      stats.Stats{stats.Stamina: 15, stats.Intellect: 23, stats.Spirit: 15, stats.SpellPower: 90}.ToFloatArray(),
+		CritRating: 14,
+		// A caster staff's damage and speed, which do nothing for a priest.
+		WeaponDamageMin: 105, WeaponDamageMax: 197, WeaponSpeed: 2.9,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
 	},
