@@ -58,7 +58,16 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Priest
 
-* (nothing yet)
+* Dark Sacrifice's mana (Undead). The client (1.60.1.70338) gives rank 5 a health drain and a mana gain of 320 every 3 sec for 15 sec, but the tooltip reads "gain ${$o2+$SPI} Mana", so the server adds something on top. The sim gives 1600 plus the priest's Spirit (about 300 on the Level 60 set), with the Spirit part on the first tick, and leaves the health loss out. foreverchanges.pro prints 1920, which is 1600 plus 20%. One cast with a known Spirit settles it (Undead priest, level 20 and up).
+* Periodic crits. The sim lets every damage over time tick crit under Forever (the fork's rule, see sim-status.md). Forever's Inner Focus now says its crit is for "a non-periodic spell", and Shadowform's double crit bonus covers Shadow Word: Pain, Mind Flay and Devouring Plague, which only matters if their ticks can crit. A Shadow Word: Pain log at the beta's level 30 settles it.
+* Shadow Weaving (aura 270 on the target) raises only the applying priest's Shadow damage against that target. The sim raises the priest's Shadow damage against every target while the stacks are up, which is the same against one boss.
+* Shadowform's crit bonus on ticks: if ticks crit, the sim gives Shadow Word: Pain, Mind Flay and Devouring Plague ticks 200% crits, as the spell's class mask covers them.
+* Mind Flay rolls to hit once, when it starts (it slows, so it is binary), and its channel does not speed up with haste, like the sim's other channels. Starshards is not binary (partial resists on its ticks).
+* Shadow Word: Death: the backlash (10% of the priest's maximum health when the target lives) is left out. Early Demise's 20% health check uses the encounter's execute phase.
+* Chastise's "very low threat" has no number, the sim gives it normal threat.
+* Power in Light needs the priest's own Holy Fire on the target (the tooltip says "your Holy Fire").
+* Searing Light's free Holy Nova, Twin Disciplines on healing and the other healer talents are not simulated.
+* Raiments of Conviction (Tier 1 shadow set, ItemSet 2105): the client's six pieces have no stats or sources yet. The sim gives its bonuses to the synthetic Phase 1 shadow set. Which pieces form the set, and whether it is crafted (Tailoring lists the "Raiments of Conviction" hands, shoulders, legs and feet, 273920 to 273923) or a raid drop, is open.
 
 ## Mage
 
@@ -87,4 +96,5 @@ Things we can only check on release, because the beta stops at level 30.
 * The level 60 trinkets in the presets (Hand of Justice, Blackhand's Breadth).
 * Raid buffs and totems at their top ranks, at their Forever values.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).
+* Shadow priest at 60: the spell ranks a level 30 doesn't know (Mind Blast 9, Mind Flay 6, Devouring Plague 6, Shadow Word: Death 4, Shadow Word: Pain 8) at the client's numbers, Shadowform (talent at 31 points), whether damage over time ticks crit (see Priest above), and Raiments of Conviction's bonuses.
 * The 100% cap on mana regen while casting. Mindfulness 3/3, Improved Stormstrike and Polished Driftwood Icon add up to 108%, and the sim caps it at 100% like cmangos.
