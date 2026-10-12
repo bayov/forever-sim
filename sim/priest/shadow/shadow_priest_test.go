@@ -18,7 +18,7 @@ func TestP1Shadow(t *testing.T) {
 			Class:      proto.Class_ClassPriest,
 			Phase:      1,
 			Race:       proto.Race_RaceUndead,
-			OtherRaces: []proto.Race{proto.Race_RaceNightElf, proto.Race_RaceDwarf},
+			OtherRaces: []proto.Race{proto.Race_RaceHuman, proto.Race_RaceNightElf, proto.Race_RaceDwarf},
 
 			Talents:     P1Talents,
 			GearSet:     core.GetGearSet("../../../ui/shadow_priest/gear_sets", "level60_phase1_synthetic"),
@@ -34,15 +34,18 @@ func TestP1Shadow(t *testing.T) {
 	}))
 }
 
-var P1Talents = "005030231301--500321501201302251"
+var P1Talents = "005030211305--500321501201302051"
 
 var P1Consumes = core.ConsumesCombo{
-	Label: "P1-Consumes",
+	Label: "Level60-Consumes",
 	Consumes: &proto.Consumes{
 		DefaultPotion:   proto.Potions_MajorManaPotion,
+		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 		Flask:           proto.Flask_FlaskOfSupremePower,
-		Food:            proto.Food_FoodRunnTumTuberSurprise,
+		Food:            proto.Food_FoodNightfinSoup,
+		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
+		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 	},

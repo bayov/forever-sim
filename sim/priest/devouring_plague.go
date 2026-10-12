@@ -19,6 +19,7 @@ var DevouringPlagueManaCost = [DevouringPlagueRanks + 1]float64{0, 215, 350, 495
 var DevouringPlagueLevel = [DevouringPlagueRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
 
 const DevouringPlagueTickCoef = 0.1
+const DevouringPlagueCooldown = time.Minute
 
 func (priest *Priest) registerDevouringPlagueSpell() {
 	priest.DevouringPlague = make([]*core.Spell, DevouringPlagueRanks+1)
@@ -61,7 +62,7 @@ func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) co
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Minute,
+				Duration: DevouringPlagueCooldown,
 			},
 		},
 

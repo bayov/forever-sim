@@ -47,15 +47,19 @@ func (priestShadow) Knobs() []Knob {
 		{Name: "innerFocus", Default: 1, Min: 0, Max: 2, Step: 1},
 		// Clip Mind Flay for a ready Mind Blast once this many ticks are in (0 never). The
 		// check runs after each tick and when the GCD comes back 1.5 sec in.
-		{Name: "mfClip", Default: 2, Min: 0, Max: 2, Step: 1},
-		// Night Elf: Starshards on cooldown, 1 below Mind Blast, 2 above it.
-		{Name: "starshards", Default: 2, Min: 0, Max: 2, Step: 1},
-		// Dwarf: Chastise on cooldown against a Humanoid.
-		{Name: "chastise", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "mfClip", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Night Elf: Starshards on cooldown, 1 below Mind Blast, 2 above it. Its ticks hit no
+		// harder than Mind Flay's in Shadowform and its 6 sec channel holds up Mind Blast, so
+		// it costs 30 DPS at any fight length (2026-10-12).
+		{Name: "starshards", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Dwarf: Chastise on cooldown against a Humanoid. A GCD of Mind Flay is worth more,
+		// 4.7 DPS at 180 sec.
+		{Name: "chastise", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Undead: Dark Sacrifice under this much mana in percent (0 never).
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
-		// Power Infusion on cooldown (needs the 31 point Discipline talent).
-		{Name: "powerInfusion", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Power Infusion on cooldown (needs the 31 point Discipline talent, which no level 60
+		// build takes).
+		{Name: "powerInfusion", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -138,7 +142,7 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		// the free spell.
 		var dpReady value
 		if k["dp"] == 1 {
-			dpReady = not(spellIsReady(devouringPlague))
+			dpReady = or(dotIsActive(devouringPlague), not(spellIsReady(devouringPlague)))
 		}
 		items = append(items, cast(innerFocus, and(spellIsReady(mindBlast), dotIsActive(shadowWordPain), dpReady), "Inner Focus right before Mind Blast. Without the talent ignore the warning on this line."))
 	} else if k["innerFocus"] == 2 {

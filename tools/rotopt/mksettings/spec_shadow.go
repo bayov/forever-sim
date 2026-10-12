@@ -14,18 +14,29 @@ func init() {
 			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
 			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
 		},
+		// Each consume was tried in and out of the set on the Level 60 build (180 sec, 20000
+		// iterations, 2026-10-12): Nightfin Soup (22 spell damage under Forever) is 7.9 ahead
+		// of Runn Tum Tuber Surprise and 3.1 ahead of Grilled Squid, the Goblin Sapper Charge
+		// adds 3.7 (a filler explosive costs a GCD and loses 4), Elixir of Wisdom 0.9.
+		// Brilliant Wizard Oil would be 12.5 ahead of Wizard Oil but is a Zul'Gurub recipe,
+		// Shadow Oil and Dragonbreath Chili add nothing. Mana never runs out in a raid fight
+		// (about 25 min to empty), so Mageblood is left out, the potion and rune are kept for
+		// longer fights.
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
 				DefaultPotion:   proto.Potions_MajorManaPotion,
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 				Flask:           proto.Flask_FlaskOfSupremePower,
-				Food:            proto.Food_FoodRunnTumTuberSurprise,
+				Food:            proto.Food_FoodNightfinSoup,
+				IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
-				ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 			}
 		},
+		// Engineering for the Goblin Sapper Charge, Tailoring as the priest's crafting.
+		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Tailoring},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassPriest
 			player.Spec = &proto.Player_ShadowPriest{ShadowPriest: &proto.ShadowPriest{
