@@ -91,7 +91,7 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997004, Name: "Warlock Synthetic Back (Phase 1)", Icon: "inv_misc_cape_20",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Stamina: 7, stats.Spirit: 6, stats.SpellPower: 35, stats.Armor: 48}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 7, stats.Spirit: 6, stats.SpellPower: 35, stats.Armor: 54}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
