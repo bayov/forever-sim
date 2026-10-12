@@ -1,7 +1,8 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":20293}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":20293}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":1311595}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":20924}}},"notes":"Consecration on cooldown, down to the last point of mana."},
@@ -10,8 +11,8 @@
         {"action":{"castSpell":{"spellId":{"spellId":10333}}},"notes":"Holy Strike on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":24239}}},"notes":"Hammer of Wrath below 20% health."},
         {"action":{"castSpell":{"spellId":{"spellId":10314}}},"notes":"Exorcism on cooldown, only against Undead and Demons."},
-        {"action":{"castSpell":{"spellId":{"spellId":1311595}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":20930}}},"op":"OpLe","rhs":{"const":{"val":"1.5s"}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.4"}}}}]}}},"notes":"Light's Vigil just before Holy Shock is ready, so the Holy Shock detonates it and starts no cooldown. Without the talent ignore the warning on this line."},
-        {"action":{"castSpell":{"spellId":{"spellId":20930}}},"notes":"Holy Shock on cooldown. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":1311595}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1311597},"sourceUnit":{"type":"CurrentTarget"}}}}}]}}},"notes":"Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":20930}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":1311597},"sourceUnit":{"type":"CurrentTarget"}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.3"}}}}]}}]}}},"notes":"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on a free GCD."}
     ]
 }

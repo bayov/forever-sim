@@ -1,11 +1,12 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":20293}}},"doAtValue":{"const":{"val":"-3s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":20920}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":20924}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Consecration with the mana to spare."},
-        {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":20920}}},{"auraIsActive":{"auraId":{"spellId":20293}}}]}}]}}},"notes":"Judgement on cooldown, on whichever damage seal is up."},
+        {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":20920}}},{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20293}}},{"cmp":{"lhs":{"autoTimeToNext":{"autoType":"MainHand"}},"op":"OpGt","rhs":{"const":{"val":"2.5s"}}}}]}}]}}]}}},"notes":"Judgement on cooldown on Seal of Command, and on Seal of Righteousness only when the next swing is a while off (Judgement of Command hits harder)."},
         {"action":{"castSpell":{"spellId":{"spellId":20920}},"condition":{"and":{"vals":[{"not":{"val":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":20920}}},{"auraIsActive":{"auraId":{"spellId":20293}}}]}}}}]}}},"notes":"Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":20293}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20920}}},{"and":{"vals":[{"cmp":{"lhs":{"autoTimeToNext":{"autoType":"MainHand"}},"op":"OpLt","rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1311703}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1311704}}}}}]}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}]}}},"notes":"Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too."},
         {"action":{"castSpell":{"spellId":{"spellId":20920}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20293}}},{"and":{"vals":[{"cmp":{"lhs":{"autoTimeToNext":{"autoType":"MainHand"}},"op":"OpLt","rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1311703}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1311704}}}}}]}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}]}}},"notes":"And back again before the next swing."},
