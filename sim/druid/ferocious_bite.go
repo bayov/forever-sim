@@ -111,7 +111,10 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 				attackPower*0.03*comboPoints +
 				rank.dmgPerEnergy*excessEnergy
 
+			rendAndTear := druid.RendAndTearMultiplier(target)
+			spell.DamageMultiplier *= rendAndTear
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			spell.DamageMultiplier /= rendAndTear
 
 			if result.Landed() {
 				druid.SpendEnergy(sim, excessEnergy, spell.EnergyMetrics())

@@ -307,7 +307,7 @@ func (druid *Druid) applyNaturalInstinct() {
 // effect is a dummy the server runs. The sim takes it as a multiplier on the hits of Claw,
 // Shred, Rake and Ferocious Bite, not on bleeds, while our Rake or Rip is up or the spec
 // assumes another bleed on the target.
-func (druid *Druid) rendAndTearMultiplier(target *core.Unit) float64 {
+func (druid *Druid) RendAndTearMultiplier(target *core.Unit) float64 {
 	if druid.Talents.RendAndTear == 0 {
 		return 1
 	}

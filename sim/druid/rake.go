@@ -77,7 +77,10 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := baseDamageInitial
+			rendAndTear := druid.RendAndTearMultiplier(target)
+			spell.DamageMultiplier *= rendAndTear
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			spell.DamageMultiplier /= rendAndTear
 
 			if result.Landed() {
 				druid.AddComboPoints(sim, 1, target, spell.ComboPointMetrics())

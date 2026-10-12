@@ -119,3 +119,17 @@ func TestCatShredDamage(t *testing.T) {
 		t.Errorf("Shred hits for %.2f, want %.2f", result.Damage, want)
 	}
 }
+
+// TestCatRendAndTear checks Rend and Tear: 2% a point more Shred damage while our Rake is on
+// the target, and nothing without a bleed.
+func TestCatRendAndTear(t *testing.T) {
+	sim, cat := newCatSim(t, catTalents)
+	target := cat.CurrentTarget
+	if got := cat.RendAndTearMultiplier(target); got != 1 {
+		t.Errorf("Rend and Tear with no bleed %.2f, want 1", got)
+	}
+	cat.Rake.Dot(target).Apply(sim)
+	if got := cat.RendAndTearMultiplier(target); math.Abs(got-1.1) > 1e-9 {
+		t.Errorf("Rend and Tear 5/5 on a bleeding target %.2f, want 1.1", got)
+	}
+}
