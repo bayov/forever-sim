@@ -347,6 +347,10 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 	consumes: SurvivalConsumes,
 });
 
+// The numbers are measured without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting
+// 8) and with the shared raid buff caps (cfb2dac: Grace of Air 77, Strength of Earth 42, Battle
+// Shout 115), which arrive with the shared merge; together they cost the ranged specs 27 to 32 and
+// Survival 7.
 // Races, 20000 iterations at 180 sec (forever-wiki/sim-status.md has 120 and 300 too): the Night
 // Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 5 to 6
 // ahead of the Orc, the best Horde race. For Survival the Human is best (2% crit with its two
@@ -356,7 +360,7 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured without trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 895.4 / 888.0 / 878.8 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
+// 868.5 / 861.3 / 853.5 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -368,7 +372,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 922.7 / 916.8 / 880.0 at 120 / 180 / 300 sec, 29 ahead of Beast Mastery at 180. The pet deals
+// 893.3 / 887.6 / 854.2 at 120 / 180 / 300 sec, 26 ahead of Beast Mastery at 180. The pet deals
 // 15% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
@@ -381,8 +385,8 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 931.3 / 921.8 / 888.9 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
-// than a pet that takes no player buffs (5 ahead of Marksmanship at 180). Runs short of mana in a 5 minute fight.
+// 898.3 / 889.6 / 859.8 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// than a pet that takes no player buffs (2 ahead of Marksmanship at 180). Runs short of mana in a 5 minute fight.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -394,7 +398,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 774.8 / 767.7 / 764.6 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
+// 767.5 / 760.4 / 757.4 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
