@@ -79,7 +79,7 @@ var RangedConsumes = core.ConsumesCombo{
 		Flask:           proto.Flask_FlaskOfDistilledWisdom,
 		Food:            proto.Food_FoodGrilledSquid,
 		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
-		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 		ZanzaBuff:       proto.ZanzaBuff_GroundScorpokAssay,
 	},

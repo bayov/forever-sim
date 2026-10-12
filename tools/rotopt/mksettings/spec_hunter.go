@@ -62,8 +62,9 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 // Mongoose (+27 over none, +13 over Greater Agility), Ground Scorpok Assay (+14, +11 for
 // Survival), Juju Might (+8), Grilled Squid (+6 over Smoked Desert Dumpling), Elixir of Wisdom
 // (+1.4) and Engineering's Goblin Land Mine (+7.6) and Goblin Sapper (+4.8). The ranged specs
-// also need Major Mana Potion (+31), Demonic Rune (+28) and Mageblood (+2.4), and Flask of
-// Distilled Wisdom is +1.1. Survival never runs low on mana and gets nothing from those, but
+// also need Major Mana Potion (+31) and Demonic Rune (+28), and Flask of Distilled Wisdom is +1.1.
+// Mageblood Potion was +2.4, but its recipe only comes from Zandalar: Greater Mageblood Elixir
+// takes the slot (simulated on the shared consumables branch). Survival never runs low on mana and gets nothing from those, but
 // Juju Power's Strength (+6.7) and Dragonbreath Chili (+3.2). Fire-toasted Bun's 2% hit
 // (+9) is left out: Forever's is a seasonal item that expires 14 days after looting (item 23327).
 // Survival puts a Dense Sharpening Stone (Blacksmithing trainer) on each sword, +9.2 (the sim keeps
@@ -89,7 +90,7 @@ func hunterConsumes(melee bool) *proto.Consumes {
 	} else {
 		consumes.DefaultPotion = proto.Potions_MajorManaPotion
 		consumes.DefaultConjured = proto.Conjured_ConjuredDemonicRune
-		consumes.ManaRegenElixir = proto.ManaRegenElixir_MagebloodPotion
+		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
 		consumes.Flask = proto.Flask_FlaskOfDistilledWisdom
 	}
 	return consumes

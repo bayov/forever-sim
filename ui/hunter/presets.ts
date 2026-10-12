@@ -201,8 +201,9 @@ export const LoneWolfOptions = HunterOptions.create({
 // Mine +7.6, Goblin Sapper +4.8). The ranged specs need Major Mana Potions (+31), Demonic Runes
 // (+28) and Mageblood, and take Flask of Distilled Wisdom (+1.1). Juju Power and the hit food do
 // nothing for them: Strength is melee attack power only, and the ranged set is at the 9% cap.
-// Mageblood Potion's recipe only comes from Zandalar, so it stands in for Greater Mageblood Elixir
-// until the sim has that.
+// Greater Mageblood Elixir in place of Mageblood Potion (its recipe only comes from Zandalar). It
+// is simulated on the shared consumables branch; until that is merged it adds nothing here, and the
+// numbers below are without it.
 // No pet consumables: Forever pets take no player buffs, and Juju and the pet scrolls are player-
 // cast buffs on the pet (they would add 17 to Beast Mastery if Forever allows them).
 export const DefaultConsumes = Consumes.create({
@@ -214,7 +215,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfDistilledWisdom,
 	food: Food.FoodGrilledSquid,
 	intellectElixir: IntellectElixir.ElixirOfWisdom,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
