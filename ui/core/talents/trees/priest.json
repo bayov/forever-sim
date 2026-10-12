@@ -10,11 +10,11 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1309969,
+          1309969,
+          1309969,
+          1309969,
+          1309969
         ],
         "maxPoints": 5,
         "name": "Power in Light",
@@ -72,11 +72,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1225132,
+          1225132,
+          1225132,
+          1225132,
+          1225132
         ],
         "maxPoints": 5,
         "name": "Twin Disciplines",
@@ -139,9 +139,9 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0
+          1309957,
+          1309957,
+          1309957
         ],
         "maxPoints": 3,
         "name": "Holy Precision",
@@ -367,7 +367,7 @@
           "colIdx": 2
         },
         "spellIds": [
-          0
+          402000
         ],
         "maxPoints": 1,
         "name": "Soul Warding",
@@ -412,7 +412,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          402174
         ],
         "maxPoints": 1,
         "name": "Penance",
@@ -438,11 +438,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          425280,
+          425280,
+          425280,
+          425280,
+          425280
         ],
         "maxPoints": 5,
         "name": "Renewed Hope",
@@ -479,9 +479,9 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          431622,
+          431622,
+          431622
         ],
         "maxPoints": 3,
         "name": "Divine Aegis",
@@ -540,9 +540,9 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0
+          14913,
+          14913,
+          14913
         ],
         "maxPoints": 3,
         "name": "Twilight Focus",
@@ -870,7 +870,7 @@
           "colIdx": 3
         },
         "spellIds": [
-          0
+          401937
         ],
         "maxPoints": 1,
         "name": "Binding Heal",
@@ -891,8 +891,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          1317006,
+          1317006
         ],
         "maxPoints": 2,
         "name": "Litany of Light",
@@ -1008,7 +1008,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          401859
         ],
         "maxPoints": 1,
         "name": "Prayer of Mending",
@@ -1324,8 +1324,8 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0
+          1225139,
+          1225139
         ],
         "maxPoints": 2,
         "name": "Improved Mind Flay",
@@ -1454,8 +1454,8 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0
+          1309950,
+          1309950
         ],
         "maxPoints": 2,
         "name": "Devouring Contagion",
@@ -1479,8 +1479,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          1310076,
+          1310076
         ],
         "maxPoints": 2,
         "name": "Early Demise",
