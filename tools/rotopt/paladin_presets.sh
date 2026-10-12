@@ -34,7 +34,7 @@ gen() {
 # -1.5, so the first swing gets the Echo too, and Judgement on Seal of Command, on Seal of
 # Righteousness only when the next swing is more than 2.5 sec off (Judgement of Command hits
 # harder): +5.8 at 180 sec on the new consumes. The search keeps them.
-gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=25" -level 60
+gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0" -level 60
 # Level 60 Shock, for the Holy Shock talents (no Twist of Light, so no twisting): Consecration
 # first down to the last point of mana (2 ahead of a 20% floor), Judgement on cooldown on Seal of
 # Righteousness, Holy Strike on cooldown (90), Light's Vigil above 40% mana just before Holy
