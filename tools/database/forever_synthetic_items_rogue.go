@@ -9,8 +9,8 @@ import (
 // ForeverSyntheticItems): each piece takes the place of an Era Phase 1 BiS item a rogue wears (the
 // Nightslayer set, Onyxia Tooth Pendant, Cape of the Black Baron, the Devilsaur set, Quick Strike Ring,
 // Don Julio's Band, Striker's Mark and the Molten Core and Onyxia weapons) at the Phase 1 epic budget of its
-// slot, at item level 66 or the replaced item's level where that is higher. The trinkets stay Hand of
-// Justice and Blackhand's Breadth.
+// slot, at item level 66 or the replaced item's level where that is higher. The gear sets leave the
+// trinket slots empty, as every class's synthetic preset does.
 //
 // The budget is the one the shaman's items spend: an epic item value of 1.2 * item level - 36.4 (42.8 at 66,
 // 52.4 at 74, 56.0 at 77), times the slot modifier (1 for head, chest and legs, 0.77 for shoulders, hands,
