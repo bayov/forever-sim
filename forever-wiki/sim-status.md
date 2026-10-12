@@ -1,6 +1,6 @@
 # Sim status
 
-What this repo's sim models of Forever as of 2026-09-20, and what it assumes where nothing is published. Racials and the Rogue, Shaman and Paladin trees follow the beta client (build 1.60.1.69876), the rest is still the BlizzCon transcriptions. Most of the engine work was ported from [ElliotWood/Forever](https://github.com/ElliotWood/Forever) (see [references.md](references.md)), then checked against this wiki and adjusted. Only Warrior, Rogue, Shaman and Paladin have Forever talent trees so far. The other five classes still run their Classic trees.
+What this repo's sim models of Forever as of 2026-09-20, and what it assumes where nothing is published. Racials and the Rogue, Shaman and Paladin trees follow the beta client (build 1.60.1.69876), the rest is still the BlizzCon transcriptions. Most of the engine work was ported from [ElliotWood/Forever](https://github.com/ElliotWood/Forever) (see [references.md](references.md)), then checked against this wiki and adjusted. Warrior, Rogue, Shaman, Paladin and Warlock have Forever talent trees. The other classes still run their Classic trees.
 
 ## Ruleset switch
 
@@ -44,14 +44,14 @@ The six new race and class pairings are selectable. Skyborne is two entries (Hig
 
 ## Talents
 
-Trees for Rogue, Shaman and Paladin come from the beta client (build 1.60.1.69876, read through hyjal.cc's talent calculator and vendored in `tools/forever_talents/client/`, converted with `import_client.py`). Every rank is real. The changes against the BlizzCon data are listed at the top of [classes/rogue.md](classes/rogue.md), [classes/shaman.md](classes/shaman.md) and [classes/paladin.md](classes/paladin.md). The Warrior tree is still `tools/forever_talents/data/warrior.json` from the nikftw transcription (rank 1 observed, the rest extrapolated), the client tree for it and the other five classes sits in `client/` waiting for the conversion.
+Trees for Rogue, Shaman, Paladin and Warlock come from the beta client (build 1.60.1.69876, read through hyjal.cc's talent calculator and vendored in `tools/forever_talents/client/`, converted with `import_client.py`). Every rank is real. The changes against the BlizzCon data are listed at the top of [classes/rogue.md](classes/rogue.md), [classes/shaman.md](classes/shaman.md) and [classes/paladin.md](classes/paladin.md). The Warrior tree is still `tools/forever_talents/data/warrior.json` from the nikftw transcription (rank 1 observed, the rest extrapolated), the client tree for it and the other five classes sits in `client/` waiting for the conversion.
 
 Regenerate a tree and its proto with `tools/forever_talents/import_talents.py <class> --write` (after `import_client.py <class>` for a class on the client data). The tree json and the proto message have to stay in the same order, so always regenerate both.
 
 The talent picker shows the Forever tooltip for every talent and marks two things:
 
 - Ranks 2 and up that were never on screen and are extrapolated (Warrior only now).
-- Talents the sim does not read, outlined in the picker. Points spent there change nothing. As of now: Warrior (Improved Charge, Spearing Strike, Improved Hamstring, Booming Voice, Iron Will, Piercing Howl, Blood Crazed, Improved Intercept, Improved Disarm, Vanguard, Improved Shield Bash), Rogue (Improved Gouge, Remorseless Attacks, Improved Kidney Shot, Improved Sprint, Improved Kick, Camouflage, Master of Deception, Setup, Dirty Tricks, Improved Distract, Heightened Senses), Shaman (Eye of the Storm, Elemental Reach, Earthbound, Earth's Grasp, Improved Ghost Wolf, Improved Healing Wave, Ancestral Healing, Healing Focus, Healing Way, Riptide), Paladin (Healing Light, Spiritual Focus, Unyielding Faith, Voice of Truth, Infusion of Light, Light's Vigil, Guardian's Favor, Improved Seal of Fury, Swift Judgement, Improved Hammer of Justice, Templar's Bulwark, Pursuit of Justice, Eye for an Eye, Twist of Light).
+- Talents the sim does not read, outlined in the picker. Points spent there change nothing. As of now: Warrior (Improved Charge, Spearing Strike, Improved Hamstring, Booming Voice, Iron Will, Piercing Howl, Blood Crazed, Improved Intercept, Improved Disarm, Vanguard, Improved Shield Bash), Rogue (Improved Gouge, Remorseless Attacks, Improved Kidney Shot, Improved Sprint, Improved Kick, Camouflage, Master of Deception, Setup, Dirty Tricks, Improved Distract, Heightened Senses), Shaman (Eye of the Storm, Elemental Reach, Earthbound, Earth's Grasp, Improved Ghost Wolf, Improved Healing Wave, Ancestral Healing, Healing Focus, Healing Way, Riptide), Warlock (Soul Harvest, Fel Concentration, Curse of Exhaustion, Improved Health Funnel, Demonic Aegis, Improved Voidwalker, Improved Felhunter, Destructive Reach, Molten Skin, Intensity, Pyroclasm, Bane of Havoc), Paladin (Healing Light, Spiritual Focus, Unyielding Faith, Voice of Truth, Infusion of Light, Light's Vigil, Guardian's Favor, Improved Seal of Fury, Swift Judgement, Improved Hammer of Justice, Templar's Bulwark, Pursuit of Justice, Eye for an Eye, Twist of Light).
 
 Per-class assumptions carried over from the fork are marked `TODO` in `sim/warrior`, `sim/rogue`, `sim/shaman` and `sim/paladin`. The ones that move DPS:
 
@@ -71,6 +71,7 @@ Racials are the only difference between races, since both factions have blessing
 Level 60, 300 sec, the shipped builds and the `mksettings` raid (2026-09-17, beta client racials):
 
 - Rogue Sinister Strike / Backstab: Undead 844.6 / 956.3 (Touch of the Grave at its cap with no internal cooldown, which is what the beta has, 836.4 / 944.5 under the 15 sec we used to assume), Human 843.4 / 936.2 (swords in the SS set only), Gnome 838.3 / 949.3 (Eureka! before a 5 point Eviscerate), Orc 836.0 / 943.1 (852.8 for Sinister Strike with Deathbringer, see below), Night Elf 835.7 / 944.0, Skyborne 832.3 / 941.8, Troll 832.0 / 940.4, Dwarf 826.7 / 934.5. Gnome fell from the top once Eureka! went from the assumed half price to 20% off. The Undead numbers are from before Touch of the Grave rolled on the press of an ability rather than on the hit. A run on the press model (`mksettings` p2 BiS sets, 50000 iterations) gives absolute numbers about 60 below this line, so it is not directly comparable, but it has the Undead 9.8 / 13.8 ahead of the Orc and 13.3 / 16.0 ahead of the Troll, a bit more than the 8.6 / 13.2 over the Orc above.
+- Warlock (Level 60 presets, 180 sec, 2026-10-12): Human 970.7 (Sword Specialization on the Era Phase 1 sword), Gnome 970.3, Undead 964.7, Orc 963.1, Troll 953.7 on Demonology, the same order on Destruction and Affliction. See Level 60 presets.
 - Enhancement: Dwarf 967 (Mace Specialization on Sulfuras), Skyborne 963, Troll 962, Tauren 962, Orc 960 (no axe, 926 with Spinal Reaper). Within 7 DPS.
 
 Orc with an axe. Rogues can wear axes under Forever, so an Orc row without one hides Axe Specialization (1% crit). The sets above carry swords, daggers and Sulfuras, and a same tier axe changes the picture only for Sinister Strike (5 min, 4000 iterations, Night Elf as the control for the weapon swap alone):
@@ -146,7 +147,30 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 ### Warlock
 
-(not done yet)
+The warlock runs the Forever client tree and spell ranks since 2026-10-12 (classes/warlock.md has the changes). The three specs share one gear set and one raid, and get a build each.
+
+- Gear: the synthetic Phase 1 warlock set (`tools/database/forever_synthetic_items_warlock.go`, 997001 to 997015): the Felheart set, Robe of Volatile Power, Mana Igniting Cord, Choker of the Fire Lord, Nemesis Leggings, Ring of Spell Power, Azuresong Mageblade, Fire Runed Grimoire and Crimson Shocker rebuilt on the shared synthetic budget. 527 spell power, 118 Intellect, 129 Stamina, 76 Spirit (10.7% of the budget), 5% crit and 3% hit, and the six armor pieces carry Demonheart Raiment (Forever's warlock Tier 1: 1% hit, 20% more mana from Life Tap). Talisman of Ephemeral Power and Briarwood Reed are the trinkets. The stat weights of the three builds come out in the same order, which is why one set serves all of them (Human, 180 sec, DPS for 1% hit / 1% crit / a point of spell power / Intellect / Spirit): Demonology 9.6 / 9.1 / 0.66 / 0.44 / 0.19, Destruction 8.3 / 8.6 / 0.63 / 0.60 / 0.14, Affliction 7.9 / 8.9 / 0.63 / 0.30 / 0.
+- Raid: the shared level 60 raid in `tools/rotopt/mksettings` plus a caster group's Mana Spring Totem. Another warlock's Curse of the Elements is up, so ours keeps its curse slot free. Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill are personal under Forever and not in it. Consumes: Flask of Supreme Power, Greater Arcane Elixir, Elixir of Shadow Power, Elixir of Firepower (Greater Firepower is Forever's Elixir of Holy Power), Mageblood Potion, Cerebral Cortex Compound, Nightfin Soup, Brilliant Wizard Oil next to the Spellstone (the warlock stones are imbues under Forever), Major Mana Potion, Demonic Rune and Goblin Sapper. Engineering and Tailoring.
+- Talents, searched with `tools/rotopt -talent-search` from seven starting builds and again on the searched rotation (`tools/rotopt/warlock_presets.sh`):
+  - Level 60 Demonology `011-0305003131221001351-0550005003`: Demonic Pact. The Imp is sacrificed before the pull (15% Shadow damage) and the Succubus stays out (Master Demonologist's 10% Shadow damage, Soul Link, Demonic Knowledge's 60 spell damage). Both Demonic Pact starts ended here.
+  - Level 60 Destruction `25510000035--055030500310035`: Conflagrate with Shadow and Flame 5/5 (Immolate is never consumed) and Fire and Brimstone, Pandemic and Malevolence. Incinerate and Bane of Havoc lost their points.
+  - Level 60 Affliction `2553000003520005--0550305003`: Shadow Mastery, Pandemic, Malevolence and Nightfall with Improved Shadow Bolt and Ruin. Wrack and Soul Siphon lost theirs, the drains are no match for Shadow Bolt.
+  - Demonology without Demonic Pact (`021-030500313122100135-0550005003`, the Succubus out and nothing sacrificed) was 849.7 against 935.2 at the time, the Demonic Sacrifice and Ruin build with no demon out 802.3.
+- Rotation (`tools/rotopt/warlock.go`): Bane of Doom when it lands before the fight ends and Bane of Agony otherwise, Corruption and Immolate when they are down, Conflagrate on cooldown for Destruction, Soul Link before the pull for Demonology, Shadow Bolt as the filler, Life Tap below 5% mana. At 180 sec on Demonology Bane of Agony alone is 34 behind, no bane 111, no Corruption 45, no Immolate 9, Soul Fire in Decimation 9, Death Coil 6, Life Tap at 20% 9, Searing Pain as the filler 185.
+- Demon: the Succubus for every build. Forever halved the demons' spells but the sim keeps their 1.12 melee (notes.md), so on the Destruction build the Succubus is 877.5 against the Felhunter's 862.0, the Imp's 823.0 and no demon's 807.1. Spellstone and Firestone are within 3.
+- Numbers, Human, 120 / 180 / 300 sec, 20000 iterations: Demonology 983.5 / 970.7 / 959.9, Destruction 903.9 / 897.4 / 891.8, Affliction 897.3 / 889.5 / 884.3. Destruction and Affliction are 7.5% and 8.4% behind Demonology at 180 sec, so each ships as a build of its own.
+
+Races (every race a warlock can be under Forever, the same seed, 20000 iterations, standard error under 0.5):
+
+| Race | Demonology 120 / 180 / 300 | Destruction 120 / 180 / 300 | Affliction 120 / 180 / 300 |
+|---|---|---|---|
+| Human (A) | 983.5 / 970.7 / 959.9 | 903.9 / 897.4 / 891.8 | 897.3 / 889.5 / 884.3 |
+| Gnome (A) | 983.4 / 970.3 / 956.2 | 903.6 / 895.7 / 888.6 | 896.3 / 888.5 / 881.5 |
+| Undead (H) | 976.7 / 964.7 / 952.6 | 898.8 / 891.9 / 886.5 | 888.9 / 881.9 / 875.8 |
+| Orc (H) | 975.4 / 963.1 / 950.3 | 896.9 / 890.5 / 883.7 | 889.4 / 882.1 / 875.1 |
+| Troll (H) | 966.7 / 953.7 / 941.8 | 884.4 / 878.5 / 873.5 | 879.5 / 871.6 / 866.0 |
+
+Best overall and best Alliance: Human. Best Horde: Undead (Orc ties it on Affliction). The Human's 2% crit is Sword Specialization with the synthetic Azuresong Mageblade, the Era Phase 1 sword, and that is the whole lead: without it the Human Demonology warlock is 934.7 at 180 sec, last of the five, so a staff or a dagger would put the Gnome on top. Gnome's Eureka! is worth the most at 120 sec, Troll's Berserking the least (its 10% haste for 10 sec every 3 min is two uses at most).
 
 ### Druid
 
