@@ -1,0 +1,17 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":10497}}},"doAtValue":{"const":{"val":"-2s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":10438}}},"doAtValue":{"const":{"val":"-1s"}}}
+    ],
+    "priorityList": [
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":17359}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLe","rhs":{"const":{"val":"0.4"}}}}},"notes":"Mana Tide Totem once the mana runs low. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":10497}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10497}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":17359}}}}}]}}},"notes":"Mana Spring Totem whenever it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":10438}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10438}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"20s"}}}}]}}},"notes":"Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards."},
+        {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}},"notes":"Flame Shock when its DoT is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":1238300}}},"notes":"Lava Burst on cooldown. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":10391}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.2"}}}}},"notes":"A lower rank of Lightning Bolt once the mana runs low."},
+        {"action":{"castSpell":{"spellId":{"spellId":15208}}},"notes":"Lightning Bolt."}
+    ]
+}
