@@ -54,21 +54,12 @@ func (warlock *Warlock) getSiphonLifeBaseConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDamage, isRollover)
-
-				if !isRollover {
-					// Siphon Life heals so it snapshots target modifiers
-					dot.SnapshotAttackerMultiplier *= dot.Spell.TargetDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex][dot.Spell.CastType], true)
-				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				// TODO: interaction with bonus damage taken?
-				// Remove target modifiers for the tick only
-				dot.Spell.Flags |= core.SpellFlagIgnoreTargetModifiers
-
+				// The target modifiers count per tick, like the warlock's other damage over time
+				// spells, so the warlock's own Improved Shadow Bolt debuff only counts while it is
+				// up (1.12's Siphon Life took them when it was cast).
 				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-
-				// revert flag changes
-				dot.Spell.Flags ^= core.SpellFlagIgnoreTargetModifiers
 
 				health := result.Damage
 				warlock.GainHealth(sim, health, healthMetrics)

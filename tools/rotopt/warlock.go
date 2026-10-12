@@ -65,6 +65,9 @@ func (warlockRotation) Knobs() []Knob {
 		// them to fall off). About their cast time: 1.6 sec for Corruption with one point of
 		// Improved Corruption and 1.5 for Immolate with Bane 5/5.
 		{Name: "dotLead", Default: 0, Min: 0, Max: 2.5, Step: 0.5},
+		// 1 recasts Immolate once it has less left than its own cast time, which clips no tick
+		// (an early Corruption, an instant, clips its last one). 0 leaves Immolate on dotLead.
+		{Name: "immolateLead", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Siphon Life (the Affliction talent) when its 30 sec are down.
 		{Name: "siphonLife", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Conflagrate on cooldown while Immolate is up.
@@ -92,6 +95,12 @@ func (warlockRotation) Knobs() []Knob {
 		{Name: "lifeTapEnd", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Soul Link before the pull (the Demonology talent).
 		{Name: "soulLink", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Life Tap before the pull, to pay back Soul Link's mana.
+		{Name: "prepullLifeTap", Default: 0, Min: 0, Max: 1, Step: 1},
+		// How many seconds before the pull the opening cast starts. Damage that lands before the
+		// pull does not count, so it should land just after: 2.5 for a 2.45 sec Shadow Bolt and
+		// its travel, 1.5 for Immolate.
+		{Name: "prepullAt", Default: 2.5, Min: 1, Max: 4, Step: 0.5},
 	}
 }
 
@@ -99,7 +108,21 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	var items []*proto.APLListItem
 	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on cooldown."))
 
-	items = append(items, cast(lockLifeTap, lt(currentManaPercent(), num(k["lifeTapMana"]/100)), "Life Tap when the mana runs low."))
+	// The filler can cost more than the Life Tap threshold, so tap also when it cannot be cast
+	// (otherwise the warlock waits for regen).
+	filler := lockShadowBolt
+	switch k["filler"] {
+	case 2:
+		filler = lockIncinerate
+	case 3:
+		filler = lockSearingPain
+	case 4:
+		filler = lockDrainLife
+	case 5:
+		filler = lockDrainSoul
+	}
+	items = append(items, cast(lockLifeTap, or(lt(currentManaPercent(), num(k["lifeTapMana"]/100)), not(spellCanCast(filler))),
+		"Life Tap when the mana runs low or the filler costs more than is left."))
 
 	switch k["bane"] {
 	case 1:
@@ -128,7 +151,11 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(lockSiphonLife, and(not(dotIsActive(lockSiphonLife)), gt(remainingTime(), seconds(9))), "Siphon Life when it is down."))
 	}
 	if k["immolate"] == 1 {
-		items = append(items, cast(lockImmolate, and(dotDown(lockImmolate, k["dotLead"]), gt(remainingTime(), seconds(k["immolateMinTime"]))), "Immolate when it is down."))
+		immolateDown := dotDown(lockImmolate, k["dotLead"])
+		if k["immolateLead"] == 1 {
+			immolateDown = or(not(dotIsActive(lockImmolate)), lt(dotRemainingTime(lockImmolate), spellCastTime(lockImmolate)))
+		}
+		items = append(items, cast(lockImmolate, and(immolateDown, gt(remainingTime(), seconds(k["immolateMinTime"]))), "Immolate when it is down."))
 	}
 	if k["conflagrate"] == 1 {
 		items = append(items, cast(lockConflagrate, dotIsActive(lockImmolate), "Conflagrate on cooldown."))
@@ -180,16 +207,23 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 
 	rot := rotation(items...)
 	if k["soulLink"] == 1 {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(lockSoulLink, 4.5))
+		at := 4.5
+		if k["prepullLifeTap"] == 1 {
+			at = 6
+		}
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockSoulLink, at))
+	}
+	if k["prepullLifeTap"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockLifeTap, 4.5))
 	}
 	switch k["filler"] {
 	case 2:
 		// Incinerate wants Immolate on the target first.
-		rot.PrepullActions = append(rot.PrepullActions, prepull(lockImmolate, 2))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockImmolate, k["prepullAt"]))
 	case 3:
-		rot.PrepullActions = append(rot.PrepullActions, prepull(lockSearingPain, 2))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockSearingPain, k["prepullAt"]))
 	default:
-		rot.PrepullActions = append(rot.PrepullActions, prepull(lockShadowBolt, 3))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockShadowBolt, k["prepullAt"]))
 	}
 	return rot
 }
@@ -205,4 +239,12 @@ func dotDown(spell *proto.ActionID, lead float64) value {
 
 func isExecutePhase(threshold proto.APLValueIsExecutePhase_ExecutePhaseThreshold) value {
 	return &proto.APLValue{Value: &proto.APLValue_IsExecutePhase{IsExecutePhase: &proto.APLValueIsExecutePhase{Threshold: threshold}}}
+}
+
+func spellCanCast(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellCanCast{SpellCanCast: &proto.APLValueSpellCanCast{SpellId: spell}}}
+}
+
+func spellCastTime(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellCastTime{SpellCastTime: &proto.APLValueSpellCastTime{SpellId: spell}}}
 }

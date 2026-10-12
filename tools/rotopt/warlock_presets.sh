@@ -25,13 +25,16 @@ gen() {
 	echo "wrote ui/warlock/apls/$name.apl.json ($knobs)"
 }
 base="bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0"
-# Demonology: Soul Link before the pull, the damage over time spells recast 1.5 sec early.
-gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,dotLead=1.5"
+# Demonology: Soul Link and a Life Tap before the pull, the damage over time spells recast 1.5 sec
+# early.
+gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5"
 # Destruction (Shadow Bolt): Conflagrate on cooldown while Immolate is up.
-gen level60_destruction "$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0"
-gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0"
+# Destruction and Affliction recast Immolate once it has less left than its cast time.
+gen level60_destruction "$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
+gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
 # Destruction fire: Incinerate while Immolate is up, Conflagrate on cooldown, Immolate recast 2
 # sec early.
-gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2"
+gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5"
 # Affliction damage over time: Siphon Life, and Wrack while Corruption and Bane of Agony are up.
-gen level60_affliction_dot "$base,filler=1,conflagrate=0,siphonLife=1,wrack=2,soulLink=0,dotLead=1"
+# Its Shadow Bolt takes 2.94 sec, so the opener starts 3 sec before the pull.
+gen level60_affliction_dot "$base,filler=1,conflagrate=0,siphonLife=1,wrack=2,soulLink=0,dotLead=0,immolateLead=1,prepullAt=3"

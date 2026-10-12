@@ -1,15 +1,15 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":25307}}},"doAtValue":{"const":{"val":"-3s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":25307}}},"doAtValue":{"const":{"val":"-2.5s"}}}
     ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on cooldown."},
-        {"action":{"castSpell":{"spellId":{"spellId":11689}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.05"}}}}},"notes":"Life Tap when the mana runs low."},
+        {"action":{"castSpell":{"spellId":{"spellId":11689}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.05"}}}},{"not":{"val":{"spellCanCast":{"spellId":{"spellId":25307}}}}}]}}},"notes":"Life Tap when the mana runs low or the filler costs more than is left."},
         {"action":{"castSpell":{"spellId":{"spellId":603}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":11713}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"60s"}}}}]}}},"notes":"Bane of Doom when it lands before the fight ends."},
         {"action":{"castSpell":{"spellId":{"spellId":11713}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":603}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":11713}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"12s"}}}},{"or":{"vals":[{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":603}}},"op":"OpGt","rhs":{"const":{"val":"12s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"60s"}}}}]}}]}}},"notes":"Bane of Agony while Bane of Doom is on cooldown or would not land."},
         {"action":{"castSpell":{"spellId":{"spellId":25311}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":25311}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"9s"}}}}]}}},"notes":"Corruption when it is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":25309}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":25309}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"6s"}}}}]}}},"notes":"Immolate when it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":25309}},"condition":{"and":{"vals":[{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":25309}}}}},{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":25309}}},"op":"OpLt","rhs":{"spellCastTime":{"spellId":{"spellId":25309}}}}}]}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"6s"}}}}]}}},"notes":"Immolate when it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":18932}},"condition":{"dotIsActive":{"spellId":{"spellId":25309}}}},"notes":"Conflagrate on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":25307}}},"notes":"Shadow Bolt as the filler."}
     ]
