@@ -13,33 +13,13 @@ type RakeRankInfo struct {
 	dotTickDamage float64
 }
 
+// Rake under Forever (1.60.1.70338, wago.tools): a little more than 1.12 on every rank
+// (rank 4 is 61 and 34 a tick, 1.12 has 58 and 32).
 var rakeSpells = []RakeRankInfo{
-	{
-		id:            1822,
-		level:         24,
-		initialDamage: 19.0,
-		dotTickDamage: 13.0,
-	},
-	{
-		id:            1823,
-		level:         34,
-		initialDamage: 28.0,
-		dotTickDamage: 19.0,
-	},
-	{
-
-		id:            1824,
-		level:         44,
-		initialDamage: 43.0,
-		dotTickDamage: 25.0,
-	},
-	{
-
-		id:            9904,
-		level:         54,
-		initialDamage: 58.0,
-		dotTickDamage: 32.0,
-	},
+	{id: 1822, level: 24, initialDamage: 23, dotTickDamage: 16},
+	{id: 1823, level: 34, initialDamage: 31, dotTickDamage: 21},
+	{id: 1824, level: 44, initialDamage: 45, dotTickDamage: 26},
+	{id: 9904, level: 54, initialDamage: 61, dotTickDamage: 34},
 }
 
 func (druid *Druid) registerRakeSpell() {
@@ -77,9 +57,8 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 			IgnoreHaste: true,
 		},
 
-		DamageMultiplierAdditive: 1 + 0.1*float64(druid.Talents.SavageFury),
-		DamageMultiplier:         1,
-		ThreatMultiplier:         1,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{

@@ -7,7 +7,7 @@
         "fieldName": "improvedWrath",
         "location": {
           "rowIdx": 0,
-          "colIdx": 0
+          "colIdx": 1
         },
         "spellIds": [
           16814,
@@ -16,49 +16,94 @@
           16817,
           16818
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "naturesGrasp",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 1
-        },
-        "spellIds": [
-          16689
+        "maxPoints": 5,
+        "name": "Improved Wrath",
+        "description": "Reduces the cast time of your Wrath spell by {0} sec and its Mana cost by {1}%.",
+        "ranks": [
+          [
+            0.1,
+            10
+          ],
+          [
+            0.2,
+            20
+          ],
+          [
+            0.3,
+            30
+          ],
+          [
+            0.4,
+            40
+          ],
+          [
+            0.5,
+            50
+          ]
         ],
-        "maxPoints": 1
+        "icon": "spell_nature_abolishmagic"
       },
       {
-        "fieldName": "improvedNaturesGrasp",
+        "fieldName": "genesis",
         "location": {
           "rowIdx": 0,
           "colIdx": 2
         },
         "spellIds": [
-          17245,
-          17247,
-          17248,
-          17249
+          1223081,
+          1223081,
+          1223081,
+          1223081,
+          1223081
         ],
-        "maxPoints": 4,
-        "prereqLocation": {
-          "rowIdx": 0,
-          "colIdx": 1
-        }
+        "maxPoints": 5,
+        "name": "Genesis",
+        "description": "Increases the periodic damage and healing done by your spells and abilities by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "spell_arcane_arcane03"
       },
       {
-        "fieldName": "improvedEntanglingRoots",
+        "fieldName": "moonglow",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
-          16918,
-          16919,
-          16920
+          16845,
+          16846,
+          16847
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Moonglow",
+        "description": "Reduces the Mana cost of your damaging spells by {0}%.",
+        "ranks": [
+          [
+            8
+          ],
+          [
+            17
+          ],
+          [
+            25
+          ]
+        ],
+        "icon": "spell_nature_sentinal"
       },
       {
         "fieldName": "improvedMoonfire",
@@ -73,80 +118,152 @@
           16824,
           16825
         ],
-        "maxPoints": 5
+        "maxPoints": 2,
+        "name": "Improved Moonfire",
+        "description": "Increases the damage and critical strike chance of your Moonfire spell by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_nature_starfall"
       },
       {
-        "fieldName": "naturalWeapons",
+        "fieldName": "naturesMajesty",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          16902,
-          16903,
-          16904,
-          16905,
-          16906
+          1223082,
+          1223082
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "naturalShapeshifter",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 3
-        },
-        "spellIds": [
-          16833,
-          16834,
-          16835
+        "maxPoints": 2,
+        "name": "Nature's Majesty",
+        "description": "Increases your critical strike chance with spells and melee attacks by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ]
         ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "improvedThorns",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 0
-        },
-        "spellIds": [
-          16836,
-          16839,
-          16840
-        ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "omenOfClarity",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16864
-        ],
-        "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 1,
-          "colIdx": 2
-        }
+        "icon": "inv_staff_01"
       },
       {
         "fieldName": "naturesReach",
         "location": {
-          "rowIdx": 2,
+          "rowIdx": 1,
           "colIdx": 3
         },
         "spellIds": [
           16819,
           16820
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Nature's Reach",
+        "description": "Increases the range of your offensive Balance spells by {0}% and improves your chance to hit by {1}%.",
+        "ranks": [
+          [
+            10,
+            2
+          ],
+          [
+            20,
+            4
+          ]
+        ],
+        "icon": "spell_nature_naturetouchgrow"
+      },
+      {
+        "fieldName": "improvedEntanglingRoots",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 0
+        },
+        "spellIds": [
+          16918,
+          16919,
+          16920
+        ],
+        "maxPoints": 3,
+        "name": "Improved Entangling Roots",
+        "description": "Increases the damage done by your Entangling Roots spell by {0}%, and its victims can take up to {1}% more damage without interrupting the effect.",
+        "ranks": [
+          [
+            25,
+            25
+          ],
+          [
+            50,
+            50
+          ],
+          [
+            75,
+            75
+          ]
+        ],
+        "icon": "spell_nature_stranglevines",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "naturesSplendor",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 1,
+          "colIdx": 2
+        },
+        "spellIds": [
+          1223083
+        ],
+        "maxPoints": 1,
+        "name": "Nature's Splendor",
+        "description": "Increases the duration of your Moonfire and Rejuvenation spells by {0} sec, your Regrowth spell by {1} sec, and your Insect Swarm spell by {2} sec.",
+        "ranks": [
+          [
+            3,
+            6,
+            2
+          ]
+        ],
+        "icon": "spell_nature_natureresistancetotem"
+      },
+      {
+        "fieldName": "insectSwarm",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
+        "spellIds": [
+          5570
+        ],
+        "maxPoints": 1,
+        "name": "Insect Swarm",
+        "description": "The enemy target is swarmed by insects, decreasing their chance to hit with attacks by {0}% and causing {1} Nature damage over {2} sec.",
+        "ranks": [
+          [
+            2,
+            48,
+            12
+          ]
+        ],
+        "icon": "spell_nature_insectswarm"
       },
       {
         "fieldName": "vengeance",
         "location": {
           "rowIdx": 3,
+          "colIdx": 1
+        },
+        "prereqLocation": {
+          "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
@@ -157,10 +274,26 @@
           16913
         ],
         "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 1,
-          "colIdx": 1
-        }
+        "name": "Vengeance",
+        "description": "Increases the critical strike damage bonus of your Arcane and Nature spells by {0}%.",
+        "ranks": [
+          [
+            20
+          ],
+          [
+            40
+          ],
+          [
+            60
+          ],
+          [
+            80
+          ],
+          [
+            100
+          ]
+        ],
+        "icon": "spell_nature_purge"
       },
       {
         "fieldName": "improvedStarfire",
@@ -175,7 +308,61 @@
           16925,
           16926
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Improved Starfire",
+        "description": "Reduces the cast time of Starfire by {0} sec and Starfire has a {1}% chance to stun its target for {2} sec.",
+        "ranks": [
+          [
+            0.1,
+            3,
+            3
+          ],
+          [
+            0.2,
+            6,
+            3
+          ],
+          [
+            0.3,
+            9,
+            3
+          ],
+          [
+            0.4,
+            12,
+            3
+          ],
+          [
+            0.5,
+            15,
+            3
+          ]
+        ],
+        "icon": "spell_arcane_starfire"
+      },
+      {
+        "fieldName": "overgrowth",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 0
+        },
+        "spellIds": [
+          17245,
+          17245
+        ],
+        "maxPoints": 2,
+        "name": "Overgrowth",
+        "description": "Increases the maximum number of targets you may have affected by Entangling Roots by {0}.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "icon": "inv_misc_herb_15",
+        "notSimulated": true
       },
       {
         "fieldName": "naturesGrace",
@@ -186,20 +373,52 @@
         "spellIds": [
           16880
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Nature's Grace",
+        "description": "All non-periodic spell criticals grace you with a blessing of nature, increasing your spellcasting speed and reducing your global cooldown by {0}% for {1} sec.",
+        "ranks": [
+          [
+            10,
+            3
+          ]
+        ],
+        "icon": "spell_nature_naturesblessing"
       },
       {
-        "fieldName": "moonglow",
+        "fieldName": "eclipse",
         "location": {
           "rowIdx": 4,
           "colIdx": 2
         },
         "spellIds": [
-          16845,
-          16846,
-          16847
+          408248,
+          408248,
+          408248
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Eclipse",
+        "description": "Your Wrath spell reduces the cast time of your next {0} Starfire spells by {1} sec. Stores up to {2} charges. Lasts {3} sec.",
+        "ranks": [
+          [
+            2,
+            0.17,
+            4,
+            15
+          ],
+          [
+            2,
+            0.33,
+            4,
+            15
+          ],
+          [
+            2,
+            0.5,
+            4,
+            15
+          ]
+        ],
+        "icon": "ability_druid_eclipse"
       },
       {
         "fieldName": "moonfury",
@@ -215,10 +434,26 @@
           16901
         ],
         "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        }
+        "name": "Moonfury",
+        "description": "Increases the damage done by your Arcane and Nature spells by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_nature_moonglow"
       },
       {
         "fieldName": "moonkinForm",
@@ -229,7 +464,18 @@
         "spellIds": [
           24858
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Moonkin Form",
+        "description": "Transforms the Druid into Moonkin Form. While in this form, the armor contribution from items is increased by {0}% and all party members within {1} yards have their critical chance increased by {2}%, exclusive with Leader of the Pack. The Moonkin cannot cast healing spells while shapeshifted. The act of shapeshifting frees the caster of Polymorph and Movement Impairing effects.",
+        "ranks": [
+          [
+            100,
+            360,
+            45,
+            3
+          ]
+        ],
+        "icon": "spell_nature_forceofnature"
       }
     ]
   },
@@ -250,182 +496,33 @@
           16937,
           16938
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "feralAggression",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16858,
-          16859,
-          16860,
-          16861,
-          16862
+        "maxPoints": 5,
+        "name": "Ferocity",
+        "description": "Reduces the cost of your Maul, Mangle, Swipe, Claw, and Rake abilities by {0} Rage or Energy.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "feralInstinct",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 0
-        },
-        "spellIds": [
-          16947,
-          16948,
-          16949,
-          16950,
-          16951
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "brutalImpact",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 1
-        },
-        "spellIds": [
-          16940,
-          16941
-        ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "thickHide",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16929,
-          16930,
-          16931,
-          16932,
-          16933
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "felineSwiftness",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 0
-        },
-        "spellIds": [
-          17002,
-          24866
-        ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "feralCharge",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 1
-        },
-        "spellIds": [
-          16979
-        ],
-        "maxPoints": 1
-      },
-      {
-        "fieldName": "sharpenedClaws",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16942,
-          16943,
-          16944
-        ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "improvedShred",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 0
-        },
-        "spellIds": [
-          16966,
-          16968
-        ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "predatoryStrikes",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 1
-        },
-        "spellIds": [
-          16972,
-          16974,
-          16975
-        ],
-        "maxPoints": 3
-      },
-      {
-        "fieldName": "bloodFrenzy",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16952,
-          16954
-        ],
-        "maxPoints": 2,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 2
-        }
-      },
-      {
-        "fieldName": "primalFury",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 3
-        },
-        "spellIds": [
-          16958,
-          16961
-        ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "savageFury",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 0
-        },
-        "spellIds": [
-          16998,
-          16999
-        ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "faerieFireFeral",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 2
-        },
-        "spellIds": [
-          16857
-        ],
-        "maxPoints": 1
+        "icon": "ability_hunter_pet_hyena"
       },
       {
         "fieldName": "heartOfTheWild",
         "location": {
-          "rowIdx": 5,
-          "colIdx": 1
+          "rowIdx": 0,
+          "colIdx": 2
         },
         "spellIds": [
           17003,
@@ -435,21 +532,534 @@
           24894
         ],
         "maxPoints": 5,
+        "name": "Heart of the Wild",
+        "description": "Increases your Intellect by {0}%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by {1}% and while in Cat Form your Strength is increased by {2}%.",
+        "ranks": [
+          [
+            2,
+            4,
+            2
+          ],
+          [
+            4,
+            8,
+            4
+          ],
+          [
+            6,
+            12,
+            6
+          ],
+          [
+            8,
+            16,
+            8
+          ],
+          [
+            10,
+            20,
+            10
+          ]
+        ],
+        "icon": "spell_holy_blessingofagility"
+      },
+      {
+        "fieldName": "feralSwiftness",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 0
+        },
+        "spellIds": [
+          17002,
+          17002
+        ],
+        "maxPoints": 2,
+        "name": "Feral Swiftness",
+        "description": "Increases your movement speed while in Cat Form by {0}%, and increases your chance to Dodge by {1}%.",
+        "ranks": [
+          [
+            15,
+            2
+          ],
+          [
+            30,
+            4
+          ]
+        ],
+        "icon": "spell_nature_spiritwolf"
+      },
+      {
+        "fieldName": "feralInstinct",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 1
+        },
+        "spellIds": [
+          16947,
+          16948,
+          16949,
+          16950,
+          16951
+        ],
+        "maxPoints": 3,
+        "name": "Feral Instinct",
+        "description": "{0}",
+        "ranks": [
+          [
+            "Increases damage done by your Swipe ability by 10% and reduces the chance enemies have to detect you while Prowling as if you were 1 level higher."
+          ],
+          [
+            "Increases damage done by your Swipe ability by 20% and reduces the chance enemies have to detect you while Prowling as if you were 2 levels higher."
+          ],
+          [
+            "Increases damage done by your Swipe ability by 30% and reduces the chance enemies have to detect you while Prowling as if you were 3 levels higher."
+          ]
+        ],
+        "icon": "ability_ambush",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "brutalImpact",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 2
+        },
+        "spellIds": [
+          16940,
+          16941
+        ],
+        "maxPoints": 2,
+        "name": "Brutal Impact",
+        "description": "Increases the stun duration of your Bash and Pounce abilities by {0} sec and reduces the cooldown of Bash by {1} sec.",
+        "ranks": [
+          [
+            0.5,
+            15
+          ],
+          [
+            1,
+            30
+          ]
+        ],
+        "icon": "ability_druid_bash",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "thickHide",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 3
+        },
+        "spellIds": [
+          16929,
+          16930,
+          16931,
+          16932,
+          16933
+        ],
+        "maxPoints": 3,
+        "name": "Thick Hide",
+        "description": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain {0} additional base Armor per level and another {1} base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
+        "ranks": [
+          [
+            178,
+            0.67
+          ],
+          [
+            179,
+            1.33
+          ],
+          [
+            180,
+            2
+          ]
+        ],
+        "icon": "inv_misc_pelt_bear_03"
+      },
+      {
+        "fieldName": "shreddingAttacks",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 0
+        },
+        "spellIds": [
+          16966,
+          16966,
+          16966
+        ],
+        "maxPoints": 3,
+        "name": "Shredding Attacks",
+        "description": "Reduces the Energy cost of your Shred ability by {0} and reduces the Rage cost of your Lacerate ability by {1}.",
+        "ranks": [
+          [
+            6,
+            1
+          ],
+          [
+            12,
+            2
+          ],
+          [
+            18,
+            3
+          ]
+        ],
+        "icon": "spell_shadow_vampiricaura"
+      },
+      {
+        "fieldName": "savageFury",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 1
+        },
+        "spellIds": [
+          16998,
+          16999
+        ],
+        "maxPoints": 2,
+        "name": "Savage Fury",
+        "description": "Increases the damage caused by your Claw, Rake, Shred, Maul, and Swipe abilities by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "ability_druid_ravage"
+      },
+      {
+        "fieldName": "feralCharge",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 2
+        },
+        "spellIds": [
+          16979
+        ],
+        "maxPoints": 1,
+        "name": "Feral Charge",
+        "description": "Charge an enemy, immobilizing them and interrupting any spell they are casting for {0} sec. Feral Charge (Cat): Leap behind an enemy, Dazing them for {1} sec.",
+        "ranks": [
+          [
+            4
+          ]
+        ],
+        "icon": "ability_hunter_pet_bear",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "sharpenedClaws",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 3
+        },
+        "spellIds": [
+          16942,
+          16943,
+          16944
+        ],
+        "maxPoints": 2,
+        "name": "Sharpened Claws",
+        "description": "Increases your critical strike chance while in Bear Form, Dire Bear Form, or Cat Form by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ]
+        ],
+        "icon": "inv_misc_monsterclaw_04"
+      },
+      {
+        "fieldName": "shiftingPower",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
         "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 0
+        },
+        "spellIds": [
+          1322605
+        ],
+        "maxPoints": 1,
+        "name": "Shifting Power",
+        "description": "Instantly convert {0}% of base Mana into {1} Energy. Shifting Power's cost is reduced by effects that reduce the cost of Shapeshifting.",
+        "ranks": [
+          [
+            55,
+            40
+          ]
+        ],
+        "icon": "spell_druid_displacement"
+      },
+      {
+        "fieldName": "primalBite",
+        "location": {
           "rowIdx": 3,
           "colIdx": 1
-        }
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 1
+        },
+        "spellIds": [
+          407995
+        ],
+        "maxPoints": 1,
+        "name": "Primal Bite",
+        "description": "Bite the target, dealing {0}% normal damage plus {1} and generating a high amount of threat.",
+        "ranks": [
+          [
+            100,
+            26
+          ]
+        ],
+        "icon": "ability_racial_cannibalize",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "predatoryStrikes",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 2
+        },
+        "spellIds": [
+          16972,
+          16974,
+          16975
+        ],
+        "maxPoints": 3,
+        "name": "Predatory Strikes",
+        "description": "Increases your melee Attack Power in Cat Form, Bear Form, and Dire Bear Form by {0}% of your level.",
+        "ranks": [
+          [
+            50
+          ],
+          [
+            100
+          ],
+          [
+            150
+          ]
+        ],
+        "icon": "ability_hunter_pet_cat"
+      },
+      {
+        "fieldName": "bloodFrenzy",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 3
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 3
+        },
+        "spellIds": [
+          16952,
+          16954
+        ],
+        "maxPoints": 2,
+        "name": "Blood Frenzy",
+        "description": "Gives you a {0}% chance to gain an additional {1} Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a {2}% chance to add an additional Combo Point.",
+        "ranks": [
+          [
+            50,
+            5,
+            50
+          ],
+          [
+            100,
+            5,
+            100
+          ]
+        ],
+        "icon": "ability_ghoulfrenzy"
+      },
+      {
+        "fieldName": "improvedShiftingPower",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 0
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
+        "spellIds": [
+          1322670,
+          1322670
+        ],
+        "maxPoints": 2,
+        "name": "Improved Shifting Power",
+        "description": "Reduces the cooldown of your Shifting Power spell by {0} sec.",
+        "ranks": [
+          [
+            4
+          ],
+          [
+            8
+          ]
+        ],
+        "icon": "ability_hunter_aspectmastery"
       },
       {
         "fieldName": "leaderOfThePack",
         "location": {
-          "rowIdx": 6,
+          "rowIdx": 4,
           "colIdx": 1
         },
         "spellIds": [
           17007
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Leader of the Pack",
+        "description": "While in Cat Form, Bear Form, or Dire Bear Form, the Leader of the Pack increases the critical strike chance of all party members within {0} yards by {1}%, exclusive with Moonkin Aura.",
+        "ranks": [
+          [
+            45,
+            3
+          ]
+        ],
+        "icon": "spell_nature_unyeildingstamina"
+      },
+      {
+        "fieldName": "naturalInstinct",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 3
+        },
+        "spellIds": [
+          1223242,
+          1223242
+        ],
+        "maxPoints": 2,
+        "name": "Natural Instinct",
+        "description": "Increases the critical strike damage bonus of your melee abilities by {0}% and increases your spell healing by {1}% of your Intellect.",
+        "ranks": [
+          [
+            10,
+            12
+          ],
+          [
+            20,
+            25
+          ]
+        ],
+        "icon": "ability_druid_predatoryinstincts"
+      },
+      {
+        "fieldName": "naturalReaction",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 0
+        },
+        "spellIds": [
+          417051,
+          417051,
+          417051,
+          417051,
+          417051
+        ],
+        "maxPoints": 5,
+        "name": "Natural Reaction",
+        "description": "Increases your dodge chance by {0}%, and gives you a {1}% chance to gain {2} Rage each time you dodge.",
+        "ranks": [
+          [
+            1,
+            20,
+            5
+          ],
+          [
+            2,
+            40,
+            5
+          ],
+          [
+            3,
+            60,
+            5
+          ],
+          [
+            4,
+            80,
+            5
+          ],
+          [
+            5,
+            100,
+            5
+          ]
+        ],
+        "icon": "ability_bullrush"
+      },
+      {
+        "fieldName": "rendAndTear",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 2
+        },
+        "spellIds": [
+          1223246,
+          1223246,
+          1223246,
+          1223246,
+          1223246
+        ],
+        "maxPoints": 5,
+        "name": "Rend and Tear",
+        "description": "Increases damage done by your melee abilities on Bleeding targets by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "ability_druid_primalagression"
+      },
+      {
+        "fieldName": "berserk",
+        "location": {
+          "rowIdx": 6,
+          "colIdx": 1
+        },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
+        "spellIds": [
+          417141
+        ],
+        "maxPoints": 1,
+        "name": "Berserk",
+        "description": "Requires Cat Form, Bear Form, Dire Bear Form Causes your Primal Bite ability to strike up to {0} targets, removes its cooldown, and increases the critical strike chance of your Combo Point-generating abilities by {1}%. Clears and grants immunity to Fear effects for the duration. Lasts {2} sec.",
+        "ranks": [
+          [
+            3,
+            100,
+            15
+          ]
+        ],
+        "icon": "ability_druid_berserk"
       }
     ]
   },
@@ -458,19 +1068,40 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/282.jpg",
     "talents": [
       {
-        "fieldName": "improvedMarkOfTheWild",
+        "fieldName": "naturesFocus",
         "location": {
           "rowIdx": 0,
           "colIdx": 1
         },
         "spellIds": [
-          17050,
-          17051,
-          17053,
-          17054,
-          17055
+          17063,
+          17065,
+          17066,
+          17067,
+          17068
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Nature's Focus",
+        "description": "Gives you a {0}% chance to avoid interruption caused by damage while casting Arcane and Nature spells.",
+        "ranks": [
+          [
+            14
+          ],
+          [
+            28
+          ],
+          [
+            42
+          ],
+          [
+            56
+          ],
+          [
+            70
+          ]
+        ],
+        "icon": "spell_nature_healingwavegreater",
+        "notSimulated": true
       },
       {
         "fieldName": "furor",
@@ -485,49 +1116,144 @@
           17060,
           17061
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Furor",
+        "description": "Gives you a {0}% chance to gain {1} Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores {2}% of the Energy you had when last in Cat Form, plus {3} Energy per sec spent outside Cat Form, up to {4} Energy. Bear Form and Dire Bear Form forfeit this Energy and halt its restoration while active.",
+        "ranks": [
+          [
+            20,
+            10,
+            20,
+            2,
+            20
+          ],
+          [
+            40,
+            10,
+            40,
+            4,
+            40
+          ],
+          [
+            60,
+            10,
+            60,
+            6,
+            60
+          ],
+          [
+            80,
+            10,
+            80,
+            8,
+            80
+          ],
+          [
+            100,
+            10,
+            100,
+            10,
+            100
+          ]
+        ],
+        "icon": "spell_holy_blessingofstamina"
       },
       {
-        "fieldName": "improvedHealingTouch",
+        "fieldName": "naturalist",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
           17069,
-          17070,
-          17071,
-          17072,
-          17073
+          17069,
+          17069,
+          17069,
+          17069
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Naturalist",
+        "description": "Reduces the cast time of your Healing Touch spell by {0} sec and increases all damage you deal by {1}%.",
+        "ranks": [
+          [
+            0.1,
+            1
+          ],
+          [
+            0.2,
+            2
+          ],
+          [
+            0.3,
+            3
+          ],
+          [
+            0.4,
+            4
+          ],
+          [
+            0.5,
+            5
+          ]
+        ],
+        "icon": "spell_nature_healingtouch"
       },
       {
-        "fieldName": "naturesFocus",
+        "fieldName": "subtlety",
         "location": {
           "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          17063,
-          17065,
-          17066,
-          17067,
-          17068
+          17118,
+          17119,
+          17120,
+          17121,
+          17122
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Subtlety",
+        "description": "Reduces the threat generated by your Nature and Arcane spells by {0}%.",
+        "ranks": [
+          [
+            10
+          ],
+          [
+            20
+          ],
+          [
+            30
+          ]
+        ],
+        "icon": "ability_eyeoftheowl",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedEnrage",
+        "fieldName": "naturalShapeshifter",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          17079,
-          17082
+          16833,
+          16834,
+          16835
         ],
-        "maxPoints": 2
+        "maxPoints": 3,
+        "name": "Natural Shapeshifter",
+        "description": "Reduces the mana cost of all shapeshifting by {0}%.",
+        "ranks": [
+          [
+            10
+          ],
+          [
+            20
+          ],
+          [
+            30
+          ]
+        ],
+        "icon": "spell_nature_wispsplode"
       },
       {
         "fieldName": "reflection",
@@ -540,33 +1266,77 @@
           17107,
           17108
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Reflection",
+        "description": "Allows {0}% of your Mana regeneration to continue while casting.",
+        "ranks": [
+          [
+            17
+          ],
+          [
+            33
+          ],
+          [
+            50
+          ]
+        ],
+        "icon": "spell_frost_windwalkon"
       },
       {
-        "fieldName": "insectSwarm",
+        "fieldName": "giftOfNature",
         "location": {
           "rowIdx": 2,
           "colIdx": 2
         },
         "spellIds": [
-          5570
+          17104,
+          24943,
+          24944,
+          24945,
+          24946
         ],
-        "maxPoints": 1
+        "maxPoints": 5,
+        "name": "Gift of Nature",
+        "description": "Increases the effect of all your healing spells by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_nature_protectionformnature",
+        "notSimulated": true
       },
       {
-        "fieldName": "subtlety",
+        "fieldName": "giftOfTheEarthmother",
         "location": {
           "rowIdx": 2,
           "colIdx": 3
         },
         "spellIds": [
-          17118,
-          17119,
-          17120,
-          17121,
-          17122
+          414673
         ],
-        "maxPoints": 5
+        "maxPoints": 1,
+        "name": "Gift of the Earthmother",
+        "description": "Reduces the global cooldown by {0} seconds on your Rejuvenation, Swiftmend, and Wild Growth spells.",
+        "ranks": [
+          [
+            0.5
+          ]
+        ],
+        "icon": "spell_nature_spiritarmor",
+        "notSimulated": true
       },
       {
         "fieldName": "tranquilSpirit",
@@ -581,20 +1351,74 @@
           24971,
           24972
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Tranquil Spirit",
+        "description": "Reduces the mana cost of your Healing Touch and Tranquility spells by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_holy_elunesgrace",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedRejuvenation",
         "location": {
           "rowIdx": 3,
-          "colIdx": 3
+          "colIdx": 2
         },
         "spellIds": [
           17111,
           17112,
           17113
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Improved Rejuvenation",
+        "description": "Increases the effect of your Rejuvenation spell by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "spell_nature_rejuvenation",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "swiftmend",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 3
+        },
+        "spellIds": [
+          18562
+        ],
+        "maxPoints": 1,
+        "name": "Swiftmend",
+        "description": "Instantly heals a target with an active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of one of those spells.",
+        "ranks": [
+          []
+        ],
+        "icon": "inv_relics_idolofrejuvenation",
+        "notSimulated": true
       },
       {
         "fieldName": "naturesSwiftness",
@@ -602,33 +1426,48 @@
           "rowIdx": 4,
           "colIdx": 0
         },
+        "prereqLocation": {
+          "rowIdx": 1,
+          "colIdx": 0
+        },
         "spellIds": [
           17116
         ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 1,
-          "colIdx": 0
-        }
+        "name": "Nature's Swiftness",
+        "description": "When activated, your next Nature spell becomes an instant cast spell.",
+        "ranks": [
+          []
+        ],
+        "icon": "spell_nature_ravenform",
+        "notSimulated": true
       },
       {
-        "fieldName": "giftOfNature",
+        "fieldName": "livingSpirit",
         "location": {
           "rowIdx": 4,
-          "colIdx": 2
+          "colIdx": 1
         },
         "spellIds": [
-          17104,
-          24943,
-          24944,
-          24945,
-          24946
+          1309631,
+          1309631,
+          1309631
         ],
-        "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 2
-        }
+        "maxPoints": 3,
+        "name": "Living Spirit",
+        "description": "Increases your Spirit by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "spell_nature_giftofthewaterspirit"
       },
       {
         "fieldName": "improvedTranquility",
@@ -640,12 +1479,30 @@
           17123,
           17124
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Tranquility",
+        "description": "Reduces threat caused by Tranquility by {0}% and its cooldown by {1}%.",
+        "ranks": [
+          [
+            50,
+            30
+          ],
+          [
+            100,
+            60
+          ]
+        ],
+        "icon": "spell_nature_tranquility",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedRegrowth",
         "location": {
           "rowIdx": 5,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
@@ -655,22 +1512,54 @@
           17077,
           17078
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Improved Regrowth",
+        "description": "Increases the critical effect chance of your Regrowth spell by {0}%.",
+        "ranks": [
+          [
+            10
+          ],
+          [
+            20
+          ],
+          [
+            30
+          ],
+          [
+            40
+          ],
+          [
+            50
+          ]
+        ],
+        "icon": "spell_nature_resistnature",
+        "notSimulated": true
       },
       {
-        "fieldName": "swiftmend",
+        "fieldName": "wildGrowth",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
-          18562
+          408120
         ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 1
-        }
+        "name": "Wild Growth",
+        "description": "Heals the target and their party for {0} over {1} sec. Party members must be within {2} yards of target. The amount healed is applied quickly at first, and slows down as Wild Growth reaches its full duration.",
+        "ranks": [
+          [
+            336,
+            7,
+            43.5
+          ]
+        ],
+        "icon": "ability_druid_flourish",
+        "notSimulated": true
       }
     ]
   }

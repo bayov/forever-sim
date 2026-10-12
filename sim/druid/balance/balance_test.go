@@ -18,25 +18,25 @@ func TestP1Balance(t *testing.T) {
 			Class:      proto.Class_ClassDruid,
 			Phase:      1,
 			Race:       proto.Race_RaceTauren,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceNightElf},
 
 			Talents:     P1Talents,
 			GearSet:     core.GetGearSet("../../../ui/balance_druid/gear_sets", "p0.bis"),
 			Rotation:    core.GetAplRotation("../../../ui/balance_druid/apls", "p1"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
 
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
 
-var P1Talents = "5000550012551251--5005031"
+var P1Talents = "5032220115501351--505203"
 
 var P1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

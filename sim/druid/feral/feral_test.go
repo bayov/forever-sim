@@ -18,14 +18,12 @@ func TestP1Feral(t *testing.T) {
 			Class:      proto.Class_ClassDruid,
 			Phase:      1,
 			Race:       proto.Race_RaceTauren,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
 			OtherRaces: []proto.Race{proto.Race_RaceNightElf},
 
 			Talents:     P1Talents,
 			GearSet:     core.GetGearSet("../../../ui/feral_druid/gear_sets", "p0.bis"),
 			Rotation:    core.GetAplRotation("../../../ui/feral_druid/apls", "p1"),
-			Buffs:       core.FullBuffs,
+			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
 			OtherSpecOptions: []core.SpecOptionsCombo{
@@ -36,11 +34,13 @@ func TestP1Feral(t *testing.T) {
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatAttackPower,
 			StatsToWeigh:    Stats,
+
+			Ruleset: proto.Ruleset_RulesetForever,
 		},
 	}))
 }
 
-var P1Talents = "500005301-5500020323202151-15"
+var P1Talents = "-55000132021032212051-055033"
 
 var PlayerOptionsMonoCat = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{

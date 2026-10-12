@@ -10,12 +10,18 @@ import (
 const InsectSwarmRanks = 5
 
 var InsectSwarmSpellId = [InsectSwarmRanks + 1]int32{0, 5570, 24974, 24975, 24976, 24977}
-var InsectSwarmBaseDamage = [InsectSwarmRanks + 1]float64{0, 66, 138, 174, 264, 324}
+
+// Damage per tick from the Forever client (1.60.1.70338, wago.tools), about 60% of 1.12
+// (rank 5 does 186 over 12 sec, 1.12 has 324). Insect Swarm moved to the Balance tree.
+var InsectSwarmTickDamage = [InsectSwarmRanks + 1]float64{0, 8, 15, 20, 25, 31}
 var InsectSwarmManaCost = [InsectSwarmRanks + 1]float64{0, 45, 85, 100, 140, 160}
 var InsectSwarmLevel = [InsectSwarmRanks + 1]int{0, 20, 30, 40, 50, 60}
 
 func (druid *Druid) registerInsectSwarmSpell() {
 	druid.InsectSwarm = make([]*DruidSpell, InsectSwarmRanks+1)
+	if !druid.Talents.InsectSwarm {
+		return
+	}
 
 	druid.InsectSwarmAuras = druid.NewEnemyAuraArray(core.InsectSwarmAura)
 
@@ -23,10 +29,14 @@ func (druid *Druid) registerInsectSwarmSpell() {
 		level := InsectSwarmLevel[rank]
 		if int32(level) <= druid.Level {
 			numTicks := int32(6)
+			// Nature's Splendor makes it 2 sec longer, one more tick.
+			if druid.Talents.NaturesSplendor {
+				numTicks++
+			}
 			tickLength := time.Second * 2
 
 			spellID := InsectSwarmSpellId[rank]
-			baseDamage := InsectSwarmBaseDamage[rank] / float64(numTicks)
+			baseDamage := InsectSwarmTickDamage[rank]
 			manaCost := InsectSwarmManaCost[rank]
 			spellCoef := .158
 
@@ -70,9 +80,6 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 						dot.Snapshot(target, baseDamage, isRollover)
-						if !druid.form.Matches(Moonkin) {
-							dot.SnapshotCritChance = 0
-						}
 					},
 					OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 						dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)

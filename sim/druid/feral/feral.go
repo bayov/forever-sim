@@ -43,7 +43,7 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 		cat.SelfBuffs.InnervateTarget = feralOptions.Options.InnervateTarget
 	}
 
-	cat.maxRipTicks = druid.RipTicks
+	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
 
 	cat.EnableEnergyBar(100.0)
 	cat.EnableRageBar(core.RageBarOptions{DamageDealtMultiplier: 1, DamageTakenMultiplier: 1})
@@ -53,10 +53,6 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 		MainHand:       cat.GetCatWeapon(),
 		AutoSwingMelee: true,
 	})
-	/*
-		cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			return cat.checkReplaceMaul(sim, mhSwingSpell)
-		}*/
 
 	cat.PseudoStats.FeralCombatEnabled = true
 
@@ -66,18 +62,7 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 type FeralDruid struct {
 	*druid.Druid
 
-	Rotation FeralDruidRotation
-
-	missChance    float64
-	readyToShift  bool
-	latency       time.Duration
-	maxRipTicks   int32
-	bleedAura     *core.Aura
-	lastShift     time.Duration
-	poolingMana   bool
-	poolStartTime time.Duration
-
-	rotationAction *core.PendingAction
+	latency time.Duration
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
@@ -101,8 +86,4 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.Druid.Reset(sim)
 	cat.Druid.CancelShapeshift(sim)
 	cat.CatFormAura.Activate(sim)
-	cat.readyToShift = false
-	//cat.berserkUsed = false
-	cat.poolingMana = false
-	cat.rotationAction = nil
 }

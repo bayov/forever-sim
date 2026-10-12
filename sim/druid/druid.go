@@ -1,6 +1,8 @@
 package druid
 
 import (
+	"time"
+
 	"github.com/wowsims/classic/sim/common/guardians"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -12,7 +14,7 @@ const (
 	SpellFlagBuilder = core.SpellFlagAgentReserved2
 )
 
-var TalentTreeSizes = [3]int{16, 16, 15}
+var TalentTreeSizes = [3]int{16, 20, 16}
 
 const (
 	SpellCode_DruidNone int32 = iota
@@ -25,6 +27,7 @@ const (
 	SpellCode_DruidMoonfire
 	SpellCode_DruidRake
 	SpellCode_DruidRip
+	SpellCode_DruidShiftingPower
 	SpellCode_DruidShred
 	SpellCode_DruidStarfire
 	SpellCode_DruidWrath
@@ -47,6 +50,7 @@ type Druid struct {
 	ReplaceBearMHFunc core.ReplaceMHSwing
 
 	Barkskin             *DruidSpell
+	Berserk              *DruidSpell
 	DemoralizingRoar     *DruidSpell
 	Enrage               *DruidSpell
 	FaerieFire           *DruidSpell
@@ -64,6 +68,7 @@ type Druid struct {
 	Rebirth              *DruidSpell
 	Rake                 *DruidSpell
 	Rip                  *DruidSpell
+	ShiftingPower        *DruidSpell
 	Shred                *DruidSpell
 	Claw                 *DruidSpell
 	Starfire             []*DruidSpell
@@ -80,6 +85,7 @@ type Druid struct {
 	BerserkAura              *core.Aura
 	CatFormAura              *core.Aura
 	ClearcastingAura         *core.Aura
+	EclipseAura              *core.Aura
 	DemoralizingRoarAuras    core.AuraArray
 	EnrageAura               *core.Aura
 	FaerieFireAuras          core.AuraArray
@@ -96,6 +102,10 @@ type Druid struct {
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
+
+	// Furor gives back part of the Energy we left Cat Form with.
+	lastCatEnergy float64
+	leftCatAt     time.Duration
 }
 
 type SelfBuffs struct {
@@ -107,12 +117,8 @@ func (druid *Druid) GetCharacter() *core.Character {
 }
 
 func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	if (raidBuffs.GiftOfTheWild == proto.TristateEffect_TristateEffectRegular) && (druid.Talents.ImprovedMarkOfTheWild > 0) {
-		druid.AddStats(core.BuffSpellValues[core.MarkOfTheWild].Multiply(0.07 * float64(druid.Talents.ImprovedMarkOfTheWild)))
-	}
-
 	// TODO: These should really be aura attached to the actual forms
-	if druid.InForm(Moonkin) {
+	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
 		raidBuffs.MoonkinAura = true
 	}
 
@@ -185,6 +191,8 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerClawSpell()
 	// druid.registerSwipeBearSpell()
 	druid.registerTigersFurySpell()
+	druid.registerShiftingPowerSpell()
+	druid.registerBerserkCD()
 }
 
 // TODO: Classic feral tank
@@ -206,6 +214,8 @@ func (druid *Druid) Reset(_ *core.Simulation) {
 	druid.BleedsActive = 0
 	druid.form = druid.StartingForm
 	druid.disabledMCDs = []*core.MajorCooldown{}
+	druid.lastCatEnergy = 0
+	druid.leftCatAt = -1
 }
 
 func New(character *core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {

@@ -7,6 +7,9 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
+// Forever's Hurricane (1.60.1.70338, wago.tools): every tick is its own spell (1278965,
+// 1278968, 1278759) with 68 + 0.2, 98 + 0.2 and 132 + 0.3 a level (1.12 has 70, 100 and 134),
+// the same 3% coefficient a tick, and no cooldown (1.12 has 1 min).
 func (druid *Druid) registerHurricaneSpell() {
 	ranks := []struct {
 		level      int32
@@ -16,9 +19,9 @@ func (druid *Druid) registerHurricaneSpell() {
 		damage     float64
 		scale      float64
 	}{
-		{level: 40, spellID: 16914, manaCost: 880, scaleLevel: 46, damage: 70, scale: 0.2},
-		{level: 50, spellID: 17401, manaCost: 1180, scaleLevel: 56, damage: 100, scale: 0.2},
-		{level: 60, spellID: 17402, manaCost: 1495, scaleLevel: 66, damage: 134, scale: 0.3},
+		{level: 40, spellID: 16914, manaCost: 880, scaleLevel: 46, damage: 68, scale: 0.2},
+		{level: 50, spellID: 17401, manaCost: 1180, scaleLevel: 56, damage: 98, scale: 0.2},
+		{level: 60, spellID: 17402, manaCost: 1495, scaleLevel: 66, damage: 132, scale: 0.3},
 	}
 
 	for i, rank := range ranks {
@@ -43,10 +46,6 @@ func (druid *Druid) registerHurricaneSpell() {
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
 					GCD: core.GCDDefault,
-				},
-				CD: core.Cooldown{
-					Timer:    druid.NewTimer(),
-					Duration: time.Second * 60,
 				},
 			},
 

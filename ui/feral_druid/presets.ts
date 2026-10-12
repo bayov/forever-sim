@@ -79,7 +79,7 @@ export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Sim
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const TalentsFeral = PresetUtils.makePresetTalents('Feral', SavedTalents.create({ talentsString: '500005301-5500021323202151-05' }));
+export const TalentsFeral = PresetUtils.makePresetTalents('Feral', SavedTalents.create({ talentsString: '-55000132021032212051-055033' }));
 
 export const TalentPresets = {
 	[Phase.Phase4]: [TalentsFeral],

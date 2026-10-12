@@ -59,8 +59,17 @@ var ferociousBiteRanks = []FerociousBiteRankInfo{
 }
 
 func (druid *Druid) registerFerociousBiteSpell() {
-	// Ferocious Bite Rank V is not available until AQ release
-	rank := core.TernaryInt(core.IncludeAQ, 4, 3)
+	// Forever's ranks match 1.12's (1.60.1.70338, wago.tools). Rank 5 needs the AQ release.
+	maxRank := core.TernaryInt(core.IncludeAQ, 4, 3)
+	rank := -1
+	for i := 0; i <= maxRank; i++ {
+		if druid.Level >= ferociousBiteRanks[i].level {
+			rank = i
+		}
+	}
+	if rank < 0 {
+		return
+	}
 	config := druid.newFerociousBiteSpellConfig(ferociousBiteRanks[rank])
 	druid.FerociousBite = druid.RegisterSpell(Cat, config)
 }
@@ -88,10 +97,9 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 			return druid.ComboPoints() > 0
 		},
 
-		DamageMultiplierAdditive: 1 + 0.03*float64(druid.Talents.FeralAggression),
-		DamageMultiplier:         1,
-		ThreatMultiplier:         1,
-		BonusCoefficient:         1,
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			comboPoints := float64(druid.ComboPoints())

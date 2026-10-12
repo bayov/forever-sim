@@ -48,11 +48,12 @@ func (druid *Druid) GetCatWeapon() core.Weapon {
 // 	}
 // }
 
-// TODO: Class bonus stats for both cat and bear.
+// Predatory Strikes gives 50% of the level a point as attack power and Sharpened Claws 3%
+// crit a point in the feral forms (1.60.1.70338, wago.tools rank curves).
 func (druid *Druid) GetFormShiftStats() stats.Stats {
 	s := stats.Stats{
 		stats.AttackPower: float64(druid.Talents.PredatoryStrikes) * 0.5 * float64(druid.Level),
-		stats.MeleeCrit:   float64(druid.Talents.SharpenedClaws) * 2 * core.CritRatingPerCritChance,
+		stats.MeleeCrit:   float64(druid.Talents.SharpenedClaws) * 3 * core.CritRatingPerCritChance,
 	}
 	/*
 		if weapon := druid.GetMHWeapon(); weapon != nil {
@@ -96,7 +97,8 @@ func (druid *Druid) registerCatFormSpell() {
 
 	var hotwDep *stats.StatDependency
 	if druid.Talents.HeartOfTheWild > 0 {
-		hotwDep = druid.NewDynamicMultiplyStat(stats.Strength, 1.0+0.04*float64(druid.Talents.HeartOfTheWild))
+		// Forever's Heart of the Wild gives Cat Form 2% Strength a point (1.12 has 4%).
+		hotwDep = druid.NewDynamicMultiplyStat(stats.Strength, 1.0+0.02*float64(druid.Talents.HeartOfTheWild))
 	}
 
 	clawWeapon := druid.GetCatWeapon()
@@ -118,7 +120,7 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.AutoAttacks.SetMH(clawWeapon)
 
 			druid.PseudoStats.ThreatMultiplier *= 0.71
-			druid.AddStatDynamic(sim, stats.Dodge, 2*float64(druid.Talents.FelineSwiftness))
+			druid.AddStatDynamic(sim, stats.Dodge, 2*float64(druid.Talents.FeralSwiftness))
 			druid.SetShapeshift(aura)
 
 			predBonus = druid.GetDynamicPredStrikeStats()
@@ -140,13 +142,17 @@ func (druid *Druid) registerCatFormSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
 			druid.SetCurrentPowerBar(core.ManaBar)
+			druid.lastCatEnergy = druid.CurrentEnergy()
+			druid.leftCatAt = sim.CurrentTime
 
-			druid.TigersFuryAura.Deactivate(sim)
+			if druid.TigersFuryAura != nil {
+				druid.TigersFuryAura.Deactivate(sim)
+			}
 
 			druid.AutoAttacks.SetMH(druid.WeaponFromMainHand())
 
 			druid.PseudoStats.ThreatMultiplier /= 0.71
-			druid.AddStatDynamic(sim, stats.Dodge, -2*float64(druid.Talents.FelineSwiftness))
+			druid.AddStatDynamic(sim, stats.Dodge, -2*float64(druid.Talents.FeralSwiftness))
 			druid.SetShapeshift(nil)
 
 			druid.AddStatsDynamic(sim, predBonus.Invert())
@@ -170,7 +176,13 @@ func (druid *Druid) registerCatFormSpell() {
 
 	energyMetrics := druid.NewEnergyMetrics(actionID)
 
-	furorProcChance := 0.2 * float64(druid.Talents.Furor)
+	// Forever's Furor (1.60.1.70338) gives back 20% a point of the Energy we had when we
+	// left Cat Form, plus 2 Energy a point for each second out of it, up to 20 a point. 1.12
+	// gave a 20% chance a point at 40 Energy, which powershifting was built on. Shifting
+	// Power takes its place.
+	furorShare := 0.2 * float64(druid.Talents.Furor)
+	furorPerSecond := 2 * float64(druid.Talents.Furor)
+	furorCap := 20 * float64(druid.Talents.Furor)
 
 	hasWolfheadBonus := false
 	if head := druid.Equipment.Head(); head != nil && (head.ID == WolfsheadHelm) {
@@ -182,8 +194,8 @@ func (druid *Druid) registerCatFormSpell() {
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.55,
-			Multiplier: 100 - 10*druid.Talents.NaturalShapeshifter,
+			BaseCost: 0.55,
+			Factor:   druid.naturalShapeshifterFactor(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -203,9 +215,13 @@ func (druid *Druid) registerCatFormSpell() {
 				druid.CancelShapeshift(sim)
 				spell.Cost.Multiplier += 100
 			} else {
-				maxShiftEnergy := core.TernaryFloat64(sim.RandomFloat("Furor") < furorProcChance, 40, 0)
-				maxShiftEnergy = core.TernaryFloat64(hasWolfheadBonus, maxShiftEnergy+20, maxShiftEnergy)
-				energyDelta := maxShiftEnergy - druid.CurrentEnergy()
+				shiftEnergy := 0.0
+				if druid.Talents.Furor > 0 && druid.leftCatAt >= 0 {
+					outside := (sim.CurrentTime - druid.leftCatAt).Seconds()
+					shiftEnergy = min(furorCap, furorShare*druid.lastCatEnergy+furorPerSecond*outside)
+				}
+				shiftEnergy = core.TernaryFloat64(hasWolfheadBonus, shiftEnergy+20, shiftEnergy)
+				energyDelta := shiftEnergy - druid.CurrentEnergy()
 
 				if energyDelta > 0 {
 					druid.AddEnergy(sim, energyDelta, energyMetrics)
@@ -378,11 +394,9 @@ func (druid *Druid) manageCooldownsEnabled() {
 	}
 }
 
-// https://www.wowhead.com/classic/spell=24858/moonkin-form
-// - Moonfire costs 50% less mana and deals 50% more damage over time
-// - Sunfire costs 50% less mana and deals 50% more damage over time
-// - Your periodic damage spells can deal critical periodic damage (handled in individual dot snapshots)
-// - You gain (2 * Level) spell damage
+// Moonkin Form under Forever (1.60.1.70338, wago.tools 24858): 35% of base mana, 360% more
+// armor from items, the party's 3% crit aura (the raid buff, see AddRaidBuffs), and Omen of
+// Clarity procs twice as often with half its cooldown (see applyOmenOfClarity).
 func (druid *Druid) registerMoonkinFormSpell() {
 	if !druid.Talents.MoonkinForm {
 		return
@@ -410,8 +424,8 @@ func (druid *Druid) registerMoonkinFormSpell() {
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.35,
-			Multiplier: 100 - 10*druid.Talents.NaturalShapeshifter,
+			BaseCost: 0.35,
+			Factor:   druid.naturalShapeshifterFactor(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
