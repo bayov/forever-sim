@@ -702,19 +702,20 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-12, Undead,
-// 20000 iterations, at 120 / 180 / 300 sec:
-//   Combat Daggers      713.6 / 690.8 / 675.8 (the default)
-//   Mutilate            668.6 / 657.6 / 651.7
-//   Seal Fate Daggers   667.5 / 656.5 / 650.6, 5.0% behind Combat Daggers
-//   Combat Swords       676.6 / 653.4 / 638.0
-//   Subtlety            642.1 / 627.5 / 620.1
-//   Seal Fate Swords    630.4 / 619.7 / 613.0, 5.2% behind Combat Swords
+// 20000 iterations, at 120 / 180 / 300 sec, after the Murder fix (no crit damage bonus):
+//   Combat Daggers      694.7 / 673.0 / 657.5 (the default)
+//   Seal Fate Daggers   656.2 / 644.9 / 638.4, 4.2% behind Combat Daggers
+//   Mutilate            652.8 / 642.1 / 636.4
+//   Combat Swords       661.8 / 639.2 / 624.1
+//   Subtlety            627.5 / 613.4 / 606.2
+//   Seal Fate Swords    617.0 / 606.5 / 599.7, 5.1% behind Combat Swords
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
-// no Venom build. Undead is the best race for every build, 5 (swords) to 15 ahead of the next. The best Alliance
-// race is the Gnome on daggers and the Human on swords. Grimstitch Armor's 4 and 5 piece bonuses
-// would add 8.1 and 6.5 to Combat Daggers. The trinket slots are empty (no Forever trinket is
+// no Venom build. Undead is the best race for every build, 6 (swords) to 15 ahead of the next. The best
+// Alliance race is the Gnome on daggers and the Human on swords. Grimstitch Armor's 4 and 5 piece
+// bonuses would add about 8 and 6 to Combat Daggers. The trinket slots are empty (no Forever trinket is
 // simulated yet), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety
-// gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches and the audit.
+// gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the
+// talent by talent verification.
 const level60Build = (name: string, tooltip: string, gear: PresetUtils.PresetGear, talents: PresetUtils.PresetTalents, rotation: PresetUtils.PresetRotation) =>
 	PresetUtils.makePresetBuild(name, {
 		group: 'Level 60',
