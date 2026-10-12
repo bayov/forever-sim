@@ -84,6 +84,9 @@ func mageCommonKnobs() []Knob {
 	return []Knob{
 		// Evocation below this much mana, 0 never.
 		{Name: "evocationMana", Default: 20, Min: 0, Max: 40, Step: 10},
+		// Evocation only with at least this many seconds of the fight left, so its 8 sec channel
+		// buys mana the fight still needs.
+		{Name: "evocationMinTime", Default: 30, Min: 0, Max: 90, Step: 30},
 		// Arcane Power and Presence of Mind wait for the other cooldowns: 0 on cooldown, 1
 		// Arcane Power waits for the trinket and racial window (they go with it).
 		{Name: "cooldownsTogether", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -106,7 +109,11 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."))
 	if k["evocationMana"] > 0 {
-		items = append(items, cast(evocation, lt(currentManaPercent(), num(k["evocationMana"]/100)), "Evocation once the mana runs low."))
+		var timeLeft value
+		if k["evocationMinTime"] > 0 {
+			timeLeft = gt(remainingTime(), seconds(k["evocationMinTime"]))
+		}
+		items = append(items, cast(evocation, and(lt(currentManaPercent(), num(k["evocationMana"]/100)), timeLeft), "Evocation once the mana runs low, with enough of the fight left to spend it."))
 	}
 	return items
 }
