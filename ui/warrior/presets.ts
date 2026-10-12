@@ -63,8 +63,9 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // (phase_1.gear.json) at Phase 1 epic budgets: Strength, Agility, crit, 10% hit and some attack
 // power, no Spirit. The six tier pieces carry Battlegear of Glory's bonuses, Forever's Molten Core
 // set for Arms and Fury. Arms and Fury share the armor, rings and bow, the file has the details.
-// The enchants are the Phase 1 set's, with 7 Agility on the boots, and the trinkets are Hand of
-// Justice and Blackhand's Breadth.
+// The enchants are the Phase 1 set's, with 7 Agility on the boots and Forever's +5 Strength on the
+// neck (+3.7 over +5 Agility's +2.9 on Fury), and the trinkets are Hand of Justice and Blackhand's
+// Breadth.
 //
 // On 2026-10-12 the Level 60 Fury build (Human, 180 sec) does 995.2 on the Fury set, where the Era
 // Phase 1 set (phase_1.gear.json) does 1010.8 with the same talents and rotation. The synthetic set
