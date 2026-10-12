@@ -14,7 +14,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	cssClass: 'shadow-priest-sim-ui',
 	cssScheme: 'priest',
 	// List any known bugs / issues here and they'll be shown on the site.
-	knownIssues: ['The Homunculi Rune is not currently implemented until more data is available'],
+	knownIssues: [],
 
 	// All stats for which EP should be calculated.
 	epStats: [
@@ -52,7 +52,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 
 	modifyDisplayStats: (player: Player<Spec.SpecShadowPriest>) => {
 		let stats = new Stats();
-		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitShadow, player.getTalents().shadowFocus * 2 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
+		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitShadow, player.getTalents().shadowFocus * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 
 		return {
 			talents: stats,
@@ -60,17 +60,20 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	},
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
+		// Measured on the Level 60 build (tools/rotopt -weights, 180 sec, 2026-10-12). Mana never
+		// runs out in a raid fight, so Spirit and MP5 are worth nothing there.
 		epWeights: Stats.fromMap({
-			[Stat.StatIntellect]: 0.16,
-			[Stat.StatSpirit]: 0.01,
+			[Stat.StatIntellect]: 0.38,
+			[Stat.StatSpirit]: 0.0,
 			[Stat.StatSpellPower]: 1,
 			[Stat.StatSpellDamage]: 1,
 			[Stat.StatShadowPower]: 1,
-			[Stat.StatSpellHit]: 5.51,
-			[Stat.StatSpellCrit]: 5.99, // Averaged between using and not using Despair for dot crits
+			[Stat.StatSpellHit]: 12.0,
+			[Stat.StatSpellCrit]: 15.1,
 			[Stat.StatSpellHaste]: 1.65,
 			[Stat.StatMP5]: 0.0,
 			[Stat.StatFireResistance]: 0.5,
@@ -114,6 +117,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60Holy],
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		rotations: [...Presets.APLPresets[Phase.Phase1]],
 		gear: [...Presets.GearPresets[Phase.Phase1]],
@@ -133,9 +137,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
+			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceDwarf,
+				[Faction.Alliance]: Race.RaceHuman,
 				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
