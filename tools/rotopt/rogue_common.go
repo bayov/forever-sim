@@ -66,6 +66,9 @@ func rogueCooldownKnobs() []Knob {
 		{Name: "eluneHoldForAr", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "berserkingHoldForBf", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "evisEnergy", Default: 79, Min: 59, Max: 99, Step: 10},
+		// The Eviscerate finisher's combo points. 5, but Mutilate builds land on 4 often enough
+		// that waiting for a fifth wastes points.
+		{Name: "evisCp", Default: 5, Min: 3, Max: 5, Step: 1},
 		{Name: "bfPrepull", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
@@ -236,7 +239,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	// which are lost otherwise (+4 DPS at 180 sec, rotation audit 2026-10-12).
 	c.evisWhen = or(
 		and(
-			ge(comboPoints(), num(5)),
+			ge(comboPoints(), num(k["evisCp"])),
 			or(auraIsActive(sliceAndDice), ge(energy(), num(k["evisEnergy"])), lt(remainingTime(), seconds(6))),
 		),
 		and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(3))),

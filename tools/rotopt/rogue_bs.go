@@ -22,6 +22,7 @@ var (
 	premeditation = spellID(14183)
 	preparation   = spellID(14185)
 	stealth       = spellID(1787)
+	stealthSpell  = spellID(1787)
 	cutthroat     = spellID(460534)
 	thousandCuts  = spellID(460535)
 	mutilate      = spellID(1329)
@@ -53,6 +54,11 @@ func (rogueBS) Knobs() []Knob {
 		Knob{Name: "ghostly", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Vanish for an Ambush (and Premeditation) at this many combo points or fewer, 9 for never.
 		Knob{Name: "vanishCp", Default: 9, Min: 0, Max: 9, Step: 3},
+		// Pool energy for the Ambush while Vanish is ready, so the builders do not keep it
+		// below 60 (an energy starved build otherwise leaves Vanish idle).
+		Knob{Name: "vanishPool", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Open from Stealth (a prepull Stealth) with Premeditation and an Ambush.
+		Knob{Name: "stealthOpener", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Backstab only at this many Thousand Cuts stacks, or when energy is pooled. 0 ignores stacks.
 		Knob{Name: "bsStacks", Default: 0, Min: 0, Max: 5, Step: 1},
 		Knob{Name: "bsAfterSwing", Default: 0, Min: 0, Max: 1, Step: 0.25},
@@ -62,7 +68,12 @@ func (rogueBS) Knobs() []Knob {
 
 func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	c := buildRogueCooldowns(k)
-	items := []*proto.APLListItem{c.sliceAndDice}
+	var items []*proto.APLListItem
+	// Out of Stealth the Ambush goes first, before anything breaks it.
+	if k["stealthOpener"] == 1 {
+		items = append(items, cast(ambush, auraIsActive(stealth), "Ambush out of Stealth (the opener or a Vanish) before anything else."))
+	}
+	items = append(items, c.sliceAndDice)
 	items = append(items, c.cooldowns...)
 
 	// Rupture is the other finisher. It snapshots Hemorrhage at cast, so the debuff only
@@ -112,6 +123,7 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	if k["vanishCp"] < 9 {
 		items = append(items,
 			cast(vanish, and(
+				not(auraIsActive(stealth)),
 				le(comboPoints(), num(k["vanishCp"])),
 				ge(energy(), spellCurrentCost(ambush)),
 				auraIsActive(sliceAndDice),
@@ -128,14 +140,20 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 		)
 	}
 
+	// While Vanish is ready for an Ambush, the builders leave its 60 energy alone.
+	var pool value
+	if k["vanishPool"] == 1 && k["vanishCp"] < 9 {
+		pool = or(not(spellIsReady(vanish)), le(remainingTime(), seconds(10)), ge(comboPoints(), num(4)), not(auraIsActive(sliceAndDice)))
+	}
+
 	if k["ghostly"] == 1 {
-		items = append(items, cast(ghostlyStrike, lt(comboPoints(), num(5)),
+		items = append(items, cast(ghostlyStrike, and(lt(comboPoints(), num(5)), pool),
 			"Ghostly Strike is 180% weapon damage for 40 energy with a dagger, more per energy than Backstab, so on cooldown."))
 	}
 
 	// The builder. Backstab waits for Thousand Cuts stacks when asked, with the energy
 	// pool as the fallback so the wait never caps energy.
-	when := builderWhen(k["bsAfterSwing"], k["bsEnergy"])
+	when := and(builderWhen(k["bsAfterSwing"], k["bsEnergy"]), pool)
 	if k["hemoFiller"] == 1 {
 		items = append(items, cast(hemorrhage, when, "Hemorrhage as the builder."))
 	}
@@ -154,5 +172,8 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 
 	rot := rotation(items...)
 	rot.PrepullActions = c.prepull
+	if k["stealthOpener"] == 1 {
+		rot.PrepullActions = append([]*proto.APLPrepullAction{prepull(stealthSpell, 2)}, rot.PrepullActions...)
+	}
 	return rot
 }

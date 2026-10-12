@@ -24,6 +24,9 @@ func (rogueMut) Knobs() []Knob {
 		// "5 combo points" and takes every finisher.
 		"arSnd": 0,
 		"bfSnd": 0,
+		// Mutilate lands on 4 points often enough that waiting for a fifth wastes points
+		// (+9 DPS, rotation audit 2026-10-12).
+		"evisCp": 4,
 	})
 	// Mutilate stays the builder: the knob search would rather Backstab with the same
 	// talents (the Seal Fate dagger build), which is a different spec.

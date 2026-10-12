@@ -60,3 +60,14 @@ func TestPremeditationOutOfStealth(t *testing.T) {
 		t.Errorf("Preparation did not reset Premeditation")
 	}
 }
+
+// TestStealthOnlyBeforeThePull checks that Stealth can't be cast once the fight is on.
+func TestStealthOnlyBeforeThePull(t *testing.T) {
+	sim, rogue := newSubtletyRogueSim()
+	if rogue.Stealth.Cast(sim, rogue.CurrentTarget) {
+		t.Errorf("Stealth went out in combat")
+	}
+	if rogue.IsStealthed() {
+		t.Errorf("the rogue is in Stealth in combat")
+	}
+}
