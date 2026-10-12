@@ -23,7 +23,7 @@ Spells at level 60 (client SpellEffect, SpellLevels, SpellPower, SpellMisc; most
 
 - Shadow Bolt rank 10 253 to 283 (1.12 482 to 538), 85.7%. Rank 9 237 to 265. Rank 10, Immolate rank 8 and Corruption rank 7 come from Ahn'Qiraj books, which the client has with no source and no trainer, so the sim's Forever ruleset stops at Shadow Bolt IX, Immolate VII and Corruption VI.
 - Immolate rank 8 158 and 5 ticks of 55 (1.12 279 and 510), 20% and 13% a tick.
-- Corruption rank 7 6 ticks of 73 (1.12 822 in all), 20% a tick (1.12 16.7%). Ranks 1 and 2 last 12 and 15 sec.
+- Corruption rank 7 6 ticks of 73 (1.12 822 in all), 20% a tick (1.12 16.7%). Ranks 1 and 2 last 12 and 15 sec. Rank 7 is an Ahn'Qiraj book, so the sim's Forever top rank is 6, 6 ticks of 57.
 - Bane of Agony (was Curse of Agony) rank 6 552 over 24 sec (1.12 1044), 13.3% a tick (1.12 8.3%).
 - Bane of Doom (was Curse of Doom) 1742 after 1 min (1.12 3200), 400% (1.12 100%).
 - Siphon Life is a talent with trainer ranks behind it, 11 / 19 / 29 / 41 every 3 sec at 30 / 38 / 48 / 58, 5% a tick.
