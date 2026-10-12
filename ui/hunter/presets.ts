@@ -121,7 +121,7 @@ export const APLPresets = {
 	[Phase.Phase1]: [APLBeastMastery, APLMarksmanship, APLLoneWolf, APLSurvival],
 };
 
-export const DefaultAPL = APLBeastMastery;
+export const DefaultAPL = APLLoneWolf;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -168,7 +168,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [TalentsBeastMastery, TalentsMarksmanship, TalentsLoneWolf, TalentsSurvival],
 };
 
-export const DefaultTalents = TalentsBeastMastery;
+export const DefaultTalents = TalentsLoneWolf;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -343,12 +343,12 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 });
 
 // Races, 20000 iterations at 180 sec (forever-wiki/sim-status.md has 120 and 300 too): the Night
-// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 3 to 6
+// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 4 to 6
 // ahead of the Orc, the best Horde race. For Survival the Human is best (2% crit with its two
-// swords), 7 ahead of the Orc.
+// swords), 4 ahead of the Night Elf and 6 ahead of the Orc.
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 958.5 / 953.1 / 946.1 at 120 / 180 / 300 sec (20000 iterations), the best of the four.
+// 905.1 / 901.1 / 898.0 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -360,7 +360,8 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 929.1 / 924.6 / 921.7 at 120 / 180 / 300 sec, 29 behind Beast Mastery at 180.
+// 927.8 / 920.5 / 876.3 at 120 / 180 / 300 sec, 19 ahead of Beast Mastery at 180. It runs short of
+// mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -372,7 +373,8 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 881.4 / 877.3 / 874.7 at 120 / 180 / 300 sec, 47 behind Marksmanship with the cat.
+// 932.2 / 926.6 / 894.1 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// than a pet that takes no player buffs. Runs short of mana in a 5 minute fight.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -384,8 +386,8 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 830.8 / 823.1 / 819.9 at 120 / 180 / 300 sec in the mksettings raid at 5 yards. In the UI the
-// fight starts at the distance in the settings and the rotation walks in first.
+// 784.7 / 777.3 / 774.2 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
+// before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
 	tooltip: 'Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group.',

@@ -103,7 +103,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		// Default talents.
 		talents: Presets.DefaultTalents.data,
 		// Default spec-specific settings.
-		specOptions: Presets.DefaultOptions,
+		specOptions: Presets.LoneWolfOptions,
 		other: Presets.OtherDefaults,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs,
@@ -142,7 +142,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildBeastMastery, Presets.PresetBuildMarksmanship, Presets.PresetBuildLoneWolf, Presets.PresetBuildSurvival],
+		builds: [Presets.PresetBuildLoneWolf, Presets.PresetBuildMarksmanship, Presets.PresetBuildBeastMastery, Presets.PresetBuildSurvival],
 		// Preset talents that the user can quickly select.
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		// Preset rotations that the user can quickly select.
