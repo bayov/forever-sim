@@ -1,5 +1,8 @@
 {
     "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":10934}}},"doAtValue":{"const":{"val":"-2s"}}}
+    ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":1277328}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.4"}}}}},"notes":"Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10060}}},"notes":"Power Infusion on cooldown. Without the talent ignore the warning on this line."},
