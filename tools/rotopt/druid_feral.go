@@ -32,7 +32,7 @@ var (
 func (druidFeral) Knobs() []Knob {
 	return []Knob{
 		// Rip at this many combo points while it is down, 0 never.
-		{Name: "ripCP", Default: 5, Min: 0, Max: 5, Step: 1},
+		{Name: "ripCP", Default: 4, Min: 0, Max: 5, Step: 1},
 		// No new Rip with less than this many seconds of the fight left.
 		{Name: "ripMinTime", Default: 10, Min: 4, Max: 12, Step: 2},
 		// Ferocious Bite at 5 combo points: 0 never, 1 only while Rip has at least
@@ -46,7 +46,7 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "biteAtCap", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "biteCapEnergy", Default: 90, Min: 60, Max: 100, Step: 10},
 		// Keep Rake up, 0/1.
-		{Name: "rake", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "rake", Default: 0, Min: 0, Max: 1, Step: 1},
 		// The builder: 0 Shred (from behind), 1 Claw.
 		{Name: "builder", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Shifting Power at or below this much Energy, 0 never.
