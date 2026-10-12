@@ -34,7 +34,6 @@ func init() {
 				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},

@@ -47,7 +47,6 @@ var P1Consumes = core.ConsumesCombo{
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
 		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-		SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},
