@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -171,7 +172,7 @@ var ItemSetPlagueheartRaiment = core.NewItemSet(core.ItemSet{
 						spell.ThreatMultiplier *= 0.75
 					}
 
-					for _, spell := range warlock.CurseOfAgony {
+					for _, spell := range warlock.BaneOfAgony {
 						spell.ThreatMultiplier *= 0.75
 					}
 
@@ -181,4 +182,56 @@ var ItemSetPlagueheartRaiment = core.NewItemSet(core.ItemSet{
 		},
 		// 8 pieces: Reduces health cost of your Life Tap by 12%.
 	},
+})
+
+// demonheartRaimentBonuses are the set bonuses of Demonheart Raiment, Forever's warlock Tier 1 set (item
+// set 2100 in the 1.60.1.70338 client, wago.tools ItemSetSpell and SpellEffect). The client pieces carry
+// no stats yet, so no real set is registered for them. We give the same bonuses to the synthetic Phase 1
+// warlock set below, the way the enhancement set carries The Spiritcaller's Rage.
+var demonheartRaimentBonuses = map[int32]core.ApplyEffect{
+	// Improves your chance to hit by 1%. Spell 1300966 has a melee hit and a spell hit aura of 1 each.
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.AddStat(stats.MeleeHit, 1*core.MeleeHitRatingPerHitChance)
+		c.AddStat(stats.SpellHit, 1*core.SpellHitRatingPerHitChance)
+	},
+	// Reduces the cast time of your Banish spell by 1.5 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// Increases damage done by your spells and effects by up to 21 when fighting Demons.
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		demons := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeDemon
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Spell Power against Demons",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range demons {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken += 21
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range demons {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken -= 21
+					}
+				}
+			},
+		}))
+	},
+	// Your Life Tap generates 20% more Mana at no additional Health cost.
+	5: func(agent core.Agent) {
+		agent.(WarlockAgent).GetWarlock().lifeTapBonus += 0.2
+	},
+}
+
+// ItemSetWarlockSyntheticPhase1 is the synthetic Phase 1 warlock set
+// (tools/database/forever_synthetic_items_warlock.go), with the Demonheart Raiment bonuses.
+var ItemSetWarlockSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Warlock Synthetic (Phase 1)",
+	Bonuses: demonheartRaimentBonuses,
 })

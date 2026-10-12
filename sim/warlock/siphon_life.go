@@ -7,22 +7,22 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-const SiphonLifeRanks = 4
-
+// The talent teaches rank 1 and the trainer the other three (client: learned at 30, 38, 48
+// and 58).
 func (warlock *Warlock) getSiphonLifeBaseConfig(rank int) core.SpellConfig {
-	spellId := [SiphonLifeRanks + 1]int32{0, 18265, 18879, 18880, 18881}[rank]
-	baseDamage := [SiphonLifeRanks + 1]float64{0, 15, 22, 33, 45}[rank]
-	manaCost := [SiphonLifeRanks + 1]float64{0, 150, 205, 285, 365}[rank]
-	level := [SiphonLifeRanks + 1]int{0, 0, 38, 48, 58}[rank]
+	data := siphonLifeRanks[rank]
+	baseDamage := data.damageAt(warlock.Level)
+	spellId := data.SpellID
+	manaCost := data.Cost
+	level := data.Level
 
-	spellCoeff := 0.05
+	spellCoeff := data.Coef
 	actionID := core.ActionID{SpellID: spellId}
 	healthMetrics := warlock.NewHealthMetrics(actionID)
 
-	baseDamage *= 1 + warlock.shadowMasteryBonus()
-
 	return core.SpellConfig{
 		ActionID:      actionID,
+		SpellCode:     SpellCode_WarlockSiphonLife,
 		SpellSchool:   core.SpellSchoolShadow,
 		DefenseType:   core.DefenseTypeMagic,
 		ProcMask:      core.ProcMaskSpellDamage,
@@ -38,8 +38,6 @@ func (warlock *Warlock) getSiphonLifeBaseConfig(rank int) core.SpellConfig {
 				GCD: core.GCDDefault,
 			},
 		},
-
-		CritDamageBonus: 0,
 
 		DamageMultiplierAdditive: 1,
 		DamageMultiplier:         1,
@@ -101,7 +99,7 @@ func (warlock *Warlock) registerSiphonLifeSpell() {
 	}
 
 	warlock.SiphonLife = make([]*core.Spell, 0)
-	for rank := 1; rank <= SiphonLifeRanks; rank++ {
+	for rank := 1; rank < len(siphonLifeRanks); rank++ {
 		config := warlock.getSiphonLifeBaseConfig(rank)
 
 		if config.RequiredLevel <= int(warlock.Level) {

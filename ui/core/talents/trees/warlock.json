@@ -4,6 +4,29 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/302.jpg",
     "talents": [
       {
+        "fieldName": "improvedLifeTap",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 0
+        },
+        "spellIds": [
+          18182,
+          18183
+        ],
+        "maxPoints": 2,
+        "name": "Improved Life Tap",
+        "description": "Increases the amount of Mana awarded by your Life Tap spell by {0}%.",
+        "ranks": [
+          [
+            10
+          ],
+          [
+            20
+          ]
+        ],
+        "icon": "spell_shadow_burningspirit"
+      },
+      {
         "fieldName": "suppression",
         "location": {
           "rowIdx": 0,
@@ -16,7 +39,32 @@
           18177,
           18178
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Suppression",
+        "description": "Increases your chance to hit with all spells and attacks by {0}% and reduces all threat you generate by {1}%.",
+        "ranks": [
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            3,
+            12
+          ],
+          [
+            4,
+            16
+          ],
+          [
+            5,
+            20
+          ]
+        ],
+        "icon": "spell_shadow_unsummonbuilding"
       },
       {
         "fieldName": "improvedCorruption",
@@ -31,72 +79,148 @@
           17813,
           17814
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Improved Corruption",
+        "description": "Reduces the casting time of your Corruption spell by {0} sec and increases the damage it deals by {1}%.",
+        "ranks": [
+          [
+            0.4,
+            2
+          ],
+          [
+            0.8,
+            4
+          ],
+          [
+            1.2,
+            6
+          ],
+          [
+            1.6,
+            8
+          ],
+          [
+            2,
+            10
+          ]
+        ],
+        "icon": "spell_shadow_abominationexplosion"
       },
       {
-        "fieldName": "improvedCurseOfWeakness",
+        "fieldName": "malediction",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
-          18179,
-          18180,
-          18181
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 3
+        "maxPoints": 5,
+        "name": "Malediction",
+        "description": "Increases all periodic damage done by your Warlock spells by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "spell_shadow_curseofachimonde",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedDrainSoul",
+        "fieldName": "soulHarvest",
         "location": {
           "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          18213,
-          18372
+          0,
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Soul Harvest",
+        "description": "Killing a non-trivial target afflicted by your Drain Soul increases your Mana regeneration by {0}% for {1} sec and allows {2}% of normal Mana regeneration to continue while casting.",
+        "ranks": [
+          [
+            50,
+            10,
+            50
+          ],
+          [
+            100,
+            10,
+            100
+          ]
+        ],
+        "icon": "inv_elemental_primal_shadow",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedLifeTap",
+        "fieldName": "improvedDrains",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          18182,
-          18183
+          0,
+          0,
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 3,
+        "name": "Improved Drains",
+        "description": "Increases health drained or damage done by your Drain Life, Drain Soul, and Wrack spells by {0}%.",
+        "ranks": [
+          [
+            7
+          ],
+          [
+            13
+          ],
+          [
+            20
+          ]
+        ],
+        "icon": "spell_shadow_haunting",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedDrainLife",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 3
-        },
-        "spellIds": [
-          17804,
-          17805,
-          17806,
-          17807,
-          17808
-        ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "improvedCurseOfAgony",
+        "fieldName": "improvedBaneOfAgony",
         "location": {
           "rowIdx": 2,
           "colIdx": 0
         },
         "spellIds": [
-          18827,
-          18829,
-          18830
+          0,
+          0
         ],
-        "maxPoints": 3
+        "maxPoints": 2,
+        "name": "Improved Bane of Agony",
+        "description": "Increases the damage done by your Bane of Agony by {0}%.",
+        "ranks": [
+          [
+            5
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_shadow_curseofsargeras",
+        "notSimulated": true
       },
       {
         "fieldName": "felConcentration",
@@ -111,7 +235,22 @@
           17786,
           17787
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Fel Concentration",
+        "description": "Gives you a {0}% chance to avoid interruption caused by damage while channeling or casting your Drain Life, Drain Mana, or Drain Soul spells.",
+        "ranks": [
+          [
+            23
+          ],
+          [
+            47
+          ],
+          [
+            70
+          ]
+        ],
+        "icon": "spell_shadow_fingerofdeath",
+        "notSimulated": true
       },
       {
         "fieldName": "amplifyCurse",
@@ -122,19 +261,81 @@
         "spellIds": [
           18288
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Amplify Curse",
+        "description": "Increases the effect of your next Curse of Weakness or Bane of Agony by {0}%, or your next Curse of Exhaustion by {1}%. Lasts {2} sec.",
+        "ranks": [
+          [
+            50,
+            20,
+            30
+          ]
+        ],
+        "icon": "spell_shadow_contagion"
       },
       {
-        "fieldName": "grimReach",
+        "fieldName": "pandemic",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 3
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Pandemic",
+        "description": "Increases the critical strike damage bonus of your Corruption, Bane of Agony, Bane of Doom, Drain Soul, Drain Life, Siphon Life, and Wrack spells by {0}%.",
+        "ranks": [
+          [
+            33
+          ],
+          [
+            67
+          ],
+          [
+            100
+          ]
+        ],
+        "icon": "spell_shadow_unstableaffliction_2",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "malevolence",
         "location": {
           "rowIdx": 3,
           "colIdx": 0
         },
         "spellIds": [
-          18218,
-          18219
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 5,
+        "name": "Malevolence",
+        "description": "Increases the critical effect chance of your Shadow spells by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "spell_shadow_focusedpower",
+        "notSimulated": true
       },
       {
         "fieldName": "nightfall",
@@ -146,19 +347,45 @@
           18094,
           18095
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Nightfall",
+        "description": "Gives your Corruption, Drain Soul, Drain Life, and Wrack spells a {0}% chance to cause you to enter a Shadow Trance after damaging the opponent. The Shadow Trance reduces the casting time of your next Shadow Bolt spell by {1}%.",
+        "ranks": [
+          [
+            2,
+            100
+          ],
+          [
+            4,
+            100
+          ]
+        ],
+        "icon": "spell_shadow_twilight"
       },
       {
-        "fieldName": "improvedDrainMana",
+        "fieldName": "curseOfExhaustion",
         "location": {
           "rowIdx": 3,
-          "colIdx": 3
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 2
         },
         "spellIds": [
-          17864,
-          18393
+          18223
         ],
-        "maxPoints": 2
+        "maxPoints": 1,
+        "name": "Curse of Exhaustion",
+        "description": "Reduces the target's movement speed by {0}% for {1} sec. Only one Curse per Warlock can be active on any one target.",
+        "ranks": [
+          [
+            30,
+            12
+          ]
+        ],
+        "icon": "spell_shadow_grimward",
+        "notSimulated": true
       },
       {
         "fieldName": "siphonLife",
@@ -169,46 +396,54 @@
         "spellIds": [
           18265
         ],
-        "maxPoints": 1
-      },
-      {
-        "fieldName": "curseOfExhaustion",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 2
-        },
-        "spellIds": [
-          18223
-        ],
         "maxPoints": 1,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 2
-        }
+        "name": "Siphon Life",
+        "description": "Transfers {0} health from the target to the caster every {1} sec. Lasts {2} sec.",
+        "ranks": [
+          [
+            11,
+            3,
+            30
+          ]
+        ],
+        "icon": "spell_shadow_requiem"
       },
       {
-        "fieldName": "improvedCurseOfExhaustion",
+        "fieldName": "soulSiphon",
         "location": {
           "rowIdx": 4,
-          "colIdx": 3
+          "colIdx": 2
         },
         "spellIds": [
-          18310,
-          18311,
-          18312,
-          18313
+          0,
+          0,
+          0
         ],
-        "maxPoints": 4,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 2
-        }
+        "maxPoints": 3,
+        "name": "Soul Siphon",
+        "description": "Increases the rate at which your Drain Life and Drain Soul deal damage by {0}%, but reduces your healing from Drain Life by {1}%.",
+        "ranks": [
+          [
+            4,
+            12
+          ],
+          [
+            8,
+            24
+          ],
+          [
+            12,
+            36
+          ]
+        ],
+        "icon": "spell_shadow_lifedrain02",
+        "notSimulated": true
       },
       {
         "fieldName": "shadowMastery",
         "location": {
           "rowIdx": 5,
-          "colIdx": 1
+          "colIdx": 2
         },
         "spellIds": [
           18271,
@@ -218,21 +453,53 @@
           18275
         ],
         "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        }
+        "name": "Shadow Mastery",
+        "description": "Increases the damage dealt or life drained by your Shadow spells by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "icon": "spell_shadow_shadetruesight"
       },
       {
-        "fieldName": "darkPact",
+        "fieldName": "wrack",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
-          18220
+          0
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Wrack",
+        "description": "Tears the target apart from within, dealing {0} Shadow damage every {1} sec and increasing the damage they take from your other Shadow damage over time effects by {2}%. Lasts {3} sec.",
+        "ranks": [
+          [
+            36,
+            1,
+            10,
+            6
+          ]
+        ],
+        "icon": "ability_deathknight_hemorrhagicfever",
+        "notSimulated": true
       }
     ]
   },
@@ -241,16 +508,32 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/303.jpg",
     "talents": [
       {
-        "fieldName": "improvedHealthstone",
+        "fieldName": "improvedHealthFunnel",
         "location": {
           "rowIdx": 0,
           "colIdx": 0
         },
         "spellIds": [
-          18692,
-          18693
+          18703,
+          18704
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Improved Health Funnel",
+        "description": "Increases the amount of health transferred by your Health Funnel spell by {0}%, reduces its health cost by {1}%, and reduces all threat your Health Funnel generates by {2}%. Allows Health Funnel to be used regardless of your demon's health.",
+        "ranks": [
+          [
+            20,
+            15,
+            50
+          ],
+          [
+            40,
+            30,
+            100
+          ]
+        ],
+        "icon": "spell_shadow_lifedrain",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedImp",
@@ -263,7 +546,24 @@
           18695,
           18696
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Improved Imp",
+        "description": "Increases the damage of your Imp's Firebolt spell by {0}% and the effect of its Fire Shield spell by {1}%.",
+        "ranks": [
+          [
+            10,
+            10
+          ],
+          [
+            20,
+            20
+          ],
+          [
+            30,
+            30
+          ]
+        ],
+        "icon": "spell_shadow_summonimp"
       },
       {
         "fieldName": "demonicEmbrace",
@@ -278,19 +578,86 @@
           18700,
           18701
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Demonic Embrace",
+        "description": "Increases your total Stamina by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            9
+          ],
+          [
+            12
+          ],
+          [
+            15
+          ]
+        ],
+        "icon": "spell_shadow_metamorphosis"
       },
       {
-        "fieldName": "improvedHealthFunnel",
+        "fieldName": "unholyPower",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 3
+        },
+        "spellIds": [
+          18769,
+          18770,
+          18771,
+          18772,
+          18773
+        ],
+        "maxPoints": 5,
+        "name": "Unholy Power",
+        "description": "Increases all damage done by your Imp, Voidwalker, Succubus, Incubus, and Felhunter pets by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_shadow_shadowworddominate"
+      },
+      {
+        "fieldName": "demonicAegis",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
-          18703,
-          18704
+          0,
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 2,
+        "name": "Demonic Aegis",
+        "description": "Increases the effectiveness of your Demon Skin and Demon Armor spells by {0}%.",
+        "ranks": [
+          [
+            15
+          ],
+          [
+            30
+          ]
+        ],
+        "icon": "spell_shadow_ragingscream",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedVoidwalker",
@@ -303,22 +670,79 @@
           18706,
           18707
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Improved Voidwalker",
+        "description": "Increases the effectiveness of your Voidwalker's Torment, Consume Shadows, Sacrifice, and Suffering spells by {0}%.",
+        "ranks": [
+          [
+            10
+          ],
+          [
+            20
+          ],
+          [
+            30
+          ]
+        ],
+        "icon": "spell_shadow_summonvoidwalker",
+        "notSimulated": true
       },
       {
-        "fieldName": "felIntellect",
+        "fieldName": "felVitality",
         "location": {
           "rowIdx": 1,
           "colIdx": 2
         },
         "spellIds": [
-          18731,
-          18743,
-          18744,
-          18745,
-          18746
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Fel Vitality",
+        "description": "Increases the maximum health and Mana of your Imp, Voidwalker, Succubus, Incubus, and Felhunter by {0}%, and increases your maximum Mana by {1}%.",
+        "ranks": [
+          [
+            5,
+            5
+          ],
+          [
+            10,
+            10
+          ],
+          [
+            15,
+            15
+          ]
+        ],
+        "icon": "spell_shadow_demonictactics",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "demonicEnergies",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 3
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Demonic Energies",
+        "description": "You heal your pet for {0}% of all spell damage you deal. When you gain Mana from Life Tap, your summoned demon gains {1}% of the Mana you gain.",
+        "ranks": [
+          [
+            8,
+            50
+          ],
+          [
+            15,
+            100
+          ]
+        ],
+        "icon": "spell_shadow_felmending",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedSayaad",
@@ -331,97 +755,253 @@
           18755,
           18756
         ],
-        "maxPoints": 3
+        "maxPoints": 3,
+        "name": "Improved Sayaad",
+        "description": "Increases the effect of your Succubus' and Incubus' Lash of Pain and Soothing Kiss spells by {0}%, and increases the duration of your Succubus' and Incubus' Seduction and Lesser Invisibility spells by {1}%.",
+        "ranks": [
+          [
+            10,
+            10
+          ],
+          [
+            20,
+            20
+          ],
+          [
+            30,
+            30
+          ]
+        ],
+        "icon": "ability_warlock_randomizesuccubusincubus"
       },
       {
-        "fieldName": "felDomination",
+        "fieldName": "demonicSacrifice",
         "location": {
           "rowIdx": 2,
           "colIdx": 1
         },
         "spellIds": [
-          18708
+          18788
         ],
-        "maxPoints": 1
-      },
-      {
-        "fieldName": "felStamina",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 2
-        },
-        "spellIds": [
-          18748
+        "maxPoints": 1,
+        "name": "Demonic Sacrifice",
+        "description": "When activated, sacrifices your summoned Demon to enhance the opposing aspect of your power, granting you an effect that lasts {0} min. The effect is canceled if any Demon is summoned. Imp: Increases your Shadow damage by {1}%. Voidwalker: Restores {2}% of your total Mana every {3} sec. Succubus/Incubus: Increases your Fire damage by {4}%. Felhunter: Restores {5}% of your total Health every {6} sec.",
+        "ranks": [
+          [
+            120,
+            15,
+            2,
+            4,
+            15,
+            3,
+            4
+          ]
         ],
-        "maxPoints": 5
+        "icon": "spell_shadow_psychicscream"
       },
       {
         "fieldName": "masterSummoner",
         "location": {
-          "rowIdx": 3,
-          "colIdx": 1
+          "rowIdx": 2,
+          "colIdx": 2
         },
         "spellIds": [
           18709,
           18710
         ],
         "maxPoints": 2,
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 1
-        }
+        "name": "Master Summoner",
+        "description": "Reduces the casting time of your Imp, Voidwalker, Succubus, Incubus, and Felhunter Summoning spells by {0} sec and the Mana cost by {1}%.",
+        "ranks": [
+          [
+            2,
+            20
+          ],
+          [
+            4,
+            40
+          ]
+        ],
+        "icon": "spell_shadow_impphaseshift"
       },
       {
-        "fieldName": "unholyPower",
+        "fieldName": "decimation",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0
+        ],
+        "maxPoints": 2,
+        "name": "Decimation",
+        "description": "Reduces the cooldown of your Soul Fire spell by {0}%. When you cast Shadow Bolt or Searing Pain on an enemy below {1}% health, they deal {2}% increased damage, and for the next {3} sec your Soul Fire spell has its cast time reduced by {4}% and costs no Soul Shards.",
+        "ranks": [
+          [
+            45,
+            35,
+            3,
+            10,
+            20
+          ],
+          [
+            90,
+            35,
+            6,
+            10,
+            40
+          ]
+        ],
+        "icon": "spell_fire_fireball02",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "felDomination",
         "location": {
           "rowIdx": 3,
           "colIdx": 2
         },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 2
+        },
         "spellIds": [
-          18769,
-          18770,
-          18771,
-          18772,
-          18773
+          18708
         ],
-        "maxPoints": 5
+        "maxPoints": 1,
+        "name": "Fel Domination",
+        "description": "Your next Imp, Voidwalker, Succubus, Incubus, or Felhunter Summon spell has its casting time reduced by {0} sec and its Mana cost reduced by {1}%.",
+        "ranks": [
+          [
+            5.5,
+            50
+          ]
+        ],
+        "icon": "spell_nature_removecurse"
       },
       {
-        "fieldName": "improvedSubjugateDemon",
+        "fieldName": "demonicBrand",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 3
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Demonic Brand",
+        "description": "Your Searing Pain generates {0}% less threat and brands the target for {1} sec. Your pet's next {2} attacks against the target generate high threat and deal {3} to {4} Fire or Shadow damage based on the pet.",
+        "ranks": [
+          [
+            17,
+            10,
+            2,
+            65,
+            68
+          ],
+          [
+            33,
+            10,
+            4,
+            65,
+            68
+          ],
+          [
+            50,
+            10,
+            6,
+            65,
+            68
+          ]
+        ],
+        "icon": "ability_demonhunter_chaoticimprint_fire",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "improvedFelhunter",
         "location": {
           "rowIdx": 4,
           "colIdx": 0
         },
         "spellIds": [
-          18821,
-          18823,
-          18824,
-          18825
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 3,
+        "name": "Improved Felhunter",
+        "description": "Increases the Attack Power reduction of your Felhunter's Tainted Blood, the healing of its Devour Magic, and the detection level of its Paranoia by {0}%, and reduces the cooldown of its Spell Lock by {1} sec.",
+        "ranks": [
+          [
+            10,
+            2
+          ],
+          [
+            20,
+            4
+          ],
+          [
+            30,
+            6
+          ]
+        ],
+        "icon": "spell_shadow_summonfelhunter",
+        "notSimulated": true
       },
       {
-        "fieldName": "demonicSacrifice",
+        "fieldName": "soulLink",
         "location": {
           "rowIdx": 4,
           "colIdx": 1
         },
-        "spellIds": [
-          18788
-        ],
-        "maxPoints": 1
-      },
-      {
-        "fieldName": "improvedFirestone",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 3
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 1
         },
         "spellIds": [
-          18767,
-          18768
+          19028
         ],
-        "maxPoints": 2
+        "maxPoints": 1,
+        "name": "Soul Link",
+        "description": "When active, {0}% of all damage taken by the caster is taken by your Imp, Voidwalker, Succubus, Incubus, or Felhunter Demon instead. In addition, both the Demon and the master will inflict {1}% more damage. Lasts as long as the Demon is active.",
+        "ranks": [
+          [
+            30,
+            3
+          ]
+        ],
+        "icon": "spell_shadow_gathershadows"
+      },
+      {
+        "fieldName": "demonicKnowledge",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 2
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Demonic Knowledge",
+        "description": "Increases your spell damage and your Demon pet's spell damage by up to {0}% of your level while you have a summoned Demon pet active.",
+        "ranks": [
+          [
+            33
+          ],
+          [
+            67
+          ],
+          [
+            100
+          ]
+        ],
+        "icon": "spell_shadow_improvedvampiricembrace",
+        "notSimulated": true
       },
       {
         "fieldName": "masterDemonologist",
@@ -437,37 +1017,63 @@
           23825
         ],
         "maxPoints": 5,
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 2
-        }
+        "name": "Master Demonologist",
+        "description": "Grants both the Warlock and the summoned demon an effect as long as that demon is active. Imp - Increases Fire damage done by {0}%. Voidwalker - Reduces Physical damage taken by {1}%. Succubus/Incubus - Increases Shadow damage done by {2}%. Felhunter - Reduces Magic damage taken by {3}%.",
+        "ranks": [
+          [
+            2,
+            2,
+            2,
+            2
+          ],
+          [
+            4,
+            4,
+            4,
+            4
+          ],
+          [
+            6,
+            6,
+            6,
+            6
+          ],
+          [
+            8,
+            8,
+            8,
+            8
+          ],
+          [
+            10,
+            10,
+            10,
+            10
+          ]
+        ],
+        "icon": "spell_shadow_shadowpact"
       },
       {
-        "fieldName": "soulLink",
+        "fieldName": "demonicPact",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          19028
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
-      },
-      {
-        "fieldName": "improvedSpellstone",
-        "location": {
-          "rowIdx": 6,
-          "colIdx": 2
         },
         "spellIds": [
-          18774,
-          18775
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 1,
+        "name": "Demonic Pact",
+        "description": "Your Demonic Sacrifice effect is no longer cancelled by summoning a different Demon pet. Resummoning the sacrificed pet will still cancel the effect.",
+        "ranks": [
+          []
+        ],
+        "icon": "inv_ability_soulharvesterwarlock_demonicsoul",
+        "notSimulated": true
       }
     ]
   },
@@ -475,6 +1081,30 @@
     "name": "Destruction",
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/301.jpg",
     "talents": [
+      {
+        "fieldName": "destructiveReach",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 0
+        },
+        "spellIds": [
+          17917,
+          17918
+        ],
+        "maxPoints": 2,
+        "name": "Destructive Reach",
+        "description": "Increases the range of your damaging spells by {0}%.",
+        "ranks": [
+          [
+            10
+          ],
+          [
+            20
+          ]
+        ],
+        "icon": "spell_shadow_corpseexplode",
+        "notSimulated": true
+      },
       {
         "fieldName": "improvedShadowBolt",
         "location": {
@@ -488,28 +1118,38 @@
           17802,
           17803
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "cataclysm",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 2
-        },
-        "spellIds": [
-          17778,
-          17779,
-          17780,
-          17781,
-          17782
+        "maxPoints": 5,
+        "name": "Improved Shadow Bolt",
+        "description": "Your Shadow Bolt critical strikes increase Shadow damage taken by the target from your attacks by {0}% for {1} sec.",
+        "ranks": [
+          [
+            4,
+            12
+          ],
+          [
+            8,
+            12
+          ],
+          [
+            12,
+            12
+          ],
+          [
+            16,
+            12
+          ],
+          [
+            20,
+            12
+          ]
         ],
-        "maxPoints": 5
+        "icon": "spell_shadow_shadowbolt"
       },
       {
         "fieldName": "bane",
         "location": {
-          "rowIdx": 1,
-          "colIdx": 1
+          "rowIdx": 0,
+          "colIdx": 2
         },
         "spellIds": [
           17788,
@@ -518,7 +1158,97 @@
           17791,
           17792
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Bane",
+        "description": "Reduces the casting time of your Shadow Bolt, Immolate, and Incinerate spells by {0} sec and your Soul Fire spell by {1} sec.",
+        "ranks": [
+          [
+            0.1,
+            0.4
+          ],
+          [
+            0.2,
+            0.8
+          ],
+          [
+            0.3,
+            1.2
+          ],
+          [
+            0.4,
+            1.6
+          ],
+          [
+            0.5,
+            2
+          ]
+        ],
+        "icon": "spell_shadow_deathpact"
+      },
+      {
+        "fieldName": "moltenSkin",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 0
+        },
+        "spellIds": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 5,
+        "name": "Molten Skin",
+        "description": "Reduces all damage taken by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "ability_mage_moltenarmor",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "cataclysm",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 1
+        },
+        "spellIds": [
+          17778,
+          17779,
+          17780,
+          17781,
+          17782
+        ],
+        "maxPoints": 3,
+        "name": "Cataclysm",
+        "description": "Reduces the Mana cost of your Destruction spells by {0}%.",
+        "ranks": [
+          [
+            3
+          ],
+          [
+            6
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "spell_fire_windsofwoe"
       },
       {
         "fieldName": "aftermath",
@@ -533,56 +1263,95 @@
           18122,
           18123
         ],
-        "maxPoints": 5
-      },
-      {
-        "fieldName": "improvedFirebolt",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 0
-        },
-        "spellIds": [
-          18126,
-          18127
+        "maxPoints": 5,
+        "name": "Aftermath",
+        "description": "Increases the initial damage of your Immolate spell by {0}% and your Conflagrate spell has a {1}% chance to Daze the target, reducing the target's movement speed by {2}% for {3} sec.",
+        "ranks": [
+          [
+            10,
+            20,
+            50,
+            5
+          ],
+          [
+            20,
+            40,
+            50,
+            5
+          ],
+          [
+            30,
+            60,
+            50,
+            5
+          ],
+          [
+            40,
+            80,
+            50,
+            5
+          ],
+          [
+            50,
+            100,
+            50,
+            5
+          ]
         ],
-        "maxPoints": 2
+        "icon": "spell_fire_fire",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedLashOfPain",
+        "fieldName": "ruin",
         "location": {
           "rowIdx": 2,
           "colIdx": 1
         },
         "spellIds": [
-          18128
+          17959
         ],
-        "maxPoints": 2
-      },
-      {
-        "fieldName": "devastation",
-        "location": {
-          "rowIdx": 2,
-          "colIdx": 2
-        },
-        "spellIds": [
-          18130,
-          18131,
-          18132,
-          18133,
-          18134
+        "maxPoints": 5,
+        "name": "Ruin",
+        "description": "Increases the critical strike damage bonus of your Destruction spells by {0}%.",
+        "ranks": [
+          [
+            20
+          ],
+          [
+            40
+          ],
+          [
+            60
+          ],
+          [
+            80
+          ],
+          [
+            100
+          ]
         ],
-        "maxPoints": 5
+        "icon": "spell_shadow_shadowwordpain"
       },
       {
         "fieldName": "shadowburn",
         "location": {
           "rowIdx": 2,
-          "colIdx": 3
+          "colIdx": 2
         },
         "spellIds": [
           17877
         ],
-        "maxPoints": 1
+        "maxPoints": 1,
+        "name": "Shadowburn",
+        "description": "Instantly blasts the target for {0} to {1} Shadow damage. If a non-trivial target dies within {2} sec of being hit with Shadowburn, the caster gains a Soul Shard.",
+        "ranks": [
+          [
+            65,
+            74,
+            8
+          ]
+        ],
+        "icon": "spell_shadow_scourgebuild"
       },
       {
         "fieldName": "intensity",
@@ -594,34 +1363,73 @@
           18135,
           18136
         ],
-        "maxPoints": 2
+        "maxPoints": 3,
+        "name": "Intensity",
+        "description": "Gives you a {0}% chance to resist interruption caused by damage while casting or channeling any Destruction spell.",
+        "ranks": [
+          [
+            23
+          ],
+          [
+            47
+          ],
+          [
+            70
+          ]
+        ],
+        "icon": "spell_fire_lavaspawn",
+        "notSimulated": true
       },
       {
-        "fieldName": "destructiveReach",
+        "fieldName": "agonizingFlames",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
         },
         "spellIds": [
-          17917,
-          17918
+          0,
+          0,
+          0
         ],
-        "maxPoints": 2
+        "maxPoints": 3,
+        "name": "Agonizing Flames",
+        "description": "Increases the critical strike chance of your Searing Pain spell by {0}% and the damage done by all your Destruction spells by {1}%.",
+        "ranks": [
+          [
+            3,
+            3
+          ],
+          [
+            7,
+            7
+          ],
+          [
+            10,
+            10
+          ]
+        ],
+        "icon": "spell_fire_soulburn",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedSearingPain",
+        "fieldName": "conflagrate",
         "location": {
           "rowIdx": 3,
-          "colIdx": 3
+          "colIdx": 2
         },
         "spellIds": [
-          17927,
-          17929,
-          17930,
-          17931,
-          17932
+          17962
         ],
-        "maxPoints": 5
+        "maxPoints": 1,
+        "name": "Conflagrate",
+        "description": "Ignites a target that is already afflicted by your Immolate spell, dealing {0} to {1} Fire damage and consuming your Immolate effect.",
+        "ranks": [
+          [
+            88,
+            111
+          ]
+        ],
+        "icon": "spell_fire_fireball"
       },
       {
         "fieldName": "pyroclasm",
@@ -629,75 +1437,174 @@
           "rowIdx": 4,
           "colIdx": 0
         },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
         "spellIds": [
           18096,
           18073
         ],
         "maxPoints": 2,
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 0
-        }
+        "name": "Pyroclasm",
+        "description": "Gives your Soul Fire spell a {0}% chance to Stun the target for {1} sec, and your Rain of Fire and Hellfire spells a {2}% chance over their duration to Stun targets they damage for {3} sec.",
+        "ranks": [
+          [
+            13,
+            3,
+            13,
+            3
+          ],
+          [
+            26,
+            3,
+            26,
+            3
+          ]
+        ],
+        "icon": "spell_fire_volcano",
+        "notSimulated": true
       },
       {
-        "fieldName": "improvedImmolate",
+        "fieldName": "baneOfHavoc",
         "location": {
           "rowIdx": 4,
           "colIdx": 1
         },
         "spellIds": [
-          17815,
-          17833,
-          17834,
-          17835,
-          17836
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 1,
+        "name": "Bane of Havoc",
+        "description": "Afflicts the target for {0} min, causing {1}% of all damage done by the Warlock to other targets to also be dealt to the cursed target. Bane of Havoc is limited to {2} target, and only one Bane per Warlock can be active on any one target.",
+        "ranks": [
+          [
+            5,
+            15,
+            1
+          ]
+        ],
+        "icon": "ability_warlock_baneofhavoc",
+        "notSimulated": true
       },
       {
-        "fieldName": "ruin",
+        "fieldName": "fireAndBrimstone",
         "location": {
           "rowIdx": 4,
           "colIdx": 2
         },
-        "spellIds": [
-          17959
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
-          "rowIdx": 2,
+          "rowIdx": 3,
           "colIdx": 2
-        }
+        },
+        "spellIds": [
+          0,
+          0,
+          0
+        ],
+        "maxPoints": 3,
+        "name": "Fire and Brimstone",
+        "description": "Increases the critical strike chance of your Conflagrate spell by {0}%.",
+        "ranks": [
+          [
+            8
+          ],
+          [
+            17
+          ],
+          [
+            25
+          ]
+        ],
+        "icon": "spell_fire_meteorstorm",
+        "notSimulated": true
       },
       {
-        "fieldName": "emberstorm",
+        "fieldName": "shadowAndFlame",
         "location": {
           "rowIdx": 5,
           "colIdx": 2
         },
         "spellIds": [
-          17954,
-          17955,
-          17956,
-          17957,
-          17958
+          0,
+          0,
+          0,
+          0,
+          0
         ],
-        "maxPoints": 5
+        "maxPoints": 5,
+        "name": "Shadow and Flame",
+        "description": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by {0}% for {1} sec. and hitting an enemy with Shadowburn increases all Fire damage you deal by {2}% for {3} sec. In addition, Conflagrate has a {4}% chance not to consume Immolate, and Shadowburn has a {5}% chance to instantly refund a Soul Shard.",
+        "ranks": [
+          [
+            2,
+            20,
+            2,
+            20,
+            20,
+            20
+          ],
+          [
+            4,
+            20,
+            4,
+            20,
+            40,
+            40
+          ],
+          [
+            6,
+            20,
+            6,
+            20,
+            60,
+            60
+          ],
+          [
+            8,
+            20,
+            8,
+            20,
+            80,
+            80
+          ],
+          [
+            10,
+            20,
+            10,
+            20,
+            100,
+            100
+          ]
+        ],
+        "icon": "spell_fire_playingwithfire",
+        "notSimulated": true
       },
       {
-        "fieldName": "conflagrate",
+        "fieldName": "incinerate",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
         },
-        "spellIds": [
-          17962
-        ],
-        "maxPoints": 1,
         "prereqLocation": {
           "rowIdx": 4,
           "colIdx": 1
-        }
+        },
+        "spellIds": [
+          0
+        ],
+        "maxPoints": 1,
+        "name": "Incinerate",
+        "description": "Deals {0} to {1} Fire damage to your target and an additional {2}% damage if the target is afflicted by Immolate.",
+        "ranks": [
+          [
+            100,
+            114,
+            25
+          ]
+        ],
+        "icon": "spell_fire_burnout",
+        "notSimulated": true
       }
     ]
   }

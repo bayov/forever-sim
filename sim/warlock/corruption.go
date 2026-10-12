@@ -7,39 +7,33 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-const CorruptionRanks = 7
+// Ranks 1 and 2 last 12 and 15 sec, the rest 18 (client SpellDuration), all with 3 sec ticks.
+var corruptionTicks = []int32{0, 4, 5, 6, 6, 6, 6, 6}
 
 func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
-	dotTickCoeff := [CorruptionRanks + 1]float64{0, .08, .155, .167, .167, .167, .167, .167}[rank] // per tick
-	ticks := [CorruptionRanks + 1]int32{0, 4, 5, 6, 6, 6, 6, 6}[rank]
-	baseDamage := [CorruptionRanks + 1]float64{0, 40, 90, 222, 324, 486, 666, 822}[rank] / float64(ticks)
-	spellId := [CorruptionRanks + 1]int32{0, 172, 6222, 6223, 7648, 11671, 11672, 25311}[rank]
-	manaCost := [CorruptionRanks + 1]float64{0, 35, 55, 100, 160, 225, 290, 340}[rank]
-	level := [CorruptionRanks + 1]int{0, 4, 14, 24, 34, 44, 54, 60}[rank]
-
-	castTime := time.Millisecond * (2000 - (400 * time.Duration(warlock.Talents.ImprovedCorruption)))
+	data := corruptionRanks[rank]
+	ticks := corruptionTicks[rank]
+	baseDamage := data.damageAt(warlock.Level)
 
 	return core.SpellConfig{
-		ActionID:      core.ActionID{SpellID: spellId},
+		ActionID:      core.ActionID{SpellID: data.SpellID},
 		SpellSchool:   core.SpellSchoolShadow,
 		SpellCode:     SpellCode_WarlockCorruption,
 		ProcMask:      core.ProcMaskSpellDamage,
 		DefenseType:   core.DefenseTypeMagic,
 		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagPureDot | WarlockFlagAffliction,
 		Rank:          rank,
-		RequiredLevel: level,
+		RequiredLevel: data.Level,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			FlatCost: data.Cost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				CastTime: castTime,
+				CastTime: data.castTime() - 400*time.Millisecond*time.Duration(warlock.Talents.ImprovedCorruption),
 				GCD:      core.GCDDefault,
 			},
 		},
-
-		CritDamageBonus: 0,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -51,7 +45,7 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 
 			NumberOfTicks:    ticks,
 			TickLength:       time.Second * 3,
-			BonusCoefficient: dotTickCoeff,
+			BonusCoefficient: data.Coef,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDamage, isRollover)
@@ -74,7 +68,6 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 				dot := spell.Dot(target)
 				return dot.CalcSnapshotDamage(sim, target, dot.Spell.OutcomeExpectedMagicAlwaysHit)
 			} else {
-				baseDamage := baseDamage / float64(ticks)
 				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 			}
 		},
@@ -84,7 +77,7 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 func (warlock *Warlock) registerCorruptionSpell() {
 	warlock.Corruption = make([]*core.Spell, 0)
 
-	maxRank := core.TernaryInt(core.IncludeAQ, CorruptionRanks, CorruptionRanks-1)
+	maxRank := core.TernaryInt(core.IncludeAQ, len(corruptionRanks)-1, len(corruptionRanks)-2)
 	for rank := 1; rank <= maxRank; rank++ {
 		config := warlock.getCorruptionConfig(rank)
 

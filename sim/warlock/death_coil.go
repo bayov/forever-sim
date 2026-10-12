@@ -6,16 +6,13 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-const DeathCoilRanks = 3
-
 func (warlock *Warlock) getDeathCoilBaseConfig(rank int) core.SpellConfig {
-	spellId := [DeathCoilRanks + 1]int32{0, 6789, 17925, 17926}[rank]
-	baseDamage := [DeathCoilRanks + 1]float64{0, 301, 375, 476}[rank]
-	manaCost := [DeathCoilRanks + 1]float64{0, 430, 495, 565}[rank]
-	level := [DeathCoilRanks + 1]int{0, 42, 50, 58}[rank]
-	spellCoeff := 0.214
-
-	baseDamage *= 1 + warlock.shadowMasteryBonus()
+	data := deathCoilRanks[rank]
+	spellId := data.SpellID
+	baseDamage := data.damageAt(warlock.Level)
+	manaCost := data.Cost
+	level := data.Level
+	spellCoeff := data.Coef
 
 	healingSpell := warlock.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellId}.WithTag(1),
@@ -71,7 +68,7 @@ func (warlock *Warlock) getDeathCoilBaseConfig(rank int) core.SpellConfig {
 
 func (warlock *Warlock) registerDeathCoilSpell() {
 	warlock.DeathCoil = make([]*core.Spell, 0)
-	for rank := 1; rank <= DeathCoilRanks; rank++ {
+	for rank := 1; rank < len(deathCoilRanks); rank++ {
 		config := warlock.getDeathCoilBaseConfig(rank)
 
 		if config.RequiredLevel <= int(warlock.Level) {

@@ -1,56 +1,49 @@
 package warlock
 
 import (
-	"time"
-
 	"github.com/wowsims/classic/sim/core"
 )
 
-const SearingPainRanks = 6
-
 func (warlock *Warlock) getSearingPainBaseConfig(rank int) core.SpellConfig {
-	spellCoeff := [SearingPainRanks + 1]float64{0, .396, .429, .429, .429, .429, .429}[rank]
-	baseDamage := [SearingPainRanks + 1][]float64{{0}, {38, 47}, {65, 77}, {93, 112}, {131, 155}, {168, 199}, {208, 244}}[rank]
-	spellId := [SearingPainRanks + 1]int32{0, 5676, 17919, 17920, 17921, 17922, 17923}[rank]
-	manaCost := [SearingPainRanks + 1]float64{0, 45, 68, 91, 118, 141, 168}[rank]
-	level := [SearingPainRanks + 1]int{0, 18, 26, 36, 42, 50, 58}[rank]
-	castTime := time.Millisecond * 1500
+	data := searingPainRanks[rank]
+	damageLow, damageHigh := data.rangeAt(warlock.Level)
 
 	return core.SpellConfig{
 		SpellCode:     SpellCode_WarlockSearingPain,
-		ActionID:      core.ActionID{SpellID: spellId},
+		ActionID:      core.ActionID{SpellID: data.SpellID},
 		SpellSchool:   core.SpellSchoolFire,
 		DefenseType:   core.DefenseTypeMagic,
 		ProcMask:      core.ProcMaskSpellDamage,
 		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | WarlockFlagDestruction,
-		RequiredLevel: level,
+		RequiredLevel: data.Level,
 		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			FlatCost: data.Cost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: castTime,
+				CastTime: data.castTime(),
 			},
 		},
-		BonusCritRating: 2.0 * float64(warlock.Talents.ImprovedSearingPain) * core.CritRatingPerCritChance,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 2,
-		BonusCoefficient: spellCoeff,
+		BonusCoefficient: data.Coef,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			damage := sim.Roll(baseDamage[0], baseDamage[1])
-			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcAndDealDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
+			if result.Landed() {
+				warlock.applyDemonicBrandTo(sim, target)
+			}
 		},
 	}
 }
 
 func (warlock *Warlock) registerSearingPainSpell() {
 	warlock.SearingPain = make([]*core.Spell, 0)
-	for rank := 1; rank <= SearingPainRanks; rank++ {
+	for rank := 1; rank < len(searingPainRanks); rank++ {
 		config := warlock.getSearingPainBaseConfig(rank)
 
 		if config.RequiredLevel <= int(warlock.Level) {

@@ -1,0 +1,252 @@
+character_stats_results: {
+ key: "TestWarlockDestruction-Phase1-CharacterStats-Default"
+ value: {
+  final_stats: 170
+  final_stats: 234
+  final_stats: 498
+  final_stats: 379
+  final_stats: 280
+  final_stats: 496
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 40
+  final_stats: 0
+  final_stats: 161
+  final_stats: 81.25
+  final_stats: 5
+  final_stats: 32.9535
+  final_stats: 0
+  final_stats: 0
+  final_stats: 772
+  final_stats: 5
+  final_stats: 30.7
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 6778
+  final_stats: 0
+  final_stats: 0
+  final_stats: 2055
+  final_stats: 390
+  final_stats: 0
+  final_stats: 5
+  final_stats: 0
+  final_stats: 13.7
+  final_stats: 5
+  final_stats: 0
+  final_stats: 6514
+  final_stats: 43
+  final_stats: 75
+  final_stats: 76
+  final_stats: 60
+  final_stats: 85
+  final_stats: 385
+  final_stats: 24
+  final_stats: 65
+  final_stats: 0
+ }
+}
+stat_weights_results: {
+ key: "TestWarlockDestruction-Phase1-StatWeights-Default"
+ value: {
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: -0.55782
+  weights: 0
+  weights: 0.6833
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 10.25242
+  weights: 5.54991
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 0
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-Champion'sDreadgear"
+ value: {
+  dps: 878.41371
+  tps: 643.12139
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-DeathmistRaiment"
+ value: {
+  dps: 839.49455
+  tps: 610.9454
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-Demoniac'sThreads"
+ value: {
+  dps: 851.31112
+  tps: 621.7366
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-Doomcaller'sAttire"
+ value: {
+  dps: 938.73558
+  tps: 687.13562
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-FelheartRaiment"
+ value: {
+  dps: 854.35006
+  tps: 618.18792
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-FieldMarshal'sThreads"
+ value: {
+  dps: 909.6406
+  tps: 667.74129
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-Hazza'rah'sCharmofDestruction-19957"
+ value: {
+  dps: 863.32467
+  tps: 631.50227
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-IronweaveBattlesuit"
+ value: {
+  dps: 731.43863
+  tps: 525.39564
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-LieutenantCommander'sDreadgear"
+ value: {
+  dps: 878.41371
+  tps: 643.12139
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-NemesisRaiment"
+ value: {
+  dps: 911.6108
+  tps: 587.22773
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-PlagueheartRaiment"
+ value: {
+  dps: 1009.83458
+  tps: 690.04059
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-TheBlackBook-19337"
+ value: {
+  dps: 868.99298
+  tps: 625.53936
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-WarlockSynthetic(Phase1)"
+ value: {
+  dps: 1001.76566
+  tps: 743.35926
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-AllItems-Warlord'sThreads"
+ value: {
+  dps: 909.6406
+  tps: 667.74129
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-Average-Default"
+ value: {
+  dps: 891.4953
+  tps: 653.47537
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-Settings-Orc-mc-Destruction Warlock-rotation-FullBuffs-Consumes-LongMultiTarget"
+ value: {
+  dps: 880.84935
+  tps: 1412.13609
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-Settings-Orc-mc-Destruction Warlock-rotation-FullBuffs-Consumes-LongSingleTarget"
+ value: {
+  dps: 880.84935
+  tps: 645.62023
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-Settings-Orc-mc-Destruction Warlock-rotation-FullBuffs-Consumes-ShortSingleTarget"
+ value: {
+  dps: 950.36531
+  tps: 675.09882
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-Settings-Orc-mc-Destruction Warlock-rotation-NoBuffs-Consumes-LongMultiTarget"
+ value: {
+  dps: 519.87852
+  tps: 1263.53752
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-Settings-Orc-mc-Destruction Warlock-rotation-NoBuffs-Consumes-LongSingleTarget"
+ value: {
+  dps: 519.87852
+  tps: 424.0566
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-Settings-Orc-mc-Destruction Warlock-rotation-NoBuffs-Consumes-ShortSingleTarget"
+ value: {
+  dps: 544.1257
+  tps: 427.08672
+ }
+}
+dps_results: {
+ key: "TestWarlockDestruction-Phase1-SwitchInFrontOfTarget-Default"
+ value: {
+  dps: 882.72325
+  tps: 647.02114
+ }
+}

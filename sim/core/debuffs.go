@@ -590,6 +590,10 @@ func JudgementOfTheCrusaderAura(caster *Unit, target *Unit, bonus float64, durat
 }
 
 func CurseOfElementsAura(target *Unit) *Aura {
+	if target.Env.IsForever() {
+		return foreverCurseOfElementsAura(target, len(foreverCurseOfElementsLevel)-1)
+	}
+
 	resistance := 75.0
 	dmgMod := 1.1
 
@@ -605,6 +609,17 @@ func CurseOfElementsAura(target *Unit) *Aura {
 	spellSchoolResistanceEffect(aura, stats.SchoolIndexFrost, resistance, 0.0, false)
 
 	return aura
+}
+
+// ForeverCurseOfElementsRankAt is the highest rank of Forever's Curse of the Elements a
+// warlock of this level knows, zero below 20.
+func ForeverCurseOfElementsRankAt(level int32) int {
+	return HighestRankAt(level, foreverCurseOfElementsLevel[:])
+}
+
+// ForeverCurseOfElementsAura is the given rank of Forever's curse, for the warlock's own cast.
+func ForeverCurseOfElementsAura(target *Unit, rank int) *Aura {
+	return foreverCurseOfElementsAura(target, rank)
 }
 
 // foreverCurseOfElementsAura is Forever's curse. It takes resistance and adds damage taken

@@ -6,61 +6,59 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-const SoulFireRanks = 2
-const SoulFireCastTime = time.Millisecond * 6000
-
+// Soul Fire costs a Soul Shard, which the sim does not track (a raiding warlock brings
+// enough). Decimation takes up to 90% off its 1 min cooldown and, after a Shadow Bolt or
+// Searing Pain on a target under 35%, up to 40% off its cast.
 func (warlock *Warlock) getSoulFireBaseConfig(rank int) core.SpellConfig {
-	spellId := [SoulFireRanks + 1]int32{0, 6353, 17924}[rank]
-	baseDamage := [SoulFireRanks + 1][]float64{{0, 0}, {628, 789}, {715, 894}}[rank]
-	manaCost := [SoulFireRanks + 1]float64{0, 305, 335}[rank]
-	level := [SoulFireRanks + 1]int{0, 48, 56}[rank]
-	spellCoeff := 1.0
+	data := soulFireRanks[rank]
+	damageLow, damageHigh := data.rangeAt(warlock.Level)
 
-	config := core.SpellConfig{
+	return core.SpellConfig{
 		SpellCode:     SpellCode_WarlockSoulFire,
-		ActionID:      core.ActionID{SpellID: spellId},
+		ActionID:      core.ActionID{SpellID: data.SpellID},
 		SpellSchool:   core.SpellSchoolFire,
 		DefenseType:   core.DefenseTypeMagic,
 		ProcMask:      core.ProcMaskSpellDamage,
 		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing | WarlockFlagDestruction,
-		RequiredLevel: level,
+		RequiredLevel: data.Level,
 		Rank:          rank,
 		MissileSpeed:  24,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			FlatCost: data.Cost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: SoulFireCastTime,
+				CastTime: data.castTime(),
+			},
+			CD: core.Cooldown{
+				Timer:    warlock.soulFireTimer(),
+				Duration: time.Duration(float64(time.Minute) * (1 - 0.45*float64(warlock.Talents.Decimation))),
 			},
 		},
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BonusCoefficient: spellCoeff,
+		BonusCoefficient: data.Coef,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			damage := sim.Roll(baseDamage[0], baseDamage[1])
-			results := spell.CalcDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
 			spell.WaitTravelTime(sim, func(s *core.Simulation) {
-				spell.DealDamage(sim, results)
+				spell.DealDamage(sim, result)
 			})
 		},
 	}
+}
 
-	config.Cast.CD = core.Cooldown{
-		Timer:    warlock.NewTimer(),
-		Duration: time.Minute,
-	}
-
-	return config
+// The ranks share one cooldown (category 631).
+func (warlock *Warlock) soulFireTimer() *core.Timer {
+	return warlock.GetOrInitTimer(&warlock.soulFireCD)
 }
 
 func (warlock *Warlock) registerSoulFireSpell() {
 	warlock.SoulFire = make([]*core.Spell, 0)
-	for rank := 1; rank <= SoulFireRanks; rank++ {
+	for rank := 1; rank < len(soulFireRanks); rank++ {
 		config := warlock.getSoulFireBaseConfig(rank)
 
 		if config.RequiredLevel <= int(warlock.Level) {
