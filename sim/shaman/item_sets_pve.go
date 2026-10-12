@@ -186,7 +186,8 @@ var ItemSetTheEarthshatterer = core.NewItemSet(core.ItemSet{
 
 // spiritcallersRageBonuses are the set bonuses of The Spiritcaller's Rage, Forever's crafted level 60
 // enhancement set (Spiritcaller Leggings 273932, Grips 273933, Spaulders 273934, Treads 273935, from the
-// 1.60.1.70205 client).
+// 1.60.1.70205 client). The 1.60.1.70338 client names its bonus spells "Tier 1" (item set 2110), with
+// the same values.
 //
 // The client pieces carry no stats yet, so no real set is registered for them. We give the same bonuses to
 // the synthetic Phase 1 enhancement set below, because it is the only enhancement set Forever has at level 60.
@@ -242,4 +243,63 @@ var spiritcallersRageBonuses = map[int32]core.ApplyEffect{
 var ItemSetEnhancementSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Enhancement Synthetic (Phase 1)",
 	Bonuses: spiritcallersRageBonuses,
+})
+
+// spiritcallersStormBonuses are the set bonuses of The Spiritcaller's Storm, Forever's elemental Tier 1
+// set (item set 2111 in the 1.60.1.70338 client, wago.tools ItemSetSpell and SpellEffect). The client
+// links the crafted Spiritcaller Kilt, Gloves, Mantle and Boots (276538 to 276541) to it as well.
+//
+// The client pieces carry no stats yet, so no real set is registered for them. We give the same bonuses to
+// the synthetic Phase 1 elemental set below, the way the enhancement set carries The Spiritcaller's Rage.
+var spiritcallersStormBonuses = map[int32]core.ApplyEffect{
+	// Improves your chance to hit by 1%. Spell 1300959 has a melee hit and a spell hit aura of 1 each.
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.AddStat(stats.MeleeHit, 1*core.MeleeHitRatingPerHitChance)
+		c.AddStat(stats.SpellHit, 1*core.SpellHitRatingPerHitChance)
+	},
+	// Reduces the cooldown of your Earthbind Totem spell by 2 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// Increases damage done by your spells and effects by up to 21 when fighting Elementals.
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		elementals := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeElemental
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Spell Power against Elementals",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range elementals {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken += 21
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range elementals {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken -= 21
+					}
+				}
+			},
+		}))
+	},
+	// Reduces the cooldown of your Lava Burst spell by 1 sec.
+	5: func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanLavaBurst {
+				spell.CD.Duration -= time.Second
+			}
+		})
+	},
+}
+
+// ItemSetElementalSyntheticPhase1 is the set of the synthetic Phase 1 elemental items
+// (tools/database/forever_synthetic_items_shaman.go), with The Spiritcaller's Storm bonuses.
+var ItemSetElementalSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Elemental Synthetic (Phase 1)",
+	Bonuses: spiritcallersStormBonuses,
 })
