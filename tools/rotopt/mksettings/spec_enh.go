@@ -9,7 +9,7 @@ func init() {
 			// The Level 60 preset's consumes (ui/enhancement_shaman/presets.ts). Under Forever the
 			// shaman imbue is a class option, so the main hand holds Shadow Oil beside it.
 			return &proto.Consumes{
-				AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
+				AgilityElixir:     proto.AgilityElixir_ElixirOfGreaterAgility,
 				AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 				DefaultPotion:     proto.Potions_MajorManaPotion,
 				DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
@@ -18,7 +18,7 @@ func init() {
 				FirePowerBuff:     proto.FirePowerBuff_ElixirOfFirepower,
 				Flask:             proto.Flask_FlaskOfSupremePower,
 				Food:              proto.Food_FoodGrilledSquid,
-				IntellectElixir:   proto.IntellectElixir_ElixirOfTheOwl,
+				IntellectElixir:   proto.IntellectElixir_ElixirOfGreaterIntellect,
 				MainHandImbue:     proto.WeaponImbue_ShadowOil,
 				ManaRegenElixir:   proto.ManaRegenElixir_GreaterMagebloodElixir,
 				NaturePowerBuff:   proto.NaturePowerBuff_ElixirOfNaturePower,
@@ -26,7 +26,7 @@ func init() {
 				ShadowPowerBuff:   proto.ShadowPowerBuff_ElixirOfShadowPower,
 				SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
 				SpiritElixir:      proto.SpiritElixir_ElixirOfSages,
-				StrengthBuff:      proto.StrengthBuff_ElixirOfTheGrizzly,
+				StrengthBuff:      proto.StrengthBuff_JujuPower,
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
 			}
 		},

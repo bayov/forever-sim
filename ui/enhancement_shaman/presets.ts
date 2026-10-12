@@ -560,7 +560,7 @@ const PresetBuildOptionsLevel30 = {
 //
 // All together with the starting totems the Level 60 build went from 788.4 to 819.6 at 180 sec.
 export const DefaultConsumes = Consumes.create({
-	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	agilityElixir: AgilityElixir.ElixirOfGreaterAgility,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorManaPotion,
 	defaultConjured: Conjured.ConjuredDemonicRune,
@@ -569,7 +569,7 @@ export const DefaultConsumes = Consumes.create({
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodGrilledSquid,
-	intellectElixir: IntellectElixir.ElixirOfTheOwl,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.ShadowOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
@@ -577,7 +577,7 @@ export const DefaultConsumes = Consumes.create({
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
-	strengthBuff: StrengthBuff.ElixirOfTheGrizzly,
+	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 

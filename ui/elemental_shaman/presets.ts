@@ -182,7 +182,7 @@ export const DefaultConsumes = Consumes.create({
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
-	intellectElixir: IntellectElixir.ElixirOfTheOwl,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
