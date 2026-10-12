@@ -13,7 +13,7 @@ func init() {
 	RegisterDpsWarlock()
 }
 
-// The five Level 60 builds of ui/warlock/presets.ts on the synthetic Phase 1 sets.
+// The four Level 60 builds of ui/warlock/presets.ts on the synthetic Phase 1 sets.
 func warlockSuite(t *testing.T, talents string, gear string, apl string, label string, options *proto.Player_Warlock) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		{
@@ -51,16 +51,11 @@ func TestWarlockDestructionFire(t *testing.T) {
 	warlockSuite(t, TalentsDestructionFire, "level60_phase1_synthetic", "level60_destruction_fire", "Destruction Fire Warlock", FireWarlock)
 }
 
-func TestWarlockAfflictionDoT(t *testing.T) {
-	warlockSuite(t, TalentsAfflictionDoT, "level60_phase1_synthetic", "level60_affliction_dot", "Affliction DoT Warlock", SuccubusWarlock)
-}
-
 // Forever tree (tools/forever_talents/client/warlock.json).
 var TalentsDemonology = "011-0305003131221001351-0550005003"
 var TalentsDestruction = "25510000035--055030500310035"
 var TalentsAffliction = "2553000003520005--0550305003"
 var TalentsDestructionFire = "252-0050003201-0050345003101351"
-var TalentsAfflictionDoT = "25530000035001351--0550005003"
 
 // Sacrifices the Succubus before the pull for 15% Fire damage and keeps no demon out.
 var FireWarlock = &proto.Player_Warlock{

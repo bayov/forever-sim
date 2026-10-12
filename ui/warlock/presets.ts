@@ -34,7 +34,6 @@ import {
 import { Stats } from '../core/proto_utils/stats.js';
 // apls
 import Level60AfflictionAPL from './apls/level60_affliction.apl.json';
-import Level60AfflictionDoTAPL from './apls/level60_affliction_dot.apl.json';
 import Level60DemonologyAPL from './apls/level60_demonology.apl.json';
 import Level60DestructionAPL from './apls/level60_destruction.apl.json';
 import Level60DestructionFireAPL from './apls/level60_destruction_fire.apl.json';
@@ -132,26 +131,9 @@ export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation(
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
 });
-// Affliction damage over time: Siphon Life on top, and Wrack while Corruption and Bane of Agony are
-// both up (its 10% only counts on those two, so in practice at the end of the fight, when Bane of
-// Doom would not land). Wrack whenever the damage over time spells are up was 205 behind. Never
-// casting Wrack would be 34 ahead: the channel costs Shadow Bolts and their Improved Shadow Bolt,
-// so the spec keeps Wrack for its playstyle and the Level 60 Affliction build is the stronger
-// choice. Immolate is recast below its cast time as on Destruction.
-export const RotationLevel60AfflictionDoT = PresetUtils.makePresetAPLRotation('Level 60 Affliction DoT', Level60AfflictionDoTAPL, {
-	group: 'Level 60',
-	tooltip: 'The Level 60 rotation with Siphon Life and Wrack, for the Affliction damage over time talents.',
-});
 export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
 
-export const APLPresets = [
-	RotationLevel60Demonology,
-	RotationLevel60Destruction,
-	RotationLevel60Affliction,
-	RotationLevel60DestructionFire,
-	RotationLevel60AfflictionDoT,
-	RotationBasic,
-];
+export const APLPresets = [RotationLevel60Demonology, RotationLevel60Destruction, RotationLevel60Affliction, RotationLevel60DestructionFire, RotationBasic];
 
 export const DefaultAPL = RotationLevel60Demonology;
 
@@ -180,7 +162,10 @@ export const TalentsLevel60Destruction = PresetUtils.makePresetTalents(
 );
 // The best build with 30 points in Affliction: Shadow Mastery, Pandemic, Malevolence and
 // Nightfall, with Improved Shadow Bolt, Ruin and Agonizing Flames. Wrack and Soul Siphon lost
-// their points to Ruin, the drains being no match for Shadow Bolt.
+// their points to Ruin, the drains being no match for Shadow Bolt. A damage over time variant with
+// Siphon Life, Soul Siphon and Wrack (25530000035001351--0550005003, the best build with both, on
+// the same Shadow Bolt rotation) is 55 behind, and casting its Wrack costs 34; its drain filler
+// versions lose 124 to 349. It played the same as this build, so it is not shipped as a spec.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	'Level 60 Affliction',
 	SavedTalents.create({ talentsString: '2553000003520005--0550305003' }),
@@ -196,28 +181,8 @@ export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
 	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for Fire damage.' },
 );
-// Affliction damage over time, its own spec: everything down to Wrack, with Siphon Life, Soul
-// Siphon, Shadow Mastery, Malediction and Pandemic, and Improved Shadow Bolt, Bane and Ruin.
-// Searched with Wrack and Siphon Life kept (-require) on the staff set; the earlier Improved Drains
-// build was 124 behind. Drain Life as the filler is 249 behind Shadow Bolt and Drain Soul 349, the
-// client gives the drains 10% a tick (Drain Soul 10% every 3 sec), so Shadow Bolt stays the filler.
-export const TalentsLevel60AfflictionDoT = PresetUtils.makePresetTalents(
-	'Level 60 Affliction DoT',
-	SavedTalents.create({ talentsString: '25530000035001351--0550005003' }),
-	{
-		group: 'Level 60',
-		tooltip:
-			'A playstyle preset, not a DPS pick: Level 60 Affliction with Siphon Life, Soul Siphon and Wrack woven in. It is 55 behind Level 60 Affliction, and never casting Wrack would be 34 ahead.',
-	},
-);
 
-export const TalentPresets = [
-	TalentsLevel60Demonology,
-	TalentsLevel60Destruction,
-	TalentsLevel60Affliction,
-	TalentsLevel60DestructionFire,
-	TalentsLevel60AfflictionDoT,
-];
+export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
 
 export const DefaultTalents = TalentsLevel60Demonology;
 
@@ -387,14 +352,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // The Level 60 builds, Gnome, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
 // 1068.2 / 1054.7 / 1028.5, Destruction 970.9 / 963.6 / 946.9, Affliction 963.1 / 956.0 / 939.5,
-// Destruction fire 968.3 / 957.8 / 938.2, Affliction damage over time 900.0 / 901.5 / 897.7.
+// Destruction fire 968.3 / 957.8 / 938.2.
 // Destruction and Affliction are inside 10% of Demonology, Destruction fire and Affliction damage
 // over time play differently and ship as specs of their own.
 //
 // Gnome is the best warlock race overall and the best Alliance one (first on every build but
 // Destruction fire, where the Undead is 2.1 ahead), then Undead, Orc, Troll and Human. The best
 // Horde race is the Undead, 4.5 behind the Gnome on Demonology at 180 sec (2.8 ahead of the Orc,
-// level with it on the Affliction builds). With the staff no warlock race has a weapon racial;
+// level with it on Affliction). With the staff no warlock race has a weapon racial;
 // on the old Azuresong sword the Human's Sword Specialization had put it first. The full table is
 // in forever-wiki/sim-status.md. Each preset takes its build's best race: Gnome, and Undead for
 // Destruction fire.
@@ -451,24 +416,5 @@ export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Le
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFire,
 });
-export const PresetBuildLevel60AfflictionDoT = PresetUtils.makePresetBuild('Level 60 Affliction DoT', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Gnome Affliction damage over time warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsLevel60AfflictionDoT,
-	rotation: RotationLevel60AfflictionDoT,
-	encounter: EncounterLevel60,
-	race: Race.RaceGnome,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsSuccubus,
-});
 
-export const PresetBuilds = [
-	PresetBuildLevel60Demonology,
-	PresetBuildLevel60Destruction,
-	PresetBuildLevel60Affliction,
-	PresetBuildLevel60DestructionFire,
-	PresetBuildLevel60AfflictionDoT,
-];
+export const PresetBuilds = [PresetBuildLevel60Demonology, PresetBuildLevel60Destruction, PresetBuildLevel60Affliction, PresetBuildLevel60DestructionFire];
