@@ -718,8 +718,20 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
-// encounter and the best race, Undead (Touch of the Grave), for every spec. The numbers are in the
-// Rogue section of forever-wiki/sim-status.md.
+// encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-12, Undead,
+// 20000 iterations, at 120 / 180 / 300 sec:
+//   Combat Daggers      713.6 / 690.8 / 675.8 (the default)
+//   Mutilate            668.6 / 657.6 / 651.7
+//   Seal Fate Daggers   667.5 / 656.5 / 650.6, 5.0% behind Combat Daggers
+//   Combat Swords       676.6 / 653.4 / 638.0
+//   Subtlety            642.1 / 627.5 / 620.1
+//   Seal Fate Swords    630.4 / 619.7 / 613.0, 5.2% behind Combat Swords
+//   Mutilate + Venom    625.9 / 617.0 / 611.2, 6.2% behind Mutilate
+// Undead is the best race for every build, 5 (swords) to 15 ahead of the next. The best Alliance
+// race is the Gnome on daggers and the Human on swords. Grimstitch Armor's 4 and 5 piece bonuses
+// would add 8.1 and 6.5 to Combat Daggers. The trinket slots are empty (no Forever trinket is
+// simulated yet), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety
+// gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches and the audit.
 const level60Build = (name: string, tooltip: string, gear: PresetUtils.PresetGear, talents: PresetUtils.PresetTalents, rotation: PresetUtils.PresetRotation) =>
 	PresetUtils.makePresetBuild(name, {
 		group: 'Level 60',
