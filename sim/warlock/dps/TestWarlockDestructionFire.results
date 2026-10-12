@@ -3,10 +3,10 @@ character_stats_results: {
  value: {
   final_stats: 168
   final_stats: 220
-  final_stats: 582
-  final_stats: 452
+  final_stats: 568
+  final_stats: 499
   final_stats: 393
-  final_stats: 797
+  final_stats: 738
   final_stats: 0
   final_stats: 31
   final_stats: 0
@@ -14,20 +14,20 @@ character_stats_results: {
   final_stats: 0
   final_stats: 40
   final_stats: 101.25
-  final_stats: 9
-  final_stats: 41.158
+  final_stats: 16
+  final_stats: 41.9335
   final_stats: 0
   final_stats: 0
   final_stats: 770
-  final_stats: 9
+  final_stats: 16
   final_stats: 35
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 9053.95
+  final_stats: 9864.7
   final_stats: 0
   final_stats: 0
-  final_stats: 2050
+  final_stats: 2152
   final_stats: 390
   final_stats: 0
   final_stats: 5
@@ -35,15 +35,15 @@ character_stats_results: {
   final_stats: 13
   final_stats: 5
   final_stats: 0
-  final_stats: 7354
+  final_stats: 7214
   final_stats: 27
   final_stats: 60
   final_stats: 60
   final_stats: 60
   final_stats: 75
-  final_stats: 385
+  final_stats: 487
   final_stats: 24
-  final_stats: 93
+  final_stats: 63
   final_stats: 0
  }
 }
@@ -53,18 +53,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.05384
+  weights: 1.10685
   weights: 0
-  weights: 0.86053
-  weights: 0
-  weights: 0
+  weights: 0.91704
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
-  weights: 9.09191
-  weights: 7.40846
+  weights: 0
+  weights: 0
+  weights: 0
+  weights: 7.82554
   weights: 0
   weights: 0
   weights: 0
@@ -99,154 +99,154 @@ stat_weights_results: {
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-Champion'sDreadgear"
  value: {
-  dps: 1009.70898
-  tps: 852.41529
+  dps: 1019.0637
+  tps: 859.25793
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-DeathmistRaiment"
  value: {
-  dps: 941.78195
-  tps: 796.54189
+  dps: 933.9474
+  tps: 789.91076
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-Demoniac'sThreads"
  value: {
-  dps: 1064.99536
-  tps: 896.78618
+  dps: 1025.63028
+  tps: 864.41831
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1085.31178
-  tps: 912.07947
+  dps: 1117.46597
+  tps: 937.14616
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 947.52163
-  tps: 800.47506
+  dps: 936.38526
+  tps: 791.32077
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1042.10712
-  tps: 877.86943
+  dps: 1059.00985
+  tps: 890.56573
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-Hazza'rah'sCharmofDestruction-19957"
  value: {
-  dps: 1153.69652
-  tps: 968.37396
+  dps: 1120.1695
+  tps: 939.66692
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 812.39497
-  tps: 693.86473
+  dps: 796.1199
+  tps: 680.52854
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-LieutenantCommander'sDreadgear"
  value: {
-  dps: 1009.70898
-  tps: 852.41529
+  dps: 1019.0637
+  tps: 859.25793
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-NemesisRaiment"
  value: {
-  dps: 1013.87297
-  tps: 730.84166
+  dps: 1010.08435
+  tps: 727.32773
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1124.7974
-  tps: 876.34399
+  dps: 1113.49734
+  tps: 867.57683
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-TheBlackBook-19337"
  value: {
-  dps: 1144.35711
-  tps: 960.90242
+  dps: 1112.28684
+  tps: 933.36079
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1160.62849
-  tps: 973.94027
+  dps: 1141.75927
+  tps: 957.1604
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1042.10712
-  tps: 877.86943
+  dps: 1059.00985
+  tps: 890.56573
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-Average-Default"
  value: {
-  dps: 1182.15651
-  tps: 991.24137
+  dps: 1159.09127
+  tps: 971.06848
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Fire Warlock-level60_destruction_fire-FullBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 1175.14671
-  tps: 1786.60546
+  dps: 1144.1174
+  tps: 1721.56292
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Fire Warlock-level60_destruction_fire-FullBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 1175.14671
-  tps: 985.52231
+  dps: 1144.1174
+  tps: 958.8095
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Fire Warlock-level60_destruction_fire-FullBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 1200.34983
-  tps: 986.55732
+  dps: 1180.71171
+  tps: 971.41716
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Fire Warlock-level60_destruction_fire-NoBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 781.59261
-  tps: 1590.05962
+  dps: 753.72053
+  tps: 1523.11556
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Fire Warlock-level60_destruction_fire-NoBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 781.59261
-  tps: 676.59389
+  dps: 753.72053
+  tps: 652.18552
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Fire Warlock-level60_destruction_fire-NoBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 823.24062
-  tps: 684.73349
+  dps: 818.67122
+  tps: 677.43477
  }
 }
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1178.16131
-  tps: 987.94578
+  dps: 1147.91645
+  tps: 961.86448
  }
 }

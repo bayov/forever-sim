@@ -42,6 +42,7 @@ import BasicRotation from './apls/rotation.apl.json';
 // gear
 import BlankGear from './gear_sets/blank.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticDemonologyGearJSON from './gear_sets/level60_phase1_synthetic_demonology.gear.json';
 import MCGear from './gear_sets/mc.gear.json';
 import PreBisGear from './gear_sets/prebis.gear.json';
 
@@ -56,20 +57,36 @@ export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 // Forever's level 60 gear is not tuned yet and Molten Core has no Forever data, so the Level 60
 // presets wear synthetic items (tools/database/forever_synthetic_items_warlock.go): the Era Phase
 // 1 BiS (the Felheart set, Robe of Volatile Power, Mana Igniting Cord, Choker of the Fire Lord,
-// Azuresong Mageblade) rebuilt at Phase 1 epic budgets with Forever's cheaper spell power, about
-// 10% of the budget on Spirit, 3% hit and 5% crit. Six of them carry Demonheart Raiment, Forever's
-// warlock Tier 1 set (1% hit, 20% more mana from Life Tap). The trinkets are the real Talisman of
-// Ephemeral Power and Briarwood Reed. One set serves all three specs, the file says why. The
-// enchants are the Phase 1 ones: Arcanum of Focus on the head and legs, Greater Stats, Greater
-// Intellect, Spirit on the boots and Spell Power on the sword.
+// Azuresong Mageblade) rebuilt on the cross-class standard (one item level table, the epic budgets
+// with Forever's cheaper spell power, the Azuresong budget for the sword and an off hand at 71),
+// about 10% of it on Spirit, 5% crit and hit to the 16% cap against a level 63 boss: 10% from gear
+// with Suppression 5/5 and the 2 piece. Only the head and chest carry Demonheart Raiment, Forever's
+// warlock Tier 1 set, so only its 2 piece (1% hit) is live; the 5 piece's 20% more mana from Life
+// Tap would add 12.6 on Demonology and 8.5 on Destruction and Affliction at 180 sec (the 4 piece is
+// 21 spell power against Demons only). The trinkets are the real Talisman of Ephemeral Power and
+// Briarwood Reed. Enchants, the best Phase 1
+// one per slot with no raid source: Lesser Arcanum of Voracity on the head and legs (Arcanum of
+// Focus is a Zandalar one), Enchant Necklace - Spell Power, Superior Defense on the cloak (none adds
+// damage), Greater Stats, Greater Intellect, the Mystic Thick Armor Kit on the gloves, Spirit on
+// the boots and Mighty Intellect on the sword (the Spell Power formula is a Molten Core drop).
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
-	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
+	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
 	group: 'Level 60',
 });
+// Demonology keeps one point of Suppression, so it swaps four pieces for hit variants (14% hit
+// from gear) at the same budget.
+export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 Synthetic Demonology',
+	Level60Phase1SyntheticDemonologyGearJSON,
+	{
+		tooltip: 'The synthetic Phase 1 set with four hit pieces, hit capped for Demonology (one point of Suppression).',
+		group: 'Level 60',
+	},
+);
 
-export const GearPresets = [GearLevel60Phase1Synthetic, GearBlank, GearPreBis, GearMC];
+export const GearPresets = [GearLevel60Phase1SyntheticDemonology, GearLevel60Phase1Synthetic, GearBlank, GearPreBis, GearMC];
 
-export const DefaultGear = GearLevel60Phase1Synthetic;
+export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -376,7 +393,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticDemonology,
 	talents: TalentsLevel60Demonology,
 	rotation: RotationLevel60Demonology,
 	encounter: EncounterLevel60,

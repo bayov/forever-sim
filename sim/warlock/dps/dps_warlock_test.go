@@ -12,8 +12,8 @@ func init() {
 	RegisterDpsWarlock()
 }
 
-// The three Level 60 builds of ui/warlock/presets.ts on the synthetic Phase 1 set.
-func warlockSuite(t *testing.T, talents string, apl string, label string, options *proto.Player_Warlock) {
+// The five Level 60 builds of ui/warlock/presets.ts on the synthetic Phase 1 sets.
+func warlockSuite(t *testing.T, talents string, gear string, apl string, label string, options *proto.Player_Warlock) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		{
 			Class: proto.Class_ClassWarlock,
@@ -21,7 +21,7 @@ func warlockSuite(t *testing.T, talents string, apl string, label string, option
 			Race:  proto.Race_RaceHuman,
 
 			Talents:     talents,
-			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "level60_phase1_synthetic"),
+			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", gear),
 			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", apl),
 			Buffs:       core.FullBuffs,
 			Consumes:    Consumes,
@@ -35,23 +35,23 @@ func warlockSuite(t *testing.T, talents string, apl string, label string, option
 }
 
 func TestWarlockDemonology(t *testing.T) {
-	warlockSuite(t, TalentsDemonology, "level60_demonology", "Demonology Warlock", DemonologyWarlock)
+	warlockSuite(t, TalentsDemonology, "level60_phase1_synthetic_demonology", "level60_demonology", "Demonology Warlock", DemonologyWarlock)
 }
 
 func TestWarlockDestruction(t *testing.T) {
-	warlockSuite(t, TalentsDestruction, "level60_destruction", "Destruction Warlock", SuccubusWarlock)
+	warlockSuite(t, TalentsDestruction, "level60_phase1_synthetic", "level60_destruction", "Destruction Warlock", SuccubusWarlock)
 }
 
 func TestWarlockAffliction(t *testing.T) {
-	warlockSuite(t, TalentsAffliction, "level60_affliction", "Affliction Warlock", SuccubusWarlock)
+	warlockSuite(t, TalentsAffliction, "level60_phase1_synthetic", "level60_affliction", "Affliction Warlock", SuccubusWarlock)
 }
 
 func TestWarlockDestructionFire(t *testing.T) {
-	warlockSuite(t, TalentsDestructionFire, "level60_destruction_fire", "Destruction Fire Warlock", FireWarlock)
+	warlockSuite(t, TalentsDestructionFire, "level60_phase1_synthetic", "level60_destruction_fire", "Destruction Fire Warlock", FireWarlock)
 }
 
 func TestWarlockAfflictionDoT(t *testing.T) {
-	warlockSuite(t, TalentsAfflictionDoT, "level60_affliction_dot", "Affliction DoT Warlock", SuccubusWarlock)
+	warlockSuite(t, TalentsAfflictionDoT, "level60_phase1_synthetic", "level60_affliction_dot", "Affliction DoT Warlock", SuccubusWarlock)
 }
 
 // Forever tree (tools/forever_talents/client/warlock.json).
