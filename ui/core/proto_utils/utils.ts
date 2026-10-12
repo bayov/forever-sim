@@ -1587,14 +1587,16 @@ export function enchantAppliesToItem(enchant: Enchant, item: Item): boolean {
 
 	if (enchant.enchantType == EnchantType.EnchantTypeStaff && item.weaponType != WeaponType.WeaponTypeStaff) return false;
 
-	if (item.weaponType == WeaponType.WeaponTypeOffHand) return false;
+	// Only an off-hand enchant goes on a held in off hand item, and it goes on nothing else.
+	if ((enchant.enchantType == EnchantType.EnchantTypeOffHand) != (item.weaponType == WeaponType.WeaponTypeOffHand)) return false;
 
-	// Forever's Heavy armor kits need an item of level 15 or above and its Thick kits one
-	// of level 25 or above (the rotopt enchant search in tools/rotopt/enchants.go uses the
-	// same rule).
+	// Forever's Heavy armor kits need an item of level 15 or above, its Thick kits one of
+	// level 25 or above and its Rugged kits one of level 35 or above (the rotopt enchant
+	// search in tools/rotopt/enchants.go uses the same rule up to Thick).
 	if (enchant.enchantType == EnchantType.EnchantTypeKit) {
 		if (enchant.name.endsWith('Heavy Armor Kit') && item.ilvl < 15) return false;
 		if (enchant.name.endsWith('Thick Armor Kit') && item.ilvl < 25) return false;
+		if (enchant.name.endsWith('Rugged Armor Kit') && item.ilvl < 35) return false;
 	}
 
 	if (sharedSlots.includes(ItemSlot.ItemSlotRanged)) {
