@@ -20,7 +20,7 @@ func init() {
 		// of Runn Tum Tuber Surprise and 3.1 ahead of Grilled Squid, the Goblin Sapper Charge
 		// adds 3.7 (a filler explosive costs a GCD and loses 4), Elixir of Wisdom 0.9.
 		// Brilliant Wizard Oil would be 12.5 ahead of Wizard Oil but is a Zul'Gurub recipe,
-		// Shadow Oil and Dragonbreath Chili add nothing. Mana never runs out in a raid fight
+		// Shadow Oil and Dragonbreath Chili add nothing, Cerebral Cortex Compound +3.2. Mana never runs out in a raid fight
 		// (about 25 min to empty), so Mageblood is left out, the potion and rune are kept for
 		// longer fights.
 		consumes: func() *proto.Consumes {
@@ -34,6 +34,7 @@ func init() {
 				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
 		// Engineering for the Goblin Sapper Charge, Tailoring as the priest's crafting.

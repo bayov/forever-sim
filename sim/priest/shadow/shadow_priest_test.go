@@ -48,6 +48,7 @@ var P1Consumes = core.ConsumesCombo{
 		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
+		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},
 }
 

@@ -6,6 +6,7 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
+	FirePowerBuff,
 	Flask,
 	Food,
 	IndividualBuffs,
@@ -22,6 +23,7 @@ import {
 	Stat,
 	TristateEffect,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { ShadowPriest_Options as Options, ShadowPriest_Options_Armor as Armor } from '../core/proto/priest.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -215,6 +217,7 @@ export const DefaultOptions = Options.create({
 // - Wizard Oil +11. Brilliant Wizard Oil would be 12.5 ahead, but it is a Zul'Gurub recipe.
 //   Shadow Oil and Dragonbreath Chili add nothing.
 // - Flask of Supreme Power is 68 ahead of the Flask of Distilled Wisdom.
+// - Cerebral Cortex Compound (25 Intellect, a Blasted Lands quest) +3.2 at 120 / 180 / 300 sec.
 // - Mana never runs out (about 25 min to empty), so Mageblood adds nothing and is left out.
 //   The potion and the rune are kept for longer fights.
 export const DefaultConsumes = Consumes.create({
@@ -227,6 +230,7 @@ export const DefaultConsumes = Consumes.create({
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
 // The shared level 60 raid of tools/rotopt/mksettings for a caster: both paladin blessings but
@@ -370,11 +374,15 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Ho
 
 // The Smite build runs out of mana, so its consumes take the mana ones the Shadow build
 // leaves out: Mageblood (+2.6 / +10.8 at 180 / 300 sec as an Undead) and Kreeg's Stout
-// Beatdown (25 Spirit, 5 Intellect, +0.4 / +6.1 more). The Flask of Distilled Wisdom is 67
+// Beatdown (25 Spirit, 5 Intellect, +0.4 / +6.1 more). Forever turns the Elixir of Greater
+// Firepower into the Elixir of Holy Power (40 Holy damage) for Smite and Holy Fire: +15.5 /
+// +15.8 / +14.1 at 120 / 180 / 300 sec, and the Cerebral Cortex Compound adds +1.6 / +4.9 /
+// +8.5 more. The Flask of Distilled Wisdom is 67
 // behind the Flask of Supreme Power even here.
 export const ConsumesSmite = Consumes.create({
 	...DefaultConsumes,
 	alcohol: Alcohol.AlcoholKreegsStoutBeatdown,
+	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
 	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
 });
 
