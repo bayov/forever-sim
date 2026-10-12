@@ -473,15 +473,15 @@
         ],
         "maxPoints": 1,
         "name": "Light's Vigil",
-        "description": "Applies Light's Vigil to the target for {0} sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer {1} to {2} Holy damage and refund {3}% of Light's Vigil's Mana cost, or allied targets to heal their party for {4} to {5}. The Paladin may only have one Light's Vigil active per party.",
+        "description": "Applies Light's Vigil to the target for {0} sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer {1} to {2} Holy damage and refund {3}% of Light's Vigil's Mana cost, or allied targets to heal their party for {4} to {5}. You may only have one Light's Vigil active per party.",
         "ranks": [
           [
             30,
             175,
             189,
             75,
-            315,
-            333
+            326,
+            344
           ]
         ],
         "icon": "ability_paladin_judgementofthepure",
@@ -898,27 +898,32 @@
         ],
         "maxPoints": 5,
         "name": "Reckoning",
-        "description": "Gives you a {0}% chance to gain an extra attack after Blocking a melee attack and a {1}% chance to gain an extra attack after being the victim of a non-periodic critical strike.",
+        "description": "Gives you a {0}% chance to gain an extra attack after Blocking a melee attack and a {1}% chance to gain an extra attack after being the victim of a non-periodic critical strike. Cannot occur more often than once every {2} sec.",
         "ranks": [
           [
             8,
-            20
+            20,
+            1.5
           ],
           [
             16,
-            40
+            40,
+            1.5
           ],
           [
             24,
-            60
+            60,
+            1.5
           ],
           [
             32,
-            80
+            80,
+            1.5
           ],
           [
             40,
-            100
+            100,
+            1.5
           ]
         ],
         "icon": "spell_holy_blessingofstrength"
@@ -1406,7 +1411,7 @@
         ],
         "maxPoints": 3,
         "name": "Champion of the Light",
-        "description": "Increases your spell damage and healing by up to {0}% of your Intellect.",
+        "description": "Increases your spell damage by up to {0}% of your Intellect.",
         "ranks": [
           [
             20

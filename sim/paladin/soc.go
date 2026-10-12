@@ -78,6 +78,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
+			BonusCritRating:  paladin.holyPowerCrit(),
 			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
@@ -104,6 +105,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskMeleeProc | core.ProcMaskMeleeDamageProc,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNotAProc,
 
+			BonusCritRating:  paladin.holyPowerCrit(),
 			DamageMultiplier: 0.7 * paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 
@@ -122,6 +124,13 @@ func (paladin *Paladin) registerSealOfCommand() {
 			},
 		})
 
+		tryProc := func(sim *core.Simulation, target *core.Unit) {
+			if icd.IsReady(sim) && ppmm.Proc(sim, core.ProcMaskMeleeMHAuto, "seal of command") {
+				icd.Use(sim)
+				procSpell.Cast(sim, target)
+			}
+		}
+
 		aura := paladin.RegisterAura(core.Aura{
 			Label:    "Seal of Command" + paladin.Label + strconv.Itoa(i+1),
 			ActionID: core.ActionID{SpellID: rank.spellID},
@@ -132,15 +141,13 @@ func (paladin *Paladin) registerSealOfCommand() {
 				}
 
 				if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
-					if icd.IsReady(sim) && ppmm.Proc(sim, spell.ProcMask, "seal of command") {
-						icd.Use(sim)
-						procSpell.Cast(sim, result.Target)
-					}
+					tryProc(sim, result.Target)
 				}
 			},
 		})
 
 		paladin.aurasSoC = append(paladin.aurasSoC, aura)
+		paladin.registerSealEcho(aura, paladin.echoOfCommand, tryProc)
 
 		paladin.sealOfCommand = paladin.RegisterSpell(core.SpellConfig{
 			ActionID:    aura.ActionID,

@@ -17,8 +17,17 @@ import (
 // later). Being Holy it ignores armor, and being a yellow hit it gives no seal procs.
 // Sacred Arbiter adds 20% damage and refreshes the judgement on the target (which a melee
 // hit does anyway), Holy Power adds 3% crit per point, Iron Creed adds 5% threat per point.
-// The flat Holy part takes 42.9% of spell power (the "SP mod" on wowhead's Forever spell
-// pages).
+//
+// The client (1.60.1.70338, wago.tools SpellEffect) builds the spell like Backstab:
+// effect 1 is normalized weapon damage (effect 121) carrying the flat Holy part with a
+// 25% spread and a 42.9% spell power coefficient, and effect 2 is the weapon damage
+// percent (effect 31). The server adds the flat part to the weapon damage before it takes
+// the percent, so the flat part and its spell power are halved at rank 8 too, the same
+// rule that gives Backstab its 150% of the flat bonus. The tooltip shows the flat part
+// before the percent ("plus 93"), the way Forever's Backstab tooltip does. The beta has not
+// shown a Holy Strike hit yet, see notes.md. Normalized damage uses Forever's speeds, which
+// the beta's Stormstrike (the same effect) showed are 0.3 above the usual ones: 3.6 for a
+// two-hander and 2.7 for a one-hander (see sim/shaman/stormstrike.go).
 var HolyStrikeLevel = [...]int{0, 6, 12, 20, 28, 36, 44, 52, 60}
 var HolyStrikeSpellId = [...]int32{0, 679, 678, 1866, 680, 2495, 5569, 10332, 10333}
 
@@ -85,12 +94,20 @@ func (paladin *Paladin) registerHolyStrike() {
 			BonusCritRating:  3 * float64(paladin.Talents.HolyPower) * core.CritRatingPerCritChance,
 			DamageMultiplier: damageMultiplier,
 			ThreatMultiplier: threatMultiplier,
-			BonusCoefficient: 0.429,
+			// The flat part's 42.9% goes through the weapon percent too.
+			BonusCoefficient: 0.429 * rank.weaponPercent,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				baseDamage := rank.weaponPercent*spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target)) + holy
+				flat := holy * (0.875 + 0.25*sim.RandomFloat("Holy Strike"))
+				baseDamage := rank.weaponPercent * (paladin.holyStrikeWeaponDamage(sim, spell.MeleeAttackPower(target)) + flat)
 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			},
 		})
 	}
+}
+
+// holyStrikeWeaponDamage is the main hand's normalized weapon damage at Forever's speeds.
+func (paladin *Paladin) holyStrikeWeaponDamage(sim *core.Simulation, attackPower float64) float64 {
+	weapon := paladin.AutoAttacks.MH()
+	return weapon.BaseDamage(sim) + (weapon.NormalizedSwingSpeed+0.3)*attackPower/weapon.AttackPowerPerDPS
 }

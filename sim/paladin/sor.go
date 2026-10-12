@@ -46,6 +46,11 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 	// under Forever (Classic ramped it up over the first three ranks), its base damage
 	// is Classic's because wowhead hides it behind the coefficient. The seal's proc takes
 	// 10% of spell power on every rank (Classic started at 2.9%).
+	//
+	// Classic's talent raised the seal's base points, so it left the spell power part
+	// alone. Forever's Improved Seals is a percent damage modifier on the proc and the
+	// judgement spells themselves (client 1.60.1.70338, spell 20224, aura 108 with misc 0),
+	// so it scales the whole hit, spell power included.
 	improvedSoR := paladin.improvedSeals()
 
 	for i, rank := range ranks {
@@ -83,13 +88,13 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressWeaponProcs | core.SpellFlagSuppressEquipProcs | core.SpellFlagBinary,
 
-			DamageMultiplier: 1,
+			DamageMultiplier: improvedSoR,
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.5, rank.judge.coeff),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				baseDamage := sim.Roll(minDamage, maxDamage) * improvedSoR
+				baseDamage := sim.Roll(minDamage, maxDamage)
 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			},
 		})
@@ -113,16 +118,16 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial,                                   //changed to ProcMaskMeleeMHSpecial, to allow procs from weapons/oils which do proc from SoR,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressEquipProcs, // but Wild Strikes does not proc, nor equip procs
 
-			//BonusCritRating: paladin.holyCrit(), // TODO to be tested, but unlikely
+			BonusCritRating: paladin.holyPowerCrit(),
 
-			DamageMultiplier: paladin.getWeaponSpecializationModifier(),
+			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSoR,
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: coeff,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				// effectively scales with coeff x 2, and damage dealt multipliers affect half the damage taken bonus
-				baseDamage := damage*improvedSoR + spell.BonusCoefficient*(spell.GetBonusDamage(target)+target.GetSchoolBonusDamageTaken(spell))
+				baseDamage := damage + spell.BonusCoefficient*(spell.GetBonusDamage(target)+target.GetSchoolBonusDamageTaken(spell))
 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
 			},
 		})
@@ -143,6 +148,9 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 		})
 
 		paladin.aurasSoR = append(paladin.aurasSoR, aura)
+		paladin.registerSealEcho(aura, paladin.echoOfRighteousness, func(sim *core.Simulation, target *core.Unit) {
+			procSpell.Cast(sim, target)
+		})
 
 		paladin.sealOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
 			ActionID:    aura.ActionID,

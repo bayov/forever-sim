@@ -77,6 +77,13 @@ type Paladin struct {
 
 	// Consecrated Ground's Holy damage buff, up while Consecration ticks.
 	consecratedGroundAura *core.Aura
+
+	// Twist of Light's Echoes, see twist_of_light.go. Nil without the talent.
+	echoOfCommand       *core.Aura
+	echoOfRighteousness *core.Aura
+	sealEchoes          map[*core.Aura]sealEcho
+	// The effect each Echo applies, the rank of the seal it replaced.
+	echoApply map[*core.Aura]func(sim *core.Simulation, target *core.Unit)
 }
 
 // Implemented by each Paladin spec.
@@ -103,6 +110,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerRighteousFury()
 	// Judgement and Seals
 	paladin.registerJudgement()
+	paladin.registerTwistOfLight()
 
 	paladin.registerSealOfRighteousness()
 	paladin.registerSealOfCommand()
@@ -210,6 +218,7 @@ func (paladin *Paladin) getPrimarySealSpell(primarySeal proto.PaladinSeal) *core
 }
 
 func (paladin *Paladin) applySeal(newSeal *core.Aura, judgement *core.Spell, sealSpell *core.Spell, sim *core.Simulation) {
+	paladin.leaveEcho(sim, newSeal)
 	if paladin.currentSeal != nil {
 		paladin.currentSeal.Deactivate(sim)
 	}

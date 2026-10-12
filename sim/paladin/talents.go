@@ -11,10 +11,15 @@ import (
 // The Forever trees from the beta client (build 1.60.1.69876). Talents the sim does not
 // read: Spiritual Focus, Unyielding Faith, Voice of Truth, Infusion of Light,
 // Illumination, Light's Vigil, Guardian's Favor, Improved Seal of Fury, Swift Judgement,
-// Improved Hammer of Justice, Templar's Bulwark, Pursuit of Justice, Eye for an Eye,
-// Repentance, and the Echo half of Twist of Light. Healing Light only touches heals.
+// Improved Hammer of Justice, Templar's Bulwark, Pursuit of Justice, Eye for an Eye and
+// Repentance. Healing Light only touches heals.
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeHit, float64(paladin.Talents.Precision)*core.MeleeHitRatingPerHitChance)
+	// Forever's Precision gives spell hit too (client 1.60.1.70338, spell 20189: auras 54
+	// and 55, "Improves your chance to hit by 1%").
+	if paladin.Env.IsForever() {
+		paladin.AddStat(stats.SpellHit, float64(paladin.Talents.Precision)*core.SpellHitRatingPerHitChance)
+	}
 	paladin.AddStat(stats.SpellHit, float64(paladin.Talents.DivinePrecision)*6*core.SpellHitRatingPerHitChance)
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.HolyPower)*core.SpellCritRatingPerCritChance)
@@ -59,6 +64,16 @@ func (paladin *Paladin) improvedSeals() float64 {
 	return []float64{1, 1.05, 1.10, 1.15}[paladin.Talents.ImprovedSeals]
 }
 
+// Holy Power's crit for the spells that roll on the melee or ranged table. The talent is
+// a crit modifier on a list of the paladin's spells (client 1.60.1.70338, spell 5923):
+// 3% per point for Holy Shock and Holy Strike, and 1% per point for the rest, which takes
+// in Consecration, Exorcism, Holy Wrath, Hammer of Wrath, the Seal of Command and Seal of
+// Righteousness procs and their judgements. The spells on the spell table get the 1% from
+// the spell crit ApplyTalents adds, this is for the others.
+func (paladin *Paladin) holyPowerCrit() float64 {
+	return float64(paladin.Talents.HolyPower) * core.CritRatingPerCritChance
+}
+
 // Benediction takes 2% per point off instant spells and abilities.
 func (paladin *Paladin) benediction() int32 {
 	return []int32{100, 98, 96, 94, 92, 90}[paladin.Talents.Benediction]
@@ -82,7 +97,8 @@ func (paladin *Paladin) holyConduit() int32 {
 // holyConduitInstant is Holy Conduit's discount plus Benediction's, for the spells Holy
 // Conduit covers when they are instant (Consecration, Exorcism, and Hammer of Wrath with
 // both points of Instrument of Law). Benediction's text says "all instant cast spells and
-// abilities". We add the two like sealCostMultiplier does.
+// abilities". We add the two like sealCostMultiplier does. Hammer of Wrath is not on
+// Benediction's list.
 func (paladin *Paladin) holyConduitInstant() int32 {
 	return paladin.holyConduit() + paladin.benediction() - 100
 }
@@ -134,7 +150,8 @@ func (paladin *Paladin) applyRedoubt() {
 }
 
 // Reckoning gives an extra attack on 20% per point of the crits taken, and on 8% per
-// point of the blocks.
+// point of the blocks, at most once every 1.5 sec (the 2026-09-12 beta notes, and the
+// client's proc cooldown on spell 20177).
 func (paladin *Paladin) applyReckoning() {
 	if paladin.Talents.Reckoning == 0 {
 		return
@@ -143,6 +160,10 @@ func (paladin *Paladin) applyReckoning() {
 	procID := core.ActionID{SpellID: 20178} // Reckoning Proc ID
 	critChance := 0.2 * float64(paladin.Talents.Reckoning)
 	blockChance := 0.08 * float64(paladin.Talents.Reckoning)
+	icd := core.Cooldown{
+		Timer:    paladin.NewTimer(),
+		Duration: time.Millisecond * 1500,
+	}
 
 	paladin.RegisterAura(core.Aura{
 		Label:    "Reckoning Trigger",
@@ -151,11 +172,12 @@ func (paladin *Paladin) applyReckoning() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !icd.IsReady(sim) {
 				return
 			}
 			if result.DidCrit() && sim.Proc(critChance, "Reckoning") ||
 				result.DidBlock() && sim.Proc(blockChance, "Reckoning") {
+				icd.Use(sim)
 				paladin.AutoAttacks.ExtraMHAttack(sim, 1, procID, spell.ActionID)
 			}
 		},
