@@ -27,9 +27,9 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "holyFireMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		{Name: "penance", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "swp", Default: 1, Min: 0, Max: 1, Step: 1},
-		{Name: "swpMana", Default: 20, Min: 0, Max: 60, Step: 10},
+		{Name: "swpMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		{Name: "dp", Default: 1, Min: 0, Max: 1, Step: 1},
-		{Name: "dpMana", Default: 40, Min: 0, Max: 80, Step: 10},
+		{Name: "dpMana", Default: 20, Min: 0, Max: 80, Step: 10},
 		{Name: "mb", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -41,9 +41,10 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
 		// Smite of this rank (0 never) once the mana would no longer last the fight at
 		// smiteManaRate mana a second. Ranks 3 and up keep the full coefficient under Forever,
-		// so rank 5 does about 88% of rank 8's damage at 800 spell power for half the mana.
-		{Name: "smiteDownrank", Default: 5, Min: 0, Max: 7, Step: 1},
-		{Name: "smiteManaRate", Default: 30, Min: 15, Max: 45, Step: 5},
+		// so a lower rank keeps most of the damage for far less mana. Rank 3 below 20 mana a
+		// second came out best at every fight length (2026-10-12).
+		{Name: "smiteDownrank", Default: 3, Min: 0, Max: 7, Step: 1},
+		{Name: "smiteManaRate", Default: 20, Min: 15, Max: 45, Step: 5},
 	}
 }
 
@@ -104,7 +105,7 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 			Rhs: num(k["smiteManaRate"]),
 		}}}, remainingTime())
 		items = append(items, cast(smite, lasts, fmt.Sprintf("Smite while the mana lasts the fight at %.0f mana a second.", k["smiteManaRate"])))
-		items = append(items, cast(spellID(priest.SmiteSpellId[rank]), nil, fmt.Sprintf("Rank %d Smite once it would not: most of the damage for half the mana.", rank)))
+		items = append(items, cast(spellID(priest.SmiteSpellId[rank]), nil, fmt.Sprintf("Rank %d Smite once it would not: most of the damage for far less mana.", rank)))
 	} else {
 		items = append(items, cast(smite, nil, "Smite fills."))
 	}
