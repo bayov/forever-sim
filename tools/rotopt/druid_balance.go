@@ -30,9 +30,12 @@ func (druidBalance) Knobs() []Knob {
 		// No new dot with less than this many seconds of the fight left.
 		{Name: "dotMinTime", Default: 8, Min: 0, Max: 12, Step: 2},
 		// The filler: 0 Starfire, 1 Wrath, 2 Wrath until Eclipse has eclipseStacks charges
-		// and then Starfire.
-		{Name: "filler", Default: 2, Min: 0, Max: 2, Step: 1},
-		{Name: "eclipseStacks", Default: 1, Min: 1, Max: 4, Step: 1},
+		// and then Starfire, 3 Wrath only once Eclipse is down to eclipseStacks charges or
+		// fewer with no Wrath on its way, and Starfire otherwise. A Wrath flies as long as it
+		// casts (1.5 sec), so with 2 a second Wrath goes out before the first one's charges
+		// land, and a third one's charges hit the cap of 4.
+		{Name: "filler", Default: 3, Min: 0, Max: 3, Step: 1},
+		{Name: "eclipseStacks", Default: 2, Min: 0, Max: 4, Step: 1},
 		// Count a Wrath still flying to the target as the charges it will give, so the filler
 		// does not cast a second Wrath while the first is in the air, 0/1.
 		{Name: "wrathInFlight", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -84,6 +87,11 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(starfire, nil, "Starfire."))
 	case 1:
 		items = append(items, cast(wrath, nil, "Wrath."))
+	case 3:
+		items = append(items,
+			cast(wrath, and(le(auraNumStacks(druidEclipse), num(k["eclipseStacks"])), not(spellInFlight(wrath))),
+				"Wrath once Eclipse is down to its last charge and no Wrath is on its way."),
+			cast(starfire, nil, "Starfire."))
 	case 2:
 		ready := ge(auraNumStacks(druidEclipse), num(k["eclipseStacks"]))
 		if k["wrathInFlight"] == 1 {

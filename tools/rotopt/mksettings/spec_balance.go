@@ -6,9 +6,8 @@ func init() {
 	specs["balance"] = &specSetup{
 		uiDir: "ui/balance_druid",
 		// The moonkin is in a caster group with a shaman, which puts Mana Spring down for it.
-		// It takes Blessing of Wisdom and Kings, not Might. The caster debuffs that reach Arcane
-		// and Nature are Curse of Shadow (Arcane only), the rest of the shared list does nothing
-		// to it.
+		// It takes Blessing of Wisdom and Kings, not Might. Of the shared debuffs only Curse of the
+		// Elements reaches it (every school at 10% under Forever), the rest do nothing to it.
 		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, _ *proto.Debuffs) {
 			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
 			// The crit aura is the moonkin's own (Moonkin Form), and no cat is in its group.
@@ -24,10 +23,12 @@ func init() {
 				DefaultPotion:   proto.Potions_MajorManaPotion,
 				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodNightfinSoup,
-				MainHandImbue:   proto.WeaponImbue_BrilliantWizardOil,
+				IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
 		withSpec: func(player *proto.Player) {

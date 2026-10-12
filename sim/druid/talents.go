@@ -400,7 +400,9 @@ func (druid *Druid) applyOmenOfClarity() {
 				return
 			}
 
-			if spell.Flags.Matches(SpellFlagOmen) && spell.SpellCode != SpellCode_DruidWrath && spell.DefaultCast.Cost > 0 {
+			// A cast that started (and paid) before the proc does not use it up.
+			if spell.Flags.Matches(SpellFlagOmen) && spell.SpellCode != SpellCode_DruidWrath && spell.DefaultCast.Cost > 0 &&
+				sim.CurrentTime-spell.CurCast.CastTime >= aura.StartedAt() {
 				aura.Deactivate(sim)
 			}
 		},

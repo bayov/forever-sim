@@ -23,7 +23,7 @@ func init() {
 				DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
 				DefaultPotion:     proto.Potions_MajorManaPotion,
 				DragonBreathChili: true,
-				Flask:             proto.Flask_FlaskOfSupremePower,
+				Flask:             proto.Flask_FlaskOfDistilledWisdom,
 				Food:              proto.Food_FoodGrilledSquid,
 				StrengthBuff:      proto.StrengthBuff_JujuPower,
 				ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
