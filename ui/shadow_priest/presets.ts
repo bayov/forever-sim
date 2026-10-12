@@ -350,7 +350,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 //   Troll     868.2 / 867.8 / 869.3
 // Human and Undead are level within the noise. Human's 2% crit with swords comes from the main
 // hand, a sword like Azuresong Mageblade, the Era Phase 1 BiS. With a staff (Staff of Dominance)
-// a Human ties a Dwarf at 805 and an Undead is 14 ahead of both. Undead's Touch of the Grave is
+// a Human ties a Dwarf at 805 and an Undead is 14 ahead of both (on the earlier consumes). Undead's Touch of the Grave is
 // 14, Gnome's Eureka! 9, Night Elf's Elune's Light 7. Troll's Berserking only speeds up Mind
 // Blast's cast, channels and the GCD do not speed up, so it is worth nothing. Starshards and
 // Chastise lose DPS (see the rotation).
