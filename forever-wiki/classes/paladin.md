@@ -6,7 +6,7 @@ Talents: 52 total, 20 new, 21 changed, 11 unchanged (verified).
 
 Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 5 and 7 hold the 11, 16, 21 and 31 point talents.
 
-Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+Warning on multi-rank NEW and CHANGED talents (now settled for every talent in the 70338 tree, see Trait curves below): the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
 ## Client build 1.60.1.70338 (checked 2026-10-12)
 
@@ -35,6 +35,39 @@ The [development notes of 24 September](https://www.wowhead.com/blue-tracker/top
 - Retribution Aura scales with the caster's spell power. The coefficient is unknown. The rank 1 tooltip stayed at 7 damage with 18 spell power on, so it is small, and the sim keeps the flat value.
 - Righteous Fury is 60% Holy threat (was 90%).
 - Consecration had targeting fixes, and Echo of Justice (the Twist of Light echo) had its proc chance fixed. Neither changes the sim.
+
+## Trait curves, client 1.60.1.70338 (2026-10-12)
+
+Forever's talents are traits: TraitDefinitionEffectPoints gives every talent effect a per-rank curve, and the curve overrides the base points on the rank 1 spell, which can be a Classic leftover. The paladin tree (TraitTree 1100) per rank:
+
+| Talent | Curve | Sim |
+| --- | --- | --- |
+| Divine Strength, Divine Intellect | 2 / 4 / 6 / 8 / 10% | same |
+| Toughness | 2 to 10% armor | same |
+| Benediction | -2 to -10% cost | same |
+| Improved Seals | 5 / 10 / 15% (the spell stores 3) | same |
+| Precision | 1 / 2 / 3% melee and spell hit | same |
+| Improved Judgement | -1 / -2 sec | same |
+| Holy Conduit | -20 / -40% cost | same |
+| Conviction | 1 to 5% crit | same |
+| Reverence | 10 / 20 / 30% regen while casting | same |
+| Purifying Power | -17 / -33% Exorcism and Holy Wrath cooldown (and -10 / -20% Cleanse cost) | same (cooldown) |
+| Sacred Duty | 2 / 4% Stamina | same |
+| Vindication | 1 / 2 / 3% | same |
+| Sanctified Judgement | 33 / 66 / 100% chance, 20 / 40 / 60% refund | same |
+| Divine Precision | 6 / 12 / 18% Holy hit | same |
+| Consecrated Ground | 5 / 10% | same |
+| Two-Handed Weapon Specialization | 2 / 4 / 6% | same |
+| One-Handed Weapon Specialization | 3 / 7 / 10% | same |
+| Vengeance | 1 / 2 / 3% a stack (the spell stores 5) | same |
+| Holy Power | 1 to 5% crit, 3 to 15% on its second effect | same (Holy Strike and Holy Shock 3% a point) |
+| Champion of the Light | 20 / 40 / 60% of Intellect | same |
+| Instrument of Law | -0.5 / -1.0 sec Hammer of Wrath cast | same |
+| Iron Creed | 5 to 25% threat | same |
+| Redoubt | 4 to 20% block | same |
+| Reckoning | 8 to 40% (its only curve) | the sim's 8% a point on blocks; its 20% a point on crits comes from the beta notes |
+
+No paladin value changed. Ranks 2 and up of every talent in the tree are settled by these curves; Improved Holy Strike and Crusade below are not in the 70338 tree.
 
 ## Beta client 1.60.1.69876 (2026-09-16)
 
@@ -191,7 +224,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 2 (5 points)
 
-- **Healing Light** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Healing Light** (3 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by 4%.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -200,7 +233,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
     - Rank 2: Increases the amount healed by your Holy Light and Flash of Light spells by 8%.
     - Rank 3: Increases the amount healed by your Holy Light and Flash of Light spells by 12%.
   - Note: Rank 1 reads 4% in the footage (our earlier 12% was a maxed-rank screenshot). Ranks 2-3 not yet seen.
-- **Spiritual Focus** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Spiritual Focus** (2 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Gives your Flash of Light, Holy Light, and Light's Vigil spells a 70% chance to not lose casting time when you take damage.
   - Rank 2: Gives your Flash of Light, Holy Light, and Light's Vigil spells a 100% chance to not lose casting time when you take damage.
   - Classic (5 ranks):
@@ -210,12 +243,12 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
     - Rank 4: Gives your Flash of Light and Holy Light spells a 56% chance to not lose casting time when you take damage.
     - Rank 5: Gives your Flash of Light and Holy Light spells a 70% chance to not lose casting time when you take damage.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Improved Seals** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Improved Seals** (3 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage done by your Seals and Judgements by 5%.
   - Rank 2: Increases the damage done by your Seals and Judgements by 10%.
   - Rank 3: Increases the damage done by your Seals and Judgements by 15%.
   - Note: Higher-rank values taken from the nikftw dataset.
-- **Unyielding Faith** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Unyielding Faith** (2 ranks, column 4) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your chance to resist Fear and Disorient effects by an additional 5%.
   - Rank 2: Increases your chance to resist Fear and Disorient effects by an additional 10%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
@@ -226,23 +259,23 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
   - Cost: Instant, 3 min cooldown
   - Grants you immunity to Silence and Interrupt effects. Lasts 6 sec.
   - Note: Slot from the third-party dataset, not yet verified in footage by us.
-- **Reverence** (3 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Reverence** (3 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Allows 10% of your Mana regeneration to continue while casting.
   - Rank 2: Allows 20% of your Mana regeneration to continue while casting.
   - Rank 3: Allows 30% of your Mana regeneration to continue while casting.
   - Note: Higher-rank values taken from the nikftw dataset.
-- **Purifying Power** (2 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Purifying Power** (2 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the mana cost of your Cleanse and Purify spells by 10% and reduces the cooldown of your Exorcism and Holy Wrath spells by 17%.
   - Rank 2: Reduces the mana cost of your Cleanse and Purify spells by 20% and reduces the cooldown of your Exorcism and Holy Wrath spells by 34%.
   - Note: Higher-rank values taken from the nikftw dataset.
 
 #### Row 4 (15 points)
 
-- **Infusion of Light** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Infusion of Light** (2 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 0.5 sec.
   - Rank 2: Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 1.0 sec.
   - Note: Rank 1 read in footage, rank 2 verified on the BlizzCon slide.
-- **Illumination** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Illumination** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Requires: Reverence (3/3)
   - Rank 1: After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 20% chance to gain Mana equal to 50% of the base cost of the spell.
   - Rank 2: After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 40% chance to gain Mana equal to 50% of the base cost of the spell.
@@ -264,7 +297,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 5 (20 points)
 
-- **Divine Precision** (3 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Divine Precision** (3 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Requires: Holy Shock (1/1)
   - Rank 1: Increases your chance to hit with Holy spells by 6%.
   - Rank 2: Increases your chance to hit with Holy spells by 12%.
@@ -275,14 +308,14 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
   - Blasts the target with Holy energy, causing 138 to 149 Holy damage to an enemy, or 119 to 128 healing to an ally.
   - Classic: Blasts the target with Holy energy, causing 204 to 220 Holy damage to an enemy, or 204 to 220 healing to an ally.
   - Note: Redesigned: 160 Mana, 10 sec cooldown and a 40 yd friendly range where Classic Rank 1 cost 225 Mana on a 30 sec cooldown at 20 yd. The numbers differ between the level 38 demo paladin (129-139 damage, 110-118 healing) and the level 60 BlizzCon slide (shown here).
-- **Consecrated Ground** (2 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Consecrated Ground** (2 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Gives your Holy spells 5% increased damage against the first 4 enemies that enter your Consecration.
   - Rank 2: Gives your Holy spells 10% increased damage against the first 4 enemies that enter your Consecration.
   - Note: Rank 2 verified on the BlizzCon slide, rank 1 from the nikftw screenshots.
 
 #### Row 6 (25 points)
 
-- **Holy Power** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Holy Power** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the critical strike chance of your Holy Shock spell by 3%, and all other spells by 1%.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -310,14 +343,14 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 1 (0 points)
 
-- **Toughness** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Toughness** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your armor value from items by 2%.
   - Rank 2: Increases your armor value from items by 4%.
   - Rank 3: Increases your armor value from items by 6%.
   - Rank 4: Increases your armor value from items by 8%.
   - Rank 5: Increases your armor value from items by 10%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Redoubt** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Redoubt** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Damaging melee attacks against you have a 10% chance to increase your chance to block by 6%. Lasts 10 sec or 5 blocks.
   - Rank 2: Damaging melee attacks against you have a 20% chance to increase your chance to block by 6%. Lasts 10 sec or 5 blocks.
   - Rank 3: Damaging melee attacks against you have a 30% chance to increase your chance to block by 6%. Lasts 10 sec or 5 blocks.
@@ -333,7 +366,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 2 (5 points)
 
-- **Precision** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Precision** (3 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your chance to hit with all spells and attacks by 1%.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -342,7 +375,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
     - Rank 2: Increases your chance to hit with melee weapons by 2%.
     - Rank 3: Increases your chance to hit with melee weapons by 3%.
   - Note: Now applies to spells as well as attacks. Ranks 2-3 not yet seen.
-- **Guardian's Favor** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Guardian's Favor** (2 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the cooldown of your Blessing of Protection by 1 min and increases the duration of your Blessing of Freedom by 3 sec.
   - Rank 2: Reduces the cooldown of your Blessing of Protection by 120 sec and increases the duration of your Blessing of Freedom by 6 sec.
   - Classic (2 ranks):
@@ -361,7 +394,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 - **Improved Seal of Fury** (1 rank, column 1) [NEW]
   - When Seal of Fury's shield is fully absorbed, restore 60 Mana, increased by 15% per level the attacker is above you, up to 45%.
   - Note: The Mana restored is one per level: 38 on the level 38 demo paladin, 60 on the level 60 BlizzCon slide (shown here).
-- **Improved Righteous Fury** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Righteous Fury** (3 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: While Righteous Fury is active, all damage taken is reduced by 2%.
   - Rank 2: While Righteous Fury is active, all damage taken is reduced by 4%.
   - Rank 3: While Righteous Fury is active, all damage taken is reduced by 6%.
@@ -370,7 +403,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
     - Rank 2: Increases the amount of threat generated by your Righteous Fury spell by 33%.
     - Rank 3: Increases the amount of threat generated by your Righteous Fury spell by 50%.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Shield Specialization** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Shield Specialization** (3 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Requires: Redoubt (5/5)
   - Rank 1: Increases the amount of damage absorbed by your shield by 10%, and gives your blocks a 33% chance to restore 6% of your maximum Mana. May only occur once every 3 sec.
   - Rank 2: Increases the amount of damage absorbed by your shield by 20%, and gives your blocks a chance to restore 6% of your maximum Mana (rank 2 chance not yet captured, 33% at rank 1, 100% at rank 3). May only occur once every 3 sec.
@@ -380,7 +413,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
     - Rank 2: Increases the amount of damage absorbed by your shield by 20%.
     - Rank 3: Increases the amount of damage absorbed by your shield by 30%.
   - Note: Every rank carries the block-to-Mana clause Classic lacked: a 33% chance at rank 1 (footage) and 100% at rank 3 (BlizzCon slide), the rank 2 chance has not been seen.
-- **Sacred Duty** (2 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Sacred Duty** (2 ranks, column 4) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your total Stamina by 2% and reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 30 sec.
   - Rank 2: Increases your total Stamina by 4% and reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 60 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
@@ -392,7 +425,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
   - Cost: Instant, 1 min cooldown
   - Finishes the remaining cooldown on your Judgement ability and reduces the Mana cost of your next Judgement by 100%.
   - Note: Text verified on the BlizzCon slide. The cooldown read 1 min on the show-floor demo (footage and screenshot) but 50 sec on the panel slide, the demo value is shown.
-- **One-Handed Weapon Specialization** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **One-Handed Weapon Specialization** (3 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage you deal with one-handed melee weapons by 3%.
   - Rank 2: Increases the damage you deal with one-handed melee weapons by 4%.
   - Rank 3: Increases the damage you deal with one-handed melee weapons by 6%.
@@ -415,7 +448,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
   - Cost: 110 Mana, Instant, 5 min cooldown
   - When activated, this ability grants you an absorb shield equal to 100% of your maximum health for 8 sec. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active.
   - Note: Text, cost and cooldown verified on the BlizzCon slide.
-- **Reckoning** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Reckoning** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Gives you a 8% chance to gain an extra attack after Blocking a melee attack and a 20% chance to gain an extra attack after being the victim of a non-periodic critical strike.
   - Rank 2: Gives you a 16% chance to gain an extra attack after Blocking a melee attack and a 40% chance to gain an extra attack after being the victim of a non-periodic critical strike.
   - Rank 3: Gives you a 24% chance to gain an extra attack after Blocking a melee attack and a 60% chance to gain an extra attack after being the victim of a non-periodic critical strike.
@@ -425,7 +458,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 6 (25 points)
 
-- **Iron Creed** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Iron Creed** (5 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the threat generated by your Holy Strike ability by 5%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 2% for 6 sec.
   - Rank 2: Increases the threat generated by your Holy Strike ability 10%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 4% for 6 sec.
   - Rank 3: Increases the threat generated by your Holy Strike ability 15%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 6% for 6 sec.
@@ -454,7 +487,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
   - Rank 3: Increases your Parry chance by 3%.
   - Rank 4: Increases your Parry chance by 4%.
   - Rank 5: Increases your Parry chance by 5%.
-- **Benediction** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Benediction** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the Mana cost of all instant cast spells and abilities by 2%.
   - Rank 2: Reduces the Mana cost of all instant cast spells and abilities by 4%.
   - Rank 3: Reduces the Mana cost of all instant cast spells and abilities by 6%.
@@ -473,7 +506,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 - **Improved Judgement** (2 ranks, column 1) [unchanged]
   - Rank 1: Decreases the cooldown of your Judgement ability by 1 sec.
   - Rank 2: Decreases the cooldown of your Judgement spell by 2 sec.
-- **Holy Conduit** (2 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Holy Conduit** (2 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 20%.
   - Rank 2: Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 40%.
   - Note: Higher-rank values taken from the nikftw dataset.
@@ -487,7 +520,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 3 (10 points)
 
-- **Vindication** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Vindication** (3 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Gives your damaging melee attacks a chance to reduce the target's Attack Power by 42, and increase your Attack Power by 1% for 30 sec.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Gives your damaging melee attacks a chance to reduce the target's Attack Power by 204, and increase your Attack Power by 3% for 30 sec.
@@ -496,7 +529,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
     - Rank 2: Gives the Paladin's damaging melee attacks a chance to reduce the target's Strength and Agility by 10% for 10 sec.
     - Rank 3: Gives the Paladin's damaging melee attacks a chance to reduce the target's Strength and Agility by 15% for 10 sec.
   - Note: Redesigned: an Attack Power debuff plus a self buff instead of Classic's Strength and Agility reduction. Rank 3 from the level 60 BlizzCon slide, rank 1 was read at level 38 from the nikftw screenshots, so the two are not on one scale, rank 2 not yet seen.
-- **Sanctified Judgement** (3 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Sanctified Judgement** (3 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Gives your Judgement ability a 33% chance to return 20% of the Mana cost of the judged seal.
   - Rank 2: Gives your Judgement ability a 66% chance to return 40% of the Mana cost of the judged seal.
   - Rank 3: Gives your Judgement ability a 100% chance to return 60% of the Mana cost of the judged seal.
@@ -509,7 +542,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 4 (15 points)
 
-- **Eye for an Eye** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Eye for an Eye** (2 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: All critical strikes against you cause 5% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health.
   - Rank 2: All critical strikes against you cause 10% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health.
   - Classic (2 ranks):
@@ -524,7 +557,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 5 (20 points)
 
-- **Two-Handed Weapon Specialization** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Two-Handed Weapon Specialization** (3 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage you deal with two-handed melee weapons by 3%.
   - Rank 2: Increases the damage you deal with two-handed melee weapons by 6%.
   - Rank 3: Increases the damage you deal with two-handed melee weapons by 9%.
@@ -532,7 +565,7 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
     - Rank 1: Increases the damage you deal with two-handed melee weapons by 2%.
     - Rank 2: Increases the damage you deal with two-handed melee weapons by 4%.
     - Rank 3: Increases the damage you deal with two-handed melee weapons by 6%.
-- **Vengeance** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Vengeance** (3 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Requires: Sanctified Judgement (3/3)
   - Rank 1: Increases your Physical and Holy damage dealt by 1% for 30 sec after landing a critical strike. Stacks up to 5 times.
   - Rank 2: Increases your Physical and Holy damage dealt by 2% for 30 sec after landing a critical strike. Stacks up to 5 times.
@@ -552,13 +585,13 @@ Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of S
 
 #### Row 6 (25 points)
 
-- **Champion of the Light** (3 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Champion of the Light** (3 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Requires: Vengeance (3/3)
   - Rank 1: Increases your spell damage and healing by up to 33% of your Intellect.
   - Rank 2: Increases your spell damage and healing by up to 66% of your Intellect.
   - Rank 3: Increases your spell damage and healing by up to 100% of your Intellect.
   - Note: Rank 3 verified on the BlizzCon slide (100%, not the 99% read from the nikftw screenshot), rank 1 read in footage.
-- **Instrument of Law** (2 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Instrument of Law** (2 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Requires: Repentance (1/1)
   - Rank 1: Reduces the cast time of your Hammer of Wrath by 0.5 sec, and reduces the threat you generate by 10% while Righteous Fury is not active.
   - Rank 2: Reduces the cast time of your Hammer of Wrath by 1.0 sec, and reduces all threat you generate by 20% while Righteous Fury is not active.
