@@ -231,11 +231,13 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // The level 60 consumables. We tried every consumable the sim applies in each slot on the
 // synthetic set at 180 sec (and 300 for the mana ones), each against the full set. Flask of
 // Supreme Power is worth 65, Dragonbreath Chili 25, Shadow Oil 30 over no oil (18 over an
-// Elemental Sharpening Stone), Elixir of Greater Firepower 16 (for the chili and the Sapper),
-// Elixir of the Mongoose 21, Juju Power 11, R.O.I.D.S. 9, Greater Arcane Elixir 15, Goblin Land
-// Mine 4, Nightfin Soup 2.4 over Grilled Squid, Elixir of Shadow Power 1.5, Goblin Sapper 1.6,
-// Elixir of Wisdom 2, Mageblood Potion 2.3 at 300 sec. The Major Mana Potion and Demonic Rune
-// are 39 and 28 at 300 sec. Flask of the Titans or Distilled Wisdom give nothing here.
+// Elemental Sharpening Stone), Elixir of Greater Firepower 16 (Forever made it the Elixir of
+// Holy Power, +40 Holy, so it is for the seals, judgements and Consecration), Elixir of the
+// Mongoose 21, Juju Power 11 (Elixir of the Grizzly in its place is 11 behind), R.O.I.D.S. 9,
+// Greater Arcane Elixir 15, Goblin Land Mine 4, Nightfin Soup 2.4 over Grilled Squid, Elixir of
+// Shadow Power 1.5, Goblin Sapper 1.6, Elixir of Wisdom 2, Mageblood Potion 2.3 at 300 sec. The
+// Major Mana Potion and Demonic Rune are 39 and 28 at 300 sec. Flask of the Titans or Distilled
+// Wisdom give nothing here.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
