@@ -195,7 +195,7 @@ export const DefaultTalents = TalentsLevel60Demonology;
 // The Succubus is out for every Level 60 build. Forever's demons take no player buffs and scale
 // from the warlock's stats (Season of Discovery's coefficients as a placeholder, notes.md), and the
 // Succubus's melee gets the most from it: on Destruction it is 23 ahead of the Felhunter and 43 of
-// the Imp. Spellstone and Firestone are within 2 there.
+// the Imp. Spellstone and Firestone are within 1 there.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
 	summon: Summon.Succubus,
@@ -256,9 +256,9 @@ export const DefaultConsumes = Consumes.create({
 // Elements up, so ours has its curse free (Forever gives a warlock a bane and a curse). Under
 // Forever Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill only help the
 // player who applies them, so they are not here.
-// The demon only gets the party buffs of the warlock's own caster group, so no Battle Shout,
-// Trueshot Aura or Leader of the Pack (about 7 DPS of the demon's on every build). It keeps the
-// raid-wide buffs.
+// Under Forever the demon takes no player buffs (notes.md) and scales from the warlock's stats
+// instead. The raid's party buffs are the warlock's caster group's: no Battle Shout, Trueshot Aura
+// or Leader of the Pack.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	bloodPact: TristateEffect.TristateEffectImproved,
@@ -354,18 +354,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Gnome, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 1068.2 / 1054.7 / 1028.5, Destruction 970.9 / 963.6 / 946.9, Affliction 963.1 / 956.0 / 939.5,
-// Destruction fire 968.3 / 957.8 / 938.2.
-// Destruction and Affliction are inside 10% of Demonology, Destruction fire and Affliction damage
-// over time play differently and ship as specs of their own.
+// 1128.1 / 1114.1 / 1087.8, Destruction 1019.7 / 1012.2 / 995.5, Affliction 1011.3 / 1004.0 / 987.3,
+// Destruction fire 1004.0 / 999.0 / 984.8. The demons take no player buffs and scale from the
+// warlock's stats with Season of Discovery's coefficients as a placeholder (notes.md): the buffs
+// off cost 6, the scaling adds 56 to 69, together +48 to +59 at 180 sec.
 //
-// Gnome is the best warlock race overall and the best Alliance one (first on every build but
-// Destruction fire, where the Undead is 2.1 ahead), then Undead, Orc, Troll and Human. The best
-// Horde race is the Undead, 4.5 behind the Gnome on Demonology at 180 sec (2.8 ahead of the Orc,
-// level with it on Affliction). With the staff no warlock race has a weapon racial;
-// on the old Azuresong sword the Human's Sword Specialization had put it first. The full table is
-// in forever-wiki/sim-status.md. Each preset takes its build's best race: Gnome, and Undead for
-// Destruction fire.
+// Gnome is the best warlock race overall and the best Alliance one, first on every build, then
+// Undead, Orc, Troll and Human. The best Horde race is the Undead, 4.7 behind the Gnome on
+// Demonology at 180 sec and 1.0 to 2.8 ahead of the Orc. With the staff no warlock race has a
+// weapon racial; on the old Azuresong sword the Human's Sword Specialization had put it first. The
+// full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
@@ -408,12 +406,12 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed and no demon out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Gnome Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceGnome,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
