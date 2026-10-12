@@ -22,6 +22,15 @@ gen() {
 	mv "ui/retribution_paladin/apls/${name}_60s.apl.json" "ui/retribution_paladin/apls/$name.apl.json"
 	echo "wrote ui/retribution_paladin/apls/$name.apl.json ($knobs $*)"
 }
+# Level 60 on the synthetic Phase 1 set (2026-10-12, the search over 120, 180 and 300 sec
+# together on the Level 60 talents). Judgement of the Crusader comes from the raid, our own
+# Seal of the Crusader opener is 11 behind. Consecration first down to 20% mana (+1.5 over
+# after the seal lines, a 60% floor is 8 behind), Seal of Command up with Twist of Light
+# twisting to Seal of Righteousness and back in the last 1.5 sec before each swing, down to
+# 20% mana (126 ahead of no twisting, a 0.5 sec window is 35 behind), Holy Strike on
+# cooldown (99), Hammer of Wrath below 20% health at any mana (29). Seal of Righteousness
+# as the primary seal is 1.5 behind, since both seals proc every swing either way.
+gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0" -level 60
 # Level 30 with 5 extra talent points (26 in all). The old level 20 rotation still wins,
 # and Seal of Command stays ahead of Seal of Righteousness on Corpsemaker.
 gen level30p5 "seal=2,consecration=1,consecrationFirst=1,consecrationMana=0" -level 30 -bonus-talents 5 -talents --502240312013201

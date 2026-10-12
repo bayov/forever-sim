@@ -12,17 +12,23 @@ import {
 	Flask,
 	Food,
 	IndividualBuffs,
+	IntellectElixir,
+	ManaRegenElixir,
 	MobType,
 	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
+	ShadowPowerBuff,
 	SpellPowerBuff,
 	Stat,
 	StrengthBuff,
+	TotemWeaponBuff,
 	TristateEffect,
 	UnitReference,
 	UnitReference_Type,
+	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { PaladinAura, PaladinOptions as RetributionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
@@ -30,8 +36,10 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import APLBasicRetJson from './apls/basic_ret.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
+import Level60APLJSON from './apls/level60.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
+import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -63,14 +71,48 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 	group: 'Level 30',
 });
 
+// Synthetic Phase 1 retribution gear, from tools/database/forever_synthetic_items_paladin.go (ids
+// from 992000, not in the game).
+//
+// Forever's level 60 client gear is not tuned yet and Molten Core and Onyxia have no Forever data,
+// so a gear search on real items ends up in Classic gear. These items rebuild the Era Phase 1
+// retribution set (Lionheart Helm, Onyxia Tooth Pendant, Truestrike Shoulders, Onslaught Girdle,
+// Band of Accuria, Quick Strike Ring, Spinal Reaper and the rest) at full epic budgets under the
+// budget standard every class's synthetic set uses, with a hybrid Strength, spell power and
+// Intellect mix, about 10% Spirit, 9% hit and 5% crit. The head, shoulders, chest, hands, legs and
+// feet carry Justice Battlegear, Forever's Tier 1 retribution set (1% attack and cast speed, 36
+// attack power against Undead, 0.5 sec off Judgement). The file has the budget math.
+//
+// The two-hander is an axe with Spinal Reaper's 203 - 305 at 3.4, the Era Phase 1 retribution
+// weapon, so no paladin race gets a weapon racial from it. Hand of Justice, Blackhand's Breadth and
+// Libram of Fervor are real items. The enchants are the Phase 1 ones (+8 Strength on head and
+// legs, Greater Stats, Superior Strength, Greater Strength, Greater Agility, Crusader), not
+// searched. The gear stays fixed for the talent, rotation and race searches.
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
+	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+
 export const GearPresets = {};
 
-export const DefaultGear = GearBlank;
+export const DefaultGear = GearLevel60Phase1Synthetic;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
+// The paladin_ret template with the knobs the level 60 search settled on (see
+// tools/rotopt/paladin_presets.sh), searched over 120, 180 and 300 sec together on the Level 60
+// talents and the synthetic set. Judgement of the Crusader comes from the raid (our own Seal of
+// the Crusader opener is 11 behind). Consecration goes first down to 20% mana. Seal of Command
+// stays up and Twist of Light twists to Seal of Righteousness and back in the last 1.5 sec
+// before each swing, so every swing gets both seals (126 DPS over no twisting). Judgement and
+// Holy Strike on cooldown, Hammer of Wrath below 20% health. Seal of Righteousness as the seal
+// that stays up is 1.5 behind.
+export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
+	tooltip: 'Level 60 rotation: Consecration, Seal of Command twisted with Seal of Righteousness before every swing, Judgement and Holy Strike on cooldown.',
+	group: 'Level 60',
+});
 export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
 	tooltip: 'Basic level 60 Retribution rotation.',
 	group: 'Level 60',
@@ -89,7 +131,7 @@ export const APLPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [APLBasicRet, APLLevel30p5],
+	[Phase.Phase4]: [APLLevel60, APLBasicRet, APLLevel30p5],
 	[Phase.Phase5]: [],
 };
 
@@ -102,15 +144,32 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/forever/talent-calc and copy the numbers in the url.
 
-// Forever trees (beta client build 1.60.1.70009). Level 60: Divine Strength and Improved
-// Seals in Holy, Toughness and Precision in Protection, the Retribution tree down to Twist
-// of Light. Not searched yet, the level 60 sets are blank. The 2026-09-24 build took
-// Improved Holy Strike and Crusade away, and their 4 points went to Deflection 2 and Holy
-// Conduit 2 so Twist of Light still has the 30 Retribution points it needs.
-export const P4RetTalents = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '50003-513-25225331001330301' }), {
-	tooltip: 'Level 60 Retribution talents down to Twist of Light. Not searched yet.',
+// The level 60 talent search on the synthetic Phase 1 set (2026-10-12, tools/rotopt
+// -talent-search at 180 sec with the Level 60 rotation, then every finalist at 120, 180 and 300
+// sec with 50000 iterations, Undead). We started it from three archetypes: Retribution to Twist
+// of Light with the side points in Holy, the same with them in Protection, and a Holy Power
+// build that leaves Twist of Light out (30 Holy, 21 Retribution).
+//
+// Level 60: the Retribution tree down to Twist of Light (Benediction, Improved Judgement, Holy
+// Conduit, Conviction, Vindication, Sanctified Judgement, Seal of Command, Sacred Arbiter,
+// Two-Handed Weapon Specialization, Vengeance, Champion of the Light, Instrument of Law 1),
+// Toughness 5 to reach Precision 3, and Divine Strength 5, Divine Intellect 2 and Improved Seals
+// 3 in Holy. 967.2 / 961.6 / 955.5 at 120 / 180 / 300 sec. The search's last move (a Vindication
+// point into Divine Intellect for mana) was a tie. Twist of Light is the build: without it the
+// seals cannot be twisted, and the Holy Power build was 24% behind before any search.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '52003-503-05225331001330311' }), {
+	tooltip: 'Level 60 talents from the talent search: Retribution to Twist of Light, Precision, Divine Strength and Improved Seals.',
 	group: 'Level 60',
 });
+// Level 60 (sub Holy): the side points in Holy instead of Protection (Divine Strength 5, Divine
+// Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2) and Instrument of Law 2 for a
+// Holy Conduit point. It was the search's best from the Holy seed. 963.2 / 957.1 / 944.6 at 120 /
+// 180 / 300 sec, 0.4% behind Level 60 at 120 sec and 1.1% at 300 because it has no Precision.
+export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
+	'Level 60 (sub Holy)',
+	SavedTalents.create({ talentsString: '550030032--05215331001330321' }),
+	{ tooltip: 'Level 60 talents with the side points in Holy instead of Protection.', group: 'Level 60' },
+);
 // Level 30 with 5 extra talent points (26 in all), Pursuit of Justice 2 pinned. Holy
 // Shock is out of reach with it: Holy Shock needs 20 Holy points and Pursuit of Justice
 // 10 Retribution points. We scored every Seal of Command build over the Retribution
@@ -133,7 +192,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [P4RetTalents, TalentsLevel30p5],
+	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel30p5],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase4][0];
@@ -144,31 +203,68 @@ export const DefaultTalents = TalentPresets[Phase.Phase4][0];
 
 export const DefaultOptions = RetributionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
-	primarySeal: PaladinSeal.Righteousness,
+	primarySeal: PaladinSeal.Command,
 });
 
+// The level 60 consumables. We tried every consumable the sim applies in each slot on the
+// synthetic set at 180 sec (and 300 for the mana ones), each against the full set. Flask of
+// Supreme Power is worth 65, Dragonbreath Chili 25, Shadow Oil 30 over no oil (18 over an
+// Elemental Sharpening Stone), Elixir of Greater Firepower 16 (for the chili and the Sapper),
+// Elixir of the Mongoose 21, Juju Power 11, R.O.I.D.S. 9, Greater Arcane Elixir 15, Goblin Land
+// Mine 4, Nightfin Soup 2.4 over Grilled Squid, Elixir of Shadow Power 1.5, Goblin Sapper 1.6,
+// Elixir of Wisdom 2, Mageblood Potion 2.3 at 300 sec. The Major Mana Potion and Demonic Rune
+// are 39 and 28 at 300 sec. Flask of the Titans or Distilled Wisdom give nothing here.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
-	boglingRoot: false,
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
-	fillerExplosive: Explosive.ExplosiveUnknown,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
-	food: Food.FoodBlessSunfruit,
 	flask: Flask.FlaskOfSupremePower,
-	//mainHandImbue: WeaponImbue.WildStrikes,
-	//offHandImbue: WeaponImbue.MagnificentTrollshine,
+	food: Food.FoodNightfinSoup,
+	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	mainHandImbue: WeaponImbue.ShadowOil,
+	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
+// The level 60 raid (tools/rotopt/mksettings): both paladin blessings, Kings, Judgement of the
+// Crusader and of Wisdom from another paladin, every debuff, Curse of the Elements (10% Holy
+// damage under Forever, worth 62 here). The paladin is in a melee group with a shaman, who puts
+// down Strength of Earth, Windfury Totem (one air totem per party since the 2026-09-24 build) and
+// Mana Spring.
+export const DefaultRaidBuffs = RaidBuffs.create({
+	arcaneBrilliance: true,
+	battleShout: TristateEffect.TristateEffectImproved,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
+	divineSpirit: true,
+	fireResistanceAura: true,
+	frostResistanceAura: true,
+	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	leaderOfThePack: true,
+	manaSpringTotem: TristateEffect.TristateEffectRegular,
+	moonkinAura: true,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	sanctityAura: true,
+	shadowProtection: true,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	thorns: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
+	trueshotAura: true,
+});
+
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfMight: TristateEffect.TristateEffectRegular,
 	blessingOfKings: true,
-	blessingOfWisdom: TristateEffect.TristateEffectRegular,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	fengusFerocity: false,
 	moldarsMoxie: false,
 	rallyingCryOfTheDragonslayer: false,
@@ -178,37 +274,106 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 	warchiefsBlessing: false,
 });
 
-export const DefaultRaidBuffs = RaidBuffs.create({
-	arcaneBrilliance: true,
-	battleShout: TristateEffect.TristateEffectImproved,
-	divineSpirit: true,
-	fireResistanceAura: true,
-	fireResistanceTotem: true,
-	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	leaderOfThePack: true,
-	moonkinAura: true,
-});
-
 export const DefaultDebuffs = Debuffs.create({
+	curseOfElements: true,
 	curseOfRecklessness: true,
+	curseOfShadow: true,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
+	exposeArmor: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
-	giftOfArthas: true,
-	sunderArmor: true,
-	judgementOfWisdom: true,
+	insectSwarm: true,
+	judgementOfLight: true,
 	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
-	improvedScorch: true,
+	judgementOfWisdom: true,
+	scorpidSting: true,
+	sunderArmor: true,
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// The paladin is a blacksmith and an enchanter. Gear another profession makes is only in
-// the presets when it binds on equip, so it can be bought.
+// At level 60 the paladin is an engineer (the Goblin Sapper and the Land Mine) and a
+// blacksmith. The level 30 build keeps Blacksmithing and Enchanting. Gear another profession
+// makes is only in the presets when it binds on equip, so it can be bought.
 export const OtherDefaults = {
-	profession1: Profession.Blacksmithing,
-	profession2: Profession.Enchanting,
+	profession1: Profession.Engineering,
+	profession2: Profession.Blacksmithing,
+	race: Race.RaceUndead,
 };
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Builds
 ///////////////////////////////////////////////////////////////////////////
+
+// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, Humanoid), a 3 minute
+// fight, and the default buffs, debuffs and consumes, so switching back from the Level 30 build
+// restores everything that build changed.
+export const EncounterLevel60 = PresetUtils.makePresetEncounter(
+	'Level 60',
+	Encounter.create({
+		duration: 180,
+		durationVariation: 20,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 213336,
+				name: 'Level 60',
+				level: 63,
+				mobType: MobType.MobTypeHumanoid,
+				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+				minBaseDamage: 3000,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		tanks: [],
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: DefaultDebuffs,
+		buffs: DefaultIndividualBuffs,
+		consumes: DefaultConsumes,
+	},
+);
+// Level 60: the Undead on the synthetic set with the Level 60 talents and rotation. Every race a
+// paladin can be, on that build with the same seed at 50000 iterations (120 / 180 / 300 sec):
+// Undead 967.2 / 961.6 / 955.5, Human 951.0 / 945.7 / 939.8, Dwarf 950.0 / 944.7 / 938.8. Undead
+// is the best race and the only Horde paladin, Human the best Alliance one (5% Spirit), 1 ahead of
+// Dwarf. Touch of the Grave rolls on every Judgement, Holy Strike and Consecration. The synthetic
+// two-hander is an axe like the Era Phase 1 Spinal Reaper, so neither Human's sword crit nor
+// Dwarf's mace crit counts. With a sword of the same stats Human would be about 975 at 180 sec,
+// ahead of Undead, and Dwarf with a mace about 952.
+export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 talents and rotation, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60,
+	encounter: EncounterLevel60,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
+});
+// Level 60 (sub Holy): the same with the sub Holy talents. 963.2 / 957.1 / 944.6 at 120 / 180 /
+// 300 sec.
+export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (sub Holy)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead with the side talent points in Holy instead of Protection.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60SubHoly,
+	rotation: APLLevel60,
+	encounter: EncounterLevel60,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
+});
 
 // A level 30 paladin soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32):
 // no raid buffs or consumes, its own Blessing of Kings (2.4 DPS ahead of Blessing of Might
@@ -257,6 +422,7 @@ export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', 
 	race: Race.RaceUndead,
 	level: 30,
 	bonusTalentPoints: 5,
+	professions: [Profession.Blacksmithing, Profession.Enchanting],
 	options: RetributionPaladinOptions.create({
 		aura: PaladinAura.RetributionAura,
 		primarySeal: PaladinSeal.Command,
