@@ -225,7 +225,7 @@ func (character *Character) registerEureka() {
 	aura := character.RegisterAura(Aura{
 		Label:     "Eureka!",
 		ActionID:  actionID,
-		Duration:  time.Second * 30,
+		Duration:  time.Second * 15, // SpellMisc duration 15000 in client 70338
 		MaxStacks: 3,
 		OnInit: func(aura *Aura, sim *Simulation) {
 			for _, spell := range character.Spellbook {
@@ -292,9 +292,10 @@ func (character *Character) registerEureka() {
 // at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
 // damage that cannot crit, cannot proc anything and heals the caster for what it deals.
 //
-// The beta gives it no internal cooldown, so every roll counts. We assumed 15 sec for a
-// while, on the grounds that a proc like this usually has one, and took the assumption
-// out on 2026-09-23 once the beta showed there is none.
+// We assumed a 15 sec internal cooldown for a while and took it out on 2026-09-23 once the
+// beta showed nothing like it. Client 70338 does give the proc aura a ProcCategoryRecovery of
+// 1000 ms, a 1 sec internal cooldown too short to see in those logs, so the two triggers below
+// share a 1 sec cooldown.
 //
 // The roll happens when a hostile ability is used, not when it lands, so an ability rolls
 // whether or not it hits. Since the 2026-09-24 beta build the ability needs a damage
@@ -342,7 +343,16 @@ func (character *Character) registerTouchOfTheGrave() {
 		},
 	})
 
+	icd := Cooldown{
+		Timer:    character.NewTimer(),
+		Duration: time.Second,
+	}
+
 	proc := func(sim *Simulation, spell *Spell, result *SpellResult) {
+		if !icd.IsReady(sim) {
+			return
+		}
+		icd.Use(sim)
 		// A cast gives the handler no result, so the drain follows the unit the player
 		// is on rather than the one that was hit.
 		target := character.CurrentTarget
