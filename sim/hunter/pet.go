@@ -83,6 +83,9 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	}
 
 	hp.Pet.MobType = petConfig.MobType
+	// Blizzard's hunter deep dive: under Forever pets no longer take player buffs that raise their
+	// stats. Set here, the buffs go on before Initialize.
+	hp.IgnoresPlayerBuffs = true
 
 	hp.EnableAutoAttacks(hp, core.AutoAttackOptions{
 		MainHand: core.Weapon{
@@ -148,9 +151,6 @@ func (hp *HunterPet) applyForeverRules() {
 	// Focus comes back 10 a second, continuously (client PowerType Focus RegenCombat 10, and beta
 	// logs where busy pets spend 9.5+ a second). Classic's is 26.25 every 5.25 sec.
 	hp.SetFocusRegen(2.5, time.Millisecond*250)
-
-	// Blizzard's hunter deep dive: pets no longer take player buffs that raise their stats.
-	hp.IgnoresPlayerBuffs = true
 }
 
 func (hp *HunterPet) Reset(_ *core.Simulation) {

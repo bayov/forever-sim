@@ -417,6 +417,7 @@ func (hunter *Hunter) applyExposePrey() {
 		ProcChance: 0.05 * float64(hunter.Talents.ExposePrey),
 		Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Target.HasActiveAuraWithTag(core.HuntersMarkAuraTag) {
+				hunter.DefensiveState.Duration = time.Second * 10
 				hunter.DefensiveState.Activate(sim)
 			}
 		},

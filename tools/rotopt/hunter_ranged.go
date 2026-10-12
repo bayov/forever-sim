@@ -48,6 +48,9 @@ func (hunterRanged) Knobs() []Knob {
 		{Name: "sniperFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// The Arcane Shot cooldown above Aimed Shot when both are ready.
 		{Name: "arcaneFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Serpent Sting below Aimed Shot, so a refresh never delays Aimed Shot's cooldown, which starts
+		// when the cast ends.
+		{Name: "serpentLate", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "intimidation", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Mana floors, in percent: Serpent Sting and the Arcane Shot cooldown only above them.
 		{Name: "serpentMana", Default: 30, Min: 0, Max: 60, Step: 10},
@@ -79,8 +82,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	if k["intimidation"] == 1 {
 		items = append(items, cast(hunterIntimidation, nil, "Intimidation on cooldown for the pet's crit, with the talent."))
 	}
-	if k["serpent"] == 1 {
-		items = append(items, cast(hunterSerpentSting, and(not(dotIsActive(hunterSerpentSting)), floor("serpentMana")), "Serpent Sting when it is down."))
+	serpent := cast(hunterSerpentSting, and(not(dotIsActive(hunterSerpentSting)), floor("serpentMana")), "Serpent Sting when it is down.")
+	if k["serpent"] == 1 && k["serpentLate"] == 0 {
+		items = append(items, serpent)
 	}
 
 	arcaneFloor := floor("arcaneMana")
@@ -105,6 +109,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(hunterAimedShot, floor("aimedMana"), "Aimed Shot on the cooldown it shares with Multi-Shot."))
 	}
 	items = append(items, cast(hunterMultiShot, nil, "Multi-Shot when Aimed Shot is not taken."))
+	if k["serpent"] == 1 && k["serpentLate"] == 1 {
+		items = append(items, serpent)
+	}
 	if k["sniper"] == 1 && k["sniperFirst"] == 0 {
 		items = append(items, sniper)
 	}

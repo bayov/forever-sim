@@ -59,6 +59,10 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 	}
 
 	rot := rotation(items...)
-	rot.PrepullActions = append(rot.PrepullActions, prepull(hunterAspectOfTheBeast, 3))
+	// Walk in before the pull: the UI starts every hunter at 25 yards.
+	rot.PrepullActions = append(rot.PrepullActions, &proto.APLPrepullAction{
+		Action:    &proto.APLAction{Action: &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(0)}}},
+		DoAtValue: seconds(-6),
+	}, prepull(hunterAspectOfTheBeast, 3))
 	return rot
 }

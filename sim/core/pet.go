@@ -33,7 +33,8 @@ type Pet struct {
 	isGuardian     bool
 	enabledOnStart bool
 
-	// Forever's hunter pets take no buffs from players.
+	// Takes no buffs from players under the Forever ruleset (hunter pets). Set at construction, the
+	// buffs go on before Initialize.
 	IgnoresPlayerBuffs bool
 
 	OnPetEnable  OnPetEnable
