@@ -310,7 +310,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 30,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
-	race: Race.RaceHuman,
+	race: Race.RaceUndead,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -372,7 +372,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -402,7 +402,7 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Ho
 	talents: TalentsLevel60Holy,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60Holy,
-	race: Race.RaceHuman,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
