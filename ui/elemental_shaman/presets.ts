@@ -68,8 +68,9 @@ export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, 
 //
 // The trinkets are real Phase 1 items: Talisman of Ephemeral Power and Briarwood Reed. The
 // relic is Burning Totem (Flame Shock 3 sec longer). The enchants are the Phase 1 caster ones
-// (Arcanum of Focus, Greater Stats, Greater Intellect, Enchant Weapon - Spell Power) and
-// Forever's Enchant Necklace - Spell Power.
+// (Lesser Arcanum of Voracity for Intellect, Greater Stats, Greater Intellect, Enchant Weapon -
+// Spell Power) and Forever's Enchant Necklace - Spell Power. Arcanum of Focus would be 6.6 more
+// at 180 sec, but the database has it in Phase 2, and the other casters use Voracity.
 //
 // On 2026-10-12 the Level 60 build is 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec on it. The
 // trinkets beat Weakness Analyzer (3.4 behind), Eye of the Beast, Burst of Knowledge, Shard of
