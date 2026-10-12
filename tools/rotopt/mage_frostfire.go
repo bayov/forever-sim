@@ -38,6 +38,9 @@ func (mageFrostfire) Knobs() []Knob {
 		// spent or less than 60 sec are left, and the mana is under this many per second of the
 		// fight left. 0 never.
 		Knob{Name: "lowManaRank", Default: 0, Min: 0, Max: 90, Step: 30},
+		// Fire Blast with the mana the fight can't use: above this many per second of the fight
+		// left. 0 never.
+		Knob{Name: "fireBlastSurplus", Default: 0, Min: 0, Max: 200, Step: 50},
 	)
 }
 
@@ -63,6 +66,12 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["fireBlastMana"] > 0 {
 		items = append(items, cast(s.fireBlast, ge(currentManaPercent(), num(k["fireBlastMana"]/100)), "Fire Blast on cooldown with the mana to spare."))
+	}
+	if k["fireBlastSurplus"] > 0 {
+		items = append(items, cast(s.fireBlast, and(
+			gt(currentMana(), mul(remainingTime(), num(k["fireBlastSurplus"]))),
+			gt(remainingTime(), seconds(1)),
+		), "Fire Blast with the mana the fight can't use."))
 	}
 	if k["lowManaRank"] > 0 {
 		rank2 := spellID(mage.FrostfireBoltSpellId[2])

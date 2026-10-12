@@ -153,7 +153,7 @@ Talents were searched (`tools/rotopt -talent-search`) from several seeds per spe
 
 | Build | Talents | Rotation | 120 | 180 | 300 |
 |---|---|---|---|---|---|
-| Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost, rank 2 Frostfire Bolt when the mana won't last | 919.5 | 900.7 | 887.1 |
+| Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost, rank 2 Frostfire Bolt when the mana won't last, Fire Blast with spare mana | 923.2 | 903.4 | 888.6 |
 | Fire | `05020500300001-13550000130133051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage, Combustion after 5 Scorch stacks | 900.1 | 884.2 | 873.7 |
 | Arcane | `051225003100311531-03-02550003` | Arcane Blast precast, Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4 | 864.0 | 852.9 | 842.9 |
 | Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 794.8 | 793.6 | 793.4 |
@@ -166,14 +166,14 @@ Races (180 sec, each build on its rotation). The staff has no racial, so the tab
 
 | Race | Frostfire | Fire | Arcane | Frost |
 |---|---|---|---|---|
-| Undead | 900.7 | 884.2 | 852.9 | 793.6 |
-| High Order | 899.7 | 875.9 | 833.9 | 793.2 |
-| Orc | 899.5 | 878.9 | 843.7 | 791.2 |
-| Troll | 896.6 | 872.0 | 840.1 | 792.2 |
-| Gnome | 895.2 | 881.8 | 842.9 | 792.1 |
-| Human | 891.1 | 873.8 | 836.9 | 785.3 |
+| Undead | 903.4 | 884.2 | 852.9 | 793.6 |
+| High Order | 901.6 | 875.9 | 833.9 | 793.2 |
+| Orc | 901.6 | 878.9 | 843.7 | 791.2 |
+| Troll | 898.1 | 872.0 | 840.1 | 792.2 |
+| Gnome | 896.5 | 881.8 | 842.9 | 792.1 |
+| Human | 893.5 | 873.8 | 836.9 | 785.3 |
 
-Undead (Touch of the Grave, 10% for mages) is best on every build, overall and for the Horde. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on Fire and Arcane. The best race holds at 120 and 300 sec except on Frostfire, where Gnome's extra mana puts it ahead of Undead at both (923.9 and 888.9 against 919.5 and 887.1); the preset keeps Undead, best at the 3 minute fight.
+Undead (Touch of the Grave, 10% for mages) is best on every build, overall and for the Horde. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on Fire and Arcane. The best race holds at 120 and 300 sec except on Frostfire, where Gnome's extra mana puts it ahead of Undead at both (927.0 and 890.4 against 923.2 and 888.6); the preset keeps Undead, best at the 3 minute fight.
 
 The consumables model Forever's launch, with no raid open. A character takes one of the +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale). Elixir of Sages with Elixir of Greater Intellect is 0.3 to 1 ahead of the Owl with Greater Spirit, and the Owl on top would add 10 to 21 at 180 sec if the two stacked, which is open (notes.md).
 

@@ -33,8 +33,9 @@ gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBl
 gen mage_frost level60_frost "iceLance=0,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90"
 # Scorch to 5 Fire Vulnerability stacks, Pyroblast at 3 Heating Up stacks, Frostfire Bolt, with
 # Fingers of Frost's Shatter crit on the next bolts (no Ice Lance, which takes no spell power and
-# costs 55 to 65 a fight cast on the charges). No Fire Blast: its mana is worth more as Frostfire
-# Bolts over a 5 minute fight. Evocation below 10% mana with 30 sec of the fight left. Once
+# costs 55 to 65 a fight cast on the charges). Fire Blast on cooldown loses: its mana is worth
+# more as Frostfire Bolts. Evocation below 10% mana with 30 sec of the fight left. Once
 # Evocation is spent (or under 60 sec are left) and the mana is under 60 a second of the fight
 # left, rank 2 Frostfire Bolt (285 mana for 9% less damage). No mana gems, for the Demonic Rune.
-gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,pyroMana=0,iceLance=0,missileBarrage=1,fireBlastMana=0,evocationMana=10,evocationMinTime=30,gems=0,lowManaRank=60"
+# Fire Blast only with the mana the fight cannot use (above 150 a second of the fight left).
+gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,pyroMana=0,iceLance=0,missileBarrage=1,fireBlastMana=0,evocationMana=10,evocationMinTime=30,gems=0,lowManaRank=60,fireBlastSurplus=150"

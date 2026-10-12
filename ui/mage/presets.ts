@@ -97,9 +97,10 @@ export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 // Frostfire Bolt as the filler. Scorch puts up 5 stacks of Fire Vulnerability and keeps them,
 // Pyroblast waits for 3 Heating Up stacks (a 1.5 sec cast), Fingers of Frost's Shatter crit goes
 // to the next bolts, Arcane Missiles takes a Missile Barrage proc. Ice Lance takes no spell power
-// (the client's coefficient is 0), so casting it on the charges costs 55 to 65. No Fire Blast:
-// over a 5 minute fight its mana is worth more as Frostfire Bolts, and it is within noise at 3
-// minutes. Evocation below 10% mana with at least 30 sec of the fight left. The knobs were
+// (the client's coefficient is 0), so casting it on the charges costs 55 to 65. Fire Blast only
+// goes with mana the fight can't use (above 150 a second of the fight left, +1.5 to +3.7); on
+// cooldown its mana is worth more as Frostfire Bolts. Evocation below 10% mana with at least 30
+// sec of the fight left, then rank 2 Frostfire Bolt when the mana won't last. The knobs were
 // searched over 120, 180 and 300 sec together, so one rotation serves every length. The searches
 // for one length at a time (on the first gear) wanted Fire Blast with Evocation at 30 to 40% and
 // no time limit, which was behind this one at every length, because Evocation's 8 sec channel late
@@ -150,7 +151,7 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
 // Frost (Ice Lance only because Fingers of Frost needs it). Frostfire Bolt is Fire and Frost at
 // once, so it gets Fire Power, Ignite and Critical Mass and also Ice Shards, Piercing Ice and
-// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 919.5 / 900.7 / 887.1
+// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 923.2 / 903.4 / 888.6
 // at 120 / 180 / 300 sec (Undead). Master of Elements 3
 // and Frost Channeling 3 are for the mana: on the first gear they cost 2.4 at 180 sec and were worth
 // 30 at 300.
@@ -317,8 +318,8 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // racials off. Undead (Touch of the Grave at 10% for mages) is best on every build and the best
 // Horde race. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana)
 // on Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome is ahead at 120 and 300 sec
-// (923.9 and 888.9 against Undead's 919.5 and 887.1).
-//   Frostfire: Undead 900.7, High Order 899.7, Orc 899.5, Troll 896.6, Gnome 895.2, Human 891.1.
+// (927.0 and 890.4 against Undead's 923.2 and 888.6).
+//   Frostfire: Undead 903.4, High Order 901.6, Orc 901.6, Troll 898.1, Gnome 896.5, Human 893.5.
 //   Fire:      Undead 884.2, Gnome 881.8, Orc 878.9, High Order 875.9, Human 873.8, Troll 872.0.
 //   Arcane:    Undead 852.9, Orc 843.7, Gnome 842.9, Troll 840.1, Human 836.9, High Order 833.9.
 //   Frost:     Undead 793.6, High Order 793.2, Troll 792.2, Gnome 792.1, Orc 791.2, Human 785.3.
