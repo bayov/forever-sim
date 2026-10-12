@@ -10,8 +10,10 @@ import (
 //
 // Each piece takes the place of an item of the Era Phase 1 DPS warrior BiS (ui/warrior/gear_sets/
 // phase_1.gear.json) at the Phase 1 epic budget of its slot: item level 66 (Molten Core tier), or the
-// Era item's level where that is higher. The budget is the standard all the classes' synthetic items
-// share, the one the shaman's items reproduce:
+// Era item's level where that is higher. Onyxia Tooth Pendant is item level 74 in Era (wowhead's Era
+// tooltip, the database here has 65). The back replaces Cape of the Black Baron (63) rather than the
+// list's Puissant Cape, which drops from Azuregos in Phase 2. The budget is the standard all the
+// classes' synthetic items share, the one the shaman's items reproduce:
 //
 //	(sum over the stats of (value * weight)^1.5)^(2/3) = (1.2 * ilvl - 36.4) * slot
 //
@@ -22,9 +24,9 @@ import (
 // and what its stats use:
 //
 //	Head       66  x1       42.8  42.7  str 8 agi 4 sta 5 hit 20 crit 28
-//	Neck       66  x0.5625  24.1  24.0  agi 7 sta 6 hit 10 crit 14
+//	Neck       74  x0.5625  29.5  29.1  agi 12 sta 10 hit 10 crit 14
 //	Shoulder   66  x0.77    33.0  32.5  str 17 ap 26 sta 11 hit 10
-//	Back       70  x0.5625  26.8  26.3  ap 30 agi 7 sta 9 hit 10
+//	Back       66  x0.5625  24.1  23.7  ap 26 agi 7 sta 7 hit 10
 //	Chest      66  x1       42.8  42.5  str 21 agi 15 sta 17 crit 14
 //	Wrist      66  x0.5625  24.1  23.2  str 20 sta 8
 //	Hands      66  x0.77    33.0  32.8  str 13 agi 14 sta 11 crit 14
@@ -36,14 +38,16 @@ import (
 //	Ranged     69  x0.32    14.8  14.3  agi 8 hit 10
 //	Main Hand  74  x0.42    22.0  21.5  str 9 agi 8 sta 7 hit 10
 //	Off Hand   70  x0.42    20.0  19.5  str 6 agi 5 sta 4 crit 14
-//	Two-Hand   77  x1       56.0  55.6  str 30 agi 17 sta 21 hit 10 crit 14
+//	Two-Hand   77  x1       56.0  55.7  str 26 agi 14 sta 19 crit 28
 //
 // The stat mix: Strength first, then Agility, Stamina on most pieces and attack power on the
 // shoulders, back and rings (the Era pieces there carry it). No Spirit, the warrior runs on Rage. The
-// armor, rings and bow carry 90 hit rating and 112 crit rating, and each weapon set adds 10 hit and 14
-// crit, so a set has 9% crit from gear and the 10% hit the Era Phase 1 BiS carries (Lionheart Helm,
-// Onyxia Tooth Pendant, Truestrike Shoulders, Puissant Cape, Onslaught Girdle, Bloodmail Boots, Band of
-// Accuria, Striker's Mark). The plate has Battlegear of Might's armor at item level 66, the waist
+// armor, rings and bow carry 90 hit rating and 112 crit rating. The Fury swords add 10 hit and 14 crit,
+// so the Fury set has the 10% hit the Era Phase 1 BiS carries (Lionheart Helm, Onyxia Tooth Pendant,
+// Truestrike Shoulders, Puissant Cape, Onslaught Girdle, Bloodmail Boots, Band of Accuria, Striker's
+// Mark), which a dual wielder's white swings still use, and 9% crit. The two-hander adds 28 crit and no
+// hit, because 9% hit caps a two-hander against a level 63 boss (8% miss and 1% hit suppression), so the
+// two-hand set has 9% hit and 10% crit. The plate has Battlegear of Might's armor at item level 66, the waist
 // Onslaught Girdle's.
 //
 // Arms and Fury share the armor, the rings and the bow, because their Era Phase 1 BiS lists are the same
@@ -72,13 +76,13 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 		SetName:        "Warrior Synthetic (Phase 1)",
 	},
-	// Neck, item level 66, in place of Onyxia Tooth Pendant (65, 18404).
+	// Neck, item level 74, in place of Onyxia Tooth Pendant (74, 18404).
 	{
 		Id: 991002, Name: "Warrior Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Agility: 7, stats.Stamina: 6}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Agility: 12, stats.Stamina: 10}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
-		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl: 74, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
 	// Shoulder, item level 66, in place of Truestrike Shoulders (61, 12927).
@@ -91,13 +95,13 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 		SetName:        "Warrior Synthetic (Phase 1)",
 	},
-	// Back, item level 70, in place of Puissant Cape (70, 18541).
+	// Back, item level 66, in place of Cape of the Black Baron (63, 13340).
 	{
-		Id: 991004, Name: "Warrior Synthetic Back (Phase 1)", Icon: "inv_misc_cape_06",
+		Id: 991004, Name: "Warrior Synthetic Back (Phase 1)", Icon: "inv_misc_cape_20",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:     stats.Stats{stats.AttackPower: 30, stats.Agility: 7, stats.Stamina: 9, stats.Armor: 54}.ToFloatArray(),
+		Stats:     stats.Stats{stats.AttackPower: 26, stats.Agility: 7, stats.Stamina: 7, stats.Armor: 45}.ToFloatArray(),
 		HitRating: 10,
-		Ilvl:      70, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
 	// Chest, item level 66, in place of Savage Gladiator Chain (57, 11726).
@@ -218,9 +222,9 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeTwoHand,
 		// Bonereaver's Edge damage and speed.
 		WeaponDamageMin: 206, WeaponDamageMax: 310, WeaponSpeed: 3.4,
-		Stats:     stats.Stats{stats.Strength: 30, stats.Agility: 17, stats.Stamina: 21}.ToFloatArray(),
-		HitRating: 10, CritRating: 14,
-		Ilvl: 77, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Stats:      stats.Stats{stats.Strength: 26, stats.Agility: 14, stats.Stamina: 19}.ToFloatArray(),
+		CritRating: 28,
+		Ilvl:       77, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
 }
