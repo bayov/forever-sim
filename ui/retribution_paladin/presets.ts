@@ -22,6 +22,7 @@ import {
 	SapperExplosive,
 	ShadowPowerBuff,
 	SpellPowerBuff,
+	SpiritElixir,
 	Stat,
 	StrengthBuff,
 	TotemWeaponBuff,
@@ -233,12 +234,17 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // Supreme Power is worth 65, Dragonbreath Chili 25, Shadow Oil 30 over no oil (18 over an
 // Elemental Sharpening Stone), Elixir of Greater Firepower 16 (Forever made it the Elixir of
 // Holy Power, +40 Holy, so it is for the seals, judgements and Consecration), Elixir of the
-// Mongoose 21, Juju Power 11 (Elixir of the Grizzly in its place is 11 behind), R.O.I.D.S. 9,
-// Greater Arcane Elixir 15, Goblin Land Mine 4, Nightfin Soup 2.4 over Grilled Squid, Elixir of
-// Shadow Power 1.5, Goblin Sapper 1.6, Elixir of Wisdom 2, Mageblood Potion 2.3 at 300 sec (a stand-in:
-// its recipe is a Zandalar Tribe one, not Phase 1, until Greater Mageblood Elixir is in the sim). The
-// Major Mana Potion and Demonic Rune are 39 and 28 at 300 sec. Flask of the Titans or Distilled
-// Wisdom give nothing here.
+// Mongoose 21, R.O.I.D.S. 9, Greater Arcane Elixir 15, Goblin Land Mine 4, Elixir of Shadow Power
+// 1.5, Goblin Sapper 1.6. The Major Mana Potion and Demonic Rune are 39 and 28 at 300 sec, and
+// the Major Spellblasting or Frenzy Potion in the potion's place lose 33 to 36 there. Flask of the
+// Titans or Distilled Wisdom give nothing here.
+//
+// With Forever's Phase 1 consumables in the sim (the shared consumables commit), the
+// stat-and-crit elixirs win their slots: Elixir of the Owl in place of Elixir of Wisdom (+22 at
+// 180 sec), Elixir of Sages (+15), Elixir of the Grizzly in place of Juju Power (+13), and
+// Lobster Stew over Nightfin Soup (+3, Mightfish Steak and Flank au Poivre are 3 to 4 behind).
+// Greater Mageblood Elixir takes the Mageblood Potion's place (the same at 180 sec, 3.3 at 300).
+// Together the Level 60 build goes from 964.3 to 1016.5 at 180 sec.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -248,14 +254,15 @@ export const DefaultConsumes = Consumes.create({
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodNightfinSoup,
-	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	food: Food.FoodLobsterStew,
+	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.ShadowOil,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
-	strengthBuff: StrengthBuff.JujuPower,
+	spiritElixir: SpiritElixir.ElixirOfSages,
+	strengthBuff: StrengthBuff.ElixirOfTheGrizzly,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
