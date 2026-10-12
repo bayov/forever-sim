@@ -20,6 +20,7 @@ func init() {
 				AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 				DefaultPotion:     proto.Potions_MightyRagePotion,
 				DragonBreathChili: true,
+				FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
 				Food:              proto.Food_FoodSmokedDesertDumpling,
 				MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
 				OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,

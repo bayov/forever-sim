@@ -6,6 +6,7 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
+	Explosive,
 	Food,
 	IndividualBuffs,
 	MobType,
@@ -196,8 +197,9 @@ const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStanc
 // Agility and 987.2 with Elixir of Giants. Taking Grizzly as well would add 15.3 on Fury and 11 on
 // Fury two-hand and Arms (both crit elixirs together are +73.2 over neither). The rest of the set we started from won its slot: Juju Might
 // (+13.9 over none), Smoked Desert Dumplings (+0.8 over Mightfish Steak, +7.2 over Flank au Poivre),
-// the Mighty Rage Potion (+9.5 over the Major Frenzy Potion), R.O.I.D.S. and Dragonbreath Chili. A
-// filler explosive costs a GCD for nothing. Flask of Supreme Power is +7, all of it Dragonbreath
+// the Mighty Rage Potion (+9.5 over the Major Frenzy Potion), R.O.I.D.S. and Dragonbreath Chili.
+// Goblin Land Mine between Sappers is +1.2 on Fury, +3.4 on Fury two-hand and +0.9 on Arms, a little
+// ahead of Thorium Grenades and Dense Dynamite. Flask of Supreme Power is +7, all of it Dragonbreath
 // Chili scaling with spell power, so it stays out.
 //
 // The presets only take what Phase 1 can get without a raid that is not open yet. Elemental
@@ -210,6 +212,7 @@ export const DefaultConsumes = Consumes.create({
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	food: Food.FoodSmokedDesertDumpling,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	offHandImbue: WeaponImbue.DenseSharpeningStone,
