@@ -234,19 +234,25 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // Supreme Power is worth 65, Dragonbreath Chili 25, Shadow Oil 30 over no oil (18 over an
 // Elemental Sharpening Stone), Elixir of Greater Firepower 16 (Forever made it the Elixir of
 // Holy Power, +40 Holy, so it is for the seals, judgements and Consecration), Elixir of the
-// Mongoose 21, R.O.I.D.S. 9, Greater Arcane Elixir 15, Goblin Land Mine 4, Elixir of Shadow Power
+// Mongoose 21 (before the one crit elixir rule), R.O.I.D.S. 9, Greater Arcane Elixir 15, Goblin Land Mine 4, Elixir of Shadow Power
 // 1.5, Goblin Sapper 1.6. The Major Mana Potion and Demonic Rune are 39 and 28 at 300 sec, and
 // the Major Spellblasting or Frenzy Potion in the potion's place lose 33 to 36 there. Flask of the
 // Titans or Distilled Wisdom give nothing here.
 //
-// With Forever's Phase 1 consumables in the sim (the shared consumables commit), the
-// stat-and-crit elixirs win their slots: Elixir of the Owl in place of Elixir of Wisdom (+22 at
-// 180 sec), Elixir of Sages (+15), Elixir of the Grizzly in place of Juju Power (+13), and
-// Lobster Stew over Nightfin Soup (+3, Mightfish Steak and Flank au Poivre are 3 to 4 behind).
-// Greater Mageblood Elixir takes the Mageblood Potion's place (the same at 180 sec, 3.3 at 300).
-// Together the Level 60 build goes from 964.3 to 1016.5 at 180 sec.
+// With Forever's Phase 1 consumables in the sim (the shared consumables commit): a character
+// takes at most one of the five 2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale, the
+// orchestrator's ruling, see notes.md). With Greater Agility, Juju Power, Greater Intellect and
+// Greater Spirit in the slots, the Level 60 build does 965.1 at 180 sec, and one crit elixir
+// adds 13 (Mongoose, Grizzly) to 15 (Owl, Sages, Whale, all the same since it is the crit that
+// counts). We take the Elixir of the Owl in the Intellect slot (980.5), on the Shock build too
+// (937.1, Sages is 0.5 ahead there, inside the noise). Each further crit elixir would add about
+// 14 on the Level 60 build and 10 on Shock: all four together were 1022.3 and 967.7. Elixir of
+// Giants is 1 to 2 behind Juju Power, Greater Spirit is worth 1.3 on Shock and nothing on the
+// twist build, Greater Agility 9 and 5. Lobster Stew beats Nightfin Soup by 3 (Mightfish Steak
+// and Flank au Poivre are 3 to 4 behind), and Greater Mageblood Elixir takes the Mageblood
+// Potion's place (the same at 180 sec, 3.3 at 300).
 export const DefaultConsumes = Consumes.create({
-	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	agilityElixir: AgilityElixir.ElixirOfGreaterAgility,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
@@ -261,8 +267,8 @@ export const DefaultConsumes = Consumes.create({
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
-	spiritElixir: SpiritElixir.ElixirOfSages,
-	strengthBuff: StrengthBuff.ElixirOfTheGrizzly,
+	spiritElixir: SpiritElixir.ElixirOfGreaterSpirit,
+	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 

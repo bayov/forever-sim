@@ -22,7 +22,7 @@ func init() {
 		// set at 180 and 300 sec (see the Level 60 consumes in ui/retribution_paladin/presets.ts).
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
-				AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
+				AgilityElixir:     proto.AgilityElixir_ElixirOfGreaterAgility,
 				AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 				DefaultPotion:     proto.Potions_MajorManaPotion,
 				DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
@@ -37,8 +37,8 @@ func init() {
 				SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
 				ShadowPowerBuff:   proto.ShadowPowerBuff_ElixirOfShadowPower,
 				SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
-				SpiritElixir:      proto.SpiritElixir_ElixirOfSages,
-				StrengthBuff:      proto.StrengthBuff_ElixirOfTheGrizzly,
+				SpiritElixir:      proto.SpiritElixir_ElixirOfGreaterSpirit,
+				StrengthBuff:      proto.StrengthBuff_JujuPower,
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
 			}
 		},
