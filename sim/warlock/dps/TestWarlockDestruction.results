@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 506
   final_stats: 452
   final_stats: 393
-  final_stats: 791
+  final_stats: 797
   final_stats: 0
   final_stats: 10
   final_stats: 0
@@ -53,7 +53,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.50488
+  weights: -0.50694
   weights: 0
   weights: 0.86054
   weights: 0
@@ -63,8 +63,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 12.70744
-  weights: 9.86531
+  weights: 12.76227
+  weights: 9.90836
   weights: 0
   weights: 0
   weights: 0
@@ -99,15 +99,15 @@ stat_weights_results: {
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-Champion'sDreadgear"
  value: {
-  dps: 1152.18601
-  tps: 863.2576
+  dps: 1157.2024
+  tps: 867.27071
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-DeathmistRaiment"
  value: {
-  dps: 1086.34765
-  tps: 809.38686
+  dps: 1091.39093
+  tps: 813.42148
  }
 }
 dps_results: {
@@ -120,133 +120,133 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1259.64319
-  tps: 944.21202
+  dps: 1264.92835
+  tps: 948.44015
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 1091.07788
-  tps: 808.00059
+  dps: 1096.11201
+  tps: 812.0279
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1184.45859
-  tps: 888.76902
+  dps: 1189.39665
+  tps: 892.71947
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-Hazza'rah'sCharmofDestruction-19957"
  value: {
-  dps: 1304.56175
-  tps: 986.03513
+  dps: 1309.82244
+  tps: 990.24368
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 939.20485
-  tps: 692.04537
+  dps: 943.97855
+  tps: 695.86433
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-LieutenantCommander'sDreadgear"
  value: {
-  dps: 1152.18601
-  tps: 863.2576
+  dps: 1157.2024
+  tps: 867.27071
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-NemesisRaiment"
  value: {
-  dps: 1170.33191
-  tps: 766.49533
+  dps: 1175.36159
+  tps: 769.97597
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1282.58034
-  tps: 891.37777
+  dps: 1287.94851
+  tps: 895.32811
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-TheBlackBook-19337"
  value: {
-  dps: 1306.46169
-  tps: 977.11344
+  dps: 1311.67805
+  tps: 981.28652
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1323.02712
-  tps: 1000.65805
+  dps: 1328.27845
+  tps: 1004.85912
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1184.45859
-  tps: 888.76902
+  dps: 1189.39665
+  tps: 892.71947
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-Average-Default"
  value: {
-  dps: 1324.06268
-  tps: 1001.33343
+  dps: 1329.25979
+  tps: 1005.49112
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Warlock-level60_destruction-FullBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 1328.13531
-  tps: 1800.69238
+  dps: 1333.34488
+  tps: 1804.86004
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Warlock-level60_destruction-FullBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 1328.13531
-  tps: 1004.93313
+  dps: 1333.34488
+  tps: 1009.10078
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Warlock-level60_destruction-FullBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 1301.03979
-  tps: 962.52235
+  dps: 1306.15931
+  tps: 966.61798
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Warlock-level60_destruction-NoBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 793.51367
-  tps: 1551.50181
+  dps: 796.73513
+  tps: 1554.07898
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Warlock-level60_destruction-NoBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 793.51367
-  tps: 646.46297
+  dps: 796.73513
+  tps: 649.04014
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Human-level60_phase1_synthetic-Destruction Warlock-level60_destruction-NoBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 808.07699
-  tps: 634.45907
+  dps: 811.38766
+  tps: 637.10761
  }
 }
 dps_results: {
  key: "TestWarlockDestruction-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1328.98622
-  tps: 1005.57471
+  dps: 1334.20258
+  tps: 1009.74779
  }
 }
