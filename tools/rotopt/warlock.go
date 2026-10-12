@@ -182,12 +182,15 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	if k["soulLink"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(lockSoulLink, 4.5))
 	}
-	opener := lockShadowBolt
 	switch k["filler"] {
+	case 2:
+		// Incinerate wants Immolate on the target first.
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockImmolate, 2))
 	case 3:
-		opener = lockSearingPain
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockSearingPain, 2))
+	default:
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lockShadowBolt, 3))
 	}
-	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 3))
 	return rot
 }
 

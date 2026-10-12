@@ -46,10 +46,31 @@ func TestWarlockAffliction(t *testing.T) {
 	warlockSuite(t, TalentsAffliction, "level60_affliction", "Affliction Warlock", SuccubusWarlock)
 }
 
+func TestWarlockDestructionFire(t *testing.T) {
+	warlockSuite(t, TalentsDestructionFire, "level60_destruction_fire", "Destruction Fire Warlock", FireWarlock)
+}
+
+func TestWarlockAfflictionDoT(t *testing.T) {
+	warlockSuite(t, TalentsAfflictionDoT, "level60_affliction_dot", "Affliction DoT Warlock", SuccubusWarlock)
+}
+
 // Forever tree (tools/forever_talents/client/warlock.json).
 var TalentsDemonology = "011-0305003131221001351-0550005003"
 var TalentsDestruction = "25510000035--055030500310035"
 var TalentsAffliction = "2553000003520005--0550305003"
+var TalentsDestructionFire = "252-0050003201-0050345003101351"
+var TalentsAfflictionDoT = "05550320035201351-0005003-03"
+
+// Sacrifices the Succubus before the pull for 15% Fire damage and keeps no demon out.
+var FireWarlock = &proto.Player_Warlock{
+	Warlock: &proto.Warlock{
+		Options: &proto.WarlockOptions{
+			Armor:         proto.WarlockOptions_DemonArmor,
+			SacrificedPet: proto.WarlockOptions_Succubus,
+			WeaponImbue:   proto.WarlockOptions_Firestone,
+		},
+	},
+}
 
 // Sacrifices the Imp before the pull and keeps the Succubus out, which Demonic Pact allows.
 var DemonologyWarlock = &proto.Player_Warlock{

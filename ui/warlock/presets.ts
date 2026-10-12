@@ -32,8 +32,10 @@ import {
 import { Stats } from '../core/proto_utils/stats.js';
 // apls
 import Level60AfflictionAPL from './apls/level60_affliction.apl.json';
+import Level60AfflictionDoTAPL from './apls/level60_affliction_dot.apl.json';
 import Level60DemonologyAPL from './apls/level60_demonology.apl.json';
 import Level60DestructionAPL from './apls/level60_destruction.apl.json';
+import Level60DestructionFireAPL from './apls/level60_destruction_fire.apl.json';
 import BasicRotation from './apls/rotation.apl.json';
 // gear
 import BlankGear from './gear_sets/blank.gear.json';
@@ -94,9 +96,30 @@ export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Leve
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation for the Affliction talents.',
 });
+// Destruction fire: Incinerate while Immolate is up (25% more), Conflagrate on cooldown, Immolate
+// opens the fight and is recast 2 sec before it runs out.
+export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation('Level 60 Destruction Fire', Level60DestructionFireAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
+});
+// Affliction damage over time: Siphon Life on top, and Wrack while Corruption and Bane of Agony are
+// both up (its 10% only counts on those two, so in practice at the end of the fight, when Bane of
+// Doom would not land). Wrack whenever the damage over time spells are up was 17 behind, never
+// casting it 0.5 ahead (inside the noise).
+export const RotationLevel60AfflictionDoT = PresetUtils.makePresetAPLRotation('Level 60 Affliction DoT', Level60AfflictionDoTAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 rotation with Siphon Life and Wrack, for the Affliction damage over time talents.',
+});
 export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
 
-export const APLPresets = [RotationLevel60Demonology, RotationLevel60Destruction, RotationLevel60Affliction, RotationBasic];
+export const APLPresets = [
+	RotationLevel60Demonology,
+	RotationLevel60Destruction,
+	RotationLevel60Affliction,
+	RotationLevel60DestructionFire,
+	RotationLevel60AfflictionDoT,
+	RotationBasic,
+];
 
 export const DefaultAPL = RotationLevel60Demonology;
 
@@ -132,7 +155,33 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	{ group: 'Level 60', tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.' },
 );
 
-export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction];
+// Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone and Shadow and Flame,
+// with the Succubus sacrificed before the pull for 15% Fire damage and no demon out, and
+// Firestone. Searched with Incinerate and Conflagrate kept (-require). The Succubus out instead was
+// 17 behind, the Imp 67.
+export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
+	'Level 60 Destruction Fire',
+	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
+	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for Fire damage.' },
+);
+// Affliction damage over time, its own spec: everything down to Wrack, with Siphon Life, Soul
+// Siphon, Improved Drains and Malediction. Searched with Wrack and Siphon Life kept (-require).
+// Drain Life as the filler was 55 behind Shadow Bolt and Drain Soul 162, Drain Soul only below 25%
+// of the boss's health lost too. The client gives the drains 10% a tick (Drain Soul 10% every 3
+// sec), so Shadow Bolt stays the filler.
+export const TalentsLevel60AfflictionDoT = PresetUtils.makePresetTalents(
+	'Level 60 Affliction DoT',
+	SavedTalents.create({ talentsString: '05550320035201351-0005003-03' }),
+	{ group: 'Level 60', tooltip: 'Siphon Life, Soul Siphon and Wrack.' },
+);
+
+export const TalentPresets = [
+	TalentsLevel60Demonology,
+	TalentsLevel60Destruction,
+	TalentsLevel60Affliction,
+	TalentsLevel60DestructionFire,
+	TalentsLevel60AfflictionDoT,
+];
 
 export const DefaultTalents = TalentsLevel60Demonology;
 
@@ -155,6 +204,12 @@ const PresetBuildOptionsDemonology = {
 	summon: Summon.Succubus,
 	sacrificedPet: Summon.Imp,
 	weaponImbue: WarlockWeaponImbue.Spellstone,
+};
+const PresetBuildOptionsFire = {
+	armor: Armor.DemonArmor,
+	summon: Summon.NoSummon,
+	sacrificedPet: Summon.Succubus,
+	weaponImbue: WarlockWeaponImbue.Firestone,
 };
 const PresetBuildOptionsSuccubus = {
 	armor: Armor.DemonArmor,
@@ -337,4 +392,37 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 	options: PresetBuildOptionsSuccubus,
 });
 
-export const PresetBuilds = [PresetBuildLevel60Demonology, PresetBuildLevel60Destruction, PresetBuildLevel60Affliction];
+export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Human Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed and no demon out, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60DestructionFire,
+	rotation: RotationLevel60DestructionFire,
+	encounter: EncounterLevel60,
+	race: Race.RaceHuman,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFire,
+});
+export const PresetBuildLevel60AfflictionDoT = PresetUtils.makePresetBuild('Level 60 Affliction DoT', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Human Affliction damage over time warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60AfflictionDoT,
+	rotation: RotationLevel60AfflictionDoT,
+	encounter: EncounterLevel60,
+	race: Race.RaceHuman,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsSuccubus,
+});
+
+export const PresetBuilds = [
+	PresetBuildLevel60Demonology,
+	PresetBuildLevel60Destruction,
+	PresetBuildLevel60Affliction,
+	PresetBuildLevel60DestructionFire,
+	PresetBuildLevel60AfflictionDoT,
+];
