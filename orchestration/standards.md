@@ -25,7 +25,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 12. The shared mksettings raid and encounter (level 63, 3731 armor, Humanoid; 120 / 180 / 300 sec); each spec in the group it would really be in. Curse of the Elements covers all magic schools; no Curse of Shadow; Improved Scorch / Winter's Chill only for the mage; Shadow Weaving only for the priest.
 13. Pre-pull is allowed for everyone (buffs, potions, totems, imbues, pets, pre-casts), but damage only counts from time 0, so pre-casts are timed to land at 0 or later.
-14. Pets: hunter pets don't get player buffs (Forever hunter rework); warlock demons do.
+14. Pets: hunter pets don't get player buffs (Forever hunter rework). Warlock demons get the raid-wide buffs (Mark of the Wild, Fortitude, Arcane Intellect, Blessings, target debuffs) but only the party buffs of the warlock's own group: the shared raid puts the warlock in a caster group, so no Battle Shout, Trueshot Aura or Leader of the Pack on the demon (11:40 ruling).
 15. Final numbers at 20,000+ iterations from binaries rebuilt after the last gear or DB change.
 
 ## Races
