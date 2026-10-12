@@ -117,7 +117,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecShadowPriest, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60Holy],
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60Holy, Presets.PresetBuildLevel60Smite],
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		rotations: [...Presets.APLPresets[Phase.Phase1]],
 		gear: [...Presets.GearPresets[Phase.Phase1]],
