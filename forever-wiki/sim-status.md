@@ -153,23 +153,23 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 Both DPS playstyles have their own gear, talents, rotation and build: Balance (moonkin) and Feral (cat). A Wrath-only moonkin rotation with its own talents is a second Balance preset. Numbers are the shared Level 60 boss and raid, 40,000 iterations (standard error 0.1 to 0.2), under the cross-class standards: the shared item level table, hit to the cap, 2 piece set bonuses only, the best Phase 1 enchants, no trinkets (Forever removed the old dungeon trinkets and the sim does not model its launch ones yet), at most one of the five +2% crit elixirs, and other elixirs in different slots stacking.
 
-**Balance.** Gear: `tools/database/forever_synthetic_items_druid.go` 998001-998013, 465 spell power, 141 Intellect, 110 hit rating (the 16% cap with Nature's Reach and the 2 piece; hit to the cap sims best at budget prices) and 56 crit rating, the staff at the casters' weapon budget with Spellblasting, Grovekeeper Eclipse on two pieces (the 5 piece would add 12.6) and Swarming Idol (3.3). Talents `5532220115501351--505` (41 Balance and Naturalist 5). Rotation (`ui/balance_druid/apls/level60.apl.json`): a Starfire 3 sec before the pull that lands at 0, Insect Swarm and Moonfire whenever they are down, a free Starfire on Clearcasting, then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in flight, Starfire otherwise. At 300 sec the plain Wrath and Starfire weave is 12 ahead, because the mana runs out. The Wrath-only rotation (`level60_wrath.apl.json`, talents `5502220115501351-03-505` with Heart of the Wild for Moonglow) is 751.5 at 180 sec, 8.5% behind.
+**Balance.** Gear: `tools/database/forever_synthetic_items_druid.go` 998001-998013, 465 spell power, 141 Intellect, 110 hit rating (the 16% cap with Nature's Reach and the 2 piece; hit to the cap sims best at budget prices) and 56 crit rating, the staff at the casters' weapon budget with Spellblasting, Grovekeeper Eclipse on two pieces (the 5 piece would add 12.6) and Swarming Idol (3.3). Talents `5532220115501351--505` (41 Balance and Naturalist 5). Rotation (`ui/balance_druid/apls/level60.apl.json`): a Starfire 3 sec before the pull that lands at 0, Insect Swarm and Moonfire whenever they are down, a free Starfire on Clearcasting, then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in flight, Starfire otherwise. At 300 sec the plain Wrath and Starfire weave is 16 ahead, because the mana runs out. The Wrath-only rotation (`level60_wrath.apl.json`, talents `5502220115501351-03-505` with Heart of the Wild for Moonglow) is 751.5 at 180 sec, 8.4% behind.
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 826.3 | 821.3 | 807.9 | best overall and Alliance |
-| Tauren | 816.7 | 813.4 | 800.4 | best Horde |
-| Windshaper Skyborne | 806.2 | 807.8 | 796.9 | |
-| High Order Skyborne | 806.1 | 807.6 | 796.6 | |
+| Night Elf | 826.3 | 820.4 | 798.9 | best overall and Alliance |
+| Tauren | 816.6 | 812.5 | 791.4 | best Horde |
+| Windshaper Skyborne | 806.0 | 806.6 | 786.9 | |
+| High Order Skyborne | 805.9 | 806.5 | 786.4 | |
 
-**Feral.** Gear: 998101-998113, 178 Agility, 170 Strength, 76 attack power, 90 hit rating (the 9% cap) and 56 crit rating, the two-hander at item level 76, Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, Shifting Power at 50 Energy or less, Tiger's Fury and Berserk on cooldown, no Rake (keeping it up costs 33).
+**Feral.** Gear: 998101-998113, 178 Agility, 170 Strength, 76 attack power, 90 hit rating (the 9% cap) and 56 crit rating, the two-hander at item level 76, Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Tiger's Fury and Berserk on cooldown, no Rake (keeping it up costs 33).
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 665.5 | 659.3 | 647.1 | best overall and Alliance |
-| High Order Skyborne | 663.6 | 657.8 | 646.0 | |
-| Windshaper Skyborne | 663.6 | 657.8 | 646.2 | best Horde |
-| Tauren | 660.9 | 655.2 | 643.1 | |
+| Night Elf | 666.1 | 659.8 | 647.8 | best overall and Alliance |
+| High Order Skyborne | 664.2 | 658.2 | 646.8 | |
+| Windshaper Skyborne | 664.2 | 658.2 | 646.9 | best Horde |
+| Tauren | 661.6 | 655.7 | 643.8 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 

@@ -86,8 +86,8 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 
 // The tools/rotopt druid_feral template's best (druid_presets.sh) on the synthetic set and the
 // Level 60 talents: Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip
-// has 4 sec left, Shred, Shifting Power at 50 Energy or less, Tiger's Fury and Berserk on
-// cooldown. No Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend
+// has 4 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due (its
+// Energy goes into Shreds, 0.6 to 0.9 ahead), Tiger's Fury and Berserk on cooldown. No Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend
 // and Tear's bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
 // points is 1 to 2 behind. The search kept that at 120 and 180 sec, and Shifting Power at 40
 // Energy is 1 ahead at 300 sec (2.9 behind at 180).
@@ -268,14 +268,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 665.5 / 659.3 / 647.1 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 666.1 / 659.8 / 647.8 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             665.5    659.3    647.1   best overall and Alliance
-//	High Order Skyborne   663.6    657.8    646.0
-//	Windshaper Skyborne   663.6    657.8    646.2   best Horde
-//	Tauren                660.9    655.2    643.1
+//	Night Elf             666.1    659.8    647.8   best overall and Alliance
+//	High Order Skyborne   664.2    658.2    646.8
+//	Windshaper Skyborne   664.2    658.2    646.9   best Horde
+//	Tauren                661.6    655.7    643.8
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.

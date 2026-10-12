@@ -92,10 +92,10 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // not use it up), then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in
 // flight, Starfire otherwise. That spends every Eclipse charge (each makes a Starfire 0.5 sec
 // shorter) without throwing Wraths at a full stack. The knob search kept it at 120 and 180 sec
-// (821.2 at 180, 20,000 iterations). Dropping Moonfire costs 54 DPS at 180 sec, Insect Swarm
+// (820.4 at 180 sec, 40,000 iterations). Dropping Moonfire costs 54 DPS at 180 sec, Insect Swarm
 // 61, and casting only Starfire 73. Innervate is left to its own trigger (at 500 mana), 2
 // ahead of casting it at 40% mana. At 300 sec the mana runs out: the old weave (Wrath until
-// Eclipse has a charge) without the Clearcasting Starfire is 12 ahead there.
+// Eclipse has a charge) without the Clearcasting Starfire is 16 ahead there.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -104,7 +104,7 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
 // before the pull, for a moonkin that would rather not weave: 751.0 / 751.5 / 751.9 at 120 /
-// 180 / 300 sec, 8.5% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath).
+// 180 / 300 sec, 8.4% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath).
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Level 60',
@@ -274,14 +274,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 826.3 / 821.3 / 807.9 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 826.3 / 820.4 / 798.9 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             826.3    821.3    807.9   best overall and Alliance
-//	Tauren                816.7    813.4    800.4   best Horde (its 1% hit is past the cap)
-//	Windshaper Skyborne   806.2    807.8    796.9
-//	High Order Skyborne   806.1    807.6    796.6
+//	Night Elf             826.3    820.4    798.9   best overall and Alliance
+//	Tauren                816.6    812.5    791.4   best Horde (its 1% hit is past the cap)
+//	Windshaper Skyborne   806.0    806.6    786.9
+//	High Order Skyborne   805.9    806.5    786.4
 //
 // No racial goes by weapon type, so the staff changes nothing here, and the ranking with
 // weapon type racials off is the same.
