@@ -189,9 +189,12 @@ const PresetBuildOptionsFury = { queueDelay: 250, startingRage: 0, shout: Warrio
 const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStance.WarriorStanceBattle };
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot on
-// the Level 60 Fury build (Undead) at 180 sec. Forever's Elixir of the Grizzly (25 Strength and 2%
-// crit) is +16.4 over Juju Power, and it stacks with the Elixir of the Mongoose: the two crit elixirs
-// together are +73.2 over neither. The rest of the set we started from won its slot: Juju Might
+// the Level 60 Fury build (Undead) at 180 sec. A character takes at most one of Forever's five +2%
+// crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale; the client lists them as one elixir in role
+// variants). Mongoose with Forever's Elixir of Ferocity (18 Strength and 18 Agility) is the best pair
+// on all three builds: Fury 992.7, against 991.5 with Juju Power, 987.3 for Grizzly with Greater
+// Agility and 987.2 with Elixir of Giants. Taking Grizzly as well would add 15.3 on Fury and 11 on
+// Fury two-hand and Arms (both crit elixirs together are +73.2 over neither). The rest of the set we started from won its slot: Juju Might
 // (+13.9 over none), Smoked Desert Dumplings (+0.8 over Mightfish Steak, +7.2 over Flank au Poivre),
 // the Mighty Rage Potion (+9.5 over the Major Frenzy Potion), R.O.I.D.S. and Dragonbreath Chili. A
 // filler explosive costs a GCD for nothing. Flask of Supreme Power is +7, all of it Dragonbreath
@@ -211,7 +214,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	offHandImbue: WeaponImbue.DenseSharpeningStone,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
-	strengthBuff: StrengthBuff.ElixirOfTheGrizzly,
+	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
