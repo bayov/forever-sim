@@ -17,8 +17,8 @@ func (warrior *Warrior) registerSlamSpell() {
 
 	// Forever gives Slam an 18 sec cooldown, and Improved Slam takes 3 sec off it (client
 	// 70338: category cooldown 18000 on every rank, and effect 3 of spell 12862 is -3000 with no
-	// rank curve, so 3 sec at either rank. ForeverChanges reads it as 3 sec a point).
-	// TODO: rank 2 of Improved Slam may take 6 sec off, see notes.md.
+	// rank curve, so 3 sec at either rank. ForeverChanges reads it as 3 sec a point, but the trait
+	// curves override only the effects they name).
 	var cooldown core.Cooldown
 	if warrior.Env.IsForever() {
 		cooldown = core.Cooldown{
