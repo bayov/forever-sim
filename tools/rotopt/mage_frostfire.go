@@ -21,6 +21,9 @@ func (mageFrostfire) Knobs() []Knob {
 		Knob{Name: "pyroStacks", Default: 3, Min: 0, Max: 3, Step: 1},
 		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 the last one.
 		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 2, Step: 1},
+		// Pyroblast only above this much mana, 0 any time. A Pyroblast costs more than the filler,
+		// so a long fight saves it for the Heating Up stacks the mana allows.
+		Knob{Name: "pyroMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		// Arcane Missiles on a Missile Barrage proc.
 		Knob{Name: "missileBarrage", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Fire Blast on cooldown above this much mana, 0 never.
@@ -39,7 +42,7 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 			"Scorch up to 5 stacks of Fire Vulnerability, and before it runs out."))
 	}
 	if p := k["pyroStacks"]; p > 0 {
-		items = append(items, cast(s.pyroblast, known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), "Pyroblast once Heating Up has cut its cast enough."))
+		items = append(items, cast(s.pyroblast, and(known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), manaAbove(k["pyroMana"])), "Pyroblast once Heating Up has cut its cast enough."))
 	}
 	switch k["iceLance"] {
 	case 1:

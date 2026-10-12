@@ -25,6 +25,9 @@ func (mageFire) Knobs() []Knob {
 		Knob{Name: "fireBlastMana", Default: 20, Min: 0, Max: 80, Step: 20},
 		// Fire Blast only while Heating Up is below 3 stacks, so its crits are not wasted.
 		Knob{Name: "fireBlastHeating", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Pyroblast only above this much mana, 0 any time. A Pyroblast costs more than the filler,
+		// so a long fight saves it for the Heating Up stacks the mana allows.
+		Knob{Name: "pyroMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		// Arcane Missiles on a Missile Barrage proc (Fireball has 20%), for builds with the
 		// Arcane talent.
 		Knob{Name: "missileBarrage", Default: 1, Min: 0, Max: 1, Step: 1},
@@ -45,7 +48,7 @@ func (mageFire) Build(k Knobs) *proto.APLRotation {
 	}
 	switch p := k["pyroStacks"]; {
 	case p >= 1 && p <= 3:
-		items = append(items, cast(s.pyroblast, known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), "Pyroblast once Heating Up has cut its cast enough."))
+		items = append(items, cast(s.pyroblast, and(known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), manaAbove(k["pyroMana"])), "Pyroblast once Heating Up has cut its cast enough."))
 	}
 	if k["missileBarrage"] == 1 {
 		items = append(items, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))

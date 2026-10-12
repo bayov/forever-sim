@@ -71,6 +71,14 @@ func known(aura *proto.ActionID, v value) value {
 	return and(auraIsKnown(aura), v)
 }
 
+// manaAbove is a mana floor in percent, nil (no condition) at 0.
+func manaAbove(percent float64) value {
+	if percent <= 0 {
+		return nil
+	}
+	return ge(currentManaPercent(), num(percent/100))
+}
+
 // mageCommonKnobs are the mana and cooldown knobs of every mage template.
 func mageCommonKnobs() []Knob {
 	return []Knob{
