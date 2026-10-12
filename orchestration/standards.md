@@ -10,7 +10,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 4. Hit (fairness P2): every set optimises hit against its other stats at budget prices; in practice hit up to the spec's cap against a level 63 boss (yellow cap for melee, 16% spell miss for casters), counting talents and the 2-piece bonus, and no over-cap.
 5. Spirit about 10% of the set for mana users, none for rage and energy users.
 6. Set bonuses (fairness P3): the Level 60 presets carry 2-piece bonuses only. Each class keeps its real Forever Tier 1 / crafted set on exactly two synthetic pieces so only the 2-piece is live (same shape for everyone: about 1% haste or 1% hit). Report what the 4- and 5-piece bonuses would add in a separate line in the presets comment, wiki and PR.
-7. Every slot carries the best Phase 1 enchant that exists for it, the Forever necklace enchants included; no item or enchant whose only source is an unopened raid (Arcanum of Focus is Zandalar: use the best non-raid head enchant, e.g. Voracity).
+7. Every slot carries the best Phase 1 enchant that exists for it, the Forever necklace enchants included; no item or enchant whose only source is an unopened raid (Arcanum of Focus is Zandalar: use the best non-raid head enchant, e.g. Voracity; Enchant Weapon - Spell Power's formula 18259 is Molten Core only: the non-raid caster stat option is Mighty Intellect, Thorium Brotherhood). Forever's Enchant Weapon - Revelation is allowed where it's best, but its proc model is a guess, so each PR also states the number with the best stat enchant. Non-raid caster picks found so far: Mystic Thick Armor Kit (+5 SP) on chest / hands / legs / feet, Lesser Healing Power (6 spell damage) on wrist; no Phase 1 caster shoulder or back enchant.
 
 ## Consumables
 
