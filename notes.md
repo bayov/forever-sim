@@ -48,6 +48,30 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Holy Power scope.
 * Swift Judgement and Pursuit of Justice are not implemented.
 
+## Warrior
+
+* (nothing yet)
+
+## Hunter
+
+* (nothing yet)
+
+## Priest
+
+* (nothing yet)
+
+## Mage
+
+* (nothing yet)
+
+## Warlock
+
+* (nothing yet)
+
+## Druid
+
+* (nothing yet)
+
 ## At 60
 
 Things we can only check on release, because the beta stops at level 30.

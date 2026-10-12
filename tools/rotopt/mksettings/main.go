@@ -20,6 +20,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -29,14 +30,14 @@ import (
 )
 
 func main() {
-	spec := flag.String("spec", "rogue", "rogue, enh or ret")
+	spec := flag.String("spec", "rogue", "one of the specs registered in spec_*.go: "+strings.Join(specNames(), ", "))
 	gear := flag.String("gear", "", "gear set name under ui/<spec>/gear_sets")
 	apl := flag.String("apl", "", "rotation name under ui/<spec>/apls")
 	talents := flag.String("talents", "", "talent string")
 	race := flag.String("race", "Human", "race name as in the proto enum, without the Race prefix")
 	level := flag.Int("level", 60, "player level, 60, 20 or 30")
 	bonusTalents := flag.Int("bonus-talents", 0, "extra talent points beyond the level's, 5 for the Forever beta at level 20")
-	blessing := flag.String("blessing", "kings", "the ret paladin's own blessing at level 20: kings, might or wisdom")
+	blessing := flag.String("blessing", "kings", "the ret paladin's own blessing below level 60: kings, might or wisdom")
 	targets := flag.Int("targets", 1, "number of enemies, copies of the level's target")
 	duration := flag.Float64("duration", 0, "fight length in seconds, 300 at level 60 and 60 at level 20 when left out")
 	out := flag.String("out", "", "file to write, stdout when empty")
@@ -90,87 +91,18 @@ func main() {
 		ThunderClap:            improved,
 	}
 
-	var uiDir string
-	var consumes *proto.Consumes
-	var withSpec func(*proto.Player)
-	switch *spec {
-	case "rogue":
-		uiDir = "ui/rogue"
-		// The rogue is in a melee group with a shaman. Enhancing Totems is not in Forever's tree,
-		// so the totems are the regular ones.
-		raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
-		raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
-		consumes = &proto.Consumes{
-			AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
-			AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
-			DefaultConjured:   proto.Conjured_ConjuredRogueThistleTea,
-			DragonBreathChili: true,
-			Flask:             proto.Flask_FlaskOfSupremePower,
-			Food:              proto.Food_FoodGrilledSquid,
-			MainHandImbue:     proto.WeaponImbue_InstantPoison,
-			OffHandImbue:      proto.WeaponImbue_DeadlyPoison,
-			SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
-			StrengthBuff:      proto.StrengthBuff_JujuPower,
-			ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
-			SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
-		}
-		withSpec = func(player *proto.Player) {
-			player.Class = proto.Class_ClassRogue
-			player.Spec = &proto.Player_Rogue{Rogue: &proto.Rogue{Options: &proto.RogueOptions{}}}
-		}
-	case "enh":
-		uiDir = "ui/enhancement_shaman"
-		consumes = &proto.Consumes{
-			AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
-			AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
-			DefaultPotion:     proto.Potions_MajorManaPotion,
-			DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
-			DragonBreathChili: true,
-			FirePowerBuff:     proto.FirePowerBuff_ElixirOfFirepower,
-			Flask:             proto.Flask_FlaskOfSupremePower,
-			Food:              proto.Food_FoodBlessSunfruit,
-			MainHandImbue:     proto.WeaponImbue_WindfuryWeapon,
-			ManaRegenElixir:   proto.ManaRegenElixir_MagebloodPotion,
-			OffHandImbue:      proto.WeaponImbue_WindfuryWeapon,
-			SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
-			SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
-			StrengthBuff:      proto.StrengthBuff_JujuPower,
-			ZanzaBuff:         proto.ZanzaBuff_ROIDS,
-		}
-		withSpec = func(player *proto.Player) {
-			player.Class = proto.Class_ClassShaman
-			player.Spec = &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
-				Options: &proto.EnhancementShaman_Options{SyncType: proto.ShamanSyncType_Auto},
-			}}
-		}
-	case "ret":
-		uiDir = "ui/retribution_paladin"
-		// The paladin is in a melee group with a shaman. Enhancing Totems is not in Forever's tree,
-		// so the totems are the regular ones.
-		raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
-		raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
-		consumes = &proto.Consumes{
-			AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
-			AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
-			DefaultPotion:     proto.Potions_MajorManaPotion,
-			DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
-			DragonBreathChili: true,
-			Flask:             proto.Flask_FlaskOfSupremePower,
-			Food:              proto.Food_FoodBlessSunfruit,
-			SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
-			SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
-			StrengthBuff:      proto.StrengthBuff_JujuPower,
-			ZanzaBuff:         proto.ZanzaBuff_ROIDS,
-		}
-		withSpec = func(player *proto.Player) {
-			player.Class = proto.Class_ClassPaladin
-			player.Spec = &proto.Player_RetributionPaladin{RetributionPaladin: &proto.RetributionPaladin{
-				Options: &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness, Aura: proto.PaladinAura_RetributionAura},
-			}}
-		}
-	default:
-		fmt.Fprintf(os.Stderr, "unknown spec %q\n", *spec)
+	setup, ok := specs[*spec]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "unknown spec %q, want one of %s\n", *spec, strings.Join(specNames(), ", "))
 		os.Exit(1)
+	}
+	if setup.raid != nil {
+		setup.raid(raidBuffs, individualBuffs, debuffs)
+	}
+	consumes := setup.consumes()
+	partyBuffs := &proto.PartyBuffs{}
+	if setup.partyBuffs != nil {
+		partyBuffs = setup.partyBuffs()
 	}
 
 	encounter := &proto.Encounter{
@@ -208,33 +140,22 @@ func main() {
 			ExecuteProportion_35: 0.35,
 			Targets:              []*proto.Target{lowLevelTarget(int32(*level))},
 		}
-		switch *spec {
-		case "rogue":
-			consumes = &proto.Consumes{
-				DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,
-				MainHandImbue:   proto.WeaponImbue_InstantPoison,
-				OffHandImbue:    proto.WeaponImbue_InstantPoison,
-			}
-		case "enh":
-			consumes = &proto.Consumes{MainHandImbue: proto.WeaponImbue_RockbiterWeapon}
-			tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
-		case "ret":
-			// The paladin's own blessing, one at a time, where everyone else assumes a
-			// paladin in the group and takes Kings. Kings won the level 20 search (see
-			// the wiki), the flag is there to check that again.
-			consumes = &proto.Consumes{}
-			switch *blessing {
-			case "kings":
-				individualBuffs = &proto.IndividualBuffs{BlessingOfKings: true}
-			case "might":
-				individualBuffs = &proto.IndividualBuffs{BlessingOfMight: proto.TristateEffect_TristateEffectRegular}
-			case "wisdom":
-				individualBuffs = &proto.IndividualBuffs{BlessingOfWisdom: proto.TristateEffect_TristateEffectRegular}
-			default:
-				fmt.Fprintf(os.Stderr, "unknown blessing %q\n", *blessing)
+		consumes = &proto.Consumes{}
+		if setup.lowLevel != nil {
+			low, err := setup.lowLevel(*blessing)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
 			}
-			tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+			if low.consumes != nil {
+				consumes = low.consumes
+			}
+			if low.buffs != nil {
+				individualBuffs = low.buffs
+			}
+			if low.tankSelf {
+				tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+			}
 		}
 	}
 	if *duration > 0 {
@@ -248,20 +169,23 @@ func main() {
 		Race:               proto.Race(raceValue),
 		Level:              int32(*level),
 		BonusTalentPoints:  int32(*bonusTalents),
-		Equipment:          core.GetGearSet(uiDir+"/gear_sets", *gear).GearSet,
+		Equipment:          core.GetGearSet(setup.uiDir+"/gear_sets", *gear).GearSet,
 		TalentsString:      *talents,
 		Consumes:           consumes,
 		Buffs:              individualBuffs,
 		Profession1:        proto.Profession_Engineering,
 		Profession2:        proto.Profession_Alchemy,
-		Rotation:           core.GetAplRotation(uiDir+"/apls", *apl).Rotation,
+		Rotation:           core.GetAplRotation(setup.uiDir+"/apls", *apl).Rotation,
 		DistanceFromTarget: 5,
 		ReactionTimeMs:     200,
 		ChannelClipDelayMs: 50,
 	}
-	withSpec(player)
+	if setup.professions[0] != proto.Profession_ProfessionUnknown {
+		player.Profession1, player.Profession2 = setup.professions[0], setup.professions[1]
+	}
+	setup.withSpec(player)
 
-	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, raidBuffs, debuffs)
+	raid := core.SinglePlayerRaidProto(player, partyBuffs, raidBuffs, debuffs)
 	raid.Tanks = tanks
 	request := &proto.RaidSimRequest{
 		Raid:      raid,
