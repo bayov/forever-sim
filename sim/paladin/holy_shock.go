@@ -70,7 +70,10 @@ func (paladin *Paladin) registerHolyShock() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(rank.minDamage, rank.maxDamage)
-				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+				result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+				if paladin.lightsVigil != nil {
+					paladin.lightsVigil(sim, target, spell, result.Landed())
+				}
 			},
 		})
 	}

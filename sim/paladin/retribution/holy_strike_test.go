@@ -125,3 +125,43 @@ func castByID(sim *core.Simulation, ret *RetributionPaladin, spellID int32) {
 	spell := ret.GetSpell(core.ActionID{SpellID: spellID})
 	spell.ApplyEffects(sim, ret.CurrentTarget, spell)
 }
+
+// TestLightsVigil checks Light's Vigil rank 3 on the next Holy Shock: the Holy Shock starts no
+// cooldown, the Vigil detonates once (1311598) and 75% of its 1340 mana comes back. Without the
+// Vigil Holy Shock goes on its 10 sec cooldown.
+func TestLightsVigil(t *testing.T) {
+	sim, ret := retSim(t, "55003003201131151--0522533", arcaniteReaper)
+	target := ret.CurrentTarget
+	vigil := ret.GetSpell(core.ActionID{SpellID: 1311595})
+	holyShock := ret.GetSpell(core.ActionID{SpellID: 20930})
+	detonate := ret.GetSpell(core.ActionID{SpellID: 1311598})
+	if vigil == nil || holyShock == nil || detonate == nil {
+		t.Fatalf("missing Light's Vigil, Holy Shock or the detonation")
+	}
+	detonations := &detonate.SpellMetrics[target.UnitIndex]
+	shocks := &holyShock.SpellMetrics[target.UnitIndex]
+	for range 20 {
+		vigil.ApplyEffects(sim, target, vigil)
+		ret.SpendMana(sim, ret.CurrentMana()-1000, ret.GetManaNotCastingMetrics())
+		before, mana := *detonations, ret.CurrentMana()
+		hitsBefore := shocks.Hits + shocks.Crits
+		holyShock.CD.Use(sim)
+		holyShock.ApplyEffects(sim, target, holyShock)
+		if !holyShock.CD.IsReady(sim) {
+			t.Fatalf("Holy Shock on cooldown after a Vigil")
+		}
+		landed := shocks.Hits+shocks.Crits > hitsBefore
+		got := detonations.Hits + detonations.Crits + detonations.Misses - before.Hits - before.Crits - before.Misses
+		if landed != (got == 1) {
+			t.Fatalf("landed %v, %d detonations", landed, got)
+		}
+		if landed && ret.CurrentMana()-mana < 0.75*1340-1 {
+			t.Fatalf("refund %.1f, want %.1f", ret.CurrentMana()-mana, 0.75*1340)
+		}
+	}
+	holyShock.CD.Use(sim)
+	holyShock.ApplyEffects(sim, target, holyShock)
+	if holyShock.CD.IsReady(sim) {
+		t.Errorf("Holy Shock off cooldown without a Vigil")
+	}
+}

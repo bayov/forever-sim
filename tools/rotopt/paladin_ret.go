@@ -41,8 +41,15 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "consecrationMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// Exorcism only lands on Undead and Demons, the line is harmless elsewhere.
 		{Name: "exorcism", Default: 1, Min: 0, Max: 1, Step: 1},
-		// Holy Shock on cooldown, a 20 point Holy talent from level 30 (10 sec under Forever).
-		{Name: "holyShock", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Holy Shock on cooldown, a 20 point Holy talent from level 30 (10 sec under Forever):
+		// 0 never, 1 after Holy Strike, 2 ahead of it.
+		{Name: "holyShock", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Holy Shock only above this much mana, 0 always.
+		{Name: "holyShockMana", Default: 0, Min: 0, Max: 60, Step: 20},
+		// Light's Vigil (the 31 point Holy talent) when Holy Shock is ready within its 1.5 sec
+		// cast, above this much mana, so the Holy Shock right after it detonates it and starts
+		// no cooldown. 100 never.
+		{Name: "lightsVigilMana", Default: 100, Min: 0, Max: 100, Step: 20},
 		// Hammer of Wrath (from level 44) below 20% health, above this much mana. 100 never.
 		{Name: "hammerOfWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
 		// Twist the seals for Twist of Light's Echo: 0 never, 1 swap Seal of Command and Seal
@@ -53,6 +60,8 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "twistMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// Holy Strike only above this much mana, 0 always.
 		{Name: "holyStrikeMana", Default: 0, Min: 0, Max: 40, Step: 20},
+		// Holy Strike ahead of the seal and twist lines instead of after them.
+		{Name: "holyStrikeFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -65,6 +74,7 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	exorcism := rankID(paladin.ExorcismLevel[:], paladin.ExorcismSpellId[:])
 	holyShock := rankID(paladin.HolyShockLevel[:], paladin.HolyShockSpellId[:])
 	hammerOfWrath := rankID(paladin.HammerOfWrathLevel[:], paladin.HammerOfWrathSpellId[:])
+	lightsVigil := rankID(paladin.LightsVigilLevel[:], paladin.LightsVigilSpellId[:])
 
 	seal, otherSeal := sealOfRighteousness, sealOfCommand
 	sealNotes := "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
@@ -95,6 +105,21 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if consecrationLine != nil && k["consecrationFirst"] == 1 {
 		items = append(items, consecrationLine)
 	}
+	holyStrikeLine := func() {
+		if k["holyStrike"] != 1 {
+			return
+		}
+		var floor value
+		notes := "Holy Strike on cooldown."
+		if k["holyStrikeMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["holyStrikeMana"]/100))
+			notes = "Holy Strike on cooldown with the mana to spare."
+		}
+		items = append(items, cast(holyStrike, floor, notes))
+	}
+	if k["holyStrikeFirst"] == 1 {
+		holyStrikeLine()
+	}
 	twist := k["twist"] == 1
 	if !twist {
 		items = append(items,
@@ -119,14 +144,31 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			cast(seal, and(auraIsActive(otherSeal), swingSoon, floor), "And back again before the next swing."),
 		)
 	}
-	if k["holyStrike"] == 1 {
-		var floor value
-		notes := "Holy Strike on cooldown."
-		if k["holyStrikeMana"] > 0 {
-			floor = ge(currentManaPercent(), num(k["holyStrikeMana"]/100))
-			notes = "Holy Strike on cooldown with the mana to spare."
+	holyShockLine := func() {
+		if k["holyShock"] == 0 {
+			return
 		}
-		items = append(items, cast(holyStrike, floor, notes))
+		var floor value
+		notes := "Holy Shock on cooldown. Without the talent ignore the warning on this line."
+		if k["holyShockMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["holyShockMana"]/100))
+			notes = "Holy Shock on cooldown with the mana to spare. Without the talent ignore the warning on this line."
+		}
+		if k["lightsVigilMana"] < 100 {
+			var vigilFloor value
+			if k["lightsVigilMana"] > 0 {
+				vigilFloor = ge(currentManaPercent(), num(k["lightsVigilMana"]/100))
+			}
+			items = append(items, cast(lightsVigil, and(le(spellTimeToReady(holyShock), seconds(1.5)), vigilFloor),
+				"Light's Vigil just before Holy Shock is ready, so the Holy Shock detonates it and starts no cooldown. Without the talent ignore the warning on this line."))
+		}
+		items = append(items, cast(holyShock, floor, notes))
+	}
+	if k["holyShock"] == 2 {
+		holyShockLine()
+	}
+	if k["holyStrikeFirst"] == 0 {
+		holyStrikeLine()
 	}
 	if k["hammerOfWrathMana"] < 100 {
 		var floor value
@@ -139,7 +181,7 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(exorcism, nil, "Exorcism on cooldown, only against Undead and Demons."))
 	}
 	if k["holyShock"] == 1 {
-		items = append(items, cast(holyShock, nil, "Holy Shock on cooldown. Without the talent ignore the warning on this line."))
+		holyShockLine()
 	}
 	if consecrationLine != nil && k["consecrationFirst"] == 0 {
 		items = append(items, consecrationLine)

@@ -78,6 +78,9 @@ type Paladin struct {
 	// Consecrated Ground's Holy damage buff, up while Consecration ticks.
 	consecratedGroundAura *core.Aura
 
+	// Light's Vigil's hook on Holy Shock, see lights_vigil.go. Nil without the talent.
+	lightsVigil func(sim *core.Simulation, target *core.Unit, holyShock *core.Spell, landed bool)
+
 	// Twist of Light's Echoes, see twist_of_light.go. Nil without the talent.
 	echoOfCommand       *core.Aura
 	echoOfRighteousness *core.Aura
@@ -128,6 +131,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerForbearance()
 	paladin.registerConsecration()
 	paladin.registerHolyShock()
+	paladin.registerLightsVigil()
 	paladin.registerExorcism()
 	paladin.registerDivineFavor()
 	paladin.registerHammerOfWrath()
