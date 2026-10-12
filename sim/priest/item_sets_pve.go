@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -122,7 +123,7 @@ var ItemSetVestmentsOfFaith = core.NewItemSet(core.ItemSet{
 				Name:       "Item - Epiphany Proc (Spell Cast)",
 				Callback:   core.CallbackOnCastComplete,
 				ProcMask:   core.ProcMaskSpellDamage,
-				SpellFlags:   core.SpellFlagHelpful,
+				SpellFlags: core.SpellFlagHelpful,
 				ProcChance: 0.05,
 				Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
 					procAura.Activate(sim)
@@ -130,4 +131,72 @@ var ItemSetVestmentsOfFaith = core.NewItemSet(core.ItemSet{
 			})
 		},
 	},
+})
+
+///////////////////////////////////////////////////////////////////////////
+//                            Forever Level 60 Item Sets
+///////////////////////////////////////////////////////////////////////////
+
+// raimentsOfConvictionBonuses are the set bonuses of Raiments of Conviction, Forever's
+// Tier 1 shadow priest set (ItemSet 2105 and ItemSetSpell in the 1.60.1.70338 client,
+// "1.60.0 - Item - Tier 1 - Priest - Shadow" spells 1300955, 1301045, 1301087, 1301706).
+//
+// The client pieces carry no stats yet, so no real set is registered for them. We give the
+// same bonuses to the synthetic Phase 1 shadow set below, like the enhancement set carries
+// The Spiritcaller's Rage.
+var raimentsOfConvictionBonuses = map[int32]core.ApplyEffect{
+	// Improves your chance to hit by 1%. Melee and spell hit (auras 54 and 55).
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.AddStats(stats.Stats{
+			stats.MeleeHit: 1 * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit: 1 * core.SpellHitRatingPerHitChance,
+		})
+	},
+	// Increases the duration of your Shackle Undead spell by 10 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// Increases damage done by your spells and effects by up to 21 when fighting Undead.
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		undead := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeUndead
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Spell Damage against Undead",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range undead {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken += 21
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range undead {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusSpellDamageTaken -= 21
+					}
+				}
+			},
+		}))
+	},
+	// Reduces the cooldown of your Devouring Plague spell by 60 sec, which is all of its
+	// 1 min cooldown under Forever.
+	5: func(agent core.Agent) {
+		priest := agent.(PriestAgent).GetPriest()
+		priest.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_PriestDevouringPlague {
+				spell.CD.Duration = max(0, spell.CD.Duration-time.Minute)
+			}
+		})
+	},
+}
+
+// ItemSetShadowSyntheticPhase1 is the set of the synthetic Phase 1 shadow priest items
+// (tools/database/forever_synthetic_items_priest.go), with the Raiments of Conviction
+// bonuses.
+var ItemSetShadowSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Shadow Synthetic (Phase 1)",
+	Bonuses: raimentsOfConvictionBonuses,
 })
