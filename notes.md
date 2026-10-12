@@ -70,6 +70,8 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Druid
 
+* Settled 2026-10-12: every druid talent's per-rank values in the sim match the client's rank curves (TraitDefinitionEffectPoints and CurvePoint, 1.60.1.70338), including the ones whose rank 1 spell stores a different base (Moonglow 25, Nature's Majesty 1, Nature's Reach 20, Sharpened Claws 2, Savage Fury 20, Heart of the Wild 10 / 20 / 10, Eclipse 30, Rend and Tear 20, Blood Frenzy 100, Natural Instinct 20, Thick Hide 100 / 3, Reflection 50). No rank 2+ druid value is unverified any more.
+
 * Omen of Clarity's proc chance. The client (70338, 16864) leaves it to the server and only gives the 10 sec cooldown. The sim keeps 1.12's 2 procs a minute on melee hits (weapon speed based) and gives a damage spell that lands the same rate over its cast time, 2 * max(cast time, 1.5 sec) / 60 a cast. Moonkin Form's two modifiers on it (+100% chance, -50% of the cooldown by our reading of modifier 38) double the chance and halve the cooldown. Counting Clearcasting procs over a few hundred Wraths and Starfires in and out of Moonkin Form settles it (beta, from level 20).
 * Shred's flat bonus. The client's effects are 80 and 155% weapon damage, which the sim reads as (weapon damage + 80) * 1.55, 124 extra. The tooltip still says "plus 180", 1.12's 80 * 2.25. A few Shreds against a target with known armor settle it (beta, rank 1 at 22: 24 * 1.55 = 37 extra).
 * The attack power on Rip (sim: 1.12's 6% a combo point up to 24% at 4 and 5 points, over the whole Rip) and Ferocious Bite (3% a point). The client leaves both to the server. Rip and Bite on the beta with two attack power values settle it.
