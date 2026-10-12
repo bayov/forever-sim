@@ -19,6 +19,7 @@ import {
 	RaidBuffs,
 	SapperExplosive,
 	SpellPowerBuff,
+	SpiritElixir,
 	Stat,
 	TristateEffect,
 	WeaponImbue,
@@ -186,23 +187,27 @@ export const DefaultOptions = MageOptions.create({
 });
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
-// on all four builds at 180 sec. Elixir of Greater Firepower is the Elixir of Holy Power under
-// Forever (+40 Holy), so the Fire elixir is the plain Elixir of Firepower (+1 to +5). Nightfin
-// Soup beats Runn Tum Tuber Surprise by 7 to 15 and Grilled Squid by 3 to 7, the Goblin Sapper adds
-// 4 (Engineering), and Elixir of Wisdom 1. The presets model Forever's launch, with no raid open,
-// so nothing that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe).
-// Cerebral Cortex Compound is a Blasted Lands quest. Flask of Supreme Power is 75 to 90 ahead of
-// Distilled Wisdom. The Goblin Land Mine costs 2 to 11, because throwing it takes a GCD.
+// on all four builds at 180 sec. The presets model Forever's launch, with no raid open, so nothing
+// that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe, Wizard Oil
+// is 12 to 16 over none). Cerebral Cortex Compound is a Blasted Lands quest. Forever's Elixir of
+// the Owl (25 Intellect, 2% crit) and Elixir of Sages (25 Spirit, 2% crit) are 27 to 45 together
+// (the sim lets both stack, which is open), Greater Mageblood Elixir (20 mp5) 0 to 6, Lobster Stew
+// (28 spell power) 3 to 4 over Nightfin Soup. Major Spellblasting Potion is 7 ahead of the Major
+// Mana Potion for Frost and 15 behind for Frostfire, so the mana potion stays. Elixir of Greater
+// Firepower is the Elixir of Holy Power under Forever (+40 Holy), so the Fire elixir is the plain
+// Elixir of Firepower. Flask of Supreme Power is 75 to 90 ahead of Distilled Wisdom, and the
+// Goblin Land Mine costs 2 to 11, because throwing it takes a GCD.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodNightfinSoup,
+	food: Food.FoodLobsterStew,
 	frostPowerBuff: FrostPowerBuff.ElixirOfFrostPower,
-	intellectElixir: IntellectElixir.ElixirOfWisdom,
+	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.WizardOil,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
+	spiritElixir: SpiritElixir.ElixirOfSages,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,

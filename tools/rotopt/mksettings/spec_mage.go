@@ -8,14 +8,15 @@ import "github.com/wowsims/classic/sim/core/proto"
 // Improved Scorch and Winter's Chill are the mage's own under Forever, so the raid gives none.
 //
 // The consumes are the same for every spec. On 2026-10-12 we tried every consumable the sim applies
-// in each slot on the four searched builds (180 sec, 20000 iterations). Elixir of Greater
-// Firepower is the Elixir of Holy Power under Forever (+40 Holy), so the Fire elixir is the plain
-// Elixir of Firepower. Nightfin Soup beats Runn Tum Tuber Surprise by 7 to 15, the Goblin Sapper
-// adds 4 and Elixir of Wisdom 1. The presets model Forever's launch, with no raid open, so nothing
-// that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe). Cerebral
-// Cortex Compound is a Blasted Lands quest. Flask of Distilled Wisdom is 75 to 90 behind Supreme
-// Power. A Goblin Land Mine costs 2 to 11 (its throw takes a GCD), and Mage Armor is 8 to 17
-// ahead of Ice Armor.
+// in each slot on the four searched builds (180 sec, 20000 iterations). The presets model
+// Forever's launch, with no raid open, so nothing that only a raid sells: Wizard Oil in place of
+// Brilliant Wizard Oil (Zandalar Tribe). Cerebral Cortex Compound is a Blasted Lands quest.
+// Elixirs of the Owl and Sages are 27 to 45 together, Greater Mageblood Elixir 0 to 6 and Lobster
+// Stew 3 to 4 over Nightfin Soup. Major Spellblasting Potion is +7 for Frost and -15 for
+// Frostfire, so the Major Mana Potion stays. Elixir of Greater Firepower is the Elixir of Holy
+// Power under Forever (+40 Holy), so the Fire elixir is the plain Elixir of Firepower. Flask of
+// Distilled Wisdom is 75 to 90 behind Supreme Power. A Goblin Land Mine costs 2 to 11 (its throw
+// takes a GCD), and Mage Armor is 8 to 17 ahead of Ice Armor.
 func mageSpec() *specSetup {
 	return &specSetup{
 		uiDir: "ui/mage",
@@ -30,10 +31,11 @@ func mageSpec() *specSetup {
 				FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 				FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
 				Flask:           proto.Flask_FlaskOfSupremePower,
-				Food:            proto.Food_FoodNightfinSoup,
-				IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+				Food:            proto.Food_FoodLobsterStew,
+				IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
-				ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
+				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
