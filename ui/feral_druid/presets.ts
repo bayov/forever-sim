@@ -86,10 +86,11 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 
 // The tools/rotopt druid_feral template's best (druid_presets.sh) on the synthetic set and the
 // Level 60 talents: Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip
-// has 4 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due (its
+// has 6 sec left (1 to 3 ahead of 4), Shred, Shifting Power at 50 Energy or less but not while a Bite is due (its
 // Energy goes into Shreds, 0.6 to 0.9 ahead), Tiger's Fury and Berserk on cooldown, no new Rip
-// in the last 8 sec and Ferocious Bite at any combo points in the last 2 (0.6 to 1.4). No Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend
-// and Tear's bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
+// in the last 8 sec and Ferocious Bite at any combo points in the last 2 (0.6 to 1.4). No
+// Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend and Tear's
+// bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
 // points is 1 to 2 behind. The search kept that at 120 and 180 sec, and Shifting Power at 40
 // Energy is 1 ahead at 300 sec (2.9 behind at 180).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
@@ -269,14 +270,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 671.0 / 664.0 / 650.9 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 669.3 / 662.8 / 652.5 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             671.0    664.0    650.9   best overall and Alliance
-//	High Order Skyborne   668.8    662.0    649.6
-//	Windshaper Skyborne   668.8    662.1    649.7   best Horde
-//	Tauren                666.5    659.8    646.9
+//	Night Elf             669.3    662.8    652.5   best overall and Alliance
+//	High Order Skyborne   667.5    661.1    651.2
+//	Windshaper Skyborne   667.6    661.2    651.3   best Horde
+//	Tauren                665.2    658.9    648.7
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.

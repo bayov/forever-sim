@@ -56,7 +56,8 @@ func (druidBalance) Knobs() []Knob {
 
 func (druidBalance) Build(k Knobs) *proto.APLRotation {
 	wrath := rankID(druid.WrathLevel[:], druid.WrathSpellId[:])
-	starfire := rankID(druid.StarfireLevel[:], druid.StarfireSpellId[:])
+	// Starfire rank 7 is an Ahn'Qiraj book rank, which Forever leaves out.
+	starfire := rankID(druid.StarfireLevel[:druid.StarfireRanks], druid.StarfireSpellId[:druid.StarfireRanks])
 	moonfire := rankID(druid.MoonfireLevel[:], druid.MoonfireSpellId[:])
 	insectSwarm := rankID(druid.InsectSwarmLevel[:], druid.InsectSwarmSpellId[:])
 

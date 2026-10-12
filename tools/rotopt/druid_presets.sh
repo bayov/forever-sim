@@ -24,17 +24,17 @@ gen() {
 # Clearcasting, Wrath once Eclipse is down to 2 charges or fewer with no Wrath flying, Starfire
 # otherwise. Innervate is left to its own trigger. The search kept that at 120 and 180 sec. At
 # 300 sec the mana runs out, and the old weave (Wrath until Eclipse has a charge) without the
-# Clearcasting Starfire is 16 DPS ahead.
+# Clearcasting Starfire is 2 DPS ahead.
 gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3"
-# The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 7.1% behind (762.2
-# against 820.4 at 180 sec), on its own talents (5502220115501351-03-505) and gear (Natural Power
+# The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 5.9% behind (760.0
+# against 807.3 at 180 sec), on its own talents (5502220115501351-03-505) and gear (Natural Power
 # gloves).
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5"
 # Feral cat on the Level 60 talents (05002-05200332021031212051-05501): Rip at 4 combo points
-# whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, no Rake (keeping it
+# whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, no Rake (keeping it
 # up costs 33), Shifting Power at 50 Energy or less but not while a Bite is due (0.6 to 0.9
 # ahead: its Energy goes into Shreds, not the Bite), Tiger's Fury and Berserk on cooldown. The
 # search kept that at 120 and 180 sec; at 300 sec Shifting Power at 40 Energy is 1 ahead.
 # At the end of the fight: no new Rip in the last 8 sec, and Ferocious Bite at any combo points
 # in the last 2 sec (0.6 to 1.4 together, the rogue's end-of-fight Eviscerate idea).
-gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8"
+gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6"

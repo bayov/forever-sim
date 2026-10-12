@@ -18,12 +18,13 @@ func init() {
 }
 
 var (
-	druidRakeLevel     = []int32{0, 24, 34, 44, 54}
-	druidRakeSpellId   = []int32{0, 1822, 1823, 1824, 9904}
-	druidRipLevel      = []int32{0, 20, 28, 36, 44, 52, 60}
-	druidRipSpellId    = []int32{0, 1079, 9492, 9493, 9752, 9894, 9896}
-	druidBiteLevel     = []int32{0, 32, 40, 48, 56, 60}
-	druidBiteSpellId   = []int32{0, 22568, 22827, 22828, 22829, 31018}
+	druidRakeLevel   = []int32{0, 24, 34, 44, 54}
+	druidRakeSpellId = []int32{0, 1822, 1823, 1824, 9904}
+	druidRipLevel    = []int32{0, 20, 28, 36, 44, 52, 60}
+	druidRipSpellId  = []int32{0, 1079, 9492, 9493, 9752, 9894, 9896}
+	// Ferocious Bite rank 5 (60, 31018) is an Ahn'Qiraj book rank, which Forever leaves out.
+	druidBiteLevel     = []int32{0, 32, 40, 48, 56}
+	druidBiteSpellId   = []int32{0, 22568, 22827, 22828, 22829}
 	druidTigersFury    = spellID(5217)
 	druidShiftingPower = spellID(1322605)
 	druidBerserk       = spellID(417141)

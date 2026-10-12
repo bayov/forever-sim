@@ -41,8 +41,9 @@ func topRank(spells []*druid.DruidSpell) *druid.DruidSpell {
 }
 
 // TestBalanceRankValues checks the top ranks against the Forever client (1.60.1.70338):
-// Wrath rank 8 costs 120 and casts in 2 sec, Starfire rank 7 costs 340 in 3.5 sec, Moonfire
-// rank 10 costs 375 and ticks 4 times, Insect Swarm rank 5 costs 160.
+// Wrath rank 8 costs 120 and casts in 2 sec, Starfire rank 6 costs 315 in 3.5 sec (rank 7 is an
+// Ahn'Qiraj book rank, left out under Forever), Moonfire rank 10 costs 375 and ticks 4 times,
+// Insect Swarm rank 5 costs 160.
 func TestBalanceRankValues(t *testing.T) {
 	_, moonkin := newMoonkinSim(t, "000000001")
 	checks := []struct {
@@ -52,7 +53,7 @@ func TestBalanceRankValues(t *testing.T) {
 		castTime time.Duration
 	}{
 		{"Wrath", topRank(moonkin.Wrath), 120, 2 * time.Second},
-		{"Starfire", topRank(moonkin.Starfire), 340, 3500 * time.Millisecond},
+		{"Starfire", topRank(moonkin.Starfire), 315, 3500 * time.Millisecond},
 		{"Moonfire", topRank(moonkin.Moonfire), 375, 0},
 		{"Insect Swarm", topRank(moonkin.InsectSwarm), 160, 0},
 	}
@@ -69,6 +70,9 @@ func TestBalanceRankValues(t *testing.T) {
 	}
 	if ticks := topRank(moonkin.Moonfire).Dot(moonkin.CurrentTarget).NumberOfTicks; ticks != 4 {
 		t.Errorf("Moonfire ticks %d times, want 4", ticks)
+	}
+	if moonkin.Starfire[druid.StarfireRanks] != nil {
+		t.Errorf("Starfire rank %d (an Ahn'Qiraj book) is registered under Forever", druid.StarfireRanks)
 	}
 }
 
@@ -87,7 +91,7 @@ func TestBalanceCostAndCastTalents(t *testing.T) {
 		t.Errorf("Wrath casts in %s, want 1.5s", got)
 	}
 	starfire := topRank(moonkin.Starfire)
-	if got, want := starfire.Cost.GetCurrentCost(), 340*0.75; math.Abs(got-want) > 1e-9 {
+	if got, want := starfire.Cost.GetCurrentCost(), 315*0.75; math.Abs(got-want) > 1e-9 {
 		t.Errorf("Starfire costs %.2f, want %.2f", got, want)
 	}
 	if got := starfire.DefaultCast.CastTime; got != 3*time.Second {

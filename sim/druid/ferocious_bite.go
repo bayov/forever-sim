@@ -59,8 +59,9 @@ var ferociousBiteRanks = []FerociousBiteRankInfo{
 }
 
 func (druid *Druid) registerFerociousBiteSpell() {
-	// Forever's ranks match 1.12's (1.60.1.70338, wago.tools). Rank 5 needs the AQ release.
-	maxRank := core.TernaryInt(core.IncludeAQ, 4, 3)
+	// Forever's ranks match 1.12's (1.60.1.70338, wago.tools). Rank 5 comes from an Ahn'Qiraj
+	// book, which Forever leaves out (Environment.IncludeAQRanks).
+	maxRank := core.TernaryInt(druid.Env.IncludeAQRanks(), 4, 3)
 	rank := -1
 	for i := 0; i <= maxRank; i++ {
 		if druid.Level >= ferociousBiteRanks[i].level {
