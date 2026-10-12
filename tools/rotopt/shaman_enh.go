@@ -56,6 +56,11 @@ func (shamanEnh) Knobs() []Knob {
 		// 0 none, 1 Lightning Shield, 2 Water Shield (the Restoration talent). Both only do
 		// anything while something hits the shaman.
 		{Name: "shield", Default: 0, Min: 0, Max: 2, Step: 1},
+		// The shield goes up again only below this much mana, 0 any time. A Water Shield spends
+		// its globes for mana, which is wasted while the pool is full.
+		{Name: "shieldMana", Default: 0, Min: 0, Max: 80, Step: 10},
+		// 1 puts the shield up before the pull too.
+		{Name: "prepullShield", Default: 0, Min: 0, Max: 1, Step: 1},
 		// 0 none, 1 Earth Shock, 2 Flame Shock, 3 Frost Shock, 4 Flame Shock when its DoT
 		// is down and Earth Shock otherwise, 5 Earth Shock while the Stormstrike debuff (20%
 		// Nature damage) is on the target and Frost Shock otherwise, 6 Flame Shock when its
@@ -290,11 +295,14 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	// The shield goes after the shocks, on a GCD nothing else wants. Above them a Water
 	// Shield recast every 15 sec delayed enough shocks and Stormstrikes to cost 10 DPS
 	// (measured while it still had a 15 sec cooldown, which the 2026-10-08 build removed).
+	var shieldID *proto.ActionID
 	switch k["shield"] {
 	case 1:
-		items = append(items, cast(lightningShield, not(auraIsActive(lightningShield)), "Lightning Shield whenever it is down."))
+		shieldID = lightningShield
+		items = append(items, cast(lightningShield, shieldWhen(lightningShield, k["shieldMana"]), "Lightning Shield whenever it is down."))
 	case 2:
-		items = append(items, cast(waterShield, not(auraIsActive(waterShield)),
+		shieldID = waterShield
+		items = append(items, cast(waterShield, shieldWhen(waterShield, k["shieldMana"]),
 			"Water Shield whenever it is down. Its three globes are 2% mana each when something hits the shaman. Without the talent ignore the warning on this line."))
 	}
 	if maxTalentPoints < 31 {
@@ -307,5 +315,19 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	for i, id := range totems {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(id, float64(len(totems)-i)))
 	}
+	// The shield goes up a GCD before the first totem, or 3 sec before the pull.
+	if shieldID != nil && k["prepullShield"] == 1 {
+		rot.PrepullActions = append([]*proto.APLPrepullAction{prepull(shieldID, float64(len(totems))+1.5)}, rot.PrepullActions...)
+	}
 	return rot
+}
+
+// shieldWhen recasts the shield when it is down, and with a mana gate (pct above 0) only below
+// that much mana.
+func shieldWhen(shield *proto.ActionID, pct float64) value {
+	when := not(auraIsActive(shield))
+	if pct > 0 {
+		when = and(when, lt(currentManaPercent(), num(pct/100)))
+	}
+	return when
 }

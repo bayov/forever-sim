@@ -1,5 +1,8 @@
 {
     "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":408510}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+    ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":25361}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":25361}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":10614}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10612}}}}}},"notes":"Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman."},
@@ -13,6 +16,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":15208}},"condition":{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":408505}}},"op":"OpGe","rhs":{"const":{"val":"5"}}}}},"notes":"Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place."},
         {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}},"notes":"Flame Shock when its DoT is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":29228}}},"op":"OpGt","rhs":{"const":{"val":"1s"}}}}]}}},"notes":"Earth Shock otherwise, unless Flame Shock is about to run out."}
+        {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":29228}}},"op":"OpGt","rhs":{"const":{"val":"1s"}}}}]}}},"notes":"Earth Shock otherwise, unless Flame Shock is about to run out."},
+        {"action":{"castSpell":{"spellId":{"spellId":408510}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":408510}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.5"}}}}]}}},"notes":"Water Shield whenever it is down. Its three globes are 2% mana each when something hits the shaman. Without the talent ignore the warning on this line."}
     ]
 }

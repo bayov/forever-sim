@@ -44,17 +44,24 @@ gen optimized "shock=4,airTotem=2,fireTotem=3,fireNova=2,fireNovaMana=20,waterTo
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
-gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,prepullTotems=0" -level 60
+gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,shield=2,shieldMana=50,prepullShield=1,prepullTotems=0" -level 60
 # On 2026-10-12, on the searched Water Shield build (050031-053030031005112151-052030001), Fire
 # Nova ahead of the shocks is +2.7 here too, and holding Earth Shock while Flame Shock has 1 sec
 # or less left (so the shock cooldown is back when the DoT runs out) +1.0: 762.3 as the mean of
 # 120, 180 and 300 sec, from 758.6. The hold is +1.1 on the Mana Tide build. On the Level 60
 # build it does nothing, and longer holds lose (4 sec is 8.5 behind), because Earth Shock spends
 # the Stormstrike mark.
+# Both builds pay for Water Shield, so since 2026-10-12 they put it up 3 sec before the pull and
+# again whenever it is down below 50% mana (the rotation auditor's finding). It only does
+# anything when something hits the shaman: with the Enhancement option of 6 raid damage hits a
+# minute it is +0.0 / +0.5 / +4.1 on the Water Shield build at 120 / 180 / 300 sec, and a wash
+# on the Mana Tide build. Recast at any mana it is 1.4 behind at 120 sec. These two builds start
+# with Magma Totem 1 sec before the pull: mksettings -spec enh writes Flametongue Totem, so set
+# the starting fire totem to Magma Totem in the settings file to reproduce their numbers.
 # Magma Totem with Mana Tide Totem at 20% mana, for the Mana Tide talent build. Fire Nova
 # goes ahead of the shocks here (fireNova=1): +4.4 at 180 sec and +1.7 at 300 on 2026-10-08.
 # On the Water Shield build that was +1.7 at 180 sec and even at 300, so magma keeps it after.
-gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,prepullTotems=0" -level 60
+gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,shield=2,shieldMana=50,prepullShield=1,prepullTotems=0" -level 60
 # Level 30 with 5 extra talent points (26 in all), tuned for the 120 sec Level 30
 # encounter. Flame Shock when its DoT is down and Earth Shock otherwise (shock=4), because
 # Earth Shock spends the Stormstrike mark (+20%). Windfury Weapon from level 30 and Mana Spring Totem from 26, and shocks only

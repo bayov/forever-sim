@@ -54,6 +54,12 @@ func (shamanEle) Knobs() []Knob {
 		{Name: "lightningBoltDownrankMana", Default: 20, Min: 10, Max: 60, Step: 10},
 		// 1 puts the totems down in the prepull actions.
 		{Name: "prepullTotems", Default: 1, Min: 0, Max: 1, Step: 1},
+		// 1 starts a Lightning Bolt 2 sec before the pull, so it lands as the fight starts. The
+		// totems go down before it.
+		{Name: "prepullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Lava Burst waits while Flame Shock has this many seconds or less left, since the 20%
+		// counts when the cast ends. 0 never waits.
+		{Name: "lavaBurstFlameShockLeft", Default: 0, Min: 0, Max: 3, Step: 1},
 	}
 }
 
@@ -103,7 +109,13 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	lavaBurstLine := func() {
 		switch k["lavaBurst"] {
 		case 1:
-			items = append(items, cast(lavaBurst, nil, "Lava Burst on cooldown. Without the talent ignore the warning on this line."))
+			var when value
+			notes := "Lava Burst on cooldown. Without the talent ignore the warning on this line."
+			if left := k["lavaBurstFlameShockLeft"]; left > 0 && k["flameShock"] == 1 {
+				when = or(not(dotIsActive(flameShock)), gt(dotRemainingTime(flameShock), seconds(left)))
+				notes = "Lava Burst on cooldown, unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line."
+			}
+			items = append(items, cast(lavaBurst, when, notes))
 		case 2:
 			items = append(items, cast(lavaBurst, dotIsActive(flameShock),
 				"Lava Burst while Flame Shock ticks (20% more). Without the talent ignore the warning on this line."))
@@ -148,10 +160,19 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	items = append(items, cast(lightningBolt, nil, "Lightning Bolt."))
 
 	rot := rotation(items...)
+	// The bolt is cast 2 sec before the pull (its cast time with Elemental Alacrity 3), and the
+	// totems one totem GCD (1 sec) apart before it.
+	boltLead := 0.0
+	if k["prepullBolt"] == 1 {
+		boltLead = 2
+	}
 	if k["prepullTotems"] == 1 {
 		for i, id := range totems {
-			rot.PrepullActions = append(rot.PrepullActions, prepull(id, float64(len(totems)-i)))
+			rot.PrepullActions = append(rot.PrepullActions, prepull(id, boltLead+float64(len(totems)-i)))
 		}
+	}
+	if k["prepullBolt"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(lightningBolt, 2))
 	}
 	return rot
 }
