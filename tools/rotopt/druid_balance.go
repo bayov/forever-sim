@@ -33,6 +33,9 @@ func (druidBalance) Knobs() []Knob {
 		// and then Starfire.
 		{Name: "filler", Default: 2, Min: 0, Max: 2, Step: 1},
 		{Name: "eclipseStacks", Default: 1, Min: 1, Max: 4, Step: 1},
+		// Count a Wrath still flying to the target as the charges it will give, so the filler
+		// does not cast a second Wrath while the first is in the air, 0/1.
+		{Name: "wrathInFlight", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Starfire while Clearcasting is up, whatever the filler says, 0/1.
 		{Name: "clearcastStarfire", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Below this much mana the dots stop and the filler is Wrath, which costs a third of
@@ -82,9 +85,17 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 	case 1:
 		items = append(items, cast(wrath, nil, "Wrath."))
 	case 2:
+		ready := ge(auraNumStacks(druidEclipse), num(k["eclipseStacks"]))
+		if k["wrathInFlight"] == 1 {
+			ready = or(ready, spellInFlight(wrath))
+		}
 		items = append(items,
-			cast(starfire, ge(auraNumStacks(druidEclipse), num(k["eclipseStacks"])), "Starfire once Eclipse has enough charges."),
+			cast(starfire, ready, "Starfire once Eclipse has enough charges, or a Wrath that will give them is on its way."),
 			cast(wrath, nil, "Wrath for Eclipse charges."))
 	}
 	return rotation(items...)
+}
+
+func spellInFlight(spell *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_SpellInFlight{SpellInFlight: &proto.APLValueSpellInFlight{SpellId: spell}}}
 }

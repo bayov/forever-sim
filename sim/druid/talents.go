@@ -249,7 +249,9 @@ func (druid *Druid) applyEclipse() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell.SpellCode == SpellCode_DruidStarfire {
+			// A charge goes with the Starfire it made shorter. One that started before the
+			// charges came (a Wrath landing mid-cast) keeps them for the next.
+			if spell.SpellCode == SpellCode_DruidStarfire && sim.CurrentTime-spell.CurCast.CastTime >= aura.StartedAt() {
 				aura.RemoveStack(sim)
 			}
 		},
