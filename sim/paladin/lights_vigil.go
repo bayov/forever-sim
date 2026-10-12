@@ -19,6 +19,9 @@ import (
 var LightsVigilLevel = [...]int{0, 40, 50, 60}
 var LightsVigilSpellId = [...]int32{0, 1310911, 1311590, 1311595}
 
+// LightsVigilDebuffId is the mark each rank puts on the target.
+var LightsVigilDebuffId = [...]int32{0, 1310909, 1311593, 1311597}
+
 func (paladin *Paladin) registerLightsVigil() {
 	if !paladin.Talents.LightsVigil || !paladin.Talents.HolyShock {
 		return

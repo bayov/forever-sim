@@ -20,7 +20,8 @@ func (paladin *Paladin) ApplyTalents() {
 	if paladin.Env.IsForever() {
 		paladin.AddStat(stats.SpellHit, float64(paladin.Talents.Precision)*core.SpellHitRatingPerHitChance)
 	}
-	paladin.AddStat(stats.SpellHit, float64(paladin.Talents.DivinePrecision)*6*core.SpellHitRatingPerHitChance)
+	// Divine Precision is 6% hit a point with Holy spells only (client 1.60.1.70338, spell 1310904).
+	paladin.PseudoStats.SchoolBonusHitChance[stats.SchoolIndexHoly] += float64(paladin.Talents.DivinePrecision) * 6 * core.SpellHitRatingPerHitChance
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.HolyPower)*core.SpellCritRatingPerCritChance)
 

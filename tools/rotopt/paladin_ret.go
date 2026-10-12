@@ -49,7 +49,7 @@ func (paladinRet) Knobs() []Knob {
 		// Light's Vigil (the 31 point Holy talent) when Holy Shock is ready within its 1.5 sec
 		// cast, above this much mana, so the Holy Shock right after it detonates it and starts
 		// no cooldown. 100 never.
-		{Name: "lightsVigilMana", Default: 100, Min: 0, Max: 100, Step: 20},
+		{Name: "lightsVigilMana", Default: 100, Min: 0, Max: 100, Step: 10},
 		// Hammer of Wrath (from level 44) below 20% health, above this much mana. 100 never.
 		{Name: "hammerOfWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
 		// Twist the seals for Twist of Light's Echo: 0 never, 1 swap Seal of Command and Seal
@@ -62,6 +62,17 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "holyStrikeMana", Default: 0, Min: 0, Max: 40, Step: 20},
 		// Holy Strike ahead of the seal and twist lines instead of after them.
 		{Name: "holyStrikeFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// With twisting, judge Seal of Righteousness only when the next swing is more than this
+		// many tenths of a second away, so most Judgements land on Seal of Command (its
+		// judgement rolls on the melee table and hits harder). 0 judges whichever seal is up.
+		{Name: "judgeRighteousnessWindow", Default: 0, Min: 0, Max: 30, Step: 5},
+		// Put the other seal up before the primary one in the prepull, so the first swing
+		// gets its Echo (twisting), or Light's Vigil on the target (Holy Shock builds).
+		{Name: "prepullTwo", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Light's Vigil whenever it is off cooldown and not on the target, above
+		// lightsVigilMana, with Holy Shock waiting for the Vigil (or the mana floor) instead of
+		// going out on cooldown. 0 ties the Vigil to Holy Shock's cooldown.
+		{Name: "vigilChain", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -75,6 +86,7 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	holyShock := rankID(paladin.HolyShockLevel[:], paladin.HolyShockSpellId[:])
 	hammerOfWrath := rankID(paladin.HammerOfWrathLevel[:], paladin.HammerOfWrathSpellId[:])
 	lightsVigil := rankID(paladin.LightsVigilLevel[:], paladin.LightsVigilSpellId[:])
+	lightsVigilMark := rankID(paladin.LightsVigilLevel[:], paladin.LightsVigilDebuffId[:])
 
 	seal, otherSeal := sealOfRighteousness, sealOfCommand
 	sealNotes := "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
@@ -136,8 +148,13 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		if k["twistMana"] > 0 {
 			floor = ge(currentManaPercent(), num(k["twistMana"]/100))
 		}
+		judgeWhen, judgeNotes := sealUp, "Judgement on cooldown, on whichever damage seal is up."
+		if k["judgeRighteousnessWindow"] > 0 {
+			judgeWhen = or(auraIsActive(sealOfCommand), and(auraIsActive(sealOfRighteousness), gt(mainHandTimeToNext(), seconds(k["judgeRighteousnessWindow"]/10))))
+			judgeNotes = "Judgement on cooldown on Seal of Command, and on Seal of Righteousness only when the next swing is a while off (Judgement of Command hits harder)."
+		}
 		items = append(items,
-			cast(judgement, and(sealUp, jotcUp), "Judgement on cooldown, on whichever damage seal is up."),
+			cast(judgement, and(judgeWhen, jotcUp), judgeNotes),
 			cast(seal, and(not(sealUp), jotcUp), sealNotes),
 			cast(otherSeal, and(auraIsActive(seal), swingSoon, floor),
 				"Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too."),
@@ -158,6 +175,17 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			var vigilFloor value
 			if k["lightsVigilMana"] > 0 {
 				vigilFloor = ge(currentManaPercent(), num(k["lightsVigilMana"]/100))
+			}
+			if k["vigilChain"] == 1 {
+				items = append(items, cast(lightsVigil, and(vigilFloor, not(targetAuraIsActive(lightsVigilMark))),
+					"Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."))
+				lowMana := constant("false")
+				if k["lightsVigilMana"] > 0 {
+					lowMana = lt(currentManaPercent(), num(k["lightsVigilMana"]/100))
+				}
+				items = append(items, cast(holyShock, and(or(targetAuraIsActive(lightsVigilMark), lowMana), floor),
+					"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."))
+				return
 			}
 			items = append(items, cast(lightsVigil, and(le(spellTimeToReady(holyShock), seconds(1.5)), vigilFloor),
 				"Light's Vigil just before Holy Shock is ready, so the Holy Shock detonates it and starts no cooldown. Without the talent ignore the warning on this line."))
@@ -192,6 +220,13 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	opener := seal
 	if k["jotc"] == 1 {
 		opener = sealOfTheCrusader
+	}
+	if k["prepullTwo"] == 1 && k["jotc"] == 0 {
+		first := otherSeal
+		if k["holyShock"] > 0 && k["lightsVigilMana"] < 100 {
+			first, opener = seal, lightsVigil
+		}
+		rot.PrepullActions = append(rot.PrepullActions, prepull(first, 3))
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 1.5))
 	return rot
