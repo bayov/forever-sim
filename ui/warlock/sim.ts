@@ -59,18 +59,19 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		gear: Presets.DefaultGear.gear,
 
 		// Default EP weights for sorting gear in the gear picker, measured on the Level 60
-		// Demonology build (Human, 180 sec, 2026-10-12) in spell power.
+		// Demonology build (Gnome, 180 sec, 2026-10-12) in spell power. Hit is worth 0 at the cap the
+		// presets sit at; its weight is the one measured below the cap.
 		epWeights: Stats.fromMap({
 			[Stat.StatMana]: 0.01,
-			[Stat.StatIntellect]: 0.64,
-			[Stat.StatSpirit]: 0.18,
-			[Stat.StatMP5]: 0.32,
+			[Stat.StatIntellect]: 0.98,
+			[Stat.StatSpirit]: 0.34,
+			[Stat.StatMP5]: 1,
 			[Stat.StatSpellPower]: 1,
 			[Stat.StatSpellDamage]: 1,
 			[Stat.StatFirePower]: 0.1,
 			[Stat.StatShadowPower]: 0.9,
 			[Stat.StatSpellHit]: 15.2,
-			[Stat.StatSpellCrit]: 13.9,
+			[Stat.StatSpellCrit]: 14,
 			[Stat.StatSpellHaste]: 7.83,
 			[Stat.StatStamina]: 0.01,
 			[Stat.StatFireResistance]: 0.0,
@@ -160,7 +161,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Alliance]: Race.RaceGnome,
 				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {

@@ -18,7 +18,7 @@ func warlockSuite(t *testing.T, talents string, gear string, apl string, label s
 		{
 			Class: proto.Class_ClassWarlock,
 			Phase: 1,
-			Race:  proto.Race_RaceHuman,
+			Race:  proto.Race_RaceGnome,
 
 			Talents:     talents,
 			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", gear),
