@@ -11,9 +11,11 @@ import "github.com/wowsims/classic/sim/core/proto"
 // in each slot on the four searched builds (180 sec, 20000 iterations). Elixir of Greater
 // Firepower is the Elixir of Holy Power under Forever (+40 Holy), so the Fire elixir is the plain
 // Elixir of Firepower. Nightfin Soup beats Runn Tum Tuber Surprise by 7 to 15, the Goblin Sapper
-// adds 4 and Elixir of Wisdom 1. Brilliant Wizard Oil is 28 to 37 ahead of Brilliant Mana Oil,
-// Flask of Distilled Wisdom 75 to 90 behind Supreme Power. A Goblin Land Mine costs 2 to 11 (its
-// throw takes a GCD), and Mage Armor is 8 to 17 ahead of Ice Armor.
+// adds 4 and Elixir of Wisdom 1. The presets model Forever's launch, with no raid open, so nothing
+// that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe), and no
+// Cerebral Cortex Compound (Zul'Gurub). Flask of Distilled Wisdom is 75 to 90 behind Supreme
+// Power. A Goblin Land Mine costs 2 to 11 (its throw takes a GCD), and Mage Armor is 8 to 17
+// ahead of Ice Armor.
 func mageSpec() *specSetup {
 	return &specSetup{
 		uiDir: "ui/mage",
@@ -30,11 +32,10 @@ func mageSpec() *specSetup {
 				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodNightfinSoup,
 				IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
-				MainHandImbue:   proto.WeaponImbue_BrilliantWizardOil,
+				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
 		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Tailoring},

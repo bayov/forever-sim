@@ -16,12 +16,14 @@ var IceLanceScaling = [IceLanceRanks + 1]core.RankScaling{{}, {26, 0.35}, {32, 0
 var IceLanceManaCost = [IceLanceRanks + 1]float64{0, 45, 55, 70, 105, 120, 160}
 var IceLanceLevel = [IceLanceRanks + 1]int{0, 20, 28, 34, 42, 48, 56}
 
-// The client has no spell power coefficient on Ice Lance (neither did SoD's, whose damage is a
-// server script). We take the SoD sim's 42.9%, which SoD logs settled. Frozen targets take 300%
+// The client has no spell power coefficient on Ice Lance, on any of the six ranks, where every
+// other new Forever damage spell carries its own (Frostfire Bolt 0.814, Arcane Blast 0.714). So
+// Ice Lance takes no spell power. SoD's client had 0 too, and there a server script gave it 42.9%;
+// whether Forever's server adds one is open (notes.md). Frozen targets take 300%
 // more (the client's dummy effect of 300 and the tooltip), so 4 times the damage. The other two
 // dummies (20 and 5) look like SoD's Glaciate (20% a stack, 5 stacks), which no Forever tooltip
 // mentions, so they are left out.
-const IceLanceSpellCoeff = 0.429
+const IceLanceSpellCoeff = 0
 const IceLanceFrozenMultiplier = 4
 
 func (mage *Mage) registerIceLanceSpell() {

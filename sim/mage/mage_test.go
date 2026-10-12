@@ -56,7 +56,7 @@ var P1Consumes = core.ConsumesCombo{
 		Food:            proto.Food_FoodNightfinSoup,
 		FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
 		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
-		MainHandImbue:   proto.WeaponImbue_BrilliantWizardOil,
+		MainHandImbue:   proto.WeaponImbue_WizardOil,
 		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 	},
