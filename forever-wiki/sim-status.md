@@ -163,7 +163,9 @@ Both specs follow the cross-class standard (orchestration/standards.md on the co
 | Dwarf (Alliance) | 687.3 | 683.7 | 674.4 |
 | Tauren (Horde) | 687.2 | 683.6 | 674.3 |
 
-  Orc is the best race and the best Horde race, Dwarf the only Alliance shaman. The staff is the Era Phase 1 weapon type and no race has a staff racial, so weapon-type racials don't figure. Tauren's 1% hit is wasted at the hit cap.
+  Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman). The staff is the Era Phase 1 weapon type and no race has a staff racial, so weapon-type racials don't figure. Tauren's 1% hit is wasted at the hit cap.
+
+  Level 60 + Mana Tide (same seed, 20000 iterations): Orc 686.4 / 682.0 / 673.7, Windshaper Skyborne 686.3 / 681.0 / 673.1, Troll 684.4 / 678.9 / 670.9, Dwarf 680.5 / 675.5 / 667.8, Tauren 680.4 / 675.4 / 667.7. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman).
 
 #### Enhancement
 
@@ -173,7 +175,14 @@ Both specs follow the cross-class standard (orchestration/standards.md on the co
 - Consumes: Forever's Phase 1 set with Elixir of the Sages as the one crit elixir (the Owl, Grizzly and Mongoose are 0.2 to 4.7 behind), Elixir of Greater Agility, Juju Power and Might, Elixir of Greater Intellect, Elixir of Nature Power, Greater Mageblood Elixir, Shadow Oil, Grilled Squid. Stacking the Mongoose, Grizzly and Owl on top would add about 36 if Forever allows it.
 - Forever leaves out the Ahn'Qiraj book ranks of the raid totems (shared head cfb2dac): the shaman puts down Strength of Earth Totem IV (42 Strength, was 53) and the raid's Battle Shout is rank VI. That costs every Enhancement build about 7.7 DPS (Level 60 was 811.0 / 799.6 / 778.6). The searches ran again on it and kept every build and rotation (only mana tie-breaks inside the noise).
 - DPS: Level 60 803.2 / 791.9 / 771.1, Imp GW 800.0 / 788.3 / 767.3, Water Shield 758.3 / 750.8 / 738.9 (5.2% behind at 3 min), Mana Tide 735.5 / 728.8 / 724.6 (8.0% behind).
-- Races: the table under Comparing races. Orc is the best race and the best Horde race, Dwarf the only Alliance one. With weapon-type racials off (no Axe Specialization), the Orc is 787.6 / 776.2 / 756.0 and Windshaper Skyborne leads at 791.4 / 779.9 / 760.8.
+- Races: the table under Comparing races. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman). With weapon-type racials off (no Axe Specialization), the Orc is 787.6 / 776.2 / 756.0 and Windshaper Skyborne leads at 791.4 / 779.9 / 760.8.
+- Races on the other builds (same seed, 20000 iterations, 120 / 180 / 300 sec). Orc wins every one at every length. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman).
+
+| Build | Orc | Windshaper Skyborne | Troll | Tauren | Dwarf |
+|---|---|---|---|---|---|
+| Imp GW | 800.0 / 788.3 / 767.3 | 788.0 / 775.9 / 756.6 | 787.7 / 774.5 / 754.7 | 786.9 / 774.4 / 755.1 | 782.7 / 770.3 / 751.2 |
+| Water Shield | 758.3 / 750.8 / 738.9 | 746.6 / 739.2 / 728.3 | 746.0 / 737.8 / 726.6 | 746.2 / 738.5 / 727.3 | 742.2 / 734.2 / 723.2 |
+| Mana Tide | 735.5 / 728.8 / 724.6 | 724.1 / 717.1 / 713.9 | 724.5 / 716.8 / 713.3 | 722.8 / 715.8 / 712.7 | 719.3 / 712.2 / 709.4 |
 
 ### Mage
 
