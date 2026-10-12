@@ -8,7 +8,6 @@ import {
 	Debuffs,
 	Encounter,
 	Explosive,
-	Flask,
 	Food,
 	IndividualBuffs,
 	MobType,
@@ -16,49 +15,48 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
+	SapperExplosive,
+	Stat,
 	StrengthBuff,
 	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 	ZanzaBuff,
-	SapperExplosive,
-	Stat,
 } from '../core/proto/common.js';
 import { RogueOptions } from '../core/proto/rogue.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import BackstabAPL from './apls/combat_backstab.apl.json';
-import BackstabRuptureAPL from './apls/combat_backstab_rupture.apl.json';
 import BackstabOnCooldownAPL from './apls/combat_backstab_on_cooldown.apl.json';
+import BackstabRuptureAPL from './apls/combat_backstab_rupture.apl.json';
 import BackstabSndWindowAPL from './apls/combat_backstab_snd_window.apl.json';
 import BackstabSweatyAPL from './apls/combat_backstab_sweaty.apl.json';
 import SinisterStrikeAPL from './apls/combat_sinister_strike.apl.json';
-import SinisterStrikeOnCooldownAPL from './apls/combat_sinister_strike_on_cooldown.apl.json';
 import SinisterStrikeHoldForARAPL from './apls/combat_sinister_strike_hold_for_ar.apl.json';
+import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
+import SinisterStrikeOnCooldownAPL from './apls/combat_sinister_strike_on_cooldown.apl.json';
 import SinisterStrikeSndOpenerAPL from './apls/combat_sinister_strike_snd_opener.apl.json';
 import SinisterStrikeSndWindowAPL from './apls/combat_sinister_strike_snd_window.apl.json';
 import SinisterStrikeSweatyAPL from './apls/combat_sinister_strike_sweaty.apl.json';
-import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
 import MutilateAPL from './apls/forever_mutilate.apl.json';
 import Level30p5BackstabAPL from './apls/level30p5_backstab.apl.json';
 import Level30p5SinisterStrikeAPL from './apls/level30p5_sinister_strike.apl.json';
-import Level60CombatSwordsAPL from './apls/level60_combat_swords.apl.json';
 import Level60CombatDaggersAPL from './apls/level60_combat_daggers.apl.json';
+import Level60CombatSwordsAPL from './apls/level60_combat_swords.apl.json';
 import Level60MutilateAPL from './apls/level60_mutilate.apl.json';
 import Level60MutilateVenomAPL from './apls/level60_mutilate_venom.apl.json';
 import Level60SubtletyAPL from './apls/level60_subtlety.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
-import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
-import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
 import BackstabGearP1BiS from './gear_sets/combat_backstab_p1_bis.gear.json';
 import BackstabGearP2BiS from './gear_sets/combat_backstab_p2_bis.gear.json';
+import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
 import SinisterStrikeGearP1BiS from './gear_sets/combat_sinister_strike_p1_bis.gear.json';
 import SinisterStrikeGearP2BiS from './gear_sets/combat_sinister_strike_p2_bis.gear.json';
+import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
 import Level30p5BackstabGear from './gear_sets/level30p5_backstab.gear.json';
 import Level30p5SinisterStrikeGear from './gear_sets/level30p5_sinister_strike.gear.json';
-import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swords.gear.json';
 import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
+import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swords.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
