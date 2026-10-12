@@ -170,7 +170,8 @@ export const DefaultOptions = ElementalShamanOptions.create({});
 // (Spirit of Zanza 2.2), Mageblood Potion 2.3, Elixir of Firepower 1.6 (Flame Shock, Lava Burst
 // and Searing Totem), Wizard Oil 11.9 and Nightfin Soup (22 spell damage under Forever) 6.1
 // over Grilled Squid. Brilliant Wizard Oil would be 10.8 more, but it comes in Era Phase 4.
-// Elixir of the Sages, Elixir of Greater Firepower and Greater Mageblood Elixir do nothing in
+// Elixir of the Sages, Elixir of Nature Power, Elixir of the Owl, Elixir of Greater Firepower
+// and Greater Mageblood Elixir do nothing in
 // the sim yet. All together the build is 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
