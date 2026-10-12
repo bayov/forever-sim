@@ -120,15 +120,15 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 863.03844
-  tps: 612.75729
+  dps: 869.31767
+  tps: 617.21554
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 859.0635
-  tps: 609.93508
+  dps: 854.92641
+  tps: 606.99775
  }
 }
 dps_results: {
