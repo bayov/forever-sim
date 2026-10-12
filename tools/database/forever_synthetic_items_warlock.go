@@ -24,9 +24,14 @@ import (
 // The budget is the one shared by every class's synthetic set (see forever_synthetic_items_shaman.go). An
 // epic piece is worth V = 1.2 * item level - 36.4 (42.8 at 66, 48.8 at 71, 47.6 at 70, 54.8 at 76, 57.2
 // at 78), times the slot modifier: 1 for the head, chest and legs, 0.77 for the shoulders, hands, waist
-// and feet, 0.5625 for the neck, back, wrist, fingers and the held in off hand, and Classic's 0.42 for a
-// one-hand weapon and 0.32 for a wand. The stats on a piece add up as (sum of (weight * amount)^1.5)^(2/3),
-// where a point of Stamina, Intellect or Spirit weighs 1, a point of spell power 0.55 (Forever's tuned
+// and feet, 0.5625 for the neck, back, wrist, fingers and the held in off hand, and 0.32 for a wand.
+// A caster one-hander keeps the real Era weapon's budget (the orchestrator's ruling for every caster,
+// 2026-10-12), its stats priced at Era rates with spell power at 0.857: Azuresong Mageblade's 7
+// Stamina, 12 Intellect, 40 spell power and 1% crit come to (7^1.5 + 12^1.5 + 14^1.5 + (40 *
+// 0.857)^1.5)^(2/3) = 46.1, and the synthetic sword spends that at Forever's 0.55 a spell power:
+// the same Stamina, Intellect and crit and 62 spell power (46.0).
+//
+// The stats on a piece add up as (sum of (weight * amount)^1.5)^(2/3), where a point of Stamina, Intellect or Spirit weighs 1, a point of spell power 0.55 (Forever's tuned
 // price) and a point of hit or crit rating 1 (10 hit rating is 1% hit, 14 crit rating 1% crit). Armor is
 // free, it is the Era piece's. We pick the Stamina, Intellect, Spirit, hit and crit of each piece, and
 // spell power fills the rest. For the chest: 42.8 * 1, and 12 Stamina, 14 Intellect, 9 Spirit and 14 crit
@@ -35,9 +40,9 @@ import (
 // power. The generator script lived in the session scratchpad (synth_lock.py), the numbers below are its
 // output.
 //
-// The set comes to 527 spell power, 118 Intellect, 129 Stamina, 76 Spirit, 70 crit rating (5%) and 30 hit
-// rating (3%). As shares of the budget that is 41% spell power, 17% Intellect, 18% Stamina, 10.7% Spirit,
-// 10% crit and 4% hit:
+// The set comes to 572 spell power, 125 Intellect, 136 Stamina, 76 Spirit, 70 crit rating (5%) and 30 hit
+// rating (3%). As shares of the budget that is 42% spell power, 17% Intellect, 18% Stamina, 10% Spirit,
+// 9% crit and 4% hit:
 //   - Spirit is on 10 of the 15 pieces, about 10% of the budget. Under Forever it also adds a point of mana
 //     to every Life Tap, on top of the regen.
 //   - The crit sits where the Era pieces had it: 1% each on the head, chest (Robe of Volatile Power), waist
@@ -168,11 +173,12 @@ var warlockSyntheticItems = []*proto.UIItem{
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
-	// Main Hand, item level 71, in place of Azuresong Mageblade (71, 17103).
+	// Main Hand, item level 71, in place of Azuresong Mageblade (71, 17103). Its budget is the real
+	// sword's, see the file comment.
 	{
 		Id: 997013, Name: "Warlock Synthetic Main Hand (Phase 1)", Icon: "inv_sword_39",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeMainHand,
-		Stats:      stats.Stats{stats.Intellect: 5, stats.SpellPower: 17}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 7, stats.Intellect: 12, stats.SpellPower: 62}.ToFloatArray(),
 		CritRating: 14,
 		// Azuresong Mageblade damage and speed.
 		WeaponDamageMin: 64, WeaponDamageMax: 140, WeaponSpeed: 2.4,
