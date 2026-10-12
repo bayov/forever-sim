@@ -397,8 +397,14 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // and Fire Novas are worth more than 5% more damage on them. It is 929.9 / 897.4 / 886.0
 // at 120 / 300 / 480 sec. The last legal build (0505331-055030031005112251) was 898.1 /
 // 881.9 / 873.1, and Concussion 5 with the same points elsewhere was 1 to 7 behind.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '500533102-053030031005112251' }), {
-	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Convection.',
+//
+// On 2026-10-12 we ran the search again on the synthetic Phase 1 set and the current sim, as the
+// mean of 120, 180 and 300 sec, and it swapped Convection 5 for Concussion 5 (+3.0, 795.7 at
+// 20000 iterations). The mana the sim gives now (Spirit on the synthetic set, Mana Spring Totem)
+// is enough without the cheaper shocks. A tie-break on mana that moves 2 points from Elemental
+// Weapons to Ancestral Knowledge is 0.8 behind. The knob search kept the Optimized rotation.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '050533102-053030031005112251' }), {
+	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
 });
 // The same search with Improved Ghost Wolf 2 pinned as well (-require
@@ -409,7 +415,10 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // After the 2026-10-05 search it is the Level 60 build with the 2 points for Improved
 // Ghost Wolf taken out of Ancestral Knowledge (1). The search with both talents pinned
 // found nothing better. It is 894.0 at 300 sec, 3.4 behind Level 60.
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '500533102-051032031005112251' }), {
+//
+// On 2026-10-12 it takes Concussion 5 in place of Convection 5 like Level 60 (+2.8). It is
+// 806.6 / 794.7 / 775.5 at 120 / 180 / 300 sec, 3.6 behind Level 60 at 180.
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '050533102-051032031005112251' }), {
 	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
 	group: 'Level 60',
 });
@@ -426,9 +435,16 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // The first search ran with Searing Totem and ended on Concussion 5 and Reverberation 1.
 // Magma Totem was 5 ahead on that build, and the search with Magma Totem moved the points
 // to Convection and Call of Flame.
+//
+// On 2026-10-12 the search ran again on the current sim, with the Water Shield requirement and the
+// Magma Totem rotation, as the mean of 120, 180 and 300 sec. It moved Elemental Devastation's
+// points to Call of Flame 3 and Convection to Concussion, and one point from Tidal Focus to
+// Mindfulness: 758.6 from 749.9. With Fire Nova ahead of the shocks and the 1 sec Earth Shock
+// hold in the Magma Totem rotation it is 773.5 / 764.5 / 748.9 at 120 / 180 / 300 sec, 4.2%
+// behind Level 60 at 180.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
-	SavedTalents.create({ talentsString: '500013-053030031005112151-050050001' }),
+	SavedTalents.create({ talentsString: '050031-053030031005112151-052030001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Level 60' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require
@@ -441,6 +457,10 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // It is 883.8 / 873.7 / 866.0 at 120 / 180 / 300 sec. Elemental Devastation is worth a
 // lot (27.8 on the Water Shield build), but its 8 points cost Rage of the Farseer and
 // Maelstrom Weapon points, and every such build we tried was 25 to 35 behind.
+//
+// On 2026-10-12 the search on the current sim (Mana Tide Totem and Water Shield pinned) found
+// nothing better: 750.4 / 743.9 / 737.9 at 120 / 180 / 300 sec with the Mana Tide rotation,
+// 6.8% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '02-055030031005112151-053051001001' }),
@@ -666,6 +686,17 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // build's Fire Nova order (see shaman_presets.sh). It wanted Grace of Air in place of Windfury
 // Totem (+23 at 180 sec), but the builds keep Windfury Totem for the group. The talents were
 // not searched again.
+//
+// On 2026-10-12, after the shaman audit fixes since 2026-10-08 (the sim had moved Level 60 to
+// 805.6 / 795.7 / 778.7), the talent and knob searches ran again (see the talent presets and
+// shaman_presets.sh). Level 60 is 809.7 / 798.2 / 779.2 at 120 / 180 / 300 sec, Level 60 + Water
+// Shield 773.5 / 764.5 / 748.9 and Level 60 + Mana Tide 750.4 / 743.9 / 737.9.
+//
+// The races on Level 60 (20000 iterations, standard error 0.4): Orc 809.7 / 798.2 / 779.2,
+// Windshaper Skyborne 796.9 / 785.5 / 767.6, Troll 796.8 / 784.9 / 766.3, Tauren 795.9 / 784.2 /
+// 766.0, Dwarf (the only Alliance shaman) 792.3 / 780.7 / 762.5. The Orc's lead is mostly Axe
+// Specialization: the synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon
+// it stands in for. A mace would give the Dwarf its 1% instead.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',
