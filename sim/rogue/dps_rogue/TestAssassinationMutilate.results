@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestAssassinationMutilate-Phase5-StatWeights-Default"
  value: {
   weights: 0.39517
-  weights: 0.38038
+  weights: 0.37387
   weights: 0
   weights: 0
   weights: 0
@@ -68,8 +68,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0.26345
-  weights: 10.22311
-  weights: 2.58031
+  weights: 10.17702
+  weights: 2.45282
   weights: 0
   weights: 0
   weights: 0
@@ -99,189 +99,189 @@ stat_weights_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 860.29263
-  tps: 610.80777
+  dps: 840.68131
+  tps: 596.88373
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 924.46978
-  tps: 654.06987
+  dps: 904.4136
+  tps: 640.02596
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 809.08118
-  tps: 574.44764
+  dps: 790.16019
+  tps: 561.01374
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 834.49954
-  tps: 592.49467
+  dps: 815.45759
+  tps: 578.97489
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 824.3687
-  tps: 585.30178
+  dps: 805.41377
+  tps: 571.84377
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 864.17103
-  tps: 613.56143
+  dps: 842.62694
+  tps: 598.26513
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 865.59633
-  tps: 614.57339
+  dps: 845.8198
+  tps: 600.53206
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 807.98041
-  tps: 573.66609
+  dps: 789.25631
+  tps: 560.37198
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 831.9682
-  tps: 590.69742
+  dps: 812.53297
+  tps: 576.89841
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 809.08118
-  tps: 574.44764
+  dps: 790.16019
+  tps: 561.01374
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 820.35847
-  tps: 582.45452
+  dps: 800.09186
+  tps: 568.06522
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 810.68756
-  tps: 575.58817
+  dps: 791.34595
+  tps: 561.85563
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 831.9682
-  tps: 590.69742
+  dps: 812.53297
+  tps: 576.89841
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Average-Default"
  value: {
-  dps: 807.8385
-  tps: 573.56534
+  dps: 788.88904
+  tps: 560.11122
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 202.92588
-  tps: 144.07738
+  dps: 196.88349
+  tps: 139.78728
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 202.92588
-  tps: 144.07738
+  dps: 196.88349
+  tps: 139.78728
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 219.01093
-  tps: 155.49776
+  dps: 212.88595
+  tps: 151.14903
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 99.63915
-  tps: 70.7438
+  dps: 95.50971
+  tps: 67.81189
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 99.63915
-  tps: 70.7438
+  dps: 95.50971
+  tps: 67.81189
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Human-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 108.73907
-  tps: 77.20474
+  dps: 104.18544
+  tps: 73.97166
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 204.31176
-  tps: 145.06135
+  dps: 198.3105
+  tps: 140.80045
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 204.31176
-  tps: 145.06135
+  dps: 198.3105
+  tps: 140.80045
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 222.5945
-  tps: 158.04209
+  dps: 216.46952
+  tps: 153.69336
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 100.34439
-  tps: 71.24451
+  dps: 96.21494
+  tps: 68.31261
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 100.34439
-  tps: 71.24451
+  dps: 96.21494
+  tps: 68.31261
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-ShortSingleTarget"
  value: {
-  dps: 110.07955
-  tps: 78.15648
+  dps: 105.52593
+  tps: 74.92341
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 639.20567
-  tps: 453.83602
+  dps: 621.01156
+  tps: 440.91821
  }
 }

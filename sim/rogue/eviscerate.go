@@ -11,19 +11,19 @@ func (rogue *Rogue) registerEviscerate() {
 	// Classic's 77 (93-137 at 1 point, foreverchanges spellbook build 70124).
 	flatDamage := rankAt(rogue.Level, map[int32]float64{
 		1: 1, 8: 3, 16: 6, 24: 10, 32: 15, 40: 22, 48: 34, 56: 48,
-		60: core.TernaryFloat64(core.IncludeAQ, 54, 48),
+		60: core.TernaryFloat64(rogue.Env.IncludeAQRanks(), 54, 48),
 	})
 	comboDamageBonus := rankAt(rogue.Level, map[int32]float64{
 		1: 5, 8: 11, 16: 19, 24: 31, 32: 45, 40: 71, 48: 110, 56: 151,
-		60: core.TernaryFloat64(core.IncludeAQ, 170, 151),
+		60: core.TernaryFloat64(rogue.Env.IncludeAQRanks(), 170, 151),
 	})
 	damageVariance := rankAt(rogue.Level, map[int32]float64{
 		1: 4, 8: 8, 16: 14, 24: 20, 32: 30, 40: 44, 48: 68, 56: 96,
-		60: core.TernaryFloat64(core.IncludeAQ, 108, 96),
+		60: core.TernaryFloat64(rogue.Env.IncludeAQRanks(), 108, 96),
 	})
 	spellID := rankSpellID(rogue.Level, map[int32]int32{
 		1: 2098, 8: 6760, 16: 6761, 24: 6762, 32: 8623, 40: 8624, 48: 11299, 56: 11300,
-		60: core.TernaryInt32(core.IncludeAQ, 31016, 11300),
+		60: core.TernaryInt32(rogue.Env.IncludeAQRanks(), 31016, 11300),
 	})
 	core.RegisterSpellRanks(11300, 31016)
 

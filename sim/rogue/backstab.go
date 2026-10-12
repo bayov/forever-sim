@@ -13,11 +13,11 @@ func (rogue *Rogue) registerBackstabSpell() {
 	// The tooltip's flat bonus divided by the 150% weapon damage multiplier.
 	flatDamageBonus := rankAt(rogue.Level, map[int32]float64{
 		4: 10, 12: 20, 20: 32, 28: 46, 36: 60, 44: 90, 52: 110,
-		60: core.TernaryFloat64(core.IncludeAQ, 150, 140),
+		60: core.TernaryFloat64(rogue.Env.IncludeAQRanks(), 150, 140),
 	})
 	spellID := rankSpellID(rogue.Level, map[int32]int32{
 		4: 53, 12: 2589, 20: 2590, 28: 2591, 36: 8721, 44: 11279, 52: 11280,
-		60: core.TernaryInt32(core.IncludeAQ, 25300, 11281),
+		60: core.TernaryInt32(rogue.Env.IncludeAQRanks(), 25300, 11281),
 	})
 	core.RegisterSpellRanks(11281, 25300)
 

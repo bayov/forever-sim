@@ -148,10 +148,10 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	baseDamageTick := rankAt(rogue.Level, map[int32]float64{
-		30: 6, 38: 9, 46: 14, 54: 18, 60: core.TernaryFloat64(core.IncludeAQ, 23, 18),
+		30: 6, 38: 9, 46: 14, 54: 18, 60: core.TernaryFloat64(rogue.Env.IncludeAQRanks(), 23, 18),
 	})
 	spellID := rankSpellID(rogue.Level, map[int32]int32{
-		30: 2823, 38: 2824, 46: 11355, 54: 11356, 60: core.TernaryInt32(core.IncludeAQ, 25347, 11356),
+		30: 2823, 38: 2824, 46: 11355, 54: 11356, 60: core.TernaryInt32(rogue.Env.IncludeAQRanks(), 25347, 11356),
 	})
 	core.RegisterSpellRanks(11356, 25347)
 
