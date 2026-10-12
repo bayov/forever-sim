@@ -1,8 +1,13 @@
 # Pet buffs under Forever: hunter pets and warlock demons
 
 Research note, 2026-10-12. It tests standards.md item 14 against the beta (client 1.60.1.70338 and
-beta reports). Classic Era is used only as the comparison baseline (client 1.15.8.66129) and says
-so where it is used.
+beta reports).
+
+Source tiers, in order: **Forever beta**, then **SoD fallback** (Season of Discovery client,
+hotfixes, blue posts and findings) where the beta is silent, then **Era fallback** only where SoD
+is silent too. Every verdict below is Forever beta unless it carries another tag. Classic Era client
+1.15.8.66129 is used once, as the baseline for the flag comparison, and that is a diff, not a
+verdict.
 
 ## Verdict in short
 
@@ -80,7 +85,10 @@ Legend:
 - **No** = the buff does not land on that pet in Forever.
 - **Via owner** = it does not land on the pet, but it raises the owner's stats, and the pet takes
   a share of those through its scaling aura.
-- **Conf.** = confidence.
+- **Conf.** = confidence. Every row is tier **Forever beta**: no row needed a fallback for its
+  verdict. SoD only fills in the scaling numbers (section 5).
+- In SoD, as in Era, pets could still be buffed (SoD fallback and Era fallback). The block is
+  new in Forever, so neither fallback applies to the "does it land" question.
 - **Sim now:**
   - The hunter branch sets `IgnoresPlayerBuffs`, which skips all raid, party, individual and
     world buffs on the pet. It inherits 10% of the hunter's ranged attack power and all of the
@@ -172,8 +180,23 @@ The world buffs are off in every preset, so this changes no number.
   - Coefficients are not known: the client is server-scripted and no beta measurement exists. The
     aura's slots are health, melee AP, spell damage, resistances, hit, spell hit, haste, crit,
     Intellect, mana regeneration and expertise.
-  - Fallback, labelled as such: in Season of Discovery the same aura gives demons AP and spell
-    damage from the warlock's spell power, and hit and crit from the warlock's.
+  - **SoD fallback**, the same aura 416189 in Season of Discovery:
+    - Blizzard hotfixes, 2024-12-04
+      ([source](https://worldofwarcraft.blizzard.com/en-us/news/24148555/hotfixes-december-4-2024)):
+      - "Warlock pets will now correctly inherit their master's Fire or Shadow spell hit chance
+        based on whichever is higher."
+      - "...gain full value of spell hit chance for their spells."
+      - "...gain 80% of their master's spell hit as physical hit."
+    - Player test, SoD forums, 2024-01-06
+      ([thread](https://us.forums.blizzard.com/en/wow/t/why-does-hunter-get-pet-scaling-but-not-warlock/1759290)):
+      - demons take the warlock's Stamina, Intellect and armor;
+      - "one attack power per 2 of your highest spell power";
+      - spell power "around 1/4". The poster says this one is unsure.
+      - A Succubus lost about 25% of its health and 14% of its armor when the warlock undressed.
+    - No SoD source gives crit inheritance.
+  - SoD fallback for hunters, February 2024 hotfix (via Wowhead and Warcraft Tavern): pets take
+    30% of the hunter's armor and 20% of the hunter's Stamina. Forever's measured 30% of armor
+    agrees. The beta's 2 health per Stamina point is the Forever number and wins.
   - **The sim inherits nothing.** That makes this the bigger gap: the demon's damage misses the
     warlock's spell power, hit and crit.
 
@@ -200,9 +223,12 @@ Pain. A log would answer it. The sim doesn't give it to the demon.
      ~7 DPS the melee party buffs were worth. The warlock's own DPS doesn't change, except through
      Soul Link and Master Demonologist, which don't depend on buffs.
 2. **Warlock demons inherit the warlock's stats.**
-   - The coefficients are unknown. Two choices: wait for a beta log, or ship a labelled SoD-based
-     placeholder.
-   - At minimum, hit and crit from the warlock, and the spell damage share.
+   - Forever's coefficients are unknown. The SoD fallback placeholder, labelled as such:
+     - spell hit 100% (the higher of the warlock's Fire and Shadow hit);
+     - physical hit 80% of the warlock's spell hit;
+     - AP 0.5 per point of the warlock's highest spell power;
+     - spell power about 25% (player-measured, weak).
+   - Crit has no source in either tier, so leave it out until a log.
    - DPS: **up**. Together with change 1 the net direction is unknown until there are
      coefficients. Shipping change 1 without change 2 would understate demons.
 3. **Gate `ApplyPetConsumeEffects` on Forever for both classes**, so a UI user can't put Juju or
