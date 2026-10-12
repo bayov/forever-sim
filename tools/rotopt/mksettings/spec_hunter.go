@@ -8,6 +8,14 @@ import "github.com/wowsims/classic/sim/core/proto"
 func init() {
 	specs["hunter_bm"] = hunterSpec(25, false, hunterRangedRaid)
 	specs["hunter_mm"] = hunterSpec(25, false, hunterRangedRaid)
+	// Lone Wolf is Marksmanship with the pet dismissed (Lone Wolf's 20% needs no pet out).
+	lw := hunterSpec(25, false, hunterRangedRaid)
+	withCat := lw.withSpec
+	lw.withSpec = func(player *proto.Player) {
+		withCat(player)
+		player.GetHunter().Options.PetType = proto.Hunter_Options_PetNone
+	}
+	specs["hunter_lw"] = lw
 	specs["hunter_sv"] = hunterSpec(5, true, hunterMeleeRaid)
 }
 
