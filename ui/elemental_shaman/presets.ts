@@ -288,7 +288,8 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-12, Level 60 is 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec.
+// On 2026-10-12, Level 60 is 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec and Level 60 + Mana
+// Tide 594.1 / 585.6 / 577.7 (1.4% behind at 180).
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
