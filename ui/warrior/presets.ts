@@ -66,8 +66,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // neck, back, wrist, waist, rings, one-handers and bow, 76 for a two-hander): Strength, Agility,
 // crit, 9% hit (the special attack cap) and some attack power, no Spirit. Only the head and legs
 // carry Battlegear of Glory, Forever's Molten Core set for Arms and Fury, so only its 2-piece is
-// live. The 4-piece (+36 attack power against Humanoids) would add 11.5 on Fury, 10.2 on two-hand
-// Fury and 9.8 on Arms (Undead, 180 sec). The 5-piece adds nothing, since Recklessness is used once a fight. Arms and
+// live. The 4-piece (+36 attack power against Humanoids) would add 11.9 on Fury, 9.5 on two-hand
+// Fury and 9.1 on Arms (Undead, 180 sec). The 5-piece adds nothing, since Recklessness is used once a fight. Arms and
 // Fury share the armor, rings and bow, the file has the details.
 //
 // Enchants: Lesser Arcanum of Voracity (8 Strength) on the head and legs, Forever's +5 Strength on
@@ -77,8 +77,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // outside raids. Trinkets are excluded until Forever's launch trinkets are simulated: client 70338
 // has no Hand of Justice or Blackhand's Breadth, so both slots are empty for every class.
 //
-// On 2026-10-12 the Level 60 Fury build (Human, 180 sec) does 954.0 on the Fury set, where the Era
-// Phase 1 set (phase_1.gear.json) does 1008.1 with the same talents and rotation. The Era set has
+// On 2026-10-12 the Level 60 Fury build (Human, 180 sec) does 933.0 on the Fury set, where the Era
+// Phase 1 set (phase_1.gear.json) does 985.6 with the same talents and rotation. The Era set has
 // Molten Core items above the shared item levels, its trinkets, the Molten Core 4-piece and
 // Edgemaster's Handguards' weapon skill.
 export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Fury)', Level60Phase1SyntheticFuryGearJSON, {
@@ -110,19 +110,19 @@ export const AplReck = PresetUtils.makePresetAPLRotation('DPS (With Reck)', APLR
 export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLNoReckJSON);
 
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
-// talents and set, Human, 180 sec: Bloodthirst, then Whirlwind with 25 Rage, Execute first in the
+// talents and set, Human, 180 sec: Whirlwind with 25 Rage, then Bloodthirst, Execute first in the
 // execute phase, Heroic Strike queued from 40 Rage, and Hamstring as a filler from 10 Rage (its hits
 // proc Windfury Totem's extra attacks and Flurry). Death Wish waits for the last 33 sec,
 // Recklessness for the last 25, both inside the execute phase. Bloodrage under 40 Rage, no
 // Berserker Rage (one point of the talent is not worth the GCD). The Mighty Rage Potion goes at the
-// pull and the second is held for the last 30 sec (+6.4 at 180 sec, -3.0 at 120). Heroic Strike from
+// pull and the second is held for the last 20 sec (+6.4 at 180 sec, -3.0 at 120, at 30 sec). Heroic Strike from
 // 20 Rage starved Bloodthirst and Whirlwind (40 is +3.4 at 180 sec, the rotation auditor's pass 2).
-// It is 954.0 where the old DPS (With Reck) rotation is 930.5. Slam on its 18 sec cooldown and
+// It is 933.0 where the old DPS (With Reck) rotation is 904.3. Slam on its 18 sec cooldown and
 // holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
 // Heroic Strike from 70 Rage instead of 40 (a slow two-hander makes less Rage), Bloodrage under 70
-// and Death Wish for the last 30 sec. The second potion is held for the last 30 sec too. Holding it
+// and Death Wish for the last 36 sec. The second potion is held for the last 30 sec. Holding it
 // for Death Wish skipped the pull potion, so it drank one a fight (+7.2 at 180 sec).
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
@@ -159,7 +159,7 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury',
 	group: 'Level 60',
 });
 // Two-hand Fury from the same search on the two-hand set: Two-Handed Weapon Specialization in place
-// of Dual Wield Specialization and Furious Precision. 839.1 at 180 sec (Human), 12% behind dual wield
+// of Dual Wield Specialization and Furious Precision. 821.3 at 180 sec (Human), 12% behind dual wield
 // Fury but its own way to play, so it gets its own preset.
 export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 	'Level 60 Fury (Two-Hand)',
@@ -170,7 +170,7 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 // Weaponmaster (1% extra attacks a point with a sword), Improved Slam and Impale, and Cruelty,
 // Unbridled Wrath and Booming Voice in Fury. Arms cannot reach Death Wish. Booming Voice does
 // nothing here, since the raid has Battle Shout, but no other talent in reach does better with those
-// points. 847.1 at 180 sec (Human), 11% behind dual wield Fury and just ahead of two-hand Fury, its
+// points. 825.5 at 180 sec (Human), 12% behind dual wield Fury and just ahead of two-hand Fury, its
 // own preset as the Mortal Strike spec.
 export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Level 60 Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
@@ -209,7 +209,7 @@ const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStanc
 // variants). Mongoose with Forever's Elixir of Ferocity (18 Strength and 18 Agility) is the best pair
 // on all three builds: Fury 992.7, against 991.5 with Juju Power, 987.3 for Grizzly with Greater
 // Agility and 987.2 with Elixir of Giants (on the earlier gear). Taking Grizzly as well would add
-// 14.9 on Fury, 11.4 on Fury two-hand and 11.1 on Arms on the final gear (both crit elixirs together
+// 14.1 on Fury, 11.6 on Fury two-hand and 10.8 on Arms on the final gear (both crit elixirs together
 // were +73.2 over neither). The rest of the set we started from won its slot: Juju Might
 // (+13.9 over none), Smoked Desert Dumplings (+0.8 over Mightfish Steak, +7.2 over Flank au Poivre),
 // the Mighty Rage Potion (+9.5 over the Major Frenzy Potion), R.O.I.D.S. and Dragonbreath Chili.
@@ -340,9 +340,11 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-12 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1011.9 / 964.5 /
-// 938.6, Level 60 Fury (Two-Hand) (Undead) 888.6 / 843.6 / 814.8 and Level 60 Arms (Undead) 870.9 /
-// 852.0 / 831.0. Undead has no weapon racial, so these are also the numbers with weapon racials off.
+// On 2026-10-12 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 992.9 / 943.8 /
+// 916.2, Level 60 Fury (Two-Hand) (Undead) 862.8 / 825.8 / 795.0 and Level 60 Arms (Undead) 848.8 /
+// 830.6 / 810.3. The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the raid's Battle Shout VI,
+// Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and Deep Wounds' ticks not
+// critting 1.6 / 6.7 / 7.2. Undead has no weapon racial, so these are also the numbers with weapon racials off.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
