@@ -66,7 +66,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Improved Tracking counts against every creature type a hunter can track (sim: the boss's type is always tracked), damage only.
 * Volley's attack power share (sim: none, the client's 0.03 spell power is a placeholder). The forever-hunter wiki says "likely scales with attack power, TBD".
 * Devilsaur Tooth makes the next Revive Pet free under Forever (the forever-hunter wiki), so the sim gives it nothing in a fight.
-* Wildstalker Armor's 5 piece bonus (spell 1301252) is named "Aimed and Multi-Shot", but its cooldown effect's class mask (131072) matches only Aimed Shot (Multi-Shot is 4096, client 1.60.1.70338). The sim cuts only Aimed Shot's cooldown, to 5 sec; Multi-Shot shares it. Its 2 piece 1% attack speed is taken as melee and ranged attack speed and cast speed (auras 342 and 65). Beta: the cooldown after a Multi-Shot with 5 pieces on.
+* Wildstalker Armor's 5 piece bonus (spell 1301252) is named "Aimed and Multi-Shot", but its cooldown effect's class mask (131072) matches only Aimed Shot (Multi-Shot is 4096, client 1.60.1.70338). The sim cuts only Aimed Shot's cooldown, to 5 sec; Multi-Shot shares it. Its 2 piece 1% attack speed is taken as melee and ranged attack speed and cast speed (auras 342 and 65). Beta: the cooldown after a Multi-Shot with 5 pieces on. The presets carry the 2 piece only (cross-class standard).
 * Trueshot Aura is a party aura under Forever; the sim only has a raid wide switch, so the hunter's own talent turns it on for the raid.
 
 ## Priest
