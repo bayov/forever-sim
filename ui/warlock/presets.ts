@@ -172,14 +172,16 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	{ group: 'Level 60', tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.' },
 );
 
-// Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone and Shadow and Flame,
-// with the Succubus sacrificed before the pull for 15% Fire damage and no demon out, and
-// Firestone. Searched with Incinerate and Conflagrate kept (-require). The Succubus out instead was
-// 41 behind, the Imp 79, and Spellstone in place of Firestone 26.
+// Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
+// Aftermath, with Malediction and Pandemic and the Succubus out, and Firestone. Searched with
+// Incinerate and Conflagrate kept (-require). Since the demons scale from the warlock's stats the
+// Succubus out beats the earlier build that sacrificed it for 15% Fire damage (957.8) by 41; the
+// Felhunter out is 24 behind, the Imp 44, and Spellstone in place of Firestone 23. Bane of Havoc's
+// point does nothing in the sim (it is the one point left over).
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
-	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
-	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for Fire damage.' },
+	SavedTalents.create({ talentsString: '2525000003-0002-0050355003101351' }),
+	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with Malediction and Pandemic and the Succubus out.' },
 );
 
 export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
@@ -190,9 +192,10 @@ export const DefaultTalents = TalentsLevel60Demonology;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// The Succubus is out for every Level 60 build. Forever halved Firebolt, but the demons' melee
-// is still 1.12's in the sim, so the Succubus is about 47 DPS ahead of the Imp on the
-// Destruction and Affliction builds (notes.md). Spellstone and Firestone are within 2 there.
+// The Succubus is out for every Level 60 build. Forever's demons take no player buffs and scale
+// from the warlock's stats (Season of Discovery's coefficients as a placeholder, notes.md), and the
+// Succubus's melee gets the most from it: on Destruction it is 23 ahead of the Felhunter and 43 of
+// the Imp. Spellstone and Firestone are within 2 there.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
 	summon: Summon.Succubus,
@@ -208,8 +211,8 @@ const PresetBuildOptionsDemonology = {
 };
 const PresetBuildOptionsFire = {
 	armor: Armor.DemonArmor,
-	summon: Summon.NoSummon,
-	sacrificedPet: Summon.Succubus,
+	summon: Summon.Succubus,
+	sacrificedPet: Summon.NoSummon,
 	weaponImbue: WarlockWeaponImbue.Firestone,
 };
 const PresetBuildOptionsSuccubus = {

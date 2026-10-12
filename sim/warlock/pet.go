@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -85,6 +86,13 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 		owner:        warlock,
 		OnPetDisable: func(sim *core.Simulation, isSacrifice bool) {},
 	}
+
+	// Forever's buffs are players only (client 70338 gives Gift of the Wild, Fortitude, Arcane
+	// Brilliance, the Greater Blessings, Battle Shout, Leader of the Pack, Moonkin Aura, the stat
+	// totems and the scrolls the players-only target flag, SPELL_ATTR3 0x100, and forever-bugs #27,
+	// "Invalid Target" on a warlock pet, was closed as not a bug), so demons get none. They scale from
+	// the warlock's stats instead, see makeStatInheritance. Debuffs on the target still count.
+	wp.Pet.IgnoresPlayerBuffs = true
 
 	wp.EnableManaBarWithModifier(cfg.PowerModifier)
 
@@ -192,8 +200,32 @@ func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 	}
 }
 
+// makeStatInheritance is the Warlock Pet Scaling aura (client 70338, spell 416189; Blizzard's warlock
+// deep dive of 2026-10-07: "pets now scale from their summoner's stats"). The client has the slots
+// (health, melee attack power, spell damage, hit, spell hit, haste, crit, Intellect, mana regen and
+// expertise) but Forever's amounts are server side and unmeasured, so these are Season of Discovery's
+// as a placeholder, taken from the wowsims SoD sim (github.com/wowsims/sod, sim/warlock/pet.go,
+// makeStatInheritance): 75% of the warlock's Stamina, 30% of its Intellect, 35% of its armor, 56.5% of
+// its highest school's spell power as attack power and 15% as spell damage, mana regen of 31.5% of its
+// Intellect, its melee and spell crit, its spell hit as melee hit and 17/12 of it (floored) as spell
+// hit. notes.md lists it under Need to Verify.
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
-		return stats.Stats{}
+		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
+		highestSchoolPower := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
+
+		return stats.Stats{
+			stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
+			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
+			stats.Armor:            ownerStats[stats.Armor] * 0.35,
+			stats.AttackPower:      highestSchoolPower * 0.565,
+			stats.MP5:              ownerStats[stats.Intellect] * 0.315,
+			stats.SpellDamage:      highestSchoolPower * 0.15,
+			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
+			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit:         math.Floor(ownerHitChance / 12.0 * 17.0),
+			stats.MeleeCrit:        ownerStats[stats.MeleeCrit],
+			stats.SpellCrit:        ownerStats[stats.SpellCrit],
+		}
 	}
 }
