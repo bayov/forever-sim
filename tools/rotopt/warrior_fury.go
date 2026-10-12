@@ -22,6 +22,9 @@ func (warriorFury) Knobs() []Knob {
 		// Hamstring as a filler above this much Rage, 0 never. It procs Windfury Totem and the sword
 		// extra attacks.
 		Knob{Name: "hamstringRage", Default: 0, Min: 0, Max: 90, Step: 10},
+		// Hamstring and Heroic Strike only when Bloodthirst and Whirlwind are at least this many
+		// seconds away, so the filler never leaves them short of Rage. 0 any time.
+		Knob{Name: "fillerGap", Default: 0, Min: 0, Max: 3, Step: 1},
 	)
 }
 
@@ -49,9 +52,17 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	if k["slamRage"] > 0 {
 		items = append(items, cast(slam, and(ge(currentRage(), num(k["slamRage"])), not(executePhase())), "Slam on cooldown with Rage to spare."))
 	}
-	items = append(items, heroicStrikeLine(k))
+	var gap value
+	if k["fillerGap"] > 0 {
+		gap = and(ge(spellTimeToReady(bloodthirst), seconds(k["fillerGap"])), ge(spellTimeToReady(whirlwind), seconds(k["fillerGap"])))
+	}
+	hs := heroicStrikeLine(k)
+	if gap != nil {
+		hs.Action.Condition = and(hs.Action.Condition, gap)
+	}
+	items = append(items, hs)
 	if k["hamstringRage"] > 0 {
-		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase())), "Hamstring with Rage to spare, for the procs."))
+		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase()), gap), "Hamstring with Rage to spare, for the procs."))
 	}
 	items = append(items, cast(berserkerStance, not(auraIsActive(berserkerStance)), "Back to Berserker Stance."))
 	return rotation(items...)

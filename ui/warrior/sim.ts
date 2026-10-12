@@ -123,17 +123,18 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 			...Presets.GearPresets[Phase.Phase1],
 		],
 		// Preset builds that the user can quickly select.
-		builds: [],
+		builds: [Presets.PresetBuildLevel60Fury, Presets.PresetBuildLevel60Fury2H, Presets.PresetBuildLevel60Arms],
 	},
 
 	autoRotation: player => {
-		const talentTree = player.getTalentTree();
-
-		if (player.getEquippedItem(ItemSlot.ItemSlotMainHand)?._item.handType === HandType.HandTypeTwoHand) {
-			return Presets.DefaultAPLs[0].rotation.rotation!;
+		// Mortal Strike means Arms, otherwise Fury with one or two weapons.
+		if (player.getTalents().mortalStrike) {
+			return Presets.APLLevel60Arms.rotation.rotation!;
 		}
-
-		return Presets.DefaultAPLs[0].rotation.rotation!;
+		if (player.getEquippedItem(ItemSlot.ItemSlotMainHand)?._item.handType === HandType.HandTypeTwoHand) {
+			return Presets.APLLevel60Fury2H.rotation.rotation!;
+		}
+		return Presets.APLLevel60Fury.rotation.rotation!;
 	},
 
 	raidSimPresets: [
@@ -149,7 +150,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
