@@ -445,7 +445,10 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Battle Shout',
 							actionId: ActionId.fromSpellId(12861),
-							playerData: playerClass(Class.ClassWarrior, player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle),
+							playerData: playerClass(
+								Class.ClassWarrior,
+								player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle,
+							),
 						},
 					],
 				},
