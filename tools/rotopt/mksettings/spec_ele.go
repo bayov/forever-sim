@@ -7,13 +7,11 @@ func init() {
 		uiDir: "ui/elemental_shaman",
 		// The elemental shaman is in a caster group and is its only shaman, so its totems are the
 		// ones the rotation puts down. It takes Wisdom and Kings from the paladins. Might is no use
-		// to it. The caster debuffs that touch its schools stay on: Curse of the Elements and
-		// Improved Scorch for Fire (Flame Shock, Lava Burst, the fire totems) and Winter's Chill for
-		// Frost Shock. Nature has no debuff.
+		// to it. Curse of the Elements is the one raid debuff on its schools: under Forever Improved
+		// Scorch and Winter's Chill only help the mage's own spells, and Curse of Shadow is gone.
 		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
-			debuffs.ImprovedScorch = true
-			debuffs.WintersChill = true
+			debuffs.CurseOfShadow = false
 		},
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
