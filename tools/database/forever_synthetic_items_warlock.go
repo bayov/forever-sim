@@ -61,9 +61,10 @@ import (
 // (item set 2100, see sim/warlock/item_sets_pve.go), so only its 2 piece bonus (1% hit) is live, the same
 // for every class's preset.
 //
-// The main hand is a sword on purpose: Azuresong Mageblade is the Era Phase 1 weapon, and that gives a
-// Human warlock its Sword Specialization (2% crit). A staff or a dagger would leave no warlock race with a
-// weapon racial.
+// The presets wear the staff at the end of the list (997020), the main hand and off hand budgets together,
+// with Forever's Enchant 2H Weapon - Spellblasting; it beats the sword (Azuresong Mageblade, which gave a
+// Human warlock Sword Specialization) and off hand by 23 to 33 DPS on every build. The sword and off hand
+// stay for anyone who wants to compare.
 
 func init() {
 	ForeverSyntheticItems = append(ForeverSyntheticItems, warlockSyntheticItems...)
