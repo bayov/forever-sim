@@ -10,7 +10,6 @@ import {
 	Explosive,
 	Flask,
 	Food,
-	HitConsumable,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -205,15 +204,14 @@ export const DefaultConsumes = Consumes.create({
 });
 
 // Survival never runs short of mana, so the potions, runes, Mageblood and the flask do nothing for
-// it. It takes Juju Power (+6.7), Fire-Toasted Bun (+9, 1% hit for the dual wield swings) and
-// Dragonbreath Chili (+3.2) instead.
+// it. It takes Juju Power (+6.7) and Dragonbreath Chili (+3.2) instead. Fire-toasted Bun's 2% hit
+// would add 9, but Forever's is a seasonal item that expires 14 days after looting (item 23327).
 export const SurvivalConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	food: Food.FoodGrilledSquid,
-	hitConsumable: HitConsumable.FireToastedBun,
 	intellectElixir: IntellectElixir.ElixirOfWisdom,
 	petAgilityConsumable: 1,
 	petAttackPowerConsumable: 1,

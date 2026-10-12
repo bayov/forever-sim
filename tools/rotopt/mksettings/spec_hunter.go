@@ -64,8 +64,8 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 // (+1.4) and Engineering's Goblin Land Mine (+7.6) and Goblin Sapper (+4.8). The ranged specs
 // also need Major Mana Potion (+31), Demonic Rune (+28) and Mageblood (+2.4), and Flask of
 // Distilled Wisdom is +1.1. Survival never runs low on mana and gets nothing from those, but
-// Juju Power's Strength (+6.7), Fire-Toasted Bun's hit (+9, the dual wield swings miss a lot)
-// and Dragonbreath Chili (+3.2). The pet gets the pet scrolls and Juju.
+// Juju Power's Strength (+6.7) and Dragonbreath Chili (+3.2). Fire-toasted Bun's 2% hit
+// (+9) is left out: Forever's is a seasonal item that expires 14 days after looting (item 23327). The pet gets the pet scrolls and Juju.
 func hunterConsumes(melee bool) *proto.Consumes {
 	consumes := &proto.Consumes{
 		AgilityElixir:            proto.AgilityElixir_ElixirOfTheMongoose,
@@ -81,7 +81,6 @@ func hunterConsumes(melee bool) *proto.Consumes {
 	}
 	if melee {
 		consumes.StrengthBuff = proto.StrengthBuff_JujuPower
-		consumes.HitConsumable = proto.HitConsumable_FireToastedBun
 		consumes.DragonBreathChili = true
 	} else {
 		consumes.DefaultPotion = proto.Potions_MajorManaPotion

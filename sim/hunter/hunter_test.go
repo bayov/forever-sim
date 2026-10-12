@@ -96,7 +96,6 @@ var SurvivalConsumes = core.ConsumesCombo{
 		DragonBreathChili:        true,
 		FillerExplosive:          proto.Explosive_ExplosiveGoblinLandMine,
 		Food:                     proto.Food_FoodGrilledSquid,
-		HitConsumable:            proto.HitConsumable_FireToastedBun,
 		IntellectElixir:          proto.IntellectElixir_ElixirOfWisdom,
 		PetAgilityConsumable:     1,
 		PetAttackPowerConsumable: 1,
