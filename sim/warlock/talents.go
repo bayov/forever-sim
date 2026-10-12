@@ -620,18 +620,14 @@ func (warlock *Warlock) applyDemonicSacrifice() {
 	if sacrificedPet != nil {
 		core.MakePermanent(warlock.RegisterAura(core.Aura{
 			Label: "Demonic Sacrifice Before Pull",
+			// At reset and not at the pull, so a Shadow Bolt cast before the pull has it. A demon
+			// summoned at the start cancels it like any summon, whether it comes out before or after.
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				core.StartDelayedAction(sim, core.DelayedActionOptions{
-					DoAt:     sim.CurrentTime,
-					Priority: core.ActionPriorityAuto,
-					OnAction: func(sim *core.Simulation) {
-						// Without Demonic Pact the demon that is out would have cancelled it.
-						if warlock.ActivePet == sacrificedPet || (warlock.ActivePet != nil && !warlock.Talents.DemonicPact) {
-							return
-						}
-						warlock.DemonicSacrificeAuras[sacrificedPet].Activate(sim)
-					},
-				})
+				// Without Demonic Pact the demon that is out would have cancelled it.
+				if warlock.ActivePet == sacrificedPet || (warlock.ActivePet != nil && !warlock.Talents.DemonicPact) {
+					return
+				}
+				warlock.DemonicSacrificeAuras[sacrificedPet].Activate(sim)
 			},
 		}))
 	}

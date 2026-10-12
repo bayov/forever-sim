@@ -78,7 +78,8 @@ func TestWarlockBanesAndCurses(t *testing.T) {
 }
 
 // TestWarlockDemonicPact checks the Imp sacrificed before the pull: its 15% Shadow damage stays
-// with the Succubus out only with Demonic Pact, and goes with any demon out without it.
+// with the Succubus out only with Demonic Pact, and goes with any demon out without it. When
+// it stays it is up from the reset, before any pre-pull cast, not from the pull.
 func TestWarlockDemonicPact(t *testing.T) {
 	const withPact = "-0305003131221001351"
 	const withoutPact = "-030500313122100135"
@@ -92,6 +93,9 @@ func TestWarlockDemonicPact(t *testing.T) {
 		{withoutPact, proto.WarlockOptions_NoSummon, true},
 	} {
 		sim, lock := newWarlockSim(t, c.talents, &proto.WarlockOptions{Summon: c.summon, SacrificedPet: proto.WarlockOptions_Imp})
+		if upAtReset := lock.DemonicSacrificeAuras[lock.Imp].IsActive(); upAtReset != c.want {
+			t.Errorf("%s with demon %s: Burning Shadow up before the pull %v, want %v", c.talents, c.summon, upAtReset, c.want)
+		}
 		var up bool
 		at(sim, 1, func(sim *core.Simulation) {
 			up = lock.DemonicSacrificeAuras[lock.Imp].IsActive()
