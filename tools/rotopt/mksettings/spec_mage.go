@@ -11,7 +11,9 @@ import "github.com/wowsims/classic/sim/core/proto"
 // in each slot on the four searched builds (180 sec, 20000 iterations). The presets model
 // Forever's launch, with no raid open, so nothing that only a raid sells: Wizard Oil in place of
 // Brilliant Wizard Oil (Zandalar Tribe). Cerebral Cortex Compound is a Blasted Lands quest.
-// Elixirs of the Owl and Sages are 27 to 45 together, Greater Mageblood Elixir 0 to 6 and Lobster
+// One +2% crit elixir a character: Elixir of Sages with Elixir of Greater Intellect is 0.3 to 1
+// ahead of the Owl with Greater Spirit (the Owl on top would be 10 to 21 more). Greater Mageblood
+// Elixir is 0 to 6 and Lobster
 // Stew 3 to 4 over Nightfin Soup. Major Spellblasting Potion is +7 for Frost and -15 for
 // Frostfire, so the Major Mana Potion stays. Elixir of Greater Firepower is the Elixir of Holy
 // Power under Forever (+40 Holy), so the Fire elixir is the plain Elixir of Firepower. Flask of
@@ -32,7 +34,7 @@ func mageSpec() *specSetup {
 				FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
 				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodLobsterStew,
-				IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
+				IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,

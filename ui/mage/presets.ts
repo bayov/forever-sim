@@ -196,9 +196,11 @@ export const DefaultOptions = MageOptions.create({
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
 // on all four builds at 180 sec. The presets model Forever's launch, with no raid open, so nothing
 // that only a raid sells: Wizard Oil in place of Brilliant Wizard Oil (Zandalar Tribe, Wizard Oil
-// is 12 to 16 over none). Cerebral Cortex Compound is a Blasted Lands quest. Forever's Elixir of
-// the Owl (25 Intellect, 2% crit) and Elixir of Sages (25 Spirit, 2% crit) are 27 to 45 together
-// (the sim lets both stack, which is open), Greater Mageblood Elixir (20 mp5) 0 to 6, Lobster Stew
+// is 12 to 16 over none). Cerebral Cortex Compound is a Blasted Lands quest. A character takes one
+// of Forever's +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale: the client makes them role
+// variants of one elixir). Elixir of Sages (25 Spirit, 2% crit) with Elixir of Greater Intellect
+// is 0.3 to 1 ahead of the Owl with Greater Spirit, and Elixir of the Owl on top would add 10 to
+// 21 if they stacked (open). Greater Mageblood Elixir (20 mp5) is 0 to 6, Lobster Stew
 // (28 spell power) 3 to 4 over Nightfin Soup. Major Spellblasting Potion is 7 ahead of the Major
 // Mana Potion for Frost and 15 behind for Frostfire, so the mana potion stays. Elixir of Greater
 // Firepower is the Elixir of Holy Power under Forever (+40 Holy), so the Fire elixir is the plain
@@ -211,7 +213,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
 	frostPowerBuff: FrostPowerBuff.ElixirOfFrostPower,
-	intellectElixir: IntellectElixir.ElixirOfTheOwl,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,

@@ -55,7 +55,7 @@ var P1Consumes = core.ConsumesCombo{
 		Flask:           proto.Flask_FlaskOfSupremePower,
 		Food:            proto.Food_FoodLobsterStew,
 		FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
-		IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
+		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
 		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,

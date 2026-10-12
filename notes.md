@@ -77,7 +77,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * A raid boss can't be frozen (sim), so Frostbite, Frost Nova and Shatter only count through Fingers of Frost.
 * Manaflare Regalia's 2 piece bonus (sim: 1% hit, the tooltip). wowhead's spell page shows 2% on the same effect.
 * Mana gems and Demonic Rune share one 2 min cooldown (sim: shared, the 70338 client's item category 1153 and spell category 30 for both). In Era they were thought to be separate. A Mana Ruby and a Demonic Rune one after the other settles it.
-* Elixir of the Owl with Elixir of Sages (sim: separate slots, so both, 4% crit together). The mage presets carry both: 27 to 45 dps at 180 sec over Elixir of Wisdom alone. If they don't stack, the presets keep the Owl, which is 12 to 25 of that.
+* One +2% crit elixir a character (Mongoose, Grizzly, Owl, Sages, Whale; sim: the orchestrator's rule, from the client's one category 2593 for the five). The mage presets take Elixir of Sages with Elixir of Greater Intellect. If the Owl stacks with Sages it adds 10 to 21 dps at 180 sec.
 
 ## Warlock
 
