@@ -167,9 +167,10 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 	SavedTalents.create({ talentsString: '05120500200001-13550000130133051-004' }),
 	{ tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.', group: 'Level 60' },
 );
-// Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, Incineration 3
-// (it covers Arcane Blast) and Elemental Precision and Improved Frostbolt in Frost. Three seeds
-// (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 799.5 /
+// Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
+// 3 (it covers Arcane Blast). The 15 Frost points do nothing for Arcane Blast and Arcane Missiles:
+// the trees have nothing else they can buy, so they sit where a Frost filler would use them. Three
+// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 799.5 /
 // 790.0 / 785.2 (Undead), 16% behind Frostfire.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
 	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
