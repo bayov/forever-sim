@@ -194,4 +194,16 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
+	// Staff, the main hand and off hand budgets together (46.2 + 27.5), in place of Staff of
+	// Dominance (70, 18842), for the presets that sim better with a two-hander.
+	{
+		Id: 996016, Name: "Mage Synthetic Staff (Phase 1)", Icon: "inv_staff_13",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 20, stats.Spirit: 11, stats.SpellPower: 100}.ToFloatArray(),
+		CritRating: 14,
+		// Staff of Dominance damage and speed.
+		WeaponDamageMin: 126, WeaponDamageMax: 205, WeaponSpeed: 2.9,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
 }
