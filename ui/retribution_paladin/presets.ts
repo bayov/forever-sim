@@ -235,7 +235,8 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // Holy Power, +40 Holy, so it is for the seals, judgements and Consecration), Elixir of the
 // Mongoose 21, Juju Power 11 (Elixir of the Grizzly in its place is 11 behind), R.O.I.D.S. 9,
 // Greater Arcane Elixir 15, Goblin Land Mine 4, Nightfin Soup 2.4 over Grilled Squid, Elixir of
-// Shadow Power 1.5, Goblin Sapper 1.6, Elixir of Wisdom 2, Mageblood Potion 2.3 at 300 sec. The
+// Shadow Power 1.5, Goblin Sapper 1.6, Elixir of Wisdom 2, Mageblood Potion 2.3 at 300 sec (a stand-in:
+// its recipe is a Zandalar Tribe one, not Phase 1, until Greater Mageblood Elixir is in the sim). The
 // Major Mana Potion and Demonic Rune are 39 and 28 at 300 sec. Flask of the Titans or Distilled
 // Wisdom give nothing here.
 export const DefaultConsumes = Consumes.create({
