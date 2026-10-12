@@ -15,9 +15,16 @@ func (hunter *Hunter) deadlyAspectsChance() float64 {
 	return 0.02 * float64(hunter.Talents.DeadlyAspects)
 }
 
+// The best Aspect of the Hawk the hunter can learn. Rank 7 comes from an Ahn'Qiraj book, out under
+// Forever. Forever's rank 6 gives less than rank 5 (55 against 90 in the beta client), so without
+// rank 7 a hunter keeps casting rank 5.
 func (hunter *Hunter) getMaxHawkRank() int {
 	levels := [8]int{0, 10, 18, 28, 38, 48, 58, 60}
-	for i := 7; i > 0; i-- {
+	maxRank := 7
+	if hunter.Env.IsForever() && !hunter.Env.IncludeAQRanks() {
+		maxRank = 5
+	}
+	for i := maxRank; i > 0; i-- {
 		if levels[i] <= int(hunter.Level) {
 			return i
 		}

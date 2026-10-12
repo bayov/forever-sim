@@ -13,13 +13,13 @@ var (
 	hunterAimedShot        = spellID(20904)
 	hunterArcaneShot       = spellID(14287)
 	hunterMultiShot        = spellID(2643)
-	hunterSerpentSting     = spellID(25295)
+	hunterSerpentSting     = spellID(13555) // rank 8, rank 9 is an AQ book
 	hunterSummonHawk       = spellID(1293527)
 	hunterSniperShot       = spellID(1310786)
 	hunterRapidFire        = spellID(3045)
 	hunterIntimidation     = spellID(19577)
 	hunterBestialWrath     = spellID(19574)
-	hunterAspectOfTheHawk  = spellID(25296)
+	hunterAspectOfTheHawk  = spellID(14321) // rank 5, see sim/hunter/aspects.go
 	hunterAspectOfTheBeast = spellID(1299447)
 	hunterRaptorStrikeQ    = spellIDTag(14266, 3)
 	hunterMongooseBite     = spellID(14271)

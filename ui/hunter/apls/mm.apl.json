@@ -1,14 +1,14 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":25296}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":14321}}},"doAtValue":{"const":{"val":"-3s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":3045}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [
         {"action":{"condition":{"inMeleeRange":{}},"move":{"rangeFromTarget":{"const":{"val":"25"}}}},"notes":"Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum."},
-        {"action":{"castSpell":{"spellId":{"spellId":25296}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":25296}}}}}},"notes":"Aspect of the Hawk if it ever drops."},
+        {"action":{"castSpell":{"spellId":{"spellId":14321}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":14321}}}}}},"notes":"Aspect of the Hawk if it ever drops."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."},
-        {"action":{"castSpell":{"spellId":{"spellId":25295}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":25295}}}}}]}}},"notes":"Serpent Sting when it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":13555}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":13555}}}}}]}}},"notes":"Serpent Sting when it is down."},
         {"action":{"castSpell":{"spellId":{"spellId":1293527}},"condition":{"and":{"vals":[{"not":{"val":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":1293527,"tag":1}}},{"dotIsActive":{"spellId":{"spellId":1293527,"tag":2}}}]}}}}]}}},"notes":"Summon Hawk while fewer than 2 hawks are out, with the talent."},
         {"action":{"castSpell":{"spellId":{"spellId":14287}}},"notes":"Arcane Shot on its cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":20904}}},"notes":"Aimed Shot on the cooldown it shares with Multi-Shot."},

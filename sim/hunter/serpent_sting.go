@@ -89,8 +89,13 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 	}
 }
 
+// Rank 9 comes from an Ahn'Qiraj book, out under Forever (rank 8's 415 instead of 555).
 func (hunter *Hunter) registerSerpentStingSpell() {
-	for rank := 9; rank >= 1; rank-- {
+	maxRank := 9
+	if !hunter.Env.IncludeAQRanks() {
+		maxRank = 8
+	}
+	for rank := maxRank; rank >= 1; rank-- {
 		config := hunter.getSerpentStingConfig(rank)
 
 		if config.RequiredLevel <= int(hunter.Level) {
