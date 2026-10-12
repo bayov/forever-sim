@@ -89,4 +89,5 @@ Things we can only check on release, because the beta stops at level 30.
 * The level 60 trinkets in the presets (Hand of Justice, Blackhand's Breadth).
 * Raid buffs and totems at their top ranks, at their Forever values.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).
+* Paladin: Justice Battlegear's real stats (the client pieces have none yet, the synthetic set carries its bonuses), Holy Strike rank 8 and Seal of Righteousness rank 8 hits with known spell power, and Twist of Light at 31 Retribution points (whether two Echoes can be up at once).
 * The 100% cap on mana regen while casting. Mindfulness 3/3, Improved Stormstrike and Polished Driftwood Icon add up to 108%, and the sim caps it at 100% like cmangos.
