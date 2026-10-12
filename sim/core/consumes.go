@@ -431,9 +431,13 @@ func applyFoodConsumes(character *Character, consumes *proto.Consumes) {
 }
 
 // Forever gives each well fed food one stat. Returns whether Forever changed the food, so the caller
-// skips its Classic stats. The other foods are the same in Forever, or new ones the sim doesn't
-// apply yet.
+// skips its Classic stats. The other foods are the same in Forever. The values are the Well Fed
+// aura's amount in client 1.60.1.70338 (SpellEffect, aura 227 on the food's spell).
 func applyForeverFood(character *Character, food proto.Food) bool {
+	if bonus, ok := foreverFoodStats[food]; ok {
+		character.AddStats(bonus)
+		return true
+	}
 	switch food {
 	case proto.Food_FoodHotWolfRibs:
 		character.AddStat(stats.Agility, 10)
@@ -456,6 +460,61 @@ func applyForeverFood(character *Character, food proto.Food) bool {
 		return false
 	}
 	return true
+}
+
+func meleeAndRangedAP(ap float64) stats.Stats {
+	return stats.Stats{stats.AttackPower: ap, stats.RangedAttackPower: ap}
+}
+
+// The Forever foods that Classic doesn't have, or that Classic gives something else.
+var foreverFoodStats = map[proto.Food]stats.Stats{
+	// Strength
+	proto.Food_FoodSavoryStagSliders: {stats.Strength: 15},
+	proto.Food_FoodSucculentPorkRibs: {stats.Strength: 5},
+	proto.Food_FoodGoretuskLiverPie:  {stats.Strength: 3},
+	proto.Food_FoodRoastedBoarMeat:   {stats.Strength: 1},
+	// Agility
+	proto.Food_FoodFlankAuPoivre:     {stats.Agility: 20},
+	proto.Food_FoodSeasonedWolfKabob: {stats.Agility: 5},
+	proto.Food_FoodCoyoteSteak:       {stats.Agility: 3},
+	proto.Food_FoodSpicedWolfMeat:    {stats.Agility: 1},
+	// Attack power, melee and ranged
+	proto.Food_FoodMightfishSteak:        meleeAndRangedAP(40),
+	proto.Food_FoodCookedGlossyMightfish: meleeAndRangedAP(30),
+	proto.Food_FoodLongjawMudSnapper:     meleeAndRangedAP(10),
+	proto.Food_FoodSlitherskinMackerel:   meleeAndRangedAP(6),
+	proto.Food_FoodBrilliantSmallfish:    meleeAndRangedAP(2),
+	// Spell damage, all schools
+	proto.Food_FoodLobsterStew:        {stats.SpellDamage: 28},
+	proto.Food_FoodRainbowFinAlbacore: {stats.SpellDamage: 1},
+	// Intellect
+	proto.Food_FoodPrehistoricPulledRaptor: {stats.Intellect: 20},
+	proto.Food_FoodRoastRaptor:             {stats.Intellect: 5},
+	proto.Food_FoodTwiceSpicedRaptorSlice:  {stats.Intellect: 3},
+	proto.Food_FoodTastyRaptorBites:        {stats.Intellect: 1},
+	// Spirit
+	proto.Food_FoodWickedSmoothie:    {stats.Spirit: 20},
+	proto.Food_FoodSpicySmoothie:     {stats.Spirit: 15},
+	proto.Food_FoodCalcifiedSmoothie: {stats.Spirit: 10},
+	proto.Food_FoodMrrgglSmrrthle:    {stats.Spirit: 5},
+	proto.Food_FoodSlimySmoothie:     {stats.Spirit: 3},
+	proto.Food_FoodVenomousSmoothie:  {stats.Spirit: 1},
+	// Stamina
+	proto.Food_FoodSavoryTurtleStew:     {stats.Stamina: 20},
+	proto.Food_FoodSpiderSausage:        {stats.Stamina: 15},
+	proto.Food_FoodGiantScrambledEggs:   {stats.Stamina: 10},
+	proto.Food_FoodCuriouslyTastyOmelet: {stats.Stamina: 5},
+	proto.Food_FoodBreakfastOmelette:    {stats.Stamina: 3},
+	proto.Food_FoodSkywallSouffle:       {stats.Stamina: 1},
+	// Healing
+	proto.Food_FoodSagesTea:  {stats.HealingPower: 44},
+	proto.Food_FoodSunnyTea:  {stats.HealingPower: 33},
+	proto.Food_FoodTriageTea: {stats.HealingPower: 22},
+	proto.Food_FoodRootTea:   {stats.HealingPower: 11},
+	proto.Food_FoodRoyalTea:  {stats.HealingPower: 7},
+	proto.Food_FoodPeaceTea:  {stats.HealingPower: 2},
+	// Armor
+	proto.Food_FoodPlatedArmorfish: {stats.BonusArmor: 150},
 }
 
 func DragonBreathChiliAura(character *Character) *Aura {
@@ -526,6 +585,11 @@ func applyDefensiveBuffConsumes(character *Character, consumes *proto.Consumes) 
 			})
 		case proto.ArmorElixir_ScrollOfProtection:
 			character.AddStat(stats.BonusArmor, scrollOfProtection[HighestRankAt(character.Level, scrollOfProtectionLevel[:])])
+		case proto.ArmorElixir_ElixirOfThePhalanx:
+			character.AddStats(stats.Stats{
+				stats.Health:     400,
+				stats.BonusArmor: 500,
+			})
 		}
 	}
 
@@ -539,6 +603,10 @@ func applyDefensiveBuffConsumes(character *Character, consumes *proto.Consumes) 
 			character.AddStats(stats.Stats{
 				stats.Health: 27,
 			})
+		case proto.HealthElixir_ElixirOfFortitudeForever:
+			character.AddStat(stats.Health, 200)
+		case proto.HealthElixir_ElixirOfGreaterFortitude:
+			character.AddStat(stats.Health, 400)
 		}
 	}
 }
@@ -555,7 +623,7 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 				stats.AttackPower:       40,
 				stats.RangedAttackPower: 40,
 			})
-		case proto.AttackPowerBuff_WinterfallFirewater:
+		case proto.AttackPowerBuff_WinterfallFirewater, proto.AttackPowerBuff_DistilledFirewater:
 			character.AddStats(stats.Stats{
 				stats.AttackPower: 35,
 			})
@@ -583,6 +651,11 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 			})
 		case proto.AgilityElixir_ScrollOfAgility:
 			character.AddStat(stats.Agility, scrollValue(character.Level))
+		case proto.AgilityElixir_ElixirOfCunning:
+			character.AddStats(stats.Stats{
+				stats.Agility:   25,
+				stats.Intellect: 25,
+			})
 		}
 	}
 
@@ -604,8 +677,24 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 			character.AddStat(stats.Strength, scrollValue(character.Level))
 		case proto.StrengthBuff_ElixirOfGiantGrowth:
 			character.AddStat(stats.Strength, 8)
+		case proto.StrengthBuff_ElixirOfStrength:
+			character.AddStat(stats.Strength, 10)
+		case proto.StrengthBuff_ElixirOfTheGrizzly:
+			character.AddStats(foreverElixirCrit.Add(stats.Stats{stats.Strength: 25}))
+		case proto.StrengthBuff_ElixirOfFerocity:
+			character.AddStats(stats.Stats{
+				stats.Strength: 18,
+				stats.Agility:  18,
+			})
 		}
 	}
+}
+
+// Forever's best elixirs add 2% critical strike chance (client aura 290, all crit), which is both
+// melee and spell crit under Forever's single crit chance.
+var foreverElixirCrit = stats.Stats{
+	stats.MeleeCrit: 2 * CritRatingPerCritChance,
+	stats.SpellCrit: 2 * SpellCritRatingPerCritChance,
 }
 
 // Scrolls of Agility and Strength give 5 / 9 / 13 / 17 at ranks I to IV, which need
@@ -641,6 +730,8 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 			character.AddStats(stats.Stats{
 				stats.SpellDamage: 15,
 			})
+		case proto.SpellPowerBuff_MinorArcaneElixir:
+			character.AddStat(stats.SpellDamage, 5)
 		}
 	}
 
@@ -658,6 +749,21 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 				character.AddStat(stats.FirePower, 40)
 			}
 		}
+	}
+
+	if consumes.NaturePowerBuff == proto.NaturePowerBuff_ElixirOfNaturePower {
+		character.AddStat(stats.NaturePower, 40)
+	}
+
+	switch consumes.HealingPowerBuff {
+	case proto.HealingPowerBuff_GreaterClericsElixir:
+		character.AddStat(stats.HealingPower, 40)
+	case proto.HealingPowerBuff_ClericsElixir:
+		character.AddStat(stats.HealingPower, 30)
+	case proto.HealingPowerBuff_LesserClericsElixir:
+		character.AddStat(stats.HealingPower, 20)
+	case proto.HealingPowerBuff_MinorClericsElixir:
+		character.AddStat(stats.HealingPower, 10)
 	}
 
 	if consumes.ShadowPowerBuff != proto.ShadowPowerBuff_ShadowPowerBuffUnknown {
@@ -688,6 +794,13 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 			character.AddStats(stats.Stats{
 				stats.MP5: 6,
 			})
+		case proto.ManaRegenElixir_GreaterMagebloodElixir:
+			character.AddStat(stats.MP5, 20)
+		case proto.ManaRegenElixir_MinorMagebloodElixir:
+			character.AddStat(stats.MP5, 3)
+		case proto.ManaRegenElixir_ElixirOfWickedRegeneration:
+			// It also gives 9 health every 5 sec, which the sim doesn't model.
+			character.AddStat(stats.MP5, 10)
 		}
 	}
 
@@ -695,9 +808,7 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 	// counts, so with a Scroll of Intellect II (8) already on, the elixir's 6 adds nothing.
 	// The buffs went on before the consumes, so we add only what the elixir gives above
 	// the scroll.
-	switch consumes.IntellectElixir {
-	case proto.IntellectElixir_ElixirOfWisdom, proto.IntellectElixir_ElixirOfLesserIntellect:
-		elixir := 6.0
+	if elixir, ok := intellectElixirs[consumes.IntellectElixir]; ok {
 		if raidBuffs.GetScrollOfIntellect() && !raidBuffs.GetArcaneBrilliance() {
 			elixir -= scrollOfIntellect[HighestRankAt(character.Level, scrollOfIntellectLevel[:])]
 		}
@@ -705,6 +816,40 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 			character.AddStat(stats.Intellect, elixir)
 		}
 	}
+	if elixir, ok := spiritElixirs[consumes.SpiritElixir]; ok {
+		if raidBuffs.GetScrollOfSpirit() && !raidBuffs.GetDivineSpirit() {
+			elixir -= scrollOfSpirit[HighestRankAt(character.Level, scrollOfSpiritLevel[:])]
+		}
+		if elixir > 0 {
+			character.AddStat(stats.Spirit, elixir)
+		}
+	}
+	// The crit is separate from the stat, so it counts whatever the scroll does.
+	if consumes.IntellectElixir == proto.IntellectElixir_ElixirOfTheOwl {
+		character.AddStats(foreverElixirCrit)
+	}
+	if consumes.SpiritElixir == proto.SpiritElixir_ElixirOfSages || consumes.SpiritElixir == proto.SpiritElixir_ElixirOfTheWhale {
+		character.AddStats(foreverElixirCrit)
+	}
+}
+
+// The Intellect and Spirit each elixir gives, from client 1.60.1.70338. The familiar scrolls
+// summon a pet, which the sim doesn't model.
+var intellectElixirs = map[proto.IntellectElixir]float64{
+	proto.IntellectElixir_ElixirOfWisdom:           6,
+	proto.IntellectElixir_ElixirOfLesserIntellect:  6,
+	proto.IntellectElixir_ElixirOfIntellect:        10,
+	proto.IntellectElixir_ElixirOfTheOwl:           25,
+	proto.IntellectElixir_ElixirOfGreaterIntellect: 25,
+}
+
+var spiritElixirs = map[proto.SpiritElixir]float64{
+	proto.SpiritElixir_ElixirOfMinorSpirit:   3,
+	proto.SpiritElixir_ElixirOfLesserSpirit:  6,
+	proto.SpiritElixir_ElixirOfSpirit:        10,
+	proto.SpiritElixir_ElixirOfGreaterSpirit: 18,
+	proto.SpiritElixir_ElixirOfSages:         25,
+	proto.SpiritElixir_ElixirOfTheWhale:      25,
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1362,10 +1507,30 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 	case proto.Potions_MagicResistancePotion:
 		return makeMagicResistancePotionMCD(character, potionCD)
 
+	case proto.Potions_MinorFrenzyPotion:
+		return makeStatBuffPotionMCD(250938, "Minor Frenzy Potion", meleeAndRangedAP(12), character, potionCD)
+	case proto.Potions_LesserFrenzyPotion:
+		return makeStatBuffPotionMCD(250939, "Lesser Frenzy Potion", meleeAndRangedAP(18), character, potionCD)
 	case proto.Potions_FrenzyPotion:
-		return makeStatBuffPotionMCD(250940, "Frenzy Potion", stats.Stats{stats.AttackPower: 28, stats.RangedAttackPower: 28}, character, potionCD)
+		return makeStatBuffPotionMCD(250940, "Frenzy Potion", meleeAndRangedAP(28), character, potionCD)
+	case proto.Potions_GreaterFrenzyPotion:
+		return makeStatBuffPotionMCD(250941, "Greater Frenzy Potion", meleeAndRangedAP(40), character, potionCD)
+	case proto.Potions_SuperiorFrenzyPotion:
+		return makeStatBuffPotionMCD(250942, "Superior Frenzy Potion", meleeAndRangedAP(56), character, potionCD)
+	case proto.Potions_MajorFrenzyPotion:
+		return makeStatBuffPotionMCD(250943, "Major Frenzy Potion", meleeAndRangedAP(80), character, potionCD)
+	case proto.Potions_MinorSpellblastingPotion:
+		return makeStatBuffPotionMCD(250932, "Minor Spellblasting Potion", stats.Stats{stats.SpellDamage: 7}, character, potionCD)
+	case proto.Potions_LesserSpellblastingPotion:
+		return makeStatBuffPotionMCD(250933, "Lesser Spellblasting Potion", stats.Stats{stats.SpellDamage: 11}, character, potionCD)
 	case proto.Potions_SpellblastingPotion:
 		return makeStatBuffPotionMCD(250934, "Spellblasting Potion", stats.Stats{stats.SpellDamage: 16}, character, potionCD)
+	case proto.Potions_GreaterSpellblastingPotion:
+		return makeStatBuffPotionMCD(250935, "Greater Spellblasting Potion", stats.Stats{stats.SpellDamage: 23}, character, potionCD)
+	case proto.Potions_SuperiorSpellblastingPotion:
+		return makeStatBuffPotionMCD(250936, "Superior Spellblasting Potion", stats.Stats{stats.SpellDamage: 33}, character, potionCD)
+	case proto.Potions_MajorSpellblastingPotion:
+		return makeStatBuffPotionMCD(250937, "Major Spellblasting Potion", stats.Stats{stats.SpellDamage: 47}, character, potionCD)
 	// case proto.Potions_GreaterArcaneProtectionPotion:
 	// 	return makeSchoolProtectionConsumableMCD(13461, character, potionCD)
 	// case proto.Potions_GreaterFireProtectionPotion:
