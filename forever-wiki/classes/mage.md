@@ -12,7 +12,7 @@ Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. T
 
 The beta client's mage tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876) (1.60.1.69876), with the talents later builds changed brought up to 1.60.1.70338 from [foreverchanges.pro](https://foreverchanges.pro/talents/mage). Positions, rank counts and prerequisites match the BlizzCon data below. Ranks 2 and up are real numbers now, and `tools/forever_talents/data/mage.json` in the sim repo is regenerated from the client tree (`client/mage.json`), so the per-talent text below is superseded where the two differ. The spells are from the client's spell tables (wago.tools DB2, 1.60.1.70338).
 
-Every multi-rank talent's per-rank values were checked on 2026-10-12 against the 70338 client's trait curves (wago.tools TraitDefinition, TraitDefinitionEffectPoints and CurvePoint), which override the rank 1 spell's base points. They all match the client tree's text and the sim, so the [ranks 2+ unverified] tags below are settled. Some rank 1 spells keep Classic leftovers in SpellEffect (Arcane Subtlety stores -30 / -15, Arcane Concentration 100, Ice Shards 100), which the curves replace.
+Every multi-rank talent's per-rank values were checked on 2026-10-12 against the 70338 client's trait curves (wago.tools TraitDefinition, TraitDefinitionEffectPoints and CurvePoint), which override the rank 1 spell's base points. They all match the client tree's text and the sim, so the [ranks 2+ unverified] tags below are settled. Some rank 1 spells keep Classic leftovers in SpellEffect (Arcane Subtlety stores -30 / -15, Arcane Concentration 100, Wake of Fire -2000), which the curves replace.
 
 Talents (client ranks where the BlizzCon data guessed):
 
