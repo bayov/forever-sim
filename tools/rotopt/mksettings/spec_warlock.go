@@ -13,6 +13,11 @@ func init() {
 				raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
 				// Casters take no Blessing of Might, and the demon only gets the warlock's blessings.
 				indBuffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
+				// The demon only gets the party buffs of the warlock's caster group, not the melee
+				// group's Battle Shout, Trueshot Aura and Leader of the Pack. Raid-wide buffs stay.
+				raidBuffs.BattleShout = proto.TristateEffect_TristateEffectMissing
+				raidBuffs.TrueshotAura = false
+				raidBuffs.LeaderOfThePack = false
 			},
 			// Every consumable the sim applies was tried in its slot on the Demonology build at
 			// 180 sec (2026-10-12): Goblin Sapper +4.1 (Engineering), Cerebral Cortex Compound +10.7

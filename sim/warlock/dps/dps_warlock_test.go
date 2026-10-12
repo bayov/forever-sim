@@ -6,6 +6,7 @@ import (
 	_ "github.com/wowsims/classic/sim/common"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 func init() {
@@ -23,7 +24,7 @@ func warlockSuite(t *testing.T, talents string, gear string, apl string, label s
 			Talents:     talents,
 			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", gear),
 			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", apl),
-			Buffs:       core.FullBuffs,
+			Buffs:       WarlockBuffs,
 			Consumes:    Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: label, SpecOptions: options},
 
@@ -132,3 +133,15 @@ var Stats = []proto.Stat{
 	proto.Stat_StatSpellHit,
 	proto.Stat_StatSpellCrit,
 }
+
+// The shared full buffs without the melee group's party buffs, which the demon does not get in a
+// caster group (as in tools/rotopt/mksettings).
+var WarlockBuffs = func() core.BuffsCombo {
+	buffs := core.FullBuffs
+	raid := googleProto.Clone(core.FullRaidBuffs).(*proto.RaidBuffs)
+	raid.BattleShout = proto.TristateEffect_TristateEffectMissing
+	raid.TrueshotAura = false
+	raid.LeaderOfThePack = false
+	buffs.Raid = raid
+	return buffs
+}()

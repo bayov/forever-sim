@@ -284,16 +284,17 @@ export const DefaultConsumes = Consumes.create({
 // Elements up, so ours has its curse free (Forever gives a warlock a bane and a curse). Under
 // Forever Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill only help the
 // player who applies them, so they are not here.
+// The demon only gets the party buffs of the warlock's own caster group, so no Battle Shout,
+// Trueshot Aura or Leader of the Pack (about 7 DPS of the demon's on every build). It keeps the
+// raid-wide buffs.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
-	battleShout: TristateEffect.TristateEffectImproved,
 	bloodPact: TristateEffect.TristateEffectImproved,
 	devotionAura: TristateEffect.TristateEffectImproved,
 	divineSpirit: true,
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	leaderOfThePack: true,
 	manaSpringTotem: TristateEffect.TristateEffectRegular,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
@@ -301,7 +302,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
-	trueshotAura: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
