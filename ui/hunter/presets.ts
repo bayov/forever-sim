@@ -186,6 +186,8 @@ export const LoneWolfOptions = HunterOptions.create({
 // Mine +7.6, Goblin Sapper +4.8). The ranged specs need Major Mana Potions (+31), Demonic Runes
 // (+28) and Mageblood, and take Flask of Distilled Wisdom (+1.1). Juju Power and the hit food do
 // nothing for them: Strength is melee attack power only, and the ranged set is at the 9% cap.
+// Mageblood Potion's recipe only comes from Zandalar, so it stands in for Greater Mageblood Elixir
+// until the sim has that.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
