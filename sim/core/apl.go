@@ -257,7 +257,11 @@ func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 	}
 
 	// Allow next action to interrupt the channel, but if the action is the same action then it still needs to continue.
+	// CanCast refuses every spell while the unit channels, so the channel is set aside while
+	// the next action is picked. Without that no action is ever ready and interruptIf never fires.
+	apl.unit.ChanneledDot = nil
 	nextAction := apl.getNextAction(sim)
+	apl.unit.ChanneledDot = channeledDot
 	if nextAction == nil {
 		return false
 	}
