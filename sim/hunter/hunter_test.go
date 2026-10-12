@@ -62,9 +62,9 @@ func hunterSuite(talents string, gear string, apl string, consumes core.Consumes
 }
 
 // The level 60 builds in ui/hunter/presets.ts.
-var BeastMasteryTalents = "5020121505021241-00530520014"
-var MarksmanshipTalents = "50201-0053552301503051-5"
-var LoneWolfTalents = "502-0053552311503051-5"
+var BeastMasteryTalents = "5020121505021241-00520503014"
+var MarksmanshipTalents = "502-0053452501503051-5"
+var LoneWolfTalents = "5-0053552511503051-5"
 var SurvivalTalents = "502-005005-500230230250122151"
 
 // The level 60 consumes from ui/hunter/presets.ts.

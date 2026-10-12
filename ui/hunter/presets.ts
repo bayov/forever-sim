@@ -59,18 +59,21 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // Forever's level 60 gear in the client is not tuned yet, and Molten Core and Onyxia have no
 // Forever data. Each piece takes the place of an Era Phase 1 hunter BiS piece (the
 // Giantstalker set, Onyxia Tooth Pendant, Wristguards of True Flight, the Devilsaur hands and
-// legs, Quick Strike Ring, Barbarous Blade, Rhok'delar) with the full epic budget of its slot
-// at item level 66 or the Era item's level. The file has the budget math. Beast Mastery and
-// Marksmanship share the Ranged set: they shoot on the same stats, and the pet takes 10% of
-// the hunter's ranged attack power and all of its crit. About 10% of the points are Spirit,
-// 9% hit (the ranged hit cap against a level 63 boss) and 5% crit.
+// legs, Quick Strike Ring, Barbarous Blade, Rhok'delar) on the cross-class item level table
+// (66 for the six armor pieces, 71 for neck, back, wrist, waist and rings, 76 for the two-hander,
+// 71 for the bow). The file has the budget math. Beast Mastery, Marksmanship and Lone Wolf share
+// the Ranged set: they shoot on the same stats, and the pet takes 10% of the hunter's ranged
+// attack power and all of its crit. About 10% of the points are Spirit, 9% hit (the ranged hit
+// cap against a level 63 boss) and 5% crit. The head and chest carry Wildstalker Armor, so only
+// its 2 piece bonus (1% attack and cast speed) is live.
 export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Ranged', Level60RangedGear, {
 	tooltip: 'A guess at Phase 1 BiS for a ranged hunter under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 // The Survival set: melee attack power and Strength in place of ranged attack power, a pair of
 // one-handed swords (Brutality Blade's damage and speed) for Predator's Edge's off hand bonus,
-// and 8% hit, since Survival takes Surefooted's 3%.
+// and 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Crusader on the main hand
+// and Agility on the off hand (+4 over Agility on both).
 export const GearLevel60Survival = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Survival', Level60SurvivalGear, {
 	tooltip: 'A guess at Phase 1 BiS for a melee Survival hunter under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -91,20 +94,20 @@ export const DefaultGear = GearLevel60Ranged;
 // ranged rotations only weigh the shots against each other: Serpent Sting when it is down,
 // Aimed Shot on the cooldown it shares with Multi-Shot, Arcane Shot on its own (shared with
 // Summon Hawk), Sniper Shot on its own, Rapid Fire, Bestial Wrath and the racials at the pull and
-// on cooldown. The knob searches on each build (2026-10-12, 180 sec, with the Wildstalker bonuses)
-// changed two things: Beast Mastery puts Arcane Shot above Aimed Shot (+5, once the 5 piece bonus
-// makes Aimed Shot's cooldown 5 sec), and Lone Wolf casts Serpent Sting at any mana (+2). Serpent
-// Sting after Aimed Shot was within noise on every build.
+// on cooldown. The knob searches on each build (2026-10-12, 180 sec, on the standard gear): Marksmanship
+// and Lone Wolf put Arcane Shot above Aimed Shot and spend their mana with no floors (+15 with
+// Improved Arcane Shot 5), and Lone Wolf casts Serpent Sting after Aimed Shot (+1.7). Beast Mastery
+// keeps Aimed Shot first and its floors.
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {
-	tooltip: 'Serpent Sting when down, Arcane Shot, Aimed Shot and Sniper Shot on cooldown, Bestial Wrath and Rapid Fire on cooldown.',
+	tooltip: 'Serpent Sting when down, Aimed Shot, Sniper Shot and Arcane Shot on cooldown, Bestial Wrath and Rapid Fire on cooldown.',
 	group: 'Level 60',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
-	tooltip: 'Serpent Sting when down, Aimed Shot, Sniper Shot and Arcane Shot on cooldown, Rapid Fire on cooldown.',
+	tooltip: 'Serpent Sting when down, Arcane Shot, Aimed Shot and Sniper Shot on cooldown, Rapid Fire on cooldown, no mana floors.',
 	group: 'Level 60',
 });
 export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWolfAPL, {
-	tooltip: 'The Marksmanship rotation with Serpent Sting at any mana.',
+	tooltip: 'The Marksmanship rotation with Serpent Sting after Aimed Shot.',
 	group: 'Level 60',
 });
 // Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Raptor Strike on
@@ -128,30 +131,29 @@ export const DefaultAPL = APLLoneWolf;
 ///////////////////////////////////////////////////////////////////////////
 
 // The talent searches (tools/rotopt -talent-search, a hill climb) ran on the synthetic sets in
-// the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12, and again
-// with the Wildstalker bonuses and the pet without player buffs (the searches before had it
-// buffed).
+// the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12, and last
+// on the standard gear (orchestration/standards.md) with the pet taking no player buffs.
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
-// Deadly Aspects, and Careful Aim, Lethal Attacks, Rapid Killing, Trueshot Aura and Mortal Shots
-// 4 in Marksmanship. The Beast Mastery searches dropped Summon Hawk: on the cooldown it shares
-// with Arcane Shot, the hawk deals less than the shot.
-export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00530520014' }), {
+// Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2,
+// Trueshot Aura and Mortal Shots 4 in Marksmanship. The Beast Mastery searches dropped Summon
+// Hawk: on the cooldown it shares with Arcane Shot, the hawk deals less than the shot.
+export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503014' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
 	group: 'Level 60',
 });
-// Marksmanship 8/38/5 with a pet: Efficiency, Careful Aim, Rapid Killing, Improved Arcane Shot 3,
+// Marksmanship 7/39/5 with a pet: Efficiency 4, Careful Aim, Rapid Killing, Improved Arcane Shot 5,
 // Trueshot Aura, Mortal Shots, Barrage, Ranged Weapon Specialization, Sniper Shot, Improved
-// Stings, Deadly Aspects, Focused Fire and Improved Tracking 5. With the Wildstalker bonuses the
-// search takes Sniper Shot. A search from a ranged Survival build ended on Marksmanship too.
-export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '50201-0053552301503051-5' }), {
-	tooltip: 'Level 60 Marksmanship 8/38/5 from the talent search, with a pet.',
+// Stings, Deadly Aspects, Focused Fire and Improved Tracking 5. A search from a ranged Survival
+// build ended on Marksmanship too.
+export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '502-0053452501503051-5' }), {
+	tooltip: 'Level 60 Marksmanship 7/39/5 from the talent search, with a pet.',
 	group: 'Level 60',
 });
-// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: the
-// Marksmanship build with Lone Wolf in place of Pathfinding.
-export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedTalents.create({ talentsString: '502-0053552311503051-5' }), {
-	tooltip: 'Level 60 Marksmanship 7/39/5 with Lone Wolf, played without a pet.',
+// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: Efficiency 5 and
+// Lone Wolf where the pet build has Efficiency 4 and Focused Fire.
+export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedTalents.create({ talentsString: '5-0053552511503051-5' }), {
+	tooltip: 'Level 60 Marksmanship 5/41/5 with Lone Wolf, played without a pet.',
 	group: 'Level 60',
 });
 // Survival 7/10/34, the melee spec: Predator's Edge, Expose Prey, Strider Kick, Lightning
