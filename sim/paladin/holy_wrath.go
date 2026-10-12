@@ -62,6 +62,7 @@ func (paladin *Paladin) registerHolyWrath() {
 
 			DamageMultiplier: 1.0,
 			ThreatMultiplier: 1,
+			BonusHitRating:   paladin.divinePrecisionHitRating(core.SpellHitRatingPerHitChance),
 			BonusCoefficient: 0.19,
 
 			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {

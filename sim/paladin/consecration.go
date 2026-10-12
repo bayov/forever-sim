@@ -70,6 +70,7 @@ func (paladin *Paladin) registerConsecration() {
 			},
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
+			BonusHitRating:   paladin.divinePrecisionHitRating(core.SpellHitRatingPerHitChance),
 			BonusCoefficient: tickCoefficient,
 			Dot: core.DotConfig{
 				IsAOE: true,

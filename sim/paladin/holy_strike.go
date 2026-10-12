@@ -95,6 +95,7 @@ func (paladin *Paladin) registerHolyStrike() {
 			DamageMultiplier: damageMultiplier,
 			ThreatMultiplier: threatMultiplier,
 			// The flat part's 42.9% goes through the weapon percent too.
+			BonusHitRating:   paladin.divinePrecisionHitRating(core.MeleeHitRatingPerHitChance),
 			BonusCoefficient: 0.429 * rank.weaponPercent,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

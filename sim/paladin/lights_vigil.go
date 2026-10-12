@@ -61,6 +61,7 @@ func (paladin *Paladin) registerLightsVigil() {
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
+			BonusHitRating:   paladin.divinePrecisionHitRating(core.SpellHitRatingPerHitChance),
 			BonusCoefficient: 0.429,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

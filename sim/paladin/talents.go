@@ -20,8 +20,6 @@ func (paladin *Paladin) ApplyTalents() {
 	if paladin.Env.IsForever() {
 		paladin.AddStat(stats.SpellHit, float64(paladin.Talents.Precision)*core.SpellHitRatingPerHitChance)
 	}
-	// Divine Precision is 6% hit a point with Holy spells only (client 1.60.1.70338, spell 1310904).
-	paladin.PseudoStats.SchoolBonusHitChance[stats.SchoolIndexHoly] += float64(paladin.Talents.DivinePrecision) * 6 * core.SpellHitRatingPerHitChance
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.HolyPower)*core.SpellCritRatingPerCritChance)
 
@@ -80,12 +78,21 @@ func (paladin *Paladin) benediction() int32 {
 	return []int32{100, 98, 96, 94, 92, 90}[paladin.Talents.Benediction]
 }
 
+// divinePrecisionHitRating is Divine Precision's 6% hit a point (client 1.60.1.70338, spell
+// 1310904). Its class mask covers Consecration, Exorcism, Holy Shock, Holy Strike, Holy Wrath
+// and Light's Vigil (plus utility spells), but not the seals, the judgements or Hammer of
+// Wrath, so it goes on those spells rather than on the whole Holy school.
+func (paladin *Paladin) divinePrecisionHitRating(ratingPerHitChance float64) float64 {
+	return 6 * float64(paladin.Talents.DivinePrecision) * ratingPerHitChance
+}
+
 // The seals take Benediction's discount, and since the 2026-09-24 beta build Twist of
-// Light takes another 20% off them. We add the two, the way percent cost reductions
-// usually combine.
+// Light takes another 20% off them. Both are percent cost modifiers (aura 108, misc 14 in
+// client 1.60.1.70338), and those multiply under Forever (the shaman's beta logs,
+// shaman_audit.md 8.1): 0.9 * 0.8 = 72% with Benediction 5.
 func (paladin *Paladin) sealCostMultiplier() int32 {
 	if paladin.Talents.TwistOfLight {
-		return paladin.benediction() - 20
+		return paladin.benediction() * 80 / 100
 	}
 	return paladin.benediction()
 }
@@ -98,10 +105,10 @@ func (paladin *Paladin) holyConduit() int32 {
 // holyConduitInstant is Holy Conduit's discount plus Benediction's, for the spells Holy
 // Conduit covers when they are instant (Consecration, Exorcism, and Hammer of Wrath with
 // both points of Instrument of Law). Benediction's text says "all instant cast spells and
-// abilities". We add the two like sealCostMultiplier does. Hammer of Wrath is not on
-// Benediction's list.
+// abilities". The two multiply like sealCostMultiplier's (0.6 * 0.9 = 54% at Holy Conduit 2
+// and Benediction 5). Hammer of Wrath is not on Benediction's list.
 func (paladin *Paladin) holyConduitInstant() int32 {
-	return paladin.holyConduit() + paladin.benediction() - 100
+	return paladin.holyConduit() * paladin.benediction() / 100
 }
 
 // Purifying Power shortens the Exorcism and Holy Wrath cooldowns by 17% per point.

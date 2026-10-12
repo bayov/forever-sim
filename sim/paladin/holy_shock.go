@@ -68,6 +68,7 @@ func (paladin *Paladin) registerHolyShock() {
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
+			BonusHitRating:   paladin.divinePrecisionHitRating(core.SpellHitRatingPerHitChance),
 			BonusCoefficient: 0.429,
 			BonusCritRating:  extraCrit,
 
