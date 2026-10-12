@@ -1,7 +1,7 @@
 #!/bin/sh
-# Regenerates the shadow priest Level 60 rotation in ui/shadow_priest/apls from the
-# priest_shadow template, with the knobs the searches settled on (2026-10-12): the
-# template's defaults, which are the searched values at 120, 180 and 300 sec.
+# Regenerates the priest Level 60 rotations in ui/shadow_priest/apls from the priest_shadow
+# and priest_smite templates, with the knobs the searches settled on (2026-10-12): the
+# templates' defaults, which are the searched values at 120, 180 and 300 sec.
 #
 # The settings, talent and knob searches behind the Level 60 presets:
 #
@@ -18,7 +18,13 @@
 #   tools/rotopt/priest_presets.sh path/to/settings.json
 set -e
 settings=$1
-go run --tags=with_db ./tools/rotopt -template priest_shadow -settings "$settings" -durs 180 \
-	-eval -confirm-iters 100 -out ui/shadow_priest/apls -name level60 >/dev/null
-mv ui/shadow_priest/apls/level60_180s.apl.json ui/shadow_priest/apls/level60.apl.json
-echo "wrote ui/shadow_priest/apls/level60.apl.json"
+gen() {
+	template=$1
+	name=$2
+	go run --tags=with_db ./tools/rotopt -template "$template" -settings "$settings" -durs 180 \
+		-eval -confirm-iters 100 -out ui/shadow_priest/apls -name "$name" >/dev/null
+	mv "ui/shadow_priest/apls/${name}_180s.apl.json" "ui/shadow_priest/apls/$name.apl.json"
+	echo "wrote ui/shadow_priest/apls/$name.apl.json"
+}
+gen priest_shadow level60
+gen priest_smite level60_smite
