@@ -190,7 +190,7 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone and Shadow and Flame,
 // with the Succubus sacrificed before the pull for 15% Fire damage and no demon out, and
 // Firestone. Searched with Incinerate and Conflagrate kept (-require). The Succubus out instead was
-// 35 behind, the Imp 79, and Spellstone in place of Firestone 26.
+// 41 behind, the Imp 79, and Spellstone in place of Firestone 26.
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
 	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
@@ -382,8 +382,8 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds, Gnome, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 1075.7 / 1062.3 / 1036.0, Destruction 977.5 / 970.2 / 953.5, Affliction 969.8 / 962.7 / 946.1,
-// Destruction fire 968.3 / 957.8 / 938.2, Affliction damage over time 906.7 / 908.2 / 904.4.
+// 1068.2 / 1054.7 / 1028.5, Destruction 970.9 / 963.6 / 946.9, Affliction 963.1 / 956.0 / 939.5,
+// Destruction fire 968.3 / 957.8 / 938.2, Affliction damage over time 900.0 / 901.5 / 897.7.
 // Destruction and Affliction are inside 10% of Demonology, Destruction fire and Affliction damage
 // over time play differently and ship as specs of their own.
 //
