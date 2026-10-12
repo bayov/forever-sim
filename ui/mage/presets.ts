@@ -85,13 +85,13 @@ export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 // Frostfire Bolt as the filler. Scorch puts up 5 stacks of Fire Vulnerability and keeps them,
 // Pyroblast waits for 3 Heating Up stacks (a 1.5 sec cast), Fingers of Frost's Shatter crit goes
 // to the next bolts, Arcane Missiles takes a Missile Barrage proc. Ice Lance takes no spell power
-// (the client's coefficient is 0), so casting it on the charges costs 55 to 65. No Fire Blast: over a 5 minute
-// fight its mana is worth more as Frostfire Bolts, and it is within noise at 3 minutes. Evocation
-// below 10% mana with at least 30 sec of the fight left. The knobs were searched over 120, 180
-// and 300 sec together, so one rotation serves every length. The searches for one length at a
-// time wanted Fire Blast with Evocation at 30 to 40% and no time limit, which is 946.4 / 973.1 /
-// 853.9 (Human), behind this one at every length, because Evocation's 8 sec channel late in a
-// short fight costs more than the mana is worth.
+// (the client's coefficient is 0), so casting it on the charges costs 55 to 65. No Fire Blast:
+// over a 5 minute fight its mana is worth more as Frostfire Bolts, and it is within noise at 3
+// minutes. Evocation below 10% mana with at least 30 sec of the fight left. The knobs were
+// searched over 120, 180 and 300 sec together, so one rotation serves every length. The searches
+// for one length at a time (on the first gear) wanted Fire Blast with Evocation at 30 to 40% and
+// no time limit, which was behind this one at every length, because Evocation's 8 sec channel late
+// in a short fight costs more than the mana is worth.
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
 	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability.',
 	group: 'Level 60',
@@ -138,8 +138,9 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
 // Frost (Ice Lance only because Fingers of Frost needs it). Frostfire Bolt is Fire and Frost at once, so it gets Fire Power, Ignite and Critical
 // Mass and also Ice Shards, Piercing Ice and Shatter. foreverchanges.pro's popular Fire build is
-// the same split. It is 1000.1 / 979.4 / 924.8 at 120 / 180 / 300 sec (Human). Master of Elements 3
-// and Frost Channeling 3 are for the mana: they cost 2.4 at 180 sec and are worth 30 at 300.
+// the same split. It is 959.0 / 937.0 / 893.6 at 120 / 180 / 300 sec (Human). Master of Elements 3
+// and Frost Channeling 3 are for the mana: on the first gear they cost 2.4 at 180 sec and were worth
+// 30 at 300.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	'Level 60 Frostfire',
 	SavedTalents.create({ talentsString: '-1355000013013304-00550003310003002' }),
@@ -150,14 +151,15 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // casts; no other place for the 3 points gains anything either (the search found no move above
 // +0.0). Four seeds (deep Frost, Frost with
 // Arcane Meditation, Frost with Incineration and a 51 point Frost build) all ended within 0.2.
-// It is 873.7 / 866.9 / 861.5 (Human), 11% behind Frostfire.
+// It is 750.4 / 745.1 / 746.2 (Human), 20% behind Frostfire, and last of the four now that Ice
+// Lance takes no spell power (with SoD's 42.9% it was second).
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost', SavedTalents.create({ talentsString: '050005-03-0555300331001301251' }), {
 	tooltip: "Deep Frost: Frostbolt, Fingers of Frost, Shatter, Winter's Chill.",
 	group: 'Level 60',
 });
 // Fire (16/31/4): every Fire damage talent to Combustion, with Arcane Concentration and Missile
 // Barrage (Fireball has 20% to make Arcane Missiles free and fast) and Elemental Precision 4. It
-// is 823.5 / 795.1 / 802.4 (Human). Fire with Frost (Elemental Precision, Ice Shards) was 740 at
+// is 860.3 / 847.1 / 840.1 (Human), 10% behind Frostfire. Fire with Frost (Elemental Precision, Ice Shards) was 740 at
 // 180 sec on the old rotation, 3% behind, and a Fire mage that goes into Frost is better off as
 // Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
@@ -167,8 +169,8 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 );
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, Incineration 3
 // (it covers Arcane Blast) and Elemental Precision and Improved Frostbolt in Frost. Three seeds
-// (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 774.1 /
-// 763.8 / 757.2 (Undead).
+// (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 799.5 /
+// 790.0 / 785.2 (Undead), 16% behind Frostfire.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
 	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
 	group: 'Level 60',
@@ -298,11 +300,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // forever-wiki/sim-status.md). Human is best for every build but Arcane, from its 2% crit with a
 // sword: the synthetic main hand is a sword like Azuresong Mageblade, the Era Phase 1 BiS. Without
 // that crit Human falls behind Undead and Windshaper on every build. Undead (Touch of the Grave at
-// 10% for mages) is best for Arcane and the best Horde race on every build, with Windshaper even.
-//   Frostfire: Human 979.4, Windshaper and High Order 967.2, Undead 966.4, Orc 965.8, Gnome 961.3, Troll 961.1.
-//   Frost:     Human 866.9, Windshaper 864.4, High Order 864.3, Troll 863.2, Orc 863.1, Undead 862.7, Gnome 862.5.
-//   Fire:      Human 795.1, Undead 788.2, Gnome 785.9, Orc 782.9, Windshaper 780.4, High Order 780.0, Troll 776.0.
-//   Arcane:    Undead 763.8, Human 760.6, Orc 755.8, Gnome 755.4, Windshaper 753.6, High Order 753.5, Troll 752.0.
+// 10% for mages) is best for Arcane and the best Horde race for Fire, with Windshaper even with it
+// on Frostfire and Frost.
+//   Frostfire: Human 937.0, High Order 925.0, Windshaper 924.7, Orc 923.8, Undead 923.1, Troll 919.3, Gnome 917.7.
+//   Fire:      Human 847.1, Undead 840.2, Gnome 837.6, Orc 836.0, Windshaper 833.0, High Order 832.7, Troll 828.0.
+//   Arcane:    Undead 790.0, Human 787.0, Orc 782.2, Gnome 781.9, Windshaper 780.2, High Order 780.0, Troll 778.9.
+//   Frost:     Human 745.1, Windshaper 744.3, High Order 744.2, Undead 743.6, Troll 742.2, Gnome 741.4, Orc 740.7.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,
