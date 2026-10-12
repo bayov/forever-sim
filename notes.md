@@ -76,6 +76,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Pyroblast's DoT coefficient (sim: 15% a tick, 60% in all, the client's on the periodic effect).
 * A raid boss can't be frozen (sim), so Frostbite, Frost Nova and Shatter only count through Fingers of Frost.
 * Manaflare Regalia's 2 piece bonus (sim: 1% hit, the tooltip). wowhead's spell page shows 2% on the same effect.
+* Elixir of the Owl with Elixir of Sages (sim: separate slots, so both, 4% crit together). The mage presets carry both: 27 to 45 dps at 180 sec over Elixir of Wisdom alone. If they don't stack, the presets keep the Owl, which is 12 to 25 of that.
 
 ## Warlock
 
