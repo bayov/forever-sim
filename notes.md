@@ -76,7 +76,8 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Arcane Mind's crit damage (sim: +20% of the crit bonus a rank, like Ice Shards, so 2 times damage at 5/5).
 * Pyroblast's DoT coefficient (sim: 15% a tick, 60% in all, the client's on the periodic effect).
 * A raid boss can't be frozen (sim), so Frostbite, Frost Nova and Shatter only count through Fingers of Frost.
-* Manaflare Regalia's 2 piece bonus (sim: 1% hit, the tooltip). wowhead's spell page shows 2% on the same effect.
+* Manaflare Regalia's 2 piece bonus (sim: 1% hit, the tooltip). wowhead's spell page shows 2% on the same effect. The Level 60 set is built to the 16% hit cap with 1%, so at 2% it would sit 1% over and the 10 hit rating would be better spent elsewhere.
+* Enchant Weapon - Revelation on a mage (sim: not used, the model was written for shaman shocks). Its proc chance and which mage spells trigger and use it are unknown; with the shaman's 7.2% on every direct spell it would be 5 to 26 ahead of Mighty Intellect on the sword.
 * Mana gems and Demonic Rune share one 2 min cooldown (sim: shared, the 70338 client's item category 1153 and spell category 30 for both). In Era they were thought to be separate. A Mana Ruby and a Demonic Rune one after the other settles it.
 * One +2% crit elixir a character (Mongoose, Grizzly, Owl, Sages, Whale; sim: the orchestrator's rule, from the client's one category 2593 for the five). The mage presets take Elixir of Sages with Elixir of Greater Intellect. If the Owl stacks with Sages it adds 10 to 21 dps at 180 sec.
 
