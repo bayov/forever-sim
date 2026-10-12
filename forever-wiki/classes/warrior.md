@@ -8,6 +8,40 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The beta client's warrior tree and spells, read from wago.tools (the Trait tables for the tree, SpellEffect, SpellMisc, SpellCooldowns, SpellPower and TraitDefinitionEffectPoints for the numbers), against the BlizzCon data below. `tools/forever_talents/client/warrior.json` and `data/warrior.json` in the sim repo are regenerated from it, so the per-talent text below is superseded where it differs. Blizzard's 1 October development notes ("Warrior Updates in Today's Beta Build") and ForeverChanges' patch notes explain most of the changes. The sim follows the client.
+
+Tree:
+
+- Arms is as at BlizzCon: 17 talents, Mortal Strike needs Sweeping Strikes, Impale needs Deep Wounds.
+- Fury (1 October): Lingering Rage (row 2, 2 to 10 sec before Rage decays after a fight) takes Iron Will's place, Furious Precision (row 3, 4 / 7 / 10% off hand hit) takes Boundless Rage's, Gore Drinker (row 6, under Enrage, which it needs: the next 3 melee attacks heal 0.5 / 1% of max health after Enrage, Berserker Rage, Bloodrage, Death Wish or Bloodthirst) is new. Improved Cleave, Boundless Rage and Precision are gone. Improved Berserker Rage moves to row 5, Flurry needs Death Wish and sits under it, Bloodthirst needs nothing.
+- Protection: Iron Will moves to row 1, Improved Bloodrage to row 1, Anticipation, Improved Revenge and Improved Thunder Clap to row 2, Improved Disarm to row 3, Improved Shield Bash to row 4, Focused Rage to row 5 and Bastion to row 6. Toughness and Vitality are gone, Last Stand needs nothing.
+
+Ranks the BlizzCon data guessed wrong:
+
+- Enrage is a flat 30% chance for 2 / 4 / 6 / 8 / 10% Physical damage (the guess was 30% a point for a flat 2%).
+- Unbridled Wrath is 12% a point, 1 Rage whatever the weapon (two-handers no longer get 2).
+- Dual Wield Specialization is 5% off hand damage and 10% off hand Rage a point, no hit.
+- Bloodthrill is 4% a point (2% before 24 September), from main hand attacks only.
+- Improved Rend is 12 / 23 / 35%, Improved Execute 3 / 5 Rage.
+- Booming Voice widens every shout by 10% a point and takes 5% a point off their Rage cost.
+- Raging Blows takes 3 Rage off Cleave and Whirlwind, and Whirlwind strikes with both weapons without it.
+- Improved Slam takes 0.25 / 0.5 sec off Slam's cast and GCD, stops it delaying the swing, and takes 3 sec off its cooldown (no rank curve on that effect, so 3 sec at either rank; ForeverChanges reads 3 a rank).
+- Master of Defense is 50 / 100% for 5 Rage. Improved Bloodrage is 25 / 50% of all of Bloodrage's Rage. Weaponmaster, Bastion and Focused Rage scale linearly as guessed (1% crit, 3% armor, 1% extra attack; 2%; 1 Rage).
+
+Spells at level 60:
+
+- Slam: 18 sec cooldown on every rank (15 before 24 September), weapon damage plus 87, 1.5 sec cast.
+- Mortal Strike rank 4: weapon damage plus 160 (ranks at 40, 48, 54, 60: 85, 110, 135, 160).
+- Bloodthirst rank 4: 45% of attack power plus 48 (ranks: plus 30, 37, 43, 48), 6 sec, 30 Rage.
+- Battle Shout rank 7: 139 attack power for 3 min. Demoralizing Shout rank 5: 204 for 45 sec.
+- Recklessness: 100% crit for 15 sec, 30 min. Death Wish: 20% Physical damage, 5% more damage taken, 3 min, 10 Rage.
+- Tactical Mastery is a trainer spell at 14 that keeps 10 Rage, and Improved Tactical Mastery adds 3 a point. Berserker Rage is trained at 30 and makes no Rage of its own without the talent.
+- Thunder Clap rank 6: 103 damage, 20% slow, 6 sec cooldown, Battle or Defensive Stance. Last Stand: 3 min.
+- A critical white hit gives 100% more Rage (75% in the first 1 October build). A queued Heroic Strike no longer raises the off hand's hit chance.
+- Battlegear of Glory (set 2102, Helm, Shoulders, Breastplate, Gauntlets, Legplates and Greaves of Glory, item level 65) is the Molten Core set for Arms and Fury: 2 pieces 1% attack and cast speed, 3 Intimidating Shout 30 sec sooner, 4 +36 attack power against Humanoids, 5 Recklessness 30 sec sooner. Battleplate of Glory (set 2103) is the Protection one.
+
 ## Spellbook changes (trainer abilities)
 
 32 of 36 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).

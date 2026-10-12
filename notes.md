@@ -50,7 +50,14 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Warrior
 
-* (nothing yet)
+* Beta: the extra Rage from critical strikes. The 1 October notes say "75% increased Rage when landing a critical strike with a basic attack", then 100% in the second warrior pass. The sim doubles the Rage of a critical white hit (main or off hand) and gives abilities nothing extra, since Heroic Strike and Cleave replace the swing and make no Rage, and the others never did. A few dozen white swings at level 30 settle it: a crit should give four times the Rage of a normal hit, where Classic gives twice (the crit does twice the damage). The combat log's Rage gains or `UnitPower` before and after each swing show it.
+* Improved Slam's cooldown cut at rank 2 (sim: 3 sec at either rank). In the client (70338) the talent's cooldown effect is -3000 ms with no rank curve, where the cast time and GCD effects have curves (-250, -500), so 2/2 is still 3 sec. ForeverChanges reads it as 3 sec a rank. It needs 25 Arms points, so level 34 at the earliest: the cooldown on the action bar after Slam with 1 and with 2 points.
+* Rage from damage taken. The 8 October build rebalanced it for 20 to 40% armor by level instead of 50% (Blizzard's notes give no formula). The sim keeps Classic's 2.5 * damage / conversion. It only matters when the boss hits the warrior, so not in the DPS presets.
+* Weaponmaster's sword extra attack: the sim gives it a 200 ms internal cooldown like Classic's Sword Specialization in this code, and lets every landed main or off hand sword attack roll it. The client (spell 1290261) leaves the proc to the server. A level 20+ warrior with a sword can count extra hits per swing.
+* Whirlwind's off hand strike. The client has no off hand effect on Whirlwind (1680), only the tooltip's "weapon damage from both melee weapons", so the server makes it. The sim gives it normalized off hand weapon damage with the off hand's 50% and Dual Wield Specialization, rolled like any special off hand attack. Whirlwind is trained at 36, so this waits for release.
+* Off hand Deep Wounds without attack power (the 8 October notes: "no longer scales with attack power on your off-hand weapon"). The sim drops the attack power from the off hand's average weapon damage and keeps the main hand's. The main hand is assumed unchanged.
+* Spearing Strike needs Battle Stance (ForeverChanges, the client data is not clear) and hits for 40% of normalized weapon damage, 120% against Giants and Dragonkin (client effects 121 and 31). No preset takes it.
+* Demoralizing Shout lasts 45 sec under Forever, the sim keeps 30. Shield Slam (625 to 685 at rank 4) and Revenge (138 to 168 at rank 6) are still the sim's old values. Only the tank uses them.
 
 ## Hunter
 
