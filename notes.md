@@ -54,7 +54,19 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Hunter
 
-* (nothing yet)
+* Arcane Shot's and Serpent Sting's attack power shares (sim: 0.11 of ranged attack power on Arcane Shot, 0.035 a Serpent Sting tick read live each tick). The client gives neither spell an attack power coefficient (build 70338), the numbers are fits to level 20 to 30 beta combat logs (ElliotWood/Forever, sim/hunter/arcane_shot.go and serpent_sting.go; the forever-hunter wiki says 10% and 3% a tick). A level 60 log with the hunter's ranged attack power known settles both. Beta: an Aspect of the Hawk swap at level 30 moves the hits by the share.
+* Auto Shot fires while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot (sim: yes under Forever, with no 0.5 sec aim of its own). From the forever-hunter wiki's beta testing ("Auto Shot can fire while the Hunter is casting another spell with a cast time"). Beta: the time between Auto Shots in a log with Aimed Shot every cooldown.
+* Pets (sim, under Forever): hits the size of a 2.0 sec pet's at every attack speed, 10% of the hunter's ranged attack power, all of the hunter's melee crit on top of the pet's own, no player buffs, 10 focus a second. From ForeverChanges' hunter pets page and the forever-hunter wiki (beta testing), and Blizzard's deep dive for "pets scale with the hunter's gear". Open: whether the crit replaces the pet's own or adds to it, whether it is the highest attack power (the sim takes ranged, the highest in every build here), and whether a slow pet really hits no harder. A pet's hits and swing times in a log with the hunter's sheet known settle them. Beta.
+* Summon Hawk's hawk (sim: a swing on arrival and one every 2.5 sec sped up by ranged haste, each 0.35 of the dive bomb's base, no crits, Unleashed Fury counts). Fitted on rank 1 at levels 25 to 30 (ElliotWood/Forever, 534 swings). The client leaves the guardian to the server. Rank 2 (level 36) and up are unchecked. Ferocity crit on the dive bomb only.
+* The weapon specialization racials (Human swords, Dwarf maces, Orc axes) give no ranged crit (sim: taken back off the ranged attacks; the forever-hunter wiki's beta testing). The pet inherits it.
+* Lacerate has no attack power share (sim: the flat 58 a tick at rank 4 and level 60, 406 in all). The client gives it none, no log has shown one. Its ticks crit like other dots under Forever. Beta: Lacerate rank 1 ticks with and without Aspect of the Beast.
+* Lacerating Strikes is 40% of the Mongoose Bite as it landed, over 7 ticks, and skips the damage modifiers the bite already took (sim). Its ticks crit (since build 70009).
+* Resourcefulness' crit proc chance: the tooltip reads "?%", the sim takes the rank curve's 50% a rank.
+* Expose Prey rolls on every landed melee or ranged attack, white or special, and needs Hunter's Mark on the target (sim; the client proc mask is melee and ranged attacks).
+* Improved Tracking counts against every creature type a hunter can track (sim: the boss's type is always tracked), damage only.
+* Volley's attack power share (sim: none, the client's 0.03 spell power is a placeholder). The forever-hunter wiki says "likely scales with attack power, TBD".
+* Devilsaur Tooth makes the next Revive Pet free under Forever (the forever-hunter wiki), so the sim gives it nothing in a fight.
+* Trueshot Aura is a party aura under Forever; the sim only has a raid wide switch, so the hunter's own talent turns it on for the raid.
 
 ## Priest
 
@@ -75,6 +87,8 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 ## At 60
 
 Things we can only check on release, because the beta stops at level 30.
+
+* Hunter: the level 60 ranks the beta can't reach (Aimed Shot 166, Arcane Shot 217, Summon Hawk 108, Sniper Shot 295, Lacerate rank 4, Volley 112), Trueshot Aura rank 5's 50 (below rank 4's 75), Aspect of the Hawk rank 6's 55 and Hunter's Mark rank 4's 71 (below the ranks before them), and whether the pet's 10% attack power share and the hawk's 0.35 hold at 60.
 
 * Naked level 60 Orc shaman sheet: attributes, health, mana, attack power, melee and spell crit, dodge, and how much crit one point of Agility and Intellect gives at 60. The level 30 sheet only checks the lower level tables. The race offsets too: the sim assumes the Forever Horde race offsets seen at level 1 (2026-10-10) hold at 60, so a naked level 60 Orc shaman, Undead paladin or Undead rogue checks them. The Alliance races and the High Order still have 1.12's or none.
 * Attack table against a level 63 boss with 300 weapon skill (sim: 8% miss and 9% hit to cap, 6.5% dodge, 40% glancing at 65% damage on average, crit cut by 4.8%). A level 33 mob at level 30 tests the same +3 rules, but with different numbers.

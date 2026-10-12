@@ -8,6 +8,61 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The hunter tree and spellbook from the beta client: wago.tools' DB2 tables for build 1.60.1.70338 (TraitNode, TraitDefinitionEffectPoints and the Spell tables), with the layout of hyjal.cc's 1.60.1.69876 tree, which 70338 kept. `tools/forever_talents/data/hunter.json` in the sim repo is regenerated from the client tree (`client/hunter.json`), so the per-talent text below is superseded where it differs. The sim follows the client. Each rank below is the client's rank curve.
+
+Beast Mastery:
+
+- Deadly Aspects (replaces Improved Aspect of the Hawk): 2% a rank for Auto Shot to give Quick Shots (30% ranged attack speed, 12 sec) while Aspect of the Hawk is up, and for a melee auto attack to give Quick Strikes (30% melee attack speed, 12 sec) while Aspect of the Beast is up. The haste and duration do not grow with the ranks.
+- Endurance Training 3% pet health and armor a rank. Focused Fire 1% a rank on everything the hunter and the pet deal while the pet is out. Unleashed Fury 3% a rank on pets and hawks. Ferocity 2% crit a rank on pets and hawks. Frenzy is Classic's.
+- Improved Mend Pet 15 / 50% cleanse and 10 / 20% cheaper. Spirit Bond 1% health every 10 / 5 sec. Bestial Discipline 10 / 20% pet focus regen and 25 / 50% mana regen while casting.
+- Summon Hawk (16 points): the dive bomb deals 32 / 47 / 85 / 108 (ranks at 25 / 36 / 48 / 60) plus 5% of ranged attack power, for 80 / 105 / 135 / 190 mana. The hawk it leaves attacks for 18 sec, at most 2 at once. 6 sec cooldown shared with Arcane Shot.
+- Intimidation gives the pet's next attack 100% more crit, 8% of base mana, 1 min. Bestial Wrath is Classic's (50% pet damage for 18 sec, 2 min, 12% of base mana).
+- Gone: Improved Aspect of the Hawk, Thick Hide (folded into Endurance Training), Improved Eyes of the Beast (baseline).
+
+Marksmanship:
+
+- Lethal Attacks (Lethal Shots) 1% crit a rank with every attack. Efficiency 3% a rank on shots, stings and melee abilities (its class mask leaves out Sniper Shot and Strider Kick).
+- Improved Stings: Serpent Sting 6 / 13 / 20%, Viper Sting's cooldown 2 / 4 / 6 sec shorter, Scorpid Sting 15 / 30 / 45 sec longer.
+- Careful Aim: 20% of Intellect a rank as melee and ranged attack power. Mortal Shots needs it, 6% crit damage a rank on Auto Shot, Aimed, Arcane and Multi-Shot, Serpent Sting and Volley (not Sniper Shot).
+- Rapid Killing: Rapid Fire's cooldown 1 min shorter a rank, and 10 / 20% on the next shot within 20 sec of a kill. Rapid Recuperation: a Serpent Sting hit gives 25 / 50% of mana regen while casting for 15 sec, using Rapid Killing 50 / 100%.
+- Improved Arcane Shot 0.3 sec a rank, on Arcane Shot only. Lone Wolf 20% damage with no pet out.
+- Trueshot Aura (row 4, 21 points) is a party aura of ranged attack power only, with trainer ranks 30 / 40 / 50 / 75 / 50 at 25 / 32 / 40 / 50 / 60.
+- Barrage 3 / 7 / 10% on Aimed Shot, Multi-Shot and Volley. Ranged Weapon Specialization 1% a rank.
+- Sniper Shot (31 points): normalized ranged weapon damage plus 160 / 225 / 295 (ranks at 40 / 48 / 58), 4 sec cast, 15 sec cooldown, 365 mana, 45 yards, and 10 yards more range on the next 3 shots.
+- Gone: Aimed Shot (trained now), Improved Hunter's Mark (baseline), Improved Scorpid Sting. Improved Serpent Sting is still in the client data but parked far off the tree, so no one can take it.
+
+Survival:
+
+- Improved Tracking (Monster and Humanoid Slaying): 1% damage a rank against the tracked creature type. Deflection 1% parry a rank (2% in the earlier beta builds). Entrapment roots for 1 to 5 sec.
+- Savage Strikes 2% crit a rank on the melee abilities (Raptor Strike, Mongoose Bite, Wing Clip, Strider Kick, Lacerate, Lacerating Strikes, Counterattack). Predator's Edge 6% crit damage a rank on the same abilities and 10% off hand damage a rank.
+- Survivalist 2% health a rank. Improved Wing Clip 7 / 13 / 20%. Clever Traps 15% a rank. Surefooted 1% hit a rank on every attack. Survival Tactics (Trap Mastery) 5% trap and Feign Death hit a rank.
+- Resourcefulness: traps and the melee abilities 30% cheaper a rank (not Strider Kick or Lacerate), and a crit has a 50% chance a rank to give 50% mana regen while casting for 30 sec (the tooltip shows "?%", 50 a rank is the rank curve).
+- Expose Prey: an attack on a target with Hunter's Mark has a 5% chance a rank to open Mongoose Bite, for 10 sec since build 70291 (5 before).
+- Survivalist's Discipline 20% off trap and Deterrence cooldowns a rank. Lightning Reflexes 2% Agility a rank (a 3% twin is parked off the tree).
+- Counterattack (16 points): 50% weapon damage plus 26 / 110 at ranks 1 and 4, after a parry. Strider Kick (21 points): 100% normalized weapon damage, 8 sec cooldown, 5.81% of base mana, 30% run speed for 3 sec. Lacerating Strikes (31 points): Mongoose Bite also bleeds 40% of its damage over 21 sec, the ticks can crit.
+- Gone: Humanoid Slaying, Improved Feign Death, Killer Instinct, Wyvern Sting, Trap Mastery.
+
+Spellbook at level 60:
+
+- Aimed Shot is trained from level 20. Rank 6: +166 (Classic 600), 2 sec cast (Classic 3), 310 mana, 6 sec cooldown shared with Multi-Shot. The ranks below: 20 / 34 / 55 / 89 / 125.
+- Multi-Shot has one rank: no flat bonus, 0.5 sec cast, 6 sec cooldown shared with Aimed Shot, 13.9% of base mana.
+- Arcane Shot rank 8: 217 Arcane (Classic 183), no spell power coefficient (Classic 42.9%). Ranks 20 / 26 / 39 / 65 / 94 / 134 / 170 / 217.
+- Serpent Sting rank 9: 555 over 15 sec, no spell power coefficient. The ranks below are lower than Classic's: 10 / 30 / 60 / 110 / 170 / 240 / 320 / 415.
+- Aspect of the Hawk rank 7: 120 ranged attack power (rank 6 reads 55, below rank 5's 90, likely a client error). Aspect of the Beast has 4 ranks of 50 / 70 / 90 / 110 melee attack power. Hunter's Mark rank 4: 71 (rank 3 98).
+- Raptor Strike rank 8: weapon damage +70 (Classic 140). Mongoose Bite rank 4: normalized weapon damage +57 (Classic a flat 115). Wing Clip is Classic's.
+- Volley rank 3: 112 Arcane a second for 6 sec (Classic 80) and no cooldown. Rapid Fire speeds up melee attacks too. Traps go down in combat and have a 30 sec cooldown, Fire and Frost traps one each.
+- Lacerate is new, trained from level 30: a bleed for 21 sec, 406 at rank 4 and level 60 (58 a tick, +0.8 a level), 95 mana.
+
+What the beta shows that the client data does not (from beta combat logs: ElliotWood/Forever's fits and the community forever-hunter wiki):
+
+- Arcane Shot adds about 0.11 of ranged attack power, Serpent Sting about 0.035 a tick, read live each tick. The ticks crit with ranged crit.
+- Auto Shot keeps firing while the hunter casts.
+- The weapon specialization racials give no ranged crit.
+- Pets swing every 2.0 sec and a passive per beast (Faster Attack I to VII) moves them to the beast's Classic speed, with hits that stay the size of a 2.0 sec pet's. Pets take 10% of the hunter's highest attack power and all of its crit (and 2 health a Stamina point, 30% of armor), take no player buffs, and regenerate 10 focus a second.
+- Summon Hawk's hawk swings every 2.5 sec (sped up by ranged haste) for about 0.35 of the dive bomb's base.
+
 ## Spellbook changes (trainer abilities)
 
 45 of 63 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
