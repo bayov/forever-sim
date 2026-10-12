@@ -1,0 +1,327 @@
+package database
+
+import (
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
+)
+
+// The hunter's synthetic Phase 1 items, made the way forever_synthetic_items.go describes, ids
+// 993000 to 993999. Two sets:
+//   - Ranged Hunter (993001 to 993014) for Beast Mastery and Marksmanship. Both shoot from range on
+//     the same stats: Agility (2 ranged attack power and crit), ranged attack power, crit and hit.
+//     The Beast Mastery pet takes 10% of the hunter's ranged attack power and all of its crit
+//     (sim/hunter/pet.go), so the same stats feed it. The two-hander is a stat stick.
+//   - Survival (993101 to 993115). Survival melees under Forever, so it wants melee attack power and
+//     a pair of weapons (Predator's Edge adds 50% off hand damage), and some Strength.
+//
+// Each piece takes the place of an Era Phase 1 hunter BiS item: the Giantstalker set (Molten Core
+// tier, item level 66), Onyxia Tooth Pendant, Wristguards of True Flight, Cape of the Black Baron,
+// the Devilsaur hands and legs, Quick Strike Ring, Blackstone Ring, Barbarous Blade and Rhok'delar.
+// Survival swaps the two-hander for a pair of Brutality Blades (the Era Phase 1 dual wield sword).
+// Every piece has the full epic budget of its slot at item level 66, or the replaced item's level
+// where that is higher.
+//
+// The budget is Classic's: an epic's slot value is (item level - 1.3) / 1.3, times the slot
+// modifier (1 for head, chest, legs and two-handers, 0.77 for shoulders, hands, waist and feet,
+// 0.56 for neck, wrist, back and rings, 0.42 for a one-hander, 0.32 for a ranged weapon). The stats
+// on an item add up as the sum of (points * price)^1.5, and that sum equals the slot value to the
+// 1.5. A point of Strength, Agility, Stamina, Intellect or Spirit costs 1, attack power 0.5, ranged
+// attack power only 0.4, hit and crit rating 1 at Forever's 10 rating per 1% hit and 14 per 1% crit.
+// So a head at item level 66 has (64.7 / 1.3)^1.5 = 351 to spend: the Ranged Hunter head's 22
+// Agility, 16 Stamina, 12 Intellect, 12 Spirit, 19 ranged attack power (7.6 points), 10 hit and 14
+// crit rating come to 355. The same formula gives Giantstalker's Helmet 354 for its 23 Agility, 23
+// Stamina, 15 Intellect, 8 Spirit and 1% crit. Hit and crit go on first, the rest of the budget is
+// split by hand picked shares per slot (the generator was a script in the session scratchpad).
+//
+// The stat mix:
+//   - Spirit is about 10% of each set's points, on 7 pieces, as for every mana user.
+//   - Agility is about 30%, Stamina 20%. Ranged attack power (or attack power and Strength for
+//     Survival) leans on the slots the Era items carry it in: the back, hands, legs, a ring and the
+//     two-hander. Intellect is 5 to 8%, enough for the mana and for Careful Aim to be worth a look.
+//   - Hit: 90 rating (9%) on 9 pieces for the ranged set, the ranged hit cap against a level 63 boss
+//     and about what Era's Phase 1 hunter BiS reaches with the Devilsaur set and Wristguards of True
+//     Flight. 80 (8%) for Survival, which takes Surefooted's 3% for its yellow attacks.
+//   - Crit: 70 rating (5%) on 5 pieces, the Era BiS's crit pieces (the Giantstalker helm, chest and
+//     belt, Onyxia Tooth Pendant).
+//
+// None of the pieces form a set. Forever keeps Giantstalker Armor's Classic bonuses (client 1.60.1.70338
+// ItemSetSpell: 3 pieces Mend Pet, 5 pet Stamina and resistances, 8 Multi-Shot and Volley 15%), and an
+// Era Phase 1 hunter wears 3 to 5 Giantstalker pieces next to Devilsaur, so only the bonuses that move
+// no damage would be active.
+//
+// The weapons keep the damage and speed of the weapon they replace: Barbarous Blade (two-handed
+// sword), Brutality Blade (one-handed sword) and Rhok'delar (bow). Swords favor the Human (2% crit
+// with swords, melee only) and give no other race a racial: the Orc's axe and the Dwarf's mace
+// crit stay off. The bow carries no racial under Forever.
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, foreverSyntheticHunterItems...)
+}
+
+var foreverSyntheticHunterItems = []*proto.UIItem{
+	// Head, item level 66, in place of Giantstalker's Helmet (66, 16846).
+	{
+		Id: 993001, Name: "Ranged Hunter Synthetic Head (Phase 1)", Icon: "inv_helmet_05",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 22, stats.Stamina: 16, stats.Intellect: 12, stats.Spirit: 12, stats.RangedAttackPower: 19, stats.Armor: 343}.ToFloatArray(),
+		HitRating: 10, CritRating: 14,
+		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Neck, item level 74, in place of Onyxia Tooth Pendant (74, 18404).
+	{
+		Id: 993002, Name: "Ranged Hunter Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
+		Type:      proto.ItemType_ItemTypeNeck,
+		Stats:     stats.Stats{stats.Agility: 15, stats.Stamina: 10}.ToFloatArray(),
+		HitRating: 10, CritRating: 14,
+		Ilvl: 74, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Shoulder, item level 66, in place of Giantstalker's Epaulets (66, 16848).
+	{
+		Id: 993003, Name: "Ranged Hunter Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 13, stats.Intellect: 8, stats.RangedAttackPower: 32, stats.Armor: 317}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Back, item level 66, in place of Cape of the Black Baron (63, 13340).
+	{
+		Id: 993004, Name: "Ranged Hunter Synthetic Back (Phase 1)", Icon: "inv_misc_cape_18",
+		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Agility: 14, stats.Stamina: 11, stats.Spirit: 7, stats.RangedAttackPower: 28, stats.Armor: 54}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Chest, item level 66, in place of Giantstalker's Breastplate (66, 16845).
+	{
+		Id: 993005, Name: "Ranged Hunter Synthetic Chest (Phase 1)", Icon: "inv_chest_chain_03",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 25, stats.Stamina: 18, stats.Intellect: 14, stats.Spirit: 14, stats.Armor: 422}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Wrist, item level 71, in place of Wristguards of True Flight (71, 18812).
+	{
+		Id: 993006, Name: "Ranged Hunter Synthetic Wrist (Phase 1)", Icon: "inv_bracer_17",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 18, stats.Stamina: 11, stats.Intellect: 7, stats.Armor: 198}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Hands, item level 66, in place of Devilsaur Gauntlets (58, 15063).
+	{
+		Id: 993007, Name: "Ranged Hunter Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 10, stats.RangedAttackPower: 50, stats.Armor: 264}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Waist, item level 66, in place of Giantstalker's Belt (66, 16851).
+	{
+		Id: 993008, Name: "Ranged Hunter Synthetic Waist (Phase 1)", Icon: "inv_belt_28",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Intellect: 8, stats.Spirit: 13, stats.Armor: 237}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Legs, item level 66, in place of Devilsaur Leggings (60, 15062).
+	{
+		Id: 993009, Name: "Ranged Hunter Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_03",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 25, stats.Stamina: 16, stats.Spirit: 10, stats.RangedAttackPower: 52, stats.Armor: 369}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Feet, item level 66, in place of Giantstalker's Boots (66, 16849).
+	{
+		Id: 993010, Name: "Ranged Hunter Synthetic Feet (Phase 1)", Icon: "inv_boots_chain_04",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Agility: 22, stats.Stamina: 14, stats.Intellect: 9, stats.Spirit: 14, stats.Armor: 290}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Finger, item level 67, in place of Quick Strike Ring (67, 18821).
+	{
+		Id: 993011, Name: "Ranged Hunter Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_15",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Agility: 13, stats.Stamina: 8, stats.RangedAttackPower: 33}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      67, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Finger II, item level 66, in place of Blackstone Ring (54, 17713).
+	{
+		Id: 993012, Name: "Ranged Hunter Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Agility: 7, stats.Stamina: 7, stats.Intellect: 7, stats.Spirit: 11}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Two-Hand, item level 66, in place of Barbarous Blade (63, 18520).
+	{
+		Id: 993013, Name: "Ranged Hunter Synthetic Two-Hand (Phase 1)", Icon: "inv_sword_50",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:     stats.Stats{stats.Agility: 24, stats.Stamina: 19, stats.RangedAttackPower: 61}.ToFloatArray(),
+		HitRating: 10,
+		// Barbarous Blade damage and speed.
+		WeaponDamageMin: 138, WeaponDamageMax: 207, WeaponSpeed: 3.2,
+		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Ranged, item level 75, in place of Rhok'delar, Longbow of the Ancient Keepers (75, 18713).
+	{
+		Id: 993014, Name: "Ranged Hunter Synthetic Ranged (Phase 1)", Icon: "inv_weapon_bow_01",
+		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
+		Stats:     stats.Stats{stats.Agility: 11, stats.RangedAttackPower: 13}.ToFloatArray(),
+		HitRating: 10,
+		// Rhok'delar damage and speed.
+		WeaponDamageMin: 89, WeaponDamageMax: 166, WeaponSpeed: 2.9,
+		Ilvl: 75, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+
+	// Head, item level 66, in place of Giantstalker's Helmet (66, 16846).
+	{
+		Id: 993101, Name: "Survival Synthetic Head (Phase 1)", Icon: "inv_helmet_05",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 22, stats.Stamina: 16, stats.Intellect: 12, stats.Spirit: 12, stats.Strength: 8, stats.Armor: 343}.ToFloatArray(),
+		HitRating: 10, CritRating: 14,
+		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Neck, item level 74, in place of Onyxia Tooth Pendant (74, 18404).
+	{
+		Id: 993102, Name: "Survival Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
+		Type:      proto.ItemType_ItemTypeNeck,
+		Stats:     stats.Stats{stats.Agility: 15, stats.Stamina: 10}.ToFloatArray(),
+		HitRating: 10, CritRating: 14,
+		Ilvl: 74, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Shoulder, item level 66, in place of Giantstalker's Epaulets (66, 16848).
+	{
+		Id: 993103, Name: "Survival Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 13, stats.Intellect: 8, stats.AttackPower: 26, stats.RangedAttackPower: 26, stats.Armor: 317}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Back, item level 66, in place of Cape of the Black Baron (63, 13340).
+	{
+		Id: 993104, Name: "Survival Synthetic Back (Phase 1)", Icon: "inv_misc_cape_18",
+		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Agility: 14, stats.Stamina: 11, stats.Spirit: 7, stats.AttackPower: 22, stats.RangedAttackPower: 22, stats.Armor: 54}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Chest, item level 66, in place of Giantstalker's Breastplate (66, 16845).
+	{
+		Id: 993105, Name: "Survival Synthetic Chest (Phase 1)", Icon: "inv_chest_chain_03",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 25, stats.Stamina: 18, stats.Strength: 14, stats.Spirit: 14, stats.Armor: 422}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Wrist, item level 71, in place of Wristguards of True Flight (71, 18812).
+	{
+		Id: 993106, Name: "Survival Synthetic Wrist (Phase 1)", Icon: "inv_bracer_17",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 18, stats.Stamina: 11, stats.Intellect: 7, stats.Armor: 198}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Hands, item level 66, in place of Devilsaur Gauntlets (58, 15063).
+	{
+		Id: 993107, Name: "Survival Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 10, stats.AttackPower: 40, stats.RangedAttackPower: 40, stats.Armor: 264}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Waist, item level 66, in place of Giantstalker's Belt (66, 16851).
+	{
+		Id: 993108, Name: "Survival Synthetic Waist (Phase 1)", Icon: "inv_belt_28",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Strength: 8, stats.Spirit: 13, stats.Armor: 237}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Legs, item level 66, in place of Devilsaur Leggings (60, 15062).
+	{
+		Id: 993109, Name: "Survival Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_03",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 25, stats.Stamina: 16, stats.Spirit: 10, stats.AttackPower: 42, stats.RangedAttackPower: 42, stats.Armor: 369}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Feet, item level 66, in place of Giantstalker's Boots (66, 16849).
+	{
+		Id: 993110, Name: "Survival Synthetic Feet (Phase 1)", Icon: "inv_boots_chain_04",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Agility: 22, stats.Stamina: 14, stats.Intellect: 9, stats.Spirit: 14, stats.Armor: 290}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Finger, item level 67, in place of Quick Strike Ring (67, 18821).
+	{
+		Id: 993111, Name: "Survival Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_15",
+		Type:  proto.ItemType_ItemTypeFinger,
+		Stats: stats.Stats{stats.Agility: 14, stats.Stamina: 9, stats.Strength: 9, stats.AttackPower: 27, stats.RangedAttackPower: 27}.ToFloatArray(),
+		Ilvl:  67, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Finger II, item level 66, in place of Blackstone Ring (54, 17713).
+	{
+		Id: 993112, Name: "Survival Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Agility: 7, stats.Stamina: 7, stats.Intellect: 7, stats.Spirit: 11}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Main Hand, item level 70, in place of Brutality Blade (70, 18832), main hand.
+	{
+		Id: 993113, Name: "Survival Synthetic Main Hand (Phase 1)", Icon: "inv_sword_39",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
+		Stats:     stats.Stats{stats.Agility: 11, stats.Strength: 8, stats.Stamina: 5}.ToFloatArray(),
+		HitRating: 10,
+		// Brutality Blade damage and speed.
+		WeaponDamageMin: 90, WeaponDamageMax: 168, WeaponSpeed: 2.5,
+		Ilvl: 70, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Off Hand, item level 70, in place of Brutality Blade (70, 18832), off hand.
+	{
+		Id: 993114, Name: "Survival Synthetic Off Hand (Phase 1)", Icon: "inv_sword_39",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
+		Stats:     stats.Stats{stats.Agility: 11, stats.Strength: 8, stats.Stamina: 5}.ToFloatArray(),
+		HitRating: 10,
+		// Brutality Blade damage and speed.
+		WeaponDamageMin: 90, WeaponDamageMax: 168, WeaponSpeed: 2.5,
+		Ilvl: 70, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Ranged, item level 75, in place of Rhok'delar, Longbow of the Ancient Keepers (75, 18713).
+	{
+		Id: 993115, Name: "Survival Synthetic Ranged (Phase 1)", Icon: "inv_weapon_bow_01",
+		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
+		Stats: stats.Stats{stats.Agility: 15, stats.Stamina: 7}.ToFloatArray(),
+		// Rhok'delar damage and speed.
+		WeaponDamageMin: 89, WeaponDamageMax: 166, WeaponSpeed: 2.9,
+		Ilvl: 75, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+}
