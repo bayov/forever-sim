@@ -10,6 +10,13 @@ import (
 // (beta client data), and the list is the one https://foreverchanges.pro builds its
 // level 20 BiS enchants from.
 //
+// Past that, the Enchanting 300 enchants and Rugged armor kits that Forever added or
+// changed, with values from client 1.60.1.70338 (SpellItemEnchantment). We list only those
+// with a known source outside raids: the formulas wowhead's Forever listing has sold by
+// vendors, and the leatherworking kits. The Grand Crusader / Sorcerer / Arcanist /
+// Inquisitor, 2H Strength, Bracer Superior Agility, Off-Hand Superior Intellect and
+// Excellent Spirit, and Lotus Claw formulas have no known source, so they're left out.
+//
 // Forever buffed a lot of the low Classic enchants. Cloak and bracer Minor Agility went
 // from +1 to +3, Gloves Agility from +5 to +7, and 2H Minor Impact from +2 to +4 damage.
 // It also added necklace enchants, +15 Strength and Agility for two-handers, and
@@ -38,6 +45,11 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverKit(1255096, 0, 1255096, 30, "Mystic Heavy Armor Kit", stats.Stats{stats.SpellPower: 4, stats.BonusArmor: 24}),
 	foreverKit(1255073, 0, 1255073, 40, "Forceful Thick Armor Kit", stats.Stats{stats.AttackPower: 8, stats.RangedAttackPower: 8, stats.BonusArmor: 32}),
 	foreverKit(1255074, 0, 1255074, 40, "Mystic Thick Armor Kit", stats.Stats{stats.SpellPower: 5, stats.BonusArmor: 32}),
+	// Rugged kits need level 50 for Forceful and Mystic, 40 for the plain one, and an item of
+	// level 35 or above.
+	foreverKit(1843, 15564, 19057, 40, "Rugged Armor Kit", stats.Stats{stats.Stamina: 5, stats.BonusArmor: 40}),
+	foreverKit(1254965, 0, 1254965, 50, "Forceful Rugged Armor Kit", stats.Stats{stats.AttackPower: 10, stats.RangedAttackPower: 10, stats.BonusArmor: 40}),
+	foreverKit(1254966, 0, 1254966, 50, "Mystic Rugged Armor Kit", stats.Stats{stats.SpellPower: 6, stats.BonusArmor: 40}),
 
 	// Necklace, new in Forever (Enchanting 210, formulas for Merchant's Favor).
 	foreverEnchant(1249059, "Enchant Necklace - Agility", proto.ItemType_ItemTypeNeck, stats.Stats{stats.Agility: 5}),
@@ -47,6 +59,7 @@ var ForeverEnchants = []*proto.UIEnchant{
 
 	// Cloak.
 	foreverEnchant(13419, "Enchant Cloak - Minor Agility", proto.ItemType_ItemTypeBack, stats.Stats{stats.Agility: 3}),
+	foreverEnchant(1219587, "Enchant Cloak - Agility", proto.ItemType_ItemTypeBack, stats.Stats{stats.Agility: 5}),
 
 	// Chest. Superior Stamina (Enchanting 220) was Superior Health (+50 health) in Classic.
 	foreverEnchant(13858, "Enchant Chest - Superior Stamina", proto.ItemType_ItemTypeChest, stats.Stats{stats.Stamina: 8}),
@@ -62,10 +75,16 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverEnchant(13661, "Enchant Bracer - Strength", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Strength: 5}),
 	foreverEnchant(1248497, "Enchant Bracer - Agility", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Agility: 5}),
 	foreverEnchant(1248498, "Enchant Bracer - Lesser Healing Power", proto.ItemType_ItemTypeWrist, stats.Stats{stats.HealingPower: 16, stats.SpellDamage: 6}),
+	foreverEnchant(1248661, "Enchant Bracer - Superior Intellect", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Intellect: 9}),
+	foreverEnchant(1220624, "Enchant Bracer - Greater Spellpower", proto.ItemType_ItemTypeWrist, stats.Stats{stats.SpellPower: 16}),
 
 	// Gloves.
 	foreverEnchant(13815, "Enchant Gloves - Agility", proto.ItemType_ItemTypeHands, stats.Stats{stats.Agility: 7}),
 	foreverEnchant(13887, "Enchant Gloves - Strength", proto.ItemType_ItemTypeHands, stats.Stats{stats.Strength: 7}),
+	foreverEnchant(1248640, "Enchant Gloves - Superior Strength", proto.ItemType_ItemTypeHands, stats.Stats{stats.Strength: 15}),
+	foreverEnchant(1213622, "Enchant Gloves - Holy Power", proto.ItemType_ItemTypeHands, stats.Stats{stats.HolyPower: 20}),
+	foreverEnchant(1213626, "Enchant Gloves - Arcane Power", proto.ItemType_ItemTypeHands, stats.Stats{stats.ArcanePower: 20}),
+	foreverEnchant(1248645, "Enchant Gloves - Natural Power", proto.ItemType_ItemTypeHands, stats.Stats{stats.NaturePower: 20}),
 
 	// Boots.
 	foreverEnchant(7867, "Enchant Boots - Minor Agility", proto.ItemType_ItemTypeFeet, stats.Stats{stats.Agility: 3}),
@@ -77,7 +96,12 @@ var ForeverEnchants = []*proto.UIEnchant{
 	// Enchanting 140. The proc is a weapon effect in sim/common.
 	foreverEnchant(1248805, "Enchant Weapon - Revelation", proto.ItemType_ItemTypeWeapon, stats.Stats{}),
 
+	// Off-hand, for held in off hand items only (not shields).
+	foreverOffHand(1219579, "Enchant Off-Hand - Wisdom", stats.Stats{stats.Intellect: 6, stats.Spirit: 5}),
+
 	// Two-hand weapon. The Impact enchants are weapon effects in sim/common.
+	foreverTwoHand(1219580, "Enchant 2H Weapon - Spellblasting", stats.Stats{stats.SpellPower: 65}),
+	foreverTwoHand(1248607, "Enchant 2H Weapon - Mighty Spell Power", stats.Stats{stats.SpellPower: 55}),
 	foreverTwoHand(7793, "Enchant 2H Weapon - Lesser Intellect", stats.Stats{stats.Intellect: 5}),
 	foreverTwoHand(7745, "Enchant 2H Weapon - Minor Impact", stats.Stats{}),
 	foreverTwoHand(13529, "Enchant 2H Weapon - Lesser Impact", stats.Stats{}),
@@ -95,6 +119,12 @@ func foreverEnchant(spellID int32, name string, itemType proto.ItemType, s stats
 func foreverTwoHand(spellID int32, name string, s stats.Stats) *proto.UIEnchant {
 	enchant := foreverEnchant(spellID, name, proto.ItemType_ItemTypeWeapon, s)
 	enchant.EnchantType = proto.EnchantType_EnchantTypeTwoHand
+	return enchant
+}
+
+func foreverOffHand(spellID int32, name string, s stats.Stats) *proto.UIEnchant {
+	enchant := foreverEnchant(spellID, name, proto.ItemType_ItemTypeWeapon, s)
+	enchant.EnchantType = proto.EnchantType_EnchantTypeOffHand
 	return enchant
 }
 
