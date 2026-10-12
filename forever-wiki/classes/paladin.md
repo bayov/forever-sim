@@ -8,6 +8,19 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Client build 1.60.1.70338 (checked 2026-10-12)
+
+Every retribution spell and talent checked against the client tables on [wago.tools](https://wago.tools/db2) (SpellEffect, SpellMisc, SpellPower, SpellCooldowns, SpellLevels, SpellAuraOptions, SpellClassOptions, ItemSet, ItemSetSpell for build 1.60.1.70338) and the talent and patch note pages on foreverchanges.pro. The seals, judgements, Exorcism, Hammer of Wrath, Holy Wrath, Holy Shock, Consecration, the blessings and Retribution Aura (Vanilla's 5 / 8 / 12 / 16 / 20 plus 6% of spell power since the 2026-10-08 build) already matched the sim. What the client showed:
+
+- Holy Strike is built like Backstab: a normalized weapon damage effect that carries the flat Holy part (93 at rank 8, a 25% spread, 42.9% of spell power), then a weapon damage percent (50% at rank 8). The server adds the flat part before it takes the percent, so the flat part and its spell power are halved too, though the tooltip shows "plus 93". The normalized speed is Forever's 3.6 for a two-hander (2.7 for a one-hander), as the beta's Stormstrike showed for the same effect.
+- Improved Seals is a damage modifier on the seal procs and judgements themselves, so it scales the spell power part of Seal of Righteousness too. Its spell carries 3%, the talent tooltips 5 / 10 / 15%.
+- Holy Power's 1% per point is a crit modifier on a list of spells: Consecration, Exorcism, Holy Wrath, Hammer of Wrath, both seal procs and both judgements (Holy Shock and Holy Strike get 3%).
+- Precision gives spell hit as well as melee hit.
+- Benediction's spell list leaves out Hammer of Wrath, Twist of Light's covers the three seals.
+- Twist of Light's Echo is two spells, Echo of Command (1311703, "a chance to activate Seal of Command") and Echo of Righteousness (1311704), one charge each and no duration, used up by the next auto attack.
+- Reckoning can trigger once every 1.5 sec, Holy Shield blocks 30%, Redoubt is 4% a point. Improved Seal of Fury's mana grows with the paladin's level.
+- Justice Battlegear (item set 2106) is the Tier 1 retribution set: head, shoulders, chest, legs, hands and feet in plate. 2 pieces: 1% attack and casting speed. 3: 5 sec off Hammer of Justice. 4: 36 attack power against Undead. 5: 0.5 sec off Judgement. The pieces have no stats in the client yet. Justice Armor (Holy) and Justice Battleplate (Protection) are the other two.
+
 ## Beta build 1.60.1.70009 (2026-09-24)
 
 The [development notes of 24 September](https://www.wowhead.com/blue-tracker/topic/us/wow-forever-beta-development-notes-updated-september-24-2360696), with the numbers checked against the client tooltips on foreverchanges.pro (build 1.60.1.70009). The sim follows all of it except Retribution Aura's spell power scaling.

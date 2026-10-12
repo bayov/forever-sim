@@ -12,10 +12,18 @@ import (
 // seal goes up after that. Holy Strike is the new baseline strike, Consecration is
 // baseline too but costs a third of the level 20 mana pool, so it is a knob with a mana
 // floor. Every line names the highest rank the player's level knows.
+//
+// With Twist of Light (the 31 point Retribution talent) replacing Seal of Command or Seal of
+// Righteousness leaves an Echo of it, which the next melee swing applies on top of the new
+// seal. Twisting puts the other damage seal up just before each swing, so every swing gets
+// both seals' effects for one seal's mana. The twist knobs say how close to the swing and
+// down to how much mana.
 type paladinRet struct{}
 
 var judgement = spellID(paladin.JudgementSpellId)
 var judgementOfTheCrusader = spellID(paladin.JudgementOfTheCrusaderSpellId)
+var echoOfCommand = spellID(1311703)
+var echoOfRighteousness = spellID(1311704)
 
 func (paladinRet) Knobs() []Knob {
 	return []Knob{
@@ -35,6 +43,16 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "exorcism", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Holy Shock on cooldown, a 20 point Holy talent from level 30 (10 sec under Forever).
 		{Name: "holyShock", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Hammer of Wrath (from level 44) below 20% health, above this much mana. 100 never.
+		{Name: "hammerOfWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
+		// Twist the seals for Twist of Light's Echo: 0 never, 1 swap Seal of Command and Seal
+		// of Righteousness within twistWindow tenths of a second of the next swing, above
+		// twistMana percent of mana.
+		{Name: "twist", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "twistWindow", Default: 10, Min: 5, Max: 30, Step: 5},
+		{Name: "twistMana", Default: 40, Min: 0, Max: 80, Step: 20},
+		// Holy Strike only above this much mana, 0 always.
+		{Name: "holyStrikeMana", Default: 0, Min: 0, Max: 40, Step: 20},
 	}
 }
 
@@ -46,11 +64,12 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	consecration := rankID(paladin.ConsecrationLevel[:], paladin.ConsecrationSpellId[:])
 	exorcism := rankID(paladin.ExorcismLevel[:], paladin.ExorcismSpellId[:])
 	holyShock := rankID(paladin.HolyShockLevel[:], paladin.HolyShockSpellId[:])
+	hammerOfWrath := rankID(paladin.HammerOfWrathLevel[:], paladin.HammerOfWrathSpellId[:])
 
-	seal := sealOfRighteousness
+	seal, otherSeal := sealOfRighteousness, sealOfCommand
 	sealNotes := "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
 	if k["seal"] == 2 {
-		seal = sealOfCommand
+		seal, otherSeal = sealOfCommand, sealOfRighteousness
 		sealNotes = "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
 	}
 
@@ -76,12 +95,45 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if consecrationLine != nil && k["consecrationFirst"] == 1 {
 		items = append(items, consecrationLine)
 	}
-	items = append(items,
-		cast(judgement, and(auraIsActive(seal), jotcUp), "Judgement on cooldown."),
-		cast(seal, and(not(auraIsActive(seal)), jotcUp), sealNotes),
-	)
+	twist := k["twist"] == 1
+	if !twist {
+		items = append(items,
+			cast(judgement, and(auraIsActive(seal), jotcUp), "Judgement on cooldown."),
+			cast(seal, and(not(auraIsActive(seal)), jotcUp), sealNotes),
+		)
+	} else {
+		sealUp := or(auraIsActive(seal), auraIsActive(otherSeal))
+		// One swap per swing: none while the last swap's Echo waits for its swing. Two swaps
+		// before a swing would leave both Echoes up, and we do not know the server allows that.
+		swingSoon := and(lt(mainHandTimeToNext(), seconds(k["twistWindow"]/10)),
+			not(auraIsActive(echoOfCommand)), not(auraIsActive(echoOfRighteousness)))
+		var floor value
+		if k["twistMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["twistMana"]/100))
+		}
+		items = append(items,
+			cast(judgement, and(sealUp, jotcUp), "Judgement on cooldown, on whichever damage seal is up."),
+			cast(seal, and(not(sealUp), jotcUp), sealNotes),
+			cast(otherSeal, and(auraIsActive(seal), swingSoon, floor),
+				"Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too."),
+			cast(seal, and(auraIsActive(otherSeal), swingSoon, floor), "And back again before the next swing."),
+		)
+	}
 	if k["holyStrike"] == 1 {
-		items = append(items, cast(holyStrike, nil, "Holy Strike on cooldown."))
+		var floor value
+		notes := "Holy Strike on cooldown."
+		if k["holyStrikeMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["holyStrikeMana"]/100))
+			notes = "Holy Strike on cooldown with the mana to spare."
+		}
+		items = append(items, cast(holyStrike, floor, notes))
+	}
+	if k["hammerOfWrathMana"] < 100 {
+		var floor value
+		if k["hammerOfWrathMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["hammerOfWrathMana"]/100))
+		}
+		items = append(items, cast(hammerOfWrath, floor, "Hammer of Wrath below 20% health."))
 	}
 	if k["exorcism"] == 1 {
 		items = append(items, cast(exorcism, nil, "Exorcism on cooldown, only against Undead and Demons."))
