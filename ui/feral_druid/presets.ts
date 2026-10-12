@@ -54,8 +54,8 @@ export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 // (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
 // item level table (66 for the armor, 71 for the jewelry, belt, back and wrist, 76 for the
 // two-hander): Agility and Strength about evenly, 9% hit (the special attack hit cap against a
-// level 63 boss, more does nothing), 4% crit and about 5% of the budget on Intellect and Spirit
-// for Shifting Power's mana. Only the head and chest carry Grovekeeper Ferocity, Forever's
+// level 63 boss, more does nothing), 4% crit, no Spirit (the cross-class rule for Energy users) and
+// about 3% of the budget on Intellect for Shifting Power's mana. Only the head and chest carry Grovekeeper Ferocity, Forever's
 // crafted Feral set, so only its 2 piece (1% attack speed) is live, like every class's set; the
 // 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec. Howling Idol (1 sec off Shifting
 // Power, a real Forever Phase 1 idol) is worth 12.5. No trinkets: Forever removed the old
@@ -268,14 +268,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 666.1 / 659.8 / 647.8 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 669.6 / 663.2 / 650.3 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             666.1    659.8    647.8   best overall and Alliance
-//	High Order Skyborne   664.2    658.2    646.8
-//	Windshaper Skyborne   664.2    658.2    646.9   best Horde
-//	Tauren                661.6    655.7    643.8
+//	Night Elf             669.6    663.2    650.3   best overall and Alliance
+//	High Order Skyborne   667.4    661.3    649.1
+//	Windshaper Skyborne   667.4    661.4    649.1   best Horde
+//	Tauren                665.1    659.0    646.3
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.
