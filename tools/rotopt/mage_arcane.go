@@ -30,6 +30,8 @@ func (mageArcane) Knobs() []Knob {
 		// With barrageFirst, the Missile Barrage missiles wait for this many stacks, 0 the stack
 		// target.
 		Knob{Name: "barrageStacks", Default: 0, Min: 0, Max: 4, Step: 1},
+		// Precast an Arcane Blast (2.5 sec cast) so it lands at the pull.
+		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 	)
 }
 
@@ -70,5 +72,9 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 		filler = s.fireball
 	}
 	items = append(items, cast(filler, nil, "The filler."))
-	return rotation(items...)
+	rot := rotation(items...)
+	if k["prepull"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(s.arcaneBlast, 2.5))
+	}
+	return rot
 }
