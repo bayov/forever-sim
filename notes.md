@@ -82,6 +82,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * The cat's claws: the sim keeps 1.12's paw, 43.8 to 65.8 damage every 1.0 sec at 60. A white hit on the beta with a known attack power settles it.
 * Windfury Totem gives a cat nothing in the sim (no weapon in Cat Form), as in 1.12. The Feral preset takes Grace of Air from the shaman.
 * Thick Hide: the sim gives 1 base armor a level a point in Cat, Bear and Moonkin Form, and leaves out the defense part and the form multipliers. Only a tank needs it.
+* Elixir stacking (the orchestrator's ruling for every class): elixirs in separate sim slots stack, so the Balance preset takes Elixir of the Owl, Elixir of Sages, Greater Arcane Elixir, Elixir of Nature Power and Greater Mageblood Elixir together (the crit pair is worth about 28 DPS at 180 sec), and the Feral preset Elixir of the Grizzly with Elixir of the Mongoose. If Forever brings back battle and guardian elixir limits, the presets lose some of these.
 * Starfire rank 7 and Ferocious Bite rank 5 were Era AQ ranks. The Forever client teaches both at 60, so the sim has them.
 
 ## At 60
