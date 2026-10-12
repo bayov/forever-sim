@@ -106,6 +106,7 @@ var Consumes = core.ConsumesCombo{
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
 		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},
 }
 

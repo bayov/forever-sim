@@ -20,6 +20,7 @@ import {
 	Stat,
 	TristateEffect,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import {
@@ -219,11 +220,11 @@ const PresetBuildOptionsSuccubus = {
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
 // on the Demonology build at 180 sec: Nightfin Soup +7.8 over Runn Tum Tuber Surprise, Goblin
-// Sapper +4.1 (Engineering), Mageblood Potion +4.4, Demonic Rune +15.8, Major Mana Potion +23.7,
-// Elixir of Shadow Power +23.3 and Wizard Oil +15.7. Under Forever the Spellstone is an imbue that
-// stacks with an oil. The presets model Forever's launch Phase 1, when no vanilla raid is open, so
-// Brilliant Wizard Oil (+32.5, Molten Core) and Cerebral Cortex Compound (+10.7, Zul'Gurub) are
-// out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of
+// Sapper +4.1 (Engineering), Mageblood Potion +4.4, Cerebral Cortex Compound +10.7 (a Blasted Lands
+// quest), Demonic Rune +15.8, Major Mana Potion +23.7, Elixir of Shadow Power +23.3 and Wizard Oil
+// +15.7. Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
+// Forever's launch Phase 1, when no vanilla raid is open, so Brilliant Wizard Oil (+32.5, a
+// Zandalar recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of
 // Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and Flask of
 // Distilled Wisdom (-88) lost.
 export const DefaultConsumes = Consumes.create({
@@ -237,9 +238,10 @@ export const DefaultConsumes = Consumes.create({
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
-// The shared level 60 raid (tools/rotopt/mksettings): both paladin blessings, Judgement of Wisdom,
+// The shared level 60 raid (tools/rotopt/mksettings): Kings and Wisdom (a caster takes no Might), Judgement of Wisdom,
 // every debuff, and a caster group's shaman with Mana Spring. Another warlock keeps Curse of the
 // Elements up, so ours has its curse free (Forever gives a warlock a bane and a curse). Under
 // Forever Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill only help the
@@ -266,7 +268,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
-	blessingOfMight: TristateEffect.TristateEffectImproved,
+	blessingOfMight: TristateEffect.TristateEffectMissing,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	fengusFerocity: false,
 	moldarsMoxie: false,
