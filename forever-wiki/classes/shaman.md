@@ -8,6 +8,17 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Client 1.60.1.70338 and the 7 October deep dive
+
+From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchanges.pro's 70338 talent calculator and the [Mage and Shaman class deep dive](https://worldofwarcraft.blizzard.com/en-us/news/24302097) of 7 October. The Elemental tree matches the sim rank for rank (shaman_audit.md 8.8 to 8.16).
+
+- Tier 1 sets, one per spec, in ItemSet and ItemSetSpell. The items carry no stats yet.
+  - The Spiritcaller's Storm (2111, Elemental): 2 pieces +1% hit, 3 pieces Earthbind Totem cooldown -2 sec, 4 pieces +21 spell damage against Elementals, 5 pieces Lava Burst cooldown -1 sec. The crafted Spiritcaller Kilt, Gloves, Mantle and Boots (276538 to 276541, item level 61) belong to it.
+  - The Spiritcaller's Rage (2110, Enhancement): 2 pieces 1% attack and cast speed, 3 pieces Air and Earth totem radius +10 yd, 4 pieces +36 attack power against Elementals, 5 pieces Stormstrike cooldown -0.5 sec. The same bonuses as the crafted set of build 70205.
+  - The Spiritcaller (2109, Restoration): 2 pieces +10 Spirit, 3 pieces Fire and Water totem radius +10 yd, 4 pieces +26 healing and +9 damage, 5 pieces Riptide cooldown -1 sec.
+- Forever shaman relics (ItemEffect): Burning Totem (Flame Shock 3 sec longer), Totem of the Storm (Lightning Bolt can proc Maelstrom Weapon at half the chance), Tidal Totem (Healing Wave cost), Totem of Urgency (Lesser Healing Wave crit, Enchanting) and Polished Driftwood Icon (8% of mana regen while casting).
+- The deep dive removes Elemental Mastery ("We could not increase Elemental Shaman damage to appropriate values in PvE and keep this talent") and Nature's Guidance, and says Elemental Focus gives Clearcasting less often on low ranks. Totems take a 1 sec global cooldown and the persistent ones last 5 min. Weapon imbues last 60 min and stack with oils and stones.
+
 ## Beta build 1.60.1.70009 (2026-09-24)
 
 The [development notes of 24 September](https://www.wowhead.com/blue-tracker/topic/us/wow-forever-beta-development-notes-updated-september-24-2360696), with the numbers from the client data on foreverchanges.pro (build 1.60.1.70009, downrank calculator and talent calculator). The sim follows all of it.

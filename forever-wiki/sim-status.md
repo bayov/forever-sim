@@ -138,7 +138,26 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 ### Shaman
 
-(not done yet)
+#### Elemental
+
+- Gear: the synthetic Phase 1 elemental set (`tools/database/forever_synthetic_items_shaman.go`, ids 990101 to 990113), in place of the Earthfury set, Choker of the Fire Lord, Deep Earth Spaulders, Robe of Volatile Power, Mana Igniting Cord, Ring of Spell Power and Staff of Dominance, on the shared synthetic budget (1.2 * item level - 36.4 per piece, times the slot modifier). It has 477 spell power, 133 Intellect, 127 Stamina, 81 Spirit (11.5% of the budget), 5% crit and 3% hit. Six pieces carry The Spiritcaller's Storm (+1% hit, Lava Burst 1 sec sooner). The trinkets are Talisman of Ephemeral Power and Briarwood Reed (Weakness Analyzer, Eye of the Beast, Burst of Knowledge, Shard of the Scale and Hand of Justice all lose), the relic Burning Totem (7.1 over none, 4.8 over Polished Driftwood Icon).
+- Raid: the shared level 60 raid without Blessing of Might, with Curse of the Elements as the one debuff on its schools (under Forever Improved Scorch and Winter's Chill only help the mage, and Curse of Shadow is gone). The shaman stands 20 yards from the boss, so it never swings, and it is the only shaman in its group.
+- Talents: `5504301300103051-052-05305` (31 Elemental for Lava Burst, Elemental Fury 5 and Lightning Overload 3, Thundering Strikes 5 and Ancestral Knowledge 2, Totemic Focus 5, Mindfulness 3 and Tidal Focus 5). The talent search ran from four seeds (deep Elemental with Restoration, with Enhancement, and two mixes), then the knob search, then the talent search again from three seeds on the new knobs. Other local optima ended at 571 (Shamanistic Focus and Ancestral Knowledge 5 for Tidal Focus) and 541. With Chain Lightning still in the rotation, the Enhancement-heavy build was 2 ahead. Without it the mana is no longer short, and the hit from Tidal Focus wins.
+- Level 60 + Mana Tide: `5504301300103051-04-053150001001` (16 Restoration for Mana Tide Totem, cast at 20% mana), 1.2% behind, shipped for the group's mana.
+- Rotation (`tools/rotopt/shaman_ele.go`, `ui/elemental_shaman/apls/level60.apl.json`): Mana Spring and Searing Totem kept up, Flame Shock whenever its DoT is down, Lava Burst on cooldown, Lightning Bolt, and Lightning Bolt rank 7 below 20% mana. Chain Lightning on cooldown costs 38 DPS on one target (2 sec, 6 sec cooldown, but too much mana for its damage). Earth Shock, mana floors, Lava Burst only with Flame Shock up and the Chain Lightning order change nothing. Magma Totem and Fire Nova are left out, because they hit around the totem and a caster stands at range.
+- Consumes: Flask of Supreme Power, Greater Arcane Elixir, Elixir of Firepower, Elixir of Wisdom, Mageblood Potion, Cerebral Cortex Compound, Nightfin Soup (22 spell damage under Forever), Wizard Oil, Major Mana Potion, Demonic Rune, Goblin Sapper Charge and Goblin Land Mine (Engineering and Alchemy). Brilliant Wizard Oil would add 10.8, but it comes in Era Phase 4.
+- DPS: 600.3 / 594.1 / 581.6 at 120 / 180 / 300 sec (Orc, 20000 iterations).
+- Races (20000 iterations, standard error 0.2, the same seed):
+
+| Elemental | 2 min | 3 min | 5 min |
+|---|---|---|---|
+| Orc (Horde) | 600.2 | 594.2 | 581.6 |
+| Tauren (Horde) | 600.3 | 594.0 | 582.6 |
+| Troll (Horde) | 600.9 | 592.8 | 579.0 |
+| Windshaper Skyborne (Horde) | 597.9 | 591.3 | 579.1 |
+| Dwarf (Alliance) | 594.3 | 588.1 | 576.3 |
+
+  Orc and Tauren tie for the best race and the best Horde race (Blood Fury against Tauren's 1% hit, Tauren 1.0 ahead at 5 min), so the preset keeps Orc, as for Enhancement. Troll is 0.7 ahead at 2 min, where Berserking fits the fight twice. Dwarf is the only Alliance shaman, 6 behind. The staff is the Era Phase 1 weapon and no race has a staff racial; an axe would give the Orc 1% crit and a mace the Dwarf.
 
 ### Mage
 
