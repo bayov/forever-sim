@@ -83,8 +83,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 
 // Frostfire Bolt as the filler. Scorch puts up 5 stacks of Fire Vulnerability and keeps them,
-// Pyroblast waits for 3 Heating Up stacks (a 1.5 sec cast), Ice Lance spends every Fingers of
-// Frost charge, Arcane Missiles takes a Missile Barrage proc. No Fire Blast: over a 5 minute
+// Pyroblast waits for 3 Heating Up stacks (a 1.5 sec cast), Fingers of Frost's Shatter crit goes
+// to the next bolts, Arcane Missiles takes a Missile Barrage proc. Ice Lance takes no spell power
+// (the client's coefficient is 0), so casting it on the charges costs 55 to 65. No Fire Blast: over a 5 minute
 // fight its mana is worth more as Frostfire Bolts, and it is within noise at 3 minutes. Evocation
 // below 10% mana with at least 30 sec of the fight left. The knobs were searched over 120, 180
 // and 300 sec together, so one rotation serves every length. The searches for one length at a
@@ -92,13 +93,14 @@ export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 // 853.9 (Human), behind this one at every length, because Evocation's 8 sec channel late in a
 // short fight costs more than the mana is worth.
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
-	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on Fingers of Frost, Scorch for Fire Vulnerability.',
+	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability.',
 	group: 'Level 60',
 });
-// Frostbolt, and Ice Lance on every Fingers of Frost charge (Ice Lance on the last charge only was
-// behind). Frost rarely runs low on mana, so Evocation almost never goes.
+// Frostbolt, with Fingers of Frost's Shatter crit on the next bolts. Ice Lance takes no spell power
+// (the client's coefficient is 0), so casting it on the charges costs 20. Frost rarely runs low on
+// mana, so Evocation almost never goes.
 export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Level 60 Frost', Level60FrostAPL, {
-	tooltip: 'Frostbolt, and Ice Lance on every Fingers of Frost charge.',
+	tooltip: 'Frostbolt, with Shatter on Fingers of Frost.',
 	group: 'Level 60',
 });
 // Scorch to 5 Fire Vulnerability stacks and before they run out, Pyroblast at 3 Heating Up
@@ -134,17 +136,19 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Frostfire (0/29/22): Wake of Fire, Incineration, Improved Fireball, Ignite, Pyroblast, Improved
 // Scorch, Heating Up, Master of Elements, Critical Mass and Fire Power 3 in Fire, Elemental
 // Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
-// Frost. Frostfire Bolt is Fire and Frost at once, so it gets Fire Power, Ignite and Critical
+// Frost (Ice Lance only because Fingers of Frost needs it). Frostfire Bolt is Fire and Frost at once, so it gets Fire Power, Ignite and Critical
 // Mass and also Ice Shards, Piercing Ice and Shatter. foreverchanges.pro's popular Fire build is
 // the same split. It is 1000.1 / 979.4 / 924.8 at 120 / 180 / 300 sec (Human). Master of Elements 3
 // and Frost Channeling 3 are for the mana: they cost 2.4 at 180 sec and are worth 30 at 300.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	'Level 60 Frostfire',
 	SavedTalents.create({ talentsString: '-1355000013013304-00550003310003002' }),
-	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter, Ice Lance.', group: 'Level 60' },
+	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Level 60' },
 );
-// Frost (10/3/38): every Frost damage talent to Winter's Chill and Ice Barrier, Incineration 3
-// for Ice Lance, and Arcane Concentration for Clearcasting. Four seeds (deep Frost, Frost with
+// Frost (10/3/38): every Frost damage talent to Winter's Chill and Ice Barrier, and Arcane
+// Concentration for Clearcasting. Incineration 3 was for Ice Lance, which the rotation no longer
+// casts; no other place for the 3 points gains anything either (the search found no move above
+// +0.0). Four seeds (deep Frost, Frost with
 // Arcane Meditation, Frost with Incineration and a 51 point Frost build) all ended within 0.2.
 // It is 873.7 / 866.9 / 861.5 (Human), 11% behind Frostfire.
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost', SavedTalents.create({ talentsString: '050005-03-0555300331001301251' }), {

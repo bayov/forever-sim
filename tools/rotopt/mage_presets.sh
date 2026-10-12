@@ -22,12 +22,14 @@ gen() {
 gen mage_arcane level60_arcane "blastStacks=2,missilesNeedBarrage=1,barrageFirst=1,conserveMana=30,evocationMana=0,filler=1"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating
 # Up stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 20% mana,
-# Fireball. Evocation below 20% mana with 30 sec of the fight left.
-gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=30"
-# Frostbolt, and Ice Lance on every Fingers of Frost charge. Frost rarely runs low on mana, so
-# Evocation (below 20% with 30 sec left) almost never goes.
-gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=30"
-# Scorch to 5 Fire Vulnerability stacks, Pyroblast at 3 Heating Up stacks, Ice Lance on every
-# Fingers of Frost charge, Frostfire Bolt. No Fire Blast: its mana is worth more as Frostfire
+# Fireball. Evocation below 20% mana with 90 sec of the fight left.
+gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90"
+# Frostbolt, with Fingers of Frost's Shatter crit on the next bolts. Ice Lance takes no spell
+# power (the client's coefficient is 0), so it costs 20 a fight cast on the charges and is left
+# out. Frost rarely runs low on mana, so Evocation (below 20% with 90 sec left) almost never goes.
+gen mage_frost level60_frost "iceLance=0,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90"
+# Scorch to 5 Fire Vulnerability stacks, Pyroblast at 3 Heating Up stacks, Frostfire Bolt, with
+# Fingers of Frost's Shatter crit on the next bolts (no Ice Lance, which takes no spell power and
+# costs 55 to 65 a fight cast on the charges). No Fire Blast: its mana is worth more as Frostfire
 # Bolts over a 5 minute fight. Evocation below 10% mana with 30 sec of the fight left.
-gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,pyroMana=0,iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=10,evocationMinTime=30"
+gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,pyroMana=0,iceLance=0,missileBarrage=1,fireBlastMana=0,evocationMana=10,evocationMinTime=30"
