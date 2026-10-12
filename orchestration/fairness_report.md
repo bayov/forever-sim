@@ -37,7 +37,8 @@ Settings: 180 sec, 5000 iterations, seed 1, standard error about 0.5 to 1. Each 
 | 25 | Feral | Night Elf | 648.6 | Windshaper 646.8 / Night Elf | same |
 | 26 | Rogue Subtlety | Undead | 627.1 | Undead / Orc 615.8 | same |
 | 27 | Rogue Seal Fate Swords | Undead | 619.2 | Undead / Human 616.6 | same |
-| 28 | Rogue Mutilate + Venom | Undead | 617.5 | Undead / Orc 602.1 | same |
+
+The Mutilate + Venom build was dropped after this sweep (7a6b0d4): Venom loses DPS at every combo point count as modelled.
 
 Every preset's race matches the sweep. The one exception is Destruction Fire, where Gnome and Undead are 0.4 apart, within noise. Weapon racials now move only two specs:
 - Enhancement: the Orc axe is worth 7.9 DPS.
