@@ -230,9 +230,9 @@ var vestmentsOfConvictionBonuses = map[int32]core.ApplyEffect{
 	},
 }
 
-// ItemSetSmiteSyntheticPhase1 is the set of the synthetic Phase 1 Smite items, the shadow
-// set's armor pieces with the Vestments of Conviction bonuses: 10 Spirit and 9 spell damage
-// beat Raiments' 1% hit by 4.1 DPS at 180 sec and 7.8 at 300 for the Smite build.
+// ItemSetSmiteSyntheticPhase1 is the set of the synthetic Phase 1 Smite items, with the
+// Vestments of Conviction bonuses. The Level 60 Smite set puts it on two pieces, so only the 2
+// piece (10 Spirit) is live; the 4 piece is the 9 spell damage and the 5 piece Penance.
 var ItemSetSmiteSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Smite Synthetic (Phase 1)",
 	Bonuses: vestmentsOfConvictionBonuses,
