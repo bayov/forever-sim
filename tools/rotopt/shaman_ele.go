@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math"
+
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/shaman"
 )
@@ -184,7 +186,7 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	if k["prepullBolt"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(lightningBolt, boltLead))
 		if k["prepullTotems"] == 1 && k["fireTotem"] == 1 {
-			rot.PrepullActions = append(rot.PrepullActions, prepull(searingTotem, boltLead-2))
+			rot.PrepullActions = append(rot.PrepullActions, prepull(searingTotem, math.Round((boltLead-2)*10)/10))
 		}
 	}
 	return rot

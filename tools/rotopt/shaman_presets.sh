@@ -10,6 +10,8 @@
 # does.
 #
 #   tools/rotopt/shaman_presets.sh path/to/settings.json
+#
+# The elemental rotations at the end are written the same way.
 set -e
 settings=$1
 gen() {
@@ -77,3 +79,20 @@ gen level30p5 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4
 # because the 3.5 sec cast runs on after the shaman is back in range and holds the swing.
 # At 70% out of melee range (2026-10-07) a knob search from these knobs kept every one.
 gen level30_pvp "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4,shockMana=10,waterTotem=1,maelstromStacks=0,fireTotem=3,fireNova=2,fireNovaMana=0" -level 30 -bonus-talents 5
+
+# The elemental presets in ui/elemental_shaman/apls, from the shaman_ele template. Mana Spring and
+# Searing Totem, Flame Shock when its DoT is down, Lava Burst on cooldown unless Flame Shock runs
+# out before the cast ends (lavaBurstFlameShockLeft=2), Lightning Bolt, rank 7 below 20% mana, and
+# no Chain Lightning (it loses on one target even above 80% mana). The fight opens with Mana
+# Spring at -3.9 sec, a Lightning Bolt at -2.9 (it lands 0.1 sec into the fight) and Searing Totem
+# at -0.9 (prepullBolt=1). Mana Tide Totem goes down at 20% mana on the Mana Tide talents.
+gen_ele() {
+	name=$1
+	knobs=$2
+	go run --tags=with_db ./tools/rotopt -template shaman_ele -settings "$settings" -durs 300 \
+		-eval -confirm-iters 100 -out ui/elemental_shaman/apls -name "$name" -knobs "$knobs" -level 60 >/dev/null
+	mv "ui/elemental_shaman/apls/${name}_300s.apl.json" "ui/elemental_shaman/apls/$name.apl.json"
+	echo "wrote ui/elemental_shaman/apls/$name.apl.json ($knobs)"
+}
+gen_ele level60 "chainLightning=0,lightningBoltDownrank=3,lavaBurstFlameShockLeft=2,prepullBolt=1"
+gen_ele level60_mana_tide "chainLightning=0,lightningBoltDownrank=3,lavaBurstFlameShockLeft=2,prepullBolt=1,manaTideMana=20"
