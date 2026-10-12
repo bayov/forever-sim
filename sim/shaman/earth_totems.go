@@ -15,7 +15,12 @@ var StrengthOfEarthTotemLevel = [StrengthOfEarthTotemRanks + 1]int{0, 10, 24, 38
 func (shaman *Shaman) registerStrengthOfEarthTotemSpell() {
 	shaman.StrengthOfEarthTotem = make([]*core.Spell, StrengthOfEarthTotemRanks+1)
 
-	for rank := 1; rank <= StrengthOfEarthTotemRanks; rank++ {
+	maxRank := StrengthOfEarthTotemRanks
+	if !shaman.Env.IncludeAQRanks() {
+		// Rank 5 is taught by an Ahn'Qiraj tablet (21292), so Forever's launch has rank 4.
+		maxRank--
+	}
+	for rank := 1; rank <= maxRank; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
 		if StrengthOfEarthTotemLevel[rank] <= int(shaman.Level) {

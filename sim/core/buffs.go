@@ -1494,6 +1494,10 @@ func StrengthOfEarthTotemAura(unit *Unit, multiplier float64) *Aura {
 	if unit.Level < CharacterMaxLevel {
 		rank = int32(HighestRankAt(unit.Level, strengthOfEarthTotemLevels))
 		updateStats = stats.Stats{stats.Strength: strengthOfEarthTotemStrength[rank]}.Multiply(multiplier).Floor()
+	} else if !unit.Env.IncludeAQRanks() {
+		// Rank 5 is taught by an Ahn'Qiraj tablet (21292), so Forever's launch has rank 4.
+		rank = 4
+		updateStats = stats.Stats{stats.Strength: strengthOfEarthTotemStrength[rank]}.Multiply(multiplier).Floor()
 	}
 	spellID := []int32{0, 8075, 8160, 8161, 10442, 25361}[rank]
 	duration := time.Minute * 5 // Forever, Classic 2 min
@@ -1531,6 +1535,10 @@ func GraceOfAirTotemAura(unit *Unit, multiplier float64) *Aura {
 	updateStats := BuffSpellValues[GraceOfAir].Multiply(multiplier).Floor()
 	if unit.Level < CharacterMaxLevel {
 		rank = int32(HighestRankAt(unit.Level, graceOfAirTotemLevels))
+		updateStats = stats.Stats{stats.Agility: graceOfAirTotemAgility[rank]}.Multiply(multiplier).Floor()
+	} else if !unit.Env.IncludeAQRanks() {
+		// Rank 3 is taught by an Ahn'Qiraj tablet (21293), so Forever's launch has rank 2.
+		rank = 2
 		updateStats = stats.Stats{stats.Agility: graceOfAirTotemAgility[rank]}.Multiply(multiplier).Floor()
 	}
 	spellID := []int32{0, 8835, 10627, 25359}[rank]
@@ -1579,8 +1587,16 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 	baseAP := BattleShoutBaseAP[rank]
 	if unit.Env.IsForever() {
 		rank = int32(HighestRankAt(unit.Level, BattleShoutLevel[:]))
+		if rank == BattleShoutRanks && !unit.Env.IncludeAQRanks() {
+			// Rank 7 is taught by an Ahn'Qiraj book (21298), so Forever's launch has rank 6.
+			rank = BattleShoutRanks - 1
+		}
 		spellId = BattleShoutSpellId[rank]
 		baseAP = foreverBattleShoutAP[rank]
+		if rank == BattleShoutRanks-1 {
+			// Rank 6 (11551) adds 0.6 a level from its base level 52 up to 61 in client 70338.
+			baseAP += 0.6 * float64(min(unit.Level, 61)-52)
+		}
 		impBattleShout = 0
 	}
 
