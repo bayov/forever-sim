@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/priest"
 )
@@ -22,9 +24,10 @@ func init() {
 }
 
 var (
-	innerFocus    = spellID(14751)
-	shadowform    = spellID(15473)
-	powerInfusion = spellIDTag(10060, 0)
+	innerFocus      = spellID(14751)
+	shadowform      = spellID(15473)
+	powerInfusion   = spellIDTag(10060, 0)
+	vampiricEmbrace = spellID(15286)
 )
 
 func (priestShadow) Knobs() []Knob {
@@ -48,6 +51,9 @@ func (priestShadow) Knobs() []Knob {
 		// Clip Mind Flay for a ready Mind Blast once this many ticks are in (0 never). The
 		// check runs after each tick and when the GCD comes back 1.5 sec in.
 		{Name: "mfClip", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Clip Mind Flay once this many ticks are in when Shadow Word: Pain or Devouring Plague
+		// fell off during it (0 never), so the damage over time spell goes back up sooner.
+		{Name: "mfClipDots", Default: 2, Min: 0, Max: 2, Step: 1},
 		// Night Elf: Starshards on cooldown, 1 below Mind Blast, 2 above it. Its ticks hit no
 		// harder than Mind Flay's in Shadowform and its 6 sec channel holds up Mind Blast, so
 		// it costs 30 DPS at any fight length (2026-10-12).
@@ -57,6 +63,9 @@ func (priestShadow) Knobs() []Knob {
 		{Name: "chastise", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Undead: Dark Sacrifice under this much mana in percent (0 never).
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
+		// Vampiric Embrace kept on the target. It heals the party for 20% of the priest's
+		// Shadow damage and deals none, so each cast is a GCD of damage given up.
+		{Name: "vampiricEmbrace", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Power Infusion on cooldown (needs the 31 point Discipline talent, which no level 60
 		// build takes).
 		{Name: "powerInfusion", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -101,6 +110,10 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(powerInfusion, nil, "Power Infusion on cooldown. Without the talent ignore the warning on this line."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on cooldown."))
+
+	if k["vampiricEmbrace"] == 1 {
+		items = append(items, cast(vampiricEmbrace, not(targetAuraIsActive(vampiricEmbrace)), "Vampiric Embrace whenever it is down, for the party's healing. Without the talent ignore the warning on this line."))
+	}
 
 	var swpTime value
 	if k["swpMinTime"] > 0 {
@@ -164,6 +177,14 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	if k["mfClip"] > 0 {
 		clip = and(spellIsReady(mindBlast), manaAbove(k["mbMana"]), ge(channeledTicks(mindFlay), num(k["mfClip"])))
 		mfNotes = "Mind Flay fills, clipped for a ready Mind Blast."
+	}
+	if k["mfClipDots"] > 0 {
+		dotDown := not(dotIsActive(shadowWordPain))
+		if k["dp"] == 1 {
+			dotDown = or(dotDown, and(not(dotIsActive(devouringPlague)), spellIsReady(devouringPlague)))
+		}
+		clip = or(clip, and(dotDown, ge(channeledTicks(mindFlay), num(k["mfClipDots"]))))
+		mfNotes = strings.TrimSuffix(mfNotes, ".") + ", and when a damage over time spell fell off."
 	}
 	items = append(items, channel(mindFlay, nil, clip, mfNotes))
 

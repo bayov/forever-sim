@@ -11,6 +11,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":14751}},"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":10947}}},{"dotIsActive":{"spellId":{"spellId":10894}}},{"or":{"vals":[{"dotIsActive":{"spellId":{"spellId":19280}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":19280}}}}}]}}]}}},"notes":"Inner Focus right before Mind Blast. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10947}}},"notes":"Mind Blast on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":1309636}}},"notes":"Shadow Word: Death on cooldown."},
-        {"action":{"channelSpell":{"spellId":{"spellId":18807}}},"notes":"Mind Flay fills."}
+        {"action":{"channelSpell":{"interruptIf":{"or":{"vals":[{"and":{"vals":[{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10894}}}}},{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":19280}}}}},{"spellIsReady":{"spellId":{"spellId":19280}}}]}}]}},{"cmp":{"lhs":{"spellChanneledTicks":{"spellId":{"spellId":18807}}},"op":"OpGe","rhs":{"const":{"val":"2"}}}}]}}]}},"spellId":{"spellId":18807}}},"notes":"Mind Flay fills, and when a damage over time spell fell off."}
     ]
 }
