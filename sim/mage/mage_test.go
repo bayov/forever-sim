@@ -20,11 +20,11 @@ func TestP1Mage(t *testing.T) {
 			Race:  proto.Race_RaceTroll,
 			// Not converted to Forever yet, so it keeps running under Classic rules.
 			Ruleset:    proto.Ruleset_RulesetClassic,
-			OtherRaces: []proto.Race{proto.Race_RaceGnome},
+			OtherRaces: []proto.Race{proto.Race_RaceUndead},
 
 			Talents:     P1Talents,
 			GearSet:     core.GetGearSet("../../ui/mage/gear_sets", "level60_phase1_synthetic"),
-			Rotation:    core.GetAplRotation("../../ui/mage/apls", "p1"),
+			Rotation:    core.GetAplRotation("../../ui/mage/apls", "level60_frostfire"),
 			Buffs:       core.FullBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "DPS", SpecOptions: PlayerOptions},
@@ -36,12 +36,13 @@ func TestP1Mage(t *testing.T) {
 	}))
 }
 
-var P1Talents = "050005--0555300331301301251"
+// The Level 60 Frostfire build (ui/mage/presets.ts).
+var P1Talents = "-1355000013013304-00550003310003002"
 
 var PlayerOptions = &proto.Player_Mage{
 	Mage: &proto.Mage{
 		Options: &proto.Mage_Options{
-			Armor: proto.Mage_Options_MoltenArmor,
+			Armor: proto.Mage_Options_MageArmor,
 		},
 	},
 }
@@ -49,13 +50,15 @@ var PlayerOptions = &proto.Player_Mage{
 var P1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",
 	Consumes: &proto.Consumes{
-		DefaultPotion:  proto.Potions_MajorManaPotion,
-		Flask:          proto.Flask_FlaskOfSupremePower,
-		FirePowerBuff:  proto.FirePowerBuff_ElixirOfGreaterFirepower,
-		FrostPowerBuff: proto.FrostPowerBuff_ElixirOfFrostPower,
-		Food:           proto.Food_FoodRunnTumTuberSurprise,
-		MainHandImbue:  proto.WeaponImbue_BrilliantWizardOil,
-		SpellPowerBuff: proto.SpellPowerBuff_GreaterArcaneElixir,
+		DefaultPotion:   proto.Potions_MajorManaPotion,
+		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
+		Flask:           proto.Flask_FlaskOfSupremePower,
+		Food:            proto.Food_FoodNightfinSoup,
+		FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
+		IntellectElixir: proto.IntellectElixir_ElixirOfWisdom,
+		MainHandImbue:   proto.WeaponImbue_BrilliantWizardOil,
+		ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 	},
 }
 
