@@ -1,0 +1,19 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":15473}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+    ],
+    "priorityList": [
+        {"action":{"castSpell":{"spellId":{"spellId":1277328}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.4"}}}}},"notes":"Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":10060}}},"notes":"Power Infusion on cooldown. Without the talent ignore the warning on this line."},
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":10894}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10894}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"9s"}}}}]}}},"notes":"Shadow Word: Pain whenever it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":19280}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":19280}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"12s"}}}}]}}},"notes":"Devouring Plague whenever it is down and off cooldown."},
+        {"action":{"channelSpell":{"spellId":{"spellId":19305}}},"notes":"Night Elf. Starshards on cooldown. Other races can ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":14751}},"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":10947}}},{"dotIsActive":{"spellId":{"spellId":10894}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":19280}}}}}]}}},"notes":"Inner Focus right before Mind Blast. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":10947}}},"notes":"Mind Blast on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":1309636}}},"notes":"Shadow Word: Death on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":1277335}}},"notes":"Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."},
+        {"action":{"channelSpell":{"interruptIf":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":10947}}},{"cmp":{"lhs":{"spellChanneledTicks":{"spellId":{"spellId":18807}}},"op":"OpGe","rhs":{"const":{"val":"2"}}}}]}},"spellId":{"spellId":18807}}},"notes":"Mind Flay fills, clipped for a ready Mind Blast."}
+    ]
+}

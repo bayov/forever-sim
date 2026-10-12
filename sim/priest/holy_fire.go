@@ -10,9 +10,13 @@ import (
 const HolyFireRanks = 8
 
 var HolyFireSpellId = [HolyFireRanks + 1]int32{0, 14914, 15262, 15263, 15264, 15265, 15266, 15267, 15261}
-var HolyFireBaseDamage = [HolyFireRanks + 1][]float64{{0}, {84, 104}, {97, 122}, {144, 178}, {173, 218}, {219, 273}, {259, 328}, {323, 406}, {355, 449}}
-var HolyFireDotDamage = [HolyFireRanks + 1]float64{0, 30, 40, 55, 65, 85, 100, 125, 145}
-var HolyFireSpellCoef = [HolyFireRanks + 1]float64{0, 0.123, 0.271, 0.554, 0.714, 0.714, 0.714, 0.714, 0.714}
+
+// Damage at each rank's cap, growth per level and the tick damage from the Forever
+// client (1.60.1.70338, wago.tools). Forever halved it (rank 8: 184 to 232 plus 75 over
+// 10 sec, Classic 355 to 449 plus 145) and gave every rank 75% direct and 5% a tick.
+var HolyFireBaseDamage = [HolyFireRanks + 1][]float64{{0}, {56.02, 70.38}, {63.47, 79.33}, {78.85, 99.15}, {89.12, 112.88}, {101.56, 128.44}, {131.59, 166.81}, {162.49, 206.31}, {183.68, 232.32}}
+var HolyFireScaling = [HolyFireRanks + 1]core.RankScaling{{}, {24, 1.3}, {30, 1.4}, {36, 1.5}, {42, 1.5}, {48, 1.5}, {54, 1.7}, {60, 1.9}, {60, 2}}
+var HolyFireTickDamage = [HolyFireRanks + 1]float64{0, 4, 5, 6, 7, 13, 10, 13, 15}
 var HolyFireManaCost = [HolyFireRanks + 1]float64{0, 85, 95, 125, 145, 170, 200, 230, 255}
 var HolyFireLevel = [HolyFireRanks + 1]int{0, 20, 24, 30, 36, 42, 48, 54, 60}
 
@@ -32,9 +36,9 @@ func (priest *Priest) getHolyFireConfig(rank int) core.SpellConfig {
 	ticks := int32(5)
 
 	spellId := HolyFireSpellId[rank]
-	baseDamageLow := HolyFireBaseDamage[rank][0]
-	baseDamageHigh := HolyFireBaseDamage[rank][1]
-	dotDamage := HolyFireDotDamage[rank] / float64(ticks)
+	baseDamageLow := HolyFireScaling[rank].At(HolyFireBaseDamage[rank][0], priest.Level)
+	baseDamageHigh := HolyFireScaling[rank].At(HolyFireBaseDamage[rank][1], priest.Level)
+	dotDamage := HolyFireTickDamage[rank]
 	manaCost := HolyFireManaCost[rank]
 	level := HolyFireLevel[rank]
 

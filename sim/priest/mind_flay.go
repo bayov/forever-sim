@@ -10,63 +10,48 @@ import (
 const MindFlayRanks = 6
 const MindFlayTicks = 3
 
+// Damage per tick and coefficient from the Forever client (1.60.1.70338, wago.tools
+// SpellEffect): rank 6 deals 390 over 3 sec (Classic 426), and every rank has 16.7% a
+// tick (Classic 15%).
 var MindFlaySpellId = [MindFlayRanks + 1]int32{0, 15407, 17311, 17312, 17313, 17314, 18807}
-var MindFlayTickSpellId = [MindFlayRanks + 1]int32{0, 16568, 7378, 17316, 17317, 17318, 18808}
-var MindFlayBaseDamage = [MindFlayRanks + 1]float64{0, 75, 126, 186, 261, 330, 426}
+var MindFlayTickDamage = [MindFlayRanks + 1]float64{0, 21, 34, 51, 75, 98, 130}
 var MindFlayManaCost = [MindFlayRanks + 1]float64{0, 45, 70, 100, 135, 165, 205}
 var MindFlayLevel = [MindFlayRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
+
+const MindFlayTickCoef = 0.167
 
 func (priest *Priest) registerMindFlay() {
 	if !priest.Talents.MindFlay {
 		return
 	}
 
-	priest.MindFlay = make([][]*core.Spell, MindFlayRanks+1)
+	priest.MindFlay = make([]*core.Spell, MindFlayRanks+1)
 
 	for rank := 1; rank <= MindFlayRanks; rank++ {
-		priest.MindFlay[rank] = make([]*core.Spell, MindFlayTicks+1)
-
-		var tick int32
-		for tick = 0; tick < MindFlayTicks; tick++ {
-			config := priest.newMindFlaySpellConfig(rank, tick)
-
-			if config.RequiredLevel <= int(priest.Level) {
-				priest.MindFlay[rank][tick] = priest.RegisterSpell(config)
-			}
+		if MindFlayLevel[rank] <= int(priest.Level) {
+			priest.MindFlay[rank] = priest.RegisterSpell(priest.newMindFlaySpellConfig(rank))
 		}
 	}
 }
 
-func (priest *Priest) newMindFlaySpellConfig(rank int, tickIdx int32) core.SpellConfig {
-	ticks := tickIdx
-	flags := SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagBinary
-	if tickIdx == 0 {
-		ticks = 3
-		flags |= core.SpellFlagAPL
-	}
-
-	spellId := MindFlaySpellId[rank]
-	baseDamage := MindFlayBaseDamage[rank] / float64(ticks)
-	manaCost := MindFlayManaCost[rank]
-	level := MindFlayLevel[rank]
-
-	spellCoeff := 0.15 // classic penalty for mf having a slow effect
-
-	tickLength := time.Second
+// Mind Flay is one channel with a single hit roll when it starts (it slows, so it is
+// binary). The APL's channel action can clip it after any tick.
+func (priest *Priest) newMindFlaySpellConfig(rank int) core.SpellConfig {
+	baseDamage := MindFlayTickDamage[rank]
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_PriestMindFlay,
-		ActionID:    core.ActionID{SpellID: spellId}.WithTag(tickIdx),
+		ActionID:    core.ActionID{SpellID: MindFlaySpellId[rank]},
 		SpellSchool: core.SpellSchoolShadow,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       flags,
+		Flags:       SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagBinary | core.SpellFlagAPL,
 
-		RequiredLevel: level,
+		RequiredLevel: MindFlayLevel[rank],
 		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			FlatCost: MindFlayManaCost[rank],
 		},
 
 		Cast: core.CastConfig{
@@ -80,12 +65,12 @@ func (priest *Priest) newMindFlaySpellConfig(rank int, tickIdx int32) core.Spell
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: fmt.Sprintf("MindFlay-%d-%d", rank, tickIdx),
+				Label: fmt.Sprintf("MindFlay-%d", rank),
 			},
-			NumberOfTicks:       ticks,
-			TickLength:          tickLength,
+			NumberOfTicks:       MindFlayTicks,
+			TickLength:          time.Second,
 			AffectedByCastSpeed: false,
-			BonusCoefficient:    spellCoeff,
+			BonusCoefficient:    MindFlayTickCoef,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDamage, isRollover)
 			},
@@ -104,9 +89,7 @@ func (priest *Priest) newMindFlaySpellConfig(rank int, tickIdx int32) core.Spell
 		},
 
 		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := baseDamage / MindFlayTicks
-			result := spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
-			return result
+			return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 		},
 	}
 }

@@ -1,11 +1,10 @@
 {
-  "$schema": "../schema/class.schema.json",
   "schemaVersion": 1,
   "class": "priest",
   "className": "Priest",
-  "dataVersion": 1,
-  "dataSource": "video",
-  "generatedAt": "2026-09-13T16:24:14Z",
+  "dataVersion": 2,
+  "dataSource": "client",
+  "generatedAt": "2026-10-12T07:04:26Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -25,19 +24,9 @@
       "name": "Discipline",
       "page": "primary",
       "order": 0,
-      "icon": "crop-discipline",
+      "icon": "spell_holy_wordfortitude",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 19460.0,
-        "frame": 1167600,
-        "crop": "data/review/priest/discipline/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "power-in-light",
@@ -45,24 +34,35 @@
           "row": 0,
           "col": 0,
           "maxRank": 5,
-          "icon": "crop-power-in-light",
-          "iconSource": "crop",
-          "iconCrop": "data/review/priest/discipline/power-in-light.icon.png",
+          "icon": "spell_holy_searinglight",
+          "iconSource": "client",
           "description": "Your Smite and Penance spells deal {0}% increased damage to targets afflicted with your Holy Fire.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x5 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19468.2,
-            "frame": 1168092,
-            "crop": "data/review/priest/discipline/power-in-light.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 1309969
         },
         {
           "id": "wand-specialization",
@@ -71,28 +71,22 @@
           "col": 1,
           "maxRank": 2,
           "icon": "inv_wand_01",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your damage with Wands by {0}%.",
-          "ranks": [[13], [26]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 345,
-            "classicSpellIds": [14524, 14525, 14526, 14527, 14528],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/discipline/Wand Specialization (talent 345): Classic 5/10/15/20/25 is proportional, Classic has 5 ranks; Forever rank 1 is 13: scaled proportionally (13 x rank). Rounding: rank 2 26 may read 25 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19472.133,
-            "frame": 1168328,
-            "crop": "data/review/priest/discipline/wand-specialization.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              13
+            ],
+            [
+              25
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 14524
         },
         {
           "id": "twin-disciplines",
@@ -100,30 +94,35 @@
           "row": 0,
           "col": 2,
           "maxRank": 5,
-          "icon": "crop-twin-disciplines",
-          "iconSource": "crop",
-          "iconCrop": "data/review/priest/discipline/twin-disciplines.icon.png",
+          "icon": "spell_holy_sealofvengeance",
+          "iconSource": "client",
           "description": "Increases the damage and healing of your instant cast spells by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 404,
-            "classicSpellIds": [14898, 15349, 15354, 15355, 15356],
-            "match": "description",
-            "similarity": 0.85
-          },
-          "ranksNote": "Classic priest/holy/Spiritual Healing (talent 404), matched on description (0.85): Classic 2/4/6/8/10 is proportional; Forever rank 1 is 1: scaled proportionally (1 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19474.0,
-            "frame": 1168440,
-            "crop": "data/review/priest/discipline/twin-disciplines.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 1225132
         },
         {
           "id": "silent-resolve",
@@ -132,22 +131,29 @@
           "col": 0,
           "maxRank": 3,
           "icon": "spell_nature_manaregentotem",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the threat generated by your Holy spells by {0}% and reduces the duration of Stun, Fear, and Silence effects inflicted on you by {1}%.",
-          "ranks": [[10, 5], [20, 10], [30, 15]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match priest/discipline/Silent Resolve (talent 352) has no alignable slots; proportional x2..x3 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19479.467,
-            "frame": 1168768,
-            "crop": "data/review/priest/discipline/silent-resolve.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10,
+              5
+            ],
+            [
+              20,
+              10
+            ],
+            [
+              30,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14523
         },
         {
           "id": "holy-precision",
@@ -156,28 +162,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_holy_divineillumination",
-          "iconSource": "classic",
-          "description": "Increases your chance to hit with Holy spells by {0}%.",
-          "ranks": [[6], [12], [18]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 583,
-            "classicSpellIds": [16180, 16196, 16198],
-            "match": "description",
-            "similarity": 0.95
-          },
-          "ranksNote": "Classic shaman/restoration/Nature's Guidance (talent 583) (cross-class), matched on description (0.95): Classic 1/2/3 is proportional; Forever rank 1 is 6: scaled proportionally (6 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19478.0,
-            "frame": 1168680,
-            "crop": "data/review/priest/discipline/holy-precision.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Improves your chance to hit with Holy spells by {0}%.",
+          "ranks": [
+            [
+              6
+            ],
+            [
+              12
+            ],
+            [
+              18
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 1309957
         },
         {
           "id": "improved-power-word-shield",
@@ -186,28 +190,26 @@
           "col": 2,
           "maxRank": 3,
           "icon": "spell_holy_powerwordshield",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the damage absorbed by your Power Word: Shield by {0}%.",
-          "ranks": [[7], [14], [21]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 343,
-            "classicSpellIds": [14748, 14768, 14769],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/discipline/Improved Power Word: Shield (talent 343): Classic 5/10/15 is proportional; Forever rank 1 is 7: scaled proportionally (7 x rank). Rounding: rank 3 21 may read 20 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19475.0,
-            "frame": 1168500,
-            "crop": "data/review/priest/discipline/improved-power-word-shield.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              7
+            ],
+            [
+              14
+            ],
+            [
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14748
         },
         {
           "id": "martyrdom",
@@ -216,28 +218,26 @@
           "col": 3,
           "maxRank": 2,
           "icon": "spell_nature_tranquility",
-          "iconSource": "classic",
-          "description": "Gives you a {0}% chance to gain Focused Casting for 6 sec after being the victim of a melee or ranged critical strike. The Focused Casting effect prevents you from losing Casting time when taking damage and increases your resistance to Interrupt effects by {1}%.",
-          "ranks": [[50, 20], [100, 40]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 321,
-            "classicSpellIds": [14531, 14774],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/discipline/Martyrdom (talent 321): Classic 10/20 is proportional; Forever rank 1 is 20: scaled proportionally (20 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19484.733,
-            "frame": 1169084,
-            "crop": "data/review/priest/discipline/martyrdom.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Gives you a {0}% chance to gain Focused Casting for {1} sec after being the victim of a melee or ranged critical strike. The Focused Casting effect prevents you from losing casting time when taking damage and increases your resistance to Interrupt effects by {2}%.",
+          "ranks": [
+            [
+              50,
+              6,
+              20
+            ],
+            [
+              100,
+              6,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 14531
         },
         {
           "id": "mental-agility",
@@ -246,30 +246,26 @@
           "col": 0,
           "maxRank": 3,
           "icon": "ability_hibernation",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the mana cost of your Smite, Holy Fire, and instant cast spells by {0}%.",
-          "ranks": [[3], [6], [9]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 341,
-            "classicSpellIds": [14520, 14780, 14781, 14782, 14783],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/discipline/Mental Agility (talent 341): Classic 2/4/6/8/10 is proportional, Classic has 5 ranks; Forever rank 1 is 3: scaled proportionally (3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19491.533,
-            "frame": 1169492,
-            "crop": "data/review/priest/discipline/mental-agility.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              7
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14520
         },
         {
           "id": "inner-focus",
@@ -278,21 +274,20 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_frost_windwalkon",
-          "iconSource": "classic",
-          "description": "When activated, reduces the Mana cost of your next spell by {0}% and increases its critical effect chance by {1}% if it is capable of a critical effect.",
-          "ranks": [[100, 25]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19488.267,
-            "frame": 1169296,
-            "crop": "data/review/priest/discipline/inner-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "When activated, reduces the Mana cost of your next spell by {0}% and increases its critical effect chance by {1}% if it is a non-periodic spell and capable of a critical effect.",
+          "ranks": [
+            [
+              100,
+              25
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "Instant; 3 min cooldown",
+          "spellId": 14751
         },
         {
           "id": "meditation",
@@ -301,28 +296,26 @@
           "col": 3,
           "maxRank": 3,
           "icon": "spell_nature_sleep",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Allows {0}% of your Mana regeneration to continue while casting.",
-          "ranks": [[17], [34], [51]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 347,
-            "classicSpellIds": [14521, 14776, 14777],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/discipline/Meditation (talent 347): Classic 5/10/15 is proportional; Forever rank 1 is 17: scaled proportionally (17 x rank). Rounding: rank 2 34 may read 35, rank 3 51 may read 50 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19486.0,
-            "frame": 1169160,
-            "crop": "data/review/priest/discipline/meditation.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              17
+            ],
+            [
+              33
+            ],
+            [
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14521
         },
         {
           "id": "improved-inner-fire",
@@ -331,22 +324,29 @@
           "col": 0,
           "maxRank": 3,
           "icon": "spell_holy_innerfire",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the Armor bonus of your Inner Fire spell by {0}% and increases its total charges by {1}.",
-          "ranks": [[15, 4], [30, 8], [45, 12]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match priest/discipline/Improved Inner Fire (talent 346) has no alignable slots; proportional x2..x3 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19494.0,
-            "frame": 1169640,
-            "crop": "data/review/priest/discipline/improved-inner-fire.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              15,
+              4
+            ],
+            [
+              30,
+              8
+            ],
+            [
+              45,
+              12
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14747
         },
         {
           "id": "mental-strength",
@@ -355,28 +355,34 @@
           "col": 1,
           "maxRank": 5,
           "icon": "spell_nature_enchantarmor",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your total Intellect by {0}%.",
-          "ranks": [[3], [6], [9], [12], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1201,
-            "classicSpellIds": [18551, 18552, 18553, 18554, 18555],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/discipline/Mental Strength (talent 1201): Classic 2/4/6/8/10 is proportional; Forever rank 1 is 3: scaled proportionally (3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19499.533,
-            "frame": 1169972,
-            "crop": "data/review/priest/discipline/mental-strength.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ],
+            [
+              9
+            ],
+            [
+              12
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 18551
         },
         {
           "id": "soul-warding",
@@ -385,28 +391,25 @@
           "col": 2,
           "maxRank": 1,
           "icon": "spell_holy_pureofheart",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the cooldown on your Power Word: Shield spell by {0} sec and reduces its mana cost by {1}%.",
-          "ranks": [[4, 15]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              4,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "improved-power-word-shield",
               "rank": 3
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19500.4,
-            "frame": 1170024,
-            "crop": "data/review/priest/discipline/soul-warding.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Improved Power Word: Shield at rank 3 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites); arrow confidence 0.70"
-          }
+          "spellId": 402000
         },
         {
           "id": "improved-mana-burn",
@@ -415,22 +418,22 @@
           "col": 3,
           "maxRank": 2,
           "icon": "spell_shadow_manaburn",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the casting time of your Mana Burn spell by {0} sec.",
-          "ranks": [[0.5], [0.5]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: Classic priest/discipline/Improved Mana Burn (talent 350) has 0.25/0.5 secs where Forever rank 1 has 0.5 sec; units differ; rank 2 is a copy of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19506.0,
-            "frame": 1170360,
-            "crop": "data/review/priest/discipline/improved-mana-burn.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              0.5
+            ],
+            [
+              1
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 14750
         },
         {
           "id": "penance",
@@ -439,23 +442,22 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_holy_penance",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Launches a volley of holy light at the target, causing {0} Holy damage to an enemy, or {1} healing to an ally, instantly and every {2} sec for {3} sec.",
-          "ranks": [[93, 223, 1, 2]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19512.4,
-            "frame": 1170744,
-            "crop": "data/review/priest/discipline/penance.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              45,
+              134,
+              1,
+              2
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "100 Mana; 36 yd hostile / 40 yd friendly; Channeled; 12 sec cooldown",
+          "spellId": 402174
         },
         {
           "id": "renewed-hope",
@@ -464,31 +466,45 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_holy_holyprotection",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Your heals from Flash Heal, Binding Heal, Lesser Heal, Heal, Greater Heal, and Penance gain {0}% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by {1} sec.",
-          "ranks": [[2, 1], [2, 1], [2, 1], [2, 1], [2, 1]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (1 sec) is never extrapolated; ranks 2..5 are copies of rank 1.",
+          "ranks": [
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              8,
+              4
+            ],
+            [
+              10,
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "soul-warding",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19508.0,
-            "frame": 1170480,
-            "crop": "data/review/priest/discipline/renewed-hope.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z",
-            "note": "prerequisite from tree arrow (stage 7): Soul Warding at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 425280
         },
         {
           "id": "divine-aegis",
@@ -497,22 +513,29 @@
           "col": 2,
           "maxRank": 3,
           "icon": "spell_holy_devineaegis",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Your critical heals create a protective shield on the target, absorbing {0}% of the amount healed. Lasts {1} sec.",
-          "ranks": [[5, 12], [5, 12], [5, 12]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: duration slot (12 sec) is never extrapolated; ranks 2..3 are copies of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19518.4,
-            "frame": 1171104,
-            "crop": "data/review/priest/discipline/divine-aegis.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5,
+              12
+            ],
+            [
+              10,
+              12
+            ],
+            [
+              15,
+              12
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 431622
         },
         {
           "id": "power-infusion",
@@ -521,28 +544,26 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_holy_powerinfusion",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Infuses the target with power, increasing their spell damage and healing done by {0}% for {1} sec.",
-          "ranks": [[20, 15]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              20,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "20% base Mana; 30 yd range; Instant; 3 min cooldown",
           "requires": [
             {
               "talent": "penance",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19519.333,
-            "frame": 1171160,
-            "crop": "data/review/priest/discipline/power-infusion.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Penance at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites); arrow confidence 0.70"
-          }
+          "spellId": 10060
         }
       ]
     },
@@ -551,19 +572,9 @@
       "name": "Holy",
       "page": "primary",
       "order": 1,
-      "icon": "crop-holy",
+      "icon": "spell_holy_holybolt",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 19460.0,
-        "frame": 1167600,
-        "crop": "data/review/priest/holy/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "twilight-focus",
@@ -571,30 +582,27 @@
           "row": 0,
           "col": 0,
           "maxRank": 3,
-          "icon": "crop-twilight-focus",
-          "iconSource": "crop",
-          "iconCrop": "data/review/priest/holy/twilight-focus.icon.png",
+          "icon": "spell_holy_healingfocus",
+          "iconSource": "client",
           "description": "Gives you a {0}% chance to avoid interruption caused by damage while casting any spell.",
-          "ranks": [[23], [46], [69]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 787,
-            "classicSpellIds": [16918, 16919, 16920],
-            "match": "description",
-            "similarity": 0.93
-          },
-          "ranksNote": "Classic druid/balance/Improved Entangling Roots (talent 787) (cross-class), matched on description (0.93): Classic 40/70/100 is 30 x rank +10, which does not start at Forever's rank 1 (23); Classic's pattern was NOT applied, ranks scaled proportionally (23 x rank). Rounding: rank 2 46 may read 45, rank 3 69 may read 70 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19530.467,
-            "frame": 1171828,
-            "crop": "data/review/priest/holy/twilight-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              23
+            ],
+            [
+              47
+            ],
+            [
+              70
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14913
         },
         {
           "id": "improved-renew",
@@ -602,30 +610,27 @@
           "row": 0,
           "col": 1,
           "maxRank": 3,
-          "icon": "crop-improved-renew",
-          "iconSource": "crop",
-          "iconCrop": "data/review/priest/holy/improved-renew.icon.png",
+          "icon": "spell_holy_renew",
+          "iconSource": "client",
           "description": "Increases the amount healed by your Renew spell by {0}%.",
-          "ranks": [[5], [10], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 406,
-            "classicSpellIds": [14908, 15020, 17191],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Improved Renew (talent 406): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19534.467,
-            "frame": 1172068,
-            "crop": "data/review/priest/holy/improved-renew.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14908
         },
         {
           "id": "holy-specialization",
@@ -634,28 +639,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_holy_sealofsalvation",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the critical effect chance of your Holy spells by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 401,
-            "classicSpellIds": [14889, 15008, 15009, 15010, 15011],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Holy Specialization (talent 401): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19535.8,
-            "frame": 1172148,
-            "crop": "data/review/priest/holy/holy-specialization.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 14889
         },
         {
           "id": "spell-warding",
@@ -664,28 +675,34 @@
           "col": 1,
           "maxRank": 5,
           "icon": "spell_holy_spellwarding",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces all spell damage taken by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 411,
-            "classicSpellIds": [27900, 27901, 27902, 27903, 27904],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Spell Warding (talent 411): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19541.733,
-            "frame": 1172504,
-            "crop": "data/review/priest/holy/spell-warding.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 27900
         },
         {
           "id": "divine-fury",
@@ -694,30 +711,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_holy_sealofwrath",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the casting time of your Smite, Holy Fire, Heal, and Greater Heal spells by {0} sec.",
-          "ranks": [[0.1], [0.2], [0.3], [0.4], [0.5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1181,
-            "classicSpellIds": [18530, 18531, 18533, 18534, 18535],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Divine Fury (talent 1181): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19538.933,
-            "frame": 1172336,
-            "crop": "data/review/priest/holy/divine-fury.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "ranks": [
+            [
+              0.1
+            ],
+            [
+              0.2
+            ],
+            [
+              0.3
+            ],
+            [
+              0.4
+            ],
+            [
+              0.5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 18530
         },
         {
           "id": "holy-nova",
@@ -726,21 +747,24 @@
           "col": 0,
           "maxRank": 1,
           "icon": "spell_holy_holynova",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Causes an explosion of holy light around the caster, causing {0} to {1} Holy damage to all enemy targets within {2} yards and healing all party members within {3} yards for {4} to {5}. These effects cause no threat.",
-          "ranks": [[30, 35, 10, 10, 64, 73]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19544.067,
-            "frame": 1172644,
-            "crop": "data/review/priest/holy/holy-nova.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              26,
+              30,
+              10,
+              10,
+              50,
+              57
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "185 Mana; Instant",
+          "spellId": 15237
         },
         {
           "id": "blessed-recovery",
@@ -749,22 +773,32 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_holy_blessedrecovery",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "After being struck by a melee or ranged critical hit, or suffering more than {0}% of your maximum Health from a single attack, heal {1}% of the damage taken over {2} sec. Refreshing this effect carries over any remaining healing.",
-          "ranks": [[30, 8, 6], [30, 8, 6], [30, 8, 6]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: Classic match priest/holy/Blessed Recovery (talent 1636) has no alignable slots; ranks 2..3 are copies of rank 1.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19548.533,
-            "frame": 1172912,
-            "crop": "data/review/priest/holy/blessed-recovery.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              30,
+              8,
+              6
+            ],
+            [
+              30,
+              17,
+              6
+            ],
+            [
+              30,
+              25,
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 27811
         },
         {
           "id": "inspiration",
@@ -773,28 +807,29 @@
           "col": 3,
           "maxRank": 3,
           "icon": "spell_holy_layonhands",
-          "iconSource": "classic",
-          "description": "Your non-periodic critical heals increase your target's Armor by {0}% for 15 sec.",
-          "ranks": [[8], [16], [25]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 361,
-            "classicSpellIds": [14892, 15362, 15363],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Inspiration (talent 361): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19546.0,
-            "frame": 1172760,
-            "crop": "data/review/priest/holy/inspiration.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Your non-periodic critical heals increase your target's Armor by {0}% for {1} sec.",
+          "ranks": [
+            [
+              8,
+              15
+            ],
+            [
+              17,
+              15
+            ],
+            [
+              25,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14892
         },
         {
           "id": "holy-reach",
@@ -803,28 +838,22 @@
           "col": 0,
           "maxRank": 2,
           "icon": "spell_holy_purify",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the range of your Smite and Holy Fire spells and the radius of your Prayer of Healing and Holy Nova spells by {0}%.",
-          "ranks": [[10], [20]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 1635,
-            "classicSpellIds": [27789, 27790],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Holy Reach (talent 1635): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19552.667,
-            "frame": 1173160,
-            "crop": "data/review/priest/holy/holy-reach.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10
+            ],
+            [
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 27789
         },
         {
           "id": "improved-healing",
@@ -833,28 +862,26 @@
           "col": 1,
           "maxRank": 3,
           "icon": "spell_holy_heal02",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the Mana cost of your Lesser Heal, Heal, Greater Heal, Penance, and Prayer of Mending spells by {0}%.",
-          "ranks": [[5], [10], [15]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 408,
-            "classicSpellIds": [14912, 15013, 15014],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Improved Healing (talent 408): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19554.067,
-            "frame": 1173244,
-            "crop": "data/review/priest/holy/improved-healing.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ],
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14912
         },
         {
           "id": "searing-light",
@@ -863,29 +890,30 @@
           "col": 2,
           "maxRank": 2,
           "icon": "spell_holy_searinglightpriest",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Holy damage done by {0}%, and gives a {1}% chance each time your Holy Fire spell deals periodic damage for your next Holy Nova to cost no Mana.",
-          "ranks": [[2, 5], [4, 10]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match priest/holy/Searing Light (talent 403) has no alignable slots; proportional x2..x2 of rank 1 assumed.",
+          "ranks": [
+            [
+              2,
+              5
+            ],
+            [
+              5,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "divine-fury",
               "rank": 5
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19556.933,
-            "frame": 1173416,
-            "crop": "data/review/priest/holy/searing-light.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Divine Fury at rank 5 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 14909
         },
         {
           "id": "binding-heal",
@@ -894,21 +922,20 @@
           "col": 3,
           "maxRank": 1,
           "icon": "spell_holy_blindingheal",
-          "iconSource": "classic",
-          "description": "Heals a friendly target and the caster for {0} to {1}.",
-          "ranks": [[330, 387]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19562.0,
-            "frame": 1173720,
-            "crop": "data/review/priest/holy/binding-heal.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Heals a friendly target and the caster for {0} to {1}. Low threat.",
+          "ranks": [
+            [
+              236,
+              284
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "155 Mana; 40 yd range; 1.5 sec cast",
+          "spellId": 401937
         },
         {
           "id": "litany-of-light",
@@ -917,22 +944,22 @@
           "col": 0,
           "maxRank": 2,
           "icon": "inv_scroll_07",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "When you cast a healing spell, gain Mana equal to {0}% of the base cost of the spell if your previous heal was a different spell.",
-          "ranks": [[5], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19578.867,
-            "frame": 1174732,
-            "crop": "data/review/priest/holy/litany-of-light.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1317006
         },
         {
           "id": "spirit-of-redemption",
@@ -941,21 +968,18 @@
           "col": 1,
           "maxRank": 1,
           "icon": "inv_enchant_essenceeternallarge",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Upon death, the priest becomes the Spirit of Redemption for {0} sec. The Spirit of Redemption cannot move, attack, be attacked or targeted by any spells or effects. While in this form the priest can cast any healing spell free of cost. When the effect ends, the priest dies.",
-          "ranks": [[15]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19566.467,
-            "frame": 1173988,
-            "crop": "data/review/priest/holy/spirit-of-redemption.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 20711
         },
         {
           "id": "spiritual-guidance",
@@ -964,22 +988,39 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_holy_spiritualguidence",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your spell healing by up to {0}% of your total Spirit and your spell damage by up to {1}% of your total Spirit.",
-          "ranks": [[5, 1], [10, 2], [15, 3], [20, 4], [25, 5]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "Classic match priest/holy/Spiritual Guidance (talent 402) has no alignable slots; proportional x2..x5 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19564.0,
-            "frame": 1173840,
-            "crop": "data/review/priest/holy/spiritual-guidance.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5,
+              1
+            ],
+            [
+              10,
+              3
+            ],
+            [
+              15,
+              5
+            ],
+            [
+              20,
+              6
+            ],
+            [
+              25,
+              8
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 14901
         },
         {
           "id": "spiritual-healing",
@@ -988,28 +1029,26 @@
           "col": 2,
           "maxRank": 3,
           "icon": "spell_nature_moonglow",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the amount healed by your spells by {0}%.",
-          "ranks": [[3], [6], [9]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 404,
-            "classicSpellIds": [14898, 15349, 15354, 15355, 15356],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/holy/Spiritual Healing (talent 404): Classic 2/4/6/8/10 is proportional, Classic has 5 ranks; Forever rank 1 is 3: scaled proportionally (3 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19604.933,
-            "frame": 1176296,
-            "crop": "data/review/priest/holy/spiritual-healing.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              7
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 14898
         },
         {
           "id": "prayer-of-mending",
@@ -1018,28 +1057,28 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_holy_prayerofmendingtga",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Places a spell on the target that heals them for {0} the next time they take damage or receive non-periodic healing. When the heal occurs, Prayer of Mending jumps to a party or raid member within {1} yards. Jumps up to {2} times and lasts {3} sec after each jump. This spell can only be placed on one target at a time per caster.",
-          "ranks": [[231, 20, 5, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "ranks": [
+            [
+              172,
+              20,
+              5,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "210 Mana; 40 yd range; Instant; 10 sec cooldown",
           "requires": [
             {
               "talent": "spirit-of-redemption",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19618.933,
-            "frame": 1177136,
-            "crop": "data/review/priest/holy/prayer-of-mending.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Spirit of Redemption at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 401859
         }
       ]
     },
@@ -1048,19 +1087,9 @@
       "name": "Shadow Magic",
       "page": "primary",
       "order": 2,
-      "icon": "crop-shadow-magic",
+      "icon": "spell_shadow_shadowwordpain",
       "rows": 7,
       "cols": 4,
-      "source": {
-        "kind": "video",
-        "video": "DxtVEhjyROU",
-        "t": 19460.0,
-        "frame": 1167600,
-        "crop": "data/review/priest/shadow-magic/_header.png",
-        "confidence": 1.0,
-        "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-        "reviewed": false
-      },
       "talents": [
         {
           "id": "shadow-focus",
@@ -1069,28 +1098,34 @@
           "col": 0,
           "maxRank": 5,
           "icon": "spell_shadow_burningspirit",
-          "iconSource": "classic",
-          "description": "Increases your chance to hit with your Shadow spells by {0}%.",
-          "ranks": [[1], [2], [3], [4], [5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 463,
-            "classicSpellIds": [15260, 15327, 15328, 15329, 15330],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Shadow Focus (talent 463): Classic 2/4/6/8/10 is proportional; Forever rank 1 is 1: scaled proportionally (1 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19628.8,
-            "frame": 1177728,
-            "crop": "data/review/priest/shadow-magic/shadow-focus.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Improves your chance to hit with Shadow spells by {0}%.",
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 15260
         },
         {
           "id": "blackout",
@@ -1099,28 +1134,39 @@
           "col": 1,
           "maxRank": 5,
           "icon": "spell_shadow_gathershadows",
-          "iconSource": "classic",
-          "description": "Gives your Shadow damage spells a {0}% chance to stun the target for 3 sec.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 464,
-            "classicSpellIds": [15268, 15323, 15324, 15325, 15326],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Blackout (talent 464): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19630.133,
-            "frame": 1177808,
-            "crop": "data/review/priest/shadow-magic/blackout.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Gives your Shadow damage spells a {0}% chance to stun the target for {1} sec.",
+          "ranks": [
+            [
+              2,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              8,
+              3
+            ],
+            [
+              10,
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 15326
         },
         {
           "id": "spirit-tap",
@@ -1129,28 +1175,49 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_shadow_requiem",
-          "iconSource": "classic",
-          "description": "Gives you a {0}% chance to gain a 100% bonus to your Spirit for 15 sec after killing a non-trivial target. For the duration, your Mana will regenerate at a 50% of normal rate while casting.",
-          "ranks": [[20], [40], [60], [80], [100]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 465,
-            "classicSpellIds": [15270, 15335, 15336, 15337, 15338],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Spirit Tap (talent 465): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19633.133,
-            "frame": 1177988,
-            "crop": "data/review/priest/shadow-magic/spirit-tap.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Gives you a {0}% chance to increase your Spirit by {1}% for {2} sec after killing a non-trivial target or when an enemy afflicted by your Vampiric Embrace dies. For the duration, {3}% of your Mana regeneration will continue while casting.",
+          "ranks": [
+            [
+              20,
+              100,
+              15,
+              50
+            ],
+            [
+              40,
+              100,
+              15,
+              50
+            ],
+            [
+              60,
+              100,
+              15,
+              50
+            ],
+            [
+              80,
+              100,
+              15,
+              50
+            ],
+            [
+              100,
+              100,
+              15,
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 15270
         },
         {
           "id": "shadow-affinity",
@@ -1159,28 +1226,26 @@
           "col": 0,
           "maxRank": 3,
           "icon": "spell_shadow_shadowward",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the threat generated by your Shadow spells by {0}%.",
-          "ranks": [[10], [20], [30]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 466,
-            "classicSpellIds": [15318, 15272, 15320],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Shadow Affinity (talent 466): Classic 8/16/25 is proportional; Forever rank 1 is 10: scaled proportionally (10 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19634.867,
-            "frame": 1178092,
-            "crop": "data/review/priest/shadow-magic/shadow-affinity.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10
+            ],
+            [
+              20
+            ],
+            [
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 15318
         },
         {
           "id": "improved-shadow-word-pain",
@@ -1189,28 +1254,22 @@
           "col": 2,
           "maxRank": 2,
           "icon": "spell_shadow_shadowwordpain",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the duration of your Shadow Word: Pain spell by {0} sec.",
-          "ranks": [[3], [6]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 482,
-            "classicSpellIds": [15275, 15317],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Improved Shadow Word: Pain (talent 482): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19636.067,
-            "frame": 1178164,
-            "crop": "data/review/priest/shadow-magic/improved-shadow-word-pain.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 15275
         },
         {
           "id": "shadow-reach",
@@ -1219,28 +1278,22 @@
           "col": 3,
           "maxRank": 2,
           "icon": "spell_shadow_chilltouch",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases the range of your offensive Shadow spells by {0}%.",
-          "ranks": [[10], [20]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 881,
-            "classicSpellIds": [17322, 17323, 17325],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Shadow Reach (talent 881): Classic 6/13/20 is proportional, Classic has 3 ranks; Forever rank 1 is 10: scaled proportionally (10 x rank).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19637.733,
-            "frame": 1178264,
-            "crop": "data/review/priest/shadow-magic/shadow-reach.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              10
+            ],
+            [
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 17322
         },
         {
           "id": "improved-mind-blast",
@@ -1249,28 +1302,34 @@
           "col": 0,
           "maxRank": 5,
           "icon": "spell_shadow_unholyfrenzy",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the cooldown of your Mind Blast spell by {0} sec.",
-          "ranks": [[0.5], [1], [1.5], [2], [2.5]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 481,
-            "classicSpellIds": [15273, 15312, 15313, 15314, 15316],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Improved Mind Blast (talent 481): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19726.4,
-            "frame": 1183584,
-            "crop": "data/review/priest/shadow-magic/improved-mind-blast.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              0.5
+            ],
+            [
+              1
+            ],
+            [
+              1.5
+            ],
+            [
+              2
+            ],
+            [
+              2.5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 15273
         },
         {
           "id": "improved-psychic-scream",
@@ -1279,35 +1338,28 @@
           "col": 1,
           "maxRank": 2,
           "icon": "spell_shadow_psychicscream",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Reduces the cooldown of your Psychic Scream spell by {0} sec.",
-          "ranks": [[2], [4]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 542,
-            "classicSpellIds": [15392, 15448],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Improved Psychic Scream (talent 542): ranks copied.",
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "blackout",
               "rank": 5
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19646.0,
-            "frame": 1178760,
-            "crop": "data/review/priest/shadow-magic/improved-psychic-scream.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Blackout at rank 5 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 15392
         },
         {
           "id": "mind-flay",
@@ -1316,21 +1368,21 @@
           "col": 2,
           "maxRank": 1,
           "icon": "spell_shadow_siphonmana",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Assault the target's mind with Shadow energy, causing {0} Shadow damage over {1} sec and slowing their movement speed by {2}%.",
-          "ranks": [[119, 3, 50]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19644.0,
-            "frame": 1178640,
-            "crop": "data/review/priest/shadow-magic/mind-flay.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              63,
+              3,
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "45 Mana; 20 yd range; Channeled",
+          "spellId": 15407
         },
         {
           "id": "improved-mind-flay",
@@ -1339,31 +1391,32 @@
           "col": 3,
           "maxRank": 2,
           "icon": "spell_shadow_soulleech_2",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Your Mind Flay now deals {0}% more damage, gains {1} yards increased range, but slows the target's movement speed by {2}%.",
-          "ranks": [[10, 5, 35], [10, 5, 35]],
-          "ranksObserved": [1],
-          "ranksSource": "manual",
-          "ranksNote": "needs manual ranks: 3 numeric slots; rank 2 is a copy of rank 1.",
+          "ranks": [
+            [
+              10,
+              5,
+              35
+            ],
+            [
+              20,
+              10,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
           "requires": [
             {
               "talent": "mind-flay",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19662.667,
-            "frame": 1179760,
-            "crop": "data/review/priest/shadow-magic/improved-mind-flay.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z",
-            "note": "prerequisite from tree arrow (stage 7): Mind Flay at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites); arrow confidence 0.50"
-          }
+          "spellId": 1225139
         },
         {
           "id": "improved-fade",
@@ -1372,28 +1425,22 @@
           "col": 0,
           "maxRank": 2,
           "icon": "spell_magic_lesserinvisibilty",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Decreases the cooldown of your Fade ability by {0} sec.",
-          "ranks": [[3], [6]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 483,
-            "classicSpellIds": [15274, 15311],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Improved Fade (talent 483): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19679.0,
-            "frame": 1180740,
-            "crop": "data/review/priest/shadow-magic/improved-fade.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 15274
         },
         {
           "id": "vampiric-embrace",
@@ -1402,21 +1449,20 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_shadow_unsummonbuilding",
-          "iconSource": "classic",
-          "description": "Afflicts your target with Shadow energy that causes all party members to be healed for {0}% of any Shadow spell damage you deal for {1} sec. Vampiric Embrace also grants a chance for your Spirit Tap talent to trigger when enemies afflicted by it die.",
-          "ranks": [[20, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19676.933,
-            "frame": 1180616,
-            "crop": "data/review/priest/shadow-magic/vampiric-embrace.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Afflicts your target with Shadow energy that causes all party members to be healed for {0}% of any Shadow spell damage you deal for {1} sec.",
+          "ranks": [
+            [
+              20,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "40 Mana; 30 yd range; Instant; 1 min cooldown",
+          "spellId": 15286
         },
         {
           "id": "shadow-weaving",
@@ -1425,28 +1471,35 @@
           "col": 2,
           "maxRank": 3,
           "icon": "spell_shadow_blackplague",
-          "iconSource": "classic",
-          "description": "Your Shadow damage spells have a {0}% chance to increase the Shadow damage you deal by 2% for 15 sec, stacking up to 5 times.",
-          "ranks": [[33], [66], [99]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 461,
-            "classicSpellIds": [15257, 15331, 15332, 15333, 15334],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Shadow Weaving (talent 461): Classic 20/40/60/80/100 is proportional, Classic has 5 ranks; Forever rank 1 is 33: scaled proportionally (33 x rank). Rounding: rank 2 66 may read 65, rank 3 99 may read 100 (values above are the raw scaled numbers).",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19672.867,
-            "frame": 1180372,
-            "crop": "data/review/priest/shadow-magic/shadow-weaving.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "iconSource": "client",
+          "description": "Your Shadow damage spells have a {0}% chance to increase the Shadow damage you deal by {1}% for {2} sec, stacking up to {3} times.",
+          "ranks": [
+            [
+              33,
+              2,
+              15,
+              5
+            ],
+            [
+              67,
+              2,
+              15,
+              5
+            ],
+            [
+              100,
+              2,
+              15,
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 15257
         },
         {
           "id": "silence",
@@ -1455,21 +1508,20 @@
           "col": 0,
           "maxRank": 1,
           "icon": "spell_shadow_impphaseshift",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Silences the target, preventing them from casting spells for {0} sec and interrupting their spellcasts for {1} sec.",
-          "ranks": [[5, 3]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19686.667,
-            "frame": 1181200,
-            "crop": "data/review/priest/shadow-magic/silence.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              5,
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "225 Mana; 20 yd range; Instant; 45 sec cooldown",
+          "spellId": 15487
         },
         {
           "id": "devouring-contagion",
@@ -1477,26 +1529,25 @@
           "row": 4,
           "col": 2,
           "maxRank": 2,
-          "icon": "crop-devouring-contagion",
-          "iconSource": "crop",
-          "iconCrop": "data/review/priest/shadow-magic/devouring-contagion.icon.png",
-          "description": "Reduces the mana cost of your Devouring Plague by {0}%. Targets that die while Devouring Plague is active spreads it, jumping to a nearby enemy within {1} yards for the remaining duration.",
-          "ranks": [[25, 5], [50, 10]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19694.467,
-            "frame": 1181668,
-            "crop": "data/review/priest/shadow-magic/devouring-contagion.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": true,
-            "reviewedBy": "data-audit",
-            "reviewedAt": "2026-09-13T00:00:00Z"
-          }
+          "icon": "client_252996",
+          "iconSource": "client",
+          "description": "Reduces the mana cost of your Devouring Plague by {0}%. Targets that die while Devouring Plague is active spreads it, jumping to a nearby enemy within {1} yds for the remaining duration.",
+          "ranks": [
+            [
+              25,
+              5
+            ],
+            [
+              50,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1309950
         },
         {
           "id": "early-demise",
@@ -1505,22 +1556,24 @@
           "col": 0,
           "maxRank": 2,
           "icon": "spell_shadow_demonicfortitude",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases Shadow Word: Death's critical strike chance on targets at or below {0}% health by {1}%.",
-          "ranks": [[20, 15], [40, 30]],
-          "ranksObserved": [1],
-          "ranksSource": "extrapolated",
-          "ranksNote": "No Classic counterpart; proportional x2..x2 of rank 1 assumed.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19700.467,
-            "frame": 1182028,
-            "crop": "data/review/priest/shadow-magic/early-demise.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              20,
+              15
+            ],
+            [
+              20,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1310076
         },
         {
           "id": "darkness",
@@ -1529,28 +1582,34 @@
           "col": 2,
           "maxRank": 5,
           "icon": "spell_shadow_twilight",
-          "iconSource": "classic",
+          "iconSource": "client",
           "description": "Increases your Shadow damage done by {0}%.",
-          "ranks": [[2], [4], [6], [8], [10]],
-          "ranksObserved": [1],
-          "ranksSource": "classic-prior",
-          "ranksPrior": {
-            "classicTalentId": 462,
-            "classicSpellIds": [15259, 15307, 15308, 15309, 15310],
-            "match": "exact-name",
-            "similarity": 1.0
-          },
-          "ranksNote": "Classic priest/shadow/Darkness (talent 462): ranks copied.",
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19709.0,
-            "frame": 1182540,
-            "crop": "data/review/priest/shadow-magic/darkness.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false
-          }
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ],
+            [
+              6
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 15259
         },
         {
           "id": "shadowform",
@@ -1559,33 +1618,33 @@
           "col": 1,
           "maxRank": 1,
           "icon": "spell_shadow_shadowform",
-          "iconSource": "classic",
-          "description": "Assume Shadowform, increasing your Shadow damage by {0}%, reducing the Mana cost of all Shadow spells by {1}%, increasing the Critical strike damage bonus of your Shadow spells by {2}%, and reducing Physical damage taken by you by {3}%. However, you may not cast healing spells while in this form.",
-          "ranks": [[10, 50, 100, 15]],
-          "ranksObserved": [1],
-          "ranksSource": "observed",
+          "iconSource": "client",
+          "description": "Assume Shadowform, increasing your Shadow damage by {0}%, reducing the Mana cost of all Shadow spells by {1}%, increasing the critical strike damage bonus of your Shadow spells by {2}%, and reducing Physical damage taken by you by {3}%. However, you may not cast healing spells while in this form.",
+          "ranks": [
+            [
+              10,
+              50,
+              100,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "40% base Mana; Instant; 1.5 sec cooldown",
           "requires": [
             {
               "talent": "vampiric-embrace",
               "rank": 1
             }
           ],
-          "source": {
-            "kind": "video",
-            "video": "DxtVEhjyROU",
-            "t": 19740.467,
-            "frame": 1184428,
-            "crop": "data/review/priest/shadow-magic/shadowform.png",
-            "confidence": 1.0,
-            "reader": "Qwen3VL-4B-Instruct-Q4_K_M+tooltip-v3",
-            "reviewed": false,
-            "note": "prerequisite from tree arrow (stage 7): Vampiric Embrace at rank 1 = its max rank (Classic rule; rank-0 tooltips do not list talent prerequisites)"
-          }
+          "spellId": 15473
         }
       ]
     }
   ],
   "notes": [
-    "Extracted from BlizzCon 2026 stream footage (rank-0 tooltips only); ranks 2+ are anticipated, point rules assumed from Classic."
+    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17; talent texts brought up to build 1.60.1.70338 from foreverchanges.pro (client TraitNode data), 2026-10-12"
   ]
 }

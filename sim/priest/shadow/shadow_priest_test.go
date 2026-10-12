@@ -18,14 +18,12 @@ func TestP1Shadow(t *testing.T) {
 			Class:      proto.Class_ClassPriest,
 			Phase:      1,
 			Race:       proto.Race_RaceUndead,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
-			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
+			OtherRaces: []proto.Race{proto.Race_RaceNightElf, proto.Race_RaceDwarf},
 
 			Talents:     P1Talents,
-			GearSet:     core.GetGearSet("../../../ui/shadow_priest/gear_sets", "p0.bis"),
-			Rotation:    core.GetAplRotation("../../../ui/shadow_priest/apls", "p1"),
-			Buffs:       core.FullBuffs,
+			GearSet:     core.GetGearSet("../../../ui/shadow_priest/gear_sets", "level60_phase1_synthetic"),
+			Rotation:    core.GetAplRotation("../../../ui/shadow_priest/apls", "level60"),
+			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 
@@ -36,7 +34,7 @@ func TestP1Shadow(t *testing.T) {
 	}))
 }
 
-var P1Talents = "0512301302--5002504103501251"
+var P1Talents = "005030231301--500321501201302251"
 
 var P1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

@@ -9,13 +9,16 @@ import (
 
 const ShadowWordPainRanks = 8
 
+// Damage per tick and the coefficient per tick from the Forever client (1.60.1.70338,
+// wago.tools SpellEffect). Forever cut the damage (rank 8: 762 over 18 sec, Classic 852)
+// and gave every rank 20% a tick, 120% over the 6 ticks (Classic 16.7% a tick at the top
+// ranks).
 var ShadowWordPainSpellId = [ShadowWordPainRanks + 1]int32{0, 589, 594, 970, 992, 2767, 10892, 10893, 10894}
-var ShadowWordPainBaseDamage = [ShadowWordPainRanks + 1]float64{0, 30, 66, 132, 234, 366, 510, 672, 852}
-var ShadowWordPainSpellCoef = [ShadowWordPainRanks + 1]float64{0, 0.067, 0.104, 0.154, 0.167, 0.167, 0.167, 0.167, 0.167} // per tick
+var ShadowWordPainTickDamage = [ShadowWordPainRanks + 1]float64{0, 5, 10, 18, 30, 48, 71, 97, 127}
 var ShadowWordPainManaCost = [ShadowWordPainRanks + 1]float64{0, 25, 50, 95, 155, 230, 305, 385, 470}
 var ShadowWordPainLevel = [ShadowWordPainRanks + 1]int{0, 4, 10, 18, 26, 34, 42, 50, 58}
 
-//To Do: Check rollover code from runes
+const ShadowWordPainTickCoef = 0.2
 
 func (priest *Priest) registerShadowWordPainSpell() {
 	priest.ShadowWordPain = make([]*core.Spell, ShadowWordPainRanks+1)
@@ -33,8 +36,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 	ticks := int32(6)
 
 	spellId := ShadowWordPainSpellId[rank]
-	baseDotDamage := ShadowWordPainBaseDamage[rank] / float64(ticks)
-	spellCoeff := ShadowWordPainSpellCoef[rank]
+	baseDotDamage := ShadowWordPainTickDamage[rank]
 	manaCost := ShadowWordPainManaCost[rank]
 	level := ShadowWordPainLevel[rank]
 
@@ -66,9 +68,10 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 				Label: fmt.Sprintf("Shadow Word: Pain (Rank %d)", rank),
 			},
 
-			NumberOfTicks:    ticks + (priest.Talents.ImprovedShadowWordPain),
+			// Improved Shadow Word: Pain adds 3 sec (one tick) a rank.
+			NumberOfTicks:    ticks + priest.Talents.ImprovedShadowWordPain,
 			TickLength:       time.Second * 3,
-			BonusCoefficient: spellCoeff,
+			BonusCoefficient: ShadowWordPainTickCoef,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDotDamage, isRollover)
@@ -86,6 +89,13 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 				spell.Dot(result.Target).Apply(sim)
 			}
 			spell.DealOutcome(sim, result)
+		},
+
+		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+			if useSnapshot {
+				return spell.Dot(target).CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
+			}
+			return spell.CalcPeriodicDamage(sim, target, baseDotDamage, spell.OutcomeExpectedMagicAlwaysHit)
 		},
 	}
 }

@@ -9,17 +9,22 @@ import (
 
 const DevouringPlagueRanks = 6
 
+// Forever lets every race learn Devouring Plague and puts it on a 1 min cooldown (Classic
+// 3 min, Undead only). Damage per tick and the 10% a tick coefficient (80% over the 8
+// ticks) are from the client (1.60.1.70338, wago.tools): rank 6 deals 848 over 24 sec,
+// Classic 904. The damage heals the priest, which the sim leaves out.
 var DevouringPlagueSpellId = [DevouringPlagueRanks + 1]int32{0, 2944, 19276, 19277, 19278, 19279, 19280}
-var DevouringPlagueBaseDamage = [DevouringPlagueRanks + 1]float64{0, 152, 272, 400, 544, 712, 904}
+var DevouringPlagueTickDamage = [DevouringPlagueRanks + 1]float64{0, 16, 29, 43, 61, 82, 106}
 var DevouringPlagueManaCost = [DevouringPlagueRanks + 1]float64{0, 215, 350, 495, 645, 810, 985}
 var DevouringPlagueLevel = [DevouringPlagueRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
 
+const DevouringPlagueTickCoef = 0.1
+
 func (priest *Priest) registerDevouringPlagueSpell() {
-	//TO DO: Implement race requirement
 	priest.DevouringPlague = make([]*core.Spell, DevouringPlagueRanks+1)
 	cdTimer := priest.NewTimer()
 
-	for rank := 1; rank < DevouringPlagueRanks; rank++ {
+	for rank := 1; rank <= DevouringPlagueRanks; rank++ {
 		config := priest.getDevouringPlagueConfig(rank, cdTimer)
 
 		if config.RequiredLevel <= int(priest.Level) {
@@ -29,15 +34,12 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 }
 
 func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
-
 	var ticks int32 = 8
 
 	spellId := DevouringPlagueSpellId[rank]
-	baseDotDamage := (DevouringPlagueBaseDamage[rank] / float64(ticks))
+	baseDotDamage := DevouringPlagueTickDamage[rank]
 	manaCost := DevouringPlagueManaCost[rank]
 	level := DevouringPlagueLevel[rank]
-
-	spellCoeff := 0.063
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_PriestDevouringPlague,
@@ -59,7 +61,7 @@ func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) co
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Minute * 3,
+				Duration: time.Minute,
 			},
 		},
 
@@ -73,7 +75,7 @@ func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) co
 
 			NumberOfTicks:    ticks,
 			TickLength:       time.Second * 3,
-			BonusCoefficient: spellCoeff,
+			BonusCoefficient: DevouringPlagueTickCoef,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDotDamage, isRollover)

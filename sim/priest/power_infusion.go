@@ -1,52 +1,40 @@
 package priest
 
-// "time"
+import (
+	"github.com/wowsims/classic/sim/core"
+)
 
-// "github.com/wowsims/classic/sim/core"
-
+// Power Infusion on the priest itself: 20% more spell damage for 15 sec, 3 min cooldown,
+// 20% of base mana (client 1.60.1.70338). It needs Penance under Forever.
 func (priest *Priest) registerPowerInfusionCD() {
 	if !priest.Talents.PowerInfusion {
 		return
 	}
 
-	// actionID := core.ActionID{SpellID: 10060, Tag: priest.Index}
+	actionID := core.ActionID{SpellID: 10060, Tag: priest.Index}
+	piAura := core.PowerInfusionAura(&priest.Unit, actionID.Tag)
 
-	// powerInfusionTarget := priest.GetUnit(priest.SelfBuffs.PowerInfusionTarget)
-	// if powerInfusionTarget == nil {
-	// 	return
-	// }
-	// powerInfusionAura := core.PowerInfusionAura(powerInfusionTarget, actionID.Tag)
+	priest.PowerInfusion = priest.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    SpellFlagPriest | core.SpellFlagHelpful | core.SpellFlagAPL,
 
-	// piSpell := priest.RegisterSpell(core.SpellConfig{
-	// 	ActionID: actionID,
-	// 	Flags:    SpellFlagPriest | core.SpellFlagHelpful,
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.2,
+		},
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    priest.NewTimer(),
+				Duration: core.PowerInfusionCD,
+			},
+		},
 
-	// 	ManaCost: core.ManaCostOptions{
-	// 		BaseCost: 0.16,
-	// 	},
-	// 	Cast: core.CastConfig{
-	// 		CD: core.Cooldown{
-	// 			Timer:    priest.NewTimer(),
-	// 			Duration: time.Duration(float64(core.PowerInfusionCD)),
-	// 		},
-	// 	},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			piAura.Activate(sim)
+		},
+	})
 
-	// 	ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-	// 		powerInfusionAura.Activate(sim)
-	// 	},
-	// })
-
-	// priest.AddMajorCooldown(core.MajorCooldown{
-	// 	Spell:    piSpell,
-	// 	Priority: core.CooldownPriorityBloodlust,
-	// 	Type:     core.CooldownTypeMana,
-	// 	ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-	// 		// How can we determine the target will be able to continue casting
-	// 		// 	for the next 15s at 20% reduced mana cost? Arbitrary value until then.
-	// 		//if powerInfusionTarget.CurrentMana() < 3000 {
-	// 		//	return false
-	// 		//}
-	// 		return !powerInfusionTarget.HasActiveAura("Bloodlust-" + core.BloodlustActionID.WithTag(-1).String())
-	// 	},
-	// })
+	priest.AddMajorCooldown(core.MajorCooldown{
+		Spell: priest.PowerInfusion,
+		Type:  core.CooldownTypeDPS,
+	})
 }
