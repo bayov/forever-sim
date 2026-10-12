@@ -400,10 +400,23 @@ func (druid *Druid) applyOmenOfClarity() {
 				return
 			}
 
-			// A cast that started (and paid) before the proc does not use it up.
-			if spell.Flags.Matches(SpellFlagOmen) && spell.SpellCode != SpellCode_DruidWrath && spell.DefaultCast.Cost > 0 &&
-				sim.CurrentTime-spell.CurCast.CastTime >= aura.StartedAt() {
+			if !spell.Flags.Matches(SpellFlagOmen) || spell.SpellCode == SpellCode_DruidWrath || spell.DefaultCast.Cost <= 0 {
+				return
+			}
+			if sim.CurrentTime-spell.CurCast.CastTime >= aura.StartedAt() {
 				aura.Deactivate(sim)
+				return
+			}
+			// A cast that started before the proc does not use it up. In the game it paid its
+			// mana when it started; the sim charges at completion, when Clearcasting has made
+			// it free, so charge the full cost here.
+			if spell.CurCast.Cost == 0 && spell.Cost != nil {
+				if manaCost, ok := spell.Cost.SpellCostFunctions.(*core.ManaCost); ok {
+					spell.Cost.Multiplier += 100
+					cost := spell.Cost.GetCurrentCost()
+					spell.Cost.Multiplier -= 100
+					druid.SpendMana(sim, min(cost, druid.CurrentMana()), manaCost.ResourceMetrics)
+				}
 			}
 		},
 	})

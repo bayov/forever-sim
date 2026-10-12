@@ -119,3 +119,32 @@ func TestBalanceEclipse(t *testing.T) {
 		t.Errorf("Starfire after Eclipse casts in %s, want %s", got, base)
 	}
 }
+
+// TestClearcastingMidCast checks that a Starfire that started before Clearcasting procs pays
+// its full mana cost and leaves Clearcasting up for the next spell.
+func TestClearcastingMidCast(t *testing.T) {
+	sim, moonkin := newMoonkinSim(t, "55302200105003")
+	starfire := topRank(moonkin.Starfire)
+	fullCost := starfire.Cost.GetCurrentCost()
+	manaBefore := moonkin.CurrentMana()
+	target := sim.GetTargetUnit(0)
+	start := sim.CurrentTime
+	starfire.Cast(sim, target)
+	core.StartDelayedAction(sim, core.DelayedActionOptions{
+		DoAt: start + time.Second,
+		OnAction: func(sim *core.Simulation) {
+			moonkin.ClearcastingAura.Activate(sim)
+		},
+	})
+	for sim.CurrentTime <= start+starfire.DefaultCast.CastTime+100*time.Millisecond {
+		if sim.Step() {
+			break
+		}
+	}
+	if !moonkin.ClearcastingAura.IsActive() {
+		t.Errorf("Clearcasting was used up by a Starfire that started before it")
+	}
+	if spent := manaBefore - moonkin.CurrentMana(); math.Abs(spent-fullCost) > 10 { // less the mana regenerated during the cast
+		t.Errorf("the Starfire spent %.1f mana, want its full cost %.1f", spent, fullCost)
+	}
+}

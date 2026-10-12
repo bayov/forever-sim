@@ -31,6 +31,7 @@ gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,fill
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5"
 # Feral cat on the Level 60 talents (05002-05200332021031212051-05501): Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, no Rake (keeping it
-# up costs 33), Shifting Power at 50 Energy or less, Tiger's Fury and Berserk on cooldown. The
+# up costs 33), Shifting Power at 50 Energy or less but not while a Bite is due (0.6 to 0.9
+# ahead: its Energy goes into Shreds, not the Bite), Tiger's Fury and Berserk on cooldown. The
 # search kept that at 120 and 180 sec; at 300 sec Shifting Power at 40 Energy is 1 ahead.
-gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50"
+gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1"

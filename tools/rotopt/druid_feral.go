@@ -53,6 +53,9 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "shiftEnergy", Default: 50, Min: 0, Max: 60, Step: 10},
 		// Shifting Power only above this much mana, so the pool lasts the fight.
 		{Name: "shiftMana", Default: 0, Min: 0, Max: 40, Step: 10},
+		// Hold Shifting Power while a Ferocious Bite is due (5 combo points with Rip up for
+		// biteRipTime), so the Energy it gives goes into Shreds and not into the Bite, 0/1.
+		{Name: "shiftHoldForBite", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Tiger's Fury: 1 on cooldown, 2 only at or below tigersFuryEnergy too, 0 never.
 		{Name: "tigersFury", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "tigersFuryEnergy", Default: 40, Min: 20, Max: 80, Step: 20},
@@ -94,7 +97,14 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		if k["shiftMana"] > 0 {
 			cond = and(cond, ge(currentManaPercent(), num(k["shiftMana"]/100)))
 		}
-		items = append(items, cast(druidShiftingPower, cond, "Shifting Power once the Energy is low. Without the talent ignore the warning on this line."))
+		if k["shiftHoldForBite"] == 1 {
+			cond = and(cond, not(and(eq(comboPoints(), num(5)), ge(dotRemainingTime(rip), seconds(k["biteRipTime"])))))
+		}
+		note := "Shifting Power once the Energy is low. Without the talent ignore the warning on this line."
+		if k["shiftHoldForBite"] == 1 {
+			note = "Shifting Power once the Energy is low, but not while a Ferocious Bite is due (its Energy goes into Shreds). Without the talent ignore the warning on this line."
+		}
+		items = append(items, cast(druidShiftingPower, cond, note))
 	}
 	if k["ripCP"] > 0 {
 		items = append(items, cast(rip, and(ge(comboPoints(), num(k["ripCP"])), not(dotIsActive(rip)), gt(remainingTime(), seconds(k["ripMinTime"]))),
@@ -109,7 +119,11 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		if k["biteAtCap"] == 1 {
 			cond = or(cond, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteCapEnergy"]))))
 		}
-		items = append(items, cast(bite, cond, "Ferocious Bite at 5 combo points while Rip has time left, or at full Energy."))
+		note := "Ferocious Bite at 5 combo points while Rip has time left."
+		if k["biteAtCap"] == 1 {
+			note = "Ferocious Bite at 5 combo points while Rip has time left, or at full Energy."
+		}
+		items = append(items, cast(bite, cond, note))
 	case 2:
 		items = append(items, cast(bite, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteEnergy"]))), "Ferocious Bite at 5 combo points."))
 	}
