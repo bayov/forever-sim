@@ -28,15 +28,18 @@ type mageSpells struct {
 	arcaneMissiles, arcaneBlast, iceLance                            *proto.ActionID
 }
 
+// mageRanks leaves out the ranks only the Ahn'Qiraj books teach (Fireball XII, Frostbolt XI,
+// Arcane Missiles VIII): the templates build Forever presets, and Forever has no source for the
+// books (core's IncludeAQRanks).
 func mageRanks() mageSpells {
 	return mageSpells{
-		fireball:       rankID(mage.FireballLevel[:], mage.FireballSpellId[:]),
-		frostbolt:      rankID(mage.FrostboltLevel[:], mage.FrostboltSpellId[:]),
+		fireball:       rankID(mage.FireballLevel[:mage.FireballRanks], mage.FireballSpellId[:]),
+		frostbolt:      rankID(mage.FrostboltLevel[:mage.FrostboltRanks], mage.FrostboltSpellId[:]),
 		frostfireBolt:  rankID(mage.FrostfireBoltLevel[:], mage.FrostfireBoltSpellId[:]),
 		scorch:         rankID(mage.ScorchLevel[:], mage.ScorchSpellId[:]),
 		fireBlast:      rankID(mage.FireBlastLevel[:], mage.FireBlastSpellId[:]),
 		pyroblast:      rankID(mage.PyroblastLevel[:], mage.PyroblastSpellId[:]),
-		arcaneMissiles: rankID(mage.ArcaneMissilesLevel[:], mage.ArcaneMissilesSpellId[:]),
+		arcaneMissiles: rankID(mage.ArcaneMissilesLevel[:mage.ArcaneMissilesRanks], mage.ArcaneMissilesSpellId[:]),
 		arcaneBlast:    rankID(mage.ArcaneBlastLevel[:], mage.ArcaneBlastSpellId[:]),
 		iceLance:       rankID(mage.IceLanceLevel[:], mage.IceLanceSpellId[:]),
 	}

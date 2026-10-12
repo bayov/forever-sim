@@ -23,7 +23,7 @@ var FrostboltLevel = [FrostboltRanks + 1]int{0, 4, 8, 14, 20, 26, 32, 38, 44, 50
 func (mage *Mage) registerFrostboltSpell() {
 	mage.Frostbolt = make([]*core.Spell, FrostboltRanks+1)
 
-	maxRank := core.TernaryInt(core.IncludeAQ, FrostboltRanks, FrostboltRanks-1)
+	maxRank := core.TernaryInt(mage.Env.IncludeAQRanks(), FrostboltRanks, FrostboltRanks-1)
 	for rank := 1; rank <= maxRank; rank++ {
 		config := mage.getFrostboltConfig(rank)
 

@@ -30,7 +30,7 @@ var FireballDotTicks = [FireballRanks + 1]int32{0, 2, 3, 3, 4, 4, 4, 4, 4, 4, 4,
 func (mage *Mage) registerFireballSpell() {
 	mage.Fireball = make([]*core.Spell, FireballRanks+1)
 
-	maxRank := core.TernaryInt(core.IncludeAQ, FireballRanks, FireballRanks-1)
+	maxRank := core.TernaryInt(mage.Env.IncludeAQRanks(), FireballRanks, FireballRanks-1)
 	for rank := 1; rank <= maxRank; rank++ {
 		config := mage.newFireballSpellConfig(rank)
 
