@@ -47,10 +47,10 @@ import (
 //   - Crit: 70 rating (5%) on 5 pieces, the Era BiS's crit pieces (the Giantstalker helm, chest and
 //     belt, Onyxia Tooth Pendant).
 //
-// None of the pieces form a set. Forever keeps Giantstalker Armor's Classic bonuses (client 1.60.1.70338
-// ItemSetSpell: 3 pieces Mend Pet, 5 pet Stamina and resistances, 8 Multi-Shot and Volley 15%), and an
-// Era Phase 1 hunter wears 3 to 5 Giantstalker pieces next to Devilsaur, so only the bonuses that move
-// no damage would be active.
+// The head, shoulders, chest, hands, legs and feet of each set form a set with the bonuses of
+// Wildstalker Armor, Forever's own Molten Core tier set for the hunter (set 2101, items 280893 to
+// 280898, client 1.60.1.70338, see sim/hunter/item_sets_pve.go). Its client pieces carry no stats yet.
+// Giantstalker Armor keeps its Classic bonuses under Forever and is not used here.
 //
 // The weapons keep the damage and speed of the weapon they replace: Barbarous Blade (two-handed
 // sword), Brutality Blade (one-handed sword) and Rhok'delar (bow). Swords favor the Human (2% crit
@@ -64,7 +64,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Head, item level 66, in place of Giantstalker's Helmet (66, 16846).
 	{
 		Id: 993001, Name: "Ranged Hunter Synthetic Head (Phase 1)", Icon: "inv_helmet_05",
-		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Ranged (Phase 1)",
+		Type:    proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Intellect: 10, stats.Spirit: 10, stats.RangedAttackPower: 15, stats.Armor: 343}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -82,7 +83,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Shoulder, item level 66, in place of Giantstalker's Epaulets (66, 16848).
 	{
 		Id: 993003, Name: "Ranged Hunter Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
-		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Ranged (Phase 1)",
+		Type:    proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 16, stats.Stamina: 11, stats.Intellect: 7, stats.RangedAttackPower: 27, stats.Armor: 317}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -99,7 +101,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Chest, item level 66, in place of Giantstalker's Breastplate (66, 16845).
 	{
 		Id: 993005, Name: "Ranged Hunter Synthetic Chest (Phase 1)", Icon: "inv_chest_chain_03",
-		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Ranged (Phase 1)",
+		Type:    proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:      stats.Stats{stats.Agility: 21, stats.Stamina: 15, stats.Intellect: 11, stats.Spirit: 11, stats.Armor: 422}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -117,7 +120,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Hands, item level 66, in place of Devilsaur Gauntlets (58, 15063).
 	{
 		Id: 993007, Name: "Ranged Hunter Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
-		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Ranged (Phase 1)",
+		Type:    proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 8, stats.RangedAttackPower: 41, stats.Armor: 264}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -135,7 +139,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Legs, item level 66, in place of Devilsaur Leggings (60, 15062).
 	{
 		Id: 993009, Name: "Ranged Hunter Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_03",
-		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Ranged (Phase 1)",
+		Type:    proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 21, stats.Stamina: 14, stats.Spirit: 9, stats.RangedAttackPower: 44, stats.Armor: 369}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -144,7 +149,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Feet, item level 66, in place of Giantstalker's Boots (66, 16849).
 	{
 		Id: 993010, Name: "Ranged Hunter Synthetic Feet (Phase 1)", Icon: "inv_boots_chain_04",
-		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Ranged (Phase 1)",
+		Type:    proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats: stats.Stats{stats.Agility: 19, stats.Stamina: 12, stats.Intellect: 8, stats.Spirit: 12, stats.Armor: 290}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
@@ -193,7 +199,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Head, item level 66, in place of Giantstalker's Helmet (66, 16846).
 	{
 		Id: 993101, Name: "Survival Synthetic Head (Phase 1)", Icon: "inv_helmet_05",
-		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Survival (Phase 1)",
+		Type:    proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 13, stats.Intellect: 10, stats.Spirit: 10, stats.Strength: 6, stats.Armor: 343}.ToFloatArray(),
 		HitRating: 10, CritRating: 14,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -211,7 +218,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Shoulder, item level 66, in place of Giantstalker's Epaulets (66, 16848).
 	{
 		Id: 993103, Name: "Survival Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
-		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Survival (Phase 1)",
+		Type:    proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 11, stats.Intellect: 7, stats.AttackPower: 21, stats.RangedAttackPower: 21, stats.Armor: 317}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -228,7 +236,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Chest, item level 66, in place of Giantstalker's Breastplate (66, 16845).
 	{
 		Id: 993105, Name: "Survival Synthetic Chest (Phase 1)", Icon: "inv_chest_chain_03",
-		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Survival (Phase 1)",
+		Type:    proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:      stats.Stats{stats.Agility: 21, stats.Stamina: 15, stats.Strength: 11, stats.Spirit: 11, stats.Armor: 422}.ToFloatArray(),
 		CritRating: 14,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -246,7 +255,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Hands, item level 66, in place of Devilsaur Gauntlets (58, 15063).
 	{
 		Id: 993107, Name: "Survival Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
-		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Survival (Phase 1)",
+		Type:    proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 16, stats.Stamina: 8, stats.AttackPower: 33, stats.RangedAttackPower: 33, stats.Armor: 264}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -264,7 +274,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Legs, item level 66, in place of Devilsaur Leggings (60, 15062).
 	{
 		Id: 993109, Name: "Survival Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_03",
-		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Survival (Phase 1)",
+		Type:    proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 21, stats.Stamina: 14, stats.Spirit: 9, stats.AttackPower: 35, stats.RangedAttackPower: 35, stats.Armor: 369}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -273,7 +284,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	// Feet, item level 66, in place of Giantstalker's Boots (66, 16849).
 	{
 		Id: 993110, Name: "Survival Synthetic Feet (Phase 1)", Icon: "inv_boots_chain_04",
-		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
+		SetName: "Hunter Synthetic Survival (Phase 1)",
+		Type:    proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats: stats.Stats{stats.Agility: 19, stats.Stamina: 12, stats.Intellect: 8, stats.Spirit: 12, stats.Armor: 290}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},

@@ -46,6 +46,8 @@ func (hunterRanged) Knobs() []Knob {
 		{Name: "sniper", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Sniper Shot above Aimed Shot when both are ready.
 		{Name: "sniperFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The Arcane Shot cooldown above Aimed Shot when both are ready.
+		{Name: "arcaneFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "intimidation", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Mana floors, in percent: Serpent Sting and the Arcane Shot cooldown only above them.
 		{Name: "serpentMana", Default: 30, Min: 0, Max: 60, Step: 10},
@@ -81,6 +83,20 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(hunterSerpentSting, and(not(dotIsActive(hunterSerpentSting)), floor("serpentMana")), "Serpent Sting when it is down."))
 	}
 
+	arcaneFloor := floor("arcaneMana")
+	var arcane []*proto.APLListItem
+	switch k["hawk"] {
+	case 1:
+		arcane = append(arcane, cast(hunterSummonHawk, arcaneFloor, "Summon Hawk on the cooldown it shares with Arcane Shot, with the talent."))
+	case 2:
+		hawksOut := and(dotIsActive(spellIDTag(1293527, 1)), dotIsActive(spellIDTag(1293527, 2)))
+		arcane = append(arcane, cast(hunterSummonHawk, and(not(hawksOut), arcaneFloor), "Summon Hawk while fewer than 2 hawks are out, with the talent."))
+	}
+	arcane = append(arcane, cast(hunterArcaneShot, arcaneFloor, "Arcane Shot on its cooldown."))
+
+	if k["arcaneFirst"] == 1 {
+		items = append(items, arcane...)
+	}
 	sniper := cast(hunterSniperShot, nil, "Sniper Shot on cooldown, with the talent.")
 	if k["sniper"] == 1 && k["sniperFirst"] == 1 {
 		items = append(items, sniper)
@@ -92,16 +108,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	if k["sniper"] == 1 && k["sniperFirst"] == 0 {
 		items = append(items, sniper)
 	}
-
-	arcaneFloor := floor("arcaneMana")
-	switch k["hawk"] {
-	case 1:
-		items = append(items, cast(hunterSummonHawk, arcaneFloor, "Summon Hawk on the cooldown it shares with Arcane Shot, with the talent."))
-	case 2:
-		hawksOut := and(dotIsActive(spellIDTag(1293527, 1)), dotIsActive(spellIDTag(1293527, 2)))
-		items = append(items, cast(hunterSummonHawk, and(not(hawksOut), arcaneFloor), "Summon Hawk while fewer than 2 hawks are out, with the talent."))
+	if k["arcaneFirst"] == 0 {
+		items = append(items, arcane...)
 	}
-	items = append(items, cast(hunterArcaneShot, arcaneFloor, "Arcane Shot on its cooldown."))
 
 	rot := rotation(items...)
 	rot.PrepullActions = append(rot.PrepullActions, prepull(hunterAspectOfTheHawk, 3))
