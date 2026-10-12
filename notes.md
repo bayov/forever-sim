@@ -43,6 +43,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * The Ahn'Qiraj ranks (Backstab and Eviscerate rank 9, Deadly Poison V) are in the Phase 1 presets because `core.IncludeAQ` is on for every class. Forever has not said when they come.
 * Grimstitch Armor's bonuses (1% hit, 36 attack power against Humanoids, Eviscerate 5 Energy cheaper) sit on the synthetic Phase 1 sets, the client pieces have no stats yet.
 * Precision scope.
+* The +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale) sit in different consume slots in the sim, so it would let them stack. The client presents them as role variants of one elixir, so the presets take one (the Elixir of the Mongoose) and fill the Strength slot with the Elixir of Ferocity (18 Strength, 18 Agility, no crit). The Elixir of the Grizzly on top would add 6.1 DPS for Sinister Strike. A beta character drinking two of them and reading the sheet settles whether they stack.
 
 ## Paladin
 
