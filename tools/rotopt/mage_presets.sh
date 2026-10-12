@@ -18,8 +18,9 @@ gen() {
 }
 # Arcane Blast to 2 stacks, then Arcane Missiles on a Missile Barrage proc. Without one, Arcane
 # Blast goes on to 4 stacks and the missiles go anyway. The missiles end the stacks and take
-# their bonus. Below 30% mana one Arcane Blast, then the missiles. No Evocation.
-gen mage_arcane level60_arcane "blastStacks=2,missilesNeedBarrage=1,barrageFirst=1,conserveMana=30,evocationMana=0,filler=1"
+# their bonus. Below 30% mana one Arcane Blast, then the missiles. No Evocation. An Arcane Blast
+# precast lands at the pull, and the Demonic Rune takes the cooldown the mana gems share.
+gen mage_arcane level60_arcane "blastStacks=2,missilesNeedBarrage=1,barrageFirst=1,conserveMana=30,evocationMana=0,filler=1,gems=0,prepull=1"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating
 # Up stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 20% mana,
 # Fireball. Evocation below 20% mana with 90 sec of the fight left. Combustion and the Talisman wait
