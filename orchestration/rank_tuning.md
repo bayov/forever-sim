@@ -1,6 +1,6 @@
 # Level 31+ rank tuning audit
 
-Read-only audit by the rank tuning auditor. It covers the spell ranks and deep talents the Level 60 presets rely on that can't be learned under the beta's level 30 cap, and asks whether each looks tuned for Forever or stale. Pass 1, 2026-10-12, covering Demonology, Destruction (and Affliction), Retribution, Fury, Rogue, Feral, Elemental and Smite. The other specs come next pass.
+Read-only audit by the rank tuning auditor. It covers the spell ranks and deep talents the Level 60 presets rely on that can't be learned under the beta's level 30 cap, and asks whether each looks tuned for Forever or stale. Pass 1 (2026-10-12 14:30 UTC) covered Demonology, Destruction, Affliction, Retribution, Fury, Rogue, Feral, Elemental and Smite. Pass 2 (15:40 UTC) adds Balance, Shadow, the mages, the hunters, Enhancement, Arms, pet abilities and the shared raid buffs. Between the passes no class branch changed rank data; workers added open-question notes only.
 
 Workers must not change their sims on these verdicts alone; the orchestrator rules on any change.
 
@@ -115,6 +115,68 @@ No sensitivity needed; the rogue's place at the bottom doesn't come from stale 3
 
 Shadow priest (next pass in detail): Mind Flay, Mind Blast and Shadow Word: Pain are all in the subtractive family, which sits at about 0.9× Era at 60. That's tuned in shape and, if anything, generous.
 
+## Pass 2: the other specs
+
+### Druid: Balance
+
+| Spell (rank) | Share | Verdict | Evidence | DPS sensitivity |
+|---|---|---|---|---|
+| Starfire VI (9876) | 56% Balance | **Tuned** | 0.72× Era at L26, 0.64–0.71 at 31+; growth ×3.5 against Era's ×3.6. | none |
+| **Wrath VIII (9912)** | 14% Balance, 59% Balance Wrath | **Stale-shaped (mild)** | 70009 multiplied every rank ×1.5; 70291 then retuned only ranks 1–5. 0.42× Era at L30, then 0.36 / 0.34 / 0.36. Growth L30→L54 ×2.0 against Era's ×2.3. | held at 0.42 (×1.17): Balance Wrath **+1.6%** (760→772), Balance +0.4% |
+| Moonfire X (9835) | 14% | **Tuned** | 0.70 at L28, 0.63–0.66 at 31+. | none |
+| Insect Swarm V (24977) | 16% | **Tuned (slight flattening)** | 0.65 at L30, then 0.69 / 0.57 / 0.57. | <0.5% |
+| Moonkin Form, Wild Growth (31-point) | – | **Unclear (untested)** | Never changed in a beta build. | – |
+
+### Priest: Shadow
+
+| Spell (rank) | Share | Verdict | Evidence |
+|---|---|---|---|
+| Mind Flay VI (18807) | 44% | **Tuned** | Subtractive family: −12 a tick from L44, 0.81× at L28 rising to 0.92× at L60; coefficient ×1.11 at every rank. |
+| Mind Blast IX (10947) | 20% | **Tuned** | −32 a hit from L46; 0.88× at L28 rising to 0.94×. |
+| Shadow Word: Pain VIII (10894) | 20% | **Tuned** | see pass 1. |
+| Shadow Word: Death (1309636), new | 9% | **Unclear (31+ only, untested)** | One rank at L56: 448 + 42.9%, 15 sec cooldown. In line with Mind Blast IX (485 + 42.9%, 8 sec). |
+| Devouring Plague VI (19280) | 5% | **Tuned** | 0.85× at L28 rising to 0.94×; coefficient ×1.59 and a 60 sec cooldown (was 180) at every rank. |
+
+### Mage: Frostfire, Fire, Arcane, Frost
+
+| Spell (rank) | Share | Verdict | Evidence | DPS sensitivity |
+|---|---|---|---|---|
+| Frostfire Bolt III (1237313), SoD rune | 63% Frostfire | **Tuned, relative to SoD** | 100 / 182 / 292 at L40 / 50 / 60, 3 s cast, coefficient 0.814 (SoD rune: 1.0). At 60 it's 0.76× Frostbolt X's base per cast; SoD's rune was 0.66× Frostbolt XI. | none |
+| **Frostbolt X (10181)** | 98% Frost | **Unclear (mild lag)** | Subtractive family: 0.79× at L26, 0.74× at L32 rising to 0.89× at L56. 70291 raised the L20/L26 ranks (+8% at L26's cap) but no 31+ rank. The 31+ ratios already sit above the playable one, so it's unclear whether the raise should carry over. | if it does (×1.08): Frost **+2.8%** (744→764, past Enhancement + Water Shield and Survival) |
+| Fireball XI (10151), Pyroblast, Scorch, Fire Blast | 46% / 10% / 6% / 16% Fire | **Tuned** | Fireball 0.66× at L30, 0.63–0.71× at 31+; Pyroblast 0.66→0.73; Scorch 0.65→0.70; Fire Blast subtractive (−32 from L46). | none |
+| Arcane Blast V (1239700), SoD rune | 52% Arcane | **Tuned at 60** | 54 / 130 / 169 / 274 / 394 at L20–60. The L40 rank grows little (+39), but at 60 it's 158 base per cast-second against Fireball XI's 155. | none |
+| Arcane Missiles VII (10212) | 46% Arcane | **Tuned** | Bolts are Era minus 21 at 31+ (subtractive); coefficient 0.24 → 0.286 at every rank. | none |
+
+### Hunter: Lone Wolf, Marksmanship, Beast Mastery, Survival
+
+| Spell (rank) | Share | Verdict | Evidence | DPS sensitivity |
+|---|---|---|---|---|
+| Arcane Shot VIII (14287) | 13–18% | **Tuned** | 1.10× Era at L28, 1.13–1.19× at 31+. | none |
+| Aimed Shot VI (20904) | 13–16% | **Tuned** | 0.27–0.29× Era at every rank, with a 2 s cast (Era 3 s). | none |
+| Serpent Sting VIII (13555) | 9–10% | **Tuned** | 0.79 at L26, 0.81–0.85 at 31+. | none |
+| Multi-Shot | – | **Tuned (redesign)** | One rank (L18); the 30–60 ranks are deleted. | – |
+| Sniper Shot III (1310786), 31-point | 6–8% | **Unclear (untested)** | 160 / 225 / 295, smooth; never changed in a beta build. | – |
+| **Raptor Strike VIII (14266)** | 11% Survival | **Stale-shaped** | Flat bonus 30 at L24 (0.88× Era), then 35 / 40 / 55 / 70 (0.50–0.70×). The playable ratio isn't kept at 31+. | held at 0.88 (×1.76 flat): Survival **+1.2%** (761→770) |
+| Mongoose Bite IV | 8% Survival | **Tuned** | 0.49–0.50× at L30 and 31+. | none |
+| Pet Claw / Bite | 3–6% | **Unchanged everywhere** | Era values at every rank. | none |
+
+### Shaman: Enhancement
+
+| Spell (rank) | Share | Verdict | Evidence | DPS sensitivity |
+|---|---|---|---|---|
+| Windfury Weapon IV (16362) | 17% | **Unchanged everywhere** | Era values at every rank (the sim's 333 AP is deliberate). | none |
+| Stormstrike (17364) | 10% | **Tuned (redesign)** | Forever version: 8 sec cooldown, flat mana cost; one rank. | – |
+| Earth Shock VII (10414) | 10% | **Stale-shaped (mild)** | 0.66× at L24, then 0.57 / 0.55 / 0.57. Growth L24→L60 ×3.7 against Era's ×4.3. | held at 0.66 (×1.16): **+0.8%** |
+| Flame Shock, Lightning Bolt X | 8% / 7% | see Elemental (pass 1) | | |
+
+### Warrior: Arms (and Fury 2H)
+
+Mortal Strike IV (21553), Overpower IV (11585), Slam IV (11605), Execute and Heroic Strike are **unchanged everywhere**: Era values at every rank. Forever only added a 20-level Slam rank and Slam's 18 sec category cooldown. No stale-data risk.
+
+### Shared raid buffs and debuffs
+
+All **tuned**, with the same Forever factor at every rank: Battle Shout 0.60×, Blessing of Might 0.72×, Blessing of Wisdom 1.2×, Mark / Gift of the Wild 1.35× (plus the 70291 aura change on every rank), Power Word / Prayer of Fortitude 1.30×, Demoralizing Shout / Roar 1.40–1.48×. Arcane Intellect, Divine Spirit, Faerie Fire and Sunder Armor (reworked in 70009 at every rank) are Era-identical or changed at every rank. Curse of Recklessness is a new linear curve, 175 / 285 / 395 / 505 armor (+110 a rank; Era 140 / 290 / 465 / 640), the same step at every rank. The totem values sit in triggered aura spells; the shared branch caps their ranks already (Forever mechanics auditor's area).
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
@@ -129,11 +191,18 @@ Shadow priest (next pass in detail): Mind Flay, Mind Blast and Shadow Word: Pain
 | Smite | 27 (717 documented) | Smite VIII flattening | +1.3% | unchanged |
 | Feral | 34 (648) | Rip 31+ nerf against the ≤30 buff | +1.6% to +2.1% | 32–33, past Mutilate and Combat Swords |
 | Rogue | 28–37 | none | 0 | – |
+| Frost mage | 25 (744) | Frostbolt X missing 70291's +8% | +2.8% | 22–23 (764) |
+| Balance Wrath-only | 23 (760) | Wrath VIII flattening | +1.6% | 22 (772) |
+| Survival | 22 (760) | Raptor Strike flat part | +1.2% | 21 (770) |
+| Enhancement | 20 (800) | Earth Shock VII flattening | +0.8% | unchanged |
+| Frostfire, Fire, Arcane, Shadow, Balance, hunters, Arms | 9–19 | none beyond untested 31-point spells | <0.5% | unchanged |
+
+**Bottom line after pass 2:** nothing in pass 2 moves a spec more than 3%. The pass 1 conclusions stand.
 
 **Bottom line for pass 1:** the 31+ ranks the presets use are mostly Forever-edited, not stale Era copies. The ranking's top and bottom don't come from stale data, with one exception that matters: Bane of Doom's 4.0 coefficient is untested and worth about 4% to every Shadow Bolt warlock. It's the difference between warlocks holding places 1–4 and Retribution taking 2–3. Lightning Bolt is the clearest stale-shaped curve: up to +6–7% for Elemental, which would still leave it in the bottom third.
 
 ## Not covered yet
 
-- Next pass: Balance (Wrath and Starfire), Shadow in detail (Shadow Word: Death, Devouring Plague), the mage specs (Frostfire Bolt, Frostbolt's +8% top-rank retune), hunters (Multi-Shot, Arcane Shot, Aimed Shot, Serpent Sting, Lone Wolf / Sniper Shot), Enhancement (Stormstrike, Windfury), Arms (Mortal Strike), and pet abilities (Lash of Pain, the cat's Claw / Bite).
-- Raid buffs and debuffs, for the cross-check. Seen so far: Battle Shout 0.60×, Blessing of Might 0.72×, Blessing of Wisdom 1.2×, Mark / Gift of the Wild 1.35×, Fortitude 1.30×, all at every rank (tuned). Curse of Recklessness 1.25× down to 0.79× by rank (to check).
-- SoD server-side baseline-rank values (not in the client).
+- SoD's server-side baseline-rank values (not in the client).
+- Pet ability ranks other than the hunter cat's (Succubus Lash of Pain), and Forever's new rotational talents' proc values (Venom, Thousand Cuts, Lacerating Strikes). No beta build changed any of these.
+- Later passes re-check the branches and the beta builds on wago.tools for new data (a new build that touches 31+ ranks would settle several "unclear" verdicts).
