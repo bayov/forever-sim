@@ -17,12 +17,12 @@ func TestP1Feral(t *testing.T) {
 		{
 			Class:      proto.Class_ClassDruid,
 			Phase:      1,
-			Race:       proto.Race_RaceTauren,
-			OtherRaces: []proto.Race{proto.Race_RaceNightElf},
+			Race:       proto.Race_RaceNightElf,
+			OtherRaces: []proto.Race{proto.Race_RaceTauren},
 
 			Talents:     P1Talents,
-			GearSet:     core.GetGearSet("../../../ui/feral_druid/gear_sets", "p0.bis"),
-			Rotation:    core.GetAplRotation("../../../ui/feral_druid/apls", "p1"),
+			GearSet:     core.GetGearSet("../../../ui/feral_druid/gear_sets", "level60_phase1_synthetic"),
+			Rotation:    core.GetAplRotation("../../../ui/feral_druid/apls", "level60"),
 			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
@@ -40,7 +40,7 @@ func TestP1Feral(t *testing.T) {
 	}))
 }
 
-var P1Talents = "-55000132021032212051-055033"
+var P1Talents = "05002-05200332021032212041-05501"
 
 var PlayerOptionsMonoCat = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{

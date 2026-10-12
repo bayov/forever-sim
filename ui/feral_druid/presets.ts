@@ -79,9 +79,15 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 export const APLFeral = PresetUtils.makePresetAPLRotation('Feral', FeralAPL);
 export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastrasz', SimpleVaelAPL);
 
-// APL_COMMENT
+// The tools/rotopt druid_feral template's best (druid_presets.sh) on the synthetic set and the
+// Level 60 talents: Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip
+// has 4 sec left, Shred, Shifting Power at 50 Energy or less, Tiger's Fury and Berserk on
+// cooldown. No Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend
+// and Tear's bleed up on its own (keeping Rake up costs 30 at every length). Rip at 5 combo
+// points is 1 to 3 behind, Ferocious Bite at full Energy while waiting on Rip 2 to 5 behind.
+// The search kept that at 120 and 180 sec, and Shifting Power at 40 Energy at 300 sec (2 DPS).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
-	tooltip: "The optimizer's best level 60 rotation: Rip and Rake up, Shred, Shifting Power and Tiger's Fury on cooldown.",
+	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power, Tiger's Fury and Berserk on cooldown.",
 	group: 'Level 60',
 });
 
@@ -106,8 +112,17 @@ export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Sim
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// TALENTS_COMMENT
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: 'TALENTS_STRING' }), {
+// The talent search's best (tools/rotopt -talent-search) on the synthetic set with the Level 60
+// rotation at 180 sec: Genesis 5 (Rip's ticks) and Nature's Majesty 2 (crit) from Balance, 34
+// Feral with Shredding Attacks, Savage Fury, Sharpened Claws, Shifting Power and Improved
+// Shifting Power, Predatory Strikes, Blood Frenzy, Leader of the Pack, Natural Instinct, Rend
+// and Tear 4 and Berserk, and Furor 5, Naturalist 5 and Natural Shapeshifter 1 in Restoration.
+// Searches started from pure Feral builds (0 / 35 / 16 with Ferocity and Reflection, 0 / 33 / 18
+// with Heart of the Wild and Thick Hide) and from the Balance split, and all of them moved
+// their spare points into Genesis and Nature's Majesty and ended here within the noise.
+// Ferocity buys nothing once the rotation drops Rake, so its row 1 points sit in Feral
+// Swiftness and Thick Hide for the same DPS.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-05200332021032212041-05501' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set.',
 	group: 'Level 60',
 });
@@ -126,24 +141,26 @@ export const DefaultOptions = FeralDruidOptions.create({
 	latencyMs: 100,
 });
 
-// The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each
-// slot on an early Level 60 build at 180 sec (608 DPS). Taking each one out costs: Elixir of the
-// Mongoose 19.7 (Greater Agility is 9.5 behind), Juju Power 11.3 (Elixir of Giants 1.9 behind),
-// Dragonbreath Chili 9.8, Juju Might 6.1, Grilled Squid 4.8. Ground Scorpok Assay is 1.3 ahead
-// of R.O.I.D.S. Flask of Supreme Power is 6.9 ahead of Distilled Wisdom or none, because the
-// chili's fire damage grows with spell power. A shapeshifted druid can use no explosives and
-// no weapon stone or oil, so those do nothing. The Major Mana Potion and Demonic Rune give a
-// cat nothing in a 3 minute fight (Shifting Power's mana lasts) and stay for longer ones.
-// Smoked Desert Dumpling is 2.4 ahead of Grilled Squid but comes later in Era (AQ).
+// The level 60 consumables, Forever launch Phase 1 only (nothing from Molten Core, Zul'Gurub,
+// Blackwing Lair, Ahn'Qiraj or Naxxramas). Elixirs in different slots stack in the sim; that is
+// our reading of Forever's elixir rules and is listed in notes.md. On 2026-10-12 we tried every
+// consumable the sim applies in each slot, first on an early Level 60 build at 180 sec (608
+// DPS): taking each one out costs Elixir of the Mongoose 19.7 (Greater Agility is 9.5 behind),
+// Dragonbreath Chili 9.8 and Juju Might 6.1, and Ground Scorpok Assay is 1.3 ahead of R.O.I.D.S.
+// On the final build Forever's Elixir of the Grizzly is 7 ahead of Juju Power and Flank au
+// Poivre 4 ahead of Grilled Squid. Flask of Distilled Wisdom keeps Shifting Power in mana; Flask
+// of Supreme Power is 6 ahead only through the chili's fire damage. A shapeshifted druid can use
+// no explosives and no weapon stone or oil, and drinks no potion in form, so those do nothing.
+// The Major Mana Potion and Demonic Rune stay for longer fights.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
-	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodGrilledSquid,
-	strengthBuff: StrengthBuff.JujuPower,
+	flask: Flask.FlaskOfDistilledWisdom,
+	food: Food.FoodFlankAuPoivre,
+	strengthBuff: StrengthBuff.ElixirOfTheGrizzly,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
@@ -242,10 +259,19 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// BUILD_COMMENT
+// The Level 60 build, 666.7 / 660.6 / 650.0 at 120 / 180 / 300 sec. Every race a druid can be
+// under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
+//
+//	                     120 sec  180 sec  300 sec
+//	Night Elf             666.7    660.6    650.0   best overall and Alliance
+//	High Order Skyborne   663.7    658.3    648.3
+//	Windshaper Skyborne   663.4    658.0    648.1   best Horde
+//	Tauren                661.3    655.7    645.3
+//
+// Night Elf's lead is its Agility. No racial goes by weapon type, so the staff changes nothing.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 RACE_NAME on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,

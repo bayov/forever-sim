@@ -26,7 +26,7 @@ gen() {
 # a mana potion, Innervate at 40% and the old weave (Wrath until Eclipse has a charge) are 7
 # DPS ahead, because the mana runs out.
 gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2"
-# The same with Wrath as the only filler, 8% behind (658 against 716 at 180 sec).
+# The same with Wrath as the only filler, 7% behind (705 against 758 at 180 sec).
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1"
 # Feral cat on the Level 60 talents (05002-05200332021032212041-05501): Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 while Rip has 4 sec left, Shred, no Rake (40 Energy

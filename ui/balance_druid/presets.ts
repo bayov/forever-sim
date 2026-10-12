@@ -8,8 +8,10 @@ import {
 	Flask,
 	Food,
 	IndividualBuffs,
+	IntellectElixir,
 	ManaRegenElixir,
 	MobType,
+	NaturePowerBuff,
 	PartyBuffs,
 	Potions,
 	Profession,
@@ -17,10 +19,12 @@ import {
 	RaidBuffs,
 	SapperExplosive,
 	SpellPowerBuff,
+	SpiritElixir,
 	Stat,
 	TristateEffect,
 	UnitReference,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -77,12 +81,13 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 
 // The tools/rotopt druid_balance template's best (druid_presets.sh) on the synthetic set and
 // the Level 60 talents: Insect Swarm and Moonfire whenever they are down, a free Starfire on
-// Clearcasting (Wrath does not use it up), and Wrath until Eclipse has a charge, then Starfire
-// (so Wrath and Starfire take turns, each Starfire 0.5 sec shorter). The knob search kept that
-// at 120, 180 and 300 sec. Dropping Moonfire costs 53 DPS at 180 sec, Insect Swarm 58, and
-// casting only Starfire 57. Innervate is left to its own trigger (at 500 mana), 3.9 ahead of
-// casting it at 40% mana. Stopping the dots or switching to Wrath alone below a mana floor
-// only lost, the set does not run dry in a raid fight.
+// Clearcasting (Wrath does not use it up), then Wrath when Eclipse is down to 2 charges or fewer
+// and no Wrath is in flight, Starfire otherwise. That spends every Eclipse charge (each makes a
+// Starfire 0.5 sec shorter) without throwing Wraths at a full stack. The knob search kept it at
+// 120 and 180 sec (757.7 at 180, 40,000 iterations). Dropping Moonfire costs 54 DPS at 180 sec,
+// Insect Swarm 62, and casting only Starfire 67. Innervate is left to its own trigger (at 500
+// mana), 2 ahead of casting it at 40% mana. At 300 sec the mana runs out: Innervate at 40% and
+// the old weave (Wrath until Eclipse has a charge) are 7 ahead there (756.5 against 749.6).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -90,9 +95,9 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana), for a moonkin that
-// would rather not weave: 661.4 / 656.6 / 661.0 at 120 / 180 / 300 sec, 8% behind the Level 60
+// would rather not weave: 708.5 / 705.2 / 708.8 at 120 / 180 / 300 sec, 7% behind the Level 60
 // rotation. A talent search with this rotation found the same talents (Eclipse and Improved
-// Starfire still pay for the free Clearcasting Starfires). Starfire alone is 659.5 at 180 sec.
+// Starfire still pay for the free Clearcasting Starfires). Starfire alone is 690.7 at 180 sec.
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Level 60',
@@ -113,7 +118,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // Reflection and Subtlety and from 41 / 10 / 0 with Heart of the Wild, and the last moves traded
 // Moonglow, Genesis and Heart of the Wild points within the noise. The other archetypes are well
 // behind at 180 sec: 31 / 0 / 20 (Reflection and Tranquil Spirit, no Moonfury)
-// 642.8, 41 / 10 / 0 685.0, against 715.2 (Tauren).
+// 642.8, 41 / 10 / 0 685.0, against 715.2 (Tauren, before the Level 60 consumes below).
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5532220115501351--505' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set: 41 Balance, Naturalist from Restoration.',
 	group: 'Level 60',
@@ -133,24 +138,28 @@ export const DefaultOptions = BalanceDruidOptions.create({
 	innervateTarget: UnitReference.create(),
 });
 
-// The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each
-// slot on the Level 60 build at 180 sec (before the talent search, 748 DPS). Taking each one
-// out costs: Flask of Supreme Power 93 (Distilled Wisdom gives nothing, the moonkin does not
-// run dry in a raid fight), Brilliant Wizard Oil 30 over Brilliant Mana Oil, Greater Arcane
-// Elixir 22, Nightfin Soup 14 (Runn Tum Tuber Surprise and Sagefish Delight are 9 to 12
-// behind), Goblin Sapper Charge 3.9, Major Mana Potion 2.2 and Demonic Rune 1.4. Mageblood
-// Potion and Elixir of Wisdom are within the noise and stay for longer fights. Goblin Land
-// Mine costs 4.9 (a global cooldown), the Elixir of Nature Power and the hit foods do nothing
-// in the sim.
+// The level 60 consumables, Forever launch Phase 1 only (nothing from Molten Core, Zul'Gurub,
+// Blackwing Lair, Ahn'Qiraj or Naxxramas, so Wizard Oil and not Brilliant Wizard Oil). Elixirs
+// in different slots stack in the sim; that is our reading of Forever's elixir rules and is
+// listed in notes.md. Together they take the Level 60 build from 705 to 756 at 180 sec. Taking
+// each one out costs: Flask of Supreme Power the most (Distilled Wisdom is 6 behind, the moonkin
+// does not run dry in a raid fight), Elixir of the Owl 15, Elixir of Sages 14, Elixir of Nature
+// Power 9, Major Spellblasting Potion 9 (over a Major Mana Potion), Lobster Stew 4, Goblin
+// Sapper Charge 3.9, Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater Mageblood
+// Elixir is within the noise and stays for longer fights.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	defaultPotion: Potions.MajorManaPotion,
+	defaultPotion: Potions.MajorSpellblastingPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodNightfinSoup,
-	mainHandImbue: WeaponImbue.BrilliantWizardOil,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	food: Food.FoodLobsterStew,
+	intellectElixir: IntellectElixir.ElixirOfTheOwl,
+	mainHandImbue: WeaponImbue.WizardOil,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
+	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	spiritElixir: SpiritElixir.ElixirOfSages,
+	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec balance):
@@ -250,14 +259,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 721.8 / 715.8 / 717.5 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 763.9 / 757.9 / 749.9 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             721.8    715.8    717.5   Elune's Light, best overall and Alliance
-//	Tauren                719.3    714.8    717.2   1% hit, best Horde
-//	Windshaper Skyborne   717.0    712.5    714.7   1% cast speed
-//	High Order Skyborne   716.9    712.3    714.5
+//	Night Elf             763.9    757.9    749.9   best overall and Alliance
+//	Tauren                761.7    757.3    750.4   best Horde (0.5 ahead at 300 sec)
+//	Windshaper Skyborne   758.9    754.5    745.6
+//	High Order Skyborne   758.8    754.4    745.2
 //
 // No racial goes by weapon type, so the staff changes nothing here.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
