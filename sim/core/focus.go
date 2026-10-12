@@ -9,7 +9,7 @@ import (
 
 // Time between focus ticks.
 const MaxFocus = 100.0
-const tickDuration = time.Millisecond * 5250 
+const tickDuration = time.Millisecond * 5250
 const BaseFocusPerTick = 26.25
 
 // OnFocusGain is called any time focus is increased.
@@ -18,8 +18,9 @@ type OnFocusGain func(sim *Simulation)
 type focusBar struct {
 	unit *Unit
 
-	focusPerTick float64
+	focusPerTick         float64
 	focusRegenMultiplier float64
+	tickDuration         time.Duration
 
 	currentFocus float64
 
@@ -33,12 +34,13 @@ type focusBar struct {
 
 func (unit *Unit) EnableFocusBar(regenMultiplier float64, onFocusGain OnFocusGain) {
 	unit.focusBar = focusBar{
-		unit:          unit,
-		focusPerTick:  BaseFocusPerTick,
+		unit:                 unit,
+		focusPerTick:         BaseFocusPerTick,
 		focusRegenMultiplier: regenMultiplier,
-		onFocusGain:   onFocusGain,
-		regenMetrics:  unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionFocusRegen}),
-		refundMetrics: unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
+		tickDuration:         tickDuration,
+		onFocusGain:          onFocusGain,
+		regenMetrics:         unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionFocusRegen}),
+		refundMetrics:        unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
 	}
 }
 
@@ -55,10 +57,16 @@ func (fb *focusBar) CurrentFocusPerTick() float64 {
 }
 
 func (fb *focusBar) CurrentFocusPerSecond() float64 {
-	return fb.CurrentFocusPerTick() / tickDuration.Seconds()
+	return fb.CurrentFocusPerTick() / fb.tickDuration.Seconds()
 }
 
-func (fb *focusBar) AddFocusRegenMultiplier (multiplier float64) {
+// SetFocusRegen replaces Classic's 26.25 focus every 5.25 sec, for Forever's pets.
+func (fb *focusBar) SetFocusRegen(focusPerTick float64, tick time.Duration) {
+	fb.focusPerTick = focusPerTick
+	fb.tickDuration = tick
+}
+
+func (fb *focusBar) AddFocusRegenMultiplier(multiplier float64) {
 	fb.focusRegenMultiplier += multiplier
 }
 
@@ -110,7 +118,7 @@ func (fb *focusBar) reset(sim *Simulation) {
 
 func (fb *focusBar) enable(sim *Simulation) {
 	sim.AddTask(fb)
-	fb.nextFocusTick = sim.CurrentTime + tickDuration
+	fb.nextFocusTick = sim.CurrentTime + fb.tickDuration
 	sim.RescheduleTask(fb.nextFocusTick)
 }
 
@@ -126,7 +134,7 @@ func (fb *focusBar) RunTask(sim *Simulation) time.Duration {
 	focus := fb.focusPerTick * fb.focusRegenMultiplier
 	fb.AddFocus(sim, focus, fb.regenMetrics)
 
-	fb.nextFocusTick = sim.CurrentTime + tickDuration
+	fb.nextFocusTick = sim.CurrentTime + fb.tickDuration
 	return fb.nextFocusTick
 }
 

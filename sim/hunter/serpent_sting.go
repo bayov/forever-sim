@@ -8,12 +8,22 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
+// Forever's Serpent Sting (beta client, build 1.60.1.70338) keeps rank 9's 555 over 15 sec and
+// lowers the ranks below it (rank 8: 415, Classic 490). It has no spell power coefficient (Classic
+// 100% over the duration). The client gives it no attack power share either, but the beta's combat
+// logs put each tick at the base plus about 0.035 of ranged attack power, read live on every tick
+// (ElliotWood/Forever's fit, sim/hunter/serpent_sting.go; the forever-hunter wiki gives 3% a tick).
+// The ticks crit with the hunter's ranged crit under Forever, and Mortal Shots is in its class mask.
+const serpentStingRAPPerTick = 0.035
+
 func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 	spellId := [10]int32{0, 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 25295}[rank]
-	baseDamage := [10]float64{0, 20, 40, 80, 140, 210, 290, 385, 490, 555}[rank] / 5
-	spellCoeff := [10]float64{0, .4, .625, .925, 1, 1, 1, 1, 1, 1}[rank] / 5
+	baseDamage := [10]float64{0, 10, 30, 60, 110, 170, 240, 320, 415, 555}[rank] / 5
 	manaCost := [10]float64{0, 15, 30, 50, 80, 115, 150, 190, 230, 250}[rank]
 	level := [10]int{0, 4, 10, 18, 26, 34, 42, 50, 58, 60}[rank]
+
+	// Improved Stings: 6/13/20% (client curve) on the periodic damage.
+	impStings := []float64{1, 1.06, 1.13, 1.20}[hunter.Talents.ImprovedStings]
 
 	return core.SpellConfig{
 		SpellCode:     SpellCode_HunterSerpentSting,
@@ -25,7 +35,7 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 		CastType:      proto.CastType_CastTypeRanged,
 		Rank:          rank,
 		RequiredLevel: level,
-		MissileSpeed:  24,
+		MissileSpeed:  40,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: manaCost,
@@ -37,10 +47,11 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return hunter.DistanceFromTarget >= core.MinRangedAttackDistance
+			return hunter.inRangedRange()
 		},
 
-		DamageMultiplier: 1 + 0.02*float64(hunter.Talents.ImprovedSerpentSting),
+		CritDamageBonus:  hunter.mortalShots(),
+		DamageMultiplier: impStings,
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
@@ -48,16 +59,19 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 				Label: "SerpentSting" + hunter.Label + strconv.Itoa(rank),
 				Tag:   "SerpentSting",
 			},
-			NumberOfTicks:    5,
-			TickLength:       time.Second * 3,
-			BonusCoefficient: spellCoeff,
+			NumberOfTicks: 5,
+			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				damage := baseDamage
-				dot.Snapshot(target, damage, isRollover)
+				dot.Snapshot(target, baseDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				dot.SnapshotBaseDamage = (baseDamage + serpentStingRAPPerTick*dot.Spell.RangedAttackPower(target, false)) * dot.Spell.BaseDamageMultiplierAdditive
+				if sim.IsForever() {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickPhysicalCrit)
+				} else {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				}
 			},
 		},
 
@@ -76,14 +90,12 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 }
 
 func (hunter *Hunter) registerSerpentStingSpell() {
-
-	maxRank := core.TernaryInt(core.IncludeAQ, 9, 8)
-	for rank := maxRank; rank >= 0; rank-- {
+	for rank := 9; rank >= 1; rank-- {
 		config := hunter.getSerpentStingConfig(rank)
 
 		if config.RequiredLevel <= int(hunter.Level) {
 			hunter.SerpentSting = hunter.GetOrRegisterSpell(config)
-			break
+			return
 		}
 	}
 }

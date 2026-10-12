@@ -9,9 +9,11 @@ import (
 const RaptorStrikeRanks = 8
 
 var RaptorStrikeSpellId = [RaptorStrikeRanks + 1]int32{0, 2973, 14260, 14261, 14262, 14263, 14264, 14265, 14266}
-var RaptorStrikeSpellIdMeleeSpecialist = [RaptorStrikeRanks + 1]int32{0, 415335, 415336, 415337, 415338, 415340, 415341, 415342, 415343}
-var RaptorStrikeBaseDamage = [RaptorStrikeRanks + 1]float64{0, 5, 11, 21, 34, 50, 80, 110, 140}
-var RaptorStrikeManaCost = [RaptorStrikeRanks + 1]float64{0, 15, 25, 35, 45, 55, 70, 80, 100}
+
+// Forever's Raptor Strike adds less from rank 4 up (rank 8: 70, Classic 140) and rank 1 costs 10 mana
+// (Classic 15), beta client build 1.60.1.70338. Still weapon damage, not normalized.
+var RaptorStrikeBaseDamage = [RaptorStrikeRanks + 1]float64{0, 5, 11, 21, 30, 35, 40, 55, 70}
+var RaptorStrikeManaCost = [RaptorStrikeRanks + 1]float64{0, 10, 25, 35, 45, 55, 70, 80, 100}
 var RaptorStrikeLevel = [RaptorStrikeRanks + 1]int{0, 1, 8, 16, 24, 32, 40, 48, 56}
 
 // Returns true if the regular melee swing should be used, false otherwise.
@@ -50,7 +52,7 @@ func (hunter *Hunter) getRaptorStrikeConfig(rank int) core.SpellConfig {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return hunter.DistanceFromTarget <= core.MaxMeleeAttackDistance
+			return hunter.inMeleeRange()
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -77,9 +79,8 @@ func (hunter *Hunter) newRaptorStrikeHitSpell(rank int) *core.Spell {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
-		BonusCritRating:  float64(hunter.Talents.SavageStrikes) * 10 * core.CritRatingPerCritChance,
-		CritDamageBonus:  hunter.mortalShots(),
 		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -118,7 +119,7 @@ func (hunter *Hunter) makeQueueSpellsAndAura() *core.Spell {
 			return hunter.curQueueAura != queueAura &&
 				hunter.CurrentMana() >= hunter.RaptorStrike.Cost.GetCurrentCost() &&
 				!hunter.IsCasting(sim) &&
-				hunter.DistanceFromTarget <= core.MaxMeleeAttackDistance &&
+				hunter.inMeleeRange() &&
 				hunter.RaptorStrike.IsReady(sim)
 		},
 
@@ -132,12 +133,13 @@ func (hunter *Hunter) makeQueueSpellsAndAura() *core.Spell {
 }
 
 func (hunter *Hunter) registerRaptorStrikeSpell() {
-	rank := map[int32]int{
-		25: 4,
-		40: 6,
-		50: 7,
-		60: 8,
-	}[hunter.Level]
+	rank := 1
+	for i := RaptorStrikeRanks; i >= 1; i-- {
+		if RaptorStrikeLevel[i] <= int(hunter.Level) {
+			rank = i
+			break
+		}
+	}
 
 	config := hunter.getRaptorStrikeConfig(rank)
 	hunter.RaptorStrike = hunter.GetOrRegisterSpell(config)

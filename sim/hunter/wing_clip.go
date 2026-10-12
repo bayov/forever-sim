@@ -4,6 +4,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
+// Wing Clip is unchanged in Forever: a flat 5/25/50 by rank on the melee table.
 func (hunter *Hunter) getWingClipConfig(rank int) core.SpellConfig {
 	spellId := [4]int32{0, 2974, 14267, 14268}[rank]
 	baseDamage := [4]float64{0, 5, 25, 50}[rank]
@@ -16,7 +17,7 @@ func (hunter *Hunter) getWingClipConfig(rank int) core.SpellConfig {
 		SpellSchool:   core.SpellSchoolPhysical,
 		DefenseType:   core.DefenseTypeMelee,
 		ProcMask:      core.ProcMaskMeleeMHSpecial,
-		Flags:         core.SpellFlagMeleeMetrics | core.SpellFlagAPL | core.SpellFlagBinary,
+		Flags:         core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagStrike,
 		Rank:          rank,
 		RequiredLevel: level,
 
@@ -31,10 +32,9 @@ func (hunter *Hunter) getWingClipConfig(rank int) core.SpellConfig {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return hunter.DistanceFromTarget <= core.MaxMeleeAttackDistance
+			return hunter.inMeleeRange()
 		},
 
-		CritDamageBonus:  hunter.mortalShots(),
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
@@ -45,13 +45,11 @@ func (hunter *Hunter) getWingClipConfig(rank int) core.SpellConfig {
 }
 
 func (hunter *Hunter) registerWingClipSpell() {
-	rank := map[int32]int{
-		25: 1,
-		40: 2,
-		50: 3,
-		60: 3,
-	}[hunter.Level]
-
-	config := hunter.getWingClipConfig(rank)
-	hunter.WingClip = hunter.GetOrRegisterSpell(config)
+	for rank := 3; rank >= 1; rank-- {
+		config := hunter.getWingClipConfig(rank)
+		if config.RequiredLevel <= int(hunter.Level) {
+			hunter.WingClip = hunter.GetOrRegisterSpell(config)
+			return
+		}
+	}
 }

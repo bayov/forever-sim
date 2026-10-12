@@ -63,7 +63,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 
 	baseMinDamage = 18.17 * attackSpeed
 	baseMaxDamage = 27.66 * attackSpeed
-	
+
 	hunterPetBaseStats = stats.Stats{
 		stats.Strength:  136,
 		stats.Agility:   100,
@@ -122,11 +122,35 @@ func (hp *HunterPet) Initialize() {
 	hp.specialAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
 	hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
 
-	hp.EnableFocusBar(1, func(sim *core.Simulation) {
+	// Bestial Discipline: 10% focus regen a rank.
+	hp.EnableFocusBar(1+0.1*float64(hp.hunterOwner.Talents.BestialDiscipline), func(sim *core.Simulation) {
 		if hp.GCD.IsReady(sim) {
 			hp.OnGCDReady(sim)
 		}
 	})
+
+	if hp.Env.IsForever() {
+		hp.applyForeverRules()
+	}
+}
+
+// What Forever changed about pets.
+func (hp *HunterPet) applyForeverRules() {
+	// Every pet swings every 2.0 sec, and a passive the beast brings (Faster Attack I to VII, Slower
+	// Attack II and III) moves that to the beast's Classic speed. Its hits stay the size of a 2.0 sec
+	// pet's, so a fast pet deals more damage (beta players, gathered on ForeverChanges' hunter pets
+	// page and the forever-hunter wiki; nobody knows yet whether that is intended). Classic scales the
+	// hit with the swing.
+	mh := hp.AutoAttacks.MH()
+	mh.BaseDamageMin = 18.17 * 2
+	mh.BaseDamageMax = 27.66 * 2
+
+	// Focus comes back 10 a second, continuously (client PowerType Focus RegenCombat 10, and beta
+	// logs where busy pets spend 9.5+ a second). Classic's is 26.25 every 5.25 sec.
+	hp.SetFocusRegen(2.5, time.Millisecond*250)
+
+	// Blizzard's hunter deep dive: pets no longer take player buffs that raise their stats.
+	hp.IgnoresPlayerBuffs = true
 }
 
 func (hp *HunterPet) Reset(_ *core.Simulation) {
@@ -187,10 +211,20 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 	}
 }
 
+// Forever's pets scale with the hunter's gear (Blizzard's hunter deep dive). The numbers are beta
+// testing on the forever-hunter wiki: 10% of the hunter's highest attack power and all of the
+// hunter's crit chance (and 2 health a Stamina point and 30% of armor, which change no damage). The
+// hunter's ranged attack power is the highest in every build here, so the pet takes 10% of that.
+// Classic pets inherit nothing.
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
-		// No stat inheritance in classic
-		return stats.Stats{}
+		if !hunter.Env.IsForever() {
+			return stats.Stats{}
+		}
+		return stats.Stats{
+			stats.AttackPower: 0.1 * ownerStats[stats.RangedAttackPower],
+			stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
+		}
 	}
 }
 
@@ -223,7 +257,8 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Damage: 1.10,
 
 		CustomRotation: func(sim *core.Simulation, hp *HunterPet, tryCast func(*core.Spell) bool) {
-			if hp.specialAbility.CD.IsReady(sim) && hp.CurrentFocusPerSecond() > hp.focusDump.Cost.BaseCost/1.6 {
+			// Forever's 10 focus a second always pays for Bite on cooldown.
+			if hp.specialAbility.CD.IsReady(sim) && (sim.IsForever() || hp.CurrentFocusPerSecond() > hp.focusDump.Cost.BaseCost/1.6) {
 				if !tryCast(hp.specialAbility) && hp.GCD.IsReady(sim) {
 					hp.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
 				}
