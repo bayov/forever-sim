@@ -15,25 +15,29 @@ func init() {
 				indBuffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
 			},
 			// Every consumable the sim applies was tried in its slot on the Demonology build at
-			// 180 sec (2026-10-12): Nightfin Soup +7.8 over Runn Tum Tuber Surprise, Goblin Sapper
-			// +4.1 (Engineering), Mageblood Potion +4.4, Cerebral Cortex Compound +10.7 (a Blasted
-			// Lands quest), Demonic Rune +15.8, Major Mana Potion +23.7, Wizard Oil +15.7, Elixir of
-			// Shadow Power +23.3. Forever's Phase 1 has no vanilla raid open, so Brilliant Wizard Oil
-			// (+32.5, Zandalar) is out.
-			// Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of
-			// Firepower takes the slot. Goblin Land Mine (-7) and Flask of Distilled Wisdom (-88) lost.
+			// 180 sec (2026-10-12): Goblin Sapper +4.1 (Engineering), Cerebral Cortex Compound +10.7
+			// (a Blasted Lands quest), Demonic Rune +15.8, Wizard Oil +15.7, Elixir of Shadow Power
+			// +23.3. With Forever's elixirs and foods simulated: Elixir of the Owl +27.9 (Elixir of
+			// Greater Intellect +9.2), Elixir of Sages +21.3 (its Spirit feeds Life Tap), Greater
+			// Mageblood Elixir +1.9 over Mageblood Potion, Lobster Stew +3.9 over Nightfin Soup, and
+			// Major Spellblasting Potion 12.9 behind Major Mana Potion. Forever's Phase 1 has no
+			// vanilla raid open, so Brilliant Wizard Oil (a Zandalar recipe) is out. Elixir of
+			// Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of Firepower
+			// takes the slot. Goblin Land Mine (-7) and Flask of Distilled Wisdom (-88) lost.
 			consumes: func() *proto.Consumes {
 				return &proto.Consumes{
 					DefaultPotion:   proto.Potions_MajorManaPotion,
 					DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 					FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 					Flask:           proto.Flask_FlaskOfSupremePower,
-					Food:            proto.Food_FoodNightfinSoup,
+					Food:            proto.Food_FoodLobsterStew,
+					IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 					MainHandImbue:   proto.WeaponImbue_WizardOil,
-					ManaRegenElixir: proto.ManaRegenElixir_MagebloodPotion,
+					ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 					SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 					ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 					SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+					SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 					ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 				}
 			},

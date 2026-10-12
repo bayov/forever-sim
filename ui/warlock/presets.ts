@@ -8,6 +8,7 @@ import {
 	Flask,
 	Food,
 	IndividualBuffs,
+	IntellectElixir,
 	ManaRegenElixir,
 	MobType,
 	Potions,
@@ -17,6 +18,7 @@ import {
 	SapperExplosive,
 	ShadowPowerBuff,
 	SpellPowerBuff,
+	SpiritElixir,
 	Stat,
 	TristateEffect,
 	WeaponImbue,
@@ -219,25 +221,30 @@ const PresetBuildOptionsSuccubus = {
 };
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
-// on the Demonology build at 180 sec: Nightfin Soup +7.8 over Runn Tum Tuber Surprise, Goblin
-// Sapper +4.1 (Engineering), Mageblood Potion +4.4, Cerebral Cortex Compound +10.7 (a Blasted Lands
-// quest), Demonic Rune +15.8, Major Mana Potion +23.7, Elixir of Shadow Power +23.3 and Wizard Oil
-// +15.7. Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
-// Forever's launch Phase 1, when no vanilla raid is open, so Brilliant Wizard Oil (+32.5, a
-// Zandalar recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain Elixir of
-// Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and Flask of
-// Distilled Wisdom (-88) lost.
+// on the Demonology build at 180 sec: Goblin Sapper +4.1 (Engineering), Cerebral Cortex Compound
+// +10.7 (a Blasted Lands quest), Demonic Rune +15.8, Elixir of Shadow Power +23.3 and Wizard Oil
+// +15.7. With Forever's elixirs and foods simulated: Elixir of the Owl +27.9 (Elixir of Greater
+// Intellect +9.2), Elixir of Sages +21.3 (its Spirit feeds Life Tap), Greater Mageblood Elixir +1.9
+// over Mageblood Potion, Lobster Stew +3.9 over Nightfin Soup, and Major Spellblasting Potion 12.9
+// behind Major Mana Potion. Together the new ones are +55 on Demonology and +40 to +52 on the other
+// builds. Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
+// Forever's launch Phase 1, when no vanilla raid is open, so Brilliant Wizard Oil (a Zandalar
+// recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain
+// Elixir of Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and
+// Flask of Distilled Wisdom (-88) lost.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodNightfinSoup,
+	food: Food.FoodLobsterStew,
+	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.WizardOil,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
