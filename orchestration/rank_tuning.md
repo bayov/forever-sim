@@ -177,6 +177,24 @@ Mortal Strike IV (21553), Overpower IV (11585), Slam IV (11605), Execute and Her
 
 All **tuned**, with the same Forever factor at every rank: Battle Shout 0.60×, Blessing of Might 0.72×, Blessing of Wisdom 1.2×, Mark / Gift of the Wild 1.35× (plus the 70291 aura change on every rank), Power Word / Prayer of Fortitude 1.30×, Demoralizing Shout / Roar 1.40–1.48×. Arcane Intellect, Divine Spirit, Faerie Fire and Sunder Armor (reworked in 70009 at every rank) are Era-identical or changed at every rank. Curse of Recklessness is a new linear curve, 175 / 285 / 395 / 505 armor (+110 a rank; Era 140 / 290 / 465 / 640), the same step at every rank. The totem values sit in triggered aura spells; the shared branch caps their ranks already (Forever mechanics auditor's area).
 
+## Rank inversion scan (orchestrator request, 16:10 UTC; ruling f8ae7cdc: presets use the strongest learned rank)
+
+Scanned client 70338 for every rank chain on the nine classes' skill lines, talent-taught ranks included and the Ahn'Qiraj book ranks excluded. Each effect's value is taken at level 60, with per-level growth capped at the rank's max level. Then the same with 600 spell power added through each rank's coefficient. Then the triggered spells (seal procs, aura triggers), the totem aura spells (Strength of Earth, Grace of Air, Windfury Totem, Mana Spring, Flametongue Totem, Stoneskin) and the weapon imbue and poison enchants (SpellItemEnchantment: Windfury, Flametongue, Rockbiter, Frostbrand, Instant, Deadly, Wound and Crippling Poison).
+
+**The only inversions in anything a preset or the shared raid uses are the three the hunter found:**
+
+| Spell | Rank the sim used | Stronger lower rank |
+|---|---|---|
+| Aspect of the Hawk | VI (14322, L58): 55 ranged AP | V (14321, L48): 90 |
+| Trueshot Aura | V (20906, L60): +50 | IV (20905, L50): +75 |
+| Hunter's Mark | IV (14325, L58): 71 | III (14324, L40): 98 |
+
+Everything else rises monotonically with rank: every damage and heal chain (also with 600 spell power), every raid buff and debuff (Battle Shout, Might, Wisdom, Kings, Mark / Gift of the Wild, Fortitude, Arcane Intellect, Divine Spirit, Sunder, Faerie Fire, Curse of Recklessness, Demoralizing Shout / Roar), the totem auras (Strength of Earth 7/14/25/42, Grace of Air 49/77, Windfury Totem 95/179/246, Mana Spring 4/6/8/10) and the imbues and poisons (Instant 15→88, Deadly 6→18, Rockbiter, Frostbrand). Forever's Windfury and Flametongue Weapon use one level-scaled spell for every rank, so they can't invert.
+
+Hits that are not real inversions: the Lightning Bolt / Chain Lightning / Lava Burst overload copies and the Penance / Holy Shock / Flash of Light / Holy Light helper spells (same-level companions), the SoD rune entries Lacerate 414647 and Tiger's Fury 417045 (not learnable), and the scripted dummy values on Blizzard, Hurricane, Volley and Rain of Fire.
+
+One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (20419, L34) procs 74 with a 0.900 coefficient, against 35 and 0.000 for rank 7 (20423). That's the client error noted in pass 1. Retribution doesn't use Seal of Fury, but if a build ever did, "strongest learned rank" would pick the broken rank 4.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
