@@ -62,12 +62,21 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 //
 // Forever's level 60 gear in the client is not tuned yet, and Molten Core and Onyxia have no
 // Forever data. The synthetic items take the place of the Era Phase 1 DPS warrior BiS
-// (phase_1.gear.json) at Phase 1 epic budgets: Strength, Agility, crit, 10% hit and some attack
-// power, no Spirit. The six tier pieces carry Battlegear of Glory's bonuses, Forever's Molten Core
-// set for Arms and Fury. Arms and Fury share the armor, rings and bow, the file has the details.
-// The enchants are the Phase 1 set's, with 7 Agility on the boots and Forever's +5 Strength on the
-// neck (+3.7 over +5 Agility's +2.9 on Fury), and the trinkets are Hand of Justice and Blackhand's
-// Breadth.
+// (phase_1.gear.json) at the item levels every class shares (66 for the big armor slots, 71 for the
+// neck, back, wrist, waist, rings, one-handers and bow, 76 for a two-hander): Strength, Agility,
+// crit, 9% hit (the special attack cap) and some attack power, no Spirit. Only the head and legs
+// carry Battlegear of Glory, Forever's Molten Core set for Arms and Fury, so only its 2-piece is
+// live. The 4-piece (+36 attack power against Humanoids) would add 11.7 on Fury, 9.3 on two-hand
+// Fury and 9.4 on Arms. The 5-piece adds nothing, since Recklessness is used once a fight. Arms and
+// Fury share the armor, rings and bow, the file has the details.
+//
+// Enchants: Lesser Arcanum of Voracity (8 Strength) on the head and legs, Forever's +5 Strength on
+// the neck (+3.7 against +2.9 for Agility on Fury), Forever's Cloak - Agility (5), Greater Stats,
+// Superior Strength on the bracers, Forever's Gloves - Superior Strength (15), Greater Agility on the
+// boots (a Forceful Rugged Armor Kit there is within 0.3) and Crusader. Nothing for the shoulders
+// outside raids. The trinkets are Blackhand's Breadth and Forever's Adaptive Combat Assistant (2
+// expertise, a world drop), 10.0 ahead of Hand of Justice on Fury and 4.6 on two-hand Fury, and 0.7
+// behind on Arms (inside the noise). Raid trinkets are out.
 //
 // On 2026-10-12 the Level 60 Fury build (Human, 180 sec) does 995.2 on the Fury set, where the Era
 // Phase 1 set (phase_1.gear.json) does 1010.8 with the same talents and rotation. The synthetic set
