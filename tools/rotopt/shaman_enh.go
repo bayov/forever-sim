@@ -315,7 +315,7 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	for i, id := range totems {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(id, float64(len(totems)-i)))
 	}
-	// The shield goes up a GCD before the first totem, or 3 sec before the pull.
+	// The shield goes up 1.5 sec before the first totem in the prepull actions.
 	if shieldID != nil && k["prepullShield"] == 1 {
 		rot.PrepullActions = append([]*proto.APLPrepullAction{prepull(shieldID, float64(len(totems))+1.5)}, rot.PrepullActions...)
 	}

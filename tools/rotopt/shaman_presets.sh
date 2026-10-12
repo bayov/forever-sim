@@ -51,7 +51,7 @@ gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNov
 # 120, 180 and 300 sec, from 758.6. The hold is +1.1 on the Mana Tide build. On the Level 60
 # build it does nothing, and longer holds lose (4 sec is 8.5 behind), because Earth Shock spends
 # the Stormstrike mark.
-# Both builds pay for Water Shield, so since 2026-10-12 they put it up 3 sec before the pull and
+# Both builds pay for Water Shield, so since 2026-10-12 they put it up before the pull (1.5 sec before the first totem) and
 # again whenever it is down below 50% mana (the rotation auditor's finding). It only does
 # anything when something hits the shaman: with the Enhancement option of 6 raid damage hits a
 # minute it is +0.0 / +0.5 / +4.1 on the Water Shield build at 120 / 180 / 300 sec, and a wash
