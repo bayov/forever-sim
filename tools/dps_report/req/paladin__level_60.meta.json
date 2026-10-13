@@ -7,7 +7,6 @@
   "pr": 3,
   "race": "Undead",
   "talents": "52003-503-05225331001330311",
-  "treePoints": "10/8/33",
   "treeNames": [
     "Holy",
     "Protection",
@@ -16,27 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 967.2,
-    "source": "PR #3 (50000 iterations)",
-    "overall": {
-      "race": "Undead",
-      "dps": 967.2
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 967.2
-    },
-    "alliance": {
-      "race": "Human",
-      "dps": 952.1
-    }
+    "dps": 981.9,
+    "source": "PR #3"
   },
   "verify": {
-    "dps": 967.37,
+    "dps": 981.69,
     "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 967.2 (PR #3 (50000 iterations)); delta +0.17."
+    "note": "-0.21 vs PR #3"
   },
   "summary": "Retribution down to Twist of Light with Precision 3 from Protection and Divine Strength, Divine Intellect and Improved Seals in Holy, twisting Seal of Command and Seal of Righteousness before every swing. It is the spec's default Level 60 preset and the best build at every fight length.",
   "keyTalents": [
@@ -82,7 +69,7 @@
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Twisting is worth 126 DPS, Consecration 109, Holy Strike 99, Hammer of Wrath 29 at 180 s",
-    "Undead is best (Touch of the Grave); a Human with an equal sword would be about 982 at 180 s, ahead of Undead",
+    "Undead is best (Touch of the Grave)",
     "A second crit elixir (Mongoose) would add 14.9 DPS; one 2% crit elixir per character by ruling",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
@@ -90,5 +77,5 @@
     "Two-Handed Weapon Specialization applied to Holy seal damage (Era sim choice vs client Physical mask): about -11 if removed",
     "Synthetic gear on the hybrid budget (only the Justice Battlegear 2-piece live)"
   ],
-  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected)."
 }

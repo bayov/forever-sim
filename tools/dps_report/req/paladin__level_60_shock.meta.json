@@ -7,7 +7,6 @@
   "pr": 3,
   "race": "Undead",
   "talents": "55003003201121251--05225230001",
-  "treePoints": "31/0/20",
   "treeNames": [
     "Holy",
     "Protection",
@@ -16,29 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock",
   "published": {
-    "dps": 959.8,
-    "source": "PR #3 (50000 iterations)",
-    "overall": {
-      "race": "Undead",
-      "dps": 959.8
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 959.8
-    },
-    "alliance": {
-      "race": "Human",
-      "dps": 944.9
-    }
+    "dps": 970.6,
+    "source": "PR #3"
   },
   "verify": {
-    "dps": 959.3,
+    "dps": 970.98,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 959.8 (PR #3 (50000 iterations)); delta -0.50."
+    "note": "+0.38 vs PR #3"
   },
-  "summary": "A deep Holy build to Light's Vigil (Holy Shock, Holy Power 5, Consecrated Ground, Divine Precision) with Retribution to Sacred Arbiter, on Seal of Righteousness with no twisting. It is the Holy Shock playstyle, 0.8% behind twist at 180 s (and ahead of it at 120 s).",
+  "summary": "A deep Holy build to Light's Vigil (Holy Shock, Holy Power 5, Consecrated Ground, Divine Precision) with Retribution to Sacred Arbiter, on Seal of Righteousness with no twisting. It is the Holy Shock playstyle, 1.2% behind twist at 180 s (level with it at 120 s).",
   "keyTalents": [
     "Holy Shock",
     "Light's Vigil",
@@ -81,14 +68,14 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Runs short of mana: ahead of twist at 120 s (974.8 / 970.2), 0.8% behind at 180 s and 4.0% at 300 s",
+    "Runs short of mana: level with twist at 120 s (987.3 / 986.6), 1.2% behind at 180 s and 4.4% at 300 s",
     "Divine Precision's hit does not cover Judgement of Righteousness",
     "Holy Shock is worth 148 DPS and Light's Vigil about 91",
     "A missed Holy Shock consumes the Vigil with no detonation or refund (small at about 1% Holy miss)",
-    "Undead is best; a Human with an equal sword would be about 969 at 180 s, ahead of Undead",
+    "Undead is best (Touch of the Grave)",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
     "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 42-49 DPS lower"
   ],
-  "notes": "Preset options are primarySeal Righteousness, as mksettings writes. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+  "notes": "Preset options are primarySeal Righteousness, as mksettings writes."
 }

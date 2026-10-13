@@ -351,9 +351,14 @@ for o in outs:
     alli = max((r for r in rs if r['faction'] == 'Alliance'), key=lambda r: r['dps'], default=None)
     pub = m.get('published') or {}
     _prev = PREV.get(bid)
+    encn = m.get('encounter')  # an encounter preset: the same boss as a creature type (shown only with "Special encounters" on)
+    base_id = m.get('baseBuild')
+    dname = DISPLAY.get(bid, m['build']) if not encn else f"{DISPLAY.get(base_id, json.load(open(os.path.join(D, 'req', base_id + '.meta.json')))['build'])} · vs {encn}"
     builds.append({
-        'id': bid, 'class': m['class'], 'presetName': m['build'], 'spec': 'Seal Fate' if bid.startswith('rogue__seal-fate') else m['spec'], 'build': DISPLAY.get(bid, m['build']), 'isDefault': bool(m.get('isDefault')),
-        'label': f"{m['class']} · {DISPLAY.get(bid, m['build'])}", 'race': race_name(m['race']),
+        'id': bid, 'class': m['class'], 'presetName': m['build'], 'spec': 'Seal Fate' if bid.startswith('rogue__seal-fate') else m['spec'], 'build': dname, 'isDefault': bool(m.get('isDefault')),
+        'label': f"{m['class']} · {dname}", 'race': race_name(m['race']),
+        'encounter': encn or None, 'baseBuild': base_id or None,
+        'bossType': encn or 'Generic boss', 'bossText': f"Level 63 {encn} boss" if encn else 'Level 63 boss with no creature type (generic)',
         'dps': round(mn['dps'], 1), 'se': round(mn['se'], 2), 'stdev': round(mn['stdev'], 1),
         'p1': round(mn['pct']['1'], 1), 'p10': round(mn['pct']['10'], 1), 'p25': round(mn['pct']['25'], 1), 'p50': round(mn['pct']['50'], 1),
         'p75': round(mn['pct']['75'], 1), 'p90': round(mn['pct']['90'], 1), 'p99': round(mn['pct']['99'], 1),
@@ -439,7 +444,10 @@ for o in outs:
         s = re.sub(r'(?<=[a-z0-9])(?=[A-Z])', ' ', k[0].upper() + k[1:])
         return s
 
-    for cat, obj in (('Consumes', o['setup']['consumes']), ('Self buffs', o['setup']['playerBuffs']), ('Raid buffs', o['setup']['raidBuffs']),
+    # a rogue's poisons are class imbues in its options (beside a stone in the consumes' imbue slot)
+    _ro = (json.load(open(os.path.join(D, 'req', bid + '.json')))['raid']['parties'][0]['players'][0].get('rogue') or {}).get('options') or {}
+    _poisons = [('mainHandImbue', _ro['mainHandPoison']) for _ in [0] if _ro.get('mainHandPoison')] + [('offHandImbue', _ro['offHandPoison']) for _ in [0] if _ro.get('offHandPoison')]
+    for cat, obj in (('Consumes', o['setup']['consumes']), ('Consumes', dict(_poisons)), ('Self buffs', o['setup']['playerBuffs']), ('Raid buffs', o['setup']['raidBuffs']),
                      ('Party buffs', o['setup']['partyBuffs']), ('Debuffs', o['setup']['debuffs'])):
         for k, v in (obj or {}).items():
             if v in (False, 0, '', None) or v == 'TristateEffectMissing':
@@ -489,9 +497,11 @@ def unship(t):
 for b in builds:
     b['summary'] = unship(b['summary'])
 
-# rank across all builds
-for i, b in enumerate(sorted(builds, key=lambda b: -b['dps'])):
-    b['rank'] = i + 1
+# rank among the default presets (an encounter preset gets the place it would take among them), and among all
+_defaults = [b for b in builds if not b['encounter']]
+for b in builds:
+    b['rank'] = 1 + sum(1 for x in _defaults if x['dps'] > b['dps'] and x is not b)
+    b['rankAll'] = 1 + sum(1 for x in builds if x['dps'] > b['dps'])
 
 
 def dump(name, rows):
@@ -558,6 +568,11 @@ mana_rows, mana_summary = mana_curves.datasets()
 if mana_summary:
     dump('mana', mana_rows)
     dump('mana_summary', mana_summary)
+
+# assumption scenarios (run_assumptions.py): assumptions, assumption_dps
+if os.path.exists(os.path.join(D, 'asm', 'results.jsonl')):
+    import asm_data
+    asm_data.build(dump, builds)
 
 # rotation: each preset's real APL as plain-English priority rows (rotation.py)
 import rotation

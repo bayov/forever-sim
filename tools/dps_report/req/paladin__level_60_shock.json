@@ -71,7 +71,7 @@
             "consumes": {
               "flask": "FlaskOfSupremePower",
               "food": "FoodLobsterStew",
-              "agilityElixir": "ElixirOfGreaterAgility",
+              "agilityElixir": "ElixirOfCunning",
               "manaRegenElixir": "GreaterMagebloodElixir",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
@@ -130,6 +130,103 @@
                 }
               ],
               "priorityList": [
+                {
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "1s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "isExecutePhase": {
+                              "threshold": "E20"
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 992015
+                                  },
+                                  "delay": {
+                                    "math": {
+                                      "op": "OpDiv",
+                                      "lhs": {
+                                        "math": {
+                                          "op": "OpSub",
+                                          "lhs": {
+                                            "math": {
+                                              "op": "OpMul",
+                                              "lhs": {
+                                                "remainingTime": {}
+                                              },
+                                              "rhs": {
+                                                "const": {
+                                                  "val": "4"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "currentTime": {}
+                                          }
+                                        }
+                                      },
+                                      "rhs": {
+                                        "const": {
+                                          "val": "5"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "20s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 992015
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Goblin Sapper Charge on cooldown.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 10646
+                      }
+                    }
+                  }
+                },
                 {
                   "notes": "Consecration on cooldown, down to the last point of mana.",
                   "action": {
@@ -348,7 +445,6 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true,
       "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
@@ -357,8 +453,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -380,7 +474,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

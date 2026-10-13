@@ -77,8 +77,8 @@
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
               "fillerExplosive": "ExplosiveGoblinLandMine",
-              "mainHandImbue": "DeadlyPoison",
-              "offHandImbue": "InstantPoison",
+              "mainHandImbue": "DenseSharpeningStone",
+              "offHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MajorFrenzyPotion",
               "defaultConjured": "ConjuredRogueThistleTea",
               "dragonBreathChili": true,
@@ -90,7 +90,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "0053231053120005-322303200013-002",
+            "talentsString": "0053031055120005-322303200013-002",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -113,6 +113,23 @@
                 }
               ],
               "priorityList": [
+                {
+                  "notes": "Ambush out of a Vanish before anything else.",
+                  "action": {
+                    "condition": {
+                      "auraIsActive": {
+                        "auraId": {
+                          "spellId": 1787
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 11269
+                      }
+                    }
+                  }
+                },
                 {
                   "notes": "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one.",
                   "action": {
@@ -949,7 +966,74 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets).",
+                  "notes": "Goblin Sapper Charge on cooldown once Slice and Dice is up.",
+                  "action": {
+                    "condition": {
+                      "auraIsActive": {
+                        "auraId": {
+                          "spellId": 6774,
+                          "rank": 2
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 10646
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 6774,
+                                "rank": 2
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "autoTimeToNext": {
+                                  "autoType": "MainHand"
+                                }
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpSub",
+                                  "lhs": {
+                                    "autoSwingTime": {
+                                      "autoType": "MainHand"
+                                    }
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.4s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 4395
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Anything not listed above (trinkets).",
                   "action": {
                     "condition": {
                       "auraIsActive": {
@@ -1069,6 +1153,182 @@
                   }
                 },
                 {
+                  "notes": "Vanish for an Ambush at low combo points.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 1787
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "currentComboPoints": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "3"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentEnergy": {}
+                              },
+                              "rhs": {
+                                "spellCurrentCost": {
+                                  "spellId": {
+                                    "spellId": 11269
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 6774,
+                                "rank": 2
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "10s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1856
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 1787
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 460534
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 11269
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Preparation resets Vanish (and Cold Blood) for a second Ambush once the first is spent.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 1787
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "currentComboPoints": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "3"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellTimeToReady": {
+                                  "spellId": {
+                                    "spellId": 1856
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "60s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "10s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14185
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Backstab.",
                   "action": {
                     "condition": {
@@ -1147,7 +1407,10 @@
             "channelClipDelayMs": 50,
             "distanceFromTarget": 5,
             "rogue": {
-              "options": {}
+              "options": {
+                "mainHandPoison": "DeadlyPoison",
+                "offHandPoison": "InstantPoison"
+              }
             }
           }
         ],
@@ -1171,7 +1434,6 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true,
       "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
@@ -1180,7 +1442,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -1202,7 +1463,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

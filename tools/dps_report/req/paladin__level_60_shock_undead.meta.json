@@ -1,0 +1,83 @@
+{
+  "id": "paladin__level_60_shock_undead",
+  "class": "Paladin",
+  "spec": "Retribution",
+  "build": "Level 60 Shock (vs Undead)",
+  "isDefault": false,
+  "pr": 3,
+  "race": "Undead",
+  "talents": "55003003201121251--05225230001",
+  "treeNames": [
+    "Holy",
+    "Protection",
+    "Retribution"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_shock_undead",
+  "published": {
+    "dps": 1041.3,
+    "source": "PR #3 / class preset"
+  },
+  "verify": {
+    "dps": 1041.27,
+    "stderr": 0.27,
+    "iters": 20000,
+    "ok": true,
+    "note": "-0.03"
+  },
+  "summary": "The Holy Shock build on its own vs Undead rotation, which adds Exorcism and keeps more mana for Light's Vigil in longer fights.",
+  "keyTalents": [
+    "Holy Shock",
+    "Light's Vigil",
+    "Holy Power",
+    "Consecrated Ground",
+    "Divine Precision",
+    "Divine Favor",
+    "Improved Seals",
+    "Sacred Arbiter"
+  ],
+  "rotation": [
+    "Pre-pull: Seal of Righteousness at -3 s, Light's Vigil at -1.5 s",
+    "Consecration on cooldown, down to the last point of mana",
+    "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
+    "Holy Strike on cooldown",
+    "Hammer of Wrath below 20% health",
+    "Light's Vigil whenever it is not on the target and mana is at or above 30%",
+    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
+    "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Elixir of Greater Agility",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Elixir of Greater Firepower (Forever's Holy Power elixir)",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of the Owl",
+    "Elixir of Greater Spirit",
+    "Greater Mageblood Elixir",
+    "R.O.I.D.S.",
+    "Lobster Stew",
+    "Dragonbreath Chili",
+    "Shadow Oil",
+    "Goblin Sapper",
+    "Goblin Land Mine",
+    "Major Mana Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "Exorcism only lands on Undead and Demons, so this build only applies to those bosses",
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Divine Precision's hit does not cover Judgement of Righteousness",
+    "Holy Shock is worth 148 DPS and Light's Vigil about 91",
+    "A missed Holy Shock consumes the Vigil with no detonation or refund (small at about 1% Holy miss)",
+    "Undead is best (Touch of the Grave)",
+    "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
+    "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
+    "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 42-49 DPS lower"
+  ],
+  "notes": "Request from mksettings with the same arguments as paladin__level_60_shock except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does.",
+  "encounter": "Undead",
+  "baseBuild": "paladin__level_60_shock"
+}

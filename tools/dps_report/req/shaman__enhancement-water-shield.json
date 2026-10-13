@@ -71,9 +71,9 @@
             "consumes": {
               "flask": "FlaskOfSupremePower",
               "food": "FoodGrilledSquid",
-              "agilityElixir": "ElixirOfGreaterAgility",
+              "agilityElixir": "ElixirOfCunning",
               "manaRegenElixir": "GreaterMagebloodElixir",
-              "strengthBuff": "JujuPower",
+              "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
               "spellPowerBuff": "GreaterArcaneElixir",
               "shadowPowerBuff": "ElixirOfShadowPower",
@@ -223,6 +223,70 @@
                 {
                   "notes": "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 990015
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpEq",
+                              "lhs": {
+                                "spellUsesRemaining": {
+                                  "spellId": {
+                                    "itemId": 990015
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 425336
+                                  },
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "itemId": 990015
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 425336
@@ -558,12 +622,12 @@
                 "startingTotems": {
                   "earth": "StrengthOfEarthTotem",
                   "air": "WindfuryTotem",
-                  "fire": "MagmaTotem",
                   "water": "ManaSpringTotem",
                   "earthSecondsBeforePull": 28,
                   "airSecondsBeforePull": 27,
-                  "fireSecondsBeforePull": 1,
-                  "waterSecondsBeforePull": 30
+                  "waterSecondsBeforePull": 30,
+                  "fire": "MagmaTotem",
+                  "fireSecondsBeforePull": 1
                 }
               }
             }
@@ -587,8 +651,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -596,8 +659,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -619,7 +680,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

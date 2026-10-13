@@ -7,7 +7,6 @@
   "pr": 8,
   "race": "NightElf",
   "talents": "5502220115501351-03-505",
-  "treePoints": "38/3/10",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -16,29 +15,17 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath",
   "published": {
-    "dps": 775.0,
-    "source": "PR #8",
-    "overall": {
-      "race": "NightElf",
-      "dps": 775.0
-    },
-    "horde": {
-      "race": "SkyborneWindshaper",
-      "dps": 770.5
-    },
-    "alliance": {
-      "race": "NightElf",
-      "dps": 775.0
-    }
+    "dps": 776.5,
+    "source": "PR #8"
   },
   "verify": {
-    "dps": 774.89,
+    "dps": 776.36,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, NightElf, 180 s with durationVariation 20, on the merged bundled-round tree. Published 775.0 (PR #8); delta -0.11."
+    "note": "-0.14 vs PR #8"
   },
-  "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 6.0% behind the default Balance build.",
+  "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 6.1% behind the default Balance build.",
   "keyTalents": [
     "Improved Wrath",
     "Moonkin Form",
@@ -72,10 +59,10 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "6.0% behind the weaving Balance build (775.0 vs 824.5 at 180 s)",
+    "6.1% behind the weaving Balance build (776.5 vs 827.0 at 180 s)",
     "Wrath rank 8 may be about 17% low on the client: holding it to the level 30 ratio would give +1.6% (760 -> 772 on the gear before the 5a and 1b rounds)",
     "Natural Power gloves are +8.1 over Arcane Power for this build",
     "Heart of the Wild 3 over Moonglow 3 is +2.6 in its own search"
   ],
-  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180 s, durationVariation 20. No edits needed. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180 s, durationVariation 20. No edits needed."
 }

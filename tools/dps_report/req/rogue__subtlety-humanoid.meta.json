@@ -1,0 +1,77 @@
+{
+  "id": "rogue__subtlety-humanoid",
+  "class": "Rogue",
+  "spec": "Subtlety",
+  "build": "Subtlety (vs Humanoid)",
+  "isDefault": false,
+  "pr": 9,
+  "race": "Undead",
+  "talents": "0053231015140004--3021203310113011",
+  "treeNames": [
+    "Assassination",
+    "Combat",
+    "Subtlety"
+  ],
+  "gearSet": "level60_phase1_synthetic_daggers",
+  "apl": "level60_subtlety",
+  "published": {
+    "dps": 666.6,
+    "source": "PR #9"
+  },
+  "verify": {
+    "dps": 666.58,
+    "stderr": 0.2,
+    "iters": 20000,
+    "ok": true,
+    "note": "-0.02 vs PR #9"
+  },
+  "summary": "Subtlety against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
+  "keyTalents": [
+    "Murder 2/2",
+    "Hemorrhage",
+    "Ghostly Strike",
+    "Premeditation",
+    "Preparation",
+    "Serrated Blades",
+    "Improved Ambush",
+    "Seal Fate 4/5"
+  ],
+  "rotation": [
+    "Ambush first while stealthed (after Vanish)",
+    "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
+    "Cold Blood right before a 5-point Eviscerate; Thistle Tea at 10 energy or less",
+    "3-point Rupture when not ticking, with Hemorrhage right before it",
+    "Premeditation at 3 combo points or fewer (no Stealth needed)",
+    "Eviscerate at 5 combo points",
+    "Vanish into Ambush at 3 combo points or fewer, pooling energy; Preparation resets Vanish and Premeditation",
+    "Ghostly Strike on cooldown",
+    "Hemorrhage as the filler builder"
+  ],
+  "consumes": [
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Ground Scorpok Assay",
+    "Flank au Poivre",
+    "Dragonbreath Chili",
+    "Major Frenzy Potion",
+    "Thistle Tea",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine",
+    "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
+  ],
+  "caveats": [
+    "Murder is damage only (+4%) and only against Humanoids and Giants",
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Fight never opens from Stealth; Stealth only comes from Vanish",
+    "Ghostly Strike is worth nothing over Hemorrhage (+0.5 removed) but is pinned by the build",
+    "Premeditation out of Stealth and Preparation's reset list are open for beta testing",
+    "Elusiveness is worth 0 at 180 s, -2.9 at 300 s",
+    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
+    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
+    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+  ],
+  "notes": "Request from mksettings with the same arguments as rogue__subtlety except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
+  "encounter": "Humanoid",
+  "baseBuild": "rogue__subtlety"
+}

@@ -6,8 +6,7 @@
   "isDefault": true,
   "pr": 9,
   "race": "Undead",
-  "talents": "0053231015140004--3021203310113011",
-  "treePoints": "29/0/22",
+  "talents": "0053031035140004--3021203310113011",
   "treeNames": [
     "Assassination",
     "Combat",
@@ -16,23 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 653.2,
-    "source": "the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)",
-    "overall": {
-      "race": "Undead",
-      "dps": 653.2
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 653.2
-    }
+    "dps": 643.6,
+    "source": "PR #9"
   },
   "verify": {
-    "dps": 653.19,
+    "dps": 643.63,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 653.2 (the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)); delta -0.01."
+    "note": "+0.03 vs PR #9"
   },
   "summary": "Subtlety with Hemorrhage, Ghostly Strike, Premeditation and Preparation, plus Seal Fate in Assassination, on the synthetic daggers. It is the Subtlety preset; the defining talents are pinned.",
   "keyTalents": [
@@ -67,8 +58,7 @@
     "Thistle Tea",
     "Goblin Sapper Charge",
     "Goblin Land Mine",
-    "Deadly Poison (main hand)",
-    "Instant Poison (off hand)"
+    "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
@@ -76,10 +66,10 @@
     "Ghostly Strike is worth nothing over Hemorrhage (+0.5 removed) but is pinned by the build",
     "Premeditation out of Stealth and Preparation's reset list are open for beta testing",
     "Elusiveness is worth 0 at 180 s, -2.9 at 300 s",
-    "Murder fixed in edd0ff72d to not raise crit damage (-13 to -19 DPS on every build)",
+    "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
     "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
   ],
-  "notes": "Only Subtlety build, so treated as the Subtlety default. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the rotation uses the on-use trinket on cooldown."
+  "notes": "Only Subtlety build, so treated as the Subtlety default."
 }

@@ -5,9 +5,8 @@
   "build": "Frost",
   "isDefault": false,
   "pr": 6,
-  "race": "Undead",
+  "race": "SkyborneHighOrder",
   "talents": "050005-03-0555300331001301251",
-  "treePoints": "10/3/38",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -16,29 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frost",
   "published": {
-    "dps": 736.5,
-    "source": "PR #6",
-    "overall": {
-      "race": "SkyborneHighOrder",
-      "dps": 736.9
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 736.5
-    },
-    "alliance": {
-      "race": "SkyborneHighOrder",
-      "dps": 736.9
-    }
+    "dps": 745.4,
+    "source": "PR #6"
   },
   "verify": {
-    "dps": 736.54,
+    "dps": 745.42,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 736.5 (PR #6); delta +0.04."
+    "note": "+0.02 vs PR #6"
   },
-  "summary": "Deep Frost Frostbolt build with Fingers of Frost, Shatter and Winter's Chill, plus Arcane Concentration. Ships as its own playstyle, 18% behind Frostfire. High Order is 0.4 ahead of Undead at 180 s, inside the noise, so the preset stays Undead.",
+  "summary": "Deep Frost Frostbolt build with Fingers of Frost, Shatter and Winter's Chill, plus Arcane Concentration. Its own playstyle, 18% behind Frostfire. The preset is High Order with a Major Spellblasting Potion.",
   "keyTalents": [
     "Arcane Concentration",
     "Improved Frostbolt",
@@ -80,5 +67,5 @@
     "Raid bosses assumed not freezable; Fingers of Frost charge timing open",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
   ],
-  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring)."
 }

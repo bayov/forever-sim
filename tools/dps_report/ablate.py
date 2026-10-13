@@ -109,6 +109,10 @@ def main():
                 d['delta'] = d['dps'] - b
                 d['same'] = d['dps'] == b
     out = os.path.join(D, 'abl', 'ablate.json')
+    if os.environ.get('ABL_MERGE') and os.path.exists(out):  # a partial rerun keeps the other builds' entries
+        old = json.load(open(out))['builds']
+        old.update(res)
+        res = old
     json.dump({'iters': ITERS, 'seed': SEED, 'builds': res}, open(out, 'w'), indent=1)
     print('wrote', out)
 
