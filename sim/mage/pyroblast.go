@@ -10,8 +10,12 @@ import (
 const PyroblastRanks = 8
 
 var PyroblastSpellId = [PyroblastRanks + 1]int32{0, 11366, 12505, 12522, 12523, 12524, 12525, 12526, 18809}
-var PyroblastBaseDamage = [PyroblastRanks + 1][]float64{{0}, {148, 195}, {184, 241}, {270, 343}, {341, 431}, {427, 536}, {510, 639}, {625, 776}, {716, 890}}
-var PyroblastDotDamage = [PyroblastRanks + 1]float64{0, 56, 72, 96, 124, 156, 188, 228, 268}
+
+// Damage at each rank's cap (or at 60) and its growth per level up to there, from the Forever
+// client (1.60.1.70338). Rank 8 is 520 to 646 plus 212 over 12 sec (Classic 716 to 890 plus 268).
+var PyroblastBaseDamage = [PyroblastRanks + 1][]float64{{0}, {99.73, 132.27}, {124.79, 163.61}, {178.41, 228.79}, {228.19, 290.61}, {288.87, 365.53}, {365.5, 458.5}, {445.69, 557.11}, {519.84, 646.16}}
+var PyroblastScaling = [PyroblastRanks + 1]core.RankScaling{{}, {24, 1.5}, {30, 1.7}, {36, 2.1}, {42, 2.4}, {48, 2.7}, {54, 3}, {60, 3.4}, {}}
+var PyroblastDotDamage = [PyroblastRanks + 1]float64{0, 44, 56, 76, 100, 124, 152, 184, 212}
 var PyroblastManaCost = [PyroblastRanks + 1]float64{0, 125, 150, 195, 240, 285, 335, 385, 440}
 var PyroblastLevel = [PyroblastRanks + 1]int{0, 20, 24, 30, 36, 42, 48, 54, 60}
 
@@ -37,13 +41,14 @@ func (mage *Mage) newPyroblastSpellConfig(rank int) core.SpellConfig {
 	tickLength := time.Second * 3
 
 	spellId := PyroblastSpellId[rank]
-	baseDamageLow := PyroblastBaseDamage[rank][0]
-	baseDamageHigh := PyroblastBaseDamage[rank][1]
+	baseDamageLow := PyroblastScaling[rank].At(PyroblastBaseDamage[rank][0], mage.Level)
+	baseDamageHigh := PyroblastScaling[rank].At(PyroblastBaseDamage[rank][1], mage.Level)
 	baseDotDamage := PyroblastDotDamage[rank] / float64(numTicks)
 	manaCost := PyroblastManaCost[rank]
 	level := PyroblastLevel[rank]
 
 	spellCoeff := 1.0
+	// 15% a tick, the client's coefficient on the periodic effect.
 	dotCoeff := .15
 	castTime := time.Second * 6
 
@@ -51,6 +56,7 @@ func (mage *Mage) newPyroblastSpellConfig(rank int) core.SpellConfig {
 
 	spellConfig := core.SpellConfig{
 		ActionID:     actionID,
+		SpellCode:    SpellCode_MagePyroblast,
 		SpellSchool:  core.SpellSchoolFire,
 		DefenseType:  core.DefenseTypeMagic,
 		ProcMask:     core.ProcMaskSpellDamage,
@@ -92,7 +98,7 @@ func (mage *Mage) newPyroblastSpellConfig(rank int) core.SpellConfig {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			result := mage.calcMageDamage(sim, target, baseDamage, spell)
 
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)

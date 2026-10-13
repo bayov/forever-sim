@@ -82,7 +82,27 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Mage
 
-* (nothing yet)
+* Ice Lance's spell power coefficient (sim: 0, the client's). The 70338 client has 0 on all six ranks where every other new Forever damage spell carries its own (Frostfire Bolt 0.814, Arcane Blast 0.714). SoD's client had 0 too and a server script gave it 42.9%. That is the largest open number for the mage: with 42.9% Frostfire and Frost are about 165 dps higher at 180 sec (Frost ahead of Fire instead of behind). Two Ice Lances at different spell power (or one with and one without a Flask of Supreme Power) settle it. It needs the talent (20 Frost points), so level 30 on the beta.
+* Ice Lance against a Frozen target (sim: 4 times, the tooltip's "300% increased"). The client's dummy effect is 300 where SoD's was 400. An Ice Lance on a Frost Nova'd mob settles it (beta, level 20+).
+* Ice Lance's two other dummy effects, 20 and 5. They look like SoD's Glaciate (20% more Ice Lance damage per Winter's Chill stack, 5 stacks), which no Forever tooltip mentions. The sim leaves them out. Ice Lance on a target with and without Winter's Chill stacks settles it (needs 25 Frost points).
+* Arcane Blast's bonus on Arcane Missiles (sim: 10% a stack, the tooltip's "all your other spells"). Worth 829.7 (10%) against 751.0 (none) and 869.0 (15%) on the Arcane preset at 180 sec, the largest open number for Arcane. The client's stack buff 400573 leaves Arcane Missiles out of its damage part, and a second buff, 400586 (15% a stack on Arcane Missiles only), is still in the client from SoD. A missile after one Arcane Blast and one without settles it (beta, level 20+).
+* Ignite (sim: SoD's rolling Ignite, each crit adds 8% a rank to what is left and starts the 4 sec over, with no cap). Classic Era's servers stopped adding after 5 crits. Since 2026-09-24 the sim takes no damage bonus on the ticks ("no longer counts damage bonuses twice"). A log with several crits within 4 sec settles both.
+* Ignite's ticks (sim: never crit, can be partially resisted again). The crit they come from already counted its crit and resist; a combat log of Ignite ticks against a boss settles both.
+* Arcane Concentration on Arcane Missiles (sim: every missile rolls, with the client's 1 sec internal cooldown). Classic rolled the missiles at a much lower rate.
+* Missile Barrage (sim: rolls on the finished cast of Arcane Blast, Fireball, Frostbolt and Frostfire Bolt, as in the SoD sim) and its free cost adding up with Arcane Power's 30% (the sim pays 30%, the two are percent cost modifiers in the client).
+* Fingers of Frost (sim: a charge goes when a damage spell finishes casting, Frostbolt included, and the proc comes when the chill lands, so it never uses itself up). Whether a Frostbolt in flight when the proc comes can use it is open.
+* Frostfire Bolt's DoT (sim: 19 a tick at rank 3, no coefficient, the client's) and that Frostfire Bolt takes both schools' talents (Fire Power, Critical Mass, Piercing Ice, Ice Shards, Ignite). The client masks of Ice Shards, Piercing Ice, Fire Power and Critical Mass name it, Frost Channeling's does not.
+* Heating Up (sim: one Pyroblast uses up all 3 stacks, from the buff's one charge) and whether a Pyroblast started before a stack lands gets it.
+* Arcane Mind's crit damage (sim: +20% of the crit bonus a rank, like Ice Shards, so 2 times damage at 5/5).
+* Pyroblast's DoT coefficient (sim: 15% a tick, 60% in all, the client's on the periodic effect).
+* A raid boss can't be frozen (sim), so Frostbite, Frost Nova and Shatter only count through Fingers of Frost.
+* Manaflare Regalia's 2 piece bonus (sim: 1% hit, the tooltip). wowhead's spell page shows 2% on the same effect. The Level 60 set is built to the 16% hit cap with 1%, so at 2% it would sit 1% over and the 10 hit rating would be better spent elsewhere.
+* Enchant Weapon - Revelation on a mage (sim: not used, the model was written for shaman shocks). Its proc chance and which mage spells trigger and use it are unknown; with the shaman's 7.2% on every direct spell it would be 5 to 26 ahead of Mighty Intellect on the sword.
+* Mana gems and Demonic Rune share one 2 min cooldown (sim: shared, the 70338 client's item category 1153 and spell category 30 for both). In Era they were thought to be separate. A Mana Ruby and a Demonic Rune one after the other settles it.
+* Presence of Mind and Combustion share the client's category 1151 3 min cooldown (sim: apart; no level 60 build has both).
+* Missile Barrage's 400588 has ProcChance 50 in the client (sim: the tooltip's 40% on Arcane Blast, 20% on Fireball, Frostbolt and Frostfire Bolt).
+* Arcane Blast's and Arcane Power's periodic damage masks (sim: both on every DoT; the client leaves the Pyroblast DoT out of Arcane Blast's and the Frostfire Bolt DoT out of Arcane Power's). No preset is affected.
+* One +2% crit elixir a character (Mongoose, Grizzly, Owl, Sages, Whale; sim: the orchestrator's rule, from the client's one category 2593 for the five). The mage presets take Elixir of Sages with Elixir of Greater Intellect. If the Owl stacks with Sages it adds 10 to 21 dps at 180 sec.
 
 ## Warlock
 
@@ -109,3 +129,6 @@ Things we can only check on release, because the beta stops at level 30.
 * The level 60 raid boss: is it level 63, and its armor (sim: 3731).
 * Paladin: Justice Battlegear's real stats (the client pieces have none yet, the synthetic set carries its bonuses), Holy Strike rank 8 and Seal of Righteousness rank 8 hits with known spell power, and Twist of Light at 31 Retribution points (whether two Echoes can be up at once).
 * The 100% cap on mana regen while casting. Mindfulness 3/3, Improved Stormstrike and Polished Driftwood Icon add up to 108%, and the sim caps it at 100% like cmangos.
+* Frostbolt X (sim: the 70338 client's values). Beta build 70291 raised the level 20 and 26 Frostbolt ranks (+8% at 26's cap) and left the 31+ ranks on Forever's curve, so whether the raise carries to rank 10 is open. If it did (x1.08), Frost would be 2.8% higher (744 to 764 at 180 sec, the rank tuning auditor's local patch). A Frostbolt X hit on the live game settles it.
+* Mage: whether Forever ever sells the Ahn'Qiraj books (Fireball XII, Frostbolt XI, Arcane Missiles VIII; sim: not under Forever, the 70338 client has no source). With them Frost is 50 higher, Arcane 30 and Fire 17.
+* Mage: every spell rank above what a level 30 knows (the talent ranks are settled: every multi-rank talent matches the 70338 trait curves, 2026-10-12). The sim takes the client's values (wago.tools 1.60.1.70338), which matched every shaman rank we could test. The deep mage talents (Arcane Power, Combustion, Fingers of Frost, Winter's Chill, the Heating Up and Missile Barrage procs at raid gear) can only be checked at 60.
