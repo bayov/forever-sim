@@ -28,7 +28,7 @@ func init() {
 				DragonBreathChili: true,
 				Flask:             proto.Flask_FlaskOfDistilledWisdom,
 				Food:              proto.Food_FoodFlankAuPoivre,
-				MainHandImbue:     proto.WeaponImbue_ElementalSharpeningStone,
+				MainHandImbue:     proto.WeaponImbue_DenseWeightstone,
 				StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 				ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 			}

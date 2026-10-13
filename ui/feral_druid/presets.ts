@@ -173,8 +173,9 @@ export const DefaultOptions = FeralDruidOptions.create({
 // Grilled Squid. Flask of Distilled Wisdom keeps Shifting Power in mana; Flask of Supreme Power
 // is 6 ahead only through the chili's fire damage. Forever lets a druid use potions, Thistle Tea
 // and Rage potions in form, and makes weapon imbues work on a cat (Blizzard's World of Warcraft:
-// Forever class deep dive, Druid): on the cat with its weapon's damage, at 180 sec, Elemental
-// Sharpening Stone is 9.5 ahead of no stone (Dense Weightstone 4.9), Thistle Tea 8.0 ahead of the
+// Forever class deep dive, Druid): on the cat with its weapon's damage, at 180 sec, Dense
+// Weightstone (the mace's stone) is 4.9 ahead of no stone (Elemental Sharpening Stone would be
+// 9.5, but its plans only drop in Molten Core), Thistle Tea 8.0 ahead of the
 // Demonic Rune (12.2 drunk at 25 Energy or less, sim/druid/thistle_tea.go), and the Mighty Rage
 // Potion's 60 Strength 6.3 ahead of the Major Mana Potion (Major Frenzy Potion 5.0), also at 300
 // sec. Explosives still can't be used in form.
@@ -186,7 +187,7 @@ export const DefaultConsumes = Consumes.create({
 	dragonBreathChili: true,
 	flask: Flask.FlaskOfDistilledWisdom,
 	food: Food.FoodFlankAuPoivre,
-	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	mainHandImbue: WeaponImbue.DenseWeightstone,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
@@ -287,14 +288,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 734.3 / 722.4 / 713.3 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 729.5 / 717.2 / 708.1 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             734.3    722.4    713.3   best overall and Alliance
-//	Windshaper Skyborne   729.1    718.9    709.1   best Horde
-//	High Order Skyborne   729.0    718.8    709.0
-//	Tauren                726.9    716.8    707.0
+//	Night Elf             729.5    717.2    708.1   best overall and Alliance
+//	Windshaper Skyborne   723.9    713.7    704.0   best Horde
+//	High Order Skyborne   723.8    713.7    704.0
+//	Tauren                722.0    711.5    701.8
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.
