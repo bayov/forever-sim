@@ -1,0 +1,90 @@
+{
+  "id": "warrior__arms",
+  "class": "Warrior",
+  "spec": "Arms",
+  "build": "Arms",
+  "isDefault": false,
+  "pr": 4,
+  "race": "Undead",
+  "talents": "20305213032515201-55050000001",
+  "treePoints": "35/16/0",
+  "treeNames": [
+    "Arms",
+    "Fury",
+    "Protection"
+  ],
+  "gearSet": "level60_phase1_synthetic_arms.gear.json",
+  "apl": "level60_arms.apl.json",
+  "published": {
+    "dps": 890.4,
+    "source": "PR #4",
+    "overall": {
+      "race": "Undead",
+      "dps": 890.4
+    },
+    "horde": {
+      "race": "Undead",
+      "dps": 890.4
+    },
+    "alliance": {
+      "race": "Human",
+      "dps": 885.9
+    }
+  },
+  "verify": {
+    "dps": 890.39,
+    "stderr": 0.35,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 890.4 (PR #4); delta -0.01."
+  },
+  "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster sword procs. It is the Arms spec's Level 60 preset, about 13% behind dual wield Fury.",
+  "keyTalents": [
+    "Mortal Strike",
+    "Bloodthrill",
+    "Improved Overpower",
+    "Weaponmaster",
+    "Improved Slam",
+    "Two-Handed Weapon Specialization",
+    "Impale",
+    "Cruelty"
+  ],
+  "rotation": [
+    "Pre-pull: Battle Stance",
+    "With 20 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance and stay",
+    "Death Wish held for the last 36 sec, Recklessness in the last 20 sec; racials with Death Wish",
+    "Mighty Rage Potion at the pull, second held for the last 20 sec; Bloodrage under 10 Rage",
+    "Mortal Strike on cooldown",
+    "Slam from 20 Rage (15 sec cooldown with Improved Slam), outside execute",
+    "Overpower from 5 Rage (dodges and Bloodthrill)",
+    "Rend kept up outside execute; then Execute",
+    "Heroic Strike from 70 Rage, Hamstring filler from 20 Rage (outside execute)"
+  ],
+  "consumes": [
+    "Flask of the Titans",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Smoked Desert Dumpling",
+    "Dragonbreath Chili",
+    "Mighty Rage Potion",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine",
+    "Dense Sharpening Stone (main hand)"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
+    "Late Forever rulings cost (Undead 180 s): Ahn'Qiraj ranks out -14.2, Deep Wounds no crit -7.2",
+    "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
+    "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
+    "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
+    "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 10.9",
+    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 8.4 at Undead 180 s)",
+    "The audit found Recklessness never cast and Rage capping; fixed with the stance swap and Hamstring filler (811.9 -> 868.7 on earlier gear)",
+    "Booming Voice (5/5) does nothing because the raid has Battle Shout",
+    "Arms in Berserker Stance with Whirlwind all fight was 10% behind"
+  ],
+  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms -talents 20305213032515201-55050000001 -race Undead -duration 180, unedited. Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the second potion is held for the last 15 s."
+}

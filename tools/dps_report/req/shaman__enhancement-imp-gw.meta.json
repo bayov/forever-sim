@@ -1,0 +1,88 @@
+{
+  "id": "shaman__enhancement-imp-gw",
+  "class": "Shaman",
+  "spec": "Enhancement",
+  "build": "Imp GW",
+  "isDefault": false,
+  "pr": 7,
+  "race": "Orc",
+  "talents": "050533102-051032031005112251",
+  "treePoints": "19/32/0",
+  "treeNames": [
+    "Elemental",
+    "Enhancement",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic.gear.json",
+  "apl": "optimized.apl.json",
+  "published": {
+    "dps": 797.9,
+    "source": "the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)",
+    "overall": {
+      "race": "Orc",
+      "dps": 797.9
+    },
+    "horde": {
+      "race": "Orc",
+      "dps": 797.9
+    }
+  },
+  "verify": {
+    "dps": 797.88,
+    "stderr": 0.35,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Orc, 180 s with durationVariation 20, on the merged bundled-round tree. Published 797.9 (the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)); delta -0.02."
+  },
+  "summary": "The Enhancement Level 60 build with 2 points moved from Ancestral Knowledge into Improved Ghost Wolf for utility. It is 3.9 behind Level 60 at 180 s.",
+  "keyTalents": [
+    "Stormstrike",
+    "Maelstrom Weapon",
+    "Rage of the Farseer",
+    "Flurry",
+    "Mental Dexterity",
+    "Improved Fire Nova",
+    "Improved Ghost Wolf"
+  ],
+  "rotation": [
+    "Pre-pull: starting totems already down (Strength of Earth IV, Windfury Totem, Flametongue Totem, Mana Spring), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down; Flametongue Totem when down and at least 20 s remain",
+    "Rage of the Farseer on cooldown; Blood Fury lined up with it",
+    "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
+    "Stormstrike on cooldown",
+    "Fire Nova while Clearcasting is up",
+    "Flame Shock when its DoT is down",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
+    "Earth Shock",
+    "Fire Nova above 20% mana"
+  ],
+  "consumes": [
+    "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
+    "Flask of Supreme Power",
+    "Elixir of Greater Agility",
+    "Juju Power",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Elixir of the Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Nature Power",
+    "Elixir of Shadow Power",
+    "Grilled Squid",
+    "Dragonbreath Chili",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Strength and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Improved Ghost Wolf is utility only (A/B 0.0)",
+    "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
+    "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
+    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
+  ],
+  "notes": "Ships as a Level 60 talent preset only (no PresetBuild of its own); request uses the Level 60 build's gear, Optimized rotation, starting totems, consumes and encounter, as the published number was measured. mksettings -spec enh output unchanged. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the Optimized rotation keeps Searing Totem down instead of Flametongue Totem, with no fire totem before the pull."
+}

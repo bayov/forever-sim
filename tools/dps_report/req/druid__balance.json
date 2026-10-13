@@ -1,0 +1,389 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceNightElf",
+            "class": "ClassDruid",
+            "equipment": {
+              "items": [
+                {
+                  "id": 998001,
+                  "enchant": 1509
+                },
+                {
+                  "id": 998002,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 998003
+                },
+                {
+                  "id": 998004
+                },
+                {
+                  "id": 998005,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 998006,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 998007,
+                  "enchant": 1213626
+                },
+                {
+                  "id": 998008
+                },
+                {
+                  "id": 998009,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 998010,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 998011
+                },
+                {
+                  "id": 998012
+                },
+                {
+                  "id": 998014
+                },
+                {
+                  "id": 998015
+                },
+                {
+                  "id": 998013,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 272430
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "mainHandImbue": "WizardOil",
+              "defaultPotion": "MajorSpellblastingPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages",
+              "naturePowerBuff": "ElixirOfNaturePower"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "5532220115501351--505",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9876
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "Racials, trinkets, potions and runes.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 24977
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "8s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24977
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Moonfire whenever its dot is down.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 9835
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "8s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9835
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "A free Starfire on Clearcasting, which Wrath does not use up.",
+                  "action": {
+                    "condition": {
+                      "auraIsActive": {
+                        "auraId": {
+                          "spellId": 16870
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9876
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Wrath once Eclipse is down to its last charge and no Wrath is on its way.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 408255
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "2"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "spellInFlight": {
+                                  "spellId": {
+                                    "spellId": 9912
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9912
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Starfire.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9876
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 30,
+            "balanceDruid": {
+              "options": {
+                "innervateTarget": {
+                  "type": "Self"
+                }
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "sanctityAura": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "curseOfShadow": true,
+      "exposeArmor": "TristateEffectImproved",
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "mobType": "MobTypeHumanoid",
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}
