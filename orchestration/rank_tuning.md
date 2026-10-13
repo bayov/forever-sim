@@ -202,6 +202,15 @@ One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (204
 - Venom (1310703: +30% via two damage-percent auras, plus a 10 flat modifier), Thousand Cuts (1310723: −3 flat modifier) and Lacerating Strikes (1310533: 40, with a 1-a-tick periodic): one rank each, never changed in any beta build. **Untested**, with no Era or SoD counterpart to compare against.
 - The orchestrator's rule (89729b6) excludes client data errors such as Seal of Fury rank 4 from the strongest-rank ruling.
 
+## Check 2026-10-13 12:20 UTC: the standards 1b gear round
+
+- No Forever build newer than 1.60.1.70338. wago.tools was down (Cloudflare 503) from 22:15 Oct 12 to about 12:00 Oct 13 and is back.
+- Every class rebuilt its gear on the Forever budget (standards 1a / 1b / 5a) and added synthetic trinkets. No commit touched rank data; the warlock's curses.go change only names the banes.
+- Re-run on the new heads (20k iterations, same local patches):
+  - Bane of Doom at a 2.0 coefficient: Demonology 1109.8 → 1062.9 (−4.2%), Destruction 985.4 → 944.0 (−4.2%), Affliction 977.4 → 934.4 (−4.4%). With Fury now 1020 and Retribution twist 967 on the new gear, Destruction and Affliction would still drop below Retribution; Demonology stays first.
+  - Elemental, Lightning Bolt X: base 673.9; ×1.12 → 687.1 (+1.9%), ×1.38 → 715.5 (+6.2%), ×1.38 with Lava Burst too → 725.4 (+7.6%).
+- The other sensitivities are small and scale the same way with spell power and attack power; not re-run.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
