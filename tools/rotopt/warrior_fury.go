@@ -25,11 +25,29 @@ func (warriorFury) Knobs() []Knob {
 		// Hamstring and Heroic Strike only when Bloodthirst and Whirlwind are at least this many
 		// seconds away, so the filler never leaves them short of Rage. 0 any time.
 		Knob{Name: "fillerGap", Default: 0, Min: 0, Max: 3, Step: 1},
+		// Spearing Strike (Battle Stance only, worth it against Giants and Dragonkin): when it is
+		// ready outside the execute phase, go to Battle Stance with at most this much Rage (more
+		// is lost to Tactical Mastery), cast it and go back. 0 never.
+		Knob{Name: "spearDance", Default: 0, Min: 0, Max: 55, Step: 15},
 	)
 }
 
 func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	items := warriorCooldowns(k)
+
+	if k["spearDance"] > 0 {
+		items = append(items,
+			cast(battleStance, and(
+				not(auraIsActive(battleStance)),
+				spellIsReady(spearingStrike),
+				ge(currentRage(), num(15)),
+				le(currentRage(), num(k["spearDance"])),
+				not(executePhase()),
+			), "Battle Stance for Spearing Strike, with no more Rage than Tactical Mastery keeps."),
+			cast(spearingStrike, nil, "Spearing Strike in Battle Stance. Without the talent ignore the warning on this line."),
+			cast(berserkerStance, and(not(auraIsActive(berserkerStance)), not(spellIsReady(spearingStrike))), "Back to Berserker Stance once Spearing Strike is out."),
+		)
+	}
 
 	executeLine := cast(execute, nil, "Execute in the execute phase.")
 	if k["executeFirst"] == 1 {

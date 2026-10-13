@@ -123,7 +123,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 			...Presets.GearPresets[Phase.Phase1],
 		],
 		// Preset builds that the user can quickly select.
-		builds: [Presets.PresetBuildLevel60Fury, Presets.PresetBuildLevel60Fury2H, Presets.PresetBuildLevel60Arms],
+		builds: [Presets.PresetBuildLevel60Fury, Presets.PresetBuildLevel60Fury2H, Presets.PresetBuildLevel60Arms, Presets.PresetBuildLevel60ArmsDragonkin],
 	},
 
 	autoRotation: player => {

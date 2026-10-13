@@ -29,6 +29,7 @@ import { Stats } from '../core/proto_utils/stats.js';
 import APLNoReckJSON from './apls/dps_no_reck.apl.json';
 import APLReckJSON from './apls/dps_reck.apl.json';
 import Level60ArmsAPLJSON from './apls/level60_arms.apl.json';
+import Level60ArmsDragonkinAPLJSON from './apls/level60_arms_dragonkin.apl.json';
 import Level60FuryAPLJSON from './apls/level60_fury.apl.json';
 import Level60Fury2HAPLJSON from './apls/level60_fury_2h.apl.json';
 import Level60Phase1SyntheticArmsGearJSON from './gear_sets/level60_phase1_synthetic_arms.gear.json';
@@ -144,11 +145,17 @@ export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury
 // the Hamstring filler missing: without them Arms did 811.9, with them 868.7 (the auditor's
 // numbers, on the earlier gear). Berserker Stance with Whirlwind in place of Overpower and
 // Rend for the whole fight was 790.0 with its own talents on the earlier gear, 90 behind. Spearing Strike is worth
-// nothing at 15 Rage for 40% weapon damage.
+// nothing at 15 Rage for 40% weapon damage, except against Giants and Dragonkin (the preset below).
 export const APLLevel60Arms = PresetUtils.makePresetAPLRotation('Level 60 Arms', Level60ArmsAPLJSON, { group: 'Level 60' });
+// Arms against a Giant or Dragonkin boss (Onyxia is Dragonkin in Phase 1), where Spearing Strike does
+// 120% of normalized weapon damage instead of 40%: the Arms rotation with Spearing Strike on cooldown
+// from 15 Rage.
+export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Level 60 Arms (vs Dragonkin)', Level60ArmsDragonkinAPLJSON, {
+	group: 'Level 60',
+});
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60Fury, APLLevel60Fury2H, APLLevel60Arms, APLNoReck, AplReck],
+	[Phase.Phase1]: [APLLevel60Fury, APLLevel60Fury2H, APLLevel60Arms, APLLevel60ArmsDragonkin, APLNoReck, AplReck],
 };
 
 export const DefaultAPLs = [APLLevel60Fury];
@@ -185,13 +192,23 @@ export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Level 60 Arms',
 	tooltip: 'Level 60 Arms talents from the talent search.',
 	group: 'Level 60',
 });
+// The talent and rotation searches on a Dragonkin boss move Anger Management's point to Spearing
+// Strike.
+export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
+	'Level 60 Arms (vs Dragonkin)',
+	SavedTalents.create({ talentsString: '20305203132515201-55050000001' }),
+	{
+		tooltip: 'Level 60 Arms talents against a Giant or Dragonkin boss, with Spearing Strike.',
+		group: 'Level 60',
+	},
+);
 
 // The old Classic DPS talents, rebuilt for the Forever tree on 2026-10-12 (the points in talents
 // Forever removed went to Furious Precision, Improved Execute and Improved Berserker Rage).
 export const TalentsP1DPS = PresetUtils.makePresetTalents('DPS', SavedTalents.create({ talentsString: '30305013-25053005152110501' }));
 
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsP1DPS],
+	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsLevel60ArmsDragonkin, TalentsP1DPS],
 };
 
 export const DefaultTalents = TalentsLevel60Fury;
@@ -349,6 +366,38 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
+// The same boss as a Dragonkin, for Spearing Strike (standards 19).
+export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
+	'Level 60 (vs Dragonkin)',
+	Encounter.create({
+		duration: 180,
+		durationVariation: 20,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 213336,
+				name: 'Level 60',
+				level: 63,
+				mobType: MobType.MobTypeDragonkin,
+				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+				minBaseDamage: 3000,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		tanks: [],
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: DefaultDebuffs,
+		buffs: DefaultIndividualBuffs,
+		consumes: DefaultConsumes,
+	},
+);
+
 // On 2026-10-13 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1075.3 / 1023.7 /
 // 991.0, Level 60 Fury (Two-Hand) (Undead) 934.6 / 887.4 / 852.8 and Level 60 Arms (Undead) 912.2 /
 // 890.4 / 865.5. The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the raid's Battle Shout VI,
@@ -387,6 +436,23 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60Arms,
 	encounter: EncounterLevel60,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsArms,
+});
+// Against a Dragonkin boss (Undead, 20,000 iterations, 120 / 180 / 300 sec): 940.5 / 920.1 / 895.0,
+// where the generic Arms build does 912.2 / 890.4 / 865.5 (+3.3% at 180 sec). Fury doesn't get one:
+// Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.4%
+// on dual wield Fury and +1.1% on two-hand Fury at 180 sec.
+export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Level 60 Arms (vs Dragonkin)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Arms with Spearing Strike, against a Giant or Dragonkin boss such as Onyxia.',
+	gear: GearLevel60Phase1SyntheticArms,
+	talents: TalentsLevel60ArmsDragonkin,
+	rotation: APLLevel60ArmsDragonkin,
+	encounter: EncounterLevel60Dragonkin,
 	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
