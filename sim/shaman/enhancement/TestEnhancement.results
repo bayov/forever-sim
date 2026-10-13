@@ -407,15 +407,36 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1161.09652
-  tps: 881.00243
+  dps: 1159.61189
+  tps: 882.80824
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
+ value: {
+  dps: 1149.00405
+  tps: 868.59202
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1167.20513
-  tps: 885.79374
+  dps: 1169.4007
+  tps: 887.49122
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
+ value: {
+  dps: 1160.7858
+  tps: 875.64394
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
+ value: {
+  dps: 1149.00405
+  tps: 868.59202
  }
 }
 dps_results: {
@@ -1002,15 +1023,36 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1180.61067
-  tps: 898.8442
+  dps: 1183.17212
+  tps: 904.45672
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
+ value: {
+  dps: 1177.46287
+  tps: 892.99316
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1195.26921
-  tps: 909.10368
+  dps: 1188.19436
+  tps: 904.77077
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
+ value: {
+  dps: 1188.81052
+  tps: 899.67773
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
+ value: {
+  dps: 1177.46287
+  tps: 892.99316
  }
 }
 dps_results: {
@@ -1261,15 +1303,36 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1236.59905
-  tps: 936.24822
+  dps: 1233.72235
+  tps: 936.96254
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
+ value: {
+  dps: 1203.09572
+  tps: 909.84965
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1239.85862
-  tps: 936.9638
+  dps: 1246.08266
+  tps: 943.09003
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
+ value: {
+  dps: 1214.27128
+  tps: 916.55053
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
+ value: {
+  dps: 1203.09572
+  tps: 909.84965
  }
 }
 dps_results: {
@@ -1520,15 +1583,36 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 1237.6686
-  tps: 935.09328
+  dps: 1271.97005
+  tps: 961.20572
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
+ value: {
+  dps: 1203.29223
+  tps: 909.14376
  }
 }
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 1240.66258
-  tps: 936.32374
+  dps: 1254.23123
+  tps: 946.26526
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
+ value: {
+  dps: 1214.15105
+  tps: 915.53582
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
+ value: {
+  dps: 1203.29223
+  tps: 909.14376
  }
 }
 dps_results: {

@@ -1,6 +1,7 @@
 package elemental
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -37,7 +38,7 @@ func newSyntheticSetSim(items []*proto.ItemSpec) *ElementalShaman {
 // elemental set: the hands and legs are its only pieces, so it gives the 2 piece bonus (1% melee
 // and spell hit) and never reaches the 5 piece one (Lava Burst 1 sec sooner).
 func TestSpiritcallersStormBonuses(t *testing.T) {
-	// The hands and legs have 10 hit rating each, the back none and no set.
+	// The hands have 16 hit rating and the legs 22, the back none and no set.
 	back, hands, legs := int32(990104), int32(990107), int32(990109)
 	equip := func(ids ...int32) []*proto.ItemSpec {
 		items := make([]*proto.ItemSpec, 17)
@@ -58,15 +59,15 @@ func TestSpiritcallersStormBonuses(t *testing.T) {
 		cooldown time.Duration
 	}{
 		{"back", equip(back), 0, 10 * time.Second},
-		{"hands", equip(hands), 1, 10 * time.Second},
-		{"hands and back", equip(hands, back), 1, 10 * time.Second},
-		{"hands and legs", equip(hands, legs), 3, 10 * time.Second},
+		{"hands", equip(hands), 1.6, 10 * time.Second},
+		{"hands and back", equip(hands, back), 1.6, 10 * time.Second},
+		{"hands and legs", equip(hands, legs), 4.8, 10 * time.Second},
 	} {
 		ele := newSyntheticSetSim(tc.items)
-		if got := ele.GetStat(stats.SpellHit) / core.SpellHitRatingPerHitChance; got != tc.hit {
+		if got := ele.GetStat(stats.SpellHit) / core.SpellHitRatingPerHitChance; math.Abs(got-tc.hit) > 1e-9 {
 			t.Errorf("%s: spell hit %.2f%%, want %.2f%%", tc.name, got, tc.hit)
 		}
-		if got := ele.GetStat(stats.MeleeHit) / core.MeleeHitRatingPerHitChance; got != tc.hit {
+		if got := ele.GetStat(stats.MeleeHit) / core.MeleeHitRatingPerHitChance; math.Abs(got-tc.hit) > 1e-9 {
 			t.Errorf("%s: melee hit %.2f%%, want %.2f%%", tc.name, got, tc.hit)
 		}
 		if got := ele.LavaBurst.CD.Duration; got != tc.cooldown {
