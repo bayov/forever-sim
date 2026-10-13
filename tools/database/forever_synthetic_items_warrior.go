@@ -13,51 +13,50 @@ import (
 // chest, hands, legs and feet at 66, neck, back, wrist, waist and both rings at 71, a two-hander at
 // 76, each one-hander at 71 and the ranged slot at 71. The back replaces Cape of the Black Baron
 // rather than the list's Puissant Cape, which drops from Azuregos in Phase 2. The budget is the
-// standard all the classes' synthetic items share:
+// standard all the classes' synthetic items share (orchestration/standards.md 1 and 1a): each piece's
+// budget is (1.2 * ilvl - 36.4) * slot, with the slot modifiers 1 (head, chest, legs, two-hand), 0.77
+// (shoulder, hands, waist, feet), 0.5625 (neck, back, wrist, finger), 0.42 (one-hand) and 0.32
+// (ranged), and its stats are spent linearly: the weighted stat total is 1.73 x the budget, within 1%.
+// Strength, Agility and Stamina weigh 1, attack power 0.5, hit rating 1 (10 to the percent) and crit
+// rating 1 (14 to the percent). Armor is free. The weapons' damage and speed are the Era weapons' and
+// not charged. Below, each piece's budget, its 1.73 x budget target and its weighted stat total:
 //
-//	(sum over the stats of (value * weight)^1.5)^(2/3) = (1.2 * ilvl - 36.4) * slot
+//	Head       66  x1       42.8  74.0  74.0  str 23 agi 10 sta 11 ap 8 crit 6 hit 20
+//	Neck       71  x0.5625  27.5  47.5  47.5  str 15 agi 7 sta 8 ap 7 crit 4 hit 10
+//	Shoulder   66  x0.77    33.0  57.0  57.0  str 19 agi 9 sta 10 ap 8 crit 5 hit 10
+//	Back       71  x0.5625  27.5  47.5  47.5  str 15 agi 7 sta 8 ap 7 crit 4 hit 10
+//	Chest      66  x1       42.8  74.0  74.0  str 30 agi 14 sta 16 ap 12 crit 8
+//	Wrist      71  x0.5625  27.5  47.5  47.5  str 19 agi 9 sta 10 ap 9 crit 5
+//	Hands      66  x0.77    33.0  57.0  57.0  str 25 agi 10 sta 12 ap 8 crit 6
+//	Waist      71  x0.77    37.6  65.0  65.0  str 23 agi 10 sta 12 ap 8 crit 6 hit 10
+//	Legs       66  x1       42.8  74.0  74.0  str 30 agi 14 sta 16 ap 12 crit 8
+//	Feet       66  x0.77    33.0  57.0  57.0  str 19 agi 9 sta 10 ap 8 crit 5 hit 10
+//	Finger     71  x0.5625  27.5  47.5  47.5  str 15 agi 7 sta 8 ap 7 crit 4 hit 10
+//	Finger II  71  x0.5625  27.5  47.5  47.5  str 19 agi 9 sta 10 ap 9 crit 5
+//	Ranged     71  x0.32    15.6  27.0  27.0  str 7 agi 3 sta 4 ap 2 crit 2 hit 10
+//	Main Hand  71  x0.42    20.5  35.5  35.5  str 11 agi 6 sta 4 crit 14 ap 1
+//	Off Hand   71  x0.42    20.5  35.5  35.5  str 11 agi 6 sta 4 crit 14 ap 1
+//	Two-Hand   76  x1       54.8  94.8  95.0  str 38 agi 25 sta 13 ap 18 crit 10
 //
-// with the slot modifiers 1 (head, chest, legs, two-hand), 0.77 (shoulder, hands, waist, feet), 0.5625
-// (neck, back, wrist, finger), 0.42 (one-hand) and 0.32 (ranged). Strength, Agility and Stamina weigh 1,
-// attack power 0.5, hit rating 1 (10 to the percent) and crit rating 1 (14 to the percent). Armor is
-// free. The weapons' damage and speed are the Era weapons' and not charged. Below, each piece's budget
-// and what its stats use:
-//
-//	Head       66  x1       42.8  42.3  str 18 agi 9 sta 11 ap 9 crit 11 hit 20
-//	Neck       71  x0.5625  27.4  27.4  str 13 agi 6 sta 8 ap 6 crit 8 hit 10
-//	Shoulder   66  x0.77    33.0  32.5  str 16 agi 8 sta 10 ap 8 crit 9 hit 10
-//	Back       71  x0.5625  27.4  27.4  str 13 agi 6 sta 8 ap 6 crit 8 hit 10
-//	Chest      66  x1       42.8  42.5  str 24 agi 11 sta 15 ap 11 crit 14
-//	Wrist      71  x0.5625  27.4  27.2  str 15 agi 7 sta 10 ap 7 crit 9
-//	Hands      66  x0.77    33.0  32.6  str 18 agi 9 sta 11 ap 9 crit 11
-//	Waist      71  x0.77    37.6  37.4  str 19 agi 9 sta 12 ap 9 crit 11 hit 10
-//	Legs       66  x1       42.8  42.5  str 24 agi 11 sta 15 ap 11 crit 14
-//	Feet       66  x0.77    33.0  32.5  str 16 agi 8 sta 10 ap 8 crit 9 hit 10
-//	Finger     71  x0.5625  27.4  27.4  str 13 agi 6 sta 8 ap 6 crit 8 hit 10
-//	Finger II  71  x0.5625  27.4  27.2  str 15 agi 7 sta 10 ap 7 crit 9
-//	Ranged     71  x0.32    15.6  15.4  str 5 agi 3 sta 3 ap 3 crit 3 hit 10
-//	Main Hand  71  x0.42    20.5  20.0  str 9 agi 6 sta 5 crit 11
-//	Off Hand   71  x0.42    20.5  20.0  str 9 agi 6 sta 5 crit 11
-//	Two-Hand   76  x1       54.8  54.6  str 28 agi 35 sta 7 ap 19
-//
-// The stat mix follows the fair-mix standard (orchestration/standards.md 5a): the shares of Season
-// of Discovery level 60 BiS warrior gear, scaled to 18% Stamina, with hit held at the cap. Shares are
+// The stat mix follows the fair-mix standard (orchestration/standards.md 5a, gear_targets.md
+// e3f2ae044): the shares of Season of Discovery level 60 BiS warrior gear at 18% Stamina. Hit stays
+// at the cap (90 rating), and what that leaves of hit's target share goes to Strength. Shares are
 // linear, weight x amount over the set's weighted total, enchants left out:
 //
 //	Set                     Sta   Str   Agi   AP    Crit  Hit
-//	Fury target             18.0  28.8  13.7  5.9   20.5  13.0
-//	Fury (these items)      18.4  29.6  14.6  6.5   19.1  11.7
-//	Arms / Fury 2H target   18.0  30.5  17.4  7.6   14.0  12.5
-//	Arms / Fury 2H (items)  17.6  30.2  17.2  7.6   15.8  11.5
+//	Fury target             18.0  34.0  16.1  6.4   12.5  13.0
+//	Fury (these items)      18.0  35.4  16.4  6.7   12.1  11.3
+//	Arms / Fury 2H target   18.0  35.0  17.2  7.3   9.9   12.5
+//	Arms / Fury 2H (items)  18.1  36.3  17.5  7.5   9.5   11.0
 //
 // Every armor piece, ring and the bow carry the same mix (Strength first, then Stamina, Agility,
-// crit and attack power, no Spirit, the warrior runs on Rage), the swords a sword's mix (Strength,
-// crit, Agility, Stamina) and the two-hander the rest of the Arms target (Agility, Strength, attack
-// power, Stamina, no crit). One armor set serves both, so the weapons carry the difference. The
-// armor, rings and bow carry 90 hit rating and the weapons none: 9% hit is the cap for special
+// attack power and crit, no Spirit, the warrior runs on Rage), the swords a sword's mix (crit,
+// Strength, Agility, Stamina) and the two-hander the rest of the Arms target (Strength, Agility,
+// attack power, Stamina, some crit). One armor set serves both, so the weapons carry the difference.
+// The armor, rings and bow carry 90 hit rating and the weapons none: 9% hit is the cap for special
 // attacks against a level 63 boss (8% miss and 1% hit suppression), and no warrior talent adds main
-// hand hit (Furious Precision is off hand only). The Fury set has 146 crit rating, the two-hand set
-// 124. The plate has Battlegear of Might's armor at item level 66, the waist Onslaught Girdle's.
+// hand hit (Furious Precision is off hand only). The Fury set has 96 crit rating, the two-hand set
+// 78. The plate has Battlegear of Might's armor at item level 66, the waist Onslaught Girdle's.
 //
 // Arms and Fury share the armor, the rings and the bow, because their Era Phase 1 BiS lists are the same
 // outside the weapons: both want Strength, crit and hit. They differ in the weapons only. Fury dual wields
@@ -80,8 +79,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991001, Name: "Warrior Synthetic Head (Phase 1)", Icon: "inv_helm_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:     stats.Stats{stats.Strength: 18, stats.Agility: 9, stats.Stamina: 11, stats.AttackPower: 9, stats.Armor: 608}.ToFloatArray(),
-		HitRating: 20, CritRating: 11,
+		Stats:     stats.Stats{stats.Strength: 23, stats.Agility: 10, stats.Stamina: 11, stats.AttackPower: 8, stats.Armor: 608}.ToFloatArray(),
+		HitRating: 20, CritRating: 6,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 		SetName:        "Warrior Synthetic (Phase 1)",
@@ -90,8 +89,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991002, Name: "Warrior Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Strength: 13, stats.Agility: 6, stats.Stamina: 8, stats.AttackPower: 6}.ToFloatArray(),
-		HitRating: 10, CritRating: 8,
+		Stats:     stats.Stats{stats.Strength: 15, stats.Agility: 7, stats.Stamina: 8, stats.AttackPower: 7}.ToFloatArray(),
+		HitRating: 10, CritRating: 4,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -99,8 +98,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991003, Name: "Warrior Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:     stats.Stats{stats.Strength: 16, stats.Agility: 8, stats.Stamina: 10, stats.AttackPower: 8, stats.Armor: 562}.ToFloatArray(),
-		HitRating: 10, CritRating: 9,
+		Stats:     stats.Stats{stats.Strength: 19, stats.Agility: 9, stats.Stamina: 10, stats.AttackPower: 8, stats.Armor: 562}.ToFloatArray(),
+		HitRating: 10, CritRating: 5,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -108,8 +107,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991004, Name: "Warrior Synthetic Back (Phase 1)", Icon: "inv_misc_cape_20",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:     stats.Stats{stats.Strength: 13, stats.Agility: 6, stats.Stamina: 8, stats.AttackPower: 6, stats.Armor: 45}.ToFloatArray(),
-		HitRating: 10, CritRating: 8,
+		Stats:     stats.Stats{stats.Strength: 15, stats.Agility: 7, stats.Stamina: 8, stats.AttackPower: 7, stats.Armor: 45}.ToFloatArray(),
+		HitRating: 10, CritRating: 4,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -117,8 +116,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991005, Name: "Warrior Synthetic Chest (Phase 1)", Icon: "inv_chest_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:      stats.Stats{stats.Strength: 24, stats.Agility: 11, stats.Stamina: 15, stats.AttackPower: 11, stats.Armor: 749}.ToFloatArray(),
-		CritRating: 14,
+		Stats:      stats.Stats{stats.Strength: 30, stats.Agility: 14, stats.Stamina: 16, stats.AttackPower: 12, stats.Armor: 749}.ToFloatArray(),
+		CritRating: 8,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -126,8 +125,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991006, Name: "Warrior Synthetic Wrist (Phase 1)", Icon: "inv_bracer_19",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:      stats.Stats{stats.Strength: 15, stats.Agility: 7, stats.Stamina: 10, stats.AttackPower: 7, stats.Armor: 328}.ToFloatArray(),
-		CritRating: 9,
+		Stats:      stats.Stats{stats.Strength: 19, stats.Agility: 9, stats.Stamina: 10, stats.AttackPower: 9, stats.Armor: 328}.ToFloatArray(),
+		CritRating: 5,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -135,8 +134,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991007, Name: "Warrior Synthetic Hands (Phase 1)", Icon: "inv_glove_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:      stats.Stats{stats.Strength: 18, stats.Agility: 9, stats.Stamina: 11, stats.AttackPower: 9, stats.Armor: 468}.ToFloatArray(),
-		CritRating: 11,
+		Stats:      stats.Stats{stats.Strength: 25, stats.Agility: 10, stats.Stamina: 12, stats.AttackPower: 8, stats.Armor: 468}.ToFloatArray(),
+		CritRating: 6,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -144,8 +143,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991008, Name: "Warrior Synthetic Waist (Phase 1)", Icon: "inv_belt_09",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:     stats.Stats{stats.Strength: 19, stats.Agility: 9, stats.Stamina: 12, stats.AttackPower: 9, stats.Armor: 494}.ToFloatArray(),
-		HitRating: 10, CritRating: 11,
+		Stats:     stats.Stats{stats.Strength: 23, stats.Agility: 10, stats.Stamina: 12, stats.AttackPower: 8, stats.Armor: 494}.ToFloatArray(),
+		HitRating: 10, CritRating: 6,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -153,8 +152,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991009, Name: "Warrior Synthetic Legs (Phase 1)", Icon: "inv_pant_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:      stats.Stats{stats.Strength: 24, stats.Agility: 11, stats.Stamina: 15, stats.AttackPower: 11, stats.Armor: 655}.ToFloatArray(),
-		CritRating: 14,
+		Stats:      stats.Stats{stats.Strength: 30, stats.Agility: 14, stats.Stamina: 16, stats.AttackPower: 12, stats.Armor: 655}.ToFloatArray(),
+		CritRating: 8,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 		SetName:        "Warrior Synthetic (Phase 1)",
@@ -163,8 +162,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991010, Name: "Warrior Synthetic Feet (Phase 1)", Icon: "inv_boot_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:     stats.Stats{stats.Strength: 16, stats.Agility: 8, stats.Stamina: 10, stats.AttackPower: 8, stats.Armor: 515}.ToFloatArray(),
-		HitRating: 10, CritRating: 9,
+		Stats:     stats.Stats{stats.Strength: 19, stats.Agility: 9, stats.Stamina: 10, stats.AttackPower: 8, stats.Armor: 515}.ToFloatArray(),
+		HitRating: 10, CritRating: 5,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -172,8 +171,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991011, Name: "Warrior Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:      proto.ItemType_ItemTypeFinger,
-		Stats:     stats.Stats{stats.Strength: 13, stats.Agility: 6, stats.Stamina: 8, stats.AttackPower: 6}.ToFloatArray(),
-		HitRating: 10, CritRating: 8,
+		Stats:     stats.Stats{stats.Strength: 15, stats.Agility: 7, stats.Stamina: 8, stats.AttackPower: 7}.ToFloatArray(),
+		HitRating: 10, CritRating: 4,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -181,8 +180,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991012, Name: "Warrior Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_16",
 		Type:       proto.ItemType_ItemTypeFinger,
-		Stats:      stats.Stats{stats.Strength: 15, stats.Agility: 7, stats.Stamina: 10, stats.AttackPower: 7}.ToFloatArray(),
-		CritRating: 9,
+		Stats:      stats.Stats{stats.Strength: 19, stats.Agility: 9, stats.Stamina: 10, stats.AttackPower: 9}.ToFloatArray(),
+		CritRating: 5,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -193,8 +192,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
 		// Striker's Mark damage and speed.
 		WeaponDamageMin: 69, WeaponDamageMax: 129, WeaponSpeed: 2.5,
-		Stats:     stats.Stats{stats.Strength: 5, stats.Agility: 3, stats.Stamina: 3, stats.AttackPower: 3}.ToFloatArray(),
-		HitRating: 10, CritRating: 3,
+		Stats:     stats.Stats{stats.Strength: 7, stats.Agility: 3, stats.Stamina: 4, stats.AttackPower: 2}.ToFloatArray(),
+		HitRating: 10, CritRating: 2,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -205,8 +204,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
 		// Vis'kag the Bloodletter damage and speed.
 		WeaponDamageMin: 100, WeaponDamageMax: 187, WeaponSpeed: 2.6,
-		Stats:      stats.Stats{stats.Strength: 9, stats.Agility: 6, stats.Stamina: 5}.ToFloatArray(),
-		CritRating: 11,
+		Stats:      stats.Stats{stats.Strength: 11, stats.Agility: 6, stats.Stamina: 4, stats.AttackPower: 1}.ToFloatArray(),
+		CritRating: 14,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -217,8 +216,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
 		// Brutality Blade damage and speed.
 		WeaponDamageMin: 90, WeaponDamageMax: 168, WeaponSpeed: 2.5,
-		Stats:      stats.Stats{stats.Strength: 9, stats.Agility: 6, stats.Stamina: 5}.ToFloatArray(),
-		CritRating: 11,
+		Stats:      stats.Stats{stats.Strength: 11, stats.Agility: 6, stats.Stamina: 4, stats.AttackPower: 1}.ToFloatArray(),
+		CritRating: 14,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
@@ -229,8 +228,9 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeTwoHand,
 		// Bonereaver's Edge damage and speed.
 		WeaponDamageMin: 206, WeaponDamageMax: 310, WeaponSpeed: 3.4,
-		Stats: stats.Stats{stats.Strength: 28, stats.Agility: 35, stats.Stamina: 7, stats.AttackPower: 19}.ToFloatArray(),
-		Ilvl:  76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Stats:      stats.Stats{stats.Strength: 38, stats.Agility: 25, stats.Stamina: 13, stats.AttackPower: 18}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
 }
