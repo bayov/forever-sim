@@ -344,7 +344,7 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 - **Builds:** Fury, Fury two-hand, Arms.
 - **Sim now (standards 21):** a landed white hit gives k × weapon swing speed in Rage, with k = 3.46 for a one-hander and 4.5 for a two-hander, off hand ×1.0, and the `warr_crit_rage` crit bonus on top. `sim/core/rage.go` behind `Env.IsForever()` (warrior worker).
 - **Source:** Blizzard's Priest & Warrior deep dive ("fully-normalized ... based on the speed of the weapon that dealt the damage"), tier 3. The constants are beta testers' level 30 measurements (forum thread 2355684; Icy Veins and wowforeverbuilds repeat them), tier 5.
-- **Why uncertain:** Blizzard gives no formula. Nobody has measured it at 60, nobody has measured the off-hand factor, and nobody knows whether k scales with level.
+- **Why uncertain:** Blizzard gives no formula. Nobody has measured it at 60, nobody has measured the off-hand factor, and nobody knows whether k scales with level. The full beta test plan, which also covers Rage from damage taken, is under "Rage needs a beta test" in orchestration/followups.md.
 - **Settings:**
   - **Low, off hand ×0.5.** This is TBC's normalised formula, where the off hand gets half the main hand's factor (1.75 against 3.5).
   - **Expected, k 3.46 / 4.5, off hand ×1.0 (Sim now).** The measured constants, with no off-hand penalty stated.
