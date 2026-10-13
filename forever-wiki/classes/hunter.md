@@ -28,7 +28,7 @@ Marksmanship:
 - Careful Aim: 20% of Intellect a rank as melee and ranged attack power. Mortal Shots needs it, 6% crit damage a rank on Auto Shot, Aimed, Arcane and Multi-Shot, Serpent Sting and Volley (not Sniper Shot).
 - Rapid Killing: Rapid Fire's cooldown 1 min shorter a rank, and 10 / 20% on the next shot within 20 sec of a kill. Rapid Recuperation: a Serpent Sting hit gives 25 / 50% of mana regen while casting for 15 sec, using Rapid Killing 50 / 100%.
 - Improved Arcane Shot 0.3 sec a rank, on Arcane Shot only. Lone Wolf 20% damage with no pet out.
-- Trueshot Aura (row 4, 21 points) is a party aura of ranged attack power only, with trainer ranks 30 / 40 / 50 / 75 / 50 at 25 / 32 / 40 / 50 / 60.
+- Trueshot Aura (row 4, 21 points) is a party aura of ranged attack power only, with trainer ranks 30 / 40 / 50 / 75 / 50 at 25 / 32 / 40 / 50 / 60 (Classic's rank 3 at 60 was 100). A level 60 hunter casts rank 4's 75, the strongest it knows, and so does the sim (standards 8a); Hunter's Mark likewise gives rank 3's 98 over rank 4's 71 (Classic 110).
 - Barrage 3 / 7 / 10% on Aimed Shot, Multi-Shot and Volley. Ranged Weapon Specialization 1% a rank.
 - Sniper Shot (31 points): normalized ranged weapon damage plus 160 / 225 / 295 (ranks at 40 / 48 / 58), 4 sec cast, 15 sec cooldown, 365 mana, 45 yards, and 10 yards more range on the next 3 shots.
 - Gone: Aimed Shot (trained now), Improved Hunter's Mark (baseline), Improved Scorpid Sting. Improved Serpent Sting is still in the client data but parked far off the tree, so no one can take it.
