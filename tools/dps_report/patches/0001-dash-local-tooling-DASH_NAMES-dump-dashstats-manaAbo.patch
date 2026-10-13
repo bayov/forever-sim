@@ -1,0 +1,122 @@
+From 6195f46dd58180a39c88e89dc85287221fbfedfe Mon Sep 17 00:00:00 2001
+From: dash <dash@local>
+Date: Tue, 13 Oct 2026 10:06:04 +0000
+Subject: [PATCH] dash: local tooling (DASH_NAMES dump, dashstats, manaAbove
+ dedupe)
+
+---
+ sim/core/environment.go       | 12 ++++++++
+ tools/dashstats/main.go       | 52 +++++++++++++++++++++++++++++++++++
+ tools/rotopt/priest_shadow.go |  7 -----
+ 3 files changed, 64 insertions(+), 7 deletions(-)
+ create mode 100644 tools/dashstats/main.go
+
+diff --git a/sim/core/environment.go b/sim/core/environment.go
+index b18b920d4..00e30bf1b 100644
+--- a/sim/core/environment.go
++++ b/sim/core/environment.go
+@@ -1,6 +1,8 @@
+ package core
+ 
+ import (
++	"fmt"
++	"os"
+ 	"slices"
+ 	"time"
+ 
+@@ -192,6 +194,16 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
+ 	}
+ 	env.postFinalizeEffects = nil
+ 
++	if path := os.Getenv("DASH_NAMES"); path != "" {
++		if f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err == nil {
++			for _, u := range env.AllUnits {
++				for _, a := range u.auras {
++					fmt.Fprintf(f, "%d\t%d\t%d\t%d\t%s\n", a.ActionID.SpellID, a.ActionID.ItemID, a.ActionID.OtherID, a.ActionID.Tag, a.Label)
++				}
++			}
++			f.Close()
++		}
++	}
+ 	env.State = Finalized
+ 
+ 	slices.SortStableFunc(env.prepullActions, func(a1, a2 PrepullAction) int {
+diff --git a/tools/dashstats/main.go b/tools/dashstats/main.go
+new file mode 100644
+index 000000000..eedc03d57
+--- /dev/null
++++ b/tools/dashstats/main.go
+@@ -0,0 +1,52 @@
++// dashstats prints a RaidSimRequest's first player's stat sheet as JSON (local dashboard helper).
++package main
++
++import (
++	"encoding/json"
++	"fmt"
++	"os"
++
++	"github.com/wowsims/classic/sim"
++	"github.com/wowsims/classic/sim/core"
++	"github.com/wowsims/classic/sim/core/proto"
++	"github.com/wowsims/classic/sim/core/stats"
++	"google.golang.org/protobuf/encoding/protojson"
++)
++
++func main() {
++	sim.RegisterAll()
++	data, err := os.ReadFile(os.Args[1])
++	if err != nil {
++		panic(err)
++	}
++	req := &proto.RaidSimRequest{}
++	if err := protojson.Unmarshal(data, req); err != nil {
++		panic(err)
++	}
++	res := core.ComputeStats(&proto.ComputeStatsRequest{Raid: req.Raid, Encounter: req.Encounter})
++	if res.ErrorResult != "" {
++		fmt.Fprintln(os.Stderr, res.ErrorResult)
++		os.Exit(1)
++	}
++	p := res.RaidStats.Parties[0].Players[0]
++	out := map[string]any{"sets": p.Sets}
++	layers := map[string]*proto.UnitStats{"base": p.BaseStats, "gear": p.GearStats, "talents": p.TalentsStats, "buffs": p.BuffsStats, "consumes": p.ConsumesStats, "final": p.FinalStats}
++	for name, us := range layers {
++		m := map[string]float64{}
++		if us != nil {
++			for i, v := range us.Stats {
++				if v != 0 {
++					m[stats.Stat(i).StatName()] = v
++				}
++			}
++			for i, v := range us.PseudoStats {
++				if v != 0 {
++					m[fmt.Sprintf("pseudo%d", i)] = v
++				}
++			}
++		}
++		out[name] = m
++	}
++	b, _ := json.Marshal(out)
++	fmt.Println(string(b))
++}
+diff --git a/tools/rotopt/priest_shadow.go b/tools/rotopt/priest_shadow.go
+index e025c9632..2cdfc8696 100644
+--- a/tools/rotopt/priest_shadow.go
++++ b/tools/rotopt/priest_shadow.go
+@@ -88,13 +88,6 @@ func channel(spell *proto.ActionID, condition value, interruptIf value, notes st
+ 	}
+ }
+ 
+-func manaAbove(percent float64) value {
+-	if percent <= 0 {
+-		return nil
+-	}
+-	return ge(currentManaPercent(), num(percent/100))
+-}
+-
+ func (priestShadow) Build(k Knobs) *proto.APLRotation {
+ 	shadowWordPain := rankID(priest.ShadowWordPainLevel[:], priest.ShadowWordPainSpellId[:])
+ 	devouringPlague := rankID(priest.DevouringPlagueLevel[:], priest.DevouringPlagueSpellId[:])
+-- 
+2.43.0
+

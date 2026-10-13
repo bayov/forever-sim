@@ -1,0 +1,89 @@
+{
+  "id": "shaman__enhancement-water-shield",
+  "class": "Shaman",
+  "spec": "Enhancement",
+  "build": "Water Shield",
+  "isDefault": false,
+  "pr": 7,
+  "race": "Orc",
+  "talents": "050031-053030031005112151-052030001",
+  "treePoints": "9/31/11",
+  "treeNames": [
+    "Elemental",
+    "Enhancement",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic.gear.json",
+  "apl": "magma.apl.json",
+  "published": {
+    "dps": 755.6,
+    "source": "the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)",
+    "overall": {
+      "race": "Orc",
+      "dps": 755.6
+    },
+    "horde": {
+      "race": "Orc",
+      "dps": 755.6
+    }
+  },
+  "verify": {
+    "dps": 756.36,
+    "stderr": 0.34,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Orc, 180 s with durationVariation 20, on the merged bundled-round tree. Published 755.6 (the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)); delta +0.76."
+  },
+  "summary": "Sub-Restoration Enhancement that takes Water Shield (with Tidal Focus and Totemic Focus) and uses Magma Totem instead of Searing/Flametongue, since it has no Improved Fire Nova. It is 5.8% behind Level 60 at 180 s.",
+  "keyTalents": [
+    "Stormstrike",
+    "Maelstrom Weapon",
+    "Rage of the Farseer",
+    "Water Shield",
+    "Call of Flame",
+    "Tidal Focus",
+    "Totemic Focus",
+    "Flurry"
+  ],
+  "rotation": [
+    "Pre-pull: Water Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem, Mana Spring, and Magma Totem 1 s before the pull",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
+    "Magma Totem when it is down and at least 10 s remain",
+    "Rage of the Farseer on cooldown; Blood Fury lined up with it; other cooldowns",
+    "Stormstrike on cooldown",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
+    "Fire Nova above 20% mana (ahead of the shocks)",
+    "Flame Shock when its DoT is down",
+    "Earth Shock while Flame Shock has more than 1 s left",
+    "Water Shield when it is down and mana is below 50%"
+  ],
+  "consumes": [
+    "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
+    "Flask of Supreme Power",
+    "Elixir of Greater Agility",
+    "Juju Power",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Elixir of the Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Nature Power",
+    "Elixir of Shadow Power",
+    "Grilled Squid",
+    "Dragonbreath Chili",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Strength and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Water Shield is inert at the preset's 0 raid hits; worth up to +4.1 at 6 hits a minute",
+    "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
+    "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
+    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
+  ],
+  "notes": "mksettings -spec enh writes a Flametongue Totem starting fire totem; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset (PresetBuildOptionsLevel60Magma) ships and shaman_presets.sh says to do. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+}

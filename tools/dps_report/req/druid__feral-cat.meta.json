@@ -1,0 +1,82 @@
+{
+  "id": "druid__feral-cat",
+  "class": "Druid",
+  "spec": "Feral",
+  "build": "Feral cat",
+  "isDefault": true,
+  "pr": 8,
+  "race": "NightElf",
+  "talents": "05002-05200332021031212051-05501",
+  "treePoints": "7/33/11",
+  "treeNames": [
+    "Balance",
+    "Feral Combat",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60",
+  "published": {
+    "dps": 688.3,
+    "source": "PR #8",
+    "overall": {
+      "race": "NightElf",
+      "dps": 688.3
+    },
+    "horde": {
+      "race": "SkyborneWindshaper",
+      "dps": 686.8
+    },
+    "alliance": {
+      "race": "NightElf",
+      "dps": 688.3
+    }
+  },
+  "verify": {
+    "dps": 688.19,
+    "stderr": 0.14,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, NightElf, 180 s with durationVariation 20, on the merged bundled-round tree. Published 688.3 (PR #8); delta -0.11."
+  },
+  "summary": "Shred and Rip cat with Shifting Power for Energy and Tiger's Fury and Berserk on cooldown, no Rake. It is the talent search's best on the synthetic Phase 1 gear and the default Feral Level 60 preset.",
+  "keyTalents": [
+    "Shredding Attacks",
+    "Shifting Power",
+    "Improved Shifting Power",
+    "Rend and Tear",
+    "Berserk",
+    "Savage Fury",
+    "Sharpened Claws",
+    "Naturalist"
+  ],
+  "rotation": [
+    "Opener: plain Cat Form (no Stealth/Prowl or Ravage)",
+    "Racials, Tiger's Fury and Berserk on cooldown",
+    "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6 s or more)",
+    "Ferocious Bite at any combo points in the last 2 s",
+    "Rip at 4+ combo points when it is down (not in the last 8 s)",
+    "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6 s or more left (or in the last 8 s)",
+    "Shred below 5 combo points"
+  ],
+  "consumes": [
+    "Flask of Distilled Wisdom",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Dragonbreath Chili",
+    "Flank au Poivre",
+    "Ground Scorpok Assay",
+    "Major Mana Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 29 Agility and 17 Strength, and 165 Strength for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Raid buffs without Ahn'Qiraj book ranks cost 14.8 (662.8 -> 648.0 at 180 s, first gear)",
+    "Rip's level 31+ client ranks are 6-9% below Era: Era values would give +1.6%",
+    "Howling Idol is worth 12.5 and 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
+    "Unverified: Shred's flat bonus, AP on Rip/Bite, Tiger's Fury on white hits and bleeds, Rend and Tear's scope",
+    "Keeping Rake up costs 33; Rip at 5 CP ties",
+    "Only one +2% crit elixir by standard; Grizzly in place of Ferocity would add 4.9"
+  ],
+  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Grace of Air regular, all blessings, own Leader of the Pack; latency 100 ms). Duration 180 s, durationVariation 20. Potion and Demonic Rune are in the consumes but do nothing in Cat Form. No edits needed. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+}
