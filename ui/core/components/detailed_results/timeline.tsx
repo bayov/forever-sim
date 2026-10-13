@@ -9,7 +9,7 @@ import { AuraUptimeLog, CastLog, DamageDealtLog, DpsLog, ResourceChangedLogGroup
 import { resourceNames } from '../../proto_utils/names.js';
 import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { orderedResourceTypes } from '../../proto_utils/utils.js';
-import { bucket, distinct, formatToNumber, maxIndex, stringComparator } from '../../utils.js';
+import { bucket, distinct, formatToCompactNumber, formatToNumber, maxIndex, stringComparator } from '../../utils.js';
 import { actionColors } from './color_settings.js';
 import { EventCategory, EventFilter } from './events_filter.js';
 import { hitOutcome, HitOutcomeKind, outcomeBadge } from './hit_outcome.js';
@@ -514,11 +514,15 @@ export class Timeline extends ResultComponent {
 
 	// Returns a function for drawing the tooltip, or null if no series was added.
 	private addManaSeries(unit: UnitMetrics, options: any): TooltipHandler | null {
-		const manaLogs = unit.groupedResourceLogs[ResourceType.ResourceTypeMana].filter(log => log.timestamp >= 0);
+		const allManaLogs = unit.groupedResourceLogs[ResourceType.ResourceTypeMana];
+		const manaLogs = allManaLogs.filter(log => log.timestamp >= 0);
 		if (manaLogs.length == 0) {
 			return null;
 		}
-		const maxMana = manaLogs[0].valueBefore;
+		// The full pool is the mana before the first change, prepull included. The first change
+		// after the pull can come after prepull totems already spent some, and then regen would
+		// draw the line over the top of the axis.
+		const maxMana = Math.max(...allManaLogs.map(log => Math.max(log.valueBefore, log.valueAfter)));
 
 		options.colors.push(manaColor);
 		options.series.push({
@@ -568,24 +572,57 @@ export class Timeline extends ResultComponent {
 		};
 	}
 
-	// Returns a function for drawing the tooltip, or null if no series was added.
+	// Returns a function for drawing the tooltip, or null if no series was added. Threat adds up
+	// over the fight to far more than the DPS, so it gets its own axis on the right.
 	private addThreatSeries(unit: UnitMetrics, options: any, colorOverride: string): TooltipHandler | null {
-		options.colors.push(colorOverride || threatColor);
+		const threatLogs = unit.threatLogs.filter(log => log.timestamp >= 0);
+		if (threatLogs.length == 0) {
+			return null;
+		}
+		const color = colorOverride || threatColor;
+		const maxThreat = Math.max(...threatLogs.map(log => log.threatAfter));
+
+		options.colors.push(color);
 		options.series.push({
 			name: 'Threat',
 			type: 'line',
-			data: unit.threatLogs
-				.filter(log => log.timestamp >= 0)
-				.map(log => {
-					return {
-						x: log.timestamp,
-						y: log.threatAfter,
-					};
-				}),
+			data: threatLogs.map(log => {
+				return {
+					x: log.timestamp,
+					y: log.threatAfter,
+				};
+			}),
 		});
+		options.yaxis.push({
+			seriesName: 'Threat',
+			opposite: true,
+			min: 0,
+			max: maxThreat > 0 ? maxThreat : 1,
+			tickAmount: 10,
+			title: {
+				text: 'Threat',
+				style: {
+					color,
+				},
+			},
+			axisBorder: {
+				show: true,
+				color,
+			},
+			axisTicks: {
+				color,
+			},
+			labels: {
+				minWidth: 30,
+				style: {
+					colors: [color],
+				},
+				formatter: (val: string) => formatToCompactNumber(parseFloat(val)),
+			},
+		} as any);
 
 		return (dataPointIndex: number) => {
-			const log = unit.threatLogs[dataPointIndex];
+			const log = threatLogs[dataPointIndex];
 			return this.threatTooltip(log, true, unit, colorOverride);
 		};
 	}
@@ -903,17 +940,17 @@ export class Timeline extends ResultComponent {
 		}
 		const startValue = resourceLogs[0].valueBefore;
 		const isPercentage = percentageResources.includes(resourceType);
-		// The top of the chart is the resource's cap: the starting mana, 100 rage or energy, and 5
-		// combo points. Others use the highest value we saw.
+		// The top of the chart is the resource's cap: the full mana pool (the highest mana we saw),
+		// 100 rage or energy, and 5 combo points. Others use the highest value we saw.
 		const caps: Partial<Record<ResourceType, number>> = {
 			[ResourceType.ResourceTypeRage]: 100,
 			[ResourceType.ResourceTypeEnergy]: 100,
 			[ResourceType.ResourceTypeComboPoints]: 5,
 		};
 		const highest = Math.max(startValue, ...resourceLogs.map(log => log.valueAfter));
-		const maxValue = isPercentage ? startValue : Math.max(caps[resourceType] ?? 0, highest);
+		const maxValue = isPercentage ? highest : Math.max(caps[resourceType] ?? 0, highest);
 		const labelText = (log: ResourceChangedLogGroup) =>
-			isPercentage ? ((log.valueAfter / startValue) * 100).toFixed(0) + '%' : Math.floor(log.valueAfter).toFixed(0);
+			isPercentage ? ((log.valueAfter / maxValue) * 100).toFixed(0) + '%' : Math.floor(log.valueAfter).toFixed(0);
 		const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
 
 		const labelElem = (
@@ -1011,7 +1048,7 @@ export class Timeline extends ResultComponent {
 			}
 			if (lo == shownIndex) return;
 			shownIndex = lo;
-			tooltip.setContent(this.resourceTooltipElem(resourceLogs[lo], startValue, false));
+			tooltip.setContent(this.resourceTooltipElem(resourceLogs[lo], maxValue, false));
 			if (!tooltip.state.isVisible) tooltip.show();
 		};
 		rowElem.addEventListener('mousemove', onMove);
