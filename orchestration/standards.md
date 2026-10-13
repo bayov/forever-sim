@@ -81,7 +81,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    | Druid Grovekeeper 4-piece | its creature type (not live) | off |
    | Hunter Improved Tracking (+1% a rank) | every raid boss type except Mechanical | stays ON, because a hunter tracks the boss's type whatever it is; the hunter applies it against Unknown too |
 
-   Talents are re-optimised for the generic boss (e.g. no Murder).
+   Talents are re-optimised for the generic boss (e.g. no Murder). Confirmed by the user (2026-10-13, after the fairness auditor raised the asymmetry): Improved Tracking stays on against the generic boss and Murder stays off. Tracking works on every boss type except Mechanical, so a hunter always has it; Murder only works on Humanoids and Giants.
    Encounter-specific builds ("vs Humanoid", "vs Undead", "vs Giant / Dragonkin") ship as extra, non-default presets wherever the creature-type effect is worth about 2% or more for that spec. Their talents and rotation are optimised for that target, and they are labelled with the creature type. The dashboard hides them by default and shows them behind a toggle.
 
 ## Races
