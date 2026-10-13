@@ -25,6 +25,8 @@ var (
 	spearingStrike   = spellID(1310222)
 	heroicStrikeNext = &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: 11567}, Tag: 1, Rank: 8}
 	potion           = &proto.ActionID{RawId: &proto.ActionID_OtherId{OtherId: proto.OtherAction_OtherActionPotion}}
+	// The synthetic on-use trinket (sim/warrior/forever_synthetic_trinkets.go): 20 sec, 2 min.
+	battleTrinket = itemID(991018)
 )
 
 // The 30 sec Death Wish is the anchor of a warrior's burst window.
@@ -67,6 +69,9 @@ func warriorKnobs() []Knob {
 		{Name: "racialHoldForDw", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "potionHoldForDw", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "potionAt", Default: 30, Min: 10, Max: 60, Step: 5},
+		// The synthetic on-use trinket: 0 on cooldown (with the other cooldowns), otherwise its last
+		// use waits for the last trinketAt seconds when the wait costs no use.
+		{Name: "trinketAt", Default: 0, Min: 0, Max: 40, Step: 5},
 		// Battle Shout when the raid's is not up. The shared raid already has one.
 		{Name: "battleShout", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
@@ -110,6 +115,14 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 		cast(berserking, hold(berserking, racial), "Troll. Berserking waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line."),
 		cast(elunesLight, hold(elunesLight, racial), "Night Elf. Elune's Light waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line."),
 		potionLine(k, hold),
+	)
+	if k["trinketAt"] > 0 {
+		items = append(items, cast(battleTrinket, or(
+			le(remainingTime(), seconds(k["trinketAt"])),
+			gt(spellUsesLostByDelay(battleTrinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(15)), num(0)),
+		), "The on-use trinket, the last use held for the end of the fight when the wait costs no use."))
+	}
+	items = append(items,
 		cast(bloodrage, lt(currentRage(), num(k["bloodrageRage"])), "Bloodrage when there is room for the Rage."),
 	)
 	if k["berserkerRageRage"] > 0 {

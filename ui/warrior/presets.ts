@@ -85,7 +85,7 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // on-use trinket with +335 attack power for 20 sec every 2 min (37 weighted on average, Earthstrike's
 // size; sim/warrior/forever_synthetic_trinkets.go).
 //
-// On 2026-10-13 the Level 60 Fury build (Human, 180 sec) does 1012.4 on the Fury set, and the Era
+// On 2026-10-13 the Level 60 Fury build (Human, 180 sec) does 1016.0 on the Fury set, and the Era
 // Phase 1 set (phase_1.gear.json) 985.6 with the same talents and rotation.
 export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Fury)', Level60Phase1SyntheticFuryGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for a dual wield warrior, made of synthetic items that are not in the game.',
@@ -123,7 +123,9 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // Berserker Rage (one point of the talent is not worth the GCD). The Mighty Rage Potion goes at the
 // pull and the second is held for the last 20 sec (+6.4 at 180 sec, -3.0 at 120, at 30 sec). Heroic Strike from
 // 20 Rage starved Bloodthirst and Whirlwind (40 is +3.4 at 180 sec, the rotation auditor's pass 2).
-// It is 1012.4 where the old DPS (With Reck) rotation is 984.5. Slam on its 18 sec cooldown and
+// The on-use trinket's last use is held for the last 25 sec the same way (+3.4 at 180 sec, +3.7 at
+// 120, +1.8 at 300; the rotation auditor's pass 12). Two-hand Fury and Arms gain nothing from it.
+// It is 1016.0 where the old DPS (With Reck) rotation is 984.5. Slam on its 18 sec cooldown and
 // holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
@@ -347,8 +349,8 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-13 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1071.6 / 1020.3 /
-// 989.2, Level 60 Fury (Two-Hand) (Undead) 934.6 / 887.4 / 852.8 and Level 60 Arms (Undead) 912.2 /
+// On 2026-10-13 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1075.3 / 1023.7 /
+// 991.0, Level 60 Fury (Two-Hand) (Undead) 934.6 / 887.4 / 852.8 and Level 60 Arms (Undead) 912.2 /
 // 890.4 / 865.5. The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the raid's Battle Shout VI,
 // Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and Deep Wounds' ticks not
 // critting 1.6 / 6.7 / 7.2. Undead has no weapon racial, so these are also the numbers with weapon racials off.
