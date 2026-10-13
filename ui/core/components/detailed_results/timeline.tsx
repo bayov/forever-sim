@@ -831,8 +831,10 @@ export class Timeline extends ResultComponent {
 		this.dpsResourcesPlotElem.classList.add('hide');
 		this.rotationPlotElem.classList.remove('hide');
 
-		this.drawRotationTimeRuler(this.rotationTimeline.querySelector('.rotation-timeline-header')!);
+		const header = this.rotationTimeline.querySelector<HTMLElement>('.rotation-timeline-header')!;
+		this.drawRotationTimeRuler(header);
 		this.drawPull();
+		this.drawGrid(header);
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 		this.addGcdRow(player, duration);
@@ -1553,14 +1555,24 @@ export class Timeline extends ResultComponent {
 		if (this.viewEnd > 0) this.rotationTimeline.appendChild(<div className="rotation-pull-line" style={{ left: pullLeft }} />);
 	}
 
+	// A faint line down the rows at every second, so we can follow a time from the ruler. Each line
+	// sits where the ruler's tick for that second is, and starts under the ruler. It goes first, so
+	// the rows draw over it.
+	private drawGrid(header: HTMLElement) {
+		const lines: Array<Element> = [];
+		for (let time = Math.ceil(this.viewStart); time <= this.viewEnd; time++) {
+			lines.push(<div className="rotation-grid-line" style={{ left: this.timeToLeft(time) }} />);
+		}
+		this.rotationTimeline.prepend(
+			<div className="rotation-grid" style={{ top: `${header.offsetTop + header.offsetHeight}px`, width: this.viewWidthPx() }}>
+				{lines}
+			</div>,
+		);
+	}
+
 	private drawRotationTimeRuler(header: HTMLElement) {
 		const [labelStep, tickStep] = rulerSteps.find(([label]) => label * this.pxPerSecond >= 60) ?? rulerSteps[rulerSteps.length - 1];
 		header.style.width = this.viewWidthPx();
-
-		// Faint lines down the rows at each label, so we can follow a time from the ruler.
-		const gridStep = labelStep * this.pxPerSecond;
-		this.rotationTimeline.style.setProperty('--grid-step', `${gridStep}px`);
-		this.rotationTimeline.style.setProperty('--grid-offset', `${-((this.viewStart % labelStep) * this.pxPerSecond)}px`);
 
 		const ticks: Array<Element> = [];
 		const firstTick = Math.ceil(this.viewStart / tickStep - 1e-6);
