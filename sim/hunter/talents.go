@@ -103,7 +103,10 @@ func (hunter *Hunter) applySurvivalTalents() {
 	// Improved Tracking: 1% damage a rank against the creature type the hunter tracks. A hunter
 	// can track every type a raid boss is (Beasts, Demons, Dragonkin, Elementals, Giants,
 	// Humanoids, Undead), so it counts against all of them. Damage only, like Classic's Slaying
-	// talents' damage half, but the crit damage half is gone. The pet does not get it.
+	// talents' damage half, but the crit damage half is gone. The pet does not get it. The
+	// Unknown type is the generic boss the Level 60 presets fight (standards 19): whatever type
+	// that boss really is, the hunter tracks it, unless it is Mechanical, which no raid boss the
+	// presets stand for is.
 	if hunter.Talents.ImprovedTracking > 0 {
 		multiplier := 1 + 0.01*float64(hunter.Talents.ImprovedTracking)
 		hunter.Env.RegisterPostFinalizeEffect(func() {
@@ -111,7 +114,7 @@ func (hunter *Hunter) applySurvivalTalents() {
 				switch t.MobType {
 				case proto.MobType_MobTypeBeast, proto.MobType_MobTypeDemon, proto.MobType_MobTypeDragonkin,
 					proto.MobType_MobTypeElemental, proto.MobType_MobTypeGiant, proto.MobType_MobTypeHumanoid,
-					proto.MobType_MobTypeUndead:
+					proto.MobType_MobTypeUndead, proto.MobType_MobTypeUnknown:
 					for _, at := range hunter.AttackTables[t.UnitIndex] {
 						at.DamageDealtMultiplier *= multiplier
 					}

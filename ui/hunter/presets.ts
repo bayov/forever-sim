@@ -328,7 +328,7 @@ const level60Boss = Encounter.create({
 			id: 213336,
 			name: 'Level 60',
 			level: 63,
-			mobType: MobType.MobTypeHumanoid,
+			mobType: MobType.MobTypeUnknown,
 			stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
 			minBaseDamage: 3000,
 			damageSpread: 0.3333,
@@ -338,7 +338,7 @@ const level60Boss = Encounter.create({
 	],
 });
 
-// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, Humanoid) in a 3
+// The level 60 raid setup: the generic level 60 boss (level 63, 3731 armor, type Unknown) in a 3
 // minute fight, and the raid and consumes above. The builds were searched at 180 sec.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter('Level 60', level60Boss, {
 	tanks: [],

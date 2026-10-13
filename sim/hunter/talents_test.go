@@ -7,10 +7,15 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 // newHunterSim builds a level 60 Forever hunter on the Survival set with the given talents.
 func newHunterSim(t *testing.T, talents string, debuffs *proto.Debuffs) (*core.Simulation, *Hunter) {
+	return newHunterSimAgainst(t, talents, debuffs, core.NewDefaultTarget())
+}
+
+func newHunterSimAgainst(t *testing.T, talents string, debuffs *proto.Debuffs, target *proto.Target) (*core.Simulation, *Hunter) {
 	player := &proto.Player{
 		Class:         proto.Class_ClassHunter,
 		Race:          proto.Race_RaceHuman,
@@ -21,7 +26,7 @@ func newHunterSim(t *testing.T, talents string, debuffs *proto.Debuffs) (*core.S
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, debuffs),
-		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())
 	sim.Reset()
@@ -93,6 +98,34 @@ func TestExposePreyWindow(t *testing.T) {
 		case mark:
 			if got := hunter.DefensiveState.RemainingDuration(sim); got != 10*time.Second {
 				t.Errorf("Expose Prey opened Mongoose Bite for %v, want 10s", got)
+			}
+		}
+	}
+}
+
+// TestImprovedTrackingGenericBoss checks that Improved Tracking's 5% counts against the generic
+// Level 60 boss (type Unknown, standards 19), whose real type a hunter can always track, and
+// against a Humanoid, but not against a Mechanical, which no tracking covers.
+func TestImprovedTrackingGenericBoss(t *testing.T) {
+	// Improved Tracking 5.
+	const talents = "--5"
+	for _, c := range []struct {
+		mobType proto.MobType
+		want    float64
+	}{
+		{proto.MobType_MobTypeUnknown, 1.05},
+		{proto.MobType_MobTypeHumanoid, 1.05},
+		{proto.MobType_MobTypeMechanical, 1},
+	} {
+		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+		target.MobType = c.mobType
+		_, hunter := newHunterSimAgainst(t, talents, &proto.Debuffs{}, target)
+		if hunter.Talents.ImprovedTracking != 5 {
+			t.Fatalf("Improved Tracking %d, want 5", hunter.Talents.ImprovedTracking)
+		}
+		for castType, at := range hunter.AttackTables[hunter.CurrentTarget.UnitIndex] {
+			if at != nil && at.DamageDealtMultiplier != c.want {
+				t.Errorf("%v, cast type %v: damage multiplier %.3f, want %.3f", c.mobType, castType, at.DamageDealtMultiplier, c.want)
 			}
 		}
 	}
