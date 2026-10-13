@@ -27,9 +27,12 @@ gen() {
 # both from the rotation auditor). Summon Hawk while fewer than 2 hawks are out (hawk=2) only matters
 # with the talent, which no build takes.
 ranged="aimed=1,aimedMana=0,hawk=2,intimidation=0,serpent=1,sniper=1,sniperFirst=0,rapidPrepull=1"
-gen hunter_ranged bm "$ranged,arcaneFirst=0,arcaneMana=20,serpentLate=0,serpentMana=30"
-gen hunter_ranged mm "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,sniperManaPerSec=25"
-gen hunter_ranged lw "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,sniperManaPerSec=25"
+gen hunter_ranged bm "$ranged,arcaneFirst=0,arcaneMana=20,serpentLate=0,serpentMana=30,holdElune=1"
+gen hunter_ranged mm "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,sniperManaPerSec=25,holdRapid=1,holdElune=1"
+gen hunter_ranged lw "$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,sniperManaPerSec=25,holdRapid=1,holdElune=1"
+# Marksmanship and Lone Wolf hold Rapid Fire and Elune's Light for the on-use trinket when the wait
+# costs no use, Beast Mastery only Elune's Light (rotation auditor, 2026-10-13: +2.3 / +1.7 / +0.5
+# at 300 sec, nothing at 120 and 180).
 # Survival: Wing Clip in every free global cooldown (+31 at 180 sec), held when Mongoose Bite or
 # Strider Kick is about ready (+0.4).
 gen hunter_sv sv "lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=1"

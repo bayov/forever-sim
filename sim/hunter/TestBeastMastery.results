@@ -299,16 +299,16 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1551.48429
-  tps: 1698.28113
+  dps: 1554.79588
+  tps: 1701.43832
   dtps: 1.92412
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1447.12209
-  tps: 1147.17371
+  dps: 1450.17738
+  tps: 1150.09036
   dtps: 1.77831
  }
 }
@@ -323,16 +323,16 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 793.74567
-  tps: 860.82405
+  dps: 793.01489
+  tps: 859.72587
   dtps: 1.77651
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 694.24906
-  tps: 481.0839
+  dps: 692.93924
+  tps: 479.12019
   dtps: 1.8306
  }
 }
