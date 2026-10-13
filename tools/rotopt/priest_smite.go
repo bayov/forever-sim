@@ -29,7 +29,8 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "swp", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "swpMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		{Name: "dp", Default: 1, Min: 0, Max: 1, Step: 1},
-		{Name: "dpMana", Default: 20, Min: 0, Max: 80, Step: 10},
+		// Devouring Plague above 40% mana (2026-10-13, with the downranking penalty).
+		{Name: "dpMana", Default: 40, Min: 0, Max: 80, Step: 10},
 		{Name: "mb", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -41,13 +42,13 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "chastise", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
 		// Smite of this rank (0 never) once the mana would no longer last the fight at
-		// smiteManaRate mana a second. Ranks 3 and up keep the full coefficient under Forever,
-		// so a lower rank keeps most of the damage for far less mana. Below 20 mana a second,
-		// rank 3 is best at every fight length (2026-10-12), rank 4 only 0.9 behind at 300 sec.
-		// Rank 3 is learned at level 14, and Classic cuts spells learned below 20, so the
-		// default is rank 4, which no such rule reaches.
-		{Name: "smiteDownrank", Default: 4, Min: 0, Max: 7, Step: 1},
-		{Name: "smiteManaRate", Default: 20, Min: 15, Max: 45, Step: 5},
+		// smiteManaRate mana a second. Forever's downranking penalty (Blizzard's 2026-10-01
+		// development notes, foreverchanges.pro/downranking: 5% of the coefficient lost per
+		// level past 17 below the caster, sim/priest/priest.go) leaves rank 7 (level 46) its
+		// full coefficient at 60 and ranks 4 and lower none. Rank 7 below 35 mana a second is
+		// 706.5 / 643.8 at 180 / 300 sec against 701.4 / 545.0 for the earlier rank 4 below 20.
+		{Name: "smiteDownrank", Default: 7, Min: 0, Max: 7, Step: 1},
+		{Name: "smiteManaRate", Default: 35, Min: 15, Max: 45, Step: 5},
 		// A Smite 2 sec before the pull (Divine Fury 5/5), landing at 0.
 		{Name: "prepullSmite", Default: 1, Min: 0, Max: 1, Step: 1},
 		// The Level 60 on-use trinket at -0.1 sec, so the pre-cast Smite landing at 0 gets it.
