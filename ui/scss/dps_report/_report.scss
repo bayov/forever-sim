@@ -2823,18 +2823,46 @@ ol.fv-list li::marker {
 	}
 }
 
-// Once the page scrolls, the header floats over it as a frosted bar as wide as the page's content. It gets a border
-// on the sides and bottom and round bottom corners, so its ends don't look cut off. On Specs the section bar sticks
-// right under it, and then the two read as one bar with the round corners at the bottom.
+// Once the page scrolls, the header floats over it as a frosted bar as wide as the page's content. Like in the spec
+// sims, the line under it first grows out to the bar's ends. Then a border fades in on the sides and bottom with
+// round bottom corners, so the bar's ends don't look cut off. The border is always there, only transparent until the
+// bar sticks, so nothing moves by a pixel when it shows. On Specs the section bar sticks right under the header, and
+// then the two read as one bar with the round corners at the bottom.
 .dps-report-sim-ui {
-	.sim-header.stuck,
-	.fv-jump.stuck {
-		border: 1px solid var(--line-color);
+	.sim-header,
+	.fv-jump {
+		border: 1px solid transparent;
 		border-top: 0;
 		border-radius: 0 0 var(--panel-radius) var(--panel-radius);
+		transition:
+			background-color 0.15s ease-in-out,
+			box-shadow 0.15s ease-in-out,
+			border-color 0.2s ease-in-out;
 
 		&::after {
-			display: none;
+			transition:
+				width 0.15s ease-in-out,
+				left 0.15s ease-in-out,
+				right 0.15s ease-in-out,
+				opacity 0.2s ease-in-out;
+		}
+	}
+
+	.sim-header.stuck,
+	.fv-jump.stuck {
+		border-color: var(--line-color);
+		transition:
+			background-color 0.15s ease-in-out,
+			box-shadow 0.15s ease-in-out,
+			border-color 0.2s ease-in-out 0.15s;
+
+		&::after {
+			opacity: 0;
+			transition:
+				width 0.15s ease-in-out,
+				left 0.15s ease-in-out,
+				right 0.15s ease-in-out,
+				opacity 0.2s ease-in-out 0.15s;
 		}
 	}
 

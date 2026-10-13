@@ -750,12 +750,13 @@ export function startReport(dash) {
       // Pointing at a row shows its numbers, and a click keeps them up. A second click opens the preset in Specs.
       const tip = (pinned) => {
         const card = $('#mana-card'), cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
+        // Only what the row doesn't show already: the middle half of fights, how many fights run low at all, and the
+        // mana pool and its net drain.
+        const share = m.shareLow ?? m.share10;
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, [
-          low ? `Below ${lowPct}% mana at ${mmss(m.lowAt)} in a typical fight` : `A typical fight never drops below ${lowPct}% mana`,
           low && m.lowAtP25 != null ? `Middle half of fights: ${mmss(m.lowAtP25)} to ${m.lowAtP75 != null ? mmss(m.lowAtP75) : 'never'}` : null,
-          `${d3.format('.0f')(m.shareLow ?? m.share10)}% of fights ever drop below ${lowPct}%`,
-          `Mana left: ${d3.format('.0f')(m.pctAt180)}% at 3:00, ${d3.format('.0f')(m.pctAt480)}% at 8:00`,
-          `${d3.format(',')(m.maxMana)} mana, spends ${f1(m.spentPerSec)} and gains ${f1(m.gainedPerSec)} a second`,
+          share >= 99.5 ? 'Every fight runs low' : `${d3.format('.0f')(share)}% of fights run low`,
+          `${d3.format(',')(m.maxMana)} mana, drains ${f1(m.spentPerSec - m.gainedPerSec)}/s`,
         ], { hl: row, open: b.id, below: true, pinned });
       };
       row.addEventListener('pointerenter', (e) => { chart.highlight(b.id); row.classList.add('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
