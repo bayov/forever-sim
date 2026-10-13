@@ -66,8 +66,9 @@ func TestCatCosts(t *testing.T) {
 	if got := cat.ShiftingPower.CD.Duration; got != 8*time.Second {
 		t.Errorf("Shifting Power cooldown %s, want 8s", got)
 	}
-	if cat.TigersFury.DefaultCast.Cost != 0 || cat.TigersFury.CD.Duration != 30*time.Second {
-		t.Errorf("Tiger's Fury costs %.0f with a %s cooldown, want free and 30s", cat.TigersFury.DefaultCast.Cost, cat.TigersFury.CD.Duration)
+	// Forever removed Tiger's Fury (sim/druid/tigers_fury.go).
+	if cat.TigersFury != nil {
+		t.Error("the Forever druid has Tiger's Fury")
 	}
 }
 
@@ -84,16 +85,9 @@ func TestCatShiftingPower(t *testing.T) {
 	}
 }
 
-// TestCatBuffs checks Tiger's Fury (15% Physical damage) and Berserk (100% crit on the
-// builders, not on Rip or Ferocious Bite).
+// TestCatBuffs checks Berserk (100% crit on the builders, not on Rip or Ferocious Bite).
 func TestCatBuffs(t *testing.T) {
 	sim, cat := newCatSim(t, catTalents)
-	physical := cat.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
-	cat.TigersFuryAura.Activate(sim)
-	if got := cat.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; math.Abs(got-physical*1.15) > 1e-9 {
-		t.Errorf("Physical damage with Tiger's Fury %.4f, want %.4f", got, physical*1.15)
-	}
-	cat.TigersFuryAura.Deactivate(sim)
 
 	shredCrit, biteCrit := cat.Shred.BonusCritRating, cat.FerociousBite.BonusCritRating
 	cat.BerserkAura.Activate(sim)

@@ -49,15 +49,17 @@ func near(a, b float64) bool { return math.Abs(a-b) < 1e-6 }
 // "The Druid's melee auto attack DPS ... in Bear Form, Cat Form, or Dire Bear Form is now the
 // same as the DPS of the Druid's equipped weapon. But the speed of attack is changed to 1.0 or
 // 2.5 seconds ... Abilities that deal weapon damage likewise use these damage values." Cat
-// Form swings Earthshaker's 62.57 DPS at 1.0 sec (50.0-75.1 a hit); Classic keeps the paw.
+// Form swings Earthshaker's 62.57 DPS at 1.0 sec, 20% either side (50.06-75.09 a hit); Classic
+// keeps the paw.
 func TestForeverCatSwingsItsWeapon(t *testing.T) {
 	_, cat := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{})
 	if !cat.InForm(druid.Cat) {
 		t.Fatal("not in Cat Form")
 	}
 	mh := cat.AutoAttacks.MH()
-	if !near(mh.SwingSpeed, 1) || !near(mh.BaseDamageMin, 175/3.5) || !near(mh.BaseDamageMax, 263/3.5) {
-		t.Errorf("Forever cat weapon %.2f-%.2f at %.1f, want %.2f-%.2f at 1.0", mh.BaseDamageMin, mh.BaseDamageMax, mh.SwingSpeed, 175/3.5, 263/3.5)
+	dps := (175 + 263) / 2 / 3.5
+	if !near(mh.SwingSpeed, 1) || !near(mh.BaseDamageMin, dps*0.8) || !near(mh.BaseDamageMax, dps*1.2) {
+		t.Errorf("Forever cat weapon %.2f-%.2f at %.1f, want %.2f-%.2f at 1.0", mh.BaseDamageMin, mh.BaseDamageMax, mh.SwingSpeed, dps*0.8, dps*1.2)
 	}
 
 	_, era := newFormSim(t, proto.Ruleset_RulesetClassic, &proto.Consumes{})
@@ -131,8 +133,8 @@ func TestForeverCatWeaponImbues(t *testing.T) {
 	}
 
 	_, weight := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseWeightstone})
-	if got := weight.AutoAttacks.MH().BaseDamageMin - plain.AutoAttacks.MH().BaseDamageMin; !near(got, 8/3.5) {
-		t.Errorf("Dense Weightstone added %.3f to the cat's swing, want %.3f", got, 8/3.5)
+	if got := weight.AutoAttacks.MH().DPS() - plain.AutoAttacks.MH().DPS(); !near(got, 8/3.5) {
+		t.Errorf("Dense Weightstone added %.3f DPS to the cat's swing, want %.3f", got, 8/3.5)
 	}
 }
 
@@ -144,5 +146,22 @@ func TestForeverCatWindfuryTotem(t *testing.T) {
 	}
 	if _, era := newFormSimBuffs(t, proto.Ruleset_RulesetClassic, &proto.Consumes{}, buffs); era.RaidTotemWeaponBuff != nil {
 		t.Error("Windfury Totem on the Classic cat")
+	}
+}
+
+// "Tiger's Fury: (Removed.)" under Forever (sim/druid/tigers_fury.go); Classic keeps the beta's
+// one rank, 15% more Physical damage.
+func TestForeverTigersFuryRemoved(t *testing.T) {
+	if _, cat := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{}); cat.TigersFury != nil {
+		t.Error("the Forever cat has Tiger's Fury")
+	}
+	sim, era := newFormSim(t, proto.Ruleset_RulesetClassic, &proto.Consumes{})
+	if era.TigersFury == nil {
+		t.Fatal("the Classic cat has no Tiger's Fury")
+	}
+	physical := era.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
+	era.TigersFuryAura.Activate(sim)
+	if got := era.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; !near(got, physical*1.15) {
+		t.Errorf("Physical damage with Tiger's Fury %.4f, want %.4f", got, physical*1.15)
 	}
 }

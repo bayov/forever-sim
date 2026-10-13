@@ -35,18 +35,20 @@ func (druid *Druid) InForm(form DruidForm) bool {
 // weapon. But the speed of attack is changed to 1.0 or 2.5 seconds, depending on the form.
 // Abilities that deal weapon damage likewise use these damage values." (Blizzard's World of
 // Warcraft: Forever class deep dive, Druid; client 1.60.1.70338 SpellShapeshiftForm gives Cat
-// Form a 1000 ms CombatRoundTime.) The weapon's damage range scales with it, and its bonus DPS
-// (weightstones and sharpening stones) comes along. Without a weapon, or outside Forever, the
+// Form a 1000 ms CombatRoundTime.) The swing averages the weapon's DPS times 1.0 sec, its bonus
+// DPS (weightstones and sharpening stones) included, and spreads 20% either side of that: the
+// client's DamageVariance of 0.4 for Cat Form (an assumption, as nothing shows the server's
+// range; most weapons spread about that much anyway). Without a weapon, or outside Forever, the
 // cat keeps the 1.12 paw. The Env is not set yet when the feral druid is built, so the feral
 // spec swaps the paw for this in Initialize.
 func (druid *Druid) GetCatWeapon() core.Weapon {
 	if druid.Env != nil && druid.Env.IsForever() && druid.HasMHWeapon() {
 		weapon := druid.WeaponFromMainHand()
 		if weapon.SwingSpeed > 0 {
-			scale := catSwingSpeed / weapon.SwingSpeed
+			average := weapon.DPS() * catSwingSpeed
 			return core.Weapon{
-				BaseDamageMin:        weapon.BaseDamageMin * scale,
-				BaseDamageMax:        weapon.BaseDamageMax * scale,
+				BaseDamageMin:        average * (1 - catDamageVariance/2),
+				BaseDamageMax:        average * (1 + catDamageVariance/2),
 				SwingSpeed:           catSwingSpeed,
 				NormalizedSwingSpeed: catSwingSpeed,
 				AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
@@ -74,6 +76,9 @@ func (druid *Druid) GetCatWeapon() core.Weapon {
 
 // catSwingSpeed is Cat Form's attack speed, 1.0 sec.
 const catSwingSpeed = 1.0
+
+// catDamageVariance is Cat Form's DamageVariance in client 1.60.1.70338 (SpellShapeshiftForm 1).
+const catDamageVariance = 0.4
 
 // Predatory Strikes gives 50% of the level a point as attack power and Sharpened Claws 3%
 // crit a point in the feral forms (1.60.1.70338, wago.tools rank curves).
