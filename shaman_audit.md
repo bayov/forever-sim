@@ -158,7 +158,7 @@ Enhancement
 - [x] 8.20 Guardian Totems
 - [x] 8.21 Mental Dexterity
 - [x] 8.22 Improved Ghost Wolf (not implemented, the sim has no Ghost Wolf)
-- [ ] 8.23 Improved Lightning Shield
+- [x] 8.23 Improved Lightning Shield
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
 - [ ] 8.25 Shamanistic Focus
 - [ ] 8.26 Anticipation
@@ -1467,6 +1467,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim: the proto has the field, but nothing reads it, and the sim has no Ghost Wolf. Our only movement is the out of melee range stretches (`pvp.go`), which are random gaps in melee, not running at a speed.
 - Level 60 + Imp GW, Level 30 + 5 and Level 30 PvP take 2/2 for travel, and those points do nothing in the sim.
 - Beta: builds had 1 and 2 points, but we never measured the cast.
+
+### 8.23 Improved Lightning Shield
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`lightning_shield.go`): 1, 2 and 3 points give the orbs 5, 10 and 15% more damage on the whole hit, spell power part included. No preset takes it.
+- Client 70338 (wago.tools 16261, talent curve 85295): +5, 10 and 15% damage (aura 108, misc 0) on the orbs (mask 0x400). A misc 0 percent modifier scales the whole hit, as the sim does (fixed 2026-10-07). That matches.
+- Beta: no build had it.
+- No sim change and no new test. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers has 3 points in the bonus sim and wants the orbs at 1.15 x 1.1.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
