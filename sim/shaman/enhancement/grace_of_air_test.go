@@ -36,13 +36,13 @@ func newGraceOfAirSim(totemWeaponBuff proto.TotemWeaponBuff, options *proto.Enha
 // Forever doesn't stack the two for now (the user, 2026-10-08). The Grace of Air here is
 // another shaman's. When the Windfury Totem is another shaman's too, Grace of Air stays off
 // the whole fight. When it's our own starting totem, put down 290 sec before the pull, it runs
-// out at 10 sec and Grace of Air's 89 Agility comes back.
+// out at 10 sec and Grace of Air's 77 Agility (rank 2; rank 3 is an Ahn'Qiraj tablet) comes back.
 func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 	_, alone := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffNone, &proto.EnhancementShaman_Options{})
 	agility := alone.GetStat(stats.Agility)
 
 	_, raidWindfury := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffWindfury, &proto.EnhancementShaman_Options{})
-	if got, want := raidWindfury.GetStat(stats.Agility), agility-89; got != want {
+	if got, want := raidWindfury.GetStat(stats.Agility), agility-77; got != want {
 		t.Errorf("with another shaman's Windfury Totem: %.0f Agility, want %.0f", got, want)
 	}
 
@@ -51,7 +51,7 @@ func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 		AirSecondsBeforePull: 290,
 	}})
 	at(sim, 5, func(sim *core.Simulation) {
-		if got, want := enh.GetStat(stats.Agility), agility-89; got != want {
+		if got, want := enh.GetStat(stats.Agility), agility-77; got != want {
 			t.Errorf("at 5 sec with our Windfury Totem: %.0f Agility, want %.0f", got, want)
 		}
 	})
@@ -66,13 +66,14 @@ func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 // TestOrcShamanGraceOfAirRanks checks the Agility our own Grace of Air Totem gives by rank
 // (shaman_audit.md 7.20).
 //
-// Ranks 1 to 3 come at levels 42, 56 and 60 and give 49, 77 and 89 Agility, as the Forever
+// Ranks 1 to 3 come at levels 42, 56 and 60 and give 49, 77 and 89 Agility (rank 3 is an Ahn'Qiraj
+// tablet, so a Forever launch sim stops at rank 2), as the Forever
 // client's party auras do. The Agility goes when a Windwall Totem takes the air slot.
 func TestOrcShamanGraceOfAirRanks(t *testing.T) {
 	for _, c := range []struct {
 		level   int32
 		agility float64
-	}{{42, 49}, {56, 77}, {60, 89}} {
+	}{{42, 49}, {56, 77}, {60, 77}} {
 		sim, enh := newShamanSim(newOrcShaman(c.level, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 5)
 		at(sim, 1, func(sim *core.Simulation) {
 			agility := enh.GetStat(stats.Agility)

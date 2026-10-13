@@ -112,6 +112,46 @@ The order barely moves with the fight length (4000 iterations, standard error un
 | Tauren | 973 | 962 | 957 | 958 | 953 |
 | Orc | 969 | 960 | 958 | 959 | 953 |
 
+## Level 60 presets
+
+The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/forever_synthetic_items*.go`), the searched talents and rotation, and the best race. Each class fills in its own section.
+
+### Warrior
+
+(not done yet)
+
+### Paladin
+
+(not done yet)
+
+### Hunter
+
+(not done yet)
+
+### Rogue
+
+(not done yet)
+
+### Priest
+
+(not done yet)
+
+### Shaman
+
+(not done yet)
+
+### Mage
+
+(not done yet)
+
+### Warlock
+
+(not done yet)
+
+### Druid
+
+(not done yet)
+
 ## Low levels
 
 The sim takes a player level (Other settings) with 1.12 base stats and spell ranks per level, and an Extra Talent Points setting next to it. Extra points never take a character past the 51 a level 60 has. Forever hands them out from level 25 and the beta stops at 20, so a level 20 has the 11 points Classic gives it and the setting stays at 0 until the cap moves. The Rogue and Enhancement Shaman UIs ship "Level 20" builds (gear, talents, rotation, race, level and encounter together) from the tools/rotopt searches: every item the level can equip, every build of the damage talents, then the rotation knobs. The encounter is Mutanus the Devourer (level 22, 922 armor), 60 sec, no raid buffs, the boss hitting the shaman so Lightning Shield fires.

@@ -106,7 +106,12 @@ var GraceOfAirTotemLevel = [GraceOfAirTotemRanks + 1]int{0, 42, 56, 60}
 func (shaman *Shaman) registerGraceOfAirTotemSpell() {
 	shaman.GraceOfAirTotem = make([]*core.Spell, GraceOfAirTotemRanks+1)
 
-	for rank := 1; rank <= GraceOfAirTotemRanks; rank++ {
+	maxRank := GraceOfAirTotemRanks
+	if !shaman.Env.IncludeAQRanks() {
+		// Rank 3 is taught by an Ahn'Qiraj tablet (21293), so Forever's launch has rank 2.
+		maxRank--
+	}
+	for rank := 1; rank <= maxRank; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
 		if GraceOfAirTotemLevel[rank] <= int(shaman.Level) {

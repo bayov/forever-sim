@@ -179,6 +179,8 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 		}
 	}
 
+	forever := character.Env.IsForever()
+
 	var berserkingAura *Aura
 	var berserkingHaste float64
 	if character.HasManaBar() {
@@ -189,6 +191,11 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 			Duration: time.Second * 10,
 			OnGain: func(aura *Aura, sim *Simulation) {
 				berserkingHaste = 1 / (1 - calcBerserkingPct())
+				if forever {
+					// Forever's Berserking (20554) is a flat +10% to melee, ranged and cast
+					// speed (auras 319, 140 and 65), the same reading as Wind Blessed's 1.01.
+					berserkingHaste = 1 + calcBerserkingPct()
+				}
 
 				character.MultiplyCastSpeed(berserkingHaste)
 				character.MultiplyAttackSpeed(sim, berserkingHaste)
@@ -239,6 +246,8 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 	}
 
 	switch {
+	case forever:
+		// Forever's Berserking has no SpellPower row in client 70338, so it costs nothing.
 	case character.HasManaBar():
 		config.ManaCost = ManaCostOptions{BaseCost: 0.07}
 	case character.HasRageBar():
