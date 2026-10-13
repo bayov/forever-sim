@@ -46,6 +46,9 @@ interface RotationRow {
 interface RowEvent {
 	elem: Element;
 	text: string;
+	// The ability of the event, in a row that mixes abilities like the GCD row. Hiding the
+	// ability hides the event.
+	actionId?: ActionId;
 }
 
 // The search looks at what happened, so we leave out the time and the source that start every
@@ -649,6 +652,7 @@ export class Timeline extends ResultComponent {
 		this.drawPull();
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
+		this.addGcdRow(player, duration);
 
 		const buffsById = Object.values(bucket(player.auraUptimeLogs, log => log.actionId!.toString()));
 		buffsById.sort((a, b) => stringComparator(a[0].actionId!.name, b[0].actionId!.name));
@@ -719,6 +723,9 @@ export class Timeline extends ResultComponent {
 			const shown = this.isRowShown(entry);
 			entry.label.classList.toggle('hide', !shown);
 			entry.row.classList.toggle('hide', !shown);
+			entry.events.forEach(event => {
+				if (event.actionId) event.elem.classList.toggle('hide', this.filter.isHidden(event.actionId));
+			});
 			anyShown ||= shown;
 			this.applySearch(entry, shown && searching);
 		});
@@ -934,6 +941,100 @@ export class Timeline extends ResultComponent {
 			});
 			this.addOnResetCallback(() => tooltip.destroy());
 		});
+		this.addRow(row);
+	}
+
+	// One row for the global cooldown. Each cast that starts the GCD draws a bar for as long as
+	// the GCD lasts, in the color of its icon, so the row reads as the rotation. A cast that takes
+	// longer than the GCD, like Lightning Bolt, fills the whole bar. Otherwise the cast time is
+	// the solid part and the rest of the GCD the lighter part. The time when the GCD was ready
+	// and we pressed nothing shows as a striped gap. The label says how much of the fight was
+	// spent under the GCD.
+	private addGcdRow(player: UnitMetrics, duration: number) {
+		const casts = player.castLogs.filter(castLog => castLog.effectiveTime > 0).sort((a, b) => a.timestamp - b.timestamp);
+		if (casts.length == 0) return;
+
+		const rowElem = this.makeRowElem();
+		const row: RotationRow = { label: document.createElement('div'), row: rowElem, name: 'GCD', actionId: null, category: 'casts', events: [] };
+
+		// We count the idle time and the share under the GCD from the pull on, so the prepull
+		// doesn't count.
+		let busyUntil = 0;
+		let busyTime = 0;
+		const addIdle = (from: number, to: number) => {
+			// Gaps shorter than this are the sim's reaction time, not a missed GCD.
+			if (to - from < 0.05) return;
+			const idleElem = (<div className="rotation-gcd-idle" style={{ left: this.timeToLeft(from), width: this.timeToPx(to - from) }} />) as HTMLElement;
+			rowElem.appendChild(idleElem);
+			const tooltip = tippy(idleElem, {
+				placement: 'bottom',
+				content: (
+					<div className="timeline-tooltip">
+						<div className="timeline-tooltip-title">
+							<span className="timeline-tooltip-name">Idle</span>
+						</div>
+						<div className="timeline-tooltip-meta">
+							{`${formatSeconds(from)} to ${formatSeconds(to)} · ${formatSeconds(to - from)} with the GCD ready and nothing pressed`}
+						</div>
+					</div>
+				),
+			});
+			this.addOnResetCallback(() => tooltip.destroy());
+		};
+
+		casts.forEach(castLog => {
+			const start = castLog.timestamp;
+			const end = start + castLog.effectiveTime;
+			if (start > busyUntil) addIdle(Math.max(0, busyUntil), start);
+			busyTime += Math.max(0, Math.min(end, duration) - Math.max(start, busyUntil, 0));
+			busyUntil = Math.max(busyUntil, end);
+
+			const actionId = castLog.actionId!;
+			const castPart = Math.min(castLog.castTime, castLog.effectiveTime);
+			const gcdElem = (
+				<div className="rotation-gcd" style={{ left: this.timeToLeft(start), width: this.timeToPx(castLog.effectiveTime) }}>
+					{castPart > 0 && <div className="rotation-gcd-cast" style={{ width: this.timeToPx(castPart) }} />}
+				</div>
+			) as HTMLElement;
+			const iconElem = (<span className="rotation-gcd-icon" />) as HTMLElement;
+			actionId.setBackground(iconElem);
+			gcdElem.appendChild(iconElem);
+			this.tint(gcdElem, actionId.iconUrl);
+			rowElem.appendChild(gcdElem);
+			row.events.push({ elem: gcdElem, text: searchText([castLog]), actionId });
+
+			const timing = [`${formatSeconds(start)} to ${formatSeconds(end)}`];
+			if (castLog.castTime > 0) timing.push(`${formatSeconds(castLog.castTime)} cast`);
+			timing.push(`${formatSeconds(castLog.effectiveTime)} GCD`);
+			const tooltip = tippy(gcdElem, {
+				placement: 'bottom',
+				content: (
+					<div className="timeline-tooltip">
+						{tooltipTitle(actionId)}
+						<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
+					</div>
+				),
+			});
+			this.addOnResetCallback(() => tooltip.destroy());
+		});
+		if (busyUntil < duration) addIdle(Math.max(0, busyUntil), duration);
+
+		const usage = duration > 0 ? (busyTime / duration) * 100 : 0;
+		const labelElem = (
+			<div className="rotation-label rotation-row rotation-gcd-label">
+				<span className="rotation-label-icon rotation-gcd-label-icon">
+					<i className="fas fa-hourglass-half" />
+				</span>
+				<span className="rotation-label-text">GCD</span>
+				<span className="rotation-gcd-usage">{`${formatAmount(usage, 1)}% used`}</span>
+			</div>
+		) as HTMLElement;
+		const labelTooltip = tippy(labelElem, {
+			placement: 'right',
+			content: 'The share of the fight, from the pull on, that we spent under the global cooldown or casting. Striped gaps are time with the GCD ready and nothing pressed.',
+		});
+		this.addOnResetCallback(() => labelTooltip.destroy());
+		row.label = labelElem;
 		this.addRow(row);
 	}
 

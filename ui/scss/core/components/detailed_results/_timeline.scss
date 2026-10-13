@@ -448,7 +448,10 @@
 
 .rotation-timeline-row {
 	position: relative;
-	overflow: hidden;
+	// The row cuts off bars that run past the end of the fight, but not up or down, so the
+	// outcome badges can stick out of their icons.
+	overflow-x: clip;
+	overflow-y: visible;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -528,6 +531,63 @@
 	overflow-x: hidden;
 }
 
+// The GCD row. Each bar is one GCD in the color of its ability's icon, with the cast time as
+// the solid part. Striped red gaps are time with the GCD ready and nothing pressed.
+.rotation-gcd {
+	position: absolute;
+	top: 2px;
+	z-index: 1;
+	height: 24px;
+	overflow: hidden;
+	border-left: 1px solid rgba(0, 0, 0, 0.6);
+	background-color: rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.4);
+}
+
+.rotation-gcd-cast {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background-color: rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.45);
+}
+
+.rotation-gcd-icon {
+	@include wowhead-background-icon;
+	@include icon-crop;
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+}
+
+.rotation-gcd-idle {
+	position: absolute;
+	top: 6px;
+	height: 16px;
+	background: repeating-linear-gradient(135deg, rgba(224, 112, 112, 0.3) 0 3px, transparent 3px 6px);
+}
+
+.rotation-gcd-label {
+	.rotation-gcd-label-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.75rem;
+		color: var(--gold-soft);
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.rotation-gcd-usage {
+		margin-left: auto;
+		font-size: 0.75rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		color: var(--text-muted-color);
+	}
+}
+
 .rotation-timeline-separator {
 	height: 1px;
 	margin: 8px 0;
@@ -543,16 +603,18 @@
 	border-radius: 0;
 }
 
-// A small badge over the bottom of a cast icon for a notable outcome, like a crit or a parry.
-// It uses the colors of the tooltip badges, so those are its legend. It stays inside the icon,
-// because the row cuts off anything that sticks out of it.
+// A small badge on the bottom right corner of a cast icon for a notable outcome, like a crit
+// or a parry. It sticks out of the icon a little, so it reads as a mark on the icon. It uses the
+// colors of the tooltip badges, so those are its legend.
 .rotation-timeline-cast-badge {
 	position: absolute;
-	left: 13px;
-	bottom: 1px;
+	// The cast can be wider than its icon, when a bar for the cast time follows it. So we place
+	// the badge from the icon's right edge (24px) and not the cast's.
+	left: 29px;
+	bottom: -3px;
 	z-index: 1;
 	padding: 0 2px;
-	transform: translateX(-50%);
+	transform: translateX(-100%);
 	border-radius: 2px;
 	font-size: 7px;
 	font-weight: 800;
