@@ -99,6 +99,26 @@
 		margin: var(--spacer-3);
 	}
 
+	// The chart's legend, a chip for each line. See drawChartLegend.
+	.chart-legend {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: var(--spacer-1);
+		margin-bottom: var(--spacer-2);
+	}
+
+	.chart-legend-swatch {
+		width: 0.75rem;
+		height: 3px;
+		border-radius: 2px;
+	}
+
+	// A hidden line's chip keeps its color, faded, so we can still tell which line it is.
+	.chart-legend-chip:not(.active) .chart-legend-swatch {
+		opacity: 0.35;
+	}
+
 	.apexcharts-tooltip.apexcharts-theme-dark {
 		z-index: 1000;
 		box-shadow: none;

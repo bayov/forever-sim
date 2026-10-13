@@ -192,6 +192,7 @@ export class Timeline extends ResultComponent {
 	private readonly filter: EventFilter;
 
 	private readonly dpsResourcesPlotElem: HTMLElement;
+	private readonly chartLegend: HTMLElement;
 	private dpsResourcesPlot: any;
 
 	private readonly rotationPlotElem: HTMLElement;
@@ -241,7 +242,10 @@ export class Timeline extends ResultComponent {
 
 		this.rootElem.appendChild(
 			<div className="timeline-plots-container">
-				<div className="timeline-plot dps-resources-plot hide"></div>
+				<div className="timeline-plot dps-resources-plot hide">
+					<div className="chart-legend" attributes={{ role: 'group', 'aria-label': 'Lines' }}></div>
+					<div className="dps-resources-chart"></div>
+				</div>
 				<div className="timeline-plot rotation-plot">
 					<div className="rotation-container">
 						<div className="rotation-labels"></div>
@@ -253,7 +257,8 @@ export class Timeline extends ResultComponent {
 		);
 
 		this.dpsResourcesPlotElem = this.rootElem.querySelector('.dps-resources-plot')!;
-		this.dpsResourcesPlot = new ApexCharts(this.dpsResourcesPlotElem, {
+		this.chartLegend = this.dpsResourcesPlotElem.querySelector('.chart-legend')!;
+		this.dpsResourcesPlot = new ApexCharts(this.dpsResourcesPlotElem.querySelector('.dps-resources-chart')!, {
 			chart: {
 				animations: {
 					enabled: false,
@@ -559,11 +564,6 @@ export class Timeline extends ResultComponent {
 			yaxis: [],
 			chart: {
 				events: {
-					// The legend shows and hides a line. We remember it for the next iteration we draw.
-					legendClick: (chart: any, seriesIndex: number) => {
-						const name = chart.w.globals.seriesNames[seriesIndex];
-						if (!this.hiddenChartSeries.delete(name)) this.hiddenChartSeries.add(name);
-					},
 					beforeResetZoom: () => {
 						return {
 							xaxis: {
@@ -612,7 +612,40 @@ export class Timeline extends ResultComponent {
 		}
 
 		options.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
+		options.legend = { show: false };
 		this.dpsResourcesPlot.updateOptions(options);
+		this.drawChartLegend(options.series.map((series: { name: string }, i: number) => ({ name: series.name, color: options.colors[i] })));
+	}
+
+	// Our own legend above the chart, with a chip for each line like the filters. A chip shows or
+	// hides its line, and we remember that for the next iteration we draw.
+	private drawChartLegend(lines: Array<{ name: string; color: string }>) {
+		this.chartLegend.replaceChildren(
+			...lines.map(({ name, color }) => {
+				const chip = (
+					<button className="filter-chip chart-legend-chip" type="button">
+						<span className="chart-legend-swatch" style={{ backgroundColor: color }} />
+						{name}
+					</button>
+				) as HTMLButtonElement;
+				const update = () => {
+					const shown = !this.hiddenChartSeries.has(name);
+					chip.classList.toggle('active', shown);
+					chip.setAttribute('aria-pressed', String(shown));
+				};
+				chip.addEventListener('click', () => {
+					if (this.hiddenChartSeries.delete(name)) {
+						this.dpsResourcesPlot.showSeries(name);
+					} else {
+						this.hiddenChartSeries.add(name);
+						this.dpsResourcesPlot.hideSeries(name);
+					}
+					update();
+				});
+				update();
+				return chip;
+			}),
+		);
 	}
 
 	private addDpsYAxis(maxDps: number, options: any) {
