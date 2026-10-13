@@ -80,7 +80,6 @@ func main() {
 		CurseOfWeakness:        improved,
 		DemoralizingRoar:       improved,
 		DemoralizingShout:      improved,
-		ExposeArmor:            improved,
 		FaerieFire:             true,
 		InsectSwarm:            true,
 		JudgementOfLight:       true,
