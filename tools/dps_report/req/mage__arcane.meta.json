@@ -1,0 +1,85 @@
+{
+  "id": "mage__arcane",
+  "class": "Mage",
+  "spec": "Arcane",
+  "build": "Arcane",
+  "isDefault": false,
+  "pr": 6,
+  "race": "Undead",
+  "talents": "051225003100311531-03-02550003",
+  "treePoints": "33/3/15",
+  "treeNames": [
+    "Arcane",
+    "Fire",
+    "Frost"
+  ],
+  "gearSet": "level60_phase1_synthetic_arcane",
+  "apl": "level60_arcane",
+  "published": {
+    "dps": 829.7,
+    "source": "PR #6",
+    "overall": {
+      "race": "Undead",
+      "dps": 829.7
+    },
+    "horde": {
+      "race": "Undead",
+      "dps": 829.7
+    },
+    "alliance": {
+      "race": "Gnome",
+      "dps": 819.6
+    }
+  },
+  "verify": {
+    "dps": 829.66,
+    "stderr": 0.26,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 829.7 (PR #6); delta -0.04."
+  },
+  "summary": "Arcane to Arcane Power with Arcane Blast and Missile Barrage, on the Arcane gear variant (Gloves - Arcane Power). 8% behind Frostfire.",
+  "keyTalents": [
+    "Arcane Blast",
+    "Missile Barrage",
+    "Arcane Impact",
+    "Arcane Mind",
+    "Arcane Instability",
+    "Arcane Power",
+    "Presence of Mind",
+    "Incineration"
+  ],
+  "rotation": [
+    "Pre-pull: Arcane Blast at -2.5 s so it lands at the pull",
+    "Cooldowns (Arcane Power, Presence of Mind, Demonic Rune) on a free GCD; mana gems never",
+    "Below 30% mana: one Arcane Blast, then Arcane Missiles",
+    "Arcane Missiles on a Missile Barrage proc once Arcane Blast has 2 stacks",
+    "Arcane Blast up to 4 stacks",
+    "Filler: Arcane Missiles (ends the stacks and takes their bonus)",
+    "No Evocation"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Frost Power",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Cerebral Cortex Compound",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Arcane Blast's bonus on Arcane Missiles: 10% per tooltip; client 400573 excludes Missiles and 400586 gives 15%",
+    "Arcane Concentration on missile ticks with a 1 s internal cooldown (assumed)",
+    "Arcane Mind crit semantics assumed",
+    "The 15 Frost points do nothing for this rotation",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
+  ],
+  "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the rotation's low-mana threshold moved from 30% to 20% mana."
+}

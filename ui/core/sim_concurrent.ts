@@ -196,10 +196,38 @@ export const runConcurrentSim = async (
 		return makeAndSendRaidSimError(combiResult.error, onProgress);
 	}
 
+	await replayPickedIterations(request, combiResult, workerPool, signals);
+
 	simRes.progressMetricsFinal.finalRaidResult = combiResult;
 	onProgress(simRes.progressMetricsFinal);
 
 	return combiResult;
+};
+
+// The split sims run without logs. Each one picks its typical, lucky and unlucky
+// iterations, the combined result has the overall ones, and here we run those three again
+// on one worker with logs on, so the results can show them event by event.
+const replayPickedIterations = async (request: RaidSimRequest, result: RaidSimResult, workerPool: WorkerPool, signals: SimSignals) => {
+	const { typicalIteration, luckyIteration, unluckyIteration } = result;
+	if (!request.simOptions?.debugFirstIteration || request.simOptions.debug) return;
+	if (!typicalIteration || !luckyIteration || !unluckyIteration) return;
+
+	const replayRequest = RaidSimRequest.clone(request);
+	replayRequest.simOptions!.iterations = 1;
+	replayRequest.simOptions!.replaySeeds = [typicalIteration.seed, luckyIteration.seed, unluckyIteration.seed];
+
+	// The replay is three iterations, so it has no progress worth showing.
+	const replay = await workerPool.raidSimAsync(replayRequest, () => undefined, signals);
+	if (replay.error) {
+		console.error('Replaying the typical, lucky and unlucky iterations failed', replay.error);
+		return;
+	}
+
+	result.logs = replay.logs;
+	result.firstIterationDuration = replay.firstIterationDuration;
+	result.typicalIteration = replay.typicalIteration;
+	result.luckyIteration = replay.luckyIteration;
+	result.unluckyIteration = replay.unluckyIteration;
 };
 
 const makeAndSendWeightsError = (err: string | ErrorOutcome, onProgress: WorkerProgressCallback): StatWeightsResult => {

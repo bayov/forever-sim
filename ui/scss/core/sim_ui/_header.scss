@@ -1,8 +1,11 @@
+:root {
+	--header-link-color: #{rgba($ivory, 0.62)};
+}
+
 .sim-header {
 	position: sticky;
 	top: 0;
 	height: var(--sim-header-height);
-	padding-top: var(--gap-width);
 	padding-left: var(--sim-content-padding-x);
 	padding-right: var(--sim-content-padding-x);
 	margin-left: calc(-1 * var(--sim-content-padding-x));
@@ -11,10 +14,8 @@
 	transition: background-color 0.15s ease-in-out;
 	z-index: var(--header-z-index);
 
-	@include media-breakpoint-down(lg) {
-		padding-top: var(--gap-width-sm);
-	}
-
+	// The line under the header lines up with the content. Once the header sticks, it spans the
+	// whole width.
 	&::after {
 		content: ' ';
 		position: absolute;
@@ -25,7 +26,7 @@
 		height: 1px;
 		margin-left: auto;
 		margin-right: auto;
-		background-color: var(--bs-border-color);
+		background-color: var(--line-color);
 		transition: width 0.15s ease-in-out;
 	}
 
@@ -57,61 +58,223 @@
 		}
 	}
 
-	.sim-tabs,
-	.import-export,
-	.sim-toolbar {
+	.sim-tabs {
 		display: flex;
 		flex-wrap: nowrap;
-		align-items: flex-end;
-		font-weight: bold;
-	}
-
-	.sim-tabs {
+		align-items: stretch;
 		border-bottom: 0;
 	}
 
+	// The main tabs. The open one is ivory with a gold line under it, like the gold titles of
+	// the panels below.
+	.sim-tabs .nav-item .nav-link {
+		position: relative;
+		padding: 0 0.9rem;
+		font-size: 0.875rem;
+		font-weight: 600;
+		letter-spacing: 0.01em;
+		color: var(--header-link-color);
+		transition: color 0.15s ease-in-out;
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: 0.9rem;
+			right: 0.9rem;
+			bottom: 0;
+			height: 2px;
+			border-radius: 2px 2px 0 0;
+			background: transparent;
+			transition: background-color 0.15s ease-in-out;
+		}
+
+		&:hover {
+			color: $ivory;
+
+			&::after {
+				background: var(--line-color-strong);
+			}
+		}
+
+		&.active {
+			color: $ivory;
+
+			&::after {
+				background: var(--gold);
+			}
+		}
+
+		@include media-breakpoint-down(xl) {
+			padding: 0 0.6rem;
+
+			&::after {
+				left: 0.6rem;
+				right: 0.6rem;
+			}
+		}
+	}
+
+	// Import and Export are actions, not tabs. They sit apart from the tabs, as quiet buttons
+	// that open a menu.
 	.import-export {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		gap: 0.25rem;
+		margin-left: var(--spacer-2);
+		padding-left: var(--spacer-3);
+
+		&::before {
+			content: '';
+			align-self: center;
+			width: 1px;
+			height: 1.25rem;
+			margin-right: var(--spacer-2);
+			background: var(--line-color-strong);
+		}
+
 		.import-link,
 		.export-link {
-			padding: $nav-link-padding-y $nav-link-padding-x;
-			font-size: $nav-link-font-size;
-			transition: $nav-link-transition;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			padding: 0.3rem 0.6rem;
+			border: 1px solid transparent;
+			border-radius: var(--bs-border-radius);
+			font-size: 0.8125rem;
+			font-weight: 600;
+			color: var(--header-link-color);
+			text-decoration: none;
+			transition:
+				color 0.15s ease-in-out,
+				background-color 0.15s ease-in-out,
+				border-color 0.15s ease-in-out;
+
+			i {
+				font-size: 0.75rem;
+				color: var(--text-muted-color);
+			}
+
+			&::after {
+				content: '\f078';
+				font-family: 'Font Awesome 6 Free';
+				font-weight: 900;
+				font-size: 0.55rem;
+				color: var(--text-muted-color);
+			}
+
+			&:hover,
+			&.show {
+				color: $ivory;
+				background: rgba(255, 255, 255, 0.05);
+
+				i {
+					color: var(--gold-soft);
+				}
+			}
 
 			&.show {
-				color: var(--bs-white);
+				border-color: var(--line-color-strong);
+			}
+
+			// On narrow screens the icons say which is which.
+			@include media-breakpoint-down(xl) {
+				span {
+					display: none;
+				}
 			}
 		}
 	}
 
 	.sim-toolbar {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		gap: 0.25rem;
 		margin-left: auto;
+		padding-left: var(--spacer-3);
 		font-size: var(--content-font-size);
 
-		.sim-toolbar-item,
 		.sim-toolbar-socials {
-			margin-left: var(--spacer-3);
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+			margin-left: var(--spacer-2);
+			padding-left: var(--spacer-2);
+			border-left: 1px solid var(--line-color-strong);
+		}
+
+		// The links on the right are quiet icon buttons. Their tooltips say what they do.
+		.sim-toolbar-item {
 			display: flex;
 
 			a {
-				margin-top: $nav-link-padding-y;
-				margin-bottom: $nav-link-padding-y;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0.4rem;
+				min-width: 2rem;
+				height: 2rem;
+				padding: 0 0.45rem;
+				border-radius: var(--bs-border-radius);
+				color: var(--text-muted-color);
+				text-decoration: none;
+				transition:
+					color 0.15s ease-in-out,
+					background-color 0.15s ease-in-out;
+
+				i {
+					font-size: 0.95rem;
+				}
+
+				&:hover {
+					color: $ivory;
+					background: rgba(255, 255, 255, 0.06);
+				}
+
+				&.link-danger {
+					color: var(--bs-link-danger) !important;
+				}
 			}
 		}
 
-		.sim-toolbar-item {
-			transition: var(--link-transition);
-		}
+		// The known issues of this sim, as a small warning chip. On narrow screens we only
+		// show its icon.
+		.sim-toolbar-item a.known-issues {
+			height: 1.625rem;
+			padding: 0 0.65rem;
+			margin-right: var(--spacer-1);
+			border: 1px solid rgba($known-issues-color, 0.4);
+			border-radius: 999px;
+			background: rgba($known-issues-color, 0.08);
+			color: $known-issues-color !important;
+			font-size: 0.75rem;
+			font-weight: 600;
 
-		.sim-toolbar-socials {
-			margin-top: calc($nav-link-padding-y / 2);
-			margin-bottom: calc($nav-link-padding-y / 2);
-			border-left: var(--border-default);
+			i {
+				font-size: 0.75rem;
+			}
 
-			a {
-				margin-top: calc($nav-link-padding-y / 2);
-				margin-bottom: calc($nav-link-padding-y / 2);
+			&:hover {
+				background: rgba($known-issues-color, 0.16);
+			}
+
+			&.hide {
+				display: none;
+			}
+
+			@include media-breakpoint-down(xxl) {
+				.sim-toolbar-item-text {
+					display: none;
+				}
 			}
 		}
+	}
+
+	// A themed menu: the panel color, rounded items and a shadow, so it reads as a layer over
+	// the page.
+	.dropdown-menu {
+		@include header-dropdown-menu;
 	}
 
 	.sim-dropdown-menu {
@@ -121,6 +284,7 @@
 
 		.dropdown-menu {
 			top: -2px;
+			margin-top: 0.35rem !important;
 		}
 	}
 }
