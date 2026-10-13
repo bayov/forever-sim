@@ -56,15 +56,19 @@ export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 // Forever's level 60 gear is not tuned yet and Molten Core has no Forever data, so the Level 60
 // presets wear synthetic items (tools/database/forever_synthetic_items_warlock.go): the Era Phase
 // 1 BiS (the Felheart set, Robe of Volatile Power, Mana Igniting Cord, Choker of the Fire Lord)
-// rebuilt on the cross-class standard (one item level table and the epic budgets with Forever's
-// cheaper spell power), about 10% of it on Spirit, 5% crit and hit to the 16% cap against a level
-// 63 boss: 10% from gear with Suppression 5/5 and the 2 piece. The weapon is a synthetic staff at
+// rebuilt on the cross-class standard (one item level table, the epic budgets spent linearly) in
+// the fair stat mix of real level 60 warlock gear (standards 5a, Season of Discovery BiS
+// proportions): Stamina 18%, Intellect 19%, Spirit 10%, spell power 28%, crit 13% (434 spell
+// power, 7.9% crit) and hit to the 16% cap against a level 63 boss: 10% from gear with
+// Suppression 5/5 and the 2 piece. The rebudget from the old all-spell-power set (524 spell power,
+// 5% crit) cost 3 to 5% (Demonology 1088.5 to 1053.2, Destruction 984.9 to 948.2, Affliction
+// 976.2 to 939.8, Destruction fire 976.2 to 932.4 at 180 sec). The weapon is a synthetic staff at
 // the caster weapon budget (Azuresong Mageblade's 46.2 and an off hand at 71, 73.7) with Enchant
 // 2H Weapon - Spellblasting (+65 spell power): it beats the synthetic Azuresong and off hand with
-// Mighty Intellect and Off-Hand - Wisdom by 23 to 33 on every build. Only the head and chest carry
+// Mighty Intellect and Off-Hand - Wisdom by 23 to 33 on every build (on the old set). Only the head and chest carry
 // Demonheart Raiment, Forever's warlock Tier 1 set, so only its 2 piece (1% hit) is live; the 5
 // piece's 20% more mana from Life Tap would add 12.9 on Demonology and 8.4 to 8.8 on Destruction and
-// Affliction at 180 sec (the 4 piece is 21 spell power against Demons only). No trinkets: Talisman
+// Affliction at 180 sec on the old set (the 4 piece is 21 spell power against Demons only). No trinkets: Talisman
 // of Ephemeral Power is a Molten Core drop and Briarwood Reed is gone from the Forever client, so
 // trinkets are excluded until Forever's launch trinkets are simulated. Enchants, the best Phase 1
 // one per slot with no raid source: Lesser Arcanum of Voracity on the head (Arcanum of Focus is a
@@ -76,8 +80,9 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 P
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
 	group: 'Level 60',
 });
-// Demonology keeps one point of Suppression, so it swaps four pieces for hit variants (14% hit
-// from gear) at the same budget.
+// Demonology keeps one point of Suppression, so it swaps four pieces (the chest, legs, waist and
+// staff) for hit variants (14% hit from gear) at the same budget, in Demonology's own stat mix.
+// Suppression 5/5 on the shared set is 52 behind (1000.8 against 1053.2 at 180 sec).
 export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear(
 	'Level 60 Phase 1 Synthetic Demonology',
 	Level60Phase1SyntheticDemonologyGearJSON,
