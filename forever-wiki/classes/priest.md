@@ -6,7 +6,32 @@ Talents: 53 total, 14 new, 27 changed, 12 unchanged (verified).
 
 Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 5 and 7 hold the 11, 16, 21 and 31 point talents.
 
-Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marked every multi-rank new or changed talent. Settled 2026-10-12: every rank of every priest talent was read from the client's trait curves (TraitDefinitionEffectPoints joined to CurvePoint, wago.tools build 1.60.1.70338), and the tag now reads [ranks settled by client trait curves]. Where the ranks below differ from the curves, the Beta client section has the client's numbers.
+
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The priest tree and spells from the beta client: the tree hyjal.cc read out of build 1.60.1.69876 (`tools/forever_talents/client/priest.json`) with the tooltips that changed by build 1.60.1.70338 (foreverchanges.pro, which reads the client's TraitNode tables), and every number below from the 70338 client tables on wago.tools (TraitDefinitionEffectPoints for the per-rank values, SpellEffect, SpellLevels, SpellPower, SpellCooldowns, SpellMisc, SkillLineAbility, ItemSet and ItemSetSpell). Rank counts, rows, columns and prerequisites match the BlizzCon data. `tools/forever_talents/data/priest.json` is regenerated from the client tree, so the per-talent text further down is superseded where it differs. The sim follows the client.
+
+Talents (the ranks the BlizzCon data guessed that were wrong):
+
+- Wand Specialization 13 / 25%. Improved Power Word: Shield 7 / 14 / 20%. Mental Agility 3 / 7 / 10%. Twilight Focus 23 / 47 / 70%. Blessed Recovery 8 / 17 / 25%. Inspiration 8 / 17 / 25%. Searing Light 2 / 5% Holy damage. Spiritual Guidance 1 / 3 / 5 / 6 / 8% of Spirit as spell damage (5% a rank as healing). Spiritual Healing 3 / 7 / 10%. Shadow Weaving 33 / 67 / 100%.
+- Penance (20 point Discipline talent) at 60: 3 bolts of 92 Holy damage at 19% each, 385 Mana, 12 sec cooldown. Power Infusion needs Penance. Inner Focus now says its crit is only for a non-periodic spell.
+- Spirit Tap also triggers when an enemy with the priest's Vampiric Embrace dies. Vampiric Embrace lasts 30 sec (1 min cooldown) and Improved Vampiric Embrace is gone, so it always heals for 20%.
+- Shadow Weaving puts a 2% stack (up to 5, 15 sec) on the target that only raises the Shadow damage of the priest who put it there (aura 270).
+- Shadowform: 10% more Shadow damage, 50% off the mana cost of Shadow spells (a school cost aura, so it multiplies with the talent cost cuts), +100% critical strike damage bonus for Shadow Word: Pain, Mind Blast, Mind Flay, Devouring Plague, Mana Burn and Shadowguard (crits deal 200%), 15% less Physical damage taken. It costs 40% of base mana and blocks healing spells only, so Smite and Holy Fire are castable in it.
+- Darkness and Searing Light are school damage auras (they cover every Shadow or Holy damage the priest deals and multiply with Shadowform). Twin Disciplines' class mask covers the periodic part of Shadow Word: Pain and Devouring Plague and the direct part of Chastise, Holy Nova, Shadowguard and Touch of Weakness, not Shadow Word: Death or Mind Blast. Mental Agility's covers Shadow Word: Pain, Devouring Plague, Vampiric Embrace, Shadowform, Power Infusion, Smite, Holy Fire and Chastise, not Mind Blast, Mind Flay or Shadow Word: Death. Inner Focus's crit leaves out Shadow Word: Death.
+
+Spells at their top rank (level 60):
+
+- Shadow Word: Pain 127 every 3 sec for 18 sec (762, Classic 852) at 20% a tick, 120% over the 6 ticks (Classic 100%).
+- Mind Blast 477 to 503 (Classic 508 to 537), 42.9% for every rank.
+- Mind Flay 390 over 3 sec (Classic 426) at 16.7% a tick (Classic 15%).
+- Devouring Plague: every race learns it, 106 every 3 sec for 24 sec (848, Classic 904) at 10% a tick, 1 min cooldown (Classic 3 min).
+- Shadow Word: Death (new, trained from 32): 444 to 472 at 42.9%, 340 Mana, instant, 15 sec cooldown. If the target lives, the priest takes 10% of their maximum health.
+- Smite 167 to 186 (Classic 384 to 429) and Holy Fire 184 to 232 plus 75 over 10 sec (Classic 355 to 449 plus 145). Both are usable in Shadowform.
+- Racial priest spells. Night Elf: Starshards 1800 Arcane over 6 sec (Classic 936) at 16.7% a tick, now on a 30 sec cooldown. Dwarf: Chastise (new), 272 to 306 Holy at 14.3%, instant, 2 min cooldown, Humanoids only. Undead: Dark Sacrifice (new), gives up 1600 health over 15 sec for 1600 mana plus the priest's Spirit, 10 min cooldown. Troll: Shadowguard 96 a hit (Classic 116). Human: Feedback, Divine Grace. Gnome: Confounding Flash, Contingency Plan. Fear Ward and Desperate Prayer are no longer tied to one race.
+
+Forever's Tier 1 shadow set, Raiments of Conviction (ItemSet 2105): 2 pieces +1% hit, 3 pieces Shackle Undead 10 sec longer, 4 pieces up to 21 spell damage against Undead, 5 pieces Devouring Plague 60 sec shorter cooldown, which is all of it. The Discipline and Holy set (Vestments of Conviction) gives 10 Spirit, Fear Ward's cooldown, 26 healing and 9 damage, and Penance and Prayer of Mending 1 sec shorter. The client pieces have no stats yet.
 
 ## Spellbook changes (trainer abilities)
 
@@ -24,13 +49,13 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 1 (0 points)
 
-- **Power in Light** (5 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Power in Light** (5 ranks, column 1) [NEW] [ranks settled by client trait curves]
   - Rank 1: Your Smite and Penance spells deal 2% increased damage to targets afflicted with your Holy Fire.
   - Rank 2: Your Smite and Penance spells deal 4% increased damage to targets afflicted with your Holy Fire.
   - Rank 3: Your Smite and Penance spells deal 6% increased damage to targets afflicted with your Holy Fire.
   - Rank 4: Your Smite and Penance spells deal 8% increased damage to targets afflicted with your Holy Fire.
   - Rank 5: Your Smite and Penance spells deal 10% increased damage to targets afflicted with your Holy Fire.
-- **Wand Specialization** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Wand Specialization** (2 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases your damage with Wands by 13%.
   - Rank 2: Increases your damage with Wands by 26%.
   - Classic (5 ranks):
@@ -39,7 +64,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
     - Rank 3: Increases your damage with Wands by 15%.
     - Rank 4: Increases your damage with Wands by 20%.
     - Rank 5: Increases your damage with Wands by 25%.
-- **Twin Disciplines** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Twin Disciplines** (5 ranks, column 3) [NEW] [ranks settled by client trait curves]
   - Rank 1: Increases the damage and healing of your instant cast spells by 1%.
   - Rank 2: Increases the damage and healing of your instant cast spells by 2%.
   - Rank 3: Increases the damage and healing of your instant cast spells by 3%.
@@ -48,7 +73,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 2 (5 points)
 
-- **Silent Resolve** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Silent Resolve** (3 ranks, column 1) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Reduces the threat generated by your Holy spells by 10% and reduces the duration of Stun, Fear, and Silence effects inflicted on you by 5%.
   - Rank 2: Reduces the threat generated by your Holy spells by 20% and reduces the duration of Stun, Fear, and Silence effects inflicted on you by 10%.
   - Rank 3: Reduces the threat generated by your Holy spells by 30% and reduces the duration of Stun, Fear, and Silence effects inflicted on you by 15%.
@@ -58,11 +83,11 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
     - Rank 3: Reduces the threat generated by your spells by 12%.
     - Rank 4: Reduces the threat generated by your spells by 16%.
     - Rank 5: Reduces the threat generated by your spells by 20%.
-- **Holy Precision** (3 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Holy Precision** (3 ranks, column 2) [NEW] [ranks settled by client trait curves]
   - Rank 1: Increases your chance to hit with Holy spells by 6%.
   - Rank 2: Increases your chance to hit with Holy spells by 12%.
   - Rank 3: Increases your chance to hit with Holy spells by 18%.
-- **Improved Power Word: Shield** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Improved Power Word: Shield** (3 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases the damage absorbed by your Power Word: Shield by 7%.
   - Rank 2: Increases the damage absorbed by your Power Word: Shield by 14%.
   - Rank 3: Increases the damage absorbed by your Power Word: Shield by 21%.
@@ -70,7 +95,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
     - Rank 1: Increases the damage absorbed by your Power Word: Shield by 5%.
     - Rank 2: Increases the damage absorbed by your Power Word: Shield by 10%.
     - Rank 3: Increases the damage absorbed by your Power Word: Shield by 15%.
-- **Martyrdom** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Martyrdom** (2 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Gives you a 50% chance to gain Focused Casting for 6 sec after being the victim of a melee or ranged critical strike. The Focused Casting effect prevents you from losing casting time when taking damage and increases your resistance to Interrupt effects by 20%.
   - Rank 2: Gives you a 100% chance to gain Focused Casting for 6 sec after being the victim of a melee or ranged critical strike. The Focused Casting effect prevents you from losing casting time when taking damage and increases your resistance to Interrupt effects by 20%.
   - Classic (2 ranks):
@@ -79,7 +104,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 3 (10 points)
 
-- **Mental Agility** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Mental Agility** (3 ranks, column 1) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Reduces the mana cost of your Smite, Holy Fire, and instant cast spells by 3%.
   - Rank 2: Reduces the mana cost of your Smite, Holy Fire, and instant cast spells by 6%.
   - Rank 3: Reduces the mana cost of your Smite, Holy Fire, and instant cast spells by 9%.
@@ -92,7 +117,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 - **Inner Focus** (1 rank, column 2) [unchanged]
   - Cost: Instant, 3 min cooldown
   - When activated, reduces the Mana cost of your next spell by 100% and increases its critical effect chance by 25% if it is capable of a critical effect.
-- **Meditation** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Meditation** (3 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Allows 17% of your Mana regeneration to continue while casting.
   - Rank 2: Allows 33% of your Mana regeneration to continue while casting.
   - Rank 3: Allows 50% of your Mana regeneration to continue while casting.
@@ -103,7 +128,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 4 (15 points)
 
-- **Improved Inner Fire** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Inner Fire** (3 ranks, column 1) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases the Armor bonus of your Inner Fire spell by 15% and increases its total charges by 4.
   - Rank 2: Increases the Armor bonus of your Inner Fire spell by 30% and increases its total charges by 8.
   - Rank 3: Increases the Armor bonus of your Inner Fire spell by 45% and increases its total charges by 12.
@@ -111,7 +136,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
     - Rank 1: Increases the Armor bonus of your Inner Fire spell by 10%.
     - Rank 2: Increases the Armor bonus of your Inner Fire spell by 20%.
     - Rank 3: Increases the Armor bonus of your Inner Fire spell by 30%.
-- **Mental Strength** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Mental Strength** (5 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases your total Intellect by 3%.
   - Rank 2: Increases your total Intellect by 6%.
   - Rank 3: Increases your total Intellect by 9%.
@@ -126,7 +151,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 - **Soul Warding** (1 rank, column 3) [NEW]
   - Requires: Improved Power Word: Shield (3/3)
   - Reduces the cooldown on your Power Word: Shield spell by 4 sec and reduces its mana cost by 15%.
-- **Improved Mana Burn** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Improved Mana Burn** (2 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Reduces the casting time of your Mana Burn spell by 0.5 sec.
   - Rank 2: Reduces the casting time of your Mana Burn spell by 1 sec.
   - Classic (2 ranks):
@@ -139,7 +164,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Requires: Mental Strength (5/5)
   - Cost: 100 Mana, Enemy: 36 yd range / Friendly: 40 yd range, Channeled, 12 sec cooldown
   - Launches a volley of holy light at the target, causing 96 Holy damage to an enemy, or 233 healing to an ally. Instantly and every 1 sec for 2 sec.
-- **Renewed Hope** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Renewed Hope** (5 ranks, column 3) [NEW] [ranks settled by client trait curves]
   - Requires: Soul Warding (1/1)
   - Rank 1: Your heals from Flash Heal, Binding Heal, Lesser Heal, Heal, Greater Heal and Penance gain 2% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by 1 sec.
   - Rank 2: Your heals from Flash Heal, Binding Heal, Lesser Heal, Heal, Greater Heal and Penance gain 4% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by 2 sec.
@@ -149,7 +174,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 6 (25 points)
 
-- **Divine Aegis** (3 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Divine Aegis** (3 ranks, column 3) [NEW] [ranks settled by client trait curves]
   - Requires: Renewed Hope (5/5)
   - Rank 1: Your critical heals create a protective shield on the target, absorbing 5% of the amount healed. Lasts 12 sec.
   - Rank 2: Your critical heals create a protective shield on the target, absorbing 10% of the amount healed. Lasts 12 sec.
@@ -169,7 +194,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 1 (0 points)
 
-- **Twilight Focus** (3 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Twilight Focus** (3 ranks, column 1) [NEW] [ranks settled by client trait curves]
   - Rank 1: Gives you a 23% chance to avoid interruption caused by damage while casting any spell.
   - Rank 2: Gives you a 46% chance to avoid interruption caused by damage while casting any spell.
   - Rank 3: Gives you a 70% chance to avoid interruption caused by damage while casting any spell.
@@ -205,7 +230,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Cost: 185 Mana, Instant
   - Causes an explosion of holy light around the caster, causing 31 to 36 Holy damage to all enemy targets within 10 yards and healing all party members within 10 yards for 68 to 77. These effects cause no threat.
   - Classic: Causes an explosion of holy light around the caster, causing 29 to 33 Holy damage to all enemy targets within 10 yards and healing all party members within 10 yards for 54 to 62. These effects cause no threat.
-- **Blessed Recovery** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Blessed Recovery** (3 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: After being struck by a melee or ranged critical hit, or suffering more than 30% of your maximum Health from a single attack, heal 8% of the damage taken over 6 sec. Refreshing this effect carries over any remaining healing.
   - Rank 2: After being struck by a melee or ranged critical hit, or suffering more than 30% of your maximum Health from a single attack, heal 16% of the damage taken over 6 sec. Refreshing this effect carries over any remaining healing.
   - Rank 3: After being struck by a melee or ranged critical hit, or suffering more than 30% of your maximum Health from a single attack, heal 25% of the damage taken over 6 sec. Refreshing this effect carries over any remaining healing.
@@ -213,7 +238,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
     - Rank 1: After being struck by a melee or ranged critical hit, heal 8% of the damage taken over 6 sec.
     - Rank 2: After being struck by a melee or ranged critical hit, heal 16% of the damage taken over 6 sec.
     - Rank 3: After being struck by a melee or ranged critical hit, heal 25% of the damage taken over 6 sec.
-- **Inspiration** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Inspiration** (3 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Your non-periodic critical heals increase your target's Armor by 8% for 15 sec.
   - Rank 2: Your non-periodic critical heals increase your target's Armor by 16% for 15 sec.
   - Rank 3: Your non-periodic critical heals increase your target's Armor by 25% for 15 sec.
@@ -227,7 +252,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 - **Holy Reach** (2 ranks, column 1) [unchanged]
   - Rank 1: Increases the range of your Smite and Holy Fire spells and the radius of your Prayer of Healing and Holy Nova spells by 10%.
   - Rank 2: Increases the range of your Smite and Holy Fire spells and the radius of your Prayer of Healing and Holy Nova spells by 20%.
-- **Improved Healing** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Healing** (3 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Reduces the Mana cost of your Lesser Heal, Heal, Greater Heal, Penance, and Prayer of Mending spells by 5%.
   - Rank 2: Reduces the Mana cost of your Lesser Heal, Heal, Greater Heal, Penance, and Prayer of Mending spells by 10%.
   - Rank 3: Reduces the Mana cost of your Lesser Heal, Heal, Greater Heal, Penance, and Prayer of Mending spells by 15%.
@@ -235,7 +260,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
     - Rank 1: Reduces the Mana cost of your Lesser Heal, Heal, and Greater Heal spells by 5%.
     - Rank 2: Reduces the Mana cost of your Lesser Heal, Heal, and Greater Heal spells by 10%.
     - Rank 3: Reduces the Mana cost of your Lesser Heal, Heal, and Greater Heal spells by 15%.
-- **Searing Light** (2 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Searing Light** (2 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
   - Requires: Divine Fury (5/5)
   - Rank 1: Increases your Holy damage done by 2%, and gives a 5% chance each time your Holy Fire spell deals periodic damage for your next Holy Nova to cost no Mana.
   - Rank 2: Increases your Holy damage done by 4%, and gives a 10% chance each time your Holy Fire spell deals periodic damage for your next Holy Nova to cost no Mana.
@@ -248,14 +273,14 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 5 (20 points)
 
-- **Litany of Light** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Litany of Light** (2 ranks, column 1) [NEW] [ranks settled by client trait curves]
   - Rank 1: When you cast a healing spell, gain Mana equal to 5% of the base cost of the spell if your previous heal was a different spell.
   - Rank 2: When you cast a healing spell, gain Mana equal to 10% of the base cost of the spell if your previous heal was a different spell.
 - **Spirit of Redemption** (1 rank, column 2) [CHANGED]
   - Requires: Improved Healing (3/3)
   - Upon death, the priest becomes the Spirit of Redemption for 15 sec. The Spirit of Redemption cannot move, attack, be attacked or targeted by any spells or effects. While in this form the priest can cast any healing spell free of cost. When the effect ends, the priest dies.
   - Classic: Upon death, the priest becomes the Spirit of Redemption for 10 sec. The Spirit of Redemption cannot move, attack, be attacked or targeted by any spells or effects. While in this form the priest can cast any healing spell free of cost. When the effect ends, the priest dies.
-- **Spiritual Guidance** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Spiritual Guidance** (5 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases your spell healing by up to 5% of your total Spirit and your spell damage by up to 2% of your total Spirit.
   - Rank 2: Increases your spell healing by up to 10% of your total Spirit and your spell damage by up to 3% of your total Spirit.
   - Rank 3: Increases your spell healing by up to 15% of your total Spirit and your spell damage by up to 4% of your total Spirit.
@@ -270,7 +295,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 6 (25 points)
 
-- **Spiritual Healing** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Spiritual Healing** (3 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
   - Requires: Spiritual Guidance (5/5)
   - Rank 1: Increases the amount healed by your spells by 3%.
   - Rank 2: Rank 2 values not yet captured from footage.
@@ -296,7 +321,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 1 (0 points)
 
-- **Shadow Focus** (5 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Shadow Focus** (5 ranks, column 1) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases your chance to hit with your Shadow spells by 1%.
   - Rank 2: Increases your chance to hit with your Shadow spells by 2%.
   - Rank 3: Increases your chance to hit with your Shadow spells by 3%.
@@ -314,7 +339,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Rank 3: Gives your Shadow damage spells a 6% chance to stun the target for 3 sec.
   - Rank 4: Gives your Shadow damage spells a 8% chance to stun the target for 3 sec.
   - Rank 5: Gives your Shadow damage spells a 10% chance to stun the target for 3 sec.
-- **Spirit Tap** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Spirit Tap** (5 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Gives you a 20% chance to gain a 100% bonus to your Spirit for 15 sec after killing a non-trivial target. For the duration, your Mana will regenerate at a 50% of normal rate while casting.
   - Rank 2: Gives you a 40% chance to gain a 100% bonus to your Spirit for 15 sec after killing a non-trivial target. For the duration, your Mana will regenerate at a 50% of normal rate while casting.
   - Rank 3: Gives you a 60% chance to gain a 100% bonus to your Spirit for 15 sec after killing a non-trivial target. For the duration, your Mana will regenerate at a 50% of normal rate while casting.
@@ -329,7 +354,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 2 (5 points)
 
-- **Shadow Affinity** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Shadow Affinity** (3 ranks, column 1) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Reduces the threat generated by your Shadow spells by 10%.
   - Rank 2: Reduces the threat generated by your Shadow spells by 20%.
   - Rank 3: Reduces the threat generated by your Shadow spells by 30%.
@@ -340,7 +365,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 - **Improved Shadow Word: Pain** (2 ranks, column 3) [unchanged]
   - Rank 1: Increases the duration of your Shadow Word: Pain spell by 3 sec.
   - Rank 2: Increases the duration of your Shadow Word: Pain spell by 6 sec.
-- **Shadow Reach** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Shadow Reach** (2 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases the range of your offensive Shadow spells by 10%.
   - Rank 2: Increases the range of your offensive Shadow spells by 20%.
   - Classic (3 ranks):
@@ -364,7 +389,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Cost: 45 Mana, 20 yd range, Channeled
   - Assault the target's mind with Shadow energy, causing 104 Shadow damage over 3 sec and slowing their movement speed by 50%.
   - Classic: Assault the target's mind with Shadow energy, causing 75 Shadow damage over 3 sec and slowing their movement speed by 50%.
-- **Improved Mind Flay** (2 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Improved Mind Flay** (2 ranks, column 4) [NEW] [ranks settled by client trait curves]
   - Requires: Mind Flay (1/1)
   - Rank 1: Your Mind Flay now deals 10% more damage, gains 5 yards increased range, but slows the target's movement speed by 35%.
   - Rank 2: Your Mind Flay now deals 20% more damage, gains 10 yards increased range, but slows the target's movement speed by 20%.
@@ -378,7 +403,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Cost: 40 Mana, 30 yd range, Instant, 1 min cooldown
   - Afflicts your target with Shadow energy that causes all party members to be healed for 20% of any Shadow spell damage you deal for 30 sec. Vampiric Embrace also grants a chance for your Spirit Tap talent to trigger when enemies afflicted by it die.
   - Classic: Afflicts your target with Shadow energy that causes all party members to be healed for 20% of any Shadow spell damage you deal for 1 min.
-- **Shadow Weaving** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Shadow Weaving** (3 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Your Shadow damage spells have a 33% chance to increase the Shadow damage you deal by 2% for 15 sec, stacking up to 5 times.
   - Rank 2: Your Shadow damage spells have a 66% chance to increase the Shadow damage you deal by 2% for 15 sec, stacking up to 5 times.
   - Rank 3: Your Shadow damage spells have a 100% chance to increase the Shadow damage you deal by 2% for 15 sec, stacking up to 5 times.
@@ -396,13 +421,13 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Cost: 225 Mana, 20 yd range, Instant, 45 sec cooldown
   - Silences the target, preventing them from casting spells for 5 sec and interrupting their spellcasts for 3 sec.
   - Classic: Silences the target, preventing them from casting spells for 5 sec.
-- **Devouring Contagion** (2 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Devouring Contagion** (2 ranks, column 3) [NEW] [ranks settled by client trait curves]
   - Rank 1: Reduces the mana cost of your Devouring Plague by 25%. Targets that die while Devouring Plague is active spreads it, jumping to a nearby enemy within 5 yards for the remaining duration.
   - Rank 2: Reduces the mana cost of your Devouring Plague by 50%. Targets that die while Devouring Plague is active spreads it, jumping to a nearby enemy within 5 yards for the remaining duration.
 
 #### Row 6 (25 points)
 
-- **Early Demise** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Early Demise** (2 ranks, column 1) [NEW] [ranks settled by client trait curves]
   - Rank 1: Increases Shadow Word: Death's critical strike chance on targets at or below 20% health by 15%.
   - Rank 2: Increases Shadow Word: Death's critical strike chance on targets at or below 20% health by 30%.
 - **Darkness** (5 ranks, column 3) [unchanged]

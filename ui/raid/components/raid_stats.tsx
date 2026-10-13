@@ -372,14 +372,10 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					label: 'Stamina',
 					effects: [
 						{
-							label: 'Improved Power Word Fortitude',
-							actionId: ActionId.fromSpellId(14767),
-							playerData: playerClassAndTalent(Class.ClassPriest, 'improvedPowerWordFortitude'),
-						},
-						{
+							// Forever built Improved Power Word: Fortitude into the spell and took the talent out.
 							label: 'Power Word Fortitude',
 							actionId: ActionId.fromSpellId(48161),
-							playerData: playerClassAndMissingTalent(Class.ClassPriest, 'improvedPowerWordFortitude'),
+							playerData: playerClass(Class.ClassPriest),
 						},
 						{
 							label: 'Scroll of Stamina',

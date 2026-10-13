@@ -18,14 +18,12 @@ func TestP1Shadow(t *testing.T) {
 			Class:      proto.Class_ClassPriest,
 			Phase:      1,
 			Race:       proto.Race_RaceUndead,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
-			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
+			OtherRaces: []proto.Race{proto.Race_RaceHuman, proto.Race_RaceNightElf, proto.Race_RaceDwarf},
 
 			Talents:     P1Talents,
-			GearSet:     core.GetGearSet("../../../ui/shadow_priest/gear_sets", "p0.bis"),
-			Rotation:    core.GetAplRotation("../../../ui/shadow_priest/apls", "p1"),
-			Buffs:       core.FullBuffs,
+			GearSet:     core.GetGearSet("../../../ui/shadow_priest/gear_sets", "level60_phase1_synthetic"),
+			Rotation:    core.GetAplRotation("../../../ui/shadow_priest/apls", "level60"),
+			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 
@@ -36,17 +34,21 @@ func TestP1Shadow(t *testing.T) {
 	}))
 }
 
-var P1Talents = "0512301302--5002504103501251"
+var P1Talents = "005030211305--500321501201302051"
 
 var P1Consumes = core.ConsumesCombo{
-	Label: "P1-Consumes",
+	Label: "Level60-Consumes",
 	Consumes: &proto.Consumes{
-		DefaultPotion:   proto.Potions_MajorManaPotion,
+		DefaultPotion:   proto.Potions_MajorSpellblastingPotion,
+		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 		Flask:           proto.Flask_FlaskOfSupremePower,
-		Food:            proto.Food_FoodRunnTumTuberSurprise,
+		Food:            proto.Food_FoodLobsterStew,
+		IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
+		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
+		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},
 }
 
