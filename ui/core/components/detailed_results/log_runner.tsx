@@ -5,6 +5,7 @@ import { SimLog } from '../../proto_utils/logs_parser';
 import { SimResult } from '../../proto_utils/sim_result.js';
 import { TypedEvent } from '../../typed_event.js';
 import { EventFilter } from './events_filter.js';
+import { badgeOutcomeInLogLine } from './hit_outcome.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
 export interface LogRunnerConfig extends ResultComponentConfig {
@@ -116,6 +117,7 @@ export class LogRunner extends ResultComponent {
 		) as HTMLTableRowElement;
 
 		timeRef.value!.addEventListener('click', () => this.onTimeClick(log.timestamp));
+		if (log.isDamageDealt()) badgeOutcomeInLogLine(eventRef.value!);
 
 		const text = eventRef.value!.textContent?.trim() ?? '';
 		eventRef.value!.title = text;
