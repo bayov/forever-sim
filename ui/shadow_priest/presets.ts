@@ -135,6 +135,9 @@ export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
 //   lost at any length. Chastise loses 4.7 to the Mind Flay GCD it takes.
 // - Dark Sacrifice (Undead) under 40% mana. Mana never gets that low in a raid fight on this
 //   set (about 25 min to empty), so it is there for longer fights.
+// - The on-use trinket and the Major Spellblasting Potion go at -0.1 sec so the pre-cast Mind
+//   Blast landing at 0 gets them (rotation auditor, 2026-10-13): +1.0 / +0.7 / +0.4 at 120 / 180
+//   / 300 sec, the same for Shadow + Holy.
 //
 // A hand audit of the timeline on the final build (2026-10-12): Shadowform holds all fight,
 // Shadow Weaving reaches 5 stacks 6 sec in and stays there, Inner Focus goes on the first Mind
@@ -147,7 +150,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 
 // The tools/rotopt priest_smite template after a knob search on the Smite talents (3000
 // iterations a candidate, 20000 to confirm, at 120, 180 and 300 sec, 2026-10-12): Power
-// Infusion on cooldown after a Smite 2 sec before the pull that lands at 0 (+6.0), Holy Fire
+// Infusion on cooldown after a Smite 2 sec before the pull that lands at 0 (+6.0; the on-use
+// trinket at -0.1 sec so it lands with the trinket up, +1.0 / +0.7 / +0.4), Holy Fire
 // whenever its damage over time is down (Power in Light gives
 // Smite 10% while it is up), Shadow Word: Pain, Devouring Plague above 20% mana, Chastise for a
 // Dwarf, Inner Focus on Holy Fire (0.2 ahead of Smite at 180 sec, 0.6 at 300; Devouring Plague
@@ -178,7 +182,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // Talent searches (tools/rotopt -talent-search, 3000 iterations a move, 20000 to confirm) on
 // the synthetic Phase 1 set at 180 sec, then again at 300 sec and after every knob search,
 // from deep Shadow with Discipline, deep Shadow with Holy, and 31 Discipline (Power Infusion)
-// with 20 Shadow. On 2026-10-13 (the bundled gear round, searches rerun) the build is 852.5 / 853.7 / 851.3 at
+// with 20 Shadow. On 2026-10-13 (the bundled gear round, searches rerun) the build is 853.5 / 854.4 / 851.7 at
 // 120 / 180 / 300 sec as an Undead.
 // - Shadow 31: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
@@ -197,7 +201,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // The same Shadow points with 20 in Holy instead of Discipline (Twilight Focus, Spell Warding,
 // Inspiration, Improved Healing and the rest of the healing utility a raid may ask for). None of
 // the Holy talents adds Shadow damage, so it gives up Twin Disciplines and Mental Strength:
-// 833.8 / 832.0 / 830.5 at 120 / 180 / 300 sec as an Undead on its own consumes (see the build),
+// 834.8 / 832.7 / 830.9 at 120 / 180 / 300 sec as an Undead on its own consumes (see the build),
 // 2.5% behind at 180 sec. A talent search from it trades Holy points for Twin Disciplines and
 // Shadow (+9.8 with 13 Holy), which defeats the build's purpose, so it keeps its 20 Holy. With
 // Dark Sacrifice left out of the rotation it would gain 5.1 (837.1).
@@ -215,7 +219,7 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // (Holy Specialization 5, Divine Fury 5, Searing Light 2) with 3 points of Shadow Focus for
 // Shadow Word: Pain's hit. The deep Holy start ends at 608.9.
 //
-// On its own set with its own consumes (see the build) it is 711.4 / 708.1 / 686.6 at 120 / 180
+// On its own set with its own consumes (see the build) it is 712.4 / 708.8 / 687.0 at 120 / 180
 // / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. That is 17% behind
 // Shadow at 180 sec and 19% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
@@ -371,14 +375,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Every race a priest can be under Forever, on the Level 60 build with the same seed (20000
 // iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-13, bundled gear
 // round):
-//   Undead    852.5 / 853.7 / 851.3  (best overall and Horde)
-//   Gnome     846.5 / 848.9 / 845.8  (best Alliance)
-//   Night Elf 845.5 / 845.5 / 843.0
-//   Human     837.8 / 838.9 / 836.7
-//   Dwarf     837.6 / 838.8 / 836.5
-//   Troll     837.4 / 838.5 / 836.2
+//   Undead    853.5 / 854.4 / 851.7  (best overall and Horde)
+//   Gnome     847.5 / 849.6 / 846.2  (best Alliance)
+//   Night Elf 846.5 / 846.1 / 843.4
+//   Human     838.8 / 839.6 / 837.1
+//   Dwarf     838.6 / 839.5 / 836.9
+//   Troll     838.4 / 839.2 / 836.6
 // Over a Human, Undead's Touch of the Grave is 14.8, Gnome's Eureka! 10.0, Night Elf's Elune's
-// Light 6.6. With the
+// Light 6.5. With the
 // staff no priest race has a weapon type racial, so the table is the same with them off (with
 // the earlier sword a Human's 2% crit tied it with an Undead). Troll's Berserking only speeds up
 // Mind Blast's cast, channels and the GCD do not speed up, so it is worth nothing. Starshards and
@@ -399,12 +403,12 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 // adds the Greater Mageblood Elixir. With it the Major Spellblasting Potion beat the Major Mana
 // Potion at every length on the earlier gear (rotation audit, 2026-10-12). Every race on it
 // (2026-10-13, bundled gear round, 120 / 180 / 300 sec):
-//   Undead    833.8 / 832.0 / 830.5  (best overall and Horde)
-//   Gnome     828.8 / 831.7 / 808.7  (best Alliance)
-//   Night Elf 828.1 / 828.5 / 785.3
-//   Human     820.4 / 822.0 / 779.1
-//   Dwarf     820.3 / 821.9 / 778.3
-//   Troll     820.1 / 821.8 / 777.1
+//   Undead    834.8 / 832.7 / 830.9  (best overall and Horde)
+//   Gnome     829.8 / 832.3 / 809.1  (best Alliance)
+//   Night Elf 829.1 / 829.2 / 785.7
+//   Human     821.4 / 822.7 / 779.5
+//   Dwarf     821.3 / 822.6 / 778.7
+//   Troll     821.1 / 822.4 / 777.5
 // Undead's Dark Sacrifice keeps it in mana on a long fight; the others run dry before 300 sec.
 export const ConsumesHoly = Consumes.create({
 	...DefaultConsumes,
@@ -458,12 +462,12 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec,
 // 2026-10-13, bundled gear round):
-//   Undead    711.4 / 708.1 / 686.6  (best overall and Horde)
-//   Gnome     715.1 / 702.6 / 680.1  (best Alliance)
-//   Night Elf 712.0 / 696.7 / 676.1
-//   Troll     710.3 / 696.0 / 674.7
-//   Human     707.9 / 694.1 / 674.0
-//   Dwarf     707.6 / 693.0 / 672.9  (the generic boss is no Humanoid, so no Chastise; it cost
+//   Undead    712.4 / 708.8 / 687.0  (best overall and Horde)
+//   Gnome     716.1 / 703.3 / 680.5  (best Alliance)
+//   Night Elf 713.0 / 697.4 / 676.6
+//   Troll     711.4 / 696.6 / 675.1
+//   Human     709.0 / 694.8 / 674.4
+//   Dwarf     708.6 / 693.7 / 673.3  (the generic boss is no Humanoid, so no Chastise; it cost
 //             the Dwarf 8 DPS against a Humanoid)
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
