@@ -4,9 +4,10 @@
 // shows the wrong numbers (Forever reworked a lot of low level gear) or 404s outright on
 // anything Forever added, like item 270081. The name goes in the page path
 // (wowhead.com/forever/item=...), in the nether tooltip path, and as the dataEnv the
-// embedded tooltip script reads.
+// embedded tooltip script reads. wowhead's tooltips.js numbers Forever's database 16
+// (WH.dataEnv.CLASSICPLUS, which it maps to "forever"); 17 isn't one of its databases.
 export const WOWHEAD_DOMAIN = 'forever';
-export const WOWHEAD_EXPANSION_ENV = 17;
+export const WOWHEAD_EXPANSION_ENV = 16;
 
 // Where we look when Forever's database has never heard of an id.
 //

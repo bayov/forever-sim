@@ -31,14 +31,14 @@ Sources, all read-only:
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 5 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation` |
 | Paladin | 4 (+1 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`) |
-| Warrior | 1 (+1 shared) | `warr_crit_rage` (+ `wf_totem_offhand`) |
+| Warrior | 2 (+1 shared) | `warr_rage_norm`, `warr_crit_rage` (+ `wf_totem_offhand`) |
 | Hunter | 6 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_shot_ap_shares`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_ab_on_missiles`, `mage_frostbolt10` |
 | Shaman | 3 | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` |
 | Druid | 5 | `druid_ooc_rate`, `druid_shred_flat`, `druid_tf_scope`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 32 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 33 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -334,9 +334,23 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% a
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
+| `warr_rage_norm` | Normalised Rage from white hits | Fury, Fury two-hand, Arms | k 3.46 / 4.5, off hand ×1.0 (standards 21) | off hand ×0.5 | k 3.46 / 4.5, off hand ×1.0 | k ×1.25 | to measure; est. a few % on Fury and Arms |
 | `warr_crit_rage` | Extra Rage from critical white hits | Fury, Fury two-hand, Arms | +100% | +75% | +100% | = Expected | est. Low −2 to −3% Fury, about −1.5% Arms |
 
 Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at its Low).
+
+### `warr_rage_norm`: normalised Rage from white hits
+
+- **Builds:** Fury, Fury two-hand, Arms.
+- **Sim now (standards 21):** a landed white hit gives k × weapon swing speed in Rage, with k = 3.46 for a one-hander and 4.5 for a two-hander, off hand ×1.0, and the `warr_crit_rage` crit bonus on top. `sim/core/rage.go` behind `Env.IsForever()` (warrior worker).
+- **Source:** Blizzard's Priest & Warrior deep dive ("fully-normalized ... based on the speed of the weapon that dealt the damage"), tier 3. The constants are beta testers' level 30 measurements (forum thread 2355684; Icy Veins and wowforeverbuilds repeat them), tier 5.
+- **Why uncertain:** Blizzard gives no formula. Nobody has measured it at 60, nobody has measured the off-hand factor, and nobody knows whether k scales with level. The full beta test plan, which also covers Rage from damage taken, is under "Rage needs a beta test" in orchestration/followups.md.
+- **Settings:**
+  - **Low, off hand ×0.5.** This is TBC's normalised formula, where the off hand gets half the main hand's factor (1.75 against 3.5).
+  - **Expected, k 3.46 / 4.5, off hand ×1.0 (Sim now).** The measured constants, with no off-hand penalty stated.
+  - **High, k ×1.25 (4.33 / 5.63).** For if the constant grows with level between 30 and 60.
+- **Sensitivity:** to be measured after the change. The mechanics auditor estimates a few % on Fury and Arms. Dual-wield Fury moves most with the off-hand factor.
+- **Knob:** the constants in the Forever branch of `sim/core/rage.go`: `core.Assume("warr_rage_k", 1)` multiplies k, and `core.Assume("warr_rage_oh", 1)` sets the off-hand factor.
 
 ### `warr_crit_rage`: extra Rage from critical white hits
 
