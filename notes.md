@@ -37,14 +37,19 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## Rogue
 
-* Opportunity x Aggression on Backstab: add or multiply (sim: multiply, 1.12 rules say add).
-* Venom x Vile Poisons: add or multiply.
-* Murder crit bonus double dip (deliberate in `target.go`).
+* Talent damage bonuses on one spell: add or multiply? Opportunity and Aggression on Backstab, Improved Eviscerate and Aggression on Eviscerate, Venom and Vile Poisons on the poisons. The client has them all as the same percent modifier (aura 108), which 1.12 adds. The sim multiplies them since 2026-10-12, like Call of Flame and Improved Fire Nova on the shaman's beta test (shaman_audit.md 5.6). A Backstab with Opportunity 2 and Aggression 3 against one without either settles it for the rogue (1.166 if they multiply, 1.16 if they add), but Aggression is a Combat row 6 talent, out of reach at 30.
+* Murder raises damage only, not crit damage (fixed 2026-10-12: 14158 is a lone aura 168). The same crit double dip is still in shared code for Troll Beast Slaying, Skyborne's Elemental bonus, Dwarf Big Game Hunter and the anti-Undead set bonuses.
+* Beta: a poison and a sharpening stone on the same weapon. Client 70338 has Forever's poisons on SpellEffect 360 (Era 54) and the stones and oils still on 54, so the sim lets both sit on one weapon (+9.5 to +13 DPS at 60). A level 20 rogue with Instant Poison and a Coarse Sharpening Stone can check that both show on the weapon.
 * Blade Flurry: does the copied hit take the damage modifiers a second time?
-* Cutthroat, Puncturing Wounds and Quietus: only rank 1 was seen, the sim scales them linearly.
-* Mutilate dagger requirement (the tooltip doesn't repeat it, the sim assumes it still applies).
-* Preparation resets only Cold Blood, Shadowstep and Vanish.
+* Beta: Mutilate with an off hand that is not a dagger. The client asks for a dagger on the cast and the main hand strike only (SpellEquippedItems, 1.60.1.70338), so the sim lets any off hand weapon strike. Mutilate is a 20 point talent, so a level 30 rogue can try it with a sword in the off hand.
+* Beta: Preparation resets every other rogue cooldown in the sim (Adrenaline Rush, Blade Flurry, Cold Blood, Premeditation, Ghostly Strike, Vanish, Evasion), as the tooltip says and Classic did. The client spell is a dummy effect, so the list is the server's. Preparation is a 20 point Subtlety talent: a level 30 rogue can use Evasion, Sprint, Ghostly Strike and Premeditation and press it.
+* Beta: Premeditation out of Stealth. The client spell no longer has the stealth only attribute, and foreverchanges reads the tooltip the same way, so the sim lets it go out in combat. A 15 point Subtlety talent, so a level 30 rogue can try it.
+* Beta: Backstab's flat bonus. Forever's tooltip says "150% weapon damage plus 150" at rank 9, Era's "plus 225", but the client effect data is the same as Era's (150 added to the weapon damage before the 150%). The sim keeps 225. At level 28 the tooltip shows "plus 46" (Era 69): a few Backstabs with a known dagger and attack power settle it.
+* Deadly Poison takes a new snapshot of the whole stack on every application (since 2026-10-12), so Venom or Blood Fury coming up later reaches a poison already at 5 stacks. Before, only the first stack took one. The modern client recomputes an aura's amount when it is applied again, but the server could keep the old one.
+* The Ahn'Qiraj book ranks (Backstab and Eviscerate rank 9, Deadly Poison V) are out under Forever (`env.IncludeAQRanks()`): client 70338 has the books with no source and no trainer. If Forever adds them at launch, Backstab, Eviscerate and Deadly Poison gain about 2 to 3% DPS (Combat Daggers 18, Combat Swords 14, Subtlety 13, Mutilate 15 at 180 sec).
+* Grimstitch Armor's bonuses (1% hit, 36 attack power against Humanoids, Eviscerate 5 Energy cheaper) sit on the synthetic Phase 1 sets, the client pieces have no stats yet.
 * Precision scope.
+* The +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale) sit in different consume slots in the sim, so it would let them stack. The client presents them as role variants of one elixir, so the presets take one (the Elixir of the Mongoose) and fill the Strength slot with the Elixir of Ferocity (18 Strength, 18 Agility, no crit). The Elixir of the Grizzly on top would add 6.1 DPS for Sinister Strike. A beta character drinking two of them and reading the sheet settles whether they stack.
 
 ## Paladin
 

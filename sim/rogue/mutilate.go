@@ -12,7 +12,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {
 		return
 	}
-	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 17, 40: 25, 50: 36, 60: 50})
+	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 17.25, 40: 24.75, 50: 36, 60: 50.25})
 
 	rogue.mutilateOH = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    MutilateActionID.WithTag(2),
@@ -44,7 +44,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       rogue.builderFlags(),
 
-		// TODO: The tooltip showed no Energy cost, the 60 is taken from the Classic Mutilate.
+		// 60 Energy in the client (1310707).
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   60,
 			Refund: 0.8,
@@ -56,8 +56,10 @@ func (rogue *Rogue) registerMutilateSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			// TODO: The tooltip didn't repeat the Classic dagger requirement, it's assumed to still apply.
-			return rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
+			// The client (SpellEquippedItems, 1.60.1.70338) asks for a dagger on the cast and its
+			// main hand half (1310707, 1310706) but not on the off hand half (1310705), so unlike
+			// the TBC Mutilate the off hand can be any weapon. We read that as a main hand dagger.
+			return rogue.HasDagger(core.MainHand) && rogue.HasOHWeapon()
 		},
 
 		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
@@ -87,8 +89,9 @@ func (rogue *Rogue) registerMutilateSpell() {
 
 // Each half strikes for 75% weapon damage plus a flat bonus, and hits harder while one of
 // the rogue's lingering poisons is on the target. The flat bonus is the Forever rank the
-// level knows (foreverchanges spellbook, build 70009): 17 from the talent, then 25, 36 and
-// 50 from the trainer at 40, 50 and 60.
+// level knows. The client adds 23, 33, 48 and 67 to the weapon damage before the 75%
+// (1310706, 399960, 1241585, 1241586 in 1.60.1.70338), so 17.25 from the talent, then
+// 24.75, 36 and 50.25 from the trainer at 40, 50 and 60.
 func (rogue *Rogue) mutilateDamage(target *core.Unit, flatDamage float64, weaponDamage float64) float64 {
 	baseDamage := flatDamage + 0.75*weaponDamage
 	if rogue.isPoisoned(target) {

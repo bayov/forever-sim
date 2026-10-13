@@ -6,6 +6,7 @@ import { Player } from '../core/player.js';
 import { Class, Faction, PartyBuffs, PseudoStat, Race, Spec, Stat, Target } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
+import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
@@ -57,6 +58,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 	displayPseudoStats: [PseudoStat.PseudoStatMeleeSpeedMultiplier],
 
 	defaults: {
+		race: Presets.P1OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
@@ -96,7 +98,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		inputs: [],
 	},
 	// IconInputs to include in the 'Player' section on the settings tab.
-	playerIconInputs: [],
+	playerIconInputs: [RogueInputs.MainHandPoison, RogueInputs.OffHandPoison],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		BuffDebuffInputs.SpellCritBuff,
@@ -122,9 +124,20 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase2]],
 		builds: [
+			Presets.PresetBuildLevel60CombatDaggers,
+			Presets.PresetBuildLevel60SealFateDaggers,
+			Presets.PresetBuildLevel60CombatSwords,
+			Presets.PresetBuildLevel60SealFateSwords,
+			Presets.PresetBuildLevel60Mutilate,
+			Presets.PresetBuildLevel60Subtlety,
+			Presets.PresetBuildLevel60CombatDaggersHumanoid,
+			Presets.PresetBuildLevel60SealFateDaggersHumanoid,
+			Presets.PresetBuildLevel60CombatSwordsHumanoid,
+			Presets.PresetBuildLevel60SealFateSwordsHumanoid,
+			Presets.PresetBuildLevel60MutilateHumanoid,
+			Presets.PresetBuildLevel60SubtletyHumanoid,
 			Presets.PresetBuildBackstab,
 			Presets.PresetBuildSinisterStrike,
-			Presets.PresetBuildIEA,
 			Presets.PresetBuildMutilate,
 			Presets.PresetBuildLevel30p5Backstab,
 			Presets.PresetBuildLevel30p5SinisterStrike,
@@ -153,7 +166,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
@@ -176,8 +189,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			consumes: Presets.DefaultConsumes[Phase.Phase1],
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Alliance]: Race.RaceGnome,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
