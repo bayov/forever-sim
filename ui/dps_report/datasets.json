@@ -41,7 +41,15 @@
  },
  "icons": {
   "title": "Talent and spell icons",
-  "description": "36 px spell, item, race and class icons, the sim UI's empty gear-slot icons, and 56 px header icons, as data URLs.",
+  "description": "36 px class, race, faction and preset icons, and 56 px header icons, as data URLs. The Ranking tab needs only these, so they load first.",
+  "updated": {
+   "at": "2026-10-13T13:09:13Z",
+   "by": "Claude (forever-sim)"
+  }
+ },
+ "icons_more": {
+  "title": "More icons",
+  "description": "36 px spell, item and aura icons and the sim UI's empty gear-slot icons, as data URLs. They load after the Ranking tab is up.",
   "updated": {
    "at": "2026-10-13T13:09:13Z",
    "by": "Claude (forever-sim)"
@@ -52,6 +60,22 @@
   "description": "Every preset at 60, 120, 180, 300 and 480 s average fight length, 5,000 fights each.",
   "updated": {
    "at": "2026-10-13T11:00:56Z",
+   "by": "Claude (forever-sim)"
+  }
+ },
+ "mana": {
+  "title": "Mana over a long fight",
+  "description": "Per mana-using preset, its mana as a % of max every 5 s through a 480 s fight with its own consumes and rotation: the average over 100 fights (pct) and the 25th and 75th percentile fight (p25, p75).",
+  "updated": {
+   "at": "2026-10-13T20:52:29Z",
+   "by": "Claude (forever-sim)"
+  }
+ },
+ "mana_summary": {
+  "title": "When mana runs low",
+  "description": "Per mana-using preset over the same 480 s fights: when mana first drops below 10% of max (median and 25th to 75th percentile fight, empty when most fights never do), the share of fights that ever do, mana % at 60, 180, 300 and 480 s, mana spent and gained per second, and the sim's seconds out of mana, time to OOM and mana left at the end over 5,000 fights.",
+  "updated": {
+   "at": "2026-10-13T20:52:29Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -137,7 +161,7 @@
  },
  "talenttrees": {
   "title": "Talent trees",
-  "description": "Every class talent tree as the sim UI lays it out: each talent\u2019s row, column, ranks, prerequisite, text from ui/core/talents/trees, and the wowhead page of each rank (Forever's database where it has the spell, else Classic's).",
+  "description": "Every class talent tree as the sim UI lays it out: each talent’s row, column, ranks, prerequisite, text from ui/core/talents/trees, and the wowhead page of each rank (Forever's database where it has the spell, else Classic's).",
   "updated": {
    "at": "2026-10-13T16:23:00Z",
    "by": "Claude (forever-sim)"
@@ -225,7 +249,7 @@
  },
  "treeart": {
   "title": "Talent tree art",
-  "description": "Each class talent tree\u2019s icon and background art (the backgrounds the sim UI uses, from Wowhead), stored as data URLs.",
+  "description": "Each class talent tree’s icon and background art (the backgrounds the sim UI uses, from Wowhead), stored as data URLs.",
   "updated": {
    "at": "2026-10-13T06:28:33Z",
    "by": "Claude (forever-sim)"
@@ -233,7 +257,7 @@
  },
  "weights": {
   "title": "Stat weights",
-  "description": "Per preset, the DPS one more point of each stat adds (per 1% for hit and crit), measured by adding the stat on top of the gear and simming 40,000 fights at 180 s with the baseline\u2019s seed; worth is in points of the preset\u2019s main stat.",
+  "description": "Per preset, the DPS one more point of each stat adds (per 1% for hit and crit), measured by adding the stat on top of the gear and simming 40,000 fights at 180 s with the baseline’s seed; worth is in points of the preset’s main stat.",
   "updated": {
    "at": "2026-10-13T11:00:56Z",
    "by": "Claude (forever-sim)"

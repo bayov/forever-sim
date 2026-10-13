@@ -48,6 +48,12 @@ merged tree, refresh the scoped builds' requests, rerun the sim steps for those 
 `python3 build_data.py`, which writes every dataset to `$DASH_DIR/data/`. Split the builds
 across subagents by class; each one runs its own class's sims.
 
+The sim steps include `mana_curves.py`, which sims every mana-using build (all but warrior
+and rogue) through 100 fixed 480 s fights and reads its mana from the debug logs. It writes
+`mana/<id>.json`, and `build_data.py` turns those into the `mana` (mana % every 5 s) and
+`mana_summary` (when mana runs low) datasets. It takes seconds per build. Rerun it with
+`--force <ids>` for every re-simmed build that uses mana.
+
 Skip the README's "Publishing" section and its `rd/` harness: they are for the old
 Dashboard-type artifact. Steps 3 to 5 here replace them.
 

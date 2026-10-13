@@ -36,7 +36,7 @@ func TestOrcShamanEarthShockResists(t *testing.T) {
 		sim := core.NewSim(&proto.RaidSimRequest{
 			Raid:       core.SinglePlayerRaidProto(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 			Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
-			SimOptions: &proto.SimOptions{Ruleset: c.ruleset, RandomSeed: 1},
+			SimOptions: &proto.SimOptions{Ruleset: c.ruleset, RandomSeed: 1, ExactDamage: true},
 		}, simsignals.CreateSignals())
 		sim.Reset()
 		enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)

@@ -28,7 +28,7 @@ func newSyntheticSetSim(items []*proto.ItemSpec) *ElementalShaman {
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	return sim.Raid.Parties[0].Players[0].(*ElementalShaman)

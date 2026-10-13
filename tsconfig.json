@@ -9,7 +9,7 @@
             "ES2021",
             "DOM.Iterable"
         ],
-        "outDir": "dist/classic",
+        "outDir": "dist/forever",
         "pretty": false,
         "allowJs": true,
         "resolveJsonModule": true,

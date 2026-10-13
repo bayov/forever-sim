@@ -36,7 +36,7 @@ func newPvPSim(dodge, parry, block, downtime, seconds float64) (*core.Simulation
 			PvpMeleeDowntime: downtime,
 			Targets:          []*proto.Target{target},
 		},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()

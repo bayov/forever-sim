@@ -102,7 +102,7 @@ func newTargetLevelSim(level, targetLevel, weapon int32, skill float64, talents 
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
@@ -155,7 +155,7 @@ func TestOrcShamanSpellMissChance(t *testing.T) {
 			sim := core.NewSim(&proto.RaidSimRequest{
 				Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 				Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
-				SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+				SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 			}, simsignals.CreateSignals())
 			sim.Reset()
 			enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)

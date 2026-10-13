@@ -1,5 +1,5 @@
 // Builds the DPS Report as one self-contained HTML file, for publishing as a Claude artifact that opens on a phone with
-// no dev server. The sim UI serves the same report at /classic/dps_report/ from the same source (ui/dps_report).
+// no dev server. The sim UI serves the same report at /forever/dps_report/ from the same source (ui/dps_report).
 //
 // It runs vite with vite.dps_report.config.mts, then puts the script, the stylesheet and every image and font they use
 // into the page. An artifact may only load scripts from a few CDNs (d3 comes from cdnjs) and stylesheets from Google
@@ -20,9 +20,9 @@ const MAX_BYTES = 16 * 1024 * 1024;
 await build({ configFile, logLevel: 'error' });
 
 const html = fs.readFileSync(path.join(buildDir, 'dps_report/index.html'), 'utf8');
-const built = url => fs.readFileSync(path.join(buildDir, url.replace(/^\/classic\//, '')), 'utf8');
+const built = url => fs.readFileSync(path.join(buildDir, url.replace(/^\/forever\//, '')), 'utf8');
 
-// The sim UI's own images and fonts (/classic/assets/... is the repo's assets/ folder) become data URIs.
+// The sim UI's own images and fonts (/forever/assets/... is the repo's assets/ folder) become data URIs.
 const MIME = {
 	'.png': 'image/png',
 	'.jpg': 'image/jpeg',
@@ -34,8 +34,8 @@ const MIME = {
 };
 const missing = new Set();
 const inlineAssets = text =>
-	text.replace(/\/classic\/assets\/[\w./-]+?\.(png|jpe?g|svg|woff2?|ico)\b/g, url => {
-		const file = path.join(root, 'assets', url.slice('/classic/assets/'.length));
+	text.replace(/\/forever\/assets\/[\w./-]+?\.(png|jpe?g|svg|woff2?|ico)\b/g, url => {
+		const file = path.join(root, 'assets', url.slice('/forever/assets/'.length));
 		if (!fs.existsSync(file)) {
 			missing.add(url);
 			return url;
@@ -44,7 +44,7 @@ const inlineAssets = text =>
 	});
 
 const scriptUrl = html.match(/<script type="module"[^>]*src="([^"]+)"/)?.[1];
-const styleUrl = html.match(/<link rel="stylesheet"[^>]*href="(\/classic\/[^"]+\.css)"/)?.[1];
+const styleUrl = html.match(/<link rel="stylesheet"[^>]*href="(\/forever\/[^"]+\.css)"/)?.[1];
 if (!scriptUrl || !styleUrl) throw new Error('vite output has no report script or stylesheet');
 
 const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? 'DPS Report';

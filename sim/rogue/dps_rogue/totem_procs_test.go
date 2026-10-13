@@ -31,7 +31,7 @@ func newTotemRogueSim(level int32, totem proto.TotemWeaponBuff, seconds float64)
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{TotemWeaponBuff: totem}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: seconds, Targets: []*proto.Target{{Level: level, MobType: proto.MobType_MobTypeBeast}}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()

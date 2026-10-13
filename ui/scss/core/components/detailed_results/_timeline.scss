@@ -270,9 +270,12 @@
 	color: $ivory;
 }
 
+// A lane runs from the line above it to its own line at the bottom. It's 30px inside, and the
+// icons and bars are 24px tall at 3px from the top, so they have 3px above and below. The rows
+// on the left have the same height, with a line we don't see, so they line up with the lanes.
 .rotation-row {
-	height: 28px;
-	margin: 3px 0;
+	height: 31px;
+	border-bottom: 1px solid transparent;
 	transition: opacity 0.15s ease-in-out;
 }
 
@@ -355,7 +358,6 @@
 .rotation-label-header,
 .rotation-timeline-header {
 	height: 26px;
-	margin-bottom: 4px;
 }
 
 .rotation-timeline {
@@ -382,7 +384,7 @@
 	.rotation-ruler-tick {
 		position: absolute;
 		bottom: 0;
-		width: 1px;
+		width: var(--hairline, 1px);
 		height: 4px;
 		background: var(--line-color-strong);
 
@@ -419,7 +421,7 @@
 		position: absolute;
 		top: 0;
 		bottom: 0;
-		width: 1px;
+		width: var(--hairline, 1px);
 		background: rgba(255, 255, 255, 0.06);
 	}
 }
@@ -500,11 +502,11 @@
 	pointer-events: none;
 }
 
-// Everything in a row is as tall as a cast icon and sits in the middle of the row. The bars
+// Everything in a row is as tall as a cast icon and sits in the middle of the lane. The bars
 // that run on from an icon, like a cast time or a DoT's uptime, take the color of the icon.
 .rotation-timeline-cast {
 	position: absolute;
-	top: 2px;
+	top: 3px;
 	z-index: 1;
 	display: flex;
 	border-radius: 3px;
@@ -519,7 +521,7 @@
 
 .rotation-timeline-tick {
 	position: absolute;
-	top: 2px;
+	top: 3px;
 	z-index: 2;
 	width: 3px;
 	height: 24px;
@@ -529,7 +531,7 @@
 
 .rotation-timeline-aura {
 	position: absolute;
-	top: 2px;
+	top: 3px;
 	height: 24px;
 	border-left: 2px solid rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.9);
 	border-radius: 2px;
@@ -552,7 +554,7 @@
 // the solid part. Striped red gaps are time with the GCD ready and nothing pressed.
 .rotation-gcd {
 	position: absolute;
-	top: 2px;
+	top: 3px;
 	z-index: 1;
 	height: 24px;
 	overflow: hidden;
@@ -581,7 +583,7 @@
 
 .rotation-gcd-idle {
 	position: absolute;
-	top: 6px;
+	top: 7px;
 	height: 16px;
 	background: repeating-linear-gradient(135deg, rgba(224, 112, 112, 0.3) 0 3px, transparent 3px 6px);
 }

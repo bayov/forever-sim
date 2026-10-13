@@ -26,6 +26,7 @@ google-chrome*
 
 #.dockerignore
 /classic/
+/forever/
 /sod/
 *.code-workspace
 wowsimclassic

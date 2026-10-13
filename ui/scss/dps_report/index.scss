@@ -5,7 +5,7 @@
 @import '../core/talents/talents_picker';
 
 .dps-report-sim-ui {
-	@include theme-color($brand, 0.95, '/classic/assets/img/classic.jpg');
+	@include theme-color($brand, 0.95, '/forever/assets/img/classic.jpg');
 }
 
 @import './report';

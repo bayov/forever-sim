@@ -115,7 +115,7 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, alwaysOn: true, filter: 'all', hlLen: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'humanoid', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'humanoid', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false }, saved);
   st.rsTarget = 'humanoid'; st.rsWeapon = 'preset';
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
@@ -589,33 +589,6 @@ export function startReport(dash) {
   $('#rank-best').addEventListener('click', (e) => { e.stopPropagation(); st.best = !st.best; persist(); render(); });
   $('#rank-reset').addEventListener('click', (e) => { e.stopPropagation(); Object.assign(st, { cls: 'All', role: 'All', fac: 'All', best: false }); persist(); render(); });
 
-  const drawScatter = () => {
-    const host = $('#scatter');
-    if (!waitOr(host, ['builds'])) return;
-    const builds = rowsOf('builds');
-    const W = host.clientWidth, H = Math.max(220, Math.min(320, W * 0.75));
-    const m = { l: 34, r: 10, t: 22, b: 40 };
-    const x = d3.scaleLinear(d3.extent(builds, (b) => b.dps), [m.l, W - m.r]).nice();
-    const y = d3.scaleLinear([0, d3.max(builds, (b) => b.cv) * 1.1], [H - m.b, m.t]).nice();
-    const svg = d3.create('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
-    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(Math.max(3, W / 90)).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null)
-      .call((g) => g.selectAll('line,path').style('stroke', 'var(--cds-chart-axis)'));
-    svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((d) => d + '%').tickSize(-(W - m.l - m.r))).attr('font-size', null).attr('font-family', null)
-      .call((g) => { g.select('.domain').remove(); g.selectAll('line').style('stroke', 'var(--cds-chart-grid)'); });
-    svg.append('text').attr('x', W - m.r).attr('y', H - 3).attr('text-anchor', 'end').text('mean DPS →');
-    svg.append('text').attr('x', 0).attr('y', 10).text('spread between fights (lower is steadier)');
-    const shown = new Set(builds.filter((b) => st.cls === 'All' || b.class === st.cls).map((b) => b.id));
-    const dots = svg.append('g').selectAll('circle').data([...builds].sort((a, b) => shown.has(a.id) - shown.has(b.id))).join('circle')
-      .attr('cx', (b) => x(b.dps)).attr('cy', (b) => y(b.cv)).attr('r', 5)
-      .style('fill', (b) => ccol(b.class)).style('stroke', 'var(--color-fg)').attr('stroke-width', 0.6)
-      .attr('opacity', (b) => (shown.has(b.id) ? 0.95 : 0.15));
-    tipOn(dots, (e, b, node) => {
-      const [px, py] = d3.pointer(e, host);
-      showTip(host, px, py, b.label, [`${f1(b.dps)} DPS ± ${f2(b.se)}`, `Rank ${b.rank} of ${builds.length}`, `Spread ${f2(b.cv)}% (sd ${f1(b.stdev)})`, `10th–90th: ${f1(b.p10)}–${f1(b.p90)}`, `${b.race}`], { hl: node, open: b.id });
-    });
-    host.replaceChildren(svg.node());
-  };
-
   // line chart of DPS by fight length; tap or hover anywhere for a crosshair readout of the nearest line
   const drawLenChart = (host, series, opts = {}) => {
     const W = host.clientWidth, H = opts.h || Math.max(220, Math.min(300, W * 0.7));
@@ -623,9 +596,10 @@ export function startReport(dash) {
     const xs = [...new Set(series.flatMap((s) => s.pts.map((p) => p.s)))].sort((a, b) => a - b);
     const x = d3.scaleLinear(d3.extent(xs), [m.l + 8, W - m.r]);
     const all = series.flatMap((s) => s.pts.map((p) => p.v)).concat(opts.ref != null ? [opts.ref] : []);
-    const y = d3.scaleLinear(d3.extent(all), [H - m.b, m.t]).nice();
+    const y = d3.scaleLinear(opts.yDomain || d3.extent(all), [H - m.b, m.t]).nice();
+    const xTicks = opts.xTicks || xs, xFmt = opts.xFmt || ((d) => d + ' s');
     const svg = d3.create('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
-    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xs).tickFormat((d, i) => (W >= 480 || i === xs.length - 1 ? d + ' s' : String(d))).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null)
+    svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat((d, i) => (W >= 480 || i === xTicks.length - 1 ? xFmt(d) : String(d))).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null)
       .call((g) => g.selectAll('line,path').style('stroke', 'var(--cds-chart-axis)'));
     svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(opts.fmt || f0).tickSize(-(W - m.l - m.r))).attr('font-size', null).attr('font-family', null)
       .call((g) => { g.select('.domain').remove(); g.selectAll('line').style('stroke', 'var(--cds-chart-grid)'); });
@@ -656,10 +630,18 @@ export function startReport(dash) {
       if (opts.focus) for (const [ss, pa] of paths) pa.attr('opacity', ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2);
       const others = series.length <= 3 ? series.filter((q) => q !== s).map((q) => { const pp = q.pts.find((r) => r.s === sx); return pp ? el('span', {}, el('i', { class: 'sw', style: `background:${q.color}` }), `${q.name}: ${opts.tipFmt ? opts.tipFmt(pp) : f1(pp.v) + ' DPS'}`) : null; }) : [];
       const [hx, hy] = d3.pointer(e, host);
-      showTip(host, hx, hy, `${s.name} · ${sx} s fights`, [el('span', {}, el('i', { class: 'sw', style: `background:${s.color}` }), opts.tipFmt ? opts.tipFmt(p) : `${f1(p.v)} DPS`), ...others,
-        series.length > 3 ? `${s.pts.map((q) => `${q.s}s ${opts.fmt ? opts.fmt(q.v) : f0(q.v)}`).join(' · ')}` : null], { open: s.id && opts.open ? s.id : null, pinned, onHide: () => { rule.attr('opacity', 0); dot.attr('opacity', 0); } });
+      // With many lines, a small table of the picked line at every length takes the place of the other lines' values.
+      const strip = series.length > 3 && opts.strip !== false ? el('div', { class: 'fv-tip-strip' }, ...s.pts.flatMap((q) => [
+        el('span', { class: 'k' + (q.s === sx ? ' on' : ''), text: `${q.s} s` }),
+        el('span', { class: 'v' + (q.s === sx ? ' on' : ''), text: opts.fmt ? opts.fmt(q.v) : f0(q.v) }),
+      ])) : null;
+      const main = opts.tipMain ? opts.tipMain(p) : [opts.tipFmt ? opts.tipFmt(p) : `${f1(p.v)} DPS`];
+      showTip(host, hx, hy, s.name, [el('span', { class: 'fv-tip-sub', text: opts.tipSub ? opts.tipSub(sx) : `${sx} s fights` }),
+        el('span', { class: 'fv-tip-main' }, el('i', { class: 'sw', style: `background:${s.color}` }), el('b', { text: main[0] }), main[1] ? el('span', { class: 'fv-tip-sub', text: main[1] }) : null), ...others, strip],
+        { open: s.id && opts.open ? s.id : null, pinned, onHide: () => { rule.attr('opacity', 0); dot.attr('opacity', 0); } });
       if (pinned && opts.onPick) opts.onPick(s.id);
     };
+    if (opts.refLabel && opts.ref != null) svg.append('text').attr('x', W - m.r).attr('y', y(opts.ref) - 4).attr('text-anchor', 'end').style('fill', 'var(--color-fg-muted)').text(opts.refLabel);
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', Math.max(0, W - m.l - m.r + 8)).attr('height', H - m.b).style('fill', 'transparent').attr('data-tip', '1').style('cursor', 'crosshair')
       .on('click', (e) => { e.stopPropagation(); pick(e, true); })
       .on('pointermove', (e) => { if (e.pointerType === 'mouse' && !tipPinned) pick(e, false); })
@@ -679,7 +661,61 @@ export function startReport(dash) {
       const on = st.cls === 'All' || b.class === st.cls;
       return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.08, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, dots: on && st.cls !== 'All', pts: pts.map((p) => ({ s: p.secs, v: 100 * p.dps / base, dps: p.dps })) };
     }).sort((a, b) => a.op - b.op);
-    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipFmt: (p) => `${f1(p.dps)} DPS, ${d3.format('.1f')(p.v)}% of its 180 s DPS` });
+    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : `${sgn(p.v - 100)}% vs 180 s`] });
+  };
+
+  // ---------- mana ----------
+  // How a preset's mana runs down over a long fight, from 100 logged 480 s fights each. The chart is the average mana
+  // and the list says when a typical fight first drops below 10%. Warriors and rogues don't use mana.
+  const mmss = (v) => `${Math.floor(v / 60)}:${String(Math.round(v % 60)).padStart(2, '0')}`;
+  const drawMana = () => {
+    const host = $('#manachart'), list = $('#mana-list');
+    if (!waitOr(host, ['mana', 'mana_summary', 'builds'])) return;
+    const builds = rowsOf('builds'), curves = d3.group(rowsOf('mana'), (r) => r.build);
+    const sum = new Map(rowsOf('mana_summary').map((r) => [r.build, r]));
+    const manaBuilds = builds.filter((b) => b.class !== 'Warrior' && b.class !== 'Rogue');
+    const shown = manaBuilds.filter((b) => sum.has(b.id) && (st.cls === 'All' || b.class === st.cls));
+    const missing = manaBuilds.filter((b) => !sum.has(b.id) && (st.cls === 'All' || b.class === st.cls));
+    $('#mana-sum').textContent = st.cls === 'Warrior' || st.cls === 'Rogue' ? `${st.cls}s don't use mana.`
+      : missing.length ? `No mana data yet for ${[...new Set(missing.map((b) => b.class))].join(', ').replace(/, ([^,]*)$/, ' and $1')} (${missing.length} preset${missing.length > 1 ? 's' : ''}).` : '';
+    if (!shown.length) { host.replaceChildren(); list.replaceChildren(); return; }
+    const series = manaBuilds.filter((b) => sum.has(b.id)).map((b) => {
+      const on = shown.includes(b);
+      const pts = (curves.get(b.id) || []).map((r) => ({ s: r.t, v: r.pct, p25: r.p25, p75: r.p75 }));
+      return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.06, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, pts };
+    }).sort((a, b) => a.op - b.op);
+    drawLenChart(host, series, {
+      fmt: (v) => d3.format('.0f')(v) + '%', yDomain: [0, 100], ref: 10, refLabel: 'runs low', xTicks: [0, 60, 120, 180, 240, 300, 360, 420, 480], xFmt: (d) => mmss(d),
+      strip: false, focus: true, open: true, hlId: st.hlMana, onPick: (id) => { st.hlMana = id; persist(); },
+      tipSub: (t) => `at ${mmss(t)}`, tipMain: (p) => [`${d3.format('.0f')(p.v)}% mana`, `middle half of fights ${d3.format('.0f')(p.p25)} to ${d3.format('.0f')(p.p75)}%`],
+    });
+    const rows = shown.map((b) => ({ b, m: sum.get(b.id) })).sort((p, q) => (p.m.lowAt ?? 1e9) - (q.m.lowAt ?? 1e9) || q.m.pctAt480 - p.m.pctAt480);
+    const dur = d3.max(rows, (r) => r.m.dur) || 480;
+    const x = (v) => `${(100 * Math.min(v, dur)) / dur}%`;
+    list.replaceChildren(...rows.map(({ b, m }) => {
+      const low = m.lowAt != null;
+      const track = el('div', { class: 'fv-track' });
+      if (low) track.append(el('span', { class: 'fv-box', style: `left:${x(m.lowAtP25 ?? m.lowAt)};width:calc(${x(m.lowAtP75 ?? dur)} - ${x(m.lowAtP25 ?? m.lowAt)})` }), el('span', { class: 'fv-med', style: `left:${x(m.lowAt)}` }));
+      else track.append(el('span', { class: 'fv-bar', style: `width:100%;background:${ccol(b.class)};opacity:0.35` }));
+      const row = el('button', { class: 'fv-row', 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${low ? 'below 10% mana at ' + mmss(m.lowAt) : 'never below 10% mana in a typical fight'}` },
+        specIco(b) || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }),
+        el('span', { class: 'fv-row-main' }, el('span', { class: 'fv-row-name' }, el('b', { text: b.build }), el('span', { text: '· ' + b.class }))),
+        el('span', { class: 'fv-row-end' }, el('span', { class: 'fv-row-val', text: low ? mmss(m.lowAt) : '8:00+' }), el('span', { class: 'fv-row-gap', text: `${d3.format('.0f')(m.pctAt480)}% left at 8:00` })),
+        track);
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (row.classList.contains('is-hl')) { openSpec(b.id); return; }
+        const card = $('#mana-card'), cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
+        showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, [
+          low ? `Below 10% mana at ${mmss(m.lowAt)} in a typical fight` : 'A typical fight never drops below 10% mana',
+          low && m.lowAtP25 != null ? `Middle half of fights: ${mmss(m.lowAtP25)} to ${m.lowAtP75 != null ? mmss(m.lowAtP75) : 'never'}` : null,
+          `${d3.format('.0f')(m.share10)}% of fights ever drop below 10%`,
+          `Mana left: ${d3.format('.0f')(m.pctAt180)}% at 3:00, ${d3.format('.0f')(m.pctAt480)}% at 8:00`,
+          `${d3.format(',')(m.maxMana)} mana, spends ${f1(m.spentPerSec)} and gains ${f1(m.gainedPerSec)} a second`,
+        ], { hl: row, open: b.id, below: true });
+      });
+      return row;
+    }));
   };
 
   // ---------- races ----------
@@ -940,15 +976,20 @@ export function startReport(dash) {
   };
 
   // ---------- icons ----------
-  let iconCache = { src: null, m: null };
+  // The class, race, faction and preset icons come first. The spell, item and slot icons (icons_more) start loading once
+  // the first view is up, or as soon as something asks for an icon that isn't in the first set.
+  let iconCache = { src: null, more: null, m: null };
+  let wantMore = false;
   const iconMap = () => {
     const r = rowsOf('icons');
     if (!r) return null;
-    if (iconCache.src !== r) iconCache = { src: r, m: new Map(r.map((x) => [x.icon, x.url])) };
+    const more = wantMore ? rowsOf('icons_more') : null;
+    if (iconCache.src !== r || iconCache.more !== more) iconCache = { src: r, more, m: new Map([...r, ...(more || [])].map((x) => [x.icon, x.url])) };
     return iconCache.m;
   };
   const iconImg = (name, cls = 'fv-ico') => {
     const m = iconMap();
+    if (m && name && !m.has(name) && !wantMore) { wantMore = true; dash.data('icons_more'); }
     const u = m && (m.get(name) || m.get('inv_misc_questionmark'));
     return u ? el('img', { src: u, alt: '', class: cls }) : null;
   };
@@ -2005,7 +2046,7 @@ export function startReport(dash) {
     const host = $('#hero');
     const builds = rowsOf('builds'), m = iconMap();
     if (!builds || !m) return;
-    const arts = rowsOf('treeart');
+    const arts = later ? rowsOf('treeart') : null;
     if (arts && !$('#top').dataset.art) {
       const top = builds.reduce((p, q) => (+q.dps > +p.dps ? q : p));
       const parts = String(top.talents).split('-').map((t) => [...t].reduce((x, c) => x + (+c || 0), 0));
@@ -2023,13 +2064,24 @@ export function startReport(dash) {
   };
 
   // ---------- render ----------
+  // What the first view doesn't need waits until it is drawn: tooltips, more icons and the tree art behind the
+  // header. Then it loads while the reader looks at the page, so it's there by the first hover or tab change.
+  let later = false;
+  const loadLater = () => {
+    if (later) return;
+    later = wantMore = true;
+    for (const id of ['tooltips', 'icons_more', 'treeart']) dash.data(id);
+  };
   function render() {
     fillStatic();
-    statusOf('tooltips');
+    if (!later && (st.tab !== 'ranking' || (statusOf('builds') === 'ok' && statusOf('icons') === 'ok'))) {
+      if (st.tab !== 'ranking') loadLater();
+      else (window.requestIdleCallback || setTimeout)(loadLater);
+    }
     if (ttNode && !ttNode.isConnected) hideTT();
     try { drawHero(); } catch (e) { console.error(e); }
     try {
-      if (st.tab === 'ranking') { drawRanking(); drawScatter(); drawLenAll(); }
+      if (st.tab === 'ranking') { drawRanking(); drawLenAll(); drawMana(); }
       else if (st.tab === 'races') { for (const [fn, h] of [[drawScen, null], [drawRaceOverview, '#race-overview'], [drawRaceSpec, '#race-spec'], [drawHeat, '#heat'], [drawRaceFind, '#race-find'], [drawFactionTable, null], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();

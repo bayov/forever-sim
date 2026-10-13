@@ -295,7 +295,7 @@ func TestOrcShamanMagmaTotemPulses(t *testing.T) {
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: 30, Targets: []*proto.Target{target, target, target}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()
@@ -359,7 +359,7 @@ func TestOrcShamanFireNova(t *testing.T) {
 		sim := core.NewSim(&proto.RaidSimRequest{
 			Raid:       core.SinglePlayerRaidProto(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 			Encounter:  &proto.Encounter{Duration: 30, Targets: []*proto.Target{target, target, target}},
-			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 		}, simsignals.CreateSignals())
 		sim.Reset()
 		sim.PrePull()

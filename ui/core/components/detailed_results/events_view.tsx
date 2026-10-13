@@ -31,10 +31,10 @@ const iterationKinds: Array<{ kind: IterationKind; label: string; tooltip: strin
 ];
 
 // The filters that mean something in each view. The others are greyed out there.
-const appliesTo: Record<EventsFormat, { search: boolean; categories: Array<EventCategory>; hidden: boolean }> = {
-	timeline: { search: true, categories: ['casts', 'auras', 'resources'], hidden: true },
-	chart: { search: false, categories: [], hidden: false },
-	log: { search: true, categories: ['casts', 'damage', 'auras', 'resources', 'other', 'debug'], hidden: true },
+const appliesTo: Record<EventsFormat, { search: boolean; categories: Array<EventCategory>; hidden: boolean; alwaysUp: boolean }> = {
+	timeline: { search: true, categories: ['casts', 'auras', 'resources'], hidden: true, alwaysUp: true },
+	chart: { search: false, categories: [], hidden: false, alwaysUp: false },
+	log: { search: true, categories: ['casts', 'damage', 'auras', 'resources', 'other', 'debug'], hidden: true, alwaysUp: false },
 };
 
 const FORMAT_STORAGE_KEY = '__detailed_results_events_format__';
@@ -75,6 +75,7 @@ export class EventsView extends ResultComponent {
 		from: HTMLInputElement;
 		to: HTMLInputElement;
 		categoryButtons: Map<EventCategory, HTMLButtonElement>;
+		alwaysUpButton: HTMLButtonElement;
 		count: HTMLElement;
 		reset: HTMLButtonElement;
 		hiddenRow: HTMLElement;
@@ -105,6 +106,7 @@ export class EventsView extends ResultComponent {
 			to: ref<HTMLInputElement>(),
 			count: ref<HTMLSpanElement>(),
 			reset: ref<HTMLButtonElement>(),
+			alwaysUp: ref<HTMLButtonElement>(),
 			hiddenRow: ref<HTMLDivElement>(),
 			hiddenList: ref<HTMLDivElement>(),
 			timelineHost: ref<HTMLDivElement>(),
@@ -199,6 +201,10 @@ export class EventsView extends ResultComponent {
 								categoryButtons.set(category, button);
 								return button;
 							})}
+							<button ref={refs.alwaysUp} className="filter-chip events-always-up" type="button">
+								<i className="fas fa-eye-slash" />
+								100% auras
+							</button>
 						</div>
 						<span ref={refs.count} className="events-count"></span>
 						<button ref={refs.reset} className="btn btn-link events-reset" type="button">
@@ -234,6 +240,7 @@ export class EventsView extends ResultComponent {
 			from: refs.from.value!,
 			to: refs.to.value!,
 			categoryButtons,
+			alwaysUpButton: refs.alwaysUp.value!,
 			count: refs.count.value!,
 			reset: refs.reset.value!,
 			hiddenRow: refs.hiddenRow.value!,
@@ -267,6 +274,8 @@ export class EventsView extends ResultComponent {
 		this.ui.from.addEventListener('change', onRangeChange);
 		this.ui.to.addEventListener('change', onRangeChange);
 		this.ui.reset.addEventListener('click', () => this.filter.reset());
+		this.ui.alwaysUpButton.addEventListener('click', () => this.filter.toggleHideAlwaysUp());
+		tippy(this.ui.alwaysUpButton, { content: 'Hide the buffs and debuffs that are up for the whole fight, like Blessing of Kings.' });
 		this.timeline.zoomEmitter.on(() => this.updateZoomButtons());
 
 		this.simUI = config.simUI;
@@ -454,6 +463,9 @@ export class EventsView extends ResultComponent {
 			button.setAttribute('aria-pressed', String(active));
 			button.disabled = !applies.categories.includes(category);
 		});
+		this.ui.alwaysUpButton.classList.toggle('active', this.filter.hideAlwaysUp);
+		this.ui.alwaysUpButton.setAttribute('aria-pressed', String(this.filter.hideAlwaysUp));
+		this.ui.alwaysUpButton.disabled = !applies.alwaysUp || !this.filter.categories.has('auras');
 
 		this.ui.reset.classList.toggle('invisible', !this.filter.isActive());
 

@@ -552,6 +552,13 @@ for w in sorted(glob.glob(os.path.join(D, 'weights', '*.json'))):
 if wrows:
     dump('weights', wrows)
 
+# mana over a 480 s fight (mana_curves.py)
+import mana_curves
+mana_rows, mana_summary = mana_curves.datasets()
+if mana_summary:
+    dump('mana', mana_rows)
+    dump('mana_summary', mana_summary)
+
 # rotation: each preset's real APL as plain-English priority rows (rotation.py)
 import rotation
 RACIAL_RACE = {}
@@ -672,7 +679,12 @@ SLOT_FILE = {'Head': 'head', 'Neck': 'neck', 'Shoulders': 'shoulders', 'Back': '
              'Off hand': 'offhand', 'Ranged': 'ranged'}
 slot_icons = [{'icon': 'slot_' + f, 'url': 'data:image/jpeg;base64,' + base64.b64encode(open(os.path.join(TREE, 'assets/item_slots', f + '.jpg'), 'rb').read()).decode()}
               for f in sorted(set(SLOT_FILE.values()))]
-dump('icons', [{'icon': ic, 'url': 'data:image/jpeg;base64,' + b} for ic, b in got if b] + [{'icon': ic + ':l', 'url': 'data:image/jpeg;base64,' + b} for ic, b in got_l if b] + slot_icons)
+# The Ranking tab, which the page opens on, needs only the class, race, faction and preset icons, so those load first.
+# The spell, item and gear-slot icons the other tabs show are a separate dataset that loads later.
+core_icons = set(RACE_ICON.values()) | set(FACTION_ICON.values()) | {'classicon_' + c.lower() for c in CLASS_ORDER} | {b['specIcon'] for b in builds} | {'inv_misc_questionmark'}
+all_icons = [{'icon': ic, 'url': 'data:image/jpeg;base64,' + b} for ic, b in got if b] + [{'icon': ic + ':l', 'url': 'data:image/jpeg;base64,' + b} for ic, b in got_l if b] + slot_icons
+dump('icons', [r for r in all_icons if r['icon'] in core_icons or r['icon'].endswith(':l')])
+dump('icons_more', [r for r in all_icons if not (r['icon'] in core_icons or r['icon'].endswith(':l'))])
 
 # each spell's and item's colour, from its icon: the dominant saturated hue, at a lightness that reads on light and dark
 from PIL import Image

@@ -144,6 +144,11 @@ message SimOptions {
 	// unlucky iterations without logs, the combined result picks the overall ones, and one
 	// more sim replays those three to get their logs.
 	repeated int64 replay_seeds = 11;
+
+	// Keeps each hit's fractional damage instead of rounding it to whole points like the game
+	// does. The rounding changes no average, but it makes each hit vary more, so stat weight
+	// runs set this to keep the gap between their two runs smooth.
+	bool exact_damage = 12;
 }
 
 // Which game rules the engine simulates. Forever is the wire default, so anything
