@@ -1,0 +1,571 @@
+// The Compare tab. The baseline run is blue and the compared run is gold, in the run pickers,
+// the bars of the tables and the DPS distribution.
+$cmp-a: $accent;
+$cmp-b: $gold;
+$cmp-better: #8fd18f;
+$cmp-worse: #ef7a7a;
+
+.cmp-root {
+	--dr-toolbar-height: 3rem;
+
+	.cmp-changed-only {
+		align-self: center;
+	}
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--block-spacer);
+
+	&.hide-threat-metrics .cmp-threat-tab,
+	&.hide-healing-metrics .cmp-healing-tab {
+		display: none;
+	}
+
+	.tab-pane.dr-tab-content {
+		padding: 0;
+
+		&.active {
+			display: flex;
+			flex-direction: column;
+			gap: var(--block-spacer);
+		}
+	}
+
+	.cmp-content.loading {
+		opacity: 0.5;
+		transition: opacity 0.15s;
+	}
+}
+
+// The two run pickers with a swap button between them.
+.cmp-runs {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	align-items: stretch;
+	gap: var(--spacer-3);
+
+	@include media-breakpoint-down(md) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.cmp-run {
+	@include panel-card;
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+	padding: 0.65rem 0.9rem;
+	border-left: 3px solid var(--cmp-color);
+
+	&.cmp-run-a {
+		--cmp-color: #{$cmp-a};
+	}
+
+	&.cmp-run-b {
+		--cmp-color: #{$cmp-b};
+	}
+
+	.cmp-run-badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--cmp-color) 16%, transparent);
+		color: var(--cmp-color);
+		font-weight: 700;
+	}
+
+	.cmp-run-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		min-width: 0;
+		flex-grow: 1;
+	}
+
+	.cmp-run-label {
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--cmp-color);
+	}
+
+	.cmp-run-select {
+		padding-top: 0.25rem;
+		padding-bottom: 0.25rem;
+		font-size: 0.875rem;
+	}
+
+	.cmp-run-meta {
+		font-size: 0.75rem;
+		color: var(--text-muted-color);
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.cmp-swap {
+	align-self: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border: 1px solid var(--line-color-strong);
+	border-radius: 50%;
+	background: $panel-bg;
+	color: var(--text-muted-color);
+
+	&:hover {
+		color: $ivory;
+		border-color: var(--text-muted-color);
+	}
+
+	@include media-breakpoint-down(md) {
+		justify-self: center;
+		transform: rotate(90deg);
+	}
+}
+
+// One line on the DPS: which run does more, by how much, and whether it's more than chance.
+.cmp-verdict-inner {
+	@include panel-card;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.85rem 1.1rem;
+	border-left: 3px solid var(--cmp-tone);
+
+	&.cmp-verdict-better {
+		--cmp-tone: #{$cmp-better};
+	}
+
+	&.cmp-verdict-worse {
+		--cmp-tone: #{$cmp-worse};
+	}
+
+	&.cmp-verdict-flat {
+		--cmp-tone: var(--line-color-strong);
+	}
+
+	.cmp-verdict-icon {
+		font-size: 1.4rem;
+		color: var(--cmp-tone);
+	}
+
+	&.cmp-verdict-flat .cmp-verdict-icon {
+		color: var(--text-muted-color);
+	}
+
+	.cmp-verdict-text {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		flex-grow: 1;
+	}
+
+	.cmp-verdict-title {
+		font-size: 1rem;
+		font-weight: 600;
+		color: $ivory;
+	}
+
+	.cmp-verdict-detail {
+		font-size: 0.8125rem;
+		color: var(--text-muted-color);
+	}
+
+	.cmp-verdict-chip {
+		flex-shrink: 0;
+		padding: 0.2rem 0.65rem;
+		border: 1px solid var(--line-color-strong);
+		border-radius: 999px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--text-muted-color);
+
+		&.significant {
+			color: var(--cmp-tone);
+			border-color: color-mix(in srgb, var(--cmp-tone) 60%, transparent);
+			background: color-mix(in srgb, var(--cmp-tone) 12%, transparent);
+		}
+	}
+}
+
+// The topline results of both runs, like the Results tab's cards.
+.cmp-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+	gap: var(--block-spacer);
+}
+
+.cmp-card {
+	@include panel-card;
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	padding: var(--spacer-3) 1rem;
+
+	&.cmp-card-lead {
+		border-left: 2px solid var(--gold);
+	}
+
+	.results-card-label {
+		align-self: flex-start;
+		font-family: var(--heading-font-family);
+		font-variant: small-caps;
+		font-weight: 700;
+		font-size: 1rem;
+		letter-spacing: 0.04em;
+		color: var(--gold-soft);
+	}
+
+	.cmp-card-values {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.6rem;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.cmp-card-b {
+		font-size: 1.6rem;
+		font-weight: 600;
+		line-height: 1.2;
+		color: $ivory;
+	}
+
+	.cmp-card-a {
+		font-size: 0.8125rem;
+		color: var(--text-muted-color);
+	}
+
+	.cmp-card-change {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.5rem;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.cmp-card-percent {
+		color: var(--text-muted-color);
+		font-weight: 500;
+	}
+
+	.cmp-card-sig {
+		margin-left: auto;
+		padding: 0 0.45rem;
+		border: 1px solid var(--line-color-strong);
+		border-radius: 999px;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		color: var(--text-muted-color);
+		cursor: help;
+
+		&.significant {
+			color: $ivory;
+			border-color: var(--text-muted-color);
+		}
+	}
+
+	// A change within the noise is still shown, but without its color.
+	&.cmp-card-noise .cmp-change {
+		color: var(--text-muted-color);
+	}
+}
+
+.cmp-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--block-spacer);
+	align-items: start;
+
+	@include media-breakpoint-up(xl) {
+		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+	}
+}
+
+.cmp-note {
+	margin: 0;
+	font-size: 0.8125rem;
+	color: var(--text-muted-color);
+}
+
+// The changed settings, in the lines of the modified preset tooltip.
+.cmp-settings-list {
+	font-size: 0.8125rem;
+
+	.fw-bold {
+		color: var(--gold-soft);
+		font-weight: 600 !important;
+	}
+
+	ul {
+		padding-left: 1.1rem;
+		color: rgba($ivory, 0.9);
+	}
+}
+
+// A bar for each change, from a line in the middle.
+.cmp-diverging {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+}
+
+.cmp-diverging-row {
+	display: grid;
+	grid-template-columns: 22px minmax(6rem, 14rem) minmax(0, 1fr) 4.5rem;
+	align-items: center;
+	gap: var(--spacer-2);
+	padding: 0.2rem 0.25rem;
+	border-radius: 3px;
+	font-size: 0.8125rem;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.035);
+	}
+
+	&.cmp-better {
+		--cmp-tone: #{$cmp-better};
+	}
+
+	&.cmp-worse {
+		--cmp-tone: #{$cmp-worse};
+	}
+
+	&.cmp-more {
+		--cmp-tone: #{$cmp-b};
+	}
+
+	&.cmp-less {
+		--cmp-tone: #{$cmp-a};
+	}
+
+	.cmp-diverging-icon {
+		width: 22px;
+		height: 22px;
+		margin: 0;
+	}
+
+	.cmp-diverging-icon-other {
+		background: rgba(255, 255, 255, 0.06);
+		cursor: default;
+	}
+
+	.cmp-diverging-name {
+		color: $ivory;
+	}
+
+	.cmp-diverging-track {
+		position: relative;
+		height: 0.6rem;
+
+		// The line where nothing changed.
+		&::before {
+			content: '';
+			position: absolute;
+			left: 50%;
+			top: -0.3rem;
+			bottom: -0.3rem;
+			width: 1px;
+			background: var(--line-color-strong);
+		}
+	}
+
+	.cmp-diverging-bar {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		min-width: 2px;
+		border-radius: 2px;
+		background: var(--cmp-tone);
+		opacity: 0.85;
+	}
+
+	.cmp-diverging-value {
+		text-align: right;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		color: var(--cmp-tone);
+	}
+}
+
+.cmp-distribution {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacer-2);
+}
+
+.cmp-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem 1.25rem;
+	font-size: 0.75rem;
+	color: var(--text-muted-color);
+	font-variant-numeric: tabular-nums;
+
+	.cmp-legend-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.cmp-legend-swatch {
+		width: 0.75rem;
+		height: 3px;
+		border-radius: 2px;
+	}
+
+	.cmp-legend-a .cmp-legend-swatch {
+		background: $cmp-a;
+	}
+
+	.cmp-legend-b .cmp-legend-swatch {
+		background: $cmp-b;
+	}
+}
+
+.cmp-distribution-chart {
+	position: relative;
+	height: 16rem;
+}
+
+// The tables: the compared run's value, the change under it, and the bars of both runs.
+.cmp-table {
+	font-size: 0.8125rem;
+
+	.metrics-table-header-cell {
+		top: calc(var(--sim-header-height) + var(--dr-toolbar-height));
+	}
+
+	.cmp-sortable {
+		&[data-sort] {
+			color: var(--gold-soft);
+		}
+
+		&[data-sort='value'] span::after {
+			content: ' ▼';
+			font-size: 0.55rem;
+			vertical-align: 0.15em;
+		}
+
+		&[data-sort='change'] span::after {
+			content: ' Δ▼';
+			font-size: 0.6rem;
+			vertical-align: 0.1em;
+		}
+	}
+
+	td.cmp-cell {
+		line-height: 1.25;
+		font-variant-numeric: tabular-nums;
+
+		.cmp-value {
+			display: block;
+			color: $ivory;
+		}
+
+		.cmp-change {
+			display: block;
+			font-size: 0.6875rem;
+			font-weight: 600;
+		}
+	}
+
+	// The main column is wide, with the bars of both runs in front of the numbers.
+	td.cmp-cell-bars {
+		width: 40%;
+		min-width: 12rem;
+	}
+
+	.cmp-cell-inner {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-3);
+	}
+
+	.cmp-numbers {
+		flex-shrink: 0;
+		min-width: 4.5rem;
+	}
+
+	.cmp-bars {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		flex-grow: 1;
+	}
+
+	.cmp-bar {
+		display: block;
+		height: 5px;
+		border-radius: 999px;
+	}
+
+	.cmp-bar-a {
+		background: rgba($cmp-a, 0.7);
+	}
+
+	.cmp-bar-b {
+		background: rgba($cmp-b, 0.85);
+	}
+
+	// A cell without a change keeps its second line, so the rows stay the same height.
+	.cmp-change:empty::before {
+		content: '\00a0';
+	}
+
+	.cmp-table-empty td {
+		padding: var(--spacer-3) var(--spacer-2);
+		text-align: left !important;
+		color: var(--text-muted-color);
+	}
+
+	.cmp-row-gone .metrics-action {
+		opacity: 0.6;
+	}
+
+	.metrics-table-footer-row td {
+		padding-top: 0.45rem;
+		font-weight: 600;
+	}
+}
+
+.cmp-tag {
+	flex-shrink: 0;
+	padding: 0 0.4rem;
+	border-radius: 999px;
+	font-size: 0.625rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+
+	&.cmp-tag-new {
+		color: $cmp-better;
+		background: rgba($cmp-better, 0.12);
+	}
+
+	&.cmp-tag-gone {
+		color: $cmp-worse;
+		background: rgba($cmp-worse, 0.12);
+	}
+}
+
+.cmp-better {
+	color: $cmp-better;
+}
+
+.cmp-worse {
+	color: $cmp-worse;
+}
+
+.cmp-flat {
+	color: var(--text-muted-color);
+}

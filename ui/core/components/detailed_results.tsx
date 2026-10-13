@@ -79,7 +79,7 @@ const tabs: Tab[] = [
 ];
 
 // A titled card around one part of the results, like the Settings tab's sections.
-const panel = (title: string, className: string, body: Element, headerExtra?: Element) => (
+export const panel = (title: string, className: string, body: Element, headerExtra?: Element) => (
 	<div className={`content-block dr-panel ${className}`}>
 		<div className="content-block-header">
 			<h6 className="content-block-title">{title}</h6>
@@ -216,25 +216,9 @@ export abstract class DetailedResults extends Component {
 			this.simUI?.simActionsContainer.querySelector<HTMLButtonElement>('.dps-action')?.click();
 		});
 
-		// The toolbar gets the header's frosted background once it sticks under the header, so
-		// the two read as one bar. Before that it has no background, so it doesn't look like a
-		// second header. The page scrolls in .sim-ui, and its scroll events don't bubble, so we
-		// listen in the capture phase.
 		const toolbar = this.rootElem.querySelector('.dr-toolbar') as HTMLElement;
-		const updateStuck = () => {
-			if (!toolbar.offsetParent) {
-				toolbar.classList.remove('stuck');
-				return;
-			}
-			const header = this.simUI?.simHeader.rootElem;
-			const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
-			toolbar.classList.toggle('stuck', toolbar.getBoundingClientRect().top <= headerBottom + 1);
-		};
-		document.addEventListener('scroll', updateStuck, { capture: true, passive: true });
-		window.addEventListener('resize', updateStuck, { passive: true });
-		document.addEventListener('shown.bs.tab', updateStuck);
-
-		this.syncSubTabWithUrl(toolbar);
+		trackStuckToolbar(toolbar, this.simUI);
+		syncSubTabWithUrl(toolbar, DetailedResults.VIEW_PARAM);
 
 		this.resultsFilter = new ResultsFilter({
 			parent: this.rootElem.querySelector('.results-filter')!,
@@ -321,23 +305,6 @@ export abstract class DetailedResults extends Component {
 				this.rootDiv.classList.add('all-players');
 				this.rootDiv.classList.remove('single-player');
 			}
-		});
-	}
-
-	// The URL says which of the results tabs is open, like ?tab=results&view=events, so a refresh
-	// or a shared link opens the same one. The main tab is in the URL too, see SimHeader.
-	private syncSubTabWithUrl(toolbar: HTMLElement) {
-		const tabName = (link: Element) => link.textContent!.trim().toLowerCase().replace(/\s+/g, '-');
-		const links = Array.from(toolbar.querySelectorAll<HTMLElement>('.dr-tabs [data-bs-toggle="tab"]'));
-
-		const wanted = new URLSearchParams(window.location.search).get(DetailedResults.VIEW_PARAM);
-		const link = links.find(link => tabName(link) === wanted);
-		if (link) BootstrapTab.getOrCreateInstance(link).show();
-
-		toolbar.addEventListener('shown.bs.tab', event => {
-			const url = new URL(window.location.href);
-			url.searchParams.set(DetailedResults.VIEW_PARAM, tabName(event.target as Element));
-			window.history.replaceState(window.history.state, '', url);
 		});
 	}
 
@@ -435,6 +402,42 @@ export class EmbeddedDetailedResults extends DetailedResults {
 		await this.handleMessage(update);
 	}
 }
+
+// The toolbar gets the header's frosted background once it sticks under the header, so the two
+// read as one bar. Before that it has no background, so it doesn't look like a second header.
+// The page scrolls in .sim-ui, and its scroll events don't bubble, so we listen in the capture
+// phase.
+export const trackStuckToolbar = (toolbar: HTMLElement, simUI: SimUI | null) => {
+	const updateStuck = () => {
+		if (!toolbar.offsetParent) {
+			toolbar.classList.remove('stuck');
+			return;
+		}
+		const header = simUI?.simHeader.rootElem;
+		const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+		toolbar.classList.toggle('stuck', toolbar.getBoundingClientRect().top <= headerBottom + 1);
+	};
+	document.addEventListener('scroll', updateStuck, { capture: true, passive: true });
+	window.addEventListener('resize', updateStuck, { passive: true });
+	document.addEventListener('shown.bs.tab', updateStuck);
+};
+
+// The URL says which of the toolbar's tabs is open, like ?tab=results&view=events, so a refresh
+// or a shared link opens the same one. The main tab is in the URL too, see SimHeader.
+export const syncSubTabWithUrl = (toolbar: HTMLElement, param: string) => {
+	const tabName = (link: Element) => link.textContent!.trim().toLowerCase().replace(/\s+/g, '-');
+	const links = Array.from(toolbar.querySelectorAll<HTMLElement>('.dr-tabs [data-bs-toggle="tab"]'));
+
+	const wanted = new URLSearchParams(window.location.search).get(param);
+	const link = links.find(link => tabName(link) === wanted);
+	if (link) BootstrapTab.getOrCreateInstance(link).show();
+
+	toolbar.addEventListener('shown.bs.tab', event => {
+		const url = new URL(window.location.href);
+		url.searchParams.set(param, tabName(event.target as Element));
+		window.history.replaceState(window.history.state, '', url);
+	});
+};
 
 // The Show unused button of a buffs or debuffs panel. Auras that never came up (no procs and no
 // uptime) stay out of the table until we ask for them, like the ranks of a spell we never cast.

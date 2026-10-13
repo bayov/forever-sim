@@ -1,4 +1,5 @@
 import { CharacterStats, StatMods } from './components/character_stats';
+import { CompareResults } from './components/compare_results/compare_results';
 import { ContentBlock } from './components/content_block';
 import { EmbeddedDetailedResults } from './components/detailed_results';
 import { dirtySettings } from './components/dirty_settings';
@@ -304,6 +305,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
+			this.addCompareTab();
 		}
 
 		this.addTopbarComponents();
@@ -444,6 +446,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		);
 
 		new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+	}
+
+	// Two runs from the sim history side by side. The raid sim has no history, so no tab.
+	private addCompareTab() {
+		const history = this.raidSimResultsManager?.simHistory;
+		if (!history) return;
+		this.addTab('Compare', 'compare-results-tab', '<div class="compare-results"></div>');
+		new CompareResults(this.rootElem.getElementsByClassName('compare-results')[0] as HTMLElement, this, history);
 	}
 
 	private addTopbarComponents() {

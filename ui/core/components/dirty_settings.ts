@@ -102,6 +102,28 @@ class DirtySettings {
 		return categorize(changes);
 	}
 
+	// The settings that differ between the ones applyFrom() and applyTo() put in place, like
+	// the settings of two saved sim runs. The lines go from the first to the second, like
+	// 'Duration: 120 → 90' when the second ran for 90 s.
+	changesBetween(applyFrom: () => void, applyTo: () => void): ChangeCategory[] {
+		if (!this.snapshot) return [];
+		const settings = this.trackedSettings();
+		let changes: SettingChange[] = [];
+		TypedEvent.silentlyDo(() => {
+			const restore = this.snapshot!();
+			try {
+				applyTo();
+				const to = settings.map(readKey);
+				changes = this.compare(settings, to, applyFrom);
+			} catch (e) {
+				console.warn('Failed to compare two sets of settings: ' + e);
+			} finally {
+				restore();
+			}
+		});
+		return categorize(changes);
+	}
+
 	// Only the individual sims set this. Without it we mark nothing.
 	setSnapshot(snapshot: SettingsSnapshot) {
 		this.snapshot = snapshot;
