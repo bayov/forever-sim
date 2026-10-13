@@ -56,22 +56,23 @@ export const GearP4BIS = PresetUtils.makePresetGear('P4 BiS', P4BISGear);
 export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
 
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
-// (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
-// item level table (66 for the armor, 71 for the jewelry, belt, back and wrist) and the
-// casters' weapon budget for the staff, in the standards 5a stat mix (the SoD level 60 BiS
-// proportions, orchestration/gear_targets.md) and spent linearly (standards 1a): 400 spell power,
-// 154 Intellect, 150 Stamina (18% of the budget), 82 Spirit (10%), 7.5% crit and 11% hit, which with Nature's Reach and the 2
-// piece is the 16% spell hit cap against a level 63 boss. Hit to the cap still sims best:
-// moving 10 hit rating into crit costs 2.2 at 180 sec. Only the head and chest carry Grovekeeper
-// Eclipse, Forever's crafted Balance set, so only its 2 piece (1% hit) is live, like every
-// class's set; the 5 piece (3 sec more Insect Swarm) would add 12.6 at 180 sec. Swarming Idol
+// (tools/database/forever_synthetic_items_druid.go, which has the budget math), priced by
+// standards 1b (Forever's caster budget per piece, 4 stat lines a piece, the staff at Forever's
+// caster weapon rate) on the shared item level table, in the standards 5a stat mix (the SoD level
+// 60 BiS proportions, orchestration/gear_targets.md): armor 709.5 and staff 193.0 weighted points,
+// 375 spell power, 147 Intellect, 136 Stamina (15%), 89 Spirit (10%), 7% crit and 11% hit, which
+// with Nature's Reach and the 2 piece is the 16% spell hit cap against a level 63 boss. Hit to the
+// cap still sims best: a set 50 hit rating under it, the rest in the same proportions, is 8.7
+// behind. Two synthetic item level 71 trinkets (standards 1b): 36 spell power and 15 crit rating,
+// and 140 spell power for 20 sec every 2 min, used on the pull. Only the head and chest carry
+// Grovekeeper Eclipse, Forever's crafted Balance set, so only its 2 piece (1% hit) is live, like
+// every class's set; the 5 piece (3 sec more Insect Swarm) would add 12.6 at 180 sec. Swarming Idol
 // (Insect Swarm 2 sec longer, a real Forever Phase 1 idol) is worth 3.3 (those two and the
-// enchant comparisons below measured on the set before the 5a rebudget). No trinkets: Forever removed the old dungeon trinkets, and its launch trinkets
-// are excluded until the sim models them. Enchants are the best Phase 1 ones a moonkin can
-// get, nothing from a raid: Lesser Arcanum of Voracity on the head, Forever's +6 spell power on
-// the neck, Mystic Rugged Armor Kit on the chest, legs and feet, Greater Spellpower on the
-// wrist, Arcane Power on the gloves (4.7 ahead of Natural Power, Starfire is Arcane) and
-// Spellblasting on the staff (6.9 ahead of Mighty Spell Power).
+// enchant comparisons below measured on the set before the 5a rebudget). Enchants are the best
+// Phase 1 ones a moonkin can get, nothing from a raid: Lesser Arcanum of Voracity on the head,
+// Forever's +6 spell power on the neck, Mystic Rugged Armor Kit on the chest, legs and feet,
+// Greater Spellpower on the wrist, Arcane Power on the gloves (4.7 ahead of Natural Power,
+// Starfire is Arcane) and Spellblasting on the staff (6.9 ahead of Mighty Spell Power).
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -101,7 +102,7 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // not use it up), then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in
 // flight, Starfire otherwise. That spends every Eclipse charge (each makes a Starfire 0.5 sec
 // shorter) without throwing Wraths at a full stack. The knob search kept it at 120, 180 and 300
-// sec (789.1 at 180 sec, 40,000 iterations). On the set before the 5a rebudget, dropping
+// sec (824.5 at 180 sec, 40,000 iterations). On the set before the 5a rebudget, dropping
 // Moonfire cost 56 DPS at 180 sec, Insect Swarm 62, and casting only Starfire 74. Innervate is
 // left to its own trigger (at 500 mana), 2 ahead of casting it at 40% mana.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
@@ -111,8 +112,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
-// before the pull, for a moonkin that would rather not weave: 740.3 / 740.9 / 741.4 at 120 /
-// 180 / 300 sec, 6.1% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
+// before the pull, for a moonkin that would rather not weave: 772.5 / 775.0 / 772.4 at 120 /
+// 180 / 300 sec, 6.0% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
 // and gear (GearLevel60Phase1SyntheticWrath).
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
@@ -283,14 +284,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 792.9 / 789.1 / 782.9 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 825.9 / 824.5 / 815.3 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             792.9    789.1    782.9   best overall and Alliance
-//	Tauren                783.9    781.7    776.0   best Horde (its 1% hit is past the cap)
-//	Windshaper Skyborne   775.0    777.1    774.7
-//	High Order Skyborne   774.8    776.8    774.1
+//	Night Elf             825.9    824.5    815.3   best overall and Alliance
+//	Tauren                815.9    816.2    808.0   best Horde (its 1% hit is past the cap)
+//	Windshaper Skyborne   806.9    811.9    806.8
+//	High Order Skyborne   806.7    811.7    806.6
 //
 // No racial goes by weapon type, so the staff changes nothing here, and the ranking with
 // weapon type racials off is the same.

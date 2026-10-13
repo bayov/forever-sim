@@ -51,24 +51,25 @@ export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
 export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
-// (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
-// item level table (66 for the armor, 71 for the jewelry, belt, back and wrist, 76 for the
-// two-hander), in the standards 5a stat mix (the SoD level 60 BiS proportions,
-// orchestration/gear_targets.md), spent linearly (standards 1a): 211 Agility, 202 Strength, 145
-// Stamina (18% of the budget), 5.3% crit, 9% hit (the special attack hit cap against a level 63
-// boss; moving 10 hit rating into crit costs 0.5 at 180 sec), 49 Intellect for Shifting Power's
-// mana, 39 attack power (34 on the two-hander) and no Spirit (the cross-class rule for Energy
-// users). Only the head and chest carry Grovekeeper Ferocity, Forever's
-// crafted Feral set, so only its 2 piece (1% attack speed) is live, like every class's set; the
-// 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec. Howling Idol (1 sec off Shifting
-// Power, a real Forever Phase 1 idol) is worth 12.5 (those two and the enchant comparisons
-// below measured on the set before the 5a rebudget). No trinkets: Forever removed the old
-// dungeon trinkets (Hand of Justice, Blackhand's Breadth), and its launch trinkets are excluded
-// until the sim models them. Enchants are the best Phase 1 ones a cat can get, nothing from a
-// raid: Lesser Arcanum of Voracity (Agility) on the head and legs, Forever's +5 Agility on the
-// neck, Agility on the back, Greater Stats, +9 Strength on the wrist, Superior Strength on the
-// gloves (3.2 ahead of Greater Agility), +7 Agility on the feet and +25 Agility on the weapon.
-// Forceful Rugged Armor Kit (+10 attack power) is 1.5 to 2.2 behind each of them.
+// (tools/database/forever_synthetic_items_druid.go, which has the budget math), priced by
+// standards 1b (Forever's physical budget per piece, 3 stat lines a piece, the two-hander at 0.90
+// of the item level line with no attack power) on the shared item level table, in the standards
+// 5a stat mix (the SoD level 60 BiS proportions, orchestration/gear_targets.md): armor 650.0 and
+// two-hander 79.0 weighted points, 189 Agility, 177 Strength, 143 Stamina (19.6%), 9% hit (the
+// special attack hit cap against a level 63 boss; moving 10 hit rating into Agility ties, into
+// crit is 1.2 behind), 4.9% crit, 45 Intellect for Shifting Power's mana, 32 attack power and no
+// Spirit (the cross-class rule for Energy users). Two synthetic item level 71 trinkets
+// (standards 1b): 29 Agility and 17 Strength, and 165 Strength for 20 sec every 2 min (2.9 ahead
+// of the same on-use as 165 Agility, 3.0 ahead of 335 attack power). Only the head and chest carry
+// Grovekeeper Ferocity, Forever's crafted Feral set, so only its 2 piece (1% attack speed) is
+// live, like every class's set; the 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec.
+// Howling Idol (1 sec off Shifting Power, a real Forever Phase 1 idol) is worth 12.5 (those two
+// and the enchant comparisons below measured on the set before the 5a rebudget). Enchants are the
+// best Phase 1 ones a cat can get, nothing from a raid: Lesser Arcanum of Voracity (Agility) on
+// the head and legs, Forever's +5 Agility on the neck, Agility on the back, Greater Stats, +9
+// Strength on the wrist, Superior Strength on the gloves (3.2 ahead of Greater Agility), +7
+// Agility on the feet and +25 Agility on the weapon. Forceful Rugged Armor Kit (+10 attack power)
+// is 1.5 to 2.2 behind each of them.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -95,7 +96,8 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 // in the last 8 sec and Ferocious Bite at any combo points in the last 2 (0.6 to 1.4). No
 // Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend and Tear's
 // bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
-// points is 1 to 2 behind. The search on the 5a gear kept every knob at 120, 180 and 300 sec.
+// points is 1 to 2 behind. The search on the 1b gear kept every knob at 120 and 180 sec (at 300
+// sec Shifting Power at 40 Energy is 0.3 ahead).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power, Tiger's Fury and Berserk on cooldown.",
 	group: 'Level 60',
@@ -274,14 +276,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 679.8 / 673.4 / 664.8 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 694.3 / 688.3 / 677.0 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             679.8    673.4    664.8   best overall and Alliance
-//	Windshaper Skyborne   678.1    671.9    664.0   best Horde
-//	High Order Skyborne   678.1    671.9    663.9
-//	Tauren                676.0    669.8    661.3
+//	Night Elf             694.3    688.3    677.0   best overall and Alliance
+//	Windshaper Skyborne   692.6    686.8    676.4   best Horde
+//	High Order Skyborne   692.5    686.8    676.2
+//	Tauren                689.7    684.0    672.8
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.
