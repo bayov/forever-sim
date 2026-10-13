@@ -1,3 +1,4 @@
+import { Tab as BootstrapTab } from 'bootstrap';
 import { ref } from 'tsx-vanilla';
 
 import { DetailedResultsUpdate, SimRun, SimRunData } from '../proto/ui';
@@ -89,6 +90,8 @@ const panel = (title: string, className: string, body: Element, headerExtra?: El
 );
 
 export abstract class DetailedResults extends Component {
+	static readonly VIEW_PARAM = 'view';
+
 	protected readonly simUI: SimUI | null;
 	protected latestRun: SimRunData | null = null;
 
@@ -231,6 +234,8 @@ export abstract class DetailedResults extends Component {
 		window.addEventListener('resize', updateStuck, { passive: true });
 		document.addEventListener('shown.bs.tab', updateStuck);
 
+		this.syncSubTabWithUrl(toolbar);
+
 		this.resultsFilter = new ResultsFilter({
 			parent: this.rootElem.querySelector('.results-filter')!,
 			resultsEmitter: this.resultsEmitter,
@@ -316,6 +321,23 @@ export abstract class DetailedResults extends Component {
 				this.rootDiv.classList.add('all-players');
 				this.rootDiv.classList.remove('single-player');
 			}
+		});
+	}
+
+	// The URL says which of the results tabs is open, like ?tab=results&view=events, so a refresh
+	// or a shared link opens the same one. The main tab is in the URL too, see SimHeader.
+	private syncSubTabWithUrl(toolbar: HTMLElement) {
+		const tabName = (link: Element) => link.textContent!.trim().toLowerCase().replace(/\s+/g, '-');
+		const links = Array.from(toolbar.querySelectorAll<HTMLElement>('.dr-tabs [data-bs-toggle="tab"]'));
+
+		const wanted = new URLSearchParams(window.location.search).get(DetailedResults.VIEW_PARAM);
+		const link = links.find(link => tabName(link) === wanted);
+		if (link) BootstrapTab.getOrCreateInstance(link).show();
+
+		toolbar.addEventListener('shown.bs.tab', event => {
+			const url = new URL(window.location.href);
+			url.searchParams.set(DetailedResults.VIEW_PARAM, tabName(event.target as Element));
+			window.history.replaceState(window.history.state, '', url);
 		});
 	}
 
