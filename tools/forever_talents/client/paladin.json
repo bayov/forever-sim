@@ -1,5 +1,5 @@
 {
- "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro, and Champion of the Light from the 2026-10-01 development notes",
+ "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro, and Champion of the Light from the 2026-10-01 development notes. Redoubt, Reckoning, Holy Shield, Champion of the Light and Light's Vigil are brought up to build 1.60.1.70338 from foreverchanges.pro (2026-10-12)",
  "class": "paladin",
  "trees": [
   {
@@ -339,14 +339,14 @@
      "passive": false,
      "icon": "ability_paladin_judgementofthepure",
      "desc": {
-      "1": "Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 175 to 189 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 315 to 333. The Paladin may only have one Light's Vigil active per party."
+      "1": "Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 175 to 189 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 326 to 344. You may only have one Light's Vigil active per party."
      },
      "req": "Holy Shock",
      "cost": "730 Mana; 20 yd hostile / 40 yd friendly; 1.5 sec cast; 6 sec cooldown",
      "id": 105320,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.70009",
+      "build": "1.60.1.70338",
       "spellId": 1310911,
       "notes": [
        "Values shown at level 60.",
@@ -417,16 +417,16 @@
      "passive": true,
      "icon": "ability_defend",
      "desc": {
-      "1": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 6%. Lasts 10 sec or 5 blocks.",
-      "2": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 12%. Lasts 10 sec or 5 blocks.",
-      "3": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 18%. Lasts 10 sec or 5 blocks.",
-      "4": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 24%. Lasts 10 sec or 5 blocks.",
-      "5": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 30%. Lasts 10 sec or 5 blocks."
+      "1": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 4%. Lasts 10 sec or 5 blocks.",
+      "2": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 8%. Lasts 10 sec or 5 blocks.",
+      "3": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 12%. Lasts 10 sec or 5 blocks.",
+      "4": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 16%. Lasts 10 sec or 5 blocks.",
+      "5": "Damaging melee attacks against you have a 10% chance to increase your chance to block by 20%. Lasts 10 sec or 5 blocks."
      },
      "id": 105626,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 20127,
       "notes": []
      }
@@ -660,16 +660,16 @@
      "passive": true,
      "icon": "spell_holy_blessingofstrength",
      "desc": {
-      "1": "Gives you a 8% chance to gain an extra attack after Blocking a melee attack and a 20% chance to gain an extra attack after being the victim of a non-periodic critical strike.",
-      "2": "Gives you a 16% chance to gain an extra attack after Blocking a melee attack and a 40% chance to gain an extra attack after being the victim of a non-periodic critical strike.",
-      "3": "Gives you a 24% chance to gain an extra attack after Blocking a melee attack and a 60% chance to gain an extra attack after being the victim of a non-periodic critical strike.",
-      "4": "Gives you a 32% chance to gain an extra attack after Blocking a melee attack and a 80% chance to gain an extra attack after being the victim of a non-periodic critical strike.",
-      "5": "Gives you a 40% chance to gain an extra attack after Blocking a melee attack and a 100% chance to gain an extra attack after being the victim of a non-periodic critical strike."
+      "1": "Gives you a 8% chance to gain an extra attack after Blocking a melee attack and a 20% chance to gain an extra attack after being the victim of a non-periodic critical strike. Cannot occur more often than once every 1.5 sec.",
+      "2": "Gives you a 16% chance to gain an extra attack after Blocking a melee attack and a 40% chance to gain an extra attack after being the victim of a non-periodic critical strike. Cannot occur more often than once every 1.5 sec.",
+      "3": "Gives you a 24% chance to gain an extra attack after Blocking a melee attack and a 60% chance to gain an extra attack after being the victim of a non-periodic critical strike. Cannot occur more often than once every 1.5 sec.",
+      "4": "Gives you a 32% chance to gain an extra attack after Blocking a melee attack and a 80% chance to gain an extra attack after being the victim of a non-periodic critical strike. Cannot occur more often than once every 1.5 sec.",
+      "5": "Gives you a 40% chance to gain an extra attack after Blocking a melee attack and a 100% chance to gain an extra attack after being the victim of a non-periodic critical strike. Cannot occur more often than once every 1.5 sec."
      },
      "id": 105627,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 20177,
       "notes": []
      }
@@ -704,7 +704,7 @@
      "passive": false,
      "icon": "spell_holy_blessingofprotection",
      "desc": {
-      "1": "Increases chance to block by 20% for 10 sec, and deals 110 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges."
+      "1": "Increases chance to block by 30% for 10 sec, and deals 110 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges."
      },
      "req": "Templar's Bulwark",
      "reqText": "Requires Shield",
@@ -712,7 +712,7 @@
      "id": 105628,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 20925,
       "notes": []
      }
@@ -1043,14 +1043,14 @@
      "passive": true,
      "icon": "ability_paladin_enlightenedjudgements",
      "desc": {
-      "1": "Increases your spell damage and healing by up to 20% of your Intellect.",
-      "2": "Increases your spell damage and healing by up to 40% of your Intellect.",
-      "3": "Increases your spell damage and healing by up to 60% of your Intellect."
+      "1": "Increases your spell damage by up to 20% of your Intellect.",
+      "2": "Increases your spell damage by up to 40% of your Intellect.",
+      "3": "Increases your spell damage by up to 60% of your Intellect."
      },
      "id": 110882,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 1311084,
       "notes": [
        "The 2026-10-01 development notes changed the ratio to 20/40/60% (was 33/66/100%), ahead of the client data we have"

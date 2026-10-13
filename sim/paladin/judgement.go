@@ -39,6 +39,9 @@ func (paladin *Paladin) registerJudgement() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, _ *core.Spell) {
 			paladin.castSpecificJudgement(sim, target, paladin.currentJudgement, paladin.currentSeal)
+			if paladin.swiftJudgementAura != nil {
+				paladin.swiftJudgementAura.Deactivate(sim)
+			}
 			if refundChance > 0 && sim.Proc(refundChance, "Sanctified Judgement") {
 				paladin.AddMana(sim, refundPortion*paladin.currentSealSpell.DefaultCast.Cost, refundMetrics)
 			}

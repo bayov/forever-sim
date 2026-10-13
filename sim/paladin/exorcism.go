@@ -73,6 +73,8 @@ func (paladin *Paladin) registerExorcism() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
+			BonusHitRating:   paladin.divinePrecisionHitRating(core.SpellHitRatingPerHitChance),
+			BonusCritRating:  paladin.holyPowerCrit(),
 			BonusCoefficient: 0.429,
 
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {

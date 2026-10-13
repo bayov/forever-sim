@@ -77,6 +77,19 @@ type Paladin struct {
 
 	// Consecrated Ground's Holy damage buff, up while Consecration ticks.
 	consecratedGroundAura *core.Aura
+
+	// Light's Vigil's hook on Holy Shock, see lights_vigil.go. Nil without the talent.
+	lightsVigil func(sim *core.Simulation, target *core.Unit, holyShock *core.Spell, landed bool)
+
+	// Twist of Light's Echoes, see twist_of_light.go. Nil without the talent.
+	echoOfCommand       *core.Aura
+	echoOfRighteousness *core.Aura
+	sealEchoes          map[*core.Aura]sealEcho
+	// The effect each Echo applies, the rank of the seal it replaced.
+	echoApply map[*core.Aura]func(sim *core.Simulation, target *core.Unit)
+
+	// Swift Judgement's free next Judgement, see swift_judgement.go. Nil without the talent.
+	swiftJudgementAura *core.Aura
 }
 
 // Implemented by each Paladin spec.
@@ -103,6 +116,8 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerRighteousFury()
 	// Judgement and Seals
 	paladin.registerJudgement()
+	paladin.registerSwiftJudgement()
+	paladin.registerTwistOfLight()
 
 	paladin.registerSealOfRighteousness()
 	paladin.registerSealOfCommand()
@@ -120,6 +135,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerForbearance()
 	paladin.registerConsecration()
 	paladin.registerHolyShock()
+	paladin.registerLightsVigil()
 	paladin.registerExorcism()
 	paladin.registerDivineFavor()
 	paladin.registerHammerOfWrath()
@@ -210,6 +226,7 @@ func (paladin *Paladin) getPrimarySealSpell(primarySeal proto.PaladinSeal) *core
 }
 
 func (paladin *Paladin) applySeal(newSeal *core.Aura, judgement *core.Spell, sealSpell *core.Spell, sim *core.Simulation) {
+	paladin.leaveEcho(sim, newSeal)
 	if paladin.currentSeal != nil {
 		paladin.currentSeal.Deactivate(sim)
 	}

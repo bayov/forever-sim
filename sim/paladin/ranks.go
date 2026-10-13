@@ -20,6 +20,8 @@ var (
 	HolyShockSpellId           = [...]int32{0, 1311606, 20473, 20929, 20930}
 	HammerOfWrathLevel         = [...]int{0, 44, 52, 60}
 	HammerOfWrathSpellId       = [...]int32{0, 24275, 24274, 24239}
+	HolyWrathLevel             = [...]int{0, 50, 60}
+	HolyWrathSpellId           = [...]int32{0, 2812, 10318}
 
 	JudgementSpellId              int32 = 20271
 	JudgementOfTheCrusaderSpellId int32 = 20303
@@ -34,4 +36,5 @@ func init() {
 	core.RegisterSpellRanks(HolyShockSpellId[1:]...)
 	core.RegisterSpellRanks(HammerOfWrathSpellId[1:]...)
 	core.RegisterSpellRanks(HolyStrikeSpellId[1:]...)
+	core.RegisterSpellRanks(LightsVigilSpellId[1:]...)
 }

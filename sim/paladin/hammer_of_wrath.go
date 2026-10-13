@@ -50,8 +50,9 @@ func (paladin *Paladin) registerHammerOfWrath() {
 
 			ManaCost: core.ManaCostOptions{
 				FlatCost: rank.manaCost,
-				// Instrument of Law 2 makes it instant, and then Benediction counts too.
-				Multiplier: core.TernaryInt32(paladin.Talents.InstrumentOfLaw == 2, paladin.holyConduitInstant(), paladin.holyConduit()),
+				// Benediction's spell list in the client (1.60.1.70338, spell 20101) leaves
+				// Hammer of Wrath out, even when Instrument of Law makes it instant.
+				Multiplier: paladin.holyConduit(),
 			},
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
@@ -67,6 +68,7 @@ func (paladin *Paladin) registerHammerOfWrath() {
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
 			BonusHitRating:   -float64(paladin.Talents.Precision) * core.MeleeHitRatingPerHitChance,
+			BonusCritRating:  paladin.holyPowerCrit(),
 
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 				return sim.IsExecutePhase20()
