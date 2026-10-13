@@ -54,27 +54,29 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	displayPseudoStats: [],
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 
-		// Default EP weights for sorting gear in the gear picker.
-		epWeights: Stats.fromMap(
-			{
-				[Stat.StatMana]: 0.01,
-				[Stat.StatIntellect]: 0.23,
-				[Stat.StatSpirit]: 0.0,
-				[Stat.StatMP5]: 0.14,
-				[Stat.StatSpellPower]: 1,
-				[Stat.StatSpellDamage]: 1,
-				[Stat.StatFirePower]: 0.1,
-				[Stat.StatShadowPower]: 0.9,
-				[Stat.StatSpellHit]: 12.79,
-				[Stat.StatSpellCrit]: 7.92,
-				[Stat.StatSpellHaste]: 7.83,
-				[Stat.StatStamina]: 0.01,
-				[Stat.StatFireResistance]: 0.0,
-			},
-		),
+		// Default EP weights for sorting gear in the gear picker, measured on the Level 60
+		// Demonology build (Gnome, 180 sec, 2026-10-12, on the set before the stat-mix rebudget) in
+		// spell power. Hit is worth 0 at the cap the presets sit at; its weight is the one measured
+		// below the cap.
+		epWeights: Stats.fromMap({
+			[Stat.StatMana]: 0.01,
+			[Stat.StatIntellect]: 0.35,
+			[Stat.StatSpirit]: 0.16,
+			[Stat.StatMP5]: 0.52,
+			[Stat.StatSpellPower]: 1,
+			[Stat.StatSpellDamage]: 1,
+			[Stat.StatFirePower]: 0.1,
+			[Stat.StatShadowPower]: 0.9,
+			[Stat.StatSpellHit]: 15.2,
+			[Stat.StatSpellCrit]: 13,
+			[Stat.StatSpellHaste]: 7.83,
+			[Stat.StatStamina]: 0.01,
+			[Stat.StatFireResistance]: 0.0,
+		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default talents.
@@ -95,7 +97,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
-	playerIconInputs: [WarlockInputs.PetInput(), WarlockInputs.ImpFireboltRank(), WarlockInputs.ArmorInput(), WarlockInputs.WeaponImbueInput()],
+	playerIconInputs: [
+		WarlockInputs.PetInput(),
+		WarlockInputs.SacrificedPetInput(),
+		WarlockInputs.ImpFireboltRank(),
+		WarlockInputs.ArmorInput(),
+		WarlockInputs.WeaponImbueInput(),
+	],
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
@@ -129,6 +137,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	},
 
 	presets: {
+		builds: Presets.PresetBuilds,
 		// Preset talents that the user can quickly select.
 		talents: Presets.TalentPresets,
 		// Preset rotations that the user can quickly select.
@@ -144,17 +153,17 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Destruction DPS',
-			defaultName: 'Destruction',
-			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
+			tooltip: 'Demonology DPS',
+			defaultName: 'Demonology',
+			iconUrl: getSpecIcon(Class.ClassWarlock, 1),
 
 			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Alliance]: Race.RaceGnome,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

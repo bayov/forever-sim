@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-var TalentTreeSizes = [3]int{17, 17, 16}
+var TalentTreeSizes = [3]int{17, 19, 16}
 
 const (
 	WarlockFlagAffliction  = core.SpellFlagAgentReserved1
@@ -22,8 +22,8 @@ const (
 
 	SpellCode_WarlockConflagrate
 	SpellCode_WarlockCorruption
-	SpellCode_WarlockCurseOfAgony
-	SpellCode_WarlockCurseOfDoom
+	SpellCode_WarlockBaneOfAgony
+	SpellCode_WarlockBaneOfDoom
 	SpellCode_WarlockDeathCoil
 	SpellCode_WarlockDemonicSacrifice
 	SpellCode_WarlockDrainLife
@@ -34,6 +34,9 @@ const (
 	SpellCode_WarlockShadowBolt
 	SpellCode_WarlockShadowburn
 	SpellCode_WarlockSoulFire
+	SpellCode_WarlockSiphonLife
+	SpellCode_WarlockWrack
+	SpellCode_WarlockIncinerate
 )
 
 type Warlock struct {
@@ -53,7 +56,8 @@ type Warlock struct {
 
 	Conflagrate []*core.Spell
 	Corruption  []*core.Spell
-	DarkPact    *core.Spell
+	Incinerate  []*core.Spell
+	Wrack       *core.Spell
 	DrainSoul   []*core.Spell
 	Immolate    []*core.Spell
 	LifeTap     []*core.Spell
@@ -67,19 +71,22 @@ type Warlock struct {
 	DeathCoil   []*core.Spell
 
 	ActiveCurseAura          core.AuraArray
+	ActiveBaneAura           core.AuraArray
 	CurseOfElements          *core.Spell
 	CurseOfElementsAuras     core.AuraArray
-	CurseOfShadow            *core.Spell
-	CurseOfShadowAuras       core.AuraArray
 	CurseOfRecklessness      *core.Spell
 	CurseOfRecklessnessAuras core.AuraArray
 	CurseOfWeakness          *core.Spell
 	CurseOfWeaknessAuras     core.AuraArray
 	CurseOfTongues           *core.Spell
 	CurseOfTonguesAuras      core.AuraArray
-	CurseOfAgony             []*core.Spell
-	CurseOfDoom              *core.Spell
+	BaneOfAgony              []*core.Spell
+	BaneOfDoom               *core.Spell
 	AmplifyCurse             *core.Spell
+
+	soulFireCD    *core.Timer
+	shadowburnCD  *core.Timer
+	conflagrateCD *core.Timer
 
 	// Track all DoT spells for effecrs that add multipliers based on active effects
 	DoTSpells         []*core.Spell
@@ -90,6 +97,18 @@ type Warlock struct {
 	ImprovedShadowBoltAuras core.AuraArray
 	SoulLinkAura            *core.Aura
 	MasterDemonologistAura  *core.Aura
+	DemonicSacrificeAuras   map[*WarlockPet]*core.Aura
+	DemonicBrandAuras       core.AuraArray
+	DecimationAura          *core.Aura
+
+	// Talent effects that scale the warlock's damage against one target, from the target's
+	// side (Improved Shadow Bolt, Wrack). See applyTargetDamageModifiers.
+	targetDamageModifiers []func(spell *core.Spell, target *core.Unit) float64
+
+	sim *core.Simulation
+
+	// Extra Life Tap mana from items (the Demonheart Raiment 5 piece bonus), on top of Improved Life Tap.
+	lifeTapBonus float64
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -110,8 +129,9 @@ func (warlock *Warlock) Initialize() {
 	// warlock.registerSeedSpell()
 	warlock.registerDrainSoulSpell()
 	warlock.registerConflagrateSpell()
+	warlock.registerIncinerateSpell()
 	warlock.registerSiphonLifeSpell()
-	warlock.registerDarkPactSpell()
+	warlock.registerWrackSpell()
 	warlock.registerSearingPainSpell()
 	// warlock.registerInfernoSpell()
 	// warlock.registerBlackBook()
@@ -120,11 +140,10 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerDeathCoilSpell()
 
 	warlock.registerCurseOfElementsSpell()
-	warlock.registerCurseOfShadowSpell()
 	warlock.registerCurseOfRecklessnessSpell()
-	warlock.registerCurseOfAgonySpell()
+	warlock.registerBaneOfAgonySpell()
 	warlock.registerAmplifyCurseSpell()
-	warlock.registerCurseOfDoomSpell()
+	warlock.registerBaneOfDoomSpell()
 	warlock.registerSummonDemon()
 
 	warlock.registerPetAbilities()
@@ -145,13 +164,17 @@ func (warlock *Warlock) Initialize() {
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.BloodPact = max(raidBuffs.BloodPact, core.MakeTristateValue(
 		warlock.Options.Summon == proto.WarlockOptions_Imp,
-		warlock.Talents.ImprovedImp == 3,
+		// Forever's Improved Imp no longer improves Blood Pact.
+		false,
 	))
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {
+	warlock.sim = sim
+	warlock.applyTargetDamageModifiers()
 	warlock.setDefaultActivePet()
 	warlock.ActiveCurseAura = make([]*core.Aura, len(sim.Environment.AllUnits))
+	warlock.ActiveBaneAura = make([]*core.Aura, len(sim.Environment.AllUnits))
 
 	// warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
 	// 	proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)

@@ -44,8 +44,9 @@ func (warlock *Warlock) registerFelDominationCD() {
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
-				Timer:    warlock.NewTimer(),
-				Duration: time.Minute * 15,
+				Timer: warlock.NewTimer(),
+				// 5 min in the Forever client (18708), 15 in 1.12.
+				Duration: time.Minute * 5,
 			},
 		},
 

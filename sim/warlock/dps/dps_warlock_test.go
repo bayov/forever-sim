@@ -6,27 +6,27 @@ import (
 	_ "github.com/wowsims/classic/sim/common"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 func init() {
 	RegisterDpsWarlock()
 }
 
-func TestWarlockSMRuin(t *testing.T) {
+// The four Level 60 builds of ui/warlock/presets.ts on the synthetic Phase 1 sets.
+func warlockSuite(t *testing.T, talents string, gear string, apl string, label string, options *proto.Player_Warlock) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		{
 			Class: proto.Class_ClassWarlock,
 			Phase: 1,
-			Race:  proto.Race_RaceOrc,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
+			Race:  proto.Race_RaceGnome,
 
-			Talents:     TalentsSMRuin,
-			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "mc"),
-			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", "rotation"),
-			Buffs:       core.FullBuffs,
+			Talents:     talents,
+			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", gear),
+			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", apl),
+			Buffs:       WarlockBuffs,
 			Consumes:    Consumes,
-			SpecOptions: core.SpecOptionsCombo{Label: "SM/Ruin Warlock", SpecOptions: DefaultDestroWarlock},
+			SpecOptions: core.SpecOptionsCombo{Label: label, SpecOptions: options},
 
 			ItemFilter:      ItemFilters,
 			EPReferenceStat: proto.Stat_StatSpellPower,
@@ -35,38 +35,57 @@ func TestWarlockSMRuin(t *testing.T) {
 	}))
 }
 
-func TestWarlockDSRuin(t *testing.T) {
-	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		{
-			Class: proto.Class_ClassWarlock,
-			Phase: 1,
-			Race:  proto.Race_RaceOrc,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
-
-			Talents:     TalentsDSRuin,
-			GearSet:     core.GetGearSet("../../../ui/warlock/gear_sets", "mc"),
-			Rotation:    core.GetAplRotation("../../../ui/warlock/apls/", "rotation"),
-			Buffs:       core.FullBuffs,
-			Consumes:    Consumes,
-			SpecOptions: core.SpecOptionsCombo{Label: "DS/Ruin Warlock", SpecOptions: DefaultDestroWarlock},
-
-			ItemFilter:      ItemFilters,
-			EPReferenceStat: proto.Stat_StatSpellPower,
-			StatsToWeigh:    Stats,
-		},
-	}))
+func TestWarlockDemonology(t *testing.T) {
+	warlockSuite(t, TalentsDemonology, "level60_phase1_synthetic_demonology", "level60_demonology", "Demonology Warlock", DemonologyWarlock)
 }
 
-var TalentsSMRuin = "5502203112201105--52500051020001"
-var TalentsDSRuin = "25002-2050300152201-52500051020001"
+func TestWarlockDestruction(t *testing.T) {
+	warlockSuite(t, TalentsDestruction, "level60_phase1_synthetic", "level60_destruction", "Destruction Warlock", SuccubusWarlock)
+}
 
-var DefaultDestroWarlock = &proto.Player_Warlock{
+func TestWarlockAffliction(t *testing.T) {
+	warlockSuite(t, TalentsAffliction, "level60_phase1_synthetic", "level60_affliction", "Affliction Warlock", SuccubusWarlock)
+}
+
+func TestWarlockDestructionFire(t *testing.T) {
+	warlockSuite(t, TalentsDestructionFire, "level60_phase1_synthetic", "level60_destruction_fire", "Destruction Fire Warlock", FireWarlock)
+}
+
+// Forever tree (tools/forever_talents/client/warlock.json).
+var TalentsDemonology = "011-0305003131221001351-0550005003"
+var TalentsDestruction = "25510000035--055030500310035"
+var TalentsAffliction = "2553000003520005--0550305003"
+var TalentsDestructionFire = "2525000003-0002-0050355003101351"
+
+// Keeps the Succubus out with Firestone.
+var FireWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
 		Options: &proto.WarlockOptions{
 			Armor:       proto.WarlockOptions_DemonArmor,
 			Summon:      proto.WarlockOptions_Succubus,
-			WeaponImbue: proto.WarlockOptions_NoWeaponImbue,
+			WeaponImbue: proto.WarlockOptions_Firestone,
+		},
+	},
+}
+
+// Sacrifices the Imp before the pull and keeps the Succubus out, which Demonic Pact allows.
+var DemonologyWarlock = &proto.Player_Warlock{
+	Warlock: &proto.Warlock{
+		Options: &proto.WarlockOptions{
+			Armor:         proto.WarlockOptions_DemonArmor,
+			Summon:        proto.WarlockOptions_Succubus,
+			SacrificedPet: proto.WarlockOptions_Imp,
+			WeaponImbue:   proto.WarlockOptions_Spellstone,
+		},
+	},
+}
+
+var SuccubusWarlock = &proto.Player_Warlock{
+	Warlock: &proto.Warlock{
+		Options: &proto.WarlockOptions{
+			Armor:       proto.WarlockOptions_DemonArmor,
+			Summon:      proto.WarlockOptions_Succubus,
+			WeaponImbue: proto.WarlockOptions_Spellstone,
 		},
 	},
 }
@@ -75,12 +94,17 @@ var Consumes = core.ConsumesCombo{
 	Label: "Consumes",
 	Consumes: &proto.Consumes{
 		DefaultPotion:   proto.Potions_MajorManaPotion,
+		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 		Flask:           proto.Flask_FlaskOfSupremePower,
-		FirePowerBuff:   proto.FirePowerBuff_ElixirOfGreaterFirepower,
+		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 		ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
-		Food:            proto.Food_FoodTenderWolfSteak,
+		Food:            proto.Food_FoodLobsterStew,
+		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 		MainHandImbue:   proto.WeaponImbue_WizardOil,
+		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+		SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
+		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 	},
 }
 
@@ -104,3 +128,15 @@ var Stats = []proto.Stat{
 	proto.Stat_StatSpellHit,
 	proto.Stat_StatSpellCrit,
 }
+
+// The shared full buffs without the melee group's party buffs, which the demon does not get in a
+// caster group (as in tools/rotopt/mksettings).
+var WarlockBuffs = func() core.BuffsCombo {
+	buffs := core.FullBuffs
+	raid := googleProto.Clone(core.FullRaidBuffs).(*proto.RaidBuffs)
+	raid.BattleShout = proto.TristateEffect_TristateEffectMissing
+	raid.TrueshotAura = false
+	raid.LeaderOfThePack = false
+	buffs.Raid = raid
+	return buffs
+}()
