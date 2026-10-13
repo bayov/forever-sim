@@ -215,8 +215,10 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 				items = append(items, cast(lightsVigil, and(vigilFloor, not(targetAuraIsActive(lightsVigilMark))),
 					"Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."))
 				lowMana := constant("false")
-				if vigilFloor != nil {
+				if k["vigilLongFight"] > 0 {
 					lowMana = not(vigilFloor)
+				} else if k["lightsVigilMana"] > 0 {
+					lowMana = lt(currentManaPercent(), num(k["lightsVigilMana"]/100))
 				}
 				items = append(items, cast(holyShock, and(or(targetAuraIsActive(lightsVigilMark), lowMana), floor),
 					"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."))
