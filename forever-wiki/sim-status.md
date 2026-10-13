@@ -164,14 +164,14 @@ Both DPS playstyles have their own gear, talents, rotation and build: Balance (m
 
 **Feral.** Gear: 998101-998113, priced by standards 1b (Forever's physical budget, 3 stat lines a piece, the two-hander at 78.8 with no attack power) in the 5a stat mix: 189 Agility, 177 Strength, 143 Stamina, 90 hit rating (the 9% cap), 69 crit rating (4.9%), 45 Intellect, 32 attack power, no Spirit, two synthetic trinkets (29 Agility and 17 Strength; 165 Strength for 20 sec every 2 min), Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5; both measured before the 5a rebudget, before the 5a and 1b rebudgets). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Berserk on cooldown (Forever removed Tiger's Fury), no new Rip in the last 8 sec and Bite at any combo points in the last 2, no Rake (keeping it up costs 33).
 
-Under Forever the cat swings its equipped weapon (its DPS at a 1.0 sec swing), uses weapon imbues, and drinks potions and Thistle Tea in form (Blizzard's class deep dive; classes/druid.md). The preset carries Elemental Sharpening Stone, Mighty Rage Potion and Thistle Tea. Together that took Feral from 689.1 to 734.1 at 180 sec, and Forever's removal of Tiger's Fury takes it to 709.2.
+Under Forever the cat swings its equipped weapon (its DPS at a 1.0 sec swing), uses weapon imbues, and drinks potions and Thistle Tea in form (Blizzard's class deep dive; classes/druid.md). The preset carries Elemental Sharpening Stone, Mighty Rage Potion and Thistle Tea. Together that took Feral from 689.1 to 734.1 at 180 sec, Forever's removal of Tiger's Fury takes it to 709.2, and a Windfury Totem in place of Grace of Air (the melee group the warrior and rogue presets have) to 722.4.
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 721.0 | 709.2 | 696.9 | best overall and Alliance |
-| Windshaper Skyborne | 717.0 | 707.1 | 694.5 | best Horde |
-| High Order Skyborne | 716.9 | 707.1 | 694.4 | |
-| Tauren | 714.0 | 704.1 | 690.9 | |
+| Night Elf | 734.3 | 722.4 | 713.3 | best overall and Alliance |
+| Windshaper Skyborne | 729.1 | 718.9 | 709.1 | best Horde |
+| High Order Skyborne | 729.0 | 718.8 | 709.0 | |
+| Tauren | 726.9 | 716.8 | 707.0 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 

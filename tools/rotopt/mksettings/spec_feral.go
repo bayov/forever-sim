@@ -5,11 +5,13 @@ import "github.com/wowsims/classic/sim/core/proto"
 func init() {
 	specs["feral"] = &specSetup{
 		uiDir: "ui/feral_druid",
-		// The cat is in a melee group with a shaman, like the rogue. Enhancing Totems is not in
-		// Forever's tree, so the totems are the regular ones.
+		// The cat is in a melee group with a shaman, who drops Strength of Earth and Windfury Totem,
+		// as for the warrior (Forever's air totems don't stack in a party, and Windfury works on a
+		// cat under Forever). Enhancing Totems is not in Forever's tree, so the totems are the
+		// regular ones.
 		raid: func(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *proto.Debuffs) {
 			raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
-			raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
+			raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
 			// The crit aura is the cat's own (Leader of the Pack), and no moonkin is in its group.
 			raidBuffs.LeaderOfThePack = false
 			raidBuffs.MoonkinAura = false

@@ -18,6 +18,7 @@ import {
 	Spec,
 	Stat,
 	StrengthBuff,
+	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 	ZanzaBuff,
@@ -191,11 +192,11 @@ export const DefaultConsumes = Consumes.create({
 });
 
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec feral): the
-// shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and Grace
-// of Air (Windfury Totem now works in Cat Form under Forever and would add 12.5 at 180 sec, but the
-// shared raid gives no melee spec one), every blessing, and its own Leader of the
-// Pack. Under Forever the totems and Battle Shout are capped below their Ahn'Qiraj book ranks
-// (Strength of Earth 42, Grace of Air 77, Battle Shout 115), which costs the cat 14.8 at 180 sec.
+// shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and
+// Windfury Totem, as the warrior and rogue presets have (Forever's air totems don't stack in a
+// party, so Windfury takes Grace of Air's place; it works on a cat under Forever), every
+// blessing, and its own Leader of the Pack. Under Forever the totems and Battle Shout are capped
+// below their Ahn'Qiraj book ranks (Strength of Earth 42, Battle Shout 115).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -205,13 +206,13 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
 	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
 });
 
@@ -286,14 +287,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 721.0 / 709.2 / 696.9 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 734.3 / 722.4 / 713.3 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             721.0    709.2    696.9   best overall and Alliance
-//	Windshaper Skyborne   717.0    707.1    694.5   best Horde
-//	High Order Skyborne   716.9    707.1    694.4
-//	Tauren                714.0    704.1    690.9
+//	Night Elf             734.3    722.4    713.3   best overall and Alliance
+//	Windshaper Skyborne   729.1    718.9    709.1   best Horde
+//	High Order Skyborne   729.0    718.8    709.0
+//	Tauren                726.9    716.8    707.0
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.
