@@ -10,7 +10,7 @@ import { defineConfig } from 'vite';
 export const ARTIFACT_OUT_DIR = path.join(__dirname, 'dist', 'dps_report_artifact');
 
 export default defineConfig({
-	base: '/classic/',
+	base: '/forever/',
 	root: path.join(__dirname, 'ui'),
 	publicDir: false,
 	// JSON.parse of a string loads the 9 MB of data faster than the same data as an object literal.

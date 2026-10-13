@@ -1,4 +1,4 @@
-BASE_DIR := classic
+BASE_DIR := forever
 OUT_DIR := dist/$(BASE_DIR)
 TS_CORE_SRC := $(shell find ui/core -name '*.ts' -type f)
 ASSETS_INPUT := $(shell find assets/ -type f)

@@ -8,12 +8,12 @@ One source, two outputs:
 
 | Output | How |
 |---|---|
-| Sim UI page, `/classic/dps_report/` | Built by vite with the rest of the UI (`make rundevserver`, `npx vite serve`, `make dist`). Linked from the homepage. |
+| Sim UI page, `/forever/dps_report/` | Built by vite with the rest of the UI (`make rundevserver`, `npx vite serve`, `make dist`). Linked from the homepage. |
 | Single-file HTML for a Claude artifact | `make dps-report-artifact` writes `dist/dps_report.html` (about 9.5 MB) with the script, styles, images, fonts and every dataset inside. Published at https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR. |
 
 The single file is built by `tools/dps_report/build_artifact.mjs` with `vite.dps_report.config.mts`. It differs from the
 sim UI build only in where the datasets come from (`data_source.inline.ts` bundles them instead of fetching them) and in
-being one file: the `/classic/assets/...` images and fonts become data URIs. An artifact may load scripts only from a few
+being one file: the `/forever/assets/...` images and fonts become data URIs. An artifact may load scripts only from a few
 CDNs and stylesheets only from Google Fonts, so d3 comes from cdnjs and nothing else is loaded from outside. The file must
 stay under 16 MB; the build fails above that.
 
