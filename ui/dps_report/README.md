@@ -30,6 +30,8 @@ Files:
   the sim UI palette and styles the charts and controls.
 - `datasets.json`: title, description and last update of each dataset.
 - `data/<id>.json`: the datasets. Rows of per-build datasets carry `build` (`<class>__<preset>`; `builds.json` calls it `id`).
+- `data/mana.json`, `data/mana_summary.json`: mana % of max every 5 s over a 480 s fight per mana-using preset, and when
+  it first drops below 10%. Made by `tools/dps_report/mana_curves.py`.
 - `provenance.json`: per build, the inputs its data was made from (written by `tools/dps_report/stale.mjs`).
 
 To regenerate the data, use the `regenerate-dps-report` skill (`.agents/skills/regenerate-dps-report/`).
