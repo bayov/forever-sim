@@ -335,7 +335,7 @@ export const OtherDefaults = {
 //                                 Builds
 ///////////////////////////////////////////////////////////////////////////
 
-// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, Humanoid), a 3 minute
+// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, type Unknown: a generic boss), a 3 minute
 // fight, and the default buffs, debuffs and consumes, like the enhancement shaman's.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	'Level 60',
@@ -350,7 +350,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 				id: 213336,
 				name: 'Level 60',
 				level: 63,
-				mobType: MobType.MobTypeHumanoid,
+				mobType: MobType.MobTypeUnknown,
 				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
 				minBaseDamage: 3000,
 				damageSpread: 0.3333,
@@ -463,7 +463,8 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 //   Night Elf 712.0 / 696.7 / 676.1
 //   Troll     710.3 / 696.0 / 674.7
 //   Human     707.9 / 694.1 / 674.0
-//   Dwarf     699.3 / 684.9 / 665.7
+//   Dwarf     707.6 / 693.0 / 672.9  (the generic boss is no Humanoid, so no Chastise; it cost
+//             the Dwarf 8 DPS against a Humanoid)
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {

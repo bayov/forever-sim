@@ -3,7 +3,7 @@
 // the spec's ui folder, a talent string, and the level 60 raid the enhancement presets
 // document (both blessings, Judgement of Wisdom, every debuff, the Phase 1 consumes).
 // The rogue gets the raid's Strength of Earth and Grace of Air on top. The target is the
-// UI's Level 60 boss (level 63, 3731 armor, Humanoid). Below 60 it is instead the UI's
+// UI's Level 60 boss (level 63, 3731 armor, type Unknown: a generic boss, standards 19). Below 60 it is instead the UI's
 // Level 20 build: a boss two levels up (see lowLevelTarget) soloed with no raid buffs or
 // debuffs, Thistle Tea and Instant Poison for the rogue, Rockbiter and the boss on the
 // shaman so Lightning Shield fires, and the boss on the paladin too (Retribution Aura).
@@ -114,7 +114,7 @@ func main() {
 			Id:      213336,
 			Name:    "Level 60",
 			Level:   63,
-			MobType: proto.MobType_MobTypeHumanoid,
+			MobType: proto.MobType_MobTypeUnknown,
 			Stats: stats.Stats{
 				stats.AttackPower: 805,
 				stats.Armor:       3731,
