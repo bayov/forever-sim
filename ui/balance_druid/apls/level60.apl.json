@@ -1,7 +1,8 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":9876}}},"doAtValue":{"const":{"val":"-3s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":9876}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"itemId":998015}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions and runes."},

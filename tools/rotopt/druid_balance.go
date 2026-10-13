@@ -51,6 +51,9 @@ func (druidBalance) Knobs() []Knob {
 		// Improved Wrath, so the spell lands at 0 plus its travel time).
 		{Name: "prepull", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "prepullTime", Default: 3, Min: 1.5, Max: 3.5, Step: 0.5},
+		// Use the synthetic spell power trinket 0.1 sec before the pull, so it is up when the
+		// pre-pull cast lands, 0/1 (only with the trinket worn).
+		{Name: "prepullTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -113,6 +116,9 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(starfire, k["prepullTime"]))
 	case 2:
 		rot.PrepullActions = append(rot.PrepullActions, prepull(wrath, k["prepullTime"]))
+	}
+	if k["prepullTrinket"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(druid.BalanceSyntheticSpellPowerTrinket), 0.1))
 	}
 	return rot
 }

@@ -23,11 +23,13 @@ gen() {
 # (it lands at 0), Insect Swarm and Moonfire whenever they are down, a free Starfire on
 # Clearcasting, Wrath once Eclipse is down to 2 charges or fewer with no Wrath flying, Starfire
 # otherwise. Innervate is left to its own trigger. The search kept that at 120, 180 and 300 sec.
-gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3"
-# The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.0% behind (775.0
-# against 824.5 at 180 sec), on its own talents (5502220115501351-03-505) and gear (Natural Power
+# Both Balance rotations use the synthetic spell power trinket 0.1 sec before the pull (1.8 / 1.1 /
+# 0.7 ahead of using it at 0 at 120 / 180 / 300 sec; 1.0 / 0.7 / 0.4 for the Wrath build).
+gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1"
+# The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (775.6
+# against 825.6 at 180 sec), on its own talents (5502220115501351-03-505) and gear (Natural Power
 # gloves).
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1"
 # Feral cat on the Level 60 talents (05002-05200332021031212051-05501): Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, no Rake (keeping it
 # up costs 33), Shifting Power at 50 Energy or less but not while a Bite is due (0.6 to 0.9
