@@ -671,7 +671,6 @@ export const DefaultDebuffs = Debuffs.create({
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
-	exposeArmor: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
 	insectSwarm: true,
 	judgementOfLight: true,
