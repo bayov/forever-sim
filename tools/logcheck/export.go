@@ -26,6 +26,7 @@ type export struct {
 	} `json:"when"`
 	Who struct {
 		Name      string `json:"name"`
+		Realm     string `json:"realm"`
 		ClassFile string `json:"classFile"`
 		RaceFile  string `json:"raceFile"`
 		Level     int32  `json:"level"`
@@ -117,6 +118,116 @@ func pickExport(dir string, end time.Time) (*export, error) {
 		return after, nil
 	}
 	return nil, fmt.Errorf("no exports in %s", dir)
+}
+
+// exportsAround returns the character's exports from the last one taken at or before the
+// window starts to the first one taken at or after it ends, in time order. Another character
+// with the same name (a deleted and remade one) has another class or race, and is left out.
+func exportsAround(dir string, ex *export, from, to time.Time) ([]*export, error) {
+	paths, _ := filepath.Glob(filepath.Join(dir, "export-*.json"))
+	var all []*export
+	for _, path := range paths {
+		other, err := loadExport(path)
+		if err != nil {
+			return nil, err
+		}
+		if other.Who.Name == ex.Who.Name && other.Who.Realm == ex.Who.Realm && other.Who.ClassFile == ex.Who.ClassFile && other.Who.RaceFile == ex.Who.RaceFile {
+			all = append(all, other)
+		}
+	}
+	slices.SortFunc(all, func(a, b *export) int { return a.time.Compare(b.time) })
+	first, last := 0, len(all)-1
+	for i, other := range all {
+		if !other.time.After(from) {
+			first = i
+		}
+	}
+	for i := len(all) - 1; i >= 0; i-- {
+		if !all[i].time.Before(to) {
+			last = i
+		}
+	}
+	if last < first {
+		return nil, nil
+	}
+	return all[first : last+1], nil
+}
+
+// exportChanges lists what changed from one export to the next that moves the sim: the
+// character's level, the skill of a weapon either one holds, the gear and the talents.
+func exportChanges(a, b *export) []string {
+	var changes []string
+	if a.Who.Level != b.Who.Level {
+		changes = append(changes, fmt.Sprintf("level %d to %d", a.Who.Level, b.Who.Level))
+	}
+
+	weaponSkills := map[string]bool{}
+	for _, ex := range []*export{a, b} {
+		for _, item := range ex.Gear {
+			if known, ok := core.ItemsByID[item.ID]; ok && weaponSkillName(known) != "" {
+				weaponSkills[weaponSkillName(known)] = true
+			}
+		}
+	}
+	ranks := map[string]int{}
+	for _, skill := range a.Skills {
+		ranks[skill.Name] = skill.Rank
+	}
+	for _, skill := range b.Skills {
+		if weaponSkills[skill.Name] && ranks[skill.Name] != skill.Rank {
+			changes = append(changes, fmt.Sprintf("%s skill %d to %d of %d", skill.Name, ranks[skill.Name], skill.Rank, skill.Max))
+		}
+	}
+
+	itemName := func(item exportItem) string {
+		switch {
+		case item.ID == 0:
+			return "nothing"
+		case item.Name != "":
+			return item.Name
+		}
+		return fmt.Sprint(item.ID)
+	}
+	for i := range max(len(a.Gear), len(b.Gear)) {
+		var before, after exportItem
+		if i < len(a.Gear) {
+			before = a.Gear[i]
+		}
+		if i < len(b.Gear) {
+			after = b.Gear[i]
+		}
+		switch {
+		case before.ID != after.ID:
+			changes = append(changes, fmt.Sprintf("%s to %s", itemName(before), itemName(after)))
+		case before.Enchant != after.Enchant:
+			changes = append(changes, fmt.Sprintf("enchant on %s %d to %d", itemName(after), before.Enchant, after.Enchant))
+		}
+	}
+
+	talents := func(ex *export) map[string]int {
+		ranks := map[string]int{}
+		for _, talent := range ex.Talents.Talents {
+			ranks[talent.Name] = talent.Rank
+		}
+		return ranks
+	}
+	before, after := talents(a), talents(b)
+	var talentChanges []string
+	for name := range after {
+		if before[name] != after[name] {
+			talentChanges = append(talentChanges, fmt.Sprintf("%s %d to %d", name, before[name], after[name]))
+		}
+	}
+	for name := range before {
+		if _, ok := after[name]; !ok && before[name] > 0 {
+			talentChanges = append(talentChanges, fmt.Sprintf("%s %d to 0", name, before[name]))
+		}
+	}
+	slices.Sort(talentChanges)
+	if len(talentChanges) > 0 {
+		changes = append(changes, "talents: "+strings.Join(talentChanges, ", "))
+	}
+	return changes
 }
 
 // character is what we build from an export, with notes on anything we had to leave out.
@@ -447,15 +558,24 @@ func (c *character) setProfessions(ex *export) {
 	}
 }
 
-// weaponSkillGaps is how far each weapon skill is below the most for our level.
-func weaponSkillGaps(ex *export) map[string]float64 {
-	gaps := map[string]float64{}
-	for _, skill := range ex.Skills {
-		if skill.Rank < skill.Max {
-			gaps[skill.Name] = float64(skill.Max - skill.Rank)
+// setSkillGaps sets how far the main hand and off hand weapons' skill is below the most for
+// our level, from the export's skills.
+func setSkillGaps(player *proto.Player, ex *export) {
+	gap := func(slot proto.ItemSlot) int32 {
+		item, ok := core.ItemsByID[player.Equipment.Items[slot].Id]
+		if !ok {
+			return 0
 		}
+		name := weaponSkillName(item)
+		for _, skill := range ex.Skills {
+			if skill.Name == name && skill.Rank < skill.Max {
+				return int32(skill.Max - skill.Rank)
+			}
+		}
+		return 0
 	}
-	return gaps
+	player.MainHandSkillGap = gap(proto.ItemSlot_ItemSlotMainHand)
+	player.OffHandSkillGap = gap(proto.ItemSlot_ItemSlotOffHand)
 }
 
 func weaponSkillName(item core.Item) string {

@@ -45,10 +45,10 @@ Run it from the repo root. A run takes about a second.
   by its spell. An enchant the sim's database lacks (Forever's leg and boot enchants 8482 and
   8485) goes in as bonus stats from the client's SpellItemEnchantment row, when all it does is
   add stats. Anything it can't place is listed as a note.
-- The export's weapon skills, taken off the sim's full skill (`-full-skill` turns that off). The
-  sim's glancing and parry chances don't follow skill, so an under-skilled weapon still shows
-  high glances and parries. When we swung a weapon below full skill in the window, the report
-  prints a warning and puts it in the flagged list ahead of those rows.
+- The export's weapon skills, as the sim's main hand and off hand skill gaps (`-full-skill`
+  turns that off). Misses, dodges, parries, glances and crits follow them. When we swung a
+  weapon below full skill in the window, the report prints a warning and puts it in the flagged
+  list ahead of the melee rows, because skill rises as we swing and the sim holds it still.
 - We stand in front of the mob, where it can parry and block, as when questing (`-behind` for
   the other way).
 - Our shaman imbue, from the last imbue we cast before the window ends (the export can't see it
@@ -88,9 +88,17 @@ replayed in every level's run.
   hit doesn't depend on the mob's level, so "Amounts on all mob levels together" runs the same
   check on every level's hits at once. A spell with a damage range can land anywhere between
   two whole points, so its round ups say nothing and it gets no amount row.
-- **Our logged stats changed.** Each of our casts carries max health, attack power, spell power
-  and armor. A change means a gear swap or a stat buff, and the sim uses the export's gear for
-  the whole window. Pick a window without swaps for damage checks.
+- **Changes between exports.** The log has no character level or skill (the level field on
+  our own lines is our item level). So we compare the character's exports from the last one
+  before the window to the first one after it, and warn about a level up, a skill up of a
+  weapon either export holds, a gear swap or a talent change. A change between two exports
+  happened somewhere between them, so the warning says which exports bracket it. With no export
+  before or after the window, a note says changes at that end don't show. Take an export right
+  before and right after a test to pin it down.
+- **Our logged stats changed.** Each of our casts carries max health, attack power, spell power,
+  armor and item level. A change means a gear swap, a stat buff or a level up (more health with
+  the same item level says a level up or a buff), and the sim uses the export's gear for the
+  whole window. Pick a window without swaps for damage checks.
 - **Spell IDs.** The sim sometimes keeps one ID where the client logs another (Windfury
   Weapon's attacks are 8232 in the sim and 439440 in the log). The report pairs a sim-only spell
   with a log-only spell of the same client name and says so. `nameAliases` in `report.go` holds

@@ -6,6 +6,7 @@ import (
 	"math"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -152,12 +153,42 @@ func (r *report) sheet() {
 	fmt.Println()
 }
 
+// exportChanges warns when the character changed during the window in a way the sim can't
+// follow, like a level up, a weapon skill up, a gear swap or a respec.
+//
+// The combat log has no level or skill (the level field on our own lines is our item level),
+// so we compare the exports taken around the window. A change between two exports happened
+// somewhere between them, so it may have been during the window or outside it. On 10-10,
+// Unarmed went from 85 at 21:30 to 147 at 23:14, which covers the whole 21:32 to 22:16 window,
+// so its glance and parry rates mix every skill in between.
+func (r *report) exportChanges(exports []*export) {
+	from, to := r.cl.from, r.cl.to
+	if len(exports) == 0 || exports[0].time.After(from) {
+		fmt.Println("note: no export from before the window starts, so a change early in the window doesn't show")
+	}
+	if len(exports) == 0 || exports[len(exports)-1].time.Before(to) {
+		fmt.Println("note: no export from after the window ends, so a change late in the window doesn't show")
+	}
+	for i := 1; i < len(exports); i++ {
+		a, b := exports[i-1], exports[i]
+		changes := exportChanges(a, b)
+		if len(changes) == 0 {
+			continue
+		}
+		what := fmt.Sprintf("the character changed between the exports at %s and %s, which overlap the window, so the sim's character may not match all of it: %s",
+			a.time.Format(stampFormat), b.time.Format(stampFormat), strings.Join(changes, ", "))
+		fmt.Printf("WARNING: %s.\n", what)
+		r.flagged = append(r.flagged, what)
+	}
+	fmt.Println()
+}
+
 // weaponSkills warns when a weapon we swung in the window is below the most skill for our level.
 //
-// The sim takes the gap off our weapon skill, but its glancing and parry chances don't follow
-// skill. So mobs glance and parry more in the log than in the sim: on 10-10 at Unarmed 85 of
-// 150 it was 30 to 45% glances on level 28 and 29 mobs, where the sim gives none. The warning
-// goes in the flagged list ahead of those rows, so they read as the skill and not a new finding.
+// The sim plays the whole window at the export's skill, and its miss, dodge, parry, glance and
+// crit chances follow it (Player.main_hand_skill_gap). But skill goes up as we swing, and a low
+// skill rises fast: on 10-10 Unarmed went from 85 at 21:30 to 147 at 23:14. So the warning
+// goes in the flagged list ahead of the melee rows it moves.
 //
 // The export has our skill at export time. Skill only goes up, so an export from after the
 // window has the most we could have had during it, and one from before has the least.
@@ -202,7 +233,7 @@ func (r *report) weaponSkills(fullSkill bool) {
 	case r.ex.time.Before(r.cl.from):
 		when = "taken before the window, so at least this during it"
 	}
-	effect := "The sim takes the gap off its weapon skill, but its glancing and parry chances don't follow skill, so expect more glances and parries in the log than in the sim"
+	effect := "The sim plays the whole window at this skill, but skill goes up as we swing, so a skill up in the window leaves the log with fewer misses, dodges, parries and glances than the sim"
 	if fullSkill {
 		effect = "The sim runs at full skill (-full-skill), so every melee row reads off"
 	}
@@ -213,35 +244,40 @@ func (r *report) weaponSkills(fullSkill bool) {
 }
 
 // mainHandSkillGap is how far the main hand's weapon skill is below the most for our level.
-// The client's sheet takes 0.04% crit off for each point, and the sim's crit stat doesn't.
+// The client's sheet takes 0.04% crit off for each point, and the sim's crit stat doesn't (its
+// attack table does).
 func (r *report) mainHandSkillGap() float64 {
-	item, ok := core.ItemsByID[r.char.player.Equipment.Items[proto.ItemSlot_ItemSlotMainHand].Id]
-	if !ok {
-		return 0
-	}
-	return skillGaps[weaponSkillName(item)]
+	return float64(r.char.player.MainHandSkillGap)
 }
 
 // logNotes lists what in the log the sim doesn't have: gear swaps or stat buffs, and buffs
 // from other players.
 func (r *report) logNotes() {
-	// Each of our casts carries our max health, attack power, spell power and armor. A change
-	// shows a gear swap or a stat buff (tools/combat_log/gear.py).
+	// Each of our casts carries our max health, attack power, spell power, armor and item
+	// level. A change shows a gear swap, a stat buff or a level up (tools/combat_log/gear.py).
 	var changes []string
-	last := ""
+	last, lastItemLevel, lastHealth := "", "", 0
 	for _, e := range r.cl.events {
 		if e.kind != "SPELL_CAST_SUCCESS" || e.srcGUID != r.cl.me || len(e.f) <= spellInfo+infoLevel {
 			continue
 		}
 		f := e.f[spellInfo:]
-		now := fmt.Sprintf("max health %s, AP %s, SP %s, armor %s", f[3], f[4], f[5], f[6])
+		now := fmt.Sprintf("max health %s, AP %s, SP %s, armor %s, item level %s", f[3], f[4], f[5], f[6], f[infoLevel])
 		if last != "" && now != last {
-			changes = append(changes, fmt.Sprintf("%s %s (%s)", e.t.Format("15:04:05"), now, e.spell))
+			// A level up raises our max health without changing our gear, but so does a
+			// Stamina buff.
+			why := ""
+			health, _ := strconv.Atoi(f[3])
+			if f[infoLevel] == lastItemLevel && health > lastHealth {
+				why = ", same item level: a level up or a buff"
+			}
+			changes = append(changes, fmt.Sprintf("%s %s (%s%s)", e.t.Format("15:04:05"), now, e.spell, why))
 		}
-		last = now
+		last, lastItemLevel = now, f[infoLevel]
+		lastHealth, _ = strconv.Atoi(f[3])
 	}
 	if len(changes) > 0 {
-		fmt.Printf("Our logged stats changed %d times in the window (gear swaps or stat buffs):\n", len(changes))
+		fmt.Printf("Our logged stats changed %d times in the window (gear swaps, stat buffs or level ups):\n", len(changes))
 		for i, change := range changes {
 			if i == 8 {
 				fmt.Printf("  and %d more\n", len(changes)-i)

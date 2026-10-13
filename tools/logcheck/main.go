@@ -109,7 +109,7 @@ func main() {
 	}
 	char.player.InFrontOfTarget = !*behind
 	if !*fullSkill {
-		skillGaps = weaponSkillGaps(ex)
+		setSkillGaps(char.player, ex)
 	}
 	setImbue(char, all, cl, ex, tables)
 
@@ -117,6 +117,11 @@ func main() {
 	r.header()
 	r.sheet()
 	r.weaponSkills(*fullSkill)
+	exports, err := exportsAround(filepath.Join(*archive, "exports"), ex, from, to)
+	if err != nil {
+		log.Fatal(err)
+	}
+	r.exportChanges(exports)
 	r.logNotes()
 
 	logTallies := tallyLog(cl)

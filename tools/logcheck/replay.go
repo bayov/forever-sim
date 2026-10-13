@@ -11,7 +11,6 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
-	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // replayCast is one of our casts from the log, to repeat in the sim at the same time.
@@ -56,11 +55,6 @@ type recorder struct {
 var (
 	recorders sync.Map // *core.Environment to *recorder
 	hookOnce  sync.Once
-
-	// skillGaps holds how far each weapon skill is below the most for our level, from the
-	// export. The sim assumes full skill, so we take the gap off before the attack tables are
-	// built.
-	skillGaps map[string]float64
 )
 
 // installHook makes every sim we build record its spell results. The aura has to go on before
@@ -71,7 +65,6 @@ func installHook() {
 			char := env.Raid.Parties[0].Players[0].GetCharacter()
 			rec := &recorder{char: char, tallies: newTallies()}
 			rec.manaMetrics = char.NewManaMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionManaGain, Tag: 9001})
-			applySkillGaps(&char.PseudoStats)
 			rec.watch(&char.Unit)
 			for _, pet := range char.Pets {
 				rec.watch(&pet.Unit)
@@ -79,20 +72,6 @@ func installHook() {
 			recorders.Store(env, rec)
 		})
 	})
-}
-
-func applySkillGaps(ps *stats.PseudoStats) {
-	skills := map[string]*float64{
-		"Axes": &ps.AxesSkill, "Swords": &ps.SwordsSkill, "Maces": &ps.MacesSkill, "Daggers": &ps.DaggersSkill,
-		"Unarmed": &ps.UnarmedSkill, "Two-Handed Axes": &ps.TwoHandedAxesSkill, "Two-Handed Swords": &ps.TwoHandedSwordsSkill,
-		"Two-Handed Maces": &ps.TwoHandedMacesSkill, "Polearms": &ps.PolearmsSkill, "Staves": &ps.StavesSkill,
-		"Bows": &ps.BowsSkill, "Guns": &ps.GunsSkill, "Crossbows": &ps.CrossbowsSkill, "Thrown": &ps.ThrownSkill,
-	}
-	for name, gap := range skillGaps {
-		if skill, ok := skills[name]; ok {
-			*skill -= gap
-		}
-	}
 }
 
 func (rec *recorder) watch(unit *core.Unit) {
