@@ -47,8 +47,9 @@ import (
 //
 // Balance (leather, ids 998001 to 998013) totals 375 spell power, 147 Intellect, 136 Stamina, 110 hit
 // rating, 98 crit rating (7.0%) and 89 Spirit. The hit takes the moonkin to the spell hit cap against
-// a level 63 boss and no further: 16% with Nature's Reach (4%) and the Grovekeeper 2 piece (1%). Hit at
-// the cap leaves spell power 3.6 points under its target (the SoD sets carry less hit). Moving hit into
+// a level 63 boss and no further: 16% with Nature's Reach (4%) and the Grovekeeper 2 piece (1%). Against
+// the hit-adjusted target (the table's other shares re-scaled into the room the capped hit leaves:
+// spell power 39.3 * 62.8 / 69.1 = 35.7, Intellect 16.3, crit 10.8) the set is on target. Moving hit into
 // spell power alone would be 1.5 to 1.9 ahead, but a set with 50 less hit and the rest in the table's
 // proportions is 8.7 behind (814.0 against 822.7 at 180 sec) and the Wrath-only build 5.9 behind, so
 // the cap stays. Spell power is the all-school kind.
