@@ -35,7 +35,9 @@ import (
 // The stat mix is the fair one of the cross-class standards (item 5a): the Season of Discovery level 60
 // warlock BiS sets' proportions at these weights (orchestration/gear_targets.md, da0a4c79e), Stamina at
 // the warlock's own share, Spirit 10%. Hit goes to the cap first (item 4); the room it takes past the
-// table's share comes evenly off Intellect, spell power and crit. A stat's linear share (L) is its weight
+// table's share came evenly off Intellect, spell power and crit; the targets below are the hit-adjusted
+// ones (gear_targets.md 1a6968081: the table's Intellect, spell power and crit re-scaled into the room
+// the capped hit leaves). A stat's linear share (L) is its weight
 // times its amount over the set's weighted total, weapons in, enchants and trinkets out. The generator
 // script lived in the session scratchpad (r3/gen.py); it picks each piece's stat lines, fits the amounts
 // to the set's totals, and the numbers below are its output, rounded, with spell power taking what
@@ -62,25 +64,25 @@ import (
 // staff 193.6, wand 21.3, 412 spell power, 148 Intellect, 133 Stamina, 93 Spirit, 96 crit rating (6.9%)
 // and 100 hit rating (10%):
 //
-//	Stat     Amount  L share  Target (Warlock)
+//	Stat     Amount  L share  Target (Warlock, hit-adjusted)
 //	Stamina    133    14.4      14.2 +/- 1.5
-//	Intellect  148    16.0      17.4
+//	Intellect  148    16.0      16.3 (table 17.4)
 //	Spirit      93    10.1      10
-//	Spell pwr  412    38.3      40.0
+//	Spell pwr  412    38.3      37.5 (table 40.0)
 //	Hit        100    10.8      at the cap (SoD 6.4)
-//	Crit        96    10.4      12.0
+//	Crit        96    10.4      11.2 (table 12.0)
 //
 // Demonology's set (level60_phase1_synthetic_demonology, the four hit pieces at the end of the list in
 // place of the chest, legs, waist and staff): armor 710.2, staff 193.6, wand 21.3, 392 spell power, 119
 // Intellect, 125 Stamina, 92 Spirit, 112 crit rating (8.0%) and 140 hit rating (14%):
 //
-//	Stat     Amount  L share  Target (Warlock Demonology)
+//	Stat     Amount  L share  Target (Warlock Demonology, hit-adjusted)
 //	Stamina    125    13.5      13.5 +/- 1.5
-//	Intellect  119    12.9      15.5
+//	Intellect  119    12.9      13.8 (table 15.5)
 //	Spirit      92     9.9      10
-//	Spell pwr  392    36.4      38.8
+//	Spell pwr  392    36.4      34.5 (table 38.8)
 //	Hit        140    15.1      at the cap (SoD 7.4)
-//	Crit       112    12.1      14.8
+//	Crit       112    12.1      13.2 (table 14.8)
 //
 // Both sets wear the two synthetic trinkets at the end of the list (outside the shares).
 //
