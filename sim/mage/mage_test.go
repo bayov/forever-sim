@@ -42,7 +42,8 @@ var P1Talents = "-1355000013013304-00550003310003002"
 var PlayerOptions = &proto.Player_Mage{
 	Mage: &proto.Mage{
 		Options: &proto.Mage_Options{
-			Armor: proto.Mage_Options_MageArmor,
+			Armor:      proto.Mage_Options_MageArmor,
+			StaffImbue: proto.Mage_Options_ImbueGreaterFlame,
 		},
 	},
 }

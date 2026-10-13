@@ -95,7 +95,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
-	playerIconInputs: [MageInputs.Armor],
+	playerIconInputs: [MageInputs.Armor, MageInputs.StaffImbueInput],
 	// Inputs to include in the 'Rotation' section on the settings tab.
 	rotationInputs: MageInputs.MageRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.

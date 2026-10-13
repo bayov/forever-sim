@@ -77,6 +77,19 @@ message Mage {
 			MoltenArmor = 3;
 		}
 		ArmorType armor = 1;
+
+		// Forever's mage-only staff imbue scrolls (Comprehension skill), in the class imbue slot,
+		// so they stack with a weapon oil. Staff only, 1 hour.
+		enum StaffImbue {
+			NoStaffImbue = 0;
+			// Scroll of Imbue Greater Flame (277500): +20 Fire damage.
+			ImbueGreaterFlame = 1;
+			// Scroll of Imbue Greater Frost (277501): +20 Frost damage.
+			ImbueGreaterFrost = 2;
+			// Scroll of Imbue Precision (277502): +1% spell crit.
+			ImbuePrecision = 3;
+		}
+		StaffImbue staff_imbue = 2;
 	}
 	Options options = 3;
 }

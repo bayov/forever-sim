@@ -186,3 +186,56 @@ func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
 		t.Errorf("Combustion stacks to %d, want 10", mage.CombustionAura.MaxStacks)
 	}
 }
+
+// The staff imbue scrolls add their stat only on a staff.
+func TestMageStaffImbue(t *testing.T) {
+	for _, tc := range []struct {
+		imbue proto.Mage_Options_StaffImbue
+		stat  stats.Stat
+		want  float64
+	}{
+		{proto.Mage_Options_ImbueGreaterFlame, stats.FirePower, 20},
+		{proto.Mage_Options_ImbueGreaterFrost, stats.FrostPower, 20},
+		{proto.Mage_Options_ImbuePrecision, stats.SpellCrit, 1 * core.SpellCritRatingPerCritChance},
+	} {
+		for _, staff := range []bool{true, false} {
+			equipment := &proto.EquipmentSpec{}
+			if staff {
+				equipment.Items = make([]*proto.ItemSpec, 15)
+				for i := range equipment.Items {
+					equipment.Items[i] = &proto.ItemSpec{}
+				}
+				// Staff of Dominance.
+				equipment.Items[proto.ItemSlot_ItemSlotMainHand] = &proto.ItemSpec{Id: 18842}
+			}
+			player := &proto.Player{
+				Race:      proto.Race_RaceGnome,
+				Class:     proto.Class_ClassMage,
+				Level:     60,
+				Equipment: equipment,
+				Spec:      &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{StaffImbue: tc.imbue}}},
+				Rotation:  &proto.APLRotation{},
+			}
+			base := *player
+			base.Spec = &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{}}}
+			got := mageStat(player, tc.stat) - mageStat(&base, tc.stat)
+			want := tc.want
+			if !staff {
+				want = 0
+			}
+			if math.Abs(got-want) > 1e-9 {
+				t.Errorf("%v, staff %v: %v gives %v, want %v", tc.imbue, staff, tc.stat, got, want)
+			}
+		}
+	}
+}
+
+func mageStat(player *proto.Player, stat stats.Stat) float64 {
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	return sim.Raid.Parties[0].Players[0].GetCharacter().GetStat(stat)
+}

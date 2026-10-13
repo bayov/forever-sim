@@ -25,7 +25,7 @@ import {
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common';
-import { Mage_Options as MageOptions, Mage_Options_ArmorType as ArmorType } from '../core/proto/mage';
+import { Mage_Options as MageOptions, Mage_Options_ArmorType as ArmorType, Mage_Options_StaffImbue as StaffImbue } from '../core/proto/mage';
 import { SavedTalents } from '../core/proto/ui';
 import { Stats } from '../core/proto_utils/stats';
 import Level60ArcaneAPL from './apls/level60_arcane.apl.json';
@@ -164,7 +164,7 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
 // Frost (Ice Lance only because Fingers of Frost needs it). Frostfire Bolt is Fire and Frost at
 // once, so it gets Fire Power, Ignite and Critical Mass and also Ice Shards, Piercing Ice and
-// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 926.8 / 904.5 / 892.1
+// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 938.7 / 915.9 / 903.9
 // at 120 / 180 / 300 sec (Undead). Frost Channeling 3 does nothing for this build (the client
 // leaves Frostfire Bolt out of it, the talent verification shows 0.0 either way): the points are
 // the 20 in Frost that Fingers of Frost needs.
@@ -178,7 +178,7 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // casts; no other place for the 3 points gains anything either (the search found no move above
 // +0.0). Four seeds (deep Frost, Frost with
 // Arcane Meditation, Frost with Incineration and a 51 point Frost build) all ended within 0.2.
-// It is 742.8 / 745.4 / 739.7 (High Order, with the Major Spellblasting Potion), 18% behind Frostfire, and last of the four now that Ice
+// It is 753.6 / 756.3 / 750.5 (High Order, with the Major Spellblasting Potion), 18% behind Frostfire, and last of the four now that Ice
 // Lance takes no spell power (with SoD's 42.9% it was second).
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost', SavedTalents.create({ talentsString: '050005-03-0555300331001301251' }), {
 	tooltip: "Deep Frost: Frostbolt, Fingers of Frost, Shatter, Winter's Chill.",
@@ -187,7 +187,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 // Fire (16/31/4): every Fire damage talent to Combustion, with Arcane Concentration and Missile
 // Barrage (Fireball has 20% to make Arcane Missiles free and fast) and Elemental Precision 4.
 // Arcane Impact 3 over Improved Channeling and Wake of Fire 2 over Master of Elements 3 are 1 and
-// 3 ahead. It is 886.6 / 873.3 / 858.8 (Undead), 3%
+// 3 ahead. It is 897.7 / 884.1 / 869.5 (Undead), 3%
 // behind Frostfire. Fire with Frost (Elemental Precision, Ice Shards) was 740 at 180 sec on the
 // old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
@@ -198,8 +198,8 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
 // 3 (it covers Arcane Blast). The 15 Frost points do nothing for Arcane Blast and Arcane Missiles:
 // the trees have nothing else they can buy, so they sit where a Frost filler would use them. Three
-// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 838.7 /
-// 829.7 / 818.7 (Undead, on the Arcane gear), 8% behind Frostfire.
+// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 845.0 /
+// 835.9 / 824.9 (Undead, on the Arcane gear), 9% behind Frostfire.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
 	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
 	group: 'Level 60',
@@ -217,9 +217,17 @@ export const DefaultTalents = TalentsLevel60Frostfire;
 
 // Mage Armor gives 50% casting regen under Forever (Classic 30%), 8 to 17 DPS over Ice Armor.
 // Forever has no Molten Armor.
+//
+// Forever's mage-only staff imbue scrolls (the Comprehension skill, client 70338 items 277500 to
+// 277502) go in the class imbue slot, so they stack with Wizard Oil. Each build takes its own at
+// 180 sec: Greater Flame (+20 Fire) for Frostfire (+11.4, Greater Frost +10.9) and Fire (+10.8),
+// Greater Frost (+20 Frost) for Frost (+10.9), Precision (+1% spell crit) for Arcane (+6.2). They
+// are listed as hidden on foreverchanges.pro, so their launch availability is an assumption.
 export const DefaultOptions = MageOptions.create({
 	armor: ArmorType.MageArmor,
+	staffImbue: StaffImbue.ImbueGreaterFlame,
 });
+const optionsWith = (staffImbue: StaffImbue) => MageOptions.create({ ...DefaultOptions, staffImbue });
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
 // on all four builds at 180 sec. The presets model Forever's launch, with no raid open, so nothing
@@ -364,14 +372,14 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 // forever-wiki/sim-status.md). The staff has no racial, so the table is the same with weapon
 // racials off. Undead (Touch of the Grave at 10% for mages) is best on Frostfire, Fire and Arcane
 // and the best Horde race on all four. On Frost (with its Major Spellblasting Potion) High Order is
-// 1.0 ahead of Undead at 180 sec, level at 120 and 0.5 behind at 300, so the Frost build is High
+// 1.1 ahead of Undead at 180 sec, level at 120 and 0.5 behind at 300, so the Frost build is High
 // Order. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on
 // Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome is ahead at 120 and 300 sec
-// (929.3 and 893.7 against Undead's 926.8 and 892.1).
-//   Frostfire: Undead 904.5, High Order 902.7, Orc 902.2, Gnome 899.9, Troll 898.4, Human 895.0.
-//   Fire:      Undead 873.3, Gnome 869.7, Orc 867.6, Human 861.8, High Order 861.5, Troll 860.8.
-//   Arcane:    Undead 829.7, Orc 821.3, Gnome 819.6, Troll 816.2, Human 813.0, High Order 811.0.
-//   Frost:     High Order 745.4, Undead 744.4, Gnome 742.4, Troll 742.4, Orc 741.9, Human 735.5.
+// (941.2 and 905.6 against Undead's 938.7 and 903.9).
+//   Frostfire: Undead 915.9, High Order 914.3, Orc 913.7, Gnome 911.4, Troll 909.9, Human 906.4.
+//   Fire:      Undead 884.1, Gnome 880.7, Orc 878.5, Human 872.6, High Order 872.4, Troll 871.6.
+//   Arcane:    Undead 835.9, Orc 827.6, Gnome 825.8, Troll 822.4, Human 819.2, High Order 817.2.
+//   Frost:     High Order 756.3, Undead 755.2, Gnome 753.3, Troll 753.3, Orc 752.7, Human 746.3.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,
@@ -391,6 +399,7 @@ export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Level 60
 });
 export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Level 60 Frost', {
 	...buildCommon,
+	options: optionsWith(StaffImbue.ImbueGreaterFrost),
 	tooltip: 'Level 60 High Order Frost on the synthetic Phase 1 gear, in a 3 minute raid fight, with a Major Spellblasting Potion.',
 	encounter: EncounterLevel60Frost,
 	talents: TalentsLevel60Frost,
@@ -399,6 +408,7 @@ export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Level 60 Fro
 });
 export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Level 60 Fire', {
 	...buildCommon,
+	options: optionsWith(StaffImbue.ImbueGreaterFlame),
 	tooltip: 'Level 60 Undead Fire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	talents: TalentsLevel60Fire,
 	rotation: APLLevel60Fire,
@@ -406,6 +416,7 @@ export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Level 60 Fire
 });
 export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Level 60 Arcane', {
 	...buildCommon,
+	options: optionsWith(StaffImbue.ImbuePrecision),
 	tooltip: 'Level 60 Undead Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticArcane,
 	talents: TalentsLevel60Arcane,

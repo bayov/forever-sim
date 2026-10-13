@@ -166,6 +166,7 @@ func NewMage(character *core.Character, options *proto.Player) *Mage {
 	case proto.Mage_Options_MageArmor:
 		mage.applyMageArmor()
 	}
+	mage.applyStaffImbue()
 
 	// Set mana regen to 12.5 + Spirit/4 each 2s tick
 	mage.SpiritManaRegenPerSecond = func() float64 {

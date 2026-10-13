@@ -20,7 +20,11 @@ import "github.com/wowsims/classic/sim/core/proto"
 // Power under Forever (+40 Holy), so the Fire elixir is the plain Elixir of Firepower. Flask of
 // Distilled Wisdom is 75 to 90 behind Supreme Power. A Goblin Land Mine costs 2 to 11 (its throw
 // takes a GCD), and Mage Armor is 8 to 17 ahead of Ice Armor.
-func mageSpec() *specSetup {
+//
+// Each spec takes its own staff imbue scroll (Forever's mage-only Comprehension scrolls, in the
+// class imbue slot, so they stack with Wizard Oil): Greater Flame for Fire and Frostfire, Greater
+// Frost for Frost, Precision for Arcane.
+func mageSpec(imbue proto.Mage_Options_StaffImbue) *specSetup {
 	return &specSetup{
 		uiDir: "ui/mage",
 		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
@@ -48,7 +52,7 @@ func mageSpec() *specSetup {
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassMage
 			player.Spec = &proto.Player_Mage{Mage: &proto.Mage{
-				Options: &proto.Mage_Options{Armor: proto.Mage_Options_MageArmor},
+				Options: &proto.Mage_Options{Armor: proto.Mage_Options_MageArmor, StaffImbue: imbue},
 			}}
 			// Casters stand at range, which only delays the bolts a little.
 			player.DistanceFromTarget = 25
