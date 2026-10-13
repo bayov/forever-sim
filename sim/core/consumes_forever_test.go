@@ -115,3 +115,101 @@ func TestForeverStatPotions(t *testing.T) {
 		}
 	}
 }
+
+// A plain one-hand mace for the proc tests, so the core tests need no item database.
+const testProcWeaponID = 999_001
+
+func setupProcSim(t *testing.T, ruleset proto.Ruleset, consumes *proto.Consumes) (*Simulation, *Character) {
+	t.Helper()
+	if _, ok := ItemsByID[testProcWeaponID]; !ok {
+		ItemsByID[testProcWeaponID] = Item{
+			ID: testProcWeaponID, Name: "Test Mace", Type: proto.ItemType_ItemTypeWeapon,
+			WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeOneHand,
+			WeaponDamageMin: 50, WeaponDamageMax: 100, SwingSpeed: 2,
+		}
+		t.Cleanup(func() { delete(ItemsByID, testProcWeaponID) })
+	}
+
+	sim := NewSim(&proto.RaidSimRequest{
+		SimOptions: &proto.SimOptions{RandomSeed: 100, Ruleset: ruleset},
+		Raid: &proto.Raid{Parties: []*proto.Party{{
+			Players: []*proto.Player{{
+				Name:      "Caster",
+				Class:     proto.Class_ClassShaman,
+				Level:     60,
+				Consumes:  consumes,
+				Buffs:     &proto.IndividualBuffs{},
+				Spec:      &proto.Player_ElementalShaman{},
+				Equipment: &proto.EquipmentSpec{Items: []*proto.ItemSpec{{Id: testProcWeaponID}}},
+			}},
+			Buffs: &proto.PartyBuffs{},
+		}}},
+		Encounter: &proto.Encounter{
+			Targets:  []*proto.Target{{Name: "target", Level: 60}},
+			Duration: 180,
+		},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	return sim, sim.Raid.Parties[0].Players[0].GetCharacter()
+}
+
+// Casts the proc spell many times and returns the lowest and highest damage of its
+// normal hits (no crit, no partial resist). The caster has no spell power.
+func procDamageRange(t *testing.T, sim *Simulation, spell *Spell) (float64, float64) {
+	t.Helper()
+	target := sim.GetTargetUnit(0)
+	metrics := &spell.SpellMetrics[target.UnitIndex]
+	lo, hi := 1e9, 0.0
+	hits := 0
+	for i := 0; i < 4000; i++ {
+		before := *metrics
+		spell.Cast(sim, target)
+		if metrics.Hits-before.Hits != 1 || metrics.Crits != before.Crits || metrics.ResistedHits != before.ResistedHits {
+			continue
+		}
+		damage := metrics.TotalDamage - before.TotalDamage
+		lo, hi = min(lo, damage), max(hi, damage)
+		hits++
+	}
+	if hits < 1000 {
+		t.Fatalf("%s: only %d normal hits", spell.ActionID, hits)
+	}
+	return lo, hi
+}
+
+// Forever's oil and Dragonbreath Chili procs at level 60, from client 1.60.1.70338
+// (SpellEffect, SpellLevels) and wowhead's Forever tooltips: Shadow Bolt (350026) 63-71,
+// Frostbolt (350025) 39-43, Dragonbreath Chili (15851) 61-69. Classic keeps 52-61, 33-38
+// and a flat 60.
+func TestForeverConsumeProcDamage(t *testing.T) {
+	cases := []struct {
+		name     string
+		consumes *proto.Consumes
+		spellID  int32
+		ruleset  proto.Ruleset
+		min, max float64
+	}{
+		{"Shadow Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_ShadowOil}, 1382, proto.Ruleset_RulesetForever, 63, 71},
+		{"Frost Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_FrostOil}, 1191, proto.Ruleset_RulesetForever, 39, 43},
+		{"Dragonbreath Chili", &proto.Consumes{DragonBreathChili: true}, 15851, proto.Ruleset_RulesetForever, 61, 69},
+		{"Classic Shadow Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_ShadowOil}, 1382, proto.Ruleset_RulesetClassic, 52, 61},
+		{"Classic Frost Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_FrostOil}, 1191, proto.Ruleset_RulesetClassic, 33, 38},
+		{"Classic Dragonbreath Chili", &proto.Consumes{DragonBreathChili: true}, 15851, proto.Ruleset_RulesetClassic, 60, 60},
+	}
+	for _, c := range cases {
+		sim, character := setupProcSim(t, c.ruleset, c.consumes)
+		if character.Level != 60 {
+			t.Fatalf("%s: caster is level %d", c.name, character.Level)
+		}
+		spell := character.GetSpell(ActionID{SpellID: c.spellID})
+		if spell == nil {
+			t.Fatalf("%s: no proc spell %d", c.name, c.spellID)
+		}
+		lo, hi := procDamageRange(t, sim, spell)
+		// The rolls are continuous, so after thousands of hits they come within 0.5 of
+		// each end.
+		if lo < c.min-1e-6 || hi > c.max+1e-6 || lo > c.min+0.5 || hi < c.max-0.5 {
+			t.Errorf("%s: hits did %.2f to %.2f, want %.0f to %.0f", c.name, lo, hi, c.min, c.max)
+		}
+	}
+}
