@@ -14,7 +14,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":24239}}},"notes":"Hammer of Wrath below 20% health."},
         {"action":{"castSpell":{"spellId":{"spellId":10314}}},"notes":"Exorcism on cooldown, only against Undead and Demons."},
         {"action":{"castSpell":{"spellId":{"spellId":1311595}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1311597},"sourceUnit":{"type":"CurrentTarget"}}}}}]}}},"notes":"Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."},
-        {"action":{"castSpell":{"spellId":{"spellId":20930}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":1311597},"sourceUnit":{"type":"CurrentTarget"}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.3"}}}}]}}]}}},"notes":"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."},
+        {"action":{"castSpell":{"spellId":{"spellId":20930}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":1311597},"sourceUnit":{"type":"CurrentTarget"}}},{"not":{"val":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}}}}]}}]}}},"notes":"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on a free GCD."}
     ]
 }

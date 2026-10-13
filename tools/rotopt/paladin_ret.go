@@ -90,6 +90,11 @@ func (paladinRet) Knobs() []Knob {
 		// With cooldownsFirst, the on-use trinket at the pull and then held for the 20% execute
 		// phase whenever holding it there loses no use of it in the fight.
 		{Name: "trinketExecute", Default: 0, Min: 0, Max: 1, Step: 1},
+		// In fights longer than vigilLongFight seconds, Light's Vigil (and Holy Shock's low mana
+		// branch) keeps a higher floor of vigilLongMana percent, so the mana lasts; shorter
+		// fights use lightsVigilMana. 0 off.
+		{Name: "vigilLongFight", Default: 0, Min: 0, Max: 300, Step: 30},
+		{Name: "vigilLongMana", Default: 60, Min: 30, Max: 80, Step: 10},
 	}
 }
 
@@ -200,12 +205,18 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			if k["lightsVigilMana"] > 0 {
 				vigilFloor = ge(currentManaPercent(), num(k["lightsVigilMana"]/100))
 			}
+			if k["vigilLongFight"] > 0 {
+				// The fight is short when the time left is under vigilLongFight minus the time spent.
+				now := &proto.APLValue{Value: &proto.APLValue_CurrentTime{CurrentTime: &proto.APLValueCurrentTime{}}}
+				shortFight := lt(remainingTime(), sub(seconds(k["vigilLongFight"]), now))
+				vigilFloor = and(vigilFloor, or(shortFight, ge(currentManaPercent(), num(k["vigilLongMana"]/100))))
+			}
 			if k["vigilChain"] == 1 {
 				items = append(items, cast(lightsVigil, and(vigilFloor, not(targetAuraIsActive(lightsVigilMark))),
 					"Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."))
 				lowMana := constant("false")
-				if k["lightsVigilMana"] > 0 {
-					lowMana = lt(currentManaPercent(), num(k["lightsVigilMana"]/100))
+				if vigilFloor != nil {
+					lowMana = not(vigilFloor)
 				}
 				items = append(items, cast(holyShock, and(or(targetAuraIsActive(lightsVigilMark), lowMana), floor),
 					"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."))
