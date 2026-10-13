@@ -624,10 +624,11 @@ export class Timeline extends ResultComponent {
 			...lines.map(({ name, color }) => {
 				const chip = (
 					<button className="filter-chip chart-legend-chip" type="button">
-						<span className="chart-legend-swatch" style={{ backgroundColor: color }} />
+						<span className="chart-legend-swatch" />
 						{name}
 					</button>
 				) as HTMLButtonElement;
+				chip.style.setProperty('--swatch', color);
 				const update = () => {
 					const shown = !this.hiddenChartSeries.has(name);
 					chip.classList.toggle('active', shown);

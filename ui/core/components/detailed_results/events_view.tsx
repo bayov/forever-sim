@@ -202,8 +202,7 @@ export class EventsView extends ResultComponent {
 								return button;
 							})}
 							<button ref={refs.alwaysUp} className="filter-chip events-always-up" type="button">
-								<i className="fas fa-eye-slash" />
-								100% auras
+								Hide 100% auras
 							</button>
 						</div>
 						<span ref={refs.count} className="events-count"></span>

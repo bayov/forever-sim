@@ -108,15 +108,21 @@
 		margin-bottom: var(--spacer-2);
 	}
 
-	.chart-legend-swatch {
-		width: 0.75rem;
-		height: 3px;
-		border-radius: 2px;
+	// The legend's checkbox is in its line's color (--swatch), in place of the chip's usual one.
+	// A hidden line's box is an outline in that color, so we can still tell which line it is.
+	.chart-legend-chip::before {
+		content: none;
 	}
 
-	// A hidden line's chip keeps its color, faded, so we can still tell which line it is.
-	.chart-legend-chip:not(.active) .chart-legend-swatch {
-		opacity: 0.35;
+	.chart-legend-swatch {
+		@include check-box(0.8rem);
+		border-color: var(--swatch);
+	}
+
+	.chart-legend-chip.active .chart-legend-swatch {
+		@include check-box-checked;
+		border-color: var(--swatch);
+		background-color: var(--swatch);
 	}
 
 	.apexcharts-tooltip.apexcharts-theme-dark {
