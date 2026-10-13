@@ -458,20 +458,25 @@ export function startReport(dash) {
   }));
 
   // ---------- shared pieces ----------
+  // The class filter looks like the sim UI's race picker: a label that says what we picked, then a row of class icons.
+  // The picked class is lit with a gold ring and the others are dimmed. Clicking the picked class again shows all.
   const classChips = (host, key) => {
-    const haveIcons = !!iconMap();
-    if (host.childElementCount && (host.dataset.icons === '1' || !haveIcons)) {
-      host.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.c === st[key])));
+    const m = iconMap();
+    const name = st[key] === 'All' ? 'All classes' : st[key];
+    if (host.childElementCount && (host.dataset.icons === '1' || !m)) {
+      host.querySelector('.fv-pick-value').textContent = name;
+      host.querySelectorAll('button').forEach((b) => { b.setAttribute('aria-pressed', String(b.dataset.c === st[key])); b.classList.toggle('active', b.dataset.c === st[key]); });
       return;
     }
-    host.replaceChildren();
-    host.dataset.icons = haveIcons ? '1' : '0';
-    for (const c of ['All', ...CLASSES]) {
-      const b = el('button', { class: 'fv-chip', 'data-c': c, 'aria-pressed': String(c === st[key]), 'data-tt': c === 'All' ? null : 'c:' + c },
-        c === 'All' ? null : (ringed('classicon_' + c.toLowerCase(), 'fv-ico ring', ccol(c)) || el('span', { class: 'fv-dot', style: `background:${ccol(c)}` })), c);
-      b.addEventListener('click', () => { st[key] = c; persist(); render(); });
-      host.append(b);
-    }
+    host.dataset.icons = m ? '1' : '0';
+    host.classList.add('fv-icon-picker');
+    host.replaceChildren(el('span', { class: 'fv-label', text: 'Class' }), el('span', { class: 'fv-pick-value', text: name }),
+      el('div', { class: 'fv-pick-options' }, ...CLASSES.map((c) => {
+        const u = m && m.get('classicon_' + c.toLowerCase());
+        const b = el('button', { type: 'button', class: 'fv-pick-option' + (c === st[key] ? ' active' : ''), 'data-c': c, 'aria-label': c, 'aria-pressed': String(c === st[key]), 'data-tt': 'c:' + c, style: u ? `background-image:url("${u}")` : `background:${ccol(c)}` });
+        b.addEventListener('click', () => { st[key] = st[key] === c ? 'All' : c; persist(); render(); });
+        return b;
+      })));
   };
   const fail = (host) => { host.replaceChildren(el('div', { class: 'fv-fail', text: 'Failed to load' })); };
   const waitOr = (host, ids) => {
@@ -618,6 +623,9 @@ export function startReport(dash) {
     const rule = svg.append('line').attr('y1', m.t).attr('y2', H - m.b).style('stroke', 'var(--color-fg)').attr('stroke-dasharray', '3 3').attr('opacity', 0).style('pointer-events', 'none');
     const dot = svg.append('circle').attr('r', 5).style('fill', 'var(--color-panel)').attr('stroke-width', 2.5).attr('opacity', 0).style('pointer-events', 'none');
     const pickable = series.filter((s) => s.pick !== false);
+    const focusOn = (s) => { for (const [ss, pa] of paths) pa.attr('opacity', !s ? ss.op ?? 1 : ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2); };
+    // With no line asked for, the picked one (opts.hlId) stays lit, or none.
+    const highlight = (id) => focusOn(series.find((q) => q.id === (id || opts.hlId)) || null);
     const pick = (e, pinned) => {
       const [px, py] = d3.pointer(e, svg.node());
       const sx = xs.reduce((a, b) => (Math.abs(x(b) - px) < Math.abs(x(a) - px) ? b : a));
@@ -627,7 +635,8 @@ export function startReport(dash) {
       const [s, p] = best;
       rule.attr('x1', x(sx)).attr('x2', x(sx)).attr('opacity', 0.5);
       dot.attr('cx', x(sx)).attr('cy', y(p.v)).style('stroke', s.color).attr('opacity', 1);
-      if (opts.focus) for (const [ss, pa] of paths) pa.attr('opacity', ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2);
+      if (opts.focus) focusOn(s);
+      if (opts.onHover) opts.onHover(s.id);
       const others = series.length <= 3 ? series.filter((q) => q !== s).map((q) => { const pp = q.pts.find((r) => r.s === sx); return pp ? el('span', {}, el('i', { class: 'sw', style: `background:${q.color}` }), `${q.name}: ${opts.tipFmt ? opts.tipFmt(pp) : f1(pp.v) + ' DPS'}`) : null; }) : [];
       const [hx, hy] = d3.pointer(e, host);
       // With many lines, a small table of the picked line at every length takes the place of the other lines' values.
@@ -645,9 +654,11 @@ export function startReport(dash) {
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', Math.max(0, W - m.l - m.r + 8)).attr('height', H - m.b).style('fill', 'transparent').attr('data-tip', '1').style('cursor', 'crosshair')
       .on('click', (e) => { e.stopPropagation(); pick(e, true); })
       .on('pointermove', (e) => { if (e.pointerType === 'mouse' && !tipPinned) pick(e, false); })
-      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); } });
+      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); highlight(null); if (opts.onHover) opts.onHover(null); } });
     host.replaceChildren(svg.node());
-    if (opts.hlId) { const s = series.find((q) => q.id === opts.hlId); if (s) for (const [ss, pa] of paths) pa.attr('opacity', ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2); }
+    highlight(null);
+    // Something outside the chart, like a list of the same presets, can light up one line.
+    return { highlight };
   };
 
   const drawLenAll = () => {
@@ -684,7 +695,9 @@ export function startReport(dash) {
       const pts = (curves.get(b.id) || []).map((r) => ({ s: r.t, v: r.pct, p25: r.p25, p75: r.p75 }));
       return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.06, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, pts };
     }).sort((a, b) => a.op - b.op);
-    drawLenChart(host, series, {
+    const hoverRow = (id) => list.querySelectorAll('.fv-row').forEach((r) => r.classList.toggle('is-hover', r.dataset.id === id));
+    const chart = drawLenChart(host, series, {
+      onHover: hoverRow,
       fmt: (v) => d3.format('.0f')(v) + '%', yDomain: [0, 100], ref: 10, refLabel: 'runs low', xTicks: [0, 60, 120, 180, 240, 300, 360, 420, 480], xFmt: (d) => mmss(d),
       strip: false, focus: true, open: true, hlId: st.hlMana, onPick: (id) => { st.hlMana = id; persist(); },
       tipSub: (t) => `at ${mmss(t)}`, tipMain: (p) => [`${d3.format('.0f')(p.v)}% mana`, `middle half of fights ${d3.format('.0f')(p.p25)} to ${d3.format('.0f')(p.p75)}%`],
@@ -702,6 +715,8 @@ export function startReport(dash) {
         el('span', { class: 'fv-row-main' }, el('span', { class: 'fv-row-name' }, el('b', { text: b.build }), el('span', { text: '· ' + b.class }))),
         el('span', { class: 'fv-row-end' }, el('span', { class: 'fv-row-val', text: low ? mmss(m.lowAt) : '8:00+' }), el('span', { class: 'fv-row-gap', text: `${d3.format('.0f')(m.pctAt480)}% left at 8:00` })),
         track);
+      row.addEventListener('pointerenter', () => { chart.highlight(b.id); row.classList.add('is-hover'); });
+      row.addEventListener('pointerleave', () => { chart.highlight(null); row.classList.remove('is-hover'); });
       row.addEventListener('click', (e) => {
         e.stopPropagation();
         if (row.classList.contains('is-hl')) { openSpec(b.id); return; }

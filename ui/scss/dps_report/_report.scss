@@ -272,19 +272,12 @@
 	align-items: center;
 }
 
+// The class pickers wrap on a phone. The padding leaves room for the gold ring of the picked class.
 #rank-classes,
 #heat-classes {
-	flex-wrap: nowrap;
-	overflow-x: auto;
-	scrollbar-width: none;
 	padding-block: 2px;
 	margin-inline: -2px;
 	padding-inline: 2px;
-}
-
-#rank-classes::-webkit-scrollbar,
-#heat-classes::-webkit-scrollbar {
-	display: none;
 }
 
 // Chips are the Events tab's filter chips (the shared filter-chip mixin). The report marks a chip that is on with
@@ -2790,6 +2783,38 @@ ol.fv-list li::marker {
 	}
 }
 
+// Pointing at a line in the chart lights up its row, like pointing at the row itself.
+.fv-mana-list .fv-row.is-hover {
+	background: color-mix(in srgb, var(--color-fg) 8%, transparent);
+}
+
 #mana-sum:empty {
 	display: none;
+}
+
+// The class filter, drawn like the sim UI's race picker (see RacePicker).
+.fv-icon-picker {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: var(--spacer-2);
+
+	.fv-pick-value {
+		color: var(--text-muted-color);
+		font-size: 0.875rem;
+	}
+
+	.fv-pick-options {
+		flex-basis: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-top: 0.3rem;
+	}
+
+	.fv-pick-option {
+		@include icon-picker-option;
+		width: 2.5rem;
+		height: 2.5rem;
+	}
 }

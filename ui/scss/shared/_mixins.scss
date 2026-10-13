@@ -263,3 +263,28 @@
 	color: var(--text-muted-color);
 	white-space: nowrap;
 }
+
+// One icon in a row of icons we pick from, like the race picker. It's dimmed and gray until we
+// pick it, and the one we pick gets its color and a gold ring.
+@mixin icon-picker-option($active: '.active') {
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 1px solid #000;
+	border-radius: 3px;
+	background-size: cover;
+	box-shadow: 0 0 0 1px var(--line-color-strong);
+	filter: grayscale(0.8) brightness(0.55);
+	transition:
+		filter 0.15s,
+		box-shadow 0.15s;
+
+	&:hover {
+		filter: grayscale(0.2) brightness(0.9);
+	}
+
+	&#{$active} {
+		filter: none;
+		box-shadow: 0 0 0 2px var(--gold);
+	}
+}
