@@ -44,20 +44,16 @@ func (hp *HunterPet) NewPetAbility(abilityType PetAbilityType, isPrimary bool) *
 	}
 }
 
-func (hp *HunterPet) newClaw() *core.Spell {
-	baseDamageMin := map[int32]float64{
-		25: 16,
-		40: 26,
-		50: 35,
-		60: 43,
-	}[hp.Owner.Level]
+// Claw and Bite by the owner's level: the damage range is the client's base points times 1 -/+ half
+// its variance (SpellEffect, build 1.60.1.70338, unchanged from Classic). TestPetAbilityDamage
+// checks them.
+var (
+	petClawDamage = map[int32][2]float64{25: {16, 22}, 40: {26, 36}, 50: {35, 49}, 60: {43, 59}}
+	petBiteDamage = map[int32][2]float64{25: {31, 37}, 40: {49, 59}, 50: {66, 80}, 60: {81, 99}}
+)
 
-	baseDamageMax := map[int32]float64{
-		25: 22,
-		40: 36,
-		50: 49,
-		60: 59,
-	}[hp.Owner.Level]
+func (hp *HunterPet) newClaw() *core.Spell {
+	baseDamageMin, baseDamageMax := petClawDamage[hp.Owner.Level][0], petClawDamage[hp.Owner.Level][1]
 
 	spellID := map[int32]int32{
 		25: 16830,
@@ -96,19 +92,7 @@ func (hp *HunterPet) newClaw() *core.Spell {
 }
 
 func (hp *HunterPet) newBite() *core.Spell {
-	baseDamageMin := map[int32]float64{
-		25: 31,
-		40: 49,
-		50: 66,
-		60: 81,
-	}[hp.Owner.Level]
-
-	baseDamageMax := map[int32]float64{
-		25: 37,
-		40: 59,
-		50: 80,
-		60: 91,
-	}[hp.Owner.Level]
+	baseDamageMin, baseDamageMax := petBiteDamage[hp.Owner.Level][0], petBiteDamage[hp.Owner.Level][1]
 
 	spellID := map[int32]int32{
 		25: 17257,

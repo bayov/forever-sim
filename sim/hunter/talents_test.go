@@ -1,6 +1,7 @@
 package hunter
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -126,6 +127,28 @@ func TestImprovedTrackingGenericBoss(t *testing.T) {
 		for castType, at := range hunter.AttackTables[hunter.CurrentTarget.UnitIndex] {
 			if at != nil && at.DamageDealtMultiplier != c.want {
 				t.Errorf("%v, cast type %v: damage multiplier %.3f, want %.3f", c.mobType, castType, at.DamageDealtMultiplier, c.want)
+			}
+		}
+	}
+}
+
+// TestPetAbilityDamage checks Claw's and Bite's damage at each level the pet has them against the
+// client (build 1.60.1.70338): base points times 1 -/+ half the variance, rounded. Bite at 60 is
+// 81 to 99 (17261: 90, variance 0.2), as in Classic.
+func TestPetAbilityDamage(t *testing.T) {
+	type effect struct{ basePoints, variance float64 }
+	for _, c := range []struct {
+		name   string
+		table  map[int32][2]float64
+		client map[int32]effect
+	}{
+		{"Claw", petClawDamage, map[int32]effect{25: {19, 0.31578946114}, 40: {31, 0.32258063555}, 50: {42, 0.33333334327}, 60: {51, 0.3137255013}}},
+		{"Bite", petBiteDamage, map[int32]effect{25: {34, 0.17647059262}, 40: {54, 0.18518517911}, 50: {73, 0.19178082049}, 60: {90, 0.20000000298}}},
+	} {
+		for level, e := range c.client {
+			want := [2]float64{math.Round(e.basePoints * (1 - e.variance/2)), math.Round(e.basePoints * (1 + e.variance/2))}
+			if got := c.table[level]; got != want {
+				t.Errorf("%s at level %d: %v, want %v", c.name, level, got, want)
 			}
 		}
 	}
