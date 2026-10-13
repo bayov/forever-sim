@@ -35,16 +35,15 @@ const LOWER_IS_BETTER = new Set(['DTPS', 'TMI', 'COD', 'OOM', 'DUR']);
 const Z_SIGNIFICANT = 1.96;
 
 const COLOR_A = '#7fb3f0';
-const COLOR_A_BAR = 'rgba(127, 179, 240, 0.85)';
+const COLOR_A_BAR = 'rgba(127, 179, 240, 0.5)';
 const COLOR_B = '#c8a24a';
-const COLOR_B_BAR = 'rgba(200, 162, 74, 0.9)';
+const COLOR_B_BAR = 'rgba(200, 162, 74, 0.5)';
 const MUTED = '#8e948f';
 
 // Each point of the distribution gets at least this many pixels.
-// Each bin holds a bar for each run, so it gets twice the pixels of a bin in the Results tab.
-const MIN_BIN_PX = 12;
-// Two runs side by side are easier to tell apart with fuller bins than in the Results tab.
-const MIN_ITERATIONS_PER_BIN = 20;
+// The same bins as the DPS Distribution of the Results tab, see DpsHistogram.
+const MIN_BIN_PX = 6;
+const MIN_ITERATIONS_PER_BIN = 10;
 const NICE_BIN_WIDTHS = [1, 2, 3, 4, 5, 10, 15, 20, 25, 50, 100, 200, 250, 500, 1000];
 
 // The rows in the list of biggest changes. The rest go in one Other row.
@@ -1000,7 +999,8 @@ function drawDistribution(canvas: HTMLCanvasElement, countsA: DpsCount[], counts
 		counts.forEach(({ dps, count }) => (bins[binOf(dps) - firstBin] += count));
 		return bins.map((count, i) => ({ x: (firstBin + i + 0.5) * width - 0.5, y: (count / total) * 100 }));
 	};
-	// The two bars of a bin stand next to each other, the baseline's on the left.
+	// The two bars of a bin take its full width, one over the other. They're see-through, so
+	// we see both where they overlap.
 	const dataset = (label: string, data: { x: number; y: number }[], color: string) => ({
 		label,
 		data,
@@ -1009,6 +1009,7 @@ function drawDistribution(canvas: HTMLCanvasElement, countsA: DpsCount[], counts
 		borderRadius: 2,
 		categoryPercentage: 0.9,
 		barPercentage: 1,
+		grouped: false,
 	});
 
 	return new Chart(canvas, {
