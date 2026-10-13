@@ -1,0 +1,84 @@
+{
+  "id": "mage__frost",
+  "class": "Mage",
+  "spec": "Frost",
+  "build": "Frost",
+  "isDefault": false,
+  "pr": 6,
+  "race": "Undead",
+  "talents": "050005-03-0555300331001301251",
+  "treePoints": "10/3/38",
+  "treeNames": [
+    "Arcane",
+    "Fire",
+    "Frost"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_frost",
+  "published": {
+    "dps": 736.5,
+    "source": "PR #6",
+    "overall": {
+      "race": "SkyborneHighOrder",
+      "dps": 736.9
+    },
+    "horde": {
+      "race": "Undead",
+      "dps": 736.5
+    },
+    "alliance": {
+      "race": "SkyborneHighOrder",
+      "dps": 736.9
+    }
+  },
+  "verify": {
+    "dps": 736.54,
+    "stderr": 0.24,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 736.5 (PR #6); delta +0.04."
+  },
+  "summary": "Deep Frost Frostbolt build with Fingers of Frost, Shatter and Winter's Chill, plus Arcane Concentration. Ships as its own playstyle, 18% behind Frostfire. High Order is 0.4 ahead of Undead at 180 s, inside the noise, so the preset stays Undead.",
+  "keyTalents": [
+    "Arcane Concentration",
+    "Improved Frostbolt",
+    "Ice Shards",
+    "Piercing Ice",
+    "Frost Channeling",
+    "Shatter",
+    "Fingers of Frost",
+    "Winter's Chill"
+  ],
+  "rotation": [
+    "Pre-pull: Frostbolt at -2.5 s",
+    "Cooldowns (Demonic Rune, racial) on a free GCD",
+    "Evocation below 20% mana with more than 90 s left (almost never fires)",
+    "Arcane Missiles on a Missile Barrage proc",
+    "Filler: Frostbolt (2.5 s), with Fingers of Frost giving Shatter crit to the next bolts; no Ice Lance"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Frost Power",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Cerebral Cortex Compound",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Ice Lance spell power coefficient 0 (client); SoD's 0.429 would be worth about 165",
+    "Frostbolt X: if beta 70291's +8% low-rank raise reaches rank 10, +2.8%",
+    "Frostbolt XI (AQ book) left out: +50 with it",
+    "Arcane Focus 5 and Incineration 3 do nothing for this rotation",
+    "Raid bosses assumed not freezable; Fingers of Frost charge timing open",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
+  ],
+  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+}

@@ -866,6 +866,9 @@ enum IntellectElixir {
 	ScrollOfRatFamiliar = 5;
 	ScrollOfFrogFamiliar = 6;
 	ScrollOfCatFamiliar = 7;
+
+	// +25 Intellect.
+	ElixirOfGreaterIntellect = 8;
 }
 
 // NextIndex: 35
@@ -1103,6 +1106,8 @@ enum EnchantType {
 	EnchantTypeShield = 2;
 	EnchantTypeKit = 3;
 	EnchantTypeStaff = 4;
+	// Goes on a held in off hand item only.
+	EnchantTypeOffHand = 5;
 }
 
 // Contains only the Enchant info needed by the sim.

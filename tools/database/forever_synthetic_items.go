@@ -33,6 +33,14 @@ import (
 // The head, shoulders, chest, hands, legs and feet form a set with the bonuses of The Spiritcaller's Rage,
 // Forever's crafted level 60 enhancement set (see sim/shaman/item_sets_pve.go). The generator script lived
 // in the session scratchpad (synth.py), the numbers below are its output.
+//
+// The other specs' synthetic items live in forever_synthetic_items_<class>.go, one file per class,
+// and add themselves to this list from an init function. Each class has its own block of ids, all
+// at or above 990000 so rotopt's -gear-synthetic flag sees them:
+//
+//	990000-990999 Shaman      991000-991999 Warrior    992000-992999 Paladin
+//	993000-993999 Hunter      994000-994999 Rogue      995000-995999 Priest
+//	996000-996999 Mage        997000-997999 Warlock    998000-998999 Druid
 
 var ForeverSyntheticItems = []*proto.UIItem{
 	// Head, item level 76, in place of Crown of Destruction (76, 18817).
