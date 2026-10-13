@@ -1,8 +1,50 @@
 :root {
 	--timeline-tick-bg: #ef7a7a;
-	--timeline-cast-bg: rgba(200, 162, 74, 0.4);
-	--timeline-aura-bg: rgba(127, 179, 240, 0.22);
 	--timeline-travel-time-bg: rgba(249, 192, 255, 0.35);
+	// The default color of a bar, until its ability's icon gives it one. See icon_color.ts.
+	--timeline-bar-rgb: 127, 179, 240;
+
+	// How a hit landed. The tooltip badges and the border of the cast icons use these, so the
+	// badges are the legend of the borders.
+	--outcome-crit: #f0a845;
+	--outcome-hit: #e8e2d0;
+	--outcome-glance: #8fb3d9;
+	--outcome-avoid: #e07070;
+	--outcome-tick: #9aa0a6;
+}
+
+.outcome-badge {
+	display: inline-block;
+	padding: 0 0.35rem;
+	border-radius: 3px;
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	line-height: 1.5;
+	white-space: nowrap;
+	color: var(--outcome-color);
+	background: color-mix(in srgb, var(--outcome-color) 16%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--outcome-color) 35%, transparent);
+
+	&.outcome-crit {
+		--outcome-color: var(--outcome-crit);
+	}
+
+	&.outcome-hit {
+		--outcome-color: var(--outcome-hit);
+	}
+
+	&.outcome-glance {
+		--outcome-color: var(--outcome-glance);
+	}
+
+	&.outcome-avoid {
+		--outcome-color: var(--outcome-avoid);
+	}
+
+	&.outcome-tick {
+		--outcome-color: var(--outcome-tick);
+	}
 }
 
 .threat .series-color,
@@ -69,54 +111,156 @@
 	}
 }
 
+// The hover tooltips of the rotation and the chart. A title with the icon and the name, a muted
+// line with the timing, then the hits or the changes and key and value rows.
 .timeline-tooltip {
 	display: flex;
 	flex-direction: column;
-	gap: var(--spacer-3);
+	gap: 0.4rem;
+	min-width: 12rem;
+	max-width: 22rem;
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+	text-align: left;
 
 	ul {
 		display: flex;
 		flex-direction: column;
-		gap: var(--spacer-1);
-		padding-left: 0;
+		gap: 0.2rem;
+		margin: 0;
+		padding: 0;
 		list-style: none;
-		margin-bottom: 0;
 	}
+}
+
+.timeline-tooltip-title {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	font-weight: 600;
+	color: $ivory;
+
+	.timeline-tooltip-note {
+		margin-left: auto;
+		padding-left: var(--spacer-2);
+		font-weight: normal;
+		color: var(--text-muted-color);
+	}
+}
+
+.timeline-tooltip-icon {
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	border-radius: 3px;
+
+	&.small {
+		width: 14px;
+		height: 14px;
+		border-radius: 2px;
+	}
+}
+
+.timeline-tooltip-meta,
+.timeline-tooltip-time,
+.timeline-tooltip-key,
+.timeline-tooltip-muted {
+	color: var(--text-muted-color);
+}
+
+.timeline-tooltip-meta {
+	font-size: 0.75rem;
+}
+
+.timeline-tooltip-hits,
+.timeline-tooltip-changes {
+	padding-top: 0.4rem !important;
+	border-top: 1px solid var(--line-color);
 
 	li {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		gap: var(--spacer-2);
 	}
 }
 
-.timeline-tooltip-header {
-	border-bottom: 1px solid var(--line-color-strong);
+.timeline-tooltip-time {
+	flex-shrink: 0;
+	width: 3.75rem;
 }
 
-.timeline-tooltip-body {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacer-3);
-}
-
-.timeline-tooltip-body-row {
+.timeline-tooltip-outcome {
 	display: flex;
 	align-items: center;
+	gap: 0.35rem;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
-.timeline-tooltip-icon {
-	width: 20px;
-	height: 20px;
+.timeline-tooltip-amount {
+	margin-left: auto;
+	padding-left: var(--spacer-2);
+	white-space: nowrap;
+	color: $ivory;
+
+	&.positive {
+		color: #6fbf73;
+	}
+
+	&.negative {
+		color: #ef7a7a;
+	}
+}
+
+.timeline-tooltip-rows {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	padding-top: 0.4rem;
+	border-top: 1px solid var(--line-color);
+}
+
+.timeline-tooltip-row {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--spacer-3);
+
+	.timeline-tooltip-value {
+		font-weight: 600;
+		color: $ivory;
+	}
+}
+
+.timeline-tooltip-auras {
+	padding-top: 0.4rem;
+	border-top: 1px solid var(--line-color);
+}
+
+.timeline-tooltip-section {
+	margin-bottom: 0.25rem;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--text-muted-color);
+}
+
+.timeline-tooltip-aura-list {
+	flex-flow: row wrap !important;
+	gap: 0.2rem 0.6rem !important;
+	font-size: 0.75rem;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+	}
 }
 
 .series-color {
 	font-weight: bold;
-}
-
-.timeline-tooltip-auras {
-	border-top: 1px solid var(--line-color-strong);
 }
 
 // The rotation. Labels on the left, and the rows on the right scroll sideways together.
@@ -129,6 +273,39 @@
 .rotation-row {
 	height: 28px;
 	margin: 3px 0;
+	transition: opacity 0.15s ease-in-out;
+}
+
+// The search. A row with no match fades. In a row where only some events match, the other events
+// fade and the matches get a gold frame.
+.rotation-row.search-dim {
+	opacity: 0.25;
+}
+
+.rotation-timeline-row.search-partial > :not(.search-hit) {
+	opacity: 0.25;
+}
+
+.rotation-timeline-row .search-hit {
+	z-index: 3;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border: 2px solid var(--gold);
+		border-radius: 3px;
+		box-shadow: 0 0 6px rgba(200, 162, 74, 0.8);
+		pointer-events: none;
+	}
+
+	&.rotation-timeline-tick {
+		background-color: var(--gold);
+
+		&::after {
+			display: none;
+		}
+	}
 }
 
 .rotation-labels {
@@ -222,7 +399,46 @@
 		font-variant-numeric: tabular-nums;
 		color: var(--text-muted-color);
 		white-space: nowrap;
+
+		&.pull {
+			font-weight: 700;
+			color: var(--gold);
+		}
 	}
+}
+
+// The time before the pull, when the prepull actions happen. Hatched, so it reads as a different
+// part of the fight, with its name at the top right next to the pull line.
+.rotation-prepull {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0 6px, transparent 6px 12px);
+	pointer-events: none;
+
+	.rotation-prepull-label {
+		position: absolute;
+		top: 3px;
+		right: 6px;
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted-color);
+	}
+}
+
+.rotation-pull-line {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	z-index: 2;
+	width: 2px;
+	margin-left: -1px;
+	background: var(--gold);
+	opacity: 0.75;
+	pointer-events: none;
 }
 
 .rotation-timeline-row {
@@ -259,12 +475,15 @@
 	}
 }
 
+// Everything in a row is as tall as a cast icon and sits in the middle of the row. The bars
+// that run on from an icon, like a cast time or a DoT's uptime, take the color of the icon.
 .rotation-timeline-cast {
 	position: absolute;
+	top: 2px;
 	z-index: 1;
 	display: flex;
 	border-radius: 3px;
-	background-color: var(--timeline-cast-bg);
+	background-color: rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.35);
 }
 
 .rotation-timeline-travel-time {
@@ -275,26 +494,26 @@
 
 .rotation-timeline-tick {
 	position: absolute;
-	top: 4px;
+	top: 2px;
 	z-index: 2;
 	width: 3px;
-	height: 20px;
+	height: 24px;
 	border-radius: 1px;
 	background-color: var(--timeline-tick-bg);
 }
 
 .rotation-timeline-aura {
 	position: absolute;
-	top: 3px;
-	height: 22px;
-	border-left: 2px solid rgba(127, 179, 240, 0.7);
+	top: 2px;
+	height: 24px;
+	border-left: 2px solid rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.9);
 	border-radius: 2px;
-	background-color: var(--timeline-aura-bg);
+	background-color: rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.3);
 }
 
 .rotation-timeline-stacks-change {
 	position: absolute;
-	height: 22px;
+	height: 24px;
 	display: flex;
 	align-items: center;
 	padding-left: 2px;
@@ -314,24 +533,41 @@
 	@include wowhead-background-icon;
 	height: 24px;
 	width: 24px;
-	border-radius: 3px 3px 0 0;
-	border-bottom: 3px solid var(--bs-gray);
+	border: 1px solid rgba(0, 0, 0, 0.7);
+	border-radius: 0;
 }
 
-.rotation-timeline-cast.outcome-miss .rotation-timeline-cast-icon {
-	border-color: #ef7a7a;
-}
+// A small badge over the bottom of a cast icon for a notable outcome, like a crit or a parry.
+// It uses the colors of the tooltip badges, so those are its legend.
+.rotation-timeline-cast-badge {
+	position: absolute;
+	left: 12px;
+	bottom: -3px;
+	z-index: 1;
+	padding: 0 2px;
+	transform: translateX(-50%);
+	border-radius: 2px;
+	font-size: 7px;
+	font-weight: 800;
+	line-height: 9px;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	color: #14181f;
+	background: var(--outcome-color);
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+	pointer-events: none;
 
-.rotation-timeline-cast.outcome-partial .rotation-timeline-cast-icon {
-	border-color: #f0c05a;
-}
+	&.outcome-crit {
+		--outcome-color: var(--outcome-crit);
+	}
 
-.rotation-timeline-cast.outcome-hit .rotation-timeline-cast-icon {
-	border-color: #6fbf73;
-}
+	&.outcome-glance {
+		--outcome-color: var(--outcome-glance);
+	}
 
-.rotation-timeline-cast.outcome-crit .rotation-timeline-cast-icon {
-	border-color: #7fb3f0;
+	&.outcome-avoid {
+		--outcome-color: var(--outcome-avoid);
+	}
 }
 
 .stacked-icon-count {

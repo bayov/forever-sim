@@ -13,7 +13,7 @@ import (
 //
 // The Classic inputs (wowhead dump, atlasloot, wago) know nothing about them,
 // so we type the stats from the wowhead Forever tooltips
-// (https://nether.wowhead.com/forever/tooltip/item/ID?dataEnv=17&locale=0) and
+// (https://nether.wowhead.com/forever/tooltip/item/ID?dataEnv=16&locale=0) and
 // merge them in after the Classic items. Quest names, quest levels and
 // factions come from https://wowforevertalents.com/dungeons/ and
 // /reputations/, which read the beta client. Chance on hit effects

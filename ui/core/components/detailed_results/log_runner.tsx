@@ -5,6 +5,7 @@ import { SimLog } from '../../proto_utils/logs_parser';
 import { SimResult } from '../../proto_utils/sim_result.js';
 import { TypedEvent } from '../../typed_event.js';
 import { EventFilter } from './events_filter.js';
+import { badgeOutcomeInLogLine } from './hit_outcome.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
 export interface LogRunnerConfig extends ResultComponentConfig {
@@ -29,6 +30,15 @@ export class LogRunner extends ResultComponent {
 
 	private rows: Array<LogRow> = [];
 	private rowsKey: SimResult | null = null;
+	// A line between the prepull events and the ones after the pull. It's a row of the same height
+	// as the others, so the virtual scroll can place it like any row.
+	private readonly pullRow = (
+		<tr className="log-pull-row">
+			<td colSpan={2}>
+				<span>Pull</span>
+			</td>
+		</tr>
+	) as HTMLTableRowElement;
 
 	// How many events the filter lets through, out of all of them.
 	readonly countEmitter = new TypedEvent<void>('LogRunnerCount');
@@ -91,10 +101,14 @@ export class LogRunner extends ResultComponent {
 	}
 
 	private applyFilter() {
-		const shown = this.rows.filter(row => this.filter.matchesLog(row.log, row.text)).map(row => row.elem);
-		this.shownCount = shown.length;
+		const shownRows = this.rows.filter(row => this.filter.matchesLog(row.log, row.text));
+		this.shownCount = shownRows.length;
 		this.totalCount = this.rows.length;
-		this.emptyElem.classList.toggle('hide', shown.length > 0 || this.rows.length == 0);
+		this.emptyElem.classList.toggle('hide', shownRows.length > 0 || this.rows.length == 0);
+
+		const shown: Element[] = shownRows.map(row => row.elem);
+		const pullIndex = shownRows.findIndex(row => row.log.timestamp >= 0);
+		if (pullIndex > 0) shown.splice(pullIndex, 0, this.pullRow);
 		this.virtualScroll.setItems(shown);
 		this.countEmitter.emit(TypedEvent.nextEventID());
 	}
@@ -116,6 +130,7 @@ export class LogRunner extends ResultComponent {
 		) as HTMLTableRowElement;
 
 		timeRef.value!.addEventListener('click', () => this.onTimeClick(log.timestamp));
+		if (log.isDamageDealt()) badgeOutcomeInLogLine(eventRef.value!);
 
 		const text = eventRef.value!.textContent?.trim() ?? '';
 		eventRef.value!.title = text;

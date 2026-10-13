@@ -262,13 +262,14 @@ export abstract class SimUI extends Component {
 		}
 	}
 
-	async runSimOnce() {
-		this.resultsViewer.setPending();
+	// Runs one new iteration for the Events view. The results of the last run stay, so the new
+	// iteration only shows next to its typical, lucky and unlucky ones.
+	async runSimOnce(): Promise<SimResult | null> {
 		try {
-			await this.sim.runRaidSimWithLogs(TypedEvent.nextEventID());
+			return await this.sim.runRaidSimWithLogs(TypedEvent.nextEventID(), false);
 		} catch (e) {
-			this.resultsViewer.hideAll();
 			this.handleCrash(e);
+			return null;
 		}
 	}
 

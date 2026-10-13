@@ -44,7 +44,7 @@ EXPR = '''(() => {
     return {rows, g};
 })()'''
 
-TOOLTIP = 'https://nether.wowhead.com/forever/tooltip/item/{}?dataEnv=17&locale=0'
+TOOLTIP = 'https://nether.wowhead.com/forever/tooltip/item/{}?dataEnv=16&locale=0'
 # The quest listing builds its rows into the Listview call instead of a variable.
 QUEST_EXPR = '''(() => {
     const s = [...document.scripts].map(x => x.textContent).join("\\n");

@@ -9,9 +9,11 @@ import { AuraUptimeLog, CastLog, DamageDealtLog, DpsLog, ResourceChangedLogGroup
 import { resourceNames } from '../../proto_utils/names.js';
 import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { orderedResourceTypes } from '../../proto_utils/utils.js';
-import { bucket, distinct, maxIndex, stringComparator } from '../../utils.js';
+import { bucket, distinct, formatToNumber, maxIndex, stringComparator } from '../../utils.js';
 import { actionColors } from './color_settings.js';
 import { EventCategory, EventFilter } from './events_filter.js';
+import { hitOutcome, HitOutcomeKind, outcomeBadge } from './hit_outcome.js';
+import { iconColor } from './icon_color.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
 type TooltipHandler = (dataPointIndex: number) => Element;
@@ -29,14 +31,124 @@ export interface TimelineConfig extends ResultComponentConfig {
 }
 
 // One row of the rotation, with the label on the left and the events on the right. We keep them
-// so the filter can show and hide rows without drawing the rotation again.
+// so the filter can show, hide and fade rows without drawing the rotation again.
 interface RotationRow {
 	label: HTMLElement;
 	row: HTMLElement;
 	name: string;
 	actionId: ActionId | null;
 	category: EventCategory;
+	events: Array<RowEvent>;
 }
+
+// One thing drawn in a row, like a cast or an aura's uptime, with the text of the logs it came
+// from. The search looks in that text.
+interface RowEvent {
+	elem: Element;
+	text: string;
+}
+
+// The search looks at what happened, so we leave out the time and the source that start every
+// log line, like "[12.34] [Player (#1)] ". Otherwise a search for "1" would match every event.
+const logPrefixRegex = /^\[[^\]]*\]\s*(\[[^\]]*\]\s*)?/;
+// Some lines name the ability only by its ID, like "from {SpellID: 10497}", so we add each
+// log's ability name too.
+const searchText = (logs: Array<SimLog>): string =>
+	logs
+		.map(log => `${log.raw.replace(logPrefixRegex, '')} ${log.actionId?.name ?? ''}`)
+		.join(' ')
+		.toLowerCase();
+
+// The sim deals a melee swing's damage 10 ms after the swing (SpellBatchWindow), and the logs
+// parser reads that delay as travel time. A real projectile takes much longer, so we treat 10 ms
+// or less as no travel at all.
+const MAX_BATCH_DELAY = 0.0105;
+const travelTimeOf = (castLog: CastLog): number => (castLog.travelTime > MAX_BATCH_DELAY ? castLog.travelTime : 0);
+
+// A cast icon gets a small badge when a hit landed in a way worth seeing, like a crit or a parry.
+// Plain hits and ticks get none, so the badges stand out. When the hits of one cast landed in
+// different ways, we show the most notable one, in this order.
+const notableOutcomes: Array<HitOutcomeKind> = ['crit', 'avoid', 'glance'];
+
+// The badge is narrow, so the longer words are short.
+const badgeLabels: Record<string, string> = {
+	Crit: 'CRIT',
+	Crush: 'CRSH',
+	Glance: 'GLNC',
+	Miss: 'MISS',
+	Dodge: 'DODGE',
+	Parry: 'PARRY',
+	Block: 'BLOCK',
+	'Blocked Crit': 'BLOCK',
+	Resist: 'RES',
+};
+
+// The most notable outcome of a cast's hits, or null when every hit was plain. A partial resist
+// on a plain hit counts as a resist.
+const notableOutcome = (castLog: CastLog): { label: string; kind: HitOutcomeKind; mixed: boolean } | null => {
+	const outcomes = castLog.damageDealtLogs.map(ddl => {
+		const outcome = hitOutcome(ddl);
+		const label = outcome.label.replace(/^(Heal|Shield) /, '');
+		return outcome.resisted > 0 && outcome.kind == 'hit' ? { label: 'Resist', kind: 'avoid' as HitOutcomeKind } : { label, kind: outcome.kind };
+	});
+	for (const kind of notableOutcomes) {
+		const found = outcomes.find(outcome => outcome.kind == kind);
+		if (found) return { ...found, mixed: outcomes.some(outcome => outcome.label != found.label) };
+	}
+	return null;
+};
+
+// The parts of the hover tooltips. Each starts with a title (the ability's icon and name), then
+// a muted line with the timing, then the hits or the changes, then key and value rows.
+const formatSeconds = (time: number): string => `${time.toFixed(2)}s`;
+
+const formatAmount = (value: number, digits = 0): string => formatToNumber(value, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+
+const tooltipTitle = (actionId: ActionId, note?: string): JSX.Element => (
+	<div className="timeline-tooltip-title">
+		{actionId.iconUrl && <img className="timeline-tooltip-icon" src={actionId.iconUrl} />}
+		<span className="timeline-tooltip-name">{actionId.name}</span>
+		{note && <span className="timeline-tooltip-note">{note}</span>}
+	</div>
+);
+
+const tooltipRow = (key: string, value: string, valueClass = ''): JSX.Element => (
+	<div className="timeline-tooltip-row">
+		<span className="timeline-tooltip-key">{key}</span>
+		<span className={`timeline-tooltip-value ${valueClass}`}>{value}</span>
+	</div>
+);
+
+// One hit: its time, how it landed and the amount. The chart lists hits of several abilities,
+// so there we name the ability too.
+const tooltipHit = (ddl: DamageDealtLog, withName = false): JSX.Element => {
+	const outcome = hitOutcome(ddl);
+	const landed = !ddl.miss && !ddl.dodge && !ddl.parry;
+	return (
+		<li>
+			<span className="timeline-tooltip-time">{formatSeconds(ddl.timestamp)}</span>
+			<span className="timeline-tooltip-outcome">
+				{withName && ddl.actionId?.iconUrl && <img className="timeline-tooltip-icon small" src={ddl.actionId.iconUrl} />}
+				{withName && ddl.actionId && <span>{ddl.actionId.name}</span>}
+				{outcomeBadge(outcome.label, outcome.kind)}
+				{outcome.resisted > 0 && <span className="timeline-tooltip-muted">{outcome.resisted}% resisted</span>}
+			</span>
+			<span className="timeline-tooltip-amount">
+				{landed ? formatAmount(ddl.amount) : ''}
+				{ddl.source?.isTarget && <span className="timeline-tooltip-muted threat-metrics"> {formatAmount(ddl.threat, 1)} threat</span>}
+			</span>
+		</li>
+	);
+};
+
+// One change to a resource or to threat, with what caused it.
+const tooltipChange = (log: SimLog, value: string, valueClass = ''): JSX.Element => (
+	<li>
+		{log.actionId?.iconUrl && <img className="timeline-tooltip-icon small" src={log.actionId.iconUrl} />}
+		<span className="timeline-tooltip-outcome">{log.actionId?.name ?? ''}</span>
+		<span className={`timeline-tooltip-amount ${valueClass}`}>{value}</span>
+	</li>
+);
 
 // Pixels per second of the rotation at each zoom step.
 const zoomLevels = [10, 20, 40, 70, 100, 150, 250, 400];
@@ -65,6 +177,8 @@ export class Timeline extends ResultComponent {
 	// The part of the iteration we draw, in seconds, from the filter's time range.
 	private viewStart = 0;
 	private viewEnd = 1;
+	// The first second of the prepull, or 0 when there's no prepull.
+	private prepullStart = 0;
 	private zoomIndex = defaultZoomIndex;
 
 	private resetCallbacks: (() => void)[] = [];
@@ -237,7 +351,11 @@ export class Timeline extends ResultComponent {
 		}
 
 		const duration = this.resultData!.result.result.firstIterationDuration || 1;
-		this.viewStart = Math.max(0, Math.min(this.filter.from ?? 0, duration));
+		// The prepull actions, like a totem 3 seconds before the pull, happen at negative times.
+		// Without a From time, the timeline starts at the first of them, on a whole second.
+		const firstEvent = this.resultData!.result.logs.reduce((first, log) => Math.min(first, log.timestamp), 0);
+		this.prepullStart = Math.floor(firstEvent);
+		this.viewStart = Math.max(this.prepullStart, Math.min(this.filter.from ?? this.prepullStart, duration));
 		this.viewEnd = Math.min(duration, this.filter.to ?? duration);
 		if (this.viewEnd <= this.viewStart) {
 			this.viewEnd = Math.min(duration, this.viewStart + 1);
@@ -528,6 +646,7 @@ export class Timeline extends ResultComponent {
 		this.rotationPlotElem.classList.remove('hide');
 
 		this.drawRotationTimeRuler(this.rotationTimeline.querySelector('.rotation-timeline-header')!);
+		this.drawPull();
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 
@@ -590,8 +709,10 @@ export class Timeline extends ResultComponent {
 	}
 
 	// Shows the rows the filter lets through, and the separators between groups that still have
-	// a row.
+	// a row. The categories and the hidden abilities hide rows. The search only fades them, see
+	// applySearch, so the rows keep their places.
 	private applyFilter() {
+		const searching = this.filter.search.trim().length > 0;
 		let anyShown = false;
 		this.rows.forEach(entry => {
 			if (entry == 'separator') return;
@@ -599,6 +720,7 @@ export class Timeline extends ResultComponent {
 			entry.label.classList.toggle('hide', !shown);
 			entry.row.classList.toggle('hide', !shown);
 			anyShown ||= shown;
+			this.applySearch(entry, shown && searching);
 		});
 
 		// A separator shows only when there are rows shown both above and below it.
@@ -624,8 +746,24 @@ export class Timeline extends ResultComponent {
 
 	private isRowShown(row: RotationRow): boolean {
 		if (!this.filter.categories.has(row.category)) return false;
-		if (row.actionId && this.filter.isHidden(row.actionId)) return false;
-		return this.filter.matchesText(row.name.toLowerCase());
+		return !(row.actionId && this.filter.isHidden(row.actionId));
+	}
+
+	// A row whose name matches the search stays as it is. When only some of its events match,
+	// like the crits of Stormstrike for "crit", we outline those events and fade the others. A
+	// row with no match at all fades.
+	private applySearch(row: RotationRow, searching: boolean) {
+		const nameMatches = !searching || this.filter.matchesText(row.name.toLowerCase());
+		let anyEventMatches = false;
+		row.events.forEach(event => {
+			const hit = !nameMatches && this.filter.matchesText(event.text);
+			event.elem.classList.toggle('search-hit', hit);
+			anyEventMatches ||= hit;
+		});
+		row.row.classList.toggle('search-partial', anyEventMatches);
+		const dim = !nameMatches && !anyEventMatches;
+		row.label.classList.toggle('search-dim', dim);
+		row.row.classList.toggle('search-dim', dim);
 	}
 
 	private addRow(row: RotationRow) {
@@ -719,7 +857,7 @@ export class Timeline extends ResultComponent {
 	private addPetRow(petName: string) {
 		const actionId = ActionId.fromPetName(petName);
 		const labelElem = (<div className="rotation-label rotation-row rotation-pet-label"></div>) as HTMLElement;
-		this.addRow({ label: labelElem, row: this.makeRowElem(), name: petName, actionId: null, category: 'casts' });
+		this.addRow({ label: labelElem, row: this.makeRowElem(), name: petName, actionId: null, category: 'casts', events: [] });
 
 		actionId.fill().then(filledActionId => {
 			const labelText = idsToGroupForRotation.includes(filledActionId.spellId) ? filledActionId.baseName : filledActionId.name;
@@ -761,6 +899,7 @@ export class Timeline extends ResultComponent {
 		) as HTMLElement;
 
 		const rowElem = this.makeRowElem();
+		const row: RotationRow = { label: labelElem, row: rowElem, name: resourceNames.get(resourceType)!, actionId: null, category: 'resources', events: [] };
 
 		resourceLogs.forEach((resourceLogGroup, i) => {
 			const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
@@ -787,6 +926,7 @@ export class Timeline extends ResultComponent {
 				}
 			}
 			rowElem.appendChild(resourceElem);
+			row.events.push({ elem: resourceElem, text: searchText(resourceLogGroup.logs) });
 
 			const tooltip = tippy(resourceElem, {
 				placement: 'bottom',
@@ -794,13 +934,14 @@ export class Timeline extends ResultComponent {
 			});
 			this.addOnResetCallback(() => tooltip.destroy());
 		});
-		this.addRow({ label: labelElem, row: rowElem, name: resourceNames.get(resourceType)!, actionId: null, category: 'resources' });
+		this.addRow(row);
 	}
 
 	private addCastRow(castLogs: Array<CastLog>, aurasById: Array<Array<AuraUptimeLog>>) {
 		const actionId = castLogs[0].actionId!;
 		const rowElem = this.makeRowElem();
-		this.addRow({ label: this.makeLabelElem(actionId), row: rowElem, name: actionId.name, actionId, category: 'casts' });
+		const row: RotationRow = { label: this.makeLabelElem(actionId), row: rowElem, name: actionId.name, actionId, category: 'casts', events: [] };
+		this.addRow(row);
 
 		let stackedIconCount = 1;
 		let stackedDamageCount = 1;
@@ -811,43 +952,38 @@ export class Timeline extends ResultComponent {
 					className="rotation-timeline-cast"
 					style={{
 						left: this.timeToLeft(castLog.timestamp),
-						minWidth: this.timeToPx(castLog.castTime + castLog.travelTime),
+						minWidth: this.timeToPx(castLog.castTime + travelTimeOf(castLog)),
 					}}></div>
 			);
 
 			rowElem.appendChild(castElem);
+			row.events.push({ elem: castElem, text: searchText([castLog, ...castLog.damageDealtLogs]) });
 
-			if (castLog.travelTime != 0) {
+			const travelTime = travelTimeOf(castLog);
+			if (travelTime != 0) {
 				const travelTimeElem = (
 					<div
 						className="rotation-timeline-travel-time"
 						style={{
 							left: this.timeToPx(castLog.castTime),
-							minWidth: this.timeToPx(castLog.travelTime),
+							minWidth: this.timeToPx(travelTime),
 						}}
 					/>
 				);
 				castElem.appendChild(travelTimeElem);
 			}
 
-			if (castLog.damageDealtLogs.length > 0) {
-				const ddl = castLog.damageDealtLogs[0];
-				if (ddl.miss || ddl.dodge || ddl.parry) {
-					castElem.classList.add('outcome-miss');
-				} else if (ddl.glance || ddl.block || ddl.partialResist1_4 || ddl.partialResist2_4 || ddl.partialResist3_4) {
-					castElem.classList.add('outcome-partial');
-				} else if (ddl.crit) {
-					castElem.classList.add('outcome-crit');
-				} else {
-					castElem.classList.add('outcome-hit');
-				}
-			}
+			this.tint(castElem as HTMLElement, actionId.iconUrl);
 
 			const iconElem = (<a className="rotation-timeline-cast-icon" />) as HTMLAnchorElement;
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
 
-			const travelTimeStr = castLog.travelTime == 0 ? '' : ` + ${castLog.travelTime.toFixed(2)}s travel time`;
+			const notable = notableOutcome(castLog);
+			if (notable) {
+				castElem.appendChild(<span className={`rotation-timeline-cast-badge outcome-${notable.kind}`}>{badgeLabels[notable.label] ?? notable.label}</span>);
+			}
+
 			const totalDamage = castLog.totalDamage();
 
 			if (index > 0) {
@@ -888,29 +1024,28 @@ export class Timeline extends ResultComponent {
 				},
 			);
 
+			const timing = [formatSeconds(castLog.timestamp)];
+			if (castLog.castTime > 0) {
+				timing[0] += ` to ${formatSeconds(castLog.timestamp + castLog.castTime)}`;
+				timing.push(`${formatSeconds(castLog.castTime)} cast`);
+			}
+			if (castLog.effectiveTime > 0) timing.push(`${formatSeconds(castLog.effectiveTime)} GCD`);
+			if (travelTime > 0) timing.push(`${formatSeconds(travelTime)} travel`);
+
 			const tt = (
 				<div className="timeline-tooltip">
-					<span>
-						{castLog.actionId!.name} from {castLog.timestamp.toFixed(2)}s to {(castLog.timestamp + castLog.castTime).toFixed(2)}s (
-						{castLog.castTime > 0 && `${castLog.castTime.toFixed(2)}s, `}
-						{castLog.effectiveTime > 0 && `${castLog.effectiveTime.toFixed(2)}s GCD Time`}){travelTimeStr.length > 0 && travelTimeStr}
-					</span>
-					{aggregatedData.damageDealtLogs.length > 0 && (
-						<ul className="rotation-timeline-cast-damage-list">
-							{aggregatedData.damageDealtLogs.map((ddl, ddlIndex) => (
-								<li>
-									<span>
-										{ddl.timestamp.toFixed(2)}s - {ddl.result()}
-									</span>
-									{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
-								</li>
-							))}
-						</ul>
+					{tooltipTitle(castLog.actionId!)}
+					<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
+					{aggregatedData.damageDealtLogs.length > 0 && <ul className="timeline-tooltip-hits">{aggregatedData.damageDealtLogs.map(ddl => tooltipHit(ddl))}</ul>}
+					{notable?.mixed && (
+						<div className="timeline-tooltip-meta">The icon's badge shows the most notable result, {notable.label.toLowerCase()}.</div>
 					)}
-					{totalDamage > 0 && (
-						<span>
-							Total: {aggregatedData.totalDamage.toFixed(2)} ({(aggregatedData.totalDamage / (castLog.effectiveTime || 1)).toFixed(2)} DPET)
-						</span>
+					{totalDamage > 0 && (aggregatedData.damageDealtLogs.length > 1 || castLog.effectiveTime > 0) && (
+						<div className="timeline-tooltip-rows">
+							{/* A single hit already shows its amount, so the total only shows for two or more. */}
+							{aggregatedData.damageDealtLogs.length > 1 && tooltipRow('Total', formatAmount(aggregatedData.totalDamage))}
+							{castLog.effectiveTime > 0 && tooltipRow('DPET', formatAmount(aggregatedData.totalDamage / castLog.effectiveTime, 1))}
+						</div>
 					)}
 				</div>
 			);
@@ -936,13 +1071,12 @@ export class Timeline extends ResultComponent {
 						/>
 					);
 					rowElem.appendChild(tickElem);
+					row.events.push({ elem: tickElem, text: searchText([ddl]) });
 
 					const tt = (
 						<div className="timeline-tooltip">
-							<span>
-								{ddl.timestamp.toFixed(2)}s - {ddl.actionId!.name} {ddl.result()}
-							</span>
-							{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
+							{tooltipTitle(ddl.actionId!, 'Tick')}
+							<ul className="timeline-tooltip-hits">{tooltipHit(ddl)}</ul>
 						</div>
 					);
 
@@ -956,19 +1090,19 @@ export class Timeline extends ResultComponent {
 		// If there are any auras that correspond to this cast, visualize them in the same row.
 		aurasById
 			.filter(auraUptimeLogs => auraUptimeLogs[0].actionId!.equalsIgnoringTag(actionId))
-			.forEach(auraUptimeLogs => this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem));
+			.forEach(auraUptimeLogs => this.applyAuraUptimeLogsToRow(auraUptimeLogs, row));
 	}
 
 	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>) {
 		const actionId = auraUptimeLogs[0].actionId!;
 
-		const rowElem = this.makeRowElem();
-		this.addRow({ label: this.makeLabelElem(actionId, true), row: rowElem, name: actionId.name, actionId, category: 'auras' });
+		const row: RotationRow = { label: this.makeLabelElem(actionId, true), row: this.makeRowElem(), name: actionId.name, actionId, category: 'auras', events: [] };
+		this.addRow(row);
 
-		this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem);
+		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row);
 	}
 
-	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, rowElem: JSX.Element) {
+	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, row: RotationRow) {
 		auraUptimeLogs.forEach(aul => {
 			const auraElem = (
 				<div
@@ -979,13 +1113,16 @@ export class Timeline extends ResultComponent {
 					}}
 				/>
 			);
-			rowElem.appendChild(auraElem);
+			row.row.appendChild(auraElem);
+			this.tint(auraElem as HTMLElement, aul.actionId?.iconUrl);
+			row.events.push({ elem: auraElem, text: searchText([aul, ...aul.stacksChange]) });
 
 			const tt = (
 				<div className="timeline-tooltip">
-					<span>
-						{aul.actionId!.name}: {aul.gainedAt.toFixed(2)}s - {aul.fadedAt.toFixed(2)}s
-					</span>
+					{tooltipTitle(aul.actionId!)}
+					<div className="timeline-tooltip-meta">
+						{`${formatSeconds(aul.gainedAt)} to ${formatSeconds(aul.fadedAt)} · ${formatSeconds(aul.fadedAt - aul.gainedAt)}`}
+					</div>
 				</div>
 			);
 
@@ -1012,6 +1149,15 @@ export class Timeline extends ResultComponent {
 				);
 				auraElem.appendChild(stacksChangeElem);
 			});
+		});
+	}
+
+	// Gives a bar the main color of its ability's icon, see icon_color.ts. The icon loads once,
+	// and until then the bar has the default color.
+	private tint(elem: HTMLElement, iconUrl: string | undefined) {
+		if (!iconUrl) return;
+		iconColor(iconUrl).then(rgb => {
+			if (rgb) elem.style.setProperty('--bar-rgb', rgb);
 		});
 	}
 
@@ -1044,6 +1190,20 @@ export class Timeline extends ResultComponent {
 
 	// The time ruler above the rotation. We pick the spacing of the labels from the zoom, so they
 	// stay about 60px or more apart.
+	// With a prepull, the time before the pull gets a hatched background labeled Prepull, and a
+	// gold line marks the pull through every row. The background goes first, so the rows draw over
+	// it, and the line goes last, over them.
+	private drawPull() {
+		if (this.prepullStart >= 0 || this.viewStart >= 0) return;
+		const pullLeft = this.timeToLeftValue(Math.min(0, this.viewEnd));
+		this.rotationTimeline.prepend(
+			<div className="rotation-prepull" style={{ width: `${pullLeft}px` }}>
+				<span className="rotation-prepull-label">Prepull</span>
+			</div>,
+		);
+		if (this.viewEnd > 0) this.rotationTimeline.appendChild(<div className="rotation-pull-line" style={{ left: `${pullLeft}px` }} />);
+	}
+
 	private drawRotationTimeRuler(header: HTMLElement) {
 		const [labelStep, tickStep] = rulerSteps.find(([label]) => label * this.pxPerSecond >= 60) ?? rulerSteps[rulerSteps.length - 1];
 		header.style.width = this.viewWidthPx();
@@ -1062,8 +1222,8 @@ export class Timeline extends ResultComponent {
 			ticks.push(<div className={`rotation-ruler-tick${isLabel ? ' major' : ''}`} style={{ left: this.timeToLeft(time) }} />);
 			if (isLabel) {
 				ticks.push(
-					<div className="rotation-ruler-label" style={{ left: this.timeToLeft(time) }}>
-						{formatRulerTime(time)}
+					<div className={`rotation-ruler-label${time == 0 && this.prepullStart < 0 ? ' pull' : ''}`} style={{ left: this.timeToLeft(time) }}>
+						{time == 0 && this.prepullStart < 0 ? 'Pull' : formatRulerTime(time)}
 					</div>,
 				);
 			}
@@ -1071,58 +1231,44 @@ export class Timeline extends ResultComponent {
 		header.replaceChildren(...ticks);
 	}
 
+	// The chart's tooltips. The time is the title, then the events at that moment, then the
+	// value of the line.
+	private chartTooltipTitle(log: SimLog, player: UnitMetrics, colorOverride: string) {
+		return (
+			<div className="timeline-tooltip-title">
+				{colorOverride != '' && (
+					<>
+						<img className="timeline-tooltip-icon" src={player.iconUrl} />
+						<span className="timeline-tooltip-name" style={{ color: colorOverride }}>
+							{player.label}
+						</span>
+					</>
+				)}
+				<span className="timeline-tooltip-name">{formatSeconds(log.timestamp)}</span>
+			</div>
+		);
+	}
+
 	private dpsTooltip(log: DpsLog, _includeAuras: boolean, player: UnitMetrics, colorOverride: string) {
-		const showPlayerLabel = colorOverride != '';
 		return (
 			<div className="timeline-tooltip dps">
-				<div className="timeline-tooltip-header">
-					{showPlayerLabel ? (
-						<>
-							<img className="timeline-tooltip-icon" src="${player.iconUrl}" />
-							<span className="" style="color: ${colorOverride}">
-								{player.label}
-							</span>
-							<span> - </span>
-						</>
-					) : null}
-					<span className="bold">{log.timestamp.toFixed(2)}s</span>
-				</div>
-				<div className="timeline-tooltip-body">
-					<ul className="timeline-dps-events">{log.damageLogs.map(damageLog => this.tooltipLogItem(damageLog, damageLog.result()))}</ul>
-					<div className="timeline-tooltip-body-row">
-						<span className="series-color">DPS: {log.dps.toFixed(2)}</span>
-					</div>
-				</div>
+				{this.chartTooltipTitle(log, player, colorOverride)}
+				{log.damageLogs.length > 0 && <ul className="timeline-tooltip-hits">{log.damageLogs.map(damageLog => tooltipHit(damageLog, true))}</ul>}
+				<div className="timeline-tooltip-rows">{tooltipRow('DPS', formatAmount(log.dps, 1), 'series-color')}</div>
 				{this.tooltipAurasSection(log)}
 			</div>
 		);
 	}
 
 	private threatTooltip(log: ThreatLogGroup, includeAuras: boolean, player: UnitMetrics, colorOverride: string) {
-		const showPlayerLabel = colorOverride != '';
 		return (
 			<div className="timeline-tooltip threat">
-				<div className="timeline-tooltip-header">
-					{showPlayerLabel ? (
-						<>
-							<img className="timeline-tooltip-icon" src={player.iconUrl} />
-							<span className="" style={{ color: colorOverride }}>
-								{player.label}
-							</span>
-							<span> - </span>
-						</>
-					) : null}
-					<span className="bold">{log.timestamp.toFixed(2)}s</span>
-				</div>
-				<div className="timeline-tooltip-body">
-					<div className="timeline-tooltip-body-row">
-						<span className="series-color">Before: {log.threatBefore.toFixed(1)}</span>
-					</div>
-					<ul className="timeline-threat-events">{log.logs.map(log => this.tooltipLogItem(log, <>{log.threat.toFixed(1)} Threat</>))}</ul>
-					<div className="timeline-tooltip-body-row">
-						<span className="series-color">After: {log.threatAfter.toFixed(1)}</span>
-					</div>
-				</div>
+				{this.chartTooltipTitle(log, player, colorOverride)}
+				<div className="timeline-tooltip-rows">{tooltipRow('Before', formatAmount(log.threatBefore, 1))}</div>
+				<ul className="timeline-tooltip-changes">
+					{log.logs.map(threatLog => tooltipChange(threatLog, `${formatAmount(threatLog.threat, 1)} threat`))}
+				</ul>
+				<div className="timeline-tooltip-rows">{tooltipRow('After', formatAmount(log.threatAfter, 1), 'series-color')}</div>
 				{includeAuras ? this.tooltipAurasSection(log) : null}
 			</div>
 		);
@@ -1130,26 +1276,26 @@ export class Timeline extends ResultComponent {
 
 	private resourceTooltipElem(log: ResourceChangedLogGroup, maxValue: number, includeAuras: boolean) {
 		const valToDisplayString = percentageResources.includes(log.resourceType)
-			? (val: number) => `${val.toFixed(1)} (${((val / maxValue) * 100).toFixed(0)}%)`
-			: (val: number) => `${val.toFixed(1)}`;
+			? (val: number) => `${formatAmount(val)} (${((val / maxValue) * 100).toFixed(0)}%)`
+			: (val: number) => formatAmount(val, 1);
+		const name = resourceNames.get(log.resourceType)!;
 
 		return (
-			<div className={`timeline-tooltip ${resourceNames.get(log.resourceType)!.toLowerCase().replaceAll(' ', '-')}`}>
-				<div className="timeline-tooltip-header">
-					<span className="bold">{log.timestamp.toFixed(2)}s</span>
+			<div className={`timeline-tooltip ${name.toLowerCase().replaceAll(' ', '-')}`}>
+				<div className="timeline-tooltip-title">
+					<img className="timeline-tooltip-icon" src={resourceTypeToIcon[log.resourceType]} />
+					<span className="timeline-tooltip-name">{name}</span>
+					<span className="timeline-tooltip-note">{formatSeconds(log.timestamp)}</span>
 				</div>
-				<div className="timeline-tooltip-body">
-					<div className="timeline-tooltip-body-row">
-						<span className="series-color">Before: {valToDisplayString(log.valueBefore)}</span>
-					</div>
-					<ul className="timeline-mana-events">
-						{log.logs.map(manaChangedLog => this.tooltipLogItemElem(manaChangedLog, <>{manaChangedLog.resultString()}</>))}
-					</ul>
-					<div className="timeline-tooltip-body-row">
-						<span className="series-color">After: {valToDisplayString(log.valueAfter)}</span>
-					</div>
-				</div>
-				{includeAuras && this.tooltipAurasSectionElem(log)}
+				<div className="timeline-tooltip-rows">{tooltipRow('Before', valToDisplayString(log.valueBefore))}</div>
+				<ul className="timeline-tooltip-changes">
+					{log.logs.map(changedLog => {
+						const delta = changedLog.valueAfter - changedLog.valueBefore;
+						return tooltipChange(changedLog, `${delta < 0 ? '' : '+'}${formatAmount(delta, 1)}`, delta < 0 ? 'negative' : 'positive');
+					})}
+				</ul>
+				<div className="timeline-tooltip-rows">{tooltipRow('After', valToDisplayString(log.valueAfter), 'series-color')}</div>
+				{includeAuras && this.tooltipAurasSection(log)}
 			</div>
 		);
 	}
@@ -1158,41 +1304,16 @@ export class Timeline extends ResultComponent {
 		return this.resourceTooltipElem(log, maxValue, includeAuras);
 	}
 
-	private tooltipLogItem(log: SimLog, value: Element) {
-		return this.tooltipLogItemElem(log, value);
-	}
-
-	private tooltipLogItemElem(log: SimLog, value: Element): JSX.Element {
-		return (
-			<li>
-				{log.actionId && log.actionId.iconUrl && <img className="timeline-tooltip-icon" src={log.actionId.iconUrl}></img>}
-				{log.actionId && <span>{log.actionId.name}</span>}
-				<span className="series-color">{value}</span>
-			</li>
-		);
-	}
-
-	private tooltipAurasSection(log: SimLog) {
-		if (log.activeAuras.length == 0) {
-			return '';
-		}
-		return this.tooltipAurasSectionElem(log);
-	}
-
-	private tooltipAurasSectionElem(log: SimLog): JSX.Element {
-		if (log.activeAuras.length == 0) {
-			return <></>;
-		}
-
+	// The auras up at the moment, as a row of small icons with their names.
+	private tooltipAurasSection(log: SimLog): JSX.Element | null {
+		if (log.activeAuras.length == 0) return null;
 		return (
 			<div className="timeline-tooltip-auras">
-				<div className="timeline-tooltip-body-row">
-					<span className="bold">Active Auras</span>
-				</div>
-				<ul className="timeline-active-auras">
+				<div className="timeline-tooltip-section">Active auras</div>
+				<ul className="timeline-tooltip-aura-list">
 					{log.activeAuras.map(auraLog => (
 						<li>
-							{auraLog.actionId!.iconUrl && <img className="timeline-tooltip-icon" src={auraLog.actionId!.iconUrl}></img>}
+							{auraLog.actionId!.iconUrl && <img className="timeline-tooltip-icon small" src={auraLog.actionId!.iconUrl} />}
 							<span>{auraLog.actionId!.name}</span>
 						</li>
 					))}
@@ -1436,6 +1557,7 @@ const rulerSteps: Array<[number, number]> = [
 ];
 
 const formatRulerTime = (time: number): string => {
+	if (time < 0) return `-${formatRulerTime(-time)}`;
 	if (time < 60) return `${Number(time.toFixed(1))}s`;
 	const minutes = Math.floor(time / 60);
 	const seconds = Math.round(time - minutes * 60);
