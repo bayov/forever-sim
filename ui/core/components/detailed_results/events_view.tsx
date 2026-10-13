@@ -14,7 +14,8 @@ import { ResultComponent, ResultComponentConfig, SimResultData } from './result_
 import { Timeline } from './timeline.js';
 
 type EventsFormat = 'timeline' | 'chart' | 'log';
-type IterationKind = 'typical' | 'lucky' | 'unlucky';
+// 'new' is the iteration we ran with Sim 1 iteration, after the run.
+type IterationKind = 'typical' | 'lucky' | 'unlucky' | 'new';
 
 const formats: Array<{ format: EventsFormat; label: string; icon: string }> = [
 	{ format: 'timeline', label: 'Timeline', icon: 'fa-bars-staggered' },
@@ -26,6 +27,7 @@ const iterationKinds: Array<{ kind: IterationKind; label: string; tooltip: strin
 	{ kind: 'typical', label: 'Typical', tooltip: 'The iteration with the DPS closest to the average.' },
 	{ kind: 'lucky', label: 'Lucky', tooltip: 'The iteration with the highest DPS.' },
 	{ kind: 'unlucky', label: 'Unlucky', tooltip: 'The iteration with the lowest DPS.' },
+	{ kind: 'new', label: 'New', tooltip: 'The iteration from Sim 1 iteration, with a fresh seed and the current settings.' },
 ];
 
 // The filters that mean something in each view. The others are greyed out there.
@@ -55,6 +57,8 @@ export class EventsView extends ResultComponent {
 	// The SimResult of each iteration of the latest run. The typical one is the run's own result.
 	private iterationResults = new Map<IterationKind, Promise<SimResult>>();
 	private latestData: SimResultData | null = null;
+	// The iteration from Sim 1 iteration, until the next run.
+	private newIteration: SimResult | null = null;
 	private selectToken = 0;
 
 	private readonly ui: {
@@ -260,8 +264,17 @@ export class EventsView extends ResultComponent {
 		const simOnceButton = refs.simOnce.value!;
 		if (config.simUI) {
 			const simUI = config.simUI;
-			simOnceButton.addEventListener('click', () => simUI.runSimOnce());
-			tippy(simOnceButton, { content: 'Run one new iteration with a fresh seed. It takes the place of the current results.' });
+			simOnceButton.addEventListener('click', async () => {
+				simOnceButton.disabled = true;
+				this.ui.loading.classList.remove('hide');
+				const result = await simUI.runSimOnce();
+				simOnceButton.disabled = false;
+				this.ui.loading.classList.add('hide');
+				if (result) this.showNewIteration(result);
+			});
+			tippy(simOnceButton, {
+				content: 'Run one more iteration with a fresh seed and the current settings. It shows as New next to the typical, lucky and unlucky iterations.',
+			});
 		} else {
 			simOnceButton.remove();
 		}
@@ -286,6 +299,7 @@ export class EventsView extends ResultComponent {
 		if (isNewRun) {
 			this.iterationResults = new Map([['typical', Promise.resolve(resultData.result)]]);
 			this.iteration = 'typical';
+			this.newIteration = null;
 		}
 		this.updateIterationButtons();
 		this.selectIteration();
@@ -314,6 +328,14 @@ export class EventsView extends ResultComponent {
 			this.timeline.renderIfDirty();
 		}
 		this.updateFilterControls();
+	}
+
+	private showNewIteration(result: SimResult) {
+		this.newIteration = result;
+		this.iterationResults.set('new', Promise.resolve(result));
+		this.iteration = 'new';
+		this.updateIterationButtons();
+		this.selectIteration();
 	}
 
 	private setIteration(kind: IterationKind) {
@@ -355,20 +377,21 @@ export class EventsView extends ResultComponent {
 
 	private updateIterationButtons() {
 		const result = this.latestData?.result.result;
-		const typical = result?.typicalIteration;
-		// A run of one iteration has nothing to pick from, and older results don't have the
-		// iterations at all.
-		const hasChoice = !!typical && (result?.iterationsDone ?? 0) > 1;
-		this.ui.iterationGroup.classList.toggle('hide', !hasChoice);
+		// A run of one iteration has no lucky or unlucky one, and older results don't have the
+		// iterations at all. Then we only offer the run's own iteration and the new one.
+		const hasPicked = !!result?.typicalIteration && (result?.iterationsDone ?? 0) > 1;
+		this.ui.iterationGroup.classList.toggle('hide', !hasPicked && !this.newIteration);
 		if (!result) return;
 
 		this.ui.iterationButtons.forEach((button, kind) => {
 			const iterationLog = getIterationLog(result, kind);
-			const available = kind == 'typical' || !!iterationLog?.logs;
-			button.disabled = !available;
+			const shown = kind == 'typical' || (kind == 'new' ? !!this.newIteration : hasPicked);
+			button.classList.toggle('hide', !shown);
+			button.disabled = kind != 'typical' && kind != 'new' && !iterationLog?.logs;
 			button.classList.toggle('active', kind == this.iteration);
 			button.setAttribute('aria-pressed', String(kind == this.iteration));
-			button.querySelector('.iteration-dps')!.textContent = iterationLog ? formatToNumber(iterationLog.dps, { maximumFractionDigits: 1 }) : '';
+			const dps = kind == 'new' ? this.newIteration?.raidMetrics.dps.avg : iterationLog?.dps;
+			button.querySelector('.iteration-dps')!.textContent = dps !== undefined ? formatToNumber(dps, { maximumFractionDigits: 1 }) : '';
 		});
 	}
 
@@ -463,6 +486,8 @@ const getIterationLog = (result: RaidSimResult, kind: IterationKind): IterationL
 			return result.luckyIteration;
 		case 'unlucky':
 			return result.unluckyIteration;
+		case 'new':
+			return undefined;
 	}
 };
 
