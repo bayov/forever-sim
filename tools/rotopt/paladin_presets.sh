@@ -63,10 +63,13 @@ gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecration
 # Consecration last above 20%. The searches on the twist and sub Holy talents ended within 2 DPS
 # of each other summed over both builds, and this one keeps more mana at 300 sec.
 gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=80,trinketExecute=1" -level 60
-# Level 60 Shock (vs Undead): the Shock rotation with Light's Vigil above 60% mana instead of
-# 30%, to leave mana for Exorcism. Holy Wrath does not make it: its 2 sec cast is worth less
+# Level 60 Shock (vs Undead): the Shock rotation, with Light's Vigil above 30% mana in fights up
+# to 240 sec and above 60% in longer ones, to leave mana for Exorcism (rotation audit pass 13: a
+# flat 60% left 1300 to 1700 mana unspent at 120 and 180 sec; +9.7 / +10.5 / 0 at 120 / 180 /
+# 300 sec; any switch point from 210 to 270 sec is the same). On the generic boss the longer
+# floor only loses, so level60_shock keeps a flat 30%. Holy Wrath does not make it: its 2 sec cast is worth less
 # than the Holy Shocks and Holy Strikes it pushes back.
-gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1" -level 60
+gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilLongFight=240,vigilLongMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1" -level 60
 # Level 30 with 5 extra talent points (26 in all). The old level 20 rotation still wins,
 # and Seal of Command stays ahead of Seal of Righteousness on Corpsemaker.
 gen level30p5 "seal=2,consecration=1,consecrationFirst=1,consecrationMana=0" -level 30 -bonus-talents 5 -talents --502240312013201

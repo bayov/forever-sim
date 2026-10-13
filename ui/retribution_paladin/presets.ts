@@ -157,11 +157,12 @@ export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Level 60 (vs 
 	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation with Exorcism and Holy Wrath.',
 	group: 'Level 60',
 });
-// Level 60 Shock (vs Undead): the Shock rotation with Exorcism on cooldown and Light's Vigil
-// above 60% mana instead of 30%, which leaves the mana for Exorcism. Holy Wrath is 6 behind: its
-// 2 sec cast pushes back Holy Shocks and Holy Strikes.
+// Level 60 Shock (vs Undead): the Shock rotation with Exorcism on cooldown, and Light's Vigil
+// above 30% mana in fights up to 240 sec and above 60% in longer ones, which leaves the mana for
+// Exorcism in long fights (a flat 60% was 9.7 / 10.5 behind at 120 / 180 sec). Holy Wrath is 4 to
+// 11 behind: its 2 sec cast pushes back Holy Shocks and Holy Strikes.
 export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60 Shock (vs Undead)', Level60ShockUndeadAPLJSON, {
-	tooltip: 'Level 60 Holy Shock rotation against an Undead or Demon boss, with Exorcism and more mana kept for it.',
+	tooltip: 'Level 60 Holy Shock rotation against an Undead or Demon boss, with Exorcism and more mana kept for it in long fights.',
 	group: 'Level 60',
 });
 export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
@@ -554,8 +555,8 @@ export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Leve
 	options: OptionsRighteousness,
 });
 // Level 60 Shock (vs Undead): the Shock talents (a talent search on the Undead boss found no
-// better) with the vs Undead Shock rotation. Undead 1060.9 / 1030.9 / 997.2, Human 1044.7 /
-// 1015.1 / 982.5, Dwarf 1043.9 / 1014.3 / 980.6, 6.2% over Level 60 Shock on its own boss at
+// better) with the vs Undead Shock rotation. Undead 1070.9 / 1041.3 / 997.2, Human 1055.4 /
+// 1026.6 / 982.5, Dwarf 1053.9 / 1024.7 / 980.6, 7.3% over Level 60 Shock on its own boss at
 // 180 sec.
 export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 60 Shock (vs Undead)', {
 	group: 'Level 60',
