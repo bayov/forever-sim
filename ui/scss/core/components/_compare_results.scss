@@ -178,6 +178,37 @@ $cmp-worse: #ef7a7a;
 		color: $ivory;
 	}
 
+	.cmp-word-a {
+		color: $cmp-a;
+	}
+
+	.cmp-word-b {
+		color: $cmp-b;
+	}
+
+	.cmp-verdict-amount {
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+
+		&.cmp-amount-better {
+			color: $cmp-better;
+		}
+
+		&.cmp-amount-worse {
+			color: $cmp-worse;
+		}
+
+		&.cmp-amount-flat {
+			color: var(--gold-soft);
+		}
+	}
+
+	.cmp-verdict-number {
+		color: $ivory;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+	}
+
 	.cmp-verdict-detail {
 		font-size: 0.8125rem;
 		color: var(--text-muted-color);

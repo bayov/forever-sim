@@ -553,28 +553,48 @@ export class CompareResults extends Component {
 		const percent = (diff / (dpsA.avg || 1)) * 100;
 		const z = zScore(dpsA.avg, dpsA.stdev, resultA.iterations, dpsB.avg, dpsB.stdev, resultB.iterations);
 		const significant = z > Z_SIGNIFICANT;
-		const amount = `${formatFixed(1)(Math.abs(diff))} DPS (${formatFixed(2)(Math.abs(percent))}%)`;
-
-		let text: string;
-		if (a.id === b.id) text = 'Both sides are the same run. Pick another run to compare with.';
-		else if (!diff) text = 'Both runs did the same DPS.';
-		else if (diff > 0) text = `The compared run does ${amount} more than the baseline.`;
-		else text = `The compared run does ${amount} less than the baseline.`;
 
 		const tone = a.id === b.id || !diff || !significant ? 'flat' : diff > 0 ? 'better' : 'worse';
 		const noise = Math.sqrt(dpsA.stdev ** 2 / Math.max(resultA.iterations, 1) + dpsB.stdev ** 2 / Math.max(resultB.iterations, 1));
+		// The runs take the colors of their pickers, and the amount the color of the change. A
+		// change within the noise gets no green or red, because it may well be chance.
+		const compared = <span className="cmp-word-b">compared run</span>;
+		const baseline = <span className="cmp-word-a">baseline</span>;
+		const amount = (
+			<span className={`cmp-verdict-amount cmp-amount-${tone}`}>
+				{`${formatFixed(1)(Math.abs(diff))} DPS (${formatFixed(2)(Math.abs(percent))}%) ${diff > 0 ? 'more' : 'less'}`}
+			</span>
+		);
+
+		let title: Element;
+		if (a.id === b.id) title = <>Both sides are the same run. Pick another run to compare with.</>;
+		else if (!diff) title = <>Both runs did the same DPS.</>;
+		else
+			title = (
+				<>
+					The {compared} does {amount} than the {baseline}.
+				</>
+			);
+
 		return (
 			<div className={`cmp-verdict-inner cmp-verdict-${tone}`}>
 				<i className={`fas ${tone === 'better' ? 'fa-arrow-trend-up' : tone === 'worse' ? 'fa-arrow-trend-down' : 'fa-equals'} cmp-verdict-icon`} />
 				<div className="cmp-verdict-text">
-					<span className="cmp-verdict-title">{text}</span>
+					<span className="cmp-verdict-title">{title}</span>
 					{a.id !== b.id && diff ? (
 						<span className="cmp-verdict-detail">
-							{significant
-								? `That's more than chance: the difference is ${z.toFixed(1)} times its standard error (Z test at 95%).`
-								: `That's within the noise of the two runs (±${formatFixed(1)(
-										noise * Z_SIGNIFICANT,
-								  )} DPS at 95%). Run more iterations to tell them apart.`}
+							{significant ? (
+								<>
+									That's more than chance: the difference is <span className="cmp-verdict-number">{`${z.toFixed(1)} times`}</span> its
+									standard error (Z test at 95%).
+								</>
+							) : (
+								<>
+									That's within the noise of the two runs (
+									<span className="cmp-verdict-number">{`±${formatFixed(1)(noise * Z_SIGNIFICANT)} DPS`}</span> at 95%). Run more iterations
+									to tell them apart.
+								</>
+							)}
 						</span>
 					) : null}
 				</div>
