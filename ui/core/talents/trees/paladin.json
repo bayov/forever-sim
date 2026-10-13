@@ -800,8 +800,7 @@
             100
           ]
         ],
-        "icon": "ability_paladin_judgementred",
-        "notSimulated": true
+        "icon": "ability_paladin_judgementred"
       },
       {
         "fieldName": "oneHandedWeaponSpecialization",
