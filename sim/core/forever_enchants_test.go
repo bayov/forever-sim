@@ -20,6 +20,8 @@ func TestForeverHighLevelEnchants(t *testing.T) {
 		{1248607, "2H Mighty Spell Power", stats.Stats{stats.SpellPower: 55}},
 		{1220624, "Bracer Greater Spellpower", stats.Stats{stats.SpellPower: 16}},
 		{1248661, "Bracer Superior Intellect", stats.Stats{stats.Intellect: 9}},
+		{1248599, "Bracer Superior Agility", stats.Stats{stats.Agility: 9}},
+		{1248668, "2H Strength", stats.Stats{stats.Strength: 25}},
 		{1213622, "Gloves Holy Power", stats.Stats{stats.HolyPower: 20}},
 		{1213626, "Gloves Arcane Power", stats.Stats{stats.ArcanePower: 20}},
 		{1248645, "Gloves Natural Power", stats.Stats{stats.NaturePower: 20}},
