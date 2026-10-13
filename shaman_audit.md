@@ -162,7 +162,7 @@ Enhancement
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
 - [x] 8.25 Shamanistic Focus
 - [x] 8.26 Anticipation
-- [ ] 8.27 Toughness
+- [x] 8.27 Toughness
 - [ ] 8.28 Flurry
 - [ ] 8.29 Stormstrike
 - [ ] 8.30 Spirit Weapons
@@ -1491,6 +1491,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16254, talent curve 85299): +2, 4 and 6% dodge (aura 49). The two Anticipation spells that give Defense skill (12297, 20096) are other classes'. That matches.
 - Beta (the `/bayov` exports in ~/forever-logs/exports): 5.4324% dodge on 2026-10-10 at 21:30 without it, and 11.4324% at 23:14 with 3/3 and the same 43 Agility. That's +6.000%, 2% a point.
 - No sim change and no new test. `avoidance_test.go` TestOrcShamanOurAvoidance already wants exactly 6% from 3/3 (6.4), and its comment now cites the exports.
+
+### 8.27 Toughness
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives 2% more Stamina, 10% at 5/5, and the server drops the fraction (5/5 turns 51 Stamina into 56). Only Level 30 PvP takes it (4/5).
+- Client 70338 (wago.tools 16252, talent curve 85301): +2, 4, 6, 8 and 10% Stamina (aura 137, misc 4). The other Toughness spells (12299, 20143) are other classes'. That matches.
+- Beta: no build had it.
+- No sim change and no new test. `base_stats_test.go` TestOrcShamanHealthTalents (6.6) wants 56 Stamina and 715 health at level 30 with 5/5, and 715 x 1.04 with Improved Reincarnation 2/2.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
