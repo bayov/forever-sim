@@ -481,6 +481,12 @@ td.uptime-cell {
 		max-width: 300px;
 	}
 
+	// The headers stick under the toolbar in the results tables, but in a tooltip they would
+	// float down over the rows.
+	.metrics-table-header-cell {
+		position: static;
+	}
+
 	thead {
 		th {
 			padding-top: 0;
