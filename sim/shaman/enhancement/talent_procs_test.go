@@ -43,7 +43,7 @@ func testTalentProcTriggers(t *testing.T) {
 	const rolls = 60
 	sim, enh := weaponSim{level: 60, talents: talentProcTalents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon, totem: proto.TotemWeaponBuff_TotemWeaponBuffFlametongue, seconds: 60}.start()
 	procs := map[string]*core.Aura{
-		flurry:               enh.GetAura("Flurry Proc (16280)"),
+		flurry:               enh.GetAura("Flurry Proc"),
 		maelstromWeapon:      enh.MaelstromWeaponAura,
 		elementalDevastation: enh.GetAura("Elemental Devastation Proc"),
 	}
@@ -153,7 +153,7 @@ func testFlurryCharges(t *testing.T) {
 	// Combat start turns the swings on, so we turn them off after it.
 	at(sim, 0.5, enh.AutoAttacks.CancelAutoSwing)
 	enh.GetAura("Windfury Imbue").Deactivate(sim)
-	flurryAura := enh.GetAura("Flurry Proc (16280)")
+	flurryAura := enh.GetAura("Flurry Proc")
 	white := enh.AutoAttacks.MHAuto()
 
 	roll := func(spell *core.Spell, outcome core.HitOutcome) {

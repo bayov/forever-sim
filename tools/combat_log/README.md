@@ -40,6 +40,20 @@ session, 2026-10-11). So raw compares straight to the sim's damage before the ta
 modifiers. On a killing Earth Shock the server removes the mark 1 ms before the damage line,
 so a script that checks the mark at the damage line calls those hits unmarked.
 
+## The archive
+
+`archive.sh` copies every `WoWCombatLog-*.txt` into `~/forever-logs/<flavor>/`, so the logs
+outlive the beta install. The client never deletes its combat logs, but uninstalling the beta
+takes the whole `Logs` folder with it. A systemd user timer runs it every 5 minutes (the units
+are in `systemd/`, installed into `~/.config/systemd/user/` and enabled), and
+`tools/logcheck` runs it before it reads a log. Nothing is compressed. When the archive gets too
+big we delete old logs by hand. `FLAVORS` in the script lists the game folders it copies, so
+add the live Forever folder there when it exists.
+
+The `/bayov export` JSONs go in `~/forever-logs/exports/` as `export-<date>_<time>.json`,
+named after their `when.date`. `tools/logcheck` pairs each log window with the export taken
+closest before it.
+
 Some scripts hold numbers from one character and one day, like the weapon models in
 `recheck.py` and the fist weapon cutoff in `glance.py`. The last section lists them.
 

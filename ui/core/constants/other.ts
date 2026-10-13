@@ -11,8 +11,8 @@ export enum Phase {
 
 export const CURRENT_PHASE = Phase.Phase6;
 
-// Github pages serves our site under the /classic directory
-export const REPO_NAME = 'classic';
+// Github pages serves our site under the /forever directory
+export const REPO_NAME = 'forever';
 
 // Get 'elemental_shaman', the pathname part after the repo name
 const pathnameParts = window.location.pathname.split('/');

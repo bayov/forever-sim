@@ -224,7 +224,7 @@ $gear-fog: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 		linear-gradient(#0c0c0c, #161616 55%, #1c1c1c);
 	// The band in the texture is 16 pixels wide, and here it's as much smaller as the slots.
 	border: calc(var(--gear-slot-size) * 16 / 85) solid transparent;
-	border-image: url('/classic/assets/gear_pane/pane_border.png') 16;
+	border-image: url('/forever/assets/gear_pane/pane_border.png') 16;
 	// The border's beveled corners are clear, and the backdrop stays out of them.
 	background-clip: padding-box;
 	box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.6);
@@ -256,7 +256,7 @@ $gear-fog: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 			top: calc(var(--gear-slot-size) * #{-$gear-frame-top / $gear-frame-icon});
 			width: calc(var(--gear-slot-size) * #{$gear-frame-width / $gear-frame-icon});
 			height: calc(var(--gear-slot-size) * #{$gear-frame-height / $gear-frame-icon});
-			background: url('/classic/assets/gear_pane/slot_frame.png') center / 100% 100% no-repeat;
+			background: url('/forever/assets/gear_pane/slot_frame.png') center / 100% 100% no-repeat;
 			pointer-events: none;
 			z-index: 2;
 		}

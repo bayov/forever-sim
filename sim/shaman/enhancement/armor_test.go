@@ -56,7 +56,7 @@ func TestOrcShamanArmor(t *testing.T) {
 			sim := core.NewSim(&proto.RaidSimRequest{
 				Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, c.debuffs),
 				Encounter:  &proto.Encounter{Duration: 6, Targets: []*proto.Target{target}},
-				SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+				SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 			}, simsignals.CreateSignals())
 			sim.Reset()
 			sim.PrePull()

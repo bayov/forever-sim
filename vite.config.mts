@@ -8,13 +8,13 @@ import { ConfigEnv, defineConfig, PluginOption, UserConfigExport } from 'vite';
 import { checker } from 'vite-plugin-checker';
 
 export const BASE_PATH = path.resolve(__dirname, 'ui');
-export const OUT_DIR = path.join(__dirname, 'dist', 'classic');
+export const OUT_DIR = path.join(__dirname, 'dist', 'forever');
 
 function serveExternalAssets() {
 	const workerMappings = {
-		'/classic/sim_worker.js': '/classic/local_worker.js',
-		'/classic/net_worker.js': '/classic/net_worker.js',
-		'/classic/lib.wasm': '/classic/lib.wasm',
+		'/forever/sim_worker.js': '/forever/local_worker.js',
+		'/forever/net_worker.js': '/forever/net_worker.js',
+		'/forever/lib.wasm': '/forever/lib.wasm',
 	};
 
 	return {
@@ -25,15 +25,15 @@ function serveExternalAssets() {
 
 				if (Object.keys(workerMappings).includes(url)) {
 					const targetPath = workerMappings[url as keyof typeof workerMappings];
-					const assetsPath = path.resolve(__dirname, './dist/classic');
-					const requestedPath = path.join(assetsPath, targetPath.replace('/classic/', ''));
+					const assetsPath = path.resolve(__dirname, './dist/forever');
+					const requestedPath = path.join(assetsPath, targetPath.replace('/forever/', ''));
 					serveFile(res, requestedPath);
 					return;
 				}
 
-				if (url.includes('/classic/assets')) {
+				if (url.includes('/forever/assets')) {
 					const assetsPath = path.resolve(__dirname, './assets');
-					const assetRelativePath = url.split('/classic/assets')[1];
+					const assetRelativePath = url.split('/forever/assets')[1];
 					const requestedPath = path.join(assetsPath, assetRelativePath);
 
 					serveFile(res, requestedPath);
@@ -87,7 +87,7 @@ function determineContentType(filePath: string) {
 
 export const getBaseConfig = ({ command, mode }: ConfigEnv) =>
 	({
-		base: '/classic/',
+		base: '/forever/',
 		root: path.join(__dirname, 'ui'),
 		build: {
 			outDir: OUT_DIR,
@@ -124,7 +124,8 @@ export default defineConfig(({ command, mode }) => {
 					// Add shared.scss as a separate entry if needed or handle it separately
 				},
 				output: {
-					assetFileNames: () => 'bundle/[name]-[hash].style.css',
+					// The DPS report's datasets (ui/dps_report/data/*.json) keep their extension; every other asset is a stylesheet.
+					assetFileNames: info => (info.name?.endsWith('.json') ? 'bundle/[name]-[hash].json' : 'bundle/[name]-[hash].style.css'),
 					entryFileNames: () => 'bundle/[name]-[hash].entry.js',
 					chunkFileNames: () => 'bundle/[name]-[hash].chunk.js',
 				},

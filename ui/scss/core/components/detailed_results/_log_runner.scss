@@ -97,6 +97,7 @@
 		}
 
 		.icon {
+			@include icon-crop;
 			vertical-align: middle;
 		}
 

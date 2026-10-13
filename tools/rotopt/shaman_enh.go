@@ -11,9 +11,10 @@ import (
 // build cannot have (Stormstrike under 16 talent points, Rage of the Farseer without the
 // talent) only warn, and a knob at 0 drops its line entirely.
 //
-// Rage of the Farseer is the anchor of the burst window (30% attack and cast speed for
-// 25 sec). Blood Fury and Berserking multiply with it, so they can wait for it the way
-// the rogue cooldowns wait for Adrenaline Rush, when the wait costs them no use. The
+// Rage of the Farseer is the anchor of the burst window (30% attack speed for 25 sec; the
+// 2026-09-24 beta build took its cast speed away). Blood Fury and Berserking multiply with
+// it, so they can wait for it the way the rogue cooldowns wait for Adrenaline Rush, when
+// the wait costs them no use. The
 // totems, the shield and the shock are 0/1 knobs, since what each is worth depends on
 // whether a raid is already providing the buff and whether the boss is hitting the shaman.
 type shamanEnh struct{}
@@ -56,6 +57,11 @@ func (shamanEnh) Knobs() []Knob {
 		// 0 none, 1 Lightning Shield, 2 Water Shield (the Restoration talent). Both only do
 		// anything while something hits the shaman.
 		{Name: "shield", Default: 0, Min: 0, Max: 2, Step: 1},
+		// The shield goes up again only below this much mana, 0 any time. A Water Shield spends
+		// its globes for mana, which is wasted while the pool is full.
+		{Name: "shieldMana", Default: 0, Min: 0, Max: 80, Step: 10},
+		// 1 puts the shield up before the pull too.
+		{Name: "prepullShield", Default: 0, Min: 0, Max: 1, Step: 1},
 		// 0 none, 1 Earth Shock, 2 Flame Shock, 3 Frost Shock, 4 Flame Shock when its DoT
 		// is down and Earth Shock otherwise, 5 Earth Shock while the Stormstrike debuff (20%
 		// Nature damage) is on the target and Frost Shock otherwise, 6 Flame Shock when its
@@ -81,6 +87,10 @@ func (shamanEnh) Knobs() []Knob {
 		{Name: "earthShockHold", Default: 0, Min: 0, Max: 4, Step: 1},
 		// With shock 4, Flame Shock goes ahead of the Maelstrom Weapon Lightning Bolt.
 		{Name: "flameShockFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// With shock 4, Earth Shock only goes while Flame Shock's DoT has more than this many
+		// seconds left, so the shared shock cooldown is back when the DoT runs out. 0 never
+		// holds.
+		{Name: "earthShockFlameShockLeft", Default: 0, Min: 0, Max: 8, Step: 1},
 		// Hard cast Lightning Bolt with the mana to spare, on top of the Maelstrom ones: 0
 		// never, 1 any time, 2 only while out of melee range (PvP mode).
 		{Name: "lightningBolt", Default: 0, Min: 0, Max: 2, Step: 1},
@@ -90,6 +100,9 @@ func (shamanEnh) Knobs() []Knob {
 		// Rage of the Farseer itself waits for Stormstrike to be ready, so the window opens
 		// with it.
 		{Name: "rageWithStormstrike", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Rage of the Farseer waits for the synthetic attack power on-use trinket (20 sec every 2
+		// min) when the wait costs it no use, the way Blood Fury waits for Rage.
+		{Name: "rageHoldForTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
 		// 1 puts the totems down in the prepull actions, 0 leaves them out, for settings that
 		// start the fight with them already down (the Enhancement option StartingTotems). A
 		// starting totem would replace the prepull one anyway.
@@ -98,8 +111,12 @@ func (shamanEnh) Knobs() []Knob {
 }
 
 func (shamanEnh) Build(k Knobs) *proto.APLRotation {
-	strengthOfEarth := rankID(shaman.StrengthOfEarthTotemLevel[:], shaman.StrengthOfEarthTotemSpellId[:])
-	graceOfAir := rankID(shaman.GraceOfAirTotemLevel[:], shaman.GraceOfAirTotemSpellId[:])
+	// The rotations are for Forever sims, which leave out the Ahn'Qiraj book ranks (Strength of
+	// Earth Totem V, Grace of Air Totem III), so the tables stop one rank short.
+	soeLevels, soeIDs := shaman.StrengthOfEarthTotemLevel[:], shaman.StrengthOfEarthTotemSpellId[:]
+	goaLevels, goaIDs := shaman.GraceOfAirTotemLevel[:], shaman.GraceOfAirTotemSpellId[:]
+	strengthOfEarth := rankID(soeLevels[:len(soeLevels)-1], soeIDs[:len(soeIDs)-1])
+	graceOfAir := rankID(goaLevels[:len(goaLevels)-1], goaIDs[:len(goaIDs)-1])
 	windfuryTotem := rankID(shaman.WindfuryTotemLevel[:], shaman.WindfuryTotemSpellId[:])
 	// An aura that is up while the totem stands.
 	windfuryTotemAura := rankID(shaman.WindfuryTotemLevel[:], shaman.WindfuryBuffAuraId[:])
@@ -170,6 +187,14 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	var rageWhen value
 	if k["rageWithStormstrike"] == 1 {
 		rageWhen = spellIsReady(stormstrike)
+	}
+	if k["rageHoldForTrinket"] == 1 {
+		hold := alignedWith(rageOfTheFarseer, itemID(shaman.EnhancementSyntheticOnUseTrinket))
+		if rageWhen == nil {
+			rageWhen = hold
+		} else {
+			rageWhen = and(rageWhen, hold)
+		}
 	}
 	// Rage of the Farseer takes 31 talent points, so the burst window only exists from
 	// level 40 (or fewer levels with bonus points). Below that the racials go last, on a GCD nothing else wants: at 20 Blood
@@ -256,7 +281,12 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		if !flameShockFirst {
 			items = append(items, flameShockLine())
 		}
-		items = append(items, cast(earthShock, earthShockWhen(), "Earth Shock otherwise."))
+		when, notes := earthShockWhen(), "Earth Shock otherwise."
+		if left := k["earthShockFlameShockLeft"]; left > 0 {
+			when = and(when, gt(dotRemainingTime(flameShock), seconds(left)))
+			notes = "Earth Shock otherwise, unless Flame Shock is about to run out."
+		}
+		items = append(items, cast(earthShock, when, notes))
 	case 5:
 		items = append(items,
 			cast(earthShock, and(targetAuraIsActive(stormstrike), manaFloor(k["shockMana"])), "Earth Shock while the Stormstrike debuff is up (20% Nature damage)."),
@@ -281,11 +311,14 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	// The shield goes after the shocks, on a GCD nothing else wants. Above them a Water
 	// Shield recast every 15 sec delayed enough shocks and Stormstrikes to cost 10 DPS
 	// (measured while it still had a 15 sec cooldown, which the 2026-10-08 build removed).
+	var shieldID *proto.ActionID
 	switch k["shield"] {
 	case 1:
-		items = append(items, cast(lightningShield, not(auraIsActive(lightningShield)), "Lightning Shield whenever it is down."))
+		shieldID = lightningShield
+		items = append(items, cast(lightningShield, shieldWhen(lightningShield, k["shieldMana"]), "Lightning Shield whenever it is down."))
 	case 2:
-		items = append(items, cast(waterShield, not(auraIsActive(waterShield)),
+		shieldID = waterShield
+		items = append(items, cast(waterShield, shieldWhen(waterShield, k["shieldMana"]),
 			"Water Shield whenever it is down. Its three globes are 2% mana each when something hits the shaman. Without the talent ignore the warning on this line."))
 	}
 	if maxTalentPoints < 31 {
@@ -298,5 +331,19 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	for i, id := range totems {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(id, float64(len(totems)-i)))
 	}
+	// The shield goes up 1.5 sec before the first totem in the prepull actions.
+	if shieldID != nil && k["prepullShield"] == 1 {
+		rot.PrepullActions = append([]*proto.APLPrepullAction{prepull(shieldID, float64(len(totems))+1.5)}, rot.PrepullActions...)
+	}
 	return rot
+}
+
+// shieldWhen recasts the shield when it is down, and with a mana gate (pct above 0) only below
+// that much mana.
+func shieldWhen(shield *proto.ActionID, pct float64) value {
+	when := not(auraIsActive(shield))
+	if pct > 0 {
+		when = and(when, lt(currentManaPercent(), num(pct/100)))
+	}
+	return when
 }

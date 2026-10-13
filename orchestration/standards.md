@@ -86,6 +86,14 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 20. Faerie Fire and Curse of Recklessness stay exclusive: they share the minor armor slot, so only one counts (user ruling 2026-10-13, reconfirming the 10-09 shaman audit call after the class changes auditor read the client as allowing them to stack).
 
+21. Rage from dealing damage is normalised in Forever, and the sim models it (user ruling 2026-10-13: "Model it + assumption"). Blizzard's Priest & Warrior deep dive: "Rage gained is now based on the speed of the weapon that dealt the damage", so AP, gear and crit damage no longer add Rage. Under the Forever ruleset, every landed white hit gives k × the weapon's swing speed in Rage:
+   - k = 3.46 for a one-hander, 4.5 for a two-hander. These are beta testers' level 30 measurements (forum thread 2355684), and no level 60 number exists yet.
+   - Off-hand factor 1.0 until a test shows otherwise.
+   - The crit bonus (`warr_crit_rage`, +100%) multiplies on top.
+   - Dodges and parries refund as in Classic.
+   - Rage from damage taken keeps the Classic formula (it only matters to tanks).
+   The constants and the off-hand factor are a dashboard assumption (`warr_rage_norm` in spec_assumptions.md). Owner: the warrior worker, in sim/core/rage.go behind `Env.IsForever()`. Bear druids get the same rule, though no DPS preset uses one.
+
 ## Races
 
 16. Presets use the best race on the spec's Era BiS weapon type. Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.

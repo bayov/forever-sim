@@ -1,0 +1,11 @@
+// The DPS Report page: the sim UI's styles, plus the report's own.
+@import '../core/sim_ui/index';
+@import '../core/components/character_stats';
+@import '../core/components/gear_picker';
+@import '../core/talents/talents_picker';
+
+.dps-report-sim-ui {
+	@include theme-color($brand, 0.95, '/forever/assets/img/classic.jpg');
+}
+
+@import './report';

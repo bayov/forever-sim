@@ -260,7 +260,11 @@ var ExtraItemIcons = []int32{
 	18262,
 }
 
-var SpellIconoverrides = []*proto.IconData{}
+var SpellIconoverrides = []*proto.IconData{
+	// Forever's Rage of the Farseer reuses SoD's spell ID, which the wowhead data names
+	// Shamanistic Rage (the SoD rune). The Forever talent's name and icon are these.
+	{Id: 425336, Name: "Rage of the Farseer", Icon: "spell_nature_bloodlust", HasBuff: true},
+}
 
 // Raid buffs / debuffs
 var SharedSpellsIcons = []int32{

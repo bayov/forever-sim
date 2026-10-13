@@ -29,6 +29,10 @@ type Simulation struct {
 	rand  Rand
 	rseed int64
 
+	// roundRand is the random source for rounding damage, kept apart from rand so that
+	// turning the rounding off leaves every other roll in the run the same.
+	roundRand Rand
+
 	// Used for testing only, see RandomFloat().
 	isTest    bool
 	testRands map[string]Rand
@@ -226,6 +230,8 @@ func newSimWithEnv(env *Environment, simOptions *proto.SimOptions, signals simsi
 		rand:  NewSplitMix(uint64(rseed)),
 		rseed: rseed,
 
+		roundRand: NewSplitMix(uint64(makeTestRandSeed(rseed, damageRoundingLabel))),
+
 		isTest:    simOptions.IsTest || simOptions.UseLabeledRands,
 		testRands: make(map[string]Rand),
 
@@ -261,12 +267,32 @@ func (sim *Simulation) labelRand(label string) Rand {
 // Options.RandomSeed + i, so seeding with it again replays that iteration.
 func (sim *Simulation) seedRands(seed int64) {
 	sim.rand.Seed(seed)
+	sim.roundRand.Seed(makeTestRandSeed(seed, damageRoundingLabel))
 
 	if sim.isTest {
 		for label, rng := range sim.testRands {
 			rng.Seed(makeTestRandSeed(seed, label))
 		}
 	}
+}
+
+const damageRoundingLabel = "Damage Rounding"
+
+// roundDamage rounds a hit to whole points the way the game does.
+//
+// The game rounds up with a chance equal to the fraction, so a hit of 8.8 does 9 on 80% of
+// hits and 8 on the rest. On average that's the unrounded hit, so it changes no average DPS,
+// only how much each hit varies. We measured it in the beta's combat log (2026-10-13, the
+// amount field): Flametongue Totem's 8.8 attack did 9 on 148 of 188 hits, and Flame Shock's
+// 21.7 ticks did 22 on 29 of 41. The log's raw field is truncated instead (8 and 21 on every
+// hit), but that's only what the log shows.
+//
+// Stat weight runs turn it off (SimOptions.ExactDamage).
+func (sim *Simulation) roundDamage(damage float64) float64 {
+	if sim.Options.GetExactDamage() {
+		return damage
+	}
+	return math.Floor(damage + sim.roundRand.NextFloat64())
 }
 
 func makeTestRandSeed(rseed int64, label string) int64 {
