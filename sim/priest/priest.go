@@ -139,3 +139,17 @@ func New(character *core.Character, talents string) *Priest {
 type PriestAgent interface {
 	GetPriest() *Priest
 }
+
+// downrankCoefficient is a rank's spell power coefficient under Forever's downranking penalty.
+// Blizzard's beta development notes (2026-10-01, us.forums.blizzard.com/en/wow/t/2360696/4):
+// "spells cast using spell ranks vastly below your current level receive less benefit from your
+// Spell Damage and Spell Healing". The size is foreverchanges.pro/downranking's measured
+// formula (beta heals up to level 30, assumed for damage spells and level 60): the rank keeps
+// 1 - 5% for each level it is learned more than 17 levels below the caster, at least 0.
+// Classic keeps its own rules.
+func (priest *Priest) downrankCoefficient(coefficient float64, learnLevel int) float64 {
+	if priest.Env == nil || !priest.Env.IsForever() {
+		return coefficient
+	}
+	return coefficient * max(0, min(1, 1-0.05*float64(int(priest.Level)-17-learnLevel)))
+}

@@ -68,7 +68,7 @@ func (priest *Priest) getHolyFireConfig(rank int) core.SpellConfig {
 			},
 		},
 
-		BonusCoefficient: directCoeff,
+		BonusCoefficient: priest.downrankCoefficient(directCoeff, level),
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -80,7 +80,7 @@ func (priest *Priest) getHolyFireConfig(rank int) core.SpellConfig {
 
 			NumberOfTicks:    ticks,
 			TickLength:       time.Second * 2,
-			BonusCoefficient: dotCoeff,
+			BonusCoefficient: priest.downrankCoefficient(dotCoeff, level),
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, dotDamage, isRollover)

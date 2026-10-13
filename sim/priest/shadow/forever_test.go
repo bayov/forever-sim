@@ -139,3 +139,26 @@ func TestInnerFocusCost(t *testing.T) {
 		t.Errorf("Devouring Plague costs %.2f under Inner Focus, want %.2f", got, plagueCost)
 	}
 }
+
+// TestDownrankCoefficient checks Forever's downranking penalty at level 60: a rank keeps its
+// full spell power coefficient up to 17 levels below the caster and loses 5% of it for each
+// level past that (Smite rank 7 at 46 keeps it, rank 6 at 38 keeps 75%, rank 4 at 22 nothing).
+func TestDownrankCoefficient(t *testing.T) {
+	_, sp := newShadowPriestSim(t, "005030231305--500321501201302051")
+	checks := []struct {
+		rank int
+		want float64
+	}{
+		{8, priest.SmiteSpellCoef[8]},
+		{7, priest.SmiteSpellCoef[7]},
+		{6, priest.SmiteSpellCoef[6] * 0.75},
+		{5, priest.SmiteSpellCoef[5] * 0.35},
+		{4, 0},
+	}
+	for _, c := range checks {
+		got := sp.Smite[c.rank].BonusCoefficient
+		if math.Abs(got-c.want) > 1e-9 {
+			t.Errorf("Smite rank %d coefficient %.4f, want %.4f", c.rank, got, c.want)
+		}
+	}
+}
