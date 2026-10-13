@@ -13,6 +13,13 @@
 		}
 	}
 
+	// The main hand and off hand weapon skill inputs in the Player section, side by side.
+	.weapon-skill-gaps {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--spacer-3);
+	}
+
 	// The saved encounters at the top of the Encounter section, like the stat weight presets.
 	.encounter-presets {
 		margin-bottom: var(--block-spacer);

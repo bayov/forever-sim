@@ -170,11 +170,15 @@ export class SettingsTab extends SimTab {
 
 		new ProfessionsPicker(contentBlock.bodyElement, this.simUI.player);
 
-		// Every spec reacts to procs, so Reaction Time is global too. Every spec can swing a
-		// weapon it hasn't leveled yet, so the weapon skills are too.
-		this.configureInputSection(contentBlock.bodyElement, {
-			inputs: [OtherInputs.ReactionTime, OtherInputs.MainHandSkillGap, OtherInputs.OffHandSkillGap],
-		});
+		// Every spec reacts to procs, so Reaction Time is global too.
+		this.configureInputSection(contentBlock.bodyElement, { inputs: [OtherInputs.ReactionTime] });
+
+		// Every spec can swing a weapon it hasn't leveled yet, so the weapon skills are global
+		// too, the two hands side by side.
+		const weaponSkills = document.createElement('div');
+		weaponSkills.classList.add('weapon-skill-gaps');
+		contentBlock.bodyElement.appendChild(weaponSkills);
+		this.configureInputSection(weaponSkills, { inputs: [OtherInputs.MainHandSkillGap, OtherInputs.OffHandSkillGap] });
 	}
 
 	private buildCustomSettingsSections() {
