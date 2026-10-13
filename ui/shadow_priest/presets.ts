@@ -91,7 +91,7 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 P
 // The same set for the Smite build without hit rating: Holy Precision gives Smite, Holy Fire and
 // Penance 18%, so it has its own pieces in the Smite stat mix (SoD's shadow proportions without
 // hit: 16.6% Stamina, 17.8% Intellect, 10% Spirit, 43.5% spell power, 12.2% crit; armor 708.2,
-// staff 194.0, wand 21.5) and the same two trinkets. The staff is 30.6 ahead of the sword and
+// staff 194.0, wand 21.5) and the same two trinkets. The staff is 29.8 ahead of the sword and
 // off hand, and the bundled gear round moved Smite from 711.1 to 708.1 at 180 sec. Its hands
 // take Forever's Enchant Gloves - Holy Power (+20 Holy damage, 5.1 ahead of the armor kit). Its
 // head and shoulders carry Vestments of Conviction, Forever's Tier 1 Discipline and Holy set, so
@@ -153,13 +153,13 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Infusion on cooldown after a Smite 2 sec before the pull that lands at 0 (+6.0; the on-use
 // trinket at -0.1 sec so it lands with the trinket up, +1.0 / +0.7 / +0.4), Holy Fire
 // whenever its damage over time is down (Power in Light gives
-// Smite 10% while it is up), Shadow Word: Pain, Devouring Plague above 20% mana, Chastise for a
+// Smite 10% while it is up), Shadow Word: Pain, Devouring Plague above 40% mana, Chastise for a
 // Dwarf, Inner Focus on Holy Fire (0.2 ahead of Smite at 180 sec, 0.6 at 300; Devouring Plague
 // is not in its free-cast mask), then rank 8 Smite while the mana lasts the fight
-// at 20 mana a second and rank 4 Smite after. Forever gives Smite ranks 3 and up the full
-// coefficient, so the low rank keeps most of the damage for a third of the mana (from the
-// rotation audit): +1.8 at 180 sec and +10 at 300 over rank 8 alone. Rank 3 is 0.9 ahead at 300
-// sec, but it is learned at level 14 and a Classic style penalty below level 20 would cut it.
+// at 35 mana a second and rank 7 Smite after. Forever's downranking penalty (Blizzard's
+// development notes, 2026-10-01; foreverchanges.pro/downranking's measured size, see notes.md)
+// leaves rank 7 (level 46) its full coefficient at 60 and the earlier rank 4 fallback none: the
+// old rotation would fall to 701.4 / 545.0 at 180 / 300 sec, this one is 706.5 / 643.8.
 // The search drops the spells that give the least damage for their mana: Mind Blast, Shadow
 // Word: Death and even Penance (385 mana for three 92 damage bolts). A timeline shows Smite
 // every 2 sec (Divine Fury) and Holy Fire back up within a cast of falling off.
@@ -219,9 +219,9 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // (Holy Specialization 5, Divine Fury 5, Searing Light 2) with 3 points of Shadow Focus for
 // Shadow Word: Pain's hit. The deep Holy start ends at 608.9.
 //
-// On its own set with its own consumes (see the build) it is 712.4 / 708.8 / 687.0 at 120 / 180
+// On its own set with its own consumes (see the build) it is 712.4 / 706.5 / 643.8 at 120 / 180
 // / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. That is 17% behind
-// Shadow at 180 sec and 19% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
+// Shadow at 180 sec and 24% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
 export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525030231305001001-00505113002-3' }), {
 	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light).',
@@ -462,12 +462,12 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec,
 // 2026-10-13, bundled gear round):
-//   Undead    712.4 / 708.8 / 687.0  (best overall and Horde)
-//   Gnome     716.1 / 703.3 / 680.5  (best Alliance)
-//   Night Elf 713.0 / 697.4 / 676.6
-//   Troll     711.4 / 696.6 / 675.1
-//   Human     709.0 / 694.8 / 674.4
-//   Dwarf     708.6 / 693.7 / 673.3  (the generic boss is no Humanoid, so no Chastise; it cost
+//   Undead    712.4 / 706.5 / 643.8  (best overall and Horde)
+//   Gnome     716.0 / 699.1 / 618.8  (best Alliance)
+//   Night Elf 711.5 / 689.0 / 606.7
+//   Human     707.9 / 688.1 / 607.5
+//   Troll     709.7 / 686.6 / 603.2
+//   Dwarf     707.0 / 685.0 / 602.7  (the generic boss is no Humanoid, so no Chastise; it cost
 //             the Dwarf 8 DPS against a Humanoid)
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
