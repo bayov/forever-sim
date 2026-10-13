@@ -540,6 +540,7 @@
 
 .rotation-timeline-stacks-change {
 	position: absolute;
+	top: 0;
 	height: 24px;
 	display: flex;
 	align-items: center;
@@ -548,6 +549,20 @@
 	font-size: 0.6875rem;
 	font-weight: 600;
 	overflow-x: hidden;
+
+	&.after-icon {
+		padding-left: 26px;
+		border-left: 0;
+	}
+}
+
+// The icon at the start of an aura's bar. It covers the bar's colored left edge. We nest it under
+// the bar, so it wins over the cast icon's position, which comes later in the file.
+.rotation-timeline-aura .rotation-timeline-aura-icon {
+	position: absolute;
+	top: 0;
+	left: -2px;
+	z-index: 1;
 }
 
 // The GCD row. Each bar is one GCD in the color of its ability's icon, with the cast time as

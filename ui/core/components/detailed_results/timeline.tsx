@@ -1471,10 +1471,13 @@ export class Timeline extends ResultComponent {
 		};
 		this.addRow(row);
 
-		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row);
+		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row, true);
 	}
 
-	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, row: RotationRow) {
+	// Draws a bar for each time the aura is up. In the aura's own lane, the bar starts with the
+	// aura's icon, like a cast. A cast lane shows its ability's auras without one, because the
+	// cast that put the aura up already has it.
+	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, row: RotationRow, withIcon = false) {
 		auraUptimeLogs.forEach(aul => {
 			const auraElem = (
 				<div
@@ -1487,6 +1490,11 @@ export class Timeline extends ResultComponent {
 			);
 			row.row.appendChild(auraElem);
 			this.tint(auraElem as HTMLElement, aul.actionId?.iconUrl);
+			if (withIcon && aul.actionId) {
+				const iconElem = (<a className="rotation-timeline-cast-icon rotation-timeline-aura-icon" />) as HTMLAnchorElement;
+				aul.actionId.setBackground(iconElem);
+				auraElem.appendChild(iconElem);
+			}
 			row.events.push({ elem: auraElem, text: searchText([aul, ...aul.stacksChange]) });
 
 			const tt = (
@@ -1510,9 +1518,10 @@ export class Timeline extends ResultComponent {
 					return;
 				}
 
+				// The stacks the aura starts with go after its icon.
 				const stacksChangeElem = (
 					<div
-						className="rotation-timeline-stacks-change"
+						className={`rotation-timeline-stacks-change${withIcon && scl.timestamp == aul.timestamp ? ' after-icon' : ''}`}
 						style={{
 							left: this.timeToPx(scl.timestamp - aul.timestamp),
 							width: this.timeToPx(aul.stacksChange[i + 1] ? aul.stacksChange[i + 1].timestamp - scl.timestamp : aul.fadedAt - scl.timestamp),
