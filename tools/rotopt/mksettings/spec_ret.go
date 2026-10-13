@@ -22,7 +22,7 @@ func init() {
 		// set at 180 and 300 sec (see the Level 60 consumes in ui/retribution_paladin/presets.ts).
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
-				AgilityElixir:     proto.AgilityElixir_ElixirOfGreaterAgility,
+				AgilityElixir:     proto.AgilityElixir_ElixirOfCunning,
 				AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 				DefaultPotion:     proto.Potions_MajorManaPotion,
 				DefaultConjured:   proto.Conjured_ConjuredDemonicRune,

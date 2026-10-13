@@ -314,9 +314,13 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // Power on the final set by 1.6 / 1.5 / 0.8 at 180 sec (twist / sub Holy / Shock). Greater Spirit is worth 1.3 on Shock and nothing on the
 // twist build, Greater Agility 9 and 5. Lobster Stew beats Nightfin Soup by 3 (Mightfish Steak
 // and Flank au Poivre are 3 to 4 behind), and Greater Mageblood Elixir takes the Mageblood
-// Potion's place (the same at 180 sec, 3.3 at 300).
+// Potion's place (the same at 180 sec, 3.3 at 300). From the consumables audit (2026-10-13):
+// Forever's Elixir of Cunning (25 Agility and 25 Intellect, no crit, so it goes with the Owl)
+// takes Greater Agility's place, +8.9 / +9.4 / +7.3 at 180 sec on twist / sub Holy / Shock and
+// +10.5 on sub Holy vs Undead. The Major Frenzy Potion loses to the Major Mana Potion and
+// Mightfish Steak to Lobster Stew.
 export const DefaultConsumes = Consumes.create({
-	agilityElixir: AgilityElixir.ElixirOfGreaterAgility,
+	agilityElixir: AgilityElixir.ElixirOfCunning,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
