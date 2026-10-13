@@ -94,7 +94,7 @@ func channel(spell *proto.ActionID, condition value, interruptIf value, notes st
 	}
 }
 
-func manaAbove(percent float64) value {
+func priestManaAbove(percent float64) value {
 	if percent <= 0 {
 		return nil
 	}
@@ -135,12 +135,12 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		if k["dpMinTime"] > 0 {
 			dpTime = ge(remainingTime(), seconds(k["dpMinTime"]))
 		}
-		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), dpTime, manaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
+		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), dpTime, priestManaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
 	}
 
 	var swdLine *proto.APLListItem
 	if k["swd"] > 0 {
-		var cond value = manaAbove(k["swdMana"])
+		var cond value = priestManaAbove(k["swdMana"])
 		notes := "Shadow Word: Death on cooldown."
 		if k["swd"] == 2 {
 			cond = and(cond, isExecutePhase20())
@@ -170,7 +170,7 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	} else if k["innerFocus"] == 2 {
 		items = append(items, cast(innerFocus, nil, "Inner Focus on cooldown. Without the talent ignore the warning on this line."))
 	}
-	items = append(items, cast(mindBlast, manaAbove(k["mbMana"]), "Mind Blast on cooldown."))
+	items = append(items, cast(mindBlast, priestManaAbove(k["mbMana"]), "Mind Blast on cooldown."))
 	if swdLine != nil && k["swdFirst"] == 0 {
 		items = append(items, swdLine)
 	}
@@ -184,7 +184,7 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	var clip value
 	mfNotes := "Mind Flay fills."
 	if k["mfClip"] > 0 {
-		clip = and(spellIsReady(mindBlast), manaAbove(k["mbMana"]), ge(channeledTicks(mindFlay), num(k["mfClip"])))
+		clip = and(spellIsReady(mindBlast), priestManaAbove(k["mbMana"]), ge(channeledTicks(mindFlay), num(k["mfClip"])))
 		mfNotes = "Mind Flay fills, clipped for a ready Mind Blast."
 	}
 	if k["mfClipDots"] > 0 {

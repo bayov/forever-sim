@@ -78,30 +78,30 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 
 	if k["holyFire"] == 1 {
 		if k["innerFocus"] == 1 {
-			items = append(items, cast(innerFocus, and(not(dotIsActive(holyFire)), manaAbove(k["holyFireMana"])), "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line."))
+			items = append(items, cast(innerFocus, and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"])), "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line."))
 		}
-		items = append(items, cast(holyFire, and(not(dotIsActive(holyFire)), manaAbove(k["holyFireMana"])), "Holy Fire whenever its damage over time is down, for Power in Light."))
+		items = append(items, cast(holyFire, and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"])), "Holy Fire whenever its damage over time is down, for Power in Light."))
 	}
 	if k["penance"] == 1 {
 		items = append(items, channel(penance, nil, nil, "Penance on cooldown. Without the talent ignore the warning on this line."))
 	}
 	if k["swp"] == 1 {
-		items = append(items, cast(shadowWordPain, and(not(dotIsActive(shadowWordPain)), ge(remainingTime(), seconds(9)), manaAbove(k["swpMana"])), "Shadow Word: Pain whenever it is down."))
+		items = append(items, cast(shadowWordPain, and(not(dotIsActive(shadowWordPain)), ge(remainingTime(), seconds(9)), priestManaAbove(k["swpMana"])), "Shadow Word: Pain whenever it is down."))
 	}
 	if k["dp"] == 1 {
-		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), manaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
+		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), priestManaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
 	}
 	if k["chastise"] == 1 {
 		items = append(items, cast(chastise, nil, "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."))
 	}
 	if k["mb"] == 1 {
 		if k["innerFocus"] == 3 {
-			items = append(items, cast(innerFocus, and(spellIsReady(mindBlast), manaAbove(k["mbMana"])), "Inner Focus right before Mind Blast. Without the talent ignore the warning on this line."))
+			items = append(items, cast(innerFocus, and(spellIsReady(mindBlast), priestManaAbove(k["mbMana"])), "Inner Focus right before Mind Blast. Without the talent ignore the warning on this line."))
 		}
-		items = append(items, cast(mindBlast, manaAbove(k["mbMana"]), "Mind Blast on cooldown."))
+		items = append(items, cast(mindBlast, priestManaAbove(k["mbMana"]), "Mind Blast on cooldown."))
 	}
 	if k["swd"] == 1 {
-		items = append(items, cast(shadowWordDeath, manaAbove(k["swdMana"]), "Shadow Word: Death on cooldown."))
+		items = append(items, cast(shadowWordDeath, priestManaAbove(k["swdMana"]), "Shadow Word: Death on cooldown."))
 	}
 	if k["innerFocus"] == 2 {
 		items = append(items, cast(innerFocus, nil, "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."))
