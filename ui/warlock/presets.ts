@@ -54,35 +54,35 @@ export const GearPreBis = PresetUtils.makePresetGear('Pre-BIS', PreBisGear);
 export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 
 // Forever's level 60 gear is not tuned yet and Molten Core has no Forever data, so the Level 60
-// presets wear synthetic items (tools/database/forever_synthetic_items_warlock.go): the Era Phase
-// 1 BiS (the Felheart set, Robe of Volatile Power, Mana Igniting Cord, Choker of the Fire Lord)
-// rebuilt on the cross-class standard (one item level table, the epic budgets spent linearly) in
-// the fair stat mix of real level 60 warlock gear (standards 5a, Season of Discovery BiS
-// proportions): Stamina 18%, Intellect 19%, Spirit 10%, spell power 28%, crit 13% (434 spell
-// power, 7.9% crit) and hit to the 16% cap against a level 63 boss: 10% from gear with
-// Suppression 5/5 and the 2 piece. The rebudget from the old all-spell-power set (524 spell power,
-// 5% crit) cost 3 to 5% (Demonology 1088.5 to 1053.2, Destruction 984.9 to 948.2, Affliction
-// 976.2 to 939.8, Destruction fire 976.2 to 932.4 at 180 sec). The weapon is a synthetic staff at
-// the caster weapon budget (Azuresong Mageblade's 46.2 and an off hand at 71, 73.7) with Enchant
-// 2H Weapon - Spellblasting (+65 spell power): it beats the synthetic Azuresong and off hand with
-// Mighty Intellect and Off-Hand - Wisdom by 23 to 33 on every build (on the old set). Only the head and chest carry
-// Demonheart Raiment, Forever's warlock Tier 1 set, so only its 2 piece (1% hit) is live; the 5
-// piece's 20% more mana from Life Tap would add 12.9 on Demonology and 8.4 to 8.8 on Destruction and
-// Affliction at 180 sec on the old set (the 4 piece is 21 spell power against Demons only). No trinkets: Talisman
-// of Ephemeral Power is a Molten Core drop and Briarwood Reed is gone from the Forever client, so
-// trinkets are excluded until Forever's launch trinkets are simulated. Enchants, the best Phase 1
-// one per slot with no raid source: Lesser Arcanum of Voracity on the head (Arcanum of Focus is a
-// Zandalar one), Enchant Necklace - Spell Power, the Mystic Rugged Armor Kit (+6 spell power) on
-// the chest, hands, legs and feet (2 ahead of Greater Stats on the chest and Voracity on the legs),
-// Bracer - Greater Spellpower and Spellblasting on the staff. No Phase 1 enchant adds damage on the
-// shoulders or back.
+// presets wear synthetic items (tools/database/forever_synthetic_items_warlock.go): the Era Phase 1
+// BiS (the Felheart set, Robe of Volatile Power, Mana Igniting Cord, Choker of the Fire Lord) rebuilt
+// on Forever's budget for a caster (standards 1b: spell power at 0.86, each armor piece at slot mod x
+// (1.125 item level + 2) x 1.053 / 1.026 / 0.995 in linear stats, four stat lines a piece within 4% of
+// the 1.7-norm shape target) in the fair stat mix of real level 60 warlock gear (standards 5a, Season of
+// Discovery BiS proportions): Stamina 14.4%, Intellect 16.0%, Spirit 10.1%, spell power 38.3%, crit
+// 10.4% (412 spell power, 6.9% crit), hit to the 16% cap against a level 63 boss: 10% from gear with
+// Suppression 5/5 and the 2 piece. Armor 709.6, the staff (item level 76) at Forever's caster rate of
+// 193.4 with Enchant 2H Weapon - Spellblasting (+65 spell power), the wand 21.3. Two synthetic
+// trinkets: +38 spell power and 13 crit rating, and an on-use 140 spell power for 20 sec every 2 min
+// (no real Phase 1 trinket is obtainable or simulated). At 180 sec the builds went from the first,
+// all-spell-power set (524 spell power, 5% crit, no trinkets) at 1088.5 / 984.9 / 976.2 / 976.2 to
+// 1053.2 / 948.2 / 939.8 / 935.0 on the fair mix (1a) and 1109.8 / 985.4 / 977.4 / 969.0 now
+// (Demonology / Destruction / Affliction / Destruction fire). Only the head and chest carry
+// Demonheart Raiment, Forever's warlock Tier 1 set, so only its 2 piece (1% hit) is live; on the first
+// set the 5 piece's 20% more mana from Life Tap would have added 12.9 on Demonology and 8.4 to 8.8 on
+// Destruction and Affliction at 180 sec (the 4 piece is 21 spell power against Demons only).
+// Enchants, the best Phase 1 one per slot with no raid source: Lesser Arcanum of Voracity on the head
+// (Arcanum of Focus is a Zandalar one), Enchant Necklace - Spell Power, the Mystic Rugged Armor Kit
+// (+6 spell power) on the chest, hands, legs and feet, Bracer - Greater Spellpower and Spellblasting on
+// the staff. No Phase 1 enchant adds damage on the shoulders or back.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
 	group: 'Level 60',
 });
 // Demonology keeps one point of Suppression, so it swaps four pieces (the chest, legs, waist and
-// staff) for hit variants (14% hit from gear) at the same budget, in Demonology's own stat mix.
-// Suppression 5/5 on the shared set is 52 behind (1000.8 against 1053.2 at 180 sec).
+// staff) for hit variants (14% hit from gear) at the same budget, in Demonology's own stat mix:
+// Stamina 13.5%, Intellect 12.9%, Spirit 9.9%, spell power 36.4%, crit 12.1%, hit 15.1%. Suppression
+// 5/5 on the shared set is 72 behind (1038.0 against 1110.1 at 180 sec).
 export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear(
 	'Level 60 Phase 1 Synthetic Demonology',
 	Level60Phase1SyntheticDemonologyGearJSON,
@@ -359,22 +359,22 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the fair stat-mix
-// sets): Demonology (Gnome) 1069.1 / 1053.2 / 1026.5, Destruction (Gnome) 957.2 / 948.2 / 931.8,
-// Affliction (Gnome) 948.5 / 939.8 / 923.2, Destruction fire (Undead) 941.5 / 935.0 / 921.7.
-// Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and Corruption
-// VI. The demons take no player buffs and scale from the warlock's stats with Season of
-// Discovery's numbers as a placeholder (notes.md). The demon is the least sourced input: on the
-// old set at 180 sec, without the owner scaling Demonology was 1037.8 and the other builds 937 to
-// 946, with the Succubus's melee halved 1044.5 and 937 to 947.
+// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the Forever budget sets
+// with the synthetic trinkets): Demonology (Gnome) 1120.8 / 1109.8 / 1080.8, Destruction (Gnome) 992.5
+// / 985.4 / 966.3, Affliction (Gnome) 982.5 / 977.4 / 958.3, Destruction fire (Undead) 972.2 / 969.0
+// / 953.7. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and
+// Corruption VI. The demons take no player buffs and scale from the warlock's stats with Season of
+// Discovery's numbers as a placeholder (notes.md). The demon is the least sourced input: on the first
+// set at 180 sec, without the owner scaling Demonology was 1037.8 and the other builds 937 to 946, with
+// the Succubus's melee halved 1044.5 and 937 to 947.
 //
-// Races at 180 sec, then Human, Orc and Troll behind: the Gnome is first on Demonology (1.7 ahead
-// of the Undead) and Affliction (2.2), level with the Undead on Destruction (the Undead is 1.4
-// ahead at 300 sec), and 2.6 behind it on Destruction fire at every length, so that build is
-// Undead. The Gnome is the best Alliance race on every build, the Undead the best Horde one, 2.2 to
-// 4.8 ahead of the Orc. With the staff no warlock race has a weapon racial; on the old Azuresong
-// sword the Human's Sword Specialization had put it first. The full table is in
-// forever-wiki/sim-status.md.
+// Races at 180 sec: the Gnome is first on Demonology (5.3 ahead of the Undead), Destruction (1.5 ahead
+// of the Orc) and Affliction (3.8 ahead of the Orc), and level with the Undead on Destruction fire
+// (969.0 to 968.9; the Undead is 1.3 ahead at 300 sec, so that build is Undead). The Gnome is the best
+// Alliance race on every build. For the Horde the Undead and the Orc are within 0.6 of each other on
+// the Shadow Bolt builds and the Undead is 2.1 ahead on Destruction fire, so the Undead is the best
+// Horde race. With the staff no warlock race has a weapon racial; on the old Azuresong sword the Human's
+// Sword Specialization had put it first. The full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
