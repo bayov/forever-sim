@@ -38,8 +38,9 @@ import Level60Phase1SyntheticArcaneGear from './gear_sets/level60_phase1_synthet
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
 
-// The Level 60 presets were searched on 2026-10-12 with tools/rotopt (the mage_arcane, mage_fire,
-// mage_frost and mage_frostfire templates, mage_presets.sh) against the level 60 raid in
+// The Level 60 presets were searched on 2026-10-12, and again on 2026-10-13 on the fair mix gear,
+// with tools/rotopt (the mage_arcane, mage_fire, mage_frost and mage_frostfire templates,
+// mage_presets.sh) against the level 60 raid in
 // tools/rotopt/mksettings (spec_mage.go): the Level 60 boss (level 63, 3731 armor, Humanoid),
 // Blessings of Kings and Wisdom, Arcane Brilliance, Mana Spring Totem, Moonkin Aura, Curse of the
 // Elements and the other shared debuffs. Improved Scorch and Winter's Chill are the mage's own
@@ -55,29 +56,33 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_mage.go (ids from 996001, not in the game), on the
-// cross-class standards every class's Level 60 preset follows. Each piece has the full epic
-// budget of its slot at Forever's cheaper spell power, at one item level table for everyone (66
-// for head, shoulders, chest, hands, legs and feet, 71 for the rest): 526 spell power, 137
-// Intellect, 80 Spirit (10% of the budget), 10% hit and 6% crit. With Elemental Precision or
-// Arcane Focus and Manaflare Regalia's 2 piece bonus (1% hit, on the head and chest only) that is
-// the 16% cap against a level 63 boss. The 4 and 5 piece bonuses would add 62.9 (7%) to Frostfire
-// at 180 sec and nothing to the others (the 5 piece is all Frostfire Bolt, the 4 piece only
-// against Elementals).
+// cross-class standards every class's Level 60 preset follows. Each piece is spent linearly at
+// 1.73 times its slot's epic budget, at one item level table for everyone (66 for head,
+// shoulders, chest, hands, legs and feet, 71 for the rest). The stats are a fair mix in the
+// proportions of Season of Discovery's level 60 BiS mage sets (standards 5a): Stamina 18% and
+// Spirit 10% of the set, then Intellect, spell power and crit. Frostfire, Fire and Frost share
+// one set: 425 spell power, 160 Intellect, 153 Stamina, 85 Spirit, 10% hit and 117 crit rating
+// (8.4%). Arcane has its own set with more spell power and less crit: 485 spell power, 162
+// Intellect, 81 crit rating (5.8%), the rest the same. With Elemental Precision or Arcane Focus
+// and Manaflare Regalia's 2 piece bonus (1% hit, on the head and chest only) the hit is the 16%
+// cap against a level 63 boss. The 4 and 5 piece bonuses would add 54.5 (6%) to Frostfire at
+// 180 sec and nothing to the others (the 5 piece is all Frostfire Bolt, the 4 piece only against
+// Elementals).
 //
 // The weapon is a staff with Staff of Dominance's damage and the budget of Azuresong Mageblade
-// and an off hand together. With Forever's 2H Spellblasting (+65 spell power) it is 16 to 40
-// ahead of the sword and off hand, so Human's sword crit no longer counts. No trinkets: Forever
+// and an off hand together. With Forever's 2H Spellblasting (+65 spell power) it is 32 to 40
+// ahead of the sword and off hand, so Human's sword crit doesn't count. No trinkets: Forever
 // removed the old dungeon ones and its launch trinkets aren't simulated yet. The enchants are the
 // best Phase 1 ones without a raid source: Lesser Arcanum of Voracity (Intellect), +6 spell power
 // on the neck, Mystic Rugged Armor Kits (+6 spell power) on chest, hands, legs and feet, Greater
 // Spellpower (+16) on the wrist and Spellblasting on the staff. Arcane wears Gloves - Arcane Power
-// (+20 Arcane) instead of the kit, 7.6 ahead.
+// (+20 Arcane) instead of the kit, 7.7 ahead.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 export const GearLevel60Phase1SyntheticArcane = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Arcane)', Level60Phase1SyntheticArcaneGear, {
-	tooltip: 'The Level 60 synthetic set with Gloves - Arcane Power, for Arcane.',
+	tooltip: 'The Level 60 synthetic Arcane set (more spell power, less crit) with Gloves - Arcane Power.',
 	group: 'Level 60',
 });
 
@@ -126,8 +131,9 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire',
 });
 // Arcane Blast to 2 stacks, then Arcane Missiles on a Missile Barrage proc. Without one, Arcane
 // Blast goes on to 4 stacks and the missiles go anyway, ending the stacks and taking their
-// bonus. Below 30% mana one Arcane Blast and the missiles. That is 16 DPS ahead of three Arcane
-// Blasts and the missiles whatever the proc (the template's default). No Evocation.
+// bonus. Below 20% mana one Arcane Blast and the missiles (30% was 1 behind on the fair mix gear).
+// That is ahead of three Arcane Blasts and the missiles whatever the proc (the template's
+// default). No Evocation.
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Level 60 Arcane', Level60ArcaneAPL, {
 	tooltip: 'Arcane Blast stacks spent by Arcane Missiles, on Missile Barrage where it can.',
 	group: 'Level 60',
@@ -151,7 +157,7 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
 // Frost (Ice Lance only because Fingers of Frost needs it). Frostfire Bolt is Fire and Frost at
 // once, so it gets Fire Power, Ignite and Critical Mass and also Ice Shards, Piercing Ice and
-// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 923.2 / 903.4 / 888.6
+// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 888.2 / 860.2 / 850.3
 // at 120 / 180 / 300 sec (Undead). Frost Channeling 3 does nothing for this build (the client
 // leaves Frostfire Bolt out of it, the talent verification shows 0.0 either way): the points are
 // the 20 in Frost that Fingers of Frost needs.
@@ -165,7 +171,7 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // casts; no other place for the 3 points gains anything either (the search found no move above
 // +0.0). Four seeds (deep Frost, Frost with
 // Arcane Meditation, Frost with Incineration and a 51 point Frost build) all ended within 0.2.
-// It is 744.7 / 743.6 / 744.0 (Undead), 18% behind Frostfire, and last of the four now that Ice
+// It is 705.8 / 704.6 / 705.0 (Undead), 18% behind Frostfire, and last of the four now that Ice
 // Lance takes no spell power (with SoD's 42.9% it was second).
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost', SavedTalents.create({ talentsString: '050005-03-0555300331001301251' }), {
 	tooltip: "Deep Frost: Frostbolt, Fingers of Frost, Shatter, Winter's Chill.",
@@ -174,7 +180,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 // Fire (16/31/4): every Fire damage talent to Combustion, with Arcane Concentration and Missile
 // Barrage (Fireball has 20% to make Arcane Missiles free and fast) and Elemental Precision 4.
 // Arcane Impact 3 over Improved Channeling and Wake of Fire 2 over Master of Elements 3 are 1 and
-// 3 ahead. It is 886.5 / 867.2 / 857.3 (Undead), 4%
+// 3 ahead. It is 851.0 / 836.3 / 824.6 (Undead), 3%
 // behind Frostfire. Fire with Frost (Elemental Precision, Ice Shards) was 740 at 180 sec on the
 // old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
@@ -185,8 +191,8 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 // Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
 // 3 (it covers Arcane Blast). The 15 Frost points do nothing for Arcane Blast and Arcane Missiles:
 // the trees have nothing else they can buy, so they sit where a Frost filler would use them. Three
-// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 833.3 /
-// 822.2 / 812.1 (Undead, on the Arcane gear), 9% behind Frostfire.
+// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 816.3 /
+// 806.8 / 797.0 (Undead, on the Arcane gear), 6% behind Frostfire.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
 	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
 	group: 'Level 60',
@@ -345,12 +351,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // forever-wiki/sim-status.md). The staff has no racial, so the table is the same with weapon
 // racials off. Undead (Touch of the Grave at 10% for mages) is best on every build and the best
 // Horde race. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana)
-// on Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome is ahead at 120 and 300 sec
-// (927.0 and 890.2 against Undead's 923.2 and 888.6).
-//   Frostfire: Undead 903.4, High Order 901.6, Orc 901.6, Troll 897.2, Gnome 896.5, Human 893.5.
-//   Fire:      Undead 867.2, Gnome 866.0, Orc 862.7, Human 857.5, Troll 856.2, High Order 856.1.
-//   Arcane:    Undead 822.2, Orc 813.9, Gnome 813.0, Troll 809.7, Human 807.0, High Order 804.1.
-//   Frost:     Undead 743.6, High Order 742.4, Gnome 741.4, Orc 740.9, Troll 740.8, Human 735.1.
+// on Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome ties Undead at 120 and 300
+// sec (889.0 and 850.7 against 888.2 and 850.3, inside the noise).
+//   Frostfire: Undead 860.2, High Order 857.4, Gnome 856.4, Orc 856.2, Troll 852.5, Human 850.6.
+//   Fire:      Undead 836.3, Gnome 831.1, Orc 828.6, Human 823.9, High Order 823.0, Troll 822.9.
+//   Arcane:    Undead 806.8, Orc 795.3, Gnome 794.6, Troll 791.6, Human 788.5, High Order 786.2.
+//   Frost:     Undead 704.6, High Order 701.8, Gnome 700.8, Troll 700.3, Orc 700.0, Human 694.9.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,

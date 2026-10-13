@@ -143,9 +143,20 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 ### Mage
 
-Four builds on one synthetic Phase 1 set (`tools/database/forever_synthetic_items_mage.go`, ids 996001 to 996016), made to the cross-class standards (orchestration/standards.md). Every piece gets its slot's budget at the shared item levels (66 for head, shoulders, chest, hands, legs and feet, 71 for the rest), and the set carries 526 spell power, 137 Intellect, 80 Spirit (10% of the budget), 10% hit and 6% crit. That hit, with Elemental Precision or Arcane Focus and the 2 piece, is the 16% cap against a level 63 boss. The Manaflare Regalia set (Forever's level 60 mage set) is on the head and chest only, so only its 2 piece bonus (1% hit) is live; its 4 and 5 piece would add 62.9 (7%) to Frostfire at 180 sec and nothing to the other builds.
+Four builds on two synthetic Phase 1 sets (`tools/database/forever_synthetic_items_mage.go`): one for Frostfire, Fire and Frost (ids 996001 to 996016) and one for Arcane (996017 to 996030). Both are made to the cross-class standards (orchestration/standards.md). Every piece is spent linearly at 1.73 times its slot's budget (item 1a), at the shared item levels (66 for head, shoulders, chest, hands, legs and feet, 71 for the rest). The stats are a fair mix (item 5a) in the proportions of Season of Discovery's level 60 BiS mage sets (orchestration/gear_targets.md): Stamina 18% and Spirit 10% of the set, then Intellect, spell power and crit, with school power counted as spell power.
 
-The weapon is a staff at the caster weapon budget (Azuresong Mageblade's 46.2 plus an off hand's 27.5), with Staff of Dominance's damage and Forever's 2H Spellblasting (+65 spell power). It is 16 to 40 ahead of a sword and off hand. No trinkets: Forever removed the old dungeon trinkets and its launch trinkets aren't simulated yet. The enchants are the best Phase 1 ones with no raid source: Lesser Arcanum of Voracity, +6 spell power on the neck, Mystic Rugged Armor Kits (+6 spell power) on chest, hands, legs and feet, and Greater Spellpower (+16) on the wrist. Arcane wears Gloves - Arcane Power (+20 Arcane) instead, 7.6 ahead. Enchant Weapon - Spell Power is a Molten Core formula, and Revelation's model is unverified for casters, so neither is used.
+| Set | Sta | Int | Spi | SP | Hit | Crit |
+|---|---|---|---|---|---|---|
+| Main, target % | 18 | 18.6 | 10 | 27.3 | 12.8 | 13.4 |
+| Main, actual % | 18.0 | 18.9 | 10.0 | 27.5 | 11.8 | 13.8 |
+| Main, amount | 153 | 160 | 85 | 425 | 100 | 117 |
+| Arcane, target % | 18 | 18.7 | 10 | 30.7 | 12.8 | 9.4 |
+| Arcane, actual % | 18.2 | 19.1 | 10.0 | 31.4 | 11.8 | 9.5 |
+| Arcane, amount | 155 | 162 | 85 | 485 | 100 | 81 |
+
+The 100 hit rating (10%), with Elemental Precision or Arcane Focus and the 2 piece, is the 16% cap against a level 63 boss. The Manaflare Regalia set (Forever's level 60 mage set) is on the head and chest only, so only its 2 piece bonus (1% hit) is live; its 4 and 5 piece would add 54.5 (6%) to Frostfire at 180 sec and nothing to the other builds. The fair mix cost 1.9% (Arcane) to 5.2% (Frost) at 180 sec against the earlier spell power heavy set (526 spell power, 12% Stamina): Frostfire 903.4 to 860.2, Fire 867.2 to 836.3, Arcane 822.2 to 806.8, Frost 743.6 to 704.6.
+
+The weapon is a staff at the caster weapon budget (Azuresong Mageblade's 46.2 plus an off hand's 26.8), with Staff of Dominance's damage and Forever's 2H Spellblasting (+65 spell power). It is 32 to 40 ahead of a sword and off hand. No trinkets: Forever removed the old dungeon trinkets and its launch trinkets aren't simulated yet. The enchants are the best Phase 1 ones with no raid source: Lesser Arcanum of Voracity, +6 spell power on the neck, Mystic Rugged Armor Kits (+6 spell power) on chest, hands, legs and feet, and Greater Spellpower (+16) on the wrist. Arcane wears Gloves - Arcane Power (+20 Arcane) instead, 7.7 ahead. Enchant Weapon - Spell Power is a Molten Core formula, and Revelation's model is unverified for casters, so neither is used.
 
 The raid is a caster group (`tools/rotopt/mksettings/spec_mage.go`): Kings and Wisdom, Arcane Brilliance, Divine Spirit, Gift of the Wild, Fortitude, Mana Spring Totem, Moonkin Aura, Curse of the Elements (all magic schools under Forever) and Judgement of Wisdom, against the Level 60 boss. Consumes: Flask of Supreme Power, Greater Arcane Elixir, Elixir of Firepower (Greater Firepower is the Elixir of Holy Power under Forever), Elixir of Frost Power, Elixirs of Sages and Greater Intellect, Greater Mageblood Elixir, Lobster Stew, Wizard Oil (Brilliant Wizard Oil is a Zul'Gurub recipe, and no raid is open at launch), Major Mana Potion, Cerebral Cortex Compound and the Goblin Sapper (Engineering and Tailoring). Mage Armor, 50% casting regen under Forever.
 
@@ -153,29 +164,29 @@ Talents were searched (`tools/rotopt -talent-search`) from several seeds per spe
 
 | Build | Talents | Rotation | 120 | 180 | 300 |
 |---|---|---|---|---|---|
-| Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost, rank 2 Frostfire Bolt when the mana won't last, Fire Blast with spare mana | 923.2 | 903.4 | 888.6 |
-| Fire | `05020500300001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage, Combustion after 5 Scorch stacks | 886.5 | 867.2 | 857.3 |
-| Arcane | `051225003100311531-03-02550003` | Arcane Blast precast, Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4 | 833.3 | 822.2 | 812.1 |
-| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 744.7 | 743.6 | 744.0 |
+| Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost, rank 2 Frostfire Bolt when the mana won't last, Fire Blast with spare mana | 888.2 | 860.2 | 850.3 |
+| Fire | `05020500300001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage, Combustion after 5 Scorch stacks | 851.0 | 836.3 | 824.6 |
+| Arcane | `051225003100311531-03-02550003` | Arcane Blast precast, Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4, one Blast below 20% mana | 816.3 | 806.8 | 797.0 |
+| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 705.8 | 704.6 | 705.0 |
 
 Frostfire Bolt is Fire and Frost at once, so it takes Fire Power, Ignite and Critical Mass along with Ice Shards, Piercing Ice and Shatter, and its crits and chills feed both Heating Up and Fingers of Frost. foreverchanges.pro's popular Fire build is the same 29 / 22 split. Evocation waits for 30 sec of the fight left (Fire 90 sec). Frostfire runs out of mana first, so once Evocation is spent (or under 60 sec are left) and the mana is under 60 a second of the fight left it casts rank 2 Frostfire Bolt (285 mana for 9% less damage). Ignite's ticks never crit (the crit they come from already did). Mana gems share the Demonic Rune's 2 min cooldown in the client (item category 1153), and the rune gives more, so Frostfire, Fire and Arcane skip the gems. Fire holds Combustion until Fire Vulnerability has 5 stacks.
 
-No Ahn'Qiraj book ranks: Forever is set before Molten Core and the 70338 client has the books with no source, so Frostbolt stops at X, Fireball at XI and Arcane Missiles at VII. That costs Frost 50, Arcane 30 and Fire 17 at 180 sec, and Frostfire nothing.
+No Ahn'Qiraj book ranks: Forever is set before Molten Core and the 70338 client has the books with no source, so Frostbolt stops at X, Fireball at XI and Arcane Missiles at VII. That cost Frost 50, Arcane 30 and Fire 17 at 180 sec on the earlier gear, and Frostfire nothing.
 
-Ice Lance takes no spell power: the 70338 client has a 0 coefficient on all six ranks, where every other new Forever damage spell carries its own. Casting it on the Fingers of Frost charges loses, so no rotation casts it, and the charges' Shatter crit goes to the bolts. With SoD's 42.9% Frostfire and Frost were about 165 higher at 180 sec. That is the largest open number for the mage (notes.md).
+Ice Lance takes no spell power: the 70338 client has a 0 coefficient on all six ranks, where every other new Forever damage spell carries its own. Casting it on the Fingers of Frost charges loses, so no rotation casts it, and the charges' Shatter crit goes to the bolts. With SoD's 42.9% Frostfire and Frost were about 165 higher at 180 sec on the earlier gear. That is the largest open number for the mage (notes.md).
 
 Races (180 sec, each build on its rotation). The staff has no racial, so the table is the same with weapon racials off. Windshaper can't be a mage.
 
 | Race | Frostfire | Fire | Arcane | Frost |
 |---|---|---|---|---|
-| Undead | 903.4 | 867.2 | 822.2 | 743.6 |
-| High Order | 901.6 | 856.1 | 804.1 | 742.4 |
-| Orc | 901.6 | 862.7 | 813.9 | 740.9 |
-| Troll | 897.2 | 856.2 | 809.7 | 740.8 |
-| Gnome | 896.5 | 866.0 | 813.0 | 741.4 |
-| Human | 893.5 | 857.5 | 807.0 | 735.1 |
+| Undead | 860.2 | 836.3 | 806.8 | 704.6 |
+| High Order | 857.4 | 823.0 | 786.2 | 701.8 |
+| Orc | 856.2 | 828.6 | 795.3 | 700.0 |
+| Troll | 852.5 | 822.9 | 791.6 | 700.3 |
+| Gnome | 856.4 | 831.1 | 794.6 | 700.8 |
+| Human | 850.6 | 823.9 | 788.5 | 694.9 |
 
-Undead (Touch of the Grave, 10% for mages) is best on every build, overall and for the Horde. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on Fire and Arcane. The best race holds at 120 and 300 sec except on Frostfire, where Gnome's extra mana puts it ahead of Undead at both (927.0 and 890.2 against 923.2 and 888.6); the preset keeps Undead, best at the 3 minute fight.
+Undead (Touch of the Grave, 10% for mages) is best on every build, overall and for the Horde. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on Fire and Arcane. The best race holds at 120 and 300 sec except on Frostfire, where Gnome's extra mana ties Undead at both (889.0 and 850.7 against 888.2 and 850.3, inside the noise); the preset keeps Undead, best at the 3 minute fight.
 
 The consumables model Forever's launch, with no raid open. A character takes one of the +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale). Elixir of Sages with Elixir of Greater Intellect is 0.3 to 1 ahead of the Owl with Greater Spirit, and the Owl on top would add 10 to 21 at 180 sec if the two stacked, which is open (notes.md).
 
