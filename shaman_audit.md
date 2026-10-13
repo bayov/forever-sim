@@ -160,7 +160,7 @@ Enhancement
 - [x] 8.22 Improved Ghost Wolf (not implemented, the sim has no Ghost Wolf)
 - [x] 8.23 Improved Lightning Shield
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
-- [ ] 8.25 Shamanistic Focus
+- [x] 8.25 Shamanistic Focus
 - [ ] 8.26 Anticipation
 - [ ] 8.27 Toughness
 - [ ] 8.28 Flurry
@@ -1475,6 +1475,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16261, talent curve 85295): +5, 10 and 15% damage (aura 108, misc 0) on the orbs (mask 0x400). A misc 0 percent modifier scales the whole hit, as the sim does (fixed 2026-10-07). That matches.
 - Beta: no build had it.
 - No sim change and no new test. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers has 3 points in the bonus sim and wants the orbs at 1.15 x 1.1.
+
+### 8.25 Shamanistic Focus
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): 1 point takes 45% off the mana cost of Earth, Flame and Frost Shock and Lightning Shield, so they cost 0.55 of their base. It multiplies with Convection since 8.1 (0.9 x 0.55 at 5/5). Every enhancement preset has it.
+- Client 70338 (wago.tools 1223030): 1 rank, -45% cost (aura 108, misc 14) on mask 0x90100400, the three shocks and Lightning Shield. Lightning Bolt, Chain Lightning, totems, Fire Nova and Water Shield aren't in it. That matches.
+- Beta (8.1): alone (the 2026-10-10 14:50 build), Earth Shock cost 80 (145 x 0.55), Flame Shock 88 and Lightning Shield 69 (125 x 0.55). With Convection 5 (the 23:14 build), Earth Shock 72 and Flame Shock 79, the two multiplied.
+- No sim change and no new test. `mana_costs_test.go` TestOrcShamanManaCostTalents covers which spells it reaches and the multiply with Convection, and TestOrcShamanCostTalentsOnTheBeta pins the beta costs.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
