@@ -454,11 +454,39 @@ export function startReport(dash) {
     }, { passive: true });
   }
   // jump to a section of the spec page
-  $('#sp-jump').replaceChildren(...[...document.querySelectorAll('#spec [data-jump]')].map((card) => {
-    const bt = el('button', { text: card.dataset.jump });
-    bt.addEventListener('click', () => { const d = card.querySelector(':scope > details'); if (d) d.open = true; card.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); });
-    return bt;
-  }));
+  // It sticks under the header, and the section we are reading gets the gold line.
+  {
+    const cards = [...document.querySelectorAll('#spec [data-jump]')];
+    const bar = $('#sp-jump-bar'), scroller = document.querySelector('.dps-report-sim-ui') || document.scrollingElement;
+    let picked = -1;
+    const links = cards.map((card, i) => {
+      const bt = el('button', { class: 'nav-link', type: 'button', text: card.dataset.jump });
+      bt.addEventListener('click', () => {
+        picked = i;
+        const d = card.querySelector(':scope > details'); if (d) d.open = true;
+        // Aim for where the bar sits once it sticks under the header, not where it is now.
+        const stuckBottom = document.querySelector('.sim-header').getBoundingClientRect().bottom + bar.offsetHeight;
+        const top = card.getBoundingClientRect().top - stuckBottom - 8;
+        scroller.scrollBy({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+      return bt;
+    });
+    $('#sp-jump').replaceChildren(...links.map((bt) => el('li', { class: 'nav-item' }, bt)));
+    const spy = () => {
+      if (bar.offsetParent === null) return;
+      const r = bar.getBoundingClientRect(), head = document.querySelector('.sim-header').getBoundingClientRect().bottom;
+      bar.classList.toggle('stuck', r.top <= head + 1);
+      // Two cards side by side start at the same height. Of those, the one we clicked wins, or else the left one.
+      const tops = cards.map((c) => c.getBoundingClientRect().top);
+      const passed = tops.filter((t) => t <= r.bottom + 24);
+      const rowTop = passed.length ? Math.max(...passed) : tops[0];
+      const row = cards.map((_, i) => i).filter((i) => Math.abs(tops[i] - rowTop) < 4);
+      const on = row.includes(picked) ? picked : row[0];
+      links.forEach((bt, i) => bt.classList.toggle('active', i === on));
+    };
+    scroller.addEventListener('scroll', spy, { passive: true });
+    new ResizeObserver(spy).observe(bar);
+  }
 
   // ---------- shared pieces ----------
   // The class filter looks like the sim UI's race picker: a label that says what we picked, then a row of class icons.
@@ -693,6 +721,7 @@ export function startReport(dash) {
     $('#mana-sum').textContent = st.cls === 'Warrior' || st.cls === 'Rogue' ? `${st.cls}s don't use mana.`
       : missing.length ? `No mana data yet for ${[...new Set(missing.map((b) => b.class))].join(', ').replace(/, ([^,]*)$/, ' and $1')} (${missing.length} preset${missing.length > 1 ? 's' : ''}).` : '';
     if (!shown.length) { host.replaceChildren(); list.replaceChildren(); return; }
+    const lowPct = rowsOf('mana_summary')[0]?.lowPct ?? 15;
     const series = manaBuilds.filter((b) => sum.has(b.id)).map((b) => {
       const on = shown.includes(b);
       const pts = (curves.get(b.id) || []).map((r) => ({ s: r.t, v: r.pct, p25: r.p25, p75: r.p75 }));
@@ -701,7 +730,7 @@ export function startReport(dash) {
     const hoverRow = (id) => list.querySelectorAll('.fv-row').forEach((r) => r.classList.toggle('is-hover', r.dataset.id === id));
     const chart = drawLenChart(host, series, {
       onHover: hoverRow,
-      fmt: (v) => d3.format('.0f')(v) + '%', yDomain: [0, 100], ref: 10, refLabel: 'runs low', xTicks: [0, 60, 120, 180, 240, 300, 360, 420, 480], xFmt: (d) => mmss(d),
+      fmt: (v) => d3.format('.0f')(v) + '%', yDomain: [0, 100], ref: lowPct, refLabel: `${lowPct}%`, xTicks: [0, 60, 120, 180, 240, 300, 360, 420, 480], xFmt: (d) => mmss(d),
       strip: false, focus: true, open: true, hlId: st.hlMana, onPick: (id) => { st.hlMana = id; persist(); },
       tipSub: (t) => `at ${mmss(t)}`, tipMain: (p) => [`${d3.format('.0f')(p.v)}% mana`, `middle half of fights ${d3.format('.0f')(p.p25)} to ${d3.format('.0f')(p.p75)}%`],
     });
@@ -713,24 +742,28 @@ export function startReport(dash) {
       const track = el('div', { class: 'fv-track' });
       if (low) track.append(el('span', { class: 'fv-box', style: `left:${x(m.lowAtP25 ?? m.lowAt)};width:calc(${x(m.lowAtP75 ?? dur)} - ${x(m.lowAtP25 ?? m.lowAt)})` }), el('span', { class: 'fv-med', style: `left:${x(m.lowAt)}` }));
       else track.append(el('span', { class: 'fv-bar', style: `width:100%;background:${ccol(b.class)};opacity:0.35` }));
-      const row = el('button', { class: 'fv-row', 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${low ? 'below 10% mana at ' + mmss(m.lowAt) : 'never below 10% mana in a typical fight'}` },
+      const row = el('button', { class: 'fv-row', 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${low ? `below ${lowPct}% mana at ${mmss(m.lowAt)}` : `never below ${lowPct}% mana in a typical fight`}` },
         specIco(b) || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }),
         el('span', { class: 'fv-row-main' }, el('span', { class: 'fv-row-name' }, el('b', { text: b.build }), el('span', { text: '· ' + b.class }))),
         el('span', { class: 'fv-row-end' }, el('span', { class: 'fv-row-val', text: low ? mmss(m.lowAt) : '8:00+' }), el('span', { class: 'fv-row-gap', text: `${d3.format('.0f')(m.pctAt480)}% left at 8:00` })),
         track);
-      row.addEventListener('pointerenter', () => { chart.highlight(b.id); row.classList.add('is-hover'); });
-      row.addEventListener('pointerleave', () => { chart.highlight(null); row.classList.remove('is-hover'); });
-      row.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (row.classList.contains('is-hl')) { openSpec(b.id); return; }
+      // Pointing at a row shows its numbers, and a click keeps them up. A second click opens the preset in Specs.
+      const tip = (pinned) => {
         const card = $('#mana-card'), cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, [
-          low ? `Below 10% mana at ${mmss(m.lowAt)} in a typical fight` : 'A typical fight never drops below 10% mana',
+          low ? `Below ${lowPct}% mana at ${mmss(m.lowAt)} in a typical fight` : `A typical fight never drops below ${lowPct}% mana`,
           low && m.lowAtP25 != null ? `Middle half of fights: ${mmss(m.lowAtP25)} to ${m.lowAtP75 != null ? mmss(m.lowAtP75) : 'never'}` : null,
-          `${d3.format('.0f')(m.share10)}% of fights ever drop below 10%`,
+          `${d3.format('.0f')(m.shareLow ?? m.share10)}% of fights ever drop below ${lowPct}%`,
           `Mana left: ${d3.format('.0f')(m.pctAt180)}% at 3:00, ${d3.format('.0f')(m.pctAt480)}% at 8:00`,
           `${d3.format(',')(m.maxMana)} mana, spends ${f1(m.spentPerSec)} and gains ${f1(m.gainedPerSec)} a second`,
-        ], { hl: row, open: b.id, below: true });
+        ], { hl: row, open: b.id, below: true, pinned });
+      };
+      row.addEventListener('pointerenter', (e) => { chart.highlight(b.id); row.classList.add('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
+      row.addEventListener('pointerleave', (e) => { chart.highlight(null); row.classList.remove('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) hideTip(); });
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (row.classList.contains('is-hl') && tipPinned) { openSpec(b.id); return; }
+        tip(true);
       });
       return row;
     }));
@@ -1156,18 +1189,15 @@ export function startReport(dash) {
       tile('Lucky fight', f1(b.p90), '90th percentile', 'builds', 'p90', W),
       tt(tile('Best race', b.bestRace, `${f1(b.bestRaceDps)} DPS`, 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
       extra);
-    for (const h of ['#sp-head', '#sp-tiles', '#sp-talents', '#sp-trees']) $(h).dataset.build = b.id;
+    for (const h of ['#sp-head', '#sp-tiles']) $(h).dataset.build = b.id;
     const i = order.findIndex((x) => x.id === b.id);
     $('#sp-prev').onclick = () => openSpec(order[(i - 1 + order.length) % order.length].id);
     $('#sp-next').onclick = () => openSpec(order[(i + 1) % order.length].id);
 
-    // talents + rotation
-    $('#sp-trees').replaceChildren(el('span', { text: b.trees }), el('span', { text: b.treePoints }));
-    mark($('#sp-talents'), 'builds', 'talents', W).textContent = b.talents;
+    // caveats
     const notes = rowsOf('notes');
     const nb = (notes || []).filter((n) => n.build === b.id);
-    for (const h of ['#sp-keytal', '#sp-caveats']) $(h).dataset.build = notes ? b.id : '';
-    $('#sp-keytal').replaceChildren(...nb.filter((n) => n.kind === 'keyTalents').map((n) => mark(el('span', { class: 'fv-tag', text: n.text }), 'notes', 'text', `build=${enc(b.id)}&kind=keyTalents&order=${n.order}`)));
+    $('#sp-caveats').dataset.build = notes ? b.id : '';
     const cav = nb.filter((n) => n.kind === 'caveats');
     $('#sp-caveats').replaceChildren(...(cav.length ? cav.map((n) => mark(el('li', { text: n.text }), 'notes', 'text', `build=${enc(b.id)}&kind=caveats&order=${n.order}`)) : notes ? [el('li', { class: 'fv-note', text: 'None recorded.' })] : []));
 
