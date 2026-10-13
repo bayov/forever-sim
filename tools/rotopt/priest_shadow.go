@@ -30,8 +30,7 @@ var (
 	vampiricEmbrace = spellID(15286)
 )
 
-// The Major Spellblasting Potion's item id (sim/core/consumes.go).
-const majorSpellblastingPotion = 250937
+// majorSpellblastingPotion (druid_balance.go) is the Major Spellblasting Potion's item id.
 
 func (priestShadow) Knobs() []Knob {
 	return []Knob{
