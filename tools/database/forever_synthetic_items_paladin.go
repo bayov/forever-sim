@@ -74,15 +74,15 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992001, Name: "Retribution Synthetic Head (Phase 1)", Icon: "inv_helmet_29",
 			Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:      stats.Stats{stats.Strength: 7, stats.Stamina: 8, stats.Intellect: 17, stats.SpellPower: 30, stats.Armor: 608}.ToFloatArray(),
-			CritRating: 25,
+			Stats:      stats.Stats{stats.Strength: 7, stats.Stamina: 11, stats.Intellect: 16, stats.SpellPower: 30, stats.Armor: 608}.ToFloatArray(),
+			CritRating: 23,
 			Ilvl:       66, SetName: set,
 		}),
 		// Neck, item level 71, in place of Onyxia Tooth Pendant.
 		retribution(&proto.UIItem{
 			Id: 992002, Name: "Retribution Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 			Type:      proto.ItemType_ItemTypeNeck,
-			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 10, stats.SpellPower: 22}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 7, stats.Stamina: 12, stats.SpellPower: 22}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      71,
 		}),
@@ -90,28 +90,30 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992003, Name: "Retribution Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
 			Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats: stats.Stats{stats.Strength: 14, stats.Stamina: 14, stats.Intellect: 14, stats.SpellPower: 25, stats.Armor: 562}.ToFloatArray(),
-			Ilvl:  66,
+			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 7, stats.Intellect: 16, stats.SpellPower: 24, stats.Armor: 562}.ToFloatArray(),
+			HitRating: 10,
+			Ilvl:      66,
 		}),
 		// Back, item level 71, in place of Cape of the Black Baron.
 		retribution(&proto.UIItem{
 			Id: 992004, Name: "Retribution Synthetic Back (Phase 1)", Icon: "inv_misc_cape_20",
 			Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-			Stats: stats.Stats{stats.Agility: 10, stats.Stamina: 11, stats.Spirit: 11, stats.SpellPower: 19, stats.Armor: 58}.ToFloatArray(),
-			Ilvl:  71,
+			Stats:     stats.Stats{stats.Agility: 6, stats.Stamina: 19, stats.Spirit: 5, stats.SpellPower: 10, stats.Armor: 58}.ToFloatArray(),
+			HitRating: 10,
+			Ilvl:      71,
 		}),
 		// Chest, item level 66, in place of the Savage Gladiator Chain.
 		retribution(&proto.UIItem{
 			Id: 992005, Name: "Retribution Synthetic Chest (Phase 1)", Icon: "inv_chest_plate16",
 			Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats: stats.Stats{stats.Strength: 12, stats.Stamina: 19, stats.Intellect: 20, stats.Spirit: 6, stats.SpellPower: 30, stats.Armor: 749}.ToFloatArray(),
+			Stats: stats.Stats{stats.Strength: 12, stats.Stamina: 20, stats.Intellect: 19, stats.Spirit: 6, stats.SpellPower: 30, stats.Armor: 749}.ToFloatArray(),
 			Ilvl:  66, SetName: set,
 		}),
 		// Wrist, item level 71, in place of Wristguards of True Flight.
 		retribution(&proto.UIItem{
 			Id: 992006, Name: "Retribution Synthetic Wrist (Phase 1)", Icon: "inv_bracer_14",
 			Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Strength: 10, stats.Stamina: 9, stats.SpellPower: 22, stats.Armor: 353}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 11, stats.Stamina: 8, stats.SpellPower: 22, stats.Armor: 353}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      71,
 		}),
@@ -127,15 +129,15 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992008, Name: "Retribution Synthetic Waist (Phase 1)", Icon: "inv_belt_29",
 			Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:      stats.Stats{stats.Strength: 17, stats.Agility: 15, stats.Stamina: 17, stats.Armor: 453}.ToFloatArray(),
-			CritRating: 19,
+			Stats:      stats.Stats{stats.Strength: 16, stats.Agility: 18, stats.Stamina: 16, stats.Armor: 453}.ToFloatArray(),
+			CritRating: 18,
 			Ilvl:       71,
 		}),
 		// Legs, item level 66, in place of Legplates of Might.
 		retribution(&proto.UIItem{
 			Id: 992009, Name: "Retribution Synthetic Legs (Phase 1)", Icon: "inv_pants_04",
 			Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Strength: 24, stats.Stamina: 24, stats.Spirit: 25, stats.Armor: 655}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 25, stats.Stamina: 24, stats.Spirit: 25, stats.Armor: 655}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      66,
 		}),
@@ -143,14 +145,15 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992010, Name: "Retribution Synthetic Feet (Phase 1)", Icon: "inv_boots_plate_06",
 			Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats: stats.Stats{stats.Stamina: 13, stats.Spirit: 13, stats.SpellPower: 24, stats.AttackPower: 32, stats.RangedAttackPower: 32, stats.Armor: 515}.ToFloatArray(),
-			Ilvl:  66,
+			Stats:     stats.Stats{stats.Stamina: 6, stats.Spirit: 18, stats.SpellPower: 18, stats.AttackPower: 28, stats.RangedAttackPower: 28, stats.Armor: 515}.ToFloatArray(),
+			HitRating: 10,
+			Ilvl:      66,
 		}),
 		// Finger, item level 71, in place of Band of Accuria.
 		retribution(&proto.UIItem{
 			Id: 992011, Name: "Retribution Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_15",
 			Type:      proto.ItemType_ItemTypeFinger,
-			Stats:     stats.Stats{stats.Strength: 11, stats.Stamina: 13, stats.SpellPower: 17}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 13, stats.SpellPower: 19}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      71,
 		}),
@@ -158,23 +161,23 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992013, Name: "Retribution Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_07",
 			Type:       proto.ItemType_ItemTypeFinger,
-			Stats:      stats.Stats{stats.Intellect: 10, stats.Spirit: 10, stats.SpellPower: 17}.ToFloatArray(),
-			CritRating: 14,
+			Stats:      stats.Stats{stats.Intellect: 11, stats.Spirit: 9, stats.SpellPower: 18}.ToFloatArray(),
+			CritRating: 13,
 			Ilvl:       71,
 		}),
 		// Two-Hand, item level 76, in place of Spinal Reaper.
 		retribution(&proto.UIItem{
 			Id: 992012, Name: "Retribution Synthetic Two-Hand (Phase 1)", Icon: "inv_axe_09",
 			Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
-			Stats:     stats.Stats{stats.Strength: 10, stats.Stamina: 10, stats.Intellect: 17, stats.Spirit: 19, stats.SpellPower: 28}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 11, stats.Stamina: 13, stats.Intellect: 12, stats.Spirit: 21, stats.SpellPower: 27}.ToFloatArray(),
 			HitRating: 10,
 			// Spinal Reaper damage and speed.
 			WeaponDamageMin: 203, WeaponDamageMax: 305, WeaponSpeed: 3.4,
 			Ilvl: 76,
 		}),
 		// Trinkets, item level 71 (standards 1b and 8a: Forever's launch trinkets are not simulated).
-		// A stat trinket at 0.56 x L(71) = 45.9 linear, and on-use trinkets with no passive stats
-		// whose effects are in sim/paladin/forever_synthetic_trinkets.go.
+		// A stat trinket at 0.56 x L(71) = 45.9 linear, and an on-use trinket with no passive
+		// stats whose effect is in sim/paladin/forever_synthetic_trinkets.go.
 		retribution(&proto.UIItem{
 			Id: 992014, Name: "Retribution Synthetic Trinket (Phase 1)", Icon: "inv_jewelry_talisman_07",
 			Type:       proto.ItemType_ItemTypeTrinket,
@@ -183,24 +186,7 @@ func init() {
 			Ilvl:       71,
 		}),
 		retribution(&proto.UIItem{
-			Id: 992018, Name: "Retribution Synthetic Strength Trinket (Phase 1)", Icon: "inv_jewelry_talisman_08",
-			Type:       proto.ItemType_ItemTypeTrinket,
-			Stats:      stats.Stats{stats.Strength: 28}.ToFloatArray(),
-			CritRating: 18,
-			Ilvl:       71,
-		}),
-		retribution(&proto.UIItem{
 			Id: 992015, Name: "Retribution Synthetic Spell Power On-Use Trinket (Phase 1)", Icon: "inv_misc_stonetablet_11",
-			Type: proto.ItemType_ItemTypeTrinket,
-			Ilvl: 71,
-		}),
-		retribution(&proto.UIItem{
-			Id: 992016, Name: "Retribution Synthetic Strength On-Use Trinket (Phase 1)", Icon: "inv_misc_armorkit_10",
-			Type: proto.ItemType_ItemTypeTrinket,
-			Ilvl: 71,
-		}),
-		retribution(&proto.UIItem{
-			Id: 992017, Name: "Retribution Synthetic Attack Power On-Use Trinket (Phase 1)", Icon: "inv_jewelry_necklace_13",
 			Type: proto.ItemType_ItemTypeTrinket,
 			Ilvl: 71,
 		}),

@@ -155,26 +155,12 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-RetributionSynthetic(Phase1)"
  value: {
-  dps: 424.63027
-  tps: 451.24846
- }
-}
-dps_results: {
- key: "TestRetribution-Phase5-AllItems-RetributionSyntheticAttackPowerOn-UseTrinket(Phase1)-992017"
- value: {
-  dps: 368.64864
-  tps: 394.95593
+  dps: 423.67635
+  tps: 450.29454
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-RetributionSyntheticSpellPowerOn-UseTrinket(Phase1)-992015"
- value: {
-  dps: 368.64864
-  tps: 394.95593
- }
-}
-dps_results: {
- key: "TestRetribution-Phase5-AllItems-RetributionSyntheticStrengthOn-UseTrinket(Phase1)-992016"
  value: {
   dps: 368.64864
   tps: 394.95593
