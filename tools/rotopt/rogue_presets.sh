@@ -54,7 +54,8 @@ low="cbPool=1,cbSnd=0,eurekaCp=0"
 gen rogue_ss level30p5_sinister_strike "ruptureCp=3,ruptureSnd=0,ssEnergy=10,sndCp=2,$low" -level 30 -bonus-talents 5 -talents 0053231013-320003
 gen rogue_bs level30p5_backstab "ruptureCp=5,ruptureSnd=0,ghostly=0,hemoForRupture=0,sndCp=4,vanishCp=3,bfSnd=0,$low" -level 30 -bonus-talents 5 -talents 005122102-302303-002
 
-# The Level 60 rotations, searched at 180 sec on the synthetic Phase 1 sets with the
+# The Level 60 rotations, searched at 180 sec on the generic boss (mksettings' Level 60 target, no
+# creature type) and the synthetic Phase 1 sets with the
 # mksettings rogue_combat, rogue_assassination and rogue_subtlety setups (knob search,
 # talent search, knob search again). These need no settings argument, each builds its own.
 # The Seal Fate builds use the Combat ones' rotations, the search kept every knob.
@@ -74,7 +75,7 @@ gen60() {
 	rm "$settings"
 	echo "wrote ui/rogue/apls/$name.apl.json ($knobs)"
 }
-gen60 rogue_combat level60_phase1_synthetic_swords rogue_ss level60_combat_swords 00532310301-32003311201515231 "arEnergy=39,bfPrepull=1"
-gen60 rogue_combat level60_phase1_synthetic_daggers rogue_bs level60_combat_daggers 00532310301-30230320201513231-002 "arEnergy=39,bfPrepull=1,bfSnd=0,bsAfterSwing=0.25,bsEnergy=100,evisCp=4,ghostly=0"
-gen60 rogue_assassination level60_phase1_synthetic_daggers rogue_mut level60_mutilate 0053231013150103-302303202015-002 "bsAfterSwing=0.75,sndRefresh=1,evisCp=4"
-gen60 rogue_subtlety level60_phase1_synthetic_daggers rogue_sub level60_subtlety 0053231015140004--3021203310113011 "bsAfterSwing=0.25,hemoFiller=1,ruptureCp=3,ruptureSnd=0,vanishCp=3,vanishPool=1"
+gen60 rogue_combat level60_phase1_synthetic_swords rogue_ss level60_combat_swords 00530310501-32003311201515231 "arEnergy=39,bfPrepull=1"
+gen60 rogue_combat level60_phase1_synthetic_daggers rogue_bs level60_combat_daggers 00530310501-30230320201513231-002 "arEnergy=39,bfPrepull=1,bfSnd=0,bsAfterSwing=0.25,bsEnergy=100,evisCp=4,ghostly=0,vanishCp=3"
+gen60 rogue_assassination level60_phase1_synthetic_daggers rogue_mut level60_mutilate 0053031033150103-302303202015-002 "bsAfterSwing=0.75,sndRefresh=1,evisCp=4"
+gen60 rogue_subtlety level60_phase1_synthetic_daggers rogue_sub level60_subtlety 0053031035140004--3021203310113011 "bsAfterSwing=0.25,hemoFiller=1,ruptureCp=3,ruptureSnd=0,vanishCp=3,vanishPool=1"
