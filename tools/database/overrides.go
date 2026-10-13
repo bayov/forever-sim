@@ -260,7 +260,17 @@ var ExtraItemIcons = []int32{
 	18262,
 }
 
-var SpellIconoverrides = []*proto.IconData{}
+var SpellIconoverrides = []*proto.IconData{
+	// Forever renamed Curse of Agony and Curse of Doom to Bane of Agony and Bane of Doom; the client keeps
+	// the Classic spell IDs.
+	{Id: 980, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 1, HasBuff: true},
+	{Id: 1014, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 2, HasBuff: true},
+	{Id: 6217, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 3, HasBuff: true},
+	{Id: 11711, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 4, HasBuff: true},
+	{Id: 11712, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 5, HasBuff: true},
+	{Id: 11713, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 6, HasBuff: true},
+	{Id: 603, Name: "Bane of Doom", Icon: "spell_shadow_auraofdarkness", HasBuff: true},
+}
 
 // Raid buffs / debuffs
 var SharedSpellsIcons = []int32{

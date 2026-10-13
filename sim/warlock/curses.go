@@ -62,7 +62,7 @@ func (warlock *Warlock) getBaneOfAgonyBaseConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "BaneofAgony-" + warlock.Label + strconv.Itoa(rank),
+				Label: "Bane of Agony-" + warlock.Label + strconv.Itoa(rank),
 			},
 			NumberOfTicks:    numTicks,
 			TickLength:       tickLength,
@@ -283,7 +283,7 @@ func (warlock *Warlock) registerBaneOfDoomSpell() {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "BaneofDoom",
+				Label: "Bane of Doom",
 			},
 			NumberOfTicks:    1,
 			TickLength:       time.Minute,
