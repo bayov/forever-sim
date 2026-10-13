@@ -162,6 +162,18 @@ func (shaman *Shaman) shamanisticFocusFactor() float64 {
 }
 
 // 0.17 / 0.33 / 0.50 sec per the beta client.
+// downrankCoefficient is what a rank keeps of its spell power coefficient under Forever:
+// Blizzard's 2026-10-01 development notes say ranks far below the caster's level get less
+// from spell power, and https://foreverchanges.pro/downranking measures 5% less for each
+// level the caster is past the rank's learn level + 17, down to nothing (the priest
+// branch's downrankCoefficient). Lightning Bolt rank 7 (10391, learned at 38) keeps 75% at 60.
+func (shaman *Shaman) downrankCoefficient(coefficient float64, learnLevel int) float64 {
+	if shaman.Env == nil || !shaman.Env.IsForever() {
+		return coefficient
+	}
+	return coefficient * max(0, min(1, 1-0.05*float64(int(shaman.Level)-17-learnLevel)))
+}
+
 func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
 	return []time.Duration{0, 170, 330, 500}[shaman.Talents.ElementalAlacrity] * time.Millisecond
 }

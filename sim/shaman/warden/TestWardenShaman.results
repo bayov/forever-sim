@@ -111,10 +111,38 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-ElementalSynthetic(Phase1)"
+ value: {
+  dps: 297.94341
+  tps: 495.73449
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
+ value: {
+  dps: 276.61697
+  tps: 458.54757
+ }
+}
+dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 355.18005
-  tps: 581.65761
+  dps: 299.75757
+  tps: 495.28879
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
+ value: {
+  dps: 280.54477
+  tps: 460.29673
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
+ value: {
+  dps: 276.61697
+  tps: 458.54757
  }
 }
 dps_results: {
