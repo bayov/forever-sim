@@ -1002,22 +1002,12 @@ export class Timeline extends ResultComponent {
 		svg.append(areaPath, linePath);
 		rowElem.appendChild(svg);
 
-		// The labels, about one per 48px. The search can still find each change, so every change
-		// keeps an element, empty and as wide as the time until the next change.
+		// The labels, about one per 48px. The search only looks at the lane's name, like "mana".
+		// Its changes name the abilities that spent or gave it, like "from Earth Shock", and the
+		// lane would light up for every ability search.
 		let lastLabelX = -Infinity;
-		resourceLogs.forEach((resourceLogGroup, i) => {
+		resourceLogs.forEach(resourceLogGroup => {
 			const x = this.timeToLeftValue(resourceLogGroup.timestamp);
-			const resourceElem = (
-				<div
-					className="rotation-timeline-resource"
-					style={{
-						left: this.timeToLeft(resourceLogGroup.timestamp),
-						width: this.timeToPx((resourceLogs[i + 1]?.timestamp || duration) - resourceLogGroup.timestamp),
-					}}></div>
-			);
-			rowElem.appendChild(resourceElem);
-			row.events.push({ elem: resourceElem, text: searchText(resourceLogGroup.logs) });
-
 			if (x - lastLabelX >= 48) {
 				lastLabelX = x;
 				rowElem.appendChild(
