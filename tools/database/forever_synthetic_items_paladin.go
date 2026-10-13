@@ -11,54 +11,56 @@ import (
 // The pieces take the place of the Era Phase 1 items a retribution paladin wears: Lionheart Helm,
 // Onyxia Tooth Pendant, Truestrike Shoulders, Cape of the Black Baron, the Savage Gladiator Chain,
 // Wristguards of True Flight, Flameguard Gauntlets, Onslaught Girdle, Legplates of Might, Sabatons of
-// Might, Band of Accuria, Quick Strike Ring and Spinal Reaper. Hand of Justice, Blackhand's Breadth and
-// Libram of Fervor stay real items.
+// Might, Band of Accuria, Quick Strike Ring and Spinal Reaper, plus two synthetic trinkets (Forever's
+// launch trinkets are not simulated). Libram of Law stays a real item.
 //
-// Budget. Every class's synthetic set uses one item level table (the orchestrator's fairness
-// ruling): head, shoulders, chest, hands, legs and feet at 66 (Molten Core tier), neck, back,
-// wrist, waist and both rings at 71, and two-handers at 76. The budget standard, backed out of the
-// enhancement items:
+// Budget: the orchestrator's standards 1b (Forever budget per archetype). Every class uses one item
+// level table: head, shoulders, chest, hands, legs and feet at 66, neck, back, wrist, waist and both
+// rings at 71, the two-hander at 76. Each armor piece's weighted linear total is
 //
-//	value = 1.2 * ilvl - 36.4,   budget = value * slot,   (sum over stats of (price * amount)^1.5)^(2/3) = budget
+//	slot mod x L(ilvl) x f,   L(ilvl) = 1.125 ilvl + 2.0,
 //
-// with slot 1 for head, chest, legs and two-handers, 0.77 for shoulders, hands, waist and feet, and
-// 0.5625 for neck, back, wrist and fingers. The prices per point are 1 for the five attributes, 0.55
-// for spell power (Forever's tuned price, see forever_synthetic_items.go), 1 for hit rating (10 make
-// 1%) and 1 for crit rating (14 make 1%). Armor is free. Per slot, budget and what the stats come to:
+// within 1%, with slot mods 1 (head, chest, legs), 0.75 (shoulders, hands, waist, feet) and 0.5625
+// (neck, back, wrist, rings), and the hybrid factors f 1.093 / 1.103 / 1.048. Each piece's 1.7-norm,
+// (sum (weight x amount)^1.7)^(1/1.7), is within 6% of slot mod x (0.661 ilvl + 2.92), which holds a
+// hybrid to 4 or 5 stat lines. The two-hander is 1.035 x L(76) = 90.6. Weights: 1 for the five
+// attributes, hit rating and crit rating, 0.86 for spell power, 0.5 for attack power. Armor is free.
+// Linear total and target, 1.7-norm and target:
 //
-//	head     66  42.80  42.77      waist    71  37.58  37.63
-//	neck     71  27.45  27.58      legs     66  42.80  42.81
-//	shoulder 66  32.96  32.99      feet     66  32.96  32.99
-//	back     71  27.45  27.41      finger   71  27.45  27.38
-//	chest    66  42.80  42.84      finger2  71  27.45  27.48
-//	wrist    71  27.45  27.43      two-hand 76  54.80  54.76
-//	hands    66  32.96  33.04
+//	head     66   83.66 /  83.34   45.5 /  46.5
+//	neck     71   48.64 /  48.27   29.0 /  28.0
+//	shoulder 66   63.48 /  63.08   34.0 /  34.9
+//	back     71   47.92 /  48.27   27.0 /  28.0
+//	chest    66   83.52 /  83.34   46.0 /  46.5
+//	wrist    71   48.64 /  48.27   29.0 /  28.0
+//	hands    66   63.50 /  63.08   36.7 /  34.9
+//	waist    71   68.00 /  67.73   38.5 /  37.4
+//	legs     66   83.00 /  83.34   48.4 /  46.5
+//	feet     66   63.00 /  63.08   34.0 /  34.9
+//	finger   71   48.64 /  48.27   29.0 /  28.0
+//	finger2  71   48.64 /  48.27   29.0 /  28.0
+//	twohand  76   91.08 /  90.56
 //
-// The head, for example: (1.2 * 66 - 36.4) * 1 = 42.80, and (12^1.5 + 11^1.5 + 9^1.5 + 9^1.5 +
-// (29 * 0.55)^1.5 + 10^1.5 + 14^1.5)^(2/3) = 42.77.
+// Armor 750.6, weapon 91.1. Stat mix (standards 5a and 5b, gear_targets.md at the hit-adjusted
+// targets): Stamina 17.6% of the set (target 17.7), Strength 12.6 (12.3), Agility 2.5 (2.4),
+// Intellect 10.0 (10.0), Spirit 10.0 (10.0), attack power 1.5 (1.5), spell power 28.3 (28.4), crit
+// 6.9 (7.0), hit 10.7. Ret keeps its Intellect and spell power amounts; the physical stats share
+// what hit leaves. 90 hit rating (9%) is the melee cap from gear for the sub Holy and Shock builds;
+// the same set with 60 hit rating simmed 9 / 34 / 11 DPS lower on twist / sub Holy / Shock.
 //
-// The stat mix is a hybrid one like the enhancement shaman's, since the paladin's seals, judgements,
-// Consecration and Holy Strike all take spell power under Forever:
-//   - Strength is about 19% of the set's budget, spell power 20%, Stamina 16%, Intellect 11%,
-//     Agility 5%.
-//   - Spirit is about 10% (79 points on 8 of the 13 pieces), because the Forever devs want Spirit to
-//     matter on mana users.
-//   - 90 hit rating on 9 pieces, 9%, the melee cap against a level 63 boss from gear alone, which
-//     the Shock and sub Holy builds need since they have no Precision. The Level 60 build's
-//     Precision 3 then only counts for its spells (the judgements and Consecration miss 16% at
-//     the most). Hit is unified under Forever.
-//   - 70 crit rating on 5 pieces (5%), a little under the Era set's.
-//   - Not every piece has every stat: the neck, wrist and first ring have no Intellect, the shoulders,
-//     hands and rings no Spirit, and the back, waist, feet and weapon carry the Agility.
+// Trinkets (standards 1b, 8a): a stat trinket at 0.56 x L(71) = 45.9 linear (spell power 32 and crit
+// rating 18: 45.5, 1.7-norm 34.7), and an on-use trinket of 140 spell power for 20 sec every 2 min
+// (sim/paladin/forever_synthetic_trinkets.go). Both sim best for both playstyles.
 //
 // Armor is the Battlegear of Might piece's of the slot (plate, item level 66), scaled by item level
-// for the wrist and waist (the cloak's from the enhancement cloak). The two-hander has Spinal Reaper's damage and speed. It is an axe like
-// Spinal Reaper, so no paladin race gets a weapon racial from it.
+// for the wrist and waist (the cloak's from the enhancement cloak). The two-hander has Spinal
+// Reaper's damage and speed. It is an axe like Spinal Reaper, so no paladin race gets a weapon racial
+// from it.
 //
 // The head and chest form a set with the bonuses of Justice Battlegear, Forever's Tier 1
 // retribution set (see sim/paladin/item_sets_pve.go). Every class's preset carries its tier set's
-// 2-piece bonus only (the orchestrator's fairness ruling), so only those two pieces are in it. The generator
-// script lived in the session scratchpad (synth_pal.py), the numbers below are its output.
+// 2-piece bonus only, so only those two pieces are in it. The generator script lived in the session
+// scratchpad (gear1b.py), the numbers below are its output.
 func init() {
 	retribution := func(item *proto.UIItem) *proto.UIItem {
 		item.RequiredLevel = 60
