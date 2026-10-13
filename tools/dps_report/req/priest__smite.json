@@ -1,0 +1,469 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceUndead",
+            "class": "ClassPriest",
+            "equipment": {
+              "items": [
+                {
+                  "id": 995016,
+                  "enchant": 1509
+                },
+                {
+                  "id": 995022,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 995017
+                },
+                {
+                  "id": 995023
+                },
+                {
+                  "id": 995018,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 995024,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 995019,
+                  "enchant": 1213622
+                },
+                {
+                  "id": 995025
+                },
+                {
+                  "id": 995020,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 995021,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 995030
+                },
+                {
+                  "id": 995031
+                },
+                {
+                  "id": 995033
+                },
+                {
+                  "id": 995034
+                },
+                {
+                  "id": 995029,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 995027
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "shadowPowerBuff": "ElixirOfShadowPower",
+              "mainHandImbue": "WizardOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfTheOwl",
+              "firePowerBuff": "ElixirOfGreaterFirepower",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spiritElixir": "ElixirOfGreaterSpirit"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "525030231305001001-00505113002-3",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Tailoring",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10934
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-2s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.4"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1277328
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Power Infusion on cooldown. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10060
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Racials and trinkets on cooldown.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "notes": "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 15261
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14751
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Holy Fire whenever its damage over time is down, for Power in Light.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 15261
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 15261
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Shadow Word: Pain whenever it is down.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 10894
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "9s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10894
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Devouring Plague whenever it is down and off cooldown.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 19280
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "12s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.2"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 19280
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1277335
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Smite while the mana lasts the fight at 20 mana a second.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "math": {
+                            "op": "OpDiv",
+                            "lhs": {
+                              "currentMana": {}
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "20"
+                              }
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "remainingTime": {}
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10934
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Rank 4 Smite once it would not: most of the damage for far less mana.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 984
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 5,
+            "shadowPriest": {
+              "options": {
+                "armor": "InnerFire"
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "sanctityAura": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "exposeArmor": "TristateEffectImproved",
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "mobType": "MobTypeHumanoid",
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

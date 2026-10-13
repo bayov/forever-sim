@@ -1,0 +1,82 @@
+{
+  "id": "priest__shadow-holy",
+  "class": "Priest",
+  "spec": "Shadow",
+  "build": "Level 60 + Holy",
+  "isDefault": false,
+  "pr": 1,
+  "race": "Undead",
+  "talents": "-3025011323-500321501201302051",
+  "treePoints": "0/20/31",
+  "treeNames": [
+    "Discipline",
+    "Holy",
+    "Shadow"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60",
+  "published": {
+    "dps": 832.0,
+    "source": "PR #1",
+    "overall": {
+      "race": "Undead",
+      "dps": 832.0
+    },
+    "horde": {
+      "race": "Undead",
+      "dps": 832.0
+    },
+    "alliance": {
+      "race": "Gnome",
+      "dps": 831.7
+    }
+  },
+  "verify": {
+    "dps": 832.03,
+    "stderr": 0.16,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 832.0 (PR #1); delta +0.03."
+  },
+  "summary": "The same Shadow points with 20 Holy points of healing utility instead of Discipline, giving up Twin Disciplines and Mental Strength. Shipped as a second Shadow preset for raids that want the Holy utility, 2.5% behind Level 60 at 180 s.",
+  "keyTalents": [
+    "Shadowform",
+    "Shadow Weaving",
+    "Darkness",
+    "Improved Mind Flay",
+    "Shadow Focus",
+    "Improved Mind Blast"
+  ],
+  "rotation": [
+    "Pre-pull: Shadowform at -3 s, Mind Blast at -1.5 s that lands at the pull",
+    "Dark Sacrifice (Undead) below 40% mana; racials on cooldown",
+    "Shadow Word: Pain whenever it is down (9+ s left in the fight)",
+    "Devouring Plague whenever it is down and off its 1 min cooldown (12+ s left)",
+    "Inner Focus right before Mind Blast",
+    "Mind Blast on cooldown, then Shadow Word: Death on cooldown",
+    "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of the Owl",
+    "Greater Mageblood Elixir",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Cerebral Cortex Compound",
+    "Goblin Sapper Charge",
+    "Major Spellblasting Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "The 20 Holy points add no DPS (healing utility only)",
+    "Runs low on mana on long fights; Greater Mageblood Elixir keeps it (without it 300 s fell to 821 on the earlier gear); Gnome is 0.3 behind Undead at 180 s but 21.8 at 300 s",
+    "Synthetic Phase 1 gear (not in the game), only the 2-piece set bonus is live; Raiments 4/5-piece would add +40.2 DPS (+4.7%, Devouring Plague without a cooldown)",
+    "Periodic spells roll crit per tick (global Forever rule); Shadow Weaving assumed to apply to the priest's own Shadow damage on every target",
+    "Mind Flay rolls hit once and its channel is not hasted; SW:Death backlash ignored and SW:Death numbers are untested in beta",
+    "Brilliant Wizard Oil left out as a Zul'Gurub recipe (+12.5); Elixir of Sages left out by the one-crit-elixir ruling (+13.9)"
+  ],
+  "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+}

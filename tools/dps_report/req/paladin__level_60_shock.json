@@ -1,0 +1,441 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceUndead",
+            "class": "ClassPaladin",
+            "equipment": {
+              "items": [
+                {
+                  "id": 992001,
+                  "enchant": 1506
+                },
+                {
+                  "id": 992002,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 992003
+                },
+                {
+                  "id": 992004,
+                  "enchant": 1219587
+                },
+                {
+                  "id": 992005,
+                  "enchant": 1891
+                },
+                {
+                  "id": 992006,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 992007,
+                  "enchant": 1213622
+                },
+                {
+                  "id": 992008
+                },
+                {
+                  "id": 992009,
+                  "enchant": 1506
+                },
+                {
+                  "id": 992010,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 992011
+                },
+                {
+                  "id": 992013
+                },
+                {
+                  "id": 992014
+                },
+                {
+                  "id": 992015
+                },
+                {
+                  "id": 992012,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 272435
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "agilityElixir": "ElixirOfGreaterAgility",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "strengthBuff": "ElixirOfFerocity",
+              "attackPowerBuff": "JujuMight",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "shadowPowerBuff": "ElixirOfShadowPower",
+              "firePowerBuff": "ElixirOfGreaterFirepower",
+              "fillerExplosive": "ExplosiveGoblinLandMine",
+              "mainHandImbue": "ShadowOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "dragonBreathChili": true,
+              "zanzaBuff": "ROIDS",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfTheOwl",
+              "spiritElixir": "ElixirOfGreaterSpirit"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved",
+              "blessingOfMight": "TristateEffectImproved"
+            },
+            "talentsString": "55003003201121251--05225230001",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Blacksmithing",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1311595
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "Consecration on cooldown, down to the last point of mana.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20924
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Judgement on cooldown.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 20293
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20271
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 20293
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Holy Strike on cooldown.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10333
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Hammer of Wrath below 20% health.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10314
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.3"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "sourceUnit": {
+                                    "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 1311597
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1311595
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "auraIsActive": {
+                                    "sourceUnit": {
+                                      "type": "CurrentTarget"
+                                    },
+                                    "auraId": {
+                                      "spellId": 1311597
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": {
+                                      "currentManaPercent": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "0.3"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20930
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Racials and trinkets on a free GCD.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 5,
+            "retributionPaladin": {
+              "options": {
+                "primarySeal": "Righteousness",
+                "aura": "RetributionAura"
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "strengthOfEarthTotem": "TristateEffectRegular",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "sanctityAura": true,
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "curseOfShadow": true,
+      "exposeArmor": "TristateEffectImproved",
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "mobType": "MobTypeHumanoid",
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

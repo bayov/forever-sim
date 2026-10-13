@@ -26,7 +26,7 @@ export class SocialLinks extends Component {
 	static buildPatreonLink(): Element {
 		const anchor = (
 			<a href="https://patreon.com/wowsims" target="_blank" className="patreon-link link-alt" dataset={{ tippyContent: 'Support us on Patreon' }}>
-				<i className="fab fa-patreon fa-lg" /> Patreon
+				<i className="fab fa-patreon fa-lg" />
 			</a>
 		);
 		tippy(anchor);

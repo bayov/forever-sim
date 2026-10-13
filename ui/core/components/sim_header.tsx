@@ -150,7 +150,7 @@ export class SimHeader extends Component {
 			<div className="sim-toolbar-item">
 				<a ref={linkRef} href={args.href ? args.href : 'javascript:void(0)'} className={args.classes || ''} target={args.href ? '_blank' : '_self'}>
 					{args.icon && <i className={args.icon}></i>}
-					{args.text ? ` ${args.text} ` : ''}
+					{args.text && <span className="sim-toolbar-item-text">{args.text}</span>}
 				</a>
 			</div>,
 		);
@@ -171,8 +171,9 @@ export class SimHeader extends Component {
 		return this.addToolbarLink({
 			parent: this.simToolbar,
 			text: 'Known Issues',
+			icon: 'fas fa-triangle-exclamation',
 			tooltip: this.knownIssuesContent,
-			classes: 'known-issues link-danger hide',
+			classes: 'known-issues hide',
 		});
 	}
 
@@ -275,7 +276,7 @@ export class SimHeader extends Component {
 								attributes={{ role: 'button', 'aria-expanded': 'false' }}
 								dataset={{ bsToggle: 'dropdown', bsDisplay: 'dynamic' }}>
 								<i className="fa fa-download"></i>
-								{' Import '}
+								<span>Import</span>
 							</a>
 							<ul className="dropdown-menu"></ul>
 						</div>
@@ -286,7 +287,7 @@ export class SimHeader extends Component {
 								attributes={{ role: 'button', 'aria-expanded': 'false' }}
 								dataset={{ bsToggle: 'dropdown', bsDisplay: 'dynamic' }}>
 								<i className="fa fa-right-from-bracket"></i>
-								{' Export '}
+								<span>Export</span>
 							</a>
 							<ul className="dropdown-menu"></ul>
 						</div>

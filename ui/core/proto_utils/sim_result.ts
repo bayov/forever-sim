@@ -15,9 +15,9 @@ import {
 	TargetedActionMetrics as TargetedActionMetricsProto,
 	UnitMetrics as UnitMetricsProto,
 } from '../proto/api.js';
-import { Class, Encounter as EncounterProto, Spec, SpellSchool, Target as TargetProto } from '../proto/common.js';
+import { Class, Encounter as EncounterProto, ItemSlot, Spec, SpellSchool, Target as TargetProto } from '../proto/common.js';
 import { SimRun } from '../proto/ui.js';
-import { ActionId, defaultTargetIcon } from '../proto_utils/action_id.js';
+import { ActionId, defaultTargetIcon, WeaponIcons } from '../proto_utils/action_id.js';
 import { bucket, formatToNumber, sum } from '../utils.js';
 import {
 	AuraUptimeLog,
@@ -216,6 +216,7 @@ export class SimResult {
 
 	static async makeNew(request: RaidSimRequest, result: RaidSimResult): Promise<SimResult> {
 		const resultData = new SimResultData(request, result);
+		ActionId.setWeaponIcons(await getWeaponIcons(request.raid));
 		const logs = await SimLog.parseAll(result);
 		const raidPromise = RaidMetrics.makeNew(resultData, request.raid!, result.raidMetrics!, logs);
 		const encounterPromise = EncounterMetrics.makeNew(resultData, request.encounter!, result.encounterMetrics!, logs);
@@ -226,6 +227,22 @@ export class SimResult {
 		return new SimResult(request, result, raidMetrics, encounterMetrics, logs);
 	}
 }
+
+// The icons of each player's main hand and off-hand weapons, by raid index.
+const getWeaponIcons = async (raid: RaidProto | undefined): Promise<Map<number, WeaponIcons>> => {
+	const iconOf = async (itemId: number | undefined) => (itemId ? (await ActionId.fromItemId(itemId).fill()).iconUrl || undefined : undefined);
+	const icons = new Map<number, WeaponIcons>();
+	await Promise.all(
+		(raid?.parties ?? []).flatMap((party, partyIndex) =>
+			party.players.map(async (player, i) => {
+				const items = player.equipment?.items ?? [];
+				const [mainHand, offHand] = await Promise.all([iconOf(items[ItemSlot.ItemSlotMainHand]?.id), iconOf(items[ItemSlot.ItemSlotOffHand]?.id)]);
+				icons.set(partyIndex * 5 + i, { mainHand, offHand });
+			}),
+		),
+	);
+	return icons;
+};
 
 export class RaidMetrics {
 	private readonly raid: RaidProto;
@@ -512,7 +529,7 @@ export class UnitMetrics {
 		);
 		const petLogs = logs.filter(log => log.source && !log.source.isTarget && log.source.isPet && log.source.index == raidIndex);
 
-		const actionsPromise = Promise.all(metrics.actions.map(actionMetrics => ActionMetrics.makeNew(null, resultData, actionMetrics, raidIndex)));
+		const actionsPromise = Promise.all(metrics.actions.map(actionMetrics => ActionMetrics.makeNew(null, resultData, actionMetrics, raidIndex, !isPet)));
 		const aurasPromise = Promise.all(metrics.auras.map(auraMetrics => AuraMetrics.makeNew(null, resultData, auraMetrics, raidIndex)));
 		const resourcesPromise = Promise.all(metrics.resources.map(resourceMetrics => ResourceMetrics.makeNew(null, resultData, resourceMetrics, raidIndex)));
 		const petsPromise = Promise.all(metrics.pets.map(petMetrics => UnitMetrics.makeNewPlayer(resultData, player, petMetrics, raidIndex, true, petLogs)));
@@ -1294,8 +1311,14 @@ export class ActionMetrics {
 		}
 	}
 
-	static async makeNew(unit: UnitMetrics | null, resultData: SimResultData, actionMetrics: ActionMetricsProto, playerIndex?: number): Promise<ActionMetrics> {
-		const actionId = await ActionId.fromProto(actionMetrics.id!).fill(playerIndex);
+	static async makeNew(
+		unit: UnitMetrics | null,
+		resultData: SimResultData,
+		actionMetrics: ActionMetricsProto,
+		playerIndex?: number,
+		ownWeapons = false,
+	): Promise<ActionMetrics> {
+		const actionId = await ActionId.fromProto(actionMetrics.id!).fill(playerIndex, ownWeapons);
 		return new ActionMetrics(unit, actionId, actionMetrics, resultData);
 	}
 

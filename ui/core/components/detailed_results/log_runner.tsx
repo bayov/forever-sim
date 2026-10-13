@@ -1,165 +1,164 @@
-// @ts-expect-error
-import debounce from 'lodash/debounce';
+import { delegate } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { SimLog } from '../../proto_utils/logs_parser';
+import { SimResult } from '../../proto_utils/sim_result.js';
 import { TypedEvent } from '../../typed_event.js';
-import { BooleanPicker } from '../boolean_picker.js';
+import { EventFilter } from './events_filter.js';
+import { badgeOutcomeInLogLine } from './hit_outcome.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
-export class LogRunner extends ResultComponent {
-	private virtualScroll: CustomVirtualScroll | null = null;
-	readonly showDebugChangeEmitter = new TypedEvent<void>('Show Debug');
-	private showDebug = false;
-	private ui: {
-		search: HTMLInputElement;
-		actions: HTMLDivElement;
-		buttonToTop: HTMLButtonElement;
-		scrollContainer: HTMLDivElement;
-		contentContainer: HTMLTableSectionElement;
-	};
-	cacheOutput: {
-		cacheKey: number | null;
-		logs: SimLog[] | null;
-		logsAsHTML: Element[] | null;
-		logsAsText: string[] | null;
-	} = { cacheKey: null, logs: null, logsAsHTML: null, logsAsText: null };
 
-	constructor(config: ResultComponentConfig) {
+export interface LogRunnerConfig extends ResultComponentConfig {
+	filter: EventFilter;
+	// Called when we click the time of an event, to show that moment in the timeline.
+	onTimeClick: (time: number) => void;
+}
+
+interface LogRow {
+	log: SimLog;
+	elem: HTMLTableRowElement;
+	text: string;
+}
+
+// The iteration's events one per line, oldest first.
+export class LogRunner extends ResultComponent {
+	private readonly filter: EventFilter;
+	private readonly onTimeClick: (time: number) => void;
+	private readonly virtualScroll: CustomVirtualScroll;
+	private readonly scrollContainer: HTMLDivElement;
+	private readonly emptyElem: HTMLElement;
+
+	private rows: Array<LogRow> = [];
+	private rowsKey: SimResult | null = null;
+	// A line between the prepull events and the ones after the pull. It's a row of the same height
+	// as the others, so the virtual scroll can place it like any row.
+	private readonly pullRow = (
+		<tr className="log-pull-row">
+			<td colSpan={2}>
+				<span>Pull</span>
+			</td>
+		</tr>
+	) as HTMLTableRowElement;
+
+	// How many events the filter lets through, out of all of them.
+	readonly countEmitter = new TypedEvent<void>('LogRunnerCount');
+	shownCount = 0;
+	totalCount = 0;
+
+	constructor(config: LogRunnerConfig) {
 		config.rootCssClass = 'log-runner-root';
 		super(config);
+		this.filter = config.filter;
+		this.onTimeClick = config.onTimeClick;
 
-		const searchRef = ref<HTMLInputElement>();
-		const actionsRef = ref<HTMLDivElement>();
-		const buttonToTopRef = ref<HTMLButtonElement>();
 		const scrollContainerRef = ref<HTMLDivElement>();
 		const contentContainerRef = ref<HTMLTableSectionElement>();
+		const emptyRef = ref<HTMLDivElement>();
 
 		this.rootElem.appendChild(
 			<>
-				<div ref={actionsRef} className="log-runner-actions">
-					<input ref={searchRef} type="text" className="form-control log-search-input" placeholder="Filter logs" />
-					<button ref={buttonToTopRef} className="btn btn-primary order-last log-runner-scroll-to-top-btn">
-						Top
-					</button>
-				</div>
 				<div ref={scrollContainerRef} className="log-runner-scroll">
-					<table className="metrics-table log-runner-table">
+					<table className="log-runner-table">
 						<thead>
-							<tr className="metrics-table-header-row">
-								<th>Time</th>
-								<th>
-									<div className="d-flex align-items-end">Event</div>
-								</th>
+							<tr>
+								<th className="log-timestamp">Time</th>
+								<th>Event</th>
 							</tr>
 						</thead>
 						<tbody ref={contentContainerRef} className="log-runner-logs"></tbody>
 					</table>
 				</div>
+				<div ref={emptyRef} className="events-empty hide">
+					No events match the filter.
+				</div>
 			</>,
 		);
 
-		this.ui = {
-			search: searchRef.value!,
-			actions: actionsRef.value!,
-			buttonToTop: buttonToTopRef.value!,
-			scrollContainer: scrollContainerRef.value!,
-			contentContainer: contentContainerRef.value!,
-		};
-
-		// Use the 'input' event to trigger search as the user types
-		const onSearchHandler = () => {
-			this.searchLogs(this.ui.search.value);
-		};
-		this.ui.search?.addEventListener('input', debounce(onSearchHandler, 150));
-		this.ui.buttonToTop?.addEventListener('click', () => {
-			this.virtualScroll?.scrollToTop();
-		});
-		new BooleanPicker<LogRunner>(this.ui.actions, this, {
-			id: 'log-runner-show-debug',
-			extraCssClasses: ['show-debug-picker'],
-			label: 'Show Debug Statements',
-			inline: true,
-			changedEvent: () => this.showDebugChangeEmitter,
-			getValue: () => this.showDebug,
-			setValue: (eventID, _logRunner, newValue) => {
-				this.showDebug = newValue;
-				this.showDebugChangeEmitter.emit(eventID);
-			},
-		});
-
-		this.showDebugChangeEmitter.on(() => {
-			const lastResults = this.getLastSimResult();
-			this.onSimResult(lastResults);
-		});
-		this.initializeClusterize();
-	}
-
-	private initializeClusterize(): void {
+		this.scrollContainer = scrollContainerRef.value!;
+		this.emptyElem = emptyRef.value!;
 		this.virtualScroll = new CustomVirtualScroll({
-			scrollContainer: this.ui.scrollContainer,
-			contentContainer: this.ui.contentContainer,
-			itemHeight: 32,
-		});
-	}
-
-	searchLogs(searchQuery: string): void {
-		// Regular expression to match quoted phrases or words
-		const matchQuotesRegex = /"([^"]+)"|\S+/g;
-		let match;
-		const keywords: any[] = [];
-		// Extract keywords and quoted phrases from the search query
-		while ((match = matchQuotesRegex.exec(searchQuery))) {
-			keywords.push(match[1] ? match[1].toLowerCase() : match[0].toLowerCase());
-		}
-		const filteredLogs = this.cacheOutput.logsAsHTML?.filter((_, index) => {
-			const logText = this.cacheOutput.logsAsText![index];
-			return keywords.every(keyword => {
-				if (keyword.startsWith('"') && keyword.endsWith('"')) {
-					// Remove quotes for exact phrase match
-					return logText.includes(keyword.slice(1, -1));
-				}
-				return logText.includes(keyword);
-			});
+			scrollContainer: this.scrollContainer,
+			contentContainer: contentContainerRef.value!,
+			itemHeight: LOG_ROW_HEIGHT,
 		});
 
-		if (filteredLogs) {
-			this.virtualScroll?.setItems(filteredLogs);
+		// A log can have thousands of rows, so the rows' tooltips are made when we hover them.
+		delegate(this.scrollContainer, { target: '[data-tippy-content]' });
+
+		this.filter.changeEmitter.on(() => this.applyFilter());
+	}
+
+	onSimResult(resultData: SimResultData) {
+		if (this.rowsKey !== resultData.result) {
+			this.rowsKey = resultData.result;
+			// Cast completed lines repeat the cast began ones, so we leave them out.
+			this.rows = resultData.result.logs
+				.filter(log => log.raw.trim() != '')
+				.filter(log => !log.isCastCompleted())
+				.map(log => this.makeRow(log));
 		}
+		this.applyFilter();
 	}
 
-	onSimResult(resultData: SimResultData): void {
-		this.virtualScroll?.setItems(this.getLogs(resultData) || []);
+	private applyFilter() {
+		const shownRows = this.rows.filter(row => this.filter.matchesLog(row.log, row.text));
+		this.shownCount = shownRows.length;
+		this.totalCount = this.rows.length;
+		this.emptyElem.classList.toggle('hide', shownRows.length > 0 || this.rows.length == 0);
+
+		const shown: Element[] = shownRows.map(row => row.elem);
+		const pullIndex = shownRows.findIndex(row => row.log.timestamp >= 0);
+		if (pullIndex > 0) shown.splice(pullIndex, 0, this.pullRow);
+		this.virtualScroll.setItems(shown);
+		this.countEmitter.emit(TypedEvent.nextEventID());
 	}
 
-	getLogs(resultData: SimResultData) {
-		if (!resultData) return [];
-		if (this.cacheOutput.cacheKey === resultData?.eventID) {
-			return this.cacheOutput.logsAsHTML;
-		}
-
-		const validLogs = resultData.result.logs.filter(log => !log.isCastCompleted());
-		this.cacheOutput.cacheKey = resultData?.eventID;
-		this.cacheOutput.logs = validLogs;
-		this.cacheOutput.logsAsHTML = validLogs.map(log => this.renderItem(log));
-		this.cacheOutput.logsAsText = this.cacheOutput.logsAsHTML.map(element => fragmentToString(element).trim().toLowerCase());
-
-		return this.cacheOutput.logsAsHTML;
-	}
-
-	renderItem(log: SimLog) {
-		return (
+	private makeRow(log: SimLog): LogRow {
+		const timeRef = ref<HTMLButtonElement>();
+		const eventRef = ref<HTMLTableCellElement>();
+		const elem = (
 			<tr>
-				<td className="log-timestamp">{log.formattedTimestamp()}</td>
-				<td className="log-evdsfent">{log.toHTML(false)}</td>
+				<td className="log-timestamp">
+					<button ref={timeRef} className="log-time-link" type="button" dataset={{ tippyContent: 'Show in timeline', tippyPlacement: 'right' }}>
+						{formatEventTime(log.timestamp)}
+					</button>
+				</td>
+				<td ref={eventRef} className="log-event">
+					<span className="log-event-text">{log.toHTML(false)}</span>
+				</td>
 			</tr>
 		) as HTMLTableRowElement;
+
+		timeRef.value!.addEventListener('click', () => this.onTimeClick(log.timestamp));
+		if (log.isDamageDealt()) badgeOutcomeInLogLine(eventRef.value!);
+
+		const text = eventRef.value!.textContent?.trim() ?? '';
+		eventRef.value!.title = text;
+
+		if (log.actionId) {
+			const actionId = log.actionId;
+			const hideButton = (
+				<button className="log-hide-action" type="button" dataset={{ tippyContent: `Hide ${actionId.name}` }}>
+					<i className="fas fa-eye-slash" />
+				</button>
+			) as HTMLButtonElement;
+			hideButton.addEventListener('click', () => this.filter.hide(actionId));
+			eventRef.value!.appendChild(hideButton);
+		}
+
+		return { log, elem, text: text.toLowerCase() };
 	}
 }
 
-const fragmentToString = (element: Node | Element) => {
-	const div = document.createElement('div');
-	div.appendChild(element.cloneNode(true));
-	return div.innerHTML;
+const LOG_ROW_HEIGHT = 30;
+
+// Times read like a clock, minutes then seconds with milliseconds: 1:05.250. Events before the
+// pull get a minus sign.
+export const formatEventTime = (time: number): string => {
+	const positive = Math.abs(time);
+	const minutes = Math.floor(positive / 60);
+	const seconds = positive - minutes * 60;
+	return `${time < 0 ? '-' : ''}${minutes}:${seconds.toFixed(3).padStart(6, '0')}`;
 };
 
 class CustomVirtualScroll {
@@ -180,8 +179,8 @@ class CustomVirtualScroll {
 		this.visibleItemsCount = 50; // +1 for buffer
 		this.startIndex = 0;
 
-		this.placeholderTop = document.createElement('div');
-		this.placeholderBottom = document.createElement('div');
+		this.placeholderTop = document.createElement('tr');
+		this.placeholderBottom = document.createElement('tr');
 		contentContainer.prepend(this.placeholderTop);
 		contentContainer.append(this.placeholderBottom);
 
@@ -195,7 +194,6 @@ class CustomVirtualScroll {
 	}
 
 	setItems(newItems: CustomVirtualScroll['items']): void {
-		// Adjust the type of newItems as needed
 		this.items = newItems;
 		this.scrollToTop();
 	}
@@ -213,7 +211,7 @@ class CustomVirtualScroll {
 	private updateVisibleItems(): void {
 		const endIndex = this.startIndex + this.visibleItemsCount;
 		const visibleItems = this.items.slice(this.startIndex, endIndex);
-		const remainingItems = this.items.length - endIndex;
+		const remainingItems = Math.max(0, this.items.length - endIndex);
 
 		// Update the height of the placeholders before it's placed in the dom to prevent rerender
 		this.placeholderTop.style.height = `${this.startIndex * this.itemHeight}px`;
