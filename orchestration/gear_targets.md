@@ -2,6 +2,8 @@
 
 CORRECTED 2026-10-13 07:05 UTC (supersedes the 06:50 table, which double-counted SoD hit and crit). From the fairness auditor's report section 7b (corrected), every SoD p4+ set averaged, trinkets excluded, AP and RAP counted once, SoD weapon feral AP excluded, school SP weighted 0.45, derived from wowsims/sod level 60 BiS sets (two late-phase sets per spec, p6 or p5, Naxx sets excluded) and orchestration/sod_stat_mix.md. Target = SoD proportions re-normalised to Stamina 18%, Spirit 10% for mana users (item 5), hit held at the current set's share (item 4; re-check the cap after the rebudget). Linear (L) shares: budget weight x amount / the set's weighted total, enchants excluded, AP and RAP counted once.
 
+Linear spend (standards item 1a, 07:15 UTC): every piece's weighted linear stat total = 1.73 x its item 1 budget (+/-1%), so every set's total is the same at the same item levels; the 1.5-norm no longer prices pieces.
+
 Orchestrator rulings (06:50 UTC):
 - Tolerance: every non-Stamina stat within +/- 3 points (L) of its target; Stamina 18 +/- 1.5.
 - Smite: target A (SoD shadow priest proportions, shadow-only SP counted as generic SP, no hit).
