@@ -119,14 +119,16 @@ export const GearLevel30p5SinisterStrike = PresetUtils.makePresetGear('Level 30 
 // Forever's level 60 client gear is not tuned yet, and Molten Core and Onyxia have no Forever
 // data. So, as for the enhancement shaman, each piece takes the place of an Era Phase 1 BiS item
 // (the Nightslayer and Devilsaur sets, Onyxia Tooth Pendant, Cape of the Black Baron, Quick Strike
-// Ring, Don Julio's Band, Striker's Mark) at the Phase 1 epic budget of its slot, on the shared
-// item level table (66 for the tier slots, 71 for the rest). The swords set leans on attack power
-// and Strength for Sinister Strike, the daggers set on Agility and crit for Backstab, Mutilate and
+// Ring, Don Julio's Band, Striker's Mark) on the shared item level table (66 for the tier slots, 71
+// for the rest), priced by the cross-class Forever budget for physical melee (three stat lines a
+// piece) in the fair stat mix of Season of Discovery rogue BiS (tools/database/forever_synthetic_items_rogue.go
+// has the numbers). The swords set is for Sinister Strike, the daggers set for Backstab, Mutilate and
 // Subtlety. Both carry 5% hit, the 9% cap with Precision 3/3 and the hands and legs, which carry
 // the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). The 4 and 5 piece
 // bonuses (36 attack power against Humanoids, Eviscerate 5 Energy cheaper) are not live, see
-// PresetBuildLevel60CombatSwords. The trinket slots are empty: Forever removed Hand of Justice and
-// Blackhand's Breadth, and the sim does not model its launch trinkets yet.
+// PresetBuildLevel60CombatSwords. The trinkets are synthetic too (31 Agility and 15 crit rating, and
+// +335 attack power for 20 sec every 2 min): Forever removed Hand of Justice and Blackhand's Breadth,
+// and the sim does not model its launch trinkets yet.
 //
 // The enchants are the best non-raid ones: Lesser Arcanum of Voracity (Agility) on head and legs,
 // Enchant Necklace - Agility, Cloak - Agility (+5), Chest - Greater Stats, Superior Strength on
@@ -702,19 +704,21 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-12, Undead,
-// 20000 iterations, at 120 / 180 / 300 sec, on the synthetic sets rebudgeted to the fair stat mix (2026-10-13):
-//   Combat Daggers      723.5 / 701.1 / 685.1 (the default)
-//   Seal Fate Daggers   684.6 / 673.0 / 666.3, 4.0% behind Combat Daggers
-//   Mutilate            680.7 / 669.7 / 663.9
-//   Combat Swords       699.9 / 676.4 / 660.4
-//   Subtlety            655.3 / 640.6 / 633.4
-//   Seal Fate Swords    654.7 / 644.0 / 636.7, 4.8% behind Combat Swords
+// 20000 iterations, at 120 / 180 / 300 sec, on the synthetic sets built to the Forever budget (standards 1b,
+// 2026-10-13: armor 650.5, weapons 63.9, bow 19.5 weighted linear points a set, plus two synthetic ilvl 71
+// trinkets, 31 Agility and 15 crit rating, and +335 attack power for 20 sec every 2 min):
+//   Combat Daggers      737.1 / 714.6 / 695.8 (the default)
+//   Seal Fate Daggers   694.3 / 683.1 / 674.4, 4.4% behind Combat Daggers
+//   Mutilate            690.4 / 679.9 / 672.1
+//   Combat Swords       715.6 / 692.0 / 673.1
+//   Subtlety            667.5 / 653.2 / 643.5
+//   Seal Fate Swords    667.5 / 657.3 / 647.8, 5.0% behind Combat Swords
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
 // no Venom build. Undead is the best race for every build, 5 (swords) to 14 ahead of the next. The best
 // Alliance race is the Gnome, except the Human on Combat Swords. Grimstitch Armor's 4 and 5 piece
-// bonuses would add about 8 and 6 to Combat Daggers. The trinket slots are empty (no Forever trinket is
-// simulated yet), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety
-// gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the
+// bonuses would add about 8 and 6 to Combat Daggers. The trinkets are synthetic (Forever's real
+// Phase 1 trinkets are removed or not simulated), and the fight does not open from Stealth (a raid
+// rogue rarely does), so Subtlety gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the
 // talent by talent verification.
 const level60Build = (name: string, tooltip: string, gear: PresetUtils.PresetGear, talents: PresetUtils.PresetTalents, rotation: PresetUtils.PresetRotation) =>
 	PresetUtils.makePresetBuild(name, {
