@@ -3013,3 +3013,29 @@ ol.fv-list li::marker {
 .fv-isel-menu .dropdown-item.active .fv-isel-end {
 	color: inherit;
 }
+
+/* ---------- special encounters ---------- */
+// The creature type of an encounter preset (a "vs Humanoid" build), on its ranking row and spec header.
+.fv-enc {
+	display: inline-block;
+	margin-left: 0.35rem;
+	padding: 0 0.35rem;
+	border-radius: var(--fv-r-sm);
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.5;
+	color: var(--fv-gold);
+	background: var(--fv-gold-soft);
+	white-space: nowrap;
+}
+
+// The boss a preset fights, at the top of its consumes and buffs card.
+.fv-boss {
+	margin: 0.2rem 0 0.5rem;
+	font-size: var(--cds-font-size-body);
+	color: var(--color-fg-muted);
+
+	b {
+		color: var(--color-fg);
+		font-weight: 500;
+	}
+}

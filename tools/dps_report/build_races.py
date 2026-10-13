@@ -16,7 +16,8 @@ HORDE = {'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper'}
 RACE_ICON = {'Human': 'race_human_male', 'Dwarf': 'race_dwarf_male', 'Night Elf': 'race_nightelf_male', 'Gnome': 'race_gnome_male',
              'High Order': 'inv_feather_02', 'Orc': 'race_orc_male', 'Undead': 'race_scourge_male', 'Tauren': 'race_tauren_male',
              'Troll': 'race_troll_male', 'Windshaper': 'ability_druid_flightform'}
-VARIANTS = ['baseline', 'beast', 'elemental', 'undead', 'weapon', 'off']
+VARIANTS = ['baseline', 'beast', 'elemental', 'humanoid', 'weapon', 'off']
+TARGET_VARIANTS = ('beast', 'elemental', 'humanoid')
 RACE_ORDER = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order', 'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper']
 
 # Racial parts the sim models, by race: (part key, racial name, what it does, when it counts)
@@ -50,10 +51,10 @@ WEAPON_PART = {'Human': 'sword', 'Dwarf': 'mace', 'Orc': 'axe'}
 WEAPON_WORD = {'sword': 'a sword', 'mace': 'a mace', 'axe': 'an axe'}
 
 SCENARIOS = [
-    ('baseline', 'Normal weapon', 'Each preset with its own weapon type, against a Humanoid boss. Weapon racials count only where the preset already holds that weapon type: Human swords (Warrior, Hunter, Combat Swords and Seal Fate Swords rogues) and Orc axes (Enhancement).'),
-    ('beast', 'Beast target', 'A Beast boss switches on Troll Beast Slaying and Dwarf Big Game Hunter: 5% more damage. Rogues lose Murder (Humanoids and Giants only) and Dwarf Priests lose Chastise (Humanoids only).'),
-    ('elemental', 'Elemental target', 'An Elemental boss switches on High Order and Windshaper Elemental Insight: 5% more damage. Rogues lose Murder and Dwarf Priests lose Chastise.'),
-    ('undead', 'Undead target', 'No racial cares about Undead. Retribution casts Exorcism (Undead and Demons only), Rogues lose Murder and Dwarf Priests lose Chastise.'),
+    ('baseline', 'Generic boss', 'Each preset with its own weapon type, against the generic level 63 boss (no creature type). Weapon racials count only where the preset already holds that weapon type: Human swords (Warrior, Hunter, Combat Swords and Seal Fate Swords rogues) and Orc axes (Enhancement).'),
+    ('beast', 'Beast target', 'A Beast boss switches on Troll Beast Slaying and Dwarf Big Game Hunter: 5% more damage.'),
+    ('elemental', 'Elemental target', 'An Elemental boss switches on High Order and Windshaper Elemental Insight: 5% more damage.'),
+    ('humanoid', 'Humanoid target', 'Priests only: Dwarf Priests cast Chastise, which works on Humanoids only. No other racial cares about Humanoids, so the other presets have no Humanoid numbers here.'),
     ('weapon', 'Racial weapon', "Human, Dwarf and Orc each hold their racial's weapon type (sword, mace, axe) where the class can use it, at the same stats and weapon DPS. Casters move the staff's stats to a one-hand weapon; dagger Rogues change only the off hand. Other races keep the preset's weapon."),
     ('off', 'Racials off', 'Every race on its base stats alone, with all racial passives and abilities left out: what the races differ by before racials.'),
 ]
@@ -89,7 +90,10 @@ def build(builds, races_rows, stats_rows, dump):
     for bid, b in list(bmap.items()):
         req = json.load(open(os.path.join(D, 'req', bid + '.json')))
         cls = b['class']
-        if os.environ.get('RACES_PARTIAL') and any('undead' not in res[(bid, rn(rc))] for rc in RR.CLASS_RACES[cls]):
+        if b.get('encounter'):
+            del bmap[bid]  # the encounter presets have only the race sweep; the scenarios are on the generic boss
+            continue
+        if os.environ.get('RACES_PARTIAL') and any(v not in res[(bid, rn(rc))] for rc in RR.CLASS_RACES[cls] for v in ('off', 'beast', 'elemental')):
             del bmap[bid]  # a test build on part of the sims
             continue
         held = {w['weaponType'] for w in RR.weapons(req) if w}
@@ -113,6 +117,8 @@ def build(builds, races_rows, stats_rows, dump):
                     val, sim = base, True
                 else:
                     val, sim = v.get(var, (None, None)), var in v
+                if var == 'humanoid' and not sim:
+                    continue  # only the classes with a Humanoid racial (Priests) have this scenario
                 if val[0] is None:
                     raise SystemExit(f'missing {bid} {race} {var}')
                 rows.append({'build': bid, 'class': cls, 'race': race, 'faction': 'Horde' if race in HORDE else 'Alliance', 'variant': var,
@@ -159,13 +165,17 @@ def build(builds, races_rows, stats_rows, dump):
                                   'se': round(math.hypot(wn[1], base[1]), 2), 'active': True, 'note': f'{WEAPON_WORD[wp]} in place of the preset weapon'})
                 breakdown.append({'build': bid, 'race': race, 'scenario': 'weapon', 'part': wp, 'label': PART_INFO[wp][0], 'dps': round(w[0] - wn[0], 2),
                                   'se': round(math.hypot(w[1], wn[1]), 2), 'active': True, 'note': f'with {WEAPON_WORD[wp]}'})
-            for t in ('beast', 'elemental', 'undead'):
+            for t in TARGET_VARIANTS:
+                if t not in v:
+                    continue
                 tv = v[t]
-                breakdown.append({'build': bid, 'race': race, 'scenario': t, 'part': 'target', 'label': {'beast': 'Beast target', 'elemental': 'Elemental target', 'undead': 'Undead target'}[t],
+                breakdown.append({'build': bid, 'race': race, 'scenario': t, 'part': 'target', 'label': {'beast': 'Beast target', 'elemental': 'Elemental target', 'humanoid': 'Humanoid target'}[t],
                                   'dps': round(tv[0] - base[0], 2), 'se': round(math.hypot(tv[1], base[1]), 2), 'active': True, 'note': ''})
         # gap to the best race within each scenario, and the rank
         for var in VARIANTS:
             vr = sorted([r for r in rows if r['variant'] == var], key=lambda r: -r['dps'])
+            if not vr:
+                continue
             for i, r in enumerate(vr):
                 r['vsBest'] = round(100 * (r['dps'] / vr[0]['dps'] - 1), 2)
                 r['rank'] = i + 1
@@ -286,7 +296,7 @@ def finding(cls, bmap, variants, breakdown):
             else:
                 lead += ' leads'
             base = next(r for r in rs0 if r['race'] == tr[0]['race'])
-            s = f"Against {word} {lead} {b0['build']} ({'+' if tr[0]['dps'] >= base['dps'] else '-'}{pct(100 * (tr[0]['dps'] / base['dps'] - 1))} over its Humanoid DPS)"
+            s = f"Against {word} {lead} {b0['build']} ({'+' if tr[0]['dps'] >= base['dps'] else '-'}{pct(100 * (tr[0]['dps'] / base['dps'] - 1))} over its generic-boss DPS)"
             if nxt and abs(nxt['vsBest']) < 0.05:
                 s += f", level with {nxt['race']}"
             elif nxt:

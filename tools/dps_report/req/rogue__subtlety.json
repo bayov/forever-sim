@@ -77,8 +77,8 @@
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
               "fillerExplosive": "ExplosiveGoblinLandMine",
-              "mainHandImbue": "DeadlyPoison",
-              "offHandImbue": "InstantPoison",
+              "mainHandImbue": "DenseSharpeningStone",
+              "offHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MajorFrenzyPotion",
               "defaultConjured": "ConjuredRogueThistleTea",
               "dragonBreathChili": true,
@@ -90,7 +90,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "0053231015140004--3021203310113011",
+            "talentsString": "0053031035140004--3021203310113011",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -609,7 +609,74 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets).",
+                  "notes": "Goblin Sapper Charge on cooldown once Slice and Dice is up.",
+                  "action": {
+                    "condition": {
+                      "auraIsActive": {
+                        "auraId": {
+                          "spellId": 6774,
+                          "rank": 2
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 10646
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 6774,
+                                "rank": 2
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "autoTimeToNext": {
+                                  "autoType": "MainHand"
+                                }
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpSub",
+                                  "lhs": {
+                                    "autoSwingTime": {
+                                      "autoType": "MainHand"
+                                    }
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.4s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 4395
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Anything not listed above (trinkets).",
                   "action": {
                     "condition": {
                       "auraIsActive": {
@@ -1416,7 +1483,10 @@
             "channelClipDelayMs": 50,
             "distanceFromTarget": 5,
             "rogue": {
-              "options": {}
+              "options": {
+                "mainHandPoison": "DeadlyPoison",
+                "offHandPoison": "InstantPoison"
+              }
             }
           }
         ],
@@ -1440,7 +1510,6 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true,
       "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
@@ -1449,7 +1518,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -1471,7 +1539,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

@@ -7,36 +7,23 @@
   "pr": 4,
   "race": "Undead",
   "talents": "30305013032-25053000152110501",
-  "treePoints": "20/31/0",
   "treeNames": [
     "Arms",
     "Fury",
     "Protection"
   ],
-  "gearSet": "level60_phase1_synthetic_arms.gear.json",
-  "apl": "level60_fury_2h.apl.json",
+  "gearSet": "level60_phase1_synthetic_arms",
+  "apl": "level60_fury_2h",
   "published": {
-    "dps": 887.4,
-    "source": "PR #4",
-    "overall": {
-      "race": "Undead",
-      "dps": 887.4
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 887.4
-    },
-    "alliance": {
-      "race": "Human",
-      "dps": 884.6
-    }
+    "dps": 890.6,
+    "source": "warrior head 38b94b4"
   },
   "verify": {
-    "dps": 887.37,
-    "stderr": 0.43,
+    "dps": 890.58,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 887.4 (PR #4); delta -0.03."
+    "note": "-0.02"
   },
   "summary": "Two-hand Fury with a Bonereaver's Edge-style sword in Berserker Stance: Bloodthirst, Whirlwind, Flurry and Two-Handed Weapon Specialization. Shipped as the two-hand Fury variant; it trails dual wield Fury but beats Arms at 120 sec.",
   "keyTalents": [
@@ -73,15 +60,14 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
     "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
-    "Late Forever rulings cost (Undead 180 s): Ahn'Qiraj ranks out -14.8, Deep Wounds no crit -6.7",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
     "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
     "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 12.0",
     "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 8.8 at Undead 180 s)",
-    "The 36 sec Death Wish hold is +3.5 at 180 sec but -4 at 120 sec",
-    "Ahead of Arms at 120 sec (934.6 vs 912.2), behind it at 180 sec (887.4 vs 890.4)"
+    "The 36 sec Death Wish hold is +3.5 at 180 sec but -4 at 120 sec"
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_arms -apl level60_fury_2h -talents 30305013032-25053000152110501 -race Undead -duration 180, unedited. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Uses the Fury class options (Berserker Stance) as the preset build does; the preset's DefaultConsumes keep an off-hand stone, which has no effect without an off hand. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the second potion is held for the last 20 s."
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_arms -apl level60_fury_2h -talents 30305013032-25053000152110501 -race Undead -duration 180, unedited. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Uses the Fury class options (Berserker Stance) as the preset build does; the preset's DefaultConsumes keep an off-hand stone, which has no effect without an off hand."
 }

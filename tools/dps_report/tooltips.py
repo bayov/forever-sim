@@ -386,7 +386,7 @@ SETUP_IDS = {
     'Flask Of The Titans': ('item', 13510), 'Food Flank Au Poivre': ('item', 250069), 'Food Grilled Squid': ('item', 13928),
     'Food Lobster Stew': ('item', 13933), 'Food Smoked Desert Dumpling': ('item', 20452), 'Elixir Of Frost Power': ('item', 17708),
     'Elixir Of Greater Intellect': ('item', 9179), 'Elixir Of The Owl': ('item', 250337), 'Deadly Poison': ('item', 20844),
-    'Dense Sharpening Stone': ('item', 12404), 'Shadow Oil': ('item', 3824), 'Wizard Oil': ('item', 20750),
+    'Dense Sharpening Stone': ('item', 12404), 'Dense Weightstone': ('item', 12643), 'Elixir Of Cunning': ('item', 250328), 'Shadow Oil': ('item', 3824), 'Wizard Oil': ('item', 20750),
     'Greater Mageblood Elixir': ('item', 250341), 'Elixir Of Nature Power': ('item', 250343), 'Instant Poison': ('item', 8928),
     'Sapper Goblin Sapper': ('item', 10646), 'Elixir Of Shadow Power': ('item', 9264), 'Greater Arcane Elixir': ('item', 13454),
     'Elixir Of Greater Spirit': ('item', 250347), 'Elixir Of Sages': ('item', 250338), 'Elixir Of Ferocity': ('item', 250350),

@@ -7,7 +7,6 @@
   "pr": 1,
   "race": "Undead",
   "talents": "525030231305001001-00505113002-3",
-  "treePoints": "31/17/3",
   "treeNames": [
     "Discipline",
     "Holy",
@@ -16,27 +15,15 @@
   "gearSet": "level60_phase1_smite",
   "apl": "level60_smite",
   "published": {
-    "dps": 708.1,
-    "source": "PR #1",
-    "overall": {
-      "race": "Undead",
-      "dps": 708.1
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 708.1
-    },
-    "alliance": {
-      "race": "Gnome",
-      "dps": 702.6
-    }
+    "dps": 706.5,
+    "source": "PR #1"
   },
   "verify": {
-    "dps": 708.1,
+    "dps": 706.49,
     "stderr": 0.15,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 708.1 (PR #1); delta +0.00. The fairness auditor lists 676.9 for this build; this request matches the PR instead."
+    "note": "-0.01 vs PR #1"
   },
   "summary": "A Holy damage priest: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light) casting Smite and Holy Fire. Shipped as its own spec on its own hit-free gear, 17% behind Shadow at 180 s because Smite is a mana-hungry filler.",
   "keyTalents": [
@@ -84,5 +71,5 @@
     "Kreeg's Stout Beatdown left out as a Dire Maul item; Elixir of Sages left out by the one-crit-elixir ruling (+6.4)",
     "Dark Sacrifice gives 1600 + Spirit mana (tooltip adds Spirit; client data says 1600)"
   ],
-  "notes": "mksettings request plus ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. Gear level60_phase1_smite, apl level60_smite. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+  "notes": "mksettings request plus ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. Gear level60_phase1_smite, apl level60_smite."
 }

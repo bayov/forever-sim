@@ -7,7 +7,6 @@
   "pr": 6,
   "race": "Undead",
   "talents": "05020500300001-23550000130123051-004",
-  "treePoints": "16/31/4",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -16,27 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 871.7,
-    "source": "PR #6",
-    "overall": {
-      "race": "Undead",
-      "dps": 871.7
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 871.7
-    },
-    "alliance": {
-      "race": "Gnome",
-      "dps": 868.6
-    }
+    "dps": 873.3,
+    "source": "PR #6"
   },
   "verify": {
-    "dps": 871.74,
+    "dps": 873.25,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 871.7 (PR #6); delta +0.04."
+    "note": "-0.05 vs PR #6"
   },
   "summary": "Deep Fire to Combustion with Arcane Concentration and Missile Barrage from Arcane. 3% behind Frostfire.",
   "keyTalents": [
@@ -83,5 +70,5 @@
     "Missile Barrage roll timing and cost interaction with Arcane Power open",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
   ],
-  "notes": "Request written by mksettings -spec mage_fire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+  "notes": "Request written by mksettings -spec mage_fire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring)."
 }

@@ -6,8 +6,7 @@
   "isDefault": false,
   "pr": 9,
   "race": "Undead",
-  "talents": "0053231025130005-3220132020141",
-  "treePoints": "30/21/0",
+  "talents": "0053031045130005-3220132020141",
   "treeNames": [
     "Assassination",
     "Combat",
@@ -16,25 +15,17 @@
   "gearSet": "level60_phase1_synthetic_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 657.3,
-    "source": "the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)",
-    "overall": {
-      "race": "Undead",
-      "dps": 657.3
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 657.3
-    }
+    "dps": 644.7,
+    "source": "PR #9"
   },
   "verify": {
-    "dps": 657.32,
-    "stderr": 0.23,
+    "dps": 644.68,
+    "stderr": 0.22,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 657.3 (the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)); delta +0.02."
+    "note": "-0.02 vs PR #9"
   },
-  "summary": "Seal Fate and Cold Blood in Assassination with Blade Flurry and Improved Sinister Strike in Combat, for Sinister Strike on swords. Shipped as a variant 5.0% behind Combat Swords.",
+  "summary": "Seal Fate and Cold Blood in Assassination with Blade Flurry and Improved Sinister Strike in Combat, for Sinister Strike on swords. Shipped as a variant 5.1% behind Combat Swords.",
   "keyTalents": [
     "Seal Fate 5/5",
     "Vile Poisons 5/5",
@@ -65,17 +56,16 @@
     "Thistle Tea",
     "Goblin Sapper Charge",
     "Goblin Land Mine",
-    "Deadly Poison (main hand)",
-    "Instant Poison (off hand)"
+    "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "5.0% behind Combat Swords at 180 s",
+    "5.1% behind Combat Swords at 180 s at 180 s",
     "Best Alliance race is Human (+2% crit with swords)",
-    "Murder fixed in edd0ff72d to not raise crit damage (-13 to -19 DPS on every build)",
+    "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
     "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
   ],
-  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Swords and it uses the rogue_combat mksettings setup and the Combat Swords APL. The talent preset tooltip mentions Hack and Slash, but the talent string has no Hack and Slash point. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the rotation uses the on-use trinket on cooldown."
+  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Swords and it uses the rogue_combat mksettings setup and the Combat Swords APL. The talent preset tooltip mentions Hack and Slash, but the talent string has no Hack and Slash point."
 }

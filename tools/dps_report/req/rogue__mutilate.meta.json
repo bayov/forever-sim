@@ -6,8 +6,7 @@
   "isDefault": true,
   "pr": 9,
   "race": "Undead",
-  "talents": "0053231013150103-302303202015-002",
-  "treePoints": "28/21/2",
+  "talents": "0053031033150103-302303202015-002",
   "treeNames": [
     "Assassination",
     "Combat",
@@ -16,23 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 679.9,
-    "source": "the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)",
-    "overall": {
-      "race": "Undead",
-      "dps": 679.9
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 679.9
-    }
+    "dps": 669.8,
+    "source": "PR #9"
   },
   "verify": {
-    "dps": 679.95,
-    "stderr": 0.2,
+    "dps": 669.77,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 679.9 (the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)); delta +0.05."
+    "note": "-0.03 vs PR #9"
   },
   "summary": "Assassination Mutilate with Seal Fate, Cold Blood and Vile Poisons, plus Precision and Puncturing Wounds in Combat, on the synthetic daggers. It is the Assassination preset; Mutilate is pinned as the builder.",
   "keyTalents": [
@@ -63,18 +54,17 @@
     "Thistle Tea",
     "Goblin Sapper Charge",
     "Goblin Land Mine",
-    "Deadly Poison (main hand)",
-    "Instant Poison (off hand)"
+    "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Backstab with the same talents is about 20 DPS ahead; Mutilate is pinned to define the spec",
-    "Venom (25 energy, cost TODO) loses DPS at every combo point count, so no Venom preset",
+    "Venom (25 Energy) loses DPS at every combo point count, so no Venom preset",
     "Mutilate needing only a main-hand dagger is open for beta testing",
-    "Murder fixed in edd0ff72d to not raise crit damage (-13 to -19 DPS on every build)",
+    "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
     "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
   ],
-  "notes": "Default for the Assassination raid-sim preset. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the rotation uses the on-use trinket on cooldown."
+  "notes": "Default for the Assassination raid-sim preset."
 }

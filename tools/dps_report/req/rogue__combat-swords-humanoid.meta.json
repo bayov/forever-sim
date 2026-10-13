@@ -1,0 +1,74 @@
+{
+  "id": "rogue__combat-swords-humanoid",
+  "class": "Rogue",
+  "spec": "Combat",
+  "build": "Combat Swords (vs Humanoid)",
+  "isDefault": false,
+  "pr": 9,
+  "race": "Undead",
+  "talents": "00532310301-32003311201515231",
+  "treeNames": [
+    "Assassination",
+    "Combat",
+    "Subtlety"
+  ],
+  "gearSet": "level60_phase1_synthetic_swords",
+  "apl": "level60_combat_swords",
+  "published": {
+    "dps": 702.8,
+    "source": "PR #9"
+  },
+  "verify": {
+    "dps": 702.76,
+    "stderr": 0.23,
+    "iters": 20000,
+    "ok": true,
+    "note": "-0.04 vs PR #9"
+  },
+  "summary": "Combat Swords against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
+  "keyTalents": [
+    "Murder 2/2",
+    "Adrenaline Rush",
+    "Blade Flurry",
+    "Hack and Slash 5/5 (sword extra attacks)",
+    "Improved Sinister Strike",
+    "Aggression",
+    "Weapon Expertise",
+    "Cold Blood"
+  ],
+  "rotation": [
+    "Pre-pull: Blade Flurry at -1 s",
+    "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
+    "Adrenaline Rush under 39 energy while Slice and Dice is up",
+    "Blade Flurry on cooldown while Slice and Dice is up",
+    "Cold Blood right before a 5-point Eviscerate",
+    "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
+    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
+    "Sinister Strike right after a main-hand swing (0.5 s), or at 79+ energy"
+  ],
+  "consumes": [
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Ground Scorpok Assay",
+    "Flank au Poivre",
+    "Dragonbreath Chili",
+    "Major Frenzy Potion",
+    "Thistle Tea",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine",
+    "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
+  ],
+  "caveats": [
+    "Murder is damage only (+4%) and only against Humanoids and Giants",
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Best Alliance race is Human (+2% crit with swords)",
+    "Swords keep 5-point Eviscerates; 4 points lose 6 to 8",
+    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
+    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
+    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+  ],
+  "notes": "Request from mksettings with the same arguments as rogue__combat-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
+  "encounter": "Humanoid",
+  "baseBuild": "rogue__combat-swords"
+}

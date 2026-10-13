@@ -106,6 +106,20 @@
                       "val": "-2.5s"
                     }
                   }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 997022
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.1s"
+                    }
+                  }
                 }
               ],
               "priorityList": [
@@ -427,8 +441,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -436,8 +449,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -459,7 +470,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,
