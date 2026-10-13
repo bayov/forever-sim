@@ -11,68 +11,57 @@ import (
 const StarshardsRanks = 7
 const StarshardsTicks = 6
 
+// Night Elf only (SkillLineAbility race mask 8). Forever roughly doubled its damage and
+// gave it a 30 sec cooldown (foreverchanges.pro): rank 7 deals 1800 Arcane over a 6 sec
+// channel, Classic 936 with no cooldown. Damage per tick and the 16.7% a tick
+// coefficient (100% over the channel) are from the client (1.60.1.70338, wago.tools).
 var StarshardsSpellId = [StarshardsRanks + 1]int32{0, 10797, 19296, 19299, 19302, 19303, 19304, 19305}
-var StarshardsTickSpellId = [StarshardsRanks + 1]int32{0, 19350, 19351, 19352, 19353, 19354, 19355, 19356}
-var StarshardsBaseDamage = [StarshardsRanks + 1]float64{0, 84, 162, 288, 414, 570, 756, 936}
+var StarshardsTickDamage = [StarshardsRanks + 1]float64{0, 27, 50, 88, 127, 178, 240, 300}
 var StarshardsManaCost = [StarshardsRanks + 1]float64{0, 50, 85, 140, 190, 245, 300, 350}
 var StarshardsLevel = [StarshardsRanks + 1]int{0, 10, 18, 26, 34, 42, 50, 58}
+
+const StarshardsTickCoef = 0.167
 
 func (priest *Priest) registerStarshardsSpell() {
 	if priest.Race != proto.Race_RaceNightElf {
 		return
 	}
 
-	priest.Starshards = make([][]*core.Spell, StarshardsRanks+1)
+	priest.Starshards = make([]*core.Spell, StarshardsRanks+1)
+	cdTimer := priest.NewTimer()
 
 	for rank := 1; rank <= StarshardsRanks; rank++ {
-		priest.Starshards[rank] = make([]*core.Spell, StarshardsTicks+1)
-
-		var tick int32
-		for tick = 0; tick < StarshardsTicks; tick++ {
-			config := priest.newStarshardsSpellConfig(rank, tick)
-
-			if config.RequiredLevel <= int(priest.Level) {
-				priest.Starshards[rank][tick] = priest.RegisterSpell(config)
-			}
+		if StarshardsLevel[rank] <= int(priest.Level) {
+			priest.Starshards[rank] = priest.RegisterSpell(priest.newStarshardsSpellConfig(rank, cdTimer))
 		}
 	}
 }
 
-func (priest *Priest) newStarshardsSpellConfig(rank int, tickIdx int32) core.SpellConfig {
-	ticks := tickIdx
-	flags := SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagBinary
-	if tickIdx == 0 {
-		ticks = 6
-		flags |= core.SpellFlagAPL
-	}
-
-	spellId := StarshardsSpellId[rank]
-	baseDamage := StarshardsBaseDamage[rank] / float64(ticks)
-	manaCost := StarshardsManaCost[rank]
-	level := StarshardsLevel[rank]
-
-	spellCoeff := 0.167
-
-	tickLength := time.Second
+func (priest *Priest) newStarshardsSpellConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
+	baseDamage := StarshardsTickDamage[rank]
 
 	return core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: StarshardsSpellId[rank]},
 		SpellCode:   SpellCode_PriestStarshards,
-		ActionID:    core.ActionID{SpellID: spellId}.WithTag(tickIdx),
 		SpellSchool: core.SpellSchoolArcane,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       flags,
+		Flags:       SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagAPL,
 
-		RequiredLevel: level,
+		RequiredLevel: StarshardsLevel[rank],
 		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			FlatCost: StarshardsManaCost[rank],
 		},
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    cdTimer,
+				Duration: time.Second * 30,
 			},
 		},
 
@@ -81,12 +70,11 @@ func (priest *Priest) newStarshardsSpellConfig(rank int, tickIdx int32) core.Spe
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: fmt.Sprintf("Starshards-%d-%d", rank, tickIdx),
+				Label: fmt.Sprintf("Starshards-%d", rank),
 			},
-			NumberOfTicks:       ticks,
-			TickLength:          tickLength,
-			AffectedByCastSpeed: false,
-			BonusCoefficient:    spellCoeff,
+			NumberOfTicks:    StarshardsTicks,
+			TickLength:       time.Second,
+			BonusCoefficient: StarshardsTickCoef,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDamage, isRollover)
 			},
@@ -104,9 +92,7 @@ func (priest *Priest) newStarshardsSpellConfig(rank int, tickIdx int32) core.Spe
 		},
 
 		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := baseDamage / StarshardsTicks
-			result := spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
-			return result
+			return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 		},
 	}
 }

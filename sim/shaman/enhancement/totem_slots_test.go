@@ -172,7 +172,7 @@ func TestOrcShamanTotemSlotsKeepRaidBuffs(t *testing.T) {
 		Raid: core.SinglePlayerRaidProto(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{},
 			&proto.RaidBuffs{StrengthOfEarthTotem: proto.TristateEffect_TristateEffectRegular}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: 10, Targets: []*proto.Target{core.NewDefaultTarget()}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()

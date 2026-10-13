@@ -10,7 +10,7 @@ func (hunter *Hunter) getFreezingTrapConfig(timer *core.Timer) core.SpellConfig 
 
 	return core.SpellConfig{
 		SpellCode:     SpellCode_HunterFreezingTrap,
-		ActionID:      core.ActionID{SpellID: 409510},
+		ActionID:      core.ActionID{SpellID: 14311},
 		SpellSchool:   core.SpellSchoolFrost,
 		DefenseType:   core.DefenseTypeMagic,
 		ProcMask:      core.ProcMaskSpellDamage,
@@ -24,7 +24,7 @@ func (hunter *Hunter) getFreezingTrapConfig(timer *core.Timer) core.SpellConfig 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    timer,
-				Duration: time.Second * 15,
+				Duration: time.Second * 30,
 			},
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

@@ -11,7 +11,7 @@ import { formatToNumber } from '../../utils.js';
 import { eventCategories, EventCategory, EventFilter } from './events_filter.js';
 import { LogRunner } from './log_runner.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
-import { Timeline } from './timeline.js';
+import { Timeline, zoomPresets, ZoomSpan } from './timeline.js';
 
 type EventsFormat = 'timeline' | 'chart' | 'log';
 // 'new' is the iteration we ran with Sim 1 iteration, after the run.
@@ -27,14 +27,14 @@ const iterationKinds: Array<{ kind: IterationKind; label: string; tooltip: strin
 	{ kind: 'typical', label: 'Typical', tooltip: 'The iteration with the DPS closest to the average.' },
 	{ kind: 'lucky', label: 'Lucky', tooltip: 'The iteration with the highest DPS.' },
 	{ kind: 'unlucky', label: 'Unlucky', tooltip: 'The iteration with the lowest DPS.' },
-	{ kind: 'new', label: 'New', tooltip: 'The iteration from Sim 1 iteration, with a fresh seed and the current settings.' },
+	{ kind: 'new', label: 'New', tooltip: 'Sim one more iteration with a fresh seed and the current settings.' },
 ];
 
 // The filters that mean something in each view. The others are greyed out there.
-const appliesTo: Record<EventsFormat, { search: boolean; categories: Array<EventCategory>; hidden: boolean }> = {
-	timeline: { search: true, categories: ['casts', 'auras', 'resources'], hidden: true },
-	chart: { search: false, categories: [], hidden: false },
-	log: { search: true, categories: ['casts', 'damage', 'auras', 'resources', 'other', 'debug'], hidden: true },
+const appliesTo: Record<EventsFormat, { search: boolean; categories: Array<EventCategory>; hidden: boolean; alwaysUp: boolean }> = {
+	timeline: { search: true, categories: ['casts', 'auras', 'resources'], hidden: true, alwaysUp: true },
+	chart: { search: false, categories: [], hidden: false, alwaysUp: false },
+	log: { search: true, categories: ['casts', 'damage', 'auras', 'resources', 'other', 'debug'], hidden: true, alwaysUp: false },
 };
 
 const FORMAT_STORAGE_KEY = '__detailed_results_events_format__';
@@ -60,19 +60,22 @@ export class EventsView extends ResultComponent {
 	// The iteration from Sim 1 iteration, until the next run.
 	private newIteration: SimResult | null = null;
 	private selectToken = 0;
+	private simulatingNew = false;
+	private readonly simUI: SimUI | null;
 
 	private readonly ui: {
 		formatButtons: Map<EventsFormat, HTMLButtonElement>;
 		iterationGroup: HTMLElement;
 		iterationButtons: Map<IterationKind, HTMLButtonElement>;
+		rerollButton: HTMLButtonElement;
 		zoomGroup: HTMLElement;
-		zoomIn: HTMLButtonElement;
-		zoomOut: HTMLButtonElement;
+		zoomButtons: Map<ZoomSpan, HTMLButtonElement>;
 		search: HTMLInputElement;
 		searchGroup: HTMLElement;
 		from: HTMLInputElement;
 		to: HTMLInputElement;
 		categoryButtons: Map<EventCategory, HTMLButtonElement>;
+		alwaysUpButton: HTMLButtonElement;
 		count: HTMLElement;
 		reset: HTMLButtonElement;
 		hiddenRow: HTMLElement;
@@ -95,16 +98,15 @@ export class EventsView extends ResultComponent {
 
 		const refs = {
 			iterationGroup: ref<HTMLDivElement>(),
+			reroll: ref<HTMLButtonElement>(),
 			zoomGroup: ref<HTMLDivElement>(),
-			zoomIn: ref<HTMLButtonElement>(),
-			zoomOut: ref<HTMLButtonElement>(),
-			simOnce: ref<HTMLButtonElement>(),
 			search: ref<HTMLInputElement>(),
 			searchGroup: ref<HTMLDivElement>(),
 			from: ref<HTMLInputElement>(),
 			to: ref<HTMLInputElement>(),
 			count: ref<HTMLSpanElement>(),
 			reset: ref<HTMLButtonElement>(),
+			alwaysUp: ref<HTMLButtonElement>(),
 			hiddenRow: ref<HTMLDivElement>(),
 			hiddenList: ref<HTMLDivElement>(),
 			timelineHost: ref<HTMLDivElement>(),
@@ -113,6 +115,7 @@ export class EventsView extends ResultComponent {
 		};
 		const formatButtons = new Map<EventsFormat, HTMLButtonElement>();
 		const iterationButtons = new Map<IterationKind, HTMLButtonElement>();
+		const zoomButtons = new Map<ZoomSpan, HTMLButtonElement>();
 		const categoryButtons = new Map<EventCategory, HTMLButtonElement>();
 
 		this.rootElem.appendChild(
@@ -138,33 +141,41 @@ export class EventsView extends ResultComponent {
 								{iterationKinds.map(({ kind, label, tooltip }) => {
 									const button = (
 										<button className={`segmented-option iteration-${kind}`} type="button">
+											{kind == 'new' && <i className="fas fa-dice iteration-new-icon" />}
 											<span className="iteration-label">{label}</span>
 											<span className="iteration-dps"></span>
 										</button>
 									) as HTMLButtonElement;
-									button.addEventListener('click', () => this.setIteration(kind));
+									button.addEventListener('click', () => (kind == 'new' && !this.newIteration ? this.simNewIteration() : this.setIteration(kind)));
 									tippy(button, { content: tooltip });
 									iterationButtons.set(kind, button);
 									return button;
 								})}
+								<button
+									ref={refs.reroll}
+									className="segmented-option iteration-reroll hide"
+									type="button"
+									attributes={{ 'aria-label': 'Sim another new iteration' }}>
+									<i className="fas fa-rotate-right" />
+								</button>
 							</div>
 						</div>
 						<div className="events-controls-end">
 							<div ref={refs.zoomGroup} className="events-zoom">
-								<span className="events-hint">Drag or Shift + scroll to move along</span>
-								<div className="segmented">
-									<button ref={refs.zoomOut} className="segmented-option" type="button" attributes={{ 'aria-label': 'Zoom out' }}>
-										<i className="fas fa-magnifying-glass-minus" />
-									</button>
-									<button ref={refs.zoomIn} className="segmented-option" type="button" attributes={{ 'aria-label': 'Zoom in' }}>
-										<i className="fas fa-magnifying-glass-plus" />
-									</button>
+								<span className="events-hint">Drag or Shift + scroll to move, Alt + scroll to zoom</span>
+								<div className="segmented" attributes={{ role: 'group', 'aria-label': 'Zoom' }}>
+									{zoomPresets.map(({ span, label }) => {
+										const button = (
+											<button className="segmented-option" type="button">
+												{label}
+											</button>
+										) as HTMLButtonElement;
+										button.addEventListener('click', () => this.timeline.setZoom(span));
+										zoomButtons.set(span, button);
+										return button;
+									})}
 								</div>
 							</div>
-							<button ref={refs.simOnce} className="btn btn-sm btn-outline-primary events-sim-once" type="button">
-								<i className="fas fa-dice me-1" />
-								Sim 1 iteration
-							</button>
 						</div>
 					</div>
 					<div className="events-filter-row">
@@ -190,6 +201,10 @@ export class EventsView extends ResultComponent {
 								categoryButtons.set(category, button);
 								return button;
 							})}
+							<button ref={refs.alwaysUp} className="filter-chip events-always-up" type="button">
+								<i className="fas fa-eye-slash" />
+								100% auras
+							</button>
 						</div>
 						<span ref={refs.count} className="events-count"></span>
 						<button ref={refs.reset} className="btn btn-link events-reset" type="button">
@@ -217,14 +232,15 @@ export class EventsView extends ResultComponent {
 			formatButtons,
 			iterationGroup: refs.iterationGroup.value!,
 			iterationButtons,
+			rerollButton: refs.reroll.value!,
 			zoomGroup: refs.zoomGroup.value!,
-			zoomIn: refs.zoomIn.value!,
-			zoomOut: refs.zoomOut.value!,
+			zoomButtons,
 			search: refs.search.value!,
 			searchGroup: refs.searchGroup.value!,
 			from: refs.from.value!,
 			to: refs.to.value!,
 			categoryButtons,
+			alwaysUpButton: refs.alwaysUp.value!,
 			count: refs.count.value!,
 			reset: refs.reset.value!,
 			hiddenRow: refs.hiddenRow.value!,
@@ -258,26 +274,13 @@ export class EventsView extends ResultComponent {
 		this.ui.from.addEventListener('change', onRangeChange);
 		this.ui.to.addEventListener('change', onRangeChange);
 		this.ui.reset.addEventListener('click', () => this.filter.reset());
-		this.ui.zoomIn.addEventListener('click', () => this.zoom(1));
-		this.ui.zoomOut.addEventListener('click', () => this.zoom(-1));
+		this.ui.alwaysUpButton.addEventListener('click', () => this.filter.toggleHideAlwaysUp());
+		tippy(this.ui.alwaysUpButton, { content: 'Hide the buffs and debuffs that are up for the whole fight, like Blessing of Kings.' });
+		this.timeline.zoomEmitter.on(() => this.updateZoomButtons());
 
-		const simOnceButton = refs.simOnce.value!;
-		if (config.simUI) {
-			const simUI = config.simUI;
-			simOnceButton.addEventListener('click', async () => {
-				simOnceButton.disabled = true;
-				this.ui.loading.classList.remove('hide');
-				const result = await simUI.runSimOnce();
-				simOnceButton.disabled = false;
-				this.ui.loading.classList.add('hide');
-				if (result) this.showNewIteration(result);
-			});
-			tippy(simOnceButton, {
-				content: 'Run one more iteration with a fresh seed and the current settings. It shows as New next to the typical, lucky and unlucky iterations.',
-			});
-		} else {
-			simOnceButton.remove();
-		}
+		this.simUI = config.simUI;
+		this.ui.rerollButton.addEventListener('click', () => this.simNewIteration());
+		tippy(this.ui.rerollButton, { content: 'Sim another new iteration, with a fresh seed and the current settings.' });
 
 		this.filter.changeEmitter.on(() => this.updateFilterControls());
 		this.logRunner.countEmitter.on(() => this.updateCount());
@@ -330,6 +333,22 @@ export class EventsView extends ResultComponent {
 		this.updateFilterControls();
 	}
 
+	// Sims one more iteration and shows it as New. A second one replaces the first.
+	private async simNewIteration() {
+		if (!this.simUI || this.simulatingNew) return;
+		this.simulatingNew = true;
+		this.updateIterationButtons();
+		this.ui.loading.classList.remove('hide');
+		const result = await this.simUI.runSimOnce();
+		this.simulatingNew = false;
+		this.ui.loading.classList.add('hide');
+		if (result) {
+			this.showNewIteration(result);
+		} else {
+			this.updateIterationButtons();
+		}
+	}
+
 	private showNewIteration(result: SimResult) {
 		this.newIteration = result;
 		this.iterationResults.set('new', Promise.resolve(result));
@@ -380,19 +399,33 @@ export class EventsView extends ResultComponent {
 		// A run of one iteration has no lucky or unlucky one, and older results don't have the
 		// iterations at all. Then we only offer the run's own iteration and the new one.
 		const hasPicked = !!result?.typicalIteration && (result?.iterationsDone ?? 0) > 1;
-		this.ui.iterationGroup.classList.toggle('hide', !hasPicked && !this.newIteration);
+		this.ui.iterationGroup.classList.toggle('hide', !hasPicked && !this.simUI);
 		if (!result) return;
 
+		// Before we sim a new iteration, New is the button that sims it. After, it picks it, and
+		// the small button next to it sims another.
 		this.ui.iterationButtons.forEach((button, kind) => {
 			const iterationLog = getIterationLog(result, kind);
-			const shown = kind == 'typical' || (kind == 'new' ? !!this.newIteration : hasPicked);
+			const shown = kind == 'typical' || (kind == 'new' ? !!this.simUI : hasPicked);
 			button.classList.toggle('hide', !shown);
-			button.disabled = kind != 'typical' && kind != 'new' && !iterationLog?.logs;
+			button.disabled = kind == 'new' ? this.simulatingNew : kind != 'typical' && !iterationLog?.logs;
+			if (kind == 'new') {
+				button.classList.toggle('not-simmed', !this.newIteration);
+				button.querySelector('.iteration-new-icon')!.classList.toggle('fa-spin', this.simulatingNew);
+				(button as any)._tippy?.setContent(
+					this.newIteration
+						? 'The iteration we simmed with a fresh seed and the current settings.'
+						: 'Sim one more iteration with a fresh seed and the current settings.',
+				);
+			}
 			button.classList.toggle('active', kind == this.iteration);
 			button.setAttribute('aria-pressed', String(kind == this.iteration));
 			const dps = kind == 'new' ? this.newIteration?.raidMetrics.dps.avg : iterationLog?.dps;
 			button.querySelector('.iteration-dps')!.textContent = dps !== undefined ? formatToNumber(dps, { maximumFractionDigits: 1 }) : '';
 		});
+		this.ui.rerollButton.classList.toggle('hide', !this.newIteration);
+		this.ui.rerollButton.disabled = this.simulatingNew;
+		this.ui.rerollButton.querySelector('i')!.classList.toggle('fa-spin', this.simulatingNew);
 	}
 
 	private showInTimeline(time: number) {
@@ -403,14 +436,13 @@ export class EventsView extends ResultComponent {
 		this.timeline.scrollToTime(time);
 	}
 
-	private zoom(step: 1 | -1) {
-		this.timeline.zoom(step);
-		this.updateZoomButtons();
-	}
-
+	// Alt + scroll zooms between the presets, and then none of them is active.
 	private updateZoomButtons() {
-		this.ui.zoomIn.disabled = !this.timeline.canZoomIn();
-		this.ui.zoomOut.disabled = !this.timeline.canZoomOut();
+		const zoom = this.timeline.getZoom();
+		this.ui.zoomButtons.forEach((button, span) => {
+			button.classList.toggle('active', span == zoom);
+			button.setAttribute('aria-pressed', String(span == zoom));
+		});
 	}
 
 	// Brings the controls in line with the filter, and greys out what the view doesn't use.
@@ -431,6 +463,9 @@ export class EventsView extends ResultComponent {
 			button.setAttribute('aria-pressed', String(active));
 			button.disabled = !applies.categories.includes(category);
 		});
+		this.ui.alwaysUpButton.classList.toggle('active', this.filter.hideAlwaysUp);
+		this.ui.alwaysUpButton.setAttribute('aria-pressed', String(this.filter.hideAlwaysUp));
+		this.ui.alwaysUpButton.disabled = !applies.alwaysUp || !this.filter.categories.has('auras');
 
 		this.ui.reset.classList.toggle('invisible', !this.filter.isActive());
 

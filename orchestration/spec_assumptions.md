@@ -31,11 +31,11 @@ Sources, all read-only:
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 5 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation` |
 | Paladin | 4 (+1 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`) |
-| Warrior | 2 (+1 shared) | `warr_rage_norm`, `warr_crit_rage` (+ `wf_totem_offhand`) |
+| Warrior | 3 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_crit_rage` (+ `wf_totem_offhand`) |
 | Hunter | 6 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_shot_ap_shares`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_ab_on_missiles`, `mage_frostbolt10` |
 | Shaman | 3 | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` |
-| Druid | 5 | `druid_ooc_rate`, `druid_shred_flat`, `druid_tf_scope`, `druid_rip_31plus`, `druid_wrath8_tuning` |
+| Druid | 4 | `druid_ooc_rate`, `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
 That makes 33 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
@@ -62,7 +62,7 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 |---|---|---|---|---|---|---|---|
 | `flat_bonus_inside_pct` | Flat bonus inside the weapon percent | Combat Daggers, Seal Fate Daggers, Subtlety (Ambush), Mutilate; Ret twist, sub Holy, Shock | inside (client effect order) | after the percent (tooltip read literally) | inside | = Expected | est. Backstab builds −3.7 to −4%, Mutilate +1.7%, Ret +3% (all at Low) |
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | yes | main hand only | yes | = Expected | est. −2 to −3% DW Fury and rogues, about −1.5% Survival (at Low) |
-| `downrank_penalty` | Downrank penalty size at 60 | Smite (rank 7 fallback; rank 4 before), Elemental (Lightning Bolt VIII fallback) | FC formula on the priest branch, none on the shaman branch | stronger (10% a level past 17) | FC formula (5% a level past 17) | none | PR Smite −0.3% at 180 s, −6.3% at 300 s (FC vs none); est. Elemental about −1% at 300 s, 0 at 180 s |
+| `downrank_penalty` | Downrank penalty size at 60 | Smite (rank 7 fallback; rank 4 before), Elemental (Lightning Bolt VIII fallback) | FC formula on both branches (a local helper on each) | stronger (10% a level past 17) | FC formula (5% a level past 17) | none | PR Smite −0.3% at 180 s, −6.3% at 300 s (FC vs none); est. Elemental about −1% at 300 s, 0 at 180 s |
 
 ### `flat_bonus_inside_pct`: flat bonus inside the weapon percent
 
@@ -334,23 +334,36 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% a
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `warr_rage_norm` | Normalised Rage from white hits | Fury, Fury two-hand, Arms | k 3.46 / 4.5, off hand ×1.0 (standards 21) | off hand ×0.5 | k 3.46 / 4.5, off hand ×1.0 | k ×1.25 | to measure; est. a few % on Fury and Arms |
+| `warr_rage_k` | How normalised Rage grows with level | Fury, Fury two-hand, Arms | midpoint, k ×1.5 at 60 (standards 21) | flat k (×1) | midpoint (×1.5 at 60) | Classic-like (×2 at 60) | flat: Fury 950.6 at 180 s; others to measure |
+| `warr_rage_oh` | Off-hand factor of normalised Rage | Fury | ×1.0 | ×0.5 | ×1.0 | = Expected | Low −9.4% Fury (measured with flat k) |
 | `warr_crit_rage` | Extra Rage from critical white hits | Fury, Fury two-hand, Arms | +100% | +75% | +100% | = Expected | est. Low −2 to −3% Fury, about −1.5% Arms |
 
 Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at its Low).
 
-### `warr_rage_norm`: normalised Rage from white hits
+### `warr_rage_k`: how normalised Rage grows with level
 
 - **Builds:** Fury, Fury two-hand, Arms.
-- **Sim now (standards 21):** a landed white hit gives k × weapon swing speed in Rage, with k = 3.46 for a one-hander and 4.5 for a two-hander, off hand ×1.0, and the `warr_crit_rage` crit bonus on top. `sim/core/rage.go` behind `Env.IsForever()` (warrior worker).
-- **Source:** Blizzard's Priest & Warrior deep dive ("fully-normalized ... based on the speed of the weapon that dealt the damage"), tier 3. The constants are beta testers' level 30 measurements (forum thread 2355684; Icy Veins and wowforeverbuilds repeat them), tier 5.
-- **Why uncertain:** Blizzard gives no formula. Nobody has measured it at 60, nobody has measured the off-hand factor, and nobody knows whether k scales with level. The full beta test plan, which also covers Rage from damage taken, is under "Rage needs a beta test" in orchestration/followups.md.
+- **Sim now (standards 21):** a landed, dodged or parried white hit gives k(L) × weapon swing speed in Rage. k30 is 3.46 for a one-hander and 4.5 for a two-hander, and k(L) = k30 × (1 + s × (L − 30) / 30) above level 30, with s = 0.5 (Expected). Dual Wield Specialization and the `warr_crit_rage` crit bonus multiply on top. The code is `sim/core/rage.go`, behind `Env.IsForever()`; only the warrior enables it.
+- **Source:** Blizzard's Priest & Warrior deep dive ("fully-normalized ... based on the speed of the weapon that dealt the damage"), tier 3. The constants are beta testers' measurements at level 30 or below (forum thread 2355684; Icy Veins and wowforeverbuilds repeat them), tier 5.
+- **Why uncertain:** the beta stopped at level 30, and Blizzard gives no formula. At 30 the measured k gives about Classic's Rage per swing; flat at 60 it gives about half (a 2.6 s main hand: 9.0 against Classic's 18.6 for an average swing). Nobody knows whether Blizzard scales it with level. The full test plan is under "Rage needs a beta test" in orchestration/followups.md.
+- **Settings (user ruling 2026-10-13):**
+  - **Low, flat (s = 0).** The level 30 constants unchanged at 60.
+  - **Expected, midpoint (s = 0.5).** ×1.5 at 60.
+  - **High, Classic-like (s = 1).** ×2 at 60, close to Classic's Rage per average swing.
+- **Sensitivity:** with flat k, Fury is 950.6 at 180 s (it was 1055.0 under Classic's damage-based Rage), Fury two-hand 835.0 and Arms 861.4. The warrior re-measures all three settings.
+- **Knob:** a package variable for the level slope s, next to `core.ForeverNormalizedRageK` (which multiplies k). The dashboard sets it with `DASH_ASSUME`.
+
+### `warr_rage_oh`: off-hand factor of normalised Rage
+
+- **Builds:** Fury (dual wield).
+- **Sim now:** ×1.0 before Dual Wield Specialization (×1.5 at 5/5).
+- **Source:** none for the off hand. Blizzard's post only says Rage depends on the weapon's speed.
 - **Settings:**
-  - **Low, off hand ×0.5.** This is TBC's normalised formula, where the off hand gets half the main hand's factor (1.75 against 3.5).
-  - **Expected, k 3.46 / 4.5, off hand ×1.0 (Sim now).** The measured constants, with no off-hand penalty stated.
-  - **High, k ×1.25 (4.33 / 5.63).** For if the constant grows with level between 30 and 60.
-- **Sensitivity:** to be measured after the change. The mechanics auditor estimates a few % on Fury and Arms. Dual-wield Fury moves most with the off-hand factor.
-- **Knob:** the constants in the Forever branch of `sim/core/rage.go`: `core.Assume("warr_rage_k", 1)` multiplies k, and `core.Assume("warr_rage_oh", 1)` sets the off-hand factor.
+  - **Low, ×0.5.** TBC's normalised formula, where the off hand gets half the main hand's factor (1.75 against 3.5).
+  - **Expected, ×1.0.**
+  - **High:** = Expected.
+- **Sensitivity:** Low is −9.4% on Fury (861.7 against 950.6 at 180 s, measured with flat k).
+- **Knob:** `core.ForeverNormalizedRageOffHand`.
 
 ### `warr_crit_rage`: extra Rage from critical white hits
 
@@ -375,7 +388,7 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 |---|---|---|---|---|---|---|---|
 | `hunter_pet_scaling` | Pet scaling from the hunter | BM, MM, SV | 10% RAP + 1:1 hit | 10% RAP, no hit | 10% RAP + hit | SoD: 22% RAP + hit | Low −17 / −10 / −10, High +41 / +23 / +18 (PR) |
 | `hunter_pet_speed` | Pet hits normalized to a 2.0 sec pet | BM, MM | yes (1.0 sec cat) | Classic: hit scales with speed | yes | = Expected | est. Low −5 to −8% BM, −2 to −4% MM |
-| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | rank 5 (50) / rank 4 (71) | 50 / 71 | 75 / 98 | 100 / 140 | est. Expected +1.2%, High +3% (from PR's TSA +6.4 LW) |
+| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | 75 / 98 (strongest learned rank) | = Expected | 75 / 98 | 100 / 140 | est. Expected +1.2%, High +3% (from PR's TSA +6.4 LW) |
 | `hunter_shot_ap_shares` | Arcane Shot and Serpent Sting AP shares | LW, MM, BM | 0.11 / 0.035 a tick | 0.10 / 0.030 | 0.11 / 0.035 | 0.12 / 0.040 | est. ±1.3% |
 | `hunter_crit_per_agi` | Crit per Agility at 60 | all four | Classic table (53 Agi a 1%) | Classic | ×1.22 | = Expected | est. +2% (Expected) |
 | `hunter_raptor_31plus` | Raptor Strike 31+ flat bonuses | Survival | client (70 at rank 8) | 70 | 96 | 123 | High +1.2% (PR) |
@@ -413,19 +426,19 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 ### `hunter_tsa_hm_rank`: Trueshot Aura and Hunter's Mark at level 60
 
 - **Builds:** Lone Wolf, Marksmanship, Beast Mastery. Both are ranged attack power only, so Survival is unaffected.
-- **Sim now:** the client's level 60 ranks: Trueshot Aura rank 5 +50 RAP (`sim/core/buffs.go:1627-1628`) and Hunter's Mark rank 4 +71 RAP (`sim/core/debuffs.go:270-271`).
+- **Sim now:** the strongest learned rank (standards 8a, `bestLearnedRank` in sim/core on the hunter branch): Trueshot Aura rank 4 +75 RAP and Hunter's Mark rank 3 +98 RAP.
 - **Source:**
   - Client 70338: Trueshot Aura ranks 30 / 40 / 50 / 75 / 50, Hunter's Mark 26 / 59 / 98 / 71. Both top ranks sit below the rank before them.
-  - The orchestrator ruled to use the strongest learned rank (standards 8a, 16:10). The shared-file change waits on the user's approval (PR #5), so the merged tree still has 50 / 71.
+  - Standards 8a: use the strongest learned rank. The hunter branch implements it (PR #5), worth +10.7 to +14.3 DPS.
 - **Why uncertain:** a top rank weaker than the one before is either a client data error Blizzard fixes, or a value players work around by casting the lower rank.
 - **Settings:**
-  - **Low, 50 / 71 (Sim now).** The client's top ranks as written.
-  - **Expected, 75 / 98.** The strongest learned rank, per the standing ruling: a player can cast the lower rank.
+  - **Low:** = Expected. A player can always cast the stronger lower rank, so the weaker top ranks are never worse.
+  - **Expected, 75 / 98 (Sim now).** The strongest learned rank.
   - **High, 100 / 140.** Blizzard fixes the top ranks onto the curve of the ranks before them: Trueshot Aura +25 a rank; Hunter's Mark about +40 a rank, Forever's ranks 1 to 3 running about 1.3× Classic's 20 / 45 / 75 / 110.
 - **Sensitivity:**
   - PR: Trueshot Aura rank 4 alone is +6.4 LW, +5.6 MM, +5.0 BM (2026-10-12 gear).
   - est.: Hunter's Mark's +27 adds about as much, so Expected is about +1.2% and High about +3%.
-- **Knob:** `sim/core/buffs.go:1628` and `sim/core/debuffs.go:271`. Replace the level 60 entry with `Assume("hunter_tsa60", 50)` / `Assume("hunter_hm60", 71)`.
+- **Knob:** the level 60 entries of `foreverTrueshotAuraRAP` and `foreverHuntersMark` in sim/core (buffs.go / debuffs.go). For High, set them to `Assume("hunter_tsa60", 50)` / `Assume("hunter_hm60", 71)` with 100 / 140; `bestLearnedRank` then picks them.
 
 ### `hunter_shot_ap_shares`: Arcane Shot and Serpent Sting attack power shares
 
@@ -583,7 +596,6 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 |---|---|---|---|---|---|---|---|
 | `druid_ooc_rate` | Omen of Clarity proc rate | Feral, Balance, Balance Wrath | 2 PPM; spells 2 × cast / 60 | spells 6% a cast | 2 PPM | 3.5 PPM | est. Feral High +1.5 to +2%; Balance under 1% |
 | `druid_shred_flat` | Shred's flat bonus | Feral | 80 inside the 155% (+124) | +80 | +124 | +180 | est. Low −3.5%, High +4.5% |
-| `druid_tf_scope` | Tiger's Fury's 15% scope | Feral | all Physical | abilities only | all Physical | = Expected | est. Low −1% |
 | `druid_rip_31plus` | Rip's level 31+ ranks | Feral | client | client | Era | ≤30 trend ×1.13 | Expected +1.6%, High +2.1% (PR) |
 | `druid_wrath8_tuning` | Wrath VIII tuning | Balance Wrath, Balance | client (×1.00) | ×1.00 | ×1.085 | ×1.17 | High +1.6% Wrath build, +0.4% Balance (PR) |
 
@@ -619,18 +631,9 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Sensitivity (est.):** at about 2000 cat attack power a Shred's base is about 431. Low is −44 (−10% Shred, about −3.5% Feral); High is +56 (+13% Shred, about +4.5% Feral).
 - **Knob:** `sim/druid/shred.go:57,71`. Add `Assume("druid_shred_extra", 124) - 80*1.55` after the multiplier (DamageMultiplier is 1.55, so divide that term by 1.55 when adding it inside).
 
-### `druid_tf_scope`: what Tiger's Fury's 15% covers
+### `druid_tf_scope`: removed
 
-- **Builds:** Feral (6 sec in every 30, at the pull with Berserk).
-- **Sim now:** ×1.15 on all of the druid's Physical damage, white hits and bleeds included. `sim/druid/tigers_fury.go:15`, applied at `:27-31`.
-- **Source:** client 5217, a dummy aura that the server applies.
-- **Why uncertain:** the dummy's scope is server side (notes.md, Druid). A few white hits and Rip ticks with it up settle it on the beta at level 24.
-- **Settings:**
-  - **Low, abilities only.** No white hits or bleeds.
-  - **Expected, all Physical damage (Sim now).** Cataclysm's Tiger's Fury, the same "+15% damage for 6 sec" design, covered everything.
-  - **High:** = Expected.
-- **Sensitivity (est.):** white hits are 34% and Rip 22% of Feral's damage, at 20% uptime (Rip snapshots it when cast inside the window). Low is about −1%.
-- **Knob:** `sim/druid/tigers_fury.go:27-31`. For Low, apply the multiplier to the Cat ability spells' `DamageMultiplier` instead of `SchoolDamageDealtMultiplier`.
+Tiger's Fury isn't in Forever (Blizzard's Druid deep dive; nothing in client 70338 grants it), and the druid branch removes it. So it's no longer an assumption.
 
 ### `druid_rip_31plus`: Rip's level 31+ ranks
 

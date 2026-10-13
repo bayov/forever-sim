@@ -256,7 +256,7 @@ export const titleIcons: Record<Spec, string> = {
 	[Spec.SpecTankWarrior]: 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg',
 };
 
-export const raidSimIcon = '/classic/assets/img/raid_icon.png';
+export const raidSimIcon = '/forever/assets/img/raid_icon.png';
 export const raidSimLabel = 'Full Raid Sim';
 
 // Converts '1231321-12313123-0' to [40, 21, 0].

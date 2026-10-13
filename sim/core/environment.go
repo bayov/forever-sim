@@ -147,8 +147,20 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 	return raidStats
 }
 
+// EnvHooks run on every new Environment right before it's finalized, while auras can still be
+// registered.
+//
+// The sim itself never sets any. They are for tools that watch a sim from outside, like
+// tools/logcheck, which records every spell result to compare with a combat log. Set them
+// before the first sim starts, because nothing guards them against concurrent changes.
+var EnvHooks []func(env *Environment)
+
 // The finalization phase.
 func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raidStats *proto.RaidStats, runFakePrepull bool) {
+	for _, hook := range EnvHooks {
+		hook(env)
+	}
+
 	for _, finalizeEffect := range env.preFinalizeEffects {
 		finalizeEffect()
 	}
@@ -248,7 +260,7 @@ func (env *Environment) setupAttackTables() {
 						case 2:
 							weaponSlot = proto.CastType_CastTypeRanged
 						}
-						attacker.AttackTables[idx][weaponSlot] = NewAttackTable(attacker, defender, weapon)
+						attacker.AttackTables[idx][weaponSlot] = newWeaponAttackTable(attacker, defender, weapon, character.weaponSkillGaps[weaponSlot])
 					}
 				}
 			} else {

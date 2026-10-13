@@ -39,7 +39,7 @@ func TestOrcShamanElementalWeapons(t *testing.T) {
 		sim := core.NewSim(&proto.RaidSimRequest{
 			Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 			Encounter:  &proto.Encounter{Duration: 600, Targets: []*proto.Target{{Level: 30, MobType: proto.MobType_MobTypeBeast}}},
-			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 		}, simsignals.CreateSignals())
 		sim.Reset()
 		sim.PrePull()

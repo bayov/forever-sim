@@ -9,21 +9,30 @@ import { SimRun } from './proto/ui';
 
 const DB_NAME = 'forever-sim';
 const STORE_NAME = 'lastSimRun';
+// The results of each run in the sim history, for the Compare tab, see SimHistory.
+const RUNS_STORE_NAME = 'simRuns';
+// The DPS and resources of the iterations of each run over the fight, see RunSeries.
+const SERIES_STORE_NAME = 'simRunSeries';
 
 function openDb(): Promise<IDBDatabase> {
 	return new Promise((resolve, reject) => {
-		const request = indexedDB.open(DB_NAME, 1);
-		request.onupgradeneeded = () => request.result.createObjectStore(STORE_NAME);
+		const request = indexedDB.open(DB_NAME, 3);
+		request.onupgradeneeded = () => {
+			const db = request.result;
+			[STORE_NAME, RUNS_STORE_NAME, SERIES_STORE_NAME].forEach(name => {
+				if (!db.objectStoreNames.contains(name)) db.createObjectStore(name);
+			});
+		};
 		request.onsuccess = () => resolve(request.result);
 		request.onerror = () => reject(request.error);
 	});
 }
 
-async function withStore<T>(mode: IDBTransactionMode, use: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+async function withStore<T>(mode: IDBTransactionMode, use: (store: IDBObjectStore) => IDBRequest<T>, storeName = STORE_NAME): Promise<T> {
 	const db = await openDb();
 	try {
 		return await new Promise<T>((resolve, reject) => {
-			const request = use(db.transaction(STORE_NAME, mode).objectStore(STORE_NAME));
+			const request = use(db.transaction(storeName, mode).objectStore(storeName));
 			request.onsuccess = () => resolve(request.result);
 			request.onerror = () => reject(request.error);
 		});
@@ -48,6 +57,71 @@ export async function loadLastSimRun(key: string): Promise<SimRun | null> {
 		return data ? SimRun.fromBinary(data) : null;
 	} catch (e) {
 		console.warn('Failed to load the last sim run: ' + e);
+		return null;
+	}
+}
+
+// The results of a run in the sim history, without the logs of its typical, lucky and unlucky
+// iterations. The Compare tab doesn't show events, and without the logs a run takes about
+// 50 KB instead of 750 KB.
+export async function saveHistoryRun(key: string, run: SimRun): Promise<void> {
+	const copy = SimRun.clone(run);
+	if (copy.result) {
+		copy.result.logs = '';
+		[copy.result.typicalIteration, copy.result.luckyIteration, copy.result.unluckyIteration].forEach(iteration => {
+			if (iteration) iteration.logs = '';
+		});
+	}
+	try {
+		await withStore('readwrite', store => store.put(SimRun.toBinary(copy), key), RUNS_STORE_NAME);
+	} catch (e) {
+		console.warn('Failed to save the results of a sim run: ' + e);
+	}
+}
+
+export async function loadHistoryRun(key: string): Promise<SimRun | null> {
+	try {
+		const data = await withStore<Uint8Array | undefined>('readonly', store => store.get(key), RUNS_STORE_NAME);
+		return data ? SimRun.fromBinary(data) : null;
+	} catch (e) {
+		console.warn('Failed to load the results of a sim run: ' + e);
+		return null;
+	}
+}
+
+export async function deleteHistoryRun(key: string): Promise<void> {
+	try {
+		await withStore('readwrite', store => store.delete(key), RUNS_STORE_NAME);
+		await withStore('readwrite', store => store.delete(key), SERIES_STORE_NAME);
+	} catch (e) {
+		console.warn('Failed to delete the results of a sim run: ' + e);
+	}
+}
+
+// The keys of every run we kept results for, across all sims.
+export async function historyRunKeys(): Promise<string[]> {
+	try {
+		return (await withStore<IDBValidKey[]>('readonly', store => store.getAllKeys(), RUNS_STORE_NAME)).map(String);
+	} catch (e) {
+		console.warn('Failed to list the saved sim runs: ' + e);
+		return [];
+	}
+}
+
+// The series of a run in the sim history, under the same key as its results.
+export async function saveHistorySeries(key: string, series: object): Promise<void> {
+	try {
+		await withStore('readwrite', store => store.put(series, key), SERIES_STORE_NAME);
+	} catch (e) {
+		console.warn('Failed to save the series of a sim run: ' + e);
+	}
+}
+
+export async function loadHistorySeries<T>(key: string): Promise<T | null> {
+	try {
+		return ((await withStore<T | undefined>('readonly', store => store.get(key), SERIES_STORE_NAME)) ?? null) as T | null;
+	} catch (e) {
+		console.warn('Failed to load the series of a sim run: ' + e);
 		return null;
 	}
 }

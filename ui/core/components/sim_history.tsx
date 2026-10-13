@@ -1,18 +1,21 @@
 import tippy, { Instance as TippyInstance } from 'tippy.js';
 
 import type { IndividualSimUI } from '../individual_sim_ui';
+import { deleteHistoryRun, historyRunKeys, loadHistoryRun, loadHistorySeries, loadLastSimRun, saveHistoryRun, saveHistorySeries } from '../last_sim_run';
 import { IndividualSimSettings } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
 import { TypedEvent } from '../typed_event';
 import { BaseModal } from './base_modal';
+import { buildRunSeries, RunSeries } from './compare_results/run_series';
 import { ChangeCategory, dirtySettings } from './dirty_settings';
 import { changesList } from './preset_tree';
-import { keyClickHint } from './sticky_tooltips';
 import { RaidSimResultsManager, ResultMetric } from './raid_sim_action';
+import { keyClickHint } from './sticky_tooltips';
 
 // A sim run as we keep it: the results the sidebar shows, and the settings it ran with so we
-// can list what changed since.
-interface SimRun {
+// can list what changed since. The full results, for the Compare tab, are in IndexedDB, see
+// saveHistoryRun.
+export interface SimRun {
 	id: string;
 	// When the run finished, in ms since the epoch.
 	time: number;
@@ -74,6 +77,11 @@ export class SimHistory {
 	private tooltips: TippyInstance[] = [];
 	private latestTooltip: TippyInstance | null = null;
 	private dialog: SimHistoryModal | null = null;
+	// The runs whose full results we kept. Runs from before we kept them have none.
+	private readonly resultIds = new Set<string>();
+
+	// Fires when a run comes, goes, gets its results saved, or gets a new name or pin.
+	readonly changeEmitter = new TypedEvent<void>('SimHistoryChange');
 
 	constructor(simUI: IndividualSimUI<any>, resultsManager: RaidSimResultsManager) {
 		this.simUI = simUI;
@@ -84,6 +92,106 @@ export class SimHistory {
 		// The warnings go under the runs.
 		simUI.resultsViewer.rootElem.insertBefore(this.listElem, simUI.resultsViewer.warningElem);
 		this.render();
+		this.loadResultIds();
+	}
+
+	// Finds the runs we kept results for. We also drop the results of runs that are gone from
+	// the history and the pins, like when another tab of the same sim pushed them out.
+	//
+	// The latest run from before we kept results still has them in the last run store (the one
+	// that shows again after a page refresh), so we copy them over. Then a first run after an
+	// update already has a run to compare with.
+	private async loadResultIds() {
+		const prefix = this.resultsKey('');
+		const keys = (await historyRunKeys()).filter(key => key.startsWith(prefix));
+		const known = new Set([...this.history, ...this.pinned].map(run => run.id));
+		keys.forEach(key => {
+			const id = key.slice(prefix.length);
+			if (known.has(id)) this.resultIds.add(id);
+			else deleteHistoryRun(key);
+		});
+
+		const latest = this.latest;
+		if (latest && !this.resultIds.has(latest.id)) {
+			const saved = await loadLastSimRun(this.simUI.getStorageKey('__lastSimRun__'));
+			const dps = saved?.result?.raidMetrics?.dps?.avg;
+			if (saved && dps !== undefined && Math.abs(dps - latest.dps) < 1e-6) {
+				await saveHistoryRun(this.resultsKey(latest.id), saved);
+				this.resultIds.add(latest.id);
+			}
+		}
+		// Runs from before we kept series have none. The latest one still has its logs in the
+		// last run store, so we build its series from them.
+		if (latest && this.resultIds.has(latest.id) && !(await loadHistorySeries(this.resultsKey(latest.id)))) {
+			const saved = await loadLastSimRun(this.simUI.getStorageKey('__lastSimRun__'));
+			const dps = saved?.result?.raidMetrics?.dps?.avg;
+			if (saved && dps !== undefined && Math.abs(dps - latest.dps) < 1e-6) {
+				try {
+					await this.saveSeries(latest.id, await SimResult.fromProto(saved));
+				} catch (e) {
+					console.warn('Failed to build the series of the latest run: ' + e);
+				}
+			}
+		}
+		this.changeEmitter.emit(TypedEvent.nextEventID());
+	}
+
+	private resultsKey(id: string): string {
+		return this.simUI.getStorageKey(`__simRun__${id}`);
+	}
+
+	// The pinned runs in the order we put them, and the recent runs newest first. A pinned run
+	// can be in both.
+	getRuns(): { pinned: SimRun[]; recent: SimRun[] } {
+		return { pinned: [...this.pinned], recent: [...this.history] };
+	}
+
+	// Reads the lucky and unlucky iterations of the run, so it takes a moment. The Compare tab
+	// hears of it through the change emitter.
+	private async saveSeries(id: string, simResult: SimResult) {
+		const series = await buildRunSeries(simResult);
+		await saveHistorySeries(this.resultsKey(id), series);
+		this.changeEmitter.emit(TypedEvent.nextEventID());
+	}
+
+	async loadSeries(run: SimRun): Promise<RunSeries | null> {
+		if (!this.resultIds.has(run.id)) return null;
+		return loadHistorySeries<RunSeries>(this.resultsKey(run.id));
+	}
+
+	hasResults(run: SimRun): boolean {
+		return this.resultIds.has(run.id);
+	}
+
+	async loadResults(run: SimRun): Promise<SimResult | null> {
+		if (!this.resultIds.has(run.id)) return null;
+		const saved = await loadHistoryRun(this.resultsKey(run.id));
+		if (!saved?.request || !saved.result) return null;
+		try {
+			return await SimResult.fromProto(saved);
+		} catch (e) {
+			console.warn('Failed to read the results of a sim run: ' + e);
+			return null;
+		}
+	}
+
+	// The settings that changed from one run to the other, in lines like 'Duration: 120 → 90'.
+	// The stat weights don't change the DPS, so we leave them out. Null when we can't read the
+	// settings of one of them.
+	changesBetween(from: SimRun, to: SimRun): ChangeCategory[] | null {
+		try {
+			const fromSettings = IndividualSimSettings.fromJson(from.settings as any);
+			const toSettings = IndividualSimSettings.fromJson(to.settings as any);
+			return dirtySettings
+				.changesBetween(
+					() => this.simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(fromSettings)),
+					() => this.simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(toSettings)),
+				)
+				.filter(category => category.name !== 'Stat Weights');
+		} catch (e) {
+			console.warn('Failed to compare the settings of two runs: ' + e);
+			return null;
+		}
 	}
 
 	startRun() {
@@ -102,8 +210,9 @@ export class SimHistory {
 	showRun(simResult: SimResult) {
 		if (this.runSettings !== null) {
 			const dps = simResult.raidMetrics.dps;
+			const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 			this.history.unshift({
-				id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+				id,
 				time: Date.now(),
 				dps: dps.avg,
 				stdev: dps.stdev,
@@ -111,9 +220,14 @@ export class SimHistory {
 				metrics: RaidSimResultsManager.toplineColumns(simResult),
 				settings: this.runSettings,
 			});
-			this.history.splice(MAX_HISTORY);
+			this.history.splice(MAX_HISTORY).forEach(run => this.dropResults(run));
 			this.runSettings = null;
 			this.store();
+			saveHistoryRun(this.resultsKey(id), simResult.toProto()).then(async () => {
+				this.resultIds.add(id);
+				this.changeEmitter.emit(TypedEvent.nextEventID());
+				await this.saveSeries(id, simResult);
+			});
 		}
 		this.running = false;
 		this.render();
@@ -133,6 +247,7 @@ export class SimHistory {
 			...(this.pinned.length ? [this.section('Pinned', this.pinned, 'pinned')] : []),
 			...(this.history.length ? [this.section('Recent', this.history.slice(0, SIDEBAR_RUNS), 'recent', this.historyButton())] : []),
 		);
+		this.changeEmitter.emit(TypedEvent.nextEventID());
 	}
 
 	// The latest run's results, with the same tooltips as after a run.
@@ -244,15 +359,26 @@ export class SimHistory {
 		return row;
 	}
 
-	private isPinned(run: SimRun): boolean {
+	isPinned(run: SimRun): boolean {
 		return this.pinned.some(other => other.id === run.id);
 	}
 
 	private togglePin(run: SimRun) {
-		if (this.isPinned(run)) this.pinned = this.pinned.filter(other => other.id !== run.id);
-		else this.pinned.push({ ...run });
+		if (this.isPinned(run)) {
+			this.pinned = this.pinned.filter(other => other.id !== run.id);
+			this.dropResults(run);
+		} else {
+			this.pinned.push({ ...run });
+		}
 		this.store();
 		this.render();
+	}
+
+	// Deletes the results of a run that's neither in the history nor pinned anymore.
+	private dropResults(run: SimRun) {
+		if (this.isPinned(run) || this.history.some(other => other.id === run.id)) return;
+		this.resultIds.delete(run.id);
+		deleteHistoryRun(this.resultsKey(run.id));
 	}
 
 	// Loads the settings the run ran with, all of them: gear, talents, rotation, buffs and the
@@ -478,18 +604,18 @@ class SimHistoryModal extends BaseModal {
 	}
 }
 
-function signed(value: number, digits: number): string {
+export function signed(value: number, digits: number): string {
 	return `${value >= 0 ? '+' : '-'}${Math.abs(value).toFixed(digits)}`;
 }
 
 // A run's name, or its date and time when it has none.
-function runLabel(run: SimRun, withYear = true): string {
+export function runLabel(run: SimRun, withYear = true): string {
 	return run.name ?? defaultLabel(run, withYear);
 }
 
 // The date and time of the run, like '2026-05-06 22:33'. The sidebar has little room, so its
 // rows leave out the year, like '05-06 22:33'.
-function defaultLabel(run: SimRun, withYear = true): string {
+export function defaultLabel(run: SimRun, withYear = true): string {
 	const date = new Date(run.time);
 	const pad = (value: number) => String(value).padStart(2, '0');
 	const year = withYear ? `${date.getFullYear()}-` : '';

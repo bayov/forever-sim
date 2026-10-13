@@ -6,7 +6,51 @@ Talents: 52 total, 23 new, 26 changed, 3 unchanged (verified).
 
 Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 5 and 7 hold the 11, 16, 21 and 31 point talents.
 
-Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled: 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The beta client's warlock tree (hyjal.cc's bundle of build 1.60.1.69876, `tools/forever_talents/client/warlock.json` in the sim repo) and spells (wago.tools DB2 tables of build 1.60.1.70338, ForeverChanges' talent calculator and spellbook for the same build), against the BlizzCon data below. The sim follows the client since 2026-10-12, and `tools/forever_talents/data/warlock.json` is generated from the client tree. The per-talent text further down is superseded where it differs.
+
+Tree:
+
+- Positions, rank counts and prerequisites held, except that Drain Hope became Wrack before the beta opened (build 1.60.1.69893): a 6 sec channel of 36 Shadow damage a second (14.3% coefficient a tick, 200 mana) that makes the warlock's Corruption and Bane of Agony deal 10% more while it lasts. Soul Harvesting is Soul Harvest since 1.60.1.70338.
+- Ranks 2 and up are real numbers now, and every talent the sim models was checked against its per-rank curve in TraitDefinitionEffectPoints (build 1.60.1.70338, through TraitDefinition and CurvePoint), which overrides the rank 1 spell's SpellEffect points: all match (2026-10-12). The one curve the sim does not use is Fire and Brimstone's first effect (3 / 7 / 10%, a dummy aura the tooltip does not show). Improved Drains is 7 / 13 / 20% on Drain Life, Drain Soul and Wrack (no per-effect bonus any more, that moved to Soul Siphon: 4 / 8 / 12% for each other Affliction effect on the target, up to 3). Fel Concentration and Intensity are 23 / 47 / 70%. Pandemic is 33 / 67 / 100% more critical strike bonus. Nightfall is 2 / 4%. Soul Harvest is 50 / 100% for 10 sec at both ranks. Improved Bane of Agony is 5 / 10%. Shadow Mastery is 1% a rank.
+- Demonology: Unholy Power is 2% a rank on all pet damage, Fel Vitality 5% a rank (pet health and mana, and the warlock's mana), Demonic Energies 8 / 15% and 50 / 100%, Master Summoner 2 / 4 sec and 20 / 40%, Decimation 45 / 90% off Soul Fire's cooldown and 20 / 40% off its cast (10 sec at both ranks, below 35% health at both ranks), Demonic Brand 2 / 4 / 6 pet attacks of 65 to 68 (10 sec at every rank, 17 / 33 / 50% less threat), Improved Felhunter 2 / 4 / 6 sec, Demonic Knowledge 33 / 67 / 100% of the level as spell damage for the warlock and the demon, Master Demonologist 2% a rank.
+- Destruction: Improved Shadow Bolt is 4% a rank for 12 sec at every rank, from the warlock's own attacks only and with no charges (Shadow Vulnerability, 17794, "damage taken from caster"). Cataclysm is 3 / 6 / 10%, Aftermath 10% a rank on Immolate's direct damage, Ruin 20% a rank, Agonizing Flames 3 / 7 / 10%, Fire and Brimstone 8 / 17 / 25%, Shadow and Flame 2% a rank and 20% a rank, 20 sec at every rank.
+
+Spells at level 60 (client SpellEffect, SpellLevels, SpellPower, SpellMisc; most damage is about half of 1.12, the damage over time coefficients went up):
+
+- Shadow Bolt rank 10 253 to 283 (1.12 482 to 538), 85.7%. Rank 9 237 to 265. Rank 10, Immolate rank 8 and Corruption rank 7 come from Ahn'Qiraj books, which the client has with no source and no trainer, so the sim's Forever ruleset stops at Shadow Bolt IX, Immolate VII and Corruption VI.
+- Immolate rank 8 158 and 5 ticks of 55 (1.12 279 and 510), 20% and 13% a tick.
+- Corruption rank 7 6 ticks of 73 (1.12 822 in all), 20% a tick (1.12 16.7%). Ranks 1 and 2 last 12 and 15 sec. Rank 7 is an Ahn'Qiraj book, so the sim's Forever top rank is 6, 6 ticks of 57.
+- Bane of Agony (was Curse of Agony) rank 6 552 over 24 sec (1.12 1044), 13.3% a tick (1.12 8.3%).
+- Bane of Doom (was Curse of Doom) 1742 after 1 min (1.12 3200), 400% (1.12 100%).
+- Siphon Life is a talent with trainer ranks behind it, 11 / 19 / 29 / 41 every 3 sec at 30 / 38 / 48 / 58, 5% a tick.
+- Drain Life rank 6 51 a second, Drain Soul rank 4 84 every 3 sec (1.12 91), both 10% a tick.
+- Searing Pain rank 6 107 to 126 (1.12 208 to 244), Soul Fire rank 2 389 to 488 (1.12 715 to 894), Death Coil rank 3 460 for 600 mana.
+- Shadowburn is a talent with trainer ranks from 20 (rank 6 258 to 288, 1.12 462 to 514), 8 sec shard window.
+- Conflagrate is a row 4 talent with trainer ranks from 25 (rank 6 251 to 313, 1.12 447 to 557), 10 sec cooldown.
+- Incinerate is the Destruction capstone with trainer ranks at 40, 50 and 60 (rank 3 201 to 233, 71.4%, 2.5 sec, 325 mana), 25% more with the warlock's Immolate on the target.
+- Life Tap converts its points plus one health a point of Spirit, times Improved Life Tap ($m1 + $SPI), 424 at rank 6 and level 60, and no longer scales with spell power.
+- Banes and curses are two slots: one bane (Agony, Doom, Havoc) and one curse per warlock on a target. Curse of Shadow is gone. Curse of the Elements is a trainer spell from 20 with 4 ranks, 30 / 45 / 60 / 75 resistance and 4 / 6 / 8 / 10% more damage taken from every magic school. Curse of Recklessness takes 505 armor and gives no attack power.
+- Firestone and Spellstone are weapon imbues now (the same enchant effect as the shaman imbues, so they stack with an oil): Major Firestone gives Fire damage up to 21 and 2% spell crit, Major Spellstone Shadow damage up to 21 and 2% spell haste.
+- The demons hit for about half too: Firebolt rank 7 43 to 48, Lash of Pain rank 6 50.
+- Demonic Sacrifice swapped its schools and lasts 2 hours: the Imp gives 15% Shadow damage, the Succubus 15% Fire damage, the Voidwalker 2% of maximum mana every 4 sec, the Felhunter 3% of maximum health every 4 sec.
+- Demonheart Raiment (item set 2100) is Forever's warlock Tier 1: 2 pieces 1% hit, 3 pieces Banish 1.5 sec faster, 4 pieces up to 21 spell damage against Demons, 5 pieces 20% more mana from Life Tap at no extra health. Its pieces carry no stats in the client yet.
+- 2026-10-01 build (70170, development notes post 4): Hellfire can crit and Drain Soul stops when another spell is cast. 2026-10-08 build (70291, post 5): Soul Harvest really gives its regeneration, the current demon is stunned while a new one is summoned, Demonic Brand's bonus damage is high threat only as Shadow, and Shadow Bolt ranks 2 to 4 were retuned (rank 4 58 to 66). 2026-09-24: Eureka! (Gnome) costs 10% less for every class, and the Voidwalker's Sacrifice scales with 10% of the warlock's spell healing.
+
+## Forever sources check (2026-10-13)
+
+Every warlock mechanic the sim models was checked again against Blizzard's Rogue and Warlock deep dive (https://worldofwarcraft.blizzard.com/en-us/news/24310968, 2026-10-07), the beta development notes (https://us.forums.blizzard.com/en/wow/t/2360696, posts of 2026-09-24, 10-01 and 10-08), foreverchanges.pro (class, spellbook, talents and patch notes pages, build 70338), wowhead's Forever spell pages (https://www.wowhead.com/forever/spell=ID, which show tooltips at the spell's maximum level, not 60) and the wago.tools SpellEffect and SpellLevels tables of 1.60.1.70338, the newest build (wago.tools/builds: 70338 on 2026-10-10, after 70334 and 70291; foreverchanges lists the next build for 2026-10-15). Everything above matches: banes and curses, Bane of Agony and Bane of Doom (1742, 4.0), the Shadow Bolt, Corruption, Immolate and Incinerate ranks, every coefficient (Immolate 20% and 13% a tick, Conflagrate 42.9%, Shadowburn and Searing Pain 42.9%, Soul Fire 100%, Death Coil 21.4%, the drains 10% a tick, Siphon Life 5% a tick), Life Tap (424 + Spirit), the demon spells, no player buffs on demons, Demonic Sacrifice and Pact, the imbues, Demonheart Raiment and the talent values. Which ranks come from Ahn'Qiraj books no source states; the sim keeps standards 8a.
+
+New since the client audit, from the community bug tracker (https://github.com/ClassicWoWCommunity/forever-bugs):
+- #303 (fixed for the next build, 2026-10-13): Siphon Life's ticks could not crit. The sim already lets every Forever damage over time tick crit (`Dot.canCrit`), Siphon Life included, so nothing changes.
+- #311 (fixed for the next build): Malediction raised Hellfire's damage to the warlock and not to enemies. No preset casts Hellfire.
+- #302 (fixed for the next build): Soul Link learned below 30 through the Talented perk gave no buff. No effect at 60.
+- #331 (open, 2026-10-13): pets show the warlock's crit on their sheet (4.58% melee and spell crit on both), measured Lash of Pain crit about 6.3% but Succubus melee crit only 0.7%. The sim gives demons no crit (notes.md); inheriting the warlock's spell crit for both would add 25 on Demonology and 20 on Destruction at 180 sec. Open until the bug or a Forever log settles it.
+- Soul shards: Drain Soul has a growing chance a tick to give one and always gives one on a kill; Soul Fire and Shadowburn still need one, Decimation makes Soul Fire free for 10 sec, Shadow and Flame gives Shadowburn's back 20% a rank, and Shadowburn's window is 8 sec. The sim still doesn't count shards (no preset spends one).
+- Warlock Pet Scaling (416189) has 20 effects, all with 0 points in the client: health, attack power, damage done, six resistances, melee and spell hit, haste and crit, Intellect, mana regeneration and healing. The server's amounts are unpublished.
 
 ## Spellbook changes (trainer abilities)
 
@@ -27,7 +71,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 - **Improved Life Tap** (2 ranks, column 1) [unchanged]
   - Rank 1: Increases the amount of Mana awarded by your Life Tap spell by 10%.
   - Rank 2: Increases the amount of Mana awarded by your Life Tap spell by 20%.
-- **Suppression** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Suppression** (5 ranks, column 2) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases your chance to hit with all spells and attacks by 1% and reduces all threat you generate by 4%.
   - Rank 2: Increases your chance to hit with all spells and attacks by 2% and reduces all threat you generate by 8%.
   - Rank 3: Increases your chance to hit with all spells and attacks by 3% and reduces all threat you generate by 12%.
@@ -39,7 +83,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
     - Rank 3: Reduces the chance for enemies to resist your Affliction spells by 6%.
     - Rank 4: Reduces the chance for enemies to resist your Affliction spells by 8%.
     - Rank 5: Reduces the chance for enemies to resist your Affliction spells by 10%.
-- **Improved Corruption** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Improved Corruption** (5 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Reduces the casting time of your Corruption spell by 0.4 sec and increases the damage it deals by 2%.
   - Rank 2: Reduces the casting time of your Corruption spell by 0.8 sec and increases the damage it deals by 4%.
   - Rank 3: Reduces the casting time of your Corruption spell by 1.2 sec and increases the damage it deals by 6%.
@@ -54,18 +98,18 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 2 (5 points)
 
-- **Malediction** (5 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Malediction** (5 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases all periodic damage done by your Warlock spells by 1%.
   - Rank 2: Increases all periodic damage done by your Warlock spells by 2%.
   - Rank 3: Increases all periodic damage done by your Warlock spells by 3%.
   - Rank 4: Increases all periodic damage done by your Warlock spells by 4%.
   - Rank 5: Increases all periodic damage done by your Warlock spells by 5%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Soul Harvesting** (2 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Soul Harvesting** (2 ranks, column 2) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: You gain Soul Harvest for 10 sec if a victim is killed while afflicted with your Drain Soul. Soul Harvest allows your Mana to regenerate at 50% of normal speed while you are casting spells, and grants a 50% increase to your Mana regeneration.
   - Rank 2: You gain Soul Harvest for 20 sec if a victim is killed while afflicted with your Drain Soul. Soul Harvest allows your Mana to regenerate at 100% of normal speed while you are casting spells, and grants a 100% increase to your Mana regeneration.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Improved Drains** (3 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Improved Drains** (3 ranks, column 3) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the damage done or health drained by your Drain Life and Drain Soul spells by 2% per each of your other Affliction effects active on the target, up to a maximum increase of 6%. When your Drain Soul damages targets below 20% health, this bonus is tripled. Additionally, your Drain Life range is extended by 3 yards.
   - Rank 2: Increases the damage done or health drained by your Drain Life and Drain Soul spells by 4% per each of your other Affliction effects active on the target, up to a maximum increase of 12%. When your Drain Soul damages targets below 40% health, this bonus is tripled. Additionally, your Drain Life range is extended by 6 yards.
   - Rank 3: Increases the damage done or health drained by your Drain Life and Drain Soul spells by 6% per each of your other Affliction effects active on the target, up to a maximum increase of 18%. When your Drain Soul damages targets below 60% health, this bonus is tripled. Additionally, your Drain Life range is extended by 9 yards.
@@ -73,11 +117,11 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 3 (10 points)
 
-- **Improved Bane of Agony** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Improved Bane of Agony** (2 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the damage done by your Bane of Agony by 5%.
   - Rank 2: Increases the damage done by your Bane of Agony by 10%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Fel Concentration** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Fel Concentration** (3 ranks, column 2) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Gives you a 23% chance to avoid interruption caused by damage while channeling or casting your Drain Life, Drain Mana, or Drain Soul spells.
   - Rank 2: Gives you a 46% chance to avoid interruption caused by damage while channeling or casting your Drain Life, Drain Mana, or Drain Soul spells.
   - Rank 3: Gives you a 69% chance to avoid interruption caused by damage while channeling or casting your Drain Life, Drain Mana, or Drain Soul spells.
@@ -93,7 +137,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
   - Increases the effect of your next Curse of Weakness or Bane of Agony by 50%, or your next Curse of Exhaustion by 20%. Lasts 30 sec.
   - Classic: Increases the effect of your next Curse of Weakness or Curse of Agony by 50%, or your next Curse of Exhaustion by 20%. Lasts 30 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Pandemic** (3 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Pandemic** (3 ranks, column 4) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the critical strike damage bonus of your Corruption, Bane of Agony, Bane of Doom, Drain Soul, Drain Life, Siphon Life, and Drain Hope spells by 33%.
   - Rank 2: Increases the critical strike damage bonus of your Corruption, Bane of Agony, Bane of Doom, Drain Soul, Drain Life, Siphon Life, and Drain Hope spells by 67%.
   - Rank 3: Increases the critical strike damage bonus of your Corruption, Bane of Agony, Bane of Doom, Drain Soul, Drain Life, Siphon Life, and Drain Hope spells by 100%.
@@ -101,13 +145,13 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 4 (15 points)
 
-- **Malevolence** (5 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Malevolence** (5 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the critical effect chance of your Shadow spells by 1%.
   - Rank 2: Increases the critical effect chance of your Shadow spells by 2%.
   - Rank 3: Increases the critical effect chance of your Shadow spells by 3%.
   - Rank 4: Increases the critical effect chance of your Shadow spells by 4%.
   - Rank 5: Increases the critical effect chance of your Shadow spells by 5%.
-- **Nightfall** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Nightfall** (2 ranks, column 2) [CHANGED] [ranks settled: 70338 trait curves]
   - Requires: Fel Concentration (3/3)
   - Rank 1: Gives your Corruption, Drain Soul, and Drain Life spells a 2% chance to cause you to enter a Shadow Trance after damaging the opponent. The Shadow Trance reduces the casting time of your next Shadow Bolt spell by 100%.
   - Rank 2: Gives your Corruption, Drain Soul, and Drain Life spells a 4% chance to cause you to enter a Shadow Trance after damaging the opponent. The Shadow Trance reduces the casting time of your next Shadow Bolt spell by 200%.
@@ -129,7 +173,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
   - Cost: 150 Mana, 30 yd range, Instant
   - Transfers 15 health from the target to the caster every 3 sec. Lasts 30 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Soul Siphon** (3 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Soul Siphon** (3 ranks, column 3) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the rate at which your Drain Life and Drain Soul deal damage by 17%, but reduces your healing from Drain Life by 10%.
   - Rank 2: Increases the rate at which your Drain Life and Drain Soul deal damage by 34%, but reduces your healing from Drain Life by 20%.
   - Rank 3: Increases the rate at which your Drain Life and Drain Soul deal damage by 51%, but reduces your healing from Drain Life by 30%.
@@ -137,7 +181,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 6 (25 points)
 
-- **Shadow Mastery** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Shadow Mastery** (5 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the damage dealt or life drained by your Shadow spells by 1%.
   - Rank 2: Increases the damage dealt or life drained by your Shadow spells by 2%.
   - Rank 3: Increases the damage dealt or life drained by your Shadow spells by 3%.
@@ -163,14 +207,14 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 1 (0 points)
 
-- **Improved Health Funnel** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Health Funnel** (2 ranks, column 1) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the amount of health transferred by your Health Funnel spell by 20%, reduces its health cost by 15%, and reduces all threat your Health Funnel generates by 50%. Allows Health Funnel to be used regardless of your demon's health.
   - Rank 2: Increases the amount of health transferred by your Health Funnel spell by 40%, reduces its health cost by 30%, and reduces all threat your Health Funnel generates by 100%. Allows Health Funnel to be used regardless of your demon's health.
   - Classic (2 ranks):
     - Rank 1: Increases the amount of Health transferred by your Health Funnel spell by 10%.
     - Rank 2: Increases the amount of Health transferred by your Health Funnel spell by 20%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Improved Imp** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Imp** (3 ranks, column 2) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the damage of your Imp's Firebolt spell by 10% and the effect of its Fire Shield spell by 10%.
   - Rank 2: Increases the damage of your Imp's Firebolt spell by 20% and the effect of its Fire Shield spell by 20%.
   - Rank 3: Increases the damage of your Imp's Firebolt spell by 30% and the effect of its Fire Shield spell by 30%.
@@ -178,7 +222,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
     - Rank 1: Increases the effect of your Imp's Firebolt, Fire Shield, and Blood Pact spells by 10%.
     - Rank 2: Increases the effect of your Imp's Firebolt, Fire Shield, and Blood Pact spells by 20%.
     - Rank 3: Increases the effect of your Imp's Firebolt, Fire Shield, and Blood Pact spells by 30%.
-- **Demonic Embrace** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Demonic Embrace** (5 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases your total Stamina by 3%.
   - Rank 2: Increases your total Stamina by 6%.
   - Rank 3: Increases your total Stamina by 9%.
@@ -190,7 +234,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
     - Rank 3: Increases your total Stamina by 9% but reduces your total Spirit by 3%.
     - Rank 4: Increases your total Stamina by 12% but reduces your total Spirit by 4%.
     - Rank 5: Increases your total Stamina by 15% but reduces your total Spirit by 5%.
-- **Unholy Power** (5 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Unholy Power** (5 ranks, column 4) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases all damage done by your Imp, Voidwalker, Succubus, Incubus, and Felhunter pets by 2%.
   - Rank 2: Increases all damage done by your Imp, Voidwalker, Succubus, Incubus, and Felhunter pets by 4%.
   - Rank 3: Increases all damage done by your Imp, Voidwalker, Succubus, Incubus, and Felhunter pets by 6%.
@@ -206,7 +250,7 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 2 (5 points)
 
-- **Demonic Aegis** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Demonic Aegis** (2 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the effectiveness of your Demon Skin and Demon Armor spells by 15%.
   - Rank 2: Increases the effectiveness of your Demon Skin and Demon Armor spells by 30%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
@@ -214,18 +258,18 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
   - Rank 1: Increases the effectiveness of your Voidwalker's Torment, Consume Shadows, Sacrifice and Suffering spells by 10%.
   - Rank 2: Increases the effectiveness of your Voidwalker's Torment, Consume Shadows, Sacrifice and Suffering spells by 20%.
   - Rank 3: Increases the effectiveness of your Voidwalker's Torment, Consume Shadows, Sacrifice and Suffering spells by 30%.
-- **Fel Vitality** (3 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Fel Vitality** (3 ranks, column 3) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the maximum health and Mana of your Imp, Voidwalker, Succubus, Incubus, and Felhunter by 5%, and increases your maximum Mana by 5%.
   - Rank 2: Increases the maximum health and Mana of your Imp, Voidwalker, Succubus, Incubus, and Felhunter by 10%, and increases your maximum Mana by 10%.
   - Rank 3: Increases the maximum health and Mana of your Imp, Voidwalker, Succubus, Incubus, and Felhunter by 15%, and increases your maximum Mana by 15%.
-- **Demonic Energies** (2 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Demonic Energies** (2 ranks, column 4) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: You heal your pet for 8% of all spell damage you deal. When you gain Mana from Life Tap, your summoned demon gains 50% of the Mana you gain.
   - Rank 2: You heal your pet for 16% of all spell damage you deal. When you gain Mana from Life Tap, your summoned demon gains 100% of the Mana you gain.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
 
 #### Row 3 (10 points)
 
-- **Improved Sayaad** (3 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Improved Sayaad** (3 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the effect of your Succubus' and Incubus' Lash of Pain and Soothing Kiss spells by 10%, and increases the duration of your Succubus' and Incubus' Seduction and Lesser Invisibility spells by 10%.
   - Rank 2: Increases the effect of your Succubus' and Incubus' Lash of Pain and Soothing Kiss spells by 20%, and increases the duration of your Succubus' and Incubus' Seduction and Lesser Invisibility spells by 20%.
   - Rank 3: Increases the effect of your Succubus' and Incubus' Lash of Pain and Soothing Kiss spells by 30%, and increases the duration of your Succubus' and Incubus' Seduction and Lesser Invisibility spells by 30%.
@@ -242,14 +286,14 @@ Succubus/Incubus: Increases your Shadow damage by 15%.
 
 Felhunter: Restores 2% of total Mana every 4 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Master Summoner** (2 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Master Summoner** (2 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Reduces the casting time of your Imp, Voidwalker, Succubus, Incubus, and Felhunter Summoning spells by 2 sec and the Mana cost by 20%.
   - Rank 2: Reduces the casting time of your Imp, Voidwalker, Succubus, Incubus, and Felhunter Summoning spells by 4 sec and the Mana cost by 40%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
 
 #### Row 4 (15 points)
 
-- **Decimation** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Decimation** (2 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Reduces the cooldown of your Soul Fire spell by 45%. When you cast Shadow Bolt or Searing Pain on an enemy below 35% health, they deal 3% increased damage, and for the next 10 sec your Soul Fire spell has its cast time reduced by 20% and costs no Soul Shards.
   - Rank 2: Reduces the cooldown of your Soul Fire spell by 90%. When you cast Shadow Bolt or Searing Pain on an enemy below 70% health, they deal 6% increased damage, and for the next 20 sec your Soul Fire spell has its cast time reduced by 40% and costs no Soul Shards.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
@@ -258,7 +302,7 @@ Felhunter: Restores 2% of total Mana every 4 sec.
   - Cost: Instant, 5 min cooldown
   - Your next Imp, Voidwalker, Succubus, Incubus, or Felhunter Summon spell has its casting time reduced by 5.5 sec and its Mana cost reduced by 50%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Demonic Brand** (3 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Demonic Brand** (3 ranks, column 4) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Your Searing Pain generates 17% less threat and brands the target for 10 sec. Your pet's next 2 attacks against the target generate high threat and deal 39 to 42 Fire or Shadow damage based on the pet.
   - Rank 2: Your Searing Pain generates 34% less threat and brands the target for 20 sec. Your pet's next 4 attacks against the target generate high threat and deal 78 to 84 Fire or Shadow damage based on the pet.
   - Rank 3: Your Searing Pain generates 51% less threat and brands the target for 30 sec. Your pet's next 6 attacks against the target generate high threat and deal 117 to 126 Fire or Shadow damage based on the pet.
@@ -266,7 +310,7 @@ Felhunter: Restores 2% of total Mana every 4 sec.
 
 #### Row 5 (20 points)
 
-- **Improved Felhunter** (3 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Improved Felhunter** (3 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the Attack Power reduction of your Felhunter's Tainted Blood, the healing of its Devour Magic, and the detection level of its Paranoia by 10%, and reduces the cooldown of its Spell Lock by 2 sec.
   - Rank 2: Increases the Attack Power reduction of your Felhunter's Tainted Blood, the healing of its Devour Magic, and the detection level of its Paranoia by 20%, and reduces the cooldown of its Spell Lock by 4 sec.
   - Rank 3: Increases the Attack Power reduction of your Felhunter's Tainted Blood, the healing of its Devour Magic, and the detection level of its Paranoia by 30%, and reduces the cooldown of its Spell Lock by 6 sec.
@@ -276,7 +320,7 @@ Felhunter: Restores 2% of total Mana every 4 sec.
   - When active, 30% of all damage taken by the caster is taken by your Imp, Voidwalker, Succubus, Incubus, or Felhunter Demon instead. In addition, both the Demon and the master will inflict 3% more damage. Lasts as long as the Demon is active.
   - Classic: When active, 30% of all damage taken by the caster is taken by your Imp, Voidwalker, Succubus, Incubus, or Felhunter demon instead. In addition, both the demon and master will inflict 3% more damage. Lasts as long as the demon is active.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Demonic Knowledge** (3 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Demonic Knowledge** (3 ranks, column 3) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases your spell damage and healing by up to 33% of your level while you have a summoned Demon pet active.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -284,7 +328,7 @@ Felhunter: Restores 2% of total Mana every 4 sec.
 
 #### Row 6 (25 points)
 
-- **Master Demonologist** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Master Demonologist** (5 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
   - Requires: Fel Domination (1/1)
   - Rank 1: Grants both the Warlock and the summoned demon an effect as long as that demon is active. Imp - Increases Fire damage done by 2%. Voidwalker - Reduces Physical damage taken by 2%. Succubus/Incubus - Increases Shadow damage done by 2%. Felhunter - Reduces Magic damage taken by 2%.
   - Rank 2: Grants both the Warlock and the summoned demon an effect as long as that demon is active. Imp - Increases Fire damage done by 4%. Voidwalker - Reduces Physical damage taken by 4%. Succubus/Incubus - Increases Shadow damage done by 4%. Felhunter - Reduces Magic damage taken by 4%.
@@ -352,13 +396,13 @@ Felhunter - Increases all resistances by 1 per level.
 
 #### Row 1 (0 points)
 
-- **Destructive Reach** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Destructive Reach** (2 ranks, column 1) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the range of your damaging spells by 10%.
   - Rank 2: Increases the range of your damaging spells by 20%.
   - Classic (2 ranks):
     - Rank 1: Increases the range of your Destruction spells by 10%.
     - Rank 2: Increases the range of your Destruction spells by 20%.
-- **Improved Shadow Bolt** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Shadow Bolt** (5 ranks, column 2) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Your Shadow Bolt critical strikes increase Shadow damage taken by the target from your attacks by 4% for 12 sec.
   - Rank 2: Your Shadow Bolt critical strikes increase Shadow damage taken by the target from your attacks by 8% for 24 sec.
   - Rank 3: Your Shadow Bolt critical strikes increase Shadow damage taken by the target from your attacks by 12% for 36 sec.
@@ -370,7 +414,7 @@ Felhunter - Increases all resistances by 1 per level.
     - Rank 3: Your Shadow Bolt critical strikes increase Shadow damage dealt to the target by 12% until 4 non-periodic damage sources are applied. Effect lasts a maximum of 12 sec.
     - Rank 4: Your Shadow Bolt critical strikes increase Shadow damage dealt to the target by 16% until 4 non-periodic damage sources are applied. Effect lasts a maximum of 12 sec.
     - Rank 5: Your Shadow Bolt critical strikes increase Shadow damage dealt to the target by 20% until 4 non-periodic damage sources are applied. Effect lasts a maximum of 12 sec.
-- **Bane** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Bane** (5 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Reduces the casting time of your Shadow Bolt, Immolate, and Incinerate spells by 0.1 sec and your Soul Fire spell by 0.4 sec.
   - Rank 2: Reduces the casting time of your Shadow Bolt, Immolate, and Incinerate spells by 0.2 sec and your Soul Fire spell by 0.8 sec.
   - Rank 3: Reduces the casting time of your Shadow Bolt, Immolate, and Incinerate spells by 0.3 sec and your Soul Fire spell by 1.2 sec.
@@ -386,14 +430,14 @@ Felhunter - Increases all resistances by 1 per level.
 
 #### Row 2 (5 points)
 
-- **Molten Skin** (5 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Molten Skin** (5 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Reduces all damage taken by 2%.
   - Rank 2: Reduces all damage taken by 4%.
   - Rank 3: Reduces all damage taken by 6%.
   - Rank 4: Reduces all damage taken by 8%.
   - Rank 5: Reduces all damage taken by 10%.
   - Note: Rank 1 (2%) and rank 5 (10%) seen on screen, 2% per rank.
-- **Cataclysm** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Cataclysm** (3 ranks, column 2) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Reduces the Mana cost of your Destruction spells by 3%.
   - Rank 2: Reduces the Mana cost of your Destruction spells by 6%.
   - Rank 3: Reduces the Mana cost of your Destruction spells by 9%.
@@ -404,7 +448,7 @@ Felhunter - Increases all resistances by 1 per level.
     - Rank 4: Reduces the Mana cost of your Destruction spells by 4%.
     - Rank 5: Reduces the Mana cost of your Destruction spells by 5%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Aftermath** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Aftermath** (5 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the initial damage of your Immolate spell by 10% and your Conflagrate spell has a 20% chance to Daze the target, reducing the target's movement speed by 50% for 5 sec.
   - Rank 2: Increases the initial damage of your Immolate spell by 20% and your Conflagrate spell has a 40% chance to Daze the target, reducing the target's movement speed by 100% for 10 sec.
   - Rank 3: Increases the initial damage of your Immolate spell by 30% and your Conflagrate spell has a 60% chance to Daze the target, reducing the target's movement speed by 150% for 15 sec.
@@ -420,7 +464,7 @@ Felhunter - Increases all resistances by 1 per level.
 
 #### Row 3 (10 points)
 
-- **Ruin** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Ruin** (5 ranks, column 2) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the critical strike damage bonus of your Destruction spells by 20%.
   - Rank 2: Increases the critical strike damage bonus of your Destruction spells by 40%.
   - Rank 3: Increases the critical strike damage bonus of your Destruction spells by 60%.
@@ -436,7 +480,7 @@ Felhunter - Increases all resistances by 1 per level.
 
 #### Row 4 (15 points)
 
-- **Intensity** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Intensity** (3 ranks, column 1) [CHANGED] [ranks settled: 70338 trait curves]
   - Rank 1: Gives you a 23% chance to resist interruption caused by damage while casting or channeling any Destruction spell.
   - Rank 2: Gives you a 46% chance to resist interruption caused by damage while casting or channeling any Destruction spell.
   - Rank 3: Gives you a 69% chance to resist interruption caused by damage while casting or channeling any Destruction spell.
@@ -444,7 +488,7 @@ Felhunter - Increases all resistances by 1 per level.
     - Rank 1: Gives you a 35% chance to resist interruption caused by damage while channeling the Rain of Fire, Hellfire or Soul Fire spell.
     - Rank 2: Gives you a 70% chance to resist interruption caused by damage while channeling the Rain of Fire, Hellfire or Soul Fire spell.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Agonizing Flames** (3 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Agonizing Flames** (3 ranks, column 2) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Increases the critical strike chance of your Searing Pain spell by 3% and the damage done by all your Destruction spells by 3%.
   - Rank 2: Increases the critical strike chance of your Searing Pain spell by 6% and the damage done by all your Destruction spells by 6%.
   - Rank 3: Increases the critical strike chance of your Searing Pain spell by 9% and the damage done by all your Destruction spells by 9%.
@@ -458,7 +502,7 @@ Felhunter - Increases all resistances by 1 per level.
 
 #### Row 5 (20 points)
 
-- **Pyroclasm** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Pyroclasm** (2 ranks, column 1) [CHANGED] [ranks settled: 70338 trait curves]
   - Requires: Intensity (3/3)
   - Rank 1: Gives your Soul Fire spell a 13% chance to Stun the target for 3 sec, and your Rain of Fire and Hellfire spells a 13% chance over their duration to Stun targets they damage for 3 sec.
   - Rank 2: Gives your Soul Fire spell a 26% chance to Stun the target for 6 sec, and your Rain of Fire and Hellfire spells a 26% chance over their duration to Stun targets they damage for 6 sec.
@@ -470,7 +514,7 @@ Felhunter - Increases all resistances by 1 per level.
   - Cost: 43 Mana, 30 yd range, Instant
   - Afflicts the target for 5 min, causing 15% of all damage done by the Warlock to other targets to also be dealt to the cursed target. Bane of Havoc is limited to 1 target, and only one Bane per Warlock can be active on any one target.
   - Note: 43 Mana, 30 yd range, instant. Slot per the third-party dataset.
-- **Fire and Brimstone** (3 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Fire and Brimstone** (3 ranks, column 3) [NEW] [ranks settled: 70338 trait curves]
   - Requires: Conflagrate (1/1)
   - Rank 1: Increases the critical strike chance of your Conflagrate spell by 8%.
   - Rank 2: Increases the critical strike chance of your Conflagrate spell by 17%.
@@ -479,7 +523,7 @@ Felhunter - Increases all resistances by 1 per level.
 
 #### Row 6 (25 points)
 
-- **Shadow and Flame** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Shadow and Flame** (5 ranks, column 3) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: Hitting an enemy with Conflagrate increases all Shadow damage you deal by 2% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 2% for 20 sec. In addition, Conflagrate has a 20% chance not to consume Immolate, and Shadowburn has a 20% chance to instantly refund a Soul Shard.
   - Rank 2: Hitting an enemy with Conflagrate increases all Shadow damage you deal by 4% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 4% for 20 sec. In addition, Conflagrate has a 40% chance not to consume Immolate, and Shadowburn has a 40% chance to instantly refund a Soul Shard.
   - Rank 3: Hitting an enemy with Conflagrate increases all Shadow damage you deal by 6% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 6% for 20 sec. In addition, Conflagrate has a 60% chance not to consume Immolate, and Shadowburn has a 60% chance to instantly refund a Soul Shard.

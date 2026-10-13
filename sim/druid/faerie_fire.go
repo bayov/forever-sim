@@ -23,7 +23,9 @@ func (druid *Druid) registerFaerieFireSpell() {
 		return core.FaerieFireAura(target)
 	})
 
-	if druid.InForm(Cat|Bear) && druid.Talents.FaerieFireFeral {
+	// Forever made Faerie Fire (Feral) a trainer spell (foreverchanges.pro lists it at level
+	// 25), so every cat and bear has it.
+	if druid.InForm(Cat|Bear) && druid.Level >= 25 {
 		spellCode = SpellCode_DruidFaerieFireFeral
 		actionID = core.ActionID{SpellID: 17392}
 		manaCostOptions = core.ManaCostOptions{}

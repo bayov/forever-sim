@@ -1,0 +1,18 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"move":{"rangeFromTarget":{"const":{"val":"0"}}}},"doAtValue":{"const":{"val":"-6s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":1299447}}},"doAtValue":{"const":{"val":"-3s"}}}
+    ],
+    "priorityList": [
+        {"action":{"condition":{"not":{"val":{"inMeleeRange":{}}}},"move":{"rangeFromTarget":{"const":{"val":"0"}}}},"notes":"Walk into melee range when the fight starts at range."},
+        {"action":{"castSpell":{"spellId":{"spellId":1299447}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1299447}}}}}},"notes":"Aspect of the Beast if it ever drops."},
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Rapid Fire, racials, trinkets and potions on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":14271}}},"notes":"Mongoose Bite whenever Expose Prey or a dodge opens it."},
+        {"action":{"castSpell":{"spellId":{"spellId":1317257}}},"notes":"Strider Kick on cooldown, with the talent."},
+        {"action":{"castSpell":{"spellId":{"spellId":14266,"tag":3}}},"notes":"Queue Raptor Strike on the next swing when it is ready."},
+        {"action":{"castSpell":{"spellId":{"spellId":1299332}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":1299332}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}]}}},"notes":"Lacerate when it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":14305}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}}},"notes":"Immolation Trap at the hunter's feet on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":14268}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.5"}}}},{"and":{"vals":[{"not":{"val":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":1310726}}},{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":14271}}},"op":"OpLt","rhs":{"const":{"val":"1s"}}}}]}}}},{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":1317257}}},"op":"OpGe","rhs":{"const":{"val":"1s"}}}}]}}]}}},"notes":"Wing Clip as a filler with the mana to spare, held when Mongoose Bite or Strider Kick is about ready."}
+    ]
+}

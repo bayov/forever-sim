@@ -86,6 +86,13 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 		OnPetDisable: func(sim *core.Simulation, isSacrifice bool) {},
 	}
 
+	// Forever's buffs are players only (client 70338 gives Gift of the Wild, Fortitude, Arcane
+	// Brilliance, the Greater Blessings, Battle Shout, Leader of the Pack, Moonkin Aura, the stat
+	// totems and the scrolls the players-only target flag, SPELL_ATTR3 0x100, and forever-bugs #27,
+	// "Invalid Target" on a warlock pet, was closed as not a bug), so demons get none. They scale from
+	// the warlock's stats instead, see makeStatInheritance. Debuffs on the target still count.
+	wp.Pet.IgnoresPlayerBuffs = true
+
 	wp.EnableManaBarWithModifier(cfg.PowerModifier)
 
 	if cfg.Name == "Imp" {
@@ -110,7 +117,6 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 
 		// Imps generally don't melee
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
-		wp.AutoAttacks.MHConfig().DamageMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
 	}
 
 	core.ApplyPetConsumeEffects(&wp.Character, warlock.Consumes)
@@ -193,8 +199,30 @@ func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 	}
 }
 
+// makeStatInheritance is the Warlock Pet Scaling aura (client 70338, spell 416189, which carries the
+// attack power, damage done, hit, crit and resistance auras; Blizzard's warlock deep dive of 2026-10-07:
+// "pets now scale from their summoner's stats"). Forever's amounts are server side (every base point is
+// 0 in the client) and unmeasured, so these are Season of Discovery's as a placeholder (the user's backup
+// source, orchestration/pet_buffs.md):
+//   - Hit: 100% of the warlock's spell hit (the higher of Fire and Shadow, one number in the sim) for the
+//     demon's spells and 80% of it as physical hit (Blizzard's Season of Discovery hotfix, 2024-12-04).
+//   - Attack power: 0.5 per point of the warlock's highest school's spell power (a Season of Discovery
+//     player test, 2024-01-06).
+//   - Spell damage: about 25% of that spell power (the same test; the tester was unsure of it).
+//   - Stamina, Intellect and armor: the test says they are inherited but gives no shares, so none here.
+//   - Crit: no source in either, so none.
+//
+// notes.md lists it under Need to Verify.
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
-		return stats.Stats{}
+		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
+		highestSchoolPower := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
+
+		return stats.Stats{
+			stats.AttackPower: highestSchoolPower * 0.5,
+			stats.SpellDamage: highestSchoolPower * 0.25,
+			stats.SpellHit:    ownerHitChance * core.SpellHitRatingPerHitChance,
+			stats.MeleeHit:    ownerHitChance * 0.8 * core.MeleeHitRatingPerHitChance,
+		}
 	}
 }

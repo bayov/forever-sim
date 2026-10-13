@@ -128,10 +128,12 @@ export class PresetConfigurationPicker extends Component {
 				if (encounter.inFrontOfTarget !== undefined) this.simUI.player.setInFrontOfTarget(eventID, encounter.inFrontOfTarget);
 			}
 			if (options) {
+				// The cast keeps TypeScript from widening the spread into a union over every class's
+				// options, which fails once two classes share a field name with different enums (armor).
 				this.simUI.player.setSpecOptions(eventID, {
 					...this.simUI.player.getSpecOptions(),
 					...options,
-				});
+				} as SpecOptions<Spec>);
 			}
 		});
 	}

@@ -172,6 +172,13 @@ export class SettingsTab extends SimTab {
 
 		// Every spec reacts to procs, so Reaction Time is global too.
 		this.configureInputSection(contentBlock.bodyElement, { inputs: [OtherInputs.ReactionTime] });
+
+		// Every spec can swing a weapon it hasn't leveled yet, so the weapon skills are global
+		// too, the two hands side by side.
+		const weaponSkills = document.createElement('div');
+		weaponSkills.classList.add('weapon-skill-gaps');
+		contentBlock.bodyElement.appendChild(weaponSkills);
+		this.configureInputSection(weaponSkills, { inputs: [OtherInputs.MainHandSkillGap, OtherInputs.OffHandSkillGap] });
 	}
 
 	private buildCustomSettingsSections() {
@@ -419,6 +426,8 @@ export class SettingsTab extends SimTab {
 					race: player.getRace(),
 					level: player.getLevel(),
 					bonusTalentPoints: player.getBonusTalentPoints(),
+					mainHandSkillGap: player.getMainHandSkillGap(),
+					offHandSkillGap: player.getOffHandSkillGap(),
 					professions: player.getProfessions(),
 					enableItemSwap: player.getEnableItemSwap(),
 					itemSwap: player.getItemSwapGear().toProto(),
@@ -442,6 +451,8 @@ export class SettingsTab extends SimTab {
 					simUI.player.setRace(eventID, newSettings.race);
 					simUI.player.setLevel(eventID, newSettings.level);
 					simUI.player.setBonusTalentPoints(eventID, newSettings.bonusTalentPoints);
+					simUI.player.setMainHandSkillGap(eventID, newSettings.mainHandSkillGap);
+					simUI.player.setOffHandSkillGap(eventID, newSettings.offHandSkillGap);
 					simUI.player.setProfessions(eventID, newSettings.professions);
 					simUI.player.setEnableItemSwap(eventID, newSettings.enableItemSwap);
 					simUI.player.setItemSwapGear(eventID, simUI.sim.db.lookupItemSwap(newSettings.itemSwap || ItemSwap.create()));

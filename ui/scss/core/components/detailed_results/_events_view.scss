@@ -6,73 +6,16 @@
 
 // A row of buttons that work as one choice, like the view and the iteration.
 .segmented {
-	display: inline-flex;
-	padding: 2px;
-	gap: 2px;
-	background: $input-bg;
-	border: 1px solid var(--line-color-strong);
-	border-radius: var(--bs-border-radius);
+	@include segmented;
 
 	.segmented-option {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		padding: 0.3rem 0.7rem;
-		border: 0;
-		border-radius: calc(var(--bs-border-radius) - 1px);
-		background: transparent;
-		color: var(--text-muted-color);
-		font-size: 0.8125rem;
-		font-weight: 600;
-		white-space: nowrap;
-
-		&:hover:not(:disabled) {
-			color: $ivory;
-			background: rgba(255, 255, 255, 0.04);
-		}
-
-		&.active {
-			color: $ivory;
-			background: $panel-bg-2;
-			box-shadow: inset 0 0 0 1px var(--line-color-strong);
-		}
-
-		&:disabled {
-			opacity: 0.4;
-			cursor: default;
-		}
+		@include segmented-option;
 	}
 }
 
 // A filter that we turn on and off, like an event category.
 .filter-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
-	padding: 0.2rem 0.65rem;
-	border: 1px solid var(--line-color-strong);
-	border-radius: 999px;
-	background: transparent;
-	color: var(--text-muted-color);
-	font-size: 0.75rem;
-	font-weight: 600;
-	white-space: nowrap;
-
-	&:hover:not(:disabled) {
-		color: $ivory;
-		border-color: var(--text-muted-color);
-	}
-
-	&.active {
-		color: $ivory;
-		border-color: rgba($accent, 0.6);
-		background: rgba($accent, 0.12);
-	}
-
-	&:disabled {
-		opacity: 0.35;
-		cursor: default;
-	}
+	@include filter-chip;
 }
 
 .events-controls.content-block {
@@ -89,9 +32,7 @@
 }
 
 .events-control-label {
-	font-size: 0.75rem;
-	color: var(--text-muted-color);
-	white-space: nowrap;
+	@include control-label;
 }
 
 .events-iteration-group {
@@ -118,6 +59,20 @@
 	.iteration-unlucky.active .iteration-dps {
 		color: #ef7a7a;
 		opacity: 1;
+	}
+
+	// New sims an iteration until we have one, so it reads as an action.
+	.iteration-new.not-simmed {
+		color: var(--gold-soft);
+	}
+
+	.iteration-new:not(.not-simmed) .iteration-new-icon {
+		display: none;
+	}
+
+	.iteration-reroll {
+		padding: 0.3rem 0.5rem;
+		font-size: 0.75rem;
 	}
 }
 
@@ -192,6 +147,26 @@
 	gap: var(--spacer-1);
 }
 
+// It hides lanes rather than showing a kind of event, so a line sets it apart from the
+// categories before it.
+.events-always-up {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	margin-left: var(--spacer-2);
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: calc(-1 * var(--spacer-2) / 2 - 2px);
+		top: 20%;
+		bottom: 20%;
+		width: 1px;
+		background: var(--line-color-strong);
+	}
+}
+
 .events-count {
 	margin-left: auto;
 	font-size: 0.75rem;
@@ -240,6 +215,7 @@
 
 	.hidden-action-icon {
 		@include wowhead-background-icon;
+		@include icon-crop;
 		width: 16px;
 		height: 16px;
 		border-radius: 50%;

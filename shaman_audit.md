@@ -144,10 +144,10 @@ Elemental
 - [x] 8.9 Improved Fire Nova
 - [x] 8.10 Eye of the Storm (implemented 2026-10-13, no preset takes it)
 - [x] 8.11 Call of Thunder
-- [ ] 8.12 Elemental Reach (not implemented)
-- [ ] 8.13 Lightning Overload
-- [ ] 8.14 Earthbound (not implemented)
-- [ ] 8.15 Elemental Fury
+- [x] 8.12 Elemental Reach (not implemented, the sim has no spell range)
+- [x] 8.13 Lightning Overload
+- [x] 8.14 Earthbound (not implemented, nothing in the sim moves the enemy)
+- [x] 8.15 Elemental Fury
 - [ ] 8.16 Lava Burst
 
 Enhancement
@@ -1377,8 +1377,41 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user (2026-10-13): "Just assume it works as stated". No test.
 - The sim (`electric_spell.go`): 1 point gives +3% crit to every rank of Lightning Bolt and Chain Lightning, and to their Lightning Overload copies, which share the config. Lava Burst and the shocks don't get it. The Level 60 elemental preset has it, and the enhancement presets don't.
-- Client 70338 (wago.tools 16120): 1 rank, +3% crit chance (aura 107, misc 7) with mask 0x3, Lightning Bolt and Chain Lightning. Lightning Overload (408438) is a dummy aura that the server runs, and the client has no separate overload spell, so an overload is most likely a copy of the same bolt. That matches the sim.
+- Client 70338 (wago.tools 16120): 1 rank, +3% crit chance (aura 107, misc 7) with mask 0x3, Lightning Bolt and Chain Lightning. The overload spells (408439 to 408484, 8.13) carry the same masks, so they get it too. That matches the sim.
 - Beta: no build had it, and we never cast Lightning Bolt or Chain Lightning.
+
+### 8.12 Elemental Reach
+
+- The user (2026-10-13): "No need for spell range for now". It stays unimplemented.
+- Client 70338 (wago.tools 28999, talent curves 85226 and 85225): 1 and 2 points give +3 and +6 yards of range to Lightning Bolt, Chain Lightning, Fire Nova and Lava Burst, and +8 and +15 yards to Flame Shock. Classic has no such talent.
+- The sim: the proto has the field, but nothing reads it. The sim has no spell range, so no spell has a maximum range and nothing stops a cast for distance. The out of melee range model (`pvp.go`) puts us at 20 yards, where every spell reaches. Lava Burst's travel time uses the distance, and Elemental Reach doesn't change that. So the talent can't do anything until the sim has spell ranges (a maximum range on every spell and stretches beyond it).
+- No preset takes it, and no beta build had it.
+
+### 8.13 Lightning Overload
+
+- The user OK'd it (2026-10-13): "sg".
+- The sim (`lightning_overload.go`): each Lightning Bolt and Chain Lightning cast has a 3, 7 or 10% chance (1, 2 and 3 points) to cast a copy of the same rank on the same target. Chain Lightning rolls once per cast, on the first target. The copy is free and instant, deals half damage, makes no threat, and a Chain Lightning copy bounces like the main one. It takes the same talents and debuffs (Concussion, Call of Thunder, the Stormstrike mark) and can crit. It never makes another copy, and it doesn't give Clearcasting, because it isn't a cast we complete.
+  - The Level 60 elemental preset has 3/3. The enhancement presets don't take it.
+- Client 70338: the talent (408438) is a dummy aura with a 3, 7 and 10% curve (85227), so the server runs the proc. Each rank has its own overload spell, Lightning Bolt 408439 to 408477 and Chain Lightning 408479 to 408484. They have the main spells' class masks (0x1 and 0x2), so the same talents apply, half the main spell's coefficient and the "no threat" attribute (0x400 in the second word). The Chain Lightning copy jumps to 3 targets at 0.7 a jump, like the main one. Their base damage is 0.45 to 0.57 of the main hit, not exactly half, which is in notes.md Need to Verify (At 60) since 7.1. The client can't tell whether Chain Lightning rolls once or once per target, or whether a copy can give Clearcasting or Maelstrom Weapon.
+- Beta: no build had it, and we never cast either spell.
+- No sim change. `lightning_overload_test.go` TestOrcShamanLightningOverload at level 60 with 3/3: 2000 rank 10 bolts overload 10% of the time (within 2%). A copy deals half the bolt's damage, costs no mana and has no threat, and casting the copy 2000 times makes no more copies. A 15% rank 3, a copy that can copy itself, 60% damage or a copy that costs mana each fail it.
+- 8.11 said the client has no separate overload spell. It does, with Call of Thunder's mask, so 8.11's conclusion stands and its text is fixed.
+
+### 8.14 Earthbound
+
+- The user OK'd leaving it out (2026-10-13): "sg".
+- Client 70338 (wago.tools 1222988 and its root 1238289): 1 point makes Earthbind Totem root nearby enemies for 5 sec when we drop it. The totem (2484) has a 15 sec cooldown and a 1 sec GCD, lasts 45 sec and takes the earth slot. Classic has no such talent.
+- The sim: the proto has the field, but nothing reads it. The sim has no Earthbind Totem, and nothing moves the enemy. The only movement is ours, the out of melee range stretches (`pvp.go`) and the APL move action. So a root has nothing to act on until the sim has enemies that kite, and it would cost the earth slot we keep for Strength of Earth.
+- No preset takes it, and no beta build had it.
+
+### 8.15 Elemental Fury
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go` applyElementalFury): each point adds 20% to the crit damage bonus of our Fire, Frost and Nature spells and of Searing and Magma Totem, so 5/5 makes a spell crit 2.0 times a hit instead of 1.5. Listing every spell the sim registers at 5/5, it goes to Lightning Bolt, Chain Lightning, the three shocks (Flame Shock's ticks too), Lava Burst, Fire Nova, Searing and Magma Totem, the Flametongue and Frostbrand Weapon procs and the Lightning Shield orbs (which never crit). Flametongue Totem's procs, Healing Stream, Stormstrike and melee don't get it.
+  - The Level 60 elemental preset has 5/5. The enhancement presets don't take it.
+- Client 70338 (wago.tools 16089, talent curve 85221): +20, 40, 60, 80 and 100% crit damage bonus (aura 108, misc 15). Its mask holds Lightning Bolt and Chain Lightning (and their overloads), the three shocks, Lava Burst, Fire Nova's damage spell, the Searing Totem attack, Magma Totem's pulse, the Flametongue Weapon procs, Frostbrand Attack and the Lightning Shield orbs. Flametongue Totem's procs (0x4 in the second word) and Healing Stream (0x2000) aren't in it. That matches the sim spell for spell.
+- Beta: no build had it.
+- No sim change. `elemental_fury_test.go` TestOrcShamanElementalFury reads each spell's crit multiplier at level 60 with 0 and 5 points: 1.5 and 2.0 on the spells above, 1.5 on Flametongue Totem's proc and Healing Stream either way, and Stormstrike's melee crit at 2.0 either way. A 10% step, giving it to every Nature spell (Healing Stream and Flametongue Totem get it) or leaving Searing and Magma Totem out fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

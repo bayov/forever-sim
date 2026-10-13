@@ -1,5 +1,5 @@
 import ApexCharts from 'apexcharts';
-import tippy from 'tippy.js';
+import tippy, { followCursor, Props } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { ResourceType } from '../../proto/api.js';
@@ -9,7 +9,8 @@ import { AuraUptimeLog, CastLog, DamageDealtLog, DpsLog, ResourceChangedLogGroup
 import { resourceNames } from '../../proto_utils/names.js';
 import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { orderedResourceTypes } from '../../proto_utils/utils.js';
-import { bucket, distinct, formatToNumber, maxIndex, stringComparator } from '../../utils.js';
+import { TypedEvent } from '../../typed_event.js';
+import { bucket, distinct, formatToCompactNumber, formatToNumber, maxIndex, stringComparator } from '../../utils.js';
 import { actionColors } from './color_settings.js';
 import { EventCategory, EventFilter } from './events_filter.js';
 import { hitOutcome, HitOutcomeKind, outcomeBadge } from './hit_outcome.js';
@@ -39,6 +40,11 @@ interface RotationRow {
 	actionId: ActionId | null;
 	category: EventCategory;
 	events: Array<RowEvent>;
+	// An aura that's up from the pull to the end of the fight.
+	alwaysUp?: boolean;
+	// The icons in the row, at the time their cast lands or their aura starts. An aura's stacks
+	// at that moment go in the icon's corner.
+	icons?: Array<{ time: number; elem: HTMLElement }>;
 }
 
 // One thing drawn in a row, like a cast or an aura's uptime, with the text of the logs it came
@@ -46,6 +52,9 @@ interface RotationRow {
 interface RowEvent {
 	elem: Element;
 	text: string;
+	// The ability of the event, in a row that mixes abilities like the GCD row. Hiding the
+	// ability hides the event.
+	actionId?: ActionId;
 }
 
 // The search looks at what happened, so we leave out the time and the source that start every
@@ -97,6 +106,11 @@ const notableOutcome = (castLog: CastLog): { label: string; kind: HitOutcomeKind
 	}
 	return null;
 };
+
+// A bar can be much wider than the view, like an aura that lasts the whole fight. Its tooltip
+// would sit at the middle or the start of the bar, maybe far off screen, so it follows the mouse
+// along the timeline instead.
+const followAlong: Partial<Props> = { followCursor: 'horizontal', plugins: [followCursor] };
 
 // The parts of the hover tooltips. Each starts with a title (the ability's icon and name), then
 // a muted line with the timing, then the hits or the changes, then key and value rows.
@@ -150,14 +164,35 @@ const tooltipChange = (log: SimLog, value: string, valueClass = ''): JSX.Element
 	</li>
 );
 
-// Pixels per second of the rotation at each zoom step.
-const zoomLevels = [10, 20, 40, 70, 100, 150, 250, 400];
-const defaultZoomIndex = zoomLevels.indexOf(100);
+// How many seconds of the rotation fit in the view, or 'fight' for the whole time range.
+export type ZoomSpan = number | 'fight';
+
+export const zoomPresets: Array<{ span: ZoomSpan; label: string }> = [
+	{ span: 10, label: '10s' },
+	{ span: 30, label: '30s' },
+	{ span: 60, label: '1m' },
+	{ span: 'fight', label: 'Fight' },
+];
+
+// The closest we zoom in, in pixels per second.
+const maxPxPerSecond = 400;
+// How fast the zoom eases to its target. After this many milliseconds it has gone about 63% of
+// the way.
+const zoomAnimationMs = 60;
+
+// A zoom on its way to its target. We keep the time at anchorX pixels from the left of the view
+// in place.
+interface ZoomAnimation {
+	anchorTime: number;
+	anchorX: number;
+	lastFrame: number;
+}
 
 export class Timeline extends ResultComponent {
 	private readonly filter: EventFilter;
 
 	private readonly dpsResourcesPlotElem: HTMLElement;
+	private readonly chartLegend: HTMLElement;
 	private dpsResourcesPlot: any;
 
 	private readonly rotationPlotElem: HTMLElement;
@@ -179,7 +214,22 @@ export class Timeline extends ResultComponent {
 	private viewEnd = 1;
 	// The first second of the prepull, or 0 when there's no prepull.
 	private prepullStart = 0;
-	private zoomIndex = defaultZoomIndex;
+	private zoomSpan: ZoomSpan = 10;
+	// From the zoom and the width of the view. It changes on every frame while the zoom animates.
+	private pxPerSecond = 100;
+	// The pixels per second and the width of the view when we last drew the rows.
+	private drawnPxPerSecond = 0;
+	private drawnWidth = 0;
+	private contentOrigin = 0;
+	private zoomAnimation: ZoomAnimation | null = null;
+	private settleTimer = 0;
+
+	// Fires when the zoom changes, also from Alt + scroll.
+	readonly zoomEmitter = new TypedEvent<void>('TimelineZoom');
+
+	// The chart's lines we don't show, by name. Threat starts hidden, because its axis climbs all
+	// fight and squeezes the other lines, and most of the time we look at DPS and mana.
+	private readonly hiddenChartSeries = new Set<string>(['Threat']);
 
 	private resetCallbacks: (() => void)[] = [];
 
@@ -192,7 +242,10 @@ export class Timeline extends ResultComponent {
 
 		this.rootElem.appendChild(
 			<div className="timeline-plots-container">
-				<div className="timeline-plot dps-resources-plot hide"></div>
+				<div className="timeline-plot dps-resources-plot hide">
+					<div className="chart-legend" attributes={{ role: 'group', 'aria-label': 'Lines' }}></div>
+					<div className="dps-resources-chart"></div>
+				</div>
 				<div className="timeline-plot rotation-plot">
 					<div className="rotation-container">
 						<div className="rotation-labels"></div>
@@ -204,7 +257,8 @@ export class Timeline extends ResultComponent {
 		);
 
 		this.dpsResourcesPlotElem = this.rootElem.querySelector('.dps-resources-plot')!;
-		this.dpsResourcesPlot = new ApexCharts(this.dpsResourcesPlotElem, {
+		this.chartLegend = this.dpsResourcesPlotElem.querySelector('.chart-legend')!;
+		this.dpsResourcesPlot = new ApexCharts(this.dpsResourcesPlotElem.querySelector('.dps-resources-chart')!, {
 			chart: {
 				animations: {
 					enabled: false,
@@ -212,7 +266,9 @@ export class Timeline extends ResultComponent {
 				background: 'transparent',
 				foreColor: '#8e948f',
 				fontFamily: 'inherit',
-				height: '100%',
+				// A fixed height, legend included. With '100%' ApexCharts measured the wrong parent and
+				// drew past the bottom of the card, which cut the legend off.
+				height: 512,
 				id: 'dpsResources',
 				type: 'line',
 				zoom: {
@@ -270,6 +326,14 @@ export class Timeline extends ResultComponent {
 			this.rotationTimeline.scrollLeft = scrollLeft - walk;
 		});
 
+		this.setUpWheelZoom();
+
+		// The zoom is in seconds, so a wider or narrower view needs new pixels per second. The view
+		// also gets its width back when the tab opens again.
+		const resizeObserver = new ResizeObserver(() => this.refitIfResized());
+		resizeObserver.observe(this.rotationTimeline);
+		this.addOnDisposeCallback(() => resizeObserver.disconnect());
+
 		let lastRange = [this.filter.from, this.filter.to];
 		this.filter.changeEmitter.on(() => {
 			// A new time range moves everything, so we draw the timeline again. The other filters
@@ -297,22 +361,116 @@ export class Timeline extends ResultComponent {
 		this.invalidate();
 	}
 
-	canZoomIn(): boolean {
-		return this.zoomIndex < zoomLevels.length - 1;
+	getZoom(): ZoomSpan {
+		return this.zoomSpan;
 	}
 
-	canZoomOut(): boolean {
-		return this.zoomIndex > 0;
+	// Shows this many seconds of the rotation, keeping the time at the left of the view where it
+	// is.
+	setZoom(span: ZoomSpan) {
+		if (span == this.zoomSpan) return;
+		this.zoomAround(span, 0);
 	}
 
-	// Zooms the rotation in or out a step, keeping the time in the middle of the view where it is.
-	zoom(step: 1 | -1) {
-		const newIndex = Math.min(zoomLevels.length - 1, Math.max(0, this.zoomIndex + step));
-		if (newIndex == this.zoomIndex) return;
-		const middle = this.leftToTime(this.rotationTimeline.scrollLeft + this.rotationTimeline.clientWidth / 2);
-		this.zoomIndex = newIndex;
-		this.invalidate();
-		this.rotationTimeline.scrollLeft = this.timeToLeftValue(middle) - this.rotationTimeline.clientWidth / 2;
+	// Zooms so the time at this many pixels from the left of the view stays there. While the
+	// timeline is hidden, we only remember the zoom for when it draws.
+	private zoomAround(span: ZoomSpan, anchorX: number) {
+		this.zoomSpan = span;
+		this.zoomEmitter.emit(TypedEvent.nextEventID());
+		if (this.dirty || !this.isVisible()) {
+			this.invalidate();
+			return;
+		}
+		const anchorTime = this.leftToTime(this.rotationTimeline.scrollLeft + anchorX);
+		if (!this.zoomAnimation) requestAnimationFrame(now => this.stepZoomAnimation(now));
+		this.zoomAnimation = { anchorTime, anchorX, lastFrame: this.zoomAnimation?.lastFrame ?? performance.now() };
+	}
+
+	// Each frame moves the zoom part of the way to its target, so it eases in and out. Every
+	// position on the timeline is a time times the --px-per-second variable, so a frame only sets
+	// that variable and draws the ruler again. Once the zoom stops, we draw the rows again for the
+	// new zoom. That brings back the right amount of resource labels and the detail of the
+	// resource charts.
+	private stepZoomAnimation(now: number) {
+		const animation = this.zoomAnimation;
+		if (!animation) return;
+		const target = this.fitPxPerSecond(this.drawnWidth);
+		// The first frame can come with a timestamp from before the wheel event, so we count every
+		// frame as at least a few milliseconds.
+		const progress = 1 - Math.exp(-Math.max(4, now - animation.lastFrame) / zoomAnimationMs);
+		animation.lastFrame = now;
+		// We step in log space, so zooming in and zooming out by the same factor take the same time.
+		const remaining = Math.log(target / this.pxPerSecond);
+		const done = Math.abs(remaining) < 0.002;
+		this.setPxPerSecond(done ? target : this.pxPerSecond * Math.exp(remaining * progress));
+		this.rotationTimeline.scrollLeft = this.timeToLeftValue(animation.anchorTime) - animation.anchorX;
+
+		window.clearTimeout(this.settleTimer);
+		if (done) {
+			this.zoomAnimation = null;
+			// The wheel sends a notch at a time, so we wait a little for the next one before we draw
+			// the rows.
+			this.settleTimer = window.setTimeout(() => {
+				if (!this.zoomAnimation && Math.abs(this.pxPerSecond - this.drawnPxPerSecond) > 1e-6) this.redrawKeepingScroll();
+			}, 150);
+		} else {
+			requestAnimationFrame(next => this.stepZoomAnimation(next));
+		}
+	}
+
+	private setPxPerSecond(pxPerSecond: number) {
+		this.pxPerSecond = pxPerSecond;
+		this.rotationTimeline.style.setProperty('--px-per-second', `${pxPerSecond}px`);
+		const header = this.rotationTimeline.querySelector<HTMLElement>('.rotation-timeline-header');
+		if (header) this.drawRotationTimeRuler(header);
+	}
+
+	// Alt + scroll zooms around the mouse. Each notch of the wheel shows about 15% more or less
+	// of the rotation.
+	private setUpWheelZoom() {
+		this.rotationTimeline.addEventListener(
+			'wheel',
+			event => {
+				if (!event.altKey || this.dirty) return;
+				event.preventDefault();
+				const delta = (event.deltaY || event.deltaX) * (event.deltaMode == WheelEvent.DOM_DELTA_LINE ? 33 : 1);
+				if (!delta) return;
+				const anchorX = event.clientX - this.rotationTimeline.getBoundingClientRect().left;
+				// A notch during the animation goes on from where the last one was going.
+				const seconds = this.zoomSeconds(this.zoomSpan) * Math.exp(delta * 0.0015);
+				// Once the whole time range fits, we stop there and call it the whole fight.
+				this.zoomAround(seconds >= this.viewEnd - this.viewStart ? 'fight' : this.zoomSeconds(seconds), anchorX);
+			},
+			{ passive: false },
+		);
+	}
+
+	// How many seconds this zoom shows in the view. It shows no more than the time range, and no
+	// less than we can see at the closest zoom.
+	private zoomSeconds(span: ZoomSpan): number {
+		const rangeSeconds = this.viewEnd - this.viewStart;
+		if (span == 'fight') return rangeSeconds;
+		return Math.min(rangeSeconds, Math.max(this.drawnWidth / maxPxPerSecond, span));
+	}
+
+	// The pixels per second that show the zoom's seconds in a view this wide.
+	private fitPxPerSecond(width: number): number {
+		return width / this.zoomSeconds(this.zoomSpan);
+	}
+
+	// Draws the rotation again when its view got wider or narrower since we drew it.
+	private refitIfResized() {
+		const width = this.rotationTimeline.clientWidth;
+		if (this.mode != 'rotation' || this.dirty || !width || Math.abs(width - this.drawnWidth) < 1) return;
+		this.redrawKeepingScroll();
+	}
+
+	// Draws the rotation again, and keeps the time at the left of the view where it is.
+	private redrawKeepingScroll() {
+		const leftTime = this.leftToTime(this.rotationTimeline.scrollLeft);
+		this.dirty = true;
+		this.renderIfDirty();
+		this.rotationTimeline.scrollLeft = this.timeToLeftValue(leftTime);
 	}
 
 	// Scrolls the rotation so this time shows near its left side.
@@ -343,6 +501,9 @@ export class Timeline extends ResultComponent {
 			this.rendered = true;
 		}
 		this.updatePlot();
+		// The labels on the left get their width from the rows we just drew. When that changed
+		// the width of the view, we draw once more to fit it.
+		this.refitIfResized();
 	}
 
 	private updatePlot() {
@@ -365,6 +526,11 @@ export class Timeline extends ResultComponent {
 
 		// The rotation follows one player. With more than one we can only show the chart.
 		if (this.mode == 'rotation' && players.length == 1) {
+			this.zoomAnimation = null;
+			window.clearTimeout(this.settleTimer);
+			this.drawnWidth = this.rotationTimeline.clientWidth;
+			this.drawnPxPerSecond = this.fitPxPerSecond(this.drawnWidth);
+			this.setPxPerSecond(this.drawnPxPerSecond);
 			try {
 				this.updateRotationChart(players[0], duration);
 			} catch (e) {
@@ -445,7 +611,41 @@ export class Timeline extends ResultComponent {
 			this.addDpsYAxis(maxDps, options);
 		}
 
+		options.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
+		options.legend = { show: false };
 		this.dpsResourcesPlot.updateOptions(options);
+		this.drawChartLegend(options.series.map((series: { name: string }, i: number) => ({ name: series.name, color: options.colors[i] })));
+	}
+
+	// Our own legend above the chart, with a chip for each line like the filters. A chip shows or
+	// hides its line, and we remember that for the next iteration we draw.
+	private drawChartLegend(lines: Array<{ name: string; color: string }>) {
+		this.chartLegend.replaceChildren(
+			...lines.map(({ name, color }) => {
+				const chip = (
+					<button className="filter-chip chart-legend-chip" type="button">
+						<span className="chart-legend-swatch" style={{ backgroundColor: color }} />
+						{name}
+					</button>
+				) as HTMLButtonElement;
+				const update = () => {
+					const shown = !this.hiddenChartSeries.has(name);
+					chip.classList.toggle('active', shown);
+					chip.setAttribute('aria-pressed', String(shown));
+				};
+				chip.addEventListener('click', () => {
+					if (this.hiddenChartSeries.delete(name)) {
+						this.dpsResourcesPlot.showSeries(name);
+					} else {
+						this.hiddenChartSeries.add(name);
+						this.dpsResourcesPlot.hideSeries(name);
+					}
+					update();
+				});
+				update();
+				return chip;
+			}),
+		);
 	}
 
 	private addDpsYAxis(maxDps: number, options: any) {
@@ -506,11 +706,15 @@ export class Timeline extends ResultComponent {
 
 	// Returns a function for drawing the tooltip, or null if no series was added.
 	private addManaSeries(unit: UnitMetrics, options: any): TooltipHandler | null {
-		const manaLogs = unit.groupedResourceLogs[ResourceType.ResourceTypeMana].filter(log => log.timestamp >= 0);
+		const allManaLogs = unit.groupedResourceLogs[ResourceType.ResourceTypeMana];
+		const manaLogs = allManaLogs.filter(log => log.timestamp >= 0);
 		if (manaLogs.length == 0) {
 			return null;
 		}
-		const maxMana = manaLogs[0].valueBefore;
+		// The full pool is the mana before the first change, prepull included. The first change
+		// after the pull can come after prepull totems already spent some, and then regen would
+		// draw the line over the top of the axis.
+		const maxMana = Math.max(...allManaLogs.map(log => Math.max(log.valueBefore, log.valueAfter)));
 
 		options.colors.push(manaColor);
 		options.series.push({
@@ -560,24 +764,57 @@ export class Timeline extends ResultComponent {
 		};
 	}
 
-	// Returns a function for drawing the tooltip, or null if no series was added.
+	// Returns a function for drawing the tooltip, or null if no series was added. Threat adds up
+	// over the fight to far more than the DPS, so it gets its own axis on the right.
 	private addThreatSeries(unit: UnitMetrics, options: any, colorOverride: string): TooltipHandler | null {
-		options.colors.push(colorOverride || threatColor);
+		const threatLogs = unit.threatLogs.filter(log => log.timestamp >= 0);
+		if (threatLogs.length == 0) {
+			return null;
+		}
+		const color = colorOverride || threatColor;
+		const maxThreat = Math.max(...threatLogs.map(log => log.threatAfter));
+
+		options.colors.push(color);
 		options.series.push({
 			name: 'Threat',
 			type: 'line',
-			data: unit.threatLogs
-				.filter(log => log.timestamp >= 0)
-				.map(log => {
-					return {
-						x: log.timestamp,
-						y: log.threatAfter,
-					};
-				}),
+			data: threatLogs.map(log => {
+				return {
+					x: log.timestamp,
+					y: log.threatAfter,
+				};
+			}),
 		});
+		options.yaxis.push({
+			seriesName: 'Threat',
+			opposite: true,
+			min: 0,
+			max: maxThreat > 0 ? maxThreat : 1,
+			tickAmount: 10,
+			title: {
+				text: 'Threat',
+				style: {
+					color,
+				},
+			},
+			axisBorder: {
+				show: true,
+				color,
+			},
+			axisTicks: {
+				color,
+			},
+			labels: {
+				minWidth: 30,
+				style: {
+					colors: [color],
+				},
+				formatter: (val: string) => formatToCompactNumber(parseFloat(val)),
+			},
+		} as any);
 
 		return (dataPointIndex: number) => {
-			const log = unit.threatLogs[dataPointIndex];
+			const log = threatLogs[dataPointIndex];
 			return this.threatTooltip(log, true, unit, colorOverride);
 		};
 	}
@@ -645,10 +882,9 @@ export class Timeline extends ResultComponent {
 		this.dpsResourcesPlotElem.classList.add('hide');
 		this.rotationPlotElem.classList.remove('hide');
 
-		this.drawRotationTimeRuler(this.rotationTimeline.querySelector('.rotation-timeline-header')!);
-		this.drawPull();
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
+		this.addGcdRow(player, duration);
 
 		const buffsById = Object.values(bucket(player.auraUptimeLogs, log => log.actionId!.toString()));
 		buffsById.sort((a, b) => stringComparator(a[0].actionId!.name, b[0].actionId!.name));
@@ -689,7 +925,7 @@ export class Timeline extends ResultComponent {
 		);
 		if (buffsToShow.length > 0) {
 			this.addSeparatorRow();
-			buffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs));
+			buffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs, duration));
 		}
 
 		const targetCastsByAbility = this.getSortedCastsByAbility(target);
@@ -702,10 +938,17 @@ export class Timeline extends ResultComponent {
 		const debuffsToShow = debuffsById;
 		if (debuffsToShow.length > 0) {
 			this.addSeparatorRow();
-			debuffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs));
+			debuffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs, duration));
 		}
 
 		this.applyFilter();
+
+		// The ruler and the grid go last. The rows give the labels on the left their width, and that
+		// tells us where the view starts on the screen. See crispLeft.
+		const header = this.rotationTimeline.querySelector<HTMLElement>('.rotation-timeline-header')!;
+		this.drawRotationTimeRuler(header);
+		this.drawPull();
+		this.drawGrid(header);
 	}
 
 	// Shows the rows the filter lets through, and the separators between groups that still have
@@ -719,6 +962,9 @@ export class Timeline extends ResultComponent {
 			const shown = this.isRowShown(entry);
 			entry.label.classList.toggle('hide', !shown);
 			entry.row.classList.toggle('hide', !shown);
+			entry.events.forEach(event => {
+				if (event.actionId) event.elem.classList.toggle('hide', this.filter.isHidden(event.actionId));
+			});
 			anyShown ||= shown;
 			this.applySearch(entry, shown && searching);
 		});
@@ -746,6 +992,7 @@ export class Timeline extends ResultComponent {
 
 	private isRowShown(row: RotationRow): boolean {
 		if (!this.filter.categories.has(row.category)) return false;
+		if (row.alwaysUp && this.filter.hideAlwaysUp) return false;
 		return !(row.actionId && this.filter.isHidden(row.actionId));
 	}
 
@@ -881,11 +1128,28 @@ export class Timeline extends ResultComponent {
 		this.separators.push([labelSeparator, rowSeparator]);
 	}
 
+	// A resource like mana, drawn as a step chart of its value across the row. Mana changes many
+	// times a second with Forever's continuous regen, so a label on every change would pile up.
+	// We label a change only when there's room since the last label, and one tooltip for the row
+	// shows the change under the mouse.
 	private addResourceRow(resourceType: ResourceType, resourceLogs: Array<ResourceChangedLogGroup>, duration: number) {
 		if (resourceLogs.length == 0) {
 			return;
 		}
 		const startValue = resourceLogs[0].valueBefore;
+		const isPercentage = percentageResources.includes(resourceType);
+		// The top of the chart is the resource's cap: the full mana pool (the highest mana we saw),
+		// 100 rage or energy, and 5 combo points. Others use the highest value we saw.
+		const caps: Partial<Record<ResourceType, number>> = {
+			[ResourceType.ResourceTypeRage]: 100,
+			[ResourceType.ResourceTypeEnergy]: 100,
+			[ResourceType.ResourceTypeComboPoints]: 5,
+		};
+		const highest = Math.max(startValue, ...resourceLogs.map(log => log.valueAfter));
+		const maxValue = isPercentage ? highest : Math.max(caps[resourceType] ?? 0, highest);
+		const labelText = (log: ResourceChangedLogGroup) =>
+			isPercentage ? ((log.valueAfter / maxValue) * 100).toFixed(0) + '%' : Math.floor(log.valueAfter).toFixed(0);
+		const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
 
 		const labelElem = (
 			<div className="rotation-label rotation-row">
@@ -901,39 +1165,186 @@ export class Timeline extends ResultComponent {
 		const rowElem = this.makeRowElem();
 		const row: RotationRow = { label: labelElem, row: rowElem, name: resourceNames.get(resourceType)!, actionId: null, category: 'resources', events: [] };
 
-		resourceLogs.forEach((resourceLogGroup, i) => {
-			const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
-			const resourceElem = (
-				<div
-					className={`rotation-timeline-resource series-color ${cNames}`}
-					style={{
-						left: this.timeToLeft(resourceLogGroup.timestamp),
-						width: this.timeToPx((resourceLogs[i + 1]?.timestamp || duration) - resourceLogGroup.timestamp),
-					}}></div>
-			);
+		// The chart. Changes within the same pixel only keep the last value, so a long fight at a
+		// low zoom stays a short path.
+		// The inside of the lane, without its line at the bottom.
+		const height = 30;
+		const pad = 3;
+		const yOf = (value: number) => (height - pad - (Math.max(0, Math.min(1, value / (maxValue || 1))) * (height - 2 * pad))).toFixed(1);
+		const steps: Array<{ x: number; y: string }> = [];
+		resourceLogs.forEach(log => {
+			const x = Math.round(this.timeToLeftValue(log.timestamp));
+			const y = yOf(log.valueAfter);
+			if (steps.length && steps[steps.length - 1].x == x) steps[steps.length - 1].y = y;
+			else steps.push({ x, y });
+		});
+		const endX = Math.round(this.timeToLeftValue(duration));
+		// Each value holds until the next change, so the path goes across, then up or down.
+		let line = `M ${steps[0].x} ${steps[0].y}`;
+		steps.forEach((step, i) => {
+			if (i > 0) line += ` H ${step.x} V ${step.y}`;
+		});
+		line += ` H ${endX}`;
+		const area = `${line} V ${height} H ${steps[0].x} Z`;
 
-			if (percentageResources.includes(resourceType)) {
-				resourceElem.textContent = ((resourceLogGroup.valueAfter / startValue) * 100).toFixed(0) + '%';
-			} else {
-				if (resourceType == ResourceType.ResourceTypeEnergy) {
-					const bgElem = document.createElement('div');
-					bgElem.classList.add('rotation-timeline-resource-fill');
-					bgElem.classList.add(cNames);
-					bgElem.style.height = ((resourceLogGroup.valueAfter / startValue) * 100).toFixed(0) + '%';
-					resourceElem.appendChild(bgElem);
-				} else {
-					resourceElem.textContent = Math.floor(resourceLogGroup.valueAfter).toFixed(0);
-				}
+		const svgNs = 'http://www.w3.org/2000/svg';
+		const svg = document.createElementNS(svgNs, 'svg');
+		svg.setAttribute('class', `rotation-resource-chart series-color ${cNames}`);
+		// The path is in pixels at the zoom we drew it. While the zoom animates, we stretch it.
+		svg.setAttribute('viewBox', `0 0 ${Math.max(endX, 1)} ${height}`);
+		svg.setAttribute('preserveAspectRatio', 'none');
+		svg.style.width = this.timeToPx(duration - this.viewStart);
+		svg.setAttribute('height', String(height));
+		const areaPath = document.createElementNS(svgNs, 'path');
+		areaPath.setAttribute('class', 'rotation-resource-area');
+		areaPath.setAttribute('d', area);
+		const linePath = document.createElementNS(svgNs, 'path');
+		linePath.setAttribute('class', 'rotation-resource-line');
+		linePath.setAttribute('d', line);
+		linePath.setAttribute('vector-effect', 'non-scaling-stroke');
+		svg.append(areaPath, linePath);
+		rowElem.appendChild(svg);
+
+		// The labels, about one per 48px. The search only looks at the lane's name, like "mana".
+		// Its changes name the abilities that spent or gave it, like "from Earth Shock", and the
+		// lane would light up for every ability search.
+		let lastLabelX = -Infinity;
+		resourceLogs.forEach(resourceLogGroup => {
+			const x = this.timeToLeftValue(resourceLogGroup.timestamp);
+			if (x - lastLabelX >= 48) {
+				lastLabelX = x;
+				rowElem.appendChild(
+					<span className={`rotation-resource-label series-color ${cNames}`} style={{ left: this.timeToLeft(resourceLogGroup.timestamp) }}>
+						{labelText(resourceLogGroup)}
+					</span>,
+				);
 			}
-			rowElem.appendChild(resourceElem);
-			row.events.push({ elem: resourceElem, text: searchText(resourceLogGroup.logs) });
+		});
 
-			const tooltip = tippy(resourceElem, {
+		// One tooltip for the row, with the change at the mouse. It finds the last change at or
+		// before the mouse's time.
+		let shownIndex = -1;
+		const tooltip = tippy(rowElem, {
+			...followAlong,
+			placement: 'bottom',
+			content: '',
+			onShow: () => (shownIndex >= 0 ? undefined : false),
+		});
+		const onMove = (event: MouseEvent) => {
+			const time = this.leftToTime(event.clientX - rowElem.getBoundingClientRect().left);
+			let lo = 0;
+			let hi = resourceLogs.length - 1;
+			while (lo < hi) {
+				const mid = Math.ceil((lo + hi) / 2);
+				if (resourceLogs[mid].timestamp <= time) lo = mid;
+				else hi = mid - 1;
+			}
+			if (lo == shownIndex) return;
+			shownIndex = lo;
+			tooltip.setContent(this.resourceTooltipElem(resourceLogs[lo], maxValue, false));
+			if (!tooltip.state.isVisible) tooltip.show();
+		};
+		rowElem.addEventListener('mousemove', onMove);
+		this.addOnResetCallback(() => {
+			rowElem.removeEventListener('mousemove', onMove);
+			tooltip.destroy();
+		});
+		this.addRow(row);
+	}
+
+	// One row for the global cooldown. Each cast that starts the GCD draws a bar for as long as
+	// the GCD lasts, in the color of its icon, so the row reads as the rotation. A cast that takes
+	// longer than the GCD, like Lightning Bolt, fills the whole bar. Otherwise the cast time is
+	// the solid part and the rest of the GCD the lighter part. The time when the GCD was ready
+	// and we pressed nothing shows as a striped gap. The label says how much of the fight was
+	// spent under the GCD.
+	private addGcdRow(player: UnitMetrics, duration: number) {
+		const casts = player.castLogs.filter(castLog => castLog.effectiveTime > 0).sort((a, b) => a.timestamp - b.timestamp);
+		if (casts.length == 0) return;
+
+		const rowElem = this.makeRowElem();
+		const row: RotationRow = { label: document.createElement('div'), row: rowElem, name: 'GCD', actionId: null, category: 'casts', events: [] };
+
+		// We count the idle time and the share under the GCD from the pull on, so the prepull
+		// doesn't count.
+		let busyUntil = 0;
+		let busyTime = 0;
+		const addIdle = (from: number, to: number) => {
+			// Gaps shorter than this are the sim's reaction time, not a missed GCD.
+			if (to - from < 0.05) return;
+			const idleElem = (<div className="rotation-gcd-idle" style={{ left: this.timeToLeft(from), width: this.timeToPx(to - from) }} />) as HTMLElement;
+			rowElem.appendChild(idleElem);
+			const tooltip = tippy(idleElem, {
+				...followAlong,
 				placement: 'bottom',
-				content: this.resourceTooltipElem(resourceLogGroup, startValue, false),
+				content: (
+					<div className="timeline-tooltip">
+						<div className="timeline-tooltip-title">
+							<span className="timeline-tooltip-name">Idle</span>
+						</div>
+						<div className="timeline-tooltip-meta">
+							{`${formatSeconds(from)} to ${formatSeconds(to)} · ${formatSeconds(to - from)} with the GCD ready and nothing pressed`}
+						</div>
+					</div>
+				),
+			});
+			this.addOnResetCallback(() => tooltip.destroy());
+		};
+
+		casts.forEach(castLog => {
+			const start = castLog.timestamp;
+			const end = start + castLog.effectiveTime;
+			if (start > busyUntil) addIdle(Math.max(0, busyUntil), start);
+			busyTime += Math.max(0, Math.min(end, duration) - Math.max(start, busyUntil, 0));
+			busyUntil = Math.max(busyUntil, end);
+
+			const actionId = castLog.actionId!;
+			const castPart = Math.min(castLog.castTime, castLog.effectiveTime);
+			const gcdElem = (
+				<div className="rotation-gcd" style={{ left: this.timeToLeft(start), width: this.timeToPx(castLog.effectiveTime) }}>
+					{castPart > 0 && <div className="rotation-gcd-cast" style={{ width: this.timeToPx(castPart) }} />}
+				</div>
+			) as HTMLElement;
+			const iconElem = (<span className="rotation-gcd-icon" />) as HTMLElement;
+			actionId.setBackground(iconElem);
+			gcdElem.appendChild(iconElem);
+			this.tint(gcdElem, actionId.iconUrl);
+			rowElem.appendChild(gcdElem);
+			row.events.push({ elem: gcdElem, text: searchText([castLog]), actionId });
+
+			const timing = [`${formatSeconds(start)} to ${formatSeconds(end)}`];
+			if (castLog.castTime > 0) timing.push(`${formatSeconds(castLog.castTime)} cast`);
+			timing.push(`${formatSeconds(castLog.effectiveTime)} GCD`);
+			const tooltip = tippy(gcdElem, {
+				...followAlong,
+				placement: 'bottom',
+				content: (
+					<div className="timeline-tooltip">
+						{tooltipTitle(actionId)}
+						<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
+					</div>
+				),
 			});
 			this.addOnResetCallback(() => tooltip.destroy());
 		});
+		if (busyUntil < duration) addIdle(Math.max(0, busyUntil), duration);
+
+		const usage = duration > 0 ? (busyTime / duration) * 100 : 0;
+		const labelElem = (
+			<div className="rotation-label rotation-row rotation-gcd-label">
+				<span className="rotation-label-icon rotation-gcd-label-icon">
+					<i className="fas fa-hourglass-half" />
+				</span>
+				<span className="rotation-label-text">GCD</span>
+				<span className="rotation-gcd-usage">{`${formatAmount(usage, 1)}% used`}</span>
+			</div>
+		) as HTMLElement;
+		const labelTooltip = tippy(labelElem, {
+			placement: 'right',
+			content: 'The share of the fight, from the pull on, that we spent under the global cooldown or casting. Striped gaps are time with the GCD ready and nothing pressed.',
+		});
+		this.addOnResetCallback(() => labelTooltip.destroy());
+		row.label = labelElem;
 		this.addRow(row);
 	}
 
@@ -978,6 +1389,7 @@ export class Timeline extends ResultComponent {
 			const iconElem = (<a className="rotation-timeline-cast-icon" />) as HTMLAnchorElement;
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
+			(row.icons ??= []).push({ time: castLog.timestamp + castLog.castTime + travelTime, elem: iconElem });
 
 			const notable = notableOutcome(castLog);
 			if (notable) {
@@ -1051,6 +1463,7 @@ export class Timeline extends ResultComponent {
 			);
 
 			tippy(castElem, {
+				...followAlong,
 				placement: 'bottom',
 				content: tt,
 			});
@@ -1093,16 +1506,27 @@ export class Timeline extends ResultComponent {
 			.forEach(auraUptimeLogs => this.applyAuraUptimeLogsToRow(auraUptimeLogs, row));
 	}
 
-	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>) {
+	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>, duration: number) {
 		const actionId = auraUptimeLogs[0].actionId!;
 
-		const row: RotationRow = { label: this.makeLabelElem(actionId, true), row: this.makeRowElem(), name: actionId.name, actionId, category: 'auras', events: [] };
+		const row: RotationRow = {
+			label: this.makeLabelElem(actionId, true),
+			row: this.makeRowElem(),
+			name: actionId.name,
+			actionId,
+			category: 'auras',
+			events: [],
+			alwaysUp: isAlwaysUp(auraUptimeLogs, duration),
+		};
 		this.addRow(row);
 
-		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row);
+		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row, true);
 	}
 
-	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, row: RotationRow) {
+	// Draws a bar for each time the aura is up. In the aura's own lane, the bar starts with the
+	// aura's icon, like a cast. A cast lane shows its ability's auras without one, because the
+	// cast that put the aura up already has it.
+	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, row: RotationRow, withIcon = false) {
 		auraUptimeLogs.forEach(aul => {
 			const auraElem = (
 				<div
@@ -1115,6 +1539,12 @@ export class Timeline extends ResultComponent {
 			);
 			row.row.appendChild(auraElem);
 			this.tint(auraElem as HTMLElement, aul.actionId?.iconUrl);
+			if (withIcon && aul.actionId) {
+				const iconElem = (<a className="rotation-timeline-cast-icon rotation-timeline-aura-icon" />) as HTMLAnchorElement;
+				aul.actionId.setBackground(iconElem);
+				auraElem.appendChild(iconElem);
+				(row.icons ??= []).push({ time: aul.gainedAt, elem: iconElem });
+			}
 			row.events.push({ elem: auraElem, text: searchText([aul, ...aul.stacksChange]) });
 
 			const tt = (
@@ -1127,6 +1557,7 @@ export class Timeline extends ResultComponent {
 			);
 
 			const tooltip = tippy(auraElem, {
+				...followAlong,
 				placement: 'bottom',
 				content: tt,
 			});
@@ -1137,6 +1568,14 @@ export class Timeline extends ResultComponent {
 					return;
 				}
 
+				// When an icon in the row is at the same moment, like the Sunder Armor cast that added
+				// the stack, the count goes in the icon's bottom right corner, like on a buff in the
+				// game. Otherwise, like when a Flurry charge gets used up, it goes in the bar.
+				const icon = row.icons?.find(icon => Math.abs(icon.time - scl.timestamp) < 0.05);
+				if (icon) {
+					const countElem = icon.elem.querySelector('.rotation-icon-count') ?? icon.elem.appendChild(<span className="rotation-icon-count" />);
+					countElem.textContent = String(scl.newStacks);
+				}
 				const stacksChangeElem = (
 					<div
 						className="rotation-timeline-stacks-change"
@@ -1144,7 +1583,7 @@ export class Timeline extends ResultComponent {
 							left: this.timeToPx(scl.timestamp - aul.timestamp),
 							width: this.timeToPx(aul.stacksChange[i + 1] ? aul.stacksChange[i + 1].timestamp - scl.timestamp : aul.fadedAt - scl.timestamp),
 						}}>
-						{String(scl.newStacks)}
+						{icon ? '' : String(scl.newStacks)}
 					</div>
 				);
 				auraElem.appendChild(stacksChangeElem);
@@ -1161,16 +1600,31 @@ export class Timeline extends ResultComponent {
 		});
 	}
 
-	private get pxPerSecond(): number {
-		return zoomLevels[this.zoomIndex];
+	// The CSS for a length, like how long a cast or an aura lasts. It follows --px-per-second, so
+	// it changes with the zoom without drawing the row again.
+	private timeToPx(time: number): string {
+		return `calc(var(--px-per-second) * ${time})`;
 	}
 
-	// For lengths, like how long a cast or an aura lasts.
-	private timeToPxValue(time: number): number {
-		return time * this.pxPerSecond;
+	// Where the left edge of the scrolled content is on the screen, in CSS pixels.
+	private measureContentOrigin() {
+		const rect = this.rotationTimeline.getBoundingClientRect();
+		this.contentOrigin = rect.left + this.rotationTimeline.clientLeft - this.rotationTimeline.scrollLeft;
+		// A line one screen pixel wide. With Windows display scaling at 125%, a CSS pixel is 1.25
+		// screen pixels, so a 1px line would always blur over two of them.
+		const dpr = window.devicePixelRatio || 1;
+		this.rotationTimeline.style.setProperty('--hairline', `${Math.max(1, Math.round(dpr)) / dpr}px`);
 	}
-	private timeToPx(time: number): string {
-		return this.timeToPxValue(time) + 'px';
+
+	// Like timeToLeft, for the thin lines of the ruler and the grid. Most seconds land between two
+	// screen pixels, like 3 sec at 88.5 px per second, at x = 265.5. The browser then blends a
+	// 1px line over both, and it looks wider and brighter than one that lands on a pixel. So we
+	// move each line to the nearest screen pixel.
+	private crispLeft(time: number): string {
+		const dpr = window.devicePixelRatio || 1;
+		const exact = this.contentOrigin + this.timeToLeftValue(time);
+		const shift = Math.round(exact * dpr) / dpr - exact;
+		return `calc(${this.timeToLeft(time)} + ${shift.toFixed(3)}px)`;
 	}
 
 	// For where something starts, measured from the start of the time range we draw.
@@ -1178,7 +1632,7 @@ export class Timeline extends ResultComponent {
 		return (time - this.viewStart) * this.pxPerSecond;
 	}
 	private timeToLeft(time: number): string {
-		return this.timeToLeftValue(time) + 'px';
+		return this.timeToPx(time - this.viewStart);
 	}
 	private leftToTime(left: number): number {
 		return this.viewStart + left / this.pxPerSecond;
@@ -1195,23 +1649,34 @@ export class Timeline extends ResultComponent {
 	// it, and the line goes last, over them.
 	private drawPull() {
 		if (this.prepullStart >= 0 || this.viewStart >= 0) return;
-		const pullLeft = this.timeToLeftValue(Math.min(0, this.viewEnd));
+		const pullLeft = this.timeToLeft(Math.min(0, this.viewEnd));
 		this.rotationTimeline.prepend(
-			<div className="rotation-prepull" style={{ width: `${pullLeft}px` }}>
+			<div className="rotation-prepull" style={{ width: pullLeft }}>
 				<span className="rotation-prepull-label">Prepull</span>
 			</div>,
 		);
-		if (this.viewEnd > 0) this.rotationTimeline.appendChild(<div className="rotation-pull-line" style={{ left: `${pullLeft}px` }} />);
+		if (this.viewEnd > 0) this.rotationTimeline.appendChild(<div className="rotation-pull-line" style={{ left: pullLeft }} />);
+	}
+
+	// A faint line down the rows at every second, so we can follow a time from the ruler. Each line
+	// sits where the ruler's tick for that second is, and starts under the ruler. It goes first, so
+	// the rows draw over it.
+	private drawGrid(header: HTMLElement) {
+		const lines: Array<Element> = [];
+		for (let time = Math.ceil(this.viewStart); time <= this.viewEnd; time++) {
+			lines.push(<div className="rotation-grid-line" style={{ left: this.crispLeft(time) }} />);
+		}
+		this.rotationTimeline.prepend(
+			<div className="rotation-grid" style={{ top: `${header.offsetTop + header.offsetHeight}px`, width: this.viewWidthPx() }}>
+				{lines}
+			</div>,
+		);
 	}
 
 	private drawRotationTimeRuler(header: HTMLElement) {
 		const [labelStep, tickStep] = rulerSteps.find(([label]) => label * this.pxPerSecond >= 60) ?? rulerSteps[rulerSteps.length - 1];
 		header.style.width = this.viewWidthPx();
-
-		// Faint lines down the rows at each label, so we can follow a time from the ruler.
-		const gridStep = labelStep * this.pxPerSecond;
-		this.rotationTimeline.style.setProperty('--grid-step', `${gridStep}px`);
-		this.rotationTimeline.style.setProperty('--grid-offset', `${-((this.viewStart % labelStep) * this.pxPerSecond)}px`);
+		this.measureContentOrigin();
 
 		const ticks: Array<Element> = [];
 		const firstTick = Math.ceil(this.viewStart / tickStep - 1e-6);
@@ -1219,7 +1684,7 @@ export class Timeline extends ResultComponent {
 		for (let i = firstTick; i <= lastTick; i++) {
 			const time = i * tickStep;
 			const isLabel = Math.abs(time / labelStep - Math.round(time / labelStep)) < 1e-6;
-			ticks.push(<div className={`rotation-ruler-tick${isLabel ? ' major' : ''}`} style={{ left: this.timeToLeft(time) }} />);
+			ticks.push(<div className={`rotation-ruler-tick${isLabel ? ' major' : ''}`} style={{ left: this.crispLeft(time) }} />);
 			if (isLabel) {
 				ticks.push(
 					<div className={`rotation-ruler-label${time == 0 && this.prepullStart < 0 ? ' pull' : ''}`} style={{ left: this.timeToLeft(time) }}>
@@ -1331,6 +1796,24 @@ export class Timeline extends ResultComponent {
 		this.resetCallbacks = [];
 	}
 }
+
+// Whether the aura is up from the pull to the end of the fight. We add up its uptime between
+// those two, so an aura we put up in the prepull counts too. When we refresh an aura, it fades and
+// comes back at the same moment, so that leaves no gap. We allow 10 ms for rounding.
+const isAlwaysUp = (auraUptimeLogs: Array<AuraUptimeLog>, duration: number): boolean => {
+	const spans = auraUptimeLogs
+		.map(log => [Math.max(0, log.gainedAt), Math.min(duration, log.fadedAt)])
+		.filter(([from, to]) => to > from)
+		.sort((a, b) => a[0] - b[0]);
+	let covered = 0;
+	let end = 0;
+	spans.forEach(([from, to]) => {
+		if (to <= end) return;
+		covered += to - Math.max(from, end);
+		end = to;
+	});
+	return covered >= duration - 0.01;
+};
 
 const MELEE_ACTION_CATEGORY = 1;
 const SPELL_ACTION_CATEGORY = 2;
@@ -1554,6 +2037,7 @@ const rulerSteps: Array<[number, number]> = [
 	[15, 5],
 	[30, 5],
 	[60, 10],
+	[120, 30],
 ];
 
 const formatRulerTime = (time: number): string => {

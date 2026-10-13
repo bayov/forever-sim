@@ -13,11 +13,13 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 
 	actionID := core.ActionID{SpellID: 15286}
 	manaCost := 40.0
-	duration := time.Minute * 1
+	// Forever: 30 sec (Classic 1 min) on a 1 min cooldown, and Improved Vampiric Embrace is
+	// gone, so it heals the party for 20% of the Shadow damage (client 1.60.1.70338).
+	duration := time.Second * 30
 
 	partyPlayers := priest.Env.Raid.GetPlayerParty(&priest.Unit).Players
 	healthMetrics := priest.NewHealthMetrics(actionID)
-	healthReturnedMultuplier := 0.05 + 0.05*float64(priest.Talents.ImprovedVampiricEmbrace)
+	healthReturnedMultuplier := 0.2
 
 	priest.VampiricEmbraceAuras = priest.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return target.GetOrRegisterAura(core.Aura{
@@ -49,6 +51,10 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    priest.NewTimer(),
+				Duration: time.Minute,
 			},
 		},
 

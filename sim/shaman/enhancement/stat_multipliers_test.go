@@ -46,7 +46,7 @@ func TestOrcShamanStatMultipliers(t *testing.T) {
 		sim := core.NewSim(&proto.RaidSimRequest{
 			Raid:       core.SinglePlayerRaidProto(newPlayer(kings), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 			Encounter:  &proto.Encounter{},
-			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 		}, simsignals.CreateSignals())
 		sim.Reset()
 		return sim, sim.Raid.Parties[0].Players[0].GetCharacter()

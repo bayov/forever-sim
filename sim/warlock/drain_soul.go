@@ -7,18 +7,18 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-const DrainSoulRanks = 4
-
+// Forever's Drain Soul hits harder than 1.12's (85 over 15 sec at rank 1, 1.12 55) and stops
+// when another spell is cast (the 2026-10-08 build), which a channel does in the sim anyway.
 func (warlock *Warlock) getDrainSoulBaseConfig(rank int) core.SpellConfig {
-	baseNumTicks := int32(5)
-	numTicks := baseNumTicks
+	numTicks := int32(5)
 	tickLength := time.Second * 3
 
-	spellId := [DrainSoulRanks + 1]int32{0, 1120, 8288, 8289, 11675}[rank]
-	spellCoeff := [DrainSoulRanks + 1]float64{0, 0.063, 0.1, 0.1, 0.1}[rank]
-	baseDamage := [DrainSoulRanks + 1]float64{0, 55, 155, 295, 455}[rank] / float64(baseNumTicks)
-	manaCost := [DrainSoulRanks + 1]float64{0, 55, 125, 210, 290}[rank]
-	level := [DrainSoulRanks + 1]int{0, 10, 24, 38, 52}[rank]
+	data := drainSoulRanks[rank]
+	spellId := data.SpellID
+	spellCoeff := data.Coef
+	baseDamage := data.damageAt(warlock.Level)
+	manaCost := data.Cost
+	level := data.Level
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_WarlockDrainSoul,
@@ -53,6 +53,7 @@ func (warlock *Warlock) getDrainSoulBaseConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDamage, isRollover)
+				dot.SnapshotAttackerMultiplier *= warlock.soulSiphonMultiplier(target)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -81,7 +82,7 @@ func (warlock *Warlock) getDrainSoulBaseConfig(rank int) core.SpellConfig {
 
 func (warlock *Warlock) registerDrainSoulSpell() {
 	warlock.DrainSoul = make([]*core.Spell, 0)
-	for rank := 1; rank <= DrainSoulRanks; rank++ {
+	for rank := 1; rank < len(drainSoulRanks); rank++ {
 		config := warlock.getDrainSoulBaseConfig(rank)
 
 		if config.RequiredLevel <= int(warlock.Level) {

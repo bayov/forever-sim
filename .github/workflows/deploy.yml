@@ -31,7 +31,7 @@ jobs:
 
       - name: Build 🔧
         run: |
-          make dist/classic/.dirstamp
+          make dist/forever/.dirstamp
 
       - name: Test
         run: |
@@ -42,7 +42,7 @@ jobs:
         with:
             repository-name: wowsims/pages-deploy
             branch: main
-            folder: dist/classic
-            target-folder: classic
+            folder: dist/forever
+            target-folder: forever
             single-commit: true
             token: ${{ secrets.DEPLOY_REPO_TOKEN }}

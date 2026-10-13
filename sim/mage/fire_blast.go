@@ -9,8 +9,13 @@ import (
 const FireBlastRanks = 7
 
 var FireBlastSpellId = [FireBlastRanks + 1]int32{0, 2136, 2137, 2138, 8412, 8413, 10197, 10199}
-var FireBlastBaseDamage = [FireBlastRanks + 1][]float64{{0}, {27, 35}, {62, 76}, {107, 132}, {177, 211}, {246, 295}, {342, 405}, {446, 524}}
-var FireBlastSpellCoeff = [FireBlastRanks + 1]float64{0, .204, .332, .429, .429, .429, .429, .429}
+
+// Damage at each rank's cap and its growth per level up to there, from the Forever client
+// (1.60.1.70338). Rank 7 is 415 to 491 (Classic 446 to 524), and every rank has the full 42.9%
+// coefficient (Classic 20.4% and 33.2% on ranks 1 and 2).
+var FireBlastBaseDamage = [FireBlastRanks + 1][]float64{{0}, {26.57, 35.43}, {56.11, 69.89}, {95.83, 118.17}, {156.19, 187.81}, {224.71, 269.29}, {314.62, 373.38}, {415.41, 490.59}}
+var FireBlastScaling = [FireBlastRanks + 1]core.RankScaling{{}, {11, 0.6}, {19, 1}, {27, 1.4}, {35, 1.8}, {43, 2.2}, {51, 2.6}, {59, 3}}
+var FireBlastSpellCoeff = [FireBlastRanks + 1]float64{0, .429, .429, .429, .429, .429, .429, .429}
 var FireBlastManaCost = [FireBlastRanks + 1]float64{0, 40, 75, 115, 165, 220, 280, 340}
 var FireBlastLevel = [FireBlastRanks + 1]int{0, 6, 14, 22, 30, 38, 46, 54}
 
@@ -30,8 +35,8 @@ func (mage *Mage) registerFireBlastSpell() {
 func (mage *Mage) newFireBlastSpellConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
 
 	spellId := FireBlastSpellId[rank]
-	baseDamageLow := FireBlastBaseDamage[rank][0]
-	baseDamageHigh := FireBlastBaseDamage[rank][1]
+	baseDamageLow := FireBlastScaling[rank].At(FireBlastBaseDamage[rank][0], mage.Level)
+	baseDamageHigh := FireBlastScaling[rank].At(FireBlastBaseDamage[rank][1], mage.Level)
 	spellCoeff := FireBlastSpellCoeff[rank]
 	manaCost := FireBlastManaCost[rank]
 	level := FireBlastLevel[rank]
@@ -58,12 +63,11 @@ func (mage *Mage) newFireBlastSpellConfig(rank int, cdTimer *core.Timer) core.Sp
 				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
-				Timer:    cdTimer,
-				Duration: cooldown - time.Millisecond*500*time.Duration(mage.Talents.ImprovedFireBlast),
+				Timer: cdTimer,
+				// Wake of Fire takes 1 sec off per point. Its bonus after a kill needs a target that dies.
+				Duration: cooldown - time.Second*time.Duration(mage.Talents.WakeOfFire),
 			},
 		},
-
-		BonusCritRating: 2 * float64(mage.Talents.Incinerate) * core.SpellCritRatingPerCritChance,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

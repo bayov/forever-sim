@@ -70,6 +70,7 @@ func (paladin *Paladin) registerConsecration() {
 			},
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
+			BonusHitRating:   paladin.divinePrecisionHitRating(core.SpellHitRatingPerHitChance),
 			BonusCoefficient: tickCoefficient,
 			Dot: core.DotConfig{
 				IsAOE: true,
@@ -94,10 +95,12 @@ func (paladin *Paladin) registerConsecration() {
 			},
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.AOEDot().Apply(sim)
+				// Consecrated Ground goes up first, so Consecration's own ticks (a Holy
+				// spell) snapshot its bonus too.
 				if paladin.consecratedGroundAura != nil {
 					paladin.consecratedGroundAura.Activate(sim)
 				}
+				spell.AOEDot().Apply(sim)
 			},
 		})
 	}

@@ -35,6 +35,7 @@ import {
 	WeaponType,
 	ZanzaBuff,
 } from '../../proto/common';
+import { Ruleset } from '../../proto/api';
 import { ActionId } from '../../proto_utils/action_id';
 import { isBluntWeaponType, isSharpWeaponType, isWeapon } from '../../proto_utils/utils';
 import { EventID, TypedEvent } from '../../typed_event';
@@ -172,10 +173,14 @@ export const ConjuredDemonicRune: ConsumableInputConfig<Conjured> = {
 	actionId: () => ActionId.fromItemId(12662),
 	value: Conjured.ConjuredDemonicRune,
 };
+// Forever lets druids drink Rage potions and Thistle Tea (Blizzard's World of Warcraft: Forever
+// class deep dive, Druid: "Rage potions and Thistletea are also now usable by Druids").
+const foreverDruid = (player: Player<any>) => player.getClass() == Class.ClassDruid && player.sim.getRuleset() === Ruleset.RulesetForever;
+
 export const ConjuredRogueThistleTea: ConsumableInputConfig<Conjured> = {
 	actionId: () => ActionId.fromItemId(7676),
 	value: Conjured.ConjuredRogueThistleTea,
-	showWhen: player => player.getClass() == Class.ClassRogue,
+	showWhen: player => player.getClass() == Class.ClassRogue || foreverDruid(player),
 };
 
 export const CONJURED_CONFIG: ConsumableStatOption<Conjured>[] = [
@@ -842,17 +847,17 @@ export const MajorManaPotion: ConsumableInputConfig<Potions> = {
 export const MightRagePotion: ConsumableInputConfig<Potions> = {
 	actionId: () => ActionId.fromItemId(13442),
 	value: Potions.MightyRagePotion,
-	showWhen: player => player.getClass() == Class.ClassWarrior,
+	showWhen: player => player.getClass() == Class.ClassWarrior || foreverDruid(player),
 };
 export const GreatRagePotion: ConsumableInputConfig<Potions> = {
 	actionId: () => ActionId.fromItemId(5633),
 	value: Potions.GreatRagePotion,
-	showWhen: player => player.getClass() == Class.ClassWarrior,
+	showWhen: player => player.getClass() == Class.ClassWarrior || foreverDruid(player),
 };
 export const RagePotion: ConsumableInputConfig<Potions> = {
 	actionId: () => ActionId.fromItemId(5631),
 	value: Potions.RagePotion,
-	showWhen: player => player.getClass() == Class.ClassWarrior,
+	showWhen: player => player.getClass() == Class.ClassWarrior || foreverDruid(player),
 };
 
 export const FrenzyPotion: ConsumableInputConfig<Potions> = {
@@ -1260,13 +1265,18 @@ export const ConsecratedSharpeningStone = (slot: ItemSlot): ConsumableInputConfi
 		},
 	};
 };
+// A cat fights with its paws, so its weapon takes no stone or oil, except under Forever, where
+// "Weapon enchantments and procs now all work while shapeshifted, including effects like
+// weightstones" (Blizzard's World of Warcraft: Forever class deep dive, Druid).
+const weaponImbuesWork = (player: Player<any>) => !player.isSpec(Spec.SpecFeralDruid) || player.sim.getRuleset() === Ruleset.RulesetForever;
+
 export const ElementalSharpeningStone = (slot: ItemSlot): ConsumableInputConfig<WeaponImbue> => {
 	return {
 		actionId: () => ActionId.fromItemId(18262),
 		value: WeaponImbue.ElementalSharpeningStone,
 		showWhen: player => {
 			const weapon = player.getEquippedItem(slot);
-			return (!weapon || isWeapon(weapon.item.weaponType)) && !player.isSpec(Spec.SpecFeralDruid);
+			return (!weapon || isWeapon(weapon.item.weaponType)) && weaponImbuesWork(player);
 		},
 	};
 };
@@ -1276,7 +1286,7 @@ export const DenseSharpeningStone = (slot: ItemSlot): ConsumableInputConfig<Weap
 		value: WeaponImbue.DenseSharpeningStone,
 		showWhen: player => {
 			const weapon = player.getEquippedItem(slot);
-			return (!weapon || isSharpWeaponType(weapon.item.weaponType)) && !player.isSpec(Spec.SpecFeralDruid);
+			return (!weapon || isSharpWeaponType(weapon.item.weaponType)) && weaponImbuesWork(player);
 		},
 	};
 };
@@ -1286,7 +1296,7 @@ export const SolidSharpeningStone = (slot: ItemSlot): ConsumableInputConfig<Weap
 		value: WeaponImbue.SolidSharpeningStone,
 		showWhen: player => {
 			const weapon = player.getEquippedItem(slot);
-			return (!weapon || isSharpWeaponType(weapon.item.weaponType)) && !player.isSpec(Spec.SpecFeralDruid);
+			return (!weapon || isSharpWeaponType(weapon.item.weaponType)) && weaponImbuesWork(player);
 		},
 	};
 };
@@ -1298,7 +1308,7 @@ export const DenseWeightstone = (slot: ItemSlot): ConsumableInputConfig<WeaponIm
 		value: WeaponImbue.DenseWeightstone,
 		showWhen: player => {
 			const weapon = player.getEquippedItem(slot);
-			return (!weapon || isBluntWeaponType(weapon.item.weaponType)) && !player.isSpec(Spec.SpecFeralDruid);
+			return (!weapon || isBluntWeaponType(weapon.item.weaponType)) && weaponImbuesWork(player);
 		},
 	};
 };
@@ -1308,7 +1318,7 @@ export const SolidWeightstone = (slot: ItemSlot): ConsumableInputConfig<WeaponIm
 		value: WeaponImbue.SolidWeightstone,
 		showWhen: player => {
 			const weapon = player.getEquippedItem(slot);
-			return (!weapon || isBluntWeaponType(weapon.item.weaponType)) && !player.isSpec(Spec.SpecFeralDruid);
+			return (!weapon || isBluntWeaponType(weapon.item.weaponType)) && weaponImbuesWork(player);
 		},
 	};
 };
@@ -1320,7 +1330,7 @@ export const ShadowOil = (slot: ItemSlot): ConsumableInputConfig<WeaponImbue> =>
 		value: WeaponImbue.ShadowOil,
 		showWhen: player => {
 			const weapon = player.getEquippedItem(slot);
-			return (!weapon || isWeapon(weapon.item.weaponType)) && !player.isSpec(Spec.SpecFeralDruid);
+			return (!weapon || isWeapon(weapon.item.weaponType)) && weaponImbuesWork(player);
 		},
 	};
 };
@@ -1330,7 +1340,7 @@ export const FrostOil = (slot: ItemSlot): ConsumableInputConfig<WeaponImbue> => 
 		value: WeaponImbue.FrostOil,
 		showWhen: player => {
 			const weapon = player.getEquippedItem(slot);
-			return (!weapon || isWeapon(weapon.item.weaponType)) && !player.isSpec(Spec.SpecFeralDruid);
+			return (!weapon || isWeapon(weapon.item.weaponType)) && weaponImbuesWork(player);
 		},
 	};
 };

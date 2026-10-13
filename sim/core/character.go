@@ -58,6 +58,9 @@ type Character struct {
 	// Stormstrike External Configuration
 	StormstrikeConfig StormstrikeConfig
 
+	// How far each weapon's skill is below the most for the level, by hand (Player.main_hand_skill_gap).
+	weaponSkillGaps map[proto.CastType]float64
+
 	// Base stats for this Character.
 	baseStats stats.Stats
 
@@ -152,6 +155,11 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		PartyIndex: partyIndex,
 
 		majorCooldownManager: newMajorCooldownManager(player.Cooldowns),
+
+		weaponSkillGaps: map[proto.CastType]float64{
+			proto.CastType_CastTypeMainHand: float64(max(0, player.MainHandSkillGap)),
+			proto.CastType_CastTypeOffHand:  float64(max(0, player.OffHandSkillGap)),
+		},
 	}
 
 	// We drop an off-hand weapon from a class that can't hold one, so it adds no stats, swings
@@ -729,6 +737,15 @@ func (character *Character) GetFiftyPercentHasteBuffCD() *Timer {
 
 func (character *Character) IsShapeshifted() bool {
 	return character.ActiveShapeShift != nil
+}
+
+// canUseItemsInForm says whether potions, runes and similar consumables can be used without
+// leaving a shapeshift form. Forever allows it ("All potions and almost all similar consumables
+// are now useable while shapeshifted and do not cancel the Druid's shapeshift", Blizzard's
+// World of Warcraft: Forever class deep dive, Druid; client 1.60.1.70338 also flags Cat, Bear and
+// Moonkin Form CanUseItems in SpellShapeshiftForm). Engineering explosives stay unusable in form.
+func (character *Character) canUseItemsInForm() bool {
+	return !character.IsShapeshifted() || character.Env.IsForever()
 }
 
 func (character *Character) CancelShapeshift(sim *Simulation) {

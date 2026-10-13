@@ -92,7 +92,11 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - The crit bonus (`warr_crit_rage`, +100%) multiplies on top.
    - Dodges and parries refund as in Classic.
    - Rage from damage taken keeps the Classic formula (it only matters to tanks).
-   The constants and the off-hand factor are a dashboard assumption (`warr_rage_norm` in spec_assumptions.md). Owner: the warrior worker, in sim/core/rage.go behind `Env.IsForever()`. Bear druids get the same rule, though no DPS preset uses one.
+   - **Level scaling of k** (user ruling 2026-10-13: "assumption, either low/medium/high (flat/midpoint/scale-like-classic)"). The constants were measured at level 30 or below. At 30 they give about Classic's Rage per swing, but at 60 flat constants give about half. So k grows with level past 30: k(L) = k30 × (1 + s × (L − 30) / 30) for L > 30, and k30 at 30 or below.
+     - s = 0: flat, the Low setting.
+     - s = 0.5: midpoint, ×1.5 at 60, the Expected setting and the presets' default.
+     - s = 1: Classic-like, ×2 at 60, the High setting. A 2.6 s one-hander's 18.0 Rage at 60 is then close to Classic's 18.6 for an average swing.
+   The level scaling (`warr_rage_k`) and the off-hand factor (`warr_rage_oh`) are dashboard assumptions in spec_assumptions.md. Owner: the warrior worker, in sim/core/rage.go behind `Env.IsForever()`. Bear druids get the same rule, though no DPS preset uses one.
 
 ## Races
 

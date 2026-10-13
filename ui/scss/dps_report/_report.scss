@@ -1,0 +1,3015 @@
+// The DPS Report in the sim UI's look. The page sits in the sim UI shell (header tabs, main), its sections are
+// sim UI content blocks, and these tokens map the report's own names onto the sim UI palette in shared/_variables.
+// They sit on :root because tooltips are appended to the body, outside the report; only this page loads this file.
+:root {
+	@each $cls, $color in $class-colors {
+		--fv-#{$cls}: #{$color};
+	}
+	--fv-alliance: #6ea8ff;
+	--fv-horde: #ff6b5e;
+	--fv-gold: var(--gold);
+	--fv-gold-soft: #{rgba($gold, 0.14)};
+	--fv-r: var(--panel-radius);
+	--fv-r-sm: var(--panel-radius);
+	--fv-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.35);
+	--fv-lift: 0 0.25rem 1rem rgba(0, 0, 0, 0.5);
+	--fv-sel-bg: var(--gold);
+	--fv-sel-fg: #{$body-bg};
+	--fv-noise: linear-gradient(transparent, transparent);
+	// Panels that were dark "stone" in the artifact (spec banner, talent trees) are the sim UI's panels here.
+	--fv-stone: #{$panel-bg};
+	--fv-stone-2: #{$panel-bg-2};
+	--fv-stone-fg: #{$ivory};
+	--fv-stone-muted: #{$text-muted-color};
+	--fv-stone-line: var(--line-color);
+	--fv-stone-gold: var(--gold-soft);
+	--fv-stone-chip: rgba(255, 255, 255, 0.05);
+
+	--color-fg: #{$ivory};
+	--color-fg-muted: #{$text-muted-color};
+	--color-bg: #{$body-bg};
+	--color-panel: #{$panel-bg-2};
+	--color-border-line: var(--line-color);
+	--color-ok: #{$success};
+	--color-bad: #{$damage-dps};
+	--cds-font-size-caption: 0.8rem;
+	--cds-font-size-body: 0.9rem;
+	--cds-font-size-heading: 1.05rem;
+	--cds-gap-xs: 0.25rem;
+	--cds-gap-sm: 0.5rem;
+	--cds-gap-md: var(--block-spacer);
+	--cds-gap-lg: var(--gap-width);
+	--cds-pad-xs: 0.25rem;
+	--cds-pad-sm: 0.5rem;
+	--cds-pad-md: 0.75rem;
+	--cds-pad-lg: 1rem;
+	--cds-pad-xl: 1.25rem;
+	--cds-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--cds-dur-slow: 0.3s;
+	--cds-border: 1px solid var(--line-color);
+	--cds-radius: var(--panel-radius);
+	--cds-text-secondary: #{$text-muted-color};
+	--cds-surface-popover: #{$panel-bg};
+	--cds-shadow-popover: 0 0.25rem 1rem rgba(0, 0, 0, 0.5);
+	--font-anthropic-sans: inherit;
+	--font-anthropic-serif: var(--heading-font-family);
+}
+
+.fv {
+	font-variant-numeric: tabular-nums;
+}
+
+// With no sidebar, the page is the header and the tabs, kept to a readable width on wide screens.
+.dps-report-sim-ui .sim-content {
+	width: 100%;
+	max-width: 90rem;
+	margin-inline: auto;
+}
+
+.fv [hidden] {
+	display: none !important;
+}
+
+.fv > *,
+.fv-page > *,
+.fv-grid > * {
+	min-width: 0;
+}
+
+.fv h1,
+.fv h2,
+.fv h3 {
+	text-wrap: balance;
+}
+
+.fv .fv-take b,
+.fv .fv-num b {
+	font-weight: 600;
+	color: var(--color-fg);
+}
+
+/* ---------- header title and the summary atop Ranking ---------- */
+// The logo is drawn like the title of a spec sim, a round icon with three lines of text, and like
+// it, it turns into a way back to the landing page when we point at it. Gold is its class color.
+.fv-home {
+	margin-right: var(--spacer-3);
+	flex-shrink: 0;
+	color: var(--gold-soft);
+	text-decoration: none;
+	@include sim-title-link;
+
+	&,
+	&:hover {
+		background: none;
+	}
+
+	// A spec title sits flush with the window's left edge, so its glow starts at full strength
+	// there. Our logo floats inside the page, so the glow fades out on both sides.
+	&::before {
+		background: linear-gradient(90deg, transparent, rgba($gold, 0.14) 25%, rgba($gold, 0.06) 70%, transparent);
+	}
+}
+
+@include media-breakpoint-down(md) {
+	.fv-home {
+		margin-right: 0;
+
+		.sim-title-texts {
+			display: none;
+		}
+	}
+}
+
+.fv-summary .fv-take {
+	margin: 0;
+	color: var(--color-fg-muted);
+	font-size: var(--cds-font-size-body);
+	line-height: 1.5;
+}
+
+.fv-summary .fv-take b {
+	color: var(--color-fg);
+}
+
+.fv-summary .fv-take b:first-child {
+	color: var(--gold-soft);
+}
+
+.fv-hero {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	padding: 0.2rem;
+}
+
+.fv-hero button {
+	flex: 0 0 2.25rem;
+	border: 0;
+	padding: 0;
+	background: none;
+	cursor: pointer;
+	border-radius: 50%;
+	line-height: 0;
+}
+
+.fv-hero img {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	box-shadow:
+		0 0 0 2px var(--ring),
+		0 2px 6px rgba(0, 0, 0, 0.55);
+	transition:
+		transform 0.18s,
+		box-shadow 0.18s;
+}
+
+.fv-hero button:hover img {
+	transform: translateY(-2px);
+}
+
+.fv-hero button[aria-pressed='true'] img {
+	transform: scale(1.12);
+	box-shadow:
+		0 0 0 2.5px var(--gold-soft),
+		0 0 12px rgba($gold, 0.55);
+}
+
+@include media-breakpoint-down(md) {
+	.fv-hero button {
+		flex-basis: 1.8rem;
+	}
+}
+
+/* ---------- tabs: the sim UI's header tabs ---------- */
+.fv-tab:focus-visible,
+.fv button:focus-visible,
+.fv select:focus-visible,
+.fv summary:focus-visible {
+	outline: 2px solid var(--fv-gold);
+	outline-offset: 2px;
+}
+
+/* ---------- pages, cards ---------- */
+.tab-content > .fv-page.active {
+	display: grid;
+}
+
+.fv-page {
+	gap: var(--block-spacer);
+	align-content: start;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.fv-page.in {
+		animation: fv-in 0.32s var(--cds-ease-out) both;
+	}
+
+	.fv-swap {
+		animation: fv-in 0.28s var(--cds-ease-out) both;
+	}
+
+	@keyframes fv-in {
+		from {
+			opacity: 0.001;
+			transform: translateY(6px);
+		}
+
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+}
+
+.fv-grid {
+	display: grid;
+	gap: var(--block-spacer);
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+// The card itself is the sim UI's content block (a panel card inside .sim-main .tab-pane).
+.fv-card {
+	display: grid;
+	gap: var(--cds-gap-sm);
+	min-width: 0;
+	position: relative;
+	align-content: start;
+	scroll-margin-top: calc(var(--sim-header-height) + 3rem);
+}
+
+.fv-card > .content-block-header {
+	margin-bottom: 0.15rem;
+}
+
+.fv-card h2,
+.fv-card h3 {
+	margin: 0;
+	font-family: var(--heading-font-family);
+	font-variant: small-caps;
+	font-size: var(--cds-font-size-heading);
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	color: var(--gold-soft);
+}
+
+.fv-card > h3:not(:first-child) {
+	margin-top: var(--cds-gap-sm);
+}
+
+.fv-note {
+	margin: 0;
+	color: var(--color-fg-muted);
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.45;
+}
+
+/* ---------- controls ---------- */
+.fv-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--cds-gap-xs) var(--cds-gap-sm);
+	align-items: center;
+}
+
+// The class pickers wrap on a phone. The padding leaves room for the gold ring of the picked class.
+#rank-classes,
+#heat-classes {
+	padding-block: 2px;
+	margin-inline: -2px;
+	padding-inline: 2px;
+}
+
+// Chips are the Events tab's filter chips (the shared filter-chip mixin). The report marks a chip that is on with
+// aria-pressed instead of .active.
+.fv-chip {
+	@include filter-chip("[aria-pressed='true']");
+	flex: 0 0 auto;
+}
+
+.fv-dot {
+	width: 0.6rem;
+	height: 0.6rem;
+	border-radius: 50%;
+	display: inline-block;
+	flex: 0 0 auto;
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-fg) 15%, transparent);
+}
+// Selects are the sim UI's .form-select, in its own size.
+.fv select {
+	width: auto;
+	max-width: 100%;
+	min-width: 0;
+}
+
+// The muted label in front of a control, like "Iteration" on the Events tab.
+.fv-label {
+	@include control-label;
+	// Some of these are <label>s, which the sim UI makes bold.
+	font-weight: normal;
+	display: inline-flex;
+	gap: 0.35rem;
+	align-items: center;
+}
+
+// The fight length applies to the whole ranking, so it sits in a row of its own above the other filters. When we
+// show another length than the default 180 s, the label turns gold like the Events tab's "New" iteration.
+.fv-lenbar {
+	display: flex;
+	align-items: center;
+	gap: var(--spacer-2) var(--spacer-3);
+	padding-bottom: var(--spacer-2);
+	border-bottom: 1px solid var(--line-color);
+}
+
+.fv-lenbar.off .fv-label {
+	color: var(--gold-soft);
+}
+
+// The previous and next buttons beside a select. They look like the select itself: the input background and border.
+.fv-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 0.75rem;
+	border: 1px solid $input-border-color;
+	border-radius: var(--bs-border-radius);
+	background: $input-bg;
+	color: var(--text-muted-color);
+	font-weight: 600;
+	transition:
+		border-color 0.15s ease-in-out,
+		color 0.15s ease-in-out;
+}
+
+.fv-btn:hover {
+	color: $ivory;
+	border-color: var(--text-muted-color);
+}
+
+// Segmented toggles are the Events tab's (the shared segmented mixins). They scroll sideways instead of wrapping when
+// a phone is too narrow for every option.
+.fv-seg {
+	@include segmented;
+	max-width: 100%;
+	overflow-x: auto;
+	scrollbar-width: none;
+	min-width: 0;
+}
+
+.fv-seg::-webkit-scrollbar {
+	display: none;
+}
+
+.fv-seg > button {
+	@include segmented-option("[aria-pressed='true']");
+	flex: 0 0 auto;
+}
+
+.fv-lanes #tl-lanes {
+	display: contents;
+}
+
+.fv-focus {
+	flex-wrap: nowrap;
+}
+
+.fv-focus select {
+	flex: 1 1 auto;
+	max-width: 18rem;
+}
+
+.fv-list {
+	margin: 0;
+	padding-left: 1.2rem;
+	display: grid;
+	gap: 0.35rem;
+	font-size: var(--cds-font-size-body);
+	line-height: 1.45;
+}
+
+.fv-list li::marker {
+	color: var(--fv-gold);
+}
+
+ol.fv-list li::marker {
+	font-size: var(--cds-font-size-caption);
+	font-weight: 600;
+}
+
+.fv-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+}
+
+.fv-tag {
+	font-size: var(--cds-font-size-caption);
+	border: 1px solid var(--color-border-line);
+	border-radius: 999px;
+	padding: 0.2rem 0.6rem 0.2rem 0.3rem;
+	background: var(--color-bg);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.fv-tag:not(:has(img)) {
+	padding-left: 0.6rem;
+}
+
+.fv-code {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: var(--cds-font-size-caption);
+	overflow-wrap: anywhere;
+	background: var(--color-bg);
+	border: 1px dashed var(--color-border-line);
+	border-radius: var(--fv-r-sm);
+	padding: 0.35rem 0.5rem;
+}
+
+/* ---------- KPI tiles ---------- */
+.fv-tiles {
+	display: grid;
+	gap: var(--cds-gap-sm);
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#sp-tiles {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (min-width: 46rem) {
+	.fv-tiles {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	#sp-tiles {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+}
+
+.fv-tile {
+	background: var(--fv-noise), var(--color-panel);
+	border: 1px solid var(--color-border-line);
+	border-radius: var(--fv-r-sm);
+	padding: 0.55rem 0.7rem;
+	display: grid;
+	gap: 0.1rem;
+	min-width: 0;
+	align-content: start;
+	box-shadow: var(--fv-shadow);
+}
+
+.fv-tile:first-child {
+	border-color: color-mix(in srgb, var(--fv-gold) 45%, var(--color-border-line));
+	background: var(--fv-noise), linear-gradient(var(--fv-gold-soft), var(--fv-gold-soft)), var(--color-panel);
+}
+
+.fv-tile .k {
+	font-size: 0.68rem;
+	color: var(--color-fg-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fv-tile .v {
+	font-family: var(--font-anthropic-serif);
+	font-weight: 400;
+	font-size: 1.35rem;
+	line-height: 1.15;
+	overflow-wrap: anywhere;
+}
+
+.fv-tile .v small {
+	font-family: var(--font-anthropic-sans);
+	font-size: 0.7rem;
+	color: var(--color-fg-muted);
+	margin-left: 0.1rem;
+}
+
+.fv-tile .v .fv-ico {
+	width: 1.2rem;
+	height: 1.2rem;
+	border-radius: 50%;
+	vertical-align: -0.12rem;
+}
+
+.fv-tile .s {
+	font-size: 0.66rem;
+	color: var(--color-fg-muted);
+	overflow-wrap: anywhere;
+}
+
+#sp-tiles .fv-tile .v {
+	font-size: 1.2rem;
+}
+
+/* ---------- ranking rows ---------- */
+.fv-rank {
+	display: grid;
+	gap: 0;
+}
+
+.fv-row {
+	min-width: 0;
+	display: grid;
+	grid-template-columns: 1.3rem 1.75rem minmax(0, 1fr) auto;
+	column-gap: 0.5rem;
+	row-gap: 0.18rem;
+	align-items: center;
+	padding: 0.38rem 0.35rem 0.42rem;
+	border-radius: var(--fv-r-sm);
+	cursor: pointer;
+	border: 0;
+	background: none;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	width: 100%;
+	transition: background 0.12s;
+}
+
+.fv-row + .fv-row {
+	border-top: 1px solid color-mix(in srgb, var(--color-border-line) 60%, transparent);
+	border-radius: 0;
+}
+
+.fv .fv-row.is-hl {
+	border-radius: var(--fv-r-sm);
+}
+
+.fv-row:hover {
+	background: color-mix(in srgb, var(--color-fg) 5%, transparent);
+}
+
+.fv-row-pos {
+	color: var(--color-fg-muted);
+	font-size: var(--cds-font-size-caption);
+	text-align: center;
+	grid-row: 1 / span 2;
+	grid-column: 1;
+}
+
+.fv-row.top .fv-row-pos {
+	color: var(--fv-gold);
+	font-weight: 700;
+}
+
+.fv-row > .fv-ico,
+.fv-row > .fv-dot {
+	grid-row: 1 / span 2;
+	grid-column: 2;
+	justify-self: center;
+}
+
+.fv-row > .fv-ico {
+	width: 1.75rem;
+	height: 1.75rem;
+	border-radius: 6px;
+}
+
+.fv-row-main {
+	min-width: 0;
+	display: grid;
+	gap: 0.08rem;
+	grid-column: 3;
+	grid-row: 1;
+}
+
+.fv-row-name {
+	display: flex;
+	align-items: baseline;
+	gap: 0.3rem;
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: var(--cds-font-size-body);
+	line-height: 1.25;
+}
+
+.fv-row-name b {
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fv-row-name span {
+	color: var(--color-fg-muted);
+	font-size: var(--cds-font-size-caption);
+	flex: 0 0 auto;
+}
+
+.fv-row-name i {
+	font-style: normal;
+	color: var(--fv-gold);
+	font-size: 0.7rem;
+	flex: 0 0 auto;
+}
+
+.fv-row-sub {
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: 0.7rem;
+	color: var(--color-fg-muted);
+	line-height: 1;
+}
+
+.fv-row-sub .fv-ico {
+	width: 0.95rem;
+	height: 0.95rem;
+	border-radius: 3px;
+	vertical-align: 0;
+}
+
+.fv-row-sub em {
+	font-style: normal;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fv-row-end {
+	grid-column: 4;
+	grid-row: 1;
+	display: grid;
+	justify-items: end;
+	gap: 0.12rem;
+}
+
+.fv-row-val {
+	font-weight: 600;
+	font-size: var(--cds-font-size-body);
+	white-space: nowrap;
+	line-height: 1.2;
+}
+
+.fv-row-gap {
+	font-size: 0.68rem;
+	color: var(--color-fg-muted);
+	white-space: nowrap;
+	line-height: 1;
+}
+
+.fv-row.top .fv-row-gap {
+	color: var(--fv-gold);
+	font-weight: 600;
+}
+
+.fv-track {
+	grid-column: 3 / -1;
+	grid-row: 2;
+	position: relative;
+	height: 0.5rem;
+}
+
+.fv-track::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0.2rem;
+	height: 0.12rem;
+	border-radius: 2px;
+	background: color-mix(in srgb, var(--color-fg) 7%, transparent);
+}
+
+.fv-bar {
+	position: absolute;
+	left: 0;
+	top: 0.13rem;
+	height: 0.26rem;
+	border-radius: 3px;
+	opacity: 0.9;
+}
+
+.fv-box {
+	position: absolute;
+	top: 0.03rem;
+	height: 0.46rem;
+	border-radius: 2px;
+	border: 1.25px solid var(--color-fg);
+	background: var(--color-panel);
+	box-sizing: border-box;
+}
+
+.fv-whisk {
+	position: absolute;
+	top: 0.24rem;
+	height: 1.25px;
+	background: var(--color-fg);
+	opacity: 0.7;
+}
+
+.fv-med {
+	position: absolute;
+	top: 0.03rem;
+	width: 1.5px;
+	height: 0.46rem;
+	background: var(--color-fg);
+}
+
+.fv-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem var(--cds-gap-md);
+	font-size: 0.7rem;
+	color: var(--color-fg-muted);
+	align-items: center;
+}
+
+.fv-legend > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+
+.fv-legend i {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 0.3rem;
+}
+
+.fv-legend > span > i {
+	margin-right: 0;
+}
+
+.fv-rank-sum {
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+}
+
+.fv-rank-sum b {
+	color: var(--color-fg);
+	font-weight: 600;
+}
+
+@media (min-width: 46rem) {
+	.fv-row {
+		grid-template-columns: 1.6rem 1.75rem minmax(12rem, 18rem) minmax(0, 1fr) 4.6rem;
+		padding-block: 0.3rem;
+	}
+
+	.fv-track {
+		grid-column: 4;
+		grid-row: 1;
+	}
+
+	.fv-row-end {
+		grid-column: 5;
+	}
+
+	.fv-row-pos,
+	.fv-row > .fv-ico,
+	.fv-row > .fv-dot {
+		grid-row: 1;
+	}
+}
+
+/* ---------- tables ---------- */
+.fv-scroll {
+	overflow-x: auto;
+	max-width: 100%;
+	-webkit-overflow-scrolling: touch;
+}
+
+.fv-scroll.tall {
+	max-height: 26rem;
+	overflow-y: auto;
+}
+
+.fv table {
+	border-collapse: separate;
+	border-spacing: 0;
+	width: 100%;
+	font-size: var(--cds-font-size-caption);
+}
+
+.fv th {
+	text-align: left;
+	font-weight: 600;
+	color: var(--color-fg-muted);
+	padding: 0.4rem 0.55rem;
+	border-bottom: 1px solid var(--color-border-line);
+	white-space: nowrap;
+	position: sticky;
+	top: 0;
+	background: var(--color-panel);
+	z-index: 1;
+	font-size: 0.7rem;
+	letter-spacing: 0.03em;
+}
+
+.fv th button {
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+.fv td {
+	padding: 0.42rem 0.55rem;
+	border-bottom: 1px solid color-mix(in srgb, var(--color-border-line) 70%, transparent);
+	vertical-align: middle;
+}
+
+.fv tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.fv td.n,
+.fv th.n {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.fv td:has(> .fv-ico),
+.fv td.first,
+.fv #faction-table td {
+	white-space: nowrap;
+}
+
+.fv td > .fv-ico {
+	margin-right: 0.15rem;
+}
+
+.fv tr.clk {
+	cursor: pointer;
+}
+
+.fv td.pos {
+	color: var(--color-ok);
+}
+
+.fv td.neg {
+	color: var(--color-bad);
+}
+
+.fv tr.clk:hover td,
+.fv tr[data-tt]:hover td {
+	background: color-mix(in srgb, var(--color-fg) 4%, var(--color-panel));
+}
+
+.fv td.first,
+.fv th.first {
+	position: sticky;
+	left: 0;
+	background: var(--color-panel);
+	z-index: 2;
+}
+
+.fv th.first {
+	z-index: 3;
+}
+
+/* ---------- heat grid ---------- */
+.fv-heat {
+	display: grid;
+	gap: 2px;
+	min-width: max-content;
+	font-size: var(--cds-font-size-caption);
+}
+
+.fv-heat .hc {
+	padding: 0.36rem 0.2rem;
+	text-align: center;
+	border-radius: 5px;
+	min-width: 2.9rem;
+	cursor: pointer;
+	border: 0;
+	font: inherit;
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg);
+	transition: transform 0.1s;
+}
+
+.fv-heat .hc:hover {
+	transform: scale(1.06);
+}
+
+.fv-heat .hh {
+	color: var(--color-fg-muted);
+	text-align: center;
+	padding: 0.3rem 0.2rem;
+	white-space: nowrap;
+	font-size: 0.68rem;
+}
+
+// The row's preset name. The left padding leaves room for the colored ring around its icon, which the overflow
+// would cut off otherwise.
+.fv-heat .hl {
+	position: sticky;
+	left: 0;
+	background: var(--color-panel);
+	padding: 0.3rem 0.4rem 0.3rem 3px;
+	white-space: nowrap;
+	display: flex;
+	gap: 0.35rem;
+	align-items: center;
+	z-index: 1;
+	max-width: 8.5rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fv-heat .hl > .fv-ico {
+	flex-shrink: 0;
+}
+
+.fv-heat .na {
+	background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--color-fg) 6%, transparent) 4px 5px);
+	color: var(--color-fg-muted);
+	cursor: default;
+}
+
+.fv-heat .hh img {
+	display: block;
+	margin: 0 auto 0.15rem;
+	width: 1.4rem;
+	height: 1.4rem;
+	border-radius: 50%;
+}
+
+/* ---------- spec ---------- */
+.fv-picker {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	gap: var(--cds-gap-xs);
+	align-items: stretch;
+}
+
+.fv-picker select {
+	width: 100%;
+	font-weight: 600;
+}
+
+.fv-picker .fv-btn {
+	font-size: 1.15rem;
+	line-height: 1;
+	padding-inline: 0.9rem;
+}
+
+.fv-spechead {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--fv-r);
+	color: var(--fv-stone-fg);
+	padding: var(--cds-pad-lg);
+	display: grid;
+	gap: 0.55rem;
+	background: var(--fv-noise), linear-gradient(160deg, var(--fv-stone-2), var(--fv-stone) 75%);
+	box-shadow:
+		inset 0 0 0 1px var(--fv-stone-line),
+		inset 0 1px 0 rgba(255, 230, 170, 0.12),
+		var(--fv-lift);
+	touch-action: pan-y;
+}
+
+.fv-spechead .art {
+	position: absolute;
+	inset: 0;
+	background-size: cover;
+	background-position: center 30%;
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.fv-spechead .art::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		100deg,
+		var(--fv-stone) 18%,
+		color-mix(in srgb, var(--fv-stone) 55%, transparent) 60%,
+		color-mix(in srgb, var(--fv-stone) 82%, transparent)
+	);
+}
+
+.fv-spechead > *:not(.art) {
+	position: relative;
+}
+
+.fv-spec-top {
+	display: flex;
+	gap: 0.85rem;
+	align-items: center;
+}
+
+.fv-spechead h2 {
+	font-family: var(--font-anthropic-serif);
+	font-weight: 400;
+	font-size: clamp(1.4rem, 6vw, 2rem);
+	line-height: 1.12;
+	margin: 0;
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.fv-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.75rem;
+	color: var(--color-fg-muted);
+	font-size: var(--cds-font-size-caption);
+}
+
+.fv-spechead .fv-meta {
+	gap: 0.35rem;
+	color: var(--fv-stone-fg);
+}
+
+.fv-spechead .fv-meta > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	background: var(--fv-stone-chip);
+	border: 1px solid rgba(255, 240, 210, 0.1);
+	border-radius: 999px;
+	padding: 0.18rem 0.55rem 0.18rem 0.3rem;
+}
+
+.fv-spechead .fv-meta > span:not(:has(img)) {
+	padding-left: 0.55rem;
+}
+
+.fv-spechead .fv-take {
+	margin: 0;
+	color: var(--fv-stone-muted);
+	font-size: var(--cds-font-size-body);
+	line-height: 1.5;
+	max-width: 70ch;
+}
+
+.fv-spechead .fv-note {
+	color: var(--fv-stone-muted);
+}
+
+.fv .fv-spechead .fv-note b {
+	color: var(--fv-stone-fg);
+}
+
+.fv-spechead .fv-swipe {
+	font-size: 0.66rem;
+	color: var(--fv-stone-muted);
+	opacity: 0.8;
+	margin: 0;
+}
+
+@media (min-width: 46rem) {
+	.fv-spechead {
+		padding: var(--cds-pad-xl);
+	}
+
+	.fv-spechead .fv-swipe {
+		display: none;
+	}
+}
+
+// The section links on Specs look like the Results tab's own tabs in a spec sim: a bar that sticks under the header
+// with a muted label in front, and a gold line under the section we are reading.
+.fv-jump {
+	@include sub-toolbar;
+	--dr-toolbar-height: 2.75rem;
+	margin-bottom: calc(-1 * var(--block-spacer) / 2);
+
+	.fv-jump-title {
+		@include sub-toolbar-title;
+		align-self: center;
+	}
+
+	.fv-jump-chev {
+		font-size: 0.75rem;
+		opacity: 0.6;
+	}
+
+	.fv-jump-tabs {
+		@include sub-tabs;
+		min-width: 0;
+	}
+}
+
+@include media-breakpoint-down(md) {
+	.fv-jump .fv-jump-title {
+		display: none;
+	}
+}
+
+.fv-sbar {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 0.1rem 0.6rem;
+	align-items: center;
+	font-size: var(--cds-font-size-caption);
+}
+
+.fv-sbar .nm {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
+	min-width: 0;
+}
+
+.fv-sbar .nm .fv-ico {
+	width: 1.15rem;
+	height: 1.15rem;
+}
+
+.fv-sbar .vl {
+	text-align: right;
+	white-space: nowrap;
+	color: var(--color-fg-muted);
+}
+
+.fv-sbar .vl > span:first-child {
+	color: var(--color-fg);
+	font-weight: 600;
+}
+
+.fv-sbar .tr {
+	grid-column: 1 / -1;
+	height: 0.38rem;
+	background: color-mix(in srgb, var(--color-fg) 7%, transparent);
+	border-radius: 4px;
+	overflow: hidden;
+	margin-bottom: 0.4rem;
+}
+
+.fv-sbar .tr span {
+	display: block;
+	height: 100%;
+	border-radius: 4px;
+}
+
+/* ---------- timeline ---------- */
+.fv-tl {
+	display: grid;
+	grid-template-columns: 5.6rem minmax(0, 1fr);
+	border: 1px solid var(--color-border-line);
+	border-radius: var(--fv-r-sm);
+	background: var(--color-bg);
+	overflow: hidden;
+}
+
+.fv-tl-labels {
+	position: relative;
+	border-right: 1px solid var(--color-border-line);
+	font-size: 0.68rem;
+	color: var(--color-fg-muted);
+	background: var(--color-panel);
+}
+
+.fv-tl-labels div {
+	position: absolute;
+	left: 0.4rem;
+	right: 0.25rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1;
+}
+
+.fv-tl-scroll {
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+	touch-action: pan-x pan-y;
+}
+
+.fv-tl-scroll svg {
+	display: block;
+}
+
+.fv-readout {
+	display: grid;
+	gap: 0.25rem;
+	font-size: var(--cds-font-size-caption);
+	background: var(--color-bg);
+	border: 1px solid var(--color-border-line);
+	border-radius: var(--fv-r-sm);
+	padding: var(--cds-pad-sm) var(--cds-pad-md);
+	min-height: 3rem;
+	align-content: start;
+}
+
+.fv-readout .ev {
+	display: flex;
+	gap: 0.5rem;
+	align-items: baseline;
+}
+
+.fv-readout .t {
+	color: var(--color-fg-muted);
+	width: 3.2rem;
+	flex: 0 0 auto;
+}
+
+.fv-log {
+	max-height: 18rem;
+	overflow-y: auto;
+	font-size: var(--cds-font-size-caption);
+	display: grid;
+	align-content: start;
+}
+
+.fv-log div {
+	display: grid;
+	grid-template-columns: 3.3rem minmax(0, 1fr) auto;
+	gap: 0.5rem;
+	padding: 0.24rem 0;
+	border-bottom: 1px solid color-mix(in srgb, var(--color-border-line) 70%, transparent);
+}
+
+.fv-log .t {
+	color: var(--color-fg-muted);
+}
+
+.fv-log .x {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.fv-chart {
+	width: 100%;
+	min-height: 12rem;
+	position: relative;
+}
+
+.fv-chart svg {
+	display: block;
+	overflow: visible;
+}
+
+.fv-chart text {
+	fill: var(--color-fg-muted);
+	font-size: 11px;
+	font-family: var(--font-anthropic-sans);
+}
+
+.fv-tl-scroll text {
+	fill: var(--color-fg-muted);
+	font-size: 10px;
+	font-family: var(--font-anthropic-sans);
+}
+// Chart readouts and game tooltips show in tippy, like the sim UI's, so Alt+click pins them.
+.fv-tip {
+	font-size: var(--cds-font-size-caption);
+	max-width: 15rem;
+	display: grid;
+	gap: 0.1rem;
+}
+
+.fv-tip .h {
+	color: var(--cds-text-secondary);
+}
+
+.fv-tip {
+	min-width: 9rem;
+	line-height: 1.4;
+}
+
+.fv-tip .h {
+	font-weight: 600;
+	color: var(--color-fg);
+}
+
+.fv-tip-open {
+	margin-top: 0.3rem;
+	font: inherit;
+	font-size: var(--cds-font-size-caption);
+	font-weight: 600;
+	border: 0;
+	border-radius: 999px;
+	padding: 0.3rem 0.7rem;
+	background: var(--fv-sel-bg);
+	color: var(--fv-sel-fg);
+	cursor: pointer;
+	justify-self: start;
+}
+
+.fv-tip .fv-tip-sub {
+	color: var(--color-fg-muted);
+}
+
+.fv-tip .fv-tip-main {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 0.4rem;
+	white-space: nowrap;
+
+	.sw {
+		margin-right: 0;
+	}
+
+	b {
+		font-size: var(--cds-font-size-body);
+		font-weight: 600;
+		color: var(--color-fg);
+	}
+}
+
+// A line's value at every fight length, with the length under the pointer picked out.
+.fv-tip .fv-tip-strip {
+	margin-top: 0.3rem;
+	padding-top: 0.3rem;
+	display: grid;
+	grid-auto-flow: column;
+	grid-template-rows: auto auto;
+	column-gap: 0.6rem;
+	border-top: 1px solid var(--color-border-line);
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+
+	.k {
+		font-size: 0.7rem;
+		color: var(--color-fg-muted);
+	}
+
+	.v {
+		color: var(--color-fg-muted);
+	}
+
+	.on {
+		font-weight: 600;
+		color: var(--color-fg);
+	}
+}
+
+.fv-tip .sw {
+	display: inline-block;
+	width: 0.6rem;
+	height: 0.6rem;
+	border-radius: 2px;
+	margin-right: 0.35rem;
+	vertical-align: -0.05rem;
+}
+
+.fv .fv-row.is-hl,
+.fv .fv-sbar .is-hl {
+	background: color-mix(in srgb, var(--fv-gold) 14%, transparent);
+	box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--fv-gold) 60%, transparent);
+}
+
+.fv svg rect.is-hl,
+.fv svg circle.is-hl {
+	stroke: var(--color-fg);
+	stroke-width: 2px;
+	opacity: 1 !important;
+}
+
+.fv-heat .hc.is-hl {
+	outline: 2px solid var(--fv-gold);
+	outline-offset: 1px;
+	position: relative;
+	z-index: 1;
+}
+
+.fv [data-tt].tt-on:not(rect):not(g):not(path) {
+	background-color: color-mix(in srgb, var(--fv-gold) 14%, transparent);
+	border-radius: 6px;
+}
+
+.fv svg rect.tt-on,
+.fv svg path.tt-on,
+.fv svg g.tt-on rect {
+	stroke: var(--color-fg);
+	stroke-width: 1.5px;
+	opacity: 1 !important;
+}
+
+.fv details > summary {
+	cursor: pointer;
+	font-size: var(--cds-font-size-heading);
+	font-weight: 600;
+	list-style: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.fv details > summary::after {
+	content: '';
+	width: 0.45rem;
+	height: 0.45rem;
+	border-right: 2px solid var(--color-fg-muted);
+	border-bottom: 2px solid var(--color-fg-muted);
+	transform: rotate(45deg);
+	transition: transform 0.2s;
+	margin-right: 0.25rem;
+	flex: 0 0 auto;
+}
+
+.fv details[open] > summary::after {
+	transform: rotate(225deg);
+}
+
+.fv details > summary::-webkit-details-marker {
+	display: none;
+}
+
+.fv details[open] > summary {
+	margin-bottom: var(--cds-gap-sm);
+}
+
+.fv-prose {
+	font-size: var(--cds-font-size-body);
+	max-width: 65ch;
+	display: grid;
+	gap: var(--cds-gap-sm);
+	line-height: 1.55;
+}
+
+.fv-prose p {
+	margin: 0;
+}
+
+/* ---------- talents ---------- */
+// The trees are the sim UI's talent picker (core/talents/_talents_picker.scss). Here they only show a preset, so
+// every tree is shown at once and none dims like the picker's carousel does on phones.
+#sp-tal .talents-picker-root {
+	width: 100%;
+}
+
+#sp-tal #talents-carousel {
+	margin: 0;
+	overflow-x: auto;
+	justify-content: safe center;
+}
+
+#sp-tal .carousel-item {
+	opacity: 1;
+}
+
+#sp-tal .talent-picker-root {
+	cursor: help;
+}
+
+@include media-breakpoint-down(lg) {
+	#sp-tal .carousel-inner {
+		transform: none;
+	}
+
+	#sp-tal .talent-tree-picker-root {
+		min-width: calc(var(--talent-icon-size) * 1.4 * 4 + 1rem);
+	}
+}
+
+/* ---------- icons ---------- */
+.fv-ico {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 3px;
+	flex: 0 0 auto;
+	vertical-align: -0.2rem;
+}
+
+.fv-ico.md {
+	width: 1.35rem;
+	height: 1.35rem;
+	border-radius: 4px;
+}
+
+.fv-ico.ring {
+	box-shadow: 0 0 0 1.5px var(--ring, var(--color-border-line));
+}
+
+.fv-ico.lg {
+	width: 3.6rem;
+	height: 3.6rem;
+	border-radius: 10px;
+	box-shadow:
+		0 0 0 2px var(--ring, var(--color-border-line)),
+		0 0 0 4px rgba(0, 0, 0, 0.55),
+		0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
+.fv-q-epic {
+	color: #8a2be2;
+}
+
+.fv-q-rare {
+	color: #0062c4;
+}
+
+.fv-q-uncommon {
+	color: #1a8a00;
+}
+
+.fv-q-legendary {
+	color: #c85f00;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) .fv-q-epic {
+		color: #c27cf7;
+	}
+
+	:root:not([data-theme='light']) .fv-q-rare {
+		color: #4aa3ff;
+	}
+
+	:root:not([data-theme='light']) .fv-q-uncommon {
+		color: #3fe23f;
+	}
+
+	:root:not([data-theme='light']) .fv-q-legendary {
+		color: #ff8f2a;
+	}
+}
+
+:root[data-theme='dark'] .fv-q-epic {
+	color: #c27cf7;
+}
+
+:root[data-theme='dark'] .fv-q-rare {
+	color: #4aa3ff;
+}
+
+:root[data-theme='dark'] .fv-q-uncommon {
+	color: #3fe23f;
+}
+
+:root[data-theme='dark'] .fv-q-legendary {
+	color: #ff8f2a;
+}
+
+.fv-heat .hh img {
+	display: block;
+	margin: 0 auto 0.15rem;
+	width: 1.4rem;
+	height: 1.4rem;
+	border-radius: 50%;
+}
+
+[data-dash-source-state='refreshing'] {
+	opacity: 0.5;
+	transition: opacity var(--cds-dur-slow);
+}
+
+[data-dash-source-state='empty'] {
+	color: transparent;
+}
+
+.fv-fail {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	color: var(--color-fg-muted);
+	font-size: var(--cds-font-size-caption);
+	min-height: 4rem;
+}
+
+.fv-fail::before {
+	content: '';
+	width: 0.375rem;
+	height: 0.375rem;
+	border-radius: 50%;
+	background: var(--color-bad);
+}
+
+/* ---------- game tooltips: a dark panel in both themes, like the game's ---------- */
+.fv [data-tt-tap] {
+	cursor: pointer;
+}
+
+.fv [data-tt]:not([data-tt-tap]) {
+	-webkit-touch-callout: none;
+}
+
+.fv-tl-scroll svg text,
+.fv-tl-scroll svg image {
+	pointer-events: none;
+}
+
+.fv-tt {
+	display: flex;
+	gap: 0.55rem;
+	align-items: flex-start;
+	font-size: 0.8rem;
+	line-height: 1.35;
+	text-align: left;
+	font-variant-numeric: tabular-nums;
+}
+
+.tippy-box:has(> .tippy-content > .fv-tt) {
+	max-width: min(20rem, calc(100vw - 8px)) !important;
+}
+
+.fv-tt .tt-ico {
+	width: 2.25rem;
+	height: 2.25rem;
+	flex: 0 0 auto;
+	border-radius: 4px;
+	box-shadow: 0 0 0 1px #6b6b78;
+	display: block;
+}
+
+.fv-tt .tt-body {
+	display: grid;
+	gap: 0.12rem;
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
+.fv-tt .tt-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.75rem;
+}
+
+.fv-tt .tt-title {
+	font-size: 0.9rem;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.fv-tt .tt-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.75rem;
+}
+
+.fv-tt .tt-row > span:last-child {
+	text-align: right;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.fv-tt .tt-row > span:first-child {
+	flex: 0 1 auto;
+	min-width: 0;
+}
+
+.fv-tt .tt-h {
+	margin-top: 0.25rem;
+	color: #ffd100;
+}
+
+.fv-tt .tt-h > span:first-child {
+	white-space: nowrap;
+}
+
+.fv-tt .tt-sp {
+	height: 0.3rem;
+}
+
+.fv-tt .tt-nums {
+	margin-top: 0.3rem;
+	padding-top: 0.3rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.16);
+	display: grid;
+	gap: 0.08rem;
+}
+
+.fv-tt .c-t {
+	color: #fff;
+}
+
+.fv-tt .c-m,
+.fv-tt .tt-sub {
+	color: #9d9d9d;
+}
+
+.fv-tt .c-y {
+	color: #ffd100;
+}
+
+.fv-tt .c-g {
+	color: #1eff00;
+}
+
+.fv-tt .c-t,
+.fv-tt .c-m,
+.fv-tt .c-y,
+.fv-tt .c-g {
+	white-space: pre-line;
+	overflow-wrap: anywhere;
+}
+
+.fv-tt .tt-sub {
+	font-size: 0.75rem;
+	white-space: nowrap;
+}
+
+.fv-tt .tt-link {
+	margin-top: 0.3rem;
+	padding-top: 0.3rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.16);
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	font-size: 0.75rem;
+}
+
+.fv-tt .tt-link a {
+	color: #7fb8ff;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	padding: 0.2rem 0;
+}
+
+.fv-tt .tt-link a:hover {
+	color: #b3d4ff;
+}
+
+.fv-tt .tt-link span {
+	color: #9d9d9d;
+}
+
+@media (max-width: 30rem) {
+	.fv-card {
+		padding: var(--cds-pad-md);
+	}
+
+	.fv-tl {
+		grid-template-columns: 4.6rem minmax(0, 1fr);
+	}
+}
+
+.fv-card > *,
+.fv details > * {
+	min-width: 0;
+}
+
+.fv details {
+	min-width: 0;
+	max-width: 100%;
+}
+
+#sp-gear-card .fv-scroll > table,
+#sp-abiltab-card .fv-scroll > table {
+	width: max-content;
+	min-width: 100%;
+}
+/* ---------- races: scenarios, overview, one preset ---------- */
+.fv-hrow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.4rem 0.6rem;
+	flex-wrap: wrap;
+}
+
+.fv-scen-tag {
+	font: inherit;
+	font-size: 0.66rem;
+	font-weight: 600;
+	border-radius: 999px;
+	padding: 0.15rem 0.55rem;
+	cursor: pointer;
+	white-space: nowrap;
+	background: var(--fv-gold-soft);
+	color: var(--color-fg);
+	border: 1px solid color-mix(in srgb, var(--fv-gold) 40%, var(--color-border-line));
+}
+
+.fv-scen {
+	border-color: color-mix(in srgb, var(--fv-gold) 40%, var(--color-border-line));
+	background: var(--fv-noise), linear-gradient(var(--fv-gold-soft), var(--fv-gold-soft)), var(--color-panel);
+}
+
+.fv-scen .fv-controls {
+	flex-wrap: nowrap;
+}
+
+.fv-scen .fv-label {
+	min-width: 3.1rem;
+}
+
+.fv-scen .fv-controls {
+	gap: var(--cds-gap-xs);
+}
+
+// The target types don't all fit a phone, so the scenario toggles are a little tighter.
+.fv-scen .fv-seg > button {
+	padding-inline: 0.45rem;
+}
+
+.fv-scen-desc {
+	margin: 0;
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.5;
+	color: var(--color-fg);
+}
+
+.fv-ro-tiles {
+	display: grid;
+	gap: var(--cds-gap-sm);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fv-ro-tiles .fv-tile .v {
+	font-size: 1rem;
+	display: flex;
+	gap: 0.3rem;
+	align-items: center;
+	min-width: 0;
+}
+
+.fv-ro-tiles .fv-tile {
+	padding-inline: 0.55rem;
+}
+
+.fv-ro-tiles .fv-tile .v span {
+	overflow-wrap: anywhere;
+	line-height: 1.1;
+}
+
+.fv-ro-tiles .fv-tile .v .fv-ico {
+	width: 1.15rem;
+	height: 1.15rem;
+	border-radius: 50%;
+}
+
+.fv-orow,
+.fv-rrow {
+	display: grid;
+	grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+	column-gap: 0.55rem;
+	row-gap: 0.2rem;
+	align-items: center;
+	padding: 0.45rem 0.3rem;
+	border-radius: var(--fv-r-sm);
+}
+
+.fv-orow {
+	cursor: pointer;
+}
+
+.fv-orow + .fv-orow,
+.fv-rrow + .fv-rrow {
+	border-top: 1px solid color-mix(in srgb, var(--color-border-line) 60%, transparent);
+	border-radius: 0;
+}
+
+.fv-orow:hover {
+	background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+}
+
+.fv-orow > .fv-ico,
+.fv-rrow > .fv-ico {
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: 50%;
+	grid-row: 1 / span 2;
+}
+
+.fv-orow .nm,
+.fv-rrow .nm {
+	min-width: 0;
+	display: flex;
+	gap: 0.35rem;
+	align-items: baseline;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: var(--cds-font-size-body);
+}
+
+.fv-orow .nm b,
+.fv-rrow .nm b {
+	font-weight: 600;
+}
+
+.fv-orow .nm small,
+.fv-rrow .nm small {
+	color: var(--color-fg-muted);
+	font-size: 0.7rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fv-rrow .nm i {
+	font-style: normal;
+	font-size: 0.64rem;
+	color: var(--fv-gold);
+	border: 1px solid color-mix(in srgb, var(--fv-gold) 50%, transparent);
+	border-radius: 999px;
+	padding: 0 0.35rem;
+}
+
+.fv-orow .end,
+.fv-rrow .end {
+	display: grid;
+	justify-items: end;
+	gap: 0.1rem;
+	white-space: nowrap;
+}
+
+.fv-orow .end b,
+.fv-rrow .end b {
+	font-weight: 600;
+	font-size: var(--cds-font-size-body);
+}
+
+.fv-orow .end small,
+.fv-rrow .end small {
+	font-size: 0.68rem;
+	color: var(--color-fg-muted);
+}
+
+.fv-rrow.top .end small,
+.fv-orow.top .end small {
+	color: var(--fv-gold);
+	font-weight: 600;
+}
+
+.fv-otrack,
+.fv-rtrack {
+	grid-column: 2 / -1;
+	position: relative;
+	height: 0.7rem;
+}
+
+.fv-otrack::before,
+.fv-rtrack::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0.29rem;
+	height: 0.12rem;
+	border-radius: 2px;
+	background: color-mix(in srgb, var(--color-fg) 7%, transparent);
+}
+
+.fv-otrack .bar {
+	position: absolute;
+	left: 0;
+	top: 0.12rem;
+	height: 0.46rem;
+	border-radius: 0 4px 4px 0;
+	opacity: 0.85;
+}
+
+.fv-otrack .wk {
+	position: absolute;
+	top: 0.33rem;
+	height: 1.5px;
+	background: var(--color-fg-muted);
+}
+
+.fv-otrack .wk::after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: -0.17rem;
+	width: 1.5px;
+	height: 0.45rem;
+	background: var(--color-fg-muted);
+}
+
+.fv-rtrack {
+	height: 0.95rem;
+}
+
+.fv-rtrack::before {
+	top: 0.42rem;
+}
+
+.fv-rtrack .sg {
+	position: absolute;
+	top: 0.1rem;
+	height: 0.75rem;
+	box-sizing: border-box;
+	border-right: 2px solid var(--color-panel);
+	cursor: pointer;
+}
+
+.fv-rtrack .sg:first-child {
+	border-radius: 3px 0 0 3px;
+}
+
+.fv-rtrack .sg.last {
+	border-radius: 0 4px 4px 0;
+	border-right: 0;
+}
+
+.fv-rtrack .sg.neg {
+	background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--color-panel) 3px 5px) !important;
+	opacity: 0.9;
+}
+
+.fv-rtrack .sg.swap {
+	background-image: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--color-panel) 70%, transparent) 3px 5px);
+}
+
+.fv-rtrack .wk {
+	position: absolute;
+	top: 0.47rem;
+	height: 1.5px;
+	background: var(--color-fg);
+	pointer-events: none;
+}
+
+.fv-rtrack .end-tick {
+	position: absolute;
+	top: 0;
+	width: 2px;
+	height: 0.95rem;
+	background: var(--color-fg);
+	border-radius: 1px;
+	pointer-events: none;
+}
+
+.fv-rsub {
+	grid-column: 2 / -1;
+	font-size: 0.68rem;
+	color: var(--color-fg-muted);
+	line-height: 1.35;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.1rem 0.55rem;
+}
+
+.fv-rsub span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	white-space: nowrap;
+}
+
+.fv-rsub i,
+.fv-legend .sw2 {
+	display: inline-block;
+	width: 0.55rem;
+	height: 0.55rem;
+	border-radius: 2px;
+	flex: 0 0 auto;
+}
+
+.fv-rsub em {
+	font-style: normal;
+	opacity: 0.85;
+}
+
+.fv .fv-rrow .sg.is-hl,
+.fv .fv-orow.is-hl {
+	outline: 2px solid var(--fv-gold);
+	outline-offset: 1px;
+	z-index: 1;
+}
+
+.fv-axisnote {
+	font-size: 0.66rem;
+	color: var(--color-fg-muted);
+	margin: 0;
+}
+
+.fv-find {
+	display: grid;
+	gap: 0.55rem;
+}
+
+.fv-find > div {
+	display: grid;
+	grid-template-columns: 1.6rem minmax(0, 1fr);
+	gap: 0.55rem;
+	align-items: start;
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.5;
+}
+
+.fv-find > div .fv-ico {
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: 50%;
+}
+
+.fv-find b {
+	font-weight: 600;
+}
+
+// Text buttons are Bootstrap's .btn-link, sized like the Events tab's "Reset filters".
+.fv-linkbtn.btn-link,
+.fv-reset.btn-link {
+	justify-self: start;
+	padding: 0;
+	font-size: 0.75rem;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.fv-tip-row {
+	display: flex;
+	gap: 0.35rem;
+	flex-wrap: wrap;
+}
+
+@media (min-width: 46rem) {
+	.fv-orow,
+	.fv-rrow {
+		grid-template-columns: 1.6rem minmax(9rem, 13rem) minmax(0, 1fr) 5.2rem;
+	}
+
+	.fv-otrack,
+	.fv-rtrack {
+		grid-column: 3;
+		grid-row: 1;
+	}
+
+	.fv-orow .end,
+	.fv-rrow .end {
+		grid-column: 4;
+		grid-row: 1;
+	}
+
+	.fv-rsub {
+		grid-column: 2 / -1;
+	}
+
+	.fv-orow > .fv-ico,
+	.fv-rrow > .fv-ico {
+		grid-row: 1;
+	}
+}
+
+/* ---------- timeline: pull marker, legend, single lane ---------- */
+.fv {
+	--fv-prepull: color-mix(in srgb, var(--fv-gold) 9%, transparent);
+}
+
+.fv-tl-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.2rem 0.85rem;
+	align-items: center;
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+}
+
+.fv-tl-legend span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+
+.fv i.sw {
+	display: inline-block;
+	width: 0.65rem;
+	height: 0.65rem;
+	border-radius: 2px;
+	flex: 0 0 auto;
+}
+
+.fv i.sw.pull {
+	width: 0;
+	height: 0.8rem;
+	border-left: 2px dashed var(--fv-gold);
+	border-radius: 0;
+}
+
+.fv-tip-sep {
+	height: 1px;
+	background: var(--cds-border);
+	margin: 0.15rem 0;
+}
+
+.fv svg g.is-hl rect.sl-cast {
+	stroke: var(--color-fg);
+	stroke-width: 2px;
+}
+
+.fv svg g.is-hl text {
+	text-decoration: underline;
+}
+/* ---------- aura mini timelines ---------- */
+.fv-sbar .tr.fv-mini {
+	position: relative;
+	height: 0.62rem;
+	overflow: hidden;
+	cursor: pointer;
+	border-radius: 3px;
+}
+
+.fv-mini > span {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	border-radius: 2px;
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+}
+
+.fv-mini > span b {
+	font-size: 0.5rem;
+	line-height: 1;
+	color: #fff;
+	padding-left: 2px;
+	font-weight: 700;
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+.fv-mini > i.pre {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	background: repeating-linear-gradient(135deg, var(--fv-prepull) 0 3px, transparent 3px 6px);
+}
+
+.fv-mini > i.pull {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 0;
+	border-left: 1.5px dashed var(--fv-gold);
+}
+
+.fv-sbar .tr.fv-mini.is-hl {
+	box-shadow: 0 0 0 1.5px var(--fv-gold);
+}
+/* ---------- rotation ---------- */
+.fv-prepull {
+	display: grid;
+	gap: 0.35rem;
+}
+
+.fv-prepull:empty {
+	display: none;
+}
+
+.fv-pp {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	align-items: center;
+}
+
+.fv-ppi {
+	font: inherit;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.25rem 0.6rem 0.25rem 0.25rem;
+	border-radius: 999px;
+	border: 1px solid var(--color-border-line);
+	background: var(--color-bg);
+	color: var(--color-fg);
+	cursor: pointer;
+	font-size: var(--cds-font-size-caption);
+}
+
+.fv-ppi .fv-ico {
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: 50%;
+}
+
+.fv-ppi > span {
+	display: grid;
+	line-height: 1.15;
+	text-align: left;
+}
+
+.fv-ppi em {
+	font-style: normal;
+	color: var(--fv-gold);
+	font-weight: 600;
+	font-size: 0.7rem;
+}
+
+.fv-ppi:not(.pull)::after {
+	content: '›';
+	color: var(--color-fg-muted);
+	margin-left: 0.15rem;
+}
+
+.fv-ppi.pull {
+	cursor: default;
+	background: var(--fv-gold-soft);
+	border-color: color-mix(in srgb, var(--fv-gold) 45%, transparent);
+	padding-left: 0.6rem;
+}
+
+.fv-prio {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 0;
+	counter-reset: none;
+}
+
+.fv-pr {
+	display: grid;
+	grid-template-columns: 1.6rem 2.2rem minmax(0, 1fr) auto;
+	gap: 0.15rem 0.6rem;
+	align-items: start;
+	padding: 0.55rem 0.15rem;
+	border-top: 1px solid color-mix(in srgb, var(--color-border-line) 75%, transparent);
+	cursor: pointer;
+	border-radius: 8px;
+}
+
+.fv-pr:first-child {
+	border-top: 0;
+}
+
+.fv-pr .no {
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--fv-gold);
+	text-align: center;
+	padding-top: 0.55rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.fv-pr .fv-ico.big {
+	width: 2.2rem;
+	height: 2.2rem;
+	border-radius: 6px;
+	box-shadow:
+		0 0 0 1px rgba(0, 0, 0, 0.35),
+		0 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+.fv-pr .tx {
+	display: grid;
+	gap: 0.12rem;
+	min-width: 0;
+}
+
+.fv-pr .hd {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	flex-wrap: wrap;
+}
+
+.fv-pr .hd b {
+	font-size: var(--cds-font-size-body);
+	font-weight: 600;
+}
+
+.fv-pr .kd {
+	font-size: 0.62rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-weight: 600;
+	padding: 0.06rem 0.4rem;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--color-fg) 8%, transparent);
+	color: var(--color-fg-muted);
+}
+
+.fv-pr .kd.race {
+	background: var(--fv-gold-soft);
+	color: var(--fv-gold);
+}
+
+.fv-pr .wh {
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+	color: var(--color-fg);
+}
+
+.fv-pr .wh::first-letter {
+	text-transform: uppercase;
+}
+
+.fv-pr .nt {
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+	color: var(--color-fg-muted);
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.fv-pr .ct {
+	display: grid;
+	justify-items: end;
+	line-height: 1.1;
+	padding-top: 0.3rem;
+}
+
+.fv-pr .ct b {
+	font-family: var(--font-anthropic-serif);
+	font-weight: 400;
+	font-size: 1.05rem;
+}
+
+.fv-pr .ct small {
+	font-size: 0.62rem;
+	color: var(--color-fg-muted);
+}
+
+.fv-pr.other {
+	opacity: 0.62;
+}
+
+.fv-pr.other .ics {
+	display: flex;
+	gap: 0.25rem;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.fv-pr.other .ics .fv-ico {
+	width: 1.2rem;
+	height: 1.2rem;
+}
+
+.fv-pr.other .tx b {
+	font-size: var(--cds-font-size-caption);
+	font-weight: 600;
+	margin-left: 0.2rem;
+}
+
+.fv-pr.other .tx {
+	grid-column: 2 / -1;
+}
+
+.fv-pr.other .no {
+	padding-top: 0.1rem;
+}
+
+.fv-noico {
+	display: inline-grid;
+	place-items: center;
+	background: color-mix(in srgb, var(--color-fg) 12%, transparent);
+	color: var(--color-fg-muted);
+	font-size: 0.7rem;
+	font-weight: 700;
+}
+/* ---------- gear: paper doll ---------- */
+// The paper doll is the sim UI's gear pane (#gear-tab .gear-picker-root in gear_picker/_gear_picker.scss), and the
+// stats its character sheet (_character_stats.scss).
+.fv-gearwrap {
+	display: grid;
+	gap: var(--block-spacer);
+	grid-template-columns: minmax(0, 1fr);
+	align-items: start;
+}
+
+@media (min-width: 62rem) {
+	.fv-gearwrap {
+		grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
+	}
+}
+
+#sp-gear .item-picker-root {
+	cursor: help;
+	min-width: 0;
+}
+
+#sp-gear .item-picker-labels-container {
+	min-width: 0;
+}
+
+#sp-gear .item-picker-name,
+#sp-gear .item-picker-enchant {
+	overflow-wrap: anywhere;
+}
+
+#sp-gear .fv-slot-empty {
+	cursor: default;
+	opacity: 0.7;
+}
+
+.fv-gear-tags {
+	display: flex;
+	gap: 0.25rem;
+	flex-wrap: wrap;
+	margin-top: 0.1rem;
+}
+
+.fv-gear-tags em {
+	font-style: normal;
+	font-size: 0.6rem;
+	font-weight: 600;
+	padding: 0.02rem 0.38rem;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.08);
+	color: var(--color-fg-muted);
+}
+
+.fv-gear-tags em.set {
+	background: rgba($success, 0.14);
+	color: var(--bs-success);
+}
+
+.fv-cstats .character-stats-label {
+	margin: 0;
+	font-family: var(--heading-font-family);
+	font-variant: small-caps;
+	font-weight: 700;
+	color: var(--gold-soft);
+}
+
+.fv-cstats {
+	@include panel-card;
+	display: grid;
+	gap: 0.35rem;
+	min-width: 0;
+}
+
+// Next to the paper doll: the character sheet, and the stat weights under it.
+.fv-gearside {
+	display: grid;
+	gap: var(--block-spacer);
+	min-width: 0;
+}
+
+/* ---------- consumes and buffs: icon pickers ---------- */
+.fv-setup {
+	display: grid;
+	gap: var(--cds-gap-md);
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+}
+
+.fv-sgrp {
+	display: grid;
+	gap: 0.4rem;
+	align-content: start;
+}
+
+.fv-sgrp .gh {
+	display: flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	font-size: 0.68rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-weight: 700;
+	color: var(--fv-gold);
+	border-bottom: 1px solid var(--color-border-line);
+	padding-bottom: 0.25rem;
+}
+
+.fv-sgrp .gh small {
+	color: var(--color-fg-muted);
+	font-weight: 500;
+	letter-spacing: 0;
+}
+
+.fv-sgrp.wide {
+	grid-column: 1 / -1;
+}
+/* subsections flow side by side, each as wide as its icons, so small categories share a row */
+.fv-sgrp:has(.fv-ssub) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1rem;
+	align-items: flex-start;
+}
+
+.fv-sgrp:has(.fv-ssub) > .gh {
+	flex: 1 0 100%;
+}
+
+.fv-ssub {
+	display: grid;
+	gap: 0.25rem;
+	flex: 0 1 auto;
+	min-width: 0;
+}
+
+.fv-ssub .sh {
+	font-size: 0.6rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--color-fg-muted);
+	font-weight: 600;
+}
+
+.fv-ssub .fv-picks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem 0.35rem;
+}
+
+.fv-ssub .fv-pick {
+	width: 4.4rem;
+}
+
+.fv-picks {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(4.4rem, 1fr));
+	gap: 0.45rem 0.35rem;
+}
+
+.fv-pick {
+	--q: #4ec04e;
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	padding: 0.15rem;
+	display: grid;
+	justify-items: center;
+	align-content: start;
+	gap: 0.15rem;
+	cursor: pointer;
+	border-radius: 8px;
+	min-width: 0;
+}
+
+.fv-pick .ib {
+	position: relative;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 6px;
+	box-shadow:
+		0 0 0 2px var(--q),
+		0 0 0 3px rgba(0, 0, 0, 0.5),
+		0 2px 6px rgba(0, 0, 0, 0.3);
+	overflow: hidden;
+}
+
+.fv-pick.q-common {
+	--q: #c9c9c9;
+}
+
+.fv-pick.q-uncommon {
+	--q: #1eff00;
+}
+
+.fv-pick.q-rare {
+	--q: #0070dd;
+}
+
+.fv-pick.q-epic {
+	--q: #a335ee;
+}
+
+.fv-pick .ib .fv-ico {
+	width: 100%;
+	height: 100%;
+	border-radius: 0;
+	display: block;
+}
+
+.fv-pick .lv,
+.fv-pick .hd {
+	position: absolute;
+	font-size: 0.5rem;
+	font-weight: 800;
+	line-height: 1;
+	padding: 0.1rem 0.18rem;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.72);
+}
+
+.fv-pick .lv {
+	right: 0;
+	bottom: 0;
+	border-top-left-radius: 4px;
+	color: #ffd100;
+}
+
+.fv-pick .hd {
+	left: 0;
+	top: 0;
+	border-bottom-right-radius: 4px;
+}
+
+.fv-pick .sl {
+	font-size: 0.56rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--color-fg-muted);
+	line-height: 1;
+	margin-top: 0.15rem;
+}
+
+.fv-pick.off .ib {
+	box-shadow: 0 0 0 1px var(--color-border-line);
+}
+
+.fv-pick.off .ib > .fv-ico,
+.fv-pick.off .ib > .lv,
+.fv-pick.off .ib > .hd,
+.fv-pick.off .nmx {
+	opacity: 0.35;
+}
+
+.fv-pick .x {
+	position: absolute;
+	right: 0;
+	top: 0;
+	font-size: 0.62rem;
+	font-weight: 800;
+	line-height: 1;
+	padding: 0.08rem 0.2rem 0.14rem;
+	color: #ff6b5e;
+	background: rgba(0, 0, 0, 0.78);
+	border-bottom-left-radius: 4px;
+}
+
+.fv-setup.hide-off .fv-pick.off,
+.fv-setup.hide-off .fv-ssub:not(:has(.fv-pick:not(.off))),
+.fv-setup.hide-off .fv-sgrp:not(:has(.fv-pick:not(.off))) {
+	display: none;
+}
+
+.fv-setup-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.4rem 0.75rem;
+}
+
+.fv-tt .tt-why {
+	color: #9d9d9d;
+	font-size: 0.75rem;
+	font-style: italic;
+	padding-bottom: 0.3rem;
+	margin-bottom: 0.15rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+	white-space: pre-line;
+	overflow-wrap: anywhere;
+}
+
+.fv-pick .nmx {
+	font-size: 0.66rem;
+	line-height: 1.2;
+	text-align: center;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	overflow-wrap: anywhere;
+}
+
+// The mana card: the chart, and next to it on wide screens the list of when each preset runs low. The list scrolls
+// when it is taller than the chart.
+.fv-mana {
+	display: grid;
+	gap: var(--cds-gap-sm) var(--block-spacer);
+	grid-template-columns: minmax(0, 1fr);
+
+	@media (min-width: 62rem) {
+		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+
+		.fv-mana-list {
+			max-height: 300px;
+			overflow-y: auto;
+		}
+	}
+}
+
+// The list is narrower than the ranking, so its rows keep the two-line phone layout at every width: name and time on
+// top, the bar under them. They have no rank number.
+.fv-mana-list .fv-row {
+	grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+	padding-block: 0.38rem 0.42rem;
+
+	& > .fv-ico,
+	& > .fv-dot {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+	}
+
+	.fv-row-main {
+		grid-column: 2;
+	}
+
+	.fv-row-end {
+		grid-column: 3;
+	}
+
+	.fv-track {
+		grid-column: 2 / -1;
+		grid-row: 2;
+	}
+}
+
+// Pointing at a line in the chart lights up its row, like pointing at the row itself.
+.fv-mana-list .fv-row.is-hover {
+	background: color-mix(in srgb, var(--color-fg) 8%, transparent);
+}
+
+#mana-sum:empty {
+	display: none;
+}
+
+// The class filter, drawn like the sim UI's race picker (see RacePicker).
+.fv-icon-picker {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: var(--spacer-2);
+
+	.fv-pick-value {
+		color: var(--text-muted-color);
+		font-size: 0.875rem;
+	}
+
+	.fv-pick-options {
+		flex-basis: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-top: 0.3rem;
+	}
+
+	.fv-pick-option {
+		@include icon-picker-option;
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+}
+
+// Once the page scrolls, the header floats over it as a frosted bar as wide as the page's content. Like in the spec
+// sims, the line under it first grows out to the bar's ends. Then a border fades in on the sides and bottom with
+// round bottom corners, so the bar's ends don't look cut off. The border is always there, only transparent until the
+// bar sticks, so nothing moves by a pixel when it shows. On Specs the section bar sticks right under the header, and
+// then the two read as one bar with the round corners at the bottom.
+.dps-report-sim-ui {
+	.sim-header,
+	.fv-jump {
+		border: 1px solid transparent;
+		border-top: 0;
+		border-radius: 0 0 var(--panel-radius) var(--panel-radius);
+		transition:
+			background-color 0.15s ease-in-out,
+			box-shadow 0.15s ease-in-out,
+			border-color 0.2s ease-in-out;
+
+		&::after {
+			transition:
+				width 0.15s ease-in-out,
+				left 0.15s ease-in-out,
+				right 0.15s ease-in-out,
+				opacity 0.2s ease-in-out;
+		}
+	}
+
+	.sim-header.stuck,
+	.fv-jump.stuck {
+		border-color: var(--line-color);
+		transition:
+			background-color 0.15s ease-in-out,
+			box-shadow 0.15s ease-in-out,
+			border-color 0.2s ease-in-out 0.15s;
+
+		&::after {
+			opacity: 0;
+			transition:
+				width 0.15s ease-in-out,
+				left 0.15s ease-in-out,
+				right 0.15s ease-in-out,
+				opacity 0.2s ease-in-out 0.15s;
+		}
+	}
+
+	&:has(.fv-page:not([hidden]) .fv-jump.stuck) .sim-header.stuck {
+		border-bottom-color: transparent;
+		border-radius: 0;
+		box-shadow: none;
+	}
+}
+
+// Compare marks its two presets A and B with a lettered badge in each one's chart color (--ab), on the pickers, the
+// table and every card, so it's always clear which side is which.
+.fv-ab {
+	--ab: var(--color-fg-muted);
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.3rem;
+	height: 1.3rem;
+	border: 1px solid var(--ab);
+	border-radius: 4px;
+	background: color-mix(in srgb, var(--ab) 20%, transparent);
+	color: var(--ab);
+	font-size: 0.72rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.fv-ab-head {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-weight: 600;
+	white-space: nowrap;
+
+	.fv-ico {
+		width: 1.2rem;
+		height: 1.2rem;
+	}
+}
+
+#cmp-table th.n .fv-ab-head {
+	justify-content: flex-end;
+}
+
+// The race and setup of each Compare side sit next to its preset.
+#cmp-pick-card .fv-controls {
+	// The preset takes half the row, and the race and setup a quarter each. On a phone the preset gets
+	// its own row, and the race and setup share the next one.
+	#cmp-a,
+	#cmp-b {
+		flex: 2 1 16rem;
+	}
+
+	.fv-cmp-var {
+		flex: 1 1 8rem;
+	}
+}
+
+#cmp-gap:empty {
+	display: none;
+}
+
+// The icon dropdown (iconSelect in report.js). The button is drawn like the page's selects, with the
+// picked option's icon in front.
+.fv-isel {
+	position: relative;
+	min-width: 0;
+
+	.fv-ico {
+		flex: 0 0 auto;
+		width: 1.25rem;
+		height: 1.25rem;
+		border-radius: 4px;
+	}
+}
+
+.fv-isel-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	text-align: left;
+}
+
+.fv-isel-text {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// The menu is the sim UI's header and Results menu.
+.fv-isel-menu {
+	@include header-dropdown-menu;
+	top: calc(100% + 0.25rem);
+	left: 0;
+	z-index: 30;
+	min-width: 100%;
+	max-height: min(60vh, 26rem);
+	overflow-y: auto;
+
+	.dropdown-header {
+		padding: 0.5rem 0.65rem 0.2rem;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.dropdown-item:disabled {
+		opacity: 0.45;
+	}
+
+	// Long options wrap on a phone instead of running off the screen.
+	.fv-isel-text {
+		white-space: normal;
+	}
+}
+
+// A picker at the end of its row opens its menu toward the left.
+.fv-isel-menu {
+	max-width: calc(100vw - 2rem);
+}
+
+.fv-isel:last-child .fv-isel-menu {
+	left: auto;
+	right: 0;
+}
+
+// The DPS sits at the right end of each option.
+.fv-isel-end {
+	margin-left: auto;
+	padding-left: 1rem;
+	color: var(--color-fg-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.fv-isel-menu .dropdown-item.active .fv-isel-end {
+	color: inherit;
+}

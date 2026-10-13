@@ -57,6 +57,10 @@ type Aura struct {
 
 	Duration time.Duration // Duration of aura, upon being applied.
 
+	// The rotation sees the aura and its stacks at once, with no reaction time, because the
+	// player's own finished cast gives them (Arcane Blast's stacks, say), not a random proc.
+	NoReaction bool
+
 	startTime time.Duration // Time at which the aura was applied.
 	expires   time.Duration // Time at which aura will be removed.
 	fadeTime  time.Duration // Time at which the aura was actually removed.
@@ -225,7 +229,7 @@ func (aura *Aura) SetStacks(sim *Simulation, newStacks int32) {
 	aura.stacks = newStacks
 	if newStacks < oldStacks {
 		aura.procStackGains = aura.procStackGains[:0]
-	} else if sim.noReaction == 0 {
+	} else if sim.noReaction == 0 && !aura.NoReaction {
 		aura.procStackGains = append(aura.procStackGains, procStackGain{at: sim.CurrentTime, stacks: newStacks - oldStacks})
 	}
 	if aura.OnStacksChange != nil {
@@ -640,7 +644,7 @@ func (aura *Aura) Activate(sim *Simulation) {
 	}
 
 	aura.startTime = sim.CurrentTime
-	aura.procGained = sim.noReaction == 0
+	aura.procGained = sim.noReaction == 0 && !aura.NoReaction
 	aura.procGainedAt = sim.CurrentTime
 	aura.procStackGains = aura.procStackGains[:0]
 	aura.Refresh(sim)

@@ -93,11 +93,30 @@
 }
 
 .timeline-plot {
-	// ApexCharts sizes itself from the element's whole height, padding included, so we keep the
-	// chart off the card's edges with a margin.
+	// The chart sets its own height, see the Timeline constructor. We keep it off the card's
+	// edges with a margin, because ApexCharts sizes itself from the element's padding box.
 	&.dps-resources-plot {
-		height: 32rem;
 		margin: var(--spacer-3);
+	}
+
+	// The chart's legend, a chip for each line. See drawChartLegend.
+	.chart-legend {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: var(--spacer-1);
+		margin-bottom: var(--spacer-2);
+	}
+
+	.chart-legend-swatch {
+		width: 0.75rem;
+		height: 3px;
+		border-radius: 2px;
+	}
+
+	// A hidden line's chip keeps its color, faded, so we can still tell which line it is.
+	.chart-legend-chip:not(.active) .chart-legend-swatch {
+		opacity: 0.35;
 	}
 
 	.apexcharts-tooltip.apexcharts-theme-dark {
@@ -149,6 +168,7 @@
 }
 
 .timeline-tooltip-icon {
+	@include icon-crop;
 	flex-shrink: 0;
 	width: 20px;
 	height: 20px;
@@ -266,13 +286,15 @@
 // The rotation. Labels on the left, and the rows on the right scroll sideways together.
 .rotation-container {
 	display: flex;
-	padding: var(--spacer-2) 0 var(--spacer-3);
 	color: $ivory;
 }
 
+// A lane runs from the line above it to its own line at the bottom. It's 30px inside, and the
+// icons and bars are 24px tall at 3px from the top, so they have 3px above and below. The rows
+// on the left have the same height, with a line we don't see, so they line up with the lanes.
 .rotation-row {
-	height: 28px;
-	margin: 3px 0;
+	height: 31px;
+	border-bottom: 1px solid transparent;
 	transition: opacity 0.15s ease-in-out;
 }
 
@@ -310,7 +332,7 @@
 
 .rotation-labels {
 	flex-shrink: 0;
-	padding: 0 var(--spacer-3);
+	padding: var(--spacer-2) var(--spacer-3) var(--spacer-3);
 	border-right: 1px solid var(--line-color);
 	white-space: nowrap;
 }
@@ -344,6 +366,7 @@
 
 .rotation-label-icon {
 	@include wowhead-background-icon;
+	@include icon-crop;
 	flex-shrink: 0;
 	height: 22px;
 	width: 22px;
@@ -354,18 +377,17 @@
 .rotation-label-header,
 .rotation-timeline-header {
 	height: 26px;
-	margin-bottom: 4px;
 }
 
 .rotation-timeline {
 	position: relative;
 	flex-grow: 1;
 	min-width: 0;
+	padding: var(--spacer-2) 0 var(--spacer-3);
 	overflow-x: auto;
 	cursor: grab;
-	background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px var(--grid-step, 100px));
-	background-position-x: var(--grid-offset, 0);
-	background-clip: content-box;
+	// The part that scrolls is darker than the labels, so it reads as its own area.
+	background: rgba(0, 0, 0, 0.22);
 
 	&.dragging {
 		cursor: grabbing;
@@ -381,7 +403,7 @@
 	.rotation-ruler-tick {
 		position: absolute;
 		bottom: 0;
-		width: 1px;
+		width: var(--hairline, 1px);
 		height: 4px;
 		background: var(--line-color-strong);
 
@@ -404,6 +426,22 @@
 			font-weight: 700;
 			color: var(--gold);
 		}
+	}
+}
+
+// A line down the rows at every second, under the ruler. See drawGrid.
+.rotation-grid {
+	position: absolute;
+	left: 0;
+	bottom: var(--spacer-3);
+	pointer-events: none;
+
+	.rotation-grid-line {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: var(--hairline, 1px);
+		background: rgba(255, 255, 255, 0.06);
 	}
 }
 
@@ -443,43 +481,51 @@
 
 .rotation-timeline-row {
 	position: relative;
-	overflow: hidden;
+	// The row cuts off bars that run past the end of the fight, but not up or down, so the
+	// outcome badges can stick out of their icons.
+	overflow-x: clip;
+	overflow-y: visible;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.rotation-timeline-resource {
+// The step chart of a resource like mana, under its labels.
+.rotation-resource-chart {
 	position: absolute;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	padding-left: 2px;
-	border-left: 1px solid rgba(255, 255, 255, 0.12);
-	font-size: 0.75rem;
-	font-weight: 600;
-	font-variant-numeric: tabular-nums;
-	overflow-x: hidden;
-}
-
-.rotation-timeline-resource-fill {
-	position: absolute;
-	bottom: 0;
+	top: 0;
 	left: 0;
-	width: 10px;
+	pointer-events: none;
 
-	&.focus {
-		background-color: var(--bs-orange);
+	.rotation-resource-area {
+		fill: currentColor;
+		fill-opacity: 0.14;
 	}
 
-	&.energy {
-		background-color: var(--bs-partial);
+	.rotation-resource-line {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.5;
+		stroke-opacity: 0.8;
 	}
 }
 
-// Everything in a row is as tall as a cast icon and sits in the middle of the row. The bars
+.rotation-resource-label {
+	position: absolute;
+	top: 50%;
+	z-index: 1;
+	padding-left: 3px;
+	transform: translateY(-50%);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+	pointer-events: none;
+}
+
+// Everything in a row is as tall as a cast icon and sits in the middle of the lane. The bars
 // that run on from an icon, like a cast time or a DoT's uptime, take the color of the icon.
 .rotation-timeline-cast {
 	position: absolute;
-	top: 2px;
+	top: 3px;
 	z-index: 1;
 	display: flex;
 	border-radius: 3px;
@@ -494,7 +540,7 @@
 
 .rotation-timeline-tick {
 	position: absolute;
-	top: 2px;
+	top: 3px;
 	z-index: 2;
 	width: 3px;
 	height: 24px;
@@ -504,7 +550,7 @@
 
 .rotation-timeline-aura {
 	position: absolute;
-	top: 2px;
+	top: 3px;
 	height: 24px;
 	border-left: 2px solid rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.9);
 	border-radius: 2px;
@@ -513,6 +559,7 @@
 
 .rotation-timeline-stacks-change {
 	position: absolute;
+	top: 0;
 	height: 24px;
 	display: flex;
 	align-items: center;
@@ -523,6 +570,96 @@
 	overflow-x: hidden;
 }
 
+// An aura's stacks in the bottom right corner of an icon, like on a buff in the game.
+.rotation-icon-count {
+	position: absolute;
+	right: 1px;
+	bottom: 0;
+	z-index: 1;
+	font-size: 10px;
+	font-weight: 800;
+	line-height: 1;
+	color: #fff;
+	text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+	pointer-events: none;
+}
+
+// A cast's outcome badge moves to the bottom left when the stacks are in the bottom right.
+.rotation-timeline-cast:has(.rotation-icon-count) .rotation-timeline-cast-badge {
+	left: -5px;
+	transform: none;
+}
+
+// The icon at the start of an aura's bar. It covers the bar's colored left edge. We nest it under
+// the bar, so it wins over the cast icon's position, which comes later in the file.
+.rotation-timeline-aura .rotation-timeline-aura-icon {
+	position: absolute;
+	top: 0;
+	left: -2px;
+	z-index: 1;
+}
+
+// The GCD row. Each bar is one GCD in the color of its ability's icon, with the cast time as
+// the solid part. Striped red gaps are time with the GCD ready and nothing pressed.
+.rotation-gcd {
+	position: absolute;
+	top: 3px;
+	z-index: 1;
+	height: 24px;
+	overflow: hidden;
+	border-left: 1px solid rgba(0, 0, 0, 0.6);
+	background-color: rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.4);
+}
+
+.rotation-gcd-cast {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background-color: rgba(var(--bar-rgb, var(--timeline-bar-rgb)), 0.45);
+}
+
+.rotation-gcd-icon {
+	@include wowhead-background-icon;
+	@include icon-crop;
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+}
+
+.rotation-gcd-idle {
+	position: absolute;
+	top: 7px;
+	height: 16px;
+	background: repeating-linear-gradient(135deg, rgba(224, 112, 112, 0.3) 0 3px, transparent 3px 6px);
+}
+
+.rotation-gcd-label {
+	.rotation-gcd-label-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.75rem;
+		color: var(--gold-soft);
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.rotation-gcd-usage {
+		margin-left: auto;
+		font-size: 0.75rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		color: var(--text-muted-color);
+	}
+}
+
 .rotation-timeline-separator {
 	height: 1px;
 	margin: 8px 0;
@@ -531,21 +668,25 @@
 
 .rotation-timeline-cast-icon {
 	@include wowhead-background-icon;
+	@include icon-crop;
 	height: 24px;
 	width: 24px;
 	border: 1px solid rgba(0, 0, 0, 0.7);
 	border-radius: 0;
 }
 
-// A small badge over the bottom of a cast icon for a notable outcome, like a crit or a parry.
-// It uses the colors of the tooltip badges, so those are its legend.
+// A small badge on the bottom right corner of a cast icon for a notable outcome, like a crit
+// or a parry. It sticks out of the icon a little, so it reads as a mark on the icon. It uses the
+// colors of the tooltip badges, so those are its legend.
 .rotation-timeline-cast-badge {
 	position: absolute;
-	left: 12px;
+	// The cast can be wider than its icon, when a bar for the cast time follows it. So we place
+	// the badge from the icon's right edge (24px) and not the cast's.
+	left: 29px;
 	bottom: -3px;
 	z-index: 1;
 	padding: 0 2px;
-	transform: translateX(-50%);
+	transform: translateX(-100%);
 	border-radius: 2px;
 	font-size: 7px;
 	font-weight: 800;

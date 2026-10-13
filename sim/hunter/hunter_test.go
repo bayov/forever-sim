@@ -12,55 +12,116 @@ func init() {
 	RegisterHunter()
 }
 
-func TestP1Hunter(t *testing.T) {
+func TestBeastMastery(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		{
-			Class:      proto.Class_ClassHunter,
-			Phase:      1,
-			Race:       proto.Race_RaceOrc,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
-			OtherRaces: []proto.Race{proto.Race_RaceDwarf},
-
-			Talents:     P1Talents,
-			GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", "p0.bis"),
-			Rotation:    core.GetAplRotation("../../ui/hunter/apls", "p1"),
-			Buffs:       core.FullBuffs,
-			Consumes:    P1Consumes,
-			SpecOptions: core.SpecOptionsCombo{Label: "Hunter", SpecOptions: P1PlayerOptions},
-
-			ItemFilter:      ItemFilters,
-			EPReferenceStat: proto.Stat_StatAttackPower,
-			StatsToWeigh:    Stats,
-		},
+		hunterSuite(BeastMasteryTalents, "level60_phase1_synthetic_ranged", "bm", RangedConsumes, PlayerOptionsCat),
 	}))
 }
 
-var P1Talents = "-05451002503051-33400023023"
+func TestMarksmanship(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
+		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm", RangedConsumes, PlayerOptionsCat),
+	}))
+}
 
-var P1Consumes = core.ConsumesCombo{
-	Label: "P1-Consumes",
+// Lone Wolf is Marksmanship without a pet.
+func TestLoneWolf(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
+		hunterSuite(LoneWolfTalents, "level60_phase1_synthetic_ranged", "lw", RangedConsumes, PlayerOptionsNoPet),
+	}))
+}
+
+// The test suite puts every player 5 yards from the target. The ranged rotations step back to 25
+// yards first (8 yards is the minimum range), Survival melees from there.
+func TestSurvival(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
+		hunterSuite(SurvivalTalents, "level60_phase1_synthetic_survival", "sv", SurvivalConsumes, PlayerOptionsCat),
+	}))
+}
+
+func hunterSuite(talents string, gear string, apl string, consumes core.ConsumesCombo, options *proto.Player_Hunter) core.CharacterSuiteConfig {
+	return core.CharacterSuiteConfig{
+		Class:      proto.Class_ClassHunter,
+		Phase:      1,
+		Race:       proto.Race_RaceOrc,
+		OtherRaces: []proto.Race{proto.Race_RaceNightElf},
+
+		Talents:     talents,
+		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", gear),
+		Rotation:    core.GetAplRotation("../../ui/hunter/apls", apl),
+		Buffs:       core.ForeverBuffs,
+		Consumes:    consumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Options", SpecOptions: options},
+
+		ItemFilter:      ItemFilters,
+		EPReferenceStat: proto.Stat_StatRangedAttackPower,
+		StatsToWeigh:    Stats,
+
+		Ruleset: proto.Ruleset_RulesetForever,
+	}
+}
+
+// The level 60 builds in ui/hunter/presets.ts.
+var BeastMasteryTalents = "5020121505021241-00520503014"
+var MarksmanshipTalents = "502-0053452501503051-5"
+var LoneWolfTalents = "5-0053552511503051-5"
+var SurvivalTalents = "502-005005-500230230250122151"
+
+// The level 60 consumes from ui/hunter/presets.ts.
+var RangedConsumes = core.ConsumesCombo{
+	Label: "Ranged",
 	Consumes: &proto.Consumes{
-		AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
-		AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
-		DefaultPotion:     proto.Potions_ManaPotion,
-		DragonBreathChili: true,
-		Flask:             proto.Flask_FlaskOfSupremePower,
-		Food:              proto.Food_FoodSagefishDelight,
-		MainHandImbue:     proto.WeaponImbue_Windfury,
-		OffHandImbue:      proto.WeaponImbue_ElementalSharpeningStone,
-		SpellPowerBuff:    proto.SpellPowerBuff_GreaterArcaneElixir,
-		StrengthBuff:      proto.StrengthBuff_JujuPower,
+		AgilityElixir:   proto.AgilityElixir_ElixirOfTheMongoose,
+		AttackPowerBuff: proto.AttackPowerBuff_JujuMight,
+		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
+		DefaultPotion:   proto.Potions_MajorManaPotion,
+		FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
+		Flask:           proto.Flask_FlaskOfDistilledWisdom,
+		Food:            proto.Food_FoodFlankAuPoivre,
+		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
+		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
+		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
+		StrengthBuff:    proto.StrengthBuff_ElixirOfFerocity,
+		ZanzaBuff:       proto.ZanzaBuff_GroundScorpokAssay,
 	},
 }
 
-var P1PlayerOptions = &proto.Player_Hunter{
+var SurvivalConsumes = core.ConsumesCombo{
+	Label: "Survival",
+	Consumes: &proto.Consumes{
+		AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
+		AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
+		DragonBreathChili: true,
+		MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
+		OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,
+		DefaultPotion:     proto.Potions_MajorFrenzyPotion,
+		FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
+		Food:              proto.Food_FoodFlankAuPoivre,
+		IntellectElixir:   proto.IntellectElixir_ElixirOfGreaterIntellect,
+		SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
+		StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
+		ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
+	},
+}
+
+var PlayerOptionsCat = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{
 		Options: &proto.Hunter_Options{
-			Ammo:           proto.Hunter_Options_RazorArrow,
+			Ammo:           proto.Hunter_Options_ThoriumHeadedArrow,
+			QuiverBonus:    proto.Hunter_Options_Speed15,
 			PetType:        proto.Hunter_Options_Cat,
 			PetUptime:      1,
-			PetAttackSpeed: 2.0,
+			PetAttackSpeed: proto.Hunter_Options_One,
+		},
+	},
+}
+
+var PlayerOptionsNoPet = &proto.Player_Hunter{
+	Hunter: &proto.Hunter{
+		Options: &proto.Hunter_Options{
+			Ammo:        proto.Hunter_Options_ThoriumHeadedArrow,
+			QuiverBonus: proto.Hunter_Options_Speed15,
+			PetType:     proto.Hunter_Options_PetNone,
 		},
 	},
 }

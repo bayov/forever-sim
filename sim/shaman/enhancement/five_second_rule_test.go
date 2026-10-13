@@ -47,7 +47,7 @@ func newShamanSim(player *proto.Player, debuffs *proto.Debuffs, seconds float64)
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, debuffs),
 		Encounter:  &proto.Encounter{Duration: seconds, Targets: []*proto.Target{core.NewDefaultTarget()}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()

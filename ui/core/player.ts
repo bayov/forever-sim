@@ -272,6 +272,8 @@ export class Player<SpecType extends Spec> {
 	private specOptions: SpecOptions<SpecType>;
 	private level = 0;
 	private bonusTalentPoints = 0;
+	private mainHandSkillGap = 0;
+	private offHandSkillGap = 0;
 	private reactionTime = DEFAULT_REACTION_TIME_MS;
 	private channelClipDelay = 0;
 	private inFrontOfTarget = false;
@@ -1010,6 +1012,29 @@ export class Player<SpecType extends Spec> {
 		this.miscOptionsChangeEmitter.emit(eventID);
 	}
 
+	// How far each weapon's skill is below the most for the level, 0 for full skill.
+	getMainHandSkillGap(): number {
+		return this.mainHandSkillGap;
+	}
+
+	setMainHandSkillGap(eventID: EventID, newGap: number) {
+		if (newGap === this.mainHandSkillGap) return;
+
+		this.mainHandSkillGap = newGap;
+		this.miscOptionsChangeEmitter.emit(eventID);
+	}
+
+	getOffHandSkillGap(): number {
+		return this.offHandSkillGap;
+	}
+
+	setOffHandSkillGap(eventID: EventID, newGap: number) {
+		if (newGap === this.offHandSkillGap) return;
+
+		this.offHandSkillGap = newGap;
+		this.miscOptionsChangeEmitter.emit(eventID);
+	}
+
 	getReactionTime(): number {
 		return this.reactionTime;
 	}
@@ -1554,6 +1579,8 @@ export class Player<SpecType extends Spec> {
 				profession2: this.getProfession2(),
 				level: this.getLevel(),
 				bonusTalentPoints: this.getBonusTalentPoints(),
+				mainHandSkillGap: this.getMainHandSkillGap(),
+				offHandSkillGap: this.getOffHandSkillGap(),
 				reactionTimeMs: this.getReactionTime(),
 				channelClipDelayMs: this.getChannelClipDelay(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
@@ -1615,6 +1642,8 @@ export class Player<SpecType extends Spec> {
 				this.setProfession2(eventID, proto.profession2);
 				this.setLevel(eventID, proto.level);
 				this.setBonusTalentPoints(eventID, proto.bonusTalentPoints);
+				this.setMainHandSkillGap(eventID, proto.mainHandSkillGap);
+				this.setOffHandSkillGap(eventID, proto.offHandSkillGap);
 				this.setReactionTime(eventID, proto.reactionTimeMs || DEFAULT_REACTION_TIME_MS);
 				this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 				this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);

@@ -100,6 +100,31 @@ export const BonusTalentPoints = {
 	},
 };
 
+export const MainHandSkillGap = {
+	id: 'main-hand-skill-gap',
+	type: 'number' as const,
+	label: 'Main Hand Skill Below Max',
+	labelTooltip:
+		'How far the main hand weapon\'s skill is below the most for the level (5 a level), 0 for full skill. A weapon you haven\'t leveled yet misses, gets dodged, parried and glanced more, glances for less and crits less.',
+	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
+	getValue: (player: Player<any>) => player.getMainHandSkillGap(),
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		player.setMainHandSkillGap(eventID, Math.max(0, newValue));
+	},
+};
+
+export const OffHandSkillGap = {
+	id: 'off-hand-skill-gap',
+	type: 'number' as const,
+	label: 'Off Hand Skill Below Max',
+	labelTooltip: 'Like Main Hand Skill Below Max, for the off hand weapon when dual wielding.',
+	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
+	getValue: (player: Player<any>) => player.getOffHandSkillGap(),
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		player.setOffHandSkillGap(eventID, Math.max(0, newValue));
+	},
+};
+
 export const ReactionTime = {
 	id: 'reaction-time',
 	type: 'number' as const,

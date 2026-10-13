@@ -3,6 +3,8 @@ package proto;
 
 option go_package = "./proto";
 
+import "common.proto";
+
 message RogueTalents {
 	// Assassination
 	int32 improved_gouge = 1;
@@ -65,7 +67,12 @@ message RogueTalents {
 }
 
 message RogueOptions {
-
+	// Forever's poisons are class imbues (client 70338: SpellEffect 360, like the shaman's weapon
+	// imbues) where Era's were temporary enchants (54), so a poison sits beside a sharpening stone
+	// or oil. They get their own fields, which leaves Consumes' main and off hand imbues for the
+	// stone. Left unset, the poisons are read from Consumes as before.
+	WeaponImbue main_hand_poison = 1;
+	WeaponImbue off_hand_poison = 2;
 }
 
 message Rogue {

@@ -82,7 +82,7 @@ func newTankSimWithBuffs(player *proto.Player, targetLevel int32, raidBuffs *pro
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       raid,
 		Encounter:  &proto.Encounter{Duration: 20, Targets: []*proto.Target{target}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()

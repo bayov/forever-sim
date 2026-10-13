@@ -134,6 +134,13 @@
 	display: inline-block;
 }
 
+// WoW icon textures have a frame drawn into their edges. We zoom in on the middle of the icon
+// so the frame doesn't show next to our own border.
+@mixin icon-crop($zoom: 125%) {
+	background-size: $zoom;
+	background-position: center;
+}
+
 // A menu that opens from the header or the Results toolbar.
 @mixin header-dropdown-menu {
 	min-width: 10rem;
@@ -173,6 +180,250 @@
 		&.active {
 			color: var(--gold-soft);
 			background: rgba($gold, 0.12);
+		}
+	}
+}
+
+// A row of buttons that work as one choice, like the Events tab's view and iteration. The DPS
+// Report uses it too. Its buttons mark the pick with aria-pressed instead of .active, so the
+// selector of the picked option is a parameter.
+@mixin segmented {
+	display: inline-flex;
+	padding: 2px;
+	gap: 2px;
+	background: $input-bg;
+	border: 1px solid var(--line-color-strong);
+	border-radius: var(--bs-border-radius);
+}
+
+@mixin segmented-option($active: '.active') {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.3rem 0.7rem;
+	border: 0;
+	border-radius: calc(var(--bs-border-radius) - 1px);
+	background: transparent;
+	color: var(--text-muted-color);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	white-space: nowrap;
+
+	&:hover:not(:disabled) {
+		color: $ivory;
+		background: rgba(255, 255, 255, 0.04);
+	}
+
+	&#{$active} {
+		color: $ivory;
+		background: $panel-bg-2;
+		box-shadow: inset 0 0 0 1px var(--line-color-strong);
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+}
+
+// A filter that we turn on and off, like an Events tab category.
+@mixin filter-chip($active: '.active') {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border: 1px solid var(--line-color-strong);
+	border-radius: 999px;
+	background: transparent;
+	color: var(--text-muted-color);
+	font-size: 0.75rem;
+	font-weight: 600;
+	white-space: nowrap;
+
+	&:hover:not(:disabled) {
+		color: $ivory;
+		border-color: var(--text-muted-color);
+	}
+
+	&#{$active} {
+		color: $ivory;
+		border-color: rgba($accent, 0.6);
+		background: rgba($accent, 0.12);
+	}
+
+	&:disabled {
+		opacity: 0.35;
+		cursor: default;
+	}
+}
+
+// The small muted label in front of a control, like "Iteration" on the Events tab.
+@mixin control-label {
+	font-size: 0.75rem;
+	color: var(--text-muted-color);
+	white-space: nowrap;
+}
+
+// One icon in a row of icons we pick from, like the race picker. It's dimmed and gray until we
+// pick it, and the one we pick gets its color and a gold ring.
+@mixin icon-picker-option($active: '.active') {
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 1px solid #000;
+	border-radius: 3px;
+	background-size: cover;
+	box-shadow: 0 0 0 1px var(--line-color-strong);
+	filter: grayscale(0.8) brightness(0.55);
+	transition:
+		filter 0.15s,
+		box-shadow 0.15s;
+
+	&:hover {
+		filter: grayscale(0.2) brightness(0.9);
+	}
+
+	&#{$active} {
+		filter: none;
+		box-shadow: 0 0 0 2px var(--gold);
+	}
+}
+
+// The second level of a sim page's menu, like the Results tab's own tabs: a bar that sticks
+// under the sim header, with a muted label in front and tabs with a gold line under the open
+// one. Once it sticks it takes the header's frosted background (the .stuck class).
+@mixin sub-toolbar {
+	position: sticky;
+	top: var(--sim-header-height);
+	display: flex;
+	align-items: stretch;
+	gap: var(--spacer-3);
+	height: var(--dr-toolbar-height);
+	padding: 0 var(--sim-content-padding-x);
+	margin-left: calc(-1 * var(--sim-content-padding-x));
+	margin-right: calc(-1 * var(--sim-content-padding-x));
+	transition:
+		background-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
+	// This needs to be less than var(--header-z-index) otherwise the toolbar overlaps the import/export dropdowns
+	z-index: calc(var(--header-z-index) - 1);
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: var(--sim-content-padding-x);
+		right: var(--sim-content-padding-x);
+		bottom: 0;
+		height: 1px;
+		background: var(--line-color);
+		transition:
+			left 0.15s ease-in-out,
+			right 0.15s ease-in-out;
+	}
+
+	&.stuck {
+		background: rgba(11, 15, 21, 0.75);
+		backdrop-filter: blur(8px);
+		box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5);
+
+		&::after {
+			left: 0;
+			right: 0;
+		}
+	}
+
+	& > * {
+		min-height: 0;
+	}
+}
+
+@mixin sub-toolbar-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--text-muted-color);
+	white-space: nowrap;
+
+	.fa-chevron-right {
+		font-size: 0.5rem;
+		opacity: 0.6;
+	}
+}
+
+@mixin sub-tabs {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	gap: 0.25rem;
+	border: 0;
+	// On a narrow page the tabs scroll sideways instead of wrapping into a second row.
+	overflow-x: auto;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	.nav-item {
+		display: flex;
+	}
+
+	.nav-link {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0 0.75rem;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		white-space: nowrap;
+		color: var(--text-muted-color);
+		transition: color 0.15s ease-in-out;
+
+		i {
+			font-size: 0.75rem;
+			opacity: 0.75;
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: 0.75rem;
+			right: 0.75rem;
+			bottom: 0;
+			z-index: 1;
+			height: 2px;
+			border-radius: 2px 2px 0 0;
+			background: transparent;
+			transition: background-color 0.15s ease-in-out;
+		}
+
+		&:hover {
+			color: $ivory;
+
+			&::after {
+				background: var(--line-color-strong);
+			}
+		}
+
+		&.active {
+			color: $ivory;
+
+			i {
+				color: var(--gold-soft);
+				opacity: 1;
+			}
+
+			&::after {
+				background: var(--gold);
+			}
 		}
 	}
 }

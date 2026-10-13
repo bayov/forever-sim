@@ -16,7 +16,7 @@ import (
 func TestOrcShamanHaste(t *testing.T) {
 	// Flurry 5/5 and Rage of the Farseer.
 	sim, enh := newShamanSim(newOrcShaman(60, "-000000000005000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 20)
-	flurry := enh.GetAuraByID(core.ActionID{SpellID: 16280})
+	flurry := enh.GetAuraByID(core.ActionID{SpellID: 16257})
 	farseer := enh.GetAuraByID(core.ActionID{SpellID: 425336})
 	farseerSpell := enh.GetSpell(core.ActionID{SpellID: 425336})
 	if flurry == nil || farseer == nil || farseerSpell == nil {

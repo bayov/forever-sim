@@ -28,6 +28,10 @@ var (
 	elunesLight    = spellID(1259799)
 	eureka         = spellID(1259812)
 	earthstrike    = itemID(21180)
+	// The Level 60 presets' synthetic on-use trinket (+335 attack power, 20 sec, 2 min, standards 1b).
+	synthTrinket = itemID(994202)
+	sapper       = itemID(10646)
+	landMine     = itemID(4395)
 )
 
 // The 15 second buffs are only worth a cast when the fight lasts that long after it.
@@ -43,6 +47,9 @@ func rogueCooldownKnobs() []Knob {
 		// (18 sec) is worth 1.4 DPS there. The refresh before it drops stays at 5 points,
 		// every lower value lost.
 		{Name: "sndCp", Default: 1, Min: 1, Max: 5, Step: 1},
+		// The refresh before Slice and Dice drops waits for this many combo points. Below 5
+		// a short refresh goes out instead of letting Slice and Dice drop and come back at 1.
+		{Name: "sndRefreshCp", Default: 5, Min: 2, Max: 5, Step: 1},
 		{Name: "arEnergy", Default: 59, Min: 39, Max: 99, Step: 10},
 		{Name: "arSnd", Default: 1, Min: 0, Max: 18, Step: 3},
 		{Name: "bfSnd", Default: 1, Min: 0, Max: 24, Step: 3},
@@ -63,6 +70,9 @@ func rogueCooldownKnobs() []Knob {
 		{Name: "eluneHoldForAr", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "berserkingHoldForBf", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "evisEnergy", Default: 79, Min: 59, Max: 99, Step: 10},
+		// The Eviscerate finisher's combo points. 5, but Mutilate builds land on 4 often enough
+		// that waiting for a fifth wastes points.
+		{Name: "evisCp", Default: 5, Min: 3, Max: 5, Step: 1},
 		{Name: "bfPrepull", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
@@ -121,6 +131,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		{bladeFlurry, k["bfSnd"], hasBladeFlurry},
 		{bloodFury, k["bloodFurySnd"], true},
 		{earthstrike, k["trinketSnd"], true},
+		{synthTrinket, k["trinketSnd"], true},
 	} {
 		if w.snd > 0 && w.has {
 			waiting = append(waiting, and(
@@ -130,9 +141,13 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 			))
 		}
 	}
+	// The sim drops a clause that names a spell the character does not know, so with none of
+	// the waiting cooldowns in the build every clause would go and leave a bare "5 combo
+	// points" that takes every finisher (a Mutilate or Seal Fate build has no Adrenaline
+	// Rush). The constant false keeps the window rule false then.
 	var sndForWindow value
 	if len(waiting) > 0 {
-		sndForWindow = and(ge(comboPoints(), num(5)), or(waiting...))
+		sndForWindow = and(ge(comboPoints(), num(5)), or(append(waiting, lt(num(1), num(0)))...))
 	}
 
 	c := rogueCooldowns{}
@@ -159,9 +174,9 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	}
 
 	// The notes say what the knobs made of the line, so the file reads right in the UI.
-	sndNotes := "Slice and Dice up at any combo points, refresh at 5 when it is about to drop"
+	sndNotes := fmt.Sprintf("Slice and Dice up at any combo points, refresh at %g when it is about to drop", k["sndRefreshCp"])
 	if k["sndCp"] > 1 {
-		sndNotes = fmt.Sprintf("Slice and Dice at %g combo points once it is down (a short one at fewer points would eat every point before a Rupture), refresh at 5 when it is about to drop", k["sndCp"])
+		sndNotes = fmt.Sprintf("Slice and Dice at %g combo points once it is down (a short one at fewer points would eat every point before a Rupture), refresh at %g when it is about to drop", k["sndCp"], k["sndRefreshCp"])
 	}
 	if sndForWindow != nil {
 		sndNotes += " or when Adrenaline Rush is waiting on a longer one"
@@ -173,7 +188,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 	}
 	c.sliceAndDice = cast(sliceAndDice, or(
 		and(ge(comboPoints(), num(k["sndCp"])), not(auraIsActive(sliceAndDice)), ge(remainingTime(), seconds(6))),
-		and(ge(comboPoints(), num(5)), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9)), c.ruptureHold),
+		and(ge(comboPoints(), num(k["sndRefreshCp"])), lt(auraRemainingTime(sliceAndDice), seconds(k["sndRefresh"])), gt(remainingTime(), seconds(9)), c.ruptureHold),
 		sndForWindow,
 	), sndNotes)
 
@@ -218,16 +233,30 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 
 		cast(earthstrike, and(sndAtLeast(k["trinketSnd"]), holdFor(earthstrike, adrenalineRush, k["trinketHoldForAr"] == 1)),
 			timedBuffNotes("Earthstrike", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
+		cast(synthTrinket, and(sndAtLeast(k["trinketSnd"]), holdFor(synthTrinket, adrenalineRush, k["trinketHoldForAr"] == 1)),
+			timedBuffNotes("The synthetic on-use trinket", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
 
 		cast(thistleTea, le(energy(), num(k["teaEnergy"])),
 			"Thistle Tea when there is room for the 100 energy."),
 
-		autocastOtherCooldowns(auraIsActive(sliceAndDice), "Anything not listed above (Sapper, trinkets)."),
+		// The Land Mine's 1 sec cast restarts both swing timers from its end, so it goes right after a
+		// main hand swing (rotations auditor, +0.6 to +1.5). It shares the explosives cooldown with the
+		// Sapper, so the Sapper needs its own line first or it would never go out.
+		cast(sapper, auraIsActive(sliceAndDice), "Goblin Sapper Charge on cooldown once Slice and Dice is up."),
+		cast(landMine, and(auraIsActive(sliceAndDice), ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.4)))),
+			"Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time."),
+
+		autocastOtherCooldowns(auraIsActive(sliceAndDice), "Anything not listed above (trinkets)."),
 	)
 
-	c.evisWhen = and(
-		ge(comboPoints(), num(5)),
-		or(auraIsActive(sliceAndDice), ge(energy(), num(k["evisEnergy"])), lt(remainingTime(), seconds(6))),
+	// A 5 point Eviscerate, or whatever points are left in the last seconds of the fight,
+	// which are lost otherwise (+4 DPS at 180 sec, rotation audit 2026-10-12).
+	c.evisWhen = or(
+		and(
+			ge(comboPoints(), num(k["evisCp"])),
+			or(auraIsActive(sliceAndDice), ge(energy(), num(k["evisEnergy"])), lt(remainingTime(), seconds(6))),
+		),
+		and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(3))),
 	)
 
 	if k["bfPrepull"] == 1 {

@@ -15,16 +15,16 @@ func init() {
 func TestP1Mage(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		{
-			Class:      proto.Class_ClassMage,
-			Phase:      1,
-			Race:       proto.Race_RaceTroll,
-			// Not converted to Forever yet, so it keeps running under Classic rules.
-			Ruleset: proto.Ruleset_RulesetClassic,
-			OtherRaces: []proto.Race{proto.Race_RaceGnome},
+			Class: proto.Class_ClassMage,
+			Phase: 1,
+			Race:  proto.Race_RaceUndead,
+			// The Level 60 Frostfire preset, under Forever rules.
+			Ruleset:    proto.Ruleset_RulesetForever,
+			OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 			Talents:     P1Talents,
-			GearSet:     core.GetGearSet("../../ui/mage/gear_sets", "p0.bis"),
-			Rotation:    core.GetAplRotation("../../ui/mage/apls", "p1"),
+			GearSet:     core.GetGearSet("../../ui/mage/gear_sets", "level60_phase1_synthetic"),
+			Rotation:    core.GetAplRotation("../../ui/mage/apls", "level60_frostfire"),
 			Buffs:       core.FullBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "DPS", SpecOptions: PlayerOptions},
@@ -36,12 +36,13 @@ func TestP1Mage(t *testing.T) {
 	}))
 }
 
-var P1Talents = "-0550320003021-2035020310035105"
+// The Level 60 Frostfire build (ui/mage/presets.ts).
+var P1Talents = "-1355000013013304-00550003310003002"
 
 var PlayerOptions = &proto.Player_Mage{
 	Mage: &proto.Mage{
 		Options: &proto.Mage_Options{
-			Armor: proto.Mage_Options_MoltenArmor,
+			Armor: proto.Mage_Options_MageArmor,
 		},
 	},
 }
@@ -49,13 +50,16 @@ var PlayerOptions = &proto.Player_Mage{
 var P1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",
 	Consumes: &proto.Consumes{
-		DefaultPotion:  proto.Potions_MajorManaPotion,
-		Flask:          proto.Flask_FlaskOfSupremePower,
-		FirePowerBuff:  proto.FirePowerBuff_ElixirOfGreaterFirepower,
-		FrostPowerBuff: proto.FrostPowerBuff_ElixirOfFrostPower,
-		Food:           proto.Food_FoodRunnTumTuberSurprise,
-		MainHandImbue:  proto.WeaponImbue_BrilliantWizardOil,
-		SpellPowerBuff: proto.SpellPowerBuff_GreaterArcaneElixir,
+		DefaultPotion:   proto.Potions_MajorManaPotion,
+		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
+		Flask:           proto.Flask_FlaskOfSupremePower,
+		Food:            proto.Food_FoodLobsterStew,
+		FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
+		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
+		MainHandImbue:   proto.WeaponImbue_WizardOil,
+		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
+		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+		SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 	},
 }
 

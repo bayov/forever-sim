@@ -148,10 +148,10 @@ func (rogue *Rogue) registerInstantPoisonSpell() {
 
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	baseDamageTick := rankAt(rogue.Level, map[int32]float64{
-		30: 6, 38: 9, 46: 14, 54: 18, 60: core.TernaryFloat64(core.IncludeAQ, 23, 18),
+		30: 6, 38: 9, 46: 14, 54: 18, 60: core.TernaryFloat64(rogue.Env.IncludeAQRanks(), 23, 18),
 	})
 	spellID := rankSpellID(rogue.Level, map[int32]int32{
-		30: 2823, 38: 2824, 46: 11355, 54: 11356, 60: core.TernaryInt32(core.IncludeAQ, 25347, 11356),
+		30: 2823, 38: 2824, 46: 11355, 54: 11356, 60: core.TernaryInt32(rogue.Env.IncludeAQRanks(), 25347, 11356),
 	})
 	core.RegisterSpellRanks(11356, 25347)
 
@@ -174,19 +174,16 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
 
+			// Every application takes a new snapshot of the whole stack, so a buff that comes up
+			// later (Venom, Blood Fury) reaches a poison that is already at 5 stacks. Taking it
+			// on the first stack only, as we did, kept Venom off the poison for the whole fight.
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, applyStack bool) {
 				if !applyStack {
 					return
 				}
-
-				// only the first stack snapshots the multiplier
-				if dot.GetStacks() == 1 {
-					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex][dot.Spell.CastType]
-					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable, true)
-					dot.SnapshotBaseDamage = 0
-				}
-
-				dot.SnapshotBaseDamage += baseDamageTick
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex][dot.Spell.CastType]
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable, true)
+				dot.SnapshotBaseDamage = baseDamageTick * float64(dot.GetStacks())
 			},
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -268,9 +265,8 @@ func (rogue *Rogue) makeDeadlyPoison() *core.Spell {
 			dot.ApplyOrRefresh(sim)
 			if dot.GetStacks() < dot.MaxStacks {
 				dot.AddStack(sim)
-				// snapshotting only takes place when adding a stack
-				dot.TakeSnapshot(sim, true)
 			}
+			dot.TakeSnapshot(sim, true)
 		},
 	})
 }

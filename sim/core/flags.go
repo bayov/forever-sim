@@ -194,6 +194,7 @@ const (
 	SpellFlagNotAProc                                      // Indicates the proc is not treated as a proc (Seal of Command)
 	SpellFlagNoPeriodicCrit                                // Indicates this spell's periodic damage can never crit, even under rulesets where dots normally can
 	SpellFlagCastFromTotem                                 // Indicates this spell goes off from a totem, not the caster (Forever's Fire Nova), so effects on the caster's next spell cast skip it
+	SpellFlagCastWhileCasting                              // Indicates this spell can go off while the caster is casting another (Forever's Auto Shot)
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

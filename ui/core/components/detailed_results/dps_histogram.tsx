@@ -8,10 +8,15 @@ type HistogramMode = 'distribution' | 'cumulative';
 
 const MODE_STORAGE_KEY = '__dps_histogram_mode__';
 
-// The most bins we draw. With more, the bars get too thin to read and each one has too few
-// iterations, so the shape gets noisy.
-const MAX_BINS = 60;
-const NICE_BIN_WIDTHS = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000];
+// How many bins we draw depends on the chart's width. Each bar gets at least this many pixels,
+// so it stays wide enough to read and to hover.
+const MIN_BIN_PX = 6;
+// Each bin holds at least this many iterations on average. With fewer, the shape gets spiky
+// from chance alone, like a short run of 100 iterations spread over 50 bins.
+const MIN_ITERATIONS_PER_BIN = 10;
+// Before the chart has a width, like while the Results tab is hidden, we draw this many.
+const DEFAULT_MAX_BINS = 60;
+const NICE_BIN_WIDTHS = [1, 2, 3, 4, 5, 10, 15, 20, 25, 50, 100, 200, 250, 500, 1000];
 
 const ACCENT = 'rgba(127, 179, 240, 0.85)';
 const ACCENT_FAINT = 'rgba(127, 179, 240, 0.3)';
@@ -34,8 +39,8 @@ interface Percentiles {
 // The DPS of each iteration, as a histogram or as the share of iterations at or below each DPS.
 //
 // The sim counts the iterations at each whole DPS. We group those counts into bins with a
-// round width, so a run with a spread of 30 DPS gets bins of 1 DPS and a run with a spread of
-// 500 DPS gets bins of 10. We mark the 10th percentile, the median and the 90th percentile:
+// round width. A wider chart gets more bins, so on a wide screen a run with a spread of 500 DPS
+// can get bins of 5 DPS, and on a narrow one bins of 10 or 20. We mark the 10th percentile, the median and the 90th percentile:
 // one in ten iterations does worse than P10, and one in ten does better than P90.
 export class DpsHistogram extends ResultComponent {
 	private mode: HistogramMode = loadMode();
@@ -44,6 +49,8 @@ export class DpsHistogram extends ResultComponent {
 	private readonly statsElem: HTMLElement;
 	private readonly chartElem: HTMLElement;
 	private readonly modeButtons: HTMLButtonElement[] = [];
+	// The bin width we drew with, so a resize only draws again when it changes the bins.
+	private drawnBinWidth = 0;
 
 	constructor(config: ResultComponentConfig) {
 		config.rootCssClass = 'dps-histogram-root';
@@ -74,6 +81,18 @@ export class DpsHistogram extends ResultComponent {
 		this.updateModeButtons();
 
 		this.addOnDisposeCallback(() => this.chart?.destroy());
+
+		// A wider or narrower chart can take a different number of bins. We check once a frame at
+		// most, because a window resize sends many changes.
+		let frame = 0;
+		const resizeObserver = new ResizeObserver(() => {
+			cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(() => {
+				if (this.mode == 'distribution' && this.lastResult && this.binWidthFor(this.lastCounts()) != this.drawnBinWidth) this.render();
+			});
+		});
+		resizeObserver.observe(this.chartElem);
+		this.addOnDisposeCallback(() => resizeObserver.disconnect());
 	}
 
 	onSimResult(resultData: SimResultData) {
@@ -103,11 +122,7 @@ export class DpsHistogram extends ResultComponent {
 		this.statsElem.replaceChildren();
 		if (!this.lastResult) return;
 
-		const damageMetrics = this.lastResult.result.getDamageMetrics(this.lastResult.filter);
-		const counts = Object.entries(damageMetrics.hist)
-			.map(([dps, count]) => ({ dps: Number(dps), count }))
-			.filter(({ count }) => count > 0)
-			.sort((a, b) => a.dps - b.dps);
+		const counts = this.lastCounts();
 		const total = counts.reduce((sum, { count }) => sum + count, 0);
 		if (!total) return;
 
@@ -134,12 +149,33 @@ export class DpsHistogram extends ResultComponent {
 				: this.drawCumulative(canvas, counts, total, markers);
 	}
 
+	private lastCounts(): DpsCount[] {
+		if (!this.lastResult) return [];
+		const damageMetrics = this.lastResult.result.getDamageMetrics(this.lastResult.filter);
+		return Object.entries(damageMetrics.hist)
+			.map(([dps, count]) => ({ dps: Number(dps), count }))
+			.filter(({ count }) => count > 0)
+			.sort((a, b) => a.dps - b.dps);
+	}
+
+	// The smallest round bin width that keeps the bars wide enough for the chart and each bin
+	// full enough. Bins of 1 DPS are the finest, because the sim counts whole DPS.
+	private binWidthFor(counts: DpsCount[]): number {
+		if (!counts.length) return 0;
+		const total = counts.reduce((sum, { count }) => sum + count, 0);
+		const chartWidth = this.chartElem.clientWidth;
+		const maxBins = Math.max(1, Math.min(chartWidth ? Math.floor(chartWidth / MIN_BIN_PX) : DEFAULT_MAX_BINS, Math.floor(total / MIN_ITERATIONS_PER_BIN)));
+		const span = counts[counts.length - 1].dps - counts[0].dps + 1;
+		return NICE_BIN_WIDTHS.find(w => span / w <= maxBins) ?? NICE_BIN_WIDTHS[NICE_BIN_WIDTHS.length - 1];
+	}
+
 	private drawDistribution(canvas: HTMLCanvasElement, counts: DpsCount[], total: number, percentiles: Percentiles, markers: Marker[]): Chart {
 		const minDps = counts[0].dps;
 		const maxDps = counts[counts.length - 1].dps;
 		// Each whole DPS step covers half a DPS on each side, so a bin of width 1 at 180 holds
 		// every iteration from 179.5 to 180.5.
-		const width = NICE_BIN_WIDTHS.find(w => (maxDps - minDps + 1) / w <= MAX_BINS) ?? NICE_BIN_WIDTHS[NICE_BIN_WIDTHS.length - 1];
+		const width = this.binWidthFor(counts);
+		this.drawnBinWidth = width;
 		const binOf = (dps: number) => Math.floor((dps + 0.5) / width);
 		const firstBin = binOf(minDps);
 		const bins = Array.from({ length: binOf(maxDps) - firstBin + 1 }, (_, i) => ({

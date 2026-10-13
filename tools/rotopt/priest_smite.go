@@ -1,0 +1,128 @@
+package main
+
+import (
+	"fmt"
+
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/priest"
+)
+
+// A Holy damage priest under Forever rules: Smite as the filler, Holy Fire kept on the
+// target for Power in Light, Penance on cooldown, and the Shadow spells a priest without
+// Shadowform still has (Shadow Word: Pain, Devouring Plague, Mind Blast, Shadow Word: Death)
+// as knobs, since without Shadowform they cost full mana. Power Infusion and Inner Focus go
+// with the 31 point Discipline build. Every line names the highest rank the player's level
+// knows. Lines for spells the build or race cannot have only warn, and a knob at 0 drops it.
+type priestSmite struct{}
+
+func init() {
+	templates["priest_smite"] = priestSmite{}
+}
+
+func (priestSmite) Knobs() []Knob {
+	return []Knob{
+		// Holy Fire whenever its damage over time is down (Power in Light needs it), above a
+		// mana floor in percent. 2 casts it on cooldown like a nuke.
+		{Name: "holyFire", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "holyFireMana", Default: 0, Min: 0, Max: 60, Step: 10},
+		{Name: "penance", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "swp", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "swpMana", Default: 0, Min: 0, Max: 60, Step: 10},
+		{Name: "dp", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Devouring Plague above 40% mana (2026-10-13, with the downranking penalty).
+		{Name: "dpMana", Default: 40, Min: 0, Max: 80, Step: 10},
+		{Name: "mb", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
+		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "swdMana", Default: 20, Min: 0, Max: 60, Step: 10},
+		// Inner Focus: 0 never, 1 on Holy Fire, 2 on Smite, 3 on Mind Blast. Devouring Plague is
+		// not in its class mask (client 14751), so it is never free.
+		{Name: "innerFocus", Default: 1, Min: 0, Max: 3, Step: 1},
+		{Name: "powerInfusion", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "chastise", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
+		// Smite of this rank (0 never) once the mana would no longer last the fight at
+		// smiteManaRate mana a second. Forever's downranking penalty (Blizzard's 2026-10-01
+		// development notes, foreverchanges.pro/downranking: 5% of the coefficient lost per
+		// level past 17 below the caster, sim/priest/priest.go) leaves rank 7 (level 46) its
+		// full coefficient at 60 and ranks 4 and lower none. Rank 7 below 35 mana a second is
+		// 706.5 / 643.8 at 180 / 300 sec against 701.4 / 545.0 for the earlier rank 4 below 20.
+		{Name: "smiteDownrank", Default: 7, Min: 0, Max: 7, Step: 1},
+		{Name: "smiteManaRate", Default: 35, Min: 15, Max: 45, Step: 5},
+		// A Smite 2 sec before the pull (Divine Fury 5/5), landing at 0.
+		{Name: "prepullSmite", Default: 1, Min: 0, Max: 1, Step: 1},
+		// The Level 60 on-use trinket at -0.1 sec, so the pre-cast Smite landing at 0 gets it.
+		{Name: "prepullTrinket", Default: 1, Min: 0, Max: 1, Step: 1},
+	}
+}
+
+func (priestSmite) Build(k Knobs) *proto.APLRotation {
+	smite := rankID(priest.SmiteLevel[:], priest.SmiteSpellId[:])
+	holyFire := rankID(priest.HolyFireLevel[:], priest.HolyFireSpellId[:])
+	penance := rankID(priest.PenanceLevel[:], priest.PenanceSpellId[:])
+	shadowWordPain := rankID(priest.ShadowWordPainLevel[:], priest.ShadowWordPainSpellId[:])
+	devouringPlague := rankID(priest.DevouringPlagueLevel[:], priest.DevouringPlagueSpellId[:])
+	mindBlast := rankID(priest.MindBlastLevel[:], priest.MindBlastSpellId[:])
+	shadowWordDeath := rankID(priest.ShadowWordDeathLevel[:], priest.ShadowWordDeathSpellId[:])
+	chastise := rankID(priest.ChastiseLevel[:], priest.ChastiseSpellId[:])
+	darkSacrifice := rankID(priest.DarkSacrificeLevel[:], priest.DarkSacrificeSpellId[:])
+
+	var items []*proto.APLListItem
+	if k["darkSacrifice"] > 0 {
+		items = append(items, cast(darkSacrifice, lt(currentManaPercent(), num(k["darkSacrifice"]/100)), "Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line."))
+	}
+	if k["powerInfusion"] == 1 {
+		items = append(items, cast(powerInfusion, nil, "Power Infusion on cooldown. Without the talent ignore the warning on this line."))
+	}
+	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on cooldown."))
+
+	if k["holyFire"] == 1 {
+		if k["innerFocus"] == 1 {
+			items = append(items, cast(innerFocus, and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"])), "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line."))
+		}
+		items = append(items, cast(holyFire, and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"])), "Holy Fire whenever its damage over time is down, for Power in Light."))
+	}
+	if k["penance"] == 1 {
+		items = append(items, channel(penance, nil, nil, "Penance on cooldown. Without the talent ignore the warning on this line."))
+	}
+	if k["swp"] == 1 {
+		items = append(items, cast(shadowWordPain, and(not(dotIsActive(shadowWordPain)), ge(remainingTime(), seconds(9)), priestManaAbove(k["swpMana"])), "Shadow Word: Pain whenever it is down."))
+	}
+	if k["dp"] == 1 {
+		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), priestManaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
+	}
+	if k["chastise"] == 1 {
+		items = append(items, cast(chastise, nil, "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."))
+	}
+	if k["mb"] == 1 {
+		if k["innerFocus"] == 3 {
+			items = append(items, cast(innerFocus, and(spellIsReady(mindBlast), priestManaAbove(k["mbMana"])), "Inner Focus right before Mind Blast. Without the talent ignore the warning on this line."))
+		}
+		items = append(items, cast(mindBlast, priestManaAbove(k["mbMana"]), "Mind Blast on cooldown."))
+	}
+	if k["swd"] == 1 {
+		items = append(items, cast(shadowWordDeath, priestManaAbove(k["swdMana"]), "Shadow Word: Death on cooldown."))
+	}
+	if k["innerFocus"] == 2 {
+		items = append(items, cast(innerFocus, nil, "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."))
+	}
+	if rank := int(k["smiteDownrank"]); rank >= 3 && rank < priest.SmiteRanks {
+		lasts := ge(&proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{
+			Op:  proto.APLValueMath_OpDiv,
+			Lhs: &proto.APLValue{Value: &proto.APLValue_CurrentMana{CurrentMana: &proto.APLValueCurrentMana{}}},
+			Rhs: num(k["smiteManaRate"]),
+		}}}, remainingTime())
+		items = append(items, cast(smite, lasts, fmt.Sprintf("Smite while the mana lasts the fight at %.0f mana a second.", k["smiteManaRate"])))
+		items = append(items, cast(spellID(priest.SmiteSpellId[rank]), nil, fmt.Sprintf("Rank %d Smite once it would not: most of the damage for far less mana.", rank)))
+	} else {
+		items = append(items, cast(smite, nil, "Smite fills."))
+	}
+	rot := rotation(items...)
+	if k["prepullSmite"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(smite, 2))
+	}
+	if k["prepullTrinket"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(priest.PriestSyntheticOnUseTrinket), 0.1))
+	}
+	return rot
+}
