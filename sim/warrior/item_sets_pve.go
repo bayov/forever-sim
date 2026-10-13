@@ -768,7 +768,7 @@ var ItemSetBattlegearOfUnyieldingStrength = core.NewItemSet(core.ItemSet{
 	},
 })
 */
-// battlegearOfGloryBonuses are the set bonuses of Battlegear of Glory, Forever's Molten Core tier set for
+// battlegearOfGloryBonuses are the set bonuses of Battlegear of Glory, Forever's tier set for
 // Arms and Fury (set 2102, Gauntlets, Greaves, Legplates, Breastplate, Shoulders and Helm of Glory, items
 // 280899 to 280904, client 1.60.1.70338, spells 1300968, 1301069, 1301095 and 1301721).
 //
