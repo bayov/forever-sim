@@ -157,7 +157,7 @@ Enhancement
 - [x] 8.19 Ancestral Knowledge
 - [x] 8.20 Guardian Totems
 - [x] 8.21 Mental Dexterity
-- [ ] 8.22 Improved Ghost Wolf (not implemented)
+- [x] 8.22 Improved Ghost Wolf (not implemented, the sim has no Ghost Wolf)
 - [ ] 8.23 Improved Lightning Shield
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
 - [ ] 8.25 Shamanistic Focus
@@ -1459,6 +1459,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 415140, talent curve 85272): 33, 67 and 100% of Intellect as attack power (aura 598). Its second effect is a dummy from SoD's rune, whose 30 sec buff (415144) isn't part of the Forever talent. That matches.
 - Beta: at the 2026-10-10 20:42 respec, 3 more Intellect (141 to 144) took attack power from 389 to 392 at 3/3. The 389 model (60 + 2 x 104 Strength - 20 + 141 Intellect) fit 75 white hits (4.1).
 - No sim change. `mental_dexterity_test.go` TestOrcShamanMentalDexterity: at level 30, 0 to 3 points add 0, 33, 67 and 100% of Intellect to attack power, and 10 Intellect gained mid-fight at 3/3 adds 10 attack power. A 66% rank 2 fails it.
+
+### 8.22 Improved Ghost Wolf
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 16262, talent curve 85293): 1 and 2 points take 1 and 3 sec off Ghost Wolf's cast time (aura 107, misc 10), so 2/2 makes it instant. It also lets Ghost Wolf be used indoors, through two spell overrides of 2645 (aura 332).
+- The sim: the proto has the field, but nothing reads it, and the sim has no Ghost Wolf. Our only movement is the out of melee range stretches (`pvp.go`), which are random gaps in melee, not running at a speed.
+- Level 60 + Imp GW, Level 30 + 5 and Level 30 PvP take 2/2 for travel, and those points do nothing in the sim.
+- Beta: builds had 1 and 2 points, but we never measured the cast.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
