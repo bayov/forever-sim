@@ -214,6 +214,7 @@ export class Timeline extends ResultComponent {
 	// The pixels per second and the width of the view when we last drew the rows.
 	private drawnPxPerSecond = 0;
 	private drawnWidth = 0;
+	private contentOrigin = 0;
 	private zoomAnimation: ZoomAnimation | null = null;
 	private settleTimer = 0;
 
@@ -831,10 +832,6 @@ export class Timeline extends ResultComponent {
 		this.dpsResourcesPlotElem.classList.add('hide');
 		this.rotationPlotElem.classList.remove('hide');
 
-		const header = this.rotationTimeline.querySelector<HTMLElement>('.rotation-timeline-header')!;
-		this.drawRotationTimeRuler(header);
-		this.drawPull();
-		this.drawGrid(header);
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 		this.addGcdRow(player, duration);
@@ -895,6 +892,13 @@ export class Timeline extends ResultComponent {
 		}
 
 		this.applyFilter();
+
+		// The ruler and the grid go last. The rows give the labels on the left their width, and that
+		// tells us where the view starts on the screen. See crispLeft.
+		const header = this.rotationTimeline.querySelector<HTMLElement>('.rotation-timeline-header')!;
+		this.drawRotationTimeRuler(header);
+		this.drawPull();
+		this.drawGrid(header);
 	}
 
 	// Shows the rows the filter lets through, and the separators between groups that still have
@@ -1112,7 +1116,8 @@ export class Timeline extends ResultComponent {
 
 		// The chart. Changes within the same pixel only keep the last value, so a long fight at a
 		// low zoom stays a short path.
-		const height = 28;
+		// The inside of the lane, without its line at the bottom.
+		const height = 30;
 		const pad = 3;
 		const yOf = (value: number) => (height - pad - (Math.max(0, Math.min(1, value / (maxValue || 1))) * (height - 2 * pad))).toFixed(1);
 		const steps: Array<{ x: number; y: string }> = [];
@@ -1524,6 +1529,27 @@ export class Timeline extends ResultComponent {
 		return `calc(var(--px-per-second) * ${time})`;
 	}
 
+	// Where the left edge of the scrolled content is on the screen, in CSS pixels.
+	private measureContentOrigin() {
+		const rect = this.rotationTimeline.getBoundingClientRect();
+		this.contentOrigin = rect.left + this.rotationTimeline.clientLeft - this.rotationTimeline.scrollLeft;
+		// A line one screen pixel wide. With Windows display scaling at 125%, a CSS pixel is 1.25
+		// screen pixels, so a 1px line would always blur over two of them.
+		const dpr = window.devicePixelRatio || 1;
+		this.rotationTimeline.style.setProperty('--hairline', `${Math.max(1, Math.round(dpr)) / dpr}px`);
+	}
+
+	// Like timeToLeft, for the thin lines of the ruler and the grid. Most seconds land between two
+	// screen pixels, like 3 sec at 88.5 px per second, at x = 265.5. The browser then blends a
+	// 1px line over both, and it looks wider and brighter than one that lands on a pixel. So we
+	// move each line to the nearest screen pixel.
+	private crispLeft(time: number): string {
+		const dpr = window.devicePixelRatio || 1;
+		const exact = this.contentOrigin + this.timeToLeftValue(time);
+		const shift = Math.round(exact * dpr) / dpr - exact;
+		return `calc(${this.timeToLeft(time)} + ${shift.toFixed(3)}px)`;
+	}
+
 	// For where something starts, measured from the start of the time range we draw.
 	private timeToLeftValue(time: number): number {
 		return (time - this.viewStart) * this.pxPerSecond;
@@ -1561,7 +1587,7 @@ export class Timeline extends ResultComponent {
 	private drawGrid(header: HTMLElement) {
 		const lines: Array<Element> = [];
 		for (let time = Math.ceil(this.viewStart); time <= this.viewEnd; time++) {
-			lines.push(<div className="rotation-grid-line" style={{ left: this.timeToLeft(time) }} />);
+			lines.push(<div className="rotation-grid-line" style={{ left: this.crispLeft(time) }} />);
 		}
 		this.rotationTimeline.prepend(
 			<div className="rotation-grid" style={{ top: `${header.offsetTop + header.offsetHeight}px`, width: this.viewWidthPx() }}>
@@ -1573,6 +1599,7 @@ export class Timeline extends ResultComponent {
 	private drawRotationTimeRuler(header: HTMLElement) {
 		const [labelStep, tickStep] = rulerSteps.find(([label]) => label * this.pxPerSecond >= 60) ?? rulerSteps[rulerSteps.length - 1];
 		header.style.width = this.viewWidthPx();
+		this.measureContentOrigin();
 
 		const ticks: Array<Element> = [];
 		const firstTick = Math.ceil(this.viewStart / tickStep - 1e-6);
@@ -1580,7 +1607,7 @@ export class Timeline extends ResultComponent {
 		for (let i = firstTick; i <= lastTick; i++) {
 			const time = i * tickStep;
 			const isLabel = Math.abs(time / labelStep - Math.round(time / labelStep)) < 1e-6;
-			ticks.push(<div className={`rotation-ruler-tick${isLabel ? ' major' : ''}`} style={{ left: this.timeToLeft(time) }} />);
+			ticks.push(<div className={`rotation-ruler-tick${isLabel ? ' major' : ''}`} style={{ left: this.crispLeft(time) }} />);
 			if (isLabel) {
 				ticks.push(
 					<div className={`rotation-ruler-label${time == 0 && this.prepullStart < 0 ? ' pull' : ''}`} style={{ left: this.timeToLeft(time) }}>
