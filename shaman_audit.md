@@ -152,7 +152,7 @@ Elemental
 
 Enhancement
 
-- [ ] 8.17 Earth's Grasp (not implemented)
+- [x] 8.17 Earth's Grasp (not implemented, the sim has no Stoneclaw or Earthbind Totem)
 - [ ] 8.18 Thundering Strikes
 - [ ] 8.19 Ancestral Knowledge
 - [ ] 8.20 Guardian Totems
@@ -1420,6 +1420,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client: the talent (traits 134169 and 134219) teaches 408490, rank 1. The vendored client tree (69876, updated to 70009) has it in row 7, column 2, with 1 rank, requiring Lightning Overload. That matches.
 - Beta: none, it's a level 40 talent.
 - No sim change and no new test. `lava_burst_test.go` covers the rank at each level and the spell (7.14).
+
+### 8.17 Earth's Grasp
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 16043, talent curves 85265 and 85264): 1 and 2 points give Stoneclaw Totem +25 and +50% (all its effects, so its health) and Earthbind Totem +10 and +20% radius. Classic's talent has the same two parts.
+- The sim: the proto has the field, but nothing reads it. The sim has neither Stoneclaw nor Earthbind Totem, and we don't model enemies attacking totems or moving (8.14).
+- No preset takes it, and no beta build had it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
