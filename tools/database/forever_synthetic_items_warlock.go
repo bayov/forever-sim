@@ -44,32 +44,32 @@ import (
 // in the target proportions, scaled to its budget, with hit scaled so the set lands on the cap; the
 // generator script lived in the session scratchpad (rebud/gen.py), the numbers below are its output,
 // rounded, with spell power filling what rounding left of each budget. Per slot, budget and what the
-// stats add up to: head, chest and legs 42.8 (42.7 to 42.8), shoulders, hands and feet 33.0 (32.7), waist
-// 37.6 (37.3), neck, back, wrist and fingers 27.5 (27.4), staff 73.7 (73.7), wand 15.6 (15.5), main hand
-// 46.2 (46.2), off hand 27.5 (27.4).
+// stats add up to: head, chest and legs 42.8 (42.6 to 42.8), shoulders, hands and feet 33.0 (33.0), waist
+// 37.6 (37.3 to 37.6), neck, back, wrist and fingers 27.5 (27.2), staff 73.7 (73.5 to 73.6), wand 15.6
+// (15.3), main hand 46.2 (45.9), off hand 27.5 (27.2).
 //
-// The shared set (Destruction, Affliction, Destruction fire; level60_phase1_synthetic) comes to 365
-// spell power, 124 Intellect, 161 Stamina, 90 Spirit, 195 crit rating (13.9%) and 100 hit rating (10%):
+// The shared set (Destruction, Affliction, Destruction fire; level60_phase1_synthetic) comes to 236
+// spell power, 163 Intellect, 161 Stamina, 90 Spirit, 114 crit rating (8.1%) and 100 hit rating (10%):
 //
 //	Stat     Amount  L share  Target (Warlock)
-//	Stamina    161    18.5      18 +/- 1.5
-//	Intellect  124    14.2      14.0
-//	Spirit      90    10.3      10
-//	Spell pwr  365    23.1      23.5
-//	Hit        100    11.5      12.6
-//	Crit       195    22.4      21.9
+//	Stamina    161    18.6      18 +/- 1.5
+//	Intellect  163    18.9      18.8
+//	Spirit      90    10.4      10
+//	Spell pwr  236    27.3      27.7
+//	Hit        100    11.6      12.6
+//	Crit       114    13.2      12.9
 //
 // Demonology's set (level60_phase1_synthetic_demonology, the four hit pieces at the end of the list in
-// place of the chest, legs, waist and staff) comes to 330 spell power, 115 Intellect, 156 Stamina, 86
-// Spirit, 191 crit rating (13.6%) and 140 hit rating (14%):
+// place of the chest, legs, waist and staff) comes to 221 spell power, 148 Intellect, 156 Stamina, 86
+// Spirit, 115 crit rating (8.2%) and 140 hit rating (14%):
 //
 //	Stat     Amount  L share  Target (Warlock Demonology)
-//	Stamina    156    17.9      18 +/- 1.5
-//	Intellect  115    13.2      12.1
+//	Stamina    156    18.0      18 +/- 1.5
+//	Intellect  148    17.1      15.4
 //	Spirit      86     9.9      10
-//	Spell pwr  330    20.9      19.4
-//	Hit        140    16.1      17.3
-//	Crit       191    22.0      23.1
+//	Spell pwr  221    25.5      24.6
+//	Hit        140    16.2      17.3
+//	Crit       115    13.3      14.7
 //
 // Before the rebudget the shared set was 524 spell power, 124 Intellect, 128 Stamina, 76 Spirit, 70 crit
 // rating and 100 hit rating (spell power 36.7%, crit 8.9%).
@@ -99,9 +99,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997001, Name: "Warlock Synthetic Head (Phase 1)", Icon: "inv_helmet_58",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 11, stats.Spirit: 8, stats.SpellPower: 31, stats.Armor: 83}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 14, stats.Spirit: 8, stats.SpellPower: 37, stats.Armor: 83}.ToFloatArray(),
 		HitRating:  9,
-		CritRating: 17,
+		CritRating: 10,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 		SetName:        "Warlock Synthetic (Phase 1)",
@@ -110,9 +110,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997002, Name: "Warlock Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_17",
 		Type:       proto.ItemType_ItemTypeNeck,
-		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 7, stats.Spirit: 5, stats.SpellPower: 21}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.Spirit: 5, stats.SpellPower: 25}.ToFloatArray(),
 		HitRating:  5,
-		CritRating: 11,
+		CritRating: 6,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -120,9 +120,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997003, Name: "Warlock Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_23",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 8, stats.Spirit: 6, stats.SpellPower: 24, stats.Armor: 76}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 11, stats.Spirit: 6, stats.SpellPower: 28, stats.Armor: 76}.ToFloatArray(),
 		HitRating:  7,
-		CritRating: 13,
+		CritRating: 8,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -130,9 +130,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997004, Name: "Warlock Synthetic Back (Phase 1)", Icon: "inv_misc_cape_20",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 7, stats.Spirit: 5, stats.SpellPower: 21, stats.Armor: 54}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.Spirit: 5, stats.SpellPower: 25, stats.Armor: 54}.ToFloatArray(),
 		HitRating:  5,
-		CritRating: 11,
+		CritRating: 6,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -140,9 +140,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997005, Name: "Warlock Synthetic Chest (Phase 1)", Icon: "inv_chest_cloth_09",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 11, stats.Spirit: 8, stats.SpellPower: 31, stats.Armor: 102}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 14, stats.Spirit: 8, stats.SpellPower: 37, stats.Armor: 102}.ToFloatArray(),
 		HitRating:  9,
-		CritRating: 17,
+		CritRating: 10,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 		SetName:        "Warlock Synthetic (Phase 1)",
@@ -151,9 +151,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997006, Name: "Warlock Synthetic Wrist (Phase 1)", Icon: "inv_bracer_07",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 7, stats.Spirit: 5, stats.SpellPower: 21, stats.Armor: 44}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.Spirit: 5, stats.SpellPower: 25, stats.Armor: 44}.ToFloatArray(),
 		HitRating:  5,
-		CritRating: 11,
+		CritRating: 6,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -161,9 +161,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997007, Name: "Warlock Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_19",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 8, stats.Spirit: 6, stats.SpellPower: 24, stats.Armor: 63}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 11, stats.Spirit: 6, stats.SpellPower: 28, stats.Armor: 63}.ToFloatArray(),
 		HitRating:  7,
-		CritRating: 13,
+		CritRating: 8,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -171,9 +171,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997008, Name: "Warlock Synthetic Waist (Phase 1)", Icon: "inv_belt_13",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 12, stats.Intellect: 9, stats.Spirit: 7, stats.SpellPower: 28, stats.Armor: 61}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 12, stats.Intellect: 13, stats.Spirit: 7, stats.SpellPower: 32, stats.Armor: 61}.ToFloatArray(),
 		HitRating:  8,
-		CritRating: 15,
+		CritRating: 9,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -181,9 +181,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997009, Name: "Warlock Synthetic Legs (Phase 1)", Icon: "inv_pants_cloth_14",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 11, stats.Spirit: 8, stats.SpellPower: 30, stats.Armor: 102}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 14, stats.Spirit: 8, stats.SpellPower: 36, stats.Armor: 102}.ToFloatArray(),
 		HitRating:  10,
-		CritRating: 17,
+		CritRating: 10,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -191,9 +191,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997010, Name: "Warlock Synthetic Feet (Phase 1)", Icon: "inv_boots_cloth_05",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 8, stats.Spirit: 6, stats.SpellPower: 24, stats.Armor: 70}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 11, stats.Spirit: 6, stats.SpellPower: 28, stats.Armor: 70}.ToFloatArray(),
 		HitRating:  7,
-		CritRating: 13,
+		CritRating: 8,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -201,9 +201,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997011, Name: "Warlock Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_38",
 		Type:       proto.ItemType_ItemTypeFinger,
-		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 7, stats.Spirit: 5, stats.SpellPower: 21}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.Spirit: 5, stats.SpellPower: 25}.ToFloatArray(),
 		HitRating:  5,
-		CritRating: 11,
+		CritRating: 6,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -211,9 +211,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997012, Name: "Warlock Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:       proto.ItemType_ItemTypeFinger,
-		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 7, stats.Spirit: 5, stats.SpellPower: 21}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.Spirit: 5, stats.SpellPower: 25}.ToFloatArray(),
 		HitRating:  5,
-		CritRating: 11,
+		CritRating: 6,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -222,9 +222,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997013, Name: "Warlock Synthetic Main Hand (Phase 1)", Icon: "inv_sword_39",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeMainHand,
-		Stats:      stats.Stats{stats.Stamina: 15, stats.Intellect: 12, stats.Spirit: 8, stats.SpellPower: 36}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 15, stats.Intellect: 16, stats.Spirit: 8, stats.SpellPower: 40}.ToFloatArray(),
 		HitRating:  9,
-		CritRating: 18,
+		CritRating: 11,
 		// Azuresong Mageblade damage and speed.
 		WeaponDamageMin: 64, WeaponDamageMax: 140, WeaponSpeed: 2.4,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -234,9 +234,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997014, Name: "Warlock Synthetic Off Hand (Phase 1)", Icon: "inv_misc_book_09",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeOffHand, HandType: proto.HandType_HandTypeOffHand,
-		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 7, stats.Spirit: 5, stats.SpellPower: 21}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 9, stats.Spirit: 5, stats.SpellPower: 25}.ToFloatArray(),
 		HitRating:  5,
-		CritRating: 11,
+		CritRating: 6,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -244,9 +244,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997015, Name: "Warlock Synthetic Wand (Phase 1)", Icon: "inv_wand_09",
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
-		Stats:      stats.Stats{stats.Stamina: 5, stats.Intellect: 4, stats.Spirit: 3, stats.SpellPower: 12}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 5, stats.Intellect: 5, stats.Spirit: 3, stats.SpellPower: 13}.ToFloatArray(),
 		HitRating:  3,
-		CritRating: 6,
+		CritRating: 4,
 		// Crimson Shocker damage and speed.
 		WeaponDamageMin: 102, WeaponDamageMax: 191, WeaponSpeed: 2,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -261,9 +261,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997016, Name: "Warlock Synthetic Chest of Precision (Phase 1)", Icon: "inv_chest_cloth_09",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 9, stats.Spirit: 7, stats.SpellPower: 23, stats.Armor: 102}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 11, stats.Spirit: 7, stats.SpellPower: 31, stats.Armor: 102}.ToFloatArray(),
 		HitRating:  18,
-		CritRating: 16,
+		CritRating: 10,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 		SetName:        "Warlock Synthetic (Phase 1)",
@@ -272,9 +272,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997017, Name: "Warlock Synthetic Legs of Precision (Phase 1)", Icon: "inv_pants_cloth_14",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 9, stats.Spirit: 7, stats.SpellPower: 23, stats.Armor: 102}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 11, stats.Spirit: 7, stats.SpellPower: 31, stats.Armor: 102}.ToFloatArray(),
 		HitRating:  18,
-		CritRating: 16,
+		CritRating: 10,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -282,9 +282,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997018, Name: "Warlock Synthetic Waist of Precision (Phase 1)", Icon: "inv_belt_13",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 8, stats.Spirit: 6, stats.SpellPower: 21, stats.Armor: 61}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 10, stats.Spirit: 6, stats.SpellPower: 26, stats.Armor: 61}.ToFloatArray(),
 		HitRating:  16,
-		CritRating: 14,
+		CritRating: 9,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
@@ -292,9 +292,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997019, Name: "Warlock Synthetic Staff of Precision (Phase 1)", Icon: "inv_staff_13",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
-		Stats:      stats.Stats{stats.Stamina: 22, stats.Intellect: 15, stats.Spirit: 12, stats.SpellPower: 43}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 22, stats.Intellect: 19, stats.Spirit: 12, stats.SpellPower: 54}.ToFloatArray(),
 		HitRating:  30,
-		CritRating: 28,
+		CritRating: 18,
 		// Staff of Dominance damage and speed.
 		WeaponDamageMin: 126, WeaponDamageMax: 205, WeaponSpeed: 2.9,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -305,9 +305,9 @@ var warlockSyntheticItems = []*proto.UIItem{
 	{
 		Id: 997020, Name: "Warlock Synthetic Staff (Phase 1)", Icon: "inv_staff_13",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
-		Stats:      stats.Stats{stats.Stamina: 24, stats.Intellect: 19, stats.Spirit: 13, stats.SpellPower: 56}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Stamina: 24, stats.Intellect: 25, stats.Spirit: 13, stats.SpellPower: 65}.ToFloatArray(),
 		HitRating:  15,
-		CritRating: 29,
+		CritRating: 17,
 		// Staff of Dominance damage and speed.
 		WeaponDamageMin: 126, WeaponDamageMax: 205, WeaponSpeed: 2.9,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
