@@ -56,3 +56,32 @@ func TestConsecratedGroundOnConsecration(t *testing.T) {
 		t.Errorf("Consecration tick multiplier with Consecrated Ground 2 / without = %.4f, want 1.1000", ratio)
 	}
 }
+
+// TestSwiftJudgement checks Swift Judgement (client 1310994): it finishes Judgement's cooldown
+// and makes the next Judgement free, and the Judgement after that costs mana again.
+func TestSwiftJudgement(t *testing.T) {
+	sim, ret := retSim(t, "02-5032210021-05225331001330311", arcaniteReaper)
+	judgement := ret.GetSpell(core.ActionID{SpellID: 20271})
+	swift := ret.GetSpell(core.ActionID{SpellID: 1310994})
+	seal := ret.GetSpell(core.ActionID{SpellID: 20293})
+	if judgement == nil || swift == nil || seal == nil {
+		t.Fatalf("missing Judgement, Swift Judgement or Seal of Righteousness")
+	}
+	target := ret.CurrentTarget
+	seal.Cast(sim, target)
+	judgement.CD.Use(sim)
+	if judgement.CD.IsReady(sim) {
+		t.Fatalf("Judgement ready right after use")
+	}
+	swift.Cast(sim, target)
+	if !judgement.CD.IsReady(sim) {
+		t.Errorf("Judgement still on cooldown after Swift Judgement")
+	}
+	if cost := judgement.Cost.GetCurrentCost(); cost != 0 {
+		t.Errorf("Judgement after Swift Judgement costs %.1f, want 0", cost)
+	}
+	judgement.Cast(sim, target)
+	if cost := judgement.Cost.GetCurrentCost(); cost <= 0 {
+		t.Errorf("the Judgement after the free one costs %.1f, want more than 0", cost)
+	}
+}

@@ -87,6 +87,9 @@ type Paladin struct {
 	sealEchoes          map[*core.Aura]sealEcho
 	// The effect each Echo applies, the rank of the seal it replaced.
 	echoApply map[*core.Aura]func(sim *core.Simulation, target *core.Unit)
+
+	// Swift Judgement's free next Judgement, see swift_judgement.go. Nil without the talent.
+	swiftJudgementAura *core.Aura
 }
 
 // Implemented by each Paladin spec.
@@ -113,6 +116,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerRighteousFury()
 	// Judgement and Seals
 	paladin.registerJudgement()
+	paladin.registerSwiftJudgement()
 	paladin.registerTwistOfLight()
 
 	paladin.registerSealOfRighteousness()
