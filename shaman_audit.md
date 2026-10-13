@@ -147,7 +147,7 @@ Elemental
 - [x] 8.12 Elemental Reach (not implemented, the sim has no spell range)
 - [x] 8.13 Lightning Overload
 - [x] 8.14 Earthbound (not implemented, nothing in the sim moves the enemy)
-- [ ] 8.15 Elemental Fury
+- [x] 8.15 Elemental Fury
 - [ ] 8.16 Lava Burst
 
 Enhancement
@@ -1403,6 +1403,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 1222988 and its root 1238289): 1 point makes Earthbind Totem root nearby enemies for 5 sec when we drop it. The totem (2484) has a 15 sec cooldown and a 1 sec GCD, lasts 45 sec and takes the earth slot. Classic has no such talent.
 - The sim: the proto has the field, but nothing reads it. The sim has no Earthbind Totem, and nothing moves the enemy. The only movement is ours, the out of melee range stretches (`pvp.go`) and the APL move action. So a root has nothing to act on until the sim has enemies that kite, and it would cost the earth slot we keep for Strength of Earth.
 - No preset takes it, and no beta build had it.
+
+### 8.15 Elemental Fury
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go` applyElementalFury): each point adds 20% to the crit damage bonus of our Fire, Frost and Nature spells and of Searing and Magma Totem, so 5/5 makes a spell crit 2.0 times a hit instead of 1.5. Listing every spell the sim registers at 5/5, it goes to Lightning Bolt, Chain Lightning, the three shocks (Flame Shock's ticks too), Lava Burst, Fire Nova, Searing and Magma Totem, the Flametongue and Frostbrand Weapon procs and the Lightning Shield orbs (which never crit). Flametongue Totem's procs, Healing Stream, Stormstrike and melee don't get it.
+  - The Level 60 elemental preset has 5/5. The enhancement presets don't take it.
+- Client 70338 (wago.tools 16089, talent curve 85221): +20, 40, 60, 80 and 100% crit damage bonus (aura 108, misc 15). Its mask holds Lightning Bolt and Chain Lightning (and their overloads), the three shocks, Lava Burst, Fire Nova's damage spell, the Searing Totem attack, Magma Totem's pulse, the Flametongue Weapon procs, Frostbrand Attack and the Lightning Shield orbs. Flametongue Totem's procs (0x4 in the second word) and Healing Stream (0x2000) aren't in it. That matches the sim spell for spell.
+- Beta: no build had it.
+- No sim change. `elemental_fury_test.go` TestOrcShamanElementalFury reads each spell's crit multiplier at level 60 with 0 and 5 points: 1.5 and 2.0 on the spells above, 1.5 on Flametongue Totem's proc and Healing Stream either way, and Stormstrike's melee crit at 2.0 either way. A 10% step, giving it to every Nature spell (Healing Stream and Flametongue Totem get it) or leaving Searing and Magma Totem out fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
