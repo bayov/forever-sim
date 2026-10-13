@@ -29,6 +29,9 @@ type report struct {
 	// aliased holds the sim spells we matched to a log spell of another ID, printed once.
 	aliased  map[int32]bool
 	logNames map[int32]string
+	// pooled holds each ability's hits from every mob level, in the order we first met them.
+	pooled      map[abilityKey]*pooledHits
+	pooledOrder []abilityKey
 	// rounding is how the server turns the raw field into whole points: "floor" or "round".
 	rounding string
 }
@@ -457,6 +460,9 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 					ls.mean(), ls.n, ls.min, ls.max, ss.mean(), ss.min, ss.max, exact.min, exact.max, r.rounding))
 			}
 		}
+
+		r.amount(fmt.Sprintf("level %d", p.level), name, lt, st)
+		r.pool(key, lt, st)
 
 		if lt.spellLanded > 0 && st.spellLanded > 0 {
 			lp, sp := 0, 0

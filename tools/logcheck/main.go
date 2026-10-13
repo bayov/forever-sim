@@ -113,7 +113,7 @@ func main() {
 	}
 	setImbue(char, all, cl, ex, tables)
 
-	r := &report{cl: cl, ex: ex, char: char, tables: tables, logPath: *logPath, minAttempts: *minAttempts, missing: map[string]bool{}, aliased: map[int32]bool{}, rounding: *rounding}
+	r := &report{cl: cl, ex: ex, char: char, tables: tables, logPath: *logPath, minAttempts: *minAttempts, missing: map[string]bool{}, aliased: map[int32]bool{}, pooled: map[abilityKey]*pooledHits{}, rounding: *rounding}
 	r.header()
 	r.sheet()
 	r.weaponSkills(*fullSkill)
@@ -124,6 +124,8 @@ func main() {
 		simTallies, stats := replay(char.player, p, *iterations)
 		r.level(p, logTallies, simTallies, stats)
 	}
+	r.amountAllLevels()
+	fmt.Println()
 	r.flags()
 }
 
@@ -232,6 +234,10 @@ func tallyLog(cl *combatLog) *tallies {
 			share = float64(d.resisted) / float64(d.amount+d.resisted+d.absorbed)
 		}
 		ts.add(level, key, outcome, float64(d.raw), physical, share)
+		if isDamage && (outcome == "hit" || outcome == "crit") && d.resisted == 0 && d.blocked == 0 && d.absorbed == 0 {
+			t := ts.get(level, key)
+			t.hits = append(t.hits, landedHit{raw: float64(d.raw), amount: float64(d.amount), crit: d.crit})
+		}
 	}
 	return ts
 }

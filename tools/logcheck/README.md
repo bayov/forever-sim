@@ -11,6 +11,8 @@ same level, a few hundred times. Then it prints each ability side by side, log a
 - its raw damage, which is the hit before the mob's armor, resists, crit and damage taken
   modifiers (the log's raw field and the sim's `RawDamage`), as a range and an average. The sim's
   hits are truncated to whole points first, because the log's raw field is truncated (below)
+- how often the amount the mob took rounded up, for abilities whose hit has one fixed value
+  (below)
 - partial resists on spells, by the share resisted
 - for what we didn't cast (procs), how many came per 100 landed white swings
 
@@ -75,6 +77,17 @@ replayed in every level's run.
   the fraction, so on average it's the unrounded hit. In the same window Flametongue Totem's
   attack did 9 on 148 of 188 hits (79%, for 8.8), the Flame Shock ticks 22 on 29 of 41 (71%, for
   21.7) and the direct hit 65 on 2 of 7 (for 64.3). So the sim's damage needs no rounding.
+- **Amounts.** For an ability whose every sim hit has the same value (Flametongue's attack,
+  Flame Shock's ticks, Lightning Shield's orbs), the amount row counts how often the log's
+  amount was raw + 1 and tests that count against the sim's fraction. The test is exact
+  (Poisson binomial over each hit's own chance, a crit has its own fraction), so a handful of
+  hits only flags when it's far off. The row also says where the log alone puts the hit, as a
+  95% interval: 7 Flame Shock hits put it at 64.11-64.62, while 201 Flametongue attacks put it
+  at 8.73-8.84. Hits with another raw (other stats) or an amount no hit with that raw can give
+  (a modifier the sim doesn't have, like the Stormstrike mark) are left out and counted. The
+  hit doesn't depend on the mob's level, so "Amounts on all mob levels together" runs the same
+  check on every level's hits at once. A spell with a damage range can land anywhere between
+  two whole points, so its round ups say nothing and it gets no amount row.
 - **Our logged stats changed.** Each of our casts carries max health, attack power, spell power
   and armor. A change means a gear swap or a stat buff, and the sim uses the export's gear for
   the whole window. Pick a window without swaps for damage checks.

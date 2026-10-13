@@ -23,6 +23,15 @@ type tally struct {
 	// cut, and partial counts them by how much was resisted, in steps of 10%.
 	spellLanded int
 	partial     map[int]int
+	// hits are the hits and crits that no resist, block or absorb cut, for the amount check.
+	hits []landedHit
+}
+
+// landedHit is one hit's raw damage and the amount the target took. In the log both are whole
+// points, and in the sim neither is rounded.
+type landedHit struct {
+	raw, amount float64
+	crit        bool
 }
 
 func newTally() *tally {
@@ -86,6 +95,7 @@ func (ts *tallies) merge(other *tallies) {
 			}
 			t.raw = append(t.raw, o.raw...)
 			t.spellLanded += o.spellLanded
+			t.hits = append(t.hits, o.hits...)
 			for share, n := range o.partial {
 				t.partial[share] += n
 			}

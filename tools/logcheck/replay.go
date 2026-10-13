@@ -127,6 +127,10 @@ func (rec *recorder) record(spell *core.Spell, result *core.SpellResult, periodi
 		}
 	}
 	rec.tallies.add(int(result.Target.Level), key, outcome, raw, physical, resisted)
+	if (outcome == "hit" || outcome == "crit") && !result.DidResist() {
+		t := rec.tallies.get(int(result.Target.Level), key)
+		t.hits = append(t.hits, landedHit{raw: raw, amount: result.Damage, crit: outcome == "crit"})
+	}
 }
 
 func simOutcome(outcome core.HitOutcome) string {
@@ -201,9 +205,10 @@ func replayOnce(base *proto.Player, p *plan, seed int64) (*tallies, *replayStats
 		TankIndex: -1,
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
-		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-		Encounter:  &proto.Encounter{Duration: p.duration.Seconds(), Targets: []*proto.Target{target}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: seed, Iterations: 1},
+		Raid:      core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter: &proto.Encounter{Duration: p.duration.Seconds(), Targets: []*proto.Target{target}},
+		// The amount check needs each hit's unrounded damage.
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: seed, Iterations: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	value, _ := recorders.LoadAndDelete(sim.Environment)
 	rec := value.(*recorder)
