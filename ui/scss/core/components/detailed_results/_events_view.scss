@@ -147,6 +147,26 @@
 	gap: var(--spacer-1);
 }
 
+// It hides lanes rather than showing a kind of event, so a line sets it apart from the
+// categories before it.
+.events-always-up {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	margin-left: var(--spacer-2);
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: calc(-1 * var(--spacer-2) / 2 - 2px);
+		top: 20%;
+		bottom: 20%;
+		width: 1px;
+		background: var(--line-color-strong);
+	}
+}
+
 .events-count {
 	margin-left: auto;
 	font-size: 0.75rem;

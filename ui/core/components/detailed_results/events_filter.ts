@@ -33,6 +33,9 @@ export class EventFilter {
 
 	readonly categories = new Set<EventCategory>(defaultCategories);
 	hidden: Array<ActionId> = [];
+	// Hides the timeline's lanes for buffs and debuffs that are up for the whole fight, like
+	// Blessing of Kings or Mark of the Wild. They only fill a lane with one long bar.
+	hideAlwaysUp = false;
 
 	get search(): string {
 		return this.searchQuery;
@@ -70,6 +73,11 @@ export class EventFilter {
 		this.emit();
 	}
 
+	toggleHideAlwaysUp() {
+		this.hideAlwaysUp = !this.hideAlwaysUp;
+		this.emit();
+	}
+
 	unhideAll() {
 		this.hidden = [];
 		this.emit();
@@ -83,12 +91,13 @@ export class EventFilter {
 		this.categories.clear();
 		defaultCategories.forEach(category => this.categories.add(category));
 		this.hidden = [];
+		this.hideAlwaysUp = false;
 		this.emit();
 	}
 
 	isActive(): boolean {
 		const defaultCategoriesOn = this.categories.size == defaultCategories.length && defaultCategories.every(category => this.categories.has(category));
-		return this.keywords.length > 0 || this.from != null || this.to != null || !defaultCategoriesOn || this.hidden.length > 0;
+		return this.keywords.length > 0 || this.from != null || this.to != null || !defaultCategoriesOn || this.hidden.length > 0 || this.hideAlwaysUp;
 	}
 
 	isHidden(actionId: ActionId): boolean {

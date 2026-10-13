@@ -40,6 +40,8 @@ interface RotationRow {
 	actionId: ActionId | null;
 	category: EventCategory;
 	events: Array<RowEvent>;
+	// An aura that's up from the pull to the end of the fight.
+	alwaysUp?: boolean;
 }
 
 // One thing drawn in a row, like a cast or an aura's uptime, with the text of the logs it came
@@ -875,7 +877,7 @@ export class Timeline extends ResultComponent {
 		);
 		if (buffsToShow.length > 0) {
 			this.addSeparatorRow();
-			buffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs));
+			buffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs, duration));
 		}
 
 		const targetCastsByAbility = this.getSortedCastsByAbility(target);
@@ -888,7 +890,7 @@ export class Timeline extends ResultComponent {
 		const debuffsToShow = debuffsById;
 		if (debuffsToShow.length > 0) {
 			this.addSeparatorRow();
-			debuffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs));
+			debuffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs, duration));
 		}
 
 		this.applyFilter();
@@ -942,6 +944,7 @@ export class Timeline extends ResultComponent {
 
 	private isRowShown(row: RotationRow): boolean {
 		if (!this.filter.categories.has(row.category)) return false;
+		if (row.alwaysUp && this.filter.hideAlwaysUp) return false;
 		return !(row.actionId && this.filter.isHidden(row.actionId));
 	}
 
@@ -1454,10 +1457,18 @@ export class Timeline extends ResultComponent {
 			.forEach(auraUptimeLogs => this.applyAuraUptimeLogsToRow(auraUptimeLogs, row));
 	}
 
-	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>) {
+	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>, duration: number) {
 		const actionId = auraUptimeLogs[0].actionId!;
 
-		const row: RotationRow = { label: this.makeLabelElem(actionId, true), row: this.makeRowElem(), name: actionId.name, actionId, category: 'auras', events: [] };
+		const row: RotationRow = {
+			label: this.makeLabelElem(actionId, true),
+			row: this.makeRowElem(),
+			name: actionId.name,
+			actionId,
+			category: 'auras',
+			events: [],
+			alwaysUp: isAlwaysUp(auraUptimeLogs, duration),
+		};
 		this.addRow(row);
 
 		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row);
@@ -1719,6 +1730,24 @@ export class Timeline extends ResultComponent {
 		this.resetCallbacks = [];
 	}
 }
+
+// Whether the aura is up from the pull to the end of the fight. We add up its uptime between
+// those two, so an aura we put up in the prepull counts too. When we refresh an aura, it fades and
+// comes back at the same moment, so that leaves no gap. We allow 10 ms for rounding.
+const isAlwaysUp = (auraUptimeLogs: Array<AuraUptimeLog>, duration: number): boolean => {
+	const spans = auraUptimeLogs
+		.map(log => [Math.max(0, log.gainedAt), Math.min(duration, log.fadedAt)])
+		.filter(([from, to]) => to > from)
+		.sort((a, b) => a[0] - b[0]);
+	let covered = 0;
+	let end = 0;
+	spans.forEach(([from, to]) => {
+		if (to <= end) return;
+		covered += to - Math.max(from, end);
+		end = to;
+	});
+	return covered >= duration - 0.01;
+};
 
 const MELEE_ACTION_CATEGORY = 1;
 const SPELL_ACTION_CATEGORY = 2;
