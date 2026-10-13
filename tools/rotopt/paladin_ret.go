@@ -25,6 +25,9 @@ var judgementOfTheCrusader = spellID(paladin.JudgementOfTheCrusaderSpellId)
 var echoOfCommand = spellID(1311703)
 var echoOfRighteousness = spellID(1311704)
 
+const syntheticSpellPowerOnUseTrinket = paladin.SyntheticSpellPowerOnUseTrinket
+const goblinSapperCharge = 10646
+
 func (paladinRet) Knobs() []Knob {
 	return []Knob{
 		// 1 Seal of Righteousness, 2 Seal of Command (the 11 point Retribution talent).
@@ -73,6 +76,10 @@ func (paladinRet) Knobs() []Knob {
 		// lightsVigilMana, with Holy Shock waiting for the Vigil (or the mana floor) instead of
 		// going out on cooldown. 0 ties the Vigil to Holy Shock's cooldown.
 		{Name: "vigilChain", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The synthetic spell power on-use trinket and the Goblin Sapper Charge on cooldown at
+		// the top of the list. On the autocast line at the bottom they wait for a free GCD,
+		// which a GCD line above it nearly always takes, so they go out seconds late.
+		{Name: "cooldownsFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -96,6 +103,12 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	}
 
 	var items []*proto.APLListItem
+	if k["cooldownsFirst"] == 1 {
+		items = append(items,
+			cast(itemID(syntheticSpellPowerOnUseTrinket), nil, "The spell power on-use trinket on cooldown."),
+			cast(itemID(goblinSapperCharge), nil, "Goblin Sapper Charge on cooldown."),
+		)
+	}
 	var jotcUp value
 	if k["jotc"] == 1 {
 		jotcUp = targetAuraIsActive(judgementOfTheCrusader)
