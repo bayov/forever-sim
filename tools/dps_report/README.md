@@ -1,0 +1,240 @@
+# DPS report: dashboard data pipeline
+
+These scripts produce every dataset behind the Forever level 60 DPS dashboard. The dashboard is the "Dashboard" type artifact at
+https://claude.ai/artifact/6Woe5kZDS9RBcvDodYDmdQ. Its page and the published datasets live in that artifact, not in this directory.
+
+```
+merged tree ──► requests ──► sims ──► datasets ──► artifact
+ (w-dash)        req/        out/ rv/       data/       assets + datasets/<id> docs
+                             abl/ weights/
+```
+
+1. **Merged tree.** One local checkout with every class branch and the consumes branch merged in, the item DB regenerated, and
+   the local dashboard patches (`patches/`) applied. The binaries are built from it.
+2. **Requests.** `req/<id>.json` is the exact RaidSimRequest for each of the 36 level 60 presets. `req/<id>.meta.json` holds
+   its class, spec, build name, preset race, talents, gear set, APL, published and verified DPS, summary, key talents, rotation,
+   consumes and caveats.
+3. **Sims.** `run_build.py`, `weights.py`, `run_races.py` and `ablate.py` run the binaries on the requests.
+4. **Datasets.** `build_data.py` (with `build_races.py`, `setup_active.py`, `rotation.py` and `tooltips.py`) writes `data/*.json`.
+5. **Artifact.** Each changed data file is uploaded as an asset, and its `datasets/<id>` doc is repointed at it.
+
+## Layout and configuration
+
+| Path | What it is | In git |
+|---|---|---|
+| `dashpaths.py` | Where every script reads and writes. Uses the env vars below. | yes |
+| `req/` | The 36 requests and their meta files (largest is 64 KB) | yes |
+| `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
+| `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
+| `patches/` | Local-only sim patches for the merged tree (see below) | yes |
+| `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
+| `rd/` | Headless check harness (Playwright) | scripts only |
+| `bin/` | `wowsimcli`, `dashstats` and optionally `wowsimcli_r`, built from the merged tree | no |
+| `out/ rv/ abl/ weights/ names/` | Raw sim outputs | no |
+| `icons/` | Download cache of wow.zamimg.com icons and talent-tree backgrounds | no |
+| `data/` | The generated datasets | no |
+| `page/` | The live page (`index.html`) plus `d3.min.js` for the harness. Fetched from the artifact; see "Checks harness" below. | no |
+
+Environment variables:
+
+- `DASH_DIR`: the base directory for `req/`, the cache and all outputs. Default: this directory.
+- `DASH_BIN`: the directory with the binaries. Default: `$DASH_DIR/bin`.
+- `DASH_TREE`: the merged tree. The binaries run with it as their cwd, and scripts read `assets/database/db.json`, talents,
+  racials, `ui/` and `forever-wiki/` from it. Default: a `w-dash` checkout next to this repository (`../w-dash` from the repo root).
+- `DASH_TT_CACHE`: overrides the tooltip cache directory.
+
+If `DASH_DIR` points somewhere else, copy or symlink `req/` and `forever_tt_cache/` there.
+
+Not included:
+
+- **The raw outputs.** They are regenerated from the requests, as described below. Last full set: `out/` 4.6 MB, `rv/` 0.1 MB of
+  results, `abl/ablate.json` 0.3 MB, `weights/` 0.15 MB, `names/` 0.36 MB.
+- **`icons/`** (about 660 jpgs, 3.4 MB). `build_data.py` refetches any missing icon from
+  `https://wow.zamimg.com/images/wow/icons/{medium,large}/<icon>.jpg`, and any missing tree background from the
+  `backgroundUrl` in `ui/core/talents/trees/<class>.json`.
+- **`spellname.csv`.** The scratch copy was an HTML error page, and no script reads it.
+
+## Building the merged tree
+
+```bash
+# once: a worktree on a local-only branch (never push it)
+git worktree add ../w-dash -b dashdata <the class branches' common base, or the previous dashdata>
+cd ../w-dash
+git fetch origin
+for c in warrior paladin hunter rogue priest shaman mage warlock druid consumes; do
+  git merge --no-edit origin/claude/wow-forever-dps-presets-m9u15h-$c || { DASH_TREE=$PWD bash ../forever-sim/tools/dps_report/resolve.sh; git status; }
+done
+```
+
+Conflict rules:
+
+- `assets/database/db.{json,bin}`: take ours and regenerate after all the merges. `resolve.sh` does this.
+- `*.md`: union of both sides. `resolve.sh` does this too.
+- Code: take the class's side for that class's files. For `tools/rotopt/run.go`, the hunter side won last time.
+- If `tools/rotopt` ends up with two `func manaAbove`, delete the one in `priest_shadow.go`. Patch 0001 does this.
+
+Then regenerate the DB, apply the patches and build:
+
+```bash
+go run tools/database/gen_db/*.go -outDir=./assets -gen=db      # every class's synthetic items and trinkets, the spell renames
+git commit -am "dash: regenerate db"                               # local only
+git am -3 ../forever-sim/tools/dps_report/patches/*.patch          # `git am --skip` a patch the merged heads already contain
+protoc -I=./proto --go_out=./sim/core ./proto/*.proto              # only if sim/core/proto/*.pb.go are missing (protoc-gen-go in ~/go/bin on PATH)
+B=../forever-sim/tools/dps_report/bin; mkdir -p $B
+go build -tags=with_db -o $B/wowsimcli ./cmd/wowsimcli
+go build -tags=with_db -o $B/mksettings ./tools/rotopt/mksettings
+go build -tags=with_db -o $B/rotopt ./tools/rotopt
+go build -tags=with_db -o $B/dashstats ./tools/dashstats
+cp $B/wowsimcli $B/wowsimcli_r   # optional; run_races.py uses wowsimcli when wowsimcli_r is missing
+```
+
+After regenerating the DB, check that every class's synthetic item ids (990000 and up, from
+`tools/database/forever_synthetic_items_<class>.go`) are in `db.json`.
+
+### Local patches (`patches/`)
+
+These were exported with `git format-patch` from the local `dashdata` branch, against the merged class heads. They are
+dashboard-only and never go to a class branch.
+
+| Patch | What it does | Needed by |
+|---|---|---|
+| `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
+| `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go`, `sim/hunter/hunter.go` and the priest racials (Chastise, Dark Sacrifice, Starshards): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, sword, mace, axe, beast, dodge, elune, mind, eureka, bloodfury, touch, endurance, berserking, windblessed, insight, chastise, starshards, darksacrifice. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants) |
+| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | the `beast` and `elemental` race variants. The real fix in shared `sim/core` is a follow-up. |
+
+The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
+their conflict resolutions follow the rules above. With no env var set, all three patches leave the sim's behaviour unchanged,
+except the 0003 crit fix against Beast or Elemental targets. No preset fights those targets.
+
+## Requests
+
+Each `req/<id>.meta.json` `notes` field records how its request was made. The usual way is
+`bin/mksettings -spec <spec> -gear <gearSet> -apl <apl> -talents <talents> -race <race>`, run with cwd `$DASH_TREE`, with the
+duration set to 180 s and the preset's encounter variation. A few builds then get small JSON edits, such as a variant's own
+consumes or the pet. The `-h` flag lists the specs. Rules: use the preset race and the build's own consumes, buffs, pet and imbues. Any
+`simOptions` will do, because the scripts override them.
+
+To refresh a request after a class change, rerun mksettings with the same arguments, reapply the edits listed in its notes, and
+check it:
+
+```bash
+python3 verify.py req/<id>.json [iters=20000] [seed=1] [Race]   # must match the published 180 s DPS within ±2
+```
+
+Then update `meta.published` and `meta.verify`, and any `summary` / `caveats` / `consumes` text the class changed, from the
+class PR bodies (bayov/forever-sim #1 to #9).
+
+## Sim steps
+
+Each step is restartable: it skips work whose output already exists. To redo a build, delete its output first.
+
+| Step | Command | Sims | Writes | Runtime, 4 CPUs |
+|---|---|---|---|---|
+| main + races + lengths + samples | `runner.sh` (start up to 4) or `python3 run_build.py <id>...`; `--resample <id>` redoes only the sample fights | Per build: main 180 s, 20k iterations, seed 1, all values saved. Race sweep: every race the class can be, 10k. Lengths 60/120/180/300/480 s, 5k. 30 one-iteration rolls, then 3 logged sample fights at the 10th, 50th and 90th percentile. dashstats stat sheet. | `out/<id>.json`, `names/<id>.tsv` | about 22 min for all 36 (2 to 5 min per class) |
+| stat weights | `ls req/*.meta.json \| xargs -n1 basename \| sed 's/.meta.json//' \| xargs -P4 -n1 python3 weights.py` | Per build: the baseline plus 6 to 8 bonus-stat runs (hit also measured downward), 180 s, 40k iterations, seed 1 | `weights/<id>.json` | about 30 min |
+| race scenarios | `python3 run_races.py [ids]` (4 threads) | Per build × race: `off`, `off:<part>`, `beast`, `elemental`, `undead`, and `weapon` / `weaponNoRacial` where the racial weapon is legal and not already held. 10k iterations, seed 1. The last full run was 1,084 sims. | appends to `rv/results.jsonl` (keyed build, race, variant) | about 35 min for all; the 458 beast and elemental reruns took about 16 min |
+| setup ablation | `python3 ablate.py [ids]` (`ITERS=300 SEED=11 PAR=4`) | Each preset with one consume, buff, debuff or profession left out, plus the non-stacking pairs. 1,957 sims. | `abl/ablate.json` | about 5 min |
+| tooltip ids | `python3 whids.py` (after a first `build_data.py`) | none | `fortt_ids.json` | seconds |
+| tooltip fetch | `python3 whcache.py fortt_ids.json` | none. Fetches from `nether.wowhead.com/{forever,classic}/tooltip/<kind>/<id>`, only ids missing from the cache. | `forever_tt_cache/` | about 13 min cold (about 1,400 requests at 0.35 s); seconds when warm |
+| datasets | `python3 build_data.py` | none | `data/*.json`, `fortt_coverage.json` | about 10 s warm; about 1 min more when icons must be fetched |
+
+Diagnostics, which produce no datasets: `whdump.py` prints Forever and Classic tooltip text side by side for the setup chips,
+and `wagocheck.py` compares the real items' ilvl and stats across Forever wowhead, the Forever client and the sim's db.
+
+## Datasets
+
+All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.py`.
+
+| Dataset | Made by | Depends on | Runtime |
+|---|---|---|---|
+| builds | build_data.py | out (main 20k, race sweep 10k, 120/300 s lengths), req meta, ranks across all builds | run_build |
+| races | build_data.py | out race sweep: every legal race, 180 s, 10k | run_build |
+| lengths | build_data.py | out lengths: 60, 120, 180, 300 and 480 s at 5k | run_build |
+| hist | build_data.py | out main run: all 20k fight DPS values, 5-DPS bins | run_build |
+| abilities | build_data.py | out main run per-action metrics, names | run_build |
+| auras | build_data.py | out main run aura uptimes and procs (player and target), names | run_build |
+| timeline_\<class\> (×9) | build_data.py | out sample fights: 3 logged one-iteration fights per build, picked from 30 seeds | run_build |
+| stats | build_data.py | out `stats`: dashstats `ComputeStats` final sheet | run_build |
+| gear | build_data.py | the request's equipment, item names, icons and ilvl from `db.json` and wowhead item csv | none (no sims) |
+| setup | build_data.py + setup_active.py | the request's consumes, buffs, debuffs and professions; `abl/ablate.json` for `active` / `why` | ablate.py |
+| notes | build_data.py | req meta keyTalents, rotation, consumes and caveats, plus the gear rules text in build_data.py (snapshot-cleaned) | none |
+| names | build_data.py | every key seen; `names/*.tsv` (DASH_NAMES), `db.json`, `assets/db_inputs/wowhead_*_tooltips.csv`, `forever-wiki/data/abilities.json`, talent trees, racials, the sim's rank arrays; colour from the icon (PIL) | run_build |
+| rotation | build_data.py + rotation.py | the request's APL (prepull and priority), cast counts from abilities, names, `racials.json` | none |
+| race_variants | build_races.py | `rv/results.jsonl` plus the out race sweep (baseline) | run_races |
+| race_breakdown | build_races.py | `rv/results.jsonl` (`off`, `off:<part>`, weapon and target deltas) | run_races |
+| race_summary | build_races.py | race_variants by scenario, scope (overall or faction) and role | run_races |
+| race_notes | build_races.py | scenario and part texts, a finding per class from race_variants | run_races |
+| weights | build_data.py | `weights/*.json` (40k per stat) | weights.py |
+| tooltips | build_data.py + tooltips.py | `forever_tt_cache` (Forever wowhead, Classic fallback), the tree's wowhead csvs, `db.json` (synthetic items, enchants), `sim/*/item*sets_pve.go`, `sim/*/forever_synthetic_trinkets.go`, Forever wiki, `racials.json`, talent trees | whcache.py |
+| talenttrees | build_data.py | `ui/core/talents/trees/<class>.json`, plus wowhead links from the tooltip cache | none |
+| treeart | build_data.py | the tree icons from `tools/forever_talents/client/<class>.json`, and backgrounds fetched from each tree's `backgroundUrl` | icon fetch |
+| icons | build_data.py | every icon used, from wow.zamimg.com (36 px medium, 56 px large for headers), plus `assets/item_slots/*.jpg` | icon fetch |
+
+Side outputs: `fortt_coverage.json`, the count of tooltips by text source, for reporting. The page also expects every dataset
+under 8 MB; the largest are icons and treeart at about 1 MB.
+
+## Rerunning only the stale parts
+
+- **What a class head touches.** It changes only that class's builds. For each of the class's ids, delete `out/<id>.json`,
+  `weights/<id>.json`, and its lines in `rv/results.jsonl`:
+  `python3 -c "import json,sys;ids=set(sys.argv[1:]);L=[l for l in open('rv/results.jsonl') if json.loads(l)['build'] not in ids];open('rv/results.jsonl','w').writelines(L)" <ids>`.
+  Then rerun `runner.sh`, `weights.py`, `run_races.py`, and `ablate.py <ids>`. Note that ablate rewrites `abl/ablate.json`
+  with only the ids it was given, so for a partial rerun, rerun all of it (5 min). Then rebuild the class's requests first if
+  its presets, gear or APL changed.
+- **Shared code.** `sim/core`, the consumes branch, a DB change that affects every class, or a change to the local patches:
+  rerun everything.
+- **Request text only** (meta summary, caveats, rotation bullets): just rerun `build_data.py`. It reads the meta files fresh.
+- **New ids to show** (new items, spells or talents): `whids.py`, then `whcache.py fortt_ids.json`, then `build_data.py`.
+- **Racial or target changes:** rerun only `run_races.py` for the affected variants (delete those lines), then `build_data.py`.
+- **`build_data.py` always rebuilds every dataset.** It takes seconds. Compare `data/*.json` with the published copies
+  (`md5sum`) and upload only the files that changed.
+- **The datasets now published** were simmed on these merged heads: warrior 7348a81, paladin 6bf522f, hunter 23a266f,
+  rogue d880922, priest 10bae4e, shaman 148542d, mage 4230073, warlock 1750d98, druid 79fac92, consumes cfb2dac. The race
+  scenarios used rogue a8d7a69 and shaman 0024236, and the target racials were rerun after patch 0003. Any class whose head is
+  newer is stale.
+
+## Publishing
+
+Read the dashboard type's rules once: Artifact tool, `action: read`, the artifact url,
+`paths: ["SKILL.md", "artifact-type/reference/design-defaults.md"]`. Don't render or screenshot the published dashboard;
+test locally with `rd/` instead.
+
+1. **Upload each changed file.** Use the Artifact tool with `action: publish`, `url` set to the artifact, `asset: true`, and
+   `file_path` set to `data/<id>.json`, one JSON file per call. The result gives `/_blob/<hash>`.
+2. **Update the dataset docs.** With ArtifactData (load it via ToolSearch `select:ArtifactData`), `get` each
+   `datasets/<id>` doc to learn its version. Then in one `batch`, `set` or `update` each with `if_version`:
+   `{title, description, source: {kind: "file", url: "/_blob/<hash>", name: "<id>.json", format: "json"}, updated: {at: <ISO time>, by: "Claude (forever-sim)"}}`.
+   New datasets need a title and description too.
+3. **Update the page.** It is the `files/index.html` doc, `{text: <page>}`, under 256 KB. Other sessions edit it too, so
+   always `get` the live doc first, merge your change into it, and `set` it with `if_version` set to the version you read.
+   Data-only refreshes don't touch it.
+4. **Follow the snapshot rule.** The page and datasets show only final data. No session history, "round", "before/after",
+   PR numbers, process words, or "shipped". `build_data.py` cleans notes accordingly. No model names in any file.
+
+## Checks harness (`rd/`)
+
+`rd/build_harness.py` wraps the page in a mock dashboard that serves `data/*.json`. In `_str` mode it stringifies nested values
+and numbers, the way the real dashboard does. With `ASYNC=1`, datasets arrive 0.06 to 1.4 s late.
+
+The checks need Playwright on `NODE_PATH` (default `/opt/node22/lib/node_modules`) and Chromium at `PW_CHROME` (default
+`/opt/pw-browsers/chromium-1194/chrome-linux/chrome`).
+
+```bash
+# page/index.html = the live files/index.html (ArtifactData get, collection files, doc index.html, out_dir)
+# page/d3.min.js  = d3 v7.9.0, e.g. https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js
+python3 rd/build_harness.py page/index.html h            # rd/h_plain.html, rd/h_str.html
+ASYNC=1 python3 rd/build_harness.py page/index.html ha   # late-arriving data
+cd rd
+node checklist2.js h plain > ck_h_plain.json   # feature counts per tab; diff against a baseline from the previous page
+node checklist2.js h str   > ck_h_str.json
+node races_check.js h plain                    # Races tab: every scenario toggle, overview, per-spec bars
+node -r ./slow.js specswitch.js h ha plain     # every way to switch presets; each spec card must match a fresh load
+node tips2.js h str light                      # tap one mark on every chart: tooltip + highlight (shots/tip_*)
+node setup_check.js h plain light              # consumes and buffs card: faded, inactive chips, ordering, "Hide inactive"
+node ttlink.js h plain light; node ttdesk.js h plain   # game tooltips and their Wowhead (Forever) links, phone and desktop
+bash suite.sh h base                           # phone screenshots of every tab, light and dark (shots/)
+bash spec_shots.sh h spec light plain          # spec page cards: timeline lanes and single lane, auras, rotation, gear, setup
+```
+
+Run the checks in plain, str and `ASYNC=1` (with `node -r ./slow.js`) modes, at phone width in both themes, before
+publishing a page change. The older `checklist.js` and `tips.js` match earlier page versions. Use the `2` versions.

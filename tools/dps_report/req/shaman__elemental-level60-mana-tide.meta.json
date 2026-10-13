@@ -1,0 +1,88 @@
+{
+  "id": "shaman__elemental-level60-mana-tide",
+  "class": "Shaman",
+  "spec": "Elemental",
+  "build": "Level 60 + Mana Tide",
+  "isDefault": false,
+  "pr": 7,
+  "race": "Orc",
+  "talents": "5504301300103051-04-053150001001",
+  "treePoints": "31/4/16",
+  "treeNames": [
+    "Elemental",
+    "Enhancement",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic.gear.json",
+  "apl": "level60_mana_tide.apl.json",
+  "published": {
+    "dps": 666.9,
+    "source": "the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)",
+    "overall": {
+      "race": "Orc",
+      "dps": 666.9
+    },
+    "horde": {
+      "race": "Orc",
+      "dps": 666.9
+    },
+    "alliance": {
+      "race": "Dwarf",
+      "dps": 659.8
+    }
+  },
+  "verify": {
+    "dps": 666.91,
+    "stderr": 0.18,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Orc, 180 s with durationVariation 20, on the merged bundled-round tree. Published 666.9 (the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)); delta +0.01."
+  },
+  "summary": "The Elemental Level 60 build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group's mana. It is 1.0% behind Level 60 at 180 s.",
+  "keyTalents": [
+    "Lava Burst",
+    "Elemental Alacrity",
+    "Elemental Fury",
+    "Call of Flame",
+    "Lightning Overload",
+    "Mana Tide Totem",
+    "Tidal Focus",
+    "Totemic Focus"
+  ],
+  "rotation": [
+    "Pre-pull: Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
+    "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
+    "Mana Tide Totem at 20% mana or less",
+    "Mana Spring Totem when it is down and Mana Tide is not up",
+    "Searing Totem when it is down and at least 20 s remain",
+    "Flame Shock whenever its DoT is down",
+    "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
+    "Lightning Bolt rank 7 below 20% mana",
+    "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Nature Power",
+    "Elixir of the Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Cerebral Cortex Compound",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 37 spell power and 14 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Mana Tide Totem is A/B -1.4 for the shaman itself: a 3 min fight with a potion and rune doesn't need the mana",
+    "Water Shield point is inert (nothing hits the caster)",
+    "Lightning Bolt level 31+ ranks look untuned in Forever data: rank 10 ~201 base at 0.714 coefficient; a x1.38 fix would be +5.8% (measured on the earlier set)",
+    "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
+    "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking"
+  ],
+  "notes": "Request is mksettings -spec ele output unchanged. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+}

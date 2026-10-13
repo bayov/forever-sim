@@ -140,10 +140,10 @@ Elemental
 - [x] 8.5 Call of Flame
 - [x] 8.6 Elemental Devastation
 - [x] 8.7 Elemental Focus (Clearcasting)
-- [ ] 8.8 Elemental Alacrity
-- [ ] 8.9 Improved Fire Nova
-- [ ] 8.10 Eye of the Storm (not implemented)
-- [ ] 8.11 Call of Thunder
+- [x] 8.8 Elemental Alacrity
+- [x] 8.9 Improved Fire Nova
+- [x] 8.10 Eye of the Storm (implemented 2026-10-13, no preset takes it)
+- [x] 8.11 Call of Thunder
 - [ ] 8.12 Elemental Reach (not implemented)
 - [ ] 8.13 Lightning Overload
 - [ ] 8.14 Earthbound (not implemented)
@@ -1344,6 +1344,41 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - 38 heals, 30 Lightning Shields and the totem drops never gave it. The next Fire Nova, Earth Shock or Flame Shock used it, never a heal. Unused ones ran out at 15.0 sec.
   - Fire Nova gave it on 28 of 135 casts (21%). Forever's Fire Nova is a cast (408342) that triggers a separate damage spell (408424), and both seem to roll the 10%. In 10 of the 28 the same Fire Nova's damage used it up 1 to 2 ms later, which saves no mana. The other 18 (13.3% +- 2.9 of casts) lasted to the next spell, which fits the sim's 10%. The Oct 8 dev notes say this "activated and immediately consumed" bug was fixed, but the Oct 10 and 11 logs still show it.
 - No sim change. `mana_costs_test.go` TestOrcShamanClearcasting covers the 10% on Earth Shock and Fire Nova, the free cast, using it up, the 15 sec, and Searing Totem neither giving nor using it. `talent_procs_test.go` testClearcastingSpells covers which spells it makes free.
+
+### 8.8 Elemental Alacrity
+
+- The user OK'd it (2026-10-13): "sg".
+- The sim (`talents.go` elementalAlacrityReduction): 1, 2 and 3 points take 0.17, 0.33 and 0.5 sec off the cast time of every rank of Lightning Bolt, Chain Lightning and Lava Burst. The cut comes before haste and Maelstrom Weapon, which multiply what's left.
+  - The Level 60 elemental preset has 3/3. The enhancement presets have none.
+- Client 70338 (wago.tools 16578 and its talent curve 85228): -170, -330 and -500 ms as a flat cast time modifier (aura 107, misc 10) on Lightning Bolt, Chain Lightning and Lava Burst. That matches the sim. The Oct 8 notes swapped its place in the tree with Elemental Fury, and the sim has that (2.7).
+- Beta: none of our builds had it, and we never cast Lightning Bolt in any log (only the Elder Cloud Serpents did). So it rests on the client data.
+- No sim change. `elemental_alacrity_test.go` TestOrcShamanElementalAlacrity checks the cast times at level 60 with 0 to 3 points: Lightning Bolt (top rank 2.5 sec, rank 1 1.5 sec), Chain Lightning (2.0) and Lava Burst (2.5), with no haste and at 25% haste. A 0.4 sec rank 3 or Lava Burst without the cut fails it. The sim has no Healing Wave, so there's no heal case.
+
+### 8.9 Improved Fire Nova
+
+- The user OK'd it (2026-10-13): "sg".
+- The sim (`talents.go`, `fire_totems.go`): each point gives Fire Nova +10% damage and takes 2 sec off its 10 sec cooldown, so 2/2 is +20% and 6 sec. The damage bonus multiplies with Call of Flame (5.6).
+  - The Level 60 enhancement preset has 2/2. The elemental and Level 30 presets have none.
+- Client 70338 (wago.tools 16086, talent curves 85223 and 85222): +10 and +20% damage (aura 108) and -2 and -4 sec cooldown (aura 107, misc 11). The mask (0x40000 in the second word) covers Fire Nova's cast (408341 to 408345) and its damage spell (408423 to 408428) at every rank. The cast has a 10 sec category cooldown. That matches the sim.
+- Beta (the 2/2 build, 2026-10-10 20:42 to 23:14): the damage was settled in 5.6 (104 hits at x1.15 x 1.2). The shortest gap between Fire Novas was 5.92 sec with the talent and 9.99 sec without it (7.25).
+- No sim change. `damage_modifiers_test.go` already wants 1.15 x 1.2 x 1.1 on Fire Nova. `periodic_test.go` TestOrcShamanFireNova now has a 1 point case at 8 sec next to 10 and 6 sec. A 1 point cooldown cut of 0 fails it.
+
+### 8.10 Eye of the Storm
+
+- The user's call (2026-10-13): implement it even though no preset takes it, so it's ready for an encounter where pushback is common.
+- Client 70338 (wago.tools 29062, talent curve 85224): 1, 2 and 3 points give a 23, 47 and 70% chance to ignore pushback from damage taken while casting Lightning Bolt, Chain Lightning and Lava Burst (aura 108, misc 9). Classic has no such talent.
+- Before: the proto had the field, but nothing read it. The core already pushes back a player's cast when a direct hit lands: 1 sec for the first hit, then 0.8, 0.6 and so on, never less than 0.2. Its pushback reduction field was read from the spell that hit us instead of the one we were casting, and nothing set it.
+- Changed (2026-10-13): the core reads the chance from the spell we're casting (`cast.go`). Lightning Bolt and Chain Lightning (`electric_spell.go`) and Lava Burst (`lava_burst.go`) take 0, 23, 47 or 70% from the talent (`talents.go` eyeOfTheStormChance). Nothing else in the sim sets the field, the roll happens at the same point, and every test and golden passed unchanged.
+- Today only the Level 30 encounters hit us (Vishas tanks on us), the Level 30 presets are all Enhancement, and the Level 60 elemental preset doesn't take it. So no preset number moves.
+- Beta: no build had it, and we never cast a Lightning Bolt.
+- `eye_of_the_storm_test.go` TestOrcShamanEyeOfTheStorm: every rank of the three spells has the chance for 0 to 3 points. 2000 top rank Lightning Bolts with an enemy hit 0.5 sec in end on time 23, 47 and 70% of the time (within 5%), and 1 sec late otherwise. Without the talent, two hits push it 1.8 sec. Reading the chance from the hitting spell, or a 60% rank 3, fails it.
+
+### 8.11 Call of Thunder
+
+- The user (2026-10-13): "Just assume it works as stated". No test.
+- The sim (`electric_spell.go`): 1 point gives +3% crit to every rank of Lightning Bolt and Chain Lightning, and to their Lightning Overload copies, which share the config. Lava Burst and the shocks don't get it. The Level 60 elemental preset has it, and the enhancement presets don't.
+- Client 70338 (wago.tools 16120): 1 rank, +3% crit chance (aura 107, misc 7) with mask 0x3, Lightning Bolt and Chain Lightning. Lightning Overload (408438) is a dummy aura that the server runs, and the client has no separate overload spell, so an overload is most likely a copy of the same bolt. That matches the sim.
+- Beta: no build had it, and we never cast Lightning Bolt or Chain Lightning.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
