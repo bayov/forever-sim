@@ -15,7 +15,7 @@ import { panel, syncSubTabWithUrl, trackStuckToolbar } from '../detailed_results
 import { changesList } from '../preset_tree';
 import { RaidSimResultsManager, ResultMetric } from '../raid_sim_action';
 import { runLabel, SimHistory, SimRun } from '../sim_history';
-import { Better, changeElem, CompareColumn, CompareRow, CompareTable, formatFixed, formatPercent } from './compare_table';
+import { Better, Breakdown, BreakdownLine, changeElem, CompareColumn, CompareRow, CompareTable, formatFixed, formatPercent } from './compare_table';
 
 // A side of the comparison is a run from the history, or the latest or the one before it. The
 // last two follow new runs, so after each Simulate we see what the change did.
@@ -107,6 +107,8 @@ export class CompareResults extends Component {
 	private distributionMode: DistributionMode = 'distribution';
 	private pair: Pair | null = null;
 	private chart: Chart | null = null;
+	// The width we drew the distribution at, see the resize observer.
+	private distributionWidth = 0;
 
 	private readonly overviewElems: {
 		verdict: HTMLElement;
@@ -341,6 +343,19 @@ export class CompareResults extends Component {
 		});
 		history.changeEmitter.on(() => this.update());
 		this.addOnDisposeCallback(() => this.chart?.destroy());
+
+		// A wider or narrower chart can take a different bin width, like the Results tab's DPS
+		// Distribution. We check once a frame at most, because a window resize sends many changes.
+		let frame = 0;
+		const resizeObserver = new ResizeObserver(() => {
+			cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(() => {
+				const width = this.overviewElems.distribution.clientWidth;
+				if (this.pair && this.distributionMode === 'distribution' && width && width !== this.distributionWidth) this.drawDistribution();
+			});
+		});
+		resizeObserver.observe(this.overviewElems.distribution);
+		this.addOnDisposeCallback(() => resizeObserver.disconnect());
 		this.update();
 	}
 
@@ -693,6 +708,7 @@ export class CompareResults extends Component {
 		this.chart?.destroy();
 		this.chart = null;
 		const elem = this.overviewElems.distribution;
+		this.distributionWidth = elem.clientWidth;
 		const countsA = dpsCounts(resultA);
 		const countsB = dpsCounts(resultB);
 		if (!countsA.length || !countsB.length) {
@@ -830,13 +846,93 @@ function resourceRows(result: SimResult, type: ResourceType): Keyed<ResourceMetr
 	});
 }
 
+// The hit types of a spell's damage, in the order of the Results tab's hover tables. The good
+// ones are better when there's more of them, from the side of whoever deals the damage.
+const HIT_TYPES: Array<{ name: string; key: keyof ActionMetrics['damageDone']; better: Better }> = [
+	{ name: 'Hit', key: 'hit', better: 'none' },
+	{ name: 'Resisted Hit', key: 'resistedHit', better: 'lower' },
+	{ name: 'Critical Hit', key: 'critHit', better: 'higher' },
+	{ name: 'Resisted Critical Hit', key: 'resistedCritHit', better: 'lower' },
+	{ name: 'Tick', key: 'tick', better: 'none' },
+	{ name: 'Resisted Tick', key: 'resistedTick', better: 'lower' },
+	{ name: 'Critical Tick', key: 'critTick', better: 'higher' },
+	{ name: 'Resisted Critical Tick', key: 'resistedCritTick', better: 'lower' },
+	{ name: 'Glancing Blow', key: 'glance', better: 'lower' },
+	{ name: 'Blocked Hit', key: 'block', better: 'lower' },
+	{ name: 'Blocked Critical Hit', key: 'blockedCrit', better: 'lower' },
+];
+
+// For damage taken the good side flips: the player wants fewer crits and more resists.
+const flip = (better: Better): Better => (better === 'higher' ? 'lower' : better === 'lower' ? 'higher' : 'none');
+const forTaker = (breakdown: Breakdown<ActionMetrics>): Breakdown<ActionMetrics> => ({
+	...breakdown,
+	lines: metric => breakdown.lines(metric).map(line => ({ ...line, better: flip(line.better ?? 'none') })),
+});
+
+// The DPS of each hit type. The Results tab shows the damage of an iteration, and we turn it into
+// DPS to match the column.
+const dpsByHitType: Breakdown<ActionMetrics> = {
+	format: formatFixed(2),
+	lines: m => {
+		const perSecond = m.avgDamage ? m.dps / m.avgDamage : 0;
+		return HIT_TYPES.map(({ name, key, better }) => ({ name, value: m.damageDone[key].value * perSecond, better }));
+	},
+};
+
+const averageByHitType: Breakdown<ActionMetrics> = {
+	format: formatFixed(1),
+	lines: m => HIT_TYPES.map(({ name, key }) => ({ name, value: m.damageDone[key].average, better: 'higher' as Better })),
+};
+
+// The share of each hit type in the landed hits, and of each tick type in the landed ticks.
+const hitShares: Breakdown<ActionMetrics> = {
+	format: formatPercent(2),
+	lines: m => {
+		const ofHits = (count: number) => (m.landedHits ? (count / m.landedHits) * 100 : 0);
+		const ofTicks = (count: number) => (m.landedTicks ? (count / m.landedTicks) * 100 : 0);
+		const lines: BreakdownLine[] = [
+			{ name: 'Hit', value: ofHits(m.hits - m.resistedHits) },
+			{ name: 'Resisted Hit', value: ofHits(m.resistedHits), better: 'lower' },
+			{ name: 'Critical Hit', value: ofHits(m.crits - m.resistedCrits), better: 'higher' },
+			{ name: 'Blocked Critical Hit', value: ofHits(m.blockedCrits), better: 'lower' },
+			{ name: 'Resisted Critical Hit', value: ofHits(m.resistedCrits), better: 'lower' },
+			{ name: 'Glancing Blow', value: ofHits(m.glances), better: 'lower' },
+			{ name: 'Blocked Hit', value: ofHits(m.blocks), better: 'lower' },
+			{ name: 'Tick', value: ofTicks(m.ticks - m.resistedTicks) },
+			{ name: 'Resisted Tick', value: ofTicks(m.resistedTicks), better: 'lower' },
+			{ name: 'Critical Tick', value: ofTicks(m.critTicks - m.resistedCritTicks), better: 'higher' },
+			{ name: 'Resisted Critical Tick', value: ofTicks(m.resistedCritTicks), better: 'lower' },
+		];
+		return lines;
+	},
+};
+
+const castOutcomes: Breakdown<ActionMetrics> = {
+	format: formatFixed(1),
+	lines: m => [
+		{ name: 'Hits', value: m.landedHits || m.casts - m.totalMisses },
+		{ name: 'Miss', value: m.misses, better: 'lower' },
+		{ name: 'Parry', value: m.parries, better: 'lower' },
+		{ name: 'Dodge', value: m.dodges, better: 'lower' },
+	],
+};
+
+const missTypes: Breakdown<ActionMetrics> = {
+	format: formatPercent(2),
+	lines: m => [
+		{ name: 'Miss', value: m.missPercent, better: 'lower' },
+		{ name: 'Parry', value: m.parryPercent, better: 'lower' },
+		{ name: 'Dodge', value: m.dodgePercent, better: 'lower' },
+	],
+};
+
 const damageColumns = (): CompareColumn<ActionMetrics>[] => [
-	{ name: 'DPS', value: m => m.dps, format: formatFixed(2), better: 'higher', bars: true },
-	{ name: 'Casts', value: m => m.casts, format: formatFixed(1) },
-	{ name: 'Hits', value: m => m.landedHits || m.landedTicks, format: formatFixed(1) },
-	{ name: 'Avg Hit', value: m => m.avgHit || m.avgTick, format: formatFixed(1), better: 'higher' },
+	{ name: 'DPS', value: m => m.dps, format: formatFixed(2), better: 'higher', bars: true, breakdown: dpsByHitType },
+	{ name: 'Casts', value: m => m.casts, format: formatFixed(1), breakdown: castOutcomes },
+	{ name: 'Hits', value: m => m.landedHits || m.landedTicks, format: formatFixed(1), breakdown: hitShares },
+	{ name: 'Avg Hit', value: m => m.avgHit || m.avgTick, format: formatFixed(1), better: 'higher', breakdown: averageByHitType },
 	{ name: 'Crit %', value: m => m.critPercent + m.blockedCritPercent || m.critTickPercent, format: formatPercent(2), better: 'higher' },
-	{ name: 'Miss %', value: m => m.totalMissesPercent, format: formatPercent(2), better: 'lower' },
+	{ name: 'Miss %', value: m => m.totalMissesPercent, format: formatPercent(2), better: 'lower', breakdown: missTypes },
 ];
 
 const threatColumns = (): CompareColumn<ActionMetrics>[] => [
@@ -853,11 +949,18 @@ const healingColumns = (): CompareColumn<ActionMetrics>[] => [
 ];
 
 const damageTakenColumns = (): CompareColumn<ActionMetrics>[] => [
-	{ name: 'DTPS', value: m => m.dps, format: formatFixed(2), better: 'lower', bars: true },
-	{ name: 'Hits', value: m => m.landedHits || m.landedTicks, format: formatFixed(1), better: 'lower' },
-	{ name: 'Avg Hit', value: m => m.avgHit || m.avgTick, format: formatFixed(1), better: 'lower' },
+	{ name: 'DTPS', value: m => m.dps, format: formatFixed(2), better: 'lower', bars: true, breakdown: forTaker(dpsByHitType) },
+	{ name: 'Hits', value: m => m.landedHits || m.landedTicks, format: formatFixed(1), better: 'lower', breakdown: forTaker(hitShares) },
+	{ name: 'Avg Hit', value: m => m.avgHit || m.avgTick, format: formatFixed(1), better: 'lower', breakdown: forTaker(averageByHitType) },
 	{ name: 'Crit %', value: m => m.critPercent, format: formatPercent(2), better: 'lower' },
-	{ name: 'Avoided %', tooltip: 'Misses, dodges and parries.', value: m => m.totalMissesPercent, format: formatPercent(2), better: 'higher' },
+	{
+		name: 'Avoided %',
+		tooltip: 'Misses, dodges and parries.',
+		value: m => m.totalMissesPercent,
+		format: formatPercent(2),
+		better: 'higher',
+		breakdown: forTaker(missTypes),
+	},
 ];
 
 const auraColumns = (): CompareColumn<AuraMetrics>[] => [

@@ -1,4 +1,4 @@
-import { delegate } from 'tippy.js';
+import { delegate, Instance as TippyInstance } from 'tippy.js';
 
 import { ActionId } from '../../proto_utils/action_id';
 import { formatToNumber } from '../../utils';
@@ -7,12 +7,28 @@ import { formatToNumber } from '../../utils';
 // going up is neither.
 export type Better = 'higher' | 'lower' | 'none';
 
+// One line of a cell's breakdown, like the crits of a spell's damage. A line can be better or
+// worse in its own way, like fewer glancing blows being better.
+export interface BreakdownLine {
+	name: string;
+	value: number;
+	better?: Better;
+}
+
+// What a cell's value is made of, like damage by hit type. Hovering the cell shows each part in
+// both runs, like the hover tables of the Results tab.
+export interface Breakdown<T> {
+	lines: (metric: T) => BreakdownLine[];
+	format: (value: number) => string;
+}
+
 export interface CompareColumn<T> {
 	name: string;
 	tooltip?: string;
 	value: (metric: T) => number;
 	format: (value: number) => string;
 	better?: Better;
+	breakdown?: Breakdown<T>;
 	// The main column gets a bar for each run under its numbers, so we see their sizes at a
 	// glance, like the Damage Done bars of the Results tab.
 	bars?: boolean;
@@ -54,6 +70,7 @@ export class CompareTable<T> {
 	private sortColumn: number;
 	private sortMode: SortMode = 'value';
 	private changedOnly = false;
+	private breakdowns = new WeakMap<HTMLElement, () => Element>();
 
 	constructor(columns: CompareColumn<T>[], sortColumn = 0) {
 		this.columns = columns;
@@ -72,7 +89,18 @@ export class CompareTable<T> {
 		this.headElem = this.rootElem.querySelector('thead tr')!;
 		this.bodyElem = this.rootElem.querySelector('tbody')!;
 		this.footElem = this.rootElem.querySelector('tfoot')!;
-		delegate(this.rootElem, { target: '[data-tippy-content]', allowHTML: false });
+		// The breakdown tables are only built when we hover a cell, because most cells are never
+		// hovered.
+		delegate(this.rootElem, {
+			target: '[data-tippy-content], .cmp-has-breakdown',
+			allowHTML: false,
+			onShow: (instance: TippyInstance) => {
+				const build = this.breakdowns.get(instance.reference as HTMLElement);
+				if (!build) return;
+				instance.setProps({ theme: 'metrics-table', maxWidth: 'none', placement: 'auto' });
+				instance.setContent(build());
+			},
+		});
 		this.renderHeader();
 	}
 
@@ -152,7 +180,7 @@ export class CompareTable<T> {
 				<tr className={row.a && row.b ? '' : row.b ? 'cmp-row-new' : 'cmp-row-gone'}>
 					<td>{this.nameCell(row)}</td>
 					{this.columns.map((column, i) =>
-						this.valueCell(column, row.a ? column.value(row.a) : undefined, row.b ? column.value(row.b) : undefined, barMax[i]),
+						this.valueCell(column, row.a ? column.value(row.a) : undefined, row.b ? column.value(row.b) : undefined, barMax[i], row),
 					)}
 				</tr>
 			)),
@@ -193,7 +221,7 @@ export class CompareTable<T> {
 		);
 	}
 
-	private valueCell(column: CompareColumn<T>, a: number | undefined, b: number | undefined, barMax: number): Element {
+	private valueCell(column: CompareColumn<T>, a: number | undefined, b: number | undefined, barMax: number, row?: CompareRow<T>): Element {
 		const numbers = (
 			<span className="cmp-numbers">
 				<span className="cmp-value">{b === undefined ? '-' : column.format(b)}</span>
@@ -216,9 +244,70 @@ export class CompareTable<T> {
 				)}
 			</td>
 		) as HTMLElement;
-		cell.dataset.tippyContent = `Baseline ${a === undefined ? '-' : column.format(a)} → Compared ${b === undefined ? '-' : column.format(b)}`;
+		if (column.breakdown && row) {
+			cell.classList.add('cmp-has-breakdown');
+			this.breakdowns.set(cell, () => breakdownTable(row, column, column.breakdown!));
+		} else {
+			cell.dataset.tippyContent = `Baseline ${a === undefined ? '-' : column.format(a)} → Compared ${b === undefined ? '-' : column.format(b)}`;
+		}
 		return cell;
 	}
+}
+
+// The parts of a cell in both runs, with the whole value at the bottom. Parts that are zero in
+// both runs, like glancing blows of a spell, are left out.
+function breakdownTable<T>(row: CompareRow<T>, column: CompareColumn<T>, breakdown: Breakdown<T>): Element {
+	const linesA = row.a ? breakdown.lines(row.a) : [];
+	const linesB = row.b ? breakdown.lines(row.b) : [];
+	const names = Array.from(new Set([...linesA, ...linesB].map(line => line.name)));
+	const valueOf = (lines: BreakdownLine[], name: string) => {
+		const value = lines.find(line => line.name === name)?.value ?? 0;
+		return Number.isFinite(value) ? value : 0;
+	};
+	const lines = names
+		.map(name => ({
+			name,
+			a: valueOf(linesA, name),
+			b: valueOf(linesB, name),
+			better: [...linesA, ...linesB].find(line => line.name === name)?.better ?? 'none',
+		}))
+		.filter(line => line.a || line.b);
+	const a = row.a ? column.value(row.a) : 0;
+	const b = row.b ? column.value(row.b) : 0;
+
+	return (
+		<div className="cmp-breakdown">
+			<div className="cmp-breakdown-title">{`${row.name} · ${column.name}`}</div>
+			<table className="metrics-table cmp-breakdown-table">
+				<thead>
+					<tr className="metrics-table-header-row">
+						<th className="metrics-table-header-cell">Type</th>
+						<th className="metrics-table-header-cell cmp-breakdown-a">Baseline</th>
+						<th className="metrics-table-header-cell cmp-breakdown-b">Compared</th>
+						<th className="metrics-table-header-cell">Change</th>
+					</tr>
+				</thead>
+				<tbody className="metrics-table-body">
+					{lines.map(line => (
+						<tr>
+							<td className="text-nowrap">{line.name}</td>
+							<td>{breakdown.format(line.a)}</td>
+							<td>{breakdown.format(line.b)}</td>
+							<td>{changeElem(line.a, line.b, breakdown.format, line.better)}</td>
+						</tr>
+					))}
+				</tbody>
+				<tfoot className="metrics-table-footer">
+					<tr className="metrics-table-footer-row">
+						<td>{column.name}</td>
+						<td>{row.a ? column.format(a) : '-'}</td>
+						<td>{row.b ? column.format(b) : '-'}</td>
+						<td>{changeElem(a, b, column.format, column.better ?? 'none')}</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	);
 }
 
 // The change from a to b, like '+12.3', colored by whether it's better. A change that's tiny

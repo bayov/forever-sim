@@ -517,8 +517,17 @@ $cmp-worse: #ef7a7a;
 
 	// The main column is wide, with the bars of both runs in front of the numbers.
 	td.cmp-cell-bars {
-		width: 40%;
-		min-width: 12rem;
+		width: 30%;
+		min-width: 6rem;
+	}
+
+	// Long names wrap, so a narrow panel like Debuffs keeps every column in view.
+	td:first-child {
+		white-space: normal;
+	}
+
+	.metrics-action-name {
+		white-space: normal;
 	}
 
 	.cmp-cell-inner {
@@ -604,4 +613,34 @@ $cmp-worse: #ef7a7a;
 
 .cmp-flat {
 	color: var(--text-muted-color);
+}
+
+// The parts of a cell, shown when we hover it.
+.cmp-breakdown {
+	.cmp-breakdown-title {
+		margin-bottom: var(--spacer-1);
+		font-weight: 600;
+		color: var(--gold-soft);
+	}
+
+	.cmp-breakdown-table {
+		font-variant-numeric: tabular-nums;
+
+		th.cmp-breakdown-a {
+			color: $cmp-a;
+		}
+
+		th.cmp-breakdown-b {
+			color: $cmp-b;
+		}
+
+		td:not(:first-child) {
+			text-align: right;
+		}
+
+		.metrics-table-footer-row td {
+			padding-top: 0.35rem;
+			font-weight: 600;
+		}
+	}
 }
