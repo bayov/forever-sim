@@ -178,7 +178,7 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // casts; no other place for the 3 points gains anything either (the search found no move above
 // +0.0). Four seeds (deep Frost, Frost with
 // Arcane Meditation, Frost with Incineration and a 51 point Frost build) all ended within 0.2.
-// It is 736.2 / 736.5 / 735.6 (Undead), 18% behind Frostfire, and last of the four now that Ice
+// It is 742.8 / 745.4 / 739.7 (High Order, with the Major Spellblasting Potion), 18% behind Frostfire, and last of the four now that Ice
 // Lance takes no spell power (with SoD's 42.9% it was second).
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost', SavedTalents.create({ talentsString: '050005-03-0555300331001301251' }), {
 	tooltip: "Deep Frost: Frostbolt, Fingers of Frost, Shatter, Winter's Chill.",
@@ -322,48 +322,56 @@ export const OtherDefaults = {
 
 // The level 60 raid setup: the sim's default boss (level 63, 3731 armor), a 3 minute fight, and
 // the default buffs, debuffs and consumes.
-export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
-	Encounter.create({
-		duration: 180,
-		durationVariation: 20,
-		executeProportion20: 0.2,
-		executeProportion25: 0.25,
-		executeProportion35: 0.35,
-		targets: [
-			{
-				id: 213336,
-				name: 'Level 60',
-				level: 63,
-				mobType: MobType.MobTypeUnknown,
-				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
-				minBaseDamage: 3000,
-				damageSpread: 0.3333,
-				swingSpeed: 2,
-				parryHaste: true,
-			},
-		],
-	}),
-	{
-		tanks: [],
-		raidBuffs: DefaultRaidBuffs,
-		debuffs: DefaultDebuffs,
-		buffs: DefaultIndividualBuffs,
-		consumes: DefaultConsumes,
-	},
-);
+const level60Encounter = Encounter.create({
+	duration: 180,
+	durationVariation: 20,
+	executeProportion20: 0.2,
+	executeProportion25: 0.25,
+	executeProportion35: 0.35,
+	targets: [
+		{
+			id: 213336,
+			name: 'Level 60',
+			level: 63,
+			mobType: MobType.MobTypeUnknown,
+			stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+			minBaseDamage: 3000,
+			damageSpread: 0.3333,
+			swingSpeed: 2,
+			parryHaste: true,
+		},
+	],
+});
+export const EncounterLevel60 = PresetUtils.makePresetEncounter('Level 60', level60Encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+// Frost has the mana to spare for a Major Spellblasting Potion in place of the Major Mana Potion:
+// +7.9 at 180 sec and +4.6 at 300 (the consumables auditor). Frostfire runs dry with it at 300 sec
+// (-77), Fire loses 24 / 18 and Arcane is +2.7 / -2.1, so they keep the Major Mana Potion.
+export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (Frost)', level60Encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: Consumes.create({ ...DefaultConsumes, defaultPotion: Potions.MajorSpellblastingPotion }),
+});
 
 // Races, on each build with its rotation, 20000 iterations, 180 sec (120 and 300 sec in
 // forever-wiki/sim-status.md). The staff has no racial, so the table is the same with weapon
-// racials off. Undead (Touch of the Grave at 10% for mages) is best on every build and the best
-// Horde race (on Frost High Order is 0.4 ahead at 180 sec, inside the noise, and behind at 120 and
-// 300). The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on
+// racials off. Undead (Touch of the Grave at 10% for mages) is best on Frostfire, Fire and Arcane
+// and the best Horde race on all four. On Frost (with its Major Spellblasting Potion) High Order is
+// 1.0 ahead of Undead at 180 sec, level at 120 and 0.5 behind at 300, so the Frost build is High
+// Order. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on
 // Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome is ahead at 120 and 300 sec
 // (929.3 and 893.7 against Undead's 926.8 and 892.1).
 //   Frostfire: Undead 904.5, High Order 902.7, Orc 902.2, Gnome 899.9, Troll 898.4, Human 895.0.
 //   Fire:      Undead 873.3, Gnome 869.7, Orc 867.6, Human 861.8, High Order 861.5, Troll 860.8.
 //   Arcane:    Undead 829.7, Orc 821.3, Gnome 819.6, Troll 816.2, Human 813.0, High Order 811.0.
-//   Frost:     High Order 736.9, Undead 736.5, Gnome 734.4, Troll 734.3, Orc 734.1, Human 727.6.
+//   Frost:     High Order 745.4, Undead 744.4, Gnome 742.4, Troll 742.4, Orc 741.9, Human 735.5.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,
@@ -383,10 +391,11 @@ export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Level 60
 });
 export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Level 60 Frost', {
 	...buildCommon,
-	tooltip: 'Level 60 Undead Frost on the synthetic Phase 1 gear, in a 3 minute raid fight.',
+	tooltip: 'Level 60 High Order Frost on the synthetic Phase 1 gear, in a 3 minute raid fight, with a Major Spellblasting Potion.',
+	encounter: EncounterLevel60Frost,
 	talents: TalentsLevel60Frost,
 	rotation: APLLevel60Frost,
-	race: Race.RaceUndead,
+	race: Race.RaceSkyborneHighOrder,
 });
 export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Level 60 Fire', {
 	...buildCommon,

@@ -154,20 +154,20 @@ Four builds on two synthetic Phase 1 sets (`tools/database/forever_synthetic_ite
 | Arcane, actual % | 13.1 | 15.9 | 9.6 | 42.9 | 10.8 | 7.6 |
 | Arcane, amount | 121 | 147 | 89 | 460 | 100 | 70 |
 
-The trinkets are 41 spell power with 11 crit rating, and an on-use +140 spell power for 20 sec every 2 min (sim/mage/forever_synthetic_trinkets.go). The 100 hit rating (10%), with Elemental Precision or Arcane Focus and the 2 piece, is the 16% cap against a level 63 boss; 2% less hit for the other stats loses 7 to 11. The Manaflare Regalia set (Forever's level 60 mage set) is on the head and chest only, so only its 2 piece bonus (1% hit) is live; its 4 and 5 piece would add 56.8 (6%) to Frostfire at 180 sec and nothing to the other builds. At 180 sec, the first set (526 spell power, no trinkets) gave Frostfire 903.4, Fire 867.2, Arcane 822.2 and Frost 743.6. The fair mix at the old prices gave 860.2, 836.3, 806.8 and 704.6. The Forever budget with the trinkets gives 904.5, 873.3, 829.7 and 736.5.
+The trinkets are 41 spell power with 11 crit rating, and an on-use +140 spell power for 20 sec every 2 min (sim/mage/forever_synthetic_trinkets.go). The 100 hit rating (10%), with Elemental Precision or Arcane Focus and the 2 piece, is the 16% cap against a level 63 boss; 2% less hit for the other stats loses 7 to 11. The Manaflare Regalia set (Forever's level 60 mage set) is on the head and chest only, so only its 2 piece bonus (1% hit) is live; its 4 and 5 piece would add 56.8 (6%) to Frostfire at 180 sec and nothing to the other builds. At 180 sec, the first set (526 spell power, no trinkets) gave Frostfire 903.4, Fire 867.2, Arcane 822.2 and Frost 743.6. The fair mix at the old prices gave 860.2, 836.3, 806.8 and 704.6. The Forever budget with the trinkets gives 904.5, 873.3, 829.7 and 736.5 (Frost 745.4 with its Major Spellblasting Potion, on High Order).
 
 The weapon is a staff at Forever's caster weapon rate (193.4), with Staff of Dominance's damage and Forever's 2H Spellblasting (+65 spell power). It is 32 to 43 ahead of a sword (149.1) and off hand (43.4). The trinkets are synthetic: Forever removed the old dungeon trinkets and its launch trinkets aren't simulated yet. The enchants are the best Phase 1 ones with no raid source: Lesser Arcanum of Voracity, +6 spell power on the neck, Mystic Rugged Armor Kits (+6 spell power) on chest, hands, legs and feet, and Greater Spellpower (+16) on the wrist. Arcane wears Gloves - Arcane Power (+20 Arcane) instead, 7.7 ahead. Enchant Weapon - Spell Power is a Molten Core formula, and Revelation's model is unverified for casters, so neither is used.
 
-The raid is a caster group (`tools/rotopt/mksettings/spec_mage.go`): Kings and Wisdom, Arcane Brilliance, Divine Spirit, Gift of the Wild, Fortitude, Mana Spring Totem, Moonkin Aura, Curse of the Elements (all magic schools under Forever) and Judgement of Wisdom, against the Level 60 boss. Consumes: Flask of Supreme Power, Greater Arcane Elixir, Elixir of Firepower (Greater Firepower is the Elixir of Holy Power under Forever), Elixir of Frost Power, Elixirs of Sages and Greater Intellect, Greater Mageblood Elixir, Lobster Stew, Wizard Oil (Brilliant Wizard Oil is a Zul'Gurub recipe, and no raid is open at launch), Major Mana Potion, Cerebral Cortex Compound and the Goblin Sapper (Engineering and Tailoring). Mage Armor, 50% casting regen under Forever.
+The raid is a caster group (`tools/rotopt/mksettings/spec_mage.go`): Kings and Wisdom, Arcane Brilliance, Divine Spirit, Gift of the Wild, Fortitude, Mana Spring Totem, Moonkin Aura, Curse of the Elements (all magic schools under Forever) and Judgement of Wisdom, against the Level 60 boss. Consumes: Flask of Supreme Power, Greater Arcane Elixir, Elixir of Firepower (Greater Firepower is the Elixir of Holy Power under Forever), Elixir of Frost Power, Elixirs of Sages and Greater Intellect, Greater Mageblood Elixir, Lobster Stew, Wizard Oil (Brilliant Wizard Oil is a Zul'Gurub recipe, and no raid is open at launch), Major Mana Potion (Major Spellblasting Potion for Frost, +7.9 at 180 sec, which the other builds lose to running dry), Cerebral Cortex Compound and the Goblin Sapper (Engineering and Tailoring). Mage Armor, 50% casting regen under Forever.
 
-Talents were searched (`tools/rotopt -talent-search`) from several seeds per spec, rotations with the mage_arcane, mage_fire, mage_frost and mage_frostfire templates over 120, 180 and 300 sec together, and the two alternated until neither moved. Every rotation was then checked by hand on a timeline (Arcane Blast stacks and Missile Barrage, Heating Up, Fingers of Frost, Scorch upkeep, Combustion, Evocation). DPS at 120 / 180 / 300 sec, 20000 iterations, best race (Undead for all four):
+Talents were searched (`tools/rotopt -talent-search`) from several seeds per spec, rotations with the mage_arcane, mage_fire, mage_frost and mage_frostfire templates over 120, 180 and 300 sec together, and the two alternated until neither moved. Every rotation was then checked by hand on a timeline (Arcane Blast stacks and Missile Barrage, Heating Up, Fingers of Frost, Scorch upkeep, Combustion, Evocation). DPS at 120 / 180 / 300 sec, 20000 iterations, best race (Undead, High Order for Frost):
 
 | Build | Talents | Rotation | 120 | 180 | 300 |
 |---|---|---|---|---|---|
 | Frostfire (default) | `-1355000013013304-00550003310003002` | Frostfire Bolt, Pyroblast at 3 Heating Up, Scorch for Fire Vulnerability, Shatter on Fingers of Frost, rank 2 Frostfire Bolt when the mana won't last, Fire Blast with spare mana | 926.8 | 904.5 | 892.1 |
 | Fire | `05020500300001-23550000130123051-004` | Fireball, Pyroblast at 3 Heating Up, Scorch, Fire Blast, Missile Barrage, Combustion after 5 Scorch stacks | 886.6 | 873.3 | 858.8 |
 | Arcane | `051225003100311531-03-02550003` | Arcane Blast precast, Arcane Blast to 2 stacks then Missiles on Missile Barrage, else to 4, one Blast below 20% mana, Arcane Power with the trinket | 838.7 | 829.7 | 818.7 |
-| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 736.2 | 736.5 | 735.6 |
+| Frost | `050005-03-0555300331001301251` | Frostbolt, Shatter on Fingers of Frost | 742.8 | 745.4 | 739.7 |
 
 Frostfire Bolt is Fire and Frost at once, so it takes Fire Power, Ignite and Critical Mass along with Ice Shards, Piercing Ice and Shatter, and its crits and chills feed both Heating Up and Fingers of Frost. foreverchanges.pro's popular Fire build is the same 29 / 22 split. Evocation waits for 30 sec of the fight left (Fire 90 sec). Frostfire runs out of mana first, so once Evocation is spent (or under 60 sec are left) and the mana is under 60 a second of the fight left it casts rank 2 Frostfire Bolt (285 mana for 9% less damage). Ignite's ticks never crit (the crit they come from already did). Mana gems share the Demonic Rune's 2 min cooldown in the client (item category 1153), and the rune gives more, so Frostfire, Fire and Arcane skip the gems. Fire holds Combustion until Fire Vulnerability has 5 stacks, and Fire and Frostfire hold the on-use trinket for it too (+1.6 and +3.7 at 180 sec, from the rotation auditor).
 
@@ -179,14 +179,14 @@ Races (180 sec, each build on its rotation). The staff has no racial, so the tab
 
 | Race | Frostfire | Fire | Arcane | Frost |
 |---|---|---|---|---|
-| Undead | 904.5 | 873.3 | 829.7 | 736.5 |
-| High Order | 902.7 | 861.5 | 811.0 | 736.9 |
-| Orc | 902.2 | 867.6 | 821.3 | 734.1 |
-| Troll | 898.4 | 860.8 | 816.2 | 734.3 |
-| Gnome | 899.9 | 869.7 | 819.6 | 734.4 |
-| Human | 895.0 | 861.8 | 813.0 | 727.6 |
+| Undead | 904.5 | 873.3 | 829.7 | 744.4 |
+| High Order | 902.7 | 861.5 | 811.0 | 745.4 |
+| Orc | 902.2 | 867.6 | 821.3 | 741.9 |
+| Troll | 898.4 | 860.8 | 816.2 | 742.4 |
+| Gnome | 899.9 | 869.7 | 819.6 | 742.4 |
+| Human | 895.0 | 861.8 | 813.0 | 735.5 |
 
-Undead (Touch of the Grave, 10% for mages) is best on every build, overall and for the Horde (on Frost High Order is 0.4 ahead at 180 sec, inside the noise, and behind at 120 and 300). The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on Fire and Arcane. The best race holds at 120 and 300 sec except on Frostfire, where Gnome's extra mana puts it ahead of Undead at both (929.3 and 893.7 against 926.8 and 892.1); the preset keeps Undead, best at the 3 minute fight.
+Undead (Touch of the Grave, 10% for mages) is best on Frostfire, Fire and Arcane, and the best Horde race on all four. On Frost, with its Major Spellblasting Potion, High Order is 1.0 ahead of Undead at 180 sec (level at 120, 0.5 behind at 300), so the Frost preset is High Order. The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on Fire and Arcane. The best race holds at 120 and 300 sec except on Frostfire, where Gnome's extra mana puts it ahead of Undead at both (929.3 and 893.7 against 926.8 and 892.1); the preset keeps Undead, best at the 3 minute fight.
 
 The consumables model Forever's launch, with no raid open. A character takes one of the +2% crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale). Elixir of Sages with Elixir of Greater Intellect is 0.3 to 1 ahead of the Owl with Greater Spirit, and the Owl on top would add 10 to 21 at 180 sec if the two stacked, which is open (notes.md).
 
