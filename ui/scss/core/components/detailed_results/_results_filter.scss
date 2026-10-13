@@ -1,7 +1,61 @@
 @import '../unit_picker';
 
+// The player and target pickers in the Results toolbar. Each is a select-like button with the
+// unit's icon and a chevron, and its menu matches the header's menus.
 .results-filter-root {
 	display: flex;
 	align-items: center;
-	font-size: 20px;
+	gap: var(--spacer-2);
+
+	.dropdown-picker-root {
+		margin-bottom: 0;
+	}
+
+	.dropdown-picker-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		height: 2rem;
+		padding: 0 0.7rem;
+		border: 1px solid var(--line-color-strong);
+		border-radius: var(--bs-border-radius);
+		background: rgba($panel-bg, 0.82);
+		color: $ivory;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		transition:
+			border-color 0.15s ease-in-out,
+			background-color 0.15s ease-in-out;
+
+		&::after {
+			margin-left: 0.25rem;
+			border: 0;
+			content: '\f078';
+			font-family: 'Font Awesome 6 Free';
+			font-weight: 900;
+			font-size: 0.55rem;
+			vertical-align: initial;
+			color: var(--text-muted-color);
+		}
+
+		&:hover,
+		&.show {
+			border-color: var(--text-muted-color);
+			background: $panel-bg-2;
+		}
+	}
+
+	.unit-picker-item-icon {
+		width: 1rem;
+		height: 1rem;
+		margin-right: 0;
+		border-radius: 3px;
+		font-size: 0.75rem;
+		color: var(--text-muted-color);
+	}
+
+	.dropdown-menu {
+		@include header-dropdown-menu;
+		margin-top: 0.35rem !important;
+	}
 }
