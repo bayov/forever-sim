@@ -318,7 +318,9 @@ export class Sim {
 		}
 	}
 
-	async runRaidSimWithLogs(eventID: EventID): Promise<SimResult | null> {
+	// Runs one iteration with its logs. With emit false, the result only goes to the caller and
+	// doesn't take the place of the current results.
+	async runRaidSimWithLogs(eventID: EventID, emit = true): Promise<SimResult | null> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
 		} else if (this.encounter.targets.length < 1) {
@@ -335,7 +337,7 @@ export class Sim {
 				throw new SimError(result.error.message);
 			}
 			const simResult = await SimResult.makeNew(request, result);
-			this.simResultEmitter.emit(eventID, simResult);
+			if (emit) this.simResultEmitter.emit(eventID, simResult);
 			return simResult;
 		} catch (error) {
 			if (error instanceof SimError) throw error;

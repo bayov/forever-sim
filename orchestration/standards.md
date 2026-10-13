@@ -1,0 +1,91 @@
+# Cross-class standards (orchestrator rulings)
+
+The rules every class follows so the specs' Level 60 numbers compare fairly. Newest rulings win; this file is the reference. Each class PR states how it applies them.
+
+## Gear
+
+1. SUPERSEDED by 1b (2026-10-13). Was: V(ilvl) = 1.2 * ilvl - 36.4 on a 1.5-norm, spell power 0.55, slot mods 1.0 / 0.77 / 0.5625, one-hand 0.42, ranged 0.32.
+1a. SUPERSEDED by 1b (2026-10-13). Was: every piece's weighted linear total = 1.73 x its item 1 budget, whatever the spec.
+1b. Forever budget, per archetype (user ruling 2026-10-13: "as accurately as we can predict what phase 1 BiS sets will look like on WoW Forever on release"; adopt the special rules real epics follow). Evidence: orchestration/forever_item_budget.md (ilvl <= 30 section: Forever kept Era's low-level budget; spell power 0.86) and orchestration/bis_budget_rules.md (Era level 60 epics price every archetype on one p-norm line, p about 1.7; archetypes differ only in stats per piece; Forever about doubles caster weapons).
+   - Weights: Str / Agi / Sta / Int / Spi 1; spell power 0.86 (generic), school-only power 0.70, healing on top of spell power 0.45, AP 0.5, RAP 0.4 (AP and RAP on one item count once), hit rating 1.0 (10 = 1%), crit rating 1.0 (14 = 1%), MP5 2.4. Armor free.
+   - Line: L(ilvl) = 1.125 x ilvl + 2.0 (Era epics at ilvl 55-80; the user picked this fit). Slot mods: 1 head / chest / legs (T1); 0.75 shoulder / hands / waist / feet (T2); 0.5625 neck / back / wrist / rings (T3). Item levels as in item 2.
+   - Armor: each piece's weighted linear total = slot mod x L(ilvl) x f, within +/-1%:
+
+     | f | T1 | T2 | T3 |
+     |---|---|---|---|
+     | pure caster (mage, warlock, Shadow / Smite, Elemental, Balance) | 1.053 | 1.026 | 0.995 |
+     | physical melee (warrior, rogue) and feral | 0.950 | 0.959 | 0.911 |
+     | hunter (BM, MM, Survival) | 1.028 | 1.056 | 0.977 |
+     | hybrid (Ret, Enhancement) | 1.093 | 1.103 | 1.048 |
+
+     Hybrid = physical x 1.15: Forever's own ilvl <= 30 hybrid pieces carry 1.13-1.15x a physical piece's linear stats, and SoD's hybrid epics 1.15x (both about 3-4.5 stats). Era's 5-6-stat hybrids (x1.26) are not used.
+     Worked totals: caster 80.3 / 58.7 / 63.0 waist / 45.8; physical and feral 72.4 / 54.9 / 58.9 / 42.0; hunter 78.4 / 60.4 / 64.8 / 45.0; hybrid 83.3 / 63.1 / 67.8 / 48.3 (T1 / T2 at 66 / waist at 71 / T3 at 71).
+   - Shape check (stops the p-norm being gamed): each armor piece's 1.7-norm value, (sum (weight x amount)^1.7)^(1/1.7), must be within +/-6% of slot mod x (0.661 x ilvl + 2.92). In practice that is 4 / 4 / 3-4 stat lines per piece (T1 / T2 / T3) for casters and hunters, 3 for physical and feral, 4-5 for hybrids. bis_budget_rules.md Q5 has the worked examples.
+   - Weapons, weighted linear total as a multiple of L(ilvl):
+     - physical two-hander (ilvl 76): 0.90 (78.8);
+     - physical one-hander (71): 0.39 each (31.9);
+     - hunter melee two-hander: 0.98 (85.8);
+     - hunter one-hander (71): 0.42 each (34.4; physical one-hander x the hunter / physical two-hander ratio 0.98 / 0.90, ruled 09:40 for Survival's dual wield);
+     - Ret / Enhancement two-hander: 1.035 (90.6; physical x 1.15);
+     - Ret / Enhancement one-hander (71): 0.45 each (36.7; physical one-hander x 1.15);
+     - feral two-hander: 0.90;
+     - caster staff (76): 2.21 (193.4), or caster main hand (71) 1.82 (149.1) plus held off-hand (71) 0.53 (43.4). This is Forever's caster weapon rate;
+     - physical ranged (bow, gun, thrown, 71): 0.24 (19.7);
+     - wand (71): 0.26 (21.3);
+     - relics, idols, totems and librams stay stat-less (their effect is their value).
+     Weapon damage and speed still come from the real Era Phase 1 weapon of that type and are free; the weapon type stays the Era Phase 1 BiS type.
+   - Trinkets: two synthetic trinkets per spec at ilvl 71 (8a).
+     1. A stat trinket: 1-3 of the spec's non-Stamina stats, weighted linear total 0.56 x L(71) = 45.9 (+/-1%), 1.7-norm value 36.8 +/-6%.
+     2. An on-use trinket with no passive stats, modelled with core.NewSimpleStatOffensiveTrinketEffect (sim/core/item_effects.go) on the shared offensive-trinket cooldown. Its average weighted value over a 180 s fight (uses at 0 s and every cooldown; amount x weight x seconds active / 180) is 27 for spell power and 37 for AP / Str / Agi / RAP, the sizes of Talisman of Ephemeral Power and Earthstrike. Suggested shape, 20 s every 2 min (2 uses in 180 s): about 140 spell power, or about 335 AP, or about 415 RAP for hunters, or about 165 Strength / Agility.
+     Hybrids may take either kind of on-use (same price), whichever sims best. Trinkets are excluded from the 5a shares.
+   - Each set reports its armor total, weapon total and the two trinkets in the PR and the presets comment, as today.
+2. One item-level table for every class (fairness P5, 12:00 ruling): head, shoulder, chest, hands, legs, feet at item level 66; neck, back, wrist, waist and both rings at 71. The budget per piece then follows 1b (per archetype).
+3. SUPERSEDED by 1b for budgets. Still in force: weapon damage and speed come from the real Era Phase 1 weapon and are free; the weapon type stays the Era Phase 1 BiS type; every spec fills its ranged / wand / relic slot with something that does something for it.
+4. Hit (fairness P2): every set optimises hit against its other stats at budget prices: usually that means hit up to the spec's cap against a level 63 boss (yellow cap for melee, 16% spell miss for casters), counting talents and the 2-piece bonus, never over the cap, but if the same budget points do more as another stat (e.g. spell power for Balance), use the mix that sims best and say so.
+5. Spirit about 10% of the set for mana users, none for rage and energy users.
+5b. Hybrids carry hybrid stats (user ruling 2026-10-13, citing Forever's developers): Ret paladin and Enhancement shaman sets mix physical and spell stats; they keep their spell power and Intellect amounts (the 5b targets in gear_targets.md, re-priced at spell power 0.86) rather than SoD's almost pure melee mix. Hunters keep about 10% Spirit as mana users (user ruling). The bundled round (per-spec Stamina, the Forever budget in 1b, synthetic trinkets) is now in force.
+5a. Fair stat mix (user ruling, 2026-10-13 06:30 UTC; metric and numbers ruled 06:40). A set is not an all-in on the spec's single highest-EP stat. It carries a realistic mix: the spec's very strong stats as its core, plus lesser but still useful stats in the proportions real level 60 itemization gives the spec (the user's pointer: Season of Discovery level 60 BiS gear for the spec; the fairness auditor derives a per-spec target mix from it, report section 7b). Shares are counted linearly: a stat's share = its budget weight x amount / the set's total weighted stats (enchants excluded, AP and RAP counted once). Stamina: each spec's own SoD BiS average share at the 1b weights (gear_targets.md), +/- 1.5 points (user ruling 2026-10-13; was 18% for everyone). Spirit for mana users stays under item 5. Guardrail: no one stat over 55% of a set's non-Stamina share (raised from 45% with spell power at 0.86: real SoD caster BiS sets carry 45-54% spell power by that measure). School-only spell power only where real gear for the spec carries it. Stat weights for every preset: orchestration/stat_weights.md.
+6. Set bonuses (fairness P3): the Level 60 presets carry 2-piece bonuses only. Each class keeps its real Forever Tier 1 / crafted set on exactly two synthetic pieces so only the 2-piece is live (same shape for everyone: about 1% haste or 1% hit). Report what the 4- and 5-piece bonuses would add in a separate line in the presets comment, wiki and PR.
+7. Every slot carries the best Phase 1 enchant that exists for it, the Forever necklace enchants included; no item or enchant whose only source is an unopened raid (head / legs: the Phase 1 Lesser Arcanums from the Burning Steppes quests, e.g. Lesser Arcanum of Voracity +8 of one stat, for every class; the full Arcanums of Focus / Rapidity / Protection are Dire Maul turn-ins (Phase 2 in Era, Forever launch status unconfirmed), so no class uses them, and a PR may report Focus or Rapidity as an alternative; the Zandalar head enchants are ZG; Enchant Weapon - Spell Power's formula 18259 is Molten Core only: the non-raid caster stat option is Mighty Intellect, Thorium Brotherhood). Mighty Intellect (Thorium Brotherhood vendor, Revered) is allowed, noted as borderline. Forever's Enchant Weapon - Revelation is NOT used by casters other than the enhancement shaman (its sim trigger list was written for shaman shocks and misfires on other casters); a PR may report it as an unverified alternative. Casters may use a staff (Forever's Enchant 2H Weapon - Spellblasting, +65 SP, vendor) or a main hand + off-hand, both at the ~73 caster weapon budget, whichever sims best. Forever's high-level enchants with non-raid sources (2H Spellblasting / Mighty Spell Power, Bracer Greater Spellpower +16 SP, Gloves school power +20 / Superior Strength +15, Cloak Agility +5, Off-Hand Wisdom, Mystic / Forceful Rugged Armor Kits) are added on the shared branch (commit 72bce99); re-pick enchants after merging it. Caster picks in the shipped sets: Mystic Rugged Armor Kit (+6 SP) on chest / hands / legs / feet unless a school glove enchant is better, Bracer Greater Spellpower (+16) on wrist; no Phase 1 caster shoulder or back enchant. Dire Maul sources (full Arcanums, Kreeg's Stout Beatdown) are out for the same reason as the Arcanums.
+
+8a. Real items in the presets (trinkets, relics, any non-synthetic slot) must be obtainable at Forever launch: no drop from an unopened vanilla raid (Molten Core, Zul'Gurub, Blackwing Lair, AQ, Naxx; e.g. Talisman of Ephemeral Power is out). NO TRINKETS (12:10 ruling): Forever removed the old dungeon trinkets (Hand of Justice, Blackhand's Breadth, Briarwood Reed, Royal Seal of Eldre'Thalas, Seal of the Dawn, Mark of Fordring... are absent from client 70338 ItemSparse), Talisman of Ephemeral Power is Molten Core only, and the sim doesn't model Forever's launch trinkets' use / proc effects (Weakness Analyzer, the Hearts of the Mountain, the Guard Captain items...). SUPERSEDED for trinkets (user ruling 2026-10-13): every Level 60 preset now carries two synthetic ilvl 71 trinkets per standards 1b (a stat trinket and an on-use trinket), since real Phase 1 trinkets are unavailable or unmodelled; each PR says the trinkets are synthetic. Relics (Libram of Law, Burning Totem, Swarming Idol, Howling Idol... sold by Pix Xizzix) are fine. Spell ranks taught only by Ahn'Qiraj books (Frostbolt XI, Fireball XII, Arcane Missiles VIII, Shadow Bolt X, Immolate VIII, Corruption VII, Starfire VII, Ferocious Bite V, Multi-Shot V, Serpent Sting IX, Aspect of the Hawk VII, Backstab IX, Eviscerate IX, Deadly Poison V, Heroic Strike IX, Revenge VI, and the raid buffs Battle Shout VII, Strength of Earth Totem V and Grace of Air Totem III, capped on the shared branch in cfb2dac; Blessings of Might and Wisdom keep 133 / 40 through the trainer Greater Blessing rank II) are out too (13:35 ruling). Where Forever's top rank is weaker than a lower learned rank (Aspect of the Hawk VI 55 < V 90, Trueshot Aura V +50 < IV +75, Hunter's Mark IV 71 < III 98), the presets use the strongest learned rank (16:10 ruling): players can cast any rank they know (obvious client data errors excluded, e.g. Seal of Fury rank 4's 0.900 coefficient): use env.IncludeAQRanks() (shared branch b2bc12f), which is false under Forever.
+
+## Consumables
+
+8. Forever launch Phase 1 only: nothing whose only source (item, recipe, plans or quest) is an unopened vanilla raid (MC, ZG, BWL, AQ, Naxx). World, dungeon, vendor, quest, Onyxia and Blasted Lands quest items are fine. Elixir of Frost Power (Winter Veil recipe, tradeable) stays. No holiday soulbound items.
+9. Forever's new consumables are simulated on the shared branch claude/wow-forever-dps-presets-m9u15h-consumes (merge its latest head).
+10. At most ONE of the five +2% crit elixirs per character: Mongoose, Grizzly, Owl, Sages, Whale. Other slots take elixirs without that crit. State what a second crit elixir would add.
+11. Every spec gets the full raid treatment: flask, the best elixir per slot, food, weapon oil / stone / imbue, potion, rune or equivalent, and explosives when its professions allow them.
+
+## Raid, encounter and settings
+
+12. The shared mksettings raid and encounter (level 63, 3731 armor, Humanoid; 120 / 180 / 300 sec); each spec in the group it would really be in. Curse of the Elements covers all magic schools; no Curse of Shadow; Improved Scorch / Winter's Chill only for the mage; Shadow Weaving only for the priest.
+13. Pre-pull is allowed for everyone (buffs, potions, totems, imbues, pets, pre-casts), but damage only counts from time 0, so pre-casts are timed to land at 0 or later. No class starts the fight in Stealth or Prowl (user ruling, 14:15): a rogue or a feral cat opens from Stealth only through an in-fight Vanish (or equivalent), never from a pre-pull Stealth / Prowl.
+14. Pets (13:05 ruling, from orchestration/pet_buffs.md): neither hunter pets nor warlock demons take player buffs in Forever (client 70338 puts a players-only target flag on 72 buff spells incl. every Greater Blessing, Gift of the Wild, Fortitude, Brilliance, Battle Shout, Leader of the Pack, Moonkin Aura, totems and scrolls; beta bug report #27 closed Not A Bug; Blizzard's hunter and warlock deep dives). Both instead scale from their owner's stats (Hunter / Warlock Pet Scaling auras): hunter pets as already modelled (10% of AP, all of the hunter's crit); demons need Warlock Pet Scaling modelled, with Season of Discovery coefficients as a labelled placeholder until a Forever log measures them. No pet consumables for either. Target debuffs apply to pet damage as usual.
+15. Final numbers at 20,000+ iterations from binaries rebuilt after the last gear or DB change.
+
+17. Windfury Totem's internal cooldown is 1.5 sec (user ruling 2026-10-13). The sim already uses it (sim/core/buffs.go CreateExtraAttackAuraCommon), so the 100 ms alternative is closed and isn't a dashboard assumption.
+
+18. Armor debuff: Sunder Armor, never Expose Armor (user ruling 2026-10-13). In Forever, 5 Sunders take the same 2250 armor as Expose Armor (sim/core/debuffs.go). A tank keeps Sunder up easily, while Expose Armor costs a rogue 5 combo points and falls off more easily, so raids won't use it. Every preset's raid debuffs (ui/<spec>/presets.ts and tools/rotopt/mksettings/main.go) set Sunder Armor on and Expose Armor off. Rogue rotations never cast Expose Armor.
+
+19. Neutral boss type (user ruling 2026-10-13: "ensure default encounter type doesn't benefit any spec or race uniquely"). Every Level 60 preset fights a level 63 boss of type Unknown ("generic boss") instead of Humanoid: mksettings encounter and every ui/<spec>/presets.ts encounter use MobType.MobTypeUnknown.
+   Creature-type effects in the sim, and how they stand on the generic boss:
+
+   | Effect | Applies vs | On the generic boss |
+   |---|---|---|
+   | Rogue Murder (+2/4%) | Humanoid, Giant | off |
+   | Paladin Exorcism, Holy Wrath, Crusade's extra 1%, Undead set bonus | Undead, Demon | off |
+   | Warrior Spearing Strike's +80% weapon damage | Giant, Dragonkin | off |
+   | Troll Beast Slaying, Dwarf Big Game Hunter | Beast | off |
+   | Skyborne Elemental Insight | Elemental | off |
+   | Druid Grovekeeper 4-piece | its creature type (not live) | off |
+   | Hunter Improved Tracking (+1% a rank) | every raid boss type except Mechanical | stays ON, because a hunter tracks the boss's type whatever it is; the hunter applies it against Unknown too |
+
+   Talents are re-optimised for the generic boss (e.g. no Murder). Confirmed by the user (2026-10-13, after the fairness auditor raised the asymmetry): Improved Tracking stays on against the generic boss and Murder stays off. Tracking works on every boss type except Mechanical, so a hunter always has it; Murder only works on Humanoids and Giants.
+   Encounter-specific builds ("vs Humanoid", "vs Undead", "vs Giant / Dragonkin") ship as extra, non-default presets wherever the creature-type effect is worth about 2% or more for that spec. Their talents and rotation are optimised for that target, and they are labelled with the creature type. The dashboard hides them by default and shows them behind a toggle.
+
+20. Faerie Fire and Curse of Recklessness stay exclusive: they share the minor armor slot, so only one counts (user ruling 2026-10-13, reconfirming the 10-09 shaman audit call after the class changes auditor read the client as allowing them to stack).
+
+## Races
+
+16. Presets use the best race on the spec's Era BiS weapon type. Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.

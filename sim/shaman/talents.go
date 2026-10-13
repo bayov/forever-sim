@@ -166,6 +166,16 @@ func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
 	return []time.Duration{0, 170, 330, 500}[shaman.Talents.ElementalAlacrity] * time.Millisecond
 }
 
+// eyeOfTheStormChance is the chance for a hit not to push back our Lightning Bolt, Chain
+// Lightning or Lava Burst cast.
+//
+// The beta client gives 23, 47 and 70% for 1, 2 and 3 points. No preset takes it today, and
+// only the Level 30 encounters hit us while we cast, but an encounter that hits a caster often
+// would need it.
+func (shaman *Shaman) eyeOfTheStormChance() float64 {
+	return []float64{0, .23, .47, .70}[shaman.Talents.EyeOfTheStorm]
+}
+
 func (shaman *Shaman) improvedFireNovaBonus() float64 {
 	return .1 * float64(shaman.Talents.ImprovedFireNova)
 }

@@ -1,0 +1,608 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceUndead",
+            "class": "ClassMage",
+            "equipment": {
+              "items": [
+                {
+                  "id": 996001,
+                  "enchant": 1509
+                },
+                {
+                  "id": 996002,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 996003
+                },
+                {
+                  "id": 996004
+                },
+                {
+                  "id": 996005,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 996006,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 996007,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 996008
+                },
+                {
+                  "id": 996009,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 996010,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 996011
+                },
+                {
+                  "id": 996012
+                },
+                {
+                  "id": 996031
+                },
+                {
+                  "id": 996032
+                },
+                {
+                  "id": 996016,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 996015
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "firePowerBuff": "ElixirOfFirepower",
+              "frostPowerBuff": "ElixirOfFrostPower",
+              "mainHandImbue": "WizardOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "05020500300001-23550000130123051-004",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Tailoring",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10151
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "Combustion once Fire Vulnerability has 5 stacks. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "sourceUnit": {
+                                "type": "CurrentTarget"
+                              },
+                              "auraId": {
+                                "spellId": 22959
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "sourceUnit": {
+                                    "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 22959
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "5"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 11129
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.2"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "90s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 12051
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 5514
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 5513
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 8007
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 8008
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Scorch up to 5 stacks of Fire Vulnerability, and before it runs out. Under Forever it only counts for the mage who put it up.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "sourceUnit": {
+                                "type": "CurrentTarget"
+                              },
+                              "auraId": {
+                                "spellId": 22959
+                              }
+                            }
+                          },
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": {
+                                      "auraNumStacks": {
+                                        "sourceUnit": {
+                                          "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 22959
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "5"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": {
+                                      "auraRemainingTime": {
+                                        "sourceUnit": {
+                                          "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 22959
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "5s"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10207
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Pyroblast once Heating Up has cut its cast enough.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "auraIsKnown": {
+                                    "auraId": {
+                                      "spellId": 400625
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGe",
+                                    "lhs": {
+                                      "auraNumStacks": {
+                                        "auraId": {
+                                          "spellId": 400625
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "3"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 18809
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10212
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Fire Blast on cooldown with the mana to spare.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.2"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10199
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "The filler.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10151
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 25,
+            "mage": {
+              "options": {
+                "armor": "MageArmor"
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "sanctityAura": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "curseOfShadow": true,
+      "exposeArmor": "TristateEffectImproved",
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "mobType": "MobTypeHumanoid",
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

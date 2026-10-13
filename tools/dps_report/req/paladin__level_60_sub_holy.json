@@ -1,0 +1,550 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceUndead",
+            "class": "ClassPaladin",
+            "equipment": {
+              "items": [
+                {
+                  "id": 992001,
+                  "enchant": 1506
+                },
+                {
+                  "id": 992002,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 992003
+                },
+                {
+                  "id": 992004,
+                  "enchant": 1219587
+                },
+                {
+                  "id": 992005,
+                  "enchant": 1891
+                },
+                {
+                  "id": 992006,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 992007,
+                  "enchant": 1213622
+                },
+                {
+                  "id": 992008
+                },
+                {
+                  "id": 992009,
+                  "enchant": 1506
+                },
+                {
+                  "id": 992010,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 992011
+                },
+                {
+                  "id": 992013
+                },
+                {
+                  "id": 992014
+                },
+                {
+                  "id": 992015
+                },
+                {
+                  "id": 992012,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 272435
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "agilityElixir": "ElixirOfGreaterAgility",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "strengthBuff": "ElixirOfFerocity",
+              "attackPowerBuff": "JujuMight",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "shadowPowerBuff": "ElixirOfShadowPower",
+              "firePowerBuff": "ElixirOfGreaterFirepower",
+              "fillerExplosive": "ExplosiveGoblinLandMine",
+              "mainHandImbue": "ShadowOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "dragonBreathChili": true,
+              "zanzaBuff": "ROIDS",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfTheOwl",
+              "spiritElixir": "ElixirOfGreaterSpirit"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved",
+              "blessingOfMight": "TristateEffectImproved"
+            },
+            "talentsString": "550030032--05215331001330321",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Blacksmithing",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "Consecration with the mana to spare.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.2"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20924
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Judgement on cooldown, on whichever damage seal is up.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "auraIsActive": {
+                                    "auraId": {
+                                      "spellId": 20920
+                                    }
+                                  }
+                                },
+                                {
+                                  "auraIsActive": {
+                                    "auraId": {
+                                      "spellId": 20293
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20271
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "or": {
+                                  "vals": [
+                                    {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 20920
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 20293
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 20920
+                              }
+                            }
+                          },
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "1.5s"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 1311703
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 1311704
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.2"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "And back again before the next swing.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 20293
+                              }
+                            }
+                          },
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "1.5s"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 1311703
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 1311704
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.2"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Holy Strike on cooldown.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10333
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Hammer of Wrath below 20% health.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10314
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Racials and trinkets on a free GCD.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 5,
+            "retributionPaladin": {
+              "options": {
+                "primarySeal": "Command",
+                "aura": "RetributionAura"
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "strengthOfEarthTotem": "TristateEffectRegular",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "sanctityAura": true,
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "curseOfShadow": true,
+      "exposeArmor": "TristateEffectImproved",
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "mobType": "MobTypeHumanoid",
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

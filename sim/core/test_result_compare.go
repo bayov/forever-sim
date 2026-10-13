@@ -180,6 +180,12 @@ func compareStruct(t *testing.T, loc string, vst reflect.Value, vmt reflect.Valu
 			mtField = mtField.Elem()
 		}
 
+		// A concurrent run picks its typical iteration from the ones each split picked, so
+		// it can be a different iteration than a single threaded run picks.
+		if fieldName == "TypicalIteration" {
+			continue
+		}
+
 		if fieldName == "Actions" {
 			checkActionMetrics(t, loc, stField.Interface().([]*proto.ActionMetrics), mtField.Interface().([]*proto.ActionMetrics), baseFloatTolerance)
 			continue

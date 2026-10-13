@@ -1,0 +1,229 @@
+From 346dd46e45e3bc91ce7981948a12adaa11d71467 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 13 Oct 2026 11:46:32 +0000
+Subject: [PATCH] dash: DASH_RACIALS_OFF switch to leave racial parts out
+ (dashboard race breakdown only)
+
+---
+ sim/core/racials_forever.go  | 106 ++++++++++++++++++++++++++---------
+ sim/hunter/hunter.go         |   3 +
+ sim/priest/chastise.go       |   2 +-
+ sim/priest/dark_sacrifice.go |   2 +-
+ sim/priest/starshards.go     |   2 +-
+ 5 files changed, 86 insertions(+), 29 deletions(-)
+
+diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
+index 8b3ef245f..c6b1ca30c 100644
+--- a/sim/core/racials_forever.go
++++ b/sim/core/racials_forever.go
+@@ -1,6 +1,8 @@
+ package core
+ 
+ import (
++	"os"
++	"strings"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core/proto"
+@@ -14,67 +16,119 @@ import (
+ // Cooldowns per the client: Blood Fury, Eureka! and the Undead and Gnome utilities 2 min,
+ // Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
+ 
++// DASH_RACIALS_OFF (dashboard builds only) lists racial parts to leave out, comma separated,
++// or "all": spirit, sword, mace, beast, dodge, elune, mind, eureka, axe, bloodfury, touch,
++// endurance, berserking, windblessed, insight, and the priest racial spells darksacrifice,
++// starshards and chastise. It splits a race's edge into its base stats and each racial.
++var dashRacialsOff = func() map[string]bool {
++	off := map[string]bool{}
++	for _, part := range strings.Split(os.Getenv("DASH_RACIALS_OFF"), ",") {
++		if part = strings.TrimSpace(strings.ToLower(part)); part != "" {
++			off[part] = true
++		}
++	}
++	return off
++}()
++
++// DashRacialOff reports whether DASH_RACIALS_OFF leaves the named racial part out.
++func DashRacialOff(name string) bool {
++	return dashRacialsOff["all"] || dashRacialsOff[name]
++}
++
+ func applyForeverRaceEffects(agent Agent) {
+ 	character := agent.GetCharacter()
++	on := func(name string) bool { return !DashRacialOff(name) }
+ 
+ 	switch character.Race {
+ 	case proto.Race_RaceHuman:
+ 		// The Human Spirit. Sword Specialization is crit now, and Mace Specialization
+ 		// moved to the Dwarves.
+-		character.MultiplyStat(stats.Spirit, 1.05)
+-		character.AddWeaponSpecializationCrit(2, proto.WeaponType_WeaponTypeSword)
++		if on("spirit") {
++			character.MultiplyStat(stats.Spirit, 1.05)
++		}
++		if on("sword") {
++			character.AddWeaponSpecializationCrit(2, proto.WeaponType_WeaponTypeSword)
++		}
+ 
+ 	case proto.Race_RaceDwarf:
+ 		// Mace Specialization and Big Game Hunter. Stoneform is a defensive cooldown the
+ 		// sim does not measure.
+-		character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeMace)
+-		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
++		if on("mace") {
++			character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeMace)
++		}
++		if on("beast") {
++			character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
++		}
+ 
+ 	case proto.Race_RaceNightElf:
+ 		// Quickness keeps its dodge. Elune's Light is the new offensive cooldown.
+-		character.AddStat(stats.Dodge, 1)
+-		character.registerElunesLight()
++		if on("dodge") {
++			character.AddStat(stats.Dodge, 1)
++		}
++		if on("elune") {
++			character.registerElunesLight()
++		}
+ 
+ 	case proto.Race_RaceGnome:
+ 		// Expansive Mind raises the resource pool itself now rather than Intellect.
+-		if character.HasManaBar() {
+-			character.MultiplyStat(stats.Mana, 1.05)
+-		}
+-		if character.HasRageBar() {
+-			character.MultiplyMaxRage(1.05)
++		if on("mind") {
++			if character.HasManaBar() {
++				character.MultiplyStat(stats.Mana, 1.05)
++			}
++			if character.HasRageBar() {
++				character.MultiplyMaxRage(1.05)
++			}
++			if character.HasEnergyBar() {
++				character.MultiplyMaxEnergy(1.05)
++			}
+ 		}
+-		if character.HasEnergyBar() {
+-			character.MultiplyMaxEnergy(1.05)
++		if on("eureka") {
++			character.registerEureka()
+ 		}
+-		character.registerEureka()
+ 
+ 	case proto.Race_RaceOrc:
+ 		// Axe Specialization is crit now. Command (pet damage) is gone.
+-		character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeAxe)
+-		character.registerForeverBloodFury()
++		if on("axe") {
++			character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeAxe)
++		}
++		if on("bloodfury") {
++			character.registerForeverBloodFury()
++		}
+ 
+ 	case proto.Race_RaceUndead:
+-		character.registerTouchOfTheGrave()
++		if on("touch") {
++			character.registerTouchOfTheGrave()
++		}
+ 
+ 	case proto.Race_RaceTauren:
+ 		// Endurance carries a point of hit alongside the health.
+-		character.MultiplyStat(stats.Health, 1.05)
+-		character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
+-		character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
++		if on("endurance") {
++			character.MultiplyStat(stats.Health, 1.05)
++			character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
++			character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
++		}
+ 
+ 	case proto.Race_RaceTroll:
+ 		// Beast Slaying stays. Bow and Throwing Specialization are gone, and Berserking
+ 		// is a flat 10% instead of scaling with missing health.
+-		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
+-		makeBerserkingCooldown(character, .1, character.NewTimer())
++		if on("beast") {
++			character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
++		}
++		if on("berserking") {
++			makeBerserkingCooldown(character, .1, character.NewTimer())
++		}
+ 
+ 	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
+ 		// Wind Blessed and Elemental Insight. The actives (Walk on Air, Read Ley Line,
+ 		// Skysight) are movement and regeneration, so the two halves sim the same.
+-		character.PseudoStats.MeleeSpeedMultiplier *= 1.01
+-		character.PseudoStats.RangedSpeedMultiplier *= 1.01
+-		character.PseudoStats.CastSpeedMultiplier *= 1.01
+-		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
++		if on("windblessed") {
++			character.PseudoStats.MeleeSpeedMultiplier *= 1.01
++			character.PseudoStats.RangedSpeedMultiplier *= 1.01
++			character.PseudoStats.CastSpeedMultiplier *= 1.01
++		}
++		if on("insight") {
++			character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
++		}
+ 	}
+ }
+ 
+diff --git a/sim/hunter/hunter.go b/sim/hunter/hunter.go
+index 212a8375a..1c48a4681 100644
+--- a/sim/hunter/hunter.go
++++ b/sim/hunter/hunter.go
+@@ -349,6 +349,9 @@ func (hunter *Hunter) removeRacialRangedCrit() {
+ 	if !ok {
+ 		return
+ 	}
++	if core.DashRacialOff(map[proto.WeaponType]string{proto.WeaponType_WeaponTypeSword: "sword", proto.WeaponType_WeaponTypeMace: "mace", proto.WeaponType_WeaponTypeAxe: "axe"}[racial.weaponType]) {
++		return
++	}
+ 	for _, weapon := range []*core.Item{hunter.MainHand(), hunter.OffHand()} {
+ 		if weapon.WeaponType == racial.weaponType {
+ 			bonus := racial.crit * core.CritRatingPerCritChance
+diff --git a/sim/priest/chastise.go b/sim/priest/chastise.go
+index 631b7bda0..656c06e34 100644
+--- a/sim/priest/chastise.go
++++ b/sim/priest/chastise.go
+@@ -19,7 +19,7 @@ var ChastiseManaCost = [ChastiseRanks + 1]float64{0, 50, 100, 135, 180, 225}
+ var ChastiseLevel = [ChastiseRanks + 1]int{0, 20, 30, 40, 50, 60}
+ 
+ func (priest *Priest) registerChastiseSpell() {
+-	if priest.Race != proto.Race_RaceDwarf {
++	if priest.Race != proto.Race_RaceDwarf || core.DashRacialOff("chastise") {
+ 		return
+ 	}
+ 
+diff --git a/sim/priest/dark_sacrifice.go b/sim/priest/dark_sacrifice.go
+index c362a30ee..c80862c48 100644
+--- a/sim/priest/dark_sacrifice.go
++++ b/sim/priest/dark_sacrifice.go
+@@ -21,7 +21,7 @@ var DarkSacrificeTickMana = [DarkSacrificeRanks + 1]float64{0, 88, 144, 204, 266
+ var DarkSacrificeLevel = [DarkSacrificeRanks + 1]int{0, 20, 30, 40, 50, 60}
+ 
+ func (priest *Priest) registerDarkSacrificeSpell() {
+-	if priest.Race != proto.Race_RaceUndead {
++	if priest.Race != proto.Race_RaceUndead || core.DashRacialOff("darksacrifice") {
+ 		return
+ 	}
+ 
+diff --git a/sim/priest/starshards.go b/sim/priest/starshards.go
+index 12f6d11d0..9394e8617 100644
+--- a/sim/priest/starshards.go
++++ b/sim/priest/starshards.go
+@@ -23,7 +23,7 @@ var StarshardsLevel = [StarshardsRanks + 1]int{0, 10, 18, 26, 34, 42, 50, 58}
+ const StarshardsTickCoef = 0.167
+ 
+ func (priest *Priest) registerStarshardsSpell() {
+-	if priest.Race != proto.Race_RaceNightElf {
++	if priest.Race != proto.Race_RaceNightElf || core.DashRacialOff("starshards") {
+ 		return
+ 	}
+ 
+-- 
+2.43.0
+

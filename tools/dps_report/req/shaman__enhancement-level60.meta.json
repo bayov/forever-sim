@@ -1,0 +1,96 @@
+{
+  "id": "shaman__enhancement-level60",
+  "class": "Shaman",
+  "spec": "Enhancement",
+  "build": "Level 60",
+  "isDefault": true,
+  "pr": 7,
+  "race": "Orc",
+  "talents": "050533102-053030031005112251",
+  "treePoints": "19/32/0",
+  "treeNames": [
+    "Elemental",
+    "Enhancement",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic.gear.json",
+  "apl": "optimized.apl.json",
+  "published": {
+    "dps": 801.8,
+    "source": "the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)",
+    "overall": {
+      "race": "Orc",
+      "dps": 801.8
+    },
+    "horde": {
+      "race": "Orc",
+      "dps": 801.8
+    },
+    "alliance": {
+      "race": "Dwarf",
+      "dps": 783.3
+    }
+  },
+  "verify": {
+    "dps": 801.77,
+    "stderr": 0.36,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Orc, 180 s with durationVariation 20, on the merged bundled-round tree. Published 801.8 (the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)); delta -0.03. The fairness auditor lists 796.5 for this build; this request matches the PR instead."
+  },
+  "summary": "Stormstrike/Maelstrom Weapon Enhancement with a two-hand axe, Windfury Weapon and Windfury Totem for the group; Concussion 5 replaces Convection 5. It is the Enhancement spec's default Level 60 preset.",
+  "keyTalents": [
+    "Stormstrike",
+    "Maelstrom Weapon",
+    "Rage of the Farseer",
+    "Flurry",
+    "Mental Dexterity",
+    "Improved Fire Nova",
+    "Shamanistic Focus",
+    "Thundering Strikes"
+  ],
+  "rotation": [
+    "Pre-pull: starting totems already down (Strength of Earth IV, Windfury Totem, Flametongue Totem, Mana Spring), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down; Flametongue Totem when down and at least 20 s remain",
+    "Rage of the Farseer on cooldown; Blood Fury lined up with it",
+    "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
+    "Stormstrike on cooldown",
+    "Fire Nova while Clearcasting is up",
+    "Flame Shock when its DoT is down",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
+    "Earth Shock",
+    "Fire Nova above 20% mana"
+  ],
+  "consumes": [
+    "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
+    "Flask of Supreme Power",
+    "Elixir of Greater Agility",
+    "Juju Power",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Elixir of the Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Nature Power",
+    "Elixir of Shadow Power",
+    "Grilled Squid",
+    "Dragonbreath Chili",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Strength and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
+    "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
+    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs",
+    "Without Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI) every build lost about 7.7 DPS",
+    "One 2% crit elixir by the standard; Mongoose, Grizzly and Owl stacked would be about +36 if Forever allows it",
+    "Earth Shock VII looks slightly untuned; held at the 0.66 ratio Enhancement would gain +0.8%",
+    "Tier 1 4/5-piece bonuses not live"
+  ],
+  "notes": "Request is mksettings -spec enh output unchanged (no starting fire totem, as in the preset since the Searing Totem change). Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the Optimized rotation keeps Searing Totem down instead of Flametongue Totem, with no fire totem before the pull."
+}
