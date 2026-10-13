@@ -27,7 +27,7 @@ Sources, all read-only:
 
 | Class | Assumptions | Keys |
 |---|---|---|
-| All classes | 2 | `flat_bonus_inside_pct`, `wf_totem_offhand` |
+| All classes | 3 | `flat_bonus_inside_pct`, `wf_totem_offhand`, `downrank_penalty` |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 5 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation` |
 | Paladin | 4 (+1 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`) |
@@ -38,7 +38,7 @@ Sources, all read-only:
 | Druid | 5 | `druid_ooc_rate`, `druid_shred_flat`, `druid_tf_scope`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 31 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 32 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -62,6 +62,7 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 |---|---|---|---|---|---|---|---|
 | `flat_bonus_inside_pct` | Flat bonus inside the weapon percent | Combat Daggers, Seal Fate Daggers, Subtlety (Ambush), Mutilate; Ret twist, sub Holy, Shock | inside (client effect order) | after the percent (tooltip read literally) | inside | = Expected | est. Backstab builds −3.7 to −4%, Mutilate +1.7%, Ret +3% (all at Low) |
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | yes | main hand only | yes | = Expected | est. −2 to −3% DW Fury and rogues, about −1.5% Survival (at Low) |
+| `downrank_penalty` | Downrank penalty size at 60 | Smite (rank 7 fallback; rank 4 before), Elemental (Lightning Bolt VIII fallback) | FC formula on the priest branch, none on the shaman branch | stronger (10% a level past 17) | FC formula (5% a level past 17) | none | PR Smite −0.3% at 180 s, −6.3% at 300 s (FC vs none); est. Elemental about −1% at 300 s, 0 at 180 s |
 
 ### `flat_bonus_inside_pct`: flat bonus inside the weapon percent
 
@@ -107,6 +108,26 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
   - About a third of the totem's procs on a dual wielder come from off-hand events.
   - The totem is worth about 45 DPS to a rogue (+24 over Grace of Air, PR), so main hand only costs rogues and dual-wield Fury about 2 to 3%, and Survival about 1.5%.
 - **Knob:** `sim/core/buffs.go:1894-1896`, set `procMask = ProcMaskMelee` only when the key is 1.
+
+### `downrank_penalty`: downrank penalty size at 60
+
+- **Builds:** only the presets that cast a spell-power rank learned more than 17 levels below 60, i.e. before level 43. The Forever class changes auditor checked every Level 60 preset's casts (result JSON, 300 iterations) and every Level 60 APL's spell IDs against client 70338 SpellLevels (2026-10-13). Two builds qualify:
+  - Priest Smite: a low-rank Smite fallback when mana runs short. It was rank 4 (level 22); since the penalty it is rank 7 (level 46).
+  - Elemental shaman (Level 60 and + Mana Tide): Lightning Bolt VIII (10391, level 38) below 20% mana. At 180 s it is 0.2 casts and 1 DPS; at 300 s 15.6 casts and 58 DPS.
+  - No other preset casts such a rank. The warrior, rogue, hunter and feral low-level IDs are single-rank or attack-power abilities, cooldowns and stances; the warlock, mage, Balance and Ret rotations use top ranks only.
+- **Sim now:** the priest branch applies foreverchanges' formula to Smite, Holy Fire, Mind Blast, SW:Pain and Devouring Plague (`sim/priest/priest.go` `downrankCoefficient`, commits 6ee9d02eb / ea9eb5c22 / 333cbeb04). The shaman branch has no penalty (`sim/shaman/lightning_bolt.go:25` keeps rank 8's full 0.714).
+- **Source:**
+  - Blizzard's development notes, 2026-10-01 (us.forums.blizzard.com/en/wow/t/2360696), tier 3: ranks "vastly below your current level receive less benefit from your Spell Damage", and they trigger class abilities less often (at 60 a rank 1 Frostbolt never procs Frostbite).
+  - foreverchanges.pro/downranking, tier 4: a rank keeps 1 − 0.05 × (L − 17 − T) of its coefficient (L your level, T the rank's learn level), between 0 and 1. Classic's level-20 cut is gone. It was measured on heals in the beta up to level 30; damage spells and level 60 are its author's assumption.
+- **Why uncertain:** the formula was never measured above level 30 or on a damage spell. The proc part has no numbers at all.
+- **Settings:**
+  - **Low, "stronger".** 10% a level past 17, so a rank keeps nothing from 27 levels below. No source; it brackets a steeper curve at 60.
+  - **Expected, "FC formula".** 5% a level past 17; nothing after 37 levels below.
+  - **High, "none".** Classic Era's rule minus its level-20 cut, i.e. no penalty for any rank the presets cast.
+- **Sensitivity:**
+  - Smite: FC vs none, with the rotation re-searched under the penalty: 708.8 → 706.5 at 180 s, 687.0 → 643.8 at 300 s (PR, priest branch).
+  - Elemental, est.: Lightning Bolt VIII keeps 75% under FC (5 levels past 17). That is about −5 to −7 DPS (−1%) at 300 s and 0 at 180 s, before re-tuning the fallback to rank IX (level 44).
+- **Knob:** one shared helper (proposal): move the priest's `downrankCoefficient` to `sim/core` as `(*Character).ForeverDownrankCoefficient(coef, learnLevel)`, reading `core.Assume("downrank_penalty_pct", 5)` (0 = none). The priest session owns the move. The shaman applies it in `lightning_bolt.go` / `chain_lightning.go`; nobody else needs it.
 
 ---
 
