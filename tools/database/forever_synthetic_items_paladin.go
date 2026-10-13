@@ -74,15 +74,15 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992001, Name: "Retribution Synthetic Head (Phase 1)", Icon: "inv_helmet_29",
 			Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:      stats.Stats{stats.Strength: 7, stats.Stamina: 11, stats.Intellect: 16, stats.SpellPower: 30, stats.Armor: 608}.ToFloatArray(),
-			CritRating: 23,
+			Stats:      stats.Stats{stats.Strength: 6, stats.Stamina: 17, stats.Intellect: 19, stats.SpellPower: 31, stats.Armor: 608}.ToFloatArray(),
+			CritRating: 15,
 			Ilvl:       66, SetName: set,
 		}),
 		// Neck, item level 71, in place of Onyxia Tooth Pendant.
 		retribution(&proto.UIItem{
 			Id: 992002, Name: "Retribution Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 			Type:      proto.ItemType_ItemTypeNeck,
-			Stats:     stats.Stats{stats.Strength: 7, stats.Stamina: 12, stats.SpellPower: 22}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 9, stats.SpellPower: 24}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      71,
 		}),
@@ -90,7 +90,7 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992003, Name: "Retribution Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
 			Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 7, stats.Intellect: 16, stats.SpellPower: 24, stats.Armor: 562}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 6, stats.Stamina: 14, stats.Intellect: 18, stats.SpellPower: 18, stats.Armor: 562}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      66,
 		}),
@@ -98,7 +98,7 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992004, Name: "Retribution Synthetic Back (Phase 1)", Icon: "inv_misc_cape_20",
 			Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-			Stats:     stats.Stats{stats.Agility: 6, stats.Stamina: 19, stats.Spirit: 5, stats.SpellPower: 10, stats.Armor: 58}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Agility: 5, stats.Stamina: 9, stats.Spirit: 5, stats.SpellPower: 22, stats.Armor: 58}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      71,
 		}),
@@ -106,14 +106,14 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992005, Name: "Retribution Synthetic Chest (Phase 1)", Icon: "inv_chest_plate16",
 			Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats: stats.Stats{stats.Strength: 12, stats.Stamina: 20, stats.Intellect: 19, stats.Spirit: 6, stats.SpellPower: 30, stats.Armor: 749}.ToFloatArray(),
+			Stats: stats.Stats{stats.Strength: 6, stats.Stamina: 14, stats.Intellect: 22, stats.Spirit: 14, stats.SpellPower: 32, stats.Armor: 749}.ToFloatArray(),
 			Ilvl:  66, SetName: set,
 		}),
 		// Wrist, item level 71, in place of Wristguards of True Flight.
 		retribution(&proto.UIItem{
 			Id: 992006, Name: "Retribution Synthetic Wrist (Phase 1)", Icon: "inv_bracer_14",
 			Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Strength: 11, stats.Stamina: 8, stats.SpellPower: 22, stats.Armor: 353}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 9, stats.SpellPower: 24, stats.Armor: 353}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      71,
 		}),
@@ -129,7 +129,7 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992008, Name: "Retribution Synthetic Waist (Phase 1)", Icon: "inv_belt_29",
 			Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:      stats.Stats{stats.Strength: 16, stats.Agility: 18, stats.Stamina: 16, stats.Armor: 453}.ToFloatArray(),
+			Stats:      stats.Stats{stats.Strength: 15, stats.Agility: 16, stats.Stamina: 19, stats.Armor: 453}.ToFloatArray(),
 			CritRating: 18,
 			Ilvl:       71,
 		}),
@@ -137,7 +137,7 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992009, Name: "Retribution Synthetic Legs (Phase 1)", Icon: "inv_pants_04",
 			Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Strength: 25, stats.Stamina: 24, stats.Spirit: 25, stats.Armor: 655}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 24, stats.Stamina: 24, stats.Spirit: 25, stats.Armor: 655}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      66,
 		}),
@@ -145,7 +145,7 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992010, Name: "Retribution Synthetic Feet (Phase 1)", Icon: "inv_boots_plate_06",
 			Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Stamina: 6, stats.Spirit: 18, stats.SpellPower: 18, stats.AttackPower: 28, stats.RangedAttackPower: 28, stats.Armor: 515}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Stamina: 8, stats.Spirit: 11, stats.SpellPower: 25, stats.AttackPower: 25, stats.RangedAttackPower: 25, stats.Armor: 515}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      66,
 		}),
@@ -153,7 +153,7 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992011, Name: "Retribution Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_15",
 			Type:      proto.ItemType_ItemTypeFinger,
-			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 13, stats.SpellPower: 19}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 9, stats.SpellPower: 24}.ToFloatArray(),
 			HitRating: 10,
 			Ilvl:      71,
 		}),
@@ -161,15 +161,15 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992013, Name: "Retribution Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_07",
 			Type:       proto.ItemType_ItemTypeFinger,
-			Stats:      stats.Stats{stats.Intellect: 11, stats.Spirit: 9, stats.SpellPower: 18}.ToFloatArray(),
-			CritRating: 13,
+			Stats:      stats.Stats{stats.Intellect: 9, stats.Spirit: 10, stats.SpellPower: 24}.ToFloatArray(),
+			CritRating: 9,
 			Ilvl:       71,
 		}),
 		// Two-Hand, item level 76, in place of Spinal Reaper.
 		retribution(&proto.UIItem{
 			Id: 992012, Name: "Retribution Synthetic Two-Hand (Phase 1)", Icon: "inv_axe_09",
 			Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
-			Stats:     stats.Stats{stats.Strength: 11, stats.Stamina: 13, stats.Intellect: 12, stats.Spirit: 21, stats.SpellPower: 27}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Strength: 6, stats.Stamina: 16, stats.Intellect: 16, stats.Spirit: 19, stats.SpellPower: 28}.ToFloatArray(),
 			HitRating: 10,
 			// Spinal Reaper damage and speed.
 			WeaponDamageMin: 203, WeaponDamageMax: 305, WeaponSpeed: 3.4,
