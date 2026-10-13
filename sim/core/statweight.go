@@ -130,6 +130,11 @@ func buildStatWeightRequests(swr *proto.StatWeightsRequest) *proto.StatWeightReq
 	// Reduce variance even more by using test-level RNG controls.
 	swr.SimOptions.UseLabeledRands = true
 
+	// Rounding each hit to whole points changes no average, but +1 of a stat then moves a hit
+	// by a whole point now and then instead of a little every time, which makes the gap
+	// between the two runs noisier.
+	swr.SimOptions.ExactDamage = true
+
 	swBaseResponse := &proto.StatWeightRequestsData{
 		BaseRequest: &proto.RaidSimRequest{
 			Raid:       raidProto,

@@ -99,7 +99,7 @@ func (ws weaponSim) start() (*core.Simulation, *EnhancementShaman) {
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{TotemWeaponBuff: ws.totem}, debuffs),
 		Encounter:  &proto.Encounter{Duration: ws.seconds, Targets: []*proto.Target{target}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
@@ -137,7 +137,7 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 		sim := core.NewSim(&proto.RaidSimRequest{
 			Raid:       core.SinglePlayerRaidProto(newOrcShaman(60, talents, &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, debuffs),
 			Encounter:  &proto.Encounter{Duration: 30, Targets: []*proto.Target{target}},
-			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 		}, simsignals.CreateSignals())
 		sim.Reset()
 		sim.PrePull()
