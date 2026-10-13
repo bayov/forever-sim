@@ -562,10 +562,11 @@ func (mage *Mage) registerCombustionCD() {
 	critPerStack := 10.0 * core.SpellCritRatingPerCritChance
 
 	mage.CombustionAura = mage.RegisterAura(core.Aura{
-		Label:     "Combustion",
-		ActionID:  actionID,
-		Duration:  core.NeverExpires,
-		MaxStacks: 20,
+		Label:    "Combustion",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
+		// The client's 28682 stacks to 10.
+		MaxStacks: 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			numCrits = 0
 		},

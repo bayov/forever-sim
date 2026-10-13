@@ -12,9 +12,13 @@ const BlizzardRanks = 6
 var BlizzardSpellId = [BlizzardRanks + 1]int32{0, 10, 6141, 8427, 10185, 10186, 10187}
 
 // The whole channel's damage, from the Forever tooltips (1.60.1.70338): rank 6 is 1168 (Classic 1192).
-// The tick coefficient is the client's 3% (Classic 4.2%).
+// The ticks are the area trigger's own spells (1279976 to 1279980 and 1279949), each with a 4.2%
+// coefficient (33.6% for the channel). The 3% on Blizzard itself is only on its dummy effect.
 var BlizzardBaseDamage = [BlizzardRanks + 1]float64{0, 200, 344, 504, 712, 928, 1168}
 var BlizzardManaCost = [BlizzardRanks + 1]float64{0, 320, 520, 720, 935, 1160, 1400}
+
+const BlizzardTickCoeff = .042
+
 var BlizzardLevel = [BlizzardRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
 
 func (mage *Mage) registerBlizzardSpell() {
@@ -38,7 +42,7 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 	manaCost := BlizzardManaCost[rank]
 	level := BlizzardLevel[rank]
 
-	spellCoeff := .03
+	spellCoeff := BlizzardTickCoeff
 
 	var improvedBlizzardProcApplication *core.Spell
 	// Improved Blizzard's chill matters for Fingers of Frost.

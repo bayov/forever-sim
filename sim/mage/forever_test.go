@@ -165,3 +165,24 @@ func TestMageWintersChillAndShatter(t *testing.T) {
 		t.Errorf("Blizzard gets %.1f crit rating with Fingers of Frost, want %.1f", got, 50*rating)
 	}
 }
+
+// Blizzard's and Flamestrike's ticks come from the area trigger's own spells, which carry the
+// client's coefficients (4.2% and 3.2% a tick), not the 3% dummy on Blizzard itself. Combustion
+// stacks to 10 (28682).
+func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
+	_, mage := newMageSim(t, "-235500001301")
+	if got := topRank(t, "Blizzard", mage.Blizzard).AOEDot().BonusCoefficient; math.Abs(got-0.042) > 1e-9 {
+		t.Errorf("Blizzard tick coefficient %v, want 0.042", got)
+	}
+	for rank, spell := range mage.Flamestrike {
+		if spell == nil {
+			continue
+		}
+		if got := spell.AOEDot().BonusCoefficient; math.Abs(got-0.032) > 1e-9 {
+			t.Errorf("Flamestrike rank %d DoT coefficient %v, want 0.032", rank, got)
+		}
+	}
+	if mage.CombustionAura != nil && mage.CombustionAura.MaxStacks != 10 {
+		t.Errorf("Combustion stacks to %d, want 10", mage.CombustionAura.MaxStacks)
+	}
+}

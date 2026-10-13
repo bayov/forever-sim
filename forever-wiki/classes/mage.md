@@ -51,6 +51,32 @@ Spells at level 60 (client, top rank):
 
 Manaflare Regalia (280450 to 280455, item level 65, no stats in the client yet) is Forever's level 60 mage set: 2 pieces 1% hit, 3 Counterspell 5 sec shorter, 4 up to 21 spell damage against Elementals, 5 Frostfire Bolt gets 10% more chance at Missile Barrage and Fingers of Frost and 10% crit during Combustion.
 
+## Mechanics check against the sim (2026-10-13)
+
+Every mage spell and talent the sim models was compared again with the 70338 client (wago.tools DB2: SpellEffect, SpellMisc, SpellPower, SpellCooldowns, SpellCategories, SpellAuraOptions, Trait tables), wowhead's Forever tooltips (`nether.wowhead.com/forever/tooltip/spell/<id>?dataEnv=17`), Blizzard's Forever development notes (us.forums.blizzard.com/en/wow/t/2360696) and mage deep dive (worldofwarcraft.blizzard.com/news/24302097), and foreverchanges.pro/class/mage.
+
+Fixed in the sim (no change to the single target presets):
+- Blizzard's ticks are the area trigger's own spells (1279976 to 1279980, 1279949), each with a 4.2% coefficient (SpellEffect EffectBonusCoefficient 0.042). The 3% the sim used is Blizzard's dummy effect (10187 effect 0).
+- Flamestrike's DoT ticks (1279983 to 1279990) are 3.2% each on every rank (the sim had 1.7 to 2%).
+- Combustion (28682) stacks to 10 (SpellAuraOptions CumulativeAura), not 20.
+
+Confirmed as the sim has them:
+- Evocation 12051: 8 sec, 1500% regen, 8 min cooldown, the same as Era.
+- Mage Armor 6117 / 22782 / 22783: 50% casting regen at every rank (Era 30%), resistances 5 / 10 / 15. The deep dive: "Mana regeneration bonus from Spirit increased".
+- Mana gems (Agate 375 to 425, Jade 550 to 650, Citrine 775 to 925, Ruby 1000 to 1200) and the Demonic and Dark Runes (900 to 1500) share one 2 min cooldown: ItemEffect SpellCategoryID 1153, 120000 ms on all six.
+- Arcane Intellect and Arcane Brilliance are still +31 Intellect. They now last an hour, and Brilliance reaches the raid (ImplicitTarget 56).
+- No Forever source changes the Spirit regen formula, the five second rule, base mana or the Intellect conversions, so the sim keeps Era's.
+- Frostfire Bolt "always uses the higher of the Mage's spell damage bonuses to Fire or Frost damage" (deep dive). The sim's multi-school spells already take the higher school power.
+- Every damage rank, coefficient, cost and cast time of Fireball, Frostbolt, Frostfire Bolt, Arcane Blast, Arcane Missiles, Ice Lance, Pyroblast, Scorch, Fire Blast, Arcane Explosion and Blast Wave, and every talent value, matches the client.
+
+Wands: the 2026-09-24 development notes say "Wands no longer gain any additional damage from the user's spell damage". Shoot (5019) and Wand Specialization (13 / 25%, now 2 points) are otherwise Era's, and wand damage still comes from ItemDamageWand. The sim doesn't model wands; a raid mage doesn't use one. Bonecreeper Stylus (13938) has no ItemSparse row in 70338, so the synthetic wand only borrows its damage and speed.
+
+Open, with what they are worth (notes.md):
+- Arcane Blast's stacks on Arcane Missiles. The tooltip of 400573 says "the damage of all other spells is increased by 10%" and the sim follows it, but the client's damage mask on 400573 leaves Arcane Missiles out, and 400586 (15% a stack on Arcane Missiles, SoD's) is still in the client. On the Arcane preset that is 829.7 at 180 sec as simmed, 751.0 with no bonus on the missiles and 869.0 with 15%.
+- 400573's and Arcane Power's periodic masks: Arcane Blast's covers the Fireball and Frostfire Bolt DoTs only, Arcane Power's leaves Frostfire Bolt's DoT out. The sim gives both to every DoT. No preset casts those spells with those buffs up.
+- Presence of Mind and Combustion share the client's category 1151 cooldown (3 min). A level 60 mage can't have both, so the sim keeps them apart.
+- Missile Barrage's talent spell (400588) has a ProcChance of 50 in SpellAuraOptions where the tooltip gives 40 / 20%. The sim follows the tooltip.
+
 ## Spellbook changes (trainer abilities)
 
 0 of 48 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
