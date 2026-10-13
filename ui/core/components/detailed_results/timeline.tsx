@@ -171,6 +171,17 @@ export const zoomPresets: Array<{ span: ZoomSpan; label: string }> = [
 
 // The closest we zoom in, in pixels per second.
 const maxPxPerSecond = 400;
+// How fast the zoom eases to its target. After this many milliseconds it has gone about 63% of
+// the way.
+const zoomAnimationMs = 60;
+
+// A zoom on its way to its target. We keep the time at anchorX pixels from the left of the view
+// in place.
+interface ZoomAnimation {
+	anchorTime: number;
+	anchorX: number;
+	lastFrame: number;
+}
 
 export class Timeline extends ResultComponent {
 	private readonly filter: EventFilter;
@@ -198,9 +209,13 @@ export class Timeline extends ResultComponent {
 	// The first second of the prepull, or 0 when there's no prepull.
 	private prepullStart = 0;
 	private zoomSpan: ZoomSpan = 10;
-	// From the zoom and the width of the view, set each time we draw.
+	// From the zoom and the width of the view. It changes on every frame while the zoom animates.
 	private pxPerSecond = 100;
+	// The pixels per second and the width of the view when we last drew the rows.
+	private drawnPxPerSecond = 0;
 	private drawnWidth = 0;
+	private zoomAnimation: ZoomAnimation | null = null;
+	private settleTimer = 0;
 
 	// Fires when the zoom changes, also from Alt + scroll.
 	readonly zoomEmitter = new TypedEvent<void>('TimelineZoom');
@@ -340,19 +355,62 @@ export class Timeline extends ResultComponent {
 		this.zoomAround(span, 0);
 	}
 
-	// Zooms so the time at this many pixels from the left of the view stays there.
+	// Zooms so the time at this many pixels from the left of the view stays there. While the
+	// timeline is hidden, we only remember the zoom for when it draws.
 	private zoomAround(span: ZoomSpan, anchorX: number) {
-		const anchorTime = this.leftToTime(this.rotationTimeline.scrollLeft + anchorX);
 		this.zoomSpan = span;
-		this.invalidate();
-		this.rotationTimeline.scrollLeft = this.timeToLeftValue(anchorTime) - anchorX;
 		this.zoomEmitter.emit(TypedEvent.nextEventID());
+		if (this.dirty || !this.isVisible()) {
+			this.invalidate();
+			return;
+		}
+		const anchorTime = this.leftToTime(this.rotationTimeline.scrollLeft + anchorX);
+		if (!this.zoomAnimation) requestAnimationFrame(now => this.stepZoomAnimation(now));
+		this.zoomAnimation = { anchorTime, anchorX, lastFrame: this.zoomAnimation?.lastFrame ?? performance.now() };
+	}
+
+	// Each frame moves the zoom part of the way to its target, so it eases in and out. Every
+	// position on the timeline is a time times the --px-per-second variable, so a frame only sets
+	// that variable and draws the ruler again. Once the zoom stops, we draw the rows again for the
+	// new zoom. That brings back the right amount of resource labels and the detail of the
+	// resource charts.
+	private stepZoomAnimation(now: number) {
+		const animation = this.zoomAnimation;
+		if (!animation) return;
+		const target = this.fitPxPerSecond(this.drawnWidth);
+		// The first frame can come with a timestamp from before the wheel event, so we count every
+		// frame as at least a few milliseconds.
+		const progress = 1 - Math.exp(-Math.max(4, now - animation.lastFrame) / zoomAnimationMs);
+		animation.lastFrame = now;
+		// We step in log space, so zooming in and zooming out by the same factor take the same time.
+		const remaining = Math.log(target / this.pxPerSecond);
+		const done = Math.abs(remaining) < 0.002;
+		this.setPxPerSecond(done ? target : this.pxPerSecond * Math.exp(remaining * progress));
+		this.rotationTimeline.scrollLeft = this.timeToLeftValue(animation.anchorTime) - animation.anchorX;
+
+		window.clearTimeout(this.settleTimer);
+		if (done) {
+			this.zoomAnimation = null;
+			// The wheel sends a notch at a time, so we wait a little for the next one before we draw
+			// the rows.
+			this.settleTimer = window.setTimeout(() => {
+				if (!this.zoomAnimation && Math.abs(this.pxPerSecond - this.drawnPxPerSecond) > 1e-6) this.redrawKeepingScroll();
+			}, 150);
+		} else {
+			requestAnimationFrame(next => this.stepZoomAnimation(next));
+		}
+	}
+
+	private setPxPerSecond(pxPerSecond: number) {
+		this.pxPerSecond = pxPerSecond;
+		this.rotationTimeline.style.setProperty('--px-per-second', `${pxPerSecond}px`);
+		const header = this.rotationTimeline.querySelector<HTMLElement>('.rotation-timeline-header');
+		if (header) this.drawRotationTimeRuler(header);
 	}
 
 	// Alt + scroll zooms around the mouse. Each notch of the wheel shows about 15% more or less
-	// of the rotation. We draw at most once a frame, because a fast scroll sends many events.
+	// of the rotation.
 	private setUpWheelZoom() {
-		let pending: { seconds: number; anchorX: number } | null = null;
 		this.rotationTimeline.addEventListener(
 			'wheel',
 			event => {
@@ -361,35 +419,37 @@ export class Timeline extends ResultComponent {
 				const delta = (event.deltaY || event.deltaX) * (event.deltaMode == WheelEvent.DOM_DELTA_LINE ? 33 : 1);
 				if (!delta) return;
 				const anchorX = event.clientX - this.rotationTimeline.getBoundingClientRect().left;
-				const seconds = (pending?.seconds ?? this.drawnWidth / this.pxPerSecond) * Math.exp(delta * 0.0015);
-				if (!pending) {
-					requestAnimationFrame(() => {
-						const { seconds, anchorX } = pending!;
-						pending = null;
-						const minSeconds = this.drawnWidth / maxPxPerSecond;
-						// Once the whole time range fits, we stop there and call it the whole fight.
-						this.zoomAround(seconds >= this.viewEnd - this.viewStart ? 'fight' : Math.max(minSeconds, seconds), anchorX);
-					});
-				}
-				pending = { seconds, anchorX };
+				// A notch during the animation goes on from where the last one was going.
+				const seconds = this.zoomSeconds(this.zoomSpan) * Math.exp(delta * 0.0015);
+				// Once the whole time range fits, we stop there and call it the whole fight.
+				this.zoomAround(seconds >= this.viewEnd - this.viewStart ? 'fight' : this.zoomSeconds(seconds), anchorX);
 			},
 			{ passive: false },
 		);
 	}
 
-	// The pixels per second that show the zoom's seconds in a view this wide. A time range
-	// shorter than the zoom fills the view.
-	private fitPxPerSecond(width: number): number {
+	// How many seconds this zoom shows in the view. It shows no more than the time range, and no
+	// less than we can see at the closest zoom.
+	private zoomSeconds(span: ZoomSpan): number {
 		const rangeSeconds = this.viewEnd - this.viewStart;
-		if (this.zoomSpan == 'fight' || this.zoomSpan >= rangeSeconds) return width / rangeSeconds;
-		return Math.min(maxPxPerSecond, width / this.zoomSpan);
+		if (span == 'fight') return rangeSeconds;
+		return Math.min(rangeSeconds, Math.max(this.drawnWidth / maxPxPerSecond, span));
 	}
 
-	// Draws the rotation again when its view got wider or narrower since we drew it, and keeps
-	// the time at the left of the view where it is.
+	// The pixels per second that show the zoom's seconds in a view this wide.
+	private fitPxPerSecond(width: number): number {
+		return width / this.zoomSeconds(this.zoomSpan);
+	}
+
+	// Draws the rotation again when its view got wider or narrower since we drew it.
 	private refitIfResized() {
 		const width = this.rotationTimeline.clientWidth;
 		if (this.mode != 'rotation' || this.dirty || !width || Math.abs(width - this.drawnWidth) < 1) return;
+		this.redrawKeepingScroll();
+	}
+
+	// Draws the rotation again, and keeps the time at the left of the view where it is.
+	private redrawKeepingScroll() {
 		const leftTime = this.leftToTime(this.rotationTimeline.scrollLeft);
 		this.dirty = true;
 		this.renderIfDirty();
@@ -449,8 +509,11 @@ export class Timeline extends ResultComponent {
 
 		// The rotation follows one player. With more than one we can only show the chart.
 		if (this.mode == 'rotation' && players.length == 1) {
+			this.zoomAnimation = null;
+			window.clearTimeout(this.settleTimer);
 			this.drawnWidth = this.rotationTimeline.clientWidth;
-			this.pxPerSecond = this.fitPxPerSecond(this.drawnWidth);
+			this.drawnPxPerSecond = this.fitPxPerSecond(this.drawnWidth);
+			this.setPxPerSecond(this.drawnPxPerSecond);
 			try {
 				this.updateRotationChart(players[0], duration);
 			} catch (e) {
@@ -1069,7 +1132,10 @@ export class Timeline extends ResultComponent {
 		const svgNs = 'http://www.w3.org/2000/svg';
 		const svg = document.createElementNS(svgNs, 'svg');
 		svg.setAttribute('class', `rotation-resource-chart series-color ${cNames}`);
-		svg.setAttribute('width', String(Math.max(endX, 1)));
+		// The path is in pixels at the zoom we drew it. While the zoom animates, we stretch it.
+		svg.setAttribute('viewBox', `0 0 ${Math.max(endX, 1)} ${height}`);
+		svg.setAttribute('preserveAspectRatio', 'none');
+		svg.style.width = this.timeToPx(duration - this.viewStart);
 		svg.setAttribute('height', String(height));
 		const areaPath = document.createElementNS(svgNs, 'path');
 		areaPath.setAttribute('class', 'rotation-resource-area');
@@ -1077,6 +1143,7 @@ export class Timeline extends ResultComponent {
 		const linePath = document.createElementNS(svgNs, 'path');
 		linePath.setAttribute('class', 'rotation-resource-line');
 		linePath.setAttribute('d', line);
+		linePath.setAttribute('vector-effect', 'non-scaling-stroke');
 		svg.append(areaPath, linePath);
 		rowElem.appendChild(svg);
 
@@ -1089,7 +1156,7 @@ export class Timeline extends ResultComponent {
 			if (x - lastLabelX >= 48) {
 				lastLabelX = x;
 				rowElem.appendChild(
-					<span className={`rotation-resource-label series-color ${cNames}`} style={{ left: `${x}px` }}>
+					<span className={`rotation-resource-label series-color ${cNames}`} style={{ left: this.timeToLeft(resourceLogGroup.timestamp) }}>
 						{labelText(resourceLogGroup)}
 					</span>,
 				);
@@ -1449,12 +1516,10 @@ export class Timeline extends ResultComponent {
 		});
 	}
 
-	// For lengths, like how long a cast or an aura lasts.
-	private timeToPxValue(time: number): number {
-		return time * this.pxPerSecond;
-	}
+	// The CSS for a length, like how long a cast or an aura lasts. It follows --px-per-second, so
+	// it changes with the zoom without drawing the row again.
 	private timeToPx(time: number): string {
-		return this.timeToPxValue(time) + 'px';
+		return `calc(var(--px-per-second) * ${time})`;
 	}
 
 	// For where something starts, measured from the start of the time range we draw.
@@ -1462,7 +1527,7 @@ export class Timeline extends ResultComponent {
 		return (time - this.viewStart) * this.pxPerSecond;
 	}
 	private timeToLeft(time: number): string {
-		return this.timeToLeftValue(time) + 'px';
+		return this.timeToPx(time - this.viewStart);
 	}
 	private leftToTime(left: number): number {
 		return this.viewStart + left / this.pxPerSecond;
@@ -1479,13 +1544,13 @@ export class Timeline extends ResultComponent {
 	// it, and the line goes last, over them.
 	private drawPull() {
 		if (this.prepullStart >= 0 || this.viewStart >= 0) return;
-		const pullLeft = this.timeToLeftValue(Math.min(0, this.viewEnd));
+		const pullLeft = this.timeToLeft(Math.min(0, this.viewEnd));
 		this.rotationTimeline.prepend(
-			<div className="rotation-prepull" style={{ width: `${pullLeft}px` }}>
+			<div className="rotation-prepull" style={{ width: pullLeft }}>
 				<span className="rotation-prepull-label">Prepull</span>
 			</div>,
 		);
-		if (this.viewEnd > 0) this.rotationTimeline.appendChild(<div className="rotation-pull-line" style={{ left: `${pullLeft}px` }} />);
+		if (this.viewEnd > 0) this.rotationTimeline.appendChild(<div className="rotation-pull-line" style={{ left: pullLeft }} />);
 	}
 
 	private drawRotationTimeRuler(header: HTMLElement) {
