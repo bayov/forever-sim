@@ -31,7 +31,7 @@ const (
 	SpellCode_WarriorWhirlwind
 )
 
-var TalentTreeSizes = [3]int{17, 18, 19}
+var TalentTreeSizes = [3]int{17, 17, 18}
 
 type WarriorInputs struct {
 	QueueDelay     int32
@@ -99,6 +99,7 @@ type Warrior struct {
 	DeepWounds        *WarriorSpell
 	ConcussionBlow    *WarriorSpell
 	Hamstring         *WarriorSpell
+	SpearingStrike    *WarriorSpell
 
 	HeroicStrike       *WarriorSpell
 	HeroicStrikeQueue  *WarriorSpell
@@ -168,6 +169,17 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.reactionTime = time.Millisecond * 500
 
+	// A critical white hit gives 100% more Rage under Forever (75% in the 1 October build, then
+	// "increased to 100% increased Rage (was 75%)" in Kaivax's 2 October "Warrior Updates in Today's
+	// Beta Build" post, https://us.forums.blizzard.com/en/wow/t/2369360). An assumption until the beta
+	// test in orchestration/followups.md ("Rage needs a beta test").
+	// Rage from white hits is normalized to the weapon's speed (standards 21, see
+	// core.ForeverNormalizedRage).
+	if warrior.Env.IsForever() {
+		warrior.AddCritDealtRageMultiplier(2)
+		warrior.EnableForeverNormalizedRage()
+	}
+
 	warrior.registerShouts()
 	warrior.registerStances()
 	warrior.registerBerserkerRageSpell()
@@ -185,6 +197,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerRendSpell()
 	warrior.registerHamstringSpell()
 	warrior.registerPummelSpell()
+	warrior.registerSpearingStrikeSpell()
 
 	// The sim often re-enables heroic strike in an unrealistic amount of time.
 	// This can cause an unrealistic immediate double-hit around wild strikes procs

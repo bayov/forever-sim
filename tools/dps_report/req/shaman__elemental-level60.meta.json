@@ -7,36 +7,23 @@
   "pr": 7,
   "race": "Orc",
   "talents": "5504301300103051-052-05305",
-  "treePoints": "31/7/13",
   "treeNames": [
     "Elemental",
     "Enhancement",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic.gear.json",
-  "apl": "level60.apl.json",
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60",
   "published": {
     "dps": 673.9,
-    "source": "the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)",
-    "overall": {
-      "race": "Orc",
-      "dps": 673.9
-    },
-    "horde": {
-      "race": "Orc",
-      "dps": 673.9
-    },
-    "alliance": {
-      "race": "Dwarf",
-      "dps": 666.8
-    }
+    "source": "PR #7"
   },
   "verify": {
-    "dps": 673.93,
+    "dps": 673.95,
     "stderr": 0.18,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Orc, 180 s with durationVariation 20, on the merged bundled-round tree. Published 673.9 (the shaman branch head 0024236 (20000 iterations; the PR body still shows the earlier round)); delta +0.03."
+    "note": "+0.05 vs PR #7"
   },
   "summary": "Deep Elemental caster on the synthetic Phase 1 staff set with Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus, from talent searches over seven seeds. It is the Elemental spec's default Level 60 preset.",
   "keyTalents": [
@@ -83,5 +70,5 @@
     "Elemental Focus proc rate on low ranks reduced on 7 Oct; exact amount open",
     "Searing Totem reach from a ranged shaman is not modelled"
   ],
-  "notes": "Request is mksettings -spec ele output unchanged. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+  "notes": "Request is mksettings -spec ele output unchanged."
 }

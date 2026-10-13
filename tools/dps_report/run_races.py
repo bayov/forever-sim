@@ -5,7 +5,8 @@ For every preset and every race its class can be (180 s, 10k iterations, seed 1,
 settings otherwise), on top of the race sweep run_build.py already did:
   off            the race's base stats only: every racial left out (DASH_RACIALS_OFF=all)
   off:<part>     one racial part left out, for races with more than one part that can count
-  beast / elemental / undead   the same fight against that creature type (presets fight a Humanoid)
+  beast / elemental   the same fight against that creature type (presets fight the generic boss)
+  humanoid       priests only: Chastise (Dwarf priests) works on Humanoids only
   weapon         the preset's weapon(s) as the race's racial weapon type (same stats and weapon DPS)
   weaponNoRacial the same weapon swap with that weapon racial left out
 Results append to rv/results.jsonl, one line per sim, so a rerun only does what is missing.
@@ -40,7 +41,7 @@ SPEED_FROM = {(AXE, '2h'): 17104, (MACE, '2h'): 17073, (SWORD, '2h'): 17076,
               (AXE, 'mh'): 17068, (MACE, 'mh'): 11684, (SWORD, 'mh'): 17075,
               (AXE, 'oh'): 12798, (MACE, 'oh'): 18683, (SWORD, 'oh'): 18832}
 CASTER = {'Mage', 'Warlock', 'Priest'}
-# Racial parts that can change DPS against the preset's Humanoid target, by race.
+# Racial parts that can change DPS, by race.
 PARTS = {
     'Human': ['spirit', 'sword'], 'Dwarf': ['mace', 'chastise'], 'NightElf': ['elune', 'starshards'],
     'Gnome': ['mind', 'eureka'], 'Orc': ['axe', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'],
@@ -48,7 +49,8 @@ PARTS = {
 }
 PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice'}
 WEAPON_PART = {'sword': SWORD, 'mace': MACE, 'axe': AXE}
-TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental', 'undead': 'MobTypeUndead'}
+TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental'}
+CLASS_TARGETS = {'Priest': {'humanoid': 'MobTypeHumanoid'}}  # a racial that cares about Humanoids (Chastise)
 NEW_ID = 9_990_000
 
 
@@ -147,7 +149,7 @@ def tasks(bid):
         if len(ps) > 1:
             for p in ps:
                 yield (bid, race, 'off:' + p), lambda race=race, p=p: sim(req, race, off=p)
-        for t, mob in TARGETS.items():
+        for t, mob in {**TARGETS, **CLASS_TARGETS.get(cls, {})}.items():
             yield (bid, race, t), lambda race=race, mob=mob: sim(req, race, mob=mob)
         if race in RACE_WEAPON:
             wt, part = RACE_WEAPON[race]
@@ -190,4 +192,6 @@ def main(ids):
 if __name__ == '__main__':
     ids = sys.argv[1:] or sorted(os.path.basename(p)[:-5] for p in os.listdir(os.path.join(D, 'req')) if not p.endswith('.meta.json'))
     ids = [i.replace('.json', '') for i in ids if not i.endswith('.meta')]
+    # the encounter presets (a creature-type boss) get only run_build's race sweep
+    ids = [i for i in ids if not json.load(open(os.path.join(D, 'req', i + '.meta.json'))).get('encounter')]
     main(ids)

@@ -61,6 +61,7 @@
       </div>
       <div class="fv-controls">
         <button class="fv-chip" id="rank-best" aria-pressed="false" title="Keep only the highest-DPS preset of each class">Best per class</button>
+        <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Add the presets built for one creature type of boss (vs Humanoid, vs Undead, vs Dragonkin) as extra rows, here and in Specs and Compare">Special encounters</button>
         <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
       </div>
       <div class="fv-legend" id="rank-legend"><span><i class="fv-bar" style="position:static;display:inline-block;width:1.2rem;background:var(--color-fg-muted)"></i>mean</span><span><i style="width:1rem;height:0.6rem;border:1.5px solid var(--color-fg);border-radius:2px"></i>middle half of fights</span><span><i style="width:1.2rem;height:1.5px;background:var(--color-fg)"></i>10th to 90th percentile</span></div>
@@ -93,7 +94,7 @@
       <div class="fv-controls"><span class="fv-label">Target</span><div class="fv-seg" id="rs-target" role="group" aria-label="Target creature type"></div></div>
       <div class="fv-controls"><span class="fv-label">Weapon</span><div class="fv-seg" id="rs-weapon" role="group" aria-label="Weapon and racials"></div></div>
       <p class="fv-scen-desc" id="rs-desc"></p>
-      <p class="fv-note">Every card on this page follows the scenario. Racial weapon and racials off are against the Humanoid boss.</p>
+      <p class="fv-note">Every card on this page follows the scenario. Racial weapon and racials off are against the generic boss. Humanoid is for Priests only (Dwarf Chastise).</p>
     </div>
 
     <div class="content-block fv-card" id="race-overview-card">
@@ -292,6 +293,7 @@
     <div class="content-block fv-card" id="sp-setup-card" data-jump="Consumes">
       <div class="content-block-header"><h6 class="content-block-title">Consumes and buffs</h6></div>
       <p class="fv-note">Everything the preset's sim settings switch on. Tap one for its tooltip.</p>
+      <p class="fv-boss" id="sp-boss"></p>
       <div class="fv-setup-bar"><p class="fv-note">Faded: listed in the sim settings but has no effect, tap for why.</p><button class="fv-chip" id="sp-setup-hide" aria-pressed="false">Hide inactive</button></div>
       <div class="fv-setup" id="sp-setup" data-source="setup tooltips icons"></div>
     </div>
@@ -356,7 +358,7 @@
       <div class="content-block-header"><h6 class="content-block-title">How these numbers were made</h6></div>
       <div class="fv-prose" id="method-prose">
         <p>Every level 60 preset was simmed with the same build of the sim. Each preset uses its own talents, rotation, synthetic Phase 1 gear (built to the rules below), consumes and the shared raid buffs and debuffs, on its preset race.</p>
-        <p>The main number is the mean of <b data-source="builds" data-field="iters" data-row="0">—</b> fights. A fight lasts <span data-source="builds" data-field="fightSecs" data-row="0">—</span> s on average, varying by up to <span data-source="builds" data-field="fightVar" data-row="0">—</span> s either way, against a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor before debuffs. Every preset uses the same random seed.</p>
+        <p>The main number is the mean of <b data-source="builds" data-field="iters" data-row="0">—</b> fights. A fight lasts <span data-source="builds" data-field="fightSecs" data-row="0">—</span> s on average, varying by up to <span data-source="builds" data-field="fightVar" data-row="0">—</span> s either way, against a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss of no creature type (a generic boss) with <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor before debuffs. Every preset uses the same random seed.</p>
         <p>The race sweep runs <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights on every race the class can be. The fight-length runs use <span data-source="builds" data-field="lengthIters" data-row="0">—</span> fights each. The three sample fights are single fights whose DPS is closest to the preset's 10th, 50th and 90th percentile, out of the first <span data-source="builds" data-field="sampleSeeds" data-row="0">—</span> seeds.</p>
         <p>The race scenarios on the Races page use as many fights as the race sweep and the same seed. "Racials off" leaves every racial passive and ability out, so what remains is the race's base stats; turning racials off one at a time splits the rest between them (where two count, each gets the average of its two possible orders, so the parts add up). "Racial weapon" gives Humans a sword, Dwarves a mace and Orcs an axe where the class can use one, with the preset weapon's stats and weapon DPS and the speed of a Phase 1 weapon of that type (Spinal Reaper, Earthshaker, Bonereaver's Edge, Deathbringer, Ironfoe, Annihilator, Hammer of the Vesper, Brutality Blade). The target scenarios change only the boss's creature type.</p>
         <p>Spell names come from the sim's own aura labels, the Forever client talent data and the item database.</p>

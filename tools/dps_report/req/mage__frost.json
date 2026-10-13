@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceSkyborneHighOrder",
             "class": "ClassMage",
             "equipment": {
               "items": [
@@ -75,7 +75,7 @@
               "firePowerBuff": "ElixirOfFirepower",
               "frostPowerBuff": "ElixirOfFrostPower",
               "mainHandImbue": "WizardOil",
-              "defaultPotion": "MajorManaPotion",
+              "defaultPotion": "MajorSpellblastingPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
               "sapperExplosive": "SapperGoblinSapper",
@@ -228,8 +228,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -237,8 +236,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -260,7 +257,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

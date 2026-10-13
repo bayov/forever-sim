@@ -7,38 +7,25 @@
   "pr": 4,
   "race": "Undead",
   "talents": "20305213032515201-55050000001",
-  "treePoints": "35/16/0",
   "treeNames": [
     "Arms",
     "Fury",
     "Protection"
   ],
-  "gearSet": "level60_phase1_synthetic_arms.gear.json",
-  "apl": "level60_arms.apl.json",
+  "gearSet": "level60_phase1_synthetic_arms",
+  "apl": "level60_arms",
   "published": {
-    "dps": 890.4,
-    "source": "PR #4",
-    "overall": {
-      "race": "Undead",
-      "dps": 890.4
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 890.4
-    },
-    "alliance": {
-      "race": "Human",
-      "dps": 885.9
-    }
+    "dps": 909.0,
+    "source": "warrior head 38b94b4"
   },
   "verify": {
-    "dps": 890.39,
+    "dps": 909.02,
     "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 890.4 (PR #4); delta -0.01."
+    "note": "+0.02"
   },
-  "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster sword procs. It is the Arms spec's Level 60 preset, about 13% behind dual wield Fury.",
+  "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster sword procs. It is the Arms spec's Level 60 preset, about 12% behind dual wield Fury.",
   "keyTalents": [
     "Mortal Strike",
     "Bloodthrill",
@@ -75,16 +62,15 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
     "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
-    "Late Forever rulings cost (Undead 180 s): Ahn'Qiraj ranks out -14.2, Deep Wounds no crit -7.2",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
     "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
     "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 10.9",
     "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 8.4 at Undead 180 s)",
-    "The audit found Recklessness never cast and Rage capping; fixed with the stance swap and Hamstring filler (811.9 -> 868.7 on earlier gear)",
     "Booming Voice (5/5) does nothing because the raid has Battle Shout",
     "Arms in Berserker Stance with Whirlwind all fight was 10% behind"
   ],
-  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms -talents 20305213032515201-55050000001 -race Undead -duration 180, unedited. Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the second potion is held for the last 15 s."
+  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms -talents 20305213032515201-55050000001 -race Undead -duration 180, unedited. Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts."
 }

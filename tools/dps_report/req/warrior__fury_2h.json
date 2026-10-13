@@ -224,10 +224,29 @@
                                     "spellId": 20572
                                   },
                                   "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
+                                    "max": {
+                                      "vals": [
+                                        {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "spellId": 12328
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "36s"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
                                     }
                                   },
                                   "minTimeLeft": {
@@ -299,10 +318,29 @@
                                     "tag": 2
                                   },
                                   "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
+                                    "max": {
+                                      "vals": [
+                                        {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "spellId": 12328
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "36s"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
                                     }
                                   },
                                   "minTimeLeft": {
@@ -374,10 +412,29 @@
                                     "spellId": 1259799
                                   },
                                   "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
+                                    "max": {
+                                      "vals": [
+                                        {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "spellId": 12328
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "36s"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
                                     }
                                   },
                                   "minTimeLeft": {
@@ -469,6 +526,70 @@
                   }
                 },
                 {
+                  "notes": "The on-use trinket, the last use held for the end of the fight when the wait costs no use.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "25s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 991018
+                                  },
+                                  "delay": {
+                                    "math": {
+                                      "op": "OpSub",
+                                      "lhs": {
+                                        "remainingTime": {}
+                                      },
+                                      "rhs": {
+                                        "const": {
+                                          "val": "25s"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 991018
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Bloodrage when there is room for the Rage.",
                   "action": {
                     "condition": {
@@ -492,20 +613,54 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets).",
-                  "action": {
-                    "autocastOtherCooldowns": {}
-                  }
-                },
-                {
-                  "notes": "Execute in the execute phase.",
+                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20662,
-                        "rank": 5
+                        "itemId": 10646
                       }
                     }
+                  }
+                },
+                {
+                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "autoTimeToNext": {
+                            "autoType": "MainHand"
+                          }
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpSub",
+                            "lhs": {
+                              "autoSwingTime": {
+                                "autoType": "MainHand"
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.4s"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 4395
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Anything not listed above (Sapper, trinkets).",
+                  "action": {
+                    "autocastOtherCooldowns": {}
                   }
                 },
                 {
@@ -543,6 +698,17 @@
                   }
                 },
                 {
+                  "notes": "Execute in the execute phase.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20662,
+                        "rank": 5
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Heroic Strike on the next swing with Rage to spare.",
                   "action": {
                     "condition": {
@@ -556,7 +722,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "70"
+                                  "val": "90"
                                 }
                               }
                             }
@@ -596,7 +762,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "10"
+                                  "val": "20"
                                 }
                               }
                             }
@@ -676,7 +842,6 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true,
       "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
@@ -685,8 +850,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -708,7 +871,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

@@ -644,33 +644,3 @@ $cmp-worse: #ef7a7a;
 		}
 	}
 }
-
-// The DPS and resources over the fight, a chart for each under one legend.
-.cmp-over-time {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacer-3);
-
-	.cmp-over-time-section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacer-1);
-	}
-
-	.cmp-over-time-title {
-		font-size: 0.6875rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--text-muted-color);
-	}
-
-	.cmp-over-time-chart {
-		position: relative;
-		height: 10rem;
-
-		&.tall {
-			height: 16rem;
-		}
-	}
-}

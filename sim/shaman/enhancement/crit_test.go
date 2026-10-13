@@ -157,3 +157,24 @@ func TestOrcShamanAxeSpecialization(t *testing.T) {
 		t.Errorf("the axe gives %.4f%% more spell crit than the mace, want 1%%", got)
 	}
 }
+
+// TestOrcShamanThunderingStrikes checks Thundering Strikes (shaman_audit.md 8.18).
+//
+// Each point is 1% more crit on every melee attack and spell, as the client says (16255). On
+// the beta, taking 5/5 off dropped the sheet's melee crit from 10.39 to 5.39 and spell crit
+// from 12.31 to 7.41.
+func TestOrcShamanThunderingStrikes(t *testing.T) {
+	crit := func(talents string) (melee, spell float64) {
+		_, enh := newShamanSim(newOrcShaman(30, talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 1)
+		return enh.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance, enh.GetStat(stats.SpellCrit) / core.SpellCritRatingPerCritChance
+	}
+	// Earth's Grasp 0 and Thundering Strikes 5.
+	fullMelee, fullSpell := crit("-05")
+	noneMelee, noneSpell := crit("")
+	if got := fullMelee - noneMelee; math.Abs(got-5) > 1e-9 {
+		t.Errorf("5/5 gives %.4f%% more melee crit, want 5%%", got)
+	}
+	if got := fullSpell - noneSpell; math.Abs(got-5) > 1e-9 {
+		t.Errorf("5/5 gives %.4f%% more spell crit, want 5%%", got)
+	}
+}

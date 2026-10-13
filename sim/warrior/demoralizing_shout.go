@@ -9,10 +9,9 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	actionId := core.DemoralizingShoutSpellId[rank]
 
 	warrior.DemoralizingShoutAuras = warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		// Improved Demoralizing Shout is gone from the Forever tree. Tanks read the attack power
-		// reduction, so it is assumed to have become baseline at full strength rather than
-		// deleted, and Forever's Booming Voice only widens the radius.
-		// TODO: assumed baseline, beta will confirm
+		// Improved Demoralizing Shout is gone from the Forever tree, and Forever's rank 5 takes
+		// 196 + 1.4 a level from 54, 204 at 60 (client 70338, spell 11556), which is Classic's 146
+		// with the old talent at 5/5. It lasts 45 sec under Forever, the sim keeps 30.
 		return core.DemoralizingShoutAura(target, 0, 5)
 	})
 
@@ -23,7 +22,7 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 		Flags:       core.SpellFlagAPL | SpellFlagOffensive,
 
 		RageCost: core.RageCostOptions{
-			Cost: 10,
+			Cost: warrior.shoutRageCost(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

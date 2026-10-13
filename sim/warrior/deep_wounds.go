@@ -24,7 +24,9 @@ func (warrior *Warrior) applyDeepWounds() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+		// Forever's Deep Wounds (412609) deals its damage through 412613, which cannot crit
+		// (client 70338: SPELL_ATTR2_CANT_CRIT, and no Attributes_8 0x200 like the DoTs that crit).
+		Flags: core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagNoPeriodicCrit,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -72,18 +74,26 @@ func (warrior *Warrior) applyDeepWounds() {
 func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isOh bool) {
 	dot := warrior.DeepWounds.Dot(target)
 
+	// Under Forever, Deep Wounds doesn't scale with attack power and is a rolling DoT (the
+	// 8 October development notes): a new crit adds the damage not yet ticked to the new DoT.
+	forever := warrior.Env.IsForever()
+	ap := core.TernaryFloat64(forever, 0, dot.Spell.MeleeAttackPower(target))
+
 	var awd float64
 	if isOh {
 		attackTableOh := warrior.AttackTables[target.UnitIndex][proto.CastType_CastTypeOffHand]
 		adm := warrior.AutoAttacks.OHAuto().AttackerDamageMultiplier(attackTableOh, true)
-		awd = warrior.AutoAttacks.OH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower(target)) * 0.5 * adm
+		awd = warrior.AutoAttacks.OH().CalculateAverageWeaponDamage(ap) * 0.5 * adm
 	} else { // MH
 		attackTableMh := warrior.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
 		adm := warrior.AutoAttacks.MHAuto().AttackerDamageMultiplier(attackTableMh, true)
-		awd = warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower(target)) * adm
+		awd = warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(ap) * adm
 	}
 
 	newDamage := awd * 0.2 * float64(warrior.Talents.DeepWounds) // 60% of average attackers damage
+	if forever && dot.IsActive() {
+		newDamage += dot.SnapshotBaseDamage * float64(dot.MaxTicksRemaining())
+	}
 
 	dot.SnapshotBaseDamage = newDamage / 4.0 // spread over 4 ticks of the dot
 	dot.SnapshotAttackerMultiplier = 1

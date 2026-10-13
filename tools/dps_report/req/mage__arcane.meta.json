@@ -7,7 +7,6 @@
   "pr": 6,
   "race": "Undead",
   "talents": "051225003100311531-03-02550003",
-  "treePoints": "33/3/15",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -17,26 +16,14 @@
   "apl": "level60_arcane",
   "published": {
     "dps": 829.7,
-    "source": "PR #6",
-    "overall": {
-      "race": "Undead",
-      "dps": 829.7
-    },
-    "horde": {
-      "race": "Undead",
-      "dps": 829.7
-    },
-    "alliance": {
-      "race": "Gnome",
-      "dps": 819.6
-    }
+    "source": "PR #6"
   },
   "verify": {
     "dps": 829.66,
     "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 829.7 (PR #6); delta -0.04."
+    "note": "-0.04 vs PR #6"
   },
   "summary": "Arcane to Arcane Power with Arcane Blast and Missile Barrage, on the Arcane gear variant (Gloves - Arcane Power). 8% behind Frostfire.",
   "keyTalents": [
@@ -81,5 +68,5 @@
     "The 15 Frost points do nothing for this rotation",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
   ],
-  "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the rotation's low-mana threshold moved from 30% to 20% mana."
+  "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring)."
 }

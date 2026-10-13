@@ -110,6 +110,102 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Arcane Power with the on-use trinket, unless the trinket won't be back in time. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 996032
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellTimeToReady": {
+                                  "spellId": {
+                                    "itemId": 996032
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpSub",
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 12042
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Presence of Mind with Arcane Power and the trinket. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 996032
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellTimeToReady": {
+                                  "spellId": {
+                                    "itemId": 996032
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpSub",
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 12043
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
@@ -456,8 +552,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -465,8 +560,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -488,7 +581,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

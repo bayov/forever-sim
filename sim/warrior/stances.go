@@ -36,9 +36,12 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 		BerserkerStance: SpellCode_WarriorStanceBerserker,
 	}[stance]
 	actionID := aura.ActionID
-	// The tooltip reads as a bonus on top of a baseline Tactical Mastery, but the baseline
-	// retention was never shown, so only the talent's own 3 Rage per point is modelled.
+	// Forever trains Tactical Mastery at 14, keeping 10 Rage, and Improved Tactical Mastery adds 3
+	// a point (client 70338, spells 1310185 and 12295).
 	maxRetainedRage := 3 * float64(warrior.Talents.ImprovedTacticalMastery)
+	if warrior.Env.IsForever() && warrior.Level >= 14 {
+		maxRetainedRage += 10
+	}
 	rageMetrics := warrior.NewRageMetrics(actionID)
 
 	stanceSpell := warrior.RegisterSpell(AnyStance, core.SpellConfig{
@@ -136,7 +139,7 @@ func (warrior *Warrior) registerBerserkerStanceAura() {
 		},
 		OnExpire: func(ee *core.ExclusiveEffect, sim *core.Simulation) {
 			ee.Aura.Unit.PseudoStats.ThreatMultiplier /= 0.8
-			ee.Aura.Unit.PseudoStats.DamageTakenMultiplier *= 1.1
+			ee.Aura.Unit.PseudoStats.DamageTakenMultiplier /= 1.1
 			ee.Aura.Unit.AddStatDynamic(sim, stats.MeleeCrit, -core.CritRatingPerCritChance*3)
 		},
 	})

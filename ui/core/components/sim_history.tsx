@@ -1,12 +1,11 @@
 import tippy, { Instance as TippyInstance } from 'tippy.js';
 
 import type { IndividualSimUI } from '../individual_sim_ui';
-import { deleteHistoryRun, historyRunKeys, loadHistoryRun, loadHistorySeries, loadLastSimRun, saveHistoryRun, saveHistorySeries } from '../last_sim_run';
+import { deleteHistoryRun, historyRunKeys, loadHistoryRun, loadLastSimRun, saveHistoryRun } from '../last_sim_run';
 import { IndividualSimSettings } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
 import { TypedEvent } from '../typed_event';
 import { BaseModal } from './base_modal';
-import { buildRunSeries, RunSeries } from './compare_results/run_series';
 import { ChangeCategory, dirtySettings } from './dirty_settings';
 import { changesList } from './preset_tree';
 import { RaidSimResultsManager, ResultMetric } from './raid_sim_action';
@@ -120,19 +119,6 @@ export class SimHistory {
 				this.resultIds.add(latest.id);
 			}
 		}
-		// Runs from before we kept series have none. The latest one still has its logs in the
-		// last run store, so we build its series from them.
-		if (latest && this.resultIds.has(latest.id) && !(await loadHistorySeries(this.resultsKey(latest.id)))) {
-			const saved = await loadLastSimRun(this.simUI.getStorageKey('__lastSimRun__'));
-			const dps = saved?.result?.raidMetrics?.dps?.avg;
-			if (saved && dps !== undefined && Math.abs(dps - latest.dps) < 1e-6) {
-				try {
-					await this.saveSeries(latest.id, await SimResult.fromProto(saved));
-				} catch (e) {
-					console.warn('Failed to build the series of the latest run: ' + e);
-				}
-			}
-		}
 		this.changeEmitter.emit(TypedEvent.nextEventID());
 	}
 
@@ -144,19 +130,6 @@ export class SimHistory {
 	// can be in both.
 	getRuns(): { pinned: SimRun[]; recent: SimRun[] } {
 		return { pinned: [...this.pinned], recent: [...this.history] };
-	}
-
-	// Reads the lucky and unlucky iterations of the run, so it takes a moment. The Compare tab
-	// hears of it through the change emitter.
-	private async saveSeries(id: string, simResult: SimResult) {
-		const series = await buildRunSeries(simResult);
-		await saveHistorySeries(this.resultsKey(id), series);
-		this.changeEmitter.emit(TypedEvent.nextEventID());
-	}
-
-	async loadSeries(run: SimRun): Promise<RunSeries | null> {
-		if (!this.resultIds.has(run.id)) return null;
-		return loadHistorySeries<RunSeries>(this.resultsKey(run.id));
 	}
 
 	hasResults(run: SimRun): boolean {
@@ -223,10 +196,9 @@ export class SimHistory {
 			this.history.splice(MAX_HISTORY).forEach(run => this.dropResults(run));
 			this.runSettings = null;
 			this.store();
-			saveHistoryRun(this.resultsKey(id), simResult.toProto()).then(async () => {
+			saveHistoryRun(this.resultsKey(id), simResult.toProto()).then(() => {
 				this.resultIds.add(id);
 				this.changeEmitter.emit(TypedEvent.nextEventID());
-				await this.saveSeries(id, simResult);
 			});
 		}
 		this.running = false;

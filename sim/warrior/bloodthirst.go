@@ -11,9 +11,18 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 		return
 	}
 
+	// Forever's Bloodthirst is 45% of attack power plus 30, 37, 43 or 48 by rank, at 40, 48, 54
+	// and 60 (client 70338). Classic's is 45% with nothing flat.
+	rank := max(1, core.HighestRankAt(warrior.Level, []int{0, 40, 48, 54, 60}))
+	apCoef := 0.45
+	flatDamage := 0.0
+	if warrior.Env.IsForever() {
+		flatDamage = []float64{0, 30, 37, 43, 48}[rank]
+	}
+
 	warrior.Bloodthirst = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorBloodthirst,
-		ActionID:    core.ActionID{SpellID: 23894},
+		ActionID:    core.ActionID{SpellID: []int32{0, 23881, 23892, 23893, 23894}[rank]},
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -41,7 +50,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 0.35*spell.MeleeAttackPower(target) + 30
+			baseDamage := apCoef*spell.MeleeAttackPower(target) + flatDamage
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			if !result.Landed() {
 				spell.IssueRefund(sim)

@@ -258,70 +258,6 @@
                 {
                   "notes": "Orc. Blood Fury waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 12328
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpEq",
-                              "lhs": {
-                                "spellUsesRemaining": {
-                                  "spellId": {
-                                    "spellId": 12328
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "30s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "spellId": 20572
-                                  },
-                                  "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 20572
@@ -332,71 +268,6 @@
                 {
                   "notes": "Troll. Berserking waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 12328
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpEq",
-                              "lhs": {
-                                "spellUsesRemaining": {
-                                  "spellId": {
-                                    "spellId": 12328
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "30s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "spellId": 26297,
-                                    "tag": 2
-                                  },
-                                  "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 26297,
@@ -408,70 +279,6 @@
                 {
                   "notes": "Night Elf. Elune's Light waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 12328
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpEq",
-                              "lhs": {
-                                "spellUsesRemaining": {
-                                  "spellId": {
-                                    "spellId": 12328
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "30s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "spellId": 1259799
-                                  },
-                                  "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 1259799
@@ -562,6 +369,51 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 2687
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Goblin Sapper Charge on cooldown.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 10646
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "autoTimeToNext": {
+                            "autoType": "MainHand"
+                          }
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpSub",
+                            "lhs": {
+                              "autoSwingTime": {
+                                "autoType": "MainHand"
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.4s"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 4395
                       }
                     }
                   }
@@ -709,7 +561,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "70"
+                                  "val": "90"
                                 }
                               }
                             }
@@ -848,7 +700,6 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true,
       "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
@@ -857,8 +708,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -880,7 +729,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

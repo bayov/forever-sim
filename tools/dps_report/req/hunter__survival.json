@@ -391,7 +391,6 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true,
       "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
@@ -400,8 +399,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -424,7 +421,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

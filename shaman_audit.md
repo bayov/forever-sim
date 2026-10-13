@@ -148,15 +148,15 @@ Elemental
 - [x] 8.13 Lightning Overload
 - [x] 8.14 Earthbound (not implemented, nothing in the sim moves the enemy)
 - [x] 8.15 Elemental Fury
-- [ ] 8.16 Lava Burst
+- [x] 8.16 Lava Burst
 
 Enhancement
 
-- [ ] 8.17 Earth's Grasp (not implemented)
-- [ ] 8.18 Thundering Strikes
-- [ ] 8.19 Ancestral Knowledge
-- [ ] 8.20 Guardian Totems
-- [ ] 8.21 Mental Dexterity
+- [x] 8.17 Earth's Grasp (not implemented, the sim has no Stoneclaw or Earthbind Totem)
+- [x] 8.18 Thundering Strikes
+- [x] 8.19 Ancestral Knowledge
+- [x] 8.20 Guardian Totems
+- [x] 8.21 Mental Dexterity
 - [ ] 8.22 Improved Ghost Wolf (not implemented)
 - [ ] 8.23 Improved Lightning Shield
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
@@ -1412,6 +1412,53 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16089, talent curve 85221): +20, 40, 60, 80 and 100% crit damage bonus (aura 108, misc 15). Its mask holds Lightning Bolt and Chain Lightning (and their overloads), the three shocks, Lava Burst, Fire Nova's damage spell, the Searing Totem attack, Magma Totem's pulse, the Flametongue Weapon procs, Frostbrand Attack and the Lightning Shield orbs. Flametongue Totem's procs (0x4 in the second word) and Healing Stream (0x2000) aren't in it. That matches the sim spell for spell.
 - Beta: no build had it.
 - No sim change. `elemental_fury_test.go` TestOrcShamanElementalFury reads each spell's crit multiplier at level 60 with 0 and 5 points: 1.5 and 2.0 on the spells above, 1.5 on Flametongue Totem's proc and Healing Stream either way, and Stormstrike's melee crit at 2.0 either way. A 10% step, giving it to every Nature spell (Healing Stream and Flametongue Totem get it) or leaving Searing and Magma Totem out fails it.
+
+### 8.16 Lava Burst (the talent)
+
+- The user OK'd it (2026-10-14): "sg". The spell itself is 7.14.
+- The sim (`lava_burst.go`): with the talent we learn rank 1 at 40, and the trainer adds rank 2 at 50 and rank 3 at 60. Without it the spell isn't registered. The UI tree has it at the bottom of Elemental (row 7), needing Lightning Overload 3/3. The Level 60 elemental preset has it, and the enhancement presets don't.
+- Client: the talent (traits 134169 and 134219) teaches 408490, rank 1. The vendored client tree (69876, updated to 70009) has it in row 7, column 2, with 1 rank, requiring Lightning Overload. That matches.
+- Beta: none, it's a level 40 talent.
+- No sim change and no new test. `lava_burst_test.go` covers the rank at each level and the spell (7.14).
+
+### 8.17 Earth's Grasp
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 16043, talent curves 85265 and 85264): 1 and 2 points give Stoneclaw Totem +25 and +50% (all its effects, so its health) and Earthbind Totem +10 and +20% radius. Classic's talent has the same two parts.
+- The sim: the proto has the field, but nothing reads it. The sim has neither Stoneclaw nor Earthbind Totem, and we don't model enemies attacking totems or moving (8.14).
+- No preset takes it, and no beta build had it.
+
+### 8.18 Thundering Strikes
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point adds 1% melee crit and 1% spell crit, 5% at 5/5. All the enhancement presets have 5/5.
+- Client 70338 (wago.tools 16255, talent curve 85275): +1% a point to all crit (aura 290: melee, ranged and spells). That matches.
+- Beta (the 2026-10-10 20:42 respec, `beta_results.txt`): dropping 5/5 took the sheet from 10.39 to 5.39 melee crit and 12.31 to 7.41 spell crit. The other 0.1 spell crit came from 3 more Intellect.
+- No sim change. `crit_test.go` TestOrcShamanThunderingStrikes: at level 30, 5/5 gives exactly 5% more melee crit and 5% more spell crit than no points. Leaving out the spell crit fails it.
+
+### 8.19 Ancestral Knowledge
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives 2% more Intellect, 10% at 5/5. It multiplies with Blessing of Kings, and the server drops the fraction before working out mana. Level 30 + 5 has 4/5, the Level 60 presets 3/5, and Level 30 PvP none.
+- Client 70338 (wago.tools 17485, talent curve 85266): +2, 4, 6, 8 and 10% Intellect (aura 137, misc 8). That matches.
+- Beta: 2026-10-08, 137 Intellect became 150 with 5/5 (2635 mana) and 165 with Blessing of Kings on top (2860 mana), so they multiply. 2026-10-10 20:42, 4/5 to 5/5 took 141 Intellect to 144.
+- No sim change and no new test. `stat_multipliers_test.go` TestOrcShamanStatMultipliers pins the 2026-10-08 numbers, Intellect gained mid-fight under both and the dropped fraction.
+
+### 8.20 Guardian Totems
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`buffs.go` foreverStoneskinTotemAura): each point gives Stoneskin Totem 10% more (rank 3 goes from 11 to 13.2 at 2/2), and we keep the fraction (7.29). Windwall Totem has no buff in the sim, and Grounding Totem isn't in it, because nothing shoots or casts at us. Level 30 PvP has 2/2, but every preset keeps Strength of Earth in the earth slot, so it changes nothing today.
+- Client 70338 (wago.tools 16258, talent curves 85274 and 85273): +10 and +20% on Stoneskin and Windwall's reduction (aura 108, misc 3) and -1 and -2 sec on Grounding Totem's cooldown. That matches what the sim has.
+- Beta: no build had it. Stoneskin's value before armor was settled in 7.29.
+- No sim change and no new test. `stoneskin_test.go` already wants 13.2 with 2 points at level 30.
+
+### 8.21 Mental Dexterity
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): 1, 2 and 3 points give attack power equal to 33, 67 and 100% of our Intellect, as a stat dependency, so Intellect gained mid-fight counts too. Every enhancement preset has 3/3.
+- Client 70338 (wago.tools 415140, talent curve 85272): 33, 67 and 100% of Intellect as attack power (aura 598). Its second effect is a dummy from SoD's rune, whose 30 sec buff (415144) isn't part of the Forever talent. That matches.
+- Beta: at the 2026-10-10 20:42 respec, 3 more Intellect (141 to 144) took attack power from 389 to 392 at 3/3. The 389 model (60 + 2 x 104 Strength - 20 + 141 Intellect) fit 75 white hits (4.1).
+- No sim change. `mental_dexterity_test.go` TestOrcShamanMentalDexterity: at level 30, 0 to 3 points add 0, 33, 67 and 100% of Intellect to attack power, and 10 Intellect gained mid-fight at 3/3 adds 10 attack power. A 66% rank 2 fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

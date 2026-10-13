@@ -162,6 +162,154 @@
                   }
                 },
                 {
+                  "notes": "Rapid Fire with the on-use trinket, unless waiting would cost a use.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 993016
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpEq",
+                              "lhs": {
+                                "spellUsesRemaining": {
+                                  "spellId": {
+                                    "itemId": 993016
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 3045
+                                  },
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "itemId": 993016
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 3045
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Elune's Light with the on-use trinket, unless waiting would cost a use.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 993016
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpEq",
+                              "lhs": {
+                                "spellUsesRemaining": {
+                                  "spellId": {
+                                    "itemId": 993016
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 1259799
+                                  },
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "itemId": 993016
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259799
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
@@ -331,8 +479,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -340,8 +487,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -364,7 +509,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

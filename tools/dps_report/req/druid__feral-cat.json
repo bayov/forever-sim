@@ -74,8 +74,9 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "defaultPotion": "MajorManaPotion",
-              "defaultConjured": "ConjuredDemonicRune",
+              "mainHandImbue": "DenseWeightstone",
+              "defaultPotion": "MightyRagePotion",
+              "defaultConjured": "ConjuredRogueThistleTea",
               "dragonBreathChili": true,
               "zanzaBuff": "GroundScorpokAssay"
             },
@@ -98,21 +99,151 @@
                   }
                 },
                 {
-                  "notes": "Tiger's Fury on cooldown, it is free and off the global cooldown.",
+                  "notes": "Berserk with the trinket, unless waiting for it would lose a use. Without the talent ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 998115
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellTimeToReady": {
+                                  "spellId": {
+                                    "itemId": 998115
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpSub",
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "10s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 417141
+                                  },
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "itemId": 998115
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 5217
+                        "spellId": 417141
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Berserk on cooldown. Without the talent ignore the warning on this line.",
+                  "notes": "Elune's Light outside Berserk, unless waiting would lose a use.",
                   "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 417141
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "spellIsReady": {
+                                        "spellId": {
+                                          "spellId": 417141
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 1259799
+                                  },
+                                  "delay": {
+                                    "auraRemainingTime": {
+                                      "auraId": {
+                                        "spellId": 417141
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "0s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 417141
+                        "spellId": 1259799
                       }
                     }
                   }
@@ -409,7 +540,6 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
-      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
@@ -420,7 +550,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -428,8 +558,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "curseOfShadow": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -451,7 +579,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,

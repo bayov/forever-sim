@@ -10,9 +10,10 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	results := make([]*core.SpellResult, min(4, warrior.Env.GetNumTargets()))
 	ohResults := make([]*core.SpellResult, len(results))
 
-	// Raging Blows adds an off-hand swing to every target Whirlwind hits.
+	// Forever's Whirlwind strikes with both weapons (the 1 October build made it baseline, it was
+	// Raging Blows' before), and Raging Blows takes 3 Rage off it.
 	var whirlwindOh *core.Spell
-	if warrior.Talents.RagingBlows && warrior.AutoAttacks.IsDualWielding {
+	if warrior.Env.IsForever() && warrior.AutoAttacks.IsDualWielding {
 		whirlwindOh = warrior.registerWhirlwindOffHandSpell()
 	}
 
@@ -25,7 +26,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		Flags:       core.SpellFlagAPL | SpellFlagOffensive,
 
 		RageCost: core.RageCostOptions{
-			Cost: 25,
+			Cost: 25 - core.TernaryFloat64(warrior.Talents.RagingBlows, 3, 0),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

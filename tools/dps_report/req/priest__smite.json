@@ -106,6 +106,20 @@
                       "val": "-2s"
                     }
                   }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 995034
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.1s"
+                    }
+                  }
                 }
               ],
               "priorityList": [
@@ -280,7 +294,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "0.2"
+                                  "val": "0.4"
                                 }
                               }
                             }
@@ -306,7 +320,7 @@
                   }
                 },
                 {
-                  "notes": "Smite while the mana lasts the fight at 20 mana a second.",
+                  "notes": "Smite while the mana lasts the fight at 35 mana a second.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -319,7 +333,7 @@
                             },
                             "rhs": {
                               "const": {
-                                "val": "20"
+                                "val": "35"
                               }
                             }
                           }
@@ -337,11 +351,11 @@
                   }
                 },
                 {
-                  "notes": "Rank 4 Smite once it would not: most of the damage for far less mana.",
+                  "notes": "Rank 7 Smite once it would not: most of the damage for far less mana.",
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 984
+                        "spellId": 10933
                       }
                     }
                   }
@@ -377,8 +391,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -386,7 +399,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "exposeArmor": "TristateEffectImproved",
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -408,7 +420,6 @@
         "id": 213336,
         "name": "Level 60",
         "level": 63,
-        "mobType": "MobTypeHumanoid",
         "stats": [
           0,
           0,
