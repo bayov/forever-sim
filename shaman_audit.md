@@ -155,7 +155,7 @@ Enhancement
 - [x] 8.17 Earth's Grasp (not implemented, the sim has no Stoneclaw or Earthbind Totem)
 - [x] 8.18 Thundering Strikes
 - [x] 8.19 Ancestral Knowledge
-- [ ] 8.20 Guardian Totems
+- [x] 8.20 Guardian Totems
 - [ ] 8.21 Mental Dexterity
 - [ ] 8.22 Improved Ghost Wolf (not implemented)
 - [ ] 8.23 Improved Lightning Shield
@@ -1443,6 +1443,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 17485, talent curve 85266): +2, 4, 6, 8 and 10% Intellect (aura 137, misc 8). That matches.
 - Beta: 2026-10-08, 137 Intellect became 150 with 5/5 (2635 mana) and 165 with Blessing of Kings on top (2860 mana), so they multiply. 2026-10-10 20:42, 4/5 to 5/5 took 141 Intellect to 144.
 - No sim change and no new test. `stat_multipliers_test.go` TestOrcShamanStatMultipliers pins the 2026-10-08 numbers, Intellect gained mid-fight under both and the dropped fraction.
+
+### 8.20 Guardian Totems
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`buffs.go` foreverStoneskinTotemAura): each point gives Stoneskin Totem 10% more (rank 3 goes from 11 to 13.2 at 2/2), and we keep the fraction (7.29). Windwall Totem has no buff in the sim, and Grounding Totem isn't in it, because nothing shoots or casts at us. Level 30 PvP has 2/2, but every preset keeps Strength of Earth in the earth slot, so it changes nothing today.
+- Client 70338 (wago.tools 16258, talent curves 85274 and 85273): +10 and +20% on Stoneskin and Windwall's reduction (aura 108, misc 3) and -1 and -2 sec on Grounding Totem's cooldown. That matches what the sim has.
+- Beta: no build had it. Stoneskin's value before armor was settled in 7.29.
+- No sim change and no new test. `stoneskin_test.go` already wants 13.2 with 2 points at level 30.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
