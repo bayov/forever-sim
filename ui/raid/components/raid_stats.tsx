@@ -331,14 +331,10 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					label: 'Stats',
 					effects: [
 						{
+							// Forever builds Improved Mark of the Wild into Gift of the Wild.
 							label: 'Improved Gift of the Wild',
 							actionId: ActionId.fromSpellId(17051),
-							playerData: playerClassAndTalent(Class.ClassDruid, 'improvedMarkOfTheWild'),
-						},
-						{
-							label: 'Gift of the Wild',
-							actionId: ActionId.fromSpellId(48470),
-							playerData: playerClassAndMissingTalent(Class.ClassDruid, 'improvedMarkOfTheWild'),
+							playerData: playerClass(Class.ClassDruid),
 						},
 					],
 				},
@@ -622,21 +618,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							playerData: playerClass(Class.ClassWarrior),
 						},
 						{
-							label: 'Improved Demoralizing Roar',
-							actionId: ActionId.fromSpellId(16862),
-							playerData: playerSpecAndTalent(
-								Spec.SpecFeralTankDruid,
-								'feralAggression',
-								player => player.getSimpleRotation().maintainDemoralizingRoar,
-							),
-						},
-						{
+							// Forever has no Feral Aggression, so the roar is never improved.
 							label: 'Demoralizing Roar',
 							actionId: ActionId.fromSpellId(9898),
-							playerData: playerSpecAndMissingTalent(
-								Spec.SpecFeralTankDruid,
-								'feralAggression',
-								player => player.getSimpleRotation().maintainDemoralizingRoar,
+							playerData: playerClass(
+								Class.ClassDruid,
+								(player: Player<any>) => player.isSpec(Spec.SpecFeralTankDruid) && (player.getSimpleRotation() as any).maintainDemoralizingRoar,
 							),
 						},
 						// {

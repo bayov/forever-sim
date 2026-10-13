@@ -1,337 +1,11 @@
 {
- "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17",
+ "source": "wago.tools TraitNode, TraitNodeEntry, TraitDefinition and TraitEdge tables of the WoW Forever beta client build 1.60.1.70338 (tree 1089), with the per-rank tooltips from foreverchanges.pro's talent calculator for the same build, fetched 2026-10-12. The hyjal.cc tree for build 1.60.1.69876 it replaces still had Mangle, Primal Fury, Predatory Instincts and King of the Jungle.",
  "class": "druid",
  "trees": [
   {
    "name": "Balance",
    "bg": 283,
    "icon": "spell_nature_starfall",
-   "talents": [
-    {
-     "name": "Improved Wrath",
-     "max": 5,
-     "row": 1,
-     "col": 2,
-     "passive": true,
-     "icon": "spell_nature_abolishmagic",
-     "desc": {
-      "1": "Reduces the cast time of your Wrath spell by 0.1 sec and its Mana cost by 10%.",
-      "2": "Reduces the cast time of your Wrath spell by 0.2 sec and its Mana cost by 20%.",
-      "3": "Reduces the cast time of your Wrath spell by 0.3 sec and its Mana cost by 30%.",
-      "4": "Reduces the cast time of your Wrath spell by 0.4 sec and its Mana cost by 40%.",
-      "5": "Reduces the cast time of your Wrath spell by 0.5 sec and its Mana cost by 50%."
-     },
-     "id": 104923,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16814,
-      "notes": []
-     }
-    },
-    {
-     "name": "Genesis",
-     "max": 5,
-     "row": 1,
-     "col": 3,
-     "passive": true,
-     "icon": "spell_arcane_arcane03",
-     "desc": {
-      "1": "Increases the periodic damage and healing done by your spells and abilities by 1%.",
-      "2": "Increases the periodic damage and healing done by your spells and abilities by 2%.",
-      "3": "Increases the periodic damage and healing done by your spells and abilities by 3%.",
-      "4": "Increases the periodic damage and healing done by your spells and abilities by 4%.",
-      "5": "Increases the periodic damage and healing done by your spells and abilities by 5%."
-     },
-     "id": 104924,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 1223081,
-      "notes": []
-     }
-    },
-    {
-     "name": "Moonglow",
-     "max": 3,
-     "row": 2,
-     "col": 1,
-     "passive": true,
-     "icon": "spell_nature_sentinal",
-     "desc": {
-      "1": "Reduces the Mana cost of your damaging spells by 8%.",
-      "2": "Reduces the Mana cost of your damaging spells by 17%.",
-      "3": "Reduces the Mana cost of your damaging spells by 25%."
-     },
-     "id": 104925,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16845,
-      "notes": []
-     }
-    },
-    {
-     "name": "Improved Moonfire",
-     "max": 2,
-     "row": 2,
-     "col": 2,
-     "passive": true,
-     "icon": "spell_nature_starfall",
-     "desc": {
-      "1": "Increases the damage and critical strike chance of your Moonfire spell by 5%.",
-      "2": "Increases the damage and critical strike chance of your Moonfire spell by 10%."
-     },
-     "id": 104931,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16821,
-      "notes": []
-     }
-    },
-    {
-     "name": "Nature's Majesty",
-     "max": 2,
-     "row": 2,
-     "col": 3,
-     "passive": true,
-     "icon": "inv_staff_01",
-     "desc": {
-      "1": "Increases your critical strike chance with spells and melee attacks by 2%.",
-      "2": "Increases your critical strike chance with spells and melee attacks by 4%."
-     },
-     "id": 104927,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 1223082,
-      "notes": []
-     }
-    },
-    {
-     "name": "Nature's Reach",
-     "max": 2,
-     "row": 2,
-     "col": 4,
-     "passive": true,
-     "icon": "spell_nature_naturetouchgrow",
-     "desc": {
-      "1": "Increases the range of your offensive Balance spells by 10% and improves your chance to hit by 2%.",
-      "2": "Increases the range of your offensive Balance spells by 20% and improves your chance to hit by 4%."
-     },
-     "id": 104929,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16819,
-      "notes": []
-     }
-    },
-    {
-     "name": "Improved Entangling Roots",
-     "max": 3,
-     "row": 3,
-     "col": 1,
-     "passive": true,
-     "icon": "spell_nature_stranglevines",
-     "desc": {
-      "1": "Increases the damage done by your Entangling Roots spell by 25%, and its victims can take up to 25% more damage without interrupting the effect.",
-      "2": "Increases the damage done by your Entangling Roots spell by 50%, and its victims can take up to 50% more damage without interrupting the effect.",
-      "3": "Increases the damage done by your Entangling Roots spell by 75%, and its victims can take up to 75% more damage without interrupting the effect."
-     },
-     "id": 104926,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16918,
-      "notes": []
-     }
-    },
-    {
-     "name": "Nature's Splendor",
-     "max": 1,
-     "row": 3,
-     "col": 3,
-     "passive": true,
-     "icon": "spell_nature_natureresistancetotem",
-     "desc": {
-      "1": "Increases the duration of your Moonfire and Rejuvenation spells by 3 sec, your Regrowth spell by 6 sec, and your Insect Swarm spell by 2 sec."
-     },
-     "req": "Nature's Majesty",
-     "id": 104928,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 1223083,
-      "notes": []
-     }
-    },
-    {
-     "name": "Vengeance",
-     "max": 5,
-     "row": 4,
-     "col": 2,
-     "passive": true,
-     "icon": "spell_nature_purge",
-     "desc": {
-      "1": "Increases the critical strike damage bonus of your Arcane and Nature spells by 20%.",
-      "2": "Increases the critical strike damage bonus of your Arcane and Nature spells by 40%.",
-      "3": "Increases the critical strike damage bonus of your Arcane and Nature spells by 60%.",
-      "4": "Increases the critical strike damage bonus of your Arcane and Nature spells by 80%.",
-      "5": "Increases the critical strike damage bonus of your Arcane and Nature spells by 100%."
-     },
-     "req": "Improved Moonfire",
-     "id": 104932,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16909,
-      "notes": []
-     }
-    },
-    {
-     "name": "Insect Swarm",
-     "max": 1,
-     "row": 4,
-     "col": 1,
-     "passive": false,
-     "icon": "spell_nature_insectswarm",
-     "desc": {
-      "1": "The enemy target is swarmed by insects, decreasing their chance to hit with attacks by 2% and causing 48 Nature damage over 12 sec."
-     },
-     "cost": "45 Mana; 30 yd range; Instant",
-     "id": 104930,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 5570,
-      "notes": [
-       "Excludes spell power, attack power and other bonuses."
-      ]
-     }
-    },
-    {
-     "name": "Improved Starfire",
-     "max": 5,
-     "row": 4,
-     "col": 3,
-     "passive": true,
-     "icon": "spell_arcane_starfire",
-     "desc": {
-      "1": "Reduces the cast time of Starfire by 0.1 sec and Starfire has a 3% chance to stun its target for 3 sec.",
-      "2": "Reduces the cast time of Starfire by 0.2 sec and Starfire has a 6% chance to stun its target for 3 sec.",
-      "3": "Reduces the cast time of Starfire by 0.3 sec and Starfire has a 9% chance to stun its target for 3 sec.",
-      "4": "Reduces the cast time of Starfire by 0.4 sec and Starfire has a 12% chance to stun its target for 3 sec.",
-      "5": "Reduces the cast time of Starfire by 0.5 sec and Starfire has a 15% chance to stun its target for 3 sec."
-     },
-     "id": 104933,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16850,
-      "notes": []
-     }
-    },
-    {
-     "name": "Overgrowth",
-     "max": 2,
-     "row": 5,
-     "col": 1,
-     "passive": true,
-     "icon": "inv_misc_herb_15",
-     "desc": {
-      "1": "Increases the maximum number of targets you may have affected by Entangling Roots by 1.",
-      "2": "Increases the maximum number of targets you may have affected by Entangling Roots by 2."
-     },
-     "id": 110844,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 17245,
-      "notes": []
-     }
-    },
-    {
-     "name": "Nature's Grace",
-     "max": 1,
-     "row": 5,
-     "col": 2,
-     "passive": true,
-     "icon": "spell_nature_naturesblessing",
-     "desc": {
-      "1": "All non-periodic spell criticals grace you with a blessing of nature, increasing your spellcasting speed and reducing your global cooldown by 10% for 3 sec."
-     },
-     "id": 104934,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16880,
-      "notes": []
-     }
-    },
-    {
-     "name": "Eclipse",
-     "max": 3,
-     "row": 5,
-     "col": 3,
-     "passive": true,
-     "icon": "ability_druid_eclipse",
-     "desc": {
-      "1": "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.17 sec. Stores up to 4 charges. Lasts 15 sec.",
-      "2": "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.33 sec. Stores up to 4 charges. Lasts 15 sec.",
-      "3": "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.50 sec. Stores up to 4 charges. Lasts 15 sec."
-     },
-     "id": 104935,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 408248,
-      "notes": []
-     }
-    },
-    {
-     "name": "Moonfury",
-     "max": 5,
-     "row": 6,
-     "col": 2,
-     "passive": true,
-     "icon": "spell_nature_moonglow",
-     "desc": {
-      "1": "Increases the damage done by your Arcane and Nature spells by 2%.",
-      "2": "Increases the damage done by your Arcane and Nature spells by 4%.",
-      "3": "Increases the damage done by your Arcane and Nature spells by 6%.",
-      "4": "Increases the damage done by your Arcane and Nature spells by 8%.",
-      "5": "Increases the damage done by your Arcane and Nature spells by 10%."
-     },
-     "id": 104936,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16896,
-      "notes": []
-     }
-    },
-    {
-     "name": "Moonkin Form",
-     "max": 1,
-     "row": 7,
-     "col": 2,
-     "passive": false,
-     "icon": "spell_nature_forceofnature",
-     "desc": {
-      "1": "Transforms the Druid into Moonkin Form. While in this form, the armor contribution from items is increased by 360%, Omen of Clarity gains 100% increased chance to trigger, and all party members within 45 yards have their critical strike chance increased by 3%, exclusive with Leader of the Pack. The Moonkin cannot cast healing spells while shapeshifted.\\n\\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects."
-     },
-     "cost": "35% base Mana; Instant",
-     "id": 104937,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 24858,
-      "notes": []
-     }
-    }
-   ],
    "removed": [
     {
      "name": "Nature's Grasp",
@@ -363,12 +37,356 @@
      "text": "Imbues the Druid with natural energy.  Each of the Druid's melee attacks [<span class='q2'>S03 - Tuning and Overrides Passive - Druid</span>: <span class='q9'>and non-instant spell casts</span>]has a chance of causing the caster to enter a Clearcasting state.  The Clearcasting state reduces the Mana, Rage or Energy cost of your next damage or healing spell or offensive ability by 100%.  Lasts 10 min.",
      "row": 3
     }
+   ],
+   "talents": [
+    {
+     "name": "Improved Wrath",
+     "max": 5,
+     "row": 1,
+     "col": 2,
+     "passive": true,
+     "icon": "spell_nature_abolishmagic",
+     "desc": {
+      "1": "Reduces the cast time of your Wrath spell by 0.1 sec and its Mana cost by 10%.",
+      "2": "Reduces the cast time of your Wrath spell by 0.2 sec and its Mana cost by 20%.",
+      "3": "Reduces the cast time of your Wrath spell by 0.3 sec and its Mana cost by 30%.",
+      "4": "Reduces the cast time of your Wrath spell by 0.4 sec and its Mana cost by 40%.",
+      "5": "Reduces the cast time of your Wrath spell by 0.5 sec and its Mana cost by 50%."
+     },
+     "id": 104923,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16814,
+      "notes": []
+     }
+    },
+    {
+     "name": "Genesis",
+     "max": 5,
+     "row": 1,
+     "col": 3,
+     "passive": true,
+     "icon": "spell_arcane_arcane03",
+     "desc": {
+      "1": "Increases the periodic damage and healing done by your spells and abilities by 1%.",
+      "2": "Increases the periodic damage and healing done by your spells and abilities by 2%.",
+      "3": "Increases the periodic damage and healing done by your spells and abilities by 3%.",
+      "4": "Increases the periodic damage and healing done by your spells and abilities by 4%.",
+      "5": "Increases the periodic damage and healing done by your spells and abilities by 5%."
+     },
+     "id": 104924,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 1223081,
+      "notes": []
+     }
+    },
+    {
+     "name": "Moonglow",
+     "max": 3,
+     "row": 2,
+     "col": 1,
+     "passive": true,
+     "icon": "spell_nature_sentinal",
+     "desc": {
+      "1": "Reduces the Mana cost of your damaging spells by 8%.",
+      "2": "Reduces the Mana cost of your damaging spells by 17%.",
+      "3": "Reduces the Mana cost of your damaging spells by 25%."
+     },
+     "id": 104925,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16845,
+      "notes": []
+     }
+    },
+    {
+     "name": "Improved Moonfire",
+     "max": 2,
+     "row": 2,
+     "col": 2,
+     "passive": true,
+     "icon": "spell_nature_starfall",
+     "desc": {
+      "1": "Increases the damage and critical strike chance of your Moonfire spell by 5%.",
+      "2": "Increases the damage and critical strike chance of your Moonfire spell by 10%."
+     },
+     "id": 104931,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16821,
+      "notes": []
+     }
+    },
+    {
+     "name": "Nature's Majesty",
+     "max": 2,
+     "row": 2,
+     "col": 3,
+     "passive": true,
+     "icon": "inv_staff_01",
+     "desc": {
+      "1": "Increases your critical strike chance with spells and melee attacks by 2%.",
+      "2": "Increases your critical strike chance with spells and melee attacks by 4%."
+     },
+     "id": 104927,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 1223082,
+      "notes": []
+     }
+    },
+    {
+     "name": "Nature's Reach",
+     "max": 2,
+     "row": 2,
+     "col": 4,
+     "passive": true,
+     "icon": "spell_nature_naturetouchgrow",
+     "desc": {
+      "1": "Increases the range of your offensive Balance spells by 10% and improves your chance to hit by 2%.",
+      "2": "Increases the range of your offensive Balance spells by 20% and improves your chance to hit by 4%."
+     },
+     "id": 104929,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16819,
+      "notes": []
+     }
+    },
+    {
+     "name": "Improved Entangling Roots",
+     "max": 3,
+     "row": 3,
+     "col": 1,
+     "passive": true,
+     "icon": "spell_nature_stranglevines",
+     "desc": {
+      "1": "Increases the damage done by your Entangling Roots spell by 25%, and its victims can take up to 25% more damage without interrupting the effect.",
+      "2": "Increases the damage done by your Entangling Roots spell by 50%, and its victims can take up to 50% more damage without interrupting the effect.",
+      "3": "Increases the damage done by your Entangling Roots spell by 75%, and its victims can take up to 75% more damage without interrupting the effect."
+     },
+     "id": 104926,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16918,
+      "notes": []
+     }
+    },
+    {
+     "name": "Nature's Splendor",
+     "max": 1,
+     "row": 3,
+     "col": 3,
+     "passive": true,
+     "icon": "spell_nature_natureresistancetotem",
+     "desc": {
+      "1": "Increases the duration of your Moonfire and Rejuvenation spells by 3 sec, your Regrowth spell by 6 sec, and your Insect Swarm spell by 2 sec."
+     },
+     "id": 104928,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 1223083,
+      "notes": []
+     },
+     "req": "Nature's Majesty"
+    },
+    {
+     "name": "Insect Swarm",
+     "max": 1,
+     "row": 4,
+     "col": 1,
+     "passive": false,
+     "icon": "spell_nature_insectswarm",
+     "desc": {
+      "1": "The enemy target is swarmed by insects, decreasing their chance to hit with attacks by 2% and causing 48 Nature damage over 12 sec."
+     },
+     "id": 104930,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 5570,
+      "notes": []
+     },
+     "cost": "45 Mana; 30 yd range; Instant"
+    },
+    {
+     "name": "Vengeance",
+     "max": 5,
+     "row": 4,
+     "col": 2,
+     "passive": true,
+     "icon": "spell_nature_purge",
+     "desc": {
+      "1": "Increases the critical strike damage bonus of your Arcane and Nature spells by 20%.",
+      "2": "Increases the critical strike damage bonus of your Arcane and Nature spells by 40%.",
+      "3": "Increases the critical strike damage bonus of your Arcane and Nature spells by 60%.",
+      "4": "Increases the critical strike damage bonus of your Arcane and Nature spells by 80%.",
+      "5": "Increases the critical strike damage bonus of your Arcane and Nature spells by 100%."
+     },
+     "id": 104932,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16909,
+      "notes": []
+     },
+     "req": "Improved Moonfire"
+    },
+    {
+     "name": "Improved Starfire",
+     "max": 5,
+     "row": 4,
+     "col": 3,
+     "passive": true,
+     "icon": "spell_arcane_starfire",
+     "desc": {
+      "1": "Reduces the cast time of Starfire by 0.1 sec and Starfire has a 3% chance to stun its target for 3 sec.",
+      "2": "Reduces the cast time of Starfire by 0.2 sec and Starfire has a 6% chance to stun its target for 3 sec.",
+      "3": "Reduces the cast time of Starfire by 0.3 sec and Starfire has a 9% chance to stun its target for 3 sec.",
+      "4": "Reduces the cast time of Starfire by 0.4 sec and Starfire has a 12% chance to stun its target for 3 sec.",
+      "5": "Reduces the cast time of Starfire by 0.5 sec and Starfire has a 15% chance to stun its target for 3 sec."
+     },
+     "id": 104933,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16850,
+      "notes": []
+     }
+    },
+    {
+     "name": "Overgrowth",
+     "max": 2,
+     "row": 5,
+     "col": 1,
+     "passive": true,
+     "icon": "inv_misc_herb_15",
+     "desc": {
+      "1": "Increases the maximum number of targets you may have affected by Entangling Roots by 1.",
+      "2": "Increases the maximum number of targets you may have affected by Entangling Roots by 2."
+     },
+     "id": 110844,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 17245,
+      "notes": []
+     }
+    },
+    {
+     "name": "Nature's Grace",
+     "max": 1,
+     "row": 5,
+     "col": 2,
+     "passive": true,
+     "icon": "spell_nature_naturesblessing",
+     "desc": {
+      "1": "All non-periodic spell criticals grace you with a blessing of nature, increasing your spellcasting speed and reducing your global cooldown by 10% for 3 sec."
+     },
+     "id": 104934,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16880,
+      "notes": []
+     }
+    },
+    {
+     "name": "Eclipse",
+     "max": 3,
+     "row": 5,
+     "col": 3,
+     "passive": true,
+     "icon": "ability_druid_eclipse",
+     "desc": {
+      "1": "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.17 sec. Stores up to 4 charges. Lasts 15 sec.",
+      "2": "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.33 sec. Stores up to 4 charges. Lasts 15 sec.",
+      "3": "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.50 sec. Stores up to 4 charges. Lasts 15 sec."
+     },
+     "id": 104935,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 408248,
+      "notes": []
+     }
+    },
+    {
+     "name": "Moonfury",
+     "max": 5,
+     "row": 6,
+     "col": 2,
+     "passive": true,
+     "icon": "spell_nature_moonglow",
+     "desc": {
+      "1": "Increases the damage done by your Arcane and Nature spells by 2%.",
+      "2": "Increases the damage done by your Arcane and Nature spells by 4%.",
+      "3": "Increases the damage done by your Arcane and Nature spells by 6%.",
+      "4": "Increases the damage done by your Arcane and Nature spells by 8%.",
+      "5": "Increases the damage done by your Arcane and Nature spells by 10%."
+     },
+     "id": 104936,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16896,
+      "notes": []
+     }
+    },
+    {
+     "name": "Moonkin Form",
+     "max": 1,
+     "row": 7,
+     "col": 2,
+     "passive": false,
+     "icon": "spell_nature_forceofnature",
+     "desc": {
+      "1": "Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party members within 45 yards have their Critical Strike chance increased by 3%, exclusive with Leader of the Pack. Also protects the caster from Polymorph effects and prevents the use of healing spells.\n\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects."
+     },
+     "id": 104937,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 24858,
+      "notes": []
+     },
+     "cost": "35% base Mana; Instant"
+    }
    ]
   },
   {
    "name": "Feral Combat",
    "bg": 281,
    "icon": "ability_racial_bearform",
+   "removed": [
+    {
+     "name": "Feral Aggression",
+     "max": 5,
+     "text": "Increases the Attack Power reduction of your Demoralizing Roar by 8% and the damage caused by your Ferocious Bite by 3%.",
+     "row": 1
+    },
+    {
+     "name": "Blood Frenzy",
+     "max": 2,
+     "text": "Your critical strikes from Cat Form abilities that add combo points  have a 50% chance to add an additional combo point.",
+     "row": 4
+    },
+    {
+     "name": "Faerie Fire (Feral)",
+     "max": 1,
+     "text": "Decrease the armor of the target by 175 for 40 sec.  While affected, the target cannot stealth or turn invisible.",
+     "row": 5
+    }
+   ],
    "talents": [
     {
      "name": "Ferocity",
@@ -378,16 +396,16 @@
      "passive": true,
      "icon": "ability_hunter_pet_hyena",
      "desc": {
-      "1": "Reduces the cost of your Maul, Mangle, Swipe, Claw, and Rake abilities by 1 Rage or Energy.",
-      "2": "Reduces the cost of your Maul, Mangle, Swipe, Claw, and Rake abilities by 2 Rage or Energy.",
-      "3": "Reduces the cost of your Maul, Mangle, Swipe, Claw, and Rake abilities by 3 Rage or Energy.",
-      "4": "Reduces the cost of your Maul, Mangle, Swipe, Claw, and Rake abilities by 4 Rage or Energy.",
-      "5": "Reduces the cost of your Maul, Mangle, Swipe, Claw, and Rake abilities by 5 Rage or Energy."
+      "1": "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 1 Rage or Energy.",
+      "2": "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 2 Rage or Energy.",
+      "3": "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 3 Rage or Energy.",
+      "4": "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 4 Rage or Energy.",
+      "5": "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 5 Rage or Energy."
      },
      "id": 104938,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16934,
       "notes": []
      }
@@ -409,7 +427,7 @@
      "id": 104939,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17003,
       "notes": []
      }
@@ -428,7 +446,7 @@
      "id": 104943,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17002,
       "notes": []
      }
@@ -448,7 +466,7 @@
      "id": 104940,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16947,
       "notes": []
      }
@@ -467,7 +485,7 @@
      "id": 104941,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16940,
       "notes": []
      }
@@ -480,15 +498,35 @@
      "passive": true,
      "icon": "inv_misc_pelt_bear_03",
      "desc": {
-      "1": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 1 additional base Armor per level and another 0.67 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
-      "2": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 2 additional base Armor per level and another 1.33 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
-      "3": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 3 additional base Armor per level and another 2.00 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms."
+      "1": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 178 additional base Armor per level and another 0.67 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
+      "2": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 179 additional base Armor per level and another 1.33 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
+      "3": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 180 additional base Armor per level and another 2.00 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms."
      },
      "id": 104942,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16929,
+      "notes": []
+     }
+    },
+    {
+     "name": "Shredding Attacks",
+     "max": 3,
+     "row": 3,
+     "col": 1,
+     "passive": true,
+     "icon": "spell_shadow_vampiricaura",
+     "desc": {
+      "1": "Reduces the Energy cost of your Shred ability by 6 and reduces the Rage cost of your Lacerate ability by 1.",
+      "2": "Reduces the Energy cost of your Shred ability by 12 and reduces the Rage cost of your Lacerate ability by 2.",
+      "3": "Reduces the Energy cost of your Shred ability by 18 and reduces the Rage cost of your Lacerate ability by 3."
+     },
+     "id": 104945,
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70338",
+      "spellId": 16966,
       "notes": []
      }
     },
@@ -506,7 +544,7 @@
      "id": 104948,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16998,
       "notes": []
      }
@@ -519,16 +557,16 @@
      "passive": false,
      "icon": "ability_hunter_pet_bear",
      "desc": {
-      "1": "Requires Bear Form, Dire Bear Form\\nCharge an enemy, immobilizing them and interrupting any spell they are casting for 4 sec.\\n\\nLeap behind an enemy."
+      "1": "Requires Bear Form, Dire Bear Form\nCharge an enemy, immobilizing them and interrupting any spell they are casting for 4 sec.\n\nLeap behind an enemy."
      },
-     "cost": "5 Rage; 8\u201325 yd range; Instant; 15 sec cooldown",
      "id": 104944,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 1238122,
       "notes": []
-     }
+     },
+     "cost": "5 Rage; 8–25 yd range; Instant; 15 sec cooldown"
     },
     {
      "name": "Sharpened Claws",
@@ -544,51 +582,52 @@
      "id": 104946,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16942,
       "notes": []
      }
     },
     {
-     "name": "Shredding Attacks",
-     "max": 3,
+     "name": "Shifting Power",
+     "max": 1,
      "row": 4,
      "col": 1,
-     "passive": true,
-     "icon": "spell_shadow_vampiricaura",
+     "passive": false,
+     "icon": "spell_druid_displacement",
      "desc": {
-      "1": "Reduces the Energy cost of your Shred ability by 6 and reduces the Rage cost of your Lacerate ability by 1.",
-      "2": "Reduces the Energy cost of your Shred ability by 12 and reduces the Rage cost of your Lacerate ability by 2.",
-      "3": "Reduces the Energy cost of your Shred ability by 18 and reduces the Rage cost of your Lacerate ability by 3."
+      "1": "Instantly convert 55% of base Mana into 40 Energy. Shifting Power's cost is reduced by effects that reduce the cost of Shapeshifting."
      },
-     "id": 104945,
+     "id": 104951,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16966,
+      "build": "1.60.1.70338",
+      "spellId": 1322605,
       "notes": []
-     }
+     },
+     "req": "Shredding Attacks",
+     "reqText": "Requires Cat Form",
+     "cost": "55% base Mana; Instant; 16 sec cooldown"
     },
     {
-     "name": "Mangle",
+     "name": "Primal Bite",
      "max": 1,
      "row": 4,
      "col": 2,
      "passive": false,
-     "icon": "ability_druid_mangle2",
+     "icon": "ability_racial_cannibalize",
      "desc": {
-      "1": "Mangle the target for 100% normal damage plus 26."
+      "1": "Bite the target, dealing 100% normal damage plus 26 and generating a high amount of threat."
      },
-     "req": "Savage Fury",
-     "reqText": "Requires Bear Form, Dire Bear Form",
-     "cost": "20 Rage; Melee Range; Instant; 6 sec cooldown",
      "id": 104949,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 407995,
       "notes": []
-     }
+     },
+     "req": "Savage Fury",
+     "reqText": "Requires Bear Form, Dire Bear Form",
+     "cost": "20 Rage; Melee Range; Instant; 6 sec cooldown"
     },
     {
      "name": "Predatory Strikes",
@@ -605,49 +644,50 @@
      "id": 104952,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16972,
       "notes": []
      }
     },
     {
-     "name": "Primal Fury",
+     "name": "Blood Frenzy",
      "max": 2,
      "row": 4,
      "col": 4,
      "passive": true,
-     "icon": "ability_racial_cannibalize",
+     "icon": "ability_ghoulfrenzy",
      "desc": {
       "1": "Gives you a 50% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a 50% chance to add an additional Combo Point.",
       "2": "Gives you a 100% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a 100% chance to add an additional Combo Point."
      },
-     "req": "Sharpened Claws",
      "id": 104947,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16958,
       "notes": []
-     }
+     },
+     "req": "Sharpened Claws"
     },
     {
-     "name": "Predatory Instincts",
+     "name": "Improved Shifting Power",
      "max": 2,
      "row": 5,
      "col": 1,
      "passive": true,
-     "icon": "ability_druid_predatoryinstincts",
+     "icon": "ability_hunter_aspectmastery",
      "desc": {
-      "1": "Increases the critical strike damage bonus of your melee abilities by 10%.",
-      "2": "Increases the critical strike damage bonus of your melee abilities by 20%."
+      "1": "Reduces the cooldown of your Shifting Power spell by 4 sec.",
+      "2": "Reduces the cooldown of your Shifting Power spell by 8 sec."
      },
-     "id": 104950,
+     "id": 113563,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 1223242,
+      "build": "1.60.1.70338",
+      "spellId": 1322670,
       "notes": []
-     }
+     },
+     "req": "Shifting Power"
     },
     {
      "name": "Leader of the Pack",
@@ -662,28 +702,27 @@
      "id": 104955,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17007,
       "notes": []
      }
     },
     {
-     "name": "King of the Jungle",
-     "max": 3,
+     "name": "Natural Instinct",
+     "max": 2,
      "row": 5,
      "col": 4,
      "passive": true,
-     "icon": "ability_druid_kingofthejungle",
+     "icon": "ability_druid_predatoryinstincts",
      "desc": {
-      "1": "Tiger's Fury now instantly grants you 20 Energy.",
-      "2": "Tiger's Fury now instantly grants you 40 Energy.",
-      "3": "Tiger's Fury now instantly grants you 60 Energy."
+      "1": "Increases the critical strike damage bonus of your melee abilities by 10% and increases your spell healing by 12% of your Intellect.",
+      "2": "Increases the critical strike damage bonus of your melee abilities by 20% and increases your spell healing by 25% of your Intellect."
      },
-     "id": 104951,
+     "id": 104950,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 417046,
+      "build": "1.60.1.70338",
+      "spellId": 1223242,
       "notes": []
      }
     },
@@ -704,7 +743,7 @@
      "id": 104954,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 417051,
       "notes": []
      }
@@ -723,14 +762,14 @@
       "4": "Increases damage done by your melee abilities on Bleeding targets by 8%.",
       "5": "Increases damage done by your melee abilities on Bleeding targets by 10%."
      },
-     "req": "Predatory Strikes",
      "id": 104953,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 1223246,
       "notes": []
-     }
+     },
+     "req": "Predatory Strikes"
     },
     {
      "name": "Berserk",
@@ -740,37 +779,17 @@
      "passive": false,
      "icon": "ability_druid_berserk",
      "desc": {
-      "1": "Requires Cat Form, Bear Form, Dire Bear Form\\nCauses your Mangle ability to strike up to 3 targets, removes its cooldown, and increases the critical strike chance of your Combo Point-generating abilities by 100%. Clears and grants immunity to Fear effects for the duration. Lasts 15 sec."
+      "1": "Requires Cat Form, Bear Form, Dire Bear Form\nCauses your Primal Bite ability to strike up to 3 targets, removes its cooldown, and increases the critical strike chance of your Combo Point-generating abilities by 100%. Clears and grants immunity to Fear effects for the duration. Lasts 15 sec."
      },
-     "req": "Leader of the Pack",
-     "cost": "Instant; 3 min cooldown",
      "id": 104956,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 417141,
       "notes": []
-     }
-    }
-   ],
-   "removed": [
-    {
-     "name": "Feral Aggression",
-     "max": 5,
-     "text": "Increases the Attack Power reduction of your Demoralizing Roar by 8% and the damage caused by your Ferocious Bite by 3%.",
-     "row": 1
-    },
-    {
-     "name": "Blood Frenzy",
-     "max": 2,
-     "text": "Your critical strikes from Cat Form abilities that add combo points  have a 50% chance to add an additional combo point.",
-     "row": 4
-    },
-    {
-     "name": "Faerie Fire (Feral)",
-     "max": 1,
-     "text": "Decrease the armor of the target by 175 for 40 sec.  While affected, the target cannot stealth or turn invisible.",
-     "row": 5
+     },
+     "req": "Leader of the Pack",
+     "cost": "Instant; 3 min cooldown"
     }
    ]
   },
@@ -778,6 +797,20 @@
    "name": "Restoration",
    "bg": 282,
    "icon": "spell_nature_healingtouch",
+   "removed": [
+    {
+     "name": "Improved Mark of the Wild",
+     "max": 5,
+     "text": "Increases the effects of your Mark of the Wild and Gift of the Wild spells by 7%.",
+     "row": 1
+    },
+    {
+     "name": "Improved Enrage",
+     "max": 2,
+     "text": "<!--sp436895:0-->The Enrage ability now instantly generates 5 Rage.<!--sp436895-->",
+     "row": 2
+    }
+   ],
    "talents": [
     {
      "name": "Nature's Focus",
@@ -796,7 +829,7 @@
      "id": 104957,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17063,
       "notes": []
      }
@@ -809,16 +842,16 @@
      "passive": true,
      "icon": "spell_holy_blessingofstamina",
      "desc": {
-      "1": "Gives you a 20% chance to gain 10 Rage when you shapeshift into Bear Form or Dire Bear Form. When you shift into Cat Form, you will regain 20% of the Energy you had when you were last in Cat Form, plus 2 Energy for each second you spent not in Bear Form, Cat Form, or Dire Bear Form, up to a maximum of 20 Energy.",
-      "2": "Gives you a 40% chance to gain 10 Rage when you shapeshift into Bear Form or Dire Bear Form. When you shift into Cat Form, you will regain 40% of the Energy you had when you were last in Cat Form, plus 4 Energy for each second you spent not in Bear Form, Cat Form, or Dire Bear Form, up to a maximum of 40 Energy.",
-      "3": "Gives you a 60% chance to gain 10 Rage when you shapeshift into Bear Form or Dire Bear Form. When you shift into Cat Form, you will regain 60% of the Energy you had when you were last in Cat Form, plus 6 Energy for each second you spent not in Bear Form, Cat Form, or Dire Bear Form, up to a maximum of 60 Energy.",
-      "4": "Gives you a 80% chance to gain 10 Rage when you shapeshift into Bear Form or Dire Bear Form. When you shift into Cat Form, you will regain 80% of the Energy you had when you were last in Cat Form, plus 8 Energy for each second you spent not in Bear Form, Cat Form, or Dire Bear Form, up to a maximum of 80 Energy.",
-      "5": "Gives you a 100% chance to gain 10 Rage when you shapeshift into Bear Form or Dire Bear Form. When you shift into Cat Form, you will regain 100% of the Energy you had when you were last in Cat Form, plus 10 Energy for each second you spent not in Bear Form, Cat Form, or Dire Bear Form, up to a maximum of 100 Energy."
+      "1": "Gives you a 20% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 20% of the Energy you had when last in Cat Form, plus 2 Energy per sec spent outside Cat Form, up to 20 Energy.\n\nBear Form and Dire Bear Form forfeit this Energy and halt its restoration while active.",
+      "2": "Gives you a 40% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 40% of the Energy you had when last in Cat Form, plus 4 Energy per sec spent outside Cat Form, up to 40 Energy.\n\nBear Form and Dire Bear Form forfeit this Energy and halt its restoration while active.",
+      "3": "Gives you a 60% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 60% of the Energy you had when last in Cat Form, plus 6 Energy per sec spent outside Cat Form, up to 60 Energy.\n\nBear Form and Dire Bear Form forfeit this Energy and halt its restoration while active.",
+      "4": "Gives you a 80% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 80% of the Energy you had when last in Cat Form, plus 8 Energy per sec spent outside Cat Form, up to 80 Energy.\n\nBear Form and Dire Bear Form forfeit this Energy and halt its restoration while active.",
+      "5": "Gives you a 100% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 100% of the Energy you had when last in Cat Form, plus 10 Energy per sec spent outside Cat Form, up to 100 Energy.\n\nBear Form and Dire Bear Form forfeit this Energy and halt its restoration while active."
      },
      "id": 104958,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17056,
       "notes": []
      }
@@ -840,7 +873,7 @@
      "id": 104922,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17069,
       "notes": []
      }
@@ -860,7 +893,7 @@
      "id": 104920,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17118,
       "notes": []
      }
@@ -880,7 +913,7 @@
      "id": 104919,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 16833,
       "notes": []
      }
@@ -900,7 +933,7 @@
      "id": 104917,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17106,
       "notes": []
      }
@@ -922,7 +955,7 @@
      "id": 104916,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17104,
       "notes": []
      }
@@ -940,7 +973,7 @@
      "id": 104918,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 414673,
       "notes": []
      }
@@ -962,7 +995,7 @@
      "id": 104915,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 24968,
       "notes": []
      }
@@ -982,7 +1015,7 @@
      "id": 104914,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17111,
       "notes": []
      }
@@ -997,14 +1030,14 @@
      "desc": {
       "1": "Instantly heals a target with an active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of one of those spells."
      },
-     "cost": "20% base Mana; 40 yd range; Instant; 15 sec cooldown",
      "id": 104912,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 18562,
       "notes": []
-     }
+     },
+     "cost": "20% base Mana; 40 yd range; Instant; 15 sec cooldown"
     },
     {
      "name": "Nature's Swiftness",
@@ -1016,15 +1049,15 @@
      "desc": {
       "1": "When activated, your next Nature spell becomes an instant cast spell."
      },
-     "req": "Naturalist",
-     "cost": "Instant; 3 min cooldown",
      "id": 104921,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17116,
       "notes": []
-     }
+     },
+     "req": "Naturalist",
+     "cost": "Instant; 3 min cooldown"
     },
     {
      "name": "Living Spirit",
@@ -1041,7 +1074,7 @@
      "id": 104911,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 1309631,
       "notes": []
      }
@@ -1060,7 +1093,7 @@
      "id": 104909,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17123,
       "notes": []
      }
@@ -1079,14 +1112,14 @@
       "4": "Increases the critical effect chance of your Regrowth spell by 40%.",
       "5": "Increases the critical effect chance of your Regrowth spell by 50%."
      },
-     "req": "Improved Rejuvenation",
      "id": 104913,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 17074,
       "notes": []
-     }
+     },
+     "req": "Improved Rejuvenation"
     },
     {
      "name": "Wild Growth",
@@ -1098,32 +1131,15 @@
      "desc": {
       "1": "Heals the target and their party for 336 over 7 sec. Party members must be within 43.5 yards of target. The amount healed is applied quickly at first, and slows down as Wild Growth reaches its full duration."
      },
-     "req": "Living Spirit",
-     "cost": "550 Mana; 40 yd range; Instant; 6 sec cooldown",
      "id": 104910,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70338",
       "spellId": 408120,
-      "notes": [
-       "Values shown at level 60.",
-       "Excludes spell power, attack power and other bonuses."
-      ]
-     }
-    }
-   ],
-   "removed": [
-    {
-     "name": "Improved Mark of the Wild",
-     "max": 5,
-     "text": "Increases the effects of your Mark of the Wild and Gift of the Wild spells by 7%.",
-     "row": 1
-    },
-    {
-     "name": "Improved Enrage",
-     "max": 2,
-     "text": "<!--sp436895:0-->The Enrage ability now instantly generates 5 Rage.<!--sp436895-->",
-     "row": 2
+      "notes": []
+     },
+     "req": "Living Spirit",
+     "cost": "550 Mana; 40 yd range; Instant; 6 sec cooldown"
     }
    ]
   }

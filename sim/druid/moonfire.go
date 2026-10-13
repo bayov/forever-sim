@@ -10,10 +10,15 @@ import (
 const MoonfireRanks = 10
 
 var MoonfireSpellId = [MoonfireRanks + 1]int32{0, 8921, 8924, 8925, 8926, 8927, 8928, 8929, 9833, 9834, 9835}
-var MoonfiresSpellCoeff = [MoonfireRanks + 1]float64{0, .06, .094, .128, .15, .15, .15, .15, .15, .15, .15}
-var MoonfiresSellDotCoeff = [MoonfireRanks + 1]float64{0, .052, .081, .111, .13, .13, .13, .13, .13, .13, .13}
-var MoonfireBaseDamage = [MoonfireRanks + 1][]float64{{0}, {9, 12}, {17, 21}, {30, 37}, {44, 53}, {70, 82}, {91, 108}, {117, 137}, {143, 168}, {172, 200}, {195, 228}}
-var MoonfireBaseDotDamage = [MoonfireRanks + 1]float64{0, 12, 32, 52, 80, 124, 164, 212, 264, 320, 384}
+
+// Damage at each rank's cap (or 60), its growth per level, and the damage per tick, from the
+// Forever client (1.60.1.70338, wago.tools). Forever cut Moonfire's hit to about two thirds
+// of 1.12 and its periodic part more (rank 10 hits for 129 to 150 and ticks 60 four times,
+// 1.12 has 195 to 228 and 384 over 12 sec). Every rank has the 15% direct and 13% a tick
+// coefficients now, and the periodic part does not grow with level.
+var MoonfireBaseDamage = [MoonfireRanks + 1][]float64{{0}, {9.19, 11.81}, {14.73, 19.27}, {24.11, 29.89}, {35.91, 43.09}, {49.62, 59.38}, {60.98, 73.02}, {74.41, 88.59}, {95.67, 113.33}, {111.55, 131.45}, {128.70, 150.50}}
+var MoonfireScaling = [MoonfireRanks + 1]core.RankScaling{{}, {9, 0.5}, {15, 0.8}, {21, 1}, {27, 1.5}, {33, 1.5}, {39, 1.6}, {45, 1.7}, {51, 2.7}, {57, 2.1}, {60, 2.3}}
+var MoonfireTickDamage = [MoonfireRanks + 1]float64{0, 4, 6, 9, 13, 19, 23, 31, 39, 49, 60}
 var MoonfireDotTicks = [MoonfireRanks + 1]int32{0, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4}
 var MoonfireManaCost = [MoonfireRanks + 1]float64{0, 25, 50, 75, 105, 150, 190, 235, 280, 325, 375}
 var MoonfireLevel = [MoonfireRanks + 1]int{0, 4, 10, 16, 22, 28, 34, 40, 46, 52, 58}
@@ -32,14 +37,18 @@ func (druid *Druid) registerMoonfireSpell() {
 
 func (druid *Druid) getMoonfireBaseConfig(rank int) core.SpellConfig {
 	ticks := MoonfireDotTicks[rank]
+	// Nature's Splendor makes it 3 sec longer, one more tick.
+	if druid.Talents.NaturesSplendor {
+		ticks++
+	}
 	tickLength := time.Second * 3
 
 	spellId := MoonfireSpellId[rank]
-	spellCoeff := MoonfiresSpellCoeff[rank]
-	spellDotCoeff := MoonfiresSellDotCoeff[rank]
-	baseDamageLow := MoonfireBaseDamage[rank][0]
-	baseDamageHigh := MoonfireBaseDamage[rank][1]
-	baseDotDamage := (MoonfireBaseDotDamage[rank] / float64(ticks))
+	spellCoeff := 0.15
+	spellDotCoeff := 0.13
+	baseDamageLow := MoonfireScaling[rank].At(MoonfireBaseDamage[rank][0], druid.Level)
+	baseDamageHigh := MoonfireScaling[rank].At(MoonfireBaseDamage[rank][1], druid.Level)
+	baseDotDamage := MoonfireTickDamage[rank]
 	manaCost := MoonfireManaCost[rank]
 	level := MoonfireLevel[rank]
 

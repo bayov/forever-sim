@@ -13,43 +13,16 @@ type RipRankInfo struct {
 	dmgTickPerCombo float64
 }
 
+// Rip under Forever (1.60.1.70338, wago.tools): rank 6 ticks for 15 plus 25.5 a combo
+// point (1.12 has 17 and 28), 10% less. The attack power part is left to the server, the
+// sim keeps 1.12's (see newRipSpellConfig).
 var ripRanks = []RipRankInfo{
-	{
-		id:              1079,
-		level:           20,
-		dmgTickBase:     3.0,
-		dmgTickPerCombo: 4.0,
-	},
-	{
-		id:              9492,
-		level:           28,
-		dmgTickBase:     4.0,
-		dmgTickPerCombo: 7.0,
-	},
-	{
-		id:              9493,
-		level:           36,
-		dmgTickBase:     6.0,
-		dmgTickPerCombo: 9.0,
-	},
-	{
-		id:              9752,
-		level:           44,
-		dmgTickBase:     9.0,
-		dmgTickPerCombo: 14.0,
-	},
-	{
-		id:              9894,
-		level:           52,
-		dmgTickBase:     12.0,
-		dmgTickPerCombo: 20.0,
-	},
-	{
-		id:              9896,
-		level:           60,
-		dmgTickBase:     17.0,
-		dmgTickPerCombo: 28.0,
-	},
+	{id: 1079, level: 20, dmgTickBase: 3, dmgTickPerCombo: 4.4},
+	{id: 9492, level: 28, dmgTickBase: 4, dmgTickPerCombo: 7.2},
+	{id: 9493, level: 36, dmgTickBase: 6, dmgTickPerCombo: 8.5},
+	{id: 9752, level: 44, dmgTickBase: 8, dmgTickPerCombo: 12.7},
+	{id: 9894, level: 52, dmgTickBase: 11, dmgTickPerCombo: 18.2},
+	{id: 9896, level: 60, dmgTickBase: 15, dmgTickPerCombo: 25.5},
 }
 
 const RipTicks int32 = 6

@@ -401,7 +401,7 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		MakePermanent(GraceOfAirTotemAura(&character.Unit, enhancingTotemsMultiplier(raidBuffs.GraceOfAirTotem)))
 	}
 
-	if raidBuffs.TotemWeaponBuff != proto.TotemWeaponBuff_TotemWeaponBuffNone && isHorde && !character.PseudoStats.FeralCombatEnabled {
+	if raidBuffs.TotemWeaponBuff != proto.TotemWeaponBuff_TotemWeaponBuffNone && isHorde && character.weaponEffectsWork() {
 		applyRaidTotemWeaponBuff(character, raidBuffs.TotemWeaponBuff)
 	}
 

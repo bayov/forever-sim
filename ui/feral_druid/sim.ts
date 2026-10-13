@@ -16,9 +16,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	cssClass: 'feral-druid-sim-ui',
 	cssScheme: 'druid',
 	// List any known bugs / issues here and they'll be shown on the site.
-	knownIssues: [
-		"The Enchant Gloves - Minor Haste enchant doesn't have its EP of 16.50 show up properly",
-	],
+	knownIssues: ["The Enchant Gloves - Minor Haste enchant doesn't have its EP of 16.50 show up properly"],
 	warnings: [],
 
 	// All stats for which EP should be calculated.
@@ -63,6 +61,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	displayPseudoStats: [PseudoStat.BonusPhysicalDamage, PseudoStat.PseudoStatMeleeSpeedMultiplier],
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
@@ -115,7 +114,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		BuffDebuffInputs.ManaSpringTotem,
 		BuffDebuffInputs.JudgementOfWisdom,
 	],
-	excludeBuffDebuffInputs: [WeaponImbue.ElementalSharpeningStone, WeaponImbue.DenseSharpeningStone],
+	// Forever cats can use weapon imbues (Blizzard's Forever class deep dive), but a mace takes no sharpening stone.
+	excludeBuffDebuffInputs: [WeaponImbue.DenseSharpeningStone],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
@@ -134,11 +134,12 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildLevel60],
 		// Preset talents that the user can quickly select.
-		talents: [...Presets.TalentPresets[Phase.Phase4]],
-		rotations: [...Presets.APLPresets[Phase.Phase4]],
+		talents: [...Presets.TalentPresets[Phase.Phase1]],
+		rotations: [...Presets.APLPresets[Phase.Phase1], ...Presets.APLPresets[Phase.Phase4]],
 		// Preset gear configurations that the user can quickly select.
-		gear: [...Presets.GearPresets[Phase.Phase4]],
+		gear: [...Presets.GearPresets[Phase.Phase1], ...Presets.GearPresets[Phase.Phase4]],
 	},
 
 	autoRotation: player => {
