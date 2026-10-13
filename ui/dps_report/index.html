@@ -1,5 +1,5 @@
 <!doctype html>
-<html data-theme="dark">
+<html>
 	<head>
 		<title>DPS Report - WoWSims Forever</title>
 		<meta charset="utf-8" />
@@ -9,15 +9,18 @@
 		<meta name="description" content="Level 60 DPS presets for World of Warcraft® Forever, ranked and explained." />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<link rel="stylesheet" href="./theme.css" />
+		<link rel="stylesheet" href="../scss/dps_report/index.scss" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+			integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer" />
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 		<script src="./index.ts" type="module"></script>
 	</head>
 
 	<body>
-		<nav class="dps-report-nav">
-			<a href="/classic/">&larr; WoWSims Forever</a>
-		</nav>
-		<div id="dash-root"></div>
+		<div id="dps-report"></div>
 	</body>
 </html>

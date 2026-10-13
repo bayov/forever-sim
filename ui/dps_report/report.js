@@ -1,917 +1,9 @@
-<style>
-/* Layout: phone first, one column. A dark "stone" header and spec banner carry the game flavour; a sticky segmented
-   tab bar switches five pages; cards stack, then pair up when wide. Class colours mark identity only (rings, bars). */
-.fv {
-  --fv-warrior: #9c7650; --fv-rogue: #9a8a00; --fv-hunter: #5f8f22; --fv-paladin: #cc4f8a; --fv-shaman: #0062c4;
-  --fv-druid: #d96400; --fv-mage: #2591bd; --fv-warlock: #7160ad; --fv-priest: #7d7d86;
-  --fv-alliance: #2f6fd6; --fv-horde: #c0392b;
-  --fv-gold: #8f6512; --fv-gold-soft: color-mix(in srgb, #c9952e 16%, transparent);
-  --fv-r: 14px; --fv-r-sm: 9px;
-  --fv-shadow: 0 1px 1px rgba(40, 28, 10, 0.04), 0 6px 22px -14px rgba(40, 28, 10, 0.28);
-  --fv-lift: 0 1px 2px rgba(40, 28, 10, 0.08), 0 14px 30px -16px rgba(40, 28, 10, 0.4);
-  --fv-sel-bg: var(--color-fg); --fv-sel-fg: var(--color-bg);
-  --fv-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E");
-  /* stone panels (header, spec banner, talent trees) stay dark in both themes, like the game's frames */
-  --fv-stone: #15120e; --fv-stone-2: #221c14; --fv-stone-fg: #f4ecdc; --fv-stone-muted: #b8aa90; --fv-stone-line: rgba(232, 191, 98, 0.28);
-  --fv-stone-gold: #eac16a; --fv-stone-chip: rgba(255, 244, 220, 0.07);
-  font-family: var(--font-anthropic-sans);
-  font-variant-numeric: tabular-nums;
-  display: grid; gap: var(--cds-gap-lg);
-  max-width: 72rem; margin-inline: auto;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .fv {
-    --fv-warrior: #c79c6e; --fv-rogue: #e8dc5a; --fv-hunter: #abd473; --fv-paladin: #f58cba; --fv-shaman: #3d94ff;
-    --fv-druid: #ff7d0a; --fv-mage: #69ccf0; --fv-warlock: #9482c9; --fv-priest: #e6e6e6; --fv-alliance: #6ea8ff; --fv-horde: #ff6b5e;
-    --fv-gold: #e0b45a; --fv-gold-soft: color-mix(in srgb, #e0b45a 14%, transparent);
-    --fv-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 8px 26px -14px rgba(0, 0, 0, 0.7);
-    --fv-lift: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 32px -14px rgba(0, 0, 0, 0.85);
-    --fv-sel-bg: var(--fv-gold); --fv-sel-fg: #17120a;
-  }
-}
-:root[data-theme="dark"] .fv {
-  --fv-warrior: #c79c6e; --fv-rogue: #e8dc5a; --fv-hunter: #abd473; --fv-paladin: #f58cba; --fv-shaman: #3d94ff;
-  --fv-druid: #ff7d0a; --fv-mage: #69ccf0; --fv-warlock: #9482c9; --fv-priest: #e6e6e6; --fv-alliance: #6ea8ff; --fv-horde: #ff6b5e;
-  --fv-gold: #e0b45a; --fv-gold-soft: color-mix(in srgb, #e0b45a 14%, transparent);
-  --fv-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 8px 26px -14px rgba(0, 0, 0, 0.7);
-  --fv-lift: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 32px -14px rgba(0, 0, 0, 0.85);
-  --fv-sel-bg: var(--fv-gold); --fv-sel-fg: #17120a;
-}
-.fv [hidden] { display: none !important; }
-.fv > *, .fv-page > *, .fv-grid > * { min-width: 0; }
-.fv h1, .fv h2, .fv h3 { text-wrap: balance; }
-.fv .fv-take b, .fv .fv-num b { font-weight: 600; color: var(--color-fg); }
+// The DPS Report's page logic: reads the datasets through `dash` (see data.ts) and draws every tab with d3.
+// It began as the script of a Claude dashboard artifact, hence the dash API and data-source marks.
+/* global d3 */
+import tippy from 'tippy.js';
 
-/* ---------- header (stone) ---------- */
-.fv-head {
-  position: relative; overflow: hidden; border-radius: var(--fv-r); color: var(--fv-stone-fg);
-  background: var(--fv-noise), radial-gradient(120% 90% at 85% 0%, #3a2c18 0%, transparent 60%), linear-gradient(160deg, var(--fv-stone-2), var(--fv-stone) 70%);
-  box-shadow: inset 0 0 0 1px var(--fv-stone-line), inset 0 1px 0 rgba(255, 230, 170, 0.12), var(--fv-lift);
-  padding: var(--cds-pad-lg); display: grid; gap: 0.55rem;
-}
-.fv-head::before { content: ''; position: absolute; inset: 0; background-image: var(--fv-hero-art, none); background-size: cover; background-position: center 30%; opacity: 0.3; pointer-events: none; }
-.fv-head::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, var(--fv-stone) 15%, color-mix(in srgb, var(--fv-stone) 55%, transparent) 65%, color-mix(in srgb, var(--fv-stone) 80%, transparent)); }
-.fv-head > * { position: relative; z-index: 1; }
-.fv-eyebrow { margin: 0; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fv-stone-gold); font-weight: 600; }
-.fv-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.55rem, 5.6vw, 2.2rem); line-height: 1.1; letter-spacing: -0.01em; margin: 0; }
-.fv-head .fv-take { margin: 0; color: var(--fv-stone-muted); font-size: var(--cds-font-size-body); line-height: 1.5; max-width: 62ch; }
-.fv .fv-head .fv-take b { color: var(--fv-stone-fg); }
-.fv .fv-head .fv-take b:first-child { color: var(--fv-stone-gold); }
-.fv-hero { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; padding: 0.3rem 0.2rem 0.35rem; margin-inline: -0.2rem; }
-.fv-hero::-webkit-scrollbar { display: none; }
-.fv-hero button { flex: 0 1 2.5rem; min-width: 1.7rem; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; line-height: 0; }
-.fv-hero img { width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; box-shadow: 0 0 0 2px var(--ring), 0 3px 8px rgba(0, 0, 0, 0.55); transition: transform 0.18s, box-shadow 0.18s; }
-.fv-hero button:hover img { transform: translateY(-2px); }
-.fv-hero button[aria-pressed="true"] img { transform: scale(1.12); box-shadow: 0 0 0 2.5px var(--fv-stone-gold), 0 0 14px rgba(234, 193, 106, 0.55); }
-@media (min-width: 46rem) { .fv-head { padding: var(--cds-pad-xl); } .fv-hero button { flex-basis: 2.7rem; } }
-
-/* ---------- tabs ---------- */
-.fv-tabs {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6;
-  display: flex; gap: 2px; padding: 3px; overflow-x: auto; scrollbar-width: none;
-  background: color-mix(in srgb, var(--color-panel) 88%, transparent); -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4);
-  border: 1px solid var(--color-border-line); border-radius: 999px; box-shadow: var(--fv-shadow);
-}
-.fv-tabs::-webkit-scrollbar { display: none; }
-.fv-tab {
-  flex: 1 0 auto; font: inherit; font-size: 0.8rem; font-weight: 500; color: var(--color-fg-muted); background: none; border: 0; border-radius: 999px;
-  padding: 0.5rem 0.55rem; cursor: pointer; white-space: nowrap; transition: color 0.15s, background 0.2s;
-}
-.fv-tab:hover { color: var(--color-fg); }
-.fv-tab[aria-selected="true"] { color: var(--fv-sel-fg); background: var(--fv-sel-bg); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18); }
-.fv-tab:focus-visible, .fv button:focus-visible, .fv select:focus-visible, .fv summary:focus-visible { outline: 2px solid var(--fv-gold); outline-offset: 2px; }
-@media (min-width: 46rem) { .fv-tab { font-size: var(--cds-font-size-body); } }
-
-/* ---------- pages, cards ---------- */
-.fv-page { display: grid; gap: var(--cds-gap-md); }
-@media (prefers-reduced-motion: no-preference) {
-  .fv-page.in { animation: fv-in 0.32s var(--cds-ease-out) both; }
-  .fv-swap { animation: fv-in 0.28s var(--cds-ease-out) both; }
-  @keyframes fv-in { from { opacity: 0.001; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-}
-.fv-grid { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
-.fv-card {
-  background: var(--fv-noise), var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--fv-r);
-  box-shadow: var(--fv-shadow); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); min-width: 0; position: relative; align-content: start;
-  scroll-margin-top: 6.6rem;
-}
-.fv-card h2, .fv-card h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: 600; letter-spacing: -0.005em; }
-.fv-card > h3:not(:first-child) { margin-top: var(--cds-gap-sm); }
-.fv-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.45; }
-
-/* ---------- controls ---------- */
-.fv-controls { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-sm); align-items: center; }
-#rank-classes, #heat-classes { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-block: 2px; margin-inline: -2px; padding-inline: 2px; }
-#rank-classes::-webkit-scrollbar, #heat-classes::-webkit-scrollbar { display: none; }
-.fv-chip {
-  font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-panel);
-  color: var(--color-fg); border-radius: 999px; padding: 0.32rem 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; flex: 0 0 auto; white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s;
-}
-.fv-chip:hover { border-color: var(--color-fg-muted); }
-.fv-chip[aria-pressed="true"] { background: var(--fv-sel-bg); color: var(--fv-sel-fg); border-color: transparent; }
-.fv-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; display: inline-block; flex: 0 0 auto; box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-fg) 15%, transparent); }
-.fv select {
-  font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-panel);
-  border: 1px solid var(--color-border-line); border-radius: var(--fv-r-sm); padding: 0.4rem 0.55rem; max-width: 100%; min-width: 0;
-}
-.fv-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: inline-flex; gap: 0.35rem; align-items: center; }
-.fv-lenbar { display: flex; align-items: center; gap: 0.5rem; justify-content: space-between; padding: 0.35rem 0.4rem 0.35rem 0.65rem; border-radius: var(--fv-r-sm); background: var(--fv-gold-soft); border: 1px solid color-mix(in srgb, var(--fv-gold) 30%, var(--color-border-line)); }
-.fv-lenbar .fv-seg button { padding-inline: 0.5rem; }
-.fv-lenbar .fv-label { color: var(--color-fg); font-weight: 600; font-size: var(--cds-font-size-caption); }
-.fv-lenbar.off { background: color-mix(in srgb, var(--fv-gold) 26%, transparent); }
-.fv-btn { font: inherit; font-size: var(--cds-font-size-body); border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); border-radius: var(--fv-r-sm); padding: 0.4rem 0.75rem; cursor: pointer; }
-.fv-btn:hover { border-color: var(--color-fg-muted); }
-.fv-btn[aria-pressed="true"] { background: var(--fv-sel-bg); color: var(--fv-sel-fg); }
-.fv-seg { display: inline-flex; padding: 2px; gap: 2px; border-radius: 999px; background: color-mix(in srgb, var(--color-fg) 7%, transparent); max-width: 100%; overflow-x: auto; scrollbar-width: none; min-width: 0; }
-.fv-seg::-webkit-scrollbar { display: none; }
-.fv-seg button { font: inherit; font-size: var(--cds-font-size-caption); border: 0; background: none; color: var(--color-fg-muted); padding: 0.32rem 0.62rem; cursor: pointer; border-radius: 999px; white-space: nowrap; flex: 0 0 auto; transition: background 0.15s, color 0.15s; }
-.fv-seg button:hover { color: var(--color-fg); }
-.fv-seg button[aria-pressed="true"] { background: var(--color-panel); color: var(--color-fg); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 0 1px var(--color-border-line); font-weight: 600; }
-.fv-lanes #tl-lanes { display: contents; }
-.fv-lanes .fv-chip { font-size: 0.7rem; padding: 0.2rem 0.6rem; color: var(--color-fg-muted); }
-.fv-lanes .fv-chip[aria-pressed="true"] { background: var(--color-panel); color: var(--color-fg); border-color: color-mix(in srgb, var(--fv-gold) 70%, var(--color-border-line)); }
-.fv-lanes .fv-chip[aria-pressed="true"]::before { content: '✓'; color: var(--fv-gold); font-weight: 700; }
-.fv-lanes .fv-chip[aria-pressed="false"] { text-decoration: line-through; opacity: 0.75; }
-.fv-focus { flex-wrap: nowrap; }
-.fv-focus select { flex: 1 1 auto; max-width: 18rem; font-size: var(--cds-font-size-caption); padding-block: 0.3rem; }
-.fv-list { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.35rem; font-size: var(--cds-font-size-body); line-height: 1.45; }
-.fv-list li::marker { color: var(--fv-gold); }
-ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 600; }
-.fv-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-.fv-talbuild { display: grid; gap: 0.4rem; margin: 0.25rem 0 0.75rem; }
-.fv-tag { font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 0.2rem 0.6rem 0.2rem 0.3rem; background: var(--color-bg); display: inline-flex; align-items: center; gap: 0.35rem; }
-.fv-tag:not(:has(img)) { padding-left: 0.6rem; }
-.fv-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--cds-font-size-caption); overflow-wrap: anywhere; background: var(--color-bg); border: 1px dashed var(--color-border-line); border-radius: var(--fv-r-sm); padding: 0.35rem 0.5rem; }
-
-/* ---------- KPI tiles ---------- */
-.fv-tiles { display: grid; gap: var(--cds-gap-sm); grid-template-columns: repeat(2, minmax(0, 1fr)); }
-#sp-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-@media (min-width: 46rem) { .fv-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } #sp-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-.fv-tile { background: var(--fv-noise), var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--fv-r-sm); padding: 0.55rem 0.7rem; display: grid; gap: 0.1rem; min-width: 0; align-content: start; box-shadow: var(--fv-shadow); }
-.fv-tile:first-child { border-color: color-mix(in srgb, var(--fv-gold) 45%, var(--color-border-line)); background: var(--fv-noise), linear-gradient(var(--fv-gold-soft), var(--fv-gold-soft)), var(--color-panel); }
-.fv-tile .k { font-size: 0.68rem; color: var(--color-fg-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fv-tile .v { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.35rem; line-height: 1.15; overflow-wrap: anywhere; }
-.fv-tile .v small { font-family: var(--font-anthropic-sans); font-size: 0.7rem; color: var(--color-fg-muted); margin-left: 0.1rem; }
-.fv-tile .v .fv-ico { width: 1.2rem; height: 1.2rem; border-radius: 50%; vertical-align: -0.12rem; }
-.fv-tile .s { font-size: 0.66rem; color: var(--color-fg-muted); overflow-wrap: anywhere; }
-#sp-tiles .fv-tile .v { font-size: 1.2rem; }
-
-/* ---------- ranking rows ---------- */
-.fv-rank { display: grid; gap: 0; }
-.fv-row {
-  min-width: 0; display: grid; grid-template-columns: 1.3rem 1.75rem minmax(0, 1fr) auto; column-gap: 0.5rem; row-gap: 0.18rem; align-items: center;
-  padding: 0.38rem 0.35rem 0.42rem; border-radius: var(--fv-r-sm); cursor: pointer; border: 0; background: none; text-align: left; font: inherit; color: inherit; width: 100%; transition: background 0.12s;
-}
-.fv-row + .fv-row { border-top: 1px solid color-mix(in srgb, var(--color-border-line) 60%, transparent); border-radius: 0; }
-.fv .fv-row.is-hl { border-radius: var(--fv-r-sm); }
-.fv-row:hover { background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
-.fv-row-pos { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); text-align: center; grid-row: 1 / span 2; grid-column: 1; }
-.fv-row.top .fv-row-pos { color: var(--fv-gold); font-weight: 700; }
-.fv-row > .fv-ico, .fv-row > .fv-dot { grid-row: 1 / span 2; grid-column: 2; justify-self: center; }
-.fv-row > .fv-ico { width: 1.75rem; height: 1.75rem; border-radius: 6px; }
-.fv-row-main { min-width: 0; display: grid; gap: 0.08rem; grid-column: 3; grid-row: 1; }
-.fv-row-name { display: flex; align-items: baseline; gap: 0.3rem; min-width: 0; white-space: nowrap; overflow: hidden; font-size: var(--cds-font-size-body); line-height: 1.25; }
-.fv-row-name b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
-.fv-row-name span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); flex: 0 0 auto; }
-.fv-row-name i { font-style: normal; color: var(--fv-gold); font-size: 0.7rem; flex: 0 0 auto; }
-.fv-row-sub { display: flex; align-items: center; gap: 0.3rem; min-width: 0; white-space: nowrap; overflow: hidden; font-size: 0.7rem; color: var(--color-fg-muted); line-height: 1; }
-.fv-row-sub .fv-ico { width: 0.95rem; height: 0.95rem; border-radius: 3px; vertical-align: 0; }
-.fv-row-sub em { font-style: normal; overflow: hidden; text-overflow: ellipsis; }
-.fv-row-end { grid-column: 4; grid-row: 1; display: grid; justify-items: end; gap: 0.12rem; }
-.fv-row-val { font-weight: 600; font-size: var(--cds-font-size-body); white-space: nowrap; line-height: 1.2; }
-.fv-row-gap { font-size: 0.68rem; color: var(--color-fg-muted); white-space: nowrap; line-height: 1; }
-.fv-row.top .fv-row-gap { color: var(--fv-gold); font-weight: 600; }
-.fv-track { grid-column: 3 / -1; grid-row: 2; position: relative; height: 0.5rem; }
-.fv-track::before { content: ''; position: absolute; left: 0; right: 0; top: 0.2rem; height: 0.12rem; border-radius: 2px; background: color-mix(in srgb, var(--color-fg) 7%, transparent); }
-.fv-bar { position: absolute; left: 0; top: 0.13rem; height: 0.26rem; border-radius: 3px; opacity: 0.9; }
-.fv-box { position: absolute; top: 0.03rem; height: 0.46rem; border-radius: 2px; border: 1.25px solid var(--color-fg); background: var(--color-panel); box-sizing: border-box; }
-.fv-whisk { position: absolute; top: 0.24rem; height: 1.25px; background: var(--color-fg); opacity: 0.7; }
-.fv-med { position: absolute; top: 0.03rem; width: 1.5px; height: 0.46rem; background: var(--color-fg); }
-.fv-legend { display: flex; flex-wrap: wrap; gap: 0.3rem var(--cds-gap-md); font-size: 0.7rem; color: var(--color-fg-muted); align-items: center; }
-.fv-legend > span { display: inline-flex; align-items: center; gap: 0.3rem; }
-.fv-legend i { display: inline-block; vertical-align: middle; margin-right: 0.3rem; }
-.fv-legend > span > i { margin-right: 0; }
-.fv-rank-sum { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.fv-rank-sum b { color: var(--color-fg); font-weight: 600; }
-@media (min-width: 46rem) {
-  .fv-row { grid-template-columns: 1.6rem 1.75rem minmax(12rem, 18rem) minmax(0, 1fr) 4.6rem; padding-block: 0.3rem; }
-  .fv-track { grid-column: 4; grid-row: 1; }
-  .fv-row-end { grid-column: 5; }
-  .fv-row-pos, .fv-row > .fv-ico, .fv-row > .fv-dot { grid-row: 1; }
-}
-
-/* ---------- tables ---------- */
-.fv-scroll { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
-.fv-scroll.tall { max-height: 26rem; overflow-y: auto; }
-.fv table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: var(--cds-font-size-caption); }
-.fv th { text-align: left; font-weight: 600; color: var(--color-fg-muted); padding: 0.4rem 0.55rem; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; position: sticky; top: 0; background: var(--color-panel); z-index: 1; font-size: 0.7rem; letter-spacing: 0.03em; }
-.fv th button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-.fv td { padding: 0.42rem 0.55rem; border-bottom: 1px solid color-mix(in srgb, var(--color-border-line) 70%, transparent); vertical-align: middle; }
-.fv tbody tr:last-child td { border-bottom: 0; }
-.fv td.n, .fv th.n { text-align: right; white-space: nowrap; }
-.fv td:has(> .fv-ico), .fv td.first, .fv #faction-table td { white-space: nowrap; }
-.fv td > .fv-ico { margin-right: 0.15rem; }
-.fv tr.clk { cursor: pointer; }
-.fv td.pos { color: var(--color-ok); } .fv td.neg { color: var(--color-bad); }
-.fv tr.clk:hover td, .fv tr[data-tt]:hover td { background: color-mix(in srgb, var(--color-fg) 4%, var(--color-panel)); }
-.fv td.first, .fv th.first { position: sticky; left: 0; background: var(--color-panel); z-index: 2; }
-.fv th.first { z-index: 3; }
-
-/* ---------- heat grid ---------- */
-.fv-heat { display: grid; gap: 2px; min-width: max-content; font-size: var(--cds-font-size-caption); }
-.fv-heat .hc { padding: 0.36rem 0.2rem; text-align: center; border-radius: 5px; min-width: 2.9rem; cursor: pointer; border: 0; font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); transition: transform 0.1s; }
-.fv-heat .hc:hover { transform: scale(1.06); }
-.fv-heat .hh { color: var(--color-fg-muted); text-align: center; padding: 0.3rem 0.2rem; white-space: nowrap; font-size: 0.68rem; }
-.fv-heat .hl { position: sticky; left: 0; background: var(--color-panel); padding: 0.3rem 0.4rem 0.3rem 0; white-space: nowrap; display: flex; gap: 0.35rem; align-items: center; z-index: 1; max-width: 8.5rem; overflow: hidden; text-overflow: ellipsis; }
-.fv-heat .na { background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--color-fg) 6%, transparent) 4px 5px); color: var(--color-fg-muted); cursor: default; }
-.fv-heat .hh img { display: block; margin: 0 auto 0.15rem; width: 1.4rem; height: 1.4rem; border-radius: 50%; }
-
-/* ---------- spec ---------- */
-.fv-picker { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--cds-gap-xs); align-items: stretch; }
-.fv-picker select { font-weight: 600; box-shadow: var(--fv-shadow); padding-block: 0.5rem; }
-.fv-picker .fv-btn { font-size: 1.15rem; line-height: 1; padding-inline: 0.9rem; box-shadow: var(--fv-shadow); }
-.fv-spechead {
-  position: relative; overflow: hidden; border-radius: var(--fv-r); color: var(--fv-stone-fg); padding: var(--cds-pad-lg); display: grid; gap: 0.55rem;
-  background: var(--fv-noise), linear-gradient(160deg, var(--fv-stone-2), var(--fv-stone) 75%);
-  box-shadow: inset 0 0 0 1px var(--fv-stone-line), inset 0 1px 0 rgba(255, 230, 170, 0.12), var(--fv-lift); touch-action: pan-y;
-}
-.fv-spechead .art { position: absolute; inset: 0; background-size: cover; background-position: center 30%; opacity: 0.5; pointer-events: none; }
-.fv-spechead .art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, var(--fv-stone) 18%, color-mix(in srgb, var(--fv-stone) 55%, transparent) 60%, color-mix(in srgb, var(--fv-stone) 82%, transparent)); }
-.fv-spechead > *:not(.art) { position: relative; }
-.fv-spec-top { display: flex; gap: 0.85rem; align-items: center; }
-.fv-spechead h2 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.4rem, 6vw, 2rem); line-height: 1.12; margin: 0; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-.fv-meta { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.fv-spechead .fv-meta { gap: 0.35rem; color: var(--fv-stone-fg); }
-.fv-spechead .fv-meta > span { display: inline-flex; align-items: center; gap: 0.3rem; background: var(--fv-stone-chip); border: 1px solid rgba(255, 240, 210, 0.1); border-radius: 999px; padding: 0.18rem 0.55rem 0.18rem 0.3rem; }
-.fv-spechead .fv-meta > span:not(:has(img)) { padding-left: 0.55rem; }
-.fv-spechead .fv-take { margin: 0; color: var(--fv-stone-muted); font-size: var(--cds-font-size-body); line-height: 1.5; max-width: 70ch; }
-.fv-spechead .fv-note { color: var(--fv-stone-muted); }
-.fv .fv-spechead .fv-note b { color: var(--fv-stone-fg); }
-.fv-spechead .fv-swipe { font-size: 0.66rem; color: var(--fv-stone-muted); opacity: 0.8; margin: 0; }
-@media (min-width: 46rem) { .fv-spechead { padding: var(--cds-pad-xl); } .fv-spechead .fv-swipe { display: none; } }
-.fv-jump { display: flex; gap: 0.3rem; overflow-x: auto; scrollbar-width: none; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 3.05rem); z-index: 5; padding: 0.35rem 0.1rem; margin-block: -0.2rem; background: var(--color-bg); box-shadow: 0 6px 8px -6px color-mix(in srgb, var(--color-fg) 18%, transparent); }
-.fv-jump::-webkit-scrollbar { display: none; }
-.fv-jump button { flex: 0 0 auto; font: inherit; font-size: 0.72rem; color: var(--color-fg-muted); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 0.25rem 0.65rem; cursor: pointer; }
-.fv-jump button:hover { color: var(--color-fg); border-color: var(--color-fg-muted); }
-.fv-sbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.1rem 0.6rem; align-items: center; font-size: var(--cds-font-size-caption); }
-.fv-sbar .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; gap: 0.4rem; align-items: center; min-width: 0; }
-.fv-sbar .nm .fv-ico { width: 1.15rem; height: 1.15rem; }
-.fv-sbar .vl { text-align: right; white-space: nowrap; color: var(--color-fg-muted); }
-.fv-sbar .vl > span:first-child { color: var(--color-fg); font-weight: 600; }
-.fv-sbar .tr { grid-column: 1 / -1; height: 0.38rem; background: color-mix(in srgb, var(--color-fg) 7%, transparent); border-radius: 4px; overflow: hidden; margin-bottom: 0.4rem; }
-.fv-sbar .tr span { display: block; height: 100%; border-radius: 4px; }
-
-/* ---------- timeline ---------- */
-.fv-tl { display: grid; grid-template-columns: 5.6rem minmax(0, 1fr); border: 1px solid var(--color-border-line); border-radius: var(--fv-r-sm); background: var(--color-bg); overflow: hidden; }
-.fv-tl-labels { position: relative; border-right: 1px solid var(--color-border-line); font-size: 0.68rem; color: var(--color-fg-muted); background: var(--color-panel); }
-.fv-tl-labels div { position: absolute; left: 0.4rem; right: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; }
-.fv-tl-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
-.fv-tl-scroll svg { display: block; }
-.fv-readout { display: grid; gap: 0.25rem; font-size: var(--cds-font-size-caption); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--fv-r-sm); padding: var(--cds-pad-sm) var(--cds-pad-md); min-height: 3rem; align-content: start; }
-.fv-readout .ev { display: flex; gap: 0.5rem; align-items: baseline; }
-.fv-readout .t { color: var(--color-fg-muted); width: 3.2rem; flex: 0 0 auto; }
-.fv-log { max-height: 18rem; overflow-y: auto; font-size: var(--cds-font-size-caption); display: grid; align-content: start; }
-.fv-log div { display: grid; grid-template-columns: 3.3rem minmax(0, 1fr) auto; gap: 0.5rem; padding: 0.24rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-border-line) 70%, transparent); }
-.fv-log .t { color: var(--color-fg-muted); }
-.fv-log .x { text-align: right; white-space: nowrap; }
-.fv-chart { width: 100%; min-height: 12rem; position: relative; }
-.fv-chart svg { display: block; overflow: visible; }
-.fv-chart text { fill: var(--color-fg-muted); font-size: 11px; font-family: var(--font-anthropic-sans); }
-.fv-tl-scroll text { fill: var(--color-fg-muted); font-size: 10px; font-family: var(--font-anthropic-sans); }
-.fv-tip {
-  position: absolute; z-index: 20; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border);
-  border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm);
-  font-size: var(--cds-font-size-caption); max-width: 15rem; display: grid; gap: 0.1rem;
-}
-.fv-tip .h { color: var(--cds-text-secondary); }
-.fv-tip { min-width: 9rem; line-height: 1.4; }
-.fv-tip .h { font-weight: 600; color: var(--color-fg); }
-.fv-tip.act { pointer-events: auto; }
-.fv-tip-open { margin-top: 0.3rem; font: inherit; font-size: var(--cds-font-size-caption); font-weight: 600; border: 0; border-radius: 999px; padding: 0.3rem 0.7rem; background: var(--fv-sel-bg); color: var(--fv-sel-fg); cursor: pointer; justify-self: start; }
-.fv-tip .sw { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 2px; margin-right: 0.35rem; vertical-align: -0.05rem; }
-.fv .fv-row.is-hl, .fv .fv-sbar .is-hl { background: color-mix(in srgb, var(--fv-gold) 14%, transparent); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--fv-gold) 60%, transparent); }
-.fv svg rect.is-hl, .fv svg circle.is-hl { stroke: var(--color-fg); stroke-width: 2px; opacity: 1 !important; }
-.fv-heat .hc.is-hl { outline: 2px solid var(--fv-gold); outline-offset: 1px; position: relative; z-index: 1; }
-.fv [data-tt].tt-on:not(rect):not(g):not(path) { background-color: color-mix(in srgb, var(--fv-gold) 14%, transparent); border-radius: 6px; }
-.fv svg rect.tt-on, .fv svg path.tt-on, .fv svg g.tt-on rect { stroke: var(--color-fg); stroke-width: 1.5px; opacity: 1 !important; }
-.fv details > summary { cursor: pointer; font-size: var(--cds-font-size-heading); font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
-.fv details > summary::after { content: ''; width: 0.45rem; height: 0.45rem; border-right: 2px solid var(--color-fg-muted); border-bottom: 2px solid var(--color-fg-muted); transform: rotate(45deg); transition: transform 0.2s; margin-right: 0.25rem; flex: 0 0 auto; }
-.fv details[open] > summary::after { transform: rotate(225deg); }
-.fv details > summary::-webkit-details-marker { display: none; }
-.fv details[open] > summary { margin-bottom: var(--cds-gap-sm); }
-.fv-prose { font-size: var(--cds-font-size-body); max-width: 65ch; display: grid; gap: var(--cds-gap-sm); line-height: 1.55; }
-.fv-prose p { margin: 0; }
-
-/* ---------- talents ---------- */
-.fv-trees { display: flex; gap: var(--cds-gap-md); overflow-x: auto; padding-bottom: 0.4rem; -webkit-overflow-scrolling: touch; justify-content: safe center; }
-.fv-tree { flex: 0 0 auto; display: grid; gap: 0.6rem; background: #15120e; border: 1px solid var(--fv-stone-line); border-radius: var(--fv-r-sm); padding: 0.75rem 0.9rem 1rem; position: relative; overflow: hidden; color: var(--fv-stone-fg); box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6); }
-.fv-tree .art { position: absolute; inset: 0; background-size: cover; background-position: center top; opacity: 0.55; pointer-events: none; }
-.fv-tree > *:not(.art) { position: relative; }
-.fv-tree-h { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; font-size: var(--cds-font-size-body); font-weight: 600; text-shadow: 0 1px 2px #000; }
-.fv-tree-h > span:first-child { color: var(--fv-stone-fg) !important; }
-.fv-tree-h span { color: var(--fv-stone-muted); font-weight: 400; font-size: var(--cds-font-size-caption); }
-.fv-tree-h img { margin-right: 0.4rem; }
-.fv-tree-box { position: relative; }
-.fv-tree-box svg { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
-.fv-tal { position: absolute; width: 40px; height: 40px; padding: 0; border: 2px solid #4a463f; border-radius: 7px; background: #0e0c09; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6); transition: transform 0.12s; }
-.fv-tal:hover { transform: scale(1.08); z-index: 1; }
-.fv-tal img { width: 100%; height: 100%; border-radius: 4px; display: block; }
-.fv-tal.zero img { filter: grayscale(1) brightness(0.75); opacity: 0.55; }
-.fv-tal.part { border-color: #41b83f; box-shadow: 0 0 8px rgba(65, 184, 63, 0.45), 0 2px 6px rgba(0, 0, 0, 0.6); }
-.fv-tal.max { border-color: #e2ad2b; box-shadow: 0 0 9px rgba(226, 173, 43, 0.5), 0 2px 6px rgba(0, 0, 0, 0.6); }
-.fv-tal b { position: absolute; right: -7px; bottom: -7px; font-size: 10px; line-height: 1; padding: 2px 3px; border-radius: 4px; background: #0f1013; color: #9a9aa2; font-weight: 600; font-variant-numeric: tabular-nums; border: 1px solid #333; }
-.fv-tal.part b { color: #5fd65c; }
-.fv-tal.max b { color: #f2c14e; }
-
-/* ---------- icons ---------- */
-.fv-ico { width: 1rem; height: 1rem; border-radius: 3px; flex: 0 0 auto; vertical-align: -0.2rem; }
-.fv-ico.md { width: 1.35rem; height: 1.35rem; border-radius: 4px; }
-.fv-ico.ring { box-shadow: 0 0 0 1.5px var(--ring, var(--color-border-line)); }
-.fv-ico.lg { width: 3.6rem; height: 3.6rem; border-radius: 10px; box-shadow: 0 0 0 2px var(--ring, var(--color-border-line)), 0 0 0 4px rgba(0, 0, 0, 0.55), 0 6px 18px rgba(0, 0, 0, 0.55); }
-.fv-q-epic { color: #8a2be2; } .fv-q-rare { color: #0062c4; } .fv-q-uncommon { color: #1a8a00; } .fv-q-legendary { color: #c85f00; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fv-q-epic { color: #c27cf7; } :root:not([data-theme="light"]) .fv-q-rare { color: #4aa3ff; } :root:not([data-theme="light"]) .fv-q-uncommon { color: #3fe23f; } :root:not([data-theme="light"]) .fv-q-legendary { color: #ff8f2a; } }
-:root[data-theme="dark"] .fv-q-epic { color: #c27cf7; } :root[data-theme="dark"] .fv-q-rare { color: #4aa3ff; } :root[data-theme="dark"] .fv-q-uncommon { color: #3fe23f; } :root[data-theme="dark"] .fv-q-legendary { color: #ff8f2a; }
-.fv-heat .hh img { display: block; margin: 0 auto 0.15rem; width: 1.4rem; height: 1.4rem; border-radius: 50%; }
-[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-[data-dash-source-state=empty] { color: transparent; }
-.fv-fail { display: flex; align-items: center; justify-content: center; gap: 0.4rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 4rem; }
-.fv-fail::before { content: ''; width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--color-bad); }
-
-/* ---------- game tooltips: a dark panel in both themes, like the game's ---------- */
-.fv { position: relative; }
-.fv [data-tt-tap] { cursor: pointer; }
-.fv [data-tt]:not([data-tt-tap]) { -webkit-touch-callout: none; }
-.fv-tl-scroll svg text, .fv-tl-scroll svg image { pointer-events: none; }
-.fv-tt {
-  position: absolute; z-index: 40; box-sizing: border-box; width: max-content; max-width: min(18rem, calc(100% - 8px));
-  display: flex; gap: 0.55rem; align-items: flex-start; padding: 0.5rem 0.65rem 0.55rem;
-  background: linear-gradient(rgba(16, 18, 38, 0.97), rgba(7, 8, 20, 0.97)); color: #fff; border: 1px solid #c4c4cc; border-radius: 6px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55), 0 10px 28px rgba(0, 0, 0, 0.5);
-  font-family: var(--font-anthropic-sans); font-size: 0.8rem; line-height: 1.35; text-align: left; font-variant-numeric: tabular-nums;
-}
-@media (prefers-reduced-motion: no-preference) { .fv-tt { animation: fv-pop 0.14s ease-out both; } @keyframes fv-pop { from { opacity: 0; transform: translateY(3px) scale(0.985); } to { opacity: 1; transform: none; } } }
-.fv-tt .tt-ico { width: 2.25rem; height: 2.25rem; flex: 0 0 auto; border-radius: 4px; box-shadow: 0 0 0 1px #6b6b78; display: block; }
-.fv-tt .tt-body { display: grid; gap: 0.12rem; min-width: 0; flex: 1 1 auto; }
-.fv-tt .tt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; }
-.fv-tt .tt-title { font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
-.fv-tt .tt-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; }
-.fv-tt .tt-row > span:last-child { text-align: right; flex: 1 1 auto; min-width: 0; }
-.fv-tt .tt-row > span:first-child { flex: 0 1 auto; min-width: 0; }
-.fv-tt .tt-h { margin-top: 0.25rem; color: #ffd100; }
-.fv-tt .tt-h > span:first-child { white-space: nowrap; }
-.fv-tt .tt-sp { height: 0.3rem; }
-.fv-tt .tt-nums { margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px solid rgba(255, 255, 255, 0.16); display: grid; gap: 0.08rem; }
-.fv-tt .c-t { color: #fff; } .fv-tt .c-m, .fv-tt .tt-sub { color: #9d9d9d; } .fv-tt .c-y { color: #ffd100; } .fv-tt .c-g { color: #1eff00; }
-.fv-tt .c-t, .fv-tt .c-m, .fv-tt .c-y, .fv-tt .c-g { white-space: pre-line; overflow-wrap: anywhere; }
-.fv-tt .tt-sub { font-size: 0.75rem; white-space: nowrap; }
-.fv-tt .tt-link { margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px solid rgba(255, 255, 255, 0.16); display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; font-size: 0.75rem; }
-.fv-tt .tt-link a { color: #7fb8ff; text-decoration: underline; text-underline-offset: 2px; padding: 0.2rem 0; }
-.fv-tt .tt-link a:hover { color: #b3d4ff; }
-.fv-tt .tt-link span { color: #9d9d9d; }
-@media (max-width: 30rem) {
-  .fv-card { padding: var(--cds-pad-md); }
-  .fv-tl { grid-template-columns: 4.6rem minmax(0, 1fr); }
-}
-
-.fv-card > *, .fv details > * { min-width: 0; }
-.fv details { min-width: 0; max-width: 100%; }
-#sp-gear-card .fv-scroll > table, #sp-abiltab-card .fv-scroll > table { width: max-content; min-width: 100%; }
-/* ---------- races: scenarios, overview, one preset ---------- */
-.fv-hrow { display: flex; justify-content: space-between; align-items: center; gap: 0.4rem 0.6rem; flex-wrap: wrap; }
-.fv-scen-tag { font: inherit; font-size: 0.66rem; font-weight: 600; border-radius: 999px; padding: 0.15rem 0.55rem; cursor: pointer; white-space: nowrap;
-  background: var(--fv-gold-soft); color: var(--color-fg); border: 1px solid color-mix(in srgb, var(--fv-gold) 40%, var(--color-border-line)); }
-.fv-scen { border-color: color-mix(in srgb, var(--fv-gold) 40%, var(--color-border-line)); background: var(--fv-noise), linear-gradient(var(--fv-gold-soft), var(--fv-gold-soft)), var(--color-panel); }
-.fv-scen .fv-controls { flex-wrap: nowrap; }
-.fv-scen .fv-label { min-width: 3.1rem; color: var(--color-fg); font-weight: 600; }
-.fv-scen .fv-controls { gap: var(--cds-gap-xs); }
-.fv-scen .fv-seg button { padding-inline: 0.42rem; }
-.fv-scen .fv-seg { background: color-mix(in srgb, var(--color-fg) 9%, transparent); }
-.fv-scen-desc { margin: 0; font-size: var(--cds-font-size-caption); line-height: 1.5; color: var(--color-fg); }
-.fv-ro-tiles { display: grid; gap: var(--cds-gap-sm); grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.fv-ro-tiles .fv-tile .v { font-size: 1rem; display: flex; gap: 0.3rem; align-items: center; min-width: 0; }
-.fv-ro-tiles .fv-tile { padding-inline: 0.55rem; }
-.fv-ro-tiles .fv-tile .v span { overflow-wrap: anywhere; line-height: 1.1; }
-.fv-ro-tiles .fv-tile .v .fv-ico { width: 1.15rem; height: 1.15rem; border-radius: 50%; }
-.fv-orow, .fv-rrow { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; column-gap: 0.55rem; row-gap: 0.2rem; align-items: center; padding: 0.45rem 0.3rem; border-radius: var(--fv-r-sm); }
-.fv-orow { cursor: pointer; }
-.fv-orow + .fv-orow, .fv-rrow + .fv-rrow { border-top: 1px solid color-mix(in srgb, var(--color-border-line) 60%, transparent); border-radius: 0; }
-.fv-orow:hover { background: color-mix(in srgb, var(--color-fg) 4%, transparent); }
-.fv-orow > .fv-ico, .fv-rrow > .fv-ico { width: 1.6rem; height: 1.6rem; border-radius: 50%; grid-row: 1 / span 2; }
-.fv-orow .nm, .fv-rrow .nm { min-width: 0; display: flex; gap: 0.35rem; align-items: baseline; white-space: nowrap; overflow: hidden; font-size: var(--cds-font-size-body); }
-.fv-orow .nm b, .fv-rrow .nm b { font-weight: 600; }
-.fv-orow .nm small, .fv-rrow .nm small { color: var(--color-fg-muted); font-size: 0.7rem; overflow: hidden; text-overflow: ellipsis; }
-.fv-rrow .nm i { font-style: normal; font-size: 0.64rem; color: var(--fv-gold); border: 1px solid color-mix(in srgb, var(--fv-gold) 50%, transparent); border-radius: 999px; padding: 0 0.35rem; }
-.fv-orow .end, .fv-rrow .end { display: grid; justify-items: end; gap: 0.1rem; white-space: nowrap; }
-.fv-orow .end b, .fv-rrow .end b { font-weight: 600; font-size: var(--cds-font-size-body); }
-.fv-orow .end small, .fv-rrow .end small { font-size: 0.68rem; color: var(--color-fg-muted); }
-.fv-rrow.top .end small, .fv-orow.top .end small { color: var(--fv-gold); font-weight: 600; }
-.fv-otrack, .fv-rtrack { grid-column: 2 / -1; position: relative; height: 0.7rem; }
-.fv-otrack::before, .fv-rtrack::before { content: ''; position: absolute; left: 0; right: 0; top: 0.29rem; height: 0.12rem; border-radius: 2px; background: color-mix(in srgb, var(--color-fg) 7%, transparent); }
-.fv-otrack .bar { position: absolute; left: 0; top: 0.12rem; height: 0.46rem; border-radius: 0 4px 4px 0; opacity: 0.85; }
-.fv-otrack .wk { position: absolute; top: 0.33rem; height: 1.5px; background: var(--color-fg-muted); }
-.fv-otrack .wk::after { content: ''; position: absolute; right: 0; top: -0.17rem; width: 1.5px; height: 0.45rem; background: var(--color-fg-muted); }
-.fv-rtrack { height: 0.95rem; }
-.fv-rtrack::before { top: 0.42rem; }
-.fv-rtrack .sg { position: absolute; top: 0.1rem; height: 0.75rem; box-sizing: border-box; border-right: 2px solid var(--color-panel); cursor: pointer; }
-.fv-rtrack .sg:first-child { border-radius: 3px 0 0 3px; }
-.fv-rtrack .sg.last { border-radius: 0 4px 4px 0; border-right: 0; }
-.fv-rtrack .sg.neg { background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--color-panel) 3px 5px) !important; opacity: 0.9; }
-.fv-rtrack .sg.swap { background-image: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--color-panel) 70%, transparent) 3px 5px); }
-.fv-rtrack .wk { position: absolute; top: 0.47rem; height: 1.5px; background: var(--color-fg); pointer-events: none; }
-.fv-rtrack .end-tick { position: absolute; top: 0; width: 2px; height: 0.95rem; background: var(--color-fg); border-radius: 1px; pointer-events: none; }
-.fv-rsub { grid-column: 2 / -1; font-size: 0.68rem; color: var(--color-fg-muted); line-height: 1.35; display: flex; flex-wrap: wrap; gap: 0.1rem 0.55rem; }
-.fv-rsub span { display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap; }
-.fv-rsub i, .fv-legend .sw2 { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 2px; flex: 0 0 auto; }
-.fv-rsub em { font-style: normal; opacity: 0.85; }
-.fv .fv-rrow .sg.is-hl, .fv .fv-orow.is-hl { outline: 2px solid var(--fv-gold); outline-offset: 1px; z-index: 1; }
-.fv-axisnote { font-size: 0.66rem; color: var(--color-fg-muted); margin: 0; }
-.fv-find { display: grid; gap: 0.55rem; }
-.fv-find > div { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: 0.55rem; align-items: start; font-size: var(--cds-font-size-caption); line-height: 1.5; }
-.fv-find > div .fv-ico { width: 1.6rem; height: 1.6rem; border-radius: 50%; }
-.fv-find b { font-weight: 600; }
-.fv-linkbtn { font: inherit; font-size: var(--cds-font-size-caption); font-weight: 600; justify-self: start; border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: 999px; padding: 0.3rem 0.75rem; cursor: pointer; }
-.fv-linkbtn:hover { border-color: var(--color-fg-muted); }
-.fv-tip-row { display: flex; gap: 0.35rem; flex-wrap: wrap; }
-@media (min-width: 46rem) { .fv-orow, .fv-rrow { grid-template-columns: 1.6rem minmax(9rem, 13rem) minmax(0, 1fr) 5.2rem; }
-  .fv-otrack, .fv-rtrack { grid-column: 3; grid-row: 1; } .fv-orow .end, .fv-rrow .end { grid-column: 4; grid-row: 1; } .fv-rsub { grid-column: 2 / -1; }
-  .fv-orow > .fv-ico, .fv-rrow > .fv-ico { grid-row: 1; } }
-
-/* ---------- timeline: pull marker, legend, single lane ---------- */
-.fv { --fv-prepull: color-mix(in srgb, var(--fv-gold) 9%, transparent); }
-.fv-tl-legend { display: flex; flex-wrap: wrap; gap: 0.2rem 0.85rem; align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.fv-tl-legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
-.fv i.sw { display: inline-block; width: 0.65rem; height: 0.65rem; border-radius: 2px; flex: 0 0 auto; }
-.fv i.sw.pull { width: 0; height: 0.8rem; border-left: 2px dashed var(--fv-gold); border-radius: 0; }
-.fv-tip-sep { height: 1px; background: var(--cds-border); margin: 0.15rem 0; }
-.fv svg g.is-hl rect.sl-cast { stroke: var(--color-fg); stroke-width: 2px; }
-.fv svg g.is-hl text { text-decoration: underline; }
-/* ---------- aura mini timelines ---------- */
-.fv-sbar .tr.fv-mini { position: relative; height: 0.62rem; overflow: hidden; cursor: pointer; border-radius: 3px; }
-.fv-mini > span { position: absolute; top: 0; bottom: 0; border-radius: 2px; display: flex; align-items: center; overflow: hidden; }
-.fv-mini > span b { font-size: 0.5rem; line-height: 1; color: #fff; padding-left: 2px; font-weight: 700; text-shadow: 0 0 2px rgba(0, 0, 0, 0.6); }
-.fv-mini > i.pre { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, var(--fv-prepull) 0 3px, transparent 3px 6px); }
-.fv-mini > i.pull { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1.5px dashed var(--fv-gold); }
-.fv-sbar .tr.fv-mini.is-hl { box-shadow: 0 0 0 1.5px var(--fv-gold); }
-/* ---------- rotation ---------- */
-.fv-prepull { display: grid; gap: 0.35rem; }
-.fv-prepull:empty { display: none; }
-.fv-pp { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
-.fv-ppi { font: inherit; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem 0.25rem 0.25rem; border-radius: 999px; border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); cursor: pointer; font-size: var(--cds-font-size-caption); }
-.fv-ppi .fv-ico { width: 1.6rem; height: 1.6rem; border-radius: 50%; }
-.fv-ppi > span { display: grid; line-height: 1.15; text-align: left; }
-.fv-ppi em { font-style: normal; color: var(--fv-gold); font-weight: 600; font-size: 0.7rem; }
-.fv-ppi:not(.pull)::after { content: '›'; color: var(--color-fg-muted); margin-left: 0.15rem; }
-.fv-ppi.pull { cursor: default; background: var(--fv-gold-soft); border-color: color-mix(in srgb, var(--fv-gold) 45%, transparent); padding-left: 0.6rem; }
-.fv-prio { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: none; }
-.fv-pr { display: grid; grid-template-columns: 1.6rem 2.2rem minmax(0, 1fr) auto; gap: 0.15rem 0.6rem; align-items: start; padding: 0.55rem 0.15rem; border-top: 1px solid color-mix(in srgb, var(--color-border-line) 75%, transparent); cursor: pointer; border-radius: 8px; }
-.fv-pr:first-child { border-top: 0; }
-.fv-pr .no { font-size: 0.72rem; font-weight: 700; color: var(--fv-gold); text-align: center; padding-top: 0.55rem; font-variant-numeric: tabular-nums; }
-.fv-pr .fv-ico.big { width: 2.2rem; height: 2.2rem; border-radius: 6px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 2px 5px rgba(0, 0, 0, 0.25); }
-.fv-pr .tx { display: grid; gap: 0.12rem; min-width: 0; }
-.fv-pr .hd { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-.fv-pr .hd b { font-size: var(--cds-font-size-body); font-weight: 600; }
-.fv-pr .kd { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; padding: 0.06rem 0.4rem; border-radius: 999px; background: color-mix(in srgb, var(--color-fg) 8%, transparent); color: var(--color-fg-muted); }
-.fv-pr .kd.race { background: var(--fv-gold-soft); color: var(--fv-gold); }
-.fv-pr .wh { font-size: var(--cds-font-size-caption); line-height: 1.4; color: var(--color-fg); }
-.fv-pr .wh::first-letter { text-transform: uppercase; }
-.fv-pr .nt { font-size: var(--cds-font-size-caption); line-height: 1.4; color: var(--color-fg-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.fv-pr .ct { display: grid; justify-items: end; line-height: 1.1; padding-top: 0.3rem; }
-.fv-pr .ct b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.05rem; }
-.fv-pr .ct small { font-size: 0.62rem; color: var(--color-fg-muted); }
-.fv-pr.other { opacity: 0.62; }
-.fv-pr.other .ics { display: flex; gap: 0.25rem; align-items: center; flex-wrap: wrap; }
-.fv-pr.other .ics .fv-ico { width: 1.2rem; height: 1.2rem; }
-.fv-pr.other .tx b { font-size: var(--cds-font-size-caption); font-weight: 600; margin-left: 0.2rem; }
-.fv-pr.other .tx { grid-column: 2 / -1; }
-.fv-pr.other .no { padding-top: 0.1rem; }
-.fv-noico { display: inline-grid; place-items: center; background: color-mix(in srgb, var(--color-fg) 12%, transparent); color: var(--color-fg-muted); font-size: 0.7rem; font-weight: 700; }
-/* ---------- gear: paper doll ---------- */
-.fv-gearwrap { display: grid; gap: var(--cds-gap-md); grid-template-columns: minmax(0, 1fr); }
-.fv-doll { display: grid; gap: 0.35rem; grid-template-columns: minmax(0, 1fr); }
-.fv-doll .col, .fv-doll .wpn { display: grid; gap: 0.25rem; align-content: start; }
-.fv-slot { --q: #9d9d9d; font: inherit; color: inherit; text-align: left; display: grid; grid-template-columns: 2.3rem minmax(0, 1fr); gap: 0.55rem; align-items: center; padding: 0.22rem 0.3rem; border-radius: 10px; border: 1px solid transparent; background: color-mix(in srgb, var(--color-bg) 70%, transparent); cursor: pointer; min-width: 0; }
-.fv-slot:hover { border-color: var(--color-border-line); }
-.fv-slot.q-uncommon { --q: #1eff00; } .fv-slot.q-rare { --q: #0070dd; } .fv-slot.q-epic { --q: #a335ee; } .fv-slot.q-legendary { --q: #ff8000; }
-.fv-slot .ib { position: relative; width: 2.3rem; height: 2.3rem; border-radius: 6px; box-shadow: 0 0 0 2px var(--q), 0 0 0 3px rgba(0, 0, 0, 0.55), 0 3px 8px rgba(0, 0, 0, 0.3); overflow: hidden; background: #111; }
-.fv-slot .ib .fv-ico { width: 100%; height: 100%; border-radius: 0; display: block; }
-.fv-slot .il { position: absolute; left: 0; right: 0; bottom: 0; font-size: 0.6rem; font-weight: 700; text-align: center; color: #fff; background: rgba(0, 0, 0, 0.62); line-height: 1.25; }
-.fv-slot .lb { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 0.4rem; min-width: 0; align-items: baseline; }
-.fv-slot .lb > .it { grid-column: 1 / -1; grid-row: 1; }
-.fv-slot .lb > .bd { grid-column: 1 / -1; }
-.fv-slot .sn { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-fg-muted); white-space: nowrap; }
-.fv-slot.empty .lb > .sn { grid-row: 1; }
-.fv-slot .it { font-size: var(--cds-font-size-caption); font-weight: 600; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fv-slot .en { font-size: 0.7rem; color: var(--color-ok); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fv-slot.empty { cursor: default; opacity: 0.7; }
-.fv-slot.empty .ib { box-shadow: 0 0 0 1px var(--color-border-line); }
-.fv-slot.empty .en { color: var(--color-fg-muted); }
-.fv-slot .bd { display: flex; gap: 0.25rem; flex-wrap: wrap; }
-.fv-slot .bd em { font-style: normal; font-size: 0.6rem; font-weight: 600; padding: 0.02rem 0.38rem; border-radius: 999px; background: var(--fv-gold-soft); color: var(--fv-gold); }
-.fv-slot .bd em.set { background: color-mix(in srgb, var(--color-ok) 14%, transparent); color: var(--color-ok); }
-.fv-cstats { display: grid; gap: 0.35rem; align-content: start; background: color-mix(in srgb, var(--color-bg) 70%, transparent); border: 1px solid var(--color-border-line); border-radius: var(--fv-r-sm); padding: var(--cds-pad-md); }
-.fv-cstats h4 { margin: 0; font-size: var(--cds-font-size-body); font-weight: 600; }
-#sp-stats { display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); }
-#sp-stats .grp { display: grid; gap: 0.05rem; align-content: start; }
-#sp-stats .gh { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fv-gold); font-weight: 700; margin-bottom: 0.1rem; }
-.fv-stat { display: flex; align-items: baseline; gap: 0.4rem; font-size: var(--cds-font-size-caption); }
-.fv-stat span { color: var(--color-fg-muted); }
-.fv-stat::after { content: ''; order: 1; flex: 1 1 auto; border-bottom: 1px dotted var(--color-border-line); min-width: 0.6rem; }
-.fv-stat b { order: 2; font-weight: 600; }
-@media (min-width: 46rem) {
-  .fv-gearwrap { grid-template-columns: minmax(0, 1fr) minmax(14rem, 17rem); }
-  .fv-doll { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 1.2rem; }
-  .fv-doll .wpn { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 0.3rem; padding-top: 0.6rem; border-top: 1px solid var(--color-border-line); }
-  .fv-slot { grid-template-columns: 2.75rem minmax(0, 1fr); padding: 0.3rem; }
-  .fv-slot .ib { width: 2.75rem; height: 2.75rem; }
-  .fv-slot .lb { grid-template-columns: minmax(0, 1fr); }
-  .fv-slot .lb > .it { grid-row: 2; }
-  .fv-slot.r { grid-template-columns: minmax(0, 1fr) 2.75rem; text-align: right; }
-  .fv-slot.r .ib { order: 2; }
-  .fv-slot.r .bd { justify-content: flex-end; }
-  #sp-stats { grid-template-columns: minmax(0, 1fr); }
-}
-/* ---------- consumes and buffs: icon pickers ---------- */
-.fv-setup { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
-.fv-sgrp { display: grid; gap: 0.4rem; align-content: start; }
-.fv-sgrp .gh { display: flex; align-items: baseline; gap: 0.4rem; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--fv-gold); border-bottom: 1px solid var(--color-border-line); padding-bottom: 0.25rem; }
-.fv-sgrp .gh small { color: var(--color-fg-muted); font-weight: 500; letter-spacing: 0; }
-.fv-sgrp.wide { grid-column: 1 / -1; }
-/* subsections flow side by side, each as wide as its icons, so small categories share a row */
-.fv-sgrp:has(.fv-ssub) { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: flex-start; }
-.fv-sgrp:has(.fv-ssub) > .gh { flex: 1 0 100%; }
-.fv-ssub { display: grid; gap: 0.25rem; flex: 0 1 auto; min-width: 0; }
-.fv-ssub .sh { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-fg-muted); font-weight: 600; }
-.fv-ssub .fv-picks { display: flex; flex-wrap: wrap; gap: 0.45rem 0.35rem; }
-.fv-ssub .fv-pick { width: 4.4rem; }
-.fv-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.4rem, 1fr)); gap: 0.45rem 0.35rem; }
-.fv-pick { --q: #4ec04e; font: inherit; color: inherit; background: none; border: 0; padding: 0.15rem; display: grid; justify-items: center; align-content: start; gap: 0.15rem; cursor: pointer; border-radius: 8px; min-width: 0; }
-.fv-pick .ib { position: relative; width: 2.5rem; height: 2.5rem; border-radius: 6px; box-shadow: 0 0 0 2px var(--q), 0 0 0 3px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3); overflow: hidden; }
-.fv-pick.q-common { --q: #c9c9c9; } .fv-pick.q-uncommon { --q: #1eff00; } .fv-pick.q-rare { --q: #0070dd; } .fv-pick.q-epic { --q: #a335ee; }
-.fv-pick .ib .fv-ico { width: 100%; height: 100%; border-radius: 0; display: block; }
-.fv-pick .lv, .fv-pick .hd { position: absolute; font-size: 0.5rem; font-weight: 800; line-height: 1; padding: 0.1rem 0.18rem; color: #fff; background: rgba(0, 0, 0, 0.72); }
-.fv-pick .lv { right: 0; bottom: 0; border-top-left-radius: 4px; color: #ffd100; }
-.fv-pick .hd { left: 0; top: 0; border-bottom-right-radius: 4px; }
-.fv-pick .sl { font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-fg-muted); line-height: 1; margin-top: 0.15rem; }
-.fv-pick.off .ib { box-shadow: 0 0 0 1px var(--color-border-line); }
-.fv-pick.off .ib > .fv-ico, .fv-pick.off .ib > .lv, .fv-pick.off .ib > .hd, .fv-pick.off .nmx { opacity: 0.35; }
-.fv-pick .x { position: absolute; right: 0; top: 0; font-size: 0.62rem; font-weight: 800; line-height: 1; padding: 0.08rem 0.2rem 0.14rem; color: #ff6b5e; background: rgba(0, 0, 0, 0.78); border-bottom-left-radius: 4px; }
-.fv-setup.hide-off .fv-pick.off, .fv-setup.hide-off .fv-ssub:not(:has(.fv-pick:not(.off))), .fv-setup.hide-off .fv-sgrp:not(:has(.fv-pick:not(.off))) { display: none; }
-.fv-setup-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 0.75rem; }
-.fv-tt .tt-why { color: #9d9d9d; font-size: 0.75rem; font-style: italic; padding-bottom: 0.3rem; margin-bottom: 0.15rem; border-bottom: 1px solid rgba(255, 255, 255, 0.16); white-space: pre-line; overflow-wrap: anywhere; }
-.fv-pick .nmx { font-size: 0.66rem; line-height: 1.2; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
-</style>
-
-<div class="fv" id="fv">
-  <header class="fv-head" id="top">
-    <p class="fv-eyebrow">Simulated raid DPS · every level 60 preset</p>
-    <h1>Forever level 60 DPS</h1>
-    <div class="fv-hero" id="hero" data-source="builds icons" role="group" aria-label="Jump to a class"></div>
-    <p class="fv-take" id="takeaway"><b data-source="overview" data-field="topLabel" data-row="0" class="dash-skeleton">—</b> leads at <b data-source="overview" data-field="topDps" data-row="0">—</b> DPS. <span data-source="overview" data-field="count" data-row="0">—</span> presets across <span data-source="overview" data-field="classes" data-row="0">—</span> classes, from <span data-source="overview" data-field="bottomDps" data-row="0">—</span> to <span data-source="overview" data-field="topDps" data-row="0">—</span> DPS (<span data-source="overview" data-field="spreadPct" data-row="0">—</span>% apart), each on its best race, synthetic Phase 1 gear and a full raid.</p>
-  </header>
-
-  <nav class="fv-tabs" role="tablist" aria-label="Pages">
-    <button class="fv-tab" role="tab" data-tab="ranking" aria-selected="true">Ranking</button>
-    <button class="fv-tab" role="tab" data-tab="races" aria-selected="false">Races</button>
-    <button class="fv-tab" role="tab" data-tab="spec" aria-selected="false">Specs</button>
-    <button class="fv-tab" role="tab" data-tab="compare" aria-selected="false">Compare</button>
-    <button class="fv-tab" role="tab" data-tab="method" aria-selected="false">Method</button>
-  </nav>
-
-  <!-- RANKING -->
-  <section class="fv-page" id="ranking" data-page="ranking">
-    <div class="fv-tiles">
-      <div class="fv-tile"><span class="k">Top preset</span><span class="v" data-source="overview" data-field="topDps" data-row="0">—</span><span class="s" data-source="overview" data-field="topLabel" data-row="0">—</span></div>
-      <div class="fv-tile"><span class="k">Median preset</span><span class="v" data-source="overview" data-field="median" data-row="0">—</span><span class="s">DPS at 180 s</span></div>
-      <div class="fv-tile"><span class="k">Lowest preset</span><span class="v" data-source="overview" data-field="bottomDps" data-row="0">—</span><span class="s" data-source="overview" data-field="bottomLabel" data-row="0">—</span></div>
-      <div class="fv-tile"><span class="k">Presets</span><span class="v" data-source="overview" data-field="count" data-row="0">—</span><span class="s"><span data-source="overview" data-field="classes" data-row="0">—</span> classes</span></div>
-    </div>
-
-    <div class="fv-card" id="rank-card">
-      <h2>DPS by preset</h2>
-      <p class="fv-note">Tap a preset for its numbers, and again to open it in Specs. Fights last 180 s on average against a level 63 boss.</p>
-      <div class="fv-lenbar" id="rank-lenbar"><span class="fv-label">Fight</span><div class="fv-seg" id="rank-len" role="group" aria-label="Fight length"></div></div>
-      <div class="fv-controls" id="rank-classes" role="group" aria-label="Class filter"></div>
-      <div class="fv-controls">
-        <span class="fv-label">Sort</span><div class="fv-seg" id="rank-sort" role="group" aria-label="Sort by"></div>
-      </div>
-      <div class="fv-controls">
-        <div class="fv-seg" id="rank-role" role="group" aria-label="Role"></div>
-        <div class="fv-seg" id="rank-fac" role="group" aria-label="Faction of the preset race"></div>
-      </div>
-      <div class="fv-controls">
-        <button class="fv-chip" id="rank-best" aria-pressed="false" title="Keep only the highest-DPS preset of each class">Best per class</button>
-        <button class="fv-chip" id="rank-reset" hidden>Clear filters</button>
-      </div>
-      <div class="fv-legend" id="rank-legend"><span><i class="fv-bar" style="position:static;display:inline-block;width:1.2rem;background:var(--color-fg-muted)"></i>mean</span><span><i style="width:1rem;height:0.6rem;border:1.5px solid var(--color-fg);border-radius:2px"></i>middle half of fights</span><span><i style="width:1.2rem;height:1.5px;background:var(--color-fg)"></i>10th to 90th percentile</span></div>
-      <p class="fv-rank-sum" id="rank-sum"></p>
-      <div class="fv-rank" id="rank-chart" data-source="builds lengths"></div>
-    </div>
-
-    <div class="fv-grid">
-      <div class="fv-card" id="scatter-card">
-        <h2>Output against consistency</h2>
-        <p class="fv-note">Right is more damage, lower is steadier: the spread between fights as a share of the mean. Tap a dot.</p>
-        <div class="fv-chart" id="scatter" data-source="builds"></div>
-      </div>
-      <div class="fv-card" id="len-card">
-        <h2>Short and long fights</h2>
-        <p class="fv-note">Each preset's DPS at five fight lengths, as a share of its 180 s DPS. The class filter above applies.</p>
-        <div class="fv-chart" id="lenchart" data-source="lengths builds"></div>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- RACES -->
-  <section class="fv-page" id="races" data-page="races" hidden>
-    <div class="fv-card fv-scen" id="race-scen-card">
-      <h2>Race scenarios</h2>
-      <div class="fv-controls"><span class="fv-label">Target</span><div class="fv-seg" id="rs-target" role="group" aria-label="Target creature type"></div></div>
-      <div class="fv-controls"><span class="fv-label">Weapon</span><div class="fv-seg" id="rs-weapon" role="group" aria-label="Weapon and racials"></div></div>
-      <p class="fv-scen-desc" id="rs-desc"></p>
-      <p class="fv-note">Every card on this page follows the scenario. Racial weapon and racials off are against the Humanoid boss.</p>
-    </div>
-
-    <div class="fv-card" id="race-overview-card">
-      <div class="fv-hrow"><h2>Which races help most</h2><button class="fv-scen-tag" aria-label="Scenario"></button></div>
-      <p class="fv-note">Across every preset a race can play: how often it is the best race, and how far behind the best it is on average (the whisker reaches its worst preset). Shorter is better. Tap a race.</p>
-      <div class="fv-controls"><div class="fv-seg" id="ro-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="ro-role" role="group" aria-label="Role"></div></div>
-      <div class="fv-ro-tiles" id="ro-tiles" data-source="race_summary"></div>
-      <div id="race-overview" data-source="race_summary"></div>
-    </div>
-
-    <div class="fv-card" id="race-spec-card">
-      <div class="fv-hrow"><h2>One preset, every race</h2><button class="fv-scen-tag" aria-label="Scenario"></button></div>
-      <p class="fv-note">Each race's DPS split into its base stats and what each racial adds; the line at the end of a bar is ± 1 standard error. Hatched parts cost DPS. Tap a part.</p>
-      <div class="fv-picker"><button class="fv-btn" id="rs-prev" aria-label="Previous preset">‹</button><select id="rs-pick" aria-label="Preset"></select><button class="fv-btn" id="rs-next" aria-label="Next preset">›</button></div>
-      <p class="fv-note" id="rs-take"></p>
-      <div class="fv-legend" id="rs-legend"></div>
-      <div id="race-spec" data-source="race_variants race_breakdown race_notes"></div>
-      <p class="fv-axisnote" id="rs-axis"></p>
-    </div>
-
-    <div class="fv-card" id="heat-card">
-      <div class="fv-hrow"><h2>Every race on every preset</h2><button class="fv-scen-tag" aria-label="Scenario"></button></div>
-      <p class="fv-note">Percent behind the preset's best race in this scenario. ★ marks the best. Hatched means that race can't be that class. Tap a cell for its DPS, or a preset name to compare its races above.</p>
-      <div class="fv-controls" id="heat-classes" role="group" aria-label="Class filter"></div>
-      <div class="fv-controls"><span class="fv-label">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div></div>
-      <div class="fv-scroll" id="heat" data-source="race_variants builds"></div>
-    </div>
-
-    <div class="fv-card" id="race-find-card">
-      <h2>What the numbers say, by class</h2>
-      <p class="fv-note">Written from the race sims. The class filter above applies.</p>
-      <div class="fv-find" id="race-find" data-source="race_notes"></div>
-    </div>
-
-    <div class="fv-card" id="faction-card">
-      <div class="fv-hrow"><h2>Best race by faction</h2><button class="fv-scen-tag" aria-label="Scenario"></button></div>
-      <p class="fv-note">The best Horde and best Alliance race for each preset, and how far the Alliance pick trails the Horde one (negative means Alliance is ahead).</p>
-      <div class="fv-scroll tall">
-        <table id="faction-table" data-source="factionbest" data-row-key="build,variant">
-          <thead><tr><th class="first" data-field="label">Preset</th><th data-field="hordeRace"><span id="fi-h"></span>Horde</th><th class="n" data-field="hordeDps">DPS</th><th data-field="allianceRace"><span id="fi-a"></span>Alliance</th><th class="n" data-field="allianceDps">DPS</th><th class="n" data-field="gapPct">Gap %</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="fv-card" id="racespread-card">
-      <div class="fv-hrow"><h2>How much race matters</h2><button class="fv-scen-tag" aria-label="Scenario"></button></div>
-      <p class="fv-note">The gap between each preset's best and worst race, as a share of the best.</p>
-      <div class="fv-controls"><span class="fv-label">Sort</span><div class="fv-seg" id="spread-sort" role="group" aria-label="Sort"></div></div>
-      <div class="fv-chart" id="racespread" data-source="racespread builds race_variants"></div>
-    </div>
-  </section>
-
-  <!-- SPEC -->
-  <section class="fv-page" id="spec" data-page="spec" hidden>
-    <div class="fv-picker">
-      <button class="fv-btn" id="sp-prev" aria-label="Previous preset">‹</button>
-      <select id="sp-pick" aria-label="Preset"></select>
-      <button class="fv-btn" id="sp-next" aria-label="Next preset">›</button>
-    </div>
-    <div class="fv-spechead" id="sp-head">
-      <div class="art" id="sp-art"></div>
-      <div class="fv-spec-top"><span id="sp-specicon"></span><h2><span class="fv-dot" id="sp-dot"></span><span id="sp-title">—</span></h2></div>
-      <div class="fv-meta" id="sp-meta"></div>
-      <p class="fv-take" id="sp-summary"></p>
-      <p class="fv-swipe">Swipe here for the next or previous preset</p>
-    </div>
-    <div class="fv-tiles" id="sp-tiles"></div>
-    <nav class="fv-jump" id="sp-jump" aria-label="Jump to a section"></nav>
-
-    <div class="fv-card" id="sp-tal-card" data-jump="Talents">
-      <h3>Talents</h3>
-      <p class="fv-note">Laid out as in the sim. Gold is maxed, green is partly spent, grey is empty. Tap a talent for its tooltip.</p>
-      <div class="fv-talbuild">
-        <div class="fv-meta" id="sp-trees"></div>
-        <div class="fv-code" id="sp-talents"></div>
-        <div class="fv-chips" id="sp-keytal"></div>
-      </div>
-      <div class="fv-seg" id="sp-tal-seg" role="group" aria-label="Talent tree"></div>
-      <div class="fv-trees" id="sp-tal"></div>
-    </div>
-
-    <div class="fv-grid">
-      <div class="fv-card" id="sp-dist-card" data-jump="Spread">
-        <h3>How fights vary</h3>
-        <p class="fv-note" id="sp-dist-note">DPS of every simulated fight, in 5 DPS bins.</p>
-        <div class="fv-controls"><div class="fv-seg" id="sp-dist-mode" role="group" aria-label="Show"></div><span class="fv-note">Tap a bar for its share of fights.</span></div>
-        <div class="fv-chart" id="sp-dist"></div>
-        <div class="fv-scroll"><table id="sp-pct"><thead><tr></tr></thead><tbody><tr></tr></tbody></table></div>
-      </div>
-      <div class="fv-card" id="sp-abil-card" data-jump="Damage">
-        <h3>Where the damage comes from</h3>
-        <p class="fv-note">Share of total damage, pets included. Tap an ability for its tooltip and numbers.</p>
-        <div class="fv-seg" id="sp-abil-metric" role="group" aria-label="Show"></div>
-        <div class="fv-sbar" id="sp-abil"></div>
-      </div>
-    </div>
-
-    <div class="fv-card" id="sp-weights-card" data-jump="Stat weights">
-      <h3>Stat weights</h3>
-      <p class="fv-note" id="sp-weights-note">What one more point of each stat is worth, in points of the preset's main stat. Hit and crit are per rating point (10 hit rating or 14 crit rating make 1%).</p>
-      <div class="fv-sbar" id="sp-weights"></div>
-      <details>
-        <summary>Raw numbers</summary>
-        <p class="fv-note">DPS gained per point, or per 1% for hit and crit, with one standard error. Each stat was added on top of the gear and simmed with the same seed as the baseline.</p>
-        <div class="fv-scroll">
-          <table id="sp-wtab" data-source="weights" data-row-key="build,stat">
-            <thead><tr><th data-field="label">Stat</th><th class="n" data-field="dpsPer">DPS</th><th class="n" data-field="sePer">±</th><th class="n" data-field="worth">Worth</th><th class="n" data-field="ratingWorth">Per rating</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </details>
-    </div>
-
-    <div class="fv-card" id="sp-time-card" data-jump="Timeline">
-      <h3>A fight, second by second</h3>
-      <p class="fv-note" id="sp-time-note">One simulated fight. Pick a typical, unlucky or lucky one, zoom in, scroll sideways, and tap anywhere to see what happened at that moment.</p>
-      <div class="fv-controls">
-        <div class="fv-seg" id="tl-mode" role="group" aria-label="Layout"></div>
-        <div class="fv-seg" id="tl-samples" role="group" aria-label="Sample fight"></div>
-        <div class="fv-seg" id="tl-zoom" role="group" aria-label="Zoom">
-          <button data-z="fit" aria-pressed="true">Whole fight</button><button data-z="60" aria-pressed="false">1 min</button><button data-z="30" aria-pressed="false">30 s</button><button data-z="15" aria-pressed="false">15 s</button><button data-z="5" aria-pressed="false">5 s</button>
-        </div>
-      </div>
-      <div class="fv-controls fv-lanes"><span class="fv-label">Lanes</span><span id="tl-lanes" role="group" aria-label="Lanes shown"></span></div>
-      <div class="fv-controls fv-focus"><label class="fv-label" for="tl-focus">Highlight</label><select id="tl-focus"></select></div>
-      <div class="fv-tl" id="tl">
-        <div class="fv-tl-labels" id="tl-labels"></div>
-        <div class="fv-tl-scroll" id="tl-scroll"></div>
-      </div>
-      <div class="fv-tl-legend" id="tl-legend"></div>
-      <div class="fv-readout" id="tl-readout"><span class="fv-note">Tap the timeline to see the casts, hits and buffs at that moment.</span></div>
-      <details id="tl-logbox">
-        <summary>Event log for the part of the fight on screen</summary>
-        <div class="fv-controls">
-          <label class="fv-label" for="tl-filter">Show</label>
-          <select id="tl-filter"><option value="all">Everything</option><option value="cast">Casts</option><option value="dmg">Damage</option><option value="aura">Buffs and debuffs</option></select>
-        </div>
-        <div class="fv-log" id="tl-log"></div>
-      </details>
-    </div>
-
-    <div class="fv-grid">
-      <div class="fv-card" id="sp-auras-card" data-jump="Auras">
-        <h3>Buff and debuff uptime</h3>
-        <p class="fv-note" id="sp-auras-note">The number is the average uptime over every simulated fight. Each bar is the sample fight picked above, filled only while the aura was up. Tap a name for its tooltip, a bar for its times.</p>
-        <div class="fv-controls"><div class="fv-seg" id="sp-aura-owner" role="group" aria-label="Whose auras"></div><button class="fv-chip" id="sp-alwayson" aria-pressed="true">Hide always-on</button></div>
-        <div class="fv-sbar" id="sp-auras"></div>
-      </div>
-      <div class="fv-card" id="sp-races-card" data-jump="Races">
-        <h3>Races for this preset</h3>
-        <p class="fv-note">180 s DPS on every race the class can be. ★ marks the best race.</p>
-        <div class="fv-chart" id="sp-races"></div>
-        <button class="fv-linkbtn" id="sp-races-link">Racials, weapons and target types ›</button>
-      </div>
-    </div>
-
-    <div class="fv-grid">
-      <div class="fv-card" id="sp-len-card">
-        <h3>Fight length</h3>
-        <p class="fv-note">Mean DPS by average fight length.</p>
-        <div class="fv-chart" id="sp-len"></div>
-      </div>
-    </div>
-
-    <div class="fv-card" id="sp-rot-card" data-jump="Rotation">
-      <h3>Rotation</h3>
-      <p class="fv-note" id="sp-rot-note">The preset's own priority list, as the sim runs it: each moment it casts the first line whose condition holds. Tap a line for the spell and its exact condition.</p>
-      <div class="fv-prepull" id="sp-prepull" data-source="rotation names icons"></div>
-      <ol class="fv-prio" id="sp-rotation" data-source="rotation abilities names icons tooltips"></ol>
-    </div>
-
-    <div class="fv-card" id="sp-abiltab-card" data-jump="Ability table">
-      <details>
-        <summary>Per-ability numbers</summary>
-        <p class="fv-note">Per fight on average. Crit share counts landed hits.</p>
-        <div class="fv-scroll tall">
-          <table id="sp-abiltab" data-source="abilities" data-row-key="build,key">
-            <thead><tr><th class="first" data-field="ability">Ability</th><th class="n" data-field="dps">DPS</th><th class="n" data-field="share">Share %</th><th class="n" data-field="casts">Casts</th><th class="n" data-field="hits">Hits</th><th class="n" data-field="crits">Crits</th><th class="n" data-field="critPct">Crit %</th><th class="n" data-field="ticks">Ticks</th><th class="n" data-field="avgHit">Avg hit</th><th class="n" data-field="avgCrit">Avg crit</th><th class="n" data-field="avgTick">Avg tick</th><th class="n" data-field="misses">Misses</th><th class="n" data-field="dodges">Dodges</th><th class="n" data-field="glances">Glances</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </details>
-    </div>
-
-    <div class="fv-card" id="sp-gear-card" data-jump="Gear">
-      <h3>Gear</h3>
-      <p class="fv-note">The preset's synthetic Phase 1 set, two synthetic trinkets included. Tap an item for its tooltip.</p>
-      <div class="fv-gearwrap">
-        <div class="fv-doll" id="sp-gear" data-source="gear tooltips icons"></div>
-        <div class="fv-cstats" id="sp-stats-card">
-          <h4>Character stats</h4>
-          <p class="fv-note">With gear, talents, buffs and consumes.</p>
-          <div id="sp-stats" data-source="stats"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fv-card" id="sp-setup-card" data-jump="Consumes">
-      <h3>Consumes and buffs</h3>
-      <p class="fv-note">Everything the preset's sim settings switch on. Tap one for its tooltip.</p>
-      <div class="fv-setup-bar"><p class="fv-note">Faded: listed in the sim settings but has no effect, tap for why.</p><button class="fv-chip" id="sp-setup-hide" aria-pressed="false">Hide inactive</button></div>
-      <div class="fv-setup" id="sp-setup" data-source="setup tooltips icons"></div>
-    </div>
-
-    <div class="fv-grid">
-      <div class="fv-card" id="sp-cav-card">
-        <details>
-          <summary>Caveats and open questions</summary>
-          <ul class="fv-list" id="sp-caveats" data-source="notes"></ul>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMPARE -->
-  <section class="fv-page" id="compare" data-page="compare" hidden>
-    <div class="fv-card" id="cmp-pick-card">
-      <h2>Compare two presets</h2>
-      <div class="fv-controls">
-        <span class="fv-dot" style="background:var(--cds-chart-muted)" id="cmp-dot-a"></span><select id="cmp-a" aria-label="First preset"></select>
-      </div>
-      <div class="fv-controls">
-        <span class="fv-dot" id="cmp-dot-b"></span><select id="cmp-b" aria-label="Second preset"></select>
-      </div>
-      <div class="fv-scroll">
-        <table id="cmp-table">
-          <thead><tr><th>Measure</th><th class="n" id="cmp-ha">A</th><th class="n" id="cmp-hb">B</th><th class="n">B vs A</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="fv-grid">
-      <div class="fv-card" id="cmp-dist-card">
-        <h3>Fight-to-fight spread</h3>
-        <p class="fv-note">Share of fights in each 5 DPS bin.</p>
-        <div class="fv-chart" id="cmp-dist" data-source="hist"></div>
-      </div>
-      <div class="fv-card" id="cmp-len-card">
-        <h3>Fight length</h3>
-        <div class="fv-chart" id="cmp-len" data-source="lengths"></div>
-      </div>
-    </div>
-    <div class="fv-card" id="cmp-w-card">
-      <h3>Stat weights side by side</h3>
-      <p class="fv-note">Each preset's stat worth in its own main stat; hit and crit per rating point.</p>
-      <div class="fv-grid" id="cmp-w" data-source="weights"></div>
-    </div>
-    <div class="fv-card" id="cmp-abil-card">
-      <h3>Damage sources side by side</h3>
-      <p class="fv-note">Each preset's top damage sources by share.</p>
-      <div class="fv-grid" id="cmp-abil" data-source="abilities"></div>
-    </div>
-  </section>
-
-  <!-- METHOD -->
-  <section class="fv-page" id="method" data-page="method" hidden>
-    <div class="fv-card" id="method-card">
-      <h2>How these numbers were made</h2>
-      <div class="fv-prose" id="method-prose">
-        <p>Every level 60 preset was simmed with the same build of the sim. Each preset uses its own talents, rotation, synthetic Phase 1 gear (built to the rules below), consumes and the shared raid buffs and debuffs, on its preset race.</p>
-        <p>The main number is the mean of <b data-source="builds" data-field="iters" data-row="0">—</b> fights. A fight lasts <span data-source="builds" data-field="fightSecs" data-row="0">—</span> s on average, varying by up to <span data-source="builds" data-field="fightVar" data-row="0">—</span> s either way, against a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor before debuffs. Every preset uses the same random seed.</p>
-        <p>The race sweep runs <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights on every race the class can be. The fight-length runs use <span data-source="builds" data-field="lengthIters" data-row="0">—</span> fights each. The three sample fights are single fights whose DPS is closest to the preset's 10th, 50th and 90th percentile, out of the first <span data-source="builds" data-field="sampleSeeds" data-row="0">—</span> seeds.</p>
-        <p>The race scenarios on the Races page use as many fights as the race sweep and the same seed. "Racials off" leaves every racial passive and ability out, so what remains is the race's base stats; turning racials off one at a time splits the rest between them (where two count, each gets the average of its two possible orders, so the parts add up). "Racial weapon" gives Humans a sword, Dwarves a mace and Orcs an axe where the class can use one, with the preset weapon's stats and weapon DPS and the speed of a Phase 1 weapon of that type (Spinal Reaper, Earthshaker, Bonereaver's Edge, Deathbringer, Ironfoe, Annihilator, Hammer of the Vesper, Brutality Blade). The target scenarios change only the boss's creature type.</p>
-        <p>Spell names come from the sim's own aura labels, the Forever client talent data and the item database.</p>
-      </div>
-    </div>
-    <div class="fv-card" id="method-gear-card">
-      <h2>Gear rules</h2>
-      <p class="fv-note">How every preset's synthetic set and trinkets are built.</p>
-      <ul class="fv-list" id="method-gear" data-source="notes"></ul>
-    </div>
-    <div class="fv-card" id="method-cav-card">
-      <h2>Open questions behind the numbers</h2>
-      <p class="fv-note">Known uncertainties for each preset.</p>
-      <div id="method-caveats" data-source="notes builds"></div>
-    </div>
-  </section>
-</div>
-
-<script>
-(() => {
+export function startReport(dash) {
   const CLASSES = ['Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest'];
   const RACES_ALL = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order', 'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper'];
   const HORDE = new Set(['Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper']);
@@ -1031,13 +123,15 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
 
   // ---------- tooltip ----------
   // Chart tooltips: tap (or hover with a mouse) a mark for its exact values; the mark is highlighted; tap elsewhere to close.
-  let tipEl = null, tipHl = [], tipPinned = false, tipCleanup = null;
+  let tipEl = null, tipTippy = null, tipHl = [], tipPinned = false, tipCleanup = null;
   const hideTip = () => {
-    if (tipEl) { tipEl.remove(); tipEl = null; }
+    if (tipTippy) { tipTippy.destroy(); tipTippy = null; }
+    tipEl = null;
     for (const n of tipHl) n.classList.remove('is-hl');
     if (tipCleanup) { tipCleanup(); tipCleanup = null; }
     tipHl = []; tipPinned = false;
   };
+  // x and y are where the mark is in host, which the tooltip points at.
   const showTip = (host, x, y, head, lines, opts = {}) => {
     hideTip();
     try { hideTT(); } catch {}
@@ -1055,15 +149,16 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
       acts.push(bt);
     }
     if (acts.length) { tipEl.classList.add('act'); tipEl.append(el('div', { class: 'fv-tip-row' }, ...acts)); }
-    host.append(tipEl);
+    const at = () => { const r = host.getBoundingClientRect(); const px = r.left + x, py = r.top + y; return { width: 0, height: 0, x: px, y: py, left: px, right: px, top: py, bottom: py }; };
+    tipTippy = tippy(host, {
+      content: tipEl, trigger: 'manual', interactive: acts.length > 0, appendTo: document.body, hideOnClick: false,
+      placement: opts.below ? 'bottom-start' : 'top-start', offset: [10, 8], getReferenceClientRect: at, duration: [120, 0],
+    });
+    tipTippy.show();
     tipHl = (Array.isArray(opts.hl) ? opts.hl : opts.hl ? [opts.hl] : []).filter(Boolean);
     for (const n of tipHl) n.classList.add('is-hl');
     tipCleanup = opts.onHide || null;
     tipPinned = opts.pinned !== false;
-    const hw = host.clientWidth, tw = tipEl.offsetWidth, th = tipEl.offsetHeight;
-    tipEl.style.left = Math.max(4, Math.min(hw - tw - 4, x + 10)) + 'px';
-    const above = y - th - 8;
-    tipEl.style.top = (opts.below || above < 4 ? y + 10 : above) + 'px';
   };
   // bind a tooltip to d3 marks: fn(event, datum, node) shows it
   const tipOn = (sel, fn) => sel.attr('data-tip', '1').style('cursor', 'pointer')
@@ -1232,30 +327,35 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
     return el('div', { class: 'c-' + (['t', 'm', 'y', 'g'].includes(k) ? k : 't'), text: String(a ?? '') });
   };
 
-  let ttEl = null, ttNode = null, ttPinned = false, ttAt = null;
+  let ttEl = null, ttTippy = null, ttNode = null, ttPinned = false, ttAt = null;
   let ttHl = [], ttHideTimer = null;
-  const hideTT = () => { clearTimeout(ttHideTimer); if (ttEl) ttEl.remove(); for (const n of ttHl) n.classList.remove('tt-on'); ttHl = []; ttEl = null; ttNode = null; ttPinned = false; };
+  const hideTT = () => {
+    clearTimeout(ttHideTimer);
+    if (ttTippy) ttTippy.destroy();
+    for (const n of ttHl) n.classList.remove('tt-on');
+    ttHl = []; ttEl = null; ttTippy = null; ttNode = null; ttPinned = false;
+  };
   const showTT = (node, pt) => {
     let spec = null;
     try { spec = ttSpec(node); } catch (err) { console.error(err); }
     if (!spec) return;
     hideTT(); hideTip();
-    const root = $('#fv');
     const body = el('div', { class: 'tt-body' }, spec.why ? el('div', { class: 'tt-why', text: spec.why }) : null,
       el('div', { class: 'tt-head' }, el('span', { class: 'tt-title', style: `color:${spec.color || GOLD}`, text: spec.title }), spec.sub ? el('span', { class: 'tt-sub', text: spec.sub }) : null),
       ...arr(spec.lines).map(ttLine),
       ...(spec.nums && spec.nums.length ? [el('div', { class: 'tt-nums' }, spec.numsHead ? el('div', { class: 'c-m', text: spec.numsHead }) : null, ...spec.nums.map(ttLine))] : []),
       spec.link ? el('div', { class: 'tt-link' }, el('a', { href: spec.link.href, target: '_blank', rel: 'noopener noreferrer', text: spec.link.label + ' ↗' }), spec.link.note ? el('span', { text: spec.link.note }) : null) : null);
-    ttEl = el('div', { class: 'fv-tt', role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
-    root.append(ttEl);
-    const fr = root.getBoundingClientRect(), r = node.getBoundingClientRect();
-    const tw = ttEl.offsetWidth, th = ttEl.offsetHeight;
-    const wide = r.width > 160 || node instanceof SVGElement;
-    const ax = pt && wide ? pt.x - 12 : r.left;
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    const below = r.bottom + 6 + th <= vh || r.top - th - 6 < 0;
-    ttEl.style.left = Math.max(4, Math.min(fr.width - tw - 4, ax - fr.left)) + 'px';
-    ttEl.style.top = (below ? r.bottom - fr.top + 6 : r.top - fr.top - th - 6) + 'px';
+    const content = el('div', { class: 'fv-tt', role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
+    const r = node.getBoundingClientRect();
+    // A wide target (a table row, a chart mark) gets the tooltip where the pointer was, not at its left edge.
+    const wide = pt && (r.width > 160 || node instanceof SVGElement);
+    const dx = wide ? pt.x - 12 - r.left : 0;
+    ttTippy = tippy(node, {
+      content, trigger: 'manual', interactive: true, appendTo: document.body, hideOnClick: false, placement: 'bottom-start', offset: [0, 6], duration: [120, 0],
+      getReferenceClientRect: wide ? () => { const q = node.getBoundingClientRect(); return { width: 0, height: q.height, x: q.left + dx, y: q.top, left: q.left + dx, right: q.left + dx, top: q.top, bottom: q.bottom }; } : null,
+    });
+    ttTippy.show();
+    ttEl = ttTippy.popper;
     ttNode = node; ttAt = { x: r.left, y: r.top };
     const par = node.parentElement, v = node.getAttribute('data-tt');
     ttHl = par && par.classList.contains('fv-sbar') ? [...par.children].filter((c) => c.getAttribute('data-tt') === v) : [node];
@@ -1326,16 +426,16 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
     const changed = st.tab !== tab;
     st.tab = tab; persist();
     if (changed) { const pg = document.getElementById(tab); pg.classList.remove('in'); void pg.offsetWidth; pg.classList.add('in'); }
-    document.querySelectorAll('.fv-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
-    document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== tab; });
+    document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); b.classList.toggle('active', b.dataset.tab === tab); });
+    document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== tab; p.classList.toggle('active', p.dataset.page === tab); });
     if (link) dash.setLink(tab === 'spec' && st.build ? st.build : tab);
     hideTip(); hideTT();
     render();
   };
-  document.querySelectorAll('.fv-tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  document.querySelectorAll('.fv-tab').forEach((b) => b.addEventListener('click', (e) => { e.preventDefault(); showTab(b.dataset.tab); }));
   const openSpec = (id) => {
     const swap = st.tab === 'spec' && st.build !== id;
-    st.build = id; st.sample = 0; st.focus = ''; persist(); showTab('spec'); window.scrollTo({ top: 0 });
+    st.build = id; st.sample = 0; st.focus = ''; persist(); showTab('spec'); $('.sim-ui').scrollTo({ top: 0 });
     if (swap) for (const n of [$('#sp-head'), $('#sp-tiles')]) { n.classList.remove('fv-swap'); void n.offsetWidth; n.classList.add('fv-swap'); }
   };
   // swipe the spec banner for the next or previous preset
@@ -1875,34 +975,56 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
       bt.addEventListener('click', () => { st.talTree = v; drawTalents(b); });
       return bt;
     }));
-    const S = 40, G = 12, W = 4 * S + 3 * G;
+    // The trees use the sim UI's talent picker markup and styles (talents_picker.tsx), read only.
     const shown = st.talTree === 'all' ? trees : trees.filter((t) => String(t.ti) === st.talTree);
-    host.replaceChildren(...shown.map((tr) => {
-      const rows = d3.max(tr.ts, (t) => t.row) + 1;
-      const H = rows * S + (rows - 1) * G;
-      const box = el('div', { class: 'fv-tree-box', style: `width:${W}px;height:${H}px` });
-      const svg = d3.create('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
-      const at = (r, c) => ({ x: c * (S + G), y: r * (S + G) });
-      for (const t of tr.ts) {
-        if (t.preRow == null) continue;
-        const a = at(t.preRow, t.preCol), z = at(t.row, t.col);
-        const on = pts(t) > 0;
-        const col = on ? (pts(t) >= t.maxPoints ? '#e2ad2b' : '#41b83f') : 'var(--color-border-line)';
-        const path = t.preCol === t.col ? `M${a.x + S / 2},${a.y + S} V${z.y - 4}` : `M${a.x + (t.col > t.preCol ? S : 0)},${a.y + S / 2} H${z.x + S / 2} V${z.y - 4}`;
-        svg.append('path').attr('d', path).style('fill', 'none').style('stroke', col).attr('stroke-width', 3);
-        svg.append('path').attr('d', `M${z.x + S / 2 - 5},${z.y - 7} L${z.x + S / 2 + 5},${z.y - 7} L${z.x + S / 2},${z.y - 1}z`).style('fill', col);
+    const arrow = (pr, pc, r, c, active) => {
+      // Placed like TalentReqArrow in the sim UI: it starts on the parent's cell and its length is in cells.
+      const a = el('div', { class: 'talent-picker-req-arrow' });
+      let rowEnd = Math.max(pr, r) + 1, colEnd = Math.max(pc, c) + 1, dir;
+      if (pr === r) {
+        dir = pc < c ? 'right' : 'left';
+        a.dataset.reqArrowColSize = String(Math.abs(pc - c));
+        colEnd = dir === 'left' ? colEnd + 1 : colEnd - 1;
+      } else if (pc === c) {
+        dir = 'down';
+        a.dataset.reqArrowRowSize = String(Math.abs(pr - r));
+        rowEnd += 1;
+      } else {
+        dir = pc < c ? 'rightdown' : 'leftdown';
+        a.dataset.reqArrowColSize = String(Math.abs(pc - c));
+        a.dataset.reqArrowRowSize = String(Math.abs(pr - r));
+        rowEnd += 1;
+        colEnd = dir === 'rightdown' ? colEnd + 1 : colEnd - 1;
+        a.append(el('div'));
       }
-      box.append(svg.node());
-      for (const t of tr.ts) {
-        const p = pts(t), c = at(t.row, t.col);
-        const cell = tt(el('button', { class: `fv-tal ${p === 0 ? 'zero' : p >= t.maxPoints ? 'max' : 'part'}`, style: `left:${c.x}px;top:${c.y}px`, 'aria-label': `${t.name} ${p} of ${t.maxPoints}` },
-          iconImg(t.icon, '') || el('span', { text: t.name.slice(0, 2) }), el('b', { text: `${p}/${t.maxPoints}` })), `tal:${b.class}:${t.tree}:${t.idx}`, true, b.id);
-        box.append(cell);
-      }
-      const art = (rowsOf('treeart') || []).find((a) => a.class === b.class && +a.tree === tr.ti);
-      return el('div', { class: 'fv-tree' }, el('div', { class: 'art', style: art && art.bg ? `background-image:url("${art.bg}")` : '' }),
-        el('div', { class: 'fv-tree-h' }, el('span', { style: 'color:var(--color-fg);font-weight:500;font-size:var(--cds-font-size-body);display:flex;align-items:center' }, art ? iconImg(art.icon, 'fv-ico md') : null, tr.name), el('span', { text: `${tr.spent} points` })), box);
-    }));
+      a.classList.add(`talent-picker-req-arrow-${dir}`);
+      Object.assign(a.style, { gridRow: String(pr + 1), gridColumn: String(pc + 1), gridRowEnd: String(rowEnd), gridColumnEnd: String(colEnd), zIndex: '1' });
+      if (active) a.dataset.reqActive = 'true';
+      return a;
+    };
+    const icons = iconMap();
+    host.replaceChildren(el('div', { class: 'talents-picker-root' }, el('div', { class: 'talents-picker-inner' }, el('div', { id: 'talents-carousel', class: 'carousel' },
+      el('div', { class: 'carousel-inner' }, ...shown.map((tr) => {
+        const rows = d3.max(tr.ts, (t) => t.row) + 1;
+        const cell = 'calc(var(--talent-icon-size) * 1.4)';
+        const main = el('div', { class: 'talent-tree-main', style: `grid-template-rows:repeat(${rows},1fr);grid-template-columns:repeat(4,1fr);height:calc(${cell} * ${rows});max-width:calc(${cell} * 4)` });
+        for (const t of tr.ts) if (t.preRow != null) main.append(arrow(t.preRow, t.preCol, t.row, t.col, pts(t) > 0));
+        for (const t of tr.ts) {
+          const p = pts(t);
+          const u = icons && (icons.get(t.icon) || icons.get('inv_misc_questionmark'));
+          main.append(tt(el('a', {
+            class: `talent-picker-root${p >= t.maxPoints ? ' talent-full' : ''}`, 'data-points': String(p), 'data-max-points': String(t.maxPoints),
+            style: `grid-row:${t.row + 1};grid-column:${t.col + 1};z-index:2;${u ? `background-image:url("${u}")` : ''}`, 'aria-label': `${t.name} ${p} of ${t.maxPoints}`,
+          }, el('span', { class: 'talent-picker-points', text: `${p}/${t.maxPoints}` })), `tal:${b.class}:${t.tree}:${t.idx}`, true, b.id));
+        }
+        const art = (rowsOf('treeart') || []).find((a) => a.class === b.class && +a.tree === tr.ti);
+        return el('div', { class: 'carousel-item active' }, el('div', { class: 'talent-tree-picker-root' },
+          el('div', { class: 'talent-tree-header' },
+            el('span', { class: 'talent-tree-icon' }, art ? iconImg(art.icon, '') : null, el('label', { class: 'talent-tree-points', text: String(tr.spent) })),
+            el('span', { class: 'talent-tree-title', text: tr.name })),
+          el('div', { class: 'talent-tree-background', style: art && art.bg ? `background-image:url("${art.bg}")` : '' }),
+          main));
+      }))))));
   };
 
   // ---------- stat weights ----------
@@ -2240,7 +1362,9 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
 
   // ---------- gear (paper doll, as the sim UI's gear picker) ----------
   const SLOT_ICON = { Head: 'head', Neck: 'neck', Shoulders: 'shoulders', Back: 'shirt', Chest: 'chest', Wrist: 'wrists', Hands: 'hands', Waist: 'waist', Legs: 'legs', Feet: 'feet', 'Ring 1': 'finger', 'Ring 2': 'finger', 'Trinket 1': 'trinket', 'Trinket 2': 'trinket', 'Main hand': 'mainhand', 'Off hand': 'offhand', Ranged: 'ranged' };
-  const DOLL = [['Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrist'], ['Hands', 'Waist', 'Legs', 'Feet', 'Ring 1', 'Ring 2', 'Trinket 1', 'Trinket 2'], ['Main hand', 'Off hand', 'Ranged']];
+  // The sim UI's gear picker (gear_picker.tsx) and character sheet (character_stats.tsx) markup, read only.
+  const GEAR_LEFT = ['Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrist', 'Main hand', 'Off hand', 'Ranged'];
+  const GEAR_RIGHT = ['Hands', 'Waist', 'Legs', 'Feet', 'Ring 1', 'Ring 2', 'Trinket 1', 'Trinket 2'];
   const drawGear = (b) => {
     const host = $('#sp-gear');
     if (!specWait(host, ['gear'], b)) return;
@@ -2248,29 +1372,35 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
     const by = new Map(gear.map((g) => [g.slot, g]));
     const twoHand = (g) => /Two-Hand|Staff|Polearm/i.test(arr(ttRow('i' + g.itemId)?.lines).map((l) => l[1]).join(' '));
     const sets = d3.rollup(gear, (v) => v.length, (g) => ttRow('i' + g.itemId)?.set || null);
-    const slot = (name, side) => {
+    const icons = iconMap();
+    const iconUrl = (name) => (icons && name ? icons.get(name) || null : null);
+    const slot = (name) => {
       const g = by.get(name);
       const W = `build=${enc(b.id)}&slot=${enc(name)}`;
+      const iconEl = (u) => el('a', { class: 'item-picker-icon', role: 'button', style: u ? `background-image:url("${u}")` : '' });
       if (!g) {
         const mh = by.get('Main hand');
-        return el('div', { class: `fv-slot empty ${side}` }, el('span', { class: 'ib' }, iconImg('slot_' + SLOT_ICON[name], 'fv-ico')),
-          el('span', { class: 'lb' }, el('span', { class: 'sn', text: name }), el('span', { class: 'en', text: name === 'Off hand' && mh && twoHand(mh) ? 'Two-hand weapon in the main hand' : 'Empty' })));
+        return el('div', { class: 'item-picker-root fv-slot-empty' },
+          el('div', { class: 'item-picker-icon-wrapper' }, iconEl(iconUrl('slot_' + SLOT_ICON[name]))),
+          el('div', { class: 'item-picker-labels-container' },
+            el('span', { class: 'item-picker-name text-muted', text: name === 'Off hand' && mh && twoHand(mh) ? 'Two-hand weapon in the main hand' : `${name}: empty` })));
       }
       const r = ttRow('i' + g.itemId);
       const q = r?.quality || g.quality || 'common';
       const set = r?.set ? r.set : null;
       const use = arr(r?.lines).some((l) => /^Use:/.test(String(l[1])));
       const synth = /Synthetic/.test(g.item) && /^Trinket/.test(name);
-      return tt(el('button', { class: `fv-slot q-${q} ${side}`, 'data-key': `${enc(b.id)},${enc(name)}` },
-        el('span', { class: 'ib' }, g.icon ? iconImg(g.icon, 'fv-ico') : iconImg('slot_' + SLOT_ICON[name], 'fv-ico'), g.ilvl ? mark(el('span', { class: 'il', text: String(g.ilvl) }), 'gear', 'ilvl', W) : null),
-        el('span', { class: 'lb' },
-          el('span', { class: 'sn', text: name }),
-          mark(el('span', { class: `it fv-q-${q}`, text: g.item.replace(/ \(Phase 1\)$/, '') }), 'gear', 'item', W),
-          g.enchant ? mark(el('span', { class: 'en', text: g.enchant }), 'gear', 'enchant', W) : null,
-          set || use || synth ? el('span', { class: 'bd' }, set ? el('em', { class: 'set', text: `Set ${sets.get(set)}/${r.setSize ?? sets.get(set)}` }) : null, synth ? el('em', { text: use ? 'On use' : 'Stat trinket' }) : use ? el('em', { text: 'On use' }) : null) : null)),
+      return tt(el('div', { class: 'item-picker-root', 'data-key': `${enc(b.id)},${enc(name)}` },
+        el('div', { class: 'item-picker-icon-wrapper' },
+          g.ilvl ? mark(el('span', { class: 'item-picker-ilvl', text: String(g.ilvl) }), 'gear', 'ilvl', W) : null,
+          iconEl(iconUrl(g.icon) || iconUrl('slot_' + SLOT_ICON[name]))),
+        el('div', { class: 'item-picker-labels-container' },
+          mark(el('a', { class: `item-picker-name item-quality-${q}`, role: 'button', text: g.item.replace(/ \(Phase 1\)$/, '') }), 'gear', 'item', W),
+          g.enchant ? mark(el('a', { class: 'item-picker-enchant', role: 'button', text: g.enchant }), 'gear', 'enchant', W) : null,
+          set || use || synth ? el('span', { class: 'fv-gear-tags' }, set ? el('em', { class: 'set', text: `Set ${sets.get(set)}/${r.setSize ?? sets.get(set)}` }) : null, synth ? el('em', { text: use ? 'On use' : 'Stat trinket' }) : use ? el('em', { text: 'On use' }) : null) : null)),
       'g:' + name);
     };
-    host.replaceChildren(el('div', { class: 'col l' }, ...DOLL[0].map((n) => slot(n, 'l'))), el('div', { class: 'col r' }, ...DOLL[1].map((n) => slot(n, 'r'))), el('div', { class: 'wpn' }, ...DOLL[2].map((n) => slot(n, 'w'))));
+    host.replaceChildren(el('div', { class: 'gear-picker-left tab-panel-col' }, ...GEAR_LEFT.map(slot)), el('div', { class: 'gear-picker-right tab-panel-col' }, ...GEAR_RIGHT.map(slot)));
   };
 
   // ---------- character stats (as the sim UI's character sheet) ----------
@@ -2283,14 +1413,15 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
     const host = $('#sp-stats');
     if (!specWait(host, ['stats'], b)) return;
     const st2 = new Map(rowsOf('stats').filter((s) => s.build === b.id).map((s) => [s.stat, s]));
-    host.replaceChildren(...STAT_GROUPS.map(([g, ks]) => {
+    host.replaceChildren(el('table', { class: 'character-stats-table' }, ...STAT_GROUPS.map(([, ks]) => {
       const have = ks.filter((k) => st2.has(k));
       if (!have.length) return null;
-      return el('div', { class: 'grp' }, el('span', { class: 'gh', text: g }), ...have.map((k) => {
+      return el('tbody', {}, ...have.map((k) => {
         const s = st2.get(k);
-        return el('div', { class: 'fv-stat' }, el('span', { text: s.label }), mark(el('b', { text: PCT_STATS.has(k) ? f2(s.value) + '%' : d3.format(',')(Math.round(s.value)) }), 'stats', 'value', `build=${enc(b.id)}&stat=${enc(k)}`));
+        return el('tr', { class: 'character-stats-table-row' }, el('td', { class: 'character-stats-table-label', text: s.label }),
+          el('td', { class: 'character-stats-table-value' }, mark(el('span', { text: PCT_STATS.has(k) ? f2(s.value) + '%' : d3.format(',')(Math.round(s.value)) }), 'stats', 'value', `build=${enc(b.id)}&stat=${enc(k)}`)));
       }));
-    }).filter(Boolean));
+    }).filter(Boolean)));
   };
 
   // ---------- consumes and buffs (as the sim UI's icon pickers) ----------
@@ -2855,7 +1986,7 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
 
   // ---------- static placeholders (headline figures, method text) ----------
   const fillStatic = () => {
-    document.querySelectorAll('#fv [data-source][data-field][data-row]').forEach((n) => {
+    document.querySelectorAll('.dps-report-sim-ui [data-source][data-field][data-row]').forEach((n) => {
       const src = n.getAttribute('data-source');
       const r = dash.data(src);
       if (r.status !== 'ok') {
@@ -2910,8 +2041,7 @@ ol.fv-list li::marker { font-size: var(--cds-font-size-caption); font-weight: 60
   const h = location.hash.slice(1);
   if (pages.includes(h)) st.tab = h;
   else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
-  document.querySelectorAll('.fv-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === st.tab)));
-  document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== st.tab; });
+  document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === st.tab)); b.classList.toggle('active', b.dataset.tab === st.tab); });
+  document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== st.tab; p.classList.toggle('active', p.dataset.page === st.tab); });
   dash.onData(render);
-})();
-</script>
+}

@@ -8,15 +8,14 @@ description: Regenerate the level 60 DPS Report (ui/dps_report) from fresh sims,
 The DPS Report ranks every level 60 DPS preset and explains each one (races, talents,
 gear, rotation, consumes, timelines). It has one source and two outputs:
 
-- `ui/dps_report/report.html`: the page. `runtime.js` gives it its `dash.data` /
-  `dash.onData` / `dash.calc` API, and `theme.css` its colours.
+- `ui/dps_report/`: the page (`layout.html`, `report.js`, styles in `ui/scss/dps_report/`), in
+  the sim UI's look. See its README.
 - `ui/dps_report/data/<id>.json`: the datasets, one file each, described in
   `ui/dps_report/datasets.json`. Rows of per-build datasets carry `build` (the preset
   id, `<class>__<preset>`; `builds.json` calls it `id`).
 - Output 1, sim UI: `/classic/dps_report/` (vite builds `ui/dps_report/index.html`).
-- Output 2, artifact: `node tools/dps_report/build_standalone.mjs` writes
-  `dist/dps_report.html` (everything inlined), published to
-  https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR.
+- Output 2, artifact: `make dps-report-artifact` writes `dist/dps_report.html` (everything
+  inlined), published to https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR.
 
 This normally runs in a Claude Code web session, because a full refresh spins up a dozen
 or more subagents for hours. Work on a branch, never directly on `master`.
@@ -42,41 +41,44 @@ Tell the user the scope in one line before starting long runs.
 
 ## 2. Generate data for the scoped builds
 
-The pipeline lives in `tools/dps_report/` (see its README for scripts and order). Run it
-for the scoped builds only, writing into a scratch folder (not `ui/dps_report/data/`)
-with the same file names. Split the builds across subagents by class; each one writes
-its own class's rows.
+The pipeline is `tools/dps_report/README.md` and its Python scripts (on
+`claude/wow-forever-dps-presets-m9u15h` until that branch is merged). Follow it: build the
+merged tree, refresh the scoped builds' requests, rerun the sim steps for those builds only
+(its "Rerunning only the stale parts" section says which outputs to delete), then
+`python3 build_data.py`, which writes every dataset to `$DASH_DIR/data/`. Split the builds
+across subagents by class; each one runs its own class's sims.
+
+Skip the README's "Publishing" section and its `rd/` harness: they are for the old
+Dashboard-type artifact. Steps 3 to 5 here replace them.
 
 The standards in `orchestration/standards.md` decide the settings: 20,000+ iterations,
 the generic boss, 120 / 180 / 300 s, binaries rebuilt after the last gear or DB change.
 
-Whole-report datasets (`race_summary`, `race_notes`, the headline text in `notes`) are
-summaries across every build. Recompute them after merging (step 3), from the merged
-data, not from the partial run alone.
-
 ## 3. Merge, then record provenance
 
 ```bash
-node tools/dps_report/merge.mjs <scratch-folder>
+node tools/dps_report/merge.mjs "$DASH_DIR/data"
 node tools/dps_report/stale.mjs --record <build ids...> --iterations 20000
 ```
 
-`merge.mjs` replaces only the rows of the builds in the scratch folder, merges lookup
-tables (icons, names, tooltips, talent trees) by key, and stamps `updated` in
-`datasets.json`. Record only the builds actually re-simmed, at the commit their sims
+`merge.mjs` replaces only the rows of the builds in that folder, merges lookup tables
+(icons, names, tooltips, talent trees) by key, replaces whole-report datasets
+(`race_summary`, `race_notes`, ...), and stamps `updated` in `datasets.json`. `build_data.py`
+rebuilds every dataset from all the sim outputs, so its whole-report datasets already
+cover every build. Record only the builds actually re-simmed, at the commit their sims
 ran on (`--commit <rev>` if it isn't `HEAD`).
 
 ## 4. Check both outputs
 
-- Rebuild the artifact file: `node tools/dps_report/build_standalone.mjs`. It must stay
-  under 16 MB.
+- Build the artifact file: `make dps-report-artifact` (or
+  `node tools/dps_report/build_artifact.mjs`). It fails if the file is over 16 MB.
 - Open `dist/dps_report.html` in the pre-installed Chromium (Playwright with
   `executablePath: '/opt/pw-browsers/chromium'`; wrap the file in
   `<!doctype html><html><head><meta charset="utf-8"></head><body>...</body></html>`
-  for a local look). Click through Ranking, Races, Specs, Compare and Method at phone
-  width, and look for console errors.
-- If you changed `report.html`, `runtime.js` or `index.ts`, also check
-  `npx vite serve` at `/classic/dps_report/`.
+  for a local look, and pass the session's proxy so d3 loads from cdnjs). Click through
+  Ranking, Races, Specs, Compare and Method at phone and desktop width, and look for
+  console errors.
+- If you changed the page itself, also check `npx vite serve` at `/classic/dps_report/`.
 
 ## 5. Publish and commit
 
@@ -91,6 +93,7 @@ ran on (`--commit <rev>` if it isn't `HEAD`).
 
 ## Editing the page itself
 
-Change `ui/dps_report/report.html`, never the published artifact. It only reads data
-through `dash.data(id)` inside `dash.onData`. A new dataset needs an entry in
-`datasets.json` and a file in `data/`.
+Change `ui/dps_report/` and `ui/scss/dps_report/`, never the published artifact. Keep the
+sim UI's look: use its classes and scss variables rather than new colours or fonts. The
+page reads data only through `dash.data(id)` inside `dash.onData`. A new dataset needs an
+entry in `datasets.json` and a file in `data/`.
