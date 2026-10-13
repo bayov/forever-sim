@@ -727,23 +727,27 @@ export const EncounterLevel60 = level60Encounter('Level 60', MobType.MobTypeUnkn
 export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)', MobType.MobTypeHumanoid);
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
-// encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-12, Undead,
-// 20000 iterations, at 120 / 180 / 300 sec, on the synthetic sets built to the Forever budget (standards 1b,
-// 2026-10-13: armor 650.5, weapons 63.9, bow 19.5 weighted linear points a set, plus two synthetic ilvl 71
-// trinkets, 31 Agility and 15 crit rating, and +335 attack power for 20 sec every 2 min):
-//   Combat Daggers      737.1 / 714.6 / 695.8 (the default)
-//   Seal Fate Daggers   694.3 / 683.1 / 674.4, 4.4% behind Combat Daggers
-//   Mutilate            690.4 / 679.9 / 672.1
-//   Combat Swords       715.6 / 692.0 / 673.1
-//   Subtlety            667.5 / 653.2 / 643.5
-//   Seal Fate Swords    667.5 / 657.3 / 647.8, 5.0% behind Combat Swords
+// encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-13, Undead,
+// 20000 iterations, at 120 / 180 / 300 sec, against the generic boss (no creature type), on the synthetic
+// sets built to the Forever budget (standards 1b: armor 650.5, weapons 63.9, bow 19.5 weighted linear
+// points a set, plus two synthetic ilvl 71 trinkets, 31 Agility and 15 crit rating, and +335 attack
+// power for 20 sec every 2 min), with a Dense Sharpening Stone beside the poison on each blade:
+//   Combat Daggers      730.3 / 708.1 / 689.7 (the default)
+//   Seal Fate Daggers   685.6 / 674.4 / 666.0, 4.8% behind Combat Daggers
+//   Mutilate            680.4 / 669.8 / 662.1
+//   Combat Swords       702.0 / 679.1 / 660.9
+//   Subtlety            657.0 / 643.6 / 634.0
+//   Seal Fate Swords    655.0 / 644.7 / 635.6, 5.1% behind Combat Swords
+// The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss) at 180 sec: Combat Daggers 730.1, Seal Fate
+// Daggers 697.8, Mutilate 693.0, Combat Swords 702.8, Subtlety 666.6, Seal Fate Swords 667.4.
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
-// no Venom build. Undead is the best race for every build, 5 (swords) to 14 ahead of the next. The best
-// Alliance race is the Gnome, except the Human on Combat Swords. Grimstitch Armor's 4 and 5 piece
-// bonuses would add about 8 and 6 to Combat Daggers. The trinkets are synthetic (Forever's real
-// Phase 1 trinkets are removed or not simulated), and the fight does not open from Stealth (a raid
-// rogue rarely does), so Subtlety gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the
-// talent by talent verification.
+// no Venom build. Undead is the best race for every build, 4 (swords) to 13 ahead of the next. The best
+// Alliance race is the Gnome, except the Human on Combat Swords. An Orc with axes in place of the swords
+// is 1.5 ahead of the Undead on Combat Swords. Grimstitch Armor's 4 and 5 piece bonuses would add about
+// 8 and 6 to Combat Daggers. The trinkets are synthetic (Forever's real Phase 1 trinkets are removed or
+// not simulated), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety gets
+// Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the talent
+// by talent verification.
 const level60Build = (
 	name: string,
 	tooltip: string,
