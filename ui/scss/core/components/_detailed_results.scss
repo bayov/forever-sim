@@ -34,6 +34,7 @@
 }
 
 .dr-root {
+	--dr-toolbar-height: 3rem;
 	display: flex;
 	flex-direction: column;
 
@@ -96,16 +97,19 @@
 	}
 }
 
-// The sub tabs and the player and target pickers. It sticks under the sim header while we
-// scroll, and then it takes the header's frosted background and its full width, so the two
+// The Results tab's own tabs and the player and target pickers. It reads as the second level
+// of the menu: a "Results" label in front, tabs with an icon and a gold line under the open one
+// like the main tabs, and a base line like the header's. It sticks under the sim header while
+// we scroll, and then it takes the header's frosted background and its full width, so the two
 // read as one bar.
 .dr-toolbar {
 	position: sticky;
 	top: var(--sim-header-height);
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	gap: var(--spacer-3);
-	padding: var(--spacer-2) var(--sim-content-padding-x);
+	height: var(--dr-toolbar-height);
+	padding: 0 var(--sim-content-padding-x);
 	margin-left: calc(-1 * var(--sim-content-padding-x));
 	margin-right: calc(-1 * var(--sim-content-padding-x));
 	transition:
@@ -114,18 +118,58 @@
 	// This needs to be less than var(--header-z-index) otherwise the toolbar overlaps the import/export dropdowns
 	z-index: calc(var(--header-z-index) - 1);
 
+	&::after {
+		content: '';
+		position: absolute;
+		left: var(--sim-content-padding-x);
+		right: var(--sim-content-padding-x);
+		bottom: 0;
+		height: 1px;
+		background: var(--line-color);
+		transition:
+			left 0.15s ease-in-out,
+			right 0.15s ease-in-out;
+	}
+
 	&.stuck {
 		background: rgba(11, 15, 21, 0.75);
 		backdrop-filter: blur(8px);
 		box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5);
+
+		&::after {
+			left: 0;
+			right: 0;
+		}
 	}
 
 	& > * {
 		min-height: 0;
 	}
 
+	.dr-toolbar-title,
+	.results-filter {
+		align-self: center;
+	}
+
 	.input-root {
 		margin-bottom: 0;
+	}
+}
+
+.dr-toolbar-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--text-muted-color);
+	white-space: nowrap;
+
+	.fa-chevron-right {
+		font-size: 0.5rem;
+		opacity: 0.6;
 	}
 }
 
@@ -135,33 +179,76 @@
 	box-shadow: none;
 }
 
-// The sub tabs read as one pill shaped control, so they don't look like a second row of the
-// main tabs above.
 .dr-tabs {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 2px;
-	padding: 3px;
-	background: rgba($panel-bg, 0.82);
-	border: 1px solid var(--line-color);
-	border-radius: 999px;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	gap: 0.25rem;
+	border: 0;
+	// On a narrow page the tabs scroll sideways instead of wrapping into a second row.
+	overflow-x: auto;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	.nav-item {
+		display: flex;
+	}
 
 	.nav-link {
-		padding: 0.3rem 0.85rem;
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0 0.75rem;
 		border: 0;
-		border-radius: 999px;
+		border-radius: 0;
+		background: transparent;
 		font-size: 0.8125rem;
 		font-weight: 600;
+		white-space: nowrap;
 		color: var(--text-muted-color);
-		background: transparent;
+		transition: color 0.15s ease-in-out;
+
+		i {
+			font-size: 0.75rem;
+			opacity: 0.75;
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: 0.75rem;
+			right: 0.75rem;
+			bottom: 0;
+			z-index: 1;
+			height: 2px;
+			border-radius: 2px 2px 0 0;
+			background: transparent;
+			transition: background-color 0.15s ease-in-out;
+		}
 
 		&:hover {
 			color: $ivory;
+
+			&::after {
+				background: var(--line-color-strong);
+			}
 		}
 
 		&.active {
-			color: $panel-bg;
-			background: $gold-soft;
+			color: $ivory;
+
+			i {
+				color: var(--gold-soft);
+				opacity: 1;
+			}
+
+			&::after {
+				background: var(--gold);
+			}
 		}
 	}
 }
@@ -285,7 +372,7 @@
 
 .metrics-table-header-cell {
 	position: sticky;
-	top: calc(var(--sim-header-height) + 3.25rem);
+	top: calc(var(--sim-header-height) + var(--dr-toolbar-height));
 	z-index: 1;
 	padding: var(--spacer-2) var(--spacer-2);
 	cursor: pointer;

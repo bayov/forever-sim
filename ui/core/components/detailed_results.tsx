@@ -25,6 +25,7 @@ type Tab = {
 	isActive?: boolean;
 	targetId: string;
 	label: string;
+	icon: string;
 	classes?: string[];
 };
 
@@ -33,38 +34,46 @@ const tabs: Tab[] = [
 		isActive: true,
 		targetId: 'damageTab',
 		label: 'Damage',
+		icon: 'fa-bolt',
 		classes: ['damage-metrics-tab'],
 	},
 	{
 		targetId: 'threatTab',
 		label: 'Threat',
+		icon: 'fa-skull',
 		classes: ['threat-metrics-tab'],
 	},
 	{
 		targetId: 'healingTab',
 		label: 'Healing',
+		icon: 'fa-heart-pulse',
 		classes: ['healing-metrics-tab'],
 	},
 	{
 		targetId: 'damageTakenTab',
 		label: 'Damage Taken',
+		icon: 'fa-shield-halved',
 		classes: ['threat-metrics-tab'],
 	},
 	{
 		targetId: 'aurasTab',
 		label: 'Auras',
+		icon: 'fa-wand-magic-sparkles',
 	},
 	{
 		targetId: 'castsTab',
 		label: 'Casts',
+		icon: 'fa-hand-sparkles',
 	},
 	{
 		targetId: 'resourcesTab',
 		label: 'Resources',
+		icon: 'fa-droplet',
 	},
 	{
 		targetId: 'eventsTab',
 		label: 'Events',
+		icon: 'fa-bars-staggered',
 	},
 ];
 
@@ -98,10 +107,12 @@ export abstract class DetailedResults extends Component {
 		this.rootElem.appendChild(
 			<div className="dr-root dr-no-results">
 				<div className="dr-toolbar">
-					<div className="results-filter"></div>
-					<div className="tabs-filler"></div>
+					<span className="dr-toolbar-title">
+						Results
+						<i className="fas fa-chevron-right" />
+					</span>
 					<ul className="nav dr-tabs" attributes={{ role: 'tablist' }}>
-						{tabs.map(({ label, targetId, isActive, classes }) => (
+						{tabs.map(({ label, icon, targetId, isActive, classes }) => (
 							<li className={`nav-item dr-tab-tab ${classes?.join(' ') || ''}`} attributes={{ role: 'presentation' }}>
 								<button
 									className={`nav-link${isActive ? ' active' : ''}`}
@@ -116,11 +127,14 @@ export abstract class DetailedResults extends Component {
 										bsToggle: 'tab',
 										bsTarget: `#${targetId}`,
 									}}>
+									<i className={`fas ${icon}`} />
 									{label}
 								</button>
 							</li>
 						))}
 					</ul>
+					<div className="tabs-filler"></div>
+					<div className="results-filter"></div>
 				</div>
 				<div className="tab-content">
 					<div id="noResultsTab" className="tab-pane dr-tab-content fade active show">
