@@ -168,10 +168,10 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // from deep Shadow with Discipline, deep Shadow with Holy, and 31 Discipline (Power Infusion)
 // with 20 Shadow. On 2026-10-12 the build is 863.5 / 862.4 / 861.7 at 120 / 180 / 300 sec as an
 // Undead.
-// - Shadow 33: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
+// - Shadow 31: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
 //   Shadow Affinity and a point of Shadow Reach only fill the rows (threat and range).
-// - Discipline 18: Twin Disciplines 5 (13 DPS), Mental Strength 5, Inner Focus (about 1).
+// - Discipline 20: Twin Disciplines 5 (13 DPS), Mental Strength 5, Inner Focus (about 1).
 //   These were measured on the first synthetic set (more spell power), the searches on the
 //   final set end on the same build.
 //   Mental Agility, Meditation and the row 2 points fill the rows: mana never runs out.
