@@ -372,12 +372,30 @@ export class RaidSimResultsManager {
 		} else {
 			const curMetrics = curMetricsTemp as DistributionMetricsProto;
 			const refMetrics = refMetricsTemp as DistributionMetricsProto;
-			const isDiff = this.applyZTestTooltip(elem, ref.iterations, refMetrics.avg, refMetrics.stdev, cur.iterations, curMetrics.avg, curMetrics.stdev, !!preNormalizedErrors);
+			const isDiff = this.applyZTestTooltip(
+				elem,
+				ref.iterations,
+				refMetrics.avg,
+				refMetrics.stdev,
+				cur.iterations,
+				curMetrics.avg,
+				curMetrics.stdev,
+				!!preNormalizedErrors,
+			);
 			formatDeltaTextElem(elem, refMetrics.avg, curMetrics.avg, precision, lowerIsBetter, !isDiff);
 		}
 	}
 
-	private applyZTestTooltip(elem: HTMLElement, n1: number, avg1: number, stdev1: number, n2: number, avg2: number, stdev2: number, preNormalized: boolean): boolean {
+	private applyZTestTooltip(
+		elem: HTMLElement,
+		n1: number,
+		avg1: number,
+		stdev1: number,
+		n2: number,
+		avg2: number,
+		stdev2: number,
+		preNormalized: boolean,
+	): boolean {
 		const delta = avg1 - avg2;
 		const err1 = preNormalized ? stdev1 : stdev1 / Math.sqrt(n1);
 		const err2 = preNormalized ? stdev2 : stdev2 / Math.sqrt(n2);
@@ -441,6 +459,7 @@ export class RaidSimResultsManager {
 	static makeToplineResultsContent(simResult: SimResult, filter?: SimResultFilter, options: ToplineResultOptions = {}) {
 		const resultColumns = this.toplineColumns(simResult, filter, options);
 		if (options.asList) return this.buildResultsList(resultColumns);
+		if (options.asCards) return this.buildResultsCards(resultColumns);
 		return this.buildResultsTable(resultColumns);
 	}
 
@@ -461,6 +480,7 @@ export class RaidSimResultsManager {
 					name: 'DPS',
 					average: dpsMetrics.avg,
 					stdev: dpsMetrics.stdev,
+					range: dpsMetrics.max > 0 ? [dpsMetrics.min, dpsMetrics.max] : undefined,
 					classes: this.getResultsLineClasses('dps'),
 				});
 
@@ -586,6 +606,7 @@ export class RaidSimResultsManager {
 				average: secondsOOM,
 				classes: [this.getResultsLineClasses('oom'), dangerLevel].join(' '),
 				unit: 'seconds',
+				note: `${formatToPercent(percentOOM * 100, { maximumFractionDigits: 1 })} of the fight`,
 			});
 		}
 
@@ -655,11 +676,60 @@ export class RaidSimResultsManager {
 		);
 	}
 
+	// The results as cards, one per metric, for the top of the Results tab.
+	static buildResultsCards(data: ResultMetric[]): Element {
+		return (
+			<div className="results-cards">
+				{data.map(({ name, average, stdev, range, note, classes, unit }) => {
+					const label = <div className="results-card-label">{name}</div>;
+					if (TOOLTIP_METRIC_LABELS[name]) {
+						tippy(label, { content: TOOLTIP_METRIC_LABELS[name], ignoreAttributes: true });
+					}
+					const errorDecimals = unit === 'percentage' ? 2 : 0;
+					const details: Array<Element> = [];
+					if (stdev) {
+						details.push(
+							<span>
+								<i className="fas fa-plus-minus fa-xs"></i> {formatToNumber(stdev, { maximumFractionDigits: errorDecimals })}
+							</span>,
+						);
+					}
+					if (range) {
+						details.push(
+							<span className="results-card-range">
+								{formatToNumber(range[0], { maximumFractionDigits: 0 })} to {formatToNumber(range[1], { maximumFractionDigits: 0 })}
+							</span>,
+						);
+					}
+					if (note) details.push(<span>{note}</span>);
+					return (
+						<div className={clsx('results-card', classes)}>
+							{label}
+							<div className="topline-result-avg">{this.formatResultValue(average, unit)}</div>
+							{details.length ? <div className="results-card-details">{details}</div> : null}
+						</div>
+					);
+				})}
+			</div>
+		);
+	}
+
+	static formatResultValue(average: number, unit: ResultMetric['unit']): string {
+		switch (unit) {
+			case 'percentage':
+				return formatToPercent(average);
+			case 'seconds':
+				return formatToNumber(average, { style: 'unit', unit: 'second', unitDisplay: 'narrow' });
+			default:
+				return formatToNumber(average);
+		}
+	}
+
 	static buildResultsList(data: ResultMetric[]): Element {
 		return (
 			<>
 				{data.map(column => {
-					const errorDecimals = (column.unit === 'percentage') ? 2 : 0;
+					const errorDecimals = column.unit === 'percentage' ? 2 : 0;
 					return (
 						<div className={`results-metric ${column.classes}`}>
 							<span className="topline-result-avg">{column.average.toFixed(2)}</span>
@@ -683,12 +753,17 @@ export class RaidSimResultsManager {
 type ToplineResultOptions = {
 	showOutOfMana?: boolean;
 	asList?: boolean;
+	asCards?: boolean;
 };
 
 export type ResultMetric = {
 	name: keyof typeof TOOLTIP_METRIC_LABELS;
 	average: number;
 	stdev?: number;
+	// The lowest and the highest value of an iteration.
+	range?: [number, number];
+	// A short line under the value, like how much of the fight we spent out of mana.
+	note?: string;
 	classes?: string;
 	unit?: 'percentage' | 'number' | 'seconds' | undefined;
 };
