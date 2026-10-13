@@ -26,40 +26,40 @@ import (
 // ilvl + 2.92), which takes 4 or 5 stat lines a piece. The two-hander gets 1.035 * L(76) = 90.6, the totem
 // no stats.
 //
-// The mix follows standards 5a and 5b, the Enhancement row of orchestration/gear_targets.md: Season of
-// Discovery's melee stats with this sim's Intellect and spell power kept (the hybrid ruling), 19.4%
-// Stamina, 13.0% Strength, 2.9% Agility, 10.4% Intellect, 10% Spirit, 3.9% attack power, 30.7% spell power,
-// 3.6% hit and 6.0% crit. The hit goes to the cap (90 rating, the 9% melee cap against a level 63 boss),
-// Stamina keeps its own share, and the other stats keep the table's proportions in what is left. A stat's
-// share is its weight times its amount over the set's weighted total (839.6, the trinkets left out):
+// The mix follows standards 5a and 5b, the Enhancement row of orchestration/gear_targets.md (1a6968081):
+// Season of Discovery's melee stats with this sim's Intellect and spell power kept (the hybrid ruling).
+// Stamina (19.4%), Spirit (10%), Intellect (10.4%) and spell power (30.7%) hold their shares, the hit goes
+// to the cap (90 rating, the 9% melee cap against a level 63 boss), and Strength, Agility, attack power and
+// crit fill the rest in the table's proportions (13.0 / 2.9 / 3.9 / 6.0). A stat's share is its weight
+// times its amount over the set's weighted total (839.3, the trinkets left out):
 //
-//	stat      amount   share   target
-//	Stamina      161   19.2%   19.4 +- 1.5
-//	Strength     100   11.9%   13.0 +- 3
-//	Agility       22    2.6%    2.9
-//	Intellect     80    9.5%   10.4
-//	Spirit        78    9.3%   10
-//	AP            59    3.5%    3.9
-//	SP           271   27.8%   30.7 +- 3
-//	Crit          46    5.5%    6.0
+//	stat      amount   share   hit-adjusted target
+//	Stamina      164   19.5%   19.4 +- 1.5
+//	Strength      81    9.7%    9.5 +- 3
+//	Agility       18    2.1%    2.1
+//	Intellect     86   10.2%   10.4 (held)
+//	Spirit        83    9.9%   10
+//	AP            48    2.9%    2.8
+//	SP           298   30.5%   30.7 (held)
+//	Crit          37    4.4%    4.4
 //	Hit           90   10.7%   at the cap
 //
-// Per piece (target, weighted linear total, 1.7-norm value / shape target, stats). The armor comes to 748.6
-// and the two-hander to 91.0:
+// Per piece (target, weighted linear total, 1.7-norm value / shape target, stats). The armor comes to 748.5
+// and the two-hander to 90.8:
 //
-//	Head         83.3    83.5 (+0.2%)   44.9 /  46.5 (-3.5%)  12 Str, 13 Sta, 11 Int, 26 Crit, 25 SP
-//	Neck         48.3    47.9 (-0.7%)   28.7 /  28.0 (+2.2%)  12 Sta, 5 Agi, 12 Hit, 22 SP
-//	Shoulder     63.1    63.3 (+0.4%)   34.2 /  34.9 (-2.1%)  9 Str, 10 Sta, 8 Int, 20 Crit, 19 SP
-//	Back         48.3    48.3 (+0.1%)   28.0 /  28.0 (-0.1%)  10 Sta, 8 Int, 14 Spi, 19 SP
-//	Chest        83.3    83.1 (-0.3%)   48.1 /  46.5 (+3.3%)  18 Str, 19 Sta, 16 Int, 35 SP
-//	Wrist        48.3    48.5 (+0.4%)   27.9 /  28.0 (-0.6%)  28 AP, 9 Sta, 10 Hit, 18 SP
-//	Hands        63.1    63.1 (-0.0%)   33.1 /  34.9 (-5.3%)  11 Str, 12 Sta, 10 Int, 12 Hit, 21 SP
-//	Waist        67.7    68.0 (+0.4%)   36.4 /  37.4 (-2.6%)  13 Str, 6 Agi, 14 Sta, 20 Spi, 15 Hit
-//	Legs         83.3    83.2 (-0.1%)   47.9 /  46.5 (+3.0%)  17 Str, 18 Sta, 19 Hit, 34 SP
-//	Feet         63.1    62.9 (-0.2%)   33.9 /  34.9 (-2.9%)  6 Agi, 12 Sta, 10 Int, 16 Spi, 22 SP
-//	Finger       48.3    48.3 (+0.1%)   27.7 /  28.0 (-1.2%)  10 Str, 11 Sta, 11 Hit, 19 SP
-//	Finger II    48.3    48.3 (+0.1%)   28.0 /  28.0 (-0.1%)  10 Sta, 8 Int, 14 Spi, 19 SP
-//	Two-Hand     90.6    91.0 (+0.4%)  -              10 Str, 5 Agi, 11 Sta, 9 Int, 14 Spi, 31 AP, 11 Hit, 18 SP
+//	Head         83.3    83.7 (+0.4%)   45.2 /  46.5 (-2.9%)  11 Str, 15 Sta, 10 Int, 21 Crit, 31 SP
+//	Neck         48.3    48.1 (-0.4%)   27.0 /  28.0 (-3.8%)  10 Sta, 3 Agi, 7 Int, 10 Hit, 21 SP
+//	Shoulder     63.1    62.8 (-0.5%)   33.9 /  34.9 (-3.0%)  8 Str, 11 Sta, 8 Int, 16 Crit, 23 SP
+//	Back         48.3    47.9 (-0.7%)   28.3 /  28.0 (+0.8%)  11 Sta, 7 Int, 11 Spi, 22 SP
+//	Chest        83.3    83.5 (+0.2%)   44.8 /  46.5 (-3.7%)  12 Str, 16 Sta, 11 Int, 17 Spi, 32 SP
+//	Wrist        48.3    48.2 (-0.1%)   27.8 /  28.0 (-0.8%)  22 AP, 10 Sta, 10 Hit, 20 SP
+//	Hands        63.1    63.5 (+0.7%)   34.3 /  34.9 (-1.8%)  9 Str, 12 Sta, 8 Int, 13 Hit, 25 SP
+//	Waist        67.7    68.0 (+0.4%)   36.3 /  37.4 (-3.0%)  12 Str, 6 Agi, 16 Sta, 17 Spi, 17 Hit
+//	Legs         83.3    83.5 (+0.2%)   44.8 /  46.5 (-3.7%)  12 Str, 16 Sta, 11 Int, 17 Hit, 32 SP
+//	Feet         63.1    63.4 (+0.5%)   35.0 /  34.9 (+0.2%)  5 Agi, 13 Sta, 9 Int, 14 Spi, 26 SP
+//	Finger       48.3    48.1 (-0.4%)   28.0 /  28.0 (-0.0%)  8 Str, 11 Sta, 11 Hit, 21 SP
+//	Finger II    48.3    47.9 (-0.7%)   28.3 /  28.0 (+0.8%)  11 Sta, 7 Int, 11 Spi, 22 SP
+//	Two-Hand     90.6    90.8 (+0.2%)  -              9 Str, 4 Agi, 12 Sta, 8 Int, 13 Spi, 26 AP, 12 Hit, 23 SP
 //
 // Two synthetic trinkets at item level 71 (standards 8a and 1b): a stat trinket with 32 Strength and 14
 // crit rating (46.0 linear, 1.7-norm 36.4 against 36.8), and an on-use trinket of 335 attack power for 20 sec
@@ -84,8 +84,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990001, Name: "Enhancement Synthetic Head (Phase 1)", Icon: "inv_crown_02",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Strength: 12, stats.Stamina: 13, stats.Intellect: 11, stats.SpellPower: 25, stats.Armor: 392}.ToFloatArray(),
-		CritRating: 26,
+		Stats:      stats.Stats{stats.Strength: 11, stats.Stamina: 15, stats.Intellect: 10, stats.SpellPower: 31, stats.Armor: 392}.ToFloatArray(),
+		CritRating: 21,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -93,8 +93,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990002, Name: "Enhancement Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Agility: 5, stats.Stamina: 12, stats.SpellPower: 22}.ToFloatArray(),
-		HitRating: 12,
+		Stats:     stats.Stats{stats.Agility: 3, stats.Stamina: 10, stats.Intellect: 7, stats.SpellPower: 21}.ToFloatArray(),
+		HitRating: 10,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -102,8 +102,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990003, Name: "Enhancement Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_25",
 		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:      stats.Stats{stats.Strength: 9, stats.Stamina: 10, stats.Intellect: 8, stats.SpellPower: 19, stats.Armor: 317}.ToFloatArray(),
-		CritRating: 20,
+		Stats:      stats.Stats{stats.Strength: 8, stats.Stamina: 11, stats.Intellect: 8, stats.SpellPower: 23, stats.Armor: 317}.ToFloatArray(),
+		CritRating: 16,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -111,7 +111,7 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990004, Name: "Enhancement Synthetic Back (Phase 1)", Icon: "inv_misc_cape_05",
 		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats: stats.Stats{stats.Stamina: 10, stats.Intellect: 8, stats.Spirit: 14, stats.SpellPower: 19, stats.Armor: 54}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 7, stats.Spirit: 11, stats.SpellPower: 22, stats.Armor: 54}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -119,7 +119,7 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990005, Name: "Enhancement Synthetic Chest (Phase 1)", Icon: "inv_chest_leather_05",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Strength: 18, stats.Stamina: 19, stats.Intellect: 16, stats.SpellPower: 35, stats.Armor: 422}.ToFloatArray(),
+		Stats: stats.Stats{stats.Strength: 12, stats.Stamina: 16, stats.Intellect: 11, stats.Spirit: 17, stats.SpellPower: 32, stats.Armor: 422}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -127,7 +127,7 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990006, Name: "Enhancement Synthetic Wrist (Phase 1)", Icon: "inv_bracer_02",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Stamina: 9, stats.AttackPower: 28, stats.SpellPower: 18, stats.Armor: 198}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Stamina: 10, stats.AttackPower: 22, stats.SpellPower: 20, stats.Armor: 198}.ToFloatArray(),
 		HitRating: 10,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -136,8 +136,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990007, Name: "Enhancement Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_26",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Strength: 11, stats.Stamina: 12, stats.Intellect: 10, stats.SpellPower: 21, stats.Armor: 264}.ToFloatArray(),
-		HitRating: 12,
+		Stats:     stats.Stats{stats.Strength: 9, stats.Stamina: 12, stats.Intellect: 8, stats.SpellPower: 25, stats.Armor: 264}.ToFloatArray(),
+		HitRating: 13,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		SetName:        "Enhancement Synthetic (Phase 1)",
@@ -146,8 +146,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990008, Name: "Enhancement Synthetic Waist (Phase 1)", Icon: "inv_belt_23",
 		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Strength: 13, stats.Agility: 6, stats.Stamina: 14, stats.Spirit: 20, stats.Armor: 255}.ToFloatArray(),
-		HitRating: 15,
+		Stats:     stats.Stats{stats.Strength: 12, stats.Agility: 6, stats.Stamina: 16, stats.Spirit: 17, stats.Armor: 255}.ToFloatArray(),
+		HitRating: 17,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -155,8 +155,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990009, Name: "Enhancement Synthetic Legs (Phase 1)", Icon: "inv_pants_06",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Strength: 17, stats.Stamina: 18, stats.SpellPower: 34, stats.Armor: 369}.ToFloatArray(),
-		HitRating: 19,
+		Stats:     stats.Stats{stats.Strength: 12, stats.Stamina: 16, stats.Intellect: 11, stats.SpellPower: 32, stats.Armor: 369}.ToFloatArray(),
+		HitRating: 17,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		SetName:        "Enhancement Synthetic (Phase 1)",
@@ -165,7 +165,7 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990010, Name: "Enhancement Synthetic Feet (Phase 1)", Icon: "inv_boots_01",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats: stats.Stats{stats.Agility: 6, stats.Stamina: 12, stats.Intellect: 10, stats.Spirit: 16, stats.SpellPower: 22, stats.Armor: 290}.ToFloatArray(),
+		Stats: stats.Stats{stats.Agility: 5, stats.Stamina: 13, stats.Intellect: 9, stats.Spirit: 14, stats.SpellPower: 26, stats.Armor: 290}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -173,7 +173,7 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990011, Name: "Enhancement Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_07",
 		Type:      proto.ItemType_ItemTypeFinger,
-		Stats:     stats.Stats{stats.Strength: 10, stats.Stamina: 11, stats.SpellPower: 19}.ToFloatArray(),
+		Stats:     stats.Stats{stats.Strength: 8, stats.Stamina: 11, stats.SpellPower: 21}.ToFloatArray(),
 		HitRating: 11,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
@@ -182,7 +182,7 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990013, Name: "Enhancement Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:  proto.ItemType_ItemTypeFinger,
-		Stats: stats.Stats{stats.Stamina: 10, stats.Intellect: 8, stats.Spirit: 14, stats.SpellPower: 19}.ToFloatArray(),
+		Stats: stats.Stats{stats.Stamina: 11, stats.Intellect: 7, stats.Spirit: 11, stats.SpellPower: 22}.ToFloatArray(),
 		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
@@ -190,8 +190,8 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	{
 		Id: 990012, Name: "Enhancement Synthetic Two-Hand (Phase 1)", Icon: "inv_axe_09",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
-		Stats:     stats.Stats{stats.Strength: 10, stats.Agility: 5, stats.Stamina: 11, stats.Intellect: 9, stats.Spirit: 14, stats.AttackPower: 31, stats.SpellPower: 18}.ToFloatArray(),
-		HitRating: 11,
+		Stats:     stats.Stats{stats.Strength: 9, stats.Agility: 4, stats.Stamina: 12, stats.Intellect: 8, stats.Spirit: 13, stats.AttackPower: 26, stats.SpellPower: 23}.ToFloatArray(),
+		HitRating: 12,
 		// Spinal Reaper damage and speed.
 		WeaponDamageMin: 203, WeaponDamageMax: 305, WeaponSpeed: 3.4,
 		Ilvl: 76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,

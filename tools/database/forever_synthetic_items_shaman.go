@@ -26,16 +26,17 @@ import (
 // The mix follows standards 5a, the Elemental row of orchestration/gear_targets.md (after Season of
 // Discovery level 60 elemental BiS): 16.1% Stamina, 19.4% Intellect, 10% Spirit, 37.8% spell power, 4.8%
 // hit and 11.9% crit. The hit goes to the cap (item 4: 16% spell hit against a level 63 boss with Tidal
-// Focus 5 and the 2 piece bonus's 1%, so 100 rating), and the other stats keep the table's proportions in
-// what is left. A stat's share is its weight times its amount over the set's weighted total (902.6, the
-// trinkets left out):
+// Focus 5 and the 2 piece bonus's 1%, so 100 rating). Measured against the hit-adjusted target
+// (gear_targets.md 1a6968081): Stamina and Spirit hold their shares and Intellect, spell power and crit
+// share what the capped hit leaves in the table's proportions. A stat's share is its weight times its
+// amount over the set's weighted total (902.6, the trinkets left out):
 //
-//	stat      amount   share   target
+//	stat      amount   share   hit-adjusted target
 //	Stamina      137   15.2%   16.1 +- 1.5
-//	Intellect    164   18.2%   19.4 +- 3
+//	Intellect    164   18.2%   17.6 +- 3
 //	Spirit        86    9.5%   10
-//	SP           367   35.0%   37.8 +- 3
-//	Crit         100   11.1%   11.9 +- 3
+//	SP           367   35.0%   34.4 +- 3
+//	Crit         100   11.1%   10.8 +- 3
 //	Hit          100   11.1%   at the cap
 //
 // Per piece (target, weighted linear total, 1.7-norm value / shape target, stats). The armor comes to 709.3

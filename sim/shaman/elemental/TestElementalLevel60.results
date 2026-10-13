@@ -123,8 +123,8 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 808.1355
-  tps: 762.41035
+  dps: 809.87148
+  tps: 763.82315
   dtps: 1.76797
  }
 }
