@@ -27,10 +27,18 @@ var (
 	potion           = &proto.ActionID{RawId: &proto.ActionID_OtherId{OtherId: proto.OtherAction_OtherActionPotion}}
 	// The synthetic on-use trinket (sim/warrior/forever_synthetic_trinkets.go): 20 sec, 2 min.
 	battleTrinket = itemID(991018)
+	// The Goblin Sapper Charge and the Goblin Land Mine share a 1 min explosives cooldown.
+	warriorSapper   = itemID(10646)
+	warriorLandMine = itemID(4395)
 )
 
 // The 30 sec Death Wish is the anchor of a warrior's burst window.
 var deathWishDuration = seconds(30)
+
+// warriorMax is the largest of the values.
+func warriorMax(vals ...value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Max{Max: &proto.APLValueMax{Vals: vals}}}
+}
 
 func currentRage() value {
 	return &proto.APLValue{Value: &proto.APLValue_CurrentRage{CurrentRage: &proto.APLValueCurrentRage{}}}
@@ -72,6 +80,9 @@ func warriorKnobs() []Knob {
 		// The synthetic on-use trinket: 0 on cooldown (with the other cooldowns), otherwise its last
 		// use waits for the last trinketAt seconds when the wait costs no use.
 		{Name: "trinketAt", Default: 0, Min: 0, Max: 40, Step: 5},
+		// 1: the Goblin Sapper Charge on cooldown, and the Goblin Land Mine right after a main hand
+		// swing, since its 1 sec cast restarts both swing timers. 0: both with the other cooldowns.
+		{Name: "mineSync", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Battle Shout when the raid's is not up. The shared raid already has one.
 		{Name: "battleShout", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
@@ -99,6 +110,12 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	case 2:
 		items = append(items, cast(recklessness, le(remainingTime(), seconds(k["recklessAt"])), "Recklessness for the last seconds of the fight, in the execute phase."))
 	}
+	// The wait for Death Wish: until it is ready, and when it is held for the last dwEnd seconds,
+	// until then too.
+	dwWait := spellTimeToReady(deathWish)
+	if k["deathWish"] == 2 {
+		dwWait = warriorMax(dwWait, sub(remainingTime(), seconds(k["dwEnd"])))
+	}
 	hold := func(spell *proto.ActionID, on bool) value {
 		if !on {
 			return nil
@@ -106,7 +123,7 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 		return or(
 			auraIsActive(deathWish),
 			eq(spellUsesRemaining(deathWish, deathWishDuration), num(0)),
-			gt(spellUsesLostByDelay(spell, spellTimeToReady(deathWish), buffDuration), num(0)),
+			gt(spellUsesLostByDelay(spell, dwWait, buffDuration), num(0)),
 		)
 	}
 	racial := k["racialHoldForDw"] == 1
@@ -128,6 +145,13 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	if k["berserkerRageRage"] > 0 {
 		items = append(items, cast(berserkerRage, lt(currentRage(), num(k["berserkerRageRage"])),
 			"Berserker Rage for its Rage (Improved Berserker Rage). It needs Berserker Stance."))
+	}
+	if k["mineSync"] == 1 {
+		items = append(items,
+			cast(warriorSapper, nil, "Goblin Sapper Charge on cooldown."),
+			cast(warriorLandMine, ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.4))),
+				"Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time."),
+		)
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Anything not listed above (Sapper, trinkets)."))
 	return items
