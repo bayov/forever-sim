@@ -1,6 +1,6 @@
 # Forever Update: the daily report page
 
-The daily "WoW Forever Daily Update" routine writes the day's findings as `report.json`. `build.py` turns that file into
+The daily "WoW Forever Daily Update" routine (its prompt is `ROUTINE.md`) writes the day's findings as `report.json`. `build.py` turns that file into
 one self-contained HTML page, which the routine publishes as an artifact. The page uses the same style as the Forever DPS
 report: a dark stone header, a sticky tab bar, cards, class colours, and game-style tooltips (tap on a phone, hover with
 a mouse).
