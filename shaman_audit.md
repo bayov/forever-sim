@@ -143,7 +143,7 @@ Elemental
 - [x] 8.8 Elemental Alacrity
 - [x] 8.9 Improved Fire Nova
 - [x] 8.10 Eye of the Storm (implemented 2026-10-13, no preset takes it)
-- [ ] 8.11 Call of Thunder
+- [x] 8.11 Call of Thunder
 - [ ] 8.12 Elemental Reach (not implemented)
 - [ ] 8.13 Lightning Overload
 - [ ] 8.14 Earthbound (not implemented)
@@ -1372,6 +1372,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Today only the Level 30 encounters hit us (Vishas tanks on us), the Level 30 presets are all Enhancement, and the Level 60 elemental preset doesn't take it. So no preset number moves.
 - Beta: no build had it, and we never cast a Lightning Bolt.
 - `eye_of_the_storm_test.go` TestOrcShamanEyeOfTheStorm: every rank of the three spells has the chance for 0 to 3 points. 2000 top rank Lightning Bolts with an enemy hit 0.5 sec in end on time 23, 47 and 70% of the time (within 5%), and 1 sec late otherwise. Without the talent, two hits push it 1.8 sec. Reading the chance from the hitting spell, or a 60% rank 3, fails it.
+
+### 8.11 Call of Thunder
+
+- The user (2026-10-13): "Just assume it works as stated". No test.
+- The sim (`electric_spell.go`): 1 point gives +3% crit to every rank of Lightning Bolt and Chain Lightning, and to their Lightning Overload copies, which share the config. Lava Burst and the shocks don't get it. The Level 60 elemental preset has it, and the enhancement presets don't.
+- Client 70338 (wago.tools 16120): 1 rank, +3% crit chance (aura 107, misc 7) with mask 0x3, Lightning Bolt and Chain Lightning. Lightning Overload (408438) is a dummy aura that the server runs, and the client has no separate overload spell, so an overload is most likely a copy of the same bolt. That matches the sim.
+- Beta: no build had it, and we never cast Lightning Bolt or Chain Lightning.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
