@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-// The DPS Report page. The same source builds into the sim UI page (/classic/dps_report/) and into a single
+// The DPS Report page. The same source builds into the sim UI page (/forever/dps_report/) and into a single
 // self-contained HTML file for a Claude artifact (make dps-report-artifact).
 import tippy from 'tippy.js';
 
@@ -13,7 +13,13 @@ tippy.setDefaultProps({ arrow: false, allowHTML: true });
 
 const root = document.getElementById('dps-report')!;
 root.innerHTML = layout;
-if (standalone) root.querySelector('#home-link')!.removeAttribute('href');
+// The single file has no landing page to go back to, so its logo is only a title.
+if (standalone) {
+	const home = root.querySelector('#home-link')!;
+	home.removeAttribute('href');
+	home.classList.remove('sim-title-home-link');
+	root.querySelector('#home-back')!.remove();
+}
 const dash = createDash(manifest, loadDataset, document.getElementById('fv')!);
 startReport(dash);
 installStickyTooltips();

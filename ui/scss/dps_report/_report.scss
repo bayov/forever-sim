@@ -89,33 +89,26 @@
 }
 
 /* ---------- header title and the summary atop Ranking ---------- */
+// The logo is drawn like the title of a spec sim, a round icon with three lines of text, and like
+// it, it turns into a way back to the landing page when we point at it. Gold is its class color.
 .fv-home {
-	display: flex;
-	align-items: center;
-	gap: var(--spacer-2);
-	margin-right: var(--spacer-4);
-	align-self: center;
+	margin-right: var(--spacer-3);
+	flex-shrink: 0;
+	color: var(--gold-soft);
 	text-decoration: none;
+	@include sim-title-link;
 
-	.sim-link-icon {
-		width: 2rem;
-		height: 2rem;
-	}
-
-	.fv-home-title {
-		font-family: var(--heading-font-family);
-		font-weight: 700;
-		font-size: 1.1rem;
-		color: var(--gold-soft);
-		white-space: nowrap;
+	&,
+	&:hover {
+		background: none;
 	}
 }
 
 @include media-breakpoint-down(md) {
 	.fv-home {
-		margin-right: var(--spacer-2);
+		margin-right: 0;
 
-		.fv-home-title {
+		.sim-title-texts {
 			display: none;
 		}
 	}
