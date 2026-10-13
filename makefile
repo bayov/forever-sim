@@ -7,6 +7,8 @@ ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 GOROOT := $(shell go env GOROOT)
 UI_SRC := $(shell find ui -name '*.ts' -o -name '*.tsx' -o -name '*.scss' -o -name '*.html')
+# The DPS Report also has plain JavaScript and its datasets as JSON.
+DPS_REPORT_SRC := $(shell find ui/dps_report -type f)
 HTML_INDECIES := ui/balance_druid/index.html \
 				 ui/feral_druid/index.html \
 				 ui/feral_tank_druid/index.html \
@@ -37,6 +39,7 @@ $(OUT_DIR)/.dirstamp: \
 
 $(OUT_DIR)/bundle/.dirstamp: \
   $(UI_SRC) \
+  $(DPS_REPORT_SRC) \
   $(HTML_INDECIES) \
   vite.config.mts \
   vite.build-workers.ts \
@@ -54,6 +57,11 @@ ui/core/index.ts: $(TS_CORE_SRC)
 	  awk -F 'ui/core/' '{ print "import \x22./" $$2 "\x22;" }' | \
 	  sed 's/\.ts";$$/";/' | \
 	  grep -v 'import "./index";' > $@
+
+# The DPS Report as one self-contained HTML file, for a Claude artifact: dist/dps_report.html.
+.PHONY: dps-report-artifact
+dps-report-artifact: node_modules
+	node tools/dps_report/build_artifact.mjs
 
 .PHONY: clean
 clean:
