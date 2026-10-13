@@ -50,6 +50,8 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "smiteManaRate", Default: 20, Min: 15, Max: 45, Step: 5},
 		// A Smite 2 sec before the pull (Divine Fury 5/5), landing at 0.
 		{Name: "prepullSmite", Default: 1, Min: 0, Max: 1, Step: 1},
+		// The Level 60 on-use trinket at -0.1 sec, so the pre-cast Smite landing at 0 gets it.
+		{Name: "prepullTrinket", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -117,6 +119,9 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	rot := rotation(items...)
 	if k["prepullSmite"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(smite, 2))
+	}
+	if k["prepullTrinket"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(priest.PriestSyntheticOnUseTrinket), 0.1))
 	}
 	return rot
 }

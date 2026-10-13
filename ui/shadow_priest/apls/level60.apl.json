@@ -2,7 +2,9 @@
     "type": "TypeAPL",
     "prepullActions": [
         {"action":{"castSpell":{"spellId":{"spellId":15473}}},"doAtValue":{"const":{"val":"-3s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":10947}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":10947}}},"doAtValue":{"const":{"val":"-1.5s"}}},
+        {"action":{"castSpell":{"spellId":{"itemId":995034}}},"doAtValue":{"const":{"val":"-0.1s"}}},
+        {"action":{"castSpell":{"spellId":{"itemId":250937}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":1277328}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.4"}}}}},"notes":"Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line."},

@@ -30,6 +30,9 @@ var (
 	vampiricEmbrace = spellID(15286)
 )
 
+// The Major Spellblasting Potion's item id (sim/core/consumes.go).
+const majorSpellblastingPotion = 250937
+
 func (priestShadow) Knobs() []Knob {
 	return []Knob{
 		// Shadow Word: Pain when it is down, with at least this many seconds of fight left.
@@ -72,6 +75,9 @@ func (priestShadow) Knobs() []Knob {
 		// Before the pull: 0 Shadowform only (1.5 sec out), 1 Shadowform 3 sec out and a Mind
 		// Blast 1.5 sec out that lands at 0, 2 the same with Inner Focus on that Mind Blast.
 		{Name: "prepull", Default: 1, Min: 0, Max: 2, Step: 1},
+		// The Level 60 on-use trinket (1) and also the Major Spellblasting Potion (2) at -0.1 sec,
+		// so the pre-cast Mind Blast landing at 0 gets them (rotation auditor, 2026-10-13).
+		{Name: "prepullCDs", Default: 2, Min: 0, Max: 2, Step: 1},
 	}
 }
 
@@ -200,6 +206,12 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 			rot.PrepullActions = append(rot.PrepullActions, prepull(innerFocus, 1.5))
 		}
 		rot.PrepullActions = append(rot.PrepullActions, prepull(mindBlast, 1.5))
+	}
+	if k["prepullCDs"] >= 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(priest.PriestSyntheticOnUseTrinket), 0.1))
+	}
+	if k["prepullCDs"] >= 2 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(majorSpellblastingPotion), 0.1))
 	}
 	return rot
 }
