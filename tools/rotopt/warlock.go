@@ -22,28 +22,30 @@ func init() {
 }
 
 var (
-	lockShadowBolt     = spellID(11661)
-	lockIncinerate     = spellID(1293813)
-	lockSearingPain    = spellID(17923)
-	lockImmolate       = spellID(11668)
-	lockCorruption     = spellID(11672)
-	lockBaneOfAgony    = spellID(11713)
-	lockBaneOfDoom     = spellID(603)
-	lockSiphonLife     = spellID(18881)
-	lockConflagrate    = spellID(18932)
-	lockShadowburn     = spellID(18871)
-	lockSoulFire       = spellID(17924)
-	lockDeathCoil      = spellID(17926)
-	lockWrack          = spellID(1316697)
-	lockDrainLife      = spellID(11700)
-	lockDrainSoul      = spellID(11675)
-	lockLifeTap        = spellID(11689)
-	lockAmplifyCurse   = spellID(18288)
-	lockSoulLink       = spellID(19028)
-	lockCurseOfElement = spellID(1311680)
-	lockCurseOfReckl   = spellID(11717)
-	lockDecimation     = spellID(440873)
-	lockShadowTrance   = spellID(17941)
+	lockShadowBolt   = spellID(11661)
+	lockIncinerate   = spellID(1293813)
+	lockSearingPain  = spellID(17923)
+	lockImmolate     = spellID(11668)
+	lockCorruption   = spellID(11672)
+	lockBaneOfAgony  = spellID(11713)
+	lockBaneOfDoom   = spellID(603)
+	lockSiphonLife   = spellID(18881)
+	lockConflagrate  = spellID(18932)
+	lockShadowburn   = spellID(18871)
+	lockSoulFire     = spellID(17924)
+	lockDeathCoil    = spellID(17926)
+	lockWrack        = spellID(1316697)
+	lockDrainLife    = spellID(11700)
+	lockDrainSoul    = spellID(11675)
+	lockLifeTap      = spellID(11689)
+	lockAmplifyCurse = spellID(18288)
+	lockSoulLink     = spellID(19028)
+	// The synthetic on-use trinket, tools/database/forever_synthetic_items_warlock.go.
+	lockSyntheticTalisman = itemID(997022)
+	lockCurseOfElement    = spellID(1311680)
+	lockCurseOfReckl      = spellID(11717)
+	lockDecimation        = spellID(440873)
+	lockShadowTrance      = spellID(17941)
 )
 
 func (warlockRotation) Knobs() []Knob {
@@ -226,6 +228,9 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	default:
 		rot.PrepullActions = append(rot.PrepullActions, prepull(lockShadowBolt, k["prepullAt"]))
 	}
+	// The synthetic on-use trinket of the Level 60 sets (140 spell power, 20 sec, 2 min), used just
+	// before the opener lands so it counts too. Without the trinket the action is dropped.
+	rot.PrepullActions = append(rot.PrepullActions, prepull(lockSyntheticTalisman, 0.1))
 	return rot
 }
 

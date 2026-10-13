@@ -1,7 +1,8 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":11661}}},"doAtValue":{"const":{"val":"-2.5s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":11661}}},"doAtValue":{"const":{"val":"-2.5s"}}},
+        {"action":{"castSpell":{"spellId":{"itemId":997022}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on cooldown."},
