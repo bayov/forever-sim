@@ -6,6 +6,7 @@ import { Player } from '../core/player.js';
 import { Class, Faction, PartyBuffs, PseudoStat, Race, Spec, Stat, Target } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
+import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
@@ -97,7 +98,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		inputs: [],
 	},
 	// IconInputs to include in the 'Player' section on the settings tab.
-	playerIconInputs: [],
+	playerIconInputs: [RogueInputs.MainHandPoison, RogueInputs.OffHandPoison],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		BuffDebuffInputs.SpellCritBuff,

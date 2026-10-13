@@ -575,7 +575,12 @@ export const PresetBuildLevel30p5SinisterStrike = PresetUtils.makePresetBuild('L
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-export const DefaultOptions = RogueOptions.create({});
+// Deadly Poison on the main hand and Instant Poison on the off hand, the best pair for every spec. They
+// are rogue options because Forever's poisons are class imbues beside the sharpening stones.
+export const DefaultOptions = RogueOptions.create({
+	mainHandPoison: WeaponImbue.DeadlyPoison,
+	offHandPoison: WeaponImbue.InstantPoison,
+});
 
 ///////////////////////////////////////////////////////////////////////////
 //                         Consumes/Buffs/Debuffs
@@ -595,8 +600,8 @@ export const P1Consumes = Consumes.create({
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	food: Food.FoodFlankAuPoivre,
-	mainHandImbue: WeaponImbue.DeadlyPoison,
-	offHandImbue: WeaponImbue.InstantPoison,
+	mainHandImbue: WeaponImbue.DenseSharpeningStone,
+	offHandImbue: WeaponImbue.DenseSharpeningStone,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,

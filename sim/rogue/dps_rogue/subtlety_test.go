@@ -80,3 +80,52 @@ func TestMurderLeavesCritDamage(t *testing.T) {
 		t.Errorf("Sinister Strike crit multiplier against a Humanoid is %.4f, want 2", got)
 	}
 }
+
+// TestPoisonBesideSharpeningStone checks that a poison set in RogueOptions and a sharpening stone in
+// the consumable imbue slot both go on the same weapon (Forever's poisons are class imbues), and that
+// settings with the poisons in Consumes still get them.
+func TestPoisonBesideSharpeningStone(t *testing.T) {
+	newSim := func(options *proto.RogueOptions, consumes *proto.Consumes) *DpsRogue {
+		items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotOffHand+1)
+		for i := range items {
+			items[i] = &proto.ItemSpec{}
+		}
+		items[proto.ItemSlot_ItemSlotMainHand] = &proto.ItemSpec{Id: 18832} // Brutality Blade, 90 - 168
+		items[proto.ItemSlot_ItemSlotOffHand] = &proto.ItemSpec{Id: 18805}  // Core Hound Tooth, 57 - 107
+		player := &proto.Player{
+			Race:      proto.Race_RaceHuman,
+			Class:     proto.Class_ClassRogue,
+			Level:     60,
+			Equipment: &proto.EquipmentSpec{Items: items},
+			Consumes:  consumes,
+			Rotation:  &proto.APLRotation{},
+			Spec:      &proto.Player_Rogue{Rogue: &proto.Rogue{Options: options}},
+		}
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{{Level: 63}}},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		}, simsignals.CreateSignals())
+		sim.Reset()
+		return sim.Raid.Parties[0].Players[0].(*DpsRogue)
+	}
+
+	rogue := newSim(
+		&proto.RogueOptions{MainHandPoison: proto.WeaponImbue_DeadlyPoison, OffHandPoison: proto.WeaponImbue_InstantPoison},
+		&proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseSharpeningStone, OffHandImbue: proto.WeaponImbue_DenseSharpeningStone},
+	)
+	if mh, oh := rogue.Poisons(); mh != proto.WeaponImbue_DeadlyPoison || oh != proto.WeaponImbue_InstantPoison {
+		t.Errorf("poisons are %v and %v, want Deadly and Instant", mh, oh)
+	}
+	if got := rogue.AutoAttacks.MH().BaseDamageMin; got != 98 {
+		t.Errorf("main hand minimum damage is %v, want 98 (90 and the stone's 8)", got)
+	}
+	if got := rogue.AutoAttacks.OH().BaseDamageMin; got != 65 {
+		t.Errorf("off hand minimum damage is %v, want 65 (57 and the stone's 8)", got)
+	}
+
+	old := newSim(&proto.RogueOptions{}, &proto.Consumes{MainHandImbue: proto.WeaponImbue_DeadlyPoison, OffHandImbue: proto.WeaponImbue_InstantPoison})
+	if mh, oh := old.Poisons(); mh != proto.WeaponImbue_DeadlyPoison || oh != proto.WeaponImbue_InstantPoison {
+		t.Errorf("poisons from Consumes are %v and %v, want Deadly and Instant", mh, oh)
+	}
+}

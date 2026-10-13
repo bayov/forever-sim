@@ -27,8 +27,10 @@ func rogueLevel60Raid(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, debu
 // Assay is 4.9 ahead of R.O.I.D.S. The caster elixirs are left out, as for the warrior and
 // the feral druid: Flask of Supreme Power and Greater Arcane Elixir add 8 DPS, all of it
 // through Dragonbreath Chili scaling with spell power, and no rogue drinks them. The Elixir
-// of the Mongoose is the one +2% crit elixir. The poisons are set per spec.
-func rogueLevel60Consumes(mainHand, offHand proto.WeaponImbue) *proto.Consumes {
+// of the Mongoose is the one +2% crit elixir. Both blades carry a Dense Sharpening Stone (+8
+// damage): Forever's poisons are class imbues beside it (see rogueWithSpec). Elemental Sharpening
+// Stone's plans are Molten Core only.
+func rogueLevel60Consumes() *proto.Consumes {
 	return &proto.Consumes{
 		AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
 		AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
@@ -37,15 +39,21 @@ func rogueLevel60Consumes(mainHand, offHand proto.WeaponImbue) *proto.Consumes {
 		DragonBreathChili: true,
 		FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
 		Food:              proto.Food_FoodFlankAuPoivre,
-		MainHandImbue:     mainHand,
-		OffHandImbue:      offHand,
+		MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
+		OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,
 		SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,
 		StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 		ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 	}
 }
 
+// rogueWithSpec puts Deadly Poison on the main hand and Instant Poison on the off hand, the best
+// pair for every spec. Forever's poisons are class imbues (client 70338, SpellEffect 360), so they
+// go in RogueOptions and leave the consumable imbue slots to the sharpening stones.
 func rogueWithSpec(player *proto.Player) {
 	player.Class = proto.Class_ClassRogue
-	player.Spec = &proto.Player_Rogue{Rogue: &proto.Rogue{Options: &proto.RogueOptions{}}}
+	player.Spec = &proto.Player_Rogue{Rogue: &proto.Rogue{Options: &proto.RogueOptions{
+		MainHandPoison: proto.WeaponImbue_DeadlyPoison,
+		OffHandPoison:  proto.WeaponImbue_InstantPoison,
+	}}}
 }

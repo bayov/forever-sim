@@ -218,12 +218,30 @@ type RogueAgent interface {
 }
 
 func (rogue *Rogue) getImbueProcMask(imbue proto.WeaponImbue) core.ProcMask {
+	mainHand, offHand := rogue.Poisons()
 	var mask core.ProcMask
-	if rogue.HasMHWeapon() && rogue.Consumes.MainHandImbue == imbue {
+	if rogue.HasMHWeapon() && mainHand == imbue {
 		mask |= core.ProcMaskMeleeMH
 	}
-	if rogue.HasOHWeapon() && rogue.Consumes.OffHandImbue == imbue {
+	if rogue.HasOHWeapon() && offHand == imbue {
 		mask |= core.ProcMaskMeleeOH
 	}
 	return mask
+}
+
+// Poisons returns the poison on each hand. Forever's poisons are class imbues that sit beside a
+// sharpening stone, so they come from RogueOptions, with the Consumes imbue slots left for the
+// stone. Settings from before that keep their poisons in Consumes, which is read when a hand's
+// option is unset.
+func (rogue *Rogue) Poisons() (mainHand, offHand proto.WeaponImbue) {
+	mainHand, offHand = rogue.Consumes.MainHandImbue, rogue.Consumes.OffHandImbue
+	if rogue.Options != nil {
+		if rogue.Options.MainHandPoison != proto.WeaponImbue_WeaponImbueUnknown {
+			mainHand = rogue.Options.MainHandPoison
+		}
+		if rogue.Options.OffHandPoison != proto.WeaponImbue_WeaponImbueUnknown {
+			offHand = rogue.Options.OffHandPoison
+		}
+	}
+	return mainHand, offHand
 }
