@@ -14,8 +14,10 @@ import (
 // changed, with values from client 1.60.1.70338 (SpellItemEnchantment). We list only those
 // with a known source outside raids: the formulas wowhead's Forever listing has sold by
 // vendors, and the leatherworking kits. The Grand Crusader / Sorcerer / Arcanist /
-// Inquisitor, 2H Strength, Bracer Superior Agility, Off-Hand Superior Intellect and
-// Excellent Spirit, and Lotus Claw formulas have no known source, so they're left out.
+// Inquisitor, Off-Hand Superior Intellect and Excellent Spirit, and Lotus Claw formulas
+// have no known source, so they're left out. Bracer Superior Agility and 2H Strength have
+// no known source either, but they're in the database for the melee specs to compare.
+// Their launch availability is unconfirmed, so no preset uses them.
 //
 // Forever buffed a lot of the low Classic enchants. Cloak and bracer Minor Agility went
 // from +1 to +3, Gloves Agility from +5 to +7, and 2H Minor Impact from +2 to +4 damage.
@@ -77,6 +79,8 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverEnchant(1248498, "Enchant Bracer - Lesser Healing Power", proto.ItemType_ItemTypeWrist, stats.Stats{stats.HealingPower: 16, stats.SpellDamage: 6}),
 	foreverEnchant(1248661, "Enchant Bracer - Superior Intellect", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Intellect: 9}),
 	foreverEnchant(1220624, "Enchant Bracer - Greater Spellpower", proto.ItemType_ItemTypeWrist, stats.Stats{stats.SpellPower: 16}),
+	// Client enchant 7656. Launch availability unconfirmed, so no preset uses it.
+	foreverEnchant(1248599, "Enchant Bracer - Superior Agility", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Agility: 9}),
 
 	// Gloves.
 	foreverEnchant(13815, "Enchant Gloves - Agility", proto.ItemType_ItemTypeHands, stats.Stats{stats.Agility: 7}),
@@ -102,6 +106,8 @@ var ForeverEnchants = []*proto.UIEnchant{
 	// Two-hand weapon. The Impact enchants are weapon effects in sim/common.
 	foreverTwoHand(1219580, "Enchant 2H Weapon - Spellblasting", stats.Stats{stats.SpellPower: 65}),
 	foreverTwoHand(1248607, "Enchant 2H Weapon - Mighty Spell Power", stats.Stats{stats.SpellPower: 55}),
+	// Client enchant 8215. Launch availability unconfirmed, so no preset uses it.
+	foreverTwoHand(1248668, "Enchant 2H Weapon - Strength", stats.Stats{stats.Strength: 25}),
 	foreverTwoHand(7793, "Enchant 2H Weapon - Lesser Intellect", stats.Stats{stats.Intellect: 5}),
 	foreverTwoHand(7745, "Enchant 2H Weapon - Minor Impact", stats.Stats{}),
 	foreverTwoHand(13529, "Enchant 2H Weapon - Lesser Impact", stats.Stats{}),
