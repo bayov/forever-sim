@@ -27,7 +27,13 @@ export function startReport(dash) {
     return n;
   };
   const enc = encodeURIComponent;
+  let asmOn = false;
+  const ASM_FIELDS = new Set(['dps', 'se', 'p1', 'p10', 'p25', 'p50', 'p75', 'p90', 'min', 'max', 'stdev', 'dps120', 'dps300', 'rank', 'rankAll', 'bestRaceDps', 'hordeDps', 'allianceDps', 'cv']);
   const mark = (n, src, field, where) => {
+    if (asmOn && ((src === 'builds' && ASM_FIELDS.has(field)) || src === 'pairs' || (src === 'lengths' && field === 'dps'))) {
+      for (const a of ['data-source', 'data-field', 'data-where']) n.removeAttribute(a);
+      return n;
+    }
     n.setAttribute('data-source', src);
     if (field) n.setAttribute('data-field', field);
     if (where) n.setAttribute('data-where', where);
@@ -54,9 +60,42 @@ export function startReport(dash) {
   const statusOf = (id) => dash.data(id).status;
   // encounter presets (the boss as a creature type) are listed only while "Special encounters" is on; Races always uses the generic boss
   const isEnc = (b) => !!(b && b.encounter && b.encounter !== 'null');
-  const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => st.enc || !isEnc(b)); };
+  const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => st.enc || !isEnc(b)).map(adjB); };
   const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b)); };
   const rankOf = (b, list) => 1 + list.filter((x) => +x.dps > +b.dps).length;
+  // ---------- assumptions: each preset's DPS under the picked settings ----------
+  const asmSel = () => Object.entries(st.asm || {}).filter(([, v]) => v).sort((p, q) => (p[0] < q[0] ? -1 : 1));
+  const asmReady = () => statusOf('assumptions') === 'ok' && statusOf('assumption_dps') === 'ok';
+  const asmIdxCache = new WeakMap();
+  const asmIdx = () => {
+    const d = rowsOf('assumption_dps');
+    if (!asmIdxCache.has(d)) { const m = new Map(); for (const r of d) { if (!m.has(r.build)) m.set(r.build, new Map()); m.get(r.build).set(r.combo || '', r); } asmIdxCache.set(d, m); }
+    return asmIdxCache.get(d);
+  };
+  const asmKeysOf = (bid) => new Set((rowsOf('assumptions') || []).filter((a) => arr(a.builds).includes(bid)).map((a) => a.key));
+  // the exact combination where it was simmed, else the single settings multiplied
+  const asmFactor = (bid, L) => {
+    if (!asmOn) return 1;
+    const ks = asmKeysOf(bid), sel = asmSel().filter(([k]) => ks.has(k));
+    const idx = asmIdx().get(bid);
+    if (!sel.length || !idx) return 1;
+    const f = +L === 120 ? 'dps120' : +L === 300 ? 'dps300' : 'dps180';
+    const base = idx.get('');
+    if (!base || !+base[f]) return 1;
+    const exact = idx.get(sel.map(([k, v]) => `${k}=${v}`).join('|'));
+    if (exact && +exact[f]) return +exact[f] / +base[f];
+    let x = 1;
+    for (const [k, v] of sel) { const one = idx.get(`${k}=${v}`); if (one && +one[f]) x *= +one[f] / +base[f]; }
+    return x;
+  };
+  const adjB = (b) => {
+    const x = asmFactor(b.id, 180);
+    if (x === 1) return b;
+    const o = { ...b, asmF: x };
+    for (const k of ['dps', 'se', 'p1', 'p10', 'p25', 'p50', 'p75', 'p90', 'min', 'max', 'stdev', 'bestRaceDps', 'hordeDps', 'allianceDps']) if (o[k] != null) o[k] = +o[k] * x;
+    o.dps120 = +b.dps120 * asmFactor(b.id, 120); o.dps300 = +b.dps300 * asmFactor(b.id, 300);
+    return o;
+  };
 
   // ---------- calculations ----------
   dash.calc('overview', {
@@ -120,7 +159,7 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'generic', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'generic', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
   st.rsTarget = 'generic'; st.rsWeapon = 'preset';
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
@@ -634,7 +673,7 @@ export function startReport(dash) {
     $('#rank-sort').parentElement.hidden = L !== 180;
     const lenMap = new Map(lengths.filter((r) => r.secs === L).map((r) => [r.build, r]));
     let rows = builds.filter((b) => (st.cls === 'All' || b.class === st.cls) && (st.fac === 'All' || b.faction === st.fac) && (st.role === 'All' || roles.get(b.id) === st.role));
-    const val = (b) => (L === 180 ? b.dps : lenMap.get(b.id)?.dps ?? 0);
+    const val = (b) => (L === 180 ? b.dps : (lenMap.get(b.id)?.dps ?? 0) * asmFactor(b.id, L));
     const sortKey = L === 180 ? st.sort : 'dps';
     const key = { dps: val, p10: (b) => b.p10, p90: (b) => b.p90, cv: (b) => -b.cv }[sortKey] || val;
     rows = rows.sort((a, b) => key(b) - key(a));
@@ -646,7 +685,7 @@ export function startReport(dash) {
     $('#rank-legend').hidden = L !== 180;
     const sortName = { dps: 'mean DPS', p10: 'an unlucky fight (10th percentile)', p90: 'a lucky fight (90th percentile)', cv: 'steadiness' }[sortKey];
     const active = [st.cls !== 'All' ? st.cls : null, st.role !== 'All' ? st.role.toLowerCase() : null, st.fac !== 'All' ? st.fac : null, st.best ? 'best per class' : null].filter(Boolean);
-    $('#rank-sum').replaceChildren(`${rows.length < total ? `Top ${rows.length} of ${total}` : `${total} of ${builds.length}`} presets`, active.length ? ` (${active.join(', ')})` : '', ', by ', sortName, ' in ', el('b', { text: `${L} s fights` }), '. Tap a row for its numbers.');
+    $('#rank-sum').replaceChildren(`${rows.length < total ? `Top ${rows.length} of ${total}` : `${total} of ${builds.length}`} presets`, active.length ? ` (${active.join(', ')})` : '', ', by ', sortName, ' in ', el('b', { text: `${L} s fights` }), '.', asmOn ? el('b', { text: ' Custom assumptions.' }) : '', ' Tap a row for its numbers.');
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset matches these filters.' })); return; }
     host.replaceChildren(...rows.map((b, i) => {
       const v = val(b);
@@ -764,7 +803,7 @@ export function startReport(dash) {
       const pts = (by.get(b.id) || []).sort((p, q) => p.secs - q.secs);
       const base = pts.find((p) => p.secs === 180)?.dps || 1;
       const on = st.cls === 'All' || b.class === st.cls;
-      return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.08, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, dots: on && st.cls !== 'All', pts: pts.map((p) => ({ s: p.secs, v: 100 * p.dps / base, dps: p.dps })) };
+      return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.08, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, dots: on && st.cls !== 'All', pts: pts.map((p) => ({ s: p.secs, v: (100 * p.dps * asmFactor(b.id, p.secs)) / (base * asmFactor(b.id, 180)), dps: p.dps * asmFactor(b.id, p.secs) })) };
     }).sort((a, b) => a.op - b.op);
     drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : `${sgn(p.v - 100)}% vs 180 s`] });
   };
@@ -1255,6 +1294,7 @@ export function startReport(dash) {
       tile('Lucky fight', f1(b.p90), '90th percentile', 'builds', 'p90', W),
       tt(tile('Best race', b.bestRace, `${f1(b.bestRaceDps)} DPS`, 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
       extra);
+    $('#sp-asm').hidden = !b.asmF;
     for (const h of ['#sp-head', '#sp-tiles']) $(h).dataset.build = b.id;
     const i = order.findIndex((x) => x.id === b.id);
     $('#sp-prev').onclick = () => openSpec(order[(i - 1 + order.length) % order.length].id);
@@ -2137,7 +2177,8 @@ export function startReport(dash) {
     // With a variant on either side, both sides read their mean DPS from the race sims, so they share one setup.
     const anyVar = !sA.full || !sB.full;
     const W = (s) => `build=${enc(s.b.id)}&race=${enc(s.race)}&variant=${s.v}`;
-    const pr = (rowsOf('pairs') || []).find((p) => p.a === A.id && p.b === B.id);
+    const pr = asmOn ? Object.fromEntries(['dps', 'p10', 'p50', 'p90', 'stdev', 'dps120', 'dps300'].map((k) => [k, +A[k] ? Math.round((B[k] / A[k] - 1) * 1000) / 10 : null]))
+      : (rowsOf('pairs') || []).find((p) => p.a === A.id && p.b === B.id);
     const pct = (a, b) => (a ? Math.round((b / a - 1) * 10000) / 100 : null);
     const diffTd = (v, f, src) => (v == null ? el('td', { class: 'n', text: '' }) : el('td', { class: 'n' + (Math.abs(v) < 0.05 ? '' : v > 0 ? ' pos' : ' neg') }, src ? mark(el('span', { text: sgn(v, f) }), ...src) : el('span', { text: sgn(v, f) }), '%'));
     const NA = '–';
@@ -2261,6 +2302,82 @@ export function startReport(dash) {
     }));
   };
 
+  // ---------- assumptions panel ----------
+  // the picks live in st, this browser's saved view
+  const SEG_NAME = { low: 'Low', expected: 'Expected', high: 'High' };
+  const asmPick = (a, id) => {
+    st.asm = { ...(st.asm || {}) };
+    if (id === a.defaultSetting) delete st.asm[a.key]; else st.asm[a.key] = id;
+    persist(); hideTip(); render();
+  };
+  $('#asm-reset').addEventListener('click', (e) => { e.stopPropagation(); st.asm = {}; persist(); hideTip(); render(); });
+  $('#asm-expected').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!asmReady()) return;
+    st.asm = Object.fromEntries(rowsOf('assumptions').filter((a) => a.status === 'live' && a.expectedSetting !== a.defaultSetting).map((a) => [a.key, a.expectedSetting]));
+    persist(); hideTip(); render();
+  });
+  const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
+  const asmLines = (a) => {
+    const sens = arr(a.sens);
+    return [a.description, ...arr(a.settings).map((x) => `${SEG_NAME[x.id] || x.id}: ${x.label} (${x.value})${x.id === a.defaultSetting ? ', the presets' : ''}${x.id === a.expectedSetting ? ', expected' : ''}. ${x.rationale}`),
+      ...(a.status === 'pending' ? ['Not simulated yet.'] : a.status === 'inert' ? ['No longer applies.'] : []),
+      ...(sens.length ? ['At 180 s:', ...sens.map((x) => `${bName(x.build)} · ${SEG_NAME[x.setting] || x.setting}: ${sgn(+x.pct, f1)}% (${sgn(+x.dps, f1)} DPS)`)] : [])];
+  };
+  const drawAsm = () => {
+    const host = $('#asm-list'), custom = asmSel().length > 0;
+    $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
+    if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
+    const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen)), card = $('#asm-card');
+    host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
+      const changed = as.filter((a) => st.asm?.[a.key]).length;
+      const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
+      d.open = open.has(cls);
+      d.addEventListener('toggle', () => { const o = new Set(arr(st.asmOpen)); if (d.open) o.add(cls); else o.delete(cls); st.asmOpen = [...o]; persist(); });
+      d.append(el('summary', {}, cls === 'All' ? null : ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), cls === 'All' ? 'All classes' : cls,
+        el('small', { text: `${as.length} assumption${as.length === 1 ? '' : 's'}` }), changed ? el('span', { class: 'fv-asm-badge', text: `${changed} changed` }) : null));
+      for (const a of as) {
+        const cur = st.asm?.[a.key] || a.defaultSetting, live = a.status === 'live';
+        const info = el('button', { class: 'fv-asm-i', 'aria-label': `About ${a.label}`, 'data-tip': '1', text: 'ⓘ' });
+        info.addEventListener('click', (e) => { e.stopPropagation(); const cr = card.getBoundingClientRect(), ir = info.getBoundingClientRect(); showTip(card, 16, ir.bottom - cr.top + 4, a.label, asmLines(a), { hl: info, below: true }); });
+        const seg = el('div', { class: 'fv-asm-seg', role: 'group', 'aria-label': a.label }, ...arr(a.settings).map((x) => {
+          const bt = el('button', { 'aria-pressed': String(x.id === cur), title: `${x.value}${x.id === a.defaultSetting ? ' (the presets)' : ''}` },
+            el('b', { text: x.label }), el('small', {}, SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null));
+          if (!live) bt.disabled = true;
+          bt.addEventListener('click', (e) => { e.stopPropagation(); asmPick(a, x.id); });
+          return bt;
+        }));
+        d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key }, el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), info,
+          !live ? el('small', { text: a.status === 'pending' ? 'not simulated yet' : 'no longer applies' }) : el('small', { text: arr(a.builds).length ? `${arr(a.builds).length} preset${arr(a.builds).length === 1 ? '' : 's'}` : '' })), seg));
+      }
+      return d;
+    }));
+  };
+  // headline figures: the overview calc, or the same figures from the adjusted presets
+  const asmOverview = () => {
+    const ns = document.querySelectorAll('#fv [data-asm-f]');
+    if (!ns.length) document.querySelectorAll('#fv [data-source="overview"]').forEach((n) => { n.dataset.asmF = n.getAttribute('data-field'); });
+    const all = document.querySelectorAll('#fv [data-asm-f]');
+    if (!asmOn) { all.forEach((n) => { n.setAttribute('data-source', 'overview'); n.setAttribute('data-field', n.dataset.asmF); n.setAttribute('data-row', '0'); }); return; }
+    const s = (genB() || []).map(adjB).sort((p, q) => q.dps - p.dps);
+    if (!s.length) return;
+    const top = s[0], bot = s[s.length - 1];
+    const v = { topLabel: top.label, topDps: f1(top.dps), bottomLabel: bot.label, bottomDps: f1(bot.dps), median: f1(d3.median(s, (b) => b.dps)), count: String(s.length),
+      classes: String(new Set(s.map((b) => b.class)).size), spreadPct: f1((top.dps / bot.dps - 1) * 100) };
+    all.forEach((n) => { for (const a of ['data-source', 'data-field', 'data-row']) n.removeAttribute(a); n.textContent = v[n.dataset.asmF] ?? '—'; n.classList.remove('dash-skeleton'); });
+  };
+  const drawMethodAsm = () => {
+    const host = $('#method-asm');
+    if (!waitOr(host, ['assumptions', 'builds'])) return;
+    host.replaceChildren(...d3.groups(rowsOf('assumptions'), (a) => a.class).flatMap(([cls, as]) => [el('h3', { text: cls === 'All' ? 'All classes' : cls }),
+      el('ul', { class: 'fv-list' }, ...as.map((a) => {
+        const nm = (id) => arr(a.settings).find((x) => x.id === id)?.label || id;
+        const sens = arr(a.sens), lo = d3.extent(sens, (x) => +x.pct);
+        return el('li', {}, el('b', { text: a.label }), `: ${a.description} `,
+          el('small', { text: `Settings: ${arr(a.settings).map((x) => `${x.label} (${x.value})`).join(' · ')}. The presets use ${nm(a.defaultSetting)}; expected ${nm(a.expectedSetting)}.${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : sens.length ? ` Changes the presets by ${sgn(lo[0], f1)}% to ${sgn(lo[1], f1)}% at 180 s.` : ''}` }));
+      }))]));
+  };
+
   // ---------- render ----------
   // What the first view doesn't need waits until it is drawn: tooltips, more icons and the tree art behind the
   // header. Then it loads while the reader looks at the page, so it's there by the first hover or tab change.
@@ -2271,6 +2388,8 @@ export function startReport(dash) {
     for (const id of ['tooltips', 'icons_more', 'treeart']) dash.data(id);
   };
   function render() {
+    asmOn = asmSel().length > 0 && asmReady();
+    asmOverview();
     fillStatic();
     if (!later && (st.tab !== 'ranking' || (statusOf('builds') === 'ok' && statusOf('icons') === 'ok'))) {
       if (st.tab !== 'ranking') loadLater();
@@ -2279,11 +2398,11 @@ export function startReport(dash) {
     if (ttNode && !ttNode.isConnected) hideTT();
     try { drawHero(); } catch (e) { console.error(e); }
     try {
-      if (st.tab === 'ranking') { drawRanking(); drawLenAll(); drawMana(); }
+      if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
       else if (st.tab === 'races') { for (const [fn, h] of [[drawScen, null], [drawRaceOverview, '#race-overview'], [drawRaceSpec, '#race-spec'], [drawHeat, '#heat'], [drawRaceFind, '#race-find'], [drawFactionTable, null], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
-      else if (st.tab === 'method') drawMethod();
+      else if (st.tab === 'method') { drawMethod(); safeTop(drawMethodAsm, $('#method-asm')); }
     } catch (err) { console.error(err); throw err; }
   }
 

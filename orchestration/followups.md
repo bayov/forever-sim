@@ -17,3 +17,5 @@ Items found late that don't affect any shipped Level 60 preset, left out of the 
   6. **Rage from damage taken.** Blizzard: the original formula, "as if you always had 50% damage reduction from Armor", absorbs ignored. The 8 October notes add that it no longer uses the player's health, and that crits and crushing blows count. Measure Rage per hit taken at a known damage and armor. This only matters for tanks: the Level 60 DPS presets take no damage, so their numbers don't depend on it.
   7. **Bear Form.** Check whether the same rules apply to a druid in Bear Form. The druid has no DPS preset there.
   Owner: the warrior worker turns the results into sim constants and tests, and moves each measured item out of spec_assumptions.md.
+
+- **Shadow Oil's proc damage needs a beta log** (user, 2026-10-13). Forever's tooltip says 63 to 71, the server formula Era's 52 to 61; the sim uses the tooltip and the dashboard shows Era's as `oil_proc_damage` Low. One Shadow Oil hit above 61 at level 60 settles `oil_proc_damage`.

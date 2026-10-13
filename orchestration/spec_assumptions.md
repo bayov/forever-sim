@@ -27,18 +27,18 @@ Sources, all read-only:
 
 | Class | Assumptions | Keys |
 |---|---|---|
-| All classes | 3 | `flat_bonus_inside_pct`, `wf_totem_offhand`, `downrank_penalty` |
+| All classes | 4 | `flat_bonus_inside_pct`, `wf_totem_offhand`, `downrank_penalty`, `oil_proc_damage` |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 5 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation` |
-| Paladin | 4 (+1 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`) |
+| Paladin | 4 (+2 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`, `oil_proc_damage`) |
 | Warrior | 3 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_crit_rage` (+ `wf_totem_offhand`) |
 | Hunter | 6 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_shot_ap_shares`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_ab_on_missiles`, `mage_frostbolt10` |
-| Shaman | 3 | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` |
+| Shaman | 3 (+1 shared) | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` (+ `oil_proc_damage` for Enhancement) |
 | Druid | 4 | `druid_ooc_rate`, `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 33 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 34 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -63,6 +63,7 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 | `flat_bonus_inside_pct` | Flat bonus inside the weapon percent | Combat Daggers, Seal Fate Daggers, Subtlety (Ambush), Mutilate; Ret twist, sub Holy, Shock | inside (client effect order) | after the percent (tooltip read literally) | inside | = Expected | est. Backstab builds −3.7 to −4%, Mutilate +1.7%, Ret +3% (all at Low) |
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | yes | main hand only | yes | = Expected | est. −2 to −3% DW Fury and rogues, about −1.5% Survival (at Low) |
 | `downrank_penalty` | Downrank penalty size at 60 | Smite (rank 7 fallback; rank 4 before), Elemental (Lightning Bolt VIII fallback) | FC formula on both branches (a local helper on each) | stronger (10% a level past 17) | FC formula (5% a level past 17) | none | PR Smite −0.3% at 180 s, −6.3% at 300 s (FC vs none); est. Elemental about −1% at 300 s, 0 at 180 s |
+| `oil_proc_damage` | Shadow Oil and Frost Oil proc damage | Ret twist, sub Holy, Shock (and their Undead encounters); all four Enhancement builds (all Shadow Oil) | Forever's tooltips (63–71 / 39–43) | Era's ranges (52–61 / 33–38) | tooltips | = Expected | −0.06 to −0.08% at Low (about 0.6 DPS; assumption sims, 180 s) |
 
 ### `flat_bonus_inside_pct`: flat bonus inside the weapon percent
 
@@ -128,6 +129,21 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
   - Smite: FC vs none, with the rotation re-searched under the penalty: 708.8 → 706.5 at 180 s, 687.0 → 643.8 at 300 s (PR, priest branch).
   - Elemental, est.: Lightning Bolt VIII keeps 75% under FC (5 levels past 17). That is about −5 to −7 DPS (−1%) at 300 s and 0 at 180 s, before re-tuning the fallback to rank IX (level 44).
 - **Knob:** one shared helper (proposal): move the priest's `downrankCoefficient` to `sim/core` as `(*Character).ForeverDownrankCoefficient(coef, learnLevel)`, reading `core.Assume("downrank_penalty_pct", 5)` (0 = none). The priest session owns the move. The shaman applies it in `lightning_bolt.go` / `chain_lightning.go`; nobody else needs it.
+
+### `oil_proc_damage`: Shadow Oil and Frost Oil proc damage
+
+- **Builds:** every preset with an oil on a weapon: the three Retribution builds and their three Undead encounters, and all four Enhancement builds. All of them use Shadow Oil; no preset uses Frost Oil, which takes the same setting.
+- **Sim now:** Forever's tooltips. Shadow Oil's proc (Shadow Bolt, 350026) deals 63 to 71, Frost Oil's (Frostbolt, 350025) 39 to 43. `sim/core/consumes.go:231-243` (`shadowOilDamageRange`, `frostOilDamageRange`); Classic Era keeps 52 to 61 and 33 to 38. The proc chances (15% and 10%) are Classic's.
+- **Source:**
+  - Wowhead's Forever tooltips (dataEnv 16, checked live): 350026 says 63 to 71, 350025 says 39 to 43. Wowhead Classic's tooltip for 350026 says 52 to 61.
+  - The consumables auditor read the server formula from the TrinityCore port: the damage scales with `level -= SpellLevel`. Forever changed the spells' BaseLevel from 12 to 0 but kept SpellLevel 12, so the server formula gives Era's ranges, while the tooltip shows the higher ones.
+- **Why uncertain:** the tooltip and the server formula disagree, and no beta log shows an oil hit at level 60.
+- **Settings:**
+  - **Low, "Era's".** Shadow Oil 52 to 61, Frost Oil 33 to 38: the server formula with SpellLevel 12.
+  - **Expected, "tooltip" (Sim now).** Shadow Oil 63 to 71, Frost Oil 39 to 43, as Forever's tooltips print.
+  - **High:** = Expected.
+- **Sensitivity (assumption sims, 180 s, at Low):** −0.06 to −0.08% on every Retribution and Enhancement build, about 0.6 DPS (Ret twist 981.7 → 981.0, Enhancement 813.9 → 813.4). The same at 120 and 300 s. Below the 0.5% threshold, but listed by user ruling (2026-10-13) because the evidence conflicts.
+- **Knob:** `sim/core/consumes.go`, both range helpers return Era's ranges when `core.Assume("oil_era", 0)` is 1.
 
 ---
 
@@ -263,7 +279,7 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 | `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes | Physical only | yes | = Expected | Low −1.1% twist (PR) |
 | `pal_31plus_ranks` | Holy Strike and Consecration 31+ ranks | twist, sub Holy, Shock | client | held to the ≤30 trend | client | = Expected | Low −1.2% (PR) |
 
-Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% at its Low).
+Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% at its Low) and `oil_proc_damage` (Shadow Oil; −0.07% at its Low).
 
 ### `pal_sor_sp_double`: Seal of Righteousness counts spell power twice
 
@@ -668,6 +684,7 @@ Tiger's Fury isn't in Forever (Blizzard's Druid deep dive; nothing in client 703
 No assumptions of its own. The rogue's scenarios are the shared ones:
 - **`flat_bonus_inside_pct`:** Backstab, Ambush and Mutilate. Est. −3.7% Combat Daggers, about −4% Seal Fate Daggers, +1.7% Mutilate and under 0.5% Subtlety at its Low.
 - **`wf_totem_offhand`:** every build dual wields in the Windfury Totem group. Est. −2 to −3% at its Low.
+- **`oil_proc_damage`:** all four Enhancement builds use Shadow Oil. −0.07 to −0.08% at its Low.
 
 ---
 
@@ -706,7 +723,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 ## Where no sensible range was found
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
-- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `warr_crit_rage`, `hunter_pet_speed`, `hunter_crit_per_agi`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation` and `druid_tf_scope`.
+- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `warr_crit_rage`, `hunter_pet_speed`, `hunter_crit_per_agi`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation`, `oil_proc_damage` and `druid_tf_scope`.
 
 Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM): no analogue below 10.
