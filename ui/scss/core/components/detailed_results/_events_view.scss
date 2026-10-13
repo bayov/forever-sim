@@ -240,6 +240,7 @@
 
 	.hidden-action-icon {
 		@include wowhead-background-icon;
+		@include icon-crop;
 		width: 16px;
 		height: 16px;
 		border-radius: 50%;

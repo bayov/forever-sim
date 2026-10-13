@@ -149,6 +149,7 @@
 }
 
 .timeline-tooltip-icon {
+	@include icon-crop;
 	flex-shrink: 0;
 	width: 20px;
 	height: 20px;
@@ -266,7 +267,6 @@
 // The rotation. Labels on the left, and the rows on the right scroll sideways together.
 .rotation-container {
 	display: flex;
-	padding: var(--spacer-2) 0 var(--spacer-3);
 	color: $ivory;
 }
 
@@ -310,7 +310,7 @@
 
 .rotation-labels {
 	flex-shrink: 0;
-	padding: 0 var(--spacer-3);
+	padding: var(--spacer-2) var(--spacer-3) var(--spacer-3);
 	border-right: 1px solid var(--line-color);
 	white-space: nowrap;
 }
@@ -344,6 +344,7 @@
 
 .rotation-label-icon {
 	@include wowhead-background-icon;
+	@include icon-crop;
 	flex-shrink: 0;
 	height: 22px;
 	width: 22px;
@@ -361,11 +362,15 @@
 	position: relative;
 	flex-grow: 1;
 	min-width: 0;
+	padding: var(--spacer-2) 0 var(--spacer-3);
 	overflow-x: auto;
 	cursor: grab;
-	background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px var(--grid-step, 100px));
-	background-position-x: var(--grid-offset, 0);
-	background-clip: content-box;
+	// The part that scrolls is darker than the labels, so it reads as its own area. The second
+	// layer is that color. It fills the padding too, but the grid lines only the content.
+	background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px var(--grid-step, 100px)),
+		linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22));
+	background-position-x: var(--grid-offset, 0), 0;
+	background-clip: content-box, border-box;
 
 	&.dragging {
 		cursor: grabbing;
@@ -531,6 +536,7 @@
 
 .rotation-timeline-cast-icon {
 	@include wowhead-background-icon;
+	@include icon-crop;
 	height: 24px;
 	width: 24px;
 	border: 1px solid rgba(0, 0, 0, 0.7);
@@ -538,11 +544,12 @@
 }
 
 // A small badge over the bottom of a cast icon for a notable outcome, like a crit or a parry.
-// It uses the colors of the tooltip badges, so those are its legend.
+// It uses the colors of the tooltip badges, so those are its legend. It stays inside the icon,
+// because the row cuts off anything that sticks out of it.
 .rotation-timeline-cast-badge {
 	position: absolute;
-	left: 12px;
-	bottom: -3px;
+	left: 13px;
+	bottom: 1px;
 	z-index: 1;
 	padding: 0 2px;
 	transform: translateX(-50%);
