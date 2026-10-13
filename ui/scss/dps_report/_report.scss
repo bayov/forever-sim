@@ -2822,3 +2822,25 @@ ol.fv-list li::marker {
 		height: 2.5rem;
 	}
 }
+
+// Once the page scrolls, the header floats over it as a frosted bar as wide as the page's content. It gets a border
+// on the sides and bottom and round bottom corners, so its ends don't look cut off. On Specs the section bar sticks
+// right under it, and then the two read as one bar with the round corners at the bottom.
+.dps-report-sim-ui {
+	.sim-header.stuck,
+	.fv-jump.stuck {
+		border: 1px solid var(--line-color);
+		border-top: 0;
+		border-radius: 0 0 var(--panel-radius) var(--panel-radius);
+
+		&::after {
+			display: none;
+		}
+	}
+
+	&:has(.fv-page:not([hidden]) .fv-jump.stuck) .sim-header.stuck {
+		border-bottom-color: transparent;
+		border-radius: 0;
+		box-shadow: none;
+	}
+}
