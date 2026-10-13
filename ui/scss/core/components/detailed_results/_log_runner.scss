@@ -1,84 +1,107 @@
 .log-runner-root {
-	.log-runner-actions {
-		display: flex;
-		margin-bottom: var(--spacer-3);
-
-		.log-search-input {
-			width: 25vw;
-		}
-
-		.show-debug-picker {
-			width: unset;
-			margin-bottom: 0;
-			margin-right: var(--block-spacer);
-			margin-left: auto;
-
-			label {
-				margin-left: var(--spacer-1);
-			}
-		}
-	}
-
 	.log-runner-scroll {
-		overflow-y: auto;
-		overflow-x: auto;
-
-		margin: 0 auto;
 		position: relative;
+		overflow-y: auto;
+		overflow-x: hidden;
 		width: 100%;
-		box-sizing: border-box;
-		will-change: scroll-position;
 		height: 70vh;
+		will-change: scroll-position;
 	}
+
 	.log-runner-table {
+		width: 100%;
 		table-layout: fixed;
+		font-size: 0.8125rem;
 
-		th {
-			padding: var(--spacer-2);
-			vertical-align: bottom;
+		thead th {
+			position: sticky;
+			top: 0;
+			z-index: 1;
+			padding: var(--spacer-2) var(--spacer-3);
+			background: $panel-bg;
+			border-bottom: 1px solid var(--line-color-strong);
+			font-size: 0.6875rem;
+			font-weight: 600;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--text-muted-color);
+		}
 
-			&:first-child {
-				width: 10ch;
-			}
+		.log-timestamp {
+			width: 6.5rem;
+			text-align: right;
+		}
+	}
 
-			&:not(:first-child) {
-				width: auto;
+	// Rows have one height, so the virtual scroll knows where each one is. A long event is cut
+	// short, and its full text shows when we hover it.
+	.log-runner-logs tr {
+		height: 30px;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.035);
+
+			.log-hide-action {
+				visibility: visible;
 			}
 		}
-		.log-runner-logs {
-			tr {
-				&:not(:last-child) {
-					td {
-						border-bottom: 1px solid var(--bs-border-color);
-					}
-				}
 
-				td {
-					padding-top: var(--spacer-2);
-					padding-bottom: var(--spacer-2);
-					padding-left: var(--spacer-2);
-				}
+		td {
+			padding: 0 var(--spacer-3);
+			border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
 
-				.log-timestamp {
-					padding-right: var(--spacer-2);
-					text-align: right;
-					vertical-align: top;
-					font-variant-numeric: tabular-nums;
-				}
+	.log-time-link {
+		padding: 0;
+		border: 0;
+		background: none;
+		font-variant-numeric: tabular-nums;
+		color: var(--text-muted-color);
 
-				.log-event {
-					// Fill any extra width
-					width: 100%;
+		&:hover {
+			color: var(--bs-link-color);
+			text-decoration: underline;
+		}
+	}
 
-					.icon {
-						vertical-align: middle;
-					}
+	.log-event {
+		position: relative;
 
-					.log-action {
-						color: var(--bs-brand);
-					}
-				}
-			}
+		.log-event-text {
+			display: inline-block;
+			max-width: calc(100% - 1.75rem);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			vertical-align: middle;
+		}
+
+		.icon {
+			vertical-align: middle;
+		}
+
+		.log-action {
+			color: var(--bs-brand);
+		}
+	}
+
+	.log-hide-action {
+		visibility: hidden;
+		position: absolute;
+		right: var(--spacer-2);
+		top: 50%;
+		transform: translateY(-50%);
+		padding: 0 0.25rem;
+		border: 0;
+		background: none;
+		font-size: 0.75rem;
+		color: var(--text-muted-color);
+
+		&:hover {
+			color: var(--bs-link-danger);
 		}
 	}
 }
