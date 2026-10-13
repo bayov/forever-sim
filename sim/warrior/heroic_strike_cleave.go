@@ -5,10 +5,12 @@ import (
 )
 
 func (warrior *Warrior) registerHeroicStrikeSpell(realismICD *core.Cooldown) {
-	flatDamageBonus := core.TernaryFloat64(core.IncludeAQ, 157, 138)
-	spellID := core.TernaryInt32(core.IncludeAQ, 25286, 11567)
+	// Ranks from the Ahn'Qiraj books are out under Forever (no source in client 70338).
+	aq := warrior.Env.IncludeAQRanks()
+	flatDamageBonus := core.TernaryFloat64(aq, 157, 138)
+	spellID := core.TernaryInt32(aq, 25286, 11567)
 	// No known equation
-	threat := core.TernaryFloat64(core.IncludeAQ, 173, 145)
+	threat := core.TernaryFloat64(aq, 173, 145)
 
 	warrior.HeroicStrike = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},
@@ -51,9 +53,8 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 	spellID := int32(20569)
 	threat := 100.0
 
-	// Improved Cleave discounts Rage in Forever instead of adding damage, and Raging Blows
-	// takes another 2 off the top.
-	rageCost := 20 - float64(warrior.Talents.ImprovedCleave) - core.TernaryFloat64(warrior.Talents.RagingBlows, 2, 0)
+	// Improved Cleave is gone from the Forever tree, and Raging Blows takes 3 Rage off Cleave.
+	rageCost := 20 - core.TernaryFloat64(warrior.Talents.RagingBlows, 3, 0)
 
 	results := make([]*core.SpellResult, min(int32(2), warrior.Env.GetNumTargets()))
 
@@ -108,7 +109,9 @@ func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *WarriorSpell, realismIC
 			if warrior.curQueueAura != nil {
 				warrior.curQueueAura.Deactivate(sim)
 			}
-			warrior.PseudoStats.DisableDWMissPenalty = true
+			// Under Forever a queued Heroic Strike or Cleave no longer raises the off-hand's hit
+			// chance (the 1 October development notes).
+			warrior.PseudoStats.DisableDWMissPenalty = !warrior.Env.IsForever()
 			warrior.curQueueAura = aura
 			warrior.curQueuedAutoSpell = srcSpell
 		},

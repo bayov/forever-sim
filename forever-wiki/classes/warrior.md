@@ -6,7 +6,57 @@ Talents: 54 total, 11 new, 31 changed, 12 unchanged (verified).
 
 Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 5 and 7 hold the 11, 16, 21 and 31 point talents.
 
-Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide. Since 2026-10-12 every such tag is replaced: the client 70338 trait curves (listed in the next section) settle all ranks.
+
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The beta client's warrior tree and spells, read from wago.tools (the Trait tables for the tree, SpellEffect, SpellMisc, SpellCooldowns, SpellPower and TraitDefinitionEffectPoints for the numbers), against the BlizzCon data below. `tools/forever_talents/client/warrior.json` and `data/warrior.json` in the sim repo are regenerated from it, so the per-talent text below is superseded where it differs. Blizzard's 1 October development notes ("Warrior Updates in Today's Beta Build") and ForeverChanges' patch notes explain most of the changes. The sim follows the client.
+
+Tree:
+
+- Arms is as at BlizzCon: 17 talents, Mortal Strike needs Sweeping Strikes, Impale needs Deep Wounds.
+- Fury (1 October): Lingering Rage (row 2, 2 to 10 sec before Rage decays after a fight) takes Iron Will's place, Furious Precision (row 3, 4 / 7 / 10% off hand hit) takes Boundless Rage's, Gore Drinker (row 6, under Enrage, which it needs: the next 3 melee attacks heal 0.5 / 1% of max health after Enrage, Berserker Rage, Bloodrage, Death Wish or Bloodthirst) is new. Improved Cleave, Boundless Rage and Precision are gone. Improved Berserker Rage moves to row 5, Flurry needs Death Wish and sits under it, Bloodthirst needs nothing.
+- Protection: Iron Will moves to row 1, Improved Bloodrage to row 1, Anticipation, Improved Revenge and Improved Thunder Clap to row 2, Improved Disarm to row 3, Improved Shield Bash to row 4, Focused Rage to row 5 and Bastion to row 6. Toughness and Vitality are gone, Last Stand needs nothing.
+
+Ranks the BlizzCon data guessed wrong:
+
+- Enrage is a flat 30% chance for 2 / 4 / 6 / 8 / 10% Physical damage (the guess was 30% a point for a flat 2%).
+- Unbridled Wrath is 12% a point, 1 Rage whatever the weapon (two-handers no longer get 2).
+- Dual Wield Specialization is 5% off hand damage and 10% off hand Rage a point, no hit.
+- Bloodthrill is 4% a point (2% before 24 September), from main hand attacks only.
+- Improved Rend is 12 / 23 / 35%, Improved Execute 3 / 5 Rage.
+- Booming Voice widens every shout by 10% a point and takes 5% a point off their Rage cost.
+- Raging Blows takes 3 Rage off Cleave and Whirlwind, and Whirlwind strikes with both weapons without it.
+- Improved Slam takes 0.25 / 0.5 sec off Slam's cast and GCD, stops it delaying the swing, and takes 3 sec off its cooldown (no rank curve on that effect, so 3 sec at either rank; ForeverChanges reads 3 a rank).
+- Master of Defense is 50 / 100% for 5 Rage. Improved Bloodrage is 25 / 50% of all of Bloodrage's Rage. Weaponmaster, Bastion and Focused Rage scale linearly as guessed (1% crit, 3% armor, 1% extra attack; 2%; 1 Rage).
+
+Every talent's per-rank values, from TraitDefinitionEffectPoints (these override the rank 1 spell's base points, which are sometimes Classic leftovers). The sim was checked against each modeled one on 2026-10-12 and matches:
+
+- Arms: Improved Heroic Strike 1 / 2 / 3 Rage, Deflection 1-5% parry, Improved Rend 12 / 23 / 35%, Improved Charge 3 / 6 Rage, Improved Tactical Mastery 3-15 Rage, Improved Overpower 25 / 50% crit, Deep Wounds 20 / 40 / 60%, Two-Handed Weapon Specialization 1 / 2 / 3%, Impale 10 / 20%, Bloodthrill 4-20%, Weaponmaster 1-5% crit, 3-15% armor and 1-5% extra attack, Improved Slam 0.25 / 0.5 sec cast and GCD, Improved Hamstring 5 / 10 / 15%.
+- Fury: Booming Voice 10-50% area and 5-25% Rage cost, Lingering Rage 2-10 sec, Furious Precision 4 / 7 / 10%, Dual Wield Specialization 5-25% damage and 10-50% Rage, Improved Berserker Rage 5 / 10 Rage and 50 / 100%, Flurry 5-25%, Cruelty 1-5%, Unbridled Wrath 12-60%, Blood Craze 1 / 2 / 3%, Enrage 2-10%, Improved Execute 3 / 5 Rage, Improved Intercept 5 / 10 sec, Gore Drinker 0.5 / 1%.
+- Protection: Improved Bloodrage 25 / 50%, Shield Specialization 1-5% block and 20-100% for Rage, Iron Will 3-15%, Anticipation 4-20 defense, Improved Revenge 20 / 40 / 60% damage, Improved Thunder Clap 2 / 4 / 6 Rage, Master of Defense 50 / 100%, Improved Disarm 7 / 13 / 20 sec, Defiance 5 / 10 / 15%, Improved Sunder Armor 1 / 2 / 3 Rage, Improved Shield Bash 50 / 100%, Improved Shield Wall 5.5 / 11 min, Focused Rage 1 / 2 / 3 Rage, Bastion 2-10%.
+- Improved Slam's 3 sec off the cooldown has no curve, so it is 3 sec at either rank.
+
+Spells at level 60:
+
+- Slam: 18 sec cooldown on every rank (15 before 24 September), weapon damage plus 87, 1.5 sec cast.
+- Mortal Strike rank 4: weapon damage plus 160 (ranks at 40, 48, 54, 60: 85, 110, 135, 160).
+- Bloodthirst rank 4: 45% of attack power plus 48 (ranks: plus 30, 37, 43, 48), 6 sec, 30 Rage.
+- Battle Shout rank 7: 139 attack power for 3 min. Demoralizing Shout rank 5: 204 for 45 sec.
+- Recklessness: 100% crit for 15 sec, 30 min. Death Wish: 20% Physical damage, 5% more damage taken, 3 min, 10 Rage.
+- Tactical Mastery is a trainer spell at 14 that keeps 10 Rage, and Improved Tactical Mastery adds 3 a point. Berserker Rage is trained at 30 and makes no Rage of its own without the talent.
+- Thunder Clap rank 6: 103 damage, 20% slow, 6 sec cooldown, Battle or Defensive Stance. Last Stand: 3 min.
+- A critical white hit gives 100% more Rage (75% in the 1 October build, 100% from Kaivax's 2 October "Warrior Updates in Today's Beta Build" post, https://us.forums.blizzard.com/en/wow/t/2369360). Rage from white hits is normalized to weapon speed (standards 21); all the Rage rules are assumptions until the beta test in orchestration/followups.md ("Rage needs a beta test"). A queued Heroic Strike no longer raises the off hand's hit chance.
+- Battlegear of Glory (set 2102, Helm, Shoulders, Breastplate, Gauntlets, Legplates and Greaves of Glory, item level 65) is the Arms and Fury tier set (its icon is a Hyjal helm, and which raid drops it in Forever is not confirmed): 2 pieces 1% attack and cast speed, 3 Intimidating Shout 30 sec sooner, 4 +36 attack power against Humanoids, 5 Recklessness 30 sec sooner. Battleplate of Glory (set 2103) is the Protection one.
+
+Checked against client 70338, wowhead's Forever tooltips (dataEnv 17) and Blizzard's posts on 13 October:
+
+- Deep Wounds doesn't scale with attack power on either hand and is a rolling DoT: a crit while it is up adds the damage not yet ticked to the new one. The 8 October notes fixed it "scaling with attack power for your Offhand weapon" and add "Deep Wounds does not scale with Attack Power but is a rolling DoT compared to Classic/Vanilla" (https://us.forums.blizzard.com/en/wow/t/2360696, post 5). The sim follows this since 13 October.
+- Windfury Totem is a party buff, not a weapon enchant (Mage & Shaman deep dive, https://news.blizzard.com/en-us/article/24302097), so a warrior keeps a sharpening stone on the main hand with it. It doesn't stack with Grace of Air.
+- Rend "now gains significant damage scaling from Attack Power" (Priest & Warrior deep dive, https://news.blizzard.com/en-us/article/24301514), but neither the client nor the tooltip (147 over 21 sec) gives a coefficient, so the sim has none.
+- Spearing Strike: the client tooltip reads 40% weapon damage plus 80% more against Giants, Dragonkin and mounted targets. The deep dive's "damage is doubled" is older.
+- Intercept is still in the game (spell 20617, Berserker Stance), so it is not removed. Whirlwind (both weapons), Berserker Rage (level 30) and Bloodrage (no longer keeps you in combat) did change. Recklessness is 100% crit and 20% more damage taken for 15 sec on a 30 min cooldown that no longer shares with Shield Wall and Retaliation.
+- The sections below are the BlizzCon transcription. Where they disagree with the top of this page (Thunder Clap's 6 sec cooldown, Slam's 18 sec cooldown and +87, Victory Rush's 1 + 15% of attack power, and the talents), the top is right.
 
 ## Spellbook changes (trainer abilities)
 
@@ -64,6 +114,8 @@ Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. T
 
 ### Removed abilities
 
+None. Intercept was missing from the level 38 demo, but the client and ForeverChanges still have it.
+
 - **Intercept** (fury, Level 30, 10 Rage, 25 yd range, Instant, 30 sec cooldown)
   - Charge an enemy, causing 65 damage and stunning it for 3 sec.
   - Note: Not in the level 38 demo warrior's Fury tab, which lists every other Classic Fury spell of that level. Charge gained stance flexibility through the Vanguard talent.
@@ -94,7 +146,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Rank 3: Increases your Parry chance by 3%.
   - Rank 4: Increases your Parry chance by 4%.
   - Rank 5: Increases your Parry chance by 5%.
-- **Improved Rend** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Improved Rend** (3 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases the Bleed damage done by your Rend ability by 12%.
   - Rank 2: Increases the bleed damage done by your Rend ability by 25%.
   - Rank 3: Increases the bleed damage done by your Rend ability by 35%.
@@ -105,13 +157,13 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 2 (5 points)
 
-- **Improved Charge** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Charge** (2 ranks, column 1) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases the Rage generated by your Charge ability by 3.
   - Rank 2: Increases the amount of rage generated by your Charge ability by 6.
   - Classic (2 ranks):
     - Rank 1: Increases the amount of rage generated by your Charge ability by 3.
     - Rank 2: Increases the amount of rage generated by your Charge ability by 6.
-- **Improved Tactical Mastery** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Tactical Mastery** (5 ranks, column 2) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Tactical Mastery lets you retain up to an additional 3 Rage when you change stances.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -124,7 +176,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
     - Rank 4: You retain up to 20 of your rage points when you change stances.
     - Rank 5: You retain up to 25 of your rage points when you change stances.
   - Note: Only rank 1 has been read from footage, ranks 2-5 previously showed the Classic Tactical Mastery talent text.
-- **Improved Overpower** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Improved Overpower** (2 ranks, column 4) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases the critical strike chance of your Overpower ability by 25%.
   - Rank 2: Increases the critical strike chance of your Overpower ability by 50%.
 
@@ -134,7 +186,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Requires: Improved Tactical Mastery (5/5)
   - Generates 1 Rage every 3 sec while in combat, and reduces Rage loss while out of combat by 30%.
   - Classic: Increases the time required for your rage to decay while out of combat by 30%.
-- **Deep Wounds** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Deep Wounds** (3 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Requires: Improved Rend (3/3)
   - Rank 1: Your critical strikes cause your opponent to Bleed, dealing 20% of your melee weapon's average damage over 12 sec.
   - Rank 2: Your critical strikes cause your opponent to Bleed, dealing 40% of your melee weapon's average damage over 12 sec.
@@ -147,7 +199,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Cost: 15 Rage, Melee Range, Instant, 20 sec cooldown
   - A brutal attack that deals 40% weapon damage. Deals an additional 80% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted.
   - Note: Filled the question-mark placeholder with the vanilla spear icon, no WotLK talent matches this ability.
-- **Two-Handed Weapon Specialization** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Two-Handed Weapon Specialization** (3 ranks, column 2) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases the damage you deal with two-handed melee weapons by 1%.
   - Rank 2: Increases the damage you deal with two-handed melee weapons by 2%.
   - Rank 3: Increases the damage you deal with two-handed melee weapons by 3%.
@@ -157,7 +209,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
     - Rank 3: Increases the damage you deal with two-handed melee weapons by 3%.
     - Rank 4: Increases the damage you deal with two-handed melee weapons by 4%.
     - Rank 5: Increases the damage you deal with two-handed melee weapons by 5%.
-- **Impale** (2 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Impale** (2 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases the critical strike damage bonus of your abilities by 10%.
   - Rank 2: Increases the critical strike damage bonus of your abilities by 20%.
   - Classic (2 ranks):
@@ -167,19 +219,19 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 5 (20 points)
 
-- **Bloodthrill** (5 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Bloodthrill** (5 ranks, column 1) [NEW] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Your melee attacks against targets afflicted by your Rend have a 2% chance to activate your Overpower ability for 1 attack on your current target. Lasts 6 sec.
   - Note: Filled the question-mark placeholder with the WotLK Taste for Blood icon (Rend enabling Overpower).
 - **Sweeping Strikes** (1 rank, column 2) [unchanged]
   - Cost: 30 Rage, Instant, 30 sec cooldown
   - Your next 5 melee attacks strike an additional nearby opponent.
-- **Weaponmaster** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Weaponmaster** (5 ranks, column 3) [NEW] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Gives your melee weapon attacks a benefit depending on the weapon. Axe/Polearm: Increases your critical strike chance by 1%. Mace/Staff: Your attacks ignore 3% of your target's armor. Sword: Your successful melee attacks have a 1% chance to trigger an extra attack on the target.
   - Note: Filled the question-mark placeholder with the WotLK Weapon Mastery icon.
 
 #### Row 6 (25 points)
 
-- **Improved Slam** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Slam** (2 ranks, column 1) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Reduces the global cooldown and cast time of your Slam ability by 0.25 sec. In addition, Slam no longer interrupts your melee swing time.
   - Rank 2: Reduces the global cooldown and cast time of your Slam ability by 0.5 sec. In addition, Slam no longer interrupts your melee swing time.
   - Classic (5 ranks):
@@ -207,7 +259,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 1 (0 points)
 
-- **Booming Voice** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Booming Voice** (5 ranks, column 2) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases the radius of your Battle Shout and Demoralizing Shout abilities by 10%.
   - Rank 2: Increases the radius of your Battle Shout and Demoralizing Shout abilities by 20%.
   - Rank 3: Increases the radius of your Battle Shout and Demoralizing Shout abilities by 30%.
@@ -229,7 +281,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 2 (5 points)
 
-- **Iron Will** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Iron Will** (5 ranks, column 2) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Reduces the duration of Stun and Fear effects inflicted on you by 3%.
   - Rank 2: Reduces the duration of Stun and Fear effects inflicted on you by 6%.
   - Rank 3: Reduces the duration of Stun and Fear effects inflicted on you by 9%.
@@ -242,7 +294,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
     - Rank 4: Increases your chance to resist Stun and Charm effects by an additional 12%.
     - Rank 5: Increases your chance to resist Stun and Charm effects by an additional 15%.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Unbridled Wrath** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Unbridled Wrath** (5 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Gives you a 12% chance to generate 1 additional Rage when you deal melee damage with a weapon. This effect is increased to 2 Rage for two-handed weapons.
   - Rank 2: Gives you a 24% chance to generate 1 additional Rage when you deal melee damage with a weapon. This effect is increased to 2 Rage for two-handed weapons.
   - Rank 3: Gives you a 36% chance to generate 1 additional Rage when you deal melee damage with a weapon. This effect is increased to 2 Rage for two-handed weapons.
@@ -258,7 +310,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 3 (10 points)
 
-- **Improved Cleave** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Cleave** (3 ranks, column 1) [CHANGED] [not in client 70338]
   - Rank 1: Reduces the Rage cost of your Cleave ability by 1.
   - Rank 2: Reduces the Rage cost of your Cleave ability by 2.
   - Rank 3: Reduces the Rage cost of your Cleave ability by 3.
@@ -270,7 +322,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 - **Piercing Howl** (1 rank, column 2) [unchanged]
   - Cost: 10 Rage, Instant
   - Causes all nearby enemies to be Dazed, reducing movement speed by 50% for 6 sec.
-- **Blood Craze** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Blood Craze** (3 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Regenerates 1% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum Health from a single attack.
   - Rank 2: Regenerates 2% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum Health from a single attack.
   - Rank 3: Regenerates 3% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum Health from a single attack.
@@ -279,13 +331,13 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
     - Rank 2: Regenerates 2% of your total Health over 6 sec after being the victim of a critical strike.
     - Rank 3: Regenerates 3% of your total Health over 6 sec after being the victim of a critical strike.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Boundless Rage** (3 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Boundless Rage** (3 ranks, column 4) [NEW] [not in client 70338]
   - Rank 1: Increases your maximum Rage by 10.
   - Note: Filled the question-mark placeholder with the WotLK Endless Rage icon (same max-rage / rage-generation talent).
 
 #### Row 4 (15 points)
 
-- **Dual Wield Specialization** (5 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Dual Wield Specialization** (5 ranks, column 1) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases your off-hand weapon damage by 5%, off-hand Rage generation by 20%, and chance to hit with off-hand attacks by 2%.
   - Rank 2: Increases your off-hand weapon damage by 10%, off-hand Rage generation by 40%, and chance to hit with off-hand attacks by 4%.
   - Rank 3: Increases your off-hand weapon damage by 15%, off-hand Rage generation by 60%, and chance to hit with off-hand attacks by 6%.
@@ -301,7 +353,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 - **Raging Blows** (1 rank, column 2) [NEW]
   - Causes your Whirlwind to also strike with your off-hand weapon, and reduces the Rage cost of your Cleave ability by 2.
   - Note: Filled the question-mark placeholder with the WotLK Improved Whirlwind icon.
-- **Enrage** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Enrage** (5 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Gives you a 30% chance to deal 2% increased Physical damage for 12 sec after being the victim of any damaging attack.
   - Rank 2: Gives you a 10% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.
   - Rank 3: Gives you a 15% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.
@@ -313,7 +365,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
     - Rank 3: Gives you a 15% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.
     - Rank 4: Gives you a 20% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.
     - Rank 5: Gives you a 25% melee damage bonus for 12 sec up to a maximum of 12 swings after being the victim of a critical strike.
-- **Improved Execute** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Improved Execute** (2 ranks, column 4) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Reduces the Rage cost of your Execute ability by 3.
   - Rank 2: Reduces the Rage cost of your Execute ability by 5.
   - Classic (2 ranks):
@@ -322,7 +374,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 5 (20 points)
 
-- **Precision** (3 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Precision** (3 ranks, column 1) [NEW] [not in client 70338]
   - Rank 1: Increases your chance to hit with all abilities and attacks by 1%.
   - Note: Filled the question-mark placeholder with the WotLK talent icon.
 - **Death Wish** (1 rank, column 2) [CHANGED]
@@ -336,13 +388,13 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 6 (25 points)
 
-- **Improved Berserker Rage** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Berserker Rage** (2 ranks, column 1) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Your Berserker Rage ability will instantly generate 5 Rage and has a 50% chance to remove all movement impairing effects when activated.
   - Rank 2: The Berserker Rage ability will generate 10 rage when used.
   - Classic (2 ranks):
     - Rank 1: The Berserker Rage ability will generate 5 rage when used.
     - Rank 2: The Berserker Rage ability will generate 10 rage when used.
-- **Flurry** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Flurry** (5 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Requires: Enrage (5/5)
   - Rank 1: Increases your melee attack speed by 5% for your next 3 swings after dealing a melee critical strike.
   - Rank 2: Increases your melee attack speed by 10% for your next 3 swings after dealing a melee critical strike.
@@ -372,7 +424,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 1 (0 points)
 
-- **Shield Specialization** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Shield Specialization** (5 ranks, column 2) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases your chance to Block attacks with your shield by 1% and grants you a 20% chance to generate 5 Rage when you Block.
   - Rank 2: Increases your chance to block attacks with a shield by 2% and has a 40% chance to generate 1 rage when a block occurs.
   - Rank 3: Increases your chance to block attacks with a shield by 3% and has a 60% chance to generate 1 rage when a block occurs.
@@ -384,7 +436,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
     - Rank 3: Increases your chance to block attacks with a shield by 3% and has a 60% chance to generate 1 rage when a block occurs.
     - Rank 4: Increases your chance to block attacks with a shield by 4% and has a 80% chance to generate 1 rage when a block occurs.
     - Rank 5: Increases your chance to block attacks with a shield by 5% and has a 100% chance to generate 1 rage when a block occurs.
-- **Anticipation** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Anticipation** (5 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases your Defense Skill by 4.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Increases your Defense skill by 6.
@@ -399,7 +451,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 2 (5 points)
 
-- **Improved Bloodrage** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Bloodrage** (2 ranks, column 1) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases all the Rage generated by your Bloodrage ability by 25%.
   - Rank 2: Increases all the Rage generated by your Bloodrage ability by 50%.
   - Classic (2 ranks):
@@ -412,7 +464,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Rank 3: Increases your armor value from items by 6%.
   - Rank 4: Increases your armor value from items by 8%.
   - Rank 5: Increases your armor value from items by 10%.
-- **Improved Thunder Clap** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Improved Thunder Clap** (3 ranks, column 4) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Reduces the Rage cost of your Thunder Clap ability by 2.
   - Rank 2: Reduces the cost of your Thunder Clap ability by 2 rage points.
   - Rank 3: Reduces the cost of your Thunder Clap ability by 4 rage points.
@@ -427,12 +479,12 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Requires: Improved Bloodrage (2/2)
   - Cost: Instant, 3 min cooldown
   - When activated, this ability temporarily grants you 30% of your maximum health for 20 sec. After the effect expires, the health is lost.
-- **Master of Defense** (2 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Master of Defense** (2 ranks, column 2) [NEW] [ranks set by the client 70338 trait curves, see above]
   - Requires: Shield Specialization (5/5)
   - Rank 1: Grants you a 50% chance to generate 5 Rage when you Dodge or Parry while a shield is equipped.
   - Rank 2: Grants you a 100% chance to generate 5 Rage when you Dodge or Parry while a shield is equipped.
   - Note: Filled the question-mark placeholder with the WotLK Improved Defensive Stance icon (dodge/parry/block proc).
-- **Improved Revenge** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Improved Revenge** (3 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases damage dealt by your Revenge ability by 20%.
   - Rank 2: Increases damage dealt by your Revenge ability by 40%.
   - Rank 3: Increases damage dealt by your Revenge ability by 60%.
@@ -441,7 +493,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
     - Rank 2: Gives your Revenge ability a 30% chance to stun the target for 3 sec.
     - Rank 3: Gives your Revenge ability a 45% chance to stun the target for 3 sec.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Defiance** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Defiance** (3 ranks, column 4) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Requires Defensive Stance. Increases all threat generated in Defensive Stance by an additional 5% while a shield is equipped.
   - Rank 2: Requires Defensive Stance. Increases all threat generated in Defensive Stance by an additional 10% while a shield is equipped.
   - Rank 3: Requires Defensive Stance. Increases all threat generated in Defensive Stance by an additional 15% while a shield is equipped.
@@ -459,7 +511,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Rank 1: Reduces the Rage cost of your Sunder Armor ability by 1.
   - Rank 2: Reduces the cost of your Sunder Armor ability by 2 rage points.
   - Rank 3: Reduces the cost of your Sunder Armor ability by 3 rage points.
-- **Improved Disarm** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Disarm** (3 ranks, column 2) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Reduces the cooldown of your Disarm ability by 7 secs.
   - Rank 2: Reduces the cooldown of your Disarm ability by 14 secs.
   - Rank 3: Reduces the cooldown of your Disarm ability by 21 secs.
@@ -474,7 +526,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 
 #### Row 5 (20 points)
 
-- **Improved Shield Wall** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Shield Wall** (2 ranks, column 1) [CHANGED] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Reduces the cooldown of your Shield Wall ability by 5.5 min.
   - Rank 2: Reduces the cooldown of your Shield Wall ability by 11 min.
   - Classic (2 ranks):
@@ -487,16 +539,16 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
 - **Improved Shield Bash** (2 ranks, column 3) [unchanged]
   - Rank 1: Gives your Shield Bash ability a 50% chance to silence the target for 3 sec.
   - Rank 2: Gives your Shield Bash ability a 100% chance to silence the target for 3 sec.
-- **Vitality** (5 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Vitality** (5 ranks, column 4) [NEW] [not in client 70338]
   - Rank 1: Increases your Stamina and Strength by 2%.
   - Note: Filled the question-mark placeholder with the WotLK talent icon.
 
 #### Row 6 (25 points)
 
-- **Focused Rage** (3 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Focused Rage** (3 ranks, column 1) [NEW] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Reduces the Rage cost of your offensive abilities by 1.
   - Note: Filled the question-mark placeholder with the WotLK talent icon.
-- **Bastion** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Bastion** (5 ranks, column 3) [NEW] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Increases all damage you deal by 2% while a shield is equipped.
   - Rank 2: Increases all damage you deal by 4% while a shield is equipped.
   - Rank 3: Increases all damage you deal by 6% while a shield is equipped.
