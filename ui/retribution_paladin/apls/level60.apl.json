@@ -5,7 +5,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":20920}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
-        {"action":{"castSpell":{"spellId":{"itemId":992015}}},"notes":"The spell power on-use trinket on cooldown."},
+        {"action":{"castSpell":{"spellId":{"itemId":992015}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"currentTime":{}},"op":"OpLt","rhs":{"const":{"val":"1s"}}}},{"isExecutePhase":{"threshold":"E20"}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"math":{"lhs":{"math":{"lhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"4"}}}},"op":"OpSub","rhs":{"currentTime":{}}}},"op":"OpDiv","rhs":{"const":{"val":"5"}}}},"minTimeLeft":{"const":{"val":"20s"}},"spellId":{"itemId":992015}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}},"notes":"The spell power on-use trinket at the pull, then held for the execute phase when that loses no use."},
         {"action":{"castSpell":{"spellId":{"itemId":10646}}},"notes":"Goblin Sapper Charge on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":20924}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Consecration with the mana to spare."},
         {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":20920}}},{"auraIsActive":{"auraId":{"spellId":20293}}}]}}]}}},"notes":"Judgement on cooldown, on whichever damage seal is up."},
