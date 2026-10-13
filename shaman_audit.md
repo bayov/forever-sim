@@ -146,7 +146,7 @@ Elemental
 - [x] 8.11 Call of Thunder
 - [x] 8.12 Elemental Reach (not implemented, the sim has no spell range)
 - [x] 8.13 Lightning Overload
-- [ ] 8.14 Earthbound (not implemented)
+- [x] 8.14 Earthbound (not implemented, nothing in the sim moves the enemy)
 - [ ] 8.15 Elemental Fury
 - [ ] 8.16 Lava Burst
 
@@ -1396,6 +1396,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: no build had it, and we never cast either spell.
 - No sim change. `lightning_overload_test.go` TestOrcShamanLightningOverload at level 60 with 3/3: 2000 rank 10 bolts overload 10% of the time (within 2%). A copy deals half the bolt's damage, costs no mana and has no threat, and casting the copy 2000 times makes no more copies. A 15% rank 3, a copy that can copy itself, 60% damage or a copy that costs mana each fail it.
 - 8.11 said the client has no separate overload spell. It does, with Call of Thunder's mask, so 8.11's conclusion stands and its text is fixed.
+
+### 8.14 Earthbound
+
+- The user OK'd leaving it out (2026-10-13): "sg".
+- Client 70338 (wago.tools 1222988 and its root 1238289): 1 point makes Earthbind Totem root nearby enemies for 5 sec when we drop it. The totem (2484) has a 15 sec cooldown and a 1 sec GCD, lasts 45 sec and takes the earth slot. Classic has no such talent.
+- The sim: the proto has the field, but nothing reads it. The sim has no Earthbind Totem, and nothing moves the enemy. The only movement is ours, the out of melee range stretches (`pvp.go`) and the APL move action. So a root has nothing to act on until the sim has enemies that kite, and it would cost the earth slot we keep for Strength of Earth.
+- No preset takes it, and no beta build had it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
