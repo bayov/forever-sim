@@ -1,4 +1,4 @@
-// The DPS Report in the sim UI's look. The page sits in the sim UI shell (sidebar, header tabs, main), its sections are
+// The DPS Report in the sim UI's look. The page sits in the sim UI shell (header tabs, main), its sections are
 // sim UI content blocks, and these tokens map the report's own names onto the sim UI palette in shared/_variables.
 // They sit on :root because tooltips are appended to the body, outside the report; only this page loads this file.
 :root {
@@ -55,14 +55,15 @@
 	--font-anthropic-serif: var(--heading-font-family);
 }
 
-.fv,
-.fv-head {
+.fv {
 	font-variant-numeric: tabular-nums;
 }
 
-.fv-head {
-	display: grid;
-	gap: 0.75rem;
+// With no sidebar, the page is the header and the tabs, kept to a readable width on wide screens.
+.dps-report-sim-ui .sim-content {
+	width: 100%;
+	max-width: 90rem;
+	margin-inline: auto;
 }
 
 .fv [hidden] {
@@ -87,29 +88,51 @@
 	color: var(--color-fg);
 }
 
-/* ---------- sidebar summary ---------- */
-.fv-eyebrow {
-	margin: 0;
-	font-family: var(--heading-font-family);
-	font-variant: small-caps;
-	font-weight: 700;
-	font-size: 1rem;
-	letter-spacing: 0.04em;
-	color: var(--gold-soft);
+/* ---------- header title and the summary atop Ranking ---------- */
+.fv-home {
+	display: flex;
+	align-items: center;
+	gap: var(--spacer-2);
+	margin-right: var(--spacer-4);
+	align-self: center;
+	text-decoration: none;
+
+	.sim-link-icon {
+		width: 2rem;
+		height: 2rem;
+	}
+
+	.fv-home-title {
+		font-family: var(--heading-font-family);
+		font-weight: 700;
+		font-size: 1.1rem;
+		color: var(--gold-soft);
+		white-space: nowrap;
+	}
 }
 
-.fv-head .fv-take {
+@include media-breakpoint-down(md) {
+	.fv-home {
+		margin-right: var(--spacer-2);
+
+		.fv-home-title {
+			display: none;
+		}
+	}
+}
+
+.fv-summary .fv-take {
 	margin: 0;
 	color: var(--color-fg-muted);
 	font-size: var(--cds-font-size-body);
 	line-height: 1.5;
 }
 
-.fv-head .fv-take b {
+.fv-summary .fv-take b {
 	color: var(--color-fg);
 }
 
-.fv-head .fv-take b:first-child {
+.fv-summary .fv-take b:first-child {
 	color: var(--gold-soft);
 }
 
@@ -121,7 +144,7 @@
 }
 
 .fv-hero button {
-	flex: 0 0 2rem;
+	flex: 0 0 2.25rem;
 	border: 0;
 	padding: 0;
 	background: none;
@@ -153,14 +176,8 @@
 		0 0 0 2.5px var(--gold-soft),
 		0 0 12px rgba($gold, 0.55);
 }
-// On phones the sidebar sits above the tabs; keep the summary short there.
-@include media-breakpoint-down(lg) {
-	.fv-head .fv-hero {
-		flex-wrap: nowrap;
-		overflow-x: auto;
-		scrollbar-width: none;
-	}
 
+@include media-breakpoint-down(md) {
 	.fv-hero button {
 		flex-basis: 1.8rem;
 	}
@@ -219,7 +236,7 @@
 	min-width: 0;
 	position: relative;
 	align-content: start;
-	scroll-margin-top: calc(var(--sim-header-height) + 1rem);
+	scroll-margin-top: calc(var(--sim-header-height) + 3rem);
 }
 
 .fv-card > .content-block-header {
@@ -1153,12 +1170,13 @@ ol.fv-list li::marker {
 	overflow-x: auto;
 	scrollbar-width: none;
 	position: sticky;
-	top: calc(env(safe-area-inset-top, 0px) + 3.05rem);
+	// Right under the header tabs, frosted like the header once the page scrolls.
+	top: var(--sim-header-height);
 	z-index: 5;
 	padding: 0.35rem 0.1rem;
 	margin-block: -0.2rem;
-	background: var(--color-bg);
-	box-shadow: 0 6px 8px -6px color-mix(in srgb, var(--color-fg) 18%, transparent);
+	background: rgba(11, 15, 21, 0.75);
+	backdrop-filter: blur(8px);
 }
 
 .fv-jump::-webkit-scrollbar {

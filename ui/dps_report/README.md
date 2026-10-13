@@ -20,7 +20,7 @@ stay under 16 MB; the build fails above that.
 Files:
 
 - `index.html`, `index.ts`: the page. `index.ts` puts `layout.html` in the page and starts `report.js`.
-- `layout.html`: the markup, in the sim UI shell (`.sim-ui`, sidebar, header tabs, `.tab-pane` pages, `.content-block`
+- `layout.html`: the markup, in the sim UI shell (`.sim-ui`, header tabs with the title, `.tab-pane` pages, `.content-block`
   cards).
 - `report.js`: the page logic. It draws every tab with d3 and reads data only through `dash.data(id)` inside
   `dash.onData`, an API it kept from its first life as a Claude dashboard artifact.
