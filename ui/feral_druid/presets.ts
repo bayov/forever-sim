@@ -54,10 +54,11 @@ export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 // (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
 // item level table (66 for the armor, 71 for the jewelry, belt, back and wrist, 76 for the
 // two-hander), in the standards 5a stat mix (the SoD level 60 BiS proportions,
-// orchestration/gear_targets.md): 184 Agility, 177 Strength, 142 Stamina (18% of the budget),
-// 9.3% crit, 9% hit (the special attack hit cap against a level 63 boss; moving 10 hit rating
-// into crit costs 0.4 at 180 sec), 40 Intellect for Shifting Power's mana, no Spirit (the
-// cross-class rule for Energy users), and the two-hander's 28 attack power. Only the head and chest carry Grovekeeper Ferocity, Forever's
+// orchestration/gear_targets.md), spent linearly (standards 1a): 211 Agility, 202 Strength, 145
+// Stamina (18% of the budget), 5.3% crit, 9% hit (the special attack hit cap against a level 63
+// boss; moving 10 hit rating into crit costs 0.5 at 180 sec), 49 Intellect for Shifting Power's
+// mana, 39 attack power (34 on the two-hander) and no Spirit (the cross-class rule for Energy
+// users). Only the head and chest carry Grovekeeper Ferocity, Forever's
 // crafted Feral set, so only its 2 piece (1% attack speed) is live, like every class's set; the
 // 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec. Howling Idol (1 sec off Shifting
 // Power, a real Forever Phase 1 idol) is worth 12.5 (those two and the enchant comparisons
@@ -94,8 +95,7 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 // in the last 8 sec and Ferocious Bite at any combo points in the last 2 (0.6 to 1.4). No
 // Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend and Tear's
 // bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
-// points is 1 to 2 behind. The search kept that at 120 and 180 sec, and Shifting Power at 40
-// Energy is 1 ahead at 300 sec (2.9 behind at 180).
+// points is 1 to 2 behind. The search on the 5a gear kept every knob at 120, 180 and 300 sec.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power, Tiger's Fury and Berserk on cooldown.",
 	group: 'Level 60',
@@ -274,14 +274,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 672.4 / 666.3 / 657.6 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 679.8 / 673.4 / 664.8 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             672.4    666.3    657.6   best overall and Alliance
-//	Windshaper Skyborne   670.9    664.9    656.7   best Horde
-//	High Order Skyborne   670.9    664.9    656.6
-//	Tauren                668.9    662.9    654.3
+//	Night Elf             679.8    673.4    664.8   best overall and Alliance
+//	Windshaper Skyborne   678.1    671.9    664.0   best Horde
+//	High Order Skyborne   678.1    671.9    663.9
+//	Tauren                676.0    669.8    661.3
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.

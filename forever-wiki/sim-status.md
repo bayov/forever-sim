@@ -153,23 +153,23 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 Both DPS playstyles have their own gear, talents, rotation and build: Balance (moonkin) and Feral (cat). A Wrath-only moonkin rotation with its own talents is a second Balance preset. Numbers are the shared Level 60 boss and raid, 40,000 iterations (standard error 0.1 to 0.2), under the cross-class standards: the shared item level table, hit to the cap, 2 piece set bonuses only, the best Phase 1 enchants, no trinkets (Forever removed the old dungeon trinkets and the sim does not model its launch ones yet), at most one of the five +2% crit elixirs, other elixirs in different slots stacking, and no spell ranks from Ahn'Qiraj books (Starfire rank 6 and Ferocious Bite rank 4, which cost Balance 13 and Feral 2 at 180 sec).
 
-**Balance.** Gear: `tools/database/forever_synthetic_items_druid.go` 998001-998013, in the standards 5a stat mix (SoD level 60 BiS proportions, `orchestration/gear_targets.md`): 306 spell power, 197 crit rating (14%), 152 Stamina, 119 Intellect, 84 Spirit and 110 hit rating (the 16% cap with Nature's Reach and the 2 piece; moving 10 hit into crit costs 2.5), the staff at the casters' weapon budget with Spellblasting, Grovekeeper Eclipse on two pieces (the 5 piece would add 12.6) and Swarming Idol (3.3; both measured before the 5a rebudget, which took Balance from 807.3 to 758.5 at 180 sec). Talents `5532220115501351--505` (41 Balance and Naturalist 5). Rotation (`ui/balance_druid/apls/level60.apl.json`): a Starfire 3 sec before the pull that lands at 0, Insect Swarm and Moonfire whenever they are down, a free Starfire on Clearcasting, then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in flight, Starfire otherwise. At 300 sec the plain Wrath and Starfire weave is 5.7 ahead, because the mana runs out. The Wrath-only rotation (`level60_wrath.apl.json`, talents `5502220115501351-03-505` with Heart of the Wild for Moonglow, Natural Power on the gloves) is 710.2 at 180 sec, 6.4% behind (Night Elf; best Horde Windshaper Skyborne 707.0).
+**Balance.** Gear: `tools/database/forever_synthetic_items_druid.go` 998001-998013, in the standards 5a stat mix (SoD level 60 BiS proportions, `orchestration/gear_targets.md`), spent linearly at 1.73 times each piece's budget (standards 1a): 400 spell power, 154 Intellect, 150 Stamina, 82 Spirit, 105 crit rating (7.5%) and 110 hit rating (the 16% cap with Nature's Reach and the 2 piece; moving 10 hit into crit costs 2.2), the staff at the casters' weapon budget with Spellblasting, Grovekeeper Eclipse on two pieces (the 5 piece would add 12.6) and Swarming Idol (3.3; both measured before the 5a rebudget, which took Balance from 807.3 to 789.1 at 180 sec). Talents `5532220115501351--505` (41 Balance and Naturalist 5). Rotation (`ui/balance_druid/apls/level60.apl.json`): a Starfire 3 sec before the pull that lands at 0, Insect Swarm and Moonfire whenever they are down, a free Starfire on Clearcasting, then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in flight, Starfire otherwise. The Wrath-only rotation (`level60_wrath.apl.json`, talents `5502220115501351-03-505` with Heart of the Wild for Moonglow, Natural Power on the gloves) is 740.9 at 180 sec, 6.1% behind (Night Elf; best Horde Windshaper Skyborne 736.9).
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 764.0 | 758.5 | 748.3 | best overall and Alliance |
-| Tauren | 755.7 | 751.7 | 741.8 | best Horde |
-| Windshaper Skyborne | 747.2 | 747.7 | 739.9 | |
-| High Order Skyborne | 747.1 | 747.6 | 739.5 | |
+| Night Elf | 792.9 | 789.1 | 782.9 | best overall and Alliance |
+| Tauren | 783.9 | 781.7 | 776.0 | best Horde |
+| Windshaper Skyborne | 775.0 | 777.1 | 774.7 | |
+| High Order Skyborne | 774.8 | 776.8 | 774.1 | |
 
-**Feral.** Gear: 998101-998113, in the 5a stat mix: 184 Agility, 177 Strength, 142 Stamina, 130 crit rating (9.3%), 90 hit rating (the 9% cap), 40 Intellect, no Spirit, the two-hander at item level 76 kept as it was (its 28 attack power is the set's only attack power), Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5; both measured before the 5a rebudget, which took Feral from 648.0 to 666.3). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Tiger's Fury and Berserk on cooldown, no new Rip in the last 8 sec and Bite at any combo points in the last 2, no Rake (keeping it up costs 33).
+**Feral.** Gear: 998101-998113, in the 5a stat mix, spent linearly: 211 Agility, 202 Strength, 145 Stamina, 90 hit rating (the 9% cap), 74 crit rating (5.3%), 49 Intellect, 39 attack power (34 on the two-hander), no Spirit, the two-hander at item level 76, Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5; both measured before the 5a rebudget, which took Feral from 648.0 to 673.4). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Tiger's Fury and Berserk on cooldown, no new Rip in the last 8 sec and Bite at any combo points in the last 2, no Rake (keeping it up costs 33).
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 672.4 | 666.3 | 657.6 | best overall and Alliance |
-| Windshaper Skyborne | 670.9 | 664.9 | 656.7 | best Horde |
-| High Order Skyborne | 670.9 | 664.9 | 656.6 | |
-| Tauren | 668.9 | 662.9 | 654.3 | |
+| Night Elf | 679.8 | 673.4 | 664.8 | best overall and Alliance |
+| Windshaper Skyborne | 678.1 | 671.9 | 664.0 | best Horde |
+| High Order Skyborne | 678.1 | 671.9 | 663.9 | |
+| Tauren | 676.0 | 669.8 | 661.3 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 
