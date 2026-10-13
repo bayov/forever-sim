@@ -19,6 +19,8 @@ var (
 	fireVulnerability = spellID(22959)
 	wintersChill      = spellID(12579)
 	mageClearcasting  = spellID(12536)
+	// The synthetic level 60 on-use trinket (sim/mage/forever_synthetic_trinkets.go).
+	mageSyntheticTalisman = itemID(996032)
 	// Mana Agate, Jade, Citrine and Ruby.
 	manaGems = []*proto.ActionID{itemID(5514), itemID(5513), itemID(8007), itemID(8008)}
 )
@@ -118,6 +120,12 @@ func scorchFirstKnob() Knob {
 	return Knob{Name: "cooldownsAfterScorch", Default: 0, Min: 0, Max: 1, Step: 1}
 }
 
+// trinketAfterScorchKnob holds the synthetic on-use trinket (+140 spell power) the same way, for
+// the Fire spells that take Fire Vulnerability's 15%. Without Improved Scorch it goes on cooldown.
+func trinketAfterScorchKnob() Knob {
+	return Knob{Name: "trinketAfterScorch", Default: 0, Min: 0, Max: 1, Step: 1}
+}
+
 // mageCooldowns is the cooldown line, ahead of the spells.
 func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 	var items []*proto.APLListItem
@@ -134,6 +142,12 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 		fullStacks := and(targetAuraIsKnown(fireVulnerability), ge(targetAuraNumStacks(fireVulnerability), num(5)))
 		items = append(items,
 			cast(combustion, fullStacks, "Combustion once Fire Vulnerability has 5 stacks. Without the talent ignore the warning on this line."),
+		)
+	}
+	if k["trinketAfterScorch"] == 1 {
+		fullStacks := or(and(targetAuraIsKnown(fireVulnerability), ge(targetAuraNumStacks(fireVulnerability), num(5))), not(targetAuraIsKnown(fireVulnerability)))
+		items = append(items,
+			cast(mageSyntheticTalisman, fullStacks, "The on-use trinket once Fire Vulnerability has 5 stacks (or on cooldown without Improved Scorch). Without the trinket ignore the warning on this line."),
 		)
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."))

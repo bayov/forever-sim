@@ -34,6 +34,7 @@ func (mageFrostfire) Knobs() []Knob {
 		// Precast the filler so the first one lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		scorchFirstKnob(),
+		trinketAfterScorchKnob(),
 		// Rank 2 Frostfire Bolt (285 mana instead of 370, about 9% less damage) once Evocation is
 		// spent or less than 60 sec are left, and the mana is under this many per second of the
 		// fight left. 0 never.

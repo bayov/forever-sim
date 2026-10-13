@@ -68,7 +68,7 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // power, 147 Intellect, 70 crit rating (5%), the rest about the same. With Elemental Precision or
 // Arcane Focus and Manaflare Regalia's 2 piece bonus (1% hit, on the head and chest only) the hit
 // is the 16% cap against a level 63 boss; 2% less hit for the other stats loses 7 to 11. The 4
-// and 5 piece bonuses would add 55.9 (6%) to Frostfire at 180 sec and nothing to the others (the
+// and 5 piece bonuses would add 56.8 (6%) to Frostfire at 180 sec and nothing to the others (the
 // 5 piece is all Frostfire Bolt, the 4 piece only against Elementals).
 //
 // The trinkets are synthetic too (Forever's real Phase 1 trinkets are gone or not simulated):
@@ -113,7 +113,8 @@ export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 // searched over 120, 180 and 300 sec together, so one rotation serves every length. The searches
 // for one length at a time (on the first gear) wanted Fire Blast with Evocation at 30 to 40% and
 // no time limit, which was behind this one at every length, because Evocation's 8 sec channel late
-// in a short fight costs more than the mana is worth.
+// in a short fight costs more than the mana is worth. The on-use trinket waits for the 5th Fire
+// Vulnerability stack (+3.7 at 180 sec).
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
 	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability.',
 	group: 'Level 60',
@@ -128,7 +129,8 @@ export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Level 60 Frost
 // Scorch to 5 Fire Vulnerability stacks and before they run out, Pyroblast at 3 Heating Up
 // stacks, Arcane Missiles on Missile Barrage, Fire Blast above 20% mana, and Fireball. Pyroblast
 // at 1 or 2 stacks, Frostfire Bolt or Scorch as the filler and holding Fire Blast while Heating Up
-// is full all lost.
+// is full all lost. Combustion and the on-use trinket wait for the 5th Fire Vulnerability stack
+// (the trinket +1.6 at 180 sec).
 export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire', Level60FireAPL, {
 	tooltip: 'Fireball, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Level 60',
@@ -161,7 +163,7 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
 // Frost (Ice Lance only because Fingers of Frost needs it). Frostfire Bolt is Fire and Frost at
 // once, so it gets Fire Power, Ignite and Critical Mass and also Ice Shards, Piercing Ice and
-// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 925.0 / 900.8 / 890.0
+// Shatter. foreverchanges.pro's popular Fire build is the same split. It is 926.8 / 904.5 / 892.1
 // at 120 / 180 / 300 sec (Undead). Frost Channeling 3 does nothing for this build (the client
 // leaves Frostfire Bolt out of it, the talent verification shows 0.0 either way): the points are
 // the 20 in Frost that Fingers of Frost needs.
@@ -184,7 +186,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost
 // Fire (16/31/4): every Fire damage talent to Combustion, with Arcane Concentration and Missile
 // Barrage (Fireball has 20% to make Arcane Missiles free and fast) and Elemental Precision 4.
 // Arcane Impact 3 over Improved Channeling and Wake of Fire 2 over Master of Elements 3 are 1 and
-// 3 ahead. It is 885.8 / 871.7 / 857.8 (Undead), 3%
+// 3 ahead. It is 886.6 / 873.3 / 858.8 (Undead), 3%
 // behind Frostfire. Fire with Frost (Elemental Precision, Ice Shards) was 740 at 180 sec on the
 // old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
@@ -357,9 +359,9 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Horde race (on Frost High Order is 0.4 ahead at 180 sec, inside the noise, and behind at 120 and
 // 300). The best Alliance race is High Order on Frostfire and Frost and Gnome (5% more mana) on
 // Fire and Arcane. Windshaper can't be a mage. On Frostfire Gnome is ahead at 120 and 300 sec
-// (928.1 and 891.5 against Undead's 925.0 and 890.0).
-//   Frostfire: Undead 900.8, High Order 899.8, Orc 899.1, Gnome 896.2, Troll 895.3, Human 891.1.
-//   Fire:      Undead 871.7, Gnome 868.6, Orc 866.7, Human 860.2, High Order 860.0, Troll 859.3.
+// (929.3 and 893.7 against Undead's 926.8 and 892.1).
+//   Frostfire: Undead 904.5, High Order 902.7, Orc 902.2, Gnome 899.9, Troll 898.4, Human 895.0.
+//   Fire:      Undead 873.3, Gnome 869.7, Orc 867.6, Human 861.8, High Order 861.5, Troll 860.8.
 //   Arcane:    Undead 829.7, Orc 821.3, Gnome 819.6, Troll 816.2, Human 813.0, High Order 811.0.
 //   Frost:     High Order 736.9, Undead 736.5, Gnome 734.4, Troll 734.3, Orc 734.1, Human 727.6.
 const buildCommon = {

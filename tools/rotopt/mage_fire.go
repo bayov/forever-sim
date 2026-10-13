@@ -36,6 +36,7 @@ func (mageFire) Knobs() []Knob {
 		// Precast the filler so the first one lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		scorchFirstKnob(),
+		trinketAfterScorchKnob(),
 	)
 }
 
