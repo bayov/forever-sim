@@ -38,10 +38,10 @@ import Level60Phase1SyntheticArcaneGear from './gear_sets/level60_phase1_synthet
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
 
-// The Level 60 presets were searched on 2026-10-12, and again on 2026-10-13 on the Forever budget gear,
-// with tools/rotopt (the mage_arcane, mage_fire, mage_frost and mage_frostfire templates,
-// mage_presets.sh) against the level 60 raid in
-// tools/rotopt/mksettings (spec_mage.go): the Level 60 boss (level 63, 3731 armor, Humanoid),
+// The Level 60 presets were searched on 2026-10-12, and again on 2026-10-13 on the Forever
+// budget gear, with tools/rotopt (the mage_arcane, mage_fire, mage_frost and mage_frostfire
+// templates, mage_presets.sh) against the level 60 raid in tools/rotopt/mksettings
+// (spec_mage.go): the Level 60 boss (level 63, 3731 armor, a generic boss of type Unknown),
 // Blessings of Kings and Wisdom, Arcane Brilliance, Mana Spring Totem, Moonkin Aura, Curse of the
 // Elements and the other shared debuffs. Improved Scorch and Winter's Chill are the mage's own
 // under Forever, so the raid gives none. The DPS below is at 120 / 180 / 300 sec with 20000
@@ -334,7 +334,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 				id: 213336,
 				name: 'Level 60',
 				level: 63,
-				mobType: MobType.MobTypeHumanoid,
+				mobType: MobType.MobTypeUnknown,
 				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
 				minBaseDamage: 3000,
 				damageSpread: 0.3333,
