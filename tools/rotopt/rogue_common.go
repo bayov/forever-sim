@@ -28,6 +28,8 @@ var (
 	elunesLight    = spellID(1259799)
 	eureka         = spellID(1259812)
 	earthstrike    = itemID(21180)
+	// The Level 60 presets' synthetic on-use trinket (+335 attack power, 20 sec, 2 min, standards 1b).
+	synthTrinket = itemID(994202)
 )
 
 // The 15 second buffs are only worth a cast when the fight lasts that long after it.
@@ -127,6 +129,7 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		{bladeFlurry, k["bfSnd"], hasBladeFlurry},
 		{bloodFury, k["bloodFurySnd"], true},
 		{earthstrike, k["trinketSnd"], true},
+		{synthTrinket, k["trinketSnd"], true},
 	} {
 		if w.snd > 0 && w.has {
 			waiting = append(waiting, and(
@@ -228,6 +231,8 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 
 		cast(earthstrike, and(sndAtLeast(k["trinketSnd"]), holdFor(earthstrike, adrenalineRush, k["trinketHoldForAr"] == 1)),
 			timedBuffNotes("Earthstrike", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
+		cast(synthTrinket, and(sndAtLeast(k["trinketSnd"]), holdFor(synthTrinket, adrenalineRush, k["trinketHoldForAr"] == 1)),
+			timedBuffNotes("The synthetic on-use trinket", k["trinketHoldForAr"] == 1 && hasAdrenalineRush, k["trinketSnd"])+" Without the trinket ignore the warning on this line."),
 
 		cast(thistleTea, le(energy(), num(k["teaEnergy"])),
 			"Thistle Tea when there is room for the 100 energy."),

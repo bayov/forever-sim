@@ -120,15 +120,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 802.95965
-  tps: 570.10135
+  dps: 804.00496
+  tps: 570.84352
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 795.74537
-  tps: 564.97921
+  dps: 804.00249
+  tps: 570.84177
  }
 }
 dps_results: {
@@ -178,6 +178,13 @@ dps_results: {
  value: {
   dps: 775.91174
   tps: 550.89734
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-RogueSyntheticOn-UseTrinket(Phase1)-994202"
+ value: {
+  dps: 785.51182
+  tps: 557.71339
  }
 }
 dps_results: {
