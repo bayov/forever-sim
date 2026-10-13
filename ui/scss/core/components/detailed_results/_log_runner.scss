@@ -55,6 +55,23 @@
 		}
 	}
 
+	// The line between the prepull events and the pull.
+	.log-runner-logs tr.log-pull-row td {
+		padding: 0 var(--spacer-3);
+		text-align: center;
+		background: linear-gradient(var(--gold), var(--gold)) center / 100% 1px no-repeat;
+
+		span {
+			padding: 0 0.6rem;
+			font-size: 0.6875rem;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: var(--gold);
+			background: $panel-bg;
+		}
+	}
+
 	.log-time-link {
 		padding: 0;
 		border: 0;

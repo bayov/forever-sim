@@ -174,9 +174,9 @@ export class EventsView extends ResultComponent {
 						</div>
 						<div className="events-range">
 							<span className="events-control-label">From</span>
-							<input ref={refs.from} type="number" className="form-control" min="0" step="any" placeholder="0" />
+							<input ref={refs.from} type="number" className="form-control" step="any" placeholder="start" />
 							<span className="events-control-label">to</span>
-							<input ref={refs.to} type="number" className="form-control" min="0" step="any" placeholder="end" />
+							<input ref={refs.to} type="number" className="form-control" step="any" placeholder="end" />
 							<span className="events-control-label">s</span>
 						</div>
 						<div className="events-categories">
@@ -491,8 +491,9 @@ const getIterationLog = (result: RaidSimResult, kind: IterationKind): IterationL
 	}
 };
 
+// Times before the pull are negative, like -3 for a prepull action 3 seconds before it.
 const parseSeconds = (value: string): number | null => {
 	if (value.trim() == '') return null;
 	const seconds = parseFloat(value);
-	return isNaN(seconds) || seconds < 0 ? null : seconds;
+	return isNaN(seconds) ? null : seconds;
 };

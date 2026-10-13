@@ -177,6 +177,8 @@ export class Timeline extends ResultComponent {
 	// The part of the iteration we draw, in seconds, from the filter's time range.
 	private viewStart = 0;
 	private viewEnd = 1;
+	// The first second of the prepull, or 0 when there's no prepull.
+	private prepullStart = 0;
 	private zoomIndex = defaultZoomIndex;
 
 	private resetCallbacks: (() => void)[] = [];
@@ -349,7 +351,11 @@ export class Timeline extends ResultComponent {
 		}
 
 		const duration = this.resultData!.result.result.firstIterationDuration || 1;
-		this.viewStart = Math.max(0, Math.min(this.filter.from ?? 0, duration));
+		// The prepull actions, like a totem 3 seconds before the pull, happen at negative times.
+		// Without a From time, the timeline starts at the first of them, on a whole second.
+		const firstEvent = this.resultData!.result.logs.reduce((first, log) => Math.min(first, log.timestamp), 0);
+		this.prepullStart = Math.floor(firstEvent);
+		this.viewStart = Math.max(this.prepullStart, Math.min(this.filter.from ?? this.prepullStart, duration));
 		this.viewEnd = Math.min(duration, this.filter.to ?? duration);
 		if (this.viewEnd <= this.viewStart) {
 			this.viewEnd = Math.min(duration, this.viewStart + 1);
@@ -640,6 +646,7 @@ export class Timeline extends ResultComponent {
 		this.rotationPlotElem.classList.remove('hide');
 
 		this.drawRotationTimeRuler(this.rotationTimeline.querySelector('.rotation-timeline-header')!);
+		this.drawPull();
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 
@@ -1183,6 +1190,20 @@ export class Timeline extends ResultComponent {
 
 	// The time ruler above the rotation. We pick the spacing of the labels from the zoom, so they
 	// stay about 60px or more apart.
+	// With a prepull, the time before the pull gets a hatched background labeled Prepull, and a
+	// gold line marks the pull through every row. The background goes first, so the rows draw over
+	// it, and the line goes last, over them.
+	private drawPull() {
+		if (this.prepullStart >= 0 || this.viewStart >= 0) return;
+		const pullLeft = this.timeToLeftValue(Math.min(0, this.viewEnd));
+		this.rotationTimeline.prepend(
+			<div className="rotation-prepull" style={{ width: `${pullLeft}px` }}>
+				<span className="rotation-prepull-label">Prepull</span>
+			</div>,
+		);
+		if (this.viewEnd > 0) this.rotationTimeline.appendChild(<div className="rotation-pull-line" style={{ left: `${pullLeft}px` }} />);
+	}
+
 	private drawRotationTimeRuler(header: HTMLElement) {
 		const [labelStep, tickStep] = rulerSteps.find(([label]) => label * this.pxPerSecond >= 60) ?? rulerSteps[rulerSteps.length - 1];
 		header.style.width = this.viewWidthPx();
@@ -1201,8 +1222,8 @@ export class Timeline extends ResultComponent {
 			ticks.push(<div className={`rotation-ruler-tick${isLabel ? ' major' : ''}`} style={{ left: this.timeToLeft(time) }} />);
 			if (isLabel) {
 				ticks.push(
-					<div className="rotation-ruler-label" style={{ left: this.timeToLeft(time) }}>
-						{formatRulerTime(time)}
+					<div className={`rotation-ruler-label${time == 0 && this.prepullStart < 0 ? ' pull' : ''}`} style={{ left: this.timeToLeft(time) }}>
+						{time == 0 && this.prepullStart < 0 ? 'Pull' : formatRulerTime(time)}
 					</div>,
 				);
 			}
@@ -1536,6 +1557,7 @@ const rulerSteps: Array<[number, number]> = [
 ];
 
 const formatRulerTime = (time: number): string => {
+	if (time < 0) return `-${formatRulerTime(-time)}`;
 	if (time < 60) return `${Number(time.toFixed(1))}s`;
 	const minutes = Math.floor(time / 60);
 	const seconds = Math.round(time - minutes * 60);

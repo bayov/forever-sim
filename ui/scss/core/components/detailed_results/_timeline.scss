@@ -399,7 +399,46 @@
 		font-variant-numeric: tabular-nums;
 		color: var(--text-muted-color);
 		white-space: nowrap;
+
+		&.pull {
+			font-weight: 700;
+			color: var(--gold);
+		}
 	}
+}
+
+// The time before the pull, when the prepull actions happen. Hatched, so it reads as a different
+// part of the fight, with its name at the top right next to the pull line.
+.rotation-prepull {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0 6px, transparent 6px 12px);
+	pointer-events: none;
+
+	.rotation-prepull-label {
+		position: absolute;
+		top: 3px;
+		right: 6px;
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted-color);
+	}
+}
+
+.rotation-pull-line {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	z-index: 2;
+	width: 2px;
+	margin-left: -1px;
+	background: var(--gold);
+	opacity: 0.75;
+	pointer-events: none;
 }
 
 .rotation-timeline-row {
