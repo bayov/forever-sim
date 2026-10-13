@@ -284,6 +284,7 @@
 // aria-pressed instead of .active.
 .fv-chip {
 	@include filter-chip("[aria-pressed='true']");
+	@include chip-check("[aria-pressed='true']");
 	flex: 0 0 auto;
 }
 

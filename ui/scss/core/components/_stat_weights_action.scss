@@ -49,8 +49,6 @@ $ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y)
 			padding-left: 0;
 
 			.form-check-input {
-				width: $ep-control-height;
-				height: $ep-control-height;
 				margin: 0;
 			}
 		}

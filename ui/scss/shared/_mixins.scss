@@ -257,6 +257,51 @@
 	}
 }
 
+// A checkbox: a small rounded square that fills with the accent color and draws a check mark
+// when it's on. BooleanPicker's input is one, and so is the box in front of a chip that we
+// turn on and off (see chip-check). The mark grows in from the middle when we check it.
+$check-mark: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%230e1219' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.2' d='m4 8.4 2.7 2.7 5.3-5.6'/></svg>");
+
+@mixin check-box($size: 1rem) {
+	appearance: none;
+	flex: 0 0 auto;
+	width: $size;
+	height: $size;
+	margin: 0;
+	border: 1.5px solid var(--line-color-strong);
+	// The corner scales with the box, so a small one doesn't turn into a circle.
+	border-radius: calc(#{$size} * 0.25);
+	background: $input-bg $check-mark center / 0 no-repeat;
+	transition:
+		background-color 0.15s,
+		border-color 0.15s,
+		background-size 0.15s ease-out;
+}
+
+@mixin check-box-checked {
+	border-color: $accent;
+	background-color: $accent;
+	background-image: $check-mark;
+	background-size: 100%;
+}
+
+// A chip that we turn on and off gets a checkbox in front of its label. The chip marks "on"
+// with $active, like filter-chip.
+@mixin chip-check($active: '.active') {
+	&::before {
+		content: '';
+		@include check-box(0.8rem);
+	}
+
+	&:hover:not(:disabled)::before {
+		border-color: var(--text-muted-color);
+	}
+
+	&#{$active}::before {
+		@include check-box-checked;
+	}
+}
+
 // The small muted label in front of a control, like "Iteration" on the Events tab.
 @mixin control-label {
 	font-size: 0.75rem;
