@@ -9,7 +9,8 @@ same level, a few hundred times. Then it prints each ability side by side, log a
 - how often it hit, crit, glanced, was blocked, missed, was dodged or parried, with the log's
   95% interval and the chance of the log's count under the sim's rate (exact binomial)
 - its raw damage, which is the hit before the mob's armor, resists, crit and damage taken
-  modifiers (the log's raw field and the sim's `RawDamage`), as a range and an average
+  modifiers (the log's raw field and the sim's `RawDamage`), as a range and an average. The sim's
+  hits are truncated to whole points first, because the beta truncates (below)
 - partial resists on spells, by the share resisted
 - for what we didn't cast (procs), how many came per 100 landed white swings
 
@@ -39,7 +40,9 @@ Run it from the repo root. A run takes about a second.
 
 - The export's race, level, gear, enchants, talents and professions. Gear goes in by item type,
   enchant IDs go through the client's SpellEffect table when the sim's database keys an enchant
-  by its spell. Anything it can't place is listed as a note.
+  by its spell. An enchant the sim's database lacks (Forever's leg and boot enchants 8482 and
+  8485) goes in as bonus stats from the client's SpellItemEnchantment row, when all it does is
+  add stats. Anything it can't place is listed as a note.
 - The export's weapon skills, taken off the sim's full skill (`-full-skill` turns that off). The
   sim's glancing and parry chances don't follow skill, so an under-skilled weapon still shows
   high glances and parries.
@@ -58,8 +61,15 @@ replayed in every level's run.
 ## Reading the report
 
 - **Sheet check.** The export's sheet against the sim's stats for the same character. The sheet
-  has the buffs that were up when the user exported, so a gap can be a buff. Missing enchants
-  show up here first.
+  has the buffs that were up when the user exported, so a gap can be a buff. Melee crit takes
+  0.04% off per missing point of main hand skill, like the client's sheet. Any gap prints a
+  warning and goes first in the flagged list, because every damage row depends on these stats.
+  Check it before reading a damage flag: on 2026-10-13 a 6 spell power gap (two enchants the
+  sim lacked) made Flame Shock and Frost Shock look wrong when they weren't.
+- **Rounding.** The log has whole points, and the beta truncates. With the sheet's spell power
+  the sim gives Flame Shock ticks 21.7, Flametongue Totem's attack 8.8 and Flame Shock's direct
+  hit 64.3, and the 10-10 log has 21, 8 and 64 on every hit. Rounding would give 22 and 9.
+  `-rounding round` compares the other way.
 - **Our logged stats changed.** Each of our casts carries max health, attack power, spell power
   and armor. A change means a gear swap or a stat buff, and the sim uses the export's gear for
   the whole window. Pick a window without swaps for damage checks.

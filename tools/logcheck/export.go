@@ -11,6 +11,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // export is the character JSON from the user's /bayov export (BayovCore addon).
@@ -207,7 +208,7 @@ func (c *character) equip(ex *export, tables *clientTables) {
 			if enchant, ok := findEnchant(gear.Enchant, item, tables); ok {
 				spec.Enchant = enchant
 			} else {
-				c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s isn't in the sim's database, left off", gear.Enchant, gear.Name))
+				c.addClientEnchant(gear.Enchant, gear.Name, tables)
 			}
 		}
 		items[slot] = spec
@@ -215,6 +216,57 @@ func (c *character) equip(ex *export, tables *clientTables) {
 	if len(left) > 0 {
 		c.notes = append(c.notes, "not in the sim's database, left off: "+strings.Join(left, ", "))
 	}
+}
+
+// The client's stat and resistance numbers for an enchant's effects, as sim stats. The stats
+// are the client's ItemModType, and the resistances its school order, where 0 is armor.
+var (
+	enchantStats = map[int32]stats.Stat{
+		0: stats.Mana, 1: stats.Health, 3: stats.Agility, 4: stats.Strength, 5: stats.Intellect,
+		6: stats.Spirit, 7: stats.Stamina, 38: stats.AttackPower, 41: stats.HealingPower,
+		42: stats.SpellDamage, 43: stats.MP5, 45: stats.SpellPower,
+	}
+	enchantResistances = map[int32]stats.Stat{
+		0: stats.BonusArmor, 2: stats.FireResistance, 3: stats.NatureResistance,
+		4: stats.FrostResistance, 5: stats.ShadowResistance, 6: stats.ArcaneResistance,
+	}
+)
+
+// addClientEnchant adds an enchant the sim's database lacks as bonus stats, from the client's
+// SpellItemEnchantment row. Forever's new leg and boot enchants (8482, 8485) are like that. An
+// enchant that does more than add stats (a proc, weapon damage) is left off with a note.
+func (c *character) addClientEnchant(id int32, itemName string, tables *clientTables) {
+	enchant, ok := tables.enchants[id]
+	if !ok {
+		c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s is in neither the sim's database nor the client's, left off", id, itemName))
+		return
+	}
+	var added stats.Stats
+	var parts []string
+	for _, effect := range enchant.effects {
+		var stat stats.Stat
+		switch effect.kind {
+		case 4:
+			stat, ok = enchantResistances[effect.arg]
+		case 5:
+			stat, ok = enchantStats[effect.arg]
+		default:
+			ok = false
+		}
+		if !ok {
+			c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s (%s) does more than add stats, left off", id, itemName, enchant.name))
+			return
+		}
+		added[stat] += float64(effect.amount)
+		parts = append(parts, fmt.Sprintf("+%d %s", effect.amount, stat.StatName()))
+	}
+	if c.player.BonusStats == nil {
+		c.player.BonusStats = &proto.UnitStats{Stats: make([]float64, stats.Len)}
+	}
+	for i, v := range added {
+		c.player.BonusStats.Stats[i] += v
+	}
+	c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s isn't in the sim's database, added from the client data as %s", id, itemName, strings.Join(parts, ", ")))
 }
 
 func itemSlot(item core.Item, items []*proto.ItemSpec) (proto.ItemSlot, bool) {

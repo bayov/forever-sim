@@ -46,11 +46,15 @@ func main() {
 	toFlag := flag.String("to", "", "end of the window, like -from")
 	iterations := flag.Int("iters", 200, "replays of the window per mob level")
 	minAttempts := flag.Int("min", 5, "leave out abilities with fewer attempts than this in the log")
+	rounding := flag.String("rounding", "floor", "how the server turns damage into whole points, floor or round")
 	fullSkill := flag.Bool("full-skill", false, "sim full weapon skill instead of the export's")
 	behind := flag.Bool("behind", false, "sim us behind the mob, where it can't parry or block (by default we're in front, as when questing)")
 	flag.Parse()
 	sim.RegisterAll()
 
+	if *rounding != "floor" && *rounding != "round" {
+		log.Fatal("-rounding is floor or round")
+	}
 	if _, err := os.Stat(filepath.Join(repoRoot, "ui/core/talents/trees")); err != nil {
 		log.Fatal("run logcheck from the repo root")
 	}
@@ -110,7 +114,7 @@ func main() {
 	}
 	setImbue(char, all, cl, ex, tables)
 
-	r := &report{cl: cl, ex: ex, char: char, tables: tables, logPath: *logPath, minAttempts: *minAttempts, missing: map[string]bool{}, aliased: map[int32]bool{}}
+	r := &report{cl: cl, ex: ex, char: char, tables: tables, logPath: *logPath, minAttempts: *minAttempts, missing: map[string]bool{}, aliased: map[int32]bool{}, rounding: *rounding}
 	r.header()
 	r.sheet()
 	r.logNotes()

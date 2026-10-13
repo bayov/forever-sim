@@ -29,6 +29,21 @@ type report struct {
 	// aliased holds the sim spells we matched to a log spell of another ID, printed once.
 	aliased  map[int32]bool
 	logNames map[int32]string
+	// rounding is how the server turns damage into whole points: "floor" or "round".
+	rounding string
+}
+
+// toWhole turns a sim hit into the whole points the log would show.
+//
+// The beta truncates, as far as we can tell (2026-10-13): with the sheet's spell power the
+// sim gives Flame Shock ticks 21.7, Flametongue Totem's attack 8.8 and Flame Shock's direct
+// hit 64.3, and the log has 21, 8 and 64 on every hit.
+func (r *report) toWhole(v float64) float64 {
+	if r.rounding == "round" {
+		return math.Round(v)
+	}
+	// A hair over, so 8.9999999 from float sums still counts as 9.
+	return math.Floor(v + 1e-6)
 }
 
 func (r *report) header() {
@@ -88,6 +103,7 @@ func (r *report) sheet() {
 
 	fmt.Println("Sheet check (the export's sheet has the buffs that were up, the sim has none)")
 	fmt.Printf("  %-14s %8s %8s %8s\n", "", "sheet", "sim", "diff")
+	var off []string
 	rows := []struct {
 		name  string
 		sim   float64
@@ -100,9 +116,9 @@ func (r *report) sheet() {
 		{"Spirit", s[stats.Spirit], func() (float64, bool) { return sheet("spirit", "effective") }},
 		{"Health", s[stats.Health], func() (float64, bool) { return sheet("health") }},
 		{"Mana", s[stats.Mana], func() (float64, bool) { return sheet("mana") }},
-		{"Armor", s[stats.Armor] + s[stats.BonusArmor], func() (float64, bool) { return sheet("armor", "effective") }},
+		{"Armor", s[stats.Armor], func() (float64, bool) { return sheet("armor", "effective") }},
 		{"Attack power", s[stats.AttackPower], attackPower},
-		{"Melee crit %", s[stats.MeleeCrit], func() (float64, bool) { return sheet("crit") }},
+		{"Melee crit %", s[stats.MeleeCrit] - 0.04*r.mainHandSkillGap(), func() (float64, bool) { return sheet("crit") }},
 		{"Spell crit %", s[stats.SpellCrit], func() (float64, bool) { return sheet("spellCrit", "nature") }},
 		{"Dodge %", s[stats.Dodge], func() (float64, bool) { return sheet("dodge") }},
 		{"Nature power", s[stats.SpellPower] + s[stats.SpellDamage] + s[stats.NaturePower], func() (float64, bool) { return sheet("spellDamage", "nature") }},
@@ -116,10 +132,28 @@ func (r *report) sheet() {
 		mark := ""
 		if math.Abs(diff) > 0.05 {
 			mark = "  <-"
+			off = append(off, fmt.Sprintf("%s %+.2f", row.name, diff))
 		}
 		fmt.Printf("  %-14s %8.2f %8.2f %+8.2f%s\n", row.name, want, row.sim, diff, mark)
 	}
+	if len(off) > 0 {
+		// Every damage row depends on these stats, so a gap here explains damage flags
+		// below before any sim formula does.
+		what := fmt.Sprintf("the sim's character differs from the sheet (%s). A buff up at export time explains a sheet that's higher, anything else is a gap in the sim's character that moves the damage rows", strings.Join(off, ", "))
+		fmt.Printf("  WARNING: %s.\n", what)
+		r.flagged = append(r.flagged, "sheet check: "+what)
+	}
 	fmt.Println()
+}
+
+// mainHandSkillGap is how far the main hand's weapon skill is below the most for our level.
+// The client's sheet takes 0.04% crit off for each point, and the sim's crit stat doesn't.
+func (r *report) mainHandSkillGap() float64 {
+	item, ok := core.ItemsByID[r.char.player.Equipment.Items[proto.ItemSlot_ItemSlotMainHand].Id]
+	if !ok {
+		return 0
+	}
+	return skillGaps[weaponSkillName(item)]
 }
 
 // logNotes lists what in the log the sim doesn't have: gear swaps or stat buffs, and buffs
@@ -328,29 +362,36 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 			}
 		}
 
-		if ls, ss := spreadOf(lt.raw), spreadOf(st.raw); ls.n > 0 && ss.n > 0 {
-			// The log rounds to whole points, so a hit can sit up to 1 past the sim's range.
+		if ls, exact := spreadOf(lt.raw), spreadOf(st.raw); ls.n > 0 && exact.n > 0 {
+			// The log has whole points, so we turn the sim's hits into whole points the way
+			// the server does (-rounding) and compare those.
+			whole := make([]float64, len(st.raw))
+			for i, v := range st.raw {
+				whole[i] = r.toWhole(v)
+			}
+			ss := spreadOf(whole)
 			outside := 0
 			for _, v := range lt.raw {
-				if v < math.Floor(ss.min)-1 || v > math.Ceil(ss.max)+1 {
+				if v < ss.min || v > ss.max {
 					outside++
 				}
 			}
-			// The averages tell more than the range. We don't know if the server rounds
-			// or floors, so we allow half a point either way, and the rounding adds 1/12
-			// to each log hit's variance.
-			gap := math.Max(0, math.Abs(ls.mean()-ss.mean())-0.5)
-			se := math.Sqrt((ss.variance() + 1.0/12) / float64(ls.n))
-			pValue := 2 * (1 - normalCDF(gap/se))
+			// The averages tell more than the range.
+			pValue := 1.0
+			if gap, se := math.Abs(ls.mean()-ss.mean()), math.Sqrt(ss.variance()/float64(ls.n)); se > 0 {
+				pValue = 2 * (1 - normalCDF(gap/se))
+			} else if gap > 1e-9 {
+				pValue = 0
+			}
 			mark := pMark(pValue)
 			if outside > 0 {
 				mark = " !!"
 			}
-			fmt.Printf("  raw      log %.0f-%.0f (avg %.1f)   sim %.1f-%.1f (avg %.1f)   %d outside, avg p %s%s\n",
-				ls.min, ls.max, ls.mean(), ss.min, ss.max, ss.mean(), outside, pString(pValue), mark)
+			fmt.Printf("  raw      log %.0f-%.0f (avg %.1f)   sim %.0f-%.0f (avg %.1f, %.1f-%.1f before %s)   %d outside, avg p %s%s\n",
+				ls.min, ls.max, ls.mean(), ss.min, ss.max, ss.mean(), exact.min, exact.max, r.rounding, outside, pString(pValue), mark)
 			if mark == " !!" {
-				r.flag(p.level, name, fmt.Sprintf("raw damage avg %.1f in %d hits (%.0f-%.0f), the sim's is %.1f (%.1f-%.1f)",
-					ls.mean(), ls.n, ls.min, ls.max, ss.mean(), ss.min, ss.max))
+				r.flag(p.level, name, fmt.Sprintf("raw damage avg %.1f in %d hits (%.0f-%.0f), the sim's is %.1f (%.0f-%.0f, %.1f-%.1f before %s)",
+					ls.mean(), ls.n, ls.min, ls.max, ss.mean(), ss.min, ss.max, exact.min, exact.max, r.rounding))
 			}
 		}
 

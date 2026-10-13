@@ -23,10 +23,24 @@ type clientTables struct {
 	// that put it on an item. The sim's enchants are keyed by one or the other, depending on
 	// where the entry came from.
 	enchantSpells map[int32][]int32
+	// enchants holds each enchant's effects, for the enchants the sim's database lacks.
+	enchants map[int32]clientEnchant
+}
+
+// clientEnchant is a row of SpellItemEnchantment. Each effect has a type (4 adds a
+// resistance or armor, 5 adds a stat), an amount, and an argument that says which resistance
+// or stat.
+type clientEnchant struct {
+	name    string
+	effects []enchantEffect
+}
+
+type enchantEffect struct {
+	kind, amount, arg int32
 }
 
 func loadClientTables(dir, build string) (*clientTables, error) {
-	tables := &clientTables{build: build, spellNames: map[int32]string{}, enchantSpells: map[int32][]int32{}}
+	tables := &clientTables{build: build, spellNames: map[int32]string{}, enchantSpells: map[int32][]int32{}, enchants: map[int32]clientEnchant{}}
 
 	names, err := wagoTable(dir, &tables.build, "SpellName")
 	if err != nil {
@@ -46,6 +60,24 @@ func loadClientTables(dir, build string) (*clientTables, error) {
 			enchant := row.int("EffectMiscValue_0")
 			tables.enchantSpells[enchant] = append(tables.enchantSpells[enchant], row.int("SpellID"))
 		}
+	}
+	enchants, err := wagoTable(dir, &tables.build, "SpellItemEnchantment")
+	if err != nil {
+		return nil, err
+	}
+	for _, row := range enchants.rows {
+		enchant := clientEnchant{name: row.get("Name_lang")}
+		for i := range 3 {
+			effect := enchantEffect{
+				kind:   row.int(fmt.Sprintf("Effect_%d", i)),
+				amount: row.int(fmt.Sprintf("EffectPointsMin_%d", i)),
+				arg:    row.int(fmt.Sprintf("EffectArg_%d", i)),
+			}
+			if effect.kind != 0 {
+				enchant.effects = append(enchant.effects, effect)
+			}
+		}
+		tables.enchants[row.int("ID")] = enchant
 	}
 	return tables, nil
 }
