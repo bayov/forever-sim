@@ -107,7 +107,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	char.notes = append(char.notes, char.weaponSkillNotes(ex)...)
 	char.player.InFrontOfTarget = !*behind
 	if !*fullSkill {
 		skillGaps = weaponSkillGaps(ex)
@@ -117,6 +116,7 @@ func main() {
 	r := &report{cl: cl, ex: ex, char: char, tables: tables, logPath: *logPath, minAttempts: *minAttempts, missing: map[string]bool{}, aliased: map[int32]bool{}, rounding: *rounding}
 	r.header()
 	r.sheet()
+	r.weaponSkills(*fullSkill)
 	r.logNotes()
 
 	logTallies := tallyLog(cl)
