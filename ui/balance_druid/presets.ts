@@ -58,14 +58,15 @@ export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
 // (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
 // item level table (66 for the armor, 71 for the jewelry, belt, back and wrist) and the
-// casters' weapon budget for the staff: 465 spell power, 10% of the budget on Spirit, 4% crit
-// and 11% hit, which with Nature's Reach and the 2 piece is the 16% spell hit cap against a
-// level 63 boss. Hit to the cap sims best at budget prices: taking 10 hit off a piece frees
-// about 4 spell power and costs about 5 DPS (835.0 at 110 hit, 825.7 at 90, 784.2 at 10). Only
-// the head and chest carry Grovekeeper Eclipse, Forever's crafted Balance set, so only its 2
-// piece (1% hit) is live, like every class's set; the 5 piece (3 sec more Insect Swarm) would
-// add 12.6 at 180 sec. Swarming Idol (Insect Swarm 2 sec longer, a real Forever Phase 1 idol)
-// is worth 3.3. No trinkets: Forever removed the old dungeon trinkets, and its launch trinkets
+// casters' weapon budget for the staff, in the standards 5a stat mix (the SoD level 60 BiS
+// proportions, orchestration/gear_targets.md): 306 spell power, 14% crit, 152 Stamina (18% of
+// the budget), 119 Intellect, 84 Spirit (10%) and 11% hit, which with Nature's Reach and the 2
+// piece is the 16% spell hit cap against a level 63 boss. Hit to the cap still sims best:
+// moving 10 hit rating into crit costs 2.5 at 180 sec. Only the head and chest carry Grovekeeper
+// Eclipse, Forever's crafted Balance set, so only its 2 piece (1% hit) is live, like every
+// class's set; the 5 piece (3 sec more Insect Swarm) would add 12.6 at 180 sec. Swarming Idol
+// (Insect Swarm 2 sec longer, a real Forever Phase 1 idol) is worth 3.3 (those two and the
+// enchant comparisons below measured on the set before the 5a rebudget). No trinkets: Forever removed the old dungeon trinkets, and its launch trinkets
 // are excluded until the sim models them. Enchants are the best Phase 1 ones a moonkin can
 // get, nothing from a raid: Lesser Arcanum of Voracity on the head, Forever's +6 spell power on
 // the neck, Mystic Rugged Armor Kit on the chest, legs and feet, Greater Spellpower on the
@@ -100,10 +101,10 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // not use it up), then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in
 // flight, Starfire otherwise. That spends every Eclipse charge (each makes a Starfire 0.5 sec
 // shorter) without throwing Wraths at a full stack. The knob search kept it at 120 and 180 sec
-// (807.3 at 180 sec, 40,000 iterations). Dropping Moonfire costs 56 DPS at 180 sec, Insect Swarm
-// 62, and casting only Starfire 74. Innervate is left to its own trigger (at 500 mana), 2
+// (758.5 at 180 sec, 40,000 iterations). On the set before the 5a rebudget, dropping Moonfire
+// cost 56 DPS at 180 sec, Insect Swarm 62, and casting only Starfire 74. Innervate is left to its own trigger (at 500 mana), 2
 // ahead of casting it at 40% mana. At 300 sec the mana runs out: the old weave (Wrath until
-// Eclipse has a charge) without the Clearcasting Starfire is 2 ahead there.
+// Eclipse has a charge) without the Clearcasting Starfire is 5.7 ahead there (754.0 to 748.3).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -111,8 +112,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
-// before the pull, for a moonkin that would rather not weave: 759.6 / 760.0 / 760.6 at 120 /
-// 180 / 300 sec, 5.9% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
+// before the pull, for a moonkin that would rather not weave: 709.4 / 710.2 / 710.6 at 120 /
+// 180 / 300 sec, 6.4% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
 // and gear (GearLevel60Phase1SyntheticWrath).
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
@@ -283,14 +284,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 811.7 / 807.3 / 800.2 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 764.0 / 758.5 / 748.3 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             811.7    807.3    800.2   best overall and Alliance
-//	Tauren                802.2    799.5    792.8   best Horde (its 1% hit is past the cap)
-//	Windshaper Skyborne   792.1    793.9    790.3
-//	High Order Skyborne   792.0    793.7    790.0
+//	Night Elf             764.0    758.5    748.3   best overall and Alliance
+//	Tauren                755.7    751.7    741.8   best Horde (its 1% hit is past the cap)
+//	Windshaper Skyborne   747.2    747.7    739.9
+//	High Order Skyborne   747.1    747.6    739.5
 //
 // No racial goes by weapon type, so the staff changes nothing here, and the ranking with
 // weapon type racials off is the same.

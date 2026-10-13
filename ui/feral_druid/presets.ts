@@ -53,12 +53,15 @@ export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
 // (tools/database/forever_synthetic_items_druid.go, which has the budget math), on the shared
 // item level table (66 for the armor, 71 for the jewelry, belt, back and wrist, 76 for the
-// two-hander): Agility and Strength about evenly, 9% hit (the special attack hit cap against a
-// level 63 boss, more does nothing), 4% crit, no Spirit (the cross-class rule for Energy users) and
-// about 3% of the budget on Intellect for Shifting Power's mana. Only the head and chest carry Grovekeeper Ferocity, Forever's
+// two-hander), in the standards 5a stat mix (the SoD level 60 BiS proportions,
+// orchestration/gear_targets.md): 184 Agility, 177 Strength, 142 Stamina (18% of the budget),
+// 9.3% crit, 9% hit (the special attack hit cap against a level 63 boss; moving 10 hit rating
+// into crit costs 0.4 at 180 sec), 40 Intellect for Shifting Power's mana, no Spirit (the
+// cross-class rule for Energy users), and the two-hander's 28 attack power. Only the head and chest carry Grovekeeper Ferocity, Forever's
 // crafted Feral set, so only its 2 piece (1% attack speed) is live, like every class's set; the
 // 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec. Howling Idol (1 sec off Shifting
-// Power, a real Forever Phase 1 idol) is worth 12.5. No trinkets: Forever removed the old
+// Power, a real Forever Phase 1 idol) is worth 12.5 (those two and the enchant comparisons
+// below measured on the set before the 5a rebudget). No trinkets: Forever removed the old
 // dungeon trinkets (Hand of Justice, Blackhand's Breadth), and its launch trinkets are excluded
 // until the sim models them. Enchants are the best Phase 1 ones a cat can get, nothing from a
 // raid: Lesser Arcanum of Voracity (Agility) on the head and legs, Forever's +5 Agility on the
@@ -271,14 +274,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 654.4 / 648.0 / 637.8 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 672.4 / 666.3 / 657.6 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             654.4    648.0    637.8   best overall and Alliance
-//	High Order Skyborne   653.0    646.7    636.9
-//	Windshaper Skyborne   653.0    646.7    636.9   best Horde
-//	Tauren                650.3    644.1    634.0
+//	Night Elf             672.4    666.3    657.6   best overall and Alliance
+//	Windshaper Skyborne   670.9    664.9    656.7   best Horde
+//	High Order Skyborne   670.9    664.9    656.6
+//	Tauren                668.9    662.9    654.3
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.
