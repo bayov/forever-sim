@@ -11,9 +11,10 @@ import (
 // build cannot have (Stormstrike under 16 talent points, Rage of the Farseer without the
 // talent) only warn, and a knob at 0 drops its line entirely.
 //
-// Rage of the Farseer is the anchor of the burst window (30% attack and cast speed for
-// 25 sec). Blood Fury and Berserking multiply with it, so they can wait for it the way
-// the rogue cooldowns wait for Adrenaline Rush, when the wait costs them no use. The
+// Rage of the Farseer is the anchor of the burst window (30% attack speed for 25 sec; the
+// 2026-09-24 beta build took its cast speed away). Blood Fury and Berserking multiply with
+// it, so they can wait for it the way the rogue cooldowns wait for Adrenaline Rush, when
+// the wait costs them no use. The
 // totems, the shield and the shock are 0/1 knobs, since what each is worth depends on
 // whether a raid is already providing the buff and whether the boss is hitting the shaman.
 type shamanEnh struct{}
