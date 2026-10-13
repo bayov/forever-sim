@@ -366,11 +366,14 @@
 	overflow-x: auto;
 	cursor: grab;
 	// The part that scrolls is darker than the labels, so it reads as its own area. The second
-	// layer is that color. It fills the padding too, but the grid lines only the content.
+	// layer is that color. It fills the padding too, but the grid lines only the content. The grid
+	// is attached to the content, so it scrolls with the rows. Otherwise it would stay in place
+	// while the rows move under it.
 	background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px var(--grid-step, 100px)),
 		linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22));
 	background-position-x: var(--grid-offset, 0), 0;
 	background-clip: content-box, border-box;
+	background-attachment: local, scroll;
 
 	&.dragging {
 		cursor: grabbing;
