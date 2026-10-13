@@ -702,16 +702,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-12, Undead,
-// 20000 iterations, at 120 / 180 / 300 sec, after the Murder fix (no crit damage bonus):
-//   Combat Daggers      694.7 / 673.0 / 657.5 (the default)
-//   Seal Fate Daggers   656.2 / 644.9 / 638.4, 4.2% behind Combat Daggers
-//   Mutilate            652.8 / 642.1 / 636.4
-//   Combat Swords       661.8 / 639.2 / 624.1
-//   Subtlety            627.5 / 613.4 / 606.2
-//   Seal Fate Swords    617.0 / 606.5 / 599.7, 5.1% behind Combat Swords
+// 20000 iterations, at 120 / 180 / 300 sec, on the synthetic sets rebudgeted to the fair stat mix (2026-10-13):
+//   Combat Daggers      723.5 / 701.1 / 685.1 (the default)
+//   Seal Fate Daggers   684.6 / 673.0 / 666.3, 4.0% behind Combat Daggers
+//   Mutilate            680.7 / 669.7 / 663.9
+//   Combat Swords       699.9 / 676.4 / 660.4
+//   Subtlety            655.3 / 640.6 / 633.4
+//   Seal Fate Swords    654.7 / 644.0 / 636.7, 4.8% behind Combat Swords
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
-// no Venom build. Undead is the best race for every build, 6 (swords) to 15 ahead of the next. The best
-// Alliance race is the Gnome on daggers and the Human on swords. Grimstitch Armor's 4 and 5 piece
+// no Venom build. Undead is the best race for every build, 5 (swords) to 14 ahead of the next. The best
+// Alliance race is the Gnome, except the Human on Combat Swords. Grimstitch Armor's 4 and 5 piece
 // bonuses would add about 8 and 6 to Combat Daggers. The trinket slots are empty (no Forever trinket is
 // simulated yet), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety
 // gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the
