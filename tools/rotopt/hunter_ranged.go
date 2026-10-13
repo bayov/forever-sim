@@ -27,6 +27,9 @@ var (
 	hunterLacerate         = spellID(1299332)
 	hunterWingClip         = spellID(14268)
 	hunterImmolationTrap   = spellID(14305)
+	nightElfElunesLight    = spellID(1259799)
+	// The ranged sets' synthetic on-use trinket (sim/hunter/forever_synthetic_trinkets.go).
+	hunterRangedOnUse = itemID(993016)
 )
 
 // Beast Mastery and Marksmanship under Forever rules. Auto Shot keeps firing through casts
@@ -62,6 +65,10 @@ func (hunterRanged) Knobs() []Knob {
 		{Name: "arcaneMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		// Aimed Shot only above this much mana (Multi-Shot is a third of the cost).
 		{Name: "aimedMana", Default: 0, Min: 0, Max: 40, Step: 10},
+		// Hold Rapid Fire, and the Night Elf's Elune's Light, for the on-use trinket when the wait
+		// costs no use. Only a fight long enough for a third trinket use sees a difference.
+		{Name: "holdRapid", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "holdElune", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -82,8 +89,14 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 			},
 		},
 		cast(hunterAspectOfTheHawk, not(auraIsActive(hunterAspectOfTheHawk)), "Aspect of the Hawk if it ever drops."),
-		autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."),
 	}
+	if k["holdRapid"] == 1 {
+		items = append(items, cast(hunterRapidFire, alignedWith(hunterRapidFire, hunterRangedOnUse), "Rapid Fire with the on-use trinket, unless waiting would cost a use."))
+	}
+	if k["holdElune"] == 1 {
+		items = append(items, cast(nightElfElunesLight, alignedWith(nightElfElunesLight, hunterRangedOnUse), "Elune's Light with the on-use trinket, unless waiting would cost a use."))
+	}
+	items = append(items, autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."))
 	if k["intimidation"] == 1 {
 		items = append(items, cast(hunterIntimidation, nil, "Intimidation on cooldown for the pet's crit, with the talent."))
 	}
