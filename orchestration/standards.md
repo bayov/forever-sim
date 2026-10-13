@@ -25,7 +25,9 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
      - physical two-hander (ilvl 76): 0.90 (78.8);
      - physical one-hander (71): 0.39 each (31.9);
      - hunter melee two-hander: 0.98 (85.8);
+     - hunter one-hander (71): 0.42 each (34.4; physical one-hander x the hunter / physical two-hander ratio 0.98 / 0.90, ruled 09:40 for Survival's dual wield);
      - Ret / Enhancement two-hander: 1.035 (90.6; physical x 1.15);
+     - Ret / Enhancement one-hander (71): 0.45 each (36.7; physical one-hander x 1.15);
      - feral two-hander: 0.90;
      - caster staff (76): 2.21 (193.4), or caster main hand (71) 1.82 (149.1) plus held off-hand (71) 0.53 (43.4). This is Forever's caster weapon rate;
      - physical ranged (bow, gun, thrown, 71): 0.24 (19.7);
