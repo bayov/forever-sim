@@ -171,8 +171,11 @@ func (warrior *Warrior) Initialize() {
 
 	// A critical white hit gives 100% more Rage under Forever (75% from the 1 October build,
 	// 100% from its second warrior pass the same day).
+	// Rage from white hits is normalized to the weapon's speed (standards 21, see
+	// core.ForeverNormalizedRage).
 	if warrior.Env.IsForever() {
 		warrior.AddCritDealtRageMultiplier(2)
+		warrior.EnableForeverNormalizedRage()
 	}
 
 	warrior.registerShouts()

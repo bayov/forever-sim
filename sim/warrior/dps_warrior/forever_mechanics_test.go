@@ -33,28 +33,93 @@ func newForeverWarrior(t *testing.T, talents string) (*core.Simulation, *warrior
 	return sim, sim.Raid.Parties[0].Players[0].(*DpsWarrior).GetWarrior()
 }
 
-// TestForeverWarriorCritRage checks that a critical white hit gives twice the Rage of a normal hit
-// with the same damage (the 1 October development notes: 100% more Rage from critical strikes), on
-// top of what the damage gives.
-func TestForeverWarriorCritRage(t *testing.T) {
-	sim, war := newForeverWarrior(t, "")
-	mh := war.AutoAttacks.MHAuto()
+// newForeverWarriorArmed is newForeverWarrior with weapons: the synthetic Fury swords (991014,
+// 2.6 sec, and 991015, 2.5 sec) or the synthetic two-hander (991016, 3.4 sec).
+func newForeverWarriorArmed(t *testing.T, talents string, mainHand, offHand int32) (*core.Simulation, *warrior.Warrior) {
+	// A boss that swings, for Rage from damage taken.
+	target := core.NewDefaultTarget()
+	target.MinBaseDamage = 3000
+	target.SwingSpeed = 2
+	items := make([]*proto.ItemSpec, 17)
+	for i := range items {
+		items[i] = &proto.ItemSpec{}
+	}
+	items[proto.ItemSlot_ItemSlotMainHand] = &proto.ItemSpec{Id: mainHand}
+	items[proto.ItemSlot_ItemSlotOffHand] = &proto.ItemSpec{Id: offHand}
+	player := &proto.Player{
+		Race:          proto.Race_RaceTauren,
+		Class:         proto.Class_ClassWarrior,
+		Level:         60,
+		Equipment:     &proto.EquipmentSpec{Items: items},
+		TalentsString: talents,
+		Rotation:      &proto.APLRotation{},
+		Spec:          &proto.Player_Warrior{Warrior: &proto.Warrior{Options: &proto.Warrior_Options{}}},
+	}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	return sim, sim.Raid.Parties[0].Players[0].(*DpsWarrior).GetWarrior()
+}
 
-	gained := func(outcome core.HitOutcome) float64 {
-		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
-		result := mh.NewResult(war.CurrentTarget)
-		result.Outcome = outcome
-		result.Damage = 300
-		mh.DealDamage(sim, result)
-		return war.CurrentRage()
+// whiteRage is the Rage one white hit with this outcome and damage gives, from an empty bar.
+func whiteRage(sim *core.Simulation, war *warrior.Warrior, auto *core.Spell, outcome core.HitOutcome, damage float64) float64 {
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+	result := auto.NewResult(war.CurrentTarget)
+	result.Outcome = outcome
+	result.Damage = damage
+	result.PreOutcomeDamage = damage
+	auto.DealDamage(sim, result)
+	return war.CurrentRage()
+}
+
+// TestForeverWarriorNormalizedRage checks standards 21: under Forever a landed white hit gives
+// k × the weapon's swing speed in Rage, whatever its damage (Blizzard's Priest & Warrior deep dive:
+// "Rage gained is now based on the speed of the weapon that dealt the damage"), with k = 3.46 for
+// a one-hander and 4.5 for a two-hander, the off hand at the same rate, 100% more on a crit (the
+// 1 October development notes) and dodges and parries giving the same as a hit.
+func TestForeverWarriorNormalizedRage(t *testing.T) {
+	near := func(name string, got, want float64) {
+		t.Helper()
+		if math.Abs(got-want) > 1e-6 {
+			t.Errorf("%s gave %.3f Rage, want %.3f", name, got, want)
+		}
 	}
-	hit := gained(core.OutcomeHit)
-	crit := gained(core.OutcomeCrit)
-	if want := 300 * 7.5 / core.GetRageConversion(60); math.Abs(hit-want) > 1e-6 {
-		t.Errorf("a 300 damage hit gave %.3f Rage, want %.3f", hit, want)
-	}
-	if math.Abs(crit-2*hit) > 1e-6 {
-		t.Errorf("a 300 damage crit gave %.3f Rage, want twice the hit's %.3f", crit, 2*hit)
+
+	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
+	mh, oh := war.AutoAttacks.MHAuto(), war.AutoAttacks.OHAuto()
+	near("a 300 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 300), 3.46*2.6)
+	near("a 900 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 900), 3.46*2.6)
+	near("a main hand crit", whiteRage(sim, war, mh, core.OutcomeCrit, 600), 2*3.46*2.6)
+	near("a dodged main hand swing", whiteRage(sim, war, mh, core.OutcomeDodge, 0), 3.46*2.6)
+	near("a parried main hand swing", whiteRage(sim, war, mh, core.OutcomeParry, 0), 3.46*2.6)
+	near("a glancing main hand swing", whiteRage(sim, war, mh, core.OutcomeGlance, 200), 3.46*2.6)
+	near("a missed main hand swing", whiteRage(sim, war, mh, core.OutcomeMiss, 0), 0)
+	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), 3.46*2.5)
+
+	// Dual Wield Specialization's off hand Rage (10% a point) stays on top.
+	sim, war = newForeverWarriorArmed(t, "-00000005", 991014, 991015)
+	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*3.46*2.5)
+
+	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
+	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), 4.5*3.4)
+}
+
+// TestForeverWarriorDamageTakenRage checks that Rage from taking damage stays Classic's (standards
+// 21 only changes Rage from dealing damage): damage × 2.5 / the conversion at the attacker's
+// level. The damage comes from a level 60 special attack, which gives no Rage for dealing it.
+func TestForeverWarriorDamageTakenRage(t *testing.T) {
+	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+	attack := war.Hamstring.Spell
+	result := attack.NewResult(&war.Unit)
+	result.Outcome = core.OutcomeHit
+	result.Damage = 1000
+	attack.DealDamage(sim, result)
+	if got, want := war.CurrentRage(), 1000*2.5/core.GetRageConversion(60); math.Abs(got-want) > 1e-6 {
+		t.Errorf("taking 1000 damage gave %.3f Rage, want %.3f", got, want)
 	}
 }
 

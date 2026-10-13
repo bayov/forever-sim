@@ -1,6 +1,6 @@
 #!/bin/sh
 # Regenerates the Level 60 warrior rotations in ui/warrior/apls from the warrior_fury and
-# warrior_arms templates, with the knobs the searches settled on (2026-10-12, Human, 180 sec,
+# warrior_arms templates, with the knobs the searches settled on (2026-10-13 with Forever's normalized Rage, 180 sec,
 # the synthetic Phase 1 sets and the Level 60 talents, see ui/warrior/presets.ts). The settings
 # come from tools/rotopt/mksettings (spec fury or arms). The rotation itself does not depend on
 # them, only the one sanity sim does.
@@ -23,12 +23,13 @@ gen() {
 	echo "wrote ui/warrior/apls/$name.apl.json ($knobs)"
 }
 gen warrior_fury level60_fury 30305013002-25053005112110501-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=40,deathWish=2,dwEnd=33,executeFirst=1,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=40,potionAt=20,potionHoldForDw=2,mineSync=1,racialHoldForDw=1,recklessAt=25,recklessness=2,slamRage=0,trinketAt=25,wwBtGap=0,wwFirst=1,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=60,mineSync=1,potionAt=20,potionHoldForDw=2,racialHoldForDw=1,recklessAt=25,recklessness=0,slamRage=0,spearDance=0,trinketAt=25,wwBtGap=0,wwFirst=1,wwRage=25
 gen warrior_fury level60_fury_2h 30305013032-25053000152110501 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=70,deathWish=2,dwEnd=36,executeFirst=1,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=70,potionAt=20,potionHoldForDw=2,mineSync=1,racialHoldForDw=1,recklessAt=25,recklessness=2,slamRage=0,wwBtGap=0,wwFirst=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=70,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=20,hsExecute=0,hsRage=90,mineSync=1,potionAt=20,potionHoldForDw=2,racialHoldForDw=1,recklessAt=25,recklessness=2,slamRage=0,spearDance=0,trinketAt=25,wwBtGap=0,wwFirst=0,wwRage=25
 gen warrior_arms level60_arms 20305213032515201-55050000001 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=10,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=20,hsExecute=0,hsRage=70,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,mineSync=1,racialHoldForDw=0,reckSwap=1,recklessAt=20,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=10,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=20,hsExecute=0,hsRage=90,mineSync=1,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,racialHoldForDw=0,reckSwap=1,recklessAt=20,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
 # Arms against a Giant or Dragonkin boss (Onyxia), where Spearing Strike does 80% more weapon damage:
-# the talent and knob searches on a Dragonkin boss took Spearing Strike for Anger Management.
-gen warrior_arms level60_arms_dragonkin 20305203132515201-55050000001 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=10,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=20,hsExecute=0,hsRage=70,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,mineSync=1,racialHoldForDw=0,reckSwap=1,recklessAt=20,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=15,stance=1,wwRage=25
+# the talent and knob searches on a Dragonkin boss take Spearing Strike and Improved Bloodrage for two
+# points of Booming Voice and one of Improved Execute.
+gen warrior_arms level60_arms_dragonkin 20305213132515201-3505-2 \
+	battleShout=0,berserkerRageRage=0,bloodrageRage=10,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=20,hsExecute=0,hsRage=90,mineSync=1,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,racialHoldForDw=0,reckSwap=1,recklessAt=20,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=15,stance=1,trinketAt=0,wwRage=25

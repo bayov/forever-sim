@@ -20,6 +20,7 @@ type rageBar struct {
 	damageTakenMultiplier  float64 // Multiplier for rage generation from damage taken
 	offHandDealtMultiplier float64 // Extra multiplier for rage generation from off-hand damage dealt
 	critDealtMultiplier    float64 // Extra multiplier for rage generation from critical auto attacks
+	normalizedDealt        bool    // Forever: rage from auto attacks by weapon speed, not damage
 
 	flatDamageDealtBonusRage float64
 	flatDamageTakenBonusRage float64
@@ -35,6 +36,30 @@ type RageBarOptions struct {
 	StartingRage          float64
 	DamageDealtMultiplier float64
 	DamageTakenMultiplier float64
+}
+
+// Forever normalizes Rage from dealing damage: "Rage gained is now based on the speed of the
+// weapon that dealt the damage" (Blizzard's Priest & Warrior deep dive). Blizzard gives no
+// formula. A landed white hit gives k × the weapon's swing speed, with k measured by beta testers
+// at level 30 (forum thread 2355684): about 3.46 a second for a one-hander and 4.5 for a
+// two-hander. Nobody has measured the off hand, so it gets the same (standards 21). The
+// multipliers are for the dashboard's assumption runs (spec_assumptions.md, warr_rage_norm).
+var (
+	ForeverNormalizedRageOneHand  = 3.46
+	ForeverNormalizedRageTwoHand  = 4.5
+	ForeverNormalizedRageK        = 1.0 // Multiplies both constants
+	ForeverNormalizedRageOffHand  = 1.0 // Off hand factor
+	foreverTwoHandNormalizedSpeed = 3.3
+)
+
+// ForeverNormalizedRage is the Rage a landed white hit with this weapon gives under Forever,
+// before the off hand, crit and talent multipliers.
+func ForeverNormalizedRage(weapon *Weapon) float64 {
+	k := ForeverNormalizedRageOneHand
+	if weapon.NormalizedSwingSpeed >= foreverTwoHandNormalizedSpeed {
+		k = ForeverNormalizedRageTwoHand
+	}
+	return k * ForeverNormalizedRageK * weapon.SwingSpeed
 }
 
 func GetRageConversion(attacker_level int32) float64 {
@@ -93,6 +118,14 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			}
 
 			generatedRage := damage * 7.5 / rageConversion
+			if unit.rageBar.normalizedDealt {
+				// Dodges and parries give the same Rage as a hit, as Classic's do.
+				if spell.ProcMask == ProcMaskMeleeOHAuto {
+					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH()) * ForeverNormalizedRageOffHand
+				} else {
+					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.MH())
+				}
+			}
 			generatedRage *= unit.rageBar.damageDealtMultiplier
 			if spell.ProcMask == ProcMaskMeleeOHAuto {
 				generatedRage *= unit.rageBar.offHandDealtMultiplier
@@ -159,6 +192,14 @@ func (unit *Unit) AddOffHandDealtRageMultiplier(multi float64) {
 // notes: 100% more for warriors).
 func (unit *Unit) AddCritDealtRageMultiplier(multi float64) {
 	unit.rageBar.critDealtMultiplier *= multi
+}
+
+// EnableForeverNormalizedRage switches Rage from dealing damage to Forever's normalized Rage (see
+// ForeverNormalizedRage). Rage from taking damage stays Classic's.
+func (unit *Unit) EnableForeverNormalizedRage() {
+	if unit.Env.IsForever() {
+		unit.rageBar.normalizedDealt = true
+	}
 }
 
 func (unit *Unit) AddMaxRage(amount float64) {
