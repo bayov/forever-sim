@@ -154,7 +154,7 @@ Enhancement
 
 - [x] 8.17 Earth's Grasp (not implemented, the sim has no Stoneclaw or Earthbind Totem)
 - [x] 8.18 Thundering Strikes
-- [ ] 8.19 Ancestral Knowledge
+- [x] 8.19 Ancestral Knowledge
 - [ ] 8.20 Guardian Totems
 - [ ] 8.21 Mental Dexterity
 - [ ] 8.22 Improved Ghost Wolf (not implemented)
@@ -1435,6 +1435,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16255, talent curve 85275): +1% a point to all crit (aura 290: melee, ranged and spells). That matches.
 - Beta (the 2026-10-10 20:42 respec, `beta_results.txt`): dropping 5/5 took the sheet from 10.39 to 5.39 melee crit and 12.31 to 7.41 spell crit. The other 0.1 spell crit came from 3 more Intellect.
 - No sim change. `crit_test.go` TestOrcShamanThunderingStrikes: at level 30, 5/5 gives exactly 5% more melee crit and 5% more spell crit than no points. Leaving out the spell crit fails it.
+
+### 8.19 Ancestral Knowledge
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives 2% more Intellect, 10% at 5/5. It multiplies with Blessing of Kings, and the server drops the fraction before working out mana. Level 30 + 5 has 4/5, the Level 60 presets 3/5, and Level 30 PvP none.
+- Client 70338 (wago.tools 17485, talent curve 85266): +2, 4, 6, 8 and 10% Intellect (aura 137, misc 8). That matches.
+- Beta: 2026-10-08, 137 Intellect became 150 with 5/5 (2635 mana) and 165 with Blessing of Kings on top (2860 mana), so they multiply. 2026-10-10 20:42, 4/5 to 5/5 took 141 Intellect to 144.
+- No sim change and no new test. `stat_multipliers_test.go` TestOrcShamanStatMultipliers pins the 2026-10-08 numbers, Intellect gained mid-fight under both and the dropped fraction.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
