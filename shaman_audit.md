@@ -161,7 +161,7 @@ Enhancement
 - [x] 8.23 Improved Lightning Shield
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
 - [x] 8.25 Shamanistic Focus
-- [ ] 8.26 Anticipation
+- [x] 8.26 Anticipation
 - [ ] 8.27 Toughness
 - [ ] 8.28 Flurry
 - [ ] 8.29 Stormstrike
@@ -1483,6 +1483,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 1223030): 1 rank, -45% cost (aura 108, misc 14) on mask 0x90100400, the three shocks and Lightning Shield. Lightning Bolt, Chain Lightning, totems, Fire Nova and Water Shield aren't in it. That matches.
 - Beta (8.1): alone (the 2026-10-10 14:50 build), Earth Shock cost 80 (145 x 0.55), Flame Shock 88 and Lightning Shield 69 (125 x 0.55). With Convection 5 (the 23:14 build), Earth Shock 72 and Flame Shock 79, the two multiplied.
 - No sim change and no new test. `mana_costs_test.go` TestOrcShamanManaCostTalents covers which spells it reaches and the multiply with Convection, and TestOrcShamanCostTalentsOnTheBeta pins the beta costs.
+
+### 8.26 Anticipation
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives 2% dodge, 6% at 3/3. It matters only when something hits us (Vishas at Level 30, PvP). Only Level 30 PvP takes it (3/3).
+- Client 70338 (wago.tools 16254, talent curve 85299): +2, 4 and 6% dodge (aura 49). The two Anticipation spells that give Defense skill (12297, 20096) are other classes'. That matches.
+- Beta (the `/bayov` exports in ~/forever-logs/exports): 5.4324% dodge on 2026-10-10 at 21:30 without it, and 11.4324% at 23:14 with 3/3 and the same 43 Agility. That's +6.000%, 2% a point.
+- No sim change and no new test. `avoidance_test.go` TestOrcShamanOurAvoidance already wants exactly 6% from 3/3 (6.4), and its comment now cites the exports.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
