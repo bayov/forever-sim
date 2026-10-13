@@ -142,7 +142,7 @@ Elemental
 - [x] 8.7 Elemental Focus (Clearcasting)
 - [x] 8.8 Elemental Alacrity
 - [x] 8.9 Improved Fire Nova
-- [ ] 8.10 Eye of the Storm (not implemented)
+- [x] 8.10 Eye of the Storm (implemented 2026-10-13, no preset takes it)
 - [ ] 8.11 Call of Thunder
 - [ ] 8.12 Elemental Reach (not implemented)
 - [ ] 8.13 Lightning Overload
@@ -1362,6 +1362,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16086, talent curves 85223 and 85222): +10 and +20% damage (aura 108) and -2 and -4 sec cooldown (aura 107, misc 11). The mask (0x40000 in the second word) covers Fire Nova's cast (408341 to 408345) and its damage spell (408423 to 408428) at every rank. The cast has a 10 sec category cooldown. That matches the sim.
 - Beta (the 2/2 build, 2026-10-10 20:42 to 23:14): the damage was settled in 5.6 (104 hits at x1.15 x 1.2). The shortest gap between Fire Novas was 5.92 sec with the talent and 9.99 sec without it (7.25).
 - No sim change. `damage_modifiers_test.go` already wants 1.15 x 1.2 x 1.1 on Fire Nova. `periodic_test.go` TestOrcShamanFireNova now has a 1 point case at 8 sec next to 10 and 6 sec. A 1 point cooldown cut of 0 fails it.
+
+### 8.10 Eye of the Storm
+
+- The user's call (2026-10-13): implement it even though no preset takes it, so it's ready for an encounter where pushback is common.
+- Client 70338 (wago.tools 29062, talent curve 85224): 1, 2 and 3 points give a 23, 47 and 70% chance to ignore pushback from damage taken while casting Lightning Bolt, Chain Lightning and Lava Burst (aura 108, misc 9). Classic has no such talent.
+- Before: the proto had the field, but nothing read it. The core already pushes back a player's cast when a direct hit lands: 1 sec for the first hit, then 0.8, 0.6 and so on, never less than 0.2. Its pushback reduction field was read from the spell that hit us instead of the one we were casting, and nothing set it.
+- Changed (2026-10-13): the core reads the chance from the spell we're casting (`cast.go`). Lightning Bolt and Chain Lightning (`electric_spell.go`) and Lava Burst (`lava_burst.go`) take 0, 23, 47 or 70% from the talent (`talents.go` eyeOfTheStormChance). Nothing else in the sim sets the field, the roll happens at the same point, and every test and golden passed unchanged.
+- Today only the Level 30 encounters hit us (Vishas tanks on us), the Level 30 presets are all Enhancement, and the Level 60 elemental preset doesn't take it. So no preset number moves.
+- Beta: no build had it, and we never cast a Lightning Bolt.
+- `eye_of_the_storm_test.go` TestOrcShamanEyeOfTheStorm: every rank of the three spells has the chance for 0 to 3 points. 2000 top rank Lightning Bolts with an enemy hit 0.5 sec in end on time 23, 47 and 70% of the time (within 5%), and 1 sec late otherwise. Without the talent, two hits push it 1.8 sec. Reading the chance from the hitting spell, or a 60% rank 3, fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
