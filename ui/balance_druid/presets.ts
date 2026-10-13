@@ -253,7 +253,7 @@ export const OtherDefaults = {
 //                                 Builds
 ///////////////////////////////////////////////////////////////////////////
 
-// The level 60 raid setup: the shared Level 60 boss (level 63, 3731 armor, Humanoid), a 3 minute
+// The level 60 raid setup: the shared Level 60 boss (level 63, 3731 armor, type Unknown, standards 19), a 3 minute
 // fight, and the buffs, debuffs and consumes above.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	'Level 60',
@@ -268,7 +268,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 				id: 213336,
 				name: 'Level 60',
 				level: 63,
-				mobType: MobType.MobTypeHumanoid,
+				mobType: MobType.MobTypeUnknown,
 				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
 				minBaseDamage: 3000,
 				damageSpread: 0.3333,
