@@ -156,7 +156,7 @@ Enhancement
 - [x] 8.18 Thundering Strikes
 - [x] 8.19 Ancestral Knowledge
 - [x] 8.20 Guardian Totems
-- [ ] 8.21 Mental Dexterity
+- [x] 8.21 Mental Dexterity
 - [ ] 8.22 Improved Ghost Wolf (not implemented)
 - [ ] 8.23 Improved Lightning Shield
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
@@ -1451,6 +1451,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16258, talent curves 85274 and 85273): +10 and +20% on Stoneskin and Windwall's reduction (aura 108, misc 3) and -1 and -2 sec on Grounding Totem's cooldown. That matches what the sim has.
 - Beta: no build had it. Stoneskin's value before armor was settled in 7.29.
 - No sim change and no new test. `stoneskin_test.go` already wants 13.2 with 2 points at level 30.
+
+### 8.21 Mental Dexterity
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): 1, 2 and 3 points give attack power equal to 33, 67 and 100% of our Intellect, as a stat dependency, so Intellect gained mid-fight counts too. Every enhancement preset has 3/3.
+- Client 70338 (wago.tools 415140, talent curve 85272): 33, 67 and 100% of Intellect as attack power (aura 598). Its second effect is a dummy from SoD's rune, whose 30 sec buff (415144) isn't part of the Forever talent. That matches.
+- Beta: at the 2026-10-10 20:42 respec, 3 more Intellect (141 to 144) took attack power from 389 to 392 at 3/3. The 389 model (60 + 2 x 104 Strength - 20 + 141 Intellect) fit 75 white hits (4.1).
+- No sim change. `mental_dexterity_test.go` TestOrcShamanMentalDexterity: at level 30, 0 to 3 points add 0, 33, 67 and 100% of Intellect to attack power, and 10 Intellect gained mid-fight at 3/3 adds 10 attack power. A 66% rank 2 fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
