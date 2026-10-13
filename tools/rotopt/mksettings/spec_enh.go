@@ -49,7 +49,6 @@ func init() {
 					StartingTotems: &proto.StartingTotems{
 						Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 28,
 						Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 27,
-						Fire: proto.FireTotem_FlametongueTotem, FireSecondsBeforePull: 29,
 						Water: proto.WaterTotem_ManaSpringTotem, WaterSecondsBeforePull: 30,
 					},
 				},

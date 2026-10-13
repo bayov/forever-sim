@@ -104,16 +104,16 @@ The order barely moves with the fight length (4000 iterations, standard error un
 | Human | 974 | 936 | 935 | 931 | 930 |
 | Dwarf | 972 | 934 | 933 | 929 | 928 |
 
-| Enhancement (2026-10-12, synthetic Phase 1 set on the standard, no Ahn'Qiraj ranks, 3 min raid, 20000 iterations) | 2 min | 3 min | 5 min |
+| Enhancement (2026-10-13, synthetic Phase 1 set on standards 1b with the synthetic trinkets, no Ahn'Qiraj ranks, 3 min raid, 20000 iterations) | 2 min | 3 min | 5 min |
 |---|---|---|---|
-| Orc | 803.2 | 791.9 | 771.1 |
-| Orc without Axe Specialization | 787.6 | 776.2 | 756.0 |
-| Windshaper Skyborne | 791.4 | 779.9 | 760.8 |
-| Troll | 790.8 | 778.3 | 758.6 |
-| Tauren | 790.0 | 778.1 | 759.0 |
-| Dwarf | 785.8 | 773.8 | 754.3 |
+| Orc | 813.5 | 801.8 | 781.6 |
+| Orc without Axe Specialization | 797.8 | 786.0 | 765.8 |
+| Windshaper Skyborne | 799.8 | 787.8 | 768.9 |
+| Tauren | 799.8 | 787.4 | 768.2 |
+| Troll | 800.2 | 787.3 | 768.5 |
+| Dwarf | 795.3 | 783.3 | 764.4 |
 
-The synthetic two-hander is an axe (Spinal Reaper's damage and speed), so the Orc's 12.0 DPS lead is Axe Specialization's 1% crit: without it Windshaper Skyborne leads. Dwarf is the only Alliance shaman.
+The synthetic two-hander is an axe (Spinal Reaper's damage and speed), so the Orc's 14.0 DPS lead is Axe Specialization's 1% crit: without it Windshaper Skyborne leads. Dwarf is the only Alliance shaman.
 
 ## Level 60 presets
 
@@ -141,48 +141,48 @@ The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/f
 
 ### Shaman
 
-Both specs follow the cross-class standard (orchestration/standards.md on the coordination branch): its item levels and budget, hit to the cap against a level 63 boss, the Tier 1 sets on two pieces (2 piece bonus only), the best enchant outside the raids in every slot, Forever's Phase 1 consumables with one +2% crit elixir, no trinkets (Forever removed the old dungeon trinkets, the launch ones aren't simulated yet), and a pre-pull that only does damage from the pull on. Numbers are 20000 iterations, Orc, at 120 / 180 / 300 sec, against the shared Level 60 boss.
+Both specs follow the cross-class standard (orchestration/standards.md on the coordination branch): its item levels and budget, hit to the cap against a level 63 boss, the Tier 1 sets on two pieces (2 piece bonus only), the best enchant outside the raids in every slot, Forever's Phase 1 consumables with one +2% crit elixir, two synthetic item level 71 trinkets (a stat trinket and an on-use one, standards 1b and 8a: Forever removed the old dungeon trinkets and the launch ones aren't simulated yet), and a pre-pull that only does damage from the pull on. Since the 2026-10-13 gear round both sets follow standards 1b, Forever's budget per archetype (L = 1.125 * item level + 2.0, spell power at 0.86, the 1.7-norm shape check per piece, Forever's doubled caster weapon), and the hit-adjusted gear_targets.md mix. Numbers are 20000 iterations, Orc, at 120 / 180 / 300 sec, against the shared Level 60 boss.
 
 #### Elemental
 
-- Gear: the synthetic Phase 1 elemental set (`tools/database/forever_synthetic_items_shaman.go`, ids 990101 to 990113), in place of the Earthfury set, Choker of the Fire Lord, Deep Earth Spaulders, Robe of Volatile Power, Mana Igniting Cord, Ring of Spell Power and Staff of Dominance. Since 2026-10-13 it follows the fair stat mix (standards 5a, the Elemental row of gear_targets.md at e3f2ae044, after Season of Discovery level 60 elemental BiS), spent linearly (item 1a: each piece carries 1.73 times its budget): 389 spell power, 169 Intellect, 150 Stamina, 78 Spirit, 110 crit rating (7.9%) and 100 hit rating (10%, the cap with Tidal Focus 5 and the 2 piece), that is 26.1% spell power, 20.6% Intellect, 18.3% Stamina, 9.5% Spirit, 13.4% crit and 12.2% hit of the weighted total. Before it was 504 spell power and 5% crit (36% spell power). The staff gets a caster's whole weapon budget (73). The hands and legs carry The Spiritcaller's Storm (2 pieces, +1% hit); its 5 piece bonus (Lava Burst 1 sec sooner) isn't live. Enchants: Spellblasting (staff), Gloves - Natural Power, Bracer - Greater Spellpower, Mystic Rugged kits on chest, legs and feet, Lesser Arcanum of Voracity, Enchant Necklace - Spell Power. Relic Burning Totem (7.1 over none, 4.8 over Polished Driftwood Icon).
+- Gear: the synthetic Phase 1 elemental set (`tools/database/forever_synthetic_items_shaman.go`, ids 990101 to 990115), in place of the Earthfury set, Choker of the Fire Lord, Deep Earth Spaulders, Robe of Volatile Power, Mana Igniting Cord, Ring of Spell Power and Staff of Dominance. On standards 1b for a pure caster (f 1.053 / 1.026 / 0.995, 4 stat lines a piece): 367 spell power, 164 Intellect, 137 Stamina, 86 Spirit, 100 crit rating (7.1%) and 100 hit rating (10%, the cap with Tidal Focus 5 and the 2 piece), that is 35.0% spell power, 18.2% Intellect, 15.2% Stamina, 9.5% Spirit, 11.1% crit and 11.1% hit of the weighted total (hit-adjusted targets 34.4 / 17.6 / 16.1 / 10 / 10.8). Armor 709.3 and the staff 193.3 weighted points; every piece within 1% of its budget and -3.9 to +1.0% on the shape check. Trinkets: a stat trinket (37 spell power, 14 crit rating) and an on-use one (140 spell power for 20 sec every 2 min). The hands and legs carry The Spiritcaller's Storm (2 pieces, +1% hit); its 5 piece bonus (Lava Burst 1 sec sooner) isn't live. Enchants: Spellblasting (staff), Gloves - Natural Power, Bracer - Greater Spellpower, Mystic Rugged kits on chest, legs and feet, Lesser Arcanum of Voracity, Enchant Necklace - Spell Power. Relic Burning Totem.
 - Raid: the shared level 60 raid without Blessing of Might, with Curse of the Elements as the one debuff on its schools. The shaman stands 20 yards from the boss, so it never swings, and it is the only shaman in its group.
 - Talents: `5504301300103051-052-05305` (31 Elemental for Lava Burst, Elemental Fury 5 and Lightning Overload 3, Thundering Strikes 5 and Ancestral Knowledge 2, Totemic Focus 5, Mindfulness 3 and Tidal Focus 5), from talent searches over seven seeds before and after the knob search, run again on the standard gear.
-- Level 60 + Mana Tide: `5504301300103051-04-053150001001` (16 Restoration, Mana Tide Totem at 20% mana), 642.4 / 639.3 / 631.3, 1.1% behind.
+- Level 60 + Mana Tide: `5504301300103051-04-053150001001` (16 Restoration, Mana Tide Totem at 20% mana), 667.7 / 666.9 / 656.5, 1.0% behind.
 - Rotation (`tools/rotopt/shaman_ele.go`, written by `shaman_presets.sh`): Mana Spring at -3.9 sec, a Lightning Bolt at -2.9 (it lands 0.1 sec into the fight), Searing Totem at -0.9 (its first attack is after the pull), then Flame Shock whenever its DoT is down, Lava Burst on cooldown unless Flame Shock runs out before the cast ends, Lightning Bolt, and rank 7 below 20% mana. The opener is worth +10.6 / +7.0 / +4.8 over putting the totems down with no bolt. Chain Lightning loses on one target even above 80% mana (490 damage a second for 485 mana, against Lightning Bolt's 479 for 198). Magma Totem and Fire Nova are left out, because they hit around the totem and a caster stands at range.
 - Consumes: Flask of Supreme Power, Greater Arcane Elixir, Elixir of Firepower, Elixir of Nature Power, Elixir of the Sages (the one crit elixir) with Elixir of Greater Intellect, Greater Mageblood Elixir, Cerebral Cortex Compound, Lobster Stew, Wizard Oil, Major Mana Potion, Demonic Rune, Goblin Sapper Charge and Goblin Land Mine (Engineering and Alchemy). The Owl on top of the Sages would add about 10 if Forever lets crit elixirs stack.
-- DPS: 648.7 / 646.1 / 638.1 (693.3 / 690.3 / 680.4 before the fair-mix rebudget; the talent and knob searches kept both builds on the new set). That is low next to the other casters because of Forever's own spell data: Lightning Bolt rank 10 does about 201 at level 60 with a 0.714 coefficient (client 70338), where Classic's did 419 to 467 at 0.857, and the elemental shaman has few damage multipliers (Concussion 5%, Curse of the Elements). Lightning Bolt is about half of the damage, Lava Burst and Flame Shock most of the rest.
+- DPS: 674.3 / 673.9 / 663.7 (648.7 / 646.1 / 638.1 on the 1a set without trinkets, 693.3 / 690.3 / 680.4 before the fair mix; the talent and knob searches kept both builds on the new set). That is low next to the other casters because of Forever's own spell data: Lightning Bolt rank 10 does about 201 at level 60 with a 0.714 coefficient (client 70338), where Classic's did 419 to 467 at 0.857, and the elemental shaman has few damage multipliers (Concussion 5%, Curse of the Elements). Lightning Bolt is about half of the damage, Lava Burst and Flame Shock most of the rest.
 - No fire-focused Elemental: Forever's elemental has no fire filler. Lava Burst has a cooldown, Flame Shock shares the shock cooldown, and Fire Nova and Magma Totem only reach a boss in melee range, so a fire build still fills with Lightning Bolt and plays the same.
 - Races (same seed, standard error 0.2):
 
 | Elemental | 2 min | 3 min | 5 min |
 |---|---|---|---|
-| Orc (Horde) | 648.7 | 646.1 | 638.1 |
-| Windshaper Skyborne (Horde) | 648.8 | 645.6 | 637.9 |
-| Troll (Horde) | 647.1 | 643.5 | 635.9 |
-| Dwarf (Alliance) | 643.5 | 640.3 | 632.9 |
-| Tauren (Horde) | 643.4 | 640.2 | 632.8 |
+| Orc (Horde) | 674.3 | 673.9 | 663.7 |
+| Windshaper Skyborne (Horde) | 673.2 | 672.3 | 662.4 |
+| Troll (Horde) | 671.2 | 669.1 | 659.7 |
+| Dwarf (Alliance) | 667.8 | 666.8 | 657.2 |
+| Tauren (Horde) | 667.8 | 666.7 | 657.2 |
 
-  Best overall and best Horde: Orc, tied with Windshaper Skyborne (within 0.5, standard error 0.2); the preset keeps Orc. Best Alliance: Dwarf (the only Alliance shaman). The staff is the Era Phase 1 weapon type and no race has a staff racial, so weapon-type racials don't figure. Tauren's 1% hit is wasted at the hit cap.
+  Best overall and best Horde: Orc (1.6 ahead of Windshaper Skyborne at 3 min). Best Alliance: Dwarf (the only Alliance shaman). The staff is the Era Phase 1 weapon type and no race has a staff racial, so weapon-type racials don't figure. Tauren's 1% hit is wasted at the hit cap.
 
-  Level 60 + Mana Tide (same seed, 20000 iterations): Orc 642.4 / 639.3 / 631.3, Windshaper Skyborne 642.5 / 638.6 / 631.2, Troll 640.8 / 636.8 / 629.2, Dwarf 637.2 / 633.5 / 626.2, Tauren 637.1 / 633.4 / 626.1. Best overall and best Horde: Orc, tied with Windshaper Skyborne. Best Alliance: Dwarf (the only Alliance shaman).
+  Level 60 + Mana Tide (same seed, 20000 iterations): Orc 667.7 / 666.9 / 656.5, Windshaper Skyborne 666.7 / 665.2 / 655.4, Troll 664.7 / 662.0 / 652.6, Dwarf 661.3 / 659.8 / 650.2, Tauren 661.2 / 659.8 / 650.1. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman).
 
 #### Enhancement
 
-- Gear: the synthetic Phase 1 enhancement set (`tools/database/forever_synthetic_items.go`, ids 990001 to 990013), rebudgeted to the standard (no more item level 76 head or 72 rings, 9% hit), with the synthetic chest in place of Timbermaw Tunic. The hands and legs carry The Spiritcaller's Rage (2 pieces, 1% attack and cast speed); the 4 and 5 piece bonuses aren't live. Enchants: Crusader (+9.0 over Enchant Weapon - Strength), Gloves - Superior Strength, Cloak - Agility, Enchant Necklace - Strength, Boots - Greater Agility, Lesser Arcanum of Voracity, Greater Stats, Superior Strength bracers.
+- Gear: the synthetic Phase 1 enhancement set (`tools/database/forever_synthetic_items.go`, ids 990001 to 990016), with the synthetic chest in place of Timbermaw Tunic. On standards 1b for a hybrid (f 1.093 / 1.103 / 1.048, 4-5 stat lines a piece, the two-hander 90.6) and the hit-adjusted Enhancement row (5b: Intellect and spell power held): 298 spell power, 164 Stamina, 86 Intellect, 83 Spirit, 81 Strength, 18 Agility, 48 attack power, 37 crit rating (2.6%) and 90 hit rating (9%, the melee cap), that is 30.5% spell power, 19.5% Stamina, 10.2% Intellect, 9.9% Spirit, 9.7% Strength, 2.1% Agility, 2.9% attack power, 4.4% crit and 10.7% hit. Armor 748.5 and the two-hander 90.8 weighted points; every piece within 1% of its budget and -3.8 to +0.8% on the shape check. Trinkets: a stat trinket (32 Strength, 14 crit rating) and an on-use one (335 attack power for 20 sec every 2 min; a 140 spell power on-use is 3.6 behind). The hands and legs carry The Spiritcaller's Rage (2 pieces, 1% attack and cast speed); the 4 and 5 piece bonuses aren't live. Enchants: Crusader, Gloves - Superior Strength, Cloak - Agility, Enchant Necklace - Strength, Boots - Greater Agility, Lesser Arcanum of Voracity, Greater Stats, Superior Strength bracers. The Optimized rotation puts Searing Totem down at the pull since the gear round (+5.9 at 3 min over Flametongue Totem, which holds Windfury Totem's weapon buff slot).
 - The sim moved since the 2026-10-08 presets (the audit fixes): Level 60 measured 805.6 / 795.7 / 778.7 against the 826.5 / 819.6 / 807.7 in the presets. The talent search (Spirit Weapons pinned, the mean of the three lengths) then swapped Convection 5 for Concussion 5: `050533102-053030031005112251`, +3.0. It ran again on the standard gear and only made tie-breaks on mana. The knob search keeps the Optimized rotation once Windfury Totem stays up for the group (it prefers Grace of Air for the shaman alone, as before).
 - Level 60 + Water Shield (sub Restoration): `050031-053030031005112151-052030001`, from a search with Water Shield pinned, +8.7 over the old build. Its Magma Totem rotation casts Fire Nova ahead of the shocks (+2.7), holds Earth Shock while Flame Shock has 1 sec or less left (+1.0), and puts Water Shield up before the pull and below 50% mana (inert at the preset's 0 raid hits, up to +4.1 at 6 a minute). Level 60 + Mana Tide: the search found nothing better. Level 60 + Imp GW takes Concussion like Level 60.
 - Consumes: Forever's Phase 1 set with Elixir of the Sages as the one crit elixir (the Owl, Grizzly and Mongoose are 0.2 to 4.7 behind), Elixir of Greater Agility, Juju Power and Might, Elixir of Greater Intellect, Elixir of Nature Power, Greater Mageblood Elixir, Shadow Oil, Grilled Squid. Stacking the Mongoose, Grizzly and Owl on top would add about 36 if Forever allows it.
 - Forever leaves out the Ahn'Qiraj book ranks of the raid totems (shared head cfb2dac): the shaman puts down Strength of Earth Totem IV (42 Strength, was 53) and the raid's Battle Shout is rank VI. That costs every Enhancement build about 7.7 DPS (Level 60 was 811.0 / 799.6 / 778.6). The searches ran again on it and kept every build and rotation (only mana tie-breaks inside the noise).
-- DPS: Level 60 803.2 / 791.9 / 771.1, Imp GW 800.0 / 788.3 / 767.3, Water Shield 758.3 / 750.8 / 738.9 (5.2% behind at 3 min), Mana Tide 735.5 / 728.8 / 724.6 (8.0% behind).
-- Races: the table under Comparing races. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman). With weapon-type racials off (no Axe Specialization), the Orc is 787.6 / 776.2 / 756.0 and Windshaper Skyborne leads at 791.4 / 779.9 / 760.8.
+- DPS: Level 60 813.5 / 801.8 / 781.6, Imp GW 810.3 / 797.9 / 778.0, Water Shield 763.1 / 755.6 / 741.4 (5.8% behind at 3 min), Mana Tide 739.7 / 733.0 / 727.4 (8.6% behind). Before the gear round: 803.2 / 791.9 / 771.1, 800.0 / 788.3 / 767.3, 758.3 / 750.8 / 738.9 and 735.5 / 728.8 / 724.6.
+- Races: the table under Comparing races. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman). With weapon-type racials off (no Axe Specialization), the Orc is 797.8 / 786.0 / 765.8 and Windshaper Skyborne leads at 799.8 / 787.8 / 768.9.
 - Races on the other builds (same seed, 20000 iterations, 120 / 180 / 300 sec). Orc wins every one at every length. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman).
 
 | Build | Orc | Windshaper Skyborne | Troll | Tauren | Dwarf |
 |---|---|---|---|---|---|
-| Imp GW | 800.0 / 788.3 / 767.3 | 788.0 / 775.9 / 756.6 | 787.7 / 774.5 / 754.7 | 786.9 / 774.4 / 755.1 | 782.7 / 770.3 / 751.2 |
-| Water Shield | 758.3 / 750.8 / 738.9 | 746.6 / 739.2 / 728.3 | 746.0 / 737.8 / 726.6 | 746.2 / 738.5 / 727.3 | 742.2 / 734.2 / 723.2 |
-| Mana Tide | 735.5 / 728.8 / 724.6 | 724.1 / 717.1 / 713.9 | 724.5 / 716.8 / 713.3 | 722.8 / 715.8 / 712.7 | 719.3 / 712.2 / 709.4 |
+| Imp GW | 810.3 / 797.9 / 778.0 | 796.6 / 784.1 / 765.4 | 796.9 / 783.6 / 764.8 | 796.6 / 783.5 / 764.4 | 792.0 / 779.5 / 760.9 |
+| Water Shield | 763.1 / 755.6 / 741.4 | 750.1 / 742.7 / 730.2 | 749.7 / 741.6 / 728.9 | 749.7 / 742.1 / 729.3 | 746.1 / 738.4 / 725.7 |
+| Mana Tide | 739.7 / 733.0 / 727.4 | 727.4 / 720.8 / 716.3 | 728.3 / 720.9 / 715.8 | 726.2 / 719.6 / 715.0 | 722.8 / 716.0 / 711.4 |
 
 ### Mage
 

@@ -61,12 +61,16 @@ export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, 
 // Forever's level 60 gear in the client is not tuned yet, and Molten Core and Onyxia have no
 // Forever data. The synthetic items take the place of the Era Phase 1 elemental pieces (the
 // Earthfury set, Choker of the Fire Lord, Deep Earth Spaulders, Robe of Volatile Power, Mana
-// Igniting Cord, Ring of Spell Power and Staff of Dominance), rebuilt on the cross-class
-// standard (orchestration/standards.md): its item levels and budget, Forever's cheaper spell
-// power, about 10% of the budget in Spirit, and hit to the spell cap against a level 63 boss
-// with Tidal Focus 5 and the 2 piece bonus. The hands and legs carry The Spiritcaller's Storm,
-// Forever's elemental Tier 1 set, so only its 2 piece bonus (+1% hit) is live. The 5 piece bonus
-// (Lava Burst 1 sec sooner) would add more. The file has the budget math.
+// Igniting Cord, Ring of Spell Power and Staff of Dominance), built on the cross-class standard
+// (orchestration/standards.md, item 1b since the 2026-10-13 gear round): Forever's budget for a
+// pure caster (each armor piece carries slot mod * (1.125 * item level + 2.0) * 1.053 / 1.026 /
+// 0.995 in weighted stats, spell power at 0.86, 4 stat lines a piece by the 1.7-norm shape check),
+// Forever's doubled caster weapon (the staff carries 193.4), the Elemental mix of gear_targets.md
+// (15% Stamina, 18% Intellect, 10% Spirit, 35% spell power, 11% crit) and hit to the spell cap
+// against a level 63 boss with Tidal Focus 5 and the 2 piece bonus. The armor is 709.3 and the staff
+// 193.3 weighted points. The hands and legs carry The Spiritcaller's Storm, Forever's elemental Tier 1
+// set, so only its 2 piece bonus (+1% hit) is live. The 5 piece bonus (Lava Burst 1 sec sooner) would
+// add more. The file has the budget math, the shares and the shape check per piece.
 //
 // The enchants are the best a Phase 1 shaman can get outside the raids: Enchant 2H Weapon -
 // Spellblasting (Forever, +65 spell power), Gloves - Natural Power, Bracer - Greater Spellpower,
@@ -76,15 +80,14 @@ export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, 
 // Revelation is about 17 behind. The relic is Burning Totem (Flame Shock 3 sec longer),
 // 7.1 ahead of no relic and 4.8 ahead of Polished Driftwood Icon.
 //
-// No trinkets: Forever removed the old dungeon trinkets (Briarwood Reed and Royal Seal of
-// Eldre'Thalas aren't in the 70338 client), Talisman of Ephemeral Power is Molten Core only, and
-// the sim doesn't model Forever's launch trinkets yet. Trinkets excluded until they are.
+// Two synthetic item level 71 trinkets (standards 8a and 1b): Forever removed the old dungeon
+// trinkets and the sim doesn't model its launch ones, so each spec gets a stat trinket (37 spell
+// power and 14 crit rating) and an on-use one (140 spell power for 20 sec every 2 min, the weight of
+// Talisman of Ephemeral Power). Both are synthetic, not in the game.
 //
-// On 2026-10-13 the set was rebudgeted to the fair stat mix of the standard (item 5a: 18%
-// Stamina, 21% Intellect, 10% Spirit, 26% spell power, 13% crit and 12% hit of its weighted
-// total, after Season of Discovery level 60 elemental BiS) and spent linearly (item 1a, 1.73
-// times each piece's budget). It was 36% spell power and 9% crit before. The Level 60 build went
-// from 693.3 / 690.3 / 680.4 to 648.7 / 646.1 / 638.1 at 120 / 180 / 300 sec. The set stays fixed, it was not gear searched.
+// The Level 60 build is 674.3 / 673.9 / 663.7 at 120 / 180 / 300 sec on it. Before the gear round
+// it was 648.7 / 646.1 / 638.1 (the 1a set, no trinkets) and 693.3 / 690.3 / 680.4 before the fair
+// mix. The set stays fixed, it was not gear searched.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -157,8 +160,8 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
 // talent search with Mana Tide Totem pinned found it, and found it again on the standard gear.
 // Its Water Shield point does nothing in the sim: the elemental options have no raid damage
-// hits, and the boss never hits a caster. It is 642.4 / 639.3 / 631.3 at 120 / 180 / 300 sec
-// on the fair-mix set, 1.1% behind Level 60 at 180.
+// hits, and the boss never hits a caster. It is 667.7 / 666.9 / 656.5 at 120 / 180 / 300 sec
+// on the 1b set, 1.0% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '5504301300103051-04-053150001001' }),
@@ -263,8 +266,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // The shaman is an engineer for the Goblin Sapper Charge and Goblin Land Mine (4.3 and 1.2)
-// and an alchemist. The race is Orc, tied for the best race with Windshaper Skyborne (646.1 and
-// 645.6 at 180 sec), see the races under the builds.
+// and an alchemist. The race is Orc, the best race (673.9 at 180 sec, Windshaper Skyborne 1.6
+// behind), see the races under the builds.
 export const OtherDefaults = {
 	distanceFromTarget: 20,
 	profession1: Profession.Engineering,
@@ -310,17 +313,17 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-13, on the fair-mix set (standards 5a) with the standard consumes (20000
-// iterations), Level 60 is 648.7 / 646.1 / 638.1 at 120 / 180 / 300 sec and Level 60 + Mana Tide
-// 642.4 / 639.3 / 631.3. The talent and knob searches ran again on the new set and kept both
-// builds. Before the rebudget they were 693.3 / 690.3 / 680.4 and 686.4 / 682.0 / 673.7.
+// On 2026-10-13, on the gear round's set (standards 1b, with the two synthetic trinkets) and the
+// standard consumes (20000 iterations), Level 60 is 674.3 / 673.9 / 663.7 at 120 / 180 / 300 sec and
+// Level 60 + Mana Tide 667.7 / 666.9 / 656.5. The talent and knob searches ran again on the new set and
+// kept both builds. On the 1a set they were 648.7 / 646.1 / 638.1 and 642.4 / 639.3 / 631.3.
 //
-// The races (same settings and seed): Orc 648.7 / 646.1 / 638.1, Windshaper Skyborne 648.8 /
-// 645.6 / 637.9, Troll 647.1 / 643.5 / 635.9, Dwarf (the only Alliance shaman) 643.5 / 640.3 /
-// 632.9, Tauren 643.4 / 640.2 / 632.8. Orc and Windshaper Skyborne tie for the best race and
-// the best Horde race (within 0.5, standard error 0.2), and the preset keeps Orc. The staff
-// is the Era Phase 1 weapon type and no race has a staff racial; Tauren's 1% hit is wasted at
-// the hit cap.
+// The races (same settings and seed): Orc 674.3 / 673.9 / 663.7, Windshaper Skyborne 673.2 / 672.3 /
+// 662.4, Troll 671.2 / 669.1 / 659.7, Dwarf (the only Alliance shaman) 667.8 / 666.8 / 657.2, Tauren
+// 667.8 / 666.7 / 657.2. Best overall and best Horde: Orc, 1.6 ahead of Windshaper Skyborne at 180 sec.
+// Best Alliance: Dwarf (the only Alliance shaman). On Mana Tide: Orc 666.9, Windshaper Skyborne 665.2,
+// Troll 662.0, Dwarf 659.8, Tauren 659.8 at 180 sec. The staff is the Era Phase 1 weapon type and no
+// race has a staff racial; Tauren's 1% hit is wasted at the hit cap.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',

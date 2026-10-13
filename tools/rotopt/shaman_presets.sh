@@ -42,7 +42,12 @@ gen() {
 # Enhancement option StartingTotems, see the presets), so the rotations leave them out of
 # the prepull actions (prepullTotems=0). A starting totem costs no mana. The Level 30 PvP
 # rotation still puts them down before the pull.
-gen optimized "shock=4,airTotem=2,fireTotem=3,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=0" -level 60
+#
+# On 2026-10-13 (the standards 1b gear round) the knob search moved the fire totem from
+# Flametongue Totem to Searing Totem (with fireTotemMinTime 10): 801.8 against 795.9 at 180 sec
+# with Windfury Totem kept for the group. Flametongue Totem holds the same weapon buff slot as
+# Windfury Totem. Searing goes down at the pull, so the Level 60 builds have no fire starting totem.
+gen optimized "shock=4,airTotem=2,fireTotem=1,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=0" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.

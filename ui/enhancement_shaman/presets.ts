@@ -244,9 +244,19 @@ export const GearLevel30PvPHighHP = PresetUtils.makePresetGear('Level 30 PvP (Hi
 // raids: Crusader on the two-hander (+9.0 over Enchant Weapon - Strength, ahead of 2H Agility and
 // Revelation), Gloves - Superior Strength (+2.8), Cloak - Agility (+0.5), Enchant Necklace -
 // Strength (+2.1), Boots - Greater Agility (+2.2). Forceful Rugged Armor Kits lose to the chest,
-// leg and boot enchants. No trinkets: Forever removed Hand of Justice and Blackhand's Breadth
-// (they aren't in the 70338 client), and the sim doesn't model Forever's launch trinkets yet.
-// Trinkets excluded until they are.
+// leg and boot enchants.
+//
+// On 2026-10-13 (the gear round, standards 1b) the set was rebuilt on Forever's budget for a hybrid:
+// each armor piece carries slot mod * (1.125 * item level + 2.0) * 1.093 / 1.103 / 1.048 in weighted
+// stats (spell power at 0.86, attack power 0.5), 4 or 5 stat lines a piece by the 1.7-norm shape
+// check, and the two-hander 90.6. The mix is the Enhancement row of gear_targets.md, hit-adjusted:
+// Stamina 19.5%, Strength 9.7%, Agility 2.1%, Intellect 10.2%, Spirit 9.9%, attack power 2.9%,
+// spell power 30.5%, crit 4.4% and hit 10.7% (the cap). The armor is 748.5 and the two-hander 90.8
+// weighted points; the file has the shares and the shape check per piece. It also carries two
+// synthetic item level 71 trinkets (Forever removed the old dungeon trinkets and the sim doesn't
+// model its launch ones): a stat trinket (32 Strength, 14 crit rating) and an on-use one (335 attack
+// power for 20 sec every 2 min, the weight of Earthstrike). A spell power on-use (140) sims 3.6
+// behind at 180 sec. Both trinkets are synthetic, not in the game.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -420,7 +430,9 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // is enough without the cheaper shocks. A tie-break on mana that moves 2 points from Elemental
 // Weapons to Ancestral Knowledge is 0.8 behind. The knob search kept the Optimized rotation. On
 // the standard gear and consumes the search only made such tie-breaks on mana (795.9 against
-// 796.1), so the build stays: 803.2 / 791.9 / 771.1 at 120 / 180 / 300 sec.
+// 796.1), so the build stays: 803.2 / 791.9 / 771.1 at 120 / 180 / 300 sec. On the 2026-10-13
+// gear round's set the search again only made mana tie-breaks inside the noise (792.0 against
+// 792.6), so the build stays: 813.5 / 801.8 / 781.6.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '050533102-053030031005112251' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
@@ -435,7 +447,8 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // found nothing better. It is 894.0 at 300 sec, 3.4 behind Level 60.
 //
 // On 2026-10-12 it takes Concussion 5 in place of Convection 5 like Level 60 (+2.8). It is
-// 800.0 / 788.3 / 767.3 at 120 / 180 / 300 sec on the standard gear, 3.6 behind Level 60 at 180.
+// 810.3 / 797.9 / 778.0 at 120 / 180 / 300 sec on the 2026-10-13 gear round's set, 3.9 behind Level 60
+// at 180 (800.0 / 788.3 / 767.3 before).
 export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '050533102-051032031005112251' }), {
 	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
 	group: 'Level 60',
@@ -461,7 +474,9 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // hold in the Magma Totem rotation it was 773.5 / 764.5 / 748.9 at 120 / 180 / 300 sec. On the
 // standard gear and consumes it is 758.3 / 750.8 / 738.9, 5.2% behind Level 60 at 180. The search
 // there only moved 2 points from Elemental Weapons to Ancestral Knowledge on a mana tie-break
-// (757.3 against 758.6), so the build stays.
+// (757.3 against 758.6), so the build stays. On the 2026-10-13 gear round's set the same tie-break
+// was 752.8 against 751.2, inside the noise, so it stays: 763.1 / 755.6 / 741.4, 5.8% behind Level 60
+// at 180.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
 	SavedTalents.create({ talentsString: '050031-053030031005112151-052030001' }),
@@ -480,7 +495,8 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 //
 // On 2026-10-12 the search on the current sim (Mana Tide Totem and Water Shield pinned) found
 // nothing better: 750.4 / 743.9 / 737.9 at 120 / 180 / 300 sec with the Mana Tide rotation. On
-// the standard gear and consumes it is 735.5 / 728.8 / 724.6, 8.0% behind Level 60 at 180.
+// the standard gear and consumes it was 735.5 / 728.8 / 724.6. On the 2026-10-13 gear round's set
+// the search found nothing better: 739.7 / 733.0 / 727.4, 8.6% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '02-055030031005112151-053051001001' }),
@@ -552,8 +568,9 @@ const startingTotemsLevel60 = StartingTotems.create({
 	earthSecondsBeforePull: 28,
 	air: AirTotem.WindfuryTotem,
 	airSecondsBeforePull: 27,
-	fire: FireTotem.FlametongueTotem,
-	fireSecondsBeforePull: 29,
+	// No fire totem before the pull: since the 2026-10-13 gear round the Optimized rotation puts
+	// Searing Totem down at the pull (+5.9 at 180 sec over Flametongue Totem, which shares the
+	// weapon buff slot with Windfury Totem).
 	water: WaterTotem.ManaSpringTotem,
 	waterSecondsBeforePull: 30,
 });
@@ -566,7 +583,13 @@ const PresetBuildOptionsLevel60Magma = {
 // Windfury Totem comes at level 32.
 const PresetBuildOptionsLevel30 = {
 	...PresetBuildOptions,
-	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, air: AirTotem.NoAirTotem, airSecondsBeforePull: 0 }),
+	startingTotems: StartingTotems.create({
+		...startingTotemsLevel60,
+		air: AirTotem.NoAirTotem,
+		airSecondsBeforePull: 0,
+		fire: FireTotem.FlametongueTotem,
+		fireSecondsBeforePull: 29,
+	}),
 };
 
 // The level 60 consumables. On 2026-10-08 we tried every consumable the sim applies in each
@@ -726,12 +749,20 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // build about 7.7 DPS (Level 60 was 811.0 / 799.6 / 778.6). The talent and knob searches ran again
 // on it and kept every build, with only mana tie-breaks inside the noise.
 //
-// The races on Level 60 (20000 iterations, standard error 0.4): Orc 803.2 / 791.9 / 771.1,
-// Windshaper Skyborne 791.4 / 779.9 / 760.8, Troll 790.8 / 778.3 / 758.6, Tauren 790.0 / 778.1 /
-// 759.0, Dwarf (the only Alliance shaman) 785.8 / 773.8 / 754.3. The Orc's lead is mostly Axe
-// Specialization: the synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon
-// it stands in for. Without it the Orc is 787.6 / 776.2 / 756.0 and Windshaper Skyborne leads. A
-// mace would give the Dwarf its 1% instead.
+// On 2026-10-13 the gear round (standards 1b, with the synthetic trinkets) moved them: Level 60 is
+// 813.5 / 801.8 / 781.6, Level 60 + Imp GW 810.3 / 797.9 / 778.0, Level 60 + Water Shield 763.1 /
+// 755.6 / 741.4 and Level 60 + Mana Tide 739.7 / 733.0 / 727.4 (20000 iterations). The knob search
+// moved the Optimized rotation's fire totem from Flametongue Totem to Searing Totem (+5.9 at 180
+// sec; Flametongue Totem holds the weapon buff slot Windfury Totem needs), and kept every other knob.
+//
+// The races on Level 60 (20000 iterations, standard error 0.4): Orc 813.5 / 801.8 / 781.6,
+// Windshaper Skyborne 799.8 / 787.8 / 768.9, Troll 800.2 / 787.3 / 768.5, Tauren 799.8 / 787.4 /
+// 768.2, Dwarf (the only Alliance shaman) 795.3 / 783.3 / 764.4. Best overall and best Horde: Orc.
+// Best Alliance: Dwarf (the only Alliance shaman). The Orc's lead is mostly Axe Specialization: the
+// synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon it stands in for.
+// Without it the Orc is 797.8 / 786.0 / 765.8, and Windshaper Skyborne leads (Tauren and Troll
+// within noise of it). A mace would give the Dwarf its 1% instead. Orc wins the Imp GW, Water Shield and Mana Tide
+// builds too (sim-status.md has the tables).
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',
