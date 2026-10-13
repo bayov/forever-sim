@@ -42,6 +42,9 @@ interface RotationRow {
 	events: Array<RowEvent>;
 	// An aura that's up from the pull to the end of the fight.
 	alwaysUp?: boolean;
+	// The icons in the row, at the time their cast lands or their aura starts. An aura's stacks
+	// at that moment go in the icon's corner.
+	icons?: Array<{ time: number; elem: HTMLElement }>;
 }
 
 // One thing drawn in a row, like a cast or an aura's uptime, with the text of the logs it came
@@ -1353,6 +1356,7 @@ export class Timeline extends ResultComponent {
 			const iconElem = (<a className="rotation-timeline-cast-icon" />) as HTMLAnchorElement;
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
+			(row.icons ??= []).push({ time: castLog.timestamp + castLog.castTime + travelTime, elem: iconElem });
 
 			const notable = notableOutcome(castLog);
 			if (notable) {
@@ -1506,6 +1510,7 @@ export class Timeline extends ResultComponent {
 				const iconElem = (<a className="rotation-timeline-cast-icon rotation-timeline-aura-icon" />) as HTMLAnchorElement;
 				aul.actionId.setBackground(iconElem);
 				auraElem.appendChild(iconElem);
+				(row.icons ??= []).push({ time: aul.gainedAt, elem: iconElem });
 			}
 			row.events.push({ elem: auraElem, text: searchText([aul, ...aul.stacksChange]) });
 
@@ -1530,15 +1535,22 @@ export class Timeline extends ResultComponent {
 					return;
 				}
 
-				// The stacks the aura starts with go after its icon.
+				// When an icon in the row is at the same moment, like the Sunder Armor cast that added
+				// the stack, the count goes in the icon's bottom right corner, like on a buff in the
+				// game. Otherwise, like when a Flurry charge gets used up, it goes in the bar.
+				const icon = row.icons?.find(icon => Math.abs(icon.time - scl.timestamp) < 0.05);
+				if (icon) {
+					const countElem = icon.elem.querySelector('.rotation-icon-count') ?? icon.elem.appendChild(<span className="rotation-icon-count" />);
+					countElem.textContent = String(scl.newStacks);
+				}
 				const stacksChangeElem = (
 					<div
-						className={`rotation-timeline-stacks-change${withIcon && scl.timestamp == aul.timestamp ? ' after-icon' : ''}`}
+						className="rotation-timeline-stacks-change"
 						style={{
 							left: this.timeToPx(scl.timestamp - aul.timestamp),
 							width: this.timeToPx(aul.stacksChange[i + 1] ? aul.stacksChange[i + 1].timestamp - scl.timestamp : aul.fadedAt - scl.timestamp),
 						}}>
-						{String(scl.newStacks)}
+						{icon ? '' : String(scl.newStacks)}
 					</div>
 				);
 				auraElem.appendChild(stacksChangeElem);

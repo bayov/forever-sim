@@ -548,11 +548,30 @@
 	font-size: 0.6875rem;
 	font-weight: 600;
 	overflow-x: hidden;
+}
 
-	&.after-icon {
-		padding-left: 26px;
-		border-left: 0;
-	}
+// An aura's stacks in the bottom right corner of an icon, like on a buff in the game.
+.rotation-icon-count {
+	position: absolute;
+	right: 1px;
+	bottom: 0;
+	z-index: 1;
+	font-size: 10px;
+	font-weight: 800;
+	line-height: 1;
+	color: #fff;
+	text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+	pointer-events: none;
+}
+
+// A cast's outcome badge moves to the bottom left when the stacks are in the bottom right.
+.rotation-timeline-cast:has(.rotation-icon-count) .rotation-timeline-cast-badge {
+	left: -5px;
+	transform: none;
 }
 
 // The icon at the start of an aura's bar. It covers the bar's colored left edge. We nest it under
