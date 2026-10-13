@@ -458,29 +458,39 @@
 .rotation-timeline-resource {
 	position: absolute;
 	height: 100%;
-	display: flex;
-	align-items: center;
-	padding-left: 2px;
-	border-left: 1px solid rgba(255, 255, 255, 0.12);
-	font-size: 0.75rem;
-	font-weight: 600;
-	font-variant-numeric: tabular-nums;
-	overflow-x: hidden;
 }
 
-.rotation-timeline-resource-fill {
+// The step chart of a resource like mana, under its labels.
+.rotation-resource-chart {
 	position: absolute;
-	bottom: 0;
+	top: 0;
 	left: 0;
-	width: 10px;
+	pointer-events: none;
 
-	&.focus {
-		background-color: var(--bs-orange);
+	.rotation-resource-area {
+		fill: currentColor;
+		fill-opacity: 0.14;
 	}
 
-	&.energy {
-		background-color: var(--bs-partial);
+	.rotation-resource-line {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.5;
+		stroke-opacity: 0.8;
 	}
+}
+
+.rotation-resource-label {
+	position: absolute;
+	top: 50%;
+	z-index: 1;
+	padding-left: 3px;
+	transform: translateY(-50%);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+	pointer-events: none;
 }
 
 // Everything in a row is as tall as a cast icon and sits in the middle of the row. The bars

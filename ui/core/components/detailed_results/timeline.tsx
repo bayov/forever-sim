@@ -893,11 +893,28 @@ export class Timeline extends ResultComponent {
 		this.separators.push([labelSeparator, rowSeparator]);
 	}
 
+	// A resource like mana, drawn as a step chart of its value across the row. Mana changes many
+	// times a second with Forever's continuous regen, so a label on every change would pile up.
+	// We label a change only when there's room since the last label, and one tooltip for the row
+	// shows the change under the mouse.
 	private addResourceRow(resourceType: ResourceType, resourceLogs: Array<ResourceChangedLogGroup>, duration: number) {
 		if (resourceLogs.length == 0) {
 			return;
 		}
 		const startValue = resourceLogs[0].valueBefore;
+		const isPercentage = percentageResources.includes(resourceType);
+		// The top of the chart is the resource's cap: the starting mana, 100 rage or energy, and 5
+		// combo points. Others use the highest value we saw.
+		const caps: Partial<Record<ResourceType, number>> = {
+			[ResourceType.ResourceTypeRage]: 100,
+			[ResourceType.ResourceTypeEnergy]: 100,
+			[ResourceType.ResourceTypeComboPoints]: 5,
+		};
+		const highest = Math.max(startValue, ...resourceLogs.map(log => log.valueAfter));
+		const maxValue = isPercentage ? startValue : Math.max(caps[resourceType] ?? 0, highest);
+		const labelText = (log: ResourceChangedLogGroup) =>
+			isPercentage ? ((log.valueAfter / startValue) * 100).toFixed(0) + '%' : Math.floor(log.valueAfter).toFixed(0);
+		const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
 
 		const labelElem = (
 			<div className="rotation-label rotation-row">
@@ -913,39 +930,94 @@ export class Timeline extends ResultComponent {
 		const rowElem = this.makeRowElem();
 		const row: RotationRow = { label: labelElem, row: rowElem, name: resourceNames.get(resourceType)!, actionId: null, category: 'resources', events: [] };
 
+		// The chart. Changes within the same pixel only keep the last value, so a long fight at a
+		// low zoom stays a short path.
+		const height = 28;
+		const pad = 3;
+		const yOf = (value: number) => (height - pad - (Math.max(0, Math.min(1, value / (maxValue || 1))) * (height - 2 * pad))).toFixed(1);
+		const steps: Array<{ x: number; y: string }> = [];
+		resourceLogs.forEach(log => {
+			const x = Math.round(this.timeToLeftValue(log.timestamp));
+			const y = yOf(log.valueAfter);
+			if (steps.length && steps[steps.length - 1].x == x) steps[steps.length - 1].y = y;
+			else steps.push({ x, y });
+		});
+		const endX = Math.round(this.timeToLeftValue(duration));
+		// Each value holds until the next change, so the path goes across, then up or down.
+		let line = `M ${steps[0].x} ${steps[0].y}`;
+		steps.forEach((step, i) => {
+			if (i > 0) line += ` H ${step.x} V ${step.y}`;
+		});
+		line += ` H ${endX}`;
+		const area = `${line} V ${height} H ${steps[0].x} Z`;
+
+		const svgNs = 'http://www.w3.org/2000/svg';
+		const svg = document.createElementNS(svgNs, 'svg');
+		svg.setAttribute('class', `rotation-resource-chart series-color ${cNames}`);
+		svg.setAttribute('width', String(Math.max(endX, 1)));
+		svg.setAttribute('height', String(height));
+		const areaPath = document.createElementNS(svgNs, 'path');
+		areaPath.setAttribute('class', 'rotation-resource-area');
+		areaPath.setAttribute('d', area);
+		const linePath = document.createElementNS(svgNs, 'path');
+		linePath.setAttribute('class', 'rotation-resource-line');
+		linePath.setAttribute('d', line);
+		svg.append(areaPath, linePath);
+		rowElem.appendChild(svg);
+
+		// The labels, about one per 48px. The search can still find each change, so every change
+		// keeps an element, empty and as wide as the time until the next change.
+		let lastLabelX = -Infinity;
 		resourceLogs.forEach((resourceLogGroup, i) => {
-			const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
+			const x = this.timeToLeftValue(resourceLogGroup.timestamp);
 			const resourceElem = (
 				<div
-					className={`rotation-timeline-resource series-color ${cNames}`}
+					className="rotation-timeline-resource"
 					style={{
 						left: this.timeToLeft(resourceLogGroup.timestamp),
 						width: this.timeToPx((resourceLogs[i + 1]?.timestamp || duration) - resourceLogGroup.timestamp),
 					}}></div>
 			);
-
-			if (percentageResources.includes(resourceType)) {
-				resourceElem.textContent = ((resourceLogGroup.valueAfter / startValue) * 100).toFixed(0) + '%';
-			} else {
-				if (resourceType == ResourceType.ResourceTypeEnergy) {
-					const bgElem = document.createElement('div');
-					bgElem.classList.add('rotation-timeline-resource-fill');
-					bgElem.classList.add(cNames);
-					bgElem.style.height = ((resourceLogGroup.valueAfter / startValue) * 100).toFixed(0) + '%';
-					resourceElem.appendChild(bgElem);
-				} else {
-					resourceElem.textContent = Math.floor(resourceLogGroup.valueAfter).toFixed(0);
-				}
-			}
 			rowElem.appendChild(resourceElem);
 			row.events.push({ elem: resourceElem, text: searchText(resourceLogGroup.logs) });
 
-			const tooltip = tippy(resourceElem, {
-				...followAlong,
-				placement: 'bottom',
-				content: this.resourceTooltipElem(resourceLogGroup, startValue, false),
-			});
-			this.addOnResetCallback(() => tooltip.destroy());
+			if (x - lastLabelX >= 48) {
+				lastLabelX = x;
+				rowElem.appendChild(
+					<span className={`rotation-resource-label series-color ${cNames}`} style={{ left: `${x}px` }}>
+						{labelText(resourceLogGroup)}
+					</span>,
+				);
+			}
+		});
+
+		// One tooltip for the row, with the change at the mouse. It finds the last change at or
+		// before the mouse's time.
+		let shownIndex = -1;
+		const tooltip = tippy(rowElem, {
+			...followAlong,
+			placement: 'bottom',
+			content: '',
+			onShow: () => (shownIndex >= 0 ? undefined : false),
+		});
+		const onMove = (event: MouseEvent) => {
+			const time = this.leftToTime(event.clientX - rowElem.getBoundingClientRect().left);
+			let lo = 0;
+			let hi = resourceLogs.length - 1;
+			while (lo < hi) {
+				const mid = Math.ceil((lo + hi) / 2);
+				if (resourceLogs[mid].timestamp <= time) lo = mid;
+				else hi = mid - 1;
+			}
+			if (lo == shownIndex) return;
+			shownIndex = lo;
+			tooltip.setContent(this.resourceTooltipElem(resourceLogs[lo], startValue, false));
+			if (!tooltip.state.isVisible) tooltip.show();
+		};
+		rowElem.addEventListener('mousemove', onMove);
+		this.addOnResetCallback(() => {
+			rowElem.removeEventListener('mousemove', onMove);
+			tooltip.destroy();
 		});
 		this.addRow(row);
 	}
