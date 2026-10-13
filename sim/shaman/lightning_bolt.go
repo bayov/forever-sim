@@ -50,10 +50,10 @@ func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
 	spellId := LightningBoltSpellId[rank]
 	baseDamageLow := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][0], shaman.Level)
 	baseDamageHigh := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][1], shaman.Level)
-	spellCoeff := LightningBoltSpellCoef[rank]
+	level := LightningBoltLevel[rank]
+	spellCoeff := shaman.downrankCoefficient(LightningBoltSpellCoef[rank], level)
 	castTime := LightningBoltCastTime[rank]
 	manaCost := LightningBoltManaCost[rank]
-	level := LightningBoltLevel[rank]
 
 	spell := shaman.newElectricSpellConfig(
 		core.ActionID{SpellID: spellId},

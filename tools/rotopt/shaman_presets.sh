@@ -90,7 +90,7 @@ gen level30_pvp "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock
 
 # The elemental presets in ui/elemental_shaman/apls, from the shaman_ele template. Mana Spring and
 # Searing Totem, Flame Shock when its DoT is down, Lava Burst on cooldown unless Flame Shock runs
-# out before the cast ends (lavaBurstFlameShockLeft=2), Lightning Bolt, rank 7 below 20% mana, and
+# out before the cast ends (lavaBurstFlameShockLeft=2), Lightning Bolt, rank 8 below 20% mana, and
 # no Chain Lightning (it loses on one target even above 80% mana). The fight opens with Mana
 # Spring at -3.9 sec, a Lightning Bolt at -2.9 (it lands 0.1 sec into the fight) and Searing Totem
 # at -0.9 (prepullBolt=1). Mana Tide Totem goes down at 20% mana on the Mana Tide talents.
@@ -102,5 +102,5 @@ gen_ele() {
 	mv "ui/elemental_shaman/apls/${name}_300s.apl.json" "ui/elemental_shaman/apls/$name.apl.json"
 	echo "wrote ui/elemental_shaman/apls/$name.apl.json ($knobs)"
 }
-gen_ele level60 "chainLightning=0,lightningBoltDownrank=3,lavaBurstFlameShockLeft=2,prepullBolt=1"
-gen_ele level60_mana_tide "chainLightning=0,lightningBoltDownrank=3,lavaBurstFlameShockLeft=2,prepullBolt=1,manaTideMana=20"
+gen_ele level60 "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1"
+gen_ele level60_mana_tide "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,manaTideMana=20"

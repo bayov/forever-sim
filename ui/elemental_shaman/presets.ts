@@ -85,7 +85,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, 
 // power and 14 crit rating) and an on-use one (140 spell power for 20 sec every 2 min, the weight of
 // Talisman of Ephemeral Power). Both are synthetic, not in the game.
 //
-// The Level 60 build is 674.3 / 673.9 / 663.7 at 120 / 180 / 300 sec on it. Before the gear round
+// The Level 60 build is 674.3 / 673.9 / 663.3 at 120 / 180 / 300 sec on it (663.7 at 300 before the
+// downranking penalty). Before the gear round
 // it was 648.7 / 646.1 / 638.1 (the 1a set, no trinkets) and 693.3 / 690.3 / 680.4 before the fair
 // mix. The set stays fixed, it was not gear searched.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
@@ -113,7 +114,8 @@ export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAP
 // The tools/rotopt shaman_ele search on the Level 60 talents, over the mean of 120, 180 and
 // 300 sec: Mana Spring and Searing Totem, Flame Shock whenever its DoT is down, Lava Burst on
 // cooldown unless Flame Shock runs out before the cast ends (+1.3 to +1.8), Lightning Bolt, and
-// Lightning Bolt rank 7 below 20% mana (+2 over the top rank). The fight opens with Mana Spring
+// Lightning Bolt rank 8 below 20% mana (+7.6 at 300 sec over the top rank; rank 7 until Forever's
+// downranking penalty, which leaves it 75% of its coefficient, cost it 11.6 at 300 sec). The fight opens with Mana Spring
 // at -3.9 sec, a Lightning Bolt at -2.9 (it lands 0.1 sec into the fight) and Searing Totem at
 // -0.9 (its first attack comes after the pull): +10.6 / +7.0 / +4.8 at 120 / 180 / 300 sec over
 // putting the two totems down with no bolt. Chain Lightning loses on one target even above 80%
@@ -160,7 +162,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
 // talent search with Mana Tide Totem pinned found it, and found it again on the standard gear.
 // Its Water Shield point does nothing in the sim: the elemental options have no raid damage
-// hits, and the boss never hits a caster. It is 667.7 / 666.9 / 656.5 at 120 / 180 / 300 sec
+// hits, and the boss never hits a caster. It is 667.7 / 666.9 / 656.7 at 120 / 180 / 300 sec
 // on the 1b set, 1.0% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
@@ -313,13 +315,13 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // On 2026-10-13, on the gear round's set (standards 1b, with the two synthetic trinkets) and the
-// standard consumes (20000 iterations), Level 60 is 674.3 / 673.9 / 663.7 at 120 / 180 / 300 sec and
-// Level 60 + Mana Tide 667.7 / 666.9 / 656.5. The talent and knob searches ran again on the new set and
+// standard consumes (20000 iterations), Level 60 is 674.3 / 673.9 / 663.3 at 120 / 180 / 300 sec and
+// Level 60 + Mana Tide 667.7 / 666.9 / 656.7 (with the downranking penalty and the rank 8 fallback). The talent and knob searches ran again on the new set and
 // kept both builds. On the 1a set they were 648.7 / 646.1 / 638.1 and 642.4 / 639.3 / 631.3.
 //
-// The races (same settings and seed): Orc 674.3 / 673.9 / 663.7, Windshaper Skyborne 673.2 / 672.3 /
-// 662.4, Troll 671.2 / 669.1 / 659.7, Dwarf (the only Alliance shaman) 667.8 / 666.8 / 657.2, Tauren
-// 667.8 / 666.7 / 657.2. Best overall and best Horde: Orc, 1.6 ahead of Windshaper Skyborne at 180 sec.
+// The races (same settings and seed): Orc 674.3 / 673.9 / 663.3, Windshaper Skyborne 673.2 / 672.4 /
+// 661.8, Troll 671.2 / 669.1 / 659.2, Dwarf (the only Alliance shaman) 667.8 / 666.8 / 656.8, Tauren
+// 667.8 / 666.7 / 656.7. Best overall and best Horde: Orc, 1.5 ahead of Windshaper Skyborne at 180 sec.
 // Best Alliance: Dwarf (the only Alliance shaman). On Mana Tide: Orc 666.9, Windshaper Skyborne 665.2,
 // Troll 662.0, Dwarf 659.8, Tauren 659.8 at 180 sec. The staff is the Era Phase 1 weapon type and no
 // race has a staff racial; Tauren's 1% hit is wasted at the hit cap.

@@ -1491,3 +1491,10 @@ Every changed and new shaman mechanic, against client 1.60.1.70338 (wago.tools S
 - Weapon rules: two-handed axes and maces are baseline (the Enhancement talent is gone), as in the sim.
 - Elemental Focus not used by Fire Nova's own cast (70291), Flametongue Totem's shapeshift speed (70291), Lightning Bolt's low ranks (70291) and Lava Burst's raise (70009): in the sim already.
 - Nothing else needed fixing, so no DPS changed.
+
+### Forever's downranking penalty (2026-10-13, the class-changes auditor's finding E1)
+
+- Blizzard's 2026-10-01 development notes: ranks far below the caster's level get less from spell power. foreverchanges.pro/downranking measures a rank keeping 1 - 0.05 x (level - 17 - learn level) of its coefficient, between 0 and 1 (heals up to level 30, assumed at 60). The priest branch applies the same formula.
+- Changed: Lightning Bolt and Chain Lightning ranks take it (`downrankCoefficient` in `talents.go`, Forever only). At 60, Lightning Bolt rank 7 (learned at 38) keeps 75%, rank 6 45%, ranks 8 to 10 all of it. `downrank_test.go` fails when a downranked rank keeps its full coefficient or a rank near the level loses some.
+- The Level 60 rotations dropped 3 ranks (rank 7) below 20% mana: 652.1 at 300 sec with the penalty (663.7 before). Two ranks (rank 8) is best: 674.3 / 673.9 / 663.3, and 667.7 / 666.9 / 656.7 on Mana Tide. The Era "Default" rotation falls back to rank 4, which keeps nothing at 60, so its goldens fell a lot. No Enhancement preset casts a downranked rank, and its goldens did not move.
+- Not modelled: the notes also say downranked spells trigger class abilities less often, with no number.

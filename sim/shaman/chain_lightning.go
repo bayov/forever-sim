@@ -46,7 +46,7 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spellId := ChainLightningSpellId[rank]
 	baseDamageLow := ChainLightningScaling[rank].At(ChainLightningBaseDamage[rank][0], shaman.Level)
 	baseDamageHigh := ChainLightningScaling[rank].At(ChainLightningBaseDamage[rank][1], shaman.Level)
-	spellCoeff := ChainLightningSpellCoef[rank]
+	spellCoeff := shaman.downrankCoefficient(ChainLightningSpellCoef[rank], ChainLightningLevel[rank])
 	manaCost := ChainLightningManaCost[rank]
 	level := ChainLightningLevel[rank]
 

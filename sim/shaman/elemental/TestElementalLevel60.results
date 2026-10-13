@@ -147,8 +147,8 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 771.06087
-  tps: 728.76289
+  dps: 771.087
+  tps: 728.78903
   dtps: 1.76797
  }
 }
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Average-Default"
  value: {
-  dps: 843.34991
-  tps: 795.0533
+  dps: 843.35075
+  tps: 795.05418
   dtps: 1.8941
  }
 }
@@ -235,16 +235,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 555.49744
-  tps: 857.90014
+  dps: 539.60725
+  tps: 841.11756
   dtps: 1.91688
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 480.61695
-  tps: 454.50684
+  dps: 465.48401
+  tps: 438.64906
   dtps: 1.81673
  }
 }
@@ -283,16 +283,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 554.69067
-  tps: 857.6997
+  dps: 536.78361
+  tps: 838.60505
   dtps: 1.91688
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 478.60975
-  tps: 453.34401
+  dps: 461.11178
+  tps: 434.83597
   dtps: 1.81673
  }
 }
