@@ -28,7 +28,31 @@ func (druid *Druid) InForm(form DruidForm) bool {
 	return druid.form.Matches(form)
 }
 
+// GetCatWeapon is what Cat Form attacks with. Under Forever the cat swings its equipped
+// weapon's DPS at a 1.0 sec speed, and weapon damage abilities (Shred, Claw) use the same
+// values: "While Shapeshifted, the Druid's melee auto attack DPS (Damage Per Second) while in
+// Bear Form, Cat Form, or Dire Bear Form is now the same as the DPS of the Druid's equipped
+// weapon. But the speed of attack is changed to 1.0 or 2.5 seconds, depending on the form.
+// Abilities that deal weapon damage likewise use these damage values." (Blizzard's World of
+// Warcraft: Forever class deep dive, Druid; client 1.60.1.70338 SpellShapeshiftForm gives Cat
+// Form a 1000 ms CombatRoundTime.) The weapon's damage range scales with it, and its bonus DPS
+// (weightstones and sharpening stones) comes along. Without a weapon, or outside Forever, the
+// cat keeps the 1.12 paw. The Env is not set yet when the feral druid is built, so the feral
+// spec swaps the paw for this in Initialize.
 func (druid *Druid) GetCatWeapon() core.Weapon {
+	if druid.Env != nil && druid.Env.IsForever() && druid.HasMHWeapon() {
+		weapon := druid.WeaponFromMainHand()
+		if weapon.SwingSpeed > 0 {
+			scale := catSwingSpeed / weapon.SwingSpeed
+			return core.Weapon{
+				BaseDamageMin:        weapon.BaseDamageMin * scale,
+				BaseDamageMax:        weapon.BaseDamageMax * scale,
+				SwingSpeed:           catSwingSpeed,
+				NormalizedSwingSpeed: catSwingSpeed,
+				AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
+			}
+		}
+	}
 	return core.Weapon{
 		BaseDamageMin:        43.84,
 		BaseDamageMax:        65.76,
@@ -47,6 +71,9 @@ func (druid *Druid) GetCatWeapon() core.Weapon {
 // 		AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
 // 	}
 // }
+
+// catSwingSpeed is Cat Form's attack speed, 1.0 sec.
+const catSwingSpeed = 1.0
 
 // Predatory Strikes gives 50% of the level a point as attack power and Sharpened Claws 3%
 // crit a point in the feral forms (1.60.1.70338, wago.tools rank curves).

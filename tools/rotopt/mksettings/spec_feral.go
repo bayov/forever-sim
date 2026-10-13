@@ -15,16 +15,18 @@ func init() {
 			raidBuffs.MoonkinAura = false
 		},
 		// The consumes the Level 60 preset uses (ui/feral_druid/presets.ts says what each is
-		// worth). Shapeshifted, the cat can use no explosives and no weapon stone or oil.
+		// worth). Under Forever the cat drinks in form and its weapon takes a stone; it still
+		// can use no explosives.
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
 				AgilityElixir:     proto.AgilityElixir_ElixirOfTheMongoose,
 				AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
-				DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
-				DefaultPotion:     proto.Potions_MajorManaPotion,
+				DefaultConjured:   proto.Conjured_ConjuredRogueThistleTea,
+				DefaultPotion:     proto.Potions_MightyRagePotion,
 				DragonBreathChili: true,
 				Flask:             proto.Flask_FlaskOfDistilledWisdom,
 				Food:              proto.Food_FoodFlankAuPoivre,
+				MainHandImbue:     proto.WeaponImbue_ElementalSharpeningStone,
 				StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 				ZanzaBuff:         proto.ZanzaBuff_GroundScorpokAssay,
 			}

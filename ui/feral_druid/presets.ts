@@ -19,6 +19,7 @@ import {
 	Stat,
 	StrengthBuff,
 	TristateEffect,
+	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { FeralDruid_Options as FeralDruidOptions, FeralDruid_Rotation as FeralDruidRotation } from '../core/proto/druid.js';
@@ -168,27 +169,30 @@ export const DefaultOptions = FeralDruidOptions.create({
 // Elixir of the Mongoose 19.7 (Greater Agility is 9.5 behind), Dragonbreath Chili 9.8 and Juju
 // Might 6.1, and Ground Scorpok Assay is 1.3 ahead of R.O.I.D.S. Flank au Poivre is 4 ahead of
 // Grilled Squid. Flask of Distilled Wisdom keeps Shifting Power in mana; Flask of Supreme Power
-// is 6 ahead only through the chili's fire damage. A shapeshifted druid can use no explosives
-// and no weapon stone or oil, so those do nothing. The sim also never uses a potion or a rune in
-// form (their ShouldActivate checks IsShapeshifted), so the potion and rune slots do nothing for
-// the cat either: 679.6 with and without them at 300 sec, and Major Frenzy Potion ties the Major
-// Mana Potion (consumables auditor). The Major Mana Potion and Demonic Rune stay as what a cat
-// would carry for Shifting Power's mana.
+// is 6 ahead only through the chili's fire damage. Forever lets a druid use potions, Thistle Tea
+// and Rage potions in form, and makes weapon imbues work on a cat (Blizzard's World of Warcraft:
+// Forever class deep dive, Druid): on the cat with its weapon's damage, at 180 sec, Elemental
+// Sharpening Stone is 9.5 ahead of no stone (Dense Weightstone 4.9), Thistle Tea 8.0 ahead of the
+// Demonic Rune (12.2 drunk at 25 Energy or less, sim/druid/thistle_tea.go), and the Mighty Rage
+// Potion's 60 Strength 6.3 ahead of the Major Mana Potion (Major Frenzy Potion 5.0), also at 300
+// sec. Explosives still can't be used in form.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
-	defaultConjured: Conjured.ConjuredDemonicRune,
-	defaultPotion: Potions.MajorManaPotion,
+	defaultConjured: Conjured.ConjuredRogueThistleTea,
+	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
 	flask: Flask.FlaskOfDistilledWisdom,
 	food: Food.FoodFlankAuPoivre,
+	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec feral): the
 // shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and Grace
-// of Air (Windfury Totem does nothing in Cat Form), every blessing, and its own Leader of the
+// of Air (Windfury Totem now works in Cat Form under Forever and would add 12.5 at 180 sec, but the
+// shared raid gives no melee spec one), every blessing, and its own Leader of the
 // Pack. Under Forever the totems and Battle Shout are capped below their Ahn'Qiraj book ranks
 // (Strength of Earth 42, Grace of Air 77, Battle Shout 115), which costs the cat 14.8 at 180 sec.
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -281,14 +285,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 696.8 / 689.1 / 679.6 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 747.8 / 734.1 / 720.1 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             696.8    689.1    679.6   best overall and Alliance
-//	Windshaper Skyborne   692.6    686.8    676.9   best Horde
-//	High Order Skyborne   692.5    686.8    676.7
-//	Tauren                689.7    684.0    673.5
+//	Night Elf             747.8    734.1    720.1   best overall and Alliance
+//	Windshaper Skyborne   743.8    732.0    717.7   best Horde
+//	High Order Skyborne   743.7    731.9    717.6
+//	Tauren                740.8    728.9    714.0
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.

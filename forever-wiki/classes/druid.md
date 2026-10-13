@@ -37,6 +37,12 @@ Spell values at level 60 (1.12 in brackets):
 
 Forever's crafted level 60 druid sets (item sets 2114 and 2115, leather head, shoulders, chest, hands, legs and feet): Grovekeeper Eclipse gives 1% hit (2), Nature's Grasp's cooldown 15 sec shorter (3), 21 spell damage against Demons (4) and 3 sec more Insect Swarm (5). Grovekeeper Ferocity gives 1% attack and cast speed (2), Hibernate in Cat Form (3), 36 attack power against Demons (4) and 1 sec off Shifting Power's cooldown (5). The pieces carry no stats in the client yet.
 
+Shapeshift forms under Forever (Blizzard's World of Warcraft: Forever class deep dive, Druid; the client, 1.60.1.70338, gives Cat and Bear Form 1000 and 2500 ms swings and flags Cat, Bear and Moonkin Form CanUseItems):
+- Cat, Bear and Dire Bear Form auto attack with the equipped weapon's DPS, at 1.0 sec (cat) or 2.5 sec (bear), and abilities that deal weapon damage use the same values. In the sim the cat swings its weapon's damage range scaled by 1.0 / its speed (sim/druid/forms.go GetCatWeapon), worth 16.4 DPS on the Feral preset over the 1.12 paw. Bear Form isn't in the sim.
+- Weapon enchants and procs work in form, including weightstones, sharpening stones, Crusader and Windfury Totem (sim/core/consumes.go weaponEffectsWork). Elemental Sharpening Stone is worth 9.5 to the cat, a raid Windfury Totem 12.5.
+- Potions and almost all similar consumables can be used in form without leaving it, and druids can drink Rage potions and Thistle Tea (sim/core/character.go canUseItemsInForm, sim/druid/thistle_tea.go). Thistle Tea is worth 12.2 to the cat, the Mighty Rage Potion's Strength 6.3. Most Engineering bombs still can't be used in form; the new SAF-T and EZ-Thro recipes can, but the sim doesn't have them.
+- Racials (Shadowmeld, War Stomp, Walk on Air), Faerie Fire, Barkskin and Nature's Grasp can be used in form. Moonkin Form can cast every non-healing spell. Berserk works in Cat and Bear Form.
+
 ## Spellbook changes (trainer abilities)
 
 6 of 53 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).

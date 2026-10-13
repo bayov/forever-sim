@@ -186,6 +186,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	// druid.registerBearFormSpell()
 	// druid.registerEnrageSpell()
 	druid.registerFerociousBiteSpell()
+	druid.registerThistleTeaCD()
 	// druid.registerMangleBearSpell()
 	// druid.registerMaulSpell()
 	druid.registerRakeSpell()

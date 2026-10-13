@@ -84,6 +84,33 @@ func applyWeaponImbueConsumes(character *Character, consumes *proto.Consumes) {
 	}
 }
 
+// weaponEffectsWork says whether weapon imbues apply. A feral druid fights with its paws, so
+// outside Forever its weapon's stones, oils and totem imbues do nothing. Forever makes them
+// work in form: "Weapon enchantments and procs now all work while shapeshifted, including
+// effects like weightstones, Crusader enchant, and Windfury Totem" (Blizzard's World of
+// Warcraft: Forever class deep dive, Druid).
+func (character *Character) weaponEffectsWork() bool {
+	return !character.PseudoStats.FeralCombatEnabled || character.Env.IsForever()
+}
+
+// addImbueWeaponDamage adds a sharpening stone's or weightstone's flat damage to a weapon. A
+// Forever cat swings its weapon's DPS at its own speed (sim/druid/forms.go), so the stone goes
+// in as the weapon's bonus DPS, and its damage per hit scales with the cat's swing.
+func addImbueWeaponDamage(character *Character, isMh bool, amount float64) {
+	if !character.PseudoStats.FeralCombatEnabled {
+		weapon := character.AutoAttacks.MH()
+		if !isMh {
+			weapon = character.AutoAttacks.OH()
+		}
+		weapon.BaseDamageMin += amount
+		weapon.BaseDamageMax += amount
+	} else if character.Env.IsForever() && isMh {
+		if mh := character.GetMHWeapon(); mh != nil && mh.SwingSpeed > 0 {
+			character.PseudoStats.BonusMHDps += amount / mh.SwingSpeed
+		}
+	}
+}
+
 // Forever's wizard oils add as much healing as spell damage.
 func addForeverOilHealing(character *Character, amount float64) {
 	if character.Env.IsForever() {
@@ -151,25 +178,11 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 
 		// Sharpening Stones
 		case proto.WeaponImbue_SolidSharpeningStone:
-			if !character.PseudoStats.FeralCombatEnabled {
-				weapon := character.AutoAttacks.MH()
-				if !isMh {
-					weapon = character.AutoAttacks.OH()
-				}
-				weapon.BaseDamageMin += 6
-				weapon.BaseDamageMax += 6
-			}
+			addImbueWeaponDamage(character, isMh, 6)
 		case proto.WeaponImbue_DenseSharpeningStone:
-			if !character.PseudoStats.FeralCombatEnabled {
-				weapon := character.AutoAttacks.MH()
-				if !isMh {
-					weapon = character.AutoAttacks.OH()
-				}
-				weapon.BaseDamageMin += 8
-				weapon.BaseDamageMax += 8
-			}
+			addImbueWeaponDamage(character, isMh, 8)
 		case proto.WeaponImbue_ElementalSharpeningStone:
-			if !character.PseudoStats.FeralCombatEnabled {
+			if character.weaponEffectsWork() {
 				character.AddStats(stats.Stats{
 					stats.MeleeCrit: 2 * CritRatingPerCritChance,
 				})
@@ -190,35 +203,21 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 
 		// Weightstones
 		case proto.WeaponImbue_SolidWeightstone:
-			if !character.PseudoStats.FeralCombatEnabled {
-				weapon := character.AutoAttacks.MH()
-				if !isMh {
-					weapon = character.AutoAttacks.OH()
-				}
-				weapon.BaseDamageMin += 6
-				weapon.BaseDamageMax += 6
-			}
+			addImbueWeaponDamage(character, isMh, 6)
 		case proto.WeaponImbue_DenseWeightstone:
-			if !character.PseudoStats.FeralCombatEnabled {
-				weapon := character.AutoAttacks.MH()
-				if !isMh {
-					weapon = character.AutoAttacks.OH()
-				}
-				weapon.BaseDamageMin += 8
-				weapon.BaseDamageMax += 8
-			}
+			addImbueWeaponDamage(character, isMh, 8)
 		// Windfury Totem from another shaman. It used to take the main hand imbue slot, and
 		// old settings still carry it there. It is the raid buffs' totem weapon buff now.
 		case proto.WeaponImbue_Windfury:
-			if !character.PseudoStats.FeralCombatEnabled {
+			if character.weaponEffectsWork() {
 				applyRaidTotemWeaponBuff(character, proto.TotemWeaponBuff_TotemWeaponBuffWindfury)
 			}
 		case proto.WeaponImbue_ShadowOil:
-			if !character.PseudoStats.FeralCombatEnabled {
+			if character.weaponEffectsWork() {
 				registerShadowOil(character, isMh, shadowOilIcd)
 			}
 		case proto.WeaponImbue_FrostOil:
-			if !character.PseudoStats.FeralCombatEnabled {
+			if character.weaponEffectsWork() {
 				registerFrostOil(character, isMh)
 			}
 		}
@@ -1239,7 +1238,7 @@ func makeHealthConsumableMCD(itemId int32, character *Character, cdTimer *Timer)
 		Type: CooldownTypeSurvival,
 		ShouldActivate: func(sim *Simulation, character *Character) bool {
 			// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
-			return (character.MaxHealth()-(character.CurrentHealth()) >= maxRoll) && !character.IsShapeshifted()
+			return (character.MaxHealth()-(character.CurrentHealth()) >= maxRoll) && character.canUseItemsInForm()
 		},
 		Spell: character.GetOrRegisterSpell(SpellConfig{
 			ActionID: actionID,
@@ -1250,7 +1249,9 @@ func makeHealthConsumableMCD(itemId int32, character *Character, cdTimer *Timer)
 					Duration: cdDuration,
 				},
 				ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
-					character.CancelShapeshift(sim)
+					if !character.Env.IsForever() {
+						character.CancelShapeshift(sim)
+					}
 				},
 			},
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -1300,7 +1301,7 @@ func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 		ShouldActivate: func(sim *Simulation, character *Character) bool {
 			// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
 			totalRegen := character.ManaRegenPerSecondWhileCasting() * 2
-			return (character.MaxMana()-(character.CurrentMana()+totalRegen) >= maxRoll) && !character.IsShapeshifted()
+			return (character.MaxMana()-(character.CurrentMana()+totalRegen) >= maxRoll) && character.canUseItemsInForm()
 		},
 		Spell: character.GetOrRegisterSpell(SpellConfig{
 			ActionID: actionID,
@@ -1311,7 +1312,9 @@ func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 					Duration: cdDuration,
 				},
 				ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
-					character.CancelShapeshift(sim)
+					if !character.Env.IsForever() {
+						character.CancelShapeshift(sim)
+					}
 				},
 			},
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -1339,7 +1342,9 @@ func makeArmorConsumableMCD(itemId int32, character *Character, cdTimer *Timer) 
 					Duration: cdDuration,
 				},
 				ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
-					character.CancelShapeshift(sim)
+					if !character.Env.IsForever() {
+						character.CancelShapeshift(sim)
+					}
 				},
 			},
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -1382,7 +1387,9 @@ func makeMagicResistancePotionMCD(character *Character, cdTimer *Timer) MajorCoo
 					Duration: cdDuration,
 				},
 				ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
-					character.CancelShapeshift(sim)
+					if !character.Env.IsForever() {
+						character.CancelShapeshift(sim)
+					}
 				},
 			},
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -1413,7 +1420,7 @@ func makeRageConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 	return MajorCooldown{
 		Type: CooldownTypeDPS,
 		ShouldActivate: func(sim *Simulation, character *Character) bool {
-			return !character.IsShapeshifted()
+			return character.canUseItemsInForm()
 		},
 		Spell: character.GetOrRegisterSpell(SpellConfig{
 			ActionID: actionID,
@@ -1424,7 +1431,9 @@ func makeRageConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 					Duration: cdDuration,
 				},
 				ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
-					character.CancelShapeshift(sim)
+					if !character.Env.IsForever() {
+						character.CancelShapeshift(sim)
+					}
 				},
 			},
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -1448,7 +1457,7 @@ func makeStatBuffPotionMCD(itemId int32, label string, buff stats.Stats, charact
 	return MajorCooldown{
 		Type: CooldownTypeDPS,
 		ShouldActivate: func(sim *Simulation, character *Character) bool {
-			return !character.IsShapeshifted()
+			return character.canUseItemsInForm()
 		},
 		Spell: character.GetOrRegisterSpell(SpellConfig{
 			ActionID: actionID,
@@ -1459,7 +1468,9 @@ func makeStatBuffPotionMCD(itemId int32, label string, buff stats.Stats, charact
 					Duration: time.Minute * 2,
 				},
 				ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
-					character.CancelShapeshift(sim)
+					if !character.Env.IsForever() {
+						character.CancelShapeshift(sim)
+					}
 				},
 			},
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {

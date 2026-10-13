@@ -114,7 +114,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		BuffDebuffInputs.ManaSpringTotem,
 		BuffDebuffInputs.JudgementOfWisdom,
 	],
-	excludeBuffDebuffInputs: [WeaponImbue.ElementalSharpeningStone, WeaponImbue.DenseSharpeningStone],
+	// Forever cats can use weapon imbues (Blizzard's Forever class deep dive), but a mace takes no sharpening stone.
+	excludeBuffDebuffInputs: [WeaponImbue.DenseSharpeningStone],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
