@@ -67,7 +67,7 @@
   "title": "Mana over a long fight",
   "description": "Per mana-using preset, its mana as a % of max every 5 s through a 480 s fight with its own consumes and rotation: the average over 100 fights (pct) and the 25th and 75th percentile fight (p25, p75).",
   "updated": {
-   "at": "2026-10-13T21:08:49.217Z",
+   "at": "2026-10-13T22:27:01.334Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -75,7 +75,7 @@
   "title": "When mana runs low",
   "description": "Per mana-using preset over the same 480 s fights: when mana first drops below 15% of max (median and 25th to 75th percentile fight, empty when most fights never do), the share of fights that ever do, mana % at 60, 180, 300 and 480 s, mana spent and gained per second, and the sim's seconds out of mana, time to OOM and mana left at the end over 5,000 fights.",
   "updated": {
-   "at": "2026-10-13T21:08:49.221Z",
+   "at": "2026-10-13T22:27:01.338Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -161,7 +161,7 @@
  },
  "talenttrees": {
   "title": "Talent trees",
-  "description": "Every class talent tree as the sim UI lays it out: each talent\u2019s row, column, ranks, prerequisite, text from ui/core/talents/trees, and the wowhead page of each rank (Forever's database where it has the spell, else Classic's).",
+  "description": "Every class talent tree as the sim UI lays it out: each talent’s row, column, ranks, prerequisite, text from ui/core/talents/trees, and the wowhead page of each rank (Forever's database where it has the spell, else Classic's).",
   "updated": {
    "at": "2026-10-13T22:10:21.250Z",
    "by": "Claude (forever-sim)"
@@ -249,7 +249,7 @@
  },
  "treeart": {
   "title": "Talent tree art",
-  "description": "Each class talent tree\u2019s icon and background art (the backgrounds the sim UI uses, from Wowhead), stored as data URLs.",
+  "description": "Each class talent tree’s icon and background art (the backgrounds the sim UI uses, from Wowhead), stored as data URLs.",
   "updated": {
    "at": "2026-10-13T22:10:21.592Z",
    "by": "Claude (forever-sim)"
@@ -257,7 +257,7 @@
  },
  "weights": {
   "title": "Stat weights",
-  "description": "Per preset, the DPS one more point of each stat adds (per 1% for hit and crit), measured by adding the stat on top of the gear and simming 40,000 fights at 180 s with the baseline\u2019s seed; worth is in points of the preset\u2019s main stat.",
+  "description": "Per preset, the DPS one more point of each stat adds (per 1% for hit and crit), measured by adding the stat on top of the gear and simming 40,000 fights at 180 s with the baseline’s seed; worth is in points of the preset’s main stat.",
   "updated": {
    "at": "2026-10-13T22:10:21.596Z",
    "by": "Claude (forever-sim)"
