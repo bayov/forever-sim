@@ -65,6 +65,10 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "tigersFuryEnergy", Default: 40, Min: 20, Max: 80, Step: 20},
 		// Berserk: 1 on cooldown, 2 with Tiger's Fury up, 0 never.
 		{Name: "berserk", Default: 1, Min: 0, Max: 2, Step: 1},
+		// Cooldown stacking (rotation auditor), 0/1: Berserk's later uses held for the synthetic
+		// Strength trinket when holding loses no use, and the Night Elf's Elune's Light (10% crit)
+		// kept out of Berserk, where every builder crits anyway.
+		{Name: "cdStack", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Tiger's Fury before the pull, so it is ready again sooner, 0/1.
 		{Name: "prepullTigersFury", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
@@ -90,11 +94,20 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 	case 2:
 		items = append(items, cast(druidTigersFury, le(energy(), num(k["tigersFuryEnergy"])), "Tiger's Fury once the Energy is low."))
 	}
-	switch k["berserk"] {
-	case 1:
+	switch {
+	case k["berserk"] == 1 && k["cdStack"] == 1:
+		items = append(items, cast(druidBerserk, holdFor(druidBerserk, itemID(druid.FeralSyntheticStrengthTrinket)),
+			"Berserk with the trinket, unless waiting for it would lose a use. Without the talent ignore the warning on this line."))
+	case k["berserk"] == 1:
 		items = append(items, cast(druidBerserk, nil, "Berserk on cooldown. Without the talent ignore the warning on this line."))
-	case 2:
+	case k["berserk"] == 2:
 		items = append(items, cast(druidBerserk, auraIsActive(druidTigersFury), "Berserk with Tiger's Fury."))
+	}
+	if k["cdStack"] == 1 {
+		items = append(items, cast(elunesLight, or(
+			and(not(auraIsActive(druidBerserk)), not(spellIsReady(druidBerserk))),
+			gt(spellUsesLostByDelay(elunesLight, auraRemainingTime(druidBerserk), seconds(0)), num(0))),
+			"Elune's Light outside Berserk, unless waiting would lose a use."))
 	}
 	if k["shiftEnergy"] > 0 {
 		cond := le(energy(), num(k["shiftEnergy"]))

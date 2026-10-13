@@ -102,11 +102,14 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // not use it up), then Wrath when Eclipse is down to 2 charges or fewer and no Wrath is in
 // flight, Starfire otherwise. That spends every Eclipse charge (each makes a Starfire 0.5 sec
 // shorter) without throwing Wraths at a full stack. The knob search kept it at 120, 180 and 300
-// sec (825.6 at 180 sec, 40,000 iterations). On the set before the 5a rebudget, dropping
+// sec (827.0 at 180 sec, 40,000 iterations). On the set before the 5a rebudget, dropping
 // Moonfire cost 56 DPS at 180 sec, Insect Swarm 62, and casting only Starfire 74. Innervate is
 // left to its own trigger (at 500 mana), 2 ahead of casting it at 40% mana. The synthetic spell
 // power trinket goes 0.1 sec before the pull, so it is up when the Starfire lands: 1.8 / 1.1 /
-// 0.7 ahead of using it at 0 (rotation auditor).
+// 0.7 ahead of using it at 0 (rotation auditor). Major Spellblasting Potion and Elune's Light
+// (the Night Elf's racial) go at the same moment, and Elune's later uses wait for the trinket
+// when waiting loses no use: 2.2 / 1.5 / 1.6 ahead at 120 / 180 / 300 sec (rotation auditor's
+// cooldown pass; the Wrath build gains 1.2 / 0.8 / 1.0 from the same lines).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -114,7 +117,7 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
-// before the pull, for a moonkin that would rather not weave: 773.5 / 775.6 / 772.8 at 120 /
+// before the pull, for a moonkin that would rather not weave: 774.7 / 776.5 / 773.7 at 120 /
 // 180 / 300 sec, 6.1% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
 // and gear (GearLevel60Phase1SyntheticWrath).
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
@@ -285,12 +288,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 827.7 / 825.6 / 816.0 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 829.8 / 827.0 / 817.7 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             827.7    825.6    816.0   best overall and Alliance
-//	Tauren                817.6    817.4    808.7   best Horde (its 1% hit is past the cap)
+//	Night Elf             829.8    827.0    817.7   best overall and Alliance
+//	Tauren                818.2    817.8    809.0   best Horde (its 1% hit is past the cap)
 //	Windshaper Skyborne   806.9    811.9    806.8
 //	High Order Skyborne   806.8    811.7    806.6
 //

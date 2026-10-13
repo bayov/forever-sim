@@ -97,7 +97,10 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 // Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend and Tear's
 // bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
 // points is 1 to 2 behind. The search on the 1b gear kept every knob at 120 and 180 sec (at 300
-// sec Shifting Power at 40 Energy is 0.3 ahead).
+// sec Shifting Power at 40 Energy is 0.3 ahead). Berserk's later uses wait for the Strength
+// trinket when waiting loses no use, and Elune's Light (the Night Elf's 10% crit) stays out of
+// Berserk, where every builder crits anyway: 2.5 / 0.9 / 2.7 ahead at 120 / 180 / 300 sec
+// (rotation auditor's cooldown pass).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power, Tiger's Fury and Berserk on cooldown.",
 	group: 'Level 60',
@@ -275,14 +278,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 build, 694.3 / 688.3 / 677.0 at 120 / 180 / 300 sec. Every race a druid can be
+// The Level 60 build, 696.8 / 689.1 / 679.6 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             694.3    688.3    677.0   best overall and Alliance
-//	Windshaper Skyborne   692.6    686.8    676.4   best Horde
-//	High Order Skyborne   692.5    686.8    676.2
-//	Tauren                689.7    684.0    672.8
+//	Night Elf             696.8    689.1    679.6   best overall and Alliance
+//	Windshaper Skyborne   692.6    686.8    676.9   best Horde
+//	High Order Skyborne   692.5    686.8    676.7
+//	Tauren                689.7    684.0    673.5
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.

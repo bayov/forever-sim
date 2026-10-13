@@ -54,6 +54,10 @@ func (druidBalance) Knobs() []Knob {
 		// Use the synthetic spell power trinket 0.1 sec before the pull, so it is up when the
 		// pre-pull cast lands, 0/1 (only with the trinket worn).
 		{Name: "prepullTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Cooldown stacking (rotation auditor), 0/1: Major Spellblasting Potion and the Night Elf's
+		// Elune's Light 0.1 sec before the pull as well, so the pre-pull cast lands inside them, and
+		// Elune's later uses held for the synthetic trinket when holding loses no use.
+		{Name: "cdStack", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -75,6 +79,10 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 			"Innervate on ourself once the mana runs low."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets, potions and runes."))
+	if k["cdStack"] == 1 {
+		items = append(items, cast(elunesLight, holdFor(elunesLight, itemID(druid.BalanceSyntheticSpellPowerTrinket)),
+			"Elune's Light with the trinket, unless waiting for it would lose a use."))
+	}
 	if k["insectSwarm"] == 1 {
 		items = append(items, cast(insectSwarm, and(not(dotIsActive(insectSwarm)), gt(remainingTime(), seconds(k["dotMinTime"])), manaOK),
 			"Insect Swarm whenever it is down. Without the talent ignore the warning on this line."))
@@ -120,9 +128,27 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 	if k["prepullTrinket"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(druid.BalanceSyntheticSpellPowerTrinket), 0.1))
 	}
+	if k["cdStack"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions,
+			prepull(itemID(majorSpellblastingPotion), 0.1),
+			prepull(elunesLight, 0.1))
+	}
 	return rot
 }
 
 func spellInFlight(spell *proto.ActionID) value {
 	return &proto.APLValue{Value: &proto.APLValue_SpellInFlight{SpellInFlight: &proto.APLValueSpellInFlight{SpellId: spell}}}
+}
+
+// elunesLight (rogue_common.go) is the Night Elf's Forever racial (sim/core/racials_forever.go):
+// 10% crit for a while on a long cooldown. Other races do not have it; their rotation skips the line.
+const majorSpellblastingPotion = 250937
+
+// holdFor casts spell while trigger's aura is up, or when trigger will not be ready again in
+// the fight (with 10 sec to spare), or when waiting for it would cost spell a use.
+func holdFor(spell, trigger *proto.ActionID) value {
+	return or(
+		auraIsActive(trigger),
+		gt(spellTimeToReady(trigger), sub(remainingTime(), seconds(10))),
+		gt(spellUsesLostByDelay(spell, spellTimeToReady(trigger), seconds(15)), num(0)))
 }
