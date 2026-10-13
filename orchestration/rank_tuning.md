@@ -109,7 +109,7 @@ No sensitivity needed; the rogue's place at the bottom doesn't come from stale 3
 | Spell | Share | Verdict | Evidence | DPS sensitivity |
 |---|---|---|---|---|
 | **Smite VIII (10934)** | 39% | **Stale-shaped (mild)** | 0.51× Era at L30, then 0.42 / 0.41 / 0.43. Growth L30→L54 ×2.1 against Era ×2.5. | held at 0.51 (×1.18): **+1.3%** |
-| Smite IV (984), downranked | 21% | **Tuned** | A ≤30 rank, retuned in 70291. | – |
+| Smite IV (984), downranked | 21% before 2026-10-13 | **Tuned**, but no longer cast | A ≤30 rank, retuned in 70291. Under Forever's downranking penalty it keeps no spell power at 60, so the preset falls back to Smite VII (a 31+ rank, stale-shaped like VIII). | see the 18:25 check |
 | Holy Fire VIII (15261) | 18% | **Tuned** | 0.54× at L30, 0.46–0.52× at 31+. | none |
 | Shadow Word: Pain VIII (10894) | 16% | **Tuned** | Subtractive family (−15 a tick, plateau from L50); coefficient ×1.2 at every rank. | none |
 
@@ -210,6 +210,15 @@ One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (204
   - Bane of Doom at a 2.0 coefficient: Demonology 1109.8 → 1062.9 (−4.2%), Destruction 985.4 → 944.0 (−4.2%), Affliction 977.4 → 934.4 (−4.4%). With Fury now 1020 and Retribution twist 967 on the new gear, Destruction and Affliction would still drop below Retribution; Demonology stays first.
   - Elemental, Lightning Bolt X: base 673.9; ×1.12 → 687.1 (+1.9%), ×1.38 → 715.5 (+6.2%), ×1.38 with Lava Burst too → 725.4 (+7.6%).
 - The other sensitivities are small and scale the same way with spell power and attack power; not re-run.
+
+## Check 2026-10-13 18:25 UTC: Forever's downranking penalty
+
+- Still no Forever build after 1.60.1.70338.
+- The priest (6ee9d02) and shaman (651dcb6) branches now apply Forever's downranking penalty (Blizzard's 2026-10-01 notes; foreverchanges.pro's formula: a rank loses 5% of its coefficient for each level past learn level + 17). That changes what "the rank the preset casts" means for this audit:
+  - Smite: the low-mana fallback moved from Smite IV (L22, now no spell power at 60) to Smite VII (L46), a stale-shaped 31+ rank like Smite VIII (0.41–0.43× Era). Smite VII and VIII are now most of the damage. Holding every 31+ Smite rank at the L30 ratio (×1.18): **+1.8%** (634.0 → 645.5, with Shadow's consumes, since mksettings has no Smite spec; only the percentage counts). It was +1.3% before.
+  - Elemental: the fallback is now Lightning Bolt VIII (L44), also stale-shaped. The 20k-iteration numbers on the new head match the 12:20 check (673.9 base; +1.9% / +6.2% / +7.6%), because the fallback only plays below 20% mana.
+- The druid branch now treats Tiger's Fury as removed under Forever; this audit had it as a single rank (5217 at L24) in client 70338. That's the druid worker's call, and it isn't a 31+ rank question.
+- The hunter applied the strongest-rank ruling (Aspect of the Hawk V, Trueshot Aura IV, Hunter's Mark III).
 
 ## Cross-class summary
 
