@@ -165,7 +165,7 @@ Enhancement
 - [x] 8.27 Toughness
 - [x] 8.28 Flurry
 - [x] 8.29 Stormstrike
-- [ ] 8.30 Spirit Weapons
+- [x] 8.30 Spirit Weapons
 - [ ] 8.31 Mental Quickness
 - [ ] 8.32 Improved Stormstrike
 - [ ] 8.33 Maelstrom Weapon
@@ -1515,6 +1515,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client: the vendored tree (69876) has it in row 4, column 3, 1 rank, no prerequisite, teaching 17364. That matches.
 - Beta: every enhancement build had it (194 casts in 7.7).
 - No sim change and no new test. `stormstrike_test.go` and the 4.1 tests cover the ability. What Improved Stormstrike does without Stormstrike is for 8.32.
+
+### 8.30 Spirit Weapons
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): 1 point lets us parry (5%, 6.4), and our threat is x0.7 without Rockbiter Weapon and x1.3 with it. Every enhancement preset has it, and the talent searches pin it for threat.
+- Client 70338 (wago.tools 16268): -30% threat on all schools (aura 10), and +86 to Rockbiter Weapon's own threat modifier (its passive aura, 0% by default). With Rockbiter that's 0.7 x 1.86 = 1.302, where the sim has 1.3. Threat isn't in our DPS, so we leave the 0.2%. The parry isn't among the client spell's effects, so the server grants it ("Gives a chance to parry").
+- Beta: we parried with it (6.2, 6.4). The threat wasn't measured.
+- No sim change. `avoidance_test.go` TestOrcShamanOurAvoidance wants 4.2% parry from a level 34 mob with it, and the new TestOrcShamanNoParryWithoutSpiritWeapons rolls 20,000 of that mob's swings at a shaman without it and wants no parry. Letting every shaman parry fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
