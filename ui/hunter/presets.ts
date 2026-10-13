@@ -367,7 +367,7 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 975.6 / 969.0 / 958.5 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
+// 975.6 / 969.0 / 959.0 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -379,7 +379,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 1015.3 / 1007.0 / 977.8 at 120 / 180 / 300 sec, 38 ahead of Beast Mastery at 180. The pet deals
+// 1015.3 / 1007.0 / 979.5 at 120 / 180 / 300 sec, 38 ahead of Beast Mastery at 180. The pet deals
 // 14% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
@@ -392,7 +392,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 1023.6 / 1015.6 / 988.8 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// 1023.6 / 1015.5 / 991.1 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
 // than a pet that takes no player buffs (9 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
