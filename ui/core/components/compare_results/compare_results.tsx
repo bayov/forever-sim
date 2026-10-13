@@ -16,6 +16,7 @@ import { changesList } from '../preset_tree';
 import { RaidSimResultsManager, ResultMetric } from '../raid_sim_action';
 import { runLabel, SimHistory, SimRun } from '../sim_history';
 import { Better, Breakdown, BreakdownLine, changeElem, CompareColumn, CompareRow, CompareTable, formatFixed, formatPercent } from './compare_table';
+import { OverTimeView } from './over_time';
 
 // A side of the comparison is a run from the history, or the latest or the one before it. The
 // last two follow new runs, so after each Simulate we see what the change did.
@@ -61,6 +62,7 @@ interface Tab {
 
 const tabs: Tab[] = [
 	{ id: 'compareOverviewTab', label: 'Overview', icon: 'fa-scale-balanced' },
+	{ id: 'compareOverTimeTab', label: 'Over Time', icon: 'fa-chart-line' },
 	{ id: 'compareDamageTab', label: 'Damage', icon: 'fa-bolt' },
 	{ id: 'compareThreatTab', label: 'Threat', icon: 'fa-skull', className: 'cmp-threat-tab' },
 	{ id: 'compareHealingTab', label: 'Healing', icon: 'fa-heart-pulse', className: 'cmp-healing-tab' },
@@ -119,6 +121,9 @@ export class CompareResults extends Component {
 		changesButtons: HTMLButtonElement[];
 		distributionButtons: HTMLButtonElement[];
 	};
+	private readonly overTime = new OverTimeView();
+	private seriesToken = 0;
+	private readonly resourceCardsElem: HTMLElement;
 	private readonly tables: {
 		damage: CompareTable<ActionMetrics>;
 		threat: CompareTable<ActionMetrics>;
@@ -279,7 +284,11 @@ export class CompareResults extends Component {
 					<div id="compareCastsTab" className="tab-pane dr-tab-content fade">
 						{panel('Casts', '', this.tables.casts.rootElem)}
 					</div>
+					<div id="compareOverTimeTab" className="tab-pane dr-tab-content fade">
+						{panel('Over Time', 'cmp-over-time-panel', this.overTime.rootElem, this.overTime.controlsElem)}
+					</div>
 					<div id="compareResourcesTab" className="tab-pane dr-tab-content fade">
+						<div className="cmp-cards cmp-resource-cards" />
 						{resourcePanels}
 					</div>
 				</div>
@@ -308,6 +317,9 @@ export class CompareResults extends Component {
 		};
 		this.updateModeButtons();
 		delegate(this.rootElem.querySelector('#compareOverviewTab')!, { target: '[data-tippy-content]' });
+		delegate(this.rootElem.querySelector('#compareOverTimeTab')!, { target: '[data-tippy-content]' });
+		delegate(this.rootElem.querySelector('.cmp-resource-cards')!, { target: '[data-tippy-content]' });
+		this.resourceCardsElem = this.rootElem.querySelector('.cmp-resource-cards')!;
 
 		(['a', 'b'] as Side[]).forEach(side =>
 			this.selects[side].addEventListener('change', () => {
@@ -434,7 +446,11 @@ export class CompareResults extends Component {
 		}
 
 		const key = `${a!.id}|${b!.id}`;
-		if (key === this.drawnKey) return;
+		if (key === this.drawnKey) {
+			// The series of a run come a moment after its results.
+			if (this.pair && !this.overTime.isComplete) this.loadSeries();
+			return;
+		}
 		if (!this.isVisible()) {
 			this.pendingDraw = true;
 			return;
@@ -525,6 +541,8 @@ export class CompareResults extends Component {
 		this.pair = { a, b, resultA, resultB };
 		this.drawOverview();
 		this.drawTables();
+		this.drawResourceCards();
+		this.loadSeries();
 	}
 
 	private drawOverview() {
@@ -741,6 +759,59 @@ export class CompareResults extends Component {
 				: drawCumulative(canvas, countsA, countsB, markers);
 	}
 
+	private async loadSeries() {
+		const pair = this.pair;
+		if (!pair) return;
+		const token = ++this.seriesToken;
+		const [seriesA, seriesB] = await Promise.all([this.history.loadSeries(pair.a), this.history.loadSeries(pair.b)]);
+		if (token !== this.seriesToken || pair !== this.pair) return;
+		this.overTime.setSeries(seriesA, seriesB, this.simUI.sim.getShowThreatMetrics());
+	}
+
+	// How much of each resource the runs gained, spent and wasted, from all their iterations. The
+	// rates are per second, so runs of different lengths compare.
+	private drawResourceCards() {
+		const { resultA, resultB } = this.pair!;
+		const cards: Element[] = [];
+		RESOURCE_SUMMARY_TYPES.forEach(type => {
+			const rowsA = resourceRows(resultA, type).map(row => row.metric);
+			const rowsB = resourceRows(resultB, type).map(row => row.metric);
+			if (!rowsA.length && !rowsB.length) return;
+			const name = resourceNames.get(type) ?? 'Resource';
+			const sum = (rows: ResourceMetrics[], value: (metric: ResourceMetrics) => number) => rows.reduce((total, metric) => total + value(metric), 0);
+			const gained = (rows: ResourceMetrics[]) => sum(rows, m => Math.max(0, m.gainPerSecond));
+			const spent = (rows: ResourceMetrics[]) => sum(rows, m => Math.max(0, -m.gainPerSecond));
+			const wasted = (rows: ResourceMetrics[]) => sum(rows, m => m.wastedGain);
+			cards.push(
+				compareCard(`${name} gained / s`, gained(rowsA), gained(rowsB), formatFixed(2), 'higher'),
+				compareCard(`${name} spent / s`, spent(rowsA), spent(rowsB), formatFixed(2), 'none'),
+				compareCard(
+					`${name} wasted`,
+					wasted(rowsA),
+					wasted(rowsB),
+					formatFixed(1),
+					'lower',
+					'Gains that came while the pool was full, in an iteration.',
+				),
+			);
+			if (type === ResourceType.ResourceTypeMana) {
+				const oom = (result: SimResult) => result.getFirstPlayer()?.secondsOomAvg ?? 0;
+				cards.push(
+					compareCard(
+						'Time out of mana',
+						oom(resultA),
+						oom(resultB),
+						value => `${formatFixed(1)(value)}s`,
+						'lower',
+						'How long an iteration spends out of mana, on average.',
+					),
+				);
+			}
+		});
+		this.resourceCardsElem.replaceChildren(...cards);
+		this.resourceCardsElem.classList.toggle('hide', !cards.length);
+	}
+
 	private drawTables() {
 		const { resultA, resultB } = this.pair!;
 		this.tables.damage.setRows(pairRows(damageRows(resultA), damageRows(resultB)));
@@ -755,6 +826,29 @@ export class CompareResults extends Component {
 			panel.classList.toggle('hide', table.isEmpty);
 		});
 	}
+}
+
+// The resources with a summary on the Resources tab.
+const RESOURCE_SUMMARY_TYPES = [ResourceType.ResourceTypeMana, ResourceType.ResourceTypeEnergy, ResourceType.ResourceTypeRage];
+
+// A card with the compared run's value, the baseline's under it, and the change.
+function compareCard(name: string, a: number, b: number, format: (value: number) => string, better: Better, tooltip?: string): Element {
+	const percent = a ? ((b - a) / Math.abs(a)) * 100 : 0;
+	return (
+		<div className="cmp-card" dataset={tooltip ? { tippyContent: tooltip } : {}}>
+			<span className="results-card-label">{name}</span>
+			<div className="cmp-card-values">
+				<span className="cmp-card-b">{format(b)}</span>
+				<span className="cmp-card-a">{`from ${format(a)}`}</span>
+			</div>
+			<div className="cmp-card-change">
+				{changeElem(a, b, format, better)}
+				{a && format(Math.abs(b - a)) !== format(0) ? (
+					<span className="cmp-card-percent">{`${percent >= 0 ? '+' : '-'}${formatFixed(2)(Math.abs(percent))}%`}</span>
+				) : null}
+			</div>
+		</div>
+	);
 }
 
 // A spell, aura or pet of one run, by the key we match it with in the other run.
