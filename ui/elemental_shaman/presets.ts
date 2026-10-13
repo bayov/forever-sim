@@ -80,8 +80,11 @@ export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, 
 // Eldre'Thalas aren't in the 70338 client), Talisman of Ephemeral Power is Molten Core only, and
 // the sim doesn't model Forever's launch trinkets yet. Trinkets excluded until they are.
 //
-// On 2026-10-12 the Level 60 build is 693.3 / 690.3 / 680.4 at 120 / 180 / 300 sec on it. The
-// set stays fixed, it was not gear searched.
+// On 2026-10-13 the set was rebudgeted to the fair stat mix of the standard (item 5a: 18%
+// Stamina, 17% Intellect, 10% Spirit, 20% spell power, 22% crit and 12% hit of its weighted
+// total, after Season of Discovery level 60 elemental BiS), where it was 36% spell power and 9%
+// crit before. The Level 60 build went from 693.3 / 690.3 / 680.4 to 624.5 / 621.8 / 613.1 at
+// 120 / 180 / 300 sec. The set stays fixed, it was not gear searched.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -154,8 +157,8 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
 // talent search with Mana Tide Totem pinned found it, and found it again on the standard gear.
 // Its Water Shield point does nothing in the sim: the elemental options have no raid damage
-// hits, and the boss never hits a caster. It is 686.4 / 682.0 / 673.7 at 120 / 180 / 300 sec,
-// 1.2% behind Level 60 at 180.
+// hits, and the boss never hits a caster. It is 618.8 / 615.2 / 607.4 at 120 / 180 / 300 sec
+// on the fair-mix set, 1.1% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '5504301300103051-04-053150001001' }),
@@ -260,8 +263,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // The shaman is an engineer for the Goblin Sapper Charge and Goblin Land Mine (4.3 and 1.2)
-// and an alchemist. The race is Orc, the best race (690.3 at 180 sec, Windshaper Skyborne 0.8
-// behind), see the races under the builds.
+// and an alchemist. The race is Orc, tied for the best race with Windshaper Skyborne (621.8 and
+// 621.7 at 180 sec), see the races under the builds.
 export const OtherDefaults = {
 	distanceFromTarget: 20,
 	profession1: Profession.Engineering,
@@ -307,12 +310,15 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-12, on the standard gear and consumes (20000 iterations), Level 60 is 693.3 /
-// 690.3 / 680.4 at 120 / 180 / 300 sec and Level 60 + Mana Tide 686.4 / 682.0 / 673.7.
+// On 2026-10-13, on the fair-mix set (standards 5a) with the standard consumes (20000
+// iterations), Level 60 is 624.5 / 621.8 / 613.1 at 120 / 180 / 300 sec and Level 60 + Mana Tide
+// 618.8 / 615.2 / 607.4. The talent and knob searches ran again on the new set and kept both
+// builds. Before the rebudget they were 693.3 / 690.3 / 680.4 and 686.4 / 682.0 / 673.7.
 //
-// The races (same settings and seed): Orc 693.3 / 690.3 / 680.4, Windshaper Skyborne 693.1 /
-// 689.5 / 679.8, Troll 691.2 / 687.1 / 677.6, Dwarf (the only Alliance shaman) 687.3 / 683.7 /
-// 674.4, Tauren 687.2 / 683.6 / 674.3. Orc is the best race and the best Horde race. The staff
+// The races (same settings and seed): Orc 624.5 / 621.8 / 613.1, Windshaper Skyborne 625.0 /
+// 621.7 / 613.1, Troll 623.0 / 619.4 / 611.0, Dwarf (the only Alliance shaman) 619.7 / 616.5 /
+// 608.3, Tauren 619.5 / 616.3 / 608.1. Orc and Windshaper Skyborne tie for the best race and
+// the best Horde race (within 0.5, standard error 0.2), and the preset keeps Orc. The staff
 // is the Era Phase 1 weapon type and no race has a staff racial; Tauren's 1% hit is wasted at
 // the hit cap.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
