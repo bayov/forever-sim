@@ -188,22 +188,6 @@
       </div>
     </div>
 
-    <div class="content-block fv-card" id="sp-weights-card" data-jump="Stat weights">
-      <div class="content-block-header"><h6 class="content-block-title">Stat weights</h6></div>
-      <p class="fv-note" id="sp-weights-note">What one more point of each stat is worth, in points of the preset's main stat. Hit and crit are per rating point (10 hit rating or 14 crit rating make 1%).</p>
-      <div class="fv-sbar" id="sp-weights"></div>
-      <details>
-        <summary>Raw numbers</summary>
-        <p class="fv-note">DPS gained per point, or per 1% for hit and crit, with one standard error. Each stat was added on top of the gear and simmed with the same seed as the baseline.</p>
-        <div class="fv-scroll">
-          <table id="sp-wtab" data-source="weights" data-row-key="build,stat">
-            <thead><tr><th data-field="label">Stat</th><th class="n" data-field="dpsPer">DPS</th><th class="n" data-field="sePer">±</th><th class="n" data-field="worth">Worth</th><th class="n" data-field="ratingWorth">Per rating</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </details>
-    </div>
-
     <div class="content-block fv-card" id="sp-time-card" data-jump="Timeline">
       <div class="content-block-header"><h6 class="content-block-title">A fight, second by second</h6></div>
       <p class="fv-note" id="sp-time-note">One simulated fight. Pick a typical, unlucky or lucky one, zoom in, scroll sideways, and tap anywhere to see what happened at that moment.</p>
@@ -280,10 +264,27 @@
       <p class="fv-note">The preset's synthetic Phase 1 set, two synthetic trinkets included. Tap an item for its tooltip.</p>
       <div class="fv-gearwrap">
         <div id="gear-tab"><div class="gear-picker-root" id="sp-gear" data-source="gear tooltips icons"></div></div>
-        <div class="character-stats-root fv-cstats" id="sp-stats-card">
-          <h6 class="character-stats-label">Character stats</h6>
-          <p class="fv-note">With gear, talents, buffs and consumes.</p>
-          <div id="sp-stats" data-source="stats"></div>
+        <div class="fv-gearside">
+          <div class="character-stats-root fv-cstats" id="sp-stats-card">
+            <h6 class="character-stats-label">Character stats</h6>
+            <p class="fv-note">With gear, talents, buffs and consumes.</p>
+            <div id="sp-stats" data-source="stats"></div>
+          </div>
+          <div class="fv-cstats" id="sp-weights-card" data-jump="Stat weights">
+            <h6 class="character-stats-label">Stat weights</h6>
+            <p class="fv-note" id="sp-weights-note">What one more point of each stat is worth, in points of the preset's main stat. Hit and crit are per rating point (10 hit rating or 14 crit rating make 1%).</p>
+            <div class="fv-sbar" id="sp-weights"></div>
+            <details>
+              <summary>Raw numbers</summary>
+              <p class="fv-note">DPS gained per point, or per 1% for hit and crit, with one standard error. Each stat was added on top of the gear and simmed with the same seed as the baseline.</p>
+              <div class="fv-scroll">
+                <table id="sp-wtab" data-source="weights" data-row-key="build,stat">
+                  <thead><tr><th data-field="label">Stat</th><th class="n" data-field="dpsPer">DPS</th><th class="n" data-field="sePer">±</th><th class="n" data-field="worth">Worth</th><th class="n" data-field="ratingWorth">Per rating</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
     </div>
@@ -310,14 +311,14 @@
     <div class="content-block fv-card" id="cmp-pick-card">
       <div class="content-block-header"><h6 class="content-block-title">Compare two presets</h6></div>
       <div class="fv-controls">
-        <span class="fv-dot" style="background:var(--cds-chart-muted)" id="cmp-dot-a"></span><select class="form-select" id="cmp-a" aria-label="First preset"></select>
+        <span class="fv-ab" id="cmp-dot-a">A</span><select class="form-select" id="cmp-a" aria-label="Preset A"></select>
       </div>
       <div class="fv-controls">
-        <span class="fv-dot" id="cmp-dot-b"></span><select class="form-select" id="cmp-b" aria-label="Second preset"></select>
+        <span class="fv-ab" id="cmp-dot-b">B</span><select class="form-select" id="cmp-b" aria-label="Preset B"></select>
       </div>
       <div class="fv-scroll">
         <table id="cmp-table">
-          <thead><tr><th>Measure</th><th class="n" id="cmp-ha">A</th><th class="n" id="cmp-hb">B</th><th class="n">B vs A</th></tr></thead>
+          <thead><tr><th>Measure</th><th class="n" id="cmp-ha">A</th><th class="n" id="cmp-hb">B</th><th class="n" id="cmp-hd">B vs A</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>

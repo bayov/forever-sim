@@ -656,7 +656,7 @@ export function startReport(dash) {
     const pickable = series.filter((s) => s.pick !== false);
     const focusOn = (s) => { for (const [ss, pa] of paths) pa.attr('opacity', !s ? ss.op ?? 1 : ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2); };
     // With no line asked for, the picked one (opts.hlId) stays lit, or none.
-    const highlight = (id) => focusOn(series.find((q) => q.id === (id || opts.hlId)) || null);
+    const highlight = (id) => { const want = id || opts.hlId; focusOn(want ? series.find((q) => q.id === want) || null : null); };
     const pick = (e, pinned) => {
       const [px, py] = d3.pointer(e, svg.node());
       const sx = xs.reduce((a, b) => (Math.abs(x(b) - px) < Math.abs(x(a) - px) ? b : a));
@@ -2010,8 +2010,12 @@ export function startReport(dash) {
     sortedBuildOptions($('#cmp-a'), builds, st.A); sortedBuildOptions($('#cmp-b'), builds, st.B);
     const A = builds.find((b) => b.id === st.A), B = builds.find((b) => b.id === st.B);
     const ca = dash.colors[0], cb = dash.colors[1];
-    $('#cmp-dot-a').style.background = ca; $('#cmp-dot-b').style.background = cb;
-    $('#cmp-ha').replaceChildren(specIco(A, '') || '', ' ' + A.build); $('#cmp-hb').replaceChildren(specIco(B, '') || '', ' ' + B.build);
+    // Every widget on the tab marks the two presets with the same lettered badge, A and B, in their chart colors.
+    const abBadge = (k) => el('span', { class: 'fv-ab', style: `--ab:${k === 'A' ? ca : cb}`, text: k });
+    $('#cmp-dot-a').style.setProperty('--ab', ca); $('#cmp-dot-b').style.setProperty('--ab', cb);
+    $('#cmp-ha').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('A'), specIco(A, '') || '', A.build));
+    $('#cmp-hb').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('B'), specIco(B, '') || '', B.build));
+    $('#cmp-hd').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('B'), 'vs', abBadge('A')));
 
     const pr = (rowsOf('pairs') || []).find((p) => p.a === A.id && p.b === B.id);
     const rows = [['Mean DPS', 'dps', f1], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120 s fight', 'dps120', f1], ['300 s fight', 'dps300', f1], ['Race', 'race', String], ['Best race', 'bestRace', String], ['Rank', 'rank', String]];
@@ -2021,23 +2025,23 @@ export function startReport(dash) {
     const hd = $('#cmp-dist');
     if (waitOr(hd, ['hist'])) {
       const h = rowsOf('hist');
-      drawHist(hd, [{ name: A.build, color: ca, op: 0.6, bins: binsFor(h, A.id) }, { name: B.build, color: cb, op: 0.6, bins: binsFor(h, B.id) }], { marks: [{ v: A.dps, label: 'A' }, { v: B.dps, label: 'B' }] });
+      drawHist(hd, [{ name: `A · ${A.build}`, color: ca, op: 0.6, bins: binsFor(h, A.id) }, { name: `B · ${B.build}`, color: cb, op: 0.6, bins: binsFor(h, B.id) }], { marks: [{ v: A.dps, label: 'A' }, { v: B.dps, label: 'B' }] });
     }
     const hl = $('#cmp-len');
     if (waitOr(hl, ['lengths'])) {
       const l = rowsOf('lengths');
-      const ser = (b, c) => ({ name: b.build, short: b === A ? 'A' : 'B', color: c, dots: true, pts: l.filter((r) => r.build === b.id).sort((p, q) => p.secs - q.secs).map((p) => ({ s: p.secs, v: p.dps })) });
+      const ser = (b, c) => ({ name: `${b === A ? 'A' : 'B'} · ${b.build}`, short: b === A ? 'A' : 'B', color: c, dots: true, pts: l.filter((r) => r.build === b.id).sort((p, q) => p.secs - q.secs).map((p) => ({ s: p.secs, v: p.dps })) });
       drawLenChart(hl, [ser(A, ca), ser(B, cb)], { endLabels: true, h: 220 });
     }
     const hw = $('#cmp-w');
     if (waitOr(hw, ['weights'])) {
       const wr = rowsOf('weights');
-      hw.replaceChildren(...[[A, ca], [B, cb]].map(([b, c]) => {
+      hw.replaceChildren(...[[A, ca, 'A'], [B, cb, 'B']].map(([b, c, k]) => {
         const rs = wr.filter((w) => w.build === b.id && w.stat !== 'MeleeHitDown');
         const v = (w) => (w.unit === '1%' ? w.ratingWorth : w.worth);
         rs.sort((x, y) => v(y) - v(x));
         const max = d3.max(rs, (w) => Math.abs(v(w))) || 1;
-        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0' }, el('span', { class: 'fv-label' }, el('span', { class: 'fv-dot', style: `background:${c}` }), b.label),
+        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0;align-content:start' }, el('span', { class: 'fv-ab-head' }, abBadge(k), b.label),
           el('div', { class: 'fv-sbar', 'data-tt-b': b.id }, ...rs.flatMap((w) => [tt(el('span', { class: 'nm', text: w.unit === '1%' ? w.label.replace(' (1%)', ' rating') : w.label }), 'w:' + w.stat),
             tt(el('span', { class: 'vl' }, mark(el('span', { text: f2(v(w)) }), 'weights', w.unit === '1%' ? 'ratingWorth' : 'worth', `build=${enc(b.id)}&stat=${enc(w.stat)}`), ' ' + w.primaryAbbr), 'w:' + w.stat),
             tt(el('span', { class: 'tr' }, el('span', { style: `width:${Math.max(0, 100 * v(w) / max)}%;background:${c}` })), 'w:' + w.stat)])));
@@ -2046,10 +2050,10 @@ export function startReport(dash) {
     const ha = $('#cmp-abil');
     if (waitOr(ha, ['abilities'])) {
       const ab = rowsOf('abilities');
-      ha.replaceChildren(...[[A, ca], [B, cb]].map(([b, c]) => {
+      ha.replaceChildren(...[[A, ca, 'A'], [B, cb, 'B']].map(([b, c, k]) => {
         const rows2 = ab.filter((a) => a.build === b.id && a.dps > 0).slice(0, 10);
         const max = d3.max(rows2, (a) => a.share) || 1;
-        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0' }, el('span', { class: 'fv-label' }, el('span', { class: 'fv-dot', style: `background:${c}` }), b.label),
+        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0;align-content:start' }, el('span', { class: 'fv-ab-head' }, abBadge(k), b.label),
           el('div', { class: 'fv-sbar', 'data-tt-b': b.id }, ...rows2.flatMap((a) => [tt(el('span', { class: 'nm', text: a.ability }), 'k:' + a.key), tt(el('span', { class: 'vl' }, mark(el('span', { text: f1(a.share) }), 'abilities', 'share', `build=${enc(b.id)}&key=${enc(a.key)}`), '%'), 'k:' + a.key), tt(el('span', { class: 'tr' }, el('span', { style: `width:${100 * a.share / max}%;background:${c}` })), 'k:' + a.key)])));
       }));
     }

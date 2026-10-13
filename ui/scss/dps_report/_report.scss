@@ -2520,6 +2520,14 @@ ol.fv-list li::marker {
 	@include panel-card;
 	display: grid;
 	gap: 0.35rem;
+	min-width: 0;
+}
+
+// Next to the paper doll: the character sheet, and the stat weights under it.
+.fv-gearside {
+	display: grid;
+	gap: var(--block-spacer);
+	min-width: 0;
 }
 
 /* ---------- consumes and buffs: icon pickers ---------- */
@@ -2871,4 +2879,40 @@ ol.fv-list li::marker {
 		border-radius: 0;
 		box-shadow: none;
 	}
+}
+
+// Compare marks its two presets A and B with a lettered badge in each one's chart color (--ab), on the pickers, the
+// table and every card, so it's always clear which side is which.
+.fv-ab {
+	--ab: var(--color-fg-muted);
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.3rem;
+	height: 1.3rem;
+	border: 1px solid var(--ab);
+	border-radius: 4px;
+	background: color-mix(in srgb, var(--ab) 20%, transparent);
+	color: var(--ab);
+	font-size: 0.72rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.fv-ab-head {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-weight: 600;
+	white-space: nowrap;
+
+	.fv-ico {
+		width: 1.2rem;
+		height: 1.2rem;
+	}
+}
+
+#cmp-table th.n .fv-ab-head {
+	justify-content: flex-end;
 }
