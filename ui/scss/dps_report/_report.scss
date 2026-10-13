@@ -2919,11 +2919,6 @@ ol.fv-list li::marker {
 
 // The race and setup of each Compare side sit next to its preset.
 #cmp-pick-card .fv-controls {
-	.form-select {
-		width: auto;
-		min-width: 0;
-	}
-
 	// The preset takes half the row, and the race and setup a quarter each. On a phone the preset gets
 	// its own row, and the race and setup share the next one.
 	#cmp-a,
@@ -2938,4 +2933,83 @@ ol.fv-list li::marker {
 
 #cmp-gap:empty {
 	display: none;
+}
+
+// The icon dropdown (iconSelect in report.js). The button is drawn like the page's selects, with the
+// picked option's icon in front.
+.fv-isel {
+	position: relative;
+	min-width: 0;
+
+	.fv-ico {
+		flex: 0 0 auto;
+		width: 1.25rem;
+		height: 1.25rem;
+		border-radius: 4px;
+	}
+}
+
+.fv-isel-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	text-align: left;
+}
+
+.fv-isel-text {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// The menu is the sim UI's header and Results menu.
+.fv-isel-menu {
+	@include header-dropdown-menu;
+	top: calc(100% + 0.25rem);
+	left: 0;
+	z-index: 30;
+	min-width: 100%;
+	max-height: min(60vh, 26rem);
+	overflow-y: auto;
+
+	.dropdown-header {
+		padding: 0.5rem 0.65rem 0.2rem;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.dropdown-item:disabled {
+		opacity: 0.45;
+	}
+
+	// Long options wrap on a phone instead of running off the screen.
+	.fv-isel-text {
+		white-space: normal;
+	}
+}
+
+// A picker at the end of its row opens its menu toward the left.
+.fv-isel-menu {
+	max-width: calc(100vw - 2rem);
+}
+
+.fv-isel:last-child .fv-isel-menu {
+	left: auto;
+	right: 0;
+}
+
+// The DPS sits at the right end of each option.
+.fv-isel-end {
+	margin-left: auto;
+	padding-left: 1rem;
+	color: var(--color-fg-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.fv-isel-menu .dropdown-item.active .fv-isel-end {
+	color: inherit;
 }

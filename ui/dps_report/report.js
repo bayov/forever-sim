@@ -537,6 +537,60 @@ export function startReport(dash) {
     }
     sel.value = value;
   };
+  // A dropdown with an icon on each option, in place of a <select> (which can't show images). The button looks
+  // like the page's selects, and the menu like the sim UI's dropdowns. A re-render (when a dataset finishes
+  // loading) keeps an open menu open.
+  //
+  // items are { header } rows or { value, text, icon, end, disabled } options. icon is a function, because we
+  // need a fresh icon element for the button and for the menu.
+  const iselShow = (host, open) => {
+    host.classList.toggle('open', open);
+    host.querySelector('.fv-isel-menu')?.classList.toggle('show', open);
+    host.querySelector('.fv-isel-btn')?.setAttribute('aria-expanded', String(open));
+  };
+  const iconSelect = (host, items, value, onPick, btnText) => {
+    host.classList.add('fv-isel');
+    const open = host.classList.contains('open');
+    const cur = items.find((it) => !it.header && it.value === value);
+    const btn = el('button', { type: 'button', class: 'form-select fv-isel-btn', 'aria-haspopup': 'listbox', 'aria-expanded': String(open), 'aria-label': host.dataset.label || '' },
+      cur?.icon?.() || '', el('span', { class: 'fv-isel-text', text: cur ? btnText?.(cur) ?? cur.text : '' }));
+    const menu = el('div', { class: 'dropdown-menu fv-isel-menu' + (open ? ' show' : ''), role: 'listbox' },
+      ...items.map((it) => (it.header ? el('h6', { class: 'dropdown-header', style: it.color ? `color:${it.color}` : '', text: it.header })
+        : el('button', { type: 'button', role: 'option', class: 'dropdown-item' + (it.value === value ? ' active' : ''), 'aria-selected': String(it.value === value), 'data-v': it.value, ...(it.disabled ? { disabled: '' } : {}) },
+          it.icon?.() || '', el('span', { class: 'fv-isel-text', text: it.text }), it.end ? el('small', { class: 'fv-isel-end', text: it.end }) : ''))));
+    const opts = () => [...menu.querySelectorAll('.dropdown-item:not([disabled])')];
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const o = !host.classList.contains('open');
+      document.querySelectorAll('.fv-isel.open').forEach((h) => h !== host && iselShow(h, false));
+      iselShow(host, o);
+      // We scroll the picked option into the middle of the menu, without scrolling the page.
+      const a = menu.querySelector('.active');
+      if (o && a) menu.scrollTop = a.offsetTop - (menu.clientHeight - a.offsetHeight) / 2;
+    });
+    btn.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      e.preventDefault();
+      if (!host.classList.contains('open')) btn.click();
+      (menu.querySelector('.active:not([disabled])') || opts()[0])?.focus();
+    });
+    menu.addEventListener('keydown', (e) => {
+      const all = opts(), i = all.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); all[Math.max(0, Math.min(all.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)))]?.focus(); }
+      if (e.key === 'Escape' || e.key === 'Tab') { iselShow(host, false); if (e.key === 'Escape') btn.focus(); }
+    });
+    menu.addEventListener('click', (e) => {
+      const it = e.target.closest('.dropdown-item');
+      if (!it || it.disabled) return;
+      e.stopPropagation();
+      iselShow(host, false);
+      btn.focus();
+      if (it.dataset.v !== value) onPick(it.dataset.v);
+    });
+    host.replaceChildren(btn, menu);
+  };
+  document.addEventListener('click', (e) => { for (const h of document.querySelectorAll('.fv-isel.open')) if (!h.contains(e.target)) iselShow(h, false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.fv-isel.open').forEach((h) => iselShow(h, false)); });
   const buildOrder = (builds) => CLASSES.flatMap((c) => builds.filter((b) => b.class === c).sort((a, b) => b.dps - a.dps));
 
   // ---------- ranking ----------
@@ -2026,17 +2080,25 @@ export function startReport(dash) {
     return [`oklch(from ${c} min(0.97, ${dark} + 0.3) c h)`, `oklch(from ${c} ${dark} c h)`];
   };
   const fillCmpVariants = (s) => {
-    const rs = $(`#cmp-${s.k.toLowerCase()}r`), vs = $(`#cmp-${s.k.toLowerCase()}v`);
-    rs.disabled = vs.disabled = !s.mine.length;
+    const lk = s.k.toLowerCase();
     const base = s.mine.filter((r) => r.variant === 'baseline').sort((p, q) => q.dps - p.dps);
-    rs.replaceChildren(...(base.length ? base.map((r) => el('option', { value: r.race, text: `${r.race}${r.race === s.b.race ? ' (preset)' : ''} · ${f1(r.dps)}` })) : [el('option', { value: s.b.race, text: `${s.b.race} (preset)` })]));
-    rs.value = s.race;
-    vs.replaceChildren(...CMP_SETUPS.map(([v, lbl]) => {
+    const races = base.length ? base : [{ race: s.b.race, raceIcon: s.b.raceIcon }];
+    iconSelect($(`#cmp-${lk}r`), races.map((r) => ({ value: r.race, text: r.race + (r.race === s.b.race ? ' (preset)' : ''), icon: () => raceIco(r.raceIcon), end: r.dps ? f1(r.dps) : '' })), s.race,
+      (v) => { st[s.k + 'r'] = v; persist(); render(); });
+    iconSelect($(`#cmp-${lk}v`), CMP_SETUPS.map(([v, lbl]) => {
       const r = s.mine.find((x) => x.race === s.race && x.variant === v);
-      const off = v === 'weapon' && !r?.simmed;
-      return el('option', { value: v, text: off && r?.note ? `${lbl} (${r.note})` : lbl, ...(off ? { disabled: '' } : {}) });
-    }));
-    vs.value = s.v;
+      const off = !s.mine.length || (v === 'weapon' && !r?.simmed);
+      return { value: v, text: off && r?.note ? `${lbl} (${r.note})` : lbl, end: r && !off ? f1(r.dps) : '', disabled: off && v !== 'baseline' };
+    }), s.v, (v) => { st[s.k + 'v'] = v; persist(); render(); });
+  };
+  // The preset picker groups the presets by class, best first, like the page's other preset pickers.
+  const cmpPresetPicker = (k, builds) => {
+    const items = CLASSES.flatMap((c) => {
+      const bs = builds.filter((b) => b.class === c).sort((a, b) => b.dps - a.dps);
+      return bs.length ? [{ header: c, color: ccol(c) }, ...bs.map((b) => ({ value: b.id, text: b.build, label: b.label, icon: () => specIco(b, ''), end: f1(b.dps) }))] : [];
+    });
+    // A new preset starts on its own race and setup.
+    iconSelect($(`#cmp-${k.toLowerCase()}`), items, st[k], (v) => { st[k] = v; st[k + 'r'] = null; st[k + 'v'] = null; persist(); render(); }, (it) => `${it.label} · ${it.end}`);
   };
   const drawCompare = () => {
     if (statusOf('builds') !== 'ok') return;
@@ -2044,7 +2106,7 @@ export function startReport(dash) {
     const ord = buildOrder(builds);
     if (!st.A || !builds.find((b) => b.id === st.A)) st.A = ord[0].id;
     if (!st.B || !builds.find((b) => b.id === st.B)) st.B = [...builds].sort((a, b) => b.dps - a.dps).find((b) => b.id !== st.A).id;
-    sortedBuildOptions($('#cmp-a'), builds, st.A); sortedBuildOptions($('#cmp-b'), builds, st.B);
+    cmpPresetPicker('A', builds); cmpPresetPicker('B', builds);
     const A = builds.find((b) => b.id === st.A), B = builds.find((b) => b.id === st.B);
     const rv = rowsOf('race_variants');
     const sA = cmpSide('A', A, rv), sB = cmpSide('B', B, rv);
@@ -2128,14 +2190,6 @@ export function startReport(dash) {
       }));
     }
   };
-  for (const k of ['A', 'B']) {
-    const lk = k.toLowerCase();
-    // A new preset starts on its own race and setup.
-    $(`#cmp-${lk}`).addEventListener('change', (e) => { st[k] = e.target.value; st[k + 'r'] = null; st[k + 'v'] = null; persist(); render(); });
-    $(`#cmp-${lk}r`).addEventListener('change', (e) => { st[k + 'r'] = e.target.value; persist(); render(); });
-    $(`#cmp-${lk}v`).addEventListener('change', (e) => { st[k + 'v'] = e.target.value; persist(); render(); });
-  }
-
   // ---------- method ----------
   const drawMethod = () => {
     const gh = $('#method-gear');
