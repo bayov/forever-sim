@@ -403,6 +403,9 @@ export function startReport(dash) {
         hideTT(); e.preventDefault(); e.stopPropagation(); return;
       }
       const n = e.target.closest ? e.target.closest('[data-tt]') : null;
+      // A toggle, like a class icon in the class filter, does its job on click, so its tooltip closes instead of
+      // staying pinned.
+      if (n && n.hasAttribute('aria-pressed')) { hideTT(); return; }
       if (n && n.hasAttribute('data-tt-tap')) {
         if (n === ttNode && ttPinned) hideTT();
         else { showTT(n, { x: e.clientX, y: e.clientY }); ttPinned = true; }
