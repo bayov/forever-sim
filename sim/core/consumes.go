@@ -225,8 +225,27 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 	}
 }
 
+// Forever's oil procs, Shadow Bolt (350026) and Frostbolt (350025) in client 1.60.1.70338,
+// scale with the wielder's level up to their SpellLevels MaxLevel, 17 and 12. Every Forever
+// sim is above that, so the range is the same at level 20 and 60. The proc chances in
+// SpellItemEnchantment (15 and 10) are unchanged from Classic.
+func shadowOilDamageRange(env *Environment) (float64, float64) {
+	if env.IsForever() {
+		return 63, 71
+	}
+	return 52, 61
+}
+
+func frostOilDamageRange(env *Environment) (float64, float64) {
+	if env.IsForever() {
+		return 39, 43
+	}
+	return 33, 38
+}
+
 func registerShadowOil(character *Character, isMh bool, icd Cooldown) {
 	procChance := 0.15
+	minDamage, maxDamage := shadowOilDamageRange(character.Env)
 
 	procSpell := character.GetOrRegisterSpell(SpellConfig{
 		ActionID:    ActionID{SpellID: 1382},
@@ -240,7 +259,7 @@ func registerShadowOil(character *Character, isMh bool, icd Cooldown) {
 		BonusCoefficient: 0.56,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			damage := sim.Roll(52, 61)
+			damage := sim.Roll(minDamage, maxDamage)
 			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
@@ -277,6 +296,7 @@ func registerShadowOil(character *Character, isMh bool, icd Cooldown) {
 
 func registerFrostOil(character *Character, isMh bool) {
 	procChance := 0.10
+	minDamage, maxDamage := frostOilDamageRange(character.Env)
 
 	procSpell := character.GetOrRegisterSpell(SpellConfig{
 		ActionID:    ActionID{SpellID: 1191},
@@ -290,7 +310,7 @@ func registerFrostOil(character *Character, isMh bool) {
 		BonusCoefficient: 0.269,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			damage := sim.Roll(33, 38)
+			damage := sim.Roll(minDamage, maxDamage)
 			spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
@@ -517,8 +537,16 @@ var foreverFoodStats = map[proto.Food]stats.Stats{
 	proto.Food_FoodPlatedArmorfish: {stats.BonusArmor: 150},
 }
 
+// Classic's Dragonbreath Chili (15851) does a flat 60. Forever's does 65 with a variance of
+// 0.123 (client 1.60.1.70338), so it rolls 61 to 69.
+func dragonbreathChiliDamage(sim *Simulation) float64 {
+	if sim.IsForever() {
+		return sim.Roll(61, 69)
+	}
+	return 60
+}
+
 func DragonBreathChiliAura(character *Character) *Aura {
-	baseDamage := 60.0
 	procChance := .05
 	icd := Cooldown{
 		Timer:    character.NewTimer(),
@@ -538,7 +566,7 @@ func DragonBreathChiliAura(character *Character) *Aura {
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
 			for _, aoeTarget := range sim.Environment.Encounter.TargetUnits {
-				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, aoeTarget, dragonbreathChiliDamage(sim), spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})
