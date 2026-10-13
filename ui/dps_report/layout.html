@@ -61,23 +61,26 @@
       </div>
       <div class="fv-controls">
         <button class="fv-chip" id="rank-best" aria-pressed="false" title="Keep only the highest-DPS preset of each class">Best per class</button>
-        <button class="fv-chip" id="rank-reset" hidden>Clear filters</button>
+        <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
       </div>
       <div class="fv-legend" id="rank-legend"><span><i class="fv-bar" style="position:static;display:inline-block;width:1.2rem;background:var(--color-fg-muted)"></i>mean</span><span><i style="width:1rem;height:0.6rem;border:1.5px solid var(--color-fg);border-radius:2px"></i>middle half of fights</span><span><i style="width:1.2rem;height:1.5px;background:var(--color-fg)"></i>10th to 90th percentile</span></div>
       <p class="fv-rank-sum" id="rank-sum"></p>
       <div class="fv-rank" id="rank-chart" data-source="builds lengths"></div>
     </div>
 
-    <div class="fv-grid">
-      <div class="content-block fv-card" id="scatter-card">
-        <div class="content-block-header"><h6 class="content-block-title">Output against consistency</h6></div>
-        <p class="fv-note">Right is more damage, lower is steadier: the spread between fights as a share of the mean. Tap a dot.</p>
-        <div class="fv-chart" id="scatter" data-source="builds"></div>
-      </div>
-      <div class="content-block fv-card" id="len-card">
-        <div class="content-block-header"><h6 class="content-block-title">Short and long fights</h6></div>
-        <p class="fv-note">Each preset's DPS at five fight lengths, as a share of its 180 s DPS. The class filter above applies.</p>
-        <div class="fv-chart" id="lenchart" data-source="lengths builds"></div>
+    <div class="content-block fv-card" id="len-card">
+      <div class="content-block-header"><h6 class="content-block-title">Short and long fights</h6></div>
+      <p class="fv-note">Each preset's DPS at five fight lengths, as a share of its 180 s DPS. The class filter above applies.</p>
+      <div class="fv-chart" id="lenchart" data-source="lengths builds"></div>
+    </div>
+
+    <div class="content-block fv-card" id="mana-card">
+      <div class="content-block-header"><h6 class="content-block-title">Mana over a long fight</h6></div>
+      <p class="fv-note">Average mana over 100 fights of 8 minutes, with each preset's own consumes and mana potions. The list says when a typical fight first drops below 10%, with the middle half of fights as the box. The class filter above applies.</p>
+      <p class="fv-note" id="mana-sum"></p>
+      <div class="fv-mana">
+        <div class="fv-chart" id="manachart" data-source="mana mana_summary builds"></div>
+        <div class="fv-rank fv-mana-list" id="mana-list" data-source="mana_summary builds"></div>
       </div>
     </div>
 
@@ -243,7 +246,7 @@
         <div class="content-block-header"><h6 class="content-block-title">Races for this preset</h6></div>
         <p class="fv-note">180 s DPS on every race the class can be. ★ marks the best race.</p>
         <div class="fv-chart" id="sp-races"></div>
-        <button class="fv-linkbtn" id="sp-races-link">Racials, weapons and target types ›</button>
+        <button class="btn btn-link fv-linkbtn" type="button" id="sp-races-link">Racials, weapons and target types ›</button>
       </div>
     </div>
 

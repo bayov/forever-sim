@@ -287,33 +287,11 @@
 	display: none;
 }
 
+// Chips are the Events tab's filter chips (the shared filter-chip mixin). The report marks a chip that is on with
+// aria-pressed instead of .active.
 .fv-chip {
-	font: inherit;
-	font-size: var(--cds-font-size-caption);
-	border: 1px solid var(--color-border-line);
-	background: var(--color-panel);
-	color: var(--color-fg);
-	border-radius: 999px;
-	padding: 0.32rem 0.65rem;
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
+	@include filter-chip("[aria-pressed='true']");
 	flex: 0 0 auto;
-	white-space: nowrap;
-	transition:
-		background 0.15s,
-		border-color 0.15s;
-}
-
-.fv-chip:hover {
-	border-color: var(--color-fg-muted);
-}
-
-.fv-chip[aria-pressed='true'] {
-	background: var(--fv-sel-bg);
-	color: var(--fv-sel-fg);
-	border-color: transparent;
 }
 
 .fv-dot {
@@ -324,73 +302,62 @@
 	flex: 0 0 auto;
 	box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-fg) 15%, transparent);
 }
-// Selects are the sim UI's .form-select.
+// Selects are the sim UI's .form-select, in its own size.
 .fv select {
 	width: auto;
 	max-width: 100%;
 	min-width: 0;
-	font-size: var(--cds-font-size-body);
 }
 
+// The muted label in front of a control, like "Iteration" on the Events tab.
 .fv-label {
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg-muted);
+	@include control-label;
+	// Some of these are <label>s, which the sim UI makes bold.
+	font-weight: normal;
 	display: inline-flex;
 	gap: 0.35rem;
 	align-items: center;
 }
 
+// The fight length applies to the whole ranking, so it sits in a row of its own above the other filters. When we
+// show another length than the default 180 s, the label turns gold like the Events tab's "New" iteration.
 .fv-lenbar {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
-	justify-content: space-between;
-	padding: 0.35rem 0.4rem 0.35rem 0.65rem;
-	border-radius: var(--fv-r-sm);
-	background: var(--fv-gold-soft);
-	border: 1px solid color-mix(in srgb, var(--fv-gold) 30%, var(--color-border-line));
+	gap: var(--spacer-2) var(--spacer-3);
+	padding-bottom: var(--spacer-2);
+	border-bottom: 1px solid var(--line-color);
 }
 
-.fv-lenbar .fv-seg button {
-	padding-inline: 0.5rem;
+.fv-lenbar.off .fv-label {
+	color: var(--gold-soft);
 }
 
-.fv-lenbar .fv-label {
-	color: var(--color-fg);
-	font-weight: 600;
-	font-size: var(--cds-font-size-caption);
-}
-
-.fv-lenbar.off {
-	background: color-mix(in srgb, var(--fv-gold) 26%, transparent);
-}
-
+// The previous and next buttons beside a select. They look like the select itself: the input background and border.
 .fv-btn {
-	font: inherit;
-	font-size: var(--cds-font-size-body);
-	border: 1px solid var(--color-border-line);
-	background: var(--color-panel);
-	color: var(--color-fg);
-	border-radius: var(--fv-r-sm);
-	padding: 0.4rem 0.75rem;
-	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 0.75rem;
+	border: 1px solid $input-border-color;
+	border-radius: var(--bs-border-radius);
+	background: $input-bg;
+	color: var(--text-muted-color);
+	font-weight: 600;
+	transition:
+		border-color 0.15s ease-in-out,
+		color 0.15s ease-in-out;
 }
 
 .fv-btn:hover {
-	border-color: var(--color-fg-muted);
+	color: $ivory;
+	border-color: var(--text-muted-color);
 }
 
-.fv-btn[aria-pressed='true'] {
-	background: var(--fv-sel-bg);
-	color: var(--fv-sel-fg);
-}
-
+// Segmented toggles are the Events tab's (the shared segmented mixins). They scroll sideways instead of wrapping when
+// a phone is too narrow for every option.
 .fv-seg {
-	display: inline-flex;
-	padding: 2px;
-	gap: 2px;
-	border-radius: 999px;
-	background: color-mix(in srgb, var(--color-fg) 7%, transparent);
+	@include segmented;
 	max-width: 100%;
 	overflow-x: auto;
 	scrollbar-width: none;
@@ -401,60 +368,13 @@
 	display: none;
 }
 
-.fv-seg button {
-	font: inherit;
-	font-size: var(--cds-font-size-caption);
-	border: 0;
-	background: none;
-	color: var(--color-fg-muted);
-	padding: 0.32rem 0.62rem;
-	cursor: pointer;
-	border-radius: 999px;
-	white-space: nowrap;
+.fv-seg > button {
+	@include segmented-option("[aria-pressed='true']");
 	flex: 0 0 auto;
-	transition:
-		background 0.15s,
-		color 0.15s;
-}
-
-.fv-seg button:hover {
-	color: var(--color-fg);
-}
-
-.fv-seg button[aria-pressed='true'] {
-	background: var(--color-panel);
-	color: var(--color-fg);
-	box-shadow:
-		0 1px 2px rgba(0, 0, 0, 0.16),
-		0 0 0 1px var(--color-border-line);
-	font-weight: 600;
 }
 
 .fv-lanes #tl-lanes {
 	display: contents;
-}
-
-.fv-lanes .fv-chip {
-	font-size: 0.7rem;
-	padding: 0.2rem 0.6rem;
-	color: var(--color-fg-muted);
-}
-
-.fv-lanes .fv-chip[aria-pressed='true'] {
-	background: var(--color-panel);
-	color: var(--color-fg);
-	border-color: color-mix(in srgb, var(--fv-gold) 70%, var(--color-border-line));
-}
-
-.fv-lanes .fv-chip[aria-pressed='true']::before {
-	content: '✓';
-	color: var(--fv-gold);
-	font-weight: 700;
-}
-
-.fv-lanes .fv-chip[aria-pressed='false'] {
-	text-decoration: line-through;
-	opacity: 0.75;
 }
 
 .fv-focus {
@@ -464,7 +384,6 @@
 .fv-focus select {
 	flex: 1 1 auto;
 	max-width: 18rem;
-	font-size: var(--cds-font-size-caption);
 }
 
 .fv-list {
@@ -1041,7 +960,6 @@ ol.fv-list li::marker {
 	font-size: 1.15rem;
 	line-height: 1;
 	padding-inline: 0.9rem;
-	box-shadow: var(--fv-shadow);
 }
 
 .fv-spechead {
@@ -1182,21 +1100,10 @@ ol.fv-list li::marker {
 	display: none;
 }
 
+// The section links look like the Events tab's filter chips, but they only jump, so none of them is ever on.
 .fv-jump button {
+	@include filter-chip;
 	flex: 0 0 auto;
-	font: inherit;
-	font-size: 0.72rem;
-	color: var(--color-fg-muted);
-	background: var(--color-panel);
-	border: 1px solid var(--color-border-line);
-	border-radius: 999px;
-	padding: 0.25rem 0.65rem;
-	cursor: pointer;
-}
-
-.fv-jump button:hover {
-	color: var(--color-fg);
-	border-color: var(--color-fg-muted);
 }
 
 .fv-sbar {
@@ -1392,6 +1299,55 @@ ol.fv-list li::marker {
 	color: var(--fv-sel-fg);
 	cursor: pointer;
 	justify-self: start;
+}
+
+.fv-tip .fv-tip-sub {
+	color: var(--color-fg-muted);
+}
+
+.fv-tip .fv-tip-main {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 0.4rem;
+	white-space: nowrap;
+
+	.sw {
+		margin-right: 0;
+	}
+
+	b {
+		font-size: var(--cds-font-size-body);
+		font-weight: 600;
+		color: var(--color-fg);
+	}
+}
+
+// A line's value at every fight length, with the length under the pointer picked out.
+.fv-tip .fv-tip-strip {
+	margin-top: 0.3rem;
+	padding-top: 0.3rem;
+	display: grid;
+	grid-auto-flow: column;
+	grid-template-rows: auto auto;
+	column-gap: 0.6rem;
+	border-top: 1px solid var(--color-border-line);
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+
+	.k {
+		font-size: 0.7rem;
+		color: var(--color-fg-muted);
+	}
+
+	.v {
+		color: var(--color-fg-muted);
+	}
+
+	.on {
+		font-weight: 600;
+		color: var(--color-fg);
+	}
 }
 
 .fv-tip .sw {
@@ -1838,20 +1794,15 @@ ol.fv-list li::marker {
 
 .fv-scen .fv-label {
 	min-width: 3.1rem;
-	color: var(--color-fg);
-	font-weight: 600;
 }
 
 .fv-scen .fv-controls {
 	gap: var(--cds-gap-xs);
 }
 
-.fv-scen .fv-seg button {
-	padding-inline: 0.42rem;
-}
-
-.fv-scen .fv-seg {
-	background: color-mix(in srgb, var(--color-fg) 9%, transparent);
+// The target types don't all fit a phone, so the scenario toggles are a little tighter.
+.fv-scen .fv-seg > button {
+	padding-inline: 0.45rem;
 }
 
 .fv-scen-desc {
@@ -2148,21 +2099,14 @@ ol.fv-list li::marker {
 	font-weight: 600;
 }
 
-.fv-linkbtn {
-	font: inherit;
-	font-size: var(--cds-font-size-caption);
-	font-weight: 600;
+// Text buttons are Bootstrap's .btn-link, sized like the Events tab's "Reset filters".
+.fv-linkbtn.btn-link,
+.fv-reset.btn-link {
 	justify-self: start;
-	border: 1px solid var(--color-border-line);
-	background: var(--color-bg);
-	color: var(--color-fg);
-	border-radius: 999px;
-	padding: 0.3rem 0.75rem;
-	cursor: pointer;
-}
-
-.fv-linkbtn:hover {
-	border-color: var(--color-fg-muted);
+	padding: 0;
+	font-size: 0.75rem;
+	text-decoration: none;
+	white-space: nowrap;
 }
 
 .fv-tip-row {
@@ -2801,4 +2745,51 @@ ol.fv-list li::marker {
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	overflow-wrap: anywhere;
+}
+
+// The mana card: the chart, and next to it on wide screens the list of when each preset runs low. The list scrolls
+// when it is taller than the chart.
+.fv-mana {
+	display: grid;
+	gap: var(--cds-gap-sm) var(--block-spacer);
+	grid-template-columns: minmax(0, 1fr);
+
+	@media (min-width: 62rem) {
+		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+
+		.fv-mana-list {
+			max-height: 300px;
+			overflow-y: auto;
+		}
+	}
+}
+
+// The list is narrower than the ranking, so its rows keep the two-line phone layout at every width: name and time on
+// top, the bar under them. They have no rank number.
+.fv-mana-list .fv-row {
+	grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+	padding-block: 0.38rem 0.42rem;
+
+	& > .fv-ico,
+	& > .fv-dot {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+	}
+
+	.fv-row-main {
+		grid-column: 2;
+	}
+
+	.fv-row-end {
+		grid-column: 3;
+	}
+
+	.fv-track {
+		grid-column: 2 / -1;
+		grid-row: 2;
+	}
+}
+
+#mana-sum:empty {
+	display: none;
 }
