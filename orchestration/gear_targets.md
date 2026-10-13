@@ -17,7 +17,7 @@ Shares are linear (L): budget weight x amount / the set's weighted total, enchan
 Rules for the round:
 - Budget per piece, weapons and trinkets: standards 1b (per archetype, with the 1.7-norm shape check).
 - Hit: item 4 decides. Hit goes to the spec's cap at the best mix, counting talents and the 2-piece bonus; the table's hit column is only SoD's own share. Hit is set first, and the other non-Stamina, non-Spirit stats keep the table's proportions in the room left.
-- Tolerance: every non-Stamina stat within +/- 3 points (L) of its target; Stamina within +/- 1.5.
+- Tolerance: every non-Stamina stat within +/- 3 points (L) of its HIT-ADJUSTED target; Stamina within +/- 1.5. The hit-adjusted target takes the set's actual capped hit share, then re-scales the other non-Stamina, non-Spirit targets in the table's proportions to fill the room left. Example: Shadow at 10.8% hit gives SP 37.0, Int 15.2, Crit 10.4. The table's own figures apply only where hit matches SoD's share.
 - Guardrail: no one stat over 55% of the non-Stamina share. The last column shows the top stat's share.
 - Mage: one shared set for Frostfire, Frost and Fire; Arcane keeps its own.
 - Warlock: one set for Destruction, Affliction and Fire; Demonology keeps its own.
