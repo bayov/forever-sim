@@ -26,7 +26,7 @@ from run_build import run, D, LINE
 
 DUR = 480
 STEP = 5
-LOW = 10  # "runs low" means mana below this % of max
+LOW = 15  # "runs low" means mana below this % of max. Most rotations start holding spells around 15 to 20%.
 FIGHTS = int(os.environ.get('FIGHTS', 100))
 AGG_ITERS = 5000
 PAR = int(os.environ.get('PAR', 8))
@@ -134,7 +134,7 @@ def datasets():
         at = lambda t: r1(sum(cols[t // b['step']]) / len(cols[t // b['step']]))
         summary.append({'build': b['id'], 'fights': b['fights'], 'dur': b['dur'], 'maxMana': round(b['maxMana']),
                         'lowAt': r1(q(low, 0.5)), 'lowAtP25': r1(q(low, 0.25)), 'lowAtP75': r1(q(low, 0.75)),
-                        'share10': r1(100 * sum(1 for v in low if not math.isinf(v)) / len(low)),
+                        'lowPct': LOW, 'shareLow': r1(100 * sum(1 for v in low if not math.isinf(v)) / len(low)),
                         'pctAt60': at(60), 'pctAt180': at(180), 'pctAt300': at(300), 'pctAt480': at(b['dur']),
                         'minPct': min(r['pct'] for r in curve if r['build'] == b['id']),
                         'spentPerSec': r1(b['spentPerSec']), 'gainedPerSec': r1(b['gainedPerSec']),

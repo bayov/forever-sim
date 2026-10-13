@@ -42,6 +42,9 @@ interface RotationRow {
 	events: Array<RowEvent>;
 	// An aura that's up from the pull to the end of the fight.
 	alwaysUp?: boolean;
+	// The icons in the row, at the time their cast lands or their aura starts. An aura's stacks
+	// at that moment go in the icon's corner.
+	icons?: Array<{ time: number; elem: HTMLElement }>;
 }
 
 // One thing drawn in a row, like a cast or an aura's uptime, with the text of the logs it came
@@ -223,6 +226,10 @@ export class Timeline extends ResultComponent {
 	// Fires when the zoom changes, also from Alt + scroll.
 	readonly zoomEmitter = new TypedEvent<void>('TimelineZoom');
 
+	// The chart's lines we don't show, by name. Threat starts hidden, because its axis climbs all
+	// fight and squeezes the other lines, and most of the time we look at DPS and mana.
+	private readonly hiddenChartSeries = new Set<string>(['Threat']);
+
 	private resetCallbacks: (() => void)[] = [];
 
 	constructor(config: TimelineConfig) {
@@ -254,7 +261,9 @@ export class Timeline extends ResultComponent {
 				background: 'transparent',
 				foreColor: '#8e948f',
 				fontFamily: 'inherit',
-				height: '100%',
+				// A fixed height, legend included. With '100%' ApexCharts measured the wrong parent and
+				// drew past the bottom of the card, which cut the legend off.
+				height: 512,
 				id: 'dpsResources',
 				type: 'line',
 				zoom: {
@@ -550,6 +559,11 @@ export class Timeline extends ResultComponent {
 			yaxis: [],
 			chart: {
 				events: {
+					// The legend shows and hides a line. We remember it for the next iteration we draw.
+					legendClick: (chart: any, seriesIndex: number) => {
+						const name = chart.w.globals.seriesNames[seriesIndex];
+						if (!this.hiddenChartSeries.delete(name)) this.hiddenChartSeries.add(name);
+					},
 					beforeResetZoom: () => {
 						return {
 							xaxis: {
@@ -597,6 +611,7 @@ export class Timeline extends ResultComponent {
 			this.addDpsYAxis(maxDps, options);
 		}
 
+		options.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
 		this.dpsResourcesPlot.updateOptions(options);
 	}
 
@@ -1341,6 +1356,7 @@ export class Timeline extends ResultComponent {
 			const iconElem = (<a className="rotation-timeline-cast-icon" />) as HTMLAnchorElement;
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
+			(row.icons ??= []).push({ time: castLog.timestamp + castLog.castTime + travelTime, elem: iconElem });
 
 			const notable = notableOutcome(castLog);
 			if (notable) {
@@ -1471,10 +1487,13 @@ export class Timeline extends ResultComponent {
 		};
 		this.addRow(row);
 
-		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row);
+		this.applyAuraUptimeLogsToRow(auraUptimeLogs, row, true);
 	}
 
-	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, row: RotationRow) {
+	// Draws a bar for each time the aura is up. In the aura's own lane, the bar starts with the
+	// aura's icon, like a cast. A cast lane shows its ability's auras without one, because the
+	// cast that put the aura up already has it.
+	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, row: RotationRow, withIcon = false) {
 		auraUptimeLogs.forEach(aul => {
 			const auraElem = (
 				<div
@@ -1487,6 +1506,12 @@ export class Timeline extends ResultComponent {
 			);
 			row.row.appendChild(auraElem);
 			this.tint(auraElem as HTMLElement, aul.actionId?.iconUrl);
+			if (withIcon && aul.actionId) {
+				const iconElem = (<a className="rotation-timeline-cast-icon rotation-timeline-aura-icon" />) as HTMLAnchorElement;
+				aul.actionId.setBackground(iconElem);
+				auraElem.appendChild(iconElem);
+				(row.icons ??= []).push({ time: aul.gainedAt, elem: iconElem });
+			}
 			row.events.push({ elem: auraElem, text: searchText([aul, ...aul.stacksChange]) });
 
 			const tt = (
@@ -1510,6 +1535,14 @@ export class Timeline extends ResultComponent {
 					return;
 				}
 
+				// When an icon in the row is at the same moment, like the Sunder Armor cast that added
+				// the stack, the count goes in the icon's bottom right corner, like on a buff in the
+				// game. Otherwise, like when a Flurry charge gets used up, it goes in the bar.
+				const icon = row.icons?.find(icon => Math.abs(icon.time - scl.timestamp) < 0.05);
+				if (icon) {
+					const countElem = icon.elem.querySelector('.rotation-icon-count') ?? icon.elem.appendChild(<span className="rotation-icon-count" />);
+					countElem.textContent = String(scl.newStacks);
+				}
 				const stacksChangeElem = (
 					<div
 						className="rotation-timeline-stacks-change"
@@ -1517,7 +1550,7 @@ export class Timeline extends ResultComponent {
 							left: this.timeToPx(scl.timestamp - aul.timestamp),
 							width: this.timeToPx(aul.stacksChange[i + 1] ? aul.stacksChange[i + 1].timestamp - scl.timestamp : aul.fadedAt - scl.timestamp),
 						}}>
-						{String(scl.newStacks)}
+						{icon ? '' : String(scl.newStacks)}
 					</div>
 				);
 				auraElem.appendChild(stacksChangeElem);

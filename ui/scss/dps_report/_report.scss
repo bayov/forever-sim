@@ -272,19 +272,12 @@
 	align-items: center;
 }
 
+// The class pickers wrap on a phone. The padding leaves room for the gold ring of the picked class.
 #rank-classes,
 #heat-classes {
-	flex-wrap: nowrap;
-	overflow-x: auto;
-	scrollbar-width: none;
 	padding-block: 2px;
 	margin-inline: -2px;
 	padding-inline: 2px;
-}
-
-#rank-classes::-webkit-scrollbar,
-#heat-classes::-webkit-scrollbar {
-	display: none;
 }
 
 // Chips are the Events tab's filter chips (the shared filter-chip mixin). The report marks a chip that is on with
@@ -408,12 +401,6 @@ ol.fv-list li::marker {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.35rem;
-}
-
-.fv-talbuild {
-	display: grid;
-	gap: 0.4rem;
-	margin: 0.25rem 0 0.75rem;
 }
 
 .fv-tag {
@@ -914,11 +901,13 @@ ol.fv-list li::marker {
 	font-size: 0.68rem;
 }
 
+// The row's preset name. The left padding leaves room for the colored ring around its icon, which the overflow
+// would cut off otherwise.
 .fv-heat .hl {
 	position: sticky;
 	left: 0;
 	background: var(--color-panel);
-	padding: 0.3rem 0.4rem 0.3rem 0;
+	padding: 0.3rem 0.4rem 0.3rem 3px;
 	white-space: nowrap;
 	display: flex;
 	gap: 0.35rem;
@@ -927,6 +916,10 @@ ol.fv-list li::marker {
 	max-width: 8.5rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.fv-heat .hl > .fv-ico {
+	flex-shrink: 0;
 }
 
 .fv-heat .na {
@@ -1081,29 +1074,33 @@ ol.fv-list li::marker {
 	}
 }
 
+// The section links on Specs look like the Results tab's own tabs in a spec sim: a bar that sticks under the header
+// with a muted label in front, and a gold line under the section we are reading.
 .fv-jump {
-	display: flex;
-	gap: 0.3rem;
-	overflow-x: auto;
-	scrollbar-width: none;
-	position: sticky;
-	// Right under the header tabs, frosted like the header once the page scrolls.
-	top: var(--sim-header-height);
-	z-index: 5;
-	padding: 0.35rem 0.1rem;
-	margin-block: -0.2rem;
-	background: rgba(11, 15, 21, 0.75);
-	backdrop-filter: blur(8px);
+	@include sub-toolbar;
+	--dr-toolbar-height: 2.75rem;
+	margin-bottom: calc(-1 * var(--block-spacer) / 2);
+
+	.fv-jump-title {
+		@include sub-toolbar-title;
+		align-self: center;
+	}
+
+	.fv-jump-chev {
+		font-size: 0.75rem;
+		opacity: 0.6;
+	}
+
+	.fv-jump-tabs {
+		@include sub-tabs;
+		min-width: 0;
+	}
 }
 
-.fv-jump::-webkit-scrollbar {
-	display: none;
-}
-
-// The section links look like the Events tab's filter chips, but they only jump, so none of them is ever on.
-.fv-jump button {
-	@include filter-chip;
-	flex: 0 0 auto;
+@include media-breakpoint-down(md) {
+	.fv-jump .fv-jump-title {
+		display: none;
+	}
 }
 
 .fv-sbar {
@@ -2790,6 +2787,38 @@ ol.fv-list li::marker {
 	}
 }
 
+// Pointing at a line in the chart lights up its row, like pointing at the row itself.
+.fv-mana-list .fv-row.is-hover {
+	background: color-mix(in srgb, var(--color-fg) 8%, transparent);
+}
+
 #mana-sum:empty {
 	display: none;
+}
+
+// The class filter, drawn like the sim UI's race picker (see RacePicker).
+.fv-icon-picker {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: var(--spacer-2);
+
+	.fv-pick-value {
+		color: var(--text-muted-color);
+		font-size: 0.875rem;
+	}
+
+	.fv-pick-options {
+		flex-basis: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-top: 0.3rem;
+	}
+
+	.fv-pick-option {
+		@include icon-picker-option;
+		width: 2.5rem;
+		height: 2.5rem;
+	}
 }

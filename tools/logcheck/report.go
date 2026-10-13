@@ -149,6 +149,66 @@ func (r *report) sheet() {
 	fmt.Println()
 }
 
+// weaponSkills warns when a weapon we swung in the window is below the most skill for our level.
+//
+// The sim takes the gap off our weapon skill, but its glancing and parry chances don't follow
+// skill. So mobs glance and parry more in the log than in the sim: on 10-10 at Unarmed 85 of
+// 150 it was 30 to 45% glances on level 28 and 29 mobs, where the sim gives none. The warning
+// goes in the flagged list ahead of those rows, so they read as the skill and not a new finding.
+//
+// The export has our skill at export time. Skill only goes up, so an export from after the
+// window has the most we could have had during it, and one from before has the least.
+func (r *report) weaponSkills(fullSkill bool) {
+	swings := 0
+	for _, e := range r.cl.events {
+		if e.srcGUID == r.cl.me && (e.kind == "SWING_DAMAGE" || e.kind == "SWING_MISSED") {
+			swings++
+		}
+	}
+	if swings == 0 {
+		return
+	}
+	skills := map[string][2]int{}
+	for _, skill := range r.ex.Skills {
+		skills[skill.Name] = [2]int{skill.Rank, skill.Max}
+	}
+	var low []string
+	hands := []struct {
+		slot proto.ItemSlot
+		name string
+	}{{proto.ItemSlot_ItemSlotMainHand, "main hand"}, {proto.ItemSlot_ItemSlotOffHand, "off hand"}}
+	for _, hand := range hands {
+		item, ok := core.ItemsByID[r.char.player.Equipment.Items[hand.slot].Id]
+		if !ok {
+			continue
+		}
+		// A shield or held off hand item has no skill name, so it never shows up here.
+		name := weaponSkillName(item)
+		if s, ok := skills[name]; ok && s[0] < s[1] {
+			low = append(low, fmt.Sprintf("%s %d of %d (%s in the %s)", name, s[0], s[1], item.Name, hand.name))
+		}
+	}
+	if len(low) == 0 {
+		return
+	}
+
+	when := "taken inside the window"
+	switch {
+	case r.ex.time.After(r.cl.to):
+		when = "taken after the window, so at most this during it"
+	case r.ex.time.Before(r.cl.from):
+		when = "taken before the window, so at least this during it"
+	}
+	effect := "The sim takes the gap off its weapon skill, but its glancing and parry chances don't follow skill, so expect more glances and parries in the log than in the sim"
+	if fullSkill {
+		effect = "The sim runs at full skill (-full-skill), so every melee row reads off"
+	}
+	what := fmt.Sprintf("weapon skill below the most for our level: %s, from the export %s, with %d swings in the window. %s",
+		strings.Join(low, ", "), when, swings, effect)
+	fmt.Printf("WARNING: %s.\n\n", what)
+	r.flagged = append(r.flagged, what)
+}
+
 // mainHandSkillGap is how far the main hand's weapon skill is below the most for our level.
 // The client's sheet takes 0.04% crit off for each point, and the sim's crit stat doesn't.
 func (r *report) mainHandSkillGap() float64 {

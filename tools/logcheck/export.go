@@ -458,28 +458,6 @@ func weaponSkillGaps(ex *export) map[string]float64 {
 	return gaps
 }
 
-// weaponSkillNotes lists the equipped weapons whose skill is below the most for our level.
-// The sim's glancing chance doesn't follow our skill, but on the beta it does, so their
-// glances read high.
-func (c *character) weaponSkillNotes(ex *export) []string {
-	skills := map[string][2]int{}
-	for _, skill := range ex.Skills {
-		skills[skill.Name] = [2]int{skill.Rank, skill.Max}
-	}
-	var notes []string
-	for _, slot := range []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand} {
-		item, ok := core.ItemsByID[c.player.Equipment.Items[slot].Id]
-		if !ok {
-			continue
-		}
-		name := weaponSkillName(item)
-		if s, ok := skills[name]; ok && s[0] < s[1] {
-			notes = append(notes, fmt.Sprintf("%s skill is %d of %d (%s), and the sim's glancing chance doesn't follow skill", name, s[0], s[1], item.Name))
-		}
-	}
-	return notes
-}
-
 func weaponSkillName(item core.Item) string {
 	twoHand := item.HandType == proto.HandType_HandTypeTwoHand
 	switch item.WeaponType {

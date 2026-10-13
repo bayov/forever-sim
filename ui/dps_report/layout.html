@@ -76,7 +76,7 @@
 
     <div class="content-block fv-card" id="mana-card">
       <div class="content-block-header"><h6 class="content-block-title">Mana over a long fight</h6></div>
-      <p class="fv-note">Average mana over 100 fights of 8 minutes, with each preset's own consumes and mana potions. The list says when a typical fight first drops below 10%, with the middle half of fights as the box. The class filter above applies.</p>
+      <p class="fv-note">Time until below 15% mana, in 8 minute fights.</p>
       <p class="fv-note" id="mana-sum"></p>
       <div class="fv-mana">
         <div class="fv-chart" id="manachart" data-source="mana mana_summary builds"></div>
@@ -161,16 +161,13 @@
       <p class="fv-swipe">Swipe here for the next or previous preset</p>
     </div>
     <div class="fv-tiles" id="sp-tiles"></div>
-    <nav class="fv-jump" id="sp-jump" aria-label="Jump to a section"></nav>
+    <nav class="fv-jump" id="sp-jump-bar" aria-label="Jump to a section">
+      <span class="fv-jump-title">Sections <span class="fv-jump-chev">›</span></span>
+      <ul class="nav fv-jump-tabs" id="sp-jump"></ul>
+    </nav>
 
     <div class="content-block fv-card" id="sp-tal-card" data-jump="Talents">
       <div class="content-block-header"><h6 class="content-block-title">Talents</h6></div>
-      <p class="fv-note">Laid out as in the sim. Gold is maxed, green is partly spent, grey is empty. Tap a talent for its tooltip.</p>
-      <div class="fv-talbuild">
-        <div class="fv-meta" id="sp-trees"></div>
-        <div class="fv-code" id="sp-talents"></div>
-        <div class="fv-chips" id="sp-keytal"></div>
-      </div>
       <div class="fv-seg" id="sp-tal-seg" role="group" aria-label="Talent tree"></div>
       <div class="fv-trees" id="sp-tal"></div>
     </div>

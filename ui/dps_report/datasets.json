@@ -67,15 +67,15 @@
   "title": "Mana over a long fight",
   "description": "Per mana-using preset, its mana as a % of max every 5 s through a 480 s fight with its own consumes and rotation: the average over 100 fights (pct) and the 25th and 75th percentile fight (p25, p75).",
   "updated": {
-   "at": "2026-10-13T20:52:29Z",
+   "at": "2026-10-13T21:08:49.217Z",
    "by": "Claude (forever-sim)"
   }
  },
  "mana_summary": {
   "title": "When mana runs low",
-  "description": "Per mana-using preset over the same 480 s fights: when mana first drops below 10% of max (median and 25th to 75th percentile fight, empty when most fights never do), the share of fights that ever do, mana % at 60, 180, 300 and 480 s, mana spent and gained per second, and the sim's seconds out of mana, time to OOM and mana left at the end over 5,000 fights.",
+  "description": "Per mana-using preset over the same 480 s fights: when mana first drops below 15% of max (median and 25th to 75th percentile fight, empty when most fights never do), the share of fights that ever do, mana % at 60, 180, 300 and 480 s, mana spent and gained per second, and the sim's seconds out of mana, time to OOM and mana left at the end over 5,000 fights.",
   "updated": {
-   "at": "2026-10-13T20:52:29Z",
+   "at": "2026-10-13T21:08:49.221Z",
    "by": "Claude (forever-sim)"
   }
  },

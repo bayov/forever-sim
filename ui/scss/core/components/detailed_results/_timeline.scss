@@ -93,10 +93,9 @@
 }
 
 .timeline-plot {
-	// ApexCharts sizes itself from the element's whole height, padding included, so we keep the
-	// chart off the card's edges with a margin.
+	// The chart sets its own height, see the Timeline constructor. We keep it off the card's
+	// edges with a margin, because ApexCharts sizes itself from the element's padding box.
 	&.dps-resources-plot {
-		height: 32rem;
 		margin: var(--spacer-3);
 	}
 
@@ -540,6 +539,7 @@
 
 .rotation-timeline-stacks-change {
 	position: absolute;
+	top: 0;
 	height: 24px;
 	display: flex;
 	align-items: center;
@@ -548,6 +548,39 @@
 	font-size: 0.6875rem;
 	font-weight: 600;
 	overflow-x: hidden;
+}
+
+// An aura's stacks in the bottom right corner of an icon, like on a buff in the game.
+.rotation-icon-count {
+	position: absolute;
+	right: 1px;
+	bottom: 0;
+	z-index: 1;
+	font-size: 10px;
+	font-weight: 800;
+	line-height: 1;
+	color: #fff;
+	text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+	pointer-events: none;
+}
+
+// A cast's outcome badge moves to the bottom left when the stacks are in the bottom right.
+.rotation-timeline-cast:has(.rotation-icon-count) .rotation-timeline-cast-badge {
+	left: -5px;
+	transform: none;
+}
+
+// The icon at the start of an aura's bar. It covers the bar's colored left edge. We nest it under
+// the bar, so it wins over the cast icon's position, which comes later in the file.
+.rotation-timeline-aura .rotation-timeline-aura-icon {
+	position: absolute;
+	top: 0;
+	left: -2px;
+	z-index: 1;
 }
 
 // The GCD row. Each bar is one GCD in the color of its ability's icon, with the cast time as

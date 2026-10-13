@@ -403,6 +403,9 @@ export function startReport(dash) {
         hideTT(); e.preventDefault(); e.stopPropagation(); return;
       }
       const n = e.target.closest ? e.target.closest('[data-tt]') : null;
+      // A toggle, like a class icon in the class filter, does its job on click, so its tooltip closes instead of
+      // staying pinned.
+      if (n && n.hasAttribute('aria-pressed')) { hideTT(); return; }
       if (n && n.hasAttribute('data-tt-tap')) {
         if (n === ttNode && ttPinned) hideTT();
         else { showTT(n, { x: e.clientX, y: e.clientY }); ttPinned = true; }
@@ -451,27 +454,60 @@ export function startReport(dash) {
     }, { passive: true });
   }
   // jump to a section of the spec page
-  $('#sp-jump').replaceChildren(...[...document.querySelectorAll('#spec [data-jump]')].map((card) => {
-    const bt = el('button', { text: card.dataset.jump });
-    bt.addEventListener('click', () => { const d = card.querySelector(':scope > details'); if (d) d.open = true; card.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); });
-    return bt;
-  }));
+  // It sticks under the header, and the section we are reading gets the gold line.
+  {
+    const cards = [...document.querySelectorAll('#spec [data-jump]')];
+    const bar = $('#sp-jump-bar'), scroller = document.querySelector('.dps-report-sim-ui') || document.scrollingElement;
+    let picked = -1;
+    const links = cards.map((card, i) => {
+      const bt = el('button', { class: 'nav-link', type: 'button', text: card.dataset.jump });
+      bt.addEventListener('click', () => {
+        picked = i;
+        const d = card.querySelector(':scope > details'); if (d) d.open = true;
+        // Aim for where the bar sits once it sticks under the header, not where it is now.
+        const stuckBottom = document.querySelector('.sim-header').getBoundingClientRect().bottom + bar.offsetHeight;
+        const top = card.getBoundingClientRect().top - stuckBottom - 8;
+        scroller.scrollBy({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+      return bt;
+    });
+    $('#sp-jump').replaceChildren(...links.map((bt) => el('li', { class: 'nav-item' }, bt)));
+    const spy = () => {
+      if (bar.offsetParent === null) return;
+      const r = bar.getBoundingClientRect(), head = document.querySelector('.sim-header').getBoundingClientRect().bottom;
+      bar.classList.toggle('stuck', r.top <= head + 1);
+      // Two cards side by side start at the same height. Of those, the one we clicked wins, or else the left one.
+      const tops = cards.map((c) => c.getBoundingClientRect().top);
+      const passed = tops.filter((t) => t <= r.bottom + 24);
+      const rowTop = passed.length ? Math.max(...passed) : tops[0];
+      const row = cards.map((_, i) => i).filter((i) => Math.abs(tops[i] - rowTop) < 4);
+      const on = row.includes(picked) ? picked : row[0];
+      links.forEach((bt, i) => bt.classList.toggle('active', i === on));
+    };
+    scroller.addEventListener('scroll', spy, { passive: true });
+    new ResizeObserver(spy).observe(bar);
+  }
 
   // ---------- shared pieces ----------
+  // The class filter looks like the sim UI's race picker: a label that says what we picked, then a row of class icons.
+  // The picked class is lit with a gold ring and the others are dimmed. Clicking the picked class again shows all.
   const classChips = (host, key) => {
-    const haveIcons = !!iconMap();
-    if (host.childElementCount && (host.dataset.icons === '1' || !haveIcons)) {
-      host.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.c === st[key])));
+    const m = iconMap();
+    const name = st[key] === 'All' ? 'All classes' : st[key];
+    if (host.childElementCount && (host.dataset.icons === '1' || !m)) {
+      host.querySelector('.fv-pick-value').textContent = name;
+      host.querySelectorAll('button').forEach((b) => { b.setAttribute('aria-pressed', String(b.dataset.c === st[key])); b.classList.toggle('active', b.dataset.c === st[key]); });
       return;
     }
-    host.replaceChildren();
-    host.dataset.icons = haveIcons ? '1' : '0';
-    for (const c of ['All', ...CLASSES]) {
-      const b = el('button', { class: 'fv-chip', 'data-c': c, 'aria-pressed': String(c === st[key]), 'data-tt': c === 'All' ? null : 'c:' + c },
-        c === 'All' ? null : (ringed('classicon_' + c.toLowerCase(), 'fv-ico ring', ccol(c)) || el('span', { class: 'fv-dot', style: `background:${ccol(c)}` })), c);
-      b.addEventListener('click', () => { st[key] = c; persist(); render(); });
-      host.append(b);
-    }
+    host.dataset.icons = m ? '1' : '0';
+    host.classList.add('fv-icon-picker');
+    host.replaceChildren(el('span', { class: 'fv-label', text: 'Class' }), el('span', { class: 'fv-pick-value', text: name }),
+      el('div', { class: 'fv-pick-options' }, ...CLASSES.map((c) => {
+        const u = m && m.get('classicon_' + c.toLowerCase());
+        const b = el('button', { type: 'button', class: 'fv-pick-option' + (c === st[key] ? ' active' : ''), 'data-c': c, 'aria-label': c, 'aria-pressed': String(c === st[key]), 'data-tt': 'c:' + c, style: u ? `background-image:url("${u}")` : `background:${ccol(c)}` });
+        b.addEventListener('click', () => { st[key] = st[key] === c ? 'All' : c; persist(); render(); });
+        return b;
+      })));
   };
   const fail = (host) => { host.replaceChildren(el('div', { class: 'fv-fail', text: 'Failed to load' })); };
   const waitOr = (host, ids) => {
@@ -618,6 +654,9 @@ export function startReport(dash) {
     const rule = svg.append('line').attr('y1', m.t).attr('y2', H - m.b).style('stroke', 'var(--color-fg)').attr('stroke-dasharray', '3 3').attr('opacity', 0).style('pointer-events', 'none');
     const dot = svg.append('circle').attr('r', 5).style('fill', 'var(--color-panel)').attr('stroke-width', 2.5).attr('opacity', 0).style('pointer-events', 'none');
     const pickable = series.filter((s) => s.pick !== false);
+    const focusOn = (s) => { for (const [ss, pa] of paths) pa.attr('opacity', !s ? ss.op ?? 1 : ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2); };
+    // With no line asked for, the picked one (opts.hlId) stays lit, or none.
+    const highlight = (id) => focusOn(series.find((q) => q.id === (id || opts.hlId)) || null);
     const pick = (e, pinned) => {
       const [px, py] = d3.pointer(e, svg.node());
       const sx = xs.reduce((a, b) => (Math.abs(x(b) - px) < Math.abs(x(a) - px) ? b : a));
@@ -627,7 +666,8 @@ export function startReport(dash) {
       const [s, p] = best;
       rule.attr('x1', x(sx)).attr('x2', x(sx)).attr('opacity', 0.5);
       dot.attr('cx', x(sx)).attr('cy', y(p.v)).style('stroke', s.color).attr('opacity', 1);
-      if (opts.focus) for (const [ss, pa] of paths) pa.attr('opacity', ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2);
+      if (opts.focus) focusOn(s);
+      if (opts.onHover) opts.onHover(s.id);
       const others = series.length <= 3 ? series.filter((q) => q !== s).map((q) => { const pp = q.pts.find((r) => r.s === sx); return pp ? el('span', {}, el('i', { class: 'sw', style: `background:${q.color}` }), `${q.name}: ${opts.tipFmt ? opts.tipFmt(pp) : f1(pp.v) + ' DPS'}`) : null; }) : [];
       const [hx, hy] = d3.pointer(e, host);
       // With many lines, a small table of the picked line at every length takes the place of the other lines' values.
@@ -645,9 +685,11 @@ export function startReport(dash) {
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', Math.max(0, W - m.l - m.r + 8)).attr('height', H - m.b).style('fill', 'transparent').attr('data-tip', '1').style('cursor', 'crosshair')
       .on('click', (e) => { e.stopPropagation(); pick(e, true); })
       .on('pointermove', (e) => { if (e.pointerType === 'mouse' && !tipPinned) pick(e, false); })
-      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); } });
+      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); highlight(null); if (opts.onHover) opts.onHover(null); } });
     host.replaceChildren(svg.node());
-    if (opts.hlId) { const s = series.find((q) => q.id === opts.hlId); if (s) for (const [ss, pa] of paths) pa.attr('opacity', ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2); }
+    highlight(null);
+    // Something outside the chart, like a list of the same presets, can light up one line.
+    return { highlight };
   };
 
   const drawLenAll = () => {
@@ -679,13 +721,16 @@ export function startReport(dash) {
     $('#mana-sum').textContent = st.cls === 'Warrior' || st.cls === 'Rogue' ? `${st.cls}s don't use mana.`
       : missing.length ? `No mana data yet for ${[...new Set(missing.map((b) => b.class))].join(', ').replace(/, ([^,]*)$/, ' and $1')} (${missing.length} preset${missing.length > 1 ? 's' : ''}).` : '';
     if (!shown.length) { host.replaceChildren(); list.replaceChildren(); return; }
+    const lowPct = rowsOf('mana_summary')[0]?.lowPct ?? 15;
     const series = manaBuilds.filter((b) => sum.has(b.id)).map((b) => {
       const on = shown.includes(b);
       const pts = (curves.get(b.id) || []).map((r) => ({ s: r.t, v: r.pct, p25: r.p25, p75: r.p75 }));
       return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.06, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, pts };
     }).sort((a, b) => a.op - b.op);
-    drawLenChart(host, series, {
-      fmt: (v) => d3.format('.0f')(v) + '%', yDomain: [0, 100], ref: 10, refLabel: 'runs low', xTicks: [0, 60, 120, 180, 240, 300, 360, 420, 480], xFmt: (d) => mmss(d),
+    const hoverRow = (id) => list.querySelectorAll('.fv-row').forEach((r) => r.classList.toggle('is-hover', r.dataset.id === id));
+    const chart = drawLenChart(host, series, {
+      onHover: hoverRow,
+      fmt: (v) => d3.format('.0f')(v) + '%', yDomain: [0, 100], ref: lowPct, refLabel: `${lowPct}%`, xTicks: [0, 60, 120, 180, 240, 300, 360, 420, 480], xFmt: (d) => mmss(d),
       strip: false, focus: true, open: true, hlId: st.hlMana, onPick: (id) => { st.hlMana = id; persist(); },
       tipSub: (t) => `at ${mmss(t)}`, tipMain: (p) => [`${d3.format('.0f')(p.v)}% mana`, `middle half of fights ${d3.format('.0f')(p.p25)} to ${d3.format('.0f')(p.p75)}%`],
     });
@@ -697,22 +742,28 @@ export function startReport(dash) {
       const track = el('div', { class: 'fv-track' });
       if (low) track.append(el('span', { class: 'fv-box', style: `left:${x(m.lowAtP25 ?? m.lowAt)};width:calc(${x(m.lowAtP75 ?? dur)} - ${x(m.lowAtP25 ?? m.lowAt)})` }), el('span', { class: 'fv-med', style: `left:${x(m.lowAt)}` }));
       else track.append(el('span', { class: 'fv-bar', style: `width:100%;background:${ccol(b.class)};opacity:0.35` }));
-      const row = el('button', { class: 'fv-row', 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${low ? 'below 10% mana at ' + mmss(m.lowAt) : 'never below 10% mana in a typical fight'}` },
+      const row = el('button', { class: 'fv-row', 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${low ? `below ${lowPct}% mana at ${mmss(m.lowAt)}` : `never below ${lowPct}% mana in a typical fight`}` },
         specIco(b) || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }),
         el('span', { class: 'fv-row-main' }, el('span', { class: 'fv-row-name' }, el('b', { text: b.build }), el('span', { text: '· ' + b.class }))),
         el('span', { class: 'fv-row-end' }, el('span', { class: 'fv-row-val', text: low ? mmss(m.lowAt) : '8:00+' }), el('span', { class: 'fv-row-gap', text: `${d3.format('.0f')(m.pctAt480)}% left at 8:00` })),
         track);
-      row.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (row.classList.contains('is-hl')) { openSpec(b.id); return; }
+      // Pointing at a row shows its numbers, and a click keeps them up. A second click opens the preset in Specs.
+      const tip = (pinned) => {
         const card = $('#mana-card'), cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, [
-          low ? `Below 10% mana at ${mmss(m.lowAt)} in a typical fight` : 'A typical fight never drops below 10% mana',
+          low ? `Below ${lowPct}% mana at ${mmss(m.lowAt)} in a typical fight` : `A typical fight never drops below ${lowPct}% mana`,
           low && m.lowAtP25 != null ? `Middle half of fights: ${mmss(m.lowAtP25)} to ${m.lowAtP75 != null ? mmss(m.lowAtP75) : 'never'}` : null,
-          `${d3.format('.0f')(m.share10)}% of fights ever drop below 10%`,
+          `${d3.format('.0f')(m.shareLow ?? m.share10)}% of fights ever drop below ${lowPct}%`,
           `Mana left: ${d3.format('.0f')(m.pctAt180)}% at 3:00, ${d3.format('.0f')(m.pctAt480)}% at 8:00`,
           `${d3.format(',')(m.maxMana)} mana, spends ${f1(m.spentPerSec)} and gains ${f1(m.gainedPerSec)} a second`,
-        ], { hl: row, open: b.id, below: true });
+        ], { hl: row, open: b.id, below: true, pinned });
+      };
+      row.addEventListener('pointerenter', (e) => { chart.highlight(b.id); row.classList.add('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
+      row.addEventListener('pointerleave', (e) => { chart.highlight(null); row.classList.remove('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) hideTip(); });
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (row.classList.contains('is-hl') && tipPinned) { openSpec(b.id); return; }
+        tip(true);
       });
       return row;
     }));
@@ -1138,18 +1189,15 @@ export function startReport(dash) {
       tile('Lucky fight', f1(b.p90), '90th percentile', 'builds', 'p90', W),
       tt(tile('Best race', b.bestRace, `${f1(b.bestRaceDps)} DPS`, 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
       extra);
-    for (const h of ['#sp-head', '#sp-tiles', '#sp-talents', '#sp-trees']) $(h).dataset.build = b.id;
+    for (const h of ['#sp-head', '#sp-tiles']) $(h).dataset.build = b.id;
     const i = order.findIndex((x) => x.id === b.id);
     $('#sp-prev').onclick = () => openSpec(order[(i - 1 + order.length) % order.length].id);
     $('#sp-next').onclick = () => openSpec(order[(i + 1) % order.length].id);
 
-    // talents + rotation
-    $('#sp-trees').replaceChildren(el('span', { text: b.trees }), el('span', { text: b.treePoints }));
-    mark($('#sp-talents'), 'builds', 'talents', W).textContent = b.talents;
+    // caveats
     const notes = rowsOf('notes');
     const nb = (notes || []).filter((n) => n.build === b.id);
-    for (const h of ['#sp-keytal', '#sp-caveats']) $(h).dataset.build = notes ? b.id : '';
-    $('#sp-keytal').replaceChildren(...nb.filter((n) => n.kind === 'keyTalents').map((n) => mark(el('span', { class: 'fv-tag', text: n.text }), 'notes', 'text', `build=${enc(b.id)}&kind=keyTalents&order=${n.order}`)));
+    $('#sp-caveats').dataset.build = notes ? b.id : '';
     const cav = nb.filter((n) => n.kind === 'caveats');
     $('#sp-caveats').replaceChildren(...(cav.length ? cav.map((n) => mark(el('li', { text: n.text }), 'notes', 'text', `build=${enc(b.id)}&kind=caveats&order=${n.order}`)) : notes ? [el('li', { class: 'fv-note', text: 'None recorded.' })] : []));
 

@@ -45,7 +45,8 @@ Run it from the repo root. A run takes about a second.
   add stats. Anything it can't place is listed as a note.
 - The export's weapon skills, taken off the sim's full skill (`-full-skill` turns that off). The
   sim's glancing and parry chances don't follow skill, so an under-skilled weapon still shows
-  high glances and parries.
+  high glances and parries. When we swung a weapon below full skill in the window, the report
+  prints a warning and puts it in the flagged list ahead of those rows.
 - We stand in front of the mob, where it can parry and block, as when questing (`-behind` for
   the other way).
 - Our shaman imbue, from the last imbue we cast before the window ends (the export can't see it
