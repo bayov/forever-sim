@@ -2916,3 +2916,26 @@ ol.fv-list li::marker {
 #cmp-table th.n .fv-ab-head {
 	justify-content: flex-end;
 }
+
+// The race and setup of each Compare side sit next to its preset.
+#cmp-pick-card .fv-controls {
+	.form-select {
+		width: auto;
+		min-width: 0;
+	}
+
+	// The preset takes half the row, and the race and setup a quarter each. On a phone the preset gets
+	// its own row, and the race and setup share the next one.
+	#cmp-a,
+	#cmp-b {
+		flex: 2 1 16rem;
+	}
+
+	.fv-cmp-var {
+		flex: 1 1 8rem;
+	}
+}
+
+#cmp-gap:empty {
+	display: none;
+}

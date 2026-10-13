@@ -115,7 +115,7 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'humanoid', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'humanoid', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false }, saved);
   st.rsTarget = 'humanoid'; st.rsWeapon = 'preset';
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
@@ -2001,6 +2001,43 @@ export function startReport(dash) {
   }));
 
   // ---------- compare ----------
+  // A side is a preset, or one of its race and setup variants from the Races tab. A variant only has its
+  // mean DPS, because we sim the spread, fight lengths, stat weights and damage sources for the preset's own
+  // race only.
+  const CMP_SETUPS = [['baseline', 'Normal setup'], ['weapon', 'Racial weapon'], ['off', 'Racials off'], ['beast', 'Beast target'], ['elemental', 'Elemental target'], ['undead', 'Undead target']];
+  const cmpSide = (k, b, rv) => {
+    const mine = rv ? rv.filter((r) => r.build === b.id) : [];
+    let race = st[k + 'r'] || b.race, v = st[k + 'v'] || 'baseline';
+    if (!mine.some((r) => r.race === race)) race = b.race;
+    const row = (vv) => mine.find((r) => r.race === race && r.variant === vv);
+    // The racial weapon setup only exists for races with a weapon racial the preset can use.
+    if (!rv || (v === 'weapon' && !row('weapon')?.simmed)) v = 'baseline';
+    const tag = [race !== b.race ? race : null, v !== 'baseline' ? CMP_SETUPS.find((o) => o[0] === v)[1].toLowerCase() : null].filter(Boolean).join(' · ');
+    return { k, b, race, v, row: row(v), mine, full: race === b.race && v === 'baseline', name: tag ? `${b.build} · ${tag}` : b.build };
+  };
+  // Two classes take their class colors. Two presets of one class take a brighter and a darker shade of it.
+  //
+  // The darker shade stays at 52% lightness or more, so the shaman's blue (already fairly dark) stays readable
+  // on the dark page. The brighter shade sits a fixed step above it, so the priest's white still gets a gray
+  // to pair with.
+  const cmpColors = (A, B) => {
+    if (A.class !== B.class) return [ccol(A.class), ccol(B.class)];
+    const c = ccol(A.class), dark = 'max(0.52, l - 0.2)';
+    return [`oklch(from ${c} min(0.97, ${dark} + 0.3) c h)`, `oklch(from ${c} ${dark} c h)`];
+  };
+  const fillCmpVariants = (s) => {
+    const rs = $(`#cmp-${s.k.toLowerCase()}r`), vs = $(`#cmp-${s.k.toLowerCase()}v`);
+    rs.disabled = vs.disabled = !s.mine.length;
+    const base = s.mine.filter((r) => r.variant === 'baseline').sort((p, q) => q.dps - p.dps);
+    rs.replaceChildren(...(base.length ? base.map((r) => el('option', { value: r.race, text: `${r.race}${r.race === s.b.race ? ' (preset)' : ''} · ${f1(r.dps)}` })) : [el('option', { value: s.b.race, text: `${s.b.race} (preset)` })]));
+    rs.value = s.race;
+    vs.replaceChildren(...CMP_SETUPS.map(([v, lbl]) => {
+      const r = s.mine.find((x) => x.race === s.race && x.variant === v);
+      const off = v === 'weapon' && !r?.simmed;
+      return el('option', { value: v, text: off && r?.note ? `${lbl} (${r.note})` : lbl, ...(off ? { disabled: '' } : {}) });
+    }));
+    vs.value = s.v;
+  };
   const drawCompare = () => {
     if (statusOf('builds') !== 'ok') return;
     const builds = rowsOf('builds');
@@ -2009,57 +2046,95 @@ export function startReport(dash) {
     if (!st.B || !builds.find((b) => b.id === st.B)) st.B = [...builds].sort((a, b) => b.dps - a.dps).find((b) => b.id !== st.A).id;
     sortedBuildOptions($('#cmp-a'), builds, st.A); sortedBuildOptions($('#cmp-b'), builds, st.B);
     const A = builds.find((b) => b.id === st.A), B = builds.find((b) => b.id === st.B);
-    const ca = dash.colors[0], cb = dash.colors[1];
-    // Every widget on the tab marks the two presets with the same lettered badge, A and B, in their chart colors.
+    const rv = rowsOf('race_variants');
+    const sA = cmpSide('A', A, rv), sB = cmpSide('B', B, rv);
+    fillCmpVariants(sA); fillCmpVariants(sB);
+    const [ca, cb] = cmpColors(A, B);
+    const colOf = (s) => (s.k === 'A' ? ca : cb);
+    // Every widget on the tab marks the two sides with the same lettered badge, A and B, in their chart colors.
     const abBadge = (k) => el('span', { class: 'fv-ab', style: `--ab:${k === 'A' ? ca : cb}`, text: k });
     $('#cmp-dot-a').style.setProperty('--ab', ca); $('#cmp-dot-b').style.setProperty('--ab', cb);
-    $('#cmp-ha').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('A'), specIco(A, '') || '', A.build));
-    $('#cmp-hb').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('B'), specIco(B, '') || '', B.build));
+    $('#cmp-ha').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('A'), specIco(A, '') || '', sA.name));
+    $('#cmp-hb').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('B'), specIco(B, '') || '', sB.name));
     $('#cmp-hd').replaceChildren(el('span', { class: 'fv-ab-head' }, abBadge('B'), 'vs', abBadge('A')));
 
+    // With a variant on either side, both sides read their mean DPS from the race sims, so they share one setup.
+    const anyVar = !sA.full || !sB.full;
+    const W = (s) => `build=${enc(s.b.id)}&race=${enc(s.race)}&variant=${s.v}`;
     const pr = (rowsOf('pairs') || []).find((p) => p.a === A.id && p.b === B.id);
-    const rows = [['Mean DPS', 'dps', f1], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120 s fight', 'dps120', f1], ['300 s fight', 'dps300', f1], ['Race', 'race', String], ['Best race', 'bestRace', String], ['Rank', 'rank', String]];
-    $('#cmp-table tbody').replaceChildren(...rows.map(([lbl, k, f]) => el('tr', {}, el('td', { text: lbl }),
-      mark(el('td', { class: 'n', text: f(A[k]) }), 'builds', k, 'id=' + enc(A.id)), mark(el('td', { class: 'n', text: f(B[k]) }), 'builds', k, 'id=' + enc(B.id)),
-      pr && pr[k] != null ? el('td', { class: 'n' + (k === 'stdev' || Math.abs(pr[k]) < 0.05 ? '' : pr[k] > 0 ? ' pos' : ' neg') }, mark(el('span', { text: sgn(pr[k]) }), 'pairs', k, `a=${enc(A.id)}&b=${enc(B.id)}`), '%') : el('td', { class: 'n', text: '' }))));
+    const pct = (a, b) => (a ? Math.round((b / a - 1) * 10000) / 100 : null);
+    const diffTd = (v, f, src) => (v == null ? el('td', { class: 'n', text: '' }) : el('td', { class: 'n' + (Math.abs(v) < 0.05 ? '' : v > 0 ? ' pos' : ' neg') }, src ? mark(el('span', { text: sgn(v, f) }), ...src) : el('span', { text: sgn(v, f) }), '%'));
+    const NA = '–';
+    const valTd = (s, k, f) => {
+      if (k === 'dps' && anyVar) return s.row ? mark(el('td', { class: 'n', text: f1(s.row.dps) }), 'race_variants', 'dps', W(s)) : el('td', { class: 'n', text: NA });
+      if (k === 'se') return anyVar && s.row ? mark(el('td', { class: 'n', text: `± ${f2(s.row.se)}` }), 'race_variants', 'se', W(s)) : mark(el('td', { class: 'n', text: `± ${f2(s.b.se)}` }), 'builds', 'se', 'id=' + enc(s.b.id));
+      if (k === 'race') return el('td', { class: 'n', text: s.race });
+      if (k === 'setup') return el('td', { class: 'n', text: CMP_SETUPS.find((o) => o[0] === s.v)[1] });
+      if (k === 'raceRank') return s.row ? mark(el('td', { class: 'n', text: `${s.row.rank} of ${s.row.of}` }), 'race_variants', 'rank', W(s)) : el('td', { class: 'n', text: NA });
+      if (k === 'bestRace') { const top = s.mine.find((r) => r.variant === s.v && r.rank === 1); return el('td', { class: 'n', text: top ? top.race : s.b.bestRace }); }
+      if (!s.full) return el('td', { class: 'n', text: NA });
+      return mark(el('td', { class: 'n', text: f(s.b[k]) }), 'builds', k, 'id=' + enc(s.b.id));
+    };
+    const diffOf = (k) => {
+      if (k === 'dps' && anyVar) return diffTd(sA.row && sB.row ? pct(sA.row.dps, sB.row.dps) : null, f2);
+      if (anyVar || !pr || pr[k] == null) return diffTd(null);
+      const td = diffTd(pr[k], f1, ['pairs', k, `a=${enc(A.id)}&b=${enc(B.id)}`]);
+      // A wider spread is neither good nor bad, so it gets no color.
+      if (k === 'stdev') td.className = 'n';
+      return td;
+    };
+    const rows = [['Mean DPS', 'dps', f1], ['Error of the mean', 'se', f2], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120 s fight', 'dps120', f1], ['300 s fight', 'dps300', f1], ['Race', 'race', String],
+      ...(anyVar ? [['Setup', 'setup', String]] : []), ...(rv ? [['Race rank', 'raceRank', String]] : []), ['Best race', 'bestRace', String], ['Rank', 'rank', String]];
+    $('#cmp-table tbody').replaceChildren(...rows.map(([lbl, k, f]) => el('tr', {}, el('td', { text: lbl }), valTd(sA, k, f), valTd(sB, k, f), diffOf(k))));
+
+    // The charts and the side by side cards show the sides that were simmed in full.
+    const full = [sA, sB].filter((s) => s.full), part = [sA, sB].filter((s) => !s.full);
+    const gap = $('#cmp-gap');
+    gap.replaceChildren(...(part.length ? [part.map((s) => `${s.k} (${s.name})`).join(' and '), ` only ${part.length > 1 ? 'have their' : 'has its'} mean DPS. ${full.length ? `The cards below show ${full[0].k} only` : 'The spread, fight length, stat weights and damage sources show up when a side is a preset on its own race and setup'}, because we sim them for each preset's own race only.`] : []));
+    for (const id of ['#cmp-dist-card', '#cmp-len-card', '#cmp-w-card', '#cmp-abil-card']) $(id).hidden = !full.length;
     const hd = $('#cmp-dist');
-    if (waitOr(hd, ['hist'])) {
+    if (full.length && waitOr(hd, ['hist'])) {
       const h = rowsOf('hist');
-      drawHist(hd, [{ name: `A · ${A.build}`, color: ca, op: 0.6, bins: binsFor(h, A.id) }, { name: `B · ${B.build}`, color: cb, op: 0.6, bins: binsFor(h, B.id) }], { marks: [{ v: A.dps, label: 'A' }, { v: B.dps, label: 'B' }] });
+      drawHist(hd, full.map((s) => ({ name: `${s.k} · ${s.name}`, color: colOf(s), op: 0.6, bins: binsFor(h, s.b.id) })), { marks: full.map((s) => ({ v: s.b.dps, label: s.k })) });
     }
     const hl = $('#cmp-len');
-    if (waitOr(hl, ['lengths'])) {
+    if (full.length && waitOr(hl, ['lengths'])) {
       const l = rowsOf('lengths');
-      const ser = (b, c) => ({ name: `${b === A ? 'A' : 'B'} · ${b.build}`, short: b === A ? 'A' : 'B', color: c, dots: true, pts: l.filter((r) => r.build === b.id).sort((p, q) => p.secs - q.secs).map((p) => ({ s: p.secs, v: p.dps })) });
-      drawLenChart(hl, [ser(A, ca), ser(B, cb)], { endLabels: true, h: 220 });
+      const ser = (s) => ({ name: `${s.k} · ${s.name}`, short: s.k, color: colOf(s), dots: true, pts: l.filter((r) => r.build === s.b.id).sort((p, q) => p.secs - q.secs).map((p) => ({ s: p.secs, v: p.dps })) });
+      drawLenChart(hl, full.map(ser), { endLabels: true, h: 220 });
     }
     const hw = $('#cmp-w');
-    if (waitOr(hw, ['weights'])) {
+    if (full.length && waitOr(hw, ['weights'])) {
       const wr = rowsOf('weights');
-      hw.replaceChildren(...[[A, ca, 'A'], [B, cb, 'B']].map(([b, c, k]) => {
-        const rs = wr.filter((w) => w.build === b.id && w.stat !== 'MeleeHitDown');
+      hw.replaceChildren(...full.map((s) => {
+        const rs = wr.filter((w) => w.build === s.b.id && w.stat !== 'MeleeHitDown');
         const v = (w) => (w.unit === '1%' ? w.ratingWorth : w.worth);
         rs.sort((x, y) => v(y) - v(x));
         const max = d3.max(rs, (w) => Math.abs(v(w))) || 1;
-        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0;align-content:start' }, el('span', { class: 'fv-ab-head' }, abBadge(k), b.label),
-          el('div', { class: 'fv-sbar', 'data-tt-b': b.id }, ...rs.flatMap((w) => [tt(el('span', { class: 'nm', text: w.unit === '1%' ? w.label.replace(' (1%)', ' rating') : w.label }), 'w:' + w.stat),
-            tt(el('span', { class: 'vl' }, mark(el('span', { text: f2(v(w)) }), 'weights', w.unit === '1%' ? 'ratingWorth' : 'worth', `build=${enc(b.id)}&stat=${enc(w.stat)}`), ' ' + w.primaryAbbr), 'w:' + w.stat),
-            tt(el('span', { class: 'tr' }, el('span', { style: `width:${Math.max(0, 100 * v(w) / max)}%;background:${c}` })), 'w:' + w.stat)])));
+        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0;align-content:start' }, el('span', { class: 'fv-ab-head' }, abBadge(s.k), s.b.label),
+          el('div', { class: 'fv-sbar', 'data-tt-b': s.b.id }, ...rs.flatMap((w) => [tt(el('span', { class: 'nm', text: w.unit === '1%' ? w.label.replace(' (1%)', ' rating') : w.label }), 'w:' + w.stat),
+            tt(el('span', { class: 'vl' }, mark(el('span', { text: f2(v(w)) }), 'weights', w.unit === '1%' ? 'ratingWorth' : 'worth', `build=${enc(s.b.id)}&stat=${enc(w.stat)}`), ' ' + w.primaryAbbr), 'w:' + w.stat),
+            tt(el('span', { class: 'tr' }, el('span', { style: `width:${Math.max(0, 100 * v(w) / max)}%;background:${colOf(s)}` })), 'w:' + w.stat)])));
       }));
     }
     const ha = $('#cmp-abil');
-    if (waitOr(ha, ['abilities'])) {
+    if (full.length && waitOr(ha, ['abilities'])) {
       const ab = rowsOf('abilities');
-      ha.replaceChildren(...[[A, ca, 'A'], [B, cb, 'B']].map(([b, c, k]) => {
-        const rows2 = ab.filter((a) => a.build === b.id && a.dps > 0).slice(0, 10);
+      ha.replaceChildren(...full.map((s) => {
+        const rows2 = ab.filter((a) => a.build === s.b.id && a.dps > 0).slice(0, 10);
         const max = d3.max(rows2, (a) => a.share) || 1;
-        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0;align-content:start' }, el('span', { class: 'fv-ab-head' }, abBadge(k), b.label),
-          el('div', { class: 'fv-sbar', 'data-tt-b': b.id }, ...rows2.flatMap((a) => [tt(el('span', { class: 'nm', text: a.ability }), 'k:' + a.key), tt(el('span', { class: 'vl' }, mark(el('span', { text: f1(a.share) }), 'abilities', 'share', `build=${enc(b.id)}&key=${enc(a.key)}`), '%'), 'k:' + a.key), tt(el('span', { class: 'tr' }, el('span', { style: `width:${100 * a.share / max}%;background:${c}` })), 'k:' + a.key)])));
+        return el('div', { style: 'display:grid;gap:0.4rem;min-width:0;align-content:start' }, el('span', { class: 'fv-ab-head' }, abBadge(s.k), s.b.label),
+          el('div', { class: 'fv-sbar', 'data-tt-b': s.b.id }, ...rows2.flatMap((a) => [tt(el('span', { class: 'nm', text: a.ability }), 'k:' + a.key), tt(el('span', { class: 'vl' }, mark(el('span', { text: f1(a.share) }), 'abilities', 'share', `build=${enc(s.b.id)}&key=${enc(a.key)}`), '%'), 'k:' + a.key), tt(el('span', { class: 'tr' }, el('span', { style: `width:${100 * a.share / max}%;background:${colOf(s)}` })), 'k:' + a.key)])));
       }));
     }
   };
-  $('#cmp-a').addEventListener('change', (e) => { st.A = e.target.value; persist(); render(); });
-  $('#cmp-b').addEventListener('change', (e) => { st.B = e.target.value; persist(); render(); });
+  for (const k of ['A', 'B']) {
+    const lk = k.toLowerCase();
+    // A new preset starts on its own race and setup.
+    $(`#cmp-${lk}`).addEventListener('change', (e) => { st[k] = e.target.value; st[k + 'r'] = null; st[k + 'v'] = null; persist(); render(); });
+    $(`#cmp-${lk}r`).addEventListener('change', (e) => { st[k + 'r'] = e.target.value; persist(); render(); });
+    $(`#cmp-${lk}v`).addEventListener('change', (e) => { st[k + 'v'] = e.target.value; persist(); render(); });
+  }
 
   // ---------- method ----------
   const drawMethod = () => {
