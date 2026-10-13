@@ -82,13 +82,13 @@ export class ResultsFilter extends ResultComponent {
 			};
 		} else if (ref.type == UnitType.AllPlayers) {
 			return {
-				iconUrl: '',
+				iconUrl: 'fa-users',
 				text: 'All Players',
 				value: ref,
 			};
 		} else if (ref.type == UnitType.AllTargets) {
 			return {
-				iconUrl: '',
+				iconUrl: 'fa-crosshairs',
 				text: 'All Targets',
 				value: ref,
 			};
@@ -103,7 +103,7 @@ export class ResultsFilter extends ResultComponent {
 
 			if (unit) {
 				return {
-					iconUrl: unit.iconUrl || '',
+					iconUrl: unit.iconUrl || (ref.type == UnitType.Target ? 'fa-skull' : 'fa-user'),
 					text: unit.label,
 					color: unit.classColor || '',
 					value: ref,

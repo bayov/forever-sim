@@ -98,12 +98,20 @@ func (unit *Unit) applySpellPushback() {
 				return
 			}
 
-			if hc := aura.Unit.Hardcast; aura.Unit.IsCasting(sim) && sim.Roll(0, 1.0) > spell.PushbackReduction {
+			if !aura.Unit.IsCasting(sim) {
+				return
+			}
+
+			// We take the chance to ignore pushback from the spell we're casting.
+			//
+			// Talents like Eye of the Storm let our Lightning Bolt shrug off a hit. The spell that
+			// hits us has nothing to do with it.
+			hc := aura.Unit.Hardcast
+			hcSpell := aura.Unit.GetSpell(hc.ActionID)
+			if sim.Roll(0, 1.0) > hcSpell.PushbackReduction {
 				// Do spell pushback
 				pushback := DurationFromSeconds(max(0.2, hc.Pushback))
 				aura.Unit.Hardcast.Pushback -= 0.2
-
-				hcSpell := aura.Unit.GetSpell(hc.ActionID)
 
 				if hcSpell.Flags.Matches(SpellFlagChanneled) {
 					newExpires := max(sim.CurrentTime, hc.Expires-pushback)

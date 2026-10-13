@@ -1,0 +1,81 @@
+{
+  "id": "rogue__combat-swords",
+  "class": "Rogue",
+  "spec": "Combat",
+  "build": "Combat Swords",
+  "isDefault": false,
+  "pr": 9,
+  "race": "Undead",
+  "talents": "00532310301-32003311201515231",
+  "treePoints": "18/33/0",
+  "treeNames": [
+    "Assassination",
+    "Combat",
+    "Subtlety"
+  ],
+  "gearSet": "level60_phase1_synthetic_swords",
+  "apl": "level60_combat_swords",
+  "published": {
+    "dps": 692.0,
+    "source": "the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)",
+    "overall": {
+      "race": "Undead",
+      "dps": 692.0
+    },
+    "horde": {
+      "race": "Undead",
+      "dps": 692.0
+    }
+  },
+  "verify": {
+    "dps": 691.97,
+    "stderr": 0.23,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 692.0 (the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)); delta -0.03."
+  },
+  "summary": "Deep Combat Sinister Strike on the synthetic Phase 1 swords with Adrenaline Rush, Blade Flurry, Hack and Slash and Cold Blood. It is the sword alternative to Combat Daggers.",
+  "keyTalents": [
+    "Adrenaline Rush",
+    "Blade Flurry",
+    "Hack and Slash 5/5 (sword extra attacks)",
+    "Improved Sinister Strike",
+    "Aggression",
+    "Weapon Expertise",
+    "Cold Blood"
+  ],
+  "rotation": [
+    "Pre-pull: Blade Flurry at -1 s",
+    "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
+    "Adrenaline Rush under 39 energy while Slice and Dice is up",
+    "Blade Flurry on cooldown while Slice and Dice is up",
+    "Cold Blood right before a 5-point Eviscerate",
+    "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
+    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
+    "Sinister Strike right after a main-hand swing (0.5 s), or at 79+ energy"
+  ],
+  "consumes": [
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Ground Scorpok Assay",
+    "Flank au Poivre",
+    "Dragonbreath Chili",
+    "Major Frenzy Potion",
+    "Thistle Tea",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine",
+    "Deadly Poison (main hand)",
+    "Instant Poison (off hand)"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Best Alliance race is Human (+2% crit with swords)",
+    "Swords keep 5-point Eviscerates; 4 points lose 6 to 8",
+    "Murder fixed in edd0ff72d to not raise crit damage (-13 to -19 DPS on every build)",
+    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
+    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
+    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+  ],
+  "notes": "Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the rotation uses the on-use trinket on cooldown."
+}

@@ -15,6 +15,11 @@ export interface ActionIdConfig {
 }
 
 // Uniquely identifies a specific item / spell / thing in WoW. This object is immutable.
+export interface WeaponIcons {
+	mainHand?: string;
+	offHand?: string;
+}
+
 export class ActionId {
 	readonly itemId: number;
 	readonly randomSuffixId: number;
@@ -27,6 +32,10 @@ export class ActionId {
 	readonly name: string;
 	readonly iconUrl: string;
 	readonly spellIdTooltipOverride: number | null;
+
+	// The icons of the weapons each player had in the run we show, by raid index. Melee shows
+	// the player's own weapon instead of a generic sword. See setWeaponIcons.
+	private static weaponIcons = new Map<number, WeaponIcons>();
 
 	private constructor(
 		itemId: number,
@@ -83,7 +92,8 @@ export class ActionId {
 				break;
 			case OtherAction.OtherActionAttack:
 				name = 'Melee';
-				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg';
+				// A player's melee comes with their weapon's icon, see fill.
+				iconUrl = iconUrl || 'https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg';
 				if (tag === 1) {
 					name += ' (Main-Hand)';
 				} else if (tag === 2) {
@@ -227,9 +237,25 @@ export class ActionId {
 		return filled;
 	}
 
+	// Sets the weapon icons for melee, for the run whose results we read next.
+	static setWeaponIcons(icons: Map<number, WeaponIcons>) {
+		ActionId.weaponIcons = icons;
+	}
+
 	// Returns an ActionId with the name and iconUrl fields filled.
-	// playerIndex is the optional index of the player to whom this ID corresponds.
-	async fill(playerIndex?: number): Promise<ActionId> {
+	// playerIndex is the optional index of the player to whom this ID corresponds. ownWeapons
+	// says that the ID is the player's own, and not their pet's or a target's, so melee gets the
+	// player's weapon icon.
+	async fill(playerIndex?: number, ownWeapons = false): Promise<ActionId> {
+		if (ownWeapons && playerIndex !== undefined && this.otherId == OtherAction.OtherActionAttack) {
+			const icons = ActionId.weaponIcons.get(playerIndex);
+			// Tag 2 is the off-hand. The main hand also makes the extra attacks (tag 3).
+			const iconUrl = this.tag == 2 ? icons?.offHand : icons?.mainHand;
+			if (iconUrl) {
+				return new ActionId(this.itemId, this.spellId, this.otherId, this.tag, this.baseName, this.name, iconUrl, this.rank, this.randomSuffixId);
+			}
+		}
+
 		if (this.name || this.iconUrl) {
 			return this;
 		}

@@ -1,26 +1,66 @@
 @import '../raid_sim_action';
 
-.topline-results-root {
-	padding-bottom: var(--gap-width);
+// The headline numbers of the run as a row of cards.
+.topline-results-root.results-sim {
+	text-align: left;
 
-	.metrics-table {
-		width: max-content;
-		max-width: 100%;
-		width: 100%;
-		table-layout: fixed;
+	.results-cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+		gap: var(--block-spacer);
 	}
 
-	.metrics-table-header-row {
-		border-bottom: 0;
-	}
+	.results-card {
+		@include panel-card;
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		padding: var(--spacer-3) 1rem;
+		font-weight: normal;
 
-	.metrics-table-body {
-		tr {
-			border-bottom: 0;
+		.results-card-label {
+			align-self: flex-start;
+			font-family: var(--heading-font-family);
+			font-variant: small-caps;
+			font-weight: 700;
+			font-size: 1rem;
+			letter-spacing: 0.04em;
+			color: var(--gold-soft);
+		}
 
-			&:hover {
-				background-color: transparent;
-			}
+		.topline-result-avg {
+			font-size: 1.75rem;
+			font-weight: 600;
+			line-height: 1.2;
+			font-variant-numeric: tabular-nums;
+			color: $ivory;
+		}
+
+		.results-card-details {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.25rem 0.75rem;
+			font-size: 0.75rem;
+			color: var(--text-muted-color);
+			font-variant-numeric: tabular-nums;
+		}
+
+		// The DPS card leads, so it has a gold edge.
+		&.results-sim-dps {
+			border-left: 2px solid var(--gold);
+		}
+
+		// Time out of mana goes from calm to red as it grows.
+		&.safe .topline-result-avg {
+			color: #8fd18f;
+		}
+
+		&.warning .topline-result-avg {
+			color: #f0c05a;
+		}
+
+		&.danger .topline-result-avg {
+			color: #ef7a7a;
 		}
 	}
 }

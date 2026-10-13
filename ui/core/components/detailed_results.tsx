@@ -1,4 +1,6 @@
-import { REPO_NAME } from '../constants/other';
+import { Tab as BootstrapTab } from 'bootstrap';
+import { ref } from 'tsx-vanilla';
+
 import { DetailedResultsUpdate, SimRun, SimRunData } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
 import { SimUI } from '../sim_ui';
@@ -9,15 +11,14 @@ import { CastMetricsTable } from './detailed_results/cast_metrics';
 import { DamageMetricsTable } from './detailed_results/damage_metrics';
 import { DpsHistogram } from './detailed_results/dps_histogram';
 import { DtpsMetricsTable } from './detailed_results/dtps_metrics';
+import { EventsView } from './detailed_results/events_view';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
-import { LogRunner } from './detailed_results/log_runner';
 import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
 import { PlayerDamageTakenMetricsTable } from './detailed_results/player_damage_taken';
 import { ResourceMetricsTable } from './detailed_results/resource_metrics';
 import { SimResultData } from './detailed_results/result_component';
 import { ResultsFilter } from './detailed_results/results_filter';
 import { ThreatMetricsTable } from './detailed_results/threat_metrics';
-import { Timeline } from './detailed_results/timeline';
 import { ToplineResults } from './detailed_results/topline_results';
 import { RaidSimResultsManager } from './raid_sim_action';
 
@@ -25,6 +26,7 @@ type Tab = {
 	isActive?: boolean;
 	targetId: string;
 	label: string;
+	icon: string;
 	classes?: string[];
 };
 
@@ -33,50 +35,63 @@ const tabs: Tab[] = [
 		isActive: true,
 		targetId: 'damageTab',
 		label: 'Damage',
+		icon: 'fa-bolt',
 		classes: ['damage-metrics-tab'],
 	},
 	{
 		targetId: 'threatTab',
 		label: 'Threat',
+		icon: 'fa-skull',
 		classes: ['threat-metrics-tab'],
 	},
 	{
 		targetId: 'healingTab',
 		label: 'Healing',
+		icon: 'fa-heart-pulse',
 		classes: ['healing-metrics-tab'],
 	},
 	{
 		targetId: 'damageTakenTab',
 		label: 'Damage Taken',
+		icon: 'fa-shield-halved',
 		classes: ['threat-metrics-tab'],
 	},
 	{
-		targetId: 'buffsTab',
-		label: 'Buffs',
-	},
-	{
-		targetId: 'debuffsTab',
-		label: 'Debuffs',
+		targetId: 'aurasTab',
+		label: 'Auras',
+		icon: 'fa-wand-magic-sparkles',
 	},
 	{
 		targetId: 'castsTab',
 		label: 'Casts',
+		icon: 'fa-hand-sparkles',
 	},
 	{
 		targetId: 'resourcesTab',
 		label: 'Resources',
+		icon: 'fa-droplet',
 	},
 	{
-		targetId: 'timelineTab',
-		label: 'Timeline',
-	},
-	{
-		targetId: 'logTab',
-		label: 'Log',
+		targetId: 'eventsTab',
+		label: 'Events',
+		icon: 'fa-bars-staggered',
 	},
 ];
 
+// A titled card around one part of the results, like the Settings tab's sections.
+const panel = (title: string, className: string, body: Element, headerExtra?: Element) => (
+	<div className={`content-block dr-panel ${className}`}>
+		<div className="content-block-header">
+			<h6 className="content-block-title">{title}</h6>
+			{headerExtra ?? null}
+		</div>
+		<div className="content-block-body">{body}</div>
+	</div>
+);
+
 export abstract class DetailedResults extends Component {
+	static readonly VIEW_PARAM = 'view';
+
 	protected readonly simUI: SimUI | null;
 	protected latestRun: SimRunData | null = null;
 
@@ -85,16 +100,22 @@ export abstract class DetailedResults extends Component {
 	private resultsFilter: ResultsFilter;
 	private rootDiv: HTMLElement;
 
-	constructor(parent: HTMLElement, simUI: SimUI | null, cssScheme: string) {
+	constructor(parent: HTMLElement, simUI: SimUI | null) {
 		super(parent, 'detailed-results-manager-root');
+
+		const simulateRef = ref<HTMLButtonElement>();
+		const buffsUnusedRef = ref<HTMLButtonElement>();
+		const debuffsUnusedRef = ref<HTMLButtonElement>();
 
 		this.rootElem.appendChild(
 			<div className="dr-root dr-no-results">
 				<div className="dr-toolbar">
-					<div className="results-filter"></div>
-					<div className="tabs-filler"></div>
-					<ul className="nav nav-tabs" attributes={{ role: 'tablist' }}>
-						{tabs.map(({ label, targetId, isActive, classes }) => (
+					<span className="dr-toolbar-title">
+						Results
+						<i className="fas fa-chevron-right" />
+					</span>
+					<ul className="nav dr-tabs" attributes={{ role: 'tablist' }}>
+						{tabs.map(({ label, icon, targetId, isActive, classes }) => (
 							<li className={`nav-item dr-tab-tab ${classes?.join(' ') || ''}`} attributes={{ role: 'presentation' }}>
 								<button
 									className={`nav-link${isActive ? ' active' : ''}`}
@@ -109,80 +130,78 @@ export abstract class DetailedResults extends Component {
 										bsToggle: 'tab',
 										bsTarget: `#${targetId}`,
 									}}>
+									<i className={`fas ${icon}`} />
 									{label}
 								</button>
 							</li>
 						))}
 					</ul>
+					<div className="tabs-filler"></div>
+					<div className="results-filter"></div>
 				</div>
 				<div className="tab-content">
 					<div id="noResultsTab" className="tab-pane dr-tab-content fade active show">
-						Run a simulation to view results
+						<div className="dr-empty">
+							<i className="fas fa-chart-column dr-empty-icon" />
+							<h5 className="dr-empty-title">No results yet</h5>
+							<p className="dr-empty-text">
+								Run a simulation to see where the damage comes from, how auras and casts add up, and the typical, lucky and unlucky iterations
+								event by event.
+							</p>
+							{simUI ? (
+								<button ref={simulateRef} className="btn btn-primary" type="button">
+									Simulate
+								</button>
+							) : null}
+						</div>
 					</div>
 					<div id="damageTab" className="tab-pane dr-tab-content damage-content fade active show">
 						<div className="dr-row topline-results" />
-						<div className="dr-row all-players-only">
-							<div className="player-damage-metrics" />
-						</div>
-						<div className="dr-row single-player-only">
-							<div className="damage-metrics" />
-						</div>
-						<div className="dr-row dps-histogram" />
+						<div className="dr-row all-players-only">{panel('Players', 'damage-metrics', <div className="player-damage-metrics" />)}</div>
+						<div className="dr-row single-player-only">{panel('Abilities', 'damage-metrics', <div className="damage-metrics-host" />)}</div>
+						<div className="dr-row">{panel('DPS Distribution', 'damage-metrics', <div className="dps-histogram" />)}</div>
 					</div>
 					<div id="threatTab" className="tab-pane dr-tab-content threat-content fade">
 						<div className="dr-row topline-results" />
-						<div className="dr-row all-players-only">
-							<div className="player-threat-metrics" />
-						</div>
-						<div className="dr-row single-player-only">
-							<div className="threat-metrics" />
-						</div>
+						<div className="dr-row all-players-only">{panel('Players', 'threat-metrics', <div className="player-threat-metrics" />)}</div>
+						<div className="dr-row single-player-only">{panel('Abilities', 'threat-metrics', <div className="threat-metrics-host" />)}</div>
 					</div>
 					<div id="healingTab" className="tab-pane dr-tab-content healing-content fade">
 						<div className="dr-row topline-results" />
-						<div className="dr-row single-player-only">
-							<div className="healing-spell-metrics" />
-						</div>
-						<div className="dr-row hps-histogram" />
+						<div className="dr-row single-player-only">{panel('Abilities', 'healing-metrics', <div className="healing-spell-metrics" />)}</div>
 					</div>
 					<div id="damageTakenTab" className="tab-pane dr-tab-content damage-taken-content fade">
 						<div className="dr-row topline-results" />
-						<div className="dr-row all-players-only">
-							<div className="player-damage-taken-metrics" />
-						</div>
-						<div className="dr-row single-player-only">
-							<div className="dtps-metrics" />
-						</div>
-						<div className="dr-row damage-taken-histogram single-player-only" />
+						<div className="dr-row all-players-only">{panel('Players', '', <div className="player-damage-taken-metrics" />)}</div>
+						<div className="dr-row single-player-only">{panel('Abilities', '', <div className="dtps-metrics" />)}</div>
 					</div>
-					<div id="buffsTab" className="tab-pane dr-tab-content buffs-content fade">
-						<div className="dr-row">
-							<div className="buff-aura-metrics" />
-						</div>
-					</div>
-					<div id="debuffsTab" className="tab-pane dr-tab-content debuffs-content fade">
-						<div className="dr-row">
-							<div className="debuff-aura-metrics" />
+					<div id="aurasTab" className="tab-pane dr-tab-content auras-content fade">
+						<div className="dr-row dr-auras-grid">
+							{panel(
+								'Buffs',
+								'',
+								<div className="buff-aura-metrics" />,
+								<button ref={buffsUnusedRef} className="btn btn-link dr-panel-action" type="button" />,
+							)}
+							{panel(
+								'Debuffs',
+								'',
+								<div className="debuff-aura-metrics" />,
+								<button ref={debuffsUnusedRef} className="btn btn-link dr-panel-action" type="button" />,
+							)}
 						</div>
 					</div>
 					<div id="castsTab" className="tab-pane dr-tab-content casts-content fade">
-						<div className="dr-row">
-							<div className="cast-metrics" />
-						</div>
+						<div className="dr-row">{panel('Casts', '', <div className="cast-metrics" />)}</div>
 					</div>
 					<div id="resourcesTab" className="tab-pane dr-tab-content resources-content fade">
 						<div className="dr-row">
 							<div className="resource-metrics" />
 						</div>
 					</div>
-					<div id="timelineTab" className="tab-pane dr-tab-content timeline-content fade">
+					<div id="eventsTab" className="tab-pane dr-tab-content events-content fade">
 						<div className="dr-row">
-							<div className="timeline" />
-						</div>
-					</div>
-					<div id="logTab" className="tab-pane dr-tab-content log-content fade">
-						<div className="dr-row">
-							<div className="log" />
+							<div className="events-view" />
 						</div>
 					</div>
 				</div>
@@ -193,18 +212,29 @@ export abstract class DetailedResults extends Component {
 
 		this.simUI?.sim.settingsChangeEmitter.on(async () => await this.updateSettings());
 
-		// Allow styling the sticky toolbar
-		const toolbar = document.querySelector('.dr-toolbar') as HTMLElement;
-		new IntersectionObserver(
-			([e]) => {
-				e.target.classList.toggle('stuck', e.intersectionRatio < 1);
-			},
-			{
-				// Intersect with the sim header or top of the separate tab
-				rootMargin: this.simUI ? `-${this.simUI.simHeader.rootElem.offsetHeight + 1}px 0px 0px 0px` : '0px',
-				threshold: [1],
-			},
-		).observe(toolbar);
+		simulateRef.value?.addEventListener('click', () => {
+			this.simUI?.simActionsContainer.querySelector<HTMLButtonElement>('.dps-action')?.click();
+		});
+
+		// The toolbar gets the header's frosted background once it sticks under the header, so
+		// the two read as one bar. Before that it has no background, so it doesn't look like a
+		// second header. The page scrolls in .sim-ui, and its scroll events don't bubble, so we
+		// listen in the capture phase.
+		const toolbar = this.rootElem.querySelector('.dr-toolbar') as HTMLElement;
+		const updateStuck = () => {
+			if (!toolbar.offsetParent) {
+				toolbar.classList.remove('stuck');
+				return;
+			}
+			const header = this.simUI?.simHeader.rootElem;
+			const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+			toolbar.classList.toggle('stuck', toolbar.getBoundingClientRect().top <= headerBottom + 1);
+		};
+		document.addEventListener('scroll', updateStuck, { capture: true, passive: true });
+		window.addEventListener('resize', updateStuck, { passive: true });
+		document.addEventListener('shown.bs.tab', updateStuck);
+
+		this.syncSubTabWithUrl(toolbar);
 
 		this.resultsFilter = new ResultsFilter({
 			parent: this.rootElem.querySelector('.results-filter')!,
@@ -221,12 +251,12 @@ export abstract class DetailedResults extends Component {
 		});
 
 		new ThreatMetricsTable({
-			parent: this.rootElem.querySelector('.threat-metrics')!,
+			parent: this.rootElem.querySelector('.threat-metrics-host')!,
 			resultsEmitter: this.resultsEmitter,
 		});
 
 		new DamageMetricsTable({
-			parent: this.rootElem.querySelector('.damage-metrics')!,
+			parent: this.rootElem.querySelector('.damage-metrics-host')!,
 			resultsEmitter: this.resultsEmitter,
 		});
 
@@ -246,20 +276,22 @@ export abstract class DetailedResults extends Component {
 			{ parent: this.rootElem.querySelector('.player-damage-taken-metrics')!, resultsEmitter: this.resultsEmitter },
 			this.resultsFilter,
 		);
-		new AuraMetricsTable(
+		const buffsTable = new AuraMetricsTable(
 			{
 				parent: this.rootElem.querySelector('.buff-aura-metrics')!,
 				resultsEmitter: this.resultsEmitter,
 			},
 			false,
 		);
-		new AuraMetricsTable(
+		const debuffsTable = new AuraMetricsTable(
 			{
 				parent: this.rootElem.querySelector('.debuff-aura-metrics')!,
 				resultsEmitter: this.resultsEmitter,
 			},
 			true,
 		);
+		bindUnusedToggle(buffsTable, buffsUnusedRef.value!);
+		bindUnusedToggle(debuffsTable, debuffsUnusedRef.value!);
 
 		new DpsHistogram({
 			parent: this.rootElem.querySelector('.dps-histogram')!,
@@ -271,21 +303,10 @@ export abstract class DetailedResults extends Component {
 			resultsEmitter: this.resultsEmitter,
 		});
 
-		const timeline = new Timeline({
-			parent: this.rootElem.querySelector('.timeline')!,
-			cssScheme: cssScheme,
+		new EventsView({
+			parent: this.rootElem.querySelector('.events-view')!,
 			resultsEmitter: this.resultsEmitter,
-		});
-
-		const tabEl = document.querySelector('button[data-bs-target="#timelineTab"]');
-		tabEl?.addEventListener('shown.bs.tab', () => {
-			timeline.render();
-		});
-
-		new LogRunner({
-			parent: this.rootElem.querySelector('.log')!,
-			cssScheme: cssScheme,
-			resultsEmitter: this.resultsEmitter,
+			simUI: this.simUI,
 		});
 
 		this.rootElem.classList.add('hide-threat-metrics');
@@ -300,6 +321,23 @@ export abstract class DetailedResults extends Component {
 				this.rootDiv.classList.add('all-players');
 				this.rootDiv.classList.remove('single-player');
 			}
+		});
+	}
+
+	// The URL says which of the results tabs is open, like ?tab=results&view=events, so a refresh
+	// or a shared link opens the same one. The main tab is in the URL too, see SimHeader.
+	private syncSubTabWithUrl(toolbar: HTMLElement) {
+		const tabName = (link: Element) => link.textContent!.trim().toLowerCase().replace(/\s+/g, '-');
+		const links = Array.from(toolbar.querySelectorAll<HTMLElement>('.dr-tabs [data-bs-toggle="tab"]'));
+
+		const wanted = new URLSearchParams(window.location.search).get(DetailedResults.VIEW_PARAM);
+		const link = links.find(link => tabName(link) === wanted);
+		if (link) BootstrapTab.getOrCreateInstance(link).show();
+
+		toolbar.addEventListener('shown.bs.tab', event => {
+			const url = new URL(window.location.href);
+			url.searchParams.set(DetailedResults.VIEW_PARAM, tabName(event.target as Element));
+			window.history.replaceState(window.history.state, '', url);
 		});
 	}
 
@@ -363,9 +401,9 @@ export abstract class DetailedResults extends Component {
 						damageTabEl.classList.remove('active', 'show');
 						healingTabEl.classList.add('active', 'show');
 
-						const toolbar = document.getElementsByClassName('dr-toolbar')[0] as HTMLElement;
-						toolbar.querySelector('.damage-metrics')?.children[0].classList.remove('active');
-						toolbar.querySelector('.healing-metrics')?.children[0].classList.add('active');
+						const toolbar = this.rootElem.querySelector('.dr-toolbar') as HTMLElement;
+						toolbar.querySelector('[data-bs-target="#damageTab"]')?.classList.remove('active');
+						toolbar.querySelector('[data-bs-target="#healingTab"]')?.classList.add('active');
 					}
 				}
 				this.rootElem.classList[settings.showThreatMetrics ? 'remove' : 'add']('hide-threat-metrics');
@@ -376,62 +414,13 @@ export abstract class DetailedResults extends Component {
 	}
 }
 
-export class WindowedDetailedResults extends DetailedResults {
-	constructor(parent: HTMLElement) {
-		super(parent, null, new URLSearchParams(window.location.search).get('cssScheme') ?? '');
-
-		window.addEventListener('message', async event => await this.handleMessage(DetailedResultsUpdate.fromJson(event.data)));
-
-		this.rootElem.insertAdjacentHTML('beforeend', `<div class="sim-bg"></div>`);
-	}
-
-	async postMessage(update: DetailedResultsUpdate): Promise<void> {
-		await this.handleMessage(update);
-	}
-}
-
 export class EmbeddedDetailedResults extends DetailedResults {
-	private tabWindow: Window | null = null;
-
 	constructor(parent: HTMLElement, simUI: SimUI, simResultsManager: RaidSimResultsManager) {
-		super(parent, simUI, simUI.cssScheme);
-
-		const newTabBtn = (
-			<div className="detailed-results-controls-div">
-				<button className="detailed-results-new-tab-button btn btn-primary">View in Separate Tab</button>
-				<button className="detailed-results-1-iteration-button btn btn-primary">Sim 1 Iteration</button>
-			</div>
-		);
-
-		this.rootElem.prepend(newTabBtn);
-
-		const url = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/detailed_results/index.html`);
-		url.searchParams.append('cssClass', simUI.cssClass);
+		super(parent, simUI);
 
 		if (simUI.isIndividualSim()) {
-			url.searchParams.append('isIndividualSim', '');
 			this.rootElem.classList.add('individual-sim');
 		}
-
-		const newTabButton = this.rootElem.querySelector('.detailed-results-new-tab-button');
-		newTabButton?.addEventListener('click', () => {
-			if (this.tabWindow == null || this.tabWindow.closed) {
-				this.tabWindow = window.open(url.href, 'Detailed Results');
-				this.tabWindow!.addEventListener('load', async () => {
-					if (this.latestRun) {
-						await this.updateSettings();
-						await this.setSimRunData(this.latestRun);
-					}
-				});
-			} else {
-				this.tabWindow.focus();
-			}
-		});
-
-		const simButton = this.rootElem.querySelector('.detailed-results-1-iteration-button');
-		simButton?.addEventListener('click', () => {
-			(window.opener || window.parent)!.postMessage('runOnce', '*');
-		});
 
 		simResultsManager.currentChangeEmitter.on(async () => {
 			const runData = simResultsManager.getRunData();
@@ -443,9 +432,18 @@ export class EmbeddedDetailedResults extends DetailedResults {
 	}
 
 	async postMessage(update: DetailedResultsUpdate) {
-		if (this.tabWindow) {
-			this.tabWindow.postMessage(DetailedResultsUpdate.toJson(update), '*');
-		}
 		await this.handleMessage(update);
 	}
 }
+
+// The Show unused button of a buffs or debuffs panel. Auras that never came up (no procs and no
+// uptime) stay out of the table until we ask for them, like the ranks of a spell we never cast.
+const bindUnusedToggle = (table: AuraMetricsTable, button: HTMLButtonElement) => {
+	const update = () => {
+		button.classList.toggle('hide', table.unusedCount == 0);
+		button.textContent = table.showUnused ? 'Hide unused' : `Show unused (${table.unusedCount})`;
+	};
+	button.addEventListener('click', () => table.setShowUnused(!table.showUnused));
+	table.onUpdate.on(update);
+	update();
+};

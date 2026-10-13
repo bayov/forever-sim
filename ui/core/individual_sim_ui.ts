@@ -28,6 +28,7 @@ import { GLOBAL_DISPLAY_PSEUDO_STATS, GLOBAL_DISPLAY_STATS, GLOBAL_EP_STATS } fr
 import { SimSettingCategories } from './constants/sim_settings';
 import * as Tooltips from './constants/tooltips';
 import { installItemTooltipFallback } from './item_tooltip_fallback';
+import { loadLastSimRun, saveLastSimRun } from './last_sim_run';
 import { simLaunchStatuses } from './launched_sims';
 import { DEFAULT_REACTION_TIME_MS, Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { PresetBuild, PresetEpWeights, PresetGear, PresetRotation } from './preset_utils';
@@ -51,6 +52,7 @@ import {
 import { IndividualSimSettings, SavedTalents } from './proto/ui';
 import { ItemSwapGear } from './proto_utils/gear';
 import { professionNames } from './proto_utils/names';
+import { SimResult } from './proto_utils/sim_result';
 import { Stats, UnitStat } from './proto_utils/stats';
 import { getTalentPoints, isHealingSpec, isTankSpec, SpecOptions, SpecRotation, specToEligibleRaces, specToLocalStorageKey } from './proto_utils/utils';
 import { SimUI, SimWarning } from './sim_ui';
@@ -285,6 +287,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			// first callback invoked from waitForInit().
 			this.sim.waitForInit().then(() => {
 				this.loadSettings();
+				this.restoreLastSimRun();
 
 				if (isHealingSpec(this.player.spec)) {
 					alert(Tooltips.HEALING_SIM_DISCLAIMER);
@@ -342,6 +345,27 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				window.localStorage.setItem(this.getSettingsStorageKey(), jsonStr);
 			});
 		});
+	}
+
+	// Shows the last run's results again after a page refresh, and saves each new run for the
+	// next one. See last_sim_run.ts.
+	private async restoreLastSimRun() {
+		const key = this.getStorageKey('__lastSimRun__');
+		// A run that finishes while we read the saved one is newer, so we don't show the saved
+		// one over it.
+		let hasNewRun = false;
+		const saved = await loadLastSimRun(key);
+		this.sim.simResultEmitter.on((_, simResult) => {
+			hasNewRun = true;
+			saveLastSimRun(key, simResult.toProto());
+		});
+		if (!saved?.request || !saved.result || hasNewRun) return;
+		try {
+			const simResult = await SimResult.fromProto(saved);
+			if (!hasNewRun) this.sim.simResultEmitter.emit(TypedEvent.nextEventID(), simResult);
+		} catch (e) {
+			console.warn('Failed to show the last sim run: ' + e);
+		}
 	}
 
 	private addSidebarComponents() {
