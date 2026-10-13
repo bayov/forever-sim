@@ -172,6 +172,38 @@ export function startReport(dash) {
     .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(this)) hideTip(); });
   document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip]') && !e.target.closest('.fv-tip')) hideTip(); });
 
+  const aBoss = (type) => `${/^[AEIOU]/.test(type) ? 'an' : 'a'} ${type} boss`;
+  // An advantaged preset's "vs Undead" badge says on hover why the preset does better against that kind of boss.
+  const encBadge = (b) => {
+    const badge = el('span', { class: 'fv-enc', text: 'vs ' + b.encounter });
+    if (b.advantage) tippy(badge, { content: el('div', { class: 'fv-advtip' }, el('b', { text: `Advantaged against ${aBoss(b.encounter)}` }), el('p', { text: b.advantage })) });
+    return badge;
+  };
+  // Plain title tooltips become the sim UI's tooltips. We move each title into a tippy as it shows up, in the
+  // layout or in anything we draw later.
+  const tipTitles = (n) => {
+    const t = n.getAttribute('title');
+    n.removeAttribute('title');
+    if (!t) return;
+    const content = el('span', { text: t });
+    if (n._tippy) n._tippy.setContent(content);
+    else tippy(n, { content });
+  };
+  {
+    const root = $('#fv');
+    root.querySelectorAll('[title]').forEach(tipTitles);
+    new MutationObserver((muts) => {
+      for (const m of muts) {
+        if (m.type === 'attributes') { if (m.target.hasAttribute('title')) tipTitles(m.target); continue; }
+        for (const n of m.addedNodes) {
+          if (n.nodeType !== 1) continue;
+          if (n.hasAttribute('title')) tipTitles(n);
+          n.querySelectorAll('[title]').forEach(tipTitles);
+        }
+      }
+    }).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['title'] });
+  }
+
   // ---------- game tooltips ----------
   // Anything with data-tt="<type>:<id>" gets a game-style tooltip: tap (data-tt-tap) or long-press on touch, hover with a mouse.
   // Types: k spell or item key, a aura key, g gear slot, su setup chip, tal talent, r race, c class, w stat weight.
@@ -689,7 +721,7 @@ export function startReport(dash) {
           el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : b.build }), el('span', { text: '· ' + b.class })),
           el('span', { class: 'fv-row-sub' }, tt(raceIco(b.raceIcon), `r:${b.race}:${b.class}`, false, b.id), el('em', { text: b.race }),
             iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null, roles.get(b.id) ? el('em', { text: '· ' + roles.get(b.id) }) : null,
-            isEnc(b) ? el('span', { class: 'fv-enc', text: 'vs ' + b.encounter }) : null)),
+            isEnc(b) ? encBadge(b) : null)),
         el('span', { class: 'fv-row-end' }, valEl, el('span', { class: 'fv-row-gap', text: extra })),
         track);
       row.addEventListener('click', (e) => {
@@ -699,7 +731,7 @@ export function startReport(dash) {
         const lines = L === 180
           ? [`${f1(b.dps)} DPS ± ${f2(b.se)} (1 s.e.)`, `Rank ${rankOf(b, builds)} of ${builds.length} · ${gap < 0.05 ? 'top preset' : `${f1(gap)}% behind the top`}`, `10th–90th percentile: ${f1(b.p10)}–${f1(b.p90)}`, `Middle half: ${f1(b.p25)}–${f1(b.p75)}`, `Fight-to-fight spread ${f2(b.cv)}%`, `${b.race} (${b.faction})${roles.get(b.id) ? ' · ' + roles.get(b.id) : ''}`]
           : [`${f1(v)} DPS in ${L} s fights${lenMap.get(b.id)?.se != null ? ` ± ${f2(lenMap.get(b.id).se)}` : ''}`, `${f1(b.dps)} DPS at 180 s (${sgn(100 * (v / b.dps - 1))}%)`, gap < 0.05 ? 'Top preset at this length' : `${f1(gap)}% behind the top at ${L} s`, `${b.race} (${b.faction})`];
-        if (isEnc(b)) lines.push(`Advantaged: against a ${b.encounter} boss`);
+        if (isEnc(b)) lines.push(`Advantaged: against ${aBoss(b.encounter)}`);
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, lines, { hl: row, open: b.id, below: true });
       });
       return row;
@@ -1264,7 +1296,7 @@ export function startReport(dash) {
       tt(el('span', {}, ringed('classicon_' + b.class.toLowerCase(), 'fv-ico ring', ccol(b.class)), ` ${b.spec}`), 'c:' + b.class),
       tt(el('span', {}, raceIco(b.raceIcon), ' ', mark(el('span', { text: b.race }), 'builds', 'race', W), ' ', iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon')), `r:${b.race}:${b.class}`, true, b.id),
       mark(el('span', { text: b.treePoints }), 'builds', 'treePoints', W),
-      isEnc(b) ? mark(el('span', { class: 'fv-enc', text: 'vs ' + b.encounter }), 'builds', 'encounter', W) : null);
+      isEnc(b) ? mark(encBadge(b), 'builds', 'encounter', W) : null);
     mark($('#sp-summary'), 'builds', 'summary', W).textContent = b.summary;
     const extra = b.petDps > 0 ? tile('Pet damage', f1(b.petShare), `${f1(b.petDps)} DPS from pets`, 'builds', 'petShare', W, '%')
       : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight on average', 'builds', 'oomSecs', W, ' s')

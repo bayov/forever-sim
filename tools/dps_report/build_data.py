@@ -368,6 +368,8 @@ for o in outs:
         'talents': m.get('talents', ''), 'treePoints': m.get('treePoints') or tree_points(m.get('talents', '')),
         'trees': ' / '.join(m.get('treeNames') or []), 'gearSet': m.get('gearSet', ''), 'apl': m.get('apl', ''),
         'summary': m.get('summary', ''),
+        # Why an encounter preset beats its normal build on its creature type of boss, for the Advantaged badge.
+        'advantage': m.get('advantage') or None,
         'bestRace': race_name(best['race']), 'bestRaceDps': round(best['dps'], 1),
         'hordeRace': race_name(horde['race']) if horde else None, 'hordeDps': round(horde['dps'], 1) if horde else None,
         'allianceRace': race_name(alli['race']) if alli else None, 'allianceDps': round(alli['dps'], 1) if alli else None,

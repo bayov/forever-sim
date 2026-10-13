@@ -3069,3 +3069,18 @@ ol.fv-list li::marker {
 		color: var(--gold-soft);
 	}
 }
+
+// Why an advantaged preset does better against its kind of boss.
+.fv-advtip {
+	max-width: 18rem;
+
+	b {
+		display: block;
+		margin-bottom: 0.25rem;
+		color: var(--gold-soft);
+	}
+
+	p {
+		margin: 0;
+	}
+}
