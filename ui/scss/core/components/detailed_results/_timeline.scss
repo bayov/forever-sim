@@ -93,10 +93,9 @@
 }
 
 .timeline-plot {
-	// ApexCharts sizes itself from the element's whole height, padding included, so we keep the
-	// chart off the card's edges with a margin.
+	// The chart sets its own height, see the Timeline constructor. We keep it off the card's
+	// edges with a margin, because ApexCharts sizes itself from the element's padding box.
 	&.dps-resources-plot {
-		height: 32rem;
 		margin: var(--spacer-3);
 	}
 

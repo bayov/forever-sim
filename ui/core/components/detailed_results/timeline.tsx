@@ -223,6 +223,10 @@ export class Timeline extends ResultComponent {
 	// Fires when the zoom changes, also from Alt + scroll.
 	readonly zoomEmitter = new TypedEvent<void>('TimelineZoom');
 
+	// The chart's lines we don't show, by name. Threat starts hidden, because its axis climbs all
+	// fight and squeezes the other lines, and most of the time we look at DPS and mana.
+	private readonly hiddenChartSeries = new Set<string>(['Threat']);
+
 	private resetCallbacks: (() => void)[] = [];
 
 	constructor(config: TimelineConfig) {
@@ -254,7 +258,9 @@ export class Timeline extends ResultComponent {
 				background: 'transparent',
 				foreColor: '#8e948f',
 				fontFamily: 'inherit',
-				height: '100%',
+				// A fixed height, legend included. With '100%' ApexCharts measured the wrong parent and
+				// drew past the bottom of the card, which cut the legend off.
+				height: 512,
 				id: 'dpsResources',
 				type: 'line',
 				zoom: {
@@ -550,6 +556,11 @@ export class Timeline extends ResultComponent {
 			yaxis: [],
 			chart: {
 				events: {
+					// The legend shows and hides a line. We remember it for the next iteration we draw.
+					legendClick: (chart: any, seriesIndex: number) => {
+						const name = chart.w.globals.seriesNames[seriesIndex];
+						if (!this.hiddenChartSeries.delete(name)) this.hiddenChartSeries.add(name);
+					},
 					beforeResetZoom: () => {
 						return {
 							xaxis: {
@@ -597,6 +608,7 @@ export class Timeline extends ResultComponent {
 			this.addDpsYAxis(maxDps, options);
 		}
 
+		options.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
 		this.dpsResourcesPlot.updateOptions(options);
 	}
 
