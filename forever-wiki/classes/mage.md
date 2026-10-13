@@ -6,7 +6,76 @@ Talents: 54 total, 6 new, 32 changed, 16 unchanged (verified).
 
 Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 5 and 7 hold the 11, 16, 21 and 31 point talents.
 
-Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+
+## Beta client 1.60.1.69876 to 1.60.1.70338 (2026-10-12)
+
+The beta client's mage tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876) (1.60.1.69876), with the talents later builds changed brought up to 1.60.1.70338 from [foreverchanges.pro](https://foreverchanges.pro/talents/mage). Positions, rank counts and prerequisites match the BlizzCon data below. Ranks 2 and up are real numbers now, and `tools/forever_talents/data/mage.json` in the sim repo is regenerated from the client tree (`client/mage.json`), so the per-talent text below is superseded where the two differ. The spells are from the client's spell tables (wago.tools DB2, 1.60.1.70338).
+
+Every multi-rank talent's per-rank values were checked on 2026-10-12 against the 70338 client's trait curves (wago.tools TraitDefinition, TraitDefinitionEffectPoints and CurvePoint), which override the rank 1 spell's base points. They all match the client tree's text and the sim, so the [ranks 2+ unverified] tags below are settled. Some rank 1 spells keep Classic leftovers in SpellEffect (Arcane Subtlety stores -30 / -15, Arcane Concentration 100, Wake of Fire -2000), which the curves replace.
+
+Talents (client ranks where the BlizzCon data guessed):
+
+- Arcane Focus and Elemental Precision are 1% hit per rank to 5%. Arcane Impact is 2 / 4 / 6% crit on all Arcane spells. Arcane Subtlety is 8 / 15 resistance. Magic Absorption is 5 / 10 resistance.
+- Arcane Meditation is 17 / 33 / 50% casting regen (Classic 5 / 10 / 15%). Arcane Resilience is 25 / 50% of Intellect as armor.
+- Arcane Mind is 2% Intellect and 20% Arcane crit damage bonus per rank (Classic gave max mana). Arcane Instability is 1% damage and 1% crit per rank on every spell.
+- Arcane Concentration has a 1 sec internal cooldown in the client (11213), so one Arcane Missiles can't roll it five times.
+- Improved Channeling (new) is 20% Arcane Missiles and 14% Arcane Blast pushback protection per rank. Arcane Geometry (new) is 3 / 6 yds of Arcane range.
+- Arcane Blast (talent, then trainer ranks at 30, 40, 50 and 60): 364 to 424 at 60 with a 71.4% coefficient, 2.5 sec, 15% of base mana. Each cast is a stack (8 sec, 4 stacks) worth 10% more damage on the mage's other spells and 175% more mana on Arcane Blast. Any other damage spell ends them.
+- Missile Barrage (new): Arcane Blast 40%, Fireball, Frostbolt and Frostfire Bolt 20%, to make the next Arcane Missiles within 15 sec free and twice as fast.
+- Wake of Fire (new): Fire Blast 1 / 2 sec shorter, and 25 / 50% crit on the next Fire Blast after a kill (30 sec since 2026-10-08, 20 before).
+- Incineration has 3 ranks (2 / 4 / 6%) and covers Fire Blast, Scorch, Ice Lance and Arcane Blast. Improved Fireball covers Frostfire Bolt. Impact is 3 / 7 / 10%, Burning Soul 23 / 47 / 70% with 10% less threat per rank.
+- Improved Scorch is 33 / 67 / 100%, and the vulnerability (22959) counts only for the mage who put it up ("all Fire damage you deal to your target").
+- Heating Up (Hot Streak until 2026-10-08, new): non-periodic crits with Fireball, Frostfire Bolt, Fire Blast and Scorch take 25% off the next Pyroblast's cast within 20 sec (15 sec before 2026-10-08), stacking to 3. The buff (400625) has one charge and a -25% cast time modifier per stack.
+- Combustion: 3 non-periodic Fire crits again since 2026-10-08 (4 on the beta before).
+- Ignite: "no longer counts damage bonuses twice" since 2026-09-24.
+- Permafrost is 11 / 22 / 33% longer chills, Improved Blizzard 15 / 25 / 40% slower, Improved Cone of Cold 12 / 23 / 35%, Frost Channeling 5% cheaper Frost spells and 10% less threat per rank.
+- Shatter has 3 ranks: 17 / 33 / 50% crit against Frozen targets.
+- Ice Lance (talent, then trainer ranks at 28, 34, 42, 48 and 56): 136 to 161 at 60, instant, 160 mana, 300% more damage to Frozen targets. The client has no spell power coefficient on it.
+- Fingers of Frost (new): chills have a 15% chance to make the next spell (two at rank 2) act as if the target were Frozen, for 15 sec.
+- Winter's Chill: 20% per rank, at most one stack per rank, and each stack is 2% crit for the mage's own Frostbolt and Ice Lance only (12579's crit aura is from the caster).
+- Ice Barrier rank 1 is 448 at 46 and rank 4 819 at 60.
+
+Spells at level 60 (client, top rank):
+
+- Fireball 425 to 541 plus 60 over 8 sec (Classic 596 to 760 plus 76), 100% coefficient, 410 mana.
+- Frostbolt 457 to 493 (Classic 515 to 555), 81.4%, 290 mana.
+- Frostfire Bolt (new trainer spell at 40, 50 and 60): Fire and Frost, 270 to 314 plus 57 over 9 sec, 81.4%, 3 sec, 370 mana, chills.
+- Arcane Missiles 209 a missile (Classic 230), 28.6% a missile (143% for the channel, Classic 120%), 655 mana.
+- Those three are the Ahn'Qiraj book ranks (Fireball XII, Frostbolt XI, Arcane Missiles VIII). The 70338 client has the books with no source and Forever starts before Molten Core, so the sim's Forever ruleset stops at the ranks before them: Fireball XI (397 to 505), Frostbolt X (382 to 413) and Arcane Missiles VII (175 a missile), at their caps.
+- Scorch 166 to 196 (Classic 237 to 280), Fire Blast 415 to 491 (Classic 446 to 524), both 42.9% on every rank.
+- Pyroblast 520 to 646 plus 212 over 12 sec (Classic 716 to 890 plus 268). Rank 1 comes with the talent at 20, ranks 2 to 8 from the trainer.
+- Arcane Explosion 239 to 258, Flamestrike 381 to 466 plus 332, Blizzard 1168 over 8 sec (3% a tick), Blast Wave 453 to 533, Cone of Cold 328 to 358.
+- Mage Armor gives 50% casting regen at every rank (Classic 30%). Evocation and the mana gems are unchanged.
+- The low ranks of the damage spells have close to full coefficients, not the 1.12 penalty for spells learned below 20.
+
+Manaflare Regalia (280450 to 280455, item level 65, no stats in the client yet) is Forever's level 60 mage set: 2 pieces 1% hit, 3 Counterspell 5 sec shorter, 4 up to 21 spell damage against Elementals, 5 Frostfire Bolt gets 10% more chance at Missile Barrage and Fingers of Frost and 10% crit during Combustion.
+
+## Mechanics check against the sim (2026-10-13)
+
+Every mage spell and talent the sim models was compared again with the 70338 client (wago.tools DB2: SpellEffect, SpellMisc, SpellPower, SpellCooldowns, SpellCategories, SpellAuraOptions, Trait tables), wowhead's Forever tooltips (`nether.wowhead.com/forever/tooltip/spell/<id>?dataEnv=17`), Blizzard's Forever development notes (us.forums.blizzard.com/en/wow/t/2360696) and mage deep dive (worldofwarcraft.blizzard.com/news/24302097), and foreverchanges.pro/class/mage.
+
+Fixed in the sim (no change to the single target presets):
+- Blizzard's ticks are the area trigger's own spells (1279976 to 1279980, 1279949), each with a 4.2% coefficient (SpellEffect EffectBonusCoefficient 0.042). The 3% the sim used is Blizzard's dummy effect (10187 effect 0).
+- Flamestrike's DoT ticks (1279983 to 1279990) are 3.2% each on every rank (the sim had 1.7 to 2%).
+- Combustion (28682) stacks to 10 (SpellAuraOptions CumulativeAura), not 20.
+
+Confirmed as the sim has them:
+- Evocation 12051: 8 sec, 1500% regen, 8 min cooldown, the same as Era.
+- Mage Armor 6117 / 22782 / 22783: 50% casting regen at every rank (Era 30%), resistances 5 / 10 / 15. The deep dive: "Mana regeneration bonus from Spirit increased".
+- Mana gems (Agate 375 to 425, Jade 550 to 650, Citrine 775 to 925, Ruby 1000 to 1200) and the Demonic and Dark Runes (900 to 1500) share one 2 min cooldown: ItemEffect SpellCategoryID 1153, 120000 ms on all six.
+- Arcane Intellect and Arcane Brilliance are still +31 Intellect. They now last an hour, and Brilliance reaches the raid (ImplicitTarget 56).
+- No Forever source changes the Spirit regen formula, the five second rule, base mana or the Intellect conversions, so the sim keeps Era's.
+- Frostfire Bolt "always uses the higher of the Mage's spell damage bonuses to Fire or Frost damage" (deep dive). The sim's multi-school spells already take the higher school power.
+- Every damage rank, coefficient, cost and cast time of Fireball, Frostbolt, Frostfire Bolt, Arcane Blast, Arcane Missiles, Ice Lance, Pyroblast, Scorch, Fire Blast, Arcane Explosion and Blast Wave, and every talent value, matches the client.
+
+Wands: the 2026-09-24 development notes say "Wands no longer gain any additional damage from the user's spell damage". Shoot (5019) and Wand Specialization (13 / 25%, now 2 points) are otherwise Era's, and wand damage still comes from ItemDamageWand. The sim doesn't model wands; a raid mage doesn't use one. Bonecreeper Stylus (13938) has no ItemSparse row in 70338, so the synthetic wand only borrows its damage and speed.
+
+Open, with what they are worth (notes.md):
+- Arcane Blast's stacks on Arcane Missiles. The tooltip of 400573 says "the damage of all other spells is increased by 10%" and the sim follows it, but the client's damage mask on 400573 leaves Arcane Missiles out, and 400586 (15% a stack on Arcane Missiles, SoD's) is still in the client. On the Arcane preset that is 829.7 at 180 sec as simmed, 751.0 with no bonus on the missiles and 869.0 with 15%.
+- 400573's and Arcane Power's periodic masks: Arcane Blast's covers the Fireball and Frostfire Bolt DoTs only, Arcane Power's leaves Frostfire Bolt's DoT out. The sim gives both to every DoT. No preset casts those spells with those buffs up.
+- Presence of Mind and Combustion share the client's category 1151 cooldown (3 min). A level 60 mage can't have both, so the sim keeps them apart.
+- Missile Barrage's talent spell (400588) has a ProcChance of 50 in SpellAuraOptions where the tooltip gives 40 / 20%. The sim follows the tooltip.
 
 ## Spellbook changes (trainer abilities)
 
@@ -28,7 +97,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Rank 1: Increases your damage with Wands by 13%.
   - Rank 2: Increases your damage with Wands by 25%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Arcane Focus** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Arcane Focus** (5 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases your chance to hit with your Arcane spells by 1%.
   - Rank 2: Increases your chance to hit with your Arcane spells by 2%.
   - Rank 3: Increases your chance to hit with your Arcane spells by 3%.
@@ -41,7 +110,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
     - Rank 4: Reduces the chance that the opponent can resist your Arcane spells by 8%.
     - Rank 5: Reduces the chance that the opponent can resist your Arcane spells by 10%.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Improved Channeling** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Improved Channeling** (5 ranks, column 3) [NEW] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Gives you a 20% chance to avoid interruption caused by damage while channeling Arcane Missiles and a 14% chance while casting Arcane Blast.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -50,14 +119,14 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 2 (5 points)
 
-- **Arcane Subtlety** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Arcane Subtlety** (2 ranks, column 1) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Reduces your target's resistance to all your spells by 8 and reduces the threat caused by your Arcane spells by 15%.
   - Rank 2: Reduces your target's resistance to all your spells by 15 and reduces the threat caused by your Arcane spells by 30%.
   - Classic (2 ranks):
     - Rank 1: Reduces your target's resistance to all your spells by 5 and reduces the threat caused by your Arcane spells by 20%.
     - Rank 2: Reduces your target's resistance to all your spells by 10 and reduces the threat caused by your Arcane spells by 40%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Magic Absorption** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Magic Absorption** (2 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases all your resistances by 5 and causes all spells you fully resist to restore 1% of your total mana. Cannot trigger more often than 1 time per sec.
   - Rank 2: Increases all your resistances by 10 and causes all spells you fully resist to restore 2% of your total mana. Cannot trigger more often than 1 time per sec.
   - Classic (5 ranks):
@@ -72,7 +141,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Rank 3: Gives you a 6% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%.
   - Rank 4: Gives you a 8% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%.
   - Rank 5: Gives you a 10% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%.
-- **Arcane Resilience** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Arcane Resilience** (2 ranks, column 4) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases your Armor by an amount equal to 25% of your Intellect.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Classic: Increases your armor by an amount equal to 50% of your Intellect.
@@ -80,10 +149,10 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 3 (10 points)
 
-- **Arcane Geometry** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Arcane Geometry** (2 ranks, column 1) [NEW] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the range of your Arcane spells by 3 yards.
   - Rank 2: Rank 2 values not yet captured from footage.
-- **Arcane Impact** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Arcane Impact** (3 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the critical strike chance of your Arcane spells by 2%.
   - Rank 2: Increases the critical strike chance of your Arcane spells by 4%.
   - Rank 3: Increases the critical strike chance of your Arcane spells by 6%.
@@ -99,21 +168,21 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 4 (15 points)
 
-- **Arcane Shielding** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Arcane Shielding** (2 ranks, column 1) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Decreases the Mana lost per point of damage taken when your Mana Shield spell is active by 17% and increases the resistances granted by your Mage Armor spell by 25%.
   - Rank 2: Decreases the Mana lost per point of damage taken when your Mana Shield spell is active by 34% and increases the resistances granted by your Mage Armor spell by 50%.
   - Classic (2 ranks):
     - Rank 1: Decreases the mana lost per point of damage taken when Mana Shield is active by 10%.
     - Rank 2: Decreases the mana lost per point of damage taken when Mana Shield is active by 20%.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Improved Counterspell** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Counterspell** (2 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Your Counterspell also Silences the target for 2 sec.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Classic (2 ranks):
     - Rank 1: Gives your Counterspell a 50% chance to silence the target for 4 sec.
     - Rank 2: Gives your Counterspell a 100% chance to silence the target for 4 sec.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Arcane Meditation** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Arcane Meditation** (3 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Requires: Arcane Concentration (5/5)
   - Rank 1: Allows 17% of your Mana regeneration to continue while casting.
   - Rank 2: Allows 34% of your Mana regeneration to continue while casting.
@@ -132,7 +201,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 - **Presence of Mind** (1 rank, column 2) [unchanged]
   - Cost: Instant, 3 min cooldown
   - When activated, your next Mage spell with a casting time less than 10 sec becomes an instant cast spell.
-- **Arcane Mind** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Arcane Mind** (5 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases your Intellect by 2% and increases the critical strike damage bonus of your Arcane spells by 20%.
   - Rank 2: Increases your Intellect by 4% and increases the critical strike damage bonus of your Arcane spells by 40%.
   - Rank 3: Increases your Intellect by 6% and increases the critical strike damage bonus of your Arcane spells by 60%.
@@ -147,7 +216,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 6 (25 points)
 
-- **Arcane Instability** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Arcane Instability** (3 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Requires: Arcane Mind (5/5)
   - Rank 1: Increases the damage done by all your spells by 1% and your critical strike chance with all attacks by 1%.
   - Rank 2: Increases the damage done by all your spells by 2% and your critical strike chance with all attacks by 2%.
@@ -172,11 +241,11 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 1 (0 points)
 
-- **Wake of Fire** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Wake of Fire** (2 ranks, column 1) [NEW] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Reduces the cooldown of your Fire Blast spell by 1 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 20 sec by 25%.
   - Rank 2: Reduces the cooldown of your Fire Blast spell by 2 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 20 sec by 50%.
   - Note: Rank 2 confirmed on screen: 2 sec and 50%.
-- **Incineration** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Incineration** (3 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the critical strike chance of your Fire Blast and Scorch spells by 2%.
   - Rank 2: Increases the critical strike chance of your Fire Blast and Scorch spells by 4%.
   - Rank 3: Increases the critical strike chance of your Fire Blast and Scorch spells by 4%.
@@ -184,7 +253,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
     - Rank 1: Increases the critical strike chance of your Fire Blast and Scorch spells by 2%.
     - Rank 2: Increases the critical strike chance of your Fire Blast and Scorch spells by 4%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Improved Fireball** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Improved Fireball** (5 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Reduces the casting time of your Fireball spell by 0.1 sec.
   - Rank 2: Reduces the casting time of your Fireball spell by 0.2 sec.
   - Rank 3: Reduces the casting time of your Fireball spell by 0.3 sec.
@@ -204,7 +273,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Rank 1: Increases the range of your Fire spells by 3 yards.
   - Rank 2: Increases the range of your Fire spells by 6 yards.
   - Note: Placed from the third-party dataset, not yet verified in footage by us.
-- **Impact** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Impact** (3 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Gives your Fire spells a 2% chance to stun the target for 2 sec.
   - Rank 2: Gives your Fire spells a 4% chance to stun the target for 2 sec.
   - Rank 3: Gives your Fire spells a 6% chance to stun the target for 2 sec.
@@ -218,14 +287,14 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 3 (10 points)
 
-- **Burning Soul** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Burning Soul** (3 ranks, column 1) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Gives your Fire spells a 23% chance to not lose casting time when you take damage and reduces the threat caused by your Fire spells by 10%.
   - Rank 2: Gives your Fire spells a 70% chance to not lose casting time when you take damage and reduces the threat caused by your Fire spells by 30%.
   - Rank 3: Gives your Fire spells a 70% chance to not lose casting time when you take damage and reduces the threat caused by your Fire spells by 30%.
   - Classic (2 ranks):
     - Rank 1: Gives your Fire spells a 35% chance to not lose casting time when you take damage and reduces the threat caused by your Fire spells by 15%.
     - Rank 2: Gives your Fire spells a 70% chance to not lose casting time when you take damage and reduces the threat caused by your Fire spells by 30%.
-- **Improved Flamestrike** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Flamestrike** (3 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the critical strike chance of your Flamestrike spell by 5%.
   - Rank 2: Increases the critical strike chance of your Flamestrike spell by 10%.
   - Rank 3: Increases the critical strike chance of your Flamestrike spell by 15%.
@@ -238,7 +307,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 4 (15 points)
 
-- **Improved Scorch** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Scorch** (3 ranks, column 1) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Your Scorch spell has a 33% chance to cause your target to be vulnerable to Fire damage. This vulnerability increases all Fire damage you deal to your target by 3% and lasts 30 sec, stacking up to 5 times.
   - Rank 2: Your Scorch spells have a 66% chance to cause your target to be vulnerable to Fire damage. This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec. Stacks up to 5 times.
   - Rank 3: Your Scorch spells have a 100% chance to cause your target to be vulnerable to Fire damage. This vulnerability increases the Fire damage dealt to your target by 3% and lasts 30 sec. Stacks up to 5 times.
@@ -300,7 +369,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Rank 3: Reduces the casting time of your Frostbolt spell by 0.3 sec.
   - Rank 4: Reduces the casting time of your Frostbolt spell by 0.4 sec.
   - Rank 5: Reduces the casting time of your Frostbolt spell by 0.5 sec.
-- **Elemental Precision** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Elemental Precision** (5 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases your chance to hit with Frost and Fire spells by 1%.
   - Rank 2: Increases your chance to hit with Frost and Fire spells by 2%.
   - Rank 3: Increases your chance to hit with Frost and Fire spells by 3%.
@@ -320,7 +389,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Rank 3: Increases the critical strike damage bonus of your Frost spells by 60%.
   - Rank 4: Increases the critical strike damage bonus of your Frost spells by 80%.
   - Rank 5: Increases the critical strike damage bonus of your Frost spells by 100%.
-- **Permafrost** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Permafrost** (3 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the duration of your Chill effects by 11% and reduces the target's speed by an additional 3%.
   - Rank 2: Increases the duration of your Chill effects by 22% and reduces the target's speed by an additional 6%.
   - Rank 3: Increases the duration of your Chill effects by 33% and reduces the target's speed by an additional 9%.
@@ -332,7 +401,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 - **Improved Frost Nova** (2 ranks, column 3) [unchanged]
   - Rank 1: Reduces the cooldown of your Frost Nova spell by 2 sec.
   - Rank 2: Reduces the cooldown of your Frost Nova spell by 4 sec.
-- **Frostbite** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Frostbite** (3 ranks, column 4) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Gives your Chill effects a 5% chance to freeze the target for 5 sec.
   - Rank 2: Gives your Chill effects a 10% chance to freeze the target for 5 sec.
   - Rank 3: Gives your Chill effects a 15% chance to freeze the target for 5 sec.
@@ -343,7 +412,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Rank 1: Increases the damage done by your Frost spells by 2%.
   - Rank 2: Increases the damage done by your Frost spells by 4%.
   - Rank 3: Increases the damage done by your Frost spells by 6%.
-- **Frost Channeling** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Frost Channeling** (3 ranks, column 2) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Reduces the mana cost of your Frost spells by 5% and reduces the threat caused by your Frost spells by 10%.
   - Rank 2: Reduces the mana cost of your Frost spells by 10% and reduces the threat caused by your Frost spells by 20%.
   - Rank 3: Reduces the mana cost of your Frost spells by 15% and reduces the threat caused by your Frost spells by 30%.
@@ -353,7 +422,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Cost: 45 Mana, 30 yd range, Instant
   - Deals 28 to 33 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.
   - Note: Filled the question-mark placeholder with the WotLK Ice Lance icon.
-- **Improved Blizzard** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Improved Blizzard** (3 ranks, column 4) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Adds a Chill effect to your Blizzard spell. This effect lowers the target's movement speed by 15% for 1.5 sec.
   - Rank 2: Adds a Chill effect to your Blizzard spell. This effect lowers the target's movement speed by 30% for 1.5 sec.
   - Rank 3: Adds a Chill effect to your Blizzard spell. This effect lowers the target's movement speed by 45% for 1.5 sec.
@@ -365,7 +434,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 4 (15 points)
 
-- **Arctic Reach** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Arctic Reach** (2 ranks, column 1) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the range of your Frostbolt and Blizzard spells and the radius of your Frost Nova and Cone of Cold spells by 10%.
   - Rank 2: Increases the range of your Frostbolt and Blizzard spells and the radius of your Frost Nova and Cone of Cold spells by 20%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
@@ -373,7 +442,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Cost: 15 Mana, Instant, 5 min cooldown
   - You become encased in a block of ice, protecting you from all physical attacks and spells for 10 sec, but during that time you cannot attack, move or cast spells.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Shatter** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Shatter** (3 ranks, column 4) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the critical strike chance of all your spells against frozen targets by 10%.
   - Rank 2: Increases the critical strike chance of all your spells against frozen targets by 20%.
   - Rank 3: Increases the critical strike chance of all your spells against frozen targets by 30%.
@@ -386,7 +455,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 5 (20 points)
 
-- **Improved Cone of Cold** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Cone of Cold** (3 ranks, column 1) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Increases the damage dealt by your Cone of Cold spell by 12%.
   - Rank 2: Increases the damage dealt by your Cone of Cold spell by 25%.
   - Rank 3: Increases the damage dealt by your Cone of Cold spell by 35%.
@@ -399,14 +468,14 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Finishes the remaining cooldown on all your other Frost spells.
   - Classic: When activated, this spell finishes the cooldown on all of your Frost spells.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Fingers of Frost** (2 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Fingers of Frost** (2 ranks, column 3) [NEW] [ranks 2+ settled by the 70338 trait curves]
   - Requires: Ice Lance (1/1)
   - Rank 1: Gives your Chill effects a 15% chance to grant you the Fingers of Frost effect, which treats your next 1 spell cast as if the target were Frozen. Lasts 15 sec.
   - Rank 2: Gives your Chill effects a 30% chance to grant you the Fingers of Frost effect, which treats your next 1 spell cast as if the target were Frozen. Lasts 15 sec.
 
 #### Row 6 (25 points)
 
-- **Winter's Chill** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Winter's Chill** (5 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
   - Rank 1: Gives your Frost damage spells a 20% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by 2% for 15 sec. Stacks up to 1 times.
   - Rank 2: Gives your Frost damage spells a 40% chance to apply the Winter's Chill effect, which increases the chance a Frost spell will critically hit the target by 2% for 15 sec. Stacks up to 5 times.
   - Rank 3: Gives your Frost damage spells a 60% chance to apply the Winter's Chill effect, which increases the chance a Frost spell will critically hit the target by 2% for 15 sec. Stacks up to 5 times.

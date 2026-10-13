@@ -68,10 +68,12 @@ func (rogue *Rogue) applyMurder() {
 		for _, t := range rogue.Env.Encounter.Targets {
 			switch t.MobType {
 			case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeGiant:
+				// The client's Murder (14158) is a lone damage done versus creature type aura
+				// (168), so a crit is twice the raised damage. Humanoid Slaying adds a second aura
+				// for the crit damage, Murder has none, so the crit multiplier stays as it is.
 				multiplier := []float64{1, 1.02, 1.04}[rogue.Talents.Murder]
 				for _, at := range rogue.AttackTables[t.UnitIndex] {
 					at.DamageDealtMultiplier *= multiplier
-					at.CritMultiplier *= multiplier
 				}
 			}
 		}

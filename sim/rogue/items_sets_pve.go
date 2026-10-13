@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -359,4 +360,75 @@ var ItemSetBonescytheArmor = core.NewItemSet(core.ItemSet{
 			})
 		},
 	},
+})
+
+///////////////////////////////////////////////////////////////////////////
+//                            Forever
+///////////////////////////////////////////////////////////////////////////
+
+// grimstitchBonuses are the set bonuses of Grimstitch Armor (set 2099), Forever's crafted level 60 rogue
+// set (Leatherworking: Grimstitch Mask 280877, Spaulders 280876, Chestpiece 280879, Gloves 280875, Pants
+// 280872 and Boots 280878, item level 65, from the 1.60.1.70338 client). The client spells are named "Item -
+// Tier 1 - Rogue": 1300956, 1301047, 1301088 and 1301708.
+//
+// The client pieces carry no stats yet, so no real set is registered for them. We give the bonuses to the
+// synthetic Phase 1 rogue sets below, the way the shaman's synthetic set carries The Spiritcaller's Rage.
+var grimstitchBonuses = map[int32]core.ApplyEffect{
+	// Improves your chance to hit by 1% (melee and spell, auras 54 and 55).
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.AddStats(stats.Stats{
+			stats.MeleeHit: 1 * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit: 1 * core.SpellHitRatingPerHitChance,
+		})
+	},
+	// Reduces the cooldown of your Kidney Shot ability by 3 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do, the sim has no Kidney Shot.
+	},
+	// +36 Attack Power against Humanoids.
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		humanoids := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeHumanoid
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Attack Power against Humanoids",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range humanoids {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusAttackPowerTaken += 36
+					}
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range humanoids {
+					for _, at := range c.AttackTables[target.UnitIndex] {
+						at.BonusAttackPowerTaken -= 36
+					}
+				}
+			},
+		}))
+	},
+	// Reduces the cost of your Envenom and Eviscerate abilities by 5 Energy. Forever has no Envenom.
+	5: func(agent core.Agent) {
+		rogue := agent.(RogueAgent).GetRogue()
+		rogue.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_RogueEviscerate {
+				spell.Cost.FlatModifier -= 5
+			}
+		})
+	},
+}
+
+// The synthetic Phase 1 rogue sets (tools/database/forever_synthetic_items_rogue.go), with the Grimstitch
+// Armor bonuses.
+var ItemSetCombatSwordsSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Combat Swords Synthetic (Phase 1)",
+	Bonuses: grimstitchBonuses,
+})
+
+var ItemSetDaggersSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Daggers Synthetic (Phase 1)",
+	Bonuses: grimstitchBonuses,
 })

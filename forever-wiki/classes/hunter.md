@@ -6,7 +6,70 @@ Talents: 50 total, 15 new, 20 changed, 15 unchanged (verified).
 
 Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 5 and 7 hold the 11, 16, 21 and 31 point talents.
 
-Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). The beta client's rank curves (TraitDefinitionEffectPoints, build 1.60.1.70338) have since settled every rank, see the section above; the tags below say so. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
+
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The hunter tree and spellbook from the beta client: wago.tools' DB2 tables for build 1.60.1.70338 (TraitNode, TraitDefinitionEffectPoints and the Spell tables), with the layout of hyjal.cc's 1.60.1.69876 tree, which 70338 kept. `tools/forever_talents/data/hunter.json` in the sim repo is regenerated from the client tree (`client/hunter.json`), so the per-talent text below is superseded where it differs. The sim follows the client. Each rank below is the client's rank curve. On 2026-10-12 every curve of a talent the sim models was checked against the sim's per-rank values (TraitDefinition, TraitDefinitionEffectPoints, CurvePoint); all match. Lightning Reflexes has a second definition at 3% a rank on an orphan node (104982); the tree's node (110859) is 2% a rank, as the sim has it. Resourcefulness carries a third curve (-20 / -40) on its proc trigger effect, which does nothing.
+
+Beast Mastery:
+
+- Deadly Aspects (replaces Improved Aspect of the Hawk): 2% a rank for Auto Shot to give Quick Shots (30% ranged attack speed, 12 sec) while Aspect of the Hawk is up, and for a melee auto attack to give Quick Strikes (30% melee attack speed, 12 sec) while Aspect of the Beast is up. The haste and duration do not grow with the ranks.
+- Endurance Training 3% pet health and armor a rank. Focused Fire 1% a rank on everything the hunter and the pet deal while the pet is out. Unleashed Fury 3% a rank on pets and hawks. Ferocity 2% crit a rank on pets and hawks. Frenzy is Classic's.
+- Improved Mend Pet 15 / 50% cleanse and 10 / 20% cheaper. Spirit Bond 1% health every 10 / 5 sec. Bestial Discipline 10 / 20% pet focus regen and 25 / 50% mana regen while casting.
+- Summon Hawk (16 points): the dive bomb deals 32 / 47 / 85 / 108 (ranks at 25 / 36 / 48 / 60) plus 5% of ranged attack power, for 80 / 105 / 135 / 190 mana. The hawk it leaves attacks for 18 sec, at most 2 at once. 6 sec cooldown shared with Arcane Shot.
+- Intimidation gives the pet's next attack 100% more crit, 8% of base mana, 1 min. Bestial Wrath is Classic's (50% pet damage for 18 sec, 2 min, 12% of base mana).
+- Gone: Improved Aspect of the Hawk, Thick Hide (folded into Endurance Training), Improved Eyes of the Beast (baseline).
+
+Marksmanship:
+
+- Lethal Attacks (Lethal Shots) 1% crit a rank with every attack. Efficiency 3% a rank on shots, stings and melee abilities (its class mask leaves out Sniper Shot and Strider Kick).
+- Improved Stings: Serpent Sting 6 / 13 / 20%, Viper Sting's cooldown 2 / 4 / 6 sec shorter, Scorpid Sting 15 / 30 / 45 sec longer.
+- Careful Aim: 20% of Intellect a rank as melee and ranged attack power. Mortal Shots needs it, 6% crit damage a rank on Auto Shot, Aimed, Arcane and Multi-Shot, Serpent Sting and Volley (not Sniper Shot).
+- Rapid Killing: Rapid Fire's cooldown 1 min shorter a rank, and 10 / 20% on the next shot within 20 sec of a kill. Rapid Recuperation: a Serpent Sting hit gives 25 / 50% of mana regen while casting for 15 sec, using Rapid Killing 50 / 100%.
+- Improved Arcane Shot 0.3 sec a rank, on Arcane Shot only. Lone Wolf 20% damage with no pet out.
+- Trueshot Aura (row 4, 21 points) is a party aura of ranged attack power only, with trainer ranks 30 / 40 / 50 / 75 / 50 at 25 / 32 / 40 / 50 / 60 (Classic's rank 3 at 60 was 100). A level 60 hunter casts rank 4's 75, the strongest it knows, and so does the sim (standards 8a); Hunter's Mark likewise gives rank 3's 98 over rank 4's 71 (Classic 110).
+- Barrage 3 / 7 / 10% on Aimed Shot, Multi-Shot and Volley. Ranged Weapon Specialization 1% a rank.
+- Sniper Shot (31 points): normalized ranged weapon damage plus 160 / 225 / 295 (ranks at 40 / 48 / 58), 4 sec cast, 15 sec cooldown, 365 mana, 45 yards, and 10 yards more range on the next 3 shots.
+- Gone: Aimed Shot (trained now), Improved Hunter's Mark (baseline), Improved Scorpid Sting. Improved Serpent Sting is still in the client data but parked far off the tree, so no one can take it.
+
+Survival:
+
+- Improved Tracking (Monster and Humanoid Slaying): 1% damage a rank against the tracked creature type. Deflection 1% parry a rank (2% in the earlier beta builds). Entrapment roots for 1 to 5 sec.
+- Savage Strikes 2% crit a rank on the melee abilities (Raptor Strike, Mongoose Bite, Wing Clip, Strider Kick, Lacerate, Lacerating Strikes, Counterattack). Predator's Edge 6% crit damage a rank on the same abilities and 10% off hand damage a rank.
+- Survivalist 2% health a rank. Improved Wing Clip 7 / 13 / 20%. Clever Traps 15% a rank. Surefooted 1% hit a rank on every attack. Survival Tactics (Trap Mastery) 5% trap and Feign Death hit a rank.
+- Resourcefulness: traps and the melee abilities 30% cheaper a rank (not Strider Kick or Lacerate), and a crit has a 50% chance a rank to give 50% mana regen while casting for 30 sec (the tooltip shows "?%", 50 a rank is the rank curve).
+- Expose Prey: an attack on a target with Hunter's Mark has a 5% chance a rank to open Mongoose Bite, for 10 sec since build 70291 (5 before).
+- Survivalist's Discipline 20% off trap and Deterrence cooldowns a rank. Lightning Reflexes 2% Agility a rank (a 3% twin is parked off the tree).
+- Counterattack (16 points): 50% weapon damage plus 26 / 110 at ranks 1 and 4, after a parry. Strider Kick (21 points): 100% normalized weapon damage, 8 sec cooldown, 5.81% of base mana, 30% run speed for 3 sec. Lacerating Strikes (31 points): Mongoose Bite also bleeds 40% of its damage over 21 sec, the ticks can crit.
+- Gone: Humanoid Slaying, Improved Feign Death, Killer Instinct, Wyvern Sting, Trap Mastery.
+
+Spellbook at level 60:
+
+- Aimed Shot is trained from level 20. Rank 6: +166 (Classic 600), 2 sec cast (Classic 3), 310 mana, 6 sec cooldown shared with Multi-Shot. The ranks below: 20 / 34 / 55 / 89 / 125.
+- Multi-Shot has one rank: no flat bonus, 0.5 sec cast, 6 sec cooldown shared with Aimed Shot, 13.9% of base mana.
+- Arcane Shot rank 8: 217 Arcane (Classic 183), no spell power coefficient (Classic 42.9%). Ranks 20 / 26 / 39 / 65 / 94 / 134 / 170 / 217.
+- Serpent Sting rank 9: 555 over 15 sec, no spell power coefficient. The ranks below are lower than Classic's: 10 / 30 / 60 / 110 / 170 / 240 / 320 / 415.
+- Aspect of the Hawk rank 7: 120 ranged attack power (rank 6 reads 55, below rank 5's 90, likely a client error). Aspect of the Beast has 4 ranks of 50 / 70 / 90 / 110 melee attack power. Hunter's Mark rank 4: 71 (rank 3 98).
+- Raptor Strike rank 8: weapon damage +70 (Classic 140). Mongoose Bite rank 4: normalized weapon damage +57 (Classic a flat 115). Wing Clip is Classic's.
+- Volley rank 3: 112 Arcane a second for 6 sec (Classic 80) and no cooldown. Rapid Fire speeds up melee attacks too. Traps go down in combat and have a 30 sec cooldown, Fire and Frost traps one each.
+- Lacerate is new, trained from level 30: a bleed for 21 sec, 406 at rank 4 and level 60 (58 a tick, +0.8 a level), 95 mana.
+
+What the beta shows that the client data does not (from beta combat logs: ElliotWood/Forever's fits and the community forever-hunter wiki):
+
+- Arcane Shot adds about 0.11 of ranged attack power, Serpent Sting about 0.035 a tick, read live each tick. The ticks crit with ranged crit.
+- Auto Shot keeps firing while the hunter casts.
+- The weapon specialization racials give no ranged crit.
+- Pets swing every 2.0 sec and a passive per beast (Faster Attack I to VII) moves them to the beast's Classic speed, with hits that stay the size of a 2.0 sec pet's. Pets take 10% of the hunter's highest attack power and all of its crit (and 2 health a Stamina point, 30% of armor), take no player buffs, and regenerate 10 focus a second.
+- Summon Hawk's hawk swings every 2.5 sec (sped up by ranged haste) for about 0.35 of the dive bomb's base.
+
+Cross-check against wowhead's Forever database (2026-10-13). Wowhead serves Forever as data environment 16 (`nether.wowhead.com/tooltip/<type>/<id>?dataEnv=16`): Sniper Shot 1310786 exists only there. Environment 17 is retail's squished data (Giantstalker's Helmet at item level 13), not Forever. Against the client and the sim:
+
+- Ammo and quivers are unchanged. Thorium Headed Arrow and Thorium Shells add 17.5 damage a second (item level 57), Ice Threaded Arrow 16.5. Ancient Sinew Wrapped Lamina and Harpy Hide Quiver give 15% ranged attack speed (Haste 29414, client aura 557 at 15). Quickdraw Quiver gives 13%. The sim's Thorium Headed Arrow at 17.5 and the 15% quiver match.
+- These match the client and the sim: Aspect of the Hawk rank 5 is 90, rank 6 is 55 and rank 7 (an Ahn'Qiraj book) is 120. Aspect of the Beast is 50 / 70 / 90 / 110. Serpent Sting rank 8 is 415 over 15 sec. Arcane Shot is 217. Aimed Shot is +166 with a 2 sec cast. Rapid Fire is 40% ranged and melee for 15 sec. Immolation Trap is 690 over 15 sec with a 30 sec cooldown. Raptor Strike is +70, Mongoose Bite +57, Wing Clip 50 and Strider Kick 100%. Sniper Shot is +295, 4 sec, 365 mana. Summon Hawk is 108 + 0.05 of ranged attack power. Hunter's Mark rank 4 is 71. Trueshot Aura ranks 4 and 5 are 75 and 50. Bestial Wrath is 50% for 18 sec. Elune's Light is 10% crit for 15 sec on a 3 min cooldown.
+- Lacerate reads 451 over 21 sec, which is its level 68 cap (58 + 0.8 x 8 a tick). It is 406 at 60.
+- The cat's Claw is 43 to 59 and its Bite 81 to 99 at level 60. The sim had Bite at 81 to 91 and is fixed (+0.4 to +0.7 DPS for the pet builds).
+- Under Forever a weapon holds a totem buff (Windfury Totem), the wielder's own imbue and an oil or stone together (classes/shaman.md). So Survival's main hand gets both Windfury Totem and its Dense Sharpening Stone, as the sim has it.
 
 ## Spellbook changes (trainer abilities)
 
@@ -101,7 +164,7 @@ Aspect of the Monkey, Aspect of the Hawk, Call Pet, Dismiss Pet, Feed Pet, Reviv
 
 ### Not yet verified (Classic text assumed)
 
-Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counterattack, Track Dragonkin, Wyvern Sting, Volley, Trueshot Aura, Attack, Claw, Defensive, Dive, Follow, Great Stamina, Growl, Natural Armor, Stay
+Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counterattack, Track Dragonkin, Wyvern Sting, Volley, Attack, Defensive, Dive, Follow, Great Stamina, Growl, Natural Armor, Stay (Trueshot Aura and the pets' Claw and Bite were checked against the client and wowhead's Forever data on 2026-10-13, see above)
 
 ## Talents
 
@@ -111,7 +174,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 1 (0 points)
 
-- **Deadly Aspects** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Deadly Aspects** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: While Aspect of the Hawk is active, all normal ranged attacks have a 2% chance of increasing ranged attack speed by 30% for 12 sec. While Aspect of the Beast is active, all melee auto attacks have a 2% chance of increasing melee attack speed by 30% for 12 sec.
   - Rank 2: While Aspect of the Hawk is active, all normal ranged attacks have a 4% chance of increasing ranged attack speed by 60% for 24 sec. While Aspect of the Beast is active, all melee auto attacks have a 4% chance of increasing melee attack speed by 60% for 24 sec.
   - Rank 3: While Aspect of the Hawk is active, all normal ranged attacks have a 6% chance of increasing ranged attack speed by 90% for 36 sec. While Aspect of the Beast is active, all melee auto attacks have a 6% chance of increasing melee attack speed by 90% for 36 sec.
@@ -123,7 +186,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
     - Rank 3: While Aspect of the Hawk is active, all normal ranged attacks have a 3% chance of increasing ranged attack speed by 30% for 12 sec.
     - Rank 4: While Aspect of the Hawk is active, all normal ranged attacks have a 4% chance of increasing ranged attack speed by 30% for 12 sec.
     - Rank 5: While Aspect of the Hawk is active, all normal ranged attacks have a 5% chance of increasing ranged attack speed by 30% for 12 sec.
-- **Endurance Training** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Endurance Training** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the Health and Armor of your pets by 3%.
   - Rank 2: Increases the Health and Armor of your pets by 6%.
   - Rank 3: Increases the Health and Armor of your pets by 9%.
@@ -138,10 +201,10 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 2 (5 points)
 
-- **Focused Fire** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Focused Fire** (2 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases all damage you deal by 1% while your pet is active.
   - Rank 2: Increases all damage you deal by 2% while your pet is active.
-- **Improved Aspect of the Monkey** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Aspect of the Monkey** (3 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the Dodge bonus of your Aspect of the Monkey by 2%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability.
   - Rank 2: Increases the Dodge bonus of your Aspect of the Monkey by 4%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability.
   - Rank 3: Increases the Dodge bonus of your Aspect of the Monkey by 6%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability.
@@ -159,7 +222,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 - **Bestial Swiftness** (1 rank, column 2) [CHANGED]
   - Increases the movement speed of your pets by 30%.
   - Classic: Increases the outdoor movement speed of your pets by 30%.
-- **Unleashed Fury** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Unleashed Fury** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage done by your pets and hawks by 3%.
   - Rank 2: Increases the damage done by your pets and hawks by 6%.
   - Rank 3: Increases the damage done by your pets and hawks by 9%.
@@ -174,11 +237,11 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 4 (15 points)
 
-- **Improved Mend Pet** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Mend Pet** (2 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Gives your Mend Pet spell a 15% chance of cleansing 1 Curse, Disease, Magic, or Poison effect from your pet each time it heals and reduces the Mana cost by 10%.
   - Rank 2: Gives your Mend Pet spell a 30% chance of cleansing 1 Curse, Disease, Magic, or Poison effect from your pet each time it heals and reduces the Mana cost by 20%.
   - Note: Higher-rank values taken from the nikftw dataset.
-- **Ferocity** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Ferocity** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the critical strike chance of your pets and hawks by 2%.
   - Rank 2: Increases the critical strike chance of your pets and hawks by 4%.
   - Rank 3: Increases the critical strike chance of your pets and hawks by 6%.
@@ -207,7 +270,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
   - Cost: 84 Mana, 100 yd range, Instant, 1 min cooldown
   - Command your pet to Stun the target for 3 sec on its next successful attack, which also gains 100% increased critical strike chance. Generates high threat.
   - Classic: Command your pet to intimidate the target on the next successful melee attack, causing a high amount of threat and stunning the target for 3 sec.
-- **Bestial Discipline** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Bestial Discipline** (2 ranks, column 4) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the Focus regeneration of your pets by 10% and allows 25% of your Mana regeneration to continue while casting.
   - Rank 2: Increases the Focus regeneration of your pets by 20% and allows 50% of your Mana regeneration to continue while casting.
   - Classic (2 ranks):
@@ -249,7 +312,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
   - Rank 4: Gives your Concussive Shot a 16% chance to stun the target for 3 sec.
   - Rank 5: Gives your Concussive Shot a 20% chance to stun the target for 3 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Lethal Attacks** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Lethal Attacks** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your critical strike chance with all attacks by 1%.
   - Rank 2: Increases your critical strike chance with all attacks by 2%.
   - Rank 3: Increases your critical strike chance with all attacks by 3%.
@@ -265,12 +328,12 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 2 (5 points)
 
-- **Improved Stings** (3 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Improved Stings** (3 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage of your Serpent Sting ability by 6%, reduces the cooldown of your Viper Sting ability by 2 sec, and increases the duration of your Scorpid Sting ability by 15 sec.
   - Rank 2: Increases the damage of your Serpent Sting ability by 12%, reduces the cooldown of your Viper Sting ability by 4 sec, and increases the duration of your Scorpid Sting ability by 30 sec.
   - Rank 3: Increases the damage of your Serpent Sting ability by 18%, reduces the cooldown of your Viper Sting ability by 6 sec, and increases the duration of your Scorpid Sting ability by 45 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Efficiency** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Efficiency** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the Mana cost of your Shots, Stings, and melee abilities by 3%.
   - Rank 2: Reduces the Mana cost of your Shots, Stings, and melee abilities by 6%.
   - Rank 3: Reduces the Mana cost of your Shots, Stings, and melee abilities by 9%.
@@ -283,7 +346,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
     - Rank 4: Reduces the Mana cost of your Shots and Stings by 8%.
     - Rank 5: Reduces the Mana cost of your Shots and Stings by 10%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Careful Aim** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Careful Aim** (5 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your Attack Power by 20% of your Intellect.
   - Rank 2: Increases your Attack Power by 40% of your Intellect.
   - Rank 3: Increases your Attack Power by 60% of your Intellect.
@@ -293,11 +356,11 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 3 (10 points)
 
-- **Rapid Killing** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Rapid Killing** (2 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the cooldown on your Rapid Fire ability by 1 min. In addition, when you kill a non-trivial enemy or it dies while afflicted by your Serpent Sting, you gain Rapid Killing, increasing the damage of your next Shot ability within 20 sec by 10%.
   - Rank 2: Reduces the cooldown on your Rapid Fire ability by 2 min. In addition, when you kill a non-trivial enemy or it dies while afflicted by your Serpent Sting, you gain Rapid Killing, increasing the damage of your next Shot ability within 40 sec by 20%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Improved Arcane Shot** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Arcane Shot** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the cooldown of your Arcane Shot by 0.3 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.
   - Rank 2: Reduces the cooldown of your Arcane Shot by 0.6 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.
   - Rank 3: Reduces the cooldown of your Arcane Shot by 0.9 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.
@@ -321,7 +384,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
   - Increases the Ranged Attack Power of party members within 45 yards by 30. Lasts 30 min.
   - Classic: Increases the attack power of party members within 45 yards by 50. Lasts 30 min.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Mortal Shots** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Mortal Shots** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Requires: Careful Aim (5/5)
   - Rank 1: Increases the critical strike damage bonus on all ranged abilities by 6%.
   - Rank 2: Increases the critical strike damage bonus on all ranged abilities by 12%.
@@ -337,12 +400,12 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 5 (20 points)
 
-- **Rapid Recuperation** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Rapid Recuperation** (2 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Requires: Rapid Killing (2/2)
   - Rank 1: Hitting a target with your Serpent Sting ability grants you 25% and consuming Rapid Killing grants you 50% of your Mana regeneration while casting for the next 15 sec.
   - Rank 2: Hitting a target with your Serpent Sting ability grants you 50% and consuming Rapid Killing grants you 100% of your Mana regeneration while casting for the next 30 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Barrage** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Barrage** (3 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 3%.
   - Rank 2: Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 6%.
   - Rank 3: Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 9%.
@@ -381,7 +444,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 1 (0 points)
 
-- **Improved Tracking** (5 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Improved Tracking** (5 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: While tracking Beasts, Demons, Dragonkin, Elementals, Giants, Humanoids, or Undead, all damage you deal to the tracked creature type is increased by 1%.
   - Rank 2: While tracking Beasts, Demons, Dragonkin, Elementals, Giants, Humanoids, or Undead, all damage you deal to the tracked creature type is increased by 2%.
   - Rank 3: While tracking Beasts, Demons, Dragonkin, Elementals, Giants, Humanoids, or Undead, all damage you deal to the tracked creature type is increased by 3%.
@@ -396,7 +459,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 2 (5 points)
 
-- **Entrapment** (5 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Entrapment** (5 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: When your traps are triggered, all affected targets are Entrapped, preventing them from moving for 1 sec.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -409,7 +472,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
     - Rank 4: Gives your Immolation Trap, Frost Trap, and Explosive Trap a 20% chance to entrap the target, preventing them from moving for 5 sec.
     - Rank 5: Gives your Immolation Trap, Frost Trap, and Explosive Trap a 25% chance to entrap the target, preventing them from moving for 5 sec.
   - Note: Rank 1 from footage. Ranks 2+ were still Classic text, rewritten from rank 1 with linear scaling. Rank 2+ values not yet seen on camera.
-- **Savage Strikes** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Savage Strikes** (2 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the critical strike chance of all your melee abilities by 2%.
   - Rank 2: Increases the critical strike chance of all your melee abilities by 4%.
   - Classic (2 ranks):
@@ -434,7 +497,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 - **Clever Traps** (2 ranks, column 1) [unchanged]
   - Rank 1: Increases the duration of Freezing and Frost trap effects by 15% and the damage of Immolation and Explosive trap effects by 15%.
   - Rank 2: Increases the duration of Freezing and Frost trap effects by 30% and the damage of Immolation and Explosive trap effects by 30%.
-- **Surefooted** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Surefooted** (3 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your hit chance by 1% and reduces the duration of movement impairing effects on you by 10%.
   - Rank 2: Increases your hit chance by 2% and reduces the duration of movement impairing effects on you by 20%.
   - Rank 3: Increases your hit chance by 3% and reduces the duration of movement impairing effects on you by 30%.
@@ -449,11 +512,11 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 4 (15 points)
 
-- **Survival Tactics** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Survival Tactics** (2 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your chance to hit with your Trap and Feign Death abilities by 5%.
   - Rank 2: Increases your chance to hit with your Trap and Feign Death abilities by 10%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Predator's Edge** (5 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Predator's Edge** (5 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your melee critical strike damage by 6% and your offhand weapon damage by 10%.
   - Rank 2: Increases your melee critical strike damage by 12% and your offhand weapon damage by 20%.
   - Rank 3: Increases your melee critical strike damage by 18% and your offhand weapon damage by 30%.
@@ -467,15 +530,15 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 5 (20 points)
 
-- **Resourcefulness** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Resourcefulness** (2 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the mana cost of your Trap abilities and melee abilities by 30%. In addition, your critical strikes have a 30% chance to allow 50% of your Mana regeneration to continue while casting for 30 sec.
   - Rank 2: Reduces the mana cost of your Trap abilities and melee abilities by 60%. In addition, your critical strikes have a 60% chance to allow 100% of your Mana regeneration to continue while casting for 60 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Expose Prey** (2 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Expose Prey** (2 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Your attacks against targets with Hunter's Mark have a 5% chance to activate your Mongoose Bite for 5 sec.
   - Rank 2: Your attacks against targets with Hunter's Mark have a 10% chance to activate your Mongoose Bite for 10 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Survivalist's Discipline** (2 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Survivalist's Discipline** (2 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the cooldown of your Trap and Deterrence abilities by 20%.
   - Rank 2: Reduces the cooldown of your Trap and Deterrence abilities by 40%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
@@ -486,7 +549,7 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
 
 #### Row 6 (25 points)
 
-- **Lightning Reflexes** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Lightning Reflexes** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your Agility by 2%.
   - Rank 2: Increases your Agility by 4%.
   - Rank 3: Increases your Agility by 6%.

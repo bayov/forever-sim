@@ -739,6 +739,15 @@ func (character *Character) IsShapeshifted() bool {
 	return character.ActiveShapeShift != nil
 }
 
+// canUseItemsInForm says whether potions, runes and similar consumables can be used without
+// leaving a shapeshift form. Forever allows it ("All potions and almost all similar consumables
+// are now useable while shapeshifted and do not cancel the Druid's shapeshift", Blizzard's
+// World of Warcraft: Forever class deep dive, Druid; client 1.60.1.70338 also flags Cat, Bear and
+// Moonkin Form CanUseItems in SpellShapeshiftForm). Engineering explosives stay unusable in form.
+func (character *Character) canUseItemsInForm() bool {
+	return !character.IsShapeshifted() || character.Env.IsForever()
+}
+
 func (character *Character) CancelShapeshift(sim *Simulation) {
 	if character.ActiveShapeShift != nil {
 		character.ActiveShapeShift.Deactivate(sim)

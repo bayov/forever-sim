@@ -53,21 +53,20 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	displayPseudoStats: [],
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
-		// Default EP weights for sorting gear in the gear picker.
+		// Default EP weights for sorting gear in the gear picker. From rotopt -weights on the Level 60
+		// Frostfire build at 180 sec (2026-10-12, 50000 iterations), in spell power. Hit and crit are
+		// per 1%. Spirit and mp5 read about 0, because the mage does not run dry in 3 minutes.
 		epWeights: Stats.fromMap({
-			[Stat.StatIntellect]: 0.49,
+			[Stat.StatIntellect]: 0.16,
 			[Stat.StatSpellPower]: 1,
 			[Stat.StatSpellDamage]: 1,
-			[Stat.StatArcanePower]: 1,
-			[Stat.StatFirePower]: 1,
-			[Stat.StatFrostPower]: 1,
-			// Aggregated across 3 builds
-			[Stat.StatSpellHit]: 18.59,
-			[Stat.StatSpellCrit]: 13.91,
+			[Stat.StatSpellHit]: 18.9,
+			[Stat.StatSpellCrit]: 14.1,
 			[Stat.StatSpellHaste]: 6.85,
-			[Stat.StatMP5]: 0.11,
+			[Stat.StatMP5]: 0.0,
 			[Stat.StatFireResistance]: 0.5,
 		}),
 		// Default consumes settings.
@@ -86,9 +85,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 
 	modifyDisplayStats: (player: Player<Spec.SpecMage>) => {
 		let stats = new Stats();
-		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitArcane, player.getTalents().arcaneFocus * 2 * SPELL_HIT_RATING_PER_HIT_CHANCE);
-		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitFire, player.getTalents().elementalPrecision * 2 * SPELL_HIT_RATING_PER_HIT_CHANCE);
-		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitFrost, player.getTalents().elementalPrecision * 2 * SPELL_HIT_RATING_PER_HIT_CHANCE);
+		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitArcane, player.getTalents().arcaneFocus * SPELL_HIT_RATING_PER_HIT_CHANCE);
+		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitFire, player.getTalents().elementalPrecision * SPELL_HIT_RATING_PER_HIT_CHANCE);
+		stats = stats.addPseudoStat(PseudoStat.PseudoStatSchoolHitFrost, player.getTalents().elementalPrecision * SPELL_HIT_RATING_PER_HIT_CHANCE);
 
 		return {
 			talents: stats,
@@ -96,7 +95,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
-	playerIconInputs: [MageInputs.Armor],
+	playerIconInputs: [MageInputs.Armor, MageInputs.StaffImbueInput],
 	// Inputs to include in the 'Rotation' section on the settings tab.
 	rotationInputs: MageInputs.MageRotationConfig,
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
@@ -112,6 +111,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildLevel60Frostfire, Presets.PresetBuildLevel60Frost, Presets.PresetBuildLevel60Fire, Presets.PresetBuildLevel60Arcane],
 		rotations: [...Presets.APLPresets[Phase.Phase1]],
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		gear: [...Presets.GearPresets[Phase.Phase1]],
@@ -128,22 +128,22 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			defaultName: 'Arcane',
 			iconUrl: getSpecIcon(Class.ClassMage, 0),
 
-			talents: Presets.DefaultTalents.data,
+			talents: Presets.TalentsLevel60Arcane.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceGnome,
-				[Faction.Horde]: Race.RaceTroll,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
 				[Faction.Alliance]: {
-					1: Presets.DefaultGear.gear,
+					1: Presets.GearLevel60Phase1SyntheticArcane.gear,
 				},
 				[Faction.Horde]: {
-					1: Presets.DefaultGear.gear,
+					1: Presets.GearLevel60Phase1SyntheticArcane.gear,
 				},
 			},
 		},
@@ -153,14 +153,14 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			defaultName: 'Fire',
 			iconUrl: getSpecIcon(Class.ClassMage, 1),
 
-			talents: Presets.DefaultTalents.data,
+			talents: Presets.TalentsLevel60Fire.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceGnome,
-				[Faction.Horde]: Race.RaceTroll,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
@@ -178,14 +178,14 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			defaultName: 'Frost',
 			iconUrl: getSpecIcon(Class.ClassMage, 2),
 
-			talents: Presets.DefaultTalents.data,
+			talents: Presets.TalentsLevel60Frost.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			otherDefaults: Presets.OtherDefaults,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceGnome,
-				[Faction.Horde]: Race.RaceTroll,
+				[Faction.Alliance]: Race.RaceSkyborneHighOrder,
+				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

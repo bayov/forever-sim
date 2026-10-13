@@ -401,7 +401,7 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		MakePermanent(GraceOfAirTotemAura(&character.Unit, enhancingTotemsMultiplier(raidBuffs.GraceOfAirTotem)))
 	}
 
-	if raidBuffs.TotemWeaponBuff != proto.TotemWeaponBuff_TotemWeaponBuffNone && isHorde && !character.PseudoStats.FeralCombatEnabled {
+	if raidBuffs.TotemWeaponBuff != proto.TotemWeaponBuff_TotemWeaponBuffNone && isHorde && character.weaponEffectsWork() {
 		applyRaidTotemWeaponBuff(character, raidBuffs.TotemWeaponBuff)
 	}
 
@@ -496,7 +496,7 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 func applyPetBuffEffects(petAgent PetAgent, playerFaction proto.Faction, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) {
 	// Summoned pets, like Mage Water Elemental, aren't around to receive raid buffs.
 	// Also assume that applicable world buffs are applied to the starting pet only
-	if petAgent.GetPet().IsGuardian() || !petAgent.GetPet().enabledOnStart {
+	if petAgent.GetPet().IsGuardian() || !petAgent.GetPet().enabledOnStart || (petAgent.GetPet().IgnoresPlayerBuffs && petAgent.GetPet().Env.IsForever()) {
 		return
 	}
 
@@ -1619,16 +1619,28 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 }
 
 // Forever's Trueshot Aura is a Marksmanship talent with five ranks from level 25. It only
-// gives ranged attack power now, so a melee character gets nothing from it. The rank 5
-// tooltip says 50, less than rank 4's 75. We take it as written.
+// gives ranged attack power now, so a melee character gets nothing from it. In client 70338
+// rank 5 (20906, level 60) gives 50, half of Classic's 100 and less than rank 4's (20905) 75.
+// A hunter keeps every rank learned and casts the strongest, so a weaker top rank isn't used
+// (standards 8a; bestLearnedRank).
 var foreverTrueshotAuraLevel = [...]int{0, 25, 32, 40, 50, 60}
 var foreverTrueshotAuraRAP = [...]float64{0, 30, 40, 50, 75, 50}
+
+// bestLearnedRank is the strongest value among the ranks learned by level, for Forever spells
+// whose top rank gives less than a lower one. Players can cast any rank they have learned.
+func bestLearnedRank[L int | int32](level int32, learnLevels []L, values []float64) float64 {
+	best := 0.0
+	for r := 1; r <= HighestRankAt(level, learnLevels); r++ {
+		best = max(best, values[r])
+	}
+	return best
+}
 
 func TrueshotAura(unit *Unit) *Aura {
 	rangedAP := 100.0
 	meleeAP := 100.0
 	if unit.Env.IsForever() {
-		rangedAP = foreverTrueshotAuraRAP[HighestRankAt(unit.Level, foreverTrueshotAuraLevel[:])]
+		rangedAP = bestLearnedRank(unit.Level, foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:])
 		meleeAP = 0
 	}
 

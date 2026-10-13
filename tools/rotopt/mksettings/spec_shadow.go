@@ -1,0 +1,49 @@
+package main
+
+import "github.com/wowsims/classic/sim/core/proto"
+
+func init() {
+	specs["shadow"] = &specSetup{
+		uiDir: "ui/shadow_priest",
+		// A caster takes Blessing of Wisdom where the melee take Might, and the shaman in a
+		// caster group drops Mana Spring (Dwarf shamans give the Alliance totems too). The
+		// melee debuffs in the shared raid do nothing for a priest. Forever has no Curse of
+		// Shadow, its Curse of the Elements covers Shadow, and Shadow Weaving as a raid debuff
+		// is off under Forever, the priest's own talent gives it.
+		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
+			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
+			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
+			debuffs.CurseOfShadow = false
+		},
+		// Each consume was tried in and out of the set on the Level 60 build (180 sec, 20000
+		// iterations, 2026-10-12): Lobster Stew (28 spell damage under Forever) is 2.8 ahead of
+		// Nightfin Soup, the Goblin Sapper Charge adds 3.7 (a filler explosive costs a GCD and
+		// loses 4), the Elixir of the Owl 16.4 over the Elixir of Wisdom (one 2% crit elixir a
+		// character, Sages would add 13.9), the Major Spellblasting Potion 8.2 over the Major
+		// Mana Potion and Cerebral Cortex Compound 3.2. Brilliant Wizard Oil would be 12.5 ahead of Wizard Oil but is a
+		// Zul'Gurub recipe, Shadow Oil and Dragonbreath Chili add nothing. Mana never runs out
+		// in a raid fight (about 25 min to empty), so Mageblood is left out.
+		consumes: func() *proto.Consumes {
+			return &proto.Consumes{
+				DefaultPotion:   proto.Potions_MajorSpellblastingPotion,
+				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
+				Flask:           proto.Flask_FlaskOfSupremePower,
+				Food:            proto.Food_FoodLobsterStew,
+				IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
+				MainHandImbue:   proto.WeaponImbue_WizardOil,
+				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
+				ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
+				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
+				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
+			}
+		},
+		// Engineering for the Goblin Sapper Charge, Tailoring as the priest's crafting.
+		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Tailoring},
+		withSpec: func(player *proto.Player) {
+			player.Class = proto.Class_ClassPriest
+			player.Spec = &proto.Player_ShadowPriest{ShadowPriest: &proto.ShadowPriest{
+				Options: &proto.ShadowPriest_Options{Armor: proto.ShadowPriest_Options_InnerFire},
+			}}
+		},
+	}
+}

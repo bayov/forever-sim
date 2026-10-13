@@ -81,15 +81,14 @@ func (wp *WarlockPet) registerImpFireboltSpell() {
 		rank = min(rank, int(wp.owner.Options.MaxFireboltRank))
 	}
 
-	spellCoeff := [8]float64{0, .164, .314, .529, .571, .571, .571, .571}[rank]
-	baseDamage := [8][]float64{{0, 0}, {7, 10}, {14, 16}, {25, 29}, {36, 41}, {52, 59}, {72, 80}, {85, 96}}[rank]
-	spellId := [8]int32{0, 3110, 7799, 7800, 7801, 7802, 11762, 11763}[rank]
-	manaCost := [8]float64{0, 10, 20, 35, 50, 70, 95, 115}[rank]
-	level := [8]int{0, 1, 8, 18, 28, 38, 48, 58}[rank]
-
-	improvedImp := []float64{1, 1.1, 1.2, 1.3}[wp.owner.Talents.ImprovedImp]
-	baseDamage[0] *= improvedImp
-	baseDamage[1] *= improvedImp
+	// Forever halved Firebolt too (42.6 to 47.8 at rank 7 and level 60, 1.12 85 to 96,
+	// client 11763). The coefficient is on the imp's own spell power, which it has none of.
+	data := impFireboltRanks[rank]
+	spellCoeff := data.Coef
+	damageLow, damageHigh := data.rangeAt(warlockLevel)
+	spellId := data.SpellID
+	manaCost := data.Cost
+	level := data.Level
 
 	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
@@ -105,7 +104,7 @@ func (wp *WarlockPet) registerImpFireboltSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      time.Millisecond * 1000,
-				CastTime: time.Millisecond * (2000 - time.Duration(500*wp.owner.Talents.ImprovedFirebolt)),
+				CastTime: data.castTime(),
 			},
 			// Adding an artificial CD to account for real delay in imp casts in-game
 			CD: core.Cooldown{
@@ -115,11 +114,13 @@ func (wp *WarlockPet) registerImpFireboltSpell() {
 		},
 
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		BonusCoefficient: spellCoeff,
+		// Improved Imp: 10% a point on Firebolt.
+		DamageMultiplierAdditive: 1 + 0.1*float64(wp.owner.Talents.ImprovedImp),
+		ThreatMultiplier:         1,
+		BonusCoefficient:         spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(baseDamage[0], baseDamage[1])
+			baseDamage := sim.Roll(damageLow, damageHigh)
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 

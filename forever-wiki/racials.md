@@ -117,7 +117,7 @@ Classes: Hunter, Mage, Priest, Rogue, Shaman, Warlock (new), Warrior.
 
 ### Windshaper Skyborne (new, Horde)
 
-Classes: Druid, Hunter, Mage, Rogue, Shaman, Warrior.
+Classes: Druid, Hunter, Rogue, Shaman, Warrior.
 
 - Walk on Air (active) NEW: [Instant; 2 min cooldown] Glide downward through the air for 10 sec while controlling your direction of travel.
 - Skysight (active) NEW: [0.5 sec cast; 2 min cooldown] Attempt to draw power from a convergence of elements and receive its blessing, increasing your movement and mounted movement speeds by 10%. Lasts 30 sec if no elemental convergence is nearby, and 15 min if one is found.

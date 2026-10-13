@@ -7,18 +7,15 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-const DrainLifeRanks = 6
-
 func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 	numTicks := int32(5)
 
-	spellId := [DrainLifeRanks + 1]int32{0, 689, 699, 709, 7651, 11699, 11700}[rank]
-	spellCoeff := [DrainLifeRanks + 1]float64{0, .078, .1, .1, .1, .1, .1}[rank]
-	baseDamage := [DrainLifeRanks + 1]float64{0, 10, 17, 29, 41, 55, 71}[rank]
-	manaCost := [DrainLifeRanks + 1]float64{0, 55, 85, 135, 185, 240, 300}[rank]
-	level := [DrainLifeRanks + 1]int{0, 14, 22, 30, 38, 46, 54}[rank]
-
-	baseDamage *= 1 + warlock.shadowMasteryBonus() + 0.02*float64(warlock.Talents.ImprovedDrainLife)
+	data := drainLifeRanks[rank]
+	spellId := data.SpellID
+	spellCoeff := data.Coef
+	baseDamage := data.damageAt(warlock.Level)
+	manaCost := data.Cost
+	level := data.Level
 
 	actionID := core.ActionID{SpellID: spellId}
 
@@ -66,9 +63,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDamage, isRollover)
-				// Drain Life heals so it snapshots target modifiers
-				// Update 2024-06-29: It no longer snapshots on PTR
-				// dot.SnapshotAttackerMultiplier *= dot.Spell.TargetDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex][dot.Spell.CastType], true)
+				dot.SnapshotAttackerMultiplier *= warlock.soulSiphonMultiplier(target)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -101,7 +96,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 
 func (warlock *Warlock) registerDrainLifeSpell() {
 	warlock.DrainLife = make([]*core.Spell, 0)
-	for rank := 1; rank <= DrainLifeRanks; rank++ {
+	for rank := 1; rank < len(drainLifeRanks); rank++ {
 		config := warlock.getDrainLifeBaseConfig(rank)
 
 		if config.RequiredLevel <= int(warlock.Level) {

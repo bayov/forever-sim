@@ -200,7 +200,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
 		if !forever {
 			MakePermanent(HuntersMarkAura(target, GetTristateValueInt32(debuffs.HuntersMark, 0, 5)))
-		} else if bonus := foreverHuntersMark[HighestRankAt(level, foreverHuntersMarkLevel[:])]; bonus > 0 {
+		} else if bonus := bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:]); bonus > 0 {
 			MakePermanent(huntersMarkAura(target, bonus))
 		}
 	}
@@ -266,7 +266,9 @@ var (
 	foreverJudgementOfWisdomLevel = [...]int{0, 38, 48, 58}
 	foreverJudgementOfWisdomMana  = [...]float64{0, 33, 46, 59}
 
-	// wowhead and ForeverChanges both list rank 4 below rank 3, so we keep their numbers.
+	// Client 70338, wowhead and ForeverChanges all have rank 4 (14325, 71; Classic 110) below
+	// rank 3 (14324, 98). A hunter keeps both and casts rank 3, so the mark gives 98 from level 40
+	// (standards 8a; bestLearnedRank).
 	foreverHuntersMarkLevel = [...]int{0, 6, 22, 40, 58}
 	foreverHuntersMark      = [...]float64{0, 26, 59, 98, 71}
 )
@@ -590,6 +592,10 @@ func JudgementOfTheCrusaderAura(caster *Unit, target *Unit, bonus float64, durat
 }
 
 func CurseOfElementsAura(target *Unit) *Aura {
+	if target.Env.IsForever() {
+		return foreverCurseOfElementsAura(target, len(foreverCurseOfElementsLevel)-1)
+	}
+
 	resistance := 75.0
 	dmgMod := 1.1
 
@@ -605,6 +611,17 @@ func CurseOfElementsAura(target *Unit) *Aura {
 	spellSchoolResistanceEffect(aura, stats.SchoolIndexFrost, resistance, 0.0, false)
 
 	return aura
+}
+
+// ForeverCurseOfElementsRankAt is the highest rank of Forever's Curse of the Elements a
+// warlock of this level knows, zero below 20.
+func ForeverCurseOfElementsRankAt(level int32) int {
+	return HighestRankAt(level, foreverCurseOfElementsLevel[:])
+}
+
+// ForeverCurseOfElementsAura is the given rank of Forever's curse, for the warlock's own cast.
+func ForeverCurseOfElementsAura(target *Unit, rank int) *Aura {
+	return foreverCurseOfElementsAura(target, rank)
 }
 
 // foreverCurseOfElementsAura is Forever's curse. It takes resistance and adds damage taken

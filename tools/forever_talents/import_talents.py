@@ -77,13 +77,17 @@ def sorted_talents(tree):
 
 def spell_ids(talent, existing):
 	# Keep whatever the tree already used so regenerating doesn't churn icons.
-	if talent['name'] in existing:
+	if talent['name'] in existing and any(existing[talent['name']]):
 		return existing[talent['name']]
 
 	prior = talent.get('ranksPrior') or {}
 	ids = prior.get('classicSpellIds') or []
 	if ids:
 		return (ids + [ids[-1]] * talent['maxRank'])[:talent['maxRank']]
+
+	# A client tree names the rank 1 spell, which is enough for the icon and tooltip link.
+	if talent.get('spellId'):
+		return [talent['spellId']] * talent['maxRank']
 
 	return [PLACEHOLDER_SPELL_ID] * talent['maxRank']
 

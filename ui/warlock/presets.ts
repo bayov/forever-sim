@@ -1,24 +1,29 @@
-import { Player } from '../core/player.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
-	Alcohol,
 	Conjured,
 	Consumes,
 	Debuffs,
+	Encounter,
 	FirePowerBuff,
 	Flask,
 	Food,
 	IndividualBuffs,
+	IntellectElixir,
 	ManaRegenElixir,
+	MobType,
 	Potions,
 	Profession,
+	Race,
 	RaidBuffs,
+	SapperExplosive,
 	ShadowPowerBuff,
 	SpellPowerBuff,
+	SpiritElixir,
+	Stat,
 	TristateEffect,
 	WeaponImbue,
 	ZanzaBuff,
-} from '../core/proto/common';
+} from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import {
 	WarlockOptions as WarlockOptions,
@@ -26,10 +31,17 @@ import {
 	WarlockOptions_Summon as Summon,
 	WarlockOptions_WeaponImbue as WarlockWeaponImbue,
 } from '../core/proto/warlock.js';
+import { Stats } from '../core/proto_utils/stats.js';
 // apls
+import Level60AfflictionAPL from './apls/level60_affliction.apl.json';
+import Level60DemonologyAPL from './apls/level60_demonology.apl.json';
+import Level60DestructionAPL from './apls/level60_destruction.apl.json';
+import Level60DestructionFireAPL from './apls/level60_destruction_fire.apl.json';
 import BasicRotation from './apls/rotation.apl.json';
 // gear
 import BlankGear from './gear_sets/blank.gear.json';
+import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticDemonologyGearJSON from './gear_sets/level60_phase1_synthetic_demonology.gear.json';
 import MCGear from './gear_sets/mc.gear.json';
 import PreBisGear from './gear_sets/prebis.gear.json';
 
@@ -41,83 +53,238 @@ export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 export const GearPreBis = PresetUtils.makePresetGear('Pre-BIS', PreBisGear);
 export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 
-export const GearPresets = [
-	GearBlank,
-	GearPreBis,
-	GearMC,
-];
+// Forever's level 60 gear is not tuned yet and Molten Core has no Forever data, so the Level 60
+// presets wear synthetic items (tools/database/forever_synthetic_items_warlock.go): the Era Phase 1
+// BiS (the Felheart set, Robe of Volatile Power, Mana Igniting Cord, Choker of the Fire Lord) rebuilt
+// on Forever's budget for a caster (standards 1b: spell power at 0.86, each armor piece at slot mod x
+// (1.125 item level + 2) x 1.053 / 1.026 / 0.995 in linear stats, four stat lines a piece within 4% of
+// the 1.7-norm shape target) in the fair stat mix of real level 60 warlock gear (standards 5a, Season of
+// Discovery BiS proportions): Stamina 14.4%, Intellect 16.0%, Spirit 10.1%, spell power 38.3%, crit
+// 10.4% (412 spell power, 6.9% crit), hit to the 16% cap against a level 63 boss: 10% from gear with
+// Suppression 5/5 and the 2 piece. Armor 709.6, the staff (item level 76) at Forever's caster rate of
+// 193.4 with Enchant 2H Weapon - Spellblasting (+65 spell power), the wand 21.3. Two synthetic
+// trinkets: +38 spell power and 13 crit rating, and an on-use 140 spell power for 20 sec every 2 min
+// (no real Phase 1 trinket is obtainable or simulated). At 180 sec the builds went from the first,
+// all-spell-power set (524 spell power, 5% crit, no trinkets) at 1088.5 / 984.9 / 976.2 / 976.2 to
+// 1053.2 / 948.2 / 939.8 / 935.0 on the fair mix (1a) and 1111.2 / 986.5 / 978.5 / 970.2 now (the on-use trinket used before the pull)
+// (Demonology / Destruction / Affliction / Destruction fire). Only the head and chest carry
+// Demonheart Raiment, Forever's warlock Tier 1 set, so only its 2 piece (1% hit) is live; on the first
+// set the 5 piece's 20% more mana from Life Tap would have added 12.9 on Demonology and 8.4 to 8.8 on
+// Destruction and Affliction at 180 sec (the 4 piece is 21 spell power against Demons only).
+// Enchants, the best Phase 1 one per slot with no raid source: Lesser Arcanum of Voracity on the head
+// (Arcanum of Focus is a Zandalar one), Enchant Necklace - Spell Power, the Mystic Rugged Armor Kit
+// (+6 spell power) on the chest, hands, legs and feet, Bracer - Greater Spellpower and Spellblasting on
+// the staff. No Phase 1 enchant adds damage on the shoulders or back.
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
+	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
+	group: 'Level 60',
+});
+// Demonology keeps one point of Suppression, so it swaps four pieces (the chest, legs, waist and
+// staff) for hit variants (14% hit from gear) at the same budget, in Demonology's own stat mix:
+// Stamina 13.5%, Intellect 12.9%, Spirit 9.9%, spell power 36.4%, crit 12.1%, hit 15.1%. Suppression
+// 5/5 on the shared set is 72 behind (1038.0 against 1110.1 at 180 sec).
+export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 Synthetic Demonology',
+	Level60Phase1SyntheticDemonologyGearJSON,
+	{
+		tooltip: 'The synthetic Phase 1 set with four hit pieces, hit capped for Demonology (one point of Suppression).',
+		group: 'Level 60',
+	},
+);
 
-export const DefaultGear = GearPreBis;
+export const GearPresets = [GearLevel60Phase1SyntheticDemonology, GearLevel60Phase1Synthetic, GearBlank, GearPreBis, GearMC];
+
+export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// P1
-export const RotationSB = PresetUtils.makePresetAPLRotation('Destruction', BasicRotation);
+// The Level 60 rotations come from tools/rotopt's warlock template (tools/rotopt/warlock.go),
+// searched on each build at 180 sec with the Level 60 settings (see warlock_presets.sh). All
+// three keep Bane of Doom up when it lands before the fight ends and Bane of Agony otherwise,
+// then Corruption and Immolate when they are down, Shadow Bolt as the filler, and Life Tap only
+// under 5% mana. A knob search kept every one of those. Against them, at 180 sec on Demonology:
+// Bane of Agony alone is 41 behind, no bane 118, no Corruption 45, no Immolate 7, Soul Fire
+// during Decimation 11, Death Coil on cooldown 9, Curse of Recklessness 6, Life Tap at 20% mana
+// 10. Searing Pain as the filler is 229 behind. Wrack, Incinerate, Siphon Life, the drains and
+// Shadowburn never made a build, Shadow Bolt does more with the same time. The opening Shadow Bolt
+// starts 2.5 sec before the pull so it lands just after it (damage before the pull does not
+// count), Life Tap also goes out when the filler costs more than the mana left, and Demonology
+// recasts Corruption and Immolate 1.5 sec early and taps once before the pull to pay for Soul
+// Link (the rotation audit's fixes, +10 to +14 at 180 sec).
+export const RotationLevel60Demonology = PresetUtils.makePresetAPLRotation('Level 60 Demonology', Level60DemonologyAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 rotation with Soul Link before the pull, for the Demonology talents.',
+});
+// Destruction adds Conflagrate on cooldown while Immolate is up. Shadow and Flame 5/5 keeps the
+// Immolate every time. Destruction and Affliction recast Immolate once it has less left than its
+// own cast time, which clips no tick, and Corruption only when it is gone (an early instant
+// Corruption clips its last tick).
+export const RotationLevel60Destruction = PresetUtils.makePresetAPLRotation('Level 60 Destruction', Level60DestructionAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 rotation with Conflagrate, for the Destruction talents.',
+});
+export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Level 60 Affliction', Level60AfflictionAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 rotation for the Affliction talents.',
+});
+// Destruction fire: Incinerate while Immolate is up (25% more), Conflagrate on cooldown, Immolate
+// opens the fight (started 1.5 sec before the pull, so it lands as the fight starts) and is
+// recast 2 sec before it runs out.
+export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation('Level 60 Destruction Fire', Level60DestructionFireAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
+});
+export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
 
-export const APLPresets = [RotationSB];
+export const APLPresets = [RotationLevel60Demonology, RotationLevel60Destruction, RotationLevel60Affliction, RotationLevel60DestructionFire, RotationBasic];
 
-export const DefaultAPL = RotationSB;
+export const DefaultAPL = RotationLevel60Demonology;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
+// Searched with tools/rotopt -talent-search on the synthetic set at 180 sec, from seven starting
+// builds (deep Affliction, deep Destruction, Demonic Pact with Destruction or Affliction,
+// Affliction and Demonology without Pact, Demonic Sacrifice and Ruin with no demon out, and a
+// Wrack build), then again on the searched rotation. Every Demonic Pact start ended on the same
+// build. It sacrifices the Imp before the pull (15% Shadow damage) and keeps the Succubus out
+// (Master Demonologist's 10% Shadow damage, Soul Link, Demonic Knowledge's 60 spell damage).
+export const TalentsLevel60Demonology = PresetUtils.makePresetTalents(
+	'Level 60 Demonology',
+	SavedTalents.create({ talentsString: '011-0305003131221001351-0550005003' }),
+	{ group: 'Level 60', tooltip: 'Demonic Pact with Improved Shadow Bolt and Ruin.' },
+);
+// The best build with 30 points in Destruction: Conflagrate, Fire and Brimstone and Shadow and
+// Flame, with Pandemic and Malevolence from Affliction. Incinerate and Bane of Havoc lost to two
+// points of Malevolence and Shadowburn to more Pandemic.
+export const TalentsLevel60Destruction = PresetUtils.makePresetTalents(
+	'Level 60 Destruction',
+	SavedTalents.create({ talentsString: '25510000035--055030500310035' }),
+	{ group: 'Level 60', tooltip: 'Conflagrate and Shadow and Flame, with Pandemic and Malevolence.' },
+);
+// The best build with 30 points in Affliction: Shadow Mastery, Pandemic, Malevolence and
+// Nightfall, with Improved Shadow Bolt, Ruin and Agonizing Flames. Wrack and Soul Siphon lost
+// their points to Ruin, the drains being no match for Shadow Bolt. A damage over time variant with
+// Siphon Life, Soul Siphon and Wrack (25530000035001351--0550005003, the best build with both, on
+// the same Shadow Bolt rotation) is 55 behind, and casting its Wrack costs 34; its drain filler
+// versions lose 124 to 349. It played the same as this build, so it is not shipped as a spec.
+export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
+	'Level 60 Affliction',
+	SavedTalents.create({ talentsString: '2553000003520005--0550305003' }),
+	{ group: 'Level 60', tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.' },
+);
 
-export const TalentsSMRuid = {
-	name: 'SM/Ruin',
-	data: SavedTalents.create({ talentsString: '5502203112201105--52500051020001' }),
-};
+// Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
+// Aftermath, with Malediction and Pandemic and the Succubus out, and Firestone. Searched with
+// Incinerate and Conflagrate kept (-require). Since the demons scale from the warlock's stats the
+// Succubus out beats the earlier build that sacrificed it for 15% Fire damage (950.8) by 25; the
+// Felhunter out is 25 behind, the Imp 35, and Spellstone in place of Firestone 24. Without the owner
+// scaling (notes.md) the sacrifice build would be the pick again. Bane of Havoc's
+// point does nothing in the sim (it is the one point left over).
+export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
+	'Level 60 Destruction Fire',
+	SavedTalents.create({ talentsString: '2525000003-0002-0050355003101351' }),
+	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with Malediction and Pandemic and the Succubus out.' },
+);
 
-export const TalentsDSRuin = {
-	name: 'DS/Ruin',
-	data: SavedTalents.create({ talentsString: '25002-2050300152201-52500051020001' }),
-};
+export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
 
-export const TalentPresets = [TalentsSMRuid, TalentsDSRuin];
-
-export const DefaultTalents = TalentsDSRuin;
+export const DefaultTalents = TalentsLevel60Demonology;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
+// The Succubus is out for every Level 60 build. Forever's demons take no player buffs and scale
+// from the warlock's stats (Season of Discovery's coefficients as a placeholder, notes.md), and the
+// Succubus's melee gets the most from it: on Destruction it is 25 ahead of the Felhunter and 34 of
+// the Imp. Spellstone and Firestone are within 1 there.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
 	summon: Summon.Succubus,
-	weaponImbue: WarlockWeaponImbue.NoWeaponImbue,
+	sacrificedPet: Summon.Imp,
+	weaponImbue: WarlockWeaponImbue.Spellstone,
 });
 
+const PresetBuildOptionsDemonology = {
+	armor: Armor.DemonArmor,
+	summon: Summon.Succubus,
+	sacrificedPet: Summon.Imp,
+	weaponImbue: WarlockWeaponImbue.Spellstone,
+};
+const PresetBuildOptionsFire = {
+	armor: Armor.DemonArmor,
+	summon: Summon.Succubus,
+	sacrificedPet: Summon.NoSummon,
+	weaponImbue: WarlockWeaponImbue.Firestone,
+};
+const PresetBuildOptionsSuccubus = {
+	armor: Armor.DemonArmor,
+	summon: Summon.Succubus,
+	sacrificedPet: Summon.NoSummon,
+	weaponImbue: WarlockWeaponImbue.Spellstone,
+};
+
+// The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot
+// on the Demonology build at 180 sec: Goblin Sapper +4.1 (Engineering), Cerebral Cortex Compound
+// +10.7 (a Blasted Lands quest), Demonic Rune +15.8, Elixir of Shadow Power +23.3 and Wizard Oil
+// +15.7. With Forever's elixirs and foods simulated: a character takes one of the five +2% crit
+// elixirs (Mongoose, Grizzly, Owl, Sages, Whale are role variants of one elixir), and Elixir of
+// Sages with Elixir of Greater Intellect is 0.1 to 0.6 ahead of Elixir of the Owl with Elixir of
+// Greater Spirit on every build (Sages' Spirit feeds Life Tap). Greater Mageblood Elixir is +1.9
+// over Mageblood Potion, Lobster Stew +3.9 over Nightfin Soup, and Major Spellblasting Potion 12.9
+// behind Major Mana Potion. Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
+// Forever's launch Phase 1, when no vanilla raid is open, so Brilliant Wizard Oil (a Zandalar
+// recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain
+// Elixir of Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and
+// Flask of Distilled Wisdom (-88) lost.
 export const DefaultConsumes = Consumes.create({
-	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
-	defaultPotion: Potions.MajorManaPotion,
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	flask: Flask.FlaskOfSupremePower,
+	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	food: Food.FoodRunnTumTuberSurprise,
-	// mainHandImbue: WeaponImbue.BrilliantWizardOil,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	flask: Flask.FlaskOfSupremePower,
+	food: Food.FoodLobsterStew,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
+	mainHandImbue: WeaponImbue.WizardOil,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
+	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
 
+// The shared level 60 raid (tools/rotopt/mksettings): Kings and Wisdom (a caster takes no Might), Judgement of Wisdom,
+// every debuff, and a caster group's shaman with Mana Spring. Another warlock keeps Curse of the
+// Elements up, so ours has its curse free (Forever gives a warlock a bane and a curse). Under
+// Forever Improved Shadow Bolt, Shadow Weaving, Improved Scorch and Winter's Chill only help the
+// player who applies them, so they are not here.
+// Under Forever the demon takes no player buffs (notes.md) and scales from the warlock's stats
+// instead. The raid's party buffs are the warlock's caster group's: no Battle Shout, Trueshot Aura
+// or Leader of the Pack.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
 	divineSpirit: true,
 	fireResistanceAura: true,
-	fireResistanceTotem: true,
+	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
 	manaSpringTotem: TristateEffect.TristateEffectRegular,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	sanctityAura: true,
+	shadowProtection: true,
+	thorns: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
+	blessingOfMight: TristateEffect.TristateEffectMissing,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	fengusFerocity: false,
 	moldarsMoxie: false,
@@ -129,17 +296,137 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	exposeArmor: TristateEffect.TristateEffectImproved,
+	curseOfElements: true,
+	curseOfRecklessness: true,
+	curseOfShadow: true,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
+	exposeArmor: TristateEffect.TristateEffectMissing,
 	faerieFire: true,
-	improvedScorch: true,
+	insectSwarm: true,
+	judgementOfLight: true,
+	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
-	shadowWeaving: true,
+	scorpidSting: true,
 	sunderArmor: true,
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
+// Engineering for the Goblin Sapper in the consumes, Tailoring for the cloth.
 export const OtherDefaults = {
 	distanceFromTarget: 25,
-	profession1: Profession.Enchanting,
+	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 150,
+	race: Race.RaceGnome,
 };
+
+///////////////////////////////////////////////////////////////////////////
+//                                 Builds
+///////////////////////////////////////////////////////////////////////////
+
+// The level 60 raid setup: the sim's default boss (level 63, 3731 armor), a 3 minute fight, and
+// the default buffs, debuffs and consumes, like the enhancement shaman's.
+export const EncounterLevel60 = PresetUtils.makePresetEncounter(
+	'Level 60',
+	Encounter.create({
+		duration: 180,
+		durationVariation: 20,
+		executeProportion20: 0.2,
+		executeProportion25: 0.25,
+		executeProportion35: 0.35,
+		targets: [
+			{
+				id: 213336,
+				name: 'Level 60',
+				level: 63,
+				mobType: MobType.MobTypeUnknown,
+				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+				minBaseDamage: 3000,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		tanks: [],
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: DefaultDebuffs,
+		buffs: DefaultIndividualBuffs,
+		consumes: DefaultConsumes,
+	},
+);
+
+// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the Forever budget sets
+// with the synthetic trinkets): Demonology (Gnome) 1122.8 / 1111.2 / 1081.6, Destruction (Gnome) 994.1
+// / 986.5 / 967.0, Affliction (Gnome) 984.1 / 978.5 / 959.0, Destruction fire (Undead) 974.1 / 970.2
+// / 954.4. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and
+// Corruption VI. The demons take no player buffs and scale from the warlock's stats with Season of
+// Discovery's numbers as a placeholder (notes.md). The demon is the least sourced input: on the first
+// set at 180 sec, without the owner scaling Demonology was 1037.8 and the other builds 937 to 946, with
+// the Succubus's melee halved 1044.5 and 937 to 947.
+//
+// Races at 180 sec: the Gnome is first on Demonology (5.4 ahead of the Undead), Destruction (1.5 ahead
+// of the Orc) and Affliction (3.8 ahead of the Orc), and level with the Undead on Destruction fire
+// (970.2 each; the Undead is 1.3 ahead at 300 sec, so that build is Undead). The Gnome is the best
+// Alliance race on every build. For the Horde the Undead and the Orc are within 0.6 of each other on
+// the Shadow Bolt builds and the Undead is 2.0 ahead on Destruction fire, so the Undead is the best
+// Horde race. With the staff no warlock race has a weapon racial; on the old Azuresong sword the Human's
+// Sword Specialization had put it first. The full table is in forever-wiki/sim-status.md.
+export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1SyntheticDemonology,
+	talents: TalentsLevel60Demonology,
+	rotation: RotationLevel60Demonology,
+	encounter: EncounterLevel60,
+	race: Race.RaceGnome,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsDemonology,
+});
+export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Level 60 Destruction', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Gnome Destruction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60Destruction,
+	rotation: RotationLevel60Destruction,
+	encounter: EncounterLevel60,
+	race: Race.RaceGnome,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsSuccubus,
+});
+export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 60 Affliction', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Gnome Affliction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60Affliction,
+	rotation: RotationLevel60Affliction,
+	encounter: EncounterLevel60,
+	race: Race.RaceGnome,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsSuccubus,
+});
+
+export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60DestructionFire,
+	rotation: RotationLevel60DestructionFire,
+	encounter: EncounterLevel60,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFire,
+});
+
+export const PresetBuilds = [PresetBuildLevel60Demonology, PresetBuildLevel60Destruction, PresetBuildLevel60Affliction, PresetBuildLevel60DestructionFire];

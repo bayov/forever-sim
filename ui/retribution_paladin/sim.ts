@@ -15,8 +15,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	// List any known bugs / issues here and they'll be shown on the site.
 	knownIssues: [
 		`Forever rules: a Judgement does not consume the seal, Judgement of the Crusader lasts 40 sec and melee hits refresh it,
-		Holy Strike is baseline, Consecration is baseline and reworked, and the talent trees are the beta client's. Twist of Light,
-		Seal of Fury and Light's Vigil are not simulated.`,
+		Holy Strike is baseline, Consecration is baseline and reworked, and the talent trees are the beta client's. Twist of Light's
+		Echo and Light's Vigil are simulated. Seal of Fury is not.`,
+		`The Level 60 gear is synthetic: items that are not in the game, built to Phase 1 budgets, with Justice Battlegear's set bonuses.`,
 		`Be aware that not all item and weapon enchants are currently implemented in the sim, which make some notable Retribution
 		weapons like Pendulum of Doom and The Jackhammer undervalued.`,
 	],
@@ -113,7 +114,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 		partyBuffs: PartyBuffs.create({}),
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
-		race: Race.RaceUndead,
+		race: Presets.OtherDefaults.race,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
@@ -132,6 +133,12 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 
 	presets: {
 		builds: [
+			Presets.PresetBuildLevel60,
+			Presets.PresetBuildLevel60SubHoly,
+			Presets.PresetBuildLevel60Shock,
+			Presets.PresetBuildLevel60Undead,
+			Presets.PresetBuildLevel60SubHolyUndead,
+			Presets.PresetBuildLevel60ShockUndead,
 			Presets.PresetBuildLevel30p5,
 		],
 		rotations: [
@@ -148,7 +155,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			...Presets.TalentPresets[Phase.Phase1],
 		],
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.DefaultGear, Presets.GearLevel30p5],
+		gear: [Presets.GearLevel60Phase1Synthetic, Presets.GearBlank, Presets.GearLevel30p5],
 	},
 
 	autoRotation: player => {
@@ -165,6 +172,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
+			otherDefaults: Presets.OtherDefaults,
 			// Forever gives the Forsaken paladins, so the Horde has one now.
 			defaultFactionRaces: {
 				[Faction.Alliance]: Race.RaceHuman,

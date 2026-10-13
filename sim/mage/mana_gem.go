@@ -57,6 +57,8 @@ func (mage *Mage) newManaGemCooldown(rank int) core.SpellConfig {
 		RequiredLevel: ManaGemLevel[rank],
 
 		Cast: core.CastConfig{
+			// The gems share the runes' cooldown: the 70338 client gives the gems and Demonic and
+			// Dark Rune one item category (1153, 2 min) and one spell category (30).
 			CD: core.Cooldown{
 				Timer:    mage.GetConjuredCD(),
 				Duration: time.Minute * 2,

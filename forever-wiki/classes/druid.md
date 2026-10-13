@@ -8,6 +8,41 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+Update 2026-10-12: every multi-rank talent below that is still in the tree was checked against the client's per-rank curves (TraitDefinitionEffectPoints and CurvePoint, build 1.60.1.70338) and the sim's per-rank values match them, so those are marked [ranks settled by the 70338 trait curves]. Talents marked [not in client 70338] are no longer in the tree; the current tree is in the "Beta client 1.60.1.70338" section.
+
+## Beta client 1.60.1.70338 (2026-10-12)
+
+The druid tree and spells from the newest beta client on [wago.tools](https://wago.tools/db2) (TraitNode, TraitNodeEntry, TraitDefinition and TraitEdge for the tree, TraitDefinitionEffectPoints and the curves behind it for every rank, SpellEffect, SpellMisc, SpellPower, SpellCooldowns and SpellLevels for the spells), checked against [foreverchanges.pro](https://foreverchanges.pro/talents/druid)'s talent calculator for the same build. `tools/forever_talents/client/druid.json` and the sim follow it, so the BlizzCon text below is superseded where it differs.
+
+Talent tree changes against the BlizzCon data (and the hyjal.cc tree for build 69876):
+
+- Feral row 3 is Shredding Attacks (3 ranks, 6 / 12 / 18 Energy off Shred), Savage Fury, Feral Charge and Sharpened Claws. Row 4 is Shifting Power, Primal Bite, Predatory Strikes and Blood Frenzy. Row 5 is Improved Shifting Power, Leader of the Pack and Natural Instinct. Row 6 Natural Reaction and Rend and Tear, row 7 Berserk.
+- Mangle, Primal Fury, Predatory Instincts and King of the Jungle are gone. Primal Bite (the old Mangle, bear only: 20 Rage, 100% weapon damage plus 26 to 77 by rank, 6 sec cooldown) takes Mangle's place, Blood Frenzy is Primal Fury (50 / 100% to gain 5 Rage on a bear crit, and the same chance of an extra combo point on a crit from a combo point builder), Natural Instinct is Predatory Instincts (10 / 20% more crit damage bonus on the melee abilities, plus 12 / 25% of Intellect as spell healing).
+- Shifting Power (new, needs Shredding Attacks 3/3): Cat Form only, turns 55% of base mana into 40 Energy, 16 sec cooldown, 1 sec global cooldown. Natural Shapeshifter takes 10% a point off its cost. Improved Shifting Power (new, 2 ranks) takes 4 sec a point off the cooldown. It replaces powershifting, which Forever's Furor ends (shifting into Cat Form gives back 20% a point of the Energy we left with, plus 2 Energy a point a second out of form, up to 20 a point).
+- Berserk: Claw, Rake, Shred, Ravage and Pounce get 100% more crit chance for 15 sec, 3 min cooldown, off the global cooldown. Primal Bite hits 3 targets with no cooldown.
+- Tiger's Fury is gone: "Tiger's Fury: (Removed.) This has been replaced with a new Feral-specific talent called Shifting Power." (Blizzard's class deep dive; the 1 October beta development notes list it as removed). The client (1.60.1.70338) still has spell 5217 (15% more Physical damage for 6 sec, 30 sec cooldown, free), but its SkillLineAbility row has AcquireMethod 3, like the talent-granted Berserk and Shifting Power, and no talent grants it, so no trainer teaches it. The sim leaves it out under Forever (24.9 DPS on the Feral preset). King of the Jungle's 60 Energy on it is gone with the talent.
+- Every rank of every talent is in the client now. The values the BlizzCon data guessed that were wrong: Moonglow 8 / 17 / 25% off every damage spell, Improved Moonfire 5 / 10% damage, periodic damage and crit, Nature's Majesty 2 / 4% crit, Moonfury 2% a point on all Arcane and Nature damage, Eclipse 0.17 / 0.33 / 0.5 sec off each of the next 2 Starfires a Wrath gives (4 charges at most, 15 sec), Feral Instinct 10 / 20 / 30% Swipe damage, Heart of the Wild 2% Intellect and Cat Form Strength a point, Reflection 17 / 33 / 50% regen while casting, Living Spirit 5% Spirit a point, Naturalist 1% damage a point.
+- Nature's Grace is now 10% cast speed and 10% off the Balance spells' global cooldown for 3 sec after a spell crit that is not periodic (1.12 took 0.5 sec off the next cast).
+- Moonkin Form costs 35% of base mana, gives the party 3% crit with spells and attacks (exclusive with Leader of the Pack), and makes Omen of Clarity proc twice as often with half its 10 sec cooldown. Omen of Clarity is a baseline passive from level 20 and procs from spells too. The chance is the server's, the client has none.
+
+Spell values at level 60 (1.12 in brackets):
+
+- Wrath rank 8: 92 to 102 Nature (248 to 277), 120 mana (180), 2 sec, 57.1%.
+- Starfire rank 7: 350 to 412 Arcane (496 to 584), 340 mana, 3.5 sec, 100%. Rank 6 313 to 370.
+- Moonfire rank 10: 129 to 150 (195 to 228) and 60 a tick for 12 sec (384 over 12 sec), 375 mana, 15% and 13% a tick on every rank.
+- Insect Swarm rank 5: 31 a tick for 12 sec, 186 (324), 160 mana, 15.8% a tick. It is a Balance talent now (row 4).
+- Hurricane rank 3: 132 a tick (134), no cooldown (1 min).
+- Shred rank 5: 155% weapon damage (225%) on the weapon damage plus 80, so 124 extra. The tooltip still says "plus 180", 1.12's 80 times 2.25. 60 Energy.
+- Claw rank 5: 110% weapon damage plus 115 (100%). Rake rank 4: 61 and 34 a tick for 9 sec (58 and 32). Rip rank 6: 15 plus 25.5 a combo point a tick for 12 sec (17 plus 28). Ferocious Bite rank 5 is unchanged.
+
+Forever's crafted level 60 druid sets (item sets 2114 and 2115, leather head, shoulders, chest, hands, legs and feet): Grovekeeper Eclipse gives 1% hit (2), Nature's Grasp's cooldown 15 sec shorter (3), 21 spell damage against Demons (4) and 3 sec more Insect Swarm (5). Grovekeeper Ferocity gives 1% attack and cast speed (2), Hibernate in Cat Form (3), 36 attack power against Demons (4) and 1 sec off Shifting Power's cooldown (5). The pieces carry no stats in the client yet.
+
+Shapeshift forms under Forever (Blizzard's World of Warcraft: Forever class deep dive, Druid; the client, 1.60.1.70338, gives Cat and Bear Form 1000 and 2500 ms swings and flags Cat, Bear and Moonkin Form CanUseItems):
+- Cat, Bear and Dire Bear Form auto attack with the equipped weapon's DPS, at 1.0 sec (cat) or 2.5 sec (bear), and abilities that deal weapon damage use the same values. In the sim the cat swings its weapon's damage range scaled by 1.0 / its speed (sim/druid/forms.go GetCatWeapon), worth 16.4 DPS on the Feral preset over the 1.12 paw. Bear Form isn't in the sim.
+- Weapon enchants and procs work in form, including weightstones, sharpening stones, Crusader and Windfury Totem (sim/core/consumes.go weaponEffectsWork). Dense Weightstone is worth 4.9 to the cat (Elemental Sharpening Stone would be 9.5, but its plans only drop in Molten Core), a raid Windfury Totem 13.3 in place of Grace of Air (the Feral preset's melee group has it, as the warrior's and rogue's do).
+- Potions and almost all similar consumables can be used in form without leaving it, and druids can drink Rage potions and Thistle Tea (sim/core/character.go canUseItemsInForm, sim/druid/thistle_tea.go). Thistle Tea is worth 12.2 to the cat, the Mighty Rage Potion's Strength 6.3. Most Engineering bombs still can't be used in form; the new SAF-T and EZ-Thro recipes can, but the sim doesn't have them.
+- Racials (Shadowmeld, War Stomp, Walk on Air), Faerie Fire, Barkskin and Nature's Grasp can be used in form. Moonkin Form can cast every non-healing spell. Berserk works in Cat and Bear Form.
+
 ## Spellbook changes (trainer abilities)
 
 6 of 53 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
@@ -53,7 +88,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
 
 #### Row 1 (0 points)
 
-- **Improved Wrath** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Wrath** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the cast time of your Wrath spell by 0.1 sec and its Mana cost by 10%.
   - Rank 2: Reduces the cast time of your Wrath spell by 0.2 sec and its Mana cost by 20%.
   - Rank 3: Reduces the cast time of your Wrath spell by 0.3 sec and its Mana cost by 30%.
@@ -65,7 +100,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
     - Rank 3: Reduces the cast time of your Wrath spell by 0.3 sec.
     - Rank 4: Reduces the cast time of your Wrath spell by 0.4 sec.
     - Rank 5: Reduces the cast time of your Wrath spell by 0.5 sec.
-- **Genesis** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Genesis** (5 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the periodic damage and healing done by your spells and abilities by 1%.
   - Rank 2: Increases the periodic damage and healing done by your spells and abilities by 2%.
   - Rank 3: Increases the periodic damage and healing done by your spells and abilities by 3%.
@@ -75,7 +110,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
 
 #### Row 2 (5 points)
 
-- **Moonglow** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Moonglow** (3 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the Mana cost of your spells by 3%.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -84,7 +119,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
     - Rank 2: Reduces the Mana cost of your Moonfire, Starfire, Wrath, Healing Touch, Regrowth and Rejuvenation spells by 6%.
     - Rank 3: Reduces the Mana cost of your Moonfire, Starfire, Wrath, Healing Touch, Regrowth and Rejuvenation spells by 9%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Improved Moonfire** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Improved Moonfire** (2 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage and critical strike chance of your Moonfire spell by 5%.
   - Rank 2: Increases the damage and critical strike chance of your Moonfire spell by 10%.
   - Classic (5 ranks):
@@ -94,11 +129,11 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
     - Rank 4: Increases the damage and critical strike chance of your Moonfire spell by 8%.
     - Rank 5: Increases the damage and critical strike chance of your Moonfire spell by 10%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Nature's Majesty** (2 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Nature's Majesty** (2 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your critical strike chance with spells and melee attacks by 2%.
   - Rank 2: Increases your critical strike chance with spells and melee attacks by 4%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Nature's Reach** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Nature's Reach** (2 ranks, column 4) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the range of your offensive Balance spells by 10% and increases the chance for all your spells and attacks to hit by 2%.
   - Rank 2: Increases the range of your offensive Balance spells by 20% and increases the chance for all your spells and attacks to hit by 4%.
   - Classic (2 ranks):
@@ -108,7 +143,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
 
 #### Row 3 (10 points)
 
-- **Improved Entangling Roots** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Improved Entangling Roots** (3 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage done by your Entangling Roots spell by 25%, and its victims can take up to 25% more damage without interrupting the effect.
   - Rank 2: Increases the damage done by your Entangling Roots spell by 50%, and its victims can take up to 50% more damage without interrupting the effect.
   - Rank 3: Increases the damage done by your Entangling Roots spell by 75%, and its victims can take up to 75% more damage without interrupting the effect.
@@ -117,7 +152,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
   - Requires: Nature's Majesty (2/2)
   - Increases the duration of your Moonfire and Rejuvenation spells by 3 sec, your Regrowth spell by 6 sec, and your Insect Swarm spell by 2 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Balance of Nature** (5 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **Balance of Nature** (5 ranks, column 4) [NEW] [not in client 70338]
   - Rank 1: Each time you cast a Nature spell, your next Arcane damage spell within 10 sec deals 1% increased damage. Each time you cast an Arcane spell, your next Nature damage spell within 10 sec deals 1% increased damage.
   - Rank 2: Each time you cast a Nature spell, your next Arcane damage spell within 10 sec deals 2% increased damage. Each time you cast an Arcane spell, your next Nature damage spell within 10 sec deals 2% increased damage.
   - Rank 3: Each time you cast a Nature spell, your next Arcane damage spell within 10 sec deals 3% increased damage. Each time you cast an Arcane spell, your next Nature damage spell within 10 sec deals 3% increased damage.
@@ -132,7 +167,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
   - The enemy target is swarmed by insects, decreasing their chance to hit by 2% and causing 55 Nature damage over 12 sec.
   - Classic: The enemy target is swarmed by insects, decreasing their chance to hit by 2% and causing 66 Nature damage over 12 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Vengeance** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Vengeance** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Requires: Improved Moonfire (2/2)
   - Rank 1: Increases the critical strike damage bonus of your Arcane and Nature spells by 20%.
   - Rank 2: Rank 2 values not yet captured from footage.
@@ -156,14 +191,14 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
 
 #### Row 5 (20 points)
 
-- **Overgrowth** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Overgrowth** (2 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the maximum number of targets you may have affected by Entangling Roots by 1.
   - Rank 2: Increases the maximum number of targets you may have affected by Entangling Roots by 2.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
 - **Nature's Grace** (1 rank, column 2) [unchanged]
   - All non-periodic spell criticals grace you with a blessing of nature, increasing your spellcasting speed and reducing your global cooldown by 10% for 3 sec.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Eclipse** (3 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Eclipse** (3 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.17 sec. Stores up to 4 charges. Lasts 15 sec.
   - Rank 2: Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.34 sec. Stores up to 4 charges. Lasts 15 sec.
   - Rank 3: Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.50 sec. Stores up to 4 charges. Lasts 15 sec.
@@ -171,7 +206,7 @@ Bear Form, Demoralizing Roar, Growl, Maul, Bash, Aquatic Form, Swipe, Cat Form, 
 
 #### Row 6 (25 points)
 
-- **Moonfury** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Moonfury** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage done by your Arcane and Nature spells by 1%.
   - Rank 2: Increases the damage done by your Arcane and Nature spells by 2%.
   - Rank 3: Increases the damage done by your Arcane and Nature spells by 3%.
@@ -206,7 +241,7 @@ The act of shapeshifting frees the caster of Polymorph and Movement Impairing ef
   - Rank 3: Reduces the cost of your Maul, Swipe, Claw, and Rake abilities by 3 Rage or Energy.
   - Rank 4: Reduces the cost of your Maul, Swipe, Claw, and Rake abilities by 4 Rage or Energy.
   - Rank 5: Reduces the cost of your Maul, Swipe, Claw, and Rake abilities by 5 Rage or Energy.
-- **Heart of the Wild** (5 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Heart of the Wild** (5 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your Intellect by 2%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 4% and while in Cat Form your Strength is increased by 2%.
   - Rank 2: Increases your Intellect by 4%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 8% and while in Cat Form your Strength is increased by 4%.
   - Rank 3: Increases your Intellect by 6%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 12% and while in Cat Form your Strength is increased by 6%.
@@ -222,11 +257,11 @@ The act of shapeshifting frees the caster of Polymorph and Movement Impairing ef
 
 #### Row 2 (5 points)
 
-- **Feral Swiftness** (2 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Feral Swiftness** (2 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your movement speed while in Cat Form by 15%, and increases your chance to Dodge by 2%.
   - Rank 2: Increases your movement speed while in Cat Form by 30%, and increases your chance to Dodge by 4%.
   - Note: Replaced a missing zamimg file (spell_druid_feralswiftness) with the WotLK/vanilla icon.
-- **Feral Instinct** (3 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Feral Instinct** (3 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases threat caused in Bear Form and Dire Bear Form by 5% and reduces the chance enemies have to detect you while Prowling.
   - Rank 2: Increases threat caused in Bear Form and Dire Bear Form by 10% and reduces the chance enemies have to detect you while Prowling.
   - Rank 3: Increases threat caused in Bear Form and Dire Bear Form by 15% and reduces the chance enemies have to detect you while Prowling.
@@ -241,7 +276,7 @@ The act of shapeshifting frees the caster of Polymorph and Movement Impairing ef
   - Rank 1: Increases the stun duration of your Bash and Pounce abilities by 0.5 sec and reduces the cooldown of Bash by 15 sec.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Thick Hide** (3 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Thick Hide** (3 ranks, column 4) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 1 additional base Armor per level and another 0.67 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -255,7 +290,7 @@ The act of shapeshifting frees the caster of Polymorph and Movement Impairing ef
 
 #### Row 3 (10 points)
 
-- **Savage Fury** (2 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Savage Fury** (2 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases the damage caused by your Claw, Rake, Shred, Maul, and Swipe abilities by 5%.
   - Rank 2: Increases the damage caused by your Claw, Rake, Shred, Maul, and Swipe abilities by 10%.
   - Classic (2 ranks):
@@ -269,7 +304,7 @@ The act of shapeshifting frees the caster of Polymorph and Movement Impairing ef
 Feral Charge (Cat)
 Leap behind an enemy, Dazing them for 3 sec.
   - Classic: Causes you to charge an enemy, immobilizing and interrupting any spell being cast for 4 sec.
-- **Sharpened Claws** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Sharpened Claws** (2 ranks, column 4) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your critical strike chance while in Bear Form, Dire Bear Form, or Cat Form by 3%.
   - Rank 2: Increases your critical strike chance while in Bear Form, Dire Bear Form, or Cat Form by 6%.
   - Classic (3 ranks):
@@ -280,7 +315,7 @@ Leap behind an enemy, Dazing them for 3 sec.
 
 #### Row 4 (15 points)
 
-- **Shredding Attacks** (3 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Shredding Attacks** (3 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the Energy cost of your Shred ability by 6 and reduces the Rage cost of your Lacerate ability by 1.
   - Rank 2: Reduces the Energy cost of your Shred ability by 12 and reduces the Rage cost of your Lacerate ability by 2.
   - Rank 3: Reduces the Energy cost of your Shred ability by 18 and reduces the Rage cost of your Lacerate ability by 3.
@@ -298,7 +333,7 @@ Leap behind an enemy, Dazing them for 3 sec.
   - Rank 2: Increases your melee attack power in Cat, Bear, and Dire Bear Forms by 100% of your level.
   - Rank 3: Increases your melee attack power in Cat, Bear, and Dire Bear Forms by 150% of your level.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Primal Fury** (2 ranks, column 4) [CHANGED] [ranks 2+ unverified]
+- **Primal Fury** (2 ranks, column 4) [CHANGED] [not in client 70338]
   - Requires: Sharpened Claws (2/2)
   - Rank 1: Gives you a 50% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a 50% chance to add an additional Combo Point.
   - Rank 2: Rank 2 values not yet captured from footage.
@@ -308,7 +343,7 @@ Leap behind an enemy, Dazing them for 3 sec.
 
 #### Row 5 (20 points)
 
-- **Predatory Instincts** (2 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Predatory Instincts** (2 ranks, column 1) [NEW] [not in client 70338]
   - Rank 1: Increases the critical strike damage bonus of your melee abilities by 10%.
   - Rank 2: Increases the critical strike damage bonus of your melee abilities by 20%.
   - Note: Higher-rank values taken from the nikftw dataset.
@@ -316,7 +351,7 @@ Leap behind an enemy, Dazing them for 3 sec.
   - While in Cat Form, Bear Form, or Dire Bear Form, the Leader of the Pack increases the critical strike chance of all party members within 45 yards by 3%, exclusive with Moonkin Aura.
   - Classic: While in Cat, Bear or Dire Bear Form, the Leader of the Pack increases ranged and melee critical chance of all party members within 45 yards by 3%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **King of the Jungle** (3 ranks, column 4) [NEW] [ranks 2+ unverified]
+- **King of the Jungle** (3 ranks, column 4) [NEW] [not in client 70338]
   - Rank 1: Tiger's Fury now instantly grants you 20 Energy.
   - Rank 2: Tiger's Fury now instantly grants you 40 Energy.
   - Rank 3: Tiger's Fury now instantly grants you 60 Energy.
@@ -324,14 +359,14 @@ Leap behind an enemy, Dazing them for 3 sec.
 
 #### Row 6 (25 points)
 
-- **Natural Reaction** (5 ranks, column 1) [NEW] [ranks 2+ unverified]
+- **Natural Reaction** (5 ranks, column 1) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your dodge chance by 1%, and gives you a 20% chance to gain 5 Rage each time you dodge.
   - Rank 2: Increases your dodge chance by 2%, and gives you a 40% chance to gain 5 Rage each time you dodge.
   - Rank 3: Increases your dodge chance by 3%, and gives you a 60% chance to gain 5 Rage each time you dodge.
   - Rank 4: Increases your dodge chance by 4%, and gives you a 80% chance to gain 5 Rage each time you dodge.
   - Rank 5: Increases your dodge chance by 5%, and gives you a 100% chance to gain 5 Rage each time you dodge.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Rend and Tear** (5 ranks, column 3) [NEW] [ranks 2+ unverified]
+- **Rend and Tear** (5 ranks, column 3) [NEW] [ranks settled by the 70338 trait curves]
   - Requires: Predatory Strikes (3/3)
   - Rank 1: Increases damage done by your melee abilities on Bleeding targets by 2%.
   - Rank 2: Increases damage done by your melee abilities on Bleeding targets by 4%.
@@ -353,7 +388,7 @@ Leap behind an enemy, Dazing them for 3 sec.
 
 #### Row 1 (0 points)
 
-- **Nature's Focus** (5 ranks, column 2) [CHANGED] [ranks 2+ unverified]
+- **Nature's Focus** (5 ranks, column 2) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Gives you a 14% chance to avoid interruption caused by damage while casting Arcane and Nature spells.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -376,7 +411,7 @@ Leap behind an enemy, Dazing them for 3 sec.
 
 #### Row 2 (5 points)
 
-- **Naturalist** (5 ranks, column 1) [CHANGED] [ranks 2+ unverified]
+- **Naturalist** (5 ranks, column 1) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the cast time of your Healing Touch spell by 0.1 sec and increases all damage you deal by 1%.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.
@@ -388,7 +423,7 @@ Leap behind an enemy, Dazing them for 3 sec.
   - Rank 2: Reduces the threat generated by your Healing spells by 8%.
   - Rank 3: Reduces the threat generated by your Healing spells by 12%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Natural Shapeshifter** (3 ranks, column 3) [CHANGED] [ranks 2+ unverified]
+- **Natural Shapeshifter** (3 ranks, column 3) [CHANGED] [ranks settled by the 70338 trait curves]
   - Rank 1: Reduces the mana cost of all shapeshifting by 10%.
   - Rank 2: Reduces the mana cost of all shapeshifting by 20%.
   - Rank 3: Reduces the mana cost of all shapeshifting by 30%.
@@ -433,7 +468,7 @@ Leap behind an enemy, Dazing them for 3 sec.
   - Requires: Naturalist (5/5)
   - Cost: Instant, 3 min cooldown
   - When activated, your next Nature spell becomes an instant cast spell.
-- **Living Spirit** (3 ranks, column 2) [NEW] [ranks 2+ unverified]
+- **Living Spirit** (3 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your Spirit by 5%.
   - Rank 2: Rank 2 values not yet captured from footage.
   - Rank 3: Rank 3 values not yet captured from footage.

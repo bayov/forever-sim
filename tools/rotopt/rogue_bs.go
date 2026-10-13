@@ -25,6 +25,7 @@ var (
 	cutthroat     = spellID(460534)
 	thousandCuts  = spellID(460535)
 	mutilate      = spellID(1329)
+	venom         = spellID(32645)
 )
 
 func (rogueBS) Knobs() []Knob {
@@ -40,10 +41,21 @@ func (rogueBS) Knobs() []Knob {
 		// Mutilate as the builder instead of Backstab (a 20 point Assassination talent under
 		// Forever, daggers in both hands).
 		Knob{Name: "mutilate", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Venom at this many combo points or more when it has under venomRefresh sec left, 0 for
+		// never. A 31 point Assassination talent.
+		Knob{Name: "venomCp", Default: 0, Min: 0, Max: 5, Step: 1},
+		Knob{Name: "venomRefresh", Default: 2, Min: 0, Max: 8, Step: 2},
+		// Premeditation (no longer needs Stealth under Forever) at this many combo points or
+		// fewer, so the 2 points it adds are not lost over 5. 9 leaves it to the cooldown rule
+		// in the sim, which uses it at 3 or fewer.
+		Knob{Name: "premedCp", Default: 9, Min: 0, Max: 9, Step: 1},
 		// Ghostly Strike on cooldown as a builder.
 		Knob{Name: "ghostly", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Vanish for an Ambush (and Premeditation) at this many combo points or fewer, 9 for never.
 		Knob{Name: "vanishCp", Default: 9, Min: 0, Max: 9, Step: 3},
+		// Pool energy for the Ambush while Vanish is ready, so the builders do not keep it
+		// below 60 (an energy starved build otherwise leaves Vanish idle).
+		Knob{Name: "vanishPool", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Backstab only at this many Thousand Cuts stacks, or when energy is pooled. 0 ignores stacks.
 		Knob{Name: "bsStacks", Default: 0, Min: 0, Max: 5, Step: 1},
 		Knob{Name: "bsAfterSwing", Default: 0, Min: 0, Max: 1, Step: 0.25},
@@ -53,7 +65,12 @@ func (rogueBS) Knobs() []Knob {
 
 func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	c := buildRogueCooldowns(k)
-	items := []*proto.APLListItem{c.sliceAndDice}
+	var items []*proto.APLListItem
+	// Out of a Vanish the Ambush goes first, before anything breaks the Stealth.
+	if k["vanishCp"] < 9 {
+		items = append(items, cast(ambush, auraIsActive(stealth), "Ambush out of a Vanish before anything else."))
+	}
+	items = append(items, c.sliceAndDice)
 	items = append(items, c.cooldowns...)
 
 	// Rupture is the other finisher. It snapshots Hemorrhage at cast, so the debuff only
@@ -82,22 +99,33 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(rupture, ruptureWhen, "Rupture when it is not ticking and Slice and Dice does not need the points."+c.holdNotes))
 	}
 
+	if k["venomCp"] > 0 {
+		items = append(items, cast(venom, and(
+			ge(comboPoints(), num(k["venomCp"])),
+			lt(auraRemainingTime(venom), seconds(k["venomRefresh"])),
+			gt(remainingTime(), seconds(6)),
+			c.ruptureHold,
+		), "Venom, 30% more poison damage and 10% more poison procs, refreshed when it is about to drop."+c.holdNotes))
+	}
+	if k["premedCp"] < 9 {
+		items = append(items, cast(premeditation, le(comboPoints(), num(k["premedCp"])),
+			"Premeditation needs no Stealth under Forever, so it goes out whenever the 2 points fit."))
+	}
+
 	items = append(items, cast(eviscerate, c.evisWhen, ""))
 
-	// Vanish is only an Ambush (and Premeditation, which needs stealth) at a low combo
-	// count, so the points are not wasted over 5. Premeditation has no GCD, Ambush breaks
-	// the stealth right after. Preparation gives a second Vanish once the first is spent,
-	// which with Restless Blades pulling Vanish in anyway is the one use it gets. Cutthroat
-	// Ambushes ride on the same line.
+	// Vanish is only an Ambush at a low combo count, so the points are not wasted over 5.
+	// Ambush breaks the stealth right after. Preparation gives a second Vanish once the
+	// first is spent. Cutthroat Ambushes ride on the same line.
 	if k["vanishCp"] < 9 {
 		items = append(items,
 			cast(vanish, and(
+				not(auraIsActive(stealth)),
 				le(comboPoints(), num(k["vanishCp"])),
 				ge(energy(), spellCurrentCost(ambush)),
 				auraIsActive(sliceAndDice),
 				gt(remainingTime(), seconds(10)),
-			), "Vanish for an Ambush at low combo points. Premeditation goes out in the stealth first."),
-			cast(premeditation, auraIsActive(stealth), "Premeditation needs stealth, so right after Vanish."),
+			), "Vanish for an Ambush at low combo points."),
 			cast(ambush, or(auraIsActive(stealth), auraIsActive(cutthroat)),
 				"Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab."),
 			cast(preparation, and(
@@ -109,14 +137,20 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 		)
 	}
 
+	// While Vanish is ready for an Ambush, the builders leave its 60 energy alone.
+	var pool value
+	if k["vanishPool"] == 1 && k["vanishCp"] < 9 {
+		pool = or(not(spellIsReady(vanish)), le(remainingTime(), seconds(10)), ge(comboPoints(), num(4)), not(auraIsActive(sliceAndDice)))
+	}
+
 	if k["ghostly"] == 1 {
-		items = append(items, cast(ghostlyStrike, lt(comboPoints(), num(5)),
+		items = append(items, cast(ghostlyStrike, and(lt(comboPoints(), num(5)), pool),
 			"Ghostly Strike is 180% weapon damage for 40 energy with a dagger, more per energy than Backstab, so on cooldown."))
 	}
 
 	// The builder. Backstab waits for Thousand Cuts stacks when asked, with the energy
 	// pool as the fallback so the wait never caps energy.
-	when := builderWhen(k["bsAfterSwing"], k["bsEnergy"])
+	when := and(builderWhen(k["bsAfterSwing"], k["bsEnergy"]), pool)
 	if k["hemoFiller"] == 1 {
 		items = append(items, cast(hemorrhage, when, "Hemorrhage as the builder."))
 	}

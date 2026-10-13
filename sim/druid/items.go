@@ -13,6 +13,10 @@ const (
 	IdolOfTheMoon       = 23197
 	IdolOfBrutality     = 23198
 	RuneOfMetamorphosis = 19340
+
+	// Forever's Phase 1 idols (1.60.1.70338 client).
+	HowlingIdol  = 272427
+	SwarmingIdol = 272430
 )
 
 func init() {
@@ -39,6 +43,24 @@ func init() {
 				spell.BonusDamage += 33
 			}
 		})
+	})
+
+	// Howling Idol, Forever. Equip: Reduces the cooldown of your Shifting Power ability by 1 sec
+	// (spell 1291059, a flat cooldown modifier of -1000 ms).
+	core.NewItemEffect(HowlingIdol, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		druid.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_DruidShiftingPower {
+				spell.CD.Duration -= time.Second
+			}
+		})
+	})
+
+	// Swarming Idol, Forever. Equip: Increases the duration of your Insect Swarm spell by 2 sec
+	// (spell 1291061, a flat duration modifier of +2000 ms).
+	core.NewItemEffect(SwarmingIdol, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		druid.InsectSwarmBonusDuration += time.Second * 2
 	})
 
 	// https://www.wowhead.com/classic/item=23198/idol-of-brutality

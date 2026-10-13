@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-var TalentTreeSizes = [3]int{15, 16, 16}
+var TalentTreeSizes = [3]int{18, 17, 18}
 
 const (
 	SpellFlagPriest = core.SpellFlagAgentReserved1
@@ -26,6 +26,9 @@ const (
 	SpellCode_PriestSmite
 	SpellCode_PriestStarshards
 	SpellCode_PriestVampiricTouch
+	SpellCode_PriestShadowWordDeath
+	SpellCode_PriestChastise
+	SpellCode_PriestPenance
 )
 
 type Priest struct {
@@ -34,7 +37,9 @@ type Priest struct {
 
 	Latency float64
 
+	Chastise          []*core.Spell
 	CircleOfHealing   *core.Spell
+	DarkSacrifice     *core.Spell
 	DevouringPlague   []*core.Spell
 	EmpoweredRenew    *core.Spell
 	FlashHeal         []*core.Spell
@@ -42,21 +47,23 @@ type Priest struct {
 	HolyFire          []*core.Spell
 	InnerFocus        *core.Spell
 	MindBlast         []*core.Spell
-	MindFlay          [][]*core.Spell // 1 entry for each tick for each rank
+	MindFlay          []*core.Spell
+	Penance           []*core.Spell
+	PowerInfusion     *core.Spell
 	PowerWordShield   []*core.Spell
 	PrayerOfHealing   []*core.Spell
 	PrayerOfMending   *core.Spell
 	Renew             []*core.Spell
 	Shadowform        *core.Spell
 	ShadowWeavingProc *core.Spell
+	ShadowWordDeath   []*core.Spell
 	ShadowWordPain    []*core.Spell
 	Smite             []*core.Spell
-	Starshards        [][]*core.Spell
+	Starshards        []*core.Spell
 	VampiricEmbrace   *core.Spell
 
 	InnerFocusAura *core.Aura
 	ShadowformAura *core.Aura
-	SpiritTapAura  *core.Aura
 
 	ShadowWeavingAuras   core.AuraArray
 	VampiricEmbraceAuras core.AuraArray
@@ -72,10 +79,9 @@ func (priest *Priest) GetCharacter() *core.Character {
 func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ShadowProtection = true
 	raidBuffs.DivineSpirit = true
-	raidBuffs.PowerWordFortitude = max(
-		raidBuffs.PowerWordFortitude,
-		core.MakeTristateValue(true, priest.Talents.ImprovedPowerWordFortitude == 2),
-	)
+	// Forever took Improved Power Word: Fortitude out of the tree and built it into the
+	// spell, which the buff code handles under Forever.
+	raidBuffs.PowerWordFortitude = max(raidBuffs.PowerWordFortitude, proto.TristateEffect_TristateEffectRegular)
 }
 
 func (priest *Priest) AddPartyBuffs(_ *proto.PartyBuffs) {
@@ -85,14 +91,17 @@ func (priest *Priest) Initialize() {
 	priest.registerMindBlast()
 	priest.registerMindFlay()
 	priest.registerShadowWordPainSpell()
-	if priest.GetCharacter().Race == proto.Race_RaceUndead {
-		priest.registerDevouringPlagueSpell()
-	}
-	if priest.GetCharacter().Race == proto.Race_RaceNightElf {
-		priest.registerStarshardsSpell()
-	}
+	priest.registerShadowWordDeathSpell()
+	// Forever lets every race learn Devouring Plague (SkillLineAbility race mask -1 in the
+	// client, 1.60.1.70338). The racial priest spells that can deal damage to a boss are
+	// Starshards (Night Elf) and Chastise (Dwarf). Dark Sacrifice (Undead) gives mana.
+	priest.registerDevouringPlagueSpell()
+	priest.registerStarshardsSpell()
+	priest.registerChastiseSpell()
+	priest.registerDarkSacrificeSpell()
 	priest.registerSmiteSpell()
 	priest.registerHolyFire()
+	priest.registerPenanceSpell()
 
 	priest.registerPowerInfusionCD()
 }
@@ -129,4 +138,18 @@ func New(character *core.Character, talents string) *Priest {
 // Agent is a generic way to access underlying priest on any of the agents.
 type PriestAgent interface {
 	GetPriest() *Priest
+}
+
+// downrankCoefficient is a rank's spell power coefficient under Forever's downranking penalty.
+// Blizzard's beta development notes (2026-10-01, us.forums.blizzard.com/en/wow/t/2360696/4):
+// "spells cast using spell ranks vastly below your current level receive less benefit from your
+// Spell Damage and Spell Healing". The size is foreverchanges.pro/downranking's measured
+// formula (beta heals up to level 30, assumed for damage spells and level 60): the rank keeps
+// 1 - 5% for each level it is learned more than 17 levels below the caster, at least 0.
+// Classic keeps its own rules.
+func (priest *Priest) downrankCoefficient(coefficient float64, learnLevel int) float64 {
+	if priest.Env == nil || !priest.Env.IsForever() {
+		return coefficient
+	}
+	return coefficient * max(0, min(1, 1-0.05*float64(int(priest.Level)-17-learnLevel)))
 }
