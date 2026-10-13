@@ -11,17 +11,19 @@ const DB_NAME = 'forever-sim';
 const STORE_NAME = 'lastSimRun';
 // The results of each run in the sim history, for the Compare tab, see SimHistory.
 const RUNS_STORE_NAME = 'simRuns';
-// The DPS and resources of the iterations of each run over the fight, see RunSeries.
-const SERIES_STORE_NAME = 'simRunSeries';
+// Version 3 kept the DPS and resources of each run over the fight in this store. We dropped
+// them, so version 4 deletes it.
+const OLD_SERIES_STORE_NAME = 'simRunSeries';
 
 function openDb(): Promise<IDBDatabase> {
 	return new Promise((resolve, reject) => {
-		const request = indexedDB.open(DB_NAME, 3);
+		const request = indexedDB.open(DB_NAME, 4);
 		request.onupgradeneeded = () => {
 			const db = request.result;
-			[STORE_NAME, RUNS_STORE_NAME, SERIES_STORE_NAME].forEach(name => {
+			[STORE_NAME, RUNS_STORE_NAME].forEach(name => {
 				if (!db.objectStoreNames.contains(name)) db.createObjectStore(name);
 			});
+			if (db.objectStoreNames.contains(OLD_SERIES_STORE_NAME)) db.deleteObjectStore(OLD_SERIES_STORE_NAME);
 		};
 		request.onsuccess = () => resolve(request.result);
 		request.onerror = () => reject(request.error);
@@ -92,7 +94,6 @@ export async function loadHistoryRun(key: string): Promise<SimRun | null> {
 export async function deleteHistoryRun(key: string): Promise<void> {
 	try {
 		await withStore('readwrite', store => store.delete(key), RUNS_STORE_NAME);
-		await withStore('readwrite', store => store.delete(key), SERIES_STORE_NAME);
 	} catch (e) {
 		console.warn('Failed to delete the results of a sim run: ' + e);
 	}
@@ -105,23 +106,5 @@ export async function historyRunKeys(): Promise<string[]> {
 	} catch (e) {
 		console.warn('Failed to list the saved sim runs: ' + e);
 		return [];
-	}
-}
-
-// The series of a run in the sim history, under the same key as its results.
-export async function saveHistorySeries(key: string, series: object): Promise<void> {
-	try {
-		await withStore('readwrite', store => store.put(series, key), SERIES_STORE_NAME);
-	} catch (e) {
-		console.warn('Failed to save the series of a sim run: ' + e);
-	}
-}
-
-export async function loadHistorySeries<T>(key: string): Promise<T | null> {
-	try {
-		return ((await withStore<T | undefined>('readonly', store => store.get(key), SERIES_STORE_NAME)) ?? null) as T | null;
-	} catch (e) {
-		console.warn('Failed to load the series of a sim run: ' + e);
-		return null;
 	}
 }
