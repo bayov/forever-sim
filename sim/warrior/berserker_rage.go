@@ -7,13 +7,14 @@ import (
 )
 
 func (warrior *Warrior) registerBerserkerRageSpell() {
-	if warrior.Level < 32 {
+	// Forever trains it at 30 (Classic 32).
+	if warrior.Level < core.TernaryInt32(warrior.Env.IsForever(), 30, 32) {
 		return
 	}
 
 	actionID := core.ActionID{SpellID: 18499}
 	rageMetrics := warrior.NewRageMetrics(actionID)
-	instantRage := 5 * float64(warrior.Talents.ImprovedBerserkerRage)
+	instantRage := 5 * float64(warrior.Talents.ImprovedBerserkerRage) // client 70338: 5 and 10
 
 	warrior.BerserkerRageAura = warrior.RegisterAura(core.Aura{
 		Label:    "Berserker Rage",

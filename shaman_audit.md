@@ -148,12 +148,12 @@ Elemental
 - [x] 8.13 Lightning Overload
 - [x] 8.14 Earthbound (not implemented, nothing in the sim moves the enemy)
 - [x] 8.15 Elemental Fury
-- [ ] 8.16 Lava Burst
+- [x] 8.16 Lava Burst
 
 Enhancement
 
-- [ ] 8.17 Earth's Grasp (not implemented)
-- [ ] 8.18 Thundering Strikes
+- [x] 8.17 Earth's Grasp (not implemented, the sim has no Stoneclaw or Earthbind Totem)
+- [x] 8.18 Thundering Strikes
 - [ ] 8.19 Ancestral Knowledge
 - [ ] 8.20 Guardian Totems
 - [ ] 8.21 Mental Dexterity
@@ -1412,6 +1412,29 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16089, talent curve 85221): +20, 40, 60, 80 and 100% crit damage bonus (aura 108, misc 15). Its mask holds Lightning Bolt and Chain Lightning (and their overloads), the three shocks, Lava Burst, Fire Nova's damage spell, the Searing Totem attack, Magma Totem's pulse, the Flametongue Weapon procs, Frostbrand Attack and the Lightning Shield orbs. Flametongue Totem's procs (0x4 in the second word) and Healing Stream (0x2000) aren't in it. That matches the sim spell for spell.
 - Beta: no build had it.
 - No sim change. `elemental_fury_test.go` TestOrcShamanElementalFury reads each spell's crit multiplier at level 60 with 0 and 5 points: 1.5 and 2.0 on the spells above, 1.5 on Flametongue Totem's proc and Healing Stream either way, and Stormstrike's melee crit at 2.0 either way. A 10% step, giving it to every Nature spell (Healing Stream and Flametongue Totem get it) or leaving Searing and Magma Totem out fails it.
+
+### 8.16 Lava Burst (the talent)
+
+- The user OK'd it (2026-10-14): "sg". The spell itself is 7.14.
+- The sim (`lava_burst.go`): with the talent we learn rank 1 at 40, and the trainer adds rank 2 at 50 and rank 3 at 60. Without it the spell isn't registered. The UI tree has it at the bottom of Elemental (row 7), needing Lightning Overload 3/3. The Level 60 elemental preset has it, and the enhancement presets don't.
+- Client: the talent (traits 134169 and 134219) teaches 408490, rank 1. The vendored client tree (69876, updated to 70009) has it in row 7, column 2, with 1 rank, requiring Lightning Overload. That matches.
+- Beta: none, it's a level 40 talent.
+- No sim change and no new test. `lava_burst_test.go` covers the rank at each level and the spell (7.14).
+
+### 8.17 Earth's Grasp
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 16043, talent curves 85265 and 85264): 1 and 2 points give Stoneclaw Totem +25 and +50% (all its effects, so its health) and Earthbind Totem +10 and +20% radius. Classic's talent has the same two parts.
+- The sim: the proto has the field, but nothing reads it. The sim has neither Stoneclaw nor Earthbind Totem, and we don't model enemies attacking totems or moving (8.14).
+- No preset takes it, and no beta build had it.
+
+### 8.18 Thundering Strikes
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point adds 1% melee crit and 1% spell crit, 5% at 5/5. All the enhancement presets have 5/5.
+- Client 70338 (wago.tools 16255, talent curve 85275): +1% a point to all crit (aura 290: melee, ranged and spells). That matches.
+- Beta (the 2026-10-10 20:42 respec, `beta_results.txt`): dropping 5/5 took the sheet from 10.39 to 5.39 melee crit and 12.31 to 7.41 spell crit. The other 0.1 spell crit came from 3 more Intellect.
+- No sim change. `crit_test.go` TestOrcShamanThunderingStrikes: at level 30, 5/5 gives exactly 5% more melee crit and 5% more spell crit than no points. Leaving out the spell crit fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

@@ -16,7 +16,6 @@ import { changesList } from '../preset_tree';
 import { RaidSimResultsManager, ResultMetric } from '../raid_sim_action';
 import { runLabel, SimHistory, SimRun } from '../sim_history';
 import { Better, Breakdown, BreakdownLine, changeElem, CompareColumn, CompareRow, CompareTable, formatFixed, formatPercent } from './compare_table';
-import { OverTimeView } from './over_time';
 
 // A side of the comparison is a run from the history, or the latest or the one before it. The
 // last two follow new runs, so after each Simulate we see what the change did.
@@ -62,7 +61,6 @@ interface Tab {
 
 const tabs: Tab[] = [
 	{ id: 'compareOverviewTab', label: 'Overview', icon: 'fa-scale-balanced' },
-	{ id: 'compareOverTimeTab', label: 'Over Time', icon: 'fa-chart-line' },
 	{ id: 'compareDamageTab', label: 'Damage', icon: 'fa-bolt' },
 	{ id: 'compareThreatTab', label: 'Threat', icon: 'fa-skull', className: 'cmp-threat-tab' },
 	{ id: 'compareHealingTab', label: 'Healing', icon: 'fa-heart-pulse', className: 'cmp-healing-tab' },
@@ -121,8 +119,6 @@ export class CompareResults extends Component {
 		changesButtons: HTMLButtonElement[];
 		distributionButtons: HTMLButtonElement[];
 	};
-	private readonly overTime = new OverTimeView();
-	private seriesToken = 0;
 	private readonly resourceCardsElem: HTMLElement;
 	private readonly tables: {
 		damage: CompareTable<ActionMetrics>;
@@ -284,9 +280,6 @@ export class CompareResults extends Component {
 					<div id="compareCastsTab" className="tab-pane dr-tab-content fade">
 						{panel('Casts', '', this.tables.casts.rootElem)}
 					</div>
-					<div id="compareOverTimeTab" className="tab-pane dr-tab-content fade">
-						{panel('Over Time', 'cmp-over-time-panel', this.overTime.rootElem, this.overTime.controlsElem)}
-					</div>
 					<div id="compareResourcesTab" className="tab-pane dr-tab-content fade">
 						<div className="cmp-cards cmp-resource-cards" />
 						{resourcePanels}
@@ -317,7 +310,6 @@ export class CompareResults extends Component {
 		};
 		this.updateModeButtons();
 		delegate(this.rootElem.querySelector('#compareOverviewTab')!, { target: '[data-tippy-content]' });
-		delegate(this.rootElem.querySelector('#compareOverTimeTab')!, { target: '[data-tippy-content]' });
 		delegate(this.rootElem.querySelector('.cmp-resource-cards')!, { target: '[data-tippy-content]' });
 		this.resourceCardsElem = this.rootElem.querySelector('.cmp-resource-cards')!;
 
@@ -446,11 +438,7 @@ export class CompareResults extends Component {
 		}
 
 		const key = `${a!.id}|${b!.id}`;
-		if (key === this.drawnKey) {
-			// The series of a run come a moment after its results.
-			if (this.pair && !this.overTime.isComplete) this.loadSeries();
-			return;
-		}
+		if (key === this.drawnKey) return;
 		if (!this.isVisible()) {
 			this.pendingDraw = true;
 			return;
@@ -542,7 +530,6 @@ export class CompareResults extends Component {
 		this.drawOverview();
 		this.drawTables();
 		this.drawResourceCards();
-		this.loadSeries();
 	}
 
 	private drawOverview() {
@@ -757,15 +744,6 @@ export class CompareResults extends Component {
 			this.distributionMode === 'distribution'
 				? drawDistribution(canvas, countsA, countsB, markers, elem.clientWidth)
 				: drawCumulative(canvas, countsA, countsB, markers);
-	}
-
-	private async loadSeries() {
-		const pair = this.pair;
-		if (!pair) return;
-		const token = ++this.seriesToken;
-		const [seriesA, seriesB] = await Promise.all([this.history.loadSeries(pair.a), this.history.loadSeries(pair.b)]);
-		if (token !== this.seriesToken || pair !== this.pair) return;
-		this.overTime.setSeries(seriesA, seriesB, this.simUI.sim.getShowThreatMetrics());
 	}
 
 	// How much of each resource the runs gained, spent and wasted, from all their iterations. The
