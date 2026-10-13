@@ -154,9 +154,9 @@ Enhancement
 
 - [x] 8.17 Earth's Grasp (not implemented, the sim has no Stoneclaw or Earthbind Totem)
 - [x] 8.18 Thundering Strikes
-- [ ] 8.19 Ancestral Knowledge
-- [ ] 8.20 Guardian Totems
-- [ ] 8.21 Mental Dexterity
+- [x] 8.19 Ancestral Knowledge
+- [x] 8.20 Guardian Totems
+- [x] 8.21 Mental Dexterity
 - [ ] 8.22 Improved Ghost Wolf (not implemented)
 - [ ] 8.23 Improved Lightning Shield
 - [x] 8.24 Elemental Weapons (beta 2026-10-09: Rockbiter +20%, Windfury +40% once, Flametongue +15% on the whole hit, see section 7 part 2)
@@ -1435,6 +1435,30 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16255, talent curve 85275): +1% a point to all crit (aura 290: melee, ranged and spells). That matches.
 - Beta (the 2026-10-10 20:42 respec, `beta_results.txt`): dropping 5/5 took the sheet from 10.39 to 5.39 melee crit and 12.31 to 7.41 spell crit. The other 0.1 spell crit came from 3 more Intellect.
 - No sim change. `crit_test.go` TestOrcShamanThunderingStrikes: at level 30, 5/5 gives exactly 5% more melee crit and 5% more spell crit than no points. Leaving out the spell crit fails it.
+
+### 8.19 Ancestral Knowledge
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives 2% more Intellect, 10% at 5/5. It multiplies with Blessing of Kings, and the server drops the fraction before working out mana. Level 30 + 5 has 4/5, the Level 60 presets 3/5, and Level 30 PvP none.
+- Client 70338 (wago.tools 17485, talent curve 85266): +2, 4, 6, 8 and 10% Intellect (aura 137, misc 8). That matches.
+- Beta: 2026-10-08, 137 Intellect became 150 with 5/5 (2635 mana) and 165 with Blessing of Kings on top (2860 mana), so they multiply. 2026-10-10 20:42, 4/5 to 5/5 took 141 Intellect to 144.
+- No sim change and no new test. `stat_multipliers_test.go` TestOrcShamanStatMultipliers pins the 2026-10-08 numbers, Intellect gained mid-fight under both and the dropped fraction.
+
+### 8.20 Guardian Totems
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`buffs.go` foreverStoneskinTotemAura): each point gives Stoneskin Totem 10% more (rank 3 goes from 11 to 13.2 at 2/2), and we keep the fraction (7.29). Windwall Totem has no buff in the sim, and Grounding Totem isn't in it, because nothing shoots or casts at us. Level 30 PvP has 2/2, but every preset keeps Strength of Earth in the earth slot, so it changes nothing today.
+- Client 70338 (wago.tools 16258, talent curves 85274 and 85273): +10 and +20% on Stoneskin and Windwall's reduction (aura 108, misc 3) and -1 and -2 sec on Grounding Totem's cooldown. That matches what the sim has.
+- Beta: no build had it. Stoneskin's value before armor was settled in 7.29.
+- No sim change and no new test. `stoneskin_test.go` already wants 13.2 with 2 points at level 30.
+
+### 8.21 Mental Dexterity
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): 1, 2 and 3 points give attack power equal to 33, 67 and 100% of our Intellect, as a stat dependency, so Intellect gained mid-fight counts too. Every enhancement preset has 3/3.
+- Client 70338 (wago.tools 415140, talent curve 85272): 33, 67 and 100% of Intellect as attack power (aura 598). Its second effect is a dummy from SoD's rune, whose 30 sec buff (415144) isn't part of the Forever talent. That matches.
+- Beta: at the 2026-10-10 20:42 respec, 3 more Intellect (141 to 144) took attack power from 389 to 392 at 3/3. The 389 model (60 + 2 x 104 Strength - 20 + 141 Intellect) fit 75 white hits (4.1).
+- No sim change. `mental_dexterity_test.go` TestOrcShamanMentalDexterity: at level 30, 0 to 3 points add 0, 33, 67 and 100% of Intellect to attack power, and 10 Intellect gained mid-fight at 3/3 adds 10 attack power. A 66% rank 2 fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
