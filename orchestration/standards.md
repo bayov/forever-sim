@@ -66,6 +66,8 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 17. Windfury Totem's internal cooldown is 1.5 sec (user ruling 2026-10-13). The sim already uses it (sim/core/buffs.go CreateExtraAttackAuraCommon), so the 100 ms alternative is closed and isn't a dashboard assumption.
 
+18. Armor debuff: Sunder Armor, never Expose Armor (user ruling 2026-10-13). In Forever, 5 Sunders take the same 2250 armor as Expose Armor (sim/core/debuffs.go). A tank keeps Sunder up easily, while Expose Armor costs a rogue 5 combo points and falls off more easily, so raids won't use it. Every preset's raid debuffs (ui/<spec>/presets.ts and tools/rotopt/mksettings/main.go) set Sunder Armor on and Expose Armor off. Rogue rotations never cast Expose Armor.
+
 ## Races
 
 16. Presets use the best race on the spec's Era BiS weapon type. Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.
