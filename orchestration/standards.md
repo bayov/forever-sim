@@ -68,6 +68,22 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 18. Armor debuff: Sunder Armor, never Expose Armor (user ruling 2026-10-13). In Forever, 5 Sunders take the same 2250 armor as Expose Armor (sim/core/debuffs.go). A tank keeps Sunder up easily, while Expose Armor costs a rogue 5 combo points and falls off more easily, so raids won't use it. Every preset's raid debuffs (ui/<spec>/presets.ts and tools/rotopt/mksettings/main.go) set Sunder Armor on and Expose Armor off. Rogue rotations never cast Expose Armor.
 
+19. Neutral boss type (user ruling 2026-10-13: "ensure default encounter type doesn't benefit any spec or race uniquely"). Every Level 60 preset fights a level 63 boss of type Unknown ("generic boss") instead of Humanoid: mksettings encounter and every ui/<spec>/presets.ts encounter use MobType.MobTypeUnknown.
+   Creature-type effects in the sim, and how they stand on the generic boss:
+
+   | Effect | Applies vs | On the generic boss |
+   |---|---|---|
+   | Rogue Murder (+2/4%) | Humanoid, Giant | off |
+   | Paladin Exorcism, Holy Wrath, Crusade's extra 1%, Undead set bonus | Undead, Demon | off |
+   | Warrior Spearing Strike's +80% weapon damage | Giant, Dragonkin | off |
+   | Troll Beast Slaying, Dwarf Big Game Hunter | Beast | off |
+   | Skyborne Elemental Insight | Elemental | off |
+   | Druid Grovekeeper 4-piece | its creature type (not live) | off |
+   | Hunter Improved Tracking (+1% a rank) | every raid boss type except Mechanical | stays ON, because a hunter tracks the boss's type whatever it is; the hunter applies it against Unknown too |
+
+   Talents are re-optimised for the generic boss (e.g. no Murder).
+   Encounter-specific builds ("vs Humanoid", "vs Undead", "vs Giant / Dragonkin") ship as extra, non-default presets wherever the creature-type effect is worth about 2% or more for that spec. Their talents and rotation are optimised for that target, and they are labelled with the creature type. The dashboard hides them by default and shows them behind a toggle.
+
 ## Races
 
 16. Presets use the best race on the spec's Era BiS weapon type. Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.
