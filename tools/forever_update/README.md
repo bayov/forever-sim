@@ -20,7 +20,8 @@ labels, items Wowhead doesn't have yet). Fix them before publishing. Tooltips an
 
 | Tab | Shows |
 |---|---|
-| Today | Big changes, then one card each for Shaman, Paladin and Rogue: **class changes only**. Each card links to its items. |
+| (top) | **What matters today**: the TL;DR, at most 5 points |
+| Today | Big changes, the **Sim changes** checklist (what to change, where, old → new, and its state), then one card each for Shaman, Paladin and Rogue: **class changes only**. Each card links to its items. |
 | Items | Revealed/hidden counters, then every newly revealed or changed item as a game tooltip. You can filter by class (S/P/R by default). |
 | Sim | PR status and link, the newest build vs the sim's build, PR changes, a per-spec DPS impact chart, "needs your call" items and TASKS.md items |
 | Others | Class changes for the other six classes |
@@ -31,6 +32,8 @@ Items never appear in the class cards. They go in `items.list`, with `who` namin
 ## report.json
 
 All text is plain, and `**bold**` is the only markup. Leave out any key you don't need.
+
+Keep it short: `tldr` has at most 5 one-line points, every `take` is one line of at most 15 words, and every `misc` text is at most 25 words (put the rest in `details`). Items marked `"repeat": true` are folded under "Seen yesterday" in the class cards and the news, and sorted last in Items. `simTodo` replaces `sim.changes`, `sim.notIncluded` and `sim.tasks` (which still render if given). `build.py --strict` fails when `tldr` is missing or longer than 5, or when a `simTodo` row has no `state`, `what` or `where`.
 
 ```jsonc
 {
@@ -43,6 +46,15 @@ All text is plain, and `**bold**` is the only markup. Leave out any key you don'
   "build": { "newest": "1.60.1.70338", "newestDate": "Oct 10", "sim": "70338", "isNew": false },
   "alerts": ["**No push access** ..."],       // red lines in the header (no push access, network refused, ...)
   "kpis": [],                                 // optional override of the four tiles: {k, v, s, tab}
+
+  // Required. At most 5 points, most important first, one line each. Shown above everything else.
+  "tldr": [ { "tag": "Sim", "text": "**PR #12** adds 9 revealed items. No preset moves.", "hot": true } ],
+
+  // Every sim change and exactly what to change. Shown on Today (under Big changes) and at the top of Sim.
+  // state: pr (in today's PR) | call (needs your call) | task (logged in TASKS.md) | done (already in the sim)
+  "simTodo": [ { "state": "call", "what": "Baron Charr's Sceptre proc", "ref": "i:18671",
+                 "where": "sim/common/item_effects.go · BaronCharrsSceptre", "old": "35", "new": "90",
+                 "status": "tooltip", "why": "Tooltip only. Check SpellEffect 13442 on wago.tools." } ],
 
   "big": [ { "title": "...", "text": "...", "ref": "i:18671", "old": "35", "new": "90", "kind": "buff", "status": "client" } ],
 

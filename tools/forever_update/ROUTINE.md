@@ -51,6 +51,13 @@ PER-CLASS IMPACT SUMMARY (in both the PR description and the report): for every 
 
 I am a min-maxer who cares most about BALANCE. I play SHAMAN, PALADIN and ROGUE, and I want every change to those three, however tiny, up front and emphasized. I care about all other classes too and want every balance change surfaced, just lower down.
 
+KEEP IT SHORT AND SCANNABLE. I read this on my phone and want the important things in seconds:
+- "tldr" (required, at most 5 points, most important first): one line each, starting with a tag (Sim, Shaman, Paladin, Rogue, Build, Items, News, ...). Mark with "hot": true only what needs my attention or changes the sim. On a quiet day, 1–2 points are enough.
+- "simTodo" (required whenever anything touches the sim): one row per sim change, saying exactly what to change: "what" (in a few words), "where" (file · function or constant), "old" → "new", a status label, a "state" (pr = in today's PR, call = needs my call, task = logged in TASKS.md, done = already in the sim) and a "why" of at most 12 words. This list replaces "sim.changes", "sim.notIncluded" and "sim.tasks"; leave those empty.
+- Every "take" is one line of at most 15 words, and every "misc" text at most 25 words. Put anything longer in "details".
+- Set "repeat": true on anything from yesterday's report. The page folds those away, so don't repeat their details.
+- Leave out news with no gameplay or sim impact (soundtracks, merch, art, speculation); give it one short misc row at most.
+
 REPORT CONTENT — every fact goes into report.json (format in tools/forever_update/README.md). The page lays it out in tabs:
 
 1. 🚨 Big changes ("big") — the most important news of the day: major balance passes, big mechanic changes, new builds, release-date or phase news, major content, a big batch of revealed raid or tier items. Leave it empty if there are none. An item belongs here only if it's genuinely big (a new best-in-slot for a sim spec, a tier set revealed); otherwise it goes in Items only.
@@ -75,6 +82,6 @@ REPORT FORMAT — the page is built from report.json by the repo's builder; don'
 3. Publish the built file with the Artifact tool as a NEW artifact each day (a new file path each day), with icon "news" and a one-sentence description of the day's headline. Don't load design skills or restyle the page; the template already follows the artifact page contract.
 4. If the Artifact tool is unavailable or publishing fails, send the HTML file with SendUserFile instead and say so.
 
-FINAL REPLY (pushed to my phone as the notification): 2–4 short lines: the single biggest headline, one line for shaman/paladin/rogue (or "no S/P/R changes"), the number of newly revealed items worth a look, and the artifact link (plus the PR link if one was opened). Nothing else.
+FINAL REPLY (pushed to my phone as the notification): 2–4 short lines: the top tldr point, one line for shaman/paladin/rogue (or "no S/P/R changes"), the number of newly revealed items worth a look, and the artifact link (plus the PR link if one was opened). Nothing else.
 
 If there is no new WoW Forever news, no new build and no newly revealed items in the window, don't publish an artifact. Reply with a single short line saying so, with the date, and nothing more.

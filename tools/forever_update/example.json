@@ -6,9 +6,15 @@
   "phase": "Beta",
   "phaseNote": "ends Oct 21–22 · live Nov 4",
   "window": "Since Mon 12 Oct 20:00 IDT",
-  "build": { "newest": "1.60.1.70338", "newestDate": "Oct 10", "sim": "70338", "isNew": false },
-  "alerts": ["**No push access** to bayov/forever-sim and no Go module proxy in this run: the sim changes and TASKS.md entries were sent as patch files."],
-
+  "build": {
+    "newest": "1.60.1.70338",
+    "newestDate": "Oct 10",
+    "sim": "70338",
+    "isNew": false
+  },
+  "alerts": [
+    "**No push access** to bayov/forever-sim and no Go module proxy in this run: the sim changes and TASKS.md entries were sent as patch files."
+  ],
   "big": [
     {
       "title": "Quiet day: no build, no hotfix, no blue post",
@@ -16,7 +22,6 @@
       "text": "BlizzTrack still shows 1.60.1.70338 at Oct 12 20:36 UTC. The last Kaivax posts (dev notes, known issues) are from Oct 8."
     }
   ],
-
   "classes": {
     "Shaman": {
       "changes": [
@@ -41,36 +46,160 @@
         }
       ]
     },
-    "Paladin": { "changes": [] },
-    "Rogue": { "changes": [] }
+    "Paladin": {
+      "changes": []
+    },
+    "Rogue": {
+      "changes": []
+    }
   },
-
   "items": {
     "counters": [
-      { "label": "Overall", "revealed": 4731, "total": 12599 },
-      { "label": "New Forever items", "revealed": 649, "total": 2425 },
-      { "label": "Classic items", "revealed": 3157, "total": 5006 },
-      { "label": "Season of Discovery leftovers", "revealed": 925, "total": 5168 }
+      {
+        "label": "Overall",
+        "revealed": 4731,
+        "total": 12599
+      },
+      {
+        "label": "New Forever items",
+        "revealed": 649,
+        "total": 2425
+      },
+      {
+        "label": "Classic items",
+        "revealed": 3157,
+        "total": 5006
+      },
+      {
+        "label": "Season of Discovery leftovers",
+        "revealed": 925,
+        "total": 5168
+      }
     ],
     "note": "Newest reveal group: **October 11 to 12** (8 items). Items from the Oct 9–11 groups that the sim's database still lacks are included and marked \"may repeat\". No tier or Forever-only set piece left \"still hidden\".",
     "list": [
       {
         "id": 18671,
-        "who": ["Shaman", "Paladin", "Rogue", "Warrior"],
+        "who": [
+          "Shaman",
+          "Paladin",
+          "Rogue",
+          "Warrior"
+        ],
         "kind": "buff",
-        "changed": [["Item level", "59", "60"], ["Required level", "54", "55"], ["Damage", "70–132", "71–134"], ["Fire proc", "35", "90"]],
+        "changed": [
+          [
+            "Item level",
+            "59",
+            "60"
+          ],
+          [
+            "Required level",
+            "54",
+            "55"
+          ],
+          [
+            "Damage",
+            "70–132",
+            "71–134"
+          ],
+          [
+            "Fire proc",
+            "35",
+            "90"
+          ]
+        ],
         "group": "Oct 11–12",
         "inSim": false,
         "take": "Strong leveling main hand at 55. The 90 comes from tooltip text only; **the sim keeps 35** until SpellEffect 13442 is checked."
       },
-      { "id": 284285, "who": ["Shaman", "Paladin"], "group": "Oct 11–12", "inSim": false, "take": "Hybrid Str + SP gloves for Enhancement and Ret in the late 40s." },
-      { "id": 284064, "who": ["Paladin", "Warrior"], "group": "Oct 11–12", "inSim": false, "take": "Ret shoulders that fit the sim's Str + SP valuation." },
-      { "id": 281661, "who": ["Paladin", "Warrior", "Hunter", "Druid"], "group": "Oct 11–12", "inSim": false, "take": "Slow 3.60 leveling 2H at 33, good for Seal of Command, but only 26.8 DPS." },
-      { "id": 274385, "who": ["Rogue", "Shaman", "Warrior", "Hunter"], "group": "Oct 9–10", "repeat": true, "inSim": false, "take": "Left out: needs an AP-vs-Humanoids effect and a call on \"+3 Defense\"." },
-      { "id": 274432, "who": ["Resto Shaman", "Priest", "Druid"], "group": "Oct 10–11", "repeat": true, "inSim": false, "take": "Left out: the healing vs spell-damage stat convention needs a call." },
-      { "id": 283545, "who": ["Ele Shaman", "Druid"], "group": "Oct 10–11", "repeat": true, "inSim": false },
-      { "id": 281896, "who": ["Shaman", "Druid"], "group": "Oct 10–11", "repeat": true, "inSim": false },
-      { "id": 286569, "who": ["Mage", "Warlock"], "group": "Oct 10–11", "repeat": true, "inSim": false }
+      {
+        "id": 284285,
+        "who": [
+          "Shaman",
+          "Paladin"
+        ],
+        "group": "Oct 11–12",
+        "inSim": false,
+        "take": "Hybrid Str + SP gloves for Enhancement and Ret in the late 40s."
+      },
+      {
+        "id": 284064,
+        "who": [
+          "Paladin",
+          "Warrior"
+        ],
+        "group": "Oct 11–12",
+        "inSim": false,
+        "take": "Ret shoulders that fit the sim's Str + SP valuation."
+      },
+      {
+        "id": 281661,
+        "who": [
+          "Paladin",
+          "Warrior",
+          "Hunter",
+          "Druid"
+        ],
+        "group": "Oct 11–12",
+        "inSim": false,
+        "take": "Slow 3.60 leveling 2H at 33, good for Seal of Command, but only 26.8 DPS."
+      },
+      {
+        "id": 274385,
+        "who": [
+          "Rogue",
+          "Shaman",
+          "Warrior",
+          "Hunter"
+        ],
+        "group": "Oct 9–10",
+        "repeat": true,
+        "inSim": false,
+        "take": "Left out: needs an AP-vs-Humanoids effect and a call on \"+3 Defense\"."
+      },
+      {
+        "id": 274432,
+        "who": [
+          "Resto Shaman",
+          "Priest",
+          "Druid"
+        ],
+        "group": "Oct 10–11",
+        "repeat": true,
+        "inSim": false,
+        "take": "Left out: the healing vs spell-damage stat convention needs a call."
+      },
+      {
+        "id": 283545,
+        "who": [
+          "Ele Shaman",
+          "Druid"
+        ],
+        "group": "Oct 10–11",
+        "repeat": true,
+        "inSim": false
+      },
+      {
+        "id": 281896,
+        "who": [
+          "Shaman",
+          "Druid"
+        ],
+        "group": "Oct 10–11",
+        "repeat": true,
+        "inSim": false
+      },
+      {
+        "id": 286569,
+        "who": [
+          "Mage",
+          "Warlock"
+        ],
+        "group": "Oct 10–11",
+        "repeat": true,
+        "inSim": false
+      }
     ],
     "skippedTitle": "Skipped: 4 more from the Oct 11–12 group",
     "skipped": [
@@ -78,13 +207,26 @@
       "Nordic Longshank (9401) and Papal Fez (9431): revealed, but ForeverChanges has no Forever stats for them yet."
     ]
   },
-
   "sim": {
-    "pr": { "state": "blocked", "title": "No PR: no push access" },
+    "pr": {
+      "state": "blocked",
+      "title": "No PR: no push access"
+    },
     "reason": "This run couldn't push to bayov/forever-sim or reach the Go module proxy, so it couldn't regenerate the database or run the tests. The changes went out as a patch.",
     "changes": [
-      { "what": "6 new ForeverItems: 284064, 284285, 281661, 286569, 283545, 281896", "file": "tools/database/forever_items.go", "old": "absent", "new": "added" },
-      { "what": "Baron Charr's Sceptre (ForeverSeenInGame)", "ref": "i:18671", "file": "tools/database/forever_items.go", "old": "ilvl 59, req 54, 70–132", "new": "ilvl 60, req 55, 71–134" }
+      {
+        "what": "6 new ForeverItems: 284064, 284285, 281661, 286569, 283545, 281896",
+        "file": "tools/database/forever_items.go",
+        "old": "absent",
+        "new": "added"
+      },
+      {
+        "what": "Baron Charr's Sceptre (ForeverSeenInGame)",
+        "ref": "i:18671",
+        "file": "tools/database/forever_items.go",
+        "old": "ilvl 59, req 54, 70–132",
+        "new": "ilvl 60, req 55, 71–134"
+      }
     ],
     "impactNote": "No golden *.results diff could be produced. No preset should move: every added item needs level 33+, and the shipped presets are Level 30 + 5 and Level 60.",
     "notIncluded": [
@@ -93,67 +235,323 @@
       "Stone Keeper Spire (274432): SpellDamage + HealingPower or SpellPower + HealingPower."
     ],
     "tasks": [
-      { "text": "Apply the 2026-10-13 patch, run gen_db and the tests, open the PR.", "sub": "Give the daily task push access." },
-      { "text": "Baron Charr's Sceptre proc 35 → 90", "sub": "Check SpellEffect 13442 and ItemEffect 18671 for build 70338 on wago.tools." },
-      { "text": "Items left out: Abomination Chain, Stone Keeper Spire, Nordic Longshank, Papal Fez." },
-      { "text": "Restorative Totems should scale HST's healing power after the next build (#291).", "sub": "sim/shaman/water_totems.go scales the base heal only." }
+      {
+        "text": "Apply the 2026-10-13 patch, run gen_db and the tests, open the PR.",
+        "sub": "Give the daily task push access."
+      },
+      {
+        "text": "Baron Charr's Sceptre proc 35 → 90",
+        "sub": "Check SpellEffect 13442 and ItemEffect 18671 for build 70338 on wago.tools."
+      },
+      {
+        "text": "Items left out: Abomination Chain, Stone Keeper Spire, Nordic Longshank, Papal Fez."
+      },
+      {
+        "text": "Restorative Totems should scale HST's healing power after the next build (#291).",
+        "sub": "sim/shaman/water_totems.go scales the base heal only."
+      }
     ]
   },
-
   "otherNote": "No official balance changes. These fixes are queued for the next beta build (~Oct 15) on the testers' bug tracker, dev-marked fixed. (may repeat yesterday)",
   "other": {
-    "Warrior": { "changes": [
-      { "name": "Improved Berserker Rage", "value": "now breaks roots", "kind": "fix", "status": "tracker", "repeat": true }
-    ] },
-    "Hunter": { "changes": [
-      { "name": "Immolation / Explosive Trap", "value": "gain from AP and SP", "kind": "buff", "status": "tracker", "repeat": true, "take": "A frost trap and a fire trap can be out at once." },
-      { "name": "Improved Mend Pet", "value": "lowers cost (was raising it)", "kind": "fix", "status": "tracker", "repeat": true },
-      { "name": "Summon Hawk", "value": "no longer chases late or dead targets", "kind": "fix", "status": "tracker", "repeat": true },
-      { "name": "Predator's Edge", "value": "no auto-attack crit damage (intended)", "kind": "change", "status": "tracker", "repeat": true }
-    ] },
-    "Mage": { "changes": [
-      { "name": "Frost Channeling", "value": "lowers threat (was raising it)", "kind": "fix", "status": "tracker", "repeat": true }
-    ] },
-    "Priest": { "changes": [
-      { "name": "Twin Disciplines", "value": "now raises Mind Flay", "kind": "buff", "status": "tracker", "repeat": true },
-      { "name": "Shadow Word: Death", "value": "Shadowform and Twin Disciplines apply", "kind": "buff", "status": "tracker", "repeat": true },
-      { "name": "Mind Vision", "value": "no longer stops enemy drinking", "kind": "fix", "status": "tracker", "repeat": true }
-    ] },
-    "Warlock": { "changes": [
-      { "name": "Siphon Life", "value": "can crit", "kind": "buff", "status": "tracker", "repeat": true },
-      { "name": "Malediction", "value": "Hellfire bonus hits enemies too", "kind": "buff", "status": "tracker", "repeat": true },
-      { "name": "Soul Link (via Talented, under 30)", "value": "buff now applies", "kind": "fix", "status": "tracker", "repeat": true }
-    ] },
-    "Druid": { "changes": [
-      { "name": "Faerie Fire", "value": "one druid can't stack two ranks", "kind": "nerf", "status": "tracker", "repeat": true }
-    ] }
+    "Warrior": {
+      "changes": [
+        {
+          "name": "Improved Berserker Rage",
+          "value": "now breaks roots",
+          "kind": "fix",
+          "status": "tracker",
+          "repeat": true
+        }
+      ]
+    },
+    "Hunter": {
+      "changes": [
+        {
+          "name": "Immolation / Explosive Trap",
+          "value": "gain from AP and SP",
+          "kind": "buff",
+          "status": "tracker",
+          "repeat": true,
+          "take": "A frost trap and a fire trap can be out at once."
+        },
+        {
+          "name": "Improved Mend Pet",
+          "value": "lowers cost (was raising it)",
+          "kind": "fix",
+          "status": "tracker",
+          "repeat": true
+        },
+        {
+          "name": "Summon Hawk",
+          "value": "no longer chases late or dead targets",
+          "kind": "fix",
+          "status": "tracker",
+          "repeat": true
+        },
+        {
+          "name": "Predator's Edge",
+          "value": "no auto-attack crit damage (intended)",
+          "kind": "change",
+          "status": "tracker",
+          "repeat": true
+        }
+      ]
+    },
+    "Mage": {
+      "changes": [
+        {
+          "name": "Frost Channeling",
+          "value": "lowers threat (was raising it)",
+          "kind": "fix",
+          "status": "tracker",
+          "repeat": true
+        }
+      ]
+    },
+    "Priest": {
+      "changes": [
+        {
+          "name": "Twin Disciplines",
+          "value": "now raises Mind Flay",
+          "kind": "buff",
+          "status": "tracker",
+          "repeat": true
+        },
+        {
+          "name": "Shadow Word: Death",
+          "value": "Shadowform and Twin Disciplines apply",
+          "kind": "buff",
+          "status": "tracker",
+          "repeat": true
+        },
+        {
+          "name": "Mind Vision",
+          "value": "no longer stops enemy drinking",
+          "kind": "fix",
+          "status": "tracker",
+          "repeat": true
+        }
+      ]
+    },
+    "Warlock": {
+      "changes": [
+        {
+          "name": "Siphon Life",
+          "value": "can crit",
+          "kind": "buff",
+          "status": "tracker",
+          "repeat": true
+        },
+        {
+          "name": "Malediction",
+          "value": "Hellfire bonus hits enemies too",
+          "kind": "buff",
+          "status": "tracker",
+          "repeat": true
+        },
+        {
+          "name": "Soul Link (via Talented, under 30)",
+          "value": "buff now applies",
+          "kind": "fix",
+          "status": "tracker",
+          "repeat": true
+        }
+      ]
+    },
+    "Druid": {
+      "changes": [
+        {
+          "name": "Faerie Fire",
+          "value": "one druid can't stack two ranks",
+          "kind": "nerf",
+          "status": "tracker",
+          "repeat": true
+        }
+      ]
+    }
   },
-
   "misc": [
-    { "cat": "Progression", "status": "interview", "date": "Oct 12, 19:15 UTC", "source": "Icy Veins", "url": "https://www.icy-veins.com/wow-forever/news/horizontal-progression-in-wow-forever-blizzard-clarifies/",
-      "text": "Clay Stone: \"horizontal\" means a bigger world, not flat power. Small vertical gains between tiers, Dragonspine-style chase items; older raid gear may stay BiS for some specs for years." },
-    { "cat": "Classes", "status": "interview", "date": "~Oct 12, 21:45 UTC", "source": "Wowhead / TechRadar", "url": "https://www.wowhead.com/forever/news/wow-forever-classes-wont-be-modernized-techradar-interview-with-blizzard-383378",
-      "text": "No modernization of Classic classes. Respecs get expensive fast and the price resets weekly. No summoning stones (Warlock identity)." },
-    { "cat": "Systems", "status": "interview", "date": "Oct 12", "source": "PC Gamer", "url": "https://www.pcgamer.com/games/world-of-warcraft/why-alts-are-part-of-world-of-warcraft-forevers-core-progression-plans/",
-      "text": "Ion Hazzikostas: an account-wide bank is possible \"in the not-too-distant future\". Alts and Legacy points are core; the level cap stays." },
-    { "cat": "Roadmap", "status": "interview", "date": "Oct 13, 15:30 UTC", "source": "MassivelyOP", "url": "https://massivelyop.com/2026/10/13/world-of-warcraft-forever-devs-discuss-account-wide-banks-new-races-and-tanking-shamans/",
-      "text": "No retail races planned. Kalimdor and the Eastern Kingdoms only for the first years." },
-    { "cat": "Legacy / UI", "status": "tracker", "date": "next build ~Oct 15",
-      "text": "Talent tooltips show ranks again (#217). Bountiful Harvest and Luremaster give their extra materials and fish (#309, #310)." },
-    { "cat": "Beta", "status": "blue", "date": "Oct 8", "repeat": true,
-      "text": "The latest official dev notes and known issues are still the Oct 8 posts. Beta runs until Oct 21–22; launch is Nov 4." }
+    {
+      "cat": "Progression",
+      "status": "interview",
+      "date": "Oct 12, 19:15 UTC",
+      "source": "Icy Veins",
+      "url": "https://www.icy-veins.com/wow-forever/news/horizontal-progression-in-wow-forever-blizzard-clarifies/",
+      "text": "Clay Stone: \"horizontal\" means a bigger world, not flat power. Small vertical gains between tiers, Dragonspine-style chase items; older raid gear may stay BiS for some specs for years."
+    },
+    {
+      "cat": "Classes",
+      "status": "interview",
+      "date": "~Oct 12, 21:45 UTC",
+      "source": "Wowhead / TechRadar",
+      "url": "https://www.wowhead.com/forever/news/wow-forever-classes-wont-be-modernized-techradar-interview-with-blizzard-383378",
+      "text": "No modernization of Classic classes. Respecs get expensive fast and the price resets weekly. No summoning stones (Warlock identity)."
+    },
+    {
+      "cat": "Systems",
+      "status": "interview",
+      "date": "Oct 12",
+      "source": "PC Gamer",
+      "url": "https://www.pcgamer.com/games/world-of-warcraft/why-alts-are-part-of-world-of-warcraft-forevers-core-progression-plans/",
+      "text": "Ion Hazzikostas: an account-wide bank is possible \"in the not-too-distant future\". Alts and Legacy points are core; the level cap stays."
+    },
+    {
+      "cat": "Roadmap",
+      "status": "interview",
+      "date": "Oct 13, 15:30 UTC",
+      "source": "MassivelyOP",
+      "url": "https://massivelyop.com/2026/10/13/world-of-warcraft-forever-devs-discuss-account-wide-banks-new-races-and-tanking-shamans/",
+      "text": "No retail races planned. Kalimdor and the Eastern Kingdoms only for the first years."
+    },
+    {
+      "cat": "Legacy / UI",
+      "status": "tracker",
+      "date": "next build ~Oct 15",
+      "text": "Talent tooltips show ranks again (#217). Bountiful Harvest and Luremaster give their extra materials and fish (#309, #310)."
+    },
+    {
+      "cat": "Beta",
+      "status": "blue",
+      "date": "Oct 8",
+      "repeat": true,
+      "text": "The latest official dev notes and known issues are still the Oct 8 posts. Beta runs until Oct 21–22; launch is Nov 4."
+    }
   ],
-
   "sources": [
-    { "site": "ForeverChanges", "label": "hidden items", "url": "https://foreverchanges.pro/hidden-items" },
-    { "site": "ForeverChanges", "label": "patch notes", "url": "https://foreverchanges.pro/patch-notes" },
-    { "site": "Wowhead", "label": "classes not modernized", "url": "https://www.wowhead.com/forever/news/wow-forever-classes-wont-be-modernized-techradar-interview-with-blizzard-383378" },
-    { "site": "Icy Veins", "label": "horizontal progression", "url": "https://www.icy-veins.com/wow-forever/news/horizontal-progression-in-wow-forever-blizzard-clarifies/" },
-    { "site": "Icy Veins", "label": "shaman tanking", "url": "https://www.icy-veins.com/wow-forever/news/will-players-travel-to-northrend-or-pandaria-in-wow-forever/" },
-    { "site": "PC Gamer", "label": "alts and account bank", "url": "https://www.pcgamer.com/games/world-of-warcraft/why-alts-are-part-of-world-of-warcraft-forevers-core-progression-plans/" },
-    { "site": "MassivelyOP", "label": "dev roundup", "url": "https://massivelyop.com/2026/10/13/world-of-warcraft-forever-devs-discuss-account-wide-banks-new-races-and-tanking-shamans/" },
-    { "site": "BlizzTrack", "label": "build versions", "url": "https://blizztrack.com/view/wow_cn_beta?type=versions" },
-    { "site": "Blizzard", "label": "beta forum", "url": "https://us.forums.blizzard.com/en/wow/c/in-development/wow-forever-beta-discussion/349" },
-    { "site": "Bluetracker", "label": "blue posts", "url": "https://www.bluetracker.gg/wow/" }
+    {
+      "site": "ForeverChanges",
+      "label": "hidden items",
+      "url": "https://foreverchanges.pro/hidden-items"
+    },
+    {
+      "site": "ForeverChanges",
+      "label": "patch notes",
+      "url": "https://foreverchanges.pro/patch-notes"
+    },
+    {
+      "site": "Wowhead",
+      "label": "classes not modernized",
+      "url": "https://www.wowhead.com/forever/news/wow-forever-classes-wont-be-modernized-techradar-interview-with-blizzard-383378"
+    },
+    {
+      "site": "Icy Veins",
+      "label": "horizontal progression",
+      "url": "https://www.icy-veins.com/wow-forever/news/horizontal-progression-in-wow-forever-blizzard-clarifies/"
+    },
+    {
+      "site": "Icy Veins",
+      "label": "shaman tanking",
+      "url": "https://www.icy-veins.com/wow-forever/news/will-players-travel-to-northrend-or-pandaria-in-wow-forever/"
+    },
+    {
+      "site": "PC Gamer",
+      "label": "alts and account bank",
+      "url": "https://www.pcgamer.com/games/world-of-warcraft/why-alts-are-part-of-world-of-warcraft-forevers-core-progression-plans/"
+    },
+    {
+      "site": "MassivelyOP",
+      "label": "dev roundup",
+      "url": "https://massivelyop.com/2026/10/13/world-of-warcraft-forever-devs-discuss-account-wide-banks-new-races-and-tanking-shamans/"
+    },
+    {
+      "site": "BlizzTrack",
+      "label": "build versions",
+      "url": "https://blizztrack.com/view/wow_cn_beta?type=versions"
+    },
+    {
+      "site": "Blizzard",
+      "label": "beta forum",
+      "url": "https://us.forums.blizzard.com/en/wow/c/in-development/wow-forever-beta-discussion/349"
+    },
+    {
+      "site": "Bluetracker",
+      "label": "blue posts",
+      "url": "https://www.bluetracker.gg/wow/"
+    }
+  ],
+  "tldr": [
+    {
+      "tag": "Sim",
+      "text": "**PR #12** adds 9 revealed items to the database. No preset or DPS number moves.",
+      "hot": true
+    },
+    {
+      "tag": "Paladin",
+      "text": "**Icemetal Barbute** is now Str + Int plate at 40, a Ret leveling helm."
+    },
+    {
+      "tag": "Shaman",
+      "text": "**Feardred's Gauntlets** (Str + SP mail, req 49) fit Enhancement."
+    },
+    {
+      "tag": "Tracker",
+      "text": "Tremor Totem stays 30 yd (#301). Seal of the Crusader's +40% is a tooltip bug (#330)."
+    },
+    {
+      "tag": "Build",
+      "text": "Still 1.60.1.70338. The next build is expected around Oct 15."
+    }
+  ],
+  "simTodo": [
+    {
+      "state": "pr",
+      "what": "7 new revealed items",
+      "where": "tools/database/forever_items.go · ForeverItems",
+      "old": "absent",
+      "new": "added",
+      "status": "client",
+      "why": "No source yet, so the gear search ignores them."
+    },
+    {
+      "state": "pr",
+      "what": "Icemetal Barbute",
+      "ref": "i:10763",
+      "where": "forever_items.go · ForeverSeenInGame",
+      "old": "+10 Sta +7 Spi",
+      "new": "+7 Sta +10 Int",
+      "status": "client"
+    },
+    {
+      "state": "pr",
+      "what": "Baron Charr's Sceptre stats",
+      "ref": "i:18671",
+      "where": "forever_items.go · ForeverSeenInGame",
+      "old": "70–132, req 54",
+      "new": "71–134, req 55",
+      "status": "client"
+    },
+    {
+      "state": "call",
+      "what": "Baron Charr's Sceptre proc",
+      "ref": "i:18671",
+      "where": "sim/common/item_effects.go · BaronCharrsSceptre",
+      "old": "35",
+      "new": "90",
+      "status": "tooltip",
+      "why": "Tooltip only. Check SpellEffect 13442 on wago.tools."
+    },
+    {
+      "state": "call",
+      "what": "+healing / +spell damage items (Stone Keeper Spire, Papal Fez)",
+      "where": "forever_items.go · ForeverItems / ForeverSeenInGame",
+      "status": "client",
+      "why": "wowhead mixes two stat conventions. Pick one."
+    },
+    {
+      "state": "call",
+      "what": "Abomination Chain (AP vs Humanoids, +3 Defense Rating)",
+      "ref": "i:274385",
+      "where": "sim/common/item_effects.go",
+      "status": "client",
+      "why": "Needs an item effect and a rating conversion."
+    },
+    {
+      "state": "task",
+      "what": "Restorative Totems scales HST healing power",
+      "where": "sim/shaman/talents.go · restorativeTotemsModifier",
+      "status": "tracker",
+      "why": "Dev-marked fixed for the ~Oct 15 build (#291). Change it once the build lands."
+    }
   ]
 }

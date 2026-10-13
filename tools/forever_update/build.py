@@ -23,6 +23,7 @@ CLASSES = ['Shaman', 'Paladin', 'Rogue', 'Warrior', 'Hunter', 'Mage', 'Priest', 
 STATUSES = {'official', 'hotfix', 'blue', 'interview', 'client', 'datamined', 'tracker', 'tooltip', 'unclear'}
 KINDS = {'buff', 'nerf', 'change', 'fix', 'new'}
 PR_STATES = {'open', 'draft', 'none', 'blocked'}
+TODO_STATES = {'pr', 'call', 'task', 'done'}
 
 
 # ---------- Wowhead tooltip HTML -> lines (same parser as tools/dps_report/tooltips.py) ----------
@@ -255,6 +256,16 @@ def validate(r, problems):
             problems.append(f'items.list[{i}].id must be the numeric item id')
         if not it.get('who'):
             problems.append(f'items.list[{i}] ({it.get("id")}) has no "who"')
+    tl = r.get('tldr') or []
+    if not tl:
+        problems.append("report.tldr is empty: give the day's 1–5 most important points, most important first")
+    if len(tl) > 5:
+        problems.append(f'report.tldr has {len(tl)} points; keep it to 5 at most')
+    for i, t in enumerate(r.get('simTodo') or []):
+        if t.get('state') not in TODO_STATES:
+            problems.append(f'simTodo[{i}].state "{t.get("state")}" is not one of {sorted(TODO_STATES)}')
+        if not t.get('what') or not t.get('where'):
+            problems.append(f'simTodo[{i}] needs "what" and "where" (file and function or constant)')
     st = ((r.get('sim') or {}).get('pr') or {}).get('state')
     if st and st not in PR_STATES:
         problems.append(f'sim.pr.state "{st}" is not one of {sorted(PR_STATES)}')

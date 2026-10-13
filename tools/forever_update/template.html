@@ -285,6 +285,23 @@ details.more > div { margin-top: 0.5rem; display: grid; gap: 0.4rem; font-size: 
 .fu-tt { position: absolute; z-index: 40; width: max-content; max-width: min(19rem, calc(100% - 8px)); }
 @media (prefers-reduced-motion: no-preference) { .fu-tt { animation: fu-pop 0.14s ease-out both; } @keyframes fu-pop { from { opacity: 0; transform: translateY(3px) scale(0.985); } to { opacity: 1; transform: none; } } }
 .tt-on { background-color: color-mix(in srgb, var(--gold) 14%, transparent); border-radius: 6px; }
+/* TL;DR and the sim to-do list */
+.tldr { border-left: 4px solid var(--gold); }
+.tldr ol { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.4rem; font-size: 0.9rem; }
+.tldr li.hot::marker { color: var(--bad); font-weight: 700; }
+.tldr .tag { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 0.05rem 0.4rem; border-radius: 99px; margin-right: 0.35rem; background: var(--gold-soft); color: var(--gold); vertical-align: 0.1em; }
+.tldr li.hot .tag { background: color-mix(in srgb, var(--bad) 16%, transparent); color: var(--bad); }
+.todo { display: grid; gap: 0.5rem; }
+.todo .row { display: grid; grid-template-columns: auto 1fr; gap: 0.15rem 0.6rem; align-items: start; padding: 0.5rem 0; border-top: 1px solid var(--line); }
+.todo .row:first-child { border-top: 0; padding-top: 0; }
+.todo .st { grid-row: 1 / span 3; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.45rem; border-radius: var(--r-sm); white-space: nowrap; }
+.todo .st.pr { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+.todo .st.call { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+.todo .st.task { background: color-mix(in srgb, var(--info) 16%, transparent); color: var(--info); }
+.todo .st.done { background: color-mix(in srgb, var(--fg) 10%, transparent); color: var(--muted); }
+.todo .w { font-weight: 600; font-size: 0.88rem; }
+.todo .loc { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); overflow-wrap: anywhere; }
+.todo .why { font-size: 0.8rem; color: var(--muted); }
 </style>
 <div class="fu" id="fu"></div>
 <script id="fu-data" type="application/json">__DATA__</script>
@@ -461,15 +478,37 @@ details.more > div { margin-top: 0.5rem; display: grid; gap: 0.4rem; font-size: 
     ...arr(R.alerts).map((a) => el('div', { class: 'alert' }, el('span', {}, rich(a)))));
   root.append(head);
 
+  // ---------- TL;DR: the few things that matter, ranked ----------
+  const tl = arr(R.tldr).map((t) => (typeof t === 'string' ? { text: t } : t));
+  if (tl.length) root.append(el('section', { class: 'card tldr' }, el('h3', { text: 'What matters today' }),
+    el('ol', {}, tl.map((t) => el('li', { class: t.hot ? 'hot' : null }, t.tag ? el('span', { class: 'tag', text: t.tag }) : null, rich(t.text))))));
+
+  // ---------- sim to-do: every sim change, what it touches and where it stands ----------
+  const TODO = { pr: 'In PR', call: 'Your call', task: 'TASKS.md', done: 'Done' };
+  const todoCard = (title) => {
+    const rows = arr(R.simTodo);
+    if (!rows.length) return null;
+    return el('div', { class: 'card' }, el('h3', { text: title }), el('div', { class: 'todo' }, rows.map((t) => {
+      const st = TODO[t.state] ? t.state : 'task';
+      const ref = t.ref && TT[t.ref] ? t.ref : null;
+      return el('div', { class: 'row' },
+        el('span', { class: 'st ' + st, text: st === 'pr' && (R.sim?.pr?.number) ? `PR #${R.sim.pr.number}` : TODO[st] }),
+        el('div', { class: 'w' }, el('span', { 'data-tt': ref }, rich(t.what)), ' ', (t.old != null || t.new != null) ? valuePill({ old: t.old, new: t.new, dir: t.dir || 'none' }) : null, t.status ? ' ' : null, t.status ? statusChip(t.status) : null),
+        t.where ? el('div', { class: 'loc', text: t.where }) : null,
+        t.why ? el('div', { class: 'why' }, rich(t.why)) : null);
+    })));
+  };
+
   // ---------- tabs ----------
-  const spr = MAIN.reduce((n, c) => n + arr(R.classes?.[c]?.changes).length, 0);
-  const otherN = Object.values(R.other || {}).reduce((n, v) => n + arr(v.changes).length, 0);
+  const fresh = (l) => arr(l).filter((c) => !c.repeat).length;
+  const spr = MAIN.reduce((n, c) => n + fresh(R.classes?.[c]?.changes), 0);
+  const otherN = Object.values(R.other || {}).reduce((n, v) => n + fresh(v.changes), 0);
   const TABS = [
     { id: 'today', label: 'Today', n: arr(R.big).length + spr },
     { id: 'items', label: 'Items', n: items.length },
-    { id: 'sim', label: 'Sim', n: arr(R.sim?.changes).length },
+    { id: 'sim', label: 'Sim', n: arr(R.simTodo).length || arr(R.sim?.changes).length },
     { id: 'classes', label: 'Others', n: otherN },
-    { id: 'news', label: 'News', n: arr(R.misc).length },
+    { id: 'news', label: 'News', n: fresh(R.misc) },
   ];
 
   // ---------- KPI tiles ----------
@@ -506,9 +545,10 @@ details.more > div { margin-top: 0.5rem; display: grid; gap: 0.4rem; font-size: 
   const classCard = (c, data, main) => {
     const ch = arr(data?.changes), its = itemsFor(c);
     const card = el('article', { class: 'card cls' + (main ? ' main' : ''), style: `--c:${cvar(c)}` },
-      el('div', { class: 'cls-h' }, classIcon(c), el('h3', { text: c }), el('span', { class: 'count', text: ch.length ? `${ch.length} change${ch.length === 1 ? '' : 's'}` : 'No changes' })),
+      el('div', { class: 'cls-h' }, classIcon(c), el('h3', { text: c }), el('span', { class: 'count', text: ch.filter((c) => !c.repeat).length ? `${ch.filter((c) => !c.repeat).length} new` : 'Nothing new' })),
       data?.summary ? el('p', { class: 'sum' }, rich(data.summary)) : null,
-      ch.length ? ch.map(changeRow) : el('div', { class: 'empty', text: 'No changes today.' }));
+      ch.filter((c) => !c.repeat).length ? ch.filter((c) => !c.repeat).map(changeRow) : el('div', { class: 'empty', text: ch.length ? 'Nothing new today.' : 'No changes today.' }),
+      ch.some((c) => c.repeat) ? el('details', { class: 'more' }, el('summary', { text: `Seen yesterday: ${ch.filter((c) => c.repeat).length}` }), el('div', {}, ch.filter((c) => c.repeat).map(changeRow))) : null);
     if (its.length) card.append(el('button', { class: 'itemlink', onclick: () => { setFilter(c); showTab('items'); } },
       el('span', { class: 'stack' }, its.slice(0, 4).map((it) => icon(TT['i:' + it.id]?.icon || it.icon))), `${its.length} new item${its.length === 1 ? '' : 's'} → Items`));
     return card;
@@ -527,6 +567,7 @@ details.more > div { margin-top: 0.5rem; display: grid; gap: 0.4rem; font-size: 
           g.text ? el('div', { class: 'note', style: 'font-size:.85rem' }, rich(g.text)) : null));
       }
     }
+    { const tc = todoCard('🛠 Sim changes'); if (tc) p.append(tc); }
     p.append(sec('⚔️ Shaman · Paladin · Rogue'));
     p.append(el('div', { class: 'grid' }, MAIN.map((c) => classCard(c, R.classes?.[c], true))));
     p.append(el('div', { class: 'card' }, el('p', { class: 'note', text: 'Labels — tap any chip, name or icon for details.' }), legend()));
@@ -560,7 +601,7 @@ details.more > div { margin-top: 0.5rem; display: grid; gap: 0.4rem; font-size: 
       el('button', { class: 'fchip', 'aria-pressed': String(filter === f), onclick: () => setFilter(f) }, ic, label, el('span', { class: 'n', text: String(count(f)) }))));
     const list = items.filter((it) => filter === 'all' || (filter === 'mine' ? it.who.some((w) => MAIN.includes(baseClass(w))) : it.who.some((w) => baseClass(w) === filter)));
     const rank = (it) => Math.min(...it.who.map((w) => { const i = CLASSES.indexOf(baseClass(w)); return i < 0 ? 99 : i; }), 99);
-    list.sort((a, b) => rank(a) - rank(b));
+    list.sort((a, b) => (a.repeat ? 1 : 0) - (b.repeat ? 1 : 0) || rank(a) - rank(b));
     itemGrid.replaceChildren(...(list.length ? list.map(itemCard) : [el('div', { class: 'empty', text: filter === 'mine' ? 'Nothing new for Shaman, Paladin or Rogue.' : 'No items for this filter.' })]));
   };
   {
@@ -592,6 +633,7 @@ details.more > div { margin-top: 0.5rem; display: grid; gap: 0.4rem; font-size: 
       pr.url ? el('a', { class: 'btn', href: pr.url, target: '_blank', rel: 'noopener noreferrer', text: `Open PR #${pr.number || ''} ↗` }) : null,
       b.newest ? el('div', { class: 'builds' }, el('div', {}, el('span', { class: 'k', text: 'Newest client build' }), el('span', { class: 'v', text: b.newest })),
         el('div', {}, el('span', { class: 'k', text: 'Sim built from' }), el('span', { class: 'v', text: b.sim || '?' }))) : null));
+    { const tc = todoCard('Sim changes, by state'); if (tc) p.append(tc); }
     if (arr(S.changes).length) p.append(el('div', { class: 'card' }, el('h3', { text: 'Changes in the PR' }), el('div', {}, S.changes.map((c) => {
       const ref = c.ref && TT[c.ref] ? c.ref : null;
       return el('div', { class: 'chg' }, icon(ref && TT[ref].icon) || el('span', { class: 'ico blank', text: '⚙' }),
@@ -638,11 +680,13 @@ details.more > div { margin-top: 0.5rem; display: grid; gap: 0.4rem; font-size: 
   {
     const p = pages.news;
     p.append(sec('📰 Everything else'));
-    const m = arr(R.misc);
-    p.append(el('div', { class: 'card' }, m.length ? el('div', { class: 'news' }, m.map((n) => el('div', { class: 'nrow' },
+    const nrow = (n) => el('div', { class: 'nrow' },
       el('div', { class: 'top' }, n.cat ? el('span', { class: 'cat', text: n.cat }) : null, n.status ? statusChip(n.status) : null, repeatChip(n), el('span', { text: [n.date, n.source].filter(Boolean).join(' · ') })),
       el('div', { class: 'txt' }, rich(n.text), n.url ? el('a', { href: n.url, target: '_blank', rel: 'noopener noreferrer', text: 'source ↗' }) : null),
-      n.details ? el('details', { class: 'more' }, el('summary', { text: 'Details' }), el('div', {}, arr(n.details).map((d) => el('div', {}, rich(d))))) : null))) : el('div', { class: 'empty', text: 'Nothing else today.' })));
+      n.details ? el('details', { class: 'more' }, el('summary', { text: 'Details' }), el('div', {}, arr(n.details).map((d) => el('div', {}, rich(d))))) : null);
+    const all = arr(R.misc), m = all.filter((n) => !n.repeat), seen = all.filter((n) => n.repeat);
+    p.append(el('div', { class: 'card' }, m.length ? el('div', { class: 'news' }, m.map(nrow)) : el('div', { class: 'empty', text: 'Nothing else today.' }),
+      seen.length ? el('details', { class: 'more' }, el('summary', { text: `Seen yesterday: ${seen.length}` }), el('div', { class: 'news' }, seen.map(nrow))) : null));
     if (arr(R.sources).length) {
       p.append(sec('Sources'));
       p.append(el('div', { class: 'srcs' }, R.sources.map((s) => el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer' }, el('b', { text: s.site || '' }), s.label || s.url))));
