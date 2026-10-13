@@ -359,19 +359,22 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// The Level 60 builds, Gnome, at 120 / 180 / 300 sec (20000 iterations, 2026-10-12): Demonology
-// 1102.9 / 1088.5 / 1061.4, Destruction 992.3 / 984.9 / 968.7, Affliction 983.5 / 976.2 / 959.6,
-// Destruction fire 981.3 / 976.2 / 962.2. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt
-// is rank IX, Immolate VII and Corruption VI. The demons take no player buffs and scale from the
-// warlock's stats with Season of Discovery's numbers as a placeholder (notes.md). The demon is the
-// least sourced input: at 180 sec, without the owner scaling Demonology is 1037.8 and the other
-// builds 937 to 946, with the Succubus's melee halved 1044.5 and 937 to 947.
+// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the fair stat-mix
+// sets): Demonology (Gnome) 1069.1 / 1053.2 / 1026.5, Destruction (Gnome) 957.2 / 948.2 / 931.8,
+// Affliction (Gnome) 948.5 / 939.8 / 923.2, Destruction fire (Undead) 941.5 / 935.0 / 921.7.
+// Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and Corruption
+// VI. The demons take no player buffs and scale from the warlock's stats with Season of
+// Discovery's numbers as a placeholder (notes.md). The demon is the least sourced input: on the
+// old set at 180 sec, without the owner scaling Demonology was 1037.8 and the other builds 937 to
+// 946, with the Succubus's melee halved 1044.5 and 937 to 947.
 //
-// Gnome is the best warlock race overall and the best Alliance one, first on every build at 180
-// sec (level with the Undead on Destruction fire), then Undead, Orc, Troll and Human. The best
-// Horde race is the Undead, 4.2 behind the Gnome on Demonology at 180 sec and 0.7 to 2.5 ahead of
-// the Orc. With the staff no warlock race has a weapon racial; on the old Azuresong sword the
-// Human's Sword Specialization had put it first. The full table is in forever-wiki/sim-status.md.
+// Races at 180 sec, then Human, Orc and Troll behind: the Gnome is first on Demonology (1.7 ahead
+// of the Undead) and Affliction (2.2), level with the Undead on Destruction (the Undead is 1.4
+// ahead at 300 sec), and 2.6 behind it on Destruction fire at every length, so that build is
+// Undead. The Gnome is the best Alliance race on every build, the Undead the best Horde one, 2.2 to
+// 4.8 ahead of the Orc. With the staff no warlock race has a weapon racial; on the old Azuresong
+// sword the Human's Sword Specialization had put it first. The full table is in
+// forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
@@ -414,12 +417,12 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Gnome Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
 	encounter: EncounterLevel60,
-	race: Race.RaceGnome,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

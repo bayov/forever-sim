@@ -59,8 +59,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		gear: Presets.DefaultGear.gear,
 
 		// Default EP weights for sorting gear in the gear picker, measured on the Level 60
-		// Demonology build (Gnome, 180 sec, 2026-10-12) in spell power. Hit is worth 0 at the cap the
-		// presets sit at; its weight is the one measured below the cap.
+		// Demonology build (Gnome, 180 sec, 2026-10-12, on the set before the stat-mix rebudget) in
+		// spell power. Hit is worth 0 at the cap the presets sit at; its weight is the one measured
+		// below the cap.
 		epWeights: Stats.fromMap({
 			[Stat.StatMana]: 0.01,
 			[Stat.StatIntellect]: 0.35,
