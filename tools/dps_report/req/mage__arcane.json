@@ -1,0 +1,549 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceUndead",
+            "class": "ClassMage",
+            "equipment": {
+              "items": [
+                {
+                  "id": 996017,
+                  "enchant": 1509
+                },
+                {
+                  "id": 996018,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 996019
+                },
+                {
+                  "id": 996020
+                },
+                {
+                  "id": 996021,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 996022,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 996023,
+                  "enchant": 1213626
+                },
+                {
+                  "id": 996024
+                },
+                {
+                  "id": 996025,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 996026,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 996027
+                },
+                {
+                  "id": 996028
+                },
+                {
+                  "id": 996031
+                },
+                {
+                  "id": 996032
+                },
+                {
+                  "id": 996029,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 996030
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "firePowerBuff": "ElixirOfFirepower",
+              "frostPowerBuff": "ElixirOfFrostPower",
+              "mainHandImbue": "WizardOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "051225003100311531-03-02550003",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Tailoring",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1239700
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-2.5s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 5514
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 5513
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 8007
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 8008
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Low on mana: Arcane Missiles after a single Arcane Blast.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.2"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 400573
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "1"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10212
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Low on mana: one Arcane Blast.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.2"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 400573
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "1"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1239700
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Arcane Missiles on Missile Barrage once the stacks are up.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 400573
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "2"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10212
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Arcane Blast up to the stack target.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 400573
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "4"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1239700
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "The filler.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10212
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 25,
+            "mage": {
+              "options": {
+                "armor": "MageArmor"
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "sanctityAura": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "curseOfShadow": true,
+      "exposeArmor": "TristateEffectImproved",
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "mobType": "MobTypeHumanoid",
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

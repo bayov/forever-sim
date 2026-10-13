@@ -22,7 +22,7 @@ type DistributionMetrics struct {
 	min     float64
 	maxSeed int64
 	minSeed int64
-	hist    map[int32]int32 // rounded DPS to count
+	hist    map[int32]int32 // DPS rounded to a whole number, to the number of iterations
 	sample  []float64
 }
 
@@ -51,8 +51,9 @@ func (distMetrics *DistributionMetrics) doneIteration(sim *Simulation) {
 		distMetrics.minSeed = sim.rand.GetSeed()
 	}
 
-	dpsRounded := int32(math.Round(dps/10) * 10)
-	distMetrics.hist[dpsRounded]++
+	// We keep whole DPS steps, so a low level run with a spread of 30 DPS still has enough
+	// steps for a smooth histogram. The UI groups them into wider bins for a bigger spread.
+	distMetrics.hist[int32(math.Round(dps))]++
 }
 
 func (distMetrics *DistributionMetrics) ToProto() *proto.DistributionMetrics {

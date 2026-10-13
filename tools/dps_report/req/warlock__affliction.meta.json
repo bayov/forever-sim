@@ -1,0 +1,89 @@
+{
+  "id": "warlock__affliction",
+  "class": "Warlock",
+  "spec": "Affliction",
+  "build": "Affliction",
+  "isDefault": false,
+  "pr": 2,
+  "race": "Gnome",
+  "talents": "2553000003520005--0550305003",
+  "treePoints": "30/0/21",
+  "treeNames": [
+    "Affliction",
+    "Demonology",
+    "Destruction"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_affliction",
+  "published": {
+    "dps": 977.4,
+    "source": "PR #2",
+    "overall": {
+      "race": "Gnome",
+      "dps": 977.4
+    },
+    "horde": {
+      "race": "Orc",
+      "dps": 973.6
+    },
+    "alliance": {
+      "race": "Gnome",
+      "dps": 977.4
+    }
+  },
+  "verify": {
+    "dps": 977.41,
+    "stderr": 0.38,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Gnome, 180 s with durationVariation 20, on the merged bundled-round tree. Published 977.4 (PR #2); delta +0.01."
+  },
+  "summary": "Shadow Bolt Affliction: Shadow Mastery, Pandemic, Malevolence and Nightfall with Improved Shadow Bolt, Ruin and Agonizing Flames, Succubus out. The best 30-point Affliction build; a Wrack/drain DoT spec was dropped as 55+ DPS behind with the same playstyle.",
+  "keyTalents": [
+    "Shadow Mastery",
+    "Pandemic",
+    "Malevolence",
+    "Nightfall",
+    "Improved Shadow Bolt",
+    "Ruin",
+    "Agonizing Flames"
+  ],
+  "rotation": [
+    "Pre-pull: Shadow Bolt at -2.5 s (lands just after the pull)",
+    "Racials on cooldown",
+    "Life Tap below 5% mana or when the filler costs more than the mana left",
+    "Bane of Doom when it lands before the fight ends (more than 60 s left)",
+    "Bane of Agony while Bane of Doom is on cooldown or would not land",
+    "Corruption when it is down (more than 9 s left)",
+    "Immolate when down or when less than its cast time remains",
+    "Shadow Bolt as the filler (instant on Nightfall procs)"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of Firepower",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Cerebral Cortex Compound",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Major Spellstone (weapon imbue)"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 38 spell power and 13 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Demon sensitivity: no owner scaling 937.0, Succubus melee halved 938.7, both 913.8 (first set)",
+    "Wrack/Siphon Life DoT variant (25530000035001351--0550005003) is 55 behind; drain fillers 124 to 349 behind",
+    "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server-side): worth +49 on Demonology, +39 on the other builds",
+    "Succubus base melee is unverified: halved melee would cost Demonology 43, the other builds 38 to 39",
+    "Bane of Doom coefficient 4.0 (Era 1.0) is about 12% of Shadow Bolt builds' damage; at 2.0 they lose about 4%, at 1.0 about 6%",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS below rank X/VIII/VII",
+    "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
+    "Soul shards and Life Tap health cost are not tracked"
+  ],
+  "notes": "Request straight from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -race Gnome -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+}

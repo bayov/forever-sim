@@ -34,6 +34,10 @@ func SplitSimRequestForConcurrency(request *proto.RaidSimRequest, splitCount int
 
 	split[0] = googleProto.Clone(request).(*proto.RaidSimRequest)
 	split[0].SimOptions.Iterations = iterPerSplit + request.SimOptions.Iterations%splitCount
+	// No logs from the splits. Each one picks its typical, lucky and unlucky iterations,
+	// and we replay the overall ones once the results are combined (see
+	// ReplayIterationsRequest).
+	split[0].SimOptions.DebugFirstIteration = false
 
 	// Sims increment their seed each iteration. Offset starting seed of each split to emulate that.
 	nextStartSeed := split[0].SimOptions.RandomSeed + int64(split[0].SimOptions.Iterations)
@@ -41,7 +45,7 @@ func SplitSimRequestForConcurrency(request *proto.RaidSimRequest, splitCount int
 	for i := 1; i < int(splitCount); i++ {
 		split[i] = googleProto.Clone(request).(*proto.RaidSimRequest)
 		split[i].SimOptions.Iterations = iterPerSplit
-		split[i].SimOptions.DebugFirstIteration = false // No logs
+		split[i].SimOptions.DebugFirstIteration = false
 		split[i].SimOptions.RandomSeed = nextStartSeed
 		nextStartSeed += int64(split[i].SimOptions.Iterations)
 	}
@@ -352,7 +356,62 @@ func CombineConcurrentSimResults(results []*proto.RaidSimResult, isDebug bool) *
 		rsrc.AddResult(result, i == numResults-1, resultWeight)
 	}
 
+	combinePickedIterations(rsrc.Combined, results)
+
 	return rsrc.Combined
+}
+
+// combinePickedIterations picks the overall typical, lucky and unlucky iterations from the
+// ones each split sim picked.
+//
+// Lucky and unlucky are the highest and lowest of the splits. The typical one is the
+// split's typical iteration closest to the combined average, which is close to the
+// iteration closest to that average over all iterations.
+func combinePickedIterations(combined *proto.RaidSimResult, results []*proto.RaidSimResult) {
+	mean := combined.RaidMetrics.Dps.Avg
+	for _, result := range results {
+		if it := result.TypicalIteration; it != nil {
+			if combined.TypicalIteration == nil || math.Abs(it.Dps-mean) < math.Abs(combined.TypicalIteration.Dps-mean) {
+				combined.TypicalIteration = it
+			}
+		}
+		if it := result.LuckyIteration; it != nil {
+			if combined.LuckyIteration == nil || it.Dps > combined.LuckyIteration.Dps {
+				combined.LuckyIteration = it
+			}
+		}
+		if it := result.UnluckyIteration; it != nil {
+			if combined.UnluckyIteration == nil || it.Dps < combined.UnluckyIteration.Dps {
+				combined.UnluckyIteration = it
+			}
+		}
+	}
+}
+
+// ReplayIterationsRequest returns the request that runs the typical, lucky and unlucky
+// iterations of a combined concurrent result again with logs on, or nil when the result
+// has none.
+func ReplayIterationsRequest(request *proto.RaidSimRequest, result *proto.RaidSimResult) *proto.RaidSimRequest {
+	if result.TypicalIteration == nil || result.LuckyIteration == nil || result.UnluckyIteration == nil {
+		return nil
+	}
+	replay := googleProto.Clone(request).(*proto.RaidSimRequest)
+	replay.SimOptions.Iterations = 1
+	replay.SimOptions.ReplaySeeds = []int64{result.TypicalIteration.Seed, result.LuckyIteration.Seed, result.UnluckyIteration.Seed}
+	return replay
+}
+
+// ApplyIterationReplays copies the logs from the replay of ReplayIterationsRequest into
+// the combined result.
+func ApplyIterationReplays(result *proto.RaidSimResult, replay *proto.RaidSimResult) {
+	if replay == nil || replay.Error != nil {
+		return
+	}
+	result.Logs = replay.Logs
+	result.FirstIterationDuration = replay.FirstIterationDuration
+	result.TypicalIteration = replay.TypicalIteration
+	result.LuckyIteration = replay.LuckyIteration
+	result.UnluckyIteration = replay.UnluckyIteration
 }
 
 type concurrentSimData struct {
@@ -527,6 +586,12 @@ func runSimConcurrent(request *proto.RaidSimRequest, progress chan *proto.Progre
 	}
 
 	result = CombineConcurrentSimResults(csd.FinalResults, request.SimOptions.Debug)
+
+	if request.SimOptions.DebugFirstIteration && !request.SimOptions.Debug {
+		if replayRequest := ReplayIterationsRequest(request, result); replayRequest != nil {
+			ApplyIterationReplays(result, RunSim(replayRequest, nil, signals))
+		}
+	}
 
 	if progress != nil {
 		pm := csd.MakeProgressMetrics()
