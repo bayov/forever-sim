@@ -167,7 +167,7 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 | race_notes | build_races.py | scenario and part texts, a finding per class from race_variants | run_races |
 | weights | build_data.py | `weights/*.json` (40k per stat) | weights.py |
 | mana | build_data.py (`mana_curves.datasets()`) | `mana/*.json`: per build and 5 s step, the average mana % of max over 100 fights at 480 s, with the 25th and 75th percentile fight | mana_curves.py |
-| mana_summary | build_data.py (`mana_curves.datasets()`) | `mana/*.json`: when mana first drops below 10% (median, p25, p75, null when that fight quantile never does), share of fights that do, mana % at 60/180/300/480 s, spend and regen per second, and the 5k run's `secondsOomAvg`, Tto and mana at the end | mana_curves.py |
+| mana_summary | build_data.py (`mana_curves.datasets()`) | `mana/*.json`: when mana first drops below 15% (`lowPct`) (median, p25, p75, null when that fight quantile never does), share of fights that do, mana % at 60/180/300/480 s, spend and regen per second, and the 5k run's `secondsOomAvg`, Tto and mana at the end | mana_curves.py |
 | tooltips | build_data.py + tooltips.py | `forever_tt_cache` (Forever wowhead, Classic fallback), the tree's wowhead csvs, `db.json` (synthetic items, enchants), `sim/*/item*sets_pve.go`, `sim/*/forever_synthetic_trinkets.go`, Forever wiki, `racials.json`, talent trees | whcache.py |
 | talenttrees | build_data.py | `ui/core/talents/trees/<class>.json`, plus wowhead links from the tooltip cache | none |
 | treeart | build_data.py | the tree icons from `tools/forever_talents/client/<class>.json`, and backgrounds fetched from each tree's `backgroundUrl` | icon fetch |
