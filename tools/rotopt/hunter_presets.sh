@@ -1,6 +1,7 @@
 #!/bin/sh
 # Regenerates the hunter rotations in ui/hunter/apls from the hunter_ranged and hunter_sv
-# templates, with the knobs the 2026-10-12 searches settled on (at 180 sec on the synthetic
+# templates, with the knobs the 2026-10-12 searches settled on, confirmed on the standards 1b gear
+# on 2026-10-13 (at 180 sec on the synthetic
 # Phase 1 sets and the Level 60 talents). Run from the repo root with a settings file the
 # optimizer should sim against, made with mksettings for the spec. The rotation itself does
 # not depend on the settings, only the one sanity sim does.

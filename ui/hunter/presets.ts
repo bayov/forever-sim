@@ -144,7 +144,7 @@ export const DefaultAPL = APLLoneWolf;
 
 // The talent searches (tools/rotopt -talent-search, a hill climb) ran on the synthetic sets in
 // the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12, and last
-// on the standard gear (orchestration/standards.md) with the pet taking no player buffs.
+// on the standards 1b gear with its trinkets (2026-10-13), where every build held.
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
 // Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2,
@@ -359,15 +359,16 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // The numbers are without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8) and
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
 // Races, 20000 iterations at 180 sec (forever-wiki/sim-status.md has 120 and 300 too): the Night
-// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 5 to 6
-// ahead of the Orc, the best Horde race. For Survival the Human is best (2% crit with its two
-// swords), 4 ahead of the Night Elf and 7 ahead of the Orc. With the Wildstalker Armor 4 and 5
-// piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class does),
-// Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
-// rotations re-tuned for the shorter Aimed Shot cooldown (measured without trinkets).
+// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 5 ahead
+// of the Orc, the best Horde race. For Survival the Human is best (2% crit with its two swords),
+// 6 ahead of the Orc and the Night Elf, which tie within the noise. With the Wildstalker Armor 4
+// and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
+// does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
+// rotations re-tuned for the shorter Aimed Shot cooldown (measured on the 2026-10-12 gear, before
+// standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 889.2 / 881.5 / 874.7 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
+// 975.6 / 969.0 / 958.5 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -379,8 +380,8 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 920.7 / 912.2 / 892.5 at 120 / 180 / 300 sec, 31 ahead of Beast Mastery at 180. The pet deals
-// 15% of it. It runs short of mana in a 5 minute fight.
+// 1015.3 / 1007.0 / 977.8 at 120 / 180 / 300 sec, 38 ahead of Beast Mastery at 180. The pet deals
+// 14% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -392,8 +393,8 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 924.7 / 916.1 / 899.5 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
-// than a pet that takes no player buffs (4 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
+// 1023.6 / 1015.6 / 988.8 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// than a pet that takes no player buffs (9 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -405,7 +406,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 784.7 / 778.1 / 774.3 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
+// 864.3 / 858.0 / 851.7 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
