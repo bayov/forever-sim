@@ -134,6 +134,13 @@
 	display: inline-block;
 }
 
+// WoW icon textures have a frame drawn into their edges. We zoom in on the middle of the icon
+// so the frame doesn't show next to our own border.
+@mixin icon-crop($zoom: 125%) {
+	background-size: $zoom;
+	background-position: center;
+}
+
 // A menu that opens from the header or the Results toolbar.
 @mixin header-dropdown-menu {
 	min-width: 10rem;

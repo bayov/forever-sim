@@ -1,8 +1,11 @@
 {
   "updated": "2026-10-13",
-  "note": "Snapshot taken while the 2026-10-13 round was still in progress. The next run should refresh everything listed in openItems.",
+  "note": "The class and consumes heads below are what the published dashboard data was built from (before standards 18-20 and the class-changes round). Compare them with the current branch heads to see what's stale.",
   "foreverClientBuild": "1.60.1.70338",
-  "coordinationBranch": {"name": "claude/wow-forever-dps-presets-m9u15h", "head": "b23485514"},
+  "coordinationBranch": {
+    "name": "claude/wow-forever-dps-presets-m9u15h",
+    "head": "b23485514"
+  },
   "classBranches": {
     "warrior": "aa11a4f47",
     "paladin": "d24d52372",
@@ -14,7 +17,10 @@
     "warlock": "bfb8961a5",
     "druid": "28da841e9"
   },
-  "consumesBranch": {"name": "claude/wow-forever-dps-presets-m9u15h-consumes", "head": "c613ab10f"},
+  "consumesBranch": {
+    "name": "claude/wow-forever-dps-presets-m9u15h-consumes",
+    "head": "c613ab10f"
+  },
   "dashboard": {
     "artifact": "https://claude.ai/artifact/6Woe5kZDS9RBcvDodYDmdQ",
     "pageVersion": 22,
@@ -22,11 +28,30 @@
   },
   "openItems": [
     "Dashboard data refresh on the final heads (B7), including encounter presets behind a 'Special encounters' toggle and the race analysis on the generic boss",
-    "Assumption scenarios (B9) after the class research and fixes settle",
-    "Hunter and druid merges of the consumes branch (hunter waits on a user permission approval)",
-    "Rogue final numbers for the generic boss and vs Humanoid",
-    "Sim UI WOWHEAD_EXPANSION_ENV=17 should probably be 16 (17 is retail data); unverified in a browser",
+    "Assumption scenarios (B9) once the class research settles",
+    "Hunter: merge the consumes branch (waits on a user permission approval in the Hunter session); PR #5 conflicts with master until then",
+    "Shaman PR #7: remove the root-level rotopt binary (22 MB) and audit notes before merging; it also replaces the existing Enhancement Synthetic (Phase 1) items",
+    "Class PRs (B12): merge one at a time; master's db.json moved in #12, so each needs gen_db after merging master; priest/mage duplicate manaAbove; warlock/shaman both edit SpellIconoverrides",
+    "Gnome Eureka! spell mask (forever_class_changes G1, minor)",
     "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)",
-    "Move the report into the repo as ui/dps_report/ (another thread is working on it)"
-  ]
+    "In-repo report ui/dps_report/ (single-file artifact https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR) is on branch claude/results-dashboard-ui-page-gglynp, not pushed yet; see SKILL.md B8"
+  ],
+  "merged": {
+    "date": "2026-10-13",
+    "prs": {
+      "#10": "shared sim changes (consumes branch, head c613ab10f)",
+      "#11": "coordination docs, tools/dps_report, this skill (head 877c3fc45)"
+    },
+    "openClassPRs": {
+      "#1": "priest",
+      "#2": "warlock",
+      "#3": "paladin",
+      "#4": "warrior",
+      "#5": "hunter",
+      "#6": "mage",
+      "#7": "shaman",
+      "#8": "druid",
+      "#9": "rogue"
+    }
+  }
 }

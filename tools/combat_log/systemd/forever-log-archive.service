@@ -1,0 +1,6 @@
+[Unit]
+Description=Copy WoW Forever combat logs into ~/forever-logs
+
+[Service]
+Type=oneshot
+ExecStart=%h/projects/forever-sim/tools/combat_log/archive.sh

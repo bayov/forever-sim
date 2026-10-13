@@ -119,6 +119,20 @@
 		color: #ef7a7a;
 		opacity: 1;
 	}
+
+	// New sims an iteration until we have one, so it reads as an action.
+	.iteration-new.not-simmed {
+		color: var(--gold-soft);
+	}
+
+	.iteration-new:not(.not-simmed) .iteration-new-icon {
+		display: none;
+	}
+
+	.iteration-reroll {
+		padding: 0.3rem 0.5rem;
+		font-size: 0.75rem;
+	}
 }
 
 .events-controls-end {
@@ -240,6 +254,7 @@
 
 	.hidden-action-icon {
 		@include wowhead-background-icon;
+		@include icon-crop;
 		width: 16px;
 		height: 16px;
 		border-radius: 50%;

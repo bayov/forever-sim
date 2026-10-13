@@ -7,6 +7,7 @@ import { NumberPicker } from '../core/components/number_picker';
 import { markUnstacked } from '../core/components/unstacked_mark';
 import { IndividualSimUI } from '../core/individual_sim_ui';
 import { Player } from '../core/player';
+import { Ruleset } from '../core/proto/api';
 import { APLPrepullAction, APLRotation_Type as APLRotationType } from '../core/proto/apl';
 import { Spec } from '../core/proto/common';
 import { AirTotem, EarthTotem, FireTotem, StartingTotems, WaterTotem } from '../core/proto/shaman';
@@ -21,7 +22,7 @@ interface TotemOption {
 	name: string;
 	value: number;
 	icon: string;
-	ranks: Array<{ level: number; spellId: number }>;
+	ranks: Array<{ level: number; spellId: number; aqBook?: boolean }>;
 }
 
 interface TotemElement {
@@ -35,6 +36,9 @@ interface TotemElement {
 }
 
 const ranks = (levels: Array<number>, spellIds: Array<number>) => levels.map((level, i) => ({ level, spellId: spellIds[i] }));
+// The last rank is taught by an Ahn'Qiraj book, which Forever leaves out (core's IncludeAQRanks).
+const ranksWithAQBook = (levels: Array<number>, spellIds: Array<number>) =>
+	ranks(levels, spellIds).map((rank, i) => (i === levels.length - 1 ? { ...rank, aqBook: true } : rank));
 
 const ELEMENTS: Array<TotemElement> = [
 	{
@@ -47,7 +51,7 @@ const ELEMENTS: Array<TotemElement> = [
 				name: 'Strength of Earth Totem',
 				value: EarthTotem.StrengthOfEarthTotem,
 				icon: 'spell_nature_earthbindtotem',
-				ranks: ranks([10, 24, 38, 52, 60], [8075, 8160, 8161, 10442, 25361]),
+				ranks: ranksWithAQBook([10, 24, 38, 52, 60], [8075, 8160, 8161, 10442, 25361]),
 			},
 			{
 				name: 'Stoneskin Totem',
@@ -69,7 +73,7 @@ const ELEMENTS: Array<TotemElement> = [
 				name: 'Grace of Air Totem',
 				value: AirTotem.GraceOfAirTotem,
 				icon: 'spell_nature_invisibilitytotem',
-				ranks: ranks([42, 56, 60], [8835, 10627, 25359]),
+				ranks: ranksWithAQBook([42, 56, 60], [8835, 10627, 25359]),
 			},
 		],
 	},
@@ -134,14 +138,16 @@ function setStartingTotems(eventID: EventID, player: EnhPlayer, change: (totems:
 	player.setSpecOptions(eventID, options);
 }
 
-const changedEvent = (player: EnhPlayer) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.miscOptionsChangeEmitter]);
+const changedEvent = (player: EnhPlayer) =>
+	TypedEvent.onAny([player.specOptionsChangeEmitter, player.miscOptionsChangeEmitter, player.sim.rulesetChangeEmitter]);
 
 const learned = (totem: TotemOption, player: Player<any>) => totem.ranks[0].level <= player.getEffectiveLevel();
 
 // The spell of the highest rank our level knows, for the totem's icon and tooltip.
 function highestRankSpellId(totem: TotemOption, player: Player<any>): number {
 	const level = player.getEffectiveLevel();
-	return totem.ranks.filter(rank => rank.level <= level).pop()?.spellId ?? totem.ranks[0].spellId;
+	const forever = player.sim.getRuleset() === Ruleset.RulesetForever;
+	return totem.ranks.filter(rank => rank.level <= level && !(forever && rank.aqBook)).pop()?.spellId ?? totem.ranks[0].spellId;
 }
 
 // Totems the rotation can put down that we can't start the fight with, by element.

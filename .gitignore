@@ -2,6 +2,8 @@
 node_modules
 ui/core/index.ts
 ui/*/index.html
+# The DPS report page is hand-written, not generated from ui/index_template.html.
+!ui/dps_report/index.html
 .dirstamp
 
 # IDE folders
@@ -47,3 +49,4 @@ wowsimsod*.dll
 wowsimsod*.h
 .vscode/launch.json
 __pycache__/
+/rotopt
