@@ -42,8 +42,11 @@ type RageBarOptions struct {
 // weapon that dealt the damage" (Blizzard's Priest & Warrior deep dive). Blizzard gives no
 // formula. A landed white hit gives k × the weapon's swing speed, with k measured by beta testers
 // at level 30 (forum thread 2355684): about 3.46 a second for a one-hander and 4.5 for a
-// two-hander. Nobody has measured the off hand, so it gets the same (standards 21). The
-// multipliers are for the dashboard's assumption runs (spec_assumptions.md, warr_rage_norm).
+// two-hander. Nobody has measured the off hand, so it gets the same (standards 21). Talent
+// multipliers (Dual Wield Specialization's off hand Rage) and the crit bonus stay on top. All of
+// it is an assumption until the beta test in orchestration/followups.md ("Rage needs a beta
+// test"). The multipliers are for the dashboard's assumption runs (spec_assumptions.md,
+// warr_rage_norm).
 var (
 	ForeverNormalizedRageOneHand  = 3.46
 	ForeverNormalizedRageTwoHand  = 4.5
@@ -188,7 +191,9 @@ func (unit *Unit) AddOffHandDealtRageMultiplier(multi float64) {
 	unit.rageBar.offHandDealtMultiplier *= multi
 }
 
-// Forever gives Rage users more Rage from a critical auto attack (the 1 October development
+// Forever gives Rage users more Rage from a critical auto attack (Kaivax's 2 October post,
+// https://us.forums.blizzard.com/en/wow/t/2369360; an assumption until the beta test in
+// orchestration/followups.md, "Rage needs a beta test") (the 1 October development
 // notes: 100% more for warriors).
 func (unit *Unit) AddCritDealtRageMultiplier(multi float64) {
 	unit.rageBar.critDealtMultiplier *= multi

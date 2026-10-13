@@ -79,7 +79,8 @@ func whiteRage(sim *core.Simulation, war *warrior.Warrior, auto *core.Spell, out
 // k × the weapon's swing speed in Rage, whatever its damage (Blizzard's Priest & Warrior deep dive:
 // "Rage gained is now based on the speed of the weapon that dealt the damage"), with k = 3.46 for
 // a one-hander and 4.5 for a two-hander, the off hand at the same rate, 100% more on a crit (the
-// 1 October development notes) and dodges and parries giving the same as a hit.
+// 2 October post, https://us.forums.blizzard.com/en/wow/t/2369360) and dodges and parries giving
+// the same as a hit. Abilities and Deep Wounds give no Rage for their damage.
 func TestForeverWarriorNormalizedRage(t *testing.T) {
 	near := func(name string, got, want float64) {
 		t.Helper()
@@ -105,6 +106,12 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 
 	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
 	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), 4.5*3.4)
+	near("a two-hander crit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeCrit, 1000), 2*4.5*3.4)
+
+	// Only white hits make Rage: an ability's damage and Deep Wounds' ticks make none.
+	sim, war = newForeverWarriorArmed(t, "00305003", 991014, 991015)
+	near("a Hamstring hit", whiteRage(sim, war, war.Hamstring.Spell, core.OutcomeHit, 500), 0)
+	near("a Deep Wounds hit", whiteRage(sim, war, war.DeepWounds.Spell, core.OutcomeHit, 500), 0)
 }
 
 // TestForeverWarriorDamageTakenRage checks that Rage from taking damage stays Classic's (standards

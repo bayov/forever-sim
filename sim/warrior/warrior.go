@@ -169,8 +169,10 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.reactionTime = time.Millisecond * 500
 
-	// A critical white hit gives 100% more Rage under Forever (75% from the 1 October build,
-	// 100% from its second warrior pass the same day).
+	// A critical white hit gives 100% more Rage under Forever (75% in the 1 October build, then
+	// "increased to 100% increased Rage (was 75%)" in Kaivax's 2 October "Warrior Updates in Today's
+	// Beta Build" post, https://us.forums.blizzard.com/en/wow/t/2369360). An assumption until the beta
+	// test in orchestration/followups.md ("Rage needs a beta test").
 	// Rage from white hits is normalized to the weapon's speed (standards 21, see
 	// core.ForeverNormalizedRage).
 	if warrior.Env.IsForever() {
