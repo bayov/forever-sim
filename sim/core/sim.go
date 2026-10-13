@@ -14,6 +14,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 type Task interface {
@@ -256,13 +257,14 @@ func (sim *Simulation) labelRand(label string) Rand {
 	return labelRng
 }
 
-func (sim *Simulation) reseedRands(i int64) {
-	rseed := sim.Options.RandomSeed + i
-	sim.rand.Seed(rseed)
+// seedRands seeds every random source with this seed. Iteration i of a run uses the seed
+// Options.RandomSeed + i, so seeding with it again replays that iteration.
+func (sim *Simulation) seedRands(seed int64) {
+	sim.rand.Seed(seed)
 
 	if sim.isTest {
 		for label, rng := range sim.testRands {
-			rng.Seed(makeTestRandSeed(rseed, label))
+			rng.Seed(makeTestRandSeed(seed, label))
 		}
 	}
 }
@@ -300,19 +302,21 @@ func (sim *Simulation) Reset() {
 }
 
 func (sim *Simulation) Reseed(seed int64) {
-	sim.reseedRands(seed)
+	sim.seedRands(sim.Options.RandomSeed + seed)
 }
 
 // Run runs the simulation for the configured number of iterations, and
 // collects all the metrics together.
 func (sim *Simulation) run() *proto.RaidSimResult {
+	if len(sim.Options.ReplaySeeds) > 0 {
+		return sim.runReplays(sim.Options.ReplaySeeds)
+	}
+
 	t0 := time.Now()
 
 	logsBuffer := &strings.Builder{}
-	if sim.Options.Debug || sim.Options.DebugFirstIteration {
-		sim.Log = func(message string, vals ...interface{}) {
-			logsBuffer.WriteString(fmt.Sprintf("[%0.2f] "+message+"\n", append([]interface{}{sim.CurrentTime.Seconds()}, vals...)...))
-		}
+	if sim.Options.Debug {
+		sim.Log = sim.logTo(logsBuffer)
 	}
 
 	// Uncomment this to print logs directly to console.
@@ -321,57 +325,62 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	// 	fmt.Printf(fmt.Sprintf("[%0.1f] "+message+"\n", append([]interface{}{sim.CurrentTime.Seconds()}, vals...)...))
 	// }
 
-	sim.runOnce()
-	firstIterationDuration := sim.Duration
-	if sim.Encounter.EndFightAtHealth != 0 {
-		firstIterationDuration = sim.CurrentTime
-	}
-	totalDuration := firstIterationDuration
+	// Every iteration's seed, raid DPS and duration, so we can pick the typical, lucky and
+	// unlucky iterations at the end.
+	iterations := make([]*proto.IterationLog, 0, sim.Options.Iterations)
 
-	if !sim.Options.Debug {
-		sim.Log = nil
-	}
-
+	var totalDuration time.Duration
 	var st time.Time
-	for i := int32(1); i < sim.Options.Iterations; i++ {
-		if sim.Signals.Abort.IsTriggered() {
-			quitResult := &proto.RaidSimResult{Error: &proto.ErrorOutcome{Type: proto.ErrorOutcomeType_ErrorOutcomeAborted}}
-			if sim.ProgressReport != nil {
-				sim.ProgressReport(&proto.ProgressMetrics{FinalRaidResult: quitResult})
+	for i := int32(0); i < sim.Options.Iterations; i++ {
+		if i > 0 {
+			if sim.Signals.Abort.IsTriggered() {
+				quitResult := &proto.RaidSimResult{Error: &proto.ErrorOutcome{Type: proto.ErrorOutcomeType_ErrorOutcomeAborted}}
+				if sim.ProgressReport != nil {
+					sim.ProgressReport(&proto.ProgressMetrics{FinalRaidResult: quitResult})
+				}
+				return quitResult
 			}
-			return quitResult
-		}
 
-		// fmt.Printf("Iteration: %d\n", i)
-		if sim.ProgressReport != nil && time.Since(st) > time.Millisecond*100 {
-			metrics := sim.Raid.GetMetrics()
-			sim.ProgressReport(&proto.ProgressMetrics{TotalIterations: sim.Options.Iterations, CompletedIterations: i, Dps: metrics.Dps.Avg, Hps: metrics.Hps.Avg})
-			if IsRunningInWasm() {
-				time.Sleep(time.Microsecond) // Need to sleep to escape the go scheduler in wasm to give the JS event loop a chance to process requests to the worker.
-			} else {
-				runtime.Gosched() // ensure that reporting threads are given time to report, mostly only important in wasm (only 1 thread)
+			if sim.ProgressReport != nil && time.Since(st) > time.Millisecond*100 {
+				metrics := sim.Raid.GetMetrics()
+				sim.ProgressReport(&proto.ProgressMetrics{TotalIterations: sim.Options.Iterations, CompletedIterations: i, Dps: metrics.Dps.Avg, Hps: metrics.Hps.Avg})
+				if IsRunningInWasm() {
+					time.Sleep(time.Microsecond) // Need to sleep to escape the go scheduler in wasm to give the JS event loop a chance to process requests to the worker.
+				} else {
+					runtime.Gosched() // ensure that reporting threads are given time to report, mostly only important in wasm (only 1 thread)
+				}
+				st = time.Now()
 			}
-			st = time.Now()
-		}
 
-		// Before each iteration, reset state to seed+iterations
-		sim.reseedRands(int64(i))
+			// Before each iteration, reset state to seed+iterations. The first iteration
+			// already has that seed from NewSim.
+			sim.seedRands(sim.Options.RandomSeed + int64(i))
+		}
 
 		sim.runOnce()
-		iterDuration := sim.Duration
-		if sim.Encounter.EndFightAtHealth != 0 {
-			iterDuration = sim.CurrentTime
-		}
-		totalDuration += iterDuration
+		iteration := sim.lastIteration()
+		totalDuration += time.Duration(iteration.Duration * float64(time.Second))
+		iterations = append(iterations, iteration)
 	}
+
 	result := &proto.RaidSimResult{
 		RaidMetrics:      sim.Raid.GetMetrics(),
 		EncounterMetrics: sim.Encounter.GetMetricsProto(),
 
-		Logs:                   logsBuffer.String(),
-		FirstIterationDuration: firstIterationDuration.Seconds(),
-		AvgIterationDuration:   totalDuration.Seconds() / float64(sim.Options.Iterations),
-		IterationsDone:         sim.Options.Iterations,
+		Logs:                 logsBuffer.String(),
+		AvgIterationDuration: totalDuration.Seconds() / float64(sim.Options.Iterations),
+		IterationsDone:       sim.Options.Iterations,
+	}
+	if len(iterations) > 0 {
+		result.FirstIterationDuration = iterations[0].Duration
+	}
+	pickIterations(result, iterations)
+
+	if sim.Options.DebugFirstIteration && !sim.Options.Debug && result.TypicalIteration != nil {
+		// The replays below run more iterations, and those change the metrics the result
+		// still points into (like the DPS histogram map). So we hand out a copy.
+		result = googleProto.Clone(result).(*proto.RaidSimResult)
+		sim.replayPicked(result)
 	}
 
 	// Final progress report
@@ -384,6 +393,127 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	}
 
 	return result
+}
+
+// logTo returns a sim.Log that writes every line to buffer, with the time in front.
+func (sim *Simulation) logTo(buffer *strings.Builder) func(string, ...interface{}) {
+	return func(message string, vals ...interface{}) {
+		buffer.WriteString(fmt.Sprintf("[%0.2f] "+message+"\n", append([]interface{}{sim.CurrentTime.Seconds()}, vals...)...))
+	}
+}
+
+// lastIteration returns the seed, raid DPS and duration of the iteration that just ran.
+//
+// The raid DPS is worked out the same way as the DPS histogram does it, so the picked
+// iterations line up with it.
+func (sim *Simulation) lastIteration() *proto.IterationLog {
+	duration := sim.Duration
+	if sim.Encounter.EndFightAtHealth != 0 {
+		duration = sim.CurrentTime
+	}
+	return &proto.IterationLog{
+		Seed:     sim.rand.GetSeed(),
+		Dps:      sim.Raid.dpsMetrics.Total / sim.Duration.Seconds(),
+		Duration: duration.Seconds(),
+	}
+}
+
+// pickIterations sets the typical (raid DPS closest to the average), lucky (highest raid
+// DPS) and unlucky (lowest raid DPS) iterations of the result, without their logs.
+func pickIterations(result *proto.RaidSimResult, iterations []*proto.IterationLog) {
+	if len(iterations) == 0 {
+		return
+	}
+
+	mean := 0.0
+	for _, it := range iterations {
+		mean += it.Dps
+	}
+	mean /= float64(len(iterations))
+
+	typical, lucky, unlucky := iterations[0], iterations[0], iterations[0]
+	for _, it := range iterations[1:] {
+		if math.Abs(it.Dps-mean) < math.Abs(typical.Dps-mean) {
+			typical = it
+		}
+		if it.Dps > lucky.Dps {
+			lucky = it
+		}
+		if it.Dps < unlucky.Dps {
+			unlucky = it
+		}
+	}
+
+	result.TypicalIteration = typical
+	result.LuckyIteration = lucky
+	result.UnluckyIteration = unlucky
+}
+
+// replayPicked runs the typical, lucky and unlucky iterations of the result again with
+// logs on, and puts their logs in the result.
+func (sim *Simulation) replayPicked(result *proto.RaidSimResult) {
+	picked := []*proto.IterationLog{result.TypicalIteration, result.LuckyIteration, result.UnluckyIteration}
+	replays := make([]*proto.IterationLog, len(picked))
+	for i, it := range picked {
+		replays[i] = sim.replayIteration(it.Seed)
+		if replays[i].Dps != it.Dps && !sim.isTest {
+			log.Printf("Replaying the iteration with seed %d gave %.3f DPS, but it ran at %.3f DPS the first time", it.Seed, replays[i].Dps, it.Dps)
+		}
+	}
+	result.TypicalIteration, result.LuckyIteration, result.UnluckyIteration = replays[0], replays[1], replays[2]
+	setTypicalLogs(result)
+}
+
+// runReplays runs only the iterations with these seeds (typical, lucky, unlucky), with
+// logs on. See SimOptions.replay_seeds.
+func (sim *Simulation) runReplays(seeds []int64) *proto.RaidSimResult {
+	result := &proto.RaidSimResult{IterationsDone: int32(len(seeds))}
+	replays := make([]*proto.IterationLog, len(seeds))
+	for i, seed := range seeds {
+		replays[i] = sim.replayIteration(seed)
+	}
+	if len(replays) > 0 {
+		result.TypicalIteration = replays[0]
+	}
+	if len(replays) > 1 {
+		result.LuckyIteration = replays[1]
+	}
+	if len(replays) > 2 {
+		result.UnluckyIteration = replays[2]
+	}
+	setTypicalLogs(result)
+
+	result.RaidMetrics = sim.Raid.GetMetrics()
+	result.EncounterMetrics = sim.Encounter.GetMetricsProto()
+
+	if sim.ProgressReport != nil {
+		sim.ProgressReport(&proto.ProgressMetrics{TotalIterations: 1, CompletedIterations: 1, FinalRaidResult: result})
+	}
+	return result
+}
+
+// replayIteration runs the iteration with this seed with logs on.
+func (sim *Simulation) replayIteration(seed int64) *proto.IterationLog {
+	logs := &strings.Builder{}
+	sim.Log = sim.logTo(logs)
+	sim.seedRands(seed)
+	sim.runOnce()
+	sim.Log = nil
+
+	replay := sim.lastIteration()
+	replay.Logs = logs.String()
+	return replay
+}
+
+// setTypicalLogs moves the typical iteration's logs to the result's own logs, where the
+// results read them by default.
+func setTypicalLogs(result *proto.RaidSimResult) {
+	if result.TypicalIteration == nil {
+		return
+	}
+	result.Logs = result.TypicalIteration.Logs
+	result.FirstIterationDuration = result.TypicalIteration.Duration
+	result.TypicalIteration.Logs = ""
 }
 
 // RunOnce is the main event loop. It will run the simulation for number of seconds.

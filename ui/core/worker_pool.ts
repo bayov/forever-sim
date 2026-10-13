@@ -161,6 +161,8 @@ export class WorkerPool {
 		// Don't print the logs because it just clogs the console.
 		const resultJson = RaidSimResult.toJson(result.finalRaidResult!) as any;
 		delete resultJson!['logs'];
+		delete resultJson!['luckyIteration']?.['logs'];
+		delete resultJson!['unluckyIteration']?.['logs'];
 		worker.log('Raid sim result: ' + JSON.stringify(resultJson));
 		return result.finalRaidResult!;
 	}
