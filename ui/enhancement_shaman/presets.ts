@@ -433,7 +433,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // 796.1), so the build stays: 803.2 / 791.9 / 771.1 at 120 / 180 / 300 sec. On the 2026-10-13
 // gear round's set the search again only made mana tie-breaks inside the noise (792.0 against
 // 792.6), so the build stays: 813.5 / 801.8 / 781.6, and 813.8 / 801.6 / 782.3 once Rage of the Farseer
-// waits for the on-use trinket, and 823.8 / 813.0 / 793.4 with Elixir of Cunning and Ferocity.
+// waits for the on-use trinket, and 824.5 / 813.9 / 794.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '050533102-053030031005112251' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
@@ -449,7 +449,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 //
 // On 2026-10-12 it takes Concussion 5 in place of Convection 5 like Level 60 (+2.8). It is
 // 810.4 / 797.7 / 778.7 at 120 / 180 / 300 sec on the 2026-10-13 gear round's set with Rage of the
-// Farseer waiting for the on-use trinket (820.3 / 808.9 / 789.3 with Elixir of Cunning and Ferocity),
+// Farseer waiting for the on-use trinket (820.9 / 809.4 / 790.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage),
 // 4.1 behind Level 60 at 180 (800.0 / 788.3 / 767.3 before).
 export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '050533102-051032031005112251' }), {
 	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
@@ -478,7 +478,7 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // there only moved 2 points from Elemental Weapons to Ancestral Knowledge on a mana tie-break
 // (757.3 against 758.6), so the build stays. On the 2026-10-13 gear round's set the same tie-break
 // was 752.8 against 751.2, inside the noise, so it stays: 763.1 / 755.6 / 741.4, and 762.9 / 755.4 /
-// 742.3 with Rage of the Farseer waiting for the on-use trinket (771.2 / 764.7 / 752.7 with Elixir
+// 742.3 with Rage of the Farseer waiting for the on-use trinket (772.0 / 765.5 / 753.2 with Elixir
 // of Cunning and Ferocity), 5.9% behind Level 60 at 180.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
@@ -500,7 +500,7 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // nothing better: 750.4 / 743.9 / 737.9 at 120 / 180 / 300 sec with the Mana Tide rotation. On
 // the standard gear and consumes it was 735.5 / 728.8 / 724.6. On the 2026-10-13 gear round's set
 // the search found nothing better: 739.7 / 733.0 / 727.4, and 739.9 / 733.4 / 728.4 with Rage of the
-// Farseer waiting for the on-use trinket (748.7 / 742.3 / 737.7 with Elixir of Cunning and Ferocity),
+// Farseer waiting for the on-use trinket (749.3 / 742.7 / 737.9 with Elixir of Cunning and Ferocity and Forever's oil and chili damage),
 // 8.7% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
@@ -771,15 +771,17 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // 755.4 / 742.3 and Level 60 + Mana Tide 739.9 / 733.4 / 728.4.
 //
 // Then the consumables auditor's pass put in Elixir of Cunning and Elixir of Ferocity (see
-// DefaultConsumes): Level 60 is 823.8 / 813.0 / 793.4, Level 60 + Imp GW 820.3 / 808.9 / 789.3,
-// Level 60 + Water Shield 771.2 / 764.7 / 752.7 and Level 60 + Mana Tide 748.7 / 742.3 / 737.7.
+// DefaultConsumes): Level 60 was 823.8 / 813.0 / 793.4. With the shared consumables branch's Forever
+// damage for Shadow Oil (63 to 71) and Dragonbreath Chili (61 to 69) Level 60 is 824.5 / 813.9 /
+// 794.0, Level 60 + Imp GW 820.9 / 809.4 / 790.0, Level 60 + Water Shield 772.0 / 765.5 / 753.2 and
+// Level 60 + Mana Tide 749.3 / 742.7 / 737.9.
 //
-// The races on Level 60 (20000 iterations, standard error 0.4): Orc 823.8 / 813.0 / 793.4,
-// Tauren 809.9 / 799.0 / 780.6, Windshaper Skyborne 808.9 / 798.4 / 780.4, Troll 809.7 / 797.9 /
-// 779.4, Dwarf (the only Alliance shaman) 805.2 / 794.4 / 776.3. Best overall and best Horde: Orc.
+// The races on Level 60 (20000 iterations, standard error 0.4): Orc 824.5 / 813.9 / 794.0,
+// Windshaper Skyborne 810.6 / 799.9 / 781.6, Tauren 810.2 / 799.4 / 780.9, Troll 810.0 / 798.6 /
+// 780.1, Dwarf (the only Alliance shaman) 805.8 / 794.8 / 776.3. Best overall and best Horde: Orc.
 // Best Alliance: Dwarf (the only Alliance shaman). The Orc's lead is mostly Axe Specialization: the
 // synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon it stands in for.
-// Without it the Orc is 808.5 / 798.1 / 778.5, and Tauren leads (Windshaper Skyborne and Troll
+// Without it the Orc is 808.8 / 798.3 / 778.8, and Windshaper Skyborne leads (Tauren and Troll
 // within noise of it). A mace would give the Dwarf its 1% instead. Orc wins the Imp GW, Water Shield and Mana Tide
 // builds too (sim-status.md has the tables).
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
