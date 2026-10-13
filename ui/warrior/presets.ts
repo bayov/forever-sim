@@ -70,8 +70,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // special attack cap), no Spirit. Totals: armor 650.5, bow 19.5, swords 64.0, two-hander 79.0; the
 // Fury set 733.5, the Arms / Fury 2H set 748.5. Only the head and legs carry Battlegear of Glory,
 // Forever's Molten Core set for Arms and Fury, so only its 2-piece is live. The 4-piece (+36 attack
-// power against Humanoids) would add 10.8 on Fury, 8.8 on two-hand Fury and 8.4 on Arms (Undead,
-// 180 sec). The 5-piece adds nothing, since Recklessness is used once a fight. Arms and Fury share the
+// power against Humanoids) would add 10.8 on Fury, 8.8 on two-hand Fury and 8.4 on Arms against a
+// Humanoid boss (Undead, 180 sec). The 5-piece adds nothing, since Recklessness is used once a fight. Arms and Fury share the
 // armor, rings, bow and trinkets, the file has the details.
 //
 // Enchants: Lesser Arcanum of Voracity (8 Strength) on the head and legs, Forever's +5 Strength on
@@ -315,9 +315,9 @@ export const OtherDefaults = {
 //                                 Builds
 ///////////////////////////////////////////////////////////////////////////
 
-// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, Humanoid), a 3 minute
-// fight, and the default buffs, debuffs and consumes. The synthetic Phase 1 sets, their talents and
-// rotations were searched at 180 sec.
+// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, type Unknown so that no
+// creature-type bonus applies, standards 19), a 3 minute fight, and the default buffs, debuffs and
+// consumes. The synthetic Phase 1 sets, their talents and rotations were searched at 180 sec.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	'Level 60',
 	Encounter.create({
@@ -331,7 +331,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 				id: 213336,
 				name: 'Level 60',
 				level: 63,
-				mobType: MobType.MobTypeHumanoid,
+				mobType: MobType.MobTypeUnknown,
 				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
 				minBaseDamage: 3000,
 				damageSpread: 0.3333,
