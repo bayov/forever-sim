@@ -99,6 +99,9 @@ func (shamanEnh) Knobs() []Knob {
 		// Rage of the Farseer itself waits for Stormstrike to be ready, so the window opens
 		// with it.
 		{Name: "rageWithStormstrike", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Rage of the Farseer waits for the synthetic attack power on-use trinket (20 sec every 2
+		// min) when the wait costs it no use, the way Blood Fury waits for Rage.
+		{Name: "rageHoldForTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
 		// 1 puts the totems down in the prepull actions, 0 leaves them out, for settings that
 		// start the fight with them already down (the Enhancement option StartingTotems). A
 		// starting totem would replace the prepull one anyway.
@@ -183,6 +186,14 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	var rageWhen value
 	if k["rageWithStormstrike"] == 1 {
 		rageWhen = spellIsReady(stormstrike)
+	}
+	if k["rageHoldForTrinket"] == 1 {
+		hold := alignedWith(rageOfTheFarseer, itemID(shaman.EnhancementSyntheticOnUseTrinket))
+		if rageWhen == nil {
+			rageWhen = hold
+		} else {
+			rageWhen = and(rageWhen, hold)
+		}
 	}
 	// Rage of the Farseer takes 31 talent points, so the burst window only exists from
 	// level 40 (or fewer levels with bonus points). Below that the racials go last, on a GCD nothing else wants: at 20 Blood
