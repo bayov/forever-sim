@@ -58,25 +58,34 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // tools/database/forever_synthetic_items_hunter.go (ids from 993000, not in the game).
 //
 // Forever's level 60 gear in the client is not tuned yet, and Molten Core and Onyxia have no
-// Forever data. Each piece takes the place of an Era Phase 1 hunter BiS piece (the
-// Giantstalker set, Onyxia Tooth Pendant, Wristguards of True Flight, the Devilsaur hands and
-// legs, Quick Strike Ring, Barbarous Blade, Rhok'delar) on the cross-class item level table
-// (66 for the six armor pieces, 71 for neck, back, wrist, waist and rings, 76 for the two-hander,
-// 71 for the bow). The file has the budget math. Beast Mastery, Marksmanship and Lone Wolf share
-// the Ranged set: they shoot on the same stats, and the pet takes 10% of the hunter's ranged
-// attack power and all of its crit. About 10% of the points are Spirit, 9% hit (the ranged hit
-// cap against a level 63 boss) and 5% crit. The head and chest carry Wildstalker Armor, so only
-// its 2 piece bonus (1% attack and cast speed) is live.
-// No trinkets: Forever removed the old dungeon trinkets (Hand of Justice and Blackhand's Breadth
-// are not in client 70338), and trinkets stay out until Forever's launch trinkets are simulated.
+// Forever data. Each piece takes the place of an Era Phase 1 hunter BiS piece (the Giantstalker
+// set, Onyxia Tooth Pendant, Wristguards of True Flight, the Devilsaur hands and legs, Quick Strike
+// Ring, Barbarous Blade, Rhok'delar) on the cross-class item level table (66 for the six armor
+// pieces, 71 for neck, back, wrist, waist and rings, 76 for the two-hander, 71 for the bow) and the
+// cross-class budget 1b (orchestration/standards.md, 2026-10-13): each armor piece's weighted stats
+// are slot mod x (1.125 ilvl + 2.0) x the hunter's 1.028 / 1.056 / 0.977 per tier, on 4 / 4 / 3
+// stat lines. The file has the math. Ranged set totals: armor 704.0 (target 706.1), two-hander
+// 85.6, bow 19.8. Beast Mastery, Marksmanship and Lone Wolf share the Ranged set: they shoot on the
+// same stats, and the pet takes 10% of the hunter's ranged attack power and all of its crit.
+// Stamina 17.2% of the points and Spirit 10% (the 5a targets), hit 90 rating (9%, the ranged cap
+// against a level 63 boss), then Agility 34.6%, crit 17.8%, ranged attack power 4.7%, Intellect
+// 3.5% and Strength 1.1%. The head and chest carry Wildstalker Armor, so only its 2 piece bonus (1%
+// attack and cast speed) is live.
+// Trinkets are synthetic too (standards 1b), since Forever's launch trinkets are not simulated: 32
+// Agility and 14 crit rating (45.9 of budget), and an on-use 415 ranged attack power for 20 sec
+// every 2 min (37 weighted points over a 3 minute fight, Earthstrike's size).
 export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Ranged', Level60RangedGear, {
 	tooltip: 'A guess at Phase 1 BiS for a ranged hunter under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 // The Survival set: melee attack power and Strength in place of ranged attack power, a pair of
-// one-handed swords (Brutality Blade's damage and speed) for Predator's Edge's off hand bonus,
-// and 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Crusader on the main hand
-// and Agility on the off hand (+4 over Agility on both).
+// one-handed swords (Brutality Blade's damage and speed) for Predator's Edge's off hand bonus, and
+// 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Totals: armor 705.5 (target 706.1),
+// swords 34.5 each (the standard has no hunter one-hander: the physical 0.39 x the hunter /
+// physical two-hander ratio, 0.42 x L(71)), bow 19.5. Stamina 15.4%, Spirit 10.1%, Agility 31.1%,
+// crit 14.7%, Strength 11.2%, attack power 9.9%, hit 7.6%. Crusader on the main hand and Agility on
+// the off hand (+4 over Agility on both). Trinkets: 32 Agility and 14 crit rating, and an on-use
+// 335 attack power and ranged attack power for 20 sec every 2 min.
 export const GearLevel60Survival = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Survival', Level60SurvivalGear, {
 	tooltip: 'A guess at Phase 1 BiS for a melee Survival hunter under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
