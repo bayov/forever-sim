@@ -712,7 +712,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 				id: 213336,
 				name: 'Level 60',
 				level: 63,
-				mobType: MobType.MobTypeHumanoid,
+				mobType: MobType.MobTypeUnknown,
 				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
 				minBaseDamage: 3000,
 				damageSpread: 0.3333,
