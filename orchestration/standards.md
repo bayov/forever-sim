@@ -64,6 +64,8 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 14. Pets (13:05 ruling, from orchestration/pet_buffs.md): neither hunter pets nor warlock demons take player buffs in Forever (client 70338 puts a players-only target flag on 72 buff spells incl. every Greater Blessing, Gift of the Wild, Fortitude, Brilliance, Battle Shout, Leader of the Pack, Moonkin Aura, totems and scrolls; beta bug report #27 closed Not A Bug; Blizzard's hunter and warlock deep dives). Both instead scale from their owner's stats (Hunter / Warlock Pet Scaling auras): hunter pets as already modelled (10% of AP, all of the hunter's crit); demons need Warlock Pet Scaling modelled, with Season of Discovery coefficients as a labelled placeholder until a Forever log measures them. No pet consumables for either. Target debuffs apply to pet damage as usual.
 15. Final numbers at 20,000+ iterations from binaries rebuilt after the last gear or DB change.
 
+17. Windfury Totem's internal cooldown is 1.5 sec (user ruling 2026-10-13). The sim already uses it (sim/core/buffs.go CreateExtraAttackAuraCommon), so the 100 ms alternative is closed and isn't a dashboard assumption.
+
 ## Races
 
 16. Presets use the best race on the spec's Era BiS weapon type. Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.
