@@ -29,11 +29,12 @@ import (
 // fairness auditor took from Season of Discovery level 60 rogue BiS (orchestration/gear_targets.md, rows
 // Rogue swords and Rogue daggers). Every piece but the five that carry the hit has the same mix, so the shares
 // hold for the whole set. Shares are linear: a stat's weight times its amount over the set's weighted total,
-// enchants left out and attack power counted once.
+// enchants left out and attack power counted once. No stat is over 45% of a set's non-Stamina total
+// (swords Agility 44.9%).
 //
 //	Set            Stamina  Strength  Agility  Attack power  Hit         Crit
-//	Combat Swords  143      152       295      89            50 (5%)     109 (7.8%)
-//	  share (L)    18.0     19.2      37.2     5.6           6.3         13.7
+//	Combat Swords  143      155       292      89            50 (5%)     109 (7.8%)
+//	  share (L)    18.0     19.5      36.8     5.6           6.3         13.7
 //	  target       18       18.9      36.9     5.6           7.2         13.5
 //	Daggers        145      145       289      113           50 (5%)     108 (7.7%)
 //	  share (L)    18.3     18.3      36.4     7.1           6.3         13.6
@@ -98,7 +99,7 @@ var rogueSyntheticItems = []*proto.UIItem{
 	{
 		Id: 994005, Name: "Combat Swords Synthetic Chest (Phase 1)", Icon: "inv_chest_cloth_07",
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats:      stats.Stats{stats.Strength: 15, stats.Agility: 29, stats.Stamina: 14, stats.AttackPower: 10, stats.Armor: 200, stats.RangedAttackPower: 10}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Strength: 16, stats.Agility: 28, stats.Stamina: 14, stats.AttackPower: 10, stats.Armor: 200, stats.RangedAttackPower: 10}.ToFloatArray(),
 		CritRating: 11,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
@@ -135,7 +136,7 @@ var rogueSyntheticItems = []*proto.UIItem{
 	{
 		Id: 994009, Name: "Combat Swords Synthetic Legs (Phase 1)", Icon: "inv_pants_06",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats:      stats.Stats{stats.Strength: 15, stats.Agility: 29, stats.Stamina: 14, stats.AttackPower: 10, stats.Armor: 175, stats.RangedAttackPower: 10}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Strength: 16, stats.Agility: 28, stats.Stamina: 14, stats.AttackPower: 10, stats.Armor: 175, stats.RangedAttackPower: 10}.ToFloatArray(),
 		CritRating: 11,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
@@ -145,7 +146,7 @@ var rogueSyntheticItems = []*proto.UIItem{
 	{
 		Id: 994010, Name: "Combat Swords Synthetic Feet (Phase 1)", Icon: "inv_boots_08",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats:      stats.Stats{stats.Strength: 12, stats.Agility: 23, stats.Stamina: 11, stats.AttackPower: 6, stats.Armor: 138, stats.RangedAttackPower: 6}.ToFloatArray(),
+		Stats:      stats.Stats{stats.Strength: 13, stats.Agility: 22, stats.Stamina: 11, stats.AttackPower: 6, stats.Armor: 138, stats.RangedAttackPower: 6}.ToFloatArray(),
 		CritRating: 8,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
