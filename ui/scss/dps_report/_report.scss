@@ -288,6 +288,11 @@
 	flex: 0 0 auto;
 }
 
+// Chips that run an action (the assumptions panel's All expected and Reset) aren't toggles, so no checkbox.
+.fv-chip-action::before {
+	content: none;
+}
+
 .fv-dot {
 	width: 0.6rem;
 	height: 0.6rem;
