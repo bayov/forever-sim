@@ -17095,7 +17095,7 @@
 {"id":425310,"name":"Engrave Belt - Renewed Hope","icon":"inv_misc_desecrated_leatherbelt"},
 {"id":425312,"name":"Engrave Boots - Spirit of the Redeemer","icon":"inv_misc_desecrated_leatherboots"},
 {"id":425314,"name":"Engrave Boots - Dispersion","icon":"inv_misc_desecrated_leatherboots"},
-{"id":425336,"name":"Shamanistic Rage","icon":"spell_nature_shamanrage","hasBuff":true},
+{"id":425336,"name":"Rage of the Farseer","icon":"spell_nature_bloodlust","hasBuff":true},
 {"id":425339,"name":"Molten Blast","icon":"spell_shaman_lavaflow"},
 {"id":425343,"name":"Engrave Pants - Shamanistic Rage","icon":"inv_misc_desecrated_leatherpants"},
 {"id":425344,"name":"Engrave Gloves - Molten Blast","icon":"inv_misc_desecrated_leatherglove"},
