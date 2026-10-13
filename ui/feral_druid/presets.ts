@@ -169,8 +169,11 @@ export const DefaultOptions = FeralDruidOptions.create({
 // Might 6.1, and Ground Scorpok Assay is 1.3 ahead of R.O.I.D.S. Flank au Poivre is 4 ahead of
 // Grilled Squid. Flask of Distilled Wisdom keeps Shifting Power in mana; Flask of Supreme Power
 // is 6 ahead only through the chili's fire damage. A shapeshifted druid can use no explosives
-// and no weapon stone or oil, and drinks no potion in form, so those do nothing. The Major Mana
-// Potion and Demonic Rune stay for longer fights.
+// and no weapon stone or oil, so those do nothing. The sim also never uses a potion or a rune in
+// form (their ShouldActivate checks IsShapeshifted), so the potion and rune slots do nothing for
+// the cat either: 679.6 with and without them at 300 sec, and Major Frenzy Potion ties the Major
+// Mana Potion (consumables auditor). The Major Mana Potion and Demonic Rune stay as what a cat
+// would carry for Shifting Power's mana.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
