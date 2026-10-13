@@ -65,10 +65,38 @@ const searchText = (logs: Array<SimLog>): string =>
 const MAX_BATCH_DELAY = 0.0105;
 const travelTimeOf = (castLog: CastLog): number => (castLog.travelTime > MAX_BATCH_DELAY ? castLog.travelTime : 0);
 
-// The order we pick a cast's border color in when its hits landed in different ways. We show
-// the best one.
-const outcomeRank: Array<HitOutcomeKind> = ['crit', 'hit', 'glance', 'tick', 'avoid'];
-const outcomeLabels: Record<HitOutcomeKind, string> = { crit: 'a crit', hit: 'a hit', glance: 'a glance', tick: 'a tick', avoid: 'a miss' };
+// A cast icon gets a small badge when a hit landed in a way worth seeing, like a crit or a parry.
+// Plain hits and ticks get none, so the badges stand out. When the hits of one cast landed in
+// different ways, we show the most notable one, in this order.
+const notableOutcomes: Array<HitOutcomeKind> = ['crit', 'avoid', 'glance'];
+
+// The badge is narrow, so the longer words are short.
+const badgeLabels: Record<string, string> = {
+	Crit: 'CRIT',
+	Crush: 'CRSH',
+	Glance: 'GLNC',
+	Miss: 'MISS',
+	Dodge: 'DODGE',
+	Parry: 'PARRY',
+	Block: 'BLOCK',
+	'Blocked Crit': 'BLOCK',
+	Resist: 'RES',
+};
+
+// The most notable outcome of a cast's hits, or null when every hit was plain. A partial resist
+// on a plain hit counts as a resist.
+const notableOutcome = (castLog: CastLog): { label: string; kind: HitOutcomeKind; mixed: boolean } | null => {
+	const outcomes = castLog.damageDealtLogs.map(ddl => {
+		const outcome = hitOutcome(ddl);
+		const label = outcome.label.replace(/^(Heal|Shield) /, '');
+		return outcome.resisted > 0 && outcome.kind == 'hit' ? { label: 'Resist', kind: 'avoid' as HitOutcomeKind } : { label, kind: outcome.kind };
+	});
+	for (const kind of notableOutcomes) {
+		const found = outcomes.find(outcome => outcome.kind == kind);
+		if (found) return { ...found, mixed: outcomes.some(outcome => outcome.label != found.label) };
+	}
+	return null;
+};
 
 // The parts of the hover tooltips. Each starts with a title (the ability's icon and name), then
 // a muted line with the timing, then the hits or the changes, then key and value rows.
@@ -938,16 +966,16 @@ export class Timeline extends ResultComponent {
 				castElem.appendChild(travelTimeElem);
 			}
 
-			// The icon's border shows how the cast's hits landed, in the colors of the tooltip's
-			// badges. A cast without hits, like a buff, keeps the plain border.
-			const outcomes = distinct(castLog.damageDealtLogs.map(ddl => hitOutcome(ddl).kind));
-			const bestOutcome = outcomeRank.find(kind => outcomes.includes(kind));
-			if (bestOutcome) castElem.classList.add(`outcome-${bestOutcome}`);
 			this.tint(castElem as HTMLElement, actionId.iconUrl);
 
 			const iconElem = (<a className="rotation-timeline-cast-icon" />) as HTMLAnchorElement;
 			actionId.setBackground(iconElem);
 			castElem.appendChild(iconElem);
+
+			const notable = notableOutcome(castLog);
+			if (notable) {
+				castElem.appendChild(<span className={`rotation-timeline-cast-badge outcome-${notable.kind}`}>{badgeLabels[notable.label] ?? notable.label}</span>);
+			}
 
 			const totalDamage = castLog.totalDamage();
 
@@ -1002,8 +1030,8 @@ export class Timeline extends ResultComponent {
 					{tooltipTitle(castLog.actionId!)}
 					<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
 					{aggregatedData.damageDealtLogs.length > 0 && <ul className="timeline-tooltip-hits">{aggregatedData.damageDealtLogs.map(ddl => tooltipHit(ddl))}</ul>}
-					{outcomes.length > 1 && bestOutcome && (
-						<div className="timeline-tooltip-meta">The icon's border shows the best result, {outcomeLabels[bestOutcome]}.</div>
+					{notable?.mixed && (
+						<div className="timeline-tooltip-meta">The icon's badge shows the most notable result, {notable.label.toLowerCase()}.</div>
 					)}
 					{totalDamage > 0 && (aggregatedData.damageDealtLogs.length > 1 || castLog.effectiveTime > 0) && (
 						<div className="timeline-tooltip-rows">
