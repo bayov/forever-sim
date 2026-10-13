@@ -1,5 +1,5 @@
 {
-	"note": "2026-10-13 refresh: every build was simmed on a merged tree of master plus the class branches, which matches master baed22e62 for every class but the warrior. 41 builds ran before master's per-hit rounding (6b55cdb45, a mean DPS effect of about 0.007%) was in that tree; paladin__level_60_shock_undead and the four warrior builds ran with it. The warrior builds come from warrior branch 38b94b40a (standards 21, s = 0.5), which master does not have yet, so stale.mjs lists them until it is merged.",
+	"note": "2026-10-13 refresh: every build was simmed on a merged tree of master plus the class branches. Its class code matches master baed22e62 for every class but the warrior, and master 17de326bd (with warrior PR #4) for the warrior, so the 42 other builds are recorded at baed22e62 and the four warrior builds at this branch's merge of 17de326bd. Two differences from those commits: 41 builds ran before master's per-hit rounding (6b55cdb45, a mean DPS effect of about 0.007%); paladin__level_60_shock_undead and the warrior builds ran with it. And the tree predates the main hand / off hand weapon skill gap option (d3e86387b), which changes nothing at its default of 0 for weapons at full skill, as every preset's are.",
 	"builds": {
 		"rogue__combat-daggers-humanoid": {
 			"commit": "baed22e621a6cd8a643c7d92c831955c13cdf517",
@@ -716,69 +716,69 @@
 			}
 		},
 		"warrior__fury": {
-			"commit": "38b94b40a62dae874bbc5c7804109e85fc9dac2d",
-			"recordedAt": "2026-10-13T22:10:37.368Z",
+			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
+			"recordedAt": "2026-10-13T22:27:50.239Z",
 			"iterations": 20000,
 			"inputs": {
-				"sim/core": "bb4d8b630fe845b92c6e8c1634a6106ac9a23e46",
+				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
 				"sim/common": "e5ac76fe3bed2a3f8be7d82d0280dfb943c91003",
 				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
-				"proto": "d141c6ea1f8704f7b9ce847f957e8bd51e8081c3",
-				"assets/database": "7d26e11b36b3cc0b9a1ab53bf03c1c27f0b84498",
-				"tools/rotopt": "dbfee94997d85a45417f3dd9f433f804af7335ed",
-				"sim/warrior": "510923191f4bf8b7d15877a540b52f67f24c1ac6",
+				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
+				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
+				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
 				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
 			}
 		},
 		"warrior__fury_2h": {
-			"commit": "38b94b40a62dae874bbc5c7804109e85fc9dac2d",
-			"recordedAt": "2026-10-13T22:10:37.493Z",
+			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
+			"recordedAt": "2026-10-13T22:27:50.302Z",
 			"iterations": 20000,
 			"inputs": {
-				"sim/core": "bb4d8b630fe845b92c6e8c1634a6106ac9a23e46",
+				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
 				"sim/common": "e5ac76fe3bed2a3f8be7d82d0280dfb943c91003",
 				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
-				"proto": "d141c6ea1f8704f7b9ce847f957e8bd51e8081c3",
-				"assets/database": "7d26e11b36b3cc0b9a1ab53bf03c1c27f0b84498",
-				"tools/rotopt": "dbfee94997d85a45417f3dd9f433f804af7335ed",
-				"sim/warrior": "510923191f4bf8b7d15877a540b52f67f24c1ac6",
+				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
+				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
+				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
 				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
 			}
 		},
 		"warrior__arms": {
-			"commit": "38b94b40a62dae874bbc5c7804109e85fc9dac2d",
-			"recordedAt": "2026-10-13T22:10:37.568Z",
+			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
+			"recordedAt": "2026-10-13T22:27:50.379Z",
 			"iterations": 20000,
 			"inputs": {
-				"sim/core": "bb4d8b630fe845b92c6e8c1634a6106ac9a23e46",
+				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
 				"sim/common": "e5ac76fe3bed2a3f8be7d82d0280dfb943c91003",
 				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
-				"proto": "d141c6ea1f8704f7b9ce847f957e8bd51e8081c3",
-				"assets/database": "7d26e11b36b3cc0b9a1ab53bf03c1c27f0b84498",
-				"tools/rotopt": "dbfee94997d85a45417f3dd9f433f804af7335ed",
-				"sim/warrior": "510923191f4bf8b7d15877a540b52f67f24c1ac6",
+				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
+				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
+				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
 				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
 			}
 		},
 		"warrior__arms_dragonkin": {
-			"commit": "38b94b40a62dae874bbc5c7804109e85fc9dac2d",
-			"recordedAt": "2026-10-13T22:10:37.862Z",
+			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
+			"recordedAt": "2026-10-13T22:27:50.431Z",
 			"iterations": 20000,
 			"inputs": {
-				"sim/core": "bb4d8b630fe845b92c6e8c1634a6106ac9a23e46",
+				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
 				"sim/common": "e5ac76fe3bed2a3f8be7d82d0280dfb943c91003",
 				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
-				"proto": "d141c6ea1f8704f7b9ce847f957e8bd51e8081c3",
-				"assets/database": "7d26e11b36b3cc0b9a1ab53bf03c1c27f0b84498",
-				"tools/rotopt": "dbfee94997d85a45417f3dd9f433f804af7335ed",
-				"sim/warrior": "510923191f4bf8b7d15877a540b52f67f24c1ac6",
+				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
+				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
+				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
 				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
 			}
