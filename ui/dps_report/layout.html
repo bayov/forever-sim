@@ -49,23 +49,19 @@
 
     <div class="content-block fv-card" id="rank-card">
       <div class="content-block-header"><h6 class="content-block-title">DPS by preset</h6></div>
-      <p class="fv-note">Tap a preset for its numbers, and again to open it in Specs. Fights last 180 s on average against a level 63 boss.</p>
-      <div class="fv-lenbar" id="rank-lenbar"><span class="fv-label">Fight</span><div class="fv-seg" id="rank-len" role="group" aria-label="Fight length"></div></div>
+      <div class="fv-lenbar" id="rank-lenbar"><span class="fv-label">Fight length</span><div class="fv-seg" id="rank-len" role="group" aria-label="Fight length"></div></div>
       <div class="fv-controls" id="rank-classes" role="group" aria-label="Class filter"></div>
-      <div class="fv-controls">
-        <span class="fv-label">Sort</span><div class="fv-seg" id="rank-sort" role="group" aria-label="Sort by"></div>
+      <div class="fv-controls fv-ctl-row">
+        <div class="fv-ctl"><span class="fv-label">Sort</span><div class="fv-seg" id="rank-sort" role="group" aria-label="Sort by"></div></div>
+        <div class="fv-ctl">
+          <span class="fv-label">Filter</span>
+          <div class="fv-seg" id="rank-role" role="group" aria-label="Role"></div>
+          <div class="fv-seg" id="rank-fac" role="group" aria-label="Faction of the preset race"></div>
+          <button class="fv-chip" id="rank-best" aria-pressed="false" title="Keep only the highest-DPS preset of each class">Best per class</button>
+          <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Add the presets with an advantage against one creature type of boss (vs Humanoid, vs Undead, vs Dragonkin) as extra rows, here and in Specs and Compare">Advantaged</button>
+          <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
+        </div>
       </div>
-      <div class="fv-controls">
-        <div class="fv-seg" id="rank-role" role="group" aria-label="Role"></div>
-        <div class="fv-seg" id="rank-fac" role="group" aria-label="Faction of the preset race"></div>
-      </div>
-      <div class="fv-controls">
-        <button class="fv-chip" id="rank-best" aria-pressed="false" title="Keep only the highest-DPS preset of each class">Best per class</button>
-        <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Add the presets built for one creature type of boss (vs Humanoid, vs Undead, vs Dragonkin) as extra rows, here and in Specs and Compare">Special encounters</button>
-        <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
-      </div>
-      <div class="fv-legend" id="rank-legend"><span><i class="fv-bar" style="position:static;display:inline-block;width:1.2rem;background:var(--color-fg-muted)"></i>mean</span><span><i style="width:1rem;height:0.6rem;border:1.5px solid var(--color-fg);border-radius:2px"></i>middle half of fights</span><span><i style="width:1.2rem;height:1.5px;background:var(--color-fg)"></i>10th to 90th percentile</span></div>
-      <p class="fv-rank-sum" id="rank-sum"></p>
       <div class="fv-rank" id="rank-chart" data-source="builds lengths"></div>
     </div>
 
