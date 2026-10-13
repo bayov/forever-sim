@@ -153,7 +153,7 @@ Elemental
 Enhancement
 
 - [x] 8.17 Earth's Grasp (not implemented, the sim has no Stoneclaw or Earthbind Totem)
-- [ ] 8.18 Thundering Strikes
+- [x] 8.18 Thundering Strikes
 - [ ] 8.19 Ancestral Knowledge
 - [ ] 8.20 Guardian Totems
 - [ ] 8.21 Mental Dexterity
@@ -1427,6 +1427,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16043, talent curves 85265 and 85264): 1 and 2 points give Stoneclaw Totem +25 and +50% (all its effects, so its health) and Earthbind Totem +10 and +20% radius. Classic's talent has the same two parts.
 - The sim: the proto has the field, but nothing reads it. The sim has neither Stoneclaw nor Earthbind Totem, and we don't model enemies attacking totems or moving (8.14).
 - No preset takes it, and no beta build had it.
+
+### 8.18 Thundering Strikes
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point adds 1% melee crit and 1% spell crit, 5% at 5/5. All the enhancement presets have 5/5.
+- Client 70338 (wago.tools 16255, talent curve 85275): +1% a point to all crit (aura 290: melee, ranged and spells). That matches.
+- Beta (the 2026-10-10 20:42 respec, `beta_results.txt`): dropping 5/5 took the sheet from 10.39 to 5.39 melee crit and 12.31 to 7.41 spell crit. The other 0.1 spell crit came from 3 more Intellect.
+- No sim change. `crit_test.go` TestOrcShamanThunderingStrikes: at level 30, 5/5 gives exactly 5% more melee crit and 5% more spell crit than no points. Leaving out the spell crit fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
