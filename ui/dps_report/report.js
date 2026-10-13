@@ -52,13 +52,18 @@ export function startReport(dash) {
     return normCache.get(d);
   };
   const statusOf = (id) => dash.data(id).status;
+  // encounter presets (the boss as a creature type) are listed only while "Special encounters" is on; Races always uses the generic boss
+  const isEnc = (b) => !!(b && b.encounter && b.encounter !== 'null');
+  const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => st.enc || !isEnc(b)); };
+  const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b)); };
+  const rankOf = (b, list) => 1 + list.filter((x) => +x.dps > +b.dps).length;
 
   // ---------- calculations ----------
   dash.calc('overview', {
     inputs: ['builds'], title: 'Headline figures',
     description: 'Top, median and lowest preset DPS, how many presets and classes, and the top-to-bottom gap in percent.',
     fn: (builds) => {
-      const s = [...builds].sort((a, b) => b.dps - a.dps);
+      const s = builds.filter((b) => !(b.encounter && b.encounter !== 'null')).sort((a, b) => b.dps - a.dps);
       const n = (v) => +v;
       const top = s[0], bot = s[s.length - 1];
       return [{
@@ -115,8 +120,8 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'humanoid', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false }, saved);
-  st.rsTarget = 'humanoid'; st.rsWeapon = 'preset';
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'generic', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false }, saved);
+  st.rsTarget = 'generic'; st.rsWeapon = 'preset';
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -277,7 +282,7 @@ export function startReport(dash) {
   };
 
   const classSpec = (cls) => {
-    const bs = (rowsOf('builds') || []).filter((x) => x.class === cls).sort((x, y) => y.dps - x.dps);
+    const bs = (visB() || []).filter((x) => x.class === cls).sort((x, y) => y.dps - x.dps);
     return {
       title: cls, icon: 'classicon_' + cls.toLowerCase(), color: CCOL[cls] || '#fff', sub: `${bs.length} preset${bs.length === 1 ? '' : 's'}`,
       lines: bs.length ? [['m', 'Level 60 presets, mean DPS at 180 s'], ...bs.map((x) => ['2', x.build, f1(x.dps)])] : [],
@@ -526,14 +531,14 @@ export function startReport(dash) {
     return false;
   };
   const sortedBuildOptions = (sel, builds, value) => {
-    if (!sel.dataset.filled) {
+    if (sel.dataset.filled !== String(builds.length)) {
       sel.replaceChildren();
       for (const c of CLASSES) {
         const g = el('optgroup', { label: c });
         builds.filter((b) => b.class === c).sort((a, b) => b.dps - a.dps).forEach((b) => g.append(el('option', { value: b.id, text: `${b.label} · ${f1(b.dps)}` })));
         if (g.childElementCount) sel.append(g);
       }
-      sel.dataset.filled = '1';
+      sel.dataset.filled = String(builds.length);
     }
     sel.value = value;
   };
@@ -620,10 +625,11 @@ export function startReport(dash) {
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
     seg($('#rank-fac'), 'fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     $('#rank-best').setAttribute('aria-pressed', String(st.best));
+    $('#rank-enc').setAttribute('aria-pressed', String(!!st.enc));
     const filtered = st.cls !== 'All' || st.role !== 'All' || st.fac !== 'All' || st.best;
     $('#rank-reset').hidden = !filtered;
     if (!waitOr(host, ['builds', 'lengths'])) return;
-    const builds = rowsOf('builds'), lengths = rowsOf('lengths'), roles = roleOf();
+    const builds = visB(), lengths = rowsOf('lengths'), roles = roleOf();
     const L = +st.len;
     $('#rank-sort').parentElement.hidden = L !== 180;
     const lenMap = new Map(lengths.filter((r) => r.secs === L).map((r) => [r.build, r]));
@@ -659,9 +665,10 @@ export function startReport(dash) {
         el('span', { class: 'fv-row-pos', text: String(i + 1) }),
         specIco(b) || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }),
         el('span', { class: 'fv-row-main' },
-          el('span', { class: 'fv-row-name' }, el('b', { text: b.build }), el('span', { text: '· ' + b.class })),
+          el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : b.build }), el('span', { text: '· ' + b.class })),
           el('span', { class: 'fv-row-sub' }, tt(raceIco(b.raceIcon), `r:${b.race}:${b.class}`, false, b.id), el('em', { text: b.race }),
-            iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null, roles.get(b.id) ? el('em', { text: '· ' + roles.get(b.id) }) : null)),
+            iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null, roles.get(b.id) ? el('em', { text: '· ' + roles.get(b.id) }) : null,
+            isEnc(b) ? el('span', { class: 'fv-enc', text: 'vs ' + b.encounter }) : null)),
         el('span', { class: 'fv-row-end' }, valEl, el('span', { class: 'fv-row-gap', text: extra })),
         track);
       row.addEventListener('click', (e) => {
@@ -669,14 +676,16 @@ export function startReport(dash) {
         if (row.classList.contains('is-hl')) { openSpec(b.id); return; }
         const card = $('#rank-card'), cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
         const lines = L === 180
-          ? [`${f1(b.dps)} DPS ± ${f2(b.se)} (1 s.e.)`, `Rank ${b.rank} of ${builds.length} · ${gap < 0.05 ? 'top preset' : `${f1(gap)}% behind the top`}`, `10th–90th percentile: ${f1(b.p10)}–${f1(b.p90)}`, `Middle half: ${f1(b.p25)}–${f1(b.p75)}`, `Fight-to-fight spread ${f2(b.cv)}%`, `${b.race} (${b.faction})${roles.get(b.id) ? ' · ' + roles.get(b.id) : ''}`]
+          ? [`${f1(b.dps)} DPS ± ${f2(b.se)} (1 s.e.)`, `Rank ${rankOf(b, builds)} of ${builds.length} · ${gap < 0.05 ? 'top preset' : `${f1(gap)}% behind the top`}`, `10th–90th percentile: ${f1(b.p10)}–${f1(b.p90)}`, `Middle half: ${f1(b.p25)}–${f1(b.p75)}`, `Fight-to-fight spread ${f2(b.cv)}%`, `${b.race} (${b.faction})${roles.get(b.id) ? ' · ' + roles.get(b.id) : ''}`]
           : [`${f1(v)} DPS in ${L} s fights${lenMap.get(b.id)?.se != null ? ` ± ${f2(lenMap.get(b.id).se)}` : ''}`, `${f1(b.dps)} DPS at 180 s (${sgn(100 * (v / b.dps - 1))}%)`, gap < 0.05 ? 'Top preset at this length' : `${f1(gap)}% behind the top at ${L} s`, `${b.race} (${b.faction})`];
+        if (isEnc(b)) lines.push(`Special encounter: a ${b.encounter} boss`);
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, lines, { hl: row, open: b.id, below: true });
       });
       return row;
     }));
   };
   $('#rank-best').addEventListener('click', (e) => { e.stopPropagation(); st.best = !st.best; persist(); render(); });
+  $('#rank-enc').addEventListener('click', (e) => { e.stopPropagation(); st.enc = !st.enc; if (!st.enc && st.build && isEnc((rowsOf('builds') || []).find((b) => b.id === st.build))) st.build = (rowsOf('builds') || []).find((b) => b.id === st.build).baseBuild; persist(); hideTip(); render(); });
   $('#rank-reset').addEventListener('click', (e) => { e.stopPropagation(); Object.assign(st, { cls: 'All', role: 'All', fac: 'All', best: false }); persist(); render(); });
 
   // line chart of DPS by fight length; tap or hover anywhere for a crosshair readout of the nearest line
@@ -749,7 +758,7 @@ export function startReport(dash) {
   const drawLenAll = () => {
     const host = $('#lenchart');
     if (!waitOr(host, ['lengths', 'builds'])) return;
-    const builds = rowsOf('builds'), lengths = rowsOf('lengths');
+    const builds = visB(), lengths = rowsOf('lengths');
     const by = d3.group(lengths, (r) => r.build);
     const series = builds.map((b) => {
       const pts = (by.get(b.id) || []).sort((p, q) => p.secs - q.secs);
@@ -767,7 +776,7 @@ export function startReport(dash) {
   const drawMana = () => {
     const host = $('#manachart'), list = $('#mana-list');
     if (!waitOr(host, ['mana', 'mana_summary', 'builds'])) return;
-    const builds = rowsOf('builds'), curves = d3.group(rowsOf('mana'), (r) => r.build);
+    const builds = visB(), curves = d3.group(rowsOf('mana'), (r) => r.build);
     const sum = new Map(rowsOf('mana_summary').map((r) => [r.build, r]));
     const manaBuilds = builds.filter((b) => b.class !== 'Warrior' && b.class !== 'Rogue');
     const shown = manaBuilds.filter((b) => sum.has(b.id) && (st.cls === 'All' || b.class === st.cls));
@@ -834,8 +843,9 @@ export function startReport(dash) {
     if (!waitOr(host, ['race_variants', 'builds'])) return;
     const V = rsVar();
     const RACES = RACES_ALL.filter((r) => st.heatFac === 'All' || (st.heatFac === 'Horde') === HORDE.has(r));
-    const builds = buildOrder(rowsOf('builds')).filter((b) => st.heatCls === 'All' || b.class === st.heatCls);
     const races = rowsOf('race_variants').filter((r) => r.variant === V);
+    const has = new Set(races.map((r) => r.build));
+    const builds = buildOrder(genB()).filter((b) => (st.heatCls === 'All' || b.class === st.heatCls) && has.has(b.id));
     const idx = new Map(races.map((r) => [r.build + '|' + r.race, r]));
     const grid = el('div', { class: 'fv-heat', style: `grid-template-columns: minmax(6.5rem, 8.5rem) repeat(${RACES.length}, minmax(2.9rem, 1fr))` });
     grid.append(el('div', { class: 'hh' }));
@@ -917,10 +927,10 @@ export function startReport(dash) {
   };
 
   // ---------- races: scenarios ----------
-  // Target and weapon are two views of one scenario: the weapon views are simmed against the Humanoid boss only.
-  const RS_T = [['humanoid', 'Humanoid'], ['beast', 'Beast'], ['elemental', 'Elemental'], ['undead', 'Undead']];
+  // Target and weapon are two views of one scenario: the weapon views are simmed against the generic boss only.
+  const RS_T = [['generic', 'Generic boss'], ['beast', 'Beast'], ['elemental', 'Elemental'], ['humanoid', 'Humanoid']];
   const RS_W = [['preset', 'Normal weapon'], ['weapon', 'Racial weapon'], ['off', 'Racials off']];
-  const rsVar = () => (st.rsTarget !== 'humanoid' ? st.rsTarget : st.rsWeapon === 'preset' ? 'baseline' : st.rsWeapon);
+  const rsVar = () => (st.rsTarget !== 'generic' ? st.rsTarget : st.rsWeapon === 'preset' ? 'baseline' : st.rsWeapon);
   const safeTop = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) fail(host); } };
   // a racial's colour follows what kind it is: a passive, a cooldown, or the target type; base stats and the weapon swap are neutral
   const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, chastise: 1, starshards: 1, darksacrifice: 1, target: 2 };
@@ -936,8 +946,8 @@ export function startReport(dash) {
   document.querySelectorAll('#races .fv-scen-tag').forEach((t) => t.addEventListener('click', (e) => { e.stopPropagation(); $('#race-scen-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
 
   const drawScen = () => {
-    seg($('#rs-target'), 'rsTarget', RS_T, (v) => { if (v !== 'humanoid') st.rsWeapon = 'preset'; persist(); render(); });
-    seg($('#rs-weapon'), 'rsWeapon', RS_W, (v) => { if (v !== 'preset') st.rsTarget = 'humanoid'; persist(); render(); });
+    seg($('#rs-target'), 'rsTarget', RS_T, (v) => { if (v !== 'generic') st.rsWeapon = 'preset'; persist(); render(); });
+    seg($('#rs-weapon'), 'rsWeapon', RS_W, (v) => { if (v !== 'preset') st.rsTarget = 'generic'; persist(); render(); });
     const V = rsVar(), d = $('#rs-desc');
     if (statusOf('race_notes') !== 'ok') { d.classList.add('dash-skeleton'); return; }
     d.classList.remove('dash-skeleton');
@@ -994,21 +1004,21 @@ export function startReport(dash) {
   const drawRaceSpec = () => {
     const host = $('#race-spec');
     if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds'])) return;
-    const builds = rowsOf('builds');
+    const builds = genB();
     if (!builds.some((b) => b.id === st.rsBuild)) st.rsBuild = builds.some((b) => b.id === st.build) ? st.build : [...builds].sort((p, q) => q.dps - p.dps)[0].id;
     const pick = $('#rs-pick');
     sortedBuildOptions(pick, builds, st.rsBuild);
     if (!pick.dataset.bound) {
       pick.dataset.bound = '1';
       pick.addEventListener('change', () => { st.rsBuild = pick.value; persist(); hideTip(); render(); });
-      const order = () => buildOrder(rowsOf('builds')).map((b) => b.id);
+      const order = () => buildOrder(genB()).map((b) => b.id);
       const step = (d) => { const o = order(); st.rsBuild = o[(o.indexOf(st.rsBuild) + d + o.length) % o.length]; persist(); hideTip(); render(); };
       $('#rs-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
       $('#rs-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
     }
     const b = builds.find((x) => x.id === st.rsBuild), V = rsVar();
     const rows = rowsOf('race_variants').filter((r) => r.build === b.id && r.variant === V).sort((p, q) => q.dps - p.dps);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); $('#rs-take').textContent = ''; return; }
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: V === 'humanoid' ? 'No racial of this class cares about Humanoids: only Priests (Dwarf Chastise) have this scenario.' : 'No race numbers for this preset.' })); $('#rs-take').textContent = ''; return; }
     const bd = rowsOf('race_breakdown').filter((r) => r.build === b.id);
     const segsOf = (race) => {
       const mine = bd.filter((r) => r.race === race);
@@ -1212,7 +1222,7 @@ export function startReport(dash) {
 
   const drawSpec = () => {
     if (!waitOr($('#sp-head'), ['builds'])) return;
-    const builds = rowsOf('builds');
+    const builds = visB();
     const order = buildOrder(builds);
     if (!st.build || !builds.find((b) => b.id === st.build)) st.build = order.find((b) => b.isDefault)?.id || order[0].id;
     const b = builds.find((x) => x.id === st.build);
@@ -1232,14 +1242,15 @@ export function startReport(dash) {
     $('#sp-meta').replaceChildren(
       tt(el('span', {}, ringed('classicon_' + b.class.toLowerCase(), 'fv-ico ring', ccol(b.class)), ` ${b.spec}`), 'c:' + b.class),
       tt(el('span', {}, raceIco(b.raceIcon), ' ', mark(el('span', { text: b.race }), 'builds', 'race', W), ' ', iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon')), `r:${b.race}:${b.class}`, true, b.id),
-      mark(el('span', { text: b.treePoints }), 'builds', 'treePoints', W));
+      mark(el('span', { text: b.treePoints }), 'builds', 'treePoints', W),
+      isEnc(b) ? mark(el('span', { class: 'fv-enc', text: 'vs ' + b.encounter }), 'builds', 'encounter', W) : null);
     mark($('#sp-summary'), 'builds', 'summary', W).textContent = b.summary;
     const extra = b.petDps > 0 ? tile('Pet damage', f1(b.petShare), `${f1(b.petDps)} DPS from pets`, 'builds', 'petShare', W, '%')
       : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight on average', 'builds', 'oomSecs', W, ' s')
         : tile('Threat per second', f0(b.tps), 'for tanks keeping aggro', 'builds', 'tps', W);
     $('#sp-tiles').replaceChildren(
       tile('Mean DPS', f1(b.dps), `± ${f2(b.se)} (1 s.e.)`, 'builds', 'dps', W),
-      tile('Rank', String(b.rank), `of ${builds.length} presets`, 'builds', 'rank', W),
+      tile('Rank', String(rankOf(b, builds)), `of ${builds.length} presets`, 'builds', st.enc ? 'rankAll' : 'rank', W),
       tile('Unlucky fight', f1(b.p10), '10th percentile', 'builds', 'p10', W),
       tile('Lucky fight', f1(b.p90), '90th percentile', 'builds', 'p90', W),
       tt(tile('Best race', b.bestRace, `${f1(b.bestRaceDps)} DPS`, 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
@@ -1617,6 +1628,8 @@ export function startReport(dash) {
   };
   const drawSetup = (b) => {
     const host = $('#sp-setup');
+    const bossEl = $('#sp-boss');
+    bossEl.replaceChildren(el('b', { text: 'Boss: ' }), mark(el('span', { text: b.bossText || 'Level 63 boss' }), 'builds', 'bossText', 'id=' + enc(b.id)), isEnc(b) ? ' (special encounter)' : '');
     if (!specWait(host, ['setup'], b)) return;
     const rows = rowsOf('setup').filter((s) => s.build === b.id).map((s) => ({ s, p: setupPlace(s) }));
     const sections = d3.groups(rows, (x) => x.p[0]).sort((p, q) => SETUP_SECTIONS.indexOf(p[0]) - SETUP_SECTIONS.indexOf(q[0]));
@@ -2058,7 +2071,7 @@ export function startReport(dash) {
   // A side is a preset, or one of its race and setup variants from the Races tab. A variant only has its
   // mean DPS, because we sim the spread, fight lengths, stat weights and damage sources for the preset's own
   // race only.
-  const CMP_SETUPS = [['baseline', 'Normal setup'], ['weapon', 'Racial weapon'], ['off', 'Racials off'], ['beast', 'Beast target'], ['elemental', 'Elemental target'], ['undead', 'Undead target']];
+  const CMP_SETUPS = [['baseline', 'Normal setup'], ['weapon', 'Racial weapon'], ['off', 'Racials off'], ['beast', 'Beast target'], ['elemental', 'Elemental target'], ['humanoid', 'Humanoid target']];
   const cmpSide = (k, b, rv) => {
     const mine = rv ? rv.filter((r) => r.build === b.id) : [];
     let race = st[k + 'r'] || b.race, v = st[k + 'v'] || 'baseline';
@@ -2087,7 +2100,7 @@ export function startReport(dash) {
       (v) => { st[s.k + 'r'] = v; persist(); render(); });
     iconSelect($(`#cmp-${lk}v`), CMP_SETUPS.map(([v, lbl]) => {
       const r = s.mine.find((x) => x.race === s.race && x.variant === v);
-      const off = !s.mine.length || (v === 'weapon' && !r?.simmed);
+      const off = !s.mine.length || (v === 'weapon' && !r?.simmed) || (v !== 'baseline' && !r);
       return { value: v, text: off && r?.note ? `${lbl} (${r.note})` : lbl, end: r && !off ? f1(r.dps) : '', disabled: off && v !== 'baseline' };
     }), s.v, (v) => { st[s.k + 'v'] = v; persist(); render(); });
   };
@@ -2102,7 +2115,7 @@ export function startReport(dash) {
   };
   const drawCompare = () => {
     if (statusOf('builds') !== 'ok') return;
-    const builds = rowsOf('builds');
+    const builds = visB();
     const ord = buildOrder(builds);
     if (!st.A || !builds.find((b) => b.id === st.A)) st.A = ord[0].id;
     if (!st.B || !builds.find((b) => b.id === st.B)) st.B = [...builds].sort((a, b) => b.dps - a.dps).find((b) => b.id !== st.A).id;
@@ -2131,6 +2144,8 @@ export function startReport(dash) {
       if (k === 'dps' && anyVar) return s.row ? mark(el('td', { class: 'n', text: f1(s.row.dps) }), 'race_variants', 'dps', W(s)) : el('td', { class: 'n', text: NA });
       if (k === 'se') return anyVar && s.row ? mark(el('td', { class: 'n', text: `± ${f2(s.row.se)}` }), 'race_variants', 'se', W(s)) : mark(el('td', { class: 'n', text: `± ${f2(s.b.se)}` }), 'builds', 'se', 'id=' + enc(s.b.id));
       if (k === 'race') return el('td', { class: 'n', text: s.race });
+      if (k === 'rank') return mark(el('td', { class: 'n', text: String(rankOf(s.b, builds)) }), 'builds', st.enc ? 'rankAll' : 'rank', 'id=' + enc(s.b.id));
+      if (k === 'bossType') return mark(el('td', { class: 'n', text: s.b.bossType || 'Generic boss' }), 'builds', 'bossType', 'id=' + enc(s.b.id));
       if (k === 'setup') return el('td', { class: 'n', text: CMP_SETUPS.find((o) => o[0] === s.v)[1] });
       if (k === 'raceRank') return s.row ? mark(el('td', { class: 'n', text: `${s.row.rank} of ${s.row.of}` }), 'race_variants', 'rank', W(s)) : el('td', { class: 'n', text: NA });
       if (k === 'bestRace') { const top = s.mine.find((r) => r.variant === s.v && r.rank === 1); return el('td', { class: 'n', text: top ? top.race : s.b.bestRace }); }
@@ -2146,7 +2161,7 @@ export function startReport(dash) {
       return td;
     };
     const rows = [['Mean DPS', 'dps', f1], ['Error of the mean', 'se', f2], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120 s fight', 'dps120', f1], ['300 s fight', 'dps300', f1], ['Race', 'race', String],
-      ...(anyVar ? [['Setup', 'setup', String]] : []), ...(rv ? [['Race rank', 'raceRank', String]] : []), ['Best race', 'bestRace', String], ['Rank', 'rank', String]];
+      ...(anyVar ? [['Setup', 'setup', String]] : []), ...(rv ? [['Race rank', 'raceRank', String]] : []), ['Best race', 'bestRace', String], ['Boss', 'bossType', String], ['Rank', 'rank', String]];
     $('#cmp-table tbody').replaceChildren(...rows.map(([lbl, k, f]) => el('tr', {}, el('td', { text: lbl }), valTd(sA, k, f), valTd(sB, k, f), diffOf(k))));
 
     // The charts and the side by side cards show the sides that were simmed in full.
@@ -2196,7 +2211,7 @@ export function startReport(dash) {
     if (statusOf('notes') === 'ok') gh.replaceChildren(...rowsOf('notes').filter((n) => n.build === '_round' && n.kind === 'gear').sort((a, b) => a.order - b.order).map((n) => mark(el('li', { text: n.text }), 'notes', 'text', `build=_round&kind=gear&order=${n.order}`)));
     const host = $('#method-caveats');
     if (!waitOr(host, ['notes', 'builds'])) return;
-    const builds = new Map(rowsOf('builds').map((b) => [b.id, b]));
+    const builds = new Map(visB().map((b) => [b.id, b]));
     const cav = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.has(n.build));
     const byClass = d3.groups(cav, (n) => builds.get(n.build).class).sort((a, b) => CLASSES.indexOf(a[0]) - CLASSES.indexOf(b[0]));
     host.replaceChildren(...byClass.map(([cls, ns]) => {
@@ -2226,7 +2241,7 @@ export function startReport(dash) {
   // ---------- hero ----------
   const drawHero = () => {
     const host = $('#hero');
-    const builds = rowsOf('builds'), m = iconMap();
+    const builds = genB(), m = iconMap();
     if (!builds || !m) return;
     const arts = later ? rowsOf('treeart') : null;
     if (arts && !$('#top').dataset.art) {
