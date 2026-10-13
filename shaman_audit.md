@@ -141,7 +141,7 @@ Elemental
 - [x] 8.6 Elemental Devastation
 - [x] 8.7 Elemental Focus (Clearcasting)
 - [x] 8.8 Elemental Alacrity
-- [ ] 8.9 Improved Fire Nova
+- [x] 8.9 Improved Fire Nova
 - [ ] 8.10 Eye of the Storm (not implemented)
 - [ ] 8.11 Call of Thunder
 - [ ] 8.12 Elemental Reach (not implemented)
@@ -1353,6 +1353,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16578 and its talent curve 85228): -170, -330 and -500 ms as a flat cast time modifier (aura 107, misc 10) on Lightning Bolt, Chain Lightning and Lava Burst. That matches the sim. The Oct 8 notes swapped its place in the tree with Elemental Fury, and the sim has that (2.7).
 - Beta: none of our builds had it, and we never cast Lightning Bolt in any log (only the Elder Cloud Serpents did). So it rests on the client data.
 - No sim change. `elemental_alacrity_test.go` TestOrcShamanElementalAlacrity checks the cast times at level 60 with 0 to 3 points: Lightning Bolt (top rank 2.5 sec, rank 1 1.5 sec), Chain Lightning (2.0) and Lava Burst (2.5), with no haste and at 25% haste. A 0.4 sec rank 3 or Lava Burst without the cut fails it. The sim has no Healing Wave, so there's no heal case.
+
+### 8.9 Improved Fire Nova
+
+- The user OK'd it (2026-10-13): "sg".
+- The sim (`talents.go`, `fire_totems.go`): each point gives Fire Nova +10% damage and takes 2 sec off its 10 sec cooldown, so 2/2 is +20% and 6 sec. The damage bonus multiplies with Call of Flame (5.6).
+  - The Level 60 enhancement preset has 2/2. The elemental and Level 30 presets have none.
+- Client 70338 (wago.tools 16086, talent curves 85223 and 85222): +10 and +20% damage (aura 108) and -2 and -4 sec cooldown (aura 107, misc 11). The mask (0x40000 in the second word) covers Fire Nova's cast (408341 to 408345) and its damage spell (408423 to 408428) at every rank. The cast has a 10 sec category cooldown. That matches the sim.
+- Beta (the 2/2 build, 2026-10-10 20:42 to 23:14): the damage was settled in 5.6 (104 hits at x1.15 x 1.2). The shortest gap between Fire Novas was 5.92 sec with the talent and 9.99 sec without it (7.25).
+- No sim change. `damage_modifiers_test.go` already wants 1.15 x 1.2 x 1.1 on Fire Nova. `periodic_test.go` TestOrcShamanFireNova now has a 1 point case at 8 sec next to 10 and 6 sec. A 1 point cooldown cut of 0 fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
