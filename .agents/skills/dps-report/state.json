@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-13",
-  "note": "The class and consumes heads below are what the published dashboard data was built from (before standards 18-20 and the class-changes round). Compare them with the current branch heads to see what's stale.",
+  "note": "All nine class PRs, the shared consumes branch and the coordination docs are merged into master (#4, #7, #10, #11, #13, #15, #16). The report data in ui/dps_report was built from master's content; ui/dps_report/provenance.json records each build. Use `node tools/dps_report/stale.mjs` to see what's stale.",
   "foreverClientBuild": "1.60.1.70338",
   "coordinationBranch": {
     "name": "claude/wow-forever-dps-presets-m9u15h",
@@ -21,37 +21,30 @@
     "name": "claude/wow-forever-dps-presets-m9u15h-consumes",
     "head": "c613ab10f"
   },
-  "dashboard": {
-    "artifact": "https://claude.ai/artifact/6Woe5kZDS9RBcvDodYDmdQ",
-    "pageVersion": 22,
-    "dataBuiltFrom": "class heads of roughly 10:00-13:00 UTC 2026-10-13 (before standards 18-20, the Forever class-changes round and the consumes fixes)"
-  },
   "openItems": [
-    "Dashboard data refresh on the final heads (B7), including encounter presets behind a 'Special encounters' toggle and the race analysis on the generic boss",
-    "Assumption scenarios (B9) once the class research settles",
-    "Hunter: merge the consumes branch (waits on a user permission approval in the Hunter session); PR #5 conflicts with master until then",
-    "Shaman PR #7: remove the root-level rotopt binary (22 MB) and audit notes before merging; it also replaces the existing Enhancement Synthetic (Phase 1) items",
-    "Class PRs (B12): merge one at a time; master's db.json moved in #12, so each needs gen_db after merging master; priest/mage duplicate manaAbove; warlock/shaman both edit SpellIconoverrides",
-    "Gnome Eureka! spell mask (forever_class_changes G1, minor)",
+    "Assumption picker (B9) in ui/dps_report, with the new oil_proc_damage assumption: follow-up PR from branch report-assumptions",
+    "Gnome Eureka! spell mask (forever_class_changes G1, minor, shared racials_forever.go)",
     "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)",
-    "In-repo report ui/dps_report/ (single-file artifact https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR) is on branch claude/results-dashboard-ui-page-gglynp, not pushed yet; see SKILL.md B8"
+    "Beta measurements wanted: Rage (orchestration/followups.md 'Rage needs a beta test'), Shadow Oil proc damage above 61",
+    "mksettings gives the Smite build the generic shadow consumes, not ConsumesSmite (rotation auditor note; only matters when reproducing Smite from mksettings)"
   ],
   "merged": {
     "date": "2026-10-13",
     "prs": {
       "#10": "shared sim changes (consumes branch, head c613ab10f)",
-      "#11": "coordination docs, tools/dps_report, this skill (head 877c3fc45)"
-    },
-    "openClassPRs": {
-      "#1": "priest",
-      "#2": "warlock",
-      "#3": "paladin",
-      "#4": "warrior",
-      "#5": "hunter",
-      "#6": "mage",
+      "#11": "coordination docs, tools/dps_report, this skill (head 877c3fc45)",
       "#7": "shaman",
-      "#8": "druid",
-      "#9": "rogue"
+      "#13": "skill merge steps, Wowhead dataEnv 16, standards 21",
+      "#15": "integration of priest, warlock, paladin, hunter, mage, druid, rogue (#1 #2 #3 #5 #6 #8 #9)",
+      "#4": "warrior",
+      "#16": "in-repo DPS report: final data, special encounters, generic-boss races"
     }
+  },
+  "report": {
+    "source": "ui/dps_report/",
+    "artifact": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
+    "artifactVersion": 4,
+    "publishedFrom": "master after #16 (1b9662185)",
+    "legacyDashboard": "deleted 2026-10-13"
   }
 }
