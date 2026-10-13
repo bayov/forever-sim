@@ -100,6 +100,7 @@ Template: `prompts/dashboard/HANDOFF_dash_refresh.md`.
 4. Check every feature in plain, stringified and async data modes at phone width and in both themes.
 5. Publish with `if_version` pinned. Never create a new artifact.
 Templates: `HANDOFF_specpage.md`, `HANDOFF_races.md`, `HANDOFF_setup_active.md`, `HANDOFF_forever_tooltips.md`, `HANDOFF_redesign.md`. Once the report lives in the repo as `ui/dps_report/`, the same rules apply to that page and its data files.
+The in-repo report (`ui/dps_report/`) uses the **sim UI's visual style and shares its components**: the pinnable Wowhead Forever tooltips, icons, talent trees, gear and character-stats styling, and scss variables (user requirement, 2026-10-13). The same source must also build into a **self-contained single-file HTML** with no dev server: JS, CSS, assets and data inlined, under the artifact size limit. A session can then publish it as an artifact. Use the repo's build target for that (see ui/dps_report's README once it exists) rather than hand-writing a separate page. The Dashboard-type artifact from 2026-10-13 is the legacy, custom-styled version.
 
 **B9. Assumption scenarios.**
 1. Dashboard-only knobs in the merged tree: DASH_ASSUME env var, defaults bit-identical.
