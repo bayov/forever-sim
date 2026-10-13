@@ -144,6 +144,18 @@
 	box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45);
 	font-size: 0.8125rem;
 
+	// The menu sits a little below its button. We close a dropdown when the mouse leaves its
+	// button for anything that isn't the menu, see bootstrap_overrides.ts. So this strip covers
+	// the gap, and the mouse is on the menu all the way down from the button.
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 100%;
+		height: 0.6rem;
+	}
+
 	.dropdown-item {
 		display: flex;
 		align-items: center;
