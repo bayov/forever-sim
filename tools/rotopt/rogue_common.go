@@ -30,6 +30,8 @@ var (
 	earthstrike    = itemID(21180)
 	// The Level 60 presets' synthetic on-use trinket (+335 attack power, 20 sec, 2 min, standards 1b).
 	synthTrinket = itemID(994202)
+	sapper       = itemID(10646)
+	landMine     = itemID(4395)
 )
 
 // The 15 second buffs are only worth a cast when the fight lasts that long after it.
@@ -237,7 +239,14 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		cast(thistleTea, le(energy(), num(k["teaEnergy"])),
 			"Thistle Tea when there is room for the 100 energy."),
 
-		autocastOtherCooldowns(auraIsActive(sliceAndDice), "Anything not listed above (Sapper, trinkets)."),
+		// The Land Mine's 1 sec cast restarts both swing timers from its end, so it goes right after a
+		// main hand swing (rotations auditor, +0.6 to +1.5). It shares the explosives cooldown with the
+		// Sapper, so the Sapper needs its own line first or it would never go out.
+		cast(sapper, auraIsActive(sliceAndDice), "Goblin Sapper Charge on cooldown once Slice and Dice is up."),
+		cast(landMine, and(auraIsActive(sliceAndDice), ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.4)))),
+			"Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time."),
+
+		autocastOtherCooldowns(auraIsActive(sliceAndDice), "Anything not listed above (trinkets)."),
 	)
 
 	// A 5 point Eviscerate, or whatever points are left in the last seconds of the fight,

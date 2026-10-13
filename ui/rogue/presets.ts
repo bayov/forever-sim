@@ -331,7 +331,7 @@ export const CombatBackstabTalents = PresetUtils.makePresetTalents('Backstab', S
 });
 export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents(
 	'Sinister Strike',
-	SavedTalents.create({ talentsString: '00532310301-32003311201515231' }),
+	SavedTalents.create({ talentsString: '00530310501-32003311201515231' }),
 	{ tooltip: 'Level 60 Combat talents for Sinister Strike.', group: 'Level 60' },
 );
 export const AssassinationMutilateTalents = PresetUtils.makePresetTalents(
@@ -365,30 +365,32 @@ export const Level30p5BackstabTalents = PresetUtils.makePresetTalents('Level 30 
 // The Level 60 talents, from the tools/rotopt talent searches on the synthetic Phase 1 sets (180 sec,
 // 3000 iterations a candidate, the best moves checked again at 10000), seeded from each archetype
 // and alternated with the knob search until neither moved. See PresetBuildLevel60CombatDaggers for
-// the numbers.
+// the numbers. These are for the generic boss (no creature type), where Murder does nothing, so its
+// two points go to Lethality (Vile Poisons for Seal Fate Daggers, whose Lethality is full). The
+// "(vs Humanoid)" talents below keep Murder 2/2 for Humanoid and Giant bosses.
 export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
 	'Level 60 Combat Swords',
-	SavedTalents.create({ talentsString: '00532310301-32003311201515231' }),
+	SavedTalents.create({ talentsString: '00530310501-32003311201515231' }),
 	{ tooltip: 'Deep Combat for Sinister Strike: Adrenaline Rush, Blade Flurry, Hack and Slash, Cold Blood.', group: 'Level 60' },
 );
 export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 	'Level 60 Seal Fate Swords',
-	SavedTalents.create({ talentsString: '0053231025130005-3220132020141' }),
+	SavedTalents.create({ talentsString: '0053031045130005-3220132020141' }),
 	{ tooltip: 'Seal Fate and Cold Blood in Assassination with Blade Flurry and Hack and Slash, for Sinister Strike.', group: 'Level 60' },
 );
 export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 	'Level 60 Combat Daggers',
-	SavedTalents.create({ talentsString: '00532310301-30230320201513231-002' }),
+	SavedTalents.create({ talentsString: '00530310501-30230320201513231-002' }),
 	{ tooltip: 'Deep Combat for Backstab: Adrenaline Rush, Blade Flurry, Puncturing Wounds, Hack and Slash, Opportunity.', group: 'Level 60' },
 );
 export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
 	'Level 60 Seal Fate Daggers',
-	SavedTalents.create({ talentsString: '0053231053120005-322303200013-002' }),
+	SavedTalents.create({ talentsString: '0053031055120005-322303200013-002' }),
 	{ tooltip: 'Seal Fate and Cold Blood in Assassination with Puncturing Wounds and Blade Flurry, for Backstab.', group: 'Level 60' },
 );
 export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents(
 	'Level 60 Mutilate',
-	SavedTalents.create({ talentsString: '0053231013150103-302303202015-002' }),
+	SavedTalents.create({ talentsString: '0053031033150103-302303202015-002' }),
 	{
 		tooltip: 'Assassination for Mutilate: Seal Fate, Cold Blood, Vile Poisons, with Precision and Puncturing Wounds in Combat.',
 		group: 'Level 60',
@@ -396,9 +398,35 @@ export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents(
 );
 export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents(
 	'Level 60 Subtlety',
-	SavedTalents.create({ talentsString: '0053231015140004--3021203310113011' }),
+	SavedTalents.create({ talentsString: '0053031035140004--3021203310113011' }),
 	{ tooltip: 'Subtlety for Hemorrhage, Ghostly Strike, Premeditation and Preparation, with Seal Fate in Assassination.', group: 'Level 60' },
 );
+
+// The same builds for a Humanoid or Giant boss, where Murder 2/2 (+4% damage) is worth more than the
+// points it takes from Lethality or Vile Poisons. The talent searches on a Humanoid boss chose these.
+const humanoidTalents = (name: string, talentsString: string, tooltip: string) =>
+	PresetUtils.makePresetTalents(`${name} (vs Humanoid)`, SavedTalents.create({ talentsString }), {
+		tooltip: `${tooltip} With Murder 2/2, for a Humanoid or Giant boss.`,
+		group: 'Level 60',
+	});
+export const TalentsLevel60CombatSwordsHumanoid = humanoidTalents(
+	'Level 60 Combat Swords',
+	'00532310301-32003311201515231',
+	'Deep Combat for Sinister Strike.',
+);
+export const TalentsLevel60SealFateSwordsHumanoid = humanoidTalents(
+	'Level 60 Seal Fate Swords',
+	'0053231025130005-3220132020141',
+	'Seal Fate with Blade Flurry for Sinister Strike.',
+);
+export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Level 60 Combat Daggers', '00532310301-30230320201513231-002', 'Deep Combat for Backstab.');
+export const TalentsLevel60SealFateDaggersHumanoid = humanoidTalents(
+	'Level 60 Seal Fate Daggers',
+	'0053231053120005-322303200013-002',
+	'Seal Fate with Puncturing Wounds for Backstab.',
+);
+export const TalentsLevel60MutilateHumanoid = humanoidTalents('Level 60 Mutilate', '0053231013150103-302303202015-002', 'Assassination for Mutilate.');
+export const TalentsLevel60SubtletyHumanoid = humanoidTalents('Level 60 Subtlety', '0053231015140004--3021203310113011', 'Subtlety for Hemorrhage.');
 
 export const TalentPresets = {
 	[Phase.Phase1]: [
@@ -408,6 +436,12 @@ export const TalentPresets = {
 		TalentsLevel60SealFateDaggers,
 		TalentsLevel60Mutilate,
 		TalentsLevel60Subtlety,
+		TalentsLevel60CombatDaggersHumanoid,
+		TalentsLevel60SealFateDaggersHumanoid,
+		TalentsLevel60CombatSwordsHumanoid,
+		TalentsLevel60SealFateSwordsHumanoid,
+		TalentsLevel60MutilateHumanoid,
+		TalentsLevel60SubtletyHumanoid,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
 		AssassinationMutilateTalents,
@@ -421,6 +455,12 @@ export const TalentPresets = {
 		TalentsLevel60SealFateDaggers,
 		TalentsLevel60Mutilate,
 		TalentsLevel60Subtlety,
+		TalentsLevel60CombatDaggersHumanoid,
+		TalentsLevel60SealFateDaggersHumanoid,
+		TalentsLevel60CombatSwordsHumanoid,
+		TalentsLevel60SealFateSwordsHumanoid,
+		TalentsLevel60MutilateHumanoid,
+		TalentsLevel60SubtletyHumanoid,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
 		AssassinationMutilateTalents,
@@ -644,39 +684,42 @@ export const OtherDefaults = {
 //                                 Level 60
 ///////////////////////////////////////////////////////////////////////////
 
-// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, Humanoid), a 3 minute
+// The level 60 raid setup: the generic boss (level 63, 3731 armor, no creature type), a 3 minute
 // fight, and the default buffs, debuffs and consumes above. It is here so switching back from the
 // Level 30 builds restores everything they changed.
-export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
-	Encounter.create({
-		duration: 180,
-		durationVariation: 20,
-		executeProportion20: 0.2,
-		executeProportion25: 0.25,
-		executeProportion35: 0.35,
-		targets: [
-			{
-				id: 213336,
-				name: 'Level 60',
-				level: 63,
-				mobType: MobType.MobTypeUnknown,
-				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
-				minBaseDamage: 3000,
-				damageSpread: 0.3333,
-				swingSpeed: 2,
-				parryHaste: true,
-			},
-		],
-	}),
-	{
-		tanks: [],
-		raidBuffs: P1RaidBuffs,
-		debuffs: P1DefaultDebuffs,
-		buffs: P1IndividualBuffs,
-		consumes: P1Consumes,
-	},
-);
+const level60Encounter = (name: string, mobType: MobType) =>
+	PresetUtils.makePresetEncounter(
+		name,
+		Encounter.create({
+			duration: 180,
+			durationVariation: 20,
+			executeProportion20: 0.2,
+			executeProportion25: 0.25,
+			executeProportion35: 0.35,
+			targets: [
+				{
+					id: 213336,
+					name: 'Level 60',
+					level: 63,
+					mobType,
+					stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+					minBaseDamage: 3000,
+					damageSpread: 0.3333,
+					swingSpeed: 2,
+					parryHaste: true,
+				},
+			],
+		}),
+		{
+			tanks: [],
+			raidBuffs: P1RaidBuffs,
+			debuffs: P1DefaultDebuffs,
+			buffs: P1IndividualBuffs,
+			consumes: P1Consumes,
+		},
+	);
+export const EncounterLevel60 = level60Encounter('Level 60', MobType.MobTypeUnknown);
+export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)', MobType.MobTypeHumanoid);
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-12, Undead,
@@ -696,14 +739,21 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Phase 1 trinkets are removed or not simulated), and the fight does not open from Stealth (a raid
 // rogue rarely does), so Subtlety gets Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the
 // talent by talent verification.
-const level60Build = (name: string, tooltip: string, gear: PresetUtils.PresetGear, talents: PresetUtils.PresetTalents, rotation: PresetUtils.PresetRotation) =>
+const level60Build = (
+	name: string,
+	tooltip: string,
+	gear: PresetUtils.PresetGear,
+	talents: PresetUtils.PresetTalents,
+	rotation: PresetUtils.PresetRotation,
+	encounter = EncounterLevel60,
+) =>
 	PresetUtils.makePresetBuild(name, {
 		group: 'Level 60',
 		tooltip,
 		gear,
 		talents,
 		rotation,
-		encounter: EncounterLevel60,
+		encounter,
 		race: Race.RaceUndead,
 		level: 60,
 		bonusTalentPoints: 0,
@@ -749,5 +799,46 @@ export const PresetBuildLevel60Subtlety = level60Build(
 	'Level 60 Undead Subtlety (Hemorrhage, Ghostly Strike, Premeditation) on the synthetic Phase 1 daggers.',
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60Subtlety,
+	ROTATION_PRESET_LEVEL60_SUBTLETY,
+);
+
+// The vs Humanoid builds: the same specs against a Humanoid boss (Giants too), with Murder 2/2.
+// Extra presets, the generic boss builds above are the defaults.
+const humanoidBuild = (name: string, gear: PresetUtils.PresetGear, talents: PresetUtils.PresetTalents, rotation: PresetUtils.PresetRotation) =>
+	level60Build(`${name} (vs Humanoid)`, `${name} against a Humanoid or Giant boss, with Murder 2/2.`, gear, talents, rotation, EncounterLevel60Humanoid);
+export const PresetBuildLevel60CombatDaggersHumanoid = humanoidBuild(
+	'Level 60 Combat Daggers',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60CombatDaggersHumanoid,
+	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+);
+export const PresetBuildLevel60SealFateDaggersHumanoid = humanoidBuild(
+	'Level 60 Seal Fate Daggers',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60SealFateDaggersHumanoid,
+	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+);
+export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(
+	'Level 60 Combat Swords',
+	GearLevel60SyntheticSwords,
+	TalentsLevel60CombatSwordsHumanoid,
+	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+);
+export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
+	'Level 60 Seal Fate Swords',
+	GearLevel60SyntheticSwords,
+	TalentsLevel60SealFateSwordsHumanoid,
+	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+);
+export const PresetBuildLevel60MutilateHumanoid = humanoidBuild(
+	'Level 60 Mutilate',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60MutilateHumanoid,
+	ROTATION_PRESET_LEVEL60_MUTILATE,
+);
+export const PresetBuildLevel60SubtletyHumanoid = humanoidBuild(
+	'Level 60 Subtlety',
+	GearLevel60SyntheticDaggers,
+	TalentsLevel60SubtletyHumanoid,
 	ROTATION_PRESET_LEVEL60_SUBTLETY,
 );
