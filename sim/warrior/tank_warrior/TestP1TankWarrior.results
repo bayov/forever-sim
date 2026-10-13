@@ -50,7 +50,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestP1TankWarrior-Phase1-StatWeights-Default"
  value: {
-  weights: -0.37835
+  weights: -0.3781
   weights: 0
   weights: 0
   weights: 0
@@ -67,7 +67,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.03649
+  weights: -0.03597
   weights: 0
   weights: 0
   weights: 0
@@ -99,266 +99,266 @@ stat_weights_results: {
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-BattlegearofHeroism"
  value: {
-  dps: 362.36694
-  tps: 360.61998
+  dps: 362.57264
+  tps: 360.78527
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-BattlegearofMight"
  value: {
-  dps: 329.06025
-  tps: 328.29375
+  dps: 329.25573
+  tps: 328.45087
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-BattlegearofWrath"
  value: {
-  dps: 332.75322
-  tps: 334.91677
+  dps: 332.94243
+  tps: 335.06886
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-Champion'sBattlearmor"
  value: {
-  dps: 351.11283
-  tps: 349.80185
+  dps: 351.31144
+  tps: 349.96146
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-Conqueror'sBattlegear"
  value: {
-  dps: 377.20527
-  tps: 374.75097
+  dps: 377.40521
+  tps: 374.91164
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-Dreadnaught'sBattlegear"
  value: {
-  dps: 345.0914
-  tps: 344.00683
+  dps: 345.29919
+  tps: 344.17379
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-FieldMarshal'sBattlegear"
  value: {
-  dps: 380.39006
-  tps: 378.17018
+  dps: 380.59827
+  tps: 378.33748
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-LieutenantCommander'sBattlearmor"
  value: {
-  dps: 351.11283
-  tps: 349.80185
+  dps: 351.31144
+  tps: 349.96146
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-Vindicator'sBattlegear"
  value: {
-  dps: 362.47713
-  tps: 363.03462
+  dps: 362.66679
+  tps: 363.18708
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-Warlord'sBattlegear"
  value: {
-  dps: 380.39006
-  tps: 378.17018
+  dps: 380.59827
+  tps: 378.33748
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-WarriorSynthetic(Phase1)"
  value: {
-  dps: 359.33181
-  tps: 357.63977
+  dps: 359.54565
+  tps: 357.81157
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-WarriorSyntheticBattleTrinket(Phase1)-991018"
  value: {
-  dps: 349.64346
-  tps: 348.1701
+  dps: 349.83476
+  tps: 348.32387
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Average-Default"
  value: {
-  dps: 337.92199
-  tps: 337.09517
+  dps: 338.11478
+  tps: 337.24978
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 37.62482
-  tps: 153.1229
+  dps: 38.15964
+  tps: 153.56076
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 19.99682
-  tps: 26.81225
+  dps: 20.0063
+  tps: 26.82055
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 50.13328
-  tps: 63.15463
+  dps: 50.1589
+  tps: 63.17875
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 16.16012
-  tps: 138.17924
+  dps: 16.52995
+  tps: 138.48311
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 9.09228
-  tps: 22.07061
+  dps: 9.10287
+  tps: 22.07968
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 19.89868
-  tps: 42.1243
+  dps: 19.92442
+  tps: 42.14789
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 37.62482
-  tps: 153.1229
+  dps: 38.15964
+  tps: 153.56076
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 19.99682
-  tps: 26.81225
+  dps: 20.0063
+  tps: 26.82055
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 65.36193
-  tps: 78.38328
+  dps: 65.38755
+  tps: 78.4074
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 16.54442
-  tps: 138.56355
+  dps: 16.91425
+  tps: 138.86741
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 9.28443
-  tps: 22.26276
+  dps: 9.29502
+  tps: 22.27183
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 34.27015
-  tps: 56.49577
+  dps: 34.29589
+  tps: 56.51936
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 38.46011
-  tps: 153.95819
+  dps: 38.99494
+  tps: 154.39605
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 20.1906
-  tps: 27.00603
+  dps: 20.20008
+  tps: 27.01434
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 50.29634
-  tps: 63.31769
+  dps: 50.32196
+  tps: 63.34181
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 16.42164
-  tps: 138.44077
+  dps: 16.79147
+  tps: 138.74463
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 9.13791
-  tps: 22.11624
+  dps: 9.1485
+  tps: 22.12531
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 20.01017
-  tps: 42.23579
+  dps: 20.03591
+  tps: 42.25938
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 38.46011
-  tps: 153.95819
+  dps: 38.99494
+  tps: 154.39605
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 20.1906
-  tps: 27.00603
+  dps: 20.20008
+  tps: 27.01434
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 65.525
-  tps: 78.54635
+  dps: 65.55061
+  tps: 78.57046
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 16.80595
-  tps: 138.82507
+  dps: 17.17577
+  tps: 139.12893
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 9.33006
-  tps: 22.30839
+  dps: 9.34065
+  tps: 22.31746
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Orc-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 34.38163
-  tps: 56.60726
+  dps: 34.40738
+  tps: 56.63084
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 277.08233
-  tps: 279.90364
+  dps: 277.25523
+  tps: 280.04195
  }
 }
