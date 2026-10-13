@@ -56,7 +56,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 	displayPseudoStats: [],
 
 	defaults: {
-		race: Race.RaceTroll,
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
@@ -109,6 +109,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60ManaTide],
 		// Preset talents that the user can quickly select.
 		talents: [
 			...Presets.TalentPresets[Phase.Phase6],
@@ -154,8 +155,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceUnknown,
-				[Faction.Horde]: Race.RaceTroll,
+				[Faction.Alliance]: Race.RaceDwarf,
+				[Faction.Horde]: Race.RaceOrc,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

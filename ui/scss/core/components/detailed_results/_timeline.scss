@@ -365,12 +365,8 @@
 	padding: var(--spacer-2) 0 var(--spacer-3);
 	overflow-x: auto;
 	cursor: grab;
-	// The part that scrolls is darker than the labels, so it reads as its own area. The second
-	// layer is that color. It fills the padding too, but the grid lines only the content.
-	background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px var(--grid-step, 100px)),
-		linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22));
-	background-position-x: var(--grid-offset, 0), 0;
-	background-clip: content-box, border-box;
+	// The part that scrolls is darker than the labels, so it reads as its own area.
+	background: rgba(0, 0, 0, 0.22);
 
 	&.dragging {
 		cursor: grabbing;
@@ -409,6 +405,22 @@
 			font-weight: 700;
 			color: var(--gold);
 		}
+	}
+}
+
+// A line down the rows at every second, under the ruler. See drawGrid.
+.rotation-grid {
+	position: absolute;
+	left: 0;
+	bottom: var(--spacer-3);
+	pointer-events: none;
+
+	.rotation-grid-line {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: rgba(255, 255, 255, 0.06);
 	}
 }
 

@@ -162,6 +162,18 @@ func (shaman *Shaman) shamanisticFocusFactor() float64 {
 }
 
 // 0.17 / 0.33 / 0.50 sec per the beta client.
+// downrankCoefficient is what a rank keeps of its spell power coefficient under Forever:
+// Blizzard's 2026-10-01 development notes say ranks far below the caster's level get less
+// from spell power, and https://foreverchanges.pro/downranking measures 5% less for each
+// level the caster is past the rank's learn level + 17, down to nothing (the priest
+// branch's downrankCoefficient). Lightning Bolt rank 7 (10391, learned at 38) keeps 75% at 60.
+func (shaman *Shaman) downrankCoefficient(coefficient float64, learnLevel int) float64 {
+	if shaman.Env == nil || !shaman.Env.IsForever() {
+		return coefficient
+	}
+	return coefficient * max(0, min(1, 1-0.05*float64(int(shaman.Level)-17-learnLevel)))
+}
+
 func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
 	return []time.Duration{0, 170, 330, 500}[shaman.Talents.ElementalAlacrity] * time.Millisecond
 }
@@ -408,7 +420,6 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 		return nil
 	}
 
-	spellID := []int32{16257, 16277, 16278, 16279, 16280}[points-1]
 	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
 
 	// The buff lasts 15 sec when we don't use up its 3 charges.
@@ -416,9 +427,13 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 	// It's 15 sec in both the Forever (70291) and Era (1.15.9) clients. We kept it forever
 	// before, which only showed when white swings stop for long, like out of melee range in
 	// PvP.
+	//
+	// Forever's client has one Flurry buff (16257) for every rank, and the talent sets its
+	// size. Classic's rank 2 to 5 buffs (16277 to 16280) are gone from it, and Forever's
+	// wowhead shows "Spell not found" for them.
 	aura := shaman.GetOrRegisterAura(core.Aura{
-		Label:     fmt.Sprintf("Flurry Proc (%d)", spellID),
-		ActionID:  core.ActionID{SpellID: spellID},
+		Label:     "Flurry Proc",
+		ActionID:  core.ActionID{SpellID: 16257},
 		Duration:  time.Second * 15,
 		MaxStacks: 3,
 	})

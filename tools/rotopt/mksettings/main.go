@@ -80,7 +80,6 @@ func main() {
 		CurseOfWeakness:        improved,
 		DemoralizingRoar:       improved,
 		DemoralizingShout:      improved,
-		ExposeArmor:            improved,
 		FaerieFire:             true,
 		InsectSwarm:            true,
 		JudgementOfLight:       true,
@@ -115,7 +114,7 @@ func main() {
 			Id:      213336,
 			Name:    "Level 60",
 			Level:   63,
-			MobType: proto.MobType_MobTypeHumanoid,
+			MobType: proto.MobType_MobTypeUnknown,
 			Stats: stats.Stats{
 				stats.AttackPower: 805,
 				stats.Armor:       3731,

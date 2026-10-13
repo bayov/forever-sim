@@ -124,7 +124,8 @@ export default defineConfig(({ command, mode }) => {
 					// Add shared.scss as a separate entry if needed or handle it separately
 				},
 				output: {
-					assetFileNames: () => 'bundle/[name]-[hash].style.css',
+					// The DPS report's datasets (ui/dps_report/data/*.json) keep their extension; every other asset is a stylesheet.
+					assetFileNames: info => (info.name?.endsWith('.json') ? 'bundle/[name]-[hash].json' : 'bundle/[name]-[hash].style.css'),
 					entryFileNames: () => 'bundle/[name]-[hash].entry.js',
 					chunkFileNames: () => 'bundle/[name]-[hash].chunk.js',
 				},
