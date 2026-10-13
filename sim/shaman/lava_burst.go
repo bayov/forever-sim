@@ -59,9 +59,10 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 			ModifyCast: shaman.stopMeleeForCast,
 		},
 
-		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
-		BonusCoefficient: spellCoeff,
+		DamageMultiplier:  1,
+		ThreatMultiplier:  1,
+		BonusCoefficient:  spellCoeff,
+		PushbackReduction: shaman.eyeOfTheStormChance(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if shaman.hasActiveFlameShock(target) {

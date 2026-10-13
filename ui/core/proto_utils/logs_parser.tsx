@@ -22,6 +22,11 @@ export class Entity {
 		this.isPet = isPet;
 	}
 
+	// A player, not a target or a pet.
+	get isPlayer(): boolean {
+		return !this.isTarget && !this.isPet;
+	}
+
 	equals(other: Entity) {
 		return this.isTarget == other.isTarget && this.isPet == other.isPet && this.index == other.index && this.name == other.name;
 	}
@@ -429,7 +434,7 @@ export class DamageDealtLog extends SimLog {
 		);
 		if (match) {
 			return ActionId.fromLogString(match[1])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(cause => {
 					params.actionId = cause;
 
@@ -585,7 +590,7 @@ export class AuraEventLog extends SimLog {
 		const match = params.raw.match(/Aura ((gained)|(faded)|(refreshed)): (.*)/);
 		if (match && match[5]) {
 			return ActionId.fromLogString(match[5])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(aura => {
 					params.actionId = aura;
 					const event = match[1];
@@ -619,7 +624,7 @@ export class AuraStacksChangeLog extends SimLog {
 		const match = params.raw.match(/(.*) stacks: ([0-9]+) --> ([0-9]+)/);
 		if (match && match[1]) {
 			return ActionId.fromLogString(match[1])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(aura => {
 					params.actionId = aura;
 					return new AuraStacksChangeLog(params, parseInt(match[2]), parseInt(match[3]));
@@ -799,7 +804,7 @@ export class ResourceChangedLog extends SimLog {
 			const valueBefore = match[13]
 			const valueAfter = match[14];
 			return ActionId.fromLogString(match[12])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(cause => {
 					params.actionId = cause;
 					return new ResourceChangedLog(params, resourceType, parseFloat(valueBefore), parseFloat(valueAfter), match[1] == 'Spent');
@@ -882,7 +887,7 @@ export class MajorCooldownUsedLog extends SimLog {
 		const match = params.raw.match(/Major cooldown used: (.*)/);
 		if (match) {
 			return ActionId.fromLogString(match[1])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(cooldownId => {
 					params.actionId = cooldownId;
 					return new MajorCooldownUsedLog(params);
@@ -926,7 +931,7 @@ export class CastBeganLog extends SimLog {
 				effectiveTime /= 1000;
 			}
 			return ActionId.fromLogString(match[1])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(castId => {
 					params.actionId = castId;
 					return new CastBeganLog(params, parseFloat(match[2]), castTime, effectiveTime);
@@ -954,7 +959,7 @@ export class CastCompletedLog extends SimLog {
 		const match = params.raw.match(/Completed cast (.*)/);
 		if (match) {
 			return ActionId.fromLogString(match[1])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(castId => {
 					params.actionId = castId;
 					return new CastCompletedLog(params);
@@ -1105,7 +1110,7 @@ export class StatChangeLog extends SimLog {
 		const match = params.raw.match(/((Gained)|(Lost)) ({.*}) from (fading )?(.*)/);
 		if (match) {
 			return ActionId.fromLogString(match[6])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(effectId => {
 					params.actionId = effectId;
 					const sign = match[1] == 'Lost' ? -1 : 1;
@@ -1146,10 +1151,10 @@ export class ExtraAttackLog extends SimLog {
 		const match = params.raw.match(/gained ([0-9]+) extra (?:main-hand|off-hand|ranged) (attacks?) from ({.*?}) triggered by ({.*?})/);
 		if (match) {
 			return ActionId.fromLogString(match[3])
-				.fill(params.source?.index)
+				.fill(params.source?.index, params.source?.isPlayer)
 				.then(attackID => {
 					return ActionId.fromLogString(match[4])
-						.fill(params.source?.index)
+						.fill(params.source?.index, params.source?.isPlayer)
 						.then(triggerID => {
 							params.actionId = attackID;
 							return new ExtraAttackLog(params, parseInt(match[1]), match[2], attackID, triggerID);

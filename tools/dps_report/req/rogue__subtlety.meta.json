@@ -1,0 +1,85 @@
+{
+  "id": "rogue__subtlety",
+  "class": "Rogue",
+  "spec": "Subtlety",
+  "build": "Subtlety",
+  "isDefault": true,
+  "pr": 9,
+  "race": "Undead",
+  "talents": "0053231015140004--3021203310113011",
+  "treePoints": "29/0/22",
+  "treeNames": [
+    "Assassination",
+    "Combat",
+    "Subtlety"
+  ],
+  "gearSet": "level60_phase1_synthetic_daggers",
+  "apl": "level60_subtlety",
+  "published": {
+    "dps": 653.2,
+    "source": "the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)",
+    "overall": {
+      "race": "Undead",
+      "dps": 653.2
+    },
+    "horde": {
+      "race": "Undead",
+      "dps": 653.2
+    }
+  },
+  "verify": {
+    "dps": 653.19,
+    "stderr": 0.19,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, Undead, 180 s with durationVariation 20, on the merged bundled-round tree. Published 653.2 (the rogue branch head a8d7a69 (20000 iterations; the PR body still shows the earlier round)); delta -0.01."
+  },
+  "summary": "Subtlety with Hemorrhage, Ghostly Strike, Premeditation and Preparation, plus Seal Fate in Assassination, on the synthetic daggers. It is the Subtlety preset; the defining talents are pinned.",
+  "keyTalents": [
+    "Hemorrhage",
+    "Ghostly Strike",
+    "Premeditation",
+    "Preparation",
+    "Serrated Blades",
+    "Improved Ambush",
+    "Seal Fate 4/5",
+    "Vile Poisons 5/5"
+  ],
+  "rotation": [
+    "Ambush first while stealthed (after Vanish)",
+    "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
+    "Cold Blood right before a 5-point Eviscerate; Thistle Tea at 10 energy or less",
+    "3-point Rupture when not ticking, with Hemorrhage right before it",
+    "Premeditation at 3 combo points or fewer (no Stealth needed)",
+    "Eviscerate at 5 combo points",
+    "Vanish into Ambush at 3 combo points or fewer, pooling energy; Preparation resets Vanish and Premeditation",
+    "Ghostly Strike on cooldown",
+    "Hemorrhage as the filler builder"
+  ],
+  "consumes": [
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Ground Scorpok Assay",
+    "Flank au Poivre",
+    "Dragonbreath Chili",
+    "Major Frenzy Potion",
+    "Thistle Tea",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine",
+    "Deadly Poison (main hand)",
+    "Instant Poison (off hand)"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Fight never opens from Stealth; Stealth only comes from Vanish",
+    "Ghostly Strike is worth nothing over Hemorrhage (+0.5 removed) but is pinned by the build",
+    "Premeditation out of Stealth and Preparation's reset list are open for beta testing",
+    "Elusiveness is worth 0 at 180 s, -2.9 at 300 s",
+    "Murder fixed in edd0ff72d to not raise crit damage (-13 to -19 DPS on every build)",
+    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
+    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
+    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+  ],
+  "notes": "Only Subtlety build, so treated as the Subtlety default. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets, and the rotation uses the on-use trinket on cooldown."
+}

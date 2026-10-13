@@ -130,7 +130,7 @@
 // A tab with a changed setting or a modified preset on it gets the modified color and a
 // dot. The active tab draws its underline with ::after, so the dot is ::before, moved after
 // the title (the tab's link is a flex box).
-.sim-header .nav-link.dirty-tab {
+.sim-header .sim-tabs .nav-item .nav-link.dirty-tab:not(.active) {
 	color: var(--dirty-color);
 }
 
