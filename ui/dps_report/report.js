@@ -2117,8 +2117,9 @@ export function startReport(dash) {
     let race = st[k + 'r'] || b.race, v = st[k + 'v'] || 'baseline';
     if (!mine.some((r) => r.race === race)) race = b.race;
     const row = (vv) => mine.find((r) => r.race === race && r.variant === vv);
-    // The racial weapon setup only exists for races with a weapon racial the preset can use.
-    if (!rv || (v === 'weapon' && !row('weapon')?.simmed)) v = 'baseline';
+    // The racial weapon setup only exists for races with a weapon racial the preset can use. A setup can also
+    // go missing from the data, like the Undead target that the generic boss replaced.
+    if (!rv || !row(v) || (v === 'weapon' && !row('weapon')?.simmed)) v = 'baseline';
     const tag = [race !== b.race ? race : null, v !== 'baseline' ? CMP_SETUPS.find((o) => o[0] === v)[1].toLowerCase() : null].filter(Boolean).join(' · ');
     return { k, b, race, v, row: row(v), mine, full: race === b.race && v === 'baseline', name: tag ? `${b.build} · ${tag}` : b.build };
   };
@@ -2185,7 +2186,7 @@ export function startReport(dash) {
       if (k === 'dps' && anyVar) return s.row ? mark(el('td', { class: 'n', text: f1(s.row.dps) }), 'race_variants', 'dps', W(s)) : el('td', { class: 'n', text: NA });
       if (k === 'se') return anyVar && s.row ? mark(el('td', { class: 'n', text: `± ${f2(s.row.se)}` }), 'race_variants', 'se', W(s)) : mark(el('td', { class: 'n', text: `± ${f2(s.b.se)}` }), 'builds', 'se', 'id=' + enc(s.b.id));
       if (k === 'race') return el('td', { class: 'n', text: s.race });
-      if (k === 'rank') return mark(el('td', { class: 'n', text: String(rankOf(s.b, builds)) }), 'builds', st.enc ? 'rankAll' : 'rank', 'id=' + enc(s.b.id));
+      if (k === 'rank' && s.full) return mark(el('td', { class: 'n', text: String(rankOf(s.b, builds)) }), 'builds', st.enc ? 'rankAll' : 'rank', 'id=' + enc(s.b.id));
       if (k === 'bossType') return mark(el('td', { class: 'n', text: s.b.bossType || 'Generic boss' }), 'builds', 'bossType', 'id=' + enc(s.b.id));
       if (k === 'setup') return el('td', { class: 'n', text: CMP_SETUPS.find((o) => o[0] === s.v)[1] });
       if (k === 'raceRank') return s.row ? mark(el('td', { class: 'n', text: `${s.row.rank} of ${s.row.of}` }), 'race_variants', 'rank', W(s)) : el('td', { class: 'n', text: NA });

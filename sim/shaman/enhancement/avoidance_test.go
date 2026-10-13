@@ -83,7 +83,8 @@ func TestOrcShamanEnemyAvoidance(t *testing.T) {
 //
 // Miss is 5%, dodge is our sheet dodge and parry is 5% with Spirit Weapons. Each is 0.2%
 // lower a level the mob is above us. We have no shield, so we never block. Anticipation adds
-// 2% dodge a point, as its Forever text says. While we cast, only a miss stops a swing. The
+// 2% dodge a point, as its Forever text says, and 3/3 took the beta sheet from 5.4324% to
+// 11.4324% dodge (shaman_audit.md 8.26). While we cast, only a miss stops a swing. The
 // beta fits miss and dodge against level 25 to 35 mobs (shaman_audit.md 6.4). We roll a level
 // 34 mob's swing 20,000 times with Anticipation 3/3 and Spirit Weapons, and again while we
 // cast.
