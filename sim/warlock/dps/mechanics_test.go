@@ -106,3 +106,22 @@ func TestWarlockDemonicPact(t *testing.T) {
 		}
 	}
 }
+
+// TestWarlockSiphonLifeCrits checks that Siphon Life's ticks can crit under Forever, like the
+// warlock's other damage over time spells (forever-bugs #303, fixed for the client after 70338).
+func TestWarlockSiphonLifeCrits(t *testing.T) {
+	sim, lock := newWarlockSim(t, "00000000000001", &proto.WarlockOptions{})
+	siphonLife := lock.SiphonLife[len(lock.SiphonLife)-1]
+
+	at(sim, 0.5, func(sim *core.Simulation) {
+		lock.AddStatDynamic(sim, stats.SpellHit, 20*core.SpellHitRatingPerHitChance)
+		lock.AddStatDynamic(sim, stats.SpellCrit, 100*core.SpellCritRatingPerCritChance)
+		castNow(t, sim, lock, siphonLife)
+	})
+	runSim(sim)
+
+	metrics := siphonLife.SpellMetrics[lock.CurrentTarget.UnitIndex]
+	if metrics.CritTicks == 0 || metrics.Ticks != 0 {
+		t.Errorf("Siphon Life at 100%% crit: %d crit ticks and %d plain ticks, want only crits", metrics.CritTicks, metrics.Ticks)
+	}
+}
