@@ -1,7 +1,50 @@
 .dps-histogram-root {
-	height: 16rem;
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacer-3);
 	width: 100%;
-	margin-top: var(--block-spacer);
-	margin-left: auto;
-	margin-right: auto;
+}
+
+.dps-histogram-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacer-2) var(--spacer-3);
+}
+
+.dps-histogram-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--spacer-2) var(--spacer-4);
+	font-variant-numeric: tabular-nums;
+}
+
+.dps-histogram-stat {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.4rem;
+
+	.dps-histogram-stat-label {
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted-color);
+	}
+
+	.dps-histogram-stat-value {
+		font-weight: 600;
+		color: $ivory;
+	}
+
+	&.median .dps-histogram-stat-value {
+		color: var(--gold-soft);
+	}
+}
+
+.dps-histogram-chart {
+	position: relative;
+	height: 15rem;
+	width: 100%;
 }

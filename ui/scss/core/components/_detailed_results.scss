@@ -1,4 +1,5 @@
 @import './detailed_results/dps_histogram';
+@import './detailed_results/events_view';
 @import './detailed_results/log_runner';
 @import './detailed_results/player_damage';
 @import './detailed_results/resource_metrics';
@@ -10,17 +11,9 @@
 .detailed-results-manager-root {
 	display: flex;
 	flex-direction: column;
+
 	& > * {
 		min-height: 0;
-	}
-}
-
-.detailed-results-controls-div {
-	display: flex;
-	margin-bottom: var(--block-spacer);
-
-	.detailed-results-new-tab-button {
-		margin-right: var(--block-spacer);
 	}
 }
 
@@ -35,6 +28,7 @@
 .individual-sim .single-player-only {
 	display: initial;
 }
+
 .individual-sim .all-players-only {
 	display: none;
 }
@@ -44,7 +38,8 @@
 	flex-direction: column;
 
 	&.dr-no-results {
-		.dr-row {
+		.dr-row,
+		.dr-toolbar {
 			display: none;
 		}
 	}
@@ -55,58 +50,78 @@
 		}
 	}
 
-	> {
-		.tab-content {
-			padding-top: var(--gap-width);
-		}
+	> .tab-content {
+		padding-top: var(--block-spacer);
+	}
 
-		.tab-content > .tab-pane.dr-tab-content {
-			padding-top: 0;
-			padding-bottom: 0;
+	.tab-pane.dr-tab-content {
+		padding-top: 0;
+		padding-bottom: 0;
+
+		&.active {
+			display: flex;
+			flex-direction: column;
+			gap: var(--block-spacer);
 		}
 	}
 }
 
+// Each part of the results sits in a card, titled like the Settings tab's sections.
+.dr-panel {
+	.content-block-header {
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--spacer-3);
+	}
+
+	.dr-panel-action {
+		padding: 0;
+		font-size: var(--content-font-size);
+		color: var(--text-muted-color);
+
+		&:hover {
+			color: var(--bs-link-hover-color);
+		}
+	}
+}
+
+.dr-auras-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--block-spacer);
+	align-items: start;
+
+	@include media-breakpoint-up(xxl) {
+		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+	}
+}
+
+// The sub tabs and the player and target pickers. It sticks under the sim header while we
+// scroll, and then it takes the header's frosted background and its full width, so the two
+// read as one bar.
 .dr-toolbar {
 	position: sticky;
 	top: var(--sim-header-height);
-	padding-left: var(--container-padding);
-	padding-right: var(--container-padding);
-	margin-left: calc(-1 * var(--container-padding));
-	margin-right: calc(-1 * var(--container-padding));
 	display: flex;
-	transition: background-color 0.15s ease-in-out;
+	align-items: center;
+	gap: var(--spacer-3);
+	padding: var(--spacer-2) var(--sim-content-padding-x);
+	margin-left: calc(-1 * var(--sim-content-padding-x));
+	margin-right: calc(-1 * var(--sim-content-padding-x));
+	transition:
+		background-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
 	// This needs to be less than var(--header-z-index) otherwise the toolbar overlaps the import/export dropdowns
 	z-index: calc(var(--header-z-index) - 1);
 
-	&::after {
-		content: ' ';
-		position: absolute;
-		bottom: -1px;
-		left: 0;
-		right: 0;
-		width: calc(100% - 2 * var(--container-padding));
-		height: 1px;
-		margin-left: auto;
-		margin-right: auto;
-		background-color: var(--bs-border-color);
-		transition: width 0.15s ease-in-out;
-	}
-
 	&.stuck {
-		background: rgba(var(--theme-background-color), var(--theme-background-opacity));
-
-		&::after {
-			width: 100%;
-		}
+		background: rgba(11, 15, 21, 0.75);
+		backdrop-filter: blur(8px);
+		box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5);
 	}
 
 	& > * {
 		min-height: 0;
-	}
-
-	.nav-tabs {
-		border-bottom: 0;
 	}
 
 	.input-root {
@@ -114,12 +129,78 @@
 	}
 }
 
-#noResultsTab {
+// The header's shadow would fall across the toolbar, so the shadow under the toolbar is the
+// only one.
+.sim-ui:has(.dr-toolbar.stuck) .sim-header.stuck {
+	box-shadow: none;
+}
+
+// The sub tabs read as one pill shaped control, so they don't look like a second row of the
+// main tabs above.
+.dr-tabs {
 	display: flex;
-	justify-content: center;
+	flex-wrap: wrap;
+	gap: 2px;
+	padding: 3px;
+	background: rgba($panel-bg, 0.82);
+	border: 1px solid var(--line-color);
+	border-radius: 999px;
+
+	.nav-link {
+		padding: 0.3rem 0.85rem;
+		border: 0;
+		border-radius: 999px;
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--text-muted-color);
+		background: transparent;
+
+		&:hover {
+			color: $ivory;
+		}
+
+		&.active {
+			color: $panel-bg;
+			background: $gold-soft;
+		}
+	}
+}
+
+#noResultsTab {
+	padding: var(--gap-width) 0;
+}
+
+.dr-empty {
+	@include panel-card;
+	display: flex;
+	flex-direction: column;
 	align-items: center;
-	padding: var(--gap-width);
-	font-size: 1rem;
+	gap: var(--spacer-2);
+	max-width: 32rem;
+	margin: 2rem auto;
+	padding: 2.5rem 2rem;
+	text-align: center;
+
+	.dr-empty-icon {
+		font-size: 2.25rem;
+		color: var(--gold);
+		margin-bottom: var(--spacer-2);
+	}
+
+	.dr-empty-title {
+		margin: 0;
+		font-family: var(--heading-font-family);
+		font-variant: small-caps;
+		font-weight: 700;
+		font-size: 1.35rem;
+		color: var(--gold-soft);
+	}
+
+	.dr-empty-text {
+		color: var(--text-muted-color);
+		font-size: 0.875rem;
+		margin-bottom: var(--spacer-2);
+	}
 }
 
 .results-filter {
@@ -140,8 +221,12 @@
 	width: 100%;
 }
 
+// The tables of the results. Quiet lines between rows, small capital headers, and numbers that
+// line up in their columns.
 .metrics-table {
+	width: 100%;
 	table-layout: auto;
+	font-variant-numeric: tabular-nums;
 
 	td,
 	th {
@@ -151,6 +236,7 @@
 	th {
 		white-space: nowrap;
 	}
+
 	td {
 		@include media-breakpoint-up(1080p) {
 			white-space: nowrap;
@@ -162,25 +248,27 @@
 	}
 }
 
-.damage-content .metrics-table,
-.threat-content .metrics-table,
-.healing-content .metrics-table,
+.dr-root .metrics-table,
 .tippy-box[data-theme='metrics-table'] {
-	font-size: 12px;
+	font-size: 0.8125rem;
 }
 
 .tippy-box[data-theme='metrics-table'],
 .metrics-table {
-	--bs-border-default: rgba(var(--bs-white-rgb), 0.2);
+	--bs-border-default: var(--line-color);
 	width: 100%;
+}
 
+.tippy-box[data-theme='metrics-table'] {
 	th,
 	td {
 		border-left: 1px solid var(--bs-border-default);
 		border-right: 1px solid var(--bs-border-default);
+
 		&:first-child {
 			border-left: 0;
 		}
+
 		&:last-child {
 			border-right: 0;
 		}
@@ -188,35 +276,76 @@
 }
 
 .metrics-table-header-row {
-	border-bottom: 2px solid rgba(var(--bs-white-rgb), 0.8);
+	border-bottom: 1px solid var(--line-color-strong);
 }
 
 .metrics-table-footer-row {
-	border-top: 2px solid rgba(var(--bs-white-rgb), 0.8);
+	border-top: 1px solid var(--line-color-strong);
 }
 
 .metrics-table-header-cell {
-	padding: var(--spacer-1) var(--spacer-2);
+	position: sticky;
+	top: calc(var(--sim-header-height) + 3.25rem);
+	z-index: 1;
+	padding: var(--spacer-2) var(--spacer-2);
 	cursor: pointer;
-	text-align: center;
+	text-align: right;
+	background: $panel-bg;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--text-muted-color);
+	user-select: none;
+
+	&:first-child {
+		text-align: left;
+	}
+
+	&:hover {
+		color: $ivory;
+	}
+
+	// The column we sort by gets an arrow, tablesorter marks it with aria-sort.
+	&[aria-sort='ascending'],
+	&[aria-sort='descending'] {
+		color: var(--gold-soft);
+	}
+
+	&[aria-sort='ascending'] .tablesorter-header-inner::after,
+	&[aria-sort='descending'] .tablesorter-header-inner::after {
+		font-size: 0.55rem;
+		margin-left: 0.35em;
+		vertical-align: 0.15em;
+	}
+
+	&[aria-sort='ascending'] .tablesorter-header-inner::after {
+		content: '▲';
+	}
+
+	&[aria-sort='descending'] .tablesorter-header-inner::after {
+		content: '▼';
+	}
 }
 
 .metrics-table-body tr {
-	border-bottom: 1px solid var(--bs-border-default);
+	border-bottom: 1px solid var(--line-color);
+	transition: background-color 0.1s ease-in-out;
 
-	&:nth-child(even) {
-		background-color: rgba(var(--bs-white-rgb), 0.05);
+	&:last-child {
+		border-bottom: 0;
 	}
 }
 
 .metrics-table-body tr:hover {
-	background-color: var(--bs-black-alpha-50);
+	background-color: rgba(255, 255, 255, 0.035);
 }
 
 .metrics-table-body,
 .metrics-table-footer {
 	td {
-		padding: var(--spacer-1) var(--spacer-2);
+		padding: 0.35rem var(--spacer-2);
+		vertical-align: middle;
 	}
 }
 
@@ -224,6 +353,7 @@
 .metrics-table-footer td:first-child {
 	text-align: left;
 }
+
 .metrics-table-body td:not(:first-child),
 .metrics-table-footer td:not(:first-child) {
 	text-align: right;
@@ -235,38 +365,59 @@
 	gap: var(--spacer-2);
 	white-space: initial;
 
+	.metrics-action-name {
+		color: $ivory;
+	}
+
 	.expand-toggle {
 		margin-left: auto;
+		color: var(--text-muted-color);
 	}
 }
 
 .metrics-action-icon {
 	@include wowhead-background-icon;
-	height: 24px;
-	width: 24px;
+	flex-shrink: 0;
+	height: 22px;
+	width: 22px;
 	vertical-align: middle;
-	margin-right: 4px;
+	margin-right: 2px;
+	border-radius: 3px;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
 }
 
 .parent-metric {
 	cursor: pointer;
 }
-.child-metric > *:first-child {
-	padding-left: 20px;
+
+.child-metric {
+	background: rgba(0, 0, 0, 0.18);
+
+	> *:first-child {
+		padding-left: 1.75rem;
+	}
+
+	.metrics-action-icon {
+		width: 18px;
+		height: 18px;
+	}
 }
 
 tr:not(.parent-metric) .expand-toggle {
 	display: none;
 }
+
 .parent-metric.expand .fa-caret-right,
 .parent-metric:not(.expand) .fa-caret-down {
 	display: none;
 }
 
+// The share of the total in a column: percent, a bar, then the amount.
 .metrics-total {
-	--total-percentage-width: 7ch;
+	--total-percentage-width: 6ch;
 	--total-amount-width: 7ch;
 	--total-bar-min-width: 50px;
+	align-items: center;
 	min-width: calc(var(--total-percentage-width) + var(--total-amount-width) + var(--total-bar-min-width));
 }
 
@@ -274,8 +425,10 @@ tr:not(.parent-metric) .expand-toggle {
 .metrics-total-damage {
 	flex-shrink: 0;
 }
+
 .metrics-total-percentage {
 	width: var(--total-percentage-width);
+	color: var(--text-muted-color);
 }
 
 .metrics-total-amount {
@@ -284,12 +437,16 @@ tr:not(.parent-metric) .expand-toggle {
 
 .metrics-total-bar {
 	position: absolute;
+	top: 50%;
 	left: var(--total-percentage-width);
 	right: var(--total-amount-width);
-	height: 100%;
+	height: 0.5rem;
+	transform: translateY(-50%);
 	flex-shrink: 1;
 	flex-grow: 1;
-	background-color: color-mix(in srgb, var(--bs-white) 5%, transparent);
+	overflow: hidden;
+	border-radius: 999px;
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 .metrics-total-bar-fill {
@@ -298,12 +455,36 @@ tr:not(.parent-metric) .expand-toggle {
 	left: 0;
 	width: var(--percentage);
 	height: 100%;
+	border-radius: 999px;
 	background-color: currentColor;
+	opacity: 0.85;
+}
+
+// Aura uptime, with a thin bar under the number.
+td.uptime-cell {
+	position: relative;
+	min-width: 6.5rem;
+
+	.uptime-bar {
+		position: absolute;
+		left: var(--spacer-2);
+		right: var(--spacer-2);
+		bottom: 3px;
+		height: 3px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, rgba($accent, 0.7) var(--uptime), rgba(255, 255, 255, 0.05) var(--uptime));
+	}
 }
 
 .tippy-box[data-theme='metrics-table'] {
 	@include media-breakpoint-down(sm) {
 		max-width: 300px;
+	}
+
+	// The headers stick under the toolbar in the results tables, but in a tooltip they would
+	// float down over the rows.
+	.metrics-table-header-cell {
+		position: static;
 	}
 
 	thead {

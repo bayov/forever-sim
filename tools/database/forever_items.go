@@ -727,6 +727,53 @@ var ForeverItems = []*proto.UIItem{
 		FactionRestriction: proto.UIItem_FACTION_RESTRICTION_HORDE_ONLY,
 		Sources:            []*proto.UIItemSource{foreverQuest(97265, "Hate the Hatefury")},
 	},
+	// Hidden items the beta server revealed from October 10 to 13
+	// (https://foreverchanges.pro/hidden-items), with the stats from the item pages and the
+	// wowhead Forever tooltips, which agree. No source is known yet, so the gear search
+	// leaves them out until one is.
+	{
+		Id: 284064, Name: "Cliffbreaker's Pauldrons", Icon: "inv_shoulder_24",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats: stats.Stats{stats.Armor: 410, stats.Strength: 12, stats.Stamina: 12, stats.SpellPower: 13}.ToFloatArray(),
+		Ilvl:  52, RequiredLevel: 47, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 284285, Name: "Feardred's Gauntlets", Icon: "inv_gauntlets_29",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Armor: 183, stats.Strength: 11, stats.SpellPower: 13}.ToFloatArray(),
+		Ilvl:  54, RequiredLevel: 49, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 281661, Name: "Well-Worn Pitchfork", Icon: "inv_misc_2h_farmpitchfork_a_01",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypePolearm, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{stats.Strength: 14, stats.Stamina: 3}.ToFloatArray(),
+		WeaponDamageMin: 77, WeaponDamageMax: 116, WeaponSpeed: 3.60,
+		Ilvl: 38, RequiredLevel: 33, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 283545, Name: "Moonchaser's Headdress", Icon: "inv_helmet_17",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Armor: 101, stats.Intellect: 13, stats.SpellPower: 15}.ToFloatArray(),
+		Ilvl:  46, RequiredLevel: 41, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 281896, Name: "Surveyor's Gloves", Icon: "inv_gauntlets_27",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Armor: 75, stats.Stamina: 8, stats.SpellPower: 12}.ToFloatArray(),
+		Ilvl:  44, RequiredLevel: 39, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286569, Name: "Firebird Leggings", Icon: "inv_pants_cloth_14",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Armor: 55, stats.Intellect: 14, stats.FirePower: 17}.ToFloatArray(),
+		Ilvl:  48, RequiredLevel: 43, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286640, Name: "High Priestess's Kilt", Icon: "inv_pants_cloth_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Armor: 73, stats.Stamina: 23, stats.Intellect: 17, stats.SpellPenetration: 5}.ToFloatArray(),
+		Ilvl:  59, RequiredLevel: 54, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
 }
 
 // ForeverSeenInGame are items whose stats differ from wowhead's Forever listing. They are
@@ -902,5 +949,20 @@ var ForeverSeenInGame = []*proto.UIItem{
 		Id: 271214, Name: "Rotmender's Treads",
 		Stats: stats.Stats{stats.Armor: 29, stats.Intellect: 4, stats.Spirit: 4, stats.Stamina: 7}.ToFloatArray(),
 		Ilvl:  24, RequiredLevel: 19, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	// Revealed by the beta server on October 11 to 13 (https://foreverchanges.pro/item/ID).
+	// wowhead's Forever listing still has the Classic stats. Icemetal Barbute traded
+	// Spirit for Intellect (Classic 15 Str, 10 Sta, 7 Spi). Baron Charr's Sceptre's
+	// fire proc reads 90 on the tooltip (35 in Classic); the proc is not changed here.
+	{
+		Id: 10763, Name: "Icemetal Barbute",
+		Stats: stats.Stats{stats.Armor: 341, stats.Strength: 14, stats.Stamina: 7, stats.Intellect: 10, stats.FrostResistance: 10}.ToFloatArray(),
+		Ilvl:  43, RequiredLevel: 40, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 18671, Name: "Baron Charr's Sceptre",
+		Stats:           stats.Stats{stats.Strength: 5}.ToFloatArray(),
+		WeaponDamageMin: 71, WeaponDamageMax: 134, WeaponSpeed: 2.60,
+		Ilvl: 60, RequiredLevel: 55, Quality: proto.ItemQuality_ItemQualityRare,
 	},
 }

@@ -1,0 +1,89 @@
+{
+  "id": "hunter__beast-mastery",
+  "class": "Hunter",
+  "spec": "Beast Mastery",
+  "build": "Beast Mastery",
+  "isDefault": false,
+  "pr": 5,
+  "race": "NightElf",
+  "talents": "5020121505021241-00520503014",
+  "treePoints": "31/20/0",
+  "treeNames": [
+    "Beast Mastery",
+    "Marksmanship",
+    "Survival"
+  ],
+  "gearSet": "level60_phase1_synthetic_ranged",
+  "apl": "bm",
+  "published": {
+    "dps": 969.0,
+    "source": "PR #5",
+    "overall": {
+      "race": "NightElf",
+      "dps": 969.0
+    },
+    "horde": {
+      "race": "Orc",
+      "dps": 964.4
+    },
+    "alliance": {
+      "race": "NightElf",
+      "dps": 969.0
+    }
+  },
+  "verify": {
+    "dps": 968.99,
+    "stderr": 0.2,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 20000 iterations, seed 1, NightElf, 180 s with durationVariation 20, on the merged bundled-round tree. Published 969.0 (PR #5); delta -0.01."
+  },
+  "summary": "Beast Mastery 31/20 with a 1.0 sec cat: Bestial Wrath, Frenzy, Ferocity and Unleashed Fury, plus Careful Aim and Mortal Shots in Marksmanship. The pet deals about 26% of its damage; it is the pet-focused build, 38 DPS behind Marksmanship at 180 s.",
+  "keyTalents": [
+    "Bestial Wrath",
+    "Frenzy",
+    "Unleashed Fury",
+    "Ferocity",
+    "Deadly Aspects",
+    "Careful Aim",
+    "Lethal Attacks",
+    "Mortal Shots"
+  ],
+  "rotation": [
+    "Pre-pull: Aspect of the Hawk at -3 s, Rapid Fire at -0.1 s",
+    "Bestial Wrath (0 and 120 s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Serpent Sting when it is down (mana >= 30%)",
+    "Aimed Shot on the cooldown it shares with Multi-Shot",
+    "Sniper Shot on cooldown",
+    "Arcane Shot on cooldown (mana >= 20%)",
+    "Cat (1.0 sec) bites and claws on cooldown, Frenzy up about 178 of 180 s; Auto Shot throughout"
+  ],
+  "consumes": [
+    "Flask of Distilled Wisdom",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Ground Scorpok Assay",
+    "Juju Might",
+    "Flank au Poivre",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Agility and 14 crit rating, and 415 ranged attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Trueshot Aura rank 5 (50 RAP) is below rank 4 (75); modelled as written. Casting rank 4 would add about +5 to +6 DPS (open for the owner)",
+    "Hunter's Mark rank 4 (71) is below rank 3 (98); modelled as written",
+    "Aspect of the Hawk held at rank 5 (90 RAP) since Forever's rank 6 gives only 55",
+    "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +41 (2026-10-12 gear)",
+    "Arcane Shot (0.11 RAP) and Serpent Sting (0.035 RAP per tick) AP shares are open assumptions",
+    "Auto Shot fires through casts with no 0.5 sec aim (open assumption)",
+    "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain +1 (measured on the 2026-10-12 gear)",
+    "Pet consumables are off (Forever pets take no player buffs); they would add 17 if allowed",
+    "Intimidation is talented but not cast by the rotation",
+    "Major Frenzy Potion is +5 at 120/180 s but 19 behind at 300 s, so Major Mana Potion ships"
+  ],
+  "notes": "Request written by mksettings (spec hunter_bm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Bundled gear round (2026-10-13): request regenerated with mksettings on the merged class heads with the same arguments and edits as before; the gear set now carries the two synthetic trinkets."
+}

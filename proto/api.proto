@@ -136,6 +136,14 @@ message SimOptions {
 	bool interactive = 8; // Enables interactive mode.
 	bool use_labeled_rands = 9; // Use test level RNG.
 	Ruleset ruleset = 10;
+
+	// When set, the sim runs only the iterations with these seeds, with logs on, in the
+	// order typical, lucky, unlucky. It doesn't run the usual iterations.
+	//
+	// A concurrent run uses it at the end. Each split sim picks its own typical, lucky and
+	// unlucky iterations without logs, the combined result picks the overall ones, and one
+	// more sim replays those three to get their logs.
+	repeated int64 replay_seeds = 11;
 }
 
 // Which game rules the engine simulates. Forever is the wire default, so anything
@@ -405,6 +413,27 @@ message RaidSimResult {
 	ErrorOutcome error = 5;
 
 	int32 iterations_done = 7;
+
+	// The iteration whose raid DPS is closest to the average, the one with the highest raid
+	// DPS and the one with the lowest. The results show them event by event.
+	//
+	// With debug_first_iteration on, logs above holds the typical iteration's logs (and
+	// first_iteration_duration its duration), and the lucky and unlucky ones carry their
+	// own logs.
+	IterationLog typical_iteration = 8;
+	IterationLog lucky_iteration = 9;
+	IterationLog unlucky_iteration = 10;
+}
+
+// One iteration of a run.
+message IterationLog {
+	// The seed the iteration ran with. Running the same request with this seed gives the
+	// same iteration again.
+	int64 seed = 1;
+	double dps = 2;
+	// In seconds.
+	double duration = 3;
+	string logs = 4;
 }
 
 message RaidSimRequestSplitRequest {

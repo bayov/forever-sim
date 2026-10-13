@@ -1,4 +1,3 @@
-import { TOOLTIP_METRIC_LABELS } from '../../constants/tooltips';
 import { ResourceType } from '../../proto/api';
 import { resourceNames } from '../../proto_utils/names';
 import { ResourceMetrics } from '../../proto_utils/sim_result';
@@ -12,20 +11,20 @@ export class ResourceMetricsTable extends ResultComponent {
 		super(config);
 
 		orderedResourceTypes.forEach(resourceType => {
+			// Each resource gets its own card, titled like the other panels of the results.
+			const panelElem = document.createElement('div');
+			panelElem.classList.add('content-block', 'dr-panel', 'resource-metrics-table-container', 'hide');
+			panelElem.innerHTML = `<div class="content-block-header"><h6 class="content-block-title">${resourceNames.get(resourceType)}</h6></div>`;
 			const containerElem = document.createElement('div');
-			containerElem.classList.add('resource-metrics-table-container', 'hide');
-			containerElem.innerHTML = `<span class="resource-metrics-table-title">${resourceNames.get(resourceType)}</span>`;
-			this.rootElem.appendChild(containerElem);
+			containerElem.classList.add('content-block-body');
+			panelElem.appendChild(containerElem);
+			this.rootElem.appendChild(panelElem);
 
 			const childConfig = config;
 			childConfig.parent = containerElem;
 			const table = new TypedResourceMetricsTable(childConfig, resourceType);
 			table.onUpdate.on(() => {
-				if (table.rootElem.classList.contains('hide')) {
-					containerElem.classList.add('hide');
-				} else {
-					containerElem.classList.remove('hide');
-				}
+				panelElem.classList.toggle('hide', table.rootElem.classList.contains('hide'));
 			});
 		});
 	}

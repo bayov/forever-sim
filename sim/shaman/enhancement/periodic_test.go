@@ -346,14 +346,14 @@ func TestOrcShamanMagmaTotemPulses(t *testing.T) {
 // 7.25).
 //
 // It goes off around our fire totem, so it can't be cast without one. With a Magma Totem down
-// it hits all 3 targets and waits 10 sec, or 6 sec with Improved Fire Nova 2/2. On the beta
-// the shortest gaps between casts were 9.99 sec and, with the talent, 5.92 sec. Once the
-// Magma Totem's 20 sec are up, it can't be cast again.
+// it hits all 3 targets and waits 10 sec, or 8 and 6 sec with Improved Fire Nova 1 and 2. On
+// the beta the shortest gaps between casts were 9.99 sec and, with the talent at 2/2, 5.92
+// sec (shaman_audit.md 8.9). Once the Magma Totem's 20 sec are up, it can't be cast again.
 func TestOrcShamanFireNova(t *testing.T) {
 	for _, c := range []struct {
 		talents  string
 		cooldown time.Duration
-	}{{"", 10 * time.Second}, {"000000002", 6 * time.Second}} {
+	}{{"", 10 * time.Second}, {"000000001", 8 * time.Second}, {"000000002", 6 * time.Second}} {
 		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
 		target.Level = 60
 		sim := core.NewSim(&proto.RaidSimRequest{

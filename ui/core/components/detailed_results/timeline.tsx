@@ -9,9 +9,9 @@ import { AuraUptimeLog, CastLog, DamageDealtLog, DpsLog, ResourceChangedLogGroup
 import { resourceNames } from '../../proto_utils/names.js';
 import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { orderedResourceTypes } from '../../proto_utils/utils.js';
-import { TypedEvent } from '../../typed_event.js';
 import { bucket, distinct, maxIndex, stringComparator } from '../../utils.js';
 import { actionColors } from './color_settings.js';
+import { EventCategory, EventFilter } from './events_filter.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
 type TooltipHandler = (dataPointIndex: number) => Element;
@@ -20,56 +20,62 @@ const dpsColor = '#ed5653';
 const manaColor = '#2E93fA';
 const threatColor = '#b56d07';
 
+// How the timeline shows the iteration. The rotation has a row per ability, aura and resource.
+// The chart draws DPS, mana and threat over time.
+export type TimelineMode = 'rotation' | 'chart';
+
+export interface TimelineConfig extends ResultComponentConfig {
+	filter: EventFilter;
+}
+
+// One row of the rotation, with the label on the left and the events on the right. We keep them
+// so the filter can show and hide rows without drawing the rotation again.
+interface RotationRow {
+	label: HTMLElement;
+	row: HTMLElement;
+	name: string;
+	actionId: ActionId | null;
+	category: EventCategory;
+}
+
+// Pixels per second of the rotation at each zoom step.
+const zoomLevels = [10, 20, 40, 70, 100, 150, 250, 400];
+const defaultZoomIndex = zoomLevels.indexOf(100);
+
 export class Timeline extends ResultComponent {
+	private readonly filter: EventFilter;
+
 	private readonly dpsResourcesPlotElem: HTMLElement;
 	private dpsResourcesPlot: any;
 
 	private readonly rotationPlotElem: HTMLElement;
 	private readonly rotationLabels: HTMLElement;
 	private readonly rotationTimeline: HTMLElement;
-	private readonly rotationHiddenIdsContainer: HTMLElement;
-	private readonly chartPicker: HTMLSelectElement;
+	private readonly emptyElem: HTMLElement;
 
 	private resultData: SimResultData | null;
 	private rendered: boolean;
+	// Set when something changed while the timeline was hidden, so we draw it once it shows.
+	private dirty = true;
+	private mode: TimelineMode = 'rotation';
 
-	private hiddenIds: Array<ActionId>;
-	private hiddenIdsChangeEmitter;
+	private rows: Array<RotationRow | 'separator'> = [];
+	private separators: Array<HTMLElement[]> = [];
+
+	// The part of the iteration we draw, in seconds, from the filter's time range.
+	private viewStart = 0;
+	private viewEnd = 1;
+	private zoomIndex = defaultZoomIndex;
 
 	private resetCallbacks: (() => void)[] = [];
 
-	constructor(config: ResultComponentConfig) {
+	constructor(config: TimelineConfig) {
 		config.rootCssClass = 'timeline-root';
 		super(config);
+		this.filter = config.filter;
 		this.resultData = null;
 		this.rendered = false;
-		this.hiddenIds = [];
-		this.hiddenIdsChangeEmitter = new TypedEvent<void>();
 
-		this.rootElem.appendChild(
-			<div className="timeline-disclaimer">
-				<div className="d-flex flex-column">
-					<p>
-						<i className="warning fa fa-exclamation-triangle fa-xl me-2"></i>
-						Timeline data visualizes only 1 sim iteration.
-					</p>
-					<p>
-						Note: You can move the timeline by holding <kbd>Shift</kbd> while scrolling, or by clicking and dragging.
-					</p>
-				</div>
-				<select className="timeline-chart-picker form-select">
-					<option className="rotation-option" value="rotation">
-						Rotation
-					</option>
-					<option className="dps-option" value="dps">
-						DPS
-					</option>
-					<option className="threat-option" value="threat">
-						Threat
-					</option>
-				</select>
-			</div>,
-		);
 		this.rootElem.appendChild(
 			<div className="timeline-plots-container">
 				<div className="timeline-plot dps-resources-plot hide"></div>
@@ -78,22 +84,10 @@ export class Timeline extends ResultComponent {
 						<div className="rotation-labels"></div>
 						<div className="rotation-timeline" draggable={true}></div>
 					</div>
-					<div className="rotation-hidden-ids"></div>
 				</div>
+				<div className="events-empty hide">No rows match the filter.</div>
 			</div>,
 		);
-
-		this.chartPicker = this.rootElem.querySelector('.timeline-chart-picker')!;
-		this.chartPicker.addEventListener('change', () => {
-			if (this.chartPicker.value == 'rotation') {
-				this.dpsResourcesPlotElem.classList.add('hide');
-				this.rotationPlotElem.classList.remove('hide');
-			} else {
-				this.dpsResourcesPlotElem.classList.remove('hide');
-				this.rotationPlotElem.classList.add('hide');
-			}
-			this.updatePlot();
-		});
 
 		this.dpsResourcesPlotElem = this.rootElem.querySelector('.dps-resources-plot')!;
 		this.dpsResourcesPlot = new ApexCharts(this.dpsResourcesPlotElem, {
@@ -102,7 +96,8 @@ export class Timeline extends ResultComponent {
 					enabled: false,
 				},
 				background: 'transparent',
-				foreColor: 'white',
+				foreColor: '#8e948f',
+				fontFamily: 'inherit',
 				height: '100%',
 				id: 'dpsResources',
 				type: 'line',
@@ -110,6 +105,9 @@ export class Timeline extends ResultComponent {
 					enabled: true,
 					allowMouseWheelZoom: false,
 				},
+			},
+			grid: {
+				borderColor: 'rgba(255, 255, 255, 0.06)',
 			},
 			series: [], // Set dynamically
 			xaxis: {
@@ -130,7 +128,7 @@ export class Timeline extends ResultComponent {
 		this.rotationPlotElem = this.rootElem.querySelector('.rotation-plot')!;
 		this.rotationLabels = this.rootElem.querySelector('.rotation-labels')!;
 		this.rotationTimeline = this.rootElem.querySelector('.rotation-timeline')!;
-		this.rotationHiddenIdsContainer = this.rootElem.querySelector('.rotation-hidden-ids')!;
+		this.emptyElem = this.rootElem.querySelector('.events-empty')!;
 
 		let isMouseDown = false;
 		let startX = 0;
@@ -142,30 +140,95 @@ export class Timeline extends ResultComponent {
 			isMouseDown = true;
 			startX = event.pageX - this.rotationTimeline.offsetLeft;
 			scrollLeft = this.rotationTimeline.scrollLeft;
+			this.rotationTimeline.classList.add('dragging');
 		});
-		this.rotationTimeline.addEventListener('mouseleave', () => {
+		const stopDrag = () => {
 			isMouseDown = false;
-			this.rotationTimeline.classList.remove('active');
-		});
-		this.rotationTimeline.addEventListener('mouseup', () => {
-			isMouseDown = false;
-			this.rotationTimeline.classList.remove('active');
-		});
+			this.rotationTimeline.classList.remove('dragging');
+		};
+		this.rotationTimeline.addEventListener('mouseleave', stopDrag);
+		this.rotationTimeline.addEventListener('mouseup', stopDrag);
 		this.rotationTimeline.addEventListener('mousemove', event => {
 			if (!isMouseDown) return;
 			event.preventDefault();
 			const x = event.pageX - this.rotationTimeline.offsetLeft;
-			const walk = (x - startX) * 3; //scroll-fast
+			const walk = x - startX;
 			this.rotationTimeline.scrollLeft = scrollLeft - walk;
+		});
+
+		let lastRange = [this.filter.from, this.filter.to];
+		this.filter.changeEmitter.on(() => {
+			// A new time range moves everything, so we draw the timeline again. The other filters
+			// only show and hide rows.
+			const rangeChanged = lastRange[0] != this.filter.from || lastRange[1] != this.filter.to;
+			lastRange = [this.filter.from, this.filter.to];
+			if (rangeChanged) {
+				this.invalidate();
+			} else {
+				this.applyFilter();
+			}
 		});
 	}
 
 	onSimResult(resultData: SimResultData) {
 		this.resultData = resultData;
+		this.invalidate();
+	}
 
-		if (this.rendered) {
-			this.updatePlot();
+	setMode(mode: TimelineMode) {
+		if (this.mode == mode) return;
+		this.mode = mode;
+		this.dpsResourcesPlotElem.classList.toggle('hide', mode != 'chart');
+		this.rotationPlotElem.classList.toggle('hide', mode != 'rotation');
+		this.invalidate();
+	}
+
+	canZoomIn(): boolean {
+		return this.zoomIndex < zoomLevels.length - 1;
+	}
+
+	canZoomOut(): boolean {
+		return this.zoomIndex > 0;
+	}
+
+	// Zooms the rotation in or out a step, keeping the time in the middle of the view where it is.
+	zoom(step: 1 | -1) {
+		const newIndex = Math.min(zoomLevels.length - 1, Math.max(0, this.zoomIndex + step));
+		if (newIndex == this.zoomIndex) return;
+		const middle = this.leftToTime(this.rotationTimeline.scrollLeft + this.rotationTimeline.clientWidth / 2);
+		this.zoomIndex = newIndex;
+		this.invalidate();
+		this.rotationTimeline.scrollLeft = this.timeToLeftValue(middle) - this.rotationTimeline.clientWidth / 2;
+	}
+
+	// Scrolls the rotation so this time shows near its left side.
+	scrollToTime(time: number) {
+		this.renderIfDirty();
+		this.rotationTimeline.scrollLeft = Math.max(0, this.timeToLeftValue(time) - this.rotationTimeline.clientWidth / 5);
+		this.rotationTimeline.querySelector('.rotation-timeline-marker')?.remove();
+		const marker = <div className="rotation-timeline-marker" style={{ left: this.timeToLeft(time) }} />;
+		this.rotationTimeline.appendChild(marker);
+	}
+
+	private invalidate() {
+		this.dirty = true;
+		if (this.isVisible()) this.renderIfDirty();
+	}
+
+	private isVisible(): boolean {
+		return this.rootElem.offsetParent != null;
+	}
+
+	// The timeline needs its size to draw, so it only draws while we can see it.
+	renderIfDirty() {
+		if (!this.dirty || !this.isVisible()) return;
+		this.dirty = false;
+		this.reset();
+		if (!this.rendered) {
+			this.dpsResourcesPlot.render();
+			this.rendered = true;
 		}
+		this.updatePlot();
 	}
 
 	private updatePlot() {
@@ -174,6 +237,27 @@ export class Timeline extends ResultComponent {
 		}
 
 		const duration = this.resultData!.result.result.firstIterationDuration || 1;
+		this.viewStart = Math.max(0, Math.min(this.filter.from ?? 0, duration));
+		this.viewEnd = Math.min(duration, this.filter.to ?? duration);
+		if (this.viewEnd <= this.viewStart) {
+			this.viewEnd = Math.min(duration, this.viewStart + 1);
+		}
+
+		const players = this.resultData!.result.getRaidIndexedPlayers(this.resultData!.filter);
+
+		// The rotation follows one player. With more than one we can only show the chart.
+		if (this.mode == 'rotation' && players.length == 1) {
+			try {
+				this.updateRotationChart(players[0], duration);
+			} catch (e) {
+				console.log('Failed to update rotation chart: ', e);
+			}
+			return;
+		}
+		this.clearRotationChart();
+		this.dpsResourcesPlotElem.classList.remove('hide');
+		this.rotationPlotElem.classList.add('hide');
+
 		const options: any = {
 			theme: {
 				mode: 'dark',
@@ -181,8 +265,9 @@ export class Timeline extends ResultComponent {
 			series: [],
 			colors: [],
 			xaxis: {
-				min: 0,
-				max: duration,
+				type: 'numeric',
+				min: this.viewStart,
+				max: this.viewEnd,
 				tickAmount: 10,
 				decimalsInFloat: 1,
 				labels: {
@@ -198,8 +283,8 @@ export class Timeline extends ResultComponent {
 					beforeResetZoom: () => {
 						return {
 							xaxis: {
-								min: 0,
-								max: duration,
+								min: this.viewStart,
+								max: this.viewEnd,
 							},
 						};
 					},
@@ -222,21 +307,8 @@ export class Timeline extends ResultComponent {
 			},
 		};
 
-		const players = this.resultData!.result.getRaidIndexedPlayers(this.resultData!.filter);
 		if (players.length == 1) {
 			const player = players[0];
-
-			const rotationOption = this.rootElem.querySelector('.rotation-option')!;
-			rotationOption.classList.remove('hide');
-			const threatOption = this.rootElem.querySelector('.threat-option')!;
-			threatOption.classList.add('hide');
-
-			try {
-				this.updateRotationChart(player, duration);
-			} catch (e) {
-				console.log('Failed to update rotation chart: ', e);
-			}
-
 			const dpsData = this.addDpsSeries(player, options, '');
 			this.addDpsYAxis(dpsData.maxDps, options);
 			tooltipHandlers.push(dpsData.tooltipHandler);
@@ -246,34 +318,13 @@ export class Timeline extends ResultComponent {
 
 			this.addMajorCooldownAnnotations(player, options);
 		} else {
-			if (this.chartPicker.value == 'rotation') {
-				this.chartPicker.value = 'dps';
-				return;
-			}
-			const rotationOption = this.rootElem.querySelector('.rotation-option')!;
-			rotationOption.classList.add('hide');
-			const threatOption = this.rootElem.querySelector('.threat-option')!;
-			threatOption.classList.remove('hide');
-
-			this.clearRotationChart();
-
-			if (this.chartPicker.value == 'dps') {
-				let maxDps = 0;
-				players.forEach(player => {
-					const dpsData = this.addDpsSeries(player, options, `var(--bs-${player.classColor}`);
-					maxDps = Math.max(maxDps, dpsData.maxDps);
-					tooltipHandlers.push(dpsData.tooltipHandler);
-				});
-				this.addDpsYAxis(maxDps, options);
-			} else {
-				// threat
-				let maxThreat = 0;
-				players.forEach(player => {
-					tooltipHandlers.push(this.addThreatSeries(player, options, player.classColor));
-					maxThreat = Math.max(maxThreat, player.maxThreat);
-				});
-				this.addThreatYAxis(maxThreat, options);
-			}
+			let maxDps = 0;
+			players.forEach(player => {
+				const dpsData = this.addDpsSeries(player, options, `var(--bs-${player.classColor}`);
+				maxDps = Math.max(maxDps, dpsData.maxDps);
+				tooltipHandlers.push(dpsData.tooltipHandler);
+			});
+			this.addDpsYAxis(maxDps, options);
 		}
 
 		this.dpsResourcesPlot.updateOptions(options);
@@ -305,37 +356,6 @@ export class Timeline extends ResultComponent {
 				minWidth: 30,
 				style: {
 					colors: [dpsColor],
-				},
-			},
-		});
-	}
-
-	private addThreatYAxis(maxThreat: number, options: any) {
-		const axisMax = Math.ceil(maxThreat / 10000) * 10000;
-		options.yaxis.push({
-			color: threatColor,
-			seriesName: 'Threat',
-			min: 0,
-			max: axisMax,
-			tickAmount: 10,
-			decimalsInFloat: 0,
-			title: {
-				text: 'Threat',
-				style: {
-					color: threatColor,
-				},
-			},
-			axisBorder: {
-				show: true,
-				color: threatColor,
-			},
-			axisTicks: {
-				color: threatColor,
-			},
-			labels: {
-				minWidth: 30,
-				style: {
-					colors: [threatColor],
 				},
 			},
 		});
@@ -491,13 +511,9 @@ export class Timeline extends ResultComponent {
 		this.rotationLabels.appendChild(<div className="rotation-label-header"></div>);
 
 		this.rotationTimeline.innerText = '';
-		this.rotationTimeline.appendChild(
-			<div className="rotation-timeline-header">
-				<canvas className="rotation-timeline-canvas"></canvas>
-			</div>,
-		);
-		this.rotationHiddenIdsContainer.innerText = '';
-		this.hiddenIdsChangeEmitter = new TypedEvent<void>();
+		this.rotationTimeline.appendChild(<div className="rotation-timeline-header"></div>);
+		this.rows = [];
+		this.separators = [];
 	}
 
 	private updateRotationChart(player: UnitMetrics, duration: number) {
@@ -508,12 +524,10 @@ export class Timeline extends ResultComponent {
 		const target = targets[0];
 
 		this.clearRotationChart();
+		this.dpsResourcesPlotElem.classList.add('hide');
+		this.rotationPlotElem.classList.remove('hide');
 
-		try {
-			this.drawRotationTimeRuler(this.rotationTimeline.querySelector('.rotation-timeline-canvas')!, duration);
-		} catch (e) {
-			console.log('Failed to draw rotation: ', e);
-		}
+		this.drawRotationTimeRuler(this.rotationTimeline.querySelector('.rotation-timeline-header')!);
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 
@@ -524,7 +538,7 @@ export class Timeline extends ResultComponent {
 		const buffsAndDebuffsById = buffsById.concat(debuffsById);
 
 		const playerCastsByAbility = this.getSortedCastsByAbility(player);
-		playerCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
+		playerCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById));
 
 		if (player.pets.length > 0) {
 			const playerPets = new Map<string, UnitMetrics>();
@@ -542,11 +556,11 @@ export class Timeline extends ResultComponent {
 			});
 
 			playerPets.forEach(pet => {
-				this.addSeparatorRow(duration);
-				this.addPetRow(pet.name, duration);
+				this.addSeparatorRow();
+				this.addPetRow(pet.name);
 				orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, pet.groupedResourceLogs[resourceType], duration));
 				const petCastsByAbility = this.getSortedCastsByAbility(pet);
-				petCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
+				petCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById));
 			});
 		}
 
@@ -555,22 +569,69 @@ export class Timeline extends ResultComponent {
 			playerCastsByAbility.findIndex(casts => casts[0].actionId!.equalsIgnoringTag(auraUptimeLogs[0].actionId!)),
 		);
 		if (buffsToShow.length > 0) {
-			this.addSeparatorRow(duration);
-			buffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs, duration));
+			this.addSeparatorRow();
+			buffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs));
 		}
 
 		const targetCastsByAbility = this.getSortedCastsByAbility(target);
 		if (targetCastsByAbility.length > 0) {
-			this.addSeparatorRow(duration);
-			targetCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
+			this.addSeparatorRow();
+			targetCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById));
 		}
 
 		// Add a row for all debuffs, even those which have already been visualized in a cast row.
 		const debuffsToShow = debuffsById;
 		if (debuffsToShow.length > 0) {
-			this.addSeparatorRow(duration);
-			debuffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs, duration));
+			this.addSeparatorRow();
+			debuffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs));
 		}
+
+		this.applyFilter();
+	}
+
+	// Shows the rows the filter lets through, and the separators between groups that still have
+	// a row.
+	private applyFilter() {
+		let anyShown = false;
+		this.rows.forEach(entry => {
+			if (entry == 'separator') return;
+			const shown = this.isRowShown(entry);
+			entry.label.classList.toggle('hide', !shown);
+			entry.row.classList.toggle('hide', !shown);
+			anyShown ||= shown;
+		});
+
+		// A separator shows only when there are rows shown both above and below it.
+		let shownAbove = false;
+		let pending: HTMLElement[] | null = null;
+		let separatorIndex = 0;
+		this.rows.forEach(entry => {
+			if (entry == 'separator') {
+				const separator = this.separators[separatorIndex++];
+				separator.forEach(e => e.classList.add('hide'));
+				if (shownAbove) pending = separator;
+				return;
+			}
+			if (!entry.label.classList.contains('hide')) {
+				pending?.forEach(e => e.classList.remove('hide'));
+				pending = null;
+				shownAbove = true;
+			}
+		});
+
+		this.emptyElem.classList.toggle('hide', anyShown || this.rows.length == 0 || this.mode != 'rotation');
+	}
+
+	private isRowShown(row: RotationRow): boolean {
+		if (!this.filter.categories.has(row.category)) return false;
+		if (row.actionId && this.filter.isHidden(row.actionId)) return false;
+		return this.filter.matchesText(row.name.toLowerCase());
+	}
+
+	private addRow(row: RotationRow) {
+		this.rows.push(row);
+		this.rotationLabels.appendChild(row.label);
+		this.rotationTimeline.appendChild(row.row);
 	}
 
 	private getSortedCastsByAbility(player: UnitMetrics): Array<Array<CastLog>> {
@@ -614,106 +675,72 @@ export class Timeline extends ResultComponent {
 		return castsByAbility;
 	}
 
-	private makeLabelElem(actionId: ActionId, isHiddenLabel: boolean, isAura?: boolean): JSX.Element {
+	private makeLabelElem(actionId: ActionId, isAura?: boolean): HTMLElement {
 		const labelText = idsToGroupForRotation.includes(actionId.spellId) ? actionId.baseName : actionId.name;
 		const labelIcon = ref<HTMLAnchorElement>();
-		const hideElem = ref<HTMLElement>();
+		const hideElem = ref<HTMLButtonElement>();
 		const labelElem = (
-			<div className={`rotation-label rotation-row ${isHiddenLabel ? 'rotation-label-hidden' : ''}`}>
-				<span ref={hideElem} className={`fas fa-eye${isHiddenLabel ? '' : '-slash'}`}></span>
+			<div className="rotation-label rotation-row">
 				<a ref={labelIcon} className="rotation-label-icon"></a>
 				<span className="rotation-label-text">{labelText}</span>
+				<button ref={hideElem} className="rotation-label-hide" type="button">
+					<i className="fas fa-eye-slash" />
+				</button>
 			</div>
-		);
-		const onClickHandler = () => {
-			if (isHiddenLabel) {
-				const index = this.hiddenIds.findIndex(hiddenId => hiddenId.equals(actionId));
-				if (index != -1) {
-					this.hiddenIds.splice(index, 1);
-				}
-			} else {
-				this.hiddenIds.push(actionId);
-			}
-			this.hiddenIdsChangeEmitter.emit(TypedEvent.nextEventID());
-		};
+		) as HTMLElement;
+		const onClickHandler = () => this.filter.hide(actionId);
 		hideElem.value!.addEventListener('click', onClickHandler);
 		const tooltip = tippy(hideElem.value!, {
-			theme: 'timeline-tooltip',
 			placement: 'bottom',
-			content: isHiddenLabel ? 'Show Row' : 'Hide Row',
+			content: 'Hide row',
 		});
 
-		const updateHidden = () => {
-			if (isHiddenLabel == Boolean(this.hiddenIds.find(hiddenId => hiddenId.equals(actionId)))) {
-				labelElem.classList.remove('hide');
-			} else {
-				labelElem.classList.add('hide');
-			}
-		};
-		const event = this.hiddenIdsChangeEmitter.on(updateHidden);
-		updateHidden();
 		actionId.setBackgroundAndHref(labelIcon.value!);
 		actionId.setWowheadDataset(labelIcon.value!, { useBuffAura: isAura });
 
 		this.addOnResetCallback(() => {
 			hideElem.value?.removeEventListener('click', onClickHandler);
 			tooltip.destroy();
-			event.dispose();
 		});
 
 		return labelElem;
 	}
 
-	private makeRowElem(actionId: ActionId, duration: number): JSX.Element {
-		const rowElem = (
+	private makeRowElem(): HTMLElement {
+		return (
 			<div
 				className="rotation-timeline-row rotation-row"
 				style={{
-					width: this.timeToPx(duration),
+					width: this.viewWidthPx(),
 				}}></div>
-		);
-
-		const updateHidden = () => {
-			if (this.hiddenIds.find(hiddenId => hiddenId.equals(actionId))) {
-				rowElem.classList.add('hide');
-			} else {
-				rowElem.classList.remove('hide');
-			}
-		};
-		const event = this.hiddenIdsChangeEmitter.on(updateHidden);
-		updateHidden();
-		this.addOnResetCallback(() => event.dispose());
-		return rowElem;
+		) as HTMLElement;
 	}
 
-	private addPetRow(petName: string, duration: number) {
+	private addPetRow(petName: string) {
 		const actionId = ActionId.fromPetName(petName);
-		const rowElem = this.makeRowElem(actionId, duration);
-
-		const iconElem = document.createElement('div');
-		this.rotationLabels.appendChild(iconElem);
+		const labelElem = (<div className="rotation-label rotation-row rotation-pet-label"></div>) as HTMLElement;
+		this.addRow({ label: labelElem, row: this.makeRowElem(), name: petName, actionId: null, category: 'casts' });
 
 		actionId.fill().then(filledActionId => {
 			const labelText = idsToGroupForRotation.includes(filledActionId.spellId) ? filledActionId.baseName : filledActionId.name;
 			const labelIcon = ref<HTMLAnchorElement>();
-			const labelElem = (
-				<div className="rotation-label rotation-row">
+			labelElem.appendChild(
+				<>
 					<a ref={labelIcon} className="rotation-label-icon"></a>
 					<span className="rotation-label-text">{labelText}</span>
-				</div>
+				</>,
 			);
 			filledActionId.setBackgroundAndHref(labelIcon.value!);
-			iconElem.appendChild(labelElem);
 		});
-
-		this.rotationTimeline.appendChild(rowElem);
 	}
 
-	private addSeparatorRow(duration: number) {
-		const separatorElem = <div className="rotation-timeline-separator"></div>;
-		this.rotationLabels.appendChild(separatorElem.cloneNode());
-		separatorElem.style.width = this.timeToPx(duration);
-		this.rotationTimeline.appendChild(separatorElem);
+	private addSeparatorRow() {
+		const labelSeparator = (<div className="rotation-timeline-separator"></div>) as HTMLElement;
+		const rowSeparator = (<div className="rotation-timeline-separator" style={{ width: this.viewWidthPx() }}></div>) as HTMLElement;
+		this.rotationLabels.appendChild(labelSeparator);
+		this.rotationTimeline.appendChild(rowSeparator);
+		this.rows.push('separator');
+		this.separators.push([labelSeparator, rowSeparator]);
 	}
 
 	private addResourceRow(resourceType: ResourceType, resourceLogs: Array<ResourceChangedLogGroup>, duration: number) {
@@ -731,17 +758,9 @@ export class Timeline extends ResultComponent {
 					}}></a>
 				<span className="rotation-label-text">{resourceNames.get(resourceType)}</span>
 			</div>
-		);
+		) as HTMLElement;
 
-		this.rotationLabels.appendChild(labelElem);
-
-		const rowElem = (
-			<div
-				className="rotation-timeline-row rotation-row"
-				style={{
-					width: this.timeToPx(duration),
-				}}></div>
-		);
+		const rowElem = this.makeRowElem();
 
 		resourceLogs.forEach((resourceLogGroup, i) => {
 			const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
@@ -749,7 +768,7 @@ export class Timeline extends ResultComponent {
 				<div
 					className={`rotation-timeline-resource series-color ${cNames}`}
 					style={{
-						left: this.timeToPx(resourceLogGroup.timestamp),
+						left: this.timeToLeft(resourceLogGroup.timestamp),
 						width: this.timeToPx((resourceLogs[i + 1]?.timestamp || duration) - resourceLogGroup.timestamp),
 					}}></div>
 			);
@@ -775,16 +794,13 @@ export class Timeline extends ResultComponent {
 			});
 			this.addOnResetCallback(() => tooltip.destroy());
 		});
-		this.rotationTimeline.appendChild(rowElem);
+		this.addRow({ label: labelElem, row: rowElem, name: resourceNames.get(resourceType)!, actionId: null, category: 'resources' });
 	}
 
-	private addCastRow(castLogs: Array<CastLog>, aurasById: Array<Array<AuraUptimeLog>>, duration: number) {
+	private addCastRow(castLogs: Array<CastLog>, aurasById: Array<Array<AuraUptimeLog>>) {
 		const actionId = castLogs[0].actionId!;
-
-		this.rotationLabels.appendChild(this.makeLabelElem(actionId, false));
-		this.rotationHiddenIdsContainer.appendChild(this.makeLabelElem(actionId, true));
-
-		const rowElem = this.makeRowElem(actionId, duration);
+		const rowElem = this.makeRowElem();
+		this.addRow({ label: this.makeLabelElem(actionId), row: rowElem, name: actionId.name, actionId, category: 'casts' });
 
 		let stackedIconCount = 1;
 		let stackedDamageCount = 1;
@@ -794,7 +810,7 @@ export class Timeline extends ResultComponent {
 				<div
 					className="rotation-timeline-cast"
 					style={{
-						left: this.timeToPx(castLog.timestamp),
+						left: this.timeToLeft(castLog.timestamp),
 						minWidth: this.timeToPx(castLog.castTime + castLog.travelTime),
 					}}></div>
 			);
@@ -915,7 +931,7 @@ export class Timeline extends ResultComponent {
 						<div
 							className="rotation-timeline-tick"
 							style={{
-								left: this.timeToPx(ddl.timestamp),
+								left: this.timeToLeft(ddl.timestamp),
 							}}
 						/>
 					);
@@ -941,17 +957,13 @@ export class Timeline extends ResultComponent {
 		aurasById
 			.filter(auraUptimeLogs => auraUptimeLogs[0].actionId!.equalsIgnoringTag(actionId))
 			.forEach(auraUptimeLogs => this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem));
-
-		this.rotationTimeline.appendChild(rowElem);
 	}
 
-	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>, duration: number) {
+	private addAuraRow(auraUptimeLogs: Array<AuraUptimeLog>) {
 		const actionId = auraUptimeLogs[0].actionId!;
 
-		const rowElem = this.makeRowElem(actionId, duration);
-		this.rotationLabels.appendChild(this.makeLabelElem(actionId, false, true));
-		this.rotationHiddenIdsContainer.appendChild(this.makeLabelElem(actionId, true, true));
-		this.rotationTimeline.appendChild(rowElem);
+		const rowElem = this.makeRowElem();
+		this.addRow({ label: this.makeLabelElem(actionId, true), row: rowElem, name: actionId.name, actionId, category: 'auras' });
 
 		this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem);
 	}
@@ -962,7 +974,7 @@ export class Timeline extends ResultComponent {
 				<div
 					className="rotation-timeline-aura"
 					style={{
-						left: this.timeToPx(aul.gainedAt),
+						left: this.timeToLeft(aul.gainedAt),
 						minWidth: this.timeToPx(aul.fadedAt === aul.gainedAt ? 0.001 : aul.fadedAt - aul.gainedAt),
 					}}
 				/>
@@ -1003,58 +1015,60 @@ export class Timeline extends ResultComponent {
 		});
 	}
 
+	private get pxPerSecond(): number {
+		return zoomLevels[this.zoomIndex];
+	}
+
+	// For lengths, like how long a cast or an aura lasts.
 	private timeToPxValue(time: number): number {
-		return time * 100;
+		return time * this.pxPerSecond;
 	}
 	private timeToPx(time: number): string {
 		return this.timeToPxValue(time) + 'px';
 	}
 
-	private drawRotationTimeRuler(canvas: HTMLCanvasElement, duration: number) {
-		const height = 30;
-		canvas.width = this.timeToPxValue(duration);
-		canvas.height = height;
+	// For where something starts, measured from the start of the time range we draw.
+	private timeToLeftValue(time: number): number {
+		return (time - this.viewStart) * this.pxPerSecond;
+	}
+	private timeToLeft(time: number): string {
+		return this.timeToLeftValue(time) + 'px';
+	}
+	private leftToTime(left: number): number {
+		return this.viewStart + left / this.pxPerSecond;
+	}
 
-		const ctx = canvas.getContext('2d')!;
-		ctx.strokeStyle = 'white';
+	private viewWidthPx(): string {
+		return this.timeToPx(this.viewEnd - this.viewStart);
+	}
 
-		ctx.font = 'bold 14px SimDefaultFont';
-		ctx.fillStyle = 'white';
-		ctx.lineWidth = 2;
-		ctx.beginPath();
+	// The time ruler above the rotation. We pick the spacing of the labels from the zoom, so they
+	// stay about 60px or more apart.
+	private drawRotationTimeRuler(header: HTMLElement) {
+		const [labelStep, tickStep] = rulerSteps.find(([label]) => label * this.pxPerSecond >= 60) ?? rulerSteps[rulerSteps.length - 1];
+		header.style.width = this.viewWidthPx();
 
-		// Bottom border line
-		ctx.moveTo(0, height);
-		ctx.lineTo(canvas.width, height);
+		// Faint lines down the rows at each label, so we can follow a time from the ruler.
+		const gridStep = labelStep * this.pxPerSecond;
+		this.rotationTimeline.style.setProperty('--grid-step', `${gridStep}px`);
+		this.rotationTimeline.style.setProperty('--grid-offset', `${-((this.viewStart % labelStep) * this.pxPerSecond)}px`);
 
-		// Tick lines
-		const numTicks = 1 + Math.floor(duration * 10);
-		for (let i = 0; i <= numTicks; i++) {
-			const time = i * 0.1;
-			let x = this.timeToPxValue(time);
-			if (i == 0) {
-				ctx.textAlign = 'left';
-				x++;
-			} else if (i % 10 == 0 && time + 1 > duration) {
-				ctx.textAlign = 'right';
-				x--;
-			} else {
-				ctx.textAlign = 'center';
+		const ticks: Array<Element> = [];
+		const firstTick = Math.ceil(this.viewStart / tickStep - 1e-6);
+		const lastTick = Math.floor(this.viewEnd / tickStep + 1e-6);
+		for (let i = firstTick; i <= lastTick; i++) {
+			const time = i * tickStep;
+			const isLabel = Math.abs(time / labelStep - Math.round(time / labelStep)) < 1e-6;
+			ticks.push(<div className={`rotation-ruler-tick${isLabel ? ' major' : ''}`} style={{ left: this.timeToLeft(time) }} />);
+			if (isLabel) {
+				ticks.push(
+					<div className="rotation-ruler-label" style={{ left: this.timeToLeft(time) }}>
+						{formatRulerTime(time)}
+					</div>,
+				);
 			}
-
-			let lineHeight = 0;
-			if (i % 10 == 0) {
-				lineHeight = height * 0.5;
-				ctx.fillText(time + 's', x, height - height * 0.6);
-			} else if (i % 5 == 0) {
-				lineHeight = height * 0.25;
-			} else {
-				lineHeight = height * 0.125;
-			}
-			ctx.moveTo(x, height);
-			ctx.lineTo(x, height - lineHeight);
 		}
-		ctx.stroke();
+		header.replaceChildren(...ticks);
 	}
 
 	private dpsTooltip(log: DpsLog, _includeAuras: boolean, player: UnitMetrics, colorOverride: string) {
@@ -1185,13 +1199,6 @@ export class Timeline extends ResultComponent {
 				</ul>
 			</div>
 		);
-	}
-
-	render() {
-		this.reset();
-		this.dpsResourcesPlot.render();
-		this.rendered = true;
-		this.updatePlot();
 	}
 
 	addOnResetCallback(callback: () => void) {
@@ -1415,3 +1422,22 @@ const idsToGroupForRotation: Array<number> = [
 ];
 
 const percentageResources: Array<ResourceType> = [ResourceType.ResourceTypeHealth, ResourceType.ResourceTypeMana];
+
+// Pairs of seconds between ruler labels and seconds between its small ticks, from fine to coarse.
+const rulerSteps: Array<[number, number]> = [
+	[0.5, 0.1],
+	[1, 0.2],
+	[2, 0.5],
+	[5, 1],
+	[10, 2],
+	[15, 5],
+	[30, 5],
+	[60, 10],
+];
+
+const formatRulerTime = (time: number): string => {
+	if (time < 60) return `${Number(time.toFixed(1))}s`;
+	const minutes = Math.floor(time / 60);
+	const seconds = Math.round(time - minutes * 60);
+	return `${minutes}:${String(seconds).padStart(2, '0')}`;
+};
