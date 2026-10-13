@@ -45,24 +45,37 @@ type RageBarOptions struct {
 // two-hander. Nobody has measured the off hand, so it gets the same (standards 21). Talent
 // multipliers (Dual Wield Specialization's off hand Rage) and the crit bonus stay on top. All of
 // it is an assumption until the beta test in orchestration/followups.md ("Rage needs a beta
-// test"). The multipliers are for the dashboard's assumption runs (spec_assumptions.md,
-// warr_rage_norm).
+// test"). k is a level 30 number, and flat at 60 it gives about half of Classic's Rage a swing, so
+// how it grows past 30 is an assumption too (standards 21): k(L) = k30 × (1 + s × (L − 30) / 30),
+// with s = 0 flat, 0.5 the midpoint (×1.5 at 60, the default) and 1 Classic-like (×2 at 60). The
+// variables are for the dashboard's assumption runs (spec_assumptions.md, warr_rage_k and
+// warr_rage_oh).
 var (
 	ForeverNormalizedRageOneHand  = 3.46
 	ForeverNormalizedRageTwoHand  = 4.5
 	ForeverNormalizedRageK        = 1.0 // Multiplies both constants
 	ForeverNormalizedRageOffHand  = 1.0 // Off hand factor
+	ForeverNormalizedRageScaling  = 0.5 // s, how k grows from level 30 to 60
 	foreverTwoHandNormalizedSpeed = 3.3
 )
 
-// ForeverNormalizedRage is the Rage a landed white hit with this weapon gives under Forever,
-// before the off hand, crit and talent multipliers.
-func ForeverNormalizedRage(weapon *Weapon) float64 {
+// ForeverNormalizedRageLevelFactor is k(level) / k(30): 1 up to level 30, then
+// 1 + s × (level − 30) / 30.
+func ForeverNormalizedRageLevelFactor(level int32) float64 {
+	if level <= 30 {
+		return 1
+	}
+	return 1 + ForeverNormalizedRageScaling*float64(level-30)/30
+}
+
+// ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
+// level under Forever, before the off hand, crit and talent multipliers.
+func ForeverNormalizedRage(weapon *Weapon, level int32) float64 {
 	k := ForeverNormalizedRageOneHand
 	if weapon.NormalizedSwingSpeed >= foreverTwoHandNormalizedSpeed {
 		k = ForeverNormalizedRageTwoHand
 	}
-	return k * ForeverNormalizedRageK * weapon.SwingSpeed
+	return k * ForeverNormalizedRageK * ForeverNormalizedRageLevelFactor(level) * weapon.SwingSpeed
 }
 
 func GetRageConversion(attacker_level int32) float64 {
@@ -124,9 +137,9 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			if unit.rageBar.normalizedDealt {
 				// Dodges and parries give the same Rage as a hit, as Classic's do.
 				if spell.ProcMask == ProcMaskMeleeOHAuto {
-					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH()) * ForeverNormalizedRageOffHand
+					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * ForeverNormalizedRageOffHand
 				} else {
-					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.MH())
+					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.MH(), unit.Level)
 				}
 			}
 			generatedRage *= unit.rageBar.damageDealtMultiplier

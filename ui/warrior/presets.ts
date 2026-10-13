@@ -86,8 +86,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // on-use trinket with +335 attack power for 20 sec every 2 min (37 weighted on average, Earthstrike's
 // size; sim/warrior/forever_synthetic_trinkets.go).
 //
-// On 2026-10-13 the Level 60 Fury build (Human, 180 sec) does 943.0 on the Fury set, and the Era
-// Phase 1 set (phase_1.gear.json) 916.2 with the same talents and rotation.
+// On 2026-10-13 the Level 60 Fury build (Human, 180 sec) does 1029.9 on the Fury set, and the Era
+// Phase 1 set (phase_1.gear.json) 984.2 with the same talents and rotation.
 export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Fury)', Level60Phase1SyntheticFuryGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for a dual wield warrior, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -118,20 +118,20 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, 180 sec, with Forever's normalized Rage (standards 21: a white hit gives 3.46 Rage
-// a second of weapon speed, so less than Classic's Rage from damage): Whirlwind with 25 Rage, then
-// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 60 Rage, and
+// a second of weapon speed at level 30, ×1.5 at 60 with s = 0.5): Whirlwind with 25 Rage, then
+// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 40 Rage, and
 // Hamstring as a filler from 10 Rage (its hits proc Windfury Totem's extra attacks and Flurry).
 // Death Wish goes on cooldown and Recklessness at the pull with the other cooldowns: holding them
-// for the execute phase, where Execute spends all the Rage, lost 14 at 180 sec. Bloodrage under 40
+// for the execute phase, where Execute spends all the Rage, lost 14 at 180 sec with flat Rage. Bloodrage under 40
 // Rage, no Berserker Rage. The second Mighty Rage Potion and the on-use trinket's last use are held
 // for the last 20 and 25 sec when that costs no use. The Goblin Land Mine waits for the moment after
 // a main hand swing, since its 1 sec cast restarts both swing timers, and the Sapper goes on
 // cooldown ahead of it. Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
-// no use. It is 943.0 (Human) where the old DPS (With Reck) rotation is 909.7. Slam on its 18 sec
+// no use. It is 1029.9 (Human) where the old DPS (With Reck) rotation is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
-// Heroic Strike from 90 Rage instead of 60, Hamstring from 20, Bloodrage under 70, and Death Wish
+// Heroic Strike from 90 Rage instead of 40, Hamstring from 20, Bloodrage under 70, and Death Wish
 // held for the last 36 sec with Recklessness for the last 25. The second potion and the trinket's
 // last use are held for the last 20 and 25 sec.
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
@@ -176,7 +176,7 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury',
 	group: 'Level 60',
 });
 // Two-hand Fury from the same search on the two-hand set: Two-Handed Weapon Specialization in place
-// of Dual Wield Specialization and Furious Precision. 832.7 at 180 sec (Human), 12% behind dual wield
+// of Dual Wield Specialization and Furious Precision. 888.0 at 180 sec (Human), 14% behind dual wield
 // Fury but its own way to play, so it gets its own preset.
 export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 	'Level 60 Fury (Two-Hand)',
@@ -187,7 +187,7 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 // Weaponmaster (1% extra attacks a point with a sword), Improved Slam and Impale, and Cruelty,
 // Unbridled Wrath and Booming Voice in Fury. Arms cannot reach Death Wish. Booming Voice does
 // nothing here, since the raid has Battle Shout, but no other talent in reach does better with those
-// points. 859.2 at 180 sec (Human), 9% behind dual wield Fury and just ahead of two-hand Fury, its
+// points. 906.5 at 180 sec (Human), 12% behind dual wield Fury and just ahead of two-hand Fury, its
 // own preset as the Mortal Strike spec.
 export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Level 60 Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
@@ -399,16 +399,15 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-13 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 956.9 / 950.6 /
-// 929.1, Level 60 Fury (Two-Hand) (Undead) 867.2 / 835.0 / 811.1 and Level 60 Arms (Undead) 873.0 /
-// 861.4 / 841.0. Forever's normalized Rage (standards 21) cost 104 / 84 / 61 at 180 sec against
-// Classic's Rage from damage, after the searches re-tuned the Rage thresholds. Its unknowns move
-// these: the off hand at half Rage (TBC's rule) is 861.7 on Fury (-9.4%, the two-hand builds have
-// no off hand), and k 25% higher is 998.6 / 868.7 / 889.8 (+5.0 / +4.0 / +3.3%). The Ahn'Qiraj book
-// ranks being out (Heroic Strike VIII, the raid's Battle Shout VI, Strength of Earth and Grace of
-// Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (both
-// measured before normalized Rage). Undead has no weapon racial, so these are also the numbers with
-// weapon racials off.
+// On 2026-10-13 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1053.6 / 1037.0 /
+// 1013.5, Level 60 Fury (Two-Hand) (Undead) 930.9 / 890.6 / 864.8 and Level 60 Arms (Undead) 926.6 /
+// 909.0 / 886.7, with Forever's normalized Rage at s = 0.5 (standards 21). How k grows from level 30
+// to 60 is an assumption: flat (s = 0) is 950.6 / 835.0 / 861.4 at 180 sec, Classic-like (s = 1)
+// 1076.1 / 924.2 / 935.0, and the off hand at half Rage (s = 0.5) 945.1 on Fury (-8.9%; the
+// two-hand builds have no off hand). The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the
+// raid's Battle Shout VI, Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and
+// Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (both measured before normalized Rage). Undead has
+// no weapon racial, so these are also the numbers with weapon racials off.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -448,10 +447,10 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsArms,
 });
-// Against a Dragonkin boss (Undead, 20,000 iterations, 120 / 180 / 300 sec): 901.8 / 892.3 / 872.3,
-// where the generic Arms build does 873.0 / 861.4 / 841.0 (+3.6% at 180 sec). Fury doesn't get one:
-// Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.6%
-// on dual wield Fury and +0.6% on two-hand Fury at 180 sec.
+// Against a Dragonkin boss (Undead, 20,000 iterations, 120 / 180 / 300 sec): 955.6 / 940.0 / 918.0,
+// where the generic Arms build does 926.6 / 909.0 / 886.7 (+3.4% at 180 sec). Fury doesn't get one:
+// Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.5%
+// on dual wield Fury and +0.8% on two-hand Fury at 180 sec.
 export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Level 60 Arms (vs Dragonkin)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Arms with Spearing Strike, against a Giant or Dragonkin boss such as Onyxia.',

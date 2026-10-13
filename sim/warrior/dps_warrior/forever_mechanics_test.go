@@ -89,29 +89,53 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 		}
 	}
 
+	// At level 60 with the default s = 0.5, k is 1.5 times its level 30 value.
+	const l60 = 1.5
 	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
 	mh, oh := war.AutoAttacks.MHAuto(), war.AutoAttacks.OHAuto()
-	near("a 300 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 300), 3.46*2.6)
-	near("a 900 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 900), 3.46*2.6)
-	near("a main hand crit", whiteRage(sim, war, mh, core.OutcomeCrit, 600), 2*3.46*2.6)
-	near("a dodged main hand swing", whiteRage(sim, war, mh, core.OutcomeDodge, 0), 3.46*2.6)
-	near("a parried main hand swing", whiteRage(sim, war, mh, core.OutcomeParry, 0), 3.46*2.6)
-	near("a glancing main hand swing", whiteRage(sim, war, mh, core.OutcomeGlance, 200), 3.46*2.6)
+	near("a 300 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 300), l60*3.46*2.6)
+	near("a 900 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 900), l60*3.46*2.6)
+	near("a main hand crit", whiteRage(sim, war, mh, core.OutcomeCrit, 600), 2*l60*3.46*2.6)
+	near("a dodged main hand swing", whiteRage(sim, war, mh, core.OutcomeDodge, 0), l60*3.46*2.6)
+	near("a parried main hand swing", whiteRage(sim, war, mh, core.OutcomeParry, 0), l60*3.46*2.6)
+	near("a glancing main hand swing", whiteRage(sim, war, mh, core.OutcomeGlance, 200), l60*3.46*2.6)
 	near("a missed main hand swing", whiteRage(sim, war, mh, core.OutcomeMiss, 0), 0)
-	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), 3.46*2.5)
+	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), l60*3.46*2.5)
 
 	// Dual Wield Specialization's off hand Rage (10% a point) stays on top.
 	sim, war = newForeverWarriorArmed(t, "-00000005", 991014, 991015)
-	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*3.46*2.5)
+	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*l60*3.46*2.5)
 
 	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
-	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), 4.5*3.4)
-	near("a two-hander crit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeCrit, 1000), 2*4.5*3.4)
+	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), l60*4.5*3.4)
+	near("a two-hander crit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeCrit, 1000), 2*l60*4.5*3.4)
 
 	// Only white hits make Rage: an ability's damage and Deep Wounds' ticks make none.
 	sim, war = newForeverWarriorArmed(t, "00305003", 991014, 991015)
 	near("a Hamstring hit", whiteRage(sim, war, war.Hamstring.Spell, core.OutcomeHit, 500), 0)
 	near("a Deep Wounds hit", whiteRage(sim, war, war.DeepWounds.Spell, core.OutcomeHit, 500), 0)
+}
+
+// TestForeverWarriorNormalizedRageLevels checks standards 21's level scaling: k(L) = k30 × (1 + s ×
+// (L − 30) / 30) above level 30, with the default s = 0.5: ×1 at 30 and below, ×1.25 at 45 and ×1.5
+// at 60.
+func TestForeverWarriorNormalizedRageLevels(t *testing.T) {
+	if core.ForeverNormalizedRageScaling != 0.5 {
+		t.Fatalf("the default s is %g, want 0.5", core.ForeverNormalizedRageScaling)
+	}
+	sword := &core.Weapon{SwingSpeed: 2.6, NormalizedSwingSpeed: 2.4}
+	twoHander := &core.Weapon{SwingSpeed: 3.4, NormalizedSwingSpeed: 3.3}
+	for _, c := range []struct {
+		level  int32
+		factor float64
+	}{{20, 1}, {30, 1}, {45, 1.25}, {60, 1.5}} {
+		if got, want := core.ForeverNormalizedRage(sword, c.level), c.factor*3.46*2.6; math.Abs(got-want) > 1e-9 {
+			t.Errorf("a 2.6 sec one-hander at level %d gives %.4f Rage, want %.4f", c.level, got, want)
+		}
+		if got, want := core.ForeverNormalizedRage(twoHander, c.level), c.factor*4.5*3.4; math.Abs(got-want) > 1e-9 {
+			t.Errorf("a 3.4 sec two-hander at level %d gives %.4f Rage, want %.4f", c.level, got, want)
+		}
+	}
 }
 
 // TestForeverWarriorDamageTakenRage checks that Rage from taking damage stays Classic's (standards
