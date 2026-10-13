@@ -23,7 +23,7 @@ import (
 // back, wrist, waist and both rings at 71. Each armor piece also passes the shape check: its
 // 1.7-norm, (sum (weight x amount)^1.7)^(1/1.7), is within 6% of slot mod x (0.661 x ilvl +
 // 2.92), which takes the four stat lines a real caster epic carries. Weapons are Forever's caster
-// weapon rate: the staff 193.4 (2.21 x L(76)), or a main hand 149.1 plus an off hand 43.4, and
+// weapon rate: the staff (item level 76) 193.4 (2.21 x L(76)), or a main hand 149.1 plus an off hand 43.4, and
 // the wand 21.3.
 //
 // Per slot, the budget and what the stats add up to (main set, then Arcane), and the shape
@@ -218,8 +218,8 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
-	// Staff, the main hand and off hand budgets together (46.2 + 27.5), in place of Staff of
-	// Dominance (70, 18842), for the presets that sim better with a two-hander.
+	// Staff, item level 76, Forever's caster staff rate (193.4, 2.21 x L(76)), in place of Staff of
+	// Dominance (70, 18842).
 	{
 		Id: 996016, Name: "Mage Synthetic Staff (Phase 1)", Icon: "inv_staff_13",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
@@ -227,7 +227,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 		CritRating: 30,
 		// Staff of Dominance damage and speed.
 		WeaponDamageMin: 126, WeaponDamageMax: 205, WeaponSpeed: 2.9,
-		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl: 76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
 	// Arcane: head, item level 66, in place of Arcanist Crown (66, 16795).
@@ -339,8 +339,8 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
-	// Arcane: staff, the main hand and off hand budgets together (46.2 + 27.5), in place of Staff of
-	// Dominance (70, 18842), for the presets that sim better with a two-hander.
+	// Arcane: staff, item level 76, Forever's caster staff rate (193.4, 2.21 x L(76)), in place of
+	// Staff of Dominance (70, 18842).
 	{
 		Id: 996029, Name: "Mage Arcane Synthetic Staff (Phase 1)", Icon: "inv_staff_13",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeStaff, HandType: proto.HandType_HandTypeTwoHand,
@@ -348,7 +348,7 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 		CritRating: 13,
 		// Staff of Dominance damage and speed.
 		WeaponDamageMin: 126, WeaponDamageMax: 205, WeaponSpeed: 2.9,
-		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Ilvl: 76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
 	// Arcane: wand, item level 71, in place of Bonecreeper Stylus (62, 13938).
