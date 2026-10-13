@@ -144,7 +144,7 @@ Elemental
 - [x] 8.9 Improved Fire Nova
 - [x] 8.10 Eye of the Storm (implemented 2026-10-13, no preset takes it)
 - [x] 8.11 Call of Thunder
-- [ ] 8.12 Elemental Reach (not implemented)
+- [x] 8.12 Elemental Reach (not implemented, the sim has no spell range)
 - [ ] 8.13 Lightning Overload
 - [ ] 8.14 Earthbound (not implemented)
 - [ ] 8.15 Elemental Fury
@@ -1379,6 +1379,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim (`electric_spell.go`): 1 point gives +3% crit to every rank of Lightning Bolt and Chain Lightning, and to their Lightning Overload copies, which share the config. Lava Burst and the shocks don't get it. The Level 60 elemental preset has it, and the enhancement presets don't.
 - Client 70338 (wago.tools 16120): 1 rank, +3% crit chance (aura 107, misc 7) with mask 0x3, Lightning Bolt and Chain Lightning. Lightning Overload (408438) is a dummy aura that the server runs, and the client has no separate overload spell, so an overload is most likely a copy of the same bolt. That matches the sim.
 - Beta: no build had it, and we never cast Lightning Bolt or Chain Lightning.
+
+### 8.12 Elemental Reach
+
+- The user (2026-10-13): "No need for spell range for now". It stays unimplemented.
+- Client 70338 (wago.tools 28999, talent curves 85226 and 85225): 1 and 2 points give +3 and +6 yards of range to Lightning Bolt, Chain Lightning, Fire Nova and Lava Burst, and +8 and +15 yards to Flame Shock. Classic has no such talent.
+- The sim: the proto has the field, but nothing reads it. The sim has no spell range, so no spell has a maximum range and nothing stops a cast for distance. The out of melee range model (`pvp.go`) puts us at 20 yards, where every spell reaches. Lava Burst's travel time uses the distance, and Elemental Reach doesn't change that. So the talent can't do anything until the sim has spell ranges (a maximum range on every spell and stretches beyond it).
+- No preset takes it, and no beta build had it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
