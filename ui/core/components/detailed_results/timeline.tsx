@@ -1,5 +1,5 @@
 import ApexCharts from 'apexcharts';
-import tippy from 'tippy.js';
+import tippy, { followCursor, Props } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { ResourceType } from '../../proto/api.js';
@@ -100,6 +100,11 @@ const notableOutcome = (castLog: CastLog): { label: string; kind: HitOutcomeKind
 	}
 	return null;
 };
+
+// A bar can be much wider than the view, like an aura that lasts the whole fight. Its tooltip
+// would sit at the middle or the start of the bar, maybe far off screen, so it follows the mouse
+// along the timeline instead.
+const followAlong: Partial<Props> = { followCursor: 'horizontal', plugins: [followCursor] };
 
 // The parts of the hover tooltips. Each starts with a title (the ability's icon and name), then
 // a muted line with the timing, then the hits or the changes, then key and value rows.
@@ -936,6 +941,7 @@ export class Timeline extends ResultComponent {
 			row.events.push({ elem: resourceElem, text: searchText(resourceLogGroup.logs) });
 
 			const tooltip = tippy(resourceElem, {
+				...followAlong,
 				placement: 'bottom',
 				content: this.resourceTooltipElem(resourceLogGroup, startValue, false),
 			});
@@ -967,6 +973,7 @@ export class Timeline extends ResultComponent {
 			const idleElem = (<div className="rotation-gcd-idle" style={{ left: this.timeToLeft(from), width: this.timeToPx(to - from) }} />) as HTMLElement;
 			rowElem.appendChild(idleElem);
 			const tooltip = tippy(idleElem, {
+				...followAlong,
 				placement: 'bottom',
 				content: (
 					<div className="timeline-tooltip">
@@ -1007,6 +1014,7 @@ export class Timeline extends ResultComponent {
 			if (castLog.castTime > 0) timing.push(`${formatSeconds(castLog.castTime)} cast`);
 			timing.push(`${formatSeconds(castLog.effectiveTime)} GCD`);
 			const tooltip = tippy(gcdElem, {
+				...followAlong,
 				placement: 'bottom',
 				content: (
 					<div className="timeline-tooltip">
@@ -1152,6 +1160,7 @@ export class Timeline extends ResultComponent {
 			);
 
 			tippy(castElem, {
+				...followAlong,
 				placement: 'bottom',
 				content: tt,
 			});
@@ -1228,6 +1237,7 @@ export class Timeline extends ResultComponent {
 			);
 
 			const tooltip = tippy(auraElem, {
+				...followAlong,
 				placement: 'bottom',
 				content: tt,
 			});
