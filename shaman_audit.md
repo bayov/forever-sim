@@ -148,7 +148,7 @@ Elemental
 - [x] 8.13 Lightning Overload
 - [x] 8.14 Earthbound (not implemented, nothing in the sim moves the enemy)
 - [x] 8.15 Elemental Fury
-- [ ] 8.16 Lava Burst
+- [x] 8.16 Lava Burst
 
 Enhancement
 
@@ -1412,6 +1412,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16089, talent curve 85221): +20, 40, 60, 80 and 100% crit damage bonus (aura 108, misc 15). Its mask holds Lightning Bolt and Chain Lightning (and their overloads), the three shocks, Lava Burst, Fire Nova's damage spell, the Searing Totem attack, Magma Totem's pulse, the Flametongue Weapon procs, Frostbrand Attack and the Lightning Shield orbs. Flametongue Totem's procs (0x4 in the second word) and Healing Stream (0x2000) aren't in it. That matches the sim spell for spell.
 - Beta: no build had it.
 - No sim change. `elemental_fury_test.go` TestOrcShamanElementalFury reads each spell's crit multiplier at level 60 with 0 and 5 points: 1.5 and 2.0 on the spells above, 1.5 on Flametongue Totem's proc and Healing Stream either way, and Stormstrike's melee crit at 2.0 either way. A 10% step, giving it to every Nature spell (Healing Stream and Flametongue Totem get it) or leaving Searing and Magma Totem out fails it.
+
+### 8.16 Lava Burst (the talent)
+
+- The user OK'd it (2026-10-14): "sg". The spell itself is 7.14.
+- The sim (`lava_burst.go`): with the talent we learn rank 1 at 40, and the trainer adds rank 2 at 50 and rank 3 at 60. Without it the spell isn't registered. The UI tree has it at the bottom of Elemental (row 7), needing Lightning Overload 3/3. The Level 60 elemental preset has it, and the enhancement presets don't.
+- Client: the talent (traits 134169 and 134219) teaches 408490, rank 1. The vendored client tree (69876, updated to 70009) has it in row 7, column 2, with 1 rank, requiring Lightning Overload. That matches.
+- Beta: none, it's a level 40 talent.
+- No sim change and no new test. `lava_burst_test.go` covers the rank at each level and the spell (7.14).
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
