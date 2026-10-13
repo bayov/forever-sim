@@ -199,18 +199,23 @@ export abstract class DetailedResults extends Component {
 			this.simUI?.simActionsContainer.querySelector<HTMLButtonElement>('.dps-action')?.click();
 		});
 
-		// Allow styling the sticky toolbar
+		// The toolbar gets the header's frosted background once it sticks under the header, so
+		// the two read as one bar. Before that it has no background, so it doesn't look like a
+		// second header. The page scrolls in .sim-ui, and its scroll events don't bubble, so we
+		// listen in the capture phase.
 		const toolbar = this.rootElem.querySelector('.dr-toolbar') as HTMLElement;
-		new IntersectionObserver(
-			([e]) => {
-				e.target.classList.toggle('stuck', e.intersectionRatio < 1);
-			},
-			{
-				// Intersect with the sim header
-				rootMargin: this.simUI ? `-${this.simUI.simHeader.rootElem.offsetHeight + 1}px 0px 0px 0px` : '0px',
-				threshold: [1],
-			},
-		).observe(toolbar);
+		const updateStuck = () => {
+			if (!toolbar.offsetParent) {
+				toolbar.classList.remove('stuck');
+				return;
+			}
+			const header = this.simUI?.simHeader.rootElem;
+			const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+			toolbar.classList.toggle('stuck', toolbar.getBoundingClientRect().top <= headerBottom + 1);
+		};
+		document.addEventListener('scroll', updateStuck, { capture: true, passive: true });
+		window.addEventListener('resize', updateStuck, { passive: true });
+		document.addEventListener('shown.bs.tab', updateStuck);
 
 		this.resultsFilter = new ResultsFilter({
 			parent: this.rootElem.querySelector('.results-filter')!,

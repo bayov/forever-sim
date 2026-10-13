@@ -96,16 +96,18 @@
 	}
 }
 
-// The sub tabs and the player and target pickers. It sticks under the sim header while we scroll.
+// The sub tabs and the player and target pickers. It sticks under the sim header while we
+// scroll, and then it takes the header's frosted background and its full width, so the two
+// read as one bar.
 .dr-toolbar {
 	position: sticky;
 	top: var(--sim-header-height);
 	display: flex;
 	align-items: center;
 	gap: var(--spacer-3);
-	padding: var(--spacer-2) var(--container-padding);
-	margin-left: calc(-1 * var(--container-padding));
-	margin-right: calc(-1 * var(--container-padding));
+	padding: var(--spacer-2) var(--sim-content-padding-x);
+	margin-left: calc(-1 * var(--sim-content-padding-x));
+	margin-right: calc(-1 * var(--sim-content-padding-x));
 	transition:
 		background-color 0.15s ease-in-out,
 		box-shadow 0.15s ease-in-out;
@@ -113,9 +115,9 @@
 	z-index: calc(var(--header-z-index) - 1);
 
 	&.stuck {
-		background: rgba($body-bg, 0.92);
-		backdrop-filter: blur(6px);
-		box-shadow: 0 1px 0 var(--line-color);
+		background: rgba(11, 15, 21, 0.75);
+		backdrop-filter: blur(8px);
+		box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5);
 	}
 
 	& > * {
@@ -125,6 +127,12 @@
 	.input-root {
 		margin-bottom: 0;
 	}
+}
+
+// The header's shadow would fall across the toolbar, so the shadow under the toolbar is the
+// only one.
+.sim-ui:has(.dr-toolbar.stuck) .sim-header.stuck {
+	box-shadow: none;
 }
 
 // The sub tabs read as one pill shaped control, so they don't look like a second row of the
