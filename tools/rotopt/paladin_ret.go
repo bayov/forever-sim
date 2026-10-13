@@ -87,6 +87,9 @@ func (paladinRet) Knobs() []Knob {
 		// Holy Wrath (from level 50, 2 sec cast, 1 min cooldown, only hits Undead and Demons)
 		// after Exorcism above holyWrathMana percent of mana. 100 never.
 		{Name: "holyWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
+		// With cooldownsFirst, the on-use trinket at the pull and then held for the 20% execute
+		// phase whenever holding it there loses no use of it in the fight.
+		{Name: "trinketExecute", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -113,7 +116,7 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	var items []*proto.APLListItem
 	if k["cooldownsFirst"] == 1 {
 		items = append(items,
-			cast(itemID(syntheticSpellPowerOnUseTrinket), nil, "The spell power on-use trinket on cooldown."),
+			trinketLine(k["trinketExecute"] == 1),
 			cast(itemID(goblinSapperCharge), nil, "Goblin Sapper Charge on cooldown."),
 		)
 	}
@@ -273,4 +276,23 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 1.5))
 	return rot
+}
+
+// trinketLine is the spell power on-use trinket on cooldown, or with holdForExecute at the pull
+// and then held for the 20% execute phase when that loses no use. The time until execute is
+// (4 x remaining - now) / 5: APL math truncates a duration times a fractional constant to 0, so
+// it multiplies by 4 and divides by 5 instead of taking 0.8.
+func trinketLine(holdForExecute bool) *proto.APLListItem {
+	trinket := itemID(syntheticSpellPowerOnUseTrinket)
+	if !holdForExecute {
+		return cast(trinket, nil, "The spell power on-use trinket on cooldown.")
+	}
+	now := &proto.APLValue{Value: &proto.APLValue_CurrentTime{CurrentTime: &proto.APLValueCurrentTime{}}}
+	math := func(op proto.APLValueMath_MathOperator, lhs, rhs value) value {
+		return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: op, Lhs: lhs, Rhs: rhs}}}
+	}
+	untilExecute := math(proto.APLValueMath_OpDiv, sub(math(proto.APLValueMath_OpMul, remainingTime(), num(4)), now), num(5))
+	execute := &proto.APLValue{Value: &proto.APLValue_IsExecutePhase{IsExecutePhase: &proto.APLValueIsExecutePhase{Threshold: proto.APLValueIsExecutePhase_E20}}}
+	return cast(trinket, or(lt(now, seconds(1)), execute, gt(spellUsesLostByDelay(trinket, untilExecute, seconds(20)), num(0))),
+		"The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.")
 }
