@@ -33,7 +33,6 @@ import BackstabSndWindowAPL from './apls/combat_backstab_snd_window.apl.json';
 import BackstabSweatyAPL from './apls/combat_backstab_sweaty.apl.json';
 import SinisterStrikeAPL from './apls/combat_sinister_strike.apl.json';
 import SinisterStrikeHoldForARAPL from './apls/combat_sinister_strike_hold_for_ar.apl.json';
-import SinisterStrikeIEAAPL from './apls/combat_sinister_strike_iea.apl.json';
 import SinisterStrikeOnCooldownAPL from './apls/combat_sinister_strike_on_cooldown.apl.json';
 import SinisterStrikeSndOpenerAPL from './apls/combat_sinister_strike_snd_opener.apl.json';
 import SinisterStrikeSndWindowAPL from './apls/combat_sinister_strike_snd_window.apl.json';
@@ -223,10 +222,6 @@ export const ROTATION_PRESET_SINISTER_STRIKE_SWEATY = PresetUtils.makePresetAPLR
 	tooltip: 'Sweaty variant of the Sinister Strike rotation.',
 	group: 'Level 60',
 });
-export const ROTATION_PRESET_SINISTER_STRIKE_IEA = PresetUtils.makePresetAPLRotation('Improved Expose Armor (SS)', SinisterStrikeIEAAPL, {
-	tooltip: 'Sinister Strike rotation that also keeps Improved Expose Armor up.',
-	group: 'Level 60',
-});
 export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateAPL, {
 	tooltip: 'Level 60 Mutilate rotation.',
 	group: 'Level 60',
@@ -285,7 +280,6 @@ export const APLPresets = {
 		ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW,
 		ROTATION_PRESET_BACKSTAB_SWEATY,
 		ROTATION_PRESET_SINISTER_STRIKE_SWEATY,
-		ROTATION_PRESET_SINISTER_STRIKE_IEA,
 		ROTATION_PRESET_MUTILATE,
 		ROTATION_PRESET_LEVEL30P5_BACKSTAB,
 		ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE,
@@ -306,7 +300,6 @@ export const APLPresets = {
 		ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW,
 		ROTATION_PRESET_BACKSTAB_SWEATY,
 		ROTATION_PRESET_SINISTER_STRIKE_SWEATY,
-		ROTATION_PRESET_SINISTER_STRIKE_IEA,
 		ROTATION_PRESET_MUTILATE,
 		ROTATION_PRESET_LEVEL30P5_BACKSTAB,
 		ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE,
@@ -321,7 +314,6 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 
 export const DefaultAPLBackstab = ROTATION_PRESET_BACKSTAB;
 export const DefaultAPLSinisterStrike = ROTATION_PRESET_SINISTER_STRIKE;
-export const DefaultAPLIEA = ROTATION_PRESET_SINISTER_STRIKE_IEA;
 export const DefaultAPLMutilate = ROTATION_PRESET_MUTILATE;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -341,11 +333,6 @@ export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents(
 	'Sinister Strike',
 	SavedTalents.create({ talentsString: '00532310301-32003311201515231' }),
 	{ tooltip: 'Level 60 Combat talents for Sinister Strike.', group: 'Level 60' },
-);
-export const CombatSinisterStrikeIEATalents = PresetUtils.makePresetTalents(
-	'Improved Expose Armor (SS)',
-	SavedTalents.create({ talentsString: '005323123-32003311201515131' }),
-	{ tooltip: 'Level 60 Sinister Strike talents with Improved Expose Armor.', group: 'Level 60' },
 );
 export const AssassinationMutilateTalents = PresetUtils.makePresetTalents(
 	'Mutilate',
@@ -423,7 +410,6 @@ export const TalentPresets = {
 		TalentsLevel60Subtlety,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
-		CombatSinisterStrikeIEATalents,
 		AssassinationMutilateTalents,
 		Level30p5BackstabTalents,
 		Level30p5SinisterStrikeTalents,
@@ -437,7 +423,6 @@ export const TalentPresets = {
 		TalentsLevel60Subtlety,
 		CombatBackstabTalents,
 		CombatSinisterStrikeTalents,
-		CombatSinisterStrikeIEATalents,
 		AssassinationMutilateTalents,
 		Level30p5BackstabTalents,
 		Level30p5SinisterStrikeTalents,
@@ -450,7 +435,6 @@ export const DefaultTalentsSubtlety = TalentsLevel60Subtlety;
 
 export const DefaultTalentsBackstab = CombatBackstabTalents;
 export const DefaultTalentsSinisterStrike = CombatSinisterStrikeTalents;
-export const DefaultTalentsIEA = CombatSinisterStrikeIEATalents;
 export const DefaultTalentsMutilate = AssassinationMutilateTalents;
 
 export const DefaultTalents = TalentsLevel60CombatDaggers;
@@ -471,13 +455,6 @@ export const PresetBuildSinisterStrike = PresetUtils.makePresetBuild('Sinister S
 	gear: GearSinisterStrikeP2BiS,
 	talents: DefaultTalentsSinisterStrike,
 	rotation: DefaultAPLSinisterStrike,
-});
-export const PresetBuildIEA = PresetUtils.makePresetBuild('IEA', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Sinister Strike with Improved Expose Armor, on Phase 2 BiS gear.',
-	gear: GearSinisterStrikeP2BiS,
-	talents: DefaultTalentsIEA,
-	rotation: DefaultAPLIEA,
 });
 export const PresetBuildMutilate = PresetUtils.makePresetBuild('Mutilate', {
 	group: 'Level 60',
@@ -639,7 +616,6 @@ export const P1DefaultDebuffs = Debuffs.create({
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
-	exposeArmor: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
 	insectSwarm: true,
 	judgementOfLight: true,
