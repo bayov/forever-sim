@@ -102,6 +102,12 @@
 	&:hover {
 		background: none;
 	}
+
+	// A spec title sits flush with the window's left edge, so its glow starts at full strength
+	// there. Our logo floats inside the page, so the glow fades out on both sides.
+	&::before {
+		background: linear-gradient(90deg, transparent, rgba($gold, 0.14) 25%, rgba($gold, 0.06) 70%, transparent);
+	}
 }
 
 @include media-breakpoint-down(md) {
