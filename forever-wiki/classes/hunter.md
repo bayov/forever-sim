@@ -63,6 +63,14 @@ What the beta shows that the client data does not (from beta combat logs: Elliot
 - Pets swing every 2.0 sec and a passive per beast (Faster Attack I to VII) moves them to the beast's Classic speed, with hits that stay the size of a 2.0 sec pet's. Pets take 10% of the hunter's highest attack power and all of its crit (and 2 health a Stamina point, 30% of armor), take no player buffs, and regenerate 10 focus a second.
 - Summon Hawk's hawk swings every 2.5 sec (sped up by ranged haste) for about 0.35 of the dive bomb's base.
 
+Cross-check against wowhead's Forever database (2026-10-13). Wowhead serves Forever as data environment 16 (`nether.wowhead.com/tooltip/<type>/<id>?dataEnv=16`): Sniper Shot 1310786 exists only there. Environment 17 is retail's squished data (Giantstalker's Helmet at item level 13), not Forever. Against the client and the sim:
+
+- Ammo and quivers are unchanged. Thorium Headed Arrow and Thorium Shells add 17.5 damage a second (item level 57), Ice Threaded Arrow 16.5. Ancient Sinew Wrapped Lamina and Harpy Hide Quiver give 15% ranged attack speed (Haste 29414, client aura 557 at 15). Quickdraw Quiver gives 13%. The sim's Thorium Headed Arrow at 17.5 and the 15% quiver match.
+- These match the client and the sim: Aspect of the Hawk rank 5 is 90, rank 6 is 55 and rank 7 (an Ahn'Qiraj book) is 120. Aspect of the Beast is 50 / 70 / 90 / 110. Serpent Sting rank 8 is 415 over 15 sec. Arcane Shot is 217. Aimed Shot is +166 with a 2 sec cast. Rapid Fire is 40% ranged and melee for 15 sec. Immolation Trap is 690 over 15 sec with a 30 sec cooldown. Raptor Strike is +70, Mongoose Bite +57, Wing Clip 50 and Strider Kick 100%. Sniper Shot is +295, 4 sec, 365 mana. Summon Hawk is 108 + 0.05 of ranged attack power. Hunter's Mark rank 4 is 71. Trueshot Aura ranks 4 and 5 are 75 and 50. Bestial Wrath is 50% for 18 sec. Elune's Light is 10% crit for 15 sec on a 3 min cooldown.
+- Lacerate reads 451 over 21 sec, which is its level 68 cap (58 + 0.8 x 8 a tick). It is 406 at 60.
+- The cat's Claw is 43 to 59 and its Bite 81 to 99 at level 60. The sim had Bite at 81 to 91 and is fixed (+0.4 to +0.7 DPS for the pet builds).
+- Under Forever a weapon holds a totem buff (Windfury Totem), the wielder's own imbue and an oil or stone together (classes/shaman.md). So Survival's main hand gets both Windfury Totem and its Dense Sharpening Stone, as the sim has it.
+
 ## Spellbook changes (trainer abilities)
 
 45 of 63 trainer abilities confirmed from footage. Abilities not listed below are either verified unchanged or still Classic placeholders (unverified).
@@ -156,7 +164,7 @@ Aspect of the Monkey, Aspect of the Hawk, Call Pet, Dismiss Pet, Feed Pet, Reviv
 
 ### Not yet verified (Classic text assumed)
 
-Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counterattack, Track Dragonkin, Wyvern Sting, Volley, Trueshot Aura, Attack, Claw, Defensive, Dive, Follow, Great Stamina, Growl, Natural Armor, Stay
+Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counterattack, Track Dragonkin, Wyvern Sting, Volley, Attack, Defensive, Dive, Follow, Great Stamina, Growl, Natural Armor, Stay (Trueshot Aura and the pets' Claw and Bite were checked against the client and wowhead's Forever data on 2026-10-13, see above)
 
 ## Talents
 
