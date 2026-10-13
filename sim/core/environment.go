@@ -260,7 +260,7 @@ func (env *Environment) setupAttackTables() {
 						case 2:
 							weaponSlot = proto.CastType_CastTypeRanged
 						}
-						attacker.AttackTables[idx][weaponSlot] = NewAttackTable(attacker, defender, weapon)
+						attacker.AttackTables[idx][weaponSlot] = newWeaponAttackTable(attacker, defender, weapon, character.weaponSkillGaps[weaponSlot])
 					}
 				}
 			} else {

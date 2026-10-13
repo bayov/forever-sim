@@ -313,6 +313,12 @@ func spellMissChance(levelDiff int32) float64 {
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
+	return newWeaponAttackTable(attacker, defender, weapon, 0)
+}
+
+// newWeaponAttackTable is the attack table for a weapon whose skill is skillGap below the most
+// for the attacker's level.
+func newWeaponAttackTable(attacker *Unit, defender *Unit, weapon *Item, skillGap float64) *AttackTable {
 	// Source: https://github.com/magey/classic-warrior/wiki/Attack-table
 	table := &AttackTable{
 		Attacker: attacker,
@@ -328,8 +334,12 @@ func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
 
 	if defender.Type == EnemyUnit {
 		baseWeaponSkill := float64(attacker.Level * 5)
-		weaponSkill := baseWeaponSkill + GetWeaponSkill(attacker, weapon)
+		weaponSkill := baseWeaponSkill + GetWeaponSkill(attacker, weapon) - skillGap
 		targetDefense := float64(defender.Level * 5)
+		// Parry and glancing go by our weapon skill, but skill above the most for our level
+		// doesn't lower them. So they take the lower of the two, and with full skill or more
+		// that's the level's skill.
+		cappedSkill := min(weaponSkill, baseWeaponSkill)
 
 		if targetDefense-weaponSkill > 10 {
 			table.HitSuppression = (targetDefense - weaponSkill - 10) * 0.002
@@ -339,10 +349,10 @@ func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
 			table.BaseMissChance = 0.05 + (targetDefense-weaponSkill)*0.001
 		}
 
-		if targetDefense-baseWeaponSkill > 10 {
-			table.BaseParryChance = 0.05 + (targetDefense-baseWeaponSkill)*0.006 // = 14
+		if targetDefense-cappedSkill > 10 {
+			table.BaseParryChance = 0.05 + (targetDefense-cappedSkill)*0.006 // = 14
 		} else {
-			table.BaseParryChance = 0.05 + (targetDefense-baseWeaponSkill)*0.001 // = 5 / 5.5 / 6
+			table.BaseParryChance = 0.05 + (targetDefense-cappedSkill)*0.001 // = 5 / 5.5 / 6
 		}
 
 		table.BaseSpellMissChance = spellMissChance(defender.Level - attacker.Level)
@@ -354,7 +364,7 @@ func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
 		// They also can't go below 0. Against a mob 2 or more levels below us the formula
 		// turns negative (-40% at level 30 against a level 25), and on the one roll white
 		// table that ate the block and crit chances after it. The SoD sim has the same gap.
-		table.BaseGlanceChance = max(min(0.1+(targetDefense-baseWeaponSkill)*0.02, 0.4), 0)
+		table.BaseGlanceChance = max(min(0.1+(targetDefense-cappedSkill)*0.02, 0.4), 0)
 
 		table.GlanceMultiplierMin = max(min(1.3-0.05*(targetDefense-weaponSkill), 0.91), 0.01)
 		table.GlanceMultiplierMax = max(min(1.2-0.03*(targetDefense-weaponSkill), 0.99), 0.2)
@@ -375,6 +385,9 @@ func NewAttackTable(attacker *Unit, defender *Unit, weapon *Item) *AttackTable {
 		if (defender.Level - attacker.Level) >= 3 {
 			table.MeleeCritSuppression += 0.018
 		}
+		// A weapon below full skill crits 0.04% less for each point, like the client's character
+		// sheet shows (the beta's 10-10 export at Unarmed 85 of 150).
+		table.MeleeCritSuppression += (baseWeaponSkill - cappedSkill) * 0.0004
 		table.SpellCritSuppression = UnitLevelFloat64(defender.Level-attacker.Level, 0, 0, 0.003, 0.021)
 	} else {
 

@@ -33,6 +33,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## All classes
 
+* Beta: misses, dodges, parries, glances and crits with a weapon below full skill (the "Main Hand Skill Below Max" option, 2026-10-14). The sim uses Classic's formulas with the lower of our skill and the level's: parry 0.6% a point past 10 short of the mob's defense, glancing 2% a point up to the 40% cap, and 0.04% less crit a point (the client's sheet shows that one). The 10-10 log at Unarmed close to 85 of 150 (21:32 to 21:45, level 29 mobs, 68 swings) had 51% glances, 26% parries, 12% misses and 9% dodges, with no hits. The sim at 85 gives 41% parries and 40% glances, and the table runs out before the glances get all of theirs. So parries may rise slower per point and glances may pass the 40% cap. That log can't settle it, because the skill rose to 147 by 23:14. A test needs the skill at each swing, from a skill up timeline or a run short enough that the skill barely moves.
 * Beta: crit and dodge per Agility of the warrior, hunter and warlock. At level 1 the warrior gets 0.2500 a point (sim 0.2572), the hunter 0.2174 crit and 0.4348 dodge (sim 0.1783 and 0.3567), and the warlock 0.15 (sim 0.1249). The paladin, rogue, priest, mage and druid match the sim at level 1 (2026-10-10).
 
 ## Rogue
