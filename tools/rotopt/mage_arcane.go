@@ -32,6 +32,8 @@ func (mageArcane) Knobs() []Knob {
 		Knob{Name: "barrageStacks", Default: 0, Min: 0, Max: 4, Step: 1},
 		// Precast an Arcane Blast (2.5 sec cast) so it lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Hold Arcane Power and Presence of Mind for the synthetic on-use trinket.
+		Knob{Name: "powerWithTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
 	)
 }
 

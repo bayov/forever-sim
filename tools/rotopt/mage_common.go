@@ -144,6 +144,14 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 			cast(combustion, fullStacks, "Combustion once Fire Vulnerability has 5 stacks. Without the talent ignore the warning on this line."),
 		)
 	}
+	if k["powerWithTrinket"] == 1 {
+		// With the trinket up, or when it won't be back before the last 15 sec.
+		withTrinket := or(auraIsActive(mageSyntheticTalisman), gt(spellTimeToReady(mageSyntheticTalisman), sub(remainingTime(), seconds(15))))
+		items = append(items,
+			cast(arcanePower, withTrinket, "Arcane Power with the on-use trinket, unless the trinket won't be back in time. Without the talent ignore the warning on this line."),
+			cast(presenceOfMind, withTrinket, "Presence of Mind with Arcane Power and the trinket. Without the talent ignore the warning on this line."),
+		)
+	}
 	if k["trinketAfterScorch"] == 1 {
 		fullStacks := or(and(targetAuraIsKnown(fireVulnerability), ge(targetAuraNumStacks(fireVulnerability), num(5))), not(targetAuraIsKnown(fireVulnerability)))
 		items = append(items,

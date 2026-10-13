@@ -139,7 +139,8 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire',
 // Blast goes on to 4 stacks and the missiles go anyway, ending the stacks and taking their
 // bonus. Below 20% mana one Arcane Blast and the missiles (30% was 1 behind on the fair mix gear, and the Forever budget gear kept it).
 // That is ahead of three Arcane Blasts and the missiles whatever the proc (the template's
-// default). No Evocation.
+// default). No Evocation. Arcane Power and Presence of Mind wait for the on-use trinket unless it
+// won't be back before the last 15 sec (+1.6 at 300 sec, nothing lost shorter).
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Level 60 Arcane', Level60ArcaneAPL, {
 	tooltip: 'Arcane Blast stacks spent by Arcane Missiles, on Missile Barrage where it can.',
 	group: 'Level 60',
@@ -198,7 +199,7 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
 // 3 (it covers Arcane Blast). The 15 Frost points do nothing for Arcane Blast and Arcane Missiles:
 // the trees have nothing else they can buy, so they sit where a Frost filler would use them. Three
 // seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 838.7 /
-// 829.7 / 817.1 (Undead, on the Arcane gear), 8% behind Frostfire.
+// 829.7 / 818.7 (Undead, on the Arcane gear), 8% behind Frostfire.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
 	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
 	group: 'Level 60',
