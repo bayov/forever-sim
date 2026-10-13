@@ -132,7 +132,15 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60SubHoly, Presets.PresetBuildLevel60Shock, Presets.PresetBuildLevel30p5],
+		builds: [
+			Presets.PresetBuildLevel60,
+			Presets.PresetBuildLevel60SubHoly,
+			Presets.PresetBuildLevel60Shock,
+			Presets.PresetBuildLevel60Undead,
+			Presets.PresetBuildLevel60SubHolyUndead,
+			Presets.PresetBuildLevel60ShockUndead,
+			Presets.PresetBuildLevel30p5,
+		],
 		rotations: [
 			...Presets.APLPresets[Phase.Phase4],
 			...Presets.APLPresets[Phase.Phase3],

@@ -39,6 +39,8 @@ import APLBasicRetJson from './apls/basic_ret.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
 import Level60ShockAPLJSON from './apls/level60_shock.apl.json';
+import Level60ShockUndeadAPLJSON from './apls/level60_shock_undead.apl.json';
+import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
@@ -143,6 +145,23 @@ export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Level 60 Shock
 	tooltip: "Level 60 Holy Shock rotation: Consecration, Light's Vigil and Holy Shock, Judgement and Holy Strike on cooldown.",
 	group: 'Level 60',
 });
+// Level 60 (vs Undead), for an Undead or Demon boss, where Exorcism and Holy Wrath land
+// (standards 19; the default boss is type Unknown, where they do nothing). Searched on an Undead
+// boss over 120, 180 and 300 sec together, with talent searches in between, from the twist and
+// sub Holy builds. Seal of Righteousness stays up and Twist of Light twists to Seal of Command
+// before each swing at any mana, Judgement on whichever seal is up, Holy Strike, Hammer of Wrath
+// and Exorcism on cooldown, Holy Wrath above 80% mana (2.4 DPS), Consecration last above 20%.
+export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Level 60 (vs Undead)', Level60UndeadAPLJSON, {
+	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation with Exorcism and Holy Wrath.',
+	group: 'Level 60',
+});
+// Level 60 Shock (vs Undead): the Shock rotation with Exorcism on cooldown and Light's Vigil
+// above 60% mana instead of 30%, which leaves the mana for Exorcism. Holy Wrath is 6 behind: its
+// 2 sec cast pushes back Holy Shocks and Holy Strikes.
+export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60 Shock (vs Undead)', Level60ShockUndeadAPLJSON, {
+	tooltip: 'Level 60 Holy Shock rotation against an Undead or Demon boss, with Exorcism and more mana kept for it.',
+	group: 'Level 60',
+});
 export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
 	tooltip: 'Basic level 60 Retribution rotation.',
 	group: 'Level 60',
@@ -161,7 +180,7 @@ export const APLPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [APLLevel60, APLLevel60Shock, APLBasicRet, APLLevel30p5],
+	[Phase.Phase4]: [APLLevel60, APLLevel60Shock, APLLevel60Undead, APLLevel60ShockUndead, APLBasicRet, APLLevel30p5],
 	[Phase.Phase5]: [],
 };
 
@@ -213,6 +232,27 @@ export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock
 	tooltip: "Level 60 Holy Shock talents: deep Holy to Light's Vigil with Holy Power, and Retribution to Sacred Arbiter.",
 	group: 'Level 60',
 });
+// Level 60 (vs Undead): the talent search from Level 60 on an Undead boss with the vs Undead
+// rotation. Purifying Power 2 (Exorcism every 10 sec, Holy Wrath every 40) for two Vindication
+// points (+24), Divine Strength 2 and Divine Intellect 5 (Divine Strength 3 into Divine Intellect,
+// +1.5), Reverence 1 for a Precision point and Instrument of Law back into Vindication (mana
+// tie-breaks). 1062.7 / 1056.5 / 1029.9 at 120 / 180 / 300 sec against an Undead boss, 8.9% over
+// Level 60 on its own boss at 180 sec. The sub Holy one below is ahead from 180 sec on.
+export const TalentsLevel60Undead = PresetUtils.makePresetTalents(
+	'Level 60 (vs Undead)',
+	SavedTalents.create({ talentsString: '250030012-502-05225231001330301' }),
+	{ tooltip: 'Level 60 talents for an Undead or Demon boss: Purifying Power for Exorcism and Holy Wrath.', group: 'Level 60' },
+);
+// Level 60 (sub Holy, vs Undead): the talent search from Level 60 (sub Holy) on an Undead boss
+// moved Instrument of Law 2 to 1 for Holy Conduit 2 (Exorcism and Holy Wrath cost 40% less). It
+// already has Purifying Power 2. 1063.3 / 1059.4 / 1049.0 at 120 / 180 / 300 sec against an
+// Undead boss, the best build there at 180 and 300 sec (9.7% over Level 60 (sub Holy) on its own
+// boss at 180 sec): its Divine Intellect 5 and Reverence 3 pay for the extra spells.
+export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
+	'Level 60 (sub Holy, vs Undead)',
+	SavedTalents.create({ talentsString: '550030032--05225331001330311' }),
+	{ tooltip: 'Level 60 sub Holy talents for an Undead or Demon boss, with Holy Conduit 2.', group: 'Level 60' },
+);
 // Level 30 with 5 extra talent points (26 in all), Pursuit of Justice 2 pinned. Holy
 // Shock is out of reach with it: Holy Shock needs 20 Holy points and Pursuit of Justice
 // 10 Retribution points. We scored every Seal of Command build over the Retribution
@@ -235,7 +275,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel30p5],
+	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60Undead, TalentsLevel60SubHolyUndead, TalentsLevel30p5],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase4][0];
@@ -453,6 +493,76 @@ export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Sho
 		aura: PaladinAura.RetributionAura,
 		primarySeal: PaladinSeal.Righteousness,
 	}),
+});
+
+// The Level 60 boss as an Undead, for the vs Undead builds (Exorcism and Holy Wrath land on
+// Undead and Demons only).
+export const EncounterLevel60Undead = PresetUtils.makePresetEncounter(
+	'Level 60 (vs Undead)',
+	Encounter.create({
+		...EncounterLevel60.encounter!,
+		targets: EncounterLevel60.encounter!.targets.map(target => ({ ...target, mobType: MobType.MobTypeUndead })),
+	}),
+	{
+		tanks: [],
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: DefaultDebuffs,
+		buffs: DefaultIndividualBuffs,
+		consumes: DefaultConsumes,
+	},
+);
+const OptionsRighteousness = RetributionPaladinOptions.create({
+	aura: PaladinAura.RetributionAura,
+	primarySeal: PaladinSeal.Righteousness,
+});
+// The vs Undead builds, on an Undead boss (50000 iterations, 120 / 180 / 300 sec). Undead stays
+// the best race and Human the best Alliance one on each.
+// Level 60 (vs Undead): Undead 1062.7 / 1056.5 / 1029.9, Human 1046.8 / 1041.0 / 1015.3, Dwarf
+// 1046.1 / 1040.2 / 1013.9.
+export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (vs Undead)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead against an Undead or Demon boss, with Exorcism and Holy Wrath.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60Undead,
+	rotation: APLLevel60Undead,
+	encounter: EncounterLevel60Undead,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: OptionsRighteousness,
+});
+// Level 60 (sub Holy, vs Undead): Undead 1063.3 / 1059.4 / 1049.0, Human 1047.9 / 1044.1 /
+// 1034.5, Dwarf 1047.4 / 1043.5 / 1033.3. The best build against an Undead boss.
+export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Level 60 (sub Holy, vs Undead)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead with the sub Holy talents against an Undead or Demon boss, with Exorcism and Holy Wrath.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60SubHolyUndead,
+	rotation: APLLevel60Undead,
+	encounter: EncounterLevel60Undead,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: OptionsRighteousness,
+});
+// Level 60 Shock (vs Undead): the Shock talents (a talent search on the Undead boss found no
+// better) with the vs Undead Shock rotation. Undead 1055.3 / 1026.1 / 990.1, Human 1038.8 /
+// 1009.7 / 975.7, Dwarf 1037.8 / 1008.8 / 973.6, 6.7% over Level 60 Shock on its own boss at
+// 180 sec.
+export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 60 Shock (vs Undead)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead Holy Shock build against an Undead or Demon boss, with Exorcism.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60Shock,
+	rotation: APLLevel60ShockUndead,
+	encounter: EncounterLevel60Undead,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: OptionsRighteousness,
 });
 
 // A level 30 paladin soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32):
