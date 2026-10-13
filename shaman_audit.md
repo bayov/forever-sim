@@ -164,7 +164,7 @@ Enhancement
 - [x] 8.26 Anticipation
 - [x] 8.27 Toughness
 - [x] 8.28 Flurry
-- [ ] 8.29 Stormstrike
+- [x] 8.29 Stormstrike
 - [ ] 8.30 Spirit Weapons
 - [ ] 8.31 Mental Quickness
 - [ ] 8.32 Improved Stormstrike
@@ -1507,6 +1507,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338: the talent (16256, curve 85300) gives 5 to 25%. One buff (16257) for every rank, with 3 charges, 15 sec, spent only by auto attacks (0x200 in the second word). That matches.
 - Beta (WoWCombatLog-101026_150733.txt, 15:07 to 20:42, Flurry 5/5 with Rage of the Storm at 3.3, leaving out gaps with a Flurry change or a cast inside): 391 white swing gaps with Flurry down peak at 3.30 to 3.31 sec, and 80 with it up the whole gap at 2.64 to 2.65 (3.3 / 1.25). 25 buffs ended by use, each after 2 charge drops and then the removal, so 3 charges. 15 more ran out at 14.96 to 15.09 sec with 0 to 2 charges used.
 - No sim change and no new test. `haste_test.go` covers the 5/5 speed and the rescaled swing, `talent_procs_test.go` what gives and uses charges, the 0.5 sec gap and a crit giving them back, and 4.13 the 15 sec.
+
+### 8.29 Stormstrike (the talent)
+
+- The user OK'd it (2026-10-14): "sg". The ability is 7.7 and 4.1.
+- The sim (`stormstrike.go`): with the talent we know Stormstrike (17364). Without it the spell isn't registered, and Improved Stormstrike does nothing (`talents.go`). The UI tree has it in Enhancement row 4, column 3, with no prerequisite, and Improved Stormstrike below it needs it. Every enhancement preset has it.
+- Client: the vendored tree (69876) has it in row 4, column 3, 1 rank, no prerequisite, teaching 17364. That matches.
+- Beta: every enhancement build had it (194 casts in 7.7).
+- No sim change and no new test. `stormstrike_test.go` and the 4.1 tests cover the ability. What Improved Stormstrike does without Stormstrike is for 8.32.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
