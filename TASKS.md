@@ -29,3 +29,10 @@ Item format:
   - 284064 Cliffbreaker's Pauldrons, 284285 Feardred's Gauntlets, 281661 Well-Worn Pitchfork, 283545 Moonchaser's Headdress, 281896 Surveyor's Gloves, 286569 Firebird Leggings, 286640 High Priestess's Kilt
 - [ ] 2026-10-13 — Restorative Totems should also raise Healing Stream Totem's healing from healing power after the next beta build (~Oct 15) (forever-bugs #291, dev-marked fixed)
   - `sim/shaman/water_totems.go` scales only the base heal. Re-check on the new build's SpellEffect data for HST, and on the beta.
+- [ ] 2026-10-14 — Optimize for a leveling journey instead of a single encounter (user idea)
+  - The score would be kill speed over a whole level range, not encounter DPS. It counts downtime: how long we sit between pulls to get HP and mana back. It also counts how many mobs we can pull at once and survive.
+  - Talents are picked at each level, so the search finds the best order to spend points in, not just the final build.
+  - It would let us compare paths, for example whether respeccing at some level beats keeping one build the whole way.
+- [ ] 2026-10-14 — Whole raid sim (user idea)
+  - Sim every member of a raid together, so we can try out raid comps and see the total raid damage.
+  - Then optimize the comp itself: which classes and specs, and how buffs, debuffs and totems are spread across groups.
