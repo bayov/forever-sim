@@ -106,14 +106,14 @@ The order barely moves with the fight length (4000 iterations, standard error un
 
 | Enhancement (2026-10-13, synthetic Phase 1 set on standards 1b with the synthetic trinkets, no Ahn'Qiraj ranks, 3 min raid, 20000 iterations) | 2 min | 3 min | 5 min |
 |---|---|---|---|
-| Orc | 813.8 | 801.6 | 782.3 |
-| Orc without Axe Specialization | 798.3 | 786.4 | 767.1 |
-| Tauren | 800.4 | 788.0 | 769.5 |
-| Troll | 800.0 | 787.0 | 769.2 |
-| Windshaper Skyborne | 799.2 | 786.9 | 769.3 |
-| Dwarf | 795.6 | 783.6 | 765.3 |
+| Orc | 823.8 | 813.0 | 793.4 |
+| Orc without Axe Specialization | 808.5 | 798.1 | 778.5 |
+| Tauren | 809.9 | 799.0 | 780.6 |
+| Windshaper Skyborne | 808.9 | 798.4 | 780.4 |
+| Troll | 809.7 | 797.9 | 779.4 |
+| Dwarf | 805.2 | 794.4 | 776.3 |
 
-The synthetic two-hander is an axe (Spinal Reaper's damage and speed), so the Orc's 13.6 DPS lead is Axe Specialization's 1% crit: without it Tauren leads (Troll and Windshaper Skyborne within noise). Dwarf is the only Alliance shaman.
+The synthetic two-hander is an axe (Spinal Reaper's damage and speed), so the Orc's 14.0 DPS lead is Axe Specialization's 1% crit: without it Tauren leads (Troll and Windshaper Skyborne within noise). Dwarf is the only Alliance shaman.
 
 ## Level 60 presets
 
@@ -172,18 +172,18 @@ Both specs follow the cross-class standard (orchestration/standards.md on the co
 - Gear: the synthetic Phase 1 enhancement set (`tools/database/forever_synthetic_items.go`, ids 990001 to 990016), with the synthetic chest in place of Timbermaw Tunic. On standards 1b for a hybrid (f 1.093 / 1.103 / 1.048, 4-5 stat lines a piece, the two-hander 90.6) and the hit-adjusted Enhancement row (5b: Intellect and spell power held): 298 spell power, 164 Stamina, 86 Intellect, 83 Spirit, 81 Strength, 18 Agility, 48 attack power, 37 crit rating (2.6%) and 90 hit rating (9%, the melee cap), that is 30.5% spell power, 19.5% Stamina, 10.2% Intellect, 9.9% Spirit, 9.7% Strength, 2.1% Agility, 2.9% attack power, 4.4% crit and 10.7% hit. Armor 748.5 and the two-hander 90.8 weighted points; every piece within 1% of its budget and -3.8 to +0.8% on the shape check. Trinkets: a stat trinket (32 Strength, 14 crit rating) and an on-use one (335 attack power for 20 sec every 2 min; a 140 spell power on-use is 3.6 behind). The hands and legs carry The Spiritcaller's Rage (2 pieces, 1% attack and cast speed); the 4 and 5 piece bonuses aren't live. Enchants: Crusader, Gloves - Superior Strength, Cloak - Agility, Enchant Necklace - Strength, Boots - Greater Agility, Lesser Arcanum of Voracity, Greater Stats, Superior Strength bracers. The Optimized rotation puts Searing Totem down at the pull since the gear round (+5.9 at 3 min over Flametongue Totem, which holds Windfury Totem's weapon buff slot).
 - The sim moved since the 2026-10-08 presets (the audit fixes): Level 60 measured 805.6 / 795.7 / 778.7 against the 826.5 / 819.6 / 807.7 in the presets. The talent search (Spirit Weapons pinned, the mean of the three lengths) then swapped Convection 5 for Concussion 5: `050533102-053030031005112251`, +3.0. It ran again on the standard gear and only made tie-breaks on mana. The knob search keeps the Optimized rotation once Windfury Totem stays up for the group (it prefers Grace of Air for the shaman alone, as before).
 - Level 60 + Water Shield (sub Restoration): `050031-053030031005112151-052030001`, from a search with Water Shield pinned, +8.7 over the old build. Its Magma Totem rotation casts Fire Nova ahead of the shocks (+2.7), holds Earth Shock while Flame Shock has 1 sec or less left (+1.0), and puts Water Shield up before the pull and below 50% mana (inert at the preset's 0 raid hits, up to +4.1 at 6 a minute). Level 60 + Mana Tide: the search found nothing better. Level 60 + Imp GW takes Concussion like Level 60.
-- Consumes: Forever's Phase 1 set with Elixir of the Sages as the one crit elixir (the Owl, Grizzly and Mongoose are 0.2 to 4.7 behind), Elixir of Greater Agility, Juju Power and Might, Elixir of Greater Intellect, Elixir of Nature Power, Greater Mageblood Elixir, Shadow Oil, Grilled Squid. Stacking the Mongoose, Grizzly and Owl on top would add about 36 if Forever allows it.
+- Consumes: Forever's Phase 1 set with Elixir of the Sages as the one crit elixir (the Owl, Grizzly and Mongoose are 0.2 to 4.7 behind), Elixir of Cunning (+10.2 over Greater Agility at 3 min), Elixir of Ferocity (+1.2 over Juju Power), Juju Might, Elixir of Greater Intellect, Elixir of Nature Power, Greater Mageblood Elixir, Shadow Oil, Grilled Squid. Stacking the Mongoose, Grizzly and Owl on top would add about 36 if Forever allows it.
 - Forever leaves out the Ahn'Qiraj book ranks of the raid totems (shared head cfb2dac): the shaman puts down Strength of Earth Totem IV (42 Strength, was 53) and the raid's Battle Shout is rank VI. That costs every Enhancement build about 7.7 DPS (Level 60 was 811.0 / 799.6 / 778.6). The searches ran again on it and kept every build and rotation (only mana tie-breaks inside the noise).
 - Rage of the Farseer waits for the on-use trinket when the wait costs it no use (the rotation auditor's cooldown pass), in the Optimized, Magma Totem and Mana Tide rotations: paired at 20000 iterations +0.7 to +1.3 at 5 min and within ±0.2 at 2 and 3 min. Blood Fury already waits for Rage, and Mana Tide Totem at 20% mana stays (35 to 80% costs up to 11).
-- DPS: Level 60 813.8 / 801.6 / 782.3, Imp GW 810.4 / 797.7 / 778.7, Water Shield 762.9 / 755.4 / 742.3 (5.8% behind at 3 min), Mana Tide 739.9 / 733.4 / 728.4 (8.5% behind). Without the trinket hold: 813.5 / 801.8 / 781.6, 810.3 / 797.9 / 778.0, 763.1 / 755.6 / 741.4 and 739.7 / 733.0 / 727.4. Before the gear round: 803.2 / 791.9 / 771.1, 800.0 / 788.3 / 767.3, 758.3 / 750.8 / 738.9 and 735.5 / 728.8 / 724.6.
-- Races: the table under Comparing races. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman). With weapon-type racials off (no Axe Specialization), the Orc is 798.3 / 786.4 / 767.1 and Tauren leads at 800.4 / 788.0 / 769.5.
+- DPS: Level 60 823.8 / 813.0 / 793.4, Imp GW 820.3 / 808.9 / 789.3, Water Shield 771.2 / 764.7 / 752.7 (5.9% behind at 3 min), Mana Tide 748.7 / 742.3 / 737.7 (8.7% behind). With the old Greater Agility and Juju Power: 813.8 / 801.6 / 782.3, 810.4 / 797.7 / 778.7, 762.9 / 755.4 / 742.3 and 739.9 / 733.4 / 728.4. Without the trinket hold as well: 813.5 / 801.8 / 781.6, 810.3 / 797.9 / 778.0, 763.1 / 755.6 / 741.4 and 739.7 / 733.0 / 727.4. Before the gear round: 803.2 / 791.9 / 771.1, 800.0 / 788.3 / 767.3, 758.3 / 750.8 / 738.9 and 735.5 / 728.8 / 724.6.
+- Races: the table under Comparing races. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman). With weapon-type racials off (no Axe Specialization), the Orc is 808.5 / 798.1 / 778.5 and Tauren leads at 809.9 / 799.0 / 780.6 (Windshaper Skyborne and Troll within noise).
 - Races on the other builds (same seed, 20000 iterations, 120 / 180 / 300 sec). Orc wins every one at every length. Best overall and best Horde: Orc. Best Alliance: Dwarf (the only Alliance shaman).
 
 | Build | Orc | Windshaper Skyborne | Troll | Tauren | Dwarf |
 |---|---|---|---|---|---|
-| Imp GW | 810.4 / 797.7 / 778.7 | 796.0 / 783.4 / 765.7 | 796.9 / 783.5 / 765.5 | 797.2 / 784.2 / 765.8 | 792.5 / 779.7 / 761.1 |
-| Water Shield | 762.9 / 755.4 / 742.3 | 749.7 / 742.4 / 730.5 | 750.7 / 742.1 / 730.2 | 749.4 / 741.7 / 729.6 | 745.1 / 737.7 / 726.0 |
-| Mana Tide | 739.9 / 733.4 / 728.4 | 727.4 / 720.3 / 716.7 | 728.1 / 720.7 / 716.6 | 725.8 / 719.0 / 715.3 | 723.0 / 716.3 / 712.2 |
+| Imp GW | 820.3 / 808.9 / 789.3 | 805.2 / 794.2 / 776.2 | 806.3 / 794.0 / 776.1 | 806.5 / 794.8 / 776.2 | 801.8 / 790.4 / 772.1 |
+| Water Shield | 771.2 / 764.7 / 752.7 | 758.7 / 752.0 / 741.3 | 759.4 / 751.5 / 740.5 | 758.4 / 751.1 / 740.0 | 754.5 / 747.4 / 736.3 |
+| Mana Tide | 748.7 / 742.3 / 737.7 | 736.3 / 729.3 / 725.6 | 736.7 / 729.3 / 725.4 | 734.9 / 728.0 / 724.5 | 731.9 / 725.0 / 721.4 |
 
 ### Mage
 
