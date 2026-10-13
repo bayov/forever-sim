@@ -120,15 +120,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 799.25419
-  tps: 567.47047
+  dps: 797.82823
+  tps: 566.45805
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 790.16548
-  tps: 561.01749
+  dps: 791.02995
+  tps: 561.63126
  }
 }
 dps_results: {
