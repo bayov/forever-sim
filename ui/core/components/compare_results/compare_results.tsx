@@ -35,15 +35,16 @@ const LOWER_IS_BETTER = new Set(['DTPS', 'TMI', 'COD', 'OOM', 'DUR']);
 const Z_SIGNIFICANT = 1.96;
 
 const COLOR_A = '#7fb3f0';
-const COLOR_A_FILL = 'rgba(127, 179, 240, 0.18)';
+const COLOR_A_BAR = 'rgba(127, 179, 240, 0.85)';
 const COLOR_B = '#c8a24a';
-const COLOR_B_FILL = 'rgba(200, 162, 74, 0.18)';
+const COLOR_B_BAR = 'rgba(200, 162, 74, 0.9)';
 const MUTED = '#8e948f';
 
 // Each point of the distribution gets at least this many pixels.
-const MIN_BIN_PX = 8;
-// The lines of two runs cross a lot, so we want them smoother than the bars of the Results tab.
-const MIN_ITERATIONS_PER_BIN = 40;
+// Each bin holds a bar for each run, so it gets twice the pixels of a bin in the Results tab.
+const MIN_BIN_PX = 12;
+// Two runs side by side are easier to tell apart with fuller bins than in the Results tab.
+const MIN_ITERATIONS_PER_BIN = 20;
 const NICE_BIN_WIDTHS = [1, 2, 3, 4, 5, 10, 15, 20, 25, 50, 100, 200, 250, 500, 1000];
 
 // The rows in the list of biggest changes. The rest go in one Other row.
@@ -999,26 +1000,21 @@ function drawDistribution(canvas: HTMLCanvasElement, countsA: DpsCount[], counts
 		counts.forEach(({ dps, count }) => (bins[binOf(dps) - firstBin] += count));
 		return bins.map((count, i) => ({ x: (firstBin + i + 0.5) * width - 0.5, y: (count / total) * 100 }));
 	};
-	const dataset = (label: string, data: { x: number; y: number }[], color: string, fill: string) => ({
+	// The two bars of a bin stand next to each other, the baseline's on the left.
+	const dataset = (label: string, data: { x: number; y: number }[], color: string) => ({
 		label,
 		data,
-		borderColor: color,
-		backgroundColor: fill,
-		fill: 'origin' as const,
-		borderWidth: 2,
-		pointRadius: 0,
-		pointHoverRadius: 4,
-		pointHoverBackgroundColor: color,
-		tension: 0.3,
+		backgroundColor: color,
+		hoverBackgroundColor: color,
+		borderRadius: 2,
+		categoryPercentage: 0.9,
+		barPercentage: 1,
 	});
 
 	return new Chart(canvas, {
-		type: 'line',
+		type: 'bar',
 		data: {
-			datasets: [
-				dataset('Baseline', shares(countsA, totalA), COLOR_A, COLOR_A_FILL),
-				dataset('Compared', shares(countsB, totalB), COLOR_B, COLOR_B_FILL),
-			],
+			datasets: [dataset('Baseline', shares(countsA, totalA), COLOR_A_BAR), dataset('Compared', shares(countsB, totalB), COLOR_B_BAR)],
 		},
 		plugins: [markerPlugin(markers)],
 		options: {
@@ -1042,6 +1038,7 @@ function drawDistribution(canvas: HTMLCanvasElement, countsA: DpsCount[], counts
 					type: 'linear',
 					min: firstBin * width - 0.5,
 					max: (firstBin + binCount) * width - 0.5,
+					offset: false,
 					grid: { display: false },
 					ticks: { color: MUTED, maxRotation: 0, autoSkipPadding: 16, callback: wholeDpsTick },
 				},
