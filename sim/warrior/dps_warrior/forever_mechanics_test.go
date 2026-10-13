@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/warrior"
 )
 
@@ -103,5 +104,37 @@ func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
 	}
 	if flurry.Duration != 15*time.Second {
 		t.Errorf("Flurry lasts %v, want 15s", flurry.Duration)
+	}
+}
+
+// TestForeverWarriorDeepWoundsRolls checks the 8 October development notes: under Forever, Deep
+// Wounds doesn't scale with attack power, and it is a rolling DoT, so a crit while it is up adds
+// the damage not yet ticked to the new one.
+func TestForeverWarriorDeepWoundsRolls(t *testing.T) {
+	sim, war := newForeverWarrior(t, "00305003")
+	war.AutoAttacks.MH().BaseDamageMin = 100
+	war.AutoAttacks.MH().BaseDamageMax = 200
+	mh := war.AutoAttacks.MHAuto()
+	dot := war.DeepWounds.Dot(war.CurrentTarget)
+	crit := func() float64 {
+		result := mh.NewResult(war.CurrentTarget)
+		result.Outcome = core.OutcomeCrit
+		result.Damage = 300
+		mh.DealDamage(sim, result)
+		return dot.SnapshotBaseDamage
+	}
+
+	first := crit()
+	if first <= 0 {
+		t.Fatalf("a crit should apply Deep Wounds, its tick is %.3f", first)
+	}
+	if got := crit(); math.Abs(got-2*first) > 1e-6 {
+		t.Errorf("a second crit before any tick gave a %.3f tick, want the first's 4 ticks rolled in: %.3f", got, 2*first)
+	}
+
+	dot.Cancel(sim)
+	war.AddStatDynamic(sim, stats.AttackPower, 1000)
+	if got := crit(); math.Abs(got-first) > 1e-6 {
+		t.Errorf("with 1000 more attack power a crit gave a %.3f tick, want %.3f", got, first)
 	}
 }

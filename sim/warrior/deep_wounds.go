@@ -74,20 +74,26 @@ func (warrior *Warrior) applyDeepWounds() {
 func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isOh bool) {
 	dot := warrior.DeepWounds.Dot(target)
 
+	// Under Forever, Deep Wounds doesn't scale with attack power and is a rolling DoT (the
+	// 8 October development notes): a new crit adds the damage not yet ticked to the new DoT.
+	forever := warrior.Env.IsForever()
+	ap := core.TernaryFloat64(forever, 0, dot.Spell.MeleeAttackPower(target))
+
 	var awd float64
 	if isOh {
 		attackTableOh := warrior.AttackTables[target.UnitIndex][proto.CastType_CastTypeOffHand]
 		adm := warrior.AutoAttacks.OHAuto().AttackerDamageMultiplier(attackTableOh, true)
-		// The 8 October build stopped attack power from counting on off-hand crits under Forever.
-		ap := core.TernaryFloat64(warrior.Env.IsForever(), 0, dot.Spell.MeleeAttackPower(target))
 		awd = warrior.AutoAttacks.OH().CalculateAverageWeaponDamage(ap) * 0.5 * adm
 	} else { // MH
 		attackTableMh := warrior.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
 		adm := warrior.AutoAttacks.MHAuto().AttackerDamageMultiplier(attackTableMh, true)
-		awd = warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower(target)) * adm
+		awd = warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(ap) * adm
 	}
 
 	newDamage := awd * 0.2 * float64(warrior.Talents.DeepWounds) // 60% of average attackers damage
+	if forever && dot.IsActive() {
+		newDamage += dot.SnapshotBaseDamage * float64(dot.MaxTicksRemaining())
+	}
 
 	dot.SnapshotBaseDamage = newDamage / 4.0 // spread over 4 ticks of the dot
 	dot.SnapshotAttackerMultiplier = 1

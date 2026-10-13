@@ -70,7 +70,7 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // Stamina at about 19.7%): Strength first, then Stamina, Agility, crit and attack power, 9% hit (the
 // special attack cap), no Spirit. Totals: armor 650.5, bow 19.5, swords 64.0, two-hander 79.0; the
 // Fury set 733.5, the Arms / Fury 2H set 748.5. Only the head and legs carry Battlegear of Glory,
-// Forever's Molten Core set for Arms and Fury, so only its 2-piece is live. The 4-piece (+36 attack
+// Forever's Arms and Fury tier set, so only its 2-piece is live. The 4-piece (+36 attack
 // power against Humanoids) would add 10.8 on Fury, 8.8 on two-hand Fury and 8.4 on Arms against a
 // Humanoid boss (Undead, 180 sec). The 5-piece adds nothing, since Recklessness is used once a fight. Arms and Fury share the
 // armor, rings, bow and trinkets, the file has the details.
@@ -86,8 +86,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // on-use trinket with +335 attack power for 20 sec every 2 min (37 weighted on average, Earthstrike's
 // size; sim/warrior/forever_synthetic_trinkets.go).
 //
-// On 2026-10-13 the Level 60 Fury build (Human, 180 sec) does 1018.7 on the Fury set, and the Era
-// Phase 1 set (phase_1.gear.json) 987.1 with the same talents and rotation.
+// On 2026-10-13 the Level 60 Fury build (Human, 180 sec) does 1049.5 on the Fury set, and the Era
+// Phase 1 set (phase_1.gear.json) 1018.7 with the same talents and rotation.
 export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Fury)', Level60Phase1SyntheticFuryGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for a dual wield warrior, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -130,7 +130,7 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // both swing timers (+3.0 at 180 sec), and the Sapper goes on cooldown ahead of it. Blood Fury,
 // Berserking and Elune's Light wait for a Death Wish that is held for the end only when that costs
 // no use (+7.8 for Orc at 180 sec; the rotation auditor's cooldown pass).
-// It is 1018.7 where the old DPS (With Reck) rotation is 984.5. Slam on its 18 sec cooldown and
+// It is 1049.5 where the old DPS (With Reck) rotation is 1006.2. Slam on its 18 sec cooldown and
 // holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
@@ -179,7 +179,7 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury',
 	group: 'Level 60',
 });
 // Two-hand Fury from the same search on the two-hand set: Two-Handed Weapon Specialization in place
-// of Dual Wield Specialization and Furious Precision. 885.4 at 180 sec (Human), 13% behind dual wield
+// of Dual Wield Specialization and Furious Precision. 917.9 at 180 sec (Human), 13% behind dual wield
 // Fury but its own way to play, so it gets its own preset.
 export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 	'Level 60 Fury (Two-Hand)',
@@ -190,7 +190,7 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 // Weaponmaster (1% extra attacks a point with a sword), Improved Slam and Impale, and Cruelty,
 // Unbridled Wrath and Booming Voice in Fury. Arms cannot reach Death Wish. Booming Voice does
 // nothing here, since the raid has Battle Shout, but no other talent in reach does better with those
-// points. 888.7 at 180 sec (Human), 13% behind dual wield Fury and just ahead of two-hand Fury, its
+// points. 921.1 at 180 sec (Human), 12% behind dual wield Fury and just ahead of two-hand Fury, its
 // own preset as the Mortal Strike spec.
 export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Level 60 Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
@@ -402,9 +402,10 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-13 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1077.8 / 1026.7 /
-// 993.1, Level 60 Fury (Two-Hand) (Undead) 935.2 / 888.7 / 853.7 and Level 60 Arms (Undead) 914.4 /
-// 894.1 / 867.9. The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the raid's Battle Shout VI,
+// On 2026-10-13 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1103.8 / 1055.5 /
+// 1024.9, Level 60 Fury (Two-Hand) (Undead) 963.6 / 917.7 / 883.9 and Level 60 Arms (Undead) 941.3 /
+// 922.9 / 897.6. Deep Wounds without attack power but rolling (the 8 October notes) is +28.8 / +29.0 /
+// +28.8 at 180 sec. Two-hand Fury is level between Undead and Human (917.7 and 917.9). The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the raid's Battle Shout VI,
 // Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and Deep Wounds' ticks not
 // critting 1.6 / 6.7 / 7.2. Undead has no weapon racial, so these are also the numbers with weapon racials off.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
@@ -446,10 +447,10 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsArms,
 });
-// Against a Dragonkin boss (Undead, 20,000 iterations, 120 / 180 / 300 sec): 943.4 / 922.9 / 896.7,
-// where the generic Arms build does 914.4 / 894.1 / 867.9 (+3.2% at 180 sec). Fury doesn't get one:
+// Against a Dragonkin boss (Undead, 20,000 iterations, 120 / 180 / 300 sec): 969.9 / 951.4 / 926.2,
+// where the generic Arms build does 941.3 / 922.9 / 897.6 (+3.1% at 180 sec). Fury doesn't get one:
 // Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.4%
-// on dual wield Fury and +1.1% on two-hand Fury at 180 sec.
+// on dual wield Fury and +0.8% on two-hand Fury at 180 sec.
 export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Level 60 Arms (vs Dragonkin)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Arms with Spearing Strike, against a Giant or Dragonkin boss such as Onyxia.',

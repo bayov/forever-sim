@@ -47,7 +47,16 @@ Spells at level 60:
 - Tactical Mastery is a trainer spell at 14 that keeps 10 Rage, and Improved Tactical Mastery adds 3 a point. Berserker Rage is trained at 30 and makes no Rage of its own without the talent.
 - Thunder Clap rank 6: 103 damage, 20% slow, 6 sec cooldown, Battle or Defensive Stance. Last Stand: 3 min.
 - A critical white hit gives 100% more Rage (75% in the first 1 October build). A queued Heroic Strike no longer raises the off hand's hit chance.
-- Battlegear of Glory (set 2102, Helm, Shoulders, Breastplate, Gauntlets, Legplates and Greaves of Glory, item level 65) is the Molten Core set for Arms and Fury: 2 pieces 1% attack and cast speed, 3 Intimidating Shout 30 sec sooner, 4 +36 attack power against Humanoids, 5 Recklessness 30 sec sooner. Battleplate of Glory (set 2103) is the Protection one.
+- Battlegear of Glory (set 2102, Helm, Shoulders, Breastplate, Gauntlets, Legplates and Greaves of Glory, item level 65) is the Arms and Fury tier set (its icon is a Hyjal helm, and which raid drops it in Forever is not confirmed): 2 pieces 1% attack and cast speed, 3 Intimidating Shout 30 sec sooner, 4 +36 attack power against Humanoids, 5 Recklessness 30 sec sooner. Battleplate of Glory (set 2103) is the Protection one.
+
+Checked against client 70338, wowhead's Forever tooltips (dataEnv 17) and Blizzard's posts on 13 October:
+
+- Deep Wounds doesn't scale with attack power on either hand and is a rolling DoT: a crit while it is up adds the damage not yet ticked to the new one. The 8 October notes fixed it "scaling with attack power for your Offhand weapon" and add "Deep Wounds does not scale with Attack Power but is a rolling DoT compared to Classic/Vanilla" (https://us.forums.blizzard.com/en/wow/t/2360696, post 5). The sim follows this since 13 October.
+- Windfury Totem is a party buff, not a weapon enchant (Mage & Shaman deep dive, https://news.blizzard.com/en-us/article/24302097), so a warrior keeps a sharpening stone on the main hand with it. It doesn't stack with Grace of Air.
+- Rend "now gains significant damage scaling from Attack Power" (Priest & Warrior deep dive, https://news.blizzard.com/en-us/article/24301514), but neither the client nor the tooltip (147 over 21 sec) gives a coefficient, so the sim has none.
+- Spearing Strike: the client tooltip reads 40% weapon damage plus 80% more against Giants, Dragonkin and mounted targets. The deep dive's "damage is doubled" is older.
+- Intercept is still in the game (spell 20617, Berserker Stance), so it is not removed. Whirlwind (both weapons), Berserker Rage (level 30) and Bloodrage (no longer keeps you in combat) did change. Recklessness is 100% crit and 20% more damage taken for 15 sec on a 30 min cooldown that no longer shares with Shield Wall and Retaliation.
+- The sections below are the BlizzCon transcription. Where they disagree with the top of this page (Thunder Clap's 6 sec cooldown, Slam's 18 sec cooldown and +87, Victory Rush's 1 + 15% of attack power, and the talents), the top is right.
 
 ## Spellbook changes (trainer abilities)
 
@@ -104,6 +113,8 @@ Spells at level 60:
   - Note: Now 60% damage reduction for 12 sec on a 15 minute cooldown (Classic: 75% for 10 sec every 30 minutes). Requires Defensive Stance and a shield.
 
 ### Removed abilities
+
+None. Intercept was missing from the level 38 demo, but the client and ForeverChanges still have it.
 
 - **Intercept** (fury, Level 30, 10 Rage, 25 yd range, Instant, 30 sec cooldown)
   - Charge an enemy, causing 65 damage and stunning it for 3 sec.
