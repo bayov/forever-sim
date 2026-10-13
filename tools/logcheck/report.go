@@ -29,15 +29,18 @@ type report struct {
 	// aliased holds the sim spells we matched to a log spell of another ID, printed once.
 	aliased  map[int32]bool
 	logNames map[int32]string
-	// rounding is how the server turns damage into whole points: "floor" or "round".
+	// rounding is how the server turns the raw field into whole points: "floor" or "round".
 	rounding string
 }
 
-// toWhole turns a sim hit into the whole points the log would show.
+// toWhole turns a sim hit into the whole points the log's raw field would show.
 //
-// The beta truncates, as far as we can tell (2026-10-13): with the sheet's spell power the
-// sim gives Flame Shock ticks 21.7, Flametongue Totem's attack 8.8 and Flame Shock's direct
-// hit 64.3, and the log has 21, 8 and 64 on every hit.
+// The beta truncates the raw field, as far as we can tell (2026-10-13): with the sheet's spell
+// power the sim gives Flame Shock ticks 21.7, Flametongue Totem's attack 8.8 and Flame Shock's
+// direct hit 64.3, and the log has raw 21, 8 and 64 on every hit.
+//
+// The amount the mob takes is rounded up with a chance equal to the fraction (9 on 79% of the
+// 8.8 hits), so on average it's the unrounded hit, like the sim's damage.
 func (r *report) toWhole(v float64) float64 {
 	if r.rounding == "round" {
 		return math.Round(v)

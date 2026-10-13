@@ -10,7 +10,7 @@ same level, a few hundred times. Then it prints each ability side by side, log a
   95% interval and the chance of the log's count under the sim's rate (exact binomial)
 - its raw damage, which is the hit before the mob's armor, resists, crit and damage taken
   modifiers (the log's raw field and the sim's `RawDamage`), as a range and an average. The sim's
-  hits are truncated to whole points first, because the beta truncates (below)
+  hits are truncated to whole points first, because the log's raw field is truncated (below)
 - partial resists on spells, by the share resisted
 - for what we didn't cast (procs), how many came per 100 landed white swings
 
@@ -66,10 +66,14 @@ replayed in every level's run.
   warning and goes first in the flagged list, because every damage row depends on these stats.
   Check it before reading a damage flag: on 2026-10-13 a 6 spell power gap (two enchants the
   sim lacked) made Flame Shock and Frost Shock look wrong when they weren't.
-- **Rounding.** The log has whole points, and the beta truncates. With the sheet's spell power
-  the sim gives Flame Shock ticks 21.7, Flametongue Totem's attack 8.8 and Flame Shock's direct
-  hit 64.3, and the 10-10 log has 21, 8 and 64 on every hit. Rounding would give 22 and 9.
-  `-rounding round` compares the other way.
+- **Rounding.** The log's raw field is truncated to whole points, so we truncate the sim's hits
+  before comparing raw. With the sheet's spell power the sim gives Flame Shock ticks 21.7,
+  Flametongue Totem's attack 8.8 and Flame Shock's direct hit 64.3, and the 10-10 log has raw
+  21, 8 and 64 on every hit. Rounding would give 22 and 9. `-rounding round` compares the other
+  way. The damage the mob takes (the amount) is rounded differently: up with a chance equal to
+  the fraction, so on average it's the unrounded hit. In the same window Flametongue Totem's
+  attack did 9 on 148 of 188 hits (79%, for 8.8), the Flame Shock ticks 22 on 29 of 41 (71%, for
+  21.7) and the direct hit 65 on 2 of 7 (for 64.3). So the sim's damage needs no rounding.
 - **Our logged stats changed.** Each of our casts carries max health, attack power, spell power
   and armor. A change means a gear swap or a stat buff, and the sim uses the export's gear for
   the whole window. Pick a window without swaps for damage checks.
