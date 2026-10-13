@@ -80,6 +80,13 @@ func (paladinRet) Knobs() []Knob {
 		// the top of the list. On the autocast line at the bottom they wait for a free GCD,
 		// which a GCD line above it nearly always takes, so they go out seconds late.
 		{Name: "cooldownsFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Against Undead and Demons: Exorcism ahead of Holy Strike instead of last, and only
+		// above exorcismMana percent of mana.
+		{Name: "exorcismFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "exorcismMana", Default: 0, Min: 0, Max: 60, Step: 20},
+		// Holy Wrath (from level 50, 2 sec cast, 1 min cooldown, only hits Undead and Demons)
+		// after Exorcism above holyWrathMana percent of mana. 100 never.
+		{Name: "holyWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
 	}
 }
 
@@ -94,6 +101,7 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	hammerOfWrath := rankID(paladin.HammerOfWrathLevel[:], paladin.HammerOfWrathSpellId[:])
 	lightsVigil := rankID(paladin.LightsVigilLevel[:], paladin.LightsVigilSpellId[:])
 	lightsVigilMark := rankID(paladin.LightsVigilLevel[:], paladin.LightsVigilDebuffId[:])
+	holyWrath := rankID(paladin.HolyWrathLevel[:], paladin.HolyWrathSpellId[:])
 
 	seal, otherSeal := sealOfRighteousness, sealOfCommand
 	sealNotes := "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
@@ -208,6 +216,21 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if k["holyShock"] == 2 {
 		holyShockLine()
 	}
+	exorcismLine := func() {
+		if k["exorcism"] != 1 {
+			return
+		}
+		var floor value
+		notes := "Exorcism on cooldown, only against Undead and Demons."
+		if k["exorcismMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["exorcismMana"]/100))
+			notes = "Exorcism on cooldown with the mana to spare, only against Undead and Demons."
+		}
+		items = append(items, cast(exorcism, floor, notes))
+	}
+	if k["exorcismFirst"] == 1 {
+		exorcismLine()
+	}
 	if k["holyStrikeFirst"] == 0 {
 		holyStrikeLine()
 	}
@@ -218,8 +241,15 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		}
 		items = append(items, cast(hammerOfWrath, floor, "Hammer of Wrath below 20% health."))
 	}
-	if k["exorcism"] == 1 {
-		items = append(items, cast(exorcism, nil, "Exorcism on cooldown, only against Undead and Demons."))
+	if k["exorcismFirst"] == 0 {
+		exorcismLine()
+	}
+	if k["holyWrathMana"] < 100 {
+		var floor value
+		if k["holyWrathMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["holyWrathMana"]/100))
+		}
+		items = append(items, cast(holyWrath, floor, "Holy Wrath on cooldown, only against Undead and Demons."))
 	}
 	if k["holyShock"] == 1 {
 		holyShockLine()

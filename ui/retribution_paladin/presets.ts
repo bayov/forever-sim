@@ -364,9 +364,10 @@ export const OtherDefaults = {
 //                                 Builds
 ///////////////////////////////////////////////////////////////////////////
 
-// The level 60 raid setup: the sim's default boss (level 63, 3731 armor, Humanoid), a 3 minute
-// fight, and the default buffs, debuffs and consumes, so switching back from the Level 30 build
-// restores everything that build changed.
+// The level 60 raid setup: the sim's default boss (level 63, 3731 armor) as type Unknown, the
+// generic boss of standards 19, so no creature-type bonus applies (Exorcism and Holy Wrath do
+// nothing on it), a 3 minute fight, and the default buffs, debuffs and consumes, so switching
+// back from the Level 30 build restores everything that build changed.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	'Level 60',
 	Encounter.create({
@@ -380,7 +381,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 				id: 213336,
 				name: 'Level 60',
 				level: 63,
-				mobType: MobType.MobTypeHumanoid,
+				mobType: MobType.MobTypeUnknown,
 				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
 				minBaseDamage: 3000,
 				damageSpread: 0.3333,
