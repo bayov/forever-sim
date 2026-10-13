@@ -262,5 +262,21 @@
    "at": "2026-10-13T22:10:21.596Z",
    "by": "Claude (forever-sim)"
   }
+ },
+ "assumptions": {
+  "title": "Assumptions",
+  "description": "Every value Forever hasn't confirmed that the presets depend on, by class: what it is, the presets it touches, its Low / Expected / High settings with their rationale, which one the presets use, and each setting's effect on each preset at 180 s.",
+  "updated": {
+   "at": "2026-10-13T22:57:28.146Z",
+   "by": "Claude (forever-sim)"
+  }
+ },
+ "assumption_dps": {
+  "title": "DPS under each assumption",
+  "description": "Per preset an assumption touches: mean DPS with no setting changed, with each other setting alone (180 s at 20,000 fights, 120 and 300 s at 5,000), and with combinations of settings at 180 s (every combination where a preset has 3 or fewer assumptions, 12 random ones otherwise, which check the multiplied estimate the page uses for the rest). Seed 1, the preset's own request.",
+  "updated": {
+   "at": "2026-10-13T22:57:28.132Z",
+   "by": "Claude (forever-sim)"
+  }
  }
 }
