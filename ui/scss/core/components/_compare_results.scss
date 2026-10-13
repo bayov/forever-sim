@@ -111,9 +111,14 @@ $cmp-worse: #ef7a7a;
 }
 
 .cmp-swap {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	align-self: center;
+	flex-shrink: 0;
 	width: 2.25rem;
 	height: 2.25rem;
+	padding: 0;
 	border: 1px solid var(--line-color-strong);
 	border-radius: 50%;
 	background: $panel-bg;
