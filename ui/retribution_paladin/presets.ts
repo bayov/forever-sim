@@ -93,7 +93,7 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // head and chest carry Justice Battlegear, Forever's Tier 1 retribution set, so only its 2-piece
 // bonus (1% attack and cast speed) is live, the same shape as every class's preset. The 4-piece
 // (36 attack power against Undead) adds nothing on the raid boss, and the 5-piece (0.5 sec off
-// Judgement) would add 5.3 at 180 sec on the Level 60 build, 5.1 on sub Holy and 9.7 on Shock.
+// Judgement) would add 5.5 at 180 sec on the Level 60 build, 5.3 on sub Holy and 9.3 on Shock.
 //
 // The two-hander is an axe with Spinal Reaper's 203 - 305 at 3.4, the Era Phase 1 retribution
 // weapon, so no paladin race gets a weapon racial from it. The relic is Libram of Law (Pix
@@ -132,6 +132,8 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // that stays up is 1.5 behind. The spell power on-use trinket and the Goblin Sapper Charge go at
 // the top on cooldown: on the autocast line at the bottom they waited for a free GCD and went
 // out 3 to 4.5 sec late (+6.1 / +3.3 / +2.1 at 120 / 180 / 300 sec, Shock +4.7 / +1.6 / +1.7).
+// The trinket goes at the pull and is then held for the 20% execute phase whenever that loses no
+// use of it (+1.3 at 180 sec, Shock +1.1, nothing at 120 sec). All four Level 60 rotations do this.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: 'Level 60 rotation: Consecration, Seal of Command twisted with Seal of Righteousness before every swing, Judgement and Holy Strike on cooldown.',
 	group: 'Level 60',
@@ -203,7 +205,7 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // Conduit, Conviction, Vindication, Sanctified Judgement, Seal of Command, Sacred Arbiter,
 // Two-Handed Weapon Specialization, Vengeance, Champion of the Light, Instrument of Law 1),
 // Toughness 5 to reach Precision 3, and Divine Strength 5, Divine Intellect 2 and Improved Seals
-// 3 in Holy. 976.3 / 970.5 / 961.1 at 120 / 180 / 300 sec on the final set. The search's last move (a Vindication
+// 3 in Holy. 976.3 / 971.8 / 961.1 at 120 / 180 / 300 sec on the final set. The search's last move (a Vindication
 // point into Divine Intellect for mana) was a tie. Twist of Light is the build: without it the
 // seals cannot be twisted, and the Holy Power build was 24% behind before any search.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '52003-503-05225331001330311' }), {
@@ -212,7 +214,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 });
 // Level 60 (sub Holy): the side points in Holy instead of Protection (Divine Strength 5, Divine
 // Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2) and Instrument of Law 2 for a
-// Holy Conduit point. It was the search's best from the Holy seed. 971.8 / 965.5 / 952.8 at 120 /
+// Holy Conduit point. It was the search's best from the Holy seed. 971.8 / 966.8 / 952.8 at 120 /
 // 180 / 300 sec, 0.5% behind Level 60 at 120 sec and 0.9% at 300 because it has no Precision.
 export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 	'Level 60 (sub Holy)',
@@ -224,8 +226,8 @@ export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 // Strength 5, Divine Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2, Illumination 1
 // (to reach row 5), Divine Favor, Holy Shock, Divine Precision 2, Consecrated Ground 2, Holy
 // Power 5 and Light's Vigil, with Benediction, Improved Judgement, Holy Conduit, Conviction,
-// Vindication 2, Sanctified Judgement 3 and Sacred Arbiter in Retribution. 979.5 / 961.4 / 922.3
-// at 120 / 180 / 300 sec on the final set (Spellblasting and Holy Power favour it), 0.9% behind
+// Vindication 2, Sanctified Judgement 3 and Sacred Arbiter in Retribution. 979.5 / 962.5 / 922.4
+// at 120 / 180 / 300 sec on the final set (Spellblasting and Holy Power favour it), 1.0% behind
 // Level 60 at 180 sec and 4.0% at 300 (Divine Precision does not cover its judgements): without Twist of Light it has nothing for the free GCDs
 // between its cooldowns, and it runs out of mana in long fights. Light's Vigil is worth 64 and Holy Shock 148.
 export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock', SavedTalents.create({ talentsString: '55003003201121251--05225230001' }), {
@@ -236,7 +238,7 @@ export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock
 // rotation. Purifying Power 2 (Exorcism every 10 sec, Holy Wrath every 40) for two Vindication
 // points (+24), Divine Strength 2 and Divine Intellect 5 (Divine Strength 3 into Divine Intellect,
 // +1.5), Reverence 1 for a Precision point and Instrument of Law back into Vindication (mana
-// tie-breaks). 1062.7 / 1056.5 / 1029.9 at 120 / 180 / 300 sec against an Undead boss, 8.9% over
+// tie-breaks). 1062.7 / 1057.4 / 1030.0 at 120 / 180 / 300 sec against an Undead boss, 8.8% over
 // Level 60 on its own boss at 180 sec. The sub Holy one below is ahead from 180 sec on.
 export const TalentsLevel60Undead = PresetUtils.makePresetTalents(
 	'Level 60 (vs Undead)',
@@ -245,7 +247,7 @@ export const TalentsLevel60Undead = PresetUtils.makePresetTalents(
 );
 // Level 60 (sub Holy, vs Undead): the talent search from Level 60 (sub Holy) on an Undead boss
 // moved Instrument of Law 2 to 1 for Holy Conduit 2 (Exorcism and Holy Wrath cost 40% less). It
-// already has Purifying Power 2. 1063.3 / 1059.4 / 1049.0 at 120 / 180 / 300 sec against an
+// already has Purifying Power 2. 1063.3 / 1060.3 / 1049.2 at 120 / 180 / 300 sec against an
 // Undead boss, the best build there at 180 and 300 sec (9.7% over Level 60 (sub Holy) on its own
 // boss at 180 sec): its Divine Intellect 5 and Reverence 3 pay for the extra spells.
 export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
@@ -307,7 +309,7 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 // counts). We take the Elixir of the Owl in the Intellect slot (980.5), on the Shock build too
 // (937.1, Sages is 0.5 ahead there, inside the noise). These were on the earlier set with
 // trinkets. On the final set, a second crit elixir (Mongoose in place of Greater Agility) would add
-// 14.9 on the Level 60 build at 180 sec and 12.0 on Shock (Forever's Mongoose gives spell crit too). Elixir of
+// 15.0 on the Level 60 build at 180 sec and 11.9 on Shock (Forever's Mongoose gives spell crit too). Elixir of
 // Giants is 1 to 2 behind Juju Power, and Elixir of Ferocity (18 Strength and Agility) beats Juju
 // Power on the final set by 1.6 / 1.5 / 0.8 at 180 sec (twist / sub Holy / Shock). Greater Spirit is worth 1.3 on Shock and nothing on the
 // twist build, Greater Agility 9 and 5. Lobster Stew beats Nightfin Soup by 3 (Mightfish Steak
@@ -440,12 +442,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 // Level 60: the Undead on the synthetic set with the Level 60 talents and rotation. Every race a
 // paladin can be, on that build with the same seed at 50000 iterations (120 / 180 / 300 sec):
-// Undead 976.3 / 970.5 / 961.1, Human 961.4 / 955.7 / 946.7, Dwarf 960.5 / 954.7 / 945.6. Undead
+// Undead 976.3 / 971.8 / 961.1, Human 961.4 / 957.0 / 946.7, Dwarf 960.5 / 956.0 / 945.7. Undead
 // is the best race and the only Horde paladin, Human the best Alliance one (5% Spirit), 1 ahead of
 // Dwarf. These are also the numbers with weapon racials off, since the axe gets none. Touch of the Grave rolls on every Judgement, Holy Strike and Consecration. The synthetic
 // two-hander is an axe like the Era Phase 1 Spinal Reaper, so neither Human's sword crit nor
-// Dwarf's mace crit counts. With a sword of the same stats Human would be about 985 at 180 sec,
-// ahead of Undead, and Dwarf with a mace about 962.
+// Dwarf's mace crit counts. With a sword of the same stats Human would be about 987 at 180 sec,
+// ahead of Undead, and Dwarf with a mace about 964.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 talents and rotation, in a 3 minute raid fight.',
@@ -459,8 +461,8 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: DefaultOptions,
 });
-// Level 60 (sub Holy): the same with the sub Holy talents. Undead 971.8 / 965.5 / 952.8 at 120 /
-// 180 / 300 sec, Human 956.8 / 950.9 / 939.5, Dwarf 956.2 / 950.2 / 937.8.
+// Level 60 (sub Holy): the same with the sub Holy talents. Undead 971.8 / 966.8 / 952.8 at 120 /
+// 180 / 300 sec, Human 956.8 / 952.2 / 939.5, Dwarf 956.2 / 951.5 / 937.8.
 export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (sub Holy)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Undead with the side talent points in Holy instead of Protection.',
@@ -476,8 +478,8 @@ export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (
 });
 
 // Level 60 Shock: the Holy Shock talents and rotation on Seal of Righteousness. Races at 120 /
-// 180 / 300 sec (50000 iterations): Undead 979.5 / 961.4 / 922.3, Human 964.3 / 946.8 / 908.6,
-// Dwarf 963.3 / 945.3 / 906.7.
+// 180 / 300 sec (50000 iterations): Undead 979.5 / 962.5 / 922.4, Human 964.3 / 947.8 / 908.8,
+// Dwarf 963.3 / 946.3 / 906.9.
 export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Shock', {
 	group: 'Level 60',
 	tooltip: "Level 60 Undead Holy Shock build with Light's Vigil, on the synthetic Phase 1 gear.",
@@ -517,8 +519,8 @@ const OptionsRighteousness = RetributionPaladinOptions.create({
 });
 // The vs Undead builds, on an Undead boss (50000 iterations, 120 / 180 / 300 sec). Undead stays
 // the best race and Human the best Alliance one on each.
-// Level 60 (vs Undead): Undead 1062.7 / 1056.5 / 1029.9, Human 1046.8 / 1041.0 / 1015.3, Dwarf
-// 1046.1 / 1040.2 / 1013.9.
+// Level 60 (vs Undead): Undead 1062.7 / 1057.4 / 1030.0, Human 1046.8 / 1041.9 / 1015.4, Dwarf
+// 1046.1 / 1041.1 / 1014.0.
 export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (vs Undead)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Undead against an Undead or Demon boss, with Exorcism and Holy Wrath.',
@@ -532,8 +534,8 @@ export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (v
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: OptionsRighteousness,
 });
-// Level 60 (sub Holy, vs Undead): Undead 1063.3 / 1059.4 / 1049.0, Human 1047.9 / 1044.1 /
-// 1034.5, Dwarf 1047.4 / 1043.5 / 1033.3. The best build against an Undead boss.
+// Level 60 (sub Holy, vs Undead): Undead 1063.3 / 1060.3 / 1049.2, Human 1047.9 / 1044.1 /
+// 1034.5, Dwarf 1047.4 / 1044.4 / 1033.5. The best build against an Undead boss.
 export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Level 60 (sub Holy, vs Undead)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Undead with the sub Holy talents against an Undead or Demon boss, with Exorcism and Holy Wrath.',
@@ -548,8 +550,8 @@ export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Leve
 	options: OptionsRighteousness,
 });
 // Level 60 Shock (vs Undead): the Shock talents (a talent search on the Undead boss found no
-// better) with the vs Undead Shock rotation. Undead 1055.3 / 1026.1 / 990.1, Human 1038.8 /
-// 1009.7 / 975.7, Dwarf 1037.8 / 1008.8 / 973.6, 6.7% over Level 60 Shock on its own boss at
+// better) with the vs Undead Shock rotation. Undead 1055.3 / 1026.8 / 990.3, Human 1038.8 /
+// 1009.7 / 975.7, Dwarf 1037.8 / 1009.5 / 973.8, 6.7% over Level 60 Shock on its own boss at
 // 180 sec.
 export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 60 Shock (vs Undead)', {
 	group: 'Level 60',
