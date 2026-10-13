@@ -80,7 +80,7 @@ func main() {
 		CurseOfWeakness:        improved,
 		DemoralizingRoar:       improved,
 		DemoralizingShout:      improved,
-		ExposeArmor:            improved,
+		ExposeArmor:            proto.TristateEffect_TristateEffectMissing,
 		FaerieFire:             true,
 		InsectSwarm:            true,
 		JudgementOfLight:       true,
