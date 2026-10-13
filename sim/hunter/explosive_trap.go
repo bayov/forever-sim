@@ -8,11 +8,13 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+// The Forever trap cooldown is 30 sec (Classic 15). The damage is Classic's (client 14315, build
+// 1.60.1.70338: 208 to 264 and 330 over 20 sec at rank 3).
 func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.SpellConfig {
-	spellId := [4]int32{0, 409532, 409534, 409535}[rank]
+	spellId := [4]int32{0, 13813, 14316, 14317}[rank]
 	dotDamage := [4]float64{0, 15, 24, 33}[rank]
 	minDamage := [4]float64{0, 104, 145, 208}[rank]
-	maxDamage := [4]float64{0, 135, 193, 265}[rank]
+	maxDamage := [4]float64{0, 135, 193, 264}[rank]
 	manaCost := [4]float64{0, 275, 395, 520}[rank]
 	level := [4]int{0, 34, 44, 54}[rank]
 
@@ -35,7 +37,7 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    timer,
-				Duration: time.Second * 15,
+				Duration: time.Second * 30,
 			},
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

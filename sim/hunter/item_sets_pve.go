@@ -2,7 +2,9 @@ package hunter
 
 import (
 	"time"
+
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -287,4 +289,65 @@ var ItemSetCryptstalkerArmor = core.NewItemSet(core.ItemSet{
 			}))
 		},
 	},
+})
+
+// wildstalkerArmorBonuses are the bonuses of Wildstalker Armor, Forever's Molten Core tier set for the
+// hunter (set 2101, items 280893 to 280898, client 1.60.1.70338 ItemSetSpell, spells 1300945, 1301012,
+// 1301078 and 1301252). Its client pieces carry no stats yet, so no real set is registered for them.
+// The synthetic Phase 1 hunter sets below get the same bonuses.
+var wildstalkerArmorBonuses = map[int32]core.ApplyEffect{
+	// 1% attack and casting speed (auras 342 and 65).
+	2: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		c.PseudoStats.MeleeSpeedMultiplier *= 1.01
+		c.PseudoStats.RangedSpeedMultiplier *= 1.01
+		c.PseudoStats.CastSpeedMultiplier *= 1.01
+	},
+	// Frost Trap and Freezing Trap cooldown 3 sec shorter. No damage.
+	3: func(agent core.Agent) {
+	},
+	// 36 melee attack power against Beasts (aura 102, melee only).
+	4: func(agent core.Agent) {
+		c := agent.GetCharacter()
+		beasts := core.FilterSlice(c.Env.Encounter.TargetUnits, func(unit *core.Unit) bool {
+			return unit.MobType == proto.MobType_MobTypeBeast
+		})
+		core.MakePermanent(c.RegisterAura(core.Aura{
+			Label: "Attack Power against Beasts",
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range beasts {
+					c.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BonusAttackPowerTaken += 36
+					c.AttackTables[target.UnitIndex][proto.CastType_CastTypeOffHand].BonusAttackPowerTaken += 36
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				for _, target := range beasts {
+					c.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BonusAttackPowerTaken -= 36
+					c.AttackTables[target.UnitIndex][proto.CastType_CastTypeOffHand].BonusAttackPowerTaken -= 36
+				}
+			},
+		}))
+	},
+	// Aimed Shot cooldown 1 sec shorter. The tooltip names Multi-Shot too, but the effect's class mask
+	// (131072) is Aimed Shot's alone (Multi-Shot is 4096). Multi-Shot still shares the cooldown.
+	5: func(agent core.Agent) {
+		hunter := agent.(HunterAgent).GetHunter()
+		hunter.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_HunterAimedShot {
+				spell.CD.Duration -= time.Second
+			}
+		})
+	},
+}
+
+// The synthetic Phase 1 hunter sets (tools/database/forever_synthetic_items_hunter.go), with the
+// Wildstalker Armor bonuses.
+var ItemSetHunterSyntheticRanged = core.NewItemSet(core.ItemSet{
+	Name:    "Hunter Synthetic Ranged (Phase 1)",
+	Bonuses: wildstalkerArmorBonuses,
+})
+
+var ItemSetHunterSyntheticSurvival = core.NewItemSet(core.ItemSet{
+	Name:    "Hunter Synthetic Survival (Phase 1)",
+	Bonuses: wildstalkerArmorBonuses,
 })

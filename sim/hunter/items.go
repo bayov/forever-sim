@@ -9,14 +9,14 @@ import (
 
 const (
 	KnightLieutenantsChainGauntlets = 16403
-	BloodGuardsChainGauntlets = 16530
-	MarshalsChainGrips = 16463
-	GeneralsChainGloves = 16571
-	RenatakisCharmofBeasts = 19953
-	DevilsaurEye   = 19991
-	DevilsaurTooth = 19992
-	KnightLieutenantsChainVices= 23279
-	BloodGuardsChainVices = 22862
+	BloodGuardsChainGauntlets       = 16530
+	MarshalsChainGrips              = 16463
+	GeneralsChainGloves             = 16571
+	RenatakisCharmofBeasts          = 19953
+	DevilsaurEye                    = 19991
+	DevilsaurTooth                  = 19992
+	KnightLieutenantsChainVices     = 23279
+	BloodGuardsChainVices           = 22862
 )
 
 func init() {
@@ -44,47 +44,47 @@ func init() {
 			},
 		}))
 	})
-	
+
 	// Equip: Increases the damage done by your Multi-Shot by 4%
 	core.NewItemEffect(MarshalsChainGrips, func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
-			core.MakePermanent(hunter.RegisterAura(core.Aura{
-				Label: "Multi-Shot Damage Increase",
-				OnInit: func(aura *core.Aura, sim *core.Simulation) {
-					hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
-				},
-			}))
+		core.MakePermanent(hunter.RegisterAura(core.Aura{
+			Label: "Multi-Shot Damage Increase",
+			OnInit: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
+			},
+		}))
 	})
 	// Equip: Increases the damage done by your Multi-Shot by 4%
 	core.NewItemEffect(GeneralsChainGloves, func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
-			core.MakePermanent(hunter.RegisterAura(core.Aura{
-				Label: "Multi-Shot Damage Increase",
-				OnInit: func(aura *core.Aura, sim *core.Simulation) {
-					hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
-				},
-			}))
-	})	
+		core.MakePermanent(hunter.RegisterAura(core.Aura{
+			Label: "Multi-Shot Damage Increase",
+			OnInit: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
+			},
+		}))
+	})
 	// Equip: Increases the damage done by your Multi-Shot by 4%
 	core.NewItemEffect(KnightLieutenantsChainVices, func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
-			core.MakePermanent(hunter.RegisterAura(core.Aura{
-				Label: "Multi-Shot Damage Increase",
-				OnInit: func(aura *core.Aura, sim *core.Simulation) {
-					hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
-				},
-			}))
-	})	
+		core.MakePermanent(hunter.RegisterAura(core.Aura{
+			Label: "Multi-Shot Damage Increase",
+			OnInit: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
+			},
+		}))
+	})
 	// Equip: Increases the damage done by your Multi-Shot by 4%
 	core.NewItemEffect(BloodGuardsChainVices, func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
-			core.MakePermanent(hunter.RegisterAura(core.Aura{
-				Label: "Multi-Shot Damage Increase",
-				OnInit: func(aura *core.Aura, sim *core.Simulation) {
-					hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
-				},
-			}))
-	})			
+		core.MakePermanent(hunter.RegisterAura(core.Aura{
+			Label: "Multi-Shot Damage Increase",
+			OnInit: func(aura *core.Aura, sim *core.Simulation) {
+				hunter.MultiShot.BaseDamageMultiplierAdditive += 0.04
+			},
+		}))
+	})
 	// Use: Instantly clears the cooldowns of Aimed Shot, Multishot, Volley, and Arcane Shot. (cooldown 3 min)
 	core.NewItemEffect(RenatakisCharmofBeasts, func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
@@ -106,10 +106,12 @@ func init() {
 			},
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				hunter.AimedShot.CD.Reset()
-				hunter.MultiShot.CD.Reset()
-				hunter.Volley.CD.Reset()
-				hunter.ArcaneShot.CD.Reset()
+				// Forever's Volley has no cooldown.
+				for _, spell := range []*core.Spell{hunter.AimedShot, hunter.MultiShot, hunter.Volley, hunter.ArcaneShot} {
+					if spell != nil && spell.CD.Timer != nil {
+						spell.CD.Reset()
+					}
+				}
 			},
 		})
 
@@ -118,7 +120,7 @@ func init() {
 			Spell: spell,
 		})
 	})
-	
+
 	core.NewItemEffect(DevilsaurEye, func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
 
@@ -218,8 +220,10 @@ func init() {
 					Duration: time.Minute * 2,
 				},
 			},
+			// Forever's Devilsaur Tooth makes the next Revive Pet free instead (the forever-hunter
+			// wiki), which does nothing in a fight.
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-				return hunter.pet.IsEnabled()
+				return !sim.IsForever() && hunter.pet.IsEnabled()
 			},
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				aura.Activate(sim)
@@ -230,7 +234,7 @@ func init() {
 			Spell: spell,
 			Type:  core.CooldownTypeDPS,
 			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return hunter.pet != nil && hunter.pet.IsEnabled()
+				return !sim.IsForever() && hunter.pet != nil && hunter.pet.IsEnabled()
 			},
 		})
 	})
