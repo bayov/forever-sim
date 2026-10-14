@@ -1464,7 +1464,7 @@ export function startReport(dash) {
   // type racial against its boss type. On one preset the numbers are DPS.
   const TARGET_PART = { 'Troll|beast': 'beast_troll', 'Dwarf|beast': 'beast_dwarf', 'High Order|elemental': 'insight', 'Windshaper|elemental': 'insight', 'Dwarf|humanoid': 'chastise' };
   const drawRacialRank = () => {
-    const host = $('#racial-rank'), take = $('#rl-take'), dead = $('#rl-dead');
+    const host = $('#racial-rank'), dead = $('#rl-dead');
     if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) return;
     const sc = scopeOf('rl');
     drawScope('rl', sc);
@@ -1497,7 +1497,7 @@ export function startReport(dash) {
     const rows = all.filter((a) => a.works), idle = all.filter((a) => !a.works);
     if (!rows.length) {
       host.replaceChildren(el('p', { class: 'fv-note', text: 'No racial does anything on these presets.' }));
-      take.replaceChildren(); dead.replaceChildren(); $('#rl-legend').replaceChildren();
+      dead.replaceChildren(); $('#rl-legend').replaceChildren();
       return;
     }
     const max = Math.max(d3.max(rows, (a) => a.value), one ? 1 : 0.1);
@@ -1519,15 +1519,15 @@ export function startReport(dash) {
         showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(a.label, a.race, noteRow('part', a.part)?.icon ? iconImg(noteRow('part', a.part).icon) : raceIco(a.raceIcon)), [
           tipKey(fd(a.value), one ? 'DPS' : `of ${a.race} DPS`, one ? null : 'on average'),
           info ? tipText(info.short || info.text) : null,
-          !one && top.length ? tipTable(['Strongest on', ''], top.map((g) => [bmap.get(g.build)?.label || g.build, `${sgn(g.share, f2)}%`])) : null,
+          !one && top.length ? tipTable(['Strongest on', ''], top.map((g) => {
+            const b = bmap.get(g.build);
+            return [b ? el('span', { class: 'fv-tip-spec' }, specIco(b, ''), b.label) : g.build, `${sgn(g.share, f2)}%`];
+          })) : null,
           a.works < a.n && a.notes.length ? tipNote(`Does nothing on ${a.n - a.works} of ${a.n}: ${a.notes.slice(0, 2).join('; ')}`) : null,
         ], { hl: row, below: true, pinned });
       });
       return row;
     }));
-    const lead = rows[0];
-    take.replaceChildren(el('b', { text: `${lead.race} ${lead.label}` }), one ? ` adds the most on ${sc.single.label}: ${fd(lead.value)} DPS.`
-      : ` adds the most: ${fd(lead.value)} of its race's DPS on average, and it works on ${lead.works} of ${lead.n} presets.`);
     dead.textContent = idle.length ? `No effect on ${one ? 'this preset' : 'these presets'}: ${idle.map((a) => `${a.label} (${a.race})`).join(', ')}.` : '';
     legend($('#rl-legend'), kinds);
   };

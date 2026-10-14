@@ -1452,6 +1452,18 @@ ol.fv-list li::marker {
 	}
 }
 
+// A preset in a tooltip table: its spec icon, then its name.
+.fv-tip-spec {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+
+	.fv-ico {
+		width: 1.1rem;
+		height: 1.1rem;
+	}
+}
+
 // An assumption's setting: its name, the presets' and expected marks, and its value in small type under it.
 .fv-tip-set {
 	b {
