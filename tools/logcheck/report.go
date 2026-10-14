@@ -157,10 +157,15 @@ func (r *report) sheet() {
 // follow, like a level up, a weapon skill up, a gear swap or a respec.
 //
 // The combat log has no level or skill (the level field on our own lines is our item level),
-// so we compare the exports taken around the window. A change between two exports happened
-// somewhere between them, so it may have been during the window or outside it. On 10-10,
-// Unarmed went from 85 at 21:30 to 147 at 23:14, which covers the whole 21:32 to 22:16 window,
-// so its glance and parry rates mix every skill in between.
+// so we compare the exports taken around the window. A change between two pasted exports
+// happened somewhere between them, so it may have been during the window or outside it. On
+// 10-10, Unarmed went from 85 at 21:30 to 147 at 23:14, which covers the whole 21:32 to 22:16
+// window, so its glance and parry rates mix every skill in between.
+//
+// BayovCore's history records each change within a few seconds of when it happened, so between
+// two history records we can say when, and a change recorded after the window ends didn't
+// happen in it. A weapon skill has a record for each point, so we sum those into one line per
+// skill.
 func (r *report) exportChanges(exports []*export) {
 	from, to := r.cl.from, r.cl.to
 	if len(exports) == 0 || exports[0].time.After(from) {
@@ -169,14 +174,50 @@ func (r *report) exportChanges(exports []*export) {
 	if len(exports) == 0 || exports[len(exports)-1].time.Before(to) {
 		fmt.Println("note: no export from after the window ends, so a change late in the window doesn't show")
 	}
+	skills := map[string]skillChange{}
+	var skillOrder []string
 	for i := 1; i < len(exports); i++ {
 		a, b := exports[i-1], exports[i]
-		changes := exportChanges(a, b)
+		exact := a.history && b.history
+		if exact && b.time.After(to.Add(historySettle)) {
+			continue
+		}
+		changes, skillUps := exportChanges(a, b)
+		for name, up := range skillUps {
+			if seen, ok := skills[name]; ok {
+				up.from = seen.from
+			} else {
+				skillOrder = append(skillOrder, name)
+			}
+			skills[name] = up
+		}
 		if len(changes) == 0 {
 			continue
 		}
-		what := fmt.Sprintf("the character changed between the exports at %s and %s, which overlap the window, so the sim's character may not match all of it: %s",
-			a.time.Format(stampFormat), b.time.Format(stampFormat), strings.Join(changes, ", "))
+		var what string
+		if exact {
+			what = fmt.Sprintf("the character changed at %s, so the sim's character may not match all of the window: %s",
+				b.time.Format(stampFormat), strings.Join(changes, ", "))
+		} else {
+			what = fmt.Sprintf("the character changed between the exports at %s and %s, which overlap the window, so the sim's character may not match all of it: %s",
+				a.time.Format(stampFormat), b.time.Format(stampFormat), strings.Join(changes, ", "))
+		}
+		fmt.Printf("WARNING: %s.\n", what)
+		r.flagged = append(r.flagged, what)
+	}
+	if len(skillOrder) > 0 {
+		slices.Sort(skillOrder)
+		span := fmt.Sprintf("between %s and %s, around the window", exports[0].time.Format(stampFormat), exports[len(exports)-1].time.Format(stampFormat))
+		if exports[0].history && exports[len(exports)-1].history {
+			span = "during the window"
+		}
+		var ups []string
+		for _, name := range skillOrder {
+			up := skills[name]
+			ups = append(ups, fmt.Sprintf("%s %d to %d of %d", name, up.from, up.to, up.max))
+		}
+		what := fmt.Sprintf("weapon skill went up %s, so its misses, dodges, parries, glances and crits mix the skills in between: %s",
+			span, strings.Join(ups, ", "))
 		fmt.Printf("WARNING: %s.\n", what)
 		r.flagged = append(r.flagged, what)
 	}

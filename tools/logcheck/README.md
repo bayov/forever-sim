@@ -30,10 +30,20 @@ Run it from the repo root. A run takes about a second.
 - **The log.** With no `-log`, it runs `tools/combat_log/archive.sh` first and reads the newest
   log in `~/forever-logs/_classic_beta_/`. `-from` and `-to` take `HH:MM:SS` on the log's first
   day (a time before the log starts is the next day) or `YYYY-MM-DD HH:MM:SS`.
-- **The export.** With no `-export`, it takes the newest one in `~/forever-logs/exports/` taken
-  before the window ends. When the user pastes an export, save it there as
+- **The export.** With no `-export`, it takes the newest export taken before the window ends.
+  It looks at the pasted ones in `~/forever-logs/exports/` and at BayovCore's history in
+  `~/forever-logs/history/` (below). When the user pastes an export, save it in `exports/` as
   `export-<date>_<time>.json` with the date and time from its `when.date`. The header prints which
   one it took and how far from the window.
+- **The history.** BayovCore's export module (`Modules/Export.lua` in bayovui) also records the
+  character as it changes. It takes a full snapshot at login, `/reload` and `/bayov export
+  mark`. After that it records each gear swap, enchant, talent change, level up and skill up,
+  within about 2 seconds of when it happened, and the sheet after a gear, talent or level change.
+  WoW writes it to disk on `/reload` or logout. `archive.sh` runs
+  `tools/combat_log/history.py`, which adds the new records to
+  `~/forever-logs/history/<Name>-<Realm>.jsonl` (the sheets and talent lists are in the
+  `.blobs.json` next to it). logcheck rebuilds a whole export for each record, so the header
+  names a history line like `Bayov-ClassicBetaPvP.jsonl:5 (history, change)`.
 - **Client tables.** It downloads SpellName and SpellEffect for the export's client build from
   wago.tools into `~/forever-logs/wago/<build>/`, or uses the newest build there when wago.tools
   doesn't have it.
@@ -93,8 +103,11 @@ replayed in every level's run.
   before the window to the first one after it, and warn about a level up, a skill up of a
   weapon either export holds, a gear swap or a talent change. A change between two exports
   happened somewhere between them, so the warning says which exports bracket it. With no export
-  before or after the window, a note says changes at that end don't show. Take an export right
-  before and right after a test to pin it down.
+  before or after the window, a note says changes at that end don't show. Between two history
+  records the warning gives the time of the change instead, and a change recorded after the
+  window ends isn't one. Weapon skill ups are summed into one line per skill, because history
+  has a record for each point. Without history, take an export right before and right after a
+  test to pin it down.
 - **Our logged stats changed.** Each of our casts carries max health, attack power, spell power,
   armor and item level. A change means a gear swap, a stat buff or a level up (more health with
   the same item level says a level up or a buff), and the sim uses the export's gear for the

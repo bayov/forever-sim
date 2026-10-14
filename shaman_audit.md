@@ -183,7 +183,7 @@ Restoration
 - [x] 8.42 Healing Focus (not implemented)
 - [x] 8.43 Water Shield
 - [x] 8.44 Tidal Mastery
-- [ ] 8.45 Restorative Totems
+- [x] 8.45 Restorative Totems
 - [ ] 8.46 Mana Tide Totem
 - [ ] 8.47 Healing Way (not implemented)
 - [ ] 8.48 Nature's Swiftness
@@ -1636,6 +1636,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16194, curve 85308): +1 to 5% crit (aura 107, misc 7) on Healing Wave, Lesser Healing Wave, Chain Heal and Riptide, not Healing Stream. Classic's version also covered Lightning Bolt and Chain Lightning, and Forever's doesn't, as its tooltip says. The mask also has Lightning Shield's bit (0x400), orb damage spells 26363 to 26370 included, probably left over from Classic's "and lightning spells". It changes nothing, because orbs never crit (7.15: 310 beta orb hits, 0 crits).
 - Beta: no build had it.
 - No sim change and no test. It only matters if we sim healing.
+
+### 8.45 Restorative Totems
+
+- The user OK'd it (2026-10-14): "ok fix comment", then "sg, we'll verify later so add to verify" on the stacking question.
+- The sim: Healing Stream gets +10% healing a point (`water_totems.go`, restorativeTotemsModifier), and our own Mana Spring +5% mana a point (`water_totems.go`). Another shaman's Mana Spring is the raid buff (`buffs.go`), where "Improved" stands for that shaman's 5/5 (x1.25) and our points don't touch it. Both Restoration presets take 5/5, nothing else.
+- Client 70338 (wago.tools 16187): +5 to 25% on Mana Spring (curve 85320, mask 0x4000) and +10 to 50% on Healing Stream (curve 85319, mask 0x2000), aura 108 on all effects. That matches.
+- Beta: no build had it. Mana Spring ticks without it were 4 mana about every 2 sec (`mana_returns_test.go`).
+- Fixed the restorativeTotemsModifier comment, which said Mana Spring's half was only in `buffs.go`.
+- Open (notes.md Need to Verify, both cases the user asked for: two plain totems, and an improved one next to a plain one): with our own Mana Spring and another shaman's, the sim adds both in full (50 to 62.5 MP5 at level 60). In the client each totem holds a party area aura of the same spell (5677 / 10494), and the usual Classic rule keeps only the stronger one. No preset uses both.
+- No sim change and no new test. `periodic_test.go` wants Healing Stream at +50% with 5/5, and `mana_returns_test.go` Mana Spring rank 1 at 5 mana a tick with 5/5 instead of 4.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
