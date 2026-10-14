@@ -202,7 +202,7 @@ Tree rules
 - [x] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
 - [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth (waits for release gear data, the user 2026-10-14)
 - [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants (waits for release gear data, the user 2026-10-14)
-- [ ] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
+- [x] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
 - [ ] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
 - [ ] 9.9 Weapon oils and stones beside the shaman imbue
 
@@ -1744,6 +1744,21 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - The Ten Storms 5 piece is +3% crit on all spells in the client (23570, aura 57 with no school), and the sim gives it to Nature only. Only 1 piece is in any preset, so it's never live.
   - Forever's level 60 PvP sets (Champion's and Warlord's Thunderfist, "Premier" pieces) aren't in the DB or the sim.
   - Forever's new world sets have pieces in our DB but no set name, because we read set names from wowhead Classic tooltips. So Partners in Crime (+22 Strength and a Strength proc, a level 17 and a level 60 ring), Rider of the Plaguelands (a Shadow damage melee proc, level 57) and the caster ones never get their bonuses. Krol'dok Battlegear and Defias Enforcer's Garb aren't on wowhead Forever yet.
+
+### 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
+
+- The user OK'd it (2026-10-15): "sg", and asked to also verify whether explosives with a cast time reset the swing timer.
+- The sim (`sim/core/consumes.go` registerExplosivesCD and newBasicExplosiveSpellConfig): the Sapper is instant and off the GCD, deals 450 to 750 Fire to every enemy and 375 to 625 to us, and has its own 5 min cooldown. The filler (Land Mine 394 to 506, Solid Dynamite 213 to 287, Dense 340 to 460, Thorium Grenade 300 to 500) takes a 1 sec cast off the GCD. All share a 1 min cooldown, get a 100% hit bonus and need Engineering. A white swing that comes due during the 1 sec cast waits for it to end.
+- Presets: every Enhancement and Elemental build at Level 60 and Level 30 (PvP too, through the shared Level 30 consumes) takes the Sapper and the Land Mine. At level 30 the Sapper is worth about +3.1 and the Land Mine 3.3 to 3.9.
+- Client 70338:
+  - Sapper 13241: 600 base with 0.5 variance to enemies and 500 with 0.5 to us (the sim's ranges), a 300000 ms item cooldown and category 24 with a 60000 ms category cooldown. Engineering 205.
+  - Land Mine 4100: an instant summon (cast time index 1, 0 ms) of a mine for 60 sec. Its Detonation 4043 deals 450 with 0.2489 variance, so 394 to 506. Engineering 195.
+  - Solid Dynamite 12419: 250 with 0.296 variance, cast time index 4 (1000 ms). The dynamites and the grenade share category 24.
+  - A level 30 engineer can reach 225 skill, so both explosives are usable.
+- The one mismatch: placing the Land Mine is instant in the client, and the sim gives it the dynamites' 1 sec cast. The real cost may be the wait until the mine goes off (an old TODO asks for a 10 sec delay), and no source gives that timing.
+- No sim change. Making the mine instant is a core change for every class, and the warrior, rogue and paladin rotations time it around swings, so it waits for the beta.
+- notes.md Need to Verify (Beta): is placing the mine instant, does an explosive with a cast time reset or hold our swing timer and does an instant one touch it, and how soon does the mine go off.
+- No new test. The values match the client and the suite stays small.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
