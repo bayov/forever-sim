@@ -621,8 +621,11 @@ func (shaman *Shaman) totemicFocusFactor() float64 {
 	return 1 - .05*float64(shaman.Talents.TotemicFocus)
 }
 
-// Restorative Totems uses Mod Spell Effectiveness (Base Value). Only the Healing Stream half is
-// modelled here, Mana Spring's value is hard coded in buffs.go.
+// restorativeTotemsModifier is Restorative Totems' bonus to Healing Stream Totem's healing.
+//
+// The talent's other half, 5% a point on Mana Spring Totem, is in water_totems.go for the
+// totems we drop ourselves. Another shaman's Mana Spring is the raid buff in buffs.go, where
+// "Improved" stands for that shaman's 5/5, and our own points don't touch it.
 func (shaman *Shaman) restorativeTotemsModifier() float64 {
 	return .1 * float64(shaman.Talents.RestorativeTotems)
 }
