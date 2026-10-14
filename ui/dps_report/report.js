@@ -1367,6 +1367,26 @@ export function startReport(dash) {
     // The weakest base stats in view, which the tooltip measures each race's base stats against.
     const baseOf = (r) => r.segs.find((sg) => sg.part === 'base')?.v;
     const low = d3.least(rows.filter((r) => baseOf(r) != null), baseOf);
+    // What the weapon swap changes. On one preset that's each swapped weapon's speed, and each talent whose bonus
+    // depends on the weapon type, before and after. Over several presets we name the talents only.
+    const swapTip = (r) => {
+      const sw = r.shares.map((g) => (bd.get(g.build + '|' + r.race) || []).find((q) => q.part === 'swap')).filter(Boolean);
+      const clsOf = (q) => bmap.get(q.build)?.class || '';
+      const talent = (t, lines) => el('div', { class: 'fv-tip-racial' }, iconImg(t[1], 'fv-ico') || el('i'), el('span', {}, el('b', { text: t[0] }), ...lines.map((l) => el('span', { text: l }))));
+      if (one) {
+        const q = sw[0];
+        if (!q) return [];
+        const sec = (v) => `${f2(v)} sec`;
+        return [...arr(q.weapons).map(([hand, was, now, s0, s1]) => el('span', {},
+          el('b', { text: `${hand[0].toUpperCase() + hand.slice(1)}: ` }), s0 === s1 ? `${was} to ${now}, same ${sec(s0)} speed` : `${was} at ${sec(s0)} to ${now} at ${sec(s1)}`)),
+          ...(arr(q.talents).length ? arr(q.talents).map((t) => talent([`${t[0]} ${t[2]}/${t[3]}`, t[1]], [`Before: ${t[4]}.`, `After: ${t[5]}.`]))
+            : [el('span', { class: 'fv-tip-m', text: 'No talent in this preset depends on the weapon type, so only the speed changes.' })])];
+      }
+      const names = new Map();
+      for (const q of sw) for (const t of arr(q.talents)) if (!names.has(t[0])) names.set(t[0], [t, clsOf(q)]);
+      return names.size ? [el('span', { class: 'fv-tip-m', text: 'Talents in these presets that change with the weapon type:' }),
+        ...[...names.values()].map(([t, cls]) => talent(t, [`${cls} talent. Pick one spec to see its bonus before and after.`]))] : [];
+    };
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
       r.segs.forEach((sg, k) => {
@@ -1413,6 +1433,7 @@ export function startReport(dash) {
             }
           } else if (sg) name = `${sg.label} ${fd(sg.v)}`;
           if (!name) return;
+          if (part === 'swap') sub.push(...swapTip(r));
           if (!one && what === 'seg') sub.push(el('span', { class: 'fv-tip-m', text: `Averaged over ${r.n} presets, as a share of the best race's DPS on each.` }));
           const segEl = what === 'seg' ? row.querySelector(`.sg[data-zone="${part}"]`) : null;
           const capEl = row.querySelector(`.fv-rsub [data-zone="${zone}"]`);
