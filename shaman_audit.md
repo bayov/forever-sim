@@ -184,7 +184,7 @@ Restoration
 - [x] 8.43 Water Shield
 - [x] 8.44 Tidal Mastery
 - [x] 8.45 Restorative Totems
-- [ ] 8.46 Mana Tide Totem
+- [x] 8.46 Mana Tide Totem
 - [ ] 8.47 Healing Way (not implemented)
 - [ ] 8.48 Nature's Swiftness
 - [ ] 8.49 Purification
@@ -1646,6 +1646,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Fixed the restorativeTotemsModifier comment, which said Mana Spring's half was only in `buffs.go`.
 - Open (notes.md Need to Verify, both cases the user asked for: two plain totems, and an improved one next to a plain one): with our own Mana Spring and another shaman's, the sim adds both in full (50 to 62.5 MP5 at level 60). In the client each totem holds a party area aura of the same spell (5677 / 10494), and the usual Classic rule keeps only the stronger one. No preset uses both.
 - No sim change and no new test. `periodic_test.go` wants Healing Stream at +50% with 5/5, and `mana_returns_test.go` Mana Spring rank 1 at 5 mana a tick with 5/5 instead of 4.
+
+### 8.46 Mana Tide Totem
+
+- The user OK'd it (2026-10-14): "sg", and asked to verify how totems from two shamans stack in general.
+- The spell was checked in 7.27 (`mana_returns_test.go` TestOrcShamanManaTideRanks). Without the talent it isn't registered. Restorative Totems doesn't touch it, and the client's mask agrees (Mana Spring and Healing Stream only). Totemic Focus cuts its cost (8.36). Level 60 + Mana Tide, Elemental Level 60 + Mana Tide and both Restoration presets take it. The enhancement `mana_tide` and Elemental `level60_mana_tide` rotations cast it under 20% mana and put Mana Spring back after.
+- Beta: nobody has cast it in our logs.
+- Open (notes.md Need to Verify): how totems from two shamans stack. In the client (70338) Strength of Earth, Grace of Air, Windfury, Flametongue, Stoneskin, Windwall, Mana Spring, Healing Stream, Mana Tide and Tranquil Air are party area auras (effect 35), and the resistance totems raid area auras (effect 65).
+- No sim change and no new test.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

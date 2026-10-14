@@ -61,8 +61,8 @@ func roundUpChance(v, a float64) float64 {
 }
 
 // amount prints the amount row for one ability, on one mob level or on all of them together
-// (where says which, for the flagged list).
-func (r *report) amount(where, name string, lt, st *tally) {
+// (level 0).
+func (r *report) amount(level int, name string, lt, st *tally) {
 	sim, ok := steadyHitOf(st.hits)
 	if !ok {
 		return
@@ -141,7 +141,7 @@ func (r *report) amount(where, name string, lt, st *tally) {
 	fmt.Printf("  amount   rounded up on %d of %d, the sim's %.3f expects %.1f   p %s%s   %s%s\n",
 		up, len(hits), sim.raw, expected, pString(pValue), mark, fit, leftOut)
 	if mark == " !!" {
-		r.flagged = append(r.flagged, fmt.Sprintf("%s, %s: amount rounded up on %d of %d, the sim's hit of %.3f expects %.1f (%s)", where, name, up, len(hits), sim.raw, expected, fit))
+		r.flag(level, name, "amount", fmt.Sprintf("amount rounded up on %d of %d, the sim's hit of %.3f expects %.1f (%s)", up, len(hits), sim.raw, expected, fit))
 	}
 }
 
@@ -186,7 +186,7 @@ func (r *report) amountAllLevels() {
 		}
 		name := r.name(key)
 		fmt.Printf("\n%s: %d levels\n", name, p.levels)
-		r.amount("all levels", name, p.log, p.sim)
+		r.amount(0, name, p.log, p.sim)
 	}
 }
 
