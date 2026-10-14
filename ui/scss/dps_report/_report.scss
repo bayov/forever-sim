@@ -2000,10 +2000,6 @@ ol.fv-list li::marker {
 	border-radius: var(--fv-r-sm);
 }
 
-.fv-orow {
-	cursor: pointer;
-}
-
 .fv-orow + .fv-orow,
 .fv-rrow + .fv-rrow {
 	border-top: 1px solid color-mix(in srgb, var(--color-border-line) 60%, transparent);
@@ -2211,10 +2207,10 @@ ol.fv-list li::marker {
 }
 
 .fv .fv-rrow .sg.is-hl,
+// An overview row only shows a tooltip on hover, so it gets a light background there instead of the gold outline
+// that marks a clicked mark.
 .fv .fv-orow.is-hl {
-	outline: 2px solid var(--fv-gold);
-	outline-offset: 1px;
-	z-index: 1;
+	background: color-mix(in srgb, var(--color-fg) 6%, transparent);
 }
 
 .fv-axisnote {

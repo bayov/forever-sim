@@ -1236,7 +1236,7 @@ export function startReport(dash) {
       return [...acc.values()].map((a) => {
         const byShare = [...a.shares].sort((p, q) => q.share - p.share);
         return { ...a, tag: a.rows[0].tag ? groupTag(a.rows) : null, weapon: a.rows.find((r) => r.weapon)?.weapon, presets: a.shares.length,
-          timesBest: a.shares.filter((g) => g.share > 99.995).length, avg: d3.mean(a.shares, (g) => g.share), worst: byShare[byShare.length - 1],
+          timesBest: a.shares.filter((g) => g.share > 99.995).length, avg: d3.mean(a.shares, (g) => g.share),
           medianRank: d3.median(a.ranks), top3: byShare.slice(0, 3) };
       });
     };
@@ -1265,13 +1265,13 @@ export function startReport(dash) {
     const x = (v) => `${(100 * (v - lo)) / (100 - lo)}%`;
     const card = $('#race-overview-card');
     host.replaceChildren(...rows.map((r, i) => {
-      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : '') + (r.tag ? ' adv' : ''), 'data-tip': '1', role: 'button', tabindex: '0', 'aria-label': `${who(r)}: ${pct(r.avg)} of the best race's DPS, ${bestOn(r)}` },
+      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : '') + (r.tag ? ' adv' : ''), 'data-tip': '1', 'aria-label': `${who(r)}: ${pct(r.avg)} of the best race's DPS, ${bestOn(r)}` },
         tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), `r:${r.race}`),
         el('span', { class: 'nm' }, raceName(r)),
         el('span', { class: 'end' }, el('b', { text: pct(r.avg) }), el('small', { text: r.timesBest ? `best on ${r.timesBest} of ${r.presets}` : 'never best' })),
         el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${x(r.avg)};background:${fcol(r.race)}` })));
-      // Pointing at a row lists the specs it is the best race for, and a click keeps the list up. A race that is
-      // never the best lists the three presets where it comes closest.
+      // Pointing at a row lists the specs it is the best race for. A race that is never the best lists the three
+      // presets where it comes closest. A phone has no pointer, so there a tap shows the list.
       const tip = (pinned) => {
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
         const order = new Map(buildOrder(rowsOf('builds')).map((b, k) => [b.id, k]));
@@ -1284,14 +1284,12 @@ export function startReport(dash) {
           tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.presets} presets${scope === 'Faction' ? ` (${r.faction})` : ''}`),
           best.length ? null : el('span', { class: 'fv-tip-m', text: 'It comes closest on:' }),
           el('div', { class: 'fv-tip-specs' }, ...list),
-          tipText(`Its weakest preset is ${lab.get(r.worst.build)}, at ${pct(r.worst.share)} of the best race's DPS.`),
         ], { hl: row, below: true, pinned });
       };
       row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
       row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
-      row.addEventListener('click', (e) => {
-        if (e.target.closest('[data-tt]')) return;
-        e.stopPropagation();
+      row.addEventListener('pointerup', (e) => {
+        if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
         if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }
         tip(true);
       });
