@@ -167,7 +167,7 @@ Enhancement
 - [x] 8.29 Stormstrike
 - [x] 8.30 Spirit Weapons
 - [x] 8.31 Mental Quickness
-- [ ] 8.32 Improved Stormstrike
+- [x] 8.32 Improved Stormstrike
 - [ ] 8.33 Maelstrom Weapon
 - [ ] 8.34 Rage of the Farseer
 
@@ -1531,6 +1531,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 30812, talent curves 85302, 85303 and 87358): +15 and 30% of Intellect as spell damage on all magic schools (aura 174) and as healing done (aura 175). That matches.
 - Beta: at the 2026-10-10 20:42 respec, dropping 2/2 took the sheet's spell power from 91 to 49. The 42 is 30% of 141 Intellect. The sheet's healing was spell power + 10 (the gloves) in every export, so the 42 counted for healing too (7.28). The 15:07 log's spell hits fit 91 (5.4).
 - No sim change. The new `mental_quickness_test.go` TestOrcShamanMentalQuickness wants 15 and 30% of Intellect as spell power at level 30, and 3 more spell power from 10 Intellect gained mid-fight at 2/2. A 10% share a point fails it.
+
+### 8.32 Improved Stormstrike
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives a 50% chance that a Stormstrike cast, landed or not, gives 50% mana regen while casting for 15 sec (the regen doesn't grow with points). Each point also gives a 50% chance that our dodge or parry of an enemy attack resets Stormstrike's cooldown. A mob dodging or parrying our attacks doesn't count. Without Stormstrike it does nothing, and the tree needs Stormstrike first anyway. Every enhancement preset has 2/2.
+- Client 70338 (wago.tools 1223031, curves 85305 and 85304): 50 and 100% for both chances, as dummy auras the server handles. The buff (1238931) lasts 15 sec and gives 50% regen while casting (aura 134). That matches.
+- Beta, 15:07 log (2/2 by the 14:50 and 18:21 exports): all 194 of our casts gave the buff, and it came off 14.9 to 15.1 sec after the last gain when nothing renewed it. In 59 cooldowns we dodged or parried something. In 24 of them we cast Stormstrike early, 0.2 to 4.9 sec after the first dodge or parry. In the other 35 we didn't, mostly long pauses or kills, and a few where we were idle until the normal 8 sec (a parry at +1.7 sec, nothing cast, then Stormstrike at +8.2). So the reset exists, but the log can't tell 100% from a lower chance.
+- Beta, 10-11 log from 23:26 (Stormstrike 1, Improved Stormstrike 0 by the 23:26 export): 26 cooldowns with a dodge or parry, none early, and no buff on us.
+- No sim change. `five_second_rule_test.go` TestOrcShamanCastingRegenCap covers the buff's regen. The new `improved_stormstrike_test.go` TestOrcShamanImprovedStormstrike casts Stormstrike 1000 times at 1/2 and 2/2 and wants the buff 50 and 100% of the time. It dodges or parries a level 30 mob's swing 1000 times with Stormstrike on cooldown and wants the same reset rates, and wants no reset when the mob dodges or parries our swing. Halving either chance, or resetting on our own attacks, fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
