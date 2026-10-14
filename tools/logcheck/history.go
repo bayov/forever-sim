@@ -12,11 +12,11 @@ import (
 )
 
 // historySettle is how long after a change BayovCore records it, at most. The addon waits for 2
-// seconds of quiet (SETTLE in History.lua), and we leave a few more for a slow frame.
+// seconds of quiet (SETTLE in BayovCore's Modules/Export.lua), and we leave a few more for a slow frame.
 const historySettle = 5 * time.Second
 
 // historyRecord is one line of ~/forever-logs/history/<Name>-<Realm>.jsonl, which
-// tools/combat_log/history.py copies out of BayovCore's history module.
+// tools/combat_log/history.py copies out of BayovCore's export module.
 //
 // A "login" or "mark" record holds the whole character, like an export. A "change" record
 // holds only what changed: the gear slots (false for one that was emptied), the talents, the

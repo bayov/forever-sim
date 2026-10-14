@@ -35,8 +35,8 @@ Run it from the repo root. A run takes about a second.
   `~/forever-logs/history/` (below). When the user pastes an export, save it in `exports/` as
   `export-<date>_<time>.json` with the date and time from its `when.date`. The header prints which
   one it took and how far from the window.
-- **The history.** BayovCore's history module (`Modules/History.lua` in bayovui) records the
-  character as it changes. It takes a full snapshot at login, `/reload` and `/bayov history
+- **The history.** BayovCore's export module (`Modules/Export.lua` in bayovui) also records the
+  character as it changes. It takes a full snapshot at login, `/reload` and `/bayov export
   mark`. After that it records each gear swap, enchant, talent change, level up and skill up,
   within about 2 seconds of when it happened, and the sheet after a gear, talent or level change.
   WoW writes it to disk on `/reload` or logout. `archive.sh` runs

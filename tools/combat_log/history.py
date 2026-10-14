@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Copy BayovCore's character history out of the game's SavedVariables into ~/forever-logs.
 
-BayovCore's history module (bayovui/addons/BayovCore/Modules/History.lua in the WoW folder)
+BayovCore's export module (bayovui/addons/BayovCore/Modules/Export.lua in the WoW folder) also
 records the character's setup as it changes: a full snapshot at login, then each gear swap,
 talent change, level up and skill up, and the sheet after a change. Each record is a compact JSON
 string. Sheets and talent lists are stored once and records point at them by id.
@@ -130,14 +130,14 @@ def unescape(s):
 
 
 def history_chars(path):
-    """The history module's characters in one SavedVariables file, or {} when it has none."""
+    """The export module's history, by character, in one SavedVariables file, or {} when it has none."""
     with open(path, encoding='utf-8', errors='replace') as f:
         text = f.read()
-    if '"history"' not in text:
+    if '"chars"' not in text:
         return {}
     db = LuaParser(text).globals().get('BayovCoreDB') or {}
-    history = ((db.get('modules') or {}).get('history') or {})
-    return history.get('chars') or {}
+    export = ((db.get('modules') or {}).get('export') or {})
+    return export.get('chars') or {}
 
 
 def merge(archive, key, char):
