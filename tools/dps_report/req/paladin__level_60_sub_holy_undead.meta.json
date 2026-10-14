@@ -27,6 +27,7 @@
   },
   "summary": "The sub Holy twist build with Holy Conduit 2 against an Undead or Demon boss, with Exorcism and Holy Wrath in the rotation. The best paladin build on such a boss.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons, so against such a boss they're extra damage on top of the usual rotation. This build also takes Holy Conduit 2, which makes both spells 40% cheaper.",
+  "advantageShort": "Exorcism and Holy Wrath hit only Undead and Demons: extra damage on top of the rotation. Holy Conduit 2 makes both 40% cheaper.",
   "keyTalents": [
     "Twist of Light",
     "Seal of Command",

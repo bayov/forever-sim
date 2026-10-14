@@ -27,6 +27,7 @@
   },
   "summary": "Seal Fate Swords against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
   "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",
+  "advantageShort": "Murder 2/2: +4% damage to Humanoids and Giants. It does nothing elsewhere, so the normal build skips it.",
   "keyTalents": [
     "Murder 2/2",
     "Seal Fate 5/5",

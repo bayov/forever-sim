@@ -44,6 +44,13 @@ PART_INFO = {
     'swap': ('Weapon swap', "The preset's weapon changed to the racial's weapon type at the same stats and weapon DPS, with the racial left out: talents that care about the weapon type and the new weapon's speed."),
     'target': ('Target type', 'What changes against this creature type: conditional racials, plus talents and spells that only work on some types.'),
 }
+
+# The tooltip's one line for the parts whose text above runs long; the others show their text as it is.
+PART_SHORT = {
+    'touch': '5% chance a hit (10% for Mages, Priests and Warlocks): Shadow damage of 5% of max health, at most once a second.',
+    'swap': "The racial's weapon type at the same stats and weapon DPS, racial left out: weapon-type talents and the new speed.",
+}
+
 RACE_PARTS = {'Human': ['spirit', 'sword'], 'Dwarf': ['mace', 'beast_dwarf', 'chastise'], 'Night Elf': ['elune', 'starshards'],
               'Gnome': ['mind', 'eureka'], 'Orc': ['axe', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
               'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight'], 'Windshaper': ['windblessed', 'insight']}
@@ -206,7 +213,7 @@ def build(builds, races_rows, stats_rows, dump):
     for key, title, text in SCENARIOS:
         notes.append({'kind': 'scenario', 'key': key, 'title': title, 'text': text})
     for p, (title, text) in PART_INFO.items():
-        notes.append({'kind': 'part', 'key': p, 'title': title, 'text': text})
+        notes.append({'kind': 'part', 'key': p, 'title': title, 'text': text, 'short': PART_SHORT.get(p, text)})
     for cls in ['Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest']:
         notes.append({'kind': 'class', 'key': cls, 'title': cls, 'text': finding(cls, bmap, variants, breakdown)})
     dump('race_variants', variants)
