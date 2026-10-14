@@ -19,6 +19,9 @@ func (warriorFury) Knobs() []Knob {
 		Knob{Name: "wwBtGap", Default: 0, Min: 0, Max: 2, Step: 1},
 		// Slam on cooldown above this much Rage, 0 never.
 		Knob{Name: "slamRage", Default: 0, Min: 0, Max: 60, Step: 15},
+		// Slam only right after a main hand swing (the next one at least the swing time minus 0.5
+		// sec away), ahead of Whirlwind: 0 any time, after the main strikes.
+		Knob{Name: "slamAfterSwing", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Hamstring as a filler above this much Rage, 0 never. It procs Windfury Totem and the sword
 		// extra attacks.
 		Knob{Name: "hamstringRage", Default: 0, Min: 0, Max: 90, Step: 10},
@@ -59,7 +62,19 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	}
 	bt := cast(bloodthirst, nil, "Bloodthirst on cooldown.")
 	ww := cast(whirlwind, wwWhen, "Whirlwind on cooldown with the Rage for it.")
-	if k["wwFirst"] == 1 {
+	afterSwing := k["slamRage"] > 0 && k["slamAfterSwing"] == 1
+	if afterSwing {
+		slamNow := cast(slam, and(
+			ge(currentRage(), num(k["slamRage"])),
+			not(executePhase()),
+			ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.5))),
+		), "Slam right after a main hand swing, so its cast costs little swing time.")
+		if k["wwFirst"] == 1 {
+			items = append(items, slamNow, ww, bt)
+		} else {
+			items = append(items, bt, slamNow, ww)
+		}
+	} else if k["wwFirst"] == 1 {
 		items = append(items, ww, bt)
 	} else {
 		items = append(items, bt, ww)
@@ -67,7 +82,7 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	if k["executeFirst"] == 0 {
 		items = append(items, executeLine)
 	}
-	if k["slamRage"] > 0 {
+	if k["slamRage"] > 0 && !afterSwing {
 		items = append(items, cast(slam, and(ge(currentRage(), num(k["slamRage"])), not(executePhase())), "Slam on cooldown with Rage to spare."))
 	}
 	var gap value
