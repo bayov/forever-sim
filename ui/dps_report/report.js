@@ -1050,32 +1050,30 @@ export function startReport(dash) {
     const rows = d3.groups(races.filter((r) => builds.has(r.build)), (r) => r.build).map(([build, rs]) => ({ build, spreadPct: Math.round((1 - rs[rs.length - 1].dps / rs[0].dps) * 1000) / 10, best: rs[0].name, worst: rs[rs.length - 1].name }))
       .sort((a, b) => (st.spreadSort === 'class' ? order.get(a.build) - order.get(b.build) : b.spreadPct - a.spreadPct));
     const max = d3.max(rows, (r) => r.spreadPct) || 1;
-    const wrap = el('div', { class: 'fv-sbar' });
+    const wrap = el('div', { class: 'fv-sbar fv-srows' });
     for (const r of rows) {
       const b = builds.get(r.build);
       const v = el('span', { class: 'vl' }, el('span', { text: f2(r.spreadPct) }), '%');
-      const parts = [el('span', { class: 'nm', 'data-tip': '1' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), `${b.label} `, el('small', { class: 'fv-note', text: `${r.best} over ${r.worst}` })), v,
-        el('span', { class: 'tr', 'data-tip': '1' }, el('span', { style: `width:${100 * r.spreadPct / max}%;background:${ccol(b.class)}` }))];
-      v.setAttribute('data-tip', '1');
+      const tr = el('span', { class: 'tr' }, el('span', { style: `width:${100 * r.spreadPct / max}%;background:${ccol(b.class)}` }));
+      const row = el('div', { class: 'fv-srow', 'data-tip': '1' }, el('span', { class: 'nm' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), `${b.label} `,
+        el('small', { class: 'fv-note', text: `${r.best} over ${r.worst}` })), v, tr);
       // The tooltip shows on hover and lists every entry on the preset, best first. A click pins it, so we can
       // reach its buttons.
       const tip = (pinned) => {
         const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
-        const card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = parts[2].getBoundingClientRect();
+        const card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = tr.getBoundingClientRect();
         showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, `best to worst of ${sib.length} entries`),
           tipGrid(sib.map((q, k) => [q.name + (q.isPreset ? ' (preset race)' : ''), k === 0 ? `${f1(q.dps)} DPS` : `−${f2(100 * (1 - q.dps / sib[0].dps))}%`]))],
-          { hl: parts, open: b.id, below: true, pinned, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
+          { hl: row, open: b.id, below: true, pinned, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
       };
-      for (const n of parts) {
-        hoverTip(n, tip);
-        n.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (e.pointerType && e.pointerType !== 'mouse') return;
-          if (parts[0].classList.contains('is-hl') && tipPinned) { hideTip(); return; }
-          tip(true);
-        });
-      }
-      wrap.append(...parts);
+      hoverTip(row, tip);
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (e.pointerType && e.pointerType !== 'mouse') return;
+        if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }
+        tip(true);
+      });
+      wrap.append(row);
     }
     host.replaceChildren(wrap);
     host.style.minHeight = 'auto';
@@ -1292,6 +1290,25 @@ export function startReport(dash) {
   };
   const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'The race without its racials') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
 
+  // Each racial's caption sits under its piece of the bar, starting where the piece starts. When a caption would run
+  // into the one before it, we move it down to the first line where it fits, so short pieces side by side still get
+  // readable captions. A caption that would run past the right edge moves left until it fits.
+  const layoutCaps = (root) => {
+    for (const cap of root.querySelectorAll('.fv-rcap')) {
+      const W = cap.clientWidth, spans = [...cap.children];
+      if (!W || !spans.length) continue;
+      const lineH = spans[0].offsetHeight + 2, lanes = [];
+      for (const sp of spans) {
+        const w = sp.offsetWidth, want = Math.max(0, Math.min((W * +sp.dataset.at) / 100, W - w));
+        let lane = lanes.findIndex((end) => end + 10 <= want);
+        if (lane < 0) lane = lanes.push(0) - 1;
+        lanes[lane] = want + w;
+        Object.assign(sp.style, { left: `${want}px`, top: `${lane * lineH}px` });
+      }
+      cap.style.height = `${lanes.length * lineH}px`;
+    }
+  };
+
   // ---------- races: best races ----------
   // Every race, and each advantage as its own entry, ranked over the presets in the filter. On one preset a bar is
   // the entry's DPS. Over several presets it's the entry's DPS as a share of the best entry's on the same preset,
@@ -1356,15 +1373,16 @@ export function startReport(dash) {
           style: `left:${k === 0 ? 0 : x(a)}%;width:${Math.max(k === 0 ? 0 : 0.6, x(z) - (k === 0 ? 0 : x(a)))}%;background:${partCol(sg.part)};${neg ? 'z-index:1;' : ''}` }));
       });
       if (one) track.append(el('span', { class: 'wk', style: `left:${x(r.dps - r.se)}%;width:${Math.max(0.4, x(r.dps + r.se) - x(r.dps - r.se))}%` }));
-      const sub = el('div', { class: 'fv-rsub' }, ...r.segs.filter((sg) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => el('span', { 'data-zone': sg.part }, partIco(sg.part),
-        `${shortLabel(sg.label)} ${fd(sg.v)}`)),
-        ...(one ? r.idle.slice(0, 3).map((q) => el('span', { 'data-zone': 'idle:' + q.part }, el('em', { text: `${shortLabel(q.label)}: ${q.note}` }))) : []));
+      const cap = el('div', { class: 'fv-rsub fv-rcap' }, ...r.segs.map((sg, k) => ({ sg, at: k === 0 ? 0 : x(Math.min(sg.from, sg.to)) }))
+        .filter(({ sg }) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005))
+        .map(({ sg, at }) => el('span', { 'data-zone': sg.part, 'data-at': at, style: `left:${at}%` }, partIco(sg.part), `${shortLabel(sg.label)} ${fd(sg.v)}`)));
+      const idle = one && r.idle.length ? el('div', { class: 'fv-rsub' }, ...r.idle.slice(0, 3).map((q) => el('span', { 'data-zone': 'idle:' + q.part }, el('em', { text: `${shortLabel(q.label)}: ${q.note}` })))) : null;
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), one ? `r:${r.race}:${one.class}` : `r:${r.race}`, true, one?.id),
         el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null),
-        el('span', { class: 'end' }, el('b', { text: one ? f1(r.dps) : pct(r.avg) }),
-          el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' })),
-        track, sub);
+        el('span', { class: 'end' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
+          el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
+        track, cap, idle);
       // Each part of the entry has its own tooltip. A piece of the bar, or its caption under the bar, says what
       // that part is worth and what the racial does. The rest of the row gives the entry's DPS, and over several
       // presets the specs it's the best race for, one line per class, or the three where it comes closest.
@@ -1425,6 +1443,12 @@ export function startReport(dash) {
     } else take.replaceChildren();
     axis.textContent = one ? `Bars start at ${f0(lo)} DPS, not at zero.` : `A full bar is 100%: the best race on every preset. Bars start at ${f1(lo)}%, not at zero.`;
     legend($('#rs-legend'), kinds, true);
+    layoutCaps(host);
+    if (!host.dataset.capWatch) {
+      host.dataset.capWatch = '1';
+      let w = 0;
+      new ResizeObserver(() => { if (host.clientWidth !== w) { w = host.clientWidth; layoutCaps(host); } }).observe(host);
+    }
   };
 
   // ---------- races: strongest racials ----------
