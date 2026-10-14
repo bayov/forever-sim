@@ -2251,8 +2251,7 @@ ol.fv-list li::marker {
 
 // The piece of a race's bar, and its caption, whose tooltip is open.
 .fv-rtrack .sg.is-hl {
-	z-index: 2;
-	box-shadow: 0 0 0 1.5px var(--color-fg);
+	filter: brightness(1.3);
 }
 
 .fv-rsub span.is-hl {
