@@ -3252,6 +3252,10 @@ ol.fv-list li::marker {
 	color: var(--color-ok);
 }
 
+#asm-card .fv-note .exp {
+	color: var(--fv-gold);
+}
+
 .fv-asm-cls {
 	border-top: var(--cds-border);
 
@@ -3285,26 +3289,108 @@ ol.fv-list li::marker {
 	}
 }
 
+// An assumption: its question, one line on what's unknown, the specs it affects, then the settings. Each setting
+// shows its change at 180 s against the presets' setting. Side by side on wide screens, stacked on a phone.
 .fv-asm-row {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: 0.3rem;
-	padding: 0.45rem 0 0.6rem;
+	gap: 0.45rem;
+	padding: 0.6rem 0 0.75rem;
 
 	& + & {
 		border-top: 1px dashed var(--color-border-line);
 	}
+
+	@media (min-width: 900px) {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		column-gap: var(--spacer-4);
+		align-items: center;
+	}
+}
+
+.fv-asm-txt {
+	display: grid;
+	gap: 0.25rem;
+	min-width: 0;
 }
 
 .fv-asm-lbl {
 	display: flex;
 	align-items: baseline;
-	gap: 0.35rem;
+	gap: 0.4rem;
 	font-size: var(--cds-font-size-body);
+
+	> b {
+		font-weight: 600;
+		color: var(--color-fg);
+		min-width: 0;
+	}
+
+	.fv-asm-i {
+		margin-left: auto;
+	}
+}
+
+// How far it can move a preset: big (4% or more), medium (1.5% or more) or small.
+.fv-asm-size {
+	flex: none;
+	font-size: 0.7rem;
+	line-height: 1.5;
+	padding: 0 0.4rem;
+	border-radius: 999px;
+	border: 1px solid var(--color-border-line);
+	color: var(--color-fg-muted);
+	white-space: nowrap;
+
+	&.big {
+		color: var(--fv-gold);
+		background: var(--fv-gold-soft);
+		border-color: transparent;
+	}
+
+	&.med {
+		color: var(--color-fg);
+	}
+}
+
+.fv-asm-short {
+	margin: 0;
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+	color: var(--color-fg-muted);
+}
+
+.fv-asm-aff {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 0.3rem;
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+
+	> .k {
+		margin-right: 0.1rem;
+	}
+}
+
+.fv-asm-spec {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.05rem 0.45rem 0.05rem 0.2rem;
+	border-radius: 999px;
+	border: 1px solid var(--color-border-line);
+	background: var(--fv-stone-chip);
+	color: var(--color-fg);
+	white-space: nowrap;
+
+	.fv-ico {
+		width: 0.95rem;
+		height: 0.95rem;
+	}
 
 	small {
 		color: var(--color-fg-muted);
-		font-size: var(--cds-font-size-caption);
 	}
 }
 
@@ -3316,6 +3402,25 @@ ol.fv-list li::marker {
 	padding: 0 0.2rem;
 	font: inherit;
 	line-height: 1;
+}
+
+// A signed change in the ok and bad colours, and a range of them.
+.fv-asm-d {
+	font-weight: 600;
+	white-space: nowrap;
+
+	&.pos {
+		color: var(--color-ok);
+	}
+
+	&.neg {
+		color: var(--color-bad);
+	}
+}
+
+.fv-asm-to {
+	color: var(--color-fg-muted);
+	font-size: 0.72rem;
 }
 
 .fv-asm-seg {
@@ -3335,21 +3440,32 @@ ol.fv-list li::marker {
 		color: var(--color-fg-muted);
 		font: inherit;
 		font-size: var(--cds-font-size-caption);
-		padding: 0.3rem 0.25rem;
+		padding: 0.35rem 0.25rem;
 		cursor: pointer;
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-rows: 1fr auto auto;
+		justify-items: center;
 		align-items: center;
+		gap: 0.1rem;
+		text-align: center;
 		line-height: 1.25;
 
 		b {
 			color: var(--color-fg);
 			font-weight: 500;
-			font-size: var(--cds-font-size-body);
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			max-width: 100%;
+			font-size: var(--cds-font-size-caption);
+			text-wrap: balance;
+			overflow-wrap: anywhere;
+		}
+
+		.fv-asm-eff {
+			min-height: 1.25em;
+			font-size: 0.78rem;
+			line-height: 1.25;
+		}
+
+		small {
+			font-size: 0.7rem;
 		}
 
 		&[aria-pressed='true'] {
@@ -3357,7 +3473,11 @@ ol.fv-list li::marker {
 			color: var(--fv-sel-fg);
 
 			b,
-			small {
+			small,
+			.def,
+			.exp,
+			.fv-asm-d,
+			.fv-asm-to {
 				color: var(--fv-sel-fg);
 			}
 		}
@@ -3367,6 +3487,47 @@ ol.fv-list li::marker {
 			opacity: 0.55;
 		}
 	}
+
+	.exp {
+		color: var(--fv-gold);
+	}
+}
+
+// The ⓘ tooltip: per spec, the change under each other setting with the DPS under it, then what each setting means.
+.fv-asm-tspec {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	white-space: nowrap;
+
+	.fv-ico {
+		width: 0.95rem;
+		height: 0.95rem;
+	}
+
+	small {
+		color: var(--color-fg-muted);
+	}
+}
+
+.fv-asm-tcell {
+	display: grid;
+	justify-items: end;
+
+	small {
+		font-weight: 400;
+		font-size: 0.7rem;
+
+		.fv-asm-d {
+			font-weight: 400;
+		}
+	}
+}
+
+.fv-asm-tsets {
+	display: grid;
+	gap: 0.25rem;
+	margin-top: 0.15rem;
 }
 
 #method-asm h3 {
@@ -3374,11 +3535,19 @@ ol.fv-list li::marker {
 	font-size: var(--cds-font-size-heading);
 }
 
+#method-asm li {
+	margin-bottom: 0.45rem;
+}
+
 #method-asm li small {
 	color: var(--color-fg-muted);
 }
 
-// Each setting's reason and its effect on every preset, under the assumption.
+#method-asm .fv-asm-mdesc {
+	margin-top: 0.1rem;
+}
+
+// Each setting's numbers, reason and effect on every preset, under the assumption; the source as a footnote.
 #method-asm .fv-asm-msets {
 	display: grid;
 	gap: 0.15rem;
@@ -3388,6 +3557,13 @@ ol.fv-list li::marker {
 		color: var(--color-fg);
 		font-weight: 600;
 	}
+}
+
+#method-asm .fv-asm-src {
+	display: block;
+	margin-top: 0.2rem;
+	font-size: 0.72rem;
+	font-style: italic;
 }
 
 // Sort and the filters share a row when there's room. Each keeps its label with its controls when the row wraps.

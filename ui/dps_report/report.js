@@ -2431,23 +2431,55 @@ export function startReport(dash) {
     persist(); hideTip(); render();
   });
   const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
-  // An assumption's tooltip: its question in one line, then each setting with its effect on the presets at 180 s (one
-  // number, or the range over the presets it touches). The full text and every preset's number are in Method.
-  const asmEffect = (a, sid) => {
-    const xs = arr(a.sens).filter((x) => x.setting === sid).map((x) => +x.pct);
-    if (!xs.length) return el('span', { class: 'fv-tip-m', text: '–' });
+  // Effects are each setting's change against the presets' own setting at 180 s, from `sens`. A signed number takes
+  // the ok or bad colour; a range over several presets runs from the smaller change to the larger.
+  const SPEC_SHORT = { Retribution: 'Ret', Enhancement: 'Enh', Elemental: 'Ele', 'Beast Mastery': 'BM', Marksmanship: 'MM' };
+  const asmSigned = (v, f, unit, eps) => el('span', { class: 'fv-asm-d' + (Math.abs(v) < eps ? '' : v > 0 ? ' pos' : ' neg'), text: (Math.abs(v) < eps ? '' : v > 0 ? '+' : '−') + f(Math.abs(v)) + unit });
+  const asmRange = (xs, f = f1, unit = '%', eps = 0.05) => {
+    if (!xs.length) return null;
     const lo = d3.min(xs), hi = d3.max(xs);
-    return hi - lo < 0.05 ? tipDelta(lo) : el('span', {}, tipDelta(lo), el('span', { class: 'fv-tip-m', text: ' to ' }), tipDelta(hi));
+    if (hi - lo < eps || (Math.sign(lo) === Math.sign(hi) && f(Math.abs(lo)) === f(Math.abs(hi)))) return el('span', { class: 'fv-asm-eff' }, asmSigned((lo + hi) / 2, f, unit, eps));
+    const [p, q] = lo >= 0 ? [lo, hi] : hi <= 0 ? [hi, lo] : [lo, hi];
+    return el('span', { class: 'fv-asm-eff' }, asmSigned(p, f, '', eps), el('span', { class: 'fv-asm-to', text: ' to ' }), asmSigned(q, f, unit, eps));
   };
+  const asmPcts = (a, sid, ids) => arr(a.sens).filter((x) => x.setting === sid && (!ids || ids.includes(x.build))).map((x) => +x.pct);
+  // how much an assumption can move a preset at 180 s, for the order within a class and the size badge
+  const asmImpact = (a) => (a.status === 'live' ? d3.max(arr(a.sens), (x) => Math.abs(+x.pct)) || 0 : -1);
+  const asmSize = (v) => (v >= 4 ? ['big', 'Big'] : v >= 1.5 ? ['med', 'Medium'] : v >= 0.05 ? ['small', 'Small'] : ['none', 'No effect']);
+  const asmSort = (as) => [...as].sort((p, q) => asmImpact(q) - asmImpact(p) || p.order - q.order);
+  // The presets an assumption touches, by spec. A spec counts its presets on the generic boss; the vs Undead /
+  // Humanoid / Dragonkin copies of those are in its numbers but not its count.
+  const asmSpecs = (a) => {
+    const byId = new Map((rowsOf('builds') || []).map((b) => [b.id, b])), groups = new Map();
+    for (const id of arr(a.builds)) {
+      const b = byId.get(id);
+      if (!b) continue;
+      const k = `${b.class}|${b.spec}`;
+      if (!groups.has(k)) groups.set(k, { cls: b.class, spec: b.spec, icon: b.specIcon, ids: [], names: [] });
+      const g = groups.get(k);
+      g.ids.push(id);
+      if (!b.encounter) g.names.push(b.build);
+    }
+    return [...groups.values()].map((g) => ({ ...g, n: g.names.length || g.ids.length, short: SPEC_SHORT[g.spec] || g.spec }));
+  };
+  const asmChip = (g) => el('span', { class: 'fv-asm-spec', title: `${g.cls} · ${g.spec}: ${(g.names.length ? g.names : g.ids.map(bName)).join(', ')}${g.ids.length > g.names.length && g.names.length ? ' (and their vs-encounter versions)' : ''}` },
+    ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short, g.n > 1 ? el('small', { text: ` ×${g.n}` }) : null);
+  const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null];
+  // The ⓘ tooltip: each spec's change under every other setting (percent, and DPS under it), then what each setting
+  // means and why it's a candidate. Method has every preset's number and the sources.
   const asmTip = (a) => {
-    const n = arr(a.builds).length;
-    return [tipText(a.short || a.description),
-      tipTable(['Setting', a.status === 'live' && arr(a.sens).length ? `At 180 s${n > 1 ? `, ${n} presets` : ''}` : ''], arr(a.settings).map((x) => [
-        el('span', { class: 'fv-tip-set' }, el('b', { text: x.label }), x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null,
-          x.value && x.value !== x.label ? el('small', { text: x.value }) : null),
-        a.status !== 'live' ? '' : x.id === a.defaultSetting ? el('span', { class: 'fv-tip-m', text: 'as simmed' }) : asmEffect(a, x.id)])),
-      tipNote(el('span', { class: 'def', text: '●' }), ' the presets · ', el('span', { class: 'exp', text: '★' }), ' expected',
-        a.status === 'pending' ? ' · not simulated yet' : a.status === 'inert' ? ' · no longer applies' : '')];
+    const live = a.status === 'live' && arr(a.sens).length, others = arr(a.settings).filter((x) => x.id !== a.defaultSetting);
+    const dpsOf = (sid, ids) => arr(a.sens).filter((x) => x.setting === sid && ids.includes(x.build)).map((x) => +x.dps);
+    return [
+      live ? tipTable(['At 180 s', ...others.map((x) => SEG_NAME[x.id] || x.label)], asmSpecs(a).map((g) => [
+        el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short, g.n > 1 ? el('small', { text: ` ×${g.n}` }) : null),
+        ...others.map((x) => el('span', { class: 'fv-asm-tcell' }, asmRange(asmPcts(a, x.id, g.ids)) || '–', el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5))))])) : null,
+      el('div', { class: 'fv-asm-tsets' }, ...arr(a.settings).map((x) => el('div', { class: 'fv-tip-set' },
+        el('b', { text: x.label }), el('span', { class: 'fv-tip-m', text: ` ${SEG_NAME[x.id] || ''}` }), ...asmMarks(a, x),
+        el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })))),
+      tipNote(a.status === 'live' ? 'Changes against the presets\' setting ' : 'The presets\' setting ', el('span', { class: 'def', text: '●' }), ' · ', el('span', { class: 'exp', text: '★' }), ' expected',
+        a.status === 'pending' ? ' · not simulated yet' : a.status === 'inert' ? ' · no longer applies' : ''),
+    ];
   };
   const openMethodAsm = () => { showTab('method'); requestAnimationFrame(() => $('#method-asm-card')?.scrollIntoView({ block: 'start' })); };
   const drawAsm = () => {
@@ -2456,25 +2488,33 @@ export function startReport(dash) {
     if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
     const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen)), card = $('#asm-card');
     host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
-      const changed = as.filter((a) => st.asm?.[a.key]).length;
+      const changed = as.filter((a) => st.asm?.[a.key]).length, top = d3.max(as, asmImpact);
       const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
       d.open = open.has(cls);
       d.addEventListener('toggle', () => { const o = new Set(arr(st.asmOpen)); if (d.open) o.add(cls); else o.delete(cls); st.asmOpen = [...o]; persist(); });
       d.append(el('summary', {}, cls === 'All' ? null : ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), cls === 'All' ? 'All classes' : cls,
-        el('small', { text: `${as.length} assumption${as.length === 1 ? '' : 's'}` }), changed ? el('span', { class: 'fv-asm-badge', text: `${changed} changed` }) : null));
-      for (const a of as) {
-        const cur = st.asm?.[a.key] || a.defaultSetting, live = a.status === 'live';
-        const info = el('button', { class: 'fv-asm-i', 'aria-label': `About ${a.label}`, 'data-tip': '1', text: 'ⓘ' });
+        el('small', { text: `${as.length} assumption${as.length === 1 ? '' : 's'}${top > 0 ? ` · up to ${f1(top)}%` : ''}` }), changed ? el('span', { class: 'fv-asm-badge', text: `${changed} changed` }) : null));
+      for (const a of asmSort(as)) {
+        const cur = st.asm?.[a.key] || a.defaultSetting, live = a.status === 'live', imp = asmImpact(a), [sz, szText] = asmSize(imp);
+        const info = el('button', { class: 'fv-asm-i', 'aria-label': `Details: ${a.label}`, 'data-tip': '1', text: 'ⓘ' });
         info.addEventListener('click', (e) => { e.stopPropagation(); const cr = card.getBoundingClientRect(), ir = info.getBoundingClientRect(); showTip(card, 16, ir.bottom - cr.top + 4, a.label, asmTip(a), { hl: info, below: true, act: ['More in Method ›', openMethodAsm] }); });
         const seg = el('div', { class: 'fv-asm-seg', role: 'group', 'aria-label': a.label }, ...arr(a.settings).map((x) => {
-          const bt = el('button', { 'aria-pressed': String(x.id === cur), title: `${x.value}${x.id === a.defaultSetting ? ' (the presets)' : ''}` },
-            el('b', { text: x.label }), el('small', {}, SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null));
+          const eff = live && x.id !== a.defaultSetting ? asmRange(asmPcts(a, x.id)) : null;
+          const bt = el('button', { 'aria-pressed': String(x.id === cur), title: `${x.value ? x.value + '. ' : ''}${x.rationale}${x.id === a.defaultSetting ? ' (the presets)' : ''}` },
+            el('b', { text: x.label }), eff || el('span', { class: 'fv-asm-eff none', 'aria-hidden': 'true' }),
+            el('small', {}, SEG_NAME[x.id] || x.id, ...asmMarks(a, x)));
           if (!live) bt.disabled = true;
           bt.addEventListener('click', (e) => { e.stopPropagation(); asmPick(a, x.id); });
           return bt;
         }));
-        d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key }, el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), info,
-          !live ? el('small', { text: a.status === 'pending' ? 'not simulated yet' : 'no longer applies' }) : el('small', { text: arr(a.builds).length ? `${arr(a.builds).length} preset${arr(a.builds).length === 1 ? '' : 's'}` : '' })), seg));
+        const specs = asmSpecs(a);
+        d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
+          el('div', { class: 'fv-asm-txt' },
+            el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Moves a preset by up to ${f1(imp)}% at 180 s`, text: szText }) : null, info),
+            el('p', { class: 'fv-asm-short', text: a.short || a.description }),
+            !live ? el('small', { class: 'fv-asm-aff', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' })
+              : specs.length ? el('div', { class: 'fv-asm-aff' }, el('span', { class: 'k', text: 'Affects' }), ...specs.map(asmChip)) : null),
+          seg));
       }
       return d;
     }));
@@ -2496,15 +2536,18 @@ export function startReport(dash) {
     const host = $('#method-asm');
     if (!waitOr(host, ['assumptions', 'builds'])) return;
     host.replaceChildren(...d3.groups(rowsOf('assumptions'), (a) => a.class).flatMap(([cls, as]) => [el('h3', { text: cls === 'All' ? 'All classes' : cls }),
-      el('ul', { class: 'fv-list' }, ...as.map((a) => {
-        // The full text the tooltip leaves out: the description, each setting's reason, and its effect on every preset.
+      el('ul', { class: 'fv-list' }, ...asmSort(as).map((a) => {
+        // The full text the panel leaves out: the description, each setting's numbers and reason, its effect on every
+        // preset, and the source.
         const sens = arr(a.sens);
-        return el('li', {}, el('b', { text: a.label }), `: ${a.description}${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : ''}`,
+        return el('li', {}, el('b', { text: a.label }),
+          el('div', { class: 'fv-asm-mdesc', text: `${a.description}${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : ''}` }),
           el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => {
             const xs = sens.filter((y) => y.setting === x.id);
-            return el('small', {}, el('b', { text: x.label }), ` (${x.value})${x.id === a.defaultSetting ? ', the presets' : ''}${x.id === a.expectedSetting ? ', expected' : ''}: ${x.rationale}`,
+            return el('small', {}, el('b', { text: x.label }), ` (${[SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? 'the presets' : null, x.id === a.expectedSetting && x.id !== 'expected' ? 'expected' : null].filter(Boolean).join(', ')}): ${x.value ? x.value + '. ' : ''}${x.rationale}`,
               xs.length ? ` At 180 s: ${xs.map((y) => `${bName(y.build)} ${sgn(+y.pct, f1)}%`).join(', ')}.` : '');
-          })));
+          })),
+          a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
       }))]));
   };
 
