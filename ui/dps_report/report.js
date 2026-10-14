@@ -1057,14 +1057,24 @@ export function startReport(dash) {
       const parts = [el('span', { class: 'nm', 'data-tip': '1' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), `${b.label} `, el('small', { class: 'fv-note', text: `${r.best} over ${r.worst}` })), v,
         el('span', { class: 'tr', 'data-tip': '1' }, el('span', { style: `width:${100 * r.spreadPct / max}%;background:${ccol(b.class)}` }))];
       v.setAttribute('data-tip', '1');
-      for (const n of parts) n.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (parts[0].classList.contains('is-hl')) { hideTip(); return; }
+      // The tooltip shows on hover and lists every entry on the preset, best first. A click pins it, so we can
+      // reach its buttons.
+      const tip = (pinned) => {
         const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
-        const bb = sib[0], ww = sib[sib.length - 1], card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = parts[2].getBoundingClientRect();
+        const card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = parts[2].getBoundingClientRect();
         showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, `best to worst of ${sib.length} entries`),
-          tipGrid([['Best', `${r.best}${bb ? ` · ${f1(bb.dps)}` : ''}`], ['Worst', `${r.worst}${ww ? ` · ${f1(ww.dps)}` : ''}`], ['Preset race', b.race]])], { hl: parts, open: b.id, below: true, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
-      });
+          tipGrid(sib.map((q, k) => [q.name + (q.isPreset ? ' (preset race)' : ''), k === 0 ? `${f1(q.dps)} DPS` : `−${f2(100 * (1 - q.dps / sib[0].dps))}%`]))],
+          { hl: parts, open: b.id, below: true, pinned, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
+      };
+      for (const n of parts) {
+        hoverTip(n, tip);
+        n.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (e.pointerType && e.pointerType !== 'mouse') return;
+          if (parts[0].classList.contains('is-hl') && tipPinned) { hideTip(); return; }
+          tip(true);
+        });
+      }
       wrap.append(...parts);
     }
     host.replaceChildren(wrap);
@@ -1206,6 +1216,31 @@ export function startReport(dash) {
     });
   };
 
+  // A row whose parts each have their own tooltip. A part is any element with data-zone, and the rest of the row
+  // is one more part (zone ''). With a mouse we show the tooltip of the part under the pointer, and switch it as
+  // the pointer moves to another part. A tap shows and pins the tooltip of the part it lands on, and a second tap
+  // on the same part closes it. tip(zone, node, pinned) gets the part's element, or the row.
+  const hoverZones = (row, tip) => {
+    let cur = null;
+    const at = (e) => e.target.closest('[data-zone]') || row;
+    const zone = (n) => (n === row ? '' : n.dataset.zone);
+    row.addEventListener('pointerover', (e) => {
+      if (e.pointerType !== 'mouse' || tipPinned) return;
+      const n = at(e), z = zone(n);
+      if (z === cur && tipHl.includes(row)) return;
+      cur = z;
+      tip(z, n, false);
+    });
+    row.addEventListener('pointerleave', (e) => { cur = null; if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
+    row.addEventListener('pointerup', (e) => {
+      if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
+      const n = at(e), z = zone(n);
+      if (tipPinned && tipHl.includes(row) && z === cur) { hideTip(); cur = null; return; }
+      cur = z;
+      tip(z, n, true);
+    });
+  };
+
   // ---------- races: the scope filter ----------
   // Both Races cards narrow down the presets they average over with one filter: a faction, a role, a class, then
   // one spec. Each step lists only what fits the steps before it, so a role leaves its classes and a class leaves
@@ -1317,35 +1352,55 @@ export function startReport(dash) {
         const a = Math.min(sg.from, sg.to), z = Math.max(sg.from, sg.to);
         if (sg.part !== 'base') kinds.add(sg.part === 'swap' ? 'swap' : PART_KIND[sg.part] ?? 0);
         const neg = sg.v < 0 && sg.part !== 'base';
-        track.append(el('span', { class: 'sg' + (neg ? ' neg' : '') + (sg.part === 'swap' ? ' swap' : '') + (k === r.segs.length - 1 ? ' last' : ''),
+        track.append(el('span', { class: 'sg' + (neg ? ' neg' : '') + (sg.part === 'swap' ? ' swap' : '') + (k === r.segs.length - 1 ? ' last' : ''), 'data-zone': sg.part,
           style: `left:${k === 0 ? 0 : x(a)}%;width:${Math.max(k === 0 ? 0 : 0.6, x(z) - (k === 0 ? 0 : x(a)))}%;background:${partCol(sg.part)};${neg ? 'z-index:1;' : ''}` }));
       });
       if (one) track.append(el('span', { class: 'wk', style: `left:${x(r.dps - r.se)}%;width:${Math.max(0.4, x(r.dps + r.se) - x(r.dps - r.se))}%` }));
-      const sub = el('div', { class: 'fv-rsub' }, ...r.segs.filter((sg) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => el('span', {}, partIco(sg.part),
+      const sub = el('div', { class: 'fv-rsub' }, ...r.segs.filter((sg) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => el('span', { 'data-zone': sg.part }, partIco(sg.part),
         `${shortLabel(sg.label)} ${fd(sg.v)}`)),
-        ...(one ? r.idle.slice(0, 3).map((q) => el('span', {}, el('em', { text: `${shortLabel(q.label)}: ${q.note}` }))) : []));
+        ...(one ? r.idle.slice(0, 3).map((q) => el('span', { 'data-zone': 'idle:' + q.part }, el('em', { text: `${shortLabel(q.label)}: ${q.note}` }))) : []));
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), one ? `r:${r.race}:${one.class}` : `r:${r.race}`, true, one?.id),
         el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null),
         el('span', { class: 'end' }, el('b', { text: one ? f1(r.dps) : pct(r.avg) }),
           el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' })),
         track, sub);
-      // The tooltip says what each racial does. Over several presets it starts with the specs the entry is the
-      // best race for, one line per class, or the three where it comes closest.
-      hoverTip(row, (pinned) => {
+      // Each part of the entry has its own tooltip. A piece of the bar, or its caption under the bar, says what
+      // that part is worth and what the racial does. The rest of the row gives the entry's DPS, and over several
+      // presets the specs it's the best race for, one line per class, or the three where it comes closest.
+      hoverZones(row, (zone, node, pinned) => {
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
-        const racials = r.segs.filter((sg) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => {
-          const info = noteRow('part', sg.part);
-          return el('div', { class: 'fv-tip-racial' }, partIco(sg.part, 'fv-ico'), el('span', {}, el('b', { text: `${sg.label} ${fd(sg.v)}` }), info ? el('span', { text: info.short || info.text }) : null));
-        });
-        const base = baseOf(r);
-        if (base != null && low && rows.length > 1) {
-          const gap = one ? (100 * (base - baseOf(low))) / baseOf(low) : base - baseOf(low);
-          const vs = low.race === r.race ? 'The weakest base stats of these races.'
-            : gap < 0.005 ? `About the same as ${low.race}, the weakest base here.`
-            : `${f2(gap)}%${one ? ` (${f1(base - baseOf(low))} DPS)` : ''} above ${low.race}, the weakest base here.`;
-          racials.unshift(el('div', { class: 'fv-tip-racial' }, el('i', { style: 'background:var(--cds-chart-muted)' }),
-            el('span', {}, el('b', { text: `Base stats ${one ? `${f1(base)} DPS` : `${f2(base)}%`}` }), el('span', { text: vs }))));
+        const title = tipTitle(who(r), one ? one.label : null, raceIco(r.raceIcon));
+        const opts = { below: true, pinned };
+        if (zone) {
+          const [what, part] = zone.startsWith('idle:') ? ['idle', zone.slice(5)] : ['seg', zone];
+          const sg = r.segs.find((g) => g.part === part), q = r.idle.find((g) => g.part === part);
+          const info = noteRow('part', part);
+          let name, sub = [];
+          if (what === 'idle' && q) {
+            name = shortLabel(q.label);
+            sub.push(el('span', { class: 'fv-tip-m', text: q.note[0].toUpperCase() + q.note.slice(1) + '.' }));
+          } else if (part === 'base') {
+            const base = baseOf(r);
+            name = `Base stats ${fv(base)}${one ? ' DPS' : ''}`;
+            if (low && rows.length > 1) {
+              const gap = one ? (100 * (base - baseOf(low))) / baseOf(low) : base - baseOf(low);
+              sub.push(el('span', { class: 'fv-tip-m', text: low.race === r.race ? 'The weakest base stats of these races.'
+                : gap < 0.005 ? `About the same as ${low.race}, the weakest base here.`
+                : `${f2(gap)}%${one ? ` (${f1(base - baseOf(low))} DPS)` : ''} above ${low.race}, the weakest base here.` }));
+            }
+          } else if (sg) name = `${sg.label} ${fd(sg.v)}`;
+          if (!name) return;
+          if (!one && what === 'seg') sub.push(el('span', { class: 'fv-tip-m', text: `Averaged over ${r.n} presets, as a share of the best race's DPS on each.` }));
+          const segEl = what === 'seg' ? row.querySelector(`.sg[data-zone="${part}"]`) : null;
+          const capEl = row.querySelector(`.fv-rsub [data-zone="${zone}"]`);
+          // We point the tooltip at the caption when the pointer is on it, else at the piece of the bar.
+          const at = (node.closest('.fv-rsub') ? node : segEl || node).getBoundingClientRect();
+          showTip(card, Math.max(8, at.left - cr.left), (node.closest('.fv-rsub') ? at.bottom : rw.bottom) - cr.top + 4, title,
+            [el('div', { class: 'fv-tip-racial' }, part === 'base' ? el('i', { style: 'background:var(--cds-chart-muted)' }) : partIco(part, 'fv-ico'),
+              el('span', {}, el('b', { text: name }), info ? el('span', { text: info.text }) : null)), ...sub],
+            { ...opts, hl: [row, segEl, capEl] });
+          return;
         }
         let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`)];
         if (!one) {
@@ -1358,7 +1413,7 @@ export function startReport(dash) {
           head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
             best.length ? null : el('span', { class: 'fv-tip-m', text: 'It comes closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list)];
         }
-        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(who(r), one ? one.label : null, raceIco(r.raceIcon)), [...head, ...racials], { hl: row, below: true, pinned });
+        showTip(card, 24, rw.bottom - cr.top + 4, title, [...head, el('span', { class: 'fv-tip-m', text: 'Point at a piece of the bar to see what it adds.' })], { ...opts, hl: row });
       });
       return row;
     }));
