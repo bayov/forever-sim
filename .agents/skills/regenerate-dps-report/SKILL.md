@@ -93,7 +93,8 @@ ran on (`--commit <rev>` if it isn't `HEAD`).
   keeps working. From a new session the tool first needs a `read` of that URL. Never
   create a second artifact for the report.
 - Commit `ui/dps_report/data/`, `datasets.json`, `provenance.json` and any pipeline
-  changes on the branch, push, and ask the user before opening or merging a PR.
+  changes on a local branch, merge origin/master in, then push straight to `master`
+  with no PR (user ruling, 2026-10-14).
 - Reply with the artifact link, which builds were re-simmed and why, and the biggest
   ranking changes.
 

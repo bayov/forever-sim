@@ -1,7 +1,7 @@
 {
-  "updated": "2026-10-13",
+  "updated": "2026-10-14",
   "note": "All nine class PRs, the shared consumes branch and the coordination docs are merged into master (#4, #7, #10, #11, #13, #15, #16). The report data in ui/dps_report was built from master's content; ui/dps_report/provenance.json records each build. Use `node tools/dps_report/stale.mjs` to see what's stale.",
-  "foreverClientBuild": "1.60.1.70338",
+  "foreverClientBuild": "1.60.1.70374 (spell and talent tables identical to 70338)",
   "coordinationBranch": {
     "name": "claude/wow-forever-dps-presets-m9u15h",
     "head": "b23485514"
@@ -22,7 +22,6 @@
     "head": "c613ab10f"
   },
   "openItems": [
-    "Assumption picker (B9) in ui/dps_report, with the new oil_proc_damage assumption: follow-up PR from branch report-assumptions",
     "Gnome Eureka! spell mask (forever_class_changes G1, minor, shared racials_forever.go)",
     "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)",
     "Beta measurements wanted: Rage (orchestration/followups.md 'Rage needs a beta test'), Shadow Oil proc damage above 61",
@@ -37,14 +36,17 @@
       "#13": "skill merge steps, Wowhead dataEnv 16, standards 21",
       "#15": "integration of priest, warlock, paladin, hunter, mage, druid, rogue (#1 #2 #3 #5 #6 #8 #9)",
       "#4": "warrior",
-      "#16": "in-repo DPS report: final data, special encounters, generic-boss races"
+      "#16": "in-repo DPS report: final data, special encounters, generic-boss races",
+      "#17": "assumption picker, oil_proc_damage, skill for the in-repo report",
+      "#18": "warrior rotation audit pass 14",
+      "#19": "warrior report data after #18, warrior potion-notes fix"
     }
   },
   "report": {
     "source": "ui/dps_report/",
     "artifact": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
-    "artifactVersion": 4,
-    "publishedFrom": "master after #16 (1b9662185)",
+    "artifactVersion": 6,
+    "publishedFrom": "master 776726e76 (concise tooltips)",
     "legacyDashboard": "deleted 2026-10-13"
   }
 }

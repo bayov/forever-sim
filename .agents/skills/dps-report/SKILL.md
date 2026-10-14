@@ -103,7 +103,7 @@ Template for a delegated job: `prompts/dashboard/HANDOFF_dash_refresh.md`. Its p
   - The single-file `make dps-report-artifact` → `dist/dps_report.html`, which must stay under 16 MB.
 - **Checks:** Playwright with `/opt/pw-browsers/chromium` on the wrapped dist file, with the session's proxy for d3. Check every tab at phone and desktop width, in both themes, with no console errors. Also run `npx tsc --noEmit` (generate `ui/core/proto` first) and prettier on the files you touch.
 - **Publish:** on request, publish `dist/dps_report.html` to https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR. `read` it first, then publish with that `url`. Never create a second report artifact.
-- **Coordination:** the user and other sessions commit report UI changes to master often. Work on a branch from origin/master and merge master before opening the PR.
+- **Landing it:** push report changes straight to `master`, with no PR (user ruling, 2026-10-14: "push straight next time"). Work on a local branch from origin/master, merge master in last (the user and other sessions commit report UI changes often), and run every check above. Then push it to `master` as a fast-forward, or merge master again first if it moved. Republish the artifact from that master build.
 
 **B9. Assumption scenarios.**
 1. Dashboard-only knobs in the merged tree: the DASH_ASSUME env var, with defaults bit-identical.
@@ -119,7 +119,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 - Update PR bodies (class workers do their own).
 - Tell the user what changed, with the ranking.
 
-**B12. Merge into master.** Open or merge PRs only when the user asks.
+**B12. Merge into master.** Report-only changes (`ui/dps_report`, its data and `tools/dps_report`) go straight to master (B8). Sim, preset and class changes still go through PRs, and you open or merge those only when the user asks.
 1. **Order.** Shared sim changes go first (the `-consumes` branch), then coordination, then the class PRs one at a time. Start with the classes that touch the least shared code.
 2. **Merge method.** Use merge commits, not squash or rebase. Every class branch carries the shared commits, so their commit IDs must survive for the class diffs to shrink cleanly.
 3. **Before each class merge, check its reach.** List the shared files the PR changes:
