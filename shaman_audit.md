@@ -1644,7 +1644,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16187): +5 to 25% on Mana Spring (curve 85320, mask 0x4000) and +10 to 50% on Healing Stream (curve 85319, mask 0x2000), aura 108 on all effects. That matches.
 - Beta: no build had it. Mana Spring ticks without it were 4 mana about every 2 sec (`mana_returns_test.go`).
 - Fixed the restorativeTotemsModifier comment, which said Mana Spring's half was only in `buffs.go`.
-- Open (notes.md Need to Verify): with our own Mana Spring and another shaman's, the sim adds both in full (50 to 62.5 MP5 at level 60). In the client each totem holds a party area aura of the same spell (5677 / 10494), and the usual Classic rule keeps only the stronger one. No preset uses both.
+- Open (notes.md Need to Verify, both cases the user asked for: two plain totems, and an improved one next to a plain one): with our own Mana Spring and another shaman's, the sim adds both in full (50 to 62.5 MP5 at level 60). In the client each totem holds a party area aura of the same spell (5677 / 10494), and the usual Classic rule keeps only the stronger one. No preset uses both.
 - No sim change and no new test. `periodic_test.go` wants Healing Stream at +50% with 5/5, and `mana_returns_test.go` Mana Spring rank 1 at 5 mana a tick with 5/5 instead of 4.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
