@@ -177,7 +177,7 @@ Restoration
 - [x] 8.36 Totemic Focus
 - [x] 8.37 Mindfulness
 - [x] 8.38 Natural Grace
-- [ ] 8.39 Tidal Focus
+- [x] 8.39 Tidal Focus
 - [ ] 8.40 Improved Reincarnation
 - [ ] 8.41 Ancestral Healing (not implemented)
 - [ ] 8.42 Healing Focus (not implemented)
@@ -1590,6 +1590,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: no build had it, and we've never measured threat.
 - Changed: the cut now goes on everything we cast in a magic school. Stormstrike, Windfury's attacks and white hits keep their threat, and magic item procs and Healing Stream get the cut. Threat isn't in our DPS, and no golden changed.
 - The new `natural_grace_test.go` TestOrcShamanNaturalGrace wants 0.85 times the threat at 3/3 for Lightning Bolt, Flame Shock, Flametongue Weapon and Healing Stream Totem, and 1 for Stormstrike and white hits. The old shaman flag rule fails it on Stormstrike and Healing Stream.
+
+### 8.39 Tidal Focus
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives +1% melee and spell hit, and takes 1% off the cost of our healing spells (a cost factor, so it multiplies with the other cost talents). The sim has no shaman heal with a cost (no Healing Wave, Lesser Healing Wave or Chain Heal), so only the hit matters. Both Elemental presets take 5/5, the enhancement presets none.
+- Client 70338 (wago.tools 16179, curves 85315, 109096 and 109095): -1 to -5% cost (aura 108, misc 14) on mask 0x1c0 (Healing Wave, Lesser Healing Wave and Chain Heal) plus one third-word bit, +1 to 5% melee hit (aura 54) and +1 to 5% spell hit (aura 55). That matches.
+- Beta: no build had it.
+- No sim change and no new test. `miss_test.go` TestOrcShamanMissChance wants 5 melee hit at 5/5 and the miss against the boss, and TestOrcShamanSpellMissChance 12% spell miss against the boss and the 1% floor at our level. The cost part has no spell to test.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
