@@ -31,7 +31,7 @@ A = [
       default='expected', expected='expected'),
  dict(key='wf_totem_offhand', cls='All', label='Windfury Totem from off-hand hits',
       desc="Whether off-hand hits can proc Windfury Totem. Forever's totem is a party aura with nothing tying it to a weapon; Era's only procced from the main hand.",
-      builds=R(ROGUE) + ['hunter__survival'],
+      builds=['warrior__fury'] + R(ROGUE) + ['hunter__survival'],
       settings=[S('low', 'Main hand', 'main-hand hits only', "Era's behaviour.", {'wf_totem_offhand': 0}),
                 S('expected', 'Any hit', 'any melee hit', "The client's party aura has no weapon condition.")],
       default='expected', expected='expected'),
