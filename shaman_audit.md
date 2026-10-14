@@ -166,7 +166,7 @@ Enhancement
 - [x] 8.28 Flurry
 - [x] 8.29 Stormstrike
 - [x] 8.30 Spirit Weapons
-- [ ] 8.31 Mental Quickness
+- [x] 8.31 Mental Quickness
 - [ ] 8.32 Improved Stormstrike
 - [ ] 8.33 Maelstrom Weapon
 - [ ] 8.34 Rage of the Farseer
@@ -1523,6 +1523,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16268): -30% threat on all schools (aura 10), and +86 to Rockbiter Weapon's own threat modifier (its passive aura, 0% by default). With Rockbiter that's 0.7 x 1.86 = 1.302, where the sim has 1.3. Threat isn't in our DPS, so we leave the 0.2%. The parry isn't among the client spell's effects, so the server grants it ("Gives a chance to parry").
 - Beta: we parried with it (6.2, 6.4). The threat wasn't measured.
 - No sim change. `avoidance_test.go` TestOrcShamanOurAvoidance wants 4.2% parry from a level 34 mob with it, and the new TestOrcShamanNoParryWithoutSpiritWeapons rolls 20,000 of that mob's swings at a shaman without it and wants no parry. Letting every shaman parry fails it.
+
+### 8.31 Mental Quickness
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): 1 and 2 points give spell power equal to 15 and 30% of our Intellect. It's a stat dependency, so Intellect gained mid-fight counts. Our heals add spell power to healing power, so it raises them too. Every enhancement preset has 2/2.
+- Client 70338 (wago.tools 30812, talent curves 85302, 85303 and 87358): +15 and 30% of Intellect as spell damage on all magic schools (aura 174) and as healing done (aura 175). That matches.
+- Beta: at the 2026-10-10 20:42 respec, dropping 2/2 took the sheet's spell power from 91 to 49. The 42 is 30% of 141 Intellect. The sheet's healing was spell power + 10 (the gloves) in every export, so the 42 counted for healing too (7.28). The 15:07 log's spell hits fit 91 (5.4).
+- No sim change. The new `mental_quickness_test.go` TestOrcShamanMentalQuickness wants 15 and 30% of Intellect as spell power at level 30, and 3 more spell power from 10 Intellect gained mid-fight at 2/2. A 10% share a point fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
