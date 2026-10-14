@@ -716,8 +716,8 @@
 			}
 		},
 		"warrior__fury": {
-			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
-			"recordedAt": "2026-10-13T22:27:50.239Z",
+			"commit": "530ea3705d656e0f69025cc557cfe481ce90fa14",
+			"recordedAt": "2026-10-14T08:39:48.417Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -726,15 +726,15 @@
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
-				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"tools/rotopt": "e1406d01b3397808e71619b7de0412fde49b1178",
 				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
-				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
+				"ui/warrior": "31474cc61b2ae668d99447d39e2ec1a411ff7dcf"
 			}
 		},
 		"warrior__fury_2h": {
-			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
-			"recordedAt": "2026-10-13T22:27:50.302Z",
+			"commit": "530ea3705d656e0f69025cc557cfe481ce90fa14",
+			"recordedAt": "2026-10-14T08:39:48.492Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -743,15 +743,15 @@
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
-				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"tools/rotopt": "e1406d01b3397808e71619b7de0412fde49b1178",
 				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
-				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
+				"ui/warrior": "31474cc61b2ae668d99447d39e2ec1a411ff7dcf"
 			}
 		},
 		"warrior__arms": {
-			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
-			"recordedAt": "2026-10-13T22:27:50.379Z",
+			"commit": "530ea3705d656e0f69025cc557cfe481ce90fa14",
+			"recordedAt": "2026-10-14T08:39:48.545Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -760,15 +760,15 @@
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
-				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"tools/rotopt": "e1406d01b3397808e71619b7de0412fde49b1178",
 				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
-				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
+				"ui/warrior": "31474cc61b2ae668d99447d39e2ec1a411ff7dcf"
 			}
 		},
 		"warrior__arms_dragonkin": {
-			"commit": "5dd3ebfdc1dff8f884d821776346462dba9f2ccc",
-			"recordedAt": "2026-10-13T22:27:50.431Z",
+			"commit": "530ea3705d656e0f69025cc557cfe481ce90fa14",
+			"recordedAt": "2026-10-14T08:39:48.604Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -777,10 +777,10 @@
 				"sim/lib": "8be3422963afbf5786dc3d7403afd70b57295d8a",
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
-				"tools/rotopt": "a4f71d1b7b3987302963812feb3af71a85d30b77",
+				"tools/rotopt": "e1406d01b3397808e71619b7de0412fde49b1178",
 				"sim/warrior": "9ed5127587c339a3d09b68ea965b821b010121fb",
 				"ui/tank_warrior": "a88720f32fcbed9847536c52c6827262003ae503",
-				"ui/warrior": "fd275bccb00762b3fb14b296cb07e1dc6529b61d"
+				"ui/warrior": "31474cc61b2ae668d99447d39e2ec1a411ff7dcf"
 			}
 		}
 	}
