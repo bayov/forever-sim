@@ -185,7 +185,7 @@ Restoration
 - [x] 8.44 Tidal Mastery
 - [x] 8.45 Restorative Totems
 - [x] 8.46 Mana Tide Totem
-- [ ] 8.47 Healing Way (not implemented)
+- [x] 8.47 Healing Way (not implemented)
 - [ ] 8.48 Nature's Swiftness
 - [ ] 8.49 Purification
 - [ ] 8.50 Riptide (not implemented)
@@ -1654,6 +1654,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: nobody has cast it in our logs.
 - Open (notes.md Need to Verify): how totems from two shamans stack. In the client (70338) Strength of Earth, Grace of Air, Windfury, Flametongue, Stoneskin, Windwall, Mana Spring, Healing Stream, Mana Tide and Tranquil Air are party area auras (effect 35), and the resistance totems raid area auras (effect 65).
 - No sim change and no new test.
+
+### 8.47 Healing Way
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 29206, curve 85322): +8, 17 and 25% healing on Healing Wave (aura 108, mask 0x40), a flat bonus where Classic's was a stacking buff on the target.
+- The sim: nothing reads it (a TODO in `talents.go`), and the sim has no Healing Wave. Both Restoration presets take 3/3, nothing else.
+- No beta build had it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
