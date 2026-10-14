@@ -267,7 +267,7 @@
   "title": "Assumptions",
   "description": "Every value Forever hasn't confirmed that the presets depend on, by class: what it is (one short line for the tooltip, the full description for Method), the presets it touches, its Low / Expected / High settings with their rationale, which one the presets use, and each setting's effect on each preset at 180 s.",
   "updated": {
-   "at": "2026-10-14T10:27:51.947Z",
+   "at": "2026-10-14T10:44:52.761Z",
    "by": "Claude (forever-sim)"
   }
  },
