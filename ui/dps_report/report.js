@@ -159,8 +159,8 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsTarget: 'generic', rsWeapon: 'preset', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
-  st.rsTarget = 'generic'; st.rsWeapon = 'preset';
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsMode: 'adv', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
+  st.rsMode = 'adv';
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -236,17 +236,35 @@ export function startReport(dash) {
   document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip]') && !e.target.closest('.fv-tip')) hideTip(); });
 
   // An advantaged preset's "vs Undead" badge says on hover how much it gains over its normal build, and why.
+  //
+  // The abilities and talents it names (advantageRefs) get their icon in front of their name in the line, and
+  // their own game tooltip under it.
   const advTip = (b) => {
     const base = (rowsOf('builds') || []).find((x) => x.id === b.baseBuild);
     const ab = base ? adjB(base) : null;
-    return el('div', { class: 'fv-tip' }, tipTitle(`Advantaged vs ${b.encounter}`),
+    const specs = arr(b.advantageRefs).map((v) => { try { return specFor(v, b.id); } catch { return null; } }).filter(Boolean);
+    return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`Advantaged vs ${b.encounter}`),
       ab && +ab.dps ? tipKey(tipDelta(100 * (b.dps / ab.dps - 1)), null, `over ${ab.build} (generic boss)`) : null,
-      tipText(b.advantageShort || b.advantage));
+      tipText(...withIcons(b.advantageShort || b.advantage, specs)),
+      specs.length ? el('div', { class: 'fv-advtip-cards' }, ...specs.map((sp) => ttCard(sp, true))) : null);
+  };
+  // text as nodes, with each spec's first mention as its icon and name
+  const withIcons = (text, specs) => {
+    let parts = [String(text)];
+    for (const sp of specs) {
+      const name = String(sp.title);
+      const k = parts.findIndex((p) => typeof p === 'string' && p.includes(name));
+      if (k < 0) continue;
+      const [before, ...rest] = parts[k].split(name);
+      parts.splice(k, 1, before, el('span', { class: 'fv-advtip-ref' }, sp.icon ? iconImg(sp.icon, 'fv-ico') : null, el('b', { text: name })), rest.join(name));
+    }
+    return parts.filter((p) => p !== '');
   };
   const encBadge = (b) => {
     const badge = el('span', { class: 'fv-enc', text: 'vs ' + b.encounter });
     if (b.advantage || b.advantageShort) {
-      tippy(badge, { content: advTip(b) });
+      // We build the tooltip each time it shows, because the spell and talent tooltips load after the page.
+      tippy(badge, { content: advTip(b), onShow: (t) => t.setContent(advTip(b)) });
       // a tap on the badge shows why, not the ranking row's own tooltip
       badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
     }
@@ -407,11 +425,11 @@ export function startReport(dash) {
         : [['+1 point', `${fmt('.3f')(w.dpsPer)} DPS`], ['Error', `± ${fmt('.3f')(w.sePer)} DPS`]]) };
   };
 
-  const ttSpec = (node) => {
-    const v = node.getAttribute('data-tt') || '';
+  const ttSpec = (node) => specFor(node.getAttribute('data-tt') || '', node.closest('[data-tt-b]')?.getAttribute('data-tt-b') || st.build, node);
+  // The game tooltip for a data-tt ref like "k:s10314" or "tal:Rogue:0:4", for preset b.
+  const specFor = (v, b, node = null) => {
     const i = v.indexOf(':');
     const type = v.slice(0, i), id = v.slice(i + 1);
-    const b = node.closest('[data-tt-b]')?.getAttribute('data-tt-b') || st.build;
     const [p0, p1, p2] = id.split(':');
     switch (type) {
       case 'k': return spellSpec(id, b, false);
@@ -420,7 +438,7 @@ export function startReport(dash) {
       case 'su': return setupSpec(id, b);
       case 'rot': return rotSpec(p0, p1, b);
       case 'tal': return talentSpec(p0, p1, p2, b);
-      case 'r': return raceSpec(p0, p1, node.closest('[data-tt-b]') ? b : null);
+      case 'r': return raceSpec(p0, p1, node?.closest('[data-tt-b]') ? b : null);
       case 'c': return classSpec(id);
       case 'w': return weightSpec(id, b);
       default: return null;
@@ -448,18 +466,24 @@ export function startReport(dash) {
     for (const n of ttHl) n.classList.remove('tt-on');
     ttHl = []; ttEl = null; ttTippy = null; ttNode = null; ttPinned = false;
   };
-  const showTT = (node, pt) => {
-    let spec = null;
-    try { spec = ttSpec(node); } catch (err) { console.error(err); }
-    if (!spec) return;
-    hideTT(); hideTip();
+  // A game tooltip's card: the icon, then the title, its lines and its numbers. A compact card (one embedded in
+  // another tooltip) is only the game's own text, without our numbers and the Wowhead link.
+  const ttCard = (spec, compact = false) => {
+    if (compact) spec = { ...spec, nums: [], link: null };
     const off = /^No effect: /.test(spec.why || '');
     const body = el('div', { class: 'tt-body' }, spec.why ? el('div', { class: 'tt-why' }, off ? el('b', { text: 'No effect' }) : null, off ? ' ' + spec.why.replace(/^No effect: /, '') : spec.why) : null,
       el('div', { class: 'tt-head' }, el('span', { class: 'tt-title', style: `color:${spec.color || GOLD}`, text: spec.title }), spec.sub ? el('span', { class: 'tt-sub', text: spec.sub }) : null),
       ...arr(spec.lines).map(ttLine),
       ...(spec.nums && spec.nums.length ? [el('div', { class: 'tt-nums' }, spec.numsHead ? el('div', { class: 'c-m', text: spec.numsHead }) : null, ...spec.nums.map(ttLine))] : []),
       spec.link ? el('div', { class: 'tt-link' }, el('a', { href: spec.link.href, target: '_blank', rel: 'noopener noreferrer', text: spec.link.label + ' ↗' }), spec.link.note ? el('span', { text: spec.link.note }) : null) : null);
-    const content = el('div', { class: 'fv-tt', role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
+    return el('div', { class: 'fv-tt', role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
+  };
+  const showTT = (node, pt) => {
+    let spec = null;
+    try { spec = ttSpec(node); } catch (err) { console.error(err); }
+    if (!spec) return;
+    hideTT(); hideTip();
+    const content = ttCard(spec);
     const r = node.getBoundingClientRect();
     // A wide target (a table row, a chart mark) gets the tooltip where the pointer was, not at its left edge.
     const wide = pt && (r.width > 160 || node instanceof SVGElement);
@@ -976,24 +1000,31 @@ export function startReport(dash) {
     classChips($('#heat-classes'), 'heatCls');
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
     seg($('#heat-fac'), 'heatFac', [['All', 'All'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
-    if (!waitOr(host, ['race_variants', 'builds'])) return;
+    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds'])) return;
     const V = rsVar();
     const RACES = RACES_ALL.filter((r) => st.heatFac === 'All' || (st.heatFac === 'Horde') === HORDE.has(r));
-    const races = rowsOf('race_variants').filter((r) => r.variant === V);
+    const races = raceRows(V);
     const has = new Set(races.map((r) => r.build));
     const builds = buildOrder(genB()).filter((b) => (st.heatCls === 'All' || b.class === st.heatCls) && has.has(b.id));
-    const idx = new Map(races.map((r) => [r.build + '|' + r.race, r]));
-    const grid = el('div', { class: 'fv-heat', style: `grid-template-columns: minmax(6.5rem, 8.5rem) repeat(${RACES.length}, minmax(2.9rem, 1fr))` });
+    const shown = new Set(builds.map((b) => b.id));
+    const idx = new Map(races.map((r) => [r.build + '|' + r.key, r]));
+    // Each race's column, then a column for each of its advantages that any preset shown has.
+    const cols = RACES.flatMap((rc) => [{ key: rc, race: rc, tag: null }, ...ADV.map((v) => races.filter((r) => r.race === rc && r.variant === v && shown.has(r.build))).filter((rs) => rs.length)
+      .map((rs) => ({ key: rs[0].key, race: rc, tag: groupTag(rs) }))]);
+    const grid = el('div', { class: 'fv-heat', style: `grid-template-columns: minmax(6.5rem, 8.5rem) repeat(${cols.length}, minmax(2.9rem, 1fr))` });
     grid.append(el('div', { class: 'hh' }));
     const RI = new Map(races.map((r) => [r.race, r.raceIcon]));
-    for (const r of RACES) grid.append(tt(el('div', { class: 'hh', style: `color:${fcol(r)}` }, RI.get(r) ? iconImg(RI.get(r), '') : null, r.replace('High Order', 'High Ord.').replace('Windshaper', 'Windshp.')), 'r:' + r));
+    for (const c of cols) {
+      grid.append(tt(el('div', { class: 'hh' + (c.tag ? ' var' : ''), style: `color:${fcol(c.race)}` }, RI.get(c.race) ? iconImg(RI.get(c.race), '') : null, c.race.replace('High Order', 'High Ord.').replace('Windshaper', 'Windshp.'),
+        c.tag ? el('small', { text: c.tag.replace(/^with (an? )?/, '').replace(/ or (an? )?/, ' or ') }) : null), 'r:' + c.race));
+    }
     const maxGap = d3.max(races, (r) => -r.vsBest) || 1;
     for (const b of builds) {
       const hl = el('div', { class: 'hl', title: b.label, role: 'button', tabindex: '0', style: 'cursor:pointer' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), b.build);
       hl.addEventListener('click', (e) => { e.stopPropagation(); pickRaceSpec(b.id); });
       grid.append(hl);
-      for (const rc of RACES) {
-        const r = idx.get(b.id + '|' + rc);
+      for (const col of cols) {
+        const r = idx.get(b.id + '|' + col.key);
         if (!r) { grid.append(el('div', { class: 'hc na', text: '' })); continue; }
         const best = r.vsBest >= -0.005;
         const t = Math.min(1, -r.vsBest / Math.min(maxGap, 4));
@@ -1007,10 +1038,10 @@ export function startReport(dash) {
           const card = $('#heat-card'), cr = card.getBoundingClientRect(), cb = c.getBoundingClientRect();
           if (c.classList.contains('is-hl')) { hideTip(); return; }
           const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
-          showTip(card, cb.left - cr.left, cb.top - cr.top, tipTitle(rc, b.label, raceIco(r.raceIcon)), [
-            tipKey(best ? '★ Best race' : tipDelta(r.vsBest, f2), null, best ? null : `vs ${sib[0].race}`),
-            tipGrid([['DPS', `${f1(r.dps)} ± ${f2(r.se)}`], ['Race rank', `${sib.indexOf(r) + 1} of ${sib.length}`], r.isPreset ? ['Preset race', '✓'] : null]),
-            r.note ? tipNote(`As with its normal weapon: ${r.note}`) : null], { hl: c, open: b.id, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
+          showTip(card, cb.left - cr.left, cb.top - cr.top, tipTitle(r.name, b.label, raceIco(r.raceIcon)), [
+            tipKey(best ? '★ Best race' : tipDelta(r.vsBest, f2), null, best ? null : `vs ${sib[0].name}`),
+            tipGrid([['DPS', `${f1(r.dps)} ± ${f2(r.se)}`], ['Race rank', `${r.rank} of ${r.of}`], r.isPreset ? ['Preset race', '✓'] : null]),
+            r.note && r.variant === 'weapon' ? tipNote(r.note) : null], { hl: c, open: b.id, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
         });
         grid.append(c);
       }
@@ -1020,35 +1051,40 @@ export function startReport(dash) {
 
   const drawFactionTable = () => {
     const tb = $('#faction-table tbody');
-    if (statusOf('builds') !== 'ok' || statusOf('factionbest') !== 'ok') return;
-    const V = rsVar();
-    const fb = new Map(rowsOf('factionbest').filter((g) => g.variant === V).map((g) => [g.build, g]));
-    const ic = new Map(RACES_ALL.map((r) => [r, (rowsOf('race_variants') || []).find((x) => x.race === r)?.raceIcon]));
+    if (statusOf('builds') !== 'ok' || statusOf('race_variants') !== 'ok') return;
+    const V = rsVar(), rr = raceRows(V);
+    const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label]));
+    // Each preset's best Horde and best Alliance entry. The rows are sorted best first.
+    const fb = new Map(d3.groups(rr, (r) => r.build).map(([build, rs]) => {
+      const h = rs.find((r) => r.faction === 'Horde'), al = rs.find((r) => r.faction === 'Alliance');
+      return [build, { label: lab.get(build), h, al, gapPct: h && al ? Math.round((h.dps / al.dps - 1) * 1000) / 10 : null }];
+    }));
     if (iconMap()) { $('#fi-h').replaceChildren(iconImg('ui_hordeicon')); $('#fi-a').replaceChildren(iconImg('ui_allianceicon')); }
     tb.replaceChildren(...buildOrder(rowsOf('builds')).filter((b) => fb.has(b.id)).map((b) => {
       const g = fb.get(b.id);
       return el('tr', { class: 'clk', 'data-key': `${enc(b.id)},${enc(V)}`, onclick: () => pickRaceSpec(b.id) },
         el('td', { class: 'first' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), ' ' + g.label),
-        tt(el('td', {}, raceIco(ic.get(g.hordeRace)), ' ' + (g.hordeRace || '—')), g.hordeRace ? `r:${g.hordeRace}:${b.class}` : null, false, b.id), el('td', { class: 'n', text: g.hordeDps ? f1(g.hordeDps) : '—' }),
-        tt(el('td', {}, raceIco(ic.get(g.allianceRace)), ' ' + (g.allianceRace || '—')), g.allianceRace ? `r:${g.allianceRace}:${b.class}` : null, false, b.id), el('td', { class: 'n', text: g.allianceDps ? f1(g.allianceDps) : '—' }),
+        ...[g.h, g.al].flatMap((r) => [tt(el('td', {}, ...(r ? [raceIco(r.raceIcon), ' ', raceName(r)] : ['—'])), r ? `r:${r.race}:${b.class}` : null, false, b.id), el('td', { class: 'n', text: r ? f1(r.dps) : '—' })]),
         el('td', { class: 'n', text: g.gapPct == null ? '' : f1(g.gapPct) }));
     }));
   };
 
   const drawRaceSpread = () => {
     const host = $('#racespread');
-    if (!waitOr(host, ['racespread', 'builds', 'race_variants'])) return;
+    if (!waitOr(host, ['builds', 'race_variants', 'race_breakdown'])) return;
     const V = rsVar();
     const builds = new Map(rowsOf('builds').map((b) => [b.id, b]));
     seg($('#spread-sort'), 'spreadSort', [['spread', 'Biggest gap'], ['class', 'By class']]);
     const order = new Map(buildOrder(rowsOf('builds')).map((b, i) => [b.id, i]));
-    const rows = rowsOf('racespread').filter((r) => r.variant === V && builds.has(r.build)).sort((a, b) => (st.spreadSort === 'class' ? order.get(a.build) - order.get(b.build) : b.spreadPct - a.spreadPct));
-    const races = rowsOf('race_variants').filter((r) => r.variant === V);
+    const races = raceRows(V);
+    // The gap between each preset's best and worst entry. The rows are sorted best first.
+    const rows = d3.groups(races.filter((r) => builds.has(r.build)), (r) => r.build).map(([build, rs]) => ({ build, spreadPct: Math.round((1 - rs[rs.length - 1].dps / rs[0].dps) * 1000) / 10, best: rs[0].name, worst: rs[rs.length - 1].name }))
+      .sort((a, b) => (st.spreadSort === 'class' ? order.get(a.build) - order.get(b.build) : b.spreadPct - a.spreadPct));
     const max = d3.max(rows, (r) => r.spreadPct) || 1;
     const wrap = el('div', { class: 'fv-sbar' });
     for (const r of rows) {
       const b = builds.get(r.build);
-      const v = el('span', { class: 'vl' }, mark(el('span', { text: f2(r.spreadPct) }), 'racespread', 'spreadPct', `build=${enc(r.build)}&variant=${V}`), '%');
+      const v = el('span', { class: 'vl' }, el('span', { text: f2(r.spreadPct) }), '%');
       const parts = [el('span', { class: 'nm', 'data-tip': '1' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), `${b.label} `, el('small', { class: 'fv-note', text: `${r.best} over ${r.worst}` })), v,
         el('span', { class: 'tr', 'data-tip': '1' }, el('span', { style: `width:${100 * r.spreadPct / max}%;background:${ccol(b.class)}` }))];
       v.setAttribute('data-tip', '1');
@@ -1057,7 +1093,7 @@ export function startReport(dash) {
         if (parts[0].classList.contains('is-hl')) { hideTip(); return; }
         const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
         const bb = sib[0], ww = sib[sib.length - 1], card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = parts[2].getBoundingClientRect();
-        showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, `best to worst of ${sib.length} races`),
+        showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, `best to worst of ${sib.length} entries`),
           tipGrid([['Best', `${r.best}${bb ? ` · ${f1(bb.dps)}` : ''}`], ['Worst', `${r.worst}${ww ? ` · ${f1(ww.dps)}` : ''}`], ['Preset race', b.race]])], { hl: parts, open: b.id, below: true, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
       });
       wrap.append(...parts);
@@ -1067,10 +1103,57 @@ export function startReport(dash) {
   };
 
   // ---------- races: scenarios ----------
-  // Target and weapon are two views of one scenario: the weapon views are simmed against the generic boss only.
-  const RS_T = [['generic', 'Generic boss'], ['beast', 'Beast'], ['elemental', 'Elemental'], ['humanoid', 'Humanoid']];
-  const RS_W = [['preset', 'Normal weapon'], ['weapon', 'Racial weapon'], ['off', 'Racials off']];
-  const rsVar = () => (st.rsTarget !== 'generic' ? st.rsTarget : st.rsWeapon === 'preset' ? 'baseline' : st.rsWeapon);
+  // The page shows every race with its advantages (adv), every race on the generic boss alone (baseline), or every
+  // race with its racials off (off).
+  const RS_MODES = [['adv', 'Every advantage'], ['baseline', 'Generic boss'], ['off', 'Racials off']];
+  const rsVar = () => st.rsMode;
+
+  // A race with an advantage shows up a second time, as its own entry: Human with a sword, Troll vs Beast,
+  // Windshaper vs Elemental. A variant counts where its DPS differs from the race's own on the generic boss. That's
+  // the racial weapon swap where the preset doesn't already hold that weapon type, and the target types the race
+  // has a racial for.
+  //
+  // Each entry is a race_variants row with a key (the race, or race|variant), a name, a tag like "with a sword",
+  // and its rank and gap among all of the preset's entries.
+  const ADV = ['weapon', 'beast', 'elemental', 'humanoid'];
+  const weaponOf = (build, race) => (rowsOf('race_breakdown') || []).find((q) => q.build === build && q.race === race && q.scenario === 'weapon' && q.part !== 'swap')?.part;
+  const advTag = (v, weapon) => (v === 'weapon' ? (weapon ? `with ${/^[aeiou]/.test(weapon) ? 'an' : 'a'} ${weapon}` : 'with its racial weapon') : `vs ${v[0].toUpperCase()}${v.slice(1)}`);
+  // One tag for an entry across presets: Human swaps to a sword for some presets and to a mace for others.
+  const groupTag = (rows) => {
+    const v = rows[0].variant;
+    if (v !== 'weapon') return advTag(v);
+    const ws = [...new Set(rows.map((r) => r.weapon).filter(Boolean))];
+    return ws.length ? advTag('weapon', ws.join(' or ')) : advTag('weapon');
+  };
+  let rrCache = {};
+  const raceRows = (mode) => {
+    const rv = rowsOf('race_variants');
+    if (!rv) return null;
+    const rb = rowsOf('race_breakdown');
+    if (rrCache.rv === rv && rrCache.rb === rb && rrCache.mode === mode) return rrCache.rows;
+    const rows = rv.filter((r) => r.variant === (mode === 'off' ? 'off' : 'baseline')).map((r) => ({ ...r, key: r.race, name: r.race, tag: null }));
+    if (mode === 'adv') {
+      const base = new Map(rows.map((r) => [r.build + '|' + r.race, r]));
+      for (const r of rv) {
+        if (!ADV.includes(r.variant) || !r.simmed) continue;
+        const own = base.get(r.build + '|' + r.race);
+        if (!own || Math.abs(r.dps - own.dps) < 0.05) continue;
+        const weapon = r.variant === 'weapon' ? weaponOf(r.build, r.race) : null;
+        const tag = advTag(r.variant, weapon);
+        rows.push({ ...r, key: `${r.race}|${r.variant}`, name: `${r.race} ${tag}`, tag, weapon, isPreset: false });
+      }
+    }
+    // Each preset's entries come out together, best first.
+    const out = d3.groups(rows, (r) => r.build).flatMap(([, rs]) => {
+      rs.sort((p, q) => q.dps - p.dps);
+      rs.forEach((r, i) => { r.rank = i + 1; r.of = rs.length; r.vsBest = Math.round(10000 * (r.dps / rs[0].dps - 1)) / 100; });
+      return rs;
+    });
+    rrCache = { rv, rb, mode, rows: out };
+    return out;
+  };
+  // A race's name with its advantage, if any, as a smaller tag after it.
+  const raceName = (r, tag = r.tag) => el('span', { class: 'fv-rname' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), tag ? el('span', { class: 'fv-rtag', text: tag }) : null);
   const safeTop = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) fail(host); } };
   // a racial's colour follows what kind it is: a passive, a cooldown, or the target type; base stats and the weapon swap are neutral
   const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, chastise: 1, starshards: 1, darksacrifice: 1, target: 2 };
@@ -1086,14 +1169,19 @@ export function startReport(dash) {
   document.querySelectorAll('#races .fv-scen-tag').forEach((t) => t.addEventListener('click', (e) => { e.stopPropagation(); $('#race-scen-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
 
   const drawScen = () => {
-    seg($('#rs-target'), 'rsTarget', RS_T, (v) => { if (v !== 'generic') st.rsWeapon = 'preset'; persist(); render(); });
-    seg($('#rs-weapon'), 'rsWeapon', RS_W, (v) => { if (v !== 'preset') st.rsTarget = 'generic'; persist(); render(); });
+    seg($('#rs-mode'), 'rsMode', RS_MODES);
     const V = rsVar(), d = $('#rs-desc');
+    const tags = document.querySelectorAll('#races .fv-scen-tag');
+    if (V === 'adv') {
+      d.textContent = 'Every race on the generic boss, and each advantage a race has as its own entry: the racial weapon (Human with a sword or mace, Orc with an axe, Dwarf with a mace) where the preset holds another weapon type, and the boss types a racial works on (Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid for Priests).';
+      tags.forEach((t) => { t.textContent = 'Every advantage'; });
+      return;
+    }
     if (statusOf('race_notes') !== 'ok') { d.classList.add('dash-skeleton'); return; }
     d.classList.remove('dash-skeleton');
     const n = noteRow('scenario', V);
     mark(d, 'race_notes', 'text', `kind=scenario&key=${V}`).textContent = n ? n.text : '';
-    document.querySelectorAll('#races .fv-scen-tag').forEach((t) => { mark(t, 'race_notes', 'title', `kind=scenario&key=${V}`).textContent = n ? n.title : ''; });
+    tags.forEach((t) => { mark(t, 'race_notes', 'title', `kind=scenario&key=${V}`).textContent = n ? n.title : ''; });
   };
 
   // ---------- races: overview ----------
@@ -1102,38 +1190,58 @@ export function startReport(dash) {
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
     seg($('#ro-fac'), 'rsFac', [['All', 'All races'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     seg($('#ro-role'), 'rsRole', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
-    if (!waitOr(host, ['race_summary'])) { tiles.replaceChildren(); return; }
+    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) { tiles.replaceChildren(); return; }
     const V = rsVar(), scope = st.rsFac === 'All' ? 'All' : 'Faction';
-    const all = rowsOf('race_summary').filter((r) => r.variant === V && r.scope === scope && (st.rsFac === 'All' || r.faction === st.rsFac));
-    const W = (r) => `variant=${V}&scope=${scope}&role=${r.role}&race=${enc(r.race)}`;
+    const rr = raceRows(V), roleMap = roleOf();
+    const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label]));
+    // Per entry, over the presets of a role: how often it's the best, and how far behind the best it is on average and
+    // at worst. Within a faction, the best is that faction's best.
+    const summarize = (role) => {
+      const acc = new Map();
+      for (const [build, rs] of d3.groups(rr.filter((r) => role === 'All' || roleMap.get(r.build) === role), (r) => r.build)) {
+        const pool = scope === 'All' ? rs : rs.filter((r) => r.faction === st.rsFac);
+        if (!pool.length) continue;
+        pool.forEach((r, i) => {
+          if (!acc.has(r.key)) acc.set(r.key, { key: r.key, race: r.race, faction: r.faction, raceIcon: r.raceIcon, rows: [], gaps: [], ranks: [] });
+          const a = acc.get(r.key);
+          a.rows.push(r); a.gaps.push({ build, gap: 100 * (1 - r.dps / pool[0].dps) }); a.ranks.push(i + 1);
+        });
+      }
+      return [...acc.values()].map((a) => {
+        const close = [...a.gaps].sort((p, q) => p.gap - q.gap).slice(0, 3);
+        return { ...a, tag: a.rows[0].tag ? groupTag(a.rows) : null, presets: a.gaps.length, timesBest: a.gaps.filter((g) => g.gap < 0.005).length,
+          avgGap: d3.mean(a.gaps, (g) => g.gap), worstGap: d3.max(a.gaps, (g) => g.gap), medianRank: d3.median(a.ranks),
+          bestFor: close.map((g) => lab.get(g.build)), bestForGap: close.map((g) => g.gap) };
+      });
+    };
     const better = (p, q) => q.timesBest - p.timesBest || p.avgGap - q.avgGap;
     // the best race for each role: most often best, then the smallest average gap
     tiles.replaceChildren(...['Melee', 'Ranged', 'Caster'].map((rl) => {
-      const top = all.filter((r) => r.role === rl).sort(better)[0];
+      const top = summarize(rl).sort(better)[0];
       if (!top) return el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: rl }), el('span', { class: 'v', text: '—' }));
       return tt(el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: `Best ${rl.toLowerCase()}` }),
-        el('span', { class: 'v' }, raceIco(top.raceIcon), mark(el('span', { text: top.race }), 'race_summary', 'race', W(top))),
-        el('span', { class: 's' }, mark(el('span', { text: String(top.timesBest) }), 'race_summary', 'timesBest', W(top)), ' of ', mark(el('span', { text: String(top.presets) }), 'race_summary', 'presets', W(top)), ' presets')), `r:${top.race}`);
+        el('span', { class: 'v' }, raceIco(top.raceIcon), el('span', { text: top.race })),
+        el('span', { class: 's', text: `${top.tag ? top.tag + ' · ' : ''}${top.timesBest} of ${top.presets} presets` })), `r:${top.race}`);
     }));
-    const rows = all.filter((r) => r.role === st.rsRole).sort((p, q) => p.avgGap - q.avgGap || q.timesBest - p.timesBest);
+    const rows = summarize(st.rsRole).sort((p, q) => p.avgGap - q.avgGap || q.timesBest - p.timesBest);
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race plays this role in this faction.' })); return; }
     const max = Math.max(0.5, d3.max(rows, (r) => r.worstGap));
     const x = (v) => `${(100 * v) / max}%`;
     const card = $('#race-overview-card');
     host.replaceChildren(...rows.map((r, i) => {
-      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : ''), 'data-tip': '1', role: 'button', tabindex: '0', 'aria-label': `${r.race}: best on ${r.timesBest} of ${r.presets}` },
+      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : ''), 'data-tip': '1', role: 'button', tabindex: '0', 'aria-label': `${r.race}${r.tag ? ' ' + r.tag : ''}: best on ${r.timesBest} of ${r.presets}` },
         tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), `r:${r.race}`),
-        el('span', { class: 'nm' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), el('small', { text: `${r.presets} preset${r.presets === 1 ? '' : 's'}` })),
-        el('span', { class: 'end' }, el('b', {}, '★ ', mark(el('span', { text: String(r.timesBest) }), 'race_summary', 'timesBest', W(r))),
-          el('small', {}, r.avgGap < 0.005 ? 'always best' : el('span', {}, '−', mark(el('span', { text: f2(r.avgGap) }), 'race_summary', 'avgGap', W(r)), '% avg'))),
+        el('span', { class: 'nm' }, raceName(r), el('small', { text: `${r.presets} preset${r.presets === 1 ? '' : 's'}` })),
+        el('span', { class: 'end' }, el('b', { text: `★ ${r.timesBest}` }),
+          el('small', { text: r.avgGap < 0.005 ? 'always best' : `−${f2(r.avgGap)}% avg` })),
         el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${x(r.avgGap)};background:${fcol(r.race)}` }), el('span', { class: 'wk', style: `left:0;width:${x(r.worstGap)}` })));
       row.addEventListener('click', (e) => {
         if (e.target.closest('[data-tt]')) return;
         e.stopPropagation();
         if (row.classList.contains('is-hl')) { hideTip(); return; }
-        const cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
+        const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
         const bf = arr(r.bestFor).map((lbl, k) => [lbl, +arr(r.bestForGap)[k] > 0.005 ? tipDelta(-arr(r.bestForGap)[k], f2) : '★']);
-        showTip(card, 24, rr.bottom - cr.top + 4, tipTitle(r.race, st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)),
+        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(r.tag ? `${r.race} ${r.tag}` : r.race, st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)),
           [tipKey(`Best on ${r.timesBest}`, `of ${r.presets} presets`, scope === 'Faction' ? `in the ${r.faction}` : null),
             tipGrid([['Average gap', r.avgGap < 0.005 ? '0%' : tipDelta(-r.avgGap, f2)], ['Worst gap', r.worstGap < 0.005 ? '0%' : tipDelta(-r.worstGap, f2)], ['Median rank', String(r.medianRank)]]),
             bf.length ? tipTable(['Closest to the best', ''], bf) : null], { hl: row, below: true });
@@ -1159,10 +1267,12 @@ export function startReport(dash) {
       $('#rs-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
     }
     const b = builds.find((x) => x.id === st.rsBuild), V = rsVar();
-    const rows = rowsOf('race_variants').filter((r) => r.build === b.id && r.variant === V).sort((p, q) => q.dps - p.dps);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: V === 'humanoid' ? 'No racial of this class cares about Humanoids: only Priests (Dwarf Chastise) have this scenario.' : 'No race numbers for this preset.' })); $('#rs-take').textContent = ''; return; }
+    const rows = raceRows(V).filter((r) => r.build === b.id);
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); $('#rs-take').textContent = ''; return; }
     const bd = rowsOf('race_breakdown').filter((r) => r.build === b.id);
-    const segsOf = (race) => {
+    // An entry's bar: base stats, then each racial that works in its scenario (its variant).
+    const segsOf = (row) => {
+      const race = row.race, V = row.variant;
       const mine = bd.filter((r) => r.race === race);
       const base = mine.find((r) => r.part === 'base');
       const out = [{ part: 'base', r: base }];
@@ -1175,17 +1285,17 @@ export function startReport(dash) {
       for (const sg of out) { sg.from = at; at += +sg.r.dps; sg.to = at; }
       return { segs: out, idle: mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part)) && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))) };
     };
-    const S = new Map(rows.map((r) => [r.race, segsOf(r.race)]));
-    const ends = rows.flatMap((r) => S.get(r.race).segs.flatMap((sg) => [sg.from || sg.to, sg.to]).filter((v) => v > 0).concat([r.dps - r.se, r.dps + r.se]));
-    const bases = rows.map((r) => S.get(r.race).segs[0].to);
+    const S = new Map(rows.map((r) => [r.key, segsOf(r)]));
+    const ends = rows.flatMap((r) => S.get(r.key).segs.flatMap((sg) => [sg.from || sg.to, sg.to]).filter((v) => v > 0).concat([r.dps - r.se, r.dps + r.se]));
+    const bases = rows.map((r) => S.get(r.key).segs[0].to);
     const hi = d3.max(ends), lo0 = Math.min(d3.min(ends), d3.min(bases));
     const lo = Math.max(0, lo0 - 0.35 * Math.max(hi - lo0, 4));
     const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo);
     const card = $('#race-spec-card');
-    const W = (r) => `build=${enc(b.id)}&race=${enc(r.race)}&variant=${V}`;
+    const W = (r) => `build=${enc(b.id)}&race=${enc(r.race)}&variant=${r.variant}`;
     const kinds = new Set();
     host.replaceChildren(...rows.map((r, i) => {
-      const { segs, idle } = S.get(r.race);
+      const { segs, idle } = S.get(r.key);
       const track = el('div', { class: 'fv-rtrack' });
       segs.forEach((sg, k) => {
         const a = Math.min(sg.from, sg.to), z = Math.max(sg.from, sg.to);
@@ -1199,7 +1309,7 @@ export function startReport(dash) {
           const info = noteRow('part', sg.part === 'base' ? 'base' : sg.part === 'target' ? 'target' : sg.part);
           const d = +sg.r.dps, se = +sg.r.se;
           const cr = card.getBoundingClientRect(), nr = n.getBoundingClientRect();
-          showTip(card, nr.left - cr.left, nr.bottom - cr.top + 2, tipTitle(sg.r.label, r.race, raceIco(r.raceIcon)),
+          showTip(card, nr.left - cr.left, nr.bottom - cr.top + 2, tipTitle(sg.r.label, r.name, raceIco(r.raceIcon)),
             [sg.part === 'base' ? tipKey(f1(d), 'DPS', 'on base stats alone')
               : tipKey(tipDelta(d, f1, ' DPS'), null, el('span', { class: 'fv-tip-m' }, `${sgn((100 * d) / r.dps, f2)}% · ± ${f1(se)}`, Math.abs(d) < 2 * se ? ' · noise' : '')),
             info ? tipText(info.short || info.text) : null, sg.r.note ? tipNote(sg.r.note) : null], { hl: n, below: true });
@@ -1212,13 +1322,13 @@ export function startReport(dash) {
         ...idle.slice(0, 3).map((q) => el('span', {}, el('em', { text: `${String(q.label).replace('Specialization', 'Spec.')}: ${q.note}` }))));
       return el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : '') },
         tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), `r:${r.race}:${b.class}`, true, b.id),
-        el('span', { class: 'nm' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), r.isPreset ? el('i', { text: 'preset race' }) : null),
+        el('span', { class: 'nm' }, raceName(r), r.isPreset ? el('i', { text: 'preset race' }) : null),
         el('span', { class: 'end' }, mark(el('b', { text: f1(r.dps) }), 'race_variants', 'dps', W(r)), el('small', { text: i === 0 ? '★ best' : `−${f2(-r.vsBest)}%` })),
         track, sub);
     }));
     const top = rows[0], last = rows[rows.length - 1];
-    $('#rs-take').replaceChildren(el('b', { text: b.label }), ': ', mark(el('b', { text: top.race }), 'race_variants', 'race', W(top)), ' leads with ', mark(el('span', { text: f1(top.dps) }), 'race_variants', 'dps', W(top)), ' DPS',
-      ...(rows.length > 1 ? ['; ', rows[1].race, ' is ', f2(-rows[1].vsBest), '% behind and ', last.race, ' last at −', f2(-last.vsBest), '%.'] : ['.']));
+    $('#rs-take').replaceChildren(el('b', { text: b.label }), ': ', mark(el('b', { text: top.name }), 'race_variants', 'race', W(top)), ' leads with ', mark(el('span', { text: f1(top.dps) }), 'race_variants', 'dps', W(top)), ' DPS',
+      ...(rows.length > 1 ? ['; ', rows[1].name, ' is ', f2(-rows[1].vsBest), '% behind and ', last.name, ' last at −', f2(-last.vsBest), '%.'] : ['.']));
     $('#rs-axis').textContent = `Bars start at ${f0(lo)} DPS.`;
     $('#rs-legend').replaceChildren(el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats'),
       ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
@@ -1564,10 +1674,12 @@ export function startReport(dash) {
 
   const drawSpecRaces = (b) => {
     const host = $('#sp-races');
-    host.setAttribute('data-source', 'races');
-    if (!specWait(host, ['races'], b)) return;
-    const rows = rowsOf('races').filter((r) => r.build === b.id).sort((x, y) => y.dps - x.dps);
-    const W = host.clientWidth, rowH = 26, m = { l: 100, r: 64, t: 4, b: 4 };
+    host.setAttribute('data-source', 'race_variants race_breakdown');
+    if (!specWait(host, ['race_variants', 'race_breakdown'], b)) return;
+    // Every race, and each advantage a race has as its own row (see raceRows), best first.
+    const rows = raceRows('adv').filter((r) => r.build === b.id);
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); return; }
+    const W = host.clientWidth, rowH = 26, m = { l: rows.some((r) => r.tag) ? Math.min(190, W * 0.42) : 100, r: 64, t: 4, b: 4 };
     const H = m.t + m.b + rows.length * rowH;
     const lo = d3.min(rows, (r) => r.dps) * 0.985, hi = d3.max(rows, (r) => r.dps);
     const x = d3.scaleLinear([lo, hi], [m.l, W - m.r]);
@@ -1576,9 +1688,12 @@ export function startReport(dash) {
       const yy = m.t + i * rowH;
       const rg = svg.append('g').attr('data-tt', `r:${r.race}:${b.class}`).attr('data-tt-tap', '').attr('data-tt-b', b.id);
       rg.append('rect').attr('x', 0).attr('y', yy).attr('width', W).attr('height', rowH).style('fill', 'transparent');
-      rg.append('text').attr('x', m.l - 26).attr('y', yy + rowH / 2 + 4).attr('text-anchor', 'end').text(r.race).style('fill', fcol(r.race));
+      const label = rg.append('text').attr('x', m.l - 26).attr('y', yy + rowH / 2 + 4).attr('text-anchor', 'end');
+      label.append('tspan').text(r.race).style('fill', fcol(r.race));
+      if (r.tag) label.append('tspan').text(' ' + r.tag).style('fill', 'var(--color-fg-muted)').attr('font-size', '0.85em');
       if (r.raceIcon) svgIcon(rg, r.raceIcon, m.l - 22, yy + 4, rowH - 8);
-      rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', 0.8);
+      // An advantage's bar is lighter than its race's own.
+      rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', r.tag ? 0.45 : 0.8);
       svg.append('text').attr('x', x(r.dps) + 6).attr('y', yy + rowH / 2 + 4).text(f1(r.dps) + (i === 0 ? ' ★' : ''));
     });
     svg.append('text').attr('x', m.l).attr('y', H).attr('font-size', 9).text(`axis starts at ${f0(lo)}`);

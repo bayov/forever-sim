@@ -131,3 +131,21 @@ func TestOrcShamanOurAvoidance(t *testing.T) {
 	check("not casting", free, 0.042, dodge-0.008, 0.042)
 	check("casting", casting, 0.042, 0, 0)
 }
+
+// TestOrcShamanNoParryWithoutSpiritWeapons checks that we never parry without Spirit Weapons
+// (shaman_audit.md 8.30).
+//
+// The panel shows 5% parry for every character, but a shaman can only parry with the talent.
+// We roll a level 34 mob's swing 20,000 times at a level 30 shaman with no talents.
+func TestOrcShamanNoParryWithoutSpiritWeapons(t *testing.T) {
+	sim, enh := newTankSim(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), 34)
+	swing := enh.CurrentTarget.AutoAttacks.MHAuto()
+	at(sim, 1, func(sim *core.Simulation) {
+		for range 20000 {
+			if result := swing.CalcDamage(sim, &enh.Unit, 100, swing.OutcomeEnemyMeleeWhite); result.Outcome.Matches(core.OutcomeParry) {
+				t.Fatalf("we parried without Spirit Weapons")
+			}
+		}
+	})
+	runSim(sim)
+}
