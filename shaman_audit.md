@@ -174,7 +174,7 @@ Enhancement
 Restoration
 
 - [x] 8.35 Improved Healing Wave (not implemented)
-- [ ] 8.36 Totemic Focus
+- [x] 8.36 Totemic Focus
 - [ ] 8.37 Mindfulness
 - [ ] 8.38 Natural Grace
 - [ ] 8.39 Tidal Focus
@@ -1565,6 +1565,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16182, curve 85307): 0.1 to 0.5 sec off Healing Wave's cast time (aura 107, cast time, mask 0x40).
 - The sim: the proto has the field, but nothing reads it. The sim has no Healing Wave spell (`shaman.go` has a slot that nothing fills), and no rotation heals except Healing Stream Totem. So it only matters if we ever sim healing.
 - No preset takes it. Both Elemental presets put their first 5 Restoration points in Totemic Focus, and the enhancement presets have no Restoration points. No beta build had it.
+
+### 8.36 Totemic Focus
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`, `totems.go`, `fire_totems.go`): each point takes 5% off every totem's mana cost, 25% at 5/5, and it multiplies with the other cost talents (8.1). Fire Nova is a spell under Forever and keeps its full cost. Both Elemental presets take 5/5, the enhancement presets none.
+- Client 70338 (wago.tools 16173, curve 85321): -5 to -25% cost (aura 108, misc 14). Its mask covers Searing, Magma and Stoneclaw Totem, Healing Stream and Mana Spring, and the shared totem bit that holds every other totem, Mana Tide included. It also covers Totemic Projection and Call of the Elements, Ancestors and Spirits (the "spells that summon or move them"), which the sim doesn't have. Forever's Fire Nova (408341 to 408345) has other mask bits. That matches.
+- Beta: no shaman build had it. The 16:53 export with 13 points in the third tree was the paladin.
+- No sim change. `mana_costs_test.go` TestOrcShamanManaCostTalents checked 5/5 on 13 totems, alone and with the other cost talents, and Fire Nova at full cost. It now also checks Mana Tide Totem with and without 5/5 (60 and 45 mana at rank 3). Mana Tide at full cost fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
