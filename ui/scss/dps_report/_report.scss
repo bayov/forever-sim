@@ -1269,25 +1269,201 @@ ol.fv-list li::marker {
 	font-family: var(--font-anthropic-sans);
 }
 // Chart readouts and game tooltips show in tippy, like the sim UI's, so Alt+click pins them.
+// Every report tooltip is built from the same pieces (tipTitle, tipKey, tipGrid, tipTable, tipText, tipNote in
+// report.js): a title, the answer, then labelled values, at most about 19rem wide.
 .fv-tip {
 	font-size: var(--cds-font-size-caption);
-	max-width: 15rem;
-	display: grid;
-	gap: 0.1rem;
-}
-
-.fv-tip .h {
-	color: var(--cds-text-secondary);
-}
-
-.fv-tip {
-	min-width: 9rem;
 	line-height: 1.4;
+	min-width: 9rem;
+	max-width: min(19rem, calc(100vw - 2rem));
+	display: grid;
+	gap: 0.2rem;
+	font-variant-numeric: tabular-nums;
+	overflow-wrap: anywhere;
 }
 
-.fv-tip .h {
-	font-weight: 600;
+.tippy-box:has(> .tippy-content > .fv-tip) {
+	max-width: min(20rem, calc(100vw - 1rem)) !important;
+}
+
+.fv-tip-title {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	min-width: 0;
 	color: var(--color-fg);
+
+	b {
+		font-weight: 600;
+		min-width: 0;
+	}
+
+	> span {
+		margin-left: auto;
+		padding-left: 0.5rem;
+		color: var(--color-fg-muted);
+		white-space: nowrap;
+	}
+
+	img,
+	.fv-ico {
+		width: 1.15rem;
+		height: 1.15rem;
+		flex: none;
+		border-radius: 3px;
+	}
+
+	.sw {
+		margin-right: 0;
+		flex: none;
+	}
+}
+
+// The answer: a big number with its unit, and what it is or how it compares.
+.fv-tip-key {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 0.35rem;
+
+	> b {
+		font-size: var(--cds-font-size-body);
+		font-weight: 600;
+		color: var(--color-fg);
+	}
+
+	.u {
+		color: var(--color-fg);
+	}
+}
+
+.fv-tip-m,
+.fv-tip .fv-tip-sub {
+	color: var(--color-fg-muted);
+}
+
+// Gains and losses take the ok and bad colours.
+.fv-tip-d {
+	font-weight: 600;
+	white-space: nowrap;
+
+	&.pos {
+		color: var(--color-ok);
+	}
+
+	&.neg {
+		color: var(--color-bad);
+	}
+}
+
+// Labelled values: the label muted, the value bold and right-aligned; a list of words sits left.
+.fv-tip-grid {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 0.1rem 0.9rem;
+
+	> .k {
+		color: var(--color-fg-muted);
+		white-space: nowrap;
+	}
+
+	> .v {
+		justify-self: end;
+		text-align: right;
+		font-weight: 600;
+		color: var(--color-fg);
+	}
+
+	> .v.txt {
+		justify-self: stretch;
+		text-align: left;
+		font-weight: 400;
+	}
+
+	.fv-ico {
+		width: 1rem;
+		height: 1rem;
+		vertical-align: -0.2rem;
+	}
+}
+
+.fv-tip-table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th {
+		font-weight: 400;
+		font-size: 0.72rem;
+		color: var(--color-fg-muted);
+		text-align: right;
+		padding: 0 0 0.1rem 0.6rem;
+		white-space: nowrap;
+	}
+
+	td {
+		padding: 0.12rem 0 0.12rem 0.6rem;
+		text-align: right;
+		font-weight: 600;
+		color: var(--color-fg);
+		vertical-align: top;
+		border-top: 1px solid var(--color-border-line);
+	}
+
+	th:first-child,
+	td:first-child {
+		padding-left: 0;
+		text-align: left;
+		font-weight: 400;
+	}
+}
+
+// An assumption's setting: its name, the presets' and expected marks, and its value in small type under it.
+.fv-tip-set {
+	b {
+		font-weight: 600;
+	}
+
+	small {
+		display: block;
+		font-size: 0.72rem;
+		color: var(--color-fg-muted);
+	}
+}
+
+.fv-tip .def {
+	color: var(--color-ok);
+}
+
+.fv-tip .exp {
+	color: var(--fv-gold);
+}
+
+.fv-tip-text {
+	color: var(--color-fg);
+}
+
+.fv-tip-note {
+	font-size: 0.72rem;
+	color: var(--color-fg-muted);
+}
+
+.fv-tip-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.2rem;
+
+	span {
+		padding: 0 0.3rem;
+		border-radius: 3px;
+		background: var(--fv-stone-chip);
+		border: 1px solid var(--color-border-line);
+		font-size: 0.72rem;
+	}
+
+	em {
+		font-size: 0.72rem;
+		color: var(--color-fg-muted);
+	}
 }
 
 .fv-tip-open {
@@ -1302,28 +1478,6 @@ ol.fv-list li::marker {
 	color: var(--fv-sel-fg);
 	cursor: pointer;
 	justify-self: start;
-}
-
-.fv-tip .fv-tip-sub {
-	color: var(--color-fg-muted);
-}
-
-.fv-tip .fv-tip-main {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0 0.4rem;
-	white-space: nowrap;
-
-	.sw {
-		margin-right: 0;
-	}
-
-	b {
-		font-size: var(--cds-font-size-body);
-		font-weight: 600;
-		color: var(--color-fg);
-	}
 }
 
 // A line's value at every fight length, with the length under the pointer picked out.
@@ -2748,6 +2902,29 @@ ol.fv-list li::marker {
 	overflow-wrap: anywhere;
 }
 
+// A setup chip with no effect leads with that, in the loss colour.
+.fv-tt .tt-why b {
+	font-style: normal;
+	font-weight: 600;
+	color: var(--color-bad);
+}
+
+// The exact APL condition, folded under the rotation line's tooltip.
+.fv-tt .tt-more {
+	margin-top: 0.2rem;
+	font-size: 0.75rem;
+
+	summary {
+		color: var(--color-fg-muted);
+		cursor: pointer;
+	}
+
+	> div {
+		padding-top: 0.15rem;
+		overflow-wrap: anywhere;
+	}
+}
+
 .fv-pick .nmx {
 	font-size: 0.66rem;
 	line-height: 1.2;
@@ -3201,6 +3378,18 @@ ol.fv-list li::marker {
 	color: var(--color-fg-muted);
 }
 
+// Each setting's reason and its effect on every preset, under the assumption.
+#method-asm .fv-asm-msets {
+	display: grid;
+	gap: 0.15rem;
+	margin-top: 0.2rem;
+
+	b {
+		color: var(--color-fg);
+		font-weight: 600;
+	}
+}
+
 // Sort and the filters share a row when there's room. Each keeps its label with its controls when the row wraps.
 .fv-ctl-row {
 	column-gap: var(--spacer-4);
@@ -3220,26 +3409,20 @@ ol.fv-list li::marker {
 	inset: -0.4rem 0;
 }
 
+// The ranking bar's part tooltip follows the mouse, so it stays inline text, which the sim UI doesn't offer to pin.
 .fv-parttip {
-	font-size: 0.75rem;
+	font-size: var(--cds-font-size-caption);
 	line-height: 1.4;
+	font-variant-numeric: tabular-nums;
 
-	b {
-		color: var(--gold-soft);
-	}
-}
-
-// Why an advantaged preset does better against its kind of boss.
-.fv-advtip {
-	max-width: 18rem;
-
-	b {
-		display: block;
-		margin-bottom: 0.25rem;
-		color: var(--gold-soft);
+	.t {
+		font-weight: 600;
+		color: var(--color-fg);
 	}
 
-	p {
-		margin: 0;
+	b {
+		font-size: var(--cds-font-size-body);
+		font-weight: 600;
+		color: var(--color-fg);
 	}
 }

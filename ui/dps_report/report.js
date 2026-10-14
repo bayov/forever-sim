@@ -165,6 +165,29 @@ export function startReport(dash) {
   if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
+  // ---------- tooltip pieces ----------
+  // Every tooltip is built from these, so they all look alike: a title, then the answer (a key figure or one short
+  // line), then a grid of labelled values or a small table, signed deltas in the ok and bad colours, and a muted
+  // footnote. Longer explanations live in the Method tab.
+  const tipTitle = (text, sub, icon) => el('div', { class: 'fv-tip-title' }, icon || null, el('b', { text }), sub ? el('span', { text: sub }) : null);
+  // the key figure: a big value, its unit, and what it is or how it compares
+  const tipKey = (value, unit, after) => el('div', { class: 'fv-tip-key' }, el('b', {}, value), unit ? el('span', { class: 'u', text: unit }) : null,
+    after == null || after === '' ? null : typeof after === 'string' ? el('span', { class: 'fv-tip-m', text: after }) : after);
+  const tipDelta = (v, f = f1, unit = '%', eps = 0.05) => el('span', { class: 'fv-tip-d' + (Math.abs(v) < eps ? '' : v > 0 ? ' pos' : ' neg'), text: sgn(v, f) + unit });
+  // rows of [label, value, 'txt' for a value that is words rather than a number]; null rows are left out
+  const tipGrid = (rows) => {
+    const rs = rows.filter(Boolean);
+    return rs.length ? el('div', { class: 'fv-tip-grid' }, ...rs.flatMap(([k, v, kind]) => [el('span', { class: 'k' }, k), el('span', { class: 'v' + (kind === 'txt' ? ' txt' : '') }, v ?? '')])) : null;
+  };
+  // a small table: head is the column titles, rows the cells; the first column is the row's name
+  const tipTable = (head, rows) => el('table', { class: 'fv-tip-table' },
+    head ? el('thead', {}, el('tr', {}, ...head.map((h) => el('th', {}, h)))) : null,
+    el('tbody', {}, ...rows.filter(Boolean).map((r) => el('tr', {}, ...r.map((c) => el('td', {}, c ?? ''))))));
+  const tipText = (...kids) => el('div', { class: 'fv-tip-text' }, ...kids);
+  const tipNote = (...kids) => el('div', { class: 'fv-tip-note' }, ...kids);
+  const tipSw = (color) => el('i', { class: 'sw', style: `background:${color}` });
+  const tipChips = (items, more) => el('div', { class: 'fv-tip-chips' }, ...items.map((t) => el('span', { text: t })), more ? el('em', { text: more }) : null);
+
   // ---------- tooltip ----------
   // Chart tooltips: tap (or hover with a mouse) a mark for its exact values; the mark is highlighted; tap elsewhere to close.
   let tipEl = null, tipTippy = null, tipHl = [], tipPinned = false, tipCleanup = null;
@@ -175,11 +198,12 @@ export function startReport(dash) {
     if (tipCleanup) { tipCleanup(); tipCleanup = null; }
     tipHl = []; tipPinned = false;
   };
-  // x and y are where the mark is in host, which the tooltip points at.
+  // x and y are where the mark is in host, which the tooltip points at. head is a title (text, or tipTitle(...)), and
+  // lines are the tooltip pieces above (plain text lines still work).
   const showTip = (host, x, y, head, lines, opts = {}) => {
     hideTip();
     try { hideTT(); } catch {}
-    tipEl = el('div', { class: 'fv-tip' + (opts.open ? ' act' : ''), role: 'status' }, el('span', { class: 'h', text: head }),
+    tipEl = el('div', { class: 'fv-tip' + (opts.open ? ' act' : ''), role: 'status' }, typeof head === 'string' ? tipTitle(head) : head,
       ...lines.filter((l) => l != null && l !== '').map((l) => (typeof l === 'string' ? el('span', { text: l }) : l)));
     const acts = [];
     if (opts.act) {
@@ -211,11 +235,21 @@ export function startReport(dash) {
     .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(this)) hideTip(); });
   document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip]') && !e.target.closest('.fv-tip')) hideTip(); });
 
-  const aBoss = (type) => `${/^[AEIOU]/.test(type) ? 'an' : 'a'} ${type} boss`;
-  // An advantaged preset's "vs Undead" badge says on hover why the preset does better against that kind of boss.
+  // An advantaged preset's "vs Undead" badge says on hover how much it gains over its normal build, and why.
+  const advTip = (b) => {
+    const base = (rowsOf('builds') || []).find((x) => x.id === b.baseBuild);
+    const ab = base ? adjB(base) : null;
+    return el('div', { class: 'fv-tip' }, tipTitle(`Advantaged vs ${b.encounter}`),
+      ab && +ab.dps ? tipKey(tipDelta(100 * (b.dps / ab.dps - 1)), null, `over ${ab.build} (generic boss)`) : null,
+      tipText(b.advantageShort || b.advantage));
+  };
   const encBadge = (b) => {
     const badge = el('span', { class: 'fv-enc', text: 'vs ' + b.encounter });
-    if (b.advantage) tippy(badge, { content: el('div', { class: 'fv-advtip' }, el('b', { text: `Advantaged against ${aBoss(b.encounter)}` }), el('p', { text: b.advantage })) });
+    if (b.advantage || b.advantageShort) {
+      tippy(badge, { content: advTip(b) });
+      // a tap on the badge shows why, not the ranking row's own tooltip
+      badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
+    }
     return badge;
   };
   // Plain title tooltips become the sim UI's tooltips. We move each title into a tippy as it shows up, in the
@@ -224,7 +258,7 @@ export function startReport(dash) {
     const t = n.getAttribute('title');
     n.removeAttribute('title');
     if (!t) return;
-    const content = el('span', { text: t });
+    const content = el('div', { class: 'fv-tip fv-tip-text', text: t });
     if (n._tippy) n._tippy.setContent(content);
     else tippy(n, { content });
   };
@@ -355,8 +389,8 @@ export function startReport(dash) {
   const classSpec = (cls) => {
     const bs = (visB() || []).filter((x) => x.class === cls).sort((x, y) => y.dps - x.dps);
     return {
-      title: cls, icon: 'classicon_' + cls.toLowerCase(), color: CCOL[cls] || '#fff', sub: `${bs.length} preset${bs.length === 1 ? '' : 's'}`,
-      lines: bs.length ? [['m', 'Level 60 presets, mean DPS at 180 s'], ...bs.map((x) => ['2', x.build, f1(x.dps)])] : [],
+      title: cls, icon: 'classicon_' + cls.toLowerCase(), color: CCOL[cls] || '#fff', sub: `${bs.length} preset${bs.length === 1 ? '' : 's'} · DPS`,
+      lines: bs.map((x) => ['2', x.build, f1(x.dps)]),
     };
   };
 
@@ -365,11 +399,12 @@ export function startReport(dash) {
     if (!w) return null;
     const s = ttRow('stat:' + stat);
     const pct = w.unit === '1%';
-    const lines = [pct
-      ? ['y', `1% more ${stat === 'MeleeHit' ? 'hit' : 'crit'} adds ${f2(w.dpsPer)} DPS. One rating point (${stat === 'MeleeHit' ? 10 : 14} make 1%) is worth ${w.ratingWorth == null ? '—' : f2(w.ratingWorth)} ${w.primaryAbbr}.`]
-      : ['y', `One more point adds ${fmt('.3f')(w.dpsPer)} DPS, as much as ${w.worth == null ? '—' : f2(w.worth)} ${w.primaryAbbr}.`], ...arr(s?.lines)];
-    return { title: pct ? String(w.label).replace(' (1%)', ' rating') : String(w.label), color: GOLD, sub: w.primaryAbbr ? `in ${w.primaryAbbr}` : '', lines,
-      nums: nums([['DPS per ' + (pct ? '1%' : 'point'), `${fmt('.3f')(w.dpsPer)} ± ${fmt('.3f')(w.sePer)}`]]) };
+    // The answer goes in the header (what a point is worth), the numbers behind it in the grid.
+    const worth = pct ? w.ratingWorth : w.worth;
+    const hit = stat === 'MeleeHit' ? 'hit' : 'crit';
+    return { title: pct ? String(w.label).replace(' (1%)', ' rating') : String(w.label), color: GOLD, sub: worth == null ? '' : `${f2(worth)} ${w.primaryAbbr} a point`, lines: arr(s?.lines),
+      nums: nums(pct ? [[`+1% ${hit}`, `${f2(w.dpsPer)} DPS`], ['Rating for 1%', String(stat === 'MeleeHit' ? 10 : 14)], ['Error', `± ${fmt('.3f')(w.sePer)} DPS`]]
+        : [['+1 point', `${fmt('.3f')(w.dpsPer)} DPS`], ['Error', `± ${fmt('.3f')(w.sePer)} DPS`]]) };
   };
 
   const ttSpec = (node) => {
@@ -396,6 +431,8 @@ export function startReport(dash) {
     if (!Array.isArray(l)) return null;
     const [k, a, b] = l;
     if (k === 's') return el('div', { class: 'tt-sp' });
+    // a detail kept out of the way: it opens on a tap without closing the tooltip
+    if (k === 'd') return el('details', { class: 'tt-more' }, el('summary', { text: String(a ?? '') }), el('div', { class: 'c-m', text: String(b ?? '') }));
     if (k === '2' || k === 'h' || k === 'n') {
       return el('div', { class: 'tt-row' + (k === 'h' ? ' tt-h' : '') }, el('span', { class: k === 'n' ? 'c-m' : null, text: String(a ?? '') }),
         el('span', { class: k === 'h' ? 'c-m' : 'c-t', text: String(b ?? '') }));
@@ -416,7 +453,8 @@ export function startReport(dash) {
     try { spec = ttSpec(node); } catch (err) { console.error(err); }
     if (!spec) return;
     hideTT(); hideTip();
-    const body = el('div', { class: 'tt-body' }, spec.why ? el('div', { class: 'tt-why', text: spec.why }) : null,
+    const off = /^No effect: /.test(spec.why || '');
+    const body = el('div', { class: 'tt-body' }, spec.why ? el('div', { class: 'tt-why' }, off ? el('b', { text: 'No effect' }) : null, off ? ' ' + spec.why.replace(/^No effect: /, '') : spec.why) : null,
       el('div', { class: 'tt-head' }, el('span', { class: 'tt-title', style: `color:${spec.color || GOLD}`, text: spec.title }), spec.sub ? el('span', { class: 'tt-sub', text: spec.sub }) : null),
       ...arr(spec.lines).map(ttLine),
       ...(spec.nums && spec.nums.length ? [el('div', { class: 'tt-nums' }, spec.numsHead ? el('div', { class: 'c-m', text: spec.numsHead }) : null, ...spec.nums.map(ttLine))] : []),
@@ -476,6 +514,8 @@ export function startReport(dash) {
       if (ttEl && ttEl.contains(e.target)) {
         // the wowhead link opens in a new tab; any other tap on the tooltip closes it
         if (e.target.closest('.tt-link a')) { e.stopPropagation(); setTimeout(hideTT, 0); return; }
+        // a folded detail opens and closes in place, and the tooltip stays
+        if (e.target.closest('.tt-more')) { e.stopPropagation(); ttPinned = true; return; }
         hideTT(); e.preventDefault(); e.stopPropagation(); return;
       }
       const n = e.target.closest ? e.target.closest('[data-tt]') : null;
@@ -698,12 +738,12 @@ export function startReport(dash) {
       if (e.pointerType !== 'mouse') return;
       const r = track.getBoundingClientRect(), v = (e.clientX - r.left) / r.width * max, pxPerDps = r.width / max;
       const part = Math.abs(v - b.p50) * pxPerDps <= 4 ? ['Median', f1(b.p50)]
-        : v >= b.p25 && v <= b.p75 ? ['Middle half of fights', `${f1(b.p25)} to ${f1(b.p75)}`]
-          : v >= b.p10 && v <= b.p90 ? ['10th to 90th percentile', `${f1(b.p10)} to ${f1(b.p90)}`]
+        : v >= b.p25 && v <= b.p75 ? ['Middle half of fights', `${f1(b.p25)}–${f1(b.p75)}`]
+          : v >= b.p10 && v <= b.p90 ? ['10th–90th percentile', `${f1(b.p10)}–${f1(b.p90)}`]
             : v <= b.dps ? ['Mean', f1(b.dps)] : null;
       if (!part) { hide(); return; }
       if (!partTippy) partTippy = tippy(el('span'), { trigger: 'manual', appendTo: document.body, placement: 'top', offset: [0, 12], duration: [80, 0], content: '' });
-      if (last !== part[0]) { partTippy.setContent(el('div', { class: 'fv-parttip' }, el('b', { text: part[0] }), el('br'), `${part[1]} DPS`)); last = part[0]; }
+      if (last !== part[0]) { partTippy.setContent(el('span', { class: 'fv-parttip' }, el('span', { class: 't', text: part[0] }), el('br'), el('b', { text: part[1] }), ' DPS')); last = part[0]; }
       const px = e.clientX, py = r.top + r.height / 2;
       partTippy.setProps({ getReferenceClientRect: () => ({ width: 0, height: 0, x: px, y: py, left: px, right: px, top: py, bottom: py }) });
       partTippy.show();
@@ -767,11 +807,14 @@ export function startReport(dash) {
         e.stopPropagation();
         if (row.classList.contains('is-hl')) { openSpec(b.id); return; }
         const card = $('#rank-card'), cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
+        const behind = gap < 0.05 ? el('span', { class: 'fv-tip-m', text: 'top' }) : tipDelta(-gap);
+        const race = el('span', {}, raceIco(b.raceIcon), ` ${b.race}${roles.get(b.id) ? ' · ' + roles.get(b.id) : ''}`);
+        const se = lenMap.get(b.id)?.se;
         const lines = L === 180
-          ? [`${f1(b.dps)} DPS ± ${f2(b.se)} (1 s.e.)`, `Rank ${rankOf(b, builds)} of ${builds.length} · ${gap < 0.05 ? 'top preset' : `${f1(gap)}% behind the top`}`, `10th–90th percentile: ${f1(b.p10)}–${f1(b.p90)}`, `Middle half: ${f1(b.p25)}–${f1(b.p75)}`, `Fight-to-fight spread ${f2(b.cv)}%`, `${b.race} (${b.faction})${roles.get(b.id) ? ' · ' + roles.get(b.id) : ''}`]
-          : [`${f1(v)} DPS in ${L} s fights${lenMap.get(b.id)?.se != null ? ` ± ${f2(lenMap.get(b.id).se)}` : ''}`, `${f1(b.dps)} DPS at 180 s (${sgn(100 * (v / b.dps - 1))}%)`, gap < 0.05 ? 'Top preset at this length' : `${f1(gap)}% behind the top at ${L} s`, `${b.race} (${b.faction})`];
-        if (isEnc(b)) lines.push(`Advantaged: against ${aBoss(b.encounter)}`);
-        showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, lines, { hl: row, open: b.id, below: true });
+          ? [tipKey(f1(b.dps), 'DPS', `± ${f2(b.se)}`), tipGrid([['Rank', el('span', {}, `${rankOf(b, builds)} of ${builds.length} · `, behind)], ['10th–90th', `${f1(b.p10)}–${f1(b.p90)}`],
+            ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null])]
+          : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L} s` : `at ${L} s`), tipGrid([['vs 180 s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
+        showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(b.label, null, specIco(b, '')), lines, { hl: row, open: b.id, below: true });
       });
       return row;
     }));
@@ -823,16 +866,17 @@ export function startReport(dash) {
       dot.attr('cx', x(sx)).attr('cy', y(p.v)).style('stroke', s.color).attr('opacity', 1);
       if (opts.focus) focusOn(s);
       if (opts.onHover) opts.onHover(s.id);
-      const others = series.length <= 3 ? series.filter((q) => q !== s).map((q) => { const pp = q.pts.find((r) => r.s === sx); return pp ? el('span', {}, el('i', { class: 'sw', style: `background:${q.color}` }), `${q.name}: ${opts.tipFmt ? opts.tipFmt(pp) : f1(pp.v) + ' DPS'}`) : null; }) : [];
+      // A few lines: the others' values at this length in a grid. Many lines: a small table of the picked line at every
+      // length takes their place.
+      const others = series.length <= 3 ? tipGrid(series.filter((q) => q !== s).map((q) => { const pp = q.pts.find((r) => r.s === sx); return pp ? [el('span', {}, tipSw(q.color), q.short || q.name), opts.tipMain ? opts.tipMain(pp)[0] : `${f1(pp.v)} DPS`] : null; })) : null;
       const [hx, hy] = d3.pointer(e, host);
-      // With many lines, a small table of the picked line at every length takes the place of the other lines' values.
       const strip = series.length > 3 && opts.strip !== false ? el('div', { class: 'fv-tip-strip' }, ...s.pts.flatMap((q) => [
         el('span', { class: 'k' + (q.s === sx ? ' on' : ''), text: `${q.s} s` }),
         el('span', { class: 'v' + (q.s === sx ? ' on' : ''), text: opts.fmt ? opts.fmt(q.v) : f0(q.v) }),
       ])) : null;
-      const main = opts.tipMain ? opts.tipMain(p) : [opts.tipFmt ? opts.tipFmt(p) : `${f1(p.v)} DPS`];
-      showTip(host, hx, hy, s.name, [el('span', { class: 'fv-tip-sub', text: opts.tipSub ? opts.tipSub(sx) : `${sx} s fights` }),
-        el('span', { class: 'fv-tip-main' }, el('i', { class: 'sw', style: `background:${s.color}` }), el('b', { text: main[0] }), main[1] ? el('span', { class: 'fv-tip-sub', text: main[1] }) : null), ...others, strip],
+      // tipMain gives the key figure and what it compares to; tipRows any further [label, value] rows
+      const main = opts.tipMain ? opts.tipMain(p) : [`${f1(p.v)} DPS`];
+      showTip(host, hx, hy, tipTitle(s.name, opts.tipSub ? opts.tipSub(sx) : `${sx} s`, tipSw(s.color)), [tipKey(main[0], null, main[1]), opts.tipRows ? tipGrid(opts.tipRows(p)) : null, others, strip],
         { open: s.id && opts.open ? s.id : null, pinned, onHide: () => { rule.attr('opacity', 0); dot.attr('opacity', 0); } });
       if (pinned && opts.onPick) opts.onPick(s.id);
     };
@@ -858,7 +902,7 @@ export function startReport(dash) {
       const on = st.cls === 'All' || b.class === st.cls;
       return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.08, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, dots: on && st.cls !== 'All', pts: pts.map((p) => ({ s: p.secs, v: (100 * p.dps * asmFactor(b.id, p.secs)) / (base * asmFactor(b.id, 180)), dps: p.dps * asmFactor(b.id, p.secs) })) };
     }).sort((a, b) => a.op - b.op);
-    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : `${sgn(p.v - 100)}% vs 180 s`] });
+    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(p.v - 100), ' vs 180 s')] });
   };
 
   // ---------- mana ----------
@@ -887,7 +931,7 @@ export function startReport(dash) {
       onHover: hoverRow,
       fmt: (v) => d3.format('.0f')(v) + '%', yDomain: [0, 100], ref: lowPct, refLabel: `${lowPct}%`, xTicks: [0, 60, 120, 180, 240, 300, 360, 420, 480], xFmt: (d) => mmss(d),
       strip: false, focus: true, open: true, hlId: st.hlMana, onPick: (id) => { st.hlMana = id; persist(); },
-      tipSub: (t) => `at ${mmss(t)}`, tipMain: (p) => [`${d3.format('.0f')(p.v)}% mana`, `middle half of fights ${d3.format('.0f')(p.p25)} to ${d3.format('.0f')(p.p75)}%`],
+      tipSub: (t) => `at ${mmss(t)}`, tipMain: (p) => [`${d3.format('.0f')(p.v)}%`, 'mana, average'], tipRows: (p) => [['Middle half', `${d3.format('.0f')(p.p25)}–${d3.format('.0f')(p.p75)}%`]],
     });
     const rows = shown.map((b) => ({ b, m: sum.get(b.id) })).sort((p, q) => (p.m.lowAt ?? 1e9) - (q.m.lowAt ?? 1e9) || q.m.pctAt480 - p.m.pctAt480);
     const dur = d3.max(rows, (r) => r.m.dur) || 480;
@@ -908,10 +952,10 @@ export function startReport(dash) {
         // Only what the row doesn't show already: the middle half of fights, how many fights run low at all, and the
         // mana pool and its net drain.
         const share = m.shareLow ?? m.share10;
-        showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, [
-          low && m.lowAtP25 != null ? `Middle half of fights: ${mmss(m.lowAtP25)} to ${m.lowAtP75 != null ? mmss(m.lowAtP75) : 'never'}` : null,
-          share >= 99.5 ? 'Every fight runs low' : `${d3.format('.0f')(share)}% of fights run low`,
-          `${d3.format(',')(m.maxMana)} mana, drains ${f1(m.spentPerSec - m.gainedPerSec)}/s`,
+        showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(b.label, null, specIco(b, '')), [
+          tipKey(low ? mmss(m.lowAt) : '8:00+', null, low ? `below ${lowPct}% mana` : `never below ${lowPct}%`),
+          tipGrid([low && m.lowAtP25 != null ? ['Middle half', `${mmss(m.lowAtP25)}–${m.lowAtP75 != null ? mmss(m.lowAtP75) : 'never'}`] : null,
+            ['Fights running low', share >= 99.5 ? 'all' : `${d3.format('.0f')(share)}%`], ['Mana pool', d3.format(',')(m.maxMana)], ['Net drain', `${f1(m.spentPerSec - m.gainedPerSec)}/s`]]),
         ], { hl: row, open: b.id, below: true, pinned });
       };
       row.addEventListener('pointerenter', (e) => { chart.highlight(b.id); row.classList.add('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
@@ -963,7 +1007,10 @@ export function startReport(dash) {
           const card = $('#heat-card'), cr = card.getBoundingClientRect(), cb = c.getBoundingClientRect();
           if (c.classList.contains('is-hl')) { hideTip(); return; }
           const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
-          showTip(card, cb.left - cr.left, cb.top - cr.top, `${b.label} · ${rc}`, [`${f1(r.dps)} DPS ± ${f2(r.se)}`, best ? 'Best race for this preset' : `${d3.format('.2f')(-r.vsBest)}% behind the best (${sib[0].race})`, `Race ${sib.indexOf(r) + 1} of ${sib.length} for this preset`, r.note ? `Same as with its normal weapon: ${r.note}` : '', r.isPreset ? 'The preset’s race' : ''], { hl: c, open: b.id, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
+          showTip(card, cb.left - cr.left, cb.top - cr.top, tipTitle(rc, b.label, raceIco(r.raceIcon)), [
+            tipKey(best ? '★ Best race' : tipDelta(r.vsBest, f2), null, best ? null : `vs ${sib[0].race}`),
+            tipGrid([['DPS', `${f1(r.dps)} ± ${f2(r.se)}`], ['Race rank', `${sib.indexOf(r) + 1} of ${sib.length}`], r.isPreset ? ['Preset race', '✓'] : null]),
+            r.note ? tipNote(`As with its normal weapon: ${r.note}`) : null], { hl: c, open: b.id, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
         });
         grid.append(c);
       }
@@ -1010,7 +1057,8 @@ export function startReport(dash) {
         if (parts[0].classList.contains('is-hl')) { hideTip(); return; }
         const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
         const bb = sib[0], ww = sib[sib.length - 1], card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = parts[2].getBoundingClientRect();
-        showTip(card, 20, nr.bottom - cr.top + 4, b.label, [`Best: ${r.best}${bb ? ` · ${f1(bb.dps)} DPS` : ''}`, `Worst: ${r.worst}${ww ? ` · ${f1(ww.dps)} DPS` : ''}`, `Gap ${f2(r.spreadPct)}% across ${sib.length} races`, `Preset race: ${b.race}`], { hl: parts, open: b.id, below: true, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
+        showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, `best to worst of ${sib.length} races`),
+          tipGrid([['Best', `${r.best}${bb ? ` · ${f1(bb.dps)}` : ''}`], ['Worst', `${r.worst}${ww ? ` · ${f1(ww.dps)}` : ''}`], ['Preset race', b.race]])], { hl: parts, open: b.id, below: true, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
       });
       wrap.append(...parts);
     }
@@ -1084,9 +1132,11 @@ export function startReport(dash) {
         e.stopPropagation();
         if (row.classList.contains('is-hl')) { hideTip(); return; }
         const cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
-        const bf = arr(r.bestFor).map((lbl, k) => `${lbl}${+arr(r.bestForGap)[k] > 0.005 ? ` (−${f2(arr(r.bestForGap)[k])}%)` : ' (best)'}`);
-        showTip(card, 24, rr.bottom - cr.top + 4, `${r.race} · ${st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase()}`,
-          [`Best race on ${r.timesBest} of ${r.presets} presets${scope === 'Faction' ? ` (within the ${r.faction})` : ''}`, `${f2(r.avgGap)}% behind the best on average`, `Worst: ${f2(r.worstGap)}% behind`, `Median rank ${r.medianRank}`, 'Closest to the best on:', ...bf], { hl: row, below: true });
+        const bf = arr(r.bestFor).map((lbl, k) => [lbl, +arr(r.bestForGap)[k] > 0.005 ? tipDelta(-arr(r.bestForGap)[k], f2) : '★']);
+        showTip(card, 24, rr.bottom - cr.top + 4, tipTitle(r.race, st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)),
+          [tipKey(`Best on ${r.timesBest}`, `of ${r.presets} presets`, scope === 'Faction' ? `in the ${r.faction}` : null),
+            tipGrid([['Average gap', r.avgGap < 0.005 ? '0%' : tipDelta(-r.avgGap, f2)], ['Worst gap', r.worstGap < 0.005 ? '0%' : tipDelta(-r.worstGap, f2)], ['Median rank', String(r.medianRank)]]),
+            bf.length ? tipTable(['Closest to the best', ''], bf) : null], { hl: row, below: true });
       });
       return row;
     }));
@@ -1149,9 +1199,10 @@ export function startReport(dash) {
           const info = noteRow('part', sg.part === 'base' ? 'base' : sg.part === 'target' ? 'target' : sg.part);
           const d = +sg.r.dps, se = +sg.r.se;
           const cr = card.getBoundingClientRect(), nr = n.getBoundingClientRect();
-          showTip(card, nr.left - cr.left, nr.bottom - cr.top + 2, `${r.race} · ${sg.r.label}`,
-            [sg.part === 'base' ? `${f1(d)} DPS on base stats alone` : `${sgn(d, f1)} DPS ± ${f1(se)}${Math.abs(d) < 2 * se ? ' (within the noise)' : ''}`,
-              sg.part === 'base' ? null : `${sgn((100 * d) / r.dps, f2)}% of this race's DPS`, sg.r.note || null, info ? info.text : null], { hl: n, below: true });
+          showTip(card, nr.left - cr.left, nr.bottom - cr.top + 2, tipTitle(sg.r.label, r.race, raceIco(r.raceIcon)),
+            [sg.part === 'base' ? tipKey(f1(d), 'DPS', 'on base stats alone')
+              : tipKey(tipDelta(d, f1, ' DPS'), null, el('span', { class: 'fv-tip-m' }, `${sgn((100 * d) / r.dps, f2)}% · ± ${f1(se)}`, Math.abs(d) < 2 * se ? ' · noise' : '')),
+            info ? tipText(info.short || info.text) : null, sg.r.note ? tipNote(sg.r.note) : null], { hl: n, below: true });
         });
         track.append(n);
       });
@@ -1405,7 +1456,11 @@ export function startReport(dash) {
     const hit = svg.append('g').selectAll('rect').data(los).join('rect').attr('x', (k) => x(k)).attr('width', (k) => Math.max(2, x(k + 5) - x(k))).attr('y', m.t).attr('height', H - m.b - m.t).style('fill', 'transparent');
     tipOn(hit, (e, k) => {
       const [px, py] = d3.pointer(e, host);
-      const lines = sets.map((s) => { const d = s.bins.find((q) => q.lo === k); return el('span', {}, sets.length > 1 ? el('i', { class: 'sw', style: `background:${s.color}` }) : null, `${sets.length > 1 ? s.name + ': ' : ''}${d ? `${d3.format('.2%')(d.share)} of fights (${f0(d.count)}), ${d3.format('.1%')(d.cum)} at or below` : 'no fights'}`); });
+      const bin = (s) => s.bins.find((q) => q.lo === k);
+      // One preset: its share of fights as the key figure. Two: a row each.
+      const lines = sets.length === 1
+        ? (() => { const d = bin(sets[0]); return d ? [tipKey(d3.format('.2%')(d.share), 'of fights', `(${f0(d.count)})`), tipGrid([['At or below', d3.format('.1%')(d.cum)]])] : [tipText('No fights')]; })()
+        : [tipTable(['', 'Fights', 'At or below'], sets.map((s) => { const d = bin(s); return [el('span', {}, tipSw(s.color), s.name.split(' · ')[0]), d ? d3.format('.2%')(d.share) : '–', d ? d3.format('.1%')(d.cum) : '–']; }))];
       showTip(host, px, py, `${k}–${k + 5} DPS`, lines, { hl: bars.get(k) });
     });
     host.replaceChildren(svg.node());
@@ -1490,10 +1545,11 @@ export function startReport(dash) {
           e.stopPropagation();
           if (bar.classList.contains('is-hl')) { hideTip(); return; }
           const r = card.getBoundingClientRect(), nb = bar.getBoundingClientRect();
-          const lines = [`${f1(a.uptime)}% average over every fight`, `${f1(upHere)}% in this ${s.label.toLowerCase()}, ${iv.length} time${iv.length === 1 ? '' : 's'}`,
-            ...iv.slice(0, 10).map((q) => `${fmtT(q[2])} to ${q[3] >= s.dur - 0.05 ? 'the end' : fmtT(q[3])}${q[4] > 1 ? ` · up to ${q[4]} stacks` : ''}`),
-            iv.length > 10 ? `and ${iv.length - 10} more` : null];
-          showTip(card, e.clientX - r.left - 20, nb.bottom - r.top, a.aura, lines, { hl: bar, below: true });
+          const tm = (t) => `${Math.max(0, t).toFixed(0)}`;
+          const lines = [tipKey(`${f1(a.uptime)}%`, 'uptime', 'every fight'), tipGrid([[`This ${s.label.toLowerCase().replace(' fight', '')} fight`, `${f1(upHere)}% · ${iv.length}×`],
+            d3.max(iv, (q) => q[4]) > 1 ? ['Most stacks', String(d3.max(iv, (q) => q[4]))] : null]),
+            iv.length ? tipChips(iv.slice(0, 8).map((q) => `${tm(q[2])}–${q[3] >= s.dur - 0.05 ? 'end' : tm(q[3])} s`), iv.length > 8 ? `+${iv.length - 8} more` : null) : null];
+          showTip(card, e.clientX - r.left - 20, nb.bottom - r.top, tipTitle(a.aura, null, a.icon ? iconImg(a.icon) : null), lines, { hl: bar, below: true });
         });
       } else {
         bar = el('span', { class: 'tr' }, el('span', { style: `width:${a.uptime}%;background:${col}` }));
@@ -1535,7 +1591,7 @@ export function startReport(dash) {
     host.setAttribute('data-source', 'lengths');
     if (!specWait(host, ['lengths'], b)) return;
     const pts = rowsOf('lengths').filter((r) => r.build === b.id).sort((p, q) => p.secs - q.secs).map((p) => ({ s: p.secs, v: p.dps, oom: p.oomSecs }));
-    drawLenChart(host, [{ name: b.build, color: ccol(b.class), dots: true, pts }], { h: 200, tipFmt: (p) => `${f1(p.v)} DPS (${sgn(100 * (p.v / b.dps - 1))}% vs 180 s)${p.oom > 0 ? ` · ${f1(p.oom)} s out of mana` : ''}` });
+    drawLenChart(host, [{ name: b.build, color: ccol(b.class), dots: true, pts }], { h: 200, tipMain: (p) => [`${f1(p.v)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(100 * (p.v / b.dps - 1)), ' vs 180 s')], tipRows: (p) => [p.oom > 0 ? ['Out of mana', `${f1(p.oom)} s`] : null] });
   };
 
   // ---------- rotation ----------
@@ -1559,13 +1615,15 @@ export function startReport(dash) {
     if (!r) return null;
     const base = r.key ? spellSpec(r.key, b, false) : { title: r.name, color: GOLD, lines: [], nums: [] };
     const cond = r.cond ? tlParse(r.cond, null) : null;
+    // A priority line's card already shows its condition and note, so the tooltip doesn't repeat them; pre-pull casts
+    // and folded lines (other races' racials, lines switched off) show them here. The exact APL condition is folded.
+    const shown = section === 'priority' && !r.otherRace && !/^Never/.test(r.when || '');
     const lines = [
-      ['h', section === 'prepull' ? `Before the pull, at ${fmtT(+r.at)}` : `Priority ${r.order}`, String(r.kind)],
-      r.when ? ['t', 'When: ' + r.when] : null,
-      r.extra ? ['t', r.extra] : null,
-      r.notes ? ['m', r.notes] : null,
-      r.race ? ['m', r.otherRace ? `${r.race} only: skipped on this preset's race.` : `${r.race} racial.`] : null,
-      cond ? ['m', 'Condition: ' + aplText(cond)] : null,
+      ['h', section === 'prepull' ? `Pre-pull · ${fmtT(+r.at)}` : `Priority ${r.order}`, r.race ? (r.otherRace ? `${r.race} only · skipped` : `${r.race} racial`) : String(r.kind)],
+      !shown && r.when ? ['t', r.when] : null,
+      !shown && r.extra ? ['t', r.extra] : null,
+      !shown && r.notes ? ['m', r.notes] : null,
+      cond ? ['d', 'Exact condition', aplText(cond)] : null,
     ].filter(Boolean);
     return { ...base, icon: base.icon || r.icon, title: String(r.key && !/^oOther/.test(r.key) ? base.title : r.name), lines: [...lines, ...(base.lines && base.lines.length ? [['s'], ...base.lines] : [])] };
   };
@@ -1963,18 +2021,15 @@ export function startReport(dash) {
 
     // ---- single lane ----
     // one moment's state, for the tooltip: resource left, buffs and debuffs up, recent cooldowns
-    const stateLines = (t) => {
-      const out = [];
+    const stateGrid = (t) => {
       const rv = resKey ? resAt(resKey, t + 0.001) : null;
-      if (rv != null) out.push(el('span', {}, el('i', { class: 'sw', style: `background:${resCol}` }), `${resName[0].toUpperCase() + resName.slice(1)} left: ${f0(rv)} of ${f0(resMax)}`));
       const cp = cpKey ? resAt(cpKey, t + 0.001) : null;
-      if (cp != null) out.push(`Combo points: ${f0(cp)}`);
       const bu = aurasAt(t, 'p'), de = aurasAt(t, 't');
-      if (bu.length) out.push(`Buffs: ${bu.slice(0, 8).join(', ')}${bu.length > 8 ? ` +${bu.length - 8}` : ''}`);
-      if (de.length) out.push(`Debuffs: ${de.slice(0, 6).join(', ')}${de.length > 6 ? ` +${de.length - 6}` : ''}`);
       const cdr = s.cds.filter((c) => c[0] <= t + 0.01 && c[0] >= t - 30);
-      if (cdr.length) out.push(`Cooldowns in the last 30 s: ${cdr.map((c) => `${label(c[1])} (${fmtT(c[0])})`).join(', ')}`);
-      return out;
+      const list = (xs, n) => `${xs.slice(0, n).join(', ')}${xs.length > n ? ` +${xs.length - n}` : ''}`;
+      return tipGrid([rv != null ? [el('span', {}, tipSw(resCol), resName[0].toUpperCase() + resName.slice(1)), `${f0(rv)} / ${f0(resMax)}`] : null,
+        cp != null ? ['Combo points', f0(cp)] : null, bu.length ? ['Buffs', list(bu, 5), 'txt'] : null, de.length ? ['Debuffs', list(de, 4), 'txt'] : null,
+        cdr.length ? ['Last 30 s', cdr.map((c) => `${label(c[1])} ${fmtT(c[0])}`).join(', '), 'txt'] : null]);
     };
     if (single) {
       const evC = s.casts.map((c) => ({ t: c[0], k: c[1], u: c[4], cast: c[2], cost: c[5], kind: 'c' }));
@@ -1998,27 +2053,32 @@ export function startReport(dash) {
       const tipFor = (g, what) => (e, d, node) => {
         const r = card.getBoundingClientRect(), nb = node.getBoundingClientRect();
         const evs = what === 'c' ? d.ev : what === 'd' ? d.ev : d.ev;
-        const head = evs.length === 1 && what !== 'r' ? `${label(evs[0].k)} · ${fmtT(evs[0].t)}` : `${fmtT(d.t0)}${d.t1 > d.t0 ? ` to ${fmtT(d.t1)}` : ''} · ${evs.length} ${what === 'c' ? 'casts' : what === 'd' ? 'hits' : 'changes'}`;
+        const head = evs.length === 1 && what !== 'r' ? tipTitle(label(evs[0].k), fmtT(evs[0].t), icoOf(evs[0].k) ? iconImg(icoOf(evs[0].k)) : null)
+          : tipTitle(`${evs.length} ${what === 'c' ? 'casts' : what === 'd' ? 'hits' : 'changes'}`, `${fmtT(d.t0)}${d.t1 > d.t0 ? `–${fmtT(d.t1)}` : ''}`);
         const lines = [];
+        // a cast's cost and the damage it did, in a few words
+        const castOf = (c) => {
+          const hits = s.dmg.filter((q) => q[1] === c.k && q[0] >= c.t - 0.01 && q[0] <= c.t + Math.max(c.cast, 0) + 1.2 && (q[2] > 0 || q[3] !== 'H'));
+          return [c.cost ? `−${f0(c.cost)}${resName ? ' ' + resName : ''}` : null, hits.length ? hits.slice(0, 3).map((q) => (q[2] ? `${kfmt(q[2])}${q[3] === 'C' ? ' crit' : ''}` : OUTC[q[3]] || q[3])).join(', ') : null, c.u !== 'p' ? unitName(c.u) : null];
+        };
+        const more = (n, max) => (n > max ? tipNote(`and ${n - max} more`) : null);
         if (what === 'c') {
-          for (const c of evs.slice(0, 8)) {
-            const hits = s.dmg.filter((q) => q[1] === c.k && q[0] >= c.t - 0.01 && q[0] <= c.t + Math.max(c.cast, 0) + 1.2 && (q[2] > 0 || q[3] !== 'H'));
-            const dmgTxt = hits.length ? hits.slice(0, 3).map((q) => q[2] ? `${kfmt(q[2])}${q[3] === 'C' ? ' crit' : ''}` : OUTC[q[3]] || q[3]).join(', ') : '';
-            lines.push(el('span', {}, evs.length > 1 ? el('b', { text: `${fmtT(c.t)} ${label(c.k)}` }) : el('b', { text: c.cast > 0 ? `${f1(c.cast)} s cast` : 'Instant' }),
-              c.cost ? ` · −${f0(c.cost)}${resName ? ' ' + resName : ''}` : '', dmgTxt ? ` · ${dmgTxt}` : '', c.u !== 'p' ? ` · ${unitName(c.u)}` : ''));
+          if (evs.length === 1) {
+            const c = evs[0], [cost, dmg, who] = castOf(c);
+            lines.push(tipGrid([['Cast', c.cast > 0 ? `${f1(c.cast)} s` : 'instant'], cost ? ['Cost', cost] : null, dmg ? ['Damage', dmg] : null, who ? ['By', who, 'txt'] : null]));
+          } else {
+            lines.push(tipGrid(evs.slice(0, 6).map((c) => [`${fmtT(c.t)} ${label(c.k)}`, castOf(c).filter(Boolean).join(' · ') || (c.cast > 0 ? `${f1(c.cast)} s` : 'instant')])), more(evs.length, 6));
           }
-          if (evs.length > 8) lines.push(`and ${evs.length - 8} more`);
         } else if (what === 'd') {
           const sum = d3.sum(evs, (q) => q.amt), cr = evs.filter((q) => q.o === 'C').length;
-          if (evs.length > 1) lines.push(el('b', { text: `${kfmt(sum)} damage${cr ? `, ${cr} crit${cr > 1 ? 's' : ''}` : ''}` }));
-          for (const q of evs.slice(0, 8)) lines.push(`${evs.length > 1 ? fmtT(q.t) + ' ' + label(q.k) + ' ' : ''}${q.amt ? kfmt(q.amt) : ''} ${q.tick ? 'tick' : ''} ${OUTC[q.o] || q.o}`.replace(/\s+/g, ' ').trim());
-          if (evs.length > 8) lines.push(`and ${evs.length - 8} more`);
+          const one = (q) => `${q.amt ? kfmt(q.amt) : ''} ${q.tick ? 'tick' : ''} ${q.o === 'H' && q.amt ? '' : OUTC[q.o] || q.o}`.replace(/\s+/g, ' ').trim();
+          if (evs.length === 1) lines.push(tipKey(one(evs[0]), null, null));
+          else lines.push(tipKey(kfmt(sum), 'damage', cr ? `${cr} crit${cr > 1 ? 's' : ''}` : null), tipGrid(evs.slice(0, 6).map((q) => [`${fmtT(q.t)} ${label(q.k)}`, one(q)])), more(evs.length, 6));
         } else {
           const net = d3.sum(evs, (q) => q.dv);
-          lines.push(el('b', { text: `${resName[0].toUpperCase() + resName.slice(1)} ${sgn(net, f0)}` }));
-          for (const q of evs.slice(0, 6)) lines.push(`${fmtT(q.t)} ${sgn(q.dv, f0)}`);
+          lines.push(tipKey(sgn(net, f0), resName), tipGrid(evs.slice(0, 6).map((q) => [fmtT(q.t), sgn(q.dv, f0)])), more(evs.length, 6));
         }
-        lines.push(el('span', { class: 'fv-tip-sep' }), ...stateLines(d.t1));
+        lines.push(el('span', { class: 'fv-tip-sep' }), stateGrid(d.t1));
         showTip(card, nb.left - r.left + nb.width / 2 - 10, nb.bottom - r.top, head, lines, { hl: node, below: true });
       };
       // casts: icons framed in their colour; pets smaller, on the lower half
@@ -2371,12 +2431,25 @@ export function startReport(dash) {
     persist(); hideTip(); render();
   });
   const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
-  const asmLines = (a) => {
-    const sens = arr(a.sens);
-    return [a.description, ...arr(a.settings).map((x) => `${SEG_NAME[x.id] || x.id}: ${x.label} (${x.value})${x.id === a.defaultSetting ? ', the presets' : ''}${x.id === a.expectedSetting ? ', expected' : ''}. ${x.rationale}`),
-      ...(a.status === 'pending' ? ['Not simulated yet.'] : a.status === 'inert' ? ['No longer applies.'] : []),
-      ...(sens.length ? ['At 180 s:', ...sens.map((x) => `${bName(x.build)} · ${SEG_NAME[x.setting] || x.setting}: ${sgn(+x.pct, f1)}% (${sgn(+x.dps, f1)} DPS)`)] : [])];
+  // An assumption's tooltip: its question in one line, then each setting with its effect on the presets at 180 s (one
+  // number, or the range over the presets it touches). The full text and every preset's number are in Method.
+  const asmEffect = (a, sid) => {
+    const xs = arr(a.sens).filter((x) => x.setting === sid).map((x) => +x.pct);
+    if (!xs.length) return el('span', { class: 'fv-tip-m', text: '–' });
+    const lo = d3.min(xs), hi = d3.max(xs);
+    return hi - lo < 0.05 ? tipDelta(lo) : el('span', {}, tipDelta(lo), el('span', { class: 'fv-tip-m', text: ' to ' }), tipDelta(hi));
   };
+  const asmTip = (a) => {
+    const n = arr(a.builds).length;
+    return [tipText(a.short || a.description),
+      tipTable(['Setting', a.status === 'live' && arr(a.sens).length ? `At 180 s${n > 1 ? `, ${n} presets` : ''}` : ''], arr(a.settings).map((x) => [
+        el('span', { class: 'fv-tip-set' }, el('b', { text: x.label }), x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null,
+          x.value && x.value !== x.label ? el('small', { text: x.value }) : null),
+        a.status !== 'live' ? '' : x.id === a.defaultSetting ? el('span', { class: 'fv-tip-m', text: 'as simmed' }) : asmEffect(a, x.id)])),
+      tipNote(el('span', { class: 'def', text: '●' }), ' the presets · ', el('span', { class: 'exp', text: '★' }), ' expected',
+        a.status === 'pending' ? ' · not simulated yet' : a.status === 'inert' ? ' · no longer applies' : '')];
+  };
+  const openMethodAsm = () => { showTab('method'); requestAnimationFrame(() => $('#method-asm-card')?.scrollIntoView({ block: 'start' })); };
   const drawAsm = () => {
     const host = $('#asm-list'), custom = asmSel().length > 0;
     $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
@@ -2392,7 +2465,7 @@ export function startReport(dash) {
       for (const a of as) {
         const cur = st.asm?.[a.key] || a.defaultSetting, live = a.status === 'live';
         const info = el('button', { class: 'fv-asm-i', 'aria-label': `About ${a.label}`, 'data-tip': '1', text: 'ⓘ' });
-        info.addEventListener('click', (e) => { e.stopPropagation(); const cr = card.getBoundingClientRect(), ir = info.getBoundingClientRect(); showTip(card, 16, ir.bottom - cr.top + 4, a.label, asmLines(a), { hl: info, below: true }); });
+        info.addEventListener('click', (e) => { e.stopPropagation(); const cr = card.getBoundingClientRect(), ir = info.getBoundingClientRect(); showTip(card, 16, ir.bottom - cr.top + 4, a.label, asmTip(a), { hl: info, below: true, act: ['More in Method ›', openMethodAsm] }); });
         const seg = el('div', { class: 'fv-asm-seg', role: 'group', 'aria-label': a.label }, ...arr(a.settings).map((x) => {
           const bt = el('button', { 'aria-pressed': String(x.id === cur), title: `${x.value}${x.id === a.defaultSetting ? ' (the presets)' : ''}` },
             el('b', { text: x.label }), el('small', {}, SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null));
@@ -2424,10 +2497,14 @@ export function startReport(dash) {
     if (!waitOr(host, ['assumptions', 'builds'])) return;
     host.replaceChildren(...d3.groups(rowsOf('assumptions'), (a) => a.class).flatMap(([cls, as]) => [el('h3', { text: cls === 'All' ? 'All classes' : cls }),
       el('ul', { class: 'fv-list' }, ...as.map((a) => {
-        const nm = (id) => arr(a.settings).find((x) => x.id === id)?.label || id;
-        const sens = arr(a.sens), lo = d3.extent(sens, (x) => +x.pct);
-        return el('li', {}, el('b', { text: a.label }), `: ${a.description} `,
-          el('small', { text: `Settings: ${arr(a.settings).map((x) => `${x.label} (${x.value})`).join(' · ')}. The presets use ${nm(a.defaultSetting)}; expected ${nm(a.expectedSetting)}.${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : sens.length ? ` Changes the presets by ${sgn(lo[0], f1)}% to ${sgn(lo[1], f1)}% at 180 s.` : ''}` }));
+        // The full text the tooltip leaves out: the description, each setting's reason, and its effect on every preset.
+        const sens = arr(a.sens);
+        return el('li', {}, el('b', { text: a.label }), `: ${a.description}${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : ''}`,
+          el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => {
+            const xs = sens.filter((y) => y.setting === x.id);
+            return el('small', {}, el('b', { text: x.label }), ` (${x.value})${x.id === a.defaultSetting ? ', the presets' : ''}${x.id === a.expectedSetting ? ', expected' : ''}: ${x.rationale}`,
+              xs.length ? ` At 180 s: ${xs.map((y) => `${bName(y.build)} ${sgn(+y.pct, f1)}%`).join(', ')}.` : '');
+          })));
       }))]));
   };
 
