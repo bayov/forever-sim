@@ -1308,6 +1308,9 @@ export function startReport(dash) {
     const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
     const kinds = new Set();
     const card = $('#race-rank-card');
+    // The weakest base stats in view, which the tooltip measures each race's base stats against.
+    const baseOf = (r) => r.segs.find((sg) => sg.part === 'base')?.v;
+    const low = d3.least(rows.filter((r) => baseOf(r) != null), baseOf);
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
       r.segs.forEach((sg, k) => {
@@ -1335,6 +1338,15 @@ export function startReport(dash) {
           const info = noteRow('part', sg.part);
           return el('div', { class: 'fv-tip-racial' }, partIco(sg.part, 'fv-ico'), el('span', {}, el('b', { text: `${sg.label} ${fd(sg.v)}` }), info ? el('span', { text: info.short || info.text }) : null));
         });
+        const base = baseOf(r);
+        if (base != null && low && rows.length > 1) {
+          const gap = one ? (100 * (base - baseOf(low))) / baseOf(low) : base - baseOf(low);
+          const vs = low.race === r.race ? 'The weakest base stats of these races.'
+            : gap < 0.005 ? `About the same as ${low.race}, the weakest base here.`
+            : `${f2(gap)}%${one ? ` (${f1(base - baseOf(low))} DPS)` : ''} above ${low.race}, the weakest base here.`;
+          racials.unshift(el('div', { class: 'fv-tip-racial' }, el('i', { style: 'background:var(--cds-chart-muted)' }),
+            el('span', {}, el('b', { text: `Base stats ${one ? `${f1(base)} DPS` : `${f2(base)}%`}` }), el('span', { text: vs }))));
+        }
         let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`)];
         if (!one) {
           const order = new Map(sc.builds.map((b, k) => [b.id, k]));
