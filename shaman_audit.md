@@ -188,7 +188,7 @@ Restoration
 - [x] 8.47 Healing Way (not implemented)
 - [x] 8.48 Nature's Swiftness
 - [x] 8.49 Purification
-- [ ] 8.50 Riptide (not implemented)
+- [x] 8.50 Riptide (not implemented)
 
 Tree rules
 
@@ -1678,6 +1678,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16178, curves 85323 and 87379): +2 to 10% healing (aura 108) on Healing Wave, Lesser Healing Wave and Chain Heal (mask 0x1c0) plus Riptide's third-word bit, and the same on Riptide's heal over time (misc 22). Healing Stream (0x2000) is in neither, despite the tooltip's "your healing spells". That matches.
 - Beta: no build had it.
 - No sim change and no new test. `periodic_test.go` TestOrcShamanHealingStreamTalents wants Healing Stream at 9 a tick (6 x 1.5) with Restorative Totems and Purification both 5/5.
+
+### 8.50 Riptide
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 408521): heals for 480 (0.214 coefficient) and 89 every 3 sec over 15 sec (0.10), and our Chain Heal on that target is 25% stronger. 1.5 sec GCD and a 6 sec category cooldown.
+- The sim: the proto has the field, but nothing reads it, and the sim has no Chain Heal. Both Restoration presets take it, nothing else. It's the first one we'd add for healing or PvP self heals.
+- No beta build had it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

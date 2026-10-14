@@ -1998,7 +1998,7 @@ ol.fv-list li::marker {
 	height: 1.35rem;
 	border-radius: 4px;
 	box-shadow: 0 0 0 2px var(--ring);
-	margin: 0.15rem 0.2rem 0.15rem 0.1rem;
+	margin: 0.15rem 0.2rem 0.15rem 2px;
 }
 
 #racial-rank .nm small .fv-ico {
@@ -2311,6 +2311,7 @@ ol.fv-list li::marker {
 		position: absolute;
 		top: 0;
 		height: 1.4rem;
+		max-width: 100%;
 	}
 }
 
