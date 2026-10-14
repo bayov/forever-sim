@@ -1253,7 +1253,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-11): "sg".
 - The sim (`shocks.go`, `electric_spell.go`, `lava_burst.go`): 5 points. Each takes 2% off the mana cost of Earth, Flame and Frost Shock, Lightning Bolt, Chain Lightning and Lava Burst, so 10% at 5/5. It adds to Shamanistic Focus's 45% on the shocks and to Maelstrom Weapon on Lightning Bolt (2.7, 7.11).
-  - The Level 60 enhancement preset has 5/5, and the Level 30 presets have none.
+  - Presets (rechecked 2026-10-14): both Elemental presets have 5/5 and Warden 3/5. The enhancement presets have none since the later talent reruns (Level 60 had 5/5 when this was written).
 - Client 70338 (wago.tools 16039 and its talent curve 85214): 5 ranks, -2, -4, -6, -8 and -10% on the spell cost, for the shocks, Lightning Bolt, Chain Lightning and Lava Burst (class mask 0x90100003 and 0x1000). It's the same kind of percent modifier as Shamanistic Focus, and the client adds those.
 - Beta: the user never had it (7.11).
 - Already tested: `mana_costs_test.go` TestOrcShamanManaCostTalents (5/5 on every shock, Lightning Bolt, Chain Lightning and Lava Burst, and not on totems, Lightning Shield or Fire Nova, with Shamanistic Focus too) and TestOrcShamanMaelstromWeaponCost. Nothing tests fewer than 5 points.
@@ -1274,7 +1274,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-12): "8.2 sg".
 - The sim (`talents.go` applyConcussion): 5 points, 1% more damage a point on Lightning Bolt, Chain Lightning and Earth Shock. It's added to the other percent bonuses of the same kind, but none of those spells has another one, so adding and multiplying give the same. It multiplies with the Stormstrike mark and Curse of the Elements. Lightning Overload's copies of Lightning Bolt and Chain Lightning get it too.
-  - The elemental preset has 5/5. The Level 60 and Level 30 enhancement presets have none, so it doesn't move their DPS.
+  - Presets (rechecked 2026-10-14): both Elemental presets, Warden and the Level 60, Level 60 + Imp GW and Level 60 + Water Shield enhancement presets have 5/5, and Level 60 + Mana Tide 2/5. The Level 30 presets have none. (This first said the enhancement presets had none.)
 - Client 70338 (wago.tools 16035 and its talent curve 85215): 5 ranks, 1 to 5% more damage (aura 108, a percent modifier). The class mask 0x100003 is Lightning Bolt, Chain Lightning and Earth Shock only, as the tooltip says. Flame Shock and Frost Shock aren't in it.
 - Beta: the user never had it.
 - No sim change. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers had Concussion 5 on Earth Shock only. Now it also wants Lightning Bolt and Chain Lightning at 1.05 * 1.2 * 1.1 on a marked target with Curse of the Elements, and Frost Shock at 1.1 (Flame Shock was already in it at 1.15 * 1.1). Taking Lightning Bolt or Chain Lightning out of Concussion's spell list, or putting Frost Shock in, fails it.
@@ -1304,14 +1304,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim (`talents.go` applyElementalWarding): 1, 2 and 3 points take 3, 7 and 10% off the Fire, Frost and Nature damage we take, direct and periodic.
 - Client 70338 (wago.tools 28996 and its talent curve 85216): -3, -7 and -10% damage taken (aura 87) for school mask 28, which is Fire, Nature and Frost. That matches the sim.
 - Beta: the 20:42 respec had 3 points, but we measured no enemy spell on us.
-- It does nothing in our sims today. No preset encounter casts at us (6.5), Vishas and the level 63 boss only melee, and the PvP mode has no enemy spells. No enhancement preset has points in it.
+- It does nothing in our sims today. No preset encounter casts at us (6.5), Vishas and the level 63 boss only melee, and the PvP mode has no enemy spells. No enhancement or Elemental preset has points in it. Warden Level 60 has 3/3 (rechecked 2026-10-14).
 - No sim change. `elemental_warding_test.go` TestOrcShamanElementalWarding: with 1, 2 and 3 points an enemy's 100 damage Fire, Frost and Nature hits deal 97, 93 and 90, and Arcane, Shadow and physical hits deal 100. A wrong rank value, a missing school or an extra school fails it.
 
 ### 8.4 Reverberation
 
 - The user OK'd it (2026-10-12): "sg".
 - The sim (`shocks.go`): 0.2 sec a point off the 6 sec cooldown Earth, Flame and Frost Shock share, so 5 sec at 5/5 (7.11).
-  - The Level 60 enhancement preset has 5/5. The Level 30 presets have none.
+  - Presets (rechecked 2026-10-14): Level 60, Level 60 + Imp GW and Warden have 5/5, and both Elemental presets 4/5. Level 60 + Water Shield, Level 60 + Mana Tide and the Level 30 presets have none.
 - Client 70338 (wago.tools 16040 and its talent curve 85220): 5 ranks, -200 ms each, on the cooldown (aura 107, misc 11) of the three shocks (class mask 0x90100000). That matches.
 - Beta: the Elemental build of 2026-10-11 (20:20 to about 23:10) had Reverberation 2. In WoWCombatLog-101126_202029.txt the shortest gaps between two of our shocks were 5.503, 5.605 and 5.624 sec, from 22:29 to 22:41. Without Reverberation, 44 gaps on 2026-10-10 never went under 5.904. Both come out about 0.1 sec under the cooldown, which fits 5.6 sec at 2 points.
 - No sim change. `shocks_test.go` TestOrcShamanSharedShockCooldown now has a 2 point case at 5.6 sec next to 6 sec and 5/5 at 5 sec. A rank 2 value of 0.5 sec fails it.
@@ -1320,7 +1320,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-12): "sg".
 - The sim (`talents.go`, `fire_totems.go`): 5% a point (3 ranks) on Searing Totem, Magma Totem, Fire Nova, Flame Shock (the hit and the ticks) and Lava Burst. On Fire Nova it multiplies with Improved Fire Nova (5.6), and on Lava Burst with the spell's own 20% when Flame Shock is on the target (still in Need to Verify). It leaves Flametongue Totem and Flametongue Weapon alone.
-  - The Level 60 enhancement preset has 3/3. The Level 30 presets have none.
+  - Presets (rechecked 2026-10-14): both Elemental presets and the Level 60, Level 60 + Imp GW and Level 60 + Water Shield enhancement presets have 3/3. Level 60 + Mana Tide and the Level 30 presets have none.
 - Client 70338 (wago.tools 16038, talent curves 85218 and 85217): 5, 10 and 15% (aura 108). The damage effect has class mask 0x50000000 and 0x1000 in the second word, which is the Searing Totem attack, Magma Totem, Fire Nova (408424), Flame Shock and Lava Burst. The periodic effect has 0x10000000, Flame Shock's ticks. Flametongue Totem's proc (0x4 in the second word) and Flametongue Weapon's (0x200000) aren't in either. That matches the sim.
 - Beta (the Call of Flame 3 build, 2026-10-10 20:42 to 23:14, `beta_results.txt`): the Flame Shock hit was 64 and its ticks 21 at 49 spell power, where x1.15 gives 64.3 and 21.7 and no Call of Flame 55 and 18. Fire Nova took Call of Flame times Improved Fire Nova (5.6). Flametongue Totem hit raw 18 on all 18 procs, where Call of Flame would have made it 20. That build dropped no Searing or Magma Totem and has no Lava Burst, so those rest on the client data.
 - No sim change. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers now has Lava Burst and Magma Totem at 1.15 * 1.1 next to Flame Shock, Fire Nova and Searing Totem. Both sims now have the Lava Burst talent, and the bonus one adds Call of Flame 3. TestOrcShamanCallOfFlameLeavesFlametongue rolls every Flametongue Weapon and Flametongue Totem proc at level 60 with and without Call of Flame 3 and wants the same damage. Taking Lava Burst or Magma Totem out of Call of Flame, or putting the Flametongue procs in, fails them.
@@ -1328,7 +1328,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.6 Elemental Devastation
 
 - The user OK'd it (2026-10-12): "g".
-- The sim (`talents.go` applyElementalDevastation): a crit on the direct hit of an offensive spell gives +3% melee crit a point for 10 sec. Fire Nova crits don't (4.13, 620a81c2), and neither do Flame Shock tick crits, the Flametongue Weapon and Totem procs, Searing and Magma Totem or the Lightning Shield orbs. Only the elemental presets have it.
+- The sim (`talents.go` applyElementalDevastation): a crit on the direct hit of an offensive spell gives +3% melee crit a point for 10 sec. Fire Nova crits don't (4.13, 620a81c2), and neither do Flame Shock tick crits, the Flametongue Weapon and Totem procs, Searing and Magma Totem or the Lightning Shield orbs. Level 60 and Level 60 + Imp GW have 3/3 and Level 60 + Water Shield 1/3. The Elemental presets have none (rechecked 2026-10-14, this first said only the Elemental presets had it).
 - Client 70338: the talent (30160) has a trait curve of 3, 6 and 9% and triggers on harmful spells. Its buff (30165) is +melee crit (aura 52) for 10 sec. Forever has that one buff for every rank. Classic's rank 2 and 3 buffs (29177 and 29178) aren't in the client, but the sim used them.
 - Beta (4.13 and the beta session's item 5): every direct shock crit gave the buff (more than 10), and it lasted 10.0 sec. Fire Nova (0 of 7), Flametongue Totem (more than 50), Flametongue Weapon (0 of 9) and Flame Shock tick crits never did. The size isn't settled. In every log with 3/3, 56 white swings with the buff up crit 14.3% +- 4.7 and 1836 with it down 10.4%. +9% would give about 19.4% and +3% about 13.4%, so the 9% rests on the client.
 - Changed (2026-10-12, the user's OK): the buff is 30165 at every rank under Forever (`talents.go`). Classic keeps a buff for each rank. Only the buff's ID in the timeline and metrics changes.
@@ -1337,7 +1337,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.7 Elemental Focus (Clearcasting)
 
 - The user OK'd it (2026-10-12), and said to assume heals never give Clearcasting and aren't made free by it.
-- The sim (`talents.go` applyElementalFocus): each damage spell we cast (the shocks, Lightning Bolt, Chain Lightning, Fire Nova and Lava Burst) has a 10% chance to give Clearcasting (16246) for 15 sec. It makes the next of those spells free, and that cast uses it up. Totem attacks, imbue procs, Lightning Shield orbs, heals and totems neither give it nor use it. Only the elemental presets have it.
+- The sim (`talents.go` applyElementalFocus): each damage spell we cast (the shocks, Lightning Bolt, Chain Lightning, Fire Nova and Lava Burst) has a 10% chance to give Clearcasting (16246) for 15 sec. It makes the next of those spells free, and that cast uses it up. Totem attacks, imbue procs, Lightning Shield orbs, heals and totems neither give it nor use it. Both Elemental presets, Warden, Level 60 and Level 60 + Imp GW have it (rechecked 2026-10-14, this first said only the Elemental presets had it).
 - Client 70338: the talent (16164) has a 10% chance. Its buff lasts 15 sec, has 1 charge, and takes 100% off the cost of Lightning Bolt, Chain Lightning, the three shocks, Fire Nova's cast and Lava Burst. That matches the sim.
 - Beta (2026-10-10 from 20:42, and 2026-10-11 from 20:20 to 23:15):
   - The shocks gave it on 13 of 132 casts (9.8%).
@@ -1349,7 +1349,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-13): "sg".
 - The sim (`talents.go` elementalAlacrityReduction): 1, 2 and 3 points take 0.17, 0.33 and 0.5 sec off the cast time of every rank of Lightning Bolt, Chain Lightning and Lava Burst. The cut comes before haste and Maelstrom Weapon, which multiply what's left.
-  - The Level 60 elemental preset has 3/3. The enhancement presets have none.
+  - Both Elemental presets have 3/3. The enhancement presets have none.
 - Client 70338 (wago.tools 16578 and its talent curve 85228): -170, -330 and -500 ms as a flat cast time modifier (aura 107, misc 10) on Lightning Bolt, Chain Lightning and Lava Burst. That matches the sim. The Oct 8 notes swapped its place in the tree with Elemental Fury, and the sim has that (2.7).
 - Beta: none of our builds had it, and we never cast Lightning Bolt in any log (only the Elder Cloud Serpents did). So it rests on the client data.
 - No sim change. `elemental_alacrity_test.go` TestOrcShamanElementalAlacrity checks the cast times at level 60 with 0 to 3 points: Lightning Bolt (top rank 2.5 sec, rank 1 1.5 sec), Chain Lightning (2.0) and Lava Burst (2.5), with no haste and at 25% haste. A 0.4 sec rank 3 or Lava Burst without the cut fails it. The sim has no Healing Wave, so there's no heal case.
@@ -1358,7 +1358,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-13): "sg".
 - The sim (`talents.go`, `fire_totems.go`): each point gives Fire Nova +10% damage and takes 2 sec off its 10 sec cooldown, so 2/2 is +20% and 6 sec. The damage bonus multiplies with Call of Flame (5.6).
-  - The Level 60 enhancement preset has 2/2. The elemental and Level 30 presets have none.
+  - Level 60 and Level 60 + Imp GW have 2/2 (rechecked 2026-10-14). The other enhancement presets and the Elemental presets have none.
 - Client 70338 (wago.tools 16086, talent curves 85223 and 85222): +10 and +20% damage (aura 108) and -2 and -4 sec cooldown (aura 107, misc 11). The mask (0x40000 in the second word) covers Fire Nova's cast (408341 to 408345) and its damage spell (408423 to 408428) at every rank. The cast has a 10 sec category cooldown. That matches the sim.
 - Beta (the 2/2 build, 2026-10-10 20:42 to 23:14): the damage was settled in 5.6 (104 hits at x1.15 x 1.2). The shortest gap between Fire Novas was 5.92 sec with the talent and 9.99 sec without it (7.25).
 - No sim change. `damage_modifiers_test.go` already wants 1.15 x 1.2 x 1.1 on Fire Nova. `periodic_test.go` TestOrcShamanFireNova now has a 1 point case at 8 sec next to 10 and 6 sec. A 1 point cooldown cut of 0 fails it.
@@ -1376,7 +1376,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.11 Call of Thunder
 
 - The user (2026-10-13): "Just assume it works as stated". No test.
-- The sim (`electric_spell.go`): 1 point gives +3% crit to every rank of Lightning Bolt and Chain Lightning, and to their Lightning Overload copies, which share the config. Lava Burst and the shocks don't get it. The Level 60 elemental preset has it, and the enhancement presets don't.
+- The sim (`electric_spell.go`): 1 point gives +3% crit to every rank of Lightning Bolt and Chain Lightning, and to their Lightning Overload copies, which share the config. Lava Burst and the shocks don't get it. Both Elemental presets have it, and the enhancement presets don't.
 - Client 70338 (wago.tools 16120): 1 rank, +3% crit chance (aura 107, misc 7) with mask 0x3, Lightning Bolt and Chain Lightning. The overload spells (408439 to 408484, 8.13) carry the same masks, so they get it too. That matches the sim.
 - Beta: no build had it, and we never cast Lightning Bolt or Chain Lightning.
 
@@ -1391,7 +1391,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-13): "sg".
 - The sim (`lightning_overload.go`): each Lightning Bolt and Chain Lightning cast has a 3, 7 or 10% chance (1, 2 and 3 points) to cast a copy of the same rank on the same target. Chain Lightning rolls once per cast, on the first target. The copy is free and instant, deals half damage, makes no threat, and a Chain Lightning copy bounces like the main one. It takes the same talents and debuffs (Concussion, Call of Thunder, the Stormstrike mark) and can crit. It never makes another copy, and it doesn't give Clearcasting, because it isn't a cast we complete.
-  - The Level 60 elemental preset has 3/3. The enhancement presets don't take it.
+  - Both Elemental presets have 3/3. The enhancement presets don't take it.
 - Client 70338: the talent (408438) is a dummy aura with a 3, 7 and 10% curve (85227), so the server runs the proc. Each rank has its own overload spell, Lightning Bolt 408439 to 408477 and Chain Lightning 408479 to 408484. They have the main spells' class masks (0x1 and 0x2), so the same talents apply, half the main spell's coefficient and the "no threat" attribute (0x400 in the second word). The Chain Lightning copy jumps to 3 targets at 0.7 a jump, like the main one. Their base damage is 0.45 to 0.57 of the main hit, not exactly half, which is in notes.md Need to Verify (At 60) since 7.1. The client can't tell whether Chain Lightning rolls once or once per target, or whether a copy can give Clearcasting or Maelstrom Weapon.
 - Beta: no build had it, and we never cast either spell.
 - No sim change. `lightning_overload_test.go` TestOrcShamanLightningOverload at level 60 with 3/3: 2000 rank 10 bolts overload 10% of the time (within 2%). A copy deals half the bolt's damage, costs no mana and has no threat, and casting the copy 2000 times makes no more copies. A 15% rank 3, a copy that can copy itself, 60% damage or a copy that costs mana each fail it.
@@ -1408,7 +1408,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-14): "sg".
 - The sim (`talents.go` applyElementalFury): each point adds 20% to the crit damage bonus of our Fire, Frost and Nature spells and of Searing and Magma Totem, so 5/5 makes a spell crit 2.0 times a hit instead of 1.5. Listing every spell the sim registers at 5/5, it goes to Lightning Bolt, Chain Lightning, the three shocks (Flame Shock's ticks too), Lava Burst, Fire Nova, Searing and Magma Totem, the Flametongue and Frostbrand Weapon procs and the Lightning Shield orbs (which never crit). Flametongue Totem's procs, Healing Stream, Stormstrike and melee don't get it.
-  - The Level 60 elemental preset has 5/5. The enhancement presets don't take it.
+  - Both Elemental presets have 5/5. The enhancement presets don't take it.
 - Client 70338 (wago.tools 16089, talent curve 85221): +20, 40, 60, 80 and 100% crit damage bonus (aura 108, misc 15). Its mask holds Lightning Bolt and Chain Lightning (and their overloads), the three shocks, Lava Burst, Fire Nova's damage spell, the Searing Totem attack, Magma Totem's pulse, the Flametongue Weapon procs, Frostbrand Attack and the Lightning Shield orbs. Flametongue Totem's procs (0x4 in the second word) and Healing Stream (0x2000) aren't in it. That matches the sim spell for spell.
 - Beta: no build had it.
 - No sim change. `elemental_fury_test.go` TestOrcShamanElementalFury reads each spell's crit multiplier at level 60 with 0 and 5 points: 1.5 and 2.0 on the spells above, 1.5 on Flametongue Totem's proc and Healing Stream either way, and Stormstrike's melee crit at 2.0 either way. A 10% step, giving it to every Nature spell (Healing Stream and Flametongue Totem get it) or leaving Searing and Magma Totem out fails it.
@@ -1416,7 +1416,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.16 Lava Burst (the talent)
 
 - The user OK'd it (2026-10-14): "sg". The spell itself is 7.14.
-- The sim (`lava_burst.go`): with the talent we learn rank 1 at 40, and the trainer adds rank 2 at 50 and rank 3 at 60. Without it the spell isn't registered. The UI tree has it at the bottom of Elemental (row 7), needing Lightning Overload 3/3. The Level 60 elemental preset has it, and the enhancement presets don't.
+- The sim (`lava_burst.go`): with the talent we learn rank 1 at 40, and the trainer adds rank 2 at 50 and rank 3 at 60. Without it the spell isn't registered. The UI tree has it at the bottom of Elemental (row 7), needing Lightning Overload 3/3. Both Elemental presets have it, and the enhancement presets don't.
 - Client: the talent (traits 134169 and 134219) teaches 408490, rank 1. The vendored client tree (69876, updated to 70009) has it in row 7, column 2, with 1 rank, requiring Lightning Overload. That matches.
 - Beta: none, it's a level 40 talent.
 - No sim change and no new test. `lava_burst_test.go` covers the rank at each level and the spell (7.14).
@@ -1439,7 +1439,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.19 Ancestral Knowledge
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`): each point gives 2% more Intellect, 10% at 5/5. It multiplies with Blessing of Kings, and the server drops the fraction before working out mana. Level 30 + 5 has 4/5, the Level 60 presets 3/5, and Level 30 PvP none.
+- The sim (`talents.go`): each point gives 2% more Intellect, 10% at 5/5. It multiplies with Blessing of Kings, and the server drops the fraction before working out mana. Level 30 + 5 has 4/5. Level 60 and Level 60 + Water Shield have 3/5, Level 60 + Imp GW 1/5, Level 60 + Mana Tide 5/5, Elemental Level 60 2/5 and Level 30 PvP none (rechecked 2026-10-14).
 - Client 70338 (wago.tools 17485, talent curve 85266): +2, 4, 6, 8 and 10% Intellect (aura 137, misc 8). That matches.
 - Beta: 2026-10-08, 137 Intellect became 150 with 5/5 (2635 mana) and 165 with Blessing of Kings on top (2860 mana), so they multiply. 2026-10-10 20:42, 4/5 to 5/5 took 141 Intellect to 144.
 - No sim change and no new test. `stat_multipliers_test.go` TestOrcShamanStatMultipliers pins the 2026-10-08 numbers, Intellect gained mid-fight under both and the dropped fraction.
@@ -1447,7 +1447,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.20 Guardian Totems
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`buffs.go` foreverStoneskinTotemAura): each point gives Stoneskin Totem 10% more (rank 3 goes from 11 to 13.2 at 2/2), and we keep the fraction (7.29). Windwall Totem has no buff in the sim, and Grounding Totem isn't in it, because nothing shoots or casts at us. Level 30 PvP has 2/2, but every preset keeps Strength of Earth in the earth slot, so it changes nothing today.
+- The sim (`buffs.go` foreverStoneskinTotemAura): each point gives Stoneskin Totem 10% more (rank 3 goes from 11 to 13.2 at 2/2), and we keep the fraction (7.29). Windwall Totem has no buff in the sim, and Grounding Totem isn't in it, because nothing shoots or casts at us. Level 30 PvP and Warden have 2/2 (rechecked 2026-10-14). The enhancement presets keep Strength of Earth in the earth slot and the Warden rotation drops no Stoneskin Totem, so it changes nothing today.
 - Client 70338 (wago.tools 16258, talent curves 85274 and 85273): +10 and +20% on Stoneskin and Windwall's reduction (aura 108, misc 3) and -1 and -2 sec on Grounding Totem's cooldown. That matches what the sim has.
 - Beta: no build had it. Stoneskin's value before armor was settled in 7.29.
 - No sim change and no new test. `stoneskin_test.go` already wants 13.2 with 2 points at level 30.
@@ -1465,13 +1465,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The user OK'd leaving it out (2026-10-14): "sg".
 - Client 70338 (wago.tools 16262, talent curve 85293): 1 and 2 points take 1 and 3 sec off Ghost Wolf's cast time (aura 107, misc 10), so 2/2 makes it instant. It also lets Ghost Wolf be used indoors, through two spell overrides of 2645 (aura 332).
 - The sim: the proto has the field, but nothing reads it, and the sim has no Ghost Wolf. Our only movement is the out of melee range stretches (`pvp.go`), which are random gaps in melee, not running at a speed.
-- Level 60 + Imp GW, Level 30 + 5 and Level 30 PvP take 2/2 for travel, and those points do nothing in the sim.
+- Level 60 + Imp GW, Level 30 + 5, Level 30 PvP and the Raid Healing Restoration preset take 2/2 for travel, and those points do nothing in the sim.
 - Beta: builds had 1 and 2 points, but we never measured the cast.
 
 ### 8.23 Improved Lightning Shield
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`lightning_shield.go`): 1, 2 and 3 points give the orbs 5, 10 and 15% more damage on the whole hit, spell power part included. No preset takes it.
+- The sim (`lightning_shield.go`): 1, 2 and 3 points give the orbs 5, 10 and 15% more damage on the whole hit, spell power part included. Only Warden Level 60 takes it, 3/3 (rechecked 2026-10-14, this first said no preset).
 - Client 70338 (wago.tools 16261, talent curve 85295): +5, 10 and 15% damage (aura 108, misc 0) on the orbs (mask 0x400). A misc 0 percent modifier scales the whole hit, as the sim does (fixed 2026-10-07). That matches.
 - Beta: no build had it.
 - No sim change and no new test. `damage_modifiers_test.go` TestOrcShamanSpellDamageModifiers has 3 points in the bonus sim and wants the orbs at 1.15 x 1.1.
@@ -1487,7 +1487,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.26 Anticipation
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`): each point gives 2% dodge, 6% at 3/3. It matters only when something hits us (Vishas at Level 30, PvP). Only Level 30 PvP takes it (3/3).
+- The sim (`talents.go`): each point gives 2% dodge, 6% at 3/3. It matters only when something hits us (Vishas at Level 30, PvP). Level 30 PvP and Warden take 3/3.
 - Client 70338 (wago.tools 16254, talent curve 85299): +2, 4 and 6% dodge (aura 49). The two Anticipation spells that give Defense skill (12297, 20096) are other classes'. That matches.
 - Beta (the `/bayov` exports in ~/forever-logs/exports): 5.4324% dodge on 2026-10-10 at 21:30 without it, and 11.4324% at 23:14 with 3/3 and the same 43 Agility. That's +6.000%, 2% a point.
 - No sim change and no new test. `avoidance_test.go` TestOrcShamanOurAvoidance already wants exactly 6% from 3/3 (6.4), and its comment now cites the exports.
@@ -1495,7 +1495,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.27 Toughness
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`): each point gives 2% more Stamina, 10% at 5/5, and the server drops the fraction (5/5 turns 51 Stamina into 56). Only Level 30 PvP takes it (4/5).
+- The sim (`talents.go`): each point gives 2% more Stamina, 10% at 5/5, and the server drops the fraction (5/5 turns 51 Stamina into 56). Level 30 PvP takes 4/5 and Warden 5/5.
 - Client 70338 (wago.tools 16252, talent curve 85301): +2, 4, 6, 8 and 10% Stamina (aura 137, misc 4). The other Toughness spells (12299, 20143) are other classes'. That matches.
 - Beta: no build had it.
 - No sim change and no new test. `base_stats_test.go` TestOrcShamanHealthTalents (6.6) wants 56 Stamina and 715 health at level 30 with 5/5, and 715 x 1.04 with Improved Reincarnation 2/2.
@@ -1535,7 +1535,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.32 Improved Stormstrike
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`): each point gives a 50% chance that a Stormstrike cast, landed or not, gives 50% mana regen while casting for 15 sec (the regen doesn't grow with points). Each point also gives a 50% chance that our dodge or parry of an enemy attack resets Stormstrike's cooldown. A mob dodging or parrying our attacks doesn't count. Without Stormstrike it does nothing, and the tree needs Stormstrike first anyway. Every enhancement preset has 2/2.
+- The sim (`talents.go`): each point gives a 50% chance that a Stormstrike cast, landed or not, gives 50% mana regen while casting for 15 sec (the regen doesn't grow with points). Each point also gives a 50% chance that our dodge or parry of an enemy attack resets Stormstrike's cooldown. A mob dodging or parrying our attacks doesn't count. Without Stormstrike it does nothing, and the tree needs Stormstrike first anyway. Level 60, Level 60 + Imp GW, the Level 30 presets and Warden have 2/2, and Level 60 + Water Shield and Level 60 + Mana Tide 1/2.
 - Client 70338 (wago.tools 1223031, curves 85305 and 85304): 50 and 100% for both chances, as dummy auras the server handles. The buff (1238931) lasts 15 sec and gives 50% regen while casting (aura 134). That matches.
 - Beta, 15:07 log (2/2 by the 14:50 and 18:21 exports): all 194 of our casts gave the buff, and it came off 14.9 to 15.1 sec after the last gain when nothing renewed it. In 59 cooldowns we dodged or parried something. In 24 of them we cast Stormstrike early, 0.2 to 4.9 sec after the first dodge or parry. In the other 35 we didn't, mostly long pauses or kills, and a few where we were idle until the normal 8 sec (a parry at +1.7 sec, nothing cast, then Stormstrike at +8.2). So the reset exists, but the log can't tell 100% from a lower chance.
 - Beta, 10-11 log from 23:26 (Stormstrike 1, Improved Stormstrike 0 by the 23:26 export): 26 cooldowns with a dodge or parry, none early, and no buff on us.
@@ -1544,7 +1544,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.33 Maelstrom Weapon
 
 - The user OK'd it (2026-10-14): "sg - and yes we need to verify".
-- The sim (`talents.go`): any landed melee hit (white hits, Stormstrike, Windfury Weapon attacks) can give a stack, at 2 PPM a point (a guess, 10 PPM at 5/5). Up to 5 stacks for 30 sec. Each stack takes 4% a point off the next Lightning Bolt's cast time and cost, so 5 stacks at 5/5 make it instant and free. Lightning Bolt uses all the stacks when its cast ends. Chain Lightning neither gets nor uses them, and an overload bolt doesn't use them. With Totem of the Storm, Lightning Bolt can give a stack at half a white swing's chance (9.2). Both Level 60 enhancement presets have 5/5, and their rotations cast Lightning Bolt only at 5 stacks. The Level 30 presets can't take it (34+).
+- The sim (`talents.go`): any landed melee hit (white hits, Stormstrike, Windfury Weapon attacks) can give a stack, at 2 PPM a point (a guess, 10 PPM at 5/5). Up to 5 stacks for 30 sec. Each stack takes 4% a point off the next Lightning Bolt's cast time and cost, so 5 stacks at 5/5 make it instant and free. Lightning Bolt uses all the stacks when its cast ends. Chain Lightning neither gets nor uses them, and an overload bolt doesn't use them. With Totem of the Storm, Lightning Bolt can give a stack at half a white swing's chance (9.2). All four Level 60 enhancement presets have 5/5, and their rotations cast Lightning Bolt only at 5 stacks. The Level 30 presets can't take it (34+).
 - Client 70338 (wago.tools 408498, curve 85306): -4 to -20% by rank, up to 5 stacks. It triggers on melee auto attacks, melee abilities and harmful spells (0x10014, the spells for Totem of the Storm). The proc chance field is 100 with no PPM entry, so the server sets the rate. An unused dummy effect holds 50, which may be Totem of the Storm's 50%. The buff (408505) lasts 30 sec with 5 stacks and 1 charge, and changes cast time and cost on Lightning Bolt's mask only (0x1, Chain Lightning is 0x2). That matches, except the rate, which the client doesn't give.
 - SoD (wowsims/sod `runes.go`): the rune is 10 PPM, plus 5 with Windfury Weapon and 5 more with a two-handed weapon, so our Level 60 setup would get 20 PPM there. It also covers Chain Lightning, Lava Burst and Lesser Healing Wave, which Forever's buff mask doesn't.
 - Beta: no data, our character is under 34. The rate stays in notes.md Need to Verify, now with SoD's numbers (the user, 2026-10-14).
@@ -1554,7 +1554,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.34 Rage of the Farseer
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`): an instant, off-GCD cooldown that gives +30% attack speed for 25 sec and no cast speed (the 2026-09-24 build took that away). The 3 min cooldown is its own. The haste multiplies with Flurry and the others, and the swing in progress rescales (4.2). Both Level 60 enhancement presets take it. The rotations line it up with the 990015 trinket, and Blood Fury and Berserking go with it.
+- The sim (`talents.go`): an instant, off-GCD cooldown that gives +30% attack speed for 25 sec and no cast speed (the 2026-09-24 build took that away). The 3 min cooldown is its own. The haste multiplies with Flurry and the others, and the swing in progress rescales (4.2). All four Level 60 enhancement presets take it. The rotations line it up with the 990015 trinket, and Blood Fury and Berserking go with it.
 - Client 70338 (wago.tools 425336): 25 sec, a 180000 ms cooldown with no category, GCD 0. Effect 1 is +30% attack speed (aura 342, melee and ranged). Effect 2 is aura 61 at 30, which makes the model 30% bigger and is only cosmetic. Build 70009's tooltip says "Instant, 3 min cooldown" too, where the older one showed no cooldown. That matches.
 - Beta: no data, it's a row 7 talent and our character is level 30. It stays in the notes.md line for the row 6 and 7 talents.
 - No sim change. The code comment now cites the 70338 client and the tooltip for the 3 min. Already tested in `rage_of_the_farseer_test.go` (1.3x attack speed, no cast speed, 25 sec), `haste_test.go`, `gcd_test.go` and `reaction_time_test.go`. TestOrcShamanRageOfTheFarseer now also wants it ready again exactly 3 min after the cast. A 2 min cooldown fails it.
@@ -1564,12 +1564,12 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The user OK'd leaving it out (2026-10-14): "sg".
 - Client 70338 (wago.tools 16182, curve 85307): 0.1 to 0.5 sec off Healing Wave's cast time (aura 107, cast time, mask 0x40).
 - The sim: the proto has the field, but nothing reads it. The sim has no Healing Wave spell (`shaman.go` has a slot that nothing fills), and no rotation heals except Healing Stream Totem. So it only matters if we ever sim healing.
-- No preset takes it. Both Elemental presets put their first 5 Restoration points in Totemic Focus, and the enhancement presets have no Restoration points. No beta build had it.
+- Only the two Restoration presets (Tank Healing and Raid Healing) take it, 5/5, which opens the next tier and does nothing in the sim. The Elemental presets and the enhancement presets with Restoration points (Level 60 + Water Shield and Level 60 + Mana Tide) put their first 5 in Totemic Focus. No beta build had it. (This first said no preset took it.)
 
 ### 8.36 Totemic Focus
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`, `totems.go`, `fire_totems.go`): each point takes 5% off every totem's mana cost, 25% at 5/5, and it multiplies with the other cost talents (8.1). Fire Nova is a spell under Forever and keeps its full cost. Both Elemental presets take 5/5, the enhancement presets none.
+- The sim (`talents.go`, `totems.go`, `fire_totems.go`): each point takes 5% off every totem's mana cost, 25% at 5/5, and it multiplies with the other cost talents (8.1). Fire Nova is a spell under Forever and keeps its full cost. Both Elemental presets, Level 60 + Water Shield, Level 60 + Mana Tide and both Restoration presets take 5/5. The other enhancement presets have none.
 - Client 70338 (wago.tools 16173, curve 85321): -5 to -25% cost (aura 108, misc 14). Its mask covers Searing, Magma and Stoneclaw Totem, Healing Stream and Mana Spring, and the shared totem bit that holds every other totem, Mana Tide included. It also covers Totemic Projection and Call of the Elements, Ancestors and Spirits (the "spells that summon or move them"), which the sim doesn't have. Forever's Fire Nova (408341 to 408345) has other mask bits. That matches.
 - Beta: no shaman build had it. The 16:53 export with 13 points in the third tree was the paladin.
 - No sim change. `mana_costs_test.go` TestOrcShamanManaCostTalents checked 5/5 on 13 totems, alone and with the other cost talents, and Fire Nova at full cost. It now also checks Mana Tide Totem with and without 5/5 (60 and 45 mana at rank 3). Mana Tide at full cost fails it.
@@ -1577,7 +1577,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.37 Mindfulness
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`): 1, 2 and 3 points keep 17, 33 and 50% of our Spirit regen going while we cast (inside the five second rule). MP5 keeps going in full anyway. It adds to the Polished Driftwood Icon's 8% and Improved Stormstrike's 50%, capped at 100% (2.3). Both Elemental presets take 3/3, the enhancement presets none.
+- The sim (`talents.go`): 1, 2 and 3 points keep 17, 33 and 50% of our Spirit regen going while we cast (inside the five second rule). MP5 keeps going in full anyway. It adds to the Polished Driftwood Icon's 8% and Improved Stormstrike's 50%, capped at 100% (2.3). Both Elemental presets, Level 60 + Mana Tide and both Restoration presets take 3/3, and Level 60 + Water Shield 2/3. The other enhancement presets have none.
 - Client 70338 (wago.tools 1223033, curve 85316): 17, 33 and 50% (aura 134, the same casting regen aura as Improved Stormstrike's buff). The forever-wiki's 17 / 34 / 51 is an older text. That matches.
 - Beta: no build had it.
 - No sim change. `five_second_rule_test.go` TestOrcShamanCastingRegenCap uses 3/3 with the icon and Improved Stormstrike. The new `mindfulness_test.go` TestOrcShamanMindfulness wants 0, 17, 33 and 50% of the full regen while casting at 0 to 3 points on a naked level 60 shaman. The wiki's 34 and 51 fail it.
@@ -1585,7 +1585,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.38 Natural Grace
 
 - The user OK'd the change (2026-10-14): "sg".
-- The sim (`talents.go`) before: each point cut the threat of every spell with the shaman spell flag by 5%, 15% at 3/3. That took Stormstrike (physical) in, and left Healing Stream Totem and magic item procs out. Only the second Elemental preset takes it (1 point).
+- The sim (`talents.go`) before: each point cut the threat of every spell with the shaman spell flag by 5%, 15% at 3/3. That took Stormstrike (physical) in, and left Healing Stream Totem and magic item procs out. Elemental Level 60 + Mana Tide takes 1/3 and the Tank Healing Restoration preset 3/3.
 - Client 70338 (wago.tools 29187, curve 85314): -5, -10 and -15% threat (aura 10) on school mask 126, every magic school and not physical.
 - Beta: no build had it, and we've never measured threat.
 - Changed: the cut now goes on everything we cast in a magic school. Stormstrike, Windfury's attacks and white hits keep their threat, and magic item procs and Healing Stream get the cut. Threat isn't in our DPS, and no golden changed.
@@ -1594,7 +1594,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 8.39 Tidal Focus
 
 - The user OK'd it (2026-10-14): "sg".
-- The sim (`talents.go`): each point gives +1% melee and spell hit, and takes 1% off the cost of our healing spells (a cost factor, so it multiplies with the other cost talents). The sim has no shaman heal with a cost (no Healing Wave, Lesser Healing Wave or Chain Heal), so only the hit matters. Both Elemental presets take 5/5, the enhancement presets none.
+- The sim (`talents.go`): each point gives +1% melee and spell hit, and takes 1% off the cost of our healing spells (a cost factor, so it multiplies with the other cost talents). The sim has no shaman heal with a cost (no Healing Wave, Lesser Healing Wave or Chain Heal), so only the hit matters. Both Elemental presets, Level 60 + Mana Tide and both Restoration presets take 5/5, and Level 60 + Water Shield 3/5. The other enhancement presets have none.
 - Client 70338 (wago.tools 16179, curves 85315, 109096 and 109095): -1 to -5% cost (aura 108, misc 14) on mask 0x1c0 (Healing Wave, Lesser Healing Wave and Chain Heal) plus one third-word bit, +1 to 5% melee hit (aura 54) and +1 to 5% spell hit (aura 55). That matches.
 - Beta: no build had it.
 - No sim change and no new test. `miss_test.go` TestOrcShamanMissChance wants 5 melee hit at 5/5 and the miss against the boss, and TestOrcShamanSpellMissChance 12% spell miss against the boss and the 1% floor at our level. The cost part has no spell to test.
