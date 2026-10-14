@@ -159,8 +159,7 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsMode: 'adv', rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
-  st.rsMode = 'adv';
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsWpn: true, rsTgt: true, rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -1103,19 +1102,23 @@ export function startReport(dash) {
   };
 
   // ---------- races: scenarios ----------
-  // The page shows every race with its advantages (adv), every race on the generic boss alone (baseline), or every
-  // race with its racials off (off).
-  const RS_MODES = [['adv', 'Every advantage'], ['baseline', 'Generic boss'], ['off', 'Racials off']];
-  const rsVar = () => st.rsMode;
+  // The page shows every race as the preset plays it, on the generic boss. Two switches add the advantages as
+  // entries of their own: the racial weapons (w) and the boss types a racial works on (t).
+  const rsVar = () => (st.rsWpn ? 'w' : '') + (st.rsTgt ? 't' : '');
 
   // A race with an advantage shows up a second time, as its own entry: Human with a sword, Troll vs Beast,
-  // Windshaper vs Elemental. A variant counts where its DPS differs from the race's own on the generic boss. That's
-  // the racial weapon swap where the preset doesn't already hold that weapon type, and the target types the race
-  // has a racial for.
+  // Windshaper vs Elemental. A variant counts where its DPS differs from the race's own on the generic boss by more
+  // than the sim's noise (three standard errors). High Order vs Beast comes out 0.1 DPS apart, for example.
+  //
+  // A weapon racial shows up both ways. Where the preset doesn't hold that weapon type, the race's own entry is
+  // without it, and the weapon swap sim is the entry with it. Where the preset already holds it (Human on a sword
+  // Warrior), the race's own entry is the one with it. The entry without it is that minus the racial's share in
+  // race_breakdown, which is what the sims with the racial left out give.
   //
   // Each entry is a race_variants row with a key (the race, or race|variant), a name, a tag like "with a sword",
   // and its rank and gap among all of the preset's entries.
   const ADV = ['weapon', 'beast', 'elemental', 'humanoid'];
+  const WPN_PARTS = ['sword', 'mace', 'axe'];
   const weaponOf = (build, race) => (rowsOf('race_breakdown') || []).find((q) => q.build === build && q.race === race && q.scenario === 'weapon' && q.part !== 'swap')?.part;
   const advTag = (v, weapon) => (v === 'weapon' ? (weapon ? `with ${/^[aeiou]/.test(weapon) ? 'an' : 'a'} ${weapon}` : 'with its racial weapon') : `vs ${v[0].toUpperCase()}${v.slice(1)}`);
   // One tag for an entry across presets: Human swaps to a sword for some presets and to a mace for others.
@@ -1129,19 +1132,29 @@ export function startReport(dash) {
   const raceRows = (mode) => {
     const rv = rowsOf('race_variants');
     if (!rv) return null;
-    const rb = rowsOf('race_breakdown');
+    const rb = rowsOf('race_breakdown') || [];
     if (rrCache.rv === rv && rrCache.rb === rb && rrCache.mode === mode) return rrCache.rows;
-    const rows = rv.filter((r) => r.variant === (mode === 'off' ? 'off' : 'baseline')).map((r) => ({ ...r, key: r.race, name: r.race, tag: null }));
-    if (mode === 'adv') {
-      const base = new Map(rows.map((r) => [r.build + '|' + r.race, r]));
-      for (const r of rv) {
-        if (!ADV.includes(r.variant) || !r.simmed) continue;
-        const own = base.get(r.build + '|' + r.race);
-        if (!own || Math.abs(r.dps - own.dps) < 0.05) continue;
-        const weapon = r.variant === 'weapon' ? weaponOf(r.build, r.race) : null;
-        const tag = advTag(r.variant, weapon);
-        rows.push({ ...r, key: `${r.race}|${r.variant}`, name: `${r.race} ${tag}`, tag, weapon, isPreset: false });
+    const wpn = mode.includes('w'), tgt = mode.includes('t');
+    const rows = rv.filter((r) => r.variant === 'baseline').map((r) => ({ ...r, key: r.race, name: r.race, tag: null }));
+    const base = new Map(rows.map((r) => [r.build + '|' + r.race, r]));
+    if (wpn) {
+      const held = new Map(rb.filter((q) => q.scenario === 'all' && q.active && WPN_PARTS.includes(q.part) && Math.abs(q.dps) >= 3 * q.se).map((q) => [q.build + '|' + q.race, q]));
+      for (const r of [...rows]) {
+        const h = held.get(r.build + '|' + r.race);
+        if (!h) continue;
+        const tag = advTag('weapon', h.part);
+        rows.push({ ...r, variant: 'weapon', key: `${r.race}|weapon`, name: `${r.race} ${tag}`, tag, weapon: h.part, adv: true });
+        Object.assign(r, { variant: 'noweapon', dps: Math.round(10 * (r.dps - h.dps)) / 10, tag: `without the ${h.part} racial`, weapon: h.part, dropped: h, isPreset: false });
+        r.name = `${r.race} ${r.tag}`;
       }
+    }
+    for (const r of rv) {
+      if (!ADV.includes(r.variant) || !r.simmed || (r.variant === 'weapon' ? !wpn : !tgt)) continue;
+      const own = base.get(r.build + '|' + r.race);
+      if (!own || Math.abs(r.dps - (own.dropped ? own.dps + own.dropped.dps : own.dps)) < 3 * Math.hypot(r.se, own.se)) continue;
+      const weapon = r.variant === 'weapon' ? weaponOf(r.build, r.race) : null;
+      const tag = advTag(r.variant, weapon);
+      rows.push({ ...r, key: `${r.race}|${r.variant}`, name: `${r.race} ${tag}`, tag, weapon, adv: true, isPreset: false });
     }
     // Each preset's entries come out together, best first.
     const out = d3.groups(rows, (r) => r.build).flatMap(([, rs]) => {
@@ -1169,19 +1182,21 @@ export function startReport(dash) {
   document.querySelectorAll('#races .fv-scen-tag').forEach((t) => t.addEventListener('click', (e) => { e.stopPropagation(); $('#race-scen-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
 
   const drawScen = () => {
-    seg($('#rs-mode'), 'rsMode', RS_MODES);
-    const V = rsVar(), d = $('#rs-desc');
-    const tags = document.querySelectorAll('#races .fv-scen-tag');
-    if (V === 'adv') {
-      d.textContent = 'Every race on the generic boss, and each advantage a race has as its own entry: the racial weapon (Human with a sword or mace, Orc with an axe, Dwarf with a mace) where the preset holds another weapon type, and the boss types a racial works on (Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid for Priests).';
-      tags.forEach((t) => { t.textContent = 'Every advantage'; });
-      return;
+    for (const [id, key] of [['#rs-wpn', 'rsWpn'], ['#rs-tgt', 'rsTgt']]) {
+      const bt = $(id);
+      bt.setAttribute('aria-pressed', String(!!st[key]));
+      if (!bt.dataset.bound) {
+        bt.dataset.bound = '1';
+        bt.addEventListener('click', (e) => { e.stopPropagation(); st[key] = !st[key]; persist(); hideTip(); render(); });
+      }
     }
-    if (statusOf('race_notes') !== 'ok') { d.classList.add('dash-skeleton'); return; }
-    d.classList.remove('dash-skeleton');
-    const n = noteRow('scenario', V);
-    mark(d, 'race_notes', 'text', `kind=scenario&key=${V}`).textContent = n ? n.text : '';
-    tags.forEach((t) => { mark(t, 'race_notes', 'title', `kind=scenario&key=${V}`).textContent = n ? n.title : ''; });
+    const txt = ['Every race as the preset plays it, against the generic boss.'];
+    if (st.rsWpn) txt.push('Human, Dwarf and Orc show up both without and with their weapon racial (a sword, mace or axe, where the class can use one). Where the preset holds another weapon type, the entry with the racial holds that type at the same stats and weapon DPS.');
+    else txt.push('A weapon racial counts only where the preset already holds that weapon type.');
+    if (st.rsTgt) txt.push('Races with a racial against one boss type show up again against that type: Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, and Dwarf vs Humanoid for Priests.');
+    $('#rs-desc').textContent = txt.join(' ');
+    const tag = st.rsWpn && st.rsTgt ? 'Weapons and enemy types' : st.rsWpn ? 'Racial weapons' : st.rsTgt ? 'Racial enemy types' : 'Generic boss';
+    document.querySelectorAll('#races .fv-scen-tag').forEach((t) => { t.textContent = tag; });
   };
 
   // ---------- races: overview ----------
@@ -1270,20 +1285,19 @@ export function startReport(dash) {
     const rows = raceRows(V).filter((r) => r.build === b.id);
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); $('#rs-take').textContent = ''; return; }
     const bd = rowsOf('race_breakdown').filter((r) => r.build === b.id);
-    // An entry's bar: base stats, then each racial that works in its scenario (its variant).
+    // An entry's bar: base stats, then each racial that works in its scenario (its variant). The entry without its
+    // weapon racial leaves that racial out.
     const segsOf = (row) => {
       const race = row.race, V = row.variant;
       const mine = bd.filter((r) => r.race === race);
       const base = mine.find((r) => r.part === 'base');
       const out = [{ part: 'base', r: base }];
-      if (V !== 'off') {
-        for (const r of mine.filter((q) => q.scenario === 'all' && q.part !== 'base' && q.active)) out.push({ part: r.part, r });
-        const cond = mine.find((q) => q.scenario === 'all' && !q.active && COND[V] && COND[V].test(q.part));
-        for (const r of mine.filter((q) => q.scenario === (V === 'baseline' ? '-' : V))) out.push({ part: r.part, r: cond && r.part === 'target' ? { ...r, label: `${r.label}, ${cond.label}` } : r });
-      }
+      for (const r of mine.filter((q) => q.scenario === 'all' && q.part !== 'base' && q.active && q !== row.dropped)) out.push({ part: r.part, r });
+      const cond = mine.find((q) => q.scenario === 'all' && !q.active && COND[V] && COND[V].test(q.part));
+      for (const r of mine.filter((q) => q.scenario === V)) out.push({ part: r.part, r: cond && r.part === 'target' ? { ...r, label: `${r.label}, ${cond.label}` } : r });
       let at = 0;
       for (const sg of out) { sg.from = at; at += +sg.r.dps; sg.to = at; }
-      return { segs: out, idle: mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part)) && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))) };
+      return { segs: out, idle: (row.dropped ? [{ ...row.dropped, note: 'left out of this entry' }] : []).concat(mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part)) && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part)))) };
     };
     const S = new Map(rows.map((r) => [r.key, segsOf(r)]));
     const ends = rows.flatMap((r) => S.get(r.key).segs.flatMap((sg) => [sg.from || sg.to, sg.to]).filter((v) => v > 0).concat([r.dps - r.se, r.dps + r.se]));
@@ -1677,7 +1691,7 @@ export function startReport(dash) {
     host.setAttribute('data-source', 'race_variants race_breakdown');
     if (!specWait(host, ['race_variants', 'race_breakdown'], b)) return;
     // Every race, and each advantage a race has as its own row (see raceRows), best first.
-    const rows = raceRows('adv').filter((r) => r.build === b.id);
+    const rows = raceRows('wt').filter((r) => r.build === b.id);
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); return; }
     const W = host.clientWidth, rowH = 26, m = { l: rows.some((r) => r.tag) ? Math.min(190, W * 0.42) : 100, r: 64, t: 4, b: 4 };
     const H = m.t + m.b + rows.length * rowH;
@@ -1693,7 +1707,7 @@ export function startReport(dash) {
       if (r.tag) label.append('tspan').text(' ' + r.tag).style('fill', 'var(--color-fg-muted)').attr('font-size', '0.85em');
       if (r.raceIcon) svgIcon(rg, r.raceIcon, m.l - 22, yy + 4, rowH - 8);
       // An advantage's bar is lighter than its race's own.
-      rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', r.tag ? 0.45 : 0.8);
+      rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', r.adv ? 0.45 : 0.8);
       svg.append('text').attr('x', x(r.dps) + 6).attr('y', yy + rowH / 2 + 4).text(f1(r.dps) + (i === 0 ? ' ★' : ''));
     });
     svg.append('text').attr('x', m.l).attr('y', H).attr('font-size', 9).text(`axis starts at ${f0(lo)}`);
@@ -2339,7 +2353,7 @@ export function startReport(dash) {
   // A side is a preset, or one of its race and setup variants from the Races tab. A variant only has its
   // mean DPS, because we sim the spread, fight lengths, stat weights and damage sources for the preset's own
   // race only.
-  const CMP_SETUPS = [['baseline', 'Normal setup'], ['weapon', 'Racial weapon'], ['off', 'Racials off'], ['beast', 'Beast target'], ['elemental', 'Elemental target'], ['humanoid', 'Humanoid target']];
+  const CMP_SETUPS = [['baseline', 'Normal setup'], ['weapon', 'Racial weapon'], ['beast', 'Beast target'], ['elemental', 'Elemental target'], ['humanoid', 'Humanoid target']];
   const cmpSide = (k, b, rv) => {
     const mine = rv ? rv.filter((r) => r.build === b.id) : [];
     let race = st[k + 'r'] || b.race, v = st[k + 'v'] || 'baseline';
@@ -2347,7 +2361,7 @@ export function startReport(dash) {
     const row = (vv) => mine.find((r) => r.race === race && r.variant === vv);
     // The racial weapon setup only exists for races with a weapon racial the preset can use. A setup can also
     // go missing from the data, like the Undead target that the generic boss replaced.
-    if (!rv || !row(v) || (v === 'weapon' && !row('weapon')?.simmed)) v = 'baseline';
+    if (!rv || !row(v) || !CMP_SETUPS.some((o) => o[0] === v) || (v === 'weapon' && !row('weapon')?.simmed)) v = 'baseline';
     const tag = [race !== b.race ? race : null, v !== 'baseline' ? CMP_SETUPS.find((o) => o[0] === v)[1].toLowerCase() : null].filter(Boolean).join(' · ');
     return { k, b, race, v, row: row(v), mine, full: race === b.race && v === 'baseline', name: tag ? `${b.build} · ${tag}` : b.build };
   };
