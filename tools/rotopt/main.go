@@ -129,11 +129,9 @@ func main() {
 		setup.player().BonusTalentPoints = int32(*bonusTalents)
 	}
 	if l := setup.player().Level; l > 0 && l < core.CharacterMaxLevel {
-		maxTalentPoints = max(0, int(l)-9)
 		playerLevel = l
 	}
-	// The bonus points never take a character past the 51 a level 60 has.
-	maxTalentPoints = min(51, maxTalentPoints+int(setup.player().BonusTalentPoints))
+	maxTalentPoints = talentPoints(setup.player().Level, setup.player().BonusTalentPoints)
 	if *talents != "" {
 		setup.player().TalentsString = *talents
 	}

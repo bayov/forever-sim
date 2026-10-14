@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/wowsims/classic/sim/core"
 )
 
 // Talent search. Every move takes one point (or a whole talent's worth of points) from a
@@ -48,6 +50,19 @@ type talentTree struct {
 // Points the build may spend, one per level from 10 plus the player's bonus points. Set
 // from the player in main.
 var maxTalentPoints = 51
+
+// talentPoints is how many points a character of this level and bonus points has.
+//
+// We give one point a level from level 10, plus the bonus points (5 on the Level 30 + 5
+// presets). The bonus points never take a character past the 51 a level 60 has. A level
+// of 0 means level 60, the way the sim reads it.
+func talentPoints(level, bonus int32) int {
+	points := 51
+	if level > 0 && level < core.CharacterMaxLevel {
+		points = max(0, int(level)-9)
+	}
+	return min(51, points+int(bonus))
+}
 
 func loadTalentTrees(class string) ([]talentTree, error) {
 	path := filepath.Join("ui", "core", "talents", "trees", class+".json")

@@ -192,7 +192,7 @@ Restoration
 
 Tree rules
 
-- [ ] 8.51 Points per level, the bonus points (Level 30 + 5), tier and prerequisite rules in the talent search
+- [x] 8.51 Points per level, the bonus points (Level 30 + 5), tier and prerequisite rules in the talent search
 
 ## 9. Race, gear and consumables
 
@@ -1685,6 +1685,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 408521): heals for 480 (0.214 coefficient) and 89 every 3 sec over 15 sec (0.10), and our Chain Heal on that target is 25% stronger. 1.5 sec GCD and a 6 sec category cooldown.
 - The sim: the proto has the field, but nothing reads it, and the sim has no Chain Heal. Both Restoration presets take it, nothing else. It's the first one we'd add for healing or PvP self heals.
 - No beta build had it.
+
+### 8.51 Talent tree rules in the talent search
+
+- The user OK'd it and the new test (2026-10-14): "sg".
+- The search (`tools/rotopt/talents.go`): a character has one point a level from level 10, plus the player's bonus points, and never more than 51. A row opens at 5 points per row above it in the same tree. A talent with a prerequisite needs that one maxed. No talent goes over its rank count. The talents pinned with `-require` (Spirit Weapons, and Stormstrike at Level 30 + 5) stay maxed. The layout and prerequisites come from `ui/core/talents/trees/shaman.json`, the file the talent picker draws.
+- Client: the UI tree matches the vendored client tree (69876 / 70009) and the 70338 `/bayov` exports in tree, row, column and rank count for all 50 talents. The seven prerequisites match the vendored tree (Call of Thunder needs Elemental Alacrity, Elemental Fury needs Call of Thunder, Lava Burst needs Lightning Overload, Flurry needs Mental Dexterity, Improved Stormstrike needs Stormstrike, Rage of the Farseer needs Mental Quickness, Riptide needs Healing Way). The exports have no prerequisites, so those aren't checked against 70338.
+- Beta: every full level 30 export has 26 points (21 + 5), and all 13 exports pass the row rule. The 2026-10-11 23:26 build has Stormstrike (row 4) with exactly 15 points above it, so the game asks no more than 5 a row.
+- Every shaman preset passes the rules, at 26 points on Level 30 + 5 and PvP and 51 on Level 60.
+- No rule changed. The point cap moved out of `main.go` into `talentPoints` so a test can reach it.
+- The new `tools/rotopt/talents_test.go` is rotopt's first test. TestTalentPoints checks 21 and 26 at level 30, 51 at level 60 with or without 5 bonus points. TestTalentTreeRules starts from the Level 30 + 5 preset and breaks one rule a build: a 27th point (valid once the cap is 27), row 4 with 14 points above, Improved Stormstrike without Stormstrike, Flurry with Mental Dexterity at 2/3, and no Spirit Weapons once it's required. A row gate one row looser, no prerequisite check, no required check and no 51 cap each fail it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
