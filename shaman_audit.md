@@ -187,7 +187,7 @@ Restoration
 - [x] 8.46 Mana Tide Totem
 - [x] 8.47 Healing Way (not implemented)
 - [x] 8.48 Nature's Swiftness
-- [ ] 8.49 Purification
+- [x] 8.49 Purification
 - [ ] 8.50 Riptide (not implemented)
 
 Tree rules
@@ -1670,6 +1670,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: no build had it.
 - Changed: the cooldown starts when we press it. The sim used to start it again when the buff was used. The full suite passes, no golden changed.
 - The new `natures_swiftness_test.go` TestOrcShamanNaturesSwiftness presses it at 1 sec at level 60. The Lightning Bolt at 3 sec is instant and uses up the buff, the one at 7 sec takes its full cast, and it's ready at 181 sec. Starting the cooldown again on the bolt fails it (ready at 183).
+
+### 8.49 Purification
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim: it does nothing. `water_totems.go` leaves Healing Stream out of it, and the sim has no other heal. Both Restoration presets take 5/5, nothing else.
+- Client 70338 (wago.tools 16178, curves 85323 and 87379): +2 to 10% healing (aura 108) on Healing Wave, Lesser Healing Wave and Chain Heal (mask 0x1c0) plus Riptide's third-word bit, and the same on Riptide's heal over time (misc 22). Healing Stream (0x2000) is in neither, despite the tooltip's "your healing spells". That matches.
+- Beta: no build had it.
+- No sim change and no new test. `periodic_test.go` TestOrcShamanHealingStreamTalents wants Healing Stream at 9 a tick (6 x 1.5) with Restorative Totems and Purification both 5/5.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
