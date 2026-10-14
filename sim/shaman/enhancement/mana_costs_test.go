@@ -34,13 +34,13 @@ func checkManaCosts(t *testing.T, label string, checks []manaCostCheck) {
 }
 
 // TestOrcShamanManaCostTalents checks which spells each cost talent reaches at level 60, and
-// that the talents add up.
+// how the talents combine.
 //
 // Convection takes 2% a point off shocks, Lightning Bolt, Chain Lightning and Lava Burst.
 // Shamanistic Focus takes 45% off shocks and Lightning Shield. Totemic Focus takes 5% a point
-// off totems. That's what the beta client texts say. They multiply, as the beta showed
-// (shaman_audit.md 8.1), so with Convection 5/5 and Shamanistic Focus we pay 0.9 * 0.55 of a
-// shock's cost, 49.5%. Added up, it would be 45%.
+// off totems, Mana Tide Totem included (shaman_audit.md 8.36). That's what the beta client
+// texts say. They multiply, as the beta showed (shaman_audit.md 8.1), so with Convection 5/5
+// and Shamanistic Focus we pay 0.9 * 0.55 of a shock's cost, 49.5%. Added up, it would be 45%.
 //
 // Fire Nova is a spell and not a totem under Forever, so none of them reach it.
 func TestOrcShamanManaCostTalents(t *testing.T) {
@@ -79,6 +79,21 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 			rankCost(t, "Healing Stream Totem", enh.HealingStreamTotem, shaman.HealingStreamTotemManaCost[:], c.totem),
 			{"Tremor Totem", enh.TremorTotem, 60, c.totem},
 			rankCost(t, "Fire Nova", enh.FireNova, shaman.FireNovaManaCost[:], 1),
+		})
+	}
+
+	// Mana Tide Totem needs its own talent, so we check it with and without Totemic Focus.
+	for _, c := range []struct {
+		name    string
+		talents string
+		totem   float64
+	}{
+		{"Mana Tide Totem", "--000000000001", 1},
+		{"Mana Tide Totem with Totemic Focus 5/5", "--050000000001", .75},
+	} {
+		_, enh := newShamanSim(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+		checkManaCosts(t, c.name, []manaCostCheck{
+			rankCost(t, "Mana Tide Totem", enh.ManaTideTotem, shaman.ManaTideTotemManaCost[:], c.totem),
 		})
 	}
 }
