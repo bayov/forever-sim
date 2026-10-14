@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_dragonkin",
   "published": {
-    "dps": 940.0,
-    "source": "warrior head 38b94b4"
+    "dps": 947.9,
+    "source": "warrior head 55979ee (rotation audit pass 14)"
   },
   "verify": {
-    "dps": 939.98,
-    "stderr": 0.35,
+    "dps": 947.92,
+    "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "-0.02"
+    "note": "+0.02"
   },
   "summary": "Arms with Spearing Strike and Improved Bloodrage against a Giant or Dragonkin boss such as Onyxia; 3.4% ahead of the generic Arms build on its own boss at 180 s.",
   "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin. Against such a boss the talent is worth taking, so this build puts it in the rotation. The normal Arms build spends those points elsewhere.",
@@ -38,8 +38,8 @@
   ],
   "rotation": [
     "Pre-pull: Battle Stance",
-    "With 20 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance and stay",
-    "Death Wish held for the last 36 sec, Recklessness in the last 20 sec; racials with Death Wish",
+    "With 25 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
+    "Death Wish held for the last 36 sec, Recklessness in the last 25 sec; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",
     "Mighty Rage Potion at the pull, second held for the last 20 sec; Bloodrage under 10 Rage",
     "Mortal Strike on cooldown",
     "Slam from 20 Rage (15 sec cooldown with Improved Slam), outside execute",

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h",
   "published": {
-    "dps": 890.6,
-    "source": "warrior head 38b94b4"
+    "dps": 901.6,
+    "source": "warrior head 55979ee (rotation audit pass 14)"
   },
   "verify": {
-    "dps": 890.58,
-    "stderr": 0.37,
+    "dps": 901.59,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "-0.02"
+    "note": "-0.01"
   },
   "summary": "Two-hand Fury with a Bonereaver's Edge-style sword in Berserker Stance: Bloodthirst, Whirlwind, Flurry and Two-Handed Weapon Specialization. Shipped as the two-hand Fury variant; it trails dual wield Fury but beats Arms at 120 sec.",
   "keyTalents": [
@@ -37,11 +37,11 @@
   ],
   "rotation": [
     "Start in Berserker Stance with no Rage; Battle Shout from the raid",
-    "Death Wish held for the last 36 sec, Recklessness for the last 25 sec",
-    "Racial cooldowns with Death Wish; Mighty Rage Potion at the pull, second held for the last 30 sec",
+    "Death Wish held for the last 36 sec, Recklessness for the last 30 sec",
+    "Blood Fury and Berserking held for the last 25 sec, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 30 sec",
     "Bloodrage under 70 Rage",
     "Execute first in the execute phase",
-    "Bloodthirst, then Whirlwind at 25+ Rage",
+    "Bloodthirst, then Slam from 30 Rage right after a main hand swing, then Whirlwind at 25+ Rage",
     "Heroic Strike queued from 70 Rage (outside execute)",
     "Hamstring filler from 10 Rage"
   ],
