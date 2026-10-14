@@ -2249,7 +2249,16 @@ ol.fv-list li::marker {
 	opacity: 0.85;
 }
 
-.fv .fv-rrow .sg.is-hl,
+// The piece of a race's bar, and its caption, whose tooltip is open.
+.fv-rtrack .sg.is-hl {
+	z-index: 2;
+	box-shadow: 0 0 0 1.5px var(--color-fg);
+}
+
+.fv-rsub span.is-hl {
+	color: var(--color-fg);
+}
+
 // An overview row only shows a tooltip on hover, so it gets a light background there instead of the gold outline
 // that marks a clicked mark.
 .fv .fv-orow.is-hl {
@@ -2281,7 +2290,7 @@ ol.fv-list li::marker {
 @media (min-width: 46rem) {
 	.fv-orow,
 	.fv-rrow {
-		grid-template-columns: 1.6rem minmax(9rem, 16rem) minmax(0, 1fr) 5.2rem;
+		grid-template-columns: 1.6rem minmax(9rem, 16rem) minmax(0, 1fr) 7rem;
 	}
 
 	.fv-otrack,
