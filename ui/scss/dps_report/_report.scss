@@ -10,8 +10,8 @@
 	--fv-gold: var(--gold);
 	--fv-gold-soft: #{rgba($gold, 0.14)};
 	// The race advantage tags: weapon racials, then boss types, then the entry without its weapon racial.
-	--fv-adv-wpn: #c39bff;
-	--fv-adv-tgt: #3fcfc0;
+	--fv-adv-wpn: #b9bec8;
+	--fv-adv-tgt: #ff8a4c;
 	--fv-adv-nowpn: var(--color-fg-muted);
 	--fv-r: var(--panel-radius);
 	--fv-r-sm: var(--panel-radius);
@@ -1932,46 +1932,32 @@ ol.fv-list li::marker {
 	flex-wrap: wrap;
 }
 
-.fv-scen-tag {
-	font: inherit;
-	font-size: 0.66rem;
-	font-weight: 600;
-	border-radius: 999px;
-	padding: 0.15rem 0.55rem;
-	cursor: pointer;
-	white-space: nowrap;
-	background: var(--fv-gold-soft);
-	color: var(--color-fg);
-	border: 1px solid color-mix(in srgb, var(--fv-gold) 40%, var(--color-border-line));
+// The specs a race is the best for, in the overview's tooltip, one line per class.
+.fv-tip-specs {
+	display: grid;
+	gap: 0.2rem;
+	font-size: 0.74rem;
+	line-height: 1.35;
 }
 
-.fv-scen {
-	border-color: color-mix(in srgb, var(--fv-gold) 40%, var(--color-border-line));
-	background: var(--fv-noise), linear-gradient(var(--fv-gold-soft), var(--fv-gold-soft)), var(--color-panel);
+.fv-tip-specs > span {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.35rem;
 }
 
-.fv-scen .fv-controls {
-	flex-wrap: nowrap;
+.fv-tip-specs .fv-ico {
+	flex: none;
+	width: 1rem;
+	height: 1rem;
 }
 
-.fv-scen .fv-label {
-	min-width: 3.1rem;
-}
-
-.fv-scen .fv-controls {
+// Each Races card's own switches for the advantage entries (racial weapons, racial enemy types).
+.fv-rs-opts {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
 	gap: var(--cds-gap-xs);
-}
-
-// The target types don't all fit a phone, so the scenario toggles are a little tighter.
-.fv-scen .fv-seg > button {
-	padding-inline: 0.45rem;
-}
-
-.fv-scen-desc {
-	margin: 0;
-	font-size: var(--cds-font-size-caption);
-	line-height: 1.5;
-	color: var(--color-fg);
 }
 
 .fv-ro-tiles {

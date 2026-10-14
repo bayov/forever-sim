@@ -92,28 +92,20 @@
 
   <!-- RACES -->
   <section class="tab-pane fv-page" id="races" data-page="races" hidden>
-    <div class="content-block fv-card fv-scen" id="race-scen-card">
-      <div class="content-block-header"><h6 class="content-block-title">Race scenarios</h6></div>
-      <div class="fv-controls"><span class="fv-label">Show</span>
-        <button class="fv-chip" id="rs-wpn" aria-pressed="true" title="Human, Dwarf and Orc with and without their weapon racial, as two entries">Racial weapons</button>
-        <button class="fv-chip" id="rs-tgt" aria-pressed="true" title="Races with a racial against one boss type, again against that type">Racial enemy types</button></div>
-      <p class="fv-scen-desc" id="rs-desc"></p>
-      <p class="fv-note">Every card on this page follows this choice.</p>
-    </div>
-
     <div class="content-block fv-card" id="race-overview-card">
-      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Which races help most</h6><button class="fv-scen-tag" aria-label="Scenario"></button></div>
+      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Which races help most</h6></div>
       <p class="fv-note">For each race, how close it gets to the DPS of the best race, averaged over every preset it can play. 100% means it is the best race on all of them. Tap a race to see its presets.</p>
       <p class="fv-ro-take" id="ro-take"></p>
-      <div class="fv-controls"><div class="fv-seg" id="ro-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="ro-role" role="group" aria-label="Role"></div></div>
+      <div class="fv-controls"><div class="fv-seg" id="ro-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="ro-role" role="group" aria-label="Role"></div><div class="fv-rs-opts" id="ro-opts"></div></div>
       <div class="fv-ro-tiles" id="ro-tiles" data-source="race_summary"></div>
       <div id="race-overview" data-source="race_summary"></div>
       <p class="fv-note" id="ro-axis"></p>
     </div>
 
     <div class="content-block fv-card" id="race-spec-card">
-      <div class="content-block-header fv-hrow"><h6 class="content-block-title">One preset, every race</h6><button class="fv-scen-tag" aria-label="Scenario"></button></div>
+      <div class="content-block-header fv-hrow"><h6 class="content-block-title">One preset, every race</h6></div>
       <p class="fv-note">Each race's DPS split into its base stats and what each racial adds; the line at the end of a bar is ± 1 standard error. Hatched parts cost DPS. Tap a part.</p>
+      <div class="fv-controls"><div class="fv-rs-opts" id="rsp-opts"></div></div>
       <div class="fv-picker"><button class="fv-btn" id="rs-prev" aria-label="Previous preset">‹</button><select class="form-select" id="rs-pick" aria-label="Preset"></select><button class="fv-btn" id="rs-next" aria-label="Next preset">›</button></div>
       <p class="fv-note" id="rs-take"></p>
       <div class="fv-legend" id="rs-legend"></div>
@@ -122,10 +114,10 @@
     </div>
 
     <div class="content-block fv-card" id="heat-card">
-      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Every race on every preset</h6><button class="fv-scen-tag" aria-label="Scenario"></button></div>
-      <p class="fv-note">Percent behind the preset's best race in this scenario. ★ marks the best. Hatched means that race can't be that class. Tap a cell for its DPS, or a preset name to compare its races above.</p>
+      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Every race on every preset</h6></div>
+      <p class="fv-note">Percent behind the preset's best race. ★ marks the best. Hatched means that race can't be that class. Tap a cell for its DPS, or a preset name to compare its races above.</p>
       <div class="fv-controls" id="heat-classes" role="group" aria-label="Class filter"></div>
-      <div class="fv-controls"><span class="fv-label">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div></div>
+      <div class="fv-controls"><span class="fv-label">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="heat-opts"></div></div>
       <div class="fv-scroll" id="heat" data-source="race_variants builds"></div>
     </div>
 
@@ -136,8 +128,9 @@
     </div>
 
     <div class="content-block fv-card" id="faction-card">
-      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Best race by faction</h6><button class="fv-scen-tag" aria-label="Scenario"></button></div>
+      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Best race by faction</h6></div>
       <p class="fv-note">The best Horde and best Alliance race for each preset, and how far the Alliance pick trails the Horde one (negative means Alliance is ahead).</p>
+      <div class="fv-controls"><div class="fv-rs-opts" id="fac-opts"></div></div>
       <div class="fv-scroll tall">
         <table id="faction-table" data-source="factionbest" data-row-key="build,variant">
           <thead><tr><th class="first" data-field="label">Preset</th><th data-field="hordeRace"><span id="fi-h"></span>Horde</th><th class="n" data-field="hordeDps">DPS</th><th data-field="allianceRace"><span id="fi-a"></span>Alliance</th><th class="n" data-field="allianceDps">DPS</th><th class="n" data-field="gapPct">Gap %</th></tr></thead>
@@ -146,9 +139,9 @@
       </div>
     </div>
     <div class="content-block fv-card" id="racespread-card">
-      <div class="content-block-header fv-hrow"><h6 class="content-block-title">How much race matters</h6><button class="fv-scen-tag" aria-label="Scenario"></button></div>
+      <div class="content-block-header fv-hrow"><h6 class="content-block-title">How much race matters</h6></div>
       <p class="fv-note">The gap between each preset's best and worst race, as a share of the best.</p>
-      <div class="fv-controls"><span class="fv-label">Sort</span><div class="fv-seg" id="spread-sort" role="group" aria-label="Sort"></div></div>
+      <div class="fv-controls"><span class="fv-label">Sort</span><div class="fv-seg" id="spread-sort" role="group" aria-label="Sort"></div><div class="fv-rs-opts" id="spread-opts"></div></div>
       <div class="fv-chart" id="racespread" data-source="racespread builds race_variants"></div>
     </div>
   </section>

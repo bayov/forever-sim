@@ -159,7 +159,7 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsWpn: true, rsTgt: true, rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -1000,7 +1000,7 @@ export function startReport(dash) {
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
     seg($('#heat-fac'), 'heatFac', [['All', 'All'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds'])) return;
-    const V = rsVar();
+    const V = rsVar('heat');
     const RACES = RACES_ALL.filter((r) => st.heatFac === 'All' || (st.heatFac === 'Horde') === HORDE.has(r));
     const races = raceRows(V);
     const has = new Set(races.map((r) => r.build));
@@ -1051,7 +1051,7 @@ export function startReport(dash) {
   const drawFactionTable = () => {
     const tb = $('#faction-table tbody');
     if (statusOf('builds') !== 'ok' || statusOf('race_variants') !== 'ok') return;
-    const V = rsVar(), rr = raceRows(V);
+    const V = rsVar('fac'), rr = raceRows(V);
     const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label]));
     // Each preset's best Horde and best Alliance entry. The rows are sorted best first.
     const fb = new Map(d3.groups(rr, (r) => r.build).map(([build, rs]) => {
@@ -1071,7 +1071,7 @@ export function startReport(dash) {
   const drawRaceSpread = () => {
     const host = $('#racespread');
     if (!waitOr(host, ['builds', 'race_variants', 'race_breakdown'])) return;
-    const V = rsVar();
+    const V = rsVar('spread');
     const builds = new Map(rowsOf('builds').map((b) => [b.id, b]));
     seg($('#spread-sort'), 'spreadSort', [['spread', 'Biggest gap'], ['class', 'By class']]);
     const order = new Map(buildOrder(rowsOf('builds')).map((b, i) => [b.id, i]));
@@ -1102,9 +1102,30 @@ export function startReport(dash) {
   };
 
   // ---------- races: scenarios ----------
-  // The page shows every race as the preset plays it, on the generic boss. Two switches add the advantages as
-  // entries of their own: the racial weapons (w) and the boss types a racial works on (t).
-  const rsVar = () => (st.rsWpn ? 'w' : '') + (st.rsTgt ? 't' : '');
+  // Each Races card shows every race as the preset plays it, on the generic boss. Two switches on each card add
+  // the advantages as entries of their own: the racial weapons (w, on by default) and the boss types a racial
+  // works on (t, off by default).
+  const RS_OPTS = [['w', 'Racial weapons', 'Human, Dwarf and Orc both without and with their weapon racial (a sword, mace or axe the class can use), as two entries'],
+    ['t', 'Racial enemy types', 'Races with a racial against one boss type, again against that type: Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid for Priests']];
+  const rsVar = (card) => {
+    const m = st.rsOpt?.[card] ?? 'w';
+    const host = $(`#${card}-opts`);
+    if (host && !host.dataset.bound) {
+      host.dataset.bound = '1';
+      host.replaceChildren(...RS_OPTS.map(([k, lbl, tip]) => {
+        const bt = el('button', { type: 'button', class: 'fv-chip', 'data-k': k, title: tip, text: lbl });
+        bt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cur = st.rsOpt?.[card] ?? 'w';
+          st.rsOpt = { ...st.rsOpt, [card]: RS_OPTS.map((o) => o[0]).filter((x) => (x === k) !== cur.includes(x)).join('') };
+          persist(); hideTip(); render();
+        });
+        return bt;
+      }));
+    }
+    host?.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(m.includes(b.dataset.k))));
+    return m;
+  };
 
   // A race with an advantage shows up a second time, as its own entry: Human with a sword, Troll vs Beast,
   // Windshaper vs Elemental. A variant counts where its DPS differs from the race's own on the generic boss by more
@@ -1167,7 +1188,7 @@ export function startReport(dash) {
   };
   // A race's name with its advantage, if any, as a smaller tag after it.
   // An advantage tag is a colored pill with an icon, so the extra entries stand out from the races' own. Weapon
-  // racials are violet, the boss types teal, and the entry without its weapon racial is a plain outline.
+  // racials are gray, the boss types orange, and the entry without its weapon racial is a dashed outline.
   const TAG_ICON = { sword: 'inv_sword_04', mace: 'inv_mace_25', axe: 'inv_axe_09', beast: 'ability_hunter_pet_bear', elemental: 'spell_frost_summonwaterelemental', humanoid: 'spell_holy_chastise' };
   const tagKind = (v) => (v === 'weapon' ? 'wpn' : v === 'noweapon' ? 'nowpn' : ADV.includes(v) ? 'tgt' : '');
   const tagIcon = (r) => TAG_ICON[r.variant === 'weapon' ? String(r.weapon || '').split(' ')[0] : r.variant];
@@ -1189,26 +1210,6 @@ export function startReport(dash) {
     if (st.tab !== 'races') showTab('races'); else render();
     requestAnimationFrame(() => $('#race-spec-card').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }));
   };
-  document.querySelectorAll('#races .fv-scen-tag').forEach((t) => t.addEventListener('click', (e) => { e.stopPropagation(); $('#race-scen-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
-
-  const drawScen = () => {
-    for (const [id, key] of [['#rs-wpn', 'rsWpn'], ['#rs-tgt', 'rsTgt']]) {
-      const bt = $(id);
-      bt.setAttribute('aria-pressed', String(!!st[key]));
-      if (!bt.dataset.bound) {
-        bt.dataset.bound = '1';
-        bt.addEventListener('click', (e) => { e.stopPropagation(); st[key] = !st[key]; persist(); hideTip(); render(); });
-      }
-    }
-    const txt = ['Every race as the preset plays it, against the generic boss.'];
-    if (st.rsWpn) txt.push('Human, Dwarf and Orc show up both without and with their weapon racial (a sword, mace or axe, where the class can use one). Where the preset holds another weapon type, the entry with the racial holds that type at the same stats and weapon DPS.');
-    else txt.push('A weapon racial counts only where the preset already holds that weapon type.');
-    if (st.rsTgt) txt.push('Races with a racial against one boss type show up again against that type: Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, and Dwarf vs Humanoid for Priests.');
-    $('#rs-desc').textContent = txt.join(' ');
-    const tag = st.rsWpn && st.rsTgt ? 'Weapons and enemy types' : st.rsWpn ? 'Racial weapons' : st.rsTgt ? 'Racial enemy types' : 'Generic boss';
-    document.querySelectorAll('#races .fv-scen-tag').forEach((t) => { t.textContent = tag; });
-  };
-
   // ---------- races: overview ----------
   const drawRaceOverview = () => {
     const host = $('#race-overview'), tiles = $('#ro-tiles'), take = $('#ro-take');
@@ -1216,9 +1217,9 @@ export function startReport(dash) {
     seg($('#ro-fac'), 'rsFac', [['All', 'All races'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     seg($('#ro-role'), 'rsRole', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
     if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) { tiles.replaceChildren(); take.replaceChildren(); return; }
-    const V = rsVar(), scope = st.rsFac === 'All' ? 'All' : 'Faction';
+    const V = rsVar('ro'), scope = st.rsFac === 'All' ? 'All' : 'Faction';
     const rr = raceRows(V), roleMap = roleOf();
-    const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label]));
+    const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label])), bmap = new Map(rowsOf('builds').map((b) => [b.id, b]));
     // Per entry, over the presets of a role: its DPS as a share of the best entry's on each preset, then the
     // average of that and how often it is the best. Within a faction, the best is that faction's best.
     const summarize = (role) => {
@@ -1269,16 +1270,30 @@ export function startReport(dash) {
         el('span', { class: 'nm' }, raceName(r)),
         el('span', { class: 'end' }, el('b', { text: pct(r.avg) }), el('small', { text: r.timesBest ? `best on ${r.timesBest} of ${r.presets}` : 'never best' })),
         el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${x(r.avg)};background:${fcol(r.race)}` })));
+      // Pointing at a row lists the specs it is the best race for, and a click keeps the list up. A race that is
+      // never the best lists the three presets where it comes closest.
+      const tip = (pinned) => {
+        const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
+        const order = new Map(buildOrder(rowsOf('builds')).map((b, k) => [b.id, k]));
+        const best = r.shares.filter((g) => g.share > 99.995).sort((p, q) => order.get(p.build) - order.get(q.build));
+        // One line per class: its icon, then the specs, like "Rogue: Seal Fate Daggers, Subtlety".
+        const byClass = d3.groups((best.length ? best : r.top3).map((g) => ({ g, b: bmap.get(g.build) })).filter((o) => o.b), (o) => o.b.class);
+        const list = byClass.map(([cls, os]) => el('span', {}, ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), el('span', {},
+          el('b', { text: `${cls}: `, style: `color:${ccol(cls)}` }), os.map((o) => o.b.build + (best.length ? '' : ` (${pct(o.g.share)})`)).join(', '))));
+        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(who(r), st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)), [
+          tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.presets} presets${scope === 'Faction' ? ` (${r.faction})` : ''}`),
+          best.length ? null : el('span', { class: 'fv-tip-m', text: 'It comes closest on:' }),
+          el('div', { class: 'fv-tip-specs' }, ...list),
+          tipText(`Its weakest preset is ${lab.get(r.worst.build)}, at ${pct(r.worst.share)} of the best race's DPS.`),
+        ], { hl: row, below: true, pinned });
+      };
+      row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
+      row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
       row.addEventListener('click', (e) => {
         if (e.target.closest('[data-tt]')) return;
         e.stopPropagation();
-        if (row.classList.contains('is-hl')) { hideTip(); return; }
-        const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
-        const bf = r.top3.map((g) => [lab.get(g.build), g.share > 99.995 ? '★ best' : pct(g.share)]);
-        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(who(r), st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)),
-          [tipKey(pct(r.avg), "of the best race's DPS", 'on average'),
-            tipGrid([['Best race on', `${r.timesBest} of ${r.presets} presets${scope === 'Faction' ? ` (${r.faction})` : ''}`], ['Its weakest preset', `${pct(r.worst.share)} · ${lab.get(r.worst.build)}`], ['Typical place', `${ordinal(Math.round(r.medianRank))} of the races`]]),
-            bf.length ? tipTable(['Its best presets', ''], bf) : null], { hl: row, below: true });
+        if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }
+        tip(true);
       });
       return row;
     }));
@@ -1301,7 +1316,7 @@ export function startReport(dash) {
       $('#rs-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
       $('#rs-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
     }
-    const b = builds.find((x) => x.id === st.rsBuild), V = rsVar();
+    const b = builds.find((x) => x.id === st.rsBuild), V = rsVar('rsp');
     const rows = raceRows(V).filter((r) => r.build === b.id);
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); $('#rs-take').textContent = ''; return; }
     const bd = rowsOf('race_breakdown').filter((r) => r.build === b.id);
@@ -2723,7 +2738,7 @@ export function startReport(dash) {
     try { drawHero(); } catch (e) { console.error(e); }
     try {
       if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
-      else if (st.tab === 'races') { for (const [fn, h] of [[drawScen, null], [drawRaceOverview, '#race-overview'], [drawRaceSpec, '#race-spec'], [drawHeat, '#heat'], [drawRaceFind, '#race-find'], [drawFactionTable, null], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
+      else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceOverview, '#race-overview'], [drawRaceSpec, '#race-spec'], [drawHeat, '#heat'], [drawRaceFind, '#race-find'], [drawFactionTable, null], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
       else if (st.tab === 'method') { drawMethod(); safeTop(drawMethodAsm, $('#method-asm')); }
