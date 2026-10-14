@@ -41,14 +41,14 @@ PART_INFO = {
     'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6 sec, 30 sec cooldown.'),
     'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15 sec, 10 min cooldown.'),
     'base': ('Base stats', "The race's own Strength, Agility, Stamina, Intellect and Spirit, with every racial left out."),
-    'swap': ('Weapon swap', "Its racial needs a sword, mace or axe, so the race swaps weapons. The new weapon has the same stats and damage, but its speed can differ, and some talents give a different bonus for each weapon type."),
+    'swap': ('Weapon swap', "A weapon racial only works with its weapon type. So for a preset that holds another weapon, we give the race that type of weapon with the same stats and damage. This piece is what the new weapon changes by itself, before its racial: the weapon's speed, and talents that give a different bonus per weapon type."),
     'target': ('Target type', 'What changes against this creature type: conditional racials, plus talents and spells that only work on some types.'),
 }
 
 # The tooltip's one line for the parts whose text above runs long; the others show their text as it is.
 PART_SHORT = {
     'touch': '5% chance a hit (10% for Mages, Priests and Warlocks): Shadow damage of 5% of max health, at most once a second.',
-    'swap': "Its racial needs a sword, mace or axe, so the race swaps weapons. Same stats and damage, but the speed and some talent bonuses change.",
+    'swap': "What holding the racial's weapon type changes by itself, before the racial: the weapon's speed, and talents that give a different bonus per weapon type.",
 }
 
 # Each racial's game icon, from ui/core/forever/racials.json. The priest racials are from wowhead, and Dark Sacrifice
@@ -68,13 +68,15 @@ WEAPON_PART = {'Human': 'sword', 'Dwarf': 'mace', 'Orc': 'axe'}
 WEAPON_WORD = {'sword': 'a sword', 'mace': 'a mace', 'axe': 'an axe'}
 
 # Talents whose bonus depends on the weapon type, by class: (name, talent tree, index in the tree, icon, max points,
-# and per weapon type what the bonus is and how much each point gives).
+# what it does in a few words, and per weapon type what the bonus is and how much each point gives).
 WEAPON_TALENTS = {
-    'Warrior': ('Weaponmaster', 0, 13, 'garrison_weaponupgrade', 5, {
+    'Warrior': ('Weaponmaster', 0, 13, 'garrison_weaponupgrade', 5,
+                'A bonus that depends on the weapon: critical strike chance with an axe or polearm, armor ignored with a mace or staff, or extra attacks with a sword.', {
         'axe': ('% critical strike chance', 1), 'polearm': ('% critical strike chance', 1),
         'mace': ("% of the target's armor ignored", 3), 'staff': ("% of the target's armor ignored", 3),
         'sword': ('% chance of an extra attack', 1)}),
-    'Rogue': ('Hack and Slash', 1, 13, 'inv_sword_27', 5, {
+    'Rogue': ('Hack and Slash', 1, 13, 'inv_sword_27', 5,
+              'A bonus that depends on the weapon: extra attacks with an axe or sword, critical strike chance with a dagger or fist weapon, or armor ignored with a mace.', {
         'axe': ('% chance of an extra attack', 1), 'sword': ('% chance of an extra attack', 1),
         'dagger': ('% critical strike chance', 1), 'fist': ('% critical strike chance', 1),
         'mace': ("% of the target's armor ignored", 3)}),
@@ -86,12 +88,16 @@ def swap_detail(RR, cls, req, wtype):
     """What a race's weapon swap changes, for the swap's tooltip.
 
     weapons has one [hand, old type, new type, old speed, new speed] per weapon we swap. A dagger Rogue keeps its main
-    hand dagger, so only its off hand shows up. talents has one [name, icon, points, max points, old bonus, new bonus]
-    per talent in the preset whose bonus changes with the new weapon type.
+    hand dagger, so only its off hand shows up. A caster gets its staff's stats on a one-hand weapon, and caster is
+    true then, because casters don't attack with the weapon.
+
+    talents has one [name, icon, points, max points, what it does, old type, old bonus, new type, new bonus] per talent
+    in the preset whose bonus changes with the new weapon type. A bonus is '' when the type gets none.
     """
     r2, items = RR.swapped(req, cls, wtype)
     new = {it['id']: it for it in items}
     old, eq = RR.weapons(req), RR.player(r2)['equipment']['items']
+    caster = cls in RR.CASTER or bool(old[0] and old[0]['weaponType'] == RR.STAFF and cls in ('Shaman', 'Druid'))
     weapons = []
     for k, slot in enumerate((14, 15)):
         it = new.get((eq[slot] or {}).get('id')) if len(eq) > slot and eq[slot] else None
@@ -99,18 +105,17 @@ def swap_detail(RR, cls, req, wtype):
             hand = 'two-hand' if old[k].get('handType') == 4 and it.get('handType') == 4 else HAND_NAME[slot]
             weapons.append([hand, RR.WT_NAME.get(old[k]['weaponType'], ''), RR.WT_NAME.get(wtype, ''), old[k].get('weaponSpeed'), it.get('weaponSpeed')])
     talents = []
-    if cls in WEAPON_TALENTS:
-        name, tree, idx, icon, mx, bonus = WEAPON_TALENTS[cls]
+    if cls in WEAPON_TALENTS and not caster:
+        name, tree, idx, icon, mx, desc, bonus = WEAPON_TALENTS[cls]
         trees = (RR.player(req).get('talentsString') or '').split('-')
         pts = int(((trees[tree] if len(trees) > tree else '') + '0' * 32)[idx])
         for _, was, now, _, _ in weapons:
             if pts and bonus.get(was) != bonus.get(now):
-                art = lambda t: ('an ' if t[:1] in 'aeiou' else 'a ') + t
-                fmt = lambda t: f'{bonus[t][1] * pts}{bonus[t][0]} with {art(t)}' if t in bonus else f'nothing with {art(t)}'
-                row = [name, icon, pts, mx, fmt(was), fmt(now)]
+                fmt = lambda t: f'{bonus[t][1] * pts}{bonus[t][0]}' if t in bonus else ''
+                row = [name, icon, pts, mx, desc, was, fmt(was), now, fmt(now)]
                 if row not in talents:
                     talents.append(row)
-    return weapons, talents
+    return weapons, talents, caster
 
 
 SCENARIOS = [
@@ -224,10 +229,10 @@ def build(builds, races_rows, stats_rows, dump):
             if 'weapon' in v:
                 wn, w = v['weaponNoRacial'], v['weapon']
                 wp = WEAPON_PART[race]
-                sw, st = swap_detail(RR, cls, req, RR.WEAPON_PART[wp])
+                sw, st, sc = swap_detail(RR, cls, req, RR.WEAPON_PART[wp])
                 breakdown.append({'build': bid, 'race': race, 'scenario': 'weapon', 'part': 'swap', 'label': PART_INFO['swap'][0], 'dps': round(wn[0] - base[0], 2),
                                   'se': round(math.hypot(wn[1], base[1]), 2), 'active': True, 'note': f'{WEAPON_WORD[wp]} in place of the preset weapon',
-                                  'weapons': sw, 'talents': st})
+                                  'weapons': sw, 'talents': st, 'caster': sc})
                 breakdown.append({'build': bid, 'race': race, 'scenario': 'weapon', 'part': wp, 'label': PART_INFO[wp][0], 'dps': round(w[0] - wn[0], 2),
                                   'se': round(math.hypot(w[1], wn[1]), 2), 'active': True, 'note': f'with {WEAPON_WORD[wp]}'})
             for t in TARGET_VARIANTS:

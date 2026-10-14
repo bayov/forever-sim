@@ -1367,25 +1367,55 @@ export function startReport(dash) {
     // The weakest base stats in view, which the tooltip measures each race's base stats against.
     const baseOf = (r) => r.segs.find((sg) => sg.part === 'base')?.v;
     const low = d3.least(rows.filter((r) => baseOf(r) != null), baseOf);
-    // What the weapon swap changes. On one preset that's each swapped weapon's speed, and each talent whose bonus
-    // depends on the weapon type, before and after. Over several presets we name the talents only.
+    // The weapon swap's tooltip, told for this entry. It starts with what the preset holds and why the entry holds
+    // another weapon type, then what that changes before the racial: each talent whose bonus depends on the weapon
+    // type, and the weapon's speed. Over several presets it lists what the swap changes on each preset instead.
+    const art = (t) => (/^[aeiou]/.test(t) ? 'an ' : 'a ') + t;
     const swapTip = (r) => {
       const sw = r.shares.map((g) => (bd.get(g.build + '|' + r.race) || []).find((q) => q.part === 'swap')).filter(Boolean);
-      const clsOf = (q) => bmap.get(q.build)?.class || '';
-      const talent = (t, lines) => el('div', { class: 'fv-tip-racial' }, iconImg(t[1], 'fv-ico') || el('i'), el('span', {}, el('b', { text: t[0] }), ...lines.map((l) => el('span', { text: l }))));
+      const racial = r.segs.find((sg) => sg.part === r.weapon)?.label || 'Its weapon racial';
+      const W = r.weapon || 'weapon';
+      const talent = (t, lines) => el('div', { class: 'fv-tip-racial' }, iconImg(t[1], 'fv-ico') || el('i'),
+        el('span', {}, el('b', { text: lines[0] }), ...lines.slice(1).map((l) => el('span', { text: l }))));
+      const bonus = (type, v) => `With ${art(type)}: ${v || 'no bonus'}.`;
       if (one) {
         const q = sw[0];
-        if (!q) return [];
-        const sec = (v) => `${f2(v)} sec`;
-        return [...arr(q.weapons).map(([hand, was, now, s0, s1]) => el('span', {},
-          el('b', { text: `${hand[0].toUpperCase() + hand.slice(1)}: ` }), s0 === s1 ? `${was} to ${now}, same ${sec(s0)} speed` : `${was} at ${sec(s0)} to ${now} at ${sec(s1)}`)),
-          ...(arr(q.talents).length ? arr(q.talents).map((t) => talent([`${t[0]} ${t[2]}/${t[3]}`, t[1]], [`Before: ${t[4]}.`, `After: ${t[5]}.`]))
-            : [el('span', { class: 'fv-tip-m', text: 'No talent in this preset depends on the weapon type, so only the speed changes.' })])];
+        if (!q) return { text: null, nodes: [] };
+        const ws = arr(q.weapons), spec = bmap.get(one.id)?.build || one.label;
+        const holds = ws.length === 2 ? (ws[0][1] === ws[1][1] ? `${art(ws[0][1])} in each hand` : `${art(ws[0][1])} and ${art(ws[1][1])}`)
+          : ws[0][0] === 'off hand' ? `${art(ws[0][1])} in the off hand` : ws[0][0] === 'two-hand' ? `a two-hand ${ws[0][1]}` : art(ws[0][1]);
+        const gets = ws.length === 2 ? `${art(W)} in each hand` : ws[0][0] === 'off hand' ? `${art(W)} in the off hand` : q.caster ? `a one-hand ${W}` : art(W);
+        const text = `${spec} holds ${holds}. ${racial} only works with ${art(W)}, so this entry gets ${gets} with the same stats and damage. `
+          + `This piece is what that change does by itself, before ${racial} adds its bonus.`;
+        const moved = ws.filter((w) => w[3] !== w[4]);
+        const nodes = [];
+        if (q.caster) nodes.push(el('span', { class: 'fv-tip-m', text: "Casters don't attack with their weapon, so this changes nothing." }));
+        else {
+          for (const t of arr(q.talents)) nodes.push(talent(t, [`${t[0]} ${t[2]}/${t[3]}`, t[4], bonus(t[5], t[6]), bonus(t[7], t[8])]));
+          if (moved.length) {
+            nodes.push(el('span', {}, el('b', { text: 'Speed: ' }), moved.map(([hand, , , s0, s1]) => `${hand} ${f2(s0)} sec to ${f2(s1)} sec`).join(', ') + '. ',
+              Math.abs(q.dps) < 0.05 ? "This preset doesn't fight in melee, so the speed changes nothing." : 'The damage per second stays the same, but a slower weapon hits harder and less often.'));
+          }
+          if (!arr(q.talents).length && !moved.length) nodes.push(el('span', { class: 'fv-tip-m', text: 'No talent in this preset cares about the weapon type, and the speed stays the same, so nothing changes.' }));
+        }
+        return { text, nodes };
       }
-      const names = new Map();
-      for (const q of sw) for (const t of arr(q.talents)) if (!names.has(t[0])) names.set(t[0], [t, clsOf(q)]);
-      return names.size ? [el('span', { class: 'fv-tip-m', text: 'Talents in these presets that change with the weapon type:' }),
-        ...[...names.values()].map(([t, cls]) => talent(t, [`${cls} talent. Pick one spec to see its bonus before and after.`]))] : [];
+      const text = `${racial} only works with ${art(W)}. So on each preset that holds another weapon, this entry gets ${art(W)} with the same stats and damage. `
+        + `This piece is what that change does by itself, before ${racial} adds its bonus.`;
+      const why = (q) => (arr(q.talents).length ? arr(q.talents).map((t) => t[0]).join(' and ') + ' bonus changes' : 'the weapon speed changes');
+      const from = (q) => { const t = [...new Set(arr(q.weapons).map((w) => w[1]))].join(' and '); return t[0].toUpperCase() + t.slice(1); };
+      const live = sw.filter((q) => Math.abs(+q.dps) >= 0.05), idle = sw.filter((q) => Math.abs(+q.dps) < 0.05);
+      const talents = new Map();
+      for (const q of live) for (const t of arr(q.talents)) if (!talents.has(t[0])) talents.set(t[0], t);
+      return { text, nodes: [
+        el('div', { class: 'fv-tip-specs' }, ...live.map((q) => {
+          const b = bmap.get(q.build);
+          return el('span', {}, b ? specIco(b, '') : el('i'), el('span', {}, el('b', { text: `${b?.label || q.build}: ${sgn(+q.dps, f1)} DPS. ` }), `${from(q)} to ${W}, ${why(q)}.`));
+        })),
+        idle.length ? el('span', { class: 'fv-tip-m', text: `No effect on ${idle.map((q) => bmap.get(q.build)?.label || q.build).join(', ')}. `
+          + 'Casters and ranged Hunters don\'t attack with this weapon, and the others keep the same speed and talent bonus.' }) : null,
+        ...[...talents.values()].map((t) => talent(t, [t[0], t[4]])),
+      ] };
     };
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
@@ -1433,7 +1463,8 @@ export function startReport(dash) {
             }
           } else if (sg) name = `${sg.label} ${fd(sg.v)}`;
           if (!name) return;
-          if (part === 'swap') sub.push(...swapTip(r));
+          let text = info?.text;
+          if (part === 'swap') { const t = swapTip(r); text = t.text || text; sub.push(...t.nodes); }
           if (!one && what === 'seg') sub.push(el('span', { class: 'fv-tip-m', text: `Averaged over ${r.n} presets, as a share of the best race's DPS on each.` }));
           const segEl = what === 'seg' ? row.querySelector(`.sg[data-zone="${part}"]`) : null;
           const capEl = row.querySelector(`.fv-rsub [data-zone="${zone}"]`);
@@ -1441,7 +1472,7 @@ export function startReport(dash) {
           const at = (node.closest('.fv-rsub') ? node : segEl || node).getBoundingClientRect();
           showTip(card, Math.max(8, at.left - cr.left), (node.closest('.fv-rsub') ? at.bottom : rw.bottom) - cr.top + 4, title,
             [el('div', { class: 'fv-tip-racial' }, part === 'base' ? el('i', { style: 'background:var(--cds-chart-muted)' }) : partIco(part, 'fv-ico'),
-              el('span', {}, el('b', { text: name }), info ? el('span', { text: info.text }) : null)), ...sub],
+              el('span', {}, el('b', { text: name }), text ? el('span', { text }) : null)), ...sub],
             { ...opts, hl: [row, segEl, capEl] });
           return;
         }
