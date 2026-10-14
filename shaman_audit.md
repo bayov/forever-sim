@@ -181,7 +181,7 @@ Restoration
 - [x] 8.40 Improved Reincarnation
 - [x] 8.41 Ancestral Healing (not implemented)
 - [x] 8.42 Healing Focus (not implemented)
-- [ ] 8.43 Water Shield
+- [x] 8.43 Water Shield
 - [ ] 8.44 Tidal Mastery
 - [ ] 8.45 Restorative Totems
 - [ ] 8.46 Mana Tide Totem
@@ -1057,7 +1057,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The user OK'd it (2026-10-11): "sg".
 - The sim (`water_shield.go`): a Restoration talent (level 20). It's free, has a 1.5 sec GCD and no cooldown, and lasts 10 min with 3 globes. Casting it, or Lightning Shield, replaces the shield we have, so a recast fills it back to 3.
   - A globe gives 2% of our max mana. We spend one when an enemy lands a direct hit on us (the same hits as Lightning Shield, 7.15) or when one of our heals crits, at most one every 3.5 sec. Healing Stream's crits don't spend one, because it heals over time (5.7). At level 60 only the raid damage hits option (6.5) feeds it.
-  - No rotation casts it. The Level 60 + Water Shield talent preset takes it, but it gives nothing in the Level 60 encounter, where nothing hits us.
+  - No rotation casts it. The Level 60 + Water Shield talent preset takes it, but it gives nothing in the Level 60 encounter, where nothing hits us. (Rechecked 2026-10-14 in 8.43: the `magma` and `mana_tide` enhancement rotations now cast it before the pull and when it's down below 50% mana.)
 - Client 70338 (wago.tools 408510, 408511): no mana cost, a 1500 ms GCD and no cooldown, 10 min, 3 charges, a 3500 ms proc cooldown and the Lightning Shield proc flags plus our heals (0x262a8). Each charge triggers 408511, which restores 2% of max mana. The client has no mana over time part, which SoD's Water Shield rune had. The tooltip: "When a spell, melee, or ranged attack hits the caster or when one of the caster's healing spells gets a critical result, 2% of maximum mana is restored to the caster, expending one water globe."
 - Beta: our character doesn't have it. Another shaman (level 25) used it in WoWCombatLog-101026_150733.txt:
   - 18 globes gave 2% of max mana, rounded up or down: 24 or 25 at 1210 max mana (24.2), 26 at 1300, 27 or 28 at 1390 (27.8). On average that's the sim's exact 2%.
@@ -1620,6 +1620,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16181, curve 85317): a 23, 47 or 70% chance that taking damage doesn't push back a heal (aura 108, pushback) for Healing Wave, Lesser Healing Wave and Chain Heal (mask 0x1c0) plus one third-word bit.
 - The sim: nothing reads it. The sim has none of those spells, though it has the pushback rule since 8.10. Both Restoration presets take 3/3.
 - No beta build had it.
+
+### 8.43 Water Shield
+
+- The user OK'd it (2026-10-14): "sg". The spell was checked in 7.16.
+- The sim (`water_shield.go`): without the talent the spell isn't registered. Level 60 + Water Shield, Level 60 + Mana Tide, Elemental Level 60 + Mana Tide and both Restoration presets take it. The `magma` and `mana_tide` enhancement rotations cast it before the pull and when it's down below 50% mana. At Level 60 only the raid damage hits option (6.5) spends globes, and no preset sets it.
+- Client: the vendored tree has it as a 1 rank Restoration talent teaching 408510. 70338's 408510 and 408511 match the sim (7.16).
+- Beta: another level 25 shaman's globes in 7.16. Our character never had it.
+- No sim change and no new test. `mana_returns_test.go` TestOrcShamanWaterShieldRecast and the other 7.16 tests cover it. Fixed 7.16's line that said no rotation casts it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
