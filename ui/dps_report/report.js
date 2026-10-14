@@ -1292,18 +1292,22 @@ export function startReport(dash) {
 
   // Each racial's caption sits under its piece of the bar, starting where the piece starts. When a caption would run
   // into the one before it, we move it down to the first line where it fits, so short pieces side by side still get
-  // readable captions. A caption that would run past the right edge moves left until it fits.
+  // readable captions. A caption that would run past the right edge of the card ends at the right edge instead.
+  //
+  // We place captions in percent, or against the right edge, not in pixels. So they stay under their piece when the
+  // card changes width, or when the web font loads after we measured and the text gets wider.
   const layoutCaps = (root) => {
     for (const cap of root.querySelectorAll('.fv-rcap')) {
       const W = cap.clientWidth, spans = [...cap.children];
       if (!W || !spans.length) continue;
       const lineH = spans[0].offsetHeight + 2, lanes = [];
       for (const sp of spans) {
-        const w = sp.offsetWidth, want = Math.max(0, Math.min((W * +sp.dataset.at) / 100, W - w));
-        let lane = lanes.findIndex((end) => end + 10 <= want);
+        const w = sp.offsetWidth, want = (W * +sp.dataset.at) / 100, clamp = want + w > W;
+        const from = clamp ? Math.max(0, W - w) : want;
+        let lane = lanes.findIndex((end) => end + 10 <= from);
         if (lane < 0) lane = lanes.push(0) - 1;
-        lanes[lane] = want + w;
-        Object.assign(sp.style, { left: `${want}px`, top: `${lane * lineH}px` });
+        lanes[lane] = from + w;
+        Object.assign(sp.style, { left: clamp ? 'auto' : `${sp.dataset.at}%`, right: clamp ? '0' : 'auto', top: `${lane * lineH}px` });
       }
       cap.style.height = `${lanes.length * lineH}px`;
     }
@@ -1448,6 +1452,8 @@ export function startReport(dash) {
       host.dataset.capWatch = '1';
       let w = 0;
       new ResizeObserver(() => { if (host.clientWidth !== w) { w = host.clientWidth; layoutCaps(host); } }).observe(host);
+      document.fonts?.ready.then(() => layoutCaps(host));
+      document.fonts?.addEventListener('loadingdone', () => layoutCaps(host));
     }
   };
 
