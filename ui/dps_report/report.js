@@ -1000,7 +1000,7 @@ export function startReport(dash) {
     // Each race's column, then a column for each of its advantages that any preset shown has.
     const cols = RACES.flatMap((rc) => [{ key: rc, race: rc, tag: null }, ...ADV.map((v) => races.filter((r) => r.race === rc && r.variant === v && shown.has(r.build))).filter((rs) => rs.length)
       .map((rs) => ({ key: rs[0].key, race: rc, tag: groupTag(rs), variant: rs[0].variant }))]);
-    const grid = el('div', { class: 'fv-heat', style: `grid-template-columns: minmax(6.5rem, 8.5rem) repeat(${cols.length}, minmax(2.9rem, 1fr))` });
+    const grid = el('div', { class: 'fv-heat', style: `grid-template-columns: max-content repeat(${cols.length}, minmax(2.9rem, 1fr))` });
     grid.append(el('div', { class: 'hh' }));
     const RI = new Map(races.map((r) => [r.race, r.raceIcon]));
     for (const c of cols) {
@@ -1255,7 +1255,7 @@ export function startReport(dash) {
       && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
     return { segs: out.filter((sg) => sg.r), idle };
   };
-  const legend = (host, kinds) => host.replaceChildren(...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'The race without its racials') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
 
   // ---------- races: best races ----------
   // Every race, and each advantage as its own entry, ranked over the presets in the filter. On one preset a bar is
@@ -1356,8 +1356,8 @@ export function startReport(dash) {
       take.replaceChildren(el('b', { text: one.label }), ': ', el('b', { text: who(lead) }), ` leads with ${f1(lead.dps)} DPS`,
         ...(rows.length > 1 ? ['. ', who(rows[1]), ` is ${f2(100 * (1 - rows[1].dps / lead.dps))}% behind, and `, who(last), ` is last at −${f2(100 * (1 - last.dps / lead.dps))}%.`] : ['.']));
     } else take.replaceChildren();
-    axis.textContent = one ? `Bars start at ${f0(lo)} DPS.` : `A full bar is 100%: the best race on every preset. Bars start at ${f1(lo)}%.`;
-    legend($('#rs-legend'), kinds);
+    axis.textContent = one ? `Bars start at ${f0(lo)} DPS, not at zero.` : `A full bar is 100%: the best race on every preset. Bars start at ${f1(lo)}%, not at zero.`;
+    legend($('#rs-legend'), kinds, true);
   };
 
   // ---------- races: strongest racials ----------

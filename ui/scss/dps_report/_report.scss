@@ -35,6 +35,8 @@
 	--color-panel: #{$panel-bg-2};
 	--color-border-line: var(--line-color);
 	--color-ok: #{$success};
+	// The neutral chart colour: a race's base stats in its bar, the heatmap's gaps, and any mark with no colour of its own.
+	--cds-chart-muted: #5d6676;
 	--color-bad: #{$damage-dps};
 	--cds-font-size-caption: 0.8rem;
 	--cds-font-size-body: 0.9rem;
@@ -922,9 +924,15 @@ ol.fv-list li::marker {
 	gap: 0.35rem;
 	align-items: center;
 	z-index: 1;
-	max-width: 8.5rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+// On a phone the sticky name column would take too much of the screen, so a long name is cut short there.
+@media (max-width: 46rem) {
+	.fv-heat .hl {
+		max-width: 11rem;
+	}
 }
 
 .fv-heat .hl > .fv-ico {
@@ -1962,12 +1970,11 @@ ol.fv-list li::marker {
 
 // A racial's icon in the bar captions, ringed in its kind's colour.
 .fv-rsub .fv-pico {
-	width: 0.95rem;
-	height: 0.95rem;
-	border-radius: 3px;
-	box-shadow: 0 0 0 1.5px var(--ring);
-	vertical-align: -0.2rem;
-	margin-right: 0.15rem;
+	width: 1.35rem;
+	height: 1.35rem;
+	border-radius: 4px;
+	box-shadow: 0 0 0 2px var(--ring);
+	margin: 0.15rem 0.2rem 0.15rem 0.1rem;
 }
 
 #racial-rank .nm small .fv-ico {
@@ -2173,7 +2180,6 @@ ol.fv-list li::marker {
 	height: 0.75rem;
 	box-sizing: border-box;
 	border-right: 2px solid var(--color-panel);
-	cursor: pointer;
 }
 
 .fv-rtrack .sg:first-child {
