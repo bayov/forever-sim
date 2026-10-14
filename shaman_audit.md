@@ -178,7 +178,7 @@ Restoration
 - [x] 8.37 Mindfulness
 - [x] 8.38 Natural Grace
 - [x] 8.39 Tidal Focus
-- [ ] 8.40 Improved Reincarnation
+- [x] 8.40 Improved Reincarnation
 - [ ] 8.41 Ancestral Healing (not implemented)
 - [ ] 8.42 Healing Focus (not implemented)
 - [ ] 8.43 Water Shield
@@ -1598,6 +1598,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16179, curves 85315, 109096 and 109095): -1 to -5% cost (aura 108, misc 14) on mask 0x1c0 (Healing Wave, Lesser Healing Wave and Chain Heal) plus one third-word bit, +1 to 5% melee hit (aura 54) and +1 to 5% spell hit (aura 55). That matches.
 - Beta: no build had it.
 - No sim change and no new test. `miss_test.go` TestOrcShamanMissChance wants 5 melee hit at 5/5 and the miss against the boss, and TestOrcShamanSpellMissChance 12% spell miss against the boss and the 1% floor at our level. The cost part has no spell to test.
+
+### 8.40 Improved Reincarnation
+
+- The user OK'd it (2026-10-14): "sg". Checked first in 6.6.
+- The sim (`talents.go`): 2% more max health a point, Stamina's part included. The shorter Reincarnation cooldown and the extra health and mana on a Reincarnation never come up in a fight. Tank Healing has 2/2 and Level 60 + Mana Tide 1/2, the other presets none.
+- Client 70338 (wago.tools 16184, curve 85310, aura 133): 2 and 4%. That matches.
+- Beta: no build had it.
+- No sim change and no new test. `base_stats_test.go` TestOrcShamanHealthTalents (6.6) wants 665 x 1.04 health at level 30 with 2/2, and 715 x 1.04 with Toughness 5/5 too.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
