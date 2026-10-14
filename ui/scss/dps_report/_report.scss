@@ -3678,3 +3678,10 @@ ol.fv-list li::marker {
 	flex-wrap: nowrap;
 	flex-shrink: 0;
 }
+
+// The spec chip's range of effects, after its name.
+.fv-asm-spec .fv-asm-eff {
+	margin-left: 0.3rem;
+	font-size: var(--cds-font-size-caption);
+	font-variant-numeric: tabular-nums;
+}

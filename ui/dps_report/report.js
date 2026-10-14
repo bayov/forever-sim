@@ -2576,8 +2576,8 @@ export function startReport(dash) {
   const asmImpact = (a) => (a.status === 'live' ? d3.max(arr(a.sens), (x) => Math.abs(+x.pct)) || 0 : -1);
   const asmSize = (v) => (v >= 4 ? ['big', 'Big'] : v >= 1.5 ? ['med', 'Medium'] : v >= 0.05 ? ['small', 'Small'] : ['none', 'No effect']);
   const asmSort = (as) => [...as].sort((p, q) => asmImpact(q) - asmImpact(p) || p.order - q.order);
-  // The presets an assumption touches, by spec. A spec counts its presets on the generic boss; the vs Undead /
-  // Humanoid / Dragonkin copies of those are in its numbers but not its count.
+  // The presets an assumption touches, by spec. A spec covers all its presets, the vs Undead / Humanoid / Dragonkin
+  // copies included, so the page names the spec only.
   const asmSpecs = (a) => {
     const byId = new Map((rowsOf('builds') || []).map((b) => [b.id, b])), groups = new Map();
     for (const id of arr(a.builds)) {
@@ -2591,8 +2591,10 @@ export function startReport(dash) {
     }
     return [...groups.values()].map((g) => ({ ...g, n: g.names.length || g.ids.length, short: SPEC_SHORT[g.spec] || g.spec }));
   };
-  const asmChip = (g) => el('span', { class: 'fv-asm-spec', title: `${g.cls} · ${g.spec}: ${(g.names.length ? g.names : g.ids.map(bName)).join(', ')}${g.ids.length > g.names.length && g.names.length ? ' (and their vs-encounter versions)' : ''}` },
-    ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short, g.n > 1 ? el('small', { text: ` ×${g.n}` }) : null);
+  // A spec chip covers every preset of that spec, so it shows no preset count. Its number is how far the other
+  // settings move that spec at 180 s, from the most it loses to the most it gains.
+  const asmChip = (a) => (g) => el('span', { class: 'fv-asm-spec', title: `${g.cls} · ${g.spec}` }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short,
+    a.status === 'live' ? asmRange(arr(a.sens).filter((x) => g.ids.includes(x.build)).map((x) => +x.pct)) : null);
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null];
   // The ⓘ tooltip: each spec's change under every other setting (percent, and DPS under it), then what each setting
   // means and why it's a candidate. Method has every preset's number and the sources.
@@ -2601,7 +2603,7 @@ export function startReport(dash) {
     const dpsOf = (sid, ids) => arr(a.sens).filter((x) => x.setting === sid && ids.includes(x.build)).map((x) => +x.dps);
     return [
       live ? tipTable(['At 180 s', ...others.map((x) => SEG_NAME[x.id] || x.label)], asmSpecs(a).map((g) => [
-        el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short, g.n > 1 ? el('small', { text: ` ×${g.n}` }) : null),
+        el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short),
         ...others.map((x) => el('span', { class: 'fv-asm-tcell' }, asmRange(asmPcts(a, x.id, g.ids)) || '–', el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5))))])) : null,
       el('div', { class: 'fv-asm-tsets' }, ...arr(a.settings).map((x) => el('div', { class: 'fv-tip-set' },
         el('b', { text: x.label }), el('span', { class: 'fv-tip-m', text: ` ${SEG_NAME[x.id] || ''}` }), ...asmMarks(a, x),
@@ -2642,7 +2644,7 @@ export function startReport(dash) {
             el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Moves a preset by up to ${f1(imp)}% at 180 s`, text: szText }) : null, info),
             el('p', { class: 'fv-asm-short', text: a.short || a.description }),
             !live ? el('small', { class: 'fv-asm-aff', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' })
-              : specs.length ? el('div', { class: 'fv-asm-aff' }, el('span', { class: 'k', text: 'Affects' }), ...specs.map(asmChip)) : null),
+              : specs.length ? el('div', { class: 'fv-asm-aff' }, el('span', { class: 'k', text: 'Affects' }), ...specs.map(asmChip(a))) : null),
           seg));
       }
       return d;
@@ -2666,15 +2668,15 @@ export function startReport(dash) {
     if (!waitOr(host, ['assumptions', 'builds'])) return;
     host.replaceChildren(...d3.groups(rowsOf('assumptions'), (a) => a.class).flatMap(([cls, as]) => [el('h3', { text: cls === 'All' ? 'All classes' : cls }),
       el('ul', { class: 'fv-list' }, ...asmSort(as).map((a) => {
-        // The full text the panel leaves out: the description, each setting's numbers and reason, its effect on every
-        // preset, and the source.
+        // The full text the panel leaves out: the description, each setting's numbers and reason, its effect on each
+        // spec (the range over its presets), and the source.
         const sens = arr(a.sens);
         return el('li', {}, el('b', { text: a.label }),
           el('div', { class: 'fv-asm-mdesc', text: `${a.description}${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : ''}` }),
           el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => {
             const xs = sens.filter((y) => y.setting === x.id);
             return el('small', {}, el('b', { text: x.label }), ` (${[SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? 'the presets' : null, x.id === a.expectedSetting && x.id !== 'expected' ? 'expected' : null].filter(Boolean).join(', ')}): ${x.value ? x.value + '. ' : ''}${x.rationale}`,
-              xs.length ? ` At 180 s: ${xs.map((y) => `${bName(y.build)} ${sgn(+y.pct, f1)}%`).join(', ')}.` : '');
+              ...(xs.length ? [' At 180 s: ', ...asmSpecs(a).flatMap((g, i) => [i ? ', ' : '', `${g.short} `, asmRange(asmPcts(a, x.id, g.ids)) || '–']), '.'] : []));
           })),
           a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
       }))]));
