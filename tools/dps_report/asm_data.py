@@ -58,7 +58,7 @@ def build(dump, builds=None):
                                 'dps': round(by_secs[180][0] - base[0], 1)})
     arows = []
     for i, a in enumerate(A):
-        arows.append({'order': i, 'class': a['cls'], 'key': a['key'], 'label': a['label'], 'short': a.get('short') or a['desc'], 'description': a['desc'], 'builds': a['builds'],
+        arows.append({'order': i, 'class': a['cls'], 'key': a['key'], 'label': a['label'], 'short': a.get('short') or a['desc'], 'description': a['desc'], 'source': a.get('src', ''), 'builds': a['builds'],
                       'settings': [{k: s[k] for k in ('id', 'label', 'value', 'rationale')} for s in a['settings']],
                       'defaultSetting': a['default'], 'expectedSetting': a['expected'], 'status': a.get('status', 'live'),
                       'sens': sorted(sens.get(a['key'], []), key=lambda x: (x['setting'], x['build']))})

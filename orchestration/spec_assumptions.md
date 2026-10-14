@@ -12,6 +12,7 @@ Sources, all read-only:
 
 ## Conventions
 
+- **Page wording:** the report shows each assumption in plain words (a question-style label, one line on what's unknown, setting labels that say what each choice means). That wording lives in `tools/dps_report/assumptions_def.py` (rewritten 2026-10-14); the labels in this file are the inventory's working names, matched by key.
 - **Sim now** marks the setting the shipped presets use. Use it as the dashboard's default, so the default ranking matches the presets. "Expected" is our best guess for release; where it differs from Sim now, the entry says why.
 - **Sensitivity:**
   - **PR**: measured by the class session and quoted from its PR, wiki or notes. The gear set is named when it isn't the final 1b set.
@@ -684,7 +685,6 @@ Tiger's Fury isn't in Forever (Blizzard's Druid deep dive; nothing in client 703
 No assumptions of its own. The rogue's scenarios are the shared ones:
 - **`flat_bonus_inside_pct`:** Backstab, Ambush and Mutilate. Est. −3.7% Combat Daggers, about −4% Seal Fate Daggers, +1.7% Mutilate and under 0.5% Subtlety at its Low.
 - **`wf_totem_offhand`:** every build dual wields in the Windfury Totem group. Est. −2 to −3% at its Low.
-- **`oil_proc_damage`:** all four Enhancement builds use Shadow Oil. −0.07 to −0.08% at its Low.
 
 ---
 

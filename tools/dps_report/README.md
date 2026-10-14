@@ -127,8 +127,10 @@ Then update `meta.published` and `meta.verify`, and any `summary` / `caveats` / 
 class PR bodies (bayov/forever-sim #1 to #9). An encounter preset (one with `encounter` and `baseBuild`) also has an
 `advantage` line. It says in a sentence or two why the preset beats its normal build on that creature type of boss, like
 Murder's 4% against Humanoids and Giants, and an `advantageShort` of 25 words at most that the page shows on hover over
-the preset's "vs Humanoid" badge (the long line stays in the data). Each assumption in `assumptions_def.py` likewise has a
-`short` line for its tooltip next to the `desc` the Method tab shows.
+the preset's "vs Humanoid" badge (the long line stays in the data). Each assumption in `assumptions_def.py` is written for a
+player who hasn't read our notes: a question-style `label` (8 words at most), a `short` line (20 words at most) the
+Ranking panel shows under it, setting labels that say what each choice means with a `rationale` of 15 words at most, and
+a `desc` of 2 to 4 sentences plus its `src` (written to the data as `source`) for the Method tab.
 
 ## Sim steps
 
