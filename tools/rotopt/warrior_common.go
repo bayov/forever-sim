@@ -189,7 +189,11 @@ func potionLine(k Knobs, hold func(*proto.ActionID, bool) value) *proto.APLListI
 		if k["potionPull"] == 1 {
 			when = or(le(warriorCurrentTime(), seconds(3)), when)
 		}
-		return cast(potion, when, "Mighty Rage Potion at the pull, the last one held for the end of the fight when the wait costs no use.")
+		notes := "Mighty Rage Potion, the last one held for the end of the fight when the wait costs no use."
+		if k["potionPull"] == 1 {
+			notes = "Mighty Rage Potion at the pull, the last one held for the end of the fight when the wait costs no use."
+		}
+		return cast(potion, when, notes)
 	}
 	return cast(potion, hold(potion, k["potionHoldForDw"] == 1), "Mighty Rage Potion with Death Wish.")
 }
