@@ -169,7 +169,7 @@ Enhancement
 - [x] 8.31 Mental Quickness
 - [x] 8.32 Improved Stormstrike
 - [x] 8.33 Maelstrom Weapon
-- [ ] 8.34 Rage of the Farseer
+- [x] 8.34 Rage of the Farseer
 
 Restoration
 
@@ -1551,6 +1551,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Also corrected: 7.13 said Maelstrom Weapon works on Chain Lightning. It doesn't, in the sim or the client.
 - No sim change. Already tested in `talent_procs_test.go` (what triggers it, Lightning Bolt uses the stacks and Chain Lightning doesn't), `mana_costs_test.go` (cost and cast time at 5/5 with Convection), `gcd_test.go`, `swing_timer_test.go` and `reaction_time_test.go`. The new `maelstrom_weapon_test.go` TestOrcShamanMaelstromWeaponRanks sets 1 to 5 stacks at every rank and wants 4% a point a stack off the bolt's cast time and cost, and a stack gone after 30 sec. 5% a point on either, or 31 sec, fails it.
 
+### 8.34 Rage of the Farseer
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): an instant, off-GCD cooldown that gives +30% attack speed for 25 sec and no cast speed (the 2026-09-24 build took that away). The 3 min cooldown is its own. The haste multiplies with Flurry and the others, and the swing in progress rescales (4.2). Both Level 60 enhancement presets take it. The rotations line it up with the 990015 trinket, and Blood Fury and Berserking go with it.
+- Client 70338 (wago.tools 425336): 25 sec, a 180000 ms cooldown with no category, GCD 0. Effect 1 is +30% attack speed (aura 342, melee and ranged). Effect 2 is aura 61 at 30, which makes the model 30% bigger and is only cosmetic. Build 70009's tooltip says "Instant, 3 min cooldown" too, where the older one showed no cooldown. That matches.
+- Beta: no data, it's a row 7 talent and our character is level 30. It stays in the notes.md line for the row 6 and 7 talents.
+- No sim change. The code comment now cites the 70338 client and the tooltip for the 3 min. Already tested in `rage_of_the_farseer_test.go` (1.3x attack speed, no cast speed, 25 sec), `haste_test.go`, `gcd_test.go` and `reaction_time_test.go`. TestOrcShamanRageOfTheFarseer now also wants it ready again exactly 3 min after the cast. A 2 min cooldown fails it.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
@@ -1657,7 +1665,7 @@ What each talent does in the sim today (`talents.go` unless noted). Values are p
 
 ### Source checks against the beta client talent texts (`tools/forever_talents/client/shaman.json`)
 
-- Rage of the Farseer: build 70009 says "Instant; 3 min cooldown". That settles the 3 min the sim guessed. The code comment and the notes.md Need to Verify line can be updated at 8.34.
+- Rage of the Farseer: build 70009 says "Instant; 3 min cooldown". That settles the 3 min the sim guessed. The code comment was updated in 8.34. The notes.md line that lists the row 6 and 7 talents for a later check stays.
 - Shamanistic Focus: "Reduces the mana cost of your Shock and Lightning Shield spells by 45%." Lightning Shield is in, the sim is right.
 - Mental Dexterity: 33 / 67 / 100% of Intellect, the sim is right (the wiki's 99% was an older tree).
 - Stormstrike: "Instantly strike for normal weapon damage", so not normalized, the sim is right.

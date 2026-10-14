@@ -575,8 +575,8 @@ func (shaman *Shaman) registerRageOfTheFarseerCD() {
 
 	actionID := core.ActionID{SpellID: 425336}
 	multiplier := 1.30
-	// The tooltip shows no cooldown, but Blizzard's Mage and Shaman deep dive (2026-10-07) and
-	// the client (1.60.1.70291) both give 3 minutes.
+	// Blizzard's Mage and Shaman deep dive (2026-10-07), the client (1.60.1.70338) and the
+	// tooltip since build 70009 all give 3 minutes.
 	cd := time.Minute * 3
 
 	buffAura := shaman.RegisterAura(core.Aura{
