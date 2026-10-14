@@ -8,12 +8,11 @@ import (
 )
 
 // TestOrcShamanNaturesSwiftness checks that Nature's Swiftness makes one Lightning Bolt instant
-// and that its cooldown starts when we press it (shaman_audit.md 8.48).
+// and that its cooldown starts when the buff is used up (shaman_audit.md 8.48).
 //
 // The next Nature spell with a cast time is instant and uses up the buff. The client (70338)
-// doesn't flag the 3 min cooldown to start when the buff ends, so it starts at the press. We
-// press it at 1 sec on a level 60 shaman, cast Lightning Bolts at 3 and 7 sec and want it ready at
-// 181 sec, not 183.
+// flags the 3 min cooldown to start when the buff ends. We press it at 1 sec on a level 60
+// shaman, cast Lightning Bolts at 3 and 7 sec and want it ready at 183 sec, not 181.
 func TestOrcShamanNaturesSwiftness(t *testing.T) {
 	// Nature's Swiftness is the fourteenth Restoration talent.
 	sim, enh := newShamanSim(newOrcShaman(60, "--00000000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 200)
@@ -45,14 +44,19 @@ func TestOrcShamanNaturesSwiftness(t *testing.T) {
 		}
 		castNow(t, sim, enh, lb)
 	})
-	at(sim, 180.9, func(sim *core.Simulation) {
+	at(sim, 2, func(sim *core.Simulation) {
 		if ns.IsReady(sim) {
-			t.Error("Nature's Swiftness is ready before 3 min")
+			t.Error("Nature's Swiftness is ready again while its buff is up")
 		}
 	})
-	at(sim, 181.1, func(sim *core.Simulation) {
+	at(sim, 182.9, func(sim *core.Simulation) {
+		if ns.IsReady(sim) {
+			t.Error("Nature's Swiftness is ready before 3 min after the buff was used")
+		}
+	})
+	at(sim, 183.1, func(sim *core.Simulation) {
 		if !ns.IsReady(sim) {
-			t.Errorf("Nature's Swiftness isn't ready 3 min after we pressed it (ready in %s)", ns.CD.TimeToReady(sim))
+			t.Errorf("Nature's Swiftness isn't ready 3 min after the buff was used (ready in %s)", ns.CD.TimeToReady(sim))
 		}
 	})
 	runSim(sim)

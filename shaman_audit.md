@@ -1664,12 +1664,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 8.48 Nature's Swiftness
 
-- The user OK'd the change (2026-10-14): "sg".
+- The user OK'd the change (2026-10-14): "sg". It was reverted the same day (below).
 - The sim (`talents.go`): an off-GCD cooldown. The next Nature spell we cast with a cast time is instant (Lightning Bolt or Chain Lightning, the sim has no shaman heals), and that cast uses up the buff. Both Restoration presets take it, no DPS preset.
-- Client 70338 (wago.tools 16188): -100% cast time (aura 108, misc 10), 1 charge, a 180000 ms cooldown, GCD 0, no time limit. The mask is Lightning Bolt, Chain Lightning, Healing Wave, Lesser Healing Wave, Chain Heal, Healing Rain and Ghost Wolf, the same spells in the sim as "Nature school with a cast time". Stealth carries the attribute flag for a cooldown that starts when the buff ends (0x10000000 in the first word), and Nature's Swiftness doesn't, nor do Presence of Mind or the druid's Nature's Swiftness. So the 3 min starts at the press. That's read from attribute bits, not a direct statement.
+- Client 70338 (wago.tools 16188): -100% cast time (aura 108, misc 10), 1 charge, a 180000 ms cooldown, GCD 0, no time limit. The mask is Lightning Bolt, Chain Lightning, Healing Wave, Lesser Healing Wave, Chain Heal, Healing Rain and Ghost Wolf, the same spells in the sim as "Nature school with a cast time".
+- The cooldown: Attributes_0 is 0x02050000 on 16188 and 17116. 0x02000000 is the flag for "can't be used while active, and the cooldown starts when the effect ends". Presence of Mind (12043), Inner Focus (14751) and Divine Favor (20216) have it too, and Ice Block and Cold Snap don't. So the 3 min starts when the buff is used up.
+- The first pass misread the bit. It took 0x10000000 for that flag because Stealth has it, but 0x10000000 is "can't be used in combat". So 817393490 started the cooldown at the press. The Forever mechanics auditor caught it, and we checked the table again and restored the old sim behavior.
 - Beta: no build had it.
-- Changed: the cooldown starts when we press it. The sim used to start it again when the buff was used. The full suite passes, no golden changed.
-- The new `natures_swiftness_test.go` TestOrcShamanNaturesSwiftness presses it at 1 sec at level 60. The Lightning Bolt at 3 sec is instant and uses up the buff, the one at 7 sec takes its full cast, and it's ready at 181 sec. Starting the cooldown again on the bolt fails it (ready at 183).
+- The sim now: the cooldown we start at the press only blocks a second press while the buff is up, and the cast that uses up the buff starts the 3 min again. The full suite passes, no golden changed.
+- `natures_swiftness_test.go` TestOrcShamanNaturesSwiftness presses it at 1 sec at level 60. It isn't ready at 2 sec, the Lightning Bolt at 3 sec is instant and uses up the buff, the one at 7 sec takes its full cast, and it's ready at 183 sec, not 181.
 
 ### 8.49 Purification
 
