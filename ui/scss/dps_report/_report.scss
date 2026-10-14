@@ -1959,33 +1959,32 @@ ol.fv-list li::marker {
 	gap: var(--cds-gap-xs);
 }
 
-.fv-ro-tiles {
+// The Races cards' scope filter: faction and role, then the class icons, then the spec dropdown with the
+// advantage switches.
+.fv-scope {
 	display: grid;
 	gap: var(--cds-gap-sm);
-	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.fv-ro-tiles .fv-tile .v {
-	font-size: 1rem;
-	display: flex;
-	gap: 0.3rem;
-	align-items: center;
-	min-width: 0;
+.fv-scope-spec {
+	min-width: min(14rem, 100%);
 }
 
-.fv-ro-tiles .fv-tile {
-	padding-inline: 0.55rem;
+// Spec names are short, so the menu fits them on one line.
+.fv-scope-spec .fv-isel-menu {
+	width: max-content;
+
+	.fv-isel-text {
+		white-space: nowrap;
+	}
 }
 
-.fv-ro-tiles .fv-tile .v span {
-	overflow-wrap: anywhere;
-	line-height: 1.1;
+.fv-pick-option[hidden] {
+	display: none;
 }
 
-.fv-ro-tiles .fv-tile .v .fv-ico {
-	width: 1.15rem;
-	height: 1.15rem;
-	border-radius: 50%;
+#racial-rank .fv-orow .end b.neg {
+	color: var(--color-bad);
 }
 
 .fv-orow,
@@ -3684,12 +3683,8 @@ ol.fv-list li::marker {
 	line-height: 1.5;
 }
 
-.fv-ro-tiles .fv-tile .fv-rtag {
-	justify-self: start;
-}
-
 @media (min-width: 46rem) {
-	#race-overview .fv-orow {
+	#racial-rank .fv-orow {
 		grid-template-columns: 1.6rem minmax(9rem, 16rem) minmax(0, 1fr) 6.5rem;
 	}
 }
@@ -3701,20 +3696,6 @@ ol.fv-list li::marker {
 	flex-shrink: 0;
 }
 
-// On a phone the three tiles are narrow, so a long race name like Windshaper drops its icon instead of breaking.
-@media (max-width: 30rem) {
-	.fv-ro-tiles .fv-tile .v {
-		font-size: 0.92rem;
-	}
-
-	.fv-ro-tiles .fv-tile .v .fv-ico {
-		display: none;
-	}
-
-	.fv-ro-tiles .fv-tile .v span {
-		overflow-wrap: normal;
-	}
-}
 
 // The spec chip's range of effects, after its name.
 .fv-asm-spec .fv-asm-eff {

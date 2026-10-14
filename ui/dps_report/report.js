@@ -146,7 +146,7 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsBuild: null, setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -617,12 +617,14 @@ export function startReport(dash) {
   // ---------- shared pieces ----------
   // The class filter looks like the sim UI's race picker: a label that says what we picked, then a row of class icons.
   // The picked class is lit with a gold ring and the others are dimmed. Clicking the picked class again shows all.
-  const classChips = (host, key) => {
+  //
+  // avail, when given, is the classes to offer. The others are hidden.
+  const classChips = (host, key, avail) => {
     const m = iconMap();
     const name = st[key] === 'All' ? 'All classes' : st[key];
     if (host.childElementCount && (host.dataset.icons === '1' || !m)) {
       host.querySelector('.fv-pick-value').textContent = name;
-      host.querySelectorAll('button').forEach((b) => { b.setAttribute('aria-pressed', String(b.dataset.c === st[key])); b.classList.toggle('active', b.dataset.c === st[key]); });
+      host.querySelectorAll('button').forEach((b) => { b.setAttribute('aria-pressed', String(b.dataset.c === st[key])); b.classList.toggle('active', b.dataset.c === st[key]); b.hidden = !!avail && !avail.has(b.dataset.c); });
       return;
     }
     host.dataset.icons = m ? '1' : '0';
@@ -632,6 +634,7 @@ export function startReport(dash) {
         const u = m && m.get('classicon_' + c.toLowerCase());
         const b = el('button', { type: 'button', class: 'fv-pick-option' + (c === st[key] ? ' active' : ''), 'data-c': c, 'aria-label': c, 'aria-pressed': String(c === st[key]), 'data-tt': 'c:' + c, style: u ? `background-image:url("${u}")` : `background:${ccol(c)}` });
         b.addEventListener('click', () => { st[key] = st[key] === c ? 'All' : c; persist(); render(); });
+        b.hidden = !!avail && !avail.has(c);
         return b;
       })));
   };
@@ -1166,186 +1169,268 @@ export function startReport(dash) {
   };
   const raceName = (r, tag = r.tag) => el('span', { class: 'fv-rname' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), raceTag(r, tag));
   const safeTop = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) fail(host); } };
-  // a racial's colour follows what kind it is: a passive, a cooldown, or the target type; base stats and the weapon swap are neutral
-  const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, chastise: 1, starshards: 1, darksacrifice: 1, target: 2 };
+  // a racial's colour follows what kind it is: a passive, a cooldown, or a boss type; base stats and the weapon swap are neutral
+  const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, chastise: 1, starshards: 1, darksacrifice: 1, target: 2, beast_troll: 2, beast_dwarf: 2, insight: 2 };
   const partCol = (p) => (p === 'base' ? 'var(--cds-chart-muted)' : p === 'swap' ? 'var(--color-fg-muted)' : dash.colors[PART_KIND[p] ?? 0]);
   const COND = { beast: /^beast/, elemental: /^insight$/ };
-  const KIND_NAME = ['Passive racial', 'Racial cooldown', 'Target type'];
+  const KIND_NAME = ['Passive racial', 'Racial cooldown', 'Boss type racial'];
   const noteRow = (kind, key) => (rowsOf('race_notes') || []).find((n) => n.kind === kind && n.key === key);
+  const shortLabel = (s) => String(s).replace('Specialization', 'Spec.');
+  const pct = (v) => `${v > 99.995 ? '100' : f1(Math.min(v, 99.9))}%`;
+  const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+  // Shows one preset in the Best races card: the class picked, the spec picked, and the card in view.
   const pickRaceSpec = (id) => {
-    st.rsBuild = id; persist(); hideTip();
+    const b = (rowsOf('builds') || []).find((x) => x.id === id);
+    Object.assign(st, { rsRole: 'All', rsCls: b ? b.class : 'All', rsSpec: id });
+    persist(); hideTip();
     if (st.tab !== 'races') showTab('races'); else render();
-    requestAnimationFrame(() => $('#race-spec-card').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }));
+    requestAnimationFrame(() => $('#race-rank-card').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }));
   };
-  // ---------- races: overview ----------
-  const drawRaceOverview = () => {
-    const host = $('#race-overview'), tiles = $('#ro-tiles'), take = $('#ro-take');
+  // Pointing at a row shows its tooltip, and on a phone (no pointer) a tap does.
+  const hoverTip = (row, tip) => {
+    row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
+    row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
+    row.addEventListener('pointerup', (e) => {
+      if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
+      if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }
+      tip(true);
+    });
+  };
+
+  // ---------- races: the scope filter ----------
+  // Both Races cards narrow down the presets they average over with one filter: a faction, a role, a class, then
+  // one spec. Each step lists only what fits the steps before it, so a role leaves its classes and a class leaves
+  // its specs. Each card keeps its own choice, under its own prefix (rs for races, rl for racials).
+  const ROLES = [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']];
+  const scopeOf = (p) => {
+    const roleMap = roleOf(), has = new Set((rowsOf('race_variants') || []).map((r) => r.build));
+    const all = buildOrder(genB() || []).filter((b) => has.has(b.id));
+    const role = st[p + 'Role'] || 'All';
+    const inRole = all.filter((b) => role === 'All' || roleMap.get(b.id) === role);
+    const classes = CLASSES.filter((c) => inRole.some((b) => b.class === c));
+    if (!classes.includes(st[p + 'Cls'])) st[p + 'Cls'] = 'All';
+    const cls = st[p + 'Cls'];
+    const inCls = inRole.filter((b) => cls === 'All' || b.class === cls);
+    if (!inCls.some((b) => b.id === st[p + 'Spec'])) st[p + 'Spec'] = 'All';
+    const spec = st[p + 'Spec'];
+    const builds = spec === 'All' ? inCls : inCls.filter((b) => b.id === spec);
+    return { fac: st[p + 'Fac'] || 'All', role, cls, spec, classes, inCls, builds, ids: new Set(builds.map((b) => b.id)), single: builds.length === 1 ? builds[0] : null };
+  };
+  const drawScope = (p, sc) => {
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
-    seg($('#ro-fac'), 'rsFac', [['All', 'All races'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
-    seg($('#ro-role'), 'rsRole', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
-    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) { tiles.replaceChildren(); take.replaceChildren(); return; }
-    const V = rsVar('ro'), scope = st.rsFac === 'All' ? 'All' : 'Faction';
-    const rr = raceRows(V), roleMap = roleOf();
-    const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label])), bmap = new Map(rowsOf('builds').map((b) => [b.id, b]));
-    // Per entry, over the presets of a role: its DPS as a share of the best entry's on each preset, then the
-    // average of that and how often it is the best. Within a faction, the best is that faction's best.
-    const summarize = (role) => {
-      const acc = new Map();
-      for (const [build, rs] of d3.groups(rr.filter((r) => role === 'All' || roleMap.get(r.build) === role), (r) => r.build)) {
-        const pool = scope === 'All' ? rs : rs.filter((r) => r.faction === st.rsFac);
-        if (!pool.length) continue;
-        pool.forEach((r, i) => {
-          if (!acc.has(r.key)) acc.set(r.key, { key: r.key, race: r.race, faction: r.faction, raceIcon: r.raceIcon, variant: r.variant, rows: [], shares: [], ranks: [] });
-          const a = acc.get(r.key);
-          a.rows.push(r); a.shares.push({ build, share: (100 * r.dps) / pool[0].dps }); a.ranks.push(i + 1);
-        });
-      }
-      return [...acc.values()].map((a) => {
-        const byShare = [...a.shares].sort((p, q) => q.share - p.share);
-        return { ...a, tag: a.rows[0].tag ? groupTag(a.rows) : null, weapon: a.rows.find((r) => r.weapon)?.weapon, presets: a.shares.length,
-          timesBest: a.shares.filter((g) => g.share > 99.995).length, avg: d3.mean(a.shares, (g) => g.share),
-          medianRank: d3.median(a.ranks), top3: byShare.slice(0, 3) };
+    seg($(`#${p}-fac`), p + 'Fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
+    seg($(`#${p}-role`), p + 'Role', ROLES);
+    classChips($(`#${p}-cls`), p + 'Cls', new Set(sc.classes));
+    const all = sc.cls !== 'All' ? `All ${sc.cls} specs` : sc.role !== 'All' ? `All ${sc.role.toLowerCase()} specs` : 'All specs';
+    const items = [{ value: 'All', text: `${all} (${sc.inCls.length})` }];
+    for (const c of CLASSES) {
+      const bs = sc.inCls.filter((b) => b.class === c);
+      if (!bs.length) continue;
+      if (sc.cls === 'All') items.push({ header: c, color: ccol(c) });
+      for (const b of bs) items.push({ value: b.id, text: b.build, icon: () => specIco(b, '') });
+    }
+    const host = $(`#${p}-spec`);
+    host.dataset.label = 'Spec';
+    iconSelect(host, items, sc.spec, (v) => { st[p + 'Spec'] = v; persist(); hideTip(); render(); }, (it) => (it.value === 'All' ? all : `${sc.cls === 'All' ? (sc.builds[0]?.class || '') + ' · ' : ''}${it.text}`));
+  };
+
+  // An entry's bar on one preset: base stats, then each racial that works in its scenario (its variant). The entry
+  // without its weapon racial leaves that racial out. A boss type's part is named after the racial it switches on.
+  const segsOf = (row, mine) => {
+    const V = row.variant;
+    const out = [{ part: 'base', r: mine.find((q) => q.part === 'base') }];
+    for (const r of mine.filter((q) => q.scenario === 'all' && q.part !== 'base' && q.active && q !== row.dropped)) out.push({ part: r.part, r });
+    const cond = mine.find((q) => q.scenario === 'all' && !q.active && COND[V] && COND[V].test(q.part));
+    for (const r of mine.filter((q) => q.scenario === V)) out.push(r.part === 'target' && cond ? { part: cond.part, r: { ...r, label: cond.label } } : { part: r.part, r });
+    const idle = (row.dropped ? [{ ...row.dropped, note: 'left out of this entry' }] : []).concat(mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part))
+      && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
+    return { segs: out.filter((sg) => sg.r), idle };
+  };
+  const legend = (host, kinds) => host.replaceChildren(el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats'),
+    ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+
+  // ---------- races: best races ----------
+  // Every race, and each advantage as its own entry, ranked over the presets in the filter. On one preset a bar is
+  // the entry's DPS. Over several presets it's the entry's DPS as a share of the best entry's on the same preset,
+  // averaged, so a full bar is the best race on every preset. Either way the bar is split into the race's base
+  // stats and what each of its racials adds, which shows how strong each racial is.
+  const drawRaceRank = () => {
+    const host = $('#race-rank'), take = $('#rs-take'), axis = $('#rs-axis');
+    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) return;
+    const sc = scopeOf('rs');
+    drawScope('rs', sc);
+    const V = rsVar('rs'), one = sc.single;
+    const rr = raceRows(V).filter((r) => sc.ids.has(r.build) && (sc.fac === 'All' || r.faction === sc.fac));
+    if (!rr.length) {
+      host.replaceChildren(el('p', { class: 'fv-note', text: 'No race of this faction plays these presets.' }));
+      take.replaceChildren(); axis.textContent = ''; $('#rs-legend').replaceChildren();
+      return;
+    }
+    const bd = d3.group(rowsOf('race_breakdown').filter((q) => sc.ids.has(q.build)), (q) => q.build + '|' + q.race);
+    const bmap = new Map(sc.builds.map((b) => [b.id, b]));
+    // Per entry: each part's value summed over the presets (DPS on one preset, else a share of the best entry's
+    // DPS), its share of the best on each preset, and its place.
+    const acc = new Map();
+    for (const [build, rs] of d3.groups(rr, (r) => r.build)) {
+      const best = rs[0].dps, u = one ? 1 : 100 / best;
+      rs.forEach((r, i) => {
+        const { segs, idle } = segsOf(r, bd.get(build + '|' + r.race) || []);
+        if (!acc.has(r.key)) acc.set(r.key, { ...r, parts: new Map(), shares: [], ranks: [], idle });
+        const a = acc.get(r.key);
+        a.shares.push({ build, share: (100 * r.dps) / best });
+        a.ranks.push(i + 1);
+        for (const sg of segs) {
+          if (!a.parts.has(sg.part)) a.parts.set(sg.part, { part: sg.part, label: sg.r.label, sum: 0 });
+          a.parts.get(sg.part).sum += +sg.r.dps * u;
+        }
       });
-    };
-    const better = (p, q) => q.timesBest - p.timesBest || q.avg - p.avg;
+    }
+    const rows = [...acc.values()].map((a) => {
+      const n = a.shares.length;
+      const avg = d3.mean(a.shares, (g) => g.share);
+      return { ...a, n, value: one ? a.dps : avg, avg, timesBest: a.shares.filter((g) => g.share > 99.995).length, medianRank: d3.median(a.ranks),
+        segs: [...a.parts.values()].map((p) => ({ ...p, v: p.sum / n })) };
+    }).sort((p, q) => q.value - p.value);
+    for (const r of rows) { let at = 0; for (const sg of r.segs) { sg.from = at; at += sg.v; sg.to = at; } }
+    const ends = rows.flatMap((r) => r.segs.flatMap((sg) => [sg.from || sg.to, sg.to]).filter((v) => v > 0).concat(one ? [r.dps - r.se, r.dps + r.se] : [r.value]));
+    const hi = d3.max(ends), lo0 = Math.min(d3.min(ends), d3.min(rows, (r) => r.segs[0].to));
+    const lo = Math.max(0, lo0 - 0.35 * Math.max(hi - lo0, one ? 4 : 0.5));
+    const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo);
+    const fv = (v) => (one ? f1(v) : `${f2(v)}%`), fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
-    const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
-    const pct = (v) => `${v > 99.995 ? '100' : f1(Math.min(v, 99.9))}%`;
-    const bestOn = (r) => (r.timesBest ? `best on ${r.timesBest} of ${r.presets} presets` : `never the best, ${r.presets} presets`);
-    // the best race for each role: most often best, then the highest average
-    tiles.replaceChildren(...['Melee', 'Ranged', 'Caster'].map((rl) => {
-      const top = summarize(rl).sort(better)[0];
-      if (!top) return el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: `Best for ${rl.toLowerCase()}` }), el('span', { class: 'v', text: '—' }));
-      return el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: `Best for ${rl.toLowerCase()}` }),
-        el('span', { class: 'v' }, tt(raceIco(top.raceIcon), `r:${top.race}`), el('span', { text: top.race, style: `color:${fcol(top.race)}` })),
-        top.tag ? raceTag(top) : null,
-        el('span', { class: 's', text: top.timesBest ? `Best race on ${top.timesBest} of ${top.presets} ${rl.toLowerCase()} presets` : `${pct(top.avg)} of the best race's DPS` }));
-    }));
-    const rows = summarize(st.rsRole).sort((p, q) => q.avg - p.avg || q.timesBest - p.timesBest);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race plays this role in this faction.' })); take.replaceChildren(); return; }
-    // The takeaway in words: the leader, and the best race without an advantage when the leader has one.
-    const lead = rows[0], plain = rows.find((r) => !r.tag || r.variant === 'noweapon');
-    take.replaceChildren(el('b', { text: who(lead) }), ` gets the closest to the best race: ${pct(lead.avg)} of its DPS on average, and ${bestOn(lead)}.`,
-      ...(lead.tag && plain && plain !== lead ? [' Without an advantage, ', el('b', { text: who(plain) }), ` leads at ${pct(plain.avg)}.`] : []));
-    // The bars start a little below the lowest average, so the gaps between races are easy to see.
-    const lo = Math.max(0, Math.floor(d3.min(rows, (r) => r.avg)) - 1);
-    const x = (v) => `${(100 * (v - lo)) / (100 - lo)}%`;
-    const card = $('#race-overview-card');
+    const bestOn = (r) => (r.timesBest ? `best on ${r.timesBest} of ${r.n} presets` : `never the best, ${r.n} presets`);
+    const kinds = new Set();
+    const card = $('#race-rank-card');
     host.replaceChildren(...rows.map((r, i) => {
-      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : '') + (r.tag ? ' adv' : ''), 'data-tip': '1', 'aria-label': `${who(r)}: ${pct(r.avg)} of the best race's DPS, ${bestOn(r)}` },
-        tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), `r:${r.race}`),
-        el('span', { class: 'nm' }, raceName(r)),
-        el('span', { class: 'end' }, el('b', { text: pct(r.avg) }), el('small', { text: r.timesBest ? `best on ${r.timesBest} of ${r.presets}` : 'never best' })),
-        el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${x(r.avg)};background:${fcol(r.race)}` })));
-      // Pointing at a row lists the specs it is the best race for. A race that is never the best lists the three
-      // presets where it comes closest. A phone has no pointer, so there a tap shows the list.
-      const tip = (pinned) => {
+      const track = el('div', { class: 'fv-rtrack' });
+      r.segs.forEach((sg, k) => {
+        const a = Math.min(sg.from, sg.to), z = Math.max(sg.from, sg.to);
+        if (sg.part !== 'base') kinds.add(sg.part === 'swap' ? 'swap' : PART_KIND[sg.part] ?? 0);
+        const neg = sg.v < 0 && sg.part !== 'base';
+        track.append(el('span', { class: 'sg' + (neg ? ' neg' : '') + (sg.part === 'swap' ? ' swap' : '') + (k === r.segs.length - 1 ? ' last' : ''),
+          style: `left:${k === 0 ? 0 : x(a)}%;width:${Math.max(k === 0 ? 0 : 0.6, x(z) - (k === 0 ? 0 : x(a)))}%;background:${partCol(sg.part)};${neg ? 'z-index:1;' : ''}` }));
+      });
+      if (one) track.append(el('span', { class: 'wk', style: `left:${x(r.dps - r.se)}%;width:${Math.max(0.4, x(r.dps + r.se) - x(r.dps - r.se))}%` }));
+      const sub = el('div', { class: 'fv-rsub' }, ...r.segs.filter((sg) => sg.part === 'base' || Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => el('span', {}, el('i', { style: `background:${partCol(sg.part)}` }),
+        sg.part === 'base' ? `Base ${one ? f0(sg.v) : `${f1(sg.v)}%`}` : `${shortLabel(sg.label)} ${fd(sg.v)}`)),
+        ...(one ? r.idle.slice(0, 3).map((q) => el('span', {}, el('em', { text: `${shortLabel(q.label)}: ${q.note}` }))) : []));
+      const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
+        tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), one ? `r:${r.race}:${one.class}` : `r:${r.race}`, true, one?.id),
+        el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null),
+        el('span', { class: 'end' }, el('b', { text: one ? f1(r.dps) : pct(r.avg) }),
+          el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' })),
+        track, sub);
+      // The tooltip says what each racial does. Over several presets it starts with the specs the entry is the
+      // best race for, one line per class, or the three where it comes closest.
+      hoverTip(row, (pinned) => {
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
-        const order = new Map(buildOrder(rowsOf('builds')).map((b, k) => [b.id, k]));
-        const best = r.shares.filter((g) => g.share > 99.995).sort((p, q) => order.get(p.build) - order.get(q.build));
-        // One line per class: its icon, then the specs, like "Rogue: Seal Fate Daggers, Subtlety".
-        const byClass = d3.groups((best.length ? best : r.top3).map((g) => ({ g, b: bmap.get(g.build) })).filter((o) => o.b), (o) => o.b.class);
-        const list = byClass.map(([cls, os]) => el('span', {}, ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), el('span', {},
-          el('b', { text: `${cls}: `, style: `color:${ccol(cls)}` }), os.map((o) => o.b.build + (best.length ? '' : ` (${pct(o.g.share)})`)).join(', '))));
-        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(who(r), st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)), [
-          tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.presets} presets${scope === 'Faction' ? ` (${r.faction})` : ''}`),
-          best.length ? null : el('span', { class: 'fv-tip-m', text: 'It comes closest on:' }),
-          el('div', { class: 'fv-tip-specs' }, ...list),
-        ], { hl: row, below: true, pinned });
-      };
-      row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
-      row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
-      row.addEventListener('pointerup', (e) => {
-        if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
-        if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }
-        tip(true);
+        const racials = r.segs.filter((sg) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => {
+          const info = noteRow('part', sg.part);
+          return tipText(el('b', { text: `${sg.label} ${fd(sg.v)}` }), info ? `. ${info.short || info.text}` : '');
+        });
+        let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`)];
+        if (!one) {
+          const order = new Map(sc.builds.map((b, k) => [b.id, k]));
+          const best = r.shares.filter((g) => g.share > 99.995).sort((p, q) => order.get(p.build) - order.get(q.build));
+          const pick = best.length ? best : [...r.shares].sort((p, q) => q.share - p.share).slice(0, 3);
+          const list = d3.groups(pick.map((g) => ({ g, b: bmap.get(g.build) })).filter((o) => o.b), (o) => o.b.class).map(([cls, os]) => el('span', {},
+            ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), el('span', {}, el('b', { text: `${cls}: `, style: `color:${ccol(cls)}` }),
+              os.map((o) => o.b.build + (best.length ? '' : ` (${pct(o.g.share)})`)).join(', '))));
+          head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
+            best.length ? null : el('span', { class: 'fv-tip-m', text: 'It comes closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list)];
+        }
+        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(who(r), one ? one.label : null, raceIco(r.raceIcon)), [...head, ...racials], { hl: row, below: true, pinned });
       });
       return row;
     }));
-    $('#ro-axis').textContent = `A full bar is 100%: the best race on every preset. Bars start at ${lo}%.`;
+    const lead = rows[0];
+    if (one) {
+      const last = rows[rows.length - 1];
+      take.replaceChildren(el('b', { text: one.label }), ': ', el('b', { text: who(lead) }), ` leads with ${f1(lead.dps)} DPS`,
+        ...(rows.length > 1 ? ['. ', who(rows[1]), ` is ${f2(100 * (1 - rows[1].dps / lead.dps))}% behind, and `, who(last), ` is last at −${f2(100 * (1 - last.dps / lead.dps))}%.`] : ['.']));
+    } else {
+      const plain = rows.find((r) => !r.tag || r.variant === 'noweapon');
+      take.replaceChildren(el('b', { text: who(lead) }), ` gets the closest to the best race: ${pct(lead.avg)} of its DPS on average, and ${bestOn(lead)}.`,
+        ...(lead.tag && plain && plain !== lead ? [' Without an advantage, ', el('b', { text: who(plain) }), ` leads at ${pct(plain.avg)}.`] : []));
+    }
+    axis.textContent = one ? `Bars start at ${f0(lo)} DPS.` : `A full bar is 100%: the best race on every preset. Bars start at ${f1(lo)}%.`;
+    legend($('#rs-legend'), kinds);
   };
 
-  // ---------- races: one preset, every race ----------
-  const drawRaceSpec = () => {
-    const host = $('#race-spec');
-    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds'])) return;
-    const builds = genB();
-    if (!builds.some((b) => b.id === st.rsBuild)) st.rsBuild = builds.some((b) => b.id === st.build) ? st.build : [...builds].sort((p, q) => q.dps - p.dps)[0].id;
-    const pick = $('#rs-pick');
-    sortedBuildOptions(pick, builds, st.rsBuild);
-    if (!pick.dataset.bound) {
-      pick.dataset.bound = '1';
-      pick.addEventListener('change', () => { st.rsBuild = pick.value; persist(); hideTip(); render(); });
-      const order = () => buildOrder(genB()).map((b) => b.id);
-      const step = (d) => { const o = order(); st.rsBuild = o[(o.indexOf(st.rsBuild) + d + o.length) % o.length]; persist(); hideTip(); render(); };
-      $('#rs-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
-      $('#rs-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+  // ---------- races: strongest racials ----------
+  // Each racial ranked by how much it adds to its race's DPS, averaged over the presets in the filter that its race
+  // can play. Where a racial doesn't work (a sword racial with a dagger, Beast Slaying on the generic boss) it
+  // counts as nothing. The switches decide whether a weapon racial counts with its weapon swapped in, and a boss
+  // type racial against its boss type. On one preset the numbers are DPS.
+  const TARGET_PART = { 'Troll|beast': 'beast_troll', 'Dwarf|beast': 'beast_dwarf', 'High Order|elemental': 'insight', 'Windshaper|elemental': 'insight', 'Dwarf|humanoid': 'chastise' };
+  const drawRacialRank = () => {
+    const host = $('#racial-rank'), take = $('#rl-take'), dead = $('#rl-dead');
+    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) return;
+    const sc = scopeOf('rl');
+    drawScope('rl', sc);
+    const V = rsVar('rl'), one = sc.single, wpn = V.includes('w'), tgt = V.includes('t');
+    const base = rowsOf('race_variants').filter((r) => r.variant === 'baseline' && sc.ids.has(r.build) && (sc.fac === 'All' || r.faction === sc.fac));
+    const bd = d3.group(rowsOf('race_breakdown').filter((q) => sc.ids.has(q.build)), (q) => q.build + '|' + q.race);
+    const bmap = new Map(sc.builds.map((b) => [b.id, b]));
+    const acc = new Map();
+    for (const r of base) {
+      const mine = bd.get(r.build + '|' + r.race) || [];
+      const tv = {};
+      if (tgt) for (const q of mine) if (q.part === 'target' && TARGET_PART[r.race + '|' + q.scenario]) tv[TARGET_PART[r.race + '|' + q.scenario]] = q;
+      for (const q of mine.filter((x) => x.scenario === 'all' && x.part !== 'base')) {
+        let v = q.active ? +q.dps : 0, works = q.active;
+        if (!q.active && wpn && WPN_PARTS.includes(q.part)) {
+          const w = mine.find((x) => x.scenario === 'weapon' && x.part === q.part);
+          if (w) { v = +w.dps; works = true; }
+        }
+        if (tv[q.part]) { v += +tv[q.part].dps; works = true; }
+        const k = r.race + '|' + q.part;
+        if (!acc.has(k)) acc.set(k, { key: k, race: r.race, part: q.part, label: q.label, raceIcon: r.raceIcon, n: 0, works: 0, share: 0, dps: 0, per: [], notes: [] });
+        const a = acc.get(k);
+        a.n++; a.share += (100 * v) / r.dps; a.dps += v;
+        a.per.push({ build: r.build, share: (100 * v) / r.dps, v });
+        if (works && Math.abs(v) >= 0.05) a.works++;
+        else if (q.note && !a.notes.includes(q.note)) a.notes.push(q.note);
+      }
     }
-    const b = builds.find((x) => x.id === st.rsBuild), V = rsVar('rsp');
-    const rows = raceRows(V).filter((r) => r.build === b.id);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); $('#rs-take').textContent = ''; return; }
-    const bd = rowsOf('race_breakdown').filter((r) => r.build === b.id);
-    // An entry's bar: base stats, then each racial that works in its scenario (its variant). The entry without its
-    // weapon racial leaves that racial out.
-    const segsOf = (row) => {
-      const race = row.race, V = row.variant;
-      const mine = bd.filter((r) => r.race === race);
-      const base = mine.find((r) => r.part === 'base');
-      const out = [{ part: 'base', r: base }];
-      for (const r of mine.filter((q) => q.scenario === 'all' && q.part !== 'base' && q.active && q !== row.dropped)) out.push({ part: r.part, r });
-      const cond = mine.find((q) => q.scenario === 'all' && !q.active && COND[V] && COND[V].test(q.part));
-      for (const r of mine.filter((q) => q.scenario === V)) out.push({ part: r.part, r: cond && r.part === 'target' ? { ...r, label: `${r.label}, ${cond.label}` } : r });
-      let at = 0;
-      for (const sg of out) { sg.from = at; at += +sg.r.dps; sg.to = at; }
-      return { segs: out, idle: (row.dropped ? [{ ...row.dropped, note: 'left out of this entry' }] : []).concat(mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part)) && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part)))) };
-    };
-    const S = new Map(rows.map((r) => [r.key, segsOf(r)]));
-    const ends = rows.flatMap((r) => S.get(r.key).segs.flatMap((sg) => [sg.from || sg.to, sg.to]).filter((v) => v > 0).concat([r.dps - r.se, r.dps + r.se]));
-    const bases = rows.map((r) => S.get(r.key).segs[0].to);
-    const hi = d3.max(ends), lo0 = Math.min(d3.min(ends), d3.min(bases));
-    const lo = Math.max(0, lo0 - 0.35 * Math.max(hi - lo0, 4));
-    const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo);
-    const card = $('#race-spec-card');
-    const W = (r) => `build=${enc(b.id)}&race=${enc(r.race)}&variant=${r.variant}`;
+    const all = [...acc.values()].map((a) => ({ ...a, value: one ? a.dps : a.share / a.n })).sort((p, q) => q.value - p.value);
+    const rows = all.filter((a) => a.works), idle = all.filter((a) => !a.works);
+    if (!rows.length) {
+      host.replaceChildren(el('p', { class: 'fv-note', text: 'No racial does anything on these presets.' }));
+      take.replaceChildren(); dead.replaceChildren(); $('#rl-legend').replaceChildren();
+      return;
+    }
+    const max = Math.max(d3.max(rows, (a) => a.value), one ? 1 : 0.1);
+    const fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const kinds = new Set();
-    host.replaceChildren(...rows.map((r, i) => {
-      const { segs, idle } = S.get(r.key);
-      const track = el('div', { class: 'fv-rtrack' });
-      segs.forEach((sg, k) => {
-        const a = Math.min(sg.from, sg.to), z = Math.max(sg.from, sg.to);
-        if (sg.part !== 'base') kinds.add(sg.part === 'swap' ? 'swap' : PART_KIND[sg.part] ?? 0);
-        const neg = +sg.r.dps < 0 && sg.part !== 'base';
-        const n = el('span', { class: 'sg' + (neg ? ' neg' : '') + (sg.part === 'swap' ? ' swap' : '') + (k === segs.length - 1 ? ' last' : ''), 'data-tip': '1',
-          style: `left:${k === 0 ? 0 : x(a)}%;width:${Math.max(k === 0 ? 0 : 0.6, x(z) - (k === 0 ? 0 : x(a)))}%;background:${partCol(sg.part)};${neg ? 'z-index:1;' : ''}` });
-        n.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (n.classList.contains('is-hl')) { hideTip(); return; }
-          const info = noteRow('part', sg.part === 'base' ? 'base' : sg.part === 'target' ? 'target' : sg.part);
-          const d = +sg.r.dps, se = +sg.r.se;
-          const cr = card.getBoundingClientRect(), nr = n.getBoundingClientRect();
-          showTip(card, nr.left - cr.left, nr.bottom - cr.top + 2, tipTitle(sg.r.label, r.name, raceIco(r.raceIcon)),
-            [sg.part === 'base' ? tipKey(f1(d), 'DPS', 'on base stats alone')
-              : tipKey(tipDelta(d, f1, ' DPS'), null, el('span', { class: 'fv-tip-m' }, `${sgn((100 * d) / r.dps, f2)}% · ± ${f1(se)}`, Math.abs(d) < 2 * se ? ' · noise' : '')),
-            info ? tipText(info.short || info.text) : null, sg.r.note ? tipNote(sg.r.note) : null], { hl: n, below: true });
-        });
-        track.append(n);
+    const card = $('#racial-rank-card');
+    host.replaceChildren(...rows.map((a, i) => {
+      kinds.add(PART_KIND[a.part] ?? 0);
+      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
+        tt(raceIco(a.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(a.race)}` }), `r:${a.race}`),
+        el('span', { class: 'nm' }, el('b', { text: a.label }), el('small', { text: a.race, style: `color:${fcol(a.race)}` })),
+        el('span', { class: 'end' }, el('b', { text: fd(a.value), class: a.value < 0 ? 'neg' : '' }),
+          el('small', { text: one ? 'DPS' : a.works === a.n ? `works on all ${a.n}` : `works on ${a.works} of ${a.n}` })),
+        el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${(100 * Math.max(0, a.value)) / max}%;background:${partCol(a.part)}` })));
+      hoverTip(row, (pinned) => {
+        const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
+        const info = noteRow('part', a.part);
+        const top = [...a.per].sort((p, q) => q.share - p.share).filter((g) => Math.abs(g.v) >= 0.05).slice(0, 3);
+        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(a.label, a.race, raceIco(a.raceIcon)), [
+          tipKey(fd(a.value), one ? 'DPS' : `of ${a.race} DPS`, one ? null : 'on average'),
+          info ? tipText(info.short || info.text) : null,
+          !one && top.length ? tipTable(['Strongest on', ''], top.map((g) => [bmap.get(g.build)?.label || g.build, `${sgn(g.share, f2)}%`])) : null,
+          a.works < a.n && a.notes.length ? tipNote(`Does nothing on ${a.n - a.works} of ${a.n}: ${a.notes.slice(0, 2).join('; ')}`) : null,
+        ], { hl: row, below: true, pinned });
       });
-      track.append(el('span', { class: 'wk', style: `left:${x(r.dps - r.se)}%;width:${Math.max(0.4, x(r.dps + r.se) - x(r.dps - r.se))}%` }));
-      const sub = el('div', { class: 'fv-rsub' }, ...segs.filter((sg) => sg.part !== 'target' || Math.abs(+sg.r.dps) >= 0.05).map((sg) => el('span', {}, el('i', { style: `background:${partCol(sg.part)}` }),
-        sg.part === 'base' ? `Base ${f0(+sg.r.dps)}` : `${String(sg.r.label).replace('Specialization', 'Spec.')} ${sgn(+sg.r.dps, f1)}`)),
-        ...idle.slice(0, 3).map((q) => el('span', {}, el('em', { text: `${String(q.label).replace('Specialization', 'Spec.')}: ${q.note}` }))));
-      return el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : '') },
-        tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), `r:${r.race}:${b.class}`, true, b.id),
-        el('span', { class: 'nm' }, raceName(r), r.isPreset ? el('i', { text: 'preset race' }) : null),
-        el('span', { class: 'end' }, mark(el('b', { text: f1(r.dps) }), 'race_variants', 'dps', W(r)), el('small', { text: i === 0 ? '★ best' : `−${f2(-r.vsBest)}%` })),
-        track, sub);
+      return row;
     }));
-    const top = rows[0], last = rows[rows.length - 1];
-    $('#rs-take').replaceChildren(el('b', { text: b.label }), ': ', mark(el('b', { text: top.name }), 'race_variants', 'race', W(top)), ' leads with ', mark(el('span', { text: f1(top.dps) }), 'race_variants', 'dps', W(top)), ' DPS',
-      ...(rows.length > 1 ? ['; ', rows[1].name, ' is ', f2(-rows[1].vsBest), '% behind and ', last.name, ' last at −', f2(-last.vsBest), '%.'] : ['.']));
-    $('#rs-axis').textContent = `Bars start at ${f0(lo)} DPS.`;
-    $('#rs-legend').replaceChildren(el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats'),
-      ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+    const lead = rows[0];
+    take.replaceChildren(el('b', { text: `${lead.race} ${lead.label}` }), one ? ` adds the most on ${sc.single.label}: ${fd(lead.value)} DPS.`
+      : ` adds the most: ${fd(lead.value)} of its race's DPS on average, and it works on ${lead.works} of ${lead.n} presets.`);
+    dead.textContent = idle.length ? `No effect on ${one ? 'this preset' : 'these presets'}: ${idle.map((a) => `${a.label} (${a.race})`).join(', ')}.` : '';
+    legend($('#rl-legend'), kinds);
+    $('#rl-legend').firstChild.remove();
   };
 
   // ---------- icons ----------
@@ -1702,7 +1787,7 @@ export function startReport(dash) {
     });
     svg.append('text').attr('x', m.l).attr('y', H).attr('font-size', 9).text(`axis starts at ${f0(lo)}`);
     host.replaceChildren(svg.node());
-    $('#sp-races-link').onclick = (e) => { e.stopPropagation(); st.rsBuild = b.id; persist(); showTab('races'); requestAnimationFrame(() => $('#race-spec-card').scrollIntoView({ block: 'start' })); };
+    $('#sp-races-link').onclick = (e) => { e.stopPropagation(); pickRaceSpec(b.id); };
   };
 
   const drawSpecLen = (b) => {
@@ -2693,7 +2778,7 @@ export function startReport(dash) {
     try { drawHero(); } catch (e) { console.error(e); }
     try {
       if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
-      else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceOverview, '#race-overview'], [drawRaceSpec, '#race-spec'], [drawHeat, '#heat'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
+      else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceRank, '#race-rank'], [drawRacialRank, '#racial-rank'], [drawHeat, '#heat'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
       else if (st.tab === 'method') { drawMethod(); safeTop(drawMethodAsm, $('#method-asm')); }
