@@ -3465,3 +3465,40 @@ ol.fv-list li::marker {
 		font-size: 0.8rem;
 	}
 }
+
+// A race's advantage, like "vs Beast" or "with a sword", after its name on the Races and Specs tabs.
+.fv-rname {
+	display: inline-flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 0 0.35rem;
+	min-width: 0;
+}
+
+.fv-rtag {
+	color: var(--color-fg-muted);
+	font-size: 0.85em;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+// An advantage's column in the race heatmap: its race's icon and name, and the advantage under them. A faint
+// line on its left ties it to its race's column.
+.fv-heat .hh small {
+	display: block;
+	color: var(--color-fg-muted);
+	font-size: 0.6rem;
+}
+
+.fv-heat .hh.var {
+	box-shadow: inset 1px 0 0 var(--line-color);
+	white-space: normal;
+	line-height: 1.15;
+}
+
+// In a race row the name stays on one line, and the preset count after it gives way first.
+.fv-orow .nm .fv-rname,
+.fv-rrow .nm .fv-rname {
+	flex-wrap: nowrap;
+	flex-shrink: 0;
+}
