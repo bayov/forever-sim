@@ -18,13 +18,18 @@ package main
 // up to its time. So a window is ready once the character has a record from after it ends. A
 // character with no history at all waits until the log hasn't changed for 30 minutes.
 //
+// A log that hasn't changed for a day, with no window waiting, gets compressed to .gz
+// (compressLog).
+//
 // With -redo it runs every window again, with the sim as it is now, and the newest run of a
 // window is the one that counts.
 
 import (
 	"bufio"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
+	"io"
 	"maps"
 	"os"
 	"os/exec"
@@ -32,6 +37,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -44,6 +50,8 @@ const (
 	// auditMinAttacks is the fewest attack lines of ours on mobs that make a window worth
 	// running. A shorter one is too small for any row to flag, so we only note it.
 	auditMinAttacks = 60
+	// auditCompressAfter is how long a log stays unchanged before we compress it.
+	auditCompressAfter = 24 * time.Hour
 	// auditWorkers is how many windows run at once.
 	auditWorkers = 4
 )
@@ -80,13 +88,24 @@ type cut struct {
 }
 
 func runAudit(archive, flavor, onlyLog string, iterations int, redo bool) error {
-	if err := exec.Command(filepath.Join(repoRoot, "tools/combat_log/archive.sh")).Run(); err != nil {
-		fmt.Fprintln(os.Stderr, "archive.sh:", err)
-	}
 	dir := filepath.Join(archive, "audit")
 	ledgerPath := filepath.Join(dir, "ledger.jsonl")
 	if err := os.MkdirAll(filepath.Join(dir, "reports"), 0o755); err != nil {
 		return err
+	}
+	// Two sessions could run the audit at once (the hourly one and one we start by hand), and
+	// both would run the same windows. So the second one waits for the first.
+	lock, err := os.OpenFile(filepath.Join(dir, ".lock"), os.O_CREATE|os.O_RDWR, 0o644)
+	if err != nil {
+		return err
+	}
+	defer lock.Close()
+	if err := syscall.Flock(int(lock.Fd()), syscall.LOCK_EX); err != nil {
+		return err
+	}
+
+	if err := exec.Command(filepath.Join(repoRoot, "tools/combat_log/archive.sh")).Run(); err != nil {
+		fmt.Fprintln(os.Stderr, "archive.sh:", err)
 	}
 	ledger, err := readLedger(ledgerPath)
 	if err != nil {
@@ -103,20 +122,23 @@ func runAudit(archive, flavor, onlyLog string, iterations int, redo bool) error 
 	}
 	logs := []string{onlyLog}
 	if onlyLog == "" {
-		logs, _ = filepath.Glob(filepath.Join(archive, flavor, "WoWCombatLog-*.txt"))
-		slices.Sort(logs)
+		logs = archivedLogs(filepath.Join(archive, flavor))
 	}
 
 	var todo []auditWindow
 	var waiting []string
+	var settled []string
 	paths := map[string]string{}
 	for _, path := range logs {
-		paths[filepath.Base(path)] = path
+		paths[logName(path)] = path
 		windows, wait, err := planLog(path, exports)
 		if err != nil {
 			return err
 		}
 		waiting = append(waiting, wait...)
+		if len(wait) == 0 {
+			settled = append(settled, path)
+		}
 		for _, w := range windows {
 			if redo || !done[w.key()] {
 				todo = append(todo, w)
@@ -160,7 +182,63 @@ func runAudit(archive, flavor, onlyLog string, iterations int, redo bool) error 
 	if err := f.Close(); err != nil {
 		return err
 	}
-	return printDigest(ledger, results, waiting)
+	var digest strings.Builder
+	if err := printDigest(&digest, ledger, results, waiting); err != nil {
+		return err
+	}
+	fmt.Print(digest.String())
+
+	for _, path := range settled {
+		info, err := os.Stat(path)
+		if err != nil || strings.HasSuffix(path, ".gz") || time.Since(info.ModTime()) < auditCompressAfter {
+			continue
+		}
+		if err := compressLog(path, info); err != nil {
+			return err
+		}
+		fmt.Printf("\ncompressed %s, every window of it is in the ledger\n", logName(path))
+	}
+	return nil
+}
+
+// compressLog replaces a log with its .gz, which keeps the log's write time.
+//
+// A log holds about 15 MB a play session, and a tenth of that compressed. We compress a log
+// once it hasn't changed for auditCompressAfter and no window of it waits for history, so we
+// won't run its windows again (except with -redo, and logcheck reads the .gz the same way).
+// archive.sh skips the game's plain copy once we hold the .gz.
+func compressLog(path string, info os.FileInfo) error {
+	in, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+	tmp := path + ".gz.tmp"
+	out, err := os.Create(tmp)
+	if err != nil {
+		return err
+	}
+	gz := gzip.NewWriter(out)
+	gz.Name = filepath.Base(path)
+	gz.ModTime = info.ModTime()
+	_, err = io.Copy(gz, in)
+	if closeErr := gz.Close(); err == nil {
+		err = closeErr
+	}
+	if closeErr := out.Close(); err == nil {
+		err = closeErr
+	}
+	if err == nil {
+		err = os.Chtimes(tmp, info.ModTime(), info.ModTime())
+	}
+	if err == nil {
+		err = os.Rename(tmp, path+".gz")
+	}
+	if err != nil {
+		os.Remove(tmp)
+		return err
+	}
+	return os.Remove(path)
 }
 
 func readLedger(path string) ([]ledgerEntry, error) {
@@ -238,14 +316,14 @@ func planLog(path string, exports []*export) ([]auditWindow, []string, error) {
 				continue
 			}
 			// The window's times are whole seconds, so the end goes up to the next one.
-			w := auditWindow{Log: filepath.Base(path), Char: char, From: from.Format(stampFormat), To: to.Add(time.Second - 1).Format(stampFormat), Ends: ends, Attacks: attacks}
+			w := auditWindow{Log: logName(path), Char: char, From: from.Format(stampFormat), To: to.Add(time.Second - 1).Format(stampFormat), Ends: ends, Attacks: attacks}
 			switch {
 			case len(history) > 0 && history[len(history)-1].time.Before(to):
-				waiting = append(waiting, fmt.Sprintf("%s %s to %s: its history ends at %s, /reload in game to save it",
-					char, w.From, w.To, history[len(history)-1].time.Format(stampFormat)))
+				waiting = append(waiting, fmt.Sprintf("%s %s %s to %s: its history ends at %s, /reload in game to save it",
+					w.Log, char, w.From, w.To, history[len(history)-1].time.Format(stampFormat)))
 				continue
 			case len(history) == 0 && !idle:
-				waiting = append(waiting, fmt.Sprintf("%s %s to %s: the log is still growing", char, w.From, w.To))
+				waiting = append(waiting, fmt.Sprintf("%s %s %s to %s: the log is still growing", w.Log, char, w.From, w.To))
 				continue
 			}
 			windows = append(windows, w)
@@ -417,7 +495,7 @@ func tainted(entry ledgerEntry) bool {
 
 // printDigest prints what this audit ran and found, and how often each flag came back across
 // the whole ledger.
-func printDigest(earlier, now []ledgerEntry, waiting []string) error {
+func printDigest(w io.Writer, earlier, now []ledgerEntry, waiting []string) error {
 	known, err := readKnown()
 	if err != nil {
 		return err
@@ -471,24 +549,24 @@ func printDigest(earlier, now []ledgerEntry, waiting []string) error {
 	}
 
 	if len(now) == 0 {
-		fmt.Println("No new windows to check.")
+		fmt.Fprintln(w, "No new windows to check.")
 	}
 	for _, entry := range now {
-		fmt.Printf("\n%s  %s  %s to %s  (%d attacks, ends at %s)\n", entry.Log, entry.Char, entry.From, entry.To[11:], entry.Attacks, entry.Ends)
+		fmt.Fprintf(w, "\n%s  %s  %s to %s  (%d attacks, ends at %s)\n", entry.Log, entry.Char, entry.From, entry.To[11:], entry.Attacks, entry.Ends)
 		switch {
 		case entry.Skipped != "":
-			fmt.Printf("  skipped: %s\n", entry.Skipped)
+			fmt.Fprintf(w, "  skipped: %s\n", entry.Skipped)
 			continue
 		case entry.Error != "":
-			fmt.Printf("  ERROR: %s\n  report: %s\n", entry.Error, entry.Report)
+			fmt.Fprintf(w, "  ERROR: %s\n  report: %s\n", entry.Error, entry.Report)
 			continue
 		}
-		fmt.Printf("  export: %s\n  report: %s\n", entry.Export, entry.Report)
+		fmt.Fprintf(w, "  export: %s\n  report: %s\n", entry.Export, entry.Report)
 		if len(entry.Findings) == 0 {
-			fmt.Println("  nothing flagged")
+			fmt.Fprintln(w, "  nothing flagged")
 		}
 		if tainted(entry) {
-			fmt.Println("  the character changed in the window, so the other flags may only show that")
+			fmt.Fprintln(w, "  the character changed in the window, so the other flags may only show that")
 		}
 		for _, f := range entry.Findings {
 			mark := "      "
@@ -497,22 +575,22 @@ func printDigest(earlier, now []ledgerEntry, waiting []string) error {
 			} else if !before[f.Kind+" "+f.Ability] {
 				mark = "NEW   "
 			}
-			fmt.Printf("  %s%s\n", mark, f.String())
+			fmt.Fprintf(w, "  %s%s\n", mark, f.String())
 		}
 	}
 	if len(waiting) > 0 {
-		fmt.Println("\nWaiting:")
-		for _, w := range waiting {
-			fmt.Println("  " + w)
+		fmt.Fprintln(w, "\nWaiting:")
+		for _, line := range waiting {
+			fmt.Fprintln(w, "  "+line)
 		}
 	}
 	if len(countOrder) > 0 {
 		slices.SortStableFunc(countOrder, func(a, b string) int { return counts[b].windows - counts[a].windows })
-		fmt.Printf("\nFlags across the ledger, by how many of its %d windows had them", ran)
+		fmt.Fprintf(w, "\nFlags across the ledger, by how many of its %d windows had them", ran)
 		if left > 0 {
-			fmt.Printf(" (%d more windows left out, where the character changed)", left)
+			fmt.Fprintf(w, " (%d more windows left out, where the character changed)", left)
 		}
-		fmt.Println(":")
+		fmt.Fprintln(w, ":")
 		for _, k := range countOrder {
 			kind, ability, _ := strings.Cut(k, " ")
 			what := kind
@@ -525,7 +603,7 @@ func printDigest(earlier, now []ledgerEntry, waiting []string) error {
 			if why, ok := knownWhy(known, finding{Kind: kind, Ability: ability}); ok {
 				note = "  known: " + why
 			}
-			fmt.Printf("  %3d  %s (last %s)%s\n", counts[k].windows, what, counts[k].last, note)
+			fmt.Fprintf(w, "  %3d  %s (last %s)%s\n", counts[k].windows, what, counts[k].last, note)
 		}
 	}
 	return nil

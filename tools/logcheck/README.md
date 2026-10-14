@@ -54,6 +54,14 @@ the sim can't follow (a `change` flag, only seen before the history) are left ou
 counts, because their flags may only show that change. `-redo` runs every window again with the
 sim as it is now, which is how we see what a fix cleared.
 
+Once a log hasn't changed for a day and no window of it waits, the audit compresses it to
+`WoWCombatLog-*.txt.gz` (about a tenth of the size). logcheck reads those the same way, and
+`archive.sh` stops copying the game's plain copy. When two audits start at once, a lock makes
+the second one wait for the first.
+
+The skill runs the audit every hour while its session is open, and collects what it finds in
+`findings.md` (next to this README) for us to go through.
+
 ## Inputs
 
 - **The log.** With no `-log`, it runs `tools/combat_log/archive.sh` first and reads the newest

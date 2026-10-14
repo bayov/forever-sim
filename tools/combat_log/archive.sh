@@ -4,8 +4,9 @@
 # The client never deletes its combat logs, but uninstalling the beta (or the launcher removing
 # _classic_beta_ when the beta closes) takes the whole Logs folder with it. We copy each
 # WoWCombatLog-*.txt that is new or has grown since the last run, and keep our copy even when the
-# game's copy is gone. Nothing is compressed. When the archive gets too big we delete old logs by
-# hand.
+# game's copy is gone.
+#
+# logcheck -audit compresses a log once it's a day old and fully audited. The game still has the plain one, so we skip a log we hold as .gz.
 #
 # A systemd user timer runs this every 5 minutes (systemd/ has the units), and logcheck runs it
 # before it reads a log, so the newest lines are always in the archive.
@@ -27,7 +28,13 @@ for flavor in $FLAVORS; do
     mkdir -p "$ARCHIVE/$flavor"
     # -t keeps the game's write time, so the next run only copies a log again when it has
     # changed.
-    rsync -rt --include 'WoWCombatLog-*.txt' --exclude '*' "$src/" "$ARCHIVE/$flavor/"
+    skip=""
+    for gz in "$ARCHIVE/$flavor"/WoWCombatLog-*.txt.gz; do
+        [ -e "$gz" ] || continue
+        skip="$skip --exclude=$(basename "$gz" .gz)"
+    done
+    # shellcheck disable=SC2086 # one word per --exclude, and log names have no spaces
+    rsync -rt $skip --include 'WoWCombatLog-*.txt' --exclude '*' "$src/" "$ARCHIVE/$flavor/"
 done
 
 FLAVORS="$FLAVORS" WOW_DIR="$GAME" FOREVER_LOGS="$ARCHIVE" \
