@@ -31,8 +31,8 @@ Run it from the repo root. A run takes about a second.
 go run --tags=with_db ./tools/logcheck -audit
 ```
 
-This checks every stretch of the archived logs that we haven't checked yet. The `logcheck` skill
-(`.claude/skills/logcheck/SKILL.md`) runs it and triages what it flags.
+This checks every stretch of the archived logs that we haven't checked yet. The `log-audit` skill
+(`.claude/skills/log-audit/SKILL.md`) runs it and triages what it flags.
 
 It splits each log into windows where the sim's character holds still: one of our characters,
 with the same gear, talents and level all through. It cuts at each change BayovCore's history

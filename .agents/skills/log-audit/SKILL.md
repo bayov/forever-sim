@@ -1,6 +1,6 @@
 ---
-name: logcheck
-description: Audit the sim against the user's WoW Forever combat logs and BayovCore character history. Use it when the user runs /logcheck, says "audit the logs", "check my new logs", "check the sim against my play", comes back from a play session, or asks whether the sim still matches the game.
+name: log-audit
+description: Audit the sim against the user's WoW Forever combat logs and BayovCore character history. Use it when the user runs /log-audit, says "audit the logs", "check my new logs", "check the sim against my play", comes back from a play session, or asks whether the sim still matches the game.
 ---
 
 # Audit the sim against our combat logs
