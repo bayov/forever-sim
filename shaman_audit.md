@@ -168,7 +168,7 @@ Enhancement
 - [x] 8.30 Spirit Weapons
 - [x] 8.31 Mental Quickness
 - [x] 8.32 Improved Stormstrike
-- [ ] 8.33 Maelstrom Weapon
+- [x] 8.33 Maelstrom Weapon
 - [ ] 8.34 Rage of the Farseer
 
 Restoration
@@ -1013,7 +1013,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The sim (`chain_lightning.go`): 4 ranks, learned at 32, 40, 48 and 56. A 2 sec cast with a 6 sec cooldown of its own, a 1.5 sec GCD and 225 / 305 / 390 / 485 mana. It hits the target and jumps to 2 more, each jump dealing 70% of the one before (100%, 70%, 49%). Each hit rolls its own damage, hit and crit. Rank 4 deals 119.2 to 133.2 at 60, and rank 1 85.2 to 96.8 from 37. Ranks 1, 2 and 4 get 57.1% of spell power and rank 3 51.7% (the client's number, maybe a typo, 7.1). There's no travel time.
   - Each target's own Stormstrike mark counts for the hit on it, and that hit uses it up (7.7).
   - It jumps to the next targets in the encounter's order, where the game picks the nearest ones within reach.
-  - Convection, Concussion, Call of Thunder, Elemental Alacrity, Lightning Overload and Maelstrom Weapon work on it as on Lightning Bolt (7.12, section 8).
+  - Convection, Concussion, Call of Thunder, Elemental Alacrity and Lightning Overload work on it as on Lightning Bolt (7.12, section 8). Maelstrom Weapon doesn't (corrected in 8.33, where the sim and the client's mask both leave Chain Lightning out).
   - No preset casts it.
 - Client 70338 (wago.tools, 421, 930, 2860, 10605): the same levels, damage, growth, damage range, coefficients, mana and GCD. 3 targets with a 0.7 chain amplitude, which is the 70% a jump. The 6000 ms cooldown is its own category (85), so it doesn't share the shocks' cooldown. Cast index 5 is 2 sec, and missile speed 0.
 - Beta: none. We learn it at 32, and the character is 30.
@@ -1540,6 +1540,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta, 15:07 log (2/2 by the 14:50 and 18:21 exports): all 194 of our casts gave the buff, and it came off 14.9 to 15.1 sec after the last gain when nothing renewed it. In 59 cooldowns we dodged or parried something. In 24 of them we cast Stormstrike early, 0.2 to 4.9 sec after the first dodge or parry. In the other 35 we didn't, mostly long pauses or kills, and a few where we were idle until the normal 8 sec (a parry at +1.7 sec, nothing cast, then Stormstrike at +8.2). So the reset exists, but the log can't tell 100% from a lower chance.
 - Beta, 10-11 log from 23:26 (Stormstrike 1, Improved Stormstrike 0 by the 23:26 export): 26 cooldowns with a dodge or parry, none early, and no buff on us.
 - No sim change. `five_second_rule_test.go` TestOrcShamanCastingRegenCap covers the buff's regen. The new `improved_stormstrike_test.go` TestOrcShamanImprovedStormstrike casts Stormstrike 1000 times at 1/2 and 2/2 and wants the buff 50 and 100% of the time. It dodges or parries a level 30 mob's swing 1000 times with Stormstrike on cooldown and wants the same reset rates, and wants no reset when the mob dodges or parries our swing. Halving either chance, or resetting on our own attacks, fails it.
+
+### 8.33 Maelstrom Weapon
+
+- The user OK'd it (2026-10-14): "sg - and yes we need to verify".
+- The sim (`talents.go`): any landed melee hit (white hits, Stormstrike, Windfury Weapon attacks) can give a stack, at 2 PPM a point (a guess, 10 PPM at 5/5). Up to 5 stacks for 30 sec. Each stack takes 4% a point off the next Lightning Bolt's cast time and cost, so 5 stacks at 5/5 make it instant and free. Lightning Bolt uses all the stacks when its cast ends. Chain Lightning neither gets nor uses them, and an overload bolt doesn't use them. With Totem of the Storm, Lightning Bolt can give a stack at half a white swing's chance (9.2). Both Level 60 enhancement presets have 5/5, and their rotations cast Lightning Bolt only at 5 stacks. The Level 30 presets can't take it (34+).
+- Client 70338 (wago.tools 408498, curve 85306): -4 to -20% by rank, up to 5 stacks. It triggers on melee auto attacks, melee abilities and harmful spells (0x10014, the spells for Totem of the Storm). The proc chance field is 100 with no PPM entry, so the server sets the rate. An unused dummy effect holds 50, which may be Totem of the Storm's 50%. The buff (408505) lasts 30 sec with 5 stacks and 1 charge, and changes cast time and cost on Lightning Bolt's mask only (0x1, Chain Lightning is 0x2). That matches, except the rate, which the client doesn't give.
+- SoD (wowsims/sod `runes.go`): the rune is 10 PPM, plus 5 with Windfury Weapon and 5 more with a two-handed weapon, so our Level 60 setup would get 20 PPM there. It also covers Chain Lightning, Lava Burst and Lesser Healing Wave, which Forever's buff mask doesn't.
+- Beta: no data, our character is under 34. The rate stays in notes.md Need to Verify, now with SoD's numbers (the user, 2026-10-14).
+- Also corrected: 7.13 said Maelstrom Weapon works on Chain Lightning. It doesn't, in the sim or the client.
+- No sim change. Already tested in `talent_procs_test.go` (what triggers it, Lightning Bolt uses the stacks and Chain Lightning doesn't), `mana_costs_test.go` (cost and cast time at 5/5 with Convection), `gcd_test.go`, `swing_timer_test.go` and `reaction_time_test.go`. The new `maelstrom_weapon_test.go` TestOrcShamanMaelstromWeaponRanks sets 1 to 5 stacks at every rank and wants 4% a point a stack off the bolt's cast time and cost, and a stack gone after 30 sec. 5% a point on either, or 31 sec, fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
