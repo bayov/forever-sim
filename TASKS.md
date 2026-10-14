@@ -36,3 +36,12 @@ Item format:
 - [ ] 2026-10-14 — Whole raid sim (user idea)
   - Sim every member of a raid together, so we can try out raid comps and see the total raid damage.
   - Then optimize the comp itself: which classes and specs, and how buffs, debuffs and totems are spread across groups.
+- [ ] 2026-10-14 — Compare build 1.60.1.70374's item tables with 70338's (new client build, first seen Oct 13 23:25 UTC; no patch notes)
+  - The spell tables are already byte-identical to 70338's (`orchestration/rank_tuning.md`, check 2026-10-14 00:30 UTC). Trackers say talents, spells and items are unchanged; wowclassicforever.info lists only ManifestInterfaceData and ManifestInterfaceItemIcon as changed tables.
+  - Still to diff: https://wago.tools/db2/ItemSparse?build=1.60.1.70374 , https://wago.tools/db2/ItemEffect?build=1.60.1.70374 , https://wago.tools/db2/SpellItemEnchantment?build=1.60.1.70374 , https://wago.tools/db2/Talent?build=1.60.1.70374
+  - The fix build expected Thursday Oct 15 (forever-bugs "fixed on Thursday" list) is the one to watch: re-run the full table diff then.
+- [ ] 2026-10-14 — Decide whether Searing and Magma Totem crits should stop proccing Elemental Devastation (forever-bugs #334, Oct 13, NAB, tracker)
+  - AidanZMoon: "None of your Totem or Totem originating attacks cause Elemental Devastation"; the tooltip is updated for Thursday's build. `applyElementalDevastation` in `sim/shaman/talents.go` excludes only Fire Nova (shaman_audit.md 4.13).
+  - Check on the beta after Oct 15: does a Searing Totem crit give buff 30165? https://github.com/ClassicWoWCommunity/forever-bugs/issues/334
+- [ ] 2026-10-14 — Give Crown of Maldazzar 284065 and Triune Amulet 7722 attention once PR #20 merges (revealed Oct 12–14)
+  - Crown of Maldazzar has no known source (BoE); add one when it's known. https://foreverchanges.pro/item/284065
