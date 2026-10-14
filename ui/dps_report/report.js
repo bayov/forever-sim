@@ -1382,7 +1382,7 @@ export function startReport(dash) {
         .map(({ sg, at }) => el('span', { 'data-zone': sg.part, 'data-at': at, style: `left:${at}%` }, partIco(sg.part), `${shortLabel(sg.label)} ${fd(sg.v)}`)));
       const idle = one && r.idle.length ? el('div', { class: 'fv-rsub' }, ...r.idle.slice(0, 3).map((q) => el('span', { 'data-zone': 'idle:' + q.part }, el('em', { text: `${shortLabel(q.label)}: ${q.note}` })))) : null;
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
-        tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), one ? `r:${r.race}:${one.class}` : `r:${r.race}`, true, one?.id),
+        raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }),
         el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null),
         el('span', { class: 'end' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
