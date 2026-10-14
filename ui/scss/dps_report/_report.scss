@@ -288,6 +288,11 @@
 	flex: 0 0 auto;
 }
 
+// Chips that run an action (the assumptions panel's All expected and Reset) aren't toggles, so no checkbox.
+.fv-chip-action::before {
+	content: none;
+}
+
 .fv-dot {
 	width: 0.6rem;
 	height: 0.6rem;
@@ -3040,6 +3045,160 @@ ol.fv-list li::marker {
 		color: var(--color-fg);
 		font-weight: 500;
 	}
+}
+
+/* ---------- assumptions ---------- */
+// The Ranking tab's assumptions panel: one collapsible group per class, a segmented control per assumption.
+.fv-asm-head {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.fv-asm-badge {
+	font-size: var(--cds-font-size-caption);
+	padding: 0 0.5rem;
+	border-radius: 999px;
+	color: var(--fv-gold);
+	background: var(--fv-gold-soft);
+}
+
+.fv-asm-tools {
+	margin-left: auto;
+	display: flex;
+	gap: 0.35rem;
+}
+
+#asm-card .fv-note .def,
+.fv-asm-seg .def {
+	color: var(--color-ok);
+}
+
+.fv-asm-cls {
+	border-top: var(--cds-border);
+
+	> summary {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.55rem 0;
+		cursor: pointer;
+		list-style: none;
+		color: var(--color-fg);
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+
+		&::after {
+			content: '›';
+			margin-left: auto;
+			color: var(--color-fg-muted);
+			transition: transform var(--cds-dur-slow);
+		}
+
+		small {
+			color: var(--color-fg-muted);
+		}
+	}
+
+	&[open] > summary::after {
+		transform: rotate(90deg);
+	}
+}
+
+.fv-asm-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 0.3rem;
+	padding: 0.45rem 0 0.6rem;
+
+	& + & {
+		border-top: 1px dashed var(--color-border-line);
+	}
+}
+
+.fv-asm-lbl {
+	display: flex;
+	align-items: baseline;
+	gap: 0.35rem;
+	font-size: var(--cds-font-size-body);
+
+	small {
+		color: var(--color-fg-muted);
+		font-size: var(--cds-font-size-caption);
+	}
+}
+
+.fv-asm-i {
+	border: 0;
+	background: none;
+	color: var(--color-fg-muted);
+	cursor: pointer;
+	padding: 0 0.2rem;
+	font: inherit;
+	line-height: 1;
+}
+
+.fv-asm-seg {
+	display: flex;
+	gap: 2px;
+	padding: 2px;
+	border-radius: var(--fv-r);
+	border: var(--cds-border);
+	background: var(--fv-stone-chip);
+
+	button {
+		flex: 1 1 0;
+		min-width: 0;
+		border: 0;
+		border-radius: var(--fv-r-sm);
+		background: none;
+		color: var(--color-fg-muted);
+		font: inherit;
+		font-size: var(--cds-font-size-caption);
+		padding: 0.3rem 0.25rem;
+		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		line-height: 1.25;
+
+		b {
+			color: var(--color-fg);
+			font-weight: 500;
+			font-size: var(--cds-font-size-body);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 100%;
+		}
+
+		&[aria-pressed='true'] {
+			background: var(--fv-sel-bg);
+			color: var(--fv-sel-fg);
+
+			b,
+			small {
+				color: var(--fv-sel-fg);
+			}
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
+		}
+	}
+}
+
+#method-asm h3 {
+	margin: 0.8rem 0 0.3rem;
+	font-size: var(--cds-font-size-heading);
+}
+
+#method-asm li small {
+	color: var(--color-fg-muted);
 }
 
 // Sort and the filters share a row when there's room. Each keeps its label with its controls when the row wraps.

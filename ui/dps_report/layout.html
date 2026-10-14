@@ -47,6 +47,13 @@
       <div class="fv-tile"><span class="k">Presets</span><span class="v" data-source="overview" data-field="count" data-row="0">—</span><span class="s"><span data-source="overview" data-field="classes" data-row="0">—</span> classes</span></div>
     </div>
 
+    <div class="content-block fv-card" id="asm-card">
+      <div class="content-block-header fv-asm-head"><h6 class="content-block-title">Assumptions</h6><span class="fv-asm-badge" id="asm-badge" hidden>Custom assumptions</span>
+        <span class="fv-asm-tools"><button class="fv-chip fv-chip-action" id="asm-expected" title="Set every assumption to its expected value">All expected</button><button class="fv-chip fv-chip-action" id="asm-reset" hidden>Reset</button></span></div>
+      <p class="fv-note">Values Forever hasn't confirmed yet, by class. Pick a setting and the ranking, the headline figures, the Specs page's mean DPS and Compare follow it. <span class="def">●</span> marks the setting the presets use. Tap ⓘ for what each one means.</p>
+      <div id="asm-list" data-source="assumptions assumption_dps"></div>
+    </div>
+
     <div class="content-block fv-card" id="rank-card">
       <div class="content-block-header"><h6 class="content-block-title">DPS by preset</h6></div>
       <div class="fv-lenbar" id="rank-lenbar"><span class="fv-label">Fight length</span><div class="fv-seg" id="rank-len" role="group" aria-label="Fight length"></div></div>
@@ -158,6 +165,7 @@
       <p class="fv-swipe">Swipe here for the next or previous preset</p>
     </div>
     <div class="fv-tiles" id="sp-tiles"></div>
+    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank follow your custom assumptions; the rest of this page shows the preset as simmed.</p>
     <nav class="fv-jump" id="sp-jump-bar" aria-label="Jump to a section">
       <span class="fv-jump-title">Sections <span class="fv-jump-chev">›</span></span>
       <ul class="nav fv-jump-tabs" id="sp-jump"></ul>
@@ -364,6 +372,11 @@
       <div class="content-block-header"><h6 class="content-block-title">Gear rules</h6></div>
       <p class="fv-note">How every preset's synthetic set and trinkets are built.</p>
       <ul class="fv-list" id="method-gear" data-source="notes"></ul>
+    </div>
+    <div class="content-block fv-card" id="method-asm-card">
+      <div class="content-block-header"><h6 class="content-block-title">Assumptions</h6></div>
+      <p class="fv-note">Every assumption the Ranking tab lets you change, with its settings. The presets use the default; the expected one is the best guess for release.</p>
+      <div id="method-asm" data-source="assumptions assumption_dps"></div>
     </div>
     <div class="content-block fv-card" id="method-cav-card">
       <div class="content-block-header"><h6 class="content-block-title">Open questions behind the numbers</h6></div>

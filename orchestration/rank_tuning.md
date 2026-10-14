@@ -220,6 +220,11 @@ One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (204
 - The druid branch now treats Tiger's Fury as removed under Forever; this audit had it as a single rank (5217 at L24) in client 70338. That's the druid worker's call, and it isn't a 31+ rank question.
 - The hunter applied the strongest-rank ruling (Aspect of the Hawk V, Trueshot Aura IV, Hunter's Mark III).
 
+## Check 2026-10-14 00:30 UTC: client 1.60.1.70374
+
+- wago.tools lists a new Forever build, 1.60.1.70374. Its SpellEffect, SpellPower, SpellMisc, SpellLevels, SpellCooldowns, SpellName, SkillLineAbility, TraitDefinition, TraitDefinitionEffectPoints and CurvePoint tables are byte-identical to 70338's, so nothing in this report changes.
+- Branch commits since 18:25 Oct 13 are UI, merges and a Retribution Shock rotation knob (Light's Vigil mana floor); none touch rank data.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
