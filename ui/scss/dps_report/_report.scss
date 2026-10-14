@@ -9,6 +9,10 @@
 	--fv-horde: #ff6b5e;
 	--fv-gold: var(--gold);
 	--fv-gold-soft: #{rgba($gold, 0.14)};
+	// The race advantage tags: weapon racials, then boss types, then the entry without its weapon racial.
+	--fv-adv-wpn: #c39bff;
+	--fv-adv-tgt: #3fcfc0;
+	--fv-adv-nowpn: var(--color-fg-muted);
 	--fv-r: var(--panel-radius);
 	--fv-r-sm: var(--panel-radius);
 	--fv-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.35);
@@ -2276,7 +2280,7 @@ ol.fv-list li::marker {
 @media (min-width: 46rem) {
 	.fv-orow,
 	.fv-rrow {
-		grid-template-columns: 1.6rem minmax(9rem, 13rem) minmax(0, 1fr) 5.2rem;
+		grid-template-columns: 1.6rem minmax(9rem, 16rem) minmax(0, 1fr) 5.2rem;
 	}
 
 	.fv-otrack,
@@ -3652,10 +3656,44 @@ ol.fv-list li::marker {
 }
 
 .fv-rtag {
-	color: var(--color-fg-muted);
-	font-size: 0.85em;
-	font-weight: 500;
+	--tag: var(--color-fg-muted);
+	display: inline-flex;
+	align-items: center;
+	align-self: center;
+	gap: 0.25rem;
+	padding: 0.05rem 0.45rem;
+	border: 1px solid color-mix(in srgb, var(--tag) 50%, transparent);
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--tag) 14%, transparent);
+	color: color-mix(in srgb, var(--tag) 85%, var(--color-fg));
+	font-size: 0.72rem;
+	font-weight: 600;
+	line-height: 1.3;
 	white-space: nowrap;
+}
+
+.fv-rtag:has(img) {
+	padding-left: 0.12rem;
+}
+
+.fv-rtag img {
+	width: 0.95rem;
+	height: 0.95rem;
+	border-radius: 50%;
+}
+
+.fv-rtag.wpn {
+	--tag: var(--fv-adv-wpn);
+}
+
+.fv-rtag.tgt {
+	--tag: var(--fv-adv-tgt);
+}
+
+.fv-rtag.nowpn {
+	border-style: dashed;
+	background: none;
+	font-weight: 500;
 }
 
 // An advantage's column in the race heatmap: its race's icon and name, and the advantage under them. A faint
@@ -3672,9 +3710,51 @@ ol.fv-list li::marker {
 	line-height: 1.15;
 }
 
+.fv-heat .hh small.wpn,
+.fv-heat .hh small.tgt {
+	font-weight: 600;
+	color: var(--fv-adv-wpn);
+}
+
+.fv-heat .hh small.tgt {
+	color: var(--fv-adv-tgt);
+}
+
+// The overview's takeaway line, and its rows: the share of the best race's DPS needs a wider end column.
+.fv-ro-take {
+	margin: 0;
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.5;
+}
+
+.fv-ro-tiles .fv-tile .fv-rtag {
+	justify-self: start;
+}
+
+@media (min-width: 46rem) {
+	#race-overview .fv-orow {
+		grid-template-columns: 1.6rem minmax(9rem, 16rem) minmax(0, 1fr) 6.5rem;
+	}
+}
+
 // In a race row the name stays on one line, and the preset count after it gives way first.
 .fv-orow .nm .fv-rname,
 .fv-rrow .nm .fv-rname {
 	flex-wrap: nowrap;
 	flex-shrink: 0;
+}
+
+// On a phone the three tiles are narrow, so a long race name like Windshaper drops its icon instead of breaking.
+@media (max-width: 30rem) {
+	.fv-ro-tiles .fv-tile .v {
+		font-size: 0.92rem;
+	}
+
+	.fv-ro-tiles .fv-tile .v .fv-ico {
+		display: none;
+	}
+
+	.fv-ro-tiles .fv-tile .v span {
+		overflow-wrap: normal;
+	}
 }
