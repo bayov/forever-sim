@@ -74,6 +74,7 @@ type weaponSim struct {
 	imbue   proto.WeaponImbue
 	totem   proto.TotemWeaponBuff
 	trinket int32
+	relic   int32
 	debuffs *proto.Debuffs
 	seconds float64
 }
@@ -93,6 +94,9 @@ func (ws weaponSim) start() (*core.Simulation, *EnhancementShaman) {
 	}
 	player.Equipment.Items = append(player.Equipment.Items, ws.weapon)
 	player.Equipment.Items[proto.ItemSlot_ItemSlotTrinket1].Id = ws.trinket
+	if ws.relic != 0 {
+		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{}, &proto.ItemSpec{Id: ws.relic})
+	}
 	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
 	target.Level = ws.level + 2
 	target.Stats[proto.Stat_StatArmor] = 0

@@ -13,7 +13,10 @@ const (
 	WushoolaysCharmOfSpirits = 19956
 	TotemOfRage              = 22395
 	TotemOfTheStorm          = 23199
+	TotemOfThunder           = 228176
 	PolishedDriftwoodIcon    = 249398
+	TotemOfChargedFlames     = 263412
+	FirestormTotem           = 263436
 	ForeverTotemOfTheStorm   = 272432
 	BurningTotem             = 272433
 	RageOfTheStorm           = 280604
@@ -96,6 +99,46 @@ func init() {
 				}
 			},
 		}))
+	})
+
+	// https://www.wowhead.com/forever/item=263436/firestorm-totem
+	// Equip: Reduces the mana cost of your totems by 5%.
+	//
+	// The client's mask (1.60.1.70338, spell 1270492) holds every totem and not the Fire Nova
+	// spell. We multiply it with Totemic Focus, the way The Earthshatterer's 2 piece does.
+	core.NewItemEffect(FirestormTotem, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.Flags.Matches(SpellFlagTotem) && spell.Cost != nil {
+				spell.Cost.Factor *= .95
+			}
+		})
+	})
+
+	// https://www.wowhead.com/forever/item=263412/totem-of-charged-flames
+	// Equip: Reduces the mana cost of Flame Shock and Lightning Bolt by 5 Mana.
+	//
+	// The client (spell 1270478) takes 5 off before the percent cost cuts.
+	core.NewItemEffect(TotemOfChargedFlames, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if (spell.SpellCode == SpellCode_ShamanFlameShock || spell.SpellCode == SpellCode_ShamanLightningBolt) && spell.Cost != nil {
+				spell.Cost.FlatModifier -= 5
+			}
+		})
+	})
+
+	// https://www.wowhead.com/forever/item=228176/totem-of-thunder
+	// Equip: Increases the critical strike chance of Lightning Bolt by 1%.
+	//
+	// Lightning Overload's copies share the bolt's spell code, so they get it too.
+	core.NewItemEffect(TotemOfThunder, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanLightningBolt {
+				spell.BonusCritRating += 1 * core.SpellCritRatingPerCritChance
+			}
+		})
 	})
 
 	// https://www.wowhead.com/forever/item=272432/totem-of-the-storm

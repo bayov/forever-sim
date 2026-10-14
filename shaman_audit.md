@@ -197,7 +197,7 @@ Tree rules
 ## 9. Race, gear and consumables
 
 - [x] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). See the 9.1 write-up below. Blood Fury follows our attack power on the beta, and the sim does too since fd3f3f4e.
-- [ ] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
+- [x] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
 - [ ] 9.3 Rage of the Storm (Stormstrike +10%)
 - [ ] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
 - [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth
@@ -1695,6 +1695,31 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Every shaman preset passes the rules, at 26 points on Level 30 + 5 and PvP and 51 on Level 60.
 - No rule changed. The point cap moved out of `main.go` into `talentPoints` so a test can reach it.
 - The new `tools/rotopt/talents_test.go` is rotopt's first test. TestTalentPoints checks 21 and 26 at level 30, 51 at level 60 with or without 5 bonus points. TestTalentTreeRules starts from the Level 30 + 5 preset and breaks one rule a build: a 27th point (valid once the cap is 27), row 4 with 14 points above, Improved Stormstrike without Stormstrike, Flurry with Mental Dexterity at 2/3, and no Spirit Weapons once it's required. A row gate one row looser, no prerequisite check, no required check and no 51 cap each fail it.
+
+### 9.2 Relics
+
+- The user OK'd it, the three new relics and the test (2026-10-14): "sg".
+- Client 70338 (ItemSparse, ItemXItemEffect and the spell tables on wago.tools):
+  - Burning Totem (272433, spell 1291077): +3000 ms duration on Flame Shock only. The sim gives Flame Shock a fifth 3 sec tick, 15 sec in all. Matches.
+  - Totem of the Storm, Forever (272432, 1291078): a dummy effect with the value 50, so the server decides what the 50% is taken off. The sim gives each Lightning Bolt that lands half a main hand swing's Maelstrom Weapon chance, because a bolt has no weapon speed for the PPM formula. That's a guess (Need to Verify).
+  - Polished Driftwood Icon (249398, 1248756): 8% of mana regen while casting. Matches, and TestOrcShamanDriftwoodIcon has the beta reading (2026-10-08).
+  - Totem of the Storm, Classic (23199, 28857): +33 on Lightning Bolt and Chain Lightning. The sim adds it as spell power on those two, scaled by their coefficients. The mask also holds a Forever spell called Harness Lightning that the sim doesn't have. wowhead Forever lists the totem as a world drop.
+  - Totem of Rage (22395): not in the client's item data, and wowhead Forever has no page for it. It's most likely not in Forever. The sim keeps its Classic effect (+30 spell power on the shocks), and the enhancement Phase 5 gear set still uses it.
+- New in the sim (`items.go`), from the client's values:
+  - Totem of Thunder (228176, 461295): +1% crit on Lightning Bolt and its overloads. It's crafted or bought from Pix Xizzix at level 60.
+  - Totem of Charged Flames (263412, 1270478): 5 less mana on Flame Shock and Lightning Bolt, before the percent cuts. It's the reward from the Horde shaman quest Call of Fire.
+  - Firestorm Totem (263436, 1270492): 5% off every totem's mana cost (the mask holds every totem and not the Fire Nova spell). It multiplies with Totemic Focus, like The Earthshatterer's 2 piece. wowhead shows no source for it.
+  - The client's other relics are healing or utility (Totem of Life, Flowing Water, Tidal, Urgency, Ancestral Protection) or SoD rune icons.
+- Presets: the Level 30 sets use the Driftwood Icon, both Level 60 Synthetic sets Burning Totem, Elemental Phase 5 and 6 the Classic Totem of the Storm, and enhancement Phase 5 Totem of Rage. The enhancement "Phase 1" real-items set has no relic, and no build preset uses it. No gear changed. The Elemental Synthetic set picked Burning Totem before the search could weigh Totem of Thunder, and the Level 30 sets the Driftwood Icon before it could weigh Charged Flames. Those are reruns for when you ask.
+- The full suite passes, no golden changed.
+- The new `relics_test.go` TestOrcShamanRelics compares a level 60 shaman with each relic against one without:
+  - Burning Totem: 5 Flame Shock ticks over 15 sec, against 4.
+  - Classic Totem of the Storm: 33 spell power on Lightning Bolt and Chain Lightning, none on Earth Shock.
+  - Totem of Thunder: 1% crit on the bolt and its overload, none on Chain Lightning.
+  - Charged Flames: 5 mana off Flame Shock and the bolt, none off Earth Shock.
+  - Firestorm Totem: 95% of the cost on Searing, Windfury and Mana Spring Totem, all of it on Fire Nova.
+  - Forever Totem of the Storm: 20,000 bolts that land give a stack 29.15% of the time against 29.17% wanted (half of 10 PPM on a 3.5 sec two-hander), and never without the relic.
+  - Taking out each effect fails its check. `weaponSim` got a `relic` field for it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
