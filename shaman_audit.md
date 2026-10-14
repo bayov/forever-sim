@@ -199,9 +199,9 @@ Tree rules
 - [x] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). See the 9.1 write-up below. Blood Fury follows our attack power on the beta, and the sim does too since fd3f3f4e.
 - [x] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
 - [x] 9.3 Rage of the Storm (Stormstrike +10%)
-- [ ] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
-- [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth
-- [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants
+- [x] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
+- [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth (waits for release gear data, the user 2026-10-14)
+- [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants (waits for release gear data, the user 2026-10-14)
 - [ ] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
 - [ ] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
 - [ ] 9.9 Weapon oils and stones beside the shaman imbue
@@ -1730,6 +1730,18 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Source (wowhead Forever): the Horde shaman quest "The Tempest's Weapons" (79442, level 40, needs level 30), which also gives the Maelstrom Weapon rune. It's a choice of Rage of the Storm, Lightning's Grasp (280607, one-hand, "Storm's Grasp" 1309442, +1% Lightning Bolt crit) and Tidebringer's Claw (280605, +1% Healing Wave and Lesser Healing Wave crit). The source item is out of Need to Verify.
 - New in the sim: Lightning's Grasp's +1% Lightning Bolt crit, written like Totem of Thunder (it reaches the overloads too). No preset uses it. Tidebringer's Claw stays out.
 - Tests: TestOrcShamanDamageModifiers already checks Rage of the Storm (Stormstrike 121 against 110, white hits and Windfury 110). TestOrcShamanRelics now checks Totem of Thunder and Lightning's Grasp together: Lightning Bolt and its overload crit 1% more over Chain Lightning than without them. We measure against Chain Lightning because the weapon's Intellect moves every spell's crit. Taking out the 1% fails it.
+
+### 9.4 Set bonuses
+
+- The user (2026-10-14): "no need to audit gear too much now. We'll have proper gear info on release". So we kept this to a client check, and the gear items below wait for release.
+- Client 70338 (ItemSet 2110 and 2111, ItemSetSpell): every bonus of The Spiritcaller's Rage and The Spiritcaller's Storm matches `item_sets_pve.go`:
+  - Rage: 1% attack and cast speed, totem radius, 36 melee attack power against Elementals, 0.5 sec off Stormstrike.
+  - Storm: 1% melee and spell hit, Earthbind cooldown, 21 spell damage against Elementals, 1 sec off Lava Burst.
+  - The client lists 6 pieces a set with no stats yet. Both synthetic sets put the set on the hands and legs only, so only the 2 piece is live. `elemental/set_bonus_test.go` checks the Storm side.
+- Left for release, no change now:
+  - The Ten Storms 5 piece is +3% crit on all spells in the client (23570, aura 57 with no school), and the sim gives it to Nature only. Only 1 piece is in any preset, so it's never live.
+  - Forever's level 60 PvP sets (Champion's and Warlord's Thunderfist, "Premier" pieces) aren't in the DB or the sim.
+  - Forever's new world sets have pieces in our DB but no set name, because we read set names from wowhead Classic tooltips. So Partners in Crime (+22 Strength and a Strength proc, a level 17 and a level 60 ring), Rider of the Plaguelands (a Shadow damage melee proc, level 57) and the caster ones never get their bonuses. Krol'dok Battlegear and Defias Enforcer's Garb aren't on wowhead Forever yet.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
