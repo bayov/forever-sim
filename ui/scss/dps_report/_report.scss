@@ -3531,16 +3531,17 @@ ol.fv-list li::marker {
 		font-weight: 400;
 	}
 
+	// 3px in from the scroll box's edge, which would clip the spec icons' rings
 	thead .fv-asm-corner {
 		width: 6.6rem;
-		padding-left: 0;
+		padding-left: 3px;
 		text-align: left;
 		color: var(--color-fg-muted);
 		font-size: 0.72rem;
 	}
 
 	tbody th {
-		padding-left: 0;
+		padding-left: 3px;
 		text-align: left;
 		font-weight: 400;
 		color: var(--color-fg);
