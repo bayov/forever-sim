@@ -1176,6 +1176,15 @@ export function startReport(dash) {
   const KIND_NAME = ['Passive racial', 'Racial cooldown', 'Boss type racial'];
   const noteRow = (kind, key) => (rowsOf('race_notes') || []).find((n) => n.kind === kind && n.key === key);
   const shortLabel = (s) => String(s).replace('Specialization', 'Spec.');
+  // A racial's game icon (race_notes) with a ring in its kind's colour, so it still ties to its part of the bar. The
+  // weapon swap and a boss type with no racial behind it keep a plain swatch.
+  const partIco = (p, cls = 'fv-pico') => {
+    const ic = noteRow('part', p)?.icon;
+    const img = ic && iconMap() ? iconImg(ic, cls) : null;
+    if (!img) return el('i', { style: `background:${partCol(p)}` });
+    img.style.setProperty('--ring', partCol(p));
+    return img;
+  };
   const pct = (v) => `${v > 99.995 ? '100' : f1(Math.min(v, 99.9))}%`;
   const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
   // Shows one preset in the Best races card: the class picked, the spec picked, and the card in view.
@@ -1246,14 +1255,13 @@ export function startReport(dash) {
       && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
     return { segs: out.filter((sg) => sg.r), idle };
   };
-  const legend = (host, kinds) => host.replaceChildren(el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats'),
-    ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+  const legend = (host, kinds) => host.replaceChildren(...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
 
   // ---------- races: best races ----------
   // Every race, and each advantage as its own entry, ranked over the presets in the filter. On one preset a bar is
   // the entry's DPS. Over several presets it's the entry's DPS as a share of the best entry's on the same preset,
   // averaged, so a full bar is the best race on every preset. Either way the bar is split into the race's base
-  // stats and what each of its racials adds, which shows how strong each racial is.
+  // stats (the gray body) and what each of its racials adds, which shows how strong each racial is.
   const drawRaceRank = () => {
     const host = $('#race-rank'), take = $('#rs-take'), axis = $('#rs-axis');
     if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) return;
@@ -1298,7 +1306,6 @@ export function startReport(dash) {
     const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo);
     const fv = (v) => (one ? f1(v) : `${f2(v)}%`), fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
-    const bestOn = (r) => (r.timesBest ? `best on ${r.timesBest} of ${r.n} presets` : `never the best, ${r.n} presets`);
     const kinds = new Set();
     const card = $('#race-rank-card');
     host.replaceChildren(...rows.map((r, i) => {
@@ -1311,8 +1318,8 @@ export function startReport(dash) {
           style: `left:${k === 0 ? 0 : x(a)}%;width:${Math.max(k === 0 ? 0 : 0.6, x(z) - (k === 0 ? 0 : x(a)))}%;background:${partCol(sg.part)};${neg ? 'z-index:1;' : ''}` }));
       });
       if (one) track.append(el('span', { class: 'wk', style: `left:${x(r.dps - r.se)}%;width:${Math.max(0.4, x(r.dps + r.se) - x(r.dps - r.se))}%` }));
-      const sub = el('div', { class: 'fv-rsub' }, ...r.segs.filter((sg) => sg.part === 'base' || Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => el('span', {}, el('i', { style: `background:${partCol(sg.part)}` }),
-        sg.part === 'base' ? `Base ${one ? f0(sg.v) : `${f1(sg.v)}%`}` : `${shortLabel(sg.label)} ${fd(sg.v)}`)),
+      const sub = el('div', { class: 'fv-rsub' }, ...r.segs.filter((sg) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => el('span', {}, partIco(sg.part),
+        `${shortLabel(sg.label)} ${fd(sg.v)}`)),
         ...(one ? r.idle.slice(0, 3).map((q) => el('span', {}, el('em', { text: `${shortLabel(q.label)}: ${q.note}` }))) : []));
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), one ? `r:${r.race}:${one.class}` : `r:${r.race}`, true, one?.id),
@@ -1326,7 +1333,7 @@ export function startReport(dash) {
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
         const racials = r.segs.filter((sg) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005)).map((sg) => {
           const info = noteRow('part', sg.part);
-          return tipText(el('b', { text: `${sg.label} ${fd(sg.v)}` }), info ? `. ${info.short || info.text}` : '');
+          return el('div', { class: 'fv-tip-racial' }, partIco(sg.part, 'fv-ico'), el('span', {}, el('b', { text: `${sg.label} ${fd(sg.v)}` }), info ? el('span', { text: info.short || info.text }) : null));
         });
         let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`)];
         if (!one) {
@@ -1348,11 +1355,7 @@ export function startReport(dash) {
       const last = rows[rows.length - 1];
       take.replaceChildren(el('b', { text: one.label }), ': ', el('b', { text: who(lead) }), ` leads with ${f1(lead.dps)} DPS`,
         ...(rows.length > 1 ? ['. ', who(rows[1]), ` is ${f2(100 * (1 - rows[1].dps / lead.dps))}% behind, and `, who(last), ` is last at −${f2(100 * (1 - last.dps / lead.dps))}%.`] : ['.']));
-    } else {
-      const plain = rows.find((r) => !r.tag || r.variant === 'noweapon');
-      take.replaceChildren(el('b', { text: who(lead) }), ` gets the closest to the best race: ${pct(lead.avg)} of its DPS on average, and ${bestOn(lead)}.`,
-        ...(lead.tag && plain && plain !== lead ? [' Without an advantage, ', el('b', { text: who(plain) }), ` leads at ${pct(plain.avg)}.`] : []));
-    }
+    } else take.replaceChildren();
     axis.textContent = one ? `Bars start at ${f0(lo)} DPS.` : `A full bar is 100%: the best race on every preset. Bars start at ${f1(lo)}%.`;
     legend($('#rs-legend'), kinds);
   };
@@ -1407,8 +1410,8 @@ export function startReport(dash) {
     host.replaceChildren(...rows.map((a, i) => {
       kinds.add(PART_KIND[a.part] ?? 0);
       const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
-        tt(raceIco(a.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(a.race)}` }), `r:${a.race}`),
-        el('span', { class: 'nm' }, el('b', { text: a.label }), el('small', { text: a.race, style: `color:${fcol(a.race)}` })),
+        noteRow('part', a.part)?.icon && iconMap() ? iconImg(noteRow('part', a.part).icon, 'fv-ico') : raceIco(a.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(a.race)}` }),
+        el('span', { class: 'nm' }, el('b', { text: a.label }), tt(el('small', { style: `color:${fcol(a.race)}` }, raceIco(a.raceIcon), a.race), `r:${a.race}`)),
         el('span', { class: 'end' }, el('b', { text: fd(a.value), class: a.value < 0 ? 'neg' : '' }),
           el('small', { text: one ? 'DPS' : a.works === a.n ? `works on all ${a.n}` : `works on ${a.works} of ${a.n}` })),
         el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${(100 * Math.max(0, a.value)) / max}%;background:${partCol(a.part)}` })));
@@ -1416,7 +1419,7 @@ export function startReport(dash) {
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
         const info = noteRow('part', a.part);
         const top = [...a.per].sort((p, q) => q.share - p.share).filter((g) => Math.abs(g.v) >= 0.05).slice(0, 3);
-        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(a.label, a.race, raceIco(a.raceIcon)), [
+        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(a.label, a.race, noteRow('part', a.part)?.icon ? iconImg(noteRow('part', a.part).icon) : raceIco(a.raceIcon)), [
           tipKey(fd(a.value), one ? 'DPS' : `of ${a.race} DPS`, one ? null : 'on average'),
           info ? tipText(info.short || info.text) : null,
           !one && top.length ? tipTable(['Strongest on', ''], top.map((g) => [bmap.get(g.build)?.label || g.build, `${sgn(g.share, f2)}%`])) : null,
@@ -1430,7 +1433,6 @@ export function startReport(dash) {
       : ` adds the most: ${fd(lead.value)} of its race's DPS on average, and it works on ${lead.works} of ${lead.n} presets.`);
     dead.textContent = idle.length ? `No effect on ${one ? 'this preset' : 'these presets'}: ${idle.map((a) => `${a.label} (${a.race})`).join(', ')}.` : '';
     legend($('#rl-legend'), kinds);
-    $('#rl-legend').firstChild.remove();
   };
 
   // ---------- icons ----------

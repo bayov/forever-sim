@@ -41,14 +41,24 @@ PART_INFO = {
     'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6 sec, 30 sec cooldown.'),
     'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15 sec, 10 min cooldown.'),
     'base': ('Base stats', "The race's own Strength, Agility, Stamina, Intellect and Spirit, with every racial left out."),
-    'swap': ('Weapon swap', "The preset's weapon changed to the racial's weapon type at the same stats and weapon DPS, with the racial left out: talents that care about the weapon type and the new weapon's speed."),
+    'swap': ('Weapon swap', "What holding the racial's weapon type changes by itself, with the racial left out. The new weapon has the preset weapon's stats and weapon DPS, so what's left is its speed and any talent that cares about the weapon type."),
     'target': ('Target type', 'What changes against this creature type: conditional racials, plus talents and spells that only work on some types.'),
 }
 
 # The tooltip's one line for the parts whose text above runs long; the others show their text as it is.
 PART_SHORT = {
     'touch': '5% chance a hit (10% for Mages, Priests and Warlocks): Shadow damage of 5% of max health, at most once a second.',
-    'swap': "The racial's weapon type at the same stats and weapon DPS, racial left out: weapon-type talents and the new speed.",
+    'swap': "What the new weapon changes by itself, before the racial: its speed and any talent tied to the weapon type. It keeps the preset weapon's stats and DPS.",
+}
+
+# Each racial's game icon, from ui/core/forever/racials.json. The priest racials are from wowhead, and Dark Sacrifice
+# has no known icon.
+PART_ICON = {
+    'spirit': 'inv_enchant_shardbrilliantsmall', 'sword': 'ability_meleedamage', 'mace': 'inv_hammer_05', 'beast_dwarf': 'inv_weapon_rifle_05',
+    'elune': 'spell_nature_moonglow', 'mind': 'inv_enchant_essenceeternallarge', 'eureka': 'inv_gnometoy', 'axe': 'inv_axe_02',
+    'bloodfury': 'racial_orc_berserkerstrength', 'touch': 'spell_shadow_fingerofdeath', 'endurance': 'spell_nature_unyeildingstamina',
+    'berserking': 'racial_troll_berserk', 'beast_troll': 'inv_misc_pelt_bear_ruin_02', 'windblessed': 'inv_misc_volatileair',
+    'insight': 'achievement_raidprimalist_windelemental', 'starshards': 'spell_arcane_starfire', 'chastise': 'spell_holy_chastise',
 }
 
 RACE_PARTS = {'Human': ['spirit', 'sword'], 'Dwarf': ['mace', 'beast_dwarf', 'chastise'], 'Night Elf': ['elune', 'starshards'],
@@ -213,7 +223,7 @@ def build(builds, races_rows, stats_rows, dump):
     for key, title, text in SCENARIOS:
         notes.append({'kind': 'scenario', 'key': key, 'title': title, 'text': text})
     for p, (title, text) in PART_INFO.items():
-        notes.append({'kind': 'part', 'key': p, 'title': title, 'text': text, 'short': PART_SHORT.get(p, text)})
+        notes.append({'kind': 'part', 'key': p, 'title': title, 'text': text, 'short': PART_SHORT.get(p, text), 'icon': PART_ICON.get(p)})
     for cls in ['Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest']:
         notes.append({'kind': 'class', 'key': cls, 'title': cls, 'text': finding(cls, bmap, variants, breakdown)})
     dump('race_variants', variants)

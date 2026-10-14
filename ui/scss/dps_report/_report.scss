@@ -1276,11 +1276,11 @@ ol.fv-list li::marker {
 // report.js): a title, the answer, then labelled values, at most about 19rem wide.
 .fv-tip {
 	font-size: var(--cds-font-size-caption);
-	line-height: 1.4;
+	line-height: 1.5;
 	min-width: 9rem;
 	max-width: min(19rem, calc(100vw - 2rem));
 	display: grid;
-	gap: 0.2rem;
+	gap: 0.45rem;
 	font-variant-numeric: tabular-nums;
 	overflow-wrap: anywhere;
 }
@@ -1934,9 +1934,48 @@ ol.fv-list li::marker {
 // The specs a race is the best for, in the overview's tooltip, one line per class.
 .fv-tip-specs {
 	display: grid;
-	gap: 0.2rem;
+	gap: 0.3rem;
 	font-size: 0.74rem;
-	line-height: 1.35;
+	line-height: 1.45;
+}
+
+// A racial in a tooltip: its icon, then its name and value, and under them what it does.
+.fv-tip-racial {
+	display: grid;
+	grid-template-columns: 1.15rem minmax(0, 1fr);
+	gap: 0.45rem;
+	align-items: start;
+
+	> .fv-ico,
+	> i {
+		width: 1.15rem;
+		height: 1.15rem;
+		border-radius: 3px;
+		margin-top: 0.1rem;
+	}
+
+	> span {
+		display: grid;
+		gap: 0.1rem;
+	}
+}
+
+// A racial's icon in the bar captions, ringed in its kind's colour.
+.fv-rsub .fv-pico {
+	width: 0.95rem;
+	height: 0.95rem;
+	border-radius: 3px;
+	box-shadow: 0 0 0 1.5px var(--ring);
+	vertical-align: -0.2rem;
+	margin-right: 0.15rem;
+}
+
+#racial-rank .nm small .fv-ico {
+	width: 0.85rem;
+	height: 0.85rem;
+	border-radius: 50%;
+	margin-right: 0.2rem;
+	vertical-align: -0.12rem;
 }
 
 .fv-tip-specs > span {
@@ -3702,4 +3741,9 @@ ol.fv-list li::marker {
 	margin-left: 0.3rem;
 	font-size: var(--cds-font-size-caption);
 	font-variant-numeric: tabular-nums;
+}
+
+// Strongest racials leads each row with the racial's spell icon, which is square, not a round race portrait.
+#racial-rank .fv-orow > img.fv-ico {
+	border-radius: 4px;
 }
