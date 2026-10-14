@@ -173,7 +173,7 @@ Enhancement
 
 Restoration
 
-- [ ] 8.35 Improved Healing Wave (not implemented)
+- [x] 8.35 Improved Healing Wave (not implemented)
 - [ ] 8.36 Totemic Focus
 - [ ] 8.37 Mindfulness
 - [ ] 8.38 Natural Grace
@@ -1558,6 +1558,13 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 425336): 25 sec, a 180000 ms cooldown with no category, GCD 0. Effect 1 is +30% attack speed (aura 342, melee and ranged). Effect 2 is aura 61 at 30, which makes the model 30% bigger and is only cosmetic. Build 70009's tooltip says "Instant, 3 min cooldown" too, where the older one showed no cooldown. That matches.
 - Beta: no data, it's a row 7 talent and our character is level 30. It stays in the notes.md line for the row 6 and 7 talents.
 - No sim change. The code comment now cites the 70338 client and the tooltip for the 3 min. Already tested in `rage_of_the_farseer_test.go` (1.3x attack speed, no cast speed, 25 sec), `haste_test.go`, `gcd_test.go` and `reaction_time_test.go`. TestOrcShamanRageOfTheFarseer now also wants it ready again exactly 3 min after the cast. A 2 min cooldown fails it.
+
+### 8.35 Improved Healing Wave
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 16182, curve 85307): 0.1 to 0.5 sec off Healing Wave's cast time (aura 107, cast time, mask 0x40).
+- The sim: the proto has the field, but nothing reads it. The sim has no Healing Wave spell (`shaman.go` has a slot that nothing fills), and no rotation heals except Healing Stream Totem. So it only matters if we ever sim healing.
+- No preset takes it. Both Elemental presets put their first 5 Restoration points in Totemic Focus, and the enhancement presets have no Restoration points. No beta build had it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
