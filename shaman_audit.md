@@ -175,7 +175,7 @@ Restoration
 
 - [x] 8.35 Improved Healing Wave (not implemented)
 - [x] 8.36 Totemic Focus
-- [ ] 8.37 Mindfulness
+- [x] 8.37 Mindfulness
 - [ ] 8.38 Natural Grace
 - [ ] 8.39 Tidal Focus
 - [ ] 8.40 Improved Reincarnation
@@ -1573,6 +1573,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16173, curve 85321): -5 to -25% cost (aura 108, misc 14). Its mask covers Searing, Magma and Stoneclaw Totem, Healing Stream and Mana Spring, and the shared totem bit that holds every other totem, Mana Tide included. It also covers Totemic Projection and Call of the Elements, Ancestors and Spirits (the "spells that summon or move them"), which the sim doesn't have. Forever's Fire Nova (408341 to 408345) has other mask bits. That matches.
 - Beta: no shaman build had it. The 16:53 export with 13 points in the third tree was the paladin.
 - No sim change. `mana_costs_test.go` TestOrcShamanManaCostTalents checked 5/5 on 13 totems, alone and with the other cost talents, and Fire Nova at full cost. It now also checks Mana Tide Totem with and without 5/5 (60 and 45 mana at rank 3). Mana Tide at full cost fails it.
+
+### 8.37 Mindfulness
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): 1, 2 and 3 points keep 17, 33 and 50% of our Spirit regen going while we cast (inside the five second rule). MP5 keeps going in full anyway. It adds to the Polished Driftwood Icon's 8% and Improved Stormstrike's 50%, capped at 100% (2.3). Both Elemental presets take 3/3, the enhancement presets none.
+- Client 70338 (wago.tools 1223033, curve 85316): 17, 33 and 50% (aura 134, the same casting regen aura as Improved Stormstrike's buff). The forever-wiki's 17 / 34 / 51 is an older text. That matches.
+- Beta: no build had it.
+- No sim change. `five_second_rule_test.go` TestOrcShamanCastingRegenCap uses 3/3 with the icon and Improved Stormstrike. The new `mindfulness_test.go` TestOrcShamanMindfulness wants 0, 17, 33 and 50% of the full regen while casting at 0 to 3 points on a naked level 60 shaman. The wiki's 34 and 51 fail it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
