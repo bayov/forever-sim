@@ -179,8 +179,8 @@ Restoration
 - [x] 8.38 Natural Grace
 - [x] 8.39 Tidal Focus
 - [x] 8.40 Improved Reincarnation
-- [ ] 8.41 Ancestral Healing (not implemented)
-- [ ] 8.42 Healing Focus (not implemented)
+- [x] 8.41 Ancestral Healing (not implemented)
+- [x] 8.42 Healing Focus (not implemented)
 - [ ] 8.43 Water Shield
 - [ ] 8.44 Tidal Mastery
 - [ ] 8.45 Restorative Totems
@@ -1606,6 +1606,20 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 16184, curve 85310, aura 133): 2 and 4%. That matches.
 - Beta: no build had it.
 - No sim change and no new test. `base_stats_test.go` TestOrcShamanHealthTalents (6.6) wants 665 x 1.04 health at level 30 with 2/2, and 715 x 1.04 with Toughness 5/5 too.
+
+### 8.41 Ancestral Healing
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 16176, curve 85318): a crit from one of our healing spells gives the target Ancestral Fortitude (16177), +8, 17 or 25% armor from items for 15 sec (aura 101).
+- The sim: the proto has the field, but nothing reads it. Healing Stream's ticks can crit in the sim (8.15), so it could give us the buff when the boss hits us. Only Tank Healing takes it (3/3), and the enhancement presets would need 10 Restoration points to reach it.
+- No beta build had it.
+
+### 8.42 Healing Focus
+
+- The user OK'd leaving it out (2026-10-14): "sg".
+- Client 70338 (wago.tools 16181, curve 85317): a 23, 47 or 70% chance that taking damage doesn't push back a heal (aura 108, pushback) for Healing Wave, Lesser Healing Wave and Chain Heal (mask 0x1c0) plus one third-word bit.
+- The sim: nothing reads it. The sim has none of those spells, though it has the pushback rule since 8.10. Both Restoration presets take 3/3.
+- No beta build had it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
