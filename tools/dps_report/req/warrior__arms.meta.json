@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 909.0,
-    "source": "warrior head 38b94b4"
+    "dps": 915.1,
+    "source": "warrior head 55979ee (rotation audit pass 14)"
   },
   "verify": {
-    "dps": 909.02,
-    "stderr": 0.35,
+    "dps": 915.06,
+    "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "+0.02"
+    "note": "-0.04"
   },
   "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster sword procs. It is the Arms spec's Level 60 preset, about 12% behind dual wield Fury.",
   "keyTalents": [
@@ -38,8 +38,8 @@
   ],
   "rotation": [
     "Pre-pull: Battle Stance",
-    "With 20 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance and stay",
-    "Death Wish held for the last 36 sec, Recklessness in the last 20 sec; racials with Death Wish",
+    "With 25 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
+    "Death Wish held for the last 36 sec, Recklessness in the last 25 sec; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",
     "Mighty Rage Potion at the pull, second held for the last 20 sec; Bloodrage under 10 Rage",
     "Mortal Strike on cooldown",
     "Slam from 20 Rage (15 sec cooldown with Improved Slam), outside execute",

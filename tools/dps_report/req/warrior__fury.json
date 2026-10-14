@@ -107,7 +107,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Blood Fury waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Orc. Blood Fury waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -181,7 +181,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Berserking waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Troll. Berserking waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -331,7 +331,7 @@
                   }
                 },
                 {
-                  "notes": "Mighty Rage Potion, the last one held for the end of the fight when the wait costs no use.",
+                  "notes": "Mighty Rage Potion at the pull, the last one held for the end of the fight when the wait costs no use.",
                   "action": {
                     "condition": {
                       "or": {
@@ -340,48 +340,67 @@
                             "cmp": {
                               "op": "OpLe",
                               "lhs": {
-                                "remainingTime": {}
+                                "currentTime": {}
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "20s"
+                                  "val": "3s"
                                 }
                               }
                             }
                           },
                           {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "otherId": "OtherActionPotion"
-                                  },
-                                  "delay": {
-                                    "math": {
-                                      "op": "OpSub",
-                                      "lhs": {
-                                        "remainingTime": {}
-                                      },
-                                      "rhs": {
-                                        "const": {
-                                          "val": "20s"
-                                        }
+                            "or": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "remainingTime": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "20s"
                                       }
                                     }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGt",
+                                    "lhs": {
+                                      "spellUsesLostByDelay": {
+                                        "spellId": {
+                                          "otherId": "OtherActionPotion"
+                                        },
+                                        "delay": {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "20s"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "minTimeLeft": {
+                                          "const": {
+                                            "val": "15s"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "0"
+                                      }
                                     }
                                   }
                                 }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
+                              ]
                             }
                           }
                         ]
@@ -390,70 +409,6 @@
                     "castSpell": {
                       "spellId": {
                         "otherId": "OtherActionPotion"
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "The on-use trinket, the last use held for the end of the fight when the wait costs no use.",
-                  "action": {
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "cmp": {
-                              "op": "OpLe",
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "25s"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "itemId": 991018
-                                  },
-                                  "delay": {
-                                    "math": {
-                                      "op": "OpSub",
-                                      "lhs": {
-                                        "remainingTime": {}
-                                      },
-                                      "rhs": {
-                                        "const": {
-                                          "val": "25s"
-                                        }
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 991018
                       }
                     }
                   }
