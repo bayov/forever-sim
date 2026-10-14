@@ -25,12 +25,43 @@ go run --tags=with_db ./tools/logcheck -from 21:32:25 -to 22:16:00
 
 Run it from the repo root. A run takes about a second.
 
+## The audit
+
+```sh
+go run --tags=with_db ./tools/logcheck -audit
+```
+
+This checks every stretch of the archived logs that we haven't checked yet. The `logcheck` skill
+(`.claude/skills/logcheck/SKILL.md`) runs it and triages what it flags.
+
+It splits each log into windows where the sim's character holds still: one of our characters,
+with the same gear, talents and level all through. It cuts at each change BayovCore's history
+recorded, at each change of the item level on our casts that the history doesn't have, at each
+logout or `/reload`, and at breaks of more than 30 minutes between fights. It runs logcheck on
+each new window (four at a time) and saves the report in `~/forever-logs/audit/reports/`. The
+ledger `~/forever-logs/audit/ledger.jsonl` keeps each window with its flags, so the next audit
+skips it. A window with fewer than 60 of our attacks is noted as skipped.
+
+A window waits until the history covers it, because WoW saves the history only at logout and
+`/reload`. The addon writes a logout record just before WoW saves, so a window is ready once
+the character has a history record from after it ends. A character with no history waits
+until the log has been quiet for 30 minutes.
+
+The digest prints each new window's flags, marked `NEW` when no earlier window flagged that
+ability and kind, or `known` when `known.json` (next to this README) has them. Then it counts
+each ability and kind across the whole ledger. Windows where the character changed in a way
+the sim can't follow (a `change` flag, only seen before the history) are left out of the
+counts, because their flags may only show that change. `-redo` runs every window again with the
+sim as it is now, which is how we see what a fix cleared.
+
 ## Inputs
 
 - **The log.** With no `-log`, it runs `tools/combat_log/archive.sh` first and reads the newest
   log in `~/forever-logs/_classic_beta_/`. `-from` and `-to` take `HH:MM:SS` on the log's first
   day (a time before the log starts is the next day) or `YYYY-MM-DD HH:MM:SS`.
-- **The export.** With no `-export`, it takes the newest export taken before the window ends.
+- **The export.** With no `-export`, it takes the newest export taken before the window ends,
+  of the one character of ours (one we have exports of) that has lines in the window. When we
+  played two of them in the window, `-char Name-Realm` picks one.
   It looks at the pasted ones in `~/forever-logs/exports/` and at BayovCore's history in
   `~/forever-logs/history/` (below). When the user pastes an export, save it in `exports/` as
   `export-<date>_<time>.json` with the date and time from its `when.date`. The header prints which
@@ -39,7 +70,8 @@ Run it from the repo root. A run takes about a second.
   character as it changes. It takes a full snapshot at login, `/reload` and `/bayov export
   mark`. After that it records each gear swap, enchant, talent change, level up and skill up,
   within about 2 seconds of when it happened, and the sheet after a gear, talent or level change.
-  WoW writes it to disk on `/reload` or logout. `archive.sh` runs
+  WoW writes it to disk on `/reload` or logout, and the addon adds a logout record just before,
+  which says the history is complete up to then. `archive.sh` runs
   `tools/combat_log/history.py`, which adds the new records to
   `~/forever-logs/history/<Name>-<Realm>.jsonl` (the sheets and talent lists are in the
   `.blobs.json` next to it). logcheck rebuilds a whole export for each record, so the header
@@ -62,7 +94,8 @@ Run it from the repo root. A run takes about a second.
 - We stand in front of the mob, where it can parry and block, as when questing (`-behind` for
   the other way).
 - Our shaman imbue, from the last imbue we cast before the window ends (the export can't see it
-  under Forever).
+  under Forever). When the cast is in an earlier log file, the imbue's procs in the window say
+  which one it is.
 - Mob hits on us from the log, as raid damage hits per minute, so Lightning Shield goes off.
 - No buffs, no consumes, and no rotation beyond the replayed casts. The mana is refilled before
   each cast and the GCD freed, because neither is what we check here.

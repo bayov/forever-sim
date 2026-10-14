@@ -20,7 +20,9 @@ const historySettle = 5 * time.Second
 //
 // A "login" or "mark" record holds the whole character, like an export. A "change" record
 // holds only what changed: the gear slots (false for one that was emptied), the talents, the
-// level, or the skills that went up. The sheet ("stats") and the full talent list ("ref") are
+// level, or the skills that went up. A "logout" record holds nothing. The addon writes one at
+// logout and /reload, just before WoW saves the history, so its time says the history is
+// complete up to then. We still rebuild an export for it, the same as the one before. The sheet ("stats") and the full talent list ("ref") are
 // ids into <Name>-<Realm>.blobs.json, because the addon stores each distinct one once.
 type historyRecord struct {
 	Kind    string                     `json:"kind"`
@@ -144,6 +146,7 @@ func replayHistory(path string) ([]*export, error) {
 			return nil, err
 		}
 		ex.history = true
+		ex.kind = rec.Kind
 		exports = append(exports, ex)
 	}
 	return exports, scanner.Err()

@@ -21,9 +21,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -50,6 +52,10 @@ func main() {
 	rounding := flag.String("rounding", "floor", "how the server turns damage into whole points, floor or round")
 	fullSkill := flag.Bool("full-skill", false, "sim full weapon skill instead of the export's")
 	behind := flag.Bool("behind", false, "sim us behind the mob, where it can't parry or block (by default we're in front, as when questing)")
+	charFlag := flag.String("char", "", "the character who played the window, as Name-Realm (default: the one of ours with lines in the window)")
+	flagsOut := flag.String("flags-out", "", "also write the flagged list to this file as JSON")
+	audit := flag.Bool("audit", false, "check every stretch of the archived logs we haven't checked yet (audit.go), instead of one window")
+	redo := flag.Bool("redo", false, "with -audit, check again the windows the ledger already has, with the sim as it is now")
 	flag.Parse()
 	sim.RegisterAll()
 
@@ -58,6 +64,13 @@ func main() {
 	}
 	if _, err := os.Stat(filepath.Join(repoRoot, "ui/core/talents/trees")); err != nil {
 		log.Fatal("run logcheck from the repo root")
+	}
+
+	if *audit {
+		if err := runAudit(*archive, *flavor, *logPath, *iterations, *redo); err != nil {
+			log.Fatal(err)
+		}
+		return
 	}
 
 	if *logPath == "" {
@@ -90,16 +103,29 @@ func main() {
 		log.Fatal(err)
 	}
 	var ex *export
-	if *exportPath != "" {
+	switch {
+	case *exportPath != "":
 		ex, err = loadExport(*exportPath)
-	} else {
-		ex, err = pickExport(exports, to)
+	case *charFlag != "":
+		ex, err = pickExport(exports, to, map[string]bool{*charFlag: true})
+	default:
+		// The log has every player near us, and we may have played more than one of our
+		// characters in it, so we take an export of one that played in the window.
+		chars := logChars(all, exports, from, to)
+		if len(chars) == 0 {
+			log.Fatal("none of the characters we have exports of played in the window")
+		}
+		if len(chars) > 1 {
+			log.Fatalf("more than one of our characters played in the window (%s), pick one with -char",
+				strings.Join(slices.Sorted(maps.Keys(chars)), ", "))
+		}
+		ex, err = pickExport(exports, to, chars)
 	}
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cl, err := newCombatLog(all, ex.Who.Name, from, to)
+	cl, err := newCombatLog(all, charKey(ex), from, to)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -133,6 +159,21 @@ func main() {
 	r.amountAllLevels()
 	fmt.Println()
 	r.flags()
+	if *flagsOut != "" {
+		data, err := json.Marshal(runResult{Export: ex.path, Findings: r.flagged})
+		if err == nil {
+			err = os.WriteFile(*flagsOut, data, 0o644)
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+// runResult is what -flags-out writes, for the audit.
+type runResult struct {
+	Export   string    `json:"export"`
+	Findings []finding `json:"findings"`
 }
 
 func newestLog(dir string) string {
@@ -186,6 +227,19 @@ func setImbue(char *character, all []*event, cl *combatLog, ex *export, tables *
 			}
 		}
 	}
+	// The imbue lasts 30 minutes and survives a relog, so its cast can be in an earlier log
+	// file. Then its procs in the window tell which one it is.
+	if imbue == 0 {
+		for _, e := range cl.events {
+			if e.srcGUID != cl.me || !isAttack(e.kind) {
+				continue
+			}
+			if value, ok := imbueProcs[e.spellID]; ok {
+				imbue, name = value, e.spell+" procs in the window"
+				break
+			}
+		}
+	}
 	if enh := char.player.GetEnhancementShaman(); enh != nil && imbue != 0 {
 		enh.Options.ShamanImbue = imbue
 		char.notes = append(char.notes, "shaman imbue from the log: "+name)
@@ -208,6 +262,13 @@ func setImbue(char *character, all []*event, cl *combatLog, ex *export, tables *
 			break
 		}
 	}
+}
+
+// imbueProcs are the spells our shaman imbues hit with, by the log's spell ID. Flametongue
+// Totem's attack has the same name as the imbue's (16368 against 10444), so we go by ID.
+var imbueProcs = map[int32]proto.WeaponImbue{
+	439440: proto.WeaponImbue_WindfuryWeapon,
+	10444:  proto.WeaponImbue_FlametongueWeapon,
 }
 
 // tallyLog counts our attacks on mobs in the window, by mob level.

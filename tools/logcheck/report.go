@@ -24,7 +24,7 @@ type report struct {
 	tables      *clientTables
 	logPath     string
 	minAttempts int
-	flagged     []string
+	flagged     []finding
 	// missing holds the spells the sim doesn't have, printed once for the whole report.
 	missing map[string]bool
 	// aliased holds the sim spells we matched to a log spell of another ID, printed once.
@@ -148,7 +148,7 @@ func (r *report) sheet() {
 		// below before any sim formula does.
 		what := fmt.Sprintf("the sim's character differs from the sheet (%s). A buff up at export time explains a sheet that's higher, anything else is a gap in the sim's character that moves the damage rows", strings.Join(off, ", "))
 		fmt.Printf("  WARNING: %s.\n", what)
-		r.flagged = append(r.flagged, "sheet check: "+what)
+		r.flagged = append(r.flagged, finding{Kind: "sheet", What: what})
 	}
 	fmt.Println()
 }
@@ -203,7 +203,7 @@ func (r *report) exportChanges(exports []*export) {
 				a.time.Format(stampFormat), b.time.Format(stampFormat), strings.Join(changes, ", "))
 		}
 		fmt.Printf("WARNING: %s.\n", what)
-		r.flagged = append(r.flagged, what)
+		r.flagged = append(r.flagged, finding{Kind: "change", What: what})
 	}
 	if len(skillOrder) > 0 {
 		slices.Sort(skillOrder)
@@ -219,7 +219,7 @@ func (r *report) exportChanges(exports []*export) {
 		what := fmt.Sprintf("weapon skill went up %s, so its misses, dodges, parries, glances and crits mix the skills in between: %s",
 			span, strings.Join(ups, ", "))
 		fmt.Printf("WARNING: %s.\n", what)
-		r.flagged = append(r.flagged, what)
+		r.flagged = append(r.flagged, finding{Kind: "change", What: what})
 	}
 	fmt.Println()
 }
@@ -281,7 +281,7 @@ func (r *report) weaponSkills(fullSkill bool) {
 	what := fmt.Sprintf("weapon skill below the most for our level: %s, from the export %s, with %d swings in the window. %s",
 		strings.Join(low, ", "), when, swings, effect)
 	fmt.Printf("WARNING: %s.\n\n", what)
-	r.flagged = append(r.flagged, what)
+	r.flagged = append(r.flagged, finding{Kind: "skill", What: what})
 }
 
 // mainHandSkillGap is how far the main hand's weapon skill is below the most for our level.
@@ -482,7 +482,7 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 		name := r.name(key)
 		fmt.Printf("\n%s: log %d, sim %.1f a run\n", name, lt.attempts, float64(st.attempts)/runs)
 		if st.attempts == 0 {
-			r.flag(p.level, name, "the sim never did it")
+			r.flag(p.level, name, "never", "the sim never did it")
 			continue
 		}
 		fmt.Printf("  %-8s %5s %7s %13s %8s %7s\n", "", "log", "", "log 95% CI", "sim", "p")
@@ -501,7 +501,7 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 			}
 			fmt.Printf("  %-8s %5d %6.1f%% %5.1f-%5.1f%% %7.1f%% %7s%s\n", outcome, k, 100*float64(k)/float64(lt.attempts), 100*lo, 100*hi, 100*simRate, pString(pValue), mark)
 			if mark == " !!" {
-				r.flag(p.level, name, fmt.Sprintf("%s %d of %d (%.1f%%), the sim gives %.1f%%", outcome, k, lt.attempts, 100*float64(k)/float64(lt.attempts), 100*simRate))
+				r.flag(p.level, name, outcome, fmt.Sprintf("%s %d of %d (%.1f%%), the sim gives %.1f%%", outcome, k, lt.attempts, 100*float64(k)/float64(lt.attempts), 100*simRate))
 			}
 		}
 
@@ -533,12 +533,12 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 			fmt.Printf("  raw      log %.0f-%.0f (avg %.1f)   sim %.0f-%.0f (avg %.1f, %.1f-%.1f before %s)   %d outside, avg p %s%s\n",
 				ls.min, ls.max, ls.mean(), ss.min, ss.max, ss.mean(), exact.min, exact.max, r.rounding, outside, pString(pValue), mark)
 			if mark == " !!" {
-				r.flag(p.level, name, fmt.Sprintf("raw damage avg %.1f in %d hits (%.0f-%.0f), the sim's is %.1f (%.0f-%.0f, %.1f-%.1f before %s)",
+				r.flag(p.level, name, "raw", fmt.Sprintf("raw damage avg %.1f in %d hits (%.0f-%.0f), the sim's is %.1f (%.0f-%.0f, %.1f-%.1f before %s)",
 					ls.mean(), ls.n, ls.min, ls.max, ss.mean(), ss.min, ss.max, exact.min, exact.max, r.rounding))
 			}
 		}
 
-		r.amount(fmt.Sprintf("level %d", p.level), name, lt, st)
+		r.amount(p.level, name, lt, st)
 		r.pool(key, lt, st)
 
 		if lt.spellLanded > 0 && st.spellLanded > 0 {
@@ -555,7 +555,7 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 			fmt.Printf("  partial  log %d of %d (%.1f%%) %s   sim %.1f%% %s   p %s%s\n", lp, lt.spellLanded, 100*float64(lp)/float64(lt.spellLanded),
 				shares(lt.partial, 1), 100*simRate, shares(st.partial, float64(st.spellLanded)/100), pString(pValue), mark)
 			if mark == " !!" {
-				r.flag(p.level, name, fmt.Sprintf("partial resists on %d of %d landed, the sim gives %.1f%%", lp, lt.spellLanded, 100*simRate))
+				r.flag(p.level, name, "partial", fmt.Sprintf("partial resists on %d of %d landed, the sim gives %.1f%%", lp, lt.spellLanded, 100*simRate))
 			}
 		}
 	}
@@ -594,7 +594,7 @@ func (r *report) level(p *plan, logT, simT *tallies, rs *replayStats) {
 		name := r.name(key)
 		fmt.Printf("  %-36s log %5.1f (%d)   sim %5.1f   p %s%s\n", name, 100*float64(lt.attempts)/float64(logWhite), lt.attempts, 100*rate, pString(pValue), mark)
 		if mark == " !!" {
-			r.flag(p.level, name, fmt.Sprintf("%.1f per 100 landed white swings, the sim gives %.1f", 100*float64(lt.attempts)/float64(logWhite), 100*rate))
+			r.flag(p.level, name, "procs", fmt.Sprintf("%.1f per 100 landed white swings, the sim gives %.1f", 100*float64(lt.attempts)/float64(logWhite), 100*rate))
 		}
 	}
 	fmt.Println()
@@ -643,8 +643,34 @@ func pMark(p float64) string {
 	return ""
 }
 
-func (r *report) flag(level int, name, what string) {
-	r.flagged = append(r.flagged, fmt.Sprintf("level %d, %s: %s", level, name, what))
+// finding is one line of the flagged list.
+type finding struct {
+	// Kind says which check flagged it: "sheet", "change" and "skill" for the character, and
+	// for an ability "never" (the sim never did it), an outcome like "parry", "raw",
+	// "partial", "procs" or "amount". The audit counts how often each ability and kind come
+	// back across windows.
+	Kind string `json:"kind"`
+	// Level is the mob level, or 0 for the character's checks and for amounts on all mob
+	// levels together.
+	Level   int    `json:"level,omitempty"`
+	Ability string `json:"ability,omitempty"`
+	What    string `json:"what"`
+}
+
+func (f finding) String() string {
+	switch {
+	case f.Kind == "sheet":
+		return "sheet check: " + f.What
+	case f.Ability == "":
+		return f.What
+	case f.Level == 0:
+		return fmt.Sprintf("all levels, %s: %s", f.Ability, f.What)
+	}
+	return fmt.Sprintf("level %d, %s: %s", f.Level, f.Ability, f.What)
+}
+
+func (r *report) flag(level int, name, kind, what string) {
+	r.flagged = append(r.flagged, finding{Kind: kind, Level: level, Ability: name, What: what})
 }
 
 func (r *report) flags() {
@@ -654,6 +680,6 @@ func (r *report) flags() {
 	}
 	fmt.Println("Flagged (less than a 1 in 1000 chance under the sim, or impossible in it):")
 	for _, f := range r.flagged {
-		fmt.Println("  " + f)
+		fmt.Println("  " + f.String())
 	}
 }
