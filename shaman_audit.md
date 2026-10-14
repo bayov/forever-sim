@@ -182,7 +182,7 @@ Restoration
 - [x] 8.41 Ancestral Healing (not implemented)
 - [x] 8.42 Healing Focus (not implemented)
 - [x] 8.43 Water Shield
-- [ ] 8.44 Tidal Mastery
+- [x] 8.44 Tidal Mastery
 - [ ] 8.45 Restorative Totems
 - [ ] 8.46 Mana Tide Totem
 - [ ] 8.47 Healing Way (not implemented)
@@ -1628,6 +1628,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client: the vendored tree has it as a 1 rank Restoration talent teaching 408510. 70338's 408510 and 408511 match the sim (7.16).
 - Beta: another level 25 shaman's globes in 7.16. Our character never had it.
 - No sim change and no new test. `mana_returns_test.go` TestOrcShamanWaterShieldRecast and the other 7.16 tests cover it. Fixed 7.16's line that said no rotation casts it.
+
+### 8.44 Tidal Mastery
+
+- The user OK'd it (2026-10-14): "sg".
+- The sim (`talents.go`): each point gives +1% crit to spells with the shaman flag and the healing proc mask. The sim has no such heal. Healing Stream's heal has no shaman flag, so its crits don't get it (5.7), and the talent does nothing today. Both Restoration presets take 5/5, nothing else.
+- Client 70338 (wago.tools 16194, curve 85308): +1 to 5% crit (aura 107, misc 7) on Healing Wave, Lesser Healing Wave, Chain Heal and Riptide, not Healing Stream. Classic's version also covered Lightning Bolt and Chain Lightning, and Forever's doesn't, as its tooltip says. The mask also has Lightning Shield's bit (0x400), orb damage spells 26363 to 26370 included, probably left over from Classic's "and lightning spells". It changes nothing, because orbs never crit (7.15: 310 beta orb hits, 0 crits).
+- Beta: no build had it.
+- No sim change and no test. It only matters if we sim healing.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
