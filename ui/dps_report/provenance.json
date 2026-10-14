@@ -366,8 +366,8 @@
 			}
 		},
 		"shaman__enhancement-level60": {
-			"commit": "999e704700e80548b8f72ab82f59e7f928728950",
-			"recordedAt": "2026-10-14T10:03:33.274Z",
+			"commit": "0ac3e57abdce3d8fc0496957c5c677b9e35a6cd5",
+			"recordedAt": "2026-10-14T14:59:39.851Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -377,7 +377,7 @@
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
 				"tools/rotopt": "979da627ff1bc3c9d73328287b6bdb543ac01f9a",
-				"sim/shaman": "22603950442da9b8c63d61d29d7f386eb5c4a67e",
+				"sim/shaman": "f662c7e63c4fb387f235fdd75d15686cb3a61144",
 				"ui/elemental_shaman": "b4193b3889f01ba3b1126fb84dd7ec60ab8a1936",
 				"ui/enhancement_shaman": "4b2d46f1779251c2e8f75d20b249f2662085810a",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
@@ -385,8 +385,8 @@
 			}
 		},
 		"shaman__enhancement-imp-gw": {
-			"commit": "999e704700e80548b8f72ab82f59e7f928728950",
-			"recordedAt": "2026-10-14T10:03:33.370Z",
+			"commit": "0ac3e57abdce3d8fc0496957c5c677b9e35a6cd5",
+			"recordedAt": "2026-10-14T14:59:39.949Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -396,7 +396,7 @@
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
 				"tools/rotopt": "979da627ff1bc3c9d73328287b6bdb543ac01f9a",
-				"sim/shaman": "22603950442da9b8c63d61d29d7f386eb5c4a67e",
+				"sim/shaman": "f662c7e63c4fb387f235fdd75d15686cb3a61144",
 				"ui/elemental_shaman": "b4193b3889f01ba3b1126fb84dd7ec60ab8a1936",
 				"ui/enhancement_shaman": "4b2d46f1779251c2e8f75d20b249f2662085810a",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
@@ -404,8 +404,8 @@
 			}
 		},
 		"shaman__enhancement-water-shield": {
-			"commit": "999e704700e80548b8f72ab82f59e7f928728950",
-			"recordedAt": "2026-10-14T10:03:33.474Z",
+			"commit": "0ac3e57abdce3d8fc0496957c5c677b9e35a6cd5",
+			"recordedAt": "2026-10-14T14:59:40.034Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -415,7 +415,7 @@
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
 				"tools/rotopt": "979da627ff1bc3c9d73328287b6bdb543ac01f9a",
-				"sim/shaman": "22603950442da9b8c63d61d29d7f386eb5c4a67e",
+				"sim/shaman": "f662c7e63c4fb387f235fdd75d15686cb3a61144",
 				"ui/elemental_shaman": "b4193b3889f01ba3b1126fb84dd7ec60ab8a1936",
 				"ui/enhancement_shaman": "4b2d46f1779251c2e8f75d20b249f2662085810a",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
@@ -423,8 +423,8 @@
 			}
 		},
 		"shaman__enhancement-mana-tide": {
-			"commit": "999e704700e80548b8f72ab82f59e7f928728950",
-			"recordedAt": "2026-10-14T10:03:33.555Z",
+			"commit": "0ac3e57abdce3d8fc0496957c5c677b9e35a6cd5",
+			"recordedAt": "2026-10-14T14:59:40.127Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -434,7 +434,7 @@
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
 				"tools/rotopt": "979da627ff1bc3c9d73328287b6bdb543ac01f9a",
-				"sim/shaman": "22603950442da9b8c63d61d29d7f386eb5c4a67e",
+				"sim/shaman": "f662c7e63c4fb387f235fdd75d15686cb3a61144",
 				"ui/elemental_shaman": "b4193b3889f01ba3b1126fb84dd7ec60ab8a1936",
 				"ui/enhancement_shaman": "4b2d46f1779251c2e8f75d20b249f2662085810a",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
@@ -442,8 +442,8 @@
 			}
 		},
 		"shaman__elemental-level60": {
-			"commit": "999e704700e80548b8f72ab82f59e7f928728950",
-			"recordedAt": "2026-10-14T10:03:33.640Z",
+			"commit": "0ac3e57abdce3d8fc0496957c5c677b9e35a6cd5",
+			"recordedAt": "2026-10-14T14:59:40.214Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -453,7 +453,7 @@
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
 				"tools/rotopt": "979da627ff1bc3c9d73328287b6bdb543ac01f9a",
-				"sim/shaman": "22603950442da9b8c63d61d29d7f386eb5c4a67e",
+				"sim/shaman": "f662c7e63c4fb387f235fdd75d15686cb3a61144",
 				"ui/elemental_shaman": "b4193b3889f01ba3b1126fb84dd7ec60ab8a1936",
 				"ui/enhancement_shaman": "4b2d46f1779251c2e8f75d20b249f2662085810a",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
@@ -461,8 +461,8 @@
 			}
 		},
 		"shaman__elemental-level60-mana-tide": {
-			"commit": "999e704700e80548b8f72ab82f59e7f928728950",
-			"recordedAt": "2026-10-14T10:03:33.717Z",
+			"commit": "0ac3e57abdce3d8fc0496957c5c677b9e35a6cd5",
+			"recordedAt": "2026-10-14T14:59:40.301Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "4ceb4f18c3d60717ebfef673db764f2c6e9d5b99",
@@ -472,7 +472,7 @@
 				"proto": "b04b7874f92b1ef109de460b1c75319524288052",
 				"assets/database": "aa8cfe1588fd247478710e9872706e39d9397ff8",
 				"tools/rotopt": "979da627ff1bc3c9d73328287b6bdb543ac01f9a",
-				"sim/shaman": "22603950442da9b8c63d61d29d7f386eb5c4a67e",
+				"sim/shaman": "f662c7e63c4fb387f235fdd75d15686cb3a61144",
 				"ui/elemental_shaman": "b4193b3889f01ba3b1126fb84dd7ec60ab8a1936",
 				"ui/enhancement_shaman": "4b2d46f1779251c2e8f75d20b249f2662085810a",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
