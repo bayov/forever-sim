@@ -80,10 +80,15 @@ func (shaman *Shaman) ApplyTalents() {
 		shaman.AddStat(stats.SpellHit, core.SpellHitRatingPerHitChance*float64(shaman.Talents.TidalFocus))
 	}
 
+	// Natural Grace cuts the threat of everything we cast in a magic school.
+	//
+	// The client (70338, 29187) cuts threat by school (every school but physical), not by
+	// shaman spell. So Stormstrike keeps its threat, and a magic item or trinket proc gets the
+	// cut too.
 	if shaman.Talents.NaturalGrace > 0 {
 		threatMultiplier := 1 - .05*float64(shaman.Talents.NaturalGrace)
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.Flags.Matches(SpellFlagShaman) {
+			if spell.SpellSchool&^core.SpellSchoolPhysical != 0 {
 				spell.ThreatMultiplier *= threatMultiplier
 			}
 		})

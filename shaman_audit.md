@@ -176,7 +176,7 @@ Restoration
 - [x] 8.35 Improved Healing Wave (not implemented)
 - [x] 8.36 Totemic Focus
 - [x] 8.37 Mindfulness
-- [ ] 8.38 Natural Grace
+- [x] 8.38 Natural Grace
 - [ ] 8.39 Tidal Focus
 - [ ] 8.40 Improved Reincarnation
 - [ ] 8.41 Ancestral Healing (not implemented)
@@ -1582,6 +1582,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Beta: no build had it.
 - No sim change. `five_second_rule_test.go` TestOrcShamanCastingRegenCap uses 3/3 with the icon and Improved Stormstrike. The new `mindfulness_test.go` TestOrcShamanMindfulness wants 0, 17, 33 and 50% of the full regen while casting at 0 to 3 points on a naked level 60 shaman. The wiki's 34 and 51 fail it.
 
+### 8.38 Natural Grace
+
+- The user OK'd the change (2026-10-14): "sg".
+- The sim (`talents.go`) before: each point cut the threat of every spell with the shaman spell flag by 5%, 15% at 3/3. That took Stormstrike (physical) in, and left Healing Stream Totem and magic item procs out. Only the second Elemental preset takes it (1 point).
+- Client 70338 (wago.tools 29187, curve 85314): -5, -10 and -15% threat (aura 10) on school mask 126, every magic school and not physical.
+- Beta: no build had it, and we've never measured threat.
+- Changed: the cut now goes on everything we cast in a magic school. Stormstrike, Windfury's attacks and white hits keep their threat, and magic item procs and Healing Stream get the cut. Threat isn't in our DPS, and no golden changed.
+- The new `natural_grace_test.go` TestOrcShamanNaturalGrace wants 0.85 times the threat at 3/3 for Lightning Bolt, Flame Shock, Flametongue Weapon and Healing Stream Totem, and 1 for Stormstrike and white hits. The old shaman flag rule fails it on Stormstrike and Healing Stream.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
@@ -1668,7 +1677,7 @@ What each talent does in the sim today (`talents.go` unless noted). Values are p
 - Rage of the Farseer: +30% attack speed for 25 sec, 3 min cooldown (a guess).
 - Totemic Focus: -5% totem mana cost, not Fire Nova.
 - Mindfulness: 17 / 33 / 50% Spirit regen while casting.
-- Natural Grace: -5% threat on shaman spells.
+- Natural Grace: -5% threat on shaman spells. Changed in 8.38 to every magic school spell, as the client has it.
 - Tidal Focus: -1% healing cost, +1% melee and spell hit.
 - Improved Reincarnation: +2% health.
 - Tidal Mastery: +1% heal crit.
