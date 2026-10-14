@@ -2,9 +2,12 @@ package main
 
 import (
 	"bufio"
+	"compress/gzip"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -42,15 +45,26 @@ const (
 // The file isn't always in time order around a log restart, so we sort it. Lines with the
 // same time keep their file order, because a proc logged before a swing in the same ms didn't
 // come from that swing.
+//
+// A log the audit compressed (compressLog) ends in .gz, and we read it the same way.
 func loadLog(path string) ([]*event, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
+	var in io.Reader = file
+	if strings.HasSuffix(path, ".gz") {
+		gz, err := gzip.NewReader(file)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", path, err)
+		}
+		defer gz.Close()
+		in = gz
+	}
 
 	var events []*event
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(in)
 	scanner.Buffer(make([]byte, 1<<20), 1<<20)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -239,6 +253,21 @@ func (cl *combatLog) fights() []*fight {
 		f.end = e.t
 	}
 	return fights
+}
+
+// logName is a log's file name without the .gz of a compressed one, so the ledger knows a log
+// by one name before and after we compress it.
+func logName(path string) string {
+	return strings.TrimSuffix(filepath.Base(path), ".gz")
+}
+
+// archivedLogs are the logs in dir, plain and compressed.
+func archivedLogs(dir string) []string {
+	plain, _ := filepath.Glob(filepath.Join(dir, "WoWCombatLog-*.txt"))
+	compressed, _ := filepath.Glob(filepath.Join(dir, "WoWCombatLog-*.txt.gz"))
+	logs := append(plain, compressed...)
+	slices.SortFunc(logs, func(a, b string) int { return strings.Compare(logName(a), logName(b)) })
+	return logs
 }
 
 // isChar says whether a name in the log is the character Name-Realm. The log adds a dash

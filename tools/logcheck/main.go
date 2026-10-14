@@ -177,7 +177,7 @@ type runResult struct {
 }
 
 func newestLog(dir string) string {
-	paths, _ := filepath.Glob(filepath.Join(dir, "WoWCombatLog-*.txt"))
+	paths := archivedLogs(dir)
 	newest := ""
 	var newestTime time.Time
 	for _, path := range paths {
