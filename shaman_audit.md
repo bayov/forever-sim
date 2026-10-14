@@ -186,7 +186,7 @@ Restoration
 - [x] 8.45 Restorative Totems
 - [x] 8.46 Mana Tide Totem
 - [x] 8.47 Healing Way (not implemented)
-- [ ] 8.48 Nature's Swiftness
+- [x] 8.48 Nature's Swiftness
 - [ ] 8.49 Purification
 - [ ] 8.50 Riptide (not implemented)
 
@@ -1661,6 +1661,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 (wago.tools 29206, curve 85322): +8, 17 and 25% healing on Healing Wave (aura 108, mask 0x40), a flat bonus where Classic's was a stacking buff on the target.
 - The sim: nothing reads it (a TODO in `talents.go`), and the sim has no Healing Wave. Both Restoration presets take 3/3, nothing else.
 - No beta build had it.
+
+### 8.48 Nature's Swiftness
+
+- The user OK'd the change (2026-10-14): "sg".
+- The sim (`talents.go`): an off-GCD cooldown. The next Nature spell we cast with a cast time is instant (Lightning Bolt or Chain Lightning, the sim has no shaman heals), and that cast uses up the buff. Both Restoration presets take it, no DPS preset.
+- Client 70338 (wago.tools 16188): -100% cast time (aura 108, misc 10), 1 charge, a 180000 ms cooldown, GCD 0, no time limit. The mask is Lightning Bolt, Chain Lightning, Healing Wave, Lesser Healing Wave, Chain Heal, Healing Rain and Ghost Wolf, the same spells in the sim as "Nature school with a cast time". Stealth carries the attribute flag for a cooldown that starts when the buff ends (0x10000000 in the first word), and Nature's Swiftness doesn't, nor do Presence of Mind or the druid's Nature's Swiftness. So the 3 min starts at the press. That's read from attribute bits, not a direct statement.
+- Beta: no build had it.
+- Changed: the cooldown starts when we press it. The sim used to start it again when the buff was used. The full suite passes, no golden changed.
+- The new `natures_swiftness_test.go` TestOrcShamanNaturesSwiftness presses it at 1 sec at level 60. The Lightning Bolt at 3 sec is instant and uses up the buff, the one at 7 sec takes its full cast, and it's ready at 181 sec. Starting the cooldown again on the bolt fails it (ready at 183).
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
