@@ -56,24 +56,31 @@ func TestOrcShamanRelics(t *testing.T) {
 		}
 	})
 
-	t.Run("Totem of Thunder", func(t *testing.T) {
-		// 1% crit on Lightning Bolt and its overloads, and none on Chain Lightning.
-		_, enh := relicSim(shaman.TotemOfThunder)
-		crit := func(e *EnhancementShaman, spell *core.Spell) float64 {
-			return spell.SpellCritChance(e.CurrentTarget)
+	t.Run("Totem of Thunder and Lightning's Grasp", func(t *testing.T) {
+		// Each gives 1% crit on Lightning Bolt and its overloads, and none on Chain Lightning.
+		// Lightning's Grasp is a one-hand weapon we hold in place of Dark Edge. Its Intellect
+		// moves every spell's crit, so we measure the bolt's crit over Chain Lightning's.
+		_, totem := relicSim(shaman.TotemOfThunder)
+		_, grasp := weaponSim{level: 60, talents: talents, weapon: &proto.ItemSpec{Id: shaman.LightningsGrasp}, seconds: 10}.start()
+		lead := func(e *EnhancementShaman, spell *core.Spell) float64 {
+			return spell.SpellCritChance(e.CurrentTarget) - topRank(t, "Chain Lightning", e.ChainLightning).SpellCritChance(e.CurrentTarget)
 		}
-		lb := topRank(t, "Lightning Bolt", enh.LightningBolt)
-		for _, s := range []struct {
-			name        string
-			with, plain *core.Spell
-			want        float64
-		}{
-			{"Lightning Bolt", lb, topRank(t, "Lightning Bolt", plain.LightningBolt), .01},
-			{"its overload", enh.LightningBoltOverload[lb.Rank], plain.LightningBoltOverload[lb.Rank], .01},
-			{"Chain Lightning", topRank(t, "Chain Lightning", enh.ChainLightning), topRank(t, "Chain Lightning", plain.ChainLightning), 0},
-		} {
-			if got := crit(enh, s.with) - crit(plain, s.plain); math.Abs(got-s.want) > 1e-9 {
-				t.Errorf("%s gets %.2f%% crit, want %.0f%%", s.name, 100*got, 100*s.want)
+		for _, e := range []struct {
+			name string
+			enh  *EnhancementShaman
+		}{{"Totem of Thunder", totem}, {"Lightning's Grasp", grasp}} {
+			lb := topRank(t, "Lightning Bolt", e.enh.LightningBolt)
+			plainLB := topRank(t, "Lightning Bolt", plain.LightningBolt)
+			for _, s := range []struct {
+				name        string
+				with, plain *core.Spell
+			}{
+				{"Lightning Bolt", lb, plainLB},
+				{"its overload", e.enh.LightningBoltOverload[lb.Rank], plain.LightningBoltOverload[plainLB.Rank]},
+			} {
+				if got := lead(e.enh, s.with) - lead(plain, s.plain); math.Abs(got-.01) > 1e-9 {
+					t.Errorf("%s: %s gets %.2f%% more crit than Chain Lightning, want 1%%", e.name, s.name, 100*got)
+				}
 			}
 		}
 	})

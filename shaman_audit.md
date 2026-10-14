@@ -198,7 +198,7 @@ Tree rules
 
 - [x] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). See the 9.1 write-up below. Blood Fury follows our attack power on the beta, and the sim does too since fd3f3f4e.
 - [x] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
-- [ ] 9.3 Rage of the Storm (Stormstrike +10%)
+- [x] 9.3 Rage of the Storm (Stormstrike +10%)
 - [ ] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
 - [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth
 - [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants
@@ -1720,6 +1720,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Firestorm Totem: 95% of the cost on Searing, Windfury and Mana Spring Totem, all of it on Fire Nova.
   - Forever Totem of the Storm: 20,000 bolts that land give a stack 29.15% of the time against 29.17% wanted (half of 10 PPM on a 3.5 sec two-hander), and never without the relic.
   - Taking out each effect fails its check. `weaponSim` got a `relic` field for it.
+
+### 9.3 Rage of the Storm
+
+- The user OK'd it, Lightning's Grasp and taking the source out of Need to Verify (2026-10-14): "sg".
+- The sim (`items.go`): +10% Stormstrike damage, added to Stormstrike's other percent bonuses. It has none, so adding and multiplying come out the same.
+- Client 70338: the mace's equip spell "Rage of Earth" (1309422) gives +10% damage (aura 108) to Stormstrike 17364, the one the sim and the beta logs use, and SoD's 410156. Its stats are Intellect and Stamina, the same as our DB (15 Stamina, 12 Intellect).
+- Beta: settled in 4.4 (2026-10-10). 30 Stormstrikes (222 to 271 raw) all fit the normalized 3.6 speed with +10% (220.0 to 271.7), and 13 more later. "3.3, then 6.4%" and "+5 flat" each leave hits out. The user said to assume the +10% works.
+- Source (wowhead Forever): the Horde shaman quest "The Tempest's Weapons" (79442, level 40, needs level 30), which also gives the Maelstrom Weapon rune. It's a choice of Rage of the Storm, Lightning's Grasp (280607, one-hand, "Storm's Grasp" 1309442, +1% Lightning Bolt crit) and Tidebringer's Claw (280605, +1% Healing Wave and Lesser Healing Wave crit). The source item is out of Need to Verify.
+- New in the sim: Lightning's Grasp's +1% Lightning Bolt crit, written like Totem of Thunder (it reaches the overloads too). No preset uses it. Tidebringer's Claw stays out.
+- Tests: TestOrcShamanDamageModifiers already checks Rage of the Storm (Stormstrike 121 against 110, white hits and Windfury 110). TestOrcShamanRelics now checks Totem of Thunder and Lightning's Grasp together: Lightning Bolt and its overload crit 1% more over Chain Lightning than without them. We measure against Chain Lightning because the weapon's Intellect moves every spell's crit. Taking out the 1% fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
