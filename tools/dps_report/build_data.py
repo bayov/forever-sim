@@ -370,6 +370,8 @@ for o in outs:
         'summary': m.get('summary', ''),
         # Why an encounter preset beats its normal build on its creature type of boss, for the Advantaged badge.
         'advantage': m.get('advantage') or None,
+        # The abilities and talents the advantage line names, as game tooltip refs (k:<spell key>, tal:<class>:<tree>:<idx>).
+        'advantageRefs': m.get('advantageRefs') or None,
         'advantageShort': m.get('advantageShort') or m.get('advantage') or None,  # the badge tooltip's one line
         'bestRace': race_name(best['race']), 'bestRaceDps': round(best['dps'], 1),
         'hordeRace': race_name(horde['race']) if horde else None, 'hordeDps': round(horde['dps'], 1) if horde else None,

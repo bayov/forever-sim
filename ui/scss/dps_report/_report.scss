@@ -3426,3 +3426,42 @@ ol.fv-list li::marker {
 		color: var(--color-fg);
 	}
 }
+
+// The Advantaged badge's tooltip. The abilities and talents its line names carry their icon, and their own
+// game tooltips follow under a line, a little smaller than on their own.
+.tippy-box:has(> .tippy-content > .fv-advtip) {
+	max-width: min(22rem, calc(100vw - 1rem)) !important;
+}
+
+.fv-advtip-ref {
+	white-space: nowrap;
+
+	.fv-ico {
+		width: 1rem;
+		height: 1rem;
+		margin-right: 0.25rem;
+		border-radius: 3px;
+		vertical-align: -0.2rem;
+	}
+}
+
+.fv-advtip-cards {
+	display: grid;
+	gap: 0.6rem;
+	margin-top: 0.15rem;
+	padding-top: 0.6rem;
+	border-top: 1px solid var(--line-color);
+
+	.fv-tt {
+		font-size: 0.75rem;
+	}
+
+	.fv-tt .tt-ico {
+		width: 1.75rem;
+		height: 1.75rem;
+	}
+
+	.fv-tt .tt-title {
+		font-size: 0.8rem;
+	}
+}

@@ -236,17 +236,35 @@ export function startReport(dash) {
   document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip]') && !e.target.closest('.fv-tip')) hideTip(); });
 
   // An advantaged preset's "vs Undead" badge says on hover how much it gains over its normal build, and why.
+  //
+  // The abilities and talents it names (advantageRefs) get their icon in front of their name in the line, and
+  // their own game tooltip under it.
   const advTip = (b) => {
     const base = (rowsOf('builds') || []).find((x) => x.id === b.baseBuild);
     const ab = base ? adjB(base) : null;
-    return el('div', { class: 'fv-tip' }, tipTitle(`Advantaged vs ${b.encounter}`),
+    const specs = arr(b.advantageRefs).map((v) => { try { return specFor(v, b.id); } catch { return null; } }).filter(Boolean);
+    return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`Advantaged vs ${b.encounter}`),
       ab && +ab.dps ? tipKey(tipDelta(100 * (b.dps / ab.dps - 1)), null, `over ${ab.build} (generic boss)`) : null,
-      tipText(b.advantageShort || b.advantage));
+      tipText(...withIcons(b.advantageShort || b.advantage, specs)),
+      specs.length ? el('div', { class: 'fv-advtip-cards' }, ...specs.map((sp) => ttCard(sp, true))) : null);
+  };
+  // text as nodes, with each spec's first mention as its icon and name
+  const withIcons = (text, specs) => {
+    let parts = [String(text)];
+    for (const sp of specs) {
+      const name = String(sp.title);
+      const k = parts.findIndex((p) => typeof p === 'string' && p.includes(name));
+      if (k < 0) continue;
+      const [before, ...rest] = parts[k].split(name);
+      parts.splice(k, 1, before, el('span', { class: 'fv-advtip-ref' }, sp.icon ? iconImg(sp.icon, 'fv-ico') : null, el('b', { text: name })), rest.join(name));
+    }
+    return parts.filter((p) => p !== '');
   };
   const encBadge = (b) => {
     const badge = el('span', { class: 'fv-enc', text: 'vs ' + b.encounter });
     if (b.advantage || b.advantageShort) {
-      tippy(badge, { content: advTip(b) });
+      // We build the tooltip each time it shows, because the spell and talent tooltips load after the page.
+      tippy(badge, { content: advTip(b), onShow: (t) => t.setContent(advTip(b)) });
       // a tap on the badge shows why, not the ranking row's own tooltip
       badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
     }
@@ -407,11 +425,11 @@ export function startReport(dash) {
         : [['+1 point', `${fmt('.3f')(w.dpsPer)} DPS`], ['Error', `± ${fmt('.3f')(w.sePer)} DPS`]]) };
   };
 
-  const ttSpec = (node) => {
-    const v = node.getAttribute('data-tt') || '';
+  const ttSpec = (node) => specFor(node.getAttribute('data-tt') || '', node.closest('[data-tt-b]')?.getAttribute('data-tt-b') || st.build, node);
+  // The game tooltip for a data-tt ref like "k:s10314" or "tal:Rogue:0:4", for preset b.
+  const specFor = (v, b, node = null) => {
     const i = v.indexOf(':');
     const type = v.slice(0, i), id = v.slice(i + 1);
-    const b = node.closest('[data-tt-b]')?.getAttribute('data-tt-b') || st.build;
     const [p0, p1, p2] = id.split(':');
     switch (type) {
       case 'k': return spellSpec(id, b, false);
@@ -420,7 +438,7 @@ export function startReport(dash) {
       case 'su': return setupSpec(id, b);
       case 'rot': return rotSpec(p0, p1, b);
       case 'tal': return talentSpec(p0, p1, p2, b);
-      case 'r': return raceSpec(p0, p1, node.closest('[data-tt-b]') ? b : null);
+      case 'r': return raceSpec(p0, p1, node?.closest('[data-tt-b]') ? b : null);
       case 'c': return classSpec(id);
       case 'w': return weightSpec(id, b);
       default: return null;
@@ -448,18 +466,24 @@ export function startReport(dash) {
     for (const n of ttHl) n.classList.remove('tt-on');
     ttHl = []; ttEl = null; ttTippy = null; ttNode = null; ttPinned = false;
   };
-  const showTT = (node, pt) => {
-    let spec = null;
-    try { spec = ttSpec(node); } catch (err) { console.error(err); }
-    if (!spec) return;
-    hideTT(); hideTip();
+  // A game tooltip's card: the icon, then the title, its lines and its numbers. A compact card (one embedded in
+  // another tooltip) is only the game's own text, without our numbers and the Wowhead link.
+  const ttCard = (spec, compact = false) => {
+    if (compact) spec = { ...spec, nums: [], link: null };
     const off = /^No effect: /.test(spec.why || '');
     const body = el('div', { class: 'tt-body' }, spec.why ? el('div', { class: 'tt-why' }, off ? el('b', { text: 'No effect' }) : null, off ? ' ' + spec.why.replace(/^No effect: /, '') : spec.why) : null,
       el('div', { class: 'tt-head' }, el('span', { class: 'tt-title', style: `color:${spec.color || GOLD}`, text: spec.title }), spec.sub ? el('span', { class: 'tt-sub', text: spec.sub }) : null),
       ...arr(spec.lines).map(ttLine),
       ...(spec.nums && spec.nums.length ? [el('div', { class: 'tt-nums' }, spec.numsHead ? el('div', { class: 'c-m', text: spec.numsHead }) : null, ...spec.nums.map(ttLine))] : []),
       spec.link ? el('div', { class: 'tt-link' }, el('a', { href: spec.link.href, target: '_blank', rel: 'noopener noreferrer', text: spec.link.label + ' ↗' }), spec.link.note ? el('span', { text: spec.link.note }) : null) : null);
-    const content = el('div', { class: 'fv-tt', role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
+    return el('div', { class: 'fv-tt', role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
+  };
+  const showTT = (node, pt) => {
+    let spec = null;
+    try { spec = ttSpec(node); } catch (err) { console.error(err); }
+    if (!spec) return;
+    hideTT(); hideTip();
+    const content = ttCard(spec);
     const r = node.getBoundingClientRect();
     // A wide target (a table row, a chart mark) gets the tooltip where the pointer was, not at its left edge.
     const wide = pt && (r.width > 160 || node instanceof SVGElement);
