@@ -124,7 +124,9 @@ python3 verify.py req/<id>.json [iters=20000] [seed=1] [Race]   # must match the
 ```
 
 Then update `meta.published` and `meta.verify`, and any `summary` / `caveats` / `consumes` text the class changed, from the
-class PR bodies (bayov/forever-sim #1 to #9).
+class PR bodies (bayov/forever-sim #1 to #9). An encounter preset (one with `encounter` and `baseBuild`) also has an
+`advantage` line. It says in a sentence or two why the preset beats its normal build on that creature type of boss, like
+Murder's 4% against Humanoids and Giants. The page shows it on hover over the preset's "vs Humanoid" badge.
 
 ## Sim steps
 

@@ -26,6 +26,7 @@
     "note": "+0.04 vs PR #9"
   },
   "summary": "Combat Daggers against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
+  "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",
   "keyTalents": [
     "Murder 2/2",
     "Adrenaline Rush",

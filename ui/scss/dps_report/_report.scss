@@ -1382,7 +1382,8 @@ ol.fv-list li::marker {
 	z-index: 1;
 }
 
-.fv [data-tt].tt-on:not(rect):not(g):not(path) {
+// A class icon in the class picker keeps its own look while its tooltip is open.
+.fv [data-tt].tt-on:not(rect):not(g):not(path):not(.fv-pick-option) {
 	background-color: color-mix(in srgb, var(--fv-gold) 14%, transparent);
 	border-radius: 6px;
 }
@@ -3198,4 +3199,47 @@ ol.fv-list li::marker {
 
 #method-asm li small {
 	color: var(--color-fg-muted);
+}
+
+// Sort and the filters share a row when there's room. Each keeps its label with its controls when the row wraps.
+.fv-ctl-row {
+	column-gap: var(--spacer-4);
+}
+
+.fv-ctl {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--cds-gap-xs) var(--cds-gap-sm);
+}
+
+// The ranking bar takes the mouse a little above and below its thin parts, for their tooltips.
+.fv-rank .fv-track::after {
+	content: '';
+	position: absolute;
+	inset: -0.4rem 0;
+}
+
+.fv-parttip {
+	font-size: 0.75rem;
+	line-height: 1.4;
+
+	b {
+		color: var(--gold-soft);
+	}
+}
+
+// Why an advantaged preset does better against its kind of boss.
+.fv-advtip {
+	max-width: 18rem;
+
+	b {
+		display: block;
+		margin-bottom: 0.25rem;
+		color: var(--gold-soft);
+	}
+
+	p {
+		margin: 0;
+	}
 }

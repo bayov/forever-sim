@@ -58,7 +58,7 @@ export function startReport(dash) {
     return normCache.get(d);
   };
   const statusOf = (id) => dash.data(id).status;
-  // encounter presets (the boss as a creature type) are listed only while "Special encounters" is on; Races always uses the generic boss
+  // encounter presets (the boss as a creature type) are listed only while "Advantaged" is on; Races always uses the generic boss
   const isEnc = (b) => !!(b && b.encounter && b.encounter !== 'null');
   const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => st.enc || !isEnc(b)).map(adjB); };
   const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b)); };
@@ -210,6 +210,38 @@ export function startReport(dash) {
     .on('pointerenter', function (e, d) { if (e.pointerType === 'mouse' && !tipPinned) { fn(e, d, this); tipPinned = false; } })
     .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(this)) hideTip(); });
   document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip]') && !e.target.closest('.fv-tip')) hideTip(); });
+
+  const aBoss = (type) => `${/^[AEIOU]/.test(type) ? 'an' : 'a'} ${type} boss`;
+  // An advantaged preset's "vs Undead" badge says on hover why the preset does better against that kind of boss.
+  const encBadge = (b) => {
+    const badge = el('span', { class: 'fv-enc', text: 'vs ' + b.encounter });
+    if (b.advantage) tippy(badge, { content: el('div', { class: 'fv-advtip' }, el('b', { text: `Advantaged against ${aBoss(b.encounter)}` }), el('p', { text: b.advantage })) });
+    return badge;
+  };
+  // Plain title tooltips become the sim UI's tooltips. We move each title into a tippy as it shows up, in the
+  // layout or in anything we draw later.
+  const tipTitles = (n) => {
+    const t = n.getAttribute('title');
+    n.removeAttribute('title');
+    if (!t) return;
+    const content = el('span', { text: t });
+    if (n._tippy) n._tippy.setContent(content);
+    else tippy(n, { content });
+  };
+  {
+    const root = $('#fv');
+    root.querySelectorAll('[title]').forEach(tipTitles);
+    new MutationObserver((muts) => {
+      for (const m of muts) {
+        if (m.type === 'attributes') { if (m.target.hasAttribute('title')) tipTitles(m.target); continue; }
+        for (const n of m.addedNodes) {
+          if (n.nodeType !== 1) continue;
+          if (n.hasAttribute('title')) tipTitles(n);
+          n.querySelectorAll('[title]').forEach(tipTitles);
+        }
+      }
+    }).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['title'] });
+  }
 
   // ---------- game tooltips ----------
   // Anything with data-tt="<type>:<id>" gets a game-style tooltip: tap (data-tt-tap) or long-press on touch, hover with a mouse.
@@ -653,6 +685,31 @@ export function startReport(dash) {
   };
   const SORTS = [['dps', 'Mean'], ['p10', 'Unlucky'], ['p90', 'Lucky'], ['cv', 'Steadiest']];
   const roleOf = () => new Map((rowsOf('roles') || []).map((r) => [r.build, r.role]));
+  // Each part of a ranking bar names itself in a small tooltip while the mouse is on it: the mean bar, the box
+  // of the middle half of fights, the 10th to 90th percentile whisker and the median tick. They're too thin to
+  // aim at one by one, so we go by where the mouse is along the bar. All bars share one tooltip.
+  //
+  // The tooltip is one block of inline text, so the sim UI's sticky tooltips don't offer to pin it.
+  let partTippy = null;
+  const partTip = (track, b, max) => {
+    let last = null;
+    const hide = () => { partTippy?.hide(); last = null; };
+    track.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const r = track.getBoundingClientRect(), v = (e.clientX - r.left) / r.width * max, pxPerDps = r.width / max;
+      const part = Math.abs(v - b.p50) * pxPerDps <= 4 ? ['Median', f1(b.p50)]
+        : v >= b.p25 && v <= b.p75 ? ['Middle half of fights', `${f1(b.p25)} to ${f1(b.p75)}`]
+          : v >= b.p10 && v <= b.p90 ? ['10th to 90th percentile', `${f1(b.p10)} to ${f1(b.p90)}`]
+            : v <= b.dps ? ['Mean', f1(b.dps)] : null;
+      if (!part) { hide(); return; }
+      if (!partTippy) partTippy = tippy(el('span'), { trigger: 'manual', appendTo: document.body, placement: 'top', offset: [0, 12], duration: [80, 0], content: '' });
+      if (last !== part[0]) { partTippy.setContent(el('div', { class: 'fv-parttip' }, el('b', { text: part[0] }), el('br'), `${part[1]} DPS`)); last = part[0]; }
+      const px = e.clientX, py = r.top + r.height / 2;
+      partTippy.setProps({ getReferenceClientRect: () => ({ width: 0, height: 0, x: px, y: py, left: px, right: px, top: py, bottom: py }) });
+      partTippy.show();
+    });
+    track.addEventListener('pointerleave', hide);
+  };
   const drawRanking = () => {
     const host = $('#rank-chart');
     classChips($('#rank-classes'), 'cls');
@@ -678,14 +735,9 @@ export function startReport(dash) {
     const key = { dps: val, p10: (b) => b.p10, p90: (b) => b.p90, cv: (b) => -b.cv }[sortKey] || val;
     rows = rows.sort((a, b) => key(b) - key(a));
     if (st.best) { const seen = new Set(); rows = rows.filter((b) => !seen.has(b.class) && seen.add(b.class)); }
-    const total = rows.length;
     const max = d3.max(builds, (b) => Math.max(L === 180 ? b.p90 : 0, val(b))) * 1.02;
     const x = (v) => (100 * v / max) + '%';
     const top = d3.max(builds, val);
-    $('#rank-legend').hidden = L !== 180;
-    const sortName = { dps: 'mean DPS', p10: 'an unlucky fight (10th percentile)', p90: 'a lucky fight (90th percentile)', cv: 'steadiness' }[sortKey];
-    const active = [st.cls !== 'All' ? st.cls : null, st.role !== 'All' ? st.role.toLowerCase() : null, st.fac !== 'All' ? st.fac : null, st.best ? 'best per class' : null].filter(Boolean);
-    $('#rank-sum').replaceChildren(`${rows.length < total ? `Top ${rows.length} of ${total}` : `${total} of ${builds.length}`} presets`, active.length ? ` (${active.join(', ')})` : '', ', by ', sortName, ' in ', el('b', { text: `${L} s fights` }), '.', asmOn ? el('b', { text: ' Custom assumptions.' }) : '', ' Tap a row for its numbers.');
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset matches these filters.' })); return; }
     host.replaceChildren(...rows.map((b, i) => {
       const v = val(b);
@@ -699,6 +751,7 @@ export function startReport(dash) {
         track.append(el('span', { class: 'fv-whisk', style: `left:${x(b.p10)};width:calc(${x(b.p90)} - ${x(b.p10)})` }),
           el('span', { class: 'fv-box', style: `left:${x(b.p25)};width:calc(${x(b.p75)} - ${x(b.p25)})` }),
           el('span', { class: 'fv-med', style: `left:${x(b.p50)}` }));
+        partTip(track, b, max);
       }
       const row = el('button', { class: 'fv-row' + (i === 0 && rows.length > 1 ? ' top' : ''), 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${f1(v)} DPS` },
         el('span', { class: 'fv-row-pos', text: String(i + 1) }),
@@ -707,7 +760,7 @@ export function startReport(dash) {
           el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : b.build }), el('span', { text: '· ' + b.class })),
           el('span', { class: 'fv-row-sub' }, tt(raceIco(b.raceIcon), `r:${b.race}:${b.class}`, false, b.id), el('em', { text: b.race }),
             iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null, roles.get(b.id) ? el('em', { text: '· ' + roles.get(b.id) }) : null,
-            isEnc(b) ? el('span', { class: 'fv-enc', text: 'vs ' + b.encounter }) : null)),
+            isEnc(b) ? encBadge(b) : null)),
         el('span', { class: 'fv-row-end' }, valEl, el('span', { class: 'fv-row-gap', text: extra })),
         track);
       row.addEventListener('click', (e) => {
@@ -717,7 +770,7 @@ export function startReport(dash) {
         const lines = L === 180
           ? [`${f1(b.dps)} DPS ± ${f2(b.se)} (1 s.e.)`, `Rank ${rankOf(b, builds)} of ${builds.length} · ${gap < 0.05 ? 'top preset' : `${f1(gap)}% behind the top`}`, `10th–90th percentile: ${f1(b.p10)}–${f1(b.p90)}`, `Middle half: ${f1(b.p25)}–${f1(b.p75)}`, `Fight-to-fight spread ${f2(b.cv)}%`, `${b.race} (${b.faction})${roles.get(b.id) ? ' · ' + roles.get(b.id) : ''}`]
           : [`${f1(v)} DPS in ${L} s fights${lenMap.get(b.id)?.se != null ? ` ± ${f2(lenMap.get(b.id).se)}` : ''}`, `${f1(b.dps)} DPS at 180 s (${sgn(100 * (v / b.dps - 1))}%)`, gap < 0.05 ? 'Top preset at this length' : `${f1(gap)}% behind the top at ${L} s`, `${b.race} (${b.faction})`];
-        if (isEnc(b)) lines.push(`Special encounter: a ${b.encounter} boss`);
+        if (isEnc(b)) lines.push(`Advantaged: against ${aBoss(b.encounter)}`);
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, b.label, lines, { hl: row, open: b.id, below: true });
       });
       return row;
@@ -1282,7 +1335,7 @@ export function startReport(dash) {
       tt(el('span', {}, ringed('classicon_' + b.class.toLowerCase(), 'fv-ico ring', ccol(b.class)), ` ${b.spec}`), 'c:' + b.class),
       tt(el('span', {}, raceIco(b.raceIcon), ' ', mark(el('span', { text: b.race }), 'builds', 'race', W), ' ', iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon')), `r:${b.race}:${b.class}`, true, b.id),
       mark(el('span', { text: b.treePoints }), 'builds', 'treePoints', W),
-      isEnc(b) ? mark(el('span', { class: 'fv-enc', text: 'vs ' + b.encounter }), 'builds', 'encounter', W) : null);
+      isEnc(b) ? mark(encBadge(b), 'builds', 'encounter', W) : null);
     mark($('#sp-summary'), 'builds', 'summary', W).textContent = b.summary;
     const extra = b.petDps > 0 ? tile('Pet damage', f1(b.petShare), `${f1(b.petDps)} DPS from pets`, 'builds', 'petShare', W, '%')
       : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight on average', 'builds', 'oomSecs', W, ' s')
@@ -1669,7 +1722,7 @@ export function startReport(dash) {
   const drawSetup = (b) => {
     const host = $('#sp-setup');
     const bossEl = $('#sp-boss');
-    bossEl.replaceChildren(el('b', { text: 'Boss: ' }), mark(el('span', { text: b.bossText || 'Level 63 boss' }), 'builds', 'bossText', 'id=' + enc(b.id)), isEnc(b) ? ' (special encounter)' : '');
+    bossEl.replaceChildren(el('b', { text: 'Boss: ' }), mark(el('span', { text: b.bossText || 'Level 63 boss' }), 'builds', 'bossText', 'id=' + enc(b.id)), isEnc(b) ? ' (advantaged)' : '');
     if (!specWait(host, ['setup'], b)) return;
     const rows = rowsOf('setup').filter((s) => s.build === b.id).map((s) => ({ s, p: setupPlace(s) }));
     const sections = d3.groups(rows, (x) => x.p[0]).sort((p, q) => SETUP_SECTIONS.indexOf(p[0]) - SETUP_SECTIONS.indexOf(q[0]));
