@@ -3247,11 +3247,14 @@ ol.fv-list li::marker {
 }
 
 #asm-card .fv-note .def,
-.fv-asm-seg .def {
+#method-asm-card .fv-note .def,
+.fv-asm-tbl .def {
 	color: var(--color-ok);
 }
 
-#asm-card .fv-note .exp {
+#asm-card .fv-note .exp,
+#method-asm-card .fv-note .exp,
+.fv-asm-tbl .exp {
 	color: var(--fv-gold);
 }
 
@@ -3288,8 +3291,8 @@ ol.fv-list li::marker {
 	}
 }
 
-// An assumption: its question, one line on what's unknown, the specs it affects, then the settings. Each setting
-// shows its change at 180 s against the presets' setting. Side by side on wide screens, stacked on a phone.
+// An assumption: its question and one line on what's unknown, then its table. Side by side on wide screens, stacked
+// on a phone.
 .fv-asm-row {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
@@ -3301,9 +3304,9 @@ ol.fv-list li::marker {
 	}
 
 	@media (min-width: 900px) {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
 		column-gap: var(--spacer-4);
-		align-items: center;
+		align-items: start;
 	}
 }
 
@@ -3359,40 +3362,6 @@ ol.fv-list li::marker {
 	color: var(--color-fg-muted);
 }
 
-.fv-asm-aff {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 0.25rem 0.3rem;
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg-muted);
-
-	> .k {
-		margin-right: 0.1rem;
-	}
-}
-
-.fv-asm-spec {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.3rem;
-	padding: 0.05rem 0.45rem 0.05rem 0.2rem;
-	border-radius: 999px;
-	border: 1px solid var(--color-border-line);
-	background: var(--fv-stone-chip);
-	color: var(--color-fg);
-	white-space: nowrap;
-
-	.fv-ico {
-		width: 0.95rem;
-		height: 0.95rem;
-	}
-
-	small {
-		color: var(--color-fg-muted);
-	}
-}
-
 .fv-asm-i {
 	border: 0;
 	background: none;
@@ -3422,104 +3391,204 @@ ol.fv-list li::marker {
 	font-size: 0.72rem;
 }
 
-.fv-asm-seg {
-	display: flex;
-	gap: 2px;
-	padding: 2px;
-	border-radius: var(--fv-r);
-	border: var(--cds-border);
-	background: var(--fv-stone-chip);
+.fv-asm-body {
+	display: grid;
+	gap: 0.3rem;
+	min-width: 0;
+}
 
-	button {
-		flex: 1 1 0;
-		min-width: 0;
-		border: 0;
-		border-radius: var(--fv-r-sm);
-		background: none;
-		color: var(--color-fg-muted);
-		font: inherit;
-		font-size: var(--cds-font-size-caption);
-		padding: 0.35rem 0.25rem;
-		cursor: pointer;
-		display: grid;
-		grid-template-rows: 1fr auto auto;
-		justify-items: center;
-		align-items: center;
-		gap: 0.1rem;
+// What every number in the table means, above it.
+.fv-asm-cap {
+	margin: 0;
+	font-size: 0.72rem;
+	line-height: 1.35;
+	color: var(--color-fg-muted);
+}
+
+// The table scrolls inside its card, never the page, if it can't fit.
+.fv-asm-mx {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+// A column per setting, a row per spec. The column heads are the buttons that apply a setting; the picked column
+// takes the selected colours and a soft tint down its cells.
+.fv-asm-tbl {
+	width: 100%;
+	min-width: 18rem;
+	table-layout: fixed;
+	border-collapse: separate;
+	border-spacing: 0;
+	font-size: var(--cds-font-size-caption);
+	font-variant-numeric: tabular-nums;
+
+	// not the report's sticky, one-line table heads
+	th,
+	td {
+		position: static;
+		padding: 0.3rem 0.25rem;
 		text-align: center;
+		vertical-align: middle;
+		white-space: normal;
+		background: none;
+		border-top: 1px solid var(--color-border-line);
+		border-bottom: 0;
+	}
+
+	thead th {
+		height: 1px;
+		padding: 0 2px 0.3rem;
+		border-top: 0;
+		vertical-align: bottom;
+		font-weight: 400;
+	}
+
+	thead .fv-asm-corner {
+		width: 6.6rem;
+		padding-left: 0;
+		text-align: left;
+		color: var(--color-fg-muted);
+		font-size: 0.72rem;
+	}
+
+	tbody th {
+		padding-left: 0;
+		text-align: left;
+		font-weight: 400;
+		color: var(--color-fg);
+	}
+
+	td {
 		line-height: 1.25;
 
-		b {
-			color: var(--color-fg);
-			font-weight: 500;
-			font-size: var(--cds-font-size-caption);
-			text-wrap: balance;
-			overflow-wrap: anywhere;
-		}
-
-		.fv-asm-eff {
-			min-height: 1.25em;
-			font-size: 0.78rem;
-			line-height: 1.25;
-		}
-
-		small {
+		> small {
+			display: block;
 			font-size: 0.7rem;
-		}
+			color: var(--color-fg-muted);
 
-		&[aria-pressed='true'] {
-			background: var(--fv-sel-bg);
-			color: var(--fv-sel-fg);
-
-			b,
-			small,
-			.def,
-			.exp,
-			.fv-asm-d,
-			.fv-asm-to {
-				color: var(--fv-sel-fg);
+			.fv-asm-d {
+				font-weight: 400;
 			}
-		}
-
-		&:disabled {
-			cursor: default;
-			opacity: 0.55;
 		}
 	}
 
-	.exp {
+	td.is-cur {
+		background: var(--fv-gold-soft);
+	}
+
+	.fv-asm-eff {
+		display: inline-flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		column-gap: 0.2rem;
+	}
+
+	.fv-asm-to {
+		font-size: 0.7rem;
+	}
+
+	small .fv-asm-to {
+		font-size: inherit;
+	}
+}
+
+.fv-asm-zero {
+	color: var(--color-fg-muted);
+}
+
+// A setting's head: its name, its Low / Expected / High tag with the expected star, and what the ranking uses.
+.fv-asm-col {
+	display: grid;
+	grid-template-rows: 1fr auto auto;
+	justify-items: center;
+	align-items: center;
+	gap: 0.1rem;
+	width: 100%;
+	height: 100%;
+	min-height: 2.75rem;
+	padding: 0.35rem 0.25rem;
+	text-align: center;
+	line-height: 1.25;
+	color: var(--color-fg-muted);
+	font-size: var(--cds-font-size-caption);
+
+	b {
+		color: var(--color-fg);
+		font-weight: 500;
+		text-wrap: balance;
+		overflow-wrap: anywhere;
+	}
+
+	small {
+		font-size: 0.7rem;
+	}
+
+	.fv-asm-use {
+		font-size: 0.66rem;
+		line-height: 1.2;
+	}
+
+	.fv-asm-use.now {
 		color: var(--fv-gold);
 	}
 }
 
-// The ⓘ tooltip: per spec, the change under each other setting with the DPS under it, then what each setting means.
+.fv-asm-tbl th button.fv-asm-col {
+	border: 1px solid var(--color-border-line);
+	border-radius: var(--fv-r-sm);
+	background: var(--fv-stone-chip);
+	padding: 0.35rem 0.25rem;
+	font: inherit;
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+	white-space: normal;
+	cursor: pointer;
+
+	&:hover:not(:disabled):not([aria-pressed='true']) {
+		border-color: var(--color-fg-muted);
+	}
+
+	&[aria-pressed='true'] {
+		border-color: transparent;
+		background: var(--fv-sel-bg);
+		color: var(--fv-sel-fg);
+
+		b,
+		small,
+		.def,
+		.exp,
+		.fv-asm-use.now {
+			color: var(--fv-sel-fg);
+		}
+	}
+
+	&:disabled {
+		cursor: default;
+		opacity: 0.55;
+	}
+}
+
+// In Method the heads are plain text.
+.fv-asm-tbl.ro thead th {
+	padding-bottom: 0.2rem;
+}
+
+// A spec's row head: its icon and short name.
 .fv-asm-tspec {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.3rem;
-	white-space: nowrap;
+	min-width: 0;
 
 	.fv-ico {
+		flex: none;
 		width: 0.95rem;
 		height: 0.95rem;
 	}
 
-	small {
-		color: var(--color-fg-muted);
-	}
-}
-
-.fv-asm-tcell {
-	display: grid;
-	justify-items: end;
-
-	small {
-		font-weight: 400;
-		font-size: 0.7rem;
-
-		.fv-asm-d {
-			font-weight: 400;
-		}
+	> span {
+		min-width: 0;
+		overflow-wrap: break-word;
 	}
 }
 
@@ -3733,14 +3802,6 @@ ol.fv-list li::marker {
 .fv-rrow .nm .fv-rname {
 	flex-wrap: nowrap;
 	flex-shrink: 0;
-}
-
-
-// The spec chip's range of effects, after its name.
-.fv-asm-spec .fv-asm-eff {
-	margin-left: 0.3rem;
-	font-size: var(--cds-font-size-caption);
-	font-variant-numeric: tabular-nums;
 }
 
 // Strongest racials leads each row with the racial's spell icon, which is square, not a round race portrait.

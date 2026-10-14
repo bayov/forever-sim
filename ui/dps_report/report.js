@@ -2639,7 +2639,7 @@ export function startReport(dash) {
   const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
   // Effects are each setting's change against the presets' own setting at 180 s, from `sens`. A signed number takes
   // the ok or bad colour; a range over several presets runs from the smaller change to the larger.
-  const SPEC_SHORT = { Retribution: 'Ret', Enhancement: 'Enh', Elemental: 'Ele', 'Beast Mastery': 'BM', Marksmanship: 'MM' };
+  const SPEC_SHORT = { Retribution: 'Ret', Enhancement: 'Enh', Elemental: 'Ele', 'Beast Mastery': 'BM', Marksmanship: 'MM', Assassination: 'Assassin', Destruction: 'Destro', Demonology: 'Demo' };
   const asmSigned = (v, f, unit, eps) => el('span', { class: 'fv-asm-d' + (Math.abs(v) < eps ? '' : v > 0 ? ' pos' : ' neg'), text: (Math.abs(v) < eps ? '' : v > 0 ? '+' : '−') + f(Math.abs(v)) + unit });
   const asmRange = (xs, f = f1, unit = '%', eps = 0.05) => {
     if (!xs.length) return null;
@@ -2668,27 +2668,47 @@ export function startReport(dash) {
     }
     return [...groups.values()].map((g) => ({ ...g, n: g.names.length || g.ids.length, short: SPEC_SHORT[g.spec] || g.spec }));
   };
-  // A spec chip covers every preset of that spec, so it shows no preset count. Its number is how far the other
-  // settings move that spec at 180 s, from the most it loses to the most it gains.
-  const asmChip = (a) => (g) => el('span', { class: 'fv-asm-spec', title: `${g.cls} · ${g.spec}` }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short,
-    a.status === 'live' ? asmRange(arr(a.sens).filter((x) => g.ids.includes(x.build)).map((x) => +x.pct)) : null);
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null];
-  // The ⓘ tooltip: each spec's change under every other setting (percent, and DPS under it), then what each setting
-  // means and why it's a candidate. Method has every preset's number and the sources.
-  const asmTip = (a) => {
-    const live = a.status === 'live' && arr(a.sens).length, others = arr(a.settings).filter((x) => x.id !== a.defaultSetting);
+  // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
+  // 180 s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
+  // and the DPS under it. The presets' column is the zero point ("–") whichever column is picked, so the numbers never
+  // shift. With onPick the column heads are the buttons that apply a setting; without (Method) they are plain heads.
+  const ASM_CAP = 'DPS change at 180 s if this turns out to be true, vs the current ranking';
+  const asmHead = (a, x, cur) => [
+    el('b', { text: x.label }),
+    el('small', { class: 'fv-asm-tag' }, SEG_NAME[x.id] || x.id, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null),
+    x.id === a.defaultSetting ? el('small', { class: 'fv-asm-use' }, el('span', { class: 'def', text: '● ' }), 'ranking uses this')
+      : cur && x.id === cur ? el('small', { class: 'fv-asm-use now', text: 'now applied' }) : null,
+  ];
+  const asmMatrix = (a, cur, onPick) => {
+    const live = a.status === 'live' && arr(a.sens).length > 0, sets = arr(a.settings);
     const dpsOf = (sid, ids) => arr(a.sens).filter((x) => x.setting === sid && ids.includes(x.build)).map((x) => +x.dps);
-    return [
-      live ? tipTable(['At 180 s', ...others.map((x) => SEG_NAME[x.id] || x.label)], asmSpecs(a).map((g) => [
-        el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), g.short),
-        ...others.map((x) => el('span', { class: 'fv-asm-tcell' }, asmRange(asmPcts(a, x.id, g.ids)) || '–', el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5))))])) : null,
-      el('div', { class: 'fv-asm-tsets' }, ...arr(a.settings).map((x) => el('div', { class: 'fv-tip-set' },
-        el('b', { text: x.label }), el('span', { class: 'fv-tip-m', text: ` ${SEG_NAME[x.id] || ''}` }), ...asmMarks(a, x),
-        el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })))),
-      tipNote(a.status === 'live' ? 'Changes against the presets\' setting ' : 'The presets\' setting ', el('span', { class: 'def', text: '●' }), ' · ', el('span', { class: 'exp', text: '★' }), ' expected',
-        a.status === 'pending' ? ' · not simulated yet' : a.status === 'inert' ? ' · no longer applies' : ''),
-    ];
+    const zero = () => el('span', { class: 'fv-asm-zero', title: 'No change: the ranking uses this', text: '–' });
+    const col = (x) => [x.id === a.defaultSetting ? 'is-def' : '', onPick && x.id === cur ? 'is-cur' : ''].filter(Boolean).join(' ') || null;
+    const head = el('tr', {}, el('th', { class: 'fv-asm-corner', scope: 'col' }, live ? 'Spec' : ''), ...sets.map((x) => {
+      if (!onPick) return el('th', { scope: 'col', class: col(x) }, el('div', { class: 'fv-asm-col' }, ...asmHead(a, x)));
+      const bt = el('button', { class: 'fv-asm-col', 'data-setting': x.id, 'aria-pressed': String(x.id === cur),
+        'aria-label': `${x.label} (${SEG_NAME[x.id] || x.id})${x.id === a.defaultSetting ? ', the ranking uses this' : ''}` }, ...asmHead(a, x, cur));
+      if (!live) bt.disabled = true;
+      bt.addEventListener('click', (e) => { e.stopPropagation(); onPick(x.id); });
+      return el('th', { scope: 'col', class: col(x) }, bt);
+    }));
+    const body = live ? el('tbody', {}, ...asmSpecs(a).map((g) => el('tr', {},
+      el('th', { scope: 'row', title: `${g.cls} · ${g.spec}` }, el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), el('span', { text: g.short }))),
+      ...sets.map((x) => (x.id === a.defaultSetting ? el('td', { class: col(x) }, zero())
+        : el('td', { class: col(x) }, asmRange(asmPcts(a, x.id, g.ids)) || zero(), el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5)))))))) : null;
+    return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' + (onPick ? '' : ' ro') }, el('thead', {}, head), body));
   };
+  // The ⓘ tooltip: what each setting means and why it's a candidate, and the source. The panel's table has the
+  // numbers; Method has the full description.
+  const asmTip = (a) => [
+    el('div', { class: 'fv-asm-tsets' }, ...arr(a.settings).map((x) => el('div', { class: 'fv-tip-set' },
+      el('b', { text: x.label }), el('span', { class: 'fv-tip-m', text: ` ${SEG_NAME[x.id] || ''}` }), ...asmMarks(a, x),
+      el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })))),
+    a.source ? tipNote(`Source: ${a.source}`) : null,
+    tipNote(el('span', { class: 'def', text: '●' }), ' the ranking uses this · ', el('span', { class: 'exp', text: '★' }), ' expected',
+      a.status === 'pending' ? ' · not simulated yet' : a.status === 'inert' ? ' · no longer applies' : ''),
+  ];
   const openMethodAsm = () => { showTab('method'); requestAnimationFrame(() => $('#method-asm-card')?.scrollIntoView({ block: 'start' })); };
   const drawAsm = () => {
     const host = $('#asm-list'), custom = asmSel().length > 0;
@@ -2706,23 +2726,15 @@ export function startReport(dash) {
         const cur = st.asm?.[a.key] || a.defaultSetting, live = a.status === 'live', imp = asmImpact(a), [sz, szText] = asmSize(imp);
         const info = el('button', { class: 'fv-asm-i', 'aria-label': `Details: ${a.label}`, 'data-tip': '1', text: 'ⓘ' });
         info.addEventListener('click', (e) => { e.stopPropagation(); const cr = card.getBoundingClientRect(), ir = info.getBoundingClientRect(); showTip(card, 16, ir.bottom - cr.top + 4, a.label, asmTip(a), { hl: info, below: true, act: ['More in Method ›', openMethodAsm] }); });
-        const seg = el('div', { class: 'fv-asm-seg', role: 'group', 'aria-label': a.label }, ...arr(a.settings).map((x) => {
-          const eff = live && x.id !== a.defaultSetting ? asmRange(asmPcts(a, x.id)) : null;
-          const bt = el('button', { 'aria-pressed': String(x.id === cur), title: `${x.value ? x.value + '. ' : ''}${x.rationale}${x.id === a.defaultSetting ? ' (the presets)' : ''}` },
-            el('b', { text: x.label }), eff || el('span', { class: 'fv-asm-eff none', 'aria-hidden': 'true' }),
-            el('small', {}, SEG_NAME[x.id] || x.id, ...asmMarks(a, x)));
-          if (!live) bt.disabled = true;
-          bt.addEventListener('click', (e) => { e.stopPropagation(); asmPick(a, x.id); });
-          return bt;
-        }));
-        const specs = asmSpecs(a);
+        const picked = cur !== a.defaultSetting;
         d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
           el('div', { class: 'fv-asm-txt' },
             el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Moves a preset by up to ${f1(imp)}% at 180 s`, text: szText }) : null, info),
-            el('p', { class: 'fv-asm-short', text: a.short || a.description }),
-            !live ? el('small', { class: 'fv-asm-aff', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' })
-              : specs.length ? el('div', { class: 'fv-asm-aff' }, el('span', { class: 'k', text: 'Affects' }), ...specs.map(asmChip(a))) : null),
-          seg));
+            el('p', { class: 'fv-asm-short', text: a.short || a.description })),
+          el('div', { class: 'fv-asm-body' },
+            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180 s if this turns out to be true, vs the ranking without your pick' : ASM_CAP }) : null,
+            asmMatrix(a, cur, (id) => asmPick(a, id)),
+            !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null)));
       }
       return d;
     }));
@@ -2745,16 +2757,15 @@ export function startReport(dash) {
     if (!waitOr(host, ['assumptions', 'builds'])) return;
     host.replaceChildren(...d3.groups(rowsOf('assumptions'), (a) => a.class).flatMap(([cls, as]) => [el('h3', { text: cls === 'All' ? 'All classes' : cls }),
       el('ul', { class: 'fv-list' }, ...asmSort(as).map((a) => {
-        // The full text the panel leaves out: the description, each setting's numbers and reason, its effect on each
-        // spec (the range over its presets), and the source.
-        const sens = arr(a.sens);
+        // The full text the panel leaves out: the description, the panel's table without its buttons, each setting's
+        // numbers and reason, and the source.
+        const live = a.status === 'live' && arr(a.sens).length > 0;
         return el('li', {}, el('b', { text: a.label }),
           el('div', { class: 'fv-asm-mdesc', text: `${a.description}${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : ''}` }),
-          el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => {
-            const xs = sens.filter((y) => y.setting === x.id);
-            return el('small', {}, el('b', { text: x.label }), ` (${[SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? 'the presets' : null, x.id === a.expectedSetting && x.id !== 'expected' ? 'expected' : null].filter(Boolean).join(', ')}): ${x.value ? x.value + '. ' : ''}${x.rationale}`,
-              ...(xs.length ? [' At 180 s: ', ...asmSpecs(a).flatMap((g, i) => [i ? ', ' : '', `${g.short} `, asmRange(asmPcts(a, x.id, g.ids)) || '–']), '.'] : []));
-          })),
+          live ? el('p', { class: 'fv-asm-cap', text: ASM_CAP }) : null,
+          live ? asmMatrix(a, a.defaultSetting, null) : null,
+          el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
+            ` (${[SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? 'the ranking uses this' : null, x.id === a.expectedSetting && x.id !== 'expected' ? 'expected' : null].filter(Boolean).join(', ')}): ${x.value ? x.value + '. ' : ''}${x.rationale}`))),
           a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
       }))]));
   };
