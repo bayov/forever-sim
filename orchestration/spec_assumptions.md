@@ -137,10 +137,10 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 - **Sim now:** Forever's tooltips. Shadow Oil's proc (Shadow Bolt, 350026) deals 63 to 71, Frost Oil's (Frostbolt, 350025) 39 to 43. `sim/core/consumes.go:231-243` (`shadowOilDamageRange`, `frostOilDamageRange`); Classic Era keeps 52 to 61 and 33 to 38. The proc chances (15% and 10%) are Classic's.
 - **Source:**
   - Wowhead's Forever tooltips (dataEnv 16, checked live): 350026 says 63 to 71, 350025 says 39 to 43. Wowhead Classic's tooltip for 350026 says 52 to 61.
-  - The consumables auditor read the server formula from the TrinityCore port: the damage scales with `level -= SpellLevel`. Forever changed the spells' BaseLevel from 12 to 0 but kept SpellLevel 12, so the server formula gives Era's ranges, while the tooltip shows the higher ones.
+  - The consumables auditor read the server formula from the TrinityCore port: the damage scales with `level -= SpellLevel`. Forever changed the spells' BaseLevel to 0 but kept their SpellLevel (12 for Shadow Oil, 8 for Frost Oil), so the server formula gives Era's ranges, while the tooltip shows the higher ones.
 - **Why uncertain:** the tooltip and the server formula disagree, and no beta log shows an oil hit at level 60.
 - **Settings:**
-  - **Low, "Era's".** Shadow Oil 52 to 61, Frost Oil 33 to 38: the server formula with SpellLevel 12.
+  - **Low, "Era's".** Shadow Oil 52 to 61, Frost Oil 33 to 38: the server formula with SpellLevel 12 (Shadow) and 8 (Frost).
   - **Expected, "tooltip" (Sim now).** Shadow Oil 63 to 71, Frost Oil 39 to 43, as Forever's tooltips print.
   - **High:** = Expected.
 - **Sensitivity (assumption sims, 180 s, at Low):** −0.06 to −0.08% on every Retribution and Enhancement build, about 0.6 DPS (Ret twist 981.7 → 981.0, Enhancement 813.9 → 813.4). The same at 120 and 300 s. Below the 0.5% threshold, but listed by user ruling (2026-10-13) because the evidence conflicts.
