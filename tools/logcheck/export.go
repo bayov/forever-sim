@@ -54,6 +54,9 @@ type export struct {
 
 	path string
 	time time.Time
+	// history is true for an export rebuilt from a BayovCore history record, whose time is
+	// within a few seconds of the change it records.
+	history bool
 }
 
 type exportItem struct {
@@ -68,7 +71,13 @@ func loadExport(path string) (*export, error) {
 	if err != nil {
 		return nil, err
 	}
+	return parseExport(data, path)
+}
+
+// parseExport reads an export's JSON. `path` says where it came from, for the report.
+func parseExport(data []byte, path string) (*export, error) {
 	ex := &export{path: path}
+	var err error
 	if err := json.Unmarshal(data, ex); err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
@@ -93,18 +102,32 @@ func loadExport(path string) (*export, error) {
 	return ex, nil
 }
 
-// pickExport is the newest export taken before the window ends, or else the first one after
-// it.
-func pickExport(dir string, end time.Time) (*export, error) {
-	paths, _ := filepath.Glob(filepath.Join(dir, "export-*.json"))
-	var before, after *export
+// loadExports reads every export we have: the pasted ones in <archive>/exports, and one for each
+// record of BayovCore's history in <archive>/history.
+func loadExports(archive string) ([]*export, error) {
+	paths, _ := filepath.Glob(filepath.Join(archive, "exports", "export-*.json"))
+	var all []*export
 	for _, path := range paths {
 		ex, err := loadExport(path)
 		if err != nil {
 			return nil, err
 		}
+		all = append(all, ex)
+	}
+	history, err := loadHistory(filepath.Join(archive, "history"))
+	if err != nil {
+		return nil, err
+	}
+	return append(all, history...), nil
+}
+
+// pickExport is the newest export taken before the window ends, or else the first one after
+// it.
+func pickExport(all []*export, end time.Time) (*export, error) {
+	var before, after *export
+	for _, ex := range all {
 		if !ex.time.After(end) {
-			if before == nil || ex.time.After(before.time) {
+			if before == nil || !ex.time.Before(before.time) {
 				before = ex
 			}
 		} else if after == nil || ex.time.Before(after.time) {
@@ -117,46 +140,48 @@ func pickExport(dir string, end time.Time) (*export, error) {
 	if after != nil {
 		return after, nil
 	}
-	return nil, fmt.Errorf("no exports in %s", dir)
+	return nil, fmt.Errorf("no exports and no history")
 }
 
 // exportsAround returns the character's exports from the last one taken at or before the
 // window starts to the first one taken at or after it ends, in time order. Another character
 // with the same name (a deleted and remade one) has another class or race, and is left out.
-func exportsAround(dir string, ex *export, from, to time.Time) ([]*export, error) {
-	paths, _ := filepath.Glob(filepath.Join(dir, "export-*.json"))
-	var all []*export
-	for _, path := range paths {
-		other, err := loadExport(path)
-		if err != nil {
-			return nil, err
-		}
+func exportsAround(all []*export, ex *export, from, to time.Time) []*export {
+	var mine []*export
+	for _, other := range all {
 		if other.Who.Name == ex.Who.Name && other.Who.Realm == ex.Who.Realm && other.Who.ClassFile == ex.Who.ClassFile && other.Who.RaceFile == ex.Who.RaceFile {
-			all = append(all, other)
+			mine = append(mine, other)
 		}
 	}
-	slices.SortFunc(all, func(a, b *export) int { return a.time.Compare(b.time) })
-	first, last := 0, len(all)-1
-	for i, other := range all {
+	slices.SortStableFunc(mine, func(a, b *export) int { return a.time.Compare(b.time) })
+	first, last := 0, len(mine)-1
+	for i, other := range mine {
 		if !other.time.After(from) {
 			first = i
 		}
 	}
-	for i := len(all) - 1; i >= 0; i-- {
-		if !all[i].time.Before(to) {
+	for i := len(mine) - 1; i >= 0; i-- {
+		if !mine[i].time.Before(to) {
 			last = i
 		}
 	}
 	if last < first {
-		return nil, nil
+		return nil
 	}
-	return all[first : last+1], nil
+	return mine[first : last+1]
+}
+
+// skillChange is a weapon skill going up between two exports.
+type skillChange struct {
+	from, to, max int
 }
 
 // exportChanges lists what changed from one export to the next that moves the sim: the
-// character's level, the skill of a weapon either one holds, the gear and the talents.
-func exportChanges(a, b *export) []string {
+// character's level, the gear and the talents. The skill ups of a weapon either one holds come
+// apart, by skill name, because history has a record for each point.
+func exportChanges(a, b *export) ([]string, map[string]skillChange) {
 	var changes []string
+	skillUps := map[string]skillChange{}
 	if a.Who.Level != b.Who.Level {
 		changes = append(changes, fmt.Sprintf("level %d to %d", a.Who.Level, b.Who.Level))
 	}
@@ -175,7 +200,7 @@ func exportChanges(a, b *export) []string {
 	}
 	for _, skill := range b.Skills {
 		if weaponSkills[skill.Name] && ranks[skill.Name] != skill.Rank {
-			changes = append(changes, fmt.Sprintf("%s skill %d to %d of %d", skill.Name, ranks[skill.Name], skill.Rank, skill.Max))
+			skillUps[skill.Name] = skillChange{ranks[skill.Name], skill.Rank, skill.Max}
 		}
 	}
 
@@ -227,7 +252,7 @@ func exportChanges(a, b *export) []string {
 	if len(talentChanges) > 0 {
 		changes = append(changes, "talents: "+strings.Join(talentChanges, ", "))
 	}
-	return changes
+	return changes, skillUps
 }
 
 // character is what we build from an export, with notes on anything we had to leave out.
@@ -304,6 +329,10 @@ func (c *character) equip(ex *export, tables *clientTables) {
 	items := c.player.Equipment.Items
 	var left []string
 	for _, gear := range ex.Gear {
+		// An export rebuilt from history has an empty entry for each empty slot.
+		if gear.ID == 0 {
+			continue
+		}
 		item, ok := core.ItemsByID[gear.ID]
 		if !ok {
 			left = append(left, fmt.Sprintf("%s (%d)", gear.Name, gear.ID))

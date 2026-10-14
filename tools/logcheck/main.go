@@ -11,9 +11,10 @@
 //	go run --tags=with_db ./tools/logcheck -from 20:25:00 -to 21:10:00
 //
 // With no -log it archives the game's logs first (tools/combat_log/archive.sh) and reads the
-// newest one in ~/forever-logs. With no -export it takes the newest export from
-// ~/forever-logs/exports taken before the window ends. Save each /bayov export there as
-// export-<date>_<time>.json, with the date and time from its when.date.
+// newest one in ~/forever-logs. With no -export it takes the newest export taken before the
+// window ends, from ~/forever-logs/exports and from BayovCore's history in
+// ~/forever-logs/history (one export for each record). Save each pasted /bayov export in
+// exports/ as export-<date>_<time>.json, with the date and time from its when.date.
 //
 // It has to run from the repo root, because it reads the talent trees and the item database
 // from there.
@@ -84,11 +85,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	exports, err := loadExports(*archive)
+	if err != nil {
+		log.Fatal(err)
+	}
 	var ex *export
 	if *exportPath != "" {
 		ex, err = loadExport(*exportPath)
 	} else {
-		ex, err = pickExport(filepath.Join(*archive, "exports"), to)
+		ex, err = pickExport(exports, to)
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -117,11 +122,7 @@ func main() {
 	r.header()
 	r.sheet()
 	r.weaponSkills(*fullSkill)
-	exports, err := exportsAround(filepath.Join(*archive, "exports"), ex, from, to)
-	if err != nil {
-		log.Fatal(err)
-	}
-	r.exportChanges(exports)
+	r.exportChanges(exportsAround(exports, ex, from, to))
 	r.logNotes()
 
 	logTallies := tallyLog(cl)

@@ -54,6 +54,12 @@ The `/bayov export` JSONs go in `~/forever-logs/exports/` as `export-<date>_<tim
 named after their `when.date`. `tools/logcheck` pairs each log window with the export taken
 closest before it.
 
+`archive.sh` also runs `history.py`, which copies BayovCore's character history out of the
+game's `SavedVariables/BayovCore.lua` into `~/forever-logs/history/`. The addon records each
+gear swap, talent change, level up and skill up as it happens, and keeps the last 7 days. We
+keep every record, so the archive is the only full copy. `tools/logcheck` rebuilds an export
+for each record (its README has the details).
+
 Some scripts hold numbers from one character and one day, like the weapon models in
 `recheck.py` and the fist weapon cutoff in `glance.py`. The last section lists them.
 

@@ -10,6 +10,9 @@
 # A systemd user timer runs this every 5 minutes (systemd/ has the units), and logcheck runs it
 # before it reads a log, so the newest lines are always in the archive.
 #
+# It also copies BayovCore's character history out of the SavedVariables (history.py), which
+# logcheck uses to know the gear, talents and skills at each moment of a log.
+#
 # FLAVORS lists the game folders we archive. Add the live Forever folder when it exists.
 
 set -eu
@@ -26,3 +29,6 @@ for flavor in $FLAVORS; do
     # changed.
     rsync -rt --include 'WoWCombatLog-*.txt' --exclude '*' "$src/" "$ARCHIVE/$flavor/"
 done
+
+FLAVORS="$FLAVORS" WOW_DIR="$GAME" FOREVER_LOGS="$ARCHIVE" \
+    python3 -I "$(dirname "$0")/history.py"
