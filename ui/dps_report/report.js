@@ -1009,13 +1009,13 @@ export function startReport(dash) {
     const idx = new Map(races.map((r) => [r.build + '|' + r.key, r]));
     // Each race's column, then a column for each of its advantages that any preset shown has.
     const cols = RACES.flatMap((rc) => [{ key: rc, race: rc, tag: null }, ...ADV.map((v) => races.filter((r) => r.race === rc && r.variant === v && shown.has(r.build))).filter((rs) => rs.length)
-      .map((rs) => ({ key: rs[0].key, race: rc, tag: groupTag(rs) }))]);
+      .map((rs) => ({ key: rs[0].key, race: rc, tag: groupTag(rs), variant: rs[0].variant }))]);
     const grid = el('div', { class: 'fv-heat', style: `grid-template-columns: minmax(6.5rem, 8.5rem) repeat(${cols.length}, minmax(2.9rem, 1fr))` });
     grid.append(el('div', { class: 'hh' }));
     const RI = new Map(races.map((r) => [r.race, r.raceIcon]));
     for (const c of cols) {
       grid.append(tt(el('div', { class: 'hh' + (c.tag ? ' var' : ''), style: `color:${fcol(c.race)}` }, RI.get(c.race) ? iconImg(RI.get(c.race), '') : null, c.race.replace('High Order', 'High Ord.').replace('Windshaper', 'Windshp.'),
-        c.tag ? el('small', { text: c.tag.replace(/^with (an? )?/, '').replace(/ or (an? )?/, ' or ') }) : null), 'r:' + c.race));
+        c.tag ? el('small', { class: tagKind(c.variant), text: c.tag.replace(/^with (an? )?/, '').replace(/ or (an? )?/, ' or ') }) : null), 'r:' + c.race));
     }
     const maxGap = d3.max(races, (r) => -r.vsBest) || 1;
     for (const b of builds) {
@@ -1166,7 +1166,17 @@ export function startReport(dash) {
     return out;
   };
   // A race's name with its advantage, if any, as a smaller tag after it.
-  const raceName = (r, tag = r.tag) => el('span', { class: 'fv-rname' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), tag ? el('span', { class: 'fv-rtag', text: tag }) : null);
+  // An advantage tag is a colored pill with an icon, so the extra entries stand out from the races' own. Weapon
+  // racials are violet, the boss types teal, and the entry without its weapon racial is a plain outline.
+  const TAG_ICON = { sword: 'inv_sword_04', mace: 'inv_mace_25', axe: 'inv_axe_09', beast: 'ability_hunter_pet_bear', elemental: 'spell_frost_summonwaterelemental', humanoid: 'spell_holy_chastise' };
+  const tagKind = (v) => (v === 'weapon' ? 'wpn' : v === 'noweapon' ? 'nowpn' : ADV.includes(v) ? 'tgt' : '');
+  const tagIcon = (r) => TAG_ICON[r.variant === 'weapon' ? String(r.weapon || '').split(' ')[0] : r.variant];
+  const raceTag = (r, tag = r.tag) => {
+    if (!tag) return null;
+    const ic = r.variant !== 'noweapon' && tagIcon(r) && iconMap() ? iconImg(tagIcon(r), '') : null;
+    return el('span', { class: `fv-rtag ${tagKind(r.variant)}` }, ic, tag);
+  };
+  const raceName = (r, tag = r.tag) => el('span', { class: 'fv-rname' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), raceTag(r, tag));
   const safeTop = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) fail(host); } };
   // a racial's colour follows what kind it is: a passive, a cooldown, or the target type; base stats and the weapon swap are neutral
   const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, chastise: 1, starshards: 1, darksacrifice: 1, target: 2 };
@@ -1201,68 +1211,78 @@ export function startReport(dash) {
 
   // ---------- races: overview ----------
   const drawRaceOverview = () => {
-    const host = $('#race-overview'), tiles = $('#ro-tiles');
+    const host = $('#race-overview'), tiles = $('#ro-tiles'), take = $('#ro-take');
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
     seg($('#ro-fac'), 'rsFac', [['All', 'All races'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     seg($('#ro-role'), 'rsRole', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
-    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) { tiles.replaceChildren(); return; }
+    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) { tiles.replaceChildren(); take.replaceChildren(); return; }
     const V = rsVar(), scope = st.rsFac === 'All' ? 'All' : 'Faction';
     const rr = raceRows(V), roleMap = roleOf();
     const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label]));
-    // Per entry, over the presets of a role: how often it's the best, and how far behind the best it is on average and
-    // at worst. Within a faction, the best is that faction's best.
+    // Per entry, over the presets of a role: its DPS as a share of the best entry's on each preset, then the
+    // average of that and how often it is the best. Within a faction, the best is that faction's best.
     const summarize = (role) => {
       const acc = new Map();
       for (const [build, rs] of d3.groups(rr.filter((r) => role === 'All' || roleMap.get(r.build) === role), (r) => r.build)) {
         const pool = scope === 'All' ? rs : rs.filter((r) => r.faction === st.rsFac);
         if (!pool.length) continue;
         pool.forEach((r, i) => {
-          if (!acc.has(r.key)) acc.set(r.key, { key: r.key, race: r.race, faction: r.faction, raceIcon: r.raceIcon, rows: [], gaps: [], ranks: [] });
+          if (!acc.has(r.key)) acc.set(r.key, { key: r.key, race: r.race, faction: r.faction, raceIcon: r.raceIcon, variant: r.variant, rows: [], shares: [], ranks: [] });
           const a = acc.get(r.key);
-          a.rows.push(r); a.gaps.push({ build, gap: 100 * (1 - r.dps / pool[0].dps) }); a.ranks.push(i + 1);
+          a.rows.push(r); a.shares.push({ build, share: (100 * r.dps) / pool[0].dps }); a.ranks.push(i + 1);
         });
       }
       return [...acc.values()].map((a) => {
-        const close = [...a.gaps].sort((p, q) => p.gap - q.gap).slice(0, 3);
-        return { ...a, tag: a.rows[0].tag ? groupTag(a.rows) : null, presets: a.gaps.length, timesBest: a.gaps.filter((g) => g.gap < 0.005).length,
-          avgGap: d3.mean(a.gaps, (g) => g.gap), worstGap: d3.max(a.gaps, (g) => g.gap), medianRank: d3.median(a.ranks),
-          bestFor: close.map((g) => lab.get(g.build)), bestForGap: close.map((g) => g.gap) };
+        const byShare = [...a.shares].sort((p, q) => q.share - p.share);
+        return { ...a, tag: a.rows[0].tag ? groupTag(a.rows) : null, weapon: a.rows.find((r) => r.weapon)?.weapon, presets: a.shares.length,
+          timesBest: a.shares.filter((g) => g.share > 99.995).length, avg: d3.mean(a.shares, (g) => g.share), worst: byShare[byShare.length - 1],
+          medianRank: d3.median(a.ranks), top3: byShare.slice(0, 3) };
       });
     };
-    const better = (p, q) => q.timesBest - p.timesBest || p.avgGap - q.avgGap;
-    // the best race for each role: most often best, then the smallest average gap
+    const better = (p, q) => q.timesBest - p.timesBest || q.avg - p.avg;
+    const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
+    const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+    const pct = (v) => `${v > 99.995 ? '100' : f1(Math.min(v, 99.9))}%`;
+    const bestOn = (r) => (r.timesBest ? `best on ${r.timesBest} of ${r.presets} presets` : `never the best, ${r.presets} presets`);
+    // the best race for each role: most often best, then the highest average
     tiles.replaceChildren(...['Melee', 'Ranged', 'Caster'].map((rl) => {
       const top = summarize(rl).sort(better)[0];
-      if (!top) return el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: rl }), el('span', { class: 'v', text: '—' }));
-      return tt(el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: `Best ${rl.toLowerCase()}` }),
-        el('span', { class: 'v' }, raceIco(top.raceIcon), el('span', { text: top.race })),
-        el('span', { class: 's', text: `${top.tag ? top.tag + ' · ' : ''}${top.timesBest} of ${top.presets} presets` })), `r:${top.race}`);
+      if (!top) return el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: `Best for ${rl.toLowerCase()}` }), el('span', { class: 'v', text: '—' }));
+      return el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: `Best for ${rl.toLowerCase()}` }),
+        el('span', { class: 'v' }, tt(raceIco(top.raceIcon), `r:${top.race}`), el('span', { text: top.race, style: `color:${fcol(top.race)}` })),
+        top.tag ? raceTag(top) : null,
+        el('span', { class: 's', text: top.timesBest ? `Best race on ${top.timesBest} of ${top.presets} ${rl.toLowerCase()} presets` : `${pct(top.avg)} of the best race's DPS` }));
     }));
-    const rows = summarize(st.rsRole).sort((p, q) => p.avgGap - q.avgGap || q.timesBest - p.timesBest);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race plays this role in this faction.' })); return; }
-    const max = Math.max(0.5, d3.max(rows, (r) => r.worstGap));
-    const x = (v) => `${(100 * v) / max}%`;
+    const rows = summarize(st.rsRole).sort((p, q) => q.avg - p.avg || q.timesBest - p.timesBest);
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race plays this role in this faction.' })); take.replaceChildren(); return; }
+    // The takeaway in words: the leader, and the best race without an advantage when the leader has one.
+    const lead = rows[0], plain = rows.find((r) => !r.tag || r.variant === 'noweapon');
+    take.replaceChildren(el('b', { text: who(lead) }), ` gets the closest to the best race: ${pct(lead.avg)} of its DPS on average, and ${bestOn(lead)}.`,
+      ...(lead.tag && plain && plain !== lead ? [' Without an advantage, ', el('b', { text: who(plain) }), ` leads at ${pct(plain.avg)}.`] : []));
+    // The bars start a little below the lowest average, so the gaps between races are easy to see.
+    const lo = Math.max(0, Math.floor(d3.min(rows, (r) => r.avg)) - 1);
+    const x = (v) => `${(100 * (v - lo)) / (100 - lo)}%`;
     const card = $('#race-overview-card');
     host.replaceChildren(...rows.map((r, i) => {
-      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : ''), 'data-tip': '1', role: 'button', tabindex: '0', 'aria-label': `${r.race}${r.tag ? ' ' + r.tag : ''}: best on ${r.timesBest} of ${r.presets}` },
+      const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : '') + (r.tag ? ' adv' : ''), 'data-tip': '1', role: 'button', tabindex: '0', 'aria-label': `${who(r)}: ${pct(r.avg)} of the best race's DPS, ${bestOn(r)}` },
         tt(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }), `r:${r.race}`),
-        el('span', { class: 'nm' }, raceName(r), el('small', { text: `${r.presets} preset${r.presets === 1 ? '' : 's'}` })),
-        el('span', { class: 'end' }, el('b', { text: `★ ${r.timesBest}` }),
-          el('small', { text: r.avgGap < 0.005 ? 'always best' : `−${f2(r.avgGap)}% avg` })),
-        el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${x(r.avgGap)};background:${fcol(r.race)}` }), el('span', { class: 'wk', style: `left:0;width:${x(r.worstGap)}` })));
+        el('span', { class: 'nm' }, raceName(r)),
+        el('span', { class: 'end' }, el('b', { text: pct(r.avg) }), el('small', { text: r.timesBest ? `best on ${r.timesBest} of ${r.presets}` : 'never best' })),
+        el('div', { class: 'fv-otrack' }, el('span', { class: 'bar', style: `width:${x(r.avg)};background:${fcol(r.race)}` })));
       row.addEventListener('click', (e) => {
         if (e.target.closest('[data-tt]')) return;
         e.stopPropagation();
         if (row.classList.contains('is-hl')) { hideTip(); return; }
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
-        const bf = arr(r.bestFor).map((lbl, k) => [lbl, +arr(r.bestForGap)[k] > 0.005 ? tipDelta(-arr(r.bestForGap)[k], f2) : '★']);
-        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(r.tag ? `${r.race} ${r.tag}` : r.race, st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)),
-          [tipKey(`Best on ${r.timesBest}`, `of ${r.presets} presets`, scope === 'Faction' ? `in the ${r.faction}` : null),
-            tipGrid([['Average gap', r.avgGap < 0.005 ? '0%' : tipDelta(-r.avgGap, f2)], ['Worst gap', r.worstGap < 0.005 ? '0%' : tipDelta(-r.worstGap, f2)], ['Median rank', String(r.medianRank)]]),
-            bf.length ? tipTable(['Closest to the best', ''], bf) : null], { hl: row, below: true });
+        const bf = r.top3.map((g) => [lab.get(g.build), g.share > 99.995 ? '★ best' : pct(g.share)]);
+        showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(who(r), st.rsRole === 'All' ? 'all roles' : st.rsRole.toLowerCase(), raceIco(r.raceIcon)),
+          [tipKey(pct(r.avg), "of the best race's DPS", 'on average'),
+            tipGrid([['Best race on', `${r.timesBest} of ${r.presets} presets${scope === 'Faction' ? ` (${r.faction})` : ''}`], ['Its weakest preset', `${pct(r.worst.share)} · ${lab.get(r.worst.build)}`], ['Typical place', `${ordinal(Math.round(r.medianRank))} of the races`]]),
+            bf.length ? tipTable(['Its best presets', ''], bf) : null], { hl: row, below: true });
       });
       return row;
     }));
+    $('#ro-axis').textContent = `A full bar is 100%: the best race on every preset. Bars start at ${lo}%.`;
   };
 
   // ---------- races: one preset, every race ----------
@@ -1693,7 +1713,7 @@ export function startReport(dash) {
     // Every race, and each advantage a race has as its own row (see raceRows), best first.
     const rows = raceRows('wt').filter((r) => r.build === b.id);
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); return; }
-    const W = host.clientWidth, rowH = 26, m = { l: rows.some((r) => r.tag) ? Math.min(190, W * 0.42) : 100, r: 64, t: 4, b: 4 };
+    const W = host.clientWidth, rowH = 26, m = { l: rows.some((r) => r.tag) ? Math.min(225, W * 0.45) : 100, r: 64, t: 4, b: 4 };
     const H = m.t + m.b + rows.length * rowH;
     const lo = d3.min(rows, (r) => r.dps) * 0.985, hi = d3.max(rows, (r) => r.dps);
     const x = d3.scaleLinear([lo, hi], [m.l, W - m.r]);
@@ -1704,7 +1724,7 @@ export function startReport(dash) {
       rg.append('rect').attr('x', 0).attr('y', yy).attr('width', W).attr('height', rowH).style('fill', 'transparent');
       const label = rg.append('text').attr('x', m.l - 26).attr('y', yy + rowH / 2 + 4).attr('text-anchor', 'end');
       label.append('tspan').text(r.race).style('fill', fcol(r.race));
-      if (r.tag) label.append('tspan').text(' ' + r.tag).style('fill', 'var(--color-fg-muted)').attr('font-size', '0.85em');
+      if (r.tag) label.append('tspan').text(' ' + r.tag).style('fill', `var(--fv-adv-${tagKind(r.variant)}, var(--color-fg-muted))`).attr('font-size', '0.85em').attr('font-weight', 600);
       if (r.raceIcon) svgIcon(rg, r.raceIcon, m.l - 22, yy + 4, rowH - 8);
       // An advantage's bar is lighter than its race's own.
       rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', r.adv ? 0.45 : 0.8);
