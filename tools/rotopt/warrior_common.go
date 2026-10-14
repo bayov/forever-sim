@@ -40,6 +40,10 @@ func warriorMax(vals ...value) value {
 	return &proto.APLValue{Value: &proto.APLValue_Max{Max: &proto.APLValueMax{Vals: vals}}}
 }
 
+func warriorCurrentTime() value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentTime{CurrentTime: &proto.APLValueCurrentTime{}}}
+}
+
 func currentRage() value {
 	return &proto.APLValue{Value: &proto.APLValue_CurrentRage{CurrentRage: &proto.APLValueCurrentRage{}}}
 }
@@ -74,9 +78,15 @@ func warriorKnobs() []Knob {
 		// Blood Fury, Berserking, Elune's Light and the Mighty Rage Potion wait for Death Wish when
 		// the wait costs no use. The potion can instead (2) wait for the last potionAt seconds when
 		// the wait costs no use, for Arms' Recklessness or a Death Wish that is held to the end.
-		{Name: "racialHoldForDw", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "racialHoldForDw", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "potionHoldForDw", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "potionAt", Default: 30, Min: 10, Max: 60, Step: 5},
+		// With potionHoldForDw 2: 1 also drinks at the pull (the first 3 sec), which matters in
+		// fights too short for the hold to lose a use.
+		{Name: "potionPull", Default: 0, Min: 0, Max: 1, Step: 1},
+		// racialHoldForDw 2: Blood Fury and Berserking wait for the last racialAt seconds when the
+		// wait costs no use, instead of waiting for Death Wish.
+		{Name: "racialAt", Default: 25, Min: 15, Max: 40, Step: 5},
 		// The synthetic on-use trinket: 0 on cooldown (with the other cooldowns), otherwise its last
 		// use waits for the last trinketAt seconds when the wait costs no use.
 		{Name: "trinketAt", Default: 0, Min: 0, Max: 40, Step: 5},
@@ -127,10 +137,21 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 		)
 	}
 	racial := k["racialHoldForDw"] == 1
+	racialHold := func(spell *proto.ActionID) value {
+		if k["racialHoldForDw"] == 2 {
+			return or(
+				le(remainingTime(), seconds(k["racialAt"])),
+				gt(spellUsesLostByDelay(spell, sub(remainingTime(), seconds(k["racialAt"])), seconds(15)), num(0)),
+			)
+		}
+		return hold(spell, racial)
+	}
 	items = append(items,
-		cast(bloodFury, hold(bloodFury, racial), "Orc. Blood Fury waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line."),
-		cast(berserking, hold(berserking, racial), "Troll. Berserking waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line."),
-		cast(elunesLight, hold(elunesLight, racial), "Night Elf. Elune's Light waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line."),
+		cast(bloodFury, racialHold(bloodFury), "Orc. Blood Fury waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line."),
+		cast(berserking, racialHold(berserking), "Troll. Berserking waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line."),
+		// Elune's Light keeps waiting for Death Wish: held for the end it lost 7 at 180 sec on
+		// two-hand Fury, where Blood Fury and Berserking gained.
+		cast(elunesLight, hold(elunesLight, k["racialHoldForDw"] >= 1), "Night Elf. Elune's Light waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line."),
 		potionLine(k, hold),
 	)
 	if k["trinketAt"] > 0 {
@@ -161,10 +182,14 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 // potionAt seconds, in each case only when the wait costs no use.
 func potionLine(k Knobs, hold func(*proto.ActionID, bool) value) *proto.APLListItem {
 	if k["potionHoldForDw"] == 2 {
-		return cast(potion, or(
+		when := or(
 			le(remainingTime(), seconds(k["potionAt"])),
 			gt(spellUsesLostByDelay(potion, sub(remainingTime(), seconds(k["potionAt"])), seconds(15)), num(0)),
-		), "Mighty Rage Potion, the last one held for the end of the fight when the wait costs no use.")
+		)
+		if k["potionPull"] == 1 {
+			when = or(le(warriorCurrentTime(), seconds(3)), when)
+		}
+		return cast(potion, when, "Mighty Rage Potion at the pull, the last one held for the end of the fight when the wait costs no use.")
 	}
 	return cast(potion, hold(potion, k["potionHoldForDw"] == 1), "Mighty Rage Potion with Death Wish.")
 }

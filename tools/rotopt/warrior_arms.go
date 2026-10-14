@@ -35,13 +35,14 @@ func (warriorArms) Knobs() []Knob {
 		// Battle Stance only: switch to Berserker Stance for Recklessness (it needs Berserker Stance)
 		// when recklessAt seconds are left, Recklessness is ready and the Rage fits in what Tactical
 		// Mastery keeps, and stay there for the rest of the fight.
-		Knob{Name: "reckSwap", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 2: the same, but back to Battle Stance once Recklessness is out (it stays up).
+		Knob{Name: "reckSwap", Default: 0, Min: 0, Max: 2, Step: 1},
 	)
 }
 
 func (warriorArms) Build(k Knobs) *proto.APLRotation {
 	battle := k["stance"] == 1
-	reckSwap := battle && k["reckSwap"] == 1 && k["recklessness"] == 2
+	reckSwap := battle && k["reckSwap"] >= 1 && k["recklessness"] == 2
 	var items []*proto.APLListItem
 	if reckSwap {
 		items = append(items, cast(berserkerStance, and(
@@ -98,7 +99,9 @@ func (warriorArms) Build(k Knobs) *proto.APLRotation {
 		stance = berserkerStance
 	}
 	var back value = not(auraIsActive(stance))
-	if reckSwap {
+	if reckSwap && k["reckSwap"] == 2 {
+		back = and(back, or(gt(remainingTime(), seconds(k["recklessAt"])), not(spellIsReady(recklessness))))
+	} else if reckSwap {
 		back = and(back, gt(remainingTime(), seconds(k["recklessAt"])))
 	}
 	items = append(items, cast(stance, back, "Back to the rotation's stance."))
