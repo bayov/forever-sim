@@ -112,19 +112,6 @@ export function startReport(dash) {
       }];
     },
   });
-  dash.calc('factionbest', {
-    inputs: ['race_variants', 'builds'], title: 'Best race by faction',
-    description: 'Per preset and race scenario, the best Horde and best Alliance race with their DPS, and Horde over Alliance in percent.',
-    fn: (race_variants, builds) => {
-      const lab = new Map(builds.map((b) => [b.id, b.label]));
-      return d3.groups(race_variants, (r) => r.build, (r) => r.variant).flatMap(([build, vs]) => vs.map(([variant, rs]) => {
-        const top = (f) => rs.filter((r) => r.faction === f).reduce((x, r) => (!x || +r.dps > +x.dps ? r : x), null);
-        const h = top('Horde'), al = top('Alliance');
-        return { build, variant, label: lab.get(build), hordeRace: h ? h.race : null, hordeDps: h ? +h.dps : null, allianceRace: al ? al.race : null, allianceDps: al ? +al.dps : null,
-          gapPct: h && al ? Math.round((h.dps / al.dps - 1) * 1000) / 10 : null };
-      }));
-    },
-  });
   dash.calc('racespread', {
     inputs: ['race_variants'], title: 'Race spread',
     description: 'Per preset and race scenario, the gap between its best and worst race in percent, and which races those are.',
@@ -1048,26 +1035,6 @@ export function startReport(dash) {
     host.replaceChildren(grid);
   };
 
-  const drawFactionTable = () => {
-    const tb = $('#faction-table tbody');
-    if (statusOf('builds') !== 'ok' || statusOf('race_variants') !== 'ok') return;
-    const V = rsVar('fac'), rr = raceRows(V);
-    const lab = new Map(rowsOf('builds').map((b) => [b.id, b.label]));
-    // Each preset's best Horde and best Alliance entry. The rows are sorted best first.
-    const fb = new Map(d3.groups(rr, (r) => r.build).map(([build, rs]) => {
-      const h = rs.find((r) => r.faction === 'Horde'), al = rs.find((r) => r.faction === 'Alliance');
-      return [build, { label: lab.get(build), h, al, gapPct: h && al ? Math.round((h.dps / al.dps - 1) * 1000) / 10 : null }];
-    }));
-    if (iconMap()) { $('#fi-h').replaceChildren(iconImg('ui_hordeicon')); $('#fi-a').replaceChildren(iconImg('ui_allianceicon')); }
-    tb.replaceChildren(...buildOrder(rowsOf('builds')).filter((b) => fb.has(b.id)).map((b) => {
-      const g = fb.get(b.id);
-      return el('tr', { class: 'clk', 'data-key': `${enc(b.id)},${enc(V)}`, onclick: () => pickRaceSpec(b.id) },
-        el('td', { class: 'first' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), ' ' + g.label),
-        ...[g.h, g.al].flatMap((r) => [tt(el('td', {}, ...(r ? [raceIco(r.raceIcon), ' ', raceName(r)] : ['—'])), r ? `r:${r.race}:${b.class}` : null, false, b.id), el('td', { class: 'n', text: r ? f1(r.dps) : '—' })]),
-        el('td', { class: 'n', text: g.gapPct == null ? '' : f1(g.gapPct) }));
-    }));
-  };
-
   const drawRaceSpread = () => {
     const host = $('#racespread');
     if (!waitOr(host, ['builds', 'race_variants', 'race_breakdown'])) return;
@@ -1379,16 +1346,6 @@ export function startReport(dash) {
     $('#rs-axis').textContent = `Bars start at ${f0(lo)} DPS.`;
     $('#rs-legend').replaceChildren(el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats'),
       ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
-  };
-
-  // ---------- races: a finding per class ----------
-  const drawRaceFind = () => {
-    const host = $('#race-find');
-    if (!waitOr(host, ['race_notes'])) return;
-    const ns = rowsOf('race_notes').filter((n) => n.kind === 'class' && (st.heatCls === 'All' || n.key === st.heatCls));
-    host.replaceChildren(...CLASSES.map((c) => ns.find((n) => n.key === c)).filter(Boolean).map((n) => el('div', {},
-      tt(ringed('classicon_' + n.key.toLowerCase(), 'fv-ico ring', ccol(n.key)) || el('span', { class: 'fv-dot', style: `background:${ccol(n.key)}` }), 'c:' + n.key),
-      el('span', {}, el('b', { text: n.key + '. ' }), mark(el('span', { text: n.text }), 'race_notes', 'text', `kind=class&key=${n.key}`)))));
   };
 
   // ---------- icons ----------
@@ -2736,7 +2693,7 @@ export function startReport(dash) {
     try { drawHero(); } catch (e) { console.error(e); }
     try {
       if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
-      else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceOverview, '#race-overview'], [drawRaceSpec, '#race-spec'], [drawHeat, '#heat'], [drawRaceFind, '#race-find'], [drawFactionTable, null], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
+      else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceOverview, '#race-overview'], [drawRaceSpec, '#race-spec'], [drawHeat, '#heat'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
       else if (st.tab === 'method') { drawMethod(); safeTop(drawMethodAsm, $('#method-asm')); }

@@ -840,8 +840,7 @@ ol.fv-list li::marker {
 }
 
 .fv td:has(> .fv-ico),
-.fv td.first,
-.fv #faction-table td {
+.fv td.first {
 	white-space: nowrap;
 }
 
@@ -2217,30 +2216,6 @@ ol.fv-list li::marker {
 	font-size: 0.66rem;
 	color: var(--color-fg-muted);
 	margin: 0;
-}
-
-.fv-find {
-	display: grid;
-	gap: 0.55rem;
-}
-
-.fv-find > div {
-	display: grid;
-	grid-template-columns: 1.6rem minmax(0, 1fr);
-	gap: 0.55rem;
-	align-items: start;
-	font-size: var(--cds-font-size-caption);
-	line-height: 1.5;
-}
-
-.fv-find > div .fv-ico {
-	width: 1.6rem;
-	height: 1.6rem;
-	border-radius: 50%;
-}
-
-.fv-find b {
-	font-weight: 600;
 }
 
 // Text buttons are Bootstrap's .btn-link, sized like the Events tab's "Reset filters".
