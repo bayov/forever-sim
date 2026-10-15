@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h",
   "published": {
-    "dps": 927.5,
-    "source": "Two-hand Fury racial and trinket holds, 2026-10-15 (pass 19)"
+    "dps": 925.7,
+    "source": "Sunder Armor as every warrior's first GCD (standards 23), 2026-10-15"
   },
   "verify": {
-    "dps": 927.5,
+    "dps": 925.7,
     "stderr": 0.4,
     "iters": 20000,
     "ok": true,
@@ -37,6 +37,7 @@
   ],
   "rotation": [
     "Start in Berserker Stance with no Rage; Battle Shout from the raid",
+    "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "Death Wish held for the last 36 sec, Recklessness for the last 30 sec",
     "Blood Fury and Berserking held for the last 30 sec, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 20 sec",
     "Bloodrage under 70 Rage",

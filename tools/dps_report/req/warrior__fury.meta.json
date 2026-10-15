@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury",
   "published": {
-    "dps": 1061.4,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 1057.9,
+    "source": "Sunder Armor as every warrior's first GCD (standards 23), 2026-10-15"
   },
   "verify": {
-    "dps": 1061.4,
-    "stderr": null,
+    "dps": 1057.9,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
@@ -38,7 +38,8 @@
   ],
   "rotation": [
     "Start in Berserker Stance with no Rage; Battle Shout from the raid",
-    "Death Wish on cooldown and Recklessness at the pull (both in the opening seconds)",
+    "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
+    "Death Wish right after the Sunder, Recklessness one GCD later",
     "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown; Mighty Rage Potion at the pull, second held for the last 20 sec",
     "Bloodrage under 40 Rage",
     "Execute first in the execute phase",

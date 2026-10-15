@@ -169,57 +169,85 @@
                   }
                 },
                 {
+                  "notes": "Sunder Armor as the first GCD after the pull, as every warrior does; the raid's tanks keep it up after.",
+                  "action": {
+                    "sequence": {
+                      "name": "sunder",
+                      "actions": [
+                        {
+                          "castSpell": {
+                            "spellId": {
+                              "spellId": 11597
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
                   "notes": "Death Wish on cooldown, but held for the end of the fight when the wait costs no use. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
-                      "or": {
+                      "and": {
                         "vals": [
                           {
-                            "cmp": {
-                              "op": "OpLe",
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "36s"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "spellId": 12328
-                                  },
-                                  "delay": {
-                                    "math": {
-                                      "op": "OpSub",
-                                      "lhs": {
-                                        "remainingTime": {}
-                                      },
-                                      "rhs": {
-                                        "const": {
-                                          "val": "36s"
-                                        }
+                            "or": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "remainingTime": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "36s"
                                       }
                                     }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "30s"
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGt",
+                                    "lhs": {
+                                      "spellUsesLostByDelay": {
+                                        "spellId": {
+                                          "spellId": 12328
+                                        },
+                                        "delay": {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "36s"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "minTimeLeft": {
+                                          "const": {
+                                            "val": "30s"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "0"
+                                      }
                                     }
                                   }
                                 }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
+                              ]
+                            }
+                          },
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
                             }
                           }
                         ]
@@ -236,16 +264,27 @@
                   "notes": "Recklessness for the last seconds of the fight, in the execute phase.",
                   "action": {
                     "condition": {
-                      "cmp": {
-                        "op": "OpLe",
-                        "lhs": {
-                          "remainingTime": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "25s"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "25s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -387,28 +426,39 @@
                   "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
                   "action": {
                     "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "autoTimeToNext": {
-                            "autoType": "MainHand"
-                          }
-                        },
-                        "rhs": {
-                          "math": {
-                            "op": "OpSub",
-                            "lhs": {
-                              "autoSwingTime": {
-                                "autoType": "MainHand"
-                              }
-                            },
-                            "rhs": {
-                              "const": {
-                                "val": "0.4s"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "autoTimeToNext": {
+                                  "autoType": "MainHand"
+                                }
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpSub",
+                                  "lhs": {
+                                    "autoSwingTime": {
+                                      "autoType": "MainHand"
+                                    }
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.4s"
+                                    }
+                                  }
+                                }
                               }
                             }
+                          },
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -427,6 +477,17 @@
                 {
                   "notes": "Mortal Strike on cooldown.",
                   "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 21553,
@@ -442,25 +503,36 @@
                       "and": {
                         "vals": [
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentRage": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "20"
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpGe",
+                                    "lhs": {
+                                      "currentRage": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "20"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "isExecutePhase": {
+                                        "threshold": "E20"
+                                      }
+                                    }
+                                  }
                                 }
-                              }
+                              ]
                             }
                           },
                           {
-                            "not": {
-                              "val": {
-                                "isExecutePhase": {
-                                  "threshold": "E20"
-                                }
-                              }
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
                             }
                           }
                         ]
@@ -478,16 +550,27 @@
                   "notes": "Overpower after a dodge or a Bloodthrill proc.",
                   "action": {
                     "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "currentRage": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "5"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentRage": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "5"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -505,24 +588,35 @@
                       "and": {
                         "vals": [
                           {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 11574,
-                                    "rank": 7
+                            "and": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "dotIsActive": {
+                                        "spellId": {
+                                          "spellId": 11574,
+                                          "rank": 7
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "isExecutePhase": {
+                                        "threshold": "E20"
+                                      }
+                                    }
                                   }
                                 }
-                              }
+                              ]
                             }
                           },
                           {
-                            "not": {
-                              "val": {
-                                "isExecutePhase": {
-                                  "threshold": "E20"
-                                }
-                              }
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
                             }
                           }
                         ]
@@ -540,16 +634,27 @@
                   "notes": "Spearing Strike on cooldown. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "currentRage": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "15"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentRage": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "15"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -562,6 +667,17 @@
                 {
                   "notes": "Execute in the execute phase.",
                   "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 20662,
@@ -617,25 +733,36 @@
                       "and": {
                         "vals": [
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentRage": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "20"
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpGe",
+                                    "lhs": {
+                                      "currentRage": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "20"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "isExecutePhase": {
+                                        "threshold": "E20"
+                                      }
+                                    }
+                                  }
                                 }
-                              }
+                              ]
                             }
                           },
                           {
-                            "not": {
-                              "val": {
-                                "isExecutePhase": {
-                                  "threshold": "E20"
-                                }
-                              }
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
                             }
                           }
                         ]
