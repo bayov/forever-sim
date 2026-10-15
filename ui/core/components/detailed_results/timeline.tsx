@@ -62,7 +62,7 @@ interface RowEvent {
 const logPrefixRegex = /^\[[^\]]*\]\s*(\[[^\]]*\]\s*)?/;
 // Some lines name the ability only by its ID, like "from {SpellID: 10497}", so we add each
 // log's ability name too.
-const searchText = (logs: Array<SimLog>): string =>
+export const searchText = (logs: Array<SimLog>): string =>
 	logs
 		.map(log => `${log.raw.replace(logPrefixRegex, '')} ${log.actionId?.name ?? ''}`)
 		.join(' ')
@@ -118,7 +118,7 @@ const formatSeconds = (time: number): string => `${time.toFixed(2)}s`;
 
 const formatAmount = (value: number, digits = 0): string => formatToNumber(value, { minimumFractionDigits: digits, maximumFractionDigits: digits });
 
-const tooltipTitle = (actionId: ActionId, note?: string): JSX.Element => (
+export const tooltipTitle = (actionId: ActionId, note?: string): JSX.Element => (
 	<div className="timeline-tooltip-title">
 		{actionId.iconUrl && <img className="timeline-tooltip-icon" src={actionId.iconUrl} />}
 		<span className="timeline-tooltip-name">{actionId.name}</span>
@@ -126,7 +126,7 @@ const tooltipTitle = (actionId: ActionId, note?: string): JSX.Element => (
 	</div>
 );
 
-const tooltipRow = (key: string, value: string, valueClass = ''): JSX.Element => (
+export const tooltipRow = (key: string, value: string, valueClass = ''): JSX.Element => (
 	<div className="timeline-tooltip-row">
 		<span className="timeline-tooltip-key">{key}</span>
 		<span className={`timeline-tooltip-value ${valueClass}`}>{value}</span>
@@ -135,7 +135,7 @@ const tooltipRow = (key: string, value: string, valueClass = ''): JSX.Element =>
 
 // One hit: its time, how it landed and the amount. The chart lists hits of several abilities,
 // so there we name the ability too.
-const tooltipHit = (ddl: DamageDealtLog, withName = false): JSX.Element => {
+export const tooltipHit = (ddl: DamageDealtLog, withName = false): JSX.Element => {
 	const outcome = hitOutcome(ddl);
 	const landed = !ddl.miss && !ddl.dodge && !ddl.parry;
 	return (

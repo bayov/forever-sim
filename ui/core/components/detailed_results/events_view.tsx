@@ -274,6 +274,7 @@ export class EventsView extends ResultComponent {
 		this.replay = new Replay({
 			parent: this.ui.replayHost,
 			resultsEmitter: this.iterationEmitter,
+			filter: this.filter,
 		});
 
 		this.ui.search.addEventListener(
