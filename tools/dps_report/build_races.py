@@ -159,8 +159,8 @@ def build(builds, races_rows, stats_rows, dump):
     for bid, b in list(bmap.items()):
         req = json.load(open(os.path.join(D, 'req', bid + '.json')))
         cls = b['class']
-        if b.get('encounter'):
-            del bmap[bid]  # the encounter presets have only the race sweep; the scenarios are on the generic boss
+        if b.get('encounter') or b.get('duty'):
+            del bmap[bid]  # encounter and duty presets have only the race sweep; the scenarios are on the generic boss's base presets
             continue
         if os.environ.get('RACES_PARTIAL') and any(v not in res[(bid, rn(rc))] for rc in RR.CLASS_RACES[cls] for v in ('off', 'beast', 'elemental')):
             del bmap[bid]  # a test build on part of the sims

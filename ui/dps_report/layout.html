@@ -49,8 +49,8 @@
 
     <div class="content-block fv-card" id="asm-card">
       <div class="content-block-header fv-asm-head"><h6 class="content-block-title">Assumptions</h6><span class="fv-asm-badge" id="asm-badge" hidden>Custom assumptions</span>
-        <span class="fv-asm-tools"><button class="fv-chip fv-chip-action" id="asm-expected" title="Set every assumption to its expected value">All expected</button><button class="fv-chip fv-chip-action" id="asm-reset" hidden>Reset</button></span></div>
-      <p class="fv-note">Values Forever hasn't confirmed yet, by class, biggest first. Each table shows how each spec's DPS at 180 s would change if that choice turns out to be true, versus the current ranking. <span class="def">●</span> marks what the ranking uses, <span class="exp">★</span> our best guess for release. Tap a column to apply it: the ranking, the headline figures, the Specs page's mean DPS and Compare follow. Tap ⓘ for what each choice means and the source.</p>
+        <span class="fv-asm-tools"><button class="fv-chip fv-chip-action" id="asm-reset" hidden>Reset</button></span></div>
+      <p class="fv-note">Values Forever hasn't confirmed yet, by class, biggest first. Each table shows how each spec's DPS at 180 s would change if that choice turns out to be true, versus the current ranking. The <b>Default</b> column is what the ranking uses. Tap another column to apply it: the ranking, the headline figures, the Specs page's mean DPS and Compare follow. Tap ⓘ for what each choice means and the source.</p>
       <div id="asm-list" data-source="assumptions assumption_dps"></div>
     </div>
 
@@ -66,6 +66,7 @@
           <div class="fv-seg" id="rank-fac" role="group" aria-label="Faction of the preset race"></div>
           <button class="fv-chip" id="rank-best" aria-pressed="false" title="Keep only the highest-DPS preset of each class">Best per class</button>
           <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Adds presets built for one boss type (vs Humanoid, Undead, Dragonkin), here and in Specs and Compare">Advantaged</button>
+          <button class="fv-chip" id="rank-duty" aria-pressed="true" title="Adds each preset's duty variant: it keeps a raid buff or debuff up itself (Sunder Armor and shaman totems aside: every warrior and every shaman does those), at a cost in its own DPS">Duty</button>
           <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
         </div>
       </div>
@@ -139,7 +140,8 @@
   <section class="tab-pane fv-page" id="spec" data-page="spec" hidden>
     <div class="fv-picker">
       <button class="fv-btn" id="sp-prev" aria-label="Previous preset">‹</button>
-      <select class="form-select" id="sp-pick" aria-label="Preset"></select>
+      <div id="sp-isel" data-label="Preset"></div>
+      <select class="form-select" id="sp-pick" aria-label="Preset" hidden></select>
       <button class="fv-btn" id="sp-next" aria-label="Next preset">›</button>
     </div>
     <div class="fv-spechead" id="sp-head">
@@ -360,7 +362,7 @@
     </div>
     <div class="content-block fv-card" id="method-asm-card">
       <div class="content-block-header"><h6 class="content-block-title">Assumptions</h6></div>
-      <p class="fv-note">Every assumption the Ranking tab lets you change, biggest first: what's unknown, how each spec's DPS at 180 s would change if each choice is true versus the current ranking, why each choice is a candidate, and the source. <span class="def">●</span> marks what the ranking uses, <span class="exp">★</span> our best guess for release.</p>
+      <p class="fv-note">Every assumption the Ranking tab lets you change, biggest first: what's unknown, how each spec's DPS at 180 s would change if each choice is true versus the current ranking, why each choice is a candidate, and the source. The <b>Default</b> column is what the ranking uses.</p>
       <div id="method-asm" data-source="assumptions assumption_dps"></div>
     </div>
     <div class="content-block fv-card" id="method-cav-card">

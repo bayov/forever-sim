@@ -163,8 +163,8 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Mana Tide Totem for the group's mana: Totemic Focus 5, Mindfulness 3, Tidal Focus 5 and the
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
 // talent search with Mana Tide Totem pinned found it, and found it again on the standard gear.
-// Its Water Shield point does nothing in the sim: the elemental options have no raid damage
-// hits, and the boss never hits a caster. It is 667.7 / 666.9 / 656.7 at 120 / 180 / 300 sec
+// Its Water Shield point does nothing in the sim: the rotation keeps Lightning Shield up instead
+// (see RaidDamageHitsLevel60). It is 667.7 / 666.9 / 656.7 at 120 / 180 / 300 sec
 // on the 1b set, 1.0% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
@@ -187,7 +187,19 @@ export const DefaultTalents = TalentsLevel60;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-export const DefaultOptions = ElementalShamanOptions.create({});
+// The raid damage that hits the shaman in a level 60 raid fight: 1 direct hit a minute, at
+// random times, half of Enhancement's 2 (its RaidDamageHitsLevel60 has the sources), because a
+// caster at range is out of the cleaves and Blast Waves that reach the melee. Each hit fires a
+// Lightning Shield orb, so both Level 60 rotations keep the shield up. It goes before the pull at
+// -5.4 sec (casting it in the fight instead lost 6), and in the fight just ahead of the low rank
+// Lightning Bolt. At 180 sec Level 60 goes from 690.6 to 694.0 and Mana Tide from 683.3 to 686.5
+// (about +13 at 10 a minute), and it costs 0.4 with no hits at all, for the mana. Water Shield's
+// 2% mana a globe was 20 behind at 6 a minute on Mana Tide: the GCDs cost more than the mana is
+// worth.
+export const RaidDamageHitsLevel60 = 1;
+
+export const DefaultOptions = ElementalShamanOptions.create({ raidDamageHitsPerMinute: RaidDamageHitsLevel60 });
+const PresetBuildOptionsLevel60 = { raidDamageHitsPerMinute: RaidDamageHitsLevel60 };
 
 // The level 60 consumables, Forever's Phase 1 ones (the shared consumables branch). On 2026-10-12
 // we tried each candidate in its slot on the Level 60 build, as the mean DPS at 120, 180 and 300
@@ -220,7 +232,8 @@ export const DefaultConsumes = Consumes.create({
 // and Wisdom from the paladins, Judgement of Wisdom, and Curse of the Elements as the one debuff
 // on the shaman's schools. Under Forever Improved Scorch and Winter's Chill only help the mage's
 // own spells, and Curse of Shadow is gone. The shaman is the only one in its group, so its
-// totems are the ones the rotation puts down.
+// totems are the ones the rotation puts down (standards 23: every shaman drops its own totems; a
+// caster party's only DPS totem is Mana Spring).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -234,7 +247,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
@@ -338,6 +350,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsLevel60,
 });
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
@@ -350,4 +363,5 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsLevel60,
 });

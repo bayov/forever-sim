@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 822.0,
-    "source": "Shaman follow-up PR #23 (Fire Nova mana rule, rotation audit pass 19, 2026-10-15)"
+    "dps": 829.5,
+    "source": "Shaman PR (Lightning Shield on raid damage hits: 2 a minute melee, 1 ranged, 2026-10-15)"
   },
   "verify": {
-    "dps": 822.0,
-    "stderr": 0.4,
+    "dps": 829.49,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "paired rotopt run on this request at 180 s, with the fireNovaManaPerSec=12 Optimized rotation"
+    "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "The Enhancement Level 60 build with 2 points moved from Ancestral Knowledge into Improved Ghost Wolf for utility. It is 4.0 behind Level 60 at 180 s.",
+  "summary": "The Enhancement Level 60 build with 2 points moved from Ancestral Knowledge into Improved Ghost Wolf for utility. It is 4.3 behind Level 60 at 180 s.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -36,16 +36,18 @@
     "Improved Ghost Wolf"
   ],
   "rotation": [
-    "Pre-pull: starting totems already down (Strength of Earth IV, Windfury Totem, Flametongue Totem, Mana Spring), no mana cost",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down; Flametongue Totem when down and at least 20 s remain",
-    "Rage of the Farseer on cooldown; Blood Fury lined up with it",
+    "Pre-pull: Lightning Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they last the whole 300 s fight), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
+    "Searing Totem when it is down and at least 10 s remain",
+    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Earth Shock",
-    "Fire Nova while the mana covers 12 a second for the rest of the fight"
+    "Fire Nova while the mana covers 12 a second for the rest of the fight",
+    "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
@@ -73,7 +75,8 @@
     "Improved Ghost Wolf is utility only (A/B 0.0)",
     "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
     "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
-    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
+    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs",
+    "Raid damage hits on the shaman (2 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
   ],
-  "notes": "Ships as a Level 60 talent preset only (no PresetBuild of its own); request uses the Level 60 build's gear, Optimized rotation, starting totems, consumes and encounter, as the published number was measured. mksettings -spec enh output unchanged."
+  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

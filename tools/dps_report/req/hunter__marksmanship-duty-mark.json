@@ -1,0 +1,612 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceNightElf",
+            "class": "ClassHunter",
+            "equipment": {
+              "items": [
+                {
+                  "id": 993001,
+                  "enchant": 1508
+                },
+                {
+                  "id": 993002,
+                  "enchant": 1249059
+                },
+                {
+                  "id": 993003
+                },
+                {
+                  "id": 993004,
+                  "enchant": 1219587
+                },
+                {
+                  "id": 993005,
+                  "enchant": 1891
+                },
+                {
+                  "id": 993006,
+                  "enchant": 1248497
+                },
+                {
+                  "id": 993007,
+                  "enchant": 1887
+                },
+                {
+                  "id": 993008
+                },
+                {
+                  "id": 993009,
+                  "enchant": 1508
+                },
+                {
+                  "id": 993010,
+                  "enchant": 1887
+                },
+                {
+                  "id": 993011
+                },
+                {
+                  "id": 993012
+                },
+                {
+                  "id": 993015
+                },
+                {
+                  "id": 993016
+                },
+                {
+                  "id": 993013,
+                  "enchant": 2646
+                },
+                {},
+                {
+                  "id": 993014,
+                  "enchant": 664
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfDistilledWisdom",
+              "food": "FoodFlankAuPoivre",
+              "agilityElixir": "ElixirOfTheMongoose",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "strengthBuff": "ElixirOfFerocity",
+              "attackPowerBuff": "JujuMight",
+              "fillerExplosive": "ExplosiveGoblinLandMine",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "GroundScorpokAssay",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfGreaterIntellect"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved",
+              "blessingOfMight": "TristateEffectImproved"
+            },
+            "talentsString": "502-0053452501503051-5",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14321
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14325
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 3045
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.1s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "action": {
+                    "condition": {
+                      "inMeleeRange": {}
+                    },
+                    "move": {
+                      "rangeFromTarget": {
+                        "const": {
+                          "val": "25"
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14321
+                      }
+                    },
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 14321
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Aspect of the Hawk if it ever drops."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 3045
+                      }
+                    },
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 993016
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesRemaining": {
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "itemId": 993016
+                                  }
+                                }
+                              },
+                              "op": "OpEq",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "itemId": 993016
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "spellId": 3045
+                                  }
+                                }
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Rapid Fire with the on-use trinket, unless waiting would cost a use."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259799
+                      }
+                    },
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 993016
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesRemaining": {
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "itemId": 993016
+                                  }
+                                }
+                              },
+                              "op": "OpEq",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "itemId": 993016
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "spellId": 1259799
+                                  }
+                                }
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Elune's Light with the on-use trinket, unless waiting would cost a use."
+                },
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14325
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "auraRemainingTime": {
+                            "auraId": {
+                              "spellId": 14325
+                            },
+                            "sourceUnit": {
+                              "type": "CurrentTarget"
+                            }
+                          }
+                        },
+                        "op": "OpLt",
+                        "rhs": {
+                          "const": {
+                            "val": "3s"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Hunter's Mark duty: the mark at the pull and again before it drops (the raid's mark is off)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1293527
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "and": {
+                                  "vals": [
+                                    {
+                                      "dotIsActive": {
+                                        "spellId": {
+                                          "spellId": 1293527,
+                                          "tag": 1
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "dotIsActive": {
+                                        "spellId": {
+                                          "spellId": 1293527,
+                                          "tag": 2
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Summon Hawk while fewer than 2 hawks are out, with the talent."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14287
+                      }
+                    }
+                  },
+                  "notes": "Arcane Shot on its cooldown."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20904
+                      }
+                    }
+                  },
+                  "notes": "Aimed Shot on the cooldown it shares with Multi-Shot."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 2643
+                      }
+                    }
+                  },
+                  "notes": "Multi-Shot when Aimed Shot is not taken."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 13555
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 13555
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Serpent Sting when it is down."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1310786
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentMana": {}
+                        },
+                        "op": "OpGe",
+                        "rhs": {
+                          "math": {
+                            "lhs": {
+                              "remainingTime": {}
+                            },
+                            "op": "OpMul",
+                            "rhs": {
+                              "const": {
+                                "val": "25"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Sniper Shot on cooldown, with the talent, while the mana lasts the fight."
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 25,
+            "hunter": {
+              "options": {
+                "ammo": "ThoriumHeadedArrow",
+                "quiverBonus": "Speed15",
+                "petType": "Cat",
+                "petUptime": 1
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "graceOfAirTotem": "TristateEffectRegular",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved"
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

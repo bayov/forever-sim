@@ -19,11 +19,11 @@
     "source": "PR #3"
   },
   "verify": {
-    "dps": 1069.59,
+    "dps": 1069.98,
     "stderr": 0.33,
     "iters": 20000,
     "ok": true,
-    "note": "-0.11 vs PR #3"
+    "note": "+0.28 vs PR #3, re-checked on master 250ec4a6c (2026-10-15)"
   },
   "summary": "The twist build retuned for an Undead or Demon boss: Purifying Power 2 for Exorcism and Holy Wrath, cast on cooldown in the twist rotation.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons, so against such a boss they're extra damage on top of the usual rotation. This build also takes Purifying Power 2, which makes both cooldowns a third shorter.",

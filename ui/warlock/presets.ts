@@ -37,6 +37,10 @@ import Level60AfflictionAPL from './apls/level60_affliction.apl.json';
 import Level60DemonologyAPL from './apls/level60_demonology.apl.json';
 import Level60DestructionAPL from './apls/level60_destruction.apl.json';
 import Level60DestructionFireAPL from './apls/level60_destruction_fire.apl.json';
+import Level60DemonologyDutyCurseAPL from './apls/level60_demonology_duty_curse.apl.json';
+import Level60DestructionDutyCurseAPL from './apls/level60_destruction_duty_curse.apl.json';
+import Level60AfflictionDutyCurseAPL from './apls/level60_affliction_duty_curse.apl.json';
+import Level60DestructionFireDutyCurseAPL from './apls/level60_destruction_fire_duty_curse.apl.json';
 import BasicRotation from './apls/rotation.apl.json';
 // gear
 import BlankGear from './gear_sets/blank.gear.json';
@@ -136,9 +140,43 @@ export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation(
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
 });
+// The raid curse duty rotations (standards 23): the base rotation plus Curse of the Elements, which
+// this warlock keeps up for the raid (put up right after the opener and recast before it drops). A
+// warlock holds one curse duty and every curse costs the same GCDs, so one duty preset covers them.
+// Under Forever the curse has its own slot, so the bane stays.
+export const RotationLevel60DemonologyDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Demonology (Curse duty)', Level60DemonologyDutyCurseAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 Demonology rotation with Curse of the Elements kept up for the raid.',
+});
+export const RotationLevel60DestructionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Destruction (Curse duty)', Level60DestructionDutyCurseAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 Destruction rotation with Curse of the Elements kept up for the raid.',
+});
+export const RotationLevel60AfflictionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Affliction (Curse duty)', Level60AfflictionDutyCurseAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 Affliction rotation with Curse of the Elements kept up for the raid.',
+});
+export const RotationLevel60DestructionFireDutyCurse = PresetUtils.makePresetAPLRotation(
+	'Level 60 Destruction Fire (Curse duty)',
+	Level60DestructionFireDutyCurseAPL,
+	{
+		group: 'Level 60',
+		tooltip: 'The Level 60 Destruction Fire rotation with Curse of the Elements kept up for the raid.',
+	},
+);
 export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
 
-export const APLPresets = [RotationLevel60Demonology, RotationLevel60Destruction, RotationLevel60Affliction, RotationLevel60DestructionFire, RotationBasic];
+export const APLPresets = [
+	RotationLevel60Demonology,
+	RotationLevel60DemonologyDutyCurse,
+	RotationLevel60Destruction,
+	RotationLevel60DestructionDutyCurse,
+	RotationLevel60Affliction,
+	RotationLevel60AfflictionDutyCurse,
+	RotationLevel60DestructionFire,
+	RotationLevel60DestructionFireDutyCurse,
+	RotationBasic,
+];
 
 export const DefaultAPL = RotationLevel60Demonology;
 
@@ -277,7 +315,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 });
@@ -298,7 +335,6 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
-	curseOfShadow: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
@@ -328,36 +364,41 @@ export const OtherDefaults = {
 
 // The level 60 raid setup: the sim's default boss (level 63, 3731 armor), a 3 minute fight, and
 // the default buffs, debuffs and consumes, like the enhancement shaman's.
-export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
-	Encounter.create({
-		duration: 180,
-		durationVariation: 20,
-		executeProportion20: 0.2,
-		executeProportion25: 0.25,
-		executeProportion35: 0.35,
-		targets: [
-			{
-				id: 213336,
-				name: 'Level 60',
-				level: 63,
-				mobType: MobType.MobTypeUnknown,
-				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
-				minBaseDamage: 3000,
-				damageSpread: 0.3333,
-				swingSpeed: 2,
-				parryHaste: true,
-			},
-		],
-	}),
-	{
-		tanks: [],
-		raidBuffs: DefaultRaidBuffs,
-		debuffs: DefaultDebuffs,
-		buffs: DefaultIndividualBuffs,
-		consumes: DefaultConsumes,
-	},
-);
+const level60Encounter = (name: string, debuffs: Debuffs) =>
+	PresetUtils.makePresetEncounter(
+		name,
+		Encounter.create({
+			duration: 180,
+			durationVariation: 20,
+			executeProportion20: 0.2,
+			executeProportion25: 0.25,
+			executeProportion35: 0.35,
+			targets: [
+				{
+					id: 213336,
+					name: 'Level 60',
+					level: 63,
+					mobType: MobType.MobTypeUnknown,
+					stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+					minBaseDamage: 3000,
+					damageSpread: 0.3333,
+					swingSpeed: 2,
+					parryHaste: true,
+				},
+			],
+		}),
+		{
+			tanks: [],
+			raidBuffs: DefaultRaidBuffs,
+			debuffs,
+			buffs: DefaultIndividualBuffs,
+			consumes: DefaultConsumes,
+		},
+	);
+export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
+// The curse duty presets' encounter: the raid's Curse of the Elements is off, the warlock on duty
+// brings it; the raid's other curses and Faerie Fire stay on (other players' duties).
+export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
 
 // The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the Forever budget sets
 // with the synthetic trinkets): Demonology (Gnome) 1130.2 / 1115.5 / 1084.3, Destruction (Gnome) 999.9
@@ -429,4 +470,31 @@ export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Le
 	options: PresetBuildOptionsFire,
 });
 
-export const PresetBuilds = [PresetBuildLevel60Demonology, PresetBuildLevel60Destruction, PresetBuildLevel60Affliction, PresetBuildLevel60DestructionFire];
+// The raid curse duty presets (standards 23): each build with the warlock keeping Curse of the
+// Elements up for the raid itself, the raid's own switched off. It is Elements, not Recklessness:
+// under Forever Curse of Recklessness shares Faerie Fire's minor armor slot, so with the raid's
+// Faerie Fire up it never lands.
+const curseDutyBuild = (base: PresetUtils.PresetBuild, rotation: PresetUtils.PresetRotation) => {
+	const { name, ...options } = base;
+	return PresetUtils.makePresetBuild(`${name} (Curse duty)`, {
+		...options,
+		tooltip: `${options.tooltip} On curse duty for the raid, keeping Curse of the Elements up itself.`,
+		rotation,
+		encounter: EncounterLevel60CurseDuty,
+	});
+};
+export const PresetBuildLevel60DemonologyDutyCurse = curseDutyBuild(PresetBuildLevel60Demonology, RotationLevel60DemonologyDutyCurse);
+export const PresetBuildLevel60DestructionDutyCurse = curseDutyBuild(PresetBuildLevel60Destruction, RotationLevel60DestructionDutyCurse);
+export const PresetBuildLevel60AfflictionDutyCurse = curseDutyBuild(PresetBuildLevel60Affliction, RotationLevel60AfflictionDutyCurse);
+export const PresetBuildLevel60DestructionFireDutyCurse = curseDutyBuild(PresetBuildLevel60DestructionFire, RotationLevel60DestructionFireDutyCurse);
+
+export const PresetBuilds = [
+	PresetBuildLevel60Demonology,
+	PresetBuildLevel60DemonologyDutyCurse,
+	PresetBuildLevel60Destruction,
+	PresetBuildLevel60DestructionDutyCurse,
+	PresetBuildLevel60Affliction,
+	PresetBuildLevel60AfflictionDutyCurse,
+	PresetBuildLevel60DestructionFire,
+	PresetBuildLevel60DestructionFireDutyCurse,
+];

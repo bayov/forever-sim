@@ -277,6 +277,11 @@ CONSUME_SLOT = {'flask': ('Flask', 1), 'agilityElixir': ('Elixir', 2), 'strength
                 'defaultConjured': ('Rune', 7)}
 
 
+# Raid duties (standards 23) that make the raid safer rather than stronger: Scorpid Sting only lowers the boss's
+# chance to hit.
+DEFENSIVE_DUTIES = {'Scorpid Sting'}
+
+
 def tree_points(talents):
     parts = talents.split('-')
     return '/'.join(str(sum(int(c) for c in p)) for p in parts) if talents else ''
@@ -355,11 +360,15 @@ for o in outs:
     _prev = PREV.get(bid)
     encn = m.get('encounter')  # an encounter preset: the same boss as a creature type (shown only with "Special encounters" on)
     base_id = m.get('baseBuild')
-    dname = DISPLAY.get(bid, m['build']) if not encn else f"{DISPLAY.get(base_id, json.load(open(os.path.join(D, 'req', base_id + '.meta.json')))['build'])} · vs {encn}"
+    duty = m.get('duty')  # a duty preset (standards 23): it keeps this raid buff or debuff up itself (shown only with "Duty" on)
+    base_name = DISPLAY.get(base_id, json.load(open(os.path.join(D, 'req', base_id + '.meta.json')))['build']) if base_id else None
+    dname = f"{base_name} · vs {encn}" if encn else f"{base_name} · {duty} duty" if duty else DISPLAY.get(bid, m['build'])
     builds.append({
         'id': bid, 'class': m['class'], 'presetName': m['build'], 'spec': 'Seal Fate' if bid.startswith('rogue__seal-fate') else m['spec'], 'build': dname, 'isDefault': bool(m.get('isDefault')),
         'label': f"{m['class']} · {dname}", 'race': race_name(m['race']),
-        'encounter': encn or None, 'baseBuild': base_id or None,
+        'encounter': encn or None, 'baseBuild': base_id or None, 'duty': duty or None,
+        # a duty that protects the raid instead of raising its damage, so its cost buys no DPS anywhere
+        'dutyDefensive': duty in DEFENSIVE_DUTIES if duty else None,
         'bossType': encn or 'Generic boss', 'bossText': f"Level 63 {encn} boss" if encn else 'Level 63 boss with no creature type (generic)',
         'dps': round(mn['dps'], 1), 'se': round(mn['se'], 2), 'stdev': round(mn['stdev'], 1),
         'p1': round(mn['pct']['1'], 1), 'p10': round(mn['pct']['10'], 1), 'p25': round(mn['pct']['25'], 1), 'p50': round(mn['pct']['50'], 1),
@@ -389,12 +398,15 @@ for o in outs:
         'specIcon': spec_icon(m['class'], m.get('talents', '')),
         'faction': 'Horde' if m['race'] in ('Orc', 'Undead', 'Tauren', 'Troll', 'SkyborneWindshaper') else 'Alliance',
     })
+    for x in o['lengths']:
+        lengths.append({'build': bid, 'secs': x['secs'], 'dps': round(x['dps'], 1), 'se': round(x['se'], 2), 'oomSecs': round(x['oomSecs'], 1)})
+    if duty:
+        # The page shows a duty preset in the Ranking only, so it keeps its numbers and leaves the detail to its base.
+        continue
     for r in o['races']:
         races.append({'build': bid, 'class': m['class'], 'race': race_name(r['race']), 'faction': r['faction'],
                       'dps': round(r['dps'], 1), 'se': round(r['se'], 2), 'vsBest': round(100 * (r['dps'] / best['dps'] - 1), 2),
                       'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race']))})
-    for x in o['lengths']:
-        lengths.append({'build': bid, 'secs': x['secs'], 'dps': round(x['dps'], 1), 'se': round(x['se'], 2), 'oomSecs': round(x['oomSecs'], 1)})
     total = sum(a['dps'] for a in mn['actions'])
     seen = defaultdict(int)
     for a in mn['actions']:
@@ -507,8 +519,16 @@ def unship(t):
 for b in builds:
     b['summary'] = unship(b['summary'])
 
-# rank among the default presets (an encounter preset gets the place it would take among them), and among all
-_defaults = [b for b in builds if not b['encounter']]
+# What each duty costs: its base's DPS minus its own, at 180 s.
+_by_id = {b['id']: b for b in builds}
+for b in builds:
+    if b['duty']:
+        _base = _by_id[b['baseBuild']]
+        b['dutyCost'] = round(_base['dps'] - b['dps'], 1)
+        b['dutyCostPct'] = round(100 * (1 - b['dps'] / _base['dps']), 2)
+
+# rank among the default presets (an encounter or duty preset gets the place it would take among them), and among all
+_defaults = [b for b in builds if not b['encounter'] and not b['duty']]
 for b in builds:
     b['rank'] = 1 + sum(1 for x in _defaults if x['dps'] > b['dps'] and x is not b)
     b['rankAll'] = 1 + sum(1 for x in builds if x['dps'] > b['dps'])
@@ -594,7 +614,7 @@ for _race, _lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.js
         RACIAL_RACE.setdefault(_r['name'], race_name(_race.replace('Race', '')))
 for _k, _v in list(RACIAL_RACE.items()):
     RACIAL_RACE[_k] = {'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}.get(_v, _v)
-_outs_r = [dict(o, meta=dict(o['meta'], race=race_name(o['meta']['race']))) for o in outs]
+_outs_r = [dict(o, meta=dict(o['meta'], race=race_name(o['meta']['race']))) for o in outs if not o['meta'].get('duty')]
 rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE)
 for r in rot_rows:
     if r['key'] and not r['icon']:
@@ -617,7 +637,7 @@ print('rotation conditions shown in compact form:', rot_fallback)
 sys.path.insert(0, D)
 import tooltips
 import whcache
-tt_rows, tt_missing, tt_report = tooltips.build(TREE, names, gear, setup, outs, abilities, auras, timelines, builds, item_names,
+tt_rows, tt_missing, tt_report = tooltips.build(TREE, names, gear, setup, [o for o in outs if not o['meta'].get('duty')], abilities, auras, timelines, builds, item_names,
                                                 {e['effectId']: e for e in db['enchants']}, TREE_JSON, os.path.join(TREE, 'ui/core/forever/racials.json'), SLOTS)
 dump('tooltips', tt_rows)
 print('tooltips without text:', tt_missing)

@@ -95,6 +95,10 @@ func (paladinRet) Knobs() []Knob {
 		// fights use lightsVigilMana. 0 off.
 		{Name: "vigilLongFight", Default: 0, Min: 0, Max: 300, Step: 30},
 		{Name: "vigilLongMana", Default: 60, Min: 30, Max: 80, Step: 10},
+		// Without twisting: put the seal back up ahead of Consecration and Holy Strike, so a
+		// seal that drops (after the Judgement of the Crusader opener, or after 30 sec) is
+		// recast first.
+		{Name: "sealFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -143,6 +147,11 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		}
 		consecrationLine = cast(consecration, floor, notes)
 	}
+	twist := k["twist"] == 1
+	sealLine := cast(seal, and(not(auraIsActive(seal)), jotcUp), sealNotes)
+	if !twist && k["sealFirst"] == 1 {
+		items = append(items, sealLine)
+	}
 	if consecrationLine != nil && k["consecrationFirst"] == 1 {
 		items = append(items, consecrationLine)
 	}
@@ -161,12 +170,11 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if k["holyStrikeFirst"] == 1 {
 		holyStrikeLine()
 	}
-	twist := k["twist"] == 1
 	if !twist {
-		items = append(items,
-			cast(judgement, and(auraIsActive(seal), jotcUp), "Judgement on cooldown."),
-			cast(seal, and(not(auraIsActive(seal)), jotcUp), sealNotes),
-		)
+		items = append(items, cast(judgement, and(auraIsActive(seal), jotcUp), "Judgement on cooldown."))
+		if k["sealFirst"] == 0 {
+			items = append(items, sealLine)
+		}
 	} else {
 		sealUp := or(auraIsActive(seal), auraIsActive(otherSeal))
 		// One swap per swing: none while the last swap's Echo waits for its swing. Two swaps
@@ -280,12 +288,20 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if k["jotc"] == 1 {
 		opener = sealOfTheCrusader
 	}
-	if k["prepullTwo"] == 1 && k["jotc"] == 0 {
-		first := otherSeal
+	if k["prepullTwo"] == 1 {
+		first, second := otherSeal, seal
 		if k["holyShock"] > 0 && k["lightsVigilMana"] < 100 {
-			first, opener = seal, lightsVigil
+			first, second = seal, lightsVigil
 		}
-		rot.PrepullActions = append(rot.PrepullActions, prepull(first, 3))
+		if k["jotc"] == 1 {
+			// The raid duty: the same two pre-pull casts 1.5 sec earlier, then Seal of the
+			// Crusader last, judged at the pull. Replacing a damage seal with it still leaves
+			// Twist of Light's Echo for the first swing.
+			rot.PrepullActions = append(rot.PrepullActions, prepull(first, 4.5), prepull(second, 3))
+		} else {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(first, 3))
+			opener = second
+		}
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 1.5))
 	return rot

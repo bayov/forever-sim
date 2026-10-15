@@ -55,8 +55,9 @@ func (warlockRotation) Knobs() []Knob {
 		{Name: "bane", Default: 2, Min: 0, Max: 2, Step: 1},
 		// Amplify Curse ahead of each Bane of Agony (the Affliction talent, 3 min cooldown).
 		{Name: "amplifyCurse", Default: 0, Min: 0, Max: 1, Step: 1},
-		// 0 no curse, 1 the warlock's own Curse of the Elements, 2 Curse of Recklessness. A
-		// raid with another warlock's Curse of the Elements has no need for ours.
+		// The curse slot (separate from the bane under Forever): 0 none, the raid has its curses
+		// from another warlock; 1 Curse of the Elements and 2 Curse of Recklessness when this
+		// warlock is on duty for it (standards 23, the duty presets).
 		{Name: "curse", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "corruption", Default: 1, Min: 0, Max: 1, Step: 1},
 		// A new Corruption only with this many seconds left in the fight (its 6 ticks take 18).
@@ -130,6 +131,16 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	items = append(items, cast(lockLifeTap, or(lt(currentManaPercent(), num(k["lifeTapMana"]/100)), not(spellCanCast(filler))),
 		"Life Tap when the mana runs low or the filler costs more than is left."))
 
+	// The raid's curse when this warlock is the one on duty for it (standards 23): put up right
+	// after the opener and recast before it drops, ahead of the bane.
+	switch k["curse"] {
+	case 1:
+		items = append(items, cast(lockCurseOfElement, and(lt(targetAuraRemainingTime(lockCurseOfElement), seconds(1.5)), gt(remainingTime(), seconds(2))),
+			"Curse of the Elements on duty for the raid, recast before it drops."))
+	case 2:
+		items = append(items, cast(lockCurseOfReckl, and(lt(targetAuraRemainingTime(lockCurseOfReckl), seconds(1.5)), gt(remainingTime(), seconds(2))),
+			"Curse of Recklessness on duty for the raid, recast before it drops."))
+	}
 	switch k["bane"] {
 	case 1:
 		if k["amplifyCurse"] == 1 {
@@ -143,12 +154,6 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 				or(gt(spellTimeToReady(lockBaneOfDoom), seconds(12)), le(remainingTime(), seconds(60)))),
 				"Bane of Agony while Bane of Doom is on cooldown or would not land."),
 		)
-	}
-	switch k["curse"] {
-	case 1:
-		items = append(items, cast(lockCurseOfElement, not(targetAuraIsActive(lockCurseOfElement)), "Our own Curse of the Elements when the raid has none."))
-	case 2:
-		items = append(items, cast(lockCurseOfReckl, not(targetAuraIsActive(lockCurseOfReckl)), "Curse of Recklessness when it is down."))
 	}
 	if k["corruption"] == 1 {
 		items = append(items, cast(lockCorruption, and(dotDown(lockCorruption, k["dotLead"]), gt(remainingTime(), seconds(k["corruptionMinTime"]))), "Corruption when it is down."))

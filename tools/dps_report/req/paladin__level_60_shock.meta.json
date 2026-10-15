@@ -19,11 +19,11 @@
     "source": "PR #3"
   },
   "verify": {
-    "dps": 970.98,
+    "dps": 971.36,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "+0.38 vs PR #3"
+    "note": "+0.76 vs PR #3, re-checked on master 250ec4a6c (2026-10-15)"
   },
   "summary": "A deep Holy build to Light's Vigil (Holy Shock, Holy Power 5, Consecrated Ground, Divine Precision) with Retribution to Sacred Arbiter, on Seal of Righteousness with no twisting. It is the Holy Shock playstyle, 1.2% behind twist at 180 s (level with it at 120 s).",
   "keyTalents": [

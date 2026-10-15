@@ -14,7 +14,6 @@ import "github.com/wowsims/classic/sim/core/proto"
 func rogueLevel60Raid(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 	raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
-	debuffs.CurseOfShadow = false
 }
 
 // rogueLevel60Consumes are the level 60 consumes, each kept because it helps (Sinister

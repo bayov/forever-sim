@@ -1,0 +1,82 @@
+{
+  "id": "hunter__beast-mastery-duty-scorpid",
+  "class": "Hunter",
+  "spec": "Beast Mastery",
+  "build": "Beast Mastery (Scorpid Sting duty)",
+  "isDefault": false,
+  "pr": 5,
+  "race": "NightElf",
+  "talents": "5020121505021241-00520503014",
+  "treeNames": [
+    "Beast Mastery",
+    "Marksmanship",
+    "Survival"
+  ],
+  "gearSet": "level60_phase1_synthetic_ranged",
+  "apl": "bm_scorpid",
+  "published": {
+    "dps": 869.2,
+    "source": "Scorpid Sting duty preset (standards 23), rotation audit pass 20 (2026-10-15): 180 s, 20000 iterations, seed 1"
+  },
+  "verify": {
+    "dps": 869.16,
+    "stderr": 0.19,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, same sim as the published number"
+  },
+  "summary": "Beast Mastery 31/20 with a 1.0 sec cat: Bestial Wrath, Frenzy, Ferocity and Unleashed Fury, plus Careful Aim and Mortal Shots in Marksmanship. The pet deals about 21% of its damage; it is the pet-focused build, 68 DPS behind Marksmanship at 180 s.",
+  "keyTalents": [
+    "Bestial Wrath",
+    "Frenzy",
+    "Unleashed Fury",
+    "Ferocity",
+    "Deadly Aspects",
+    "Careful Aim",
+    "Lethal Attacks",
+    "Mortal Shots"
+  ],
+  "rotation": [
+    "Pre-pull: Aspect of the Hawk at -3 s, Rapid Fire at -0.1 s",
+    "Bestial Wrath (0 and 120 s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Scorpid Sting (2% off the boss's hit, 9% of base mana) at the pull and again in its last 4 s, in place of Serpent Sting; the raid's Scorpid Sting is off",
+    "Aimed Shot on the cooldown it shares with Multi-Shot",
+    "Sniper Shot on cooldown",
+    "Arcane Shot on cooldown (mana >= 20%)",
+    "Cat (1.0 sec) bites and claws on cooldown, Frenzy up about 178 of 180 s; Auto Shot throughout"
+  ],
+  "consumes": [
+    "Flask of Distilled Wisdom",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Ground Scorpok Assay",
+    "Juju Might",
+    "Flank au Poivre",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Agility and 14 crit rating, and 415 ranged attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (assumption hunter_tsa_hm_rank, user ruling 2026-10-15: Blizzard fixes both onto the curve; the client has 50 and 71, below the older ranks' 75 and 98)",
+    "Aspect of the Hawk held at rank 5 (90 RAP) since Forever's rank 6 gives only 55",
+    "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +41 (2026-10-12 gear)",
+    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (the forever-hunter wiki; the beta log fit was 11% / 3.5%)",
+    "Auto Shot fires through casts with no 0.5 sec aim (open assumption)",
+    "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain +1 (measured on the 2026-10-12 gear)",
+    "Pet consumables are off (Forever pets take no player buffs); they would add 17 if allowed",
+    "Intimidation is talented but not cast by the rotation",
+    "Major Frenzy Potion is +5 at 120/180 s but 19 behind at 300 s, so Major Mana Potion ships",
+    "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
+    "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
+    "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows",
+    "Scorpid Sting duty (standards 23): the request switches the raid's Scorpid Sting off and the hunter keeps its own up in place of Serpent Sting; it costs 82.5 / 83.0 / 83.5 DPS at 120 / 180 / 300 s against hunter__beast-mastery, most of it Serpent Sting's damage",
+    "The sting only lowers the boss's hit (2%, the slot it shares with Insect Swarm, whose raid debuff stays on), so it adds nothing to the raid's damage"
+  ],
+  "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_bm_scorpid. Request written by mksettings (spec hunter_bm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
+  "duty": "Scorpid Sting",
+  "baseBuild": "hunter__beast-mastery"
+}

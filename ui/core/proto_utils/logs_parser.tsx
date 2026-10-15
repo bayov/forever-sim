@@ -235,6 +235,9 @@ export class SimLog {
 					CastCompletedLog.parse(params) ||
 					StatChangeLog.parse(params) ||
 					ExtraAttackLog.parse(params) ||
+					CooldownLog.parse(params) ||
+					MaxResourcesLog.parse(params) ||
+					TotemLog.parse(params) ||
 					Promise.resolve(new SimLog(params))
 				);
 			}),
@@ -275,6 +278,18 @@ export class SimLog {
 
 	isExtraAttack(): this is ExtraAttackLog {
 		return this instanceof ExtraAttackLog;
+	}
+
+	isCooldown(): this is CooldownLog {
+		return this instanceof CooldownLog;
+	}
+
+	isMaxResources(): this is MaxResourcesLog {
+		return this instanceof MaxResourcesLog;
+	}
+
+	isTotem(): this is TotemLog {
+		return this instanceof TotemLog;
 	}
 
 	// Group events that happen at the same time.
@@ -479,6 +494,18 @@ export class DpsLog extends SimLog {
 	}
 
 	static DPS_WINDOW = 15; // Window over which to calculate DPS.
+	static DPS_MIN_WINDOW = 5;
+
+	// The seconds we divide the window's damage by at a time in the fight.
+	//
+	// Before 15 sec into the fight, the window holds only the damage since the pull. Dividing by
+	// the full 15 sec would draw the opening as a slow climb from 0, so we divide by the time so
+	// far instead. We never divide by less than 5 sec, because the first hit or two would
+	// otherwise read as thousands of DPS.
+	static windowAt(timestamp: number): number {
+		return Math.min(DpsLog.DPS_WINDOW, Math.max(DpsLog.DPS_MIN_WINDOW, timestamp));
+	}
+
 	static fromLogs(damageDealtLogs: Array<DamageDealtLog>): Array<DpsLog> {
 		const groupedDamageLogs = SimLog.groupDuplicateTimestamps(damageDealtLogs);
 
@@ -504,7 +531,7 @@ export class DpsLog extends SimLog {
 				curDamageLogs = curDamageLogs.slice(newStartIdx);
 			}
 
-			const dps = curDamageTotal / DpsLog.DPS_WINDOW;
+			const dps = curDamageTotal / DpsLog.windowAt(ddLogGroup[0].timestamp);
 			if (isNaN(dps)) {
 				console.warn('NaN dps!');
 			}
@@ -568,12 +595,16 @@ export class AuraEventLog extends SimLog {
 	readonly isGained: boolean;
 	readonly isFaded: boolean;
 	readonly isRefreshed: boolean;
+	// When a gained or refreshed aura runs out, if it does. Results simmed before the sim
+	// wrote it don't have it.
+	readonly expiresAt: number | null;
 
-	constructor(params: SimLogParams, isGained: boolean, isFaded: boolean, isRefreshed: boolean) {
+	constructor(params: SimLogParams, isGained: boolean, isFaded: boolean, isRefreshed: boolean, expiresAt: number | null = null) {
 		super(params);
 		this.isGained = isGained;
 		this.isFaded = isFaded;
 		this.isRefreshed = isRefreshed;
+		this.expiresAt = expiresAt;
 	}
 
 	toHTML(includeTimestamp = true) {
@@ -594,7 +625,8 @@ export class AuraEventLog extends SimLog {
 				.then(aura => {
 					params.actionId = aura;
 					const event = match[1];
-					return new AuraEventLog(params, event == 'gained', event == 'faded', event == 'refreshed');
+					const expires = match[5].match(/\(expires at (-?\d+\.?\d*)\)/);
+					return new AuraEventLog(params, event == 'gained', event == 'faded', event == 'refreshed', expires ? parseFloat(expires[1]) : null);
 				});
 		} else {
 			return null;
@@ -639,12 +671,15 @@ export class AuraUptimeLog extends SimLog {
 	readonly gainedAt: number;
 	readonly fadedAt: number;
 	readonly stacksChange: Array<AuraStacksChangeLog>;
+	// When the aura was set to run out as it was gained or refreshed, if the log says.
+	readonly expiresAt: number | null;
 
-	constructor(params: SimLogParams, fadedAt: number, stacksChange: Array<AuraStacksChangeLog>) {
+	constructor(params: SimLogParams, fadedAt: number, stacksChange: Array<AuraStacksChangeLog>, expiresAt: number | null = null) {
 		super(params);
 		this.gainedAt = params.timestamp;
 		this.fadedAt = fadedAt;
 		this.stacksChange = stacksChange;
+		this.expiresAt = expiresAt;
 	}
 
 	static fromLogs(logs: Array<SimLog>, entity: Entity, encounterDuration: number): Array<AuraUptimeLog> {
@@ -695,6 +730,7 @@ export class AuraUptimeLog extends SimLog {
 					},
 					log.timestamp,
 					stacksChangeLogs,
+					gainedLog.expiresAt,
 				),
 			);
 
@@ -719,6 +755,7 @@ export class AuraUptimeLog extends SimLog {
 					},
 					encounterDuration,
 					stacksChangeLogs,
+					gainedLog.expiresAt,
 				),
 			);
 		});
@@ -1163,5 +1200,109 @@ export class ExtraAttackLog extends SimLog {
 		} else {
 			return null;
 		}
+	}
+}
+
+// A spell or item went on cooldown, like "{SpellID: 17364} on cooldown until 12.500 (timer 4)".
+//
+// Spells that share a cooldown log the same timer number. One cast can log more than one timer,
+// like a trinket with its own cooldown and the cooldown it shares with the other trinkets.
+export class CooldownLog extends SimLog {
+	readonly readyAt: number;
+	readonly timer: number;
+
+	constructor(params: SimLogParams, readyAt: number, timer: number) {
+		super(params);
+		this.readyAt = readyAt;
+		this.timer = timer;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} {this.newActionIdLink(this.actionId!)} on cooldown until {this.readyAt.toFixed(2)}s.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<CooldownLog> | null {
+		const match = params.raw.match(/] ({.*?}) on cooldown until (-?\d+\.?\d*) \(timer (-?\d+)\)/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				return new CooldownLog(params, parseFloat(match[2]), parseInt(match[3]));
+			});
+	}
+}
+
+// The size of each of a unit's bars at the pull, like `Max resources: {"Health": 4210.000}`.
+export class MaxResourcesLog extends SimLog {
+	readonly maxValues: Partial<Record<ResourceType, number>>;
+
+	constructor(params: SimLogParams, maxValues: Partial<Record<ResourceType, number>>) {
+		super(params);
+		this.maxValues = maxValues;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} Max{' '}
+				{Object.entries(this.maxValues)
+					.map(([type, value]) => `${resourceNames.get(Number(type) as ResourceType)?.toLowerCase()} ${value!.toFixed(0)}`)
+					.join(', ')}
+				.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<MaxResourcesLog> | null {
+		const match = params.raw.match(/Max resources: ({.*})/);
+		if (!match) return null;
+		const maxValues: Partial<Record<ResourceType, number>> = {};
+		try {
+			Object.entries(JSON.parse(match[1]) as Record<string, number>).forEach(([name, value]) => {
+				const type = stringToResourceType(name);
+				if (type != ResourceType.ResourceTypeNone) maxValues[type] = value;
+			});
+		} catch {
+			return null;
+		}
+		return Promise.resolve(new MaxResourcesLog(params, maxValues));
+	}
+}
+
+// A shaman's totem went down in its element's slot, like
+// "{SpellID: 10438} down in the Fire slot until 55.000". A new totem in the slot takes the old
+// one's place.
+export class TotemLog extends SimLog {
+	readonly element: string;
+	readonly until: number;
+
+	constructor(params: SimLogParams, element: string, until: number) {
+		super(params);
+		this.element = element;
+		this.until = until;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} {this.newActionIdLink(this.actionId!)} down in the {this.element} slot until {this.until.toFixed(2)}s.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<TotemLog> | null {
+		const match = params.raw.match(/] ({.*?}) down in the (\w+) slot until (-?\d+\.?\d*)/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				return new TotemLog(params, match[2], parseFloat(match[3]));
+			});
 	}
 }

@@ -70,6 +70,18 @@ gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecratio
 # floor only loses, so level60_shock keeps a flat 30%. Holy Wrath does not make it: its 2 sec cast is worth less
 # than the Holy Shocks and Holy Strikes it pushes back.
 gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilLongFight=240,vigilLongMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1" -level 60
+# Judgement of the Crusader duty (standards 23): the base rotation plus Seal of the Crusader at
+# -1.5 sec after the base pre-pull and its Judgement at the pull (jotc=1). Under Forever the
+# judgement adds 161 Holy damage taken for 40 sec and the paladin's own melee hits refresh it, so
+# one cast lasts the fight. The duty requests have the raid's Judgement of the Crusader off. A
+# knob search on the duty request kept the twist knobs; Shock (sub Holy shares level60) is best
+# with Holy Strike ahead of Holy Shock there (+1.3 / +0.6 / +1.9 at 120 / 180 / 300 sec; the base
+# Shock rotation loses 0.1 to 1.1 with it, so it keeps its order).
+# Rotation audit pass 20: the Shock duty puts Seal of Righteousness back up ahead of Consecration
+# (sealFirst), since the opener's Judgement of the Crusader leaves it down: +6.0 / +3.0 / +0.5 at 120
+# / 180 / 300 sec (base Shock, which never loses its seal early, is 1.6 behind with it at 180 sec).
+gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1" -level 60
+gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1" -level 60
 # Level 30 with 5 extra talent points (26 in all). The old level 20 rotation still wins,
 # and Seal of Command stays ahead of Seal of Righteousness on Corpsemaker.
 gen level30p5 "seal=2,consecration=1,consecrationFirst=1,consecrationMana=0" -level 30 -bonus-talents 5 -talents --502240312013201

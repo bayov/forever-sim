@@ -134,7 +134,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60],
+		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60FaerieFire],
 		// Preset talents that the user can quickly select.
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		rotations: [...Presets.APLPresets[Phase.Phase1], ...Presets.APLPresets[Phase.Phase4]],

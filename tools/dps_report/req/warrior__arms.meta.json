@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 952.6,
-    "source": "Rend attack power default (warr_rend_ap 2% a tick), user ruling 2026-10-15"
+    "dps": 951.0,
+    "source": "Sunder Armor as every warrior's first GCD (standards 23), 2026-10-15"
   },
   "verify": {
-    "dps": 952.6,
-    "stderr": null,
+    "dps": 951.0,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
@@ -38,6 +38,7 @@
   ],
   "rotation": [
     "Pre-pull: Battle Stance",
+    "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "With 25 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
     "Death Wish held for the last 36 sec, Recklessness in the last 25 sec; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",
     "Mighty Rage Potion at the pull, second held for the last 20 sec; Bloodrage under 10 Rage",

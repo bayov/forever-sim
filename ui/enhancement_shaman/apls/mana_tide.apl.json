@@ -1,7 +1,7 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":408510}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":10432}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":10442}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10442}}}}}},"notes":"Strength of Earth Totem whenever it is down."},
@@ -18,6 +18,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place."},
         {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}},"notes":"Flame Shock when its DoT is down."},
         {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":29228}}},"op":"OpGt","rhs":{"const":{"val":"1s"}}}}]}}},"notes":"Earth Shock otherwise, unless Flame Shock is about to run out."},
-        {"action":{"castSpell":{"spellId":{"spellId":408510}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":408510}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.5"}}}}]}}},"notes":"Water Shield whenever it is down. Its three globes are 2% mana each when something hits the shaman. Without the talent ignore the warning on this line."}
+        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}},"notes":"Lightning Shield when it is down and nothing above is ready. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec."}
     ]
 }

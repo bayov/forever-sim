@@ -1,0 +1,86 @@
+{
+  "id": "paladin__level_60_shock-duty-crusader",
+  "class": "Paladin",
+  "spec": "Retribution",
+  "build": "Level 60 Shock (Crusader duty)",
+  "isDefault": false,
+  "pr": 42,
+  "race": "Undead",
+  "talents": "55003003201121251--05225230001",
+  "treeNames": [
+    "Holy",
+    "Protection",
+    "Retribution"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_shock_crusader_duty",
+  "published": {
+    "dps": 960.9,
+    "source": "PR #42"
+  },
+  "verify": {
+    "dps": 960.87,
+    "stderr": 0.25,
+    "iters": 20000,
+    "ok": true,
+    "note": "20k, seed 1; base 971.36, duty cost 10.49 at 180 s"
+  },
+  "summary": "A deep Holy build to Light's Vigil (Holy Shock, Holy Power 5, Consecrated Ground, Divine Precision) with Retribution to Sacred Arbiter, on Seal of Righteousness with no twisting. This copy is on Judgement of the Crusader duty: it keeps the debuff on the boss for the raid instead of getting it from another paladin.",
+  "keyTalents": [
+    "Holy Shock",
+    "Light's Vigil",
+    "Holy Power",
+    "Consecrated Ground",
+    "Divine Precision",
+    "Divine Favor",
+    "Improved Seals",
+    "Sacred Arbiter"
+  ],
+  "rotation": [
+    "Pre-pull: Seal of Righteousness at -4.5 s, Light's Vigil at -3 s, Seal of the Crusader at -1.5 s",
+    "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40 s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
+    "Seal of Righteousness back up ahead of Consecration whenever it is down (right after the opening Judgement of the Crusader)",
+    "Consecration on cooldown, down to the last point of mana",
+    "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
+    "Holy Strike on cooldown",
+    "Hammer of Wrath below 20% health",
+    "Light's Vigil whenever it is not on the target and mana is at or above 30%",
+    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
+    "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Elixir of Greater Agility",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Elixir of Greater Firepower (Forever's Holy Power elixir)",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of the Owl",
+    "Elixir of Greater Spirit",
+    "Greater Mageblood Elixir",
+    "R.O.I.D.S.",
+    "Lobster Stew",
+    "Dragonbreath Chili",
+    "Shadow Oil",
+    "Goblin Sapper",
+    "Goblin Land Mine",
+    "Major Mana Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Runs short of mana: level with twist at 120 s (987.3 / 986.6), 1.2% behind at 180 s and 4.4% at 300 s",
+    "Divine Precision's hit does not cover Judgement of Righteousness",
+    "Holy Shock is worth 148 DPS and Light's Vigil about 91",
+    "A missed Holy Shock consumes the Vigil with no detonation or refund (small at about 1% Holy miss)",
+    "Undead is best (Touch of the Grave)",
+    "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
+    "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
+    "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 42-49 DPS lower",
+    "The request has the raid's Judgement of the Crusader off, so the debuff comes only from this paladin (standards 23)."
+  ],
+  "notes": "Request: paladin__level_60_shock with raid debuff judgementOfTheCrusader removed and the level60_shock_crusader_duty rotation.",
+  "duty": "Judgement of the Crusader",
+  "baseBuild": "paladin__level_60_shock"
+}

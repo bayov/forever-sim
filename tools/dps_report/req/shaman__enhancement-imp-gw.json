@@ -100,6 +100,22 @@
             "profession2": "Leatherworking",
             "rotation": {
               "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10432
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                }
+              ],
               "priorityList": [
                 {
                   "notes": "Strength of Earth Totem whenever it is down.",
@@ -546,11 +562,19 @@
                             "cmp": {
                               "op": "OpGe",
                               "lhs": {
-                                "currentManaPercent": {}
+                                "currentMana": {}
                               },
                               "rhs": {
-                                "const": {
-                                  "val": "0.2"
+                                "math": {
+                                  "op": "OpMul",
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "12"
+                                    }
+                                  }
                                 }
                               }
                             }
@@ -571,6 +595,27 @@
                       }
                     }
                   }
+                },
+                {
+                  "notes": "Lightning Shield when it is down and nothing above is ready. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
+                  "action": {
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 10432
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10432
+                      }
+                    }
+                  }
                 }
               ]
             },
@@ -585,10 +630,11 @@
                   "earth": "StrengthOfEarthTotem",
                   "air": "WindfuryTotem",
                   "water": "ManaSpringTotem",
-                  "earthSecondsBeforePull": 28,
-                  "airSecondsBeforePull": 27,
-                  "waterSecondsBeforePull": 30
-                }
+                  "earthSecondsBeforePull": 4,
+                  "airSecondsBeforePull": 3,
+                  "waterSecondsBeforePull": 2
+                },
+                "raidDamageHitsPerMinute": 2
               }
             }
           }

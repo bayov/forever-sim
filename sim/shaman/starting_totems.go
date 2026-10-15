@@ -93,6 +93,10 @@ func (shaman *Shaman) putDownStartingTotem(sim *core.Simulation, slot int, spell
 	} else {
 		shaman.TotemExpirations[slot] = expiresAt
 	}
+	// placeTotem logged the full duration. A totem we put down before the fight has less left.
+	if sim.Log != nil {
+		shaman.Log(sim, "%s down in the %s slot until %0.3f", spell.ActionID, totemSlotNames[slot], max(expiresAt, sim.CurrentTime).Seconds())
+	}
 }
 
 func highestRank(ranks []*core.Spell) *core.Spell {

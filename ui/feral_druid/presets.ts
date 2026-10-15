@@ -28,6 +28,7 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import FeralAPL from './apls/feral.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
+import Level60FaerieFireAPLJSON from './apls/level60_ff.apl.json';
 import SimpleVaelAPL from './apls/simple_vael.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import P2BISGear from './gear_sets/p2.bis.gear.json';
@@ -109,8 +110,23 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 	group: 'Level 60',
 });
 
+// Faerie Fire duty (standards 23): the cat that keeps Faerie Fire (Feral) on the boss for the
+// raid. The Level 60 rotation leaves it to the raid's debuff; this one casts it from Cat Form
+// (free, 1 sec GCD, 6 sec cooldown, a trainer spell at 25 under Forever) first after the cooldowns
+// and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
+// rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
+// minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
+// it, and the duty's cost shows with both off: 6.3 / 5.2 / 4.2 DPS at 120 / 180 / 300 sec (723.3 /
+// 712.3 / 704.1, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own
+// hits get the armor. The knob search kept the rest of the rotation at 120, 180 and 300 sec.
+export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
+	tooltip:
+		"The Level 60 rotation, keeping Faerie Fire (Feral) on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
+	group: 'Level 60',
+});
+
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60],
+	[Phase.Phase1]: [APLLevel60, APLLevel60FaerieFire],
 	[Phase.Phase4]: [APLFeral, APLSimpleVael],
 };
 
@@ -209,7 +225,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
@@ -288,6 +303,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
+// The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
+// Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
+// so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Level 60 (Faerie Fire duty)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
 // The Level 60 build, 729.5 / 717.2 / 708.1 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
@@ -306,6 +331,19 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
+	race: Race.RaceNightElf,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+});
+export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 60 (Faerie Fire duty)', {
+	group: 'Level 60',
+	tooltip:
+		"The Level 60 build keeping Faerie Fire (Feral) on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60FaerieFire,
+	encounter: EncounterLevel60FaerieFireDuty,
 	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,

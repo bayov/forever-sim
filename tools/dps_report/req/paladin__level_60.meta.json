@@ -19,11 +19,11 @@
     "source": "PR #3"
   },
   "verify": {
-    "dps": 981.69,
+    "dps": 982.06,
     "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "-0.21 vs PR #3"
+    "note": "+0.16 vs PR #3, re-checked on master 250ec4a6c (2026-10-15)"
   },
   "summary": "Retribution down to Twist of Light with Precision 3 from Protection and Divine Strength, Divine Intellect and Improved Seals in Holy, twisting Seal of Command and Seal of Righteousness before every swing. It is the spec's default Level 60 preset and the best build at every fight length.",
   "keyTalents": [

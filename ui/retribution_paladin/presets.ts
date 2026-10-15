@@ -38,7 +38,9 @@ import { Stats } from '../core/proto_utils/stats.js';
 import APLBasicRetJson from './apls/basic_ret.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
+import Level60CrusaderDutyAPLJSON from './apls/level60_crusader_duty.apl.json';
 import Level60ShockAPLJSON from './apls/level60_shock.apl.json';
+import Level60ShockCrusaderDutyAPLJSON from './apls/level60_shock_crusader_duty.apl.json';
 import Level60ShockUndeadAPLJSON from './apls/level60_shock_undead.apl.json';
 import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
@@ -165,6 +167,21 @@ export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60
 	tooltip: 'Level 60 Holy Shock rotation against an Undead or Demon boss, with Exorcism and more mana kept for it in long fights.',
 	group: 'Level 60',
 });
+// Judgement of the Crusader duty (standards 23): one paladin in the raid keeps Judgement of the
+// Crusader on the boss, the others judge only their damage seals and get it from the raid. Under
+// Forever it is 161 Holy damage taken for 40 sec, refreshed by the paladin's own melee hits, so the
+// duty is one Seal of the Crusader after the base pre-pull and its Judgement at the pull (then
+// again only if it ever drops). The twist duty keeps the twist knobs. The Shock duty puts Seal of
+// Righteousness back up ahead of Consecration, since the opener's Judgement leaves it down (rotation
+// audit pass 20: +6.0 / +3.0 / +0.5 at 120 / 180 / 300 sec), and Holy Strike ahead of Holy Shock.
+export const APLLevel60CrusaderDuty = PresetUtils.makePresetAPLRotation('Level 60 (Crusader duty)', Level60CrusaderDutyAPLJSON, {
+	tooltip: 'Level 60 twist rotation that also keeps Judgement of the Crusader on the boss for the raid.',
+	group: 'Level 60',
+});
+export const APLLevel60ShockCrusaderDuty = PresetUtils.makePresetAPLRotation('Level 60 Shock (Crusader duty)', Level60ShockCrusaderDutyAPLJSON, {
+	tooltip: 'Level 60 Holy Shock rotation that also keeps Judgement of the Crusader on the boss for the raid.',
+	group: 'Level 60',
+});
 export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
 	tooltip: 'Basic level 60 Retribution rotation.',
 	group: 'Level 60',
@@ -183,7 +200,16 @@ export const APLPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [APLLevel60, APLLevel60Shock, APLLevel60Undead, APLLevel60ShockUndead, APLBasicRet, APLLevel30p5],
+	[Phase.Phase4]: [
+		APLLevel60,
+		APLLevel60CrusaderDuty,
+		APLLevel60Shock,
+		APLLevel60ShockCrusaderDuty,
+		APLLevel60Undead,
+		APLLevel60ShockUndead,
+		APLBasicRet,
+		APLLevel30p5,
+	],
 	[Phase.Phase5]: [],
 };
 
@@ -360,7 +386,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
@@ -384,7 +409,6 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
-	curseOfShadow: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
@@ -492,6 +516,65 @@ export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Sho
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60Shock,
 	encounter: EncounterLevel60,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: RetributionPaladinOptions.create({
+		aura: PaladinAura.RetributionAura,
+		primarySeal: PaladinSeal.Righteousness,
+	}),
+});
+
+// The Level 60 encounter for the Judgement of the Crusader duty presets: the same boss and raid
+// without the raid's Judgement of the Crusader, so the debuff comes only from the paladin's own
+// judgement.
+export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Level 60 (Crusader duty)', EncounterLevel60.encounter!, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfTheCrusader: TristateEffect.TristateEffectMissing }),
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+// The Judgement of the Crusader duty presets: each base build with its duty rotation and the duty
+// encounter. Undead, 20000 iterations, 120 / 180 / 300 sec, against the base build on the
+// base encounter: Level 60 973.6 / 973.1 / 967.4 (-13.7 / -9.0 / -5.9), sub Holy
+// 969.4 / 969.0 / 959.9 (-12.8 / -8.6 / -5.5), Shock 974.4 / 960.9 / 923.5 (-13.7 / -10.5 /
+// -7.0). Shock pays more: its pull Judgement goes on the Crusader instead of Righteousness and it
+// has to put Seal of Righteousness back up.
+export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Level 60 (Crusader duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead that keeps Judgement of the Crusader on the boss for the raid.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60CrusaderDuty,
+	encounter: EncounterLevel60CrusaderDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
+});
+export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild('Level 60 (sub Holy, Crusader duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead with the sub Holy talents that keeps Judgement of the Crusader on the boss for the raid.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60SubHoly,
+	rotation: APLLevel60CrusaderDuty,
+	encounter: EncounterLevel60CrusaderDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
+});
+export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('Level 60 Shock (Crusader duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Undead Holy Shock build that keeps Judgement of the Crusader on the boss for the raid.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60Shock,
+	rotation: APLLevel60ShockCrusaderDuty,
+	encounter: EncounterLevel60CrusaderDuty,
 	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,

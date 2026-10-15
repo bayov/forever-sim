@@ -1,0 +1,1285 @@
+// The Replay view of the Events tab: the fight played back like a video, with unit frames, a
+// cooldown tracker and scrolling combat text drawn the way an addon UI in the game draws them.
+
+// The black outline around text drawn over the game, like addons draw it.
+@mixin replay-outline {
+	text-shadow:
+		1px 1px 0 #000,
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		0 0 4px rgba(0, 0, 0, 0.85);
+}
+
+.replay-root {
+	--replay-gold: #ffd75e;
+	--replay-match: #3fd0ff;
+	// The pixel glow of the Bayov WeakAura, for buffs that are up and procs.
+	--replay-glow: #ffe6aa;
+	--class-color: #{$gold};
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.replay-player {
+	position: relative;
+	background: #5a5e62;
+	color: #fff;
+	// EllesmereUI's font is Avant Garde. We use it when the system has it, or the closest
+	// geometric sans we can find.
+	font-family: 'ITC Avant Garde Gothic', 'Avant Garde', 'URW Gothic', 'URW Gothic L', 'Century Gothic', 'Questrial', sans-serif;
+
+	&.fullscreen .replay-stage {
+		height: 100vh;
+		max-height: none;
+		aspect-ratio: auto;
+	}
+
+	&.empty {
+		.replay-frames,
+		.replay-hud,
+		.replay-controls {
+			display: none;
+		}
+	}
+}
+
+.replay-root:focus-visible .replay-player {
+	box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.replay-stage {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	// The clock and the cast history take the top and the controls the bottom. The combat text
+	// fills what the unit frames leave above them.
+	padding: 150px 3% max(74px, 9%);
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	min-height: 540px;
+	max-height: 80vh;
+	overflow: hidden;
+	cursor: pointer;
+	user-select: none;
+	// The game's own art of Tirisfal Glades (the classic client's credits painting), turned
+	// mostly gray, lighter, softer and a little blurred, so it stays behind the frames.
+	background: #6b6e6f url('/forever/assets/img/replay_background_tirisfal.jpg') center / cover no-repeat;
+}
+
+.replay-message {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--spacer-4);
+	color: var(--text-muted-color);
+	text-align: center;
+
+	// A note over a replay that plays, rather than in place of it.
+	&.notice {
+		inset: 146px 0 auto;
+		padding: 0;
+		color: #ffd166;
+		font-size: 0.85rem;
+		pointer-events: none;
+	}
+}
+
+// The clock and the damage so far, at the top in the middle.
+.replay-hud {
+	position: absolute;
+	top: 14px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: baseline;
+	gap: 18px;
+	padding: 6px 16px;
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.4);
+	font-variant-numeric: tabular-nums;
+
+	@include replay-outline;
+	pointer-events: none;
+}
+
+.replay-hud-time {
+	font-size: 1.35rem;
+	font-weight: 700;
+}
+
+.replay-hud-stat {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+}
+
+.replay-hud-label {
+	font-size: 0.7rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.replay-hud-value {
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--replay-gold);
+}
+
+// The scrolling combat text. What happens to us is on the left, what we do on the right.
+.replay-sct-zone {
+	position: relative;
+	flex: 1 1 auto;
+	min-height: 0;
+	margin: 0 -3% 12px;
+}
+
+.replay-sct {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.replay-sct-text {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	white-space: nowrap;
+	font-size: 1.4rem;
+	font-weight: 800;
+	line-height: 1;
+
+	@include replay-outline;
+	will-change: transform, top, opacity;
+
+	&.crit,
+	&.hurt-crit {
+		font-size: 2.2rem;
+	}
+
+	&.tick,
+	&.avoid,
+	&.resource {
+		font-size: 1.1rem;
+	}
+
+	&.aura {
+		font-size: 1.2rem;
+	}
+}
+
+// What we do lines up on the left and grows from there. What happens to us lines up on the
+// right with the icon after the text.
+.replay-sct-out .replay-sct-text {
+	transform-origin: left center;
+
+	&.sticky {
+		transform-origin: right center;
+	}
+}
+
+.replay-sct-in .replay-sct-text {
+	transform-origin: right center;
+
+	&.sticky {
+		transform-origin: left center;
+	}
+
+	.replay-sct-icon {
+		order: 1;
+	}
+}
+
+.replay-sct-icon {
+	flex: 0 0 auto;
+	width: 1.05em;
+	height: 1.05em;
+	min-width: 18px;
+	min-height: 18px;
+	border: 1px solid #000;
+	border-radius: 2px;
+	background-size: 115%;
+	background-position: center;
+}
+
+.replay-sct-note {
+	font-size: 0.7em;
+	font-weight: 700;
+	opacity: 0.85;
+}
+
+// The skin follows the user's beta UI: EllesmereUI unit frames (flat bars, 1px black borders,
+// no portraits, text with a drop shadow) and their Bayov WeakAura class pack in the middle
+// (wide cropped icons, desaturated cooldowns with a dark swipe, a pale pixel glow for buffs).
+// Sizes are about 0.7 of the 4K pixels the pack uses, so it reads at the size of the results.
+
+// EllesmereUI draws text with a drop shadow and no outline.
+@mixin replay-shadow {
+	text-shadow: 1px 1px 0 #000;
+}
+
+// The Bayov countdowns have an outline and a shadow.
+@mixin replay-countdown {
+	text-shadow:
+		1px 1px 0 #000,
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 2px 0 #000;
+}
+
+// The unit frames along the bottom, with the class pack between them. In the game the player
+// and target frames sit level with the pack's resource bar.
+.replay-frames {
+	position: relative;
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: start;
+	gap: 36px;
+	pointer-events: none;
+}
+
+.replay-col {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 0;
+	// The replay sets padding-top so the frames are level with the resource bar.
+}
+
+.replay-col-player {
+	align-items: flex-end;
+}
+
+.replay-col-enemies {
+	align-items: flex-start;
+
+	// With three or more enemies the frames get smaller, so they fit.
+	&.many {
+		gap: 6px;
+
+		.replay-bar.health {
+			height: 22px;
+		}
+
+		.replay-icon.debuff {
+			--width: 30px;
+			--height: 21px;
+		}
+	}
+}
+
+.replay-unit {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	width: 300px;
+	max-width: 100%;
+}
+
+.replay-unit-main {
+	padding: 0;
+
+	.focus & {
+		outline: 1px solid var(--replay-glow);
+		outline-offset: 2px;
+	}
+}
+
+.replay-unit-auras {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	gap: 5px;
+	// Under the frame, in room for one row of debuffs. More rows spill over what's under them
+	// without taking room, so the frames never move as debuffs come and go.
+	order: 2;
+	height: 28px;
+
+	.many & {
+		height: 21px;
+	}
+
+	.player & {
+		display: none;
+	}
+}
+
+.replay-bar {
+	--fill: #4f9d3d;
+
+	position: relative;
+	height: 38px;
+	overflow: hidden;
+	border: 1px solid #000;
+	background: #111;
+	font-size: 15px;
+	font-variant-numeric: tabular-nums;
+
+	@include replay-shadow;
+
+	.enemy &.health {
+		height: 30px;
+	}
+
+	&.power {
+		height: 17px;
+		background: rgba(70, 22, 22, 0.75);
+		font-size: 11px;
+
+		&.mana {
+			--fill: #577eaf;
+		}
+
+		&.energy {
+			--fill: #fff569;
+		}
+
+		&.rage {
+			--fill: #e62626;
+		}
+
+		&.focus {
+			--fill: #e07b39;
+		}
+	}
+}
+
+.replay-bar-fill {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background: var(--fill);
+
+	.enemy & {
+		left: auto;
+		right: 0;
+	}
+}
+
+.replay-bar-left,
+.replay-bar-right,
+.replay-bar-center {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	max-width: 70%;
+	overflow: hidden;
+	line-height: 1.1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.replay-bar-left {
+	left: 8px;
+}
+
+.replay-bar-right {
+	right: 8px;
+
+	.enemy & {
+		font-size: 12px;
+	}
+}
+
+.replay-bar-center {
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.replay-bar-left:empty,
+.replay-bar-right:empty {
+	display: none;
+}
+
+// The cast history at the top left: a time axis with our casts over it. The current time is
+// near its right end, right under the clock.
+.replay-history {
+	--now: 26px;
+
+	position: absolute;
+	top: 58px;
+	left: 3%;
+	right: calc(50% - var(--now));
+	height: 80px;
+	pointer-events: none;
+}
+
+// The icons fade in from the left end, where they come off the timeline.
+.replay-history-casts {
+	position: absolute;
+	inset: 0 0 24px;
+	mask-image: linear-gradient(to right, transparent, #000 48px);
+}
+
+.replay-history-axis {
+	--offset: 0px;
+
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 58px;
+	height: 22px;
+	mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - var(--now)), transparent);
+
+	// The axis line, with a short tick every second and a long one every 5 seconds.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 auto;
+		height: 8px;
+		background:
+			linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)) top / 100% 2px no-repeat,
+			repeating-linear-gradient(to right, rgba(255, 255, 255, 0.7) 0 1px, transparent 1px 200px) var(--offset) 0 / 200px 8px repeat-x,
+			repeating-linear-gradient(to right, rgba(255, 255, 255, 0.45) 0 1px, transparent 1px 40px) var(--offset) 0 / 40px 5px repeat-x;
+		filter: drop-shadow(0 1px 0 #000);
+	}
+}
+
+.replay-history-label {
+	position: absolute;
+	top: 9px;
+	left: 0;
+	font-size: 0.65rem;
+	color: rgba(255, 255, 255, 0.75);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+
+	@include replay-outline;
+}
+
+// The current time, a line through the rows at the right end where new casts appear.
+.replay-history-now {
+	position: absolute;
+	top: 0;
+	right: var(--now);
+	width: 2px;
+	height: 62px;
+	margin-right: -1px;
+	background: linear-gradient(to bottom, transparent, var(--replay-gold));
+	opacity: 0.8;
+}
+
+// The pixel glow, drawn by replay_glow.ts like BayovCore draws it: lines seen through 2px
+// strips flush inside the icon's border, adding light to the icon under them.
+.replay-glow {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.replay-glow-edge {
+	position: absolute;
+	overflow: hidden;
+}
+
+.replay-glow-line {
+	position: absolute;
+	top: 0;
+	left: 0;
+	mix-blend-mode: plus-lighter;
+}
+
+// The maintain cells over the resource bars, nine to a row as wide as the bars.
+.replay-maintain {
+	--cell: 46px;
+	--gap: 4px;
+
+	position: relative;
+	width: calc(9 * var(--cell) + 8 * var(--gap));
+	height: 32px;
+	margin-bottom: 2px;
+}
+
+// The class pack in the middle: the casts we made, our procs, the resource block, the
+// cooldown rows and the cast bar.
+.replay-center {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 446px;
+}
+
+.replay-procs,
+.replay-cooldowns {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 4px;
+	width: 100%;
+}
+
+.replay-procs {
+	// Room for one row. More procs grow upward without taking room, so nothing under them moves.
+	flex-wrap: wrap-reverse;
+	align-content: flex-start;
+	gap: 3px;
+	height: 24px;
+}
+
+.replay-resources {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	width: 100%;
+	margin-bottom: 2px;
+}
+
+.replay-swing {
+	position: relative;
+	height: 4px;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
+	box-sizing: content-box;
+}
+
+// The swing timer is thin, so we take a pixel more on each side for the hover.
+.replay-swing::before {
+	content: '';
+	position: absolute;
+	inset: -2px -1px;
+}
+
+.replay-swing-fill {
+	height: 100%;
+	background: #e8e8e8;
+}
+
+.replay-pips {
+	display: flex;
+	gap: 3px;
+}
+
+.replay-pip {
+	flex: 1;
+	height: 7px;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
+
+	.maelstrom &.on {
+		background: #00b8de;
+	}
+
+	.combo &.on {
+		background: #ff8a3d;
+	}
+}
+
+// At five Maelstrom Weapon stacks, cyan arcs light up on both sides of the pack, like the
+// PowerAuras textures of the WeakAura.
+.replay-center::before,
+.replay-center::after {
+	content: '';
+	position: absolute;
+	top: 30px;
+	width: 46px;
+	height: 120px;
+	border: 5px solid #00b8de;
+	border-radius: 50%;
+	opacity: 0;
+	filter: drop-shadow(0 0 6px #00b8de);
+	transition: opacity 0.12s;
+	pointer-events: none;
+}
+
+.replay-center::before {
+	left: -64px;
+	border-right-color: transparent;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.replay-center::after {
+	right: -64px;
+	border-left-color: transparent;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.replay-center.maelstrom-full::before,
+.replay-center.maelstrom-full::after {
+	opacity: 1;
+	animation: replay-pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes replay-pulse {
+	from {
+		opacity: 0.55;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.replay-icon {
+	--width: 46px;
+	--height: 32px;
+	--elapsed: 1;
+
+	position: relative;
+	flex: 0 0 auto;
+	width: var(--width);
+	height: var(--height);
+	overflow: hidden;
+	border: 1px solid #000;
+	font-variant-numeric: tabular-nums;
+
+	&.cooldown {
+		transition: transform 0.08s;
+
+		&.on-cooldown .replay-icon-img {
+			filter: grayscale(1);
+		}
+
+		// The flash of a button we just pressed.
+		&.pressed {
+			transform: scale(0.92);
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: rgba(255, 255, 255, 0.3);
+			}
+		}
+	}
+
+	// The buffs that come and go are smaller than the cooldowns, so the bars stand out.
+	&.proc {
+		--width: 32px;
+		--height: 22px;
+
+		animation: replay-pop 0.18s ease-out;
+	}
+
+	// The maintain cells. Something we should have up but don't is grey (and glows red), and a
+	// debuff that faded is grey and faded back.
+	&.maintain {
+		position: absolute;
+		top: 0;
+
+		&.missing .replay-icon-img,
+		&.faded .replay-icon-img {
+			filter: grayscale(1);
+		}
+
+		&.faded {
+			opacity: 0.4;
+		}
+
+		&.ending .replay-icon-time {
+			color: #ff4a3d;
+		}
+	}
+
+	// The same 68:48 rectangles as the class pack's icons.
+	&.debuff {
+		--width: 40px;
+		--height: 28px;
+	}
+
+	&.buff {
+		--width: 30px;
+		--height: 30px;
+	}
+
+	&.history {
+		--width: 36px;
+		--height: 25px;
+
+		position: absolute;
+		left: 0;
+		transform-origin: center;
+	}
+}
+
+// We crop the icons a little so the game's icon border doesn't show.
+.replay-icon-img {
+	position: absolute;
+	inset: 0;
+	background-size: 112% auto;
+	background-position: center;
+}
+
+// The swipe of a cooldown or a buff's time left, clockwise from the top like in the game.
+.replay-icon-swipe {
+	position: absolute;
+	inset: 0;
+	display: none;
+	background: conic-gradient(transparent 0 calc(var(--elapsed) * 1turn), rgba(0, 0, 0, 0.75) 0);
+
+	.swiping > & {
+		display: block;
+	}
+}
+
+.replay-icon-time {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 15px;
+	line-height: 1;
+
+	@include replay-countdown;
+
+	.expiring > & {
+		color: #ffb747;
+	}
+
+	.debuff &,
+	.buff &,
+	.proc & {
+		font-size: 12px;
+	}
+}
+
+.replay-icon-stacks {
+	position: absolute;
+	right: 2px;
+	top: 1px;
+	z-index: 1;
+	color: #fff000;
+	font-size: 12px;
+	line-height: 1;
+
+	@include replay-countdown;
+}
+
+.replay-icon-badge {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+	padding: 1px 0;
+	font-size: 0.55rem;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	letter-spacing: 0.04em;
+	background: rgba(0, 0, 0, 0.65);
+
+	&.crit {
+		color: #ffd166;
+	}
+
+	&.avoid {
+		color: #ff7b72;
+	}
+}
+
+@keyframes replay-pop {
+	from {
+		transform: scale(1.5);
+		opacity: 0;
+	}
+
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+// The cast bar of EllesmereUI's resource bars: flat grey-teal fill on black, the icon with a
+// divider, the spell on the left and the timer on the right.
+.replay-castbar {
+	order: 1;
+	display: flex;
+
+	// An enemy's cast bar takes no room, so its debuffs sit right under its frame and nothing
+	// moves when it casts. It shows over what's under the debuffs.
+	.enemy & {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 1;
+		margin-top: 4px;
+	}
+
+	width: 100%;
+	height: 28px;
+	margin-top: 6px;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
+	opacity: 0;
+	transition: opacity 0.12s;
+
+	@include replay-shadow;
+
+	&.active {
+		opacity: 1;
+	}
+
+	&.player {
+		width: 425px;
+	}
+}
+
+.replay-castbar-icon {
+	flex: 0 0 auto;
+	width: 27px;
+	border-right: 1px solid #000;
+	background-size: 112% auto;
+	background-position: center;
+}
+
+.replay-castbar-bar {
+	position: relative;
+	flex: 1;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+.replay-castbar-fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	background: #72898c;
+}
+
+.replay-castbar-name,
+.replay-castbar-time {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.replay-castbar-name {
+	left: 6px;
+}
+
+.replay-castbar-time {
+	right: 6px;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+}
+
+// The play button in the middle before we start and after the end.
+.replay-big-play {
+	position: absolute;
+	top: 42%;
+	left: 50%;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 84px;
+	height: 84px;
+	margin: -42px 0 0 -42px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+	font-size: 2rem;
+	pointer-events: none;
+
+	.show-big-play & {
+		display: flex;
+	}
+
+	.replay-stage:hover & {
+		background: var(--gold);
+		color: #000;
+	}
+}
+
+// The big icon in the middle that pops up and fades when we play, pause or change the speed.
+.replay-flash {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 68px;
+	height: 68px;
+	margin: -34px 0 0 -34px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.55);
+	font-size: 1.5rem;
+	font-weight: 700;
+	opacity: 0;
+	pointer-events: none;
+
+	&.show {
+		animation: replay-flash 0.6s ease-out forwards;
+	}
+}
+
+@keyframes replay-flash {
+	from {
+		transform: scale(0.8);
+		opacity: 1;
+	}
+
+	to {
+		transform: scale(1.5);
+		opacity: 0;
+	}
+}
+
+// The video player controls along the bottom.
+.replay-controls {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 24px 12px 4px;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45) 55%, transparent);
+}
+
+.replay-progress {
+	position: relative;
+	height: 16px;
+	cursor: pointer;
+	touch-action: none;
+}
+
+.replay-progress-track {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 50%;
+	height: 4px;
+	transform: translateY(-50%);
+	background: rgba(255, 255, 255, 0.22);
+	transition: height 0.1s;
+
+	.replay-progress:hover &,
+	.replay-progress.scrubbing & {
+		height: 6px;
+	}
+}
+
+.replay-progress-hover,
+.replay-progress-played {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.replay-progress-hover {
+	width: 0;
+	background: rgba(255, 255, 255, 0.3);
+	opacity: 0;
+
+	.replay-progress:hover & {
+		opacity: 1;
+	}
+}
+
+.replay-progress-played {
+	background: var(--gold);
+}
+
+.replay-progress-marker {
+	position: absolute;
+	top: -2px;
+	bottom: -2px;
+	width: 3px;
+	margin-left: -1px;
+	border-radius: 1px;
+	background: #fff;
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.replay-progress-thumb {
+	position: absolute;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	background: var(--gold);
+	transform: scale(0);
+	transition: transform 0.1s;
+
+	.replay-progress:hover &,
+	.replay-progress.scrubbing &,
+	.paused & {
+		transform: scale(1);
+	}
+}
+
+.replay-progress-tooltip {
+	position: absolute;
+	bottom: 20px;
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: rgba(20, 20, 20, 0.9);
+	font-size: 0.75rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	transform: translateX(-50%);
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+
+	.replay-progress:hover &,
+	.replay-progress.scrubbing & {
+		opacity: 1;
+	}
+}
+
+.replay-buttons {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	height: 40px;
+}
+
+.replay-buttons-filler {
+	flex: 1;
+}
+
+.replay-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 40px;
+	height: 36px;
+	padding: 0 8px;
+	border: 0;
+	border-radius: 4px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.92);
+	font-size: 1.05rem;
+
+	&.small {
+		min-width: 34px;
+		font-size: 0.85rem;
+	}
+
+	&:hover {
+		color: #fff;
+		background: rgba(255, 255, 255, 0.1);
+	}
+}
+
+.replay-clock {
+	margin-left: 8px;
+	font-size: 0.85rem;
+	font-variant-numeric: tabular-nums;
+	color: rgba(255, 255, 255, 0.9);
+	white-space: nowrap;
+}
+
+.replay-keys {
+	margin-right: 12px;
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.45);
+	white-space: nowrap;
+
+	@include media-breakpoint-down(xxl) {
+		display: none;
+	}
+}
+
+.replay-speed {
+	position: relative;
+}
+
+.replay-speed-button {
+	font-size: 0.85rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.replay-speed-menu {
+	position: absolute;
+	right: 0;
+	bottom: 44px;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	min-width: 120px;
+	padding: 6px 0;
+	border-radius: 8px;
+	background: rgba(28, 28, 28, 0.94);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.replay-speed-title {
+	padding: 4px 14px 6px;
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.replay-speed-option {
+	padding: 6px 14px 6px 30px;
+	border: 0;
+	background: transparent;
+	color: #fff;
+	font-size: 0.85rem;
+	text-align: left;
+	position: relative;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	&.active::before {
+		content: '\f00c';
+		position: absolute;
+		left: 10px;
+		font-family: 'Font Awesome 6 Free';
+		font-weight: 900;
+		font-size: 0.7rem;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+}
+
+// The parts of the screen with a hover tooltip. The frames and the combat text let the mouse
+// through, so a click anywhere still plays or pauses, but these parts take the hover.
+.replay-tip {
+	pointer-events: auto;
+}
+
+.replay-castbar.replay-tip:not(.active) {
+	pointer-events: none;
+}
+
+// The buffs that are up the whole fight, at the top right like the game's buff frame.
+.replay-buffs {
+	position: absolute;
+	top: 56px;
+	right: 16px;
+	display: flex;
+	flex-flow: row-reverse wrap;
+	gap: 3px;
+	max-width: 36%;
+	pointer-events: none;
+
+	.replay-icon.buff {
+		--size: 26px;
+		opacity: 1;
+	}
+}
+
+// The search at the top right. What it matches lights up on screen and on the progress bar.
+.replay-search {
+	position: absolute;
+	top: 14px;
+	right: 16px;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	width: 320px;
+	max-width: 40%;
+	padding: 0 4px 0 10px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.55);
+	cursor: default;
+
+	&:focus-within {
+		border-color: var(--replay-match);
+	}
+}
+
+.replay-search-icon {
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.replay-search-input {
+	flex: 1;
+	min-width: 0;
+	height: 30px;
+	padding: 0 4px;
+	border: 0;
+	outline: none;
+	background: transparent;
+	color: #fff;
+	font-size: 0.8rem;
+
+	&::placeholder {
+		color: rgba(255, 255, 255, 0.45);
+	}
+}
+
+.replay-search-count {
+	font-size: 0.7rem;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	color: var(--replay-match);
+
+	&.none {
+		color: #ff7b72;
+	}
+}
+
+.replay-search-step {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 0.7rem;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.12);
+		color: #fff;
+	}
+}
+
+.replay-progress-matches {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.replay-progress-match {
+	position: absolute;
+	top: -3px;
+	bottom: -3px;
+	width: 2px;
+	margin-left: -1px;
+	background: var(--replay-match);
+	box-shadow: 0 0 4px var(--replay-match);
+}
+
+// While we search, what matches lights up and the rest of the icons and lines fade back.
+.replay-player.searching {
+	.replay-searchable:not(.match) {
+		filter: grayscale(0.8) brightness(0.45);
+	}
+
+	.replay-icon.match {
+		box-shadow:
+			0 0 0 2px var(--replay-match),
+			0 0 12px var(--replay-match);
+	}
+
+	.replay-sct-text.match {
+		padding: 1px 6px;
+		border-radius: 4px;
+		background: rgba(63, 208, 255, 0.16);
+		outline: 1px solid var(--replay-match);
+	}
+}

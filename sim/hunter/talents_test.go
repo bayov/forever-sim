@@ -153,3 +153,82 @@ func TestPetAbilityDamage(t *testing.T) {
 		}
 	}
 }
+
+// TestHuntersMarkDuty checks the hunter's own Hunter's Mark, cast by the presets on Hunter's Mark
+// duty (standards 23) with the raid's debuff off: it puts the same mark on the target as the
+// debuff (140 ranged attack power at level 60, core.ForeverHuntersMarkRank4), for 2 min, at 60 mana.
+func TestHuntersMarkDuty(t *testing.T) {
+	sim, hunter := newHunterSim(t, "", &proto.Debuffs{})
+	target := hunter.CurrentTarget
+	table := hunter.AttackTables[target.UnitIndex][proto.CastType_CastTypeRanged]
+	if table.BonusAttackPowerTaken != 0 {
+		t.Fatalf("ranged attack power against the target before the mark: %v, want 0", table.BonusAttackPowerTaken)
+	}
+	if hunter.HuntersMark == nil {
+		t.Fatal("no Hunter's Mark spell")
+	}
+	if got := hunter.HuntersMark.ActionID.SpellID; got != 14325 {
+		t.Errorf("Hunter's Mark spell %d, want rank 4 (14325)", got)
+	}
+	mana := hunter.CurrentMana()
+	if !hunter.HuntersMark.Cast(sim, target) {
+		t.Fatal("Hunter's Mark didn't cast")
+	}
+	if spent := mana - hunter.CurrentMana(); spent != 60 {
+		t.Errorf("Hunter's Mark cost %v mana, want 60", spent)
+	}
+	if got := table.BonusAttackPowerTaken; got != core.ForeverHuntersMarkRank4 {
+		t.Errorf("ranged attack power against the marked target: %v, want %v", got, core.ForeverHuntersMarkRank4)
+	}
+	if aura := target.GetActiveAuraWithTag(core.HuntersMarkAuraTag); aura == nil || aura.RemainingDuration(sim) != 2*time.Minute {
+		t.Errorf("mark aura %v, want 2 min left", aura)
+	}
+}
+
+// TestScorpidStingDuty checks the hunter's own Scorpid Sting (standards 23 duty): 9% of base mana,
+// 2% off the target's chance to hit for 20 sec, 65 with Improved Stings 3, and it takes the place of
+// the hunter's Serpent Sting.
+func TestScorpidStingDuty(t *testing.T) {
+	for _, c := range []struct {
+		talents  string
+		duration time.Duration
+	}{
+		{"", 20 * time.Second},
+		// Lethal Attacks 5 and Improved Stings 3.
+		{"-0053", 65 * time.Second},
+	} {
+		sim, hunter := newHunterSim(t, c.talents, &proto.Debuffs{})
+		target := hunter.CurrentTarget
+		hunter.DistanceFromTarget = 25
+		if hunter.ScorpidSting == nil {
+			t.Fatal("no Scorpid Sting spell")
+		}
+		hunter.SerpentSting.Dot(target).Apply(sim)
+		miss := target.PseudoStats.IncreasedMissChance
+		mana := hunter.CurrentMana()
+		if !hunter.ScorpidSting.Cast(sim, target) {
+			t.Fatal("Scorpid Sting didn't cast")
+		}
+		if spent, want := mana-hunter.CurrentMana(), 0.09*hunter.BaseMana; math.Abs(spent-want) > 1e-6 {
+			t.Errorf("Scorpid Sting cost %v mana, want %v (9%% of base mana)", spent, want)
+		}
+		aura := hunter.scorpidStingAuras.Get(target)
+		for !aura.IsActive() && sim.CurrentTime < 2*time.Second {
+			if sim.Step() {
+				break
+			}
+		}
+		if !aura.IsActive() {
+			t.Fatal("Scorpid Sting didn't land")
+		}
+		if got := aura.Duration; got != c.duration {
+			t.Errorf("talents %q: Scorpid Sting lasts %v, want %v", c.talents, got, c.duration)
+		}
+		if got := target.PseudoStats.IncreasedMissChance - miss; math.Abs(got-0.02) > 1e-9 {
+			t.Errorf("Scorpid Sting raised the target's miss chance by %v, want 0.02", got)
+		}
+		if hunter.SerpentSting.Dot(target).IsActive() {
+			t.Error("Serpent Sting still up after Scorpid Sting")
+		}
+	}
+}

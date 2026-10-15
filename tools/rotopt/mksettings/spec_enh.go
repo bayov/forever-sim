@@ -1,6 +1,10 @@
 package main
 
-import "github.com/wowsims/classic/sim/core/proto"
+import (
+	"flag"
+
+	"github.com/wowsims/classic/sim/core/proto"
+)
 
 func init() {
 	specs["enh"] = &specSetup{
@@ -40,17 +44,32 @@ func init() {
 		},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassShaman
+			// The shaman drops its melee party's totems itself (standards 23: no totem duty, every
+			// shaman puts its own down, like a warrior's Sunder): Strength of Earth, Windfury Totem
+			// (it can't stand with Grace of Air) and Mana Spring. The raid has none of its own.
+			startingTotems := &proto.StartingTotems{
+				Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 4,
+				Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 3,
+				Water: proto.WaterTotem_ManaSpringTotem, WaterSecondsBeforePull: 2,
+			}
+			// The raid damage that hits a melee shaman in a level 60 raid fight and fires its
+			// Lightning Shield (ui/enhancement_shaman/presets.ts RaidDamageHitsLevel60). The level
+			// 30 builds' enemy hits the shaman itself.
+			raidHits := 2.0
+			if flag.Lookup("level").Value.String() != "60" {
+				// The level 30 builds keep the old seconds. At level 60 they go down just before
+				// the pull, so a 5 min totem lasts a 300 sec fight.
+				startingTotems.EarthSecondsBeforePull, startingTotems.AirSecondsBeforePull, startingTotems.WaterSecondsBeforePull = 28, 27, 30
+				raidHits = 0
+			}
 			player.Spec = &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
 				Options: &proto.EnhancementShaman_Options{
 					SyncType:    proto.ShamanSyncType_Auto,
 					ShamanImbue: proto.WeaponImbue_WindfuryWeapon,
 					// The Level 60 preset's starting totems. The level 30 rotations put theirs down
 					// in the prepull actions, which take the place of these.
-					StartingTotems: &proto.StartingTotems{
-						Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 28,
-						Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 27,
-						Water: proto.WaterTotem_ManaSpringTotem, WaterSecondsBeforePull: 30,
-					},
+					StartingTotems:          startingTotems,
+					RaidDamageHitsPerMinute: raidHits,
 				},
 			}}
 		},

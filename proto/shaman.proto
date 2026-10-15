@@ -150,10 +150,13 @@ message ElementalShaman {
 	message Rotation {
 	}
 
-	// NextIndex: 7
+	// NextIndex: 9
 	message Options {
 		// The shaman's own weapon imbue on the main hand, like EnhancementShaman's.
 		WeaponImbue shaman_imbue = 6;
+		// Direct hits the shaman takes from raid damage per minute, like EnhancementShaman's.
+		double raid_damage_hits_per_minute = 7;
+		double raid_damage_hits_per_minute_variation = 8;
 	}
 	Options options = 3;
 }

@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_mana_tide",
   "published": {
-    "dps": 683.3,
-    "source": "Shaman follow-up PR (end-of-fight Earth Shock, rotation audit pass 19, 2026-10-15)"
+    "dps": 686.5,
+    "source": "Shaman PR (Lightning Shield on raid damage hits: 2 a minute melee, 1 ranged, 2026-10-15)"
   },
   "verify": {
-    "dps": 683.3,
-    "stderr": 0.2,
+    "dps": 686.47,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "paired rotopt run on this request at 180 s, with the earthShockFinish rotation"
+    "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "The Elemental Level 60 build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group's mana. It is 1.0% behind Level 60 at 180 s.",
+  "summary": "The Elemental Level 60 build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group's mana. It is 1.1% behind Level 60 at 180 s.",
   "keyTalents": [
     "Lava Burst",
     "Elemental Alacrity",
@@ -37,7 +37,7 @@
     "Totemic Focus"
   ],
   "rotation": [
-    "Pre-pull: Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
+    "Pre-pull: Lightning Shield at -5.4 s, Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
     "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
     "Mana Tide Totem at 20% mana or less",
     "Mana Spring Totem when it is down and Mana Tide is not up",
@@ -45,6 +45,7 @@
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
+    "Lightning Shield when it is down (orbs fire at the target on raid damage hits, 1 a minute)",
     "Lightning Bolt rank 8 below 20% mana",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
@@ -70,7 +71,8 @@
     "Water Shield point is inert (nothing hits the caster)",
     "Lightning Bolt X's base damage ×1.12, the raise a beta build gave the top playable rank; the client's 31+ ranks look untuned (rank 10 ~201 base at 0.714 coefficient)",
     "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
-    "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking"
+    "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking",
+    "Raid damage hits on the shaman (1 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
   ],
-  "notes": "Request is mksettings -spec ele output unchanged."
+  "notes": "mksettings -spec ele -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself)."
 }

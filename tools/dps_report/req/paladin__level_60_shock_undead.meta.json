@@ -19,11 +19,11 @@
     "source": "PR #3 / class preset"
   },
   "verify": {
-    "dps": 1041.27,
+    "dps": 1041.67,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03"
+    "note": "+0.37 vs PR #3 / class preset, re-checked on master 250ec4a6c (2026-10-15)"
   },
   "summary": "The Holy Shock build on its own vs Undead rotation, which adds Exorcism and keeps more mana for Light's Vigil in longer fights.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons, so against such a boss they're extra damage on top of the usual rotation. This build adds Exorcism to its Holy Shock rotation.",

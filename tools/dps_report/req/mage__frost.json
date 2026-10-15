@@ -110,23 +110,27 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  }
+                  },
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."
                 },
                 {
-                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 12051
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
-                              "op": "OpLt",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
+                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "0.2"
@@ -136,10 +140,10 @@
                           },
                           {
                             "cmp": {
-                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
+                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "90s"
@@ -149,47 +153,47 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 12051
-                      }
                     }
-                  }
+                  },
+                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it."
                 },
                 {
-                  "notes": "Ice Lance while Fingers of Frost makes the boss count as Frozen (4 times the damage, Shatter's crit).",
                   "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "auraIsKnown": {
-                              "auraId": {
-                                "spellId": 400670
-                              }
-                            }
-                          },
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 400670
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 1240047
                       }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400670
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400670
+                              }
+                            }
+                          }
+                        ]
+                      }
                     }
-                  }
+                  },
+                  "notes": "Ice Lance while Fingers of Frost makes the boss count as Frozen (4 times the damage, Shatter's crit)."
                 },
                 {
-                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10212
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -209,23 +213,54 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10212
-                      }
                     }
-                  }
+                  },
+                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast."
                 },
                 {
-                  "notes": "Frostbolt.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240047
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "remainingTime": {}
+                        },
+                        "op": "OpLt",
+                        "rhs": {
+                          "math": {
+                            "lhs": {
+                              "spellCastTime": {
+                                "spellId": {
+                                  "spellId": 10181
+                                }
+                              }
+                            },
+                            "op": "OpAdd",
+                            "rhs": {
+                              "const": {
+                                "val": "1s"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "An instant when the filler would not land before the end of the fight."
+                },
+                {
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10181
                       }
                     }
-                  }
+                  },
+                  "notes": "Frostbolt."
                 }
               ]
             },

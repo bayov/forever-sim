@@ -19,11 +19,11 @@
     "source": "PR #3"
   },
   "verify": {
-    "dps": 977.17,
+    "dps": 977.52,
     "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03 vs PR #3"
+    "note": "+0.32 vs PR #3, re-checked on master 250ec4a6c (2026-10-15)"
   },
   "summary": "The twist build with its side points in Holy (Divine Intellect 5, Reverence, Purifying Power) instead of Protection's Precision. It is within 0.9% of the default at every length but a different talent split, so it ships as its own preset on the same rotation.",
   "keyTalents": [

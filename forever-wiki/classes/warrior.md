@@ -43,6 +43,7 @@ Spells at level 60:
 - Mortal Strike rank 4: weapon damage plus 160 (ranks at 40, 48, 54, 60: 85, 110, 135, 160).
 - Bloodthirst rank 4: 45% of attack power plus 48 (ranks: plus 30, 37, 43, 48), 6 sec, 30 Rage.
 - Battle Shout rank 7: 139 attack power for 3 min. Demoralizing Shout rank 5: 204 for 45 sec.
+  - Raid duties in the sim (standards 23): every warrior preset spends its first GCD after the pull on one Sunder Armor. The Battle Shout duty presets shout 3 sec before the pull, with a Bloodrage for the Rage, and again when 35 sec of it are left, unless it lasts the fight. Booming Voice no longer lengthens it, so a fight over about 177 sec refreshes it once, at about 142 sec, before the execute phase. The base presets leave Battle Shout to the raid.
 - Recklessness: 100% crit for 15 sec, 30 min. Death Wish: 20% Physical damage, 5% more damage taken, 3 min, 10 Rage.
 - Tactical Mastery is a trainer spell at 14 that keeps 10 Rage, and Improved Tactical Mastery adds 3 a point. Berserker Rage is trained at 30 and makes no Rage of its own without the talent.
 - Thunder Clap rank 6: 103 damage, 20% slow, 6 sec cooldown, Battle or Defensive Stance. Last Stand: 3 min.

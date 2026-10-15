@@ -14,6 +14,9 @@
 # The elemental rotations at the end are written the same way.
 set -e
 settings=$1
+# Standards 23 (user ruling 2026-10-15): there is no shaman totem duty. Every shaman drops its own
+# party's totems, like a warrior's Sunder: Strength of Earth, Windfury and Mana Spring for the melee
+# party, Mana Spring for the caster party.
 gen() {
 	name=$1
 	knobs=$2

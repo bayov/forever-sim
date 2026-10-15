@@ -85,3 +85,15 @@ func TestSwiftJudgement(t *testing.T) {
 		t.Errorf("the Judgement after the free one costs %.1f, want more than 0", cost)
 	}
 }
+
+// TestJudgementOfTheCrusaderRank checks that a level 60 paladin's own Judgement of the Crusader
+// puts the rank 6 debuff on the target: 161 Holy damage taken under Forever (140 x 1.15). Every
+// rank used to share one debuff aura, so rank 1's 23 won.
+func TestJudgementOfTheCrusaderRank(t *testing.T) {
+	sim, ret := retSim(t, "52003-503-05225331001330311", arcaniteReaper)
+	castByID(sim, ret, 20308)
+	castByID(sim, ret, 20271)
+	if got := ret.CurrentTarget.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly]; got < 160.99 || got > 161.01 {
+		t.Errorf("Holy damage taken after Judgement of the Crusader = %.2f, want 161", got)
+	}
+}

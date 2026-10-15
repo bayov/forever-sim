@@ -101,7 +101,7 @@ dashboard-only and never go to a class branch.
 | `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
 | `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go`, `sim/hunter/hunter.go` and the priest racials (Chastise, Dark Sacrifice, Starshards): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, sword, mace, axe, beast, dodge, elune, mind, eureka, bloodfury, touch, endurance, berserking, windblessed, insight, chastise, starshards, darksacrifice. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants) |
 | `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | the `beast` and `elemental` race variants. The real fix in shared `sim/core` is a follow-up. |
-| `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient) defaults to that constant, so a run with no knob reproduces master. Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
+| `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
 
 The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
 their conflict resolutions follow the rules above. With no env var set, all three patches leave the sim's behaviour unchanged,
@@ -130,6 +130,10 @@ Murder's 4% against Humanoids and Giants, and an `advantageShort` of 25 words at
 the preset's "vs Humanoid" badge (the long line stays in the data). Its `advantageRefs` list the abilities and talents
 `advantageShort` names, as game tooltip refs: `k:s10314` for a spell key, `tal:Rogue:0:4` for a talent by class, tree and
 index in `talenttrees.json`. The badge's tooltip puts each one's icon in front of its name and its own tooltip below.
+A duty preset (one with `duty` and `baseBuild`, standards 23) keeps a raid buff or debuff up itself, with the raid's copy
+off. It gets `run_build.py` only (main, race sweep, lengths, samples): the page lists it in the Ranking while "Duty" is on,
+with what it costs against its base, and `build_data.py` keeps it out of every per-preset detail dataset so the page stays
+small. Its assumption factor is its base's.
 Each assumption in `assumptions_def.py` is written for a player who hasn't read our notes: a question-style `label`
 (8 words at most), a `short` line (20 words at most) the Ranking panel shows under it, setting labels that say what each
 choice means with a `rationale` of 15 words at most, and a `desc` of 2 to 4 sentences plus its `src` (written to the

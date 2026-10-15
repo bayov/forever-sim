@@ -10,10 +10,11 @@ import { TypedEvent } from '../../typed_event.js';
 import { formatToNumber } from '../../utils.js';
 import { eventCategories, EventCategory, EventFilter } from './events_filter.js';
 import { LogRunner } from './log_runner.js';
+import { Replay } from './replay.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 import { Timeline, zoomPresets, ZoomSpan } from './timeline.js';
 
-type EventsFormat = 'timeline' | 'chart' | 'log';
+type EventsFormat = 'timeline' | 'chart' | 'log' | 'replay';
 // 'new' is the iteration we ran with Sim 1 iteration, after the run.
 type IterationKind = 'typical' | 'lucky' | 'unlucky' | 'new';
 
@@ -21,6 +22,7 @@ const formats: Array<{ format: EventsFormat; label: string; icon: string }> = [
 	{ format: 'timeline', label: 'Timeline', icon: 'fa-bars-staggered' },
 	{ format: 'chart', label: 'Chart', icon: 'fa-chart-line' },
 	{ format: 'log', label: 'Log', icon: 'fa-list' },
+	{ format: 'replay', label: 'Replay', icon: 'fa-circle-play' },
 ];
 
 const iterationKinds: Array<{ kind: IterationKind; label: string; tooltip: string }> = [
@@ -35,6 +37,7 @@ const appliesTo: Record<EventsFormat, { search: boolean; categories: Array<Event
 	timeline: { search: true, categories: ['casts', 'auras', 'resources'], hidden: true, alwaysUp: true },
 	chart: { search: false, categories: [], hidden: false, alwaysUp: false },
 	log: { search: true, categories: ['casts', 'damage', 'auras', 'resources', 'other', 'debug'], hidden: true, alwaysUp: false },
+	replay: { search: false, categories: [], hidden: false, alwaysUp: false },
 };
 
 const FORMAT_STORAGE_KEY = '__detailed_results_events_format__';
@@ -44,13 +47,14 @@ export interface EventsViewConfig extends ResultComponentConfig {
 }
 
 // One iteration of the run, event by event. We can look at it as a timeline, a chart or a log,
-// and pick the typical, the lucky or the unlucky iteration. The filter above is shared by all
-// three views.
+// or play it back like a video of the fight, and pick the typical, the lucky or the unlucky
+// iteration. The filter above is shared by the timeline, the chart and the log.
 export class EventsView extends ResultComponent {
 	private readonly filter = new EventFilter();
 	private readonly iterationEmitter = new TypedEvent<SimResultData | null>('EventsIteration');
 	private readonly timeline: Timeline;
 	private readonly logRunner: LogRunner;
+	private readonly replay: Replay;
 
 	private format: EventsFormat = 'timeline';
 	private iteration: IterationKind = 'typical';
@@ -82,6 +86,8 @@ export class EventsView extends ResultComponent {
 		hiddenList: HTMLElement;
 		timelineHost: HTMLElement;
 		logHost: HTMLElement;
+		replayHost: HTMLElement;
+		filterRow: HTMLElement;
 		loading: HTMLElement;
 	};
 
@@ -111,6 +117,8 @@ export class EventsView extends ResultComponent {
 			hiddenList: ref<HTMLDivElement>(),
 			timelineHost: ref<HTMLDivElement>(),
 			logHost: ref<HTMLDivElement>(),
+			replayHost: ref<HTMLDivElement>(),
+			filterRow: ref<HTMLDivElement>(),
 			loading: ref<HTMLDivElement>(),
 		};
 		const formatButtons = new Map<EventsFormat, HTMLButtonElement>();
@@ -178,7 +186,7 @@ export class EventsView extends ResultComponent {
 							</div>
 						</div>
 					</div>
-					<div className="events-filter-row">
+					<div ref={refs.filterRow} className="events-filter-row">
 						<div ref={refs.searchGroup} className="events-search">
 							<i className="fas fa-magnifying-glass" />
 							<input ref={refs.search} type="search" className="form-control" placeholder="Search abilities and events" />
@@ -223,6 +231,7 @@ export class EventsView extends ResultComponent {
 					</div>
 					<div ref={refs.timelineHost} className="events-timeline"></div>
 					<div ref={refs.logHost} className="events-log"></div>
+					<div ref={refs.replayHost} className="events-replay"></div>
 				</div>
 			</>,
 		);
@@ -246,6 +255,8 @@ export class EventsView extends ResultComponent {
 			hiddenList: refs.hiddenList.value!,
 			timelineHost: refs.timelineHost.value!,
 			logHost: refs.logHost.value!,
+			replayHost: refs.replayHost.value!,
+			filterRow: refs.filterRow.value!,
 			loading: refs.loading.value!,
 		};
 
@@ -259,6 +270,11 @@ export class EventsView extends ResultComponent {
 			resultsEmitter: this.iterationEmitter,
 			filter: this.filter,
 			onTimeClick: time => this.showInTimeline(time),
+		});
+		this.replay = new Replay({
+			parent: this.ui.replayHost,
+			resultsEmitter: this.iterationEmitter,
+			filter: this.filter,
 		});
 
 		this.ui.search.addEventListener(
@@ -284,8 +300,12 @@ export class EventsView extends ResultComponent {
 		this.filter.changeEmitter.on(() => this.updateFilterControls());
 		this.logRunner.countEmitter.on(() => this.updateCount());
 
-		// The timeline draws only while we can see it, so we let it know when a tab opens.
-		const onTabShown = () => this.timeline.renderIfDirty();
+		// The timeline and the replay draw only while we can see them, so we let them know when a
+		// tab opens.
+		const onTabShown = () => {
+			this.timeline.renderIfDirty();
+			this.replay.setShown(this.format == 'replay');
+		};
 		document.addEventListener('shown.bs.tab', onTabShown);
 		this.addOnDisposeCallback(() => document.removeEventListener('shown.bs.tab', onTabShown));
 
@@ -322,10 +342,14 @@ export class EventsView extends ResultComponent {
 			button.classList.toggle('active', format == this.format);
 			button.setAttribute('aria-pressed', String(format == this.format));
 		});
-		this.ui.timelineHost.classList.toggle('hide', this.format == 'log');
+		this.ui.timelineHost.classList.toggle('hide', this.format == 'log' || this.format == 'replay');
 		this.ui.logHost.classList.toggle('hide', this.format != 'log');
+		this.ui.replayHost.classList.toggle('hide', this.format != 'replay');
+		// The filters don't change what the replay shows, so we hide them there.
+		this.ui.filterRow.classList.toggle('hide', this.format == 'replay');
+		this.replay.setShown(this.format == 'replay');
 		this.ui.zoomGroup.classList.toggle('hide', this.format != 'timeline');
-		if (this.format != 'log') {
+		if (this.format == 'timeline' || this.format == 'chart') {
 			this.timeline.setMode(this.format == 'timeline' ? 'rotation' : 'chart');
 			this.timeline.renderIfDirty();
 		}
@@ -468,7 +492,7 @@ export class EventsView extends ResultComponent {
 
 		this.ui.reset.classList.toggle('invisible', !this.filter.isActive());
 
-		this.ui.hiddenRow.classList.toggle('hide', this.filter.hidden.length == 0);
+		this.ui.hiddenRow.classList.toggle('hide', this.filter.hidden.length == 0 || this.format == 'replay');
 		this.ui.hiddenRow.classList.toggle('disabled', !applies.hidden);
 		this.ui.hiddenList.replaceChildren(
 			...this.filter.hidden.map(actionId => {

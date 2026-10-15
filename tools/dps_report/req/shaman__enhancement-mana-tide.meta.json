@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "mana_tide",
   "published": {
-    "dps": 753.4,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 763.3,
+    "source": "Shaman PR (Lightning Shield on raid damage hits: 2 a minute melee, 1 ranged, 2026-10-15)"
   },
   "verify": {
-    "dps": 753.38,
+    "dps": 763.26,
     "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "matches the published number, with PR #21's Earth Shock VII ×1.08"
+    "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "Sub-Restoration Enhancement with Water Shield and Mana Tide Totem for the group's mana, on the Magma Totem rotation with Mana Tide at 20% mana. It is 8.5% behind Level 60 at 180 s.",
+  "summary": "Sub-Restoration Enhancement with Water Shield and Mana Tide Totem for the group's mana, on the Magma Totem rotation with Mana Tide at 20% mana. It is 8.5% behind Level 60 at 180 s. It keeps Lightning Shield up rather than Water Shield, which was worth less at every raid hit rate tried.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -37,17 +37,17 @@
     "Mental Dexterity"
   ],
   "rotation": [
-    "Pre-pull: Water Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem, Mana Spring, and Magma Totem 1 s before the pull",
+    "Pre-pull: Lightning Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s, and Magma Totem 1 s before the pull",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
     "Mana Tide Totem at 20% mana or less; Mana Spring waits until the tide ends",
     "Magma Totem when it is down and at least 10 s remain",
-    "Rage of the Farseer on cooldown; Blood Fury lined up with it; other cooldowns",
+    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it; other cooldowns",
     "Stormstrike on cooldown",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova above 20% mana (ahead of the shocks)",
     "Flame Shock when its DoT is down",
     "Earth Shock while Flame Shock has more than 1 s left",
-    "Water Shield when it is down and mana is below 50%"
+    "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
@@ -76,7 +76,8 @@
     "Water Shield is inert at the preset's 0 raid hits; worth up to +4.1 at 6 hits a minute",
     "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
     "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
-    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
+    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs",
+    "Raid damage hits on the shaman (2 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
   ],
-  "notes": "mksettings -spec enh writes a Flametongue Totem starting fire totem; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset (PresetBuildOptionsLevel60Magma) ships and shaman_presets.sh says to do."
+  "notes": "mksettings -spec enh -apl mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
 }

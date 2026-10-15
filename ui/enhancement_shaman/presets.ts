@@ -327,7 +327,7 @@ export const APLWindfury = PresetUtils.makePresetAPLRotation('Windfury Totem', W
 // before 2026-10-07, when Windfury Weapon still got the level 68 attack power, Windfury
 // Totem still stacked with it for the shaman, and Enhancing Totems was still in the sim.
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', OptimizedAPLJSON, {
-	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Flametongue Totem for the shaman and Fire Nova.",
+	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Searing Totem and Fire Nova.",
 	group: 'Level 60',
 });
 // The rotation for the Level 60 + Water Shield and Level 60 + Mana Tide talents. It is
@@ -339,6 +339,9 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', Optim
 // it. On the Water Shield build it is 912.0 / 899.7 / 883.4 at 120 / 180 / 300 sec, where
 // Searing Totem is 888.8 / 879.5 / 877.0. On the Level 60 build Searing Totem is still
 // ahead (938.4 against 927.1 at 180 sec).
+//
+// Since 2026-10-15 it keeps Lightning Shield up in place of Water Shield, like Optimized (see
+// RaidDamageHitsLevel60).
 export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAPLJSON, {
 	tooltip: 'Optimized with Magma Totem in place of Searing Totem, for the Water Shield talents.',
 	group: 'Level 60',
@@ -581,17 +584,37 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
+// The raid damage that hits the shaman in a level 60 raid fight: 2 direct hits a minute, at
+// random times. Nothing we can read measures it (Warcraft Logs was out of reach, 2026-10-15), so
+// it comes from Season of Discovery boss timers in the Deadly Boss Mods source. Most bosses
+// land one or two hits on the melee every 20 to 40 sec (Ragnaros's Wrath every 26 sec,
+// Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths), Patchwerk and
+// Loatheb none, and Firemaw, Vaelastrasz and Huhuran's last 30% about 10. A ranged shaman takes
+// about half as many (Elemental uses 1). The DPS report's assumptions run 0 and 10 too.
+//
+// Each hit fires a Lightning Shield orb, so every Level 60 rotation keeps the shield up: before
+// the pull at -1.5 sec, and in the fight when nothing else is ready (+2.8 at 6 a minute over
+// putting it first). At 180 sec Level 60 goes from 826.0 to 833.8, Imp GW from 822.0 to 829.5
+// (about +26 at 10 a minute), and with no hits it costs nothing measurable. The Water Shield and
+// Mana Tide builds cast Lightning Shield too: Water Shield's 2% mana a globe was worth less than
+// Lightning Shield's orbs at every rate we tried (0, 2, 6 and 10 a minute), whether we kept Water
+// Shield for low mana or not. Water Shield goes from 776.1 to 785.3, Mana Tide from 753.4 to
+// 763.3 (+32 and +34 at 10 a minute).
+export const RaidDamageHitsLevel60 = 2;
+
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shamanImbue: WeaponImbue.WindfuryWeapon,
 	syncType: ShamanSyncType.Auto,
+	raidDamageHitsPerMinute: RaidDamageHitsLevel60,
 });
 
 // The class options every preset build sets. They always set the starting totems, so loading a
-// build puts its own in place and changing them marks the build as modified.
+// build puts its own in place and changing them marks the build as modified. The same goes for
+// the raid hits: the Level 30 builds take none, because their enemy hits the shaman itself.
 //
 // The Level 30 PvP builds start the fight with no totems and put them down in the rotation's
 // prepull actions.
-const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create() };
+const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create(), raidDamageHitsPerMinute: 0 };
 
 // The raid and dungeon builds start the fight with their totems already down, each at the
 // default seconds before the pull, one totem GCD apart (see starting_totems.tsx). They cost no
@@ -601,21 +624,26 @@ const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTo
 // On 2026-10-08 that was +0.3 at 180 sec on Level 60 over the old prepull totems, and +0.7
 // at 120 sec on Level 30 + 5. At 300 sec it can be 1 to 2 behind, because the totems run out
 // 30 sec sooner and the rotation puts them down again.
+//
+// Since 2026-10-15 (the rotation auditor's pass 20) the Level 60 builds put them down 4, 3
+// and 2 sec before the pull, one totem GCD apart and after the 1 sec Magma Totem's slot, so a 5 min
+// totem lasts the whole 300 sec fight: +2.4 at 300 sec on Level 60, +2.1 on Imp GW, +1.2 on Water
+// Shield and +0.7 on Mana Tide, with 120 and 180 sec unchanged. Level 30 keeps its 28 / 30 sec.
 const startingTotemsLevel60 = StartingTotems.create({
 	earth: EarthTotem.StrengthOfEarthTotem,
-	earthSecondsBeforePull: 28,
+	earthSecondsBeforePull: 4,
 	air: AirTotem.WindfuryTotem,
-	airSecondsBeforePull: 27,
+	airSecondsBeforePull: 3,
 	// No fire totem before the pull: since the 2026-10-13 gear round the Optimized rotation puts
 	// Searing Totem down at the pull (+5.9 at 180 sec over Flametongue Totem, which shares the
 	// weapon buff slot with Windfury Totem).
 	water: WaterTotem.ManaSpringTotem,
-	waterSecondsBeforePull: 30,
+	waterSecondsBeforePull: 2,
 });
-const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
+const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60, raidDamageHitsPerMinute: RaidDamageHitsLevel60 };
 // Magma Totem lasts only 20 sec, so it goes down 1 sec before the pull.
 const PresetBuildOptionsLevel60Magma = {
-	...PresetBuildOptions,
+	...PresetBuildOptionsLevel60,
 	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, fire: FireTotem.MagmaTotem, fireSecondsBeforePull: 1 }),
 };
 // Windfury Totem comes at level 32.
@@ -623,8 +651,10 @@ const PresetBuildOptionsLevel30 = {
 	...PresetBuildOptions,
 	startingTotems: StartingTotems.create({
 		...startingTotemsLevel60,
+		earthSecondsBeforePull: 28,
 		air: AirTotem.NoAirTotem,
 		airSecondsBeforePull: 0,
+		waterSecondsBeforePull: 30,
 		fire: FireTotem.FlametongueTotem,
 		fireSecondsBeforePull: 29,
 	}),
@@ -688,7 +718,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
@@ -710,7 +739,6 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
-	curseOfShadow: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
@@ -776,7 +804,9 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // 807.7 at 120 / 180 / 300 sec, Level 60 + Water Shield 776.6 / 767.0 / 751.2 and Level 60 +
 // Mana Tide 756.6 / 750.3 / 745.3. A knob search kept every rotation knob but the Mana Tide
 // build's Fire Nova order (see shaman_presets.sh). It wanted Grace of Air in place of Windfury
-// Totem (+23 at 180 sec), but the builds keep Windfury Totem for the group. The talents were
+// Totem (+23 at 180 sec), but the builds keep Windfury Totem for the group. Standards 23 (user ruling,
+// 2026-10-15): there is no totem duty for shamans, every shaman drops its own party's totems (Strength
+// of Earth, Windfury Totem and Mana Spring for this melee party), like a warrior's Sunder. The talents were
 // not searched again.
 //
 // On 2026-10-12, after the shaman audit fixes since 2026-10-08 (the sim had moved Level 60 to
