@@ -1,0 +1,73 @@
+{
+  "id": "druid__balance-wrath-duty-ff",
+  "class": "Druid",
+  "spec": "Balance",
+  "build": "Balance Wrath (Faerie Fire duty)",
+  "isDefault": false,
+  "pr": null,
+  "race": "NightElf",
+  "talents": "5502220115501351-03-505",
+  "treeNames": [
+    "Balance",
+    "Feral Combat",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic_wrath",
+  "apl": "level60_wrath_ff",
+  "published": {
+    "dps": 757.1,
+    "source": "Faerie Fire duty (standards 23, 2026-10-15)"
+  },
+  "verify": {
+    "dps": 757.09,
+    "stderr": 0.19,
+    "iters": 20000,
+    "ok": true,
+    "note": "180 s, seed 1"
+  },
+  "summary": "The Wrath-only build keeping Faerie Fire on the target for the raid. Moonkin gets nothing from the armor itself, so the duty costs the GCDs it spends on it.",
+  "keyTalents": [
+    "Improved Wrath",
+    "Moonkin Form",
+    "Moonfury",
+    "Vengeance",
+    "Insect Swarm",
+    "Heart of the Wild",
+    "Naturalist"
+  ],
+  "rotation": [
+    "Pre-pull: Wrath cast 1.5 s before the pull",
+    "Racials, potions and runes on cooldown (Innervate on its own trigger)",
+    "Faerie Fire on the target first after the pull, again once it has under 1.5 s left",
+    "Insect Swarm whenever it is down (more than 8 s of fight left)",
+    "Moonfire whenever its dot is down (more than 8 s of fight left)",
+    "Starfire when Clearcasting is up",
+    "Moonfire when a Wrath plus 1.5 s would not land before the end",
+    "Otherwise Wrath"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Arcane Elixir",
+    "Elixir of Nature Power",
+    "Greater Mageblood Elixir",
+    "Wizard Oil",
+    "Lobster Stew",
+    "Major Spellblasting Potion",
+    "Demonic Rune",
+    "Goblin Sapper Charge",
+    "Cerebral Cortex Compound"
+  ],
+  "caveats": [
+    "Costs 32.0 / 29.4 / 27.6 DPS against the base build at 120 / 180 / 300 s",
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "5.5% behind the weaving Balance build (782.7 vs 828.5 at 180 s)",
+    "Wrath VIII's base damage ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned); the client has ×1.00",
+    "Natural Power gloves are +8.1 over Arcane Power for this build",
+    "Heart of the Wild 3 over Moonglow 3 is +2.6 in its own search"
+  ],
+  "notes": "druid__balance-wrath.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_wrath_ff rotation. Everything else is the base request.",
+  "duty": "Faerie Fire",
+  "baseBuild": "druid__balance-wrath"
+}

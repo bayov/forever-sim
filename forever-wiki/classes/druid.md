@@ -42,6 +42,7 @@ Shapeshift forms under Forever (Blizzard's World of Warcraft: Forever class deep
 - Weapon enchants and procs work in form, including weightstones, sharpening stones, Crusader and Windfury Totem (sim/core/consumes.go weaponEffectsWork). Dense Weightstone is worth 4.9 to the cat (Elemental Sharpening Stone would be 9.5, but its plans only drop in Molten Core), a raid Windfury Totem 13.3 in place of Grace of Air (the Feral preset's melee group has it, as the warrior's and rogue's do).
 - Potions and almost all similar consumables can be used in form without leaving it, and druids can drink Rage potions and Thistle Tea (sim/core/character.go canUseItemsInForm, sim/druid/thistle_tea.go). Thistle Tea is worth 12.2 to the cat, the Mighty Rage Potion's Strength 6.3. Most Engineering bombs still can't be used in form; the new SAF-T and EZ-Thro recipes can, but the sim doesn't have them.
 - Racials (Shadowmeld, War Stomp, Walk on Air), Faerie Fire, Barkskin and Nature's Grasp can be used in form. Moonkin Form can cast every non-healing spell. Berserk works in Cat and Bear Form.
+- Faerie Fire (Feral) is a trainer spell at 25 under Forever (foreverchanges.pro), cast from Cat or Bear Form: free, 1 sec GCD, 6 sec cooldown, 505 armor for 40 sec like Faerie Fire. Forever's Faerie Fire and Curse of Recklessness share the minor armor slot (standards 20). The Faerie Fire duty presets (standards 23) keep it up: 31.5 DPS at 180 sec for Balance, 29.4 for the Wrath build, 5.2 for the cat.
 
 ## Spellbook changes (trainer abilities)
 

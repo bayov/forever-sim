@@ -68,5 +68,5 @@
     "The cat's swing spreads 20% either side of the weapon's DPS (the server's range isn't visible)",
     "Windfury Totem in the melee group is +13.3 over Grace of Air; Dense Weightstone on the mace is +4.9 (Elemental Sharpening Stone left out: its plans only drop in Molten Core)"
   ],
-  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Grace of Air regular, all blessings, own Leader of the Pack; latency 100 ms). Duration 180 s, durationVariation 20. Potion and Demonic Rune are in the consumes but do nothing in Cat Form. No edits needed."
+  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180 s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. No edits needed."
 }
