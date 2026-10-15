@@ -62,6 +62,9 @@ func (shamanEle) Knobs() []Knob {
 		// Lava Burst waits while Flame Shock has this many seconds or less left, since the 20%
 		// counts when the cast ends. 0 never waits.
 		{Name: "lavaBurstFlameShockLeft", Default: 0, Min: 0, Max: 3, Step: 1},
+		// 1 casts Earth Shock at the end of the fight, once a Lightning Bolt (its cast and about 1
+		// sec of flight) would no longer land in time.
+		{Name: "earthShockFinish", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -149,6 +152,10 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 			when = and(when, gt(dotRemainingTime(flameShock), seconds(6)))
 		}
 		items = append(items, cast(earthShock, when, "Earth Shock on the shock cooldown."))
+	}
+	if k["earthShockFinish"] == 1 {
+		items = append(items, cast(earthShock, lt(remainingTime(), add(spellCastTime(lightningBolt), seconds(1))),
+			"Earth Shock when a Lightning Bolt would not land before the end."))
 	}
 	if r := int(k["lightningBoltDownrank"]); r > 0 {
 		top := len(shaman.LightningBoltLevel) - 1
