@@ -115,3 +115,25 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
      - Results at 180 s, 10,000 iterations, Beast Mastery / Marksmanship / Lone Wolf: 2.5 sec bow 952.1 / 1020.2 / 1064.2, 2.5 sec gun 952.1 / 1020.2 / 1064.3, 2.6 sec gun 952.7 / 1021.4 / 1064.3, 2.9 sec bow 948.8 / 1017.4 / 1060.6, 3.2 sec crossbow 946.8 / 1016.2 / 1058.9, 3.3 sec crossbow 945.6 / 1014.9 / 1057.6. Aimed Shot, Multi-Shot and Sniper Shot are normalised and ammo adds the same damage a second at any speed, so speed only counts through per-shot procs (Deadly Aspects' Quick Shots), which favour the faster weapons. Survival never shoots: every candidate gives it 892.41 to the cent.
      - Winner: Striker's Mark's 2.5 sec bow (76.6 to 143.2) for the shared ranged set, item 993014, so Beast Mastery, Marksmanship and Lone Wolf share it (20,000 iterations: 952.2 / 1020.3 / 1064.0, +3.5 / +2.7 / +3.3 over Rhok'delar's speed). Blastershot Launcher's 2.6 sec gun sims 0.5 / 1.0 / 0.3 higher, but only with a 15% ammo pouch; Era Phase 1's sure ammo pouch is Ribbly's Bandolier at 14% (Gnoll Skin Bandolier's 15% isn't confirmed as Phase 1), and with it the gun falls 3.4 / 3.5 / 5.2 behind the bow, which keeps the 15% quiver (Ancient Sinew Wrapped Lamina, Rhok'delar's quest). Survival keeps Rhok'delar's 2.9 sec bow (item 993115).
      - Races on the winner (20,000 iterations, 180 s): Night Elf is best for the three ranged specs, the Orc the best Horde race (3.5 / 5.1 / 4.7 behind); for Survival the Orc is best and the Night Elf the best Alliance race (11.0 behind). Unchanged from before the pass.
+
+## Raid duties
+
+23. Raid actions that cost a GCD (user ruling 2026-10-15). Long buffs (blessings, Mark / Gift of the Wild, Arcane Intellect, Fortitude, Divine Spirit, Shadow Protection, auras) are cast long before the pull and cost no GCD in the sim. The shared raid (mksettings) still provides every buff and debuff as permanent; this item says which presets pay for them.
+   - **Sunder Armor: every warrior preset**, its encounter variants included, spends its first GCD after the pull on one Sunder Armor. All warriors do this and the tanks keep it up after, so there is no variant without it. The raid's Sunder debuff stays on.
+   - **Duty presets.** For each DPS-raising action below, the spec gets a second preset "on duty" next to its base preset, because one player in the raid covers it and the rest don't:
+     - The **base preset doesn't cast it**: the raid's buff or debuff covers it, as if another player did. If a base preset casts it today, it stops.
+     - The **duty preset casts it itself**. Its request switches the raid's matching buff or debuff off, so the effect comes only from its own casts. Buffs and totems go up before the pull where the game allows; debuffs go up as early after the pull as the rotation best allows. Each is refreshed before it drops.
+     - The duty preset's rotation is the base rotation plus the duty, built from the class's rotopt template (a knob), re-optimised if the duty changes the best priorities.
+     - Its meta has `duty` (a short label, e.g. "Faerie Fire") and `baseBuild` (the base preset's id), like the encounter presets' `encounter` and `baseBuild`. The report ranks base presets and shows duty presets behind a toggle, with their DPS cost against the base.
+   - **The duties:**
+     - Warrior (Fury, Fury 2H, Arms): Battle Shout (party buff; before the pull, refreshed).
+     - Druid (Balance, Balance Wrath, Feral): Faerie Fire (Feral's is Faerie Fire (Feral)).
+     - Warlock (every spec): Curse of Recklessness, and Curse of the Elements, as two separate duty presets. The warlock casts that curse in place of its own when it can hold only one curse on the target.
+     - Hunter (every preset): Hunter's Mark.
+     - Paladin (every Ret preset): keeping the raid's DPS-raising judgement debuff up (Judgement of the Crusader, or whatever Forever's equivalent is), where the base preset judges only for its own damage.
+     - Shaman (Enhancement, Elemental): the party's totems (Windfury, Strength of Earth, Grace of Air, Mana Spring or what the party needs), dropped before the pull and refreshed. The base preset gets them from the raid.
+   - **Not duties:**
+     - Defensive debuffs: Demoralizing Shout and Roar, Thunder Clap, Curse of Weakness, Scorpid Sting, Insect Swarm. User ruling: DPS-raising duties only.
+     - Expose Armor: it doesn't stack with Sunder.
+     - Improved Scorch and Winter's Chill: under Forever they help only the mage's own spells.
+     - Shadow Weaving: passive.
