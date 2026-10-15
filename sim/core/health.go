@@ -100,11 +100,16 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 		return
 	}
 
-	if healingModel == nil {
+	// Without a healing model, a fight that ends when the mobs die (a health fight) still
+	// takes our health and can kill us, as when we solo mobs while leveling. A timed fight
+	// without one keeps us at full health, as the DPS presets that let a boss hit us (for
+	// Lightning Shield, rage and the like) have always had it.
+	if healingModel == nil && character.Env.Encounter.EndFightAtHealth == 0 {
 		return
 	}
-
-	character.Unit.Metrics.tmiBin = healingModel.BurstWindow
+	if healingModel != nil {
+		character.Unit.Metrics.tmiBin = healingModel.BurstWindow
+	}
 
 	character.RegisterAura(Aura{
 		Label:    ChanceOfDeathAuraLabel,
@@ -138,7 +143,7 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 		},
 	})
 
-	if healingModel.Hps != 0 {
+	if healingModel != nil && healingModel.Hps != 0 {
 		character.applyHealingModel(healingModel)
 	}
 }
