@@ -2,7 +2,7 @@ import ApexCharts from 'apexcharts';
 import tippy, { followCursor, Props } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
-import { ResourceType } from '../../proto/api.js';
+import { ResourceType, Ruleset } from '../../proto/api.js';
 import { OtherAction } from '../../proto/common.js';
 import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
 import { AuraUptimeLog, CastLog, DamageDealtLog, DpsLog, ResourceChangedLogGroup, SimLog, ThreatLogGroup } from '../../proto_utils/logs_parser.js';
@@ -10,7 +10,7 @@ import { resourceNames } from '../../proto_utils/names.js';
 import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { orderedResourceTypes } from '../../proto_utils/utils.js';
 import { TypedEvent } from '../../typed_event.js';
-import { bucket, distinct, formatToCompactNumber, formatToNumber, maxIndex, stringComparator } from '../../utils.js';
+import { bucket, distinct, formatToCompactNumber, formatToNumber, stringComparator, sum } from '../../utils.js';
 import { actionColors } from './color_settings.js';
 import { EventCategory, EventFilter } from './events_filter.js';
 import { hitOutcome, HitOutcomeKind, outcomeBadge } from './hit_outcome.js';
@@ -593,10 +593,11 @@ export class Timeline extends ResultComponent {
 
 		if (players.length == 1) {
 			const player = players[0];
-			const dpsData = this.addDpsSeries(player, options, '');
+			const dpsData = this.addDpsSeries(player, options, '', duration);
 			this.addDpsYAxis(dpsData.maxDps, options);
 			tooltipHandlers.push(dpsData.tooltipHandler);
-			tooltipHandlers.push(this.addManaSeries(player, options));
+			const continuousRegen = this.resultData!.result.request.simOptions?.ruleset != Ruleset.RulesetClassic;
+			tooltipHandlers.push(this.addManaSeries(player, options, continuousRegen));
 			tooltipHandlers.push(this.addThreatSeries(player, options, ''));
 			tooltipHandlers = tooltipHandlers.filter(handler => handler != null);
 
@@ -604,7 +605,7 @@ export class Timeline extends ResultComponent {
 		} else {
 			let maxDps = 0;
 			players.forEach(player => {
-				const dpsData = this.addDpsSeries(player, options, `var(--bs-${player.classColor}`);
+				const dpsData = this.addDpsSeries(player, options, `var(--bs-${player.classColor}`, duration);
 				maxDps = Math.max(maxDps, dpsData.maxDps);
 				tooltipHandlers.push(dpsData.tooltipHandler);
 			});
@@ -681,32 +682,76 @@ export class Timeline extends ResultComponent {
 	}
 
 	// Returns a function for drawing the tooltip, or null if no series was added.
-	private addDpsSeries(unit: UnitMetrics, options: any, colorOverride: string): { maxDps: number; tooltipHandler: TooltipHandler } {
-		const dpsLogs = unit.dpsLogs.filter(log => log.timestamp >= 0);
+	//
+	// The DPS is the damage of the last 15 sec, so it changes at two kinds of moments: when we
+	// deal damage, and when an old hit leaves the window 15 sec later. We draw a point at both.
+	// When nothing hits for a while, like while we wait on mana, the line then falls at the
+	// moments it really falls. Each change is a jump, so we draw the value just before it and
+	// just after it at the same time.
+	//
+	// Between 5 and 15 sec into the fight we divide by the time so far (see DpsLog.windowAt), so
+	// the value also falls slowly between changes. We add a point every half second there.
+	private addDpsSeries(unit: UnitMetrics, options: any, colorOverride: string, duration: number): { maxDps: number; tooltipHandler: TooltipHandler } {
+		const dpsLogs = unit.dpsLogs;
+		const changes = new Map<number, number>();
+		const addChange = (timestamp: number, amount: number) => changes.set(timestamp, (changes.get(timestamp) ?? 0) + amount);
+		const logsAt = new Map<number, DpsLog>();
+		dpsLogs.forEach(log => {
+			const amount = sum(log.damageLogs.map(damageLog => damageLog.amount));
+			addChange(log.timestamp, amount);
+			addChange(log.timestamp + DpsLog.DPS_WINDOW, -amount);
+			logsAt.set(log.timestamp, log);
+		});
+		for (let t = DpsLog.DPS_MIN_WINDOW; t < DpsLog.DPS_WINDOW; t += 0.5) addChange(t, 0);
+		addChange(0, 0);
+		addChange(duration, 0);
+
+		// Each point keeps the hits at its time (none at a window exit) and the last hits at or
+		// before it, for the auras in the tooltip.
+		const points: Array<{ timestamp: number; dps: number; log: DpsLog | null; aurasLog: DpsLog | null }> = [];
+		let damage = 0;
+		let lastLog: DpsLog | null = null;
+		[...changes.keys()]
+			.sort((a, b) => a - b)
+			.forEach(timestamp => {
+				const window = DpsLog.windowAt(timestamp);
+				const before = damage / window;
+				damage += changes.get(timestamp)!;
+				// Floating point sums can leave a tiny leftover when the window empties.
+				if (Math.abs(damage) < 1e-6) damage = 0;
+				const log = logsAt.get(timestamp) ?? null;
+				if (log) lastLog = log;
+				// The hits before the pull count towards the window, but we don't draw them.
+				if (timestamp < 0 || timestamp > duration) return;
+				const after = damage / window;
+				if (Math.abs(after - before) > 1e-9) points.push({ timestamp, dps: before, log: null, aurasLog: lastLog });
+				points.push({ timestamp, dps: after, log, aurasLog: lastLog });
+			});
 
 		options.colors.push(colorOverride || dpsColor);
 		options.series.push({
 			name: 'DPS',
 			type: 'line',
-			data: dpsLogs.map(log => {
-				return {
-					x: log.timestamp,
-					y: log.dps,
-				};
-			}),
+			data: points.map(point => ({ x: point.timestamp, y: point.dps })),
 		});
 
 		return {
-			maxDps: dpsLogs[maxIndex(dpsLogs.map(l => l.dps))!].dps,
+			maxDps: Math.max(1, ...points.map(point => point.dps)),
 			tooltipHandler: (dataPointIndex: number) => {
-				const log = dpsLogs[dataPointIndex];
-				return this.dpsTooltip(log, true, unit, colorOverride);
+				const point = points[dataPointIndex];
+				return this.dpsTooltip(point.timestamp, point.dps, point.log, point.aurasLog, unit, colorOverride);
 			},
 		};
 	}
 
 	// Returns a function for drawing the tooltip, or null if no series was added.
-	private addManaSeries(unit: UnitMetrics, options: any): TooltipHandler | null {
+	//
+	// A spend is a jump, so we draw a point after each change at a moment, like the regen up to
+	// it and then the cost of a cast. Under Forever, mana regenerates all the time and the sim
+	// adds the regen since the last event at every event, so a straight line between moments is
+	// right. Under Classic, mana only changes at the 2 sec ticks and the casts, so we also draw
+	// the value before the moment and the line stays flat until it.
+	private addManaSeries(unit: UnitMetrics, options: any, continuousRegen: boolean): TooltipHandler | null {
 		const allManaLogs = unit.groupedResourceLogs[ResourceType.ResourceTypeMana];
 		const manaLogs = allManaLogs.filter(log => log.timestamp >= 0);
 		if (manaLogs.length == 0) {
@@ -717,16 +762,17 @@ export class Timeline extends ResultComponent {
 		// draw the line over the top of the axis.
 		const maxMana = Math.max(...allManaLogs.map(log => Math.max(log.valueBefore, log.valueAfter)));
 
+		const points: Array<{ value: number; log: ResourceChangedLogGroup }> = [];
+		manaLogs.forEach(log => {
+			if (!continuousRegen) points.push({ value: log.valueBefore, log });
+			log.logs.forEach(changedLog => points.push({ value: changedLog.valueAfter, log }));
+		});
+
 		options.colors.push(manaColor);
 		options.series.push({
 			name: 'Mana',
 			type: 'line',
-			data: manaLogs.map(log => {
-				return {
-					x: log.timestamp,
-					y: log.valueAfter,
-				};
-			}),
+			data: points.map(point => ({ x: point.log.timestamp, y: point.value })),
 		});
 		options.yaxis.push({
 			seriesName: 'Mana',
@@ -759,14 +805,12 @@ export class Timeline extends ResultComponent {
 			},
 		} as any);
 
-		return (dataPointIndex: number) => {
-			const log = manaLogs[dataPointIndex];
-			return this.resourceTooltip(log, maxMana, true);
-		};
+		return (dataPointIndex: number) => this.resourceTooltip(points[dataPointIndex].log, maxMana, true);
 	}
 
 	// Returns a function for drawing the tooltip, or null if no series was added. Threat adds up
-	// over the fight to far more than the DPS, so it gets its own axis on the right.
+	// over the fight to far more than the DPS, so it gets its own axis on the right. It only
+	// changes when we act, so we draw the value before and after each change at the same time.
 	private addThreatSeries(unit: UnitMetrics, options: any, colorOverride: string): TooltipHandler | null {
 		const threatLogs = unit.threatLogs.filter(log => log.timestamp >= 0);
 		if (threatLogs.length == 0) {
@@ -779,12 +823,10 @@ export class Timeline extends ResultComponent {
 		options.series.push({
 			name: 'Threat',
 			type: 'line',
-			data: threatLogs.map(log => {
-				return {
-					x: log.timestamp,
-					y: log.threatAfter,
-				};
-			}),
+			data: threatLogs.flatMap(log => [
+				{ x: log.timestamp, y: log.threatBefore },
+				{ x: log.timestamp, y: log.threatAfter },
+			]),
 		});
 		options.yaxis.push({
 			seriesName: 'Threat',
@@ -815,7 +857,7 @@ export class Timeline extends ResultComponent {
 		} as any);
 
 		return (dataPointIndex: number) => {
-			const log = threatLogs[dataPointIndex];
+			const log = threatLogs[Math.floor(dataPointIndex / 2)];
 			return this.threatTooltip(log, true, unit, colorOverride);
 		};
 	}
@@ -1699,7 +1741,7 @@ export class Timeline extends ResultComponent {
 
 	// The chart's tooltips. The time is the title, then the events at that moment, then the
 	// value of the line.
-	private chartTooltipTitle(log: SimLog, player: UnitMetrics, colorOverride: string) {
+	private chartTooltipTitle(timestamp: number, player: UnitMetrics, colorOverride: string) {
 		return (
 			<div className="timeline-tooltip-title">
 				{colorOverride != '' && (
@@ -1710,18 +1752,20 @@ export class Timeline extends ResultComponent {
 						</span>
 					</>
 				)}
-				<span className="timeline-tooltip-name">{formatSeconds(log.timestamp)}</span>
+				<span className="timeline-tooltip-name">{formatSeconds(timestamp)}</span>
 			</div>
 		);
 	}
 
-	private dpsTooltip(log: DpsLog, _includeAuras: boolean, player: UnitMetrics, colorOverride: string) {
+	// The hits are those at this time, none at the moment an old hit leaves the window. The
+	// auras are those at the last hits at or before it.
+	private dpsTooltip(timestamp: number, dps: number, log: DpsLog | null, aurasLog: DpsLog | null, player: UnitMetrics, colorOverride: string) {
 		return (
 			<div className="timeline-tooltip dps">
-				{this.chartTooltipTitle(log, player, colorOverride)}
-				{log.damageLogs.length > 0 && <ul className="timeline-tooltip-hits">{log.damageLogs.map(damageLog => tooltipHit(damageLog, true))}</ul>}
-				<div className="timeline-tooltip-rows">{tooltipRow('DPS', formatAmount(log.dps, 1), 'series-color')}</div>
-				{this.tooltipAurasSection(log)}
+				{this.chartTooltipTitle(timestamp, player, colorOverride)}
+				{log && log.damageLogs.length > 0 && <ul className="timeline-tooltip-hits">{log.damageLogs.map(damageLog => tooltipHit(damageLog, true))}</ul>}
+				<div className="timeline-tooltip-rows">{tooltipRow('DPS', formatAmount(dps, 1), 'series-color')}</div>
+				{aurasLog && this.tooltipAurasSection(aurasLog)}
 			</div>
 		);
 	}
@@ -1729,7 +1773,7 @@ export class Timeline extends ResultComponent {
 	private threatTooltip(log: ThreatLogGroup, includeAuras: boolean, player: UnitMetrics, colorOverride: string) {
 		return (
 			<div className="timeline-tooltip threat">
-				{this.chartTooltipTitle(log, player, colorOverride)}
+				{this.chartTooltipTitle(log.timestamp, player, colorOverride)}
 				<div className="timeline-tooltip-rows">{tooltipRow('Before', formatAmount(log.threatBefore, 1))}</div>
 				<ul className="timeline-tooltip-changes">
 					{log.logs.map(threatLog => tooltipChange(threatLog, `${formatAmount(threatLog.threat, 1)} threat`))}

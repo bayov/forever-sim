@@ -494,6 +494,18 @@ export class DpsLog extends SimLog {
 	}
 
 	static DPS_WINDOW = 15; // Window over which to calculate DPS.
+	static DPS_MIN_WINDOW = 5;
+
+	// The seconds we divide the window's damage by at a time in the fight.
+	//
+	// Before 15 sec into the fight, the window holds only the damage since the pull. Dividing by
+	// the full 15 sec would draw the opening as a slow climb from 0, so we divide by the time so
+	// far instead. We never divide by less than 5 sec, because the first hit or two would
+	// otherwise read as thousands of DPS.
+	static windowAt(timestamp: number): number {
+		return Math.min(DpsLog.DPS_WINDOW, Math.max(DpsLog.DPS_MIN_WINDOW, timestamp));
+	}
+
 	static fromLogs(damageDealtLogs: Array<DamageDealtLog>): Array<DpsLog> {
 		const groupedDamageLogs = SimLog.groupDuplicateTimestamps(damageDealtLogs);
 
@@ -519,7 +531,7 @@ export class DpsLog extends SimLog {
 				curDamageLogs = curDamageLogs.slice(newStartIdx);
 			}
 
-			const dps = curDamageTotal / DpsLog.DPS_WINDOW;
+			const dps = curDamageTotal / DpsLog.windowAt(ddLogGroup[0].timestamp);
 			if (isNaN(dps)) {
 				console.warn('NaN dps!');
 			}
