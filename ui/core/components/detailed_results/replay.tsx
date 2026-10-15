@@ -594,8 +594,12 @@ export class Replay extends ResultComponent {
 		});
 		this.ui.stage.addEventListener('dblclick', () => this.toggleFullscreen());
 		// The keys work while the replay has focus. A click on a button would move the focus to
-		// the button, and then Space would press the button as well as play or pause.
-		this.ui.player.addEventListener('pointerup', () => this.rootElem.focus({ preventScroll: true }));
+		// the button, and then Space would press the button as well as play or pause. A click in
+		// the search box keeps the focus there, so we can type in it.
+		this.ui.player.addEventListener('pointerup', event => {
+			if ((event.target as HTMLElement).closest('input')) return;
+			this.rootElem.focus({ preventScroll: true });
+		});
 		document.addEventListener('click', () => this.ui.speedMenu.classList.add('hide'));
 
 		this.bindProgress();
