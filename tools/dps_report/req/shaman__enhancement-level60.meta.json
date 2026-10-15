@@ -19,11 +19,11 @@
     "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 823.8,
-    "stderr": null,
+    "dps": 823.79,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "matches the published number, with PR #21's Earth Shock VII ×1.08"
   },
   "summary": "Stormstrike/Maelstrom Weapon Enhancement with a two-hand axe, Windfury Weapon and Windfury Totem for the group; Concussion 5 replaces Convection 5. It is the Enhancement spec's default Level 60 preset.",
   "keyTalents": [
@@ -76,7 +76,7 @@
     "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs",
     "Without Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI) every build lost about 7.7 DPS",
     "One 2% crit elixir by the standard; Mongoose, Grizzly and Owl stacked would be about +36 if Forever allows it",
-    "Earth Shock VII looks slightly untuned; held at the 0.66 ratio Enhancement would gain +0.8%",
+    "Earth Shock VII's base damage ×1.08, halfway to the level 24 rank's 0.66 of Era; the client has ×1.00",
     "Tier 1 4/5-piece bonuses not live"
   ],
   "notes": "Request is mksettings -spec enh output unchanged (no starting fire totem, as in the preset since the Searing Totem change)."
