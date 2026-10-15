@@ -120,7 +120,7 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // hits get the armor. The knob search kept the rest of the rotation at 120, 180 and 300 sec.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
-		"The Level 60 rotation, keeping Faerie Fire (Feral) on the target for the raid. Turn off the raid's Faerie Fire and Curse of Recklessness to see its cost.",
+		"The Level 60 rotation, keeping Faerie Fire (Feral) on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
 	group: 'Level 60',
 });
 
@@ -303,6 +303,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
+// The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
+// Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
+// so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Level 60 (Faerie Fire duty)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
 // The Level 60 build, 729.5 / 717.2 / 708.1 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
@@ -329,11 +339,11 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 60 (Faerie Fire duty)', {
 	group: 'Level 60',
 	tooltip:
-		"The Level 60 build keeping Faerie Fire (Feral) on the target for the raid. Turn off the raid's Faerie Fire and Curse of Recklessness to see its cost.",
+		"The Level 60 build keeping Faerie Fire (Feral) on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
-	encounter: EncounterLevel60,
+	encounter: EncounterLevel60FaerieFireDuty,
 	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
