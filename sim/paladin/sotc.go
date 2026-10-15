@@ -43,15 +43,24 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 		libramBonus = 33
 	}
 
+	// The judgement debuff is one aura per target (core.JudgementOfTheCrusaderAura registers it by
+	// label), so it is built once with the highest rank the paladin knows. Built per rank, the
+	// first registration (rank 1, 23 Holy) won and every rank's judgement applied it.
+	top := 0
+	for i, rank := range ranks {
+		if paladin.Level >= rank.level {
+			top = i
+		}
+	}
+	debuffs := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, ranks[top].judge.bonus*improvedSotC+libramBonus, judgementDuration)
+	})
+
 	for i, rank := range ranks {
 		rank := rank
 		if paladin.Level < rank.level {
 			break
 		}
-
-		debuffs := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-			return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, rank.judge.bonus*improvedSotC+libramBonus, judgementDuration)
-		})
 
 		judgeSpell := paladin.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: rank.judge.spellID},
