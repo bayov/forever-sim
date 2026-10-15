@@ -14,7 +14,7 @@ func init() {
 }
 
 func (mageFire) Knobs() []Knob {
-	return append(mageCommonKnobs(),
+	return append(append(mageCommonKnobs(), finisherKnobs(1.04)...),
 		// Scorch until Fire Vulnerability has 5 stacks, and again once it has less than this
 		// many seconds left. 0 never Scorches.
 		Knob{Name: "scorchRefresh", Default: 5, Min: 0, Max: 9, Step: 3},
@@ -72,6 +72,7 @@ func (mageFire) Build(k Knobs) *proto.APLRotation {
 	case 3:
 		filler = s.scorch
 	}
+	items = append(items, finisherLines(k, filler, s.fireBlast, s.scorch)...)
 	items = append(items, cast(filler, nil, "The filler."))
 	rot := rotation(items...)
 	if k["prepull"] == 1 {

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frost",
   "published": {
-    "dps": 941.5,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 948.3,
+    "source": "PR (rotation auditor pass 19: end-of-fight instants, 2026-10-15)"
   },
   "verify": {
-    "dps": 941.54,
-    "stderr": 0.56,
+    "dps": 948.3,
+    "stderr": 0.6,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "180 s, 20000 iterations, on the pass 19 rotation"
   },
   "summary": "Deep Frost Frostbolt build with Fingers of Frost, Shatter and Winter's Chill, plus Arcane Concentration. Its own playstyle, 5% behind Frostfire. The preset is High Order with a Major Spellblasting Potion.",
   "keyTalents": [
@@ -42,6 +42,7 @@
     "Evocation below 20% mana with more than 90 s left (almost never fires)",
     "Ice Lance on every Fingers of Frost charge: the boss counts as Frozen, so 4 times the damage and Shatter crit",
     "Arcane Missiles on a Missile Barrage proc",
+    "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1 s)",
     "Filler: Frostbolt (2.5 s)"
   ],
   "consumes": [

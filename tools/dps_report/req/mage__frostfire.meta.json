@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frostfire",
   "published": {
-    "dps": 988.7,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 1011.5,
+    "source": "PR (rotation auditor pass 19: end-of-fight instants, Ice Lance ahead of Scorch, 2026-10-15)"
   },
   "verify": {
-    "dps": 988.72,
-    "stderr": 0.59,
+    "dps": 1011.5,
+    "stderr": 0.6,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "180 s, 20000 iterations, on the pass 19 rotation"
   },
   "summary": "Fire 29 / Frost 22 built around Frostfire Bolt, which takes both trees' talents and feeds Heating Up and Fingers of Frost at once. The mage's default Level 60 preset and the top build, the same split as foreverchanges' popular Fire build.",
   "keyTalents": [
@@ -40,12 +40,13 @@
     "Pre-pull: Frostfire Bolt at -3 s",
     "Cooldowns (Demonic Rune, racial) on a free GCD; mana gems never (they share the rune's cooldown)",
     "Evocation below 30% mana with more than 60 s left",
+    "Ice Lance on every Fingers of Frost charge, ahead of Scorch and Pyroblast",
     "Scorch to 5 Fire Vulnerability stacks and before they run out (exactly 5 in the opener)",
     "Pyroblast at 3 Heating Up stacks (1.5 s cast)",
-    "Ice Lance on every Fingers of Frost charge",
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast only with mana the fight can't use (above 150 per second of fight left)",
     "Rank 2 Frostfire Bolt once Evocation is spent or under 60 s left, while mana is under 60 per second of fight left",
+    "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5 s)",
     "Filler: Frostfire Bolt (2.5 s), carrying Fingers of Frost Shatter crit"
   ],
   "consumes": [

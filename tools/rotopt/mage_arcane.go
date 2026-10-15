@@ -1,6 +1,9 @@
 package main
 
-import "github.com/wowsims/classic/sim/core/proto"
+import (
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/mage"
+)
 
 // Arcane under Forever rules. Arcane Blast stacks to 4 for 10% more damage on the mage's other
 // spells per stack, but each stack makes the next Arcane Blast cost 175% more. Arcane Missiles
@@ -15,7 +18,7 @@ func init() {
 }
 
 func (mageArcane) Knobs() []Knob {
-	return append(mageCommonKnobs(),
+	return append(append(mageCommonKnobs(), finisherKnobs(0)...),
 		// Arcane Blast up to this many stacks before Arcane Missiles.
 		Knob{Name: "blastStacks", Default: 3, Min: 1, Max: 4, Step: 1},
 		// Arcane Missiles only with Missile Barrage up (1), or at the stack count whatever
@@ -40,6 +43,8 @@ func (mageArcane) Knobs() []Knob {
 func (mageArcane) Build(k Knobs) *proto.APLRotation {
 	s := mageRanks()
 	items := mageCooldowns(k, s)
+	arcaneExplosion := rankID(mage.ArcaneExplosionLevel[:], mage.ArcaneExplosionSpellId[:])
+	items = append(items, finisherLines(k, s.arcaneBlast, s.fireBlast, arcaneExplosion)...)
 	stacks := auraNumStacks(arcaneBlastAura)
 	abKnown := auraIsKnown(arcaneBlastAura)
 	maxStacks := num(k["blastStacks"])
