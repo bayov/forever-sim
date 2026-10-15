@@ -143,7 +143,7 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	}
 	switch k["curse"] {
 	case 1:
-		items = append(items, cast(lockCurseOfElement, not(targetAuraIsActive(spellID(11722))), "Our own Curse of the Elements when the raid has none."))
+		items = append(items, cast(lockCurseOfElement, not(targetAuraIsActive(lockCurseOfElement)), "Our own Curse of the Elements when the raid has none."))
 	case 2:
 		items = append(items, cast(lockCurseOfReckl, not(targetAuraIsActive(lockCurseOfReckl)), "Curse of Recklessness when it is down."))
 	}

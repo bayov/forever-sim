@@ -211,11 +211,11 @@ Tree rules
 - [x] 10.1 Blessings: Might, Kings, Wisdom
 - [x] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
 - [x] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
-- [ ] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
+- [x] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
 
 ## 11. Encounter and rotation
 
-- [ ] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
+- [x] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
 - [ ] 11.2 Shaman APL values (totem timers, shield charges and the like)
 - [ ] 11.3 APL edge cases: a swing due during a cast, replacing a totem early, Fire Nova on Clearcasting, mana thresholds
 - [ ] 11.4 Movement and range in PvP (time out of melee range)
@@ -351,7 +351,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 2.5 Mana returns
 
-- Judgement of Wisdom: 59 mana (rank 3) on a 50% roll from every direct hit, melee or spell. White swings roll even when they miss or are dodged (Classic). Procs and phantom spells don't. The user keeps rank 3 at every level (2026-10-08), because we only sim a raid at level 60. Its Forever value is still unknown.
+- Judgement of Wisdom: 59 mana (rank 3) on a 50% roll from every direct hit, melee or spell. White swings roll even when they miss or are dodged (Classic). Procs and phantom spells don't. It now takes the rank for the raid's level, 33 / 46 / 59 at 38 / 48 / 58 and none below 38, as client 70338 has it (10.4). The user had kept rank 3 at every level on 2026-10-08.
 - Water Shield: 3 globes of 2% max mana, free, 15 sec cooldown, 10 min (the beta client text). A landed spell, melee or ranged hit on the shaman or a heal crit spends a globe, at most one every 3.5 sec. The client only says "every few seconds". The user keeps 3.5 sec (2026-10-08): raid damage comes once every 5 to 15 sec and is the user's setting, so the wait never shows at those rates. No preset sets the raid damage rate, so it is 0 by default.
 - Mana Tide Totem: 88 / 197 / 290 mana every 3 sec, 4 times, to the party members with mana, 5 min cooldown. It takes the water slot and stops Mana Spring Totem. Rank 1 matches the beta client text.
 - `mana_returns_test.go`: TestOrcShamanJudgementOfWisdom (457 procs on 901 unarmed swings at level 60, 50.7%, 135 of them missed or dodged, 59 each, 42.8% if misses didn't roll), TestOrcShamanWaterShield (a hit every 5 sec spends a globe each time, a hit every 3 sec only every other hit), TestOrcShamanManaTide (ticks at 3 / 6 / 9 / 12 sec after the drop, Mana Spring gone). Taking the miss rolls out of Judgement of Wisdom, a 1 sec globe wait, or leaving Mana Spring up under Mana Tide each make the tests fail. Nothing changed in the sim.
@@ -1814,6 +1814,32 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - No preset takes them. Level 60 is measured with no second shaman in the group, and Level 30 has none.
 - Open: whether two shamans' Mana Spring Totems stack (notes.md Need to Verify, 8.45).
 - No sim change, no new test.
+
+### 10.4 Debuffs
+
+- The user OK'd it (2026-10-15): "sg".
+- A subagent compared every raid debuff with client 70338 (SpellEffect and SpellLevels).
+- Match: Curse of the Elements (mask 126, every Magic school with Nature, damage and resistance, +10% and -75 at 60, +6% and -45 at 30), Sunder Armor (5 x 450), Expose Armor (450 a combo point, Improved Expose Armor now only refunds energy and combo points), Faerie Fire and Curse of Recklessness (505, aura 674), Judgement of the Crusader (161 at 60, Improved Seal of the Crusader removed), Judgement of Wisdom (33 / 46 / 59 at 38 / 48 / 58), Insect Swarm (-2% hit) and Hunter's Mark. Curse of Shadow has no rank a warlock can learn, and the sim leaves it off. Judgement of Light only heals.
+- The client puts all four armor debuffs on one new armor aura (674) and says nothing about stacking, so the major (Sunder or Expose) and minor (Faerie Fire or Recklessness) slots stay the user's rulings.
+- Stormstrike is Physical only in the client and the sim. The armor debuffs raise it, and Curse of the Elements only raises the spells its mark empowers.
+- At Level 60 Sunder Armor, Faerie Fire, Curse of the Elements (spells and Shadow Oil) and Judgement of Wisdom (mana) change our numbers. Level 30 takes no debuffs.
+- Fixed (2026-10-15, `sim/core/debuffs.go`), under Forever, the defensive raid debuffs. The Defensive Debuffs section is off and the Level 60 encounter has no tank, so no shaman number moves and no golden changed:
+  - Curse of Weakness was Classic's 31 (37 Improved) at every level. It's now 4 / 7 / 12 / 18 / 26 / 37 at 4 / 12 / 22 / 32 / 42 / 52, with Improved Curse of Weakness gone.
+  - Demoralizing Shout was 146 (204 Improved) for 30 sec, and Demoralizing Roar 138 (193). Both now take the rank for the level with its growth a level for 10 levels: Shout 204 at 60 and 85 at 30 for 45 sec, Roar 204 at 60 and 88 at 30. Their Improved talents are gone.
+  - Thunder Clap was 10% (15% Improved). Every Forever rank is 20%, and Improved Thunder Clap only cuts the Rage cost.
+  - Scorpid Sting did nothing. It now takes 2% off the target's hit from level 22, in Insect Swarm's slot, so the two give 2% together.
+  - Curse of the Elements now carries each rank's client ID (440892, 1311676, 1311677, 1311680), where it had Classic's 11722, so the sim and the combat logs name the same spell. The warlock rotation template looks for 1311680 now (`tools/rotopt/warlock.go`). No generated rotation used the old check.
+- A throwaway test read the target at 30 and 60 (Shout 85 / 204, Roar 88 / 204, Curse of Weakness 12 / 37, Thunder Clap 20%, Scorpid Sting 2%). We kept no test, as agreed.
+- Open: whether Scorpid Sting and Insect Swarm stack in Forever. For the class owners (`orchestration/followups.md`): a class's own Sunder, Faerie Fire, Recklessness and Expose give the level 60 value below level 54 to 58, the warrior's own Demoralizing Shout and the paladin's own Judgement of the Crusader rounding (34.5 / 57.5 / 126.5 where the client has 35 / 58 / 127).
+
+### 11.1 Encounter
+
+- The user OK'd it (2026-10-15) and doesn't need Vishas's armor checked: "No need to verify vishas armor, it doesn't matter."
+- Already covered: the hit table by target level (4.x), armor (4.9, `armor_test.go`), resistance and partial resists (5.2), Vishas's swings, crits and parry haste (6.x), and Fire Nova, Magma Totem and Chain Lightning on more targets (7.13, 7.23, 7.25).
+- Level 60: level 63, 3731 armor, 180 sec +- 20. The level and armor are the shared standard, and notes.md Need to Verify has the boss. The mob type is Unknown in the shaman preset and the DPS report request, where the orchestration standard says Humanoid. No shaman effect keys on Humanoid, so it stays. Health and the execute phases don't matter, because the fight ends on time and we have no execute.
+- Level 30: Interrogator Vishas, level 32 Humanoid, 1063 armor and 52 minimum damage from the 1.12 creature data, 120 sec +- 5. His health (30,000) is made up and doesn't matter for the same reason.
+- Level 30 PvP: the level 30 player placeholder from 6.7.
+- No sim change, no test, no Need to Verify item.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

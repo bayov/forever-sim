@@ -187,15 +187,29 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		}
 	}
 
+	// Forever took out the talents that raised these three, so we give the rank for the raid's
+	// level and ignore "improved".
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 0, 3)))
+		if !forever {
+			MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 0, 3)))
+		} else if rank := HighestRankAt(level, foreverCurseOfWeaknessLevel[:]); rank > 0 {
+			MakePermanent(curseOfWeaknessAuraInternal(target, "Curse of Weakness", foreverCurseOfWeaknessSpellID[rank], -foreverCurseOfWeakness[rank]))
+		}
 	}
 
 	if debuffs.DemoralizingRoar != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5)))
+		if !forever {
+			MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5)))
+		} else if rank, reduction := foreverDemoralizingRoar.at(level); rank > 0 {
+			MakePermanent(foreverDemoralizingAura(target, "Demoralizing Roar", foreverDemoralizingRoar.spellID[rank], time.Second*30, reduction))
+		}
 	}
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
+		if !forever {
+			MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
+		} else if rank, reduction := foreverDemoralizingShout.at(level); rank > 0 {
+			MakePermanent(foreverDemoralizingAura(target, "Demoralizing Shout", foreverDemoralizingShout.spellID[rank], time.Second*45, reduction))
+		}
 	}
 	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
 		if !forever {
@@ -207,8 +221,13 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 
 	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
-		// +5% from Warrior's Conqueror's Battlegear 5pc
-		MakePermanent(ThunderClapAura(target, 8205, GetTristateValueInt32(debuffs.ThunderClap, 10, 15)))
+		if !forever {
+			// +5% from Warrior's Conqueror's Battlegear 5pc
+			MakePermanent(ThunderClapAura(target, 8205, GetTristateValueInt32(debuffs.ThunderClap, 10, 15)))
+		} else if rank := HighestRankAt(level, foreverThunderClapLevel[:]); rank > 0 {
+			// Every Forever rank slows attacks by 20%, and Improved Thunder Clap only cuts the Rage cost.
+			MakePermanent(ThunderClapAura(target, foreverThunderClapSpellID[rank], 20))
+		}
 	}
 	if debuffs.Thunderfury {
 		MakePermanent(ThunderfuryASAura(target))
@@ -219,7 +238,12 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(InsectSwarmAura(target))
 	}
 	if debuffs.ScorpidSting && targetIdx == 0 {
-		MakePermanent(ScorpidStingAura(target))
+		aura := MakePermanent(ScorpidStingAura(target))
+		if forever && level >= 22 {
+			// Forever's Scorpid Sting (3043, learned at 22) takes 2% off the target's chance to
+			// hit. It shares Insect Swarm's slot, so the two give 2% together.
+			increasedMissEffect(aura, 0.02)
+		}
 	}
 }
 
@@ -257,6 +281,7 @@ var (
 	foreverCurseOfRecklessnessLevel = [...]int{0, 14, 28, 42, 56}
 
 	foreverCurseOfElementsLevel      = [...]int{0, 20, 30, 40, 50}
+	foreverCurseOfElementsSpellID    = [...]int32{0, 440892, 1311676, 1311677, 1311680}
 	foreverCurseOfElementsResistance = [...]float64{0, 30, 45, 60, 75}
 	foreverCurseOfElementsDamage     = [...]float64{0, 0.04, 0.06, 0.08, 0.10}
 
@@ -633,7 +658,7 @@ func foreverCurseOfElementsAura(target *Unit, rank int) *Aura {
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Elements",
-		ActionID: ActionID{SpellID: 11722},
+		ActionID: ActionID{SpellID: foreverCurseOfElementsSpellID[rank]},
 		Duration: time.Minute * 5,
 	})
 	for _, school := range []stats.SchoolIndex{stats.SchoolIndexArcane, stats.SchoolIndexFire, stats.SchoolIndexFrost, stats.SchoolIndexHoly, stats.SchoolIndexNature, stats.SchoolIndexShadow} {
@@ -911,9 +936,18 @@ func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	modDmgReduction *= []float64{1, 1.06, 1.13, 1.20}[points]
 	modDmgReduction = math.Floor(modDmgReduction)
 
+	return curseOfWeaknessAuraInternal(target, "Curse of Weakness"+strconv.Itoa(int(points)), 11708, modDmgReduction)
+}
+
+// Forever's Curse of Weakness ranks (client 70338). Improved Curse of Weakness is gone.
+var foreverCurseOfWeaknessLevel = [...]int{0, 4, 12, 22, 32, 42, 52}
+var foreverCurseOfWeaknessSpellID = [...]int32{0, 702, 1108, 6205, 7646, 11707, 11708}
+var foreverCurseOfWeakness = [...]float64{0, 4, 7, 12, 18, 26, 37}
+
+func curseOfWeaknessAuraInternal(target *Unit, label string, spellID int32, modDmgReduction float64) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
-		Label:    "Curse of Weakness" + strconv.Itoa(int(points)),
-		ActionID: ActionID{SpellID: 11708},
+		Label:    label,
+		ActionID: ActionID{SpellID: spellID},
 		Duration: time.Minute * 2,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			aura.Unit.PseudoStats.BonusPhysicalDamage += modDmgReduction
@@ -1018,6 +1052,57 @@ func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts 
 	apReductionEffect(aura, math.Floor(baseAPReduction*(1+0.08*float64(impDemoShoutPts))))
 	return aura
 }
+
+// foreverDemoralizingRanks holds Forever's ranks of Demoralizing Shout or Roar (client 70338).
+// Each rank grows a little a level from the level it's learned, for 10 levels, and the
+// server drops the fraction.
+type foreverDemoralizingRanks struct {
+	level    [6]int
+	spellID  [6]int32
+	base     [6]float64
+	perLevel [6]float64
+}
+
+func (r *foreverDemoralizingRanks) at(level int32) (int, float64) {
+	rank := HighestRankAt(level, r.level[:])
+	if rank == 0 {
+		return 0, 0
+	}
+	learned := int32(r.level[rank])
+	return rank, math.Floor(r.base[rank] + r.perLevel[rank]*float64(min(level, learned+10)-learned))
+}
+
+// Rank 5 of Demoralizing Shout takes 204 attack power at 60 and rank 2 85 at 30. Improved
+// Demoralizing Shout is gone.
+var foreverDemoralizingShout = foreverDemoralizingRanks{
+	level:    [6]int{0, 14, 24, 34, 44, 54},
+	spellID:  [6]int32{0, 1160, 6190, 11554, 11555, 11556},
+	base:     [6]float64{0, 49, 77, 98, 147, 196},
+	perLevel: [6]float64{0, 1.4, 1.4, 1.4, 1.4, 1.4},
+}
+
+// Rank 5 of Demoralizing Roar takes 204 attack power at 60 and rank 2 88 at 30. Feral
+// Aggression is gone.
+var foreverDemoralizingRoar = foreverDemoralizingRanks{
+	level:    [6]int{0, 10, 20, 32, 42, 52},
+	spellID:  [6]int32{0, 99, 1735, 9490, 9747, 9898},
+	base:     [6]float64{0, 46, 74, 95, 144, 193},
+	perLevel: [6]float64{0, 1, 1.4, 1, 1.4, 1.4},
+}
+
+func foreverDemoralizingAura(target *Unit, label string, spellID int32, duration time.Duration, apReduction float64) *Aura {
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    label,
+		ActionID: ActionID{SpellID: spellID},
+		Duration: duration,
+	})
+	apReductionEffect(aura, apReduction)
+	return aura
+}
+
+// Forever's Thunder Clap ranks (client 70338).
+var foreverThunderClapLevel = [...]int{0, 6, 18, 28, 38, 48, 58}
+var foreverThunderClapSpellID = [...]int32{0, 6343, 8198, 8204, 8205, 11580, 11581}
 
 func VindicationAura(target *Unit, points int32, _ int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
