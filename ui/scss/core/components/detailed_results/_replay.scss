@@ -25,7 +25,7 @@
 
 .replay-player {
 	position: relative;
-	background: #3d4650;
+	background: #5a5e62;
 	color: #fff;
 	// EllesmereUI's font is Avant Garde. We use it when the system has it, or the closest
 	// geometric sans we can find.
@@ -64,10 +64,13 @@
 	overflow: hidden;
 	cursor: pointer;
 	user-select: none;
-	// A mid slate, like a dim zone in the game, so the frames' black borders and dark bar
-	// backgrounds stand out against it.
-	background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(140, 160, 185, 0.25), transparent 70%),
-		radial-gradient(ellipse 120% 60% at 50% 115%, rgba(60, 52, 44, 0.6), transparent 60%), linear-gradient(to bottom, #56636f, #48535e 65%, #3d4650);
+	// The game's own rock texture (Interface/FrameGeneral/UI-Background-Rock), turned gray by
+	// taking only its lightness over a gray, then lit up, so the frames' black borders and dark
+	// bar backgrounds stand out against it.
+	background-color: #7a7d80;
+	background-image: linear-gradient(rgba(150, 155, 160, 0.5), rgba(150, 155, 160, 0.5)), url('/forever/assets/img/replay_background_rock.jpg');
+	background-size: auto, 512px;
+	background-blend-mode: screen, luminosity;
 }
 
 .replay-message {
@@ -133,18 +136,8 @@
 
 .replay-sct {
 	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 34%;
+	inset: 0;
 	pointer-events: none;
-
-	&.replay-sct-in {
-		left: 5%;
-	}
-
-	&.replay-sct-out {
-		right: 5%;
-	}
 }
 
 .replay-sct-text {
@@ -180,10 +173,18 @@
 // right with the icon after the text.
 .replay-sct-out .replay-sct-text {
 	transform-origin: left center;
+
+	&.sticky {
+		transform-origin: right center;
+	}
 }
 
 .replay-sct-in .replay-sct-text {
 	transform-origin: right center;
+
+	&.sticky {
+		transform-origin: left center;
+	}
 
 	.replay-sct-icon {
 		order: 1;
@@ -403,6 +404,38 @@
 	background: rgba(255, 255, 255, 0.55);
 }
 
+// The pixel glow, drawn by replay_glow.ts like BayovCore draws it: lines seen through 2px
+// strips flush inside the icon's border, adding light to the icon under them.
+.replay-glow {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.replay-glow-edge {
+	position: absolute;
+	overflow: hidden;
+}
+
+.replay-glow-line {
+	position: absolute;
+	top: 0;
+	left: 0;
+	mix-blend-mode: plus-lighter;
+}
+
+// The maintain cells over the resource bars, nine to a row as wide as the bars.
+.replay-maintain {
+	--cell: 46px;
+	--gap: 4px;
+
+	position: relative;
+	width: calc(9 * var(--cell) + 8 * var(--gap));
+	height: 32px;
+	margin-bottom: 2px;
+}
+
 // The class pack in the middle: the casts we made, our procs, the resource block, the
 // cooldown rows and the cast bar.
 .replay-center {
@@ -411,7 +444,7 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 4px;
-	width: 452px;
+	width: 446px;
 }
 
 .replay-history {
@@ -522,37 +555,6 @@
 	}
 }
 
-// The pale pixel glow of the Bayov pack: eight short lines that run around inside the border.
-@property --replay-glow-angle {
-	syntax: '<angle>';
-	inherits: false;
-	initial-value: 0deg;
-}
-
-@keyframes replay-glow {
-	to {
-		--replay-glow-angle: 360deg;
-	}
-}
-
-@mixin replay-pixel-glow {
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 1px;
-		z-index: 2;
-		padding: 2px;
-		background: repeating-conic-gradient(from var(--replay-glow-angle), var(--replay-glow) 0 14deg, transparent 14deg 45deg);
-		mask:
-			linear-gradient(#000 0 0) content-box,
-			linear-gradient(#000 0 0);
-		mask-composite: exclude;
-		mix-blend-mode: screen;
-		animation: replay-glow 4s linear infinite;
-		pointer-events: none;
-	}
-}
-
 .replay-icon {
 	--width: 46px;
 	--height: 32px;
@@ -573,10 +575,6 @@
 			filter: grayscale(1);
 		}
 
-		&.buff-up {
-			@include replay-pixel-glow;
-		}
-
 		// The flash of a button we just pressed.
 		&.pressed {
 			transform: scale(0.92);
@@ -592,8 +590,26 @@
 
 	&.proc {
 		animation: replay-pop 0.18s ease-out;
+	}
 
-		@include replay-pixel-glow;
+	// The maintain cells. Something we should have up but don't is grey (and glows red), and a
+	// debuff that faded is grey and faded back.
+	&.maintain {
+		position: absolute;
+		top: 0;
+
+		&.missing .replay-icon-img,
+		&.faded .replay-icon-img {
+			filter: grayscale(1);
+		}
+
+		&.faded {
+			opacity: 0.4;
+		}
+
+		&.ending .replay-icon-time {
+			color: #ff4a3d;
+		}
 	}
 
 	&.debuff {

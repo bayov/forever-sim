@@ -127,7 +127,7 @@ export class EventFilter {
 		// We ask every question before the first if. The log types look alike to TypeScript, so a
 		// false answer would otherwise narrow log down to nothing for the next question.
 		const isDamage = log.isDamageDealt();
-		const isCast = [log.isCastBegan(), log.isMajorCooldownUsed(), log.isExtraAttack(), log.isCooldown()].some(Boolean);
+		const isCast = [log.isCastBegan(), log.isMajorCooldownUsed(), log.isExtraAttack(), log.isCooldown(), log.isTotem()].some(Boolean);
 		const isAura = [log.isAuraEvent(), log.isAuraStacksChange()].some(Boolean);
 		const isResource = [log.isResourceChanged(), log.isMaxResources()].some(Boolean);
 		if (isDamage) return 'damage';

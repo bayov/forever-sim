@@ -3,12 +3,14 @@ import debounce from 'lodash/debounce';
 import tippy, { Instance } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
+import { WOWHEAD_DOMAIN, WOWHEAD_EXPANSION_ENV } from '../../constants/wowhead.js';
 import { ResourceType } from '../../proto/api.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { CastLog, DamageDealtLog } from '../../proto_utils/logs_parser.js';
 import { resourceNames } from '../../proto_utils/names.js';
 import { formatToCompactNumber, formatToNumber } from '../../utils.js';
 import { EventFilter } from './events_filter.js';
+import { BUFF_GLOW, MISSING_GLOW, setGlow } from './replay_glow.js';
 import {
 	ActiveAura,
 	activeAuraAt,
@@ -21,6 +23,8 @@ import {
 	ReplayEnemy,
 	ReplayModel,
 	SctEvent,
+	totemAt,
+	TotemSlot,
 	TrackedCooldown,
 } from './replay_model.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
@@ -36,12 +40,11 @@ const STICKY_LIFE = 1.6;
 // How far apart lines that start close together are, in pixels.
 const LANE_PX = 28;
 const STICKY_LANE_PX = 42;
-// Where the lines line up across their area, as a share of its width. What we do to the enemies
-// lines up on its left edge, so the icons form a column. What happens to us lines up on its
-// right edge, with the icon after the text. Crits stay put in their own column toward the middle
+// What we do to the enemies lines up on the left edge of the target's frame, so the icons
+// form a column over it. What happens to us lines up on the right edge of our frame, with the
+// icon after the text. Crits stay put in their own column, this many pixels toward the middle
 // of the screen, so the lines that scroll by don't run over them.
-const SCROLL_EDGE: Record<SctEvent['side'], number> = { in: 0.45, out: 0.55 };
-const STICKY_EDGE: Record<SctEvent['side'], number> = { in: 1, out: 0 };
+const STICKY_GAP_PX = 32;
 
 // The action history strip shows this many of our latest casts. A new cast pushes the others
 // one slot to the left over this many seconds.
@@ -80,6 +83,24 @@ const formatCountdown = (seconds: number): string => {
 const easeOut = (x: number) => 1 - (1 - x) * (1 - x);
 
 const formatSeconds = (seconds: number): string => `${seconds.toFixed(1)}s`;
+
+// The game's own tooltips of spells, buffs and items, from wowhead's Forever data, by
+// "spell/17364", "aura/17364" or "item/13444". We ask once per id. Null while we wait, and
+// stays null when wowhead doesn't have it.
+const ingameTooltips = new Map<string, { content: DocumentFragment | null; loaded: Promise<void> }>();
+
+// Wowhead's tooltip markup, without anything that could run.
+const parseTooltip = (html: string): DocumentFragment => {
+	const template = document.createElement('template');
+	template.innerHTML = html;
+	template.content.querySelectorAll('script, iframe, style, link, object, embed').forEach(elem => elem.remove());
+	template.content.querySelectorAll('*').forEach(elem => {
+		Array.from(elem.attributes).forEach(attribute => {
+			if (attribute.name.startsWith('on')) elem.removeAttribute(attribute.name);
+		});
+	});
+	return template.content;
+};
 
 // The mana bar's color shifts as the mana runs low, like the user's Bayov resource bar.
 const manaColor = (fraction: number): string => (fraction < 0.15 ? '#af313a' : fraction < 0.3 ? '#af46ac' : fraction < 0.5 ? '#6358af' : '#577eaf');
@@ -264,6 +285,8 @@ export class Replay extends ResultComponent {
 		majorCooldowns: HTMLElement;
 		center: HTMLElement;
 		resources: HTMLElement;
+		maintain: HTMLElement;
+		sctZone: HTMLElement;
 		sctIn: HTMLElement;
 		sctOut: HTMLElement;
 		progress: HTMLElement;
@@ -289,7 +312,15 @@ export class Replay extends ResultComponent {
 	private playerCastBar = makeCastBar('player');
 	private playerCasts: Array<CastLog> = [];
 	private enemyFrames: Array<UnitFrameRefs & { enemy: ReplayEnemy; starts: Array<number> }> = [];
-	private cooldownElems: Array<HTMLElement> = [];
+	private cooldownViews: Array<{ cooldown: TrackedCooldown; elem: HTMLElement }> = [];
+	// The shaman pack's maintain cells: the shield, the four totem slots and Flame Shock.
+	private maintainViews: {
+		shield: HTMLElement | null;
+		totems: Array<{ slot: TotemSlot; elem: HTMLElement; shown: string }>;
+		flameShock: HTMLElement | null;
+		shieldShown: string;
+		flameShockShown: string;
+	} | null = null;
 	private procElems = new Map<string, HTMLElement>();
 	// The buffs that come and go, like procs. A buff of an ability in the cooldown tracker shows
 	// on the ability's button instead.
@@ -342,6 +373,8 @@ export class Replay extends ResultComponent {
 			majorCooldowns: ref<HTMLDivElement>(),
 			center: ref<HTMLDivElement>(),
 			resources: ref<HTMLDivElement>(),
+			maintain: ref<HTMLDivElement>(),
+			sctZone: ref<HTMLDivElement>(),
 			sctIn: ref<HTMLDivElement>(),
 			sctOut: ref<HTMLDivElement>(),
 			progress: ref<HTMLDivElement>(),
@@ -374,7 +407,7 @@ export class Replay extends ResultComponent {
 							<span ref={refs.hudDamage} className="replay-hud-value" />
 						</span>
 					</div>
-					<div className="replay-sct-zone">
+					<div ref={refs.sctZone} className="replay-sct-zone">
 						<div ref={refs.sctIn} className="replay-sct replay-sct-in" />
 						<div ref={refs.sctOut} className="replay-sct replay-sct-out" />
 					</div>
@@ -383,6 +416,7 @@ export class Replay extends ResultComponent {
 						<div ref={refs.center} className="replay-center">
 							<div ref={refs.history} className="replay-history" />
 							<div ref={refs.procs} className="replay-procs" />
+							<div ref={refs.maintain} className="replay-maintain" />
 							<div ref={refs.resources} className="replay-resources" />
 							<div ref={refs.coreCooldowns} className="replay-cooldowns core" />
 							<div ref={refs.majorCooldowns} className="replay-cooldowns major" />
@@ -451,6 +485,8 @@ export class Replay extends ResultComponent {
 			majorCooldowns: refs.majorCooldowns.value!,
 			center: refs.center.value!,
 			resources: refs.resources.value!,
+			maintain: refs.maintain.value!,
+			sctZone: refs.sctZone.value!,
 			sctIn: refs.sctIn.value!,
 			sctOut: refs.sctOut.value!,
 			progress: refs.progress.value!,
@@ -645,7 +681,6 @@ export class Replay extends ResultComponent {
 			this.ui.player.requestFullscreen?.();
 		}
 	}
-
 
 	// The big icon that pops up in the middle and fades, when we play, pause or change speed.
 	private flash(icon: string | null, text = '') {
@@ -958,6 +993,7 @@ export class Replay extends ResultComponent {
 							{tooltipRow('Times gained', String(gains))}
 						</div>
 					)}
+					{this.ingameTooltip(track.actionId, true)}
 				</div>
 			) as Element;
 		};
@@ -985,6 +1021,7 @@ export class Replay extends ResultComponent {
 						{tooltipRow('Used so far', `${used} of ${cooldown.castTimes.length}`)}
 						{used > 0 && tooltipRow('Last used', formatSeconds(cooldown.castTimes[used - 1]))}
 					</div>
+					{this.ingameTooltip(cooldown.actionId)}
 				</div>
 			) as Element;
 		};
@@ -1003,6 +1040,7 @@ export class Replay extends ResultComponent {
 				<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
 				{hits.length > 0 && <ul className="timeline-tooltip-hits">{hits.map(hit => tooltipHit(hit))}</ul>}
 				{hits.length > 1 && <div className="timeline-tooltip-rows">{tooltipRow('Total', formatToNumber(Math.round(total)))}</div>}
+				{this.ingameTooltip(log.actionId!)}
 			</div>
 		) as Element;
 	}
@@ -1027,6 +1065,7 @@ export class Replay extends ResultComponent {
 						{targets.length > 1 && tooltipRow('Targets', targets.join(', '))}
 					</div>
 				)}
+				{this.ingameTooltip(event.actionId, event.kind == 'aura')}
 			</div>
 		) as Element;
 	}
@@ -1053,21 +1092,31 @@ export class Replay extends ResultComponent {
 		this.procElems.clear();
 
 		this.playerCasts = model.casts.map(cast => cast.log);
-		const trackedAuras = new Set(model.cooldowns.map(cooldown => cooldown.aura?.key));
-		this.procTracks = model.playerAuras.filter(track => !track.alwaysUp && !trackedAuras.has(track.key));
+		// The buffs with a place of their own (a cooldown's button, a maintain cell or the pips)
+		// aren't procs.
+		const placed = new Set([
+			...model.cooldowns.map(cooldown => cooldown.aura?.key),
+			...(model.shaman?.shields ?? []).map(track => track.key),
+			model.maelstrom?.key,
+		]);
+		this.procTracks = model.playerAuras.filter(track => !track.alwaysUp && !placed.has(track.key));
 		this.buildPlayerFrame(model);
 		this.buildEnemyFrames(model);
 
 		// The cooldown tracker.
 		this.ui.coreCooldowns.replaceChildren();
 		this.ui.majorCooldowns.replaceChildren();
-		this.cooldownElems = model.cooldowns.map(cooldown => {
+		this.cooldownViews = [
+			...model.mainBar.map(cooldown => ({ cooldown, row: this.ui.coreCooldowns })),
+			...model.utilityBar.map(cooldown => ({ cooldown, row: this.ui.majorCooldowns })),
+		].map(({ cooldown, row }) => {
 			const elem = makeIcon(cooldown.actionId, 'cooldown');
-			(cooldown.longest > 30 ? this.ui.majorCooldowns : this.ui.coreCooldowns).appendChild(elem);
+			row.appendChild(elem);
 			this.tip(elem, this.cooldownTip(cooldown));
 			this.searchable(elem, cooldown.actionId.name);
-			return elem;
+			return { cooldown, elem };
 		});
+		this.buildMaintain(model);
 
 		// The progress bar marks where we used a major cooldown, like chapters on a video.
 		const span = model.end - model.start;
@@ -1136,10 +1185,11 @@ export class Replay extends ResultComponent {
 				pips.push(pip);
 			}
 		}
+		// From the bottom, like the user's Bayov resource bars: power, the swing, then the pips.
 		this.ui.resources.replaceChildren(
-			...powers.map(power => power.elem),
-			...(model.mainHandSwings.length > 1 ? [swing] : []),
 			...(pipKind ? [pipRow] : []),
+			...(model.mainHandSwings.length > 1 ? [swing] : []),
+			...powers.map(power => power.elem),
 		);
 		this.tip(this.ui.resources, () => {
 			const time = this.time;
@@ -1268,6 +1318,7 @@ export class Replay extends ResultComponent {
 		this.drawPlayer(model, time);
 		this.drawEnemies(model, time);
 		this.drawCooldowns(model, time);
+		this.drawMaintain(model, time);
 		this.drawHistory(model, time);
 		this.drawSct(model, time);
 		this.drawControls(model, time);
@@ -1335,8 +1386,7 @@ export class Replay extends ResultComponent {
 	}
 
 	private drawCooldowns(model: ReplayModel, time: number) {
-		model.cooldowns.forEach((cooldown, i) => {
-			const elem = this.cooldownElems[i];
+		this.cooldownViews.forEach(({ cooldown, elem }) => {
 			const aura = cooldown.aura ? activeAuraAt(cooldown.aura, time, model.end) : null;
 			const cd = cooldownAt(model, cooldown, time);
 			const pressIndex = lastIndexAtOrBefore(cooldown.castTimes, time);
@@ -1347,6 +1397,7 @@ export class Replay extends ResultComponent {
 			elem.classList.toggle('on-cooldown', !aura && !!cd);
 			elem.classList.toggle('ready', !aura && !cd);
 			elem.classList.toggle('expiring', !!aura && aura.remaining != null && aura.remaining < EXPIRING);
+			setGlow(elem, aura ? BUFF_GLOW : null);
 			if (aura) {
 				updateIcon(elem, aura.fraction == null ? null : 1 - aura.fraction, aura.remaining == null ? '' : formatCountdown(aura.remaining), aura.stacks);
 			} else if (cd) {
@@ -1355,6 +1406,146 @@ export class Replay extends ResultComponent {
 				updateIcon(elem, null, '', 0);
 			}
 		});
+	}
+
+	// The maintain cells, nine to a row as wide as the resource bars. The shield is in cell 1, the
+	// totems in cells 3 to 6 shifted half a cell right so the four are centred, and Flame Shock in
+	// cell 9, like the user's Bayov Shaman pack.
+	private buildMaintain(model: ReplayModel) {
+		const pack = model.shaman;
+		this.ui.maintain.replaceChildren();
+		this.ui.maintain.classList.toggle('hide', !pack);
+		if (!pack) {
+			this.maintainViews = null;
+			return;
+		}
+		const cell = (index: number, shift = 0): HTMLElement => {
+			const elem = makeIcon(ActionId.fromEmpty(), 'cooldown maintain');
+			elem.style.left = `calc(${index} * (var(--cell) + var(--gap)) + ${shift} * (var(--cell) + var(--gap)))`;
+			this.ui.maintain.appendChild(elem);
+			return elem;
+		};
+		const shield = pack.shields.length > 0 ? cell(0) : null;
+		const totems = pack.totems.map((slot, i) => {
+			const elem = cell(2 + i, 0.5);
+			this.tip(elem, this.totemTip(slot));
+			return { slot, elem, shown: '' };
+		});
+		const flameShock = model.enemies.some(enemy => enemy.debuffs.some(track => track.actionId.name.startsWith(pack.flameShock))) ? cell(8) : null;
+		this.maintainViews = { shield, totems, flameShock, shieldShown: '', flameShockShown: '' };
+	}
+
+	private drawMaintain(model: ReplayModel, time: number) {
+		const views = this.maintainViews;
+		const pack = model.shaman;
+		if (!views || !pack) return;
+		const show = (elem: HTMLElement, actionId: ActionId, shownKey: string): string => {
+			if (shownKey != actionId.toString()) {
+				setIcon(elem.querySelector('.replay-icon-img')!, actionId);
+				elem.dataset.name = actionId.name;
+			}
+			return actionId.toString();
+		};
+
+		// The shield. While it's down it stays in its cell, grey with a red glow.
+		if (views.shield) {
+			const up = pack.shields.map(track => activeAuraAt(track, time, model.end)).find(aura => !!aura) ?? null;
+			const track = up?.track ?? pack.shields.find(track => track.spanStarts[0] <= time) ?? pack.shields[0];
+			views.shieldShown = show(views.shield, track.actionId, views.shieldShown);
+			views.shield.classList.toggle('missing', !up);
+			setGlow(views.shield, up ? null : MISSING_GLOW);
+			updateIcon(views.shield, null, '', up?.stacks ?? 0);
+			if (!this.tips.has(views.shield)) {
+				this.tip(views.shield, () => this.auraTip(pack.shields.find(track => activeAuraAt(track, this.time, model.end)) ?? pack.shields[0], 'us')());
+			}
+		}
+
+		// The totems. A countdown turns orange, then red, near the totem's end. An empty slot
+		// is grey with a red glow.
+		views.totems.forEach(view => {
+			const totem = totemAt(view.slot, time);
+			view.elem.classList.toggle('hide', !totem);
+			if (!totem) return;
+			view.shown = show(view.elem, totem.drop.actionId, view.shown);
+			view.elem.classList.toggle('missing', !totem.up);
+			setGlow(view.elem, totem.up ? null : MISSING_GLOW);
+			const left = totem.drop.until - time;
+			view.elem.classList.toggle('expiring', totem.up && left < 10 && left >= 5);
+			view.elem.classList.toggle('ending', totem.up && left < 5);
+			updateIcon(
+				view.elem,
+				totem.up ? (time - totem.drop.start) / (totem.drop.until - totem.drop.start) : null,
+				totem.up ? formatCountdown(left) : '',
+				0,
+			);
+		});
+
+		// Flame Shock on the enemy we're hitting. After it fades it stays in its cell, grey and
+		// faded back.
+		if (views.flameShock) {
+			const enemy = model.enemies.find(enemy => enemy.unit.index == model.focus.at(time)) ?? model.enemies[0];
+			const track = enemy.debuffs.find(track => track.actionId.name.startsWith(pack.flameShock));
+			const aura = track ? activeAuraAt(track, time, model.end) : null;
+			const applied = !!track && track.spanStarts[0] <= time;
+			views.flameShock.classList.toggle('hide', !applied);
+			if (track && applied) {
+				views.flameShockShown = show(views.flameShock, track.actionId, views.flameShockShown);
+				views.flameShock.classList.toggle('faded', !aura);
+				updateIcon(
+					views.flameShock,
+					aura?.fraction == null ? null : 1 - aura.fraction,
+					aura?.remaining == null ? '' : formatCountdown(aura.remaining),
+					aura?.stacks ?? 0,
+				);
+				this.tip(views.flameShock, this.auraTip(track, enemy.name));
+			}
+		}
+	}
+
+	// The tooltip the game shows for the spell, buff or item, under ours. A buff shows the
+	// buff's text, like hovering a buff in the game, and falls back to the spell's.
+	private ingameTooltip(actionId: ActionId, isAura = false): Element | null {
+		const id = actionId.spellTooltipOverride ?? actionId;
+		const type = id.itemId ? 'item' : id.spellId ? 'spell' : null;
+		if (!type) return null;
+		const key = `${isAura && type == 'spell' ? 'aura' : type}/${id.itemId || id.spellId}`;
+		let entry = ingameTooltips.get(key);
+		if (!entry) {
+			const url = `https://nether.wowhead.com/${WOWHEAD_DOMAIN}/tooltip/${type}/${id.itemId || id.spellId}?dataEnv=${WOWHEAD_EXPANSION_ENV}`;
+			const newEntry: { content: DocumentFragment | null; loaded: Promise<void> } = { content: null, loaded: Promise.resolve() };
+			newEntry.loaded = fetch(url)
+				.then(response => response.json())
+				.then(json => {
+					const html = (key.startsWith('aura/') && json['buff']) || json['tooltip'];
+					if (html && !json['error']) newEntry.content = parseTooltip(html);
+				})
+				.catch(() => undefined)
+				.then(() => this.refreshTooltip());
+			ingameTooltips.set(key, newEntry);
+			entry = newEntry;
+		}
+		if (!entry.content) return null;
+		const box = (<div className="replay-ingame-tooltip" />) as HTMLElement;
+		box.appendChild(entry.content.cloneNode(true));
+		return box;
+	}
+
+	private totemTip(slot: TotemSlot): () => Element | null {
+		return () => {
+			const totem = totemAt(slot, this.time);
+			if (!totem) return null;
+			const left = totem.drop.until - this.time;
+			return (
+				<div className="timeline-tooltip">
+					{tooltipTitle(totem.drop.actionId)}
+					<div className="timeline-tooltip-meta">
+						{totem.up ? `${slot.element} totem, down since ${formatSeconds(totem.drop.start)}` : `No ${slot.element.toLowerCase()} totem down`}
+					</div>
+					{totem.up && <div className="timeline-tooltip-rows">{tooltipRow('Time left', formatSeconds(left))}</div>}
+					{this.ingameTooltip(totem.drop.actionId)}
+				</div>
+			) as Element;
+		};
 	}
 
 	// The action history strip: our latest casts, newest on the right, sliding left as we cast
@@ -1406,6 +1597,16 @@ export class Replay extends ResultComponent {
 	// The scrolling combat text. What happens to us scrolls down on the left, what we do to the
 	// enemies scrolls up on the right, and crits pop up and stay put for a moment.
 	private drawSct(model: ReplayModel, time: number) {
+		// Where the frames are, in pixels from the left and the right of the combat text's area.
+		const zone = this.ui.sctZone.getBoundingClientRect();
+		const playerFrame = this.playerFrame!.root.querySelector('.replay-unit-main')!.getBoundingClientRect();
+		const focus = model.focus.at(time);
+		const targetFrame = (this.enemyFrames.find(frame => frame.enemy.unit.index == focus) ?? this.enemyFrames[0])?.root
+			.querySelector('.replay-unit-main')!
+			.getBoundingClientRect();
+		const ourRight = zone.right - playerFrame.right;
+		const targetLeft = targetFrame ? targetFrame.left - zone.left : zone.width * 0.7;
+
 		const first = lastIndexAtOrBefore(model.sctTimes, time - SCROLL_LIFE) + 1;
 		const last = lastIndexAtOrBefore(model.sctTimes, time);
 		const shown = new Set<number>();
@@ -1440,11 +1641,14 @@ export class Replay extends ResultComponent {
 			}
 			const opacity = Math.min(1, age / 0.06) * Math.min(1, (1 - progress) / 0.3);
 			elem.style.top = `calc(${(y * 100).toFixed(2)}% + ${offset}px)`;
-			const edge = (event.sticky ? STICKY_EDGE : SCROLL_EDGE)[event.side];
-			if (event.side == 'out') {
-				elem.style.left = `${edge * 100}%`;
+			if (event.side == 'out' && !event.sticky) {
+				elem.style.left = `${targetLeft}px`;
+			} else if (event.side == 'out') {
+				elem.style.right = `${zone.width - targetLeft + STICKY_GAP_PX}px`;
+			} else if (!event.sticky) {
+				elem.style.right = `${ourRight}px`;
 			} else {
-				elem.style.right = `${(1 - edge) * 100}%`;
+				elem.style.left = `${zone.width - ourRight + STICKY_GAP_PX}px`;
 			}
 			elem.style.transform = `translateY(-50%) scale(${scale.toFixed(3)})`;
 			elem.style.opacity = opacity.toFixed(3);

@@ -160,6 +160,29 @@ export interface ReplayEnemy {
 	casts: Array<CastLog>;
 }
 
+// A totem in one of the shaman's four slots, from when it went down until it runs out or the
+// next totem of its element takes its place.
+export interface TotemDrop {
+	actionId: ActionId;
+	start: number;
+	until: number;
+}
+
+export interface TotemSlot {
+	element: string;
+	drops: Array<TotemDrop>;
+	starts: Array<number>;
+}
+
+// The shaman class pack, laid out like the user's Bayov WeakAura: the bars of cooldowns in its
+// order, and the maintain cells over the resource bars (the shield, the four totems and Flame
+// Shock on the target).
+export interface ShamanPack {
+	shields: Array<AuraTrack>;
+	totems: Array<TotemSlot>;
+	flameShock: string;
+}
+
 export interface ReplayModel {
 	start: number;
 	end: number;
@@ -171,6 +194,10 @@ export interface ReplayModel {
 	comboPoints: Steps | null;
 	playerAuras: Array<AuraTrack>;
 	cooldowns: Array<TrackedCooldown>;
+	// The two rows under the resource bars: the main bar and the utility row.
+	mainBar: Array<TrackedCooldown>;
+	utilityBar: Array<TrackedCooldown>;
+	shaman: ShamanPack | null;
 	timerUses: Map<string, TimerUses>;
 	casts: Array<ReplayCast>;
 	castStarts: Array<number>;
@@ -312,6 +339,9 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	const casts = castLogs.map(toReplayCast);
 	const majorCooldownIds = player.majorCooldownLogs.map(log => log.actionId!);
 
+	const isShaman = player.classColor == 'shaman';
+	const totemSlots = buildTotemSlots(player.logs);
+
 	// Abilities with a cooldown shorter than the GCD, like an auto attack, aren't worth tracking.
 	const cooldowns = Array.from(cooldownsByKey.values()).filter(cooldown => cooldown.longest >= 1.5);
 	cooldowns.forEach(cooldown => {
@@ -320,6 +350,15 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	});
 	// The short rotation cooldowns first, then the long ones, each in the order we first used them.
 	cooldowns.sort((a, b) => Number(a.longest > 30) - Number(b.longest > 30) || a.firstUse - b.firstUse);
+
+	const { mainBar, utilityBar } = isShaman ? shamanBars(cooldowns) : splitBars(cooldowns);
+	const shaman: ShamanPack | null = isShaman
+		? {
+				shields: playerAuras.filter(track => SHAMAN_SHIELDS.some(name => named(track.actionId, name))),
+				totems: totemSlots,
+				flameShock: 'Flame Shock',
+		  }
+		: null;
 
 	const trackedKeys = new Set(cooldowns.map(cooldown => cooldown.key));
 	const actions = casts.filter(cast => {
@@ -392,6 +431,9 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		comboPoints,
 		playerAuras,
 		cooldowns,
+		mainBar,
+		utilityBar,
+		shaman,
 		timerUses,
 		casts,
 		castStarts: casts.map(cast => cast.log.timestamp),
@@ -411,6 +453,72 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 };
 
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+
+// The rows of the user's Bayov Shaman pack (bayovui/auras/forever/shaman/group.py), in its
+// order. The main bar is the rotation and the big cooldowns, then the racial and the items we
+// carry. Utility is the situational cooldowns. Flame Shock isn't on a bar, it has its own
+// maintain cell.
+const SHAMAN_MAIN = ['Stormstrike', 'Earth Shock', 'Fire Nova', 'Chain Lightning', 'Lava Burst', 'Rage of the Farseer', "Nature's Swiftness"];
+const SHAMAN_UTILITY = ['Grounding Totem', 'Earthbind Totem', 'Stoneclaw Totem', 'Mana Tide Totem', 'Totemic Projection'];
+const SHAMAN_UTILITY_ITEMS = ['Healthstone', 'Bandage', 'Target Dummy'];
+const SHAMAN_MAINTAIN = ['Flame Shock'];
+const SHAMAN_SHIELDS = ['Lightning Shield', 'Water Shield'];
+// The totem slots in the order of the pack's cells.
+const TOTEM_ELEMENTS = ['Air', 'Earth', 'Fire', 'Water'];
+
+// The ability's name without its rank, like "Earth Shock" for "Earth Shock (Rank 7)".
+const named = (actionId: ActionId, name: string) => actionId.name == name || actionId.name.startsWith(`${name} (`);
+
+const shamanBars = (cooldowns: Array<TrackedCooldown>) => {
+	const indexIn = (list: Array<string>, cooldown: TrackedCooldown) => list.findIndex(name => named(cooldown.actionId, name));
+	const rest = cooldowns.filter(cooldown => indexIn([...SHAMAN_MAIN, ...SHAMAN_UTILITY, ...SHAMAN_MAINTAIN], cooldown) < 0);
+	const utilityItems = rest.filter(cooldown => SHAMAN_UTILITY_ITEMS.some(name => cooldown.actionId.name.includes(name)));
+	const mainBar = [
+		...cooldowns.filter(cooldown => indexIn(SHAMAN_MAIN, cooldown) >= 0).sort((a, b) => indexIn(SHAMAN_MAIN, a) - indexIn(SHAMAN_MAIN, b)),
+		// The racial, the explosive, the potion and the rune, and anything else we used.
+		...rest.filter(cooldown => !utilityItems.includes(cooldown)).sort((a, b) => a.firstUse - b.firstUse),
+	];
+	const utilityBar = [
+		...cooldowns.filter(cooldown => indexIn(SHAMAN_UTILITY, cooldown) >= 0).sort((a, b) => indexIn(SHAMAN_UTILITY, a) - indexIn(SHAMAN_UTILITY, b)),
+		...utilityItems,
+	];
+	return { mainBar, utilityBar };
+};
+
+// The other classes have no pack of the user's to follow. The short rotation cooldowns go on
+// the main bar and the long ones on the row under it.
+const splitBars = (cooldowns: Array<TrackedCooldown>) => ({
+	mainBar: cooldowns.filter(cooldown => cooldown.longest <= 30),
+	utilityBar: cooldowns.filter(cooldown => cooldown.longest > 30),
+});
+
+const buildTotemSlots = (logs: Array<SimLog>): Array<TotemSlot> => {
+	const slots = new Map<string, Array<TotemDrop>>();
+	logs.forEach(log => {
+		if (!log.isTotem()) return;
+		if (!slots.has(log.element)) slots.set(log.element, []);
+		const drops = slots.get(log.element)!;
+		// A totem we put down before the pull logs its shorter time left right after.
+		const last = drops[drops.length - 1];
+		if (last && last.start == log.timestamp && last.actionId.equals(log.actionId!)) {
+			last.until = log.until;
+		} else {
+			drops.push({ actionId: log.actionId!, start: log.timestamp, until: log.until });
+		}
+	});
+	return TOTEM_ELEMENTS.filter(element => slots.has(element)).map(element => {
+		const drops = slots.get(element)!;
+		return { element, drops, starts: drops.map(drop => drop.start) };
+	});
+};
+
+// The totem down in the slot at this time, or the last one when the slot is empty.
+export const totemAt = (slot: TotemSlot, time: number): { drop: TotemDrop; up: boolean } | null => {
+	const i = lastIndexAtOrBefore(slot.starts, time);
+	if (i < 0) return null;
+	const drop = slot.drops[i];
+	return { drop, up: time < drop.until };
+};
 
 const distinctTargets = (logs: Array<SimLog>): Array<Entity> => {
 	const found: Array<Entity> = [];

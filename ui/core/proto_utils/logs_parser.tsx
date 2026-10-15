@@ -237,6 +237,7 @@ export class SimLog {
 					ExtraAttackLog.parse(params) ||
 					CooldownLog.parse(params) ||
 					MaxResourcesLog.parse(params) ||
+					TotemLog.parse(params) ||
 					Promise.resolve(new SimLog(params))
 				);
 			}),
@@ -285,6 +286,10 @@ export class SimLog {
 
 	isMaxResources(): this is MaxResourcesLog {
 		return this instanceof MaxResourcesLog;
+	}
+
+	isTotem(): this is TotemLog {
+		return this instanceof TotemLog;
 	}
 
 	// Group events that happen at the same time.
@@ -1244,5 +1249,38 @@ export class MaxResourcesLog extends SimLog {
 			return null;
 		}
 		return Promise.resolve(new MaxResourcesLog(params, maxValues));
+	}
+}
+
+// A shaman's totem went down in its element's slot, like
+// "{SpellID: 10438} down in the Fire slot until 55.000". A new totem in the slot takes the old
+// one's place.
+export class TotemLog extends SimLog {
+	readonly element: string;
+	readonly until: number;
+
+	constructor(params: SimLogParams, element: string, until: number) {
+		super(params);
+		this.element = element;
+		this.until = until;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} {this.newActionIdLink(this.actionId!)} down in the {this.element} slot until {this.until.toFixed(2)}s.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<TotemLog> | null {
+		const match = params.raw.match(/] ({.*?}) down in the (\w+) slot until (-?\d+\.?\d*)/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				return new TotemLog(params, match[2], parseFloat(match[3]));
+			});
 	}
 }
