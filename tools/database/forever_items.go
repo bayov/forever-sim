@@ -774,6 +774,13 @@ var ForeverItems = []*proto.UIItem{
 		Stats: stats.Stats{stats.Armor: 73, stats.Stamina: 23, stats.Intellect: 17, stats.SpellPenetration: 5}.ToFloatArray(),
 		Ilvl:  59, RequiredLevel: 54, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 	},
+	// Revealed October 12 to 13. Bind on equip, no source known yet.
+	{
+		Id: 284065, Name: "Crown of Maldazzar", Icon: "inv_helmet_12",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Armor: 61, stats.Stamina: 17, stats.ShadowPower: 24}.ToFloatArray(),
+		Ilvl:  58, RequiredLevel: 53, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
 }
 
 // ForeverSeenInGame are items whose stats differ from wowhead's Forever listing. They are
@@ -964,5 +971,13 @@ var ForeverSeenInGame = []*proto.UIItem{
 		Stats:           stats.Stats{stats.Strength: 5}.ToFloatArray(),
 		WeaponDamageMin: 71, WeaponDamageMax: 134, WeaponSpeed: 2.60,
 		Ilvl: 60, RequiredLevel: 55, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	// Revealed October 13 to 14. Triune Amulet (Whitemane, Scarlet Monastery Cathedral) traded
+	// its 7 Intellect for 8 spell power (Classic 7 Sta, 7 Int, 7 Spi). The wowhead Forever
+	// tooltip agrees, the scraped listing still has the Classic stats.
+	{
+		Id: 7722, Name: "Triune Amulet",
+		Stats: stats.Stats{stats.Stamina: 7, stats.Spirit: 7, stats.SpellPower: 8}.ToFloatArray(),
+		Ilvl:  44, RequiredLevel: 39, Quality: proto.ItemQuality_ItemQualityRare,
 	},
 }
