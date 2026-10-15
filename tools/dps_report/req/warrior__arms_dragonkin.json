@@ -842,7 +842,9 @@
               "options": {
                 "queueDelay": 250,
                 "shout": "WarriorShoutBattle",
-                "stance": "WarriorStanceBattle"
+                "stance": "WarriorStanceBattle",
+                "raidDamageHitsPerMinute": 2,
+                "raidDamagePerHit": 1500
               }
             }
           }

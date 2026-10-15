@@ -91,12 +91,18 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - Off-hand factor 1.0 until a test shows otherwise.
    - The crit bonus (`warr_crit_rage`, +100%) multiplies on top.
    - Dodges and parries refund as in Classic.
-   - Rage from damage taken keeps the Classic formula (it only matters to tanks).
+   - Rage from damage taken keeps the Classic formula. It matters to tanks, and to DPS warriors through the raid damage hits (24).
    - **Level scaling of k** (user ruling 2026-10-13: "assumption, either low/medium/high (flat/midpoint/scale-like-classic)"). The constants were measured at level 30 or below. At 30 they give about Classic's Rage per swing, but at 60 flat constants give about half. So k grows with level past 30: k(L) = k30 × (1 + s × (L − 30) / 30) for L > 30, and k30 at 30 or below.
      - s = 0: flat, the Low setting.
      - s = 0.5: midpoint, ×1.5 at 60, the Expected setting and the presets' default.
      - s = 1: Classic-like, ×2 at 60, the High setting. A 2.6 s one-hander's 18.0 Rage at 60 is then close to Classic's 18.6 for an average swing.
    The level scaling (`warr_rage_k`) and the off-hand factor (`warr_rage_oh`) are dashboard assumptions in spec_assumptions.md. Owner: the warrior worker, in sim/core/rage.go behind `Env.IsForever()`. Bear druids get the same rule, though no DPS preset uses one.
+
+24. Raid damage hits (user rulings 2026-10-15). The boss is on the tank, so a DPS takes only the encounter's raid damage, which the sim doesn't model. Specs with something that reacts to a hit taken get a stand-in: random direct hits at a set average rate.
+   - Shamans: 2 a minute for Enhancement (melee), 1 for Elemental (ranged). Each fires a Lightning Shield orb or spends a Water Shield globe (sim/shaman/shields.go), and every Level 60 rotation keeps Lightning Shield up.
+   - Warriors: 2 a minute at 1500 damage, as a Fire spell hit from the boss. Each gives Rage like any damage taken (15.4 from the level 63 boss) (sim/warrior/raid_hits.go). Added after the results auditor pointed out that the same raid damage helped Enhancement but not Fury and Arms.
+   - Nothing else reacts to a hit taken: Enrage needs a crit taken, and Retribution Aura a melee attacker. The other specs get no hits.
+   - The rates and the damage are estimates from Season of Discovery boss timers in the Deadly Boss Mods source (Ragnaros's Wrath every 26 sec, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths; none on Patchwerk, Loatheb and Sapphiron; about 10 a minute on Firemaw, Vaelastrasz and Huhuran below 30%), not log measurements. The dashboard's assumptions (`sham_raid_hits`, `war_raid_hits`) run 0 and 10 a minute beside the presets' rate.
 
 ## Races
 

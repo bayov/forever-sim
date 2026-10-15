@@ -8,6 +8,7 @@ import { Class, Faction, HandType, ItemSlot, PartyBuffs, PseudoStat, Race, Spec,
 import { WarriorStance } from '../core/proto/warrior';
 import { Stats } from '../core/proto_utils/stats';
 import { getSpecIcon } from '../core/proto_utils/utils';
+import * as Inputs from './inputs.js';
 import * as Presets from './presets';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
@@ -106,6 +107,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 	encounterPicker: {
 		// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 		showExecuteProportion: true,
+	},
+	encounterInputs: {
+		inputs: [Inputs.RaidDamageHitsInput, Inputs.RaidDamagePerHitInput],
 	},
 
 	presets: {
