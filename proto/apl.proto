@@ -168,6 +168,12 @@ message APLValue {
         APLValueChannelClipDelay channel_clip_delay = 58;
         APLValueFrontOfTarget front_of_target = 63;
         APLValueInMeleeRange in_melee_range = 80;
+        APLValueIsMoving is_moving = 84;
+
+        // Leveling session values (Encounter.leveling)
+        APLValueLevelingDistance leveling_distance = 81;
+        APLValueLevelingMobsRunningIn leveling_mobs_running_in = 82;
+        APLValueLevelingMobsOnUs leveling_mobs_on_us = 83;
 
         // Class or Spec-specific values
         // Shaman
@@ -450,6 +456,25 @@ message APLValueFrontOfTarget {
 // True while the player can reach the target in melee. Only PvP mode takes the player out
 // of range.
 message APLValueInMeleeRange {
+}
+
+// True while we run: searching for a mob, or walking up to one. Only instants go out then.
+message APLValueIsMoving {
+}
+
+// Yards to the unit in a leveling session (default the current target): where a mob we
+// found stands, how far a pulled one still has to run, or melee range for one on us. 0
+// outside a session or for no unit (a PullTarget when there isn't one).
+message APLValueLevelingDistance {
+    UnitReference target_unit = 1;
+}
+
+// Mobs we pulled that are still running to us, in a leveling session.
+message APLValueLevelingMobsRunningIn {
+}
+
+// Mobs we pulled that have reached us, in a leveling session.
+message APLValueLevelingMobsOnUs {
 }
 
 message APLValueSpellTravelTime {

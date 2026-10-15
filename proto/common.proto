@@ -1058,19 +1058,26 @@ message LevelingOptions {
 	// Scales the level's average armor. Default 1.
 	double armor_multiplier = 5;
 
-	// Mobs a pull takes, the first and then chain pulls (default 1), and the most we'd ever
-	// have on us (default 5).
+	// Mobs a pull takes (default 1): until it has taken that many, a search in combat finds
+	// the next one, and the rotation pulls it (UnitReference.PullTarget) or we walk up to
+	// it. max_pack_size is the most a session can ever have (default 5).
 	int32 pack_size = 6;
 	int32 max_pack_size = 7;
 
 	// Seconds to find the next mob out of combat (default 5 to 11), and to find one to
-	// chain pull while in combat (default 2 to 4).
+	// chain pull while in combat (default 2 to 4). Searching out of combat we run around,
+	// so we can't hard cast. Searching in combat we run with the mobs on us following, the
+	// share of the time chain_search_moving says (default 0.75).
 	double search_min = 8;
 	double search_max = 9;
 	double chain_search_min = 10;
 	double chain_search_max = 11;
-	// Yards we pull from (default 30). A mob runs that less melee range to us at its speed.
-	double pull_range = 12;
+	optional double chain_search_moving = 19;
+	// How far the mob we find stands, in whole yards between these (default 10 to 40). It
+	// waits there until we pull it: a harmful spell that lands on it, or walking into melee
+	// range of it (a face pull). Then it runs to us at its level's speed.
+	double found_min = 12;
+	double found_max = 18;
 
 	// Out of combat we sit to eat and drink when health or mana is below these shares of
 	// max (defaults 0.5 and 0.4), until both are full or both buffs run out.
@@ -1173,6 +1180,9 @@ message UnitReference {
 		CurrentTarget = 5;
 		AllPlayers = 6;
 		AllTargets = 7;
+		// In a leveling session (Encounter.leveling): the mob we found and haven't pulled
+		// yet, out of combat or while fighting others. None when there isn't one.
+		PullTarget = 8;
 	}
 
 	// The type of unit being referenced.

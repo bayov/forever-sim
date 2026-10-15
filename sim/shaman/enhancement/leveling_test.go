@@ -25,6 +25,19 @@ func levelingRequest(t *testing.T, opts *proto.LevelingOptions, iterations int32
 	return req
 }
 
+func parseRunIn(value, unit string) float64 {
+	runIn, _ := strconv.ParseFloat(value, 64)
+	switch unit {
+	case "ms":
+		runIn /= 1e3
+	case "µs":
+		runIn /= 1e6
+	case "ns":
+		runIn /= 1e9
+	}
+	return runIn
+}
+
 func runLeveling(t *testing.T, req *proto.RaidSimRequest) *proto.RaidSimResult {
 	result := core.RunRaidSim(req)
 	if result.Error != nil {
@@ -38,16 +51,18 @@ func runLeveling(t *testing.T, req *proto.RaidSimRequest) *proto.RaidSimResult {
 
 var (
 	logTime      = regexp.MustCompile(`^\[(-?[0-9.]+)\] `)
-	pulledLine   = regexp.MustCompile(`Leveling: pulled (Target \d+) \(level \d+\), here in ([0-9.]+)(ms|s)`)
+	foundLine    = regexp.MustCompile(`Leveling: found (Target \d+) \(level \d+\) (\d+) yards away`)
+	pulledLine   = regexp.MustCompile(`Leveling: pulled (Target \d+) \(level \d+\) from (\d+) yards, here in ([0-9.]+)(ms|s|µs|ns)`)
 	mobSwingLine = regexp.MustCompile(`\] \[(Target \d+)\] \[ \(#1\)\] \{OtherID: 7, Tag: 1\} (Hit|Crit|Miss|Dodge|Parry|Block|Crush)`)
 	ourSwingLine = regexp.MustCompile(`\] \[ \(#1\)\] \[(Target \d+)\] \{OtherID: 7, Tag: 1\} (Hit|Crit|Miss|Dodge|Parry|Block|Glance)`)
 	diedLine     = regexp.MustCompile(`\[(Target \d+)\] Died`)
 )
 
-// TestLevelingSession runs one session with its log and checks the loop: a pulled mob runs
-// to us and only then swings, and we only reach it in melee then. A dead mob swings no more
-// until it's pulled again. The time in each state adds up to the session, and we kill a
-// steady stream of mobs.
+// TestLevelingSession runs one session with its log and checks the loop: we find a mob 10 to
+// 40 yards away, and with a rotation that doesn't pull, walk up to it and pull it in melee
+// range. A pulled mob runs to us and only then swings, and we only reach it in melee then. A
+// dead mob swings no more until it's pulled again. The time in each state adds up to the
+// session, and we kill a steady stream of mobs.
 func TestLevelingSession(t *testing.T) {
 	req := levelingRequest(t, &proto.LevelingOptions{}, 1)
 	req.SimOptions.Debug = true
@@ -62,13 +77,16 @@ func TestLevelingSession(t *testing.T) {
 			continue
 		}
 		at, _ := strconv.ParseFloat(m[1], 64)
-		if p := pulledLine.FindStringSubmatch(line); p != nil {
-			runIn, _ := strconv.ParseFloat(p[2], 64)
-			if p[3] == "ms" {
-				runIn /= 1000
+		if f := foundLine.FindStringSubmatch(line); f != nil {
+			if d, _ := strconv.Atoi(f[2]); d < 10 || d > 40 {
+				t.Errorf("at %.2f found %s %d yards away, want 10 to 40", at, f[1], d)
 			}
-			if runIn < 2.5 || runIn > 4 {
-				t.Errorf("at %.2f %s runs in %.2f sec, want about 3 (25 yards at 7 to 8 yards a sec)", at, p[1], runIn)
+			continue
+		}
+		if p := pulledLine.FindStringSubmatch(line); p != nil {
+			runIn := parseRunIn(p[3], p[4])
+			if from, _ := strconv.Atoi(p[2]); from != 5 || runIn != 0 {
+				t.Errorf("at %.2f %s was pulled from %d yards and runs in %.2f sec, want a face pull: 5 yards, here at once", at, p[1], from, runIn)
 			}
 			arrival[p[1]] = at + runIn
 			dead[p[1]] = false

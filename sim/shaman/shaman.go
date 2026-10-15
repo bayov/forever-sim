@@ -227,6 +227,7 @@ type Shaman struct {
 	ActiveTotems     [4]*core.Spell
 	totemEnds        [4]func(sim *core.Simulation) // How to end each slot's totem when the next one comes down.
 	TotemExpirations [4]time.Duration              // The expiration time of each totem (earth, air, fire, water).
+	totemPositions   [4]float64                    // Where each totem stands in a leveling session (core.Encounter.LevelingPosition).
 
 	EarthTotems []*core.Spell
 	FireTotems  []*core.Spell
@@ -325,5 +326,6 @@ func (shaman *Shaman) Reset(_ *core.Simulation) {
 		shaman.ActiveTotems[i] = nil
 		shaman.TotemExpirations[i] = 0
 		shaman.totemEnds[i] = nil
+		shaman.totemPositions[i] = 0
 	}
 }

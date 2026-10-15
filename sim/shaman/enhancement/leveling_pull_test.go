@@ -1,0 +1,209 @@
+package enhancement
+
+import (
+	"regexp"
+	"strconv"
+	"strings"
+	"testing"
+
+	"github.com/wowsims/classic/sim/core/proto"
+	"google.golang.org/protobuf/encoding/protojson"
+)
+
+// pullRotation heals below 40% health, keeps Strength of Earth Totem down (cast "at" the
+// mob we found, which mustn't pull it), and pulls the mob we found with rank 1 Earth Shock
+// within its 20 yards, or with rank 1 Lightning Bolt beyond that while no mob is on us.
+// Further out than the bolt's 30 yards it does nothing, so we walk up to the mob and shock
+// it once it's in range.
+const pullRotation = `{"type":"TypeAPL","priorityList":[
+	{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":8008}}}},
+	{"action":{"condition":{"not":{"val":{"totemRemainingTime":{"totemType":"Earth"}}}},"castSpell":{"spellId":{"spellId":8075}}}},
+	{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"levelingDistance":{"targetUnit":{"type":"PullTarget"}}},"rhs":{"const":{"val":"20"}}}},"castSpell":{"spellId":{"spellId":8042},"target":{"type":"PullTarget"}}}},
+	{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"levelingMobsOnUs":{}},"rhs":{"const":{"val":"0"}}}},"castSpell":{"spellId":{"spellId":403},"target":{"type":"PullTarget"}}}}
+]}`
+
+func withRotation(t *testing.T, req *proto.RaidSimRequest, rotation string) *proto.RaidSimRequest {
+	apl := &proto.APLRotation{}
+	if err := protojson.Unmarshal([]byte(rotation), apl); err != nil {
+		t.Fatal(err)
+	}
+	req.Raid.Parties[0].Players[0].Rotation = apl
+	return req
+}
+
+var (
+	searchingLine = regexp.MustCompile(`Leveling: searching for a mob`)
+	castLine      = regexp.MustCompile(`\] \[ \(#1\)\] Casting \{SpellID: (\d+)\}`)
+	completedLine = regexp.MustCompile(`\] \[ \(#1\)\] Completed cast \{SpellID: (\d+)\}`)
+)
+
+// TestLevelingPulls pulls with the rotation's spells: a mob found within 20 yards with a
+// shock from where we stand, one 20 to 30 yards away with a bolt, and one further away by
+// walking up until the shock reaches it. The bolt's mob only notices us once the bolt hits
+// it, and then runs to us from where it stood. While we search we run, so the rotation
+// starts no hard cast.
+func TestLevelingPulls(t *testing.T) {
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), pullRotation)
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	var found map[string]int
+	searching := false
+	kinds := map[string]int{}
+	var lastBolt float64 = -1
+	for _, line := range strings.Split(result.Logs, "\n") {
+		m := logTime.FindStringSubmatch(line)
+		if m == nil {
+			continue
+		}
+		at, _ := strconv.ParseFloat(m[1], 64)
+		switch {
+		case searchingLine.MatchString(line):
+			searching = true
+			found = map[string]int{}
+		case foundLine.MatchString(line):
+			f := foundLine.FindStringSubmatch(line)
+			searching = false
+			found[f[1]], _ = strconv.Atoi(f[2])
+		case castLine.MatchString(line):
+			spell := castLine.FindStringSubmatch(line)[1]
+			if searching && (spell == "403" || spell == "8008") {
+				t.Errorf("at %.2f started a hard cast of %s while searching", at, spell)
+			}
+		case completedLine.MatchString(line):
+			if completedLine.FindStringSubmatch(line)[1] == "403" {
+				lastBolt = at
+			}
+		case pulledLine.MatchString(line):
+			p := pulledLine.FindStringSubmatch(line)
+			mob, runIn := p[1], parseRunIn(p[3], p[4])
+			from, _ := strconv.Atoi(p[2])
+			stood := found[mob]
+			wantRunIn := float64(from-5) / 7.5
+			if runIn < wantRunIn*0.85 || runIn > wantRunIn*1.15 {
+				t.Errorf("at %.2f %s runs in %.2f sec from %d yards, want about %.2f", at, mob, runIn, from, wantRunIn)
+			}
+			switch {
+			case stood <= 20:
+				kinds["shock"]++
+				if from != stood {
+					t.Errorf("at %.2f %s found %d yards away was pulled from %d, want a shock from where we stood", at, mob, stood, from)
+				}
+			case stood <= 30:
+				kinds["bolt"]++
+				// The bolt flies 20 yards a sec.
+				if from != stood || lastBolt < 0 || at-lastBolt < float64(stood)/20-0.05 || at-lastBolt > float64(stood)/20+0.05 {
+					t.Errorf("at %.2f %s found %d yards away was pulled from %d, %.2f sec after the last bolt, want a bolt from there", at, mob, stood, from, at-lastBolt)
+				}
+			default:
+				kinds["walk"]++
+				if from > 20 {
+					t.Errorf("at %.2f %s found %d yards away was pulled from %d, want walking up to shock range", at, mob, stood, from)
+				}
+			}
+		}
+	}
+	t.Logf("pulls: %v", kinds)
+	for _, kind := range []string{"shock", "bolt", "walk"} {
+		if kinds[kind] < 2 {
+			t.Errorf("%d %s pulls in the session, want a few of each: %v", kinds[kind], kind, kinds)
+		}
+	}
+}
+
+// TestLevelingTotemRange: a Magma Totem dropped while we search is left behind as we run
+// on, so its 8 yard pulses rarely reach the mobs we pull, where one dropped with a mob on us
+// hits it every pulse.
+func TestLevelingTotemRange(t *testing.T) {
+	magma := func(condition string) float64 {
+		rotation := `{"type":"TypeAPL","priorityList":[
+			{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":8008}}}},
+			{"action":{"condition":{"and":{"vals":[` + condition + `,{"not":{"val":{"totemRemainingTime":{"totemType":"Fire"}}}}]}},"castSpell":{"spellId":{"spellId":8190}}}}
+		]}`
+		result := runLeveling(t, withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 20), rotation))
+		damage, casts := 0.0, int32(0)
+		for _, action := range result.RaidMetrics.Parties[0].Players[0].Actions {
+			for _, target := range action.Targets {
+				switch action.Id.GetSpellId() {
+				case 8187:
+					damage += target.Damage
+				case 8190:
+					casts += target.Casts
+				}
+			}
+		}
+		if casts == 0 {
+			t.Fatalf("the rotation never dropped Magma Totem (%s)", condition)
+		}
+		return damage
+	}
+	searching := magma(`{"isMoving":{}},{"cmp":{"op":"OpEq","lhs":{"levelingMobsOnUs":{}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpEq","lhs":{"levelingDistance":{"targetUnit":{"type":"PullTarget"}}},"rhs":{"const":{"val":"0"}}}}`)
+	fighting := magma(`{"cmp":{"op":"OpGe","lhs":{"levelingMobsOnUs":{}},"rhs":{"const":{"val":"1"}}}}`)
+	t.Logf("Magma Totem damage a session: %.0f dropped while searching, %.0f with a mob on us", searching, fighting)
+	if fighting <= 0 || searching > fighting/10 {
+		t.Errorf("Magma Totem dropped while searching dealt %.0f, with a mob on us %.0f, want much less", searching, fighting)
+	}
+}
+
+// chainRotation is pullRotation, but it bolts a mob 20 to 30 yards away with mobs on us too.
+const chainRotation = `{"type":"TypeAPL","priorityList":[
+	{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":8008}}}},
+	{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"levelingDistance":{"targetUnit":{"type":"PullTarget"}}},"rhs":{"const":{"val":"20"}}}},"castSpell":{"spellId":{"spellId":8042},"target":{"type":"PullTarget"}}}},
+	{"action":{"castSpell":{"spellId":{"spellId":403},"target":{"type":"PullTarget"}}}}
+]}`
+
+var lookingLine = regexp.MustCompile(`Leveling: looking for another mob, running: (true|false)`)
+
+// TestLevelingChainPulls: with a pack size of 2 (of mobs a few levels below us, so the naked
+// shaman lives through them), we look for a second mob while fighting the
+// first, mostly running with it following us, when no hard cast starts. The rotation bolts
+// the second mob from where it stands, mobs on us or not, and pulls stay two mobs.
+func TestLevelingChainPulls(t *testing.T) {
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{PackSize: 2, MobLevelOffset: -4}, 1), chainRotation)
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	running, looks, runs, chainBolts := false, 0, 0, 0
+	inCombat := map[string]bool{}
+	for _, line := range strings.Split(result.Logs, "\n") {
+		m := logTime.FindStringSubmatch(line)
+		if m == nil {
+			continue
+		}
+		at, _ := strconv.ParseFloat(m[1], 64)
+		switch {
+		case lookingLine.MatchString(line):
+			looks++
+			running = lookingLine.FindStringSubmatch(line)[1] == "true"
+			if running {
+				runs++
+			}
+		case foundLine.MatchString(line), searchingLine.MatchString(line):
+			running = false
+		case castLine.MatchString(line):
+			if spell := castLine.FindStringSubmatch(line)[1]; running && (spell == "403" || spell == "8008") {
+				t.Errorf("at %.2f started a hard cast of %s while running to look for a mob", at, spell)
+			}
+		case pulledLine.MatchString(line):
+			p := pulledLine.FindStringSubmatch(line)
+			if from, _ := strconv.Atoi(p[2]); from > 20 && len(inCombat) > 0 {
+				chainBolts++
+			}
+			inCombat[p[1]] = true
+		case diedLine.MatchString(line):
+			delete(inCombat, diedLine.FindStringSubmatch(line)[1])
+		case strings.Contains(line, "Leveling: died"):
+			inCombat = map[string]bool{}
+		}
+	}
+	t.Logf("%d looks for another mob, %d running; %d chain pulls by bolt; %.2f mobs a pull", looks, runs, chainBolts, result.EncounterMetrics.Leveling.MobsPerPull)
+	if looks < 5 || runs < looks/2 || runs == looks {
+		t.Errorf("%d looks for another mob, %d of them running, want most but not all", looks, runs)
+	}
+	if chainBolts < 2 {
+		t.Errorf("%d chain pulls by bolt from beyond shock range", chainBolts)
+	}
+	if mpp := result.EncounterMetrics.Leveling.MobsPerPull; mpp < 1.7 || mpp > 2 {
+		t.Errorf("%.2f mobs a pull with pack size 2", mpp)
+	}
+}

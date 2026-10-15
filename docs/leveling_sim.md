@@ -41,16 +41,23 @@ without any hand-picked weights.
 Each iteration is one session. HP, mana, cooldowns, buffs and debuffs carry over from pull to
 pull, so a 3-minute cooldown is ready for some pulls and not others, as in real play.
 
-1. **Search.** It takes a random time to find the next mob. Out-of-combat regen (Spirit,
-   mana regen outside the five-second rule) ticks during it.
-2. **Pull.** The APL picks how to pull a mob that isn't in combat yet: any spell at any rank
-   (Lightning Bolt rank 1 to save mana, Earth Shock, Flame Shock, …) or a face pull. The pull
-   range sets the run-in time, which starts when the pull spell lands. Spells cast while the mob
-   runs in are free damage, and the mob doesn't attack until it arrives.
-3. **Chain pull.** While mobs are running in or already hitting us, the APL can pull another
-   one, up to the pack cap. It decides from values like mobs in combat, mobs still running in,
-   HP and mana percent, and cooldowns. Pushback makes a cast pull worse once a mob is hitting us,
-   so the APL may chain-pull with an instant instead.
+1. **Search.** It takes a random time to find the next mob. We run around while we search, so
+   only instants go out (totems, shields, buffs), no hard casts. Out-of-combat regen (Spirit,
+   mana regen outside the five-second rule) ticks during it. The mob we find stands a random
+   10 to 40 yards away.
+2. **Pull.** The APL picks how to pull it: any harmful spell at any rank that reaches it
+   (Earth Shock within 20 yards, Lightning Bolt rank 1 within 30 to save mana, …) or a face
+   pull. A mob notices us when the pull spell lands, so a bolt's flight counts, and then runs to
+   us from where it stood. Spells cast while it runs in are free damage, and it doesn't attack
+   until it arrives. When the APL hasn't pulled it a second after we found it, we walk up to
+   it: an instant can still pull it on the way once it's in range, or it notices us in melee
+   range.
+3. **Chain pull.** While fighting, a search finds the next mob, up to the pack size. Most of
+   the time we run around to find it with the mobs on us following, so again only instants and
+   melee. The APL pulls it from where it stands, or we walk up to it with the mobs in tow. It
+   decides from values like mobs on us, mobs still running in, the distance to the mob, HP and
+   mana percent, and cooldowns. Pushback makes a cast pull worse once a mob is hitting us, so
+   the APL may chain-pull with an instant instead.
 4. **Fight.** Every mob has its own HP and dies on its own when its HP runs out, and then it
    stops attacking. We're out of combat only once all of them are dead.
 5. **Recover.** Out of combat the APL picks among eating and drinking, bandaging, self-heals
@@ -129,11 +136,13 @@ from the user's logs.
 
 | Setting | Default |
 |---|---|
-| Finding the next mob, out of combat | Random 5–11 s (8 s on average) |
-| Finding a mob to chain-pull, in combat | Random 2–4 s (3 s on average) |
+| Finding the next mob, out of combat | Random 5–11 s (8 s on average), running |
+| Finding a mob to chain-pull, in combat | Random 2–4 s (3 s on average), running 3 times in 4 |
+| Where the mob we find stands | Random 10–40 yd, in whole yards |
+| Our run speed | 7 yd/s |
 | Mob run speed | The level's average from the mob table: 6 yd/s at levels 1–2, about 8 yd/s from level 11 |
-| Run-in time | (pull range − 5 yd melee) ÷ run speed, from when the pull spell lands: about 3.1 s for Lightning Bolt from 30 yd and 1.9 s for a shock from 20 yd at 8 yd/s |
-| Face pull | No free damage, 1.5 s to walk up |
+| Run-in time | (distance − 5 yd melee) ÷ run speed, from when the pull spell lands: about 3.1 s for Lightning Bolt from 30 yd (after 1.5 s of flight) and 1.9 s for a shock from 20 yd at 8 yd/s |
+| Face pull | No free damage. When the APL hasn't pulled a mob 1 s after we found it, we walk up to it. |
 | A mob's first swing | Random within its swing timer after it arrives |
 | Max pack size | 5 |
 
@@ -297,8 +306,8 @@ After the groundwork:
    - Out of combat we regen health from Spirit by the 1.12 server's class formulas, half
      again while sitting (notes.md, Need to Verify). Food, water and bandages come from the
      item data by level. XP per kill is the 1.12 formula by level difference.
-   - The pull and rest decisions are options for now (pack size, eat_below, drink_below):
-     step 2 moves them into the rotation.
+   - The pull and rest decisions were options (pack size, eat_below, drink_below). Step 2
+     moved how we pull into the rotation; the rest is step 3.
    - Results: mobs killed (the one we're on at the end by the share of its health we took,
      with its standard deviation), XP and XP per hour, deaths, the time in combat, resting,
      searching and dead, and mobs per pull.
@@ -316,15 +325,49 @@ After the groundwork:
      Two at a time comes out best. At three, about 1.4 deaths a session eat the gain. The
      preset's rotation was built for Vishas, so it doesn't pull, heal or chain pull on
      purpose yet.
-   - Not modelled yet: AoE around us (Magma Totem) also hits mobs still running in, and a
-     mob's type is one per session.
-2. **APL additions:** pull and chain-pull actions; out-of-combat actions (eat and drink until a
-   threshold, bandage, heal); values for mobs in combat, mobs running in and in-combat state.
-3. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
-4. **Optimizers:** the pull and recovery policy, leveling stat weights with a Pawn export, and
+   - Not modelled yet: a mob's type is one per session.
+2. **Pulling in the APL.** Done (2026-10-15), positions in `sim/core/leveling.go`.
+   - Where things are: each mob has a distance from us, and we have a position along the way
+     we run. The mob we find stands 10 to 40 yards away; a pulled one runs in from where it
+     stood; one on us is in melee range. We run while we search, and walk up to a mob the APL
+     doesn't pull, and while we run no hard cast goes out (`Moving`).
+   - Spell ranges from the client's SpellRange (`Spell.MaxRange`, held to only in a leveling
+     session): shocks 20 yards, Lightning Bolt, Chain Lightning and Lava Burst 30.
+   - Totems stay where we drop them. Searing Totem shoots a mob within 20 yards of it, Magma
+     Totem's pulse reaches 8 yards around it, and Fire Nova 10 yards around it, castable only
+     within 30 yards of it. A totem dropped while we search is left behind. Outside a leveling
+     session nothing moves, so other fights are unchanged.
+   - The APL: `PullTarget` (a `UnitReference`) is the mob we found and haven't pulled, none
+     once a spell on its way pulls it. Values: Distance (Leveling), Mobs Running In, Mobs On
+     You, Is Moving. A spell that attacks the mob pulls it when it lands; a totem or a shield
+     cast with the mob as our target doesn't.
+   - First numbers, the Level 30 Enhancement preset with pull lines added in front of its
+     rotation (500 sessions of 20 min against level 29 to 31 mobs). Its own Flame Shock and
+     Earth Shock pull a mob within 20 yards, and we walk up to one further away:
+
+     | Rotation | Pack size | Mobs | Deaths | XP / hour | Searching and pulling | Resting | Combat | Mobs a pull |
+     |---|---|---|---|---|---|---|---|---|
+     | Preset | 1 | 73.8 | 0.03 | 42,700 | 717 s | 65 s | 412 s | 1.00 |
+     | + Lightning Bolt rank 1 at 20–30 yd | 1 | 71.9 | 0.02 | 41,600 | 720 s | 64 s | 414 s | 1.00 |
+     | + Earth Shock rank 1 within 20 yd, Lightning Bolt rank 1 at 20–30 yd | 1 | 73.3 | 0.02 | 42,400 | 736 s | 24 s | 436 s | 1.00 |
+     | Preset | 2 | 88.7 | 0.60 | 51,300 | 373 s | 185 s | 535 s | 1.33 |
+     | + Lightning Bolt rank 1 at 20–30 yd, no mob on us | 2 | 86.0 | 0.61 | 49,700 | 380 s | 181 s | 530 s | 1.36 |
+     | + Lightning Bolt rank 1 at 20–30 yd, chain pulls too | 2 | 81.9 | 0.61 | 47,300 | 387 s | 176 s | 530 s | 1.47 |
+
+     A bolt pull loses time: we stand still for the 1.5 s cast and the bolt's flight, where
+     walking 5 to 10 yards closer and shocking gets the mob to us sooner. A rank 1 shock pull
+     saves mana and so rest time, but its cooldown is shared with the preset's Flame Shock.
+     With a pack size of 2 the second mob often isn't found before the first dies, so a pull
+     takes 1.3 to 1.5 mobs on average. The mob found then is the next pull, without a search.
+   - Still options: the pack size and when to eat, drink and bandage. Step 3 moves them into
+     the APL too.
+3. **APL additions for the rest of the loop:** take another mob or not, and out-of-combat
+   actions (eat and drink until a threshold, bandage, heal).
+4. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
+5. **Optimizers:** the pull and recovery policy, leveling stat weights with a Pawn export, and
    the best mob level.
-5. **Synthetic gear curves** from 10 to 60 and the talent route search.
-6. **UI:** "Leveling" as a third mode next to DPS and PvP.
+6. **Synthetic gear curves** from 10 to 60 and the talent route search.
+7. **UI:** "Leveling" as a third mode next to DPS and PvP.
 
 ## From the logs, later
 

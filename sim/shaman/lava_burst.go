@@ -42,6 +42,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		Rank:        rank,
 
 		MissileSpeed: 20,
+		MaxRange:     30,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: LavaBurstManaCost[rank],

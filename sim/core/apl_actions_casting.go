@@ -18,7 +18,7 @@ func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APL
 		return nil
 	}
 	target := rot.GetTargetUnit(config.Target)
-	if target.Get() == nil {
+	if target.Get() == nil && !target.IsDynamic() {
 		return nil
 	}
 	return &APLActionCastSpell{
@@ -27,6 +27,9 @@ func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APL
 	}
 }
 func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
+	if action.target.IsDynamic() && action.target.Get() == nil {
+		return false
+	}
 	return action.spell.CanCast(sim, action.target.Get()) && (!action.spell.Flags.Matches(SpellFlagMCD) || action.spell.Unit.GCD.IsReady(sim) || action.spell.DefaultCast.GCD == 0)
 }
 func (action *APLActionCastSpell) Execute(sim *Simulation) {

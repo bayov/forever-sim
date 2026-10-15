@@ -46,6 +46,52 @@ func (shaman *Shaman) placeTotem(sim *core.Simulation, slot int, spell *core.Spe
 	shaman.TotemExpirations[slot] = sim.CurrentTime + duration
 	shaman.ActiveTotems[slot] = spell
 	shaman.totemEnds[slot] = end
+	shaman.totemPositions[slot] = sim.Encounter.LevelingPosition(sim)
+}
+
+// Fire totem ranges, from the client's SpellRange and SpellRadius (build 70338): Searing
+// Totem's bolt reaches 20 yards (3606), Magma Totem's pulse 8 yards around it (8187), and
+// Fire Nova goes off 10 yards around the totem (408423), which has to be within 30 yards of
+// us to cast it (408341).
+const (
+	searingTotemRange = 20
+	magmaTotemRadius  = 8
+	fireNovaRadius    = 10
+	fireNovaCastRange = 30
+)
+
+// nearFireTotem is whether the mob is within yards of our fire totem. Only a leveling
+// session moves us and the mobs around (core/leveling.go); in any other fight every mob is.
+func (shaman *Shaman) nearFireTotem(sim *core.Simulation, mob *core.Unit, yards float64) bool {
+	return sim.Encounter.LevelingDistanceFrom(sim, shaman.totemPositions[FireTotem], mob) <= yards
+}
+
+// fireTotemMobs are the mobs fighting us within yards of our fire totem.
+func (shaman *Shaman) fireTotemMobs(sim *core.Simulation, yards float64) []*core.Unit {
+	if !sim.Encounter.IsLeveling() {
+		return sim.Encounter.ActiveTargetUnits
+	}
+	return core.FilterSlice(sim.Encounter.ActiveTargetUnits, func(mob *core.Unit) bool {
+		return shaman.nearFireTotem(sim, mob, yards)
+	})
+}
+
+// searingTotemTarget is the mob Searing Totem shoots: our target, or in a leveling session
+// the first mob fighting us in its range when our target isn't one. Nil when none is.
+func (shaman *Shaman) searingTotemTarget(sim *core.Simulation) *core.Unit {
+	if !sim.Encounter.IsLeveling() {
+		return shaman.CurrentTarget
+	}
+	mobs := shaman.fireTotemMobs(sim, searingTotemRange)
+	for _, mob := range mobs {
+		if mob == shaman.CurrentTarget {
+			return mob
+		}
+	}
+	if len(mobs) > 0 {
+		return mobs[0]
+	}
+	return nil
 }
 
 // endTotemBuff ends a totem whose effect is a buff aura on us.

@@ -2,6 +2,7 @@ package shaman
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -90,7 +91,8 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 		},
 
 		// The totem runs as a dot on the shaman, so it keeps going when its target dies. It
-		// shoots our current target, which moves on to the next mob when one dies.
+		// shoots our current target, which moves on to the next mob when one dies, as long as
+		// it's in range (searingTotemTarget).
 		Dot: core.DotConfig{
 			IsAOE: true,
 			Aura: core.Aura{
@@ -104,7 +106,9 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 			NumberOfTicks: int32(duration / attackInterval),
 			TickLength:    attackInterval,
 			OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
-				attackSpell.Cast(sim, shaman.CurrentTarget)
+				if target := shaman.searingTotemTarget(sim); target != nil {
+					attackSpell.Cast(sim, target)
+				}
 			},
 		},
 
@@ -168,7 +172,7 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+			for _, aoeTarget := range shaman.fireTotemMobs(sim, magmaTotemRadius) {
 				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
@@ -277,7 +281,8 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, _ *core.Unit) bool {
-			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime
+			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime &&
+				math.Abs(sim.Encounter.LevelingPosition(sim)-shaman.totemPositions[FireTotem]) <= fireNovaCastRange
 		},
 
 		// Call of Flame and Improved Fire Nova multiply each other under Forever.
@@ -291,7 +296,7 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 		BonusCoefficient: FireNovaSpellCoeff[rank],
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+			for _, aoeTarget := range shaman.fireTotemMobs(sim, fireNovaRadius) {
 				spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(baseDamageLow, baseDamageHigh), spell.OutcomeMagicHitAndCrit)
 			}
 		},

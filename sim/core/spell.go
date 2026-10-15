@@ -23,6 +23,7 @@ type SpellConfig struct {
 	Flags         SpellFlag
 	CastType      proto.CastType
 	MissileSpeed  float64
+	MaxRange      float64
 	BaseCost      float64
 	MetricSplits  int
 	Rank          int
@@ -99,6 +100,10 @@ type Spell struct {
 	// Speed in yards/second. Spell missile speeds can be found in the game data.
 	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
 	MissileSpeed float64
+
+	// Yards the spell reaches, from the client's SpellRange. Only a leveling session, where
+	// mobs stand at a distance (leveling.go), holds a spell to it; 0 is no limit.
+	MaxRange float64
 
 	Rank          int
 	RequiredLevel int
@@ -242,6 +247,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		Flags:        config.Flags,
 		CastType:     config.CastType,
 		MissileSpeed: config.MissileSpeed,
+		MaxRange:     config.MaxRange,
 
 		SpellSchool:       config.SpellSchool,
 		SchoolIndex:       config.SpellSchool.GetSchoolIndex(),
@@ -516,8 +522,14 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
-	// Nothing harmful at a mob that died, or one a leveling session hasn't pulled yet.
-	if target != nil && target.dead && !spell.Flags.Matches(SpellFlagHelpful) {
+	// No attack at a mob that died, or one a leveling session hasn't found yet. A spell
+	// that doesn't hit the target (a totem, a shield, a buff) still goes, as when we search
+	// for the next mob with a corpse as our target.
+	if target != nil && target.dead && spell.attacksTarget() {
+		return false
+	}
+
+	if spell.MaxRange > 0 && spell.Unit.Env.Encounter.LevelingDistance(sim, target) > spell.MaxRange {
 		return false
 	}
 
@@ -578,10 +590,19 @@ func (spell *Spell) Cast(sim *Simulation, target *Unit) bool {
 	return spell.castFn(sim, target)
 }
 
+// attacksTarget is whether the spell hits its target: not a heal or buff, and not a spell
+// like a totem or a shield that is cast "at" the target but doesn't touch it.
+func (spell *Spell) attacksTarget() bool {
+	return !spell.Flags.Matches(SpellFlagHelpful) && spell.ProcMask != ProcMaskEmpty && spell.ProcMask != ProcMaskUnknown
+}
+
 func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
 	spell.SpellMetrics[target.UnitIndex].Casts++
 	spell.casts++
 
+	if leveling := sim.Encounter.leveling; leveling != nil && target.Type == EnemyUnit {
+		leveling.onCast(sim, target, spell)
+	}
 	spell.ApplyEffects(sim, target, spell)
 }
 

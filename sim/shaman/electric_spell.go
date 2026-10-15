@@ -37,6 +37,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagShaman | SpellFlagLightning | core.SpellFlagAPL,
 		MetricSplits: 6,
+		MaxRange:     30,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: baseCost,

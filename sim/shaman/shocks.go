@@ -16,6 +16,7 @@ func (shaman *Shaman) newShockSpellConfig(actionId core.ActionID, spellSchool co
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagShaman | core.SpellFlagAPL,
+		MaxRange:    20,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: baseCost,
