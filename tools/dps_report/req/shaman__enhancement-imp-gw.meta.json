@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 819.8,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 822.0,
+    "source": "Shaman follow-up PR #23 (Fire Nova mana rule, rotation audit pass 19, 2026-10-15)"
   },
   "verify": {
-    "dps": 819.77,
-    "stderr": 0.38,
+    "dps": 822.0,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "matches the published number, with PR #21's Earth Shock VII ×1.08"
+    "note": "paired rotopt run on this request at 180 s, with the fireNovaManaPerSec=12 Optimized rotation"
   },
   "summary": "The Enhancement Level 60 build with 2 points moved from Ancestral Knowledge into Improved Ghost Wolf for utility. It is 4.0 behind Level 60 at 180 s.",
   "keyTalents": [
@@ -45,7 +45,7 @@
     "Flame Shock when its DoT is down",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Earth Shock",
-    "Fire Nova above 20% mana"
+    "Fire Nova while the mana covers 12 a second for the rest of the fight"
   ],
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",

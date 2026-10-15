@@ -781,6 +781,13 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Level 60 is 834.8 / 823.8 / 803.7, Level 60 + Imp GW 831.3 / 819.8 / 799.9, Level 60 + Water Shield
 // 783.2 / 776.1 / 763.2 and Level 60 + Mana Tide 760.0 / 753.4 / 748.2.
 //
+// The Optimized rotation's Fire Nova then took a mana rule in place of its 20% floor: outside
+// Clearcasting it needs 12 mana for every second left in the fight, so the pool is spent by the end
+// (the rotation auditor's pass 19). Paired at 20000 iterations on the DPS report requests (with the
+// raid's Trueshot Aura): Level 60 835.2 / 826.0 / 805.4 (+0.4 / +2.2 / +1.7) and Level 60 + Imp GW
+// 831.8 / 822.0 / 800.2 (+0.5 / +2.2 / +0.3). 14 and 16 a second lose on Imp GW at 300 sec, 20 and
+// up lose 6 to 10. The Magma Totem rotation keeps its floor (at most +0.35, -0.86 at 300 sec).
+//
 // The races on Level 60 at 180 sec (20000 iterations, standard error 0.4): Orc 823.8, Windshaper
 // Skyborne 810.0, Tauren 809.4, Troll 809.1, Dwarf (the only Alliance shaman) 804.8. Best overall and
 // best Horde: Orc. Best Alliance: Dwarf. The Orc's lead is Axe Specialization. A 3.7 sec mace of the
