@@ -218,7 +218,7 @@ Tree rules
 - [x] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
 - [x] 11.2 Shaman APL values (totem timers, shield charges and the like)
 - [x] 11.3 APL edge cases: a swing due during a cast, replacing a totem early, Fire Nova on Clearcasting, mana thresholds
-- [ ] 11.4 Movement and range in PvP (time out of melee range)
+- [x] 11.4 Movement and range in PvP (time out of melee range)
 
 ## Findings
 
@@ -1858,6 +1858,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Fire Nova on Clearcasting: the default Level 60 rotation casts it before Flame Shock (+5 to +11 on 2026-10-06). Adding the line to the Magma Totem rotations gave +0.4 on Water Shield (776.1 to 776.5, within noise) and nothing on Mana Tide (753.4). Neither runs out of mana in 180 sec (time to OOM 301 and 433 sec), so there's no notes.md item.
 - Mana thresholds: Current Mana % runs from 0 to 1, and the presets use 0.1, 0.2, 0.5 and 0.8 consistently. A spell we can't pay for is skipped and the next line runs (2.7). Level 30 + 5 is out of mana about 7 sec a fight and Level 30 PvP about 68 of 120 sec, where Fire Nova has no mana condition. The knob search picked that, so it stays.
 - No sim change, no test, no Need to Verify item.
+
+### 11.4 Movement and range in PvP
+
+- The user OK'd it (2026-10-15). Most of it was settled in 6.7 and is tested in `pvp_test.go`.
+- The encounter's melee downtime (`pvp.go`, PvP or not) takes us out of melee range for random stretches of 1 to 10 sec, and the share out of range comes to the setting on average. The Level 30 PvP preset is out 70% of the fight, the stat weight enemies 30% or 70%, and the PvE presets never.
+- Out of range we lose white swings, Stormstrike and Fire Nova (the enemy has left the fire totem). The shocks still go out, because we're at 20 yards. Flame Shock keeps ticking, and the totem buffs stay on us, because the model has the enemy move away while we stay near our totems.
+- The swing timer keeps running while we're out, so the held swing goes off when we're back (tested). From the code, a cast made while out of range still starts the swing timer over at its end and that carries over when we come back (`attack.go` EnableAutoSwing keeps the later swing time), and going out and back in during a cast doesn't undo the hold.
+- Simplified: we can hard cast while out of range, as if we stand and cast instead of chasing. The PvP rotation has no hard casts, so it doesn't matter for the preset. Nothing changes the share out of range, so Frost Shock's slow, Earthbind and Ghost Wolf (8.x) can't shorten the kiting. The enemy keeps swinging at us while we're out (set aside in 6.1). The 70% is the user's default, not a measured number.
+- No sim change, no new test, no Need to Verify item.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
