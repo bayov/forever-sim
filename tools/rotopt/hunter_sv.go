@@ -13,6 +13,9 @@ func init() {
 // Clip as a filler. Aspect of the Beast for its melee attack power.
 type hunterSV struct{}
 
+// hunterStingRange is the sim's minimum ranged distance (core.MinRangedAttackDistance).
+const hunterStingRange = 12
+
 func (hunterSV) Knobs() []Knob {
 	return []Knob{
 		{Name: "lacerate", Default: 1, Min: 0, Max: 1, Step: 1},
@@ -27,6 +30,10 @@ func (hunterSV) Knobs() []Knob {
 		{Name: "strikerMana", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Hunter's Mark duty (standards 23), as in hunter_ranged.
 		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Scorpid Sting duty (standards 23): Survival steps out to the sting's minimum range to
+		// keep it up, with the raid's Scorpid Sting off.
+		{Name: "scorpid", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "scorpidLead", Default: 2, Min: 1, Max: 6, Step: 1},
 	}
 }
 
@@ -38,17 +45,34 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 		return ge(currentManaPercent(), num(k[name]/100))
 	}
 
-	items := []*proto.APLListItem{
+	var items []*proto.APLListItem
+	walkIn := not(inMeleeRange())
+	if k["scorpid"] == 1 {
+		due := and(hunterScorpidDue(k), not(spellInFlight(hunterScorpidSting)))
+		// Back into melee only once the sting is on its way.
+		walkIn = and(walkIn, not(due))
+		items = append(items,
+			hunterScorpidDuty(k),
+			&proto.APLListItem{
+				Notes: "Scorpid Sting duty: step back to the sting's minimum range when it is due.",
+				Action: &proto.APLAction{
+					Condition: due,
+					Action:    &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(hunterStingRange)}},
+				},
+			},
+		)
+	}
+	items = append(items, []*proto.APLListItem{
 		{
 			Notes: "Walk into melee range when the fight starts at range.",
 			Action: &proto.APLAction{
-				Condition: not(inMeleeRange()),
+				Condition: walkIn,
 				Action:    &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(0)}},
 			},
 		},
 		cast(hunterAspectOfTheBeast, not(auraIsActive(hunterAspectOfTheBeast)), "Aspect of the Beast if it ever drops."),
 		autocastOtherCooldowns(nil, "Rapid Fire, racials, trinkets and potions on cooldown."),
-	}
+	}...)
 	if k["mark"] == 1 {
 		items = append(items, hunterMarkDuty())
 	}
@@ -75,7 +99,8 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 	}
 
 	rot := rotation(items...)
-	// Walk in before the pull: the UI starts every hunter at 25 yards.
+	// Walk in before the pull: the UI starts every hunter at 25 yards. On Scorpid Sting duty too: the
+	// sim keeps Auto Shot firing in melee when the walk ends at range before the pull.
 	rot.PrepullActions = append(rot.PrepullActions, &proto.APLPrepullAction{
 		Action:    &proto.APLAction{Action: &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(0)}}},
 		DoAtValue: seconds(-6),

@@ -1188,6 +1188,19 @@ func ScorpidStingAura(target *Unit) *Aura {
 	return aura
 }
 
+// ForeverScorpidStingAura is the Scorpid Sting a hunter casts under Forever (standards 23: a hunter
+// on Scorpid Sting duty casts it with the raid's debuff off): 2% off the target's chance to hit, in
+// the slot it shares with Insect Swarm. Its length is the hunter's (Improved Stings adds to it).
+func ForeverScorpidStingAura(target *Unit, duration time.Duration) *Aura {
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Scorpid Sting (cast)",
+		ActionID: ActionID{SpellID: 3043},
+		Duration: duration,
+	})
+	increasedMissEffect(aura, 0.02)
+	return aura
+}
+
 func increasedMissEffect(aura *Aura, increasedMissChance float64) *ExclusiveEffect {
 	return aura.NewExclusiveEffect("IncreasedMiss", false, ExclusiveEffect{
 		Priority: increasedMissChance,

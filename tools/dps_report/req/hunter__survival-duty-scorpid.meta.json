@@ -1,0 +1,80 @@
+{
+  "id": "hunter__survival-duty-scorpid",
+  "class": "Hunter",
+  "spec": "Survival",
+  "build": "Survival (melee) (Scorpid Sting duty)",
+  "isDefault": false,
+  "pr": 5,
+  "race": "Orc",
+  "talents": "502-005302-500230230250122151",
+  "treeNames": [
+    "Beast Mastery",
+    "Marksmanship",
+    "Survival"
+  ],
+  "gearSet": "level60_phase1_synthetic_survival",
+  "apl": "sv_scorpid",
+  "published": {
+    "dps": 840.2,
+    "source": "Scorpid Sting duty preset (standards 23), 2026-10-15: 180 s, 20000 iterations, seed 1"
+  },
+  "verify": {
+    "dps": 840.17,
+    "stderr": 0.25,
+    "iters": 20000,
+    "ok": true,
+    "note": "same sim as the published number"
+  },
+  "summary": "Melee Survival 7/10/34 on a one-hand axe and a dagger with a cat: Predator's Edge, Expose Prey into Mongoose Bite, Strider Kick and Lacerating Strikes. It ships as Forever's melee hunter build; a ranged Survival build plays like Marksmanship and is only documented. On Scorpid Sting duty it takes Improved Stings 3 for 3 points of Careful Aim, so the sting lasts 65 s and it steps out of melee for it three times in 3 minutes.",
+  "keyTalents": [
+    "Predator's Edge",
+    "Expose Prey",
+    "Strider Kick",
+    "Lacerating Strikes",
+    "Deadly Aspects",
+    "Lightning Reflexes",
+    "Surefooted",
+    "Clever Traps",
+    "Improved Stings"
+  ],
+  "rotation": [
+    "Pre-pull: walk into melee at -6 s, Aspect of the Beast at -3 s",
+    "Racials, potions and other cooldowns on cooldown",
+    "Scorpid Sting (2% off the boss's hit, 9% of base mana, 65 s with Improved Stings 3) at the pull and again in its last 3 s, stepping out of melee to the sim's 12 yd ranged minimum for it and back in once it is on its way; the raid's Scorpid Sting is off",
+    "Mongoose Bite whenever Expose Prey (or a dodge) opens it",
+    "Strider Kick on cooldown",
+    "Raptor Strike queued on the next swing when ready",
+    "Lacerate when it is down (mana >= 20%)",
+    "Immolation Trap on cooldown (mana >= 30%)",
+    "Wing Clip in free GCDs (mana >= 50%), held when Mongoose Bite or Strider Kick is about ready"
+  ],
+  "consumes": [
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Elixir of Greater Intellect",
+    "Ground Scorpok Assay",
+    "Juju Might",
+    "Flank au Poivre",
+    "Dragonbreath Chili",
+    "Major Frenzy Potion",
+    "Dense Sharpening Stone (main hand and off hand)",
+    "Goblin Sapper",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Agility and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +18 (2026-10-12 gear)",
+    "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain 0 (measured on the 2026-10-12 gear)",
+    "Raptor Strike rank 8 adds 96, halfway from the client's 70 to Era's 0.88 (assumption hunter_raptor_31plus, user ruling 2026-10-15); the ranks below keep the client's values",
+    "Orc is best through Axe Specialization on its main hand axe, 11 ahead of the Night Elf",
+    "Fire-toasted Bun (+9) left out as a seasonal item; Elemental Sharpening Stone left out (MC-only plans)",
+    "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
+    "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
+    "Keeps Rhok'delar's 2.9 sec bow: Survival never shoots, so every ranged candidate of standards 22 sims the same",
+    "Scorpid Sting duty (standards 23): the request switches the raid's Scorpid Sting off and the hunter keeps its own up; it costs 61.6 / 52.2 / 45.1 DPS at 120 / 180 / 300 s against hunter__survival, most of it the trips out of melee and the 3 points of Careful Aim (22 of it at 180 s)",
+    "The sting only lowers the boss's hit (2%, the slot it shares with Insect Swarm, whose raid debuff stays on), so it adds nothing to the raid's damage"
+  ],
+  "notes": "Request is hunter__survival's with the rotation swapped for ui/hunter/apls/sv_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and the Improved Stings talents and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_sv_scorpid. Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6 s before the pull, which the preset says costs nothing). Survival keeps a 1.0 sec cat out (DefaultOptions).",
+  "duty": "Scorpid Sting",
+  "baseBuild": "hunter__survival"
+}

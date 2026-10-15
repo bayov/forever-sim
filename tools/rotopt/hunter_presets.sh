@@ -45,3 +45,14 @@ gen hunter_ranged bm_mark "$bm,mark=1"
 gen hunter_ranged mm_mark "$mm,mark=1"
 gen hunter_ranged lw_mark "$mm,mark=1"
 gen hunter_sv sv_mark "$sv,mark=1"
+# Scorpid Sting duty (standards 23): Scorpid Sting kept up in place of Serpent Sting, for the presets
+# with the raid's Scorpid Sting off (mksettings specs hunter_*_scorpid). Survival steps back to the
+# sim's 12 yard ranged minimum for it, 3 sec before it drops (+2 over 2 sec, which let it drop),
+# and takes Improved Stings 3 for 3 points of Careful Aim (talents 502-005302-500230230250122151).
+# Without Serpent Sting Marksmanship and Lone Wolf have the mana for Sniper Shot at 15 a second of
+# the fight left (+15 and +20 at 300 sec over 25, nothing at 120 and 180); the other knobs moved
+# nothing (2026-10-15, 6000 iterations).
+gen hunter_ranged bm_scorpid "$bm,scorpid=1"
+gen hunter_ranged mm_scorpid "$mm,scorpid=1,sniperManaPerSec=15"
+gen hunter_ranged lw_scorpid "$mm,scorpid=1,sniperManaPerSec=15"
+gen hunter_sv sv_scorpid "$sv,scorpid=1,scorpidLead=3"

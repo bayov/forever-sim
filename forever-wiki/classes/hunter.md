@@ -54,6 +54,7 @@ Spellbook at level 60:
 - Raptor Strike rank 8: weapon damage +70 (Classic 140); the sim takes +96, halfway to the level 24 rank's 0.88 of Era (report assumption hunter_raptor_31plus, user ruling 2026-10-15). Mongoose Bite rank 4: normalized weapon damage +57 (Classic a flat 115). Wing Clip is Classic's.
 - Volley rank 3: 112 Arcane a second for 6 sec (Classic 80) and no cooldown. Rapid Fire speeds up melee attacks too. Traps go down in combat and have a 30 sec cooldown, Fire and Frost traps one each.
 - Lacerate is new, trained from level 30: a bleed for 21 sec, 406 at rank 4 and level 60 (58 a tick, +0.8 a level), 95 mana.
+- Hunter's Mark rank 4 is 60 mana for 2 min. Scorpid Sting has one rank, learned at 22: 2% off the target's chance to hit for 20 sec (Improved Stings 15 / 30 / 45 sec longer), 94 mana at level 38, which is 9% of that level's base mana by Multi-Shot's 13.9% and 145, so 155 at 60. One sting a hunter on a target, so it takes Serpent Sting's place. The sim casts both only in the raid duty presets (standards 23); the other presets take them from the raid's debuffs.
 
 What the beta shows that the client data does not (from beta combat logs: ElliotWood/Forever's fits and the community forever-hunter wiki):
 

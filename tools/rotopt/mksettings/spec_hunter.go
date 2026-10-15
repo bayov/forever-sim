@@ -18,8 +18,8 @@ func init() {
 	specs["hunter_lw"] = lw
 	specs["hunter_sv"] = hunterSpec(5, true, hunterMeleeRaid)
 
-	// Hunter's Mark duty (standards 23): the same raid with its Hunter's Mark debuff off, so the
-	// mark comes only from the hunter's own casts (the rotation's mark knob).
+	// Hunter's Mark and Scorpid Sting duties (standards 23): the same raid with that debuff off, so
+	// it comes only from the hunter's own casts (the rotation's mark and scorpid knobs).
 	for _, name := range []string{"hunter_bm", "hunter_mm", "hunter_lw", "hunter_sv"} {
 		base := *specs[name]
 		raid := base.raid
@@ -28,6 +28,15 @@ func init() {
 			debuffs.HuntersMark = proto.TristateEffect_TristateEffectMissing
 		}
 		specs[name+"_mark"] = &base
+
+		// Scorpid Sting duty: the raid's Scorpid Sting off (the rotation's scorpid knob).
+		scorpid := *specs[name]
+		scorpidRaid := scorpid.raid
+		scorpid.raid = func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
+			scorpidRaid(raidBuffs, buffs, debuffs)
+			debuffs.ScorpidSting = false
+		}
+		specs[name+"_scorpid"] = &scorpid
 	}
 }
 

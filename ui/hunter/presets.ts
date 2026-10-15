@@ -37,12 +37,16 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import BeastMasteryAPL from './apls/bm.apl.json';
 import BeastMasteryMarkAPL from './apls/bm_mark.apl.json';
+import BeastMasteryScorpidAPL from './apls/bm_scorpid.apl.json';
 import LoneWolfAPL from './apls/lw.apl.json';
 import LoneWolfMarkAPL from './apls/lw_mark.apl.json';
+import LoneWolfScorpidAPL from './apls/lw_scorpid.apl.json';
 import MarksmanshipAPL from './apls/mm.apl.json';
 import MarksmanshipMarkAPL from './apls/mm_mark.apl.json';
+import MarksmanshipScorpidAPL from './apls/mm_scorpid.apl.json';
 import SurvivalAPL from './apls/sv.apl.json';
 import SurvivalMarkAPL from './apls/sv_mark.apl.json';
+import SurvivalScorpidAPL from './apls/sv_scorpid.apl.json';
 import Level60RangedGear from './gear_sets/level60_phase1_synthetic_ranged.gear.json';
 import Level60SurvivalGear from './gear_sets/level60_phase1_synthetic_survival.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
@@ -163,9 +167,43 @@ export const APLSurvivalMark = PresetUtils.makePresetAPLRotation("Survival (Hunt
 	tooltip: 'The Survival rotation.' + markDutyTooltip,
 	group: 'Level 60',
 });
+// Scorpid Sting duty (standards 23): Scorpid Sting kept up in the sting slot in place of Serpent
+// Sting (a hunter has one sting on a target), refreshed in its last 2 sec (Survival: 3 sec, as it
+// steps back from melee to the sim's 12 yard minimum range for it). The duty presets switch the
+// raid's Scorpid Sting off; the base presets take it from the raid and never cast it.
+const scorpidDutyTooltip = ' With Scorpid Sting kept up in place of Serpent Sting, for the hunter on Scorpid Sting duty.';
+export const APLBeastMasteryScorpid = PresetUtils.makePresetAPLRotation('Beast Mastery (Scorpid Sting duty)', BeastMasteryScorpidAPL, {
+	tooltip: 'The Beast Mastery rotation.' + scorpidDutyTooltip,
+	group: 'Level 60',
+});
+export const APLMarksmanshipScorpid = PresetUtils.makePresetAPLRotation('Marksmanship (Scorpid Sting duty)', MarksmanshipScorpidAPL, {
+	tooltip: 'The Marksmanship rotation.' + scorpidDutyTooltip,
+	group: 'Level 60',
+});
+export const APLLoneWolfScorpid = PresetUtils.makePresetAPLRotation('Lone Wolf (Scorpid Sting duty)', LoneWolfScorpidAPL, {
+	tooltip: 'The Lone Wolf rotation.' + scorpidDutyTooltip,
+	group: 'Level 60',
+});
+export const APLSurvivalScorpid = PresetUtils.makePresetAPLRotation('Survival (Scorpid Sting duty)', SurvivalScorpidAPL, {
+	tooltip: 'The Survival rotation, stepping out of melee for Scorpid Sting before it drops, for the hunter on Scorpid Sting duty.',
+	group: 'Level 60',
+});
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLBeastMastery, APLBeastMasteryMark, APLMarksmanship, APLMarksmanshipMark, APLLoneWolf, APLLoneWolfMark, APLSurvival, APLSurvivalMark],
+	[Phase.Phase1]: [
+		APLBeastMastery,
+		APLBeastMasteryMark,
+		APLMarksmanship,
+		APLMarksmanshipMark,
+		APLLoneWolf,
+		APLLoneWolfMark,
+		APLSurvival,
+		APLSurvivalMark,
+		APLBeastMasteryScorpid,
+		APLMarksmanshipScorpid,
+		APLLoneWolfScorpid,
+		APLSurvivalScorpid,
+	],
 };
 
 export const DefaultAPL = APLLoneWolf;
@@ -210,8 +248,20 @@ export const TalentsSurvival = PresetUtils.makePresetTalents('Survival', SavedTa
 	group: 'Level 60',
 });
 
+// Survival on Scorpid Sting duty: Improved Stings 3 (Scorpid Sting 45 sec longer, so a third of
+// the trips out of melee) for 3 points of Careful Aim. On the duty that is 840.4 against 832.6 with
+// the preset's talents at 180 sec (4000 iterations), though the swap alone costs the base build 22.
+export const TalentsSurvivalScorpid = PresetUtils.makePresetTalents(
+	'Survival (Scorpid Sting duty)',
+	SavedTalents.create({ talentsString: '502-005302-500230230250122151' }),
+	{
+		tooltip: 'Level 60 melee Survival 7/10/34 with Improved Stings 3 in place of 3 points of Careful Aim, for Scorpid Sting duty.',
+		group: 'Level 60',
+	},
+);
+
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsBeastMastery, TalentsMarksmanship, TalentsLoneWolf, TalentsSurvival],
+	[Phase.Phase1]: [TalentsBeastMastery, TalentsMarksmanship, TalentsLoneWolf, TalentsSurvival, TalentsSurvivalScorpid],
 };
 
 export const DefaultTalents = TalentsLoneWolf;
@@ -408,6 +458,22 @@ export const EncounterLevel60MeleeMarkDuty = PresetUtils.makePresetEncounter("Le
 	buffs: DefaultIndividualBuffs,
 	consumes: SurvivalConsumes,
 });
+// And with the raid's Scorpid Sting off, for the hunter on Scorpid Sting duty.
+export const ScorpidDutyDebuffs = Debuffs.create({ ...DefaultDebuffs, scorpidSting: false });
+export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Level 60 (Scorpid Sting duty)', level60Boss, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: ScorpidDutyDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+export const EncounterLevel60MeleeScorpidDuty = PresetUtils.makePresetEncounter('Level 60 Melee (Scorpid Sting duty)', level60Boss, {
+	tanks: [],
+	raidBuffs: SurvivalRaidBuffs,
+	debuffs: ScorpidDutyDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: SurvivalConsumes,
+});
 
 // The numbers are without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8) and
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
@@ -435,7 +501,9 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// DUTY_COMMENT_PresetBuildBeastMastery
+// 953.5 / 947.4 / 940.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 5.7 / 4.7 / 2.6 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
+// it drops (standards 23).
 export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60 Beast Mastery (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -444,6 +512,19 @@ export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMasteryMark,
 	encounter: EncounterLevel60MarkDuty,
+	race: Race.RaceNightElf,
+	professions,
+	options: DefaultOptions,
+});
+// 874.1 / 866.4 / 856.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 85.1 / 85.7 / 86.5 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level 60 Beast Mastery (Scorpid Sting duty)', {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight, keeping Scorpid Sting up itself in place of Serpent Sting (the raid's Scorpid Sting off).",
+	gear: GearLevel60Ranged,
+	talents: TalentsBeastMastery,
+	rotation: APLBeastMasteryScorpid,
+	encounter: EncounterLevel60ScorpidDuty,
 	race: Race.RaceNightElf,
 	professions,
 	options: DefaultOptions,
@@ -461,7 +542,9 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// DUTY_COMMENT_PresetBuildMarksmanship
+// 1022.0 / 1015.7 / 994.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 5.9 / 4.6 / 4.0 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
+// it drops (standards 23).
 export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60 Marksmanship (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -470,6 +553,19 @@ export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanshipMark,
 	encounter: EncounterLevel60MarkDuty,
+	race: Race.RaceNightElf,
+	professions,
+	options: DefaultOptions,
+});
+// 945.1 / 939.2 / 935.4 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 82.8 / 81.1 / 63.1 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level 60 Marksmanship (Scorpid Sting duty)', {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight, keeping Scorpid Sting up itself in place of Serpent Sting (the raid's Scorpid Sting off).",
+	gear: GearLevel60Ranged,
+	talents: TalentsMarksmanship,
+	rotation: APLMarksmanshipScorpid,
+	encounter: EncounterLevel60ScorpidDuty,
 	race: Race.RaceNightElf,
 	professions,
 	options: DefaultOptions,
@@ -487,7 +583,9 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// DUTY_COMMENT_PresetBuildLoneWolf
+// 1064.4 / 1058.3 / 1039.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 7.1 / 5.7 / 4.1 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
+// it drops (standards 23).
 export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lone Wolf (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -496,6 +594,19 @@ export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lon
 	talents: TalentsLoneWolf,
 	rotation: APLLoneWolfMark,
 	encounter: EncounterLevel60MarkDuty,
+	race: Race.RaceNightElf,
+	professions,
+	options: LoneWolfOptions,
+});
+// 973.5 / 967.7 / 965.0 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 98.0 / 96.3 / 78.4 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 Lone Wolf (Scorpid Sting duty)', {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight, keeping Scorpid Sting up itself in place of Serpent Sting (the raid's Scorpid Sting off).",
+	gear: GearLevel60Ranged,
+	talents: TalentsLoneWolf,
+	rotation: APLLoneWolfScorpid,
+	encounter: EncounterLevel60ScorpidDuty,
 	race: Race.RaceNightElf,
 	professions,
 	options: LoneWolfOptions,
@@ -514,7 +625,9 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	professions,
 	options: DefaultOptions,
 });
-// DUTY_COMMENT_PresetBuildSurvival
+// 896.5 / 889.9 / 881.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 3.1 / 2.5 / 2.1 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
+// it drops (standards 23).
 export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -523,6 +636,19 @@ export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Sur
 	talents: TalentsSurvival,
 	rotation: APLSurvivalMark,
 	encounter: EncounterLevel60MeleeMarkDuty,
+	race: Race.RaceOrc,
+	professions,
+	options: DefaultOptions,
+});
+// 838.0 / 840.2 / 838.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 61.6 / 52.2 / 45.1 behind the base preset: the raid's Scorpid Sting is off and the hunter steps out of melee to keep its own up (standards 23).
+export const PresetBuildSurvivalScorpid = PresetUtils.makePresetBuild('Level 60 Survival (Scorpid Sting duty)', {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group, with Improved Stings, keeping Scorpid Sting up itself by stepping out of melee for it (the raid's Scorpid Sting off).",
+	gear: GearLevel60Survival,
+	talents: TalentsSurvivalScorpid,
+	rotation: APLSurvivalScorpid,
+	encounter: EncounterLevel60MeleeScorpidDuty,
 	race: Race.RaceOrc,
 	professions,
 	options: DefaultOptions,
