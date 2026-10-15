@@ -113,7 +113,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Faerie Fire duty (standards 23): the cat that keeps Faerie Fire (Feral) on the boss for the
 // raid. The Level 60 rotation leaves it to the raid's debuff; this one casts it from Cat Form
 // (free, 1 sec GCD, 6 sec cooldown, a trainer spell at 25 under Forever) first after the cooldowns
-// and again once it has under 1 sec left. Forever's Faerie Fire and Curse of Recklessness share the
+// and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
+// rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
 // it, and the duty's cost shows with both off: 6.3 / 5.2 / 4.2 DPS at 120 / 180 / 300 sec (723.3 /
 // 712.3 / 704.1, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own

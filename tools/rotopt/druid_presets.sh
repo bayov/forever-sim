@@ -52,5 +52,7 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMa
 # in the last 2 sec (0.6 to 1.4 together, the rogue's end-of-fight Eviscerate idea).
 gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0"
 # The cat's Faerie Fire duty: Faerie Fire (Feral) from Cat Form, first after the cooldowns and
-# again once it has under 1 sec left. The knob search kept the rest at 120, 180 and 300 sec.
-gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,faerieFire=1"
+# again once it has under 7 sec left, so a missed cast (its 6 sec cooldown) gets a second try before
+# the debuff drops (rotation auditor: 99.7% uptime against 98.7% at 1 sec, same DPS). The knob
+# search kept the rest at 120, 180 and 300 sec.
+gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7"
