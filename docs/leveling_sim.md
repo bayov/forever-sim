@@ -281,9 +281,43 @@ anything leveling-specific exists.
 
 After the groundwork:
 
-1. **The Grind encounter:** the session loop above, with run-in, the not-yet-in-combat mob
-   state, state carried across pulls, eating, drinking and bandaging, the death penalty and the
-   per-level XP table.
+1. **The Grind encounter.** Done (2026-10-15), `sim/core/leveling.go` and
+   `leveling_tables.go`, set by `Encounter.leveling` (`LevelingOptions` in
+   `proto/common.proto`), results in `EncounterMetrics.leveling` (`LevelingMetrics`).
+   - The mobs: a pool of max pack size normal mobs at each level of the spread, all of one
+     creature type (default Beast), reused as they die. A mob's level and type are fixed when
+     the sim is built, because its attack tables and the talents and items that read its type
+     are.
+   - The loop: search (random 5 to 11 sec), pull, run-in from the pull range at the mob's
+     level's run speed, chain pulls every 2 to 4 sec up to the pack size, fight, then a
+     bandage, eating and drinking when health or mana is low, and search again. While a mob
+     runs in we can cast at it but not reach it in melee, and it can't hit us. Its first
+     swing comes at a random point of its swing timer. Death: the mobs leave, a 3 min corpse
+     run, back at 50% health and mana.
+   - Out of combat we regen health from Spirit by the 1.12 server's class formulas, half
+     again while sitting (notes.md, Need to Verify). Food, water and bandages come from the
+     item data by level. XP per kill is the 1.12 formula by level difference.
+   - The pull and rest decisions are options for now (pack size, eat_below, drink_below):
+     step 2 moves them into the rotation.
+   - Results: mobs killed (the one we're on at the end by the share of its health we took,
+     with its standard deviation), XP and XP per hour, deaths, the time in combat, resting,
+     searching and dead, and mobs per pull.
+   - Found on the way: an AoE that killed a mob changed the living list while looping over
+     it, and could crash. Adding and removing a living target now copies the list.
+   - First numbers, the Level 30 Enhancement preset (gear, talents and rotation, 200 sessions
+     of 20 min against level 29 to 31 mobs):
+
+     | Pack size | Mobs | Deaths | XP / hour | Combat | Resting | Searching | Dead |
+     |---|---|---|---|---|---|---|---|
+     | 1 | 75.5 | 0.0 | 43,700 | 471 s | 120 s | 608 s | 1 s |
+     | 2 | 89.6 | 0.3 | 51,900 | 567 s | 204 s | 382 s | 48 s |
+     | 3 | 82.5 | 1.4 | 47,700 | 513 s | 209 s | 244 s | 235 s |
+
+     Two at a time comes out best. At three, about 1.4 deaths a session eat the gain. The
+     preset's rotation was built for Vishas, so it doesn't pull, heal or chain pull on
+     purpose yet.
+   - Not modelled yet: AoE around us (Magma Totem) also hits mobs still running in, and a
+     mob's type is one per session.
 2. **APL additions:** pull and chain-pull actions; out-of-combat actions (eat and drink until a
    threshold, bandage, heal); values for mobs in combat, mobs running in and in-combat state.
 3. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
