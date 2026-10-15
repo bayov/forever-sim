@@ -17,9 +17,22 @@ func init() {
 	}
 	specs["hunter_lw"] = lw
 	specs["hunter_sv"] = hunterSpec(5, true, hunterMeleeRaid)
+
+	// Hunter's Mark duty (standards 23): the same raid with its Hunter's Mark debuff off, so the
+	// mark comes only from the hunter's own casts (the rotation's mark knob).
+	for _, name := range []string{"hunter_bm", "hunter_mm", "hunter_lw", "hunter_sv"} {
+		base := *specs[name]
+		raid := base.raid
+		base.raid = func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
+			raid(raidBuffs, buffs, debuffs)
+			debuffs.HuntersMark = proto.TristateEffect_TristateEffectMissing
+		}
+		specs[name+"_mark"] = &base
+	}
 }
 
-// A ranged hunter's raid: its own Hunter's Mark, Blessing of Wisdom next to Might (a mana user),
+// A ranged hunter's raid: Hunter's Mark from the raid (another hunter keeps it up, standards 23; the
+// _mark specs switch it off for the hunter on duty), Blessing of Wisdom next to Might (a mana user),
 // and a shaman in its group for Grace of Air (Agility is two ranged attack power and crit) and
 // Mana Spring. Trueshot Aura only from a Marksmanship hunter's own talent (Forever makes it a party
 // aura of ranged attack power), not from the raid. The melee debuffs and Faerie Fire stay, the

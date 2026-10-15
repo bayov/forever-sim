@@ -28,6 +28,7 @@ var (
 	hunterWingClip         = spellID(14268)
 	hunterImmolationTrap   = spellID(14305)
 	nightElfElunesLight    = spellID(1259799)
+	hunterHuntersMark      = spellID(14325) // rank 4, sim/hunter/hunters_mark.go
 	// The ranged sets' synthetic on-use trinket (sim/hunter/forever_synthetic_trinkets.go).
 	hunterRangedOnUse = itemID(993016)
 )
@@ -69,6 +70,9 @@ func (hunterRanged) Knobs() []Knob {
 		// costs no use. Only a fight long enough for a third trinket use sees a difference.
 		{Name: "holdRapid", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "holdElune", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Hunter's Mark duty (standards 23): the hunter keeps the mark up itself, with the raid's
+		// Hunter's Mark debuff off in the request. The base presets leave it to the raid.
+		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -97,6 +101,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(nightElfElunesLight, alignedWith(nightElfElunesLight, hunterRangedOnUse), "Elune's Light with the on-use trinket, unless waiting would cost a use."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."))
+	if k["mark"] == 1 {
+		items = append(items, hunterMarkDuty())
+	}
 	if k["intimidation"] == 1 {
 		items = append(items, cast(hunterIntimidation, nil, "Intimidation on cooldown for the pet's crit, with the talent."))
 	}
@@ -155,4 +162,11 @@ func hunterCurrentMana() value {
 
 func hunterMul(lhs, rhs value) value {
 	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpMul, Lhs: lhs, Rhs: rhs}}}
+}
+
+// hunterMarkDuty keeps the hunter's own Hunter's Mark on the target: the first global cooldown
+// after the pull, then again in the last 3 sec of its 2 min.
+func hunterMarkDuty() *proto.APLListItem {
+	return cast(hunterHuntersMark, lt(targetAuraRemainingTime(hunterHuntersMark), seconds(3)),
+		"Hunter's Mark duty: the mark at the pull and again before it drops (the raid's mark is off).")
 }

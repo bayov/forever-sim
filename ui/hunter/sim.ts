@@ -142,7 +142,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLoneWolf, Presets.PresetBuildMarksmanship, Presets.PresetBuildBeastMastery, Presets.PresetBuildSurvival],
+		builds: [
+			Presets.PresetBuildLoneWolf,
+			Presets.PresetBuildLoneWolfMark,
+			Presets.PresetBuildMarksmanship,
+			Presets.PresetBuildMarksmanshipMark,
+			Presets.PresetBuildBeastMastery,
+			Presets.PresetBuildBeastMasteryMark,
+			Presets.PresetBuildSurvival,
+			Presets.PresetBuildSurvivalMark,
+		],
 		// Preset talents that the user can quickly select.
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		// Preset rotations that the user can quickly select.

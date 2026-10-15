@@ -36,9 +36,13 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import BeastMasteryAPL from './apls/bm.apl.json';
+import BeastMasteryMarkAPL from './apls/bm_mark.apl.json';
 import LoneWolfAPL from './apls/lw.apl.json';
+import LoneWolfMarkAPL from './apls/lw_mark.apl.json';
 import MarksmanshipAPL from './apls/mm.apl.json';
+import MarksmanshipMarkAPL from './apls/mm_mark.apl.json';
 import SurvivalAPL from './apls/sv.apl.json';
+import SurvivalMarkAPL from './apls/sv_mark.apl.json';
 import Level60RangedGear from './gear_sets/level60_phase1_synthetic_ranged.gear.json';
 import Level60SurvivalGear from './gear_sets/level60_phase1_synthetic_survival.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
@@ -138,8 +142,30 @@ export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', Surviva
 	group: 'Level 60',
 });
 
+// Hunter's Mark duty (standards 23): the base rotation plus the hunter's own Hunter's Mark, cast in
+// the first global cooldown after the pull and again before its 2 min run out. The duty presets
+// switch the raid's Hunter's Mark off; the base presets take the mark from the raid and never cast
+// it.
+const markDutyTooltip = " Plus Hunter's Mark at the pull and before it drops, for the hunter on Hunter's Mark duty.";
+export const APLBeastMasteryMark = PresetUtils.makePresetAPLRotation("Beast Mastery (Hunter's Mark duty)", BeastMasteryMarkAPL, {
+	tooltip: 'The Beast Mastery rotation.' + markDutyTooltip,
+	group: 'Level 60',
+});
+export const APLMarksmanshipMark = PresetUtils.makePresetAPLRotation("Marksmanship (Hunter's Mark duty)", MarksmanshipMarkAPL, {
+	tooltip: 'The Marksmanship rotation.' + markDutyTooltip,
+	group: 'Level 60',
+});
+export const APLLoneWolfMark = PresetUtils.makePresetAPLRotation("Lone Wolf (Hunter's Mark duty)", LoneWolfMarkAPL, {
+	tooltip: 'The Lone Wolf rotation.' + markDutyTooltip,
+	group: 'Level 60',
+});
+export const APLSurvivalMark = PresetUtils.makePresetAPLRotation("Survival (Hunter's Mark duty)", SurvivalMarkAPL, {
+	tooltip: 'The Survival rotation.' + markDutyTooltip,
+	group: 'Level 60',
+});
+
 export const APLPresets = {
-	[Phase.Phase1]: [APLBeastMastery, APLMarksmanship, APLLoneWolf, APLSurvival],
+	[Phase.Phase1]: [APLBeastMastery, APLBeastMasteryMark, APLMarksmanship, APLMarksmanshipMark, APLLoneWolf, APLLoneWolfMark, APLSurvival, APLSurvivalMark],
 };
 
 export const DefaultAPL = APLLoneWolf;
@@ -366,6 +392,22 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 	buffs: DefaultIndividualBuffs,
 	consumes: SurvivalConsumes,
 });
+// The same raids with the raid's Hunter's Mark off, for the hunter on Hunter's Mark duty.
+export const MarkDutyDebuffs = Debuffs.create({ ...DefaultDebuffs, huntersMark: TristateEffect.TristateEffectMissing });
+export const EncounterLevel60MarkDuty = PresetUtils.makePresetEncounter("Level 60 (Hunter's Mark duty)", level60Boss, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: MarkDutyDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+export const EncounterLevel60MeleeMarkDuty = PresetUtils.makePresetEncounter("Level 60 Melee (Hunter's Mark duty)", level60Boss, {
+	tanks: [],
+	raidBuffs: SurvivalRaidBuffs,
+	debuffs: MarkDutyDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: SurvivalConsumes,
+});
 
 // The numbers are without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8) and
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
@@ -393,6 +435,19 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
+// DUTY_COMMENT_PresetBuildBeastMastery
+export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60 Beast Mastery (Hunter's Mark duty)", {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight, keeping Hunter's Mark up itself (the raid's mark off).",
+	gear: GearLevel60Ranged,
+	talents: TalentsBeastMastery,
+	rotation: APLBeastMasteryMark,
+	encounter: EncounterLevel60MarkDuty,
+	race: Race.RaceNightElf,
+	professions,
+	options: DefaultOptions,
+});
 // 1027.9 / 1020.3 / 998.5 at 120 / 180 / 300 sec, 68 ahead of Beast Mastery at 180. The pet deals
 // 11% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
@@ -402,6 +457,19 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanship,
 	encounter: EncounterLevel60,
+	race: Race.RaceNightElf,
+	professions,
+	options: DefaultOptions,
+});
+// DUTY_COMMENT_PresetBuildMarksmanship
+export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60 Marksmanship (Hunter's Mark duty)", {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight, keeping Hunter's Mark up itself (the raid's mark off).",
+	gear: GearLevel60Ranged,
+	talents: TalentsMarksmanship,
+	rotation: APLMarksmanshipMark,
+	encounter: EncounterLevel60MarkDuty,
 	race: Race.RaceNightElf,
 	professions,
 	options: DefaultOptions,
@@ -419,6 +487,19 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
+// DUTY_COMMENT_PresetBuildLoneWolf
+export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lone Wolf (Hunter's Mark duty)", {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight, keeping Hunter's Mark up itself (the raid's mark off).",
+	gear: GearLevel60Ranged,
+	talents: TalentsLoneWolf,
+	rotation: APLLoneWolfMark,
+	encounter: EncounterLevel60MarkDuty,
+	race: Race.RaceNightElf,
+	professions,
+	options: LoneWolfOptions,
+});
 // 899.6 / 892.4 / 883.7 at 120 / 180 / 300 sec in the mksettings raid (Orc, 2026-10-15). On a pair
 // of Brutality Blade swords the Human did 858.6 at 180 sec. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
@@ -429,6 +510,19 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	talents: TalentsSurvival,
 	rotation: APLSurvival,
 	encounter: EncounterLevel60Melee,
+	race: Race.RaceOrc,
+	professions,
+	options: DefaultOptions,
+});
+// DUTY_COMMENT_PresetBuildSurvival
+export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
+	group: 'Level 60',
+	tooltip:
+		"Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group, keeping Hunter's Mark up itself (the raid's mark off).",
+	gear: GearLevel60Survival,
+	talents: TalentsSurvival,
+	rotation: APLSurvivalMark,
+	encounter: EncounterLevel60MeleeMarkDuty,
 	race: Race.RaceOrc,
 	professions,
 	options: DefaultOptions,

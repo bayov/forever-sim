@@ -153,3 +153,34 @@ func TestPetAbilityDamage(t *testing.T) {
 		}
 	}
 }
+
+// TestHuntersMarkDuty checks the hunter's own Hunter's Mark, cast by the presets on Hunter's Mark
+// duty (standards 23) with the raid's debuff off: it puts the same mark on the target as the
+// debuff (140 ranged attack power at level 60, core.ForeverHuntersMarkRank4), for 2 min, at 60 mana.
+func TestHuntersMarkDuty(t *testing.T) {
+	sim, hunter := newHunterSim(t, "", &proto.Debuffs{})
+	target := hunter.CurrentTarget
+	table := hunter.AttackTables[target.UnitIndex][proto.CastType_CastTypeRanged]
+	if table.BonusAttackPowerTaken != 0 {
+		t.Fatalf("ranged attack power against the target before the mark: %v, want 0", table.BonusAttackPowerTaken)
+	}
+	if hunter.HuntersMark == nil {
+		t.Fatal("no Hunter's Mark spell")
+	}
+	if got := hunter.HuntersMark.ActionID.SpellID; got != 14325 {
+		t.Errorf("Hunter's Mark spell %d, want rank 4 (14325)", got)
+	}
+	mana := hunter.CurrentMana()
+	if !hunter.HuntersMark.Cast(sim, target) {
+		t.Fatal("Hunter's Mark didn't cast")
+	}
+	if spent := mana - hunter.CurrentMana(); spent != 60 {
+		t.Errorf("Hunter's Mark cost %v mana, want 60", spent)
+	}
+	if got := table.BonusAttackPowerTaken; got != core.ForeverHuntersMarkRank4 {
+		t.Errorf("ranged attack power against the marked target: %v, want %v", got, core.ForeverHuntersMarkRank4)
+	}
+	if aura := target.GetActiveAuraWithTag(core.HuntersMarkAuraTag); aura == nil || aura.RemainingDuration(sim) != 2*time.Minute {
+		t.Errorf("mark aura %v, want 2 min left", aura)
+	}
+}

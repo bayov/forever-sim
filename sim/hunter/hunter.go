@@ -108,6 +108,7 @@ type Hunter struct {
 	RaptorStrikeHit   *core.Spell
 	MongooseBite      *core.Spell
 	SerpentSting      *core.Spell
+	HuntersMark       *core.Spell
 	SniperShot        *core.Spell
 	StriderKick       *core.Spell
 	SummonHawk        *core.Spell
@@ -202,6 +203,7 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerAimedShotSpell(multiShotTimer)
 	hunter.registerMultiShotSpell(multiShotTimer)
 	hunter.registerSniperShotSpell()
+	hunter.registerHuntersMarkSpell()
 
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerMongooseBiteSpell()
