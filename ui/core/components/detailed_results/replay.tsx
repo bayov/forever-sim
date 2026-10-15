@@ -36,10 +36,12 @@ const STICKY_LIFE = 1.6;
 // How far apart lines that start close together are, in pixels.
 const LANE_PX = 28;
 const STICKY_LANE_PX = 42;
-// Where the lines sit across their area, as a share of its width. Crits stay put in their own
-// column toward the middle of the screen, so the lines that scroll by don't run over them.
-const SCROLL_X: Record<SctEvent['side'], number> = { in: 0.36, out: 0.64 };
-const STICKY_X: Record<SctEvent['side'], number> = { in: 0.8, out: 0.2 };
+// Where the lines line up across their area, as a share of its width. What we do to the enemies
+// lines up on its left edge, so the icons form a column. What happens to us lines up on its
+// right edge, with the icon after the text. Crits stay put in their own column toward the middle
+// of the screen, so the lines that scroll by don't run over them.
+const SCROLL_EDGE: Record<SctEvent['side'], number> = { in: 0.45, out: 0.55 };
+const STICKY_EDGE: Record<SctEvent['side'], number> = { in: 1, out: 0 };
 
 // The action history strip shows this many of our latest casts. A new cast pushes the others
 // one slot to the left over this many seconds.
@@ -50,8 +52,6 @@ const HISTORY_SLOT_PX = 50;
 const PRESS_TIME = 0.25;
 // A buff's countdown turns orange in its last seconds, like the Bayov pack's expiring alert.
 const EXPIRING = 3;
-// The controls fade out after the mouse rests this long while we play.
-const IDLE_MS = 2500;
 
 const powerClass: Partial<Record<ResourceType, string>> = {
 	[ResourceType.ResourceTypeMana]: 'mana',
@@ -246,7 +246,6 @@ export class Replay extends ResultComponent {
 	private shown = false;
 	private frameRequest = 0;
 	private lastFrameAt = 0;
-	private idleTimer = 0;
 	private wasPlayingBeforeScrub = false;
 
 	private readonly ui: {
@@ -510,11 +509,9 @@ export class Replay extends ResultComponent {
 			this.togglePlay(true);
 		});
 		this.ui.stage.addEventListener('dblclick', () => this.toggleFullscreen());
-		this.ui.player.addEventListener('pointermove', () => this.wake());
 		// The keys work while the replay has focus. A click on a button would move the focus to
 		// the button, and then Space would press the button as well as play or pause.
 		this.ui.player.addEventListener('pointerup', () => this.rootElem.focus({ preventScroll: true }));
-		this.ui.player.addEventListener('pointerleave', () => this.ui.player.classList.toggle('idle', this.playing));
 		document.addEventListener('click', () => this.ui.speedMenu.classList.add('hide'));
 
 		this.bindProgress();
@@ -583,14 +580,12 @@ export class Replay extends ResultComponent {
 		this.lastFrameAt = performance.now();
 		this.frameRequest = requestAnimationFrame(now => this.tick(now));
 		this.rootElem.focus({ preventScroll: true });
-		this.wake();
 		this.updateButtons();
 	}
 
 	private pause() {
 		this.playing = false;
 		cancelAnimationFrame(this.frameRequest);
-		this.ui?.player.classList.remove('idle');
 		if (this.ui) this.updateButtons();
 	}
 
@@ -651,14 +646,6 @@ export class Replay extends ResultComponent {
 		}
 	}
 
-	// The controls fade out while we play and the mouse rests, like on a video.
-	private wake() {
-		this.ui.player.classList.remove('idle');
-		window.clearTimeout(this.idleTimer);
-		if (this.playing) {
-			this.idleTimer = window.setTimeout(() => this.ui.player.classList.toggle('idle', this.playing), IDLE_MS);
-		}
-	}
 
 	// The big icon that pops up in the middle and fades, when we play, pause or change speed.
 	private flash(icon: string | null, text = '') {
@@ -724,7 +711,6 @@ export class Replay extends ResultComponent {
 				return;
 		}
 		event.preventDefault();
-		this.wake();
 	}
 
 	private bindProgress() {
@@ -1452,11 +1438,15 @@ export class Replay extends ResultComponent {
 				y = progress;
 				offset = -event.lane * LANE_PX;
 			}
-			const x = (event.lane % 2 ? 1 : -1) * event.lane * 10;
 			const opacity = Math.min(1, age / 0.06) * Math.min(1, (1 - progress) / 0.3);
 			elem.style.top = `calc(${(y * 100).toFixed(2)}% + ${offset}px)`;
-			elem.style.left = `${(event.sticky ? STICKY_X : SCROLL_X)[event.side] * 100}%`;
-			elem.style.transform = `translate(calc(-50% + ${x}px), -50%) scale(${scale.toFixed(3)})`;
+			const edge = (event.sticky ? STICKY_EDGE : SCROLL_EDGE)[event.side];
+			if (event.side == 'out') {
+				elem.style.left = `${edge * 100}%`;
+			} else {
+				elem.style.right = `${(1 - edge) * 100}%`;
+			}
+			elem.style.transform = `translateY(-50%) scale(${scale.toFixed(3)})`;
 			elem.style.opacity = opacity.toFixed(3);
 		}
 		this.sctElems.forEach((elem, index) => {
