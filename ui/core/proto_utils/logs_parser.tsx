@@ -235,6 +235,8 @@ export class SimLog {
 					CastCompletedLog.parse(params) ||
 					StatChangeLog.parse(params) ||
 					ExtraAttackLog.parse(params) ||
+					CooldownLog.parse(params) ||
+					MaxResourcesLog.parse(params) ||
 					Promise.resolve(new SimLog(params))
 				);
 			}),
@@ -275,6 +277,14 @@ export class SimLog {
 
 	isExtraAttack(): this is ExtraAttackLog {
 		return this instanceof ExtraAttackLog;
+	}
+
+	isCooldown(): this is CooldownLog {
+		return this instanceof CooldownLog;
+	}
+
+	isMaxResources(): this is MaxResourcesLog {
+		return this instanceof MaxResourcesLog;
 	}
 
 	// Group events that happen at the same time.
@@ -1163,5 +1173,76 @@ export class ExtraAttackLog extends SimLog {
 		} else {
 			return null;
 		}
+	}
+}
+
+// A spell or item went on cooldown, like "{SpellID: 17364} on cooldown until 12.500 (timer 4)".
+//
+// Spells that share a cooldown log the same timer number. One cast can log more than one timer,
+// like a trinket with its own cooldown and the cooldown it shares with the other trinkets.
+export class CooldownLog extends SimLog {
+	readonly readyAt: number;
+	readonly timer: number;
+
+	constructor(params: SimLogParams, readyAt: number, timer: number) {
+		super(params);
+		this.readyAt = readyAt;
+		this.timer = timer;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} {this.newActionIdLink(this.actionId!)} on cooldown until {this.readyAt.toFixed(2)}s.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<CooldownLog> | null {
+		const match = params.raw.match(/] ({.*?}) on cooldown until (-?\d+\.?\d*) \(timer (-?\d+)\)/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				return new CooldownLog(params, parseFloat(match[2]), parseInt(match[3]));
+			});
+	}
+}
+
+// The size of each of a unit's bars at the pull, like `Max resources: {"Health": 4210.000}`.
+export class MaxResourcesLog extends SimLog {
+	readonly maxValues: Partial<Record<ResourceType, number>>;
+
+	constructor(params: SimLogParams, maxValues: Partial<Record<ResourceType, number>>) {
+		super(params);
+		this.maxValues = maxValues;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} Max{' '}
+				{Object.entries(this.maxValues)
+					.map(([type, value]) => `${resourceNames.get(Number(type) as ResourceType)?.toLowerCase()} ${value!.toFixed(0)}`)
+					.join(', ')}
+				.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<MaxResourcesLog> | null {
+		const match = params.raw.match(/Max resources: ({.*})/);
+		if (!match) return null;
+		const maxValues: Partial<Record<ResourceType, number>> = {};
+		try {
+			Object.entries(JSON.parse(match[1]) as Record<string, number>).forEach(([name, value]) => {
+				const type = stringToResourceType(name);
+				if (type != ResourceType.ResourceTypeNone) maxValues[type] = value;
+			});
+		} catch {
+			return null;
+		}
+		return Promise.resolve(new MaxResourcesLog(params, maxValues));
 	}
 }

@@ -1,0 +1,1022 @@
+// The Replay view of the Events tab: the fight played back like a video, with unit frames, a
+// cooldown tracker and scrolling combat text drawn the way an addon UI in the game draws them.
+
+// The black outline around text drawn over the game, like addons draw it.
+@mixin replay-outline {
+	text-shadow:
+		1px 1px 0 #000,
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		0 0 4px rgba(0, 0, 0, 0.85);
+}
+
+.replay-root {
+	--replay-gold: #ffd75e;
+	--replay-hostile: #c62828;
+	--replay-cast: #f0a800;
+	--class-color: #{$gold};
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.replay-player {
+	position: relative;
+	background: #07090c;
+	color: #fff;
+
+	&.fullscreen .replay-stage {
+		height: 100vh;
+		max-height: none;
+		aspect-ratio: auto;
+	}
+
+	&.empty {
+		.replay-frames,
+		.replay-hud,
+		.replay-controls {
+			display: none;
+		}
+	}
+
+	&.idle {
+		cursor: none;
+
+		.replay-controls {
+			opacity: 0;
+		}
+	}
+}
+
+.replay-root:focus-visible .replay-player {
+	box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.replay-stage {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	// The clock takes the top and the controls the bottom. The combat text fills what the unit
+	// frames leave above them.
+	padding: 64px 3% max(74px, 9%);
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	min-height: 540px;
+	max-height: 80vh;
+	overflow: hidden;
+	cursor: pointer;
+	user-select: none;
+	background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(66, 86, 112, 0.35), transparent 70%),
+		radial-gradient(ellipse 120% 60% at 50% 115%, rgba(30, 24, 18, 0.9), transparent 60%), linear-gradient(to bottom, #111821, #0a0d12 70%, #07090c);
+}
+
+.replay-message {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--spacer-4);
+	color: var(--text-muted-color);
+	text-align: center;
+}
+
+// The clock and the damage so far, at the top in the middle.
+.replay-hud {
+	position: absolute;
+	top: 14px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: baseline;
+	gap: 18px;
+	padding: 6px 16px;
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.4);
+	font-variant-numeric: tabular-nums;
+
+	@include replay-outline;
+	pointer-events: none;
+}
+
+.replay-hud-time {
+	font-size: 1.35rem;
+	font-weight: 700;
+}
+
+.replay-hud-stat {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+}
+
+.replay-hud-label {
+	font-size: 0.7rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.replay-hud-value {
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--replay-gold);
+}
+
+// The scrolling combat text. What happens to us is on the left, what we do on the right.
+.replay-sct-zone {
+	position: relative;
+	flex: 1 1 auto;
+	min-height: 0;
+	margin: 0 -3% 12px;
+}
+
+.replay-sct {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 34%;
+	pointer-events: none;
+
+	&.replay-sct-in {
+		left: 5%;
+	}
+
+	&.replay-sct-out {
+		right: 5%;
+	}
+}
+
+.replay-sct-text {
+	position: absolute;
+	left: 50%;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	white-space: nowrap;
+	font-size: 1.4rem;
+	font-weight: 800;
+	line-height: 1;
+
+	@include replay-outline;
+	will-change: transform, top, opacity;
+
+	&.crit,
+	&.hurt-crit {
+		font-size: 2.2rem;
+	}
+
+	&.tick,
+	&.avoid,
+	&.resource {
+		font-size: 1.1rem;
+	}
+
+	&.aura {
+		font-size: 1.2rem;
+	}
+}
+
+.replay-sct-icon {
+	flex: 0 0 auto;
+	width: 1.05em;
+	height: 1.05em;
+	min-width: 18px;
+	min-height: 18px;
+	border: 1px solid #000;
+	border-radius: 2px;
+	background-size: 115%;
+	background-position: center;
+}
+
+.replay-sct-note {
+	font-size: 0.7em;
+	font-weight: 700;
+	opacity: 0.85;
+}
+
+// The unit frames along the bottom, with the cooldown tracker between them.
+.replay-frames {
+	position: relative;
+	flex: 0 0 auto;
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: end;
+	gap: 28px;
+	pointer-events: none;
+}
+
+.replay-col {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 0;
+}
+
+.replay-col-player {
+	align-items: flex-end;
+}
+
+.replay-col-enemies {
+	align-items: flex-start;
+
+	// With three or more enemies the frames get smaller, so they fit.
+	&.many {
+		gap: 6px;
+
+		.replay-unit {
+			width: 240px;
+		}
+
+		.replay-unit-portrait {
+			width: 32px;
+		}
+
+		.replay-bar.health {
+			height: 16px;
+		}
+
+		.replay-unit-damage {
+			display: none;
+		}
+
+		.replay-icon.debuff {
+			--size: 20px;
+		}
+	}
+}
+
+.replay-unit {
+	width: 320px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	max-width: 100%;
+}
+
+.replay-unit-main {
+	display: flex;
+	gap: 3px;
+	padding: 3px;
+	background: rgba(8, 10, 14, 0.85);
+	border: 1px solid #000;
+	box-shadow:
+		0 0 0 1px rgba(255, 255, 255, 0.07),
+		0 6px 16px rgba(0, 0, 0, 0.55);
+
+	.enemy & {
+		flex-direction: row-reverse;
+	}
+
+	.focus & {
+		box-shadow:
+			0 0 0 1px var(--replay-gold),
+			0 0 12px rgba(255, 215, 94, 0.35),
+			0 6px 16px rgba(0, 0, 0, 0.55);
+	}
+}
+
+.replay-unit-portrait {
+	flex: 0 0 auto;
+	width: 52px;
+	border: 1px solid #000;
+	background-size: 115%;
+	background-position: center;
+}
+
+.replay-unit-body {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.replay-unit-head {
+	display: flex;
+	justify-content: space-between;
+	gap: 6px;
+	font-size: 0.85rem;
+	font-weight: 700;
+	line-height: 1.2;
+
+	@include replay-outline;
+
+	.enemy & {
+		flex-direction: row-reverse;
+	}
+}
+
+.replay-unit-name {
+	color: var(--class-color);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	.enemy & {
+		color: #fff;
+	}
+}
+
+.replay-unit-level {
+	color: var(--replay-gold);
+
+	.enemy & {
+		color: #ff6b5e;
+	}
+}
+
+.replay-unit-extra {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.replay-unit-damage {
+	font-size: 0.65rem;
+	color: rgba(255, 255, 255, 0.55);
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.replay-unit-auras {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	min-height: 0;
+
+	.player & {
+		justify-content: flex-end;
+	}
+}
+
+.replay-bar {
+	--fill: #888;
+
+	position: relative;
+	height: 28px;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid #000;
+	font-size: 0.7rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+
+	@include replay-outline;
+
+	&.health {
+		--fill: #23a943;
+
+		.enemy & {
+			--fill: var(--replay-hostile);
+		}
+	}
+
+	&.power {
+		height: 12px;
+		font-size: 0.6rem;
+
+		&.mana {
+			--fill: #1f6fd6;
+		}
+
+		&.energy {
+			--fill: #e6cf1f;
+		}
+
+		&.rage {
+			--fill: #d42a2a;
+		}
+
+		&.focus {
+			--fill: #e07b39;
+		}
+	}
+}
+
+.replay-bar-fill {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	background: linear-gradient(to bottom, color-mix(in srgb, var(--fill), #fff 18%), var(--fill) 55%, color-mix(in srgb, var(--fill), #000 30%));
+
+	.enemy & {
+		left: auto;
+		right: 0;
+	}
+}
+
+.replay-bar-text,
+.replay-bar-percent {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.replay-bar-text {
+	left: 6px;
+}
+
+.replay-bar-percent {
+	right: 6px;
+
+	.enemy & {
+		right: auto;
+		left: 6px;
+	}
+
+	.execute & {
+		color: #ff9f43;
+	}
+}
+
+.replay-bar.power .replay-bar-text {
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+// Where the execute phase starts on an enemy's health bar.
+.replay-bar-execute {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background: rgba(255, 255, 255, 0.55);
+}
+
+.replay-combo {
+	display: flex;
+	gap: 3px;
+	padding-top: 1px;
+}
+
+.replay-combo-pip {
+	flex: 1;
+	height: 6px;
+	border: 1px solid #000;
+	background: rgba(255, 255, 255, 0.08);
+
+	&.on {
+		background: linear-gradient(to bottom, #ff8a3d, #d9480f);
+		box-shadow: 0 0 6px rgba(255, 120, 40, 0.6);
+	}
+}
+
+// The class pack in the middle: the casts we made, our procs, the cooldowns, the GCD and the
+// cast bar.
+.replay-center {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	width: 390px;
+}
+
+.replay-history {
+	position: relative;
+	width: 288px;
+	height: 50px;
+	overflow: hidden;
+}
+
+.replay-procs,
+.replay-cooldowns {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 4px;
+}
+
+.replay-procs {
+	min-height: 34px;
+}
+
+.replay-gcd {
+	width: 220px;
+	height: 3px;
+	background: rgba(255, 255, 255, 0.08);
+	opacity: 0.35;
+
+	&.active {
+		opacity: 1;
+	}
+}
+
+.replay-gcd-fill {
+	height: 100%;
+	background: rgba(255, 255, 255, 0.85);
+}
+
+.replay-icon {
+	--size: 40px;
+	--elapsed: 1;
+
+	position: relative;
+	flex: 0 0 auto;
+	width: var(--size);
+	height: var(--size);
+	border: 1px solid #000;
+	border-radius: 3px;
+	overflow: hidden;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+	font-variant-numeric: tabular-nums;
+
+	&.cooldown {
+		--size: 46px;
+		transition: transform 0.08s;
+
+		.major & {
+			--size: 36px;
+		}
+
+		&.on-cooldown .replay-icon-img {
+			filter: grayscale(0.85) brightness(0.75);
+		}
+
+		&.buff-up {
+			box-shadow:
+				0 0 0 2px var(--replay-gold),
+				0 0 12px rgba(255, 215, 94, 0.55);
+
+			.replay-icon-time {
+				color: var(--replay-gold);
+			}
+		}
+
+		// The flash of a button we just pressed.
+		&.pressed {
+			transform: scale(0.9);
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: rgba(255, 255, 255, 0.35);
+			}
+		}
+	}
+
+	&.proc {
+		--size: 34px;
+		animation: replay-pop 0.18s ease-out;
+		box-shadow:
+			0 0 0 1px rgba(255, 215, 94, 0.45),
+			0 0 8px rgba(255, 215, 94, 0.25);
+	}
+
+	&.debuff {
+		--size: 24px;
+	}
+
+	&.buff {
+		--size: 18px;
+		opacity: 0.85;
+	}
+
+	&.history {
+		--size: 42px;
+		position: absolute;
+		top: 4px;
+		left: 100%;
+		margin-left: 3px;
+		transform-origin: center;
+
+		&.newest {
+			box-shadow:
+				0 0 0 1px rgba(255, 255, 255, 0.5),
+				0 0 10px rgba(255, 255, 255, 0.25);
+		}
+	}
+}
+
+.replay-icon-img {
+	position: absolute;
+	inset: 0;
+	background-size: 115%;
+	background-position: center;
+}
+
+// The swipe of a cooldown or a buff's time left, clockwise from the top like in the game.
+.replay-icon-swipe {
+	position: absolute;
+	inset: 0;
+	display: none;
+	background: conic-gradient(transparent 0 calc(var(--elapsed) * 1turn), rgba(0, 0, 0, 0.68) 0);
+
+	.swiping > & {
+		display: block;
+	}
+}
+
+.replay-icon-time {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(var(--size) * 0.4);
+	font-weight: 800;
+	line-height: 1;
+
+	@include replay-outline;
+
+	.debuff &,
+	.proc & {
+		align-items: flex-end;
+		padding-bottom: 1px;
+		font-size: calc(var(--size) * 0.36);
+	}
+}
+
+.replay-icon-stacks {
+	position: absolute;
+	right: 2px;
+	top: 1px;
+	font-size: calc(var(--size) * 0.34);
+	font-weight: 800;
+	line-height: 1;
+
+	@include replay-outline;
+}
+
+.replay-icon-badge {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 1px 0;
+	font-size: 0.55rem;
+	font-weight: 800;
+	line-height: 1;
+	text-align: center;
+	letter-spacing: 0.04em;
+	background: rgba(0, 0, 0, 0.65);
+
+	&.crit {
+		color: var(--replay-gold);
+	}
+
+	&.avoid {
+		color: #ff7b72;
+	}
+}
+
+@keyframes replay-pop {
+	from {
+		transform: scale(1.5);
+		opacity: 0;
+	}
+
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+.replay-castbar {
+	display: flex;
+	gap: 3px;
+	width: 100%;
+	height: 22px;
+	opacity: 0;
+	transition: opacity 0.12s;
+
+	&.active {
+		opacity: 1;
+	}
+
+	&.player {
+		width: 300px;
+	}
+}
+
+.replay-castbar-icon {
+	flex: 0 0 auto;
+	width: 22px;
+	border: 1px solid #000;
+	background-size: 115%;
+	background-position: center;
+}
+
+.replay-castbar-bar {
+	position: relative;
+	flex: 1;
+	overflow: hidden;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.65);
+	font-size: 0.7rem;
+	font-weight: 700;
+
+	@include replay-outline;
+}
+
+.replay-castbar-fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	background: linear-gradient(to bottom, #ffc94a, var(--replay-cast) 55%, #b87800);
+
+	.enemy & {
+		background: linear-gradient(to bottom, #ff6b6b, #c62828 55%, #8e1b1b);
+	}
+}
+
+.replay-castbar-name,
+.replay-castbar-time {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.replay-castbar-name {
+	left: 6px;
+}
+
+.replay-castbar-time {
+	right: 6px;
+	font-variant-numeric: tabular-nums;
+}
+
+// The play button in the middle before we start and after the end.
+.replay-big-play {
+	position: absolute;
+	top: 42%;
+	left: 50%;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 84px;
+	height: 84px;
+	margin: -42px 0 0 -42px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+	font-size: 2rem;
+	pointer-events: none;
+
+	.show-big-play & {
+		display: flex;
+	}
+
+	.replay-stage:hover & {
+		background: var(--gold);
+		color: #000;
+	}
+}
+
+// The big icon in the middle that pops up and fades when we play, pause or change the speed.
+.replay-flash {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 68px;
+	height: 68px;
+	margin: -34px 0 0 -34px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.55);
+	font-size: 1.5rem;
+	font-weight: 700;
+	opacity: 0;
+	pointer-events: none;
+
+	&.show {
+		animation: replay-flash 0.6s ease-out forwards;
+	}
+}
+
+@keyframes replay-flash {
+	from {
+		transform: scale(0.8);
+		opacity: 1;
+	}
+
+	to {
+		transform: scale(1.5);
+		opacity: 0;
+	}
+}
+
+// The video player controls along the bottom.
+.replay-controls {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 24px 12px 4px;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45) 55%, transparent);
+	transition: opacity 0.25s;
+}
+
+.replay-progress {
+	position: relative;
+	height: 16px;
+	cursor: pointer;
+	touch-action: none;
+}
+
+.replay-progress-track {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 50%;
+	height: 4px;
+	transform: translateY(-50%);
+	background: rgba(255, 255, 255, 0.22);
+	transition: height 0.1s;
+
+	.replay-progress:hover &,
+	.replay-progress.scrubbing & {
+		height: 6px;
+	}
+}
+
+.replay-progress-hover,
+.replay-progress-played {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.replay-progress-hover {
+	width: 0;
+	background: rgba(255, 255, 255, 0.3);
+	opacity: 0;
+
+	.replay-progress:hover & {
+		opacity: 1;
+	}
+}
+
+.replay-progress-played {
+	background: var(--gold);
+}
+
+.replay-progress-marker {
+	position: absolute;
+	top: -2px;
+	bottom: -2px;
+	width: 3px;
+	margin-left: -1px;
+	border-radius: 1px;
+	background: #fff;
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.replay-progress-thumb {
+	position: absolute;
+	top: 50%;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	border-radius: 50%;
+	background: var(--gold);
+	transform: scale(0);
+	transition: transform 0.1s;
+
+	.replay-progress:hover &,
+	.replay-progress.scrubbing &,
+	.paused & {
+		transform: scale(1);
+	}
+}
+
+.replay-progress-tooltip {
+	position: absolute;
+	bottom: 20px;
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: rgba(20, 20, 20, 0.9);
+	font-size: 0.75rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	transform: translateX(-50%);
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+
+	.replay-progress:hover &,
+	.replay-progress.scrubbing & {
+		opacity: 1;
+	}
+}
+
+.replay-buttons {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	height: 40px;
+}
+
+.replay-buttons-filler {
+	flex: 1;
+}
+
+.replay-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 40px;
+	height: 36px;
+	padding: 0 8px;
+	border: 0;
+	border-radius: 4px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.92);
+	font-size: 1.05rem;
+
+	&.small {
+		min-width: 34px;
+		font-size: 0.85rem;
+	}
+
+	&:hover {
+		color: #fff;
+		background: rgba(255, 255, 255, 0.1);
+	}
+}
+
+.replay-clock {
+	margin-left: 8px;
+	font-size: 0.85rem;
+	font-variant-numeric: tabular-nums;
+	color: rgba(255, 255, 255, 0.9);
+	white-space: nowrap;
+}
+
+.replay-keys {
+	margin-right: 12px;
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.45);
+	white-space: nowrap;
+
+	@include media-breakpoint-down(xxl) {
+		display: none;
+	}
+}
+
+.replay-speed {
+	position: relative;
+}
+
+.replay-speed-button {
+	font-size: 0.85rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.replay-speed-menu {
+	position: absolute;
+	right: 0;
+	bottom: 44px;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	min-width: 120px;
+	padding: 6px 0;
+	border-radius: 8px;
+	background: rgba(28, 28, 28, 0.94);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.replay-speed-title {
+	padding: 4px 14px 6px;
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.replay-speed-option {
+	padding: 6px 14px 6px 30px;
+	border: 0;
+	background: transparent;
+	color: #fff;
+	font-size: 0.85rem;
+	text-align: left;
+	position: relative;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	&.active::before {
+		content: '\f00c';
+		position: absolute;
+		left: 10px;
+		font-family: 'Font Awesome 6 Free';
+		font-weight: 900;
+		font-size: 0.7rem;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+}
