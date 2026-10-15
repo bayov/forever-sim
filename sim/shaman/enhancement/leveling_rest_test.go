@@ -175,3 +175,46 @@ func TestLevelingTrollRegen(t *testing.T) {
 		t.Errorf("in combat a Troll regens %.4f of its out of combat regen, want 0.1", ratio)
 	}
 }
+
+// TestLevelingRestWithMobWaiting: we look for the next mob while fighting, and rest with it
+// waiting once the fight is over. Nothing pulls it while we sit: not a swing of ours from
+// where it stands (our target moves to it when the last mob dies), and not the rotation,
+// since sitting stops everything else.
+func TestLevelingRestWithMobWaiting(t *testing.T) {
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -3}, 1), rotationOf(
+		`{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"90%"}}}},"levelingRest":{"eat":true,"drink":true}}}`,
+		`{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"math":{"op":"OpAdd","lhs":{"levelingMobsOnUs":{}},"rhs":{"levelingMobsRunningIn":{}}}},"rhs":{"const":{"val":"0"}}}},"levelingWalkToPullTarget":{}}}`,
+		`{"action":{"levelingLookForMob":{}}}`))
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	sitting, rests, waiting := false, 0, 0
+	found := ""
+	logLines(t, result.Logs, func(at float64, line string) {
+		switch {
+		case foundLine.MatchString(line):
+			found = foundLine.FindStringSubmatch(line)[1]
+		case sitLine.MatchString(line):
+			sitting = true
+			rests++
+			if found != "" {
+				waiting++
+			}
+		case standLine.MatchString(line):
+			sitting = false
+		case pulledLine.MatchString(line):
+			if sitting {
+				t.Errorf("at %.2f a mob was pulled while we sat: %s", at, line)
+			}
+			// Level 26 to 28 mobs notice a level 30 from 16 to 18 yards, and nothing else
+			// pulls them here.
+			if from := atoi(pulledLine.FindStringSubmatch(line)[3]); from > 18 {
+				t.Errorf("at %.2f a mob was pulled from %d yards, beyond its aggro radius: %s", at, from, line)
+			}
+			found = ""
+		}
+	})
+	if waiting < 3 {
+		t.Errorf("%d of %d rests had a mob found and waiting, want a few", waiting, rests)
+	}
+}

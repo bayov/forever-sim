@@ -45,6 +45,12 @@ func (s *levelingSession) onRotationIdle(sim *Simulation, unit *Unit) {
 	s.after(sim, &s.next, 0, s.search)
 }
 
+// sitting is whether we're sitting, bandaging or dead: nothing else goes until that's over,
+// since anything would stand us up.
+func (s *levelingSession) sitting() bool {
+	return s.state == levelingResting || s.state == levelingBandaging || s.state == levelingDead
+}
+
 // outOfCombatState is whether we're out of combat and free to rest or bandage.
 func (s *levelingSession) outOfCombatState() bool {
 	return s.state == levelingReady || s.state == levelingSearching || s.state == levelingPulling

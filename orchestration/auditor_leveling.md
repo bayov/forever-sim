@@ -40,7 +40,8 @@ Build the tool once: `go build -tags=with_db -o /tmp/rotopt ./tools/rotopt`.
   one, `-out <dir>` writes it) and run it with `-apl <file> -eval -confirm-iters 2000`. The
   random seed is fixed, so two rotations see the same sessions and their difference is far
   less noisy than either number's standard error suggests. Still, a change is real only when
-  it holds at 4000 iterations and on a second seed (`-seed 2`).
+  it holds at 4000 iterations and on a second seed far from the first (`-seed 1000001`:
+  session i runs on seed + i, so `-seed 2` is the same sessions shifted by one).
 
 ## What to look for
 

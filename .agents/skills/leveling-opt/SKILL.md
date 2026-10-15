@@ -56,7 +56,7 @@ level (section 6).
 ## 4. Check what it found
 
 For every finding it says helped, rerun its A/B yourself at 4000 iterations, on `-seed 1` and
-`-seed 2`. Keep it only if both agree and the gain is at least two standard errors of the
+`-seed 1000001` (session i runs on seed + i, so nearby seeds repeat the same sessions). Keep it only if both agree and the gain is at least two standard errors of the
 difference. Note down everything it tried, kept or not, in `orchestration/leveling_audit_log.md`
 (template, date, idea, numbers, verdict), so later audits skip the dead ends.
 

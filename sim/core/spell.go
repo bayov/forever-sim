@@ -529,6 +529,11 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
+	// Sitting, bandaging or dead in a leveling session, we do nothing else (leveling_rest.go).
+	if leveling := spell.Unit.Env.Encounter.leveling; leveling != nil && spell.Unit == leveling.player && leveling.sitting() {
+		return false
+	}
+
 	if spell.MaxRange > 0 && spell.Unit.Env.Encounter.LevelingDistance(sim, target) > spell.MaxRange+levelingYardTolerance {
 		return false
 	}

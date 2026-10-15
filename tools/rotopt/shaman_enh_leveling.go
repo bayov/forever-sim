@@ -14,8 +14,11 @@ import (
 //   - Pulling the mob we found: a shock within 20 yards, a rank 1 Lightning Bolt from
 //     further while nothing is on us, or walking up into range. A rotation that does none
 //     of these walks up until the mob notices us.
-//   - Chain pulls: look for another mob while health and mana are above thresholds and
-//     fewer than a number of mobs are pulled.
+//   - Chain pulls: look for another mob while fewer than a number of mobs are pulled, and
+//     pull it while health and mana are above thresholds. With look-ahead we look at lower
+//     health too, and a mob we don't pull yet waits while we rest: the next pull without a
+//     search (the leveling auditor's first finding, orchestration/leveling_audit_log.md).
+//     Nothing pulls the mob we found while we need a rest.
 //   - Totems only once a mob is pulled, dropped again when out of reach.
 //   - The fight: Stormstrike, the shocks above a mana floor, Fire Nova on packs, Lightning
 //     Shield, a heal below a threshold, and the cooldowns.
@@ -27,16 +30,20 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		{Name: "recall", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "oocHealBelow", Default: 0, Min: 0, Max: 60, Step: 20},
 		{Name: "bandageBelow", Default: 0, Min: 0, Max: 80, Step: 20},
-		{Name: "restHealth", Default: 50, Min: 20, Max: 80, Step: 10},
-		{Name: "restMana", Default: 40, Min: 10, Max: 70, Step: 10},
-		{Name: "restUntil", Default: 100, Min: 60, Max: 100, Step: 10},
+		{Name: "restHealth", Default: 90, Min: 20, Max: 90, Step: 10},
+		{Name: "restMana", Default: 50, Min: 10, Max: 70, Step: 10},
+		{Name: "restUntil", Default: 90, Min: 60, Max: 100, Step: 10},
 		// Pulling: 0 none (walk up), 1 Earth Shock rank 1, 2 Earth Shock, 3 Flame Shock.
-		{Name: "pullSpell", Default: 2, Min: 0, Max: 3, Step: 1},
+		{Name: "pullSpell", Default: 0, Min: 0, Max: 3, Step: 1},
 		{Name: "pullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Chain pulls: 0 off, else look while fewer than chainMax mobs are pulled.
+		// Chain pulls: 0 off, else look while fewer than chainMax mobs are pulled, and pull
+		// what we find above chainHealth and chainMana.
 		{Name: "chainMax", Default: 2, Min: 0, Max: 4, Step: 1},
-		{Name: "chainHealth", Default: 60, Min: 30, Max: 90, Step: 10},
-		{Name: "chainMana", Default: 40, Min: 0, Max: 80, Step: 20},
+		{Name: "chainHealth", Default: 90, Min: 30, Max: 90, Step: 10},
+		{Name: "chainMana", Default: 50, Min: 0, Max: 80, Step: 10},
+		// Look for the next mob above this health even when we won't pull it yet; 0 looks
+		// only when we'd pull it (chainHealth and chainMana).
+		{Name: "lookAheadHealth", Default: 40, Min: 0, Max: 70, Step: 10},
 		// Totems, once a mob is pulled. Fire: 0 none, 1 Flametongue, 2 Searing, 3 Magma
 		// with 2 mobs on us.
 		{Name: "strengthOfEarth", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -88,9 +95,12 @@ func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	if k["bandageBelow"] > 0 {
 		items = append(items, bandage(lt(currentHealthPercent(), pct(k["bandageBelow"])), "A bandage between pulls."))
 	}
-	items = append(items, rest(true, true, k["restUntil"],
-		or(lt(currentHealthPercent(), pct(k["restHealth"])), lt(currentManaPercent(), pct(k["restMana"]))),
-		"Sit down to eat and drink when health or mana is low."))
+	needRest := or(lt(currentHealthPercent(), pct(k["restHealth"])), lt(currentManaPercent(), pct(k["restMana"])))
+	items = append(items, rest(true, true, k["restUntil"], needRest, "Sit down to eat and drink when health or mana is low."))
+	// We pull the mob we found once we're fit for it: in combat above the chain thresholds,
+	// out of combat once we don't need a rest. Until then it waits.
+	chainFit := and(gt(currentHealthPercent(), pct(k["chainHealth"])), ge(currentManaPercent(), pct(k["chainMana"])))
+	pullFit := or(and(inCombat, chainFit), and(noMobs, not(needRest)))
 
 	// The fight's heal comes before pulling more.
 	if k["combatHealBelow"] > 0 {
@@ -109,26 +119,27 @@ func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 		pullShock = flameShock
 	}
 	if pullShock != nil {
-		items = append(items, castAt(pullShock, pullTarget, nil, "Pull the mob we found with a shock once it's in range."))
+		items = append(items, castAt(pullShock, pullTarget, pullFit, "Pull the mob we found with a shock once it's in range."))
 	}
 	if k["pullBolt"] == 1 {
 		items = append(items,
-			castAt(lightningBolt1, pullTarget, eq(mobsOnUs(), num(0)), "Pull with rank 1 Lightning Bolt from beyond shock range while nothing is on us."),
-			walkToPullTarget(30, eq(mobsOnUs(), num(0)), "Walk into bolt range."))
+			castAt(lightningBolt1, pullTarget, and(pullFit, eq(mobsOnUs(), num(0))), "Pull with rank 1 Lightning Bolt from beyond shock range while nothing is on us."),
+			walkToPullTarget(30, and(pullFit, eq(mobsOnUs(), num(0))), "Walk into bolt range."))
 	}
 	shockRange := 0.0
 	if pullShock != nil {
 		shockRange = 20
 	}
-	items = append(items, walkToPullTarget(shockRange, nil, "Walk up to the mob we found, into shock range or until it notices us."))
+	items = append(items, walkToPullTarget(shockRange, pullFit, "Walk up to the mob we found, into shock range or until it notices us."))
 
 	// Chain pulls.
 	if k["chainMax"] > 0 {
-		items = append(items, lookForMob(and(
-			lt(mobsPulled(), num(k["chainMax"])),
-			gt(currentHealthPercent(), pct(k["chainHealth"])),
-			ge(currentManaPercent(), pct(k["chainMana"])),
-		), "Look for another mob while health and mana allow."))
+		look := chainFit
+		if k["lookAheadHealth"] > 0 {
+			look = gt(currentHealthPercent(), pct(k["lookAheadHealth"]))
+		}
+		items = append(items, lookForMob(and(lt(mobsPulled(), num(k["chainMax"])), look),
+			"Look for another mob while fighting: the next pull, now or after a rest."))
 	}
 
 	// Totems once a mob is pulled, again when we've moved out of their reach.

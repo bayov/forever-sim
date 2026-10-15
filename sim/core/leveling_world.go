@@ -536,7 +536,7 @@ func (encounter *Encounter) LevelingLookForMob(sim *Simulation) {
 func (encounter *Encounter) LevelingCanWalkToPullTarget(sim *Simulation, within float64) bool {
 	s := encounter.leveling
 	mob := encounter.LevelingPullTarget()
-	return mob != nil && s.goal == goalNone && !s.player.IsCasting(sim) &&
+	return mob != nil && s.goal == goalNone && !s.sitting() && !s.player.IsCasting(sim) &&
 		s.distance(sim, mob) > max(within, levelingMeleeRange)+levelingYardTolerance
 }
 

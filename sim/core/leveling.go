@@ -398,6 +398,13 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 		if sim.Log != nil {
 			s.player.Log(sim, "Leveling: out of combat")
 		}
+		// killTarget moved our target to the next living mob: the one we found, if there
+		// is one, still where it stands, out of reach of a swing.
+		if s.found != nil {
+			s.retarget(sim, s.found)
+		} else {
+			s.setPlayerDistance(sim, s.opts.foundMax)
+		}
 		s.outOfCombat(sim)
 		return
 	}
