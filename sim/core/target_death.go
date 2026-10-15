@@ -1,9 +1,5 @@
 package core
 
-import (
-	"slices"
-)
-
 // killTarget is a target dying in a health fight: its health ran out (spell_result.go). It
 // stops attacking and casting, its auras and our debuffs and dots on it end, and it leaves
 // ActiveTargetUnits, so it takes no more damage and no AoE picks it. A cast at it stops
@@ -17,7 +13,7 @@ func (encounter *Encounter) killTarget(sim *Simulation, target *Unit) {
 		return
 	}
 	target.dead = true
-	encounter.ActiveTargetUnits = slices.DeleteFunc(encounter.ActiveTargetUnits, func(u *Unit) bool { return u == target })
+	encounter.removeActiveTarget(target)
 
 	if sim.Log != nil {
 		target.Log(sim, "Died")
@@ -43,7 +39,9 @@ func (encounter *Encounter) killTarget(sim *Simulation, target *Unit) {
 		}
 	}
 
-	if len(encounter.ActiveTargetUnits) == 0 {
+	if encounter.leveling != nil {
+		encounter.leveling.onMobDeath(sim, target)
+	} else if len(encounter.ActiveTargetUnits) == 0 && encounter.EndFightAtHealth > 0 {
 		// Step ends the fight once the damage taken passes this.
 		sim.endOfCombatDamage = -1
 	}
@@ -52,4 +50,23 @@ func (encounter *Encounter) killTarget(sim *Simulation, target *Unit) {
 // IsDead says whether this target died in a health fight (killTarget).
 func (unit *Unit) IsDead() bool {
 	return unit.dead
+}
+
+// removeActiveTarget takes a target out of ActiveTargetUnits. The list is copied, never
+// changed in place, because an AoE that kills a target may still be looping over it: that
+// loop keeps the old list, and the dead target in it takes no damage (spell_result.go).
+func (encounter *Encounter) removeActiveTarget(target *Unit) {
+	active := make([]*Unit, 0, len(encounter.ActiveTargetUnits))
+	for _, u := range encounter.ActiveTargetUnits {
+		if u != target {
+			active = append(active, u)
+		}
+	}
+	encounter.ActiveTargetUnits = active
+}
+
+// addActiveTarget puts a target in ActiveTargetUnits, on a copy for the same reason.
+func (encounter *Encounter) addActiveTarget(target *Unit) {
+	active := make([]*Unit, 0, len(encounter.ActiveTargetUnits)+1)
+	encounter.ActiveTargetUnits = append(append(active, encounter.ActiveTargetUnits...), target)
 }

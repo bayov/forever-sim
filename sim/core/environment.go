@@ -58,6 +58,7 @@ func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, rule
 		Ruleset: ruleset,
 	}
 
+	encounterProto = prepareLevelingEncounter(raidProto, encounterProto)
 	env.construct(raidProto, encounterProto)
 	raidStats := env.initialize(raidProto, encounterProto)
 	env.finalize(raidProto, encounterProto, raidStats, runFakePrepull)
@@ -93,8 +94,9 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 		unit.CurrentTarget = env.Encounter.TargetUnits[0]
 	}
 
-	// In a health fight each target with health dies on its own (target_death.go).
-	if env.Encounter.EndFightAtHealth > 0 {
+	// In a health fight or a leveling session each target with health dies on its own
+	// (target_death.go).
+	if env.Encounter.EndFightAtHealth > 0 || encounterProto.Leveling != nil {
 		for _, target := range env.Encounter.TargetUnits {
 			if target.stats[stats.Health] > 0 {
 				target.EnableHealthBar()
@@ -123,6 +125,11 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 				}
 			}
 		}
+	}
+
+	// A leveling session: every mob in its pool goes for us (leveling.go).
+	if encounterProto.Leveling != nil {
+		env.Encounter.leveling = newLevelingSession(env, encounterProto)
 	}
 
 	env.State = Constructed
@@ -308,7 +315,7 @@ func (env *Environment) IsFinalized() bool {
 func (env *Environment) reset(sim *Simulation) {
 	// Reset primary targets damage taken for tracking health fights.
 	env.Encounter.DamageTaken = 0
-	env.Encounter.ActiveTargetUnits = append(env.Encounter.ActiveTargetUnits[:0], env.Encounter.TargetUnits...)
+	env.Encounter.ActiveTargetUnits = append([]*Unit(nil), env.Encounter.TargetUnits...)
 
 	// Targets need to be reset before the raid, so that players can check for
 	// the presence of permanent target auras in their Reset handlers.
@@ -319,6 +326,10 @@ func (env *Environment) reset(sim *Simulation) {
 	env.Raid.reset(sim)
 
 	env.startPvPDowntime(sim)
+
+	if env.Encounter.leveling != nil {
+		env.Encounter.leveling.reset(sim)
+	}
 }
 
 // The maximum possible duration for any iteration.
