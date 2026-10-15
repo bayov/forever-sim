@@ -16,7 +16,7 @@
   "apl": "level60_destruction",
   "published": {
     "dps": 990.0,
-    "source": "PR #2 follow-up"
+    "source": "PR #25"
   },
   "verify": {
     "dps": 990.03,
