@@ -136,8 +136,10 @@ export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury',
 // Heroic Strike from 90 Rage instead of 40, Hamstring from 20, Bloodrage under 70, Slam from 30 Rage
 // right after a main hand swing, ahead of Whirlwind (+8.4 at 180 sec; Slam at any time loses), and
 // Death Wish held for the last 36 sec with Recklessness for the last 30. The second potion and the
-// trinket's last use are held for the last 20 and 25 sec, and Blood Fury and Berserking for the last
-// 25 (Orc +2.8, Troll +1.7 at 180 sec; Elune's Light keeps waiting for Death Wish, held it lost 7).
+// trinket's last use are held for the last 20 and 34 sec, and Blood Fury and Berserking for the last
+// 30 (Elune's Light keeps waiting for Death Wish, held it lost 7). The 34 and 30 sec holds, from 25,
+// are +4.4 / +2.1 / +1.2 on the Orc at 120 / 180 / 300 sec (trinket +1.1 and Blood Fury +0.5 of it
+// at 180 sec), Troll +0.9 and Undead +1.3 at 180 sec.
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
 // set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
@@ -405,7 +407,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 );
 
 // On 2026-10-15 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1096.7 / 1061.4 /
-// 1038.2, Level 60 Fury (Two-Hand) (Orc) 960.2 / 925.4 / 896.5 and Level 60 Arms (Orc) 968.9 /
+// 1038.2, Level 60 Fury (Two-Hand) (Orc) 964.6 / 927.5 / 897.7 and Level 60 Arms (Orc) 968.9 /
 // 952.6 / 927.0, with Forever's normalized Rage at s = 0.5 (standards 21). Arms keeps Rend up, which
 // adds 2% of attack power a tick under Forever (report assumption warr_rend_ap, user ruling
 // 2026-10-15): +19.5 at 180 sec over Rend with no attack power (933.1); the Fury builds don't cast it. The weapons have the type
@@ -417,7 +419,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // two-hand builds have no off hand). The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the
 // raid's Battle Shout VI, Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and
 // Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (both measured before normalized Rage). With weapon
-// racials off, Fury stays at its Undead numbers, and the Undead does 919.1 on two-hand Fury and 929.4
+// racials off, Fury stays at its Undead numbers, and the Undead does 920.4 on two-hand Fury and 929.4
 // on Arms at 180 sec (before Rend's attack power share).
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
