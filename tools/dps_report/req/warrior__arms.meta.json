@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 933.1,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 952.6,
+    "source": "Rend attack power default (warr_rend_ap 2% a tick), user ruling 2026-10-15"
   },
   "verify": {
-    "dps": 933.1,
+    "dps": 952.6,
     "stderr": null,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster's axe crit. It is the Arms spec's Level 60 preset, about 12% behind dual wield Fury.",
+  "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster's axe crit. It is the Arms spec's Level 60 preset, about 10% behind dual wield Fury.",
   "keyTalents": [
     "Mortal Strike",
     "Bloodthrill",
