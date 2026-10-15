@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 814.5,
+    "dps": 819.8,
     "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 814.5,
+    "dps": 819.8,
     "stderr": null,
     "iters": 20000,
     "ok": true,

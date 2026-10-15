@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "magma",
   "published": {
-    "dps": 771.5,
+    "dps": 776.1,
     "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 771.5,
+    "dps": 776.1,
     "stderr": null,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Sub-Restoration Enhancement that takes Water Shield (with Tidal Focus and Totemic Focus) and uses Magma Totem instead of Searing/Flametongue, since it has no Improved Fire Nova. It is 5.7% behind Level 60 at 180 s.",
+  "summary": "Sub-Restoration Enhancement that takes Water Shield (with Tidal Focus and Totemic Focus) and uses Magma Totem instead of Searing/Flametongue, since it has no Improved Fire Nova. It is 5.8% behind Level 60 at 180 s.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",

@@ -143,7 +143,7 @@ Weapon types and speeds (2026-10-15, orchestration/standards.md 22). Each physic
 | Subtlety | 1.8 sec dagger, 1.6 sec dagger | Undead | 644.1 (unchanged) |
 | Seal Fate Swords | 2.9 sec axe, 1.6 sec dagger | Undead | 673.9 (644.7) |
 | Survival | 2.9 sec axe, 1.6 sec dagger | Orc (was Human) | 895.4 (858.6) |
-| Enhancement | 3.7 sec axe | Orc | 818.5 (813.9) |
+| Enhancement | 3.7 sec axe | Orc | 823.8 (813.9) |
 
 Ret ties on every 3.4 sec two-hander (under 1 DPS) and keeps its axe. Seal of Righteousness giving 10% of spell power on every swing would make Shock about 50 DPS higher on a 2.1 sec two-hander, but no Phase 1 BiS two-hander is that fast (notes.md, Need to Verify). Casters and ranged hunters don't swing their weapon. The race and section tables below were made on the old weapons.
 
