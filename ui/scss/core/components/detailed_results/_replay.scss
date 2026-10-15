@@ -645,11 +645,11 @@
 	}
 }
 
-// The icons are cropped by a quarter (zoom 0.25), so the game's icon border doesn't show.
+// We crop the icons a little so the game's icon border doesn't show.
 .replay-icon-img {
 	position: absolute;
 	inset: 0;
-	background-size: 134% auto;
+	background-size: 112% auto;
 	background-position: center;
 }
 
@@ -773,7 +773,7 @@
 	flex: 0 0 auto;
 	width: 27px;
 	border-right: 1px solid #000;
-	background-size: 134% auto;
+	background-size: 112% auto;
 	background-position: center;
 }
 
