@@ -109,7 +109,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // 0.7 ahead of using it at 0 (rotation auditor). Major Spellblasting Potion and Elune's Light
 // (the Night Elf's racial) go at the same moment, and Elune's later uses wait for the trinket
 // when waiting loses no use: 2.2 / 1.5 / 1.6 ahead at 120 / 180 / 300 sec (rotation auditor's
-// cooldown pass; the Wrath build gains 1.2 / 0.8 / 1.0 from the same lines).
+// cooldown pass; the Wrath build gains 1.2 / 0.8 / 1.0 from the same lines). In the last seconds,
+// once a Starfire would no longer land before the end, it casts Moonfire instead: 4.4 / 2.9 / 1.4
+// ahead (rotation auditor), 835.9 / 831.6 / 820.7 with Wrath rank 8 at x1.085.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -119,7 +121,9 @@ export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
 // before the pull, for a moonkin that would rather not weave: 774.7 / 776.5 / 773.7 at 120 /
 // 180 / 300 sec, 6.1% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
-// and gear (GearLevel60Phase1SyntheticWrath).
+// and gear (GearLevel60Phase1SyntheticWrath). Moonfire once a Wrath plus 1.5 sec would no longer
+// land before the end is 5.9 / 3.8 / 2.2 ahead (rotation auditor), 787.0 / 786.6 / 782.3 with Wrath
+// rank 8 at x1.085.
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Level 60',

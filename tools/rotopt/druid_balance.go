@@ -58,6 +58,11 @@ func (druidBalance) Knobs() []Knob {
 		// Elune's Light 0.1 sec before the pull as well, so the pre-pull cast lands inside them, and
 		// Elune's later uses held for the synthetic trinket when holding loses no use.
 		{Name: "cdStack", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Moonfire at the end of the fight once the filler would not land before it ends (rotation
+		// auditor): 0 never, 1 when a Starfire would not, 2 when a Wrath would not. endMoonfireSlack
+		// adds seconds to that cast time.
+		{Name: "endMoonfire", Default: 0, Min: 0, Max: 2, Step: 1},
+		{Name: "endMoonfireSlack", Default: 0, Min: 0, Max: 3, Step: 0.5},
 	}
 }
 
@@ -98,6 +103,18 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 	if k["wrathBelowMana"] > 0 {
 		items = append(items, cast(wrath, lt(currentManaPercent(), num(k["wrathBelowMana"]/100)),
 			"Wrath only once the mana runs low."))
+	}
+	if k["endMoonfire"] > 0 {
+		filler, name := starfire, "Starfire"
+		if k["endMoonfire"] == 2 {
+			filler, name = wrath, "Wrath"
+		}
+		castTime := spellCastTime(filler)
+		if k["endMoonfireSlack"] > 0 {
+			castTime = add(castTime, seconds(k["endMoonfireSlack"]))
+		}
+		items = append(items, cast(moonfire, lt(remainingTime(), castTime),
+			"Moonfire when a "+name+" would not land before the end."))
 	}
 	switch k["filler"] {
 	case 0:

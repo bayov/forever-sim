@@ -28,11 +28,14 @@ gen() {
 # cat, Berserk held for the Strength trinket and Elune's Light kept out of Berserk (2.5 / 0.9 / 2.7).
 # Both Balance rotations use the synthetic spell power trinket 0.1 sec before the pull (1.8 / 1.1 /
 # 0.7 ahead of using it at 0 at 120 / 180 / 300 sec; 1.0 / 0.7 / 0.4 for the Wrath build).
-gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1"
+# endMoonfire (rotation auditor): Moonfire once the filler would not land before the fight ends,
+# 4.4 / 2.9 / 1.4 ahead for Balance (when a Starfire would not land), 5.9 / 3.8 / 2.2 for the
+# Wrath build (when a Wrath plus 1.5 sec would not).
+gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1"
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
 # against 827.0 at 180 sec), on its own talents (5502220115501351-03-505) and gear (Natural Power
 # gloves).
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5"
 # Feral cat on the Level 60 talents (05002-05200332021031212051-05501): Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, no Rake (keeping it
 # up costs 33), Shifting Power at 50 Energy or less but not while a Bite is due (0.6 to 0.9
