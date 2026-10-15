@@ -218,7 +218,7 @@ One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (204
   - Smite: the low-mana fallback moved from Smite IV (L22, now no spell power at 60) to Smite VII (L46), a stale-shaped 31+ rank like Smite VIII (0.41–0.43× Era). Smite VII and VIII are now most of the damage. Holding every 31+ Smite rank at the L30 ratio (×1.18): **+1.8%** (634.0 → 645.5, with Shadow's consumes, since mksettings has no Smite spec; only the percentage counts). It was +1.3% before.
   - Elemental: the fallback is now Lightning Bolt VIII (L44), also stale-shaped. The 20k-iteration numbers on the new head match the 12:20 check (673.9 base; +1.9% / +6.2% / +7.6%), because the fallback only plays below 20% mana.
 - The druid branch now treats Tiger's Fury as removed under Forever; this audit had it as a single rank (5217 at L24) in client 70338. That's the druid worker's call, and it isn't a 31+ rank question.
-- The hunter applied the strongest-rank ruling (Aspect of the Hawk V, Trueshot Aura IV, Hunter's Mark III).
+- The hunter applied the strongest-rank ruling (Aspect of the Hawk V, Trueshot Aura IV, Hunter's Mark III). Since the user's ruling on the report assumptions (2026-10-15), the sim gives Trueshot Aura V 100 and Hunter's Mark IV 140 (fixed onto the curve), so the top ranks are cast, and Raptor Strike VIII adds 96, halfway from the client's 70 to the 0.88 of Era (123).
 
 ## Check 2026-10-14 00:30 UTC: client 1.60.1.70374
 
