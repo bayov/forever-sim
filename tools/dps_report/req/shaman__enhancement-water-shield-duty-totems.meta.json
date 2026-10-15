@@ -1,0 +1,82 @@
+{
+  "id": "shaman__enhancement-water-shield-duty-totems",
+  "class": "Shaman",
+  "spec": "Enhancement",
+  "build": "Water Shield (Totems duty)",
+  "isDefault": false,
+  "pr": 7,
+  "race": "Orc",
+  "talents": "050031-053030031005112151-052030001",
+  "treeNames": [
+    "Elemental",
+    "Enhancement",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "magma_totem_duty",
+  "published": {
+    "dps": 776.1,
+    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+  },
+  "verify": {
+    "dps": 776.05,
+    "stderr": 0.35,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 180 s, seed 1"
+  },
+  "summary": "Sub-Restoration Enhancement that takes Water Shield (with Tidal Focus and Totemic Focus) and uses Magma Totem instead of Searing/Flametongue, since it has no Improved Fire Nova. It is 5.8% behind Level 60 at 180 s. On totem duty it also keeps up the party's totems (Strength of Earth, Windfury Totem and Mana Spring for the melee party), with the raid's off.",
+  "keyTalents": [
+    "Stormstrike",
+    "Maelstrom Weapon",
+    "Rage of the Farseer",
+    "Water Shield",
+    "Call of Flame",
+    "Tidal Focus",
+    "Totemic Focus",
+    "Flurry"
+  ],
+  "rotation": [
+    "Pre-pull: Water Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem, Mana Spring, and Magma Totem 1 s before the pull",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
+    "Magma Totem when it is down and at least 10 s remain",
+    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it; other cooldowns",
+    "Stormstrike on cooldown",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
+    "Fire Nova above 20% mana (ahead of the shocks)",
+    "Flame Shock when its DoT is down",
+    "Earth Shock while Flame Shock has more than 1 s left",
+    "Water Shield when it is down and mana is below 50%"
+  ],
+  "consumes": [
+    "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
+    "Flask of Supreme Power",
+    "Elixir of Greater Agility",
+    "Juju Power",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Elixir of the Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Nature Power",
+    "Elixir of Shadow Power",
+    "Grilled Squid",
+    "Dragonbreath Chili",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Strength and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Water Shield is inert at the preset's 0 raid hits; worth up to +4.1 at 6 hits a minute",
+    "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
+    "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
+    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
+  ],
+  "notes": "mksettings -spec enh -apl magma_totem_duty -totems self (the raid has no party totems; the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships.",
+  "duty": "Totems",
+  "baseBuild": "shaman__enhancement-water-shield"
+}

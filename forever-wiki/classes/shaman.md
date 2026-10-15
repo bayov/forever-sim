@@ -25,6 +25,12 @@ From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchan
 - Downranking: under Forever a rank keeps 1 - 5% for each level past its learn level + 17 of its spell power coefficient (Blizzard's 2026-10-01 development notes, the formula from foreverchanges.pro/downranking). Lightning Bolt and Chain Lightning take it (`downrank_test.go`), so the elemental low-mana fallback is rank 8 (learned at 44) now, not rank 7 (75% at 60).
 - Talent verification (every preset talent, from sim runs on the Level 60 and Level 30 builds): 108 entries over 32 talents, 92 verified, 4 Maelstrom Weapon entries partly (the proc rate), 12 utility or inert, no bugs. Not verifiable in the sim: Maelstrom Weapon's proc rate, Elemental Focus's trigger set, Water Shield and Improved Stormstrike's dodge and parry reset (inert at 0 hits), two dummy effects.
 
+## Totem duty presets (standards 23, 2026-10-15)
+
+- Each Level 60 preset has a base build and a "(Totems duty)" build. The base build gets its party's totems from the raid's buffs, as if another shaman in the party dropped them, and keeps only the totems it drops for its own damage (Searing or Magma Totem) and Mana Tide Totem. The duty build drops the party's totems itself, with the raid's off.
+- Melee party (Enhancement): Strength of Earth, Windfury Totem and Mana Spring. Windfury Totem and Grace of Air can't both stand under Forever, and our own Windfury Weapon turns Windfury Totem's buff off for us, so it is the party's. Caster party (Elemental): Mana Spring, its only DPS totem.
+- Under Forever the totems last 5 min and a starting totem costs no mana, so the duty costs 0.0 to 0.5 DPS at 3 min and 1.1 to 4.6 at 5 min, when the totems have to go down again (sim-status.md has the numbers).
+
 ## Beta build 1.60.1.70009 (2026-09-24)
 
 The [development notes of 24 September](https://www.wowhead.com/blue-tracker/topic/us/wow-forever-beta-development-notes-updated-september-24-2360696), with the numbers from the client data on foreverchanges.pro (build 1.60.1.70009, downrank calculator and talent calculator). The sim follows all of it.

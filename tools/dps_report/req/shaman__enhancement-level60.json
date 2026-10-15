@@ -102,75 +102,8 @@
               "type": "TypeAPL",
               "priorityList": [
                 {
+                  "notes": "Searing Totem whenever it is down, unless the fight is about to end.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10442
-                      }
-                    },
-                    "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10442
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Strength of Earth Totem whenever it is down."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10614
-                      }
-                    },
-                    "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10612
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10497
-                      }
-                    },
-                    "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10497
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Mana Spring Totem whenever it is down."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10438
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -187,10 +120,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "10s"
@@ -200,17 +133,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Searing Totem whenever it is down, unless the fight is about to end."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 425336
+                        "spellId": 10438
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "or": {
                         "vals": [
@@ -223,19 +156,19 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpEq",
                               "lhs": {
                                 "spellUsesRemaining": {
+                                  "spellId": {
+                                    "itemId": 990015
+                                  },
                                   "minTimeLeft": {
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "itemId": 990015
                                   }
                                 }
                               },
-                              "op": "OpEq",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -245,8 +178,12 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 425336
+                                  },
                                   "delay": {
                                     "spellTimeToReady": {
                                       "spellId": {
@@ -258,13 +195,9 @@
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 425336
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -274,17 +207,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20572
+                        "spellId": 425336
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Orc. Blood Fury waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "or": {
                         "vals": [
@@ -297,19 +230,19 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpEq",
                               "lhs": {
                                 "spellUsesRemaining": {
+                                  "spellId": {
+                                    "spellId": 425336
+                                  },
                                   "minTimeLeft": {
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 425336
                                   }
                                 }
                               },
-                              "op": "OpEq",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -319,8 +252,12 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 20572
+                                  },
                                   "delay": {
                                     "spellTimeToReady": {
                                       "spellId": {
@@ -332,13 +269,9 @@
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 20572
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -348,109 +281,109 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20572
+                      }
                     }
-                  },
-                  "notes": "Orc. Blood Fury waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 425336
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpEq",
+                              "lhs": {
+                                "spellUsesRemaining": {
+                                  "spellId": {
+                                    "spellId": 425336
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 26297,
+                                    "tag": 2
+                                  },
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "spellId": 425336
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 26297,
                         "tag": 2
                       }
-                    },
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 425336
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellUsesRemaining": {
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  },
-                                  "spellId": {
-                                    "spellId": 425336
-                                  }
-                                }
-                              },
-                              "op": "OpEq",
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 425336
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  },
-                                  "spellId": {
-                                    "spellId": 26297,
-                                    "tag": 2
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
                     }
-                  },
-                  "notes": "Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Anything not listed above (Sapper, trinkets, potions).",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Anything not listed above (Sapper, trinkets, potions)."
+                  }
                 },
                 {
+                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 17364
                       }
                     }
-                  },
-                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Fire Nova on Clearcasting ahead of the shocks, since it is the most expensive spell. Without Elemental Focus this line does nothing.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 408345
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
@@ -468,17 +401,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Fire Nova on Clearcasting ahead of the shocks, since it is the most expensive spell. Without Elemental Focus this line does nothing."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 29228
+                        "spellId": 408345
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Flame Shock when its DoT is down.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -495,19 +428,20 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Flame Shock when its DoT is down."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 15208
+                        "spellId": 29228
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGe",
                         "lhs": {
                           "auraNumStacks": {
                             "auraId": {
@@ -515,49 +449,48 @@
                             }
                           }
                         },
-                        "op": "OpGe",
                         "rhs": {
                           "const": {
                             "val": "5"
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 15208
+                      }
                     }
-                  },
-                  "notes": "Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Earth Shock otherwise.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10414
                       }
                     }
-                  },
-                  "notes": "Earth Shock otherwise."
+                  }
                 },
                 {
+                  "notes": "Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 408345
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentMana": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "math": {
+                                  "op": "OpMul",
                                   "lhs": {
                                     "remainingTime": {}
                                   },
-                                  "op": "OpMul",
                                   "rhs": {
                                     "const": {
                                       "val": "12"
@@ -576,9 +509,13 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408345
+                      }
                     }
-                  },
-                  "notes": "Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place."
+                  }
                 }
               ]
             },
@@ -589,14 +526,7 @@
               "options": {
                 "syncType": "Auto",
                 "shamanImbue": "WindfuryWeapon",
-                "startingTotems": {
-                  "earth": "StrengthOfEarthTotem",
-                  "air": "WindfuryTotem",
-                  "water": "ManaSpringTotem",
-                  "earthSecondsBeforePull": 28,
-                  "airSecondsBeforePull": 27,
-                  "waterSecondsBeforePull": 30
-                }
+                "startingTotems": {}
               }
             }
           }
@@ -608,18 +538,21 @@
       "giftOfTheWild": "TristateEffectImproved",
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
+      "strengthOfEarthTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
       "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
       "shadowProtection": true,
       "frostResistanceAura": true,
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
       "judgementOfWisdom": true,

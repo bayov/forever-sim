@@ -32,6 +32,8 @@ import { Stats } from '../core/proto_utils/stats.js';
 import DefaultAPLJson from './apls/default.apl.json';
 import Level60APLJson from './apls/level60.apl.json';
 import Level60ManaTideAPLJson from './apls/level60_mana_tide.apl.json';
+import Level60ManaTideTotemDutyAPLJson from './apls/level60_mana_tide_totem_duty.apl.json';
+import Level60TotemDutyAPLJson from './apls/level60_totem_duty.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Phase1GearJSON from './gear_sets/phase_1.gear.json';
 import Phase2GearJSON from './gear_sets/phase_2.gear.json';
@@ -124,8 +126,17 @@ export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAP
 // once a Lightning Bolt would no longer land in time, is +5.8 / +3.4 / +1.7 (the rotation auditor,
 // 2026-10-15; +5.7 / +3.4 / +1.8 on Mana Tide). A caster stands at range, so the rotation has no
 // Magma Totem or Fire Nova. tools/rotopt/shaman_presets.sh writes it.
+//
+// Since standards 23 (raid duties, 2026-10-15) the base rotations put down no Mana Spring Totem:
+// another shaman's comes from the raid buffs. Searing Totem is for the shaman's own damage and
+// stays. The "Totems duty" rotations put Mana Spring down themselves (before the pull, again
+// when it runs out), with the raid's off (rotopt knob waterTotem).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJson, {
-	tooltip: 'The tools/rotopt search result for the Level 60 talents.',
+	tooltip: "The tools/rotopt search result for the Level 60 talents. The party's Mana Spring Totem comes from the raid.",
+	group: 'Level 60',
+});
+export const APLLevel60TotemDuty = PresetUtils.makePresetAPLRotation('Level 60 (Totems duty)', Level60TotemDutyAPLJson, {
+	tooltip: "The Level 60 rotation, also keeping up the caster party's Mana Spring Totem.",
 	group: 'Level 60',
 });
 // The same with Mana Tide Totem at 20% mana. At 40, 60 and 80% it was 1.1, 2.7 and 5.7 behind.
@@ -133,9 +144,13 @@ export const APLLevel60ManaTide = PresetUtils.makePresetAPLRotation('Level 60 + 
 	tooltip: 'The Level 60 rotation with Mana Tide Totem, for the Level 60 + Mana Tide talents.',
 	group: 'Level 60',
 });
+export const APLLevel60ManaTideTotemDuty = PresetUtils.makePresetAPLRotation('Level 60 + Mana Tide (Totems duty)', Level60ManaTideTotemDutyAPLJson, {
+	tooltip: "The Level 60 + Mana Tide rotation, also keeping up the caster party's Mana Spring Totem.",
+	group: 'Level 60',
+});
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60, APLLevel60ManaTide, APLDefault],
+	[Phase.Phase1]: [APLLevel60, APLLevel60TotemDuty, APLLevel60ManaTide, APLLevel60ManaTideTotemDuty, APLDefault],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -219,8 +234,8 @@ export const DefaultConsumes = Consumes.create({
 // The level 60 raid (tools/rotopt/mksettings -spec ele): the shared level 60 raid buffs, Kings
 // and Wisdom from the paladins, Judgement of Wisdom, and Curse of the Elements as the one debuff
 // on the shaman's schools. Under Forever Improved Scorch and Winter's Chill only help the mage's
-// own spells, and Curse of Shadow is gone. The shaman is the only one in its group, so its
-// totems are the ones the rotation puts down.
+// own spells, and Curse of Shadow is gone. A caster party's only DPS totem is Mana Spring (see
+// PartyTotemsRaidBuffs).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -238,6 +253,13 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
+});
+
+// Standards 23: the base Level 60 builds get the caster party's Mana Spring Totem from the raid, as if
+// another shaman in the party put it down. It isn't improved: the builds have no Restorative Totems.
+export const PartyTotemsRaidBuffs = RaidBuffs.create({
+	...DefaultRaidBuffs,
+	manaSpringTotem: TristateEffect.TristateEffectRegular,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -309,12 +331,21 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	}),
 	{
 		tanks: [],
-		raidBuffs: DefaultRaidBuffs,
+		raidBuffs: PartyTotemsRaidBuffs,
 		debuffs: DefaultDebuffs,
 		buffs: DefaultIndividualBuffs,
 		consumes: DefaultConsumes,
 	},
 );
+// The Level 60 encounter for the totem duty builds: the same raid without the party's Mana Spring
+// Totem, which the shaman puts down itself.
+export const EncounterLevel60TotemDuty = PresetUtils.makePresetEncounter('Level 60 (Totems duty)', EncounterLevel60.encounter!, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
 
 // On 2026-10-13, on the gear round's set (standards 1b, with the two synthetic trinkets) and the
 // standard consumes (20000 iterations), Level 60 is 674.3 / 673.9 / 663.3 at 120 / 180 / 300 sec and
@@ -339,6 +370,19 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
+// Level 60 on totem duty: it puts down the caster party's Mana Spring Totem itself, with the raid's off.
+export const PresetBuildLevel60TotemDuty = PresetUtils.makePresetBuild('Level 60 (Totems duty)', {
+	group: 'Level 60',
+	tooltip: "Level 60, also keeping up the caster party's Mana Spring Totem (the raid has no other shaman).",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60TotemDuty,
+	encounter: EncounterLevel60TotemDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+});
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
 	tooltip: 'Level 60 with the Mana Tide talents and the Mana Tide rotation.',
@@ -346,6 +390,19 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	talents: TalentsLevel60ManaTide,
 	rotation: APLLevel60ManaTide,
 	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+});
+// Level 60 + Mana Tide on totem duty: it puts down the caster party's Mana Spring Totem itself, with the raid's off.
+export const PresetBuildLevel60ManaTideTotemDuty = PresetUtils.makePresetBuild('Level 60 + Mana Tide (Totems duty)', {
+	group: 'Level 60',
+	tooltip: "Level 60 + Mana Tide, also keeping up the caster party's Mana Spring Totem (the raid has no other shaman).",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60ManaTide,
+	rotation: APLLevel60ManaTideTotemDuty,
+	encounter: EncounterLevel60TotemDuty,
 	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,

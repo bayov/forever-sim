@@ -27,6 +27,7 @@ import {
 	SpiritElixir,
 	Stat,
 	StrengthBuff,
+	TotemWeaponBuff,
 	TristateEffect,
 	UnitReference,
 	UnitReference_Type,
@@ -48,8 +49,11 @@ import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level30PvPAPLJSON from './apls/level30_pvp.apl.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
+import MagmaTotemDutyAPLJSON from './apls/magma_totem_duty.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
+import ManaTideTotemDutyAPLJSON from './apls/mana_tide_totem_duty.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
+import OptimizedTotemDutyAPLJSON from './apls/optimized_totem_duty.apl.json';
 import WindfuryAPLJSON from './apls/windfury.apl.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level30PvPGearJSON from './gear_sets/level30_pvp.gear.json';
@@ -323,8 +327,19 @@ export const APLWindfury = PresetUtils.makePresetAPLRotation('Windfury Totem', W
 // Flametongue Totem was 828. All the numbers in this paragraph and the one above are from
 // before 2026-10-07, when Windfury Weapon still got the level 68 attack power, Windfury
 // Totem still stacked with it for the shaman, and Enhancing Totems was still in the sim.
+//
+// Since standards 23 (raid duties, 2026-10-15) the Level 60 rotations come in two kinds. The base
+// ones put down no party totems: another shaman's Strength of Earth, Windfury and Mana Spring Totem
+// come from the raid buffs, and the shaman only keeps up the fire totem it drops for its own damage.
+// The "Totems duty" ones drop the party's Strength of Earth, Windfury and Mana Spring Totem
+// themselves (as starting totems before the pull, again when they run out) with the raid's totems
+// off. The two are the same rotation otherwise (rotopt knobs strengthOfEarth, airTotem, waterTotem).
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', OptimizedAPLJSON, {
-	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Flametongue Totem for the shaman and Fire Nova.",
+	tooltip: "The optimizer's best level 60 rotation, with Searing Totem and Fire Nova. The party's totems come from the raid.",
+	group: 'Level 60',
+});
+export const APLOptimizedTotemDuty = PresetUtils.makePresetAPLRotation('Optimized (Totems duty)', OptimizedTotemDutyAPLJSON, {
+	tooltip: "Optimized, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem.",
 	group: 'Level 60',
 });
 // The rotation for the Level 60 + Water Shield and Level 60 + Mana Tide talents. It is
@@ -340,6 +355,10 @@ export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAP
 	tooltip: 'Optimized with Magma Totem in place of Searing Totem, for the Water Shield talents.',
 	group: 'Level 60',
 });
+export const APLMagmaTotemDuty = PresetUtils.makePresetAPLRotation('Magma Totem (Totems duty)', MagmaTotemDutyAPLJSON, {
+	tooltip: "Magma Totem, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem.",
+	group: 'Level 60',
+});
 // Magma Totem with Mana Tide Totem once the shaman is down to 20% mana. Mana Spring Totem
 // waits for the tide to end, because putting it down would knock the tide down.
 //
@@ -347,6 +366,10 @@ export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAP
 // +2.5 at 300 sec and even at 120 and 180 sec.
 export const APLManaTide = PresetUtils.makePresetAPLRotation('Mana Tide', ManaTideAPLJSON, {
 	tooltip: 'The Magma Totem rotation that also drops Mana Tide Totem at 20% mana.',
+	group: 'Level 60',
+});
+export const APLManaTideTotemDuty = PresetUtils.makePresetAPLRotation('Mana Tide (Totems duty)', ManaTideTotemDutyAPLJSON, {
+	tooltip: "Mana Tide, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem.",
 	group: 'Level 60',
 });
 // Level 30 + 5 is Stormstrike on cooldown, Flame Shock when its DoT is down and Earth Shock
@@ -379,7 +402,18 @@ export const APLLevel30PvP = PresetUtils.makePresetAPLRotation('Level 30 PvP', L
 });
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLOptimized, APLMagma, APLManaTide, APLGraceOfAir, APLWindfury, APLLevel30p5, APLLevel30PvP],
+	[Phase.Phase1]: [
+		APLOptimized,
+		APLOptimizedTotemDuty,
+		APLMagma,
+		APLMagmaTotemDuty,
+		APLManaTide,
+		APLManaTideTotemDuty,
+		APLGraceOfAir,
+		APLWindfury,
+		APLLevel30p5,
+		APLLevel30PvP,
+	],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -579,11 +613,16 @@ const startingTotemsLevel60 = StartingTotems.create({
 	water: WaterTotem.ManaSpringTotem,
 	waterSecondsBeforePull: 30,
 });
-const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
+// The base Level 60 builds get the party's totems from the raid (standards 23), so they start with
+// none of their own. The totem duty builds start with startingTotemsLevel60.
+const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: StartingTotems.create() };
+const PresetBuildOptionsLevel60TotemDuty = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
 // Magma Totem lasts only 20 sec, so it goes down 1 sec before the pull.
-const PresetBuildOptionsLevel60Magma = {
+const magmaStartingTotem = { fire: FireTotem.MagmaTotem, fireSecondsBeforePull: 1 };
+const PresetBuildOptionsLevel60Magma = { ...PresetBuildOptions, startingTotems: StartingTotems.create(magmaStartingTotem) };
+const PresetBuildOptionsLevel60MagmaTotemDuty = {
 	...PresetBuildOptions,
-	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, fire: FireTotem.MagmaTotem, fireSecondsBeforePull: 1 }),
+	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, ...magmaStartingTotem }),
 };
 // Windfury Totem comes at level 32.
 const PresetBuildOptionsLevel30 = {
@@ -661,6 +700,18 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	trueshotAura: true,
 });
 
+// Standards 23: the base Level 60 builds get the party's totems from the raid, as if another shaman in
+// the melee party put them down. That party has Strength of Earth, Windfury Totem (which can't stand
+// with Grace of Air) and Mana Spring Totem. Our own Windfury Weapon turns Windfury Totem's buff off
+// for us, so it is there for the party. None is improved: Forever took out Enhancing Totems, and the
+// builds have no Restorative Totems.
+export const PartyTotemsRaidBuffs = RaidBuffs.create({
+	...DefaultRaidBuffs,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
+	manaSpringTotem: TristateEffect.TristateEffectRegular,
+});
+
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
@@ -733,12 +784,21 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	}),
 	{
 		tanks: [],
-		raidBuffs: DefaultRaidBuffs,
+		raidBuffs: PartyTotemsRaidBuffs,
 		debuffs: DefaultDebuffs,
 		buffs: DefaultIndividualBuffs,
 		consumes: DefaultConsumes,
 	},
 );
+// The Level 60 encounter for the totem duty builds: the same raid without its party totems, which
+// the shaman puts down itself.
+export const EncounterLevel60TotemDuty = PresetUtils.makePresetEncounter('Level 60 (Totems duty)', EncounterLevel60.encounter!, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
 // On 2026-10-08, with the starting totems and the new consumables, Level 60 is 826.5 / 819.6 /
 // 807.7 at 120 / 180 / 300 sec, Level 60 + Water Shield 776.6 / 767.0 / 751.2 and Level 60 +
 // Mana Tide 756.6 / 750.3 / 745.3. A knob search kept every rotation knob but the Mana Tide
@@ -806,6 +866,21 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsLevel60,
 });
+// Level 60 on totem duty: it drops the party's Strength of Earth, Windfury and Mana Spring Totem itself, with
+// the raid's totems off.
+export const PresetBuildLevel60TotemDuty = PresetUtils.makePresetBuild('Level 60 (Totems duty)', {
+	group: 'Level 60',
+	tooltip: "Level 60, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem (the raid has no other shaman).",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLOptimizedTotemDuty,
+	encounter: EncounterLevel60TotemDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsLevel60TotemDuty,
+});
 export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 60 + Water Shield', {
 	group: 'Level 60',
 	tooltip: 'Level 60 with the Water Shield talents and the Magma Totem rotation.',
@@ -819,6 +894,21 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsLevel60Magma,
 });
+// Level 60 + Water Shield on totem duty: it drops the party's Strength of Earth, Windfury and Mana Spring Totem itself, with
+// the raid's totems off.
+export const PresetBuildLevel60WaterShieldTotemDuty = PresetUtils.makePresetBuild('Level 60 + Water Shield (Totems duty)', {
+	group: 'Level 60',
+	tooltip: "Level 60 + Water Shield, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem (the raid has no other shaman).",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60WaterShield,
+	rotation: APLMagmaTotemDuty,
+	encounter: EncounterLevel60TotemDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsLevel60MagmaTotemDuty,
+});
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
 	tooltip: 'Level 60 with the Water Shield and Mana Tide talents and the Mana Tide rotation.',
@@ -831,6 +921,21 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsLevel60Magma,
+});
+// Level 60 + Mana Tide on totem duty: it drops the party's Strength of Earth, Windfury and Mana Spring Totem itself, with
+// the raid's totems off.
+export const PresetBuildLevel60ManaTideTotemDuty = PresetUtils.makePresetBuild('Level 60 + Mana Tide (Totems duty)', {
+	group: 'Level 60',
+	tooltip: "Level 60 + Mana Tide, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem (the raid has no other shaman).",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60ManaTide,
+	rotation: APLManaTideTotemDuty,
+	encounter: EncounterLevel60TotemDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsLevel60MagmaTotemDuty,
 });
 
 // A level 30 shaman soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32)

@@ -1,0 +1,77 @@
+{
+  "id": "shaman__elemental-level60-duty-totems",
+  "class": "Shaman",
+  "spec": "Elemental",
+  "build": "Level 60 (Totems duty)",
+  "isDefault": false,
+  "pr": 7,
+  "race": "Orc",
+  "talents": "5504301300103051-052-05305",
+  "treeNames": [
+    "Elemental",
+    "Enhancement",
+    "Restoration"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_totem_duty",
+  "published": {
+    "dps": 690.5,
+    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+  },
+  "verify": {
+    "dps": 690.55,
+    "stderr": 0.19,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py, 180 s, seed 1"
+  },
+  "summary": "Deep Elemental caster on the synthetic Phase 1 staff set with Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus, from talent searches over seven seeds. It is the Elemental spec's default Level 60 preset. On totem duty it also keeps up the party's totems (Mana Spring for the caster party), with the raid's off.",
+  "keyTalents": [
+    "Lava Burst",
+    "Elemental Alacrity",
+    "Elemental Fury",
+    "Call of Flame",
+    "Lightning Overload",
+    "Concussion",
+    "Thundering Strikes",
+    "Tidal Focus"
+  ],
+  "rotation": [
+    "Pre-pull: Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
+    "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
+    "Mana Spring Totem when it is down",
+    "Searing Totem when it is down and at least 20 s remain",
+    "Flame Shock whenever its DoT is down",
+    "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
+    "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
+    "Lightning Bolt rank 8 below 20% mana",
+    "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Firepower",
+    "Elixir of Nature Power",
+    "Elixir of the Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Cerebral Cortex Compound",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 37 spell power and 14 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Lightning Bolt X's base damage ×1.12, the raise a beta build gave the top playable rank; the client's 31+ ranks look untuned (rank 10 ~201 base at 0.714 coefficient)",
+    "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
+    "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking",
+    "Elemental Focus proc rate on low ranks reduced on 7 Oct; exact amount open",
+    "Searing Totem reach from a ranged shaman is not modelled"
+  ],
+  "notes": "mksettings -spec ele -apl level60_totem_duty -totems self (the raid has no party totems; the shaman drops Mana Spring Totem itself).",
+  "duty": "Totems",
+  "baseBuild": "shaman__elemental-level60"
+}

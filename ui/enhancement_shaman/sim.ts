@@ -103,7 +103,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
 		// Default raid/party buffs settings.
-		raidBuffs: Presets.DefaultRaidBuffs,
+		raidBuffs: Presets.PartyTotemsRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
@@ -137,8 +137,11 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	presets: {
 		builds: [
 			Presets.PresetBuildLevel60,
+			Presets.PresetBuildLevel60TotemDuty,
 			Presets.PresetBuildLevel60WaterShield,
+			Presets.PresetBuildLevel60WaterShieldTotemDuty,
 			Presets.PresetBuildLevel60ManaTide,
+			Presets.PresetBuildLevel60ManaTideTotemDuty,
 			Presets.PresetBuildLevel30p5,
 			Presets.PresetBuildLevel30PvP,
 			Presets.PresetBuildLevel30PvPVsCloth,

@@ -5,12 +5,16 @@ import "github.com/wowsims/classic/sim/core/proto"
 func init() {
 	specs["ele"] = &specSetup{
 		uiDir: "ui/elemental_shaman",
-		// The elemental shaman is in a caster group and is its only shaman, so its totems are the
-		// ones the rotation puts down. It takes Wisdom and Kings from the paladins. Might is no use
+		// The elemental shaman is in a caster group, whose only DPS totem is Mana Spring (standards
+		// 23: the raid's, or with -totems self the one the rotation puts down). Searing Totem is for
+		// its own damage and is always its own. It takes Wisdom and Kings from the paladins. Might is no use
 		// to it. Curse of the Elements is the one raid debuff on its schools: under Forever Improved
 		// Scorch and Winter's Chill only help the mage's own spells, and Curse of Shadow is gone.
 		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
+			if shamanTotemsFromRaid() {
+				raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
+			}
 		},
 		// The Level 60 preset's consumes (ui/elemental_shaman/presets.ts has what each is worth).
 		consumes: func() *proto.Consumes {
