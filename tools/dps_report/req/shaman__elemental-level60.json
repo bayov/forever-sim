@@ -99,6 +99,20 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3.9s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 15208
                       }
                     }
@@ -129,6 +143,27 @@
                   "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "notes": "Mana Spring Totem whenever it is down.",
+                  "action": {
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 10497
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
                   }
                 },
                 {
@@ -333,7 +368,6 @@
       "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
-      "manaSpringTotem": "TristateEffectRegular",
       "shadowProtection": true,
       "frostResistanceAura": true,
       "fireResistanceAura": true,

@@ -16,10 +16,10 @@
   "apl": "magma",
   "published": {
     "dps": 776.1,
-    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+    "source": "Shaman PR (standards 23 user ruling: every shaman drops its own totems, 2026-10-15)"
   },
   "verify": {
-    "dps": 776.06,
+    "dps": 776.05,
     "stderr": 0.35,
     "iters": 20000,
     "ok": true,
@@ -37,7 +37,8 @@
     "Flurry"
   ],
   "rotation": [
-    "Pre-pull: Water Shield at -1.5 s; Magma Totem 1 s before the pull. Party totems from the raid (Strength of Earth, Windfury Totem, Mana Spring)",
+    "Pre-pull: Water Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s, and Magma Totem 1 s before the pull",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
     "Magma Totem when it is down and at least 10 s remain",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it; other cooldowns",
     "Stormstrike on cooldown",
@@ -75,5 +76,5 @@
     "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
     "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
   ],
-  "notes": "mksettings -spec enh -apl magma (default -totems raid: the raid gives the party's Strength of Earth, Windfury Totem and Mana Spring Totem, standards 23) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
+  "notes": "mksettings -spec enh -apl magma (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
 }

@@ -16,10 +16,10 @@
   "apl": "level60",
   "published": {
     "dps": 690.6,
-    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+    "source": "Shaman PR (standards 23 user ruling: every shaman drops its own totems, 2026-10-15)"
   },
   "verify": {
-    "dps": 690.59,
+    "dps": 690.55,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
@@ -37,8 +37,9 @@
     "Tidal Focus"
   ],
   "rotation": [
-    "Pre-pull: Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s; the party's Mana Spring Totem comes from the raid",
+    "Pre-pull: Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
     "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
+    "Mana Spring Totem when it is down",
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
@@ -70,5 +71,5 @@
     "Elemental Focus proc rate on low ranks reduced on 7 Oct; exact amount open",
     "Searing Totem reach from a ranged shaman is not modelled"
   ],
-  "notes": "mksettings -spec ele -apl level60 (default -totems raid: the raid gives the party's Mana Spring Totem, standards 23)."
+  "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself)."
 }

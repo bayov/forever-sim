@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 822.4,
-    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+    "dps": 822.0,
+    "source": "Shaman PR (standards 23 user ruling: every shaman drops its own totems, 2026-10-15)"
   },
   "verify": {
-    "dps": 822.4,
+    "dps": 822.01,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
@@ -36,7 +36,8 @@
     "Improved Ghost Wolf"
   ],
   "rotation": [
-    "Party totems from the raid (Strength of Earth, Windfury Totem, Mana Spring); none of its own before the pull",
+    "Pre-pull: starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they last the whole 300 s fight), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
     "Searing Totem when it is down and at least 10 s remain",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
@@ -75,5 +76,5 @@
     "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
     "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
   ],
-  "notes": "mksettings -spec enh -apl optimized (default -totems raid: the raid gives the party's Strength of Earth, Windfury Totem and Mana Spring Totem, standards 23)."
+  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }
