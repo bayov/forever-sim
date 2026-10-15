@@ -13,7 +13,6 @@ func init() {
 		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
 			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
-			debuffs.CurseOfShadow = false
 		},
 		// Each consume was tried in and out of the set on the Level 60 build (180 sec, 20000
 		// iterations, 2026-10-12): Lobster Stew (28 spell damage under Forever) is 2.8 ahead of
