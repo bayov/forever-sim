@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 690.5,
-    "source": "Shaman follow-up PR (end-of-fight Earth Shock, rotation audit pass 19, 2026-10-15)"
+    "dps": 690.6,
+    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
   },
   "verify": {
-    "dps": 690.5,
-    "stderr": 0.2,
+    "dps": 690.59,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "paired rotopt run on this request at 180 s, with the earthShockFinish rotation"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Deep Elemental caster on the synthetic Phase 1 staff set with Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus, from talent searches over seven seeds. It is the Elemental spec's default Level 60 preset.",
   "keyTalents": [
@@ -37,9 +37,8 @@
     "Tidal Focus"
   ],
   "rotation": [
-    "Pre-pull: Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
+    "Pre-pull: Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s; the party's Mana Spring Totem comes from the raid",
     "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
-    "Mana Spring Totem when it is down",
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
@@ -71,5 +70,5 @@
     "Elemental Focus proc rate on low ranks reduced on 7 Oct; exact amount open",
     "Searing Totem reach from a ranged shaman is not modelled"
   ],
-  "notes": "Request is mksettings -spec ele output unchanged."
+  "notes": "mksettings -spec ele -apl level60 (default -totems raid: the raid gives the party's Mana Spring Totem, standards 23)."
 }

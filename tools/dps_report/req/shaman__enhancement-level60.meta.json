@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 826.0,
-    "source": "Shaman follow-up PR #23 (Fire Nova mana rule, rotation audit pass 19, 2026-10-15)"
+    "dps": 826.5,
+    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
   },
   "verify": {
-    "dps": 826.0,
-    "stderr": 0.4,
+    "dps": 826.48,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "paired rotopt run on this request at 180 s, with the fireNovaManaPerSec=12 Optimized rotation"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Stormstrike/Maelstrom Weapon Enhancement with a two-hand axe, Windfury Weapon and Windfury Totem for the group; Concussion 5 replaces Convection 5. It is the Enhancement spec's default Level 60 preset.",
   "keyTalents": [
@@ -37,9 +37,9 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Pre-pull: starting totems already down (Strength of Earth IV, Windfury Totem, Flametongue Totem, Mana Spring), no mana cost",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down; Flametongue Totem when down and at least 20 s remain",
-    "Rage of the Farseer on cooldown; Blood Fury lined up with it",
+    "Party totems from the raid (Strength of Earth, Windfury Totem, Mana Spring); none of its own before the pull",
+    "Searing Totem when it is down and at least 10 s remain",
+    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
@@ -79,5 +79,5 @@
     "Earth Shock VII's base damage ×1.08, halfway to the level 24 rank's 0.66 of Era; the client has ×1.00",
     "Tier 1 4/5-piece bonuses not live"
   ],
-  "notes": "Request is mksettings -spec enh output unchanged (no starting fire totem, as in the preset since the Searing Totem change)."
+  "notes": "mksettings -spec enh -apl optimized (default -totems raid: the raid gives the party's Strength of Earth, Windfury Totem and Mana Spring Totem, standards 23)."
 }

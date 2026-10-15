@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 822.0,
-    "source": "Shaman follow-up PR #23 (Fire Nova mana rule, rotation audit pass 19, 2026-10-15)"
+    "dps": 822.4,
+    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
   },
   "verify": {
-    "dps": 822.0,
-    "stderr": 0.4,
+    "dps": 822.4,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "paired rotopt run on this request at 180 s, with the fireNovaManaPerSec=12 Optimized rotation"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "The Enhancement Level 60 build with 2 points moved from Ancestral Knowledge into Improved Ghost Wolf for utility. It is 4.0 behind Level 60 at 180 s.",
   "keyTalents": [
@@ -36,9 +36,9 @@
     "Improved Ghost Wolf"
   ],
   "rotation": [
-    "Pre-pull: starting totems already down (Strength of Earth IV, Windfury Totem, Flametongue Totem, Mana Spring), no mana cost",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down; Flametongue Totem when down and at least 20 s remain",
-    "Rage of the Farseer on cooldown; Blood Fury lined up with it",
+    "Party totems from the raid (Strength of Earth, Windfury Totem, Mana Spring); none of its own before the pull",
+    "Searing Totem when it is down and at least 10 s remain",
+    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
@@ -75,5 +75,5 @@
     "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
     "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
   ],
-  "notes": "Ships as a Level 60 talent preset only (no PresetBuild of its own); request uses the Level 60 build's gear, Optimized rotation, starting totems, consumes and encounter, as the published number was measured. mksettings -spec enh output unchanged."
+  "notes": "mksettings -spec enh -apl optimized (default -totems raid: the raid gives the party's Strength of Earth, Windfury Totem and Mana Spring Totem, standards 23)."
 }

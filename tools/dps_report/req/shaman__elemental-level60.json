@@ -99,20 +99,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10497
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-3.9s"
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 15208
                       }
                     }
@@ -140,39 +126,14 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown."
+                  }
                 },
                 {
+                  "notes": "Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10497
-                      }
-                    },
-                    "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10497
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Mana Spring Totem whenever it is down."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10438
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -189,10 +150,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "20s"
@@ -202,17 +163,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 29228
+                        "spellId": 10438
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Flame Shock when its DoT is down.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -229,17 +190,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Flame Shock when its DoT is down."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1238300
+                        "spellId": 29228
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Lava Burst on cooldown, unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "or": {
                         "vals": [
@@ -256,6 +217,7 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "dotRemainingTime": {
                                   "spellId": {
@@ -263,7 +225,6 @@
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "2s"
@@ -273,25 +234,26 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Lava Burst on cooldown, unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10414
+                        "spellId": 1238300
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Earth Shock when a Lightning Bolt would not land before the end.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "remainingTime": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "math": {
+                            "op": "OpAdd",
                             "lhs": {
                               "spellCastTime": {
                                 "spellId": {
@@ -299,7 +261,6 @@
                                 }
                               }
                             },
-                            "op": "OpAdd",
                             "rhs": {
                               "const": {
                                 "val": "1s"
@@ -308,42 +269,46 @@
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Earth Shock when a Lightning Bolt would not land before the end."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10392
+                        "spellId": 10414
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "A lower rank of Lightning Bolt once the mana runs low.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "currentManaPercent": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "const": {
                             "val": "0.2"
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10392
+                      }
                     }
-                  },
-                  "notes": "A lower rank of Lightning Bolt once the mana runs low."
+                  }
                 },
                 {
+                  "notes": "Lightning Bolt.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 15208
                       }
                     }
-                  },
-                  "notes": "Lightning Bolt."
+                  }
                 }
               ]
             },
@@ -368,6 +333,7 @@
       "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
       "shadowProtection": true,
       "frostResistanceAura": true,
       "fireResistanceAura": true,

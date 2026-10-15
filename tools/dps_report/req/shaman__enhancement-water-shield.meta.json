@@ -16,14 +16,14 @@
   "apl": "magma",
   "published": {
     "dps": 776.1,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
   },
   "verify": {
-    "dps": 776.05,
+    "dps": 776.06,
     "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "matches the published number, with PR #21's Earth Shock VII ×1.08"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Sub-Restoration Enhancement that takes Water Shield (with Tidal Focus and Totemic Focus) and uses Magma Totem instead of Searing/Flametongue, since it has no Improved Fire Nova. It is 5.8% behind Level 60 at 180 s.",
   "keyTalents": [
@@ -37,10 +37,9 @@
     "Flurry"
   ],
   "rotation": [
-    "Pre-pull: Water Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem, Mana Spring, and Magma Totem 1 s before the pull",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
+    "Pre-pull: Water Shield at -1.5 s; Magma Totem 1 s before the pull. Party totems from the raid (Strength of Earth, Windfury Totem, Mana Spring)",
     "Magma Totem when it is down and at least 10 s remain",
-    "Rage of the Farseer on cooldown; Blood Fury lined up with it; other cooldowns",
+    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it; other cooldowns",
     "Stormstrike on cooldown",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova above 20% mana (ahead of the shocks)",
@@ -76,5 +75,5 @@
     "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
     "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
   ],
-  "notes": "mksettings -spec enh writes a Flametongue Totem starting fire totem; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset (PresetBuildOptionsLevel60Magma) ships and shaman_presets.sh says to do."
+  "notes": "mksettings -spec enh -apl magma (default -totems raid: the raid gives the party's Strength of Earth, Windfury Totem and Mana Spring Totem, standards 23) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
 }
