@@ -209,7 +209,7 @@ Tree rules
 ## 10. Raid buffs and debuffs (Forever values)
 
 - [x] 10.1 Blessings: Might, Kings, Wisdom
-- [ ] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
+- [x] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
 - [ ] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
 - [ ] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
 
@@ -725,7 +725,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-10). Armor takes armor / (armor + 400 + 85 * the attacker's level) off physical damage, the Classic formula for attackers below level 60 (`spell_resistances.go` GetArmorDamageModifier). Our armor is the gear's armor (both numbers each piece lists, 1.7) plus 2 a point of Agility. Only physical damage uses it.
 - Stoneskin Totem takes a flat 30 off each melee hit after armor, and after a crit doubles the hit. Guardian Totems adds 10% a point (rounded down). It's 30 for every rank, our own totem and another shaman's in the raid buffs alike (`buffs.go` StoneskinTotemAura). No preset puts it down.
-- Devotion Aura from the raid buffs gives armor, but only to Alliance characters. We're Horde, so it never reaches us.
+- Devotion Aura from the raid buffs gives armor. Under Forever the paladin buffs reach a Horde character too (Undead paladins), so it reaches us at the rank for our level, 390 at 30 and 735 at 60 (10.2).
 - None of this changes our DPS. It only changes damage taken.
 - Beta, armor (our count from the whole log, the 14:50 export): the export shows 608 armor, split into 40 base and 568 bonus. The 558 normal mob hits on us after 16:00 (no crits, crushes or blocks, no Stoneskin) fit 568 armor. With 568 the formula predicts 21,484 damage in all against the 21,485 we took, where 608 predicts 21,242. The same armor solves at every mob level from 25 to 35 (553 to 584), so the attacker's level part of the formula is right too.
 - The sim gives this gear 562 armor: 482 from the gear and 80 from 40 Agility. The sheet has 3 more Agility (43), which makes 568, the number the hits fit. So the sim's armor matches what the server uses. We don't know what the export's 40 base armor is, but it doesn't reduce damage. The 3 Agility and 5 Intellect the sim is missing come from enchants the sim doesn't have under these IDs (cloak 247, bracers 723 and the Forever enchants 8482 and 8485). That's for 9.6.
@@ -1789,6 +1789,22 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Client 70338 matches every rank: Might 19740 to 25291 on aura 99 (melee attack power, 14 to 133), Kings 20217 on aura 137 (10% to every stat), and Wisdom 19742 to 25290 at 12 to 40. Forever moved Wisdom from Classic's regen aura (85) to an energize every 5000 ms (aura 24), which gives the same mana over a fight as smooth MP5. All last 60 min.
 - Kings was checked against the beta sheet in 1.8 and Wisdom's ranks in 2.4.
 - No sim change. `mp5_test.go` TestOrcShamanMP5Buffs now checks Might too: 25 attack power at 20, 40 at 30 (rank 4 needs 32) and 133 at 60, no ranged attack power, and none under Classic. Moving rank 4 to level 30 fails it.
+
+### 10.2 Other raid buffs
+
+- The user OK'd it (2026-10-15): "sg".
+- A subagent compared all 20 raid buffs with client 70338 (SpellEffect, and SpellLevels for the rank levels and where each rank stops growing).
+- Match: Trueshot Aura (ranged attack power only, nothing for us), Retribution Aura, Divine Spirit (baseline from 30), Fortitude, Gift of the Wild, Thorns, every scroll but Stamina, and Battle Shout rank 6 (111 plus 0.6 a level from 52 to 61, floored to 115 at 60). Sanctity Aura is off under Forever, because the talent is gone.
+- Leader of the Pack (24932) and Moonkin Aura (24907) are both aura 290 at 3%, all crit. The sim gives 3% melee and spell crit once under Forever, and the two don't stack, as the client talent text says. This settles 1.7's open question on buff crit.
+- Improved talents: Improved Battle Shout, Fortitude, Mark of the Wild, Devotion Aura and Retribution Aura are gone in Forever. Improved Imp is still there but no longer raises Blood Pact.
+- Fixed (2026-10-15, `sim/core/buffs.go`), all under Forever:
+  - Devotion Aura took the Improved 25% (919 armor at every level). It's now the rank for our level, 55 to 735 at 1 to 60, so 390 at 30 and 735 at 60.
+  - Blood Pact was a flat 42 Stamina. It's now the client's ranks with their growth a level, floored like Battle Shout: rank 5 is 49 plus 0.5 a level from 50 to 60 (54 at 60, as wowhead shows), rank 3 is 21 plus 0.4 a level (22 at 30).
+  - Arcane Intellect (2 / 7 / 15 / 22 / 31 at 1 / 14 / 28 / 42 / 56), Scroll of Stamina (4 / 8 / 12 / 16 at 5 / 20 / 35 / 50), Shadow Protection (30 / 45 / 60 at 30 / 42 / 56) and the Fire and Frost Resistance Auras (30 / 45 / 60 at 36 / 48 / 60 and 32 / 44 / 56) gave their level 60 values at every level. They now take the rank for our level. A resistance buff no longer goes below 0 when Mark of the Wild gives more than it.
+  - Battle Shout grew a level only on rank 6. Every rank grows now (0.3 a level for ranks 1 to 3, 0.6 from rank 4, up to each rank's max level), so rank 3 gives 35 at 30.
+- No shaman DPS preset moves. Level 60 changes health and armor only, and the boss never swings at us. The Level 30 presets take only the scrolls of Intellect and Spirit, Kings and Scroll of Strength. The goldens of every class moved by at most 0.1% DPS, from the extra Stamina and the lower armor.
+- New `raid_buffs_test.go` TestOrcShamanRaidBuffRanks reads the sheet at 30 and 60 with Devotion Aura, Blood Pact, Arcane Brilliance and Battle Shout picked as Improved: 390 / 735 armor, 22 / 54 Stamina, 15 / 31 Intellect and 35 / 115 attack power. The old code fails 6 of the 8 checks.
+- Open: Battle Shout's rounding. The sim floors rank 6 to 115 at 60, and wowhead's Forever tooltip shows 116. Blood Pact's growth is floored the same way. Not checked: Shadow Resistance Aura and the resistance totems still give their level 60 values at every level, which no preset uses.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

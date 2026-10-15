@@ -228,7 +228,11 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 	bonusResist := float64(0)
 
 	if raidBuffs.ArcaneBrilliance {
-		character.AddStats(BuffSpellValues[ArcaneIntellect])
+		if character.Env.IsForever() {
+			character.AddStat(stats.Intellect, foreverArcaneIntellect[HighestRankAt(character.Level, foreverArcaneIntellectLevel[:])])
+		} else {
+			character.AddStats(BuffSpellValues[ArcaneIntellect])
+		}
 	} else if raidBuffs.ScrollOfIntellect {
 		character.AddStat(stats.Intellect, scrollOfIntellect[HighestRankAt(character.Level, scrollOfIntellectLevel[:])])
 	}
@@ -256,7 +260,10 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 
 	if raidBuffs.FireResistanceAura {
 		updateStats := BuffSpellValues[FireResistanceAura]
-		updateStats[stats.FireResistance] = updateStats[stats.FireResistance] - bonusResist
+		if character.Env.IsForever() {
+			updateStats = stats.Stats{stats.FireResistance: foreverResistanceBuff(character.Level, foreverFireResistanceAuraLevel)}
+		}
+		updateStats[stats.FireResistance] = max(0, updateStats[stats.FireResistance]-bonusResist)
 		character.AddStats(updateStats)
 	} else if raidBuffs.FireResistanceTotem {
 		updateStats := BuffSpellValues[FireResistanceTotem]
@@ -266,7 +273,10 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 
 	if raidBuffs.FrostResistanceAura {
 		updateStats := BuffSpellValues[FrostResistanceAura]
-		updateStats[stats.FrostResistance] = updateStats[stats.FrostResistance] - bonusResist
+		if character.Env.IsForever() {
+			updateStats = stats.Stats{stats.FrostResistance: foreverResistanceBuff(character.Level, foreverFrostResistanceAuraLevel)}
+		}
+		updateStats[stats.FrostResistance] = max(0, updateStats[stats.FrostResistance]-bonusResist)
 		character.AddStats(updateStats)
 	} else if raidBuffs.FrostResistanceTotem {
 		updateStats := BuffSpellValues[FrostResistanceTotem]
@@ -312,13 +322,19 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		}
 		character.AddStats(updateStats)
 	} else if raidBuffs.ScrollOfStamina {
-		character.AddStats(BuffSpellValues[ScrollOfStamina])
+		if character.Env.IsForever() {
+			character.AddStat(stats.Stamina, scrollOfStamina[HighestRankAt(character.Level, scrollOfStaminaLevel[:])])
+		} else {
+			character.AddStats(BuffSpellValues[ScrollOfStamina])
+		}
 	}
 
 	// Forever's Improved Imp no longer raises Blood Pact, so we take an improved one as regular.
 	if raidBuffs.BloodPact > 0 {
 		updateStats := BuffSpellValues[BloodPact]
-		if raidBuffs.BloodPact == proto.TristateEffect_TristateEffectImproved && !character.Env.IsForever() {
+		if character.Env.IsForever() {
+			updateStats = stats.Stats{stats.Stamina: foreverBloodPact(character.Level)}
+		} else if raidBuffs.BloodPact == proto.TristateEffect_TristateEffectImproved {
 			updateStats = updateStats.Multiply(1.3).Floor()
 		}
 		character.AddStats(updateStats)
@@ -330,7 +346,10 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		character.AddStats(updateStats)
 	} else if raidBuffs.ShadowProtection {
 		updateStats := BuffSpellValues[ShadowProtection]
-		updateStats[stats.ShadowResistance] = updateStats[stats.ShadowResistance] - bonusResist
+		if character.Env.IsForever() {
+			updateStats = stats.Stats{stats.ShadowResistance: foreverResistanceBuff(character.Level, foreverShadowProtectionLevel)}
+		}
+		updateStats[stats.ShadowResistance] = max(0, updateStats[stats.ShadowResistance]-bonusResist)
 		character.AddStats(updateStats)
 	}
 
@@ -606,6 +625,10 @@ func ApplyInspiration(character *Character, uptime float64) {
 func DevotionAuraAura(unit *Unit, points int32) *Aura {
 	updateStats := BuffSpellValues[DevotionAura]
 	updateStats = updateStats.Multiply(1 + .125*float64(points))
+	if unit.Env.IsForever() {
+		// Forever took out Improved Devotion Aura, so we give the rank's armor alone.
+		updateStats = stats.Stats{stats.BonusArmor: foreverDevotionAura[HighestRankAt(unit.Level, foreverDevotionAuraLevel[:])]}
+	}
 
 	return unit.RegisterAura(Aura{
 		Label:    "Devotion Aura",
@@ -1581,6 +1604,12 @@ var BattleShoutLevel = [BattleShoutRanks + 1]int{0, 1, 12, 22, 32, 42, 52, 60}
 // Shout is baseline, so its points do nothing under Forever.
 var foreverBattleShoutAP = [BattleShoutRanks + 1]float64{0, 9, 21, 33, 51, 78, 111, 139}
 
+// Each rank of Battle Shout also grows a little a level, from the level it's learned up to its
+// max level (client 70338, SpellEffect and SpellLevels). Rank 3 gives 35 at level 30 and rank 6
+// gives 115 at 60.
+var foreverBattleShoutPerLevel = [BattleShoutRanks + 1]float64{0, 0.3, 0.3, 0.3, 0.6, 0.6, 0.6, 0.6}
+var foreverBattleShoutMaxLevel = [BattleShoutRanks + 1]int32{0, 11, 21, 31, 41, 51, 61, 61}
+
 func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, has3pcWrath bool) *Aura {
 	rank := TernaryInt32(IncludeAQ, 7, 6)
 	spellId := BattleShoutSpellId[rank]
@@ -1593,11 +1622,7 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 			rank = BattleShoutRanks - 1
 		}
 		spellId = BattleShoutSpellId[rank]
-		baseAP = foreverBattleShoutAP[rank]
-		if rank == BattleShoutRanks-1 {
-			// Rank 6 (11551) adds 0.6 a level from its base level 52 up to 61 in client 70338.
-			baseAP += 0.6 * float64(min(unit.Level, 61)-52)
-		}
+		baseAP = foreverBattleShoutAP[rank] + foreverBattleShoutPerLevel[rank]*float64(min(unit.Level, foreverBattleShoutMaxLevel[rank])-int32(BattleShoutLevel[rank]))
 		impBattleShout = 0
 		// 3 min (client 70338, spell 25289), and Booming Voice no longer adds to it.
 		duration = time.Minute * 3
@@ -1695,6 +1720,46 @@ var foreverFortitudeLevel = [...]int{0, 1, 12, 24, 36, 48, 60}
 var foreverFortitudeStamina = [...]float64{0, 4, 10, 26, 42, 56, 70}
 var foreverDivineSpiritLevel = [...]int{0, 30, 40, 50, 60}
 var foreverDivineSpirit = [...]float64{0, 17, 23, 33, 40}
+
+// Forever's Arcane Intellect ranks (client 70338). Arcane Brilliance is rank 5's 31.
+var foreverArcaneIntellectLevel = [...]int{0, 1, 14, 28, 42, 56}
+var foreverArcaneIntellect = [...]float64{0, 2, 7, 15, 22, 31}
+
+// Forever's Devotion Aura ranks (client 70338). Improved Devotion Aura is gone.
+var foreverDevotionAuraLevel = [...]int{0, 1, 10, 20, 30, 40, 50, 60}
+var foreverDevotionAura = [...]float64{0, 55, 160, 275, 390, 505, 620, 735}
+
+// Forever's Blood Pact ranks (client 70338). Each grows a little a level from the level it's
+// learned up to its max level, so rank 5 gives 49 at 50 and 54 at 60, and rank 3 gives 22 at
+// 30. The server drops the fraction, as it does for Battle Shout.
+var foreverBloodPactLevel = [...]int{0, 4, 14, 26, 38, 50}
+var foreverBloodPactBase = [...]float64{0, 3, 9, 21, 35, 49}
+var foreverBloodPactPerLevel = [...]float64{0, 0.1, 0.3, 0.4, 0.4, 0.5}
+var foreverBloodPactMaxLevel = [...]int32{0, 14, 24, 36, 48, 60}
+
+func foreverBloodPact(level int32) float64 {
+	rank := HighestRankAt(level, foreverBloodPactLevel[:])
+	if rank == 0 {
+		return 0
+	}
+	growth := foreverBloodPactPerLevel[rank] * float64(min(level, foreverBloodPactMaxLevel[rank])-int32(foreverBloodPactLevel[rank]))
+	return math.Floor(foreverBloodPactBase[rank] + growth)
+}
+
+// Forever's Shadow Protection and the paladin's Fire and Frost Resistance Auras give 30 / 45 /
+// 60 resistance by rank (client 70338). Only the levels they're learned at differ.
+var foreverResistanceBuffValue = [...]float64{0, 30, 45, 60}
+var foreverShadowProtectionLevel = [...]int{0, 30, 42, 56}
+var foreverFireResistanceAuraLevel = [...]int{0, 36, 48, 60}
+var foreverFrostResistanceAuraLevel = [...]int{0, 32, 44, 56}
+
+func foreverResistanceBuff(level int32, rankLevels [4]int) float64 {
+	return foreverResistanceBuffValue[HighestRankAt(level, rankLevels[:])]
+}
+
+// Scrolls of Stamina give 4 / 8 / 12 / 16 at ranks I to IV, which need level 5, 20, 35 and 50.
+var scrollOfStaminaLevel = [...]int{0, 5, 20, 35, 50}
+var scrollOfStamina = [...]float64{0, 4, 8, 12, 16}
 
 // Scrolls of Intellect and Spirit by rank, at the best rank the character can read.
 var scrollOfIntellectLevel = [...]int{0, 5, 20, 35, 50}
