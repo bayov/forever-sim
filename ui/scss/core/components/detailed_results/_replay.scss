@@ -25,7 +25,7 @@
 
 .replay-player {
 	position: relative;
-	background: #07090c;
+	background: #3d4650;
 	color: #fff;
 	// EllesmereUI's font is Avant Garde. We use it when the system has it, or the closest
 	// geometric sans we can find.
@@ -64,8 +64,10 @@
 	overflow: hidden;
 	cursor: pointer;
 	user-select: none;
-	background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(66, 86, 112, 0.35), transparent 70%),
-		radial-gradient(ellipse 120% 60% at 50% 115%, rgba(30, 24, 18, 0.9), transparent 60%), linear-gradient(to bottom, #111821, #0a0d12 70%, #07090c);
+	// A mid slate, like a dim zone in the game, so the frames' black borders and dark bar
+	// backgrounds stand out against it.
+	background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(140, 160, 185, 0.25), transparent 70%),
+		radial-gradient(ellipse 120% 60% at 50% 115%, rgba(60, 52, 44, 0.6), transparent 60%), linear-gradient(to bottom, #56636f, #48535e 65%, #3d4650);
 }
 
 .replay-message {
