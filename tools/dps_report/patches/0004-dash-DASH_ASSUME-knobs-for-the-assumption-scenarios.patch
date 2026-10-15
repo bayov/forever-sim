@@ -2,7 +2,8 @@ dash: DASH_ASSUME knobs for the dashboard's assumption scenarios (local only)
 
 Dashboard-only knobs read by run_assumptions.py: DASH_ASSUME="key=value,..." overrides the constants the
 assumption scenarios vary (sim/core/assumptions.go). With the variable unset the sim is bit-identical.
-Made against the merged tree of master baed22e62 and warrior 38b94b40a.
+Each rank-scale knob defaults to master's constant (for example FrostboltRank10DamageScale), so a run with
+no knob reproduces master. Made against master bd45f60b7 with patches 0001 to 0003 applied.
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -79,34 +80,10 @@ index 3718a4c2a..069aa3336 100644
  }
  
 diff --git a/sim/core/buffs.go b/sim/core/buffs.go
-index 2dbe55fa5..d0b42a8a0 100644
+index 4dec20762..7ff349194 100644
 --- a/sim/core/buffs.go
 +++ b/sim/core/buffs.go
-@@ -1585,6 +1585,7 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
- 	rank := TernaryInt32(IncludeAQ, 7, 6)
- 	spellId := BattleShoutSpellId[rank]
- 	baseAP := BattleShoutBaseAP[rank]
-+	duration := time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts)))
- 	if unit.Env.IsForever() {
- 		rank = int32(HighestRankAt(unit.Level, BattleShoutLevel[:]))
- 		if rank == BattleShoutRanks && !unit.Env.IncludeAQRanks() {
-@@ -1598,12 +1599,14 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
- 			baseAP += 0.6 * float64(min(unit.Level, 61)-52)
- 		}
- 		impBattleShout = 0
-+		// 3 min (client 70338, spell 25289), and Booming Voice no longer adds to it.
-+		duration = time.Minute * 3
- 	}
- 
- 	return unit.GetOrRegisterAura(Aura{
- 		Label:      "Battle Shout",
- 		ActionID:   ActionID{SpellID: spellId},
--		Duration:   time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts))),
-+		Duration:   duration,
- 		BuildPhase: CharacterBuildPhaseBuffs,
- 		OnGain: func(aura *Aura, sim *Simulation) {
- 			aura.Unit.AddStatsDynamic(sim, stats.Stats{
-@@ -1641,6 +1644,9 @@ func TrueshotAura(unit *Unit) *Aura {
+@@ -1669,6 +1669,9 @@ func TrueshotAura(unit *Unit) *Aura {
  	meleeAP := 100.0
  	if unit.Env.IsForever() {
  		rangedAP = bestLearnedRank(unit.Level, foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:])
@@ -116,7 +93,7 @@ index 2dbe55fa5..d0b42a8a0 100644
  		meleeAP = 0
  	}
  
-@@ -1852,6 +1858,11 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
+@@ -1920,6 +1923,11 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
  			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
  				return
  			}
@@ -128,7 +105,7 @@ index 2dbe55fa5..d0b42a8a0 100644
  			if blocked != nil && blocked() {
  				return
  			}
-@@ -1902,6 +1913,9 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
+@@ -1970,6 +1978,9 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
  	procMask := ProcMaskMeleeMH
  	if character.Env.IsForever() {
  		procMask = ProcMaskMelee
@@ -160,10 +137,10 @@ index f7e4e668e..4ecbc9d2a 100644
  	}
  	return 33, 38
 diff --git a/sim/core/debuffs.go b/sim/core/debuffs.go
-index 49334a16e..077272589 100644
+index ae2258c1a..dae9aa690 100644
 --- a/sim/core/debuffs.go
 +++ b/sim/core/debuffs.go
-@@ -201,6 +201,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
+@@ -215,6 +215,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
  		if !forever {
  			MakePermanent(HuntersMarkAura(target, GetTristateValueInt32(debuffs.HuntersMark, 0, 5)))
  		} else if bonus := bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:]); bonus > 0 {
@@ -173,6 +150,28 @@ index 49334a16e..077272589 100644
  			MakePermanent(huntersMarkAura(target, bonus))
  		}
  	}
+diff --git a/sim/core/rage.go b/sim/core/rage.go
+index 3fa60ffec..1ce3cece3 100644
+--- a/sim/core/rage.go
++++ b/sim/core/rage.go
+@@ -65,7 +65,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
+ 	if level <= 30 {
+ 		return 1
+ 	}
+-	return 1 + ForeverNormalizedRageScaling*float64(level-30)/30
++	return 1 + Assume("warr_rage_s", ForeverNormalizedRageScaling)*float64(level-30)/30 // dashboard assumption
+ }
+ 
+ // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
+@@ -137,7 +137,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
+ 			if unit.rageBar.normalizedDealt {
+ 				// Dodges and parries give the same Rage as a hit, as Classic's do.
+ 				if spell.ProcMask == ProcMaskMeleeOHAuto {
+-					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * ForeverNormalizedRageOffHand
++					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * Assume("warr_rage_oh", ForeverNormalizedRageOffHand) // dashboard assumption
+ 				} else {
+ 					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.MH(), unit.Level)
+ 				}
 diff --git a/sim/druid/rip.go b/sim/druid/rip.go
 index 4d285552c..0abb1d23f 100644
 --- a/sim/druid/rip.go
@@ -237,20 +236,21 @@ index c11180e8b..3ac8fd190 100644
  					chance *= 2
  				}
 diff --git a/sim/druid/wrath.go b/sim/druid/wrath.go
-index 7353e678a..232651eb6 100644
+index 869edc63c..1bd3e9b14 100644
 --- a/sim/druid/wrath.go
 +++ b/sim/druid/wrath.go
-@@ -37,6 +37,10 @@ func (druid *Druid) newWrathSpellConfig(rank int) core.SpellConfig {
- 	spellId := WrathSpellId[rank]
- 	baseDamageLow := WrathScaling[rank].At(WrathBaseDamage[rank][0], druid.Level)
- 	baseDamageHigh := WrathScaling[rank].At(WrathBaseDamage[rank][1], druid.Level)
-+	if v, ok := core.AssumeOk("druid_wrath8_tuning"); ok && rank == 8 {
-+		baseDamageLow *= v // dashboard assumption: the rank retuned
-+		baseDamageHigh *= v
-+	}
- 	spellCoeff := WrathSpellCoeff[rank]
- 	manaCost := WrathManaCost[rank]
- 	castTime := WrathCastTime[rank]
+@@ -43,8 +43,9 @@ func WrathBaseDamageAt(rank int, level int32) (float64, float64) {
+ 	low := WrathScaling[rank].At(WrathBaseDamage[rank][0], level)
+ 	high := WrathScaling[rank].At(WrathBaseDamage[rank][1], level)
+ 	if rank == 8 {
+-		low *= WrathRank8DamageScale
+-		high *= WrathRank8DamageScale
++		scale := core.Assume("druid_wrath8_tuning", WrathRank8DamageScale) // dashboard assumption
++		low *= scale
++		high *= scale
+ 	}
+ 	return low, high
+ }
 diff --git a/sim/hunter/arcane_shot.go b/sim/hunter/arcane_shot.go
 index 261cae340..a3ef55190 100644
 --- a/sim/hunter/arcane_shot.go
@@ -323,37 +323,27 @@ index 914c51a22..38350c653 100644
  				if sim.IsForever() {
  					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickPhysicalCrit)
  				} else {
-diff --git a/sim/mage/arcane_blast.go b/sim/mage/arcane_blast.go
-index ab2541d7a..bceb4e739 100644
---- a/sim/mage/arcane_blast.go
-+++ b/sim/mage/arcane_blast.go
-@@ -117,5 +117,5 @@ func (mage *Mage) arcaneBlastBonus() float64 {
- 	if mage.ArcaneBlastAura == nil || !mage.ArcaneBlastAura.IsActive() {
- 		return 0
- 	}
--	return ArcaneBlastStackBonus * float64(mage.ArcaneBlastAura.GetStacks())
-+	return core.Assume("mage_ab_on_missiles", ArcaneBlastStackBonus) * float64(mage.ArcaneBlastAura.GetStacks()) // dashboard assumption (only Missiles reads it)
- }
 diff --git a/sim/mage/frostbolt.go b/sim/mage/frostbolt.go
-index 8998bce31..03b388475 100644
+index 695855682..f68f3da3a 100644
 --- a/sim/mage/frostbolt.go
 +++ b/sim/mage/frostbolt.go
-@@ -37,6 +37,10 @@ func (mage *Mage) getFrostboltConfig(rank int) core.SpellConfig {
- 	spellId := FrostboltSpellId[rank]
- 	baseDamageLow := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][0], mage.Level)
- 	baseDamageHigh := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][1], mage.Level)
-+	if v, ok := core.AssumeOk("mage_frostbolt10"); ok && rank == 10 {
-+		baseDamageLow *= v // dashboard assumption: the rank retuned
-+		baseDamageHigh *= v
-+	}
- 	spellCoeff := FrostboltSpellCoeff[rank]
- 	castTime := FrostboltCastTime[rank]
- 	manaCost := FrostboltManaCost[rank]
+@@ -43,8 +43,9 @@ func FrostboltBaseDamageAt(rank int, level int32) (float64, float64) {
+ 	low := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][0], level)
+ 	high := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][1], level)
+ 	if rank == 10 {
+-		low *= FrostboltRank10DamageScale
+-		high *= FrostboltRank10DamageScale
++		scale := core.Assume("mage_frostbolt10", FrostboltRank10DamageScale) // dashboard assumption
++		low *= scale
++		high *= scale
+ 	}
+ 	return low, high
+ }
 diff --git a/sim/mage/ice_lance.go b/sim/mage/ice_lance.go
-index d9e04b2fa..a8f6ba5ad 100644
+index b8995228c..1d8321ac7 100644
 --- a/sim/mage/ice_lance.go
 +++ b/sim/mage/ice_lance.go
-@@ -66,7 +66,7 @@ func (mage *Mage) newIceLanceSpellConfig(rank int) core.SpellConfig {
+@@ -68,7 +68,7 @@ func (mage *Mage) newIceLanceSpellConfig(rank int) core.SpellConfig {
  
  		DamageMultiplier: 1,
  		ThreatMultiplier: 1,
@@ -517,32 +507,22 @@ index 79f54eda9..363f1d9dd 100644
  func (paladin *Paladin) getWeaponSpecializationModifier() float64 {
  	handType := paladin.MainHand().HandType
  	if handType == proto.HandType_HandTypeMainHand || handType == proto.HandType_HandTypeOneHand {
-diff --git a/sim/priest/priest.go b/sim/priest/priest.go
-index 1596aeb8d..89d1b078c 100644
---- a/sim/priest/priest.go
-+++ b/sim/priest/priest.go
-@@ -151,5 +151,5 @@ func (priest *Priest) downrankCoefficient(coefficient float64, learnLevel int) f
- 	if priest.Env == nil || !priest.Env.IsForever() {
- 		return coefficient
- 	}
--	return coefficient * max(0, min(1, 1-0.05*float64(int(priest.Level)-17-learnLevel)))
-+	return coefficient * max(0, min(1, 1-core.Assume("downrank_penalty", 0.05)*float64(int(priest.Level)-17-learnLevel)))
- }
 diff --git a/sim/priest/smite.go b/sim/priest/smite.go
-index f39fb7a37..69de8aa8d 100644
+index 1c93f8af3..3ae86462a 100644
 --- a/sim/priest/smite.go
 +++ b/sim/priest/smite.go
-@@ -36,6 +36,10 @@ func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
- 	spellId := SmiteSpellId[rank]
- 	baseDamageLow := SmiteScaling[rank].At(SmiteBaseDamage[rank][0], priest.Level)
- 	baseDamageHigh := SmiteScaling[rank].At(SmiteBaseDamage[rank][1], priest.Level)
-+	if v, ok := core.AssumeOk("priest_smite8_tuning"); ok && rank == 8 {
-+		baseDamageLow *= v // dashboard assumption: Smite VIII retuned
-+		baseDamageHigh *= v
-+	}
- 	spellCoeff := SmiteSpellCoef[rank]
- 	castTime := SmiteCastTime[rank]
- 	manaCost := SmiteManaCost[rank]
+@@ -41,8 +41,9 @@ func SmiteBaseDamageAt(rank int, level int32) (float64, float64) {
+ 	low := SmiteScaling[rank].At(SmiteBaseDamage[rank][0], level)
+ 	high := SmiteScaling[rank].At(SmiteBaseDamage[rank][1], level)
+ 	if rank == 8 {
+-		low *= SmiteRank8DamageScale
+-		high *= SmiteRank8DamageScale
++		scale := core.Assume("priest_smite8_tuning", SmiteRank8DamageScale) // dashboard assumption
++		low *= scale
++		high *= scale
+ 	}
+ 	return low, high
+ }
 diff --git a/sim/priest/talents.go b/sim/priest/talents.go
 index c014141e3..b7728561c 100644
 --- a/sim/priest/talents.go
@@ -622,49 +602,42 @@ index 44ddbfd57..931346af4 100644
  	rogue.mutilateOH = rogue.RegisterSpell(core.SpellConfig{
  		ActionID:    MutilateActionID.WithTag(2),
 diff --git a/sim/shaman/earth_shock.go b/sim/shaman/earth_shock.go
-index 9a4f2b1d4..a53729fbc 100644
+index 51c77d679..c05d5e91d 100644
 --- a/sim/shaman/earth_shock.go
 +++ b/sim/shaman/earth_shock.go
-@@ -36,6 +36,10 @@ func (shaman *Shaman) newEarthShockSpellConfig(rank int, shockTimer *core.Timer)
- 	spellId := EarthShockSpellId[rank]
- 	baseDamageLow := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][0], shaman.Level)
- 	baseDamageHigh := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][1], shaman.Level)
-+	if v, ok := core.AssumeOk("sham_es7_tuning"); ok && rank == 7 {
-+		baseDamageLow *= v // dashboard assumption: the rank retuned
-+		baseDamageHigh *= v
-+	}
- 	spellCoeff := EarthShockSpellCoef[rank]
- 	manaCost := EarthShockManaCost[rank]
- 	level := EarthShockLevel[rank]
+@@ -42,8 +42,9 @@ func EarthShockBaseDamageAt(rank int, level int32) (float64, float64) {
+ 	low := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][0], level)
+ 	high := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][1], level)
+ 	if rank == 7 {
+-		low *= EarthShockRank7DamageScale
+-		high *= EarthShockRank7DamageScale
++		scale := core.Assume("sham_es7_tuning", EarthShockRank7DamageScale) // dashboard assumption
++		low *= scale
++		high *= scale
+ 	}
+ 	return low, high
+ }
 diff --git a/sim/shaman/lightning_bolt.go b/sim/shaman/lightning_bolt.go
-index f140dffae..60fe4e37e 100644
+index 58d686957..4e5805b35 100644
 --- a/sim/shaman/lightning_bolt.go
 +++ b/sim/shaman/lightning_bolt.go
-@@ -50,6 +50,10 @@ func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
- 	spellId := LightningBoltSpellId[rank]
- 	baseDamageLow := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][0], shaman.Level)
- 	baseDamageHigh := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][1], shaman.Level)
-+	if v, ok := core.AssumeOk("sham_lb_31plus"); ok && rank == 10 {
-+		baseDamageLow *= v // dashboard assumption: the rank retuned
-+		baseDamageHigh *= v
-+	}
- 	level := LightningBoltLevel[rank]
- 	spellCoeff := shaman.downrankCoefficient(LightningBoltSpellCoef[rank], level)
- 	castTime := LightningBoltCastTime[rank]
+@@ -56,8 +56,9 @@ func LightningBoltBaseDamageAt(rank int, level int32) (float64, float64) {
+ 	low := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][0], level)
+ 	high := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][1], level)
+ 	if rank == 10 {
+-		low *= LightningBoltRank10DamageScale
+-		high *= LightningBoltRank10DamageScale
++		scale := core.Assume("sham_lb_31plus", LightningBoltRank10DamageScale) // dashboard assumption
++		low *= scale
++		high *= scale
+ 	}
+ 	return low, high
+ }
 diff --git a/sim/shaman/talents.go b/sim/shaman/talents.go
-index d1e09c5a4..a59470bb6 100644
+index 8c2612ba8..b7c3953ca 100644
 --- a/sim/shaman/talents.go
 +++ b/sim/shaman/talents.go
-@@ -171,7 +171,7 @@ func (shaman *Shaman) downrankCoefficient(coefficient float64, learnLevel int) f
- 	if shaman.Env == nil || !shaman.Env.IsForever() {
- 		return coefficient
- 	}
--	return coefficient * max(0, min(1, 1-0.05*float64(int(shaman.Level)-17-learnLevel)))
-+	return coefficient * max(0, min(1, 1-core.Assume("downrank_penalty", 0.05)*float64(int(shaman.Level)-17-learnLevel)))
- }
- 
- func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
-@@ -521,7 +521,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
+@@ -530,7 +530,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
  
  	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
  	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
@@ -749,41 +722,6 @@ index 5788df3c8..e704f2cb5 100644
  	return warlock.makePet(cfg, warlock.Options.Summon == proto.WarlockOptions_Succubus)
  }
  
-diff --git a/sim/warlock/talents.go b/sim/warlock/talents.go
-index e07ab0839..90bc39be7 100644
---- a/sim/warlock/talents.go
-+++ b/sim/warlock/talents.go
-@@ -724,7 +724,7 @@ func (warlock *Warlock) applyDecimation() {
- 
- 	warlock.targetDamageModifiers = append(warlock.targetDamageModifiers, func(spell *core.Spell, target *core.Unit) float64 {
- 		if (spell.SpellCode == SpellCode_WarlockShadowBolt || spell.SpellCode == SpellCode_WarlockSearingPain) && warlock.sim.IsExecutePhase35() {
--			return 1 + 0.03*points
-+			return 1 + core.Assume("lock_decimation", 0.03)*points // dashboard assumption
- 		}
- 		return 1
- 	})
-diff --git a/sim/core/rage.go b/sim/core/rage.go
-index 3fa60ffec..1ce3cece3 100644
---- a/sim/core/rage.go
-+++ b/sim/core/rage.go
-@@ -65,7 +65,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
- 	if level <= 30 {
- 		return 1
- 	}
--	return 1 + ForeverNormalizedRageScaling*float64(level-30)/30
-+	return 1 + Assume("warr_rage_s", ForeverNormalizedRageScaling)*float64(level-30)/30 // dashboard assumption
- }
- 
- // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
-@@ -137,7 +137,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
- 			if unit.rageBar.normalizedDealt {
- 				// Dodges and parries give the same Rage as a hit, as Classic's do.
- 				if spell.ProcMask == ProcMaskMeleeOHAuto {
--					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * ForeverNormalizedRageOffHand
-+					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * Assume("warr_rage_oh", ForeverNormalizedRageOffHand) // dashboard assumption
- 				} else {
- 					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.MH(), unit.Level)
- 				}
 diff --git a/sim/warrior/rend.go b/sim/warrior/rend.go
 index 098043802..e9ec8950c 100644
 --- a/sim/warrior/rend.go

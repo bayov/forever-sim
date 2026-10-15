@@ -1,18 +1,17 @@
-From 6195f46dd58180a39c88e89dc85287221fbfedfe Mon Sep 17 00:00:00 2001
+From 7facce05fad6ae0bb9caaac2bd54f1bc5717ef26 Mon Sep 17 00:00:00 2001
 From: dash <dash@local>
 Date: Tue, 13 Oct 2026 10:06:04 +0000
 Subject: [PATCH] dash: local tooling (DASH_NAMES dump, dashstats, manaAbove
  dedupe)
 
 ---
- sim/core/environment.go       | 12 ++++++++
- tools/dashstats/main.go       | 52 +++++++++++++++++++++++++++++++++++
- tools/rotopt/priest_shadow.go |  7 -----
- 3 files changed, 64 insertions(+), 7 deletions(-)
+ sim/core/environment.go | 12 ++++++++++
+ tools/dashstats/main.go | 52 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 64 insertions(+)
  create mode 100644 tools/dashstats/main.go
 
 diff --git a/sim/core/environment.go b/sim/core/environment.go
-index b18b920d4..00e30bf1b 100644
+index 3d9f422c3..ec8e23088 100644
 --- a/sim/core/environment.go
 +++ b/sim/core/environment.go
 @@ -1,6 +1,8 @@
@@ -24,7 +23,7 @@ index b18b920d4..00e30bf1b 100644
  	"slices"
  	"time"
  
-@@ -192,6 +194,16 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
+@@ -204,6 +206,16 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
  	}
  	env.postFinalizeEffects = nil
  
@@ -99,24 +98,6 @@ index 000000000..eedc03d57
 +	b, _ := json.Marshal(out)
 +	fmt.Println(string(b))
 +}
-diff --git a/tools/rotopt/priest_shadow.go b/tools/rotopt/priest_shadow.go
-index e025c9632..2cdfc8696 100644
---- a/tools/rotopt/priest_shadow.go
-+++ b/tools/rotopt/priest_shadow.go
-@@ -88,13 +88,6 @@ func channel(spell *proto.ActionID, condition value, interruptIf value, notes st
- 	}
- }
- 
--func manaAbove(percent float64) value {
--	if percent <= 0 {
--		return nil
--	}
--	return ge(currentManaPercent(), num(percent/100))
--}
--
- func (priestShadow) Build(k Knobs) *proto.APLRotation {
- 	shadowWordPain := rankID(priest.ShadowWordPainLevel[:], priest.ShadowWordPainSpellId[:])
- 	devouringPlague := rankID(priest.DevouringPlagueLevel[:], priest.DevouringPlagueSpellId[:])
 -- 
 2.43.0
 
