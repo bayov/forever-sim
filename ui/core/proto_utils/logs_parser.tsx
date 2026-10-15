@@ -583,12 +583,16 @@ export class AuraEventLog extends SimLog {
 	readonly isGained: boolean;
 	readonly isFaded: boolean;
 	readonly isRefreshed: boolean;
+	// When a gained or refreshed aura runs out, if it does. Results simmed before the sim
+	// wrote it don't have it.
+	readonly expiresAt: number | null;
 
-	constructor(params: SimLogParams, isGained: boolean, isFaded: boolean, isRefreshed: boolean) {
+	constructor(params: SimLogParams, isGained: boolean, isFaded: boolean, isRefreshed: boolean, expiresAt: number | null = null) {
 		super(params);
 		this.isGained = isGained;
 		this.isFaded = isFaded;
 		this.isRefreshed = isRefreshed;
+		this.expiresAt = expiresAt;
 	}
 
 	toHTML(includeTimestamp = true) {
@@ -609,7 +613,8 @@ export class AuraEventLog extends SimLog {
 				.then(aura => {
 					params.actionId = aura;
 					const event = match[1];
-					return new AuraEventLog(params, event == 'gained', event == 'faded', event == 'refreshed');
+					const expires = match[5].match(/\(expires at (-?\d+\.?\d*)\)/);
+					return new AuraEventLog(params, event == 'gained', event == 'faded', event == 'refreshed', expires ? parseFloat(expires[1]) : null);
 				});
 		} else {
 			return null;
@@ -654,12 +659,15 @@ export class AuraUptimeLog extends SimLog {
 	readonly gainedAt: number;
 	readonly fadedAt: number;
 	readonly stacksChange: Array<AuraStacksChangeLog>;
+	// When the aura was set to run out as it was gained or refreshed, if the log says.
+	readonly expiresAt: number | null;
 
-	constructor(params: SimLogParams, fadedAt: number, stacksChange: Array<AuraStacksChangeLog>) {
+	constructor(params: SimLogParams, fadedAt: number, stacksChange: Array<AuraStacksChangeLog>, expiresAt: number | null = null) {
 		super(params);
 		this.gainedAt = params.timestamp;
 		this.fadedAt = fadedAt;
 		this.stacksChange = stacksChange;
+		this.expiresAt = expiresAt;
 	}
 
 	static fromLogs(logs: Array<SimLog>, entity: Entity, encounterDuration: number): Array<AuraUptimeLog> {
@@ -710,6 +718,7 @@ export class AuraUptimeLog extends SimLog {
 					},
 					log.timestamp,
 					stacksChangeLogs,
+					gainedLog.expiresAt,
 				),
 			);
 
@@ -734,6 +743,7 @@ export class AuraUptimeLog extends SimLog {
 					},
 					encounterDuration,
 					stacksChangeLogs,
+					gainedLog.expiresAt,
 				),
 			);
 		});

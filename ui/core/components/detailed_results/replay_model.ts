@@ -62,6 +62,9 @@ export interface AuraSpan {
 	end: number;
 	// The aura was refreshed at the end of the span, so it didn't fade then.
 	refreshed: boolean;
+	// When the aura was set to run out at the start of the span, from the log. Null in results
+	// simmed before the sim wrote it, where we guess from the spans instead.
+	expiresAt: number | null;
 	// When the aura first came up and when it finally faded, over all its refreshes.
 	chainStart: number;
 	chainEnd: number;
@@ -576,6 +579,7 @@ const buildAuraTracks = (uptimeLogs: Array<AuraUptimeLog>, start: number, end: n
 			start: log.gainedAt,
 			end: log.fadedAt,
 			refreshed: i + 1 < logs.length && Math.abs(logs[i + 1].gainedAt - log.fadedAt) < EPSILON,
+			expiresAt: log.expiresAt,
 			chainStart: log.gainedAt,
 			chainEnd: log.fadedAt,
 			stacks: log.stacksChange.map(change => ({ time: change.timestamp, stacks: change.newStacks })),
@@ -606,14 +610,17 @@ export const activeAuraAt = (track: AuraTrack, time: number, end: number): Activ
 	if (time >= span.end) return null;
 
 	let remaining: number | null = null;
+	let full = track.duration ?? span.end - span.start;
 	if (!track.alwaysUp) {
-		if (!span.refreshed && span.end < end - EPSILON) {
+		if (span.expiresAt != null) {
+			remaining = Math.max(0, span.expiresAt - time);
+			full = span.expiresAt - span.start;
+		} else if (!span.refreshed && span.end < end - EPSILON) {
 			remaining = span.end - time;
 		} else if (track.duration != null) {
 			remaining = Math.max(0, span.start + track.duration - time);
 		}
 	}
-	const full = track.duration ?? span.end - span.start;
 	const stackIndex = lastIndexAtOrBefore(span.stackTimes, time);
 	return {
 		track,
