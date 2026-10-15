@@ -471,6 +471,16 @@ After the groundwork:
      | Audit round 1, look ahead (pass 2 kept every knob) | 97.8 | 0.01 | 56,600 | 144 s | 344 s | 711 s | 2.19 |
      | Audit round 2: Mana Spring, rank 1 Searing, rest mana to 80%, chain as the target dies | 99.5 | 0.01 | 57,600 | 141 s | 338 s | 719 s | 2.32 |
      | Optimizer pass 3: pull with rank 1 Earth Shock | 100.0 | 0.01 | 57,900 | 140 s | 327 s | 732 s | 2.13 |
+     | Pass 3's rotation with one imbue (Windfury Weapon) | 91.9 | 0.02 | - | 106 s | 340 s | 750 s | 2.21 |
+     | Optimizer pass 4: Fire Nova with two mobs on us | 93.0 | 0.03 | 53,800 | 110 s | 378 s | 707 s | 2.30 |
+
+     The rows down to pass 3 ran with Rockbiter Weapon and Windfury Weapon both on the main
+     hand: the settings had Rockbiter in the consumes and Windfury in the class options, and
+     the sim put both on. The game takes one shaman imbue, so now the class options' imbue
+     wins, and the settings have Windfury alone (it kills more than Rockbiter alone, 89.6 to
+     86.3 mobs with the round 2 rotation). The rules the earlier rows found still stand; pass 4
+     re-tuned the knobs with one imbue and added Fire Nova with two mobs on us (+1.1 mobs on
+     both seeds), which the weaker melee now makes worth its mana.
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their
@@ -489,14 +499,19 @@ After the groundwork:
      one dies when we're healthy. It also found that our own lower-rank Strength of Earth and
      Stoneskin totems gave the top rank's buff, now fixed. Pass 3 then pulled with rank 1
      Earth Shock instead of walking in (+0.5 mobs on seed 1, +0.4 on a second seed).
-   - The best mob level, XP an hour with that rotation: 50,600 at 3 levels under us, 54,500
-     at 2 under, 56,500 at 1 under, 56,600 at our level, 54,700 at 1 over, 45,300 at 2 over
-     (deaths climb to 0.43 a session). Mobs of our level or one under are best.
+   - The best mob level, XP an hour with the pass 4 rotation (2000 sessions): 49,600 at 3
+     levels under us, 52,800 at 2 under, 54,300 at 1 under, 53,700 at our level, 51,300 at 1
+     over, 41,900 at 2 over (deaths climb to 0.7 a session). Mobs one level under us are best by
+     about 1%, with mobs of our level next; the knobs were tuned at our level.
 6. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
 7. **More optimizing:** leveling stat weights with a Pawn export, the talent route, other
    classes' templates.
 8. **Synthetic gear curves** from 10 to 60 and the talent route search.
-9. **UI:** "Leveling" as a third mode next to DPS and PvP.
+9. **UI**, done: "Leveling" is an Encounter Type next to PvP in the individual sims, with the
+   session's options (the fight-only inputs hide). Results lead with mobs killed, XP an hour,
+   deaths and mobs a pull, and the time split; the history and Compare tab compare mobs
+   killed; stat weights are off for now. Enhancement shaman has a "Leveling" preset group
+   with the solo Level 30 build and this rotation (`apls/level30_leveling.apl.json`).
 
 ## From the logs, later
 

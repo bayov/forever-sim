@@ -66,7 +66,7 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		// The fight.
 		{Name: "shockMana", Default: 10, Min: 0, Max: 60, Step: 10},
 		{Name: "flameShock", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "fireNova", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "fireNova", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "lightningShield", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "combatHealBelow", Default: 30, Min: 0, Max: 50, Step: 10},
 	}

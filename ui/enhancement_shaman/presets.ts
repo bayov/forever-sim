@@ -389,8 +389,8 @@ export const APLLevel30PvP = PresetUtils.makePresetAPLRotation('Level 30 PvP', L
 //
 // What it does is in docs/leveling_sim.md (step 5): it rests to 90% health and 80% mana,
 // looks for the next mob while still fighting and pulls it with rank 1 Earth Shock once it's
-// nearly full, keeps Mana Spring Totem down in the fight and Searing Totem rank 1 for two
-// mobs, and heals with Lesser Healing Wave below 30% health.
+// nearly full, keeps Mana Spring Totem down in the fight, and with two mobs puts down Searing
+// Totem rank 1 and casts Fire Nova. It heals with Lesser Healing Wave below 30% health.
 export const APLLevel30Leveling = PresetUtils.makePresetAPLRotation('Level 30 Leveling', Level30LevelingAPLJSON, {
 	tooltip: "The leveling optimizer's best rotation for a solo level 30. It rests, finds the next mob and pulls it, for the Leveling mode.",
 	group: 'Leveling',

@@ -7,6 +7,16 @@ from.
 
 ## shaman_enh_leveling, Level 30 solo (`tools/rotopt/leveling/level30_enh_solo.json`)
 
+### Pass 4, 2026-10-15 (one imbue: Windfury Weapon alone, 91.9 mobs)
+
+The settings had Rockbiter Weapon in the consumes and Windfury Weapon in the class options,
+and the sim put both on the main hand. Now the class options' imbue wins and the settings
+have Windfury alone. Every number above this entry is with both imbues.
+
+- **Fire Nova with two mobs on us** (`fireNova=1`): 91.89 / 91.86 to 92.98 / 92.99 (4000
+  sessions, seeds 1 and 1000001). Kept. Round 2 had it at -1.0 with both imbues.
+- Nothing else moved.
+
 ### Pass 3, 2026-10-15 (optimizer from the round 2 knobs, 99.53 mobs)
 
 - **Pull with rank 1 Earth Shock** (`pullSpell=1`) instead of walking in: 99.53 / 99.48 to
