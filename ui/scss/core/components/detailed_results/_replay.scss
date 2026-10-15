@@ -15,6 +15,7 @@
 	--replay-gold: #ffd75e;
 	--replay-hostile: #c62828;
 	--replay-cast: #f0a800;
+	--replay-match: #3fd0ff;
 	--class-color: #{$gold};
 
 	&:focus {
@@ -60,7 +61,7 @@
 	flex-direction: column;
 	// The clock takes the top and the controls the bottom. The combat text fills what the unit
 	// frames leave above them.
-	padding: 64px 3% max(74px, 9%);
+	padding: 100px 3% max(74px, 9%);
 	width: 100%;
 	aspect-ratio: 16 / 9;
 	min-height: 540px;
@@ -1018,5 +1019,141 @@
 		font-size: 0.7rem;
 		top: 50%;
 		transform: translateY(-50%);
+	}
+}
+
+// The parts of the screen with a hover tooltip. The frames and the combat text let the mouse
+// through, so a click anywhere still plays or pauses, but these parts take the hover.
+.replay-tip {
+	pointer-events: auto;
+}
+
+.replay-castbar.replay-tip:not(.active) {
+	pointer-events: none;
+}
+
+// The buffs that are up the whole fight, at the top right like the game's buff frame.
+.replay-buffs {
+	position: absolute;
+	top: 56px;
+	right: 16px;
+	display: flex;
+	flex-flow: row-reverse wrap;
+	gap: 3px;
+	max-width: 36%;
+	pointer-events: none;
+
+	.replay-icon.buff {
+		--size: 26px;
+		opacity: 1;
+	}
+}
+
+// The search at the top right. What it matches lights up on screen and on the progress bar.
+.replay-search {
+	position: absolute;
+	top: 14px;
+	right: 16px;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	width: 320px;
+	max-width: 40%;
+	padding: 0 4px 0 10px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.55);
+	cursor: default;
+
+	&:focus-within {
+		border-color: var(--replay-match);
+	}
+}
+
+.replay-search-icon {
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.replay-search-input {
+	flex: 1;
+	min-width: 0;
+	height: 30px;
+	padding: 0 4px;
+	border: 0;
+	outline: none;
+	background: transparent;
+	color: #fff;
+	font-size: 0.8rem;
+
+	&::placeholder {
+		color: rgba(255, 255, 255, 0.45);
+	}
+}
+
+.replay-search-count {
+	font-size: 0.7rem;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	color: var(--replay-match);
+
+	&.none {
+		color: #ff7b72;
+	}
+}
+
+.replay-search-step {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 0.7rem;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.12);
+		color: #fff;
+	}
+}
+
+.replay-progress-matches {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.replay-progress-match {
+	position: absolute;
+	top: -3px;
+	bottom: -3px;
+	width: 2px;
+	margin-left: -1px;
+	background: var(--replay-match);
+	box-shadow: 0 0 4px var(--replay-match);
+}
+
+// While we search, what matches lights up and the rest of the icons and lines fade back.
+.replay-player.searching {
+	.replay-searchable:not(.match) {
+		filter: grayscale(0.8) brightness(0.45);
+	}
+
+	.replay-icon.match {
+		box-shadow:
+			0 0 0 2px var(--replay-match),
+			0 0 12px var(--replay-match);
+	}
+
+	.replay-sct-text.match {
+		padding: 1px 6px;
+		border-radius: 4px;
+		background: rgba(63, 208, 255, 0.16);
+		outline: 1px solid var(--replay-match);
 	}
 }

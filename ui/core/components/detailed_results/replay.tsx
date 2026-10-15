@@ -1,10 +1,14 @@
-import tippy from 'tippy.js';
+// @ts-expect-error
+import debounce from 'lodash/debounce';
+import tippy, { Instance } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { ResourceType } from '../../proto/api.js';
 import { ActionId } from '../../proto_utils/action_id.js';
-import { CastLog } from '../../proto_utils/logs_parser.js';
+import { CastLog, DamageDealtLog } from '../../proto_utils/logs_parser.js';
+import { resourceNames } from '../../proto_utils/names.js';
 import { formatToCompactNumber, formatToNumber } from '../../utils.js';
+import { EventFilter } from './events_filter.js';
 import {
 	ActiveAura,
 	activeAuraAt,
@@ -17,8 +21,10 @@ import {
 	ReplayEnemy,
 	ReplayModel,
 	SctEvent,
+	TrackedCooldown,
 } from './replay_model.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import { tooltipHit, tooltipRow, tooltipTitle } from './timeline.js';
 
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 const SPEED_STORAGE_KEY = '__detailed_results_replay_speed__';
@@ -70,6 +76,17 @@ const formatCountdown = (seconds: number): string => {
 };
 
 const easeOut = (x: number) => 1 - (1 - x) * (1 - x);
+
+const formatSeconds = (seconds: number): string => `${seconds.toFixed(1)}s`;
+
+// A tooltip title for a unit, with its portrait, name and level.
+const unitTitle = (iconUrl: string, name: string, level: number): Element => (
+	<div className="timeline-tooltip-title">
+		{iconUrl && <img className="timeline-tooltip-icon" src={iconUrl} />}
+		<span className="timeline-tooltip-name">{name}</span>
+		<span className="timeline-tooltip-note">{`Level ${level}`}</span>
+	</div>
+);
 
 const setIcon = (elem: HTMLElement, actionId: ActionId) => {
 	elem.style.backgroundImage = actionId.iconUrl ? `url('${actionId.iconUrl}')` : '';
@@ -171,7 +188,13 @@ const updateCastBar = (bar: CastBarRefs, cast: CastLog | null, time: number) => 
 
 // Keeps the icons of the auras that are up in the host, in order, and reuses the icon of an
 // aura that stays up.
-const syncAuras = (host: HTMLElement, pool: Map<string, HTMLElement>, auras: Array<ActiveAura>, className = '') => {
+const syncAuras = (
+	host: HTMLElement,
+	pool: Map<string, HTMLElement>,
+	auras: Array<ActiveAura>,
+	className: string,
+	onCreate: (elem: HTMLElement, track: AuraTrack) => void,
+) => {
 	const keys = new Set(auras.map(aura => aura.track.key));
 	pool.forEach((elem, key) => {
 		if (!keys.has(key)) {
@@ -183,6 +206,7 @@ const syncAuras = (host: HTMLElement, pool: Map<string, HTMLElement>, auras: Arr
 		let elem = pool.get(aura.track.key);
 		if (!elem) {
 			elem = makeIcon(aura.track.actionId, className);
+			onCreate(elem, aura.track);
 			pool.set(aura.track.key, elem);
 		}
 		if (host.children[i] !== elem) host.insertBefore(elem, host.children[i] ?? null);
@@ -196,7 +220,10 @@ const activeAuras = (tracks: Array<AuraTrack>, time: number, end: number): Array
 		.filter((aura): aura is ActiveAura => !!aura)
 		.sort((a, b) => a.span.chainStart - b.span.chainStart);
 
-export interface ReplayConfig extends ResultComponentConfig {}
+export interface ReplayConfig extends ResultComponentConfig {
+	// The filter of the Events tab. The replay highlights what its search matches.
+	filter: EventFilter;
+}
 
 // The Replay view of the Events tab. It plays one iteration back like a video of the fight: our
 // unit frame on the left, the enemies on the right, a cooldown tracker in the middle (like a
@@ -259,9 +286,27 @@ export class Replay extends ResultComponent {
 	private historyElems = new Map<number, HTMLElement>();
 	private sctElems = new Map<number, HTMLElement>();
 
+	// The hover tooltip. The parts of the screen move, come and go many times a second, so one
+	// tooltip serves all of them. It follows the part under the mouse and shows its state at the
+	// time we're at, so it updates while we play.
+	private tooltip!: Instance;
+	private readonly tips = new WeakMap<Element, () => Element | null>();
+	private hovered: Element | null = null;
+	private pointer: { x: number; y: number } | null = null;
+
+	// The search highlights what it matches, on screen and on the progress bar. It's the search
+	// of the Events tab, so it carries over to the timeline and the log.
+	private readonly filter: EventFilter;
+	private readonly searchTexts = new WeakMap<Element, string>();
+	private matchTimes: Array<number> = [];
+	private readonly search: { input: HTMLInputElement; count: HTMLElement; matches: HTMLElement };
+	// The buffs that are up the whole fight, at the top right like the game's buff frame.
+	private readonly buffsElem: HTMLElement;
+
 	constructor(config: ReplayConfig) {
 		config.rootCssClass = 'replay-root';
 		super(config);
+		this.filter = config.filter;
 
 		try {
 			const stored = parseFloat(window.localStorage.getItem(SPEED_STORAGE_KEY) ?? '');
@@ -463,6 +508,17 @@ export class Replay extends ResultComponent {
 		document.addEventListener('click', () => this.ui.speedMenu.classList.add('hide'));
 
 		this.bindProgress();
+		this.bindTooltip();
+
+		this.buffsElem = (<div className="replay-buffs" />) as HTMLElement;
+		this.ui.stage.appendChild(this.buffsElem);
+		this.search = this.buildSearch();
+		this.filter.changeEmitter.on(() => {
+			if (document.activeElement != this.search.input && this.search.input.value != this.filter.search) {
+				this.search.input.value = this.filter.search;
+			}
+			this.updateSearch();
+		});
 		this.rootElem.addEventListener('keydown', event => this.onKey(event));
 	}
 
@@ -481,6 +537,7 @@ export class Replay extends ResultComponent {
 		this.model = model;
 		this.time = model.start;
 		this.build(model);
+		this.updateSearch();
 		this.draw();
 	}
 
@@ -705,6 +762,279 @@ export class Replay extends ResultComponent {
 		progress.addEventListener('pointerenter', event => showHover(event.clientX));
 	}
 
+	private buildSearch() {
+		const input = (<input type="search" className="replay-search-input" placeholder="Highlight abilities and events" />) as HTMLInputElement;
+		const count = (<span className="replay-search-count" />) as HTMLElement;
+		const prev = (
+			<button className="replay-search-step" type="button" attributes={{ 'aria-label': 'Previous match (Shift + Enter)' }}>
+				<i className="fas fa-chevron-left" />
+			</button>
+		) as HTMLButtonElement;
+		const next = (
+			<button className="replay-search-step" type="button" attributes={{ 'aria-label': 'Next match (Enter)' }}>
+				<i className="fas fa-chevron-right" />
+			</button>
+		) as HTMLButtonElement;
+		const box = (
+			<div className="replay-search">
+				<i className="fas fa-magnifying-glass replay-search-icon" />
+				{input}
+				{count}
+				{prev}
+				{next}
+			</div>
+		) as HTMLElement;
+		// Clicks in the search don't play or pause, like clicks on the screen do.
+		['click', 'dblclick', 'pointerdown'].forEach(type => box.addEventListener(type, event => event.stopPropagation()));
+		input.value = this.filter.search;
+		input.addEventListener(
+			'input',
+			debounce(() => this.filter.setSearch(input.value), 150),
+		);
+		input.addEventListener('keydown', event => {
+			if (event.key == 'Enter') {
+				this.filter.setSearch(input.value);
+				this.stepMatch(event.shiftKey ? -1 : 1);
+				event.preventDefault();
+			} else if (event.key == 'Escape') {
+				input.blur();
+			}
+		});
+		prev.addEventListener('click', () => this.stepMatch(-1));
+		next.addEventListener('click', () => this.stepMatch(1));
+		tippy(prev, { content: 'Previous match (Shift + Enter)' });
+		tippy(next, { content: 'Next match (Enter)' });
+		this.ui.stage.appendChild(box);
+
+		const matches = (<div className="replay-progress-matches" />) as HTMLElement;
+		this.ui.markers.before(matches);
+		return { input, count, matches };
+	}
+
+	// Marks a part of the screen the search can match, with the text it looks in.
+	private searchable(elem: Element, text: string) {
+		elem.classList.add('replay-searchable');
+		this.searchTexts.set(elem, text.toLowerCase());
+		this.applyMatch(elem);
+	}
+
+	private applyMatch(elem: Element) {
+		const text = this.searchTexts.get(elem);
+		elem.classList.toggle('match', !!text && this.filter.search.trim() != '' && this.filter.matchesText(text));
+	}
+
+	// Finds the times of the matches for the progress bar, and highlights what's on screen.
+	private updateSearch() {
+		const model = this.model;
+		const searching = this.filter.search.trim() != '';
+		this.ui.player.classList.toggle('searching', searching && !!model);
+		this.ui.stage.querySelectorAll('.replay-searchable').forEach(elem => this.applyMatch(elem));
+
+		const times: Array<number> = [];
+		if (model && searching) {
+			model.casts.forEach(cast => this.filter.matchesText(cast.searchText) && times.push(cast.log.timestamp));
+			model.sct.forEach(event => this.filter.matchesText(event.searchText) && times.push(event.time));
+			[...model.playerAuras, ...model.enemies.flatMap(enemy => enemy.debuffs)].forEach(track => {
+				if (!track.alwaysUp && this.filter.matchesText(track.actionId.name.toLowerCase())) {
+					track.spans.forEach(span => span.start == span.chainStart && times.push(span.start));
+				}
+			});
+		}
+		times.sort((a, b) => a - b);
+		// The same moment can match a cast, its hit and its buff. We count it once.
+		this.matchTimes = times.filter((time, i) => i == 0 || time - times[i - 1] > 0.005);
+
+		this.search.count.textContent = searching ? `${formatToNumber(this.matchTimes.length)} ${this.matchTimes.length == 1 ? 'match' : 'matches'}` : '';
+		this.search.count.classList.toggle('none', searching && this.matchTimes.length == 0);
+
+		// A tick on the progress bar for each match. Many matches close together share a tick,
+		// one for each of the bar's 400 slots.
+		if (!model) return;
+		const span = model.end - model.start;
+		const slots = new Set(this.matchTimes.map(time => Math.round(((time - model.start) / span) * 400)));
+		this.search.matches.replaceChildren(
+			...Array.from(slots).map(slot => {
+				const tick = (<div className="replay-progress-match" />) as HTMLElement;
+				tick.style.left = `${slot / 4}%`;
+				return tick;
+			}),
+		);
+	}
+
+	// Jumps to the next or the previous match. We land just after it, so its combat text is
+	// already up.
+	private stepMatch(direction: number) {
+		if (this.matchTimes.length == 0) return;
+		const landing = 0.08;
+		const target =
+			direction > 0
+				? this.matchTimes.find(time => time + landing > this.time + 0.01)
+				: [...this.matchTimes].reverse().find(time => time + landing < this.time - 0.01);
+		if (target === undefined) return;
+		this.seek(target + landing);
+	}
+
+	private bindTooltip() {
+		this.tooltip = tippy(this.ui.stage, {
+			trigger: 'manual',
+			placement: 'top',
+			content: '',
+			maxWidth: 360,
+			duration: [100, 0],
+			// In full screen only what's inside the player shows, so the tooltip lives there too.
+			appendTo: () => this.ui.player,
+		});
+		const track = (event: PointerEvent) => {
+			this.pointer = { x: event.clientX, y: event.clientY };
+			this.hover((event.target as Element).closest('.replay-tip'));
+		};
+		this.ui.stage.addEventListener('pointerover', track);
+		this.ui.stage.addEventListener('pointermove', track);
+		this.ui.stage.addEventListener('pointerleave', () => {
+			this.pointer = null;
+			this.hover(null);
+		});
+	}
+
+	// Gives a part of the screen a hover tooltip.
+	private tip(elem: Element, content: () => Element | null) {
+		elem.classList.add('replay-tip');
+		this.tips.set(elem, content);
+	}
+
+	private hover(elem: Element | null) {
+		if (elem == this.hovered) return;
+		this.hovered = elem;
+		if (!elem) {
+			this.tooltip.hide();
+			return;
+		}
+		this.tooltip.setProps({ getReferenceClientRect: () => elem.getBoundingClientRect() });
+		this.refreshTooltip();
+	}
+
+	private refreshTooltip() {
+		const content = this.hovered ? this.tips.get(this.hovered)?.() : null;
+		if (!content) {
+			this.tooltip.hide();
+			return;
+		}
+		this.tooltip.setContent(content);
+		if (!this.tooltip.state.isShown) this.tooltip.show();
+		this.tooltip.popperInstance?.update();
+	}
+
+	// While we play, the parts move under a mouse that stands still, like the combat text that
+	// scrolls by. So after each frame we look again at what's under the mouse.
+	private updateHover() {
+		if (this.pointer) {
+			const under = document.elementFromPoint(this.pointer.x, this.pointer.y);
+			this.hover(under?.closest('.replay-tip') ?? null);
+		}
+		if (this.hovered && !this.hovered.isConnected) this.hover(null);
+		if (this.hovered) this.refreshTooltip();
+	}
+
+	// A buff or debuff: since when it's up, how long it has left, its stacks and its uptime.
+	private auraTip(track: AuraTrack, where: string): () => Element {
+		const model = this.model!;
+		const fightStart = Math.max(0, model.start);
+		const uptime =
+			track.spans.reduce((total, span) => total + Math.max(0, Math.min(span.end, model.end) - Math.max(span.start, fightStart)), 0) /
+			(model.end - fightStart);
+		const gains = track.spans.filter(span => span.start == span.chainStart).length;
+		return () => {
+			const aura = activeAuraAt(track, this.time, model.end);
+			const meta = track.alwaysUp
+				? `On ${where} the whole fight`
+				: aura
+				? `On ${where} since ${formatSeconds(aura.span.chainStart)}`
+				: `Not on ${where} now`;
+			return (
+				<div className="timeline-tooltip">
+					{tooltipTitle(track.actionId, aura && aura.stacks > 1 ? `${aura.stacks} stacks` : undefined)}
+					<div className="timeline-tooltip-meta">{meta}</div>
+					{!track.alwaysUp && (
+						<div className="timeline-tooltip-rows">
+							{aura?.remaining != null && tooltipRow('Time left', formatSeconds(aura.remaining))}
+							{track.duration != null && tooltipRow('Duration', formatSeconds(track.duration))}
+							{tooltipRow('Uptime', `${(uptime * 100).toFixed(1)}%`)}
+							{tooltipRow('Times gained', String(gains))}
+						</div>
+					)}
+				</div>
+			) as Element;
+		};
+	}
+
+	private cooldownTip(cooldown: TrackedCooldown): () => Element {
+		return () => {
+			const model = this.model!;
+			const aura = cooldown.aura ? activeAuraAt(cooldown.aura, this.time, model.end) : null;
+			const cd = cooldownAt(model, cooldown, this.time);
+			const used = lastIndexAtOrBefore(cooldown.castTimes, this.time) + 1;
+			const status = aura
+				? aura.remaining != null
+					? `Buff up, ${formatSeconds(aura.remaining)} left`
+					: 'Buff up'
+				: cd
+				? `On cooldown, ${formatSeconds(cd.remaining)} left`
+				: 'Ready';
+			return (
+				<div className="timeline-tooltip">
+					{tooltipTitle(cooldown.actionId)}
+					<div className="timeline-tooltip-meta">{status}</div>
+					<div className="timeline-tooltip-rows">
+						{tooltipRow('Cooldown', formatSeconds(cooldown.longest))}
+						{tooltipRow('Used so far', `${used} of ${cooldown.castTimes.length}`)}
+						{used > 0 && tooltipRow('Last used', formatSeconds(cooldown.castTimes[used - 1]))}
+					</div>
+				</div>
+			) as Element;
+		};
+	}
+
+	// A cast: when, how long it took, and how its hits landed.
+	private castTip(log: CastLog): Element {
+		const timing = [formatSeconds(log.timestamp)];
+		if (log.castTime > 0) timing.push(`${formatSeconds(log.castTime)} cast`);
+		if (log.effectiveTime > 0) timing.push(`${formatSeconds(log.effectiveTime)} GCD`);
+		const hits = log.damageDealtLogs;
+		const total = hits.filter(hit => !hit.miss && !hit.dodge && !hit.parry).reduce((sum, hit) => sum + hit.amount, 0);
+		return (
+			<div className="timeline-tooltip">
+				{tooltipTitle(log.actionId!)}
+				<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
+				{hits.length > 0 && <ul className="timeline-tooltip-hits">{hits.map(hit => tooltipHit(hit))}</ul>}
+				{hits.length > 1 && <div className="timeline-tooltip-rows">{tooltipRow('Total', formatToNumber(Math.round(total)))}</div>}
+			</div>
+		) as Element;
+	}
+
+	// A line of the combat text: the hits behind it, or the buff or resource we gained.
+	private sctTip(event: SctEvent): Element {
+		const hits = event.logs.filter((log): log is DamageDealtLog => log.isDamageDealt());
+		const targets = Array.from(new Set(hits.map(hit => hit.target?.name).filter(Boolean)));
+		const what = event.kind == 'aura' ? 'Gained' : event.kind == 'resource' ? event.text : '';
+		return (
+			<div className="timeline-tooltip">
+				{tooltipTitle(event.actionId)}
+				<div className="timeline-tooltip-meta">{[formatSeconds(event.time), what].filter(Boolean).join(' · ')}</div>
+				{hits.length > 0 && <ul className="timeline-tooltip-hits">{hits.map(hit => tooltipHit(hit))}</ul>}
+				{(hits.length > 1 || targets.length > 1) && (
+					<div className="timeline-tooltip-rows">
+						{hits.length > 1 &&
+							tooltipRow(
+								'Total',
+								formatToNumber(Math.round(hits.filter(hit => !hit.miss && !hit.dodge && !hit.parry).reduce((sum, hit) => sum + hit.amount, 0))),
+							)}
+						{targets.length > 1 && tooltipRow('Targets', targets.join(', '))}
+					</div>
+				)}
+			</div>
+		) as Element;
+	}
+
 	private updateButtons() {
 		const ended = !!this.model && this.time >= this.model.end;
 		const icon = this.playing ? 'fa-pause' : ended ? 'fa-rotate-right' : 'fa-play';
@@ -738,7 +1068,8 @@ export class Replay extends ResultComponent {
 		this.cooldownElems = model.cooldowns.map(cooldown => {
 			const elem = makeIcon(cooldown.actionId, 'cooldown');
 			(cooldown.longest > 30 ? this.ui.majorCooldowns : this.ui.coreCooldowns).appendChild(elem);
-			tippy(elem, { content: cooldown.actionId.name });
+			this.tip(elem, this.cooldownTip(cooldown));
+			this.searchable(elem, cooldown.actionId.name);
 			return elem;
 		});
 
@@ -790,6 +1121,11 @@ export class Replay extends ResultComponent {
 		};
 	}
 
+	// A cast bar's tooltip is the cast's, while the bar shows one.
+	private tipCastBar(bar: CastBarRefs) {
+		this.tip(bar.root, () => (bar.root.classList.contains('active') && bar.shown ? this.castTip(bar.shown) : null));
+	}
+
 	private buildPlayerFrame(model: ReplayModel) {
 		const frame = this.buildUnitFrame(model.playerName, model.playerLevel, model.player.iconUrl, 'player');
 		const powers = model.powers.map(bar => {
@@ -813,15 +1149,40 @@ export class Replay extends ResultComponent {
 			frame.extra.appendChild(pips);
 		}
 
-		// The buffs that are up the whole fight never change, so we draw them once, small.
+		// The buffs that are up the whole fight never change, so we draw them once, at the top
+		// right like the game's buff frame.
+		const buffs: Array<HTMLElement> = [];
 		model.playerAuras
 			.filter(track => track.alwaysUp)
 			.forEach(track => {
 				const elem = makeIcon(track.actionId, 'buff');
-				frame.auras.appendChild(elem);
-				tippy(elem, { content: track.actionId.name });
+				buffs.push(elem);
+				this.tip(elem, this.auraTip(track, 'us'));
+				this.searchable(elem, track.actionId.name);
 			});
 
+		this.tip(frame.root.querySelector('.replay-unit-main')!, () => {
+			const time = this.time;
+			const damage = model.damageDone.at(time);
+			return (
+				<div className="timeline-tooltip">
+					{unitTitle(model.player.iconUrl, model.playerName, model.playerLevel)}
+					<div className="timeline-tooltip-rows">
+						{model.health &&
+							tooltipRow('Health', `${formatToNumber(Math.round(model.health.value.at(time)))} / ${formatToNumber(model.health.max)}`)}
+						{model.powers.map(bar =>
+							tooltipRow(resourceNames.get(bar.type)!, `${formatToNumber(Math.floor(bar.value.at(time)))} / ${formatToNumber(bar.max)}`),
+						)}
+						{model.comboPoints && tooltipRow('Combo points', String(model.comboPoints.at(time)))}
+						{tooltipRow('Damage done', formatToNumber(Math.round(damage)))}
+						{time >= 1 && tooltipRow('DPS so far', formatToNumber(damage / time, { maximumFractionDigits: 1 }))}
+					</div>
+				</div>
+			) as Element;
+		});
+		this.tipCastBar(this.playerCastBar);
+
+		this.buffsElem.replaceChildren(...buffs);
 		this.ui.playerCol.replaceChildren(frame.root);
 		this.playerFrame = { ...frame, powers, combo };
 	}
@@ -837,11 +1198,26 @@ export class Replay extends ResultComponent {
 				mark.style.right = `${model.executeFraction * 100}%`;
 				frame.root.querySelector('.health')!.appendChild(mark);
 			}
-			if (model.timeBasedHealth) {
-				tippy(frame.root.querySelector('.health') as HTMLElement, {
-					content: 'The fight ends at a set time, so the health bar follows the time left, like the execute phases of the sim do.',
-				});
-			}
+			this.tip(frame.root.querySelector('.replay-unit-main')!, () => {
+				const time = this.time;
+				const damage = enemy.damageTaken.at(time);
+				return (
+					<div className="timeline-tooltip">
+						{unitTitle(enemy.unit.iconUrl, enemy.name, enemy.level)}
+						<div className="timeline-tooltip-rows">
+							{tooltipRow('Health', `${(enemy.healthFraction(time) * 100).toFixed(1)}%`)}
+							{tooltipRow('Damage taken', formatToNumber(Math.round(damage)))}
+							{time >= 1 && tooltipRow('DPS taken so far', formatToNumber(damage / time, { maximumFractionDigits: 1 }))}
+						</div>
+						{model.timeBasedHealth && (
+							<div className="timeline-tooltip-meta">
+								The fight ends at a set time, so the health bar follows the time left, like the execute phases of the sim do.
+							</div>
+						)}
+					</div>
+				) as Element;
+			});
+			this.tipCastBar(frame.castBar);
 			return { ...frame, enemy, damage, starts: enemy.casts.map(cast => cast.timestamp) };
 		});
 		this.ui.enemyCol.replaceChildren(...this.enemyFrames.map(frame => frame.root));
@@ -861,6 +1237,7 @@ export class Replay extends ResultComponent {
 		this.drawHistory(model, time);
 		this.drawSct(model, time);
 		this.drawControls(model, time);
+		this.updateHover();
 	}
 
 	private drawHud(model: ReplayModel, time: number) {
@@ -894,7 +1271,10 @@ export class Replay extends ResultComponent {
 		}
 
 		// The procs and other buffs that come and go, in the middle above the cooldowns.
-		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time, model.end), 'proc');
+		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time, model.end), 'proc', (elem, track) => {
+			this.tip(elem, this.auraTip(track, 'us'));
+			this.searchable(elem, track.actionId.name);
+		});
 
 		updateCastBar(this.playerCastBar, castAt(this.playerCasts, model.castStarts, time), time);
 
@@ -922,7 +1302,10 @@ export class Replay extends ResultComponent {
 			setText(frame.damage, `${formatToCompactNumber(enemy.damageTaken.at(time), { maximumFractionDigits: 1 })} damage taken`);
 			frame.root.classList.toggle('focus', enemy.unit.index == focus && this.enemyFrames.length > 1);
 			frame.root.classList.toggle('execute', model.executeFraction > 0 && fraction <= model.executeFraction);
-			syncAuras(frame.auras, frame.auraElems, activeAuras(enemy.debuffs, time, model.end), 'debuff');
+			syncAuras(frame.auras, frame.auraElems, activeAuras(enemy.debuffs, time, model.end), 'debuff', (elem, track) => {
+				this.tip(elem, this.auraTip(track, enemy.name));
+				this.searchable(elem, track.actionId.name);
+			});
 			updateCastBar(frame.castBar, castAt(enemy.casts, frame.starts, time), time);
 		});
 	}
@@ -987,6 +1370,8 @@ export class Replay extends ResultComponent {
 
 	private makeHistoryIcon(cast: ReplayCast): HTMLElement {
 		const elem = makeIcon(cast.log.actionId!, 'history');
+		this.tip(elem, () => this.castTip(cast.log));
+		this.searchable(elem, cast.searchText);
 		if (cast.badge) {
 			elem.appendChild(<span className={`replay-icon-badge ${cast.badgeKind}`}>{cast.badge}</span>);
 		}
@@ -1052,6 +1437,8 @@ export class Replay extends ResultComponent {
 			</div>
 		) as HTMLElement;
 		elem.style.color = event.color;
+		this.tip(elem, () => this.sctTip(event));
+		this.searchable(elem, event.searchText);
 		const icon = elem.querySelector<HTMLElement>('.replay-sct-icon');
 		if (icon) icon.style.backgroundImage = `url('${event.iconUrl}')`;
 		return elem;

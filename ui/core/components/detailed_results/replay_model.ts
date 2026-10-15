@@ -4,6 +4,7 @@ import { ActionId } from '../../proto_utils/action_id.js';
 import { AuraUptimeLog, CastLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser.js';
 import { SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { formatToNumber } from '../../utils.js';
+import { searchText } from './timeline.js';
 
 // Everything the Replay view draws, worked out once per iteration. The view then asks for the
 // state at any time of the iteration, so seeking back and forth draws the same frame every time.
@@ -125,7 +126,12 @@ export interface SctEvent {
 	kind: SctKind;
 	text: string;
 	note: string;
+	actionId: ActionId;
 	iconUrl: string;
+	// The log lines behind the line, like the hits of a Fire Nova, for its hover tooltip.
+	logs: Array<SimLog>;
+	// What the search looks in.
+	searchText: string;
 	// A CSS color, like the color of the spell school.
 	color: string;
 	// Lines that come close together start a bit apart, so they don't overlap.
@@ -139,6 +145,8 @@ export interface ReplayCast {
 	// What happened with its hits worth a badge, like CRIT or MISS.
 	badge: string;
 	badgeKind: 'crit' | 'avoid' | '';
+	// What the search looks in, the cast and its hits.
+	searchText: string;
 }
 
 export interface ReplayEnemy {
@@ -221,7 +229,7 @@ const autoAttacks = [OtherAction.OtherActionAttack, OtherAction.OtherActionShoot
 
 // Lines this close together on one side start apart from each other.
 const LANE_WINDOW = 0.45;
-const LANES = 4;
+const LANES = 6;
 const STICKY_WINDOW = 0.7;
 const STICKY_LANES = 3;
 const EPSILON = 1e-6;
@@ -408,12 +416,13 @@ const distinctTargets = (logs: Array<SimLog>): Array<Entity> => {
 
 const toReplayCast = (log: CastLog): ReplayCast => {
 	const hits = log.damageDealtLogs;
-	if (hits.some(hit => hit.crit)) return { log, badge: 'CRIT', badgeKind: 'crit' };
+	const text = searchText([log, ...hits]);
+	if (hits.some(hit => hit.crit)) return { log, badge: 'CRIT', badgeKind: 'crit', searchText: text };
 	const avoided = hits.find(hit => hit.miss || hit.dodge || hit.parry);
 	if (avoided && hits.every(hit => hit.miss || hit.dodge || hit.parry)) {
-		return { log, badge: avoided.miss ? 'MISS' : avoided.dodge ? 'DODGE' : 'PARRY', badgeKind: 'avoid' };
+		return { log, badge: avoided.miss ? 'MISS' : avoided.dodge ? 'DODGE' : 'PARRY', badgeKind: 'avoid', searchText: text };
 	}
-	return { log, badge: '', badgeKind: '' };
+	return { log, badge: '', badgeKind: '', searchText: text };
 };
 
 const buildAuraTracks = (uptimeLogs: Array<AuraUptimeLog>, start: number, end: number): Array<AuraTrack> => {
@@ -501,7 +510,7 @@ const buildSct = (
 	resourceLogs: Array<ResourceChangedLog>,
 	bars: Array<ReplayBar>,
 ): Array<SctEvent> => {
-	const events: Array<Omit<SctEvent, 'lane'>> = [];
+	const events: Array<Omit<SctEvent, 'lane' | 'searchText'>> = [];
 	const isPlayer = (entity: Entity | null) => !!entity && entity.isPlayer && entity.index == player.index;
 
 	// What we did to the enemies. Hits of one ability at the same moment, like Fire Nova on three
@@ -524,7 +533,9 @@ const buildSct = (
 				kind: 'avoid',
 				text: first.miss ? 'Miss' : first.dodge ? 'Dodge' : 'Parry',
 				note: logs.length > 1 ? `×${logs.length}` : '',
+				actionId: first.actionId!,
 				iconUrl,
+				logs,
 				color: avoidColor,
 				sticky: false,
 			});
@@ -544,7 +555,9 @@ const buildSct = (
 			kind: crit ? 'crit' : first.tick ? 'tick' : 'damage',
 			text: crit ? `${formatAmount(amount)}!` : formatAmount(amount),
 			note: notes.join(', '),
+			actionId: first.actionId!,
 			iconUrl,
+			logs,
 			color: schoolColor(first),
 			sticky: crit,
 		});
@@ -560,7 +573,9 @@ const buildSct = (
 			kind: avoided ? 'avoid' : log.crit || log.crush ? 'hurt-crit' : 'hurt',
 			text: avoided ? (log.miss ? 'Miss' : log.dodge ? 'Dodge' : 'Parry') : `-${formatAmount(log.amount)}`,
 			note: log.crush ? 'crushing' : log.block ? 'blocked' : '',
+			actionId: log.actionId!,
 			iconUrl: log.actionId!.iconUrl,
+			logs: [log],
 			color: avoided ? avoidColor : hurtColor,
 			sticky: !avoided && (log.crit || log.crush),
 		});
@@ -576,7 +591,9 @@ const buildSct = (
 				kind: 'heal',
 				text: `+${formatAmount(log.amount)}`,
 				note: log.isShielding() ? 'absorb' : log.crit ? 'crit' : '',
+				actionId: log.actionId!,
 				iconUrl: log.actionId!.iconUrl,
+				logs: [log],
 				color: healColor,
 				sticky: false,
 			});
@@ -594,7 +611,9 @@ const buildSct = (
 						kind: 'aura',
 						text: `+${track.actionId.name}`,
 						note: '',
+						actionId: track.actionId,
 						iconUrl: track.actionId.iconUrl,
+						logs: [],
 						color: auraColor,
 						sticky: false,
 					});
@@ -615,7 +634,9 @@ const buildSct = (
 			kind: 'resource',
 			text: `+${formatAmount(amount)} ${label}`,
 			note: '',
+			actionId: log.actionId!,
 			iconUrl: log.actionId!.iconUrl,
+			logs: [log],
 			color: resourceColors[log.resourceType]!,
 			sticky: false,
 		});
@@ -631,6 +652,6 @@ const buildSct = (
 		const times = (recent[group] = (recent[group] ?? []).filter(time => event.time - time < window));
 		const lane = times.length % (event.sticky ? STICKY_LANES : LANES);
 		times.push(event.time);
-		return { ...event, lane };
+		return { ...event, lane, searchText: `${searchText(event.logs)} ${event.actionId.name} ${event.text} ${event.note}`.toLowerCase() };
 	});
 };
