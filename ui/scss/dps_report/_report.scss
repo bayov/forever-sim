@@ -1990,6 +1990,12 @@ ol.fv-list li::marker {
 }
 
 // A racial in a tooltip: its icon, then its name and value, and under them what it does.
+// A racial's or talent's description inside one of our tooltips: the game tooltip's gold (the tooltips are dark in
+// both themes).
+.fv-tip-game {
+	color: #ffd100;
+}
+
 .fv-tip-racial {
 	display: grid;
 	grid-template-columns: 1.15rem minmax(0, 1fr);
@@ -3933,4 +3939,10 @@ ol.fv-list li::marker {
 // Strongest racials leads each row with the racial's spell icon, which is square, not a round race portrait.
 #racial-rank .fv-orow > img.fv-ico {
 	border-radius: 4px;
+}
+
+// An open icon dropdown sits above the sticky Sections bar, which otherwise covers its menu (the bar's z-index is just
+// under the page header's, so the menu can't simply go higher).
+.fv-page:has(.fv-isel.open) .fv-jump {
+	z-index: 1;
 }

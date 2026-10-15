@@ -177,6 +177,9 @@ export function startReport(dash) {
     el('tbody', {}, ...rows.filter(Boolean).map((r) => el('tr', {}, ...r.map((c) => el('td', {}, c ?? ''))))));
   const tipText = (...kids) => el('div', { class: 'fv-tip-text' }, ...kids);
   const tipNote = (...kids) => el('div', { class: 'fv-tip-note' }, ...kids);
+  // Game text inside one of our tooltips (a racial's or a talent's description) takes the game's tooltip gold.
+  const GAME_TEXT = 'fv-tip-game';
+  const racialText = (part) => !['base', 'swap', 'target'].includes(part);
   const tipSw = (color) => el('i', { class: 'sw', style: `background:${color}` });
   const tipChips = (items, more) => el('div', { class: 'fv-tip-chips' }, ...items.map((t) => el('span', { text: t })), more ? el('em', { text: more }) : null);
 
@@ -1421,7 +1424,7 @@ export function startReport(dash) {
       const racial = r.segs.find((sg) => sg.part === r.weapon)?.label || 'Its weapon racial';
       const W = r.weapon || 'weapon';
       const talent = (t, lines) => el('div', { class: 'fv-tip-racial' }, iconImg(t[1], 'fv-ico') || el('i'),
-        el('span', {}, el('b', { text: lines[0] }), ...lines.slice(1).map((l) => el('span', { text: l }))));
+        el('span', {}, el('b', { text: lines[0] }), ...lines.slice(1).map((l, k) => el('span', { class: k === 0 ? GAME_TEXT : null, text: l }))));
       const bonus = (type, v) => `With ${art(type)}: ${v || 'no bonus'}.`;
       if (one) {
         const q = sw[0];
@@ -1517,7 +1520,7 @@ export function startReport(dash) {
           const at = (node.closest('.fv-rsub') ? node : segEl || node).getBoundingClientRect();
           showTip(card, Math.max(8, at.left - cr.left), (node.closest('.fv-rsub') ? at.bottom : rw.bottom) - cr.top + 4, title,
             [el('div', { class: 'fv-tip-racial' }, part === 'base' ? el('i', { style: 'background:var(--cds-chart-muted)' }) : partIco(part, 'fv-ico'),
-              el('span', {}, el('b', { text: name }), text ? el('span', { text }) : null)), ...sub],
+              el('span', {}, el('b', { text: name }), text ? el('span', { class: text === info?.text && racialText(part) ? GAME_TEXT : null, text }) : null)), ...sub],
             { ...opts, hl: [row, segEl, capEl] });
           return;
         }
@@ -1615,7 +1618,7 @@ export function startReport(dash) {
         const top = [...a.per].sort((p, q) => q.share - p.share).filter((g) => Math.abs(g.v) >= 0.05).slice(0, 3);
         showTip(card, 24, rw.bottom - cr.top + 4, tipTitle(a.label, a.race, noteRow('part', a.part)?.icon ? iconImg(noteRow('part', a.part).icon) : raceIco(a.raceIcon)), [
           tipKey(fd(a.value), one ? 'DPS' : `of ${a.race} DPS`, one ? null : 'on average'),
-          info ? tipText(info.short || info.text) : null,
+          info ? tipText(racialText(a.part) ? el('span', { class: GAME_TEXT, text: info.short || info.text }) : info.short || info.text) : null,
           !one && top.length ? tipTable(['Strongest on', ''], top.map((g) => {
             const b = bmap.get(g.build);
             return [b ? el('span', { class: 'fv-tip-spec' }, specIco(b, ''), b.label) : g.build, `${sgn(g.share, f2)}%`];
