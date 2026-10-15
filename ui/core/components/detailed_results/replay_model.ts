@@ -345,6 +345,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	const majorCooldownIds = player.majorCooldownLogs.map(log => log.actionId!);
 
 	const totemSlots = buildTotemSlots(player.logs);
+	const totemIds = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => drop.actionId.toString())));
 
 	// Abilities with a cooldown shorter than the GCD, like an auto attack, aren't worth tracking.
 	const cooldowns = Array.from(cooldownsByKey.values()).filter(cooldown => cooldown.longest >= 1.5);
@@ -419,7 +420,13 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 			level: encounter?.targets[i]?.level || 63,
 			healthFraction,
 			damageTaken,
-			debuffs: buildAuraTracks(target.auraUptimeLogs, start, end),
+			// The sim keeps Searing Totem and Magma Totem going as a dot on the first enemy, but in game
+			// it's a totem that casts at the enemy, and the enemy has no debuff for it.
+			debuffs: buildAuraTracks(
+				target.auraUptimeLogs.filter(log => !totemIds.has(log.actionId!.toString())),
+				start,
+				end,
+			),
 			casts: target.castLogs.filter(log => log.castTime > 0).sort((a, b) => a.timestamp - b.timestamp),
 		};
 	});
