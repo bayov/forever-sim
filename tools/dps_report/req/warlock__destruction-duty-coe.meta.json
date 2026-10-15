@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction (Curse of the Elements duty)",
   "isDefault": false,
-  "pr": 2,
+  "pr": 30,
   "race": "Gnome",
   "talents": "25510000035--055030500310035",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction_duty_coe",
   "published": {
     "dps": 977.0,
-    "source": "PR (raid duties)"
+    "source": "PR #30"
   },
   "verify": {
     "dps": 977.05,

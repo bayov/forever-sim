@@ -4,7 +4,7 @@
   "spec": "Demonology",
   "build": "Demonology (Curse of Recklessness duty)",
   "isDefault": false,
-  "pr": 2,
+  "pr": 30,
   "race": "Gnome",
   "talents": "011-0305003131221001351-0550005003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_demonology_duty_cor",
   "published": {
     "dps": 1097.2,
-    "source": "PR (raid duties)"
+    "source": "PR #30"
   },
   "verify": {
     "dps": 1097.21,

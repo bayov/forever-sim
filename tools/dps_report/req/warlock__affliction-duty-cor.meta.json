@@ -4,7 +4,7 @@
   "spec": "Affliction",
   "build": "Affliction (Curse of Recklessness duty)",
   "isDefault": false,
-  "pr": 2,
+  "pr": 30,
   "race": "Gnome",
   "talents": "2553000003520005--0550305003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_affliction_duty_cor",
   "published": {
     "dps": 966.1,
-    "source": "PR (raid duties)"
+    "source": "PR #30"
   },
   "verify": {
     "dps": 966.09,

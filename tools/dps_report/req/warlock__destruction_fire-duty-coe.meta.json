@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction Fire (Curse of the Elements duty)",
   "isDefault": false,
-  "pr": 2,
+  "pr": 30,
   "race": "Undead",
   "talents": "2525000003-0002-0050355003101351",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction_fire_duty_coe",
   "published": {
     "dps": 963.1,
-    "source": "PR (raid duties)"
+    "source": "PR #30"
   },
   "verify": {
     "dps": 963.08,
