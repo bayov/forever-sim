@@ -46,11 +46,21 @@ const STICKY_LANE_PX = 42;
 // of the screen, so the lines that scroll by don't run over them.
 const STICKY_GAP_PX = 32;
 
-// The action history strip shows this many of our latest casts. A new cast pushes the others
-// one slot to the left over this many seconds.
-const HISTORY_SLOTS = 6;
+// The cast history is a timeline at the top left that ends at the current time, right under the
+// clock. Each cast sits at the moment we made it and slides left as time goes on. Casts too
+// close together for their icons to fit side by side (like a racial between two spells) go up
+// one row.
+const HISTORY_PX_PER_SEC = 40;
+const HISTORY_ICON_PX = 36;
+const HISTORY_ROWS = 2;
+const HISTORY_ROW_PX = 28;
+// How far left of the timeline's right end the current time is, so the newest icon fits and
+// the axis fades out after it.
+const HISTORY_NOW_PX = 26;
+// The axis has a tick every second and a time label every few seconds.
+const HISTORY_LABEL_EVERY = 5;
+// A new cast pops in over this many seconds.
 const HISTORY_SHIFT = 0.15;
-const HISTORY_SLOT_PX = 50;
 // A cooldown icon lights up like a pressed button for this long after we use it.
 const PRESS_TIME = 0.25;
 // A buff's countdown turns orange in its last seconds, like the Bayov pack's expiring alert.
@@ -81,6 +91,20 @@ const formatCountdown = (seconds: number): string => {
 };
 
 const easeOut = (x: number) => 1 - (1 - x) * (1 - x);
+
+// The row of each cast on the history timeline. A cast goes in the lowest row where it doesn't
+// cover the icon before it. When every row is taken (a burst of off-GCD casts), it goes in the
+// row whose last icon is furthest back.
+const historyRows = (model: ReplayModel): Array<number> => {
+	const rowEnds = new Array<number>(HISTORY_ROWS).fill(-Infinity);
+	return model.actionStarts.map(at => {
+		const x = at * HISTORY_PX_PER_SEC;
+		let row = rowEnds.findIndex(end => end <= x);
+		if (row < 0) row = rowEnds.indexOf(Math.min(...rowEnds));
+		rowEnds[row] = x + HISTORY_ICON_PX + 2;
+		return row;
+	});
+};
 
 const formatSeconds = (seconds: number): string => `${seconds.toFixed(1)}s`;
 
@@ -280,6 +304,7 @@ export class Replay extends ResultComponent {
 		playerCol: HTMLElement;
 		enemyCol: HTMLElement;
 		history: HTMLElement;
+		historyAxis: HTMLElement;
 		procs: HTMLElement;
 		coreCooldowns: HTMLElement;
 		majorCooldowns: HTMLElement;
@@ -328,6 +353,9 @@ export class Replay extends ResultComponent {
 	// The iteration the frames were last lined up with the resource bar for.
 	private alignedFor: ReplayModel | null = null;
 	private historyElems = new Map<number, HTMLElement>();
+	private historyLabels = new Map<number, HTMLElement>();
+	// The row of each cast on the history timeline, by its index in the model's actions.
+	private historyRows: Array<number> = [];
 	private sctElems = new Map<number, HTMLElement>();
 
 	// The hover tooltip. The parts of the screen move, come and go many times a second, so one
@@ -370,6 +398,7 @@ export class Replay extends ResultComponent {
 			playerCol: ref<HTMLDivElement>(),
 			enemyCol: ref<HTMLDivElement>(),
 			history: ref<HTMLDivElement>(),
+			historyAxis: ref<HTMLDivElement>(),
 			procs: ref<HTMLDivElement>(),
 			coreCooldowns: ref<HTMLDivElement>(),
 			majorCooldowns: ref<HTMLDivElement>(),
@@ -409,6 +438,11 @@ export class Replay extends ResultComponent {
 							<span ref={refs.hudDamage} className="replay-hud-value" />
 						</span>
 					</div>
+					<div className="replay-history">
+						<div className="replay-history-now" />
+						<div ref={refs.history} className="replay-history-casts" />
+						<div ref={refs.historyAxis} className="replay-history-axis" />
+					</div>
 					<div ref={refs.sctZone} className="replay-sct-zone">
 						<div ref={refs.sctIn} className="replay-sct replay-sct-in" />
 						<div ref={refs.sctOut} className="replay-sct replay-sct-out" />
@@ -416,7 +450,6 @@ export class Replay extends ResultComponent {
 					<div className="replay-frames">
 						<div ref={refs.playerCol} className="replay-col replay-col-player" />
 						<div ref={refs.center} className="replay-center">
-							<div ref={refs.history} className="replay-history" />
 							<div ref={refs.procs} className="replay-procs" />
 							<div ref={refs.maintain} className="replay-maintain" />
 							<div ref={refs.resources} className="replay-resources" />
@@ -482,6 +515,7 @@ export class Replay extends ResultComponent {
 			playerCol: refs.playerCol.value!,
 			enemyCol: refs.enemyCol.value!,
 			history: refs.history.value!,
+			historyAxis: refs.historyAxis.value!,
 			procs: refs.procs.value!,
 			coreCooldowns: refs.coreCooldowns.value!,
 			majorCooldowns: refs.majorCooldowns.value!,
@@ -1093,6 +1127,9 @@ export class Replay extends ResultComponent {
 		this.sctElems.clear();
 		this.historyElems.forEach(elem => elem.remove());
 		this.historyElems.clear();
+		this.historyLabels.forEach(elem => elem.remove());
+		this.historyLabels.clear();
+		this.historyRows = historyRows(model);
 		this.procElems.forEach(elem => elem.remove());
 		this.procElems.clear();
 
@@ -1196,21 +1233,36 @@ export class Replay extends ResultComponent {
 			...(model.mainHandSwings.length > 1 ? [swing] : []),
 			...powers.map(power => power.elem),
 		);
-		this.tip(this.ui.resources, () => {
-			const time = this.time;
-			return (
+		// Each bar has its own tooltip, so we see the one resource under the mouse.
+		const rowsTip = (rows: () => Array<Element | null>) => () =>
+			(
 				<div className="timeline-tooltip">
-					<div className="timeline-tooltip-rows">
-						{model.powers.map(bar =>
-							tooltipRow(resourceNames.get(bar.type)!, `${formatToNumber(Math.floor(bar.value.at(time)))} / ${formatToNumber(bar.max)}`),
-						)}
-						{model.comboPoints && tooltipRow('Combo points', String(model.comboPoints.at(time)))}
-						{model.maelstrom && tooltipRow('Maelstrom Weapon', String(this.pipsAt(model, time)))}
-						{this.swingAt(model, time) != null && tooltipRow('Next main hand swing', formatSeconds(this.swingAt(model, time)!.next - time))}
-					</div>
+					<div className="timeline-tooltip-rows">{rows()}</div>
 				</div>
 			) as Element;
-		});
+		powers.forEach(({ bar, elem }) =>
+			this.tip(
+				elem,
+				rowsTip(() => [
+					tooltipRow(resourceNames.get(bar.type)!, `${formatToNumber(Math.floor(bar.value.at(this.time)))} / ${formatToNumber(bar.max)}`),
+				]),
+			),
+		);
+		this.tip(
+			swing,
+			rowsTip(() => {
+				const next = this.swingAt(model, this.time);
+				return [tooltipRow('Next main hand swing', next ? formatSeconds(next.next - this.time) : 'None')];
+			}),
+		);
+		if (model.maelstrom) {
+			this.tip(pipRow, this.auraTip(model.maelstrom, 'us'));
+		} else if (model.comboPoints) {
+			this.tip(
+				pipRow,
+				rowsTip(() => [tooltipRow('Combo points', String(model.comboPoints!.at(this.time)))]),
+			);
+		}
 		this.resourceRefs = { powers, swingFill: swing.firstElementChild as HTMLElement, pips };
 	}
 
@@ -1281,12 +1333,6 @@ export class Replay extends ResultComponent {
 		this.enemyFrames = model.enemies.map(enemy => {
 			const frame = this.buildUnitFrame('enemy');
 			frame.rightText.textContent = enemy.name;
-			if (model.executeFraction > 0) {
-				const mark = (<div className="replay-bar-execute" />) as HTMLElement;
-				// The enemy's bar empties toward the right, so the mark is measured from the right.
-				mark.style.right = `${model.executeFraction * 100}%`;
-				frame.root.querySelector('.health')!.appendChild(mark);
-			}
 			this.tip(frame.root.querySelector('.replay-unit-main')!, () => {
 				const time = this.time;
 				const damage = enemy.damageTaken.at(time);
@@ -1394,7 +1440,6 @@ export class Replay extends ResultComponent {
 			setWidth(frame.health, fraction);
 			setText(frame.leftText, `${(fraction * 100).toFixed(fraction < 0.1 ? 1 : 0)}%`);
 			frame.root.classList.toggle('focus', enemy.unit.index == focus && this.enemyFrames.length > 1);
-			frame.root.classList.toggle('execute', model.executeFraction > 0 && fraction <= model.executeFraction);
 			syncAuras(frame.auras, frame.auraElems, activeAuras(enemy.debuffs, time, model.end), 'debuff', (elem, track) => {
 				this.tip(elem, this.auraTip(track, enemy.name));
 				this.searchable(elem, track.actionId.name);
@@ -1566,38 +1611,56 @@ export class Replay extends ResultComponent {
 		};
 	}
 
-	// The action history strip: our latest casts, newest on the right, sliding left as we cast
-	// more, like the TrufiGCD addon.
+	// The cast history timeline: our casts where we made them, newest on the right at the
+	// current time, sliding left as time goes on, like the TrufiGCD addon on a time axis.
 	private drawHistory(model: ReplayModel, time: number) {
-		const last = lastIndexAtOrBefore(model.actionStarts, time);
+		const nowX = this.ui.history.clientWidth - HISTORY_NOW_PX;
+		const xAt = (at: number) => nowX - (time - at) * HISTORY_PX_PER_SEC;
+		const oldest = time - (nowX + HISTORY_ICON_PX) / HISTORY_PX_PER_SEC;
+
 		const shown = new Set<number>();
-		if (last >= 0) {
-			const newest = model.actions[last].log.timestamp;
-			const shift = easeOut(Math.min(1, (time - newest) / HISTORY_SHIFT));
-			for (let k = 0; k < HISTORY_SLOTS + 1 && last - k >= 0; k++) {
-				const index = last - k;
-				const position = k - 1 + shift;
-				if (position > HISTORY_SLOTS - 1) break;
-				shown.add(index);
-				let elem = this.historyElems.get(index);
-				if (!elem) {
-					elem = this.makeHistoryIcon(model.actions[index]);
-					this.historyElems.set(index, elem);
-					this.ui.history.appendChild(elem);
-				}
-				const x = -(position + 1) * HISTORY_SLOT_PX;
-				const fadeOut = Math.max(0, position - (HISTORY_SLOTS - 2));
-				const opacity = (k == 0 ? shift : 1) * (1 - fadeOut) * (1 - 0.1 * Math.max(0, position));
-				const scale = k == 0 ? 1.12 - 0.12 * (1 - shift) : 1;
-				elem.style.transform = `translateX(${x.toFixed(2)}px) scale(${scale.toFixed(3)})`;
-				elem.style.opacity = opacity.toFixed(3);
-				elem.classList.toggle('newest', k == 0);
+		for (let index = lastIndexAtOrBefore(model.actionStarts, time); index >= 0; index--) {
+			const at = model.actionStarts[index];
+			if (at < oldest) break;
+			shown.add(index);
+			let elem = this.historyElems.get(index);
+			if (!elem) {
+				elem = this.makeHistoryIcon(model.actions[index]);
+				elem.style.top = `${(HISTORY_ROWS - 1 - this.historyRows[index]) * HISTORY_ROW_PX}px`;
+				this.historyElems.set(index, elem);
+				this.ui.history.appendChild(elem);
 			}
+			const pop = easeOut(Math.min(1, (time - at) / HISTORY_SHIFT));
+			const scale = 1.12 - 0.12 * pop;
+			elem.style.transform = `translateX(${(xAt(at) - HISTORY_ICON_PX / 2).toFixed(2)}px) scale(${scale.toFixed(3)})`;
+			elem.style.opacity = pop.toFixed(3);
 		}
 		this.historyElems.forEach((elem, index) => {
 			if (!shown.has(index)) {
 				elem.remove();
 				this.historyElems.delete(index);
+			}
+		});
+
+		// The ticks are a repeating background that we slide with the time. The labels are the
+		// fight's time every few seconds.
+		const axis = this.ui.historyAxis;
+		axis.style.setProperty('--offset', `${xAt(0).toFixed(2)}px`);
+		const labels = new Set<number>();
+		for (let at = Math.ceil(oldest / HISTORY_LABEL_EVERY) * HISTORY_LABEL_EVERY; at <= time; at += HISTORY_LABEL_EVERY) {
+			labels.add(at);
+			let elem = this.historyLabels.get(at);
+			if (!elem) {
+				elem = (<span className="replay-history-label">{formatClock(at, 0)}</span>) as HTMLElement;
+				this.historyLabels.set(at, elem);
+				axis.appendChild(elem);
+			}
+			elem.style.transform = `translateX(${xAt(at).toFixed(2)}px) translateX(-50%)`;
+		}
+		this.historyLabels.forEach((elem, at) => {
+			if (!labels.has(at)) {
+				elem.remove();
+				this.historyLabels.delete(at);
 			}
 		});
 	}

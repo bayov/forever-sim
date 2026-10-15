@@ -217,7 +217,6 @@ export interface ReplayModel {
 	markers: Array<{ time: number; actionId: ActionId }>;
 	// Results simmed before the sim wrote the cooldown lines have no cooldown tracker.
 	hasCooldownData: boolean;
-	executeFraction: number;
 	// The fight ends at a set time, so the enemy's health follows the time left.
 	timeBasedHealth: boolean;
 }
@@ -358,6 +357,15 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 			cooldowns.push({ key, actionId: cast.actionId!, timers: [], castTimes: [], longest: 0, firstUse: cast.timestamp, aura: null });
 		});
 	}
+	// The same goes for the major cooldowns of every class (racials, trinkets, engineering
+	// explosives, potions), so they keep their button when the result has no cooldown lines.
+	majorCooldownIds.forEach(actionId => {
+		const key = actionId.toStringIgnoringTag();
+		if (cooldowns.some(cooldown => cooldown.key == key)) return;
+		const cast = castLogs.find(log => log.actionId!.toStringIgnoringTag() == key);
+		if (!cast) return;
+		cooldowns.push({ key, actionId: cast.actionId!, timers: [], castTimes: [], longest: 0, firstUse: cast.timestamp, aura: null });
+	});
 	cooldowns.forEach(cooldown => {
 		cooldown.castTimes = castLogs.filter(log => log.actionId!.toStringIgnoringTag() == cooldown.key).map(log => log.timestamp);
 		cooldown.aura = playerAuras.find(track => track.actionId.equalsIgnoringTag(cooldown.actionId)) ?? null;
@@ -462,7 +470,6 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		sctTimes: sct.map(event => event.time),
 		markers,
 		hasCooldownData: player.logs.some(log => log.isCooldown() || log.isMaxResources()),
-		executeFraction: encounter?.executeProportion20 ?? 0,
 		timeBasedHealth,
 	};
 };

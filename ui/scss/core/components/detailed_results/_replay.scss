@@ -54,9 +54,9 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	// The clock takes the top and the controls the bottom. The combat text fills what the unit
-	// frames leave above them.
-	padding: 100px 3% max(74px, 9%);
+	// The clock and the cast history take the top and the controls the bottom. The combat text
+	// fills what the unit frames leave above them.
+	padding: 150px 3% max(74px, 9%);
 	width: 100%;
 	aspect-ratio: 16 / 9;
 	min-height: 540px;
@@ -81,7 +81,7 @@
 
 	// A note over a replay that plays, rather than in place of it.
 	&.notice {
-		inset: 64px 0 auto;
+		inset: 146px 0 auto;
 		padding: 0;
 		color: #ffd166;
 		font-size: 0.85rem;
@@ -401,17 +401,72 @@
 	display: none;
 }
 
-.execute .replay-bar-left {
-	color: #ffb747;
+// The cast history at the top left: a time axis with our casts over it. The current time is
+// near its right end, right under the clock.
+.replay-history {
+	--now: 26px;
+
+	position: absolute;
+	top: 58px;
+	left: 3%;
+	right: calc(50% - var(--now));
+	height: 80px;
+	pointer-events: none;
 }
 
-// Where the execute phase starts on an enemy's health bar.
-.replay-bar-execute {
+// The icons fade in from the left end, where they come off the timeline.
+.replay-history-casts {
+	position: absolute;
+	inset: 0 0 24px;
+	mask-image: linear-gradient(to right, transparent, #000 48px);
+}
+
+.replay-history-axis {
+	--offset: 0px;
+
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 58px;
+	height: 22px;
+	mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - var(--now)), transparent);
+
+	// The axis line, with a short tick every second and a long one every 5 seconds.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 auto;
+		height: 8px;
+		background:
+			linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)) top / 100% 2px no-repeat,
+			repeating-linear-gradient(to right, rgba(255, 255, 255, 0.7) 0 1px, transparent 1px 200px) var(--offset) 0 / 200px 8px repeat-x,
+			repeating-linear-gradient(to right, rgba(255, 255, 255, 0.45) 0 1px, transparent 1px 40px) var(--offset) 0 / 40px 5px repeat-x;
+		filter: drop-shadow(0 1px 0 #000);
+	}
+}
+
+.replay-history-label {
+	position: absolute;
+	top: 9px;
+	left: 0;
+	font-size: 0.65rem;
+	color: rgba(255, 255, 255, 0.75);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+
+	@include replay-outline;
+}
+
+// The current time, a line through the rows at the right end where new casts appear.
+.replay-history-now {
 	position: absolute;
 	top: 0;
-	bottom: 0;
-	width: 1px;
-	background: rgba(255, 255, 255, 0.55);
+	right: var(--now);
+	width: 2px;
+	height: 62px;
+	margin-right: -1px;
+	background: linear-gradient(to bottom, transparent, var(--replay-gold));
+	opacity: 0.8;
 }
 
 // The pixel glow, drawn by replay_glow.ts like BayovCore draws it: lines seen through 2px
@@ -457,14 +512,6 @@
 	width: 446px;
 }
 
-.replay-history {
-	position: relative;
-	width: 300px;
-	height: 40px;
-	margin-bottom: 4px;
-	overflow: hidden;
-}
-
 .replay-procs,
 .replay-cooldowns {
 	display: flex;
@@ -475,11 +522,11 @@
 }
 
 .replay-procs {
-	// Room for one row. More procs grow upward over the history strip without taking room, so
-	// nothing under them moves.
+	// Room for one row. More procs grow upward without taking room, so nothing under them moves.
 	flex-wrap: wrap-reverse;
 	align-content: flex-start;
-	height: 32px;
+	gap: 3px;
+	height: 24px;
 }
 
 .replay-resources {
@@ -491,10 +538,18 @@
 }
 
 .replay-swing {
+	position: relative;
 	height: 4px;
 	border: 1px solid #000;
 	background: rgba(0, 0, 0, 0.7);
 	box-sizing: content-box;
+}
+
+// The swing timer is thin, so we take a pixel more on each side for the hover.
+.replay-swing::before {
+	content: '';
+	position: absolute;
+	inset: -2px -1px;
 }
 
 .replay-swing-fill {
@@ -602,7 +657,11 @@
 		}
 	}
 
+	// The buffs that come and go are smaller than the cooldowns, so the bars stand out.
 	&.proc {
+		--width: 32px;
+		--height: 22px;
+
 		animation: replay-pop 0.18s ease-out;
 	}
 
@@ -638,9 +697,11 @@
 	}
 
 	&.history {
+		--width: 36px;
+		--height: 25px;
+
 		position: absolute;
-		top: 2px;
-		left: 100%;
+		left: 0;
 		transform-origin: center;
 	}
 }
@@ -682,7 +743,8 @@
 	}
 
 	.debuff &,
-	.buff & {
+	.buff &,
+	.proc & {
 		font-size: 12px;
 	}
 }
