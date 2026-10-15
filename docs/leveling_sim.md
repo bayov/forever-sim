@@ -263,14 +263,19 @@ anything leveling-specific exists.
    - A cast at a mob that dies during it stops there, as in game: no mana spent, no effect,
      its cooldown given back, and we can act again when the GCD from its start runs out.
 3. **Healing.**
-   - Self-heals by rank and level, checked against the client data:
-     - Shaman: Healing Wave and Lesser Healing Wave.
+   - Shaman, done (2026-10-15, `sim/shaman/healing.go`, shaman_audit.md 11.5): Healing Wave,
+     Lesser Healing Wave, Chain Heal and Riptide from the Forever client, every heal landing on
+     us, and the healing talents (Improved Healing Wave, Healing Way, Purification, Healing
+     Focus, Ancestral Healing, Tidal Focus, Tidal Mastery, Nature's Swiftness, Water Shield,
+     Mental Quickness). A rotation can heal on `currentHealthPercent`. A naked level 30 dies
+     to one level 30 mob 46% of the time with white swings only, and never with Lesser Healing
+     Wave below 40% health.
+   - Still to do, other classes:
      - Priest: Lesser Heal, Heal, Flash Heal, Greater Heal and Renew (today commented out or
        missing).
      - Paladin: Holy Light and Flash of Light.
      - Druid: Healing Touch, Rejuvenation and Regrowth.
    - Absorbs in the core, for Power Word: Shield, Mana Shield and Sacrifice.
-   - Shaman goes first.
 
 ## The leveling mode
 
