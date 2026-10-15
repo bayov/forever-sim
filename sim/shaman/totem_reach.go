@@ -1,7 +1,6 @@
 package shaman
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -35,7 +34,7 @@ type totemReach struct {
 
 // inTotemReach is whether we're within the slot's totem's buff radius.
 func (shaman *Shaman) inTotemReach(sim *core.Simulation, slot int) bool {
-	return math.Abs(sim.Encounter.LevelingPosition(sim)-shaman.totemPositions[slot]) <= totemBuffRadius
+	return sim.Encounter.LevelingPosition(sim).Dist(shaman.totemPositions[slot]) <= totemBuffRadius
 }
 
 // setTotemReach says how the totem just put down in the slot turns its buff on and off.

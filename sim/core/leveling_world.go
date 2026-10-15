@@ -5,15 +5,17 @@ import (
 	"time"
 )
 
-// Where things are in a leveling session (leveling.go): a line we move along. We have a
+// Where things are in a leveling session (leveling.go): a flat 2D plane, in yards. We have a
 // position on it, and so does every mob out of the pool and every totem (LevelingPosition).
 //
-//   - We run forward while we search, and walk to a mob or back to a point (a totem) when the
-//     session or the rotation says so. While we move no hard cast goes out (Moving), but we
-//     keep swinging at a mob on us.
-//   - The mob we find stands ahead of us, 10 to 40 yards away (found_min / found_max).
-//   - A pulled mob runs at us at its level's speed, following us if we move, and reaches us
-//     5 yards away (melee range). It then stays on us wherever we go.
+//   - Each search we run off in a random direction, and we walk to a mob or to a point (a
+//     totem) when the session or the rotation says so. While we move no hard cast goes out
+//     (Moving), but we keep swinging at a mob on us.
+//   - The mob we find stands in a random direction from us, 10 to 40 yards away (found_min /
+//     found_max).
+//   - A pulled mob runs at us at its level's speed and reaches us 5 yards away (melee range).
+//     While we move it keeps turning toward where we are, every 0.1 sec. Once it has reached
+//     us it stays on us wherever we go.
 //   - A mob we haven't pulled notices us once we're within its aggro radius, and pulls itself:
 //     20 yards for a mob of our level, a yard more for each level it has over us and a yard
 //     less for each level under, never under 5 (cmangos Creature::GetAttackDistance). One
@@ -27,7 +29,52 @@ const (
 	levelingFacePullAfter = time.Second
 	// How often the session checks whether to walk up to the mob we found.
 	levelingPullPoll = 250 * time.Millisecond
+	// How often a mob running at us turns toward where we are while we move.
+	levelingChaseTurn = 100 * time.Millisecond
 )
+
+// Vec2 is a point or a movement on the leveling session's plane, in yards.
+type Vec2 struct {
+	X, Y float64
+}
+
+func (v Vec2) Add(o Vec2) Vec2         { return Vec2{v.X + o.X, v.Y + o.Y} }
+func (v Vec2) Sub(o Vec2) Vec2         { return Vec2{v.X - o.X, v.Y - o.Y} }
+func (v Vec2) Scale(k float64) Vec2    { return Vec2{v.X * k, v.Y * k} }
+func (v Vec2) Dot(o Vec2) float64      { return v.X*o.X + v.Y*o.Y }
+func (v Vec2) Len() float64            { return math.Hypot(v.X, v.Y) }
+func (v Vec2) Dist(o Vec2) float64     { return v.Sub(o).Len() }
+func (v Vec2) IsZero() bool            { return v.X == 0 && v.Y == 0 }
+func vec2FromAngle(angle float64) Vec2 { return Vec2{math.Cos(angle), math.Sin(angle)} }
+func (v Vec2) unit() Vec2              { return v.Scale(1 / v.Len()) }
+func (v Vec2) at(d time.Duration) Vec2 { return v.Scale(d.Seconds()) }
+
+// toward is k yards from v toward o.
+func (v Vec2) toward(o Vec2, k float64) Vec2 {
+	if v == o {
+		return v
+	}
+	return v.Add(o.Sub(v).unit().Scale(k))
+}
+
+// whenWithin is the first time from now, in seconds, that a point at rel (from us) moving
+// at relVel comes within r of us, and false if it never does.
+func whenWithin(rel, relVel Vec2, r float64) (float64, bool) {
+	c := rel.Dot(rel) - r*r
+	if c <= 0 {
+		return 0, true
+	}
+	a := relVel.Dot(relVel)
+	b := rel.Dot(relVel)
+	if a == 0 || b >= 0 {
+		return 0, false
+	}
+	disc := b*b - a*c
+	if disc < 0 {
+		return 0, false
+	}
+	return (-b - math.Sqrt(disc)) / a, true
+}
 
 type levelingMobState int
 
@@ -40,8 +87,8 @@ const (
 
 type levelingMob struct {
 	state levelingMobState
-	// Position at xAt: where a found mob stands, or a running one was, running in dir.
-	x, dir  float64
+	// Position at xAt: where a found mob stands, or a running one was, running along dir.
+	x, dir  Vec2
 	xAt     time.Duration
 	arrival *PendingAction
 	// A spell that attacks it is on its way (a bolt in flight): it's pulled, and no longer
@@ -66,8 +113,8 @@ const (
 	goalPoint
 )
 
-func (s *levelingSession) playerPosition(sim *Simulation) float64 {
-	return s.pos + s.vel*(sim.CurrentTime-s.posAt).Seconds()
+func (s *levelingSession) playerPosition(sim *Simulation) Vec2 {
+	return s.pos.Add(s.vel.at(sim.CurrentTime - s.posAt))
 }
 
 func mobRunSpeed(mob *Unit) float64 {
@@ -75,13 +122,13 @@ func mobRunSpeed(mob *Unit) float64 {
 }
 
 // mobPosition is where the mob is; one on us is where we are.
-func (s *levelingSession) mobPosition(sim *Simulation, mob *Unit) float64 {
+func (s *levelingSession) mobPosition(sim *Simulation, mob *Unit) Vec2 {
 	m := &s.mobs[mob.Index]
 	switch m.state {
 	case mobFound:
 		return m.x
 	case mobRunning:
-		return m.x + m.dir*mobRunSpeed(mob)*(sim.CurrentTime-m.xAt).Seconds()
+		return m.x.Add(m.dir.Scale(mobRunSpeed(mob) * (sim.CurrentTime - m.xAt).Seconds()))
 	}
 	return s.playerPosition(sim)
 }
@@ -91,9 +138,9 @@ func (s *levelingSession) mobPosition(sim *Simulation, mob *Unit) float64 {
 func (s *levelingSession) distance(sim *Simulation, mob *Unit) float64 {
 	switch s.mobs[mob.Index].state {
 	case mobFound:
-		return math.Abs(s.mobPosition(sim, mob) - s.playerPosition(sim))
+		return s.mobPosition(sim, mob).Dist(s.playerPosition(sim))
 	case mobRunning:
-		return max(levelingMeleeRange, math.Abs(s.mobPosition(sim, mob)-s.playerPosition(sim)))
+		return max(levelingMeleeRange, s.mobPosition(sim, mob).Dist(s.playerPosition(sim)))
 	case mobArrived:
 		return levelingMeleeRange
 	}
@@ -107,27 +154,18 @@ func (s *levelingSession) aggroRadius(mob *Unit) float64 {
 }
 
 // setVelocity starts, stops or turns our movement. Starting to move stops a hard cast. The
-// mobs running at us change course, and the mob we found may notice us sooner or later.
-func (s *levelingSession) setVelocity(sim *Simulation, vel float64) {
+// mobs running at us turn toward us, and the mob we found may notice us sooner or later.
+func (s *levelingSession) setVelocity(sim *Simulation, vel Vec2) {
 	if vel == s.vel {
 		return
 	}
-	for _, mob := range s.env.Encounter.ActiveTargetUnits {
-		if m := &s.mobs[mob.Index]; m.state == mobRunning {
-			m.x, m.xAt = s.mobPosition(sim, mob), sim.CurrentTime
-		}
-	}
 	s.pos, s.posAt = s.playerPosition(sim), sim.CurrentTime
-	if s.vel == 0 && s.player.Hardcast.Expires > sim.CurrentTime {
+	if s.vel.IsZero() && s.player.Hardcast.Expires > sim.CurrentTime {
 		s.player.interruptHardcast(sim)
 	}
 	s.vel = vel
-	s.player.MovementHandler.Moving = vel != 0
-	for _, mob := range s.env.Encounter.ActiveTargetUnits {
-		if s.mobs[mob.Index].state == mobRunning {
-			s.scheduleArrival(sim, mob)
-		}
-	}
+	s.player.MovementHandler.Moving = !vel.IsZero()
+	s.chase(sim)
 	if s.found != nil && s.found == s.player.CurrentTarget {
 		s.player.DistanceFromTarget = s.distance(sim, s.found)
 	}
@@ -135,67 +173,80 @@ func (s *levelingSession) setVelocity(sim *Simulation, vel float64) {
 }
 
 // move sets off toward a goal, or stops with goalNone.
-func (s *levelingSession) move(sim *Simulation, goal levelingGoal, toward float64, within float64, mob *Unit) {
+func (s *levelingSession) move(sim *Simulation, goal levelingGoal, toward Vec2, within float64, mob *Unit) {
 	s.goal, s.goalPoint, s.goalWithin, s.goalMob = goal, toward, within, mob
 	cancel(sim, &s.goalReached)
 	if goal == goalNone {
-		s.setVelocity(sim, 0)
+		s.setVelocity(sim, Vec2{})
 		s.stoppedAt = sim.CurrentTime
 		return
 	}
 	speed := s.player.MovementHandler.MoveSpeed
 	if goal == goalSearch {
-		s.setVelocity(sim, speed)
+		heading := vec2FromAngle(2 * math.Pi * sim.RandomFloat("Leveling Search Heading"))
+		s.setVelocity(sim, heading.Scale(speed))
 		return
 	}
-	gap := toward - s.playerPosition(sim)
-	if math.Abs(gap) <= within {
-		s.move(sim, goalNone, 0, 0, nil)
+	here := s.playerPosition(sim)
+	gap := toward.Dist(here)
+	if gap <= within {
+		s.move(sim, goalNone, Vec2{}, 0, nil)
 		return
 	}
-	s.setVelocity(sim, math.Copysign(speed, gap))
-	s.after(sim, &s.goalReached, DurationFromSeconds((math.Abs(gap)-within)/speed), func(sim *Simulation) {
-		s.move(sim, goalNone, 0, 0, nil)
+	s.setVelocity(sim, toward.Sub(here).unit().Scale(speed))
+	s.after(sim, &s.goalReached, DurationFromSeconds((gap-within)/speed), func(sim *Simulation) {
+		from := s.playerPosition(sim)
+		s.move(sim, goalNone, Vec2{}, 0, nil)
 		// Exactly there, not a rounding error short of a spell's range.
-		s.pos = toward - math.Copysign(within, gap)
+		s.pos = toward.toward(from, within)
 		s.scheduleProximity(sim)
 	})
 }
 
-// scheduleArrival times a running mob's arrival from where it and we are now.
-func (s *levelingSession) scheduleArrival(sim *Simulation, mob *Unit) {
-	m := &s.mobs[mob.Index]
-	cancel(sim, &m.arrival)
+// chase brings the mobs running at us up to now, turns them toward us, and times their
+// arrival. While we move they turn again every levelingChaseTurn.
+func (s *levelingSession) chase(sim *Simulation) {
+	cancel(sim, &s.chaseTurn)
 	p := s.playerPosition(sim)
-	gap := math.Abs(p - m.x)
-	if gap <= levelingMeleeRange {
-		s.after(sim, &m.arrival, 0, func(sim *Simulation) { s.arrive(sim, mob) })
-		return
+	running := false
+	for _, mob := range s.env.Encounter.ActiveTargetUnits {
+		m := &s.mobs[mob.Index]
+		if m.state != mobRunning {
+			continue
+		}
+		cancel(sim, &m.arrival)
+		m.x, m.xAt = s.mobPosition(sim, mob), sim.CurrentTime
+		rel := m.x.Sub(p)
+		if rel.Len() <= levelingMeleeRange {
+			s.after(sim, &m.arrival, 0, func(sim *Simulation) { s.arrive(sim, mob) })
+			continue
+		}
+		m.dir = rel.Scale(-1 / rel.Len())
+		t, ok := whenWithin(rel, m.dir.Scale(mobRunSpeed(mob)).Sub(s.vel), levelingMeleeRange)
+		if ok && (s.vel.IsZero() || t <= levelingChaseTurn.Seconds()) {
+			s.after(sim, &m.arrival, DurationFromSeconds(t), func(sim *Simulation) { s.arrive(sim, mob) })
+		} else {
+			running = true
+		}
 	}
-	m.dir = math.Copysign(1, p-m.x)
-	closing := mobRunSpeed(mob) - m.dir*s.vel
-	if closing <= 0 {
-		return // We outrun it, for now.
+	if running && !s.vel.IsZero() {
+		s.after(sim, &s.chaseTurn, levelingChaseTurn, s.chase)
 	}
-	s.after(sim, &m.arrival, DurationFromSeconds((gap-levelingMeleeRange)/closing), func(sim *Simulation) { s.arrive(sim, mob) })
 }
 
-// scheduleProximity times when the mob we found notices us, if we're heading its way.
+// scheduleProximity times when the mob we found notices us, if our path takes us within its
+// aggro radius.
 func (s *levelingSession) scheduleProximity(sim *Simulation) {
 	cancel(sim, &s.proximity)
 	mob := s.found
 	if mob == nil || s.mobs[mob.Index].incoming {
 		return
 	}
-	gap := s.distance(sim, mob) - s.aggroRadius(mob)
-	switch {
-	case gap <= 0:
-	case s.vel != 0 && math.Signbit(s.vel) == math.Signbit(s.mobs[mob.Index].x-s.playerPosition(sim)):
-		gap /= math.Abs(s.vel)
-	default:
+	t, ok := whenWithin(s.mobs[mob.Index].x.Sub(s.playerPosition(sim)), s.vel.Scale(-1), s.aggroRadius(mob))
+	if !ok {
 		return
 	}
-	s.after(sim, &s.proximity, DurationFromSeconds(max(gap, 0)), func(sim *Simulation) {
+	s.after(sim, &s.proximity, DurationFromSeconds(t), func(sim *Simulation) {
 		if s.found == mob {
 			if sim.Log != nil {
 				s.player.Log(sim, "Leveling: %s noticed us", mob.Label)
@@ -213,12 +264,12 @@ func (s *levelingSession) search(sim *Simulation) {
 		return
 	}
 	s.setState(sim, levelingSearching)
-	s.move(sim, goalSearch, 0, 0, nil)
+	s.move(sim, goalSearch, Vec2{}, 0, nil)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: searching for a mob")
 	}
 	s.after(sim, &s.next, randomDuration(sim, "Leveling Search", s.opts.searchMin, s.opts.searchMax), func(sim *Simulation) {
-		s.move(sim, goalNone, 0, 0, nil)
+		s.move(sim, goalNone, Vec2{}, 0, nil)
 		if s.find(sim, false) != nil {
 			s.startPull(sim)
 		} else {
@@ -227,7 +278,8 @@ func (s *levelingSession) search(sim *Simulation) {
 	})
 }
 
-// find picks a mob from the pool to stand ahead of us, waiting to be pulled.
+// find picks a mob from the pool to stand in a random direction from us, waiting to be
+// pulled.
 func (s *levelingSession) find(sim *Simulation, autoPull bool) *Unit {
 	level := s.levels[int(sim.RandomFloat("Leveling Mob Level")*float64(len(s.levels)))%len(s.levels)]
 	mob := s.idleMob(level)
@@ -235,15 +287,16 @@ func (s *levelingSession) find(sim *Simulation, autoPull bool) *Unit {
 		return nil
 	}
 	distance := math.Round(s.opts.foundMin + sim.RandomFloat("Leveling Mob Distance")*(s.opts.foundMax-s.opts.foundMin))
+	direction := vec2FromAngle(2 * math.Pi * sim.RandomFloat("Leveling Mob Direction"))
 	mob.dead = false
 	mob.enabled = true
 	mob.healthBar.currentHealth = mob.MaxHealth()
 	mob.auraTracker.expireAll(sim) // Anything cast at it while it lay in the pool.
 	mob.auraTracker.respawn(sim)
-	s.mobs[mob.Index] = levelingMob{state: mobFound, x: s.playerPosition(sim) + distance, xAt: sim.CurrentTime, autoPull: autoPull}
+	s.mobs[mob.Index] = levelingMob{state: mobFound, x: s.playerPosition(sim).Add(direction.Scale(distance)), xAt: sim.CurrentTime, autoPull: autoPull}
 	s.found, s.foundAt = mob, sim.CurrentTime
 	if sim.Log != nil {
-		s.player.Log(sim, "Leveling: found %s (level %d) %.0f yards away", mob.Label, mob.Level, distance)
+		s.player.Log(sim, "Leveling: found %s (level %d) %.0f yards away, bearing %.0f°", mob.Label, mob.Level, distance, math.Mod(math.Atan2(direction.Y, direction.X)*180/math.Pi+360, 360))
 	}
 	s.scheduleProximity(sim)
 	return mob
@@ -252,7 +305,7 @@ func (s *levelingSession) find(sim *Simulation, autoPull bool) *Unit {
 // startPull: out of combat with a mob found. It's our target, and the rotation pulls it.
 func (s *levelingSession) startPull(sim *Simulation) {
 	s.setState(sim, levelingPulling)
-	s.move(sim, goalNone, 0, 0, nil)
+	s.move(sim, goalNone, Vec2{}, 0, nil)
 	s.foundAt = sim.CurrentTime
 	s.retarget(sim, s.found)
 	s.pollPull(sim)
@@ -300,7 +353,7 @@ func (s *levelingSession) onCast(sim *Simulation, mob *Unit, spell *Spell) {
 	m.incoming = true
 	cancel(sim, &s.proximity)
 	if s.goal == goalMob && s.goalMob == mob {
-		s.move(sim, goalNone, 0, 0, nil)
+		s.move(sim, goalNone, Vec2{}, 0, nil)
 	}
 	StartDelayedAction(sim, DelayedActionOptions{
 		DoAt: sim.CurrentTime + spell.TravelTime() + 100*time.Millisecond,
@@ -328,12 +381,12 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 		cancel(sim, &s.proximity)
 	}
 	if s.goal == goalMob && s.goalMob == mob {
-		s.move(sim, goalNone, 0, 0, nil)
+		s.move(sim, goalNone, Vec2{}, 0, nil)
 	}
 	if s.state != levelingCombat {
 		s.setState(sim, levelingCombat)
 		if s.goal == goalSearch {
-			s.move(sim, goalNone, 0, 0, nil)
+			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
 		s.pulls++
 		s.pullMobs = 0
@@ -345,12 +398,12 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 	if mob == s.player.CurrentTarget {
 		s.setPlayerDistance(sim, max(distance, levelingMeleeRange))
 	}
-	s.scheduleArrival(sim, mob)
+	s.chase(sim)
 	if sim.Log != nil {
 		if arrival := s.mobs[mob.Index].arrival; arrival != nil {
 			s.player.Log(sim, "Leveling: pulled %s (level %d) from %.0f yards, here in %s", mob.Label, mob.Level, distance, arrival.NextActionAt-sim.CurrentTime)
 		} else {
-			s.player.Log(sim, "Leveling: pulled %s (level %d) from %.0f yards, not catching up with us", mob.Label, mob.Level, distance)
+			s.player.Log(sim, "Leveling: pulled %s (level %d) from %.0f yards, chasing us", mob.Label, mob.Level, distance)
 		}
 	}
 	s.chainSearch(sim, true)
@@ -366,14 +419,14 @@ func (s *levelingSession) chainSearch(sim *Simulation, auto bool) bool {
 	}
 	moving := sim.RandomFloat("Leveling Chain Search Moving") < s.opts.chainSearchMoving
 	if moving {
-		s.move(sim, goalSearch, 0, 0, nil)
+		s.move(sim, goalSearch, Vec2{}, 0, nil)
 	}
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: looking for another mob, running: %v", moving)
 	}
 	s.after(sim, &s.chainNext, randomDuration(sim, "Leveling Chain Search", s.opts.chainSearchMin, s.opts.chainSearchMax), func(sim *Simulation) {
 		if s.goal == goalSearch {
-			s.move(sim, goalNone, 0, 0, nil)
+			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
 		if s.state != levelingCombat || s.find(sim, auto) == nil {
 			return
@@ -400,30 +453,30 @@ func (s *levelingSession) arrive(sim *Simulation, mob *Unit) {
 }
 
 // The leveling session's view of where things are, for spells, totems and the rotation.
-// Outside a session everything is in reach: distances are 0.
+// Outside a session everything is in reach: every position is the origin.
 
 // IsLeveling is whether this is a leveling session.
 func (encounter *Encounter) IsLeveling() bool {
 	return encounter.leveling != nil
 }
 
-// LevelingPosition is where we are on the line we move along, 0 outside a session. A totem
+// LevelingPosition is where we are on the plane, the origin outside a session. A totem
 // keeps the position it was dropped at.
-func (encounter *Encounter) LevelingPosition(sim *Simulation) float64 {
+func (encounter *Encounter) LevelingPosition(sim *Simulation) Vec2 {
 	if encounter.leveling == nil {
-		return 0
+		return Vec2{}
 	}
 	return encounter.leveling.playerPosition(sim)
 }
 
 // LevelingDistanceFrom is how far the mob is from a point (a totem), 0 outside a session.
 // A mob on us is where we are.
-func (encounter *Encounter) LevelingDistanceFrom(sim *Simulation, point float64, mob *Unit) float64 {
+func (encounter *Encounter) LevelingDistanceFrom(sim *Simulation, point Vec2, mob *Unit) float64 {
 	s := encounter.leveling
 	if s == nil {
 		return 0
 	}
-	return math.Abs(s.mobPosition(sim, mob) - point)
+	return s.mobPosition(sim, mob).Dist(point)
 }
 
 // LevelingDistance is how far the target is from us in a session, 0 outside one.
@@ -494,20 +547,20 @@ func (encounter *Encounter) LevelingWalkToPullTarget(sim *Simulation, within flo
 
 // LevelingCanWalkTo is whether we can walk to within yards of a point (a totem): we're in a
 // session, not moving or casting, and further away than that.
-func (encounter *Encounter) LevelingCanWalkTo(sim *Simulation, point, within float64) bool {
+func (encounter *Encounter) LevelingCanWalkTo(sim *Simulation, point Vec2, within float64) bool {
 	s := encounter.leveling
 	return s != nil && s.goal == goalNone && !s.player.IsCasting(sim) &&
 		(s.state == levelingPulling || s.state == levelingCombat) &&
-		math.Abs(point-s.playerPosition(sim)) > within
+		point.Dist(s.playerPosition(sim)) > within
 }
 
 // LevelingWalkTo walks to within yards of a point. The mobs on us follow, and the mob we
 // found may notice us on the way.
-func (encounter *Encounter) LevelingWalkTo(sim *Simulation, point, within float64) {
+func (encounter *Encounter) LevelingWalkTo(sim *Simulation, point Vec2, within float64) {
 	if encounter.LevelingCanWalkTo(sim, point, within) {
 		s := encounter.leveling
 		if sim.Log != nil {
-			s.player.Log(sim, "Leveling: walking %.0f yards back", math.Abs(point-s.playerPosition(sim))-within)
+			s.player.Log(sim, "Leveling: walking %.0f yards toward a point", point.Dist(s.playerPosition(sim))-within)
 		}
 		s.move(sim, goalPoint, point, within, nil)
 	}

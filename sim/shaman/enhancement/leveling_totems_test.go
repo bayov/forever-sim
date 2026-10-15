@@ -118,8 +118,9 @@ func TestTotemicRecall(t *testing.T) {
 	}
 }
 
-// TestTotemicProjection: a Magma Totem dropped while we search is left behind, but
-// projecting it to us once a mob is on us brings its pulses back.
+// TestTotemicProjection: a Magma Totem dropped while we search is left behind (a mob that
+// runs past it on its way to us may take a pulse), but projecting it to us once a mob is on
+// us brings its pulses back.
 func TestTotemicProjection(t *testing.T) {
 	magma := `{"action":{"condition":{"and":{"vals":[` + searchingOnly + `,{"not":{"val":{"totemRemainingTime":{"totemType":"Fire"}}}}]}},"castSpell":{"spellId":{"spellId":8190}}}}`
 	project := `{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"levelingMobsOnUs":{}},"rhs":{"const":{"val":"1"}}}},{"cmp":{"op":"OpGt","lhs":{"totemDistance":{"totemType":"Fire"}},"rhs":{"const":{"val":"8"}}}}]}},"castSpell":{"spellId":{"spellId":437009}}}}`
@@ -128,8 +129,8 @@ func TestTotemicProjection(t *testing.T) {
 	projected, _ := spellDamage(player, 8187)
 	_, projections := spellDamage(player, 437009)
 	t.Logf("Magma Totem damage: %.0f left behind, %.0f projected with %d projections", left, projected, projections)
-	if left != 0 || projected <= 0 || projections == 0 {
-		t.Errorf("Magma Totem dealt %.0f left behind and %.0f projected to us (%d projections), want none and some", left, projected, projections)
+	if left > projected/20 || projected <= 0 || projections == 0 {
+		t.Errorf("Magma Totem dealt %.0f left behind and %.0f projected to us (%d projections), want next to none and some", left, projected, projections)
 	}
 }
 
@@ -163,5 +164,32 @@ func TestLevelingTotemsVanishOnDeath(t *testing.T) {
 		if !recast {
 			t.Errorf("back from the corpse run at %.2f without dropping the totem again, want it gone", revive)
 		}
+	}
+}
+
+// TestLevelingChase: walking back to a totem left behind while a mob runs at us, the mob
+// turns to follow and still reaches us, a little later than if we'd stood still.
+func TestLevelingChase(t *testing.T) {
+	rotation := rotationOf(healLine,
+		`{"action":{"condition":{"and":{"vals":[`+searchingOnly+`,{"not":{"val":{"totemRemainingTime":{"totemType":"Earth"}}}}]}},"castSpell":{"spellId":{"spellId":8160}}}}`,
+		`{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"levelingMobsRunningIn":{}},"rhs":{"const":{"val":"1"}}}},{"cmp":{"op":"OpGt","lhs":{"totemDistance":{"totemType":"Earth"}},"rhs":{"const":{"val":"30"}}}}]}},"shamanWalkToTotem":{"totemType":"Earth","within":{"const":{"val":"0"}}}}}`)
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), rotation)
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	chasing := regexp.MustCompile(`Leveling: walking \d+ yards toward a point`)
+	walks := 0
+	logLines(t, result.Logs, func(at float64, line string) {
+		if chasing.MatchString(line) {
+			walks++
+		}
+	})
+	m := result.EncounterMetrics.Leveling
+	t.Logf("%d walks back with a mob running at us, %.1f kills", walks, m.MobsKilled)
+	if walks < 3 {
+		t.Errorf("%d walks back to the totem with a mob running in, want a few", walks)
+	}
+	if m.MobsKilled < 15 {
+		t.Errorf("%.1f mobs killed, want a steady stream: a mob chasing us must still reach us", m.MobsKilled)
 	}
 }

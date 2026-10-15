@@ -2,7 +2,6 @@ package shaman
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -282,7 +281,7 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 		},
 		ExtraCastCondition: func(sim *core.Simulation, _ *core.Unit) bool {
 			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime &&
-				math.Abs(sim.Encounter.LevelingPosition(sim)-shaman.totemPositions[FireTotem]) <= fireNovaCastRange
+				sim.Encounter.LevelingPosition(sim).Dist(shaman.totemPositions[FireTotem]) <= fireNovaCastRange
 		},
 
 		// Call of Flame and Improved Fire Nova multiply each other under Forever.

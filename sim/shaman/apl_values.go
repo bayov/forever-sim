@@ -2,7 +2,6 @@ package shaman
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -55,7 +54,7 @@ func (shaman *Shaman) totemDistance(sim *core.Simulation, slot int) float64 {
 	if !shaman.totemIsDown(sim, slot) {
 		return 0
 	}
-	return math.Abs(sim.Encounter.LevelingPosition(sim) - shaman.totemPositions[slot])
+	return sim.Encounter.LevelingPosition(sim).Dist(shaman.totemPositions[slot])
 }
 
 type APLValueTotemDistance struct {

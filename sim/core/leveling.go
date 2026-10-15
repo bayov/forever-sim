@@ -19,7 +19,7 @@ import (
 // read its type are. A dead mob goes back to the pool and comes again in a later pull, with
 // full health and its permanent auras back.
 //
-// Where things are: we, the mobs and our totems have positions on a line we move along
+// Where things are: we, the mobs and our totems have positions on a 2D plane
 // (leveling_world.go).
 //
 // One loop runs the session:
@@ -66,13 +66,14 @@ type levelingSession struct {
 	foundAt time.Duration
 
 	// Where we are (leveling_world.go): our position at posAt, moving at vel yards a sec,
-	// toward a goal, and when we last stopped. goalReached ends the walk, and proximity is
-	// the mob we found noticing us.
-	pos, vel, goalPoint, goalWithin float64
-	posAt, stoppedAt                time.Duration
-	goal                            levelingGoal
-	goalMob                         *Unit
-	goalReached, proximity          *PendingAction
+	// toward a goal, and when we last stopped. goalReached ends the walk, proximity is the
+	// mob we found noticing us, and chaseTurn turns the mobs running at us while we move.
+	pos, vel, goalPoint               Vec2
+	goalWithin                        float64
+	posAt, stoppedAt                  time.Duration
+	goal                              levelingGoal
+	goalMob                           *Unit
+	goalReached, proximity, chaseTurn *PendingAction
 
 	state      levelingState
 	stateSince time.Duration
@@ -285,8 +286,8 @@ func (s *levelingSession) reset(sim *Simulation) {
 	}
 	enc.ActiveTargetUnits = nil
 	s.found = nil
-	s.pos, s.vel, s.posAt, s.stoppedAt = 0, 0, 0, 0
-	s.goal, s.goalMob, s.goalReached, s.proximity = goalNone, nil, nil, nil
+	s.pos, s.vel, s.posAt, s.stoppedAt = Vec2{}, Vec2{}, 0, 0
+	s.goal, s.goalMob, s.goalReached, s.proximity, s.chaseTurn = goalNone, nil, nil, nil, nil
 	s.player.MovementHandler.Moving = false
 	s.player.DistanceFromTarget = s.opts.foundMax
 
@@ -382,7 +383,7 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	active := s.env.Encounter.ActiveTargetUnits
 	if len(active) == 0 {
 		cancel(sim, &s.chainNext)
-		s.move(sim, goalNone, 0, 0, nil)
+		s.move(sim, goalNone, Vec2{}, 0, nil)
 		s.outOfCombat(sim)
 		return
 	}
@@ -409,7 +410,7 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 		m.arrival.Cancel(sim)
 	}
 	if s.goal == goalMob && s.goalMob == mob {
-		s.move(sim, goalNone, 0, 0, nil)
+		s.move(sim, goalNone, Vec2{}, 0, nil)
 	}
 	*m = levelingMob{}
 	mob.enabled = false
@@ -528,7 +529,7 @@ func (s *levelingSession) onPlayerDeath(sim *Simulation) {
 	s.deaths++
 	s.setState(sim, levelingDead)
 	cancel(sim, &s.chainNext)
-	s.move(sim, goalNone, 0, 0, nil)
+	s.move(sim, goalNone, Vec2{}, 0, nil)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: died, back in %s", s.opts.deathPenalty)
 	}

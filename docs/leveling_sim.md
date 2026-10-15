@@ -43,8 +43,9 @@ pull, so a 3-minute cooldown is ready for some pulls and not others, as in real 
 
 1. **Search.** It takes a random time to find the next mob. We run around while we search, so
    only instants go out (totems, shields, buffs), no hard casts. Out-of-combat regen (Spirit,
-   mana regen outside the five-second rule) ticks during it. The mob we find stands a random
-   10 to 40 yards away.
+   mana regen outside the five-second rule) ticks during it. Positions are on a flat 2D plane:
+   each search we run off in a random direction, and the mob we find stands a random 10 to 40
+   yards away in a random direction from us.
 2. **Pull.** The APL picks how to pull it: any harmful spell at any rank that reaches it
    (Earth Shock within 20 yards, Lightning Bolt rank 1 within 30 to save mana, …) or a face
    pull. A mob notices us when the pull spell lands, so a bolt's flight counts, and then runs to
@@ -141,7 +142,8 @@ from the user's logs.
 |---|---|
 | Finding the next mob, out of combat | Random 5–11 s (8 s on average), running |
 | Finding a mob to chain-pull, in combat | Random 2–4 s (3 s on average), running 3 times in 4 |
-| Where the mob we find stands | Random 10–40 yd, in whole yards |
+| Where the mob we find stands | Random 10–40 yd in whole yards, in a random direction |
+| Searching | Running in a random direction at our run speed |
 | Our run speed | 7 yd/s |
 | Mob run speed | The level's average from the mob table: 6 yd/s at levels 1–2, about 8 yd/s from level 11 |
 | Run-in time | (distance − 5 yd melee) ÷ run speed, from when the pull spell lands: about 3.1 s for Lightning Bolt from 30 yd (after 1.5 s of flight) and 1.9 s for a shock from 20 yd at 8 yd/s |
@@ -332,8 +334,8 @@ After the groundwork:
      purpose yet.
    - Not modelled yet: a mob's type is one per session.
 2. **Pulling in the APL.** Done (2026-10-15), positions in `sim/core/leveling.go`.
-   - Where things are: each mob has a distance from us, and we have a position along the way
-     we run. The mob we find stands 10 to 40 yards away; a pulled one runs in from where it
+   - Where things are (on a line at first, a 2D plane since step 3): each mob has a distance
+     from us, and we have a position along the way we run. The mob we find stands 10 to 40 yards away; a pulled one runs in from where it
      stood; one on us is in melee range. We run while we search, and walk up to a mob the APL
      doesn't pull, and while we run no hard cast goes out (`Moving`).
    - Spell ranges from the client's SpellRange (`Spell.MaxRange`, held to only in a leveling
@@ -367,9 +369,13 @@ After the groundwork:
    - Since then (step 3) the APL decides on chain pulls and the mob notices us from its aggro
      radius, so these numbers are out of date.
 3. **Chain pulls, aggro radius and totems in the APL.** Done (2026-10-15).
-   - Positions are on a line (`sim/core/leveling_world.go`): ours, each mob's and each totem's.
-     A pulled mob chases us at its speed and changes course when we move, so it can take
-     longer to reach us when we walk away.
+   - Positions are on a flat 2D plane (`sim/core/leveling_world.go`): ours, each mob's and
+     each totem's. Each search runs off in a random direction, and the mob we find stands in a
+     random direction from us. A pulled mob runs straight at us, and while we move it turns
+     toward us every 0.1 s, so it takes longer to reach us when we walk away. A mob notices us
+     the moment our path comes within its aggro radius, and a totem's reach and a Magma
+     Totem's pulse are measured from where it stands. (The first version of step 3 had
+     everything on one line, with every mob ahead of us; the table below is from the plane.)
    - A mob notices us within its aggro radius (above). A face pull stops there, and the mob
      runs the rest of the way.
    - The APL decides when to look for another mob while fighting (Look For Mob (Leveling)),
@@ -392,19 +398,19 @@ After the groundwork:
 
      | Rotation | Mobs | Deaths | XP / hour | Searching and pulling | Resting | Combat | Mobs a pull |
      |---|---|---|---|---|---|---|---|
-     | Preset: a totem whenever its buff is missing | 55.7 | 0.00 | 32,200 | 536 s | 317 s | 347 s | 1.00 |
-     | Buff totems only with a mob pulled | 56.8 | 0.00 | 32,900 | 549 s | 261 s | 391 s | 1.00 |
-     | + Totemic Recall once the fight is over | 58.2 | 0.00 | 33,700 | 561 s | 239 s | 400 s | 1.00 |
-     | + Totemic Projection instead of Recall, when a totem is out of reach | 57.1 | 0.00 | 33,100 | 550 s | 266 s | 384 s | 1.00 |
-     | No buff totems | 65.1 | 0.00 | 37,700 | 628 s | 166 s | 406 s | 1.00 |
-     | Recall, + look for another mob above 60% health and 40% mana while fewer than 2 are pulled | 77.6 | 0.15 | 44,900 | 226 s | 386 s | 563 s | 2.50 |
-     | No buff totems, + the same chain pulls | 82.2 | 0.31 | 47,600 | 238 s | 323 s | 587 s | 2.51 |
+     | Preset: a totem whenever its buff is missing | 57.7 | 0.00 | 33,400 | 556 s | 285 s | 360 s | 1.00 |
+     | Buff totems only with a mob pulled | 56.9 | 0.00 | 32,900 | 549 s | 261 s | 390 s | 1.00 |
+     | + Totemic Recall once the fight is over | 58.1 | 0.00 | 33,600 | 561 s | 239 s | 400 s | 1.00 |
+     | + Totemic Projection instead of Recall, when a totem is out of reach | 57.3 | 0.00 | 33,200 | 553 s | 265 s | 382 s | 1.00 |
+     | No buff totems | 65.0 | 0.00 | 37,600 | 627 s | 166 s | 407 s | 1.00 |
+     | Recall, + look for another mob above 60% health and 40% mana while fewer than 2 are pulled | 77.9 | 0.18 | 45,000 | 216 s | 369 s | 584 s | 2.67 |
+     | No buff totems, + the same chain pulls | 79.7 | 0.31 | 46,100 | 216 s | 322 s | 608 s | 2.79 |
 
      At level 30, single pulls die in about 25 s, and the totems' mana (Strength of Earth 65,
      Mana Spring 40, Flametongue 90 at these ranks) costs more rest than their buffs save.
      Recalling them when the fight is over gets a quarter back and is better than leaving them
      behind. The rotation-driven chain pulls are the big gain: searching drops from about 600 s
-     to 230 s a session, since we find the next mob while fighting. A pull averages 2.5 mobs,
+     to 220 s a session, since we find the next mob while fighting. A pull averages 2.7 mobs,
      because a mob found when the first dies is pulled too, as long as health and mana allow.
      The preset rotation was built for a boss, so none of this is tuned yet.
    - Still options: when to eat, drink and bandage. Step 4 moves them into the APL.

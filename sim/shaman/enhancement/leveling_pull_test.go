@@ -279,3 +279,28 @@ func TestLevelingWalkIntoBoltRange(t *testing.T) {
 		t.Errorf("%d mobs found beyond 30 yards, want a few", far)
 	}
 }
+
+var bearingLine = regexp.MustCompile(`Leveling: found Target \d+ \(level \d+\) \d+ yards away, bearing (\d+)°`)
+
+// TestLevelingFoundBearing: the mobs we find stand in any direction from us, not on a line.
+func TestLevelingFoundBearing(t *testing.T) {
+	req := levelingRequest(t, &proto.LevelingOptions{}, 5)
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	quadrants := [4]int{}
+	n := 0
+	logLines(t, result.Logs, func(at float64, line string) {
+		if b := bearingLine.FindStringSubmatch(line); b != nil {
+			bearing, _ := strconv.Atoi(b[1])
+			quadrants[(bearing/90)%4]++
+			n++
+		}
+	})
+	t.Logf("%d mobs found, by quadrant: %v", n, quadrants)
+	for q, count := range quadrants {
+		if n < 40 || float64(count) < 0.1*float64(n) {
+			t.Errorf("%d of %d mobs found in quadrant %d, want them spread all around", count, n, q)
+		}
+	}
+}
