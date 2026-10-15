@@ -63,10 +63,10 @@ func main() {
 		MoonkinAura:         true,
 		PowerWordFortitude:  improved,
 		RetributionAura:     improved,
-		SanctityAura:        true,
-		ShadowProtection:    true,
-		Thorns:              improved,
-		TrueshotAura:        true,
+		// No Sanctity Aura: it isn't in Forever's Retribution tree, and the sim ignores it under Forever.
+		ShadowProtection: true,
+		Thorns:           improved,
+		TrueshotAura:     true,
 	}
 	individualBuffs := &proto.IndividualBuffs{
 		BlessingOfKings:  true,
@@ -74,9 +74,9 @@ func main() {
 		BlessingOfWisdom: improved,
 	}
 	debuffs := &proto.Debuffs{
-		CurseOfElements:        true,
-		CurseOfRecklessness:    true,
-		CurseOfShadow:          true,
+		CurseOfElements:     true,
+		CurseOfRecklessness: true,
+		// No Curse of Shadow: Forever has none (its Curse of the Elements covers Shadow and Arcane).
 		CurseOfWeakness:        improved,
 		DemoralizingRoar:       improved,
 		DemoralizingShout:      improved,

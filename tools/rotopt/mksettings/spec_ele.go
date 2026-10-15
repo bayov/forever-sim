@@ -11,7 +11,6 @@ func init() {
 		// Scorch and Winter's Chill only help the mage's own spells, and Curse of Shadow is gone.
 		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
-			debuffs.CurseOfShadow = false
 		},
 		// The Level 60 preset's consumes (ui/elemental_shaman/presets.ts has what each is worth).
 		consumes: func() *proto.Consumes {
