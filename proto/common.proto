@@ -1058,9 +1058,11 @@ message LevelingOptions {
 	// Scales the level's average armor. Default 1.
 	double armor_multiplier = 5;
 
-	// Mobs a pull takes (default 1): until it has taken that many, a search in combat finds
-	// the next one, and the rotation pulls it (UnitReference.PullTarget) or we walk up to
-	// it. max_pack_size is the most a session can ever have (default 5).
+	// The rotation decides when to look for another mob while fighting (Look For Mob), and
+	// how to pull it. pack_size is a fixed policy on top for a rotation without that (default
+	// 1, none): until a pull has taken that many, we look for the next mob, and walk up to it
+	// if the rotation doesn't pull it. max_pack_size is the most mobs we can ever have on us
+	// (default 5).
 	int32 pack_size = 6;
 	int32 max_pack_size = 7;
 

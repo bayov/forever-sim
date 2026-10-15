@@ -360,6 +360,13 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		shaman.placeTotem(sim, FireTotem, spell, duration, shaman.endFireTotem(spell))
 		spell.AOEDot().Apply(sim)
+		shaman.setTotemReach(FireTotem,
+			func(sim *core.Simulation) {
+				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_FlametongueWeapon)
+			},
+			func(sim *core.Simulation) {
+				shaman.clearTotemWeaponBuff(sim, buffAura)
+			})
 	}
 	return spell
 }

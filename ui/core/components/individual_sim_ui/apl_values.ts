@@ -71,6 +71,7 @@ import {
 	APLValueSpellTimeToReady,
 	APLValueSpellTravelTime,
 	APLValueTimeToEnergyTick,
+	APLValueTotemDistance,
 	APLValueTotemRemainingTime,
 	APLValueWarlockCurrentPetMana,
 	APLValueWarlockCurrentPetManaPercent,
@@ -400,7 +401,7 @@ function executePhaseThresholdFieldConfig(field: string): AplHelpers.APLPickerBu
 	};
 }
 
-function totemTypeFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+export function totemTypeFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => TotemType.Water,
@@ -1063,6 +1064,14 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		submenu: ['Shaman'],
 		shortDescription: 'Returns the amount of time remaining until the totem will expire.',
 		newValue: APLValueTotemRemainingTime.create,
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
+		fields: [totemTypeFieldConfig('totemType')],
+	}),
+	totemDistance: inputBuilder({
+		label: 'Totem Distance (Leveling)',
+		submenu: ['Shaman'],
+		shortDescription: 'Yards from you to your totem of this element in a leveling session. 0 outside one or without that totem.',
+		newValue: APLValueTotemDistance.create,
 		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
 		fields: [totemTypeFieldConfig('totemType')],
 	}),

@@ -25,6 +25,20 @@ func levelingRequest(t *testing.T, opts *proto.LevelingOptions, iterations int32
 	return req
 }
 
+// aggroRadius is the aggro radius of a mob of this level at our level 30.
+func aggroRadius(level string) int {
+	l, _ := strconv.Atoi(level)
+	return 20 + l - 30
+}
+
+// checkRunIn: a mob runs to melee range at 7 to 8.5 yards a sec.
+func checkRunIn(t *testing.T, at float64, mob string, from int, runIn float64) {
+	t.Helper()
+	if lo, hi := float64(from-5)/8.5, float64(from-5)/6.5; runIn < lo-0.01 || runIn > hi+0.01 {
+		t.Errorf("at %.2f %s runs in %.2f sec from %d yards, want %.2f to %.2f", at, mob, runIn, from, lo, hi)
+	}
+}
+
 func parseRunIn(value, unit string) float64 {
 	runIn, _ := strconv.ParseFloat(value, 64)
 	switch unit {
@@ -52,15 +66,16 @@ func runLeveling(t *testing.T, req *proto.RaidSimRequest) *proto.RaidSimResult {
 var (
 	logTime      = regexp.MustCompile(`^\[(-?[0-9.]+)\] `)
 	foundLine    = regexp.MustCompile(`Leveling: found (Target \d+) \(level \d+\) (\d+) yards away`)
-	pulledLine   = regexp.MustCompile(`Leveling: pulled (Target \d+) \(level \d+\) from (\d+) yards, here in ([0-9.]+)(ms|s|µs|ns)`)
+	pulledLine   = regexp.MustCompile(`Leveling: pulled (Target \d+) \(level (\d+)\) from (\d+) yards, here in ([0-9.]+)(ms|s|µs|ns)`)
 	mobSwingLine = regexp.MustCompile(`\] \[(Target \d+)\] \[ \(#1\)\] \{OtherID: 7, Tag: 1\} (Hit|Crit|Miss|Dodge|Parry|Block|Crush)`)
 	ourSwingLine = regexp.MustCompile(`\] \[ \(#1\)\] \[(Target \d+)\] \{OtherID: 7, Tag: 1\} (Hit|Crit|Miss|Dodge|Parry|Block|Glance)`)
 	diedLine     = regexp.MustCompile(`\[(Target \d+)\] Died`)
 )
 
 // TestLevelingSession runs one session with its log and checks the loop: we find a mob 10 to
-// 40 yards away, and with a rotation that doesn't pull, walk up to it and pull it in melee
-// range. A pulled mob runs to us and only then swings, and we only reach it in melee then. A
+// 40 yards away, and with a rotation that doesn't pull, walk up to it until it notices us
+// (its aggro radius, 20 yards at our level, a yard more for each level over us), or it
+// notices us at once when we found it that close. A pulled mob runs to us and only then swings, and we only reach it in melee then. A
 // dead mob swings no more until it's pulled again. The time in each state adds up to the
 // session, and we kill a steady stream of mobs.
 func TestLevelingSession(t *testing.T) {
@@ -70,6 +85,7 @@ func TestLevelingSession(t *testing.T) {
 
 	arrival := map[string]float64{}
 	dead := map[string]bool{}
+	found := map[string]int{}
 	pulls := 0
 	for _, line := range strings.Split(result.Logs, "\n") {
 		m := logTime.FindStringSubmatch(line)
@@ -78,16 +94,20 @@ func TestLevelingSession(t *testing.T) {
 		}
 		at, _ := strconv.ParseFloat(m[1], 64)
 		if f := foundLine.FindStringSubmatch(line); f != nil {
-			if d, _ := strconv.Atoi(f[2]); d < 10 || d > 40 {
+			d, _ := strconv.Atoi(f[2])
+			if d < 10 || d > 40 {
 				t.Errorf("at %.2f found %s %d yards away, want 10 to 40", at, f[1], d)
 			}
+			found[f[1]] = d
 			continue
 		}
 		if p := pulledLine.FindStringSubmatch(line); p != nil {
-			runIn := parseRunIn(p[3], p[4])
-			if from, _ := strconv.Atoi(p[2]); from != 5 || runIn != 0 {
-				t.Errorf("at %.2f %s was pulled from %d yards and runs in %.2f sec, want a face pull: 5 yards, here at once", at, p[1], from, runIn)
+			runIn := parseRunIn(p[4], p[5])
+			from, _ := strconv.Atoi(p[3])
+			if want := min(found[p[1]], aggroRadius(p[2])); from != want {
+				t.Errorf("at %.2f %s found %d yards away was pulled from %d, want %d: where it noticed us as we walked up", at, p[1], found[p[1]], from, want)
 			}
+			checkRunIn(t, at, p[1], from, runIn)
 			arrival[p[1]] = at + runIn
 			dead[p[1]] = false
 			pulls++

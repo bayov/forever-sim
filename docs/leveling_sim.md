@@ -48,16 +48,19 @@ pull, so a 3-minute cooldown is ready for some pulls and not others, as in real 
 2. **Pull.** The APL picks how to pull it: any harmful spell at any rank that reaches it
    (Earth Shock within 20 yards, Lightning Bolt rank 1 within 30 to save mana, …) or a face
    pull. A mob notices us when the pull spell lands, so a bolt's flight counts, and then runs to
-   us from where it stood. Spells cast while it runs in are free damage, and it doesn't attack
-   until it arrives. When the APL hasn't pulled it a second after we found it, we walk up to
-   it: an instant can still pull it on the way once it's in range, or it notices us in melee
-   range.
-3. **Chain pull.** While fighting, a search finds the next mob, up to the pack size. Most of
-   the time we run around to find it with the mobs on us following, so again only instants and
-   melee. The APL pulls it from where it stands, or we walk up to it with the mobs in tow. It
-   decides from values like mobs on us, mobs still running in, the distance to the mob, HP and
-   mana percent, and cooldowns. Pushback makes a cast pull worse once a mob is hitting us, so
-   the APL may chain-pull with an instant instead.
+   us from where it stood, following us if we move. Spells cast while it runs in are free
+   damage, and it doesn't attack until it arrives. A mob also notices us once we're within its
+   aggro radius: 20 yards at our level, a yard more for each level it has over us, a yard less
+   for each under. So a face pull is walking up until it notices us and runs the rest of the
+   way, and a mob we find that close notices us at once. The APL can walk up to it, all the way
+   or into a spell's range; when it hasn't pulled it, isn't casting and hasn't moved for a
+   second, we walk up to it anyway. An instant can still pull it on the way.
+3. **Chain pull.** While fighting, the APL decides whether to look for another mob, from our
+   health, mana, cooldowns, mobs on us and mobs still running in, so a pull can take one mob,
+   two, three or more. Most of the time we run around to find it with the mobs on us
+   following, so again only instants and melee. The APL pulls it from where it stands, walks up
+   to it with the mobs in tow, or leaves it as the next pull. Pushback makes a cast pull worse
+   once a mob is hitting us, so the APL may chain-pull with an instant instead.
 4. **Fight.** Every mob has its own HP and dies on its own when its HP runs out, and then it
    stops attacking. We're out of combat only once all of them are dead.
 5. **Recover.** Out of combat the APL picks among eating and drinking, bandaging, self-heals
@@ -142,7 +145,9 @@ from the user's logs.
 | Our run speed | 7 yd/s |
 | Mob run speed | The level's average from the mob table: 6 yd/s at levels 1–2, about 8 yd/s from level 11 |
 | Run-in time | (distance − 5 yd melee) ÷ run speed, from when the pull spell lands: about 3.1 s for Lightning Bolt from 30 yd (after 1.5 s of flight) and 1.9 s for a shock from 20 yd at 8 yd/s |
-| Face pull | No free damage. When the APL hasn't pulled a mob 1 s after we found it, we walk up to it. |
+| Aggro radius | 20 yd for a mob of our level, ±1 yd a level of difference, at least 5 (cmangos `Creature::GetAttackDistance`) |
+| Face pull | No free damage. We walk up until the mob notices us. When the APL hasn't pulled a mob, isn't casting and hasn't moved for 1 s, we walk up to it. |
+| Buff totem reach | 30 yd (client SpellRadius), checked once a second |
 | A mob's first swing | Random within its swing timer after it arrives |
 | Max pack size | 5 |
 
@@ -359,15 +364,57 @@ After the groundwork:
      saves mana and so rest time, but its cooldown is shared with the preset's Flame Shock.
      With a pack size of 2 the second mob often isn't found before the first dies, so a pull
      takes 1.3 to 1.5 mobs on average. The mob found then is the next pull, without a search.
-   - Still options: the pack size and when to eat, drink and bandage. Step 3 moves them into
-     the APL too.
-3. **APL additions for the rest of the loop:** take another mob or not, and out-of-combat
-   actions (eat and drink until a threshold, bandage, heal).
-4. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
-5. **Optimizers:** the pull and recovery policy, leveling stat weights with a Pawn export, and
+   - Since then (step 3) the APL decides on chain pulls and the mob notices us from its aggro
+     radius, so these numbers are out of date.
+3. **Chain pulls, aggro radius and totems in the APL.** Done (2026-10-15).
+   - Positions are on a line (`sim/core/leveling_world.go`): ours, each mob's and each totem's.
+     A pulled mob chases us at its speed and changes course when we move, so it can take
+     longer to reach us when we walk away.
+   - A mob notices us within its aggro radius (above). A face pull stops there, and the mob
+     runs the rest of the way.
+   - The APL decides when to look for another mob while fighting (Look For Mob (Leveling)),
+     and how to pull it. `pack_size` is now only a fixed policy for a rotation without that
+     (default 1, none). Walk To Pull Target (Leveling) walks up to the mob, all the way or into
+     a spell's range.
+   - Buff totems reach 30 yards (Strength of Earth, Stoneskin, Grace of Air, Windfury,
+     Flametongue and Mana Spring Totem): further away we lose the buff, and get it back when
+     we come back while the totem stands. Healing Stream and Mana Tide give nothing on a pulse
+     out of reach. Our totems vanish when we die.
+   - Totemic Recall (36936, level 20): takes every totem back for a quarter of its mana cost,
+     a 1.5 s global cooldown, no cost. Totemic Projection (437009, level 22): moves every totem
+     to where we stand, 25% of base mana (Totemic Focus discounts it), 1 min cooldown. Both
+     from the client data, build 70338.
+   - APL: Walk To Totem (Leveling) walks back toward a totem with the mobs following, and
+     Totem Distance (Leveling) is how far one is.
+   - The leveling demo is solo now: the Level 30 Enhancement preset's gear, talents and
+     rotation without party or raid buffs, Blessing of Kings, starting totems, explosives or
+     potions. 500 sessions of 20 min against level 29 to 31 mobs:
+
+     | Rotation | Mobs | Deaths | XP / hour | Searching and pulling | Resting | Combat | Mobs a pull |
+     |---|---|---|---|---|---|---|---|
+     | Preset: a totem whenever its buff is missing | 55.7 | 0.00 | 32,200 | 536 s | 317 s | 347 s | 1.00 |
+     | Buff totems only with a mob pulled | 56.8 | 0.00 | 32,900 | 549 s | 261 s | 391 s | 1.00 |
+     | + Totemic Recall once the fight is over | 58.2 | 0.00 | 33,700 | 561 s | 239 s | 400 s | 1.00 |
+     | + Totemic Projection instead of Recall, when a totem is out of reach | 57.1 | 0.00 | 33,100 | 550 s | 266 s | 384 s | 1.00 |
+     | No buff totems | 65.1 | 0.00 | 37,700 | 628 s | 166 s | 406 s | 1.00 |
+     | Recall, + look for another mob above 60% health and 40% mana while fewer than 2 are pulled | 77.6 | 0.15 | 44,900 | 226 s | 386 s | 563 s | 2.50 |
+     | No buff totems, + the same chain pulls | 82.2 | 0.31 | 47,600 | 238 s | 323 s | 587 s | 2.51 |
+
+     At level 30, single pulls die in about 25 s, and the totems' mana (Strength of Earth 65,
+     Mana Spring 40, Flametongue 90 at these ranks) costs more rest than their buffs save.
+     Recalling them when the fight is over gets a quarter back and is better than leaving them
+     behind. The rotation-driven chain pulls are the big gain: searching drops from about 600 s
+     to 230 s a session, since we find the next mob while fighting. A pull averages 2.5 mobs,
+     because a mob found when the first dies is pulled too, as long as health and mana allow.
+     The preset rotation was built for a boss, so none of this is tuned yet.
+   - Still options: when to eat, drink and bandage. Step 4 moves them into the APL.
+4. **APL additions for the rest of the loop:** out-of-combat actions (eat and drink until a
+   threshold, bandage, heal).
+5. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
+6. **Optimizers:** the pull and recovery policy, leveling stat weights with a Pawn export, and
    the best mob level.
-6. **Synthetic gear curves** from 10 to 60 and the talent route search.
-7. **UI:** "Leveling" as a third mode next to DPS and PvP.
+7. **Synthetic gear curves** from 10 to 60 and the talent route search.
+8. **UI:** "Leveling" as a third mode next to DPS and PvP.
 
 ## From the logs, later
 

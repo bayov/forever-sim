@@ -110,7 +110,9 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 		NumberOfTicks: int32(duration / healInterval),
 		TickLength:    healInterval,
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			healSpell.Cast(sim, target)
+			if shaman.inTotemReach(sim, WaterTotem) {
+				healSpell.Cast(sim, target)
+			}
 		},
 	}
 
@@ -192,6 +194,7 @@ func (shaman *Shaman) newManaSpringTotemSpellConfig(rank int) core.SpellConfig {
 		// The ticks start over from the drop.
 		shaman.placeTotem(sim, WaterTotem, spell, aura.Duration, endTotemBuff(aura))
 		aura.Activate(sim)
+		shaman.setTotemAuraReach(WaterTotem, aura)
 	}
 	return spell
 }
@@ -257,6 +260,9 @@ func (shaman *Shaman) newManaTideTotemSpellConfig(rank int, cooldown *core.Timer
 				Period:   core.ManaTideTotemTickPeriod,
 				NumTicks: 4,
 				OnAction: func(sim *core.Simulation) {
+					if !shaman.inTotemReach(sim, WaterTotem) {
+						return
+					}
 					for i, char := range players {
 						char.AddMana(sim, manaRestore, metrics[i])
 					}

@@ -185,6 +185,8 @@ type Shaman struct {
 	EarthShield            *core.Spell
 	EarthShock             []*core.Spell
 	FireNova               []*core.Spell
+	TotemicRecall          *core.Spell
+	TotemicProjection      *core.Spell
 	FlametongueTotem       []*core.Spell
 	FlameShock             []*core.Spell
 	FrostShock             []*core.Spell
@@ -228,6 +230,8 @@ type Shaman struct {
 	totemEnds        [4]func(sim *core.Simulation) // How to end each slot's totem when the next one comes down.
 	TotemExpirations [4]time.Duration              // The expiration time of each totem (earth, air, fire, water).
 	totemPositions   [4]float64                    // Where each totem stands in a leveling session (core.Encounter.LevelingPosition).
+	totemReaches     [4]*totemReach                // How each totem's buff comes and goes with our distance (totem_reach.go).
+	totemCosts       [4]float64                    // The mana each totem cost, for Totemic Recall.
 
 	EarthTotems []*core.Spell
 	FireTotems  []*core.Spell
@@ -314,6 +318,9 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerWindwallTotemSpell()
 	shaman.registerStartingTotems()
+	shaman.registerTotemicRecallSpell()
+	shaman.registerTotemicProjectionSpell()
+	shaman.registerTotemReach()
 }
 
 func (shaman *Shaman) Reset(_ *core.Simulation) {
@@ -327,5 +334,7 @@ func (shaman *Shaman) Reset(_ *core.Simulation) {
 		shaman.TotemExpirations[i] = 0
 		shaman.totemEnds[i] = nil
 		shaman.totemPositions[i] = 0
+		shaman.totemReaches[i] = nil
+		shaman.totemCosts[i] = 0
 	}
 }

@@ -50,6 +50,7 @@ func (shaman *Shaman) newStrengthOfEarthTotemSpellConfig(rank int) core.SpellCon
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		shaman.placeTotem(sim, EarthTotem, spell, duration, endTotemBuff(buffAura))
 		buffAura.Activate(sim)
+		shaman.setTotemAuraReach(EarthTotem, buffAura)
 	}
 	return spell
 }
@@ -94,6 +95,7 @@ func (shaman *Shaman) newStoneskinTotemSpellConfig(rank int) core.SpellConfig {
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		shaman.placeTotem(sim, EarthTotem, spell, duration, endTotemBuff(buffAura))
 		buffAura.Activate(sim)
+		shaman.setTotemAuraReach(EarthTotem, buffAura)
 	}
 	return spell
 }

@@ -79,3 +79,50 @@ func (value *APLValueLevelingMobsOnUs) GetInt(sim *Simulation) int32 {
 func (value *APLValueLevelingMobsOnUs) String() string {
 	return "Leveling Mobs On Us()"
 }
+
+type APLActionLevelingLookForMob struct {
+	defaultAPLActionImpl
+	unit *Unit
+}
+
+func (rot *APLRotation) newActionLevelingLookForMob(_ *proto.APLActionLevelingLookForMob) APLActionImpl {
+	return &APLActionLevelingLookForMob{unit: rot.unit}
+}
+func (action *APLActionLevelingLookForMob) IsReady(sim *Simulation) bool {
+	return sim.Encounter.LevelingCanLookForMob()
+}
+func (action *APLActionLevelingLookForMob) Execute(sim *Simulation) {
+	sim.Encounter.LevelingLookForMob(sim)
+}
+func (action *APLActionLevelingLookForMob) String() string {
+	return "Look For Mob (Leveling)"
+}
+
+type APLActionLevelingWalkToPullTarget struct {
+	defaultAPLActionImpl
+	within APLValue
+}
+
+func (rot *APLRotation) newActionLevelingWalkToPullTarget(config *proto.APLActionLevelingWalkToPullTarget) APLActionImpl {
+	return &APLActionLevelingWalkToPullTarget{within: rot.coerceTo(rot.newAPLValue(config.Within), proto.APLValueType_ValueTypeFloat)}
+}
+func (action *APLActionLevelingWalkToPullTarget) withinYards(sim *Simulation) float64 {
+	if action.within == nil {
+		return 0
+	}
+	return action.within.GetFloat(sim)
+}
+func (action *APLActionLevelingWalkToPullTarget) IsReady(sim *Simulation) bool {
+	return sim.Encounter.LevelingCanWalkToPullTarget(sim, action.withinYards(sim))
+}
+func (action *APLActionLevelingWalkToPullTarget) Execute(sim *Simulation) {
+	sim.Encounter.LevelingWalkToPullTarget(sim, action.withinYards(sim))
+}
+func (action *APLActionLevelingWalkToPullTarget) String() string {
+	return fmt.Sprintf("Walk To Pull Target (Leveling)(%v)", action.within)
+}
+
+// NewAPLFloatValue builds a value from its config as a number, for class actions.
+func (rot *APLRotation) NewAPLFloatValue(config *proto.APLValue) APLValue {
+	return rot.coerceTo(rot.newAPLValue(config), proto.APLValueType_ValueTypeFloat)
+}

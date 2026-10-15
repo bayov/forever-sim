@@ -73,9 +73,14 @@ message APLAction {
         APLActionMove move = 18;
         APLActionAddComboPoints add_combo_points = 23;
 
+        // Leveling session actions (Encounter.leveling)
+        APLActionLevelingLookForMob leveling_look_for_mob = 24;
+        APLActionLevelingWalkToPullTarget leveling_walk_to_pull_target = 25;
+
         // Class or Spec-specific actions
         APLActionCatOptimalRotationAction cat_optimal_rotation_action = 19;
         APLActionCastPaladinPrimarySeal cast_paladin_primary_seal = 21;
+        APLActionShamanWalkToTotem shaman_walk_to_totem = 26;
 
         // Internal use only, not exposed in UI.
         APLActionCustomRotation custom_rotation = 20;
@@ -178,6 +183,7 @@ message APLValue {
         // Class or Spec-specific values
         // Shaman
         APLValueTotemRemainingTime totem_remaining_time = 49;
+        APLValueTotemDistance totem_distance = 85;
         // Druid
         APLValueCatExcessEnergy cat_excess_energy = 52;
         // Warlock
@@ -301,6 +307,25 @@ message APLActionCastPaladinPrimarySeal {
 
 message APLActionMove {
     APLValue range_from_target = 1;
+}
+
+// In a leveling session, while fighting: look for another mob to pull. Most of the time we
+// run around to find it with the mobs on us following (LevelingOptions.chain_search_moving).
+// The mob we find is the Pull Target (UnitReference.PullTarget) until we pull it.
+message APLActionLevelingLookForMob {
+}
+
+// In a leveling session: walk toward the Pull Target until we're within this many yards of
+// it (melee range when 0), or it notices us first (its aggro radius). The mobs on us follow.
+message APLActionLevelingWalkToPullTarget {
+    APLValue within = 1;
+}
+
+// In a leveling session: walk back toward one of our totems until we're within this many
+// yards of it. The mobs on us follow, and the ones running at us change course.
+message APLActionShamanWalkToTotem {
+    ShamanTotems.TotemType totem_type = 1;
+    APLValue within = 2;
 }
 
 message APLActionCustomRotation {
@@ -561,6 +586,12 @@ message APLValueSequenceIsReady {
 }
 message APLValueSequenceTimeToReady {
     string sequence_name = 1;
+}
+
+// Yards from us to our totem of this element in a leveling session, 0 outside one or
+// without that totem.
+message APLValueTotemDistance {
+    ShamanTotems.TotemType totem_type = 1;
 }
 
 message APLValueTotemRemainingTime {

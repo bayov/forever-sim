@@ -46,11 +46,11 @@ Item format:
   - Shaman first: Healing Wave and Lesser Healing Wave by rank and level. Then Priest (Lesser Heal, Heal, Flash Heal, Greater Heal, Renew; today commented out or missing), Paladin (Holy Light, Flash of Light) and Druid (Healing Touch, Rejuvenation, Regrowth).
   - Absorbs in the core, for Power Word: Shield, Mana Shield and Sacrifice.
   - 2026-10-15: shaman done (`sim/shaman/healing.go`, shaman_audit.md 11.5), with the healing talents. Still open: Priest, Paladin, Druid and absorbs.
-- [ ] 2026-10-15 — Leveling mode step 3: move the rest of the pull and rest decisions into the rotation (`docs/leveling_sim.md`, The leveling mode)
-  - Step 1, the session engine, is done (`sim/core/leveling.go`): pack size, eat_below and drink_below are options for now.
-  - Step 2 is done (2026-10-15): positions, spell and totem ranges, searching on the run, and pulling from the APL (`PullTarget`, Distance (Leveling), Mobs Running In, Mobs On You, Is Moving).
-  - Still to do: APL actions to take another mob or not (today pack_size), eat and drink to a threshold, bandage.
-  - Buff totem ranges (Strength of Earth, Mana Spring and the rest reach 30 yards) once we run away from them, and a bolt's flight time to a chain pull target that isn't our current target (it uses our current target's distance).
+- [ ] 2026-10-15 — Leveling mode step 4: move the rest decisions into the rotation (`docs/leveling_sim.md`, The leveling mode)
+  - Steps 1 to 3 are done (2026-10-15): the session engine, positions with spell and totem ranges, pulling from the APL, rotation-driven chain pulls, aggro radius, buff totem reach, Totemic Recall and Totemic Projection.
+  - Still to do: APL actions to eat and drink to a threshold, and to bandage (today eat_below, drink_below and no_bandages).
+  - A bolt's flight time to a chain pull target that isn't our current target uses our current target's distance.
+  - Stoneskin Totem's client data also has a 20 yard effect next to the 30 yard one; we use 30 for all of it.
 - [ ] 2026-10-15 — Leveling: measure search, run-in and chain-pull times and pack sizes from the user's logs (`docs/leveling_sim.md`, From the logs)
   - Needs `~/forever-logs` on the user's machine. Drop gaps over about 60 s (AFK) and use the fast quartile as the default.
 - [ ] 2026-10-14 — Whole raid sim (user idea)

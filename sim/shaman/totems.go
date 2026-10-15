@@ -47,6 +47,8 @@ func (shaman *Shaman) placeTotem(sim *core.Simulation, slot int, spell *core.Spe
 	shaman.ActiveTotems[slot] = spell
 	shaman.totemEnds[slot] = end
 	shaman.totemPositions[slot] = sim.Encounter.LevelingPosition(sim)
+	shaman.totemReaches[slot] = nil
+	shaman.totemCosts[slot] = spell.CurCast.Cost
 }
 
 // Fire totem ranges, from the client's SpellRange and SpellRadius (build 70338): Searing

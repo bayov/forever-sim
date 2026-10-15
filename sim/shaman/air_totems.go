@@ -19,6 +19,7 @@ func (shaman *Shaman) setActiveAirTotem(sim *core.Simulation, spell *core.Spell,
 	}
 	shaman.placeTotem(sim, AirTotem, spell, duration, endTotemBuff(aura))
 	aura.Activate(sim)
+	shaman.setTotemAuraReach(AirTotem, aura)
 }
 
 const WindfuryTotemRanks = 3

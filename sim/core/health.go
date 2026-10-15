@@ -142,6 +142,12 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 	}
 }
 
+// RegisterLevelingDeathEffect runs effect when we die in a leveling session (leveling.go),
+// as a shaman's totems vanish. Only a session goes on after a death.
+func (character *Character) RegisterLevelingDeathEffect(effect func(sim *Simulation)) {
+	character.levelingDeathEffects = append(character.levelingDeathEffects, effect)
+}
+
 // died is our health running out: recorded for the chance of death, and in a leveling
 // session the corpse run (leveling.go), which can happen again later in the session.
 func (character *Character) died(sim *Simulation) {

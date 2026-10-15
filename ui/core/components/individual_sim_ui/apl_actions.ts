@@ -15,19 +15,22 @@ import {
 	APLActionCustomRotation,
 	APLActionItemSwap,
 	APLActionItemSwap_SwapSet as ItemSwapSet,
+	APLActionLevelingLookForMob,
+	APLActionLevelingWalkToPullTarget,
 	APLActionMove,
 	APLActionMultidot,
 	APLActionMultishield,
 	APLActionResetSequence,
 	APLActionSchedule,
 	APLActionSequence,
+	APLActionShamanWalkToTotem,
 	APLActionStrictSequence,
 	APLActionTriggerICD,
 	APLActionWait,
 	APLActionWaitUntil,
 	APLValue,
 } from '../../proto/apl';
-import { Spec } from '../../proto/common';
+import { Class, Spec } from '../../proto/common';
 import { isHealingSpec } from '../../proto_utils/utils';
 import { EventID } from '../../typed_event';
 import { randomUUID } from '../../utils';
@@ -660,5 +663,39 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 		includeIf: (player: Player<any>, _isPrepull: boolean) => player.spec == Spec.SpecRetributionPaladin || player.spec == Spec.SpecProtectionPaladin,
 		newValue: () => APLActionCastPaladinPrimarySeal.create({}),
 		fields: [],
+	}),
+	['shamanWalkToTotem']: inputBuilder({
+		label: 'Walk To Totem (Leveling)',
+		submenu: ['Shaman'],
+		shortDescription: 'In a leveling session, walks back toward your totem of this element until you are within the given yards of it. The mobs on you follow.',
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
+		newValue: () => APLActionShamanWalkToTotem.create({}),
+		fields: [
+			AplValues.totemTypeFieldConfig('totemType'),
+			AplValues.valueFieldConfig('within', {
+				label: 'within',
+				labelTooltip: 'Yards from the totem to stop at.',
+			}),
+		],
+	}),
+	['levelingLookForMob']: inputBuilder({
+		label: 'Look For Mob (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription:
+			'In a leveling session, while fighting: looks for another mob to pull, usually running around with the mobs on you following. The mob found is the Pull Target.',
+		newValue: () => APLActionLevelingLookForMob.create({}),
+		fields: [],
+	}),
+	['levelingWalkToPullTarget']: inputBuilder({
+		label: 'Walk To Pull Target (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription: 'In a leveling session: walks toward the Pull Target until you are within the given yards of it (melee range for 0), or it notices you first.',
+		newValue: () => APLActionLevelingWalkToPullTarget.create({}),
+		fields: [
+			AplValues.valueFieldConfig('within', {
+				label: 'within',
+				labelTooltip: 'Yards from the mob to stop at.',
+			}),
+		],
 	}),
 };

@@ -19,24 +19,25 @@ import (
 // read its type are. A dead mob goes back to the pool and comes again in a later pull, with
 // full health and its permanent auras back.
 //
-// Where things are: each mob has a distance from us, and we have a position along the way we
-// run, so a totem stays where we dropped it while we move on (LevelingPosition).
+// Where things are: we, the mobs and our totems have positions on a line we move along
+// (leveling_world.go).
 //
 // One loop runs the session:
 //   - Searching: we run around for a random 5 to 11 sec (search_min / search_max), so we
 //     can't hard cast, and find a mob standing 10 to 40 yards away (found_min / found_max).
-//   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A harmful
-//     spell that lands on it pulls it, and spells only reach it within their range
-//     (Spell.MaxRange). When the rotation hasn't pulled it a second after we found it and
-//     isn't casting, we walk up to it, and it notices us in melee range (a face pull). The
-//     rotation can still pull it on the way, with an instant once it's in range.
-//   - Combat: a pulled mob runs to us at its level's speed. We can cast at it on the way,
-//     but it can't hit us and we can't reach it in melee until it's here. Its first swing
-//     comes at a random point of its swing timer. While the pull has taken fewer than
-//     pack_size mobs, a search finds the next one (2 to 4 sec, running with the mobs on us following
-//     three times out of four, when only instants and melee go out). It's pulled the same
-//     way: the rotation's spell at the Pull Target, or we walk up to it with the mobs on us
-//     in tow.
+//     One that close to its aggro radius notices us at once.
+//   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A spell
+//     that attacks it pulls it when it lands, and spells only reach it within their range
+//     (Spell.MaxRange). The rotation can walk toward it (Walk To Pull Target). When it hasn't
+//     pulled it, isn't casting and hasn't moved for a second, we walk up to it until it
+//     notices us (a face pull). The rotation can still pull it on the way with an instant.
+//   - Combat: a pulled mob runs at us at its level's speed, following us if we move. We can
+//     cast at it on the way, but it can't hit us and we can't reach it in melee until it's
+//     here. Its first swing comes at a random point of its swing timer. The rotation decides
+//     whether to look for another mob (Look For Mob: 2 to 4 sec, running with the mobs on us
+//     following three times out of four, when only instants and melee go out), and pulls it
+//     the same ways, or leaves it for our next pull. pack_size is a fixed policy for a
+//     rotation that doesn't decide.
 //   - When the last one dies, we're out of combat: a bandage when our health is low and
 //     we're not Recently Bandaged, then we sit to eat and drink when health or mana is low,
 //     until both are full or both buffs run out. Then the mob we found while fighting if
@@ -64,12 +65,14 @@ type levelingSession struct {
 	found   *Unit
 	foundAt time.Duration
 
-	// Our position along the way we run, and since when we've been moving. walkTo is the
-	// found mob we're walking up to, if we are.
-	position    float64
-	moving      bool
-	movingSince time.Duration
-	walkTo      *Unit
+	// Where we are (leveling_world.go): our position at posAt, moving at vel yards a sec,
+	// toward a goal, and when we last stopped. goalReached ends the walk, and proximity is
+	// the mob we found noticing us.
+	pos, vel, goalPoint, goalWithin float64
+	posAt, stoppedAt                time.Duration
+	goal                            levelingGoal
+	goalMob                         *Unit
+	goalReached, proximity          *PendingAction
 
 	state      levelingState
 	stateSince time.Duration
@@ -102,27 +105,6 @@ type levelingSession struct {
 	}
 }
 
-type levelingMobState int
-
-const (
-	mobInPool levelingMobState = iota
-	mobFound
-	mobRunning
-	mobArrived
-)
-
-type levelingMob struct {
-	state levelingMobState
-	// Distance from us at since: where a found mob stands (since we last walked up to it),
-	// or where a running one started.
-	distance float64
-	since    time.Duration
-	arrival  *PendingAction
-	// A harmful spell at a found mob is on its way (a bolt in flight), so the mob is pulled
-	// and no longer the rotation's Pull Target.
-	incoming bool
-}
-
 type levelingState int
 
 const (
@@ -151,15 +133,6 @@ type levelingOptions struct {
 	deathPenalty                   time.Duration
 	reviveFraction                 float64
 }
-
-const (
-	// Where a mob that reached us stands.
-	levelingMeleeRange = 5
-	// How long the rotation has to pull a mob we found before we walk up to it.
-	levelingFacePullAfter = time.Second
-	// How often the session looks at the pull: whether to walk up, how close we are.
-	levelingPullPoll = 250 * time.Millisecond
-)
 
 func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 	or := func(v, def float64) float64 {
@@ -311,8 +284,9 @@ func (s *levelingSession) reset(sim *Simulation) {
 		s.mobs[target.Index] = levelingMob{}
 	}
 	enc.ActiveTargetUnits = nil
-	s.found, s.walkTo = nil, nil
-	s.position, s.moving = 0, false
+	s.found = nil
+	s.pos, s.vel, s.posAt, s.stoppedAt = 0, 0, 0, 0
+	s.goal, s.goalMob, s.goalReached, s.proximity = goalNone, nil, nil, nil
 	s.player.MovementHandler.Moving = false
 	s.player.DistanceFromTarget = s.opts.foundMax
 
@@ -362,231 +336,6 @@ func randomDuration(sim *Simulation, label string, lo, hi time.Duration) time.Du
 	return lo + time.Duration(sim.RandomFloat(label)*float64(hi-lo))
 }
 
-// Moving: we run (searching, or walking up to a mob), so no hard casts. Mobs on us follow
-// and keep swinging, and so do we.
-func (s *levelingSession) setMoving(sim *Simulation, moving bool) {
-	if s.moving == moving {
-		return
-	}
-	if s.moving {
-		if s.walkTo != nil {
-			m := &s.mobs[s.walkTo.Index]
-			m.distance, m.since = s.distance(sim, s.walkTo), sim.CurrentTime
-			s.walkTo = nil
-		}
-		s.position += s.player.MovementHandler.MoveSpeed * (sim.CurrentTime - s.movingSince).Seconds()
-	} else {
-		s.movingSince = sim.CurrentTime
-		if s.player.Hardcast.Expires > sim.CurrentTime {
-			s.player.interruptHardcast(sim)
-		}
-	}
-	s.moving = moving
-	s.player.MovementHandler.Moving = moving
-}
-
-// playerPosition is where we are along the way we run.
-func (s *levelingSession) playerPosition(sim *Simulation) float64 {
-	if s.moving {
-		return s.position + s.player.MovementHandler.MoveSpeed*(sim.CurrentTime-s.movingSince).Seconds()
-	}
-	return s.position
-}
-
-// distance is how far the mob is from us: where a found mob stands (closer as we walk up to
-// it), how far a running one has still to come, and melee range for one on us.
-func (s *levelingSession) distance(sim *Simulation, mob *Unit) float64 {
-	m := &s.mobs[mob.Index]
-	switch m.state {
-	case mobFound:
-		if mob == s.walkTo {
-			return max(levelingMeleeRange, m.distance-s.player.MovementHandler.MoveSpeed*(sim.CurrentTime-m.since).Seconds())
-		}
-		return m.distance
-	case mobRunning:
-		speed := NormalMobStatsAt(mob.Level).RunSpeed
-		return max(levelingMeleeRange, m.distance-speed*(sim.CurrentTime-m.since).Seconds())
-	case mobArrived:
-		return levelingMeleeRange
-	}
-	return math.Inf(1)
-}
-
-// search: out of combat and ready, we run around looking for the next mob.
-func (s *levelingSession) search(sim *Simulation) {
-	if s.found != nil {
-		// We saw it while fighting, and it's still there.
-		s.startPull(sim)
-		return
-	}
-	s.setState(sim, levelingSearching)
-	s.setMoving(sim, true)
-	if sim.Log != nil {
-		s.player.Log(sim, "Leveling: searching for a mob")
-	}
-	s.after(sim, &s.next, randomDuration(sim, "Leveling Search", s.opts.searchMin, s.opts.searchMax), func(sim *Simulation) {
-		s.setMoving(sim, false)
-		if s.find(sim) != nil {
-			s.startPull(sim)
-		} else {
-			s.search(sim)
-		}
-	})
-}
-
-// find picks a mob from the pool to stand somewhere around us, waiting to be pulled.
-func (s *levelingSession) find(sim *Simulation) *Unit {
-	level := s.levels[int(sim.RandomFloat("Leveling Mob Level")*float64(len(s.levels)))%len(s.levels)]
-	mob := s.idleMob(level)
-	if mob == nil {
-		return nil
-	}
-	distance := math.Round(s.opts.foundMin + sim.RandomFloat("Leveling Mob Distance")*(s.opts.foundMax-s.opts.foundMin))
-	mob.dead = false
-	mob.enabled = true
-	mob.healthBar.currentHealth = mob.MaxHealth()
-	mob.auraTracker.expireAll(sim) // Anything cast at it while it lay in the pool.
-	mob.auraTracker.respawn(sim)
-	s.mobs[mob.Index] = levelingMob{state: mobFound, distance: distance, since: sim.CurrentTime}
-	s.found, s.foundAt = mob, sim.CurrentTime
-	if sim.Log != nil {
-		s.player.Log(sim, "Leveling: found %s (level %d) %.0f yards away", mob.Label, mob.Level, distance)
-	}
-	return mob
-}
-
-// startPull: out of combat with a mob found. It's our target, and the rotation pulls it.
-func (s *levelingSession) startPull(sim *Simulation) {
-	s.setState(sim, levelingPulling)
-	s.setMoving(sim, false)
-	s.foundAt = sim.CurrentTime
-	s.retarget(sim, s.found)
-	s.pollPull(sim)
-}
-
-// pollPull watches the mob we found, out of combat or in: once we've walked into melee range
-// of it, it's pulled, and when the rotation hasn't pulled it a second after we found it and
-// isn't casting, we walk up to it.
-func (s *levelingSession) pollPull(sim *Simulation) {
-	mob := s.found
-	if mob == nil || (s.state != levelingPulling && s.state != levelingCombat) {
-		return
-	}
-	distance := s.distance(sim, mob)
-	if s.mobs[mob.Index].incoming {
-		return
-	}
-	if distance <= levelingMeleeRange {
-		s.aggro(sim, mob)
-		return
-	}
-	if s.walkTo == nil && !s.moving && sim.CurrentTime-s.foundAt >= levelingFacePullAfter && !s.player.IsCasting(sim) {
-		if sim.Log != nil {
-			s.player.Log(sim, "Leveling: walking up to %s", mob.Label)
-		}
-		s.setMoving(sim, true)
-		s.walkTo = mob
-		s.mobs[mob.Index].since = sim.CurrentTime
-	}
-	if mob == s.player.CurrentTarget {
-		// Still out of melee range, so no swings to move.
-		s.player.DistanceFromTarget = distance
-	}
-	poll := levelingPullPoll
-	if s.walkTo == mob {
-		poll = min(poll, DurationFromSeconds((distance-levelingMeleeRange)/s.player.MovementHandler.MoveSpeed))
-	}
-	s.after(sim, &s.next, max(poll, time.Millisecond), s.pollPull)
-}
-
-// onCast: a spell of ours went off at a mob. A harmful one at the mob we found pulls it
-// when it lands (onHit), and until then the rotation shouldn't cast another. A spell that
-// never lands (no damage, no miss) pulls it once its travel time is over.
-func (s *levelingSession) onCast(sim *Simulation, mob *Unit, spell *Spell) {
-	m := &s.mobs[mob.Index]
-	if m.state != mobFound || m.incoming || !spell.attacksTarget() {
-		return
-	}
-	m.incoming = true
-	if s.walkTo == mob {
-		s.setMoving(sim, false)
-	}
-	StartDelayedAction(sim, DelayedActionOptions{
-		DoAt: sim.CurrentTime + spell.TravelTime() + 100*time.Millisecond,
-		OnAction: func(sim *Simulation) {
-			if s.mobs[mob.Index].state == mobFound && s.mobs[mob.Index].incoming {
-				s.aggro(sim, mob)
-			}
-		},
-	})
-}
-
-// onHit: something of ours landed on a mob. A harmful hit pulls the mob we found.
-func (s *levelingSession) onHit(sim *Simulation, mob *Unit, spell *Spell) {
-	if s.mobs[mob.Index].state == mobFound && !spell.Flags.Matches(SpellFlagHelpful) {
-		s.aggro(sim, mob)
-	}
-}
-
-// aggro: the mob is pulled and runs to us from where it stands.
-func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
-	distance := s.distance(sim, mob)
-	if mob == s.found {
-		s.found = nil
-	}
-	if s.walkTo == mob {
-		s.setMoving(sim, false)
-	}
-	if s.state != levelingCombat {
-		s.setState(sim, levelingCombat)
-		s.setMoving(sim, false)
-		s.pulls++
-		s.pullMobs = 0
-	}
-	s.pullMobs++
-	s.mobsPulled++
-	s.mobs[mob.Index] = levelingMob{state: mobRunning, distance: distance, since: sim.CurrentTime}
-	s.env.Encounter.addActiveTarget(mob)
-
-	runIn := DurationFromSeconds(max(distance-levelingMeleeRange, 0) / NormalMobStatsAt(mob.Level).RunSpeed)
-	if sim.Log != nil {
-		s.player.Log(sim, "Leveling: pulled %s (level %d) from %.0f yards, here in %s", mob.Label, mob.Level, distance, runIn)
-	}
-	if mob == s.player.CurrentTarget {
-		s.setPlayerDistance(sim, max(distance, levelingMeleeRange))
-	}
-	m := &s.mobs[mob.Index]
-	if runIn <= 0 {
-		s.arrive(sim, mob)
-	} else {
-		m.arrival = &PendingAction{NextActionAt: sim.CurrentTime + runIn, OnAction: func(sim *Simulation) { s.arrive(sim, mob) }}
-		sim.AddPendingAction(m.arrival)
-	}
-	s.chainSearch(sim)
-}
-
-// chainSearch: while the pull has taken fewer than pack_size mobs, we look for the next one
-// as we fight, running around with the mobs on us following most of the time.
-func (s *levelingSession) chainSearch(sim *Simulation) {
-	if s.state != levelingCombat || s.found != nil || s.chainNext != nil || s.pullMobs >= s.opts.packSize {
-		return
-	}
-	moving := sim.RandomFloat("Leveling Chain Search Moving") < s.opts.chainSearchMoving
-	if moving {
-		s.setMoving(sim, true)
-	}
-	if sim.Log != nil {
-		s.player.Log(sim, "Leveling: looking for another mob, running: %v", moving)
-	}
-	s.after(sim, &s.chainNext, randomDuration(sim, "Leveling Chain Search", s.opts.chainSearchMin, s.opts.chainSearchMax), func(sim *Simulation) {
-		s.setMoving(sim, false)
-		if s.state != levelingCombat || s.find(sim) == nil {
-			return
-		}
-		s.pollPull(sim)
-	})
-}
-
 func (s *levelingSession) idleMob(level int32) *Unit {
 	for _, mob := range s.pool[level] {
 		if s.mobs[mob.Index].state == mobInPool {
@@ -601,22 +350,6 @@ func (s *levelingSession) idleMob(level int32) *Unit {
 		}
 	}
 	return nil
-}
-
-// arrive: the mob reached us and starts swinging, its first swing anywhere in its timer.
-func (s *levelingSession) arrive(sim *Simulation, mob *Unit) {
-	m := &s.mobs[mob.Index]
-	if m.state != mobRunning {
-		return
-	}
-	m.state, m.arrival = mobArrived, nil
-	aa := &mob.AutoAttacks
-	swing := DurationFromSeconds(aa.MH().SwingSpeed / mob.SwingSpeed())
-	aa.mh.swingAt = sim.CurrentTime + time.Duration(sim.RandomFloat("Leveling First Swing")*float64(swing))
-	aa.EnableAutoSwing(sim)
-	if s.player.CurrentTarget == mob {
-		s.setPlayerDistance(sim, levelingMeleeRange)
-	}
 }
 
 // retarget makes the mob our target, in melee range once it has reached us.
@@ -649,7 +382,7 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	active := s.env.Encounter.ActiveTargetUnits
 	if len(active) == 0 {
 		cancel(sim, &s.chainNext)
-		s.setMoving(sim, false)
+		s.move(sim, goalNone, 0, 0, nil)
 		s.outOfCombat(sim)
 		return
 	}
@@ -660,7 +393,7 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	} else {
 		s.retarget(sim, target)
 	}
-	s.chainSearch(sim)
+	s.chainSearch(sim, true)
 }
 
 // pulled is whether the mob is one we pulled, on its way or on us.
@@ -675,8 +408,8 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 	if m.arrival != nil {
 		m.arrival.Cancel(sim)
 	}
-	if s.walkTo == mob {
-		s.setMoving(sim, false)
+	if s.goal == goalMob && s.goalMob == mob {
+		s.move(sim, goalNone, 0, 0, nil)
 	}
 	*m = levelingMob{}
 	mob.enabled = false
@@ -795,9 +528,12 @@ func (s *levelingSession) onPlayerDeath(sim *Simulation) {
 	s.deaths++
 	s.setState(sim, levelingDead)
 	cancel(sim, &s.chainNext)
-	s.setMoving(sim, false)
+	s.move(sim, goalNone, 0, 0, nil)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: died, back in %s", s.opts.deathPenalty)
+	}
+	for _, effect := range s.character.levelingDeathEffects {
+		effect(sim)
 	}
 	enc := &s.env.Encounter
 	for len(enc.ActiveTargetUnits) > 0 {
@@ -838,7 +574,6 @@ func (s *levelingSession) revive(sim *Simulation) {
 func (s *levelingSession) doneIteration(sim *Simulation) {
 	s.seconds[s.state] += sim.CurrentTime - s.stateSince
 	s.stateSince = sim.CurrentTime
-	s.setMoving(sim, false)
 	kills, xp := s.kills, s.xp
 	for _, mob := range s.env.Encounter.ActiveTargetUnits {
 		share := 1 - mob.CurrentHealth()/mob.MaxHealth()
@@ -882,66 +617,4 @@ func (s *levelingSession) metrics() *proto.LevelingMetrics {
 		m.MobsPerPull = a.pulled / a.pulls
 	}
 	return m
-}
-
-// The leveling session's view of where things are, for spells and totems (0 and in reach of
-// everything outside a session).
-
-// IsLeveling is whether this is a leveling session.
-func (encounter *Encounter) IsLeveling() bool {
-	return encounter.leveling != nil
-}
-
-// LevelingPosition is where we are along the way we run in a leveling session, 0 outside
-// one. A totem keeps the position it was dropped at.
-func (encounter *Encounter) LevelingPosition(sim *Simulation) float64 {
-	if encounter.leveling == nil {
-		return 0
-	}
-	return encounter.leveling.playerPosition(sim)
-}
-
-// LevelingDistanceFrom is how far the mob is from a point we stood at (a totem), 0 outside a
-// leveling session. A mob on us is where we are, and one still on its way or waiting to be
-// pulled is that much further, taken on the far side.
-func (encounter *Encounter) LevelingDistanceFrom(sim *Simulation, point float64, mob *Unit) float64 {
-	s := encounter.leveling
-	if s == nil {
-		return 0
-	}
-	return math.Abs(s.playerPosition(sim)-point) + max(0, s.distance(sim, mob)-levelingMeleeRange)
-}
-
-// LevelingDistance is how far the target is from us in a leveling session, 0 outside one.
-func (encounter *Encounter) LevelingDistance(sim *Simulation, target *Unit) float64 {
-	if encounter.leveling == nil || target == nil || target.Type != EnemyUnit {
-		return 0
-	}
-	return encounter.leveling.distance(sim, target)
-}
-
-// LevelingPullTarget is the mob we found and haven't pulled, nil when there isn't one or
-// a spell on its way to it already pulls it.
-func (encounter *Encounter) LevelingPullTarget() *Unit {
-	s := encounter.leveling
-	if s == nil || s.found == nil || s.mobs[s.found.Index].incoming {
-		return nil
-	}
-	return s.found
-}
-
-// LevelingMobCounts are the mobs we pulled that are still coming and those on us.
-func (encounter *Encounter) LevelingMobCounts() (running, onUs int) {
-	if encounter.leveling == nil {
-		return 0, len(encounter.ActiveTargetUnits)
-	}
-	for _, mob := range encounter.ActiveTargetUnits {
-		switch encounter.leveling.mobs[mob.Index].state {
-		case mobRunning:
-			running++
-		case mobArrived:
-			onUs++
-		}
-	}
-	return
 }

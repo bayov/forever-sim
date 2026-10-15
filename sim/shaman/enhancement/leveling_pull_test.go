@@ -37,9 +37,9 @@ var (
 	completedLine = regexp.MustCompile(`\] \[ \(#1\)\] Completed cast \{SpellID: (\d+)\}`)
 )
 
-// TestLevelingPulls pulls with the rotation's spells: a mob found within 20 yards with a
-// shock from where we stand, one 20 to 30 yards away with a bolt, and one further away by
-// walking up until the shock reaches it. The bolt's mob only notices us once the bolt hits
+// TestLevelingPulls pulls with the rotation's spells: a mob found within its aggro radius
+// notices us at once, one 20 to 30 yards away takes a bolt, and we walk up to one further
+// away until the shock reaches it or it notices us. The bolt's mob only notices us once the bolt hits
 // it, and then runs to us from where it stood. While we search we run, so the rotation
 // starts no hard cast.
 func TestLevelingPulls(t *testing.T) {
@@ -76,14 +76,16 @@ func TestLevelingPulls(t *testing.T) {
 			}
 		case pulledLine.MatchString(line):
 			p := pulledLine.FindStringSubmatch(line)
-			mob, runIn := p[1], parseRunIn(p[3], p[4])
-			from, _ := strconv.Atoi(p[2])
-			stood := found[mob]
-			wantRunIn := float64(from-5) / 7.5
-			if runIn < wantRunIn*0.85 || runIn > wantRunIn*1.15 {
-				t.Errorf("at %.2f %s runs in %.2f sec from %d yards, want about %.2f", at, mob, runIn, from, wantRunIn)
-			}
+			mob, runIn := p[1], parseRunIn(p[4], p[5])
+			from, _ := strconv.Atoi(p[3])
+			stood, radius := found[mob], aggroRadius(p[2])
+			checkRunIn(t, at, mob, from, runIn)
 			switch {
+			case stood <= radius:
+				kinds["noticed"]++
+				if from != stood {
+					t.Errorf("at %.2f %s found %d yards away, in its %d yard aggro radius, was pulled from %d, want at once", at, mob, stood, radius, from)
+				}
 			case stood <= 20:
 				kinds["shock"]++
 				if from != stood {
@@ -97,14 +99,14 @@ func TestLevelingPulls(t *testing.T) {
 				}
 			default:
 				kinds["walk"]++
-				if from > 20 {
-					t.Errorf("at %.2f %s found %d yards away was pulled from %d, want walking up to shock range", at, mob, stood, from)
+				if from > max(20, radius) {
+					t.Errorf("at %.2f %s found %d yards away was pulled from %d, want walking up to shock range or its %d yard aggro radius", at, mob, stood, from, radius)
 				}
 			}
 		}
 	}
 	t.Logf("pulls: %v", kinds)
-	for _, kind := range []string{"shock", "bolt", "walk"} {
+	for _, kind := range []string{"noticed", "bolt", "walk"} {
 		if kinds[kind] < 2 {
 			t.Errorf("%d %s pulls in the session, want a few of each: %v", kinds[kind], kind, kinds)
 		}
@@ -186,7 +188,7 @@ func TestLevelingChainPulls(t *testing.T) {
 			}
 		case pulledLine.MatchString(line):
 			p := pulledLine.FindStringSubmatch(line)
-			if from, _ := strconv.Atoi(p[2]); from > 20 && len(inCombat) > 0 {
+			if from, _ := strconv.Atoi(p[3]); from > 21 && len(inCombat) > 0 {
 				chainBolts++
 			}
 			inCombat[p[1]] = true
@@ -205,5 +207,75 @@ func TestLevelingChainPulls(t *testing.T) {
 	}
 	if mpp := result.EncounterMetrics.Leveling.MobsPerPull; mpp < 1.7 || mpp > 2 {
 		t.Errorf("%.2f mobs a pull with pack size 2", mpp)
+	}
+}
+
+// TestLevelingLookForMob: the rotation looks for another mob only while we're above 70%
+// health with fewer than 3 mobs pulled, and shocks it or walks up to it. Pulls take as many
+// mobs as that allows, not a fixed number.
+func TestLevelingLookForMob(t *testing.T) {
+	rotation := `{"type":"TypeAPL","priorityList":[
+		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":8008}}}},
+		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"levelingDistance":{"targetUnit":{"type":"PullTarget"}}},"rhs":{"const":{"val":"20"}}}},"castSpell":{"spellId":{"spellId":8042},"target":{"type":"PullTarget"}}}},
+		{"action":{"levelingWalkToPullTarget":{}}},
+		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"70%"}}}},{"cmp":{"op":"OpLt","lhs":{"math":{"op":"OpAdd","lhs":{"levelingMobsOnUs":{}},"rhs":{"levelingMobsRunningIn":{}}}},"rhs":{"const":{"val":"3"}}}}]}},"levelingLookForMob":{}}}
+	]}`
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -4}, 1), rotation)
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	pullSizes := map[int]int{}
+	inPull := 0
+	logLines(t, result.Logs, func(at float64, line string) {
+		switch {
+		case pulledLine.MatchString(line):
+			inPull++
+		case searchingLine.MatchString(line), strings.Contains(line, "Leveling: died"):
+			if inPull > 0 {
+				pullSizes[inPull]++
+			}
+			inPull = 0
+		}
+	})
+	t.Logf("pulls by mobs taken: %v, %.2f mobs a pull", pullSizes, result.EncounterMetrics.Leveling.MobsPerPull)
+	if pullSizes[1] == 0 || pullSizes[2]+pullSizes[3] == 0 {
+		t.Errorf("pulls by mobs taken %v, want some single and some chain pulls", pullSizes)
+	}
+	for size := range pullSizes {
+		if size > 3 {
+			t.Errorf("a pull took %d mobs, but the rotation looks only while fewer than 3 are pulled", size)
+		}
+	}
+}
+
+// TestLevelingWalkIntoBoltRange: the rotation walks up to a mob only until it's 30 yards
+// away, then bolts it, so every pull of a mob found further away comes from 30 yards.
+func TestLevelingWalkIntoBoltRange(t *testing.T) {
+	rotation := `{"type":"TypeAPL","priorityList":[
+		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":8008}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":403},"target":{"type":"PullTarget"}}}},
+		{"action":{"levelingWalkToPullTarget":{"within":{"const":{"val":"30"}}}}}
+	]}`
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), rotation)
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	found := map[string]int{}
+	far := 0
+	logLines(t, result.Logs, func(at float64, line string) {
+		if f := foundLine.FindStringSubmatch(line); f != nil {
+			found[f[1]], _ = strconv.Atoi(f[2])
+		} else if p := pulledLine.FindStringSubmatch(line); p != nil {
+			from, _ := strconv.Atoi(p[3])
+			if found[p[1]] > 30 {
+				far++
+				if from != 30 {
+					t.Errorf("at %.2f %s found %d yards away was pulled from %d, want 30", at, p[1], found[p[1]], from)
+				}
+			}
+		}
+	})
+	if far < 3 {
+		t.Errorf("%d mobs found beyond 30 yards, want a few", far)
 	}
 }
