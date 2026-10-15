@@ -378,6 +378,7 @@ SETUP_ALIAS = {'goblin sapper': 'Goblin Sapper Charge', 'explosive goblin land m
 # by the chip's value with any "(improved)" dropped. Forever's own ids where the UI uses them (Curse of the Elements, the 25xxxx consumables),
 # and the rank the sim casts where Forever's launch lacks the top one (Battle Shout 6, Strength of Earth 4, Grace of Air 2: Ahn'Qiraj books).
 SETUP_IDS = {
+    'Scroll Of Imbue Greater Flame': ('item', 277500), 'Scroll Of Imbue Greater Frost': ('item', 277501), 'Scroll Of Imbue Precision': ('item', 277502),
     'Elixir Of Greater Agility': ('item', 9187), 'Elixir Of The Mongoose': ('item', 13452), 'Juju Might': ('item', 12460),
     'Conjured Demonic Rune': ('item', 12662), 'Conjured Rogue Thistle Tea': ('item', 7676), 'Major Frenzy Potion': ('item', 250943),
     'Major Mana Potion': ('item', 13444), 'Major Spellblasting Potion': ('item', 250937), 'Mighty Rage Potion': ('item', 13442),

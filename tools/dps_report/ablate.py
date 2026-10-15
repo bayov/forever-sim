@@ -47,6 +47,9 @@ def entries(req):
             else:
                 txt = words(k) + (' (improved)' if v == 'TristateEffectImproved' else '' if v in (True, 'TristateEffectRegular') else f' ({v})')
             out.append((cat, txt, holder, k))
+    mo = (pl.get('mage') or {}).get('options') or {}
+    if mo.get('staffImbue'):  # a mage's staff imbue scroll is a class option, shown with the consumables
+        out.append(('Consumes', 'Staff Imbue: ' + words('ScrollOf' + mo['staffImbue']), ('mage', 'options'), 'staffImbue'))
     for pk in ('profession1', 'profession2'):
         if pl.get(pk):
             out.append(('Professions', words(pl[pk]), ('player', pk), None))
@@ -59,7 +62,7 @@ def drop(req, holder, k):
     if k is None:
         pl.pop(holder[1], None)
         return r
-    obj = {'player': pl, 'raid': r['raid'], 'party': r['raid']['parties'][0]}[holder[0]][holder[1]]
+    obj = {'player': pl, 'raid': r['raid'], 'party': r['raid']['parties'][0], 'mage': pl.get('mage') or {}}[holder[0]][holder[1]]
     obj.pop(k)
     return r
 

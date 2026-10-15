@@ -216,7 +216,9 @@ SETUP_ICON = {'manaSpringTotem': 'spell_nature_manaregentotem', 'windfuryTotem':
               'wintersChill': 'spell_frost_chillingblast', 'shadowWeaving': 'spell_shadow_blackplague', 'stormstrike': 'spell_holy_sealofmight'}
 
 
-CONSUME_ICON = {'flask of supreme power': 'inv_potion_41', 'flask of the titans': 'inv_potion_62', 'flask of distilled wisdom': 'inv_potion_97',
+CONSUME_ICON = {'scroll of imbue greater flame': 'inv_10_inscription2_repcontracts_scroll_02_uprez_color2',
+                'scroll of imbue greater frost': 'inv_10_inscription2_repcontracts_scroll_02_uprez',
+                'scroll of imbue precision': 'inv_10_inscription2_repcontracts_scroll_02_uprez_color4', 'flask of supreme power': 'inv_potion_41', 'flask of the titans': 'inv_potion_62', 'flask of distilled wisdom': 'inv_potion_97',
                 'elixir of the mongoose': 'inv_potion_32', 'elixir of greater agility': 'inv_potion_94', 'juju might': 'inv_misc_monsterscales_07',
                 'juju power': 'inv_misc_monsterscales_11', 'elixir of ferocity': 'inv_potion_61', 'greater arcane elixir': 'inv_potion_25',
                 'elixir of shadow power': 'inv_potion_46', 'elixir of greater firepower': 'inv_potion_60', 'elixir of firepower': 'inv_potion_33',
@@ -271,7 +273,7 @@ CONSUME_SLOT = {'flask': ('Flask', 1), 'agilityElixir': ('Elixir', 2), 'strength
                 'spiritElixir': ('Elixir', 2), 'attackPowerBuff': ('Elixir', 2), 'firePowerBuff': ('Elixir', 2), 'frostPowerBuff': ('Elixir', 2),
                 'naturePowerBuff': ('Elixir', 2), 'shadowPowerBuff': ('Elixir', 2), 'spellPowerBuff': ('Elixir', 2), 'manaRegenElixir': ('Elixir', 2),
                 'zanzaBuff': ('Elixir', 2), 'food': ('Food', 3), 'dragonBreathChili': ('Food', 3), 'defaultPotion': ('Potion', 4),
-                'mainHandImbue': ('Weapon', 5), 'offHandImbue': ('Weapon', 5), 'sapperExplosive': ('Explosive', 6), 'fillerExplosive': ('Explosive', 6),
+                'mainHandImbue': ('Weapon', 5), 'offHandImbue': ('Weapon', 5), 'staffImbue': ('Weapon', 5), 'sapperExplosive': ('Explosive', 6), 'fillerExplosive': ('Explosive', 6),
                 'defaultConjured': ('Rune', 7)}
 
 
@@ -452,6 +454,9 @@ for o in outs:
     # a rogue's poisons are class imbues in its options (beside a stone in the consumes' imbue slot)
     _ro = (json.load(open(os.path.join(D, 'req', bid + '.json')))['raid']['parties'][0]['players'][0].get('rogue') or {}).get('options') or {}
     _poisons = [('mainHandImbue', _ro['mainHandPoison']) for _ in [0] if _ro.get('mainHandPoison')] + [('offHandImbue', _ro['offHandPoison']) for _ in [0] if _ro.get('offHandPoison')]
+    # a mage's staff imbue scroll is a class option too, on top of the oil
+    _mo = (json.load(open(os.path.join(D, 'req', bid + '.json')))['raid']['parties'][0]['players'][0].get('mage') or {}).get('options') or {}
+    _poisons += [('staffImbue', 'ScrollOf' + _mo['staffImbue'])] if _mo.get('staffImbue') else []
     for cat, obj in (('Consumes', o['setup']['consumes']), ('Consumes', dict(_poisons)), ('Self buffs', o['setup']['playerBuffs']), ('Raid buffs', o['setup']['raidBuffs']),
                      ('Party buffs', o['setup']['partyBuffs']), ('Debuffs', o['setup']['debuffs'])):
         for k, v in (obj or {}).items():
