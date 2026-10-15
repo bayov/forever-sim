@@ -78,7 +78,7 @@ func (druidFeral) Knobs() []Knob {
 		// once it has less than ffRefresh seconds left. ffPos 0 puts it ahead of everything but the
 		// cooldowns, 1 after Rip.
 		{Name: "faerieFire", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "ffRefresh", Default: 1, Min: 0, Max: 4, Step: 1},
+		{Name: "ffRefresh", Default: 1, Min: 0, Max: 8, Step: 1},
 		{Name: "ffPos", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }

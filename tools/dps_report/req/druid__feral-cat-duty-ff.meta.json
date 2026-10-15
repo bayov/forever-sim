@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 712.3,
-    "source": "PR #31 (Faerie Fire duty, standards 23)"
+    "dps": 712.4,
+    "source": "Faerie Fire (Feral) refreshed at 7 s (rotation audit pass 20)"
   },
   "verify": {
-    "dps": 712.25,
+    "dps": 712.35,
     "stderr": 0.15,
     "iters": 20000,
     "ok": true,
@@ -39,7 +39,7 @@
   "rotation": [
     "Opener: plain Cat Form (no Stealth/Prowl or Ravage)",
     "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket; Elune's Light outside Berserk",
-    "Faerie Fire (Feral) from Cat Form first after the cooldowns, again once it has under 1 s left (free, 1 s GCD, 6 s cooldown)",
+    "Faerie Fire (Feral) from Cat Form first after the cooldowns, again once it has under 7 s left, so a miss gets a retry (free, 1 s GCD, 6 s cooldown)",
     "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6 s or more)",
     "Ferocious Bite at any combo points in the last 2 s",
     "Rip at 4+ combo points when it is down (not in the last 8 s)",
