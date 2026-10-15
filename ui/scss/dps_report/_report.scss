@@ -3340,12 +3340,6 @@ ol.fv-list li::marker {
 	color: var(--color-ok);
 }
 
-#asm-card .fv-note .exp,
-#method-asm-card .fv-note .exp,
-.fv-asm-tbl .exp {
-	color: var(--fv-gold);
-}
-
 .fv-asm-cls {
 	border-top: var(--cds-border);
 
@@ -3455,10 +3449,6 @@ ol.fv-list li::marker {
 
 	.def {
 		color: var(--color-ok);
-	}
-
-	.exp {
-		color: var(--fv-gold);
 	}
 }
 
@@ -3604,7 +3594,7 @@ ol.fv-list li::marker {
 	color: var(--color-fg-muted);
 }
 
-// A setting's head: its name, its Low / Expected / High tag with the expected star, and what the ranking uses.
+// A setting's head: its name and its tag, Default (what the ranking uses) or Low / Mid / High.
 .fv-asm-col {
 	display: grid;
 	grid-template-rows: 1fr auto auto;
@@ -3664,7 +3654,6 @@ ol.fv-list li::marker {
 		b,
 		small,
 		.def,
-		.exp,
 		.fv-asm-use.now {
 			color: var(--fv-sel-fg);
 		}

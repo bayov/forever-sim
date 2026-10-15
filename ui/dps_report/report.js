@@ -2779,12 +2779,6 @@ export function startReport(dash) {
     persist(); hideTip(); render();
   };
   $('#asm-reset').addEventListener('click', (e) => { e.stopPropagation(); st.asm = {}; persist(); hideTip(); render(); });
-  $('#asm-expected').addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!asmReady()) return;
-    st.asm = Object.fromEntries(rowsOf('assumptions').filter((a) => a.status === 'live' && a.expectedSetting !== a.defaultSetting).map((a) => [a.key, a.expectedSetting]));
-    persist(); hideTip(); render();
-  });
   const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
   // Effects are each setting's change against the presets' own setting at 180 s, from `sens`. A signed number takes
   // the ok or bad colour; a range over several presets runs from the smaller change to the larger.
@@ -2819,10 +2813,11 @@ export function startReport(dash) {
   };
   // A reference row: the only value considered, which the presets use, so there is nothing to compare or pick.
   const asmRef = (a) => arr(a.settings).length === 1;
-  const REF_CAP = 'Reference: the only value considered, so the ranking uses it and there is nothing to compare.';
+  const REF_CAP = 'Reference: the only value considered, so it is the default and there is nothing to compare.';
   const asmRefLine = (a) => arr(a.settings).map((x) => el('p', { class: 'fv-asm-ref' }, el('b', { text: x.label }), ...asmMarks(a, x),
     x.value && x.value !== x.label ? el('span', { text: ` · ${x.value}` }) : null));
-  const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' ●' }) : null, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null];
+  // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
+  const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' · default' }) : null];
   // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
   // 180 s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
   // and the DPS under it. The presets' column is the zero point ("–") whichever column is picked, so the numbers never
@@ -2830,19 +2825,18 @@ export function startReport(dash) {
   const ASM_CAP = 'DPS change at 180 s if this turns out to be true, vs the current ranking';
   const asmHead = (a, x, cur) => [
     el('b', { text: x.label }),
-    el('small', { class: 'fv-asm-tag' }, SEG_NAME[x.id] || x.id, x.id === a.expectedSetting ? el('span', { class: 'exp', text: ' ★' }) : null),
-    x.id === a.defaultSetting ? el('small', { class: 'fv-asm-use' }, el('span', { class: 'def', text: '● ' }), 'ranking uses this')
-      : cur && x.id === cur ? el('small', { class: 'fv-asm-use now', text: 'now applied' }) : null,
+    x.id === a.defaultSetting ? el('small', { class: 'fv-asm-tag def', text: 'Default' }) : el('small', { class: 'fv-asm-tag', text: SEG_NAME[x.id] || x.id }),
+    cur && x.id === cur && x.id !== a.defaultSetting ? el('small', { class: 'fv-asm-use now', text: 'now applied' }) : null,
   ];
   const asmMatrix = (a, cur, onPick) => {
     const live = a.status === 'live' && arr(a.sens).length > 0, sets = arr(a.settings);
     const dpsOf = (sid, ids) => arr(a.sens).filter((x) => x.setting === sid && ids.includes(x.build)).map((x) => +x.dps);
-    const zero = () => el('span', { class: 'fv-asm-zero', title: 'No change: the ranking uses this', text: '–' });
+    const zero = () => el('span', { class: 'fv-asm-zero', title: 'No change: this is the default', text: '–' });
     const col = (x) => [x.id === a.defaultSetting ? 'is-def' : '', onPick && x.id === cur ? 'is-cur' : ''].filter(Boolean).join(' ') || null;
     const head = el('tr', {}, el('th', { class: 'fv-asm-corner', scope: 'col' }, live ? 'Spec' : ''), ...sets.map((x) => {
       if (!onPick) return el('th', { scope: 'col', class: col(x) }, el('div', { class: 'fv-asm-col' }, ...asmHead(a, x)));
       const bt = el('button', { class: 'fv-asm-col', 'data-setting': x.id, 'aria-pressed': String(x.id === cur),
-        'aria-label': `${x.label} (${SEG_NAME[x.id] || x.id})${x.id === a.defaultSetting ? ', the ranking uses this' : ''}` }, ...asmHead(a, x, cur));
+        'aria-label': `${x.label} (${SEG_NAME[x.id] || x.id})${x.id === a.defaultSetting ? ', default' : ''}` }, ...asmHead(a, x, cur));
       if (!live) bt.disabled = true;
       bt.addEventListener('click', (e) => { e.stopPropagation(); onPick(x.id); });
       return el('th', { scope: 'col', class: col(x) }, bt);
@@ -2860,8 +2854,7 @@ export function startReport(dash) {
       el('b', { text: x.label }), el('span', { class: 'fv-tip-m', text: ` ${SEG_NAME[x.id] || ''}` }), ...asmMarks(a, x),
       el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })))),
     a.source ? tipNote(`Source: ${a.source}`) : null,
-    tipNote(el('span', { class: 'def', text: '●' }), ' the ranking uses this · ', el('span', { class: 'exp', text: '★' }), ' expected',
-      a.status === 'pending' ? ' · not simulated yet' : a.status === 'inert' ? ' · no longer applies' : ''),
+    a.status === 'pending' ? tipNote('Not simulated yet') : a.status === 'inert' ? tipNote('No longer applies') : null,
   ];
   const openMethodAsm = () => { showTab('method'); requestAnimationFrame(() => $('#method-asm-card')?.scrollIntoView({ block: 'start' })); };
   const drawAsm = () => {
@@ -2869,8 +2862,6 @@ export function startReport(dash) {
     $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
     if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
     const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen)), card = $('#asm-card');
-    // "All expected" only does something while some assumption's expected setting differs from the presets' own.
-    $('#asm-expected').hidden = !As.some((a) => a.status === 'live' && a.expectedSetting !== a.defaultSetting);
     host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
       const changed = as.filter((a) => st.asm?.[a.key]).length, top = d3.max(as, asmImpact);
       const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
@@ -2922,7 +2913,7 @@ export function startReport(dash) {
           live ? el('p', { class: 'fv-asm-cap', text: ASM_CAP }) : ref ? el('p', { class: 'fv-asm-cap', text: REF_CAP }) : null,
           live ? asmMatrix(a, a.defaultSetting, null) : null,
           el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
-            ` (${[SEG_NAME[x.id] || x.id, x.id === a.defaultSetting ? 'the ranking uses this' : null, x.id === a.expectedSetting && x.id !== 'expected' ? 'expected' : null].filter(Boolean).join(', ')}): ${x.value ? x.value + '. ' : ''}${x.rationale}`))),
+            ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value ? x.value + '. ' : ''}${x.rationale}`))),
           a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
       }))]));
   };
