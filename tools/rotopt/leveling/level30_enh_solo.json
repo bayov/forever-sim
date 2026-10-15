@@ -1,0 +1,110 @@
+{
+ "raid": {
+  "parties": [
+   {
+    "players": [
+     {
+      "race": "RaceOrc",
+      "class": "ClassShaman",
+      "equipment": {
+       "items": [
+        {
+         "id": 3020
+        },
+        {
+         "id": 13084,
+         "enchant": 1249057
+        },
+        {
+         "id": 6697
+        },
+        {
+         "id": 7460,
+         "randomSuffix": 936,
+         "enchant": 13419
+        },
+        {
+         "id": 273026,
+         "enchant": 866
+        },
+        {
+         "id": 9428,
+         "randomSuffix": 176,
+         "enchant": 1248498
+        },
+        {
+         "id": 277223,
+         "enchant": 13887
+        },
+        {
+         "id": 252461
+        },
+        {
+         "id": 6690,
+         "enchant": 1255124
+        },
+        {
+         "id": 15142,
+         "randomSuffix": 942,
+         "enchant": 13637
+        },
+        {
+         "id": 281635
+        },
+        {
+         "id": 13097
+        },
+        {},
+        {},
+        {
+         "id": 280604,
+         "enchant": 13695
+        },
+        {},
+        {
+         "id": 249398
+        }
+       ]
+      },
+      "consumes": {
+       "mainHandImbue": "RockbiterWeapon"
+      },
+      "talentsString": "-0540320010051122",
+      "level": 30,
+      "bonusTalentPoints": 5,
+      "profession1": "Engineering",
+      "profession2": "Leatherworking",
+      "rotation": {
+       "type": "TypeAPL"
+      },
+      "reactionTimeMs": 200,
+      "channelClipDelayMs": 50,
+      "distanceFromTarget": 5,
+      "enhancementShaman": {
+       "options": {
+        "syncType": "Auto",
+        "shamanImbue": "WindfuryWeapon"
+       }
+      },
+      "inFrontOfTarget": true
+     }
+    ],
+    "buffs": {}
+   }
+  ],
+  "buffs": {},
+  "debuffs": {},
+  "tanks": [
+   {
+    "type": "Player"
+   }
+  ]
+ },
+ "encounter": {
+  "leveling": {}
+ },
+ "simOptions": {
+  "iterations": 500,
+  "randomSeed": 1
+ }
+}

@@ -395,6 +395,9 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	if len(active) == 0 {
 		cancel(sim, &s.chainNext)
 		s.move(sim, goalNone, Vec2{}, 0, nil)
+		if sim.Log != nil {
+			s.player.Log(sim, "Leveling: out of combat")
+		}
 		s.outOfCombat(sim)
 		return
 	}

@@ -207,6 +207,9 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	if sim.Log != nil && i == 0 {
 		apl.unit.Log(sim, "No available actions!")
 	}
+	if i == 0 && sim.Encounter.leveling != nil {
+		sim.Encounter.leveling.onRotationIdle(sim, apl.unit)
+	}
 
 	gcdReady := apl.unit.GCD.IsReady(sim)
 	if gcdReady {

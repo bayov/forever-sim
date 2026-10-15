@@ -81,7 +81,14 @@ func main() {
 	outName := flag.String("name", "", "file name base for -out, defaults to the template name")
 	breakdown := flag.Bool("breakdown", false, "print the damage of every spell and attack for the starting knobs at the first fight length, no search")
 	timeline := flag.Bool("timeline", false, "print one iteration's cooldown and finisher casts for the starting knobs at the first fight length, no search")
+	objective := flag.String("objective", "mobs", "leveling settings: what to maximize, mobs (killed in a session) or xp (an hour, for comparing mob levels)")
+	mobOffset := flag.Int("mob-offset", 0, "leveling settings: the mobs' level less ours (the session's mob_level_offset)")
+	session := flag.Bool("session", false, "leveling settings: print one session's pulls, rests and searches for the starting knobs, no search")
+	sessionSeed := flag.Int64("session-seed", 1, "leveling settings: the random seed of the -session, for another sample session")
+	seed := flag.Int64("seed", 1, "random seed of the scoring runs, to check a gain holds on other fights or sessions")
 	flag.Parse()
+	simSeed = *seed
+	levelingObjective = *objective
 
 	log.SetOutput(io.Discard)
 	sim.RegisterAll()
@@ -174,6 +181,20 @@ func main() {
 	for _, d := range strings.Split(*durs, ",") {
 		v, _ := strconv.ParseFloat(d, 64)
 		durations = append(durations, v)
+	}
+	if leveling := setup.request.Encounter.GetLeveling(); leveling != nil {
+		// A session has its own length: one run per candidate.
+		durations = durations[:1]
+		if *mobOffset != 0 {
+			leveling.MobLevelOffset = int32(*mobOffset)
+		}
+		if *session {
+			fmt.Print(setup.session(template.Build(start), *sessionSeed))
+			return
+		}
+	} else if *session || *mobOffset != 0 {
+		fmt.Fprintln(os.Stderr, "-session and -mob-offset need leveling settings (an encounter with leveling options)")
+		os.Exit(2)
 	}
 
 	if *printStats {
@@ -358,7 +379,7 @@ func main() {
 		suffix    string
 	}
 	var jobs []job
-	if *combined {
+	if *combined || setup.request.Encounter.GetLeveling() != nil {
 		jobs = []job{{durations, ""}}
 	} else {
 		for _, d := range durations {

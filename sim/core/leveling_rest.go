@@ -26,20 +26,23 @@ type levelingRest struct {
 	refill bool
 }
 
-// ready: out of combat, deciding. We look again every levelingPullPoll.
+// ready: out of combat, deciding. We search once the rotation has looked with its global
+// cooldown up and found nothing to do (onRotationIdle), or after levelingReadyAtMost.
 func (s *levelingSession) ready(sim *Simulation) {
 	s.setState(sim, levelingReady)
 	s.move(sim, goalNone, Vec2{}, 0, nil)
-	s.after(sim, &s.next, levelingPullPoll, s.pollReady)
+	s.after(sim, &s.next, levelingReadyAtMost, s.search)
 }
 
-func (s *levelingSession) pollReady(sim *Simulation) {
-	// An idle rotation waits 50 ms at a time on its global cooldown, which isn't a cast.
-	if s.player.IsCasting(sim) || s.player.GCD.TimeToReady(sim) > 100*time.Millisecond {
-		s.after(sim, &s.next, levelingPullPoll, s.pollReady)
+// A rotation that keeps acting out of combat still searches after this.
+const levelingReadyAtMost = 10 * time.Second
+
+// onRotationIdle: the rotation looked and did nothing. Ready, we go on to the next pull.
+func (s *levelingSession) onRotationIdle(sim *Simulation, unit *Unit) {
+	if unit != s.player || s.state != levelingReady || s.player.IsCasting(sim) {
 		return
 	}
-	s.search(sim)
+	s.after(sim, &s.next, 0, s.search)
 }
 
 // outOfCombatState is whether we're out of combat and free to rest or bandage.

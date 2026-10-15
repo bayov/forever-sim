@@ -95,9 +95,15 @@ type result struct {
 	// Health and armor without buffs or consumes, as the character sheet shows them.
 	// Only the gear search fills them in, when it is asked to.
 	health, armor float64
+
+	// A leveling session's results (leveling.go), where dps above is the score.
+	leveling *proto.LevelingMetrics
 }
 
 func (r result) String() string {
+	if r.leveling != nil {
+		return levelingString(r)
+	}
 	out := fmt.Sprintf("%.1f(%.1f)", r.dps, r.stderr)
 	if r.mana != 0 {
 		out += fmt.Sprintf(" mana %.0f(%.0f) tto %.0fs", r.mana, r.manaStderr, r.tto)
@@ -115,11 +121,14 @@ func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) 
 	request.Raid.Parties[0].Players[0].Rotation = rot
 	request.Encounter.Duration = duration
 	request.SimOptions.Iterations = iterations
-	request.SimOptions.RandomSeed = 1
+	request.SimOptions.RandomSeed = simSeed
 
 	res := core.RunRaidSimConcurrent(request)
 	if res.Error != nil {
 		return result{}, fmt.Errorf("%s", res.Error.Message)
+	}
+	if m := res.EncounterMetrics.GetLeveling(); m != nil {
+		return levelingResult(m, iterations), nil
 	}
 	player := res.RaidMetrics.Parties[0].Players[0]
 	n := math.Sqrt(float64(iterations))
