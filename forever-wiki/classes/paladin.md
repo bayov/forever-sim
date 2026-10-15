@@ -111,6 +111,7 @@ Wowhead's Forever database (2026-09-20) has the trainer abilities, see [../sim-s
   - Fills the Paladin with the spirit of a crusader for 30 sec, granting 157 melee attack power. The Paladin also attacks 40% faster, but deals less damage with each attack. Only one Seal can be active on the Paladin at any one time.
 
 Unleashing this Seal's energy will judge an enemy for 40 sec, increasing Holy damage taken by up to 92. Your melee strikes will refresh the spell's duration. Only one Judgement per Paladin can be active at any one time.
+  - Note (sim, 2026-10-15): rank 6 is 161 Holy damage taken at level 60 (140 x 1.15). Judgement of Righteousness and Judgement of Command leave no debuff, so a Retribution paladin keeps its Judgement of the Crusader up while judging its damage seals; the Level 60 presets get it from the raid, and the "Crusader duty" presets cast it themselves (standards 23).
   - Classic: Fills the Paladin with the spirit of a crusader for 30 sec, granting 325 melee attack power. The Paladin also attacks 40% faster, but deals less damage with each attack. Only one Seal can be active on the Paladin at any one time.
 
 Unleashing this Seal's energy will judge an enemy for 10 sec, increasing Holy damage taken by up to 140. Your melee strikes will refresh the spell's duration. Only one Judgement per Paladin can be active at any one time.
