@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 var TalentTreeSizes = [3]int{16, 18, 16}
@@ -119,6 +120,25 @@ func (shaman *Shaman) clearTotemWeaponBuff(sim *core.Simulation, aura *core.Aura
 		shaman.totemWeaponBuff.Activate(sim)
 	} else if shaman.RaidTotemWeaponBuff != nil {
 		shaman.RaidTotemWeaponBuff.Activate(sim)
+	}
+}
+
+// OneMainHandImbue keeps one shaman imbue on the main hand, as the game does. When the spec's
+// options pick one (ShamanImbue) and the consumes carry a different shaman imbue, the options
+// win, the way the UI moves a shaman imbue out of the consumes. Call it before NewShaman,
+// which puts the consumes' imbue on.
+func OneMainHandImbue(character *core.Character, imbue proto.WeaponImbue) {
+	if imbue == proto.WeaponImbue_WeaponImbueUnknown || character.Consumes == nil {
+		return
+	}
+	switch character.Consumes.MainHandImbue {
+	case imbue:
+		return
+	case proto.WeaponImbue_RockbiterWeapon, proto.WeaponImbue_FlametongueWeapon, proto.WeaponImbue_FrostbrandWeapon, proto.WeaponImbue_WindfuryWeapon:
+		// A copy, so the request's consumes stay as they came.
+		consumes := googleProto.Clone(character.Consumes).(*proto.Consumes)
+		consumes.MainHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		character.Consumes = consumes
 	}
 }
 

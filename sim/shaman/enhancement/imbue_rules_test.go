@@ -15,7 +15,8 @@ import (
 // Under Forever the shaman imbue and an oil or stone sit in two different places on the weapon,
 // so Rockbiter's 177.6 attack power and Brilliant Wizard Oil's 36 spell power and 1% spell crit
 // both apply. Old saved settings can still hold Rockbiter in the consumables. When the class
-// settings hold it too, its attack power only counts once.
+// settings hold it too, its attack power only counts once. The weapon takes one shaman imbue,
+// so a different one in the class settings (Windfury Weapon) takes Rockbiter's place.
 func TestOrcShamanImbueRules(t *testing.T) {
 	newShaman := func(shamanImbue, consumesImbue proto.WeaponImbue) *EnhancementShaman {
 		player := newOrcShaman(30, "", &proto.EnhancementShaman_Options{ShamanImbue: shamanImbue})
@@ -38,6 +39,7 @@ func TestOrcShamanImbueRules(t *testing.T) {
 		{"Rockbiter and Brilliant Wizard Oil", rockbiter, oil, stats.Stats{stats.AttackPower: 177.6, stats.SpellPower: 36, stats.SpellCrit: core.SpellCritRatingPerCritChance}},
 		{"Rockbiter in both", rockbiter, rockbiter, stats.Stats{stats.AttackPower: 177.6}},
 		{"Rockbiter in the consumables", proto.WeaponImbue_WeaponImbueUnknown, rockbiter, stats.Stats{stats.AttackPower: 177.6}},
+		{"Windfury in the class settings, Rockbiter in the consumables", proto.WeaponImbue_WindfuryWeapon, rockbiter, stats.Stats{}},
 	} {
 		enh := newShaman(c.shamanImbue, c.consumes)
 		for _, stat := range []stats.Stat{stats.AttackPower, stats.SpellPower, stats.SpellCrit} {

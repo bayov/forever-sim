@@ -2,7 +2,7 @@ import { SpecOptions } from '../../../core/proto_utils/utils';
 import { IndividualSimUI } from '../../individual_sim_ui';
 import { PresetBuild } from '../../preset_utils';
 import { APLRotation, APLRotation_Type } from '../../proto/apl';
-import { Consumes, Debuffs, Encounter, EquipmentSpec, HealingModel, IndividualBuffs, RaidBuffs, Spec } from '../../proto/common';
+import { Consumes, Debuffs, Encounter, EquipmentSpec, HealingModel, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
 import { IndividualSimSettings, SavedTalents } from '../../proto/ui';
 import { statNames } from '../../proto_utils/names';
 import { normalizeDebuffs } from '../../raid';
@@ -21,7 +21,12 @@ const BUILD_PARTS: Array<{ name: string; has: (build: PresetBuild) => boolean }>
 	{ name: 'Encounter', has: build => !!build.encounter?.encounter || !!build.encounter?.healingModel || build.encounter?.inFrontOfTarget !== undefined },
 	{
 		name: 'Buffs, debuffs and consumes',
-		has: build => !!build.encounter?.buffs || !!build.encounter?.raidBuffs || !!build.encounter?.debuffs || !!build.encounter?.consumes,
+		has: build =>
+			!!build.encounter?.buffs ||
+			!!build.encounter?.raidBuffs ||
+			!!build.encounter?.partyBuffs ||
+			!!build.encounter?.debuffs ||
+			!!build.encounter?.consumes,
 	},
 	{ name: 'Race', has: build => build.race !== undefined },
 	{ name: 'Level and extra talent points', has: build => build.level !== undefined || build.bonusTalentPoints !== undefined },
@@ -124,6 +129,7 @@ export class PresetConfigurationPicker extends Component {
 				if (encounter.buffs) this.simUI.player.setBuffs(eventID, encounter.buffs);
 				if (encounter.debuffs) this.simUI.sim.raid.setDebuffs(eventID, encounter.debuffs);
 				if (encounter.raidBuffs) this.simUI.sim.raid.setBuffs(eventID, encounter.raidBuffs);
+				if (encounter.partyBuffs) this.simUI.player.getParty()?.setBuffs(eventID, encounter.partyBuffs);
 				if (encounter.consumes) this.simUI.player.setConsumes(eventID, encounter.consumes);
 				if (encounter.inFrontOfTarget !== undefined) this.simUI.player.setInFrontOfTarget(eventID, encounter.inFrontOfTarget);
 			}
@@ -213,7 +219,8 @@ export class PresetConfigurationPicker extends Component {
 		const hasTanks = encounter?.tanks ? JSON.stringify(encounter.tanks) === JSON.stringify(raid.getTanks()) : true;
 		const hasBuffs =
 			(encounter?.buffs ? IndividualBuffs.equals(encounter.buffs, player.getBuffs()) : true) &&
-			(encounter?.raidBuffs ? RaidBuffs.equals(encounter.raidBuffs, raid.getBuffs()) : true);
+			(encounter?.raidBuffs ? RaidBuffs.equals(encounter.raidBuffs, raid.getBuffs()) : true) &&
+			(encounter?.partyBuffs ? PartyBuffs.equals(encounter.partyBuffs, player.getParty()?.getBuffs() ?? PartyBuffs.create()) : true);
 		// The raid turns some debuffs off, see normalizeDebuffs, so a preset that has them still matches.
 		const hasDebuffs = encounter?.debuffs ? Debuffs.equals(normalizeDebuffs(encounter.debuffs, this.simUI.sim.getRuleset()), raid.getDebuffs()) : true;
 		const hasConsumes = encounter?.consumes ? Consumes.equals(encounter.consumes, player.getConsumes()) : true;

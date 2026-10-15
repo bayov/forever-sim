@@ -28,6 +28,7 @@ func RegisterEnhancementShaman() {
 func NewEnhancementShaman(character *core.Character, options *proto.Player) *EnhancementShaman {
 	enhOptions := options.GetEnhancementShaman()
 
+	shaman.OneMainHandImbue(character, enhOptions.Options.ShamanImbue)
 	enh := &EnhancementShaman{
 		Shaman: shaman.NewShaman(character, options.TalentsString),
 	}

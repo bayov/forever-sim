@@ -11,6 +11,7 @@ import {
 	Faction,
 	HealingModel,
 	IndividualBuffs,
+	PartyBuffs,
 	Profession,
 	Race,
 	RaidBuffs,
@@ -77,6 +78,9 @@ export interface PresetEncounter extends PresetBase {
 	healingModel?: HealingModel;
 	tanks?: UnitReference[];
 	raidBuffs?: RaidBuffs;
+	// The buffs of our party, like another shaman's Mana Tide Totem. Left out means the
+	// encounter does not touch them.
+	partyBuffs?: PartyBuffs;
 	debuffs?: Debuffs;
 	buffs?: IndividualBuffs;
 	consumes?: Consumes;
@@ -87,7 +91,7 @@ export interface PresetEncounter extends PresetBase {
 // The buffs and consumes can be given directly instead of through an exported link.
 export interface PresetEncounterOptions
 	extends PresetOptionsBase,
-		Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'debuffs' | 'buffs' | 'consumes' | 'inFrontOfTarget'> {}
+		Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'partyBuffs' | 'debuffs' | 'buffs' | 'consumes' | 'inFrontOfTarget'> {}
 
 export interface PresetBuild {
 	name: string;

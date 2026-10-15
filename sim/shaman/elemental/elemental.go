@@ -26,6 +26,7 @@ func RegisterElementalShaman() {
 func NewElementalShaman(character *core.Character, options *proto.Player) *ElementalShaman {
 	eleOptions := options.GetElementalShaman()
 
+	shaman.OneMainHandImbue(character, eleOptions.GetOptions().GetShamanImbue())
 	ele := &ElementalShaman{
 		Shaman: shaman.NewShaman(character, options.TalentsString),
 	}

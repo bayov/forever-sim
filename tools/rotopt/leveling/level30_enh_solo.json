@@ -66,9 +66,7 @@
         }
        ]
       },
-      "consumes": {
-       "mainHandImbue": "RockbiterWeapon"
-      },
+      "consumes": {},
       "talentsString": "-0540320010051122",
       "level": 30,
       "bonusTalentPoints": 5,

@@ -13,9 +13,11 @@ import {
 	Food,
 	IndividualBuffs,
 	IntellectElixir,
+	LevelingOptions,
 	ManaRegenElixir,
 	MobType,
 	NaturePowerBuff,
+	PartyBuffs,
 	Potions,
 	Profession,
 	PseudoStat,
@@ -45,6 +47,7 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
+import Level30LevelingAPLJSON from './apls/level30_leveling.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level30PvPAPLJSON from './apls/level30_pvp.apl.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
@@ -378,8 +381,23 @@ export const APLLevel30PvP = PresetUtils.makePresetAPLRotation('Level 30 PvP', L
 	group: 'Level 30 PvP',
 });
 
+// Level 30 Leveling is the leveling optimizer's best rotation for a solo level 30 grinding
+// mobs of its level (tools/rotopt, the shaman_enh_leveling template, see
+// docs/leveling_sim.md). It needs the Leveling mode: it rests, looks for the next mob and
+// pulls it with the leveling actions, which do nothing in a single fight. A better rotation
+// from a later optimizer run can replace apls/level30_leveling.apl.json under the same name.
+//
+// What it does is in docs/leveling_sim.md (step 5): it rests to 90% health and 80% mana,
+// looks for the next mob while still fighting and pulls it with rank 1 Earth Shock once it's
+// nearly full, keeps Mana Spring Totem down in the fight and Searing Totem rank 1 for two
+// mobs, and heals with Lesser Healing Wave below 30% health.
+export const APLLevel30Leveling = PresetUtils.makePresetAPLRotation('Level 30 Leveling', Level30LevelingAPLJSON, {
+	tooltip: "The leveling optimizer's best rotation for a solo level 30. It rests, finds the next mob and pulls it, for the Leveling mode.",
+	group: 'Leveling',
+});
+
 export const APLPresets = {
-	[Phase.Phase1]: [APLOptimized, APLMagma, APLManaTide, APLGraceOfAir, APLWindfury, APLLevel30p5, APLLevel30PvP],
+	[Phase.Phase1]: [APLOptimized, APLMagma, APLManaTide, APLGraceOfAir, APLWindfury, APLLevel30p5, APLLevel30PvP, APLLevel30Leveling],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -533,8 +551,23 @@ export const TalentsLevel30PvP = PresetUtils.makePresetTalents('Level 30 PvP', S
 	group: 'Level 30 PvP',
 });
 
+// The talents the leveling optimizer ran with. They are the Level 30 + 5 talents, kept as their
+// own preset so a leveling talent search can change them later without touching Level 30 + 5.
+export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Leveling', SavedTalents.create({ talentsString: '-0540320010051122' }), {
+	tooltip: 'The Level 30 + 5 talents, which the leveling optimizer ran with.',
+	group: 'Leveling',
+});
+
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel60WaterShield, TalentsLevel60ManaTide, TalentsLevel30p5, TalentsLevel30PvP],
+	[Phase.Phase1]: [
+		TalentsLevel60,
+		TalentsLevel60ImpGW,
+		TalentsLevel60WaterShield,
+		TalentsLevel60ManaTide,
+		TalentsLevel30p5,
+		TalentsLevel30PvP,
+		TalentsLevel30Leveling,
+	],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -1393,3 +1426,46 @@ export const PresetBuildLevel30PvPVsProt = makeLevel30PvPBuild(
 	EncounterLevel30PvPVsProt,
 	EPLevel30PvPVsProt,
 );
+
+// Leveling is a grinding session in place of one fight (docs/leveling_sim.md): 20 min against
+// mobs of our level, give or take one, with every leveling option at its default. The sim makes
+// up the mobs and the session's length, so the duration and the target here only count when
+// the Leveling mode is off again. They are the Level 30 encounter's.
+//
+// We level alone: no raid or party buffs, no Blessing of Kings and no debuffs from others.
+export const EncounterLeveling = PresetUtils.makePresetEncounter(
+	'Leveling',
+	Encounter.create({
+		...EncounterLevel30.encounter,
+		leveling: LevelingOptions.create(),
+	}),
+	{
+		group: 'Leveling',
+		tanks: EncounterLevel30.tanks,
+		raidBuffs: RaidBuffs.create(),
+		partyBuffs: PartyBuffs.create(),
+		debuffs: Debuffs.create(),
+		buffs: IndividualBuffs.create(),
+		consumes: Consumes.create(),
+		inFrontOfTarget: true,
+	},
+);
+// The solo level 30 setup the leveling optimizer ran with (tools/rotopt/leveling/
+// level30_enh_solo.json): the Level 30 + 5 gear, talents and professions, an Orc with 5 extra
+// talent points, Windfury Weapon, and no starting totems, explosives or potions.
+//
+// The game takes one shaman imbue on the weapon. Windfury Weapon kills more mobs a session
+// than Rockbiter Weapon with this rotation (89.6 to 86.3 at 2000 sessions, 2026-10-15).
+export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 Leveling (solo)', {
+	group: 'Leveling',
+	tooltip: 'A level 30 Orc grinding mobs of its level alone for 20 min, with the Level 30 + 5 gear and talents and no buffs or consumes.',
+	gear: GearLevel30p5,
+	talents: TalentsLevel30Leveling,
+	rotation: APLLevel30Leveling,
+	encounter: EncounterLeveling,
+	race: Race.RaceOrc,
+	level: 30,
+	bonusTalentPoints: 5,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptions,
+});

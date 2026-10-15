@@ -30,6 +30,7 @@ type WardenShaman struct {
 }
 
 func NewWardenShaman(character *core.Character, options *proto.Player) *WardenShaman {
+	shaman.OneMainHandImbue(character, options.GetWardenShaman().GetOptions().GetShamanImbue())
 	warden := &WardenShaman{
 		Shaman: shaman.NewShaman(character, options.TalentsString),
 	}
