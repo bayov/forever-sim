@@ -61,12 +61,15 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // Forever data. Each piece takes the place of an Era Phase 1 hunter BiS piece (the Giantstalker
 // set, Onyxia Tooth Pendant, Wristguards of True Flight, the Devilsaur hands and legs, Quick Strike
 // Ring, Barbarous Blade, Rhok'delar) on the cross-class item level table (66 for the six armor
-// pieces, 71 for neck, back, wrist, waist and rings, 76 for the two-hander, 71 for the bow) and the
+// pieces, 71 for neck, back, wrist, waist and rings, 76 for the two-hander, 71 for the ranged weapon) and the
 // cross-class budget 1b (orchestration/standards.md, 2026-10-13): each armor piece's weighted stats
 // are slot mod x (1.125 ilvl + 2.0) x the hunter's 1.028 / 1.056 / 0.977 per tier, on 4 / 4 / 3
 // stat lines. The file has the math. Ranged set totals: armor 704.0 (target 706.1), two-hander
-// 85.6, bow 19.8. Beast Mastery, Marksmanship and Lone Wolf share the Ranged set: they shoot on the
-// same stats, and the pet takes 10% of the hunter's ranged attack power and all of its crit.
+// 85.6, ranged weapon 19.8. Beast Mastery, Marksmanship and Lone Wolf share the Ranged set: they shoot
+// on the same stats, and the pet takes 10% of the hunter's ranged attack power and all of its crit.
+// The ranged weapon keeps Rhok'delar's damage per second as a 2.5 sec bow, Striker's Mark's speed and
+// spread, the Phase 1 BiS speed the three ranged specs sim best with (standards 22, Ranged: +3.5 /
+// +2.7 / +3.3 over Rhok'delar's 2.9 sec bow at 180 sec), with the 15% quiver.
 // Stamina 17.2% of the points and Spirit 10% (the 5a targets), hit 90 rating (9%, the ranged cap
 // against a level 63 boss), then Agility 34.6%, crit 17.8%, ranged attack power 4.7%, Intellect
 // 3.5% and Strength 1.1%. The head and chest carry Wildstalker Armor, so only its 2 piece bonus (1%
@@ -84,7 +87,8 @@ export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Sy
 // 22), and
 // 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Totals: armor 705.5 (target 706.1),
 // swords 34.5 each (the standard has no hunter one-hander: the physical 0.39 x the hunter /
-// physical two-hander ratio, 0.42 x L(71)), bow 19.5. Stamina 15.4%, Spirit 10.1%, Agility 31.1%,
+// physical two-hander ratio, 0.42 x L(71)), bow 19.5 (Rhok'delar's 2.9 sec: Survival never shoots,
+// so every ranged candidate sims the same for it). Stamina 15.4%, Spirit 10.1%, Agility 31.1%,
 // crit 14.7%, Strength 11.2%, attack power 9.9%, hit 7.6%. Crusader on the main hand and Agility on
 // the off hand (+4 over Agility on both). Trinkets: 32 Agility and 14 crit rating, and an on-use
 // 335 attack power and ranged attack power for 20 sec every 2 min.
@@ -190,8 +194,14 @@ export const DefaultTalents = TalentsLoneWolf;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// A cat at 1.0 sec: Broken Tooth (Badlands) is the one 1.0 sec beast under Forever, and a
-// Forever pet hits as hard at any speed, so the fastest pet deals the most.
+// A cat at 1.0 sec (Broken Tooth, Badlands). A pet's hit scales with its attack speed, as in
+// Classic (report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's "every pet hits
+// like a 2.0 sec pet" is treated as a bug), so its white damage a second is the same at any speed.
+// Every pet family at 1.0, 1.2, 1.5 and 2.0 sec was simmed on Beast Mastery, Marksmanship and
+// Survival (180 sec, 10000 iterations, 2026-10-15): the cat is still best (the raptor ties it, with
+// the same damage modifier, Bite and Claw), 5 to 9 ahead of the next family (the owl, then the
+// bat), and the cat's speeds sim within 1 DPS of each other (20000 iterations), so the preset
+// keeps the 1.0 sec cat.
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.ThoriumHeadedArrow,
 	quiverBonus: Hunter_Options_QuiverBonus.Speed15,
@@ -360,16 +370,18 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // The numbers are without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8) and
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
 // Races, 20000 iterations at 180 sec (forever-wiki/sim-status.md has 120 and 300 too): the Night
-// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 5 ahead
-// of the Orc, the best Horde race. For Survival the Orc is best (Axe Specialization with its main
-// hand axe), 9 ahead of the Night Elf, the best Alliance race. With the Wildstalker Armor 4
+// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 4 to 5 ahead
+// of the Orc, the best Horde race (3.5 on Beast Mastery). For Survival the Orc is best (Axe Specialization with its main
+// hand axe), 11 ahead of the Night Elf, the best Alliance race. Forever has no ranged weapon
+// racials (Dwarf Gun and Troll Bow Specialization are gone), so the ranged type favours no race. With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured on the 2026-10-12 gear, before
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 987.1 / 980.4 / 970.3 at 120 / 180 / 300 sec (20000 iterations). The pet deals 26% of it.
+// 959.2 / 952.2 / 942.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15). The pet deals 21% of
+// it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -381,8 +393,8 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 1028.2 / 1019.8 / 992.0 at 120 / 180 / 300 sec, 39 ahead of Beast Mastery at 180. The pet deals
-// 14% of it. It runs short of mana in a 5 minute fight.
+// 1027.9 / 1020.3 / 998.5 at 120 / 180 / 300 sec, 68 ahead of Beast Mastery at 180. The pet deals
+// 11% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -394,8 +406,8 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 1038.0 / 1029.8 / 1005.1 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
-// than a pet that takes no player buffs (10 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
+// 1071.5 / 1064.0 / 1043.4 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// than a pet that takes no player buffs (44 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -407,7 +419,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 902.6 / 895.4 / 887.0 at 120 / 180 / 300 sec in the mksettings raid (Orc, 2026-10-15). On a pair
+// 899.6 / 892.4 / 883.7 at 120 / 180 / 300 sec in the mksettings raid (Orc, 2026-10-15). On a pair
 // of Brutality Blade swords the Human did 858.6 at 180 sec. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {

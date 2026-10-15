@@ -11,10 +11,12 @@ import (
 // Forever's Serpent Sting (beta client, build 1.60.1.70338) keeps rank 9's 555 over 15 sec and
 // lowers the ranks below it (rank 8: 415, Classic 490). It has no spell power coefficient (Classic
 // 100% over the duration). The client gives it no attack power share either, but the beta's combat
-// logs put each tick at the base plus about 0.035 of ranged attack power, read live on every tick
-// (ElliotWood/Forever's fit, sim/hunter/serpent_sting.go; the forever-hunter wiki gives 3% a tick).
-// The ticks crit with the hunter's ranged crit under Forever, and Mortal Shots is in its class mask.
-const serpentStingRAPPerTick = 0.035
+// logs put each tick at the base plus a share of ranged attack power, read live on every tick:
+// about 0.035 in ElliotWood/Forever's fit (sim/hunter/serpent_sting.go), 3% a tick on the
+// forever-hunter wiki. Report assumption hunter_shot_ap_shares, user ruling 2026-10-15: the wiki's
+// 3%, as for Arcane Shot. The ticks crit with the hunter's ranged crit under Forever, and Mortal
+// Shots is in its class mask.
+const serpentStingRAPPerTick = 0.03
 
 func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 	spellId := [10]int32{0, 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 25295}[rank]

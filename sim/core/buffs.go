@@ -1649,10 +1649,14 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 // Forever's Trueshot Aura is a Marksmanship talent with five ranks from level 25. It only
 // gives ranged attack power now, so a melee character gets nothing from it. In client 70338
 // rank 5 (20906, level 60) gives 50, half of Classic's 100 and less than rank 4's (20905) 75.
-// A hunter keeps every rank learned and casts the strongest, so a weaker top rank isn't used
-// (standards 8a; bestLearnedRank).
+//
+// Report assumption hunter_tsa_hm_rank, user ruling 2026-10-15: rank 5 gives 100, as if Blizzard
+// fixes the top rank onto the curve (Classic's level 60 value), so the hunter casts the top rank.
+// A hunter still keeps every rank learned and casts the strongest (standards 8a; bestLearnedRank).
+const ForeverTrueshotAuraRank5RAP = 100
+
 var foreverTrueshotAuraLevel = [...]int{0, 25, 32, 40, 50, 60}
-var foreverTrueshotAuraRAP = [...]float64{0, 30, 40, 50, 75, 50}
+var foreverTrueshotAuraRAP = [...]float64{0, 30, 40, 50, 75, ForeverTrueshotAuraRank5RAP}
 
 // bestLearnedRank is the strongest value among the ranks learned by level, for Forever spells
 // whose top rank gives less than a lower one. Players can cast any rank they have learned.

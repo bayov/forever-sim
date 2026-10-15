@@ -9,11 +9,13 @@ import (
 
 // Forever's Arcane Shot (beta client, build 1.60.1.70338) hits harder at most ranks (rank 8: 217,
 // Classic 183) and has no spell power coefficient (Classic 42.9%). The client gives it no attack
-// power share either, but the beta's combat logs show one: hits come out at the base plus about
-// 0.11 of ranged attack power, fitted on level 20 to 30 hunters and checked with Aspect of the Hawk
-// and Hunter's Mark swaps (ElliotWood/Forever, sim/hunter/arcane_shot.go; the forever-hunter wiki
-// gives 10%). The 6 sec cooldown is shared with Summon Hawk (client category 1173).
-const arcaneShotRAPCoefficient = 0.11
+// power share either, but the beta's combat logs show one: a combat-log fit on level 20 to 30
+// hunters, checked with Aspect of the Hawk and Hunter's Mark swaps, gives about 0.11 of ranged
+// attack power (ElliotWood/Forever, sim/hunter/arcane_shot.go), and the forever-hunter wiki 10%.
+// Report assumption hunter_shot_ap_shares, user ruling 2026-10-15: the wiki's 10%, since the fit
+// at low attack power is only good to about 10% either way. The 6 sec cooldown is shared with
+// Summon Hawk (client category 1173).
+const arcaneShotRAPCoefficient = 0.10
 
 func (hunter *Hunter) getArcaneShotConfig(rank int, timer *core.Timer) core.SpellConfig {
 	spellId := [9]int32{0, 3044, 14281, 14282, 14283, 14284, 14285, 14286, 14287}[rank]

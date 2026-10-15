@@ -6,6 +6,11 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
+// Report assumption warr_rend_ap, user ruling 2026-10-15: under Forever each Rend tick adds 2% of
+// attack power, about 14% over a full Rend at 60. Blizzard's warrior notes say Rend now "scales
+// significantly" with attack power, and the client holds no coefficient, so this is a modest guess.
+const ForeverRendAPPerTick = 0.02
+
 func (warrior *Warrior) registerRendSpell() {
 
 	rend := map[int32]struct {
@@ -52,6 +57,10 @@ func (warrior *Warrior) registerRendSpell() {
 			NumberOfTicks: rend.ticks,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				if sim.IsForever() {
+					dot.Snapshot(target, baseDamage+ForeverRendAPPerTick*dot.Spell.MeleeAttackPower(target), isRollover)
+					return
+				}
 				dot.Snapshot(target, baseDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

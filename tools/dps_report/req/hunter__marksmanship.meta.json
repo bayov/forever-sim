@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm",
   "published": {
-    "dps": 1019.8,
-    "source": "PR #5"
+    "dps": 1020.3,
+    "source": "warrior and hunter assumption defaults and the ranged weapon pass, 2026-10-15 (standards 22, Ranged)"
   },
   "verify": {
-    "dps": 1019.78,
-    "stderr": 0.24,
+    "dps": 1020.26,
+    "stderr": 0.23,
     "iters": 20000,
     "ok": true,
-    "note": "-0.02 vs PR #5"
+    "note": "same sim as the published number"
   },
-  "summary": "Marksmanship 7/39/5 with a 1.0 sec cat: Efficiency 4 and Focused Fire in place of Lone Wolf. The pet deals about 14% of its damage; it ships as the pet alternative to Lone Wolf, 10 DPS behind.",
+  "summary": "Marksmanship 7/39/5 with a 1.0 sec cat: Efficiency 4 and Focused Fire in place of Lone Wolf. The pet deals about 11% of its damage; it ships as the pet alternative to Lone Wolf, 44 DPS behind.",
   "keyTalents": [
     "Deadly Aspects",
     "Careful Aim",
@@ -61,14 +61,16 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Agility and 14 crit rating, and 415 ranged attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Trueshot Aura rank 5 (50 RAP) is below rank 4 (75); modelled as written. Casting rank 4 would add about +5 to +6 DPS (open for the owner)",
-    "Hunter's Mark rank 4 (71) is below rank 3 (98); modelled as written",
+    "Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (assumption hunter_tsa_hm_rank, user ruling 2026-10-15: Blizzard fixes both onto the curve; the client has 50 and 71, below the older ranks' 75 and 98)",
     "Aspect of the Hawk held at rank 5 (90 RAP) since Forever's rank 6 gives only 55",
     "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +23 (2026-10-12 gear)",
-    "Arcane Shot (0.11 RAP) and Serpent Sting (0.035 RAP per tick) AP shares are open assumptions",
+    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (the forever-hunter wiki; the beta log fit was 11% / 3.5%)",
     "Auto Shot fires through casts with no 0.5 sec aim (open assumption)",
     "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain +13 (measured on the 2026-10-12 gear)",
-    "Runs short of mana in a 5 minute fight (992.0 at 300 s)"
+    "Runs short of mana in a 5 minute fight (998.5 at 300 s)",
+    "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
+    "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
+    "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows"
   ],
   "notes": "Request written by mksettings (spec hunter_mm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions."
 }

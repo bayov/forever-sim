@@ -19,8 +19,9 @@ import (
 // Strike Ring, Blackstone Ring, Barbarous Blade (a pair of Brutality Blades for Survival) and
 // Rhok'delar. The weapons keep their damage per second. Survival's pair takes the type and speed it
 // sims best with among the speeds of Era Phase 1 BiS weapons (standards 22): Deathbringer's 2.9 sec
-// axe in the main hand and Core Hound Tooth's 1.6 sec dagger in the off hand. The others keep their
-// weapon's type and speed.
+// axe in the main hand and Core Hound Tooth's 1.6 sec dagger in the off hand. The ranged set's bow
+// takes Striker's Mark's 2.5 sec speed the same way (standards 22, Ranged). The Survival set keeps
+// Rhok'delar's 2.9 sec bow: Survival never shoots, so every ranged candidate sims the same for it.
 //
 // Budgets follow the cross-class standard 1b (orchestration/standards.md, 2026-10-13), the budget
 // real level 60 epics follow, per archetype:
@@ -187,11 +188,12 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	},
 	// Ranged, item level 71, in place of Rhok'delar, Longbow of the Ancient Keepers (75, 18713).
 	{
-		Id: 993014, Name: "Ranged Hunter Synthetic Ranged (Phase 1)", Icon: "inv_weapon_bow_01",
+		Id: 993014, Name: "Ranged Hunter Synthetic Ranged (Phase 1)", Icon: "inv_weapon_bow_08",
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeBow,
 		Stats: stats.Stats{stats.Agility: 13, stats.RangedAttackPower: 17}.ToFloatArray(),
-		// Rhok'delar damage and speed.
-		WeaponDamageMin: 89, WeaponDamageMax: 166, WeaponSpeed: 2.9,
+		// Striker's Mark's speed and damage spread at Rhok'delar's 44.0 DPS (standards 22, Ranged:
+		// a Phase 1 BiS speed, the one that sims best with a Phase 1 quiver).
+		WeaponDamageMin: 76.6, WeaponDamageMax: 143.2, WeaponSpeed: 2.5,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},

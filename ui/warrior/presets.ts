@@ -405,8 +405,10 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 );
 
 // On 2026-10-15 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1096.7 / 1061.4 /
-// 1038.2, Level 60 Fury (Two-Hand) (Orc) 960.2 / 925.4 / 896.5 and Level 60 Arms (Orc) 948.5 /
-// 933.1 / 908.4, with Forever's normalized Rage at s = 0.5 (standards 21). The weapons have the type
+// 1038.2, Level 60 Fury (Two-Hand) (Orc) 960.2 / 925.4 / 896.5 and Level 60 Arms (Orc) 968.9 /
+// 952.6 / 927.0, with Forever's normalized Rage at s = 0.5 (standards 21). Arms keeps Rend up, which
+// adds 2% of attack power a tick under Forever (report assumption warr_rend_ap, user ruling
+// 2026-10-15): +19.5 at 180 sec over Rend with no attack power (933.1); the Fury builds don't cast it. The weapons have the type
 // and speed each build sims best with among Era Phase 1 BiS speeds (standards 22): a 2.8 sec sword
 // and a 1.7 sec axe for Fury, a 3.7 sec axe for the two-hand builds. On the Era BiS swords the
 // builds did 1038.1, 901.6 and 915.1 at 180 sec (Undead). The numbers below were measured on those swords. How k grows
@@ -416,7 +418,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // raid's Battle Shout VI, Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and
 // Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (both measured before normalized Rage). With weapon
 // racials off, Fury stays at its Undead numbers, and the Undead does 919.1 on two-hand Fury and 929.4
-// on Arms at 180 sec.
+// on Arms at 180 sec (before Rend's attack power share).
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -456,8 +458,8 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsArms,
 });
-// Against a Dragonkin boss (Orc, 20,000 iterations, 120 / 180 / 300 sec): 987.8 / 971.5 / 945.9,
-// where the generic Arms build does 948.5 / 933.1 / 908.4 (+4.1% at 180 sec). Fury doesn't get one:
+// Against a Dragonkin boss (Orc, 20,000 iterations, 120 / 180 / 300 sec): 1008.2 / 991.0 / 964.5,
+// where the generic Arms build does 968.9 / 952.6 / 927.0 (+4.0% at 180 sec). Fury doesn't get one:
 // Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.5%
 // on dual wield Fury and +0.8% on two-hand Fury at 180 sec.
 export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Level 60 Arms (vs Dragonkin)', {

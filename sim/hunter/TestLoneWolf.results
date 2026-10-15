@@ -20,7 +20,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 2053
   final_stats: 9
-  final_stats: 48.10671
+  final_stats: 51.80733
   final_stats: 0
   final_stats: 0
   final_stats: 0
@@ -28,7 +28,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 4659
-  final_stats: 2662
+  final_stats: 2687
   final_stats: 0
   final_stats: 5
   final_stats: 0
@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestLoneWolf-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 0.90286
+  weights: 1.15206
   weights: 0
   weights: 0
   weights: 0
@@ -67,17 +67,17 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.0013
+  weights: 0.00135
   weights: 0
-  weights: 13.77056
-  weights: 0
-  weights: 0
+  weights: 12.9849
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.37588
+  weights: 0
+  weights: 0
+  weights: 0.38284
   weights: 0
   weights: 0
   weights: 0
@@ -99,304 +99,304 @@ stat_weights_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-BeastmasterArmor"
  value: {
-  dps: 1434.80683
-  tps: 1461.0452
+  dps: 1469.49783
+  tps: 1497.21451
   dtps: 2.19517
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
-  dps: 1553.30083
-  tps: 1577.99581
+  dps: 1601.14417
+  tps: 1626.94431
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-BloodGuard'sChainVices-22862"
  value: {
-  dps: 1559.76833
-  tps: 1584.45776
+  dps: 1602.41483
+  tps: 1628.20117
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Champion'sPursuance"
  value: {
-  dps: 1496.8835
-  tps: 1521.00722
+  dps: 1530.39133
+  tps: 1555.75104
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1393.814
-  tps: 1417.96907
+  dps: 1428.4265
+  tps: 1453.67704
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-CryptstalkerArmor"
  value: {
-  dps: 1697.9355
-  tps: 1728.85214
+  dps: 1739.0985
+  tps: 1769.84177
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-DevilsaurEye-19991"
  value: {
-  dps: 1570.48533
-  tps: 1595.35777
+  dps: 1625.137
+  tps: 1651.20993
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-DevilsaurTooth-19992"
  value: {
-  dps: 1558.55883
-  tps: 1583.4316
+  dps: 1612.795
+  tps: 1638.86639
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-DragonstalkerArmor"
  value: {
-  dps: 1596.21467
-  tps: 1620.87129
+  dps: 1629.57433
+  tps: 1655.39316
   dtps: 1.93717
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1603.44667
-  tps: 1628.00702
+  dps: 1640.00233
+  tps: 1665.71025
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-General'sChainGloves-16571"
  value: {
-  dps: 1574.06217
-  tps: 1598.73433
+  dps: 1621.42467
+  tps: 1647.32926
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-GiantstalkerArmor"
  value: {
-  dps: 1509.369
-  tps: 1533.77829
+  dps: 1550.632
+  tps: 1576.32169
   dtps: 2.05383
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-HunterSyntheticRanged(Phase1)"
  value: {
-  dps: 1580.66633
-  tps: 1605.53344
+  dps: 1628.15
+  tps: 1654.19754
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-HunterSyntheticSurvival(Phase1)"
  value: {
-  dps: 1550.20017
-  tps: 1575.03759
+  dps: 1591.25967
+  tps: 1617.31951
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Knight-Lieutenant'sChainGauntlets-16403"
  value: {
-  dps: 1553.30083
-  tps: 1577.99581
+  dps: 1601.14417
+  tps: 1626.94431
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Knight-Lieutenant'sChainVices-23279"
  value: {
-  dps: 1559.76833
-  tps: 1584.45776
+  dps: 1602.41483
+  tps: 1628.20117
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-LieutenantCommander'sPursuance"
  value: {
-  dps: 1496.8835
-  tps: 1521.00722
+  dps: 1530.39133
+  tps: 1555.75104
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1393.814
-  tps: 1417.96907
+  dps: 1428.4265
+  tps: 1453.67704
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Marshal'sChainGrips-16463"
  value: {
-  dps: 1574.06217
-  tps: 1598.73433
+  dps: 1621.42467
+  tps: 1647.32926
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Predator'sArmor"
  value: {
-  dps: 1520.24217
-  tps: 1544.83324
+  dps: 1558.16233
+  tps: 1583.9817
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Renataki'sCharmofBeasts-19953"
  value: {
-  dps: 1566.18317
-  tps: 1591.11079
+  dps: 1617.43717
+  tps: 1643.55903
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Striker'sGarb"
  value: {
-  dps: 1652.87
-  tps: 1677.85694
+  dps: 1700.75267
+  tps: 1726.9961
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-SurvivalSyntheticOn-UseTrinket(Phase1)-993117"
  value: {
-  dps: 1585.19567
-  tps: 1610.06672
+  dps: 1640.36133
+  tps: 1666.43362
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1603.44667
-  tps: 1628.00702
+  dps: 1640.00233
+  tps: 1665.71025
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Average-Default"
  value: {
-  dps: 1597.45206
-  tps: 1622.39675
-  dtps: 2.30172
+  dps: 1640.09838
+  tps: 1666.15915
+  dtps: 2.30376
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1740.53717
-  tps: 2240.68582
+  dps: 1793.3125
+  tps: 2317.06874
   dtps: 2.0975
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1611.284
-  tps: 1636.28328
+  dps: 1664.78767
+  tps: 1690.9749
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1724.1975
-  tps: 1749.18951
+  dps: 1773.88583
+  tps: 1800.18337
   dtps: 11.59417
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 751.15283
-  tps: 1047.02741
+  dps: 773.3145
+  tps: 1069.18278
   dtps: 1.94933
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 653.26383
-  tps: 668.05464
+  dps: 674.545
+  tps: 689.33393
   dtps: 2.36133
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 864.01083
-  tps: 889.14855
+  dps: 887.4075
+  tps: 912.54749
   dtps: 11.80667
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1735.15467
-  tps: 2235.37818
+  dps: 1790.85267
+  tps: 2314.39195
   dtps: 1.84833
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1608.2885
-  tps: 1633.30637
+  dps: 1664.80783
+  tps: 1690.98233
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1708.54833
-  tps: 1733.54922
+  dps: 1772.6325
+  tps: 1798.96294
   dtps: 11.27
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 747.7255
-  tps: 1043.6036
+  dps: 765.85817
+  tps: 1061.73213
   dtps: 1.887
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 650.2665
-  tps: 665.05306
+  dps: 668.36417
+  tps: 683.16581
   dtps: 2.21233
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 857.4
-  tps: 882.54812
+  dps: 873.08083
+  tps: 898.22615
   dtps: 11.06167
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1596.1155
-  tps: 1620.99245
+  dps: 1649.54883
+  tps: 1675.51862
   dtps: 2.254
  }
 }

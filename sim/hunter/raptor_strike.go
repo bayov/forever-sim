@@ -12,7 +12,13 @@ var RaptorStrikeSpellId = [RaptorStrikeRanks + 1]int32{0, 2973, 14260, 14261, 14
 
 // Forever's Raptor Strike adds less from rank 4 up (rank 8: 70, Classic 140) and rank 1 costs 10 mana
 // (Classic 15), beta client build 1.60.1.70338. Still weapon damage, not normalized.
-var RaptorStrikeBaseDamage = [RaptorStrikeRanks + 1]float64{0, 5, 11, 21, 30, 35, 40, 55, 70}
+//
+// Report assumption hunter_raptor_31plus, user ruling 2026-10-15: rank 8 adds 96, halfway from the
+// client's 70 to 123 (the level 24 rank's 0.88 of Era), as the ranks past level 30 sit at 0.50 to
+// 0.70 of Era as if not retuned yet. The lower ranks keep the client's values.
+const RaptorStrikeRank8BaseDamage = 96
+
+var RaptorStrikeBaseDamage = [RaptorStrikeRanks + 1]float64{0, 5, 11, 21, 30, 35, 40, 55, RaptorStrikeRank8BaseDamage}
 var RaptorStrikeManaCost = [RaptorStrikeRanks + 1]float64{0, 10, 25, 35, 45, 55, 70, 80, 100}
 var RaptorStrikeLevel = [RaptorStrikeRanks + 1]int{0, 1, 8, 16, 24, 32, 40, 48, 56}
 

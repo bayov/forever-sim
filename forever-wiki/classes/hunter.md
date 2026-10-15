@@ -28,7 +28,7 @@ Marksmanship:
 - Careful Aim: 20% of Intellect a rank as melee and ranged attack power. Mortal Shots needs it, 6% crit damage a rank on Auto Shot, Aimed, Arcane and Multi-Shot, Serpent Sting and Volley (not Sniper Shot).
 - Rapid Killing: Rapid Fire's cooldown 1 min shorter a rank, and 10 / 20% on the next shot within 20 sec of a kill. Rapid Recuperation: a Serpent Sting hit gives 25 / 50% of mana regen while casting for 15 sec, using Rapid Killing 50 / 100%.
 - Improved Arcane Shot 0.3 sec a rank, on Arcane Shot only. Lone Wolf 20% damage with no pet out.
-- Trueshot Aura (row 4, 21 points) is a party aura of ranged attack power only, with trainer ranks 30 / 40 / 50 / 75 / 50 at 25 / 32 / 40 / 50 / 60 (Classic's rank 3 at 60 was 100). A level 60 hunter casts rank 4's 75, the strongest it knows, and so does the sim (standards 8a); Hunter's Mark likewise gives rank 3's 98 over rank 4's 71 (Classic 110).
+- Trueshot Aura (row 4, 21 points) is a party aura of ranged attack power only, with trainer ranks 30 / 40 / 50 / 75 / 50 at 25 / 32 / 40 / 50 / 60 (Classic's rank 3 at 60 was 100). A level 60 hunter would cast rank 4's 75, the strongest it knows (standards 8a); Hunter's Mark likewise has rank 3's 98 over rank 4's 71 (Classic 110). The sim gives rank 5 100 and Hunter's Mark rank 4 140, as if Blizzard fixes both top ranks onto the curve, so the top ranks are cast (report assumption hunter_tsa_hm_rank, user ruling 2026-10-15).
 - Barrage 3 / 7 / 10% on Aimed Shot, Multi-Shot and Volley. Ranged Weapon Specialization 1% a rank.
 - Sniper Shot (31 points): normalized ranged weapon damage plus 160 / 225 / 295 (ranks at 40 / 48 / 58), 4 sec cast, 15 sec cooldown, 365 mana, 45 yards, and 10 yards more range on the next 3 shots.
 - Gone: Aimed Shot (trained now), Improved Hunter's Mark (baseline), Improved Scorpid Sting. Improved Serpent Sting is still in the client data but parked far off the tree, so no one can take it.
@@ -51,16 +51,17 @@ Spellbook at level 60:
 - Arcane Shot rank 8: 217 Arcane (Classic 183), no spell power coefficient (Classic 42.9%). Ranks 20 / 26 / 39 / 65 / 94 / 134 / 170 / 217.
 - Serpent Sting rank 9: 555 over 15 sec, no spell power coefficient. The ranks below are lower than Classic's: 10 / 30 / 60 / 110 / 170 / 240 / 320 / 415.
 - Aspect of the Hawk rank 7: 120 ranged attack power (rank 6 reads 55, below rank 5's 90, likely a client error). Aspect of the Beast has 4 ranks of 50 / 70 / 90 / 110 melee attack power. Hunter's Mark rank 4: 71 (rank 3 98).
-- Raptor Strike rank 8: weapon damage +70 (Classic 140). Mongoose Bite rank 4: normalized weapon damage +57 (Classic a flat 115). Wing Clip is Classic's.
+- Raptor Strike rank 8: weapon damage +70 (Classic 140); the sim takes +96, halfway to the level 24 rank's 0.88 of Era (report assumption hunter_raptor_31plus, user ruling 2026-10-15). Mongoose Bite rank 4: normalized weapon damage +57 (Classic a flat 115). Wing Clip is Classic's.
 - Volley rank 3: 112 Arcane a second for 6 sec (Classic 80) and no cooldown. Rapid Fire speeds up melee attacks too. Traps go down in combat and have a 30 sec cooldown, Fire and Frost traps one each.
 - Lacerate is new, trained from level 30: a bleed for 21 sec, 406 at rank 4 and level 60 (58 a tick, +0.8 a level), 95 mana.
 
 What the beta shows that the client data does not (from beta combat logs: ElliotWood/Forever's fits and the community forever-hunter wiki):
 
-- Arcane Shot adds about 0.11 of ranged attack power, Serpent Sting about 0.035 a tick, read live each tick. The ticks crit with ranged crit.
+- Arcane Shot adds about 0.11 of ranged attack power, Serpent Sting about 0.035 a tick, read live each tick (the log fit); the forever-hunter wiki says 10% and 3% a tick, and the sim takes the wiki's (user ruling 2026-10-15). The ticks crit with ranged crit.
 - Auto Shot keeps firing while the hunter casts.
 - The weapon specialization racials give no ranged crit.
-- Pets swing every 2.0 sec and a passive per beast (Faster Attack I to VII) moves them to the beast's Classic speed, with hits that stay the size of a 2.0 sec pet's. Pets take 10% of the hunter's highest attack power and all of its crit (and 2 health a Stamina point, 30% of armor), take no player buffs, and regenerate 10 focus a second.
+- At level 1 a hunter gets 22% more crit per Agility than in Classic (the other classes match Classic). The sim carries the ratio to every level under Forever (report assumption hunter_crit_per_agi, user ruling 2026-10-15).
+- Pets swing every 2.0 sec and a passive per beast (Faster Attack I to VII) moves them to the beast's Classic speed, with hits that stay the size of a 2.0 sec pet's. The sim treats that as a bug and scales the hit with the speed, as in Classic (report assumption hunter_pet_speed, user ruling 2026-10-15). Pets take 10% of the hunter's highest attack power and all of its crit (and 2 health a Stamina point, 30% of armor), take no player buffs, and regenerate 10 focus a second.
 - Summon Hawk's hawk swings every 2.5 sec (sped up by ranged haste) for about 0.35 of the dive bomb's base.
 
 Cross-check against wowhead's Forever database (2026-10-13). Wowhead serves Forever as data environment 16 (`nether.wowhead.com/tooltip/<type>/<id>?dataEnv=16`): Sniper Shot 1310786 exists only there. Environment 17 is retail's squished data (Giantstalker's Helmet at item level 13), not Forever. Against the client and the sim:
