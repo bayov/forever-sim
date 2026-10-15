@@ -173,3 +173,26 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 	}
 	return items
 }
+
+// finisherKnobs: in the last moments of the fight, when the filler's cast would not land before
+// the end, cast instants instead (they land, the filler would be lost). finishPad is the margin
+// added to the filler's cast time.
+func finisherKnobs(pad float64) []Knob {
+	return []Knob{
+		{Name: "finisher", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "finishPad", Default: pad, Min: 0, Max: 2, Step: 0.25},
+	}
+}
+
+// finisherLines are the instants to cast when the filler would not land before the end.
+func finisherLines(k Knobs, filler *proto.ActionID, instants ...*proto.ActionID) []*proto.APLListItem {
+	if k["finisher"] != 1 {
+		return nil
+	}
+	tooLate := lt(remainingTime(), add(spellCastTime(filler), seconds(k["finishPad"])))
+	var items []*proto.APLListItem
+	for _, instant := range instants {
+		items = append(items, cast(instant, tooLate, "An instant when the filler would not land before the end of the fight."))
+	}
+	return items
+}

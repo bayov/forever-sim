@@ -16,7 +16,7 @@ func init() {
 }
 
 func (mageFrostfire) Knobs() []Knob {
-	return append(mageCommonKnobs(),
+	return append(append(mageCommonKnobs(), finisherKnobs(1.5)...),
 		// Scorch up to 5 stacks of Fire Vulnerability and again with less than this many seconds
 		// left, 0 never.
 		Knob{Name: "scorchRefresh", Default: 5, Min: 0, Max: 9, Step: 3},
@@ -24,6 +24,8 @@ func (mageFrostfire) Knobs() []Knob {
 		Knob{Name: "pyroStacks", Default: 3, Min: 0, Max: 3, Step: 1},
 		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 the last one.
 		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 2, Step: 1},
+		// The Fingers of Frost Ice Lance ahead of Scorch and Pyroblast.
+		Knob{Name: "iceLanceFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Pyroblast only above this much mana, 0 any time. A Pyroblast costs more than the filler,
 		// so a long fight saves it for the Heating Up stacks the mana allows.
 		Knob{Name: "pyroMana", Default: 0, Min: 0, Max: 60, Step: 10},
@@ -48,6 +50,17 @@ func (mageFrostfire) Knobs() []Knob {
 func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 	s := mageRanks()
 	items := mageCooldowns(k, s)
+	iceLance := func() {
+		switch k["iceLance"] {
+		case 1:
+			items = append(items, cast(s.iceLance, known(fingersOfFrost, auraIsActive(fingersOfFrost)), "Ice Lance while Fingers of Frost is up."))
+		case 2:
+			items = append(items, cast(s.iceLance, known(fingersOfFrost, eq(auraNumStacks(fingersOfFrost), num(1))), "Ice Lance on the last Fingers of Frost charge."))
+		}
+	}
+	if k["iceLanceFirst"] == 1 {
+		iceLance()
+	}
 	if k["scorchRefresh"] > 0 {
 		items = append(items, cast(s.scorch,
 			and(targetAuraIsKnown(fireVulnerability), or(lt(targetAuraNumStacks(fireVulnerability), num(5)), lt(targetAuraRemainingTime(fireVulnerability), seconds(k["scorchRefresh"])))),
@@ -56,11 +69,8 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 	if p := k["pyroStacks"]; p > 0 {
 		items = append(items, cast(s.pyroblast, and(known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), manaAbove(k["pyroMana"])), "Pyroblast once Heating Up has cut its cast enough."))
 	}
-	switch k["iceLance"] {
-	case 1:
-		items = append(items, cast(s.iceLance, known(fingersOfFrost, auraIsActive(fingersOfFrost)), "Ice Lance while Fingers of Frost is up."))
-	case 2:
-		items = append(items, cast(s.iceLance, known(fingersOfFrost, eq(auraNumStacks(fingersOfFrost), num(1))), "Ice Lance on the last Fingers of Frost charge."))
+	if k["iceLanceFirst"] != 1 {
+		iceLance()
 	}
 	if k["missileBarrage"] == 1 {
 		items = append(items, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
@@ -82,6 +92,7 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 			gt(remainingTime(), seconds(10)),
 		), "Rank 2 Frostfire Bolt when the mana will not last the fight."))
 	}
+	items = append(items, finisherLines(k, s.frostfireBolt, s.iceLance)...)
 	items = append(items, cast(s.frostfireBolt, nil, "Frostfire Bolt."))
 	rot := rotation(items...)
 	if k["prepull"] == 1 {

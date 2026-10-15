@@ -13,7 +13,7 @@ func init() {
 }
 
 func (mageFrost) Knobs() []Knob {
-	return append(mageCommonKnobs(),
+	return append(append(mageCommonKnobs(), finisherKnobs(1)...),
 		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 only the last
 		// charge (the first goes on a Frostbolt).
 		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 2, Step: 1},
@@ -42,6 +42,7 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 	if k["fireBlastMana"] > 0 {
 		items = append(items, cast(s.fireBlast, ge(currentManaPercent(), num(k["fireBlastMana"]/100)), "Fire Blast on cooldown with the mana to spare."))
 	}
+	items = append(items, finisherLines(k, s.frostbolt, s.iceLance)...)
 	items = append(items, cast(s.frostbolt, nil, "Frostbolt."))
 	rot := rotation(items...)
 	if k["prepull"] == 1 {

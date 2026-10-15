@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 884.5,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 889.1,
+    "source": "PR (rotation auditor pass 19: end-of-fight instants, 2026-10-15)"
   },
   "verify": {
-    "dps": 884.46,
-    "stderr": 0.38,
+    "dps": 889.1,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "180 s, 20000 iterations, on the pass 19 rotation"
   },
   "summary": "Deep Fire to Combustion with Arcane Concentration and Missile Barrage from Arcane. 11% behind Frostfire.",
   "keyTalents": [
@@ -45,6 +45,7 @@
     "Pyroblast at 3 Heating Up stacks (1.5 s cast)",
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast on cooldown at 20% mana or more",
+    "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04 s)",
     "Filler: Fireball"
   ],
   "consumes": [

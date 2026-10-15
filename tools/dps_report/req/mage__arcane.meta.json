@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arcane",
   "apl": "level60_arcane",
   "published": {
-    "dps": 836.4,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 843.5,
+    "source": "PR (rotation auditor pass 19: end-of-fight instants, 2026-10-15)"
   },
   "verify": {
-    "dps": 836.43,
-    "stderr": 0.27,
+    "dps": 843.5,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "180 s, 20000 iterations, on the pass 19 rotation"
   },
   "summary": "Arcane to Arcane Power with Arcane Blast and Missile Barrage, on the Arcane gear variant (Gloves - Arcane Power). 15% behind Frostfire.",
   "keyTalents": [
@@ -39,7 +39,8 @@
   "rotation": [
     "Pre-pull: Arcane Blast at -2.5 s so it lands at the pull",
     "Cooldowns (Arcane Power, Presence of Mind, Demonic Rune) on a free GCD; mana gems never",
-    "Below 30% mana: one Arcane Blast, then Arcane Missiles",
+    "Fire Blast, then Arcane Explosion, when an Arcane Blast would not land before the end",
+    "Below 20% mana: one Arcane Blast, then Arcane Missiles",
     "Arcane Missiles on a Missile Barrage proc once Arcane Blast has 2 stacks",
     "Arcane Blast up to 4 stacks",
     "Filler: Arcane Missiles (ends the stacks and takes their bonus)",
