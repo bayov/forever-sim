@@ -193,3 +193,20 @@ func TestLevelingChase(t *testing.T) {
 		t.Errorf("%.1f mobs killed, want a steady stream: a mob chasing us must still reach us", m.MobsKilled)
 	}
 }
+
+// TestOwnTotemRank: our own Strength of Earth Totem gives the Strength of the rank we cast,
+// rank 1's 7 rather than the 14 of rank 2 a level 30 knows.
+func TestOwnTotemRank(t *testing.T) {
+	for _, c := range []struct {
+		spell    int32
+		strength string
+	}{{8075, `"Strength": 7.000`}, {8160, `"Strength": 14.000`}} {
+		req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), rotationOf(
+			`{"action":{"condition":{"not":{"val":{"totemRemainingTime":{"totemType":"Earth"}}}},"castSpell":{"spellId":{"spellId":`+strconv.Itoa(int(c.spell))+`}}}}`))
+		req.SimOptions.Debug = true
+		result := runLeveling(t, req)
+		if !strings.Contains(result.Logs, "Dynamic stat change: {"+c.strength) {
+			t.Errorf("Strength of Earth Totem %d never gave %s", c.spell, c.strength)
+		}
+	}
+}

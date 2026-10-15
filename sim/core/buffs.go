@@ -699,6 +699,24 @@ func foreverStoneskinTotemAura(unit *Unit, points int32) *Aura {
 	})
 }
 
+// StoneskinTotemRankAura is the buff of our own Stoneskin Totem cast at a rank below the
+// highest our level knows (Forever): that rank's amount, where StoneskinTotemAura gives the
+// highest (as another shaman's totem would). A leveling rotation may drop a cheap rank.
+func StoneskinTotemRankAura(unit *Unit, points int32, rank int) *Aura {
+	reduction := stoneskinTotemReduction[rank] * (1 + .1*float64(points))
+	return unit.GetOrRegisterAura(Aura{
+		Label:    fmt.Sprintf("Stoneskin (Rank %d)", rank),
+		ActionID: ActionID{SpellID: stoneskinTotemAuraSpellId[rank]},
+		Duration: time.Minute * 5,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor -= reduction
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.BonusPhysicalDamageTakenBeforeArmor += reduction
+		},
+	})
+}
+
 // Forever's Retribution Aura ranks, for another paladin's aura on the character. The
 // paladin's own is in sim/paladin/retribution_aura.go and does not stack with it.
 //
@@ -1546,6 +1564,24 @@ func StrengthOfEarthTotemAura(unit *Unit, multiplier float64) *Aura {
 		},
 	})
 	return aura
+}
+
+// StrengthOfEarthTotemRankAura is the buff of our own Strength of Earth Totem cast at a rank
+// below the highest our level knows: that rank's Strength, where StrengthOfEarthTotemAura gives
+// the highest (as another shaman's totem would). A leveling rotation may drop a cheap rank.
+func StrengthOfEarthTotemRankAura(unit *Unit, rank int) *Aura {
+	updateStats := stats.Stats{stats.Strength: strengthOfEarthTotemStrength[rank]}
+	return unit.GetOrRegisterAura(Aura{
+		Label:    fmt.Sprintf("Strength of Earth Totem (Rank %d)", rank),
+		ActionID: ActionID{SpellID: []int32{0, 8075, 8160, 8161, 10442, 25361}[rank]},
+		Duration: time.Minute * 5,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			unit.AddStatsDynamic(sim, updateStats)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			unit.AddStatsDynamic(sim, updateStats.Multiply(-1))
+		},
+	})
 }
 
 // The rank the unit's level can have. Forever's ranks give 49, 77 and 89 Agility, Classic

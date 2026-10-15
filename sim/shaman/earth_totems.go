@@ -43,6 +43,14 @@ func (shaman *Shaman) newStrengthOfEarthTotemSpellConfig(rank int) core.SpellCon
 	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
 
 	buffAura := ownTotemAura(core.StrengthOfEarthTotemAura(&shaman.Unit, 1))
+	top := core.HighestRankAt(shaman.Level, StrengthOfEarthTotemLevel[:])
+	if !shaman.Env.IncludeAQRanks() {
+		top = min(top, StrengthOfEarthTotemRanks-1)
+	}
+	if rank < top {
+		// A lower rank than our level's best gives its own, smaller buff.
+		buffAura = core.StrengthOfEarthTotemRankAura(&shaman.Unit, rank)
+	}
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
@@ -88,6 +96,10 @@ func (shaman *Shaman) newStoneskinTotemSpellConfig(rank int) core.SpellConfig {
 
 	// We build the buff now, because the sim can't add an aura once the fight has started.
 	buffAura := core.StoneskinTotemAura(&shaman.Unit, shaman.Talents.GuardianTotems)
+	if shaman.Env.IsForever() && rank < core.HighestRankAt(shaman.Level, StoneskinTotemLevel[:]) {
+		// A lower rank than our level's best gives its own, smaller buff.
+		buffAura = core.StoneskinTotemRankAura(&shaman.Unit, shaman.Talents.GuardianTotems, rank)
+	}
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
