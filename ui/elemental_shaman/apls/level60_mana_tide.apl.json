@@ -1,6 +1,7 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":10432}}},"doAtValue":{"const":{"val":"-5.4s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":10497}}},"doAtValue":{"const":{"val":"-3.9s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":15208}}},"doAtValue":{"const":{"val":"-2.9s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":10438}}},"doAtValue":{"const":{"val":"-0.9s"}}}
@@ -13,6 +14,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}},"notes":"Flame Shock when its DoT is down."},
         {"action":{"castSpell":{"spellId":{"spellId":1238300}},"condition":{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}},{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":29228}}},"op":"OpGt","rhs":{"const":{"val":"2s"}}}}]}}},"notes":"Lava Burst on cooldown, unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":15208}}},"op":"OpAdd","rhs":{"const":{"val":"1s"}}}}}}},"notes":"Earth Shock when a Lightning Bolt would not land before the end."},
+        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}},"notes":"Lightning Shield when it is down. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec."},
         {"action":{"castSpell":{"spellId":{"spellId":10392}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.2"}}}}},"notes":"A lower rank of Lightning Bolt once the mana runs low."},
         {"action":{"castSpell":{"spellId":{"spellId":15208}}},"notes":"Lightning Bolt."}
     ]

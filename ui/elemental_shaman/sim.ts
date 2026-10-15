@@ -1,6 +1,7 @@
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as ConsumesInputs from '../core/components/inputs/consumables';
 import { makeShamanImbueInput, migrateShamanImbue } from '../core/components/inputs/shaman_imbues';
+import { makeRaidDamageHitsInput, makeRaidDamageHitsVariationInput } from '../core/components/inputs/shaman_raid_hits';
 import * as OtherInputs from '../core/components/other_inputs';
 import { Phase } from '../core/constants/other';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui';
@@ -95,6 +96,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [makeShamanImbueInput<Spec.SpecElementalShaman>(), OtherInputs.DistanceFromTarget],
+	},
+	encounterInputs: {
+		inputs: [makeRaidDamageHitsInput<Spec.SpecElementalShaman>(), makeRaidDamageHitsVariationInput<Spec.SpecElementalShaman>()],
 	},
 	migrateSettings: migrateShamanImbue,
 	itemSwapConfig: {

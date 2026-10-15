@@ -764,7 +764,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 6.5 Spell damage to us and the raid damage hits
 
 - Shown to the user (2026-10-10). No enemy casts at us, because no preset encounter has an AI (6.1). So Elemental Warding (3, 7 and 10% less Fire, Frost and Nature damage taken, as the Forever text says, `talents.go`) and our resistances never do anything in our sims.
-- Raid damage hits (`shields.go`, Enhancement options "Raid hits per minute" and its +/-): the user sets how many direct hits a minute the raid's enemies land on us. Each one fires our Lightning Shield orb at our target or spends a Water Shield globe, the same as a real hit. Both shields still wait 3.5 sec between procs (the client's 3500 ms proc cooldown, 7.15 and 7.16). Nothing else that reacts to a hit taken sees them. With a +/-, each iteration picks its own rate in that range. No preset sets it.
+- Raid damage hits (`shields.go`, Enhancement options "Raid hits per minute" and its +/-): the user sets how many direct hits a minute the raid's enemies land on us. Each one fires our Lightning Shield orb at our target or spends a Water Shield globe, the same as a real hit. Both shields still wait 3.5 sec between procs (the client's 3500 ms proc cooldown, 7.15 and 7.16). Nothing else that reacts to a hit taken sees them. With a +/-, each iteration picks its own rate in that range. Since 2026-10-15 every Level 60 preset sets it (below), and Elemental has it too.
 - Found: the hits come at an even pace (one every 60 / rate sec). Real raid damage comes at random times, and with the 3.5 sec wait an even pace gives more procs than random hits at the same rate:
 
   | Hits a minute | Procs a minute, even | Procs a minute, random |
@@ -782,6 +782,11 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Tests:
   - TestOrcShamanRaidDamageHits (replaces TestOrcShamanRaidDamageLightningShield) keeps Lightning Shield at 3 orbs for 9 min at 15 hits a minute. It wants about 72 orbs (8 a minute), within 15. It got 78. The old even pace gives 135 and fails it.
   - TestOrcShamanWaterShield now lands enemy melee hits at set times (every 5 sec, then every 3 sec) instead of using the option, so it still checks each globe and the 3.5 sec wait.
+
+- The user (2026-10-15): the presets cast neither shield, though most raid fights put some damage on a DPS. Add a raid hits assumption, 0 allowed, with rates from SoD logs.
+- Done (2026-10-15): Elemental's options take the raid hits too (`elemental.go`, the same two fields), and every Level 60 preset sets them: 2 a minute for Enhancement (melee) and 1 for Elemental (ranged), at random times (`RaidDamageHitsLevel60` in each spec's presets.ts, and mksettings). Every Level 60 rotation keeps Lightning Shield up, the Water Shield and Mana Tide builds too: Water Shield's 2% mana a globe was worth less than the orbs at 0, 2, 6 and 10 hits a minute, for Enhancement and Elemental alike. At 180 sec: Enhancement Level 60 826.0 to 833.8, Imp GW 822.0 to 829.5, Water Shield 776.1 to 785.3, Mana Tide 753.4 to 763.3; Elemental Level 60 690.6 to 694.0, Mana Tide 683.3 to 686.5.
+- The rates are estimates, not measurements: Warcraft Logs answered 403 from this environment and `tools/warcraftlogs` has no API client here. They come from SoD boss timers in the Deadly Boss Mods source: most bosses land one or two direct hits on the melee every 20 to 40 sec (Ragnaros's Wrath every 26 sec, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths), Patchwerk, Loatheb and Sapphiron none (their raid damage ticks), Firemaw, Vaelastrasz and Huhuran below 30% about 10. The DPS report's assumption runs 0 and 10 a minute beside the presets' rate. To measure it: the damage taken by DPS shamans on SoD bosses, direct hits only, through `tools/warcraftlogs` with an API client.
+- `elemental/shields_test.go` TestOrcShamanRaidDamageHits checks that 15 hits a minute fire about 8 orbs a minute and 0 fire none. It fails when Elemental's options don't reach the shield.
 
 ### 6.6 Health
 

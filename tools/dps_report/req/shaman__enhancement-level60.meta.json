@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 826.0,
-    "source": "Shaman PR (standards 23 user ruling: every shaman drops its own totems, 2026-10-15)"
+    "dps": 833.8,
+    "source": "Shaman PR (Lightning Shield on raid damage hits: 2 a minute melee, 1 ranged, 2026-10-15)"
   },
   "verify": {
-    "dps": 825.97,
+    "dps": 833.83,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
@@ -37,7 +37,7 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Pre-pull: starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they last the whole 300 s fight), no mana cost",
+    "Pre-pull: Lightning Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they last the whole 300 s fight), no mana cost",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
     "Searing Totem when it is down and at least 10 s remain",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
@@ -47,7 +47,8 @@
     "Flame Shock when its DoT is down",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Earth Shock",
-    "Fire Nova while the mana covers 12 a second for the rest of the fight"
+    "Fire Nova while the mana covers 12 a second for the rest of the fight",
+    "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
@@ -78,7 +79,8 @@
     "Without Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI) every build lost about 7.7 DPS",
     "One 2% crit elixir by the standard; Mongoose, Grizzly and Owl stacked would be about +36 if Forever allows it",
     "Earth Shock VII's base damage ×1.08, halfway to the level 24 rank's 0.66 of Era; the client has ×1.00",
-    "Tier 1 4/5-piece bonuses not live"
+    "Tier 1 4/5-piece bonuses not live",
+    "Raid damage hits on the shaman (2 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

@@ -99,6 +99,20 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 10432
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-5.4s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 10497
                       }
                     }
@@ -313,6 +327,27 @@
                   }
                 },
                 {
+                  "notes": "Lightning Shield when it is down. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
+                  "action": {
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 10432
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10432
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "A lower rank of Lightning Bolt once the mana runs low.",
                   "action": {
                     "condition": {
@@ -351,7 +386,9 @@
             "channelClipDelayMs": 50,
             "distanceFromTarget": 20,
             "elementalShaman": {
-              "options": {}
+              "options": {
+                "raidDamageHitsPerMinute": 1
+              }
             }
           }
         ],
