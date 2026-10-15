@@ -7,7 +7,7 @@ import { NumberPicker } from '../components/number_picker.js';
 import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 import { Encounter } from '../encounter.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
-import { InputType, MobType, PresetTarget, SpellSchool, Stat, Target, Target as TargetProto, TargetInput } from '../proto/common.js';
+import { InputType, LevelingOptions, MobType, PresetTarget, SpellSchool, Stat, Target, Target as TargetProto, TargetInput } from '../proto/common.js';
 import { statNames } from '../proto_utils/names.js';
 import { Stats } from '../proto_utils/stats.js';
 import { isHealingSpec } from '../proto_utils/utils.js';
@@ -27,7 +27,9 @@ export interface EncounterPickerConfig {
 	showExecuteProportion: boolean;
 }
 
-// The fight settings: its length, PvP, the execute phases and the targets.
+// The fight settings: its length, PvP, the execute phases and the targets. In Leveling mode the
+// leveling session's options take the place of the length, the execute phases and the targets,
+// which the session doesn't use.
 //
 // Each target is a row with its mob type's icon, its name and two lines of its stats. We edit a
 // target in a modal with only that target's settings, add one with the button under the list
@@ -48,30 +50,59 @@ export class EncounterPicker extends Component {
 				setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => {
 					encounter.setUseHealth(eventID, newValue);
 				},
+				showWhen: (encounter: Encounter) => !encounter.isLeveling(),
 			});
 		}
 
+		// Leveling mode shows the session's options and hides the fight's settings it ignores.
+		const updateMode = () => {
+			const leveling = modEncounter.isLeveling();
+			this.rootElem.querySelectorAll(`:scope > .${FIGHT_ONLY_CLASS}`).forEach(elem => elem.classList.toggle('hide', leveling));
+			this.rootElem.querySelectorAll(':scope > .encounter-leveling').forEach(elem => elem.classList.toggle('hide', !leveling));
+		};
+		updateMode();
+		const modeEvent = modEncounter.changeEmitter.on(updateMode);
+		this.addOnDisposeCallback(() => modeEvent.dispose());
+
 		// Need to wait so that the encounter and target presets will be loaded.
 		modEncounter.sim.waitForInit().then(() => {
-			// The Encounter Type comes first. PvP is one of its choices, beside the preset
-			// encounters, and picking anything else turns PvP off.
+			// The Encounter Type comes first. PvP and Leveling are among its choices, beside the
+			// preset encounters, and picking anything else turns them off. Leveling is for one
+			// player, so the raid sim doesn't offer it.
 			const presetEncounters = modEncounter.sim.db.getAllPresetEncounters();
 			const typeGroup = this.rootElem.querySelector(':scope > .encounter-type-group') as HTMLElement;
 			const typePicker = new EnumPicker<Encounter>(typeGroup, modEncounter, {
 				id: 'encounter-type',
 				label: 'Encounter Type',
-				labelTooltip:
-					'A preset fight, or PvP. In PvP the target is an enemy player, and white hits never glance. How long we spend out of melee range is Out of Melee (%), in PvP or not.',
+				labelTooltip: simUI.isIndividualSim()
+					? 'A preset fight, PvP or Leveling. In PvP the target is an enemy player, and white hits never glance. How long we spend out of melee range is Out of Melee (%), in PvP or not. Leveling is a grinding session against normal mobs around our level, scored by the mobs we kill, with its own settings below.'
+					: 'A preset fight, or PvP. In PvP the target is an enemy player, and white hits never glance. How long we spend out of melee range is Out of Melee (%), in PvP or not.',
 				values: [
 					{ name: 'Custom', value: ENCOUNTER_TYPE_CUSTOM },
 					{ name: 'PvP', value: ENCOUNTER_TYPE_PVP },
+					...(simUI.isIndividualSim() ? [{ name: 'Leveling', value: ENCOUNTER_TYPE_LEVELING }] : []),
 					...presetEncounters.map((pe, i) => ({ name: pe.path, value: i })),
 				],
 				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => (encounter.getPvp() ? ENCOUNTER_TYPE_PVP : presetEncounters.findIndex(pe => encounter.matchesPreset(pe))),
+				getValue: (encounter: Encounter) => {
+					if (encounter.isLeveling()) return ENCOUNTER_TYPE_LEVELING;
+					if (encounter.getPvp()) return ENCOUNTER_TYPE_PVP;
+					return presetEncounters.findIndex(pe => encounter.matchesPreset(pe));
+				},
 				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 					TypedEvent.freezeAllAndDo(() => {
 						encounter.setPvp(eventID, newValue == ENCOUNTER_TYPE_PVP);
+						// A new session starts with every option at its default. The Out of Melee
+						// field is hidden in Leveling mode, where the session moves us itself, so we
+						// clear it rather than keep a downtime nobody sees.
+						if (newValue == ENCOUNTER_TYPE_LEVELING) {
+							if (!encounter.isLeveling()) {
+								encounter.setLeveling(eventID, LevelingOptions.create());
+								encounter.setPvpMeleeDowntime(eventID, 0);
+							}
+						} else {
+							encounter.setLeveling(eventID, undefined);
+						}
 						if (newValue >= 0) {
 							encounter.applyPreset(eventID, presetEncounters[newValue]);
 						}
@@ -108,7 +139,9 @@ export class EncounterPicker extends Component {
 				modEncounter.targetsChangeEmitter.emit(TypedEvent.nextEventID());
 			}
 
-			new TargetList(this.rootElem, modEncounter, simUI);
+			const targetList = new TargetList(this.rootElem, modEncounter, simUI);
+			targetList.rootElem.classList.add(FIGHT_ONLY_CLASS);
+			updateMode();
 		});
 	}
 }
@@ -677,6 +710,10 @@ class TargetInputPicker extends Input<Encounter, TargetInput> {
 // The Encounter Type picker's choices besides the preset encounters, which use their index.
 const ENCOUNTER_TYPE_CUSTOM = -1;
 const ENCOUNTER_TYPE_PVP = -2;
+const ENCOUNTER_TYPE_LEVELING = -3;
+
+// The class of the fields Leveling mode hides, see EncounterPicker.
+const FIGHT_ONLY_CLASS = 'encounter-fight-only';
 
 // The fight's fields. The EncounterPicker puts the Encounter Type in front of the PvP field,
 // once the sim has loaded the preset encounters.
@@ -685,7 +722,10 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 	typeGroup.classList.add('encounter-type-group');
 	rootElem.appendChild(typeGroup);
 
+	addLevelingPickers(rootElem, encounter);
+
 	const durationGroup = Input.newGroupContainer();
+	durationGroup.classList.add(FIGHT_ONLY_CLASS);
 	rootElem.appendChild(durationGroup);
 
 	new NumberPicker(durationGroup, encounter, {
@@ -726,12 +766,13 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 			encounter.setPvpMeleeDowntime(eventID, newValue / 100);
 		},
+		showWhen: (encounter: Encounter) => !encounter.isLeveling(),
 	});
 
 	// The three execute phases share one label. Each field's own label is the health its phase
 	// starts at, and its value is the share of the fight in that phase.
 	const executeSection = document.createElement('div');
-	executeSection.classList.add('execute-section');
+	executeSection.classList.add('execute-section', FIGHT_ONLY_CLASS);
 	rootElem.appendChild(executeSection);
 	const executeLabel = document.createElement('label');
 	executeLabel.classList.add('form-label');
@@ -786,6 +827,237 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 		enableWhen: _ => {
 			return !encounter.getUseHealth();
 		},
+	});
+}
+
+// The leveling session's options (LevelingOptions in proto/common.proto), shown in Leveling
+// mode. The ones we change most come first. The rest are under Advanced.
+function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
+	const section = document.createElement('div');
+	section.classList.add('encounter-leveling');
+	rootElem.appendChild(section);
+
+	const mainGroup = Input.newGroupContainer();
+	section.appendChild(mainGroup);
+	addLevelingNumberPicker(mainGroup, encounter, {
+		id: 'encounter-leveling-session-length',
+		label: 'Session (min)',
+		labelTooltip: 'How long the grinding session lasts, in minutes.',
+		get: opts => Math.round((orDefault(opts.sessionLength, 1200) / 60) * 100) / 100,
+		set: (opts, value) => (opts.sessionLength = unlessDefault(value * 60, 1200)),
+	});
+	addLevelingNumberPicker(mainGroup, encounter, {
+		id: 'encounter-leveling-mob-level-offset',
+		label: 'Mob Level +/-',
+		labelTooltip: 'The level of the mobs we grind, less ours. 0 grinds mobs of our level, and -2 mobs two levels under us.',
+		get: opts => opts.mobLevelOffset,
+		set: (opts, value) => (opts.mobLevelOffset = value),
+	});
+	new EnumPicker<Encounter>(mainGroup, encounter, {
+		id: 'encounter-leveling-mob-type',
+		label: 'Mob Type',
+		labelTooltip:
+			'The creature type of every mob in the session, for the talents and items that read it, like the Slaying ones. It is one type for the whole session.',
+		values: mobTypeEnumValues.filter(mt => mt.value != MobType.MobTypeUnknown).map(mt => ({ name: mt.name, value: mt.value })),
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getLeveling()?.mobType || DEFAULT_LEVELING_MOB_TYPE,
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) =>
+			updateLeveling(eventID, encounter, opts => (opts.mobType = newValue == DEFAULT_LEVELING_MOB_TYPE ? MobType.MobTypeUnknown : newValue)),
+	});
+	addLevelingNumberPicker(mainGroup, encounter, {
+		id: 'encounter-leveling-pack-size',
+		label: 'Pack Size',
+		labelTooltip:
+			"How many mobs we pull at once when the rotation doesn't look for mobs itself (Look For Mob): until a pull has this many, we look for the next mob and walk up to it if the rotation doesn't pull it. 1 pulls one mob at a time.",
+		get: opts => Math.max(opts.packSize, 1),
+		set: (opts, value) => (opts.packSize = unlessDefault(value, 1)),
+	});
+
+	const searchGroup = Input.newGroupContainer();
+	section.appendChild(searchGroup);
+	const searchTooltip =
+		'The time it takes to find the next mob out of combat, in seconds, at random between Search Min and Search Max. We run around while we search, so we can only cast instants.';
+	addLevelingNumberPicker(searchGroup, encounter, {
+		id: 'encounter-leveling-search-min',
+		label: 'Search Min (sec)',
+		labelTooltip: searchTooltip,
+		float: true,
+		get: opts => orDefault(opts.searchMin, 5),
+		set: (opts, value) => (opts.searchMin = unlessDefault(value, 5)),
+	});
+	addLevelingNumberPicker(searchGroup, encounter, {
+		id: 'encounter-leveling-search-max',
+		label: 'Search Max (sec)',
+		labelTooltip: searchTooltip,
+		float: true,
+		get: opts => orDefault(opts.searchMax, 11),
+		set: (opts, value) => (opts.searchMax = unlessDefault(value, 11)),
+	});
+	const foundTooltip =
+		'How far away the mob we find stands, in whole yards, at random between Mob Distance Min and Mob Distance Max. It waits there until a harmful spell lands on it or we walk into melee range of it, then runs to us.';
+	addLevelingNumberPicker(searchGroup, encounter, {
+		id: 'encounter-leveling-found-min',
+		label: 'Mob Distance Min (yd)',
+		labelTooltip: foundTooltip,
+		get: opts => Math.round(orDefault(opts.foundMin, 10)),
+		set: (opts, value) => (opts.foundMin = unlessDefault(value, 10)),
+	});
+	addLevelingNumberPicker(searchGroup, encounter, {
+		id: 'encounter-leveling-found-max',
+		label: 'Mob Distance Max (yd)',
+		labelTooltip: foundTooltip,
+		get: opts => Math.round(orDefault(opts.foundMax, 40)),
+		set: (opts, value) => (opts.foundMax = unlessDefault(value, 40)),
+	});
+
+	const restGroup = Input.newGroupContainer();
+	section.appendChild(restGroup);
+	const restTooltip =
+		'Out of combat we sit to eat and drink when health is under Eat Below or mana is under Drink Below, until both are full or the food and drink run out. A rotation with Rest (Leveling) decides that for itself.';
+	addLevelingNumberPicker(restGroup, encounter, {
+		id: 'encounter-leveling-eat-below',
+		label: 'Eat Below (%)',
+		labelTooltip: restTooltip,
+		get: opts => toPercent(orDefault(opts.eatBelow, 0.5)),
+		set: (opts, value) => (opts.eatBelow = unlessDefault(value / 100, 0.5)),
+	});
+	addLevelingNumberPicker(restGroup, encounter, {
+		id: 'encounter-leveling-drink-below',
+		label: 'Drink Below (%)',
+		labelTooltip: restTooltip,
+		get: opts => toPercent(orDefault(opts.drinkBelow, 0.4)),
+		set: (opts, value) => (opts.drinkBelow = unlessDefault(value / 100, 0.4)),
+	});
+	new BooleanPicker<Encounter>(restGroup, encounter, {
+		id: 'encounter-leveling-bandages',
+		label: 'Bandages',
+		labelTooltip:
+			"Out of combat we bandage when health is under Eat Below and we're not Recently Bandaged, with the best bandage First Aid allows at our level.",
+		inline: true,
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => !encounter.getLeveling()?.noBandages,
+		setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => updateLeveling(eventID, encounter, opts => (opts.noBandages = !newValue)),
+	});
+
+	// The options we rarely change, folded away.
+	const advanced = document.createElement('details');
+	advanced.classList.add('encounter-leveling-advanced');
+	advanced.innerHTML = `
+		<summary class="form-label"><i class="fas fa-chevron-right encounter-leveling-chevron"></i>Advanced</summary>
+	`;
+	section.appendChild(advanced);
+	const advancedGroup = Input.newGroupContainer();
+	advanced.appendChild(advancedGroup);
+
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-mob-level-spread',
+		label: 'Mob Level Spread',
+		labelTooltip: 'How many levels either side of the mob level the mobs spread. At level 20, a spread of 1 grinds level 19 to 21 mobs.',
+		get: opts => Math.max(opts.mobLevelSpread ?? 1, 0),
+		set: (opts, value) => (opts.mobLevelSpread = value == 1 ? undefined : Math.max(value, 0)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-armor-multiplier',
+		label: 'Armor Multiplier',
+		labelTooltip: "Scales the mobs' armor, which is the average for their level.",
+		float: true,
+		get: opts => orDefault(opts.armorMultiplier, 1),
+		set: (opts, value) => (opts.armorMultiplier = unlessDefault(value, 1)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-max-pack-size',
+		label: 'Max Pack Size',
+		labelTooltip: 'The most mobs we can ever have on us at once.',
+		get: opts => orDefault(opts.maxPackSize, 5),
+		set: (opts, value) => (opts.maxPackSize = unlessDefault(value, 5)),
+	});
+	const chainSearchTooltip =
+		'The time it takes to find a mob to chain pull while in combat, in seconds, at random between Chain Search Min and Chain Search Max.';
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-chain-search-min',
+		label: 'Chain Search Min (sec)',
+		labelTooltip: chainSearchTooltip,
+		float: true,
+		get: opts => orDefault(opts.chainSearchMin, 2),
+		set: (opts, value) => (opts.chainSearchMin = unlessDefault(value, 2)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-chain-search-max',
+		label: 'Chain Search Max (sec)',
+		labelTooltip: chainSearchTooltip,
+		float: true,
+		get: opts => orDefault(opts.chainSearchMax, 4),
+		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 4)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-chain-search-moving',
+		label: 'Chain Search Running (%)',
+		labelTooltip: "The share of a search in combat we spend running, with the mobs on us following. We can't hard cast while we run.",
+		get: opts => toPercent(Math.min(Math.max(opts.chainSearchMoving ?? 0.75, 0), 1)),
+		set: (opts, value) => (opts.chainSearchMoving = value / 100 == 0.75 ? undefined : Math.min(Math.max(value / 100, 0), 1)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-death-penalty',
+		label: 'Death Penalty (sec)',
+		labelTooltip: 'The corpse run after a death, in seconds. The mobs on us leave, and our cooldowns keep ticking.',
+		get: opts => orDefault(opts.deathPenalty, 180),
+		set: (opts, value) => (opts.deathPenalty = unlessDefault(value, 180)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-revive-fraction',
+		label: 'Revive At (%)',
+		labelTooltip: 'The share of health and mana we come back with after a death.',
+		get: opts => toPercent(orDefault(opts.reviveFraction, 0.5)),
+		set: (opts, value) => (opts.reviveFraction = unlessDefault(value / 100, 0.5)),
+	});
+}
+
+// The session fights Beasts when the mob type is left unset.
+const DEFAULT_LEVELING_MOB_TYPE = MobType.MobTypeBeast;
+
+// Most leveling options take their default when left at 0, or below it, the way
+// resolveLevelingOptions in sim/core/leveling.go reads them. We show the value the session
+// uses, and store a value equal to the default as 0, so a preset with the defaults left unset
+// still matches after we type them back in.
+function orDefault(value: number, defaultValue: number): number {
+	return value > 0 ? value : defaultValue;
+}
+function unlessDefault(value: number, defaultValue: number): number {
+	return value > 0 && value != defaultValue ? value : 0;
+}
+function toPercent(share: number): number {
+	return Math.round(share * 10000) / 100;
+}
+
+// Changes a copy of the leveling options and sets it. Outside Leveling mode the fields are
+// hidden, and we leave the encounter alone.
+function updateLeveling(eventID: EventID, encounter: Encounter, change: (opts: LevelingOptions) => void) {
+	const opts = encounter.getLeveling();
+	if (!opts) return;
+	change(opts);
+	encounter.setLeveling(eventID, opts);
+}
+
+interface LevelingNumberConfig {
+	id: string;
+	label: string;
+	labelTooltip: string;
+	float?: boolean;
+	// The value the session uses, with the default in place of an unset field.
+	get: (opts: LevelingOptions) => number;
+	// Puts the value in the options.
+	set: (opts: LevelingOptions, value: number) => void;
+}
+
+function addLevelingNumberPicker(parent: HTMLElement, encounter: Encounter, config: LevelingNumberConfig) {
+	new NumberPicker<Encounter>(parent, encounter, {
+		id: config.id,
+		label: config.label,
+		labelTooltip: config.labelTooltip,
+		float: config.float,
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => config.get(encounter.getLeveling() ?? LevelingOptions.create()),
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => updateLeveling(eventID, encounter, opts => config.set(opts, newValue)),
 	});
 }
 

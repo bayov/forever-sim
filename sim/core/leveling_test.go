@@ -71,9 +71,13 @@ func TestLevelingRestorers(t *testing.T) {
 func TestPrepareLevelingEncounter(t *testing.T) {
 	raid := &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{{Class: proto.Class_ClassShaman, Level: 30}}}}}
 	spread := int32(2)
-	enc := prepareLevelingEncounter(raid, &proto.Encounter{Leveling: &proto.LevelingOptions{MobLevelOffset: 1, MobLevelSpread: &spread, MaxPackSize: 3}})
+	enc := prepareLevelingEncounter(raid, &proto.Encounter{Leveling: &proto.LevelingOptions{MobLevelOffset: 1, MobLevelSpread: &spread, MaxPackSize: 3},
+		ExecuteProportion_20: 0.2, ExecuteProportion_25: 0.25, ExecuteProportion_35: 0.35, Pvp: true, PvpMeleeDowntime: 0.3})
 	if enc.Duration != 1200 || enc.UseHealth {
 		t.Errorf("duration %.0f and use health %v, want 1200 and false", enc.Duration, enc.UseHealth)
+	}
+	if enc.ExecuteProportion_20 != 0 || enc.ExecuteProportion_25 != 0 || enc.ExecuteProportion_35 != 0 || enc.Pvp || enc.PvpMeleeDowntime != 0 {
+		t.Errorf("execute proportions %v, %v, %v and PvP %v, %v, want them all off", enc.ExecuteProportion_20, enc.ExecuteProportion_25, enc.ExecuteProportion_35, enc.Pvp, enc.PvpMeleeDowntime)
 	}
 	levels := map[int32]int{}
 	for _, mob := range enc.Targets {

@@ -751,7 +751,11 @@ export class Player<SpecType extends Spec> {
 
 	getMeleeCritCapInfo(weapon: WeaponType, useDWPenalty?: boolean): MeleeCritCapInfo {
 		let targetLevel = 63; // Initializes at level 63 until UI is loaded
-		if (this.sim.encounter.targets) {
+		const leveling = this.sim.encounter.getLeveling();
+		if (leveling) {
+			// A leveling session grinds mobs around our level plus its offset, not the targets.
+			targetLevel = Math.max(this.getEffectiveLevel() + leveling.mobLevelOffset, 1);
+		} else if (this.sim.encounter.targets) {
 			targetLevel = this.sim.encounter?.primaryTarget.level;
 		}
 

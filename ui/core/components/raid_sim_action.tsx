@@ -10,6 +10,7 @@ import { RequestTypes } from '../sim_signal_manager';
 import { SimUI } from '../sim_ui';
 import { EventID, TypedEvent } from '../typed_event';
 import { formatDeltaTextElem, formatToNumber, formatToPercent, sum } from '../utils';
+import { buildLevelingResults, getLevelingMetrics, levelingColumns } from './leveling_results';
 import type { SimHistory } from './sim_history';
 import { SimProgress } from './sim_progress';
 
@@ -187,9 +188,13 @@ export class RaidSimResultsManager {
 			return;
 		}
 
+		// A leveling run shows its mobs killed and the rest of the session in place of the DPS.
+		const leveling = getLevelingMetrics(simResult);
 		this.simUI.resultsViewer.setContent(
 			<div className="results-sim">
-				{RaidSimResultsManager.makeToplineResultsContent(simResult, undefined, { asList: true })}
+				{leveling
+					? buildLevelingResults(leveling, simResult.iterations, simResult.raidMetrics.dps.avg)
+					: RaidSimResultsManager.makeToplineResultsContent(simResult, undefined, { asList: true })}
 				<div className="results-sim-reference">
 					<a href="javascript:void(0)" className="results-sim-set-reference" attributes={{ role: 'button' }}>
 						<i className={`fa fa-map-pin fa-lg text-${this.simUI.cssScheme} me-2`}></i>Save as Reference
@@ -320,6 +325,15 @@ export class RaidSimResultsManager {
 		}
 
 		this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dps']} .results-reference-diff`, res => res.raidMetrics.dps, 2);
+		// A leveling run compares its mobs killed. A reference that wasn't one counts as none.
+		this.formatToplineResult(
+			'.results-sim-mobs .results-reference-diff',
+			res => {
+				const leveling = getLevelingMetrics(res);
+				return DistributionMetricsProto.create({ avg: leveling?.mobsKilled ?? 0, stdev: leveling?.mobsKilledStdev ?? 0 });
+			},
+			2,
+		);
 		if (this.simUI.isIndividualSim()) {
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['hps']} .results-reference-diff`, res => res.raidMetrics.hps, 2);
 			this.formatToplineResult(`.${RaidSimResultsManager.resultMetricClasses['dpasp']} .results-reference-diff`, res => res.getPlayers()[0]!.dpasp, 2);
@@ -471,6 +485,13 @@ export class RaidSimResultsManager {
 
 		const resultColumns: ResultMetric[] = [];
 
+		// A leveling run leads with its mobs killed and the rest of the session, and keeps the
+		// DPS and the other results after them.
+		const leveling = getLevelingMetrics(simResult);
+		if (leveling && !(filter?.target || filter?.target === 0)) {
+			resultColumns.push(...levelingColumns(leveling, simResult.iterations));
+		}
+
 		if (players.length === 1) {
 			const playerMetrics = players[0];
 			if (playerMetrics.getTargetIndex(filter) === null) {
@@ -598,7 +619,9 @@ export class RaidSimResultsManager {
 		if (showOutOfMana) {
 			const player = players[0];
 			const secondsOOM = player.secondsOomAvg;
-			const percentOOM = secondsOOM / simResult.encounterMetrics.durationSeconds;
+			// A leveling session has no set duration in the encounter, so it goes by the
+			// session's.
+			const percentOOM = secondsOOM / (leveling ? simResult.duration : simResult.encounterMetrics.durationSeconds);
 			const dangerLevel = percentOOM < 0.01 ? 'safe' : percentOOM < 0.05 ? 'warning' : 'danger';
 
 			resultColumns.push({
@@ -606,9 +629,13 @@ export class RaidSimResultsManager {
 				average: secondsOOM,
 				classes: [this.getResultsLineClasses('oom'), dangerLevel].join(' '),
 				unit: 'seconds',
-				note: `${formatToPercent(percentOOM * 100, { maximumFractionDigits: 1 })} of the fight`,
+				note: `${formatToPercent(percentOOM * 100, { maximumFractionDigits: 1 })} of the ${leveling ? 'session' : 'fight'}`,
 			});
 		}
+
+		// Threat and the tank results don't mean much for a grinding session, which counts its
+		// own deaths.
+		if (leveling) return resultColumns.filter(column => !LEVELING_SKIPPED_COLUMNS.includes(column.name));
 
 		return resultColumns;
 	}
@@ -680,17 +707,17 @@ export class RaidSimResultsManager {
 	static buildResultsCards(data: ResultMetric[]): Element {
 		return (
 			<div className="results-cards">
-				{data.map(({ name, average, stdev, range, note, classes, unit }) => {
+				{data.map(({ name, average, stdev, error, digits, range, note, classes, unit }) => {
 					const label = <div className="results-card-label">{name}</div>;
 					if (TOOLTIP_METRIC_LABELS[name]) {
 						tippy(label, { content: TOOLTIP_METRIC_LABELS[name], ignoreAttributes: true });
 					}
-					const errorDecimals = unit === 'percentage' ? 2 : 0;
+					const errorDecimals = unit === 'percentage' || error !== undefined ? 2 : 0;
 					const details: Array<Element> = [];
-					if (stdev) {
+					if (error ?? stdev) {
 						details.push(
 							<span>
-								<i className="fas fa-plus-minus fa-xs"></i> {formatToNumber(stdev, { maximumFractionDigits: errorDecimals })}
+								<i className="fas fa-plus-minus fa-xs"></i> {formatToNumber(error ?? stdev!, { maximumFractionDigits: errorDecimals })}
 							</span>,
 						);
 					}
@@ -705,7 +732,7 @@ export class RaidSimResultsManager {
 					return (
 						<div className={clsx('results-card', classes)}>
 							{label}
-							<div className="topline-result-avg">{this.formatResultValue(average, unit)}</div>
+							<div className="topline-result-avg">{this.formatResultValue(average, unit, digits)}</div>
 							{details.length ? <div className="results-card-details">{details}</div> : null}
 						</div>
 					);
@@ -714,14 +741,16 @@ export class RaidSimResultsManager {
 		);
 	}
 
-	static formatResultValue(average: number, unit: ResultMetric['unit']): string {
+	static formatResultValue(average: number, unit: ResultMetric['unit'], digits?: number): string {
 		switch (unit) {
 			case 'percentage':
 				return formatToPercent(average);
 			case 'seconds':
 				return formatToNumber(average, { style: 'unit', unit: 'second', unitDisplay: 'narrow' });
 			default:
-				return formatToNumber(average);
+				return digits === undefined
+					? formatToNumber(average)
+					: formatToNumber(average, { minimumFractionDigits: digits, maximumFractionDigits: digits });
 		}
 	}
 
@@ -750,6 +779,8 @@ export class RaidSimResultsManager {
 	}
 }
 
+const LEVELING_SKIPPED_COLUMNS: Array<ResultMetric['name']> = ['DPASP', 'TPS', 'TMI', 'COD'];
+
 type ToplineResultOptions = {
 	showOutOfMana?: boolean;
 	asList?: boolean;
@@ -760,6 +791,11 @@ export type ResultMetric = {
 	name: keyof typeof TOOLTIP_METRIC_LABELS;
 	average: number;
 	stdev?: number;
+	// The ± the cards show in place of the stdev, like the standard error of a leveling run's
+	// mobs killed.
+	error?: number;
+	// The decimals of the value, when it needs other than the default.
+	digits?: number;
 	// The lowest and the highest value of an iteration.
 	range?: [number, number];
 	// A short line under the value, like how much of the fight we spent out of mana.

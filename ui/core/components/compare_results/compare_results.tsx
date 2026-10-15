@@ -12,6 +12,7 @@ import { orderedResourceTypes } from '../../proto_utils/utils';
 import { bucket, formatToNumber } from '../../utils';
 import { Component } from '../component';
 import { panel, syncSubTabWithUrl, trackStuckToolbar } from '../detailed_results';
+import { getLevelingMetrics, mobsKilledError } from '../leveling_results';
 import { changesList } from '../preset_tree';
 import { RaidSimResultsManager, ResultMetric } from '../raid_sim_action';
 import { runLabel, SimHistory, SimRun } from '../sim_history';
@@ -28,7 +29,7 @@ const SIDE_NAMES: Record<Side, string> = { a: 'Baseline', b: 'Compared' };
 const CHANGED_ONLY_KEY = '__compare_changed_only__';
 
 // The topline results where less is better.
-const LOWER_IS_BETTER = new Set(['DTPS', 'TMI', 'COD', 'OOM', 'DUR']);
+const LOWER_IS_BETTER = new Set(['DTPS', 'TMI', 'COD', 'OOM', 'DUR', 'Deaths']);
 
 // Bigger changes than this many standard errors are real, the same Z test at 95% as the sim
 // history.
@@ -467,8 +468,10 @@ export class CompareResults extends Component {
 			elem.disabled = disabled;
 			return elem;
 		};
-		const runOption = (run: SimRun) =>
-			option(run.id, `${runLabel(run)} · ${run.dps.toFixed(1)} DPS${this.history.hasResults(run) ? '' : ' (DPS only)'}`, !this.history.hasResults(run));
+		const runOption = (run: SimRun) => {
+			const score = run.leveling ? `${run.leveling.mobsKilled.toFixed(1)} mobs` : `${run.dps.toFixed(1)} DPS`;
+			return option(run.id, `${runLabel(run)} · ${score}${this.history.hasResults(run) ? '' : ' (DPS only)'}`, !this.history.hasResults(run));
+		};
 		const group = (label: string, options: HTMLOptionElement[]) => {
 			const elem = document.createElement('optgroup');
 			elem.label = label;
@@ -497,7 +500,11 @@ export class CompareResults extends Component {
 			return;
 		}
 		const label = this.choices[side] === 'latest' || this.choices[side] === 'previous' ? `${runLabel(run)} · ` : '';
-		elem.textContent = `${label}${run.dps.toFixed(1)} DPS ±${run.stdev.toFixed(0)} · ${formatToNumber(run.iterations)} iterations`;
+		// A leveling run goes by its mobs killed a session, with the standard error.
+		const score = run.leveling
+			? `${run.leveling.mobsKilled.toFixed(2)} mobs ±${mobsKilledError(run.leveling, run.iterations).toFixed(2)}`
+			: `${run.dps.toFixed(1)} DPS ±${run.stdev.toFixed(0)}`;
+		elem.textContent = `${label}${score} · ${formatToNumber(run.iterations)} iterations`;
 	}
 
 	private async loadResult(run: SimRun): Promise<SimResult | null> {
@@ -565,10 +572,15 @@ export class CompareResults extends Component {
 	}
 
 	// One sentence on the DPS: how much more or less the compared run does, and whether that's
-	// more than chance.
+	// more than chance. Two leveling runs compare their mobs killed a session instead.
 	private verdict(a: SimRun, b: SimRun, resultA: SimResult, resultB: SimResult): Element {
-		const dpsA = resultA.raidMetrics.dps;
-		const dpsB = resultB.raidMetrics.dps;
+		const levelingA = getLevelingMetrics(resultA);
+		const levelingB = getLevelingMetrics(resultB);
+		const leveling = !!levelingA && !!levelingB;
+		const unit = leveling ? 'mobs' : 'DPS';
+		const dpsA = leveling ? { avg: levelingA.mobsKilled, stdev: levelingA.mobsKilledStdev } : resultA.raidMetrics.dps;
+		const dpsB = leveling ? { avg: levelingB.mobsKilled, stdev: levelingB.mobsKilledStdev } : resultB.raidMetrics.dps;
+		const digits = leveling ? 2 : 1;
 		const diff = dpsB.avg - dpsA.avg;
 		const percent = (diff / (dpsA.avg || 1)) * 100;
 		const z = zScore(dpsA.avg, dpsA.stdev, resultA.iterations, dpsB.avg, dpsB.stdev, resultB.iterations);
@@ -582,13 +594,19 @@ export class CompareResults extends Component {
 		const baseline = <span className="cmp-word-a">baseline</span>;
 		const amount = (
 			<span className={`cmp-verdict-amount cmp-amount-${tone}`}>
-				{`${formatFixed(1)(Math.abs(diff))} DPS (${formatFixed(2)(Math.abs(percent))}%) ${diff > 0 ? 'more' : 'less'}`}
+				{`${formatFixed(digits)(Math.abs(diff))} ${unit} (${formatFixed(2)(Math.abs(percent))}%) ${diff > 0 ? 'more' : 'less'}`}
 			</span>
 		);
 
 		let title: Element;
 		if (a.id === b.id) title = <>Both sides are the same run. Pick another run to compare with.</>;
-		else if (!diff) title = <>Both runs did the same DPS.</>;
+		else if (!diff) title = <>{leveling ? 'Both runs killed the same mobs a session.' : 'Both runs did the same DPS.'}</>;
+		else if (leveling)
+			title = (
+				<>
+					The {compared} kills {amount} a session than the {baseline}.
+				</>
+			);
 		else
 			title = (
 				<>
@@ -611,8 +629,8 @@ export class CompareResults extends Component {
 							) : (
 								<>
 									That's within the noise of the two runs (
-									<span className="cmp-verdict-number">{`±${formatFixed(1)(noise * Z_SIGNIFICANT)} DPS`}</span> at 95%). Run more iterations
-									to tell them apart.
+									<span className="cmp-verdict-number">{`±${formatFixed(digits)(noise * Z_SIGNIFICANT)} ${unit}`}</span> at 95%). Run more
+									iterations to tell them apart.
 								</>
 							)}
 						</span>
@@ -627,7 +645,7 @@ export class CompareResults extends Component {
 
 	private card(metricA: ResultMetric, metricB: ResultMetric, iterationsA: number, iterationsB: number): Element {
 		const better: Better = LOWER_IS_BETTER.has(metricB.name) ? 'lower' : 'higher';
-		const format = (value: number) => RaidSimResultsManager.formatResultValue(value, metricB.unit);
+		const format = (value: number) => RaidSimResultsManager.formatResultValue(value, metricB.unit, metricB.digits);
 		const diff = metricB.average - metricA.average;
 		const percent = metricA.average ? (diff / Math.abs(metricA.average)) * 100 : 0;
 		// Only results with a spread can be tested, like DPS. TMI and the others without one show
@@ -638,7 +656,10 @@ export class CompareResults extends Component {
 			tippy(label, { content: TOOLTIP_METRIC_LABELS[metricB.name as keyof typeof TOOLTIP_METRIC_LABELS], ignoreAttributes: true });
 		}
 		return (
-			<div className={`cmp-card ${metricB.name === 'DPS' ? 'cmp-card-lead' : ''} ${z !== null && z <= Z_SIGNIFICANT ? 'cmp-card-noise' : ''}`}>
+			<div
+				className={`cmp-card ${metricB.name === (getLevelingMetrics(this.pair!.resultB) ? 'Mobs Killed' : 'DPS') ? 'cmp-card-lead' : ''} ${
+					z !== null && z <= Z_SIGNIFICANT ? 'cmp-card-noise' : ''
+				}`}>
 				{label}
 				<div className="cmp-card-values">
 					<span className="cmp-card-b">{format(metricB.average)}</span>

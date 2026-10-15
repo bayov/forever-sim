@@ -79,6 +79,13 @@ $ep-control-height: calc(var(--content-font-size) * 1.5 + var(--input-padding-y)
 			gap: var(--spacer-1);
 			white-space: nowrap;
 		}
+
+		// Calculate in leveling mode, which has no stat weights yet. It stays hoverable for
+		// its tooltip, see EpWeightsMenu.
+		.calc-weights[aria-disabled='true'] {
+			opacity: var(--bs-btn-disabled-opacity);
+			cursor: not-allowed;
+		}
 	}
 
 	.ep-reference-options {

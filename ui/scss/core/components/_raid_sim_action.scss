@@ -12,6 +12,9 @@
 		.results-sim-dps .topline-result-avg:after {
 			content: ' DPS';
 		}
+		.results-sim-mobs .topline-result-avg:after {
+			content: ' mobs';
+		}
 		.results-sim-tto .topline-result-avg:after {
 			content: ' TTO';
 		}
@@ -467,5 +470,84 @@
 
 	to {
 		transform: translateX(233%);
+	}
+}
+
+// A leveling run's results in the sidebar, see leveling_results.tsx: the mobs killed a session
+// leads, with the rest of the session in small lines under it.
+.leveling-results {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacer-2);
+	font-variant-numeric: tabular-nums;
+
+	.results-sim-mobs {
+		text-align: center;
+	}
+
+	.leveling-stats {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.1rem 0.75rem;
+		font-size: 0.8125rem;
+		font-weight: normal;
+		color: var(--text-muted-color);
+	}
+
+	.leveling-stat-value {
+		font-weight: 600;
+		color: $body-color;
+	}
+
+	// The DPS of the whole session, downtime included, on a line of its own under what we ate
+	// and drank.
+	.leveling-dps {
+		flex-basis: 100%;
+		text-align: center;
+	}
+
+	// How the session's time split, as one bar with a key under it.
+	.leveling-session-bar {
+		display: flex;
+		height: 0.5rem;
+		overflow: hidden;
+		border-radius: var(--bs-border-radius-sm);
+		background: var(--line-color);
+	}
+
+	.leveling-session-legend {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.1rem 0.6rem;
+		margin-top: 0.3rem;
+		font-size: 0.75rem;
+		font-weight: normal;
+		color: var(--text-muted-color);
+	}
+
+	.leveling-session-swatch {
+		display: inline-block;
+		width: 0.5rem;
+		height: 0.5rem;
+		margin-right: 0.25rem;
+		border-radius: 2px;
+	}
+
+	.leveling-session-combat {
+		background: #c8a24a;
+	}
+
+	.leveling-session-resting {
+		background: #8fd18f;
+	}
+
+	.leveling-session-searching {
+		background: #7fb3f0;
+	}
+
+	.leveling-session-dead {
+		background: #ef7a7a;
 	}
 }

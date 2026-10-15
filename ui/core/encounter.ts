@@ -1,5 +1,5 @@
 import { UnitMetadataList } from './player.js';
-import { Encounter as EncounterProto, PresetEncounter, PresetTarget, Target as TargetProto } from './proto/common.js';
+import { Encounter as EncounterProto, LevelingOptions, PresetEncounter, PresetTarget, Target as TargetProto } from './proto/common.js';
 import { Sim } from './sim.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
@@ -23,6 +23,8 @@ export class Encounter {
 	private useHealth = false;
 	private pvp = false;
 	private pvpMeleeDowntime = DEFAULT_PVP_MELEE_DOWNTIME;
+	// Set in Leveling mode, a grinding session in place of one fight (docs/leveling_sim.md).
+	private leveling: LevelingOptions | undefined = undefined;
 
 	targets!: Array<TargetProto>;
 	targetsMetadata: UnitMetadataList;
@@ -31,6 +33,7 @@ export class Encounter {
 	readonly targetsChangeEmitter = new TypedEvent<void>();
 	readonly durationChangeEmitter = new TypedEvent<void>();
 	readonly executeProportionChangeEmitter = new TypedEvent<void>();
+	readonly levelingChangeEmitter = new TypedEvent<void>();
 
 	// Emits when any of the above emitters emit.
 	readonly changeEmitter = new TypedEvent<void>();
@@ -44,7 +47,7 @@ export class Encounter {
 
 			this.targets = [TargetProto.clone(presetTarget.target!)];
 
-			[this.targetsChangeEmitter, this.durationChangeEmitter, this.executeProportionChangeEmitter].forEach(emitter =>
+			[this.targetsChangeEmitter, this.durationChangeEmitter, this.executeProportionChangeEmitter, this.levelingChangeEmitter].forEach(emitter =>
 				emitter.on(eventID => this.changeEmitter.emit(eventID)),
 			);
 		});
@@ -133,6 +136,22 @@ export class Encounter {
 		this.durationChangeEmitter.emit(eventID);
 	}
 
+	// The leveling session's options, or undefined when we sim one fight. An empty
+	// LevelingOptions is a session with every option at its default. We return a copy.
+	getLeveling(): LevelingOptions | undefined {
+		return this.leveling ? LevelingOptions.clone(this.leveling) : undefined;
+	}
+	setLeveling(eventID: EventID, newLeveling: LevelingOptions | undefined) {
+		const same = newLeveling && this.leveling ? LevelingOptions.equals(newLeveling, this.leveling) : newLeveling === this.leveling;
+		if (same) return;
+
+		this.leveling = newLeveling ? LevelingOptions.clone(newLeveling) : undefined;
+		this.levelingChangeEmitter.emit(eventID);
+	}
+	isLeveling(): boolean {
+		return this.leveling !== undefined;
+	}
+
 	matchesPreset(preset: PresetEncounter): boolean {
 		return preset.targets.length == this.targets.length && this.targets.every((t, i) => TargetProto.equals(t, preset.targets[i].target));
 	}
@@ -159,6 +178,7 @@ export class Encounter {
 			pvp: this.pvp,
 			pvpMeleeDowntime: this.pvpMeleeDowntime,
 			targets: this.targets,
+			leveling: this.getLeveling(),
 		});
 	}
 
@@ -172,6 +192,7 @@ export class Encounter {
 			this.setUseHealth(eventID, proto.useHealth);
 			this.setPvp(eventID, proto.pvp);
 			this.setPvpMeleeDowntime(eventID, proto.pvpMeleeDowntime);
+			this.setLeveling(eventID, proto.leveling);
 			// We copy the targets, so editing one later doesn't change the preset or the saved
 			// settings they came from.
 			this.targets = proto.targets.map(target => TargetProto.clone(target));

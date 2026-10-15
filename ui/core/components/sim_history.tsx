@@ -2,11 +2,14 @@ import tippy, { Instance as TippyInstance } from 'tippy.js';
 
 import type { IndividualSimUI } from '../individual_sim_ui';
 import { deleteHistoryRun, historyRunKeys, loadHistoryRun, loadLastSimRun, saveHistoryRun } from '../last_sim_run';
+import { LevelingMetrics } from '../proto/api';
 import { IndividualSimSettings } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
 import { TypedEvent } from '../typed_event';
+import { formatToNumber } from '../utils';
 import { BaseModal } from './base_modal';
 import { ChangeCategory, dirtySettings } from './dirty_settings';
+import { buildLevelingResults, getLevelingMetrics, mobsKilledError } from './leveling_results';
 import { changesList } from './preset_tree';
 import { RaidSimResultsManager, ResultMetric } from './raid_sim_action';
 import { keyClickHint } from './sticky_tooltips';
@@ -24,8 +27,28 @@ export interface SimRun {
 	stdev: number;
 	iterations: number;
 	metrics: ResultMetric[];
+	// A leveling run's session results (docs/leveling_sim.md). Its score is the mobs killed a
+	// session, in place of the DPS.
+	leveling?: LevelingMetrics;
 	// IndividualSimSettings as JSON.
 	settings: unknown;
+}
+
+// What a run is ranked by: its DPS, or the mobs killed a session of a leveling run.
+interface RunScore {
+	value: number;
+	stdev: number;
+	unit: string;
+}
+
+function runScore(run: SimRun): RunScore {
+	if (run.leveling) return { value: run.leveling.mobsKilled, stdev: run.leveling.mobsKilledStdev, unit: 'mobs' };
+	return { value: run.dps, stdev: run.stdev, unit: 'DPS' };
+}
+
+// A leveling run and a DPS run score different things, so they don't compare.
+function sameKind(a: SimRun, b: SimRun): boolean {
+	return !!a.leveling === !!b.leveling;
 }
 
 // How a run's DPS compares with the latest run. The difference only counts when it's bigger
@@ -183,6 +206,7 @@ export class SimHistory {
 	showRun(simResult: SimResult) {
 		if (this.runSettings !== null) {
 			const dps = simResult.raidMetrics.dps;
+			const leveling = getLevelingMetrics(simResult);
 			const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 			this.history.unshift({
 				id,
@@ -191,6 +215,7 @@ export class SimHistory {
 				stdev: dps.stdev,
 				iterations: simResult.iterations,
 				metrics: RaidSimResultsManager.toplineColumns(simResult),
+				...(leveling ? { leveling: LevelingMetrics.clone(leveling) } : {}),
 				settings: this.runSettings,
 			});
 			this.history.splice(MAX_HISTORY).forEach(run => this.dropResults(run));
@@ -228,6 +253,15 @@ export class SimHistory {
 		if (this.running || !latest) return;
 		this.latestTooltip?.destroy();
 		this.latestTooltip = null;
+		// A leveling run shows its mobs killed and the rest of the session in place of the DPS,
+		// and the run's tooltip goes on the mobs killed.
+		if (latest.leveling) {
+			const content = (<div className="results-sim">{buildLevelingResults(latest.leveling, latest.iterations, latest.dps)}</div>) as HTMLElement;
+			this.simUI.resultsViewer.setContent(content);
+			const mobsElem = content.querySelector<HTMLElement>('.results-sim-mobs');
+			if (mobsElem) this.latestTooltip = this.addTooltip(mobsElem, () => this.runTooltip(latest), []);
+			return;
+		}
 		const content = (<div className="results-sim">{RaidSimResultsManager.buildResultsList(latest.metrics)}</div>) as HTMLElement;
 		this.simUI.resultsViewer.setContent(content);
 
@@ -275,7 +309,8 @@ export class SimHistory {
 		return this.history.map(run => this.buildRow(run, 'dialog', tooltips));
 	}
 
-	// One run in a row: its name, its DPS, and how the latest run compares with it.
+	// One run in a row: its name, its DPS (or mobs killed for a leveling run), and how the
+	// latest run compares with it.
 	//
 	// The rows of the sidebar's sections share the columns of one grid, so the numbers line up
 	// from section to section, see .sim-history.
@@ -284,7 +319,8 @@ export class SimHistory {
 		const isLatest = latest?.id === run.id;
 		const isPinned = this.isPinned(run);
 		const comparison = this.compare(run);
-		const diff = latest && !isLatest ? latest.dps - run.dps : null;
+		const score = runScore(run);
+		const diff = latest && !isLatest && sameKind(latest, run) ? runScore(latest).value - score.value : null;
 
 		const pinButton = (
 			<button className={`sim-run-pin ${isPinned ? 'active' : ''}`} attributes={{ 'aria-label': isPinned ? 'Unpin' : 'Pin' }}>
@@ -310,10 +346,10 @@ export class SimHistory {
 					{renameButton}
 				</span>
 				{place === 'dialog' ? <span className="sim-run-iterations">{`${run.iterations} it.`}</span> : undefined}
-				<span className="sim-run-dps">{run.dps.toFixed(1)}</span>
+				<span className="sim-run-dps">{run.leveling ? `${score.value.toFixed(1)} mobs` : run.dps.toFixed(1)}</span>
 				{isLatest ? <span className="sim-run-latest-tag">latest</span> : undefined}
 				{diff !== null ? <span className="sim-run-diff">{signed(diff, 1)}</span> : undefined}
-				{diff !== null ? <span className="sim-run-percent">{`(${signed((diff / (run.dps || 1)) * 100, 1)}%)`}</span> : undefined}
+				{diff !== null ? <span className="sim-run-percent">{`(${signed((diff / (score.value || 1)) * 100, 1)}%)`}</span> : undefined}
 			</div>
 		) as HTMLElement;
 		row.dataset.id = run.id;
@@ -472,15 +508,20 @@ export class SimHistory {
 	private runTooltip(run: SimRun): Element {
 		const latest = this.latest;
 		const isLatest = latest?.id === run.id;
+		const score = runScore(run);
 		let verdict = '';
-		if (latest && !isLatest) {
-			const diff = latest.dps - run.dps;
-			const percent = (Math.abs(diff) / (run.dps || 1)) * 100;
-			const amount = `${Math.abs(diff).toFixed(2)} DPS (${percent.toFixed(2)}%)`;
+		if (latest && !isLatest && !sameKind(latest, run)) {
+			verdict = latest.leveling
+				? "The latest run is a leveling run, so it doesn't compare with this one."
+				: "This is a leveling run, so it doesn't compare with the latest one.";
+		} else if (latest && !isLatest) {
+			const diff = runScore(latest).value - score.value;
+			const percent = (Math.abs(diff) / (score.value || 1)) * 100;
+			const amount = `${Math.abs(diff).toFixed(2)} ${score.unit} (${percent.toFixed(2)}%)`;
 			const comparison = this.compare(run);
 			if (comparison === 'higher') verdict = `The latest run did ${amount} better.`;
 			else if (comparison === 'lower') verdict = `The latest run did ${amount} worse.`;
-			else verdict = `The latest run is within the noise of this one (${signed(diff, 2)} DPS).`;
+			else verdict = `The latest run is within the noise of this one (${signed(diff, 2)} ${score.unit}).`;
 		}
 		// When it ran with the current settings, there's nothing to load.
 		const categories = this.changesSince(run);
@@ -488,7 +529,11 @@ export class SimHistory {
 			<>
 				{run.name ? <p className="mb-0 fw-bold">{run.name}</p> : undefined}
 				<p className="mb-0 sim-run-time">{defaultLabel(run)}</p>
-				<p className="mb-0">{`${run.dps.toFixed(2)} DPS (±${run.stdev.toFixed(0)}) over ${run.iterations} iterations`}</p>
+				{run.leveling ? (
+					<p className="mb-0">{levelingSummary(run.leveling, run.iterations)}</p>
+				) : (
+					<p className="mb-0">{`${run.dps.toFixed(2)} DPS (±${run.stdev.toFixed(0)}) over ${run.iterations} iterations`}</p>
+				)}
 				{verdict ? <p className={`mb-0 sim-run-verdict sim-run-${this.compare(run)}`}>{verdict}</p> : undefined}
 				{this.changesNote(categories)}
 				{categories?.length === 0 ? undefined : keyClickHint('ctrl', 'load its settings')}
@@ -523,9 +568,9 @@ export class SimHistory {
 
 	private compare(run: SimRun): Comparison {
 		const latest = this.latest;
-		if (!latest || latest.id === run.id) return 'same';
-		const error = (run: SimRun) => run.stdev / Math.sqrt(Math.max(run.iterations, 1));
-		const diff = latest.dps - run.dps;
+		if (!latest || latest.id === run.id || !sameKind(latest, run)) return 'same';
+		const error = (run: SimRun) => runScore(run).stdev / Math.sqrt(Math.max(run.iterations, 1));
+		const diff = runScore(latest).value - runScore(run).value;
 		const noise = Math.sqrt(error(latest) ** 2 + error(run) ** 2);
 		if (diff === 0 || (noise > 0 && Math.abs(diff) / noise <= 1.96)) return 'same';
 		return diff > 0 ? 'higher' : 'lower';
@@ -574,6 +619,14 @@ class SimHistoryModal extends BaseModal {
 			rows.length ? <div className="sim-history-list">{rows}</div> : <p className="mb-0">No runs yet.</p>,
 		);
 	}
+}
+
+// Like '45.65 mobs killed a session (±0.33), 26,403 XP/h, over 100 sessions'.
+function levelingSummary(leveling: LevelingMetrics, iterations: number): string {
+	const error = mobsKilledError(leveling, iterations).toFixed(2);
+	return `${leveling.mobsKilled.toFixed(2)} mobs killed a session (±${error}), ${formatToNumber(leveling.xpPerHour, {
+		maximumFractionDigits: 0,
+	})} XP/h, over ${iterations} sessions`;
 }
 
 export function signed(value: number, digits: number): string {

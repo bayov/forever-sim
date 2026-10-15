@@ -248,7 +248,7 @@ class EpWeightsMenu extends Component {
 		const calcButton = this.rootElem.getElementsByClassName('calc-weights')[0] as HTMLButtonElement;
 		let isRunning = false;
 		calcButton.addEventListener('click', async _event => {
-			if (isRunning) return;
+			if (isRunning || this.isLeveling()) return;
 			isRunning = true;
 
 			try {
@@ -339,16 +339,26 @@ class EpWeightsMenu extends Component {
 			},
 		});
 
-		tippy(calcButton, {
-			content: `
+		const calcTooltip = `
 				<p class="mb-1">We sim the character once as it is, and then once with each stat raised by 1 and once with it lowered by 1. All of them use the same random rolls, so the difference is the stat alone.</p>
 				<p class="mb-1">A stat's weight is the DPS it adds per point. Its EP is that weight divided by the weight of ${getNameFromStat(
 					this.getDpsEpRefStat(),
 				)}, so ${getNameFromStat(this.getDpsEpRefStat())} is always 1.</p>
 				<p class="mb-0">More iterations give steadier numbers, but take longer.</p>
-			`,
-			allowHTML: true,
-		});
+			`;
+		const levelingTooltip = "Stat weights aren't available for leveling yet. They weigh stats by DPS, and a leveling run scores mobs killed.";
+		const calcButtonTooltip = tippy(calcButton, { content: calcTooltip, allowHTML: true });
+
+		// In leveling mode Calculate is off, because the weights would be by DPS. The button
+		// stays hoverable (aria-disabled, not disabled) so its tooltip can say why.
+		const updateLeveling = () => {
+			const leveling = this.isLeveling();
+			if (leveling) calcButton.setAttribute('aria-disabled', 'true');
+			else calcButton.removeAttribute('aria-disabled');
+			calcButtonTooltip.setContent(leveling ? levelingTooltip : calcTooltip);
+		};
+		this.simUI.sim.encounter.changeEmitter.on(updateLeveling);
+		updateLeveling();
 
 		tippy(this.applyAllButton, { content: 'Copy every calculated EP into the Current EP.' });
 		this.applyAllButton.addEventListener('click', () => this.applyAll());
@@ -375,6 +385,11 @@ class EpWeightsMenu extends Component {
 
 		const weightRatioCells = this.body.querySelectorAll('.type-ratio.type-weight') as NodeListOf<HTMLElement>;
 		weightRatioCells.forEach(makeEpRatioCell);
+	}
+
+	// Whether the encounter is a leveling session (docs/leveling_sim.md).
+	private isLeveling(): boolean {
+		return this.simUI.sim.encounter.isLeveling();
 	}
 
 	// The tooltips on the column titles. They say what each column holds, which stat the EP is

@@ -219,6 +219,13 @@ func prepareLevelingEncounter(raidProto *proto.Raid, encounterProto *proto.Encou
 	prepared.Duration = opts.sessionLength.Seconds()
 	prepared.DurationVariation = 0
 	prepared.UseHealth = false
+	// Execute phases go by time over the whole encounter, which says nothing about each mob's
+	// health in a session, so they never start; and a session isn't a PvP fight.
+	prepared.ExecuteProportion_20 = 0
+	prepared.ExecuteProportion_25 = 0
+	prepared.ExecuteProportion_35 = 0
+	prepared.Pvp = false
+	prepared.PvpMeleeDowntime = 0
 	prepared.Targets = nil
 	for _, mobLevel := range levelingMobLevels(level, opts) {
 		for range opts.maxPack {

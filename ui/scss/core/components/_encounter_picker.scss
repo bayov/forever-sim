@@ -35,6 +35,51 @@
 	}
 }
 
+// The leveling session's options, in place of the fight's in Leveling mode, with the ones we
+// rarely change folded under Advanced.
+.encounter-leveling {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--block-spacer);
+
+	.encounter-leveling-advanced > summary {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		width: fit-content;
+		margin-bottom: 0;
+		list-style: none;
+		cursor: pointer;
+		user-select: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+	}
+
+	.encounter-leveling-chevron {
+		width: 0.75rem;
+		font-size: 0.7rem;
+		transition: transform 0.1s;
+	}
+
+	.encounter-leveling-advanced[open] {
+		> summary {
+			margin-bottom: var(--block-spacer);
+		}
+
+		.encounter-leveling-chevron {
+			transform: rotate(90deg);
+		}
+	}
+
+	// The summary takes the changed color when one of the folded fields changed.
+	.encounter-leveling-advanced:has(.dirty-setting) > summary {
+		color: var(--dirty-color);
+	}
+}
+
 .encounter-targets {
 	width: 100%;
 	display: flex;

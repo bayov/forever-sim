@@ -383,7 +383,13 @@ export class SettingsTab extends SimTab {
 		// in the Stat Weights section.
 		const encounterPresets = this.encounterPresets!;
 		tippy(encounterPresets.querySelector('span')!, {
-			content: presetListTooltip('Loading an encounter changes:', ['Duration and its variation', 'Execute phases', 'PvP options', 'Targets']),
+			content: presetListTooltip('Loading an encounter changes:', [
+				'Duration and its variation',
+				'Execute phases',
+				'PvP options',
+				'Leveling mode and its options',
+				'Targets',
+			]),
 		});
 		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(
 			encounterPresets.querySelector('.saved-data-presets') as HTMLElement,
