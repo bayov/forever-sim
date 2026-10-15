@@ -41,6 +41,7 @@ Item format:
   - 2026-10-15: the sim side is done (mob table from the 1.12 world database, death without a healing model, health fight length, pushback cap, tests). Still open: run `go run --tags=with_db ./tools/logcheck -mobs` on the user's machine and compare Forever's mobs with the table; the low-level defense checks; the UI preset. `docs/leveling_sim.md`, Groundwork 1.
 - [ ] 2026-10-15 — Leveling groundwork 2: separate mob death (`docs/leveling_sim.md`, Groundwork)
   - Each mob has its own HP, dies when it runs out and stops attacking. The fight ends when all are dead. Today `use_health` only ends the fight on the targets' combined HP.
+  - 2026-10-15: done (`sim/core/target_death.go`, `sim/core/aoe.go`), with AoE taking only living targets and helpers for hard and soft caps. Which kind each AoE is in Forever goes to the Forever mechanics auditor (orchestration/auditor_forever.md, AoE scaling). Still open: cancel a cast whose target died during it.
 - [ ] 2026-10-15 — Leveling groundwork 3: self-healing (`docs/leveling_sim.md`, Groundwork)
   - Shaman first: Healing Wave and Lesser Healing Wave by rank and level. Then Priest (Lesser Heal, Heal, Flash Heal, Greater Heal, Renew; today commented out or missing), Paladin (Holy Light, Flash of Light) and Druid (Healing Touch, Rejuvenation, Regrowth).
   - Absorbs in the core, for Power Word: Shield, Mana Shield and Sacrifice.

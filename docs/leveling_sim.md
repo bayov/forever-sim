@@ -201,10 +201,11 @@ Bandages are on by default: the best cloth for our level, assuming First Aid is 
   health percent.
 - **Self-heals that exist for DPS reasons:** Drain Life, Siphon Life, Death Coil, Vampiric
   Embrace and Lay on Hands. Life Tap costs health.
-- **A health-based fight end** (`Encounter.use_health`). It adds up the targets' HP and ends
-  the fight when that total runs out, so mobs don't die separately. Until groundwork 1 such a
-  fight reported a 600 s length (the placeholder before the presim), so its DPS and damage taken
-  per second were wrong. It now reports the time the kill took.
+- **A health-based fight end** (`Encounter.use_health`). Since groundwork 2 each target with
+  health dies on its own (`sim/core/target_death.go`), and the fight ends when the last one
+  does. Until groundwork 1 such a fight reported a 600 s length (the placeholder before the
+  presim), so its DPS and damage taken per second were wrong. It now reports the time the
+  kill took.
 - **The normal mob table** and a target built from it (`core.NormalMobTarget`), since
   groundwork 1.
 - **Everything below level 60:** per-level base stats, ranks by level and level-difference
@@ -235,8 +236,32 @@ anything leveling-specific exists.
      - A "solo mob" encounter preset in the UI. Until the leveling mode has its own UI, a
        target from the table with "use health" on does it by hand, and the results show
        damage taken per second and the chance of death.
-2. **Separate mob death.** Each mob has its own HP, dies when it runs out and stops attacking.
-   The fight ends when all are dead.
+2. **Separate mob death.** Done (2026-10-15).
+   - In a health fight each mob has its own health. When it runs out, after the killing
+     blow's procs, the mob dies (`sim/core/target_death.go`): it stops swinging and casting,
+     its auras and our debuffs and dots on it end, and it leaves
+     `Encounter.ActiveTargetUnits`. Whoever had it as their target moves on to the next living
+     one, and the fight ends with the last kill. Overkill doesn't count toward the damage the
+     mobs took.
+   - Nothing lands on a dead mob: the core drops damage to it, and every AoE in the sim takes
+     its targets from the living ones.
+   - AoE kinds (`sim/core/aoe.go`): hard capped (`Encounter.AoETargetCount(N)`), soft capped
+     (`AoESoftCapMultiplier`, split or square root past N) and unlimited (every living
+     target). Which kind each ability is in Forever is the Forever mechanics auditor's AoE
+     scaling check (orchestration/auditor_forever.md, orchestration/aoe_scaling.md). Until
+     then the sim keeps what it had: the hard caps in each spell, the 10 target split on
+     Explosive Trap and one explosive, and full damage for the rest.
+   - The shaman's fire totems run on the shaman, not on the first mob, so they keep going
+     when it dies, and Searing Totem shoots our current target.
+   - Timed fights never kill a mob, and with the totems as they were every golden test result
+     came out the same to the last digit. Moving the totems onto the shaman reorders events
+     that happen at the same moment, which moves the shaman results by up to 0.025 DPS (under
+     0.01%, within noise). The shaman golden results were updated for it.
+   - Tests: `sim/shaman/enhancement/mob_death_test.go` (a pack dying one by one, Chain
+     Lightning and Fire Nova on the one mob left, Searing Totem moving on) and
+     `sim/core/aoe_test.go`.
+   - Open: a cast that finishes on a mob that died during it still costs its mana, and its
+     damage is dropped. In game the cast would fail. The leveling mode should cancel it.
 3. **Healing.**
    - Self-heals by rank and level, checked against the client data:
      - Shaman: Healing Wave and Lesser Healing Wave.
