@@ -124,16 +124,18 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
      - The **base preset doesn't cast it**: the raid's buff or debuff covers it, as if another player did. If a base preset casts it today, it stops.
      - The **duty preset casts it itself**. Its request switches the raid's matching buff or debuff off, so the effect comes only from its own casts. Buffs and totems go up before the pull where the game allows; debuffs go up as early after the pull as the rotation best allows. Each is refreshed before it drops.
      - The duty preset's rotation is the base rotation plus the duty, built from the class's rotopt template (a knob), re-optimised if the duty changes the best priorities.
-     - Its meta has `duty` (a short label, e.g. "Faerie Fire") and `baseBuild` (the base preset's id), like the encounter presets' `encounter` and `baseBuild`. The report ranks base presets and shows duty presets behind a toggle, with their DPS cost against the base.
+     - Its meta has `duty` (a short label, e.g. "Faerie Fire") and `baseBuild` (the base preset's id), like the encounter presets' `encounter` and `baseBuild`. The report has a "Duty" toggle, on by default (user ruling 2026-10-15), that shows the duty presets in the rankings next to their base presets, each with its DPS cost against the base.
    - **The duties:**
      - Warrior (Fury, Fury 2H, Arms): Battle Shout (party buff; before the pull, refreshed).
-     - Druid (Balance, Balance Wrath, Feral): Faerie Fire (Feral's is Faerie Fire (Feral)).
-     - Warlock (every spec): Curse of Recklessness, and Curse of the Elements, as two separate duty presets. The warlock casts that curse in place of its own when it can hold only one curse on the target.
-     - Hunter (every preset): Hunter's Mark.
+     - Druid (Balance, Balance Wrath, Feral): Faerie Fire (Feral's is Faerie Fire (Feral)). Balance and Balance Wrath also get an Insect Swarm duty preset.
+     - Warlock (every spec): one curse duty preset, casting Curse of Recklessness in place of its own curse. User ruling: a warlock holds at most one curse duty, and every curse costs the same GCDs, so one preset covers it; other warlocks cover the other curses, so the raid's other curse debuffs (Curse of the Elements) stay on in its request.
+     - Hunter (every preset): Hunter's Mark, and Scorpid Sting (in the sting slot, in place of Serpent Sting) as a second duty preset.
      - Paladin (every Ret preset): keeping the raid's DPS-raising judgement debuff up (Judgement of the Crusader, or whatever Forever's equivalent is), where the base preset judges only for its own damage.
      - Shaman (Enhancement, Elemental): the party's totems (Windfury, Strength of Earth, Grace of Air, Mana Spring or what the party needs), dropped before the pull and refreshed. The base preset gets them from the raid.
-   - **Not duties:**
-     - Defensive debuffs: Demoralizing Shout and Roar, Thunder Clap, Curse of Weakness, Scorpid Sting, Insect Swarm. User ruling: DPS-raising duties only.
+   - **Not duties** (user verdicts 2026-10-15, one per action):
+     - Demoralizing Shout, Thunder Clap, Demoralizing Roar: left to the tanks.
+     - Curse of Weakness: covered by the warlock's single curse duty.
+     - Judgement of Wisdom and Judgement of Light: support, not DPS.
      - Expose Armor: it doesn't stack with Sunder.
      - Improved Scorch and Winter's Chill: under Forever they help only the mage's own spells.
      - Shadow Weaving: passive.
