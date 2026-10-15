@@ -64,13 +64,9 @@
 	overflow: hidden;
 	cursor: pointer;
 	user-select: none;
-	// The game's own rock texture (Interface/FrameGeneral/UI-Background-Rock), turned gray by
-	// taking only its lightness over a gray, then lit up, so the frames' black borders and dark
-	// bar backgrounds stand out against it.
-	background-color: #7a7d80;
-	background-image: linear-gradient(rgba(150, 155, 160, 0.5), rgba(150, 155, 160, 0.5)), url('/forever/assets/img/replay_background_rock.jpg');
-	background-size: auto, 512px;
-	background-blend-mode: screen, luminosity;
+	// The game's own art of Tirisfal Glades (the classic client's credits painting), turned
+	// mostly gray, lighter, softer and a little blurred, so it stays behind the frames.
+	background: #6b6e6f url('/forever/assets/img/replay_background_tirisfal.jpg') center / cover no-repeat;
 }
 
 .replay-message {
