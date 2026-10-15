@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury_battle_shout",
   "published": {
-    "dps": 1063.3,
+    "dps": 1063.5,
     "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
   },
   "verify": {
-    "dps": 1063.28,
+    "dps": 1063.49,
     "stderr": 0.34,
     "iters": 20000,
     "ok": true,

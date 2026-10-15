@@ -256,14 +256,16 @@ export function startReport(dash) {
     return parts.filter((p) => p !== '');
   };
   // A duty preset's badge on its ranking row, and what the duty costs against its base preset (the raid covers it there).
+  // What the duty costs, signed: a duty can come out level with its base, or a hair ahead within the noise.
+  const dutyCostText = (b, base) => { const c = base.dps - b.dps; return Math.abs(c) < 0.05 ? '±0' : c > 0 ? `−${f1(c)}` : `+${f1(-c)}`; };
   const dutyCostEl = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
-    return +base.dps ? el('span', {}, `${b.duty} · −${f1(base.dps - b.dps)} DPS `, tipDelta(100 * (b.dps / base.dps - 1))) : b.duty;
+    return +base.dps ? el('span', {}, `${b.duty} · ${dutyCostText(b, base)} DPS `, tipDelta(100 * (b.dps / base.dps - 1))) : b.duty;
   };
   const dutyTip = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
-      +base.dps ? tipKey(`−${f1(base.dps - b.dps)}`, 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}, where the raid covers it`)) : null,
+      +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}, where the raid covers it`)) : null,
       b.dutyDefensive === true ? tipText('Defensive: it makes the raid safer, not stronger, so no one else gains DPS from it.') : null,
       tipText(b.summary));
   };
@@ -2311,7 +2313,7 @@ export function startReport(dash) {
     const hid = new Set(String(st.lanes || '').split(',').filter(Boolean));
     // highlight one ability: everything else fades
     const fsel = $('#tl-focus');
-    const keys = [...new Set(s.casts.map((c) => c[1]).concat(s.dmg.map((d) => d[1])))].filter((k) => names.has(k)).sort((p, q) => label(p).localeCompare(label(q)));
+    const keys = [...new Set(s.casts.map((c) => c[1]).concat(s.dmg.map((d) => d[1])))].filter((k) => names.has(k)).sort((p, q) => String(label(p)).localeCompare(String(label(q))));
     fsel.replaceChildren(el('option', { value: '', text: 'Everything' }), ...keys.map((k) => el('option', { value: k, text: label(k) })));
     if (!keys.includes(st.focus)) st.focus = '';
     fsel.value = st.focus;

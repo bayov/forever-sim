@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_dragonkin",
   "published": {
-    "dps": 991.5,
+    "dps": 992.2,
     "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
   },
   "verify": {
-    "dps": 991.48,
+    "dps": 992.16,
     "stderr": 0.35,
     "iters": 20000,
     "ok": true,

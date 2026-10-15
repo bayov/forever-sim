@@ -16,7 +16,9 @@ SLOTS = ['Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrist', 'Hands', 'Waist'
 OTHER = {'oOtherActionAttack': 'Melee', 'oOtherActionAttackt1': 'Melee (main hand)', 'oOtherActionAttackt2': 'Melee (off hand)',
          'oOtherActionShoot': 'Auto Shot', 'oOtherActionManaRegen': 'Mana regen', 'oOtherActionEnergyRegen': 'Energy regen',
          'oOtherActionFocusRegen': 'Focus regen', 'oOtherActionRefund': 'Refund', 'oOtherActionPotion': 'Potion', 'oOtherActionMove': 'Movement',
-         'oOtherActionComboPoints': 'Combo points', 'oOtherActionManaGain': 'Mana gain', 'oOtherActionRageGain': 'Rage gain', 'oOtherActionDamageTaken': 'Damage taken', 'oOtherActionExplosives': 'Explosives', 'oOtherActionWait': 'Wait'}
+         'oOtherActionComboPoints': 'Combo points', 'oOtherActionManaGain': 'Mana gain', 'oOtherActionRageGain': 'Rage gain', 'oOtherActionDamageTaken': 'Damage taken', 'oOtherActionExplosives': 'Explosives', 'oOtherActionWait': 'Wait',
+         # The logs name OtherIDs run_build.py doesn't map by number: 11 is the raid damage hit the boss lands on a warrior
+         'o11': 'Raid damage hit'}
 # metrics keys use the enum's text; normalize to the log's keys
 def norm_key(k):
     return k
