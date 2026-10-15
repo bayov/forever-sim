@@ -40,7 +40,7 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		{Name: "restUntil", Default: 90, Min: 60, Max: 100, Step: 10},
 		{Name: "restUntilMana", Default: 80, Min: 60, Max: 100, Step: 10},
 		// Pulling: 0 none (walk up), 1 Earth Shock rank 1, 2 Earth Shock, 3 Flame Shock.
-		{Name: "pullSpell", Default: 0, Min: 0, Max: 3, Step: 1},
+		{Name: "pullSpell", Default: 1, Min: 0, Max: 3, Step: 1},
 		{Name: "pullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Chain pulls: 0 off, else look while fewer than chainMax mobs are pulled, and pull
 		// what we find above chainHealth and chainMana.

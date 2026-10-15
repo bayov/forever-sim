@@ -7,6 +7,13 @@ from.
 
 ## shaman_enh_leveling, Level 30 solo (`tools/rotopt/leveling/level30_enh_solo.json`)
 
+### Pass 3, 2026-10-15 (optimizer from the round 2 knobs, 99.53 mobs)
+
+- **Pull with rank 1 Earth Shock** (`pullSpell=1`) instead of walking in: 99.53 / 99.48 to
+  100.02 / 99.89 (4000 sessions, seeds 1 and 1000001). With look ahead the mob is often found
+  while we fight, and the shock brings it in without a walk. Kept.
+- Nothing else moved: combat heal at 40% -0.6, 20% -1.3; other knobs flat or worse.
+
 ### Round 2, 2026-10-15 (from 97.8 mobs, after pass 2)
 
 Rests wait on mana, not health: 1305 of 1478 rests (40 sessions) ended at about full health

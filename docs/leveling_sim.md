@@ -469,6 +469,8 @@ After the groundwork:
      | Template defaults before tuning | 79.5 | 0.31 | about 46,000 | 237 s | 318 s | 596 s | 2.42 |
      | Optimizer pass 1 | 90.2 | 0.01 | 52,200 | 235 s | 300 s | 664 s | 2.54 |
      | Audit round 1, look ahead (pass 2 kept every knob) | 97.8 | 0.01 | 56,600 | 144 s | 344 s | 711 s | 2.19 |
+     | Audit round 2: Mana Spring, rank 1 Searing, rest mana to 80%, chain as the target dies | 99.5 | 0.01 | 57,600 | 141 s | 338 s | 719 s | 2.32 |
+     | Optimizer pass 3: pull with rank 1 Earth Shock | 100.0 | 0.01 | 57,900 | 140 s | 327 s | 732 s | 2.13 |
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their
@@ -479,6 +481,14 @@ After the groundwork:
      fighting, at any health over 40%, but pull it only when nearly full (over 90% health and
      50% mana); otherwise rest with it waiting, and it's the next pull with no search.
      Searching drops from 235 to 144 sec a session.
+
+     Audit round 2 saw that rests wait on mana, not health (drinking is slower than eating),
+     so its gains make mana cheaper: Mana Spring Totem in combat with no Totemic Recall (the
+     recall's global cooldown costs more than its refund gives back), rank 1 Searing Totem and
+     only with two mobs pulled, resting mana to 80%, and pulling the next mob as the current
+     one dies when we're healthy. It also found that our own lower-rank Strength of Earth and
+     Stoneskin totems gave the top rank's buff, now fixed. Pass 3 then pulled with rank 1
+     Earth Shock instead of walking in (+0.5 mobs on seed 1, +0.4 on a second seed).
    - The best mob level, XP an hour with that rotation: 50,600 at 3 levels under us, 54,500
      at 2 under, 56,500 at 1 under, 56,600 at our level, 54,700 at 1 over, 45,300 at 2 over
      (deaths climb to 0.43 a session). Mobs of our level or one under are best.
