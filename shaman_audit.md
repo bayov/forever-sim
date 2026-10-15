@@ -203,7 +203,7 @@ Tree rules
 - [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth (waits for release gear data, the user 2026-10-14)
 - [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants (waits for release gear data, the user 2026-10-14)
 - [x] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
-- [ ] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
+- [x] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
 - [ ] 9.9 Weapon oils and stones beside the shaman imbue
 
 ## 10. Raid buffs and debuffs (Forever values)
@@ -1759,6 +1759,18 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - No sim change. Making the mine instant is a core change for every class, and the warrior, rogue and paladin rotations time it around swings, so it waits for the beta.
 - notes.md Need to Verify (Beta): is placing the mine instant, does an explosive with a cast time reset or hold our swing timer and does an instant one touch it, and how soon does the mine go off.
 - No new test. The values match the client and the suite stays small.
+
+### 9.8 Elixirs, flasks, food, scrolls and juju
+
+- The user OK'd it (2026-10-15): "sg - we need to mostly verify what stacks, etc".
+- Level 60 is the consumables auditor's (`orchestration/auditor_consumes.md`), including the one 2% crit elixir rule (notes.md). We checked the Level 30 shaman set (`EncounterLevel30.consumes`) against client 70338.
+- All match: Elixir of Agility 11328 (15 Agility), Lesser Arcane Elixir 1250971 (15 damage to all magic schools, aura 13, so damage only), Elixir of Fire Power 7844 (10 Fire), Lesser Mageblood Elixir 1250944 (6 mana per 5 sec, aura 85), Scroll of Strength II 8119 (9 Strength, level 25), Briny Seafood Stew (Well Fed 1249520 with 14 damage only) and Mana Potion 2023 (520 with 0.25 variance, 455 to 585).
+- Dragonbreath Chili 15852: 5% on white swings and melee abilities (proc type 20), a 10000 ms cooldown, and 15851 deals 65 Fire with 0.123 variance (61 to 69). The sim has the same. It's its own buff, not Well Fed, so it stacks with the stew.
+- Every item needs level 27 or less, so a level 30 character can use them all.
+- 1.7's open question: under Forever the five 2% crit elixirs and Grilled Squid's 1% add melee and spell crit both (`consumes.go` foreverElixirCrit and applyForeverFood), which fits Forever's single crit chance. Leader of the Pack and Moonkin Aura are item 10.2.
+- Stacking: the client doesn't hold the rules. The sim stacks every elixir slot like Classic, and one slot holds a scroll and the elixirs of the same stat.
+- No sim change. notes.md Need to Verify (Beta) lists the stacking pairs to try at level 30: the four Level 30 elixirs together (battle and guardian limits), scrolls with elixirs of the same stat, two elixirs of one stat, Dragonbreath Chili with Well Fed, two Well Fed foods and the Forever elixirs side by side.
+- No new test.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
