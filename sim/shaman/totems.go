@@ -46,7 +46,14 @@ func (shaman *Shaman) placeTotem(sim *core.Simulation, slot int, spell *core.Spe
 	shaman.TotemExpirations[slot] = sim.CurrentTime + duration
 	shaman.ActiveTotems[slot] = spell
 	shaman.totemEnds[slot] = end
+	if sim.Log != nil {
+		shaman.Log(sim, "%s down in the %s slot until %0.3f", spell.ActionID, totemSlotNames[slot], shaman.TotemExpirations[slot].Seconds())
+	}
 }
+
+// The elements of the totem slots, for the log line the Replay view of the Events tab reads
+// to draw the totems in the class pack's cells.
+var totemSlotNames = []string{AirTotem: "Air", EarthTotem: "Earth", FireTotem: "Fire", WaterTotem: "Water"}
 
 // endTotemBuff ends a totem whose effect is a buff aura on us.
 //
