@@ -966,6 +966,10 @@ ol.fv-list li::marker {
 	font-weight: 600;
 }
 
+.fv-picker .fv-isel-btn {
+	font-weight: 600;
+}
+
 .fv-picker .fv-btn {
 	font-size: 1.15rem;
 	line-height: 1;
@@ -1847,6 +1851,8 @@ ol.fv-list li::marker {
 }
 
 .fv-tt .tt-row {
+	// a cost, range or cast time line is white, as in the game
+	color: #fff;
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;

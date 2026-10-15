@@ -274,7 +274,7 @@ A = [
  dict(key='sham_raid_hits', cls='Shaman', label='How often does raid damage hit the shaman?',
       short="Each direct hit fires a Lightning Shield orb. With the boss on the tank, only raid damage hits the shaman.",
       desc="The presets keep Lightning Shield up. Each direct hit an enemy lands on the shaman fires an orb at the target, at most one every 3.5 sec. The boss is on the tank, so the hits come from raid damage, at random times: 2 a minute for Enhancement in melee, 1 for Elemental at range. Nobody has measured it for a DPS shaman yet; the rates come from boss timers.",
-      src="Season of Discovery boss timers in the Deadly Boss Mods source (Ragnaros, Broodlord, Firemaw, Chromaggus, Huhuran, Kel'Thuzad, Sapphiron); Warcraft Logs was out of reach.",
+      src="Season of Discovery boss timers in the Deadly Boss Mods source (Ragnaros, Broodlord, Firemaw, Chromaggus, Huhuran, Kel'Thuzad, Sapphiron). Not measured in logs yet.",
       builds=ELE + ENH,
       settings=[S('low', 'None', '0 hits a minute', "Bosses whose damage only hits the tank or ticks, like Patchwerk.", None, 'raid_hits=0'),
                 S('expected', 'Now and then', 'melee 2 hits a minute, ranged 1', 'One or two raid-wide hits every 20 to 40 sec.'),

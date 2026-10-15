@@ -264,8 +264,10 @@ export function startReport(dash) {
       b.dutyDefensive === true ? tipText('Defensive: it makes the raid safer, not stronger, so no one else gains DPS from it.') : null,
       tipText(b.summary));
   };
+  // The badge's short name for each duty; its tooltip gives the full name, and says when the duty is defensive.
+  const DUTY_SHORT = { 'Battle Shout': 'Shout', 'Curse of the Elements': 'Curse', 'Faerie Fire': 'FF', "Hunter's Mark": 'Mark', 'Judgement of the Crusader': 'Crusader', 'Scorpid Sting': 'Scorpid' };
   const dutyBadge = (b, list) => {
-    const badge = el('span', { class: 'fv-duty' + (b.dutyDefensive === true ? ' def' : ''), text: b.duty + (b.dutyDefensive === true ? ' duty · defensive' : ' duty') });
+    const badge = el('span', { class: 'fv-duty' + (b.dutyDefensive === true ? ' def' : ''), text: `${DUTY_SHORT[b.duty] || b.duty} duty` });
     tippy(badge, { content: dutyTip(b, list), onShow: (t) => t.setContent(dutyTip(b, list)) });
     badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
     return badge;
@@ -430,7 +432,9 @@ export function startReport(dash) {
     // The answer goes in the header (what a point is worth), the numbers behind it in the grid.
     const worth = pct ? w.ratingWorth : w.worth;
     const hit = stat === 'MeleeHit' ? 'hit' : 'crit';
-    return { title: pct ? String(w.label).replace(' (1%)', ' rating') : String(w.label), color: GOLD, sub: worth == null ? '' : `${f2(worth)} ${w.primaryAbbr} a point`, lines: arr(s?.lines),
+    return { title: pct ? String(w.label).replace(' (1%)', ' rating') : String(w.label), color: GOLD, sub: worth == null ? '' : `${f2(worth)} ${w.primaryAbbr} a point`,
+      // the stat's description is gold, as on the character sheet; our own notes stay grey
+      lines: arr(s?.lines).map((l) => (l[0] === 'm' && !/^Losing hit:/.test(String(l[1])) ? ['y', l[1]] : l)),
       nums: nums(pct ? [[`+1% ${hit}`, `${f2(w.dpsPer)} DPS`], ['Rating for 1%', String(stat === 'MeleeHit' ? 10 : 14)], ['Error', `± ${fmt('.3f')(w.sePer)} DPS`]]
         : [['+1 point', `${fmt('.3f')(w.dpsPer)} DPS`], ['Error', `± ${fmt('.3f')(w.sePer)} DPS`]]) };
   };
@@ -463,7 +467,7 @@ export function startReport(dash) {
     if (k === 'd') return el('details', { class: 'tt-more' }, el('summary', { text: String(a ?? '') }), el('div', { class: 'c-m', text: String(b ?? '') }));
     if (k === '2' || k === 'h' || k === 'n') {
       return el('div', { class: 'tt-row' + (k === 'h' ? ' tt-h' : '') }, el('span', { class: k === 'n' ? 'c-m' : null, text: String(a ?? '') }),
-        el('span', { class: k === 'h' ? 'c-m' : 'c-t', text: String(b ?? '') }));
+        el('span', { class: 'c-t', text: String(b ?? '') }));
     }
     return el('div', { class: 'c-' + (['t', 'm', 'y', 'g'].includes(k) ? k : 't'), text: String(a ?? '') });
   };
@@ -745,6 +749,15 @@ export function startReport(dash) {
   };
   document.addEventListener('click', (e) => { for (const h of document.querySelectorAll('.fv-isel.open')) if (!h.contains(e.target)) iselShow(h, false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.fv-isel.open').forEach((h) => iselShow(h, false)); });
+  // The Specs tab's preset picker: each preset with its spec icon and DPS, grouped by class (best first) under a
+  // header in the class colour. The hidden #sp-pick select keeps the same choice for scripts that drive the page.
+  const specPicker = (builds, value) => {
+    const items = CLASSES.flatMap((c) => {
+      const bs = builds.filter((b) => b.class === c).sort((a, b) => b.dps - a.dps);
+      return bs.length ? [{ header: c, color: ccol(c) }, ...bs.map((b) => ({ value: b.id, text: b.build, label: `${b.build} · ${b.class}`, icon: () => specIco(b, ''), end: f1(b.dps) }))] : [];
+    });
+    iconSelect($('#sp-isel'), items, value, (v) => openSpec(v), (it) => it.label);
+  };
   const buildOrder = (builds) => CLASSES.flatMap((c) => builds.filter((b) => b.class === c).sort((a, b) => b.dps - a.dps));
 
   // ---------- ranking ----------
@@ -843,7 +856,7 @@ export function startReport(dash) {
         el('span', { class: 'fv-row-main' },
           el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : isDuty(b) ? String(b.build).replace(/ · [^·]* duty$/, '') : b.build }), el('span', { text: '· ' + b.class })),
           el('span', { class: 'fv-row-sub' }, tt(raceIco(b.raceIcon), `r:${b.race}:${b.class}`, false, b.id), el('em', { text: b.race }),
-            iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null, roles.get(b.id) ? el('em', { text: '· ' + roles.get(b.id) }) : null,
+            iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null,
             isEnc(b) ? encBadge(b) : null, isDuty(b) ? dutyBadge(b, builds) : null)),
         el('span', { class: 'fv-row-end' }, valEl, el('span', { class: 'fv-row-gap', text: extra })),
         track);
@@ -852,7 +865,7 @@ export function startReport(dash) {
         if (row.classList.contains('is-hl')) { openSpec(b.id); return; }
         const card = $('#rank-card'), cr = card.getBoundingClientRect(), rr = row.getBoundingClientRect();
         const behind = gap < 0.05 ? el('span', { class: 'fv-tip-m', text: 'top' }) : tipDelta(-gap);
-        const race = el('span', {}, raceIco(b.raceIcon), ` ${b.race}${roles.get(b.id) ? ' · ' + roles.get(b.id) : ''}`);
+        const race = el('span', {}, raceIco(b.raceIcon), ` ${b.race}`);
         const se = lenMap.get(b.id)?.se;
         const lines = L === 180
           ? [tipKey(f1(b.dps), 'DPS', `± ${f2(b.se)}`), tipGrid([['Rank', el('span', {}, `${rankOf(b, builds)} of ${builds.length} · `, behind)], ['10th–90th', `${f1(b.p10)}–${f1(b.p90)}`],
@@ -1753,6 +1766,7 @@ export function startReport(dash) {
     const b = builds.find((x) => x.id === st.build);
     const W = 'id=' + enc(b.id);
     sortedBuildOptions($('#sp-pick'), builds, b.id);
+    specPicker(builds, b.id);
     $('#sp-dot').style.background = ccol(b.class);
     $('#sp-dot').hidden = !!iconMap();
     $('#sp-specicon').replaceChildren(...(iconMap() ? [ringed(b.specIcon + ':l', 'fv-ico lg', ccol(b.class)) || specIco(b, 'lg')] : []));
