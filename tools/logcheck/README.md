@@ -62,6 +62,27 @@ the second one wait for the first.
 The skill runs the audit every hour while its session is open, and collects what it finds in
 `findings.md` (next to this README) for us to go through.
 
+## The mobs
+
+```sh
+go run --tags=with_db ./tools/logcheck -mobs
+```
+
+This measures the mobs that swung at our characters, in every archived log (or just `-log`),
+for the leveling sim's normal mob table (`sim/core/mob_stats_auto_gen.go`,
+`docs/leveling_sim.md`). Our level at each swing comes from the exports and BayovCore's
+history.
+
+- **By mob level:** the mobs' max health and armor (from the log's advanced fields), the time
+  between a mob's swings at us, and the raw damage of their landed swings, before our armor
+  and the crit. Each comes as a median and a mean, next to the table's value for that level.
+- **By the mob's level less ours:** how their white swings landed on us (miss, dodge, parry,
+  block, crit and crush), with 95% intervals.
+
+The log doesn't say which mobs are elites, rares or bosses, so a level's averages carry some
+of them, and the medians are the safer numbers. Parry haste and stuns shorten or lengthen
+the gaps between swings, which is why the swing time is a median too.
+
 ## Inputs
 
 - **The log.** With no `-log`, it runs `tools/combat_log/archive.sh` first and reads the newest

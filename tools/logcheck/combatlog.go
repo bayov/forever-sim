@@ -62,7 +62,11 @@ func loadLog(path string) ([]*event, error) {
 		defer gz.Close()
 		in = gz
 	}
+	return readEvents(in)
+}
 
+// readEvents reads combat log lines and returns them in time order, as loadLog says.
+func readEvents(in io.Reader) ([]*event, error) {
 	var events []*event
 	scanner := bufio.NewScanner(in)
 	scanner.Buffer(make([]byte, 1<<20), 1<<20)
