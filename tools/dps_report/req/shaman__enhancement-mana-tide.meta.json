@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "mana_tide",
   "published": {
-    "dps": 759.1,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 753.4,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 759.11,
-    "stderr": 0.36,
+    "dps": 753.4,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "same sim as the published number"
   },
   "summary": "Sub-Restoration Enhancement with Water Shield and Mana Tide Totem for the group's mana, on the Magma Totem rotation with Mana Tide at 20% mana. It is 8.5% behind Level 60 at 180 s.",
   "keyTalents": [

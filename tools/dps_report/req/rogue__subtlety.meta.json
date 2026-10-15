@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 667.5,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 644.1,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 667.5,
+    "dps": 644.1,
     "stderr": null,
     "iters": 20000,
     "ok": true,

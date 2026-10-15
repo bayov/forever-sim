@@ -124,8 +124,9 @@ export const GearLevel30p5SinisterStrike = PresetUtils.makePresetGear('Level 30 
 // for the rest), priced by the cross-class Forever budget for physical melee (three stat lines a
 // piece) in the fair stat mix of Season of Discovery rogue BiS (tools/database/forever_synthetic_items_rogue.go
 // has the numbers). The swords set is for Sinister Strike, the daggers set for Backstab, Mutilate and
-// Subtlety. The weapons have the type and speed each build sims best with (standards 22), so Seal Fate
-// Swords and Mutilate get their own copies of the sets with different weapons. Both carry 5% hit, the 9% cap with Precision 3/3 and the hands and legs, which carry
+// Subtlety. The weapons have the type and speed each build sims best with among Era Phase 1 BiS speeds
+// (standards 22), so Seal Fate Swords and Mutilate get their own copies of the sets with different
+// weapons. Both carry 5% hit, the 9% cap with Precision 3/3 and the hands and legs, which carry
 // the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). The 4 and 5 piece
 // bonuses (36 attack power against Humanoids, Eviscerate 5 Energy cheaper) are not live, see
 // PresetBuildLevel60CombatSwords. The trinkets are synthetic too (31 Agility and 15 crit rating, and
@@ -144,13 +145,13 @@ export const GearLevel60SyntheticDaggers = PresetUtils.makePresetGear('Level 60 
 	tooltip: 'A guess at Phase 1 BiS under Forever for Backstab and Subtlety, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
-// The swords set with a 2.7 sec sword and a 1.4 sec dagger off hand, which Seal Fate sims best with.
+// The swords set with a 1.6 sec dagger off hand, which Seal Fate sims best with.
 export const GearLevel60SyntheticSealFateSwords = PresetUtils.makePresetGear('Level 60 Synthetic Seal Fate Swords', Level60SyntheticSealFateSwordsGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for Seal Fate Sinister Strike, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
-// The daggers set with a 1.5 sec sword off hand, which Mutilate sims best with: its off hand strike is
-// normalised to 2.4 sec for any weapon but a dagger.
+// The daggers set with a 1.7 sec dagger main hand and a 1.8 sec sword off hand, which Mutilate sims best
+// with: its off hand strike is normalised to 2.4 sec for any weapon but a dagger.
 export const GearLevel60SyntheticMutilate = PresetUtils.makePresetGear('Level 60 Synthetic Mutilate', Level60SyntheticMutilateGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for Mutilate, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -750,23 +751,24 @@ export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)
 // sets built to the Forever budget (standards 1b: armor 650.5, weapons 63.9, bow 19.5 weighted linear
 // points a set, plus two synthetic ilvl 71 trinkets, 31 Agility and 15 crit rating, and +335 attack
 // power for 20 sec every 2 min), with a Dense Sharpening Stone beside the poison on each blade:
-//   Combat Daggers      751.2 / 728.4 / 709.6 (the default)
-//   Seal Fate Daggers   706.9 / 695.5 / 686.7, 4.5% behind Combat Daggers
-//   Mutilate            706.0 / 695.6 / 687.5
-//   Combat Swords       745.8 / 723.0 / 704.8
-//   Subtlety            681.3 / 667.5 / 658.0
-//   Seal Fate Swords    688.1 / 678.2 / 669.1, 6.2% behind Combat Swords
-// The weapons have the type and speed each build sims best with (standards 22), from real Era Phase 1
-// weapons at the Era BiS weapons' damage per second. A slow main hand and a fast off hand win: Combat
-// Swords holds a 2.9 sec axe and a 1.5 sec sword, Seal Fate Swords a 2.7 sec sword and a 1.4 sec dagger,
-// the dagger builds a 2.0 sec and a 1.4 sec dagger, and Mutilate a 2.0 sec dagger and a 1.5 sec
-// sword. On the Era BiS weapons the six builds did 708.1, 674.4, 669.8, 679.1, 643.6 and 644.7.
-// The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss) at 180 sec: Combat Daggers 751.1, Seal Fate
-// Daggers 719.7, Mutilate 719.5, Combat Swords 748.3, Subtlety 691.3, Seal Fate Swords 702.3.
+//   Combat Daggers      730.8 / 708.6 / 690.2 (the default)
+//   Seal Fate Daggers   686.1 / 674.9 / 666.4, 4.8% behind Combat Daggers
+//   Mutilate            692.1 / 681.2 / 673.1
+//   Combat Swords       733.5 / 710.4 / 691.9
+//   Subtlety            657.4 / 644.1 / 634.4
+//   Seal Fate Swords    683.9 / 673.9 / 664.4, 5.1% behind Combat Swords
+// The weapons have the type and speed each build sims best with among Era Phase 1 BiS speeds
+// (standards 22), at the Era BiS weapons' damage per second. A slow main hand and a fast off hand win:
+// Combat Swords holds a 2.9 sec axe and a 1.7 sec axe, Seal Fate Swords the 2.9 sec axe and a 1.6 sec
+// dagger, and Mutilate a 1.7 sec dagger and a 1.8 sec sword. The other dagger builds keep Perdition's
+// Blade and Core Hound Tooth. On the Era BiS weapons Mutilate did 669.8, Combat Swords 679.1 and Seal
+// Fate Swords 644.7.
+// The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss) at 180 sec: Combat Daggers 730.6, Seal Fate
+// Daggers 698.3, Mutilate 704.6, Combat Swords 735.2, Subtlety 667.1, Seal Fate Swords 697.7.
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
-// no Venom build. Undead is the best race for every build, 2 (Combat Swords, ahead of the Orc with its axe) to 12
-// ahead of the next. The
-// best Alliance race is the Gnome, except the Human on Combat Swords. Grimstitch Armor's 4 and 5 piece bonuses would add about
+// no Venom build. Undead is the best race for every build, 1 (Combat Swords, ahead of the Orc with its
+// axes) to 13 ahead of the next. The best Alliance race is the Gnome, tied by the Night Elf on Combat
+// Swords. Grimstitch Armor's 4 and 5 piece bonuses would add about
 // 8 and 6 to Combat Daggers. The trinkets are synthetic (Forever's real Phase 1 trinkets are removed or
 // not simulated), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety gets
 // Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the talent

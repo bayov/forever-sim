@@ -48,12 +48,12 @@ import (
 // The weapons keep the damage per second of the Era weapons they replace, swords for Sinister Strike
 // (Vis'kag the Bloodletter and Brutality Blade) and daggers for the rest (Perdition's Blade and Core Hound
 // Tooth), with the slot's budget in stats on top and no proc. Their type and speed are the ones each
-// build sims best with (standards 22), from real Era Phase 1 weapons. Combat Swords holds Deathbringer's
-// 2.9 sec axe (Forever lets rogues use axes) and Lord Blackwood's Blade's 1.5 sec sword. Seal Fate
-// Swords holds Ebon Hilt of Marduk's 2.7 sec sword and Bonescraper's 1.4 sec dagger. The dagger builds
-// hold Barman Shanker's 2.0 sec dagger and Bonescraper in the off hand, and Mutilate a 1.5 sec sword off
-// hand instead. A fast off hand applies more poison, and Mutilate's off hand strike is normalised to 2.4
-// sec for any weapon but a dagger. The ranged slot is a bow with Striker's Mark's
+// build sims best with among the speeds of Era Phase 1 BiS weapons (standards 22). Combat Swords holds
+// Deathbringer's 2.9 sec axe (Forever lets rogues use axes) and Bone Slicing Hatchet's 1.7 sec axe.
+// Seal Fate Swords holds the same main hand and Core Hound Tooth's 1.6 sec dagger. The dagger builds
+// keep Perdition's Blade and Core Hound Tooth. Mutilate holds Felstriker's 1.7 sec dagger and Dal'Rend's
+// Tribal Guardian's 1.8 sec sword, because its off hand strike is normalised to 2.4 sec for any weapon
+// but a dagger. A fast off hand applies more poison. The ranged slot is a bow with Striker's Mark's
 // damage.
 //
 // The hands and legs of each set form a set with the bonuses of Grimstitch Armor, Forever's crafted level 60
@@ -177,21 +177,21 @@ var rogueSyntheticItems = []*proto.UIItem{
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
 		Stats:     stats.Stats{stats.Strength: 7, stats.Agility: 8, stats.Stamina: 7}.ToFloatArray(),
 		HitRating: 10,
-		// Deathbringer's speed and damage spread at Vis'kag the Bloodletter's 55.2 DPS
-		// (standards 22: the type and speed that sim best). Forever lets rogues use axes.
+		// Deathbringer's speed and damage spread at Vis'kag the Bloodletter's 55.2 DPS (standards 22:
+		// a Phase 1 BiS speed, the one that sims best). Forever lets rogues use axes.
 		WeaponDamageMin: 111.6, WeaponDamageMax: 208.5, WeaponSpeed: 2.9,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
 	// Off Hand, item level 71, in place of Brutality Blade (70, 18832). Linear 32.0 of 31.9.
 	{
-		Id: 994014, Name: "Combat Swords Synthetic Off Hand (Phase 1)", Icon: "inv_sword_05",
-		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
+		Id: 994014, Name: "Combat Swords Synthetic Off Hand (Phase 1)", Icon: "inv_axe_11",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
 		Stats:      stats.Stats{stats.Agility: 10, stats.Stamina: 8, stats.AttackPower: 10, stats.RangedAttackPower: 10}.ToFloatArray(),
 		CritRating: 9,
-		// Lord Blackwood's Blade's speed and damage spread at Brutality Blade's 51.6 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 53.3, WeaponDamageMax: 101.5, WeaponSpeed: 1.5,
+		// Bone Slicing Hatchet's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22:
+		// a Phase 1 BiS speed, the one that sims best).
+		WeaponDamageMin: 61, WeaponDamageMax: 114.4, WeaponSpeed: 1.7,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
@@ -205,27 +205,15 @@ var rogueSyntheticItems = []*proto.UIItem{
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
-	// Seal Fate Swords main hand: the Combat Swords main hand's stats at the speed Seal Fate sims best with.
-	{
-		Id: 994016, Name: "Seal Fate Swords Synthetic Main Hand (Phase 1)", Icon: "inv_sword_15",
-		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
-		Stats:     stats.Stats{stats.Strength: 7, stats.Agility: 8, stats.Stamina: 7}.ToFloatArray(),
-		HitRating: 10,
-		// Ebon Hilt of Marduk's speed and damage spread at Vis'kag the Bloodletter's 55.2 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 103.6, WeaponDamageMax: 194.4, WeaponSpeed: 2.7,
-		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
-		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
-	},
 	// Seal Fate Swords off hand: the Combat Swords off hand's stats as a dagger, at the speed Seal Fate sims best with.
 	{
-		Id: 994017, Name: "Seal Fate Swords Synthetic Off Hand (Phase 1)", Icon: "inv_weapon_shortblade_12",
+		Id: 994017, Name: "Seal Fate Swords Synthetic Off Hand (Phase 1)", Icon: "inv_weapon_shortblade_11",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeDagger, HandType: proto.HandType_HandTypeOneHand,
 		Stats:      stats.Stats{stats.Agility: 10, stats.Stamina: 8, stats.AttackPower: 10, stats.RangedAttackPower: 10}.ToFloatArray(),
 		CritRating: 9,
-		// Bonescraper's speed and damage spread at Brutality Blade's 51.6 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 50.7, WeaponDamageMax: 93.8, WeaponSpeed: 1.4,
+		// Core Hound Tooth's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22:
+		// a Phase 1 BiS speed, the one that sims best).
+		WeaponDamageMin: 57.4, WeaponDamageMax: 107.7, WeaponSpeed: 1.6,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
@@ -343,21 +331,19 @@ var rogueSyntheticItems = []*proto.UIItem{
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeDagger, HandType: proto.HandType_HandTypeOneHand,
 		Stats:     stats.Stats{stats.Strength: 8, stats.Agility: 7, stats.Stamina: 7}.ToFloatArray(),
 		HitRating: 10,
-		// Barman Shanker's speed and damage spread at Perdition's Blade's 58.3 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 81.5, WeaponDamageMax: 151.8, WeaponSpeed: 2,
+		// Perdition's Blade damage and speed.
+		WeaponDamageMin: 73, WeaponDamageMax: 137, WeaponSpeed: 1.8,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
 	// Off Hand, item level 71, in place of Core Hound Tooth (70, 18805). Linear 32.0 of 31.9.
 	{
-		Id: 994114, Name: "Daggers Synthetic Off Hand (Phase 1)", Icon: "inv_weapon_shortblade_12",
+		Id: 994114, Name: "Daggers Synthetic Off Hand (Phase 1)", Icon: "inv_weapon_shortblade_11",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeDagger, HandType: proto.HandType_HandTypeOneHand,
 		Stats:      stats.Stats{stats.Agility: 9, stats.Stamina: 8, stats.AttackPower: 12, stats.RangedAttackPower: 12}.ToFloatArray(),
 		CritRating: 9,
-		// Bonescraper's speed and damage spread at Core Hound Tooth's 51.3 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 50.4, WeaponDamageMax: 93.1, WeaponSpeed: 1.4,
+		// Core Hound Tooth damage and speed.
+		WeaponDamageMin: 57, WeaponDamageMax: 107, WeaponSpeed: 1.6,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
@@ -373,13 +359,25 @@ var rogueSyntheticItems = []*proto.UIItem{
 	},
 	// Mutilate off hand: the dagger off hand's stats as a sword, at the speed Mutilate sims best with.
 	{
-		Id: 994116, Name: "Mutilate Synthetic Off Hand (Phase 1)", Icon: "inv_sword_05",
+		Id: 994116, Name: "Mutilate Synthetic Off Hand (Phase 1)", Icon: "inv_sword_40",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
 		Stats:      stats.Stats{stats.Agility: 9, stats.Stamina: 8, stats.AttackPower: 12, stats.RangedAttackPower: 12}.ToFloatArray(),
 		CritRating: 9,
-		// Lord Blackwood's Blade's speed and damage spread at Core Hound Tooth's 51.3 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 52.9, WeaponDamageMax: 100.8, WeaponSpeed: 1.5,
+		// Dal'Rend's Tribal Guardian's speed and damage spread at Core Hound Tooth's 51.3 DPS (standards 22:
+		// a Phase 1 BiS speed, the one that sims best).
+		WeaponDamageMin: 64.4, WeaponDamageMax: 120.1, WeaponSpeed: 1.8,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Mutilate main hand: the dagger main hand's stats at the speed Mutilate sims best with.
+	{
+		Id: 994117, Name: "Mutilate Synthetic Main Hand (Phase 1)", Icon: "inv_weapon_shortblade_25",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeDagger, HandType: proto.HandType_HandTypeOneHand,
+		Stats:     stats.Stats{stats.Strength: 8, stats.Agility: 7, stats.Stamina: 7}.ToFloatArray(),
+		HitRating: 10,
+		// Felstriker's speed and damage spread at Perdition's Blade's 58.3 DPS (standards 22:
+		// a Phase 1 BiS speed, the one that sims best).
+		WeaponDamageMin: 69.1, WeaponDamageMax: 129.2, WeaponSpeed: 1.7,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},

@@ -776,15 +776,15 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // 794.0, Level 60 + Imp GW 820.9 / 809.4 / 790.0, Level 60 + Water Shield 772.0 / 765.5 / 753.2 and
 // Level 60 + Mana Tide 749.3 / 742.7 / 737.9.
 //
-// Then the two-hander took the type and speed the builds sim best with (standards 22): Spinal Reaper's
-// damage per second at The Blackrock Slicer's 4.0 sec, still an axe. On 2026-10-15 (20000 iterations)
-// Level 60 is 835.9 / 824.4 / 803.9, Level 60 + Imp GW 832.4 / 819.9 / 799.4, Level 60 + Water Shield
-// 784.7 / 777.6 / 764.0 and Level 60 + Mana Tide 761.7 / 754.5 / 749.1.
+// Then the two-hander took the slowest Era Phase 1 BiS two-hand speed (standards 22): Spinal Reaper's
+// damage per second at Dreadforge Retaliator's 3.7 sec, still an axe. On 2026-10-15 (20000 iterations)
+// Level 60 is 834.8 / 823.8 / 803.7, Level 60 + Imp GW 831.3 / 819.8 / 799.9, Level 60 + Water Shield
+// 783.2 / 776.1 / 763.2 and Level 60 + Mana Tide 760.0 / 753.4 / 748.2.
 //
-// The races on Level 60 at 180 sec (20000 iterations, standard error 0.4): Orc 824.4, Windshaper
-// Skyborne 810.6, Tauren 810.0, Troll 809.2, Dwarf (the only Alliance shaman) 805.5. Best overall and
-// best Horde: Orc. Best Alliance: Dwarf. The Orc's lead is Axe Specialization. A 3.9 sec mace of the
-// same damage per second would give the Dwarf its 1% instead (810.7). Orc wins the Imp GW, Water
+// The races on Level 60 at 180 sec (20000 iterations, standard error 0.4): Orc 823.8, Windshaper
+// Skyborne 810.0, Tauren 809.4, Troll 809.1, Dwarf (the only Alliance shaman) 804.8. Best overall and
+// best Horde: Orc. Best Alliance: Dwarf. The Orc's lead is Axe Specialization. A 3.7 sec mace of the
+// same damage per second would give the Dwarf its 1% instead (812.5). Orc wins the Imp GW, Water
 // Shield and Mana Tide builds too (sim-status.md has the older tables).
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',

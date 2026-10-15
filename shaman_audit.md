@@ -216,7 +216,7 @@ Tree rules
 ## 11. Encounter and rotation
 
 - [x] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
-- [ ] 11.2 Shaman APL values (totem timers, shield charges and the like)
+- [x] 11.2 Shaman APL values (totem timers, shield charges and the like)
 - [ ] 11.3 APL edge cases: a swing due during a cast, replacing a totem early, Fire Nova on Clearcasting, mana thresholds
 - [ ] 11.4 Movement and range in PvP (time out of melee range)
 
@@ -1839,6 +1839,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Level 60: level 63, 3731 armor, 180 sec +- 20. The level and armor are the shared standard, and notes.md Need to Verify has the boss. The mob type is Unknown in the shaman preset and the DPS report request, where the orchestration standard says Humanoid. No shaman effect keys on Humanoid, so it stays. Health and the execute phases don't matter, because the fight ends on time and we have no execute.
 - Level 30: Interrogator Vishas, level 32 Humanoid, 1063 armor and 52 minimum damage from the 1.12 creature data, 120 sec +- 5. His health (30,000) is made up and doesn't matter for the same reason.
 - Level 30 PvP: the level 30 player placeholder from 6.7.
+- No sim change, no test, no Need to Verify item.
+
+### 11.2 Shaman APL values
+
+- The user OK'd it (2026-10-15).
+- The one shaman value, Totem Remaining Time (`apl_values.go`), gives the time left on the totem of an element. It reads the expiry that `placeTotem` sets, resets every iteration (`shaman.go`), and the totems put down before the pull carry their elapsed time over (`starting_totems.go`). No preset uses it.
+- The presets read totems through the buff they put on us (Strength of Earth 10442 and 8160, Windfury Totem 10612, Grace of Air 10627, Mana Spring 10497 and 5675, Mana Tide 17359) or the fire totem's dot (Searing 10438 and 10587, Flametongue Totem 8227). They also read Flame Shock (29228, 8053), Maelstrom Weapon stacks (408505), Water Shield (408510), Lightning Shield (905), Clearcasting (16246), Rage of the Farseer (425336) and the synthetic trinket (990015).
+- A throwaway test loaded all eight shaman preset rotations with their own settings (Level 30 + 5, Level 30 PvP, Grace of Air, Windfury and the four Level 60 DPS report builds). Every reference resolves, so no rotation points at a rank the level doesn't know. The only warning is Berserking (26297) in the Level 60 rotations, the Troll racial an Orc doesn't know, kept for the race comparisons.
 - No sim change, no test, no Need to Verify item.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)

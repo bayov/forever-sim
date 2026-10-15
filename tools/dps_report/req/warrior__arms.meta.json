@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 951.1,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 933.1,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 951.1,
+    "dps": 933.1,
     "stderr": null,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster's axe crit. It is the Arms spec's Level 60 preset, about 11% behind dual wield Fury.",
+  "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster's axe crit. It is the Arms spec's Level 60 preset, about 12% behind dual wield Fury.",
   "keyTalents": [
     "Mortal Strike",
     "Bloodthrill",
@@ -63,7 +63,7 @@
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
-    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991019)",
+    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
     "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
