@@ -37,6 +37,9 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 			QueueDelay:     warOptions.Options.QueueDelay,
 			Stance:         warOptions.Options.Stance,
 			StanceSnapshot: warOptions.Options.StanceSnapshot,
+
+			RaidDamageHitsPerMinute: warOptions.Options.RaidDamageHitsPerMinute,
+			RaidDamagePerHit:        warOptions.Options.RaidDamagePerHit,
 		}),
 		Options: warOptions.Options,
 	}

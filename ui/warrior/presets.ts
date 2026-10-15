@@ -248,16 +248,37 @@ export const DefaultTalents = TalentsLevel60Fury;
 //                                 Options Presets
 ///////////////////////////////////////////////////////////////////////////
 
+// The raid damage that hits a melee DPS in a level 60 raid fight: 2 direct hits a minute at random
+// times, the same as the Enhancement shaman's (enhancement_shaman/presets.ts RaidDamageHitsLevel60
+// has where the rate comes from), each 1500 damage. The damage is an estimate too, from the same
+// boss timers: Ragnaros's Wrath, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley and
+// Huhuran's Poison Bolt Volley hit for about 1000 to 2500 in Classic. Each hit gives 15.4 Rage
+// from the level 63 boss (19.2 under Recklessness). At 180 sec that is +6.9 on Fury (1057.9 to
+// 1064.9), +15.5 on Fury two-hand (925.7 to 941.2), +2.1 on Arms (951.0 to 953.2) and +2.9 on Arms
+// vs Dragonkin; at 10 hits a minute +29, +65, +10 and +9. Arms already caps its Rage with no
+// hits, so it wastes much of what the hits give.
+export const RaidDamageHitsLevel60 = 2;
+export const RaidDamagePerHitLevel60 = 1500;
+
 export const DefaultOptions = WarriorOptions.create({
 	queueDelay: 250,
 	startingRage: 0,
 	shout: WarriorShout.WarriorShoutBattle,
 	stance: WarriorStance.WarriorStanceBerserker,
+	raidDamageHitsPerMinute: RaidDamageHitsLevel60,
+	raidDamagePerHit: RaidDamagePerHitLevel60,
 });
 
 // The class options the preset builds set. Fury starts in Berserker Stance, Arms in Battle Stance
 // (Overpower, Rend and Bloodthrill need it).
-const PresetBuildOptionsFury = { queueDelay: 250, startingRage: 0, shout: WarriorShout.WarriorShoutBattle, stance: WarriorStance.WarriorStanceBerserker };
+const PresetBuildOptionsFury = {
+	queueDelay: 250,
+	startingRage: 0,
+	shout: WarriorShout.WarriorShoutBattle,
+	stance: WarriorStance.WarriorStanceBerserker,
+	raidDamageHitsPerMinute: RaidDamageHitsLevel60,
+	raidDamagePerHit: RaidDamagePerHitLevel60,
+};
 const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStance.WarriorStanceBattle };
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot on
