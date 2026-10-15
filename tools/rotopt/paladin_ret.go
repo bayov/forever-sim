@@ -280,12 +280,20 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if k["jotc"] == 1 {
 		opener = sealOfTheCrusader
 	}
-	if k["prepullTwo"] == 1 && k["jotc"] == 0 {
-		first := otherSeal
+	if k["prepullTwo"] == 1 {
+		first, second := otherSeal, seal
 		if k["holyShock"] > 0 && k["lightsVigilMana"] < 100 {
-			first, opener = seal, lightsVigil
+			first, second = seal, lightsVigil
 		}
-		rot.PrepullActions = append(rot.PrepullActions, prepull(first, 3))
+		if k["jotc"] == 1 {
+			// The raid duty: the same two pre-pull casts 1.5 sec earlier, then Seal of the
+			// Crusader last, judged at the pull. Replacing a damage seal with it still leaves
+			// Twist of Light's Echo for the first swing.
+			rot.PrepullActions = append(rot.PrepullActions, prepull(first, 4.5), prepull(second, 3))
+		} else {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(first, 3))
+			opener = second
+		}
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 1.5))
 	return rot
