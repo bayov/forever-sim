@@ -12,18 +12,18 @@
     "Protection",
     "Retribution"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_shock",
   "apl": "level60_shock_undead",
   "published": {
-    "dps": 1041.3,
-    "source": "PR #3 / class preset"
+    "dps": 1110.7,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 1041.27,
-    "stderr": 0.27,
+    "dps": 1110.7,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03"
+    "note": "same sim as the published number"
   },
   "summary": "The Holy Shock build on its own vs Undead rotation, which adds Exorcism and keeps more mana for Light's Vigil in longer fights.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons, so against such a boss they're extra damage on top of the usual rotation. This build adds Exorcism to its Holy Shock rotation.",

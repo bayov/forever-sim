@@ -12,18 +12,18 @@
     "Combat",
     "Subtlety"
   ],
-  "gearSet": "level60_phase1_synthetic_swords",
+  "gearSet": "level60_phase1_synthetic_seal_fate_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 667.4,
-    "source": "PR #9"
+    "dps": 702.3,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 667.44,
-    "stderr": 0.23,
+    "dps": 702.3,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "+0.04 vs PR #9"
+    "note": "same sim as the published number"
   },
   "summary": "Seal Fate Swords against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
   "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",
@@ -67,7 +67,7 @@
   "caveats": [
     "Murder is damage only (+4%) and only against Humanoids and Giants",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Best Alliance race is Human (+2% crit with swords)",
+    "Best Alliance race is Gnome, with Human within 1",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
     "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"

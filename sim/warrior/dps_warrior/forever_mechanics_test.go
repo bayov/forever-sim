@@ -33,8 +33,9 @@ func newForeverWarrior(t *testing.T, talents string) (*core.Simulation, *warrior
 	return sim, sim.Raid.Parties[0].Players[0].(*DpsWarrior).GetWarrior()
 }
 
-// newForeverWarriorArmed is newForeverWarrior with weapons: the synthetic Fury swords (991014,
-// 2.6 sec, and 991015, 2.5 sec) or the synthetic two-hander (991016, 3.4 sec).
+// newForeverWarriorArmed is newForeverWarrior with weapons: the synthetic Fury main hand and off
+// hand (991014, a 2.9 sec axe, and 991015, a 1.5 sec sword) or the synthetic Arms two-hander
+// (991016, a 4.0 sec axe).
 func newForeverWarriorArmed(t *testing.T, talents string, mainHand, offHand int32) (*core.Simulation, *warrior.Warrior) {
 	// A boss that swings, for Rage from damage taken.
 	target := core.NewDefaultTarget()
@@ -93,22 +94,22 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 	const l60 = 1.5
 	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
 	mh, oh := war.AutoAttacks.MHAuto(), war.AutoAttacks.OHAuto()
-	near("a 300 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 300), l60*3.46*2.6)
-	near("a 900 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 900), l60*3.46*2.6)
-	near("a main hand crit", whiteRage(sim, war, mh, core.OutcomeCrit, 600), 2*l60*3.46*2.6)
-	near("a dodged main hand swing", whiteRage(sim, war, mh, core.OutcomeDodge, 0), l60*3.46*2.6)
-	near("a parried main hand swing", whiteRage(sim, war, mh, core.OutcomeParry, 0), l60*3.46*2.6)
-	near("a glancing main hand swing", whiteRage(sim, war, mh, core.OutcomeGlance, 200), l60*3.46*2.6)
+	near("a 300 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 300), l60*3.46*2.9)
+	near("a 900 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 900), l60*3.46*2.9)
+	near("a main hand crit", whiteRage(sim, war, mh, core.OutcomeCrit, 600), 2*l60*3.46*2.9)
+	near("a dodged main hand swing", whiteRage(sim, war, mh, core.OutcomeDodge, 0), l60*3.46*2.9)
+	near("a parried main hand swing", whiteRage(sim, war, mh, core.OutcomeParry, 0), l60*3.46*2.9)
+	near("a glancing main hand swing", whiteRage(sim, war, mh, core.OutcomeGlance, 200), l60*3.46*2.9)
 	near("a missed main hand swing", whiteRage(sim, war, mh, core.OutcomeMiss, 0), 0)
-	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), l60*3.46*2.5)
+	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), l60*3.46*1.5)
 
 	// Dual Wield Specialization's off hand Rage (10% a point) stays on top.
 	sim, war = newForeverWarriorArmed(t, "-00000005", 991014, 991015)
-	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*l60*3.46*2.5)
+	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*l60*3.46*1.5)
 
 	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
-	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), l60*4.5*3.4)
-	near("a two-hander crit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeCrit, 1000), 2*l60*4.5*3.4)
+	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), l60*4.5*4.0)
+	near("a two-hander crit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeCrit, 1000), 2*l60*4.5*4.0)
 
 	// Only white hits make Rage: an ability's damage and Deep Wounds' ticks make none.
 	sim, war = newForeverWarriorArmed(t, "00305003", 991014, 991015)

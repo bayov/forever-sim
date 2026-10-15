@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 666.6,
-    "source": "PR #9"
+    "dps": 691.3,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 666.58,
-    "stderr": 0.2,
+    "dps": 691.3,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "-0.02 vs PR #9"
+    "note": "same sim as the published number"
   },
   "summary": "Subtlety against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
   "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",

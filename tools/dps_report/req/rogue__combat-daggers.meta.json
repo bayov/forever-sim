@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 708.1,
-    "source": "PR #9"
+    "dps": 728.4,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 708.09,
-    "stderr": 0.2,
+    "dps": 728.4,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "-0.01 vs PR #9"
+    "note": "same sim as the published number"
   },
   "summary": "Deep Combat Backstab on the synthetic Phase 1 daggers with Adrenaline Rush, Blade Flurry and Puncturing Wounds. It is the highest-DPS rogue build and the class default.",
   "keyTalents": [

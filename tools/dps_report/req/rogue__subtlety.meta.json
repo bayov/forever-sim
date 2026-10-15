@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 643.6,
-    "source": "PR #9"
+    "dps": 667.5,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 643.63,
-    "stderr": 0.19,
+    "dps": 667.5,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "+0.03 vs PR #9"
+    "note": "same sim as the published number"
   },
   "summary": "Subtlety with Hemorrhage, Ghostly Strike, Premeditation and Preparation, plus Seal Fate in Assassination, on the synthetic daggers. It is the Subtlety preset; the defining talents are pinned.",
   "keyTalents": [

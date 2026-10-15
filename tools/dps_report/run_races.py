@@ -31,9 +31,10 @@ DB = {i['id']: i for i in json.load(open(os.path.join(TREE, 'assets/database/db.
 AXE, MACE, SWORD, DAGGER, STAFF = 1, 4, 9, 2, 8
 WT_NAME = {AXE: 'axe', MACE: 'mace', SWORD: 'sword', DAGGER: 'dagger', STAFF: 'staff', 3: 'fist', 6: 'polearm'}
 RACE_WEAPON = {'Human': (SWORD, 'sword'), 'Dwarf': (MACE, 'mace'), 'Orc': (AXE, 'axe')}
-# Weapon types each class can use (Classic proficiencies), for the types the racials name.
+# Weapon types each class can use (Classic proficiencies, plus the one-hand axes Forever gives rogues),
+# for the types the racials name.
 LEGAL = {'Warrior': {AXE, MACE, SWORD}, 'Paladin': {AXE, MACE, SWORD}, 'Hunter': {AXE, SWORD},
-         'Rogue': {SWORD, MACE}, 'Shaman': {AXE, MACE}, 'Mage': {SWORD}, 'Warlock': {SWORD},
+         'Rogue': {AXE, SWORD, MACE}, 'Shaman': {AXE, MACE}, 'Mage': {SWORD}, 'Warlock': {SWORD},
          'Priest': {MACE}, 'Druid': {MACE}}
 # Real Era Phase 1 weapons whose speed and damage spread a swapped physical weapon takes,
 # by (type, hand): 2H, main hand, off hand. Damage is scaled to the preset weapon's DPS.

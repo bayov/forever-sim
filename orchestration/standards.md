@@ -33,14 +33,14 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
      - physical ranged (bow, gun, thrown, 71): 0.24 (19.7);
      - wand (71): 0.26 (21.3);
      - relics, idols, totems and librams stay stat-less (their effect is their value).
-     Weapon damage and speed still come from the real Era Phase 1 weapon of that type and are free; the weapon type stays the Era Phase 1 BiS type.
+     Weapon damage is free and keeps the damage per second of the Era Phase 1 BiS weapon. The weapon type and speed are the ones the spec sims best with (22).
    - Trinkets: two synthetic trinkets per spec at ilvl 71 (8a).
      1. A stat trinket: 1-3 of the spec's non-Stamina stats, weighted linear total 0.56 x L(71) = 45.9 (+/-1%), 1.7-norm value 36.8 +/-6%.
      2. An on-use trinket with no passive stats, modelled with core.NewSimpleStatOffensiveTrinketEffect (sim/core/item_effects.go) on the shared offensive-trinket cooldown. Its average weighted value over a 180 s fight (uses at 0 s and every cooldown; amount x weight x seconds active / 180) is 27 for spell power and 37 for AP / Str / Agi / RAP, the sizes of Talisman of Ephemeral Power and Earthstrike. Suggested shape, 20 s every 2 min (2 uses in 180 s): about 140 spell power, or about 335 AP, or about 415 RAP for hunters, or about 165 Strength / Agility.
      Hybrids may take either kind of on-use (same price), whichever sims best. Trinkets are excluded from the 5a shares.
    - Each set reports its armor total, weapon total and the two trinkets in the PR and the presets comment, as today.
 2. One item-level table for every class (fairness P5, 12:00 ruling): head, shoulder, chest, hands, legs, feet at item level 66; neck, back, wrist, waist and both rings at 71. The budget per piece then follows 1b (per archetype).
-3. SUPERSEDED by 1b for budgets. Still in force: weapon damage and speed come from the real Era Phase 1 weapon and are free; the weapon type stays the Era Phase 1 BiS type; every spec fills its ranged / wand / relic slot with something that does something for it.
+3. SUPERSEDED by 1b for budgets and by 22 for weapon type and speed. Still in force: weapon damage is free, and every spec fills its ranged / wand / relic slot with something that does something for it.
 4. Hit (fairness P2): every set optimises hit against its other stats at budget prices: usually that means hit up to the spec's cap against a level 63 boss (yellow cap for melee, 16% spell miss for casters), counting talents and the 2-piece bonus, never over the cap, but if the same budget points do more as another stat (e.g. spell power for Balance), use the mix that sims best and say so.
 5. Spirit about 10% of the set for mana users, none for rage and energy users.
 5b. Hybrids carry hybrid stats (user ruling 2026-10-13, citing Forever's developers): Ret paladin and Enhancement shaman sets mix physical and spell stats; they keep their spell power and Intellect amounts (the 5b targets in gear_targets.md, re-priced at spell power 0.86) rather than SoD's almost pure melee mix. Hunters keep about 10% Spirit as mana users (user ruling). The bundled round (per-spec Stamina, the Forever budget in 1b, synthetic trinkets) is now in force.
@@ -100,4 +100,15 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 ## Races
 
-16. Presets use the best race on the spec's Era BiS weapon type. Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.
+16. Presets use the best race on the spec's weapons (22). Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.
+
+## Weapons
+
+22. Each preset uses the weapon type and speed it sims best with (user ruling 2026-10-15: "make each preset use the weapon type it sims best with", replacing the Era Phase 1 BiS type of 3). Method:
+   - Each weapon keeps its stats and the damage per second of the Era Phase 1 BiS weapon it stands in for.
+   - It takes the speed and damage spread of a real Era Phase 1 weapon of the chosen type: item id below 30000, phase 1 in the item DB, item level 55 or more, rare or better, one-hand items for either hand unless the item is main hand or off hand only.
+   - Every class-legal type and speed was simmed (180 s, 20,000 iterations) with a race that has no weapon racial. Two-handers tried every candidate. Dual wielders improved one hand at a time until nothing changed. Then every race was simmed on the winner, with the racial's own type wherever a tie allowed it.
+   - Builds that share a gear set share weapons only when sharing costs under 1 DPS. Otherwise the build gets its own weapon items.
+   - Results (2026-10-15): slow main hands and two-handers and fast off hands win almost everywhere, because white hits, Mortal Strike, Heroic Strike and Slam scale with damage per swing, while per-hit procs (poisons, Unbridled Wrath, Seal of Righteousness's spell power part) and the normalised off hand strikes (Whirlwind, Mutilate) favour fast off hands. Fury holds a 2.9 s axe and a 1.5 s sword, Arms a 4.0 s axe, two-hand Fury a 3.7 s axe, Combat Swords a 2.9 s axe and a 1.5 s sword (Forever lets rogues use one-hand axes, forever_class_changes.md), Seal Fate Swords a 2.7 s sword and a 1.4 s dagger, the dagger rogues a 2.0 s and a 1.4 s dagger, Mutilate a 2.0 s dagger and a 1.5 s sword, Survival a 2.8 s axe and a 1.4 s dagger, the Holy Shock paladins a 2.1 s two-hand sword, and Enhancement a 4.0 s axe. Ret's other builds tie within the noise (under 1 DPS) on every two-hand type and speed and keep the 3.4 s axe. The casters and the ranged hunters don't swing their weapon, so they keep theirs.
+   - The fist results used Lefty's Brass Knuckle (Blackrock Depths, 1.5 s) as the Phase 1 fist. Eskhandar's Claws are Phase 2. Where a fist tied a sword of the same speed, the presets keep the sword.
+   - Ranged weapon types and speeds (bows, guns, crossbows) were not part of this pass.

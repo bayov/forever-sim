@@ -3,7 +3,7 @@ character_stats_results: {
  value: {
   final_stats: 206
   final_stats: 213
-  final_stats: 456
+  final_stats: 474
   final_stats: 363
   final_stats: 293
   final_stats: 438
@@ -35,7 +35,7 @@ character_stats_results: {
   final_stats: 12.5204
   final_stats: 5
   final_stats: 0
-  final_stats: 6198.4
+  final_stats: 6385.6
   final_stats: 37
   final_stats: 85
   final_stats: 60
@@ -52,7 +52,7 @@ character_stats_results: {
  value: {
   final_stats: 206
   final_stats: 213
-  final_stats: 459
+  final_stats: 477
   final_stats: 350
   final_stats: 284
   final_stats: 539
@@ -84,7 +84,7 @@ character_stats_results: {
   final_stats: 12.5204
   final_stats: 5
   final_stats: 0
-  final_stats: 6229.6
+  final_stats: 6416.8
   final_stats: 37
   final_stats: 75
   final_stats: 60
@@ -101,7 +101,7 @@ character_stats_results: {
  value: {
   final_stats: 206
   final_stats: 213
-  final_stats: 525
+  final_stats: 542
   final_stats: 423
   final_stats: 297
   final_stats: 636
@@ -133,7 +133,7 @@ character_stats_results: {
   final_stats: 12.5204
   final_stats: 5
   final_stats: 0
-  final_stats: 6916
+  final_stats: 7092.8
   final_stats: 37
   final_stats: 75
   final_stats: 60
@@ -150,7 +150,7 @@ character_stats_results: {
  value: {
   final_stats: 206
   final_stats: 213
-  final_stats: 484
+  final_stats: 501
   final_stats: 465
   final_stats: 264
   final_stats: 660
@@ -182,7 +182,7 @@ character_stats_results: {
   final_stats: 12.5204
   final_stats: 5
   final_stats: 0
-  final_stats: 6489.6
+  final_stats: 6666.4
   final_stats: 27
   final_stats: 65
   final_stats: 60
@@ -199,7 +199,7 @@ character_stats_results: {
  value: {
   final_stats: 206
   final_stats: 213
-  final_stats: 597
+  final_stats: 615
   final_stats: 455
   final_stats: 261
   final_stats: 738
@@ -231,7 +231,7 @@ character_stats_results: {
   final_stats: 12.5204
   final_stats: 5
   final_stats: 0
-  final_stats: 7664.8
+  final_stats: 7852
   final_stats: 27
   final_stats: 65
   final_stats: 60
@@ -248,7 +248,7 @@ character_stats_results: {
  value: {
   final_stats: 206
   final_stats: 213
-  final_stats: 613
+  final_stats: 631
   final_stats: 442
   final_stats: 232
   final_stats: 748
@@ -280,7 +280,7 @@ character_stats_results: {
   final_stats: 12.5204
   final_stats: 5
   final_stats: 0
-  final_stats: 7831.2
+  final_stats: 8018.4
   final_stats: 27
   final_stats: 65
   final_stats: 60

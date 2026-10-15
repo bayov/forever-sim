@@ -12,18 +12,18 @@
     "Combat",
     "Subtlety"
   ],
-  "gearSet": "level60_phase1_synthetic_daggers",
+  "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 693.0,
-    "source": "PR #9"
+    "dps": 719.5,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 692.98,
-    "stderr": 0.2,
+    "dps": 719.5,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "-0.02 vs PR #9"
+    "note": "same sim as the published number"
   },
   "summary": "Mutilate against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
   "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",

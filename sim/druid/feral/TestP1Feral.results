@@ -3,7 +3,7 @@ character_stats_results: {
  value: {
   final_stats: 566
   final_stats: 604
-  final_stats: 522
+  final_stats: 539
   final_stats: 293
   final_stats: 234
   final_stats: 0
@@ -35,7 +35,7 @@ character_stats_results: {
   final_stats: 36.1
   final_stats: 5
   final_stats: 0
-  final_stats: 6823
+  final_stats: 6993
   final_stats: 27
   final_stats: 60
   final_stats: 60

@@ -15,21 +15,21 @@
   "gearSet": "level60_phase1_synthetic_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 679.1,
-    "source": "PR #9"
+    "dps": 723.0,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 679.09,
-    "stderr": 0.22,
+    "dps": 723.0,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "-0.01 vs PR #9"
+    "note": "same sim as the published number"
   },
-  "summary": "Deep Combat Sinister Strike on the synthetic Phase 1 swords with Adrenaline Rush, Blade Flurry, Hack and Slash and Cold Blood. It is the sword alternative to Combat Daggers.",
+  "summary": "Deep Combat Sinister Strike on a synthetic Phase 1 axe main hand and a fast sword off hand with Adrenaline Rush, Blade Flurry, Hack and Slash and Cold Blood. It is the sword alternative to Combat Daggers.",
   "keyTalents": [
     "Adrenaline Rush",
     "Blade Flurry",
-    "Hack and Slash 5/5 (sword extra attacks)",
+    "Hack and Slash 5/5 (axe and sword extra attacks)",
     "Improved Sinister Strike",
     "Aggression",
     "Weapon Expertise",
@@ -60,7 +60,7 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Best Alliance race is Human (+2% crit with swords)",
+    "Best Alliance race is Human (+2% crit with the off hand sword)",
     "Swords keep 5-point Eviscerates; 4 points lose 6 to 8",
     "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",

@@ -20,6 +20,7 @@ const (
 	ForeverTotemOfTheStorm   = 272432
 	BurningTotem             = 272433
 	RageOfTheStorm           = 280604
+	LightningsGrasp          = 280607
 )
 
 func init() {
@@ -133,6 +134,20 @@ func init() {
 	//
 	// Lightning Overload's copies share the bolt's spell code, so they get it too.
 	core.NewItemEffect(TotemOfThunder, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanLightningBolt {
+				spell.BonusCritRating += 1 * core.SpellCritRatingPerCritChance
+			}
+		})
+	})
+
+	// https://www.wowhead.com/forever/item=280607/lightnings-grasp
+	// Equip: Increases the critical strike chance of your Lightning Bolt spell by 1%.
+	//
+	// It's the caster choice from the level 30 shaman quest that gives Rage of the Storm. Like
+	// Totem of Thunder, it reaches Lightning Overload's copies too.
+	core.NewItemEffect(LightningsGrasp, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
 		shaman.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.SpellCode == SpellCode_ShamanLightningBolt {

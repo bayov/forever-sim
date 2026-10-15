@@ -55,7 +55,9 @@ import (
 // Armor is the Battlegear of Might piece's of the slot (plate, item level 66), scaled by item level
 // for the wrist and waist (the cloak's from the enhancement cloak). The two-hander has Spinal
 // Reaper's damage and speed. It is an axe like Spinal Reaper, so no paladin race gets a weapon racial
-// from it.
+// from it. The Holy Shock builds get a copy with Spinal Reaper's damage per second at Barovian Family
+// Sword's 2.1 sec speed, which they sim best with (standards 22): Seal of Righteousness adds 10% of
+// spell power to every swing under Forever, so a fast weapon procs it more often.
 //
 // The head and chest form a set with the bonuses of Justice Battlegear, Forever's Tier 1
 // retribution set (see sim/paladin/item_sets_pve.go). Every class's preset carries its tier set's
@@ -175,6 +177,17 @@ func init() {
 			HitRating: 10,
 			// Spinal Reaper damage and speed.
 			WeaponDamageMin: 203, WeaponDamageMax: 305, WeaponSpeed: 3.4,
+			Ilvl: 76,
+		}),
+		// Two-Hand for the Holy Shock builds: the same stats at the speed they sim best with.
+		retribution(&proto.UIItem{
+			Id: 992016, Name: "Holy Shock Synthetic Two-Hand (Phase 1)", Icon: "inv_sword_03",
+			Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeTwoHand,
+			Stats:     stats.Stats{stats.Strength: 6, stats.Stamina: 16, stats.Intellect: 16, stats.Spirit: 19, stats.SpellPower: 28}.ToFloatArray(),
+			HitRating: 10,
+			// Barovian Family Sword's speed and damage spread at Spinal Reaper's 74.7 DPS
+			// (standards 22: the type and speed that sim best).
+			WeaponDamageMin: 124.6, WeaponDamageMax: 189.1, WeaponSpeed: 2.1,
 			Ilvl: 76,
 		}),
 		// Trinkets, item level 71 (standards 1b and 8a: Forever's launch trinkets are not simulated).

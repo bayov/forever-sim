@@ -28,7 +28,7 @@ Sources, all read-only:
 
 | Class | Assumptions | Keys |
 |---|---|---|
-| All classes | 4 | `flat_bonus_inside_pct`, `wf_totem_offhand`, `downrank_penalty`, `oil_proc_damage` |
+| All classes | 3 | `flat_bonus_inside_pct`, `wf_totem_offhand`, `oil_proc_damage` |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 5 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation` |
 | Paladin | 4 (+2 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`, `oil_proc_damage`) |
@@ -39,7 +39,7 @@ Sources, all read-only:
 | Druid | 4 | `druid_ooc_rate`, `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 34 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 33 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -63,7 +63,6 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 |---|---|---|---|---|---|---|---|
 | `flat_bonus_inside_pct` | Flat bonus inside the weapon percent | Combat Daggers, Seal Fate Daggers, Subtlety (Ambush), Mutilate; Ret twist, sub Holy, Shock | inside (client effect order) | after the percent (tooltip read literally) | inside | = Expected | est. Backstab builds −3.7 to −4%, Mutilate +1.7%, Ret +3% (all at Low) |
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | yes | main hand only | yes | = Expected | est. −2 to −3% DW Fury and rogues, about −1.5% Survival (at Low) |
-| `downrank_penalty` | Downrank penalty size at 60 | Smite (rank 7 fallback; rank 4 before), Elemental (Lightning Bolt VIII fallback) | FC formula on both branches (a local helper on each) | stronger (10% a level past 17) | FC formula (5% a level past 17) | none | PR Smite −0.3% at 180 s, −6.3% at 300 s (FC vs none); est. Elemental about −1% at 300 s, 0 at 180 s |
 | `oil_proc_damage` | Shadow Oil and Frost Oil proc damage | Ret twist, sub Holy, Shock (and their Undead encounters); all four Enhancement builds (all Shadow Oil) | Forever's tooltips (63–71 / 39–43) | Era's ranges (52–61 / 33–38) | tooltips | = Expected | −0.06 to −0.08% at Low (about 0.6 DPS; assumption sims, 180 s) |
 
 ### `flat_bonus_inside_pct`: flat bonus inside the weapon percent
@@ -110,26 +109,6 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
   - About a third of the totem's procs on a dual wielder come from off-hand events.
   - The totem is worth about 45 DPS to a rogue (+24 over Grace of Air, PR), so main hand only costs rogues and dual-wield Fury about 2 to 3%, and Survival about 1.5%.
 - **Knob:** `sim/core/buffs.go:1894-1896`, set `procMask = ProcMaskMelee` only when the key is 1.
-
-### `downrank_penalty`: downrank penalty size at 60
-
-- **Builds:** only the presets that cast a spell-power rank learned more than 17 levels below 60, i.e. before level 43. The Forever class changes auditor checked every Level 60 preset's casts (result JSON, 300 iterations) and every Level 60 APL's spell IDs against client 70338 SpellLevels (2026-10-13). Two builds qualify:
-  - Priest Smite: a low-rank Smite fallback when mana runs short. It was rank 4 (level 22); since the penalty it is rank 7 (level 46).
-  - Elemental shaman (Level 60 and + Mana Tide): Lightning Bolt VIII (10391, level 38) below 20% mana. At 180 s it is 0.2 casts and 1 DPS; at 300 s 15.6 casts and 58 DPS.
-  - No other preset casts such a rank. The warrior, rogue, hunter and feral low-level IDs are single-rank or attack-power abilities, cooldowns and stances; the warlock, mage, Balance and Ret rotations use top ranks only.
-- **Sim now:** the priest branch applies foreverchanges' formula to Smite, Holy Fire, Mind Blast, SW:Pain and Devouring Plague (`sim/priest/priest.go` `downrankCoefficient`, commits 6ee9d02eb / ea9eb5c22 / 333cbeb04). The shaman branch has no penalty (`sim/shaman/lightning_bolt.go:25` keeps rank 8's full 0.714).
-- **Source:**
-  - Blizzard's development notes, 2026-10-01 (us.forums.blizzard.com/en/wow/t/2360696), tier 3: ranks "vastly below your current level receive less benefit from your Spell Damage", and they trigger class abilities less often (at 60 a rank 1 Frostbolt never procs Frostbite).
-  - foreverchanges.pro/downranking, tier 4: a rank keeps 1 − 0.05 × (L − 17 − T) of its coefficient (L your level, T the rank's learn level), between 0 and 1. Classic's level-20 cut is gone. It was measured on heals in the beta up to level 30; damage spells and level 60 are its author's assumption.
-- **Why uncertain:** the formula was never measured above level 30 or on a damage spell. The proc part has no numbers at all.
-- **Settings:**
-  - **Low, "stronger".** 10% a level past 17, so a rank keeps nothing from 27 levels below. No source; it brackets a steeper curve at 60.
-  - **Expected, "FC formula".** 5% a level past 17; nothing after 37 levels below.
-  - **High, "none".** Classic Era's rule minus its level-20 cut, i.e. no penalty for any rank the presets cast.
-- **Sensitivity:**
-  - Smite: FC vs none, with the rotation re-searched under the penalty: 708.8 → 706.5 at 180 s, 687.0 → 643.8 at 300 s (PR, priest branch).
-  - Elemental, est.: Lightning Bolt VIII keeps 75% under FC (5 levels past 17). That is about −5 to −7 DPS (−1%) at 300 s and 0 at 180 s, before re-tuning the fallback to rank IX (level 44).
-- **Knob:** one shared helper (proposal): move the priest's `downrankCoefficient` to `sim/core` as `(*Character).ForeverDownrankCoefficient(coef, learnLevel)`, reading `core.Assume("downrank_penalty_pct", 5)` (0 = none). The priest session owns the move. The shaman applies it in `lightning_bolt.go` / `chain_lightning.go`; nobody else needs it.
 
 ### `oil_proc_damage`: Shadow Oil and Frost Oil proc damage
 
@@ -648,10 +627,6 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Sensitivity (est.):** at about 2000 cat attack power a Shred's base is about 431. Low is −44 (−10% Shred, about −3.5% Feral); High is +56 (+13% Shred, about +4.5% Feral).
 - **Knob:** `sim/druid/shred.go:57,71`. Add `Assume("druid_shred_extra", 124) - 80*1.55` after the multiplier (DamageMultiplier is 1.55, so divide that term by 1.55 when adding it inside).
 
-### `druid_tf_scope`: removed
-
-Tiger's Fury isn't in Forever (Blizzard's Druid deep dive; nothing in client 70338 grants it), and the druid branch removes it. So it's no longer an assumption.
-
 ### `druid_rip_31plus`: Rip's level 31+ ranks
 
 - **Builds:** Feral (Rip 22 to 25% of the damage, at 4 combo points).
@@ -718,12 +693,14 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 - **Shadow Word: Death, Demonic Pact, Wrack, Incinerate's base, Sniper Shot, Light's Vigil, the other 31-point capstones.** Forever's own values, untested, with no analogue to give a range.
 - **Arcane Shot and Aimed Shot cooldown sharing, Auto Shot through casts, Expose Prey, Lacerate, Lacerating Strikes.** Beta-tested or client data, or under the threshold.
 - **Elemental Focus on low ranks, Searing Totem's reach from range, Elemental Devastation's size** (the client curve). All under 0.5%.
+- **Downrank penalty size at 60** (was `downrank_penalty`, removed 2026-10-15). Forever cuts the spell power of a rank learned more than 17 levels below you (foreverchanges' 5% a level, measured on heals to level 30). Only Smite's and Elemental's low-rank fallbacks could feel it, and all three settings (10% a level, 5%, none) gave the same DPS on all three builds at 120, 180 and 300 s. Smite's fallback is rank 7, learned at 46, inside the 17 levels. The priest's spells keep the 5% rule (`downrankCoefficient`, `sim/priest/priest.go`). Reopen it if a preset starts casting a rank learned before level 43.
+- **Tiger's Fury's scope** (was `druid_tf_scope`, removed 2026-10-15). Forever removed Tiger's Fury (Blizzard's Druid deep dive; nothing in client 70338 grants it).
 - **The encounter itself** (level 63, 3731 armor, Humanoid). This moves every spec, but it is an encounter setting, not a spec assumption.
 
 ## Where no sensible range was found
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
-- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `warr_crit_rage`, `hunter_pet_speed`, `hunter_crit_per_agi`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation`, `oil_proc_damage` and `druid_tf_scope`.
+- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `warr_crit_rage`, `hunter_pet_speed`, `hunter_crit_per_agi`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation`, and `oil_proc_damage`.
 
 Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM): no analogue below 10.

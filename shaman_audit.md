@@ -198,20 +198,20 @@ Tree rules
 
 - [x] 9.1 Orc racials under Forever: Blood Fury, Axe Specialization (crit with an axe). See the 9.1 write-up below. Blood Fury follows our attack power on the beta, and the sim does too since fd3f3f4e.
 - [x] 9.2 Relics: Burning Totem, Totem of the Storm (Forever), Polished Driftwood Icon, Totem of Rage, Totem of the Storm (Classic)
-- [ ] 9.3 Rage of the Storm (Stormstrike +10%)
-- [ ] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
-- [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth
-- [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants
-- [ ] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
-- [ ] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
-- [ ] 9.9 Weapon oils and stones beside the shaman imbue
+- [x] 9.3 Rage of the Storm (Stormstrike +10%)
+- [x] 9.4 Set bonuses: Enhancement Synthetic (Phase 1), the real sets in the phase gear
+- [ ] 9.5 Trinkets in the presets: Hand of Justice, Blackhand's Breadth (waits for release gear data, the user 2026-10-14)
+- [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants (waits for release gear data, the user 2026-10-14)
+- [x] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
+- [x] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
+- [x] 9.9 Weapon oils and stones beside the shaman imbue
 
 ## 10. Raid buffs and debuffs (Forever values)
 
-- [ ] 10.1 Blessings: Might, Kings, Wisdom
-- [ ] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
-- [ ] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
-- [ ] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
+- [x] 10.1 Blessings: Might, Kings, Wisdom
+- [x] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
+- [x] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
+- [x] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
 
 ## 11. Encounter and rotation
 
@@ -351,7 +351,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 2.5 Mana returns
 
-- Judgement of Wisdom: 59 mana (rank 3) on a 50% roll from every direct hit, melee or spell. White swings roll even when they miss or are dodged (Classic). Procs and phantom spells don't. The user keeps rank 3 at every level (2026-10-08), because we only sim a raid at level 60. Its Forever value is still unknown.
+- Judgement of Wisdom: 59 mana (rank 3) on a 50% roll from every direct hit, melee or spell. White swings roll even when they miss or are dodged (Classic). Procs and phantom spells don't. It now takes the rank for the raid's level, 33 / 46 / 59 at 38 / 48 / 58 and none below 38, as client 70338 has it (10.4). The user had kept rank 3 at every level on 2026-10-08.
 - Water Shield: 3 globes of 2% max mana, free, 15 sec cooldown, 10 min (the beta client text). A landed spell, melee or ranged hit on the shaman or a heal crit spends a globe, at most one every 3.5 sec. The client only says "every few seconds". The user keeps 3.5 sec (2026-10-08): raid damage comes once every 5 to 15 sec and is the user's setting, so the wait never shows at those rates. No preset sets the raid damage rate, so it is 0 by default.
 - Mana Tide Totem: 88 / 197 / 290 mana every 3 sec, 4 times, to the party members with mana, 5 min cooldown. It takes the water slot and stops Mana Spring Totem. Rank 1 matches the beta client text.
 - `mana_returns_test.go`: TestOrcShamanJudgementOfWisdom (457 procs on 901 unarmed swings at level 60, 50.7%, 135 of them missed or dodged, 59 each, 42.8% if misses didn't roll), TestOrcShamanWaterShield (a hit every 5 sec spends a globe each time, a hit every 3 sec only every other hit), TestOrcShamanManaTide (ticks at 3 / 6 / 9 / 12 sec after the drop, Mana Spring gone). Taking the miss rolls out of Judgement of Wisdom, a 1 sec globe wait, or leaving Mana Spring up under Mana Tide each make the tests fail. Nothing changed in the sim.
@@ -725,7 +725,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-10). Armor takes armor / (armor + 400 + 85 * the attacker's level) off physical damage, the Classic formula for attackers below level 60 (`spell_resistances.go` GetArmorDamageModifier). Our armor is the gear's armor (both numbers each piece lists, 1.7) plus 2 a point of Agility. Only physical damage uses it.
 - Stoneskin Totem takes a flat 30 off each melee hit after armor, and after a crit doubles the hit. Guardian Totems adds 10% a point (rounded down). It's 30 for every rank, our own totem and another shaman's in the raid buffs alike (`buffs.go` StoneskinTotemAura). No preset puts it down.
-- Devotion Aura from the raid buffs gives armor, but only to Alliance characters. We're Horde, so it never reaches us.
+- Devotion Aura from the raid buffs gives armor. Under Forever the paladin buffs reach a Horde character too (Undead paladins), so it reaches us at the rank for our level, 390 at 30 and 735 at 60 (10.2).
 - None of this changes our DPS. It only changes damage taken.
 - Beta, armor (our count from the whole log, the 14:50 export): the export shows 608 armor, split into 40 base and 568 bonus. The 558 normal mob hits on us after 16:00 (no crits, crushes or blocks, no Stoneskin) fit 568 armor. With 568 the formula predicts 21,484 damage in all against the 21,485 we took, where 608 predicts 21,242. The same armor solves at every mob level from 25 to 35 (553 to 584), so the attacker's level part of the formula is right too.
 - The sim gives this gear 562 armor: 482 from the gear and 80 from 40 Agility. The sheet has 3 more Agility (43), which makes 568, the number the hits fit. So the sim's armor matches what the server uses. We don't know what the export's 40 base armor is, but it doesn't reduce damage. The 3 Agility and 5 Intellect the sim is missing come from enchants the sim doesn't have under these IDs (cloak 247, bracers 723 and the Forever enchants 8482 and 8485). That's for 9.6.
@@ -1664,12 +1664,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 ### 8.48 Nature's Swiftness
 
-- The user OK'd the change (2026-10-14): "sg".
+- The user OK'd the change (2026-10-14): "sg". It was reverted the same day (below).
 - The sim (`talents.go`): an off-GCD cooldown. The next Nature spell we cast with a cast time is instant (Lightning Bolt or Chain Lightning, the sim has no shaman heals), and that cast uses up the buff. Both Restoration presets take it, no DPS preset.
-- Client 70338 (wago.tools 16188): -100% cast time (aura 108, misc 10), 1 charge, a 180000 ms cooldown, GCD 0, no time limit. The mask is Lightning Bolt, Chain Lightning, Healing Wave, Lesser Healing Wave, Chain Heal, Healing Rain and Ghost Wolf, the same spells in the sim as "Nature school with a cast time". Stealth carries the attribute flag for a cooldown that starts when the buff ends (0x10000000 in the first word), and Nature's Swiftness doesn't, nor do Presence of Mind or the druid's Nature's Swiftness. So the 3 min starts at the press. That's read from attribute bits, not a direct statement.
+- Client 70338 (wago.tools 16188): -100% cast time (aura 108, misc 10), 1 charge, a 180000 ms cooldown, GCD 0, no time limit. The mask is Lightning Bolt, Chain Lightning, Healing Wave, Lesser Healing Wave, Chain Heal, Healing Rain and Ghost Wolf, the same spells in the sim as "Nature school with a cast time".
+- The cooldown: Attributes_0 is 0x02050000 on 16188 and 17116. 0x02000000 is the flag for "can't be used while active, and the cooldown starts when the effect ends". Presence of Mind (12043), Inner Focus (14751) and Divine Favor (20216) have it too, and Ice Block and Cold Snap don't. So the 3 min starts when the buff is used up.
+- The first pass misread the bit. It took 0x10000000 for that flag because Stealth has it, but 0x10000000 is "can't be used in combat". So 817393490 started the cooldown at the press. The Forever mechanics auditor caught it, and we checked the table again and restored the old sim behavior.
 - Beta: no build had it.
-- Changed: the cooldown starts when we press it. The sim used to start it again when the buff was used. The full suite passes, no golden changed.
-- The new `natures_swiftness_test.go` TestOrcShamanNaturesSwiftness presses it at 1 sec at level 60. The Lightning Bolt at 3 sec is instant and uses up the buff, the one at 7 sec takes its full cast, and it's ready at 181 sec. Starting the cooldown again on the bolt fails it (ready at 183).
+- The sim now: the cooldown we start at the press only blocks a second press while the buff is up, and the cast that uses up the buff starts the 3 min again. The full suite passes, no golden changed.
+- `natures_swiftness_test.go` TestOrcShamanNaturesSwiftness presses it at 1 sec at level 60. It isn't ready at 2 sec, the Lightning Bolt at 3 sec is instant and uses up the buff, the one at 7 sec takes its full cast, and it's ready at 183 sec, not 181.
 
 ### 8.49 Purification
 
@@ -1720,6 +1722,115 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Firestorm Totem: 95% of the cost on Searing, Windfury and Mana Spring Totem, all of it on Fire Nova.
   - Forever Totem of the Storm: 20,000 bolts that land give a stack 29.15% of the time against 29.17% wanted (half of 10 PPM on a 3.5 sec two-hander), and never without the relic.
   - Taking out each effect fails its check. `weaponSim` got a `relic` field for it.
+
+### 9.3 Rage of the Storm
+
+- The user OK'd it, Lightning's Grasp and taking the source out of Need to Verify (2026-10-14): "sg".
+- The sim (`items.go`): +10% Stormstrike damage, added to Stormstrike's other percent bonuses. It has none, so adding and multiplying come out the same.
+- Client 70338: the mace's equip spell "Rage of Earth" (1309422) gives +10% damage (aura 108) to Stormstrike 17364, the one the sim and the beta logs use, and SoD's 410156. Its stats are Intellect and Stamina, the same as our DB (15 Stamina, 12 Intellect).
+- Beta: settled in 4.4 (2026-10-10). 30 Stormstrikes (222 to 271 raw) all fit the normalized 3.6 speed with +10% (220.0 to 271.7), and 13 more later. "3.3, then 6.4%" and "+5 flat" each leave hits out. The user said to assume the +10% works.
+- Source (wowhead Forever): the Horde shaman quest "The Tempest's Weapons" (79442, level 40, needs level 30), which also gives the Maelstrom Weapon rune. It's a choice of Rage of the Storm, Lightning's Grasp (280607, one-hand, "Storm's Grasp" 1309442, +1% Lightning Bolt crit) and Tidebringer's Claw (280605, +1% Healing Wave and Lesser Healing Wave crit). The source item is out of Need to Verify.
+- New in the sim: Lightning's Grasp's +1% Lightning Bolt crit, written like Totem of Thunder (it reaches the overloads too). No preset uses it. Tidebringer's Claw stays out.
+- Tests: TestOrcShamanDamageModifiers already checks Rage of the Storm (Stormstrike 121 against 110, white hits and Windfury 110). TestOrcShamanRelics now checks Totem of Thunder and Lightning's Grasp together: Lightning Bolt and its overload crit 1% more over Chain Lightning than without them. We measure against Chain Lightning because the weapon's Intellect moves every spell's crit. Taking out the 1% fails it.
+
+### 9.4 Set bonuses
+
+- The user (2026-10-14): "no need to audit gear too much now. We'll have proper gear info on release". So we kept this to a client check, and the gear items below wait for release.
+- Client 70338 (ItemSet 2110 and 2111, ItemSetSpell): every bonus of The Spiritcaller's Rage and The Spiritcaller's Storm matches `item_sets_pve.go`:
+  - Rage: 1% attack and cast speed, totem radius, 36 melee attack power against Elementals, 0.5 sec off Stormstrike.
+  - Storm: 1% melee and spell hit, Earthbind cooldown, 21 spell damage against Elementals, 1 sec off Lava Burst.
+  - The client lists 6 pieces a set with no stats yet. Both synthetic sets put the set on the hands and legs only, so only the 2 piece is live. `elemental/set_bonus_test.go` checks the Storm side.
+- Left for release, no change now:
+  - The Ten Storms 5 piece is +3% crit on all spells in the client (23570, aura 57 with no school), and the sim gives it to Nature only. Only 1 piece is in any preset, so it's never live.
+  - Forever's level 60 PvP sets (Champion's and Warlord's Thunderfist, "Premier" pieces) aren't in the DB or the sim.
+  - Forever's new world sets have pieces in our DB but no set name, because we read set names from wowhead Classic tooltips. So Partners in Crime (+22 Strength and a Strength proc, a level 17 and a level 60 ring), Rider of the Plaguelands (a Shadow damage melee proc, level 57) and the caster ones never get their bonuses. Krol'dok Battlegear and Defias Enforcer's Garb aren't on wowhead Forever yet.
+
+### 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
+
+- The user OK'd it (2026-10-15): "sg", and asked to also verify whether explosives with a cast time reset the swing timer.
+- The sim (`sim/core/consumes.go` registerExplosivesCD and newBasicExplosiveSpellConfig): the Sapper is instant and off the GCD, deals 450 to 750 Fire to every enemy and 375 to 625 to us, and has its own 5 min cooldown. The filler (Land Mine 394 to 506, Solid Dynamite 213 to 287, Dense 340 to 460, Thorium Grenade 300 to 500) takes a 1 sec cast off the GCD. All share a 1 min cooldown, get a 100% hit bonus and need Engineering. A white swing that comes due during the 1 sec cast waits for it to end.
+- Presets: every Enhancement and Elemental build at Level 60 and Level 30 (PvP too, through the shared Level 30 consumes) takes the Sapper and the Land Mine. At level 30 the Sapper is worth about +3.1 and the Land Mine 3.3 to 3.9.
+- Client 70338:
+  - Sapper 13241: 600 base with 0.5 variance to enemies and 500 with 0.5 to us (the sim's ranges), a 300000 ms item cooldown and category 24 with a 60000 ms category cooldown. Engineering 205.
+  - Land Mine 4100: an instant summon (cast time index 1, 0 ms) of a mine for 60 sec. Its Detonation 4043 deals 450 with 0.2489 variance, so 394 to 506. Engineering 195.
+  - Solid Dynamite 12419: 250 with 0.296 variance, cast time index 4 (1000 ms). The dynamites and the grenade share category 24.
+  - A level 30 engineer can reach 225 skill, so both explosives are usable.
+- The one mismatch: placing the Land Mine is instant in the client, and the sim gives it the dynamites' 1 sec cast. The real cost may be the wait until the mine goes off (an old TODO asks for a 10 sec delay), and no source gives that timing.
+- No sim change. Making the mine instant is a core change for every class, and the warrior, rogue and paladin rotations time it around swings, so it waits for the beta.
+- notes.md Need to Verify (Beta): is placing the mine instant, does an explosive with a cast time reset or hold our swing timer and does an instant one touch it, and how soon does the mine go off.
+- No new test. The values match the client and the suite stays small.
+
+### 9.8 Elixirs, flasks, food, scrolls and juju
+
+- The user OK'd it (2026-10-15): "sg - we need to mostly verify what stacks, etc".
+- Level 60 is the consumables auditor's (`orchestration/auditor_consumes.md`), including the one 2% crit elixir rule (notes.md). We checked the Level 30 shaman set (`EncounterLevel30.consumes`) against client 70338.
+- All match: Elixir of Agility 11328 (15 Agility), Lesser Arcane Elixir 1250971 (15 damage to all magic schools, aura 13, so damage only), Elixir of Fire Power 7844 (10 Fire), Lesser Mageblood Elixir 1250944 (6 mana per 5 sec, aura 85), Scroll of Strength II 8119 (9 Strength, level 25), Briny Seafood Stew (Well Fed 1249520 with 14 damage only) and Mana Potion 2023 (520 with 0.25 variance, 455 to 585).
+- Dragonbreath Chili 15852: 5% on white swings and melee abilities (proc type 20), a 10000 ms cooldown, and 15851 deals 65 Fire with 0.123 variance (61 to 69). The sim has the same. It's its own buff, not Well Fed, so it stacks with the stew.
+- Every item needs level 27 or less, so a level 30 character can use them all.
+- 1.7's open question: under Forever the five 2% crit elixirs and Grilled Squid's 1% add melee and spell crit both (`consumes.go` foreverElixirCrit and applyForeverFood), which fits Forever's single crit chance. Leader of the Pack and Moonkin Aura are item 10.2.
+- Stacking: the client doesn't hold the rules. The sim stacks every elixir slot like Classic, and one slot holds a scroll and the elixirs of the same stat.
+- No sim change. notes.md Need to Verify (Beta) lists the stacking pairs to try at level 30: the four Level 30 elixirs together (battle and guardian limits), scrolls with elixirs of the same stat, two elixirs of one stat, Dragonbreath Chili with Well Fed, two Well Fed foods and the Forever elixirs side by side.
+- No new test.
+
+### 9.9 Weapon oils and stones beside the shaman imbue
+
+- The user OK'd it (2026-10-15): "sg".
+- Settled in 7.6: the shaman imbue stacks with an oil or a stone. The imbues use enchant effect 360 and the oils and stones 54 in client 70338, the beta showed both on one weapon, and `imbue_rules_test.go` checks it.
+- Client 70338 matches the sim: Lesser Wizard Oil 25110 (16), Wizard Oil 25111 (24) and Brilliant Wizard Oil 25113 (36 and 1% spell crit, aura 57) add damage (aura 13) and the same healing (aura 135). Elemental Sharpening Stone 22755 is 2% on aura 52, the weapon crit aura, not the all crit aura 290 of the Forever elixirs, so it stays melee crit only. Shadow Oil's enchant 25 procs Shadow Bolt 350026 on 15% of hits.
+- Shadow Oil's damage (tooltip 63 to 71 against the server formula's 52 to 61) is the other orchestration's `oil_proc_damage` assumption, with a beta follow-up.
+- New: the sim gives Shadow Oil a 10 sec cooldown shared by both hands (`consumes.go` applyWeaponImbueConsumes). It came from the upstream SoD sim (2024-02) with no source. The client has only the 15% chance, and Frost Oil in the sim has no cooldown. Without it the Level 60 Enhancement request goes from 813.9 to 832.5 at 180 sec (20,000 iterations), with Shadow Oil from 22.1 to 41.7 DPS. The Level 30 presets and the Retribution builds use Shadow Oil too. No beta log has a Shadow Oil proc.
+- No sim change. notes.md Need to Verify (Beta) asks for about 40 Shadow Oil procs to tell the cooldown apart, and `orchestration/followups.md` has it for the other orchestration.
+- No new test.
+
+### 10.1 Blessings: Might, Kings, Wisdom
+
+- The user OK'd it (2026-10-15): "sg".
+- The sim (`sim/core/buffs.go`): Blessing of Might gives Forever's ranks by level, 14 / 25 / 40 / 61 / 83 / 112 / 133 melee attack power at 4 / 12 / 22 / 32 / 42 / 52 / 60, with no Improved Blessing of Might. Blessing of Kings gives 10% to all five attributes and multiplies with our other percent bonuses. Blessing of Wisdom gives 12 / 18 / 24 / 30 / 36 / 40 mana per 5 sec at 14 / 24 / 34 / 44 / 54 / 60. All three reach a Horde shaman under Forever (Undead paladins). Level 60 takes all three, Level 30 and Level 30 PvP take Kings.
+- Client 70338 matches every rank: Might 19740 to 25291 on aura 99 (melee attack power, 14 to 133), Kings 20217 on aura 137 (10% to every stat), and Wisdom 19742 to 25290 at 12 to 40. Forever moved Wisdom from Classic's regen aura (85) to an energize every 5000 ms (aura 24), which gives the same mana over a fight as smooth MP5. All last 60 min.
+- Kings was checked against the beta sheet in 1.8 and Wisdom's ranks in 2.4.
+- No sim change. `mp5_test.go` TestOrcShamanMP5Buffs now checks Might too: 25 attack power at 20, 40 at 30 (rank 4 needs 32) and 133 at 60, no ranged attack power, and none under Classic. Moving rank 4 to level 30 fails it.
+
+### 10.2 Other raid buffs
+
+- The user OK'd it (2026-10-15): "sg".
+- A subagent compared all 20 raid buffs with client 70338 (SpellEffect, and SpellLevels for the rank levels and where each rank stops growing).
+- Match: Trueshot Aura (ranged attack power only, nothing for us), Retribution Aura, Divine Spirit (baseline from 30), Fortitude, Gift of the Wild, Thorns, every scroll but Stamina, and Battle Shout rank 6 (111 plus 0.6 a level from 52 to 61, floored to 115 at 60). Sanctity Aura is off under Forever, because the talent is gone.
+- Leader of the Pack (24932) and Moonkin Aura (24907) are both aura 290 at 3%, all crit. The sim gives 3% melee and spell crit once under Forever, and the two don't stack, as the client talent text says. This settles 1.7's open question on buff crit.
+- Improved talents: Improved Battle Shout, Fortitude, Mark of the Wild, Devotion Aura and Retribution Aura are gone in Forever. Improved Imp is still there but no longer raises Blood Pact.
+- Fixed (2026-10-15, `sim/core/buffs.go`), all under Forever:
+  - Devotion Aura took the Improved 25% (919 armor at every level). It's now the rank for our level, 55 to 735 at 1 to 60, so 390 at 30 and 735 at 60.
+  - Blood Pact was a flat 42 Stamina. It's now the client's ranks with their growth a level, floored like Battle Shout: rank 5 is 49 plus 0.5 a level from 50 to 60 (54 at 60, as wowhead shows), rank 3 is 21 plus 0.4 a level (22 at 30).
+  - Arcane Intellect (2 / 7 / 15 / 22 / 31 at 1 / 14 / 28 / 42 / 56), Scroll of Stamina (4 / 8 / 12 / 16 at 5 / 20 / 35 / 50), Shadow Protection (30 / 45 / 60 at 30 / 42 / 56) and the Fire and Frost Resistance Auras (30 / 45 / 60 at 36 / 48 / 60 and 32 / 44 / 56) gave their level 60 values at every level. They now take the rank for our level. A resistance buff no longer goes below 0 when Mark of the Wild gives more than it.
+  - Battle Shout grew a level only on rank 6. Every rank grows now (0.3 a level for ranks 1 to 3, 0.6 from rank 4, up to each rank's max level), so rank 3 gives 35 at 30.
+- No shaman DPS preset moves. Level 60 changes health and armor only, and the boss never swings at us. The Level 30 presets take only the scrolls of Intellect and Spirit, Kings and Scroll of Strength. The goldens of every class moved by at most 0.1% DPS, from the extra Stamina and the lower armor.
+- New `raid_buffs_test.go` TestOrcShamanRaidBuffRanks reads the sheet at 30 and 60 with Devotion Aura, Blood Pact, Arcane Brilliance and Battle Shout picked as Improved: 390 / 735 armor, 22 / 54 Stamina, 15 / 31 Intellect and 35 / 115 attack power. The old code fails 6 of the 8 checks.
+- Open: Battle Shout's rounding. The sim floors rank 6 to 115 at 60, and wowhead's Forever tooltip shows 116. Blood Pact's growth is floored the same way. Not checked: Shadow Resistance Aura and the resistance totems still give their level 60 values at every level, which no preset uses.
+
+### 10.3 Another shaman's totems in the raid buffs
+
+- The user OK'd it (2026-10-15): "sg".
+- Every one goes through the same code as our own totem and was checked against client 70338 in section 7, with a test each: Strength of Earth by level, up to rank 4's 42 at 60 because rank 5 is an Ahn'Qiraj tablet (7.21), Grace of Air 49 / 77 Agility, off while a Windfury Totem buff is up (7.20), Windfury Totem 95 / 179 / 246 attack power by rank (7.19), Flametongue Totem by rank without the other shaman's Elemental Weapons (7.24, `totem_weapon_buffs.go` applyRaidTotemWeaponBuff), Mana Spring 10 to 25 MP5 by level, stacking with Blessing of Wisdom (7.26 and 2.4), and Stoneskin by rank (7.29).
+- Under Forever they reach every race. Enhancing Totems is gone, so an "improved" Strength of Earth or Grace of Air gives the same as a regular one. An "improved" Mana Spring is Restorative Totems 5/5 (+25%).
+- No preset takes them. Level 60 is measured with no second shaman in the group, and Level 30 has none.
+- Open: whether two shamans' Mana Spring Totems stack (notes.md Need to Verify, 8.45).
+- No sim change, no new test.
+
+### 10.4 Debuffs
+
+- The user OK'd it (2026-10-15): "sg".
+- A subagent compared every raid debuff with client 70338 (SpellEffect and SpellLevels).
+- Match: Curse of the Elements (mask 126, every Magic school with Nature, damage and resistance, +10% and -75 at 60, +6% and -45 at 30), Sunder Armor (5 x 450), Expose Armor (450 a combo point, Improved Expose Armor now only refunds energy and combo points), Faerie Fire and Curse of Recklessness (505, aura 674), Judgement of the Crusader (161 at 60, Improved Seal of the Crusader removed), Judgement of Wisdom (33 / 46 / 59 at 38 / 48 / 58), Insect Swarm (-2% hit) and Hunter's Mark. Curse of Shadow has no rank a warlock can learn, and the sim leaves it off. Judgement of Light only heals.
+- The client puts all four armor debuffs on one new armor aura (674) and says nothing about stacking, so the major (Sunder or Expose) and minor (Faerie Fire or Recklessness) slots stay the user's rulings.
+- Stormstrike is Physical only in the client and the sim. The armor debuffs raise it, and Curse of the Elements only raises the spells its mark empowers.
+- At Level 60 Sunder Armor, Faerie Fire, Curse of the Elements (spells and Shadow Oil) and Judgement of Wisdom (mana) change our numbers. Level 30 takes no debuffs.
+- Fixed (2026-10-15, `sim/core/debuffs.go`), under Forever, the defensive raid debuffs. The Defensive Debuffs section is off and the Level 60 encounter has no tank, so no shaman number moves and no golden changed:
+  - Curse of Weakness was Classic's 31 (37 Improved) at every level. It's now 4 / 7 / 12 / 18 / 26 / 37 at 4 / 12 / 22 / 32 / 42 / 52, with Improved Curse of Weakness gone.
+  - Demoralizing Shout was 146 (204 Improved) for 30 sec, and Demoralizing Roar 138 (193). Both now take the rank for the level with its growth a level for 10 levels: Shout 204 at 60 and 85 at 30 for 45 sec, Roar 204 at 60 and 88 at 30. Their Improved talents are gone.
+  - Thunder Clap was 10% (15% Improved). Every Forever rank is 20%, and Improved Thunder Clap only cuts the Rage cost.
+  - Scorpid Sting did nothing. It now takes 2% off the target's hit from level 22, in Insect Swarm's slot, so the two give 2% together.
+  - Curse of the Elements now carries each rank's client ID (440892, 1311676, 1311677, 1311680), where it had Classic's 11722, so the sim and the combat logs name the same spell. The warlock rotation template looks for 1311680 now (`tools/rotopt/warlock.go`). No generated rotation used the old check.
+- A throwaway test read the target at 30 and 60 (Shout 85 / 204, Roar 88 / 204, Curse of Weakness 12 / 37, Thunder Clap 20%, Scorpid Sting 2%). We kept no test, as agreed.
+- Open: whether Scorpid Sting and Insect Swarm stack in Forever. For the class owners (`orchestration/followups.md`): a class's own Sunder, Faerie Fire, Recklessness and Expose give the level 60 value below level 54 to 58, the warrior's own Demoralizing Shout and the paladin's own Judgement of the Crusader rounding (34.5 / 57.5 / 126.5 where the client has 35 / 58 / 127).
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

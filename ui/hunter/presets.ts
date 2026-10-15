@@ -79,7 +79,8 @@ export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Sy
 	group: 'Level 60',
 });
 // The Survival set: melee attack power and Strength in place of ranged attack power, a pair of
-// one-handed swords (Brutality Blade's damage and speed) for Predator's Edge's off hand bonus, and
+// one-handers for Predator's Edge's off hand bonus at Brutality Blade's damage per second (a 2.8 sec
+// axe and a 1.4 sec dagger, the types and speeds Survival sims best with, standards 22), and
 // 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Totals: armor 705.5 (target 706.1),
 // swords 34.5 each (the standard has no hunter one-hander: the physical 0.39 x the hunter /
 // physical two-hander ratio, 0.42 x L(71)), bow 19.5. Stamina 15.4%, Spirit 10.1%, Agility 31.1%,
@@ -230,7 +231,7 @@ export const DefaultConsumes = Consumes.create({
 
 // Survival never runs short of mana, so the rune, Mageblood and the flask do nothing for it. It
 // takes Major Frenzy Potion (+5.9), Dragonbreath Chili (+3.2) and a Dense Sharpening Stone on each
-// sword (+9.2; Elemental Sharpening Stone's plans only drop in Molten Core). Fire-toasted Bun's 2%
+// weapon (+9.2, measured on the swords; Elemental Sharpening Stone's plans only drop in Molten Core). Fire-toasted Bun's 2%
 // hit would add 9, but Forever's is a seasonal item that expires 14 days after looting.
 export const SurvivalConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
@@ -359,8 +360,8 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
 // Races, 20000 iterations at 180 sec (forever-wiki/sim-status.md has 120 and 300 too): the Night
 // Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 5 ahead
-// of the Orc, the best Horde race. For Survival the Human is best (2% crit with its two swords),
-// 6 ahead of the Orc and the Night Elf, which tie within the noise. With the Wildstalker Armor 4
+// of the Orc, the best Horde race. For Survival the Orc is best (Axe Specialization with its main
+// hand axe), 9 ahead of the Night Elf, the best Alliance race. With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured on the 2026-10-12 gear, before
@@ -405,7 +406,8 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 865.0 / 858.6 / 852.2 at 120 / 180 / 300 sec in the mksettings raid. The rotation walks in
+// 907.5 / 900.5 / 892.4 at 120 / 180 / 300 sec in the mksettings raid (Orc, 2026-10-15). On a pair
+// of Brutality Blade swords the Human did 858.6 at 180 sec. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
@@ -414,7 +416,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	talents: TalentsSurvival,
 	rotation: APLSurvival,
 	encounter: EncounterLevel60Melee,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 	professions,
 	options: DefaultOptions,
 });

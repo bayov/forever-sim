@@ -127,6 +127,27 @@ The synthetic two-hander is an axe (Spinal Reaper's damage and speed), so the Or
 
 The level 60 preset of every DPS spec: synthetic Phase 1 gear (`tools/database/forever_synthetic_items*.go`), the searched talents and rotation, and the best race. Each class fills in its own section.
 
+Weapon types and speeds (2026-10-15, orchestration/standards.md 22). Each physical preset now holds the weapon type and speed it sims best with, at the damage per second of the Era Phase 1 BiS weapon it stands in for. The speeds come from real Era Phase 1 weapons. Slow main hands and two-handers win, and so do fast off hands. White hits, Mortal Strike, Heroic Strike and Slam scale with the damage per swing. Poisons, Unbridled Wrath and Seal of Righteousness's spell power part roll on every hit. Whirlwind's and Mutilate's off hand strikes use normalised damage, 2.4 sec for any one-hander but a dagger. At 180 sec, 20,000 iterations:
+
+| Preset | Weapons now | Race | DPS (was) |
+|---|---|---|---|
+| Fury | 2.9 sec axe, 1.5 sec sword | Undead | 1066.5 (1038.1) |
+| Fury (Two-Hand) | 3.7 sec axe | Orc (was Undead) | 925.4 (901.6) |
+| Arms | 4.0 sec axe | Orc (was Undead) | 951.1 (915.1) |
+| Arms (vs Dragonkin) | 4.0 sec axe | Orc (was Undead) | 992.1 (947.9) |
+| Combat Daggers | 2.0 sec dagger, 1.4 sec dagger | Undead | 728.4 (708.1) |
+| Seal Fate Daggers | 2.0 sec dagger, 1.4 sec dagger | Undead | 695.5 (674.4) |
+| Mutilate | 2.0 sec dagger, 1.5 sec sword | Undead | 695.6 (669.8) |
+| Combat Swords | 2.9 sec axe, 1.5 sec sword | Undead | 723.0 (679.1) |
+| Subtlety | 2.0 sec dagger, 1.4 sec dagger | Undead | 667.5 (643.6) |
+| Seal Fate Swords | 2.7 sec sword, 1.4 sec dagger | Undead | 678.2 (644.7) |
+| Survival | 2.8 sec axe, 1.4 sec dagger | Orc (was Human) | 900.5 (858.6) |
+| Ret Shock | 2.1 sec two-hand sword | Undead | 1021.4 (970.6) |
+| Ret Shock (vs Undead) | 2.1 sec two-hand sword | Undead | 1110.7 (1041.3) |
+| Enhancement | 4.0 sec axe | Orc | 824.4 (813.9) |
+
+The other Ret builds tie on every two-hand type and speed (under 1 DPS) and keep the 3.4 sec axe. Casters and ranged hunters don't swing their weapon. Seal of Righteousness giving 10% of spell power on every swing is why the Shock builds want a fast two-hander. That is the sim's Forever reading and is worth a beta check. The race and section tables below were made on the old weapons.
+
 ### Warrior
 
 Three builds, each its own spec: dual wield Fury (Bloodthirst), two-hand Fury (Bloodthirst) and Arms (Mortal Strike). The tree is the 1.60.1.70338 client's and the spells were fixed against it first (see [classes/warrior.md](classes/warrior.md)). Searched on 2026-10-12 against the `mksettings` raid (`-spec fury` / `arms`): the shared level 60 raid with a shaman in the group for Strength of Earth and Windfury Totem, Kings and Might, the Level 60 boss (type Unknown, so no creature-type bonus applies, standards 19), 180 sec. The numbers are on the fixed rage conversion (230.6 at 60, it was 198.4 because `^2` was a XOR, which gave warriors about 16% too much Rage) and, since 13 October, on Forever's normalized Rage from dealing damage (standards 21; Blizzard's Priest & Warrior deep dive: "Rage gained is now based on the speed of the weapon that dealt the damage"). A landed white hit gives k Rage a second of weapon speed, with k = 3.46 for a one-hander and 4.5 for a two-hander at level 30 (beta testers, forum thread 2355684), the off hand at the same rate, doubled on a crit. Above 30, k grows as k30 × (1 + s × (level − 30) / 30); the presets use s = 0.5 (×1.5 at 60), an assumption between flat and Classic-like. At 180 sec (Fury / two-hand / Arms): s = 0 (flat) is 950.6 / 835.0 / 861.4, s = 0.5 is 1038.1 / 901.6 / 915.1 (with the rotation auditor's pass 14 changes), s = 1 (Classic-like, ×2 at 60) is 1076.1 / 924.2 / 935.0. The off hand at half Rage (TBC's rule) is 945.1 on Fury (-8.9%).

@@ -353,10 +353,15 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 			core.Each(affectedSpells, func(spell *core.Spell) { spell.CastTimeMultiplier += 1 })
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			// The cast uses up the buff. The cooldown already started when we pressed Nature's
-			// Swiftness, because the client (70338) doesn't flag it to start when the buff ends.
+			// The cast uses up the buff and starts the 3 min cooldown.
+			//
+			// The client (70338) flags Nature's Swiftness so its cooldown begins when the buff
+			// ends (0x02000000 in the first attribute word). The cooldown we start at the press
+			// only keeps us from pressing it again while the buff is up.
 			if spell.SpellSchool.Matches(core.SpellSchoolNature) && spell.DefaultCast.CastTime > 0 {
 				aura.Deactivate(sim)
+				cdTimer.Set(sim.CurrentTime + cd)
+				shaman.UpdateMajorCooldowns()
 			}
 		},
 	})

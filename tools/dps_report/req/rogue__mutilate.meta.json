@@ -12,20 +12,20 @@
     "Combat",
     "Subtlety"
   ],
-  "gearSet": "level60_phase1_synthetic_daggers",
+  "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 669.8,
-    "source": "PR #9"
+    "dps": 695.6,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 669.77,
-    "stderr": 0.19,
+    "dps": 695.6,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03 vs PR #9"
+    "note": "same sim as the published number"
   },
-  "summary": "Assassination Mutilate with Seal Fate, Cold Blood and Vile Poisons, plus Precision and Puncturing Wounds in Combat, on the synthetic daggers. It is the Assassination preset; Mutilate is pinned as the builder.",
+  "summary": "Assassination Mutilate with Seal Fate, Cold Blood and Vile Poisons, plus Precision and Puncturing Wounds in Combat, on a synthetic dagger with a fast sword in the off hand. It is the Assassination preset; Mutilate is pinned as the builder.",
   "keyTalents": [
     "Mutilate",
     "Seal Fate 3/5",
