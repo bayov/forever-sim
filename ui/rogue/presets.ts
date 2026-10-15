@@ -54,6 +54,8 @@ import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.
 import Level30p5BackstabGear from './gear_sets/level30p5_backstab.gear.json';
 import Level30p5SinisterStrikeGear from './gear_sets/level30p5_sinister_strike.gear.json';
 import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
+import Level60SyntheticMutilateGear from './gear_sets/level60_phase1_synthetic_mutilate.gear.json';
+import Level60SyntheticSealFateSwordsGear from './gear_sets/level60_phase1_synthetic_seal_fate_swords.gear.json';
 import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swords.gear.json';
 
 // Preset options for this spec.
@@ -122,7 +124,8 @@ export const GearLevel30p5SinisterStrike = PresetUtils.makePresetGear('Level 30 
 // for the rest), priced by the cross-class Forever budget for physical melee (three stat lines a
 // piece) in the fair stat mix of Season of Discovery rogue BiS (tools/database/forever_synthetic_items_rogue.go
 // has the numbers). The swords set is for Sinister Strike, the daggers set for Backstab, Mutilate and
-// Subtlety. Both carry 5% hit, the 9% cap with Precision 3/3 and the hands and legs, which carry
+// Subtlety. The weapons have the type and speed each build sims best with (standards 22), so Seal Fate
+// Swords and Mutilate get their own copies of the sets with different weapons. Both carry 5% hit, the 9% cap with Precision 3/3 and the hands and legs, which carry
 // the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). The 4 and 5 piece
 // bonuses (36 attack power against Humanoids, Eviscerate 5 Energy cheaper) are not live, see
 // PresetBuildLevel60CombatSwords. The trinkets are synthetic too (31 Agility and 15 crit rating, and
@@ -138,7 +141,18 @@ export const GearLevel60SyntheticSwords = PresetUtils.makePresetGear('Level 60 S
 	group: 'Level 60',
 });
 export const GearLevel60SyntheticDaggers = PresetUtils.makePresetGear('Level 60 Synthetic Daggers', Level60SyntheticDaggersGear, {
-	tooltip: 'A guess at Phase 1 BiS under Forever for Backstab, Mutilate and Subtlety, made of synthetic items that are not in the game.',
+	tooltip: 'A guess at Phase 1 BiS under Forever for Backstab and Subtlety, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+// The swords set with a 2.7 sec sword and a 1.4 sec dagger off hand, which Seal Fate sims best with.
+export const GearLevel60SyntheticSealFateSwords = PresetUtils.makePresetGear('Level 60 Synthetic Seal Fate Swords', Level60SyntheticSealFateSwordsGear, {
+	tooltip: 'A guess at Phase 1 BiS under Forever for Seal Fate Sinister Strike, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+// The daggers set with a 1.5 sec sword off hand, which Mutilate sims best with: its off hand strike is
+// normalised to 2.4 sec for any weapon but a dagger.
+export const GearLevel60SyntheticMutilate = PresetUtils.makePresetGear('Level 60 Synthetic Mutilate', Level60SyntheticMutilateGear, {
+	tooltip: 'A guess at Phase 1 BiS under Forever for Mutilate, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 
@@ -146,6 +160,8 @@ export const GearPresets = {
 	[Phase.Phase1]: [
 		GearLevel60SyntheticSwords,
 		GearLevel60SyntheticDaggers,
+		GearLevel60SyntheticSealFateSwords,
+		GearLevel60SyntheticMutilate,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
 		GearBackstabP1BiS,
@@ -156,6 +172,8 @@ export const GearPresets = {
 	[Phase.Phase2]: [
 		GearLevel60SyntheticSwords,
 		GearLevel60SyntheticDaggers,
+		GearLevel60SyntheticSealFateSwords,
+		GearLevel60SyntheticMutilate,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
 		GearBackstabP2BiS,
@@ -727,23 +745,28 @@ export const EncounterLevel60 = level60Encounter('Level 60', MobType.MobTypeUnkn
 export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)', MobType.MobTypeHumanoid);
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
-// encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-13, Undead,
+// encounter and the best race, Undead (Touch of the Grave), for every spec. On 2026-10-15, Undead,
 // 20000 iterations, at 120 / 180 / 300 sec, against the generic boss (no creature type), on the synthetic
 // sets built to the Forever budget (standards 1b: armor 650.5, weapons 63.9, bow 19.5 weighted linear
 // points a set, plus two synthetic ilvl 71 trinkets, 31 Agility and 15 crit rating, and +335 attack
 // power for 20 sec every 2 min), with a Dense Sharpening Stone beside the poison on each blade:
-//   Combat Daggers      730.3 / 708.1 / 689.7 (the default)
-//   Seal Fate Daggers   685.6 / 674.4 / 666.0, 4.8% behind Combat Daggers
-//   Mutilate            680.4 / 669.8 / 662.1
-//   Combat Swords       702.0 / 679.1 / 660.9
-//   Subtlety            657.0 / 643.6 / 634.0
-//   Seal Fate Swords    655.0 / 644.7 / 635.6, 5.1% behind Combat Swords
-// The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss) at 180 sec: Combat Daggers 730.1, Seal Fate
-// Daggers 697.8, Mutilate 693.0, Combat Swords 702.8, Subtlety 666.6, Seal Fate Swords 667.4.
+//   Combat Daggers      751.2 / 728.4 / 709.6 (the default)
+//   Seal Fate Daggers   706.9 / 695.5 / 686.7, 4.5% behind Combat Daggers
+//   Mutilate            706.0 / 695.6 / 687.5
+//   Combat Swords       745.8 / 723.0 / 704.8
+//   Subtlety            681.3 / 667.5 / 658.0
+//   Seal Fate Swords    688.1 / 678.2 / 669.1, 6.2% behind Combat Swords
+// The weapons have the type and speed each build sims best with (standards 22), from real Era Phase 1
+// weapons at the Era BiS weapons' damage per second. A slow main hand and a fast off hand win: Combat
+// Swords holds a 2.9 sec axe and a 1.5 sec sword, Seal Fate Swords a 2.7 sec sword and a 1.4 sec dagger,
+// the dagger builds a 2.0 sec and a 1.4 sec dagger, and Mutilate a 2.0 sec dagger and a 1.5 sec
+// sword. On the Era BiS weapons the six builds did 708.1, 674.4, 669.8, 679.1, 643.6 and 644.7.
+// The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss) at 180 sec: Combat Daggers 751.1, Seal Fate
+// Daggers 719.7, Mutilate 719.5, Combat Swords 748.3, Subtlety 691.3, Seal Fate Swords 702.3.
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
-// no Venom build. Undead is the best race for every build, 4 (swords) to 13 ahead of the next. The best
-// Alliance race is the Gnome, except the Human on Combat Swords. An Orc with axes in place of the swords
-// is 1.5 ahead of the Undead on Combat Swords. Grimstitch Armor's 4 and 5 piece bonuses would add about
+// no Venom build. Undead is the best race for every build, 2 (Combat Swords, ahead of the Orc with its axe) to 12
+// ahead of the next. The
+// best Alliance race is the Gnome, except the Human on Combat Swords. Grimstitch Armor's 4 and 5 piece bonuses would add about
 // 8 and 6 to Combat Daggers. The trinkets are synthetic (Forever's real Phase 1 trinkets are removed or
 // not simulated), and the fight does not open from Stealth (a raid rogue rarely does), so Subtlety gets
 // Stealth from Vanish. forever-wiki/sim-status.md has the races, the searches, the audit and the talent
@@ -784,22 +807,22 @@ export const PresetBuildLevel60SealFateDaggers = level60Build(
 );
 export const PresetBuildLevel60CombatSwords = level60Build(
 	'Level 60 Combat Swords',
-	'Level 60 Undead Combat Sinister Strike on the synthetic Phase 1 swords.',
+	'Level 60 Undead Combat Sinister Strike on a synthetic Phase 1 axe and a fast sword off hand.',
 	GearLevel60SyntheticSwords,
 	TalentsLevel60CombatSwords,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 );
 export const PresetBuildLevel60SealFateSwords = level60Build(
 	'Level 60 Seal Fate Swords',
-	'Level 60 Undead Seal Fate Sinister Strike on the synthetic Phase 1 swords.',
-	GearLevel60SyntheticSwords,
+	'Level 60 Undead Seal Fate Sinister Strike on the synthetic Phase 1 sword and a fast dagger off hand.',
+	GearLevel60SyntheticSealFateSwords,
 	TalentsLevel60SealFateSwords,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 );
 export const PresetBuildLevel60Mutilate = level60Build(
 	'Level 60 Mutilate',
-	'Level 60 Undead Assassination Mutilate on the synthetic Phase 1 daggers.',
-	GearLevel60SyntheticDaggers,
+	'Level 60 Undead Assassination Mutilate on the synthetic Phase 1 dagger and a fast sword off hand.',
+	GearLevel60SyntheticMutilate,
 	TalentsLevel60Mutilate,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
 );
@@ -835,13 +858,13 @@ export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(
 );
 export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
 	'Level 60 Seal Fate Swords',
-	GearLevel60SyntheticSwords,
+	GearLevel60SyntheticSealFateSwords,
 	TalentsLevel60SealFateSwordsHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 );
 export const PresetBuildLevel60MutilateHumanoid = humanoidBuild(
 	'Level 60 Mutilate',
-	GearLevel60SyntheticDaggers,
+	GearLevel60SyntheticMutilate,
 	TalentsLevel60MutilateHumanoid,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
 );

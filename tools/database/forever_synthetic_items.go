@@ -13,8 +13,9 @@ import (
 // These items fill that gap. They are not in the game, have no source, and the gear search leaves them out.
 //
 // The pieces take the place of Era Phase 1 items an enhancement shaman would wear (Crown of Destruction,
-// the Scholomance Bloodmail set, Death's Clutch and Wristguards of True Flight), with Spinal Reaper's damage
-// and speed on the two-hander. The budget follows the cross-class standard (standards item 1b on the
+// the Scholomance Bloodmail set, Death's Clutch and Wristguards of True Flight). The two-hander keeps Spinal
+// Reaper's damage per second at The Blackrock Slicer's 4.0 sec speed, the axe speed it sims best with
+// (standards 22). The budget follows the cross-class standard (standards item 1b on the
 // coordination branch, the Forever budget per archetype). The weights: Strength, Agility, Stamina,
 // Intellect, Spirit, hit and crit rating 1 a point (10 hit rating is 1%, 14 crit rating 1%), attack power
 // 0.5 and spell power 0.86. Armor is free. The line is L(ilvl) = 1.125 * ilvl + 2.0, and each armor piece
@@ -188,12 +189,13 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	},
 	// Two-Hand, item level 76.
 	{
-		Id: 990012, Name: "Enhancement Synthetic Two-Hand (Phase 1)", Icon: "inv_axe_09",
+		Id: 990012, Name: "Enhancement Synthetic Two-Hand (Phase 1)", Icon: "inv_weapon_halberd_11",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
 		Stats:     stats.Stats{stats.Strength: 9, stats.Agility: 4, stats.Stamina: 12, stats.Intellect: 8, stats.Spirit: 13, stats.AttackPower: 26, stats.SpellPower: 23}.ToFloatArray(),
 		HitRating: 12,
-		// Spinal Reaper damage and speed.
-		WeaponDamageMin: 203, WeaponDamageMax: 305, WeaponSpeed: 3.4,
+		// The Blackrock Slicer's speed and damage spread at Spinal Reaper's 74.7 DPS
+		// (standards 22: the type and speed that sim best).
+		WeaponDamageMin: 238.8, WeaponDamageMax: 358.9, WeaponSpeed: 4,
 		Ilvl: 76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},

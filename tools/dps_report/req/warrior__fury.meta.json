@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury",
   "published": {
-    "dps": 1038.1,
-    "source": "warrior head 55979ee (rotation audit pass 14)"
+    "dps": 1066.5,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 1038.11,
-    "stderr": 0.34,
+    "dps": 1066.5,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "+0.01"
+    "note": "same sim as the published number"
   },
-  "summary": "Dual wield Fury with two swords in Berserker Stance: Bloodthirst, Whirlwind and Flurry, with Death Wish and Recklessness saved for the execute phase. It is the warrior's default Level 60 preset and its highest-DPS build.",
+  "summary": "Dual wield Fury with a slow axe and a fast sword in Berserker Stance: Bloodthirst, Whirlwind and Flurry, with Death Wish and Recklessness saved for the execute phase. It is the warrior's default Level 60 preset and its highest-DPS build.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -62,7 +62,7 @@
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
-    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
+    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991019)",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
     "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",

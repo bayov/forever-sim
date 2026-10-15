@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 813.9,
-    "source": "PR #7"
+    "dps": 824.4,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 813.92,
-    "stderr": 0.36,
+    "dps": 824.4,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "+0.02 vs PR #7"
+    "note": "same sim as the published number"
   },
   "summary": "Stormstrike/Maelstrom Weapon Enhancement with a two-hand axe, Windfury Weapon and Windfury Totem for the group; Concussion 5 replaces Convection 5. It is the Enhancement spec's default Level 60 preset.",
   "keyTalents": [

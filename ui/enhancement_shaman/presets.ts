@@ -776,14 +776,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // 794.0, Level 60 + Imp GW 820.9 / 809.4 / 790.0, Level 60 + Water Shield 772.0 / 765.5 / 753.2 and
 // Level 60 + Mana Tide 749.3 / 742.7 / 737.9.
 //
-// The races on Level 60 (20000 iterations, standard error 0.4): Orc 824.5 / 813.9 / 794.0,
-// Windshaper Skyborne 810.6 / 799.9 / 781.6, Tauren 810.2 / 799.4 / 780.9, Troll 810.0 / 798.6 /
-// 780.1, Dwarf (the only Alliance shaman) 805.8 / 794.8 / 776.3. Best overall and best Horde: Orc.
-// Best Alliance: Dwarf (the only Alliance shaman). The Orc's lead is mostly Axe Specialization: the
-// synthetic two-hander is an axe like Spinal Reaper, the Era Phase 1 weapon it stands in for.
-// Without it the Orc is 808.8 / 798.3 / 778.8, and Windshaper Skyborne leads (Tauren and Troll
-// within noise of it). A mace would give the Dwarf its 1% instead. Orc wins the Imp GW, Water Shield and Mana Tide
-// builds too (sim-status.md has the tables).
+// Then the two-hander took the type and speed the builds sim best with (standards 22): Spinal Reaper's
+// damage per second at The Blackrock Slicer's 4.0 sec, still an axe. On 2026-10-15 (20000 iterations)
+// Level 60 is 835.9 / 824.4 / 803.9, Level 60 + Imp GW 832.4 / 819.9 / 799.4, Level 60 + Water Shield
+// 784.7 / 777.6 / 764.0 and Level 60 + Mana Tide 761.7 / 754.5 / 749.1.
+//
+// The races on Level 60 at 180 sec (20000 iterations, standard error 0.4): Orc 824.4, Windshaper
+// Skyborne 810.6, Tauren 810.0, Troll 809.2, Dwarf (the only Alliance shaman) 805.5. Best overall and
+// best Horde: Orc. Best Alliance: Dwarf. The Orc's lead is Axe Specialization. A 3.9 sec mace of the
+// same damage per second would give the Dwarf its 1% instead (810.7). Orc wins the Imp GW, Water
+// Shield and Mana Tide builds too (sim-status.md has the older tables).
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',

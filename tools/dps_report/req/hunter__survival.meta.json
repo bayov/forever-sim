@@ -5,7 +5,7 @@
   "build": "Survival (melee)",
   "isDefault": false,
   "pr": 5,
-  "race": "Human",
+  "race": "Orc",
   "talents": "502-005005-500230230250122151",
   "treeNames": [
     "Beast Mastery",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv",
   "published": {
-    "dps": 858.6,
-    "source": "PR #5"
+    "dps": 900.5,
+    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 858.64,
-    "stderr": 0.25,
+    "dps": 900.5,
+    "stderr": null,
     "iters": 20000,
     "ok": true,
-    "note": "+0.04 vs PR #5"
+    "note": "same sim as the published number"
   },
-  "summary": "Melee Survival 7/10/34 on two one-handed swords with a cat: Predator's Edge, Expose Prey into Mongoose Bite, Strider Kick and Lacerating Strikes. It ships as Forever's melee hunter build; a ranged Survival build plays like Marksmanship and is only documented.",
+  "summary": "Melee Survival 7/10/34 on a one-hand axe and a dagger with a cat: Predator's Edge, Expose Prey into Mongoose Bite, Strider Kick and Lacerating Strikes. It ships as Forever's melee hunter build; a ranged Survival build plays like Marksmanship and is only documented.",
   "keyTalents": [
     "Predator's Edge",
     "Expose Prey",
@@ -64,7 +64,7 @@
     "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +18 (2026-10-12 gear)",
     "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain 0 (measured on the 2026-10-12 gear)",
     "Raptor Strike's level 32-56 flat bonuses look untuned (0.50-0.70 of Era); at 0.88 Survival would gain about +1.2%",
-    "Human is best only through its sword racial; without weapon racials Orc and Night Elf tie (852.0 / 851.8)",
+    "Orc is best through Axe Specialization on its main hand axe, 9 ahead of the Night Elf",
     "Fire-toasted Bun (+9) left out as a seasonal item; Elemental Sharpening Stone left out (MC-only plans)"
   ],
   "notes": "Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6 s before the pull, which the preset says costs nothing). Survival keeps a 1.0 sec cat out (DefaultOptions)."

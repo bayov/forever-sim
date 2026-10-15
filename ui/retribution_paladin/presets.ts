@@ -44,6 +44,7 @@ import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticShockGearJSON from './gear_sets/level60_phase1_synthetic_shock.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -110,6 +111,13 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // boots. The gear stays fixed for the talent, rotation and race searches.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+// The same set with the two-hander as a 2.1 sec sword, which the Holy Shock builds sim best with
+// (standards 22). Seal of Righteousness adds 10% of spell power to every swing under Forever, so a
+// fast weapon procs it more often. The other builds tie on any two-hand type and speed.
+export const GearLevel60Phase1SyntheticShock = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Shock)', Level60Phase1SyntheticShockGearJSON, {
+	tooltip: 'A guess at Phase 1 BiS under Forever for the Holy Shock builds, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 
@@ -482,13 +490,14 @@ export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (
 	options: DefaultOptions,
 });
 
-// Level 60 Shock: the Holy Shock talents and rotation on Seal of Righteousness. Races at 120 /
-// 180 / 300 sec (50000 iterations): Undead 987.3 / 970.6 / 930.0, Human 971.7 / 955.7 / 915.8,
-// Dwarf 970.8 / 954.4 / 914.1.
+// Level 60 Shock: the Holy Shock talents and rotation on Seal of Righteousness, with the two-hander
+// as a 2.1 sec sword (GearLevel60Phase1SyntheticShock). Undead 1028.0 / 1021.4 / 997.2 at 120 / 180 /
+// 300 sec (20000 iterations, 2026-10-15), Human 1013.5 and Dwarf 1000.4 at 180 sec. On the 3.4 sec
+// axe the Undead did 970.6 at 180 sec.
 export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Shock', {
 	group: 'Level 60',
 	tooltip: "Level 60 Undead Holy Shock build with Light's Vigil, on the synthetic Phase 1 gear.",
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticShock,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60Shock,
 	encounter: EncounterLevel60,
@@ -555,13 +564,13 @@ export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Leve
 	options: OptionsRighteousness,
 });
 // Level 60 Shock (vs Undead): the Shock talents (a talent search on the Undead boss found no
-// better) with the vs Undead Shock rotation. Undead 1070.9 / 1041.3 / 997.2, Human 1055.4 /
-// 1026.6 / 982.5, Dwarf 1053.9 / 1024.7 / 980.6, 7.3% over Level 60 Shock on its own boss at
-// 180 sec.
+// better) with the vs Undead Shock rotation, on the Shock gear. Undead 1122.0 / 1110.7 / 1073.0
+// (20000 iterations, 2026-10-15), Human 1103.7 and Dwarf 1088.7 at 180 sec, 8.7% over Level 60 Shock
+// on its own boss at 180 sec.
 export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 60 Shock (vs Undead)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Undead Holy Shock build against an Undead or Demon boss, with Exorcism.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticShock,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60ShockUndead,
 	encounter: EncounterLevel60Undead,

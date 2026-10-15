@@ -63,9 +63,16 @@ import (
 // level 66, the waist Onslaught Girdle's.
 //
 // Arms and Fury share the armor, the rings, the bow and the trinkets, because their Era Phase 1 BiS
-// lists are the same outside the weapons. Fury dual wields a main hand and an off hand sword in
-// place of Vis'kag the Bloodletter and Brutality Blade, Arms (and a two-hand Fury) a two hand sword in
-// place of Bonereaver's Edge, each with the damage and speed of the Era weapon.
+// lists are the same outside the weapons. Fury dual wields a main hand and an off hand in place of
+// Vis'kag the Bloodletter and Brutality Blade, Arms and two-hand Fury a two-hander each in place of
+// Bonereaver's Edge.
+//
+// Each weapon keeps the damage per second of the Era weapon it replaces. Its type and speed are the
+// ones the spec sims best with (standards 22), taken from a real Era Phase 1 weapon: Deathbringer's
+// 2.9 sec axe and Lord Blackwood's Blade's 1.5 sec sword for Fury, The Blackrock Slicer's 4.0 sec axe
+// for Arms and Dreadforge Retaliator's 3.7 sec axe for two-hand Fury. Under Forever's normalised Rage
+// a slow main hand gives the same Rage and bigger Heroic Strikes and Mortal Strikes, and a fast off
+// hand rolls Unbridled Wrath more often while Whirlwind's off hand strike stays normalised.
 //
 // The head and legs form a set with the bonuses of Battlegear of Glory, Forever's Molten Core tier set
 // for Arms and Fury (set 2102, items 280899 to 280904, client 70338, see sim/warrior/item_sets_pve.go).
@@ -198,11 +205,12 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	},
 	// Main Hand, item level 71, in place of Vis'kag the Bloodletter (74, 17075).
 	{
-		Id: 991014, Name: "Fury Synthetic Main Hand (Phase 1)", Icon: "inv_sword_38",
+		Id: 991014, Name: "Fury Synthetic Main Hand (Phase 1)", Icon: "inv_axe_09",
 		Type:       proto.ItemType_ItemTypeWeapon,
-		WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
-		// Vis'kag the Bloodletter damage and speed.
-		WeaponDamageMin: 100, WeaponDamageMax: 187, WeaponSpeed: 2.6,
+		WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
+		// Deathbringer's speed and damage spread at Vis'kag the Bloodletter's 55.2 DPS
+		// (standards 22: the type and speed that sim best).
+		WeaponDamageMin: 111.6, WeaponDamageMax: 208.5, WeaponSpeed: 2.9,
 		Stats:      stats.Stats{stats.Strength: 10, stats.Agility: 4, stats.Stamina: 3}.ToFloatArray(),
 		CritRating: 15,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -210,11 +218,12 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	},
 	// Off Hand, item level 71, in place of Brutality Blade (70, 18832).
 	{
-		Id: 991015, Name: "Fury Synthetic Off Hand (Phase 1)", Icon: "inv_sword_44",
+		Id: 991015, Name: "Fury Synthetic Off Hand (Phase 1)", Icon: "inv_sword_05",
 		Type:       proto.ItemType_ItemTypeWeapon,
 		WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
-		// Brutality Blade damage and speed.
-		WeaponDamageMin: 90, WeaponDamageMax: 168, WeaponSpeed: 2.5,
+		// Lord Blackwood's Blade's speed and damage spread at Brutality Blade's 51.6 DPS
+		// (standards 22: the type and speed that sim best).
+		WeaponDamageMin: 53.3, WeaponDamageMax: 101.5, WeaponSpeed: 1.5,
 		Stats:      stats.Stats{stats.Strength: 10, stats.Agility: 4, stats.Stamina: 3}.ToFloatArray(),
 		CritRating: 15,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -222,11 +231,26 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	},
 	// Two-Hand, item level 76, in place of Bonereaver's Edge (77, 17076).
 	{
-		Id: 991016, Name: "Arms Synthetic Two-Hand (Phase 1)", Icon: "inv_sword_12",
+		Id: 991016, Name: "Arms Synthetic Two-Hand (Phase 1)", Icon: "inv_weapon_halberd_11",
 		Type:       proto.ItemType_ItemTypeWeapon,
-		WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeTwoHand,
-		// Bonereaver's Edge damage and speed.
-		WeaponDamageMin: 206, WeaponDamageMax: 310, WeaponSpeed: 3.4,
+		WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
+		// The Blackrock Slicer's speed and damage spread at Bonereaver's Edge's 75.9 DPS
+		// (standards 22: the type and speed that sim best).
+		WeaponDamageMin: 242.5, WeaponDamageMax: 364.5, WeaponSpeed: 4,
+		Stats:      stats.Stats{stats.Strength: 30, stats.Agility: 18, stats.Stamina: 10, stats.AttackPower: 16}.ToFloatArray(),
+		CritRating: 13,
+		Ilvl:       76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+	},
+	// Two-Hand for two-hand Fury, item level 76: the Arms two-hander's stats at the speed two-hand Fury
+	// sims best with.
+	{
+		Id: 991019, Name: "Fury Synthetic Two-Hand (Phase 1)", Icon: "inv_axe_22",
+		Type:       proto.ItemType_ItemTypeWeapon,
+		WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
+		// Dreadforge Retaliator's speed and damage spread at Bonereaver's Edge's 75.9 DPS
+		// (standards 22: the type and speed that sim best).
+		WeaponDamageMin: 223.7, WeaponDamageMax: 337.8, WeaponSpeed: 3.7,
 		Stats:      stats.Stats{stats.Strength: 30, stats.Agility: 18, stats.Stamina: 10, stats.AttackPower: 16}.ToFloatArray(),
 		CritRating: 13,
 		Ilvl:       76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
