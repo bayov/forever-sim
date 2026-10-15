@@ -165,10 +165,10 @@ Three builds, each its own spec: dual wield Fury (Bloodthirst), two-hand Fury (B
   - Arms: 5.4 / 1.6 / 1.6 (963.5 / 951.0 / 925.4)
   - Arms (vs Dragonkin): 5.7 / 2.4 / 1.7 (1002.5 / 988.6 / 962.8)
 
-  Battle Shout duty presets for Fury, two-hand Fury and Arms run on the raid without its Battle Shout. They cast Bloodrage and Battle Shout 3 sec before the pull, so the GCD is over by then, and shout again with 3 sec left unless it lasts the fight. Forever's Battle Shout lasts 3 min, and Booming Voice only cuts its cost. The duty search moved two-hand Fury's Bloodrage from under 70 Rage to under 20 (+1.6 at 180 sec). The duty costs:
-  - Fury: 1.3 / 3.7 / 1.3 (1090.6 / 1054.2 / 1034.6)
-  - Two-hand Fury: 0.6 / 2.0 / 0.9 (961.9 / 923.7 / 894.5)
-  - Arms: 1.1 / 3.0 / 2.1 (962.4 / 948.0 / 923.3)
+  Battle Shout duty presets for Fury, two-hand Fury and Arms run on the raid without its Battle Shout. They cast Bloodrage and Battle Shout 3 sec before the pull, so the GCD is over by then, and shout again with 35 sec left unless it lasts the fight. Forever's Battle Shout lasts 3 min, so only a fight over about 177 sec refreshes it, at about 142 sec, ahead of the execute phase (with 3 sec left it went at about 174 sec, inside it: +1.5 / +1.6 / +1.2 at 180 sec, nothing at 120 sec, within 0.4 at 300 sec), and Booming Voice only cuts its cost. The duty search moved two-hand Fury's Bloodrage from under 70 Rage to under 20 (+1.6 at 180 sec). The duty costs:
+  - Fury: 1.3 / 2.2 / 1.8 (1090.6 / 1055.7 / 1034.2)
+  - Two-hand Fury: 0.6 / 0.4 / 0.7 (961.9 / 925.3 / 894.7)
+  - Arms: 1.1 / 1.9 / 1.7 (962.4 / 949.1 / 923.7)
 
   The base presets never shouted.
 - Against Giants and Dragonkin (Onyxia), Spearing Strike does 120% of normalized weapon damage instead of 40%. A fourth, non-default build, Level 60 Arms (vs Dragonkin), takes it and Improved Bloodrage for two points of Booming Voice and one of Improved Execute (`20305213132515201-3505-2`) and casts it on cooldown from 15 Rage: 967.1 / 947.9 / 922.7 (Undead) against the Arms build's 935.0 / 915.1 / 890.3 on the same boss (+3.6% at 180 sec). Fury needs Battle Stance for it: a stance dance (Battle Stance with at most 25 or 40 Rage when Spearing Strike is ready) with the talent searches is +0.5% on dual wield Fury (1042.2) and +0.8% on two-hand Fury (898.1), so Fury has no such build.

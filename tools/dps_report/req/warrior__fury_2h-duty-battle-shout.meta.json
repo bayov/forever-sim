@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 923.7,
+    "dps": 925.3,
     "source": "Battle Shout duty preset (standards 23), 2026-10-15"
   },
   "verify": {
-    "dps": 923.7,
+    "dps": 925.3,
     "stderr": 0.4,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Fury Two-Hand keeping Battle Shout up for its party, with the raid's Battle Shout off: 2.0 DPS behind the base build at 180 s.",
+  "summary": "Fury Two-Hand keeping Battle Shout up for its party, with the raid's Battle Shout off: 0.4 DPS behind the base build at 180 s.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -38,7 +38,7 @@
   "rotation": [
     "Start in Berserker Stance with no Rage; Bloodrage and Battle Shout 3 sec before the pull",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
-    "Battle Shout again with 3 sec of it left, unless it lasts the fight (Forever's lasts 3 min)",
+    "Battle Shout again with 35 sec of it left (about 142 sec in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
     "Death Wish held for the last 36 sec, Recklessness for the last 30 sec",
     "Blood Fury and Berserking held for the last 30 sec, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 20 sec",
     "Bloodrage under 20 Rage",

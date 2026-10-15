@@ -166,8 +166,9 @@ export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Level 
 });
 
 // The Battle Shout duty (standards 23): the base rotation, plus Battle Shout before the pull (with a
-// Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 3 sec of it
-// are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min.
+// Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 35 sec of it
+// are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min, so only a fight over about
+// 177 sec refreshes it, at about 142 sec, before the execute phase.
 export const APLLevel60FuryShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Battle Shout duty)', Level60FuryShoutAPLJSON, { group: 'Level 60' });
 export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand) (Battle Shout duty)', Level60Fury2HShoutAPLJSON, {
 	group: 'Level 60',
@@ -455,8 +456,8 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // two-hand Fury and 5.4 / 1.6 / 1.6 on Arms; the numbers above include it.
 //
 // The Battle Shout duty builds (standards 23) shout for the party themselves, on the raid without
-// its Battle Shout: Fury 1090.6 / 1054.2 / 1034.6, two-hand Fury 961.9 / 923.7 / 894.5 and Arms
-// 962.4 / 948.0 / 923.3, so the duty costs 1.3 / 3.7 / 1.3, 0.6 / 2.0 / 0.9 and 1.1 / 3.0 / 2.1.
+// its Battle Shout: Fury 1090.6 / 1055.7 / 1034.2, two-hand Fury 961.9 / 925.3 / 894.7 and Arms
+// 962.4 / 949.1 / 923.7, so the duty costs 1.3 / 2.2 / 1.8, 0.6 / 0.4 / 0.7 and 1.1 / 1.9 / 1.7.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',

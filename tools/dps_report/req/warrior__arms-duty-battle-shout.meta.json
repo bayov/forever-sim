@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 948.0,
+    "dps": 949.1,
     "source": "Battle Shout duty preset (standards 23), 2026-10-15"
   },
   "verify": {
-    "dps": 948.0,
+    "dps": 949.1,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Arms keeping Battle Shout up for its party, with the raid's Battle Shout off: 3.0 DPS behind the base build at 180 s.",
+  "summary": "Arms keeping Battle Shout up for its party, with the raid's Battle Shout off: 1.9 DPS behind the base build at 180 s.",
   "keyTalents": [
     "Mortal Strike",
     "Bloodthrill",
@@ -39,7 +39,7 @@
   "rotation": [
     "Pre-pull: Bloodrage and Battle Shout 3 sec before the pull",
     "Pre-pull: Battle Stance",
-    "Battle Shout again with 3 sec of it left, unless it lasts the fight (Forever's lasts 3 min)",
+    "Battle Shout again with 35 sec of it left (about 142 sec in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "With 25 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
     "Death Wish held for the last 36 sec, Recklessness in the last 25 sec; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",

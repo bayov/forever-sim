@@ -100,8 +100,10 @@ func warriorKnobs() []Knob {
 		// Rage, and again before it drops when the fight outlasts it. The base presets leave it to
 		// the raid (0), and the duty presets switch the raid's off.
 		{Name: "battleShout", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Refresh Battle Shout when this many seconds of it are left.
-		{Name: "shoutRefresh", Default: 3, Min: 0, Max: 9, Step: 3},
+		// Refresh Battle Shout when this many seconds of it are left. 35 puts the refresh (only in
+		// fights longer than about 177 sec) at about 142 sec, ahead of the execute phase, rather than
+		// at about 174 sec inside it.
+		{Name: "shoutRefresh", Default: 35, Min: 0, Max: 60, Step: 5},
 	}
 }
 
