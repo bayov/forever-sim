@@ -38,6 +38,7 @@ Item format:
   - A table of normal mob HP, armor, damage and swing speed by level (Classic averages to start).
   - Check the player's defenses at low level (dodge per Agility for every class, block, armor), spell pushback (`sim/core/cast.go`) and parry and block from in front.
   - Calibrate against the user's logs: damage taken per mob and the mob's miss, dodge and crit rates. A "solo mob" DPS encounter that reports HP lost per kill and deaths.
+  - 2026-10-15: the sim side is done (mob table from the 1.12 world database, death without a healing model, health fight length, pushback cap, tests). Still open: run `go run --tags=with_db ./tools/logcheck -mobs` on the user's machine and compare Forever's mobs with the table; the low-level defense checks; the UI preset. `docs/leveling_sim.md`, Groundwork 1.
 - [ ] 2026-10-15 — Leveling groundwork 2: separate mob death (`docs/leveling_sim.md`, Groundwork)
   - Each mob has its own HP, dies when it runs out and stops attacking. The fight ends when all are dead. Today `use_health` only ends the fight on the targets' combined HP.
 - [ ] 2026-10-15 — Leveling groundwork 3: self-healing (`docs/leveling_sim.md`, Groundwork)

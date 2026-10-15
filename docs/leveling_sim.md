@@ -66,8 +66,29 @@ abilities: those are a small share of leveling, and casters would need interrupt
 to be modelled.
 
 Per session, mobs are drawn from configurable mixes of level, armor tier and creature type
-(creature type matters for Slaying-style talents and item bonuses). HP, armor, damage and swing
-speed come from a per-level table.
+(creature type matters for Slaying-style talents and item bonuses). HP, armor, damage, swing and
+run speed come from a per-level table.
+
+**The mob table** (`sim/core/mob_stats_auto_gen.go`, `core.NormalMobStatsAt`,
+`core.NormalMobTarget`) is the average normal mob at each level from 1 to 60. It's taken from
+the 1.12 world database (cmangos classic-db), weighted by how many of each mob are spawned in the
+open world. It covers hostile and neutral mobs we can attack, rank 0 only, and leaves out casters
+(mage class mobs, 3% of spawns). `tools/export_normal_mobs.py` exports the mobs from the dump to
+`assets/db_inputs/mobs/normal_mobs.csv`, and `tools/gen_mob_stats.py` averages them into the
+table. A few rows:
+
+| Level | Health | Armor | Damage | Swing | Run speed |
+|---|---|---|---|---|---|
+| 10 | 202 | 531 | 14.1–18.4 | 1.90 s | 7.5 yd/s |
+| 20 | 486 | 924 | 32.0–39.2 | 1.99 s | 8.1 yd/s |
+| 30 | 1019 | 1288 | 45.8–55.2 | 1.94 s | 8.1 yd/s |
+| 40 | 1792 | 2189 | 66.7–82.0 | 1.96 s | 8.3 yd/s |
+| 50 | 2772 | 3123 | 89.9–110.3 | 1.93 s | 8.2 yd/s |
+| 60 | 3993 | 3728 | 120.2–148.6 | 1.92 s | 8.0 yd/s |
+
+Damage is a white swing before our armor, with the mob's attack power in it (AP / 14 per second
+of swing). `go run --tags=with_db ./tools/logcheck -mobs` measures the same things from our
+logs, so we can see where Forever's mobs differ.
 
 We fight from in front, so mobs can parry and block our swings, and we can parry, dodge and block
 theirs (the existing "in front of target" option).
@@ -110,8 +131,8 @@ from the user's logs.
 |---|---|
 | Finding the next mob, out of combat | Random 5–11 s (8 s on average) |
 | Finding a mob to chain-pull, in combat | Random 2–4 s (3 s on average) |
-| Mob run speed | 7 yd/s |
-| Run-in time | (pull range − 5 yd melee) ÷ 7 yd/s, from when the pull spell lands: about 3.6 s for Lightning Bolt from 30 yd, 2.1 s for a shock from 20 yd |
+| Mob run speed | The level's average from the mob table: 6 yd/s at levels 1–2, about 8 yd/s from level 11 |
+| Run-in time | (pull range − 5 yd melee) ÷ run speed, from when the pull spell lands: about 3.1 s for Lightning Bolt from 30 yd and 1.9 s for a shock from 20 yd at 8 yd/s |
 | Face pull | No free damage, 1.5 s to walk up |
 | A mob's first swing | Random within its swing timer after it arrives |
 | Max pack size | 5 |
@@ -122,9 +143,9 @@ from the user's logs.
 |---|---|
 | Target mob level | Our level |
 | Spread | Uniform ±1 around the target level (target 20 gives mobs of level 19 to 21) |
-| Armor tier | 25% low, 50% medium, 25% high |
-| Creature type | 40% humanoid, 40% beast, 10% undead, 10% other |
-| HP, damage and swing speed by level | Classic's averages for normal mobs, until the logs check them |
+| Armor | The level's average (an armor multiplier, 1 by default). Within a level armor barely varies: it goes by the mob's class, and the melee mobs (warrior class, 85% of spawns) all have about the same. |
+| Creature type | The level's mix from the mob table, e.g. at 30: 56% beast, 34% humanoid, 7% demon, 3% undead |
+| HP, armor, damage, swing and run speed by level | The mob table (below), until the logs check it |
 | XP per kill | Classic's formula, until we see whether Forever changed it |
 
 ### Recovery
@@ -165,10 +186,13 @@ Bandages are on by default: the best cloth for our level, assuming First Aid is 
 - **The full attack table for a mob hitting us:** miss, dodge, parry, block, crit and crushing
   by level difference, plus armor (`sim/core/target.go`).
 - **A health bar.** Damage taken comes off it and death is recorded, but the fight goes on
-  (`sim/core/health.go`). Every iteration starts at full health.
-- **Spell pushback**, including talents that reduce it (`sim/core/cast.go`). It has never fired
-  in our sims because nothing hit us. The rule (1.0 s, then 0.2 s less per hit) needs checking
-  against logs.
+  (`sim/core/health.go`). Every iteration starts at full health. Death is recorded whenever a
+  mob is on us, with or without a healing model (since groundwork 1).
+- **Spell pushback**, including talents that reduce it (`sim/core/cast.go`): 1.0 s for the
+  first hit, then 0.8, 0.6, 0.4 and 0.2 s, as on the cmangos Classic server. Since groundwork 1
+  it can't take the cast bar back past its start, as there. Forever may differ, which logs of
+  casts under mob hits would show.
+- **No dodge, parry or block while casting**, as on the cmangos Classic server.
 - **"In front of target"** as a player option (`proto/api.proto`, `in_front_of_target`).
 - **A chosen spell rank** in action IDs. The Elemental rotation already casts Lightning Bolt
   rank 7 at low mana.
@@ -178,7 +202,11 @@ Bandages are on by default: the best cloth for our level, assuming First Aid is 
 - **Self-heals that exist for DPS reasons:** Drain Life, Siphon Life, Death Coil, Vampiric
   Embrace and Lay on Hands. Life Tap costs health.
 - **A health-based fight end** (`Encounter.use_health`). It adds up the targets' HP and ends
-  the fight when that total runs out, so mobs don't die separately.
+  the fight when that total runs out, so mobs don't die separately. Until groundwork 1 such a
+  fight reported a 600 s length (the placeholder before the presim), so its DPS and damage taken
+  per second were wrong. It now reports the time the kill took.
+- **The normal mob table** and a target built from it (`core.NormalMobTarget`), since
+  groundwork 1.
 - **Everything below level 60:** per-level base stats, ranks by level and level-difference
   hit tables.
 - **rotopt:** knob search, talent hill-climb, gear search and stat weights.
@@ -189,13 +217,24 @@ These come first. Each one stands on its own in today's DPS mode, so it can be c
 anything leveling-specific exists.
 
 1. **Damage taken.**
-   - A table of normal-mob HP, armor, damage and swing speed by level.
-   - Check the player's defenses at low level (dodge per Agility for every class, block,
-     armor).
-   - Check the pushback rule and front-facing parry and block.
-   - Calibrate against the user's logs: damage taken per mob, and how often a mob's swings miss,
-     get dodged or crit.
-   - The DPS sim gets a "solo mob" encounter that reports HP lost per kill and deaths.
+   - Done (2026-10-15):
+     - The normal mob table by level, from the 1.12 world database (above).
+     - Death is recorded whenever a mob is on us, with no healing model needed.
+     - A health fight reports the time the kill took, not 600 s.
+     - Pushback can't take a cast back past its start, as on the cmangos Classic server.
+     - Tests of a mob's swings on us: outcomes by level difference, hit damage after armor,
+       a full solo fight and a pack that kills us (`sim/shaman/enhancement/normal_mob_test.go`),
+       and pushback (`pushback_test.go`).
+     - `logcheck -mobs`, to measure the same things from the logs.
+   - Open:
+     - Run `logcheck -mobs` on the user's machine, and compare Forever's mobs with the table.
+     - Check the player's defenses at low level (dodge per Agility for every class, block,
+       armor) against the beta's character sheet. notes.md has dodge per Agility checked at
+       level 1 for some classes only.
+     - Check the pushback rule in Forever's logs (casts under mob hits).
+     - A "solo mob" encounter preset in the UI. Until the leveling mode has its own UI, a
+       target from the table with "use health" on does it by hand, and the results show
+       damage taken per second and the chance of death.
 2. **Separate mob death.** Each mob has its own HP, dies when it runs out and stops attacking.
    The fight ends when all are dead.
 3. **Healing.**
