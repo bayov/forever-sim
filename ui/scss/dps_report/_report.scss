@@ -3285,6 +3285,20 @@ ol.fv-list li::marker {
 	color: inherit;
 }
 
+/* ---------- raid duties ---------- */
+// A duty preset's raid action (standards 23), on its ranking row.
+.fv-duty {
+	display: inline-block;
+	margin-left: 0.35rem;
+	padding: 0 0.35rem;
+	border-radius: var(--fv-r-sm);
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.5;
+	color: var(--color-fg-muted);
+	background: color-mix(in srgb, var(--color-fg) 8%, transparent);
+	white-space: nowrap;
+}
+
 /* ---------- special encounters ---------- */
 // The creature type of an encounter preset (a "vs Humanoid" build), on its ranking row and spec header.
 .fv-enc {

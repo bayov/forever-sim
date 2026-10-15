@@ -60,8 +60,13 @@ export function startReport(dash) {
   const statusOf = (id) => dash.data(id).status;
   // encounter presets (the boss as a creature type) are listed only while "Advantaged" is on; Races always uses the generic boss
   const isEnc = (b) => !!(b && b.encounter && b.encounter !== 'null');
-  const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => st.enc || !isEnc(b)).map(adjB); };
-  const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b)); };
+  // duty presets (the preset keeps a raid buff or debuff up itself, standards 23) are listed in the Ranking only, while "Duty"
+  // is on; everywhere else their base preset stands for them
+  const isDuty = (b) => !!(b && b.duty && b.duty !== 'null');
+  const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isDuty(b) && (st.enc || !isEnc(b))).map(adjB); };
+  const rankB = () => { const r = rowsOf('builds'); return r && r.filter((b) => (st.duty || !isDuty(b)) && (st.enc || !isEnc(b))).map(adjB); };
+  const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b) && !isDuty(b)); };
+  const dutyBase = (id) => { const b = (rowsOf('builds') || []).find((x) => x.id === id); return isDuty(b) ? b.baseBuild : id; };
   const rankOf = (b, list) => 1 + list.filter((x) => +x.dps > +b.dps).length;
   // ---------- assumptions: each preset's DPS under the picked settings ----------
   const asmSel = () => Object.entries(st.asm || {}).filter(([, v]) => v).sort((p, q) => (p[0] < q[0] ? -1 : 1));
@@ -76,6 +81,7 @@ export function startReport(dash) {
   // the exact combination where it was simmed, else the single settings multiplied
   const asmFactor = (bid, L) => {
     if (!asmOn) return 1;
+    bid = dutyBase(bid);
     const ks = asmKeysOf(bid), sel = asmSel().filter(([k]) => ks.has(k));
     const idx = asmIdx().get(bid);
     if (!sel.length || !idx) return 1;
@@ -102,7 +108,7 @@ export function startReport(dash) {
     inputs: ['builds'], title: 'Headline figures',
     description: 'Top, median and lowest preset DPS, how many presets and classes, and the top-to-bottom gap in percent.',
     fn: (builds) => {
-      const s = builds.filter((b) => !(b.encounter && b.encounter !== 'null')).sort((a, b) => b.dps - a.dps);
+      const s = builds.filter((b) => !(b.encounter && b.encounter !== 'null') && !(b.duty && b.duty !== 'null')).sort((a, b) => b.dps - a.dps);
       const n = (v) => +v;
       const top = s[0], bot = s[s.length - 1];
       return [{
@@ -146,7 +152,7 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
   if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -245,6 +251,23 @@ export function startReport(dash) {
       parts.splice(k, 1, before, el('span', { class: 'fv-advtip-ref' }, sp.icon ? iconImg(sp.icon, 'fv-ico') : null, el('b', { text: name })), rest.join(name));
     }
     return parts.filter((p) => p !== '');
+  };
+  // A duty preset's badge on its ranking row, and what the duty costs against its base preset (the raid covers it there).
+  const dutyCostEl = (b, list) => {
+    const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
+    return +base.dps ? el('span', {}, `${b.duty} · −${f1(base.dps - b.dps)} DPS `, tipDelta(100 * (b.dps / base.dps - 1))) : b.duty;
+  };
+  const dutyTip = (b, list) => {
+    const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
+    return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
+      +base.dps ? tipKey(tipDelta(100 * (b.dps / base.dps - 1)), null, `vs ${base.build}, where the raid covers it`) : null,
+      tipText(b.summary));
+  };
+  const dutyBadge = (b, list) => {
+    const badge = el('span', { class: 'fv-duty', text: b.duty + ' duty' });
+    tippy(badge, { content: dutyTip(b, list), onShow: (t) => t.setContent(dutyTip(b, list)) });
+    badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
+    return badge;
   };
   const encBadge = (b) => {
     const badge = el('span', { class: 'fv-enc', text: 'vs ' + b.encounter });
@@ -563,6 +586,7 @@ export function startReport(dash) {
   };
   document.querySelectorAll('.fv-tab').forEach((b) => b.addEventListener('click', (e) => { e.preventDefault(); showTab(b.dataset.tab); }));
   const openSpec = (id) => {
+    id = dutyBase(id);
     const swap = st.tab === 'spec' && st.build !== id;
     st.build = id; st.sample = 0; st.focus = ''; persist(); showTab('spec'); $('.sim-ui').scrollTo({ top: 0 });
     if (swap) for (const n of [$('#sp-head'), $('#sp-tiles')]) { n.classList.remove('fv-swap'); void n.offsetWidth; n.classList.add('fv-swap'); }
@@ -775,10 +799,11 @@ export function startReport(dash) {
     seg($('#rank-fac'), 'fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     $('#rank-best').setAttribute('aria-pressed', String(st.best));
     $('#rank-enc').setAttribute('aria-pressed', String(!!st.enc));
+    $('#rank-duty').setAttribute('aria-pressed', String(!!st.duty));
     const filtered = st.cls !== 'All' || st.role !== 'All' || st.fac !== 'All' || st.best;
     $('#rank-reset').hidden = !filtered;
     if (!waitOr(host, ['builds', 'lengths'])) return;
-    const builds = visB(), lengths = rowsOf('lengths'), roles = roleOf();
+    const builds = rankB(), lengths = rowsOf('lengths'), roles = roleOf();
     const L = +st.len;
     $('#rank-sort').parentElement.hidden = L !== 180;
     const lenMap = new Map(lengths.filter((r) => r.secs === L).map((r) => [r.build, r]));
@@ -810,10 +835,10 @@ export function startReport(dash) {
         el('span', { class: 'fv-row-pos', text: String(i + 1) }),
         specIco(b) || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }),
         el('span', { class: 'fv-row-main' },
-          el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : b.build }), el('span', { text: '· ' + b.class })),
+          el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : isDuty(b) ? String(b.build).replace(/ · [^·]* duty$/, '') : b.build }), el('span', { text: '· ' + b.class })),
           el('span', { class: 'fv-row-sub' }, tt(raceIco(b.raceIcon), `r:${b.race}:${b.class}`, false, b.id), el('em', { text: b.race }),
             iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null, roles.get(b.id) ? el('em', { text: '· ' + roles.get(b.id) }) : null,
-            isEnc(b) ? encBadge(b) : null)),
+            isEnc(b) ? encBadge(b) : null, isDuty(b) ? dutyBadge(b, builds) : null)),
         el('span', { class: 'fv-row-end' }, valEl, el('span', { class: 'fv-row-gap', text: extra })),
         track);
       row.addEventListener('click', (e) => {
@@ -825,7 +850,7 @@ export function startReport(dash) {
         const se = lenMap.get(b.id)?.se;
         const lines = L === 180
           ? [tipKey(f1(b.dps), 'DPS', `± ${f2(b.se)}`), tipGrid([['Rank', el('span', {}, `${rankOf(b, builds)} of ${builds.length} · `, behind)], ['10th–90th', `${f1(b.p10)}–${f1(b.p90)}`],
-            ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null])]
+            ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null, isDuty(b) ? ['Duty', dutyCostEl(b, builds)] : null])]
           : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L} s` : `at ${L} s`), tipGrid([['vs 180 s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(b.label, null, specIco(b, '')), lines, { hl: row, open: b.id, below: true });
       });
@@ -833,6 +858,7 @@ export function startReport(dash) {
     }));
   };
   $('#rank-best').addEventListener('click', (e) => { e.stopPropagation(); st.best = !st.best; persist(); render(); });
+  $('#rank-duty').addEventListener('click', (e) => { e.stopPropagation(); st.duty = !st.duty; persist(); hideTip(); render(); });
   $('#rank-enc').addEventListener('click', (e) => { e.stopPropagation(); st.enc = !st.enc; if (!st.enc && st.build && isEnc((rowsOf('builds') || []).find((b) => b.id === st.build))) st.build = (rowsOf('builds') || []).find((b) => b.id === st.build).baseBuild; persist(); hideTip(); render(); });
   $('#rank-reset').addEventListener('click', (e) => { e.stopPropagation(); Object.assign(st, { cls: 'All', role: 'All', fac: 'All', best: false }); persist(); render(); });
 

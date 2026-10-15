@@ -130,6 +130,10 @@ Murder's 4% against Humanoids and Giants, and an `advantageShort` of 25 words at
 the preset's "vs Humanoid" badge (the long line stays in the data). Its `advantageRefs` list the abilities and talents
 `advantageShort` names, as game tooltip refs: `k:s10314` for a spell key, `tal:Rogue:0:4` for a talent by class, tree and
 index in `talenttrees.json`. The badge's tooltip puts each one's icon in front of its name and its own tooltip below.
+A duty preset (one with `duty` and `baseBuild`, standards 23) keeps a raid buff or debuff up itself, with the raid's copy
+off. It gets `run_build.py` only (main, race sweep, lengths, samples): the page lists it in the Ranking while "Duty" is on,
+with what it costs against its base, and `build_data.py` keeps it out of every per-preset detail dataset so the page stays
+small. Its assumption factor is its base's.
 Each assumption in `assumptions_def.py` is written for a player who hasn't read our notes: a question-style `label`
 (8 words at most), a `short` line (20 words at most) the Ranking panel shows under it, setting labels that say what each
 choice means with a `rationale` of 15 words at most, and a `desc` of 2 to 4 sentences plus its `src` (written to the
