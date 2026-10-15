@@ -1,53 +1,51 @@
 {
-  "id": "warlock__destruction-duty-coe",
+  "id": "warlock__affliction-duty-curse",
   "class": "Warlock",
-  "spec": "Destruction",
-  "build": "Destruction (Curse of the Elements duty)",
+  "spec": "Affliction",
+  "build": "Affliction (Curse duty)",
   "isDefault": false,
   "pr": 30,
   "race": "Gnome",
-  "talents": "25510000035--055030500310035",
+  "talents": "2553000003520005--0550305003",
   "treeNames": [
     "Affliction",
     "Demonology",
     "Destruction"
   ],
   "gearSet": "level60_phase1_synthetic",
-  "apl": "level60_destruction_duty_coe",
+  "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": 977.0,
+    "dps": 966.1,
     "source": "PR #30"
   },
   "verify": {
-    "dps": 977.05,
-    "stderr": 0.36,
+    "dps": 966.09,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "+0.05 vs published"
+    "note": "-0.01 vs published"
   },
-  "summary": "Destruction on duty for the raid's Curse of the Elements: the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 13.0 DPS at 180 s against the base build.",
+  "summary": "Affliction on curse duty for the raid, casting Curse of Recklessness (the raid's Curse of the Elements comes from another warlock): the warlock keeps its own Curse of Recklessness (505 armor) up all fight, cast right after the opener and recast before it drops. Under Forever it shares the minor armor slot with Faerie Fire, so the raid's Curse of Recklessness and Faerie Fire are both off in the request. Costs 16.2 DPS at 180 s against the base build.",
   "keyTalents": [
-    "Conflagrate",
-    "Shadow and Flame",
-    "Fire and Brimstone",
-    "Improved Shadow Bolt",
-    "Ruin",
+    "Shadow Mastery",
     "Pandemic",
     "Malevolence",
+    "Nightfall",
+    "Improved Shadow Bolt",
+    "Ruin",
     "Agonizing Flames"
   ],
   "rotation": [
     "Pre-pull: Shadow Bolt at -2.5 s (lands just after the pull)",
     "Racials on cooldown",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
-    "Curse of the Elements on duty for the raid, right after the opener and recast before it drops",
+    "Curse of Recklessness on duty for the raid, right after the opener and recast before it drops",
     "Bane of Doom when it lands before the fight ends (more than 60 s left)",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
     "Corruption when it is down (more than 9 s left)",
     "Immolate when down or when less than its cast time remains",
-    "Conflagrate on cooldown while Immolate is up",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
-    "Shadow Bolt as the filler"
+    "Shadow Bolt as the filler (instant on Nightfall procs)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -67,9 +65,10 @@
   ],
   "caveats": [
     "Under Forever a bane and a curse are separate slots, so the duty curse costs only its GCDs and mana, not the bane.",
+    "Curse of Recklessness (505 armor) and Faerie Fire (505) share the minor armor slot under Forever and don't stack: with a druid's Faerie Fire up, a warlock's Curse of Recklessness can't land and adds nothing, so this duty only matters in a raid without Faerie Fire",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 38 spell power and 13 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Demon sensitivity: no owner scaling 946.1, Succubus melee halved 947.4, both 922.9 (first set)",
-    "Succubus 984.9 vs Felhunter 960.1, Imp 950.7, no demon 895.4; Spellstone and Firestone within 0.1 (first set)",
+    "Demon sensitivity: no owner scaling 937.0, Succubus melee halved 938.7, both 913.8 (first set)",
+    "Wrack/Siphon Life DoT variant (25530000035001351--0550005003) is 55 behind; drain fillers 124 to 349 behind",
     "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server-side): worth +49 on Demonology, +39 on the other builds",
     "Succubus base melee is unverified: halved melee would cost Demonology 43, the other builds 38 to 39",
     "Bane of Doom coefficient 4.0 (Era 1.0) is about 12% of Shadow Bolt builds' damage; at 2.0 they lose about 4%, at 1.0 about 6%",
@@ -77,7 +76,7 @@
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap health cost are not tracked"
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__destruction except -apl level60_destruction_duty_coe, then raid.debuffs.curseOfElements set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
-  "duty": "Curse of the Elements",
-  "baseBuild": "warlock__destruction"
+  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_curse, then raid.debuffs.curseOfRecklessness and faerieFire (the same armor slot under Forever) set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
+  "duty": "Curse of Recklessness",
+  "baseBuild": "warlock__affliction"
 }

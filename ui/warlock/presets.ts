@@ -37,14 +37,10 @@ import Level60AfflictionAPL from './apls/level60_affliction.apl.json';
 import Level60DemonologyAPL from './apls/level60_demonology.apl.json';
 import Level60DestructionAPL from './apls/level60_destruction.apl.json';
 import Level60DestructionFireAPL from './apls/level60_destruction_fire.apl.json';
-import Level60DemonologyDutyCoEAPL from './apls/level60_demonology_duty_coe.apl.json';
-import Level60DemonologyDutyCoRAPL from './apls/level60_demonology_duty_cor.apl.json';
-import Level60DestructionDutyCoEAPL from './apls/level60_destruction_duty_coe.apl.json';
-import Level60DestructionDutyCoRAPL from './apls/level60_destruction_duty_cor.apl.json';
-import Level60AfflictionDutyCoEAPL from './apls/level60_affliction_duty_coe.apl.json';
-import Level60AfflictionDutyCoRAPL from './apls/level60_affliction_duty_cor.apl.json';
-import Level60DestructionFireDutyCoEAPL from './apls/level60_destruction_fire_duty_coe.apl.json';
-import Level60DestructionFireDutyCoRAPL from './apls/level60_destruction_fire_duty_cor.apl.json';
+import Level60DemonologyDutyCurseAPL from './apls/level60_demonology_duty_curse.apl.json';
+import Level60DestructionDutyCurseAPL from './apls/level60_destruction_duty_curse.apl.json';
+import Level60AfflictionDutyCurseAPL from './apls/level60_affliction_duty_curse.apl.json';
+import Level60DestructionFireDutyCurseAPL from './apls/level60_destruction_fire_duty_curse.apl.json';
 import BasicRotation from './apls/rotation.apl.json';
 // gear
 import BlankGear from './gear_sets/blank.gear.json';
@@ -144,68 +140,25 @@ export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation(
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
 });
-// The raid duty rotations (standards 23): the base rotation plus the raid's curse, which this
-// warlock keeps up itself (put up right after the opener and recast before it drops). Under Forever
-// the curse has its own slot, so the bane stays.
-export const RotationLevel60DemonologyDutyCoE = PresetUtils.makePresetAPLRotation(
-	'Level 60 Demonology (Curse of the Elements duty)',
-	Level60DemonologyDutyCoEAPL,
-	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Demonology rotation with Curse of the Elements kept up for the raid.',
-	},
-);
-export const RotationLevel60DemonologyDutyCoR = PresetUtils.makePresetAPLRotation(
-	'Level 60 Demonology (Curse of Recklessness duty)',
-	Level60DemonologyDutyCoRAPL,
-	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Demonology rotation with Curse of Recklessness kept up for the raid.',
-	},
-);
-export const RotationLevel60DestructionDutyCoE = PresetUtils.makePresetAPLRotation(
-	'Level 60 Destruction (Curse of the Elements duty)',
-	Level60DestructionDutyCoEAPL,
-	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Destruction rotation with Curse of the Elements kept up for the raid.',
-	},
-);
-export const RotationLevel60DestructionDutyCoR = PresetUtils.makePresetAPLRotation(
-	'Level 60 Destruction (Curse of Recklessness duty)',
-	Level60DestructionDutyCoRAPL,
-	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Destruction rotation with Curse of Recklessness kept up for the raid.',
-	},
-);
-export const RotationLevel60AfflictionDutyCoE = PresetUtils.makePresetAPLRotation(
-	'Level 60 Affliction (Curse of the Elements duty)',
-	Level60AfflictionDutyCoEAPL,
-	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Affliction rotation with Curse of the Elements kept up for the raid.',
-	},
-);
-export const RotationLevel60AfflictionDutyCoR = PresetUtils.makePresetAPLRotation(
-	'Level 60 Affliction (Curse of Recklessness duty)',
-	Level60AfflictionDutyCoRAPL,
-	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Affliction rotation with Curse of Recklessness kept up for the raid.',
-	},
-);
-export const RotationLevel60DestructionFireDutyCoE = PresetUtils.makePresetAPLRotation(
-	'Level 60 Destruction Fire (Curse of the Elements duty)',
-	Level60DestructionFireDutyCoEAPL,
-	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Destruction Fire rotation with Curse of the Elements kept up for the raid.',
-	},
-);
-export const RotationLevel60DestructionFireDutyCoR = PresetUtils.makePresetAPLRotation(
-	'Level 60 Destruction Fire (Curse of Recklessness duty)',
-	Level60DestructionFireDutyCoRAPL,
+// The raid curse duty rotations (standards 23): the base rotation plus Curse of Recklessness, which
+// this warlock keeps up for the raid (put up right after the opener and recast before it drops). A
+// warlock holds one curse duty and every curse costs the same GCDs, so one duty preset covers them.
+// Under Forever the curse has its own slot, so the bane stays.
+export const RotationLevel60DemonologyDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Demonology (Curse duty)', Level60DemonologyDutyCurseAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 Demonology rotation with Curse of Recklessness kept up for the raid.',
+});
+export const RotationLevel60DestructionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Destruction (Curse duty)', Level60DestructionDutyCurseAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 Destruction rotation with Curse of Recklessness kept up for the raid.',
+});
+export const RotationLevel60AfflictionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Affliction (Curse duty)', Level60AfflictionDutyCurseAPL, {
+	group: 'Level 60',
+	tooltip: 'The Level 60 Affliction rotation with Curse of Recklessness kept up for the raid.',
+});
+export const RotationLevel60DestructionFireDutyCurse = PresetUtils.makePresetAPLRotation(
+	'Level 60 Destruction Fire (Curse duty)',
+	Level60DestructionFireDutyCurseAPL,
 	{
 		group: 'Level 60',
 		tooltip: 'The Level 60 Destruction Fire rotation with Curse of Recklessness kept up for the raid.',
@@ -215,17 +168,13 @@ export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRot
 
 export const APLPresets = [
 	RotationLevel60Demonology,
-	RotationLevel60DemonologyDutyCoE,
-	RotationLevel60DemonologyDutyCoR,
+	RotationLevel60DemonologyDutyCurse,
 	RotationLevel60Destruction,
-	RotationLevel60DestructionDutyCoE,
-	RotationLevel60DestructionDutyCoR,
+	RotationLevel60DestructionDutyCurse,
 	RotationLevel60Affliction,
-	RotationLevel60AfflictionDutyCoE,
-	RotationLevel60AfflictionDutyCoR,
+	RotationLevel60AfflictionDutyCurse,
 	RotationLevel60DestructionFire,
-	RotationLevel60DestructionFireDutyCoE,
-	RotationLevel60DestructionFireDutyCoR,
+	RotationLevel60DestructionFireDutyCurse,
 	RotationBasic,
 ];
 
@@ -449,10 +398,12 @@ const level60Encounter = (name: string, debuffs: Debuffs) =>
 		},
 	);
 export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
-// The duty presets' encounters: the raid's own curse is off, the warlock on duty brings it.
-export const EncounterLevel60CoEDuty = level60Encounter('Level 60 (Curse of the Elements duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
-export const EncounterLevel60CoRDuty = level60Encounter(
-	'Level 60 (Curse of Recklessness duty)',
+// The curse duty presets' encounter: the raid's Curse of Recklessness is off, the warlock on duty
+// brings it, and the raid's Curse of the Elements stays on (another warlock's duty). Under Forever
+// Curse of Recklessness shares Faerie Fire's minor armor slot (505 each), so the raid's Faerie Fire is
+// off too, or the warlock's curse could never land.
+export const EncounterLevel60CurseDuty = level60Encounter(
+	'Level 60 (Curse duty)',
 	Debuffs.create({ ...DefaultDebuffs, curseOfRecklessness: false, faerieFire: false }),
 );
 
@@ -526,79 +477,29 @@ export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Le
 	options: PresetBuildOptionsFire,
 });
 
-// The raid duty presets (standards 23): each build with the warlock keeping the raid's Curse of the
-// Elements or Curse of Recklessness up itself, the raid's own switched off. Under Forever Curse of
-// Recklessness shares Faerie Fire's armor slot (505 each), so with the raid's Faerie Fire up it adds
-// nothing for the raid and its duty is pure cost.
-const dutyBuild = (base: PresetUtils.PresetBuild, duty: string, rotation: PresetUtils.PresetRotation, encounter: PresetUtils.PresetEncounter) => {
+// The raid curse duty presets (standards 23): each build with the warlock keeping Curse of
+// Recklessness up for the raid itself, the raid's own switched off.
+const curseDutyBuild = (base: PresetUtils.PresetBuild, rotation: PresetUtils.PresetRotation) => {
 	const { name, ...options } = base;
-	return PresetUtils.makePresetBuild(`${name} (${duty} duty)`, {
+	return PresetUtils.makePresetBuild(`${name} (Curse duty)`, {
 		...options,
-		tooltip: `${options.tooltip} On duty for the raid's ${duty}, which it keeps up itself.`,
+		tooltip: `${options.tooltip} On curse duty for the raid, keeping Curse of Recklessness up itself.`,
 		rotation,
-		encounter,
+		encounter: EncounterLevel60CurseDuty,
 	});
 };
-export const PresetBuildLevel60DemonologyDutyCoE = dutyBuild(
-	PresetBuildLevel60Demonology,
-	'Curse of the Elements',
-	RotationLevel60DemonologyDutyCoE,
-	EncounterLevel60CoEDuty,
-);
-export const PresetBuildLevel60DemonologyDutyCoR = dutyBuild(
-	PresetBuildLevel60Demonology,
-	'Curse of Recklessness',
-	RotationLevel60DemonologyDutyCoR,
-	EncounterLevel60CoRDuty,
-);
-export const PresetBuildLevel60DestructionDutyCoE = dutyBuild(
-	PresetBuildLevel60Destruction,
-	'Curse of the Elements',
-	RotationLevel60DestructionDutyCoE,
-	EncounterLevel60CoEDuty,
-);
-export const PresetBuildLevel60DestructionDutyCoR = dutyBuild(
-	PresetBuildLevel60Destruction,
-	'Curse of Recklessness',
-	RotationLevel60DestructionDutyCoR,
-	EncounterLevel60CoRDuty,
-);
-export const PresetBuildLevel60AfflictionDutyCoE = dutyBuild(
-	PresetBuildLevel60Affliction,
-	'Curse of the Elements',
-	RotationLevel60AfflictionDutyCoE,
-	EncounterLevel60CoEDuty,
-);
-export const PresetBuildLevel60AfflictionDutyCoR = dutyBuild(
-	PresetBuildLevel60Affliction,
-	'Curse of Recklessness',
-	RotationLevel60AfflictionDutyCoR,
-	EncounterLevel60CoRDuty,
-);
-export const PresetBuildLevel60DestructionFireDutyCoE = dutyBuild(
-	PresetBuildLevel60DestructionFire,
-	'Curse of the Elements',
-	RotationLevel60DestructionFireDutyCoE,
-	EncounterLevel60CoEDuty,
-);
-export const PresetBuildLevel60DestructionFireDutyCoR = dutyBuild(
-	PresetBuildLevel60DestructionFire,
-	'Curse of Recklessness',
-	RotationLevel60DestructionFireDutyCoR,
-	EncounterLevel60CoRDuty,
-);
+export const PresetBuildLevel60DemonologyDutyCurse = curseDutyBuild(PresetBuildLevel60Demonology, RotationLevel60DemonologyDutyCurse);
+export const PresetBuildLevel60DestructionDutyCurse = curseDutyBuild(PresetBuildLevel60Destruction, RotationLevel60DestructionDutyCurse);
+export const PresetBuildLevel60AfflictionDutyCurse = curseDutyBuild(PresetBuildLevel60Affliction, RotationLevel60AfflictionDutyCurse);
+export const PresetBuildLevel60DestructionFireDutyCurse = curseDutyBuild(PresetBuildLevel60DestructionFire, RotationLevel60DestructionFireDutyCurse);
 
 export const PresetBuilds = [
 	PresetBuildLevel60Demonology,
-	PresetBuildLevel60DemonologyDutyCoE,
-	PresetBuildLevel60DemonologyDutyCoR,
+	PresetBuildLevel60DemonologyDutyCurse,
 	PresetBuildLevel60Destruction,
-	PresetBuildLevel60DestructionDutyCoE,
-	PresetBuildLevel60DestructionDutyCoR,
+	PresetBuildLevel60DestructionDutyCurse,
 	PresetBuildLevel60Affliction,
-	PresetBuildLevel60AfflictionDutyCoE,
-	PresetBuildLevel60AfflictionDutyCoR,
+	PresetBuildLevel60AfflictionDutyCurse,
 	PresetBuildLevel60DestructionFire,
-	PresetBuildLevel60DestructionFireDutyCoE,
-	PresetBuildLevel60DestructionFireDutyCoR,
+	PresetBuildLevel60DestructionFireDutyCurse,
 ];
