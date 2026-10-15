@@ -253,7 +253,9 @@ export const DefaultTalents = TalentsLevel60Fury;
 // has where the rate comes from), each 1500 damage. The damage is an estimate too, from the same
 // boss timers: Ragnaros's Wrath, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley and
 // Huhuran's Poison Bolt Volley hit for about 1000 to 2500 in Classic. Each hit gives 15.4 Rage
-// from the level 63 boss (19.2 under Recklessness). At 180 sec that is +6.9 on Fury (1057.9 to
+// from the level 63 boss (19.2 under Recklessness), and has Enrage's 30% chance, because Forever's
+// Enrage fires on any damage taken (Enrage's uptime goes from 3.5 to 23 sec a fight on the Fury
+// builds; on two-hand Fury it is about 10 of the 15.5 below). At 180 sec that is +6.9 on Fury (1057.9 to
 // 1064.9), +15.5 on Fury two-hand (925.7 to 941.2), +2.1 on Arms (951.0 to 953.2) and +2.9 on Arms
 // vs Dragonkin; at 10 hits a minute +29, +65, +10 and +9. Arms already caps its Rage with no
 // hits, so it wastes much of what the hits give.

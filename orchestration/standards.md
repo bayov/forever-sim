@@ -100,8 +100,8 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 24. Raid damage hits (user rulings 2026-10-15). The boss is on the tank, so a DPS takes only the encounter's raid damage, which the sim doesn't model. Specs with something that reacts to a hit taken get a stand-in: random direct hits at a set average rate.
    - Shamans: 2 a minute for Enhancement (melee), 1 for Elemental (ranged). Each fires a Lightning Shield orb or spends a Water Shield globe (sim/shaman/shields.go), and every Level 60 rotation keeps Lightning Shield up.
-   - Warriors: 2 a minute at 1500 damage, as a Fire spell hit from the boss. Each gives Rage like any damage taken (15.4 from the level 63 boss) (sim/warrior/raid_hits.go). Added after the results auditor pointed out that the same raid damage helped Enhancement but not Fury and Arms.
-   - Nothing else reacts to a hit taken: Enrage needs a crit taken, and Retribution Aura a melee attacker. The other specs get no hits.
+   - Warriors: 2 a minute at 1500 damage, as a Fire spell hit from the boss. Each gives Rage like any damage taken (15.4 from the level 63 boss), and under Forever each has Enrage's 30% chance, because Forever's Enrage fires on any damage taken, not only on crits (client 70338, sim/warrior/talents.go) (sim/warrior/raid_hits.go). Added after the results auditor pointed out that the same raid damage helped Enhancement but not Fury and Arms. Enrage is most of the two-hand Fury gain (+15.5, against about +5.6 from the Rage alone).
+   - No other spec reacts to a hit taken: Retribution Aura needs a melee attacker, and the Feral cat, rogues, hunters and casters gain nothing. The other specs get no hits.
    - The rates and the damage are estimates from Season of Discovery boss timers in the Deadly Boss Mods source (Ragnaros's Wrath every 26 sec, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths; none on Patchwerk, Loatheb and Sapphiron; about 10 a minute on Firemaw, Vaelastrasz and Huhuran below 30%), not log measurements. The dashboard's assumptions (`sham_raid_hits`, `war_raid_hits`) run 0 and 10 a minute beside the presets' rate.
 
 ## Races
