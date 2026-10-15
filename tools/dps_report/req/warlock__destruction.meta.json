@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction",
   "published": {
-    "dps": 986.5,
-    "source": "PR #2"
+    "dps": 990.0,
+    "source": "PR #2 follow-up"
   },
   "verify": {
-    "dps": 986.48,
+    "dps": 990.03,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "-0.02 vs PR #2"
+    "note": "+0.03 vs published"
   },
   "summary": "Shadow Bolt Destruction: Conflagrate with Shadow and Flame 5/5 (Immolate is kept) and Fire and Brimstone, plus Pandemic and Malevolence from Affliction, with the Succubus out. The best 30-point Destruction build.",
   "keyTalents": [
@@ -45,6 +45,7 @@
     "Corruption when it is down (more than 9 s left)",
     "Immolate when down or when less than its cast time remains",
     "Conflagrate on cooldown while Immolate is up",
+    "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Shadow Bolt as the filler"
   ],
   "consumes": [
