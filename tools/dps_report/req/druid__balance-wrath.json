@@ -331,6 +331,41 @@
                   }
                 },
                 {
+                  "notes": "Moonfire when a Wrath would not land before the end.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "remainingTime": {}
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpAdd",
+                            "lhs": {
+                              "spellCastTime": {
+                                "spellId": {
+                                  "spellId": 9912
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "1.5s"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9835
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Wrath.",
                   "action": {
                     "castSpell": {

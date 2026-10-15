@@ -331,6 +331,31 @@
                   }
                 },
                 {
+                  "notes": "Moonfire when a Starfire would not land before the end.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "remainingTime": {}
+                        },
+                        "rhs": {
+                          "spellCastTime": {
+                            "spellId": {
+                              "spellId": 9876
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9835
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Wrath once Eclipse is down to its last charge and no Wrath is on its way.",
                   "action": {
                     "condition": {

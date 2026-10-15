@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 828.5,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 831.4,
+    "source": "end-of-fight Moonfire (rotation audit pass 19, 2026-10-15)"
   },
   "verify": {
-    "dps": 828.47,
+    "dps": 831.38,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "180 s, seed 1, after the end-of-fight Moonfire line"
   },
   "summary": "41/0/10 moonkin that keeps Insect Swarm and Moonfire up and weaves Wrath and Starfire to spend every Eclipse charge. It is the talent search's best on the synthetic Phase 1 gear and the default Balance Level 60 preset.",
   "keyTalents": [
@@ -42,6 +42,7 @@
     "Insect Swarm whenever it is down (more than 8 s of fight left)",
     "Moonfire whenever its dot is down (more than 8 s of fight left)",
     "Starfire when Clearcasting is up (Wrath does not use it up)",
+    "Moonfire when a Starfire would not land before the end",
     "Wrath when Eclipse is at 2 charges or fewer and no Wrath is in flight",
     "Otherwise Starfire"
   ],

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath",
   "published": {
-    "dps": 782.7,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 786.5,
+    "source": "end-of-fight Moonfire (rotation audit pass 19, 2026-10-15)"
   },
   "verify": {
-    "dps": 782.72,
+    "dps": 786.49,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "180 s, seed 1, after the end-of-fight Moonfire line"
   },
   "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 5.5% behind the default Balance build.",
   "keyTalents": [
@@ -41,6 +41,7 @@
     "Insect Swarm whenever it is down (more than 8 s of fight left)",
     "Moonfire whenever its dot is down (more than 8 s of fight left)",
     "Starfire when Clearcasting is up",
+    "Moonfire when a Wrath plus 1.5 s would not land before the end",
     "Otherwise Wrath"
   ],
   "consumes": [
