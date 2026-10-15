@@ -266,7 +266,7 @@
                               "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "2s"
+                                  "val": "4s"
                                 }
                               }
                             }
