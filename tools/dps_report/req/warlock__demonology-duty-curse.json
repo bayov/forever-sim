@@ -632,7 +632,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "sanctityAura": false
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -640,7 +640,7 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": false,
-      "curseOfShadow": true,
+      "curseOfShadow": false,
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
