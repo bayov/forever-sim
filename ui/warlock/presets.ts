@@ -66,7 +66,7 @@ export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 // trinkets: +38 spell power and 13 crit rating, and an on-use 140 spell power for 20 sec every 2 min
 // (no real Phase 1 trinket is obtainable or simulated). At 180 sec the builds went from the first,
 // all-spell-power set (524 spell power, 5% crit, no trinkets) at 1088.5 / 984.9 / 976.2 / 976.2 to
-// 1053.2 / 948.2 / 939.8 / 935.0 on the fair mix (1a) and 1111.2 / 986.5 / 978.5 / 970.2 now (the on-use trinket used before the pull)
+// 1053.2 / 948.2 / 939.8 / 935.0 on the fair mix (1a) and 1115.5 / 990.0 / 982.3 / 973.6 now (the on-use trinket used before the pull, Death Coil and Searing Pain when the filler would not land before the end)
 // (Demonology / Destruction / Affliction / Destruction fire). Only the head and chest carry
 // Demonheart Raiment, Forever's warlock Tier 1 set, so only its 2 piece (1% hit) is live; on the first
 // set the 5 piece's 20% more mana from Life Tap would have added 12.9 on Demonology and 8.4 to 8.8 on
@@ -360,19 +360,19 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the Forever budget sets
-// with the synthetic trinkets): Demonology (Gnome) 1122.8 / 1111.2 / 1081.6, Destruction (Gnome) 994.1
-// / 986.5 / 967.0, Affliction (Gnome) 984.1 / 978.5 / 959.0, Destruction fire (Undead) 974.1 / 970.2
-// / 954.4. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and
+// with the synthetic trinkets): Demonology (Gnome) 1130.2 / 1115.5 / 1084.3, Destruction (Gnome) 999.9
+// / 990.0 / 969.1, Affliction (Gnome) 990.5 / 982.3 / 961.3, Destruction fire (Undead) 979.5 / 973.6
+// / 956.7. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and
 // Corruption VI. The demons take no player buffs and scale from the warlock's stats with Season of
 // Discovery's numbers as a placeholder (notes.md). The demon is the least sourced input: on the first
 // set at 180 sec, without the owner scaling Demonology was 1037.8 and the other builds 937 to 946, with
 // the Succubus's melee halved 1044.5 and 937 to 947.
 //
-// Races at 180 sec: the Gnome is first on Demonology (5.4 ahead of the Undead), Destruction (1.5 ahead
+// Races at 180 sec: the Gnome is first on Demonology (4.9 ahead of the Undead), Destruction (1.5 ahead
 // of the Orc) and Affliction (3.8 ahead of the Orc), and level with the Undead on Destruction fire
-// (970.2 each; the Undead is 1.3 ahead at 300 sec, so that build is Undead). The Gnome is the best
+// (Undead 973.6, Gnome 973.1; the Undead is 1.8 ahead at 300 sec, so that build is Undead). The Gnome is the best
 // Alliance race on every build. For the Horde the Undead and the Orc are within 0.6 of each other on
-// the Shadow Bolt builds and the Undead is 2.0 ahead on Destruction fire, so the Undead is the best
+// the Shadow Bolt builds and the Undead is 2.5 ahead on Destruction fire, so the Undead is the best
 // Horde race. With the staff no warlock race has a weapon racial; on the old Azuresong sword the Human's
 // Sword Specialization had put it first. The full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
