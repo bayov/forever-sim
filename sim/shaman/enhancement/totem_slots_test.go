@@ -32,7 +32,7 @@ func newTotemSlotSim(t *testing.T, seconds float64) (*core.Simulation, *Enhancem
 		return a.IsActive
 	}
 	dot := func(spell *core.Spell) func() bool {
-		return func() bool { return spell.Dot(enh.CurrentTarget).IsActive() }
+		return func() bool { return spell.DotOrAOEDot(enh.CurrentTarget).IsActive() }
 	}
 	healingStream := topRank(t, "Healing Stream Totem", enh.HealingStreamTotem)
 	searing := topRank(t, "Searing Totem", enh.SearingTotem)

@@ -260,12 +260,13 @@ func TestOrcShamanSearingTotemBolts(t *testing.T) {
 	}
 	bolt := enh.GetSpell(core.ActionID{SpellID: shaman.SearingTotemAttackSpellId[3]})
 	var bolts []time.Duration
-	dot := searing.Dot(enh.CurrentTarget)
+	// The totem runs as a dot on the shaman and shoots our target.
+	dot := searing.AOEDot()
 	onTick := dot.OnTick
 	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-		casts := bolt.SpellMetrics[target.UnitIndex].Casts
+		casts := bolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts
 		onTick(sim, target, dot)
-		if bolt.SpellMetrics[target.UnitIndex].Casts == casts+1 {
+		if bolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts == casts+1 {
 			bolts = append(bolts, sim.CurrentTime)
 		}
 	}
@@ -308,7 +309,7 @@ func TestOrcShamanMagmaTotemPulses(t *testing.T) {
 	targets := sim.Encounter.TargetUnits
 
 	var pulses []time.Duration
-	dot := magma.Dot(enh.CurrentTarget)
+	dot := magma.AOEDot()
 	onTick := dot.OnTick
 	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 		var before []core.SpellMetrics

@@ -89,7 +89,10 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 			IgnoreHaste: true,
 		},
 
+		// The totem runs as a dot on the shaman, so it keeps going when its target dies. It
+		// shoots our current target, which moves on to the next mob when one dies.
 		Dot: core.DotConfig{
+			IsAOE: true,
 			Aura: core.Aura{
 				Label: fmt.Sprintf("Searing Totem (Rank %d)", rank),
 			},
@@ -100,15 +103,15 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 			// totem fired 16 bolts, which 2.5 sec ticks give too.
 			NumberOfTicks: int32(duration / attackInterval),
 			TickLength:    attackInterval,
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				attackSpell.Cast(sim, target)
+			OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+				attackSpell.Cast(sim, shaman.CurrentTarget)
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			// +1 needed because of rounding issues with totem tick time.
 			shaman.placeTotem(sim, FireTotem, spell, duration+1, shaman.endFireTotem(spell))
-			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	}
 
@@ -165,7 +168,7 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
+			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
@@ -195,21 +198,22 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		},
 
 		Dot: core.DotConfig{
+			IsAOE: true,
 			Aura: core.Aura{
 				Label: fmt.Sprintf("Magma Totem (Rank %d)", rank),
 			},
 			NumberOfTicks: int32(duration / attackInterval),
 			TickLength:    attackInterval,
 
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				aoeSpell.Cast(sim, target)
+			OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+				aoeSpell.Cast(sim, shaman.CurrentTarget)
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// +1 needed because of rounding issues with totem tick time.
 			shaman.placeTotem(sim, FireTotem, spell, duration+1, shaman.endFireTotem(spell))
-			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	}
 
@@ -287,7 +291,7 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 		BonusCoefficient: FireNovaSpellCoeff[rank],
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
+			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 				spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(baseDamageLow, baseDamageHigh), spell.OutcomeMagicHitAndCrit)
 			}
 		},
@@ -334,6 +338,7 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 	// The totem is a one tick dot like the other fire totems, so that placing another fire
 	// totem takes this one down the same way.
 	spell.Dot = core.DotConfig{
+		IsAOE: true,
 		Aura: core.Aura{
 			Label: fmt.Sprintf("Flametongue Totem (Rank %d) Totem", rank),
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -349,14 +354,14 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 	}
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		shaman.placeTotem(sim, FireTotem, spell, duration, shaman.endFireTotem(spell))
-		spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
+		spell.AOEDot().Apply(sim)
 	}
 	return spell
 }
 
-// endFireTotem ends a fire totem, which the sim runs as a dot on the first target.
+// endFireTotem ends a fire totem, which the sim runs as a dot on the shaman.
 func (shaman *Shaman) endFireTotem(spell *core.Spell) func(sim *core.Simulation) {
 	return func(sim *core.Simulation) {
-		spell.Dot(sim.GetTargetUnit(0)).Cancel(sim)
+		spell.AOEDot().Cancel(sim)
 	}
 }
