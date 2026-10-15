@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 826.5,
-    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+    "dps": 826.0,
+    "source": "Shaman PR (standards 23 user ruling: every shaman drops its own totems, 2026-10-15)"
   },
   "verify": {
-    "dps": 826.48,
+    "dps": 825.97,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
@@ -37,7 +37,8 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Party totems from the raid (Strength of Earth, Windfury Totem, Mana Spring); none of its own before the pull",
+    "Pre-pull: starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they last the whole 300 s fight), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
     "Searing Totem when it is down and at least 10 s remain",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
@@ -79,5 +80,5 @@
     "Earth Shock VII's base damage ×1.08, halfway to the level 24 rank's 0.66 of Era; the client has ×1.00",
     "Tier 1 4/5-piece bonuses not live"
   ],
-  "notes": "mksettings -spec enh -apl optimized (default -totems raid: the raid gives the party's Strength of Earth, Windfury Totem and Mana Spring Totem, standards 23)."
+  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

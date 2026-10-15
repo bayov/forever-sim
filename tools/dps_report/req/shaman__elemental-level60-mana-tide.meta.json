@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_mana_tide",
   "published": {
-    "dps": 683.5,
-    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+    "dps": 683.3,
+    "source": "Shaman PR (standards 23 user ruling: every shaman drops its own totems, 2026-10-15)"
   },
   "verify": {
-    "dps": 683.51,
+    "dps": 683.33,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
@@ -37,9 +37,10 @@
     "Totemic Focus"
   ],
   "rotation": [
-    "Pre-pull: Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s; the party's Mana Spring Totem comes from the raid",
+    "Pre-pull: Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
     "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
     "Mana Tide Totem at 20% mana or less",
+    "Mana Spring Totem when it is down and Mana Tide is not up",
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
@@ -71,5 +72,5 @@
     "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
     "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking"
   ],
-  "notes": "mksettings -spec ele -apl level60_mana_tide (default -totems raid: the raid gives the party's Mana Spring Totem, standards 23)."
+  "notes": "mksettings -spec ele -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself)."
 }

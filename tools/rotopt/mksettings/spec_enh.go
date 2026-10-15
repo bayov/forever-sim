@@ -6,17 +6,6 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
-// shamanTotems says who puts down the shaman's party totems at level 60 (standards 23). "raid"
-// (the base presets): the raid's totem buffs give them, as if another shaman in the party
-// dropped them, and the shaman casts only the totems it puts down for its own damage. "self"
-// (the totem duty presets): the shaman drops them itself, and the raid has none of them.
-var shamanTotems = flag.String("totems", "raid", "who puts down a level 60 shaman's party totems: raid (base preset) or self (totem duty preset)")
-
-// shamanTotemsFromRaid is true at level 60 when the raid gives the party totems.
-func shamanTotemsFromRaid() bool {
-	return *shamanTotems != "self" && flag.Lookup("level").Value.String() == "60"
-}
-
 func init() {
 	specs["enh"] = &specSetup{
 		uiDir: "ui/enhancement_shaman",
@@ -45,17 +34,6 @@ func init() {
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
 			}
 		},
-		// A melee party gets Strength of Earth, Windfury Totem (which can't stand with Grace of Air)
-		// and Mana Spring. Our own Windfury Weapon turns Windfury Totem's buff off for us, so it
-		// is the party's. None of these is improved: Forever took Enhancing Totems out, and the
-		// builds have no Restorative Totems.
-		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
-			if shamanTotemsFromRaid() {
-				raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
-				raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
-				raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
-			}
-		},
 		// The Level 60 preset's professions.
 		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Leatherworking},
 		lowLevel: func(string) (lowLevelSetup, error) {
@@ -66,6 +44,9 @@ func init() {
 		},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassShaman
+			// The shaman drops its melee party's totems itself (standards 23: no totem duty, every
+			// shaman puts its own down, like a warrior's Sunder): Strength of Earth, Windfury Totem
+			// (it can't stand with Grace of Air) and Mana Spring. The raid has none of its own.
 			startingTotems := &proto.StartingTotems{
 				Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 4,
 				Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 3,
@@ -75,9 +56,6 @@ func init() {
 				// The level 30 builds keep the old seconds. At level 60 they go down just before
 				// the pull, so a 5 min totem lasts a 300 sec fight.
 				startingTotems.EarthSecondsBeforePull, startingTotems.AirSecondsBeforePull, startingTotems.WaterSecondsBeforePull = 28, 27, 30
-			} else if shamanTotemsFromRaid() {
-				// The raid's totems take their place.
-				startingTotems = &proto.StartingTotems{}
 			}
 			player.Spec = &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
 				Options: &proto.EnhancementShaman_Options{

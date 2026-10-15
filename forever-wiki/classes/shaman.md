@@ -25,11 +25,10 @@ From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchan
 - Downranking: under Forever a rank keeps 1 - 5% for each level past its learn level + 17 of its spell power coefficient (Blizzard's 2026-10-01 development notes, the formula from foreverchanges.pro/downranking). Lightning Bolt and Chain Lightning take it (`downrank_test.go`), so the elemental low-mana fallback is rank 8 (learned at 44) now, not rank 7 (75% at 60).
 - Talent verification (every preset talent, from sim runs on the Level 60 and Level 30 builds): 108 entries over 32 talents, 92 verified, 4 Maelstrom Weapon entries partly (the proc rate), 12 utility or inert, no bugs. Not verifiable in the sim: Maelstrom Weapon's proc rate, Elemental Focus's trigger set, Water Shield and Improved Stormstrike's dodge and parry reset (inert at 0 hits), two dummy effects.
 
-## Totem duty presets (standards 23, 2026-10-15)
+## Totems in the presets (standards 23, user ruling 2026-10-15)
 
-- Each Level 60 preset has a base build and a "(Totems duty)" build. The base build gets its party's totems from the raid's buffs, as if another shaman in the party dropped them, and keeps only the totems it drops for its own damage (Searing or Magma Totem) and Mana Tide Totem. The duty build drops the party's totems itself, with the raid's off.
-- Melee party (Enhancement): Strength of Earth, Windfury Totem and Mana Spring. Windfury Totem and Grace of Air can't both stand under Forever, and our own Windfury Weapon turns Windfury Totem's buff off for us, so it is the party's. Caster party (Elemental): Mana Spring, its only DPS totem.
-- Under Forever the totems last 5 min and a starting totem costs no mana, so the duty costs 0.0 to 0.5 DPS at 3 min and 0.9 to 2.4 at 5 min (sim-status.md has the numbers). The Enhancement duty builds put their starting totems down 4, 3 and 2 sec before the pull so they last a 300 sec fight.
+- There is no shaman totem duty: every shaman drops its own party's totems, like a warrior's Sunder, and the raid has none of its own. Enhancement puts down the melee party's Strength of Earth, Windfury Totem and Mana Spring (Windfury Totem and Grace of Air can't both stand under Forever, and our own Windfury Weapon turns Windfury Totem's buff off for us, so it is the party's); Elemental puts down the caster party's Mana Spring, its only DPS totem. Searing or Magma Totem and Mana Tide Totem are the shaman's own as before.
+- Under Forever the totems last 5 min and a starting totem costs no mana. The Enhancement builds put theirs down 4, 3 and 2 sec before the pull so they last a 300 sec fight. Against the raid's totems the cost is 0.0 to 0.7 DPS at 3 min and 0.9 to 2.4 at 5 min (sim-status.md has the numbers).
 
 ## Beta build 1.60.1.70009 (2026-09-24)
 
