@@ -33,6 +33,18 @@ Item format:
   - The score would be kill speed over a whole level range, not encounter DPS. It counts downtime: how long we sit between pulls to get HP and mana back. It also counts how many mobs we can pull at once and survive.
   - Talents are picked at each level, so the search finds the best order to spend points in, not just the final build.
   - It would let us compare paths, for example whether respeccing at some level beats keeping one build the whole way.
+  - Design and defaults settled 2026-10-15: `docs/leveling_sim.md` (score: mobs killed in a 20 min session; Enhancement shaman first). The groundwork items below come first.
+- [ ] 2026-10-15 — Leveling groundwork 1: damage taken from mobs (`docs/leveling_sim.md`, Groundwork)
+  - A table of normal mob HP, armor, damage and swing speed by level (Classic averages to start).
+  - Check the player's defenses at low level (dodge per Agility for every class, block, armor), spell pushback (`sim/core/cast.go`) and parry and block from in front.
+  - Calibrate against the user's logs: damage taken per mob and the mob's miss, dodge and crit rates. A "solo mob" DPS encounter that reports HP lost per kill and deaths.
+- [ ] 2026-10-15 — Leveling groundwork 2: separate mob death (`docs/leveling_sim.md`, Groundwork)
+  - Each mob has its own HP, dies when it runs out and stops attacking. The fight ends when all are dead. Today `use_health` only ends the fight on the targets' combined HP.
+- [ ] 2026-10-15 — Leveling groundwork 3: self-healing (`docs/leveling_sim.md`, Groundwork)
+  - Shaman first: Healing Wave and Lesser Healing Wave by rank and level. Then Priest (Lesser Heal, Heal, Flash Heal, Greater Heal, Renew; today commented out or missing), Paladin (Holy Light, Flash of Light) and Druid (Healing Touch, Rejuvenation, Regrowth).
+  - Absorbs in the core, for Power Word: Shield, Mana Shield and Sacrifice.
+- [ ] 2026-10-15 — Leveling: measure search, run-in and chain-pull times and pack sizes from the user's logs (`docs/leveling_sim.md`, From the logs)
+  - Needs `~/forever-logs` on the user's machine. Drop gaps over about 60 s (AFK) and use the fast quartile as the default.
 - [ ] 2026-10-14 — Whole raid sim (user idea)
   - Sim every member of a raid together, so we can try out raid comps and see the total raid damage.
   - Then optimize the comp itself: which classes and specs, and how buffs, debuffs and totems are spread across groups.
