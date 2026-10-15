@@ -61,7 +61,7 @@ func (hunter *Hunter) applyMarksmanshipTalents() {
 		hunter.OnSpellRegistered(func(spell *core.Spell) {
 			switch spell.SpellCode {
 			case SpellCode_HunterAimedShot, SpellCode_HunterArcaneShot, SpellCode_HunterMultiShot,
-				SpellCode_HunterSerpentSting, SpellCode_HunterVolley, SpellCode_HunterSummonHawk,
+				SpellCode_HunterSerpentSting, SpellCode_HunterScorpidSting, SpellCode_HunterVolley, SpellCode_HunterSummonHawk,
 				SpellCode_HunterRaptorStrike, SpellCode_HunterMongooseBite, SpellCode_HunterWingClip:
 				if spell.Cost != nil {
 					spell.Cost.Multiplier -= 3 * hunter.Talents.Efficiency

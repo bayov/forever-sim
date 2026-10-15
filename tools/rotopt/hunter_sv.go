@@ -25,6 +25,8 @@ func (hunterSV) Knobs() []Knob {
 		// Hold Wing Clip when Mongoose Bite (opened) or Strider Kick is ready within 1 sec.
 		{Name: "wingClipHold", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "strikerMana", Default: 0, Min: 0, Max: 40, Step: 10},
+		// Hunter's Mark duty (standards 23), as in hunter_ranged.
+		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -46,10 +48,15 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 		},
 		cast(hunterAspectOfTheBeast, not(auraIsActive(hunterAspectOfTheBeast)), "Aspect of the Beast if it ever drops."),
 		autocastOtherCooldowns(nil, "Rapid Fire, racials, trinkets and potions on cooldown."),
+	}
+	if k["mark"] == 1 {
+		items = append(items, hunterMarkDuty())
+	}
+	items = append(items,
 		cast(hunterMongooseBite, nil, "Mongoose Bite whenever Expose Prey or a dodge opens it."),
 		cast(hunterStriderKick, floor("strikerMana"), "Strider Kick on cooldown, with the talent."),
 		cast(hunterRaptorStrikeQ, nil, "Queue Raptor Strike on the next swing when it is ready."),
-	}
+	)
 	if k["lacerate"] == 1 {
 		items = append(items, cast(hunterLacerate, and(not(dotIsActive(hunterLacerate)), floor("lacerateMana")), "Lacerate when it is down."))
 	}

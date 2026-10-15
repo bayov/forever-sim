@@ -84,6 +84,10 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 				spell.DealOutcome(sim, result)
 
 				if result.Landed() {
+					// One sting a hunter on a target: it replaces the hunter's Scorpid Sting.
+					if hunter.scorpidStingAuras != nil {
+						hunter.scorpidStingAuras.Get(target).Deactivate(sim)
+					}
 					spell.Dot(target).Apply(sim)
 				}
 			})

@@ -970,6 +970,12 @@ func HuntersMarkAura(target *Unit, points int32) *Aura {
 	return huntersMarkAura(target, 110.0*(1+0.03*float64(points)))
 }
 
+// ForeverHuntersMarkAura is the mark a level's hunter casts under Forever, the same one the raid
+// debuff gives (standards 23: a hunter on Hunter's Mark duty casts it with the debuff off).
+func ForeverHuntersMarkAura(target *Unit, level int32) *Aura {
+	return huntersMarkAura(target, bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:]))
+}
+
 // bonus is the ranged attack power every attacker gains against the target.
 func huntersMarkAura(target *Unit, bonus float64) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
@@ -1179,6 +1185,19 @@ func ScorpidStingAura(target *Unit) *Aura {
 		ActionID: ActionID{SpellID: 3043},
 		Duration: time.Second * 20,
 	})
+	return aura
+}
+
+// ForeverScorpidStingAura is the Scorpid Sting a hunter casts under Forever (standards 23: a hunter
+// on Scorpid Sting duty casts it with the raid's debuff off): 2% off the target's chance to hit, in
+// the slot it shares with Insect Swarm. Its length is the hunter's (Improved Stings adds to it).
+func ForeverScorpidStingAura(target *Unit, duration time.Duration) *Aura {
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Scorpid Sting (cast)",
+		ActionID: ActionID{SpellID: 3043},
+		Duration: duration,
+	})
+	increasedMissEffect(aura, 0.02)
 	return aura
 }
 

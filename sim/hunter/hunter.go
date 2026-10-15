@@ -42,6 +42,7 @@ const (
 
 	// Stings
 	SpellCode_HunterSerpentSting
+	SpellCode_HunterScorpidSting
 
 	// Traps
 	SpellCode_HunterExplosiveTrap
@@ -108,11 +109,15 @@ type Hunter struct {
 	RaptorStrikeHit   *core.Spell
 	MongooseBite      *core.Spell
 	SerpentSting      *core.Spell
+	ScorpidSting      *core.Spell
+	HuntersMark       *core.Spell
 	SniperShot        *core.Spell
 	StriderKick       *core.Spell
 	SummonHawk        *core.Spell
 	Volley            *core.Spell
 	WingClip          *core.Spell
+
+	scorpidStingAuras core.AuraArray
 
 	Shots       []*core.Spell
 	Strikes     []*core.Spell
@@ -202,6 +207,8 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerAimedShotSpell(multiShotTimer)
 	hunter.registerMultiShotSpell(multiShotTimer)
 	hunter.registerSniperShotSpell()
+	hunter.registerHuntersMarkSpell()
+	hunter.registerScorpidStingSpell()
 
 	hunter.registerRaptorStrikeSpell()
 	hunter.registerMongooseBiteSpell()

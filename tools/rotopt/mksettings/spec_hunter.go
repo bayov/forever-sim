@@ -17,9 +17,35 @@ func init() {
 	}
 	specs["hunter_lw"] = lw
 	specs["hunter_sv"] = hunterSpec(5, true, hunterMeleeRaid)
+
+	// Hunter's Mark and Scorpid Sting duties (standards 23): the same raid with that debuff off, so
+	// it comes only from the hunter's own casts (the rotation's mark and scorpid knobs). Scorpid
+	// Sting is a duty of the ranged hunters only (user ruling 2026-10-15), not of melee Survival.
+	for _, name := range []string{"hunter_bm", "hunter_mm", "hunter_lw", "hunter_sv"} {
+		base := *specs[name]
+		raid := base.raid
+		base.raid = func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
+			raid(raidBuffs, buffs, debuffs)
+			debuffs.HuntersMark = proto.TristateEffect_TristateEffectMissing
+		}
+		specs[name+"_mark"] = &base
+		if name == "hunter_sv" {
+			continue
+		}
+
+		// Scorpid Sting duty: the raid's Scorpid Sting off (the rotation's scorpid knob).
+		scorpid := *specs[name]
+		scorpidRaid := scorpid.raid
+		scorpid.raid = func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
+			scorpidRaid(raidBuffs, buffs, debuffs)
+			debuffs.ScorpidSting = false
+		}
+		specs[name+"_scorpid"] = &scorpid
+	}
 }
 
-// A ranged hunter's raid: its own Hunter's Mark, Blessing of Wisdom next to Might (a mana user),
+// A ranged hunter's raid: Hunter's Mark from the raid (another hunter keeps it up, standards 23; the
+// _mark specs switch it off for the hunter on duty), Blessing of Wisdom next to Might (a mana user),
 // and a shaman in its group for Grace of Air (Agility is two ranged attack power and crit) and
 // Mana Spring. Trueshot Aura only from a Marksmanship hunter's own talent (Forever makes it a party
 // aura of ranged attack power), not from the raid. The melee debuffs and Faerie Fire stay, the

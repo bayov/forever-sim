@@ -1,0 +1,78 @@
+{
+  "id": "hunter__lone-wolf-duty-mark",
+  "class": "Hunter",
+  "spec": "Marksmanship",
+  "build": "Lone Wolf (Hunter's Mark duty)",
+  "isDefault": false,
+  "pr": 5,
+  "race": "NightElf",
+  "talents": "5-0053552511503051-5",
+  "treeNames": [
+    "Beast Mastery",
+    "Marksmanship",
+    "Survival"
+  ],
+  "gearSet": "level60_phase1_synthetic_ranged",
+  "apl": "lw_mark",
+  "published": {
+    "dps": 1058.3,
+    "source": "Hunter's Mark duty preset (standards 23), 2026-10-15: 180 s, 20000 iterations, seed 1"
+  },
+  "verify": {
+    "dps": 1058.34,
+    "stderr": 0.27,
+    "iters": 20000,
+    "ok": true,
+    "note": "same sim as the published number"
+  },
+  "summary": "Marksmanship 5/41/5 with Lone Wolf (+20% damage with no pet out), played with the pet dismissed. It is the hunter's default and best Level 60 build, 44 DPS ahead of Marksmanship with a cat because a Forever pet takes no player buffs.",
+  "keyTalents": [
+    "Lone Wolf",
+    "Deadly Aspects",
+    "Careful Aim",
+    "Lethal Attacks",
+    "Mortal Shots",
+    "Improved Arcane Shot",
+    "Sniper Shot",
+    "Ranged Weapon Specialization"
+  ],
+  "rotation": [
+    "Pre-pull: Aspect of the Hawk at -3 s, Rapid Fire at -0.1 s",
+    "Rapid Fire, racials, potions and Demonic Rune on cooldown",
+    "Hunter's Mark (rank 4, +140 ranged attack power) at the pull and again in its last 3 s; the raid's mark is off",
+    "Arcane Shot on cooldown (above Aimed Shot, no mana floor)",
+    "Aimed Shot on the cooldown it shares with Multi-Shot",
+    "Serpent Sting when it is down (after Aimed Shot)",
+    "Sniper Shot on cooldown while mana >= 25 x seconds left",
+    "Auto Shot throughout; no pet"
+  ],
+  "consumes": [
+    "Flask of Distilled Wisdom",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Ground Scorpok Assay",
+    "Juju Might",
+    "Flank au Poivre",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Agility and 14 crit rating, and 415 ranged attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (assumption hunter_tsa_hm_rank, user ruling 2026-10-15: Blizzard fixes both onto the curve; the client has 50 and 71, below the older ranks' 75 and 98)",
+    "Aspect of the Hawk held at rank 5 (90 RAP) since Forever's rank 6 gives only 55",
+    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (the forever-hunter wiki; the beta log fit was 11% / 3.5%)",
+    "Auto Shot fires through casts with no 0.5 sec aim (open assumption)",
+    "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain +17 (measured on the 2026-10-12 gear)",
+    "Rapid Killing's +20% after a kill is never exercised on a single boss",
+    "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
+    "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows",
+    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, one GCD and 60 mana every 2 min; it costs 7.1 / 5.7 / 4.1 DPS at 120 / 180 / 300 s against hunter__lone-wolf"
+  ],
+  "notes": "Request is hunter__lone-wolf's with the rotation swapped for ui/hunter/apls/lw_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_lw_mark. Request written by mksettings (spec hunter_lw) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Pet set to none (petType omitted = PetNone).",
+  "duty": "Hunter's Mark",
+  "baseBuild": "hunter__lone-wolf"
+}

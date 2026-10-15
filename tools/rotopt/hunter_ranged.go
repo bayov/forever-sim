@@ -28,6 +28,8 @@ var (
 	hunterWingClip         = spellID(14268)
 	hunterImmolationTrap   = spellID(14305)
 	nightElfElunesLight    = spellID(1259799)
+	hunterHuntersMark      = spellID(14325) // rank 4, sim/hunter/hunters_mark.go
+	hunterScorpidSting     = spellID(3043)  // Forever's one rank, sim/hunter/scorpid_sting.go
 	// The ranged sets' synthetic on-use trinket (sim/hunter/forever_synthetic_trinkets.go).
 	hunterRangedOnUse = itemID(993016)
 )
@@ -69,6 +71,14 @@ func (hunterRanged) Knobs() []Knob {
 		// costs no use. Only a fight long enough for a third trinket use sees a difference.
 		{Name: "holdRapid", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "holdElune", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Hunter's Mark duty (standards 23): the hunter keeps the mark up itself, with the raid's
+		// Hunter's Mark debuff off in the request. The base presets leave it to the raid.
+		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Scorpid Sting duty (standards 23): Scorpid Sting kept up in the sting slot in place of
+		// Serpent Sting, with the raid's Scorpid Sting off.
+		{Name: "scorpid", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Seconds left on the sting when the duty refreshes it.
+		{Name: "scorpidLead", Default: 2, Min: 1, Max: 6, Step: 1},
 	}
 }
 
@@ -97,11 +107,19 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(nightElfElunesLight, alignedWith(nightElfElunesLight, hunterRangedOnUse), "Elune's Light with the on-use trinket, unless waiting would cost a use."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."))
+	if k["mark"] == 1 {
+		items = append(items, hunterMarkDuty())
+	}
+	// One sting a hunter: on Scorpid Sting duty it takes Serpent Sting's place.
+	serpentOn := k["serpent"] == 1 && k["scorpid"] == 0
+	if k["scorpid"] == 1 {
+		items = append(items, hunterScorpidDuty(k))
+	}
 	if k["intimidation"] == 1 {
 		items = append(items, cast(hunterIntimidation, nil, "Intimidation on cooldown for the pet's crit, with the talent."))
 	}
 	serpent := cast(hunterSerpentSting, and(not(dotIsActive(hunterSerpentSting)), floor("serpentMana")), "Serpent Sting when it is down.")
-	if k["serpent"] == 1 && k["serpentLate"] == 0 {
+	if serpentOn && k["serpentLate"] == 0 {
 		items = append(items, serpent)
 	}
 
@@ -131,7 +149,7 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(hunterAimedShot, floor("aimedMana"), "Aimed Shot on the cooldown it shares with Multi-Shot."))
 	}
 	items = append(items, cast(hunterMultiShot, nil, "Multi-Shot when Aimed Shot is not taken."))
-	if k["serpent"] == 1 && k["serpentLate"] == 1 {
+	if serpentOn && k["serpentLate"] == 1 {
 		items = append(items, serpent)
 	}
 	if k["sniper"] == 1 && k["sniperFirst"] == 0 {
@@ -155,4 +173,22 @@ func hunterCurrentMana() value {
 
 func hunterMul(lhs, rhs value) value {
 	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpMul, Lhs: lhs, Rhs: rhs}}}
+}
+
+// hunterMarkDuty keeps the hunter's own Hunter's Mark on the target: the first global cooldown
+// after the pull, then again in the last 3 sec of its 2 min.
+func hunterMarkDuty() *proto.APLListItem {
+	return cast(hunterHuntersMark, lt(targetAuraRemainingTime(hunterHuntersMark), seconds(3)),
+		"Hunter's Mark duty: the mark at the pull and again before it drops (the raid's mark is off).")
+}
+
+// hunterScorpidDuty keeps the hunter's own Scorpid Sting on the target: the first global cooldown
+// after the pull, then again in its last scorpidLead sec, unless one is already on its way.
+func hunterScorpidDuty(k Knobs) *proto.APLListItem {
+	return cast(hunterScorpidSting, and(hunterScorpidDue(k), not(spellInFlight(hunterScorpidSting))),
+		"Scorpid Sting duty: the sting at the pull and again before it drops, in place of Serpent Sting (the raid's Scorpid Sting is off).")
+}
+
+func hunterScorpidDue(k Knobs) value {
+	return lt(targetAuraRemainingTime(hunterScorpidSting), seconds(k["scorpidLead"]))
 }
