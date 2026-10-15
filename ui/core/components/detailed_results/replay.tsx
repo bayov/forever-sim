@@ -92,18 +92,30 @@ const formatCountdown = (seconds: number): string => {
 
 const easeOut = (x: number) => 1 - (1 - x) * (1 - x);
 
-// The row of each cast on the history timeline. A cast goes in the lowest row where it doesn't
-// cover the icon before it. When every row is taken (a burst of off-GCD casts), it goes in the
-// row whose last icon is furthest back.
-const historyRows = (model: ReplayModel): Array<number> => {
-	const rowEnds = new Array<number>(HISTORY_ROWS).fill(-Infinity);
-	return model.actionStarts.map(at => {
-		const x = at * HISTORY_PX_PER_SEC;
-		let row = rowEnds.findIndex(end => end <= x);
-		if (row < 0) row = rowEnds.indexOf(Math.min(...rowEnds));
-		rowEnds[row] = x + HISTORY_ICON_PX + 2;
-		return row;
-	});
+// Where each cast goes on the history timeline: its row, and how many pixels left of its time
+// we move it.
+//
+// We place the casts from the newest back. A cast goes in the lowest row where it doesn't cover
+// the icon after it. At the pull we press Rage of the Farseer, Blood Fury, a Goblin Sapper Charge
+// and a spell all at once, and there are more of them than rows. Then the older ones move left
+// to the first free place in a row, so each icon still shows. The newest cast always sits at
+// its time.
+const historyLayout = (model: ReplayModel): Array<{ row: number; shift: number }> => {
+	const step = HISTORY_ICON_PX + 2;
+	const rowStarts = new Array<number>(HISTORY_ROWS).fill(Infinity);
+	const layout = new Array<{ row: number; shift: number }>(model.actionStarts.length);
+	for (let i = model.actionStarts.length - 1; i >= 0; i--) {
+		const x = model.actionStarts[i] * HISTORY_PX_PER_SEC;
+		let row = rowStarts.findIndex(start => x + step <= start);
+		let placed = x;
+		if (row < 0) {
+			row = rowStarts.indexOf(Math.max(...rowStarts));
+			placed = rowStarts[row] - step;
+		}
+		rowStarts[row] = placed;
+		layout[i] = { row, shift: placed - x };
+	}
+	return layout;
 };
 
 const formatSeconds = (seconds: number): string => `${seconds.toFixed(1)}s`;
@@ -354,8 +366,8 @@ export class Replay extends ResultComponent {
 	private alignedFor: ReplayModel | null = null;
 	private historyElems = new Map<number, HTMLElement>();
 	private historyLabels = new Map<number, HTMLElement>();
-	// The row of each cast on the history timeline, by its index in the model's actions.
-	private historyRows: Array<number> = [];
+	// Where each cast goes on the history timeline, by its index in the model's actions.
+	private historyLayout: Array<{ row: number; shift: number }> = [];
 	private sctElems = new Map<number, HTMLElement>();
 
 	// The hover tooltip. The parts of the screen move, come and go many times a second, so one
@@ -1129,7 +1141,7 @@ export class Replay extends ResultComponent {
 		this.historyElems.clear();
 		this.historyLabels.forEach(elem => elem.remove());
 		this.historyLabels.clear();
-		this.historyRows = historyRows(model);
+		this.historyLayout = historyLayout(model);
 		this.procElems.forEach(elem => elem.remove());
 		this.procElems.clear();
 
@@ -1626,13 +1638,14 @@ export class Replay extends ResultComponent {
 			let elem = this.historyElems.get(index);
 			if (!elem) {
 				elem = this.makeHistoryIcon(model.actions[index]);
-				elem.style.top = `${(HISTORY_ROWS - 1 - this.historyRows[index]) * HISTORY_ROW_PX}px`;
+				elem.style.top = `${(HISTORY_ROWS - 1 - this.historyLayout[index].row) * HISTORY_ROW_PX}px`;
 				this.historyElems.set(index, elem);
 				this.ui.history.appendChild(elem);
 			}
 			const pop = easeOut(Math.min(1, (time - at) / HISTORY_SHIFT));
 			const scale = 1.12 - 0.12 * pop;
-			elem.style.transform = `translateX(${(xAt(at) - HISTORY_ICON_PX / 2).toFixed(2)}px) scale(${scale.toFixed(3)})`;
+			const x = xAt(at) + this.historyLayout[index].shift - HISTORY_ICON_PX / 2;
+			elem.style.transform = `translateX(${x.toFixed(2)}px) scale(${scale.toFixed(3)})`;
 			elem.style.opacity = pop.toFixed(3);
 		}
 		this.historyElems.forEach((elem, index) => {
