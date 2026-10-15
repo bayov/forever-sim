@@ -10,6 +10,12 @@ func currentHealthPercent() value {
 	return &proto.APLValue{Value: &proto.APLValue_CurrentHealthPercent{CurrentHealthPercent: &proto.APLValueCurrentHealthPercent{}}}
 }
 
+// targetHealthPercent is our current target's health, as a share of its max.
+func targetHealthPercent() value {
+	return &proto.APLValue{Value: &proto.APLValue_CurrentHealthPercent{CurrentHealthPercent: &proto.APLValueCurrentHealthPercent{
+		SourceUnit: &proto.UnitReference{Type: proto.UnitReference_CurrentTarget}}}}
+}
+
 func pct(v float64) value {
 	return num(v / 100)
 }
@@ -74,10 +80,10 @@ func walkToTotem(totem proto.ShamanTotems_TotemType, within float64, condition v
 		ShamanWalkToTotem: &proto.APLActionShamanWalkToTotem{TotemType: totem, Within: num(within)}}})
 }
 
-// rest sits down to eat and drink (or just sit) until health and mana are at untilPct.
-func rest(eat, drink bool, untilPct float64, condition value, notes string) *proto.APLListItem {
+// rest sits down to eat and drink (or just sit) until health and mana are at these shares.
+func rest(eat, drink bool, healthUntilPct, manaUntilPct float64, condition value, notes string) *proto.APLListItem {
 	return action(condition, notes, &proto.APLAction{Action: &proto.APLAction_LevelingRest{LevelingRest: &proto.APLActionLevelingRest{
-		Eat: eat, Drink: drink, HealthUntil: pct(untilPct), ManaUntil: pct(untilPct)}}})
+		Eat: eat, Drink: drink, HealthUntil: pct(healthUntilPct), ManaUntil: pct(manaUntilPct)}}})
 }
 
 func bandage(condition value, notes string) *proto.APLListItem {

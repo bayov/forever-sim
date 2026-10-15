@@ -19,7 +19,10 @@ import (
 //     health too, and a mob we don't pull yet waits while we rest: the next pull without a
 //     search (the leveling auditor's first finding, orchestration/leveling_audit_log.md).
 //     Nothing pulls the mob we found while we need a rest.
-//   - Totems only once a mob is pulled, dropped again when out of reach.
+//   - Totems only once a mob is pulled, dropped again when out of reach. Rests wait on mana
+//     more than health at level 30 (eating heals 4% a second, drinking 1.8%), so a cheap
+//     Mana Spring Totem pays, and so does the cheapest Searing Totem with two mobs pulled
+//     (audit round 2).
 //   - The fight: Stormstrike, the shocks above a mana floor, Fire Nova on packs, Lightning
 //     Shield, a heal below a threshold, and the cooldowns.
 type shamanEnhLeveling struct{}
@@ -27,12 +30,15 @@ type shamanEnhLeveling struct{}
 func (shamanEnhLeveling) Knobs() []Knob {
 	return []Knob{
 		// Out of combat.
-		{Name: "recall", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Totemic Recall's global cooldown before each search costs more than a quarter of
+		// the totems' mana gives back (audit round 2).
+		{Name: "recall", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "oocHealBelow", Default: 0, Min: 0, Max: 60, Step: 20},
 		{Name: "bandageBelow", Default: 0, Min: 0, Max: 80, Step: 20},
 		{Name: "restHealth", Default: 90, Min: 20, Max: 90, Step: 10},
 		{Name: "restMana", Default: 50, Min: 10, Max: 70, Step: 10},
 		{Name: "restUntil", Default: 90, Min: 60, Max: 100, Step: 10},
+		{Name: "restUntilMana", Default: 80, Min: 60, Max: 100, Step: 10},
 		// Pulling: 0 none (walk up), 1 Earth Shock rank 1, 2 Earth Shock, 3 Flame Shock.
 		{Name: "pullSpell", Default: 0, Min: 0, Max: 3, Step: 1},
 		{Name: "pullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -44,17 +50,25 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		// Look for the next mob above this health even when we won't pull it yet; 0 looks
 		// only when we'd pull it (chainHealth and chainMana).
 		{Name: "lookAheadHealth", Default: 40, Min: 0, Max: 70, Step: 10},
+		// With one mob pulled and our target below this share of its health, pull the next
+		// one as it dies, above chainDyingHealth and chainDyingMana; 0 off.
+		{Name: "chainDyingBelow", Default: 20, Min: 0, Max: 40, Step: 10},
+		{Name: "chainDyingHealth", Default: 70, Min: 50, Max: 90, Step: 10},
+		{Name: "chainDyingMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// Totems, once a mob is pulled. Fire: 0 none, 1 Flametongue, 2 Searing, 3 Magma
 		// with 2 mobs on us.
 		{Name: "strengthOfEarth", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "manaSpring", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "fireTotem", Default: 0, Min: 0, Max: 3, Step: 1},
+		{Name: "manaSpring", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "fireTotem", Default: 2, Min: 0, Max: 3, Step: 1},
+		// Searing Totem: rank 1 (25 mana) or the top rank, and from how many mobs pulled.
+		{Name: "searingRank1", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "searingMinPulled", Default: 2, Min: 1, Max: 2, Step: 1},
 		// The fight.
 		{Name: "shockMana", Default: 10, Min: 0, Max: 60, Step: 10},
-		{Name: "flameShock", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "flameShock", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "fireNova", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "lightningShield", Default: 1, Min: 0, Max: 1, Step: 1},
-		{Name: "combatHealBelow", Default: 0, Min: 0, Max: 50, Step: 10},
+		{Name: "combatHealBelow", Default: 30, Min: 0, Max: 50, Step: 10},
 	}
 }
 
@@ -96,11 +110,18 @@ func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 		items = append(items, bandage(lt(currentHealthPercent(), pct(k["bandageBelow"])), "A bandage between pulls."))
 	}
 	needRest := or(lt(currentHealthPercent(), pct(k["restHealth"])), lt(currentManaPercent(), pct(k["restMana"])))
-	items = append(items, rest(true, true, k["restUntil"], needRest, "Sit down to eat and drink when health or mana is low."))
+	items = append(items, rest(true, true, k["restUntil"], k["restUntilMana"], needRest, "Sit down to eat and drink when health or mana is low."))
 	// We pull the mob we found once we're fit for it: in combat above the chain thresholds,
 	// out of combat once we don't need a rest. Until then it waits.
 	chainFit := and(gt(currentHealthPercent(), pct(k["chainHealth"])), ge(currentManaPercent(), pct(k["chainMana"])))
 	pullFit := or(and(inCombat, chainFit), and(noMobs, not(needRest)))
+	if k["chainDyingBelow"] > 0 {
+		// The next mob as our target dies, while we're fit enough for one more.
+		pullFit = or(pullFit, and(eq(mobsPulled(), num(1)),
+			lt(targetHealthPercent(), pct(k["chainDyingBelow"])),
+			gt(currentHealthPercent(), pct(k["chainDyingHealth"])),
+			ge(currentManaPercent(), pct(k["chainDyingMana"]))))
+	}
 
 	// The fight's heal comes before pulling more.
 	if k["combatHealBelow"] > 0 {
@@ -156,7 +177,11 @@ func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	case 1:
 		dropTotem(flametongueTotem, proto.ShamanTotems_Fire, 30, nil, "Flametongue Totem in combat.")
 	case 2:
-		dropTotem(searingTotem, proto.ShamanTotems_Fire, 15, ge(mobsOnUs(), num(1)), "Searing Totem with a mob on us.")
+		searing := searingTotem
+		if k["searingRank1"] == 1 {
+			searing = spellID(shaman.SearingTotemSpellId[1])
+		}
+		dropTotem(searing, proto.ShamanTotems_Fire, 15, ge(mobsPulled(), num(k["searingMinPulled"])), "Searing Totem with enough mobs pulled.")
 	case 3:
 		dropTotem(magmaTotem, proto.ShamanTotems_Fire, 4, ge(mobsOnUs(), num(2)), "Magma Totem with two mobs on us.")
 	}
