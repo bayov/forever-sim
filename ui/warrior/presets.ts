@@ -32,6 +32,9 @@ import Level60ArmsAPLJSON from './apls/level60_arms.apl.json';
 import Level60ArmsDragonkinAPLJSON from './apls/level60_arms_dragonkin.apl.json';
 import Level60FuryAPLJSON from './apls/level60_fury.apl.json';
 import Level60Fury2HAPLJSON from './apls/level60_fury_2h.apl.json';
+import Level60Fury2HShoutAPLJSON from './apls/level60_fury_2h_battle_shout.apl.json';
+import Level60FuryShoutAPLJSON from './apls/level60_fury_battle_shout.apl.json';
+import Level60ArmsShoutAPLJSON from './apls/level60_arms_battle_shout.apl.json';
 import Level60Phase1SyntheticArmsGearJSON from './gear_sets/level60_phase1_synthetic_arms.gear.json';
 import Level60Phase1SyntheticFuryGearJSON from './gear_sets/level60_phase1_synthetic_fury.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
@@ -162,8 +165,27 @@ export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Level 
 	group: 'Level 60',
 });
 
+// The Battle Shout duty (standards 23): the base rotation, plus Battle Shout before the pull (with a
+// Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 3 sec of it
+// are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min.
+export const APLLevel60FuryShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Battle Shout duty)', Level60FuryShoutAPLJSON, { group: 'Level 60' });
+export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand) (Battle Shout duty)', Level60Fury2HShoutAPLJSON, {
+	group: 'Level 60',
+});
+export const APLLevel60ArmsShout = PresetUtils.makePresetAPLRotation('Level 60 Arms (Battle Shout duty)', Level60ArmsShoutAPLJSON, { group: 'Level 60' });
+
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60Fury, APLLevel60Fury2H, APLLevel60Arms, APLLevel60ArmsDragonkin, APLNoReck, AplReck],
+	[Phase.Phase1]: [
+		APLLevel60Fury,
+		APLLevel60FuryShout,
+		APLLevel60Fury2H,
+		APLLevel60Fury2HShout,
+		APLLevel60Arms,
+		APLLevel60ArmsShout,
+		APLLevel60ArmsDragonkin,
+		APLNoReck,
+		AplReck,
+	],
 };
 
 export const DefaultAPLs = [APLLevel60Fury];
@@ -289,7 +311,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
@@ -312,7 +333,6 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
-	curseOfShadow: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
@@ -374,6 +394,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
+// The Level 60 raid without its Battle Shout, for the Battle Shout duty builds, whose warrior
+// shouts for the party (standards 23).
+export const EncounterLevel60BattleShoutDuty = PresetUtils.makePresetEncounter('Level 60 (Battle Shout duty)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: RaidBuffs.create({ ...DefaultRaidBuffs, battleShout: TristateEffect.TristateEffectMissing }),
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+
 // The same boss as a Dragonkin, for Spearing Strike (standards 19).
 export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 	'Level 60 (vs Dragonkin)',
@@ -406,9 +436,9 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-15 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1096.7 / 1061.4 /
-// 1038.2, Level 60 Fury (Two-Hand) (Orc) 964.6 / 927.5 / 897.7 and Level 60 Arms (Orc) 968.9 /
-// 952.6 / 927.0, with Forever's normalized Rage at s = 0.5 (standards 21). Arms keeps Rend up, which
+// On 2026-10-15 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1091.9 / 1057.9 /
+// 1035.9, Level 60 Fury (Two-Hand) (Orc) 962.5 / 925.7 / 895.4 and Level 60 Arms (Orc) 963.5 /
+// 951.0 / 925.4, with Forever's normalized Rage at s = 0.5 (standards 21). Arms keeps Rend up, which
 // adds 2% of attack power a tick under Forever (report assumption warr_rend_ap, user ruling
 // 2026-10-15): +19.5 at 180 sec over Rend with no attack power (933.1); the Fury builds don't cast it. The weapons have the type
 // and speed each build sims best with among Era Phase 1 BiS speeds (standards 22): a 2.8 sec sword
@@ -420,7 +450,13 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // raid's Battle Shout VI, Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and
 // Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (both measured before normalized Rage). With weapon
 // racials off, Fury stays at its Undead numbers, and the Undead does 920.4 on two-hand Fury and 929.4
-// on Arms at 180 sec (before Rend's attack power share).
+// on Arms at 180 sec (before Rend's attack power share). Every build spends its first GCD after the
+// pull on one Sunder Armor (standards 23), which cost 4.8 / 3.5 / 2.3 on Fury, 2.1 / 1.8 / 2.3 on
+// two-hand Fury and 5.4 / 1.6 / 1.6 on Arms; the numbers above include it.
+//
+// The Battle Shout duty builds (standards 23) shout for the party themselves, on the raid without
+// its Battle Shout: Fury 1090.6 / 1054.2 / 1034.6, two-hand Fury 961.9 / 923.7 / 894.5 and Arms
+// 962.4 / 948.0 / 923.3, so the duty costs 1.3 / 3.7 / 1.3, 0.6 / 2.0 / 0.9 and 1.1 / 3.0 / 2.1.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -428,6 +464,19 @@ export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60Fury,
 	encounter: EncounterLevel60,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFury,
+});
+export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Level 60 Fury (Battle Shout duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 dual wield Fury keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
+	gear: GearLevel60Phase1SyntheticFury,
+	talents: TalentsLevel60Fury,
+	rotation: APLLevel60FuryShout,
+	encounter: EncounterLevel60BattleShoutDuty,
 	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
@@ -447,6 +496,19 @@ export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Level 60 Fu
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
+export const PresetBuildLevel60Fury2HShout = PresetUtils.makePresetBuild('Level 60 Fury (Two-Hand) (Battle Shout duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 two-hand Fury keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
+	gear: GearLevel60Phase1SyntheticArms,
+	talents: TalentsLevel60Fury2H,
+	rotation: APLLevel60Fury2HShout,
+	encounter: EncounterLevel60BattleShoutDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFury,
+});
 export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Arms on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -460,8 +522,22 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsArms,
 });
-// Against a Dragonkin boss (Orc, 20,000 iterations, 120 / 180 / 300 sec): 1008.2 / 991.0 / 964.5,
-// where the generic Arms build does 968.9 / 952.6 / 927.0 (+4.0% at 180 sec). Fury doesn't get one:
+export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Level 60 Arms (Battle Shout duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Arms keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
+	gear: GearLevel60Phase1SyntheticArms,
+	talents: TalentsLevel60Arms,
+	rotation: APLLevel60ArmsShout,
+	encounter: EncounterLevel60BattleShoutDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsArms,
+});
+// Against a Dragonkin boss (Orc, 20,000 iterations, 120 / 180 / 300 sec): 1002.5 / 988.6 / 962.8
+// with the Sunder opener (1008.2 / 991.0 / 964.5 before), where the generic Arms build did 968.9 /
+// 952.6 / 927.0 before the Sunder opener (+4.0% at 180 sec). Fury doesn't get one:
 // Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.5%
 // on dual wield Fury and +0.8% on two-hand Fury at 180 sec.
 export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Level 60 Arms (vs Dragonkin)', {

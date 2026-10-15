@@ -1,0 +1,79 @@
+{
+  "id": "warrior__fury-duty-battle-shout",
+  "class": "Warrior",
+  "spec": "Fury",
+  "build": "Fury Dual Wield (Battle Shout duty)",
+  "isDefault": false,
+  "pr": 4,
+  "race": "Undead",
+  "talents": "30305013002-25053005112110501-2",
+  "treeNames": [
+    "Arms",
+    "Fury",
+    "Protection"
+  ],
+  "gearSet": "level60_phase1_synthetic_fury",
+  "apl": "level60_fury_battle_shout",
+  "published": {
+    "dps": 1054.2,
+    "source": "Battle Shout duty preset (standards 23), 2026-10-15"
+  },
+  "verify": {
+    "dps": 1054.2,
+    "stderr": 0.3,
+    "iters": 20000,
+    "ok": true,
+    "note": "same sim as the published number"
+  },
+  "summary": "Fury Dual Wield keeping Battle Shout up for its party, with the raid's Battle Shout off: 3.7 DPS behind the base build at 180 s.",
+  "keyTalents": [
+    "Bloodthirst",
+    "Flurry",
+    "Death Wish",
+    "Dual Wield Specialization",
+    "Furious Precision",
+    "Cruelty",
+    "Impale",
+    "Unbridled Wrath"
+  ],
+  "rotation": [
+    "Start in Berserker Stance with no Rage; Bloodrage and Battle Shout 3 sec before the pull",
+    "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
+    "Battle Shout again with 3 sec of it left, unless it lasts the fight (Forever's lasts 3 min)",
+    "Death Wish right after the Sunder, Recklessness one GCD later",
+    "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown; Mighty Rage Potion at the pull, second held for the last 20 sec",
+    "Bloodrage under 40 Rage",
+    "Execute first in the execute phase",
+    "Whirlwind at 25+ Rage, then Bloodthirst",
+    "Heroic Strike queued from 40 Rage (outside execute)",
+    "Hamstring filler from 10 Rage (procs Windfury Totem and Flurry)"
+  ],
+  "consumes": [
+    "Flask of the Titans",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Smoked Desert Dumpling",
+    "Dragonbreath Chili",
+    "Mighty Rage Potion",
+    "Goblin Sapper Charge",
+    "Goblin Land Mine",
+    "Dense Sharpening Stone"
+  ],
+  "caveats": [
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
+    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
+    "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
+    "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
+    "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
+    "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 15.1",
+    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 10.8 at Undead 180 s)",
+    "Second Mighty Rage Potion held for the last 20 sec: +6.4 at 180 sec, -3.0 at 120 sec (the preset targets 180 sec)",
+    "Bloodthirst sometimes slips a GCD for lack of Rage; holding fillers for it loses"
+  ],
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30305013002-25053005112110501-2 -race Undead -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
+  "duty": "Battle Shout",
+  "baseBuild": "warrior__fury"
+}
