@@ -277,6 +277,11 @@ CONSUME_SLOT = {'flask': ('Flask', 1), 'agilityElixir': ('Elixir', 2), 'strength
                 'defaultConjured': ('Rune', 7)}
 
 
+# Raid duties (standards 23) that make the raid safer rather than stronger: Scorpid Sting only lowers the boss's
+# chance to hit.
+DEFENSIVE_DUTIES = {'Scorpid Sting'}
+
+
 def tree_points(talents):
     parts = talents.split('-')
     return '/'.join(str(sum(int(c) for c in p)) for p in parts) if talents else ''
@@ -362,6 +367,8 @@ for o in outs:
         'id': bid, 'class': m['class'], 'presetName': m['build'], 'spec': 'Seal Fate' if bid.startswith('rogue__seal-fate') else m['spec'], 'build': dname, 'isDefault': bool(m.get('isDefault')),
         'label': f"{m['class']} · {dname}", 'race': race_name(m['race']),
         'encounter': encn or None, 'baseBuild': base_id or None, 'duty': duty or None,
+        # a duty that protects the raid instead of raising its damage, so its cost buys no DPS anywhere
+        'dutyDefensive': duty in DEFENSIVE_DUTIES if duty else None,
         'bossType': encn or 'Generic boss', 'bossText': f"Level 63 {encn} boss" if encn else 'Level 63 boss with no creature type (generic)',
         'dps': round(mn['dps'], 1), 'se': round(mn['se'], 2), 'stdev': round(mn['stdev'], 1),
         'p1': round(mn['pct']['1'], 1), 'p10': round(mn['pct']['10'], 1), 'p25': round(mn['pct']['25'], 1), 'p50': round(mn['pct']['50'], 1),

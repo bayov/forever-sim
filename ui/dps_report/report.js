@@ -261,10 +261,11 @@ export function startReport(dash) {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
       +base.dps ? tipKey(`−${f1(base.dps - b.dps)}`, 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}, where the raid covers it`)) : null,
+      b.dutyDefensive === true ? tipText('Defensive: it makes the raid safer, not stronger, so no one else gains DPS from it.') : null,
       tipText(b.summary));
   };
   const dutyBadge = (b, list) => {
-    const badge = el('span', { class: 'fv-duty', text: b.duty + ' duty' });
+    const badge = el('span', { class: 'fv-duty' + (b.dutyDefensive === true ? ' def' : ''), text: b.duty + (b.dutyDefensive === true ? ' duty · defensive' : ' duty') });
     tippy(badge, { content: dutyTip(b, list), onShow: (t) => t.setContent(dutyTip(b, list)) });
     badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
     return badge;
