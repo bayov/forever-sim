@@ -4,7 +4,7 @@
   "spec": "Balance",
   "build": "Balance (Faerie Fire duty)",
   "isDefault": false,
-  "pr": null,
+  "pr": 31,
   "race": "NightElf",
   "talents": "5532220115501351--505",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_ff",
   "published": {
     "dps": 799.9,
-    "source": "Faerie Fire duty (standards 23, 2026-10-15)"
+    "source": "PR #31 (Faerie Fire duty, standards 23)"
   },
   "verify": {
     "dps": 799.85,

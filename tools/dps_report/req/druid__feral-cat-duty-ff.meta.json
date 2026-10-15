@@ -4,7 +4,7 @@
   "spec": "Feral",
   "build": "Feral cat (Faerie Fire duty)",
   "isDefault": false,
-  "pr": null,
+  "pr": 31,
   "race": "NightElf",
   "talents": "05002-05200332021031212051-05501",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_ff",
   "published": {
     "dps": 712.3,
-    "source": "Faerie Fire duty (standards 23, 2026-10-15)"
+    "source": "PR #31 (Faerie Fire duty, standards 23)"
   },
   "verify": {
     "dps": 712.25,
