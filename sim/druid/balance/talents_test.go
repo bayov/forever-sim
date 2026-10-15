@@ -76,6 +76,23 @@ func TestBalanceRankValues(t *testing.T) {
 	}
 }
 
+// TestBalanceWrathRankTuning checks the report assumption the user ruled on 2026-10-15: Wrath
+// rank 8 deals 8.5% more than the client's 91.57 to 102.43, and rank 7 is unchanged.
+func TestBalanceWrathRankTuning(t *testing.T) {
+	for _, c := range []struct {
+		rank      int
+		low, high float64
+	}{
+		{8, 91.57 * 1.085, 102.43 * 1.085},
+		{7, 69.34, 77.46},
+	} {
+		low, high := druid.WrathBaseDamageAt(c.rank, 60)
+		if math.Abs(low-c.low) > 1e-9 || math.Abs(high-c.high) > 1e-9 {
+			t.Errorf("Wrath rank %d at 60: %.2f to %.2f, want %.2f to %.2f", c.rank, low, high, c.low, c.high)
+		}
+	}
+}
+
 // TestBalanceCostAndCastTalents checks Improved Wrath (0.1 sec and 10% a point), Moonglow
 // (8, 17, 25%, multiplying with Improved Wrath like every client cost modifier), Improved
 // Starfire (0.1 sec a point) and Nature's Splendor (one more tick on both dots).

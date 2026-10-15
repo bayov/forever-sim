@@ -19,6 +19,11 @@ var EarthShockSpellCoef = [EarthShockRanks + 1]float64{0, 0.386, 0.386, 0.386, 0
 var EarthShockManaCost = [EarthShockRanks + 1]float64{0, 30, 50, 85, 145, 240, 345, 450}
 var EarthShockLevel = [EarthShockRanks + 1]int{0, 4, 8, 14, 24, 36, 48, 60}
 
+// Report assumption sham_es7_tuning, user ruling 2026-10-15: rank 7's base damage x1.08, half
+// the raise that would bring it to the level 24 rank's 0.66 of Era (the ranks from level 36 keep
+// 0.55 to 0.57, as if not retuned yet).
+const EarthShockRank7DamageScale = 1.08
+
 func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	shaman.EarthShock = make([]*core.Spell, EarthShockRanks+1)
 
@@ -32,10 +37,20 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	}
 }
 
+// EarthShockBaseDamageAt is a rank's damage range at a level, before spell power.
+func EarthShockBaseDamageAt(rank int, level int32) (float64, float64) {
+	low := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][0], level)
+	high := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][1], level)
+	if rank == 7 {
+		low *= EarthShockRank7DamageScale
+		high *= EarthShockRank7DamageScale
+	}
+	return low, high
+}
+
 func (shaman *Shaman) newEarthShockSpellConfig(rank int, shockTimer *core.Timer) core.SpellConfig {
 	spellId := EarthShockSpellId[rank]
-	baseDamageLow := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][0], shaman.Level)
-	baseDamageHigh := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][1], shaman.Level)
+	baseDamageLow, baseDamageHigh := EarthShockBaseDamageAt(rank, shaman.Level)
 	spellCoeff := EarthShockSpellCoef[rank]
 	manaCost := EarthShockManaCost[rank]
 	level := EarthShockLevel[rank]

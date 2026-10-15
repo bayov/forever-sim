@@ -162,3 +162,20 @@ func TestDownrankCoefficient(t *testing.T) {
 		}
 	}
 }
+
+// TestSmiteRankTuning checks the report assumption the user ruled on 2026-10-15: Smite rank 8
+// deals 9% more than the client's 166.62 to 186.38, and rank 7 is unchanged.
+func TestSmiteRankTuning(t *testing.T) {
+	for _, c := range []struct {
+		rank      int
+		low, high float64
+	}{
+		{8, 166.62 * 1.09, 186.38 * 1.09},
+		{7, 123.74, 139.26},
+	} {
+		low, high := priest.SmiteBaseDamageAt(c.rank, 60)
+		if math.Abs(low-c.low) > 1e-9 || math.Abs(high-c.high) > 1e-9 {
+			t.Errorf("Smite rank %d at 60: %.2f to %.2f, want %.2f to %.2f", c.rank, low, high, c.low, c.high)
+		}
+	}
+}

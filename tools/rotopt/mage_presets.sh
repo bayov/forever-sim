@@ -28,16 +28,18 @@ gen mage_arcane level60_arcane "blastStacks=2,missilesNeedBarrage=1,barrageFirst
 # trinket wait for the 5th stack, so its crits go on spells that take all 15%. No mana gems:
 # they share the Demonic Rune's 2 min cooldown, and the rune gives more.
 gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,gems=0"
-# Frostbolt, with Fingers of Frost's Shatter crit on the next bolts. Ice Lance takes no spell
-# power (the client's coefficient is 0), so it costs 20 a fight cast on the charges and is left
-# out. Frost rarely runs low on mana, so Evocation (below 20% with 90 sec left) almost never goes.
-gen mage_frost level60_frost "iceLance=0,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90"
-# Scorch to 5 Fire Vulnerability stacks, Pyroblast at 3 Heating Up stacks, Frostfire Bolt, with
-# Fingers of Frost's Shatter crit on the next bolts (no Ice Lance, which takes no spell power and
-# costs 55 to 65 a fight cast on the charges). Fire Blast on cooldown loses: its mana is worth
-# more as Frostfire Bolts. Evocation below 10% mana with 30 sec of the fight left. Once
+# Frostbolt, with Ice Lance on every Fingers of Frost charge (4 times the damage on a Frozen
+# target, with SoD's 42.9% spell power coefficient: +175 at 180 sec over none, +157 over only the
+# last charge). The 2026-10-15 search at 180 sec with Ice Lance kept every other knob. Frost rarely
+# runs low on mana, so Evocation (below 20% with 90 sec left) almost never goes.
+gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90"
+# Scorch to 5 Fire Vulnerability stacks, Pyroblast at 3 Heating Up stacks, Ice Lance on every
+# Fingers of Frost charge (with SoD's 42.9% coefficient, +66 at 180 sec over none, +7 over only the
+# last charge), Frostfire Bolt. Fire Blast on cooldown loses: its mana is worth more as Frostfire
+# Bolts. Ice Lance's mana moves Evocation up to below 30% with 60 sec of the fight left (the
+# 2026-10-15 search at 180 sec: +6.2 there over 10% and 30 sec, level at 120, -3.9 at 300). Once
 # Evocation is spent (or under 60 sec are left) and the mana is under 60 a second of the fight
 # left, rank 2 Frostfire Bolt (285 mana for 9% less damage). No mana gems, for the Demonic Rune.
 # Fire Blast only with the mana the fight cannot use (above 150 a second of the fight left). The
 # on-use trinket waits for the 5th Fire Vulnerability stack.
-gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,pyroMana=0,iceLance=0,missileBarrage=1,fireBlastMana=0,evocationMana=10,evocationMinTime=30,gems=0,lowManaRank=60,fireBlastSurplus=150,trinketAfterScorch=1"
+gen mage_frostfire level60_frostfire "scorchRefresh=5,pyroStacks=3,pyroMana=0,iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=30,evocationMinTime=60,gems=0,lowManaRank=60,fireBlastSurplus=150,trinketAfterScorch=1"
