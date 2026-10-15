@@ -449,9 +449,42 @@ After the groundwork:
 
      The rest policies land within 2 mobs of each other. Healing between pulls costs mana
      that the next pull needs, and the drinking it takes is slower than eating.
+5. **The leveling optimizer.** Done (2026-10-15).
+   - `tools/rotopt` scores leveling settings by the mobs killed in a session (`-objective xp`
+     for XP an hour, to compare mob levels), with `-mob-offset`, and `-session` boils one
+     session down to its searches, pulls, fights and rests with health, mana, casts and times.
+     The `shaman_enh_leveling` template has the rules and their knobs: rest, bandage and heal
+     thresholds, the pull spell, chain pulls and look ahead, totems and Totemic Recall, the
+     fight's shocks, Fire Nova, Lightning Shield and heal. Settings for the solo Level 30
+     Enhancement shaman are in `tools/rotopt/leveling/level30_enh_solo.json`.
+   - Some choices are hard to put into fixed rules, so an auditor agent
+     (`orchestration/auditor_leveling.md`) reads sample sessions, tests rule changes, and the
+     ones that hold up go into the template for the optimizer to tune. The skill
+     `.agents/skills/leveling-opt` runs the loop, and `orchestration/leveling_audit_log.md`
+     keeps what each round tried.
+   - Level 30 solo, against level 29 to 31 mobs (4000 sessions):
+
+     | Rotation | Mobs | Deaths | XP / hour | Searching and pulling | Resting | Combat | Mobs a pull |
+     |---|---|---|---|---|---|---|---|
+     | Template defaults before tuning | 79.5 | 0.31 | about 46,000 | 237 s | 318 s | 596 s | 2.42 |
+     | Optimizer pass 1 | 90.2 | 0.01 | 52,200 | 235 s | 300 s | 664 s | 2.54 |
+     | Audit round 1, look ahead (pass 2 kept every knob) | 97.8 | 0.01 | 56,600 | 144 s | 344 s | 711 s | 2.19 |
+
+     Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
+     Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their
+     mana costs more rest than they save in 20 to 30 sec fights).
+
+     Audit round 1 found an engine bug (a swing could pull the mob we'd found from 40 yards
+     when the last mob died) and the biggest rule so far: look for the next mob while still
+     fighting, at any health over 40%, but pull it only when nearly full (over 90% health and
+     50% mana); otherwise rest with it waiting, and it's the next pull with no search.
+     Searching drops from 235 to 144 sec a session.
+   - The best mob level, XP an hour with that rotation: 50,600 at 3 levels under us, 54,500
+     at 2 under, 56,500 at 1 under, 56,600 at our level, 54,700 at 1 over, 45,300 at 2 over
+     (deaths climb to 0.43 a session). Mobs of our level or one under are best.
 6. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
-7. **Optimizers:** the pull and recovery policy, leveling stat weights with a Pawn export, and
-   the best mob level.
+7. **More optimizing:** leveling stat weights with a Pawn export, the talent route, other
+   classes' templates.
 8. **Synthetic gear curves** from 10 to 60 and the talent route search.
 9. **UI:** "Leveling" as a third mode next to DPS and PvP.
 
