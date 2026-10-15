@@ -36,7 +36,7 @@ Measurements are paired sims on each class branch's own build: the same mksettin
   - Elemental shaman Lightning Bolt VIII fallback (level 38, below 20% mana). It keeps 75% of its coefficient. Estimate: 0 at 180 s (0.2 casts), about -5 to -7 DPS (-1%) at 300 s (15.6 casts, 58 DPS), before moving the fallback to rank IX (level 44).
   - Elemental: DONE on the shaman branch (651dcb6ce). It uses a local downrankCoefficient (same formula) on Lightning Bolt and Chain Lightning, and will switch to the core helper once it lands. The fallback moved up one rank, to one learned at 44 with the full coefficient. Net change against before the penalty: Level 60 -0.4 and Mana Tide +0.2 at 300 s, 0 at 120 and 180 s. Orc stays best. Enhancement is unaffected.
   - Every other low-level ID in the APLs is a single-rank Forever spell, an attack power ability, a cooldown or a stance.
-- **Proposal.** One shared helper in sim/core, owned by the priest session, which already has it: `(*Character).ForeverDownrankCoefficient`. The shaman applies it to Lightning Bolt and Chain Lightning. It is in orchestration/spec_assumptions.md as `downrank_penalty` (stronger / FC formula / none).
+- **Proposal.** One shared helper in sim/core, owned by the priest session, which already has it: `(*Character).ForeverDownrankCoefficient`. The shaman applies it to Lightning Bolt and Chain Lightning. It was the `downrank_penalty` assumption (stronger / FC formula / none), removed because no preset's DPS moved; see "Considered and left out" in orchestration/spec_assumptions.md.
 
 ## Confirmed already right in the sim
 
