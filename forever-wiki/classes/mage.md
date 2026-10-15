@@ -31,7 +31,7 @@ Talents (client ranks where the BlizzCon data guessed):
 - Ignite: "no longer counts damage bonuses twice" since 2026-09-24.
 - Permafrost is 11 / 22 / 33% longer chills, Improved Blizzard 15 / 25 / 40% slower, Improved Cone of Cold 12 / 23 / 35%, Frost Channeling 5% cheaper Frost spells and 10% less threat per rank.
 - Shatter has 3 ranks: 17 / 33 / 50% crit against Frozen targets.
-- Ice Lance (talent, then trainer ranks at 28, 34, 42, 48 and 56): 136 to 161 at 60, instant, 160 mana, 300% more damage to Frozen targets. The client has no spell power coefficient on it.
+- Ice Lance (talent, then trainer ranks at 28, 34, 42, 48 and 56): 136 to 161 at 60, instant, 160 mana, 300% more damage to Frozen targets. The client has no spell power coefficient on it (nor did SoD's, whose server gave it 42.9%). The sim uses SoD's 42.9% by the user's ruling on the report assumptions (2026-10-15).
 - Fingers of Frost (new): chills have a 15% chance to make the next spell (two at rank 2) act as if the target were Frozen, for 15 sec.
 - Winter's Chill: 20% per rank, at most one stack per rank, and each stack is 2% crit for the mage's own Frostbolt and Ice Lance only (12579's crit aura is from the caster).
 - Ice Barrier rank 1 is 448 at 46 and rank 4 819 at 60.
@@ -42,7 +42,7 @@ Spells at level 60 (client, top rank):
 - Frostbolt 457 to 493 (Classic 515 to 555), 81.4%, 290 mana.
 - Frostfire Bolt (new trainer spell at 40, 50 and 60): Fire and Frost, 270 to 314 plus 57 over 9 sec, 81.4%, 3 sec, 370 mana, chills.
 - Arcane Missiles 209 a missile (Classic 230), 28.6% a missile (143% for the channel, Classic 120%), 655 mana.
-- Those three are the Ahn'Qiraj book ranks (Fireball XII, Frostbolt XI, Arcane Missiles VIII). The 70338 client has the books with no source and Forever starts before Molten Core, so the sim's Forever ruleset stops at the ranks before them: Fireball XI (397 to 505), Frostbolt X (382 to 413) and Arcane Missiles VII (175 a missile), at their caps.
+- Those three are the Ahn'Qiraj book ranks (Fireball XII, Frostbolt XI, Arcane Missiles VIII). The 70338 client has the books with no source and Forever starts before Molten Core, so the sim's Forever ruleset stops at the ranks before them: Fireball XI (397 to 505), Frostbolt X (382 to 413) and Arcane Missiles VII (175 a missile), at their caps. The sim deals 4% more with Frostbolt X (398 to 429), half of the 8% beta build 70291 gave the level 20 and 26 ranks (the user's ruling, 2026-10-15).
 - Scorch 166 to 196 (Classic 237 to 280), Fire Blast 415 to 491 (Classic 446 to 524), both 42.9% on every rank.
 - Pyroblast 520 to 646 plus 212 over 12 sec (Classic 716 to 890 plus 268). Rank 1 comes with the talent at 20, ranks 2 to 8 from the trainer.
 - Arcane Explosion 239 to 258, Flamestrike 381 to 466 plus 332, Blizzard 1168 over 8 sec (3% a tick), Blast Wave 453 to 533, Cone of Cold 328 to 358.
@@ -67,7 +67,7 @@ Confirmed as the sim has them:
 - Arcane Intellect and Arcane Brilliance are still +31 Intellect. They now last an hour, and Brilliance reaches the raid (ImplicitTarget 56).
 - No Forever source changes the Spirit regen formula, the five second rule, base mana or the Intellect conversions, so the sim keeps Era's.
 - Frostfire Bolt "always uses the higher of the Mage's spell damage bonuses to Fire or Frost damage" (deep dive). The sim's multi-school spells already take the higher school power.
-- Every damage rank, coefficient, cost and cast time of Fireball, Frostbolt, Frostfire Bolt, Arcane Blast, Arcane Missiles, Ice Lance, Pyroblast, Scorch, Fire Blast, Arcane Explosion and Blast Wave, and every talent value, matches the client.
+- Every damage rank, coefficient, cost and cast time of Fireball, Frostbolt, Frostfire Bolt, Arcane Blast, Arcane Missiles, Ice Lance, Pyroblast, Scorch, Fire Blast, Arcane Explosion and Blast Wave, and every talent value, matches the client, but for two report assumptions the user ruled on (2026-10-15): Ice Lance's 42.9% coefficient and Frostbolt X's 4%.
 
 Wands: the 2026-09-24 development notes say "Wands no longer gain any additional damage from the user's spell damage". Shoot (5019) and Wand Specialization (13 / 25%, now 2 points) are otherwise Era's, and wand damage still comes from ItemDamageWand. The sim doesn't model wands; a raid mage doesn't use one. Bonecreeper Stylus (13938) has no ItemSparse row in 70338, so the synthetic wand only borrows its damage and speed.
 

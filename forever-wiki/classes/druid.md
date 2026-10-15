@@ -27,7 +27,7 @@ Talent tree changes against the BlizzCon data (and the hyjal.cc tree for build 6
 
 Spell values at level 60 (1.12 in brackets):
 
-- Wrath rank 8: 92 to 102 Nature (248 to 277), 120 mana (180), 2 sec, 57.1%.
+- Wrath rank 8: 92 to 102 Nature (248 to 277), 120 mana (180), 2 sec, 57.1%. The sim deals 8.5% more (99 to 111), half of what would bring it to the level 30 rank's share of Era, as if 70291's retune of ranks 1 to 5 reached it (the user's ruling on the report assumptions, 2026-10-15).
 - Starfire rank 7: 350 to 412 Arcane (496 to 584), 340 mana, 3.5 sec, 100%. Rank 6 313 to 370.
 - Moonfire rank 10: 129 to 150 (195 to 228) and 60 a tick for 12 sec (384 over 12 sec), 375 mana, 15% and 13% a tick on every rank.
 - Insect Swarm rank 5: 31 a tick for 12 sec, 186 (324), 160 mana, 15.8% a tick. It is a Balance talent now (row 4).
