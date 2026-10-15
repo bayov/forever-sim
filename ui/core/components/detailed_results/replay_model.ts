@@ -215,6 +215,8 @@ export interface ReplayModel {
 	sct: Array<SctEvent>;
 	sctTimes: Array<number>;
 	markers: Array<{ time: number; actionId: ActionId }>;
+	// Results simmed before the sim wrote the cooldown lines have no cooldown tracker.
+	hasCooldownData: boolean;
 	executeFraction: number;
 	// The fight ends at a set time, so the enemy's health follows the time left.
 	timeBasedHealth: boolean;
@@ -329,6 +331,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		if (!timerUseLists.has(timer)) timerUseLists.set(timer, []);
 		timerUseLists.get(timer)!.push({ setAt: log.timestamp, readyAt: log.readyAt });
 	});
+	const isShaman = player.classColor == 'shaman';
 	const timerUses = new Map<string, TimerUses>();
 	timerUseLists.forEach((uses, timer) => {
 		uses.sort((a, b) => a.setAt - b.setAt);
@@ -339,11 +342,22 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	const casts = castLogs.map(toReplayCast);
 	const majorCooldownIds = player.majorCooldownLogs.map(log => log.actionId!);
 
-	const isShaman = player.classColor == 'shaman';
 	const totemSlots = buildTotemSlots(player.logs);
 
 	// Abilities with a cooldown shorter than the GCD, like an auto attack, aren't worth tracking.
 	const cooldowns = Array.from(cooldownsByKey.values()).filter(cooldown => cooldown.longest >= 1.5);
+	// The shaman pack's bars always hold the spells we cast, like the WeakAura's icons that show
+	// once a spell is learned. A spell we cast without a cooldown line (like Chain Lightning in a
+	// result simmed before the sim wrote them) shows ready and lights up when we press it.
+	if (isShaman) {
+		[...SHAMAN_MAIN, ...SHAMAN_UTILITY].forEach(name => {
+			if (cooldowns.some(cooldown => named(cooldown.actionId, name))) return;
+			const cast = castLogs.find(log => named(log.actionId!, name));
+			if (!cast) return;
+			const key = cast.actionId!.toStringIgnoringTag();
+			cooldowns.push({ key, actionId: cast.actionId!, timers: [], castTimes: [], longest: 0, firstUse: cast.timestamp, aura: null });
+		});
+	}
 	cooldowns.forEach(cooldown => {
 		cooldown.castTimes = castLogs.filter(log => log.actionId!.toStringIgnoringTag() == cooldown.key).map(log => log.timestamp);
 		cooldown.aura = playerAuras.find(track => track.actionId.equalsIgnoringTag(cooldown.actionId)) ?? null;
@@ -447,6 +461,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		sct,
 		sctTimes: sct.map(event => event.time),
 		markers,
+		hasCooldownData: player.logs.some(log => log.isCooldown() || log.isMaxResources()),
 		executeFraction: encounter?.executeProportion20 ?? 0,
 		timeBasedHealth,
 	};

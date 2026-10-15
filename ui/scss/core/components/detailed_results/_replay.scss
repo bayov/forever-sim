@@ -82,6 +82,15 @@
 	padding: var(--spacer-4);
 	color: var(--text-muted-color);
 	text-align: center;
+
+	// A note over a replay that plays, rather than in place of it.
+	&.notice {
+		inset: 64px 0 auto;
+		padding: 0;
+		color: #ffd166;
+		font-size: 0.85rem;
+		pointer-events: none;
+	}
 }
 
 // The clock and the damage so far, at the top in the middle.
@@ -246,8 +255,7 @@
 	flex-direction: column;
 	gap: 10px;
 	min-width: 0;
-	// Level with the resource bar, under the history strip and the procs.
-	padding-top: 94px;
+	// The replay sets padding-top so the frames are level with the resource bar.
 }
 
 .replay-col-player {
@@ -260,20 +268,20 @@
 	// With three or more enemies the frames get smaller, so they fit.
 	&.many {
 		gap: 6px;
-		padding-top: 0;
 
 		.replay-bar.health {
 			height: 22px;
 		}
 
 		.replay-icon.debuff {
-			--width: 24px;
-			--height: 24px;
+			--width: 30px;
+			--height: 21px;
 		}
 	}
 }
 
 .replay-unit {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -293,10 +301,16 @@
 .replay-unit-auras {
 	display: flex;
 	flex-wrap: wrap;
+	align-content: flex-start;
 	gap: 5px;
-	// Under the frame, so the frames stay level with the resource bar however many debuffs
-	// the enemy has.
+	// Under the frame, in room for one row of debuffs. More rows spill over what's under them
+	// without taking room, so the frames never move as debuffs come and go.
 	order: 2;
+	height: 28px;
+
+	.many & {
+		height: 21px;
+	}
 
 	.player & {
 		display: none;
@@ -465,7 +479,11 @@
 }
 
 .replay-procs {
-	min-height: 32px;
+	// Room for one row. More procs grow upward over the history strip without taking room, so
+	// nothing under them moves.
+	flex-wrap: wrap-reverse;
+	align-content: flex-start;
+	height: 32px;
 }
 
 .replay-resources {
@@ -612,9 +630,10 @@
 		}
 	}
 
+	// The same 68:48 rectangles as the class pack's icons.
 	&.debuff {
-		--width: 38px;
-		--height: 38px;
+		--width: 40px;
+		--height: 28px;
 	}
 
 	&.buff {
@@ -724,6 +743,17 @@
 .replay-castbar {
 	order: 1;
 	display: flex;
+
+	// An enemy's cast bar takes no room, so its debuffs sit right under its frame and nothing
+	// moves when it casts. It shows over what's under the debuffs.
+	.enemy & {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		z-index: 1;
+		margin-top: 4px;
+	}
+
 	width: 100%;
 	height: 28px;
 	margin-top: 6px;

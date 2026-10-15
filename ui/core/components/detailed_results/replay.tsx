@@ -325,6 +325,8 @@ export class Replay extends ResultComponent {
 	// The buffs that come and go, like procs. A buff of an ability in the cooldown tracker shows
 	// on the ability's button instead.
 	private procTracks: Array<AuraTrack> = [];
+	// The iteration the frames were last lined up with the resource bar for.
+	private alignedFor: ReplayModel | null = null;
 	private historyElems = new Map<number, HTMLElement>();
 	private sctElems = new Map<number, HTMLElement>();
 
@@ -575,7 +577,10 @@ export class Replay extends ResultComponent {
 			this.ui.player.classList.add('empty');
 			return;
 		}
-		this.ui.message.classList.add('hide');
+		// An old result plays without its cooldowns. We say why, under the clock.
+		this.ui.message.textContent = 'This result has no cooldown data. Sim again to see the cooldowns.';
+		this.ui.message.classList.toggle('hide', model.hasCooldownData);
+		this.ui.message.classList.toggle('notice', !model.hasCooldownData);
 		this.ui.player.classList.remove('empty');
 		this.model = model;
 		this.time = model.start;
@@ -1314,6 +1319,7 @@ export class Replay extends ResultComponent {
 		if (!model || !this.isVisible()) return;
 		const time = this.time;
 
+		this.alignFrames(model);
 		this.drawHud(model, time);
 		this.drawPlayer(model, time);
 		this.drawEnemies(model, time);
@@ -1323,6 +1329,18 @@ export class Replay extends ResultComponent {
 		this.drawSct(model, time);
 		this.drawControls(model, time);
 		this.updateHover();
+	}
+
+	// Puts the unit frames level with the resource bar of the class pack. Everything above the
+	// bar keeps its size while we play, so we only measure once per iteration. With three or more
+	// enemies their frames start at the top, so they fit.
+	private alignFrames(model: ReplayModel) {
+		if (this.alignedFor == model) return;
+		const top = this.ui.resources.offsetTop;
+		if (top <= 0) return;
+		this.ui.playerCol.style.paddingTop = `${top}px`;
+		this.ui.enemyCol.style.paddingTop = this.enemyFrames.length > 2 ? '0' : `${top}px`;
+		this.alignedFor = model;
 	}
 
 	private drawHud(model: ReplayModel, time: number) {
