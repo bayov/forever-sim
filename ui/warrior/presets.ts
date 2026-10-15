@@ -34,7 +34,6 @@ import Level60FuryAPLJSON from './apls/level60_fury.apl.json';
 import Level60Fury2HAPLJSON from './apls/level60_fury_2h.apl.json';
 import Level60Phase1SyntheticArmsGearJSON from './gear_sets/level60_phase1_synthetic_arms.gear.json';
 import Level60Phase1SyntheticFuryGearJSON from './gear_sets/level60_phase1_synthetic_fury.gear.json';
-import Level60Phase1SyntheticFury2HGearJSON from './gear_sets/level60_phase1_synthetic_fury_2h.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import Phase1Gear from './gear_sets/phase_1.gear.json';
 import Phase2Gear from './gear_sets/phase_2.gear.json';
@@ -93,19 +92,15 @@ export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Level 
 	tooltip: 'A guess at Phase 1 BiS under Forever for a dual wield warrior, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
-// The same armor with a two-hander in place of Bonereaver's Edge. Arms holds it as a 4.0 sec axe and
-// two-hand Fury as a 3.7 sec axe, the speeds each one sims best with (standards 22).
+// The same armor with a two-hander in place of Bonereaver's Edge, for Arms and two-hand Fury. It is a
+// 3.7 sec axe, the slowest Era Phase 1 BiS two-hand speed (standards 22).
 export const GearLevel60Phase1SyntheticArms = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Two-Hand)', Level60Phase1SyntheticArmsGearJSON, {
-	tooltip: 'A guess at Phase 1 BiS under Forever for an Arms warrior, made of synthetic items that are not in the game.',
-	group: 'Level 60',
-});
-export const GearLevel60Phase1SyntheticFury2H = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Fury Two-Hand)', Level60Phase1SyntheticFury2HGearJSON, {
-	tooltip: 'A guess at Phase 1 BiS under Forever for a two-hand Fury warrior, made of synthetic items that are not in the game.',
+	tooltip: 'A guess at Phase 1 BiS under Forever for a two-hand warrior, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms, GearLevel60Phase1SyntheticFury2H, GearPhase1, GearP0BIS],
+	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms, GearPhase1, GearP0BIS],
 	[Phase.Phase2]: [GearPhase2],
 	[Phase.Phase3]: [GearPhase3],
 	[Phase.Phase4]: [GearPhase4],
@@ -409,17 +404,18 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 	},
 );
 
-// On 2026-10-15 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1101.3 / 1066.5 /
-// 1042.9, Level 60 Fury (Two-Hand) (Orc) 960.2 / 925.4 / 896.5 and Level 60 Arms (Orc) 966.4 /
-// 951.1 / 925.5, with Forever's normalized Rage at s = 0.5 (standards 21). The weapons have the type
-// and speed each build sims best with (standards 22). On the Era BiS swords the builds did 1038.1,
-// 901.6 and 915.1 at 180 sec (Undead). The numbers below were measured on those swords. How k grows
+// On 2026-10-15 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1096.7 / 1061.4 /
+// 1038.2, Level 60 Fury (Two-Hand) (Orc) 960.2 / 925.4 / 896.5 and Level 60 Arms (Orc) 948.5 /
+// 933.1 / 908.4, with Forever's normalized Rage at s = 0.5 (standards 21). The weapons have the type
+// and speed each build sims best with among Era Phase 1 BiS speeds (standards 22): a 2.8 sec sword
+// and a 1.7 sec axe for Fury, a 3.7 sec axe for the two-hand builds. On the Era BiS swords the
+// builds did 1038.1, 901.6 and 915.1 at 180 sec (Undead). The numbers below were measured on those swords. How k grows
 // from level 30 to 60 is an assumption: flat (s = 0) is 950.6 / 835.0 / 861.4 at 180 sec, Classic-like (s = 1)
 // 1076.1 / 924.2 / 935.0, and the off hand at half Rage (s = 0.5) 945.1 on Fury (-8.9%; the
 // two-hand builds have no off hand). The Ahn'Qiraj book ranks being out (Heroic Strike VIII, the
 // raid's Battle Shout VI, Strength of Earth and Grace of Air) cost 22.6 / 14.8 / 14.2 at 180 sec, and
 // Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (both measured before normalized Rage). With weapon
-// racials off, Fury stays at its Undead numbers, and the Undead does 918.8 on two-hand Fury and 946.2
+// racials off, Fury stays at its Undead numbers, and the Undead does 919.1 on two-hand Fury and 929.4
 // on Arms at 180 sec.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
@@ -437,7 +433,7 @@ export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury
 export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Level 60 Fury (Two-Hand)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 two-hand Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1SyntheticFury2H,
+	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60Fury2H,
 	rotation: APLLevel60Fury2H,
 	encounter: EncounterLevel60,
@@ -460,8 +456,8 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsArms,
 });
-// Against a Dragonkin boss (Orc, 20,000 iterations, 120 / 180 / 300 sec): 1007.8 / 992.1 / 965.7,
-// where the generic Arms build does 966.4 / 951.1 / 925.5 (+4.3% at 180 sec). Fury doesn't get one:
+// Against a Dragonkin boss (Orc, 20,000 iterations, 120 / 180 / 300 sec): 987.8 / 971.5 / 945.9,
+// where the generic Arms build does 948.5 / 933.1 / 908.4 (+4.1% at 180 sec). Fury doesn't get one:
 // Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.5%
 // on dual wield Fury and +0.8% on two-hand Fury at 180 sec.
 export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Level 60 Arms (vs Dragonkin)', {

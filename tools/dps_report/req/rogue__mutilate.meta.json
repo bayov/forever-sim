@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 695.6,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 681.2,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 695.6,
+    "dps": 681.2,
     "stderr": null,
     "iters": 20000,
     "ok": true,

@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_seal_fate_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 678.2,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 673.9,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 678.2,
+    "dps": 673.9,
     "stderr": null,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Seal Fate and Cold Blood in Assassination with Blade Flurry and Improved Sinister Strike in Combat, for Sinister Strike with a sword and a fast dagger in the off hand. Shipped as a variant 6.2% behind Combat Swords.",
+  "summary": "Seal Fate and Cold Blood in Assassination with Blade Flurry and Improved Sinister Strike in Combat, for Sinister Strike with a slow axe and a fast dagger in the off hand. Shipped as a variant 5.1% behind Combat Swords.",
   "keyTalents": [
     "Seal Fate 5/5",
     "Vile Poisons 5/5",
@@ -60,8 +60,8 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "6.2% behind Combat Swords at 180 s",
-    "Best Alliance race is Gnome, with Human and Night Elf within 1",
+    "5.1% behind Combat Swords at 180 s",
+    "Best Alliance race is Gnome, with Night Elf within 1",
     "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",

@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 819.9,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 814.5,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 819.9,
+    "dps": 814.5,
     "stderr": null,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "The Enhancement Level 60 build with 2 points moved from Ancestral Knowledge into Improved Ghost Wolf for utility. It is 4.5 behind Level 60 at 180 s.",
+  "summary": "The Enhancement Level 60 build with 2 points moved from Ancestral Knowledge into Improved Ghost Wolf for utility. It is 4.0 behind Level 60 at 180 s.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",

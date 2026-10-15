@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_dragonkin",
   "published": {
-    "dps": 992.1,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 971.5,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 992.1,
+    "dps": 971.5,
     "stderr": null,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Arms with Spearing Strike and Improved Bloodrage against a Giant or Dragonkin boss such as Onyxia; 4.3% ahead of the generic Arms build on its own boss at 180 s.",
+  "summary": "Arms with Spearing Strike and Improved Bloodrage against a Giant or Dragonkin boss such as Onyxia; 4.1% ahead of the generic Arms build on its own boss at 180 s.",
   "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin. Against such a boss the talent is worth taking, so this build puts it in the rotation. The normal Arms build spends those points elsewhere.",
   "advantageRefs": [
     "tal:Warrior:0:8"
@@ -69,7 +69,7 @@
     "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
     "Fury has no Dragonkin build: a stance dance for Spearing Strike is worth only +0.4% (dual wield) and +0.8% (two-hand)",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991019)",
+    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
     "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",

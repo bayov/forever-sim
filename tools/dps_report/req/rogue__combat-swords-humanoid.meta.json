@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 748.3,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 735.2,
+    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
   },
   "verify": {
-    "dps": 748.3,
+    "dps": 735.2,
     "stderr": null,
     "iters": 20000,
     "ok": true,
@@ -67,7 +67,7 @@
   "caveats": [
     "Murder is damage only (+4%) and only against Humanoids and Giants",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Best Alliance race is Human (+2% crit with the off hand sword)",
+    "Alliance best is Gnome, tied with Night Elf at 180 s",
     "Swords keep 5-point Eviscerates; 4 points lose 6 to 8",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",

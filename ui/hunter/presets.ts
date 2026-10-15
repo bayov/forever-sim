@@ -79,8 +79,9 @@ export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Sy
 	group: 'Level 60',
 });
 // The Survival set: melee attack power and Strength in place of ranged attack power, a pair of
-// one-handers for Predator's Edge's off hand bonus at Brutality Blade's damage per second (a 2.8 sec
-// axe and a 1.4 sec dagger, the types and speeds Survival sims best with, standards 22), and
+// one-handers for Predator's Edge's off hand bonus at Brutality Blade's damage per second (a 2.9 sec
+// axe and a 1.6 sec dagger, the Era Phase 1 BiS types and speeds Survival sims best with, standards
+// 22), and
 // 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Totals: armor 705.5 (target 706.1),
 // swords 34.5 each (the standard has no hunter one-hander: the physical 0.39 x the hunter /
 // physical two-hander ratio, 0.42 x L(71)), bow 19.5. Stamina 15.4%, Spirit 10.1%, Agility 31.1%,
@@ -406,7 +407,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 907.5 / 900.5 / 892.4 at 120 / 180 / 300 sec in the mksettings raid (Orc, 2026-10-15). On a pair
+// 902.6 / 895.4 / 887.0 at 120 / 180 / 300 sec in the mksettings raid (Orc, 2026-10-15). On a pair
 // of Brutality Blade swords the Human did 858.6 at 180 sec. The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {

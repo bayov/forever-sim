@@ -18,8 +18,9 @@ import (
 // Pendant, Wristguards of True Flight, Cape of the Black Baron, the Devilsaur hands and legs, Quick
 // Strike Ring, Blackstone Ring, Barbarous Blade (a pair of Brutality Blades for Survival) and
 // Rhok'delar. The weapons keep their damage per second. Survival's pair takes the type and speed it
-// sims best with (standards 22) from real Era Phase 1 weapons: Demonfork's 2.8 sec axe in the main
-// hand and Bonescraper's 1.4 sec dagger in the off hand. The others keep their weapon's type and speed.
+// sims best with among the speeds of Era Phase 1 BiS weapons (standards 22): Deathbringer's 2.9 sec
+// axe in the main hand and Core Hound Tooth's 1.6 sec dagger in the off hand. The others keep their
+// weapon's type and speed.
 //
 // Budgets follow the cross-class standard 1b (orchestration/standards.md, 2026-10-13), the budget
 // real level 60 epics follow, per archetype:
@@ -320,23 +321,23 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	},
 	// Main Hand, item level 71, in place of Brutality Blade (70, 18832), main hand.
 	{
-		Id: 993113, Name: "Survival Synthetic Main Hand (Phase 1)", Icon: "inv_weapon_halberd_11",
+		Id: 993113, Name: "Survival Synthetic Main Hand (Phase 1)", Icon: "inv_axe_09",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
 		Stats: stats.Stats{stats.Agility: 14, stats.Strength: 11, stats.AttackPower: 19, stats.RangedAttackPower: 19}.ToFloatArray(),
-		// Demonfork's speed and damage spread at Brutality Blade's 51.6 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 100.7, WeaponDamageMax: 188.2, WeaponSpeed: 2.8,
+		// Deathbringer's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22:
+		// a Phase 1 BiS speed, the one that sims best).
+		WeaponDamageMin: 104.3, WeaponDamageMax: 194.9, WeaponSpeed: 2.9,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
 	// Off Hand, item level 71, in place of Brutality Blade (70, 18832), off hand.
 	{
-		Id: 993114, Name: "Survival Synthetic Off Hand (Phase 1)", Icon: "inv_weapon_shortblade_12",
+		Id: 993114, Name: "Survival Synthetic Off Hand (Phase 1)", Icon: "inv_weapon_shortblade_11",
 		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeDagger, HandType: proto.HandType_HandTypeOneHand,
 		Stats: stats.Stats{stats.Agility: 14, stats.Strength: 11, stats.AttackPower: 19, stats.RangedAttackPower: 19}.ToFloatArray(),
-		// Bonescraper's speed and damage spread at Brutality Blade's 51.6 DPS
-		// (standards 22: the type and speed that sim best).
-		WeaponDamageMin: 50.7, WeaponDamageMax: 93.8, WeaponSpeed: 1.4,
+		// Core Hound Tooth's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22:
+		// a Phase 1 BiS speed, the one that sims best).
+		WeaponDamageMin: 57.4, WeaponDamageMax: 107.7, WeaponSpeed: 1.6,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
