@@ -1,0 +1,616 @@
+package core
+
+import (
+	"math"
+	"time"
+
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
+	googleProto "google.golang.org/protobuf/proto"
+)
+
+// A grinding session (Encounter.leveling, docs/leveling_sim.md): instead of one fight, we
+// find a mob, pull it, maybe chain pull more, kill them, recover, and go again until the
+// session ends. The score is how many mobs we kill.
+//
+// The mobs come from a pool built with the sim: max pack size normal mobs (the mob table,
+// mob_stats.go) at each level of the spread, all of one creature type. A mob's level and type
+// are fixed when the sim is built, because its attack tables and the talents and items that
+// read its type are. A dead mob goes back to the pool and comes again in a later pull, with
+// full health and its permanent auras back.
+//
+// One loop runs the session:
+//   - Searching: a random 5 to 11 sec to find a mob (search_min / search_max), and then we
+//     pull it.
+//   - Combat: the mob runs to us from the pull range at its level's speed. We can cast at it
+//     on the way, but it can't hit us and we can't reach it in melee until it's here. Its
+//     first swing comes at a random point of its swing timer. With a pack size over 1 we
+//     chain pull more mobs every 2 to 4 sec while fighting, up to the pack size.
+//   - When the last one dies, we're out of combat: a bandage when our health is low and
+//     we're not Recently Bandaged, then we sit to eat and drink when health or mana is low,
+//     until both are full or both buffs run out. Then searching again.
+//   - Death: the mobs on us leave, and after the corpse run we come back with part of our
+//     health and mana and search again.
+//
+// Out of combat we regen health from Spirit (outOfCombatHealthRegen), and mana goes on as in
+// combat (the five-second rule). While we search the rotation can cast what helps us
+// (buffs, shields, heals), but nothing at a mob: there is none.
+type levelingSession struct {
+	env  *Environment
+	opts levelingOptions
+
+	character *Character
+	player    *Unit
+	level     int32
+
+	// The pool by level, and each target's state by Target.Index.
+	pool    map[int32][]*Unit
+	levels  []int32
+	arrived []bool
+
+	state      levelingState
+	stateSince time.Duration
+	seconds    [levelingStateCount]time.Duration
+
+	// The current pull: how many mobs it has taken so far, and the session's pulls and mobs
+	// pulled.
+	pullMobs   int
+	pulls      int
+	mobsPulled int
+	// Food, water and bandage left on the current rest or bandage.
+	foodLeft, drinkLeft, bandageLeft time.Duration
+	food, drink, bandage             restorer
+	bandageReadyAt                   time.Duration
+	// A pending pull, chain pull or revive, cancelled when the state moves on.
+	next *PendingAction
+
+	kills, xp float64
+	deaths    int
+
+	healthMetrics, foodMetrics, bandageMetrics, reviveHealthMetrics *ResourceMetrics
+	drinkMetrics, reviveManaMetrics                                 *ResourceMetrics
+
+	// Sums over iterations, for LevelingMetrics.
+	agg struct {
+		n                                        int
+		kills, kills2, xp, deaths, pulls, pulled float64
+		combat, resting, searching, dead         float64
+	}
+}
+
+type levelingState int
+
+const (
+	levelingSearching levelingState = iota
+	levelingCombat
+	levelingResting
+	levelingBandaging
+	levelingDead
+	levelingStateCount
+)
+
+// levelingOptions are the session's options with their defaults filled in.
+type levelingOptions struct {
+	sessionLength                  time.Duration
+	mobLevelOffset, mobSpread      int32
+	mobType                        proto.MobType
+	armorMultiplier                float64
+	packSize, maxPack              int
+	searchMin, searchMax           time.Duration
+	chainSearchMin, chainSearchMax time.Duration
+	pullRange                      float64
+	eatBelow, drinkBelow           float64
+	bandages                       bool
+	deathPenalty                   time.Duration
+	reviveFraction                 float64
+}
+
+// levelingMeleeRange is where a mob that reached us stands, and levelingFar is our distance
+// when no mob we target has.
+const (
+	levelingMeleeRange = 5
+	levelingFar        = 30
+)
+
+func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
+	or := func(v, def float64) float64 {
+		if v > 0 {
+			return v
+		}
+		return def
+	}
+	seconds := func(v, def float64) time.Duration { return DurationFromSeconds(or(v, def)) }
+	opts := levelingOptions{
+		sessionLength:   seconds(o.SessionLength, 1200),
+		mobLevelOffset:  o.MobLevelOffset,
+		mobSpread:       1,
+		mobType:         o.MobType,
+		armorMultiplier: or(o.ArmorMultiplier, 1),
+		packSize:        int(max(o.PackSize, 1)),
+		maxPack:         int(max(o.MaxPackSize, 0)),
+		searchMin:       seconds(o.SearchMin, 5),
+		searchMax:       seconds(o.SearchMax, 11),
+		chainSearchMin:  seconds(o.ChainSearchMin, 2),
+		chainSearchMax:  seconds(o.ChainSearchMax, 4),
+		pullRange:       or(o.PullRange, 30),
+		eatBelow:        or(o.EatBelow, 0.5),
+		drinkBelow:      or(o.DrinkBelow, 0.4),
+		bandages:        !o.NoBandages,
+		deathPenalty:    seconds(o.DeathPenalty, 180),
+		reviveFraction:  or(o.ReviveFraction, 0.5),
+	}
+	if o.MobLevelSpread != nil {
+		opts.mobSpread = max(*o.MobLevelSpread, 0)
+	}
+	if opts.mobType == proto.MobType_MobTypeUnknown {
+		opts.mobType = proto.MobType_MobTypeBeast
+	}
+	if opts.maxPack == 0 {
+		opts.maxPack = 5
+	}
+	opts.packSize = min(opts.packSize, opts.maxPack)
+	return opts
+}
+
+// levelingPlayerLevel is the level of the raid's first player, the one who grinds.
+func levelingPlayerLevel(raidProto *proto.Raid) int32 {
+	for _, party := range raidProto.Parties {
+		for _, player := range party.Players {
+			if player != nil && player.Class != proto.Class_ClassUnknown {
+				if player.Level == 0 {
+					return CharacterMaxLevel
+				}
+				return player.Level
+			}
+		}
+	}
+	return CharacterMaxLevel
+}
+
+// prepareLevelingEncounter turns a leveling encounter into one the sim can build: a timed
+// fight of the session's length with the mob pool as its targets, each one tanked by us.
+// Any other encounter comes back as it was.
+func prepareLevelingEncounter(raidProto *proto.Raid, encounterProto *proto.Encounter) *proto.Encounter {
+	if encounterProto == nil || encounterProto.Leveling == nil {
+		return encounterProto
+	}
+	opts := resolveLevelingOptions(encounterProto.Leveling)
+	level := levelingPlayerLevel(raidProto)
+
+	prepared := googleProto.Clone(encounterProto).(*proto.Encounter)
+	prepared.Duration = opts.sessionLength.Seconds()
+	prepared.DurationVariation = 0
+	prepared.UseHealth = false
+	prepared.Targets = nil
+	for _, mobLevel := range levelingMobLevels(level, opts) {
+		for range opts.maxPack {
+			mob := NormalMobTarget(mobLevel, opts.mobType, opts.armorMultiplier)
+			mob.TankIndex = -1 // We tank them all, which env.construct sets for leveling.
+			prepared.Targets = append(prepared.Targets, mob)
+		}
+	}
+	return prepared
+}
+
+// levelingMobLevels are the mob levels of the session: the spread around our level plus the
+// offset, kept within the mob table.
+func levelingMobLevels(level int32, opts levelingOptions) []int32 {
+	center := level + opts.mobLevelOffset
+	var levels []int32
+	for l := center - opts.mobSpread; l <= center+opts.mobSpread; l++ {
+		if l >= 1 && l <= int32(len(normalMobStatsByLevel)) {
+			levels = append(levels, l)
+		}
+	}
+	if len(levels) == 0 {
+		levels = append(levels, min(max(center, 1), int32(len(normalMobStatsByLevel))))
+	}
+	return levels
+}
+
+// newLevelingSession is built with the environment, once the raid is there.
+func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *levelingSession {
+	session := &levelingSession{
+		env:  env,
+		opts: resolveLevelingOptions(encounterProto.Leveling),
+		pool: map[int32][]*Unit{},
+	}
+	for _, unit := range env.Raid.AllPlayerUnits {
+		if agent := env.Raid.GetPlayerFromUnit(unit); agent != nil {
+			session.character = agent.GetCharacter()
+			session.player = unit
+			break
+		}
+	}
+	session.level = session.player.Level
+	session.levels = levelingMobLevels(session.level, session.opts)
+	session.arrived = make([]bool, len(env.Encounter.Targets))
+	for _, target := range env.Encounter.TargetUnits {
+		session.pool[target.Level] = append(session.pool[target.Level], target)
+		target.CurrentTarget = session.player
+	}
+
+	session.food = bestRestorer(levelingFood, session.level)
+	session.drink = bestRestorer(levelingWater, session.level)
+	session.bandage = bestRestorer(levelingBandages, session.level)
+
+	c := session.character
+	session.healthMetrics = c.NewHealthMetrics(ActionID{SpellID: 20577, Tag: 1}) // Health regen out of combat.
+	session.foodMetrics = c.NewHealthMetrics(ActionID{ItemID: session.food.itemID})
+	session.bandageMetrics = c.NewHealthMetrics(ActionID{ItemID: session.bandage.itemID})
+	session.reviveHealthMetrics = c.NewHealthMetrics(ActionID{SpellID: 8326}) // Ghost
+	if c.HasManaBar() {
+		session.drinkMetrics = c.NewManaMetrics(ActionID{ItemID: session.drink.itemID})
+		session.reviveManaMetrics = c.NewManaMetrics(ActionID{SpellID: 8326})
+	}
+	return session
+}
+
+// reset is the start of an iteration, after every unit's own reset: every mob back in the
+// pool and us with no mob near. Before the sim's pull at 0, so no mob starts swinging.
+func (s *levelingSession) reset(sim *Simulation) {
+	enc := &s.env.Encounter
+	for _, target := range enc.TargetUnits {
+		target.dead = true
+		target.enabled = false
+		s.arrived[target.Index] = false
+	}
+	enc.ActiveTargetUnits = nil
+	s.player.DistanceFromTarget = levelingFar
+
+	s.state, s.stateSince = levelingSearching, 0
+	s.seconds = [levelingStateCount]time.Duration{}
+	s.pullMobs, s.pulls, s.mobsPulled = 0, 0, 0
+	s.kills, s.xp, s.deaths = 0, 0, 0
+	s.bandageReadyAt = 0
+	s.next = nil
+
+	sim.AddPendingAction(&PendingAction{
+		NextActionAt: 0,
+		Priority:     ActionPriorityPrePull - 1,
+		OnAction:     s.search,
+	})
+	s.startTicks(sim)
+}
+
+func (s *levelingSession) setState(sim *Simulation, state levelingState) {
+	s.seconds[s.state] += sim.CurrentTime - s.stateSince
+	s.state, s.stateSince = state, sim.CurrentTime
+	if s.next != nil {
+		s.next.Cancel(sim)
+		s.next = nil
+	}
+}
+
+func (s *levelingSession) after(sim *Simulation, delay time.Duration, fn func(*Simulation)) {
+	s.next = &PendingAction{NextActionAt: sim.CurrentTime + delay, OnAction: fn}
+	sim.AddPendingAction(s.next)
+}
+
+func randomDuration(sim *Simulation, label string, lo, hi time.Duration) time.Duration {
+	return lo + time.Duration(sim.RandomFloat(label)*float64(hi-lo))
+}
+
+// search: out of combat and ready, we look for the next mob.
+func (s *levelingSession) search(sim *Simulation) {
+	s.setState(sim, levelingSearching)
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: searching for a mob")
+	}
+	s.after(sim, randomDuration(sim, "Leveling Search", s.opts.searchMin, s.opts.searchMax), s.pull)
+}
+
+// pull: we found a mob and pull it.
+func (s *levelingSession) pull(sim *Simulation) {
+	s.setState(sim, levelingCombat)
+	s.pulls++
+	s.pullMobs = 0
+	s.spawn(sim)
+}
+
+// spawn brings a mob from the pool: it runs to us from the pull range.
+func (s *levelingSession) spawn(sim *Simulation) {
+	level := s.levels[int(sim.RandomFloat("Leveling Mob Level")*float64(len(s.levels)))%len(s.levels)]
+	mob := s.idleMob(level)
+	if mob == nil {
+		return
+	}
+	s.pullMobs++
+	s.mobsPulled++
+
+	enc := &s.env.Encounter
+	mob.dead = false
+	mob.enabled = true
+	s.arrived[mob.Index] = false
+	mob.healthBar.currentHealth = mob.MaxHealth()
+	mob.auraTracker.respawn(sim)
+	enc.addActiveTarget(mob)
+	if s.player.CurrentTarget == nil || s.player.CurrentTarget.dead {
+		s.retarget(sim, mob)
+	}
+
+	runIn := DurationFromSeconds(max(s.opts.pullRange-levelingMeleeRange, 0) / NormalMobStatsAt(mob.Level).RunSpeed)
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: pulled %s (level %d), here in %s", mob.Label, mob.Level, runIn)
+	}
+	StartDelayedAction(sim, DelayedActionOptions{
+		DoAt:     sim.CurrentTime + runIn,
+		OnAction: func(sim *Simulation) { s.arrive(sim, mob) },
+	})
+
+	if s.pullMobs < s.opts.packSize {
+		s.after(sim, randomDuration(sim, "Leveling Chain Search", s.opts.chainSearchMin, s.opts.chainSearchMax), s.chainPull)
+	}
+}
+
+// chainPull: while fighting we pull one more, as long as the pack isn't full.
+func (s *levelingSession) chainPull(sim *Simulation) {
+	s.next = nil
+	if s.state != levelingCombat || len(s.env.Encounter.ActiveTargetUnits) >= s.opts.packSize {
+		return
+	}
+	s.spawn(sim)
+}
+
+func (s *levelingSession) idleMob(level int32) *Unit {
+	for _, mob := range s.pool[level] {
+		if mob.dead {
+			return mob
+		}
+	}
+	for _, l := range s.levels {
+		for _, mob := range s.pool[l] {
+			if mob.dead {
+				return mob
+			}
+		}
+	}
+	return nil
+}
+
+// arrive: the mob reached us and starts swinging, its first swing anywhere in its timer.
+func (s *levelingSession) arrive(sim *Simulation, mob *Unit) {
+	if mob.dead {
+		return
+	}
+	s.arrived[mob.Index] = true
+	aa := &mob.AutoAttacks
+	swing := DurationFromSeconds(aa.MH().SwingSpeed / mob.SwingSpeed())
+	aa.mh.swingAt = sim.CurrentTime + time.Duration(sim.RandomFloat("Leveling First Swing")*float64(swing))
+	aa.EnableAutoSwing(sim)
+	if s.player.CurrentTarget == mob {
+		s.setPlayerDistance(sim, levelingMeleeRange)
+	}
+}
+
+// retarget makes the mob our target, in melee range once it has reached us.
+func (s *levelingSession) retarget(sim *Simulation, mob *Unit) {
+	s.player.CurrentTarget = mob
+	for _, pet := range s.character.Pets {
+		pet.CurrentTarget = mob
+	}
+	if !mob.dead && s.arrived[mob.Index] {
+		s.setPlayerDistance(sim, levelingMeleeRange)
+	} else {
+		s.setPlayerDistance(sim, levelingFar)
+	}
+}
+
+func (s *levelingSession) setPlayerDistance(sim *Simulation, distance float64) {
+	if s.player.DistanceFromTarget == distance {
+		return
+	}
+	s.player.AutoAttacks.CancelAutoSwing(sim)
+	s.player.DistanceFromTarget = distance
+	s.player.AutoAttacks.EnableAutoSwing(sim)
+}
+
+// onMobDeath: a mob we pulled died (killTarget). It counts, our target has moved on to the
+// next living one, and when it was the last one we're out of combat.
+func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
+	s.kills++
+	s.xp += mobKillXP(s.level, mob.Level)
+	s.arrived[mob.Index] = false
+	mob.enabled = false
+	s.retarget(sim, s.player.CurrentTarget)
+
+	if len(s.env.Encounter.ActiveTargetUnits) == 0 {
+		s.outOfCombat(sim)
+	}
+}
+
+// outOfCombat: the pull is over. A bandage when health is low, then food and water when
+// health or mana is, then searching again.
+func (s *levelingSession) outOfCombat(sim *Simulation) {
+	health := s.player.CurrentHealthPercent()
+	if s.opts.bandages && health < s.opts.eatBelow && sim.CurrentTime >= s.bandageReadyAt {
+		s.setState(sim, levelingBandaging)
+		s.bandageLeft = s.bandage.duration
+		s.bandageReadyAt = sim.CurrentTime + recentlyBandagedDuration
+		s.busy(sim, s.bandage.duration)
+		if sim.Log != nil {
+			s.player.Log(sim, "Leveling: bandaging")
+		}
+		s.after(sim, s.bandage.duration, s.outOfCombat)
+		return
+	}
+
+	mana := 1.0
+	if s.player.HasManaBar() {
+		mana = s.player.CurrentManaPercent()
+	}
+	if health < s.opts.eatBelow || mana < s.opts.drinkBelow {
+		s.setState(sim, levelingResting)
+		s.foodLeft, s.drinkLeft = 0, 0
+		if health < 1 {
+			s.foodLeft = s.food.duration
+		}
+		if s.player.HasManaBar() && mana < 1 {
+			s.drinkLeft = s.drink.duration
+		}
+		if sim.Log != nil {
+			s.player.Log(sim, "Leveling: eating and drinking at %.0f%% health and %.0f%% mana", 100*health, 100*mana)
+		}
+		s.busy(sim, time.Second)
+		return
+	}
+
+	s.search(sim)
+}
+
+// busy keeps the rotation from acting while we sit, bandage or run back as a ghost.
+func (s *levelingSession) busy(sim *Simulation, d time.Duration) {
+	if s.player.Hardcast.Expires > sim.CurrentTime {
+		s.player.interruptHardcast(sim)
+	}
+	s.player.WaitUntil(sim, sim.CurrentTime+d)
+}
+
+// startTicks starts the session's 1 sec tick: health regen out of combat, food, water and
+// bandage, and standing up when we're done resting.
+func (s *levelingSession) startTicks(sim *Simulation) {
+	StartPeriodicAction(sim, PeriodicActionOptions{
+		Period: time.Second,
+		OnAction: func(sim *Simulation) {
+			s.tick(sim, time.Second)
+		},
+	})
+}
+
+func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
+	p := s.player
+	seconds := dt.Seconds()
+	switch s.state {
+	case levelingSearching, levelingResting, levelingBandaging:
+		regen := outOfCombatHealthRegen(s.character.Class, p.GetStat(stats.Spirit)) * seconds
+		if s.state == levelingResting {
+			regen *= 1.5
+		}
+		s.heal(sim, regen, s.healthMetrics)
+	}
+
+	switch s.state {
+	case levelingBandaging:
+		if s.bandageLeft > 0 {
+			s.heal(sim, s.bandage.amount*seconds/s.bandage.duration.Seconds(), s.bandageMetrics)
+			s.bandageLeft -= dt
+		}
+	case levelingResting:
+		if s.foodLeft > 0 {
+			s.heal(sim, s.food.amount*seconds/s.food.duration.Seconds(), s.foodMetrics)
+			s.foodLeft -= dt
+		}
+		if s.drinkLeft > 0 && p.HasManaBar() {
+			p.AddMana(sim, min(s.drink.amount*seconds/s.drink.duration.Seconds(), p.MaxMana()-p.CurrentMana()), s.drinkMetrics)
+			s.drinkLeft -= dt
+		}
+		healthDone := s.foodLeft <= 0 || p.CurrentHealth() >= p.MaxHealth()
+		manaDone := s.drinkLeft <= 0 || !p.HasManaBar() || p.CurrentMana() >= p.MaxMana()
+		if healthDone && manaDone {
+			s.search(sim)
+		} else {
+			s.busy(sim, dt)
+		}
+	}
+}
+
+func (s *levelingSession) heal(sim *Simulation, amount float64, metrics *ResourceMetrics) {
+	amount = min(amount, s.player.MaxHealth()-s.player.CurrentHealth())
+	if amount > 0 {
+		s.player.GainHealth(sim, amount, metrics)
+	}
+}
+
+// onPlayerDeath: the mobs on us leave, and we run back as a ghost.
+func (s *levelingSession) onPlayerDeath(sim *Simulation) {
+	if s.state == levelingDead {
+		return
+	}
+	s.deaths++
+	s.setState(sim, levelingDead)
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: died, back in %s", s.opts.deathPenalty)
+	}
+	enc := &s.env.Encounter
+	for len(enc.ActiveTargetUnits) > 0 {
+		s.despawn(sim, enc.ActiveTargetUnits[0])
+	}
+	s.setPlayerDistance(sim, levelingFar)
+	s.busy(sim, s.opts.deathPenalty)
+	s.after(sim, s.opts.deathPenalty, s.revive)
+}
+
+// despawn sends a living mob back to the pool without a kill.
+func (s *levelingSession) despawn(sim *Simulation, mob *Unit) {
+	enc := &s.env.Encounter
+	mob.dead = true
+	mob.enabled = false
+	s.arrived[mob.Index] = false
+	mob.AutoAttacks.CancelAutoSwing(sim)
+	mob.auraTracker.expireAll(sim)
+	enc.removeActiveTarget(mob)
+}
+
+func (s *levelingSession) revive(sim *Simulation) {
+	p := s.player
+	s.next = nil
+	target := s.opts.reviveFraction * p.MaxHealth()
+	if p.CurrentHealth() < target {
+		p.GainHealth(sim, target-p.CurrentHealth(), s.reviveHealthMetrics)
+	}
+	if p.HasManaBar() && p.CurrentMana() < s.opts.reviveFraction*p.MaxMana() {
+		p.AddMana(sim, s.opts.reviveFraction*p.MaxMana()-p.CurrentMana(), s.reviveManaMetrics)
+	}
+	p.Metrics.Died = true
+	s.search(sim)
+}
+
+// doneIteration adds the session to the totals: the mobs on us at the end count by the share
+// of their health we took.
+func (s *levelingSession) doneIteration(sim *Simulation) {
+	s.seconds[s.state] += sim.CurrentTime - s.stateSince
+	s.stateSince = sim.CurrentTime
+	kills, xp := s.kills, s.xp
+	for _, mob := range s.env.Encounter.ActiveTargetUnits {
+		share := 1 - mob.CurrentHealth()/mob.MaxHealth()
+		kills += share
+		xp += share * mobKillXP(s.level, mob.Level)
+	}
+
+	a := &s.agg
+	a.n++
+	a.kills += kills
+	a.kills2 += kills * kills
+	a.xp += xp
+	a.deaths += float64(s.deaths)
+	a.pulls += float64(s.pulls)
+	a.pulled += float64(s.mobsPulled)
+	a.combat += s.seconds[levelingCombat].Seconds()
+	a.resting += (s.seconds[levelingResting] + s.seconds[levelingBandaging]).Seconds()
+	a.searching += s.seconds[levelingSearching].Seconds()
+	a.dead += s.seconds[levelingDead].Seconds()
+}
+
+func (s *levelingSession) metrics() *proto.LevelingMetrics {
+	a := &s.agg
+	if a.n == 0 {
+		return &proto.LevelingMetrics{}
+	}
+	n := float64(a.n)
+	mean := a.kills / n
+	m := &proto.LevelingMetrics{
+		MobsKilled:       mean,
+		MobsKilledStdev:  math.Sqrt(max(a.kills2/n-mean*mean, 0)),
+		Xp:               a.xp / n,
+		XpPerHour:        a.xp / n * 3600 / s.opts.sessionLength.Seconds(),
+		Deaths:           a.deaths / n,
+		SecondsInCombat:  a.combat / n,
+		SecondsResting:   a.resting / n,
+		SecondsSearching: a.searching / n,
+		SecondsDead:      a.dead / n,
+	}
+	if a.pulls > 0 {
+		m.MobsPerPull = a.pulled / a.pulls
+	}
+	return m
+}

@@ -1037,6 +1037,53 @@ message Encounter {
 	// spend random stretches of 1 to 10 sec out of melee range, where they have no white
 	// hits and cannot use melee abilities.
 	double pvp_melee_downtime = 9;
+
+	// Leveling mode (docs/leveling_sim.md): a grinding session instead of one fight. When set,
+	// the targets above are ignored and the session pulls normal mobs from the mob table.
+	LevelingOptions leveling = 10;
+}
+
+// A grinding session (docs/leveling_sim.md). A field left at 0 takes its default.
+message LevelingOptions {
+	// Seconds. Default 1200 (20 min).
+	double session_length = 1;
+
+	// The mobs we grind: their level less ours (default 0), and how far either side of that
+	// they spread (default 1, so level 19 to 21 mobs for a level 20 at offset 0).
+	int32 mob_level_offset = 2;
+	optional int32 mob_level_spread = 3;
+	// Default Beast. One type for the session, because a mob's type is fixed when the sim is
+	// built (Slaying talents and items read it then).
+	MobType mob_type = 4;
+	// Scales the level's average armor. Default 1.
+	double armor_multiplier = 5;
+
+	// Mobs a pull takes, the first and then chain pulls (default 1), and the most we'd ever
+	// have on us (default 5).
+	int32 pack_size = 6;
+	int32 max_pack_size = 7;
+
+	// Seconds to find the next mob out of combat (default 5 to 11), and to find one to
+	// chain pull while in combat (default 2 to 4).
+	double search_min = 8;
+	double search_max = 9;
+	double chain_search_min = 10;
+	double chain_search_max = 11;
+	// Yards we pull from (default 30). A mob runs that less melee range to us at its speed.
+	double pull_range = 12;
+
+	// Out of combat we sit to eat and drink when health or mana is below these shares of
+	// max (defaults 0.5 and 0.4), until both are full or both buffs run out.
+	double eat_below = 13;
+	double drink_below = 14;
+	// Leave bandages out (they're on by default: the best one First Aid at our level
+	// allows, when health is below eat_below and we're not Recently Bandaged).
+	bool no_bandages = 15;
+
+	// Seconds of corpse run after a death (default 180), and the share of health and mana
+	// we come back with (default 0.5).
+	double death_penalty = 16;
+	double revive_fraction = 17;
 }
 
 message PresetTarget {

@@ -516,6 +516,11 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
+	// Nothing harmful at a mob that died, or one a leveling session hasn't pulled yet.
+	if target != nil && target.dead && !spell.Flags.Matches(SpellFlagHelpful) {
+		return false
+	}
+
 	// While moving only instant casts are possible
 	if spell.DefaultCast.CastTime > 0 && spell.Unit.IsMoving() {
 		//if sim.Log != nil {

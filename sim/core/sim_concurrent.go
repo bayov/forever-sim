@@ -296,6 +296,9 @@ func (rsrc *raidSimResultCombiner) AddResult(result *proto.RaidSimResult, isLast
 	for i, tar := range result.EncounterMetrics.Targets {
 		rsrc.combineUnitMetrics(rsrc.Combined.EncounterMetrics.Targets[i], tar, isLast, weight)
 	}
+	if add := result.EncounterMetrics.Leveling; add != nil {
+		combineLevelingMetrics(rsrc.Combined.EncounterMetrics.Leveling, add, isLast, weight)
+	}
 
 	rsrc.Combined.AvgIterationDuration += result.AvgIterationDuration * weight
 	rsrc.Combined.IterationsDone += result.IterationsDone
@@ -328,6 +331,9 @@ func (rsrc *raidSimResultCombiner) SetBaseResult(baseRsr *proto.RaidSimResult) {
 
 	for i, tar := range baseRsr.EncounterMetrics.Targets {
 		newRsr.EncounterMetrics.Targets[i] = rsrc.newUnitMetrics(tar)
+	}
+	if baseRsr.EncounterMetrics.Leveling != nil {
+		newRsr.EncounterMetrics.Leveling = &proto.LevelingMetrics{}
 	}
 
 	rsrc.Combined = newRsr
@@ -600,4 +606,23 @@ func runSimConcurrent(request *proto.RaidSimRequest, progress chan *proto.Progre
 	}
 
 	return result
+}
+
+// combineLevelingMetrics adds one thread's leveling averages, weighted by its share of the
+// iterations. The spread of mobs killed adds up as mean squares (stdev^2 + mean^2) and comes
+// back to a standard deviation on the last one.
+func combineLevelingMetrics(base, add *proto.LevelingMetrics, isLast bool, weight float64) {
+	base.MobsKilled += add.MobsKilled * weight
+	base.MobsKilledStdev += (add.MobsKilledStdev*add.MobsKilledStdev + add.MobsKilled*add.MobsKilled) * weight
+	base.Xp += add.Xp * weight
+	base.XpPerHour += add.XpPerHour * weight
+	base.Deaths += add.Deaths * weight
+	base.SecondsInCombat += add.SecondsInCombat * weight
+	base.SecondsResting += add.SecondsResting * weight
+	base.SecondsSearching += add.SecondsSearching * weight
+	base.SecondsDead += add.SecondsDead * weight
+	base.MobsPerPull += add.MobsPerPull * weight
+	if isLast {
+		base.MobsKilledStdev = math.Sqrt(max(base.MobsKilledStdev-base.MobsKilled*base.MobsKilled, 0))
+	}
 }

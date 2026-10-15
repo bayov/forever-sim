@@ -587,6 +587,16 @@ restart:
 	return at.minExpires
 }
 
+// respawn brings back a respawned mob's permanent auras (the leveling session's mob pool),
+// which its death expired: each inactive aura's reset effect runs again.
+func (at *auraTracker) respawn(sim *Simulation) {
+	for _, aura := range at.auras {
+		if !aura.IsActive() && aura.OnReset != nil {
+			aura.OnReset(aura, sim)
+		}
+	}
+}
+
 func (at *auraTracker) expireAll(sim *Simulation) {
 restart:
 	for _, aura := range at.activeAuras {

@@ -29,6 +29,9 @@ type Encounter struct {
 	// In health fight: set to true until we get something to base on
 	DurationIsEstimate bool
 
+	// The grinding session in leveling mode (leveling.go), nil otherwise.
+	leveling *levelingSession
+
 	// PvP mode, and the share of the fight out of melee range (in PvP or not), see pvp.go.
 	PvP              bool
 	PvPMeleeDowntime float64
@@ -90,6 +93,9 @@ func (encounter *Encounter) AOECapMultiplier() float64 {
 }
 
 func (encounter *Encounter) doneIteration(sim *Simulation) {
+	if encounter.leveling != nil {
+		encounter.leveling.doneIteration(sim)
+	}
 	for i := range encounter.Targets {
 		target := encounter.Targets[i]
 		target.doneIteration(sim)
@@ -105,6 +111,9 @@ func (encounter *Encounter) GetMetricsProto() *proto.EncounterMetrics {
 	for _, target := range encounter.Targets {
 		metrics.Targets[i] = target.GetMetricsProto()
 		i++
+	}
+	if encounter.leveling != nil {
+		metrics.Leveling = encounter.leveling.metrics()
 	}
 
 	return metrics

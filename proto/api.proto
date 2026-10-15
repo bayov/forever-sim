@@ -389,6 +389,28 @@ message RaidMetrics {
 
 message EncounterMetrics {
 	repeated UnitMetrics targets = 1;
+
+	// Set in leveling mode (Encounter.leveling): averages over the iterations.
+	LevelingMetrics leveling = 2;
+}
+
+// What a grinding session (docs/leveling_sim.md) came to, averaged over the iterations.
+message LevelingMetrics {
+	// The score: mobs killed in the session, the one we're fighting at the end counted by
+	// the share of its health we took.
+	double mobs_killed = 1;
+	double mobs_killed_stdev = 2;
+	// XP from those kills (Classic's formula by level difference), and per hour.
+	double xp = 3;
+	double xp_per_hour = 4;
+	double deaths = 5;
+	// Average seconds of the session in each state.
+	double seconds_in_combat = 6;
+	double seconds_resting = 7;
+	double seconds_searching = 8;
+	double seconds_dead = 9;
+	// Average number of mobs a pull came to, chain pulls included.
+	double mobs_per_pull = 10;
 }
 
 enum ErrorOutcomeType {
