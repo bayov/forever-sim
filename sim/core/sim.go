@@ -645,7 +645,15 @@ func (sim *Simulation) Cleanup() {
 	// quite at the Duration. Explicitly set this so that accesses to CurrentTime
 	// during the doneIteration phase will return the Duration value, which is
 	// intuitive.
-	sim.CurrentTime = sim.Duration
+	//
+	// A health fight ends when the targets die, not at a set time, so its duration is the
+	// time it took. Before, it took the 10 minute placeholder and every DPS and DTPS came out
+	// over 600 sec.
+	if sim.Encounter.EndFightAtHealth > 0 {
+		sim.Duration = sim.CurrentTime
+	} else {
+		sim.CurrentTime = sim.Duration
+	}
 
 	for _, pa := range sim.pendingActions {
 		if pa.CleanUp != nil {
