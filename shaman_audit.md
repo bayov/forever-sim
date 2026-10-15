@@ -215,7 +215,7 @@ Tree rules
 
 ## 11. Encounter and rotation
 
-- [ ] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
+- [x] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
 - [ ] 11.2 Shaman APL values (totem timers, shield charges and the like)
 - [ ] 11.3 APL edge cases: a swing due during a cast, replacing a totem early, Fire Nova on Clearcasting, mana thresholds
 - [ ] 11.4 Movement and range in PvP (time out of melee range)
@@ -1831,6 +1831,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
   - Curse of the Elements now carries each rank's client ID (440892, 1311676, 1311677, 1311680), where it had Classic's 11722, so the sim and the combat logs name the same spell. The warlock rotation template looks for 1311680 now (`tools/rotopt/warlock.go`). No generated rotation used the old check.
 - A throwaway test read the target at 30 and 60 (Shout 85 / 204, Roar 88 / 204, Curse of Weakness 12 / 37, Thunder Clap 20%, Scorpid Sting 2%). We kept no test, as agreed.
 - Open: whether Scorpid Sting and Insect Swarm stack in Forever. For the class owners (`orchestration/followups.md`): a class's own Sunder, Faerie Fire, Recklessness and Expose give the level 60 value below level 54 to 58, the warrior's own Demoralizing Shout and the paladin's own Judgement of the Crusader rounding (34.5 / 57.5 / 126.5 where the client has 35 / 58 / 127).
+
+### 11.1 Encounter
+
+- The user OK'd it (2026-10-15) and doesn't need Vishas's armor checked: "No need to verify vishas armor, it doesn't matter."
+- Already covered: the hit table by target level (4.x), armor (4.9, `armor_test.go`), resistance and partial resists (5.2), Vishas's swings, crits and parry haste (6.x), and Fire Nova, Magma Totem and Chain Lightning on more targets (7.13, 7.23, 7.25).
+- Level 60: level 63, 3731 armor, 180 sec +- 20. The level and armor are the shared standard, and notes.md Need to Verify has the boss. The mob type is Unknown in the shaman preset and the DPS report request, where the orchestration standard says Humanoid. No shaman effect keys on Humanoid, so it stays. Health and the execute phases don't matter, because the fight ends on time and we have no execute.
+- Level 30: Interrogator Vishas, level 32 Humanoid, 1063 armor and 52 minimum damage from the 1.12 creature data, 120 sec +- 5. His health (30,000) is made up and doesn't matter for the same reason.
+- Level 30 PvP: the level 30 player placeholder from 6.7.
+- No sim change, no test, no Need to Verify item.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
