@@ -3562,7 +3562,7 @@ ol.fv-list li::marker {
 	}
 
 	td.is-cur {
-		background: var(--fv-gold-soft);
+		background: color-mix(in srgb, var(--color-fg) 6%, transparent);
 	}
 
 	.fv-asm-eff {
