@@ -385,7 +385,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
@@ -409,7 +408,6 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
-	curseOfShadow: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,

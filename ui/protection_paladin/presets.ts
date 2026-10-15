@@ -139,7 +139,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	battleShout: TristateEffect.TristateEffectImproved,
 	divineSpirit: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 });
 
 export const DefaultDebuffs = Debuffs.create({
