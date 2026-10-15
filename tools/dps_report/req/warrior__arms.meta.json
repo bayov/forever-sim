@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 951.0,
-    "source": "Sunder Armor as every warrior's first GCD (standards 23), 2026-10-15"
+    "dps": 953.1,
+    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
   },
   "verify": {
-    "dps": 951.0,
-    "stderr": 0.3,
+    "dps": 953.15,
+    "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster's axe crit. It is the Arms spec's Level 60 preset, about 10% behind dual wield Fury.",
   "keyTalents": [
@@ -71,7 +71,8 @@
     "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 10.9",
     "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 8.4 at Undead 180 s)",
     "Booming Voice (5/5) does nothing because the raid has Battle Shout",
-    "Arms in Berserker Stance with Whirlwind all fight was 10% behind"
+    "Arms in Berserker Stance with Whirlwind all fight was 10% behind",
+    "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10 a minute"
   ],
-  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms -talents 20305213032515201-55050000001 -race Orc -duration 180, unedited. Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts."
+  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms -talents 20305213032515201-55050000001 -race Orc -duration 180, unedited (mksettings sets the raid hits, 2 a minute at 1500). Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts."
 }

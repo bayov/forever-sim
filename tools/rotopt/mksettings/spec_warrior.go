@@ -44,6 +44,10 @@ func init() {
 					Shout:        proto.WarriorShout_WarriorShoutBattle,
 					Stance:       stance,
 					StartingRage: 0,
+					// The raid damage that hits a melee DPS in a level 60 raid fight
+					// (ui/warrior/presets.ts RaidDamageHitsLevel60).
+					RaidDamageHitsPerMinute: 2,
+					RaidDamagePerHit:        1500,
 				},
 			}}
 		}

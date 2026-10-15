@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_dragonkin",
   "published": {
-    "dps": 988.6,
-    "source": "Sunder Armor as every warrior's first GCD (standards 23), 2026-10-15"
+    "dps": 991.5,
+    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
   },
   "verify": {
-    "dps": 988.6,
-    "stderr": 0.3,
+    "dps": 991.48,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Arms with Spearing Strike and Improved Bloodrage against a Giant or Dragonkin boss such as Onyxia; 4.0% ahead of the generic Arms build on its own boss at 180 s.",
   "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin. Against such a boss the talent is worth taking, so this build puts it in the rotation. The normal Arms build spends those points elsewhere.",
@@ -76,7 +76,8 @@
     "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
     "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 10.9",
     "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 8.4 at Undead 180 s)",
-    "Booming Voice (5/5) does nothing because the raid has Battle Shout"
+    "Booming Voice (5/5) does nothing because the raid has Battle Shout",
+    "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10 a minute"
   ],
   "notes": "Request from mksettings with the same arguments as warrior__arms except talents and APL, then the target's mobType set to MobTypeDragonkin, as the class preset's encounter does.",
   "encounter": "Dragonkin",

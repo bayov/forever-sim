@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury",
   "published": {
-    "dps": 1057.9,
-    "source": "Sunder Armor as every warrior's first GCD (standards 23), 2026-10-15"
+    "dps": 1064.8,
+    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
   },
   "verify": {
-    "dps": 1057.9,
-    "stderr": 0.3,
+    "dps": 1064.85,
+    "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Dual wield Fury with a slow sword and a fast axe in Berserker Stance: Bloodthirst, Whirlwind and Flurry, with Death Wish and Recklessness at the pull. It is the warrior's default Level 60 preset and its highest-DPS build.",
   "keyTalents": [
@@ -70,7 +70,8 @@
     "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 15.1",
     "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 10.8 at Undead 180 s)",
     "Second Mighty Rage Potion held for the last 20 sec: +6.4 at 180 sec, -3.0 at 120 sec (the preset targets 180 sec)",
-    "Bloodthirst sometimes slips a GCD for lack of Rage; holding fillers for it loses"
+    "Bloodthirst sometimes slips a GCD for lack of Rage; holding fillers for it loses",
+    "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10 a minute"
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury -talents 30305013002-25053005112110501-2 -race Undead -duration 180, unedited. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts."
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury -talents 30305013002-25053005112110501-2 -race Undead -duration 180, unedited (mksettings sets the raid hits, 2 a minute at 1500). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts."
 }
