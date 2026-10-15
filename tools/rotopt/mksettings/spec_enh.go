@@ -67,11 +67,15 @@ func init() {
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassShaman
 			startingTotems := &proto.StartingTotems{
-				Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 28,
-				Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 27,
-				Water: proto.WaterTotem_ManaSpringTotem, WaterSecondsBeforePull: 30,
+				Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 4,
+				Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 3,
+				Water: proto.WaterTotem_ManaSpringTotem, WaterSecondsBeforePull: 2,
 			}
-			if shamanTotemsFromRaid() {
+			if flag.Lookup("level").Value.String() != "60" {
+				// The level 30 builds keep the old seconds. At level 60 they go down just before
+				// the pull, so a 5 min totem lasts a 300 sec fight.
+				startingTotems.EarthSecondsBeforePull, startingTotems.AirSecondsBeforePull, startingTotems.WaterSecondsBeforePull = 28, 27, 30
+			} else if shamanTotemsFromRaid() {
 				// The raid's totems take their place.
 				startingTotems = &proto.StartingTotems{}
 			}

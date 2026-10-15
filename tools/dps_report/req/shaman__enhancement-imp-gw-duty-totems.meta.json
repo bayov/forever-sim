@@ -36,7 +36,7 @@
     "Improved Ghost Wolf"
   ],
   "rotation": [
-    "Pre-pull: starting totems already down (Strength of Earth IV, Windfury Totem, Mana Spring), no mana cost",
+    "Pre-pull: starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they last the whole 300 s fight), no mana cost",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
     "Searing Totem when it is down and at least 10 s remain",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
