@@ -646,7 +646,6 @@ export const P1RaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
