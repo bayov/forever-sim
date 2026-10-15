@@ -19,7 +19,8 @@ func init() {
 	specs["hunter_sv"] = hunterSpec(5, true, hunterMeleeRaid)
 
 	// Hunter's Mark and Scorpid Sting duties (standards 23): the same raid with that debuff off, so
-	// it comes only from the hunter's own casts (the rotation's mark and scorpid knobs).
+	// it comes only from the hunter's own casts (the rotation's mark and scorpid knobs). Scorpid
+	// Sting is a duty of the ranged hunters only (user ruling 2026-10-15), not of melee Survival.
 	for _, name := range []string{"hunter_bm", "hunter_mm", "hunter_lw", "hunter_sv"} {
 		base := *specs[name]
 		raid := base.raid
@@ -28,6 +29,9 @@ func init() {
 			debuffs.HuntersMark = proto.TristateEffect_TristateEffectMissing
 		}
 		specs[name+"_mark"] = &base
+		if name == "hunter_sv" {
+			continue
+		}
 
 		// Scorpid Sting duty: the raid's Scorpid Sting off (the rotation's scorpid knob).
 		scorpid := *specs[name]
