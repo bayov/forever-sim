@@ -105,7 +105,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 408510
+                        "spellId": 10432
                       }
                     }
                   },
@@ -611,41 +611,22 @@
                   }
                 },
                 {
-                  "notes": "Water Shield whenever it is down. Its three globes are 2% mana each when something hits the shaman. Without the talent ignore the warning on this line.",
+                  "notes": "Lightning Shield when it is down and nothing above is ready. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
                   "action": {
                     "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 408510
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpLt",
-                              "lhs": {
-                                "currentManaPercent": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0.5"
-                                }
-                              }
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 10432
                             }
                           }
-                        ]
+                        }
                       }
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 408510
+                        "spellId": 10432
                       }
                     }
                   }
@@ -668,7 +649,8 @@
                   "waterSecondsBeforePull": 2,
                   "fire": "MagmaTotem",
                   "fireSecondsBeforePull": 1
-                }
+                },
+                "raidDamageHitsPerMinute": 2
               }
             }
           }

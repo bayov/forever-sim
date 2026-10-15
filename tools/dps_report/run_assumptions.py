@@ -13,7 +13,7 @@ A setting with the ice_lance edit runs the preset rotation and one with Ice Lanc
 the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lance themselves). A setting with the
 no_ice_lance edit (Ice Lance at the client's coefficient, 0) runs the preset rotation and the build's rotation that never
 casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the Level 60 APL before the presets took Ice Lance up), and keeps
-the better.
+the better. A setting with the raid_hits=N edit sets the shaman's raid damage hits a minute (raidDamageHitsPerMinute) to N.
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
 """
 import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threading
@@ -55,6 +55,9 @@ def request(bid, combo, rot):
             pl.setdefault('mage', {}).setdefault('options', {})['staffImbue'] = STAFF_IMBUE[bid]
         if st['edit'] == 'no_staff_imbue':  # the presets carry the scroll; this setting takes it off
             pl.get('mage', {}).get('options', {}).pop('staffImbue', None)
+        if (st['edit'] or '').startswith('raid_hits='):  # the shaman's raid damage hits a minute
+            spec = 'elementalShaman' if 'elementalShaman' in pl else 'enhancementShaman'
+            pl[spec].setdefault('options', {})['raidDamageHitsPerMinute'] = float(st['edit'].split('=')[1])
         if st['edit'] == 'no_ice_lance' and rot == 'noil':
             pl['rotation'] = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'asm_apls', bid + '.no_ice_lance.apl.json')))
         if st['edit'] == 'ice_lance' and rot == 'il':

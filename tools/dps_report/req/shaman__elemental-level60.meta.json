@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 690.6,
-    "source": "Shaman PR (standards 23 user ruling: every shaman drops its own totems, 2026-10-15)"
+    "dps": 694.0,
+    "source": "Shaman PR (Lightning Shield on raid damage hits: 2 a minute melee, 1 ranged, 2026-10-15)"
   },
   "verify": {
-    "dps": 690.55,
+    "dps": 693.99,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
@@ -37,13 +37,14 @@
     "Tidal Focus"
   ],
   "rotation": [
-    "Pre-pull: Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
+    "Pre-pull: Lightning Shield at -5.4 s, Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
     "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
     "Mana Spring Totem when it is down",
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
+    "Lightning Shield when it is down (orbs fire at the target on raid damage hits, 1 a minute)",
     "Lightning Bolt rank 8 below 20% mana",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
@@ -69,7 +70,8 @@
     "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
     "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking",
     "Elemental Focus proc rate on low ranks reduced on 7 Oct; exact amount open",
-    "Searing Totem reach from a ranged shaman is not modelled"
+    "Searing Totem reach from a ranged shaman is not modelled",
+    "Raid damage hits on the shaman (1 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
   ],
   "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself)."
 }

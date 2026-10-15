@@ -336,6 +336,9 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', Optim
 // it. On the Water Shield build it is 912.0 / 899.7 / 883.4 at 120 / 180 / 300 sec, where
 // Searing Totem is 888.8 / 879.5 / 877.0. On the Level 60 build Searing Totem is still
 // ahead (938.4 against 927.1 at 180 sec).
+//
+// Since 2026-10-15 it keeps Lightning Shield up in place of Water Shield, like Optimized (see
+// RaidDamageHitsLevel60).
 export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAPLJSON, {
 	tooltip: 'Optimized with Magma Totem in place of Searing Totem, for the Water Shield talents.',
 	group: 'Level 60',
@@ -548,17 +551,37 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
+// The raid damage that hits the shaman in a level 60 raid fight: 2 direct hits a minute, at
+// random times. Nothing we can read measures it (Warcraft Logs was out of reach, 2026-10-15), so
+// it comes from Season of Discovery boss timers in the Deadly Boss Mods source. Most bosses
+// land one or two hits on the melee every 20 to 40 sec (Ragnaros's Wrath every 26 sec,
+// Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths), Patchwerk and
+// Loatheb none, and Firemaw, Vaelastrasz and Huhuran's last 30% about 10. A ranged shaman takes
+// about half as many (Elemental uses 1). The DPS report's assumptions run 0 and 10 too.
+//
+// Each hit fires a Lightning Shield orb, so every Level 60 rotation keeps the shield up: before
+// the pull at -1.5 sec, and in the fight when nothing else is ready (+2.8 at 6 a minute over
+// putting it first). At 180 sec Level 60 goes from 826.0 to 833.8, Imp GW from 822.0 to 829.5
+// (about +26 at 10 a minute), and with no hits it costs nothing measurable. The Water Shield and
+// Mana Tide builds cast Lightning Shield too: Water Shield's 2% mana a globe was worth less than
+// Lightning Shield's orbs at every rate we tried (0, 2, 6 and 10 a minute), whether we kept Water
+// Shield for low mana or not. Water Shield goes from 776.1 to 785.3, Mana Tide from 753.4 to
+// 763.3 (+32 and +34 at 10 a minute).
+export const RaidDamageHitsLevel60 = 2;
+
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shamanImbue: WeaponImbue.WindfuryWeapon,
 	syncType: ShamanSyncType.Auto,
+	raidDamageHitsPerMinute: RaidDamageHitsLevel60,
 });
 
 // The class options every preset build sets. They always set the starting totems, so loading a
-// build puts its own in place and changing them marks the build as modified.
+// build puts its own in place and changing them marks the build as modified. The same goes for
+// the raid hits: the Level 30 builds take none, because their enemy hits the shaman itself.
 //
 // The Level 30 PvP builds start the fight with no totems and put them down in the rotation's
 // prepull actions.
-const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create() };
+const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create(), raidDamageHitsPerMinute: 0 };
 
 // The raid and dungeon builds start the fight with their totems already down, each at the
 // default seconds before the pull, one totem GCD apart (see starting_totems.tsx). They cost no
@@ -584,10 +607,10 @@ const startingTotemsLevel60 = StartingTotems.create({
 	water: WaterTotem.ManaSpringTotem,
 	waterSecondsBeforePull: 2,
 });
-const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
+const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60, raidDamageHitsPerMinute: RaidDamageHitsLevel60 };
 // Magma Totem lasts only 20 sec, so it goes down 1 sec before the pull.
 const PresetBuildOptionsLevel60Magma = {
-	...PresetBuildOptions,
+	...PresetBuildOptionsLevel60,
 	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, fire: FireTotem.MagmaTotem, fireSecondsBeforePull: 1 }),
 };
 // Windfury Totem comes at level 32.

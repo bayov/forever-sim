@@ -37,6 +37,9 @@ func NewElementalShaman(character *core.Character, options *proto.Player) *Eleme
 		AutoSwingMelee: true,
 	})
 
+	ele.RaidDamageHitsPerMinute = eleOptions.GetOptions().GetRaidDamageHitsPerMinute()
+	ele.RaidDamageHitsPerMinuteVariation = eleOptions.GetOptions().GetRaidDamageHitsPerMinuteVariation()
+
 	ele.ShamanImbue = eleOptions.GetOptions().GetShamanImbue()
 	ele.ApplyShamanImbue()
 
