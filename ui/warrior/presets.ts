@@ -126,8 +126,8 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // Rage, no Berserker Rage. The Mighty Rage Potion goes at the pull and the second is held for the
 // last 20 sec when that costs no use, and the on-use trinket goes on cooldown (+20.7 at 120 sec,
 // where the hold alone skipped the pull potion; the rotation auditor's pass 14). The Goblin Land Mine waits for the moment after
-// a main hand swing, since its 1 sec cast restarts both swing timers, and the Sapper goes on
-// cooldown ahead of it. Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
+// a main hand swing, since a swing that comes due during its 1 sec cast waits for the cast to end,
+// and the Sapper goes on cooldown ahead of it. Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
 // no use. It is 1031.1 (Human) where the old DPS (With Reck) rotation is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
