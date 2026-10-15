@@ -44,14 +44,6 @@
 			display: none;
 		}
 	}
-
-	&.idle {
-		cursor: none;
-
-		.replay-controls {
-			opacity: 0;
-		}
-	}
 }
 
 .replay-root:focus-visible .replay-player {
@@ -830,7 +822,6 @@
 	bottom: 0;
 	padding: 24px 12px 4px;
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.45) 55%, transparent);
-	transition: opacity 0.25s;
 }
 
 .replay-progress {

@@ -50,8 +50,6 @@ const HISTORY_SLOT_PX = 50;
 const PRESS_TIME = 0.25;
 // A buff's countdown turns orange in its last seconds, like the Bayov pack's expiring alert.
 const EXPIRING = 3;
-// The controls fade out after the mouse rests this long while we play.
-const IDLE_MS = 2500;
 
 const powerClass: Partial<Record<ResourceType, string>> = {
 	[ResourceType.ResourceTypeMana]: 'mana',
@@ -246,7 +244,6 @@ export class Replay extends ResultComponent {
 	private shown = false;
 	private frameRequest = 0;
 	private lastFrameAt = 0;
-	private idleTimer = 0;
 	private wasPlayingBeforeScrub = false;
 
 	private readonly ui: {
@@ -510,11 +507,9 @@ export class Replay extends ResultComponent {
 			this.togglePlay(true);
 		});
 		this.ui.stage.addEventListener('dblclick', () => this.toggleFullscreen());
-		this.ui.player.addEventListener('pointermove', () => this.wake());
 		// The keys work while the replay has focus. A click on a button would move the focus to
 		// the button, and then Space would press the button as well as play or pause.
 		this.ui.player.addEventListener('pointerup', () => this.rootElem.focus({ preventScroll: true }));
-		this.ui.player.addEventListener('pointerleave', () => this.ui.player.classList.toggle('idle', this.playing));
 		document.addEventListener('click', () => this.ui.speedMenu.classList.add('hide'));
 
 		this.bindProgress();
@@ -583,14 +578,12 @@ export class Replay extends ResultComponent {
 		this.lastFrameAt = performance.now();
 		this.frameRequest = requestAnimationFrame(now => this.tick(now));
 		this.rootElem.focus({ preventScroll: true });
-		this.wake();
 		this.updateButtons();
 	}
 
 	private pause() {
 		this.playing = false;
 		cancelAnimationFrame(this.frameRequest);
-		this.ui?.player.classList.remove('idle');
 		if (this.ui) this.updateButtons();
 	}
 
@@ -651,14 +644,6 @@ export class Replay extends ResultComponent {
 		}
 	}
 
-	// The controls fade out while we play and the mouse rests, like on a video.
-	private wake() {
-		this.ui.player.classList.remove('idle');
-		window.clearTimeout(this.idleTimer);
-		if (this.playing) {
-			this.idleTimer = window.setTimeout(() => this.ui.player.classList.toggle('idle', this.playing), IDLE_MS);
-		}
-	}
 
 	// The big icon that pops up in the middle and fades, when we play, pause or change speed.
 	private flash(icon: string | null, text = '') {
@@ -724,7 +709,6 @@ export class Replay extends ResultComponent {
 				return;
 		}
 		event.preventDefault();
-		this.wake();
 	}
 
 	private bindProgress() {
