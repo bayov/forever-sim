@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 (sub Holy, Crusader duty)",
   "isDefault": false,
-  "pr": 3,
+  "pr": 33,
   "race": "Undead",
   "talents": "550030032--05215331001330321",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_crusader_duty",
   "published": {
     "dps": 969.0,
-    "source": "standards 23 duty PR"
+    "source": "PR #33"
   },
   "verify": {
     "dps": 968.96,

@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 Shock (Crusader duty)",
   "isDefault": false,
-  "pr": 3,
+  "pr": 33,
   "race": "Undead",
   "talents": "55003003201121251--05225230001",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_shock_crusader_duty",
   "published": {
     "dps": 957.9,
-    "source": "standards 23 duty PR"
+    "source": "PR #33"
   },
   "verify": {
     "dps": 957.94,
