@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "mana_tide",
   "published": {
-    "dps": 754.5,
-    "source": "weapon type and speed pass, 2026-10-15 (standards 22)"
+    "dps": 759.1,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 754.5,
-    "stderr": null,
+    "dps": 759.11,
+    "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "matches PR #21's 180 s measurement"
   },
-  "summary": "Sub-Restoration Enhancement with Water Shield and Mana Tide Totem for the group's mana, on the Magma Totem rotation with Mana Tide at 20% mana. It is 8.7% behind Level 60 at 180 s.",
+  "summary": "Sub-Restoration Enhancement with Water Shield and Mana Tide Totem for the group's mana, on the Magma Totem rotation with Mana Tide at 20% mana. It is 8.5% behind Level 60 at 180 s.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",

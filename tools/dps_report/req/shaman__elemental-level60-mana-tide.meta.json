@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_mana_tide",
   "published": {
-    "dps": 666.9,
-    "source": "PR #7"
+    "dps": 679.9,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 666.92,
+    "dps": 679.91,
     "stderr": 0.18,
     "iters": 20000,
     "ok": true,
-    "note": "+0.02 vs PR #7"
+    "note": "matches PR #21's 180 s measurement"
   },
   "summary": "The Elemental Level 60 build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group's mana. It is 1.0% behind Level 60 at 180 s.",
   "keyTalents": [
@@ -67,7 +67,7 @@
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 37 spell power and 14 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Mana Tide Totem is A/B -1.4 for the shaman itself: a 3 min fight with a potion and rune doesn't need the mana",
     "Water Shield point is inert (nothing hits the caster)",
-    "Lightning Bolt level 31+ ranks look untuned in Forever data: rank 10 ~201 base at 0.714 coefficient; a x1.38 fix would be +5.8% (measured on the earlier set)",
+    "Lightning Bolt X's base damage ×1.12, the raise a beta build gave the top playable rank; the client's 31+ ranks look untuned (rank 10 ~201 base at 0.714 coefficient)",
     "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
     "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking"
   ],

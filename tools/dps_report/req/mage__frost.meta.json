@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frost",
   "published": {
-    "dps": 745.4,
-    "source": "PR #6"
+    "dps": 941.5,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 745.42,
-    "stderr": 0.24,
+    "dps": 941.54,
+    "stderr": 0.56,
     "iters": 20000,
     "ok": true,
-    "note": "+0.02 vs PR #6"
+    "note": "matches PR #21's 180 s measurement"
   },
-  "summary": "Deep Frost Frostbolt build with Fingers of Frost, Shatter and Winter's Chill, plus Arcane Concentration. Its own playstyle, 18% behind Frostfire. The preset is High Order with a Major Spellblasting Potion.",
+  "summary": "Deep Frost Frostbolt build with Fingers of Frost, Shatter and Winter's Chill, plus Arcane Concentration. Its own playstyle, 5% behind Frostfire. The preset is High Order with a Major Spellblasting Potion.",
   "keyTalents": [
     "Arcane Concentration",
     "Improved Frostbolt",
@@ -40,8 +40,9 @@
     "Pre-pull: Frostbolt at -2.5 s",
     "Cooldowns (Demonic Rune, racial) on a free GCD",
     "Evocation below 20% mana with more than 90 s left (almost never fires)",
+    "Ice Lance on every Fingers of Frost charge: the boss counts as Frozen, so 4 times the damage and Shatter crit",
     "Arcane Missiles on a Missile Barrage proc",
-    "Filler: Frostbolt (2.5 s), with Fingers of Frost giving Shatter crit to the next bolts; no Ice Lance"
+    "Filler: Frostbolt (2.5 s)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -53,6 +54,7 @@
     "Greater Mageblood Elixir",
     "Lobster Stew",
     "Wizard Oil",
+    "Scroll of Imbue Greater Frost (staff imbue, on top of the oil)",
     "Cerebral Cortex Compound",
     "Major Mana Potion",
     "Demonic Rune",
@@ -60,12 +62,12 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Ice Lance spell power coefficient 0 (client); SoD's 0.429 would be worth about 165",
-    "Frostbolt X: if beta 70291's +8% low-rank raise reaches rank 10, +2.8%",
+    "Ice Lance's spell power coefficient is Season of Discovery's server value, 0.429; Forever's client has 0, as SoD's did",
+    "Frostbolt X's base damage ×1.04, half of beta 70291's +8% raise of the low ranks; the client has ×1.00",
     "Frostbolt XI (AQ book) left out: +50 with it",
     "Arcane Focus 5 and Incineration 3 do nothing for this rotation",
     "Raid bosses assumed not freezable; Fingers of Frost charge timing open",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
   ],
-  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring)."
+  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Frost) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge."
 }

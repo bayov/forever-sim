@@ -158,6 +158,36 @@
                   }
                 },
                 {
+                  "notes": "Ice Lance while Fingers of Frost makes the boss count as Frozen (4 times the damage, Shatter's crit).",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400670
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400670
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240047
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast.",
                   "action": {
                     "condition": {
@@ -204,7 +234,8 @@
             "distanceFromTarget": 25,
             "mage": {
               "options": {
-                "armor": "MageArmor"
+                "armor": "MageArmor",
+                "staffImbue": "ImbueGreaterFrost"
               }
             }
           }

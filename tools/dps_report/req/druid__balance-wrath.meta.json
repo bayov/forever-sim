@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath",
   "published": {
-    "dps": 776.5,
-    "source": "PR #8"
+    "dps": 782.7,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 776.36,
+    "dps": 782.72,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "-0.14 vs PR #8"
+    "note": "matches PR #21's 180 s measurement"
   },
-  "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 6.1% behind the default Balance build.",
+  "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 5.5% behind the default Balance build.",
   "keyTalents": [
     "Improved Wrath",
     "Moonkin Form",
@@ -59,8 +59,8 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "6.1% behind the weaving Balance build (776.5 vs 827.0 at 180 s)",
-    "Wrath rank 8 may be about 17% low on the client: holding it to the level 30 ratio would give +1.6% (760 -> 772 on the gear before the 5a and 1b rounds)",
+    "5.5% behind the weaving Balance build (782.7 vs 828.5 at 180 s)",
+    "Wrath VIII's base damage ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned); the client has ×1.00",
     "Natural Power gloves are +8.1 over Arcane Power for this build",
     "Heart of the Wild 3 over Moonglow 3 is +2.6 in its own search"
   ],

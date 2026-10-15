@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 827.0,
-    "source": "PR #8"
+    "dps": 828.5,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 826.8,
+    "dps": 828.47,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "-0.20 vs PR #8"
+    "note": "matches PR #21's 180 s measurement"
   },
   "summary": "41/0/10 moonkin that keeps Insect Swarm and Moonfire up and weaves Wrath and Starfire to spend every Eclipse charge. It is the talent search's best on the synthetic Phase 1 gear and the default Balance Level 60 preset.",
   "keyTalents": [
@@ -64,7 +64,7 @@
     "No Ahn'Qiraj ranks: Starfire rank 6 costs 13.3 DPS (820.4 -> 807.1 at 180 s, first gear)",
     "5-piece Grovekeeper Eclipse instead of 2-piece would add 12.6 and Swarming Idol is worth 3.3 (measured before the 5a and 1b rounds)",
     "At 300 s mana runs out and the plain weave without the Clearcasting Starfire is 2 ahead",
-    "Wrath rank 8 may be about 17% low on the client (only ranks 1-5 retuned): +0.4% if held to the level 30 ratio",
+    "Wrath VIII's base damage ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned); the client has ×1.00",
     "Omen of Clarity's proc chance on spells and Eclipse charges on Wrath landing are unverified",
     "Only one +2% crit elixir by standard; a second (Owl) would add 15.1"
   ],

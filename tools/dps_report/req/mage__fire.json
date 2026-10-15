@@ -557,7 +557,8 @@
             "distanceFromTarget": 25,
             "mage": {
               "options": {
-                "armor": "MageArmor"
+                "armor": "MageArmor",
+                "staffImbue": "ImbueGreaterFlame"
               }
             }
           }

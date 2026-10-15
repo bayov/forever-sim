@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 832.7,
-    "source": "PR #1"
+    "dps": 833.1,
+    "source": "master after raid buffs took Forever's ranks (shaman audit 10.2), 2026-10-15"
   },
   "verify": {
-    "dps": 832.7,
+    "dps": 833.1,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "+0.00 vs PR #1"
+    "note": "+0.40 vs PR #1 (raid buff ranks)"
   },
   "summary": "The same Shadow points with 20 Holy points of healing utility instead of Discipline, giving up Twin Disciplines and Mental Strength. Shipped as a second Shadow preset for raids that want the Holy utility, 2.5% behind Level 60 at 180 s.",
   "keyTalents": [

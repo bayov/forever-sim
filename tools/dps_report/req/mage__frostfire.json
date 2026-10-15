@@ -195,7 +195,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "0.1"
+                                  "val": "0.3"
                                 }
                               }
                             }
@@ -208,7 +208,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "30s"
+                                  "val": "60s"
                                 }
                               }
                             }
@@ -442,6 +442,36 @@
                   }
                 },
                 {
+                  "notes": "Ice Lance while Fingers of Frost is up.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400670
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400670
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240047
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast.",
                   "action": {
                     "condition": {
@@ -618,7 +648,8 @@
             "distanceFromTarget": 25,
             "mage": {
               "options": {
-                "armor": "MageArmor"
+                "armor": "MageArmor",
+                "staffImbue": "ImbueGreaterFlame"
               }
             }
           }

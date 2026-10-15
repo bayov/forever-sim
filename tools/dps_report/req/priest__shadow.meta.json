@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 854.4,
-    "source": "PR #1"
+    "dps": 854.8,
+    "source": "master after raid buffs took Forever's ranks (shaman audit 10.2), 2026-10-15"
   },
   "verify": {
-    "dps": 854.38,
+    "dps": 854.78,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "-0.02 vs PR #1"
+    "note": "+0.38 vs PR #1 (raid buff ranks)"
   },
   "summary": "Deep Shadow (Shadowform, Shadow Weaving, Darkness, Improved Mind Flay) with 20 Discipline points for Twin Disciplines, Mental Strength and Inner Focus. The talent search's best priest build and the spec's default Level 60 preset.",
   "keyTalents": [

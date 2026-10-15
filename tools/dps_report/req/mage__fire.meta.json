@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 873.3,
-    "source": "PR #6"
+    "dps": 884.5,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 873.25,
-    "stderr": 0.37,
+    "dps": 884.46,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "-0.05 vs PR #6"
+    "note": "matches PR #21's 180 s measurement"
   },
-  "summary": "Deep Fire to Combustion with Arcane Concentration and Missile Barrage from Arcane. 3% behind Frostfire.",
+  "summary": "Deep Fire to Combustion with Arcane Concentration and Missile Barrage from Arcane. 11% behind Frostfire.",
   "keyTalents": [
     "Missile Barrage",
     "Wake of Fire",
@@ -57,6 +57,7 @@
     "Greater Mageblood Elixir",
     "Lobster Stew",
     "Wizard Oil",
+    "Scroll of Imbue Greater Flame (staff imbue, on top of the oil)",
     "Cerebral Cortex Compound",
     "Major Mana Potion",
     "Demonic Rune",
@@ -70,5 +71,5 @@
     "Missile Barrage roll timing and cost interaction with Arcane Power open",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
   ],
-  "notes": "Request written by mksettings -spec mage_fire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring)."
+  "notes": "Request written by mksettings -spec mage_fire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does."
 }

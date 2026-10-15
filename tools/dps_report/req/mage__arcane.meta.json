@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arcane",
   "apl": "level60_arcane",
   "published": {
-    "dps": 829.7,
-    "source": "PR #6"
+    "dps": 836.4,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 829.66,
-    "stderr": 0.26,
+    "dps": 836.43,
+    "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "-0.04 vs PR #6"
+    "note": "matches PR #21's 180 s measurement"
   },
-  "summary": "Arcane to Arcane Power with Arcane Blast and Missile Barrage, on the Arcane gear variant (Gloves - Arcane Power). 8% behind Frostfire.",
+  "summary": "Arcane to Arcane Power with Arcane Blast and Missile Barrage, on the Arcane gear variant (Gloves - Arcane Power). 15% behind Frostfire.",
   "keyTalents": [
     "Arcane Blast",
     "Missile Barrage",
@@ -55,6 +55,7 @@
     "Greater Mageblood Elixir",
     "Lobster Stew",
     "Wizard Oil",
+    "Scroll of Imbue Precision (staff imbue, on top of the oil)",
     "Cerebral Cortex Compound",
     "Major Mana Potion",
     "Demonic Rune",
@@ -62,11 +63,11 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Arcane Blast's bonus on Arcane Missiles: 10% per tooltip; client 400573 excludes Missiles and 400586 gives 15%",
+    "Arcane Blast's bonus on Arcane Missiles: the tooltip's 10% a stack; client buff 400573 leaves Missiles out and 400586 gives 15%",
     "Arcane Concentration on missile ticks with a 1 s internal cooldown (assumed)",
     "Arcane Mind crit semantics assumed",
     "The 15 Frost points do nothing for this rotation",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
   ],
-  "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring)."
+  "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Precision) as a mage option, as the preset does."
 }

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 673.9,
-    "source": "PR #7"
+    "dps": 687.1,
+    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
   },
   "verify": {
-    "dps": 673.95,
-    "stderr": 0.18,
+    "dps": 687.07,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "+0.05 vs PR #7"
+    "note": "matches PR #21's 180 s measurement"
   },
   "summary": "Deep Elemental caster on the synthetic Phase 1 staff set with Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus, from talent searches over seven seeds. It is the Elemental spec's default Level 60 preset.",
   "keyTalents": [
@@ -64,7 +64,7 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 37 spell power and 14 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Lightning Bolt level 31+ ranks look untuned in Forever data: rank 10 ~201 base at 0.714 coefficient; a x1.38 fix would be +5.8% (measured on the earlier set)",
+    "Lightning Bolt X's base damage ×1.12, the raise a beta build gave the top playable rank; the client's 31+ ranks look untuned (rank 10 ~201 base at 0.714 coefficient)",
     "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
     "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking",
     "Elemental Focus proc rate on low ranks reduced on 7 Oct; exact amount open",
