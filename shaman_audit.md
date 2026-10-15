@@ -204,7 +204,7 @@ Tree rules
 - [ ] 9.6 Enchants: Revelation, Crusader, Impact, stat enchants, Forever enchants (waits for release gear data, the user 2026-10-14)
 - [x] 9.7 Engineering: Goblin Sapper Charge, Goblin Land Mine, the shared explosive cooldown
 - [x] 9.8 Elixirs, flasks, food, scrolls and juju: what stacks with what, the Forever-only elixirs
-- [ ] 9.9 Weapon oils and stones beside the shaman imbue
+- [x] 9.9 Weapon oils and stones beside the shaman imbue
 
 ## 10. Raid buffs and debuffs (Forever values)
 
@@ -1770,6 +1770,16 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - 1.7's open question: under Forever the five 2% crit elixirs and Grilled Squid's 1% add melee and spell crit both (`consumes.go` foreverElixirCrit and applyForeverFood), which fits Forever's single crit chance. Leader of the Pack and Moonkin Aura are item 10.2.
 - Stacking: the client doesn't hold the rules. The sim stacks every elixir slot like Classic, and one slot holds a scroll and the elixirs of the same stat.
 - No sim change. notes.md Need to Verify (Beta) lists the stacking pairs to try at level 30: the four Level 30 elixirs together (battle and guardian limits), scrolls with elixirs of the same stat, two elixirs of one stat, Dragonbreath Chili with Well Fed, two Well Fed foods and the Forever elixirs side by side.
+- No new test.
+
+### 9.9 Weapon oils and stones beside the shaman imbue
+
+- The user OK'd it (2026-10-15): "sg".
+- Settled in 7.6: the shaman imbue stacks with an oil or a stone. The imbues use enchant effect 360 and the oils and stones 54 in client 70338, the beta showed both on one weapon, and `imbue_rules_test.go` checks it.
+- Client 70338 matches the sim: Lesser Wizard Oil 25110 (16), Wizard Oil 25111 (24) and Brilliant Wizard Oil 25113 (36 and 1% spell crit, aura 57) add damage (aura 13) and the same healing (aura 135). Elemental Sharpening Stone 22755 is 2% on aura 52, the weapon crit aura, not the all crit aura 290 of the Forever elixirs, so it stays melee crit only. Shadow Oil's enchant 25 procs Shadow Bolt 350026 on 15% of hits.
+- Shadow Oil's damage (tooltip 63 to 71 against the server formula's 52 to 61) is the other orchestration's `oil_proc_damage` assumption, with a beta follow-up.
+- New: the sim gives Shadow Oil a 10 sec cooldown shared by both hands (`consumes.go` applyWeaponImbueConsumes). It came from the upstream SoD sim (2024-02) with no source. The client has only the 15% chance, and Frost Oil in the sim has no cooldown. Without it the Level 60 Enhancement request goes from 813.9 to 832.5 at 180 sec (20,000 iterations), with Shadow Oil from 22.1 to 41.7 DPS. The Level 30 presets and the Retribution builds use Shadow Oil too. No beta log has a Shadow Oil proc.
+- No sim change. notes.md Need to Verify (Beta) asks for about 40 Shadow Oil procs to tell the cooldown apart, and `orchestration/followups.md` has it for the other orchestration.
 - No new test.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
