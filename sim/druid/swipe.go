@@ -60,12 +60,14 @@ func (druid *Druid) registerSwipeBearSpell() {
 		ThreatMultiplier: SwipeThreatMultiplier,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for idx := range results {
+			// Only living targets, each one once.
+			hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+			for idx := range hits {
 				results[idx] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 				target = sim.Environment.NextTargetUnit(target)
 			}
 
-			for _, result := range results {
+			for _, result := range hits {
 				spell.DealDamage(sim, result)
 			}
 		},

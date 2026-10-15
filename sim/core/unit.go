@@ -38,6 +38,10 @@ type Unit struct {
 	//  For Pets, this is the same as the owner's index.
 	Index int32
 
+	// A target that died in a health fight (target_death.go). It takes no more damage and
+	// isn't anyone's target. Reset every iteration.
+	dead bool
+
 	// Unique index of this unit among all units in the environment.
 	// This is used as the index for attack tables.
 	UnitIndex int32
@@ -176,7 +180,7 @@ func (unit *Unit) GetOpponents() []*Unit {
 	if unit.Type == EnemyUnit {
 		return unit.Env.Raid.AllUnits
 	} else {
-		return unit.Env.Encounter.TargetUnits
+		return unit.Env.Encounter.ActiveTargetUnits
 	}
 }
 
@@ -512,6 +516,7 @@ func (unit *Unit) finalize() {
 
 func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.enabled = true
+	unit.dead = false
 	unit.resetCDs(sim)
 	unit.Hardcast.Expires = startingCDTime
 	unit.ChanneledDot = nil

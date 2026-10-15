@@ -58,7 +58,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					damage := sim.Roll(9, 13)
 					spell.CalcAndDealDamage(sim, aoeTarget, damage, spell.OutcomeMagicHitAndCrit)
 				}

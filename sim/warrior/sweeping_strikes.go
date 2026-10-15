@@ -11,8 +11,6 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		return
 	}
 
-	numTargets := min(2, warrior.Env.GetNumTargets())
-
 	// Procs from auto attacks and most abilities https://www.wowhead.com/classic/spell=12723/sweeping-strikes
 	var curDmg float64
 	hitSchoolDamagWithValue := warrior.RegisterSpell(AnyStance, core.SpellConfig{
@@ -71,7 +69,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 				spellToUse = hitSchoolDamagWithValue
 			}
 
-			if numTargets > 1 {
+			if sim.Encounter.AoETargetCount(0) > 1 {
 				target := warrior.Env.NextTargetUnit(result.Target)
 				spellToUse.Cast(sim, target)
 				spellToUse.SpellMetrics[target.UnitIndex].Casts--
@@ -105,7 +103,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		Spell: SweepingStrikes.Spell,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return sim.GetNumTargets() >= 2
+			return sim.Encounter.AoETargetCount(0) >= 2
 		},
 	})
 }

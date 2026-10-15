@@ -18,8 +18,6 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 	manaCost := [4]float64{0, 275, 395, 520}[rank]
 	level := [4]int{0, 34, 44, 54}[rank]
 
-	numHits := hunter.Env.GetNumTargets()
-
 	return core.SpellConfig{
 		SpellCode:     SpellCode_HunterExplosiveTrap,
 		ActionID:      core.ActionID{SpellID: spellId},
@@ -61,7 +59,7 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 				dot.Snapshot(target, dotDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					// Explosive Trap DoT only does damage if the target does not have an immolation trap ticking on them
 					if !aoeTarget.HasActiveAuraWithTag("ImmolationTrap") {
 						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
@@ -76,15 +74,13 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 			}
 
 			spell.WaitTravelTime(sim, func(s *core.Simulation) {
-				curTarget := target
 				// Traps gain no benefit from hit bonuses except for the Trap Mastery talent, since this is a unique interaction this is my workaround
 				spellHit := spell.Unit.GetStat(stats.SpellHit) + target.PseudoStats.BonusSpellHitRatingTaken
 				spell.Unit.AddStatDynamic(sim, stats.SpellHit, spellHit*-1)
-				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					baseDamage := sim.Roll(minDamage, maxDamage)
 					baseDamage *= sim.Encounter.AOECapMultiplier()
-					spell.CalcAndDealDamage(sim, curTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
-					curTarget = sim.Environment.NextTargetUnit(curTarget)
+					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 				}
 				spell.Unit.AddStatDynamic(sim, stats.SpellHit, spellHit)
 				spell.AOEDot().ApplyOrReset(sim)

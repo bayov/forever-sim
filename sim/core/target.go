@@ -13,6 +13,10 @@ type Encounter struct {
 	DurationVariation time.Duration
 	Targets           []*Target
 	TargetUnits       []*Unit
+	// The targets still alive, in TargetUnits' order. In a health fight a target dies when
+	// its health runs out (target_death.go). In a timed fight none do, and this is always
+	// TargetUnits.
+	ActiveTargetUnits []*Unit
 
 	ExecuteProportion_20 float64
 	ExecuteProportion_25 float64
@@ -24,9 +28,6 @@ type Encounter struct {
 	DamageTaken float64
 	// In health fight: set to true until we get something to base on
 	DurationIsEstimate bool
-
-	// Value to multiply by, for damage spells which are subject to the aoe cap.
-	aoeCapMultiplier float64
 
 	// PvP mode, and the share of the fight out of melee range (in PvP or not), see pvp.go.
 	PvP              bool
@@ -70,22 +71,22 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		encounter.TargetUnits = append(encounter.TargetUnits, &target.Unit)
 	}
 
+	encounter.ActiveTargetUnits = make([]*Unit, 0, len(encounter.TargetUnits))
+	encounter.ActiveTargetUnits = append(encounter.ActiveTargetUnits, encounter.TargetUnits...)
+
 	if encounter.EndFightAtHealth > 0 {
 		// Until we pre-sim set duration to 10m
 		encounter.Duration = time.Minute * 10
 		encounter.DurationIsEstimate = true
 	}
 
-	encounter.updateAOECapMultiplier()
-
 	return encounter
 }
 
+// AOECapMultiplier is the damage multiplier of an ability that splits its damage past 10
+// targets (aoe.go), for the targets alive now.
 func (encounter *Encounter) AOECapMultiplier() float64 {
-	return encounter.aoeCapMultiplier
-}
-func (encounter *Encounter) updateAOECapMultiplier() {
-	encounter.aoeCapMultiplier = min(10/float64(len(encounter.Targets)), 1)
+	return AoESoftCapMultiplier(int32(len(encounter.ActiveTargetUnits)), 10, AoESoftCapSplit)
 }
 
 func (encounter *Encounter) doneIteration(sim *Simulation) {

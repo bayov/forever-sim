@@ -408,6 +408,13 @@ func (spell *Spell) CalcAndDealOutcome(sim *Simulation, target *Unit, outcomeApp
 
 // Applies the fully computed spell result to the sim.
 func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result *SpellResult) {
+	// A target that died in a health fight takes nothing more, so an AoE or a bolt still in
+	// flight doesn't hit the corpse.
+	if result.Target.dead {
+		spell.DisposeResult(result)
+		return
+	}
+
 	result.Damage = sim.roundDamage(result.Damage)
 	isPartialResist := result.DidResist()
 
@@ -448,8 +455,16 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 
 	// Mark total damage done in raid so far for health based fights.
 	// Don't include damage done by EnemyUnits to Players
-	if result.Target.Type == EnemyUnit {
-		sim.Encounter.DamageTaken += result.Damage
+	target := result.Target
+	if target.Type == EnemyUnit {
+		if target.HasHealthBar() {
+			// A target with its own health in a health fight: overkill doesn't count.
+			taken := min(result.Damage, target.CurrentHealth())
+			target.RemoveHealth(sim, taken)
+			sim.Encounter.DamageTaken += taken
+		} else {
+			sim.Encounter.DamageTaken += result.Damage
+		}
 	}
 
 	if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
@@ -471,6 +486,11 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 	}
 
 	spell.DisposeResult(result)
+
+	// The killing blow's procs have run, so the target dies after them.
+	if target.Type == EnemyUnit && target.HasHealthBar() && target.CurrentHealth() <= 0 {
+		sim.Encounter.killTarget(sim, target)
+	}
 }
 func (spell *Spell) DealDamage(sim *Simulation, result *SpellResult) {
 	spell.dealDamageInternal(sim, false, result)

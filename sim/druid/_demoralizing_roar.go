@@ -31,7 +31,7 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 		FlatThreatBonus:  62 * 2,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
+			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 				result := spell.CalcAndDealOutcome(sim, aoeTarget, spell.OutcomeMagicHit)
 				if result.Landed() {
 					druid.DemoralizingRoarAuras.Get(aoeTarget).Activate(sim)

@@ -61,7 +61,7 @@ func (mage *Mage) newArcaneExplosionSpellConfig(rank int) core.SpellConfig {
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
+			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 				damage := sim.Roll(baseDamageLow, baseDamageHigh)
 				spell.CalcAndDealDamage(sim, aoeTarget, damage, spell.OutcomeMagicCrit)
 			}

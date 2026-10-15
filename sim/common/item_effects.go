@@ -448,7 +448,7 @@ func init() {
 			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					mightOfShahramAuras.Get(aoeTarget).Activate(sim)
 				}
 			},
@@ -565,7 +565,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					spell.CalcAndDealDamage(sim, aoeTarget, 90, spell.OutcomeMagicCrit)
 				}
 			},
@@ -743,7 +743,7 @@ func init() {
 			Duration:  time.Second * 10,
 			MaxStacks: 3,
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
-				for _, target := range sim.Encounter.TargetUnits {
+				for _, target := range sim.Encounter.ActiveTargetUnits {
 					target.AddStatDynamic(sim, stats.Armor, 700*float64(oldStacks))
 					target.AddStatDynamic(sim, stats.Armor, -700*float64(newStacks))
 				}
@@ -1120,7 +1120,7 @@ func init() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				shieldAura.Activate(sim)
 
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(130, 170), spell.OutcomeMagicHit)
 				}
 			},
@@ -1698,7 +1698,6 @@ func init() {
 	// Chance on hit: Blasts up to 3 targets for 105 to 145 Nature damage.
 	// Estimated based on data from WoW Armaments Discord
 	itemhelpers.CreateWeaponProcSpell(MasterworkStormhammer, "Masterwork Stormhammer", 0.5, func(character *core.Character) *core.Spell {
-		maxHits := int(min(3, character.Env.GetNumTargets()))
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 463946},
 			SpellSchool:      core.SpellSchoolNature,
@@ -1707,7 +1706,7 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for numHits := 0; numHits < maxHits; numHits++ {
+				for numHits := int32(0); numHits < sim.Encounter.AoETargetCount(3); numHits++ {
 					spell.CalcAndDealDamage(sim, target, sim.Roll(105, 145), spell.OutcomeMagicHitAndCrit)
 					target = character.Env.NextTargetUnit(target)
 				}
@@ -1879,7 +1878,7 @@ func init() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				damage := 5.0 + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target))
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					spell.CalcAndDealDamage(sim, aoeTarget, damage, spell.OutcomeMeleeSpecialHitAndCrit)
 				}
 			},
@@ -2021,7 +2020,7 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					result := spell.CalcAndDealOutcome(sim, aoeTarget, spell.OutcomeMagicHit)
 					if result.Landed() {
 						spell.Dot(aoeTarget).Apply(sim)
@@ -2348,11 +2347,12 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for idx := range results {
+				hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+				for idx := range hits {
 					results[idx] = spell.CalcDamage(sim, target, 7, spell.OutcomeMagicHitAndCrit)
 					target = character.Env.NextTargetUnit(target)
 				}
-				for _, result := range results {
+				for _, result := range hits {
 					spell.DealDamage(sim, result)
 					if result.Landed() {
 						debuffAuras.Get(result.Target).Activate(sim)
@@ -2461,11 +2461,12 @@ func init() {
 			FlatThreatBonus:  126,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for idx := range results {
+				hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+				for idx := range hits {
 					results[idx] = spell.CalcDamage(sim, target, 0, spell.OutcomeMagicHit)
 					target = sim.Environment.NextTargetUnit(target)
 				}
-				for _, result := range results {
+				for _, result := range hits {
 					if result.Landed() {
 						debuffAuras[result.Target.Index].Activate(sim)
 					}
@@ -3456,7 +3457,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					spell.CalcAndDealDamage(sim, aoeTarget, 25, spell.OutcomeMagicHitAndCrit)
 				}
 			},
@@ -3522,7 +3523,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(75, 125), spell.OutcomeMagicHit)
 				}
 			},

@@ -76,7 +76,9 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		primaryTarget := target
 		origMult := spell.DamageMultiplier
-		for hitIndex := range results {
+		// It jumps only to living mobs, never back to one it already hit.
+		hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+		for hitIndex := range hits {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
 			// Each target carries its own Stormstrike mark, so a bounce can spend one too.
 			stormstrike := shaman.spendStormstrike(sim, target)
@@ -87,7 +89,7 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 			spell.DamageMultiplier *= shaman.ChainLightningBounceCoefficient
 		}
 
-		for _, result := range results {
+		for _, result := range hits {
 			spell.DealDamage(sim, result)
 		}
 

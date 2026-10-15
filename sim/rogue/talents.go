@@ -374,7 +374,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			rogue.MultiplyMeleeSpeed(sim, 1/1.2)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if sim.GetNumTargets() < 2 {
+			if sim.Encounter.AoETargetCount(0) < 2 {
 				return
 			}
 

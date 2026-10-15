@@ -62,7 +62,9 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			curTarget := target
-			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+			// Only living targets, each one once.
+			hits := sim.Encounter.AoETargetCount(numHits)
+			for hitIndex := int32(0); hitIndex < hits; hitIndex++ {
 				baseDamage := hunter.AutoAttacks.Ranged().CalculateNormalizedWeaponDamage(sim, spell.RangedAttackPower(curTarget, false)) +
 					hunter.NormalizedAmmoDamageBonus
 
@@ -72,7 +74,7 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 			}
 
 			spell.WaitTravelTime(sim, func(s *core.Simulation) {
-				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				for hitIndex := int32(0); hitIndex < hits; hitIndex++ {
 					spell.DealDamage(sim, results[hitIndex])
 				}
 			})

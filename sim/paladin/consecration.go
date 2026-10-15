@@ -88,7 +88,7 @@ func (paladin *Paladin) registerConsecration() {
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 					// Consecration can miss, showing up as either a resist in logs or a
 					// silent failure (missing damage tick).
-					for _, aoeTarget := range sim.Encounter.TargetUnits {
+					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeMagicHitAndTick)
 					}
 				},
