@@ -1,7 +1,9 @@
 package core
 
 import (
+	"fmt"
 	"math"
+	"strings"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -555,6 +557,35 @@ func (unit *Unit) startPull(sim *Simulation) {
 
 	if unit.Type == PlayerUnit {
 		unit.SetGCDTimer(sim, max(0, unit.GCD.ReadyAt()))
+	}
+
+	if sim.Log != nil {
+		unit.logMaxResources(sim)
+	}
+}
+
+// logMaxResources writes the size of each of the unit's bars at the pull, like
+// `Max resources: {"Health": 4210.000,"Mana": 6055.000}`.
+//
+// The other log lines only say how much a bar changed, and the Replay view of the Events tab
+// needs the size of the bar to draw it. Max health is the only way to know how full the
+// player's health bar is when nothing hits them.
+func (unit *Unit) logMaxResources(sim *Simulation) {
+	var parts []string
+	if unit.HasHealthBar() {
+		parts = append(parts, fmt.Sprintf("\"Health\": %0.3f", unit.MaxHealth()))
+	}
+	if unit.HasManaBar() {
+		parts = append(parts, fmt.Sprintf("\"Mana\": %0.3f", unit.MaxMana()))
+	}
+	if unit.HasEnergyBar() {
+		parts = append(parts, fmt.Sprintf("\"Energy\": %0.3f", unit.MaxEnergy()))
+	}
+	if unit.HasRageBar() {
+		parts = append(parts, fmt.Sprintf("\"Rage\": %0.3f", unit.rageBar.maxRage))
+	}
+	if len(parts) > 0 {
+		unit.Log(sim, "Max resources: {%s}", strings.Join(parts, ","))
 	}
 }
 

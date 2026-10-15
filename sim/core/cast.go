@@ -185,6 +185,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			}
 
 			spell.CD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.CD.Duration)
+			spell.logCooldown(sim, spell.CD.Timer)
 		}
 
 		if config.SharedCD.Timer != nil {
@@ -194,6 +195,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			}
 
 			spell.SharedCD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.SharedCD.Duration)
+			spell.logCooldown(sim, spell.SharedCD.Timer)
 		}
 
 		// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
@@ -314,6 +316,7 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 			}
 
 			spell.CD.Set(sim.CurrentTime + spell.CD.Duration)
+			spell.logCooldown(sim, spell.CD.Timer)
 		}
 
 		if spell.SharedCD.Timer != nil {
@@ -323,6 +326,7 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 			}
 
 			spell.SharedCD.Set(sim.CurrentTime + spell.SharedCD.Duration)
+			spell.logCooldown(sim, spell.SharedCD.Timer)
 		}
 
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
@@ -357,4 +361,24 @@ func (spell *Spell) makeCastFuncAutosOrProcs() CastSuccessFunc {
 
 		return true
 	}
+}
+
+// logCooldown writes when the spell is off cooldown again, like
+// `{SpellID: 17364} on cooldown until 12.500 (timer 4)`, for the Replay view of the Events tab.
+//
+// The timer number is the timer's place among the unit's timers. Spells that share a timer
+// (like Earth Shock and Flame Shock) log the same number, so the replay puts all of them on
+// cooldown when we cast one.
+func (spell *Spell) logCooldown(sim *Simulation, timer *Timer) {
+	if sim.Log == nil || spell.Flags.Matches(SpellFlagNoLogs) || timer.ReadyAt() <= sim.CurrentTime {
+		return
+	}
+	timerIndex := -1
+	for i, unitTimer := range spell.Unit.cdTimers {
+		if unitTimer == timer {
+			timerIndex = i
+			break
+		}
+	}
+	spell.Unit.Log(sim, "%s on cooldown until %0.3f (timer %d)", spell.ActionID, timer.ReadyAt().Seconds(), timerIndex)
 }
