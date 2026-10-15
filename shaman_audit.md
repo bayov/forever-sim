@@ -208,7 +208,7 @@ Tree rules
 
 ## 10. Raid buffs and debuffs (Forever values)
 
-- [ ] 10.1 Blessings: Might, Kings, Wisdom
+- [x] 10.1 Blessings: Might, Kings, Wisdom
 - [ ] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
 - [ ] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
 - [ ] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
@@ -1781,6 +1781,14 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - New: the sim gives Shadow Oil a 10 sec cooldown shared by both hands (`consumes.go` applyWeaponImbueConsumes). It came from the upstream SoD sim (2024-02) with no source. The client has only the 15% chance, and Frost Oil in the sim has no cooldown. Without it the Level 60 Enhancement request goes from 813.9 to 832.5 at 180 sec (20,000 iterations), with Shadow Oil from 22.1 to 41.7 DPS. The Level 30 presets and the Retribution builds use Shadow Oil too. No beta log has a Shadow Oil proc.
 - No sim change. notes.md Need to Verify (Beta) asks for about 40 Shadow Oil procs to tell the cooldown apart, and `orchestration/followups.md` has it for the other orchestration.
 - No new test.
+
+### 10.1 Blessings: Might, Kings, Wisdom
+
+- The user OK'd it (2026-10-15): "sg".
+- The sim (`sim/core/buffs.go`): Blessing of Might gives Forever's ranks by level, 14 / 25 / 40 / 61 / 83 / 112 / 133 melee attack power at 4 / 12 / 22 / 32 / 42 / 52 / 60, with no Improved Blessing of Might. Blessing of Kings gives 10% to all five attributes and multiplies with our other percent bonuses. Blessing of Wisdom gives 12 / 18 / 24 / 30 / 36 / 40 mana per 5 sec at 14 / 24 / 34 / 44 / 54 / 60. All three reach a Horde shaman under Forever (Undead paladins). Level 60 takes all three, Level 30 and Level 30 PvP take Kings.
+- Client 70338 matches every rank: Might 19740 to 25291 on aura 99 (melee attack power, 14 to 133), Kings 20217 on aura 137 (10% to every stat), and Wisdom 19742 to 25290 at 12 to 40. Forever moved Wisdom from Classic's regen aura (85) to an energize every 5000 ms (aura 24), which gives the same mana over a fight as smooth MP5. All last 60 min.
+- Kings was checked against the beta sheet in 1.8 and Wisdom's ranks in 2.4.
+- No sim change. `mp5_test.go` TestOrcShamanMP5Buffs now checks Might too: 25 attack power at 20, 40 at 30 (rank 4 needs 32) and 133 at 60, no ranged attack power, and none under Classic. Moving rank 4 to level 30 fails it.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
