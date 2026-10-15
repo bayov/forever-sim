@@ -31,8 +31,12 @@ func (encounter *Encounter) killTarget(sim *Simulation, target *Unit) {
 	target.auraTracker.expireAll(sim)
 
 	for _, unit := range target.Env.Raid.AllUnits {
+		// A heal or buff "at" the mob (a rotation's default target) lands on us, so only a
+		// harmful cast stops.
 		if unit.Hardcast.Target == target && unit.IsCasting(sim) {
-			unit.interruptHardcast(sim)
+			if spell := unit.GetSpell(unit.Hardcast.ActionID); spell == nil || !spell.Flags.Matches(SpellFlagHelpful) {
+				unit.interruptHardcast(sim)
+			}
 		}
 		if unit.CurrentTarget == target {
 			unit.CurrentTarget = target.Env.NextTargetUnit(target)

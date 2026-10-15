@@ -59,9 +59,10 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	// Restoration Talents
-	// TODO: Healing Way
-	// TODO: Ancestral Healing
+	// Improved Healing Wave, Healing Way, Healing Focus and Purification are in the heals
+	// themselves (healing.go).
 	shaman.registerNaturesSwiftnessCD()
+	shaman.applyAncestralHealing()
 
 	shaman.PseudoStats.SpiritRegenRateCasting += []float64{0, .17, .33, .50}[shaman.Talents.Mindfulness]
 
@@ -632,4 +633,60 @@ func (shaman *Shaman) totemicFocusFactor() float64 {
 // "Improved" stands for that shaman's 5/5, and our own points don't touch it.
 func (shaman *Shaman) restorativeTotemsModifier() float64 {
 	return .1 * float64(shaman.Talents.RestorativeTotems)
+}
+
+// improvedHealingWaveReduction is Improved Healing Wave's 0.1 sec off Healing Wave's cast a
+// point (unchanged in Forever, 16182).
+func (shaman *Shaman) improvedHealingWaveReduction() time.Duration {
+	return time.Duration(shaman.Talents.ImprovedHealingWave) * 100 * time.Millisecond
+}
+
+// healingWayMultiplier is Forever's Healing Way: Healing Wave heals 8, 17 or 25% more, always
+// (the 70338 talent curve for 29206). Classic's stacking buff on the target is gone.
+func (shaman *Shaman) healingWayMultiplier() float64 {
+	return 1 + []float64{0, .08, .17, .25}[shaman.Talents.HealingWay]
+}
+
+// purificationMultiplier is Purification's 2% more healing a point on every heal (16178). It
+// multiplies with Healing Way, as the sim does with the shaman's other percent bonuses of
+// the same kind (shaman_audit.md 5.6).
+func (shaman *Shaman) purificationMultiplier() float64 {
+	return 1 + .02*float64(shaman.Talents.Purification)
+}
+
+// healingFocusChance is Healing Focus's chance for a hit not to push back a heal: 23, 47 and
+// 70% for 1 to 3 points in Forever (70338 curve for 16181; Classic had 5 points of 14%).
+func (shaman *Shaman) healingFocusChance() float64 {
+	return []float64{0, .23, .47, .70}[shaman.Talents.HealingFocus]
+}
+
+// applyAncestralHealing: after a crit from one of our heals, its target (us) has 8, 17 or 25%
+// more armor for 15 sec (70338 curve for 16176).
+func (shaman *Shaman) applyAncestralHealing() {
+	if shaman.Talents.AncestralHealing == 0 {
+		return
+	}
+	armorMultiplier := 1 + []float64{0, .08, .17, .25}[shaman.Talents.AncestralHealing]
+
+	buff := shaman.RegisterAura(core.Aura{
+		Label: "Ancestral Fortitude",
+		// One buff spell for every rank in Forever (16177, 8% that the talent's curve scales).
+		ActionID: core.ActionID{SpellID: 16177},
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.ArmorMultiplier *= armorMultiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.ArmorMultiplier /= armorMultiplier
+		},
+	})
+
+	core.MakePermanent(shaman.RegisterAura(core.Aura{
+		Label: "Ancestral Healing",
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() && spell.ProcMask.Matches(core.ProcMaskSpellHealing) && result.Target == &shaman.Unit {
+				buff.Activate(sim)
+			}
+		},
+	}))
 }

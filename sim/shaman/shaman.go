@@ -169,6 +169,7 @@ const (
 	SpellCode_ShamanSearingTotem
 	SpellCode_ShamanStormstrike
 	SpellCode_ShamanWaterShield
+	SpellCode_ShamanRiptide
 )
 
 // Shaman represents a shaman character.
@@ -197,6 +198,7 @@ type Shaman struct {
 	LightningShield        []*core.Spell
 	LightningShieldProcs   []*core.Spell // The damage component of lightning shield is a separate spell
 	MagmaTotem             []*core.Spell
+	Riptide                *core.Spell
 	ManaSpringTotem        []*core.Spell
 	ManaTideTotem          []*core.Spell
 	SearingTotem           []*core.Spell
@@ -287,6 +289,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerStormstrikeSpell()
 	shaman.registerWaterShieldSpell()
 	shaman.registerRaidDamageHits()
+	shaman.registerHealingSpells()
 
 	// Imbues
 	// In the Initialize due to frost brand adding the aura to the enemy

@@ -1869,6 +1869,22 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Simplified: we can hard cast while out of range, as if we stand and cast instead of chasing. The PvP rotation has no hard casts, so it doesn't matter for the preset. Nothing changes the share out of range, so Frost Shock's slow, Earthbind and Ghost Wolf (8.x) can't shorten the kiting. The enemy keeps swinging at us while we're out (set aside in 6.1). The 70% is the user's default, not a measured number.
 - No sim change, no new test, no Need to Verify item.
 
+### 11.5 Self-healing (leveling groundwork 3)
+
+- The user (2026-10-15): add the shaman's heals for the leveling sim (docs/leveling_sim.md), and make sure the healing talents work.
+- Heals (`healing.go`), every value from client 70338 (SpellEffect, SpellLevels, SpellMisc, SpellPower): Healing Wave ranks 1 to 10, Lesser Healing Wave 1 to 6, Chain Heal 1 to 3 and Riptide (the 31 point talent, 408521). A rank heals its base at its learn level plus its growth per level for 5 levels, spread evenly by its variance (Lightning Bolt's client rows read the same way give the sim's Lightning Bolt table to the point). Coefficients 0.429 / 0.571 / 0.714 / 0.857 by cast time, 0.429 for Lesser Healing Wave, 0.714 for Chain Heal, with Forever's downranking (`downrankCoefficient`). Riptide: 480 at 40 plus 3.7 a level to 48 (486 to 534, the tooltip), 0.214, then 89 + 10% of healing power every 3 sec for 15 sec, 245 Mana, 6 sec cooldown, and Chain Heal at a target with it heals 25% more.
+- Every heal lands on us, whatever target the rotation casts it at: we solo, and Chain Heal finds no one to jump to. A mob dying during the cast doesn't stop a heal (only harmful casts stop, `target_death.go`).
+- Talents, each one on the spells its client mask lists:
+  - Improved Healing Wave (16182): 0.1 sec off Healing Wave a point.
+  - Healing Way (29206): Healing Wave heals 8 / 17 / 25% more, always. Classic's stacking buff on the target is gone.
+  - Purification (16178): 2% a point on Healing Wave, Lesser Healing Wave, Chain Heal and Riptide (heal and ticks). Not Healing Stream, whose heal isn't on the list (`water_totems.go`). It multiplies with Healing Way, like the other percent bonuses of the same kind (5.6).
+  - Healing Focus (16181): a 23 / 47 / 70% chance for a hit not to push back Healing Wave, Lesser Healing Wave or Chain Heal.
+  - Ancestral Healing (16176, buff 16177): 8 / 17 / 25% more armor on us for 15 sec after a heal crit.
+  - Already in the sim and now reaching the heals: Tidal Focus (cost), Tidal Mastery (crit, heals only under Forever, Riptide too), Nature's Swiftness (its client mask has the three cast heals), Water Shield (a globe on a heal crit), Mental Quickness (Intellect to spell power, which heals count).
+- Tests (`sim/shaman/enhancement/healing_test.go`): the rank tables, each heal's amount with 200 healing power and no crits, with and without Healing Way and Purification, the downranked Healing Wave 1 at 60, cast times with Improved Healing Wave, costs with Tidal Focus, Tidal Mastery's 5% (and none on Lightning Bolt), Healing Focus's 70%, Nature's Swiftness, Ancestral Healing's armor, Riptide's heal and ticks and its Chain Heal bonus, a heal at a mob that dies mid-cast, and a naked level 30 against one level 30 mob: 46% deaths in 300 fights with white swings only, none with Lesser Healing Wave below 40% health.
+- No preset casts a heal, and every golden result stayed the same.
+- Open: the beta hasn't shown a heal's numbers next to the client's yet. A few Healing Waves and Lesser Healing Waves on ourselves at a known level and healing power would settle the variance reading.
+
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
 - Open: spells lose 2.1% crit against a level +3 target (`target.go` SpellCritSuppression). That isn't a 1.12 rule as far as we know. Item 5.3.
