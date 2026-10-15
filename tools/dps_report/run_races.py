@@ -7,7 +7,8 @@ settings otherwise), on top of the race sweep run_build.py already did:
   off:<part>     one racial part left out, for races with more than one part that can count
   beast / elemental   the same fight against that creature type (presets fight the generic boss)
   humanoid       priests only: Chastise (Dwarf priests) works on Humanoids only
-  weapon         the preset's weapon(s) as the race's racial weapon type (same stats and weapon DPS)
+  weapon         one of the preset's weapons as the race's racial weapon type (same stats and weapon DPS, at the
+                 nearest Phase 1 BiS speed of that type)
   weaponNoRacial the same weapon swap with that weapon racial left out
 Results append to rv/results.jsonl, one line per sim, so a rerun only does what is missing.
 Needs wowsimcli_r: wowsimcli built from the local dashdata tree with the DASH_RACIALS_OFF switch.
@@ -36,11 +37,16 @@ RACE_WEAPON = {'Human': (SWORD, 'sword'), 'Dwarf': (MACE, 'mace'), 'Orc': (AXE, 
 LEGAL = {'Warrior': {AXE, MACE, SWORD}, 'Paladin': {AXE, MACE, SWORD}, 'Hunter': {AXE, SWORD},
          'Rogue': {AXE, SWORD, MACE}, 'Shaman': {AXE, MACE}, 'Mage': {SWORD}, 'Warlock': {SWORD},
          'Priest': {MACE}, 'Druid': {MACE}}
-# Real Era Phase 1 weapons whose speed and damage spread a swapped physical weapon takes,
-# by (type, hand): 2H, main hand, off hand. Damage is scaled to the preset weapon's DPS.
-SPEED_FROM = {(AXE, '2h'): 17104, (MACE, '2h'): 17073, (SWORD, '2h'): 17076,
-              (AXE, 'mh'): 17068, (MACE, 'mh'): 11684, (SWORD, 'mh'): 17075,
-              (AXE, 'oh'): 12798, (MACE, 'oh'): 18683, (SWORD, 'oh'): 18832}
+# The Era Phase 1 BiS weapons a swapped physical weapon can take its speed and damage spread from, by (type, hand).
+#
+# These are the speeds orchestration/standards.md item 22 allows the presets: Deathbringer, Annihilator and Bone
+# Slicing Hatchet for axes, Dal'Rend's Sacred Charge, Vis'kag, Brutality Blade and Dal'Rend's Tribal Guardian for
+# swords, Persuader, Ebon Hand and Ironfoe for maces, and the 3.4 to 3.7 sec two-handers. A swap keeps the preset
+# weapon's stats and damage per second and takes the listed speed nearest to its own. So a 1.7 sec off hand axe
+# becomes a 1.8 sec sword, and a 2.9 sec main hand axe a 2.8 sec one.
+SWAP_FROM = {(AXE, 'mh'): [17068, 12798], (SWORD, 'mh'): [12940, 17075], (MACE, 'mh'): [22384, 19170, 11684],
+             (AXE, 'oh'): [17068, 12798, 18737], (SWORD, 'oh'): [12940, 17075, 18832, 12939], (MACE, 'oh'): [22384, 19170, 11684],
+             (AXE, '2h'): [11931, 19169, 17104], (SWORD, '2h'): [13505, 12592, 17076], (MACE, '2h'): [17193, 12969, 17073, 14531]}
 CASTER = {'Mage', 'Warlock', 'Priest'}
 # Racial parts that can change DPS, by race.
 PARTS = {
@@ -76,8 +82,18 @@ def parts_for(cls, race, req):
     return out
 
 
+def swap_ref(w, wtype, hand):
+    """The listed weapon of wtype for this hand whose speed is nearest w's."""
+    return min((DB[i] for i in SWAP_FROM[(wtype, hand)]), key=lambda r: abs(r['weaponSpeed'] - w['weaponSpeed']))
+
+
 def swapped(req, cls, wtype):
-    """The request with its weapon(s) changed to wtype: same stats, same weapon DPS."""
+    """The request with one weapon changed to wtype: same stats, same weapon DPS.
+
+    A weapon racial counts for both hands when either hand holds its type, so we swap only one weapon. We pick the
+    hand whose speed changes least, and the off hand on a tie. For Fury's 2.8 sec sword and 1.7 sec axe, a Dwarf gets
+    a 2.8 sec mace in the main hand rather than a 2.4 sec one in the off hand.
+    """
     req = copy.deepcopy(req)
     pl = player(req)
     eq = pl['equipment']['items']
@@ -93,21 +109,25 @@ def swapped(req, cls, wtype):
     slots = [14, 15]
     if mh and mh['weaponType'] == DAGGER and cls == 'Rogue':
         slots = [15]  # dagger builds keep the main hand dagger (Backstab, Mutilate, Ambush)
-    for k, slot in enumerate(slots):
+    cands = []
+    for slot in slots:
         w = DB.get((eq[slot] or {}).get('id')) if len(eq) > slot and eq[slot] else None
         if not w or not w.get('weaponDamageMin'):
             continue
-        hand = '2h' if w['handType'] == 4 else ('mh' if slot == 14 else 'oh')
-        ref = DB[SPEED_FROM[(wtype, hand)]]
-        dps = (w['weaponDamageMin'] + w['weaponDamageMax']) / 2 / w['weaponSpeed']
-        ravg = (ref['weaponDamageMin'] + ref['weaponDamageMax']) / 2
-        scale = dps * ref['weaponSpeed'] / ravg
-        it = {k2: v for k2, v in w.items() if k2 in SIMITEM}
-        it.update(id=nid + k + 1, name=f"{w['name']} as a {WT_NAME[wtype]}", weaponType=wtype,
-                  weaponSpeed=ref['weaponSpeed'], weaponDamageMin=round(ref['weaponDamageMin'] * scale, 1),
-                  weaponDamageMax=round(ref['weaponDamageMax'] * scale, 1))
-        items.append(it)
-        eq[slot] = dict(eq[slot], id=nid + k + 1)
+        ref = swap_ref(w, wtype, '2h' if w['handType'] == 4 else ('mh' if slot == 14 else 'oh'))
+        cands.append((round(abs(ref['weaponSpeed'] - w['weaponSpeed']), 2), -slot, slot, w, ref))
+    if not cands:
+        return req, items
+    _, _, slot, w, ref = min(cands)
+    dps = (w['weaponDamageMin'] + w['weaponDamageMax']) / 2 / w['weaponSpeed']
+    ravg = (ref['weaponDamageMin'] + ref['weaponDamageMax']) / 2
+    scale = dps * ref['weaponSpeed'] / ravg
+    it = {k2: v for k2, v in w.items() if k2 in SIMITEM}
+    it.update(id=nid + 1, name=f"{w['name']} as a {WT_NAME[wtype]}", weaponType=wtype,
+              weaponSpeed=ref['weaponSpeed'], weaponDamageMin=round(ref['weaponDamageMin'] * scale, 1),
+              weaponDamageMax=round(ref['weaponDamageMax'] * scale, 1))
+    items.append(it)
+    eq[slot] = dict(eq[slot], id=nid + 1)
     return req, items
 
 
@@ -156,6 +176,8 @@ def tasks(bid):
             wt, part = RACE_WEAPON[race]
             if wt in LEGAL[cls] and wt not in held:
                 r2, items = swapped(req, cls, wt)
+                if not items:
+                    continue
                 yield (bid, race, 'weapon'), lambda race=race, r2=r2, items=items: sim(r2, race, items=items)
                 yield (bid, race, 'weaponNoRacial'), lambda race=race, r2=r2, items=items, part=part: sim(r2, race, off=part, items=items)
 

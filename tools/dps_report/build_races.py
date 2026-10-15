@@ -41,7 +41,7 @@ PART_INFO = {
     'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6 sec, 30 sec cooldown.'),
     'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15 sec, 10 min cooldown.'),
     'base': ('Base stats', "The race's own Strength, Agility, Stamina, Intellect and Spirit, with every racial left out."),
-    'swap': ('Weapon swap', "A weapon racial only works with its weapon type. So for a preset that holds another weapon, we give the race that type of weapon with the same stats and damage. This piece is what the new weapon changes by itself, before its racial: the weapon's speed, and talents that give a different bonus per weapon type."),
+    'swap': ('Weapon swap', "A weapon racial only works while either hand holds its weapon type. So for a preset that holds another type, we swap one weapon to the racial's type, with the same stats and damage per second, at the nearest speed a Phase 1 BiS weapon of that type has. This piece is what the new weapon changes by itself, before its racial: the weapon's speed, and talents that give a different bonus per weapon type."),
     'target': ('Target type', 'What changes against this creature type: conditional racials, plus talents and spells that only work on some types.'),
 }
 
@@ -87,9 +87,10 @@ HAND_NAME = {14: 'main hand', 15: 'off hand'}
 def swap_detail(RR, cls, req, wtype):
     """What a race's weapon swap changes, for the swap's tooltip.
 
-    weapons has one [hand, old type, new type, old speed, new speed] per weapon we swap. A dagger Rogue keeps its main
-    hand dagger, so only its off hand shows up. A caster gets its staff's stats on a one-hand weapon, and caster is
-    true then, because casters don't attack with the weapon.
+    weapons has one [hand, old type, new type, old speed, new speed] row for the weapon we swap. We swap one weapon
+    only, the one whose speed changes least (run_races.swapped), and a dagger Rogue keeps its main hand dagger. A
+    caster gets its staff's stats on a one-hand weapon, and caster is true then, because casters don't attack with the
+    weapon.
 
     talents has one [name, icon, points, max points, what it does, old type, old bonus, new type, new bonus] per talent
     in the preset whose bonus changes with the new weapon type. A bonus is '' when the type gets none.
@@ -119,11 +120,11 @@ def swap_detail(RR, cls, req, wtype):
 
 
 SCENARIOS = [
-    ('baseline', 'Generic boss', 'Each preset with its own weapon type, against the generic level 63 boss (no creature type). Weapon racials count only where the preset already holds that weapon type: Human swords (Warrior, Hunter, Combat Swords and Seal Fate Swords rogues) and Orc axes (Enhancement).'),
+    ('baseline', 'Generic boss', 'Each preset with its own weapon type, against the generic level 63 boss (no creature type). Weapon racials count where the preset already holds that weapon type in either hand.'),
     ('beast', 'Beast target', 'A Beast boss switches on Troll Beast Slaying and Dwarf Big Game Hunter: 5% more damage.'),
     ('elemental', 'Elemental target', 'An Elemental boss switches on High Order and Windshaper Elemental Insight: 5% more damage.'),
     ('humanoid', 'Humanoid target', 'Priests only: Dwarf Priests cast Chastise, which works on Humanoids only. No other racial cares about Humanoids, so the other presets have no Humanoid numbers here.'),
-    ('weapon', 'Racial weapon', "Human, Dwarf and Orc each hold their racial's weapon type (sword, mace, axe) where the class can use it, at the same stats and weapon DPS. Casters move the staff's stats to a one-hand weapon; dagger Rogues change only the off hand. Other races keep the preset's weapon."),
+    ('weapon', 'Racial weapon', "Human, Dwarf and Orc hold their racial's weapon type (sword, mace, axe) where the class can use it and the preset holds none. A weapon racial counts while either hand holds its type, so we swap one weapon: the one whose speed changes least, or the off hand on a tie. Dagger Rogues keep the main hand dagger. The new weapon keeps the stats and damage per second and takes the nearest speed a Phase 1 BiS weapon of that type has. Casters move the staff's stats to a one-hand weapon. Other races keep the preset's weapons."),
     ('off', 'Racials off', 'Every race on its base stats alone, with all racial passives and abilities left out: what the races differ by before racials.'),
 ]
 
@@ -218,7 +219,7 @@ def build(builds, races_rows, stats_rows, dump):
                 else:
                     if p in sim_part:
                         wt = RR.WEAPON_PART[p]
-                        nt = f"{cls}s can't use {p}s" if wt not in RR.LEGAL[cls] else f'needs {WEAPON_WORD[p]}; the preset holds ' + (' and '.join(sorted(held_names)) or 'no weapon')
+                        nt = f"{cls}s can't use {p}s" if wt not in RR.LEGAL[cls] else f'needs {WEAPON_WORD[p]}, and the preset holds ' + (' and '.join(sorted(held_names)) or 'no weapon')
                     elif p.startswith('beast'):
                         nt = 'only against Beasts'
                     elif p == 'insight':
