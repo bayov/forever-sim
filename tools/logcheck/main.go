@@ -56,6 +56,7 @@ func main() {
 	flagsOut := flag.String("flags-out", "", "also write the flagged list to this file as JSON")
 	audit := flag.Bool("audit", false, "check every stretch of the archived logs we haven't checked yet (audit.go), instead of one window")
 	redo := flag.Bool("redo", false, "with -audit, check again the windows the ledger already has, with the sim as it is now")
+	playerOut := flag.String("player-out", "", "write the sim player built from -char's newest export (or -export) to this file as JSON and exit, without a log (player.go)")
 	flag.Parse()
 	sim.RegisterAll()
 
@@ -64,6 +65,13 @@ func main() {
 	}
 	if _, err := os.Stat(filepath.Join(repoRoot, "ui/core/talents/trees")); err != nil {
 		log.Fatal("run logcheck from the repo root")
+	}
+
+	if *playerOut != "" {
+		if err := writePlayer(*archive, *exportPath, *charFlag, *fullSkill, *playerOut); err != nil {
+			log.Fatal(err)
+		}
+		return
 	}
 
 	if *audit {
