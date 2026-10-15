@@ -1,0 +1,87 @@
+{
+  "id": "warlock__destruction_fire-duty-cor",
+  "class": "Warlock",
+  "spec": "Destruction",
+  "build": "Destruction Fire (Curse of Recklessness duty)",
+  "isDefault": false,
+  "pr": 2,
+  "race": "Undead",
+  "talents": "2525000003-0002-0050355003101351",
+  "treeNames": [
+    "Affliction",
+    "Demonology",
+    "Destruction"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_destruction_fire_duty_cor",
+  "published": {
+    "dps": 957.6,
+    "source": "PR (raid duties)"
+  },
+  "verify": {
+    "dps": 957.62,
+    "stderr": 0.26,
+    "iters": 20000,
+    "ok": true,
+    "note": "+0.02 vs published"
+  },
+  "summary": "Destruction Fire on duty for the raid's Curse of Recklessness: the warlock keeps its own Curse of Recklessness (505 armor) up all fight, cast right after the opener and recast before it drops. Under Forever it shares the minor armor slot with Faerie Fire, so the raid's Curse of Recklessness and Faerie Fire are both off in the request. Costs 16.0 DPS at 180 s against the base build.",
+  "keyTalents": [
+    "Incinerate",
+    "Conflagrate",
+    "Fire and Brimstone",
+    "Shadow and Flame",
+    "Aftermath",
+    "Malediction",
+    "Pandemic",
+    "Ruin"
+  ],
+  "rotation": [
+    "Pre-pull: Immolate at -1.5 s",
+    "Racials on cooldown",
+    "Life Tap below 5% mana or when Incinerate costs more than the mana left",
+    "Curse of Recklessness on duty for the raid, right after the opener and recast before it drops",
+    "Bane of Doom when it lands before the fight ends (more than 60 s left)",
+    "Bane of Agony while Bane of Doom is on cooldown or would not land",
+    "Corruption when down or under 2 s left (more than 9 s left)",
+    "Immolate when down or under 2 s left (more than 6 s left)",
+    "Conflagrate on cooldown while Immolate is up",
+    "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
+    "Incinerate while Immolate is up",
+    "Shadow Bolt otherwise"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of Firepower",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Cerebral Cortex Compound",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Major Firestone (weapon imbue)"
+  ],
+  "caveats": [
+    "Under Forever a bane and a curse are separate slots, so the duty curse costs only its GCDs and mana, not the bane.",
+    "Curse of Recklessness (505 armor) and Faerie Fire (505) share the minor armor slot under Forever and don't stack: with a druid's Faerie Fire up, a warlock's Curse of Recklessness can't land and adds nothing, so this duty only matters in a raid without Faerie Fire",
+    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 38 spell power and 13 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Demon sensitivity: no owner scaling 937.3, Succubus melee halved 937.4, both 913.2; without owner scaling the Succubus-sacrifice build (950.8) would be the pick (first set)",
+    "Firestone is 24 ahead of Spellstone; Felhunter out 25 behind, Imp 35",
+    "Undead and Gnome are within noise of each other at 180 s; Undead is ahead at 300 s",
+    "Whether Incinerate's 25% bonus applies to the whole hit is unverified; Bane of Havoc's point does nothing",
+    "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server-side): worth +49 on Demonology, +39 on the other builds",
+    "Succubus base melee is unverified: halved melee would cost Demonology 43, the other builds 38 to 39",
+    "Bane of Doom coefficient 4.0 (Era 1.0) is about 12% of Shadow Bolt builds' damage; at 2.0 they lose about 4%, at 1.0 about 6%",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS below rank X/VIII/VII",
+    "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
+    "Soul shards and Life Tap health cost are not tracked"
+  ],
+  "notes": "Request from mksettings with the same arguments as warlock__destruction_fire except -apl level60_destruction_fire_duty_cor, then raid.debuffs.curseOfRecklessness and faerieFire (the same armor slot under Forever) set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
+  "duty": "Curse of Recklessness",
+  "baseBuild": "warlock__destruction_fire"
+}

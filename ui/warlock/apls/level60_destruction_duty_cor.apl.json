@@ -1,0 +1,20 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":11661}}},"doAtValue":{"const":{"val":"-2.5s"}}},
+        {"action":{"castSpell":{"spellId":{"itemId":997022}}},"doAtValue":{"const":{"val":"-0.1s"}}}
+    ],
+    "priorityList": [
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":11689}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.05"}}}},{"not":{"val":{"spellCanCast":{"spellId":{"spellId":11661}}}}}]}}},"notes":"Life Tap when the mana runs low or the filler costs more than is left."},
+        {"action":{"castSpell":{"spellId":{"spellId":11717}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":11717},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"1.5s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"2s"}}}}]}}},"notes":"Curse of Recklessness on duty for the raid, recast before it drops."},
+        {"action":{"castSpell":{"spellId":{"spellId":603}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":11713}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"60s"}}}}]}}},"notes":"Bane of Doom when it lands before the fight ends."},
+        {"action":{"castSpell":{"spellId":{"spellId":11713}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":603}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":11713}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"12s"}}}},{"or":{"vals":[{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":603}}},"op":"OpGt","rhs":{"const":{"val":"12s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"60s"}}}}]}}]}}},"notes":"Bane of Agony while Bane of Doom is on cooldown or would not land."},
+        {"action":{"castSpell":{"spellId":{"spellId":11672}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":11672}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"9s"}}}}]}}},"notes":"Corruption when it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":11668}},"condition":{"and":{"vals":[{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":11668}}}}},{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":11668}}},"op":"OpLt","rhs":{"spellCastTime":{"spellId":{"spellId":11668}}}}}]}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"6s"}}}}]}}},"notes":"Immolate when it is down."},
+        {"action":{"castSpell":{"spellId":{"spellId":18932}},"condition":{"dotIsActive":{"spellId":{"spellId":11668}}}},"notes":"Conflagrate on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":17926}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":11661}}},"op":"OpAdd","rhs":{"const":{"val":"0.25s"}}}}}}},"notes":"Death Coil when the filler would not land before the end."},
+        {"action":{"castSpell":{"spellId":{"spellId":17923}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":11661}}},"op":"OpAdd","rhs":{"const":{"val":"0.25s"}}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"spellCastTime":{"spellId":{"spellId":17923}}}}}]}}},"notes":"Searing Pain when the filler would not land before the end."},
+        {"action":{"castSpell":{"spellId":{"spellId":11661}}},"notes":"Shadow Bolt as the filler."}
+    ]
+}
