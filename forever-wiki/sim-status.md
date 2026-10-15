@@ -349,6 +349,7 @@ Measured on 2026-10-13 (the bundled gear round) against the `tools/rotopt/mksett
 - Shadow + Holy races (120 / 180 / 300 sec, Greater Mageblood): Undead 834.8 / 832.7 / 830.9 (best overall and Horde), Gnome 829.8 / 832.3 / 809.1 (best Alliance), Night Elf 829.1 / 829.2 / 785.7, Human 821.4 / 822.7 / 779.5, Dwarf 821.3 / 822.6 / 778.7, Troll 821.1 / 822.4 / 777.5.
 - Builds: `Level 60` (the spec's default: Undead, the synthetic gear, the Shadow talents and rotation, the 180 sec Level 60 encounter) 853.5 / 854.4 / 851.7 at 120 / 180 / 300 sec, `Level 60 + Holy` (Undead, with Greater Mageblood) 832.7 at 180 sec, and `Level 60 Smite` (Undead, the Smite set, talents, rotation and consumes) 706.5 at 180 sec.
 - Smite VIII x1.09 (the user's ruling, 2026-10-15): the Smite build is 713.5 at 180 sec (+6.7, 20000 iterations); the Smite numbers above are from before. Shadow casts no Smite.
+- Smite end-of-fight Shadow Word: Death (rotation audit 19b, 2026-10-15): one Shadow Word: Death once a Smite would no longer land before the fight ends, 725.5 / 716.5 / 645.7 at 120 / 180 / 300 sec (+5.8 / +3.0 / +1.2). Mind Blast there adds nothing on top. Shadow gains under 1 DPS from any end-of-fight change, so its rotation stays.
 
 ### Shaman
 

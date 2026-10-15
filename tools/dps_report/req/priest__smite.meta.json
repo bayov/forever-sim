@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_smite",
   "apl": "level60_smite",
   "published": {
-    "dps": 713.5,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 716.5,
+    "source": "rotation audit 19b: end-of-fight Shadow Word: Death (2026-10-15)"
   },
   "verify": {
-    "dps": 713.5,
+    "dps": 716.5,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "180 s, 20000 iterations, seed 1 (verify.py)"
   },
   "summary": "A Holy damage priest: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light) casting Smite and Holy Fire. Shipped as its own spec on its own hit-free gear, 17% behind Shadow at 180 s because Smite is a mana-hungry filler.",
   "keyTalents": [
@@ -37,14 +37,15 @@
     "Mental Agility"
   ],
   "rotation": [
-    "Pre-pull: Smite at -2 s that lands at the pull",
-    "Dark Sacrifice (Undead) below 40% mana; Power Infusion on cooldown; racials on cooldown",
+    "Pre-pull: Smite at -2 s that lands at the pull, the on-use trinket at -0.1 s",
+    "Dark Sacrifice (Undead) below 40% mana; Power Infusion on cooldown; racials and trinkets on cooldown",
     "Inner Focus right before Holy Fire",
     "Holy Fire whenever its DoT is down (keeps Power in Light up)",
     "Shadow Word: Pain whenever it is down (9+ s left)",
-    "Devouring Plague whenever it is down (12+ s left) and mana is at least 20%",
-    "Rank 8 Smite while mana lasts the fight at 20 mana a second",
-    "Rank 4 Smite after that"
+    "Devouring Plague whenever it is down (12+ s left) and mana is at least 40%",
+    "Shadow Word: Death when a Smite would not land before the fight ends",
+    "Rank 8 Smite while mana lasts the fight at 35 mana a second",
+    "Rank 7 Smite after that"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -63,10 +64,10 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Mana-bound: 719.5 / 713.4 / 645.0 at 120 / 180 / 300 s (Undead)",
+    "Mana-bound: 725.5 / 716.5 / 645.7 at 120 / 180 / 300 s (Undead)",
     "Smite VIII's base damage ×1.09, halfway to rank 4's ratio to Era (the 31+ ranks look partly un-retuned); the client has ×1.00",
-    "No downrank penalty assumed for low Smite ranks (rank 3 would be +0.9 at 300 s but may be penalized)",
-    "Penance, Mind Blast and SW:Death dropped by the search (Penance: 385 mana for three 92-damage bolts)",
+    "Forever's downrank penalty modeled (5% of the coefficient per level past 17 below the caster), so the fallback Smite is rank 7, which keeps its full coefficient",
+    "Penance and Mind Blast dropped by the search (Penance: 385 mana for three 92-damage bolts); Shadow Word: Death only at the end of the fight",
     "Synthetic gear, Vestments of Conviction 2-piece only (4/5-piece +4.7)",
     "Kreeg's Stout Beatdown left out as a Dire Maul item; Elixir of Sages left out by the one-crit-elixir ruling (+6.4)",
     "Dark Sacrifice gives 1600 + Spirit mana (tooltip adds Spirit; client data says 1600)"
