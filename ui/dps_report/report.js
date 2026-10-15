@@ -2869,6 +2869,8 @@ export function startReport(dash) {
     $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
     if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
     const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen)), card = $('#asm-card');
+    // "All expected" only does something while some assumption's expected setting differs from the presets' own.
+    $('#asm-expected').hidden = !As.some((a) => a.status === 'live' && a.expectedSetting !== a.defaultSetting);
     host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
       const changed = as.filter((a) => st.asm?.[a.key]).length, top = d3.max(as, asmImpact);
       const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
