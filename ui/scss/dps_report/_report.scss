@@ -3297,6 +3297,11 @@ ol.fv-list li::marker {
 	color: var(--color-fg-muted);
 	background: color-mix(in srgb, var(--color-fg) 8%, transparent);
 	white-space: nowrap;
+	// on a narrow row the badge gives way first, so the race and role stay readable (its tooltip names the duty)
+	min-width: 2.5rem;
+	flex-shrink: 1000;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /* ---------- special encounters ---------- */

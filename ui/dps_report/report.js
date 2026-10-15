@@ -260,7 +260,7 @@ export function startReport(dash) {
   const dutyTip = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
-      +base.dps ? tipKey(tipDelta(100 * (b.dps / base.dps - 1)), null, `vs ${base.build}, where the raid covers it`) : null,
+      +base.dps ? tipKey(`−${f1(base.dps - b.dps)}`, 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}, where the raid covers it`)) : null,
       tipText(b.summary));
   };
   const dutyBadge = (b, list) => {
@@ -761,7 +761,12 @@ export function startReport(dash) {
     host.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === String(st[key]))));
   };
   const SORTS = [['dps', 'Mean'], ['p10', 'Unlucky'], ['p90', 'Lucky'], ['cv', 'Steadiest']];
-  const roleOf = () => new Map((rowsOf('roles') || []).map((r) => [r.build, r.role]));
+  // a duty preset plays its base preset's role
+  const roleOf = () => {
+    const m = new Map((rowsOf('roles') || []).map((r) => [r.build, r.role]));
+    for (const b of rowsOf('builds') || []) if (isDuty(b) && !m.has(b.id)) m.set(b.id, m.get(b.baseBuild));
+    return m;
+  };
   // Each part of a ranking bar names itself in a small tooltip while the mouse is on it: the mean bar, the box
   // of the middle half of fights, the 10th to 90th percentile whisker and the median tick. They're too thin to
   // aim at one by one, so we go by where the mouse is along the bar. All bars share one tooltip.
