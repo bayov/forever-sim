@@ -40,9 +40,18 @@ Item format:
   - The spell tables are already byte-identical to 70338's (`orchestration/rank_tuning.md`, check 2026-10-14 00:30 UTC). Trackers say talents, spells and items are unchanged; wowclassicforever.info lists only ManifestInterfaceData and ManifestInterfaceItemIcon as changed tables.
   - Still to diff: https://wago.tools/db2/ItemSparse?build=1.60.1.70374 , https://wago.tools/db2/ItemEffect?build=1.60.1.70374 , https://wago.tools/db2/SpellItemEnchantment?build=1.60.1.70374 , https://wago.tools/db2/Talent?build=1.60.1.70374
   - The fix build expected Thursday Oct 15 (forever-bugs "fixed on Thursday" list) is the one to watch: re-run the full table diff then.
+  - 2026-10-15 17:10 UTC: no newer build yet. wago.tools lists 1.60.1.70374 (wow_cn_beta, Oct 13) as the newest, plus a new `wowf` product at 1.60.1.70245 (first seen Oct 13, probably the live client's product).
 - [x] 2026-10-14 — Decide whether Searing and Magma Totem crits should stop proccing Elemental Devastation (forever-bugs #334, Oct 13, NAB, tracker)
   - Settled, no change needed: Searing and Magma Totem's attack spells have `ProcMaskEmpty` in `sim/shaman/fire_totems.go`, so they never match the talent's `ProcMaskSpellDamage` check, and Fire Nova is excluded by spell code. No totem attack procs Elemental Devastation in the sim, as #334 says.
   - AidanZMoon: "None of your Totem or Totem originating attacks cause Elemental Devastation"; the tooltip is updated for Thursday's build. `applyElementalDevastation` in `sim/shaman/talents.go` excludes only Fire Nova (shaman_audit.md 4.13).
   - Check on the beta after Oct 15: does a Searing Totem crit give buff 30165? https://github.com/ClassicWoWCommunity/forever-bugs/issues/334
 - [ ] 2026-10-14 — Give Crown of Maldazzar 284065 and Triune Amulet 7722 attention once PR #20 merges (revealed Oct 12–14)
   - Crown of Maldazzar has no known source (BoE); add one when it's known. https://foreverchanges.pro/item/284065
+- [ ] 2026-10-15 — Model the item procs revealed on Oct 14–15 (client, foreverchanges.pro hidden items). The stats went in with PR #37.
+  - Galgann's Firehammer 9419 (main hand mace, +54 spell power, req 42): "Chance on harmful spell cast to blast a target for 64 to 90 Fire damage (100ms cooldown)". The proc rate is unknown. https://wago.tools/db2/ItemEffect?build=1.60.1.70374&filter[ParentItemID]=9419 , https://foreverchanges.pro/item/9419
+  - Galgann's Fireblaster 9412 (gun, 44–84 / 2.60, req 42): its ranged chance-on-hit Fire Blast went from 12–18 to 22–34. The sim doesn't model the proc. https://foreverchanges.pro/item/9412
+  - Suggestion: compare Firehammer with the Elemental level 60 synthetic staff (55 SP) plus an off-hand in the gear search.
+- [ ] 2026-10-15 — On the next beta build, check these tracker fixes against the sim (forever-bugs, tracker only)
+  - #331: hunter pets use the hunter's **ranged** crit "starting Thursday" (Oct 15). `sim/hunter/pet.go:243` inherits `MeleeCrit`. https://github.com/ClassicWoWCommunity/forever-bugs/issues/331
+  - #20: the Bear Form armor multiplier will no longer apply to temporary armor buffs ("fixed in the next build"). Examples: Elixir of Minor Defense gives 140 armor in Bear Form vs 50; Mark of the Wild rank 1 gives 95 vs 34. Check whether the feral tank sim multiplies buff armor. https://github.com/ClassicWoWCommunity/forever-bugs/issues/20
+  - #344 (Shaman, Oct 14): Eye of the Storm's pushback text is now Vanilla-style. It's a wording fix only; check that the sim's pushback model matches.
