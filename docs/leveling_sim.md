@@ -260,8 +260,8 @@ anything leveling-specific exists.
    - Tests: `sim/shaman/enhancement/mob_death_test.go` (a pack dying one by one, Chain
      Lightning and Fire Nova on the one mob left, Searing Totem moving on) and
      `sim/core/aoe_test.go`.
-   - Open: a cast that finishes on a mob that died during it still costs its mana, and its
-     damage is dropped. In game the cast would fail. The leveling mode should cancel it.
+   - A cast at a mob that dies during it stops there, as in game: no mana spent, no effect,
+     its cooldown given back, and we can act again when the GCD from its start runs out.
 3. **Healing.**
    - Self-heals by rank and level, checked against the client data:
      - Shaman: Healing Wave and Lesser Healing Wave.

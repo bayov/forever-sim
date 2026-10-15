@@ -20,6 +20,8 @@ type Hardcast struct {
 	Pushback   float64
 	// The cast's full time. Pushback can't take the cast bar back past its start.
 	CastTime time.Duration
+	// When the cast started.
+	Start time.Duration
 }
 
 // Input for constructing the CastSpell function for a spell.
@@ -251,6 +253,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 				ActionID: spell.ActionID,
 				Pushback: 1.0,
 				CastTime: spell.CurCast.CastTime,
+				Start:    sim.CurrentTime,
 				OnComplete: func(sim *Simulation, target *Unit) {
 					spell.LastCastAt = sim.CurrentTime
 

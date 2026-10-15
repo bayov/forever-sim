@@ -181,3 +181,59 @@ func TestSearingTotemMovesOn(t *testing.T) {
 		t.Error("the totem is down after its target died")
 	}
 }
+
+// TestCastStopsWhenTargetDies starts a Chain Lightning (2.5 sec) at the first of 2 mobs and
+// kills that mob 1 sec in. The cast stops there: no mana spent, no damage and its cooldown
+// given back, so we can cast it again at the mob that's left.
+func TestCastStopsWhenTargetDies(t *testing.T) {
+	hit := 0
+	sim, enh := packSim(t, 40, 2, func(watcher *core.Aura) {
+		watcher.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.SpellCode == shaman.SpellCode_ShamanChainLightning {
+				hit++
+			}
+		}
+	})
+	mobs := sim.Encounter.TargetUnits
+	chain := topRank(t, "Chain Lightning", enh.ChainLightning)
+
+	var mana float64
+	checked := false
+	at(sim, 1, func(sim *core.Simulation) {
+		enh.AddMana(sim, enh.MaxMana(), enh.GetManaNotCastingMetrics())
+		mana = enh.CurrentMana()
+		castNow(t, sim, enh, chain)
+	})
+	at(sim, 2, func(sim *core.Simulation) {
+		killNow(sim, enh, mobs[0])
+		if enh.IsCasting(sim) {
+			t.Errorf("still casting after the target died, until %s", enh.Hardcast.Expires)
+		}
+		if enh.CurrentMana() < mana {
+			t.Errorf("the stopped cast cost %.0f mana", mana-enh.CurrentMana())
+		}
+		// We can act again when the GCD from the cast's start runs out.
+		if got := enh.GCD.ReadyAt(); got != 2500*time.Millisecond {
+			t.Errorf("the GCD is ready at %s, want 2.5s", got)
+		}
+	})
+	at(sim, 2.6, func(sim *core.Simulation) {
+		checked = true
+		if hit != 0 {
+			t.Errorf("the stopped cast hit %d times", hit)
+		}
+		if !chain.CD.IsReady(sim) {
+			t.Errorf("Chain Lightning is on cooldown for %s after the stopped cast", chain.CD.TimeToReady(sim))
+		}
+		enh.AddMana(sim, enh.MaxMana(), enh.GetManaNotCastingMetrics())
+		castNow(t, sim, enh, chain)
+		if enh.Hardcast.Target != mobs[1] {
+			t.Errorf("the new cast is at %v, want the mob that's left", enh.Hardcast.Target)
+		}
+	})
+	for !sim.Step() && sim.CurrentTime < 3*time.Second {
+	}
+	if !checked {
+		t.Fatalf("the fight ended at %s, before the check", sim.CurrentTime)
+	}
+}
