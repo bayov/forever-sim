@@ -1,6 +1,8 @@
 package main
 
 import (
+	goproto "google.golang.org/protobuf/proto"
+
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
@@ -8,6 +10,7 @@ import (
 // the level 60 ranks, the warrior templates only build level 60 rotations.
 var (
 	battleShout      = spellIDRank(11551, 6)
+	sunderArmor      = spellID(11597)
 	battleStance     = spellID(2457)
 	berserkerStance  = spellID(2458)
 	bloodrage        = spellID(2687)
@@ -93,8 +96,12 @@ func warriorKnobs() []Knob {
 		// 1: the Goblin Sapper Charge on cooldown, and the Goblin Land Mine right after a main hand
 		// swing, since its 1 sec cast restarts both swing timers. 0: both with the other cooldowns.
 		{Name: "mineSync", Default: 1, Min: 0, Max: 1, Step: 1},
-		// Battle Shout when the raid's is not up. The shared raid already has one.
+		// The Battle Shout duty (standards 23): 1 shouts before the pull, with a Bloodrage for the
+		// Rage, and again before it drops when the fight outlasts it. The base presets leave it to
+		// the raid (0), and the duty presets switch the raid's off.
 		{Name: "battleShout", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Refresh Battle Shout when this many seconds of it are left.
+		{Name: "shoutRefresh", Default: 3, Min: 0, Max: 9, Step: 3},
 	}
 }
 
@@ -103,7 +110,10 @@ func warriorKnobs() []Knob {
 func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	var items []*proto.APLListItem
 	if k["battleShout"] == 1 {
-		items = append(items, cast(battleShout, not(auraIsActive(battleShout)), "Battle Shout whenever it is down."))
+		items = append(items, cast(battleShout, and(
+			lt(auraRemainingTime(battleShout), seconds(k["shoutRefresh"])),
+			gt(remainingTime(), auraRemainingTime(battleShout)),
+		), "Battle Shout before it drops, unless it lasts the fight."))
 	}
 	switch k["deathWish"] {
 	case 1:
@@ -176,6 +186,64 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Anything not listed above (Sapper, trinkets)."))
 	return items
+}
+
+// The first GCD after the pull is one Sunder Armor for every warrior (standards 23), so every
+// spell on the GCD waits for the sunderOpener sequence.
+const sunderOpener = "sunder"
+
+func sequenceIsComplete(name string) value {
+	return &proto.APLValue{Value: &proto.APLValue_SequenceIsComplete{SequenceIsComplete: &proto.APLValueSequenceIsComplete{SequenceName: name}}}
+}
+
+// warriorGCDSpells are the spells the templates cast that take the GCD (or, the Land Mine, a cast).
+var warriorGCDSpells = []*proto.ActionID{battleShout, deathWish, recklessness, berserkerRage, bloodthirst,
+	mortalStrike, whirlwind, slam, execute, overpower, rend, hamstring, spearingStrike, warriorLandMine}
+
+// warriorOpener puts the Sunder Armor sequence ahead of the first spell on the GCD and makes
+// every such spell wait for it. Prepull actions don't count: Battle Shout goes up before the pull.
+func warriorOpener(rot *proto.APLRotation) *proto.APLRotation {
+	gcd := func(id *proto.ActionID) bool {
+		for _, s := range warriorGCDSpells {
+			if goproto.Equal(s, id) {
+				return true
+			}
+		}
+		return false
+	}
+	done := sequenceIsComplete(sunderOpener)
+	first := -1
+	for i, item := range rot.PriorityList {
+		cs := item.Action.GetCastSpell()
+		if cs == nil || !gcd(cs.SpellId) {
+			continue
+		}
+		if first < 0 {
+			first = i
+		}
+		item.Action.Condition = and(item.Action.Condition, done)
+	}
+	if first < 0 {
+		first = len(rot.PriorityList)
+	}
+	sunder := &proto.APLListItem{
+		Action: &proto.APLAction{Action: &proto.APLAction_Sequence{Sequence: &proto.APLActionSequence{
+			Name:    sunderOpener,
+			Actions: []*proto.APLAction{{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: sunderArmor}}}},
+		}}},
+		Notes: "Sunder Armor as the first GCD after the pull, as every warrior does; the raid's tanks keep it up after.",
+	}
+	rot.PriorityList = append(rot.PriorityList[:first], append([]*proto.APLListItem{sunder}, rot.PriorityList[first:]...)...)
+	return rot
+}
+
+// warriorShoutPrepull is the Battle Shout duty's pull: Bloodrage for the Rage, then the shout, early
+// enough that its GCD is over before Arms' stance and the pull.
+func warriorShoutPrepull(k Knobs) []*proto.APLPrepullAction {
+	if k["battleShout"] != 1 {
+		return nil
+	}
+	return []*proto.APLPrepullAction{prepull(bloodrage, 3), prepull(battleShout, 3)}
 }
 
 // potionLine is the Mighty Rage Potion: on cooldown, held for Death Wish, or held for the last

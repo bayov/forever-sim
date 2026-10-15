@@ -32,6 +32,9 @@ import Level60ArmsAPLJSON from './apls/level60_arms.apl.json';
 import Level60ArmsDragonkinAPLJSON from './apls/level60_arms_dragonkin.apl.json';
 import Level60FuryAPLJSON from './apls/level60_fury.apl.json';
 import Level60Fury2HAPLJSON from './apls/level60_fury_2h.apl.json';
+import Level60Fury2HShoutAPLJSON from './apls/level60_fury_2h_battle_shout.apl.json';
+import Level60FuryShoutAPLJSON from './apls/level60_fury_battle_shout.apl.json';
+import Level60ArmsShoutAPLJSON from './apls/level60_arms_battle_shout.apl.json';
 import Level60Phase1SyntheticArmsGearJSON from './gear_sets/level60_phase1_synthetic_arms.gear.json';
 import Level60Phase1SyntheticFuryGearJSON from './gear_sets/level60_phase1_synthetic_fury.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
@@ -162,8 +165,27 @@ export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Level 
 	group: 'Level 60',
 });
 
+// The Battle Shout duty (standards 23): the base rotation, plus Battle Shout before the pull (with a
+// Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 3 sec of it
+// are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min.
+export const APLLevel60FuryShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Battle Shout duty)', Level60FuryShoutAPLJSON, { group: 'Level 60' });
+export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand) (Battle Shout duty)', Level60Fury2HShoutAPLJSON, {
+	group: 'Level 60',
+});
+export const APLLevel60ArmsShout = PresetUtils.makePresetAPLRotation('Level 60 Arms (Battle Shout duty)', Level60ArmsShoutAPLJSON, { group: 'Level 60' });
+
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60Fury, APLLevel60Fury2H, APLLevel60Arms, APLLevel60ArmsDragonkin, APLNoReck, AplReck],
+	[Phase.Phase1]: [
+		APLLevel60Fury,
+		APLLevel60FuryShout,
+		APLLevel60Fury2H,
+		APLLevel60Fury2HShout,
+		APLLevel60Arms,
+		APLLevel60ArmsShout,
+		APLLevel60ArmsDragonkin,
+		APLNoReck,
+		AplReck,
+	],
 };
 
 export const DefaultAPLs = [APLLevel60Fury];
@@ -289,7 +311,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
@@ -312,7 +333,6 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
-	curseOfShadow: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
@@ -374,6 +394,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
+// The Level 60 raid without its Battle Shout, for the Battle Shout duty builds, whose warrior
+// shouts for the party (standards 23).
+export const EncounterLevel60BattleShoutDuty = PresetUtils.makePresetEncounter('Level 60 (Battle Shout duty)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: RaidBuffs.create({ ...DefaultRaidBuffs, battleShout: TristateEffect.TristateEffectMissing }),
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+
 // The same boss as a Dragonkin, for Spearing Strike (standards 19).
 export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 	'Level 60 (vs Dragonkin)',
@@ -434,6 +464,19 @@ export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
+export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Level 60 Fury (Battle Shout duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 dual wield Fury keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
+	gear: GearLevel60Phase1SyntheticFury,
+	talents: TalentsLevel60Fury,
+	rotation: APLLevel60FuryShout,
+	encounter: EncounterLevel60BattleShoutDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFury,
+});
 export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Level 60 Fury (Two-Hand)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 two-hand Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -447,6 +490,19 @@ export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Level 60 Fu
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
+export const PresetBuildLevel60Fury2HShout = PresetUtils.makePresetBuild('Level 60 Fury (Two-Hand) (Battle Shout duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 two-hand Fury keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
+	gear: GearLevel60Phase1SyntheticArms,
+	talents: TalentsLevel60Fury2H,
+	rotation: APLLevel60Fury2HShout,
+	encounter: EncounterLevel60BattleShoutDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFury,
+});
 export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Arms on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -454,6 +510,19 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60Arms,
 	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsArms,
+});
+export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Level 60 Arms (Battle Shout duty)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Arms keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
+	gear: GearLevel60Phase1SyntheticArms,
+	talents: TalentsLevel60Arms,
+	rotation: APLLevel60ArmsShout,
+	encounter: EncounterLevel60BattleShoutDuty,
 	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
