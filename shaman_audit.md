@@ -217,7 +217,7 @@ Tree rules
 
 - [x] 11.1 Encounter: target level, armor, health, duration variation, execute phases, more targets (Fire Nova, Magma Totem, Chain Lightning)
 - [x] 11.2 Shaman APL values (totem timers, shield charges and the like)
-- [ ] 11.3 APL edge cases: a swing due during a cast, replacing a totem early, Fire Nova on Clearcasting, mana thresholds
+- [x] 11.3 APL edge cases: a swing due during a cast, replacing a totem early, Fire Nova on Clearcasting, mana thresholds
 - [ ] 11.4 Movement and range in PvP (time out of melee range)
 
 ## Findings
@@ -1845,8 +1845,18 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 
 - The user OK'd it (2026-10-15).
 - The one shaman value, Totem Remaining Time (`apl_values.go`), gives the time left on the totem of an element. It reads the expiry that `placeTotem` sets, resets every iteration (`shaman.go`), and the totems put down before the pull carry their elapsed time over (`starting_totems.go`). No preset uses it.
-- The presets read totems through the buff they put on us (Strength of Earth 10442 and 8160, Windfury Totem 10612, Grace of Air 10627, Mana Spring 10497 and 5675, Mana Tide 17359) or the fire totem's dot (Searing 10438 and 10587, Flametongue Totem 8227). They also read Flame Shock (29228, 8053), Maelstrom Weapon stacks (408505), Water Shield (408510), Lightning Shield (905), Clearcasting (16246), Rage of the Farseer (425336) and the synthetic trinket (990015).
+- The presets read totems through the buff they put on us (Strength of Earth 10442 and 8160, Windfury Totem 10612, Grace of Air 10627, Mana Spring 10497 and 5675, Mana Tide 17359) or the fire totem's dot (Searing 10438, Magma 10587, Flametongue Totem 8227). They also read Flame Shock (29228, 8053), Maelstrom Weapon stacks (408505), Water Shield (408510), Lightning Shield (905), Clearcasting (16246), Rage of the Farseer (425336) and the synthetic trinket (990015).
 - A throwaway test loaded all eight shaman preset rotations with their own settings (Level 30 + 5, Level 30 PvP, Grace of Air, Windfury and the four Level 60 DPS report builds). Every reference resolves, so no rotation points at a rank the level doesn't know. The only warning is Berserking (26297) in the Level 60 rotations, the Troll racial an Orc doesn't know, kept for the race comparisons.
+- No sim change, no test, no Need to Verify item.
+
+### 11.3 APL edge cases
+
+- The user OK'd it (2026-10-15).
+- A swing that comes due during a cast was settled in 3.2. The cast holds our swings and the swing timer starts over when it ends, and an instant cast leaves it alone (the user's play, 2026-10-11, `swing_timer_test.go`).
+- Replacing a totem early: a new totem in the slot replaces the old one (7.x, TestOrcShamanTotemSlots). The presets only recast a totem after its buff or dot is gone. Over 300 runs of each rotation, the Level 60 ones never recast Strength of Earth, Windfury Totem or Mana Spring (the totems from before the pull last the fight), and put down Searing 3.6 times or Magma 7.9 times in 180 sec. Level 30 puts down one Flametongue Totem a fight. The one early replacement is Mana Tide over Mana Spring at 20% mana or less, 0.02 times a fight, and Mana Spring goes back down after it.
+- Fire Nova needs a fire totem up, and the rotations don't put down a new one in the last 10 sec, so Fire Nova can be unavailable near the end. That's a small rotation effect.
+- Fire Nova on Clearcasting: the default Level 60 rotation casts it before Flame Shock (+5 to +11 on 2026-10-06). Adding the line to the Magma Totem rotations gave +0.4 on Water Shield (776.1 to 776.5, within noise) and nothing on Mana Tide (753.4). Neither runs out of mana in 180 sec (time to OOM 301 and 433 sec), so there's no notes.md item.
+- Mana thresholds: Current Mana % runs from 0 to 1, and the presets use 0.1, 0.2, 0.5 and 0.8 consistently. A spell we can't pay for is skipped and the next line runs (2.7). Level 30 + 5 is out of mana about 7 sec a fight and Level 30 PvP about 68 of 120 sec, where Fire Nova has no mana condition. The knob search picked that, so it stays.
 - No sim change, no test, no Need to Verify item.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
