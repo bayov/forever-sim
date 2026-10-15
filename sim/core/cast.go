@@ -18,6 +18,8 @@ type Hardcast struct {
 	OnComplete func(*Simulation, *Unit)
 	Target     *Unit
 	Pushback   float64
+	// The cast's full time. Pushback can't take the cast bar back past its start.
+	CastTime time.Duration
 }
 
 // Input for constructing the CastSpell function for a spell.
@@ -128,6 +130,12 @@ func (unit *Unit) applySpellPushback() {
 					hcSpell.SpellMetrics[aura.Unit.CurrentTarget.UnitIndex].TotalCastTime -= pushback
 
 				} else {
+					// The cast bar goes back by the pushback, but not past its start, as on the
+					// cmangos Classic server (Spell::Delayed). A hit half a second into a 3 sec
+					// cast takes it back half a second, not the full 1 sec.
+					if hc.CastTime > 0 {
+						pushback = min(pushback, max(0, sim.CurrentTime+hc.CastTime-hc.Expires))
+					}
 					if sim.Log != nil {
 						aura.Unit.Log(sim, "Unit Hardcast extended by %s due to spell hit taken, will now occur at %s", pushback, hc.Expires+pushback)
 					}
@@ -242,6 +250,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 				Expires:  sim.CurrentTime + spell.CurCast.CastTime,
 				ActionID: spell.ActionID,
 				Pushback: 1.0,
+				CastTime: spell.CurCast.CastTime,
 				OnComplete: func(sim *Simulation, target *Unit) {
 					spell.LastCastAt = sim.CurrentTime
 

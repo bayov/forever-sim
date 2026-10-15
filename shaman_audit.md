@@ -1372,6 +1372,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Today only the Level 30 encounters hit us (Vishas tanks on us), the Level 30 presets are all Enhancement, and the Level 60 elemental preset doesn't take it. So no preset number moves.
 - Beta: no build had it, and we never cast a Lightning Bolt.
 - `eye_of_the_storm_test.go` TestOrcShamanEyeOfTheStorm: every rank of the three spells has the chance for 0 to 3 points. 2000 top rank Lightning Bolts with an enemy hit 0.5 sec in end on time 23, 47 and 70% of the time (within 5%), and 1 sec late otherwise. Without the talent, two hits push it 1.8 sec. Reading the chance from the hitting spell, or a 60% rank 3, fails it.
+- Changed (2026-10-15, leveling groundwork, `docs/leveling_sim.md`): pushback can't take the cast bar back past its start, as on the cmangos Classic server (`Spell::Delayed`), so a hit 0.5 sec into a 2.5 sec bolt adds 0.5 sec, not 1. The test's hits moved to 1 sec into the cast, where the full pushback fits, and `pushback_test.go` covers the cap. Forever's own rule is still to be seen in logs of casts under mob hits.
 
 ### 8.11 Call of Thunder
 
