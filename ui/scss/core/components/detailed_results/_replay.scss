@@ -13,9 +13,9 @@
 
 .replay-root {
 	--replay-gold: #ffd75e;
-	--replay-hostile: #c62828;
-	--replay-cast: #f0a800;
 	--replay-match: #3fd0ff;
+	// The pixel glow of the Bayov WeakAura, for buffs that are up and procs.
+	--replay-glow: #ffe6aa;
 	--class-color: #{$gold};
 
 	&:focus {
@@ -27,6 +27,9 @@
 	position: relative;
 	background: #07090c;
 	color: #fff;
+	// EllesmereUI's font is Avant Garde. We use it when the system has it, or the closest
+	// geometric sans we can find.
+	font-family: 'ITC Avant Garde Gothic', 'Avant Garde', 'URW Gothic', 'URW Gothic L', 'Century Gothic', 'Questrial', sans-serif;
 
 	&.fullscreen .replay-stage {
 		height: 100vh;
@@ -198,14 +201,35 @@
 	opacity: 0.85;
 }
 
-// The unit frames along the bottom, with the cooldown tracker between them.
+// The skin follows the user's beta UI: EllesmereUI unit frames (flat bars, 1px black borders,
+// no portraits, text with a drop shadow) and their Bayov WeakAura class pack in the middle
+// (wide cropped icons, desaturated cooldowns with a dark swipe, a pale pixel glow for buffs).
+// Sizes are about 0.7 of the 4K pixels the pack uses, so it reads at the size of the results.
+
+// EllesmereUI draws text with a drop shadow and no outline.
+@mixin replay-shadow {
+	text-shadow: 1px 1px 0 #000;
+}
+
+// The Bayov countdowns have an outline and a shadow.
+@mixin replay-countdown {
+	text-shadow:
+		1px 1px 0 #000,
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 2px 0 #000;
+}
+
+// The unit frames along the bottom, with the class pack between them. In the game the player
+// and target frames sit level with the pack's resource bar.
 .replay-frames {
 	position: relative;
 	flex: 0 0 auto;
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
-	align-items: end;
-	gap: 28px;
+	align-items: start;
+	gap: 36px;
 	pointer-events: none;
 }
 
@@ -214,6 +238,8 @@
 	flex-direction: column;
 	gap: 10px;
 	min-width: 0;
+	// Level with the resource bar, under the history strip and the procs.
+	padding-top: 94px;
 }
 
 .replay-col-player {
@@ -226,169 +252,81 @@
 	// With three or more enemies the frames get smaller, so they fit.
 	&.many {
 		gap: 6px;
-
-		.replay-unit {
-			width: 240px;
-		}
-
-		.replay-unit-portrait {
-			width: 32px;
-		}
+		padding-top: 0;
 
 		.replay-bar.health {
-			height: 16px;
-		}
-
-		.replay-unit-damage {
-			display: none;
+			height: 22px;
 		}
 
 		.replay-icon.debuff {
-			--size: 20px;
+			--width: 24px;
+			--height: 24px;
 		}
 	}
 }
 
 .replay-unit {
-	width: 320px;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+	width: 300px;
 	max-width: 100%;
 }
 
 .replay-unit-main {
-	display: flex;
-	gap: 3px;
-	padding: 3px;
-	background: rgba(8, 10, 14, 0.85);
-	border: 1px solid #000;
-	box-shadow:
-		0 0 0 1px rgba(255, 255, 255, 0.07),
-		0 6px 16px rgba(0, 0, 0, 0.55);
-
-	.enemy & {
-		flex-direction: row-reverse;
-	}
+	padding: 0;
 
 	.focus & {
-		box-shadow:
-			0 0 0 1px var(--replay-gold),
-			0 0 12px rgba(255, 215, 94, 0.35),
-			0 6px 16px rgba(0, 0, 0, 0.55);
+		outline: 1px solid var(--replay-glow);
+		outline-offset: 2px;
 	}
-}
-
-.replay-unit-portrait {
-	flex: 0 0 auto;
-	width: 52px;
-	border: 1px solid #000;
-	background-size: 115%;
-	background-position: center;
-}
-
-.replay-unit-body {
-	flex: 1 1 auto;
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	min-width: 0;
-}
-
-.replay-unit-head {
-	display: flex;
-	justify-content: space-between;
-	gap: 6px;
-	font-size: 0.85rem;
-	font-weight: 700;
-	line-height: 1.2;
-
-	@include replay-outline;
-
-	.enemy & {
-		flex-direction: row-reverse;
-	}
-}
-
-.replay-unit-name {
-	color: var(--class-color);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-
-	.enemy & {
-		color: #fff;
-	}
-}
-
-.replay-unit-level {
-	color: var(--replay-gold);
-
-	.enemy & {
-		color: #ff6b5e;
-	}
-}
-
-.replay-unit-extra {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.replay-unit-damage {
-	font-size: 0.65rem;
-	color: rgba(255, 255, 255, 0.55);
-	text-align: right;
-	font-variant-numeric: tabular-nums;
 }
 
 .replay-unit-auras {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 2px;
-	min-height: 0;
+	gap: 5px;
+	// Under the frame, so the frames stay level with the resource bar however many debuffs
+	// the enemy has.
+	order: 2;
 
 	.player & {
-		justify-content: flex-end;
+		display: none;
 	}
 }
 
 .replay-bar {
-	--fill: #888;
+	--fill: #4f9d3d;
 
 	position: relative;
-	height: 28px;
+	height: 38px;
 	overflow: hidden;
-	background: rgba(255, 255, 255, 0.06);
 	border: 1px solid #000;
-	font-size: 0.7rem;
-	font-weight: 700;
+	background: #111;
+	font-size: 15px;
 	font-variant-numeric: tabular-nums;
 
-	@include replay-outline;
+	@include replay-shadow;
 
-	&.health {
-		--fill: #23a943;
-
-		.enemy & {
-			--fill: var(--replay-hostile);
-		}
+	.enemy &.health {
+		height: 30px;
 	}
 
 	&.power {
-		height: 12px;
-		font-size: 0.6rem;
+		height: 17px;
+		background: rgba(70, 22, 22, 0.75);
+		font-size: 11px;
 
 		&.mana {
-			--fill: #1f6fd6;
+			--fill: #577eaf;
 		}
 
 		&.energy {
-			--fill: #e6cf1f;
+			--fill: #fff569;
 		}
 
 		&.rage {
-			--fill: #d42a2a;
+			--fill: #e62626;
 		}
 
 		&.focus {
@@ -402,7 +340,7 @@
 	top: 0;
 	bottom: 0;
 	left: 0;
-	background: linear-gradient(to bottom, color-mix(in srgb, var(--fill), #fff 18%), var(--fill) 55%, color-mix(in srgb, var(--fill), #000 30%));
+	background: var(--fill);
 
 	.enemy & {
 		left: auto;
@@ -410,35 +348,43 @@
 	}
 }
 
-.replay-bar-text,
-.replay-bar-percent {
+.replay-bar-left,
+.replay-bar-right,
+.replay-bar-center {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	line-height: 1;
+	max-width: 70%;
+	overflow: hidden;
+	line-height: 1.1;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.replay-bar-text {
-	left: 6px;
+.replay-bar-left {
+	left: 8px;
 }
 
-.replay-bar-percent {
-	right: 6px;
+.replay-bar-right {
+	right: 8px;
 
 	.enemy & {
-		right: auto;
-		left: 6px;
-	}
-
-	.execute & {
-		color: #ff9f43;
+		font-size: 12px;
 	}
 }
 
-.replay-bar.power .replay-bar-text {
+.replay-bar-center {
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+
+.replay-bar-left:empty,
+.replay-bar-right:empty {
+	display: none;
+}
+
+.execute .replay-bar-left {
+	color: #ffb747;
 }
 
 // Where the execute phase starts on an enemy's health bar.
@@ -450,38 +396,22 @@
 	background: rgba(255, 255, 255, 0.55);
 }
 
-.replay-combo {
-	display: flex;
-	gap: 3px;
-	padding-top: 1px;
-}
-
-.replay-combo-pip {
-	flex: 1;
-	height: 6px;
-	border: 1px solid #000;
-	background: rgba(255, 255, 255, 0.08);
-
-	&.on {
-		background: linear-gradient(to bottom, #ff8a3d, #d9480f);
-		box-shadow: 0 0 6px rgba(255, 120, 40, 0.6);
-	}
-}
-
-// The class pack in the middle: the casts we made, our procs, the cooldowns, the GCD and the
-// cast bar.
+// The class pack in the middle: the casts we made, our procs, the resource block, the
+// cooldown rows and the cast bar.
 .replay-center {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 8px;
-	width: 390px;
+	gap: 4px;
+	width: 452px;
 }
 
 .replay-history {
 	position: relative;
-	width: 288px;
-	height: 50px;
+	width: 300px;
+	height: 40px;
+	margin-bottom: 4px;
 	overflow: hidden;
 }
 
@@ -491,114 +421,197 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	gap: 4px;
+	width: 100%;
 }
 
 .replay-procs {
-	min-height: 34px;
+	min-height: 32px;
 }
 
-.replay-gcd {
-	width: 220px;
-	height: 3px;
-	background: rgba(255, 255, 255, 0.08);
-	opacity: 0.35;
+.replay-resources {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	width: 100%;
+	margin-bottom: 2px;
+}
 
-	&.active {
+.replay-swing {
+	height: 4px;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
+	box-sizing: content-box;
+}
+
+.replay-swing-fill {
+	height: 100%;
+	background: #e8e8e8;
+}
+
+.replay-pips {
+	display: flex;
+	gap: 3px;
+}
+
+.replay-pip {
+	flex: 1;
+	height: 7px;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
+
+	.maelstrom &.on {
+		background: #00b8de;
+	}
+
+	.combo &.on {
+		background: #ff8a3d;
+	}
+}
+
+// At five Maelstrom Weapon stacks, cyan arcs light up on both sides of the pack, like the
+// PowerAuras textures of the WeakAura.
+.replay-center::before,
+.replay-center::after {
+	content: '';
+	position: absolute;
+	top: 30px;
+	width: 46px;
+	height: 120px;
+	border: 5px solid #00b8de;
+	border-radius: 50%;
+	opacity: 0;
+	filter: drop-shadow(0 0 6px #00b8de);
+	transition: opacity 0.12s;
+	pointer-events: none;
+}
+
+.replay-center::before {
+	left: -64px;
+	border-right-color: transparent;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.replay-center::after {
+	right: -64px;
+	border-left-color: transparent;
+	border-top-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.replay-center.maelstrom-full::before,
+.replay-center.maelstrom-full::after {
+	opacity: 1;
+	animation: replay-pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes replay-pulse {
+	from {
+		opacity: 0.55;
+	}
+
+	to {
 		opacity: 1;
 	}
 }
 
-.replay-gcd-fill {
-	height: 100%;
-	background: rgba(255, 255, 255, 0.85);
+// The pale pixel glow of the Bayov pack: eight short lines that run around inside the border.
+@property --replay-glow-angle {
+	syntax: '<angle>';
+	inherits: false;
+	initial-value: 0deg;
+}
+
+@keyframes replay-glow {
+	to {
+		--replay-glow-angle: 360deg;
+	}
+}
+
+@mixin replay-pixel-glow {
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 1px;
+		z-index: 2;
+		padding: 2px;
+		background: repeating-conic-gradient(from var(--replay-glow-angle), var(--replay-glow) 0 14deg, transparent 14deg 45deg);
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+		mix-blend-mode: screen;
+		animation: replay-glow 4s linear infinite;
+		pointer-events: none;
+	}
 }
 
 .replay-icon {
-	--size: 40px;
+	--width: 46px;
+	--height: 32px;
 	--elapsed: 1;
 
 	position: relative;
 	flex: 0 0 auto;
-	width: var(--size);
-	height: var(--size);
-	border: 1px solid #000;
-	border-radius: 3px;
+	width: var(--width);
+	height: var(--height);
 	overflow: hidden;
-	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+	border: 1px solid #000;
 	font-variant-numeric: tabular-nums;
 
 	&.cooldown {
-		--size: 46px;
 		transition: transform 0.08s;
 
-		.major & {
-			--size: 36px;
-		}
-
 		&.on-cooldown .replay-icon-img {
-			filter: grayscale(0.85) brightness(0.75);
+			filter: grayscale(1);
 		}
 
 		&.buff-up {
-			box-shadow:
-				0 0 0 2px var(--replay-gold),
-				0 0 12px rgba(255, 215, 94, 0.55);
-
-			.replay-icon-time {
-				color: var(--replay-gold);
-			}
+			@include replay-pixel-glow;
 		}
 
 		// The flash of a button we just pressed.
 		&.pressed {
-			transform: scale(0.9);
+			transform: scale(0.92);
 
 			&::after {
 				content: '';
 				position: absolute;
 				inset: 0;
-				background: rgba(255, 255, 255, 0.35);
+				background: rgba(255, 255, 255, 0.3);
 			}
 		}
 	}
 
 	&.proc {
-		--size: 34px;
 		animation: replay-pop 0.18s ease-out;
-		box-shadow:
-			0 0 0 1px rgba(255, 215, 94, 0.45),
-			0 0 8px rgba(255, 215, 94, 0.25);
+
+		@include replay-pixel-glow;
 	}
 
 	&.debuff {
-		--size: 24px;
+		--width: 38px;
+		--height: 38px;
 	}
 
 	&.buff {
-		--size: 18px;
-		opacity: 0.85;
+		--width: 30px;
+		--height: 30px;
 	}
 
 	&.history {
-		--size: 42px;
 		position: absolute;
-		top: 4px;
+		top: 2px;
 		left: 100%;
-		margin-left: 3px;
 		transform-origin: center;
-
-		&.newest {
-			box-shadow:
-				0 0 0 1px rgba(255, 255, 255, 0.5),
-				0 0 10px rgba(255, 255, 255, 0.25);
-		}
 	}
 }
 
+// The icons are cropped by a quarter (zoom 0.25), so the game's icon border doesn't show.
 .replay-icon-img {
 	position: absolute;
 	inset: 0;
-	background-size: 115%;
+	background-size: 134% auto;
 	background-position: center;
 }
 
@@ -607,7 +620,7 @@
 	position: absolute;
 	inset: 0;
 	display: none;
-	background: conic-gradient(transparent 0 calc(var(--elapsed) * 1turn), rgba(0, 0, 0, 0.68) 0);
+	background: conic-gradient(transparent 0 calc(var(--elapsed) * 1turn), rgba(0, 0, 0, 0.75) 0);
 
 	.swiping > & {
 		display: block;
@@ -617,20 +630,22 @@
 .replay-icon-time {
 	position: absolute;
 	inset: 0;
+	z-index: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: calc(var(--size) * 0.4);
-	font-weight: 800;
+	font-size: 15px;
 	line-height: 1;
 
-	@include replay-outline;
+	@include replay-countdown;
+
+	.expiring > & {
+		color: #ffb747;
+	}
 
 	.debuff &,
-	.proc & {
-		align-items: flex-end;
-		padding-bottom: 1px;
-		font-size: calc(var(--size) * 0.36);
+	.buff & {
+		font-size: 12px;
 	}
 }
 
@@ -638,11 +653,12 @@
 	position: absolute;
 	right: 2px;
 	top: 1px;
-	font-size: calc(var(--size) * 0.34);
-	font-weight: 800;
+	z-index: 1;
+	color: #fff000;
+	font-size: 12px;
 	line-height: 1;
 
-	@include replay-outline;
+	@include replay-countdown;
 }
 
 .replay-icon-badge {
@@ -650,16 +666,17 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
+	z-index: 1;
 	padding: 1px 0;
 	font-size: 0.55rem;
-	font-weight: 800;
+	font-weight: 700;
 	line-height: 1;
 	text-align: center;
 	letter-spacing: 0.04em;
 	background: rgba(0, 0, 0, 0.65);
 
 	&.crit {
-		color: var(--replay-gold);
+		color: #ffd166;
 	}
 
 	&.avoid {
@@ -679,28 +696,35 @@
 	}
 }
 
+// The cast bar of EllesmereUI's resource bars: flat grey-teal fill on black, the icon with a
+// divider, the spell on the left and the timer on the right.
 .replay-castbar {
+	order: 1;
 	display: flex;
-	gap: 3px;
 	width: 100%;
-	height: 22px;
+	height: 28px;
+	margin-top: 6px;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
 	opacity: 0;
 	transition: opacity 0.12s;
+
+	@include replay-shadow;
 
 	&.active {
 		opacity: 1;
 	}
 
 	&.player {
-		width: 300px;
+		width: 425px;
 	}
 }
 
 .replay-castbar-icon {
 	flex: 0 0 auto;
-	width: 22px;
-	border: 1px solid #000;
-	background-size: 115%;
+	width: 27px;
+	border-right: 1px solid #000;
+	background-size: 134% auto;
 	background-position: center;
 }
 
@@ -708,22 +732,13 @@
 	position: relative;
 	flex: 1;
 	overflow: hidden;
-	border: 1px solid #000;
-	background: rgba(0, 0, 0, 0.65);
-	font-size: 0.7rem;
-	font-weight: 700;
-
-	@include replay-outline;
+	font-size: 12px;
 }
 
 .replay-castbar-fill {
 	position: absolute;
 	inset: 0 auto 0 0;
-	background: linear-gradient(to bottom, #ffc94a, var(--replay-cast) 55%, #b87800);
-
-	.enemy & {
-		background: linear-gradient(to bottom, #ff6b6b, #c62828 55%, #8e1b1b);
-	}
+	background: #72898c;
 }
 
 .replay-castbar-name,
@@ -741,6 +756,7 @@
 
 .replay-castbar-time {
 	right: 6px;
+	font-size: 14px;
 	font-variant-numeric: tabular-nums;
 }
 

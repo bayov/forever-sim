@@ -45,9 +45,11 @@ const STICKY_X: Record<SctEvent['side'], number> = { in: 0.8, out: 0.2 };
 // one slot to the left over this many seconds.
 const HISTORY_SLOTS = 6;
 const HISTORY_SHIFT = 0.15;
-const HISTORY_SLOT_PX = 48;
+const HISTORY_SLOT_PX = 50;
 // A cooldown icon lights up like a pressed button for this long after we use it.
 const PRESS_TIME = 0.25;
+// A buff's countdown turns orange in its last seconds, like the Bayov pack's expiring alert.
+const EXPIRING = 3;
 // The controls fade out after the mouse rests this long while we play.
 const IDLE_MS = 2500;
 
@@ -78,6 +80,9 @@ const formatCountdown = (seconds: number): string => {
 const easeOut = (x: number) => 1 - (1 - x) * (1 - x);
 
 const formatSeconds = (seconds: number): string => `${seconds.toFixed(1)}s`;
+
+// The mana bar's color shifts as the mana runs low, like the user's Bayov resource bar.
+const manaColor = (fraction: number): string => (fraction < 0.15 ? '#af313a' : fraction < 0.3 ? '#af46ac' : fraction < 0.5 ? '#6358af' : '#577eaf');
 
 // A tooltip title for a unit, with its portrait, name and level.
 const unitTitle = (iconUrl: string, name: string, level: number): Element => (
@@ -126,8 +131,9 @@ const setWidth = (elem: HTMLElement, fraction: number) => {
 interface UnitFrameRefs {
 	root: HTMLElement;
 	health: HTMLElement;
-	healthText: HTMLElement;
-	healthPercent: HTMLElement;
+	// The texts on the health bar's left and right, like EllesmereUI draws them.
+	leftText: HTMLElement;
+	rightText: HTMLElement;
 	castBar: CastBarRefs;
 	auras: HTMLElement;
 	auraElems: Map<string, HTMLElement>;
@@ -210,6 +216,7 @@ const syncAuras = (
 			pool.set(aura.track.key, elem);
 		}
 		if (host.children[i] !== elem) host.insertBefore(elem, host.children[i] ?? null);
+		elem.classList.toggle('expiring', aura.remaining != null && aura.remaining < EXPIRING);
 		updateIcon(elem, aura.fraction == null ? null : 1 - aura.fraction, aura.remaining == null ? '' : formatCountdown(aura.remaining), aura.stacks);
 	});
 };
@@ -256,8 +263,8 @@ export class Replay extends ResultComponent {
 		procs: HTMLElement;
 		coreCooldowns: HTMLElement;
 		majorCooldowns: HTMLElement;
-		gcd: HTMLElement;
-		gcdFill: HTMLElement;
+		center: HTMLElement;
+		resources: HTMLElement;
 		sctIn: HTMLElement;
 		sctOut: HTMLElement;
 		progress: HTMLElement;
@@ -274,10 +281,15 @@ export class Replay extends ResultComponent {
 	};
 
 	// The parts of the screen we build for each iteration.
-	private playerFrame: (UnitFrameRefs & { powers: Array<{ bar: ReplayBar; fill: HTMLElement; text: HTMLElement }>; combo: Array<HTMLElement> }) | null = null;
+	private playerFrame: UnitFrameRefs | null = null;
+	private resourceRefs: {
+		powers: Array<{ bar: ReplayBar; fill: HTMLElement; text: HTMLElement }>;
+		swingFill: HTMLElement;
+		pips: Array<HTMLElement>;
+	} | null = null;
 	private playerCastBar = makeCastBar('player');
 	private playerCasts: Array<CastLog> = [];
-	private enemyFrames: Array<UnitFrameRefs & { enemy: ReplayEnemy; damage: HTMLElement; starts: Array<number> }> = [];
+	private enemyFrames: Array<UnitFrameRefs & { enemy: ReplayEnemy; starts: Array<number> }> = [];
 	private cooldownElems: Array<HTMLElement> = [];
 	private procElems = new Map<string, HTMLElement>();
 	// The buffs that come and go, like procs. A buff of an ability in the cooldown tracker shows
@@ -329,8 +341,8 @@ export class Replay extends ResultComponent {
 			procs: ref<HTMLDivElement>(),
 			coreCooldowns: ref<HTMLDivElement>(),
 			majorCooldowns: ref<HTMLDivElement>(),
-			gcd: ref<HTMLDivElement>(),
-			gcdFill: ref<HTMLDivElement>(),
+			center: ref<HTMLDivElement>(),
+			resources: ref<HTMLDivElement>(),
 			sctIn: ref<HTMLDivElement>(),
 			sctOut: ref<HTMLDivElement>(),
 			progress: ref<HTMLDivElement>(),
@@ -369,14 +381,12 @@ export class Replay extends ResultComponent {
 					</div>
 					<div className="replay-frames">
 						<div ref={refs.playerCol} className="replay-col replay-col-player" />
-						<div className="replay-center">
+						<div ref={refs.center} className="replay-center">
 							<div ref={refs.history} className="replay-history" />
 							<div ref={refs.procs} className="replay-procs" />
+							<div ref={refs.resources} className="replay-resources" />
 							<div ref={refs.coreCooldowns} className="replay-cooldowns core" />
 							<div ref={refs.majorCooldowns} className="replay-cooldowns major" />
-							<div ref={refs.gcd} className="replay-gcd">
-								<div ref={refs.gcdFill} className="replay-gcd-fill" />
-							</div>
 							{this.playerCastBar.root}
 						</div>
 						<div ref={refs.enemyCol} className="replay-col replay-col-enemies" />
@@ -440,8 +450,8 @@ export class Replay extends ResultComponent {
 			procs: refs.procs.value!,
 			coreCooldowns: refs.coreCooldowns.value!,
 			majorCooldowns: refs.majorCooldowns.value!,
-			gcd: refs.gcd.value!,
-			gcdFill: refs.gcdFill.value!,
+			center: refs.center.value!,
+			resources: refs.resources.value!,
 			sctIn: refs.sctIn.value!,
 			sctOut: refs.sctOut.value!,
 			progress: refs.progress.value!,
@@ -1085,40 +1095,98 @@ export class Replay extends ResultComponent {
 		this.ui.player.style.setProperty('--class-color', `var(--bs-${model.player.classColor})`);
 	}
 
-	private buildUnitFrame(name: string, level: number, iconUrl: string, side: 'player' | 'enemy'): UnitFrameRefs & { extra: HTMLElement } {
+	// A unit frame like the user's EllesmereUI ones: a flat health bar with a text on each side,
+	// no portrait. The name and level are in the tooltip.
+	private buildUnitFrame(side: 'player' | 'enemy'): UnitFrameRefs {
 		const castBar = makeCastBar(side);
 		const root = (
 			<div className={`replay-unit ${side}`}>
 				<div className="replay-unit-auras" />
 				<div className="replay-unit-main">
-					<div className="replay-unit-portrait" />
-					<div className="replay-unit-body">
-						<div className="replay-unit-head">
-							<span className="replay-unit-name">{name}</span>
-							<span className="replay-unit-level">{String(level)}</span>
-						</div>
-						<div className="replay-bar health">
-							<div className="replay-bar-fill" />
-							<span className="replay-bar-text" />
-							<span className="replay-bar-percent" />
-						</div>
-						<div className="replay-unit-extra" />
+					<div className="replay-bar health">
+						<div className="replay-bar-fill" />
+						<span className="replay-bar-left" />
+						<span className="replay-bar-right" />
 					</div>
 				</div>
 			</div>
 		) as HTMLElement;
-		(root.querySelector('.replay-unit-portrait') as HTMLElement).style.backgroundImage = iconUrl ? `url('${iconUrl}')` : '';
 		root.appendChild(castBar.root);
 		return {
 			root,
 			health: root.querySelector('.health .replay-bar-fill')!,
-			healthText: root.querySelector('.health .replay-bar-text')!,
-			healthPercent: root.querySelector('.health .replay-bar-percent')!,
+			leftText: root.querySelector('.health .replay-bar-left')!,
+			rightText: root.querySelector('.health .replay-bar-right')!,
 			castBar,
 			auras: root.querySelector('.replay-unit-auras')!,
 			auraElems: new Map(),
-			extra: root.querySelector('.replay-unit-extra')!,
 		};
+	}
+
+	// The resource block of the class pack, between the procs and the cooldowns: the power bar,
+	// the swing timer and the pips (combo points, or the shaman's Maelstrom Weapon stacks).
+	private buildResources(model: ReplayModel) {
+		const powers = model.powers.map(bar => {
+			const elem = (
+				<div className={`replay-bar power ${powerClass[bar.type] ?? ''}`}>
+					<div className="replay-bar-fill" />
+					<span className="replay-bar-center" />
+				</div>
+			) as HTMLElement;
+			return { bar, elem, fill: elem.querySelector<HTMLElement>('.replay-bar-fill')!, text: elem.querySelector<HTMLElement>('.replay-bar-center')! };
+		});
+		const swing = (
+			<div className="replay-swing">
+				<div className="replay-swing-fill" />
+			</div>
+		) as HTMLElement;
+		const pips: Array<HTMLElement> = [];
+		const pipKind = model.comboPoints ? 'combo' : model.maelstrom ? 'maelstrom' : '';
+		const pipRow = (<div className={`replay-pips ${pipKind}`} />) as HTMLElement;
+		if (pipKind) {
+			for (let i = 0; i < 5; i++) {
+				const pip = (<div className="replay-pip" />) as HTMLElement;
+				pipRow.appendChild(pip);
+				pips.push(pip);
+			}
+		}
+		this.ui.resources.replaceChildren(
+			...powers.map(power => power.elem),
+			...(model.mainHandSwings.length > 1 ? [swing] : []),
+			...(pipKind ? [pipRow] : []),
+		);
+		this.tip(this.ui.resources, () => {
+			const time = this.time;
+			return (
+				<div className="timeline-tooltip">
+					<div className="timeline-tooltip-rows">
+						{model.powers.map(bar =>
+							tooltipRow(resourceNames.get(bar.type)!, `${formatToNumber(Math.floor(bar.value.at(time)))} / ${formatToNumber(bar.max)}`),
+						)}
+						{model.comboPoints && tooltipRow('Combo points', String(model.comboPoints.at(time)))}
+						{model.maelstrom && tooltipRow('Maelstrom Weapon', String(this.pipsAt(model, time)))}
+						{this.swingAt(model, time) != null && tooltipRow('Next main hand swing', formatSeconds(this.swingAt(model, time)!.next - time))}
+					</div>
+				</div>
+			) as Element;
+		});
+		this.resourceRefs = { powers, swingFill: swing.firstElementChild as HTMLElement, pips };
+	}
+
+	private pipsAt(model: ReplayModel, time: number): number {
+		if (model.comboPoints) return model.comboPoints.at(time);
+		if (!model.maelstrom) return 0;
+		const aura = activeAuraAt(model.maelstrom, time, model.end);
+		return aura ? Math.max(1, aura.stacks) : 0;
+	}
+
+	// The last and the next main hand swing around this time. A long gap, like while we were out
+	// of range, has no swing timer.
+	private swingAt(model: ReplayModel, time: number): { last: number; next: number } | null {
+		const swings = model.mainHandSwings;
+		const i = lastIndexAtOrBefore(swings, time);
+		if (i < 0 || i + 1 >= swings.length || swings[i + 1] - swings[i] > 5) return null;
+		return { last: swings[i], next: swings[i + 1] };
 	}
 
 	// A cast bar's tooltip is the cast's, while the bar shows one.
@@ -1127,27 +1195,8 @@ export class Replay extends ResultComponent {
 	}
 
 	private buildPlayerFrame(model: ReplayModel) {
-		const frame = this.buildUnitFrame(model.playerName, model.playerLevel, model.player.iconUrl, 'player');
-		const powers = model.powers.map(bar => {
-			const elem = (
-				<div className={`replay-bar power ${powerClass[bar.type] ?? ''}`}>
-					<div className="replay-bar-fill" />
-					<span className="replay-bar-text" />
-				</div>
-			) as HTMLElement;
-			frame.extra.appendChild(elem);
-			return { bar, fill: elem.querySelector<HTMLElement>('.replay-bar-fill')!, text: elem.querySelector<HTMLElement>('.replay-bar-text')! };
-		});
-		const combo: Array<HTMLElement> = [];
-		if (model.comboPoints) {
-			const pips = (<div className="replay-combo" />) as HTMLElement;
-			for (let i = 0; i < 5; i++) {
-				const pip = (<div className="replay-combo-pip" />) as HTMLElement;
-				pips.appendChild(pip);
-				combo.push(pip);
-			}
-			frame.extra.appendChild(pips);
-		}
+		const frame = this.buildUnitFrame('player');
+		this.buildResources(model);
 
 		// The buffs that are up the whole fight never change, so we draw them once, at the top
 		// right like the game's buff frame.
@@ -1184,14 +1233,13 @@ export class Replay extends ResultComponent {
 
 		this.buffsElem.replaceChildren(...buffs);
 		this.ui.playerCol.replaceChildren(frame.root);
-		this.playerFrame = { ...frame, powers, combo };
+		this.playerFrame = frame;
 	}
 
 	private buildEnemyFrames(model: ReplayModel) {
 		this.enemyFrames = model.enemies.map(enemy => {
-			const frame = this.buildUnitFrame(enemy.name, enemy.level, enemy.unit.iconUrl, 'enemy');
-			const damage = (<span className="replay-unit-damage" />) as HTMLElement;
-			frame.extra.appendChild(damage);
+			const frame = this.buildUnitFrame('enemy');
+			frame.rightText.textContent = enemy.name;
 			if (model.executeFraction > 0) {
 				const mark = (<div className="replay-bar-execute" />) as HTMLElement;
 				// The enemy's bar empties toward the right, so the mark is measured from the right.
@@ -1218,7 +1266,7 @@ export class Replay extends ResultComponent {
 				) as Element;
 			});
 			this.tipCastBar(frame.castBar);
-			return { ...frame, enemy, damage, starts: enemy.casts.map(cast => cast.timestamp) };
+			return { ...frame, enemy, starts: enemy.casts.map(cast => cast.timestamp) };
 		});
 		this.ui.enemyCol.replaceChildren(...this.enemyFrames.map(frame => frame.root));
 		this.ui.enemyCol.classList.toggle('many', this.enemyFrames.length > 2);
@@ -1252,23 +1300,27 @@ export class Replay extends ResultComponent {
 		if (model.health) {
 			const health = model.health.value.at(time);
 			setWidth(frame.health, health / model.health.max);
-			setText(frame.healthText, `${formatToNumber(Math.round(health))} / ${formatToNumber(model.health.max)}`);
-			setText(frame.healthPercent, `${Math.round((health / model.health.max) * 100)}%`);
+			// Current health and percent on the right, like EllesmereUI's "both" text.
+			setText(frame.rightText, `${formatToCompactNumber(health, { maximumFractionDigits: 1 })} | ${Math.round((health / model.health.max) * 100)}%`);
 		} else {
 			setWidth(frame.health, 1);
 		}
-		frame.powers.forEach(({ bar, fill, text }) => {
+
+		const resources = this.resourceRefs!;
+		resources.powers.forEach(({ bar, fill, text }) => {
 			const value = bar.value.at(time);
-			setWidth(fill, value / bar.max);
-			setText(
-				text,
-				bar.type == ResourceType.ResourceTypeMana ? `${formatToNumber(Math.floor(value))} / ${formatToNumber(bar.max)}` : String(Math.floor(value)),
-			);
+			const fraction = value / bar.max;
+			setWidth(fill, fraction);
+			if (bar.type == ResourceType.ResourceTypeMana) fill.style.background = manaColor(fraction);
+			setText(text, String(Math.floor(value)));
 		});
-		if (model.comboPoints) {
-			const points = model.comboPoints.at(time);
-			frame.combo.forEach((pip, i) => pip.classList.toggle('on', i < points));
-		}
+		const swing = this.swingAt(model, time);
+		setWidth(resources.swingFill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
+		const pips = this.pipsAt(model, time);
+		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
+		// At five Maelstrom Weapon stacks the pack lights up around the middle, like the
+		// PowerAuras textures of the user's WeakAura.
+		this.ui.center.classList.toggle('maelstrom-full', !!model.maelstrom && pips >= 5);
 
 		// The procs and other buffs that come and go, in the middle above the cooldowns.
 		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time, model.end), 'proc', (elem, track) => {
@@ -1277,19 +1329,6 @@ export class Replay extends ResultComponent {
 		});
 
 		updateCastBar(this.playerCastBar, castAt(this.playerCasts, model.castStarts, time), time);
-
-		// The GCD of the last thing we pressed, as a thin line under the cooldowns.
-		const last = lastIndexAtOrBefore(model.actionStarts, time);
-		let gcd = 0;
-		for (let i = last; i >= 0 && i > last - 4; i--) {
-			const log = model.actions[i].log;
-			if (log.castTime == 0 && log.effectiveTime > 0 && time < log.timestamp + log.effectiveTime) {
-				gcd = 1 - (time - log.timestamp) / log.effectiveTime;
-				break;
-			}
-		}
-		this.ui.gcd.classList.toggle('active', gcd > 0);
-		setWidth(this.ui.gcdFill, gcd);
 	}
 
 	private drawEnemies(model: ReplayModel, time: number) {
@@ -1298,8 +1337,7 @@ export class Replay extends ResultComponent {
 			const { enemy } = frame;
 			const fraction = enemy.healthFraction(time);
 			setWidth(frame.health, fraction);
-			setText(frame.healthPercent, `${(fraction * 100).toFixed(fraction < 0.1 ? 1 : 0)}%`);
-			setText(frame.damage, `${formatToCompactNumber(enemy.damageTaken.at(time), { maximumFractionDigits: 1 })} damage taken`);
+			setText(frame.leftText, `${(fraction * 100).toFixed(fraction < 0.1 ? 1 : 0)}%`);
 			frame.root.classList.toggle('focus', enemy.unit.index == focus && this.enemyFrames.length > 1);
 			frame.root.classList.toggle('execute', model.executeFraction > 0 && fraction <= model.executeFraction);
 			syncAuras(frame.auras, frame.auraElems, activeAuras(enemy.debuffs, time, model.end), 'debuff', (elem, track) => {
@@ -1322,6 +1360,7 @@ export class Replay extends ResultComponent {
 			elem.classList.toggle('buff-up', !!aura);
 			elem.classList.toggle('on-cooldown', !aura && !!cd);
 			elem.classList.toggle('ready', !aura && !cd);
+			elem.classList.toggle('expiring', !!aura && aura.remaining != null && aura.remaining < EXPIRING);
 			if (aura) {
 				updateIcon(elem, aura.fraction == null ? null : 1 - aura.fraction, aura.remaining == null ? '' : formatCountdown(aura.remaining), aura.stacks);
 			} else if (cd) {

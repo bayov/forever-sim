@@ -180,6 +180,10 @@ export interface ReplayModel {
 	enemies: Array<ReplayEnemy>;
 	// The enemy the player hit last with a single target ability, by time.
 	focus: Steps;
+	// When the main hand swung, for the swing timer.
+	mainHandSwings: Array<number>;
+	// The Maelstrom Weapon buff, which the shaman pack shows as five pips like combo points.
+	maelstrom: AuraTrack | null;
 	damageDone: Steps;
 	sct: Array<SctEvent>;
 	sctTimes: Array<number>;
@@ -395,6 +399,8 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		actionStarts: actions.map(cast => cast.log.timestamp),
 		enemies,
 		focus,
+		mainHandSwings: castLogs.filter(log => log.actionId!.otherId == OtherAction.OtherActionAttack && log.actionId!.tag == 1).map(log => log.timestamp),
+		maelstrom: playerAuras.find(track => track.actionId.name.startsWith('Maelstrom Weapon')) ?? null,
 		damageDone,
 		sct,
 		sctTimes: sct.map(event => event.time),
