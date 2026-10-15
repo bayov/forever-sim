@@ -27,6 +27,7 @@ func (hunterSV) Knobs() []Knob {
 		{Name: "strikerMana", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Hunter's Mark duty (standards 23), as in hunter_ranged.
 		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "markPrepull", Default: 0, Min: 0, Max: 3, Step: 0.5},
 	}
 }
 
@@ -80,5 +81,9 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 		Action:    &proto.APLAction{Action: &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(0)}}},
 		DoAtValue: seconds(-6),
 	}, prepull(hunterAspectOfTheBeast, 3))
+	if k["mark"] == 1 && k["markPrepull"] > 0 {
+		// In melee by then: the walk ends before it.
+		rot.PrepullActions = append(rot.PrepullActions, prepull(hunterHuntersMark, k["markPrepull"]))
+	}
 	return rot
 }

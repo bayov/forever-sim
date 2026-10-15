@@ -145,11 +145,12 @@ export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', Surviva
 	group: 'Level 60',
 });
 
-// Hunter's Mark duty (standards 23): the base rotation plus the hunter's own Hunter's Mark, cast in
-// the first global cooldown after the pull and again before its 2 min run out. The duty presets
+// Hunter's Mark duty (standards 23): the base rotation plus the hunter's own Hunter's Mark, cast 1.5
+// sec before the pull (it doesn't pull; user ruling 2026-10-15) and again before its 2 min run out,
+// never held back for the hunter's own damage. The duty presets
 // switch the raid's Hunter's Mark off; the base presets take the mark from the raid and never cast
 // it.
-const markDutyTooltip = " Plus Hunter's Mark at the pull and before it drops, for the hunter on Hunter's Mark duty.";
+const markDutyTooltip = " Plus Hunter's Mark 1.5 sec before the pull and before it drops, for the hunter on Hunter's Mark duty.";
 export const APLBeastMasteryMark = PresetUtils.makePresetAPLRotation("Beast Mastery (Hunter's Mark duty)", BeastMasteryMarkAPL, {
 	tooltip: 'The Beast Mastery rotation.' + markDutyTooltip,
 	group: 'Level 60',
@@ -168,7 +169,8 @@ export const APLSurvivalMark = PresetUtils.makePresetAPLRotation("Survival (Hunt
 });
 // Scorpid Sting duty (standards 23), for the ranged hunters only (user ruling 2026-10-15: not melee
 // Survival): Scorpid Sting kept up in the sting slot in place of Serpent Sting (a hunter has one
-// sting on a target), refreshed in its last 2 sec. The duty presets switch the raid's Scorpid Sting
+// sting on a target), refreshed in its last 2 sec (Beast Mastery: 4 sec, its busier global cooldowns
+// let a 2 sec refresh lapse). The duty presets switch the raid's Scorpid Sting
 // off; the base presets take it from the raid and never cast it.
 const scorpidDutyTooltip = ' With Scorpid Sting kept up in place of Serpent Sting, for the hunter on Scorpid Sting duty.';
 export const APLBeastMasteryScorpid = PresetUtils.makePresetAPLRotation('Beast Mastery (Scorpid Sting duty)', BeastMasteryScorpidAPL, {
@@ -474,9 +476,9 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 953.5 / 947.4 / 940.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 5.7 / 4.7 / 2.6 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
-// it drops (standards 23).
+// 959.3 / 952.1 / 942.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 0.0 / 0.0 / 0.3 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
+// pull and before it drops (standards 23).
 export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60 Beast Mastery (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -489,7 +491,7 @@ export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60
 	professions,
 	options: DefaultOptions,
 });
-// 874.1 / 866.4 / 856.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 85.1 / 85.7 / 86.5 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+// 876.7 / 869.2 / 859.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 82.5 / 83.0 / 83.5 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting, refreshed 4 sec before it drops (standards 23).
 export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level 60 Beast Mastery (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -515,9 +517,9 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 1022.0 / 1015.7 / 994.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 5.9 / 4.6 / 4.0 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
-// it drops (standards 23).
+// 1026.6 / 1018.9 / 996.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 1.3 / 1.3 / 2.0 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
+// pull and before it drops (standards 23).
 export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60 Marksmanship (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -556,9 +558,9 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 1064.4 / 1058.3 / 1039.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 7.1 / 5.7 / 4.1 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
-// it drops (standards 23).
+// 1069.7 / 1061.7 / 1041.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 1.8 / 2.3 / 1.7 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
+// pull and before it drops (standards 23).
 export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lone Wolf (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -598,9 +600,9 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	professions,
 	options: DefaultOptions,
 });
-// 896.5 / 889.9 / 881.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 3.1 / 2.5 / 2.1 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own at the pull and before
-// it drops (standards 23).
+// 898.5 / 891.3 / 882.4 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 1.1 / 1.1 / 1.3 behind the
+// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
+// pull and before it drops (standards 23).
 export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:

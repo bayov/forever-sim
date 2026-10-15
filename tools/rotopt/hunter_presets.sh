@@ -39,17 +39,24 @@ gen hunter_ranged lw "$mm"
 # Strider Kick is about ready (+0.4).
 sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=1"
 gen hunter_sv sv "$sv"
-# Hunter's Mark duty (standards 23): the base rotation plus the mark at the pull and before it drops,
+# Hunter's Mark duty (standards 23): the base rotation plus the mark before the pull and before it drops,
 # for the presets with the raid's mark off (mksettings specs hunter_*_mark).
-gen hunter_ranged bm_mark "$bm,mark=1"
-gen hunter_ranged mm_mark "$mm,mark=1"
-gen hunter_ranged lw_mark "$mm,mark=1"
-gen hunter_sv sv_mark "$sv,mark=1"
+# The mark goes up 1.5 sec before the pull (it doesn't pull; user ruling 2026-10-15), after the
+# pre-pull Aspect's global cooldown, so the boss has it from the first shot (rotation audit pass 20:
+# +4.7 / +3.3 / +3.4 / +1.4 at 180 sec on Beast Mastery / Marksmanship / Lone Wolf / Survival, 20000
+# iterations). It is not held back for the hunter's own DPS (user ruling).
+gen hunter_ranged bm_mark "$bm,mark=1,markPrepull=1.5"
+gen hunter_ranged mm_mark "$mm,mark=1,markPrepull=1.5"
+gen hunter_ranged lw_mark "$mm,mark=1,markPrepull=1.5"
+gen hunter_sv sv_mark "$sv,mark=1,markPrepull=1.5"
 # Scorpid Sting duty (standards 23), for the ranged hunters only (user ruling 2026-10-15, not melee
 # Survival): Scorpid Sting kept up in place of Serpent Sting, for the presets with the raid's Scorpid
 # Sting off (mksettings specs hunter_{bm,mm,lw}_scorpid). Without Serpent Sting Marksmanship and Lone
 # Wolf have the mana for Sniper Shot at 15 a second of the fight left (+15 and +20 at 300 sec over 25,
 # nothing at 120 and 180); the other knobs moved nothing (2026-10-15, 6000 iterations).
-gen hunter_ranged bm_scorpid "$bm,scorpid=1"
+# Beast Mastery refreshes the sting 4 sec before it drops, not 2: with its busier global cooldowns
+# the 2 sec refresh let it lapse (rotation audit pass 20; +2.6 / +2.7 / +3.0 at 120 / 180 / 300 sec).
+# Marksmanship and Lone Wolf lose 1.0 to 1.4 at 180 and 300 sec with 4, so they keep 2.
+gen hunter_ranged bm_scorpid "$bm,scorpid=1,scorpidLead=4"
 gen hunter_ranged mm_scorpid "$mm,scorpid=1,sniperManaPerSec=15"
 gen hunter_ranged lw_scorpid "$mm,scorpid=1,sniperManaPerSec=15"

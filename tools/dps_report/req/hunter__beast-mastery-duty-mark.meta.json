@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm_mark",
   "published": {
-    "dps": 947.4,
-    "source": "Hunter's Mark duty preset (standards 23), 2026-10-15: 180 s, 20000 iterations, seed 1"
+    "dps": 952.1,
+    "source": "Hunter's Mark duty preset (standards 23), rotation audit pass 20 (2026-10-15): 180 s, 20000 iterations, seed 1"
   },
   "verify": {
-    "dps": 947.45,
+    "dps": 952.14,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "verify.py, same sim as the published number"
   },
   "summary": "Beast Mastery 31/20 with a 1.0 sec cat: Bestial Wrath, Frenzy, Ferocity and Unleashed Fury, plus Careful Aim and Mortal Shots in Marksmanship. The pet deals about 21% of its damage; it is the pet-focused build, 68 DPS behind Marksmanship at 180 s.",
   "keyTalents": [
@@ -39,7 +39,7 @@
   "rotation": [
     "Pre-pull: Aspect of the Hawk at -3 s, Rapid Fire at -0.1 s",
     "Bestial Wrath (0 and 120 s), Rapid Fire, racials, Sapper and potions on cooldown",
-    "Hunter's Mark (rank 4, +140 ranged attack power) at the pull and again in its last 3 s; the raid's mark is off",
+    "Hunter's Mark (rank 4, +140 ranged attack power) 1.5 s before the pull and again in its last 3 s; the raid's mark is off",
     "Serpent Sting when it is down (mana >= 30%)",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
     "Sniper Shot on cooldown",
@@ -74,7 +74,7 @@
     "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
     "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
     "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows",
-    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, one GCD and 60 mana every 2 min; it costs 5.7 / 4.7 / 2.6 DPS at 120 / 180 / 300 s against hunter__beast-mastery"
+    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, the first cast 1.5 s before the pull, then one GCD and 60 mana every 2 min; it costs 0.0 / 0.0 / 0.3 DPS at 120 / 180 / 300 s against hunter__beast-mastery"
   ],
   "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_bm_mark. Request written by mksettings (spec hunter_bm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Hunter's Mark",

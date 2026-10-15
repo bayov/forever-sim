@@ -74,6 +74,9 @@ func (hunterRanged) Knobs() []Knob {
 		// Hunter's Mark duty (standards 23): the hunter keeps the mark up itself, with the raid's
 		// Hunter's Mark debuff off in the request. The base presets leave it to the raid.
 		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Seconds before the pull the duty casts the mark, 0 not before the pull. Hunter's Mark doesn't
+		// pull, so it may go up before it (standards 23, user ruling 2026-10-15).
+		{Name: "markPrepull", Default: 0, Min: 0, Max: 3, Step: 0.5},
 		// Scorpid Sting duty (standards 23): Scorpid Sting kept up in the sting slot in place of
 		// Serpent Sting, with the raid's Scorpid Sting off.
 		{Name: "scorpid", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -161,6 +164,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 
 	rot := rotation(items...)
 	rot.PrepullActions = append(rot.PrepullActions, prepull(hunterAspectOfTheHawk, 3))
+	if k["mark"] == 1 && k["markPrepull"] > 0 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(hunterHuntersMark, k["markPrepull"]))
+	}
 	if k["rapidPrepull"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(hunterRapidFire, 0.1))
 	}
@@ -176,7 +182,8 @@ func hunterMul(lhs, rhs value) value {
 }
 
 // hunterMarkDuty keeps the hunter's own Hunter's Mark on the target: the first global cooldown
-// after the pull, then again in the last 3 sec of its 2 min.
+// after the pull when it didn't go up before it (markPrepull), then again in the last 3 sec of its
+// 2 min.
 func hunterMarkDuty() *proto.APLListItem {
 	return cast(hunterHuntersMark, lt(targetAuraRemainingTime(hunterHuntersMark), seconds(3)),
 		"Hunter's Mark duty: the mark at the pull and again before it drops (the raid's mark is off).")
