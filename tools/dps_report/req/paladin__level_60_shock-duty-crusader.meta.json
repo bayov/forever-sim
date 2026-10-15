@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_crusader_duty",
   "published": {
-    "dps": 957.9,
-    "source": "PR #33"
+    "dps": 960.9,
+    "source": "rotation audit pass 20 (sealFirst)"
   },
   "verify": {
-    "dps": 957.94,
+    "dps": 960.87,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "20k, seed 1; base 971.36, duty cost 13.42 at 180 s"
+    "note": "20k, seed 1; base 971.36, duty cost 10.49 at 180 s"
   },
   "summary": "A deep Holy build to Light's Vigil (Holy Shock, Holy Power 5, Consecrated Ground, Divine Precision) with Retribution to Sacred Arbiter, on Seal of Righteousness with no twisting. This copy is on Judgement of the Crusader duty: it keeps the debuff on the boss for the raid instead of getting it from another paladin.",
   "keyTalents": [
@@ -39,7 +39,7 @@
   "rotation": [
     "Pre-pull: Seal of Righteousness at -4.5 s, Light's Vigil at -3 s, Seal of the Crusader at -1.5 s",
     "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40 s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
-    "Holy Strike ahead of Holy Shock (the knob search on the duty request; +0.6 at 180 s)",
+    "Seal of Righteousness back up ahead of Consecration whenever it is down (right after the opening Judgement of the Crusader)",
     "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",

@@ -171,8 +171,9 @@ export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60
 // Crusader on the boss, the others judge only their damage seals and get it from the raid. Under
 // Forever it is 161 Holy damage taken for 40 sec, refreshed by the paladin's own melee hits, so the
 // duty is one Seal of the Crusader after the base pre-pull and its Judgement at the pull (then
-// again only if it ever drops). The twist duty keeps the twist knobs; the Shock duty puts Holy
-// Strike ahead of Holy Shock, which a knob search on the duty request found (+0.6 at 180 sec).
+// again only if it ever drops). The twist duty keeps the twist knobs. The Shock duty puts Seal of
+// Righteousness back up ahead of Consecration, since the opener's Judgement leaves it down (rotation
+// audit pass 20: +6.0 / +3.0 / +0.5 at 120 / 180 / 300 sec), and Holy Strike ahead of Holy Shock.
 export const APLLevel60CrusaderDuty = PresetUtils.makePresetAPLRotation('Level 60 (Crusader duty)', Level60CrusaderDutyAPLJSON, {
 	tooltip: 'Level 60 twist rotation that also keeps Judgement of the Crusader on the boss for the raid.',
 	group: 'Level 60',
@@ -538,8 +539,8 @@ export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Lev
 // The Judgement of the Crusader duty presets: each base build with its duty rotation and the duty
 // encounter. Undead, 20000 iterations, 120 / 180 / 300 sec, against the base build on the
 // base encounter: Level 60 973.6 / 973.1 / 967.4 (-13.7 / -9.0 / -5.9), sub Holy
-// 969.4 / 969.0 / 959.9 (-12.8 / -8.6 / -5.5), Shock 968.4 / 957.9 / 923.0 (-19.7 / -13.4 /
-// -7.5). Shock pays more: its pull Judgement goes on the Crusader instead of Righteousness and it
+// 969.4 / 969.0 / 959.9 (-12.8 / -8.6 / -5.5), Shock 974.4 / 960.9 / 923.5 (-13.7 / -10.5 /
+// -7.0). Shock pays more: its pull Judgement goes on the Crusader instead of Righteousness and it
 // has to put Seal of Righteousness back up.
 export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Level 60 (Crusader duty)', {
 	group: 'Level 60',
