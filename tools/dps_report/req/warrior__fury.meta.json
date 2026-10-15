@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Dual wield Fury with a slow sword and a fast axe in Berserker Stance: Bloodthirst, Whirlwind and Flurry, with Death Wish and Recklessness saved for the execute phase. It is the warrior's default Level 60 preset and its highest-DPS build.",
+  "summary": "Dual wield Fury with a slow sword and a fast axe in Berserker Stance: Bloodthirst, Whirlwind and Flurry, with Death Wish and Recklessness at the pull. It is the warrior's default Level 60 preset and its highest-DPS build.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -38,7 +38,7 @@
   ],
   "rotation": [
     "Start in Berserker Stance with no Rage; Battle Shout from the raid",
-    "Death Wish held for the last 33 sec, Recklessness for the last 25 sec",
+    "Death Wish on cooldown and Recklessness at the pull (both in the opening seconds)",
     "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown; Mighty Rage Potion at the pull, second held for the last 20 sec",
     "Bloodrage under 40 Rage",
     "Execute first in the execute phase",
