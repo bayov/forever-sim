@@ -210,7 +210,7 @@ Tree rules
 
 - [x] 10.1 Blessings: Might, Kings, Wisdom
 - [x] 10.2 Other raid buffs: Battle Shout, Trueshot Aura, Leader of the Pack, Moonkin Aura, Retribution Aura, Sanctity Aura, Arcane Intellect, Divine Spirit, Fortitude, Gift of the Wild, Blood Pact, Devotion Aura, resistance auras, scrolls
-- [ ] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
+- [x] 10.3 Another shaman's totems in the raid buffs (Enhancing Totems is gone)
 - [ ] 10.4 Debuffs: Curse of the Elements, Curse of Recklessness, Curse of Shadow, Sunder Armor, Expose Armor, Faerie Fire, Judgement of Wisdom, Light and the Crusader, Insect Swarm, Thunder Clap, Demoralizing Shout and Roar, Scorpid Sting
 
 ## 11. Encounter and rotation
@@ -1805,6 +1805,15 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - No shaman DPS preset moves. Level 60 changes health and armor only, and the boss never swings at us. The Level 30 presets take only the scrolls of Intellect and Spirit, Kings and Scroll of Strength. The goldens of every class moved by at most 0.1% DPS, from the extra Stamina and the lower armor.
 - New `raid_buffs_test.go` TestOrcShamanRaidBuffRanks reads the sheet at 30 and 60 with Devotion Aura, Blood Pact, Arcane Brilliance and Battle Shout picked as Improved: 390 / 735 armor, 22 / 54 Stamina, 15 / 31 Intellect and 35 / 115 attack power. The old code fails 6 of the 8 checks.
 - Open: Battle Shout's rounding. The sim floors rank 6 to 115 at 60, and wowhead's Forever tooltip shows 116. Blood Pact's growth is floored the same way. Not checked: Shadow Resistance Aura and the resistance totems still give their level 60 values at every level, which no preset uses.
+
+### 10.3 Another shaman's totems in the raid buffs
+
+- The user OK'd it (2026-10-15): "sg".
+- Every one goes through the same code as our own totem and was checked against client 70338 in section 7, with a test each: Strength of Earth by level, up to rank 4's 42 at 60 because rank 5 is an Ahn'Qiraj tablet (7.21), Grace of Air 49 / 77 Agility, off while a Windfury Totem buff is up (7.20), Windfury Totem 95 / 179 / 246 attack power by rank (7.19), Flametongue Totem by rank without the other shaman's Elemental Weapons (7.24, `totem_weapon_buffs.go` applyRaidTotemWeaponBuff), Mana Spring 10 to 25 MP5 by level, stacking with Blessing of Wisdom (7.26 and 2.4), and Stoneskin by rank (7.29).
+- Under Forever they reach every race. Enhancing Totems is gone, so an "improved" Strength of Earth or Grace of Air gives the same as a regular one. An "improved" Mana Spring is Restorative Totems 5/5 (+25%).
+- No preset takes them. Level 60 is measured with no second shaman in the group, and Level 30 has none.
+- Open: whether two shamans' Mana Spring Totems stack (notes.md Need to Verify, 8.45).
+- No sim change, no new test.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 
