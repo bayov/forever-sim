@@ -30,20 +30,20 @@ Sources, all read-only:
 |---|---|---|
 | All classes | 3 | `flat_bonus_inside_pct`, `wf_totem_offhand`, `oil_proc_damage` |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
-| Warlock | 5 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation` |
+| Warlock | 4 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus` (one value, kept for reference) |
 | Paladin | 4 (+2 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`, `oil_proc_damage`) |
 | Warrior | 3 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_crit_rage` (+ `wf_totem_offhand`) |
 | Hunter | 6 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_shot_ap_shares`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
-| Mage | 3 | `mage_ice_lance_coef`, `mage_ab_on_missiles`, `mage_frostbolt10` |
+| Mage | 3 | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` |
 | Shaman | 3 (+1 shared) | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` (+ `oil_proc_damage` for Enhancement) |
-| Druid | 4 | `druid_ooc_rate`, `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
+| Druid | 4 | `druid_ooc_rate` (one value, kept for reference), `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 33 assumptions. The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 32 assumptions (33 before the 2026-10-15 review, which removed `mage_ab_on_missiles` and `lock_decimation` and counted `mage_imbue_scrolls`). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
-1. **`mage_ice_lance_coef`.** Ice Lance's spell power coefficient is 0 in the client; Season of Discovery's server gave the same spell 42.9%. At 42.9%, Frostfire and Frost gain about 165 DPS (+18% / +22%, PR, earlier gear) and Frost moves from last to mid-table among mages. This is the largest single swing in the inventory.
+1. **`mage_ice_lance_coef`.** Ice Lance's spell power coefficient is 0 in the client; Season of Discovery's client had 0 too, and its server gave the same spell 42.9%. The sim uses 42.9% and Frost and Frostfire cast Ice Lance on every Fingers of Frost charge (user ruling 2026-10-15, PR #21): Frost went from last among the mages to second. At half that, Frost loses 10.7% and Frostfire 6.0% (assumption sims, 180 s).
 2. **`lock_pet_scaling` + `lock_demon_melee`.** Both are Season of Discovery placeholders or 1.12 carry-overs.
    - Without owner scaling, every warlock build loses about 4%; with the Succubus melee halved, another 4%; with both, 7% (PR).
    - Demonology leads the ranking (1109.8), and the other three builds sit just above Retribution (969 to 985 against 960 to 967). These decide that order.
@@ -53,7 +53,7 @@ That makes 33 assumptions. The rogue has no material assumption of its own: the 
    - Pet speed: Beast Mastery's 1.0 sec cat hitting as hard as a 2.0 sec pet comes from beta players, and nobody knows if it is intended (est. −5 to −8% Beast Mastery if Classic's speed scaling returns).
    - Pet scaling: Season of Discovery's 22% scaling instead of the measured 10% would add 41 / 23 / 18 to Beast Mastery / Marksmanship / Survival (PR).
 
-Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retribution, in opposite directions) and `sham_lb_31plus` (+1.8% / +5.8% Elemental, PR).
+Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retribution, in opposite directions) and `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×1.12, assumption sims).
 
 ---
 
@@ -132,7 +132,7 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
 | `priest_sf_tick_crit` | Shadowform's 200% crit on ticks | Shadow, Shadow + Holy | 200% on SW:P, Mind Flay, DP ticks | 150% on ticks | 200% | = Expected | est. −3% (Low) |
-| `priest_smite8_tuning` | Smite VIII 31+ tuning | Smite | client (×1.00) | ×1.00 | ×1.09 | ×1.18 | +1.3% at High (PR) |
+| `priest_smite8_tuning` | Smite VIII 31+ tuning | Smite | ×1.09 | ×1.00 | ×1.09 | ×1.18 | −0.9% Low, +0.9% High (assumption sims, 180 s) |
 
 ### `priest_sf_tick_crit`: Shadowform's double crit bonus on ticks
 
@@ -151,15 +151,15 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 ### `priest_smite8_tuning`: Smite VIII looks partly untuned
 
 - **Builds:** Smite.
-- **Sim now:** client values, Smite rank 8 166.62 to 186.38 base. `sim/priest/smite.go:16` (rank 8 entry) and `:17` (growth).
+- **Sim now:** rank 8's base damage ×1.09 (`SmiteRank8DamageScale`, applied in `SmiteBaseDamageAt`, `sim/priest/smite.go`; user ruling 2026-10-15, PR #21). The client's rank 8 is 166.62 to 186.38 base.
 - **Source:** client 1.60.1.70338.
 - **Why uncertain:** Smite's ratio to Era is 0.51 at rank 4 (level 30) but 0.42 / 0.41 / 0.43 at ranks 6 to 8. Build 70291 retuned ranks 1 to 4 and no 31+ rank (rank tuning audit).
 - **Settings:**
-  - **Low, ×1.00 (Sim now).** The client as is: no 31+ rank has changed in 16 beta builds.
-  - **Expected, ×1.09.** Halfway. Blizzard's level-curve passes have moved the top playable rank 0 to 12%, so a partial retune before release is likely but its size is not known.
+  - **Low, ×1.00.** The client as is: no 31+ rank has changed in 16 beta builds.
+  - **Expected, ×1.09 (Sim now, user ruling 2026-10-15).** Halfway. Blizzard's level-curve passes have moved the top playable rank 0 to 12%, so a partial retune before release is likely but its size is not known.
   - **High, ×1.18.** Held at rank 4's 0.51 ratio to Era.
-- **Sensitivity:** High +1.3% (PR, rank tuning audit); Expected about +0.65% (est.).
-- **Knob:** multiply rank 8's `SmiteBaseDamage` (`sim/priest/smite.go:16`) by the key, applied where the range is built (`:37-38`, `if rank == 8`).
+- **Sensitivity (assumption sims, 180 s, against the ×1.09 default):** Low −0.9%, High +0.9%.
+- **Knob:** `core.Assume("priest_smite8_tuning", SmiteRank8DamageScale)` in `SmiteBaseDamageAt` (patch 0004); the setting is the whole multiplier on the client value.
 
 ---
 
@@ -167,11 +167,10 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `lock_pet_scaling` | Demon scaling from the warlock | all four | SoD placeholder | none | SoD | SoD + warlock spell crit | Low −4.5% Demo, −4.0% others (PR) |
+| `lock_pet_scaling` | Demon scaling from the warlock | all four | SoD | half of SoD | SoD | = Expected | −1.8 to −2.2% at Low (assumption sims, 180 s) |
 | `lock_demon_melee` | Succubus melee damage | all four | 1.12 (95–131) | halved | 1.12 | = Expected | Low −3.9 to −4.0% (PR) |
 | `lock_bod_coef` | Bane of Doom coefficient | Demo, Destro, Aff | 4.0 | 2.0 | 4.0 | = Expected | Low −4.1% (PR; 1.0 gives −6.1%) |
-| `lock_incinerate_bonus` | Incinerate's 25% with Immolate | Destruction Fire | whole hit | base damage only | whole hit | = Expected | est. −4% Fire (Low) |
-| `lock_decimation` | Decimation's damage part | Demonology | 3% a point | 0 | 3% a point | = Expected | −1.0% (Low, PR A/B −11.6) |
+| `lock_incinerate_bonus` | Incinerate's 25% with Immolate | Destruction Fire | whole hit | = Expected | whole hit | = Expected | one value, kept for reference |
 
 ### `lock_pet_scaling`: Warlock Pet Scaling coefficients
 
@@ -187,14 +186,11 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
   - The numbers are Season of Discovery's: the 2024-12-04 hotfix for hit, and a 2024-01-06 player test for AP and spell damage (the tester was unsure of the spell damage). Details in `orchestration/pet_buffs.md` section 5.
 - **Why uncertain:** no Forever measurement exists; the beta's 09-17 known issues say the sheet doesn't show the coefficient. PR #2 calls the demon "the least sourced input of any spec".
 - **Settings:**
-  - **Low, none.** Forever demons inherit nothing measurable; a reading of the deep dive as health and armor only.
+  - **Low, half of SoD.** Half of each Season of Discovery share (0.25 attack power and 0.125 spell damage a point of spell power, half the hit), if Forever toned the inherited shares down.
   - **Expected, SoD (Sim now).** Forever carried Season of Discovery's aura 416189 unchanged, so Season of Discovery's server values are the closest analogue.
-  - **High, SoD plus all of the warlock's spell crit.** Forever's hunter pets take all of the hunter's crit (beta-measured, `pet_buffs.md` S7), and aura 416189 has a crit slot.
-- **Sensitivity:**
-  - Low (PR, first set, Gnome): Demonology 1087.2 → 1037.8 (−4.5%), Destruction 984.9 → 946.1 (−3.9%), Affliction 976.2 → 937.0 (−4.0%), Destruction Fire 976.2 → 937.3 (−4.0%).
-  - Without the scaling, the Fire build would sacrifice the Succubus again (950.8).
-  - High: est. +0.5 to +1%. The Succubus is about 10% of Demonology's damage, and its crit would rise by about 7 points.
-- **Knob:** `sim/warlock/pet.go:222-225`. Scale each field by `Assume("lock_pet_scaling", 1)` (0 for Low); for High add `stats.SpellCrit` and `stats.MeleeCrit` from `ownerStats[stats.SpellCrit]`.
+  - **High:** = Expected. "Nothing" and "SoD plus the warlock's spell crit" were dropped (user ruling 2026-10-15).
+- **Sensitivity (assumption sims, 180 s):** half of SoD gives Demonology −2.16%, Destruction −1.87%, Affliction −1.84%, Destruction Fire −1.87%. The dropped settings last measured −3.7 to −4.3% (nothing) and +2.1 to +2.4% (SoD plus crit) at 180 s.
+- **Knob:** `sim/warlock/pet.go`, each inherited field scaled by `Assume("lock_pet_scaling", 1)` (0.5 for Low).
 
 ### `lock_demon_melee`: the Succubus's melee damage
 
@@ -229,24 +225,9 @@ Close behind: `mage_ab_on_missiles` (est. −8% / +4% Arcane), `flat_bonus_insid
 - **Source:** the tooltip; the client's second effect is a script holding 25.
 - **Why uncertain:** the script's meaning is server side, and Incinerate is a level 40 talent, beyond the beta cap (notes.md).
 - **Settings:**
-  - **Low, 25% of the base damage only.** WotLK's Incinerate gave its Immolate bonus as a flat extra of about 25% of the base, which didn't scale with spell power.
-  - **Expected, whole hit (Sim now).** The tooltip reads "25% increased damage", and the client stores a percent.
-  - **High:** = Expected.
-- **Sensitivity (est., at Low):** rank 3 is 217 base plus 0.714 × about 550 spell power, about 393. Losing a quarter of the spell power part is about −13% per Incinerate. Incinerate is about 31% of the Fire build's damage, so about −4%. The Fire build might then fall back to Shadow Bolt Destruction.
+  - **Expected, whole hit (Sim now).** The tooltip reads "25% increased damage", and the client stores a percent. The only value, kept in the report as a reference row (user ruling 2026-10-15).
+  - "25% of the base damage only" (WotLK's reading) was dropped; its last assumption sim gave −6.19% on the Fire build at 180 s.
 - **Knob:** `sim/warlock/incinerate.go:43-46`. For Low, compute a separate flat add of `0.25 * rolled base` instead of the multiplier.
-
-### `lock_decimation`: Decimation's damage part
-
-- **Builds:** Demonology (2 points).
-- **Sim now:** Shadow Bolt and Searing Pain deal 3% more a point against a target under 35% health. `sim/warlock/talents.go:727`.
-- **Source:** the tooltip only ("they deal 3% increased damage"); the client's effect has 0 points.
-- **Why uncertain:** the server fills the value; a level 40 Demonology warlock and a mob under 35% would settle it (notes.md).
-- **Settings:**
-  - **Low, 0.** The client effect as stored.
-  - **Expected, 3% a point (Sim now).** The tooltip and its trait curve (3 / 6).
-  - **High:** = Expected.
-- **Sensitivity (PR):** the talent verification A/B is −11.6 on Demonology (first set), −1.0%. The damage part is all of it, since the Soul Fire half isn't used.
-- **Knob:** `sim/warlock/talents.go:727`, `0.03 → core.Assume("lock_decimation", 0.03)`.
 
 ---
 
@@ -481,56 +462,51 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `mage_ice_lance_coef` | Ice Lance spell power coefficient | Frostfire, Frost | 0 (not cast) | 0 | 0.143 | 0.429 | High +18% Frostfire, +22% Frost (PR, earlier gear); est. Expected +3 to +6% |
-| `mage_ab_on_missiles` | Arcane Blast stacks on Arcane Missiles | Arcane | 10% a stack | 0 | 10% | 15% | est. Low −8%, High +4% |
-| `mage_frostbolt10` | Frostbolt X gets 70291's raise | Frost | client (×1.00) | ×1.00 | ×1.04 | ×1.08 | High +2.8% (PR) |
+| `mage_ice_lance_coef` | Ice Lance spell power coefficient | Frostfire, Frost | 0.429, cast on every Fingers of Frost charge | 0.2145 (half of SoD) | 0.429 | = Expected | Frost −10.7%, Frostfire −6.0% at Low (assumption sims, 180 s) |
+| `mage_frostbolt10` | Frostbolt X gets 70291's raise | Frost | ×1.04 | ×1.00 | ×1.04 | ×1.08 | −1.0% Low, +1.0% High (assumption sims, 180 s) |
+| `mage_imbue_scrolls` | Mage staff imbue scrolls | all four mages | used | not available | used | = Expected | −0.8 to −1.5% at Low (assumption sims, 180 s) |
 
 ### `mage_ice_lance_coef`: Ice Lance's spell power coefficient
 
 - **Builds:** Frostfire and Frost. Fire and Arcane don't take Ice Lance.
-- **Sim now:** 0 on all six ranks (`sim/mage/ice_lance.go:26`), with ×4 against Frozen targets (`:22-23`). Casting it on Fingers of Frost charges loses, so no rotation casts it.
-- **Source:** client 70338. Every other new Forever damage spell carries a client coefficient (Frostfire Bolt 0.814, Arcane Blast 0.714).
+- **Sim now:** 0.429 on all six ranks (`IceLanceSpellCoeff`, `sim/mage/ice_lance.go`), with ×4 against Frozen targets, and the Frost and Frostfire Level 60 rotations cast Ice Lance on every Fingers of Frost charge (user ruling 2026-10-15, PR #21).
+- **Source:** client 70338 has 0. Season of Discovery's client had 0 on the same spell too (1.15.9 spell 400640 on wago.tools), and its server gave it 42.9%. Every other new Forever damage spell carries a client coefficient (Frostfire Bolt 0.814, Arcane Blast 0.714).
 - **Why uncertain:**
-  - Season of Discovery's client also had 0, and a server script gave it 42.9%.
-  - Forever's rank 2 is Season of Discovery's rune spell (400640).
+  - Forever's server could add a different value, or none.
   - Forever also lowered the Frozen bonus (client 300 where Season of Discovery's was 400), so Blizzard did touch the spell.
   - The talent is reachable on the beta (20 Frost points), but no test has been posted.
 - **Settings:**
-  - **Low, 0 (Sim now).** The client value.
-  - **Expected, 0.143.** WotLK's Ice Lance coefficient (1/7). It is the middle ground between leaving the client's 0 and copying Season of Discovery's script onto a spell Forever already retuned. This is a judgement call.
-  - **High, 0.429.** Season of Discovery's server value on the same spell, the standard instant-cast rule.
-- **Sensitivity:**
-  - High: about +165 DPS on Frostfire and Frost (PR, on the earlier 526 spell power set: +18% / +22%). Frost would move ahead of Fire.
-  - Expected: est. +3 to +6%. Ice Lance on Fingers of Frost charges probably wins only narrowly at a ×4 Frozen multiple.
-- **Knob:**
-  - `sim/mage/ice_lance.go:26`, `IceLanceSpellCoeff` → `core.Assume(...)`.
-  - The rotation must also cast it: add an Ice Lance-on-Fingers-of-Frost line behind a knob in `tools/rotopt` (`mage_frost` / `mage_frostfire` templates), and re-run the knob search for each setting.
-
-### `mage_ab_on_missiles`: Arcane Blast's stack bonus on Arcane Missiles
-
-- **Builds:** Arcane (Arcane Missiles 46% of its damage, cast after 2 or 4 Blast stacks).
-- **Sim now:** 10% a stack, snapshotted at the start of the channel. `sim/mage/arcane_blast.go:26` (`ArcaneBlastStackBonus`), read by `arcaneBlastBonus()` at `:116-121` and `sim/mage/arcane_missiles.go:106`.
-- **Source:** the tooltip ("all your other spells").
-- **Why uncertain:** in the client, the stack buff 400573 leaves Arcane Missiles out of its damage part. A second buff, 400586 (15% a stack on Arcane Missiles only, Season of Discovery's), is still in the client. A missile after one Arcane Blast settles it on the beta (level 20+).
-- **Settings:**
-  - **Low, 0.** 400573's data, Missiles excluded.
-  - **Expected, 10% a stack (Sim now).** The Forever tooltip.
-  - **High, 15% a stack.** 400586, Season of Discovery's Missiles-specific buff, still in the client.
-- **Sensitivity (est.):** with about 3 stacks a Missiles cast, the attacker multiplier moves from about 1.63 to 1.33 at Low (−18% Missiles, −8% Arcane) and to 1.78 at High (+9% Missiles, +4% Arcane). The best stack count may change, so re-run the Arcane knob search for each setting.
-- **Knob:** split the constant. Add `arcaneMissilesStackBonus := core.Assume("mage_ab_on_missiles", 0.10)` and use it in `arcaneBlastBonus()` (`arcane_blast.go:120`), which only Missiles reads (`arcane_missiles.go:106`).
+  - **Low, 0.2145 (half of SoD).** If the server adds less than Season of Discovery's. Both settings use the Ice Lance rotation.
+  - **Expected, 0.429 (Sim now).** Season of Discovery's server value for the same client data.
+  - **High:** = Expected. The client's 0 and WotLK's 0.143 were dropped (user ruling 2026-10-15).
+- **Sensitivity (assumption sims, 180 s):** Low Frost −10.67% (−100.5 DPS), Frostfire −6.04% (−59.7).
+- **Knob:** `core.Assume("mage_ice_lance_coef", IceLanceSpellCoeff)` (patch 0004).
 
 ### `mage_frostbolt10`: does build 70291's Frostbolt raise reach rank 10?
 
 - **Builds:** Frost (Frostbolt 98% of its damage).
-- **Sim now:** client values, rank 10 382 to 413 at 60. `sim/mage/frostbolt.go:16` (rank 10 entry) and `:17`.
+- **Sim now:** rank 10's base damage ×1.04 (`FrostboltRank10DamageScale` in `FrostboltBaseDamageAt`, `sim/mage/frostbolt.go`; user ruling 2026-10-15, PR #21). The client's rank 10 is 382 to 413 at 60.
 - **Source:** client 70338.
 - **Why uncertain:** 70291 raised the level 20 and 26 Frostbolt ranks (+8% at 26's cap) and left 31+ alone. The 31+ ratios to Era already sit above the playable one, so it's unclear whether the raise should carry (rank tuning audit, "mild lag").
 - **Settings:**
-  - **Low, ×1.00 (Sim now).**
-  - **Expected, ×1.04.** Halfway; the evidence points both ways.
+  - **Low, ×1.00.** The client.
+  - **Expected, ×1.04 (Sim now, user ruling 2026-10-15).** Halfway; the evidence points both ways.
   - **High, ×1.08.** 70291's raise applied to rank 10.
-- **Sensitivity:** High +2.8% (PR, 744 → 764); Expected about +1.4% (est.).
-- **Knob:** scale rank 10's `FrostboltBaseDamage` (`sim/mage/frostbolt.go:16`) where the range is built.
+- **Sensitivity (assumption sims, 180 s, against ×1.04):** Low −1.0%, High +1.0%.
+- **Knob:** `core.Assume("mage_frostbolt10", FrostboltRank10DamageScale)` in `FrostboltBaseDamageAt` (patch 0004); the setting is the whole multiplier on the client value.
+
+### `mage_imbue_scrolls`: the mage staff imbue scrolls
+
+- **Builds:** all four mages.
+- **Sim now:** each preset takes its best scroll on top of Wizard Oil, as the class option `staffImbue`: Greater Flame for Frostfire and Fire, Greater Frost for Frost, Precision for Arcane (user ruling 2026-10-15, PR #21).
+- **Source:** the scrolls are mage-only items (277500 to 277502); foreverchanges lists them as hidden.
+- **Why uncertain:** hidden items may not be in the game at launch.
+- **Settings:**
+  - **Low, not available.** No scroll.
+  - **Expected, available (Sim now).**
+  - **High:** = Expected.
+- **Sensitivity (assumption sims, 180 s):** Low Frost −1.48%, Fire −1.23%, Frostfire −1.03%, Arcane −0.75%.
+- **Knob:** a request edit (`no_staff_imbue` in `run_assumptions.py`) that takes the option off.
 
 ---
 
@@ -539,8 +515,8 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
 | `sham_mw_ppm` | Maelstrom Weapon procs a minute (5/5) | all four Enhancement builds | 10 PPM | 5 | 10 | 20 | est. Low −3%, High +5% |
-| `sham_lb_31plus` | Lightning Bolt 31+ ranks | Elemental, Elemental Mana Tide | client (×1.00) | ×1.00 | ×1.12 | ×1.38 | Expected +1.8%, High +5.8% (PR) |
-| `sham_es7_tuning` | Earth Shock VII tuning | all four Enhancement builds | client (×1.00) | ×1.00 | ×1.08 | ×1.16 | High +0.8% (PR) |
+| `sham_lb_31plus` | Lightning Bolt 31+ ranks | Elemental, Elemental Mana Tide | ×1.12 | ×1.00 | ×1.12 | ×1.38 | −1.9% Low, +4.1% High (assumption sims, 180 s) |
+| `sham_es7_tuning` | Earth Shock VII tuning | all four Enhancement builds, both Elemental builds | ×1.08 | ×1.00 | ×1.08 | ×1.16 | −0.3 to −0.4% Low, +0.3 to +0.4% High on Enhancement; 0 on Elemental (assumption sims, 180 s) |
 
 ### `sham_mw_ppm`: Maelstrom Weapon's proc rate
 
@@ -558,31 +534,31 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 ### `sham_lb_31plus`: Lightning Bolt's level 31+ ranks
 
 - **Builds:** Elemental (Lightning Bolt about 65% of its damage with overloads), Elemental Mana Tide.
-- **Sim now:** client values, rank 10 189.92 to 211.68 plus 1.2 a level to 60. `sim/shaman/lightning_bolt.go:23` (rank 10 entry) and `:24`.
+- **Sim now:** rank 10's base damage ×1.12 (`LightningBoltRank10DamageScale` in `LightningBoltBaseDamageAt`, `sim/shaman/lightning_bolt.go`; user ruling 2026-10-15, PR #21). The client's rank 10 is 189.92 to 211.68 plus 1.2 a level to 60.
 - **Source:** client 70338 (the ForeverChanges downrank calculator reads the same).
 - **Why uncertain** (rank tuning audit, "stale-shaped"):
   - Lightning Bolt is 0.61× Era at levels 26, 32 and 38, then 0.54 / 0.48 / 0.44 at 44 / 50 / 56.
   - At 60 it does 78 base a cast-second against 84 to 158 for the other classes' nukes.
   - Build 70291 raised the top playable rank 12% and no 31+ rank.
 - **Settings:**
-  - **Low, ×1.00 (Sim now).** The client.
-  - **Expected, ×1.12.** 70291's raise on the same spell, applied to rank 10.
+  - **Low, ×1.00.** The client.
+  - **Expected, ×1.12 (Sim now, user ruling 2026-10-15).** 70291's raise on the same spell, applied to rank 10.
   - **High, ×1.38.** Held at the 0.61 ratio of levels 26 to 38.
-- **Sensitivity (PR):** Expected +1.8%, High +5.8% (690 → 730 on an earlier set); with Lava Burst ×1.38 as well, +7.2%. Elemental stays in the bottom third either way.
-- **Knob:** scale rank 10's `LightningBoltBaseDamage` (`lightning_bolt.go:23`) where the range is built (`:51-52`). Optionally do the same to Lava Burst rank 3 (`lava_burst.go:16`), since it inherits the flat curve.
+- **Sensitivity (assumption sims, 180 s, against ×1.12):** Low −1.9%, High +4.1%. Elemental stays in the bottom third either way. Enhancement's Maelstrom Weapon Lightning Bolts are rank 10 too (about 55 DPS), so the default moves them as well, but the scenario lists only the Elemental builds.
+- **Knob:** `core.Assume("sham_lb_31plus", LightningBoltRank10DamageScale)` in `LightningBoltBaseDamageAt` (patch 0004).
 
 ### `sham_es7_tuning`: Earth Shock VII
 
-- **Builds:** all four Enhancement builds (Earth Shock about 10% of the damage).
-- **Sim now:** client values, rank 7 293.07 to 308.93. `sim/shaman/earth_shock.go:16` (rank 7) and `:17`.
+- **Builds:** all four Enhancement builds (Earth Shock about 10% of the damage), and both Elemental builds, whose rotation casts no Earth Shock (0 change).
+- **Sim now:** rank 7's base damage ×1.08 (`EarthShockRank7DamageScale` in `EarthShockBaseDamageAt`, `sim/shaman/earth_shock.go`; user ruling 2026-10-15, PR #21). The client's rank 7 is 293.07 to 308.93.
 - **Source:** client 70338.
 - **Why uncertain:** 0.66× Era at level 24, then 0.57 / 0.55 / 0.57 from 36 to 60 (rank tuning audit, "stale-shaped, mild").
 - **Settings:**
-  - **Low, ×1.00 (Sim now).**
-  - **Expected, ×1.08.** Halfway.
+  - **Low, ×1.00.** The client.
+  - **Expected, ×1.08 (Sim now, user ruling 2026-10-15).** Halfway.
   - **High, ×1.16.** Held at 0.66.
-- **Sensitivity:** High +0.8% (PR); Expected about +0.4% (est.).
-- **Knob:** scale rank 7's range at `earth_shock.go:37-38`.
+- **Sensitivity (assumption sims, 180 s, against ×1.08):** Enhancement Low −0.3 to −0.4%, High +0.3 to +0.4%.
+- **Knob:** `core.Assume("sham_es7_tuning", EarthShockRank7DamageScale)` in `EarthShockBaseDamageAt` (patch 0004).
 
 ---
 
@@ -590,10 +566,10 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `druid_ooc_rate` | Omen of Clarity proc rate | Feral, Balance, Balance Wrath | 2 PPM; spells 2 × cast / 60 | spells 6% a cast | 2 PPM | 3.5 PPM | est. Feral High +1.5 to +2%; Balance under 1% |
+| `druid_ooc_rate` | Omen of Clarity proc rate | Feral, Balance, Balance Wrath | 2 PPM; spells 2 × cast / 60 | = Expected | 2 PPM | = Expected | one value, kept for reference |
 | `druid_shred_flat` | Shred's flat bonus | Feral | 80 inside the 155% (+124) | +80 | +124 | +180 | est. Low −3.5%, High +4.5% |
-| `druid_rip_31plus` | Rip's level 31+ ranks | Feral | client | client | Era | ≤30 trend ×1.13 | Expected +1.6%, High +2.1% (PR) |
-| `druid_wrath8_tuning` | Wrath VIII tuning | Balance Wrath, Balance | client (×1.00) | ×1.00 | ×1.085 | ×1.17 | High +1.6% Wrath build, +0.4% Balance (PR) |
+| `druid_rip_31plus` | Rip's level 31+ ranks | Feral | client | = Expected | client | Era; ≤30 trend ×1.13 (Higher) | +1.2% Era, +1.6% ≤30 trend (assumption sims, 180 s) |
+| `druid_wrath8_tuning` | Wrath VIII tuning | Balance Wrath, Balance | ×1.085 | ×1.00 | ×1.085 | ×1.17 | −0.8% Balance Wrath, −0.2% Balance Low, +0.8% / +0.2% High (assumption sims, 180 s) |
 
 ### `druid_ooc_rate`: Omen of Clarity's proc chance
 
@@ -608,10 +584,8 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - The Moonkin modifiers and the cooldown are the client's (16864).
 - **Why uncertain:** the client leaves the chance to the server (notes.md, Druid).
 - **Settings:**
-  - **Low, a flat 6% a spell cast** (12% in Moonkin Form), melee 2 PPM. WotLK's spell rule. It cuts Starfire's chance from 20% to 12% in Moonkin Form and leaves Wrath about the same.
-  - **Expected, the sim's rate (Sim now).** 1.12's 2 PPM, the version Forever's baseline passive was ported from.
-  - **High, 3.5 PPM melee, and spells at 3.5 × cast / 60.** The rate later expansions gave Omen of Clarity.
-- **Sensitivity (est.):** Feral's 1.0 sec paw gets about 1.6 procs a minute now, 2.8 at High: about +12 DPS (+1.5 to +2%). Balance is mostly mana-neutral (under 1% either way). The Wrath build moves with its Clearcasting Starfires (under ±1.5%).
+  - **Expected, the sim's rate (Sim now).** 1.12's 2 PPM, the version Forever's baseline passive was ported from. The only value, kept in the report as a reference row (user ruling 2026-10-15).
+  - WotLK's flat 6% a spell and the later expansions' 3.5 PPM were dropped. In the last assumption sims they moved the three druid builds −0.06 to +0.17% (6% a spell) and +0.24 to +1.44% (3.5 PPM), at 180 s.
 - **Knob:** `sim/druid/talents.go:424` (PPM) and `:445` (the spell formula). Low needs a branch: `chance = 0.06` when the key says so.
 
 ### `druid_shred_flat`: Shred's flat bonus
@@ -634,24 +608,24 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Source:** client 70338.
 - **Why uncertain:** Forever's ranks up to level 30 sit above Era per combo point (4.4 / 7.2 against 4 / 7), but the 31+ ranks sit 6 to 9% below (rank tuning audit).
 - **Settings:**
-  - **Low, the client (Sim now).**
-  - **Expected, Era's per-combo-point values** (9 / 14 / 20 / 28). Forever's own ≤30 ranks are at or above Era, so Era is the floor of that design.
-  - **High, the ≤30 trend, ×1.13.**
-- **Sensitivity (PR):** Expected +1.6%, High +2.1% (648 → 662 on an earlier set).
+  - **Expected, the client (Sim now).** Expected moved to the client value (user ruling 2026-10-15).
+  - **High, Era's per-combo-point values** (9 / 14 / 20 / 28). Forever's own ≤30 ranks are at or above Era, so Era is the floor of that design.
+  - **Higher, the ≤30 trend, ×1.13.**
+- **Sensitivity (assumption sims, 180 s):** Era +1.2%, the ≤30 trend +1.6%.
 - **Knob:** scale `dmgTickPerCombo` (and `dmgTickBase`) of rank 6 at `rip.go:25` by the key.
 
 ### `druid_wrath8_tuning`: Wrath VIII
 
 - **Builds:** Balance Wrath (Wrath 59% of the damage) and Balance (14%).
-- **Sim now:** client values, rank 8 91.57 to 102.43. `sim/druid/wrath.go:17` (rank 8) and `:18`.
+- **Sim now:** rank 8's base damage ×1.085 (`WrathRank8DamageScale` in `WrathBaseDamageAt`, `sim/druid/wrath.go`; user ruling 2026-10-15, PR #21). The client's rank 8 is 91.57 to 102.43.
 - **Source:** client 70338.
 - **Why uncertain:** build 70009 multiplied every Wrath rank by 1.5, then 70291 retuned only ranks 1 to 5. Forever over Era is 0.42 at level 30 and then 0.36 / 0.34 / 0.36 (rank tuning audit).
 - **Settings:**
-  - **Low, ×1.00 (Sim now).**
-  - **Expected, ×1.085.** Halfway.
+  - **Low, ×1.00.** The client.
+  - **Expected, ×1.085 (Sim now, user ruling 2026-10-15).** Halfway.
   - **High, ×1.17.** Held at 0.42.
-- **Sensitivity (PR):** High +1.6% on Balance Wrath (760 → 772 on an earlier set), +0.4% on Balance. Expected about half of that (est.).
-- **Knob:** scale rank 8's range from `wrath.go:17`.
+- **Sensitivity (assumption sims, 180 s, against ×1.085):** Low −0.8% Balance Wrath, −0.2% Balance, High +0.8% / +0.2%.
+- **Knob:** `core.Assume("druid_wrath8_tuning", WrathRank8DamageScale)` in `WrathBaseDamageAt` (patch 0004).
 
 ---
 
@@ -695,17 +669,21 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 - **Elemental Focus on low ranks, Searing Totem's reach from range, Elemental Devastation's size** (the client curve). All under 0.5%.
 - **Downrank penalty size at 60** (was `downrank_penalty`, removed 2026-10-15). Forever cuts the spell power of a rank learned more than 17 levels below you (foreverchanges' 5% a level, measured on heals to level 30). Only Smite's and Elemental's low-rank fallbacks could feel it, and all three settings (10% a level, 5%, none) gave the same DPS on all three builds at 120, 180 and 300 s. Smite's fallback is rank 7, learned at 46, inside the 17 levels. The priest's spells keep the 5% rule (`downrankCoefficient`, `sim/priest/priest.go`). Reopen it if a preset starts casting a rank learned before level 43.
 - **Tiger's Fury's scope** (was `druid_tf_scope`, removed 2026-10-15). Forever removed Tiger's Fury (Blizzard's Druid deep dive; nothing in client 70338 grants it).
+- **Arcane Blast's stack bonus on Arcane Missiles** (was `mage_ab_on_missiles`, removed, user ruling 2026-10-15). The sim keeps the tooltip's 10% a stack on Missiles (`ArcaneBlastStackBonus`, `sim/mage/arcane_blast.go`). The client's stack buff 400573 leaves Missiles out, and Season of Discovery's 400586 (15% a stack) is still in the client; the scenario's settings were 0 / 10% / 15% (−9.48% / 0 / +4.74% on Arcane in its last assumption sims).
+- **Decimation's damage part** (was `lock_decimation`, removed, user ruling 2026-10-15). The sim keeps the tooltip's 3% a point under 35% health (`sim/warlock/talents.go`); the client's effect holds 0, which measured −1.08% on Demonology in the last assumption sims.
+- **Settings dropped in the same review** (user ruling 2026-10-15): Ice Lance's 0 (client) and 0.143 (WotLK), the demon's "Nothing" and "SoD plus crit" scaling, Incinerate's "base damage only", and Omen of Clarity's 6% a spell and 3.5 PPM. `lock_incinerate_bonus` and `druid_ooc_rate` stay as one-value reference rows.
 - **The encounter itself** (level 63, 3731 armor, Humanoid). This moves every spec, but it is an encounter setting, not a spec assumption.
 
 ## Where no sensible range was found
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
-- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `warr_crit_rage`, `hunter_pet_speed`, `hunter_crit_per_agi`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus`, `lock_decimation`, and `oil_proc_damage`.
+- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `warr_crit_rage`, `hunter_pet_speed`, `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_ice_lance_coef`, `mage_imbue_scrolls`, `druid_rip_31plus` (no Low: the client is Expected), and `oil_proc_damage`. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
 
 Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM): no analogue below 10.
 - `hunter_shot_ap_shares` High: mirrored, not sourced.
 - The halfway "Expected" of the rank-tuning entries (`priest_smite8_tuning`, `hunter_raptor_31plus`, `mage_frostbolt10`, `sham_es7_tuning`, `druid_wrath8_tuning`): a judgement between "client as is" and "held at the ≤30 ratio".
-- `mage_ice_lance_coef` Expected (0.143): a judgement between the client's 0 and Season of Discovery's 0.429. Its High is the best-sourced alternative.
+- `mage_ice_lance_coef` Low (half of SoD): a judgement, with no source of its own.
+- `lock_pet_scaling` Low (half of SoD): the same.
 
 No sensible range at all: Rip and Ferocious Bite attack power, and the untested 31-point capstones (listed above).
