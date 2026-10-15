@@ -10,7 +10,10 @@ Per build an assumption touches, seed 1, the build's request (req/<id>.json) oth
   grid      builds with 3 or fewer assumptions: every combination of two or more non-default settings, 180 s at 20k
   check     builds with more: 12 random combinations, 180 s at 20k, to measure the multiplicative combination's error
 A setting with the ice_lance edit runs the preset rotation and one with Ice Lance on every Fingers of Frost charge, and keeps
-the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lance themselves).
+the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lance themselves). A setting with the
+no_ice_lance edit (Ice Lance at the client's coefficient, 0) runs the preset rotation and the build's rotation that never
+casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the Level 60 APL before the presets took Ice Lance up), and keeps
+the better.
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
 """
 import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threading
@@ -52,6 +55,8 @@ def request(bid, combo, rot):
             pl.setdefault('mage', {}).setdefault('options', {})['staffImbue'] = STAFF_IMBUE[bid]
         if st['edit'] == 'no_staff_imbue':  # the presets carry the scroll; this setting takes it off
             pl.get('mage', {}).get('options', {}).pop('staffImbue', None)
+        if st['edit'] == 'no_ice_lance' and rot == 'noil':
+            pl['rotation'] = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'asm_apls', bid + '.no_ice_lance.apl.json')))
         if st['edit'] == 'ice_lance' and rot == 'il':
             pr = pl['rotation']['priorityList']
             pr.insert(len(pr) - 1, copy.deepcopy(ICE_LANCE))  # just ahead of the filler
@@ -90,7 +95,8 @@ def nondefault(key):
 
 
 def rots(combo):
-    return ['preset', 'il'] if any(setting(k, s)['edit'] == 'ice_lance' for k, s in combo) else ['preset']
+    edits = {setting(k, s)['edit'] for k, s in combo}
+    return ['preset'] + (['il'] if 'ice_lance' in edits else []) + (['noil'] if 'no_ice_lance' in edits else [])
 
 
 def tasks(bid):

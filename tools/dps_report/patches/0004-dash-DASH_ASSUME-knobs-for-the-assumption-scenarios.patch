@@ -2,8 +2,10 @@ dash: DASH_ASSUME knobs for the dashboard's assumption scenarios (local only)
 
 Dashboard-only knobs read by run_assumptions.py: DASH_ASSUME="key=value,..." overrides the constants the
 assumption scenarios vary (sim/core/assumptions.go). With the variable unset the sim is bit-identical.
-Each rank-scale knob defaults to master's constant (for example FrostboltRank10DamageScale), so a run with
-no knob reproduces master. Made against master bd45f60b7 with patches 0001 to 0003 applied.
+Each knob on a constant master sets (the rank scales, Ice Lance's coefficient, Rend's attack power share,
+the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's
+Mark ranks) defaults to that constant, so a run with no knob reproduces master. Made against master
+67c157d2b with patches 0001 to 0003 applied.
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -63,27 +65,11 @@ index 000000000..2640dec7e
 +// AssumeNoWindfury maps spell IDs to the knob that, when set to 0, keeps them from procing
 +// Windfury Totem. Classes fill it from package init only, so it is never written during a sim.
 +var AssumeNoWindfury = map[int32]string{}
-diff --git a/sim/core/base_stats.go b/sim/core/base_stats.go
-index 3718a4c2a..069aa3336 100644
---- a/sim/core/base_stats.go
-+++ b/sim/core/base_stats.go
-@@ -395,6 +395,11 @@ func levelCurve(curve map[proto.Class][60]float64, c proto.Class, level int32) f
- 
- // Melee crit chance per point of Agility at the given level.
- func CritPerAgi(c proto.Class, level int32) float64 {
-+	if c == proto.Class_ClassHunter {
-+		if v, ok := AssumeOk("hunter_crit_per_agi"); ok {
-+			return CritPerAgiAtLevel[c] * levelCurve(meleeCritPerAgiCurve, c, level) * v
-+		}
-+	}
- 	return CritPerAgiAtLevel[c] * levelCurve(meleeCritPerAgiCurve, c, level)
- }
- 
 diff --git a/sim/core/buffs.go b/sim/core/buffs.go
-index 4dec20762..7ff349194 100644
+index a554e3c72..87f9fd73b 100644
 --- a/sim/core/buffs.go
 +++ b/sim/core/buffs.go
-@@ -1669,6 +1669,9 @@ func TrueshotAura(unit *Unit) *Aura {
+@@ -1673,6 +1673,9 @@ func TrueshotAura(unit *Unit) *Aura {
  	meleeAP := 100.0
  	if unit.Env.IsForever() {
  		rangedAP = bestLearnedRank(unit.Level, foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:])
@@ -93,7 +79,7 @@ index 4dec20762..7ff349194 100644
  		meleeAP = 0
  	}
  
-@@ -1920,6 +1923,11 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
+@@ -1924,6 +1927,11 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
  			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
  				return
  			}
@@ -105,7 +91,7 @@ index 4dec20762..7ff349194 100644
  			if blocked != nil && blocked() {
  				return
  			}
-@@ -1970,6 +1978,9 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
+@@ -1974,6 +1982,9 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
  	procMask := ProcMaskMeleeMH
  	if character.Env.IsForever() {
  		procMask = ProcMaskMelee
@@ -115,29 +101,8 @@ index 4dec20762..7ff349194 100644
  	}
  	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked, procMask)
  	if character.Env.IsForever() {
-diff --git a/sim/core/consumes.go b/sim/core/consumes.go
-index f7e4e668e..4ecbc9d2a 100644
---- a/sim/core/consumes.go
-+++ b/sim/core/consumes.go
-@@ -229,14 +229,14 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
- // sim is above that, so the range is the same at level 20 and 60. The proc chances in
- // SpellItemEnchantment (15 and 10) are unchanged from Classic.
- func shadowOilDamageRange(env *Environment) (float64, float64) {
--	if env.IsForever() {
-+	if env.IsForever() && Assume("oil_era", 0) == 0 {
- 		return 63, 71
- 	}
- 	return 52, 61
- }
- 
- func frostOilDamageRange(env *Environment) (float64, float64) {
--	if env.IsForever() {
-+	if env.IsForever() && Assume("oil_era", 0) == 0 {
- 		return 39, 43
- 	}
- 	return 33, 38
 diff --git a/sim/core/debuffs.go b/sim/core/debuffs.go
-index ae2258c1a..dae9aa690 100644
+index 2c48089de..88d6d2ec0 100644
 --- a/sim/core/debuffs.go
 +++ b/sim/core/debuffs.go
 @@ -215,6 +215,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
@@ -251,37 +216,37 @@ index 869edc63c..1bd3e9b14 100644
  	}
  	return low, high
  }
-diff --git a/sim/hunter/arcane_shot.go b/sim/hunter/arcane_shot.go
-index 261cae340..a3ef55190 100644
---- a/sim/hunter/arcane_shot.go
-+++ b/sim/hunter/arcane_shot.go
-@@ -58,7 +58,7 @@ func (hunter *Hunter) getArcaneShotConfig(rank int, timer *core.Timer) core.Spel
- 		ThreatMultiplier: 1,
- 
- 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
--			damage := baseDamage + arcaneShotRAPCoefficient*spell.RangedAttackPower(target, false)
-+			damage := baseDamage + core.Assume("hunter_arcane_ap", arcaneShotRAPCoefficient)*spell.RangedAttackPower(target, false) // dashboard assumption
- 			result := spell.CalcDamage(sim, target, damage, spell.OutcomeRangedHitAndCrit)
- 
- 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+diff --git a/sim/hunter/hunter.go b/sim/hunter/hunter.go
+index 6ad0e3529..bf8229c81 100644
+--- a/sim/hunter/hunter.go
++++ b/sim/hunter/hunter.go
+@@ -157,7 +157,7 @@ func (hunter *Hunter) Initialize() {
+ 	if hunter.Env.IsForever() {
+ 		// The stat dependencies add up, so this tops Classic's crit per Agility (NewHunter) up to
+ 		// Forever's.
+-		hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (ForeverCritPerAgiScale-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
++		hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.Assume("hunter_crit_per_agi", ForeverCritPerAgiScale)-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
+ 		// Forever's Auto Shot keeps firing while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot
+ 		// (the forever-hunter wiki's beta testing, "Auto Shot can fire while the Hunter is casting
+ 		// another spell with a cast time"). So it takes no aiming time of its own that a cast could
 diff --git a/sim/hunter/pet.go b/sim/hunter/pet.go
-index 2a642319d..e5f02b026 100644
+index 3293767c1..f6f1101c7 100644
 --- a/sim/hunter/pet.go
 +++ b/sim/hunter/pet.go
-@@ -145,8 +145,10 @@ func (hp *HunterPet) applyForeverRules() {
- 	// page and the forever-hunter wiki; nobody knows yet whether that is intended). Classic scales the
- 	// hit with the swing.
- 	mh := hp.AutoAttacks.MH()
--	mh.BaseDamageMin = 18.17 * 2
--	mh.BaseDamageMax = 27.66 * 2
-+	if v, ok := core.AssumeOk("hunter_pet_speed"); !ok || v != 0 { // dashboard assumption: 0 = Classic's speed-scaled hit
-+		mh.BaseDamageMin = 18.17 * 2
-+		mh.BaseDamageMax = 27.66 * 2
+@@ -152,7 +152,11 @@ func (hp *HunterPet) applyForeverRules() {
+ 	// Report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's behaviour is treated as
+ 	// a bug, so the hit scales with the swing as in Classic (a 1.0 sec pet's hit is half a 2.0 sec
+ 	// pet's, NewHunterPet), and every pet's white damage a second is the same.
+-	if !ForeverPetHitScalesWithSpeed {
++	scales := ForeverPetHitScalesWithSpeed
++	if v, ok := core.AssumeOk("hunter_pet_same_hit"); ok {
++		scales = v == 0 // dashboard assumption: 1 = the beta's rule, every pet hits like a 2.0 sec pet
 +	}
- 
- 	// Focus comes back 10 a second, continuously (client PowerType Focus RegenCombat 10, and beta
- 	// logs where busy pets spend 9.5+ a second). Classic's is 26.25 every 5.25 sec.
-@@ -228,6 +230,14 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
++	if !scales {
+ 		mh := hp.AutoAttacks.MH()
+ 		mh.BaseDamageMin = 18.17 * 2
+ 		mh.BaseDamageMax = 27.66 * 2
+@@ -238,6 +242,14 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
  		if !hunter.Env.IsForever() {
  			return stats.Stats{}
  		}
@@ -297,10 +262,10 @@ index 2a642319d..e5f02b026 100644
  			stats.AttackPower: 0.1 * ownerStats[stats.RangedAttackPower],
  			stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
 diff --git a/sim/hunter/raptor_strike.go b/sim/hunter/raptor_strike.go
-index 1885f73f3..914d1e916 100644
+index ce96f63f1..8d959ade0 100644
 --- a/sim/hunter/raptor_strike.go
 +++ b/sim/hunter/raptor_strike.go
-@@ -70,6 +70,9 @@ func (hunter *Hunter) getRaptorStrikeConfig(rank int) core.SpellConfig {
+@@ -76,6 +76,9 @@ func (hunter *Hunter) getRaptorStrikeConfig(rank int) core.SpellConfig {
  func (hunter *Hunter) newRaptorStrikeHitSpell(rank int) *core.Spell {
  	spellID := RaptorStrikeSpellId[rank]
  	baseDamage := RaptorStrikeBaseDamage[rank]
@@ -310,19 +275,6 @@ index 1885f73f3..914d1e916 100644
  
  	return hunter.RegisterSpell(core.SpellConfig{
  		SpellCode:   SpellCode_HunterRaptorStrikeHit,
-diff --git a/sim/hunter/serpent_sting.go b/sim/hunter/serpent_sting.go
-index 914c51a22..38350c653 100644
---- a/sim/hunter/serpent_sting.go
-+++ b/sim/hunter/serpent_sting.go
-@@ -66,7 +66,7 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
- 				dot.Snapshot(target, baseDamage, isRollover)
- 			},
- 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
--				dot.SnapshotBaseDamage = (baseDamage + serpentStingRAPPerTick*dot.Spell.RangedAttackPower(target, false)) * dot.Spell.BaseDamageMultiplierAdditive
-+				dot.SnapshotBaseDamage = (baseDamage + core.Assume("hunter_serpent_ap", serpentStingRAPPerTick)*dot.Spell.RangedAttackPower(target, false)) * dot.Spell.BaseDamageMultiplierAdditive
- 				if sim.IsForever() {
- 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickPhysicalCrit)
- 				} else {
 diff --git a/sim/mage/frostbolt.go b/sim/mage/frostbolt.go
 index 695855682..f68f3da3a 100644
 --- a/sim/mage/frostbolt.go
@@ -448,10 +400,10 @@ index 3cae7d4c2..232b951ec 100644
  
  			BonusCoefficient: 0.29,
 diff --git a/sim/paladin/sor.go b/sim/paladin/sor.go
-index fe71ec365..6ded08c87 100644
+index fe71ec365..bcbc16540 100644
 --- a/sim/paladin/sor.go
 +++ b/sim/paladin/sor.go
-@@ -107,8 +107,15 @@ func (paladin *Paladin) registerSealOfRighteousness() {
+@@ -107,10 +107,26 @@ func (paladin *Paladin) registerSealOfRighteousness() {
  			coeff = 0.1
  		}
  		damage := value * 0.85 * paladin.MainHand().SwingSpeed
@@ -467,8 +419,19 @@ index fe71ec365..6ded08c87 100644
 +			}
  			damage = value * 1.2 * paladin.MainHand().SwingSpeed
  		}
++		if v, ok := core.AssumeOk("pal_sor_sp_speed"); ok && v != 0 {
++			// dashboard assumption: the proc's spell power grows with weapon speed (TBC-like), the flat
++			// value at a 3.6 sec two-hander or a 2.4 sec one-hander
++			norm := 2.4
++			if paladin.has2hEquipped() {
++				norm = 3.6
++			}
++			coeff *= paladin.MainHand().SwingSpeed / norm
++		}
  
-@@ -121,7 +128,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
+ 		procSpell := paladin.RegisterSpell(core.SpellConfig{
+ 			ActionID:    core.ActionID{SpellID: rank.proc.spellID},
+@@ -121,7 +137,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
  
  			BonusCritRating: paladin.holyPowerCrit(),
  
@@ -477,7 +440,7 @@ index fe71ec365..6ded08c87 100644
  			ThreatMultiplier: 1,
  
  			BonusCoefficient: coeff,
-@@ -129,6 +136,9 @@ func (paladin *Paladin) registerSealOfRighteousness() {
+@@ -129,6 +145,9 @@ func (paladin *Paladin) registerSealOfRighteousness() {
  			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
  				// effectively scales with coeff x 2, and damage dealt multipliers affect half the damage taken bonus
  				baseDamage := damage + spell.BonusCoefficient*(spell.GetBonusDamage(target)+target.GetSchoolBonusDamageTaken(spell))
@@ -723,21 +686,18 @@ index 5788df3c8..e704f2cb5 100644
  }
  
 diff --git a/sim/warrior/rend.go b/sim/warrior/rend.go
-index 098043802..e9ec8950c 100644
+index 1352185d2..68c2b4645 100644
 --- a/sim/warrior/rend.go
 +++ b/sim/warrior/rend.go
-@@ -52,6 +52,11 @@ func (warrior *Warrior) registerRendSpell() {
- 			NumberOfTicks: rend.ticks,
+@@ -58,7 +58,7 @@ func (warrior *Warrior) registerRendSpell() {
  			TickLength:    time.Second * 3,
  			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-+				if k, ok := core.AssumeOk("warr_rend_ap"); ok {
-+					// dashboard assumption: Rend scales with attack power (k a tick)
-+					dot.Snapshot(target, baseDamage+k*dot.Spell.MeleeAttackPower(target), isRollover)
-+					return
-+				}
+ 				if sim.IsForever() {
+-					dot.Snapshot(target, baseDamage+ForeverRendAPPerTick*dot.Spell.MeleeAttackPower(target), isRollover)
++					dot.Snapshot(target, baseDamage+core.Assume("warr_rend_ap", ForeverRendAPPerTick)*dot.Spell.MeleeAttackPower(target) /* dashboard assumption */, isRollover)
+ 					return
+ 				}
  				dot.Snapshot(target, baseDamage, isRollover)
- 			},
- 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 diff --git a/sim/warrior/warrior.go b/sim/warrior/warrior.go
 index 53a2e89e8..70b0dcb85 100644
 --- a/sim/warrior/warrior.go

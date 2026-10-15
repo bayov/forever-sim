@@ -28,29 +28,29 @@ Sources, all read-only:
 
 | Class | Assumptions | Keys |
 |---|---|---|
-| All classes | 3 | `flat_bonus_inside_pct`, `wf_totem_offhand`, `oil_proc_damage` |
+| All classes | 2 | `flat_bonus_inside_pct`, `wf_totem_offhand` |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 4 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus` (one value, kept for reference) |
-| Paladin | 4 (+2 shared) | `pal_sor_sp_double`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks` (+ `flat_bonus_inside_pct`, `oil_proc_damage`) |
-| Warrior | 3 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_crit_rage` (+ `wf_totem_offhand`) |
-| Hunter | 6 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_shot_ap_shares`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
+| Paladin | 6 (+1 shared) | `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf` (+ `flat_bonus_inside_pct`) |
+| Warrior | 4 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_crit_rage`, `warr_rend_ap` (+ `wf_totem_offhand`) |
+| Hunter | 5 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` |
-| Shaman | 3 (+1 shared) | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` (+ `oil_proc_damage` for Enhancement) |
+| Shaman | 3 | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` |
 | Druid | 4 | `druid_ooc_rate` (one value, kept for reference), `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 32 assumptions (33 before the 2026-10-15 review, which removed `mage_ab_on_missiles` and `lock_decimation` and counted `mage_imbue_scrolls`). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 33 assumptions in `assumptions_def.py`. The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
-1. **`mage_ice_lance_coef`.** Ice Lance's spell power coefficient is 0 in the client; Season of Discovery's client had 0 too, and its server gave the same spell 42.9%. The sim uses 42.9% and Frost and Frostfire cast Ice Lance on every Fingers of Frost charge (user ruling 2026-10-15, PR #21): Frost went from last among the mages to second. At half that, Frost loses 10.7% and Frostfire 6.0% (assumption sims, 180 s).
+1. **`mage_ice_lance_coef`.** Ice Lance's spell power coefficient is 0 in the client; Season of Discovery's client had 0 too, and its server gave the same spell 42.9%. The sim uses 42.9% and Frost and Frostfire cast Ice Lance on every Fingers of Frost charge (user ruling 2026-10-15, PR #21): Frost went from last among the mages to second. At half that, Frost loses 10.9% and Frostfire 7.3%; at the client's 0, where the better rotation never casts Ice Lance, Frost loses 19.1% and Frostfire 9.4% (assumption sims, 180 s).
 2. **`lock_pet_scaling` + `lock_demon_melee`.** Both are Season of Discovery placeholders or 1.12 carry-overs.
    - Without owner scaling, every warlock build loses about 4%; with the Succubus melee halved, another 4%; with both, 7% (PR).
    - Demonology leads the ranking (1109.8), and the other three builds sit just above Retribution (969 to 985 against 960 to 967). These decide that order.
 3. **`lock_bod_coef`.** Bane of Doom's 4.0 coefficient is about 12% of every Shadow Bolt build's damage. At 2.0, every Shadow Bolt warlock loses 4.1% (PR), and Destruction and Affliction drop below the Retribution builds. I still expect 4.0 (it is the duration/15 rule), but it is untested in any beta build.
-4. **`pal_consecration_coef` and `pal_sor_sp_double`.** Consecration's 9.5% a tick comes from an old tooltip, against Era's 4.2% (est. −4% at Era's value). Seal of Righteousness counting spell power twice comes from Season of Discovery tests (−5.1% twist, −4.4% Shock if counted once, PR). Together these could move every Retribution build about 9%.
+4. **`pal_consecration_coef` and `pal_sor_sp_double`.** Consecration's 9.5% a tick comes from an old tooltip, against Era's 4.2% (est. −4% at Era's value). Seal of Righteousness counting spell power twice comes from Season of Discovery tests (−5.3 to −6.6% if counted once, assumption sims). Together with Consecration at Era's 4.2% (−4.5 to −6.3%) these could move every Retribution build about 11%.
 5. **`hunter_pet_speed` and `hunter_pet_scaling`.**
-   - Pet speed: Beast Mastery's 1.0 sec cat hitting as hard as a 2.0 sec pet comes from beta players, and nobody knows if it is intended (est. −5 to −8% Beast Mastery if Classic's speed scaling returns).
+   - Pet speed: the beta's fast pets hit as hard as a 2.0 sec pet. The presets treat that as a bug and use Classic's speed-scaled hit (user ruling 2026-10-15, PR #22); the beta's rule would add 6.1% to Beast Mastery and 3.2% to Marksmanship (assumption sims, 180 s).
    - Pet scaling: Season of Discovery's 22% scaling instead of the measured 10% would add 41 / 23 / 18 to Beast Mastery / Marksmanship / Survival (PR).
 
 Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retribution, in opposite directions) and `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×1.12, assumption sims).
@@ -63,7 +63,6 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 |---|---|---|---|---|---|---|---|
 | `flat_bonus_inside_pct` | Flat bonus inside the weapon percent | Combat Daggers, Seal Fate Daggers, Subtlety (Ambush), Mutilate; Ret twist, sub Holy, Shock | inside (client effect order) | after the percent (tooltip read literally) | inside | = Expected | est. Backstab builds −3.7 to −4%, Mutilate +1.7%, Ret +3% (all at Low) |
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | yes | main hand only | yes | = Expected | est. −2 to −3% DW Fury and rogues, about −1.5% Survival (at Low) |
-| `oil_proc_damage` | Shadow Oil and Frost Oil proc damage | Ret twist, sub Holy, Shock (and their Undead encounters); all four Enhancement builds (all Shadow Oil) | Forever's tooltips (63–71 / 39–43) | Era's ranges (52–61 / 33–38) | tooltips | = Expected | −0.06 to −0.08% at Low (about 0.6 DPS; assumption sims, 180 s) |
 
 ### `flat_bonus_inside_pct`: flat bonus inside the weapon percent
 
@@ -109,21 +108,6 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
   - About a third of the totem's procs on a dual wielder come from off-hand events.
   - The totem is worth about 45 DPS to a rogue (+24 over Grace of Air, PR), so main hand only costs rogues and dual-wield Fury about 2 to 3%, and Survival about 1.5%.
 - **Knob:** `sim/core/buffs.go:1894-1896`, set `procMask = ProcMaskMelee` only when the key is 1.
-
-### `oil_proc_damage`: Shadow Oil and Frost Oil proc damage
-
-- **Builds:** every preset with an oil on a weapon: the three Retribution builds and their three Undead encounters, and all four Enhancement builds. All of them use Shadow Oil; no preset uses Frost Oil, which takes the same setting.
-- **Sim now:** Forever's tooltips. Shadow Oil's proc (Shadow Bolt, 350026) deals 63 to 71, Frost Oil's (Frostbolt, 350025) 39 to 43. `sim/core/consumes.go:231-243` (`shadowOilDamageRange`, `frostOilDamageRange`); Classic Era keeps 52 to 61 and 33 to 38. The proc chances (15% and 10%) are Classic's.
-- **Source:**
-  - Wowhead's Forever tooltips (dataEnv 16, checked live): 350026 says 63 to 71, 350025 says 39 to 43. Wowhead Classic's tooltip for 350026 says 52 to 61.
-  - The consumables auditor read the server formula from the TrinityCore port: the damage scales with `level -= SpellLevel`. Forever changed the spells' BaseLevel to 0 but kept their SpellLevel (12 for Shadow Oil, 8 for Frost Oil), so the server formula gives Era's ranges, while the tooltip shows the higher ones.
-- **Why uncertain:** the tooltip and the server formula disagree, and no beta log shows an oil hit at level 60.
-- **Settings:**
-  - **Low, "Era's".** Shadow Oil 52 to 61, Frost Oil 33 to 38: the server formula with SpellLevel 12 (Shadow) and 8 (Frost).
-  - **Expected, "tooltip" (Sim now).** Shadow Oil 63 to 71, Frost Oil 39 to 43, as Forever's tooltips print.
-  - **High:** = Expected.
-- **Sensitivity (assumption sims, 180 s, at Low):** −0.06 to −0.08% on every Retribution and Enhancement build, about 0.6 DPS (Ret twist 981.7 → 981.0, Enhancement 813.9 → 813.4). The same at 120 and 300 s. Below the 0.5% threshold, but listed by user ruling (2026-10-13) because the evidence conflicts.
-- **Knob:** `sim/core/consumes.go`, both range helpers return Era's ranges when `core.Assume("oil_era", 0)` is 1.
 
 ---
 
@@ -235,12 +219,13 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `pal_sor_sp_double` | Seal of Righteousness takes spell power twice | twist, sub Holy, Shock | twice (2 × 11% on a two-hander) | once (10%) | twice | = Expected | Low −5.1% twist, −4.4% Shock (PR) |
-| `pal_consecration_coef` | Consecration's coefficient a tick | twist, sub Holy, Shock | 9.5% | 4.2% (Era) | 9.5% | 10.55% | est. Low −4%, High +0.7% |
+| `pal_sor_sp_double` | Seal of Righteousness takes spell power twice | twist, sub Holy, Shock | twice (2 × 11% on a two-hander) | once (10%) | twice | = Expected | Low −5.3 to −6.6% (assumption sims, 180 s) |
+| `pal_sor_sp_speed` | Seal of Righteousness's spell power and weapon speed | twist, sub Holy, Shock | flat per swing | scales with weapon speed (TBC-like) | flat per swing | = Expected | Low −0.5 to −0.7% (assumption sims, 180 s) |
+| `pal_consecration_coef` | Consecration's coefficient a tick | twist, sub Holy, Shock | 9.5% | 4.2% (Era) | 9.5% | = Expected | Low −4.5 to −6.3% (assumption sims, 180 s) |
 | `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes | Physical only | yes | = Expected | Low −1.1% twist (PR) |
 | `pal_31plus_ranks` | Holy Strike and Consecration 31+ ranks | twist, sub Holy, Shock | client | held to the ≤30 trend | client | = Expected | Low −1.2% (PR) |
 
-Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% at its Low) and `oil_proc_damage` (Shadow Oil; −0.07% at its Low).
+Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4.2% at its Low, assumption sims).
 
 ### `pal_sor_sp_double`: Seal of Righteousness counts spell power twice
 
@@ -258,6 +243,19 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% a
 - **Sensitivity (PR, results audit before the fairness round):** Low gives twist −49 (−5.1%) and Shock −42 (−4.4%); sub Holy is like twist. The build order doesn't change.
 - **Knob:** `sim/paladin/sor.go:131`. When the key is 1, drop the explicit `spell.BonusCoefficient*(...)` term; `:111` drops the ×1.1.
 
+### `pal_sor_sp_speed`: does Seal of Righteousness's spell power grow with weapon speed?
+
+- **Builds:** all six Retribution builds (twist, sub Holy, Shock and their Undead encounters).
+- **Sim now:** each proc adds the same share of spell power whatever the weapon speed (`sim/paladin/sor.go`); only the base damage scales with the swing.
+- **Source:** Season of Discovery and Era measurements of the same seal: flat per swing. TBC's Seal of Righteousness scaled the spell power part with weapon speed.
+- **Why uncertain:** the seal's spell power handling is server side, and no Forever log has compared weapon speeds.
+- **Settings:**
+  - **Low, scales with weapon speed (TBC-like).** The proc's spell power share × weapon speed ÷ 3.6 sec on a two-hander, ÷ 2.4 sec on a one-hander, so a 3.6 / 2.4 sec weapon gets the flat value.
+  - **Expected, flat per swing (Sim now).** What Season of Discovery and Era measured (user ruling 2026-10-15).
+  - **High:** = Expected.
+- **Sensitivity (assumption sims, 180 s, at Low):** −0.53 to −0.66% (the presets swing a 3.4 sec two-hander, ×0.94).
+- **Knob:** `sim/paladin/sor.go`, `core.AssumeOk("pal_sor_sp_speed")` scales the proc's coefficient by the swing speed over 3.6 (two-hander) or 2.4 (one-hander) (patch 0004).
+
 ### `pal_consecration_coef`: Consecration's spell power coefficient
 
 - **Builds:** twist and sub Holy (Consecration down to 20% mana, worth 109 DPS) and Shock (to the last point of mana).
@@ -270,10 +268,8 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% a
 - **Settings:**
   - **Low, 4.2% a tick.** Era's 33% over 8 ticks, if the old tooltip's 9.5% was a leftover.
   - **Expected, 9.5% a tick (Sim now).** The only Forever number anyone has seen.
-  - **High, 10.55% a tick.** 9.5% on the first-four extra plus a quarter of Era's 4.2% on the "everyone" part, if the two parts scale separately.
-- **Sensitivity (est.):**
-  - At Low, each tick goes from about 105 to 68 (−35%). About −38 DPS on twist (−3.9%) and a similar −4% on Shock.
-  - At High, about +0.7%.
+  - **High:** = Expected. The "split parts" 10.55% reading was dropped (user ruling 2026-10-15).
+- **Sensitivity (assumption sims, 180 s, at Low):** −4.5 to −6.3% (twist −6.3%, Shock −5.6%).
 - **Knob:** `sim/paladin/consecration.go:47`, `tickCoefficient = core.Assume("pal_consecration_coef", 0.095)`.
 
 ### `pal_2h_spec_holy`: Two-Handed Weapon Specialization on Holy seal damage
@@ -314,6 +310,7 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; est. +3% a
 | `warr_rage_k` | How normalised Rage grows with level | Fury, Fury two-hand, Arms | midpoint, k ×1.5 at 60 (standards 21) | flat k (×1) | midpoint (×1.5 at 60) | Classic-like (×2 at 60) | flat: Fury 950.6 at 180 s; others to measure |
 | `warr_rage_oh` | Off-hand factor of normalised Rage | Fury | ×1.0 | ×0.5 | ×1.0 | = Expected | Low −9.4% Fury (measured with flat k) |
 | `warr_crit_rage` | Extra Rage from critical white hits | Fury, Fury two-hand, Arms | +100% | +75% | +100% | = Expected | est. Low −2 to −3% Fury, about −1.5% Arms |
+| `warr_rend_ap` | Rend's attack power share | Arms, Arms vs Dragonkin | 2% of attack power a tick | none (client) | 2% a tick | 5% a tick | Low −2.0%, High +3.0% (assumption sims, 180 s) |
 
 Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at its Low).
 
@@ -357,6 +354,19 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
   - Fury is Rage-starved (Bloodthirst slips GCDs), so −2 to −3% on Fury and two-hand Fury. Arms has more non-white Rage (Bloodthrill, Overpower), so about −1.5%.
 - **Knob:** `sim/warrior/warrior.go:174`, `AddCritDealtRageMultiplier(core.Assume("warr_crit_rage", 2))` (1.75 for Low).
 
+### `warr_rend_ap`: Rend's attack power share
+
+- **Builds:** Arms and Arms vs Dragonkin (the two-hand builds that keep Rend up).
+- **Sim now:** each Rend tick adds 2% of attack power (`ForeverRendAPPerTick`, `sim/warrior/rend.go`; user ruling 2026-10-15, PR #22), about 14% of attack power over a full Rend.
+- **Source:** Blizzard's warrior development notes say Rend now "scales significantly" with attack power; client 70338 holds no coefficient.
+- **Why uncertain:** the share is server side and Rend at 60 is untested.
+- **Settings:**
+  - **Low, none.** The client as it is.
+  - **Expected, 2% a tick (Sim now).** A modest share.
+  - **High, 5% a tick.** About 35% of attack power over a full Rend.
+- **Sensitivity (assumption sims, 180 s, against 2%):** Low −2.0%, High +3.0% on both builds.
+- **Knob:** `core.Assume("warr_rend_ap", ForeverRendAPPerTick)` in Rend's snapshot (patch 0004).
+
 ---
 
 ## Hunter
@@ -364,11 +374,10 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
 | `hunter_pet_scaling` | Pet scaling from the hunter | BM, MM, SV | 10% RAP + 1:1 hit | 10% RAP, no hit | 10% RAP + hit | SoD: 22% RAP + hit | Low −17 / −10 / −10, High +41 / +23 / +18 (PR) |
-| `hunter_pet_speed` | Pet hits normalized to a 2.0 sec pet | BM, MM | yes (1.0 sec cat) | Classic: hit scales with speed | yes | = Expected | est. Low −5 to −8% BM, −2 to −4% MM |
-| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | 75 / 98 (strongest learned rank) | = Expected | 75 / 98 | 100 / 140 | est. Expected +1.2%, High +3% (from PR's TSA +6.4 LW) |
-| `hunter_shot_ap_shares` | Arcane Shot and Serpent Sting AP shares | LW, MM, BM | 0.11 / 0.035 a tick | 0.10 / 0.030 | 0.11 / 0.035 | 0.12 / 0.040 | est. ±1.3% |
-| `hunter_crit_per_agi` | Crit per Agility at 60 | all four | Classic table (53 Agi a 1%) | Classic | ×1.22 | = Expected | est. +2% (Expected) |
-| `hunter_raptor_31plus` | Raptor Strike 31+ flat bonuses | Survival | client (70 at rank 8) | 70 | 96 | 123 | High +1.2% (PR) |
+| `hunter_pet_speed` | Pet hits normalized to a 2.0 sec pet | BM, MM | no: Classic, the hit scales with speed | = Expected | Classic | the beta's same hit | High +6.1% BM, +3.2% MM (assumption sims, 180 s) |
+| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | 100 / 140 (top ranks fixed) | 50 / 71 (top ranks as written); Mid 75 / 98 (best older rank) | 100 / 140 | = Expected | Low −2.6 to −3.1%, Mid −1.4 to −1.7% (assumption sims, 180 s) |
+| `hunter_crit_per_agi` | Crit per Agility at 60 | all four | ×1.22 | Classic (53 Agi a 1%) | ×1.22 | = Expected | Low −2.6 to −2.8% (assumption sims, 180 s) |
+| `hunter_raptor_31plus` | Raptor Strike 31+ flat bonuses | Survival | 96 at rank 8 | 70 | 96 | 123 | Low −0.5%, High +0.5% (assumption sims, 180 s) |
 
 Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
@@ -390,71 +399,57 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 ### `hunter_pet_speed`: a fast pet hits as hard as a 2.0 sec pet
 
 - **Builds:** Beast Mastery (a 1.0 sec cat) and Marksmanship (a cat; check that its speed option is the same).
-- **Sim now:** every pet's auto attack hits the size of a 2.0 sec pet's (18.17 to 27.66 × 2) at any attack speed, so the fastest pet deals the most. `sim/hunter/pet.go:142-149` (`applyForeverRules`; the override at `:148-149`).
+- **Sim now:** Classic's rule: a pet's hit scales with its attack speed, so every pet has the same white damage a second (`ForeverPetHitScalesWithSpeed`, `sim/hunter/pet.go`; user ruling 2026-10-15, PR #22). On the beta every pet's auto attack hits the size of a 2.0 sec pet's (18.17 to 27.66 × 2) at any attack speed, so the fastest pet deals the most.
 - **Source:** beta players, gathered on ForeverChanges' hunter pets page and the forever-hunter wiki. The code comment says "nobody knows yet whether that is intended".
 - **Why uncertain:** it could be a beta bug that Blizzard fixes, which would bring back Classic's hit size scaling with the swing.
 - **Settings:**
-  - **Low, Classic.** The hit scales with attack speed (`sim/hunter/pet.go:64-65`), so every pet has the same white DPS.
-  - **Expected, as on the beta (Sim now).** The only observed behaviour.
-  - **High:** = Expected.
-- **Sensitivity (est.):** at Low the 1.0 sec cat's white damage halves. White hits are about half of the pet's damage, so about −5 to −8% on Beast Mastery and −2 to −4% on Marksmanship. Not simmed; Frenzy's haste makes the share uncertain.
-- **Knob:** `sim/hunter/pet.go:148-149`. Skip the override when the key is 0.
+  - **Expected, Classic (Sim now).** The hit scales with attack speed, treating the beta's behaviour as a bug (user ruling 2026-10-15).
+  - **High, as on the beta.** The only observed behaviour: every pet hits like a 2.0 sec pet.
+  - **Low:** = Expected.
+- **Sensitivity (assumption sims, 180 s, at High):** +6.1% Beast Mastery, +3.2% Marksmanship.
+- **Knob:** `core.AssumeOk("hunter_pet_same_hit")` = 1 restores the beta's 2.0 sec hit in `applyForeverRules` (patch 0004).
 
 ### `hunter_tsa_hm_rank`: Trueshot Aura and Hunter's Mark at level 60
 
 - **Builds:** Lone Wolf, Marksmanship, Beast Mastery. Both are ranged attack power only, so Survival is unaffected.
-- **Sim now:** the strongest learned rank (standards 8a, `bestLearnedRank` in sim/core on the hunter branch): Trueshot Aura rank 4 +75 RAP and Hunter's Mark rank 3 +98 RAP.
+- **Sim now:** the top ranks fixed onto the curve, Trueshot Aura rank 5 +100 RAP and Hunter's Mark rank 4 +140 RAP, cast directly (`ForeverTrueshotAuraRank5RAP`, `ForeverHuntersMarkRank4` in sim/core; user ruling 2026-10-15, PR #22; standards 8a).
 - **Source:**
   - Client 70338: Trueshot Aura ranks 30 / 40 / 50 / 75 / 50, Hunter's Mark 26 / 59 / 98 / 71. Both top ranks sit below the rank before them.
   - Standards 8a: use the strongest learned rank. The hunter branch implements it (PR #5), worth +10.7 to +14.3 DPS.
 - **Why uncertain:** a top rank weaker than the one before is either a client data error Blizzard fixes, or a value players work around by casting the lower rank.
 - **Settings:**
-  - **Low:** = Expected. A player can always cast the stronger lower rank, so the weaker top ranks are never worse.
-  - **Expected, 75 / 98 (Sim now).** The strongest learned rank.
-  - **High, 100 / 140.** Blizzard fixes the top ranks onto the curve of the ranks before them: Trueshot Aura +25 a rank; Hunter's Mark about +40 a rank, Forever's ranks 1 to 3 running about 1.3× Classic's 20 / 45 / 75 / 110.
-- **Sensitivity:**
-  - PR: Trueshot Aura rank 4 alone is +6.4 LW, +5.6 MM, +5.0 BM (2026-10-12 gear).
-  - est.: Hunter's Mark's +27 adds about as much, so Expected is about +1.2% and High about +3%.
-- **Knob:** the level 60 entries of `foreverTrueshotAuraRAP` and `foreverHuntersMark` in sim/core (buffs.go / debuffs.go). For High, set them to `Assume("hunter_tsa60", 50)` / `Assume("hunter_hm60", 71)` with 100 / 140; `bestLearnedRank` then picks them.
-
-### `hunter_shot_ap_shares`: Arcane Shot and Serpent Sting attack power shares
-
-- **Builds:** Lone Wolf, Marksmanship, Beast Mastery. Arcane Shot is 13 to 18% and Serpent Sting 9 to 10% of their damage.
-- **Sim now:** Arcane Shot 0.11 of RAP (`sim/hunter/arcane_shot.go:16`); Serpent Sting 0.035 of RAP a tick, read live (`sim/hunter/serpent_sting.go:17`).
-- **Source:** fits to level 20 to 30 beta combat logs (ElliotWood/Forever PR #489). The client gives neither spell an attack power coefficient. The forever-hunter wiki says 10% and 3% a tick.
-- **Why uncertain:** they were fitted below level 30 with small attack power; a level 60 log has not checked them.
-- **Settings:**
-  - **Low, 0.10 / 0.030.** The forever-hunter wiki's figures.
-  - **Expected, 0.11 / 0.035 (Sim now).** The combat-log fit.
-  - **High, 0.12 / 0.040.** The fit's distance from the wiki, mirrored. The data constrain the shares only to about ±10%.
-- **Sensitivity (est.):** at about 2100 RAP the attack power part is about half of each spell. Low gives Arcane Shot −4.5% and Serpent Sting −6.7%, about −1.3% on each build; High gives about +1.3%.
-- **Knob:** the two constants at `arcane_shot.go:16` and `serpent_sting.go:17`.
+  - **Low, 50 / 71, top ranks as written.** If only the weaker top ranks count.
+  - **Mid, 75 / 98, best older rank.** A player casts the stronger lower rank (the presets' setting before PR #22).
+  - **Expected, 100 / 140 (Sim now).** Blizzard fixes the top ranks onto the curve of the ranks before them: Trueshot Aura +25 a rank; Hunter's Mark about +40 a rank, Forever's ranks 1 to 3 running about 1.3× Classic's 20 / 45 / 75 / 110 (user ruling 2026-10-15).
+  - **High:** = Expected.
+- **Sensitivity (assumption sims, 180 s):** Low −2.6% BM, −3.1% LW, −2.8% MM; Mid −1.4% BM, −1.7% LW, −1.6% MM. Trueshot Aura is a raid buff in 38 of the 46 report requests, but it gives ranged attack power only, so only the hunters move.
+- **Knob:** `Assume("hunter_tsa60", …)` and `Assume("hunter_hm60", …)` override the level 60 values `bestLearnedRank` returns (patch 0004); the settings set 75 / 98 and 50 / 71.
 
 ### `hunter_crit_per_agi`: the hunter's crit per point of Agility
 
 - **Builds:** all four. Lone Wolf, Marksmanship and Beast Mastery stack Agility; the pets inherit the hunter's melee crit.
-- **Sim now:** Classic's table, 0.0189% a point at 60 (53 Agility a 1%), on Classic's level curve. `sim/core/base_stats.go:176` (`CritPerAgiAtLevel`), curve at `:396-398`.
+- **Sim now:** Classic's table ×1.22 at every level (`ForeverCritPerAgiScale`, a stat dependency in `sim/hunter/hunter.go` on top of Classic's 0.0189% a point at 60; user ruling 2026-10-15, PR #22), about 43 Agility a 1%.
 - **Source:** Classic base stats.
 - **Why uncertain:** at level 1 the beta's hunter gets 0.2174 crit a point where the sim has 0.1783 (dodge 0.4348 against 0.3567), 22% more (notes.md, All classes, 2026-10-10). The paladin, rogue, priest, mage and druid match the sim at level 1, so Forever changed the hunter's table; how that carries to 60 is unknown.
 - **Settings:**
-  - **Low, Classic (Sim now).** The level 1 difference stays a level 1 quirk.
-  - **Expected, ×1.22 at every level.** The beta's measured level 1 ratio, carried to 60.
+  - **Low, Classic.** The level 1 difference stays a level 1 quirk.
+  - **Expected, ×1.22 at every level (Sim now).** The beta's measured level 1 ratio, carried to 60.
   - **High:** = Expected; no data above level 1.
-- **Sensitivity (est.):** about 500 Agility gives 9.4% crit at Classic's rate and 11.5% at ×1.22. +2.1% crit is about +2% on the ranged specs (Mortal Shots' 2.3× crits) and slightly less on Survival.
-- **Knob:** `sim/core/base_stats.go:398`. Multiply by `Assume("hunter_crit_per_agi", 1)` when `c == proto.Class_ClassHunter`. The warrior's level 1 difference is −3% and its Agility is small, so it isn't worth a knob.
+- **Sensitivity (assumption sims, 180 s, at Low):** −2.6 to −2.8% on all four builds.
+- **Knob:** `core.Assume("hunter_crit_per_agi", ForeverCritPerAgiScale)` in the stat dependency (patch 0004). The warrior's level 1 difference is −3% and its Agility is small, so it isn't worth a knob.
 
 ### `hunter_raptor_31plus`: Raptor Strike's level 31+ flat bonuses
 
 - **Builds:** Survival (Raptor Strike 11% of its damage).
-- **Sim now:** client flat bonuses 35 / 40 / 55 / 70 at ranks 5 to 8. `sim/hunter/raptor_strike.go:15`.
+- **Sim now:** rank 8 adds 96 (`RaptorStrikeRank8BaseDamage`, `sim/hunter/raptor_strike.go`; user ruling 2026-10-15, PR #22); ranks 5 to 7 keep the client's 35 / 40 / 55.
 - **Source:** client 70338.
 - **Why uncertain:** level 24's flat is 0.88 of Era, but the 32 to 56 ranks sit at 0.50 to 0.70, so the playable ratio isn't kept (rank tuning audit, "stale-shaped").
 - **Settings:**
-  - **Low, 70 (Sim now).** The client.
-  - **Expected, 96.** Halfway: a partial retune of the kind Blizzard has made to the ≤30 ranks.
+  - **Low, 70.** The client.
+  - **Expected, 96 (Sim now).** Halfway: a partial retune of the kind Blizzard has made to the ≤30 ranks.
   - **High, 123.** Held at 0.88 of Era's 140, ×1.76.
-- **Sensitivity:** High +1.2% (PR, 761 → 770); Expected about +0.6% (est.).
-- **Knob:** `sim/hunter/raptor_strike.go:15`. Rank 8 entry `Assume("hunter_raptor8", 70)`; the preset casts rank 8 only.
+- **Sensitivity (assumption sims, 180 s, against 96):** Low −0.5%, High +0.5%.
+- **Knob:** `core.Assume("hunter_raptor8", …)` on rank 8's base damage (patch 0004); the preset casts rank 8 only.
 
 ---
 
@@ -462,7 +457,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `mage_ice_lance_coef` | Ice Lance spell power coefficient | Frostfire, Frost | 0.429, cast on every Fingers of Frost charge | 0.2145 (half of SoD) | 0.429 | = Expected | Frost −10.7%, Frostfire −6.0% at Low (assumption sims, 180 s) |
+| `mage_ice_lance_coef` | Ice Lance spell power coefficient | Frostfire, Frost | 0.429, cast on every Fingers of Frost charge | 0 (client, never casting Ice Lance); Mid 0.2145 (half of SoD) | 0.429 | = Expected | Low Frost −19.1%, Frostfire −9.4%; Mid −10.9% / −7.3% (assumption sims, 180 s) |
 | `mage_frostbolt10` | Frostbolt X gets 70291's raise | Frost | ×1.04 | ×1.00 | ×1.04 | ×1.08 | −1.0% Low, +1.0% High (assumption sims, 180 s) |
 | `mage_imbue_scrolls` | Mage staff imbue scrolls | all four mages | used | not available | used | = Expected | −0.8 to −1.5% at Low (assumption sims, 180 s) |
 
@@ -476,10 +471,11 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - Forever also lowered the Frozen bonus (client 300 where Season of Discovery's was 400), so Blizzard did touch the spell.
   - The talent is reachable on the beta (20 Frost points), but no test has been posted.
 - **Settings:**
-  - **Low, 0.2145 (half of SoD).** If the server adds less than Season of Discovery's. Both settings use the Ice Lance rotation.
+  - **Low, 0 (the client).** The client's value, which means never casting Ice Lance: each build takes the better of its Level 60 rotation and the one before Ice Lance was added (`tools/dps_report/asm_apls/`, the APLs at 27ffd2063^1), and both builds keep the no-Ice-Lance rotation (user ruling 2026-10-15).
+  - **Mid, 0.2145 (half of SoD).** If the server adds less than Season of Discovery's. It uses the Ice Lance rotation.
   - **Expected, 0.429 (Sim now).** Season of Discovery's server value for the same client data.
-  - **High:** = Expected. The client's 0 and WotLK's 0.143 were dropped (user ruling 2026-10-15).
-- **Sensitivity (assumption sims, 180 s):** Low Frost −10.67% (−100.5 DPS), Frostfire −6.04% (−59.7).
+  - **High:** = Expected. WotLK's 0.143 was dropped (user ruling 2026-10-15).
+- **Sensitivity (assumption sims, 180 s):** Low Frost −19.12% (−181.3 DPS), Frostfire −9.42% (−95.3); Mid Frost −10.86%, Frostfire −7.34%.
 - **Knob:** `core.Assume("mage_ice_lance_coef", IceLanceSpellCoeff)` (patch 0004).
 
 ### `mage_frostbolt10`: does build 70291's Frostbolt raise reach rank 10?
@@ -527,13 +523,13 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Settings:**
   - **Low, 5 PPM.** Half the analogues, for a Forever that spreads a weaker proc over its five ranks (1 a point). This is the weakest-grounded value in the inventory.
   - **Expected, 10 PPM (Sim now).** Season of Discovery's rune base rate (wowsims/sod `sim/shaman/runes.go`: "Base PPM is 10") and the 2-a-rank rate of the talent this one copies.
-  - **High, 20 PPM.** Season of Discovery's rate with Windfury Weapon on a two-hander (10 + 5 + 5; the 2024-02-20 hotfix, warcraft.wiki.gg), which is exactly what the preset wields.
-- **Sensitivity (est.):** Lightning Bolt casts scale with the rate, and Enhancement has spare GCDs between Stormstrike and the shocks. Halving costs about −3% and doubling adds about +5%.
+  - **High, 15 PPM.** As far above the base rate as Low is below it. Season of Discovery's 20 PPM (its 2024-02-20 hotfix for Windfury Weapon on a two-hander) was dropped: it was a rune hotfix that doesn't carry over (user ruling 2026-10-15).
+- **Sensitivity (assumption sims, 180 s):** Low −2.9 to −3.2%, High +2.5 to +3.1%.
 - **Knob:** `sim/shaman/talents.go:499`. Change `2*float64(...)` to `Assume("sham_mw_ppm", 10)/5*float64(...)`.
 
 ### `sham_lb_31plus`: Lightning Bolt's level 31+ ranks
 
-- **Builds:** Elemental (Lightning Bolt about 65% of its damage with overloads), Elemental Mana Tide.
+- **Builds:** Elemental (Lightning Bolt about 65% of its damage with overloads), Elemental Mana Tide, and all four Enhancement builds (their Maelstrom Weapon Lightning Bolts are rank 10).
 - **Sim now:** rank 10's base damage ×1.12 (`LightningBoltRank10DamageScale` in `LightningBoltBaseDamageAt`, `sim/shaman/lightning_bolt.go`; user ruling 2026-10-15, PR #21). The client's rank 10 is 189.92 to 211.68 plus 1.2 a level to 60.
 - **Source:** client 70338 (the ForeverChanges downrank calculator reads the same).
 - **Why uncertain** (rank tuning audit, "stale-shaped"):
@@ -544,7 +540,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - **Low, ×1.00.** The client.
   - **Expected, ×1.12 (Sim now, user ruling 2026-10-15).** 70291's raise on the same spell, applied to rank 10.
   - **High, ×1.38.** Held at the 0.61 ratio of levels 26 to 38.
-- **Sensitivity (assumption sims, 180 s, against ×1.12):** Low −1.9%, High +4.1%. Elemental stays in the bottom third either way. Enhancement's Maelstrom Weapon Lightning Bolts are rank 10 too (about 55 DPS), so the default moves them as well, but the scenario lists only the Elemental builds.
+- **Sensitivity (assumption sims, 180 s, against ×1.12):** Elemental Low −1.9%, High +4.1%; Enhancement Low −0.2 to −0.3%, High +0.5 to +0.6%. Elemental stays in the bottom third either way.
 - **Knob:** `core.Assume("sham_lb_31plus", LightningBoltRank10DamageScale)` in `LightningBoltBaseDamageAt` (patch 0004).
 
 ### `sham_es7_tuning`: Earth Shock VII
@@ -671,19 +667,21 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 - **Tiger's Fury's scope** (was `druid_tf_scope`, removed 2026-10-15). Forever removed Tiger's Fury (Blizzard's Druid deep dive; nothing in client 70338 grants it).
 - **Arcane Blast's stack bonus on Arcane Missiles** (was `mage_ab_on_missiles`, removed, user ruling 2026-10-15). The sim keeps the tooltip's 10% a stack on Missiles (`ArcaneBlastStackBonus`, `sim/mage/arcane_blast.go`). The client's stack buff 400573 leaves Missiles out, and Season of Discovery's 400586 (15% a stack) is still in the client; the scenario's settings were 0 / 10% / 15% (−9.48% / 0 / +4.74% on Arcane in its last assumption sims).
 - **Decimation's damage part** (was `lock_decimation`, removed, user ruling 2026-10-15). The sim keeps the tooltip's 3% a point under 35% health (`sim/warlock/talents.go`); the client's effect holds 0, which measured −1.08% on Demonology in the last assumption sims.
-- **Settings dropped in the same review** (user ruling 2026-10-15): Ice Lance's 0 (client) and 0.143 (WotLK), the demon's "Nothing" and "SoD plus crit" scaling, Incinerate's "base damage only", and Omen of Clarity's 6% a spell and 3.5 PPM. `lock_incinerate_bonus` and `druid_ooc_rate` stay as one-value reference rows.
+- **Settings dropped in the same review** (user ruling 2026-10-15): Ice Lance's 0.143 (WotLK; the client's 0 came back as Low in a later ruling the same day), the demon's "Nothing" and "SoD plus crit" scaling, Incinerate's "base damage only", and Omen of Clarity's 6% a spell and 3.5 PPM. `lock_incinerate_bonus` and `druid_ooc_rate` stay as one-value reference rows.
+- **Shadow Oil and Frost Oil proc damage** (was `oil_proc_damage`, removed, user ruling 2026-10-15). The sim keeps Forever's tooltip damage (Shadow Oil 63 to 71, Frost Oil 39 to 43; `sim/core/consumes.go`). Era's ranges, which the server formula with the spells' unchanged SpellLevel would give, measured −0.06 to −0.08% on the Retribution and Enhancement builds.
+- **Arcane Shot and Serpent Sting attack power shares** (was `hunter_shot_ap_shares`, removed, user ruling 2026-10-15). The sim uses the forever-hunter wiki's 10% and 3% a tick (`sim/hunter/arcane_shot.go`, `serpent_sting.go`; PR #22). The combat-log fit's 11% / 3.5% is within the fit's ±10%.
+- **Settings dropped in the same pass** (user ruling 2026-10-15): Consecration's "split parts" 10.55% and Maelstrom Weapon's 20 PPM (replaced by 15 PPM).
 - **The encounter itself** (level 63, 3731 armor, Humanoid). This moves every spec, but it is an encounter setting, not a spec assumption.
 
 ## Where no sensible range was found
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
-- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `warr_crit_rage`, `hunter_pet_speed`, `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_ice_lance_coef`, `mage_imbue_scrolls`, `druid_rip_31plus` (no Low: the client is Expected), and `oil_proc_damage`. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
+- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `warr_crit_rage`, `hunter_pet_speed` (no Low: Classic is Expected), `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_imbue_scrolls` and `druid_rip_31plus` (no Low: the client is Expected). `hunter_tsa_hm_rank` and `mage_ice_lance_coef` have two settings below Expected and none above. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
 
 Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM): no analogue below 10.
-- `hunter_shot_ap_shares` High: mirrored, not sourced.
 - The halfway "Expected" of the rank-tuning entries (`priest_smite8_tuning`, `hunter_raptor_31plus`, `mage_frostbolt10`, `sham_es7_tuning`, `druid_wrath8_tuning`): a judgement between "client as is" and "held at the ≤30 ratio".
-- `mage_ice_lance_coef` Low (half of SoD): a judgement, with no source of its own.
+- `mage_ice_lance_coef` Mid (half of SoD): a judgement, with no source of its own.
 - `lock_pet_scaling` Low (half of SoD): the same.
 
 No sensible range at all: Rip and Ferocious Bite attack power, and the untested 31-point capstones (listed above).

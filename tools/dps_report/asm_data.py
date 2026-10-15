@@ -8,6 +8,7 @@ import sys
 sys.path.insert(0, sys_path)
 from dashpaths import D  # noqa: E402
 RES = os.path.join(D, 'asm', 'results.jsonl')
+ROT_NAME = {'il': 'Ice Lance on Fingers of Frost', 'noil': 'never casts Ice Lance'}
 CLASS_ORDER = ['All', 'Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest']
 
 
@@ -43,7 +44,7 @@ def build(dump, builds=None):
     names = {b['id']: b['build'] for b in (builds or [])}
     rows = []
     for (bid, combo), (by_secs, rot) in sorted(res.items()):
-        r = {'build': bid, 'combo': combo, 'kind': next(iter(by_secs.values()))[2], 'rotation': 'Ice Lance on Fingers of Frost' if rot == 'il' else 'preset',
+        r = {'build': bid, 'combo': combo, 'kind': next(iter(by_secs.values()))[2], 'rotation': ROT_NAME.get(rot, 'preset'),
              'dps180': by_secs.get(180, (None,))[0], 'se180': by_secs.get(180, (None, None))[1],
              'dps120': by_secs.get(120, (None,))[0], 'dps300': by_secs.get(300, (None,))[0]}
         rows.append(r)

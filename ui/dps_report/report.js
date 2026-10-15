@@ -2772,7 +2772,7 @@ export function startReport(dash) {
 
   // ---------- assumptions panel ----------
   // the picks live in st, this browser's saved view
-  const SEG_NAME = { low: 'Low', expected: 'Expected', high: 'High', higher: 'Higher' };
+  const SEG_NAME = { low: 'Low', mid: 'Mid', expected: 'Expected', high: 'High', higher: 'Higher' };
   const asmPick = (a, id) => {
     st.asm = { ...(st.asm || {}) };
     if (id === a.defaultSetting) delete st.asm[a.key]; else st.asm[a.key] = id;
