@@ -36,12 +36,10 @@ import (
 //     here. Its first swing comes at a random point of its swing timer. The rotation decides
 //     whether to look for another mob (Look For Mob: 2 to 4 sec, running with the mobs on us
 //     following three times out of four, when only instants and melee go out), and pulls it
-//     the same ways, or leaves it for our next pull. pack_size is a fixed policy for a
-//     rotation that doesn't decide.
-//   - When the last one dies, we're out of combat: a bandage when our health is low and
-//     we're not Recently Bandaged, then we sit to eat and drink when health or mana is low,
-//     until both are full or both buffs run out. Then the mob we found while fighting if
-//     there is one, or a new search.
+//     the same ways, or leaves it for our next pull.
+//   - When the last one dies, we're out of combat and ready (leveling_rest.go): the rotation
+//     can bandage, sit to eat and drink, heal or buff. Once it has nothing to do, the mob we
+//     found while fighting if there is one, or a new search.
 //   - Death: the mobs on us leave, and after the corpse run we come back with part of our
 //     health and mana and search again.
 //
@@ -88,9 +86,6 @@ type levelingSession struct {
 	foodLeft, drinkLeft, bandageLeft time.Duration
 	food, drink, bandage             restorer
 	bandageReadyAt                   time.Duration
-	// Whether the rotation decides when to rest and bandage (it has those actions); if not,
-	// eat_below, drink_below and no_bandages do.
-	rotationRests bool
 	// Food, water and bandages used this session.
 	foods, drinks, bandages int
 	// A pending search, chain search or revive, cancelled when the state moves on.
@@ -133,13 +128,11 @@ type levelingOptions struct {
 	mobLevelOffset, mobSpread      int32
 	mobType                        proto.MobType
 	armorMultiplier                float64
-	packSize, maxPack              int
+	maxPack                        int
 	searchMin, searchMax           time.Duration
 	chainSearchMin, chainSearchMax time.Duration
 	chainSearchMoving              float64
 	foundMin, foundMax             float64
-	eatBelow, drinkBelow           float64
-	bandages                       bool
 	deathPenalty                   time.Duration
 	reviveFraction                 float64
 }
@@ -158,7 +151,6 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		mobSpread:         1,
 		mobType:           o.MobType,
 		armorMultiplier:   or(o.ArmorMultiplier, 1),
-		packSize:          int(max(o.PackSize, 1)),
 		maxPack:           int(max(o.MaxPackSize, 0)),
 		searchMin:         seconds(o.SearchMin, 5),
 		searchMax:         seconds(o.SearchMax, 11),
@@ -167,9 +159,6 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		chainSearchMoving: 0.75,
 		foundMin:          math.Round(or(o.FoundMin, 10)),
 		foundMax:          math.Round(or(o.FoundMax, 40)),
-		eatBelow:          or(o.EatBelow, 0.5),
-		drinkBelow:        or(o.DrinkBelow, 0.4),
-		bandages:          !o.NoBandages,
 		deathPenalty:      seconds(o.DeathPenalty, 180),
 		reviveFraction:    or(o.ReviveFraction, 0.5),
 	}
@@ -185,7 +174,6 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 	if opts.maxPack == 0 {
 		opts.maxPack = 5
 	}
-	opts.packSize = min(opts.packSize, opts.maxPack)
 	opts.foundMax = max(opts.foundMax, opts.foundMin)
 	return opts
 }
@@ -422,7 +410,6 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	} else {
 		s.retarget(sim, target)
 	}
-	s.chainSearch(sim, true)
 }
 
 // pulled is whether the mob is one we pulled, on its way or on us.
@@ -447,27 +434,9 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 	}
 }
 
-// outOfCombat: the pull is over. The rotation decides what's next (ready), or without rest
-// actions in it the fixed policy does: a bandage when health is low, then food and water when
-// health or mana is, then the next pull.
+// outOfCombat: the pull is over, and the rotation decides what's next (ready).
 func (s *levelingSession) outOfCombat(sim *Simulation) {
-	if s.rotationRests {
-		s.ready(sim)
-		return
-	}
-	health := s.player.CurrentHealthPercent()
-	if s.opts.bandages && health < s.opts.eatBelow && sim.CurrentTime >= s.bandageReadyAt {
-		s.startBandage(sim)
-		return
-	}
-
-	mana := s.manaPercent()
-	if health < s.opts.eatBelow || mana < s.opts.drinkBelow {
-		s.startRest(sim, levelingRest{eat: health < 1, drink: mana < 1, healthUntil: 1, manaUntil: 1})
-		return
-	}
-
-	s.search(sim)
+	s.ready(sim)
 }
 
 func (s *levelingSession) manaPercent() float64 {
@@ -579,11 +548,7 @@ func (s *levelingSession) revive(sim *Simulation) {
 		p.AddMana(sim, s.opts.reviveFraction*p.MaxMana()-p.CurrentMana(), s.reviveManaMetrics)
 	}
 	p.Metrics.Died = true
-	if s.rotationRests {
-		s.ready(sim)
-	} else {
-		s.search(sim)
-	}
+	s.ready(sim)
 }
 
 // doneIteration adds the session to the totals: the mobs on us at the end count by the share

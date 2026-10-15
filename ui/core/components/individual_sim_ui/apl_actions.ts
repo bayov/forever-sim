@@ -669,7 +669,8 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 	['shamanWalkToTotem']: inputBuilder({
 		label: 'Walk To Totem (Leveling)',
 		submenu: ['Shaman'],
-		shortDescription: 'In a leveling session, walks back toward your totem of this element until you are within the given yards of it. The mobs on you follow.',
+		shortDescription:
+			'In a leveling session, walks back toward your totem of this element until you are within the given yards of it. The mobs on you follow.',
 		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
 		newValue: () => APLActionShamanWalkToTotem.create({}),
 		fields: [
@@ -692,11 +693,11 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 		label: 'Rest (Leveling)',
 		submenu: ['Leveling'],
 		shortDescription:
-			'In a leveling session, out of combat: sits down to eat, drink, both or neither until health and mana reach the given shares of max (100% when empty). Sitting adds a third to Spirit health regen. A rotation with Rest or Bandage decides all resting.',
+			'In a leveling session, out of combat: sits down to eat, drink, both or neither until health and mana reach the given shares of max (100% when empty), with another food or drink when one runs out short. Sitting adds a third to Spirit health regen. Only the rotation rests: a rotation with no Rest or Bandage line gets default ones in front of its own (bandage below 50% health, eat and drink to full below 50% health or 40% mana). Add a disabled Rest line to never rest.',
 		newValue: () => APLActionLevelingRest.create({}),
 		fields: [
-			AplHelpers.booleanFieldConfig('eat', 'Eat'),
-			AplHelpers.booleanFieldConfig('drink', 'Drink'),
+			AplHelpers.booleanFieldConfig('eat', 'Eat', { labelTooltip: 'Eat the best vendor food for your level, for health.' }),
+			AplHelpers.booleanFieldConfig('drink', 'Drink', { labelTooltip: 'Drink the best vendor water for your level, for mana.' }),
 			AplValues.valueFieldConfig('healthUntil', {
 				label: 'until Health',
 				labelTooltip: 'Share of max health to rest to, e.g. 90%.',
@@ -710,14 +711,16 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 	['levelingBandage']: inputBuilder({
 		label: 'Bandage (Leveling)',
 		submenu: ['Leveling'],
-		shortDescription: 'In a leveling session, out of combat: puts on the best bandage for your level, unless Recently Bandaged.',
+		shortDescription:
+			'In a leveling session, out of combat: puts on the best bandage First Aid allows at your level, an 8 sec channel, unless Recently Bandaged (1 min). Use Bandage Ready to check.',
 		newValue: () => APLActionLevelingBandage.create({}),
 		fields: [],
 	}),
 	['levelingWalkToPullTarget']: inputBuilder({
 		label: 'Walk To Pull Target (Leveling)',
 		submenu: ['Leveling'],
-		shortDescription: 'In a leveling session: walks toward the Pull Target until you are within the given yards of it (melee range for 0), or it notices you first.',
+		shortDescription:
+			'In a leveling session: walks toward the Pull Target until you are within the given yards of it (melee range for 0), or it notices you first.',
 		newValue: () => APLActionLevelingWalkToPullTarget.create({}),
 		fields: [
 			AplValues.valueFieldConfig('within', {

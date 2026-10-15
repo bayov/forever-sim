@@ -1058,12 +1058,8 @@ message LevelingOptions {
 	// Scales the level's average armor. Default 1.
 	double armor_multiplier = 5;
 
-	// The rotation decides when to look for another mob while fighting (Look For Mob), and
-	// how to pull it. pack_size is a fixed policy on top for a rotation without that (default
-	// 1, none): until a pull has taken that many, we look for the next mob, and walk up to it
-	// if the rotation doesn't pull it. max_pack_size is the most mobs we can ever have on us
-	// (default 5).
-	int32 pack_size = 6;
+	// The most mobs we can ever have on us (default 5). The rotation decides when to look for
+	// another mob while fighting (Look For Mob), and how to pull it.
 	int32 max_pack_size = 7;
 
 	// Seconds to find the next mob out of combat (default 5 to 11), and to find one to
@@ -1081,13 +1077,10 @@ message LevelingOptions {
 	double found_min = 12;
 	double found_max = 18;
 
-	// Out of combat we sit to eat and drink when health or mana is below these shares of
-	// max (defaults 0.5 and 0.4), until both are full or both buffs run out.
-	double eat_below = 13;
-	double drink_below = 14;
-	// Leave bandages out (they're on by default: the best one First Aid at our level
-	// allows, when health is below eat_below and we're not Recently Bandaged).
-	bool no_bandages = 15;
+	// When to eat, drink and bandage is the rotation's (Rest and Bandage), and so is how many
+	// mobs a pull takes (Look For Mob). These were options once.
+	reserved 6, 13, 14, 15;
+	reserved "pack_size", "eat_below", "drink_below", "no_bandages";
 
 	// Seconds of corpse run after a death (default 180), and the share of health and mana
 	// we come back with (default 0.5).

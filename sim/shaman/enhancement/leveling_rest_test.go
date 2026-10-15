@@ -22,7 +22,7 @@ func atoi(s string) int {
 }
 
 // TestLevelingRotationRests: the rotation sits down to eat and drink below 60% health or 40%
-// mana and stands up at 90% of both, and the fixed policy stays out of it.
+// mana and stands up at 90% of both, and the default rest lines stay out of it.
 func TestLevelingRotationRests(t *testing.T) {
 	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), rotationOf(healLine,
 		`{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"40%"}}}}]}},"levelingRest":{"eat":true,"drink":true,"healthUntil":{"const":{"val":"90%"}},"manaUntil":{"const":{"val":"90%"}}}}}`))
@@ -48,7 +48,7 @@ func TestLevelingRotationRests(t *testing.T) {
 		t.Errorf("%d rests with %.0f food and %.0f drinks, want a few", sits, m.Food, m.Drinks)
 	}
 	if m.Bandages != 0 {
-		t.Errorf("%.0f bandages: the fixed policy bandaged though the rotation rests", m.Bandages)
+		t.Errorf("%.0f bandages: the default lines bandaged though the rotation rests", m.Bandages)
 	}
 }
 

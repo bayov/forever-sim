@@ -97,9 +97,6 @@ type levelingMob struct {
 	// A spell that attacks it is on its way (a bolt in flight): it's pulled, and no longer
 	// the rotation's Pull Target.
 	incoming bool
-	// Found by pack_size's search rather than the rotation's, so we walk up to it if the
-	// rotation doesn't pull it.
-	autoPull bool
 }
 
 // Why we're moving.
@@ -273,7 +270,7 @@ func (s *levelingSession) search(sim *Simulation) {
 	}
 	s.after(sim, &s.next, randomDuration(sim, "Leveling Search", s.opts.searchMin, s.opts.searchMax), func(sim *Simulation) {
 		s.move(sim, goalNone, Vec2{}, 0, nil)
-		if s.find(sim, false) != nil {
+		if s.find(sim) != nil {
 			s.startPull(sim)
 		} else {
 			s.search(sim)
@@ -283,7 +280,7 @@ func (s *levelingSession) search(sim *Simulation) {
 
 // find picks a mob from the pool to stand in a random direction from us, waiting to be
 // pulled.
-func (s *levelingSession) find(sim *Simulation, autoPull bool) *Unit {
+func (s *levelingSession) find(sim *Simulation) *Unit {
 	level := s.levels[int(sim.RandomFloat("Leveling Mob Level")*float64(len(s.levels)))%len(s.levels)]
 	mob := s.idleMob(level)
 	if mob == nil {
@@ -296,7 +293,7 @@ func (s *levelingSession) find(sim *Simulation, autoPull bool) *Unit {
 	mob.healthBar.currentHealth = mob.MaxHealth()
 	mob.auraTracker.expireAll(sim) // Anything cast at it while it lay in the pool.
 	mob.auraTracker.respawn(sim)
-	s.mobs[mob.Index] = levelingMob{state: mobFound, x: s.playerPosition(sim).Add(direction.Scale(distance)), xAt: sim.CurrentTime, autoPull: autoPull}
+	s.mobs[mob.Index] = levelingMob{state: mobFound, x: s.playerPosition(sim).Add(direction.Scale(distance)), xAt: sim.CurrentTime}
 	s.found, s.foundAt = mob, sim.CurrentTime
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: found %s (level %d) %.0f yards away, bearing %.0f°", mob.Label, mob.Level, distance, math.Mod(math.Atan2(direction.Y, direction.X)*180/math.Pi+360, 360))
@@ -314,20 +311,13 @@ func (s *levelingSession) startPull(sim *Simulation) {
 	s.pollPull(sim)
 }
 
-// pollPull watches the mob we found: when the rotation hasn't pulled it, isn't casting and
-// hasn't moved for a second, we walk up to it until it notices us. Out of combat that's
-// always so; in combat only for a mob pack_size's search found, since the rotation that
-// looked for one decides what to do with it.
+// pollPull watches the mob we found out of combat: when the rotation hasn't pulled it, isn't
+// casting and hasn't moved for a second, we walk up to it until it notices us. That keeps a
+// rotation without pull lines grinding; one with them pulls or walks up within the second. In
+// combat the rotation looked for the mob, and it decides what to do with it.
 func (s *levelingSession) pollPull(sim *Simulation) {
 	mob := s.found
-	if mob == nil || (s.state != levelingPulling && s.state != levelingCombat) {
-		return
-	}
-	m := &s.mobs[mob.Index]
-	if s.state == levelingCombat && !m.autoPull {
-		return
-	}
-	if m.incoming {
+	if mob == nil || s.state != levelingPulling || s.mobs[mob.Index].incoming {
 		return
 	}
 	if s.goal == goalNone && sim.CurrentTime-max(s.foundAt, s.stoppedAt) >= levelingFacePullAfter && !s.player.IsCasting(sim) {
@@ -409,17 +399,11 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 			s.player.Log(sim, "Leveling: pulled %s (level %d) from %.0f yards, chasing us", mob.Label, mob.Level, distance)
 		}
 	}
-	s.chainSearch(sim, true)
 }
 
-// chainSearch: while fighting, we look for another mob, running around with the mobs on us
-// following most of the time. pack_size's search (auto) goes until a pull has taken that
-// many mobs; the rotation's (LevelingLookForMob) whenever it asks.
-func (s *levelingSession) chainSearch(sim *Simulation, auto bool) bool {
-	if s.state != levelingCombat || s.found != nil || s.chainNext != nil || s.goal != goalNone ||
-		len(s.env.Encounter.ActiveTargetUnits) >= s.opts.maxPack || (auto && s.pullMobs >= s.opts.packSize) {
-		return false
-	}
+// chainSearch: while fighting, the rotation looks for another mob (LevelingLookForMob), and
+// we run around with the mobs on us following most of the time.
+func (s *levelingSession) chainSearch(sim *Simulation) {
 	moving := sim.RandomFloat("Leveling Chain Search Moving") < s.opts.chainSearchMoving
 	if moving {
 		s.move(sim, goalSearch, Vec2{}, 0, nil)
@@ -431,12 +415,10 @@ func (s *levelingSession) chainSearch(sim *Simulation, auto bool) bool {
 		if s.goal == goalSearch {
 			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
-		if s.state != levelingCombat || s.find(sim, auto) == nil {
-			return
+		if s.state == levelingCombat {
+			s.find(sim)
 		}
-		s.pollPull(sim)
 	})
-	return true
 }
 
 // arrive: the mob reached us and starts swinging, its first swing anywhere in its timer.
@@ -516,6 +498,16 @@ func (encounter *Encounter) LevelingMobCounts() (running, onUs int) {
 	return
 }
 
+// LevelingMobsThisPull is how many mobs the current pull has taken, the dead ones too: 0 out of
+// combat.
+func (encounter *Encounter) LevelingMobsThisPull() int {
+	s := encounter.leveling
+	if s == nil || s.state != levelingCombat {
+		return 0
+	}
+	return s.pullMobs
+}
+
 // LevelingCanLookForMob is whether the rotation can look for another mob now: fighting,
 // not already looking or walking, no mob found and not pulled yet, and room in the pack.
 func (encounter *Encounter) LevelingCanLookForMob() bool {
@@ -527,7 +519,7 @@ func (encounter *Encounter) LevelingCanLookForMob() bool {
 // LevelingLookForMob starts the rotation's search for another mob while fighting.
 func (encounter *Encounter) LevelingLookForMob(sim *Simulation) {
 	if encounter.LevelingCanLookForMob() {
-		encounter.leveling.chainSearch(sim, false)
+		encounter.leveling.chainSearch(sim)
 	}
 }
 

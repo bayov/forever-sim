@@ -147,36 +147,55 @@ func TestLevelingSession(t *testing.T) {
 	}
 }
 
-// TestLevelingPacks: chain pulls bring the pack size, and three mobs at a time are too much
-// for a naked level 30, who dies and loses the corpse runs' time.
+// packLines pull n mobs at a time: they look for another mob while the pull has taken fewer
+// than n (Mobs This Pull counts the dead ones too), and walk up to it while fighting.
+func packLines(n int) []string {
+	return []string{
+		`{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"levelingMobsThisPull":{}},"rhs":{"const":{"val":"` + strconv.Itoa(n) + `"}}}},"levelingLookForMob":{}}}`,
+		`{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"levelingMobsThisPull":{}},"rhs":{"const":{"val":"1"}}}},"levelingWalkToPullTarget":{}}}`,
+	}
+}
+
+// TestLevelingPacks: a rotation that pulls three mobs at a time takes three a pull, not
+// more as the first ones die, and three are too much for a naked level 30, who dies and
+// loses the corpse runs' time.
 func TestLevelingPacks(t *testing.T) {
 	one := runLeveling(t, levelingRequest(t, &proto.LevelingOptions{}, 50)).EncounterMetrics.Leveling
-	three := runLeveling(t, levelingRequest(t, &proto.LevelingOptions{PackSize: 3}, 50)).EncounterMetrics.Leveling
+	three := runLeveling(t, withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 50), rotationOf(append([]string{healLine}, packLines(3)...)...))).EncounterMetrics.Leveling
+	t.Logf("single pulls: %.1f mobs, %.2f deaths; three at a time: %.1f mobs, %.2f a pull, %.2f deaths", one.MobsKilled, one.Deaths, three.MobsKilled, three.MobsPerPull, three.Deaths)
 	if three.MobsPerPull < 2.7 || three.MobsPerPull > 3 {
-		t.Errorf("%.2f mobs a pull with pack size 3, want close to 3", three.MobsPerPull)
+		t.Errorf("%.2f mobs a pull pulling three at a time, want close to 3 and never more", three.MobsPerPull)
 	}
 	if three.Deaths < 2 || three.SecondsDead < 300 {
-		t.Errorf("pack size 3 died %.1f times for %.0f sec, want a few corpse runs", three.Deaths, three.SecondsDead)
+		t.Errorf("pulling three died %.1f times for %.0f sec, want a few corpse runs", three.Deaths, three.SecondsDead)
 	}
 	if one.Deaths > 0.1 {
 		t.Errorf("single pulls died %.2f times a session", one.Deaths)
 	}
 	if three.MobsKilled >= one.MobsKilled {
-		t.Errorf("pack size 3 killed %.1f, single pulls %.1f: dying should cost more than it gains", three.MobsKilled, one.MobsKilled)
+		t.Errorf("pulling three killed %.1f, single pulls %.1f: dying should cost more than it gains", three.MobsKilled, one.MobsKilled)
 	}
 }
 
-// TestLevelingRests: a long rest threshold makes us sit after every pull, and a session
-// without rests never sits. Resting takes time but keeps us alive.
+// TestLevelingRests: a rotation that rests below 99% sits after every pull, and one with its
+// only Rest line switched off never sits. One with no Rest or Bandage line gets the default
+// ones: it bandages below 50% health, and eats and drinks below 50% health or 40% mana.
+// Resting takes time but keeps us alive.
 func TestLevelingRests(t *testing.T) {
-	always := runLeveling(t, levelingRequest(t, &proto.LevelingOptions{EatBelow: 0.99, DrinkBelow: 0.99, NoBandages: true}, 20)).EncounterMetrics.Leveling
-	never := runLeveling(t, levelingRequest(t, &proto.LevelingOptions{EatBelow: 0.0001, DrinkBelow: 0.0001, NoBandages: true}, 20)).EncounterMetrics.Leveling
-	usual := runLeveling(t, levelingRequest(t, &proto.LevelingOptions{NoBandages: true}, 20)).EncounterMetrics.Leveling
+	restAlways := `{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"99%"}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"99%"}}}}]}},"levelingRest":{"eat":true,"drink":true}}}`
+	restOff := `{"hide":true,"action":{"levelingRest":{"eat":true,"drink":true}}}`
+	always := runLeveling(t, withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 20), rotationOf(healLine, restAlways))).EncounterMetrics.Leveling
+	never := runLeveling(t, withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 20), rotationOf(healLine, restOff))).EncounterMetrics.Leveling
+	usual := runLeveling(t, levelingRequest(t, &proto.LevelingOptions{}, 20)).EncounterMetrics.Leveling
+	t.Logf("resting %.0f / %.0f / %.0f sec, deaths %.2f / %.2f / %.2f (always, default lines, never)", always.SecondsResting, usual.SecondsResting, never.SecondsResting, always.Deaths, usual.Deaths, never.Deaths)
 	if always.SecondsResting <= usual.SecondsResting {
-		t.Errorf("resting below 99%% sat for %.0f sec a session, at the default 50%% and 40%% %.0f, want more", always.SecondsResting, usual.SecondsResting)
+		t.Errorf("resting below 99%% sat for %.0f sec a session, the default lines %.0f, want more", always.SecondsResting, usual.SecondsResting)
 	}
-	if never.SecondsResting != 0 {
-		t.Errorf("never resting sat for %.0f sec", never.SecondsResting)
+	if usual.Food < 1 || usual.Drinks < 1 || usual.Bandages < 1 {
+		t.Errorf("the default lines ate %.1f, drank %.1f and bandaged %.1f times a session, want some of each", usual.Food, usual.Drinks, usual.Bandages)
+	}
+	if never.SecondsResting != 0 || never.Food != 0 || never.Bandages != 0 {
+		t.Errorf("with the Rest line switched off we sat for %.0f sec, ate %.1f and bandaged %.1f times, want none", never.SecondsResting, never.Food, never.Bandages)
 	}
 	if never.Deaths <= always.Deaths {
 		t.Errorf("never resting died %.2f times, always resting %.2f", never.Deaths, always.Deaths)

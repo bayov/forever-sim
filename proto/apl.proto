@@ -182,6 +182,7 @@ message APLValue {
         APLValueLevelingMobsRunningIn leveling_mobs_running_in = 82;
         APLValueLevelingMobsOnUs leveling_mobs_on_us = 83;
         APLValueLevelingBandageReady leveling_bandage_ready = 86;
+        APLValueLevelingMobsThisPull leveling_mobs_this_pull = 87;
 
         // Class or Spec-specific values
         // Shaman
@@ -327,8 +328,8 @@ message APLActionLevelingWalkToPullTarget {
 // In a leveling session, out of combat: sit down to eat, drink, both, or neither (just
 // resting), until health and mana are at these shares of max (default 100%). Another food or
 // drink starts when one runs out short of that. Sitting adds a third to Spirit's health regen.
-// A rotation with this or Bandage decides all resting; one without gets the fixed policy
-// (LevelingOptions.eat_below, drink_below, no_bandages).
+// Only the rotation rests: one with no Rest or Bandage gets default lines in front (bandage
+// below 50% health, eat and drink to full below 50% health or 40% mana).
 message APLActionLevelingRest {
     bool eat = 1;
     bool drink = 2;
@@ -524,6 +525,11 @@ message APLValueLevelingMobsOnUs {
 
 // True out of combat in a leveling session while we're not Recently Bandaged.
 message APLValueLevelingBandageReady {
+}
+
+// The mobs the current pull has taken in a leveling session, the dead ones too; 0 out of
+// combat. A rotation that looks for another mob while this is under N pulls N at a time.
+message APLValueLevelingMobsThisPull {
 }
 
 message APLValueSpellTravelTime {

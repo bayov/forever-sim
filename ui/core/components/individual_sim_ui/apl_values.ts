@@ -40,6 +40,7 @@ import {
 	APLValueLevelingDistance,
 	APLValueLevelingMobsOnUs,
 	APLValueLevelingMobsRunningIn,
+	APLValueLevelingMobsThisPull,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueIsExecutePhase,
@@ -639,7 +640,7 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 	levelingBandageReady: inputBuilder({
 		label: 'Bandage Ready',
 		submenu: ['Leveling'],
-		shortDescription: '<b>True</b> out of combat in a leveling session while you are not Recently Bandaged.',
+		shortDescription: '<b>True</b> out of combat in a leveling session while you are not Recently Bandaged, so Bandage (Leveling) can go.',
 		newValue: APLValueLevelingBandageReady.create,
 		fields: [],
 	}),
@@ -648,6 +649,14 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		submenu: ['Leveling'],
 		shortDescription: 'Mobs you pulled that have reached you, in a leveling session.',
 		newValue: APLValueLevelingMobsOnUs.create,
+		fields: [],
+	}),
+	levelingMobsThisPull: inputBuilder({
+		label: 'Mobs This Pull',
+		submenu: ['Leveling'],
+		shortDescription:
+			'Mobs the current pull has taken in a leveling session, the dead ones too. 0 out of combat. Look For Mob while this is under 3 pulls three at a time.',
+		newValue: APLValueLevelingMobsThisPull.create,
 		fields: [],
 	}),
 

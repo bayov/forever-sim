@@ -864,15 +864,6 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) =>
 			updateLeveling(eventID, encounter, opts => (opts.mobType = newValue == DEFAULT_LEVELING_MOB_TYPE ? MobType.MobTypeUnknown : newValue)),
 	});
-	addLevelingNumberPicker(mainGroup, encounter, {
-		id: 'encounter-leveling-pack-size',
-		label: 'Pack Size',
-		labelTooltip:
-			"How many mobs we pull at once when the rotation doesn't look for mobs itself (Look For Mob): until a pull has this many, we look for the next mob and walk up to it if the rotation doesn't pull it. 1 pulls one mob at a time.",
-		get: opts => Math.max(opts.packSize, 1),
-		set: (opts, value) => (opts.packSize = unlessDefault(value, 1)),
-	});
-
 	const searchGroup = Input.newGroupContainer();
 	section.appendChild(searchGroup);
 	const searchTooltip =
@@ -910,35 +901,6 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.foundMax = unlessDefault(value, 40)),
 	});
 
-	const restGroup = Input.newGroupContainer();
-	section.appendChild(restGroup);
-	const restTooltip =
-		'Out of combat we sit to eat and drink when health is under Eat Below or mana is under Drink Below, until both are full or the food and drink run out. A rotation with Rest (Leveling) decides that for itself.';
-	addLevelingNumberPicker(restGroup, encounter, {
-		id: 'encounter-leveling-eat-below',
-		label: 'Eat Below (%)',
-		labelTooltip: restTooltip,
-		get: opts => toPercent(orDefault(opts.eatBelow, 0.5)),
-		set: (opts, value) => (opts.eatBelow = unlessDefault(value / 100, 0.5)),
-	});
-	addLevelingNumberPicker(restGroup, encounter, {
-		id: 'encounter-leveling-drink-below',
-		label: 'Drink Below (%)',
-		labelTooltip: restTooltip,
-		get: opts => toPercent(orDefault(opts.drinkBelow, 0.4)),
-		set: (opts, value) => (opts.drinkBelow = unlessDefault(value / 100, 0.4)),
-	});
-	new BooleanPicker<Encounter>(restGroup, encounter, {
-		id: 'encounter-leveling-bandages',
-		label: 'Bandages',
-		labelTooltip:
-			"Out of combat we bandage when health is under Eat Below and we're not Recently Bandaged, with the best bandage First Aid allows at our level.",
-		inline: true,
-		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-		getValue: (encounter: Encounter) => !encounter.getLeveling()?.noBandages,
-		setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => updateLeveling(eventID, encounter, opts => (opts.noBandages = !newValue)),
-	});
-
 	// The options we rarely change, folded away.
 	const advanced = document.createElement('details');
 	advanced.classList.add('encounter-leveling-advanced');
@@ -967,7 +929,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-max-pack-size',
 		label: 'Max Pack Size',
-		labelTooltip: 'The most mobs we can ever have on us at once.',
+		labelTooltip: 'The most mobs we can ever have on us at once. How many we pull is up to the rotation (Look For Mob).',
 		get: opts => orDefault(opts.maxPackSize, 5),
 		set: (opts, value) => (opts.maxPackSize = unlessDefault(value, 5)),
 	});

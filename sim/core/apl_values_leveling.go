@@ -142,7 +142,6 @@ type APLActionLevelingRest struct {
 }
 
 func (rot *APLRotation) newActionLevelingRest(config *proto.APLActionLevelingRest) APLActionImpl {
-	rot.unit.Env.Encounter.LevelingRotationRests()
 	action := &APLActionLevelingRest{eat: config.Eat, drink: config.Drink}
 	if config.HealthUntil != nil {
 		action.healthUntil = rot.NewAPLFloatValue(config.HealthUntil)
@@ -167,7 +166,6 @@ type APLActionLevelingBandage struct {
 }
 
 func (rot *APLRotation) newActionLevelingBandage(_ *proto.APLActionLevelingBandage) APLActionImpl {
-	rot.unit.Env.Encounter.LevelingRotationRests()
 	return &APLActionLevelingBandage{}
 }
 func (action *APLActionLevelingBandage) IsReady(sim *Simulation) bool {
@@ -195,4 +193,21 @@ func (value *APLValueLevelingBandageReady) GetBool(sim *Simulation) bool {
 }
 func (value *APLValueLevelingBandageReady) String() string {
 	return "Bandage Ready (Leveling)"
+}
+
+type APLValueLevelingMobsThisPull struct {
+	DefaultAPLValueImpl
+}
+
+func (rot *APLRotation) newValueLevelingMobsThisPull(_ *proto.APLValueLevelingMobsThisPull) APLValue {
+	return &APLValueLevelingMobsThisPull{}
+}
+func (value *APLValueLevelingMobsThisPull) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeInt
+}
+func (value *APLValueLevelingMobsThisPull) GetInt(sim *Simulation) int32 {
+	return int32(sim.Encounter.LevelingMobsThisPull())
+}
+func (value *APLValueLevelingMobsThisPull) String() string {
+	return "Leveling Mobs This Pull()"
 }

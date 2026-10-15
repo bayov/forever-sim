@@ -65,8 +65,8 @@ pull, so a 3-minute cooldown is ready for some pulls and not others, as in real 
 4. **Fight.** Every mob has its own HP and dies on its own when its HP runs out, and then it
    stops attacking. We're out of combat only once all of them are dead.
 5. **Recover.** Out of combat the APL picks among eating and drinking, bandaging, self-heals
-   (once healing exists) or searching for the next pull right away. A healer with spare mana
-   can heal instead of eating, since healing turns mana into HP.
+   or searching for the next pull right away. A healer with spare mana can heal instead of
+   eating, since healing turns mana into HP. Only the APL rests: no setting sits us down.
 6. **Death.** Dying costs a corpse run, and then we come back at partial HP and mana. It's
    a time penalty, so the optimizer can weigh a risky pull against a safe one.
 
@@ -128,6 +128,14 @@ efficiency should be checked against the BayovCore snapshots of the user's own c
 All of these are configurable. The timing defaults are placeholders until we measure them
 from the user's logs.
 
+The settings (`LevelingOptions`) describe the world: the session's length, the mobs (level,
+spread, type, armor, the most that can be on us at once), how long searches take and how far
+the mob we find stands, how much of a chain search we run, and the death penalty. Every choice
+the character makes is the rotation's: how many mobs to pull (Look For Mob, with Mobs This
+Pull to stop at a pack size), how to pull them, and when to eat, drink, bandage or heal. Eat
+Below, Drink Below, Bandages and Pack Size were settings until 2026-10-15. Old saved settings
+with them still load, and those values are ignored.
+
 ### Session
 
 | Setting | Default |
@@ -148,7 +156,7 @@ from the user's logs.
 | Mob run speed | The level's average from the mob table: 6 yd/s at levels 1–2, about 8 yd/s from level 11 |
 | Run-in time | (distance − 5 yd melee) ÷ run speed, from when the pull spell lands: about 3.1 s for Lightning Bolt from 30 yd (after 1.5 s of flight) and 1.9 s for a shock from 20 yd at 8 yd/s |
 | Aggro radius | 20 yd for a mob of our level, ±1 yd a level of difference, at least 5 (cmangos `Creature::GetAttackDistance`) |
-| Face pull | No free damage. We walk up until the mob notices us. When the APL hasn't pulled a mob, isn't casting and hasn't moved for 1 s, we walk up to it. |
+| Face pull | No free damage. We walk up until the mob notices us. Out of combat, when the APL hasn't pulled a mob, isn't casting and hasn't moved for 1 s, we walk up to it. |
 | Buff totem reach | 30 yd (client SpellRadius), checked once a second |
 | A mob's first swing | Random within its swing timer after it arrives |
 | Max pack size | 5 |
@@ -167,9 +175,11 @@ from the user's logs.
 ### Recovery
 
 The APL decides when to sit down to eat, drink, both or neither, and to what share of health
-and mana to rest (Rest (Leveling)), and when to bandage. A rotation without those actions gets
-the fixed policy: eat and drink together below 50% health or 40% mana, and stand up when both
-bars are full or both buffs run out.
+and mana to rest (Rest (Leveling)), and when to bandage (Bandage (Leveling), with Bandage
+Ready). A rotation with no Rest or Bandage line, like one written for a single fight, gets two
+default lines in front of its own: bandage below 50% health, then eat and drink to full below
+50% health or 40% mana, both only while we stand (not while searching). A rotation that should
+never rest has a Rest line switched off, which keeps the defaults out.
 
 Spirit regen goes on top of food and water, for health and mana alike:
 
@@ -193,8 +203,8 @@ The best vendor food and water for our level (amounts and durations from
 | 35 | Moonberry Juice, 1992 over 30 s | Cured Ham Steak, 1392 over 30 s |
 | 45 | Morning Glory Dew, 2934 over 30 s | Roasted Quail, 2148 over 30 s |
 
-Bandages are on by default: the best cloth for our level, assuming First Aid is kept up. The
-8 s channel and the 60 s Recently Bandaged debuff are modelled.
+A bandage is the best cloth for our level, assuming First Aid is kept up. The 8 s channel and
+the 60 s Recently Bandaged debuff are modelled.
 
 ### Gear
 
@@ -390,8 +400,8 @@ After the groundwork:
    - A mob notices us within its aggro radius (above). A face pull stops there, and the mob
      runs the rest of the way.
    - The APL decides when to look for another mob while fighting (Look For Mob (Leveling)),
-     and how to pull it. `pack_size` is now only a fixed policy for a rotation without that
-     (default 1, none). Walk To Pull Target (Leveling) walks up to the mob, all the way or into
+     and how to pull it. `pack_size` was left as a fixed policy for a rotation without that
+     (default 1, none), until step 10 took it out. Walk To Pull Target (Leveling) walks up to the mob, all the way or into
      a spell's range.
    - Buff totems reach 30 yards (Strength of Earth, Stoneskin, Grace of Air, Windfury,
      Flametongue and Mana Spring Totem): further away we lose the buff, and get it back when
@@ -430,7 +440,8 @@ After the groundwork:
      both or neither, until health and mana are at a share of max, with another food or
      drink when one runs out short), bandage (Bandage (Leveling), Bandage Ready), heal or buff.
      Once it isn't casting and its global cooldown is up, we search. It can also rest while we
-     search or with a mob found. A rotation with neither action gets the fixed policy.
+     search or with a mob found. A rotation with neither action got the fixed policy, until
+     step 10 put default lines in its place.
    - Health regen from Spirit is now Wrath's game tables, a third more sitting, with Troll
      Regeneration (Recovery above). The 1.12 formulas the sim had gave a level 30 shaman with
      50 Spirit 10.4 health a second; the tables give 4.2 (5.6 sitting).
@@ -512,6 +523,28 @@ After the groundwork:
    deaths and mobs a pull, and the time split; the history and Compare tab compare mobs
    killed; stat weights are off for now. Enhancement shaman has a "Leveling" preset group
    with the solo Level 30 build and this rotation (`apls/level30_leveling.apl.json`).
+
+10. **Every choice in the rotation.** Done (2026-10-15).
+    - Eat Below, Drink Below, Bandages and Pack Size are gone from the settings (their proto
+      fields are reserved, so old settings still load). A session only eats, drinks,
+      bandages and chain pulls when the rotation says so.
+    - New APL value: Mobs This Pull (Leveling), the mobs the current pull has taken, the dead
+      ones too, 0 out of combat. Look For Mob while it's under 3 pulls three at a time, which
+      is what Pack Size 3 did. Mobs On You plus Mobs Running In can't say that, since they
+      drop as mobs die.
+    - A rotation with no Rest or Bandage line gets default ones in front (Recovery above): the
+      old settings' 50% and 40%, eating and drinking until full. The old policy stood up when
+      both bars were full or the first food and drink ran out; the default lines eat another
+      when one runs out short, a small difference (the naked level 30 test shaman kills 23.6
+      mobs a session with them, 23.2 before).
+    - Two fallbacks stay in the session, because they keep it going rather than choose
+      anything: out of combat, a mob we found that the rotation hasn't pulled after a second
+      of standing idle gets walked up to (a rotation pulls it, walks up to it or rests within
+      that second); and when we're ready between pulls, we search after 10 sec even if the
+      rotation keeps acting (buffing every GCD, say).
+    - The Level 30 Leveling preset and the optimizer template already rested, bandaged and
+      chain pulled through the rotation, so their score is unchanged: 92.98 mobs (4000
+      sessions) before and after.
 
 ## From the logs, later
 

@@ -2,6 +2,8 @@ package core
 
 import (
 	"time"
+
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 // Out of combat between pulls in a leveling session (leveling.go): resting and bandaging.
@@ -9,21 +11,18 @@ import (
 // When the last mob dies we're ready: the rotation can sit down to eat, drink or just rest
 // (Rest (Leveling)), bandage (Bandage (Leveling)), heal or buff. Once it isn't casting and the
 // global cooldown is up, we go on to the next pull. It can also rest while we search, or with
-// a mob found and not pulled yet. A rotation without the rest actions gets the fixed policy
-// instead (eat_below, drink_below, no_bandages).
+// a mob found and not pulled yet. Only the rotation rests: a rotation with no Rest or Bandage
+// line gets default ones in front of its own (levelingDefaultRests).
 //
 // Sitting adds a third to Spirit's health regen (sittingHealthRegenMultiplier). Food and water
 // come on top of Spirit's regen, health and mana alike. While we sit or bandage the rotation
 // does nothing: anything else would stand us up.
 
 // levelingRest is what we sit down for: eating, drinking, or just sitting, until health and
-// mana are at these shares of max.
+// mana are at these shares of max, with another food or drink when one runs out short.
 type levelingRest struct {
 	eat, drink             bool
 	healthUntil, manaUntil float64
-	// Another food or drink when one runs out short of the share (the rotation's rests). The
-	// fixed policy stands up once both have run out.
-	refill bool
 }
 
 // ready: out of combat, deciding. We search once the rotation has looked with its global
@@ -111,16 +110,10 @@ func (s *levelingSession) restTick(sim *Simulation, dt time.Duration) {
 		s.drinkLeft -= dt
 	}
 	r := &s.rest
-	if r.refill {
-		s.refill(sim)
-	}
+	s.refill(sim)
 	healthDone := p.CurrentHealthPercent() >= r.healthUntil
 	manaDone := !p.HasManaBar() || s.manaPercent() >= r.manaUntil
-	if !r.refill {
-		// The fixed policy: until full or until what we ate and drank has run out.
-		healthDone = healthDone || s.foodLeft <= 0
-		manaDone = manaDone || s.drinkLeft <= 0
-	} else if r.eat && !r.drink {
+	if r.eat && !r.drink {
 		manaDone = true
 	} else if r.drink && !r.eat {
 		healthDone = true
@@ -151,24 +144,12 @@ func (s *levelingSession) startBandage(sim *Simulation) {
 	s.after(sim, &s.next, s.bandage.duration, s.outOfCombatDone)
 }
 
-// outOfCombatDone: a rest or bandage is over, and the rotation or the fixed policy decides
-// what's next.
+// outOfCombatDone: a rest or bandage is over, and the rotation decides what's next.
 func (s *levelingSession) outOfCombatDone(sim *Simulation) {
-	if s.rotationRests {
-		s.ready(sim)
-	} else {
-		s.outOfCombat(sim)
-	}
+	s.ready(sim)
 }
 
 // The rotation's side (apl_values_leveling.go).
-
-// LevelingRotationRests has the session leave resting and bandaging to the rotation.
-func (encounter *Encounter) LevelingRotationRests() {
-	if encounter.leveling != nil {
-		encounter.leveling.rotationRests = true
-	}
-}
 
 // LevelingCanRest is whether we can sit down for this rest now: out of combat, not casting,
 // and short of health or mana for it.
@@ -182,14 +163,14 @@ func (encounter *Encounter) LevelingCanRest(sim *Simulation, eat, drink bool, he
 // shares of max, with another food or drink whenever one runs out short of that.
 func (encounter *Encounter) LevelingRest(sim *Simulation, eat, drink bool, healthUntil, manaUntil float64) {
 	if encounter.LevelingCanRest(sim, eat, drink, healthUntil, manaUntil) {
-		encounter.leveling.startRest(sim, levelingRest{eat: eat, drink: drink, healthUntil: healthUntil, manaUntil: manaUntil, refill: true})
+		encounter.leveling.startRest(sim, levelingRest{eat: eat, drink: drink, healthUntil: healthUntil, manaUntil: manaUntil})
 	}
 }
 
 // LevelingBandageReady is whether we're out of combat and not Recently Bandaged.
 func (encounter *Encounter) LevelingBandageReady(sim *Simulation) bool {
 	s := encounter.leveling
-	return s != nil && s.opts.bandages && s.outOfCombatState() && sim.CurrentTime >= s.bandageReadyAt
+	return s != nil && s.outOfCombatState() && sim.CurrentTime >= s.bandageReadyAt
 }
 
 // LevelingCanBandage is whether a bandage would do anything now.
@@ -203,4 +184,77 @@ func (encounter *Encounter) LevelingBandage(sim *Simulation) {
 	if encounter.LevelingCanBandage(sim) {
 		encounter.leveling.startBandage(sim)
 	}
+}
+
+// levelingDefaultRests are the rest lines a leveling rotation gets in front of its own when it
+// has no Rest or Bandage line, so that one written for a single fight still recovers between
+// pulls: a bandage below 50% health, then eating and drinking to full below 50% health or 40%
+// mana, never while we run (searching). They are the thresholds the eat_below and drink_below
+// options had. Outside a session, for a pet, or for a rotation that rests itself, none. A
+// disabled Rest or Bandage line counts too, so a rotation that never rests just has one
+// switched off.
+func (rot *APLRotation) levelingDefaultRests(config *proto.APLRotation) []*APLAction {
+	s := rot.unit.Env.Encounter.leveling
+	if s == nil || rot.unit != s.player {
+		return nil
+	}
+	for _, item := range config.PriorityList {
+		if aplActionRests(item.Action) {
+			return nil
+		}
+	}
+	below := func(value *proto.APLValue, share string) *proto.APLValue {
+		return &proto.APLValue{Value: &proto.APLValue_Cmp{Cmp: &proto.APLValueCompare{
+			Op:  proto.APLValueCompare_OpLt,
+			Lhs: value,
+			Rhs: &proto.APLValue{Value: &proto.APLValue_Const{Const: &proto.APLValueConst{Val: share}}},
+		}}}
+	}
+	and := func(vals ...*proto.APLValue) *proto.APLValue {
+		return &proto.APLValue{Value: &proto.APLValue_And{And: &proto.APLValueAnd{Vals: vals}}}
+	}
+	standing := &proto.APLValue{Value: &proto.APLValue_Not{Not: &proto.APLValueNot{
+		Val: &proto.APLValue{Value: &proto.APLValue_IsMoving{IsMoving: &proto.APLValueIsMoving{}}}}}}
+	lowHealth := below(&proto.APLValue{Value: &proto.APLValue_CurrentHealthPercent{CurrentHealthPercent: &proto.APLValueCurrentHealthPercent{}}}, "50%")
+	needRest := lowHealth
+	if rot.unit.HasManaBar() {
+		lowMana := below(&proto.APLValue{Value: &proto.APLValue_CurrentManaPercent{CurrentManaPercent: &proto.APLValueCurrentManaPercent{}}}, "40%")
+		needRest = &proto.APLValue{Value: &proto.APLValue_Or{Or: &proto.APLValueOr{Vals: []*proto.APLValue{lowHealth, lowMana}}}}
+	}
+	configs := []*proto.APLAction{
+		{Condition: and(standing, lowHealth), Action: &proto.APLAction_LevelingBandage{LevelingBandage: &proto.APLActionLevelingBandage{}}},
+		{Condition: and(standing, needRest), Action: &proto.APLAction_LevelingRest{LevelingRest: &proto.APLActionLevelingRest{Eat: true, Drink: rot.unit.HasManaBar()}}},
+	}
+	var actions []*APLAction
+	for _, config := range configs {
+		rot.doAndRecordWarnings(nil, false, func() {
+			if action := rot.newAPLAction(config); action != nil {
+				action.Finalize(rot)
+				actions = append(actions, action)
+			}
+		})
+	}
+	return actions
+}
+
+// aplActionRests is whether the action is a Rest or Bandage, or a sequence with one in it.
+func aplActionRests(action *proto.APLAction) bool {
+	switch {
+	case action == nil:
+		return false
+	case action.GetLevelingRest() != nil, action.GetLevelingBandage() != nil:
+		return true
+	}
+	var inner []*proto.APLAction
+	if seq := action.GetSequence(); seq != nil {
+		inner = seq.Actions
+	} else if seq := action.GetStrictSequence(); seq != nil {
+		inner = seq.Actions
+	}
+	for _, a := range inner {
+		if aplActionRests(a) {
+			return true
+		}
+	}
+	return false
 }

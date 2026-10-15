@@ -137,8 +137,8 @@ func TestTotemicProjection(t *testing.T) {
 // TestLevelingTotemsVanishOnDeath: when we die our totems go, so back from the corpse run
 // the rotation drops Strength of Earth Totem again at once, long before its 5 min are up.
 func TestLevelingTotemsVanishOnDeath(t *testing.T) {
-	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{PackSize: 4, MobLevelOffset: 2}, 1), rotationOf(
-		`{"action":{"condition":{"not":{"val":{"totemRemainingTime":{"totemType":"Earth"}}}},"castSpell":{"spellId":{"spellId":8160}}}}`))
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: 2}, 1), rotationOf(append([]string{
+		`{"action":{"condition":{"not":{"val":{"totemRemainingTime":{"totemType":"Earth"}}}},"castSpell":{"spellId":{"spellId":8160}}}}`}, packLines(4)...)...))
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
 

@@ -156,12 +156,13 @@ const chainRotation = `{"type":"TypeAPL","priorityList":[
 
 var lookingLine = regexp.MustCompile(`Leveling: looking for another mob, running: (true|false)`)
 
-// TestLevelingChainPulls: with a pack size of 2 (of mobs a few levels below us, so the naked
-// shaman lives through them), we look for a second mob while fighting the
-// first, mostly running with it following us, when no hard cast starts. The rotation bolts
-// the second mob from where it stands, mobs on us or not, and pulls stay two mobs.
+// TestLevelingChainPulls: pulling two at a time (mobs a few levels below us, so the naked
+// shaman lives through them), we look for a second mob while fighting the first, mostly
+// running with it following us, when no hard cast starts. The rotation bolts the second mob
+// from where it stands, mobs on us or not, and pulls stay two mobs.
 func TestLevelingChainPulls(t *testing.T) {
-	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{PackSize: 2, MobLevelOffset: -4}, 1), chainRotation)
+	rotation := strings.TrimSuffix(chainRotation, "\n]}") + ",\n" + strings.Join(packLines(2), ",\n") + "\n]}"
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -4}, 1), rotation)
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
 
@@ -206,7 +207,7 @@ func TestLevelingChainPulls(t *testing.T) {
 		t.Errorf("%d chain pulls by bolt from beyond shock range", chainBolts)
 	}
 	if mpp := result.EncounterMetrics.Leveling.MobsPerPull; mpp < 1.7 || mpp > 2 {
-		t.Errorf("%.2f mobs a pull with pack size 2", mpp)
+		t.Errorf("%.2f mobs a pull pulling two at a time", mpp)
 	}
 }
 

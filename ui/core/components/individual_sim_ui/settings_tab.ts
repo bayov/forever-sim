@@ -402,7 +402,7 @@ export class SettingsTab extends SimTab {
 				changeEmitters: [this.simUI.sim.encounter.changeEmitter],
 				equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
 				toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
-				fromJson: (obj: any) => SavedEncounter.fromJson(obj),
+				fromJson: (obj: any) => SavedEncounter.fromJson(obj, { ignoreUnknownFields: true }),
 			},
 		);
 
@@ -485,7 +485,7 @@ export class SettingsTab extends SimTab {
 			],
 			equals: (a: SavedSettings, b: SavedSettings) => SavedSettings.equals(a, b),
 			toJson: (a: SavedSettings) => SavedSettings.toJson(a),
-			fromJson: (obj: any) => SavedSettings.fromJson(obj),
+			fromJson: (obj: any) => SavedSettings.fromJson(obj, { ignoreUnknownFields: true }),
 		});
 
 		this.simUI.sim.waitForInit().then(() => {

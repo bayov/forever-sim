@@ -176,8 +176,8 @@ export class SimHistory {
 	// settings of one of them.
 	changesBetween(from: SimRun, to: SimRun): ChangeCategory[] | null {
 		try {
-			const fromSettings = IndividualSimSettings.fromJson(from.settings as any);
-			const toSettings = IndividualSimSettings.fromJson(to.settings as any);
+			const fromSettings = IndividualSimSettings.fromJson(from.settings as any, { ignoreUnknownFields: true });
+			const toSettings = IndividualSimSettings.fromJson(to.settings as any, { ignoreUnknownFields: true });
 			return dirtySettings
 				.changesBetween(
 					() => this.simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(fromSettings)),
@@ -393,7 +393,7 @@ export class SimHistory {
 	// encounter.
 	private applySettings(run: SimRun) {
 		try {
-			const settings = IndividualSimSettings.fromJson(run.settings as any);
+			const settings = IndividualSimSettings.fromJson(run.settings as any, { ignoreUnknownFields: true });
 			this.tooltips.forEach(tooltip => tooltip.hide());
 			this.simUI.fromProto(TypedEvent.nextEventID(), settings);
 		} catch (e) {
@@ -556,7 +556,7 @@ export class SimHistory {
 	// weights don't change the DPS, so we leave them out.
 	private changesSince(run: SimRun): ChangeCategory[] | null {
 		try {
-			const settings = IndividualSimSettings.fromJson(run.settings as any);
+			const settings = IndividualSimSettings.fromJson(run.settings as any, { ignoreUnknownFields: true });
 			return dirtySettings
 				.changesFrom(() => this.simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(settings)))
 				.filter(category => category.name !== 'Stat Weights');
