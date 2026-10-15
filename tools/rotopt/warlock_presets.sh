@@ -24,7 +24,7 @@ gen() {
 	mv "ui/warlock/apls/${name}_180s.apl.json" "ui/warlock/apls/$name.apl.json"
 	echo "wrote ui/warlock/apls/$name.apl.json ($knobs)"
 }
-base="bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0"
+base="bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1"
 # Demonology: Soul Link and a Life Tap before the pull, the damage over time spells recast 1.5 sec
 # early.
 gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5"
