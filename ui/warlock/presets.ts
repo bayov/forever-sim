@@ -140,28 +140,28 @@ export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation(
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
 });
-// The raid curse duty rotations (standards 23): the base rotation plus Curse of Recklessness, which
+// The raid curse duty rotations (standards 23): the base rotation plus Curse of the Elements, which
 // this warlock keeps up for the raid (put up right after the opener and recast before it drops). A
 // warlock holds one curse duty and every curse costs the same GCDs, so one duty preset covers them.
 // Under Forever the curse has its own slot, so the bane stays.
 export const RotationLevel60DemonologyDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Demonology (Curse duty)', Level60DemonologyDutyCurseAPL, {
 	group: 'Level 60',
-	tooltip: 'The Level 60 Demonology rotation with Curse of Recklessness kept up for the raid.',
+	tooltip: 'The Level 60 Demonology rotation with Curse of the Elements kept up for the raid.',
 });
 export const RotationLevel60DestructionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Destruction (Curse duty)', Level60DestructionDutyCurseAPL, {
 	group: 'Level 60',
-	tooltip: 'The Level 60 Destruction rotation with Curse of Recklessness kept up for the raid.',
+	tooltip: 'The Level 60 Destruction rotation with Curse of the Elements kept up for the raid.',
 });
 export const RotationLevel60AfflictionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Affliction (Curse duty)', Level60AfflictionDutyCurseAPL, {
 	group: 'Level 60',
-	tooltip: 'The Level 60 Affliction rotation with Curse of Recklessness kept up for the raid.',
+	tooltip: 'The Level 60 Affliction rotation with Curse of the Elements kept up for the raid.',
 });
 export const RotationLevel60DestructionFireDutyCurse = PresetUtils.makePresetAPLRotation(
 	'Level 60 Destruction Fire (Curse duty)',
 	Level60DestructionFireDutyCurseAPL,
 	{
 		group: 'Level 60',
-		tooltip: 'The Level 60 Destruction Fire rotation with Curse of Recklessness kept up for the raid.',
+		tooltip: 'The Level 60 Destruction Fire rotation with Curse of the Elements kept up for the raid.',
 	},
 );
 export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
@@ -398,14 +398,9 @@ const level60Encounter = (name: string, debuffs: Debuffs) =>
 		},
 	);
 export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
-// The curse duty presets' encounter: the raid's Curse of Recklessness is off, the warlock on duty
-// brings it, and the raid's Curse of the Elements stays on (another warlock's duty). Under Forever
-// Curse of Recklessness shares Faerie Fire's minor armor slot (505 each), so the raid's Faerie Fire is
-// off too, or the warlock's curse could never land.
-export const EncounterLevel60CurseDuty = level60Encounter(
-	'Level 60 (Curse duty)',
-	Debuffs.create({ ...DefaultDebuffs, curseOfRecklessness: false, faerieFire: false }),
-);
+// The curse duty presets' encounter: the raid's Curse of the Elements is off, the warlock on duty
+// brings it; the raid's other curses and Faerie Fire stay on (other players' duties).
+export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
 
 // The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the Forever budget sets
 // with the synthetic trinkets): Demonology (Gnome) 1130.2 / 1115.5 / 1084.3, Destruction (Gnome) 999.9
@@ -477,13 +472,15 @@ export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Le
 	options: PresetBuildOptionsFire,
 });
 
-// The raid curse duty presets (standards 23): each build with the warlock keeping Curse of
-// Recklessness up for the raid itself, the raid's own switched off.
+// The raid curse duty presets (standards 23): each build with the warlock keeping Curse of the
+// Elements up for the raid itself, the raid's own switched off. It is Elements, not Recklessness:
+// under Forever Curse of Recklessness shares Faerie Fire's minor armor slot, so with the raid's
+// Faerie Fire up it never lands.
 const curseDutyBuild = (base: PresetUtils.PresetBuild, rotation: PresetUtils.PresetRotation) => {
 	const { name, ...options } = base;
 	return PresetUtils.makePresetBuild(`${name} (Curse duty)`, {
 		...options,
-		tooltip: `${options.tooltip} On curse duty for the raid, keeping Curse of Recklessness up itself.`,
+		tooltip: `${options.tooltip} On curse duty for the raid, keeping Curse of the Elements up itself.`,
 		rotation,
 		encounter: EncounterLevel60CurseDuty,
 	});

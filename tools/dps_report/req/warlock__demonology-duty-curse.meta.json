@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology_duty_curse",
   "published": {
-    "dps": 1097.2,
+    "dps": 1103.2,
     "source": "PR #30"
   },
   "verify": {
-    "dps": 1097.21,
-    "stderr": 0.39,
+    "dps": 1103.19,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "+0.01 vs published"
+    "note": "-0.01 vs published"
   },
-  "summary": "Demonology on curse duty for the raid, casting Curse of Recklessness (the raid's Curse of the Elements comes from another warlock): the warlock keeps its own Curse of Recklessness (505 armor) up all fight, cast right after the opener and recast before it drops. Under Forever it shares the minor armor slot with Faerie Fire, so the raid's Curse of Recklessness and Faerie Fire are both off in the request. Costs 18.3 DPS at 180 s against the base build.",
+  "summary": "Demonology on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 12.3 DPS at 180 s against the base build.",
   "keyTalents": [
     "Demonic Pact",
     "Demonic Sacrifice",
@@ -40,7 +40,7 @@
     "Pre-pull: Soul Link at -6 s, Life Tap at -4.5 s, Shadow Bolt at -2.5 s (lands just after the pull)",
     "Racials on cooldown",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
-    "Curse of Recklessness on duty for the raid, right after the opener and recast before it drops",
+    "Curse of the Elements on duty for the raid, right after the opener and recast before it drops",
     "Bane of Doom when it lands before the fight ends (more than 60 s left)",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
     "Corruption when down or under 1.5 s left (more than 9 s of fight left)",
@@ -66,7 +66,6 @@
   ],
   "caveats": [
     "Under Forever a bane and a curse are separate slots, so the duty curse costs only its GCDs and mana, not the bane.",
-    "Curse of Recklessness (505 armor) and Faerie Fire (505) share the minor armor slot under Forever and don't stack: with a druid's Faerie Fire up, a warlock's Curse of Recklessness can't land and adds nothing, so this duty only matters in a raid without Faerie Fire",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 38 spell power and 13 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Demon model is most sensitive here: no owner scaling 1037.8, Succubus melee halved 1044.5, both 1011.5 (first set)",
     "Wears the Demonology hit-variant gear (14% gear hit, 1 point of Suppression); Suppression 5/5 is 72 behind (1038.0 against 1110.1)",
@@ -78,7 +77,7 @@
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap health cost are not tracked"
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__demonology except -apl level60_demonology_duty_curse, then raid.debuffs.curseOfRecklessness and faerieFire (the same armor slot under Forever) set to false. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
-  "duty": "Curse of Recklessness",
+  "notes": "Request from mksettings with the same arguments as warlock__demonology except -apl level60_demonology_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
+  "duty": "Curse of the Elements",
   "baseBuild": "warlock__demonology"
 }

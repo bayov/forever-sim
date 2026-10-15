@@ -170,7 +170,7 @@
                   }
                 },
                 {
-                  "notes": "Curse of Recklessness on duty for the raid, recast before it drops.",
+                  "notes": "Curse of the Elements on duty for the raid, recast before it drops.",
                   "action": {
                     "condition": {
                       "and": {
@@ -184,7 +184,7 @@
                                     "type": "CurrentTarget"
                                   },
                                   "auraId": {
-                                    "spellId": 11717
+                                    "spellId": 1311680
                                   }
                                 }
                               },
@@ -213,7 +213,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11717
+                        "spellId": 1311680
                       }
                     }
                   }
@@ -643,12 +643,12 @@
       "judgementOfWisdom": true,
       "judgementOfLight": true,
       "judgementOfTheCrusader": "TristateEffectImproved",
-      "faerieFire": false,
-      "curseOfElements": true,
+      "faerieFire": true,
+      "curseOfElements": false,
       "curseOfShadow": true,
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
-      "curseOfRecklessness": false,
+      "curseOfRecklessness": true,
       "demoralizingRoar": "TristateEffectImproved",
       "demoralizingShout": "TristateEffectImproved",
       "thunderClap": "TristateEffectImproved",

@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": 966.1,
+    "dps": 971.8,
     "source": "PR #30"
   },
   "verify": {
-    "dps": 966.09,
-    "stderr": 0.37,
+    "dps": 971.82,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "-0.01 vs published"
+    "note": "+0.02 vs published"
   },
-  "summary": "Affliction on curse duty for the raid, casting Curse of Recklessness (the raid's Curse of the Elements comes from another warlock): the warlock keeps its own Curse of Recklessness (505 armor) up all fight, cast right after the opener and recast before it drops. Under Forever it shares the minor armor slot with Faerie Fire, so the raid's Curse of Recklessness and Faerie Fire are both off in the request. Costs 16.2 DPS at 180 s against the base build.",
+  "summary": "Affliction on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 10.5 DPS at 180 s against the base build.",
   "keyTalents": [
     "Shadow Mastery",
     "Pandemic",
@@ -39,7 +39,7 @@
     "Pre-pull: Shadow Bolt at -2.5 s (lands just after the pull)",
     "Racials on cooldown",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
-    "Curse of Recklessness on duty for the raid, right after the opener and recast before it drops",
+    "Curse of the Elements on duty for the raid, right after the opener and recast before it drops",
     "Bane of Doom when it lands before the fight ends (more than 60 s left)",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
     "Corruption when it is down (more than 9 s left)",
@@ -65,7 +65,6 @@
   ],
   "caveats": [
     "Under Forever a bane and a curse are separate slots, so the duty curse costs only its GCDs and mana, not the bane.",
-    "Curse of Recklessness (505 armor) and Faerie Fire (505) share the minor armor slot under Forever and don't stack: with a druid's Faerie Fire up, a warlock's Curse of Recklessness can't land and adds nothing, so this duty only matters in a raid without Faerie Fire",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 38 spell power and 13 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Demon sensitivity: no owner scaling 937.0, Succubus melee halved 938.7, both 913.8 (first set)",
     "Wrack/Siphon Life DoT variant (25530000035001351--0550005003) is 55 behind; drain fillers 124 to 349 behind",
@@ -76,7 +75,7 @@
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap health cost are not tracked"
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_curse, then raid.debuffs.curseOfRecklessness and faerieFire (the same armor slot under Forever) set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
-  "duty": "Curse of Recklessness",
+  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
+  "duty": "Curse of the Elements",
   "baseBuild": "warlock__affliction"
 }

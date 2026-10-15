@@ -37,7 +37,7 @@ gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dot
 gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5"
 
 # The raid curse duty presets (standards 23): the same rotations with the warlock keeping Curse of
-# Recklessness (curse=2) up for the raid itself. A warlock holds one curse duty, so there is one
+# the Elements (curse=1) up for the raid itself. A warlock holds one curse duty, so there is one
 # preset per build. Under Forever the curse has its own slot, so the bane stays.
 K_demonology="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5"
 K_destruction="$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
@@ -45,6 +45,6 @@ K_affliction="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,imm
 K_destruction_fire="$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5"
 for spec in demonology destruction affliction destruction_fire; do
 	eval dutyKnobs=\$K_$spec
-	gen "level60_${spec}_duty_curse" "$dutyKnobs,curse=2"
+	gen "level60_${spec}_duty_curse" "$dutyKnobs,curse=1"
 done
 
