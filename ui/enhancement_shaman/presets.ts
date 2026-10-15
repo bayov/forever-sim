@@ -602,16 +602,21 @@ const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTo
 // On 2026-10-08 that was +0.3 at 180 sec on Level 60 over the old prepull totems, and +0.7
 // at 120 sec on Level 30 + 5. At 300 sec it can be 1 to 2 behind, because the totems run out
 // 30 sec sooner and the rotation puts them down again.
+//
+// Since 2026-10-15 (the rotation auditor's pass 20) the Level 60 totem duty builds put them down 4, 3
+// and 2 sec before the pull, one totem GCD apart and after the 1 sec Magma Totem's slot, so a 5 min
+// totem lasts the whole 300 sec fight: +2.4 at 300 sec on Level 60, +2.1 on Imp GW, +1.2 on Water
+// Shield and +0.7 on Mana Tide, with 120 and 180 sec unchanged. Level 30 keeps its 28 / 30 sec.
 const startingTotemsLevel60 = StartingTotems.create({
 	earth: EarthTotem.StrengthOfEarthTotem,
-	earthSecondsBeforePull: 28,
+	earthSecondsBeforePull: 4,
 	air: AirTotem.WindfuryTotem,
-	airSecondsBeforePull: 27,
+	airSecondsBeforePull: 3,
 	// No fire totem before the pull: since the 2026-10-13 gear round the Optimized rotation puts
 	// Searing Totem down at the pull (+5.9 at 180 sec over Flametongue Totem, which shares the
 	// weapon buff slot with Windfury Totem).
 	water: WaterTotem.ManaSpringTotem,
-	waterSecondsBeforePull: 30,
+	waterSecondsBeforePull: 2,
 });
 // The base Level 60 builds get the party's totems from the raid (standards 23), so they start with
 // none of their own. The totem duty builds start with startingTotemsLevel60.
@@ -629,8 +634,10 @@ const PresetBuildOptionsLevel30 = {
 	...PresetBuildOptions,
 	startingTotems: StartingTotems.create({
 		...startingTotemsLevel60,
+		earthSecondsBeforePull: 28,
 		air: AirTotem.NoAirTotem,
 		airSecondsBeforePull: 0,
+		waterSecondsBeforePull: 30,
 		fire: FireTotem.FlametongueTotem,
 		fireSecondsBeforePull: 29,
 	}),

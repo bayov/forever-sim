@@ -37,7 +37,7 @@
     "Mental Dexterity"
   ],
   "rotation": [
-    "Pre-pull: Water Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem, Mana Spring, and Magma Totem 1 s before the pull",
+    "Pre-pull: Water Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s, and Magma Totem 1 s before the pull",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
     "Mana Tide Totem at 20% mana or less; Mana Spring waits until the tide ends",
     "Magma Totem when it is down and at least 10 s remain",

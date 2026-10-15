@@ -623,9 +623,9 @@
                   "earth": "StrengthOfEarthTotem",
                   "air": "WindfuryTotem",
                   "water": "ManaSpringTotem",
-                  "earthSecondsBeforePull": 28,
-                  "airSecondsBeforePull": 27,
-                  "waterSecondsBeforePull": 30,
+                  "earthSecondsBeforePull": 4,
+                  "airSecondsBeforePull": 3,
+                  "waterSecondsBeforePull": 2,
                   "fire": "MagmaTotem",
                   "fireSecondsBeforePull": 1
                 }

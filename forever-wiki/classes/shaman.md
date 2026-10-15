@@ -29,7 +29,7 @@ From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchan
 
 - Each Level 60 preset has a base build and a "(Totems duty)" build. The base build gets its party's totems from the raid's buffs, as if another shaman in the party dropped them, and keeps only the totems it drops for its own damage (Searing or Magma Totem) and Mana Tide Totem. The duty build drops the party's totems itself, with the raid's off.
 - Melee party (Enhancement): Strength of Earth, Windfury Totem and Mana Spring. Windfury Totem and Grace of Air can't both stand under Forever, and our own Windfury Weapon turns Windfury Totem's buff off for us, so it is the party's. Caster party (Elemental): Mana Spring, its only DPS totem.
-- Under Forever the totems last 5 min and a starting totem costs no mana, so the duty costs 0.0 to 0.5 DPS at 3 min and 1.1 to 4.6 at 5 min, when the totems have to go down again (sim-status.md has the numbers).
+- Under Forever the totems last 5 min and a starting totem costs no mana, so the duty costs 0.0 to 0.5 DPS at 3 min and 0.9 to 2.4 at 5 min (sim-status.md has the numbers). The Enhancement duty builds put their starting totems down 4, 3 and 2 sec before the pull so they last a 300 sec fight.
 
 ## Beta build 1.60.1.70009 (2026-09-24)
 
