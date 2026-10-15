@@ -50,7 +50,10 @@ gen() {
 # Since the rotation auditor's cooldown pass Rage of the Farseer waits for the on-use trinket when the
 # wait costs it no use (rageHoldForTrinket, here and in magma and mana_tide): paired at 20000
 # iterations +0.7 at 300 sec on Level 60 (+0.7 to +1.3 across the builds), within ±0.2 at 120 and 180.
-gen optimized "shock=4,airTotem=2,fireTotem=1,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=0,rageHoldForTrinket=1" -level 60
+# Fire Nova outside Clearcasting needs 12 mana a second left in the fight in place of the 20%
+# floor (fireNovaManaPerSec=12, the rotation auditor, 2026-10-15): +0.4 / +2.2 / +1.7 on Level 60
+# and +0.5 / +2.2 / +0.3 on Imp GW at 120 / 180 / 300 sec, paired at 20000 iterations.
+gen optimized "shock=4,airTotem=2,fireTotem=1,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=0,rageHoldForTrinket=1,fireNovaManaPerSec=12" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
@@ -93,7 +96,10 @@ gen level30_pvp "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock
 # out before the cast ends (lavaBurstFlameShockLeft=2), Lightning Bolt, rank 8 below 20% mana, and
 # no Chain Lightning (it loses on one target even above 80% mana). The fight opens with Mana
 # Spring at -3.9 sec, a Lightning Bolt at -2.9 (it lands 0.1 sec into the fight) and Searing Totem
-# at -0.9 (prepullBolt=1). Mana Tide Totem goes down at 20% mana on the Mana Tide talents.
+# at -0.9 (prepullBolt=1). Mana Tide Totem goes down at 20% mana on the Mana Tide talents. An Earth
+# Shock ends the fight once a Lightning Bolt (cast plus about 1 sec of flight) would not land in time
+# (earthShockFinish=1, the rotation auditor, 2026-10-15): +5.8 / +3.4 / +1.7 at 120 / 180 / 300 sec
+# on Level 60 and +5.7 / +3.4 / +1.8 on Mana Tide, paired at 20000 iterations.
 gen_ele() {
 	name=$1
 	knobs=$2
@@ -102,5 +108,5 @@ gen_ele() {
 	mv "ui/elemental_shaman/apls/${name}_300s.apl.json" "ui/elemental_shaman/apls/$name.apl.json"
 	echo "wrote ui/elemental_shaman/apls/$name.apl.json ($knobs)"
 }
-gen_ele level60 "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1"
-gen_ele level60_mana_tide "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,manaTideMana=20"
+gen_ele level60 "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1"
+gen_ele level60_mana_tide "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,manaTideMana=20,earthShockFinish=1"

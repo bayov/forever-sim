@@ -120,7 +120,9 @@ export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAP
 // -0.9 (its first attack comes after the pull): +10.6 / +7.0 / +4.8 at 120 / 180 / 300 sec over
 // putting the two totems down with no bolt. Chain Lightning loses on one target even above 80%
 // mana (490 damage a second for 485 mana, against Lightning Bolt's 479 for 198). Earth Shock and
-// mana floors on the shocks changed nothing. A caster stands at range, so the rotation has no
+// mana floors on the shocks changed nothing as rotation spells, but an Earth Shock at the end of the fight,
+// once a Lightning Bolt would no longer land in time, is +5.8 / +3.4 / +1.7 (the rotation auditor,
+// 2026-10-15; +5.7 / +3.4 / +1.8 on Mana Tide). A caster stands at range, so the rotation has no
 // Magma Totem or Fire Nova. tools/rotopt/shaman_presets.sh writes it.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJson, {
 	tooltip: 'The tools/rotopt search result for the Level 60 talents.',

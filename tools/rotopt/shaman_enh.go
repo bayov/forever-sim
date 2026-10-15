@@ -71,6 +71,9 @@ func (shamanEnh) Knobs() []Knob {
 		// its own cooldown, so it never waits on the shock.
 		{Name: "fireNova", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "fireNovaMana", Default: 40, Min: 0, Max: 80, Step: 20},
+		// When above 0, Fire Nova (outside Clearcasting) needs this much mana per second left in
+		// the fight, in place of fireNovaMana.
+		{Name: "fireNovaManaPerSec", Default: 0, Min: 0, Max: 25, Step: 1},
 		// Fire Nova on Clearcasting (Elemental Focus, the next damage spell is free): 0 no,
 		// 1 also below fireNovaMana while Clearcasting is up, 2 that and a line right after
 		// Stormstrike, so a shock or Lightning Bolt does not take the free cast first.
@@ -262,6 +265,11 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	}
 	fireNovaLine := func() {
 		when := manaFloor(k["fireNovaMana"])
+		if perSec := k["fireNovaManaPerSec"]; perSec > 0 {
+			// Keep this much mana for each second left instead of a flat floor, so the pool is
+			// spent by the end of the fight.
+			when = ge(currentMana(), mul(remainingTime(), num(perSec)))
+		}
 		if when != nil && k["fireNovaClearcast"] > 0 {
 			when = or(when, auraIsActive(clearcasting))
 		}

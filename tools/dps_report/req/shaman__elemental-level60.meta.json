@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 687.1,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 690.5,
+    "source": "Shaman follow-up PR (end-of-fight Earth Shock, rotation audit pass 19, 2026-10-15)"
   },
   "verify": {
-    "dps": 687.07,
-    "stderr": 0.19,
+    "dps": 690.5,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "paired rotopt run on this request at 180 s, with the earthShockFinish rotation"
   },
   "summary": "Deep Elemental caster on the synthetic Phase 1 staff set with Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus, from talent searches over seven seeds. It is the Elemental spec's default Level 60 preset.",
   "keyTalents": [
@@ -43,7 +43,8 @@
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
-    "Lightning Bolt rank 7 below 20% mana",
+    "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
+    "Lightning Bolt rank 8 below 20% mana",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
   "consumes": [

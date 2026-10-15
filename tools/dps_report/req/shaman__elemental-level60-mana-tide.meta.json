@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_mana_tide",
   "published": {
-    "dps": 679.9,
-    "source": "PR #21 (caster assumption defaults, 2026-10-15)"
+    "dps": 683.3,
+    "source": "Shaman follow-up PR (end-of-fight Earth Shock, rotation audit pass 19, 2026-10-15)"
   },
   "verify": {
-    "dps": 679.91,
-    "stderr": 0.18,
+    "dps": 683.3,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "matches PR #21's 180 s measurement"
+    "note": "paired rotopt run on this request at 180 s, with the earthShockFinish rotation"
   },
   "summary": "The Elemental Level 60 build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group's mana. It is 1.0% behind Level 60 at 180 s.",
   "keyTalents": [
@@ -44,7 +44,8 @@
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
-    "Lightning Bolt rank 7 below 20% mana",
+    "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
+    "Lightning Bolt rank 8 below 20% mana",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
   "consumes": [
