@@ -292,10 +292,11 @@ var (
 	foreverJudgementOfWisdomMana  = [...]float64{0, 33, 46, 59}
 
 	// Client 70338, wowhead and ForeverChanges all have rank 4 (14325, 71; Classic 110) below
-	// rank 3 (14324, 98). A hunter keeps both and casts rank 3, so the mark gives 98 from level 40
-	// (standards 8a; bestLearnedRank).
+	// rank 3 (14324, 98). Report assumption hunter_tsa_hm_rank, user ruling 2026-10-15: rank 4
+	// gives 140, as if Blizzard fixes the top rank onto the curve, so the mark gives 98 from level
+	// 40 and 140 from 58 (standards 8a; bestLearnedRank).
 	foreverHuntersMarkLevel = [...]int{0, 6, 22, 40, 58}
-	foreverHuntersMark      = [...]float64{0, 26, 59, 98, 71}
+	foreverHuntersMark      = [...]float64{0, 26, 59, 98, ForeverHuntersMarkRank4}
 )
 
 type StormstrikeConfig struct {
@@ -960,6 +961,10 @@ func curseOfWeaknessAuraInternal(target *Unit, label string, spellID int32, modD
 }
 
 const HuntersMarkAuraTag = "HuntersMark"
+
+// ForeverHuntersMarkRank4 is Hunter's Mark rank 4's ranged attack power under Forever (report
+// assumption hunter_tsa_hm_rank, user ruling 2026-10-15: the client's 71 fixed onto the curve).
+const ForeverHuntersMarkRank4 = 140
 
 func HuntersMarkAura(target *Unit, points int32) *Aura {
 	return huntersMarkAura(target, 110.0*(1+0.03*float64(points)))

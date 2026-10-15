@@ -147,8 +147,17 @@ func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 func (hunter *Hunter) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
+// Report assumption hunter_crit_per_agi, user ruling 2026-10-15: under Forever the hunter gets
+// 22% more crit per Agility than Classic at every level. The beta's level 1 character sheets give
+// 0.2174% a point against Classic's 0.1783 (notes.md, 10 October), while the other classes match
+// Classic, so the level 1 ratio is carried to 60 (Classic's 53 Agility a 1% becomes about 43).
+const ForeverCritPerAgiScale = 1.22
+
 func (hunter *Hunter) Initialize() {
 	if hunter.Env.IsForever() {
+		// The stat dependencies add up, so this tops Classic's crit per Agility (NewHunter) up to
+		// Forever's.
+		hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (ForeverCritPerAgiScale-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
 		// Forever's Auto Shot keeps firing while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot
 		// (the forever-hunter wiki's beta testing, "Auto Shot can fire while the Hunter is casting
 		// another spell with a cast time"). So it takes no aiming time of its own that a cast could

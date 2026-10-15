@@ -137,16 +137,26 @@ func (hp *HunterPet) Initialize() {
 	}
 }
 
+// ForeverPetHitScalesWithSpeed: under Forever a pet's white hit scales with its attack speed, as in
+// Classic (report assumption hunter_pet_speed, user ruling 2026-10-15). False gives the beta's
+// behaviour, where every pet hits like a 2.0 sec pet.
+const ForeverPetHitScalesWithSpeed = true
+
 // What Forever changed about pets.
 func (hp *HunterPet) applyForeverRules() {
 	// Every pet swings every 2.0 sec, and a passive the beast brings (Faster Attack I to VII, Slower
-	// Attack II and III) moves that to the beast's Classic speed. Its hits stay the size of a 2.0 sec
-	// pet's, so a fast pet deals more damage (beta players, gathered on ForeverChanges' hunter pets
-	// page and the forever-hunter wiki; nobody knows yet whether that is intended). Classic scales the
-	// hit with the swing.
-	mh := hp.AutoAttacks.MH()
-	mh.BaseDamageMin = 18.17 * 2
-	mh.BaseDamageMax = 27.66 * 2
+	// Attack II and III) moves that to the beast's Classic speed. On the beta its hits stay the size
+	// of a 2.0 sec pet's, so a fast pet deals more damage (beta players, gathered on ForeverChanges'
+	// hunter pets page and the forever-hunter wiki).
+	//
+	// Report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's behaviour is treated as
+	// a bug, so the hit scales with the swing as in Classic (a 1.0 sec pet's hit is half a 2.0 sec
+	// pet's, NewHunterPet), and every pet's white damage a second is the same.
+	if !ForeverPetHitScalesWithSpeed {
+		mh := hp.AutoAttacks.MH()
+		mh.BaseDamageMin = 18.17 * 2
+		mh.BaseDamageMax = 27.66 * 2
+	}
 
 	// Focus comes back 10 a second, continuously (client PowerType Focus RegenCombat 10, and beta
 	// logs where busy pets spend 9.5+ a second). Classic's is 26.25 every 5.25 sec.

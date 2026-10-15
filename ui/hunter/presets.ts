@@ -190,8 +190,14 @@ export const DefaultTalents = TalentsLoneWolf;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// A cat at 1.0 sec: Broken Tooth (Badlands) is the one 1.0 sec beast under Forever, and a
-// Forever pet hits as hard at any speed, so the fastest pet deals the most.
+// A cat at 1.0 sec (Broken Tooth, Badlands). A pet's hit scales with its attack speed, as in
+// Classic (report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's "every pet hits
+// like a 2.0 sec pet" is treated as a bug), so its white damage a second is the same at any speed.
+// Every pet family at 1.0, 1.2, 1.5 and 2.0 sec was simmed on Beast Mastery, Marksmanship and
+// Survival (180 sec, 10000 iterations, 2026-10-15): the cat is still best (the raptor ties it, with
+// the same damage modifier, Bite and Claw), 5 to 9 ahead of the next family (the owl, then the
+// bat), and the cat's speeds sim within 1 DPS of each other (20000 iterations), so the preset
+// keeps the 1.0 sec cat.
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.ThoriumHeadedArrow,
 	quiverBonus: Hunter_Options_QuiverBonus.Speed15,

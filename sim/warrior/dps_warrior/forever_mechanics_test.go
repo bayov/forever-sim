@@ -235,3 +235,25 @@ func TestForeverWarriorDeepWoundsRolls(t *testing.T) {
 		t.Errorf("with 1000 more attack power a crit gave a %.3f tick, want %.3f", got, first)
 	}
 }
+
+// TestForeverWarriorRendAttackPower checks report assumption warr_rend_ap (user ruling
+// 2026-10-15): under Forever each Rend tick adds 2% of attack power to rank 4's 21.
+func TestForeverWarriorRendAttackPower(t *testing.T) {
+	sim, war := newForeverWarrior(t, "")
+	target := war.CurrentTarget
+	tick := func() float64 {
+		dot := war.Rend.Dot(target)
+		dot.Apply(sim)
+		got := dot.SnapshotBaseDamage
+		dot.Cancel(sim)
+		return got
+	}
+	for _, extra := range []float64{0, 1000} {
+		war.AddStatDynamic(sim, stats.AttackPower, extra)
+		ap := war.Rend.MeleeAttackPower(target)
+		want := (21 + 0.02*ap) * war.Rend.BaseDamageMultiplierAdditive
+		if got := tick(); math.Abs(got-want) > 1e-6 {
+			t.Errorf("Rend at %.0f attack power ticks for %.3f, want %.3f", ap, got, want)
+		}
+	}
+}
