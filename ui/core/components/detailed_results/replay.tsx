@@ -36,10 +36,12 @@ const STICKY_LIFE = 1.6;
 // How far apart lines that start close together are, in pixels.
 const LANE_PX = 28;
 const STICKY_LANE_PX = 42;
-// Where the lines sit across their area, as a share of its width. Crits stay put in their own
-// column toward the middle of the screen, so the lines that scroll by don't run over them.
-const SCROLL_X: Record<SctEvent['side'], number> = { in: 0.36, out: 0.64 };
-const STICKY_X: Record<SctEvent['side'], number> = { in: 0.8, out: 0.2 };
+// Where the lines line up across their area, as a share of its width. What we do to the enemies
+// lines up on its left edge, so the icons form a column. What happens to us lines up on its
+// right edge, with the icon after the text. Crits stay put in their own column toward the middle
+// of the screen, so the lines that scroll by don't run over them.
+const SCROLL_EDGE: Record<SctEvent['side'], number> = { in: 0.45, out: 0.55 };
+const STICKY_EDGE: Record<SctEvent['side'], number> = { in: 1, out: 0 };
 
 // The action history strip shows this many of our latest casts. A new cast pushes the others
 // one slot to the left over this many seconds.
@@ -1436,11 +1438,15 @@ export class Replay extends ResultComponent {
 				y = progress;
 				offset = -event.lane * LANE_PX;
 			}
-			const x = (event.lane % 2 ? 1 : -1) * event.lane * 10;
 			const opacity = Math.min(1, age / 0.06) * Math.min(1, (1 - progress) / 0.3);
 			elem.style.top = `calc(${(y * 100).toFixed(2)}% + ${offset}px)`;
-			elem.style.left = `${(event.sticky ? STICKY_X : SCROLL_X)[event.side] * 100}%`;
-			elem.style.transform = `translate(calc(-50% + ${x}px), -50%) scale(${scale.toFixed(3)})`;
+			const edge = (event.sticky ? STICKY_EDGE : SCROLL_EDGE)[event.side];
+			if (event.side == 'out') {
+				elem.style.left = `${edge * 100}%`;
+			} else {
+				elem.style.right = `${(1 - edge) * 100}%`;
+			}
+			elem.style.transform = `translateY(-50%) scale(${scale.toFixed(3)})`;
 			elem.style.opacity = opacity.toFixed(3);
 		}
 		this.sctElems.forEach((elem, index) => {
