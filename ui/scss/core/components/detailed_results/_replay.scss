@@ -892,9 +892,10 @@
 		display: flex;
 	}
 
+	// On hover it takes the spec's color, like the shaman blue.
 	.replay-stage:hover & {
-		background: var(--gold);
-		color: #000;
+		background: var(--bs-primary);
+		color: var(--theme-component-text-color);
 	}
 }
 
