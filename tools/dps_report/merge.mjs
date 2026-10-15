@@ -20,6 +20,7 @@ const manifestPath = path.join(root, 'ui/dps_report/datasets.json');
 
 const KEYS = {
 	icons: ['icon'],
+	icons_more: ['icon'],
 	names: ['key'],
 	tooltips: ['key', 'kind'],
 	talenttrees: ['class', 'tree', 'idx'],
