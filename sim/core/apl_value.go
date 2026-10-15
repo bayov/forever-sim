@@ -99,6 +99,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueLevelingMobsRunningIn(config.GetLevelingMobsRunningIn())
 	case *proto.APLValue_LevelingMobsOnUs:
 		return rot.newValueLevelingMobsOnUs(config.GetLevelingMobsOnUs())
+	case *proto.APLValue_LevelingBandageReady:
+		return rot.newValueLevelingBandageReady(config.GetLevelingBandageReady())
 	case *proto.APLValue_NumberTargets:
 		return rot.newValueNumberTargets(config.GetNumberTargets())
 

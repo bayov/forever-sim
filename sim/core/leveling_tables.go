@@ -67,30 +67,35 @@ func bestRestorer(list []restorer, level int32) restorer {
 }
 
 // outOfCombatHealthRegen is the health a second we regen out of combat, standing, from
-// Spirit: the 1.12 server's formula by class (cmangos Unit::OCTRegenHPPerSpirit). Sitting
-// to eat or drink makes it half again as much. Forever's own rule is still to be seen.
-func outOfCombatHealthRegen(class proto.Class, spirit float64) float64 {
-	var regen float64
-	switch class {
-	case proto.Class_ClassDruid, proto.Class_ClassMage:
-		regen = spirit*0.11 + 1
-	case proto.Class_ClassHunter:
-		regen = spirit*0.43 - 5.5
-	case proto.Class_ClassPaladin:
-		regen = spirit * 0.25
-	case proto.Class_ClassPriest:
-		regen = spirit*0.15 + 1.4
-	case proto.Class_ClassRogue:
-		regen = spirit*0.84 - 13
-	case proto.Class_ClassShaman:
-		regen = spirit*0.28 - 3.6
-	case proto.Class_ClassWarlock:
-		regen = spirit*0.12 + 1.5
-	case proto.Class_ClassWarrior:
-		regen = spirit*1.26 - 22.6
+// Spirit: Wrath's game tables (healthRegenPerSpirit, tools/gen_regen_tables.py), a 2 sec tick
+// of the class and level's ratio times the first 50 Spirit plus the lower ratio times the
+// rest. On the Forever beta a player measured that shape: no constant, a lower ratio past 50
+// (eu.forums.blizzard.com/en/wow/t/635182, 2026-10-12). Their ticks were 0.65 to 1.35 times
+// these tables' (a level 8 warrior close, a level 14 paladin higher, a level 5 warlock
+// lower), and the 1.12 server's formulas were further off (notes.md, Need to Verify).
+//
+// Warriors and rogues regen the most: at level 30 a warrior gets 0.56 a Spirit a tick and a
+// rogue 0.33, a shaman 0.17 and a mage 0.10.
+func outOfCombatHealthRegen(class proto.Class, level int32, spirit float64) float64 {
+	ratios, ok := healthRegenPerSpirit[class]
+	if !ok || spirit <= 0 {
+		return 0
 	}
-	return max(regen, 0)
+	r := ratios[min(max(level, 1), 60)-1]
+	return (min(spirit, 50)*r[0] + max(spirit-50, 0)*r[1]) / 2
 }
+
+// Sitting (to eat, drink or just rest) adds a third to Spirit's health regen. The Forever beta
+// measurement above saw about 30% more; Blizzard's later games document 33%. (The 1.12 and
+// 3.3.5 emulators use 50%.) Food and water come on top.
+const sittingHealthRegenMultiplier = 4.0 / 3
+
+// Troll Regeneration (racials.md, unchanged under Forever): 10% more health regen, and 10% of
+// it goes on in combat. The beta measurement saw the combat part (+1 a tick against 10.5).
+const (
+	trollHealthRegenMultiplier = 1.1
+	trollCombatHealthRegen     = 0.1
+)
 
 // mobKillXP is the XP a normal mob of mobLevel gives at our level, by the 1.12 server's
 // formula (cmangos MaNGOS::XP::BaseGain): our level * 5 + 45 for a mob of our level, 5% more

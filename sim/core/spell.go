@@ -529,7 +529,7 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
-	if spell.MaxRange > 0 && spell.Unit.Env.Encounter.LevelingDistance(sim, target) > spell.MaxRange {
+	if spell.MaxRange > 0 && spell.Unit.Env.Encounter.LevelingDistance(sim, target) > spell.MaxRange+levelingYardTolerance {
 		return false
 	}
 

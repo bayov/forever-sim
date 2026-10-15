@@ -76,6 +76,8 @@ message APLAction {
         // Leveling session actions (Encounter.leveling)
         APLActionLevelingLookForMob leveling_look_for_mob = 24;
         APLActionLevelingWalkToPullTarget leveling_walk_to_pull_target = 25;
+        APLActionLevelingRest leveling_rest = 27;
+        APLActionLevelingBandage leveling_bandage = 28;
 
         // Class or Spec-specific actions
         APLActionCatOptimalRotationAction cat_optimal_rotation_action = 19;
@@ -179,6 +181,7 @@ message APLValue {
         APLValueLevelingDistance leveling_distance = 81;
         APLValueLevelingMobsRunningIn leveling_mobs_running_in = 82;
         APLValueLevelingMobsOnUs leveling_mobs_on_us = 83;
+        APLValueLevelingBandageReady leveling_bandage_ready = 86;
 
         // Class or Spec-specific values
         // Shaman
@@ -319,6 +322,23 @@ message APLActionLevelingLookForMob {
 // it (melee range when 0), or it notices us first (its aggro radius). The mobs on us follow.
 message APLActionLevelingWalkToPullTarget {
     APLValue within = 1;
+}
+
+// In a leveling session, out of combat: sit down to eat, drink, both, or neither (just
+// resting), until health and mana are at these shares of max (default 100%). Another food or
+// drink starts when one runs out short of that. Sitting adds a third to Spirit's health regen.
+// A rotation with this or Bandage decides all resting; one without gets the fixed policy
+// (LevelingOptions.eat_below, drink_below, no_bandages).
+message APLActionLevelingRest {
+    bool eat = 1;
+    bool drink = 2;
+    APLValue health_until = 3;
+    APLValue mana_until = 4;
+}
+
+// In a leveling session, out of combat: put on the level's best bandage (First Aid kept up),
+// unless Recently Bandaged.
+message APLActionLevelingBandage {
 }
 
 // In a leveling session: walk back toward one of our totems until we're within this many
@@ -500,6 +520,10 @@ message APLValueLevelingMobsRunningIn {
 
 // Mobs we pulled that have reached us, in a leveling session.
 message APLValueLevelingMobsOnUs {
+}
+
+// True out of combat in a leveling session while we're not Recently Bandaged.
+message APLValueLevelingBandageReady {
 }
 
 message APLValueSpellTravelTime {

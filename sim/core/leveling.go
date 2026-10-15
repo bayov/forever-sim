@@ -45,8 +45,8 @@ import (
 //   - Death: the mobs on us leave, and after the corpse run we come back with part of our
 //     health and mana and search again.
 //
-// Out of combat we regen health from Spirit (outOfCombatHealthRegen), and mana goes on as in
-// combat (the five-second rule). While no mob is on us the rotation can cast what helps us
+// Out of combat we regen health from Spirit (outOfCombatHealthRegen), a third more sitting,
+// and mana goes on as in combat (the five-second rule). While no mob is on us the rotation can cast what helps us
 // (buffs, shields, heals), but nothing harmful except at the mob it pulls.
 type levelingSession struct {
 	env  *Environment
@@ -83,10 +83,16 @@ type levelingSession struct {
 	pullMobs   int
 	pulls      int
 	mobsPulled int
-	// Food, water and bandage left on the current rest or bandage.
+	// The current rest (leveling_rest.go), with the food, water and bandage left on it.
+	rest                             levelingRest
 	foodLeft, drinkLeft, bandageLeft time.Duration
 	food, drink, bandage             restorer
 	bandageReadyAt                   time.Duration
+	// Whether the rotation decides when to rest and bandage (it has those actions); if not,
+	// eat_below, drink_below and no_bandages do.
+	rotationRests bool
+	// Food, water and bandages used this session.
+	foods, drinks, bandages int
 	// A pending search, chain search or revive, cancelled when the state moves on.
 	next      *PendingAction
 	chainNext *PendingAction
@@ -103,6 +109,7 @@ type levelingSession struct {
 		kills, kills2, xp, deaths        float64
 		pulls, pulled                    float64
 		combat, resting, searching, dead float64
+		foods, drinks, bandages          float64
 	}
 }
 
@@ -115,6 +122,8 @@ const (
 	levelingResting
 	levelingBandaging
 	levelingDead
+	// Out of combat and deciding: the rotation can rest, bandage or buff before we search.
+	levelingReady
 	levelingStateCount
 )
 
@@ -296,6 +305,8 @@ func (s *levelingSession) reset(sim *Simulation) {
 	s.pullMobs, s.pulls, s.mobsPulled = 0, 0, 0
 	s.kills, s.xp, s.deaths = 0, 0, 0
 	s.bandageReadyAt = 0
+	s.rest = levelingRest{}
+	s.foods, s.drinks, s.bandages = 0, 0, 0
 	s.next, s.chainNext = nil, nil
 
 	sim.AddPendingAction(&PendingAction{
@@ -419,43 +430,34 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 	}
 }
 
-// outOfCombat: the pull is over. A bandage when health is low, then food and water when
+// outOfCombat: the pull is over. The rotation decides what's next (ready), or without rest
+// actions in it the fixed policy does: a bandage when health is low, then food and water when
 // health or mana is, then the next pull.
 func (s *levelingSession) outOfCombat(sim *Simulation) {
+	if s.rotationRests {
+		s.ready(sim)
+		return
+	}
 	health := s.player.CurrentHealthPercent()
 	if s.opts.bandages && health < s.opts.eatBelow && sim.CurrentTime >= s.bandageReadyAt {
-		s.setState(sim, levelingBandaging)
-		s.bandageLeft = s.bandage.duration
-		s.bandageReadyAt = sim.CurrentTime + recentlyBandagedDuration
-		s.busy(sim, s.bandage.duration)
-		if sim.Log != nil {
-			s.player.Log(sim, "Leveling: bandaging")
-		}
-		s.after(sim, &s.next, s.bandage.duration, s.outOfCombat)
+		s.startBandage(sim)
 		return
 	}
 
-	mana := 1.0
-	if s.player.HasManaBar() {
-		mana = s.player.CurrentManaPercent()
-	}
+	mana := s.manaPercent()
 	if health < s.opts.eatBelow || mana < s.opts.drinkBelow {
-		s.setState(sim, levelingResting)
-		s.foodLeft, s.drinkLeft = 0, 0
-		if health < 1 {
-			s.foodLeft = s.food.duration
-		}
-		if s.player.HasManaBar() && mana < 1 {
-			s.drinkLeft = s.drink.duration
-		}
-		if sim.Log != nil {
-			s.player.Log(sim, "Leveling: eating and drinking at %.0f%% health and %.0f%% mana", 100*health, 100*mana)
-		}
-		s.busy(sim, time.Second)
+		s.startRest(sim, levelingRest{eat: health < 1, drink: mana < 1, healthUntil: 1, manaUntil: 1})
 		return
 	}
 
 	s.search(sim)
+}
+
+func (s *levelingSession) manaPercent() float64 {
+	if !s.player.HasManaBar() {
+		return 1
+	}
+	return s.player.CurrentManaPercent()
 }
 
 // busy keeps the rotation from acting while we sit, bandage or run back as a ghost.
@@ -480,13 +482,20 @@ func (s *levelingSession) startTicks(sim *Simulation) {
 func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 	p := s.player
 	seconds := dt.Seconds()
+	regen := outOfCombatHealthRegen(s.character.Class, s.level, p.GetStat(stats.Spirit)) * seconds
+	if s.character.Race == proto.Race_RaceTroll {
+		regen *= trollHealthRegenMultiplier
+	}
 	switch s.state {
 	case levelingSearching, levelingPulling, levelingResting, levelingBandaging:
-		regen := outOfCombatHealthRegen(s.character.Class, p.GetStat(stats.Spirit)) * seconds
 		if s.state == levelingResting {
-			regen *= 1.5
+			regen *= sittingHealthRegenMultiplier
 		}
 		s.heal(sim, regen, s.healthMetrics)
+	case levelingCombat:
+		if s.character.Race == proto.Race_RaceTroll {
+			s.heal(sim, regen*trollCombatHealthRegen, s.healthMetrics)
+		}
 	}
 
 	switch s.state {
@@ -496,21 +505,7 @@ func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 			s.bandageLeft -= dt
 		}
 	case levelingResting:
-		if s.foodLeft > 0 {
-			s.heal(sim, s.food.amount*seconds/s.food.duration.Seconds(), s.foodMetrics)
-			s.foodLeft -= dt
-		}
-		if s.drinkLeft > 0 && p.HasManaBar() {
-			p.AddMana(sim, min(s.drink.amount*seconds/s.drink.duration.Seconds(), p.MaxMana()-p.CurrentMana()), s.drinkMetrics)
-			s.drinkLeft -= dt
-		}
-		healthDone := s.foodLeft <= 0 || p.CurrentHealth() >= p.MaxHealth()
-		manaDone := s.drinkLeft <= 0 || !p.HasManaBar() || p.CurrentMana() >= p.MaxMana()
-		if healthDone && manaDone {
-			s.search(sim)
-		} else {
-			s.busy(sim, dt)
-		}
+		s.restTick(sim, dt)
 	}
 }
 
@@ -567,7 +562,11 @@ func (s *levelingSession) revive(sim *Simulation) {
 		p.AddMana(sim, s.opts.reviveFraction*p.MaxMana()-p.CurrentMana(), s.reviveManaMetrics)
 	}
 	p.Metrics.Died = true
-	s.search(sim)
+	if s.rotationRests {
+		s.ready(sim)
+	} else {
+		s.search(sim)
+	}
 }
 
 // doneIteration adds the session to the totals: the mobs on us at the end count by the share
@@ -592,7 +591,10 @@ func (s *levelingSession) doneIteration(sim *Simulation) {
 	a.pulled += float64(s.mobsPulled)
 	a.combat += s.seconds[levelingCombat].Seconds()
 	a.resting += (s.seconds[levelingResting] + s.seconds[levelingBandaging]).Seconds()
-	a.searching += (s.seconds[levelingSearching] + s.seconds[levelingPulling]).Seconds()
+	a.searching += (s.seconds[levelingSearching] + s.seconds[levelingPulling] + s.seconds[levelingReady]).Seconds()
+	a.foods += float64(s.foods)
+	a.drinks += float64(s.drinks)
+	a.bandages += float64(s.bandages)
 	a.dead += s.seconds[levelingDead].Seconds()
 }
 
@@ -613,6 +615,9 @@ func (s *levelingSession) metrics() *proto.LevelingMetrics {
 		SecondsResting:   a.resting / n,
 		SecondsSearching: a.searching / n,
 		SecondsDead:      a.dead / n,
+		Food:             a.foods / n,
+		Drinks:           a.drinks / n,
+		Bandages:         a.bandages / n,
 	}
 	if a.pulls > 0 {
 		m.MobsPerPull = a.pulled / a.pulls

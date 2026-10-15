@@ -36,6 +36,7 @@ import {
 	APLValueFrontOfTarget,
 	APLValueInMeleeRange,
 	APLValueIsMoving,
+	APLValueLevelingBandageReady,
 	APLValueLevelingDistance,
 	APLValueLevelingMobsOnUs,
 	APLValueLevelingMobsRunningIn,
@@ -633,6 +634,13 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		submenu: ['Leveling'],
 		shortDescription: 'Mobs you pulled that are still running to you, in a leveling session.',
 		newValue: APLValueLevelingMobsRunningIn.create,
+		fields: [],
+	}),
+	levelingBandageReady: inputBuilder({
+		label: 'Bandage Ready',
+		submenu: ['Leveling'],
+		shortDescription: '<b>True</b> out of combat in a leveling session while you are not Recently Bandaged.',
+		newValue: APLValueLevelingBandageReady.create,
 		fields: [],
 	}),
 	levelingMobsOnUs: inputBuilder({

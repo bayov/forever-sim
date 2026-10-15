@@ -622,6 +622,9 @@ func combineLevelingMetrics(base, add *proto.LevelingMetrics, isLast bool, weigh
 	base.SecondsSearching += add.SecondsSearching * weight
 	base.SecondsDead += add.SecondsDead * weight
 	base.MobsPerPull += add.MobsPerPull * weight
+	base.Food += add.Food * weight
+	base.Drinks += add.Drinks * weight
+	base.Bandages += add.Bandages * weight
 	if isLast {
 		base.MobsKilledStdev = math.Sqrt(max(base.MobsKilledStdev-base.MobsKilled*base.MobsKilled, 0))
 	}

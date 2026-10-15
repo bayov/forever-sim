@@ -411,6 +411,10 @@ message LevelingMetrics {
 	double seconds_dead = 9;
 	// Average number of mobs a pull came to, chain pulls included.
 	double mobs_per_pull = 10;
+	// Food, water and bandages used a session.
+	double food = 11;
+	double drinks = 12;
+	double bandages = 13;
 }
 
 enum ErrorOutcomeType {

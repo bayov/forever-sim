@@ -31,6 +31,9 @@ const (
 	levelingPullPoll = 250 * time.Millisecond
 	// How often a mob running at us turns toward where we are while we move.
 	levelingChaseTurn = 100 * time.Millisecond
+	// Distances closer than this to a range are in it: a walk that stops at 30 yards ends a
+	// rounding error away from it.
+	levelingYardTolerance = 1e-6
 )
 
 // Vec2 is a point or a movement on the leveling session's plane, in yards.
@@ -534,7 +537,7 @@ func (encounter *Encounter) LevelingCanWalkToPullTarget(sim *Simulation, within 
 	s := encounter.leveling
 	mob := encounter.LevelingPullTarget()
 	return mob != nil && s.goal == goalNone && !s.player.IsCasting(sim) &&
-		s.distance(sim, mob) > max(within, levelingMeleeRange)
+		s.distance(sim, mob) > max(within, levelingMeleeRange)+levelingYardTolerance
 }
 
 // LevelingWalkToPullTarget walks up to the Pull Target until we're within yards of it (0
@@ -551,7 +554,7 @@ func (encounter *Encounter) LevelingCanWalkTo(sim *Simulation, point Vec2, withi
 	s := encounter.leveling
 	return s != nil && s.goal == goalNone && !s.player.IsCasting(sim) &&
 		(s.state == levelingPulling || s.state == levelingCombat) &&
-		point.Dist(s.playerPosition(sim)) > within
+		point.Dist(s.playerPosition(sim)) > within+levelingYardTolerance
 }
 
 // LevelingWalkTo walks to within yards of a point. The mobs on us follow, and the mob we

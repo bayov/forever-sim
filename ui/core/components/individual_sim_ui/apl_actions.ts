@@ -15,7 +15,9 @@ import {
 	APLActionCustomRotation,
 	APLActionItemSwap,
 	APLActionItemSwap_SwapSet as ItemSwapSet,
+	APLActionLevelingBandage,
 	APLActionLevelingLookForMob,
+	APLActionLevelingRest,
 	APLActionLevelingWalkToPullTarget,
 	APLActionMove,
 	APLActionMultidot,
@@ -684,6 +686,32 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 		shortDescription:
 			'In a leveling session, while fighting: looks for another mob to pull, usually running around with the mobs on you following. The mob found is the Pull Target.',
 		newValue: () => APLActionLevelingLookForMob.create({}),
+		fields: [],
+	}),
+	['levelingRest']: inputBuilder({
+		label: 'Rest (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription:
+			'In a leveling session, out of combat: sits down to eat, drink, both or neither until health and mana reach the given shares of max (100% when empty). Sitting adds a third to Spirit health regen. A rotation with Rest or Bandage decides all resting.',
+		newValue: () => APLActionLevelingRest.create({}),
+		fields: [
+			AplHelpers.booleanFieldConfig('eat', 'Eat'),
+			AplHelpers.booleanFieldConfig('drink', 'Drink'),
+			AplValues.valueFieldConfig('healthUntil', {
+				label: 'until Health',
+				labelTooltip: 'Share of max health to rest to, e.g. 90%.',
+			}),
+			AplValues.valueFieldConfig('manaUntil', {
+				label: 'until Mana',
+				labelTooltip: 'Share of max mana to rest to, e.g. 90%.',
+			}),
+		],
+	}),
+	['levelingBandage']: inputBuilder({
+		label: 'Bandage (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription: 'In a leveling session, out of combat: puts on the best bandage for your level, unless Recently Bandaged.',
+		newValue: () => APLActionLevelingBandage.create({}),
 		fields: [],
 	}),
 	['levelingWalkToPullTarget']: inputBuilder({

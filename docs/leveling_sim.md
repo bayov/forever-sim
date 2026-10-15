@@ -166,9 +166,20 @@ from the user's logs.
 
 ### Recovery
 
-Eating and drinking happen together. We stand up when both bars are full or both buffs run out.
-The sit thresholds are APL knobs the optimizer tunes. The defaults are mana below 40% or HP
-below 50%.
+The APL decides when to sit down to eat, drink, both or neither, and to what share of health
+and mana to rest (Rest (Leveling)), and when to bandage. A rotation without those actions gets
+the fixed policy: eat and drink together below 50% health or 40% mana, and stand up when both
+bars are full or both buffs run out.
+
+Spirit regen goes on top of food and water, for health and mana alike:
+
+| Regen | Model |
+|---|---|
+| Health from Spirit, out of combat | Wrath's game tables: a 2 s tick of the first 50 Spirit times a class and level ratio, plus the rest times a lower ratio. At level 30 a warrior gets 0.56 a Spirit a tick, a rogue 0.33, a shaman 0.17, a mage 0.10. A Forever beta measurement fits the shape but not every value (notes.md, Need to Verify). |
+| Sitting (eating, drinking or just resting) | A third more health from Spirit, for every class (the beta measurement saw about 30%). Mana regen isn't changed by sitting. |
+| Mana from Spirit | The sim's Forever formula, outside the five-second rule (notes.md). |
+| Troll Regeneration | 10% more health regen, and 10% of it in combat. |
+| In combat | No health regen from Spirit (Troll aside). |
 
 The best vendor food and water for our level (amounts and durations from
 `assets/db_inputs/wowhead_item_tooltips.csv`):
@@ -414,13 +425,35 @@ After the groundwork:
      because a mob found when the first dies is pulled too, as long as health and mana allow.
      The preset rotation was built for a boss, so none of this is tuned yet.
    - Still options: when to eat, drink and bandage. Step 4 moves them into the APL.
-4. **APL additions for the rest of the loop:** out-of-combat actions (eat and drink until a
-   threshold, bandage, heal).
-5. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
-6. **Optimizers:** the pull and recovery policy, leveling stat weights with a Pawn export, and
+4. **Resting in the APL.** Done (2026-10-15), `sim/core/leveling_rest.go`.
+   - When the last mob dies we're ready: the APL can sit down (Rest (Leveling): eat, drink,
+     both or neither, until health and mana are at a share of max, with another food or
+     drink when one runs out short), bandage (Bandage (Leveling), Bandage Ready), heal or buff.
+     Once it isn't casting and its global cooldown is up, we search. It can also rest while we
+     search or with a mob found. A rotation with neither action gets the fixed policy.
+   - Health regen from Spirit is now Wrath's game tables, a third more sitting, with Troll
+     Regeneration (Recovery above). The 1.12 formulas the sim had gave a level 30 shaman with
+     50 Spirit 10.4 health a second; the tables give 4.2 (5.6 sitting).
+   - Food, water and bandages used are in the results, for the gold they cost later.
+   - The solo demo with the "no buff totems, look for another mob" rotation, different rest
+     policies (500 sessions):
+
+     | Rest policy | Mobs | Deaths | XP / hour | Searching and pulling | Resting | Combat | Mobs a pull |
+     |---|---|---|---|---|---|---|---|
+     | Fixed: eat below 50% health, drink below 40% mana | 78.9 | 0.35 | 45,600 | 220 s | 320 s | 601 s | 2.74 |
+     | Rotation: the same thresholds, until both are full | 78.5 | 0.31 | 45,400 | 231 s | 322 s | 595 s | 2.77 |
+     | Rotation: the same thresholds, until 80% | 80.5 | 0.34 | 46,500 | 270 s | 265 s | 608 s | 2.48 |
+     | Rotation: rest earlier, below 70% health or 60% mana | 79.1 | 0.29 | 45,800 | 216 s | 332 s | 603 s | 2.90 |
+     | Rotation: bandage below 70% when ready, eat and drink as above | 77.9 | 0.32 | 45,100 | 222 s | 330 s | 594 s | 2.85 |
+     | Rotation: Lesser Healing Wave below 60% out of combat, drink below 40% | 72.1 | 0.39 | 41,700 | 307 s | 287 s | 542 s | 2.30 |
+
+     The rest policies land within 2 mobs of each other. Healing between pulls costs mana
+     that the next pull needs, and the drinking it takes is slower than eating.
+6. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
+7. **Optimizers:** the pull and recovery policy, leveling stat weights with a Pawn export, and
    the best mob level.
-7. **Synthetic gear curves** from 10 to 60 and the talent route search.
-8. **UI:** "Leveling" as a third mode next to DPS and PvP.
+8. **Synthetic gear curves** from 10 to 60 and the talent route search.
+9. **UI:** "Leveling" as a third mode next to DPS and PvP.
 
 ## From the logs, later
 

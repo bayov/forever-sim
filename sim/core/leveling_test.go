@@ -29,13 +29,24 @@ func TestMobKillXP(t *testing.T) {
 	}
 }
 
-// TestOutOfCombatHealthRegen checks the 1.12 server's health regen a second from Spirit.
+// TestOutOfCombatHealthRegen checks health regen a second from Spirit against Wrath's tables:
+// a level 30 shaman's first 50 Spirit give 0.166667 a 2 sec tick each and the rest 0.071429,
+// and a level 30 warrior regens over three times as much.
 func TestOutOfCombatHealthRegen(t *testing.T) {
-	if got := outOfCombatHealthRegen(proto.Class_ClassShaman, 50); math.Abs(got-10.4) > 1e-9 {
-		t.Errorf("a shaman with 50 Spirit regens %.2f a sec, want 10.4", got)
-	}
-	if got := outOfCombatHealthRegen(proto.Class_ClassWarrior, 10); got != 0 {
-		t.Errorf("a warrior with 10 Spirit regens %.2f a sec, want 0 (the formula is below 0)", got)
+	for _, c := range []struct {
+		class  proto.Class
+		level  int32
+		spirit float64
+		want   float64
+	}{
+		{proto.Class_ClassShaman, 30, 50, 50 * 0.166667 / 2},
+		{proto.Class_ClassShaman, 30, 80, (50*0.166667 + 30*0.071429) / 2},
+		{proto.Class_ClassWarrior, 30, 50, 50 * 0.555556 / 2},
+		{proto.Class_ClassMage, 60, 0, 0},
+	} {
+		if got := outOfCombatHealthRegen(c.class, c.level, c.spirit); math.Abs(got-c.want) > 1e-6 {
+			t.Errorf("a level %d %s with %.0f Spirit regens %.4f a sec, want %.4f", c.level, c.class, c.spirit, got, c.want)
+		}
 	}
 }
 

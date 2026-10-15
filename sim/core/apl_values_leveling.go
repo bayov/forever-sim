@@ -126,3 +126,73 @@ func (action *APLActionLevelingWalkToPullTarget) String() string {
 func (rot *APLRotation) NewAPLFloatValue(config *proto.APLValue) APLValue {
 	return rot.coerceTo(rot.newAPLValue(config), proto.APLValueType_ValueTypeFloat)
 }
+
+// shareValue reads an optional share of max (a "90%" const), 100% when there's none.
+func shareValue(sim *Simulation, value APLValue) float64 {
+	if value == nil {
+		return 1
+	}
+	return value.GetFloat(sim)
+}
+
+type APLActionLevelingRest struct {
+	defaultAPLActionImpl
+	eat, drink             bool
+	healthUntil, manaUntil APLValue
+}
+
+func (rot *APLRotation) newActionLevelingRest(config *proto.APLActionLevelingRest) APLActionImpl {
+	rot.unit.Env.Encounter.LevelingRotationRests()
+	action := &APLActionLevelingRest{eat: config.Eat, drink: config.Drink}
+	if config.HealthUntil != nil {
+		action.healthUntil = rot.NewAPLFloatValue(config.HealthUntil)
+	}
+	if config.ManaUntil != nil {
+		action.manaUntil = rot.NewAPLFloatValue(config.ManaUntil)
+	}
+	return action
+}
+func (action *APLActionLevelingRest) IsReady(sim *Simulation) bool {
+	return sim.Encounter.LevelingCanRest(sim, action.eat, action.drink, shareValue(sim, action.healthUntil), shareValue(sim, action.manaUntil))
+}
+func (action *APLActionLevelingRest) Execute(sim *Simulation) {
+	sim.Encounter.LevelingRest(sim, action.eat, action.drink, shareValue(sim, action.healthUntil), shareValue(sim, action.manaUntil))
+}
+func (action *APLActionLevelingRest) String() string {
+	return fmt.Sprintf("Rest (Leveling)(eat: %v, drink: %v)", action.eat, action.drink)
+}
+
+type APLActionLevelingBandage struct {
+	defaultAPLActionImpl
+}
+
+func (rot *APLRotation) newActionLevelingBandage(_ *proto.APLActionLevelingBandage) APLActionImpl {
+	rot.unit.Env.Encounter.LevelingRotationRests()
+	return &APLActionLevelingBandage{}
+}
+func (action *APLActionLevelingBandage) IsReady(sim *Simulation) bool {
+	return sim.Encounter.LevelingCanBandage(sim)
+}
+func (action *APLActionLevelingBandage) Execute(sim *Simulation) {
+	sim.Encounter.LevelingBandage(sim)
+}
+func (action *APLActionLevelingBandage) String() string {
+	return "Bandage (Leveling)"
+}
+
+type APLValueLevelingBandageReady struct {
+	DefaultAPLValueImpl
+}
+
+func (rot *APLRotation) newValueLevelingBandageReady(_ *proto.APLValueLevelingBandageReady) APLValue {
+	return &APLValueLevelingBandageReady{}
+}
+func (value *APLValueLevelingBandageReady) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueLevelingBandageReady) GetBool(sim *Simulation) bool {
+	return sim.Encounter.LevelingBandageReady(sim)
+}
+func (value *APLValueLevelingBandageReady) String() string {
+	return "Bandage Ready (Leveling)"
+}

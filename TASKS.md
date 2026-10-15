@@ -46,9 +46,10 @@ Item format:
   - Shaman first: Healing Wave and Lesser Healing Wave by rank and level. Then Priest (Lesser Heal, Heal, Flash Heal, Greater Heal, Renew; today commented out or missing), Paladin (Holy Light, Flash of Light) and Druid (Healing Touch, Rejuvenation, Regrowth).
   - Absorbs in the core, for Power Word: Shield, Mana Shield and Sacrifice.
   - 2026-10-15: shaman done (`sim/shaman/healing.go`, shaman_audit.md 11.5), with the healing talents. Still open: Priest, Paladin, Druid and absorbs.
-- [ ] 2026-10-15 — Leveling mode step 4: move the rest decisions into the rotation (`docs/leveling_sim.md`, The leveling mode)
-  - Steps 1 to 3 are done (2026-10-15): the session engine, positions with spell and totem ranges, pulling from the APL, rotation-driven chain pulls, aggro radius, buff totem reach, Totemic Recall and Totemic Projection.
-  - Still to do: APL actions to eat and drink to a threshold, and to bandage (today eat_below, drink_below and no_bandages).
+- [x] 2026-10-15 — Leveling mode step 4: move the rest decisions into the rotation (`docs/leveling_sim.md`, The leveling mode)
+  - Done (2026-10-15): Rest (Leveling) and Bandage (Leveling) actions, Bandage Ready, the ready state between pulls; health regen from Wrath's game tables, a third more sitting, Troll Regeneration.
+- [ ] 2026-10-15 — Leveling: open items after steps 1 to 4 (`docs/leveling_sim.md`)
+  - Measure a shaman's out of combat health ticks on the beta (notes.md, Need to Verify): two Spirit values under 50 and one over, at two levels, standing and sitting.
   - A bolt's flight time to a chain pull target that isn't our current target uses our current target's distance.
   - Stoneskin Totem's client data also has a 20 yard effect next to the 30 yard one; we use 30 for all of it.
 - [ ] 2026-10-15 — Leveling: measure search, run-in and chain-pull times and pack sizes from the user's logs (`docs/leveling_sim.md`, From the logs)
