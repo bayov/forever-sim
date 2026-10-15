@@ -35,6 +35,10 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "swdMana", Default: 20, Min: 0, Max: 60, Step: 10},
+		// Shadow Word: Death once a Smite would no longer land before the fight ends. With swd
+		// off it is always ready then: +5.8 / +3.0 / +1.2 at 120 / 180 / 300 sec (rotation
+		// audit 19b). Mind Blast there adds nothing on top.
+		{Name: "swdEnd", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Inner Focus: 0 never, 1 on Holy Fire, 2 on Smite, 3 on Mind Blast. Devouring Plague is
 		// not in its class mask (client 14751), so it is never free.
 		{Name: "innerFocus", Default: 1, Min: 0, Max: 3, Step: 1},
@@ -102,6 +106,10 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["swd"] == 1 {
 		items = append(items, cast(shadowWordDeath, priestManaAbove(k["swdMana"]), "Shadow Word: Death on cooldown."))
+	}
+	if k["swdEnd"] == 1 {
+		smiteCastTime := &proto.APLValue{Value: &proto.APLValue_SpellCastTime{SpellCastTime: &proto.APLValueSpellCastTime{SpellId: smite}}}
+		items = append(items, cast(shadowWordDeath, lt(remainingTime(), smiteCastTime), "Shadow Word: Death when Smite would not land before the fight ends."))
 	}
 	if k["innerFocus"] == 2 {
 		items = append(items, cast(innerFocus, nil, "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."))

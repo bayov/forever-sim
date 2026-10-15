@@ -161,7 +161,9 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // leaves rank 7 (level 46) its full coefficient at 60 and the earlier rank 4 fallback none: the
 // old rotation would fall to 701.4 / 545.0 at 180 / 300 sec, this one is 706.5 / 643.8.
 // The search drops the spells that give the least damage for their mana: Mind Blast, Shadow
-// Word: Death and even Penance (385 mana for three 92 damage bolts). A timeline shows Smite
+// Word: Death and even Penance (385 mana for three 92 damage bolts). Shadow Word: Death comes
+// back once, when a Smite would no longer land before the fight ends: 725.5 / 716.5 / 645.7
+// against 719.7 / 713.5 / 644.5 at 120 / 180 / 300 sec (rotation audit 19b, 2026-10-15). A timeline shows Smite
 // every 2 sec (Divine Fury) and Holy Fire back up within a cast of falling off.
 export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Level 60 Smite', Level60SmiteAPL, {
 	tooltip:
