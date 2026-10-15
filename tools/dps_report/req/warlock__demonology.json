@@ -451,6 +451,97 @@
                   }
                 },
                 {
+                  "notes": "Death Coil when the filler would not land before the end.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "remainingTime": {}
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpAdd",
+                            "lhs": {
+                              "spellCastTime": {
+                                "spellId": {
+                                  "spellId": 11661
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.25s"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 17926
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Searing Pain when the filler would not land before the end.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpAdd",
+                                  "lhs": {
+                                    "spellCastTime": {
+                                      "spellId": {
+                                        "spellId": 11661
+                                      }
+                                    }
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.25s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "spellCastTime": {
+                                  "spellId": {
+                                    "spellId": 17923
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 17923
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Shadow Bolt as the filler.",
                   "action": {
                     "castSpell": {
@@ -491,7 +582,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "sanctityAura": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -499,6 +591,7 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
+      "curseOfShadow": true,
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,

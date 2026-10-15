@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire",
   "published": {
-    "dps": 970.2,
-    "source": "PR #2"
+    "dps": 973.6,
+    "source": "PR #25"
   },
   "verify": {
-    "dps": 970.19,
+    "dps": 973.6,
     "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "-0.01 vs PR #2"
+    "note": "+0.00 vs published"
   },
   "summary": "Fire Destruction with Incinerate as the filler, Conflagrate, Fire and Brimstone, Shadow and Flame and Aftermath, plus Malediction and Pandemic, Succubus out and Firestone. Shipped as its own playstyle on Undead, 1.7% behind Shadow Bolt Destruction.",
   "keyTalents": [
@@ -45,6 +45,7 @@
     "Corruption when down or under 2 s left (more than 9 s left)",
     "Immolate when down or under 2 s left (more than 6 s left)",
     "Conflagrate on cooldown while Immolate is up",
+    "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Incinerate while Immolate is up",
     "Shadow Bolt otherwise"
   ],

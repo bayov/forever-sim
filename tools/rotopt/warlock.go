@@ -83,6 +83,9 @@ func (warlockRotation) Knobs() []Knob {
 		{Name: "soulFire", Default: 0, Min: 0, Max: 2, Step: 1},
 		// Death Coil on cooldown.
 		{Name: "deathCoil", Default: 0, Min: 0, Max: 1, Step: 1},
+		// At the very end, when the filler would not land before the fight is over: Death Coil, then
+		// Searing Pain if it still lands.
+		{Name: "endInstants", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Wrack (the Affliction capstone): 0 never, 1 while Corruption and the bane are both up, 2
 		// only while Corruption and Bane of Agony are up (its 10% counts on those two).
 		{Name: "wrack", Default: 0, Min: 0, Max: 2, Step: 1},
@@ -192,6 +195,17 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(lockDrainSoul, isExecutePhase(proto.APLValueIsExecutePhase_E25), "Drain Soul in the last 25% of the boss."))
 	case 2:
 		items = append(items, cast(lockDrainSoul, isExecutePhase(proto.APLValueIsExecutePhase_E20), "Drain Soul in the last 20% of the boss."))
+	}
+	if k["endInstants"] == 1 {
+		fillerCast := lockShadowBolt
+		if k["filler"] == 2 {
+			fillerCast = lockIncinerate
+		}
+		tooLate := lt(remainingTime(), add(spellCastTime(fillerCast), seconds(0.25)))
+		items = append(items,
+			cast(lockDeathCoil, tooLate, "Death Coil when the filler would not land before the end."),
+			cast(lockSearingPain, and(tooLate, gt(remainingTime(), spellCastTime(lockSearingPain))),
+				"Searing Pain when the filler would not land before the end."))
 	}
 	switch k["filler"] {
 	case 4:
