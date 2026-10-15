@@ -125,3 +125,21 @@ func TestWarlockSiphonLifeCrits(t *testing.T) {
 		t.Errorf("Siphon Life at 100%% crit: %d crit ticks and %d plain ticks, want only crits", metrics.CritTicks, metrics.Ticks)
 	}
 }
+
+// TestWarlockCurseOfRecklessnessLands checks that the warlock's own Curse of Recklessness goes on
+// the target and stays for its 2 min (the Curse of Recklessness duty presets keep it up).
+func TestWarlockCurseOfRecklessnessLands(t *testing.T) {
+	sim, lock := newWarlockSim(t, "", &proto.WarlockOptions{})
+	target := lock.CurrentTarget
+
+	at(sim, 0.5, func(sim *core.Simulation) {
+		lock.AddStatDynamic(sim, stats.SpellHit, 20*core.SpellHitRatingPerHitChance)
+		castNow(t, sim, lock, lock.CurseOfRecklessness)
+	})
+	at(sim, 60, func(sim *core.Simulation) {
+		if !lock.CurseOfRecklessnessAuras.Get(target).IsActive() {
+			t.Errorf("Curse of Recklessness not up 59.5 sec after the cast")
+		}
+	})
+	runSim(sim)
+}
