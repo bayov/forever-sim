@@ -1,0 +1,545 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceNightElf",
+            "class": "ClassDruid",
+            "equipment": {
+              "items": [
+                {
+                  "id": 998001,
+                  "enchant": 1509
+                },
+                {
+                  "id": 998002,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 998003
+                },
+                {
+                  "id": 998004
+                },
+                {
+                  "id": 998005,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 998006,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 998007,
+                  "enchant": 1248645
+                },
+                {
+                  "id": 998008
+                },
+                {
+                  "id": 998009,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 998010,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 998011
+                },
+                {
+                  "id": 998012
+                },
+                {
+                  "id": 998014
+                },
+                {
+                  "id": 998015
+                },
+                {
+                  "id": 998013,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 272430
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "mainHandImbue": "WizardOil",
+              "defaultPotion": "MajorSpellblastingPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages",
+              "naturePowerBuff": "ElixirOfNaturePower"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "5502220115501351-03-505",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9912
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 998015
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.1s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 250937
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.1s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259799
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.1s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Racials, trinkets, potions and runes."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259799
+                      }
+                    },
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 998015
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellTimeToReady": {
+                                  "spellId": {
+                                    "itemId": 998015
+                                  }
+                                }
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "math": {
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "op": "OpSub",
+                                  "rhs": {
+                                    "const": {
+                                      "val": "10s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "delay": {
+                                    "spellTimeToReady": {
+                                      "spellId": {
+                                        "itemId": 998015
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "spellId": 1259799
+                                  }
+                                }
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Elune's Light with the trinket, unless waiting for it would lose a use."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9907
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 11717
+                                  },
+                                  "sourceUnit": {
+                                    "type": "CurrentTarget"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraRemainingTime": {
+                                  "auraId": {
+                                    "spellId": 9907
+                                  },
+                                  "sourceUnit": {
+                                    "type": "CurrentTarget"
+                                  }
+                                }
+                              },
+                              "op": "OpLt",
+                              "rhs": {
+                                "const": {
+                                  "val": "1.5s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Faerie Fire on the target, refreshed before it drops, unless a Curse of Recklessness holds the slot (Faerie Fire duty)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24977
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 24977
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "8s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9835
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 9835
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "8s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Moonfire whenever its dot is down."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9876
+                      }
+                    },
+                    "condition": {
+                      "auraIsActive": {
+                        "auraId": {
+                          "spellId": 16870
+                        }
+                      }
+                    }
+                  },
+                  "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9835
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "remainingTime": {}
+                        },
+                        "op": "OpLt",
+                        "rhs": {
+                          "math": {
+                            "lhs": {
+                              "spellCastTime": {
+                                "spellId": {
+                                  "spellId": 9912
+                                }
+                              }
+                            },
+                            "op": "OpAdd",
+                            "rhs": {
+                              "const": {
+                                "val": "1.5s"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Moonfire when a Wrath would not land before the end."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9912
+                      }
+                    }
+                  },
+                  "notes": "Wrath."
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 30,
+            "balanceDruid": {
+              "options": {
+                "innervateTarget": {
+                  "type": "Self"
+                }
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved"
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": false,
+      "curseOfElements": true,
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": false,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ]
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

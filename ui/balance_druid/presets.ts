@@ -31,7 +31,9 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import Balance from './apls/balance.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
+import Level60FaerieFireAPLJSON from './apls/level60_ff.apl.json';
 import Level60WrathAPLJSON from './apls/level60_wrath.apl.json';
+import Level60WrathFaerieFireAPLJSON from './apls/level60_wrath_ff.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticWrathGearJSON from './gear_sets/level60_phase1_synthetic_wrath.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
@@ -128,8 +130,26 @@ export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Level 60',
 });
+// Faerie Fire duty (standards 23): the moonkin that keeps Faerie Fire on the boss for the raid.
+// The Level 60 rotations leave it to the raid's debuff; these cast it first after the pull and
+// again once it has under 1.5 sec left. Forever's Faerie Fire and Curse of Recklessness share the
+// minor armor slot (standards 20), so the line waits while a curse holds it, and the duty's cost
+// shows with the raid's Faerie Fire and Curse of Recklessness both off. The moonkin gets nothing
+// from the armor itself, so the duty costs its GCDs: 33.7 / 31.5 / 29.1 DPS at 120 / 180 / 300
+// sec for Level 60 (802.0 / 799.9 / 791.4), 32.0 / 29.4 / 27.6 for Level 60 Wrath (755.0 /
+// 757.1 / 754.8), 20,000 iterations. The knob search kept the rest of both rotations.
+export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
+	tooltip:
+		"The Level 60 rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
+	group: 'Level 60',
+});
+export const APLLevel60WrathFaerieFire = PresetUtils.makePresetAPLRotation('Level 60 Wrath (Faerie Fire duty)', Level60WrathFaerieFireAPLJSON, {
+	tooltip:
+		"The Level 60 Wrath rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
+	group: 'Level 60',
+});
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60, APLLevel60Wrath, DefaultBalance],
+	[Phase.Phase1]: [APLLevel60, APLLevel60FaerieFire, APLLevel60Wrath, APLLevel60WrathFaerieFire, DefaultBalance],
 };
 
 export const DefaultAPL = APLPresets[Phase.Phase1][0];
@@ -292,6 +312,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
+// The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
+// Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
+// so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Level 60 (Faerie Fire duty)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
 // The Level 60 build, 829.8 / 827.0 / 817.7 at 120 / 180 / 300 sec. Every race a druid can be
 // under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
 //
@@ -315,6 +345,19 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
+export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 60 (Faerie Fire duty)', {
+	group: 'Level 60',
+	tooltip:
+		"The Level 60 build keeping Faerie Fire on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60FaerieFire,
+	encounter: EncounterLevel60FaerieFireDuty,
+	race: Race.RaceNightElf,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+});
 export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wrath', {
 	group: 'Level 60',
 	tooltip: 'The Level 60 build with Wrath as the only filler.',
@@ -322,6 +365,19 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wra
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
 	encounter: EncounterLevel60,
+	race: Race.RaceNightElf,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+});
+export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Level 60 Wrath (Faerie Fire duty)', {
+	group: 'Level 60',
+	tooltip:
+		"The Level 60 Wrath build keeping Faerie Fire on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
+	gear: GearLevel60Phase1SyntheticWrath,
+	talents: TalentsLevel60Wrath,
+	rotation: APLLevel60WrathFaerieFire,
+	encounter: EncounterLevel60FaerieFireDuty,
 	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,

@@ -165,3 +165,40 @@ func TestForeverTigersFuryRemoved(t *testing.T) {
 		t.Errorf("Physical damage with Tiger's Fury %.4f, want %.4f", got, physical*1.15)
 	}
 }
+
+// Faerie Fire duty (standards 23): the cat casts Faerie Fire (Feral) from Cat Form, free, on a
+// 1 sec global cooldown and a 6 sec cooldown, and it takes 505 armor for 40 sec.
+func TestForeverCatFaerieFireFeral(t *testing.T) {
+	sim, cat := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{})
+	if cat.FaerieFire == nil || cat.FaerieFire.SpellID != 17392 {
+		t.Fatal("the Forever cat has no Faerie Fire (Feral)")
+	}
+	target := cat.CurrentTarget
+	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
+	target.AddStatDynamic(sim, stats.Armor, 3731)
+	mana := cat.CurrentMana()
+	for i := 0; i < 20 && !cat.FaerieFireAuras.Get(target).IsActive(); i++ {
+		cat.SetGCDTimer(sim, sim.CurrentTime)
+		cat.FaerieFire.CD.Reset()
+		cat.FaerieFire.Cast(sim, target)
+	}
+	aura := cat.FaerieFireAuras.Get(target)
+	if !aura.IsActive() {
+		t.Fatal("Faerie Fire (Feral) never landed")
+	}
+	if got := target.GetStat(stats.Armor); !near(got, 3731-505) {
+		t.Errorf("armor with Faerie Fire (Feral) %.0f, want %d", got, 3731-505)
+	}
+	if aura.Duration.Seconds() != 40 {
+		t.Errorf("Faerie Fire (Feral) lasts %s, want 40s", aura.Duration)
+	}
+	if got := cat.CurrentMana(); !near(got, mana) {
+		t.Errorf("Faerie Fire (Feral) cost %.0f mana, want 0", mana-got)
+	}
+	if got := cat.FaerieFire.CD.Duration.Seconds(); got != 6 {
+		t.Errorf("Faerie Fire (Feral) cooldown %.0f sec, want 6", got)
+	}
+	if got := cat.FaerieFire.DefaultCast.GCD.Seconds(); got != 1 {
+		t.Errorf("Faerie Fire (Feral) global cooldown %.1f sec, want 1", got)
+	}
+}

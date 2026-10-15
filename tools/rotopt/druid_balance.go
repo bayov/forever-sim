@@ -20,6 +20,9 @@ var (
 	druidClearcasting = spellID(16870)
 	druidEclipse      = spellID(408255)
 	druidInnervate    = spellID(29166)
+	druidFaerieFire   = spellID(9907)
+	// The raid's Curse of Recklessness on the target (sim/core/debuffs.go).
+	druidCoRAura = spellID(11717)
 )
 
 func (druidBalance) Knobs() []Knob {
@@ -63,6 +66,11 @@ func (druidBalance) Knobs() []Knob {
 		// adds seconds to that cast time.
 		{Name: "endMoonfire", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "endMoonfireSlack", Default: 0, Min: 0, Max: 3, Step: 0.5},
+		// Faerie Fire duty (standards 23), 0/1: keep Faerie Fire on the target, cast again once it
+		// has less than ffRefresh seconds left. ffPos 0 puts it ahead of the dots, 1 after them.
+		{Name: "faerieFire", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "ffRefresh", Default: 1.5, Min: 0, Max: 4, Step: 0.5},
+		{Name: "ffPos", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -88,6 +96,14 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(elunesLight, holdFor(elunesLight, itemID(druid.BalanceSyntheticSpellPowerTrinket)),
 			"Elune's Light with the trinket, unless waiting for it would lose a use."))
 	}
+	// Forever's Faerie Fire and Curse of Recklessness share the minor armor slot (standards 20), and
+	// the sim won't put ours up while a Curse of Recklessness holds it.
+	ffItem := cast(druidFaerieFire, and(not(targetAuraIsActive(druidCoRAura)),
+		lt(targetAuraRemainingTime(druidFaerieFire), seconds(k["ffRefresh"]))),
+		"Faerie Fire on the target, refreshed before it drops, unless a Curse of Recklessness holds the slot (Faerie Fire duty).")
+	if k["faerieFire"] == 1 && k["ffPos"] == 0 {
+		items = append(items, ffItem)
+	}
 	if k["insectSwarm"] == 1 {
 		items = append(items, cast(insectSwarm, and(not(dotIsActive(insectSwarm)), gt(remainingTime(), seconds(k["dotMinTime"])), manaOK),
 			"Insect Swarm whenever it is down. Without the talent ignore the warning on this line."))
@@ -95,6 +111,9 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 	if k["moonfire"] == 1 {
 		items = append(items, cast(moonfire, and(not(dotIsActive(moonfire)), gt(remainingTime(), seconds(k["dotMinTime"])), manaOK),
 			"Moonfire whenever its dot is down."))
+	}
+	if k["faerieFire"] == 1 && k["ffPos"] == 1 {
+		items = append(items, ffItem)
 	}
 	if k["clearcastStarfire"] == 1 {
 		items = append(items, cast(starfire, auraIsActive(druidClearcasting),

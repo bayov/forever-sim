@@ -32,10 +32,15 @@ gen() {
 # 4.4 / 2.9 / 1.4 ahead for Balance (when a Starfire would not land), 5.9 / 3.8 / 2.2 for the
 # Wrath build (when a Wrath plus 1.5 sec would not).
 gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1"
+# The Faerie Fire duty (standards 23): the same rotation keeping Faerie Fire on the target, cast
+# first after the pull and again once it has under 1.5 sec left. The knob search kept the rest.
+gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,faerieFire=1"
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
 # against 827.0 at 180 sec), on its own talents (5502220115501351-03-505) and gear (Natural Power
 # gloves).
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5"
+# The Wrath build's Faerie Fire duty, the same way.
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5,faerieFire=1"
 # Feral cat on the Level 60 talents (05002-05200332021031212051-05501): Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, no Rake (keeping it
 # up costs 33), Shifting Power at 50 Energy or less but not while a Bite is due (0.6 to 0.9
@@ -46,3 +51,6 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=
 # At the end of the fight: no new Rip in the last 8 sec, and Ferocious Bite at any combo points
 # in the last 2 sec (0.6 to 1.4 together, the rogue's end-of-fight Eviscerate idea).
 gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0"
+# The cat's Faerie Fire duty: Faerie Fire (Feral) from Cat Form, first after the cooldowns and
+# again once it has under 1 sec left. The knob search kept the rest at 120, 180 and 300 sec.
+gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,faerieFire=1"
