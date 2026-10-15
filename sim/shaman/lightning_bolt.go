@@ -30,6 +30,11 @@ var LightningBoltCastTime = [LightningBoltRanks + 1]int32{0, 1500, 2000, 2500, 2
 var LightningBoltManaCost = [LightningBoltRanks + 1]float64{0, 15, 30, 45, 60, 85, 110, 135, 160, 190, 220}
 var LightningBoltLevel = [LightningBoltRanks + 1]int{0, 1, 8, 14, 20, 26, 32, 38, 44, 50, 56}
 
+// Report assumption sham_lb_31plus, user ruling 2026-10-15: rank 10's base damage x1.12, the
+// raise a beta build gave the top playable rank, as the ranks past level 38 fall from 0.61 of
+// Era's damage to 0.44 as if not retuned yet.
+const LightningBoltRank10DamageScale = 1.12
+
 func (shaman *Shaman) registerLightningBoltSpell() {
 	shaman.LightningBolt = make([]*core.Spell, LightningBoltRanks+1)
 	shaman.LightningBoltOverload = make([]*core.Spell, LightningBoltRanks+1)
@@ -46,10 +51,20 @@ func (shaman *Shaman) registerLightningBoltSpell() {
 	}
 }
 
+// LightningBoltBaseDamageAt is a rank's damage range at a level, before spell power.
+func LightningBoltBaseDamageAt(rank int, level int32) (float64, float64) {
+	low := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][0], level)
+	high := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][1], level)
+	if rank == 10 {
+		low *= LightningBoltRank10DamageScale
+		high *= LightningBoltRank10DamageScale
+	}
+	return low, high
+}
+
 func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
 	spellId := LightningBoltSpellId[rank]
-	baseDamageLow := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][0], shaman.Level)
-	baseDamageHigh := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][1], shaman.Level)
+	baseDamageLow, baseDamageHigh := LightningBoltBaseDamageAt(rank, shaman.Level)
 	level := LightningBoltLevel[rank]
 	spellCoeff := shaman.downrankCoefficient(LightningBoltSpellCoef[rank], level)
 	castTime := LightningBoltCastTime[rank]

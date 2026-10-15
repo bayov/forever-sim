@@ -20,6 +20,11 @@ var FrostboltCastTime = [FrostboltRanks + 1]int32{0, 1500, 1800, 2200, 2600, 300
 var FrostboltManaCost = [FrostboltRanks + 1]float64{0, 25, 35, 50, 65, 100, 130, 160, 195, 225, 260, 290}
 var FrostboltLevel = [FrostboltRanks + 1]int{0, 4, 8, 14, 20, 26, 32, 38, 44, 50, 56, 60}
 
+// Report assumption mage_frostbolt10, user ruling 2026-10-15: rank 10's base damage x1.04, half
+// of the 8% beta build 70291 gave the level 20 and 26 ranks, as the high ranks already sit closer
+// to Era and the evidence points both ways.
+const FrostboltRank10DamageScale = 1.04
+
 func (mage *Mage) registerFrostboltSpell() {
 	mage.Frostbolt = make([]*core.Spell, FrostboltRanks+1)
 
@@ -33,10 +38,20 @@ func (mage *Mage) registerFrostboltSpell() {
 	}
 }
 
+// FrostboltBaseDamageAt is a rank's damage range at a level, before spell power.
+func FrostboltBaseDamageAt(rank int, level int32) (float64, float64) {
+	low := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][0], level)
+	high := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][1], level)
+	if rank == 10 {
+		low *= FrostboltRank10DamageScale
+		high *= FrostboltRank10DamageScale
+	}
+	return low, high
+}
+
 func (mage *Mage) getFrostboltConfig(rank int) core.SpellConfig {
 	spellId := FrostboltSpellId[rank]
-	baseDamageLow := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][0], mage.Level)
-	baseDamageHigh := FrostboltScaling[rank].At(FrostboltBaseDamage[rank][1], mage.Level)
+	baseDamageLow, baseDamageHigh := FrostboltBaseDamageAt(rank, mage.Level)
 	spellCoeff := FrostboltSpellCoeff[rank]
 	castTime := FrostboltCastTime[rank]
 	manaCost := FrostboltManaCost[rank]

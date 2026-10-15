@@ -76,6 +76,28 @@ func TestOrcShamanSpellRanks(t *testing.T) {
 	}
 }
 
+// TestOrcShamanRankTuning checks the report assumptions the user ruled on 2026-10-15: Lightning
+// Bolt rank 10 deals 12% more than the client and Earth Shock rank 7 8% more. The ranks below
+// are unchanged.
+func TestOrcShamanRankTuning(t *testing.T) {
+	for _, c := range []struct {
+		name      string
+		at        func(int, int32) (float64, float64)
+		rank      int
+		low, high float64
+	}{
+		{"Lightning Bolt", shaman.LightningBoltBaseDamageAt, 10, 189.92 * 1.12, 211.68 * 1.12},
+		{"Lightning Bolt", shaman.LightningBoltBaseDamageAt, 9, 172.56, 193.44},
+		{"Earth Shock", shaman.EarthShockBaseDamageAt, 7, 293.07 * 1.08, 308.93 * 1.08},
+		{"Earth Shock", shaman.EarthShockBaseDamageAt, 6, 206.66, 219.34},
+	} {
+		low, high := c.at(c.rank, 60)
+		if math.Abs(low-c.low) > 1e-9 || math.Abs(high-c.high) > 1e-9 {
+			t.Errorf("%s rank %d at 60: %.2f to %.2f, want %.2f to %.2f", c.name, c.rank, low, high, c.low, c.high)
+		}
+	}
+}
+
 // TestOrcShamanImbueDamage checks a Flametongue Weapon and a Frostbrand hit at some levels
 // against the Forever client (70338, shaman_audit.md 7.1).
 //

@@ -20,6 +20,10 @@ var SmiteCastTime = [SmiteRanks + 1]int{0, 1500, 2000, 2500, 2500, 2500, 2500, 2
 var SmiteManaCost = [SmiteRanks + 1]float64{0, 20, 30, 60, 95, 140, 185, 230, 280}
 var SmiteLevel = [SmiteRanks + 1]int{0, 1, 6, 14, 22, 30, 38, 46, 54}
 
+// Report assumption priest_smite8_tuning, user ruling 2026-10-15: rank 8's base damage x1.09,
+// half the raise that would bring it to the retuned low ranks' 0.51 of Era (it keeps 0.41 to 0.43).
+const SmiteRank8DamageScale = 1.09
+
 func (priest *Priest) registerSmiteSpell() {
 	priest.Smite = make([]*core.Spell, SmiteRanks+1)
 
@@ -32,10 +36,20 @@ func (priest *Priest) registerSmiteSpell() {
 	}
 }
 
+// SmiteBaseDamageAt is a rank's damage range at a level, before spell power.
+func SmiteBaseDamageAt(rank int, level int32) (float64, float64) {
+	low := SmiteScaling[rank].At(SmiteBaseDamage[rank][0], level)
+	high := SmiteScaling[rank].At(SmiteBaseDamage[rank][1], level)
+	if rank == 8 {
+		low *= SmiteRank8DamageScale
+		high *= SmiteRank8DamageScale
+	}
+	return low, high
+}
+
 func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
 	spellId := SmiteSpellId[rank]
-	baseDamageLow := SmiteScaling[rank].At(SmiteBaseDamage[rank][0], priest.Level)
-	baseDamageHigh := SmiteScaling[rank].At(SmiteBaseDamage[rank][1], priest.Level)
+	baseDamageLow, baseDamageHigh := SmiteBaseDamageAt(rank, priest.Level)
 	spellCoeff := SmiteSpellCoef[rank]
 	castTime := SmiteCastTime[rank]
 	manaCost := SmiteManaCost[rank]

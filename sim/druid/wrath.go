@@ -21,6 +21,11 @@ var WrathManaCost = [WrathRanks + 1]float64{0, 10, 20, 40, 50, 70, 80, 100, 120}
 var WrathCastTime = [WrathRanks + 1]int{0, 1500, 1700, 2000, 2000, 2000, 2000, 2000, 2000}
 var WrathLevel = [WrathRanks + 1]int{0, 1, 6, 14, 22, 30, 38, 46, 54}
 
+// Report assumption druid_wrath8_tuning, user ruling 2026-10-15: rank 8's base damage x1.085,
+// half the raise that would bring it to the level 30 rank's 0.42 of Era (beta build 70291
+// retuned ranks 1 to 5 only, and the higher ranks keep 0.34 to 0.36).
+const WrathRank8DamageScale = 1.085
+
 func (druid *Druid) registerWrathSpell() {
 	druid.Wrath = make([]*DruidSpell, WrathRanks+1)
 
@@ -33,10 +38,20 @@ func (druid *Druid) registerWrathSpell() {
 	}
 }
 
+// WrathBaseDamageAt is a rank's damage range at a level, before spell power.
+func WrathBaseDamageAt(rank int, level int32) (float64, float64) {
+	low := WrathScaling[rank].At(WrathBaseDamage[rank][0], level)
+	high := WrathScaling[rank].At(WrathBaseDamage[rank][1], level)
+	if rank == 8 {
+		low *= WrathRank8DamageScale
+		high *= WrathRank8DamageScale
+	}
+	return low, high
+}
+
 func (druid *Druid) newWrathSpellConfig(rank int) core.SpellConfig {
 	spellId := WrathSpellId[rank]
-	baseDamageLow := WrathScaling[rank].At(WrathBaseDamage[rank][0], druid.Level)
-	baseDamageHigh := WrathScaling[rank].At(WrathBaseDamage[rank][1], druid.Level)
+	baseDamageLow, baseDamageHigh := WrathBaseDamageAt(rank, druid.Level)
 	spellCoeff := WrathSpellCoeff[rank]
 	manaCost := WrathManaCost[rank]
 	castTime := WrathCastTime[rank]

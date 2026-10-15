@@ -187,6 +187,32 @@ func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
 	}
 }
 
+// The report assumptions the user ruled on 2026-10-15: Ice Lance takes SoD's 42.9% of spell power
+// on every rank, and Frostbolt rank 10 deals 4% more than the client (rank 9 is unchanged).
+func TestMageRankTuning(t *testing.T) {
+	_, mage := newMageSim(t, "--055500033100130122")
+	for rank, spell := range mage.IceLance {
+		if spell == nil {
+			continue
+		}
+		if got := spell.BonusCoefficient; math.Abs(got-0.429) > 1e-9 {
+			t.Errorf("Ice Lance rank %d coefficient %v, want 0.429", rank, got)
+		}
+	}
+	for _, c := range []struct {
+		rank      int
+		low, high float64
+	}{
+		{10, 382.44 * 1.04, 412.76 * 1.04},
+		{9, 305.42, 331.38},
+	} {
+		low, high := FrostboltBaseDamageAt(c.rank, 60)
+		if math.Abs(low-c.low) > 1e-9 || math.Abs(high-c.high) > 1e-9 {
+			t.Errorf("Frostbolt rank %d at 60: %.2f to %.2f, want %.2f to %.2f", c.rank, low, high, c.low, c.high)
+		}
+	}
+}
+
 // The staff imbue scrolls add their stat only on a staff.
 func TestMageStaffImbue(t *testing.T) {
 	for _, tc := range []struct {
