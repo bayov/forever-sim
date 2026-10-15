@@ -401,7 +401,11 @@ func main() {
 			setup: setup, template: template, durations: j.durations,
 			iterations: int32(*confirmIterations), cache: map[string]result{}, survival: *survival,
 		}
-		fmt.Printf("%gs: %s\n", j.durations, confirm.score(best))
+		label := fmt.Sprintf("%gs", j.durations)
+		if setup.request.Encounter.GetLeveling() != nil {
+			label = "session"
+		}
+		fmt.Printf("%s: %s\n", label, confirm.score(best))
 		fmt.Printf("  start %s\n  best  %s\n  sim runs %d\n", confirm.score(start), best, s.evals)
 
 		if *outDir != "" {
