@@ -75,7 +75,13 @@ func (priest *Priest) newMindFlaySpellConfig(rank int) core.SpellConfig {
 				dot.Snapshot(target, baseDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				multiplier := priest.ImprovedMindFlayTickMultiplier(dot.TickCount)
+				dot.SnapshotAttackerMultiplier *= multiplier
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				dot.SnapshotAttackerMultiplier /= multiplier
+				if dot.TickCount == dot.NumberOfTicks {
+					priest.triggerDarkInspiration(sim)
+				}
 			},
 		},
 

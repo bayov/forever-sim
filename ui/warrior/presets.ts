@@ -252,8 +252,10 @@ export const DefaultTalents = TalentsLevel60Fury;
 
 // The raid damage in the Level 60 encounters (PresetUtils.LEVEL_60_RAID_DAMAGE, the same for every
 // spec): 2 direct hits a minute at random times, 1500 damage each. Under Forever each gives 4.5
-// Rage (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 3993 health, as if 40% armor took
-// its share), and has Enrage's 30% chance, because Forever's Enrage fires on any damage taken.
+// Rage in any stance (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 3993 health, as if
+// 40% armor took its share, before any of our own damage taken modifiers), and has Enrage's 30%
+// chance, because Forever's Enrage fires on any damage taken. Since our stance and Recklessness no
+// longer change it (2026-10-16), Fury moved by -0.2 to -0.6.
 // At 180 sec (10,000 iterations, the report requests) that is +3.4 on Fury (1040.4 to 1043.8),
 // +11.0 on Fury two-hand (921.0 to 932.0), -1.1 on Arms (945.6 to 944.5: Slam's cast is pushed
 // back) and -0.1 on Arms vs Dragonkin; at 10 hits a minute +16.0, +47.5, -4.1 and -3.3. With
@@ -364,13 +366,14 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// Undead is the best race for dual wield Fury (Touch of the Grave rolls on every ability press,
-// Hamstring included), Orc for Arms and two-hand Fury, whose two-handers are axes (Axe Specialization),
-// with Undead next. See sim-status.md for the race table. Engineering is for the Goblin Sapper Charge.
+// Orc is the best race for every warrior build since client 70425, whose Savage gives 1% crit with
+// any weapon (it was Axe Specialization), and Human, whose Ruthless gives 2% crit with any weapon,
+// is the best Alliance race. No racial depends on the weapon any more. See sim-status.md for the
+// race table. Engineering is for the Goblin Sapper Charge.
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -474,8 +477,14 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // two-hand Fury and 5.4 / 1.6 / 1.6 on Arms; the numbers above include it.
 //
 // The Battle Shout duty builds (standards 23) shout for the party themselves, on the raid without
-// its Battle Shout: Fury 1090.6 / 1055.7 / 1034.2, two-hand Fury 961.9 / 925.3 / 894.7 and Arms
-// 962.4 / 949.1 / 923.7, so the duty costs 1.3 / 2.2 / 1.8, 0.6 / 0.4 / 0.7 and 1.1 / 1.9 / 1.7.
+// its Battle Shout.
+//
+// On 2026-10-16 (client 70425's racials, the raid damage hits; 20,000 iterations, 120 / 180 / 300
+// sec): Fury (Orc) 1093.5 / 1055.1 / 1031.4 (Undead, its race before, 1078.0 / 1043.8 / 1021.5),
+// two-hand Fury (Orc) 973.5 / 932.3 / 903.6, Arms (Orc) 959.1 / 944.2 / 920.4 and Arms vs Dragonkin
+// (Orc) 1000.0 / 982.4 / 958.3. On Battle Shout duty: Fury 1092.6 / 1053.2 / 1029.8, two-hand Fury
+// 972.2 / 929.4 / 901.9 and Arms 959.4 / 942.5 / 918.2, so the duty costs 0.9 / 1.9 / 1.6,
+// 1.3 / 2.9 / 1.7 and -0.3 / 1.7 / 2.2. The numbers above this paragraph are from before.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -483,7 +492,7 @@ export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60Fury,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -496,7 +505,7 @@ export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Level 60
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60FuryShout,
 	encounter: EncounterLevel60BattleShoutDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

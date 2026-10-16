@@ -8,6 +8,16 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled: 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.70425 (2026-10-16)
+
+The sim is on 70425 for the warlock since 2026-10-16 (wago.tools DB2 tables of builds 1.60.1.70338 and 1.60.1.70425 diffed: TraitNode, TraitNodeEntry, TraitDefinition, TraitDefinitionEffectPoints, CurvePoint, TraitCond, TraitEdge, SpellEffect, SpellMisc, SpellCooldowns, SpellPower, SpellLevels, SpellAuraOptions, SpellClassOptions).
+
+- Talents: Malediction (1225177) is gone. Its node (105923, row 2 column 1) is Grim Reach now (18218, 2 ranks, 10 / 20% range on the Affliction spells, nothing for damage). Shadow Mastery is 2% a rank (2 / 4 / 6 / 8 / 10%) on both its effects, the direct damage of Shadow Bolt, Shadowburn and Death Coil and the Affliction damage over time spells; it was 1% a rank. No other warlock talent curve, gate or prerequisite changed.
+- Curse of Recklessness, every rank: the dummy effect (aura 4, 20 / 45 / 65 / 90, the old target attack power) is gone. Its slot holds the fear prevention (aura 92) that was effect 2. The armor (aura 674, 175 / 285 / 395 / 505) is unchanged, so the raid's Curse of Recklessness in the sim (505 armor, no attack power, the minor armor slot shared with Faerie Fire) holds.
+- Demon Skin and Demon Armor take their armor through aura 674 in place of 22 with the same values. 70425 moved about 280 armor effects (Frost and Ice Armor, Mark of the Wild, Devotion Aura, item armor) to aura 674, the client's armor aura, so nothing changes for the sim.
+- Siphon Life's ticks can crit by the client now (SPELL_ATTR8_PERIODIC_CAN_CRIT), which the sim already did (forever-bugs #303).
+- No damage change: Bane of Doom, Shadow Bolt, Immolate, Corruption, Bane of Agony, Conflagrate, Incinerate and Death Coil are byte-identical. The rest is crowd control flags, Destructive Reach and Amplify Curse masks and Ritual / Portal of Summoning.
+
 ## Beta client 1.60.1.70338 (2026-10-12)
 
 The beta client's warlock tree (hyjal.cc's bundle of build 1.60.1.69876, `tools/forever_talents/client/warlock.json` in the sim repo) and spells (wago.tools DB2 tables of build 1.60.1.70338, ForeverChanges' talent calculator and spellbook for the same build), against the BlizzCon data below. The sim follows the client since 2026-10-12, and `tools/forever_talents/data/warlock.json` is generated from the client tree. The per-talent text further down is superseded where it differs.
@@ -98,13 +108,10 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 2 (5 points)
 
-- **Malediction** (5 ranks, column 1) [NEW] [ranks settled: 70338 trait curves]
-  - Rank 1: Increases all periodic damage done by your Warlock spells by 1%.
-  - Rank 2: Increases all periodic damage done by your Warlock spells by 2%.
-  - Rank 3: Increases all periodic damage done by your Warlock spells by 3%.
-  - Rank 4: Increases all periodic damage done by your Warlock spells by 4%.
-  - Rank 5: Increases all periodic damage done by your Warlock spells by 5%.
-  - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
+- **Grim Reach** (2 ranks, column 1) [client 1.60.1.70425: replaces Malediction]
+  - Rank 1: Increases the range of your Affliction spells by 10%.
+  - Rank 2: Increases the range of your Affliction spells by 20%.
+  - Note: Malediction (5 ranks, 1% a rank to all periodic damage done by your Warlock spells) held this slot up to 1.60.1.70338.
 - **Soul Harvesting** (2 ranks, column 2) [NEW] [ranks settled: 70338 trait curves]
   - Rank 1: You gain Soul Harvest for 10 sec if a victim is killed while afflicted with your Drain Soul. Soul Harvest allows your Mana to regenerate at 50% of normal speed while you are casting spells, and grants a 50% increase to your Mana regeneration.
   - Rank 2: You gain Soul Harvest for 20 sec if a victim is killed while afflicted with your Drain Soul. Soul Harvest allows your Mana to regenerate at 100% of normal speed while you are casting spells, and grants a 100% increase to your Mana regeneration.
@@ -181,12 +188,12 @@ Demon Skin, Summon Imp, Create Healthstone (Minor), Summon Voidwalker, Health Fu
 
 #### Row 6 (25 points)
 
-- **Shadow Mastery** (5 ranks, column 3) [CHANGED] [ranks settled: 70338 trait curves]
-  - Rank 1: Increases the damage dealt or life drained by your Shadow spells by 1%.
-  - Rank 2: Increases the damage dealt or life drained by your Shadow spells by 2%.
-  - Rank 3: Increases the damage dealt or life drained by your Shadow spells by 3%.
-  - Rank 4: Increases the damage dealt or life drained by your Shadow spells by 4%.
-  - Rank 5: Increases the damage dealt or life drained by your Shadow spells by 5%.
+- **Shadow Mastery** (5 ranks, column 3) [CHANGED] [ranks settled: 70425 trait curves, 1% a rank up to 70338]
+  - Rank 1: Increases the damage dealt or life drained by your Shadow spells by 2%.
+  - Rank 2: Increases the damage dealt or life drained by your Shadow spells by 4%.
+  - Rank 3: Increases the damage dealt or life drained by your Shadow spells by 6%.
+  - Rank 4: Increases the damage dealt or life drained by your Shadow spells by 8%.
+  - Rank 5: Increases the damage dealt or life drained by your Shadow spells by 10%.
   - Classic (5 ranks):
     - Rank 1: Increases the damage dealt or life drained by your Shadow spells by 2%.
     - Rank 2: Increases the damage dealt or life drained by your Shadow spells by 4%.

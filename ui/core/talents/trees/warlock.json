@@ -107,39 +107,28 @@
         "icon": "spell_shadow_abominationexplosion"
       },
       {
-        "fieldName": "malediction",
+        "fieldName": "grimReach",
         "location": {
           "rowIdx": 1,
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          18218,
+          18218
         ],
-        "maxPoints": 5,
-        "name": "Malediction",
-        "description": "Increases all periodic damage done by your Warlock spells by {0}%.",
+        "maxPoints": 2,
+        "name": "Grim Reach",
+        "description": "Increases the range of your Affliction spells by {0}%.",
         "ranks": [
           [
-            1
+            10
           ],
           [
-            2
-          ],
-          [
-            3
-          ],
-          [
-            4
-          ],
-          [
-            5
+            20
           ]
         ],
-        "icon": "spell_shadow_curseofachimonde"
+        "icon": "spell_shadow_callofbone",
+        "notSimulated": true
       },
       {
         "fieldName": "soulHarvest",
@@ -246,8 +235,7 @@
             70
           ]
         ],
-        "icon": "spell_shadow_fingerofdeath",
-        "notSimulated": true
+        "icon": "spell_shadow_fingerofdeath"
       },
       {
         "fieldName": "amplifyCurse",
@@ -451,19 +439,19 @@
         "description": "Increases the damage dealt or life drained by your Shadow spells by {0}%.",
         "ranks": [
           [
-            1
-          ],
-          [
             2
-          ],
-          [
-            3
           ],
           [
             4
           ],
           [
-            5
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
           ]
         ],
         "icon": "spell_shadow_shadetruesight"
@@ -1363,8 +1351,7 @@
             70
           ]
         ],
-        "icon": "spell_fire_lavaspawn",
-        "notSimulated": true
+        "icon": "spell_fire_lavaspawn"
       },
       {
         "fieldName": "agonizingFlames",

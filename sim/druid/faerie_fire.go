@@ -40,7 +40,14 @@ func (druid *Druid) registerFaerieFireSpell() {
 			return core.FaerieFireFeralAura(target)
 		})
 	}
-	flags |= core.SpellFlagAPL | core.SpellFlagResetAttackSwing
+	flags |= core.SpellFlagAPL
+	// Forever's Faerie Fire no longer resets the swing timer (development notes, 2026-10-01,
+	// build 1.60.1.70170): the client dropped InterruptFlags 8, the auto attack reset, from
+	// every caster rank (770, 778, 9749, 9907); Faerie Fire (Feral) 17392 has none in any
+	// Forever build.
+	if !druid.Env.IsForever() {
+		flags |= core.SpellFlagResetAttackSwing
+	}
 
 	druid.FaerieFire = druid.RegisterSpell(formMask, core.SpellConfig{
 		SpellCode:   spellCode,

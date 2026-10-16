@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 1,
   "race": "Undead",
-  "talents": "525030231305001001-00505113002-3",
+  "talents": "525035231030001001-30505110002-3",
   "treeNames": [
     "Discipline",
     "Holy",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_smite",
   "apl": "level60_smite",
   "published": {
-    "dps": 716.5,
-    "source": "rotation audit 19b: end-of-fight Shadow Word: Death (2026-10-15)"
+    "dps": 710.6,
+    "source": "priest client 70425 port (DP 24 s, talents and knobs re-searched with raid hits), 2026-10-16"
   },
   "verify": {
-    "dps": 716.5,
+    "dps": 710.6,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1 (verify.py)"
+    "note": "180 s, 20000 iterations, seed 1 (seed 1000001: 710.5)"
   },
-  "summary": "A Holy damage priest: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light) casting Smite and Holy Fire. Shipped as its own spec on its own hit-free gear, 17% behind Shadow at 180 s because Smite is a mana-hungry filler.",
+  "summary": "A Holy damage priest: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus) casting Smite and Holy Fire. Shipped as its own spec on its own hit-free gear, 23% behind Shadow at 180 s because Smite is a mana-hungry filler.",
   "keyTalents": [
     "Power in Light",
     "Divine Fury",
@@ -34,16 +34,16 @@
     "Searing Light",
     "Holy Specialization",
     "Twin Disciplines",
-    "Mental Agility"
+    "Twilight Focus"
   ],
   "rotation": [
     "Pre-pull: Smite at -2 s that lands at the pull, the on-use trinket at -0.1 s",
     "Dark Sacrifice (Undead) below 40% mana; Power Infusion on cooldown; racials and trinkets on cooldown",
-    "Inner Focus right before Holy Fire",
     "Holy Fire whenever its DoT is down (keeps Power in Light up)",
     "Shadow Word: Pain whenever it is down (9+ s left)",
-    "Devouring Plague whenever it is down (12+ s left) and mana is at least 40%",
+    "Devouring Plague whenever it is down (12+ s left) and mana is at least 60%",
     "Shadow Word: Death when a Smite would not land before the fight ends",
+    "Inner Focus on cooldown, for the next Smite",
     "Rank 8 Smite while mana lasts the fight at 35 mana a second",
     "Rank 7 Smite after that"
   ],
@@ -64,13 +64,15 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Mana-bound: 725.5 / 716.5 / 645.7 at 120 / 180 / 300 s (Undead)",
+    "Mana-bound: 723.2 / 710.6 / 641.0 at 120 / 180 / 300 s (Undead); Devouring Plague's 24 s cooldown (client 70425) only pays above 60% mana",
     "Smite VIII's base damage ×1.09, halfway to rank 4's ratio to Era (the 31+ ranks look partly un-retuned); the client has ×1.00",
     "Forever's downrank penalty modeled (5% of the coefficient per level past 17 below the caster), so the fallback Smite is rank 7, which keeps its full coefficient",
     "Penance and Mind Blast dropped by the search (Penance: 385 mana for three 92-damage bolts); Shadow Word: Death only at the end of the fight",
     "Synthetic gear, Vestments of Conviction 2-piece only (4/5-piece +4.7)",
     "Kreeg's Stout Beatdown left out as a Dire Maul item; Elixir of Sages left out by the one-crit-elixir ruling (+6.4)",
-    "Dark Sacrifice gives 1600 + Spirit mana (tooltip adds Spirit; client data says 1600)"
+    "Dark Sacrifice gives 1600 + Spirit mana (tooltip adds Spirit; client data says 1600)",
+    "Twilight Focus 3/3 (70% chance to ignore pushback from the raid hits) in place of Inspiration",
+    "Gnome is the best Alliance race (701.0 at 180 s)"
   ],
   "notes": "mksettings request plus ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. Gear level60_phase1_smite, apl level60_smite."
 }
