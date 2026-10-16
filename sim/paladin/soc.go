@@ -11,6 +11,12 @@ import (
 // - A judgement that has a flat damage roll, and scales with spellpower.
 // - A 7ppm on-hit proc with a 1s ICD that deals 70% weapon damage and scales with spellpower.
 
+// SealOfCommandPPM is Seal of Command's proc rate, in procs a minute (report assumption
+// pal_soc_ppm, pending). The client (1.60.1.70425, aura options of 20375 / 20915-20920) gives the
+// aura a 100% chance on melee hits with a 1 sec recovery and no procs-per-minute entry, so the
+// server's script sets the rate, as in Classic. The sim keeps Classic's 7 a minute.
+const SealOfCommandPPM = 7.0
+
 // Judgement of Command has some unusual behaviour in classic:
 // - The judgement operates via a dummy spell, that likely figures out whether to apply
 //   half damage if the target is not stunned or not (counter to the tooltip, the base damage only is
@@ -53,7 +59,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 		{level: 60, spellID: 20920, manaCost: 210, scaleLevel: 60, proc: proc{spellID: 20947}, judge: judge{spellID: 20966, minDamage: 339, maxDamage: 373, scale: 6.1}},
 	}
 
-	ppmm := paladin.AutoAttacks.NewPPMManager(7, core.ProcMaskMelee)
+	ppmm := paladin.AutoAttacks.NewPPMManager(SealOfCommandPPM, core.ProcMaskMelee)
 	improvedSeals := paladin.improvedSeals()
 
 	icd := core.Cooldown{

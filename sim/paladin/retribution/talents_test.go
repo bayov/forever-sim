@@ -146,3 +146,52 @@ func TestSealOfRighteousnessSpellPowerOnce(t *testing.T) {
 		})
 	}
 }
+
+// TestReckoningCharges checks Reckoning since client 70425 (spell 1326084): a crit taken stores a
+// charge (5/5: always, at most once every 1.5 sec) without touching the swing timer, and the next
+// main-hand swing spends it.
+func TestReckoningCharges(t *testing.T) {
+	sim, ret := retSim(t, "-00000000000005", arcaniteReaper)
+	trigger := ret.GetAura("Reckoning Trigger")
+	if trigger == nil {
+		t.Fatalf("no Reckoning trigger with Reckoning 5/5")
+	}
+	mh := ret.AutoAttacks.MHAuto()
+	crit := mh.NewResult(&ret.Unit)
+	crit.Outcome = core.OutcomeCrit
+	swingAt := ret.AutoAttacks.MainhandSwingAt()
+	trigger.OnSpellHitTaken(trigger, sim, mh, crit)
+	trigger.OnSpellHitTaken(trigger, sim, mh, crit) // inside the 1.5 sec cooldown
+	stored := ret.GetAuraByID(core.ActionID{SpellID: 21919})
+	if stored == nil || stored.GetStacks() != 1 {
+		t.Fatalf("stored extra attacks after two crits inside 1.5 sec = %v, want 1", stored)
+	}
+	if got := ret.AutoAttacks.MainhandSwingAt(); got != swingAt {
+		t.Errorf("a stored charge moved the next swing from %s to %s", swingAt, got)
+	}
+	for sim.CurrentTime <= swingAt {
+		sim.Step()
+	}
+	if got := stored.GetStacks(); got != 0 {
+		t.Errorf("stored extra attacks after the next swing = %d, want 0", got)
+	}
+}
+
+// TestShieldSpecializationMana checks Shield Specialization 3/3's mana since client 70425
+// (spell 1310925: 4%, 6% before): a block restores 4% of maximum mana.
+func TestShieldSpecializationMana(t *testing.T) {
+	sim, ret := retSim(t, "-00000003", arcaniteReaper)
+	aura := ret.GetAura("Shield Specialization Mana")
+	if aura == nil {
+		t.Fatalf("no Shield Specialization mana aura with 3/3")
+	}
+	ret.SpendMana(sim, 0.5*ret.MaxMana(), ret.NewManaMetrics(core.ActionID{OtherID: 1}))
+	before := ret.CurrentMana()
+	mh := ret.AutoAttacks.MHAuto()
+	block := mh.NewResult(&ret.Unit)
+	block.Outcome = core.OutcomeBlock
+	aura.OnSpellHitTaken(aura, sim, mh, block)
+	if got, want := ret.CurrentMana()-before, 0.04*ret.MaxMana(); got < want-0.01 || got > want+0.01 {
+		t.Errorf("a block restored %.1f mana, want %.1f (4%% of maximum)", got, want)
+	}
+}
