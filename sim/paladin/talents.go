@@ -43,9 +43,10 @@ func (paladin *Paladin) ApplyTalents() {
 
 	// Champion of the Light turns Intellect into spell damage and healing.
 	//
-	// The 2026-10-01 development notes cut it to 20 / 40 / 60% (it was 33 / 66 / 100%).
+	// The 2026-10-01 development notes cut it to 20 / 40 / 60% (it was 33 / 66 / 100%), and
+	// client 1.60.1.70425 to 10 / 20 / 30% (trait curve 110350).
 	if paladin.Talents.ChampionOfTheLight > 0 {
-		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, .2, .4, .6}[paladin.Talents.ChampionOfTheLight])
+		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, .1, .2, .3}[paladin.Talents.ChampionOfTheLight])
 	}
 
 	paladin.applyWeaponSpecialization()
