@@ -91,7 +91,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			DamageMultiplier: improvedSoR * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
 			ThreatMultiplier: 1,
 
-			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.5, rank.judge.coeff),
+			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.429, rank.judge.coeff), // client 70425 (0.5 in 70338)
 			BonusCritRating:  paladin.holyPowerCrit(),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

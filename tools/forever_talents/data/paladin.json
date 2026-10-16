@@ -1494,13 +1494,13 @@
           "description": "Increases your spell damage by up to {0}% of your Intellect.",
           "ranks": [
             [
+              10
+            ],
+            [
               20
             ],
             [
-              40
-            ],
-            [
-              60
+              30
             ]
           ],
           "ranksObserved": [

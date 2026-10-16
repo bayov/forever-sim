@@ -1043,9 +1043,9 @@
      "passive": true,
      "icon": "ability_paladin_enlightenedjudgements",
      "desc": {
-      "1": "Increases your spell damage by up to 20% of your Intellect.",
-      "2": "Increases your spell damage by up to 40% of your Intellect.",
-      "3": "Increases your spell damage by up to 60% of your Intellect."
+      "1": "Increases your spell damage by up to 10% of your Intellect.",
+      "2": "Increases your spell damage by up to 20% of your Intellect.",
+      "3": "Increases your spell damage by up to 30% of your Intellect."
      },
      "id": 110882,
      "tooltip": {
