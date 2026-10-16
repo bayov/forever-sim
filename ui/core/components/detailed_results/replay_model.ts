@@ -1,6 +1,6 @@
 import { ResourceType } from '../../proto/api.js';
 import { OtherAction, Stat } from '../../proto/common.js';
-import { ActionId } from '../../proto_utils/action_id.js';
+import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
 import { AuraUptimeLog, CastLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser.js';
 import { SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { formatToNumber } from '../../utils.js';
@@ -279,6 +279,12 @@ const STICKY_LANES = 3;
 const EPSILON = 1e-6;
 // The smallest mana gain the combat text shows, as a share of the mana bar.
 const MIN_MANA_GAIN = 0.01;
+// Small gains of rage or energy, like the +1 Rage of each Unbridled Wrath proc, come many times a
+// second. Gains under this share of the bar that come within the window of the first one go on
+// one line, like MSBT's merged lines. The line shows at the last gain, so it never tells of a
+// gain before it happens.
+const SMALL_GAIN = 0.05;
+const MERGE_WINDOW = 2;
 
 const formatAmount = (amount: number) => formatToNumber(Math.round(amount), { maximumFractionDigits: 0 });
 
@@ -842,27 +848,48 @@ const buildSct = (
 				});
 		});
 
-	resourceLogs.forEach(log => {
-		if (log.isSpend || log.timestamp < 0) return;
-		const label = resourceLabels[log.resourceType];
-		const amount = log.valueAfter - log.valueBefore;
-		if (!label || amount < 1 || regenActions.includes(log.actionId!.otherId)) return;
-		// Small mana gains that come all the time, like Blessing of Wisdom, would bury the rest.
-		const max = bars.find(bar => bar.type == log.resourceType)?.max ?? 0;
-		if (log.resourceType == ResourceType.ResourceTypeMana && amount < max * MIN_MANA_GAIN) return;
+	const gained = (log: ResourceChangedLog) => log.valueAfter - log.valueBefore;
+	const resourceLine = (logs: Array<ResourceChangedLog>) => {
+		const sources = new Set(logs.map(log => log.actionId!.toStringIgnoringTag()));
+		const type = logs[0].resourceType;
 		events.push({
-			time: log.timestamp,
+			time: logs[logs.length - 1].timestamp,
 			side: 'in',
 			kind: 'resource',
-			text: `+${formatAmount(amount)} ${label}`,
-			note: '',
-			actionId: log.actionId!,
-			iconUrl: log.actionId!.iconUrl,
-			logs: [log],
-			color: resourceColors[log.resourceType]!,
+			text: `+${formatAmount(logs.reduce((sum, log) => sum + gained(log), 0))} ${resourceLabels[type]}`,
+			note: logs.length > 1 ? `×${logs.length}` : '',
+			actionId: logs[0].actionId!,
+			// Gains from several sources show the resource's icon.
+			iconUrl: sources.size > 1 ? resourceTypeToIcon[type] : logs[0].actionId!.iconUrl,
+			logs,
+			color: resourceColors[type]!,
 			sticky: false,
 		});
+	};
+	const merging = new Map<ResourceType, Array<ResourceChangedLog>>();
+	resourceLogs.forEach(log => {
+		if (log.isSpend || log.timestamp < 0) return;
+		const amount = gained(log);
+		if (!resourceLabels[log.resourceType] || amount < 1 || regenActions.includes(log.actionId!.otherId)) return;
+		const max = bars.find(bar => bar.type == log.resourceType)?.max ?? 0;
+		// Small mana gains that come all the time, like Blessing of Wisdom, would bury the rest.
+		if (log.resourceType == ResourceType.ResourceTypeMana) {
+			if (amount >= max * MIN_MANA_GAIN) resourceLine([log]);
+			return;
+		}
+		if (amount >= max * SMALL_GAIN) {
+			resourceLine([log]);
+			return;
+		}
+		const batch = merging.get(log.resourceType);
+		if (batch && log.timestamp - batch[0].timestamp <= MERGE_WINDOW) {
+			batch.push(log);
+		} else {
+			if (batch) resourceLine(batch);
+			merging.set(log.resourceType, [log]);
+		}
 	});
+	merging.forEach(resourceLine);
 
 	events.sort((a, b) => a.time - b.time);
 

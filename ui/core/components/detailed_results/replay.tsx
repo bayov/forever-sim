@@ -6,7 +6,7 @@ import { ref } from 'tsx-vanilla';
 import { WOWHEAD_DOMAIN, WOWHEAD_EXPANSION_ENV } from '../../constants/wowhead.js';
 import { ResourceType } from '../../proto/api.js';
 import { ActionId } from '../../proto_utils/action_id.js';
-import { CastLog, DamageDealtLog } from '../../proto_utils/logs_parser.js';
+import { CastLog, DamageDealtLog, ResourceChangedLog } from '../../proto_utils/logs_parser.js';
 import { resourceNames } from '../../proto_utils/names.js';
 import { formatToCompactNumber, formatToNumber } from '../../utils.js';
 import { EventFilter } from './events_filter.js';
@@ -1106,6 +1106,31 @@ export class Replay extends ResultComponent {
 
 	// A line of the combat text: the hits behind it, or the buff or resource we gained.
 	private sctTip(event: SctEvent): Element {
+		// A line of merged resource gains lists each gain.
+		const gains = event.logs.filter((log): log is ResourceChangedLog => log.isResourceChanged());
+		if (gains.length > 1) {
+			const sources = new Set(gains.map(log => log.actionId!.name));
+			return (
+				<div className="timeline-tooltip">
+					<div className="timeline-tooltip-title">
+						<img className="timeline-tooltip-icon" src={event.iconUrl} />
+						<span className="timeline-tooltip-name">{event.text}</span>
+					</div>
+					<div className="timeline-tooltip-meta">
+						{`${gains.length} small gains from ${formatSeconds(gains[0].timestamp)} to ${formatSeconds(event.time)}`}
+					</div>
+					<div className="timeline-tooltip-rows">
+						{gains.map(log =>
+							tooltipRow(
+								`${formatSeconds(log.timestamp)}${sources.size > 1 ? ` ${log.actionId!.name}` : ''}`,
+								`+${formatToNumber(log.valueAfter - log.valueBefore, { maximumFractionDigits: 1 })}`,
+							),
+						)}
+					</div>
+					{sources.size == 1 && this.ingameTooltip(event.actionId)}
+				</div>
+			) as Element;
+		}
 		const hits = event.logs.filter((log): log is DamageDealtLog => log.isDamageDealt());
 		const targets = Array.from(new Set(hits.map(hit => hit.target?.name).filter(Boolean)));
 		const what = event.kind == 'aura' ? 'Gained' : event.kind == 'resource' ? event.text : '';
