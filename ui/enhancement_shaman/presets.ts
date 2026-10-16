@@ -382,10 +382,11 @@ export const APLLevel30PvP = PresetUtils.makePresetAPLRotation('Level 30 PvP', L
 // pulls it with the leveling actions, which do nothing in a single fight. A better rotation
 // from a later optimizer run can replace apls/level30_leveling.apl.json under the same name.
 //
-// What it does is in docs/leveling_sim.md (step 5): it rests to 90% health and 80% mana,
-// looks for the next mob while still fighting and pulls it with rank 1 Earth Shock once it's
-// nearly full, keeps Mana Spring Totem down in the fight, and with two mobs puts down Searing
-// Totem rank 1 and casts Fire Nova. It heals with Lesser Healing Wave below 30% health.
+// What it does is in docs/leveling_sim.md (step 5, pass 9): it rests to 90% health and 80%
+// mana and pulls with Flame Shock. While still fighting it stands and looks for the next mob,
+// from 70% health (50% when its target is nearly dead). It keeps Mana Spring and Strength of
+// Earth Totem down, and with two mobs puts down Searing Totem and casts Fire Nova. It heals
+// with Lesser Healing Wave below 30% health.
 export const APLLevel30Leveling = PresetUtils.makePresetAPLRotation('Level 30 Leveling', Level30LevelingAPLJSON, {
 	tooltip: "The leveling optimizer's best rotation for a solo level 30. It rests, finds the next mob and pulls it, for the Leveling mode.",
 	group: 'Leveling',
@@ -1191,8 +1192,55 @@ export const EPLevel30PvPHighHP = makeLevel30PvPEP(
 		armor: 0.31,
 	},
 );
+// Stat weights for leveling (2026-10-16): what each stat adds to the mobs a solo level 30
+// kills in a 20 min session, in attack power, on the Level 30 Leveling (solo) build. One
+// attack power adds 0.042 mobs a session.
+//
+// Each stat is a direct probe at 20,000 sessions, +10 of it (+5 MP5, +20 spell power, +200
+// armor, +1% hit or crit) against none, with the same random rolls. Under Forever a bonus to
+// melee hit or crit moves the spell one too, so +1% is one bonus, not two. We take the step up,
+// because that's what an upgrade does. Most stats come out the same stepping down, but
+// Stamina doesn't. -10 Stamina costs 1.45 attack power a point and +10 adds 0.86, and +30 adds
+// no more than +20, because Stamina only shortens our rests and we rest to a fixed health.
+// The weapon DPS and the fire and nature split are from the stat weights run (±10).
+//
+// Next to Level 30, Spirit is worth more than four times as much and MP5 three times, while
+// Intellect is worth less. Over a session the rests matter as much as the fight, and Spirit
+// and MP5 shorten them. Hit is for the first 2% (20.9 and then 22.1). The set has none, so the
+// stat weights run can't step it down and reads it low (13.3). Armor is worth little, since
+// mobs at our level barely hurt us between rests.
+export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
+	'Level 30 Leveling',
+	Stats.fromMap(
+		{
+			[Stat.StatStrength]: 1.98,
+			[Stat.StatAgility]: 1.81,
+			[Stat.StatStamina]: 0.85,
+			[Stat.StatIntellect]: 1.79,
+			[Stat.StatSpirit]: 1.84,
+			[Stat.StatAttackPower]: 1,
+			[Stat.StatMeleeHit]: 21.5,
+			[Stat.StatSpellHit]: 21.5,
+			[Stat.StatMeleeCrit]: 14.1,
+			[Stat.StatSpellCrit]: 14.1,
+			[Stat.StatSpellPower]: 1.46,
+			[Stat.StatSpellDamage]: 1.46,
+			[Stat.StatFirePower]: 0.29,
+			[Stat.StatNaturePower]: 1.12,
+			[Stat.StatMP5]: 3.76,
+			[Stat.StatArmor]: 0.06,
+			[Stat.StatBonusArmor]: 0.06,
+		},
+		{
+			[PseudoStat.PseudoStatMainHandDps]: 13.62,
+		},
+	),
+	{ tooltip: 'Stat weights for a solo level 30 grinding mobs of its level, by mobs killed in a session.', group: 'Leveling' },
+);
+
 export const EPPresets = [
 	EPLevel30,
+	EPLevel30Leveling,
 	EPLevel30PvP,
 	EPLevel30PvPHighHP,
 	EPLevel30PvPVsCloth,
@@ -1476,6 +1524,7 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 	gear: GearLevel30p5,
 	talents: TalentsLevel30Leveling,
 	rotation: APLLevel30Leveling,
+	epWeights: EPLevel30Leveling,
 	encounter: EncounterLeveling,
 	race: Race.RaceOrc,
 	level: 30,
