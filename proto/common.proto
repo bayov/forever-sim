@@ -813,6 +813,10 @@ message RaidBuffs {
 
 	// Windfury or Flametongue Totem from another shaman, on the main hand.
 	TotemWeaponBuff totem_weapon_buff = 40;
+
+	// Forever's Salvation (spell 1038, client 1.60.1.70425): 30% less threat for the raid. It's no
+	// longer a Blessing, so it doesn't take a Blessing slot.
+	bool salvation = 41;
 }
 
 // Buffs that affect a single party.

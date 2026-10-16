@@ -438,6 +438,17 @@ export const SanctityAura = makeBooleanRaidBuffInput({
 	showWhen: player => player.hasFactionBuffs(Faction.Alliance) && player.sim.getRuleset() !== Ruleset.RulesetForever,
 });
 
+// Forever's Salvation (client 1.60.1.70425) is a raid buff that no longer takes a Blessing slot.
+// It lowers threat by 30%, so it changes TPS but not DPS.
+export const Salvation = withLabel(
+	makeBooleanRaidBuffInput({
+		actionId: () => ActionId.fromSpellId(1038),
+		fieldName: 'salvation',
+		showWhen: player => player.sim.getRuleset() === Ruleset.RulesetForever,
+	}),
+	'Salvation',
+);
+
 export const Thorns = makeTristateRaidBuffInput({
 	actionId: () => ActionId.fromSpellId(9910),
 	impId: ActionId.fromSpellId(16840),
@@ -1063,9 +1074,8 @@ const resistanceItems: Array<IconSubsectionItem> = [
 // The Blessings go here too, even for a paladin, because another paladin in the raid gives
 // them. Under Forever the raid-wide auras, shouts and totems above join them.
 //
-// Salvation isn't offered. Client 70425 made it a raid buff that no longer takes a Blessing
-// slot (spells 1038 and 25895), but it only lowers threat, which the sim doesn't model, and the
-// raid buffs have no field for it, so a toggle would do nothing.
+// Salvation goes under Other: client 70425 made it a raid buff that no longer takes a Blessing
+// slot (spells 1038 and 25895).
 export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 	{ label: 'Stats', items: [AllStatsBuff, AllStatsBuffForever, StaminaBuff, StaminaBuffForever, IntellectBuff, SpiritBuff].map(buffItem) },
 	{ label: 'Blessings', items: [BlessingOfKings, BlessingOfMight, BlessingOfMightForever, BlessingOfWisdom, BlessingOfWisdomForever].map(buffItem) },
@@ -1077,7 +1087,7 @@ export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 	{ label: 'Crit', items: [onlyWhen(critAuraItem, isForever)] },
 	{ label: 'Resistances', items: resistanceItems.map(item => onlyWhen(item, isForever)) },
 	{ label: 'Mana', items: [Innervate].map(buffItem) },
-	{ label: 'Other', items: [PowerInfusion, Thorns].map(buffItem) },
+	{ label: 'Other', items: [{ config: Salvation as IconPickerConfig<Player<any>, any>, stats: [] }, ...[PowerInfusion, Thorns].map(buffItem)] },
 ];
 
 // The buffs only the members of our party give us. The protos keep them with the raid buffs,

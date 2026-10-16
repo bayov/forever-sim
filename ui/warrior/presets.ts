@@ -337,6 +337,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	thorns: TristateEffect.TristateEffectImproved,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
+	salvation: true,
 });
 
 // Kings and Might. A Rage user has no use for Wisdom.

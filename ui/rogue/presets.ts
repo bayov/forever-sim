@@ -660,6 +660,7 @@ export const P1RaidBuffs = RaidBuffs.create({
 	thorns: TristateEffect.TristateEffectImproved,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
+	salvation: true,
 });
 
 export const DefaultRaidBuffs = {

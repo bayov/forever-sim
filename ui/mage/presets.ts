@@ -298,6 +298,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
+	salvation: true,
 });
 
 // Blessings of Kings and Wisdom.
