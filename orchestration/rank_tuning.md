@@ -314,7 +314,29 @@ Consecration's share went up with 70425's 0.042 tick coefficient on master, so i
 
 Balance (druid ports #61 and #64 are already on master), with Wrath 31+ ×1.17: Balance Wrath goes 784.4 → 798.1 (+1.7%), still below Enhancement + Water Shield (804.2). Balance goes 828.2 → 831.8 (+0.4%). Neither changes the order.
 
-Still to re-run once the shaman port merges: Elemental, which is currently last at 684.9 (Lightning Bolt ×1.12 / ×1.38, Lava Burst).
+## Check 2026-10-16 15:15 UTC: the shaman port on master
+
+The shaman 70425 port (#91) merged at 10:59 UTC. The 13:05 check missed it because it only searched from 11:00. Re-run on master 0bf4de5 with the shaman patches added, 20k iterations, and every preset's base re-simmed for the ranking. No client build is newer than 70425.
+
+| Preset | Base | 31+ rescale | Change |
+|---|---|---|---|
+| Elemental, Lightning Bolt X ×1.12 (70291's ≤30 raise) | 724.9 | 740.4 | +2.1% |
+| Elemental, Lightning Bolt X ×1.38 (held at the 0.61 ratio) | 724.9 | 774.0 | +6.8% |
+| Elemental, Lightning Bolt ×1.38 and Lava Burst ×1.38 | 724.9 | 785.7 | +8.4% |
+| Enhancement, Earth Shock 31+ ×1.16 | 818.5 | 827.0 | +1.0% |
+
+The 70425 port lifted Elemental from 684.9 to 724.9, with Lava Burst now a 20-point talent. It sits 52nd of 64 presets, just above Smite (723.7).
+
+**Ranking effects:**
+- **Lightning Bolt ×1.12:** Elemental at 740.4 passes nothing new and stays below Combat Daggers on humanoids (744.6).
+- **Lightning Bolt ×1.38:** at 774.0 it passes both Combat rogue presets on humanoids, Feral (752.7), Enhancement + Mana Tide (752.6) and Balance Wrath duty-FF (755.8). It stays below Balance Wrath (784.4).
+- **Lightning Bolt and Lava Burst ×1.38:** at 785.7 it passes Balance Wrath too and lands 1.8 below Enhancement + Water Shield (787.5). That's still the largest upward swing in the audit, about 13 places at most.
+- **Enhancement:** with Earth Shock ×1.16 it goes 818.5 → 827.0, 1.0 above Frost (826.0) and 1.2 below Balance (828.2). That margin is within noise, so call it no change in order.
+
+The other current bases are unchanged since the 11:00 check, apart from small moves from the new ports: Fury 989.0, Frostfire 1018.1, Arcane 922.9. Demonology (1118.3) and Lone Wolf (1075.7) are still first and second, so the Bane of Doom finding at 11:00 stands: coefficient 2.0 gives 1074.1, 1.6 below Lone Wolf.
+
+Every rank-tuning sensitivity has now been re-run on master with the 70425 ports.
+
 
 ## Cross-class summary
 
