@@ -1637,14 +1637,16 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 //
 // The talents go to the Level 30 Leveling build in the order the leveling stat weights were
 // measured with: Thundering Strikes first, then Mental Dexterity, Improved Ghost Wolf,
-// Shamanistic Focus and Ancestral Knowledge, and Flurry and Stormstrike once the extra points
-// come at 25. These are the builds we had at 10, 15, 20, 25 and 30. The rotations are the
-// Leveling Plan ones, with Rockbiter Weapon until Windfury Weapon at 30.
+// Shamanistic Focus and Ancestral Knowledge. The plan has no extra talent points by default,
+// so the 16th point at 25 goes to Stormstrike (a 15 point talent), and Flurry comes after it.
+// The rotations are the Leveling Plan ones, with Rockbiter Weapon until Windfury Weapon at 30.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	fromLevel: 10,
 	toLevel: 30,
-	bonusTalentPoints: 5,
-	builds: [buildFromMilestones(10, ['-01', '-05001', '-050032001', '-0540320010051', '-0540320010051122'], talentShape(shamanTalentsConfig))],
+	bonusTalentPoints: 0,
+	builds: [
+		buildFromMilestones(10, ['-01', '-05001', '-050032001', '-0540320010001', '-0540320010051', '-0540320010051122'], talentShape(shamanTalentsConfig)),
+	],
 	rotations: APLLevelingPlan.map((preset, i) =>
 		LevelingRotation.create({
 			level: [10, 15, 20, 25, 30][i],

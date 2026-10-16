@@ -305,7 +305,7 @@ export class Player<SpecType extends Spec> {
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private levelingGearPlan: LevelingGearPlanSettings = LevelingGearPlanSettings.create({ seed: 1 });
-	private levelingPlan: LevelingPlanSettings = LevelingPlanSettings.create({ fromLevel: 10, toLevel: 30, bonusTalentPoints: 5 });
+	private levelingPlan: LevelingPlanSettings = LevelingPlanSettings.create({ fromLevel: 10, toLevel: 30 });
 	private currentStats: PlayerStats = PlayerStats.create();
 	private metadata: UnitMetadata = new UnitMetadata();
 	private petMetadatas: UnitMetadataList = new UnitMetadataList();
