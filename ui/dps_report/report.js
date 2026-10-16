@@ -1528,6 +1528,13 @@ export function startReport(dash, events) {
     };
     // The race's icon, name and numbers show the row's own tooltip.
     const head = (n) => { n.dataset.zone = ''; return n; };
+    // An entry's "vs Elemental" tag shows the tooltip of the racial that works on that boss type.
+    const tagZone = (r, name) => {
+      const tag = name.querySelector('.fv-rtag');
+      const part = r.segs.find((sg) => COND[r.variant]?.test(sg.part))?.part ?? r.segs.find((sg) => sg.part === 'target')?.part;
+      if (tag && part) tag.dataset.zone = part;
+      return name;
+    };
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
       r.segs.forEach((sg, k) => {
@@ -1545,7 +1552,7 @@ export function startReport(dash, events) {
       const idle = one ? r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` })) : [];
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         head(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
-        el('span', { class: 'nm' }, head(raceName(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null, ...idle),
+        el('span', { class: 'nm' }, tagZone(r, head(raceName(r))), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null, ...idle),
         el('span', { class: 'end', 'data-zone': '' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
         track, cap);
@@ -1559,7 +1566,9 @@ export function startReport(dash, events) {
         if (zone) {
           const [what, part] = zone.startsWith('idle:') ? ['idle', zone.slice(5)] : ['seg', zone];
           const sg = r.segs.find((g) => g.part === part), q = r.idle.find((g) => g.part === part);
-          const info = noteRow('part', part);
+          // A boss type's piece with no racial of its own name (Dwarf vs Humanoid) is told as the racial behind it.
+          const ip = (part === 'target' && TARGET_PART[`${r.race}|${r.variant}`]) || part;
+          const info = noteRow('part', ip);
           let name, sub = [];
           if (what === 'idle' && q) {
             name = shortLabel(q.label);
@@ -1575,18 +1584,19 @@ export function startReport(dash, events) {
               const ref = low.race === r.race ? d3.greatest(rows.filter((q) => baseOf(q) != null), baseOf) : low;
               if (ref.race !== r.race) sub.push(...statGap(r.race, ref.race));
             }
-          } else if (sg) name = `${sg.label} ${fd(sg.v)}`;
+          } else if (sg) name = `${ip !== part && info ? info.title : sg.label} ${fd(sg.v)}`;
           if (!name) return;
           let text = info?.text;
           if (part === 'swap') { const t = swapTip(r); text = t.text || text; sub.push(...t.nodes); }
           if (!one && what === 'seg') sub.push(el('span', { class: 'fv-tip-m', text: `Share of the best race's DPS, averaged over ${r.n} presets.` }));
           const segEl = what === 'seg' ? row.querySelector(`.sg[data-zone="${part}"]`) : null;
           const capEl = row.querySelector(`.fv-rsub [data-zone="${zone}"]`);
-          // We point the tooltip at the caption when the pointer is on it, else at the piece of the bar.
-          const at = (node.closest('.fv-rsub') ? node : segEl || node).getBoundingClientRect();
-          showTip(card, Math.max(8, at.left - cr.left), (node.closest('.fv-rsub') ? at.bottom : rw.bottom) - cr.top + 4, title,
-            [el('div', { class: 'fv-tip-racial' }, part === 'base' ? el('i', { style: 'background:var(--cds-chart-muted)' }) : partIco(part, 'fv-ico'),
-              el('span', {}, el('b', { text: name }), text ? el('span', { class: text === info?.text && racialText(part) ? GAME_TEXT : null, text }) : null)), ...sub],
+          // We point the tooltip at the caption or the tag when the pointer is on it, else at the piece of the bar.
+          const own = node.closest('.fv-rsub, .fv-rtag');
+          const at = (own ? node : segEl || node).getBoundingClientRect();
+          showTip(card, Math.max(8, at.left - cr.left), (own ? at.bottom : rw.bottom) - cr.top + 4, title,
+            [el('div', { class: 'fv-tip-racial' }, part === 'base' ? el('i', { style: 'background:var(--cds-chart-muted)' }) : partIco(ip, 'fv-ico'),
+              el('span', {}, el('b', { text: name }), text ? el('span', { class: text === info?.text && racialText(ip) ? GAME_TEXT : null, text }) : null)), ...sub],
             { ...opts, hl: [row, segEl, capEl] });
           return;
         }
