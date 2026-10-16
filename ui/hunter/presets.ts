@@ -321,8 +321,8 @@ export const SurvivalConsumes = Consumes.create({
 
 // The raid the level 60 numbers were measured under (tools/rotopt/mksettings): both paladin
 // blessings, Arcane Brilliance and every debuff, the hunter's own Hunter's Mark, and a shaman
-// in the hunter's group for Grace of Air and Mana Spring. Trueshot Aura comes from the
-// hunter's own talent, not from the raid.
+// in the hunter's group for Grace of Air and Mana Spring, and the raid's Trueshot Aura (a raid aura
+// since client 1.60.1.70425, so a Marksmanship hunter in the raid covers every hunter).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -340,6 +340,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	retributionAura: TristateEffect.TristateEffectImproved,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
+	trueshotAura: true,
 });
 
 // Survival melees, so its shaman drops Windfury Totem and Strength of Earth for the melee group
