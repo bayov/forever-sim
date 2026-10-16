@@ -57,6 +57,7 @@ func main() {
 	audit := flag.Bool("audit", false, "check every stretch of the archived logs we haven't checked yet (audit.go), instead of one window")
 	redo := flag.Bool("redo", false, "with -audit, check again the windows the ledger already has, with the sim as it is now")
 	mobs := flag.Bool("mobs", false, "measure the mobs that swung at our characters, in every archived log or -log, against the leveling sim's normal mob table (mobs.go), instead of one window")
+	pacingFlag := flag.Bool("pacing", false, "measure how we paced our grinding (time from a kill to the next pull, pulls, run-ins, pack sizes) in every archived log or -log, within -from and -to, for the leveling sim's session defaults (pacing.go), instead of one window")
 	playerOut := flag.String("player-out", "", "write the sim player built from -char's newest export (or -export) to this file as JSON and exit, without a log (player.go)")
 	flag.Parse()
 	sim.RegisterAll()
@@ -77,6 +78,13 @@ func main() {
 
 	if *mobs {
 		if err := runMobs(*archive, *flavor, *logPath); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	if *pacingFlag {
+		if err := runPacing(*archive, *flavor, *logPath, *fromFlag, *toFlag); err != nil {
 			log.Fatal(err)
 		}
 		return
