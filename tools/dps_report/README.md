@@ -27,6 +27,7 @@ merged tree ──► requests ──► sims ──► datasets ──► artif
 | `req/` | The 36 requests and their meta files (largest is 64 KB) | yes |
 | `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
+| `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
 | `patches/` | Local-only sim patches for the merged tree (see below) | yes |
 | `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
@@ -207,6 +208,7 @@ under 8 MB; the largest are icons and treeart at about 1 MB.
   rerun everything.
 - **Request text only** (meta summary, caveats, rotation bullets): just rerun `build_data.py`. It reads the meta files fresh.
 - **New ids to show** (new items, spells or talents): `whids.py`, then `whcache.py fortt_ids.json`, then `build_data.py`.
+- **Talent links**: each rank links to the Forever client's rank 1 spell on Forever's wowhead, because Forever keeps only that one (`talent_links.py`). Forever's wowhead adds spells over time, so `python3 talent_links.py ids`, then `python3 whcache.py --retry talent_ids.json` asks it again for what it didn't know. `python3 talent_links.py refresh` then rewrites the links in the shipped `talenttrees.json` without a full `build_data.py` run.
 - **Racial or target changes:** rerun only `run_races.py` for the affected variants (delete those lines), then `build_data.py`.
 - **`build_data.py` always rebuilds every dataset.** It takes seconds. Compare `data/*.json` with the published copies
   (`md5sum`) and upload only the files that changed.

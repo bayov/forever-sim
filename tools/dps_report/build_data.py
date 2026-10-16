@@ -34,7 +34,7 @@ DISPLAY = {'paladin__level_60': 'Ret twist', 'paladin__level_60_sub_holy': 'Ret 
 
 STAT_LABEL = {'AttackPower': 'Attack power', 'RangedAttackPower': 'Ranged attack power', 'MeleeHit': 'Melee hit %', 'MeleeCrit': 'Melee crit %',
               'MeleeHaste': 'Melee haste %', 'SpellPower': 'Spell power', 'SpellDamage': 'Spell damage', 'SpellHit': 'Spell hit %', 'SpellCrit': 'Spell crit %',
-              'SpellHaste': 'Spell haste %', 'MP5': 'Mana per 5 s', 'FirePower': 'Fire power', 'FrostPower': 'Frost power', 'ShadowPower': 'Shadow power',
+              'SpellHaste': 'Spell haste %', 'MP5': 'Mana per 5s', 'FirePower': 'Fire power', 'FrostPower': 'Frost power', 'ShadowPower': 'Shadow power',
               'ArcanePower': 'Arcane power', 'NaturePower': 'Nature power', 'HolyPower': 'Holy power', 'ArmorPenetration': 'Armor penetration'}
 
 
@@ -311,7 +311,7 @@ GEAR_RULES = [
     "Stat weights for the budget: spell power 0.86, attack power 0.5, a hunter's ranged attack power 0.4, and every other stat 1. Caster weapons use Forever's caster weapon rate.",
     "Item levels: 66 for head, shoulders, chest, hands, legs and feet. 71 for neck, back, wrist, waist, rings, one-handers and ranged. 76 for two-handers.",
     "Stamina matches each spec's share in its Season of Discovery level 60 best-in-slot sets. Hit is at the cap. The other stats keep the spec's target proportions.",
-    "Every spec wears two synthetic item level 71 trinkets: a stat trinket (about 46 weighted points) and an on-use trinket. The on-use one gives 140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20 s every 2 min, at the pull and then on cooldown. Forever's launch trinkets aren't simulated.",
+    "Every spec wears two synthetic item level 71 trinkets: a stat trinket (about 46 weighted points) and an on-use trinket. The on-use one gives 140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20s every 2 min, at the pull and then on cooldown. Forever's launch trinkets aren't simulated.",
     "Retribution and Enhancement keep spell power and Intellect next to their melee stats, at the hybrid budget factor.",
     "Only the tier set's 2-piece bonus is active. Enchants are the best Phase 1 ones from outside raids.",
 ]
@@ -521,7 +521,7 @@ def unship(t):
 for b in builds:
     b['summary'] = unship(b['summary'])
 
-# What each duty costs: its base's DPS minus its own, at 180 s.
+# What each duty costs: its base's DPS minus its own, at 180s.
 _by_id = {b['id']: b for b in builds}
 for b in builds:
     if b['duty']:
@@ -594,7 +594,7 @@ for w in sorted(glob.glob(os.path.join(D, 'weights', '*.json'))):
 if wrows:
     dump('weights', wrows)
 
-# mana over a 480 s fight (mana_curves.py)
+# mana over a 480s fight (mana_curves.py)
 import mana_curves
 mana_rows, mana_summary = mana_curves.datasets()
 if mana_summary:
@@ -645,6 +645,7 @@ dump('tooltips', tt_rows)
 print('tooltips without text:', tt_missing)
 
 # talent trees, laid out as the sim UI draws them
+import talent_links
 trees = []
 for cls in CLASS_ORDER:
     t = json.load(open(os.path.join(TREE, f'ui/core/talents/trees/{cls.lower()}.json')))
@@ -655,9 +656,8 @@ for cls in CLASS_ORDER:
                           'col': tal['location']['colIdx'], 'maxPoints': tal['maxPoints'], 'preRow': pre['rowIdx'] if pre else None,
                           'preCol': pre['colIdx'] if pre else None, 'icon': tal.get('icon') or 'inv_misc_questionmark',
                           'description': tal.get('description', ''), 'ranks': tal.get('ranks') or [],
-                          # wowhead link per rank: "<domain>:<spell id>", Forever's where its database knows the id, else Classic's, else ""
-                          'wh': [next((f'{dm}:{sid}' for dm in ('forever', 'classic') if whcache.ok(whcache.cached(dm, 'spell', sid))), '')
-                                 for sid in tal.get('spellIds') or []]})
+                          # wowhead link per rank: "<domain>:<spell id>", see talent_links.py
+                          'wh': talent_links.links(cls, ti, tal)})
 dump('talenttrees', trees)
 
 # wowhead coverage of the tooltips: which source each one's text came from, and the ids behind them
