@@ -71,25 +71,24 @@
      }
     },
     {
-     "name": "Malediction",
-     "max": 5,
+     "name": "Grim Reach",
+     "max": 2,
      "row": 2,
      "col": 1,
      "passive": true,
-     "icon": "spell_shadow_curseofachimonde",
+     "icon": "spell_shadow_callofbone",
      "desc": {
-      "1": "Increases all periodic damage done by your Warlock spells by 1%.",
-      "2": "Increases all periodic damage done by your Warlock spells by 2%.",
-      "3": "Increases all periodic damage done by your Warlock spells by 3%.",
-      "4": "Increases all periodic damage done by your Warlock spells by 4%.",
-      "5": "Increases all periodic damage done by your Warlock spells by 5%."
+      "1": "Increases the range of your Affliction spells by 10%.",
+      "2": "Increases the range of your Affliction spells by 20%."
      },
      "id": 105923,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 1225177,
-      "notes": []
+      "build": "1.60.1.70425",
+      "spellId": 18218,
+      "notes": [
+       "Replaced Malediction (1225177) on the same node in build 1.60.1.70425 (wago.tools TraitNodeEntry 130653, TraitDefinitionEffectPoints curve 83227: 10 / 20)."
+      ]
      }
     },
     {
@@ -321,18 +320,20 @@
      "passive": true,
      "icon": "spell_shadow_shadetruesight",
      "desc": {
-      "1": "Increases the damage dealt or life drained by your Shadow spells by 1%.",
-      "2": "Increases the damage dealt or life drained by your Shadow spells by 2%.",
-      "3": "Increases the damage dealt or life drained by your Shadow spells by 3%.",
-      "4": "Increases the damage dealt or life drained by your Shadow spells by 4%.",
-      "5": "Increases the damage dealt or life drained by your Shadow spells by 5%."
+      "1": "Increases the damage dealt or life drained by your Shadow spells by 2%.",
+      "2": "Increases the damage dealt or life drained by your Shadow spells by 4%.",
+      "3": "Increases the damage dealt or life drained by your Shadow spells by 6%.",
+      "4": "Increases the damage dealt or life drained by your Shadow spells by 8%.",
+      "5": "Increases the damage dealt or life drained by your Shadow spells by 10%."
      },
      "id": 105910,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 18271,
-      "notes": []
+      "notes": [
+       "2% a rank from build 1.60.1.70425 (wago.tools curves 83215 and 88067: 2 / 4 / 6 / 8 / 10); 1% a rank before."
+      ]
      }
     },
     {
@@ -376,12 +377,6 @@
      "max": 5,
      "text": "Increases the Health drained by your Drain Life spell by 2%.",
      "row": 2
-    },
-    {
-     "name": "Grim Reach",
-     "max": 2,
-     "text": "Increases the range of your Affliction spells by 10%.",
-     "row": 4
     },
     {
      "name": "Improved Drain Mana",
