@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury_battle_shout",
   "published": {
-    "dps": 983.5,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 984.0)"
+    "dps": 985.2,
+    "source": "Rotation auditor's pass 23: Recklessness while Death Wish is up, Heroic Strike from 55, 2026-10-16"
   },
   "verify": {
-    "dps": 983.5,
-    "stderr": 0.37,
+    "dps": 985.2,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "same sim as the published number; seed 1000003 gives 985.5"
   },
   "summary": "Keeps Battle Shout up for its party, with the raid's Battle Shout off.",
   "keyTalents": [
@@ -41,12 +41,12 @@
     "Start in Berserker Stance with no Rage; Bloodrage and Battle Shout 3s before the pull",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "Battle Shout again with 35s of it left (about 142s in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
-    "Death Wish right after the Sunder, Recklessness one GCD later",
+    "Death Wish right after the Sunder, then Recklessness while Death Wish is up, ahead of the trinket (which goes one GCD later)",
     "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown; Mighty Rage Potion at the pull, second held for the last 20s",
     "Bloodrage under 40 Rage",
-    "Execute first in the execute phase",
     "Whirlwind at 25+ Rage, then Bloodthirst",
-    "Heroic Strike queued from 50 Rage (outside execute)",
+    "Execute in the execute phase, after Bloodthirst and Whirlwind (Execute first loses 4.7 on Fury and 22.7 on two-hand Fury)",
+    "Heroic Strike queued from 55 Rage (outside execute)",
     "Hamstring filler from 10 Rage (procs Windfury Totem and Flurry)"
   ],
   "consumes": [
