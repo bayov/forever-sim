@@ -11,8 +11,8 @@ import (
 // forever-wiki/racials.md). Every race has two actives and two passives, the resistance
 // racials are gone and the weapon skill racials pay crit instead.
 //
-// Cooldowns per the client: Blood Fury, Eureka! and the Undead and Gnome utilities 2 min,
-// Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
+// Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
+// (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
 
 func applyForeverRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
