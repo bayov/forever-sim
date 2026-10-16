@@ -263,6 +263,25 @@ The class ports so far: paladin PR #54 (twist and sub-Holy about −102 DPS, Sho
 - Blizzard now edits 31+ data, though: design changes at every rank (Arcane Blast, Judgements, Devouring Plague, Chain Lightning costs), a fix for one out-of-line 31+ rank (Holy Fire V), two 25-point talents retuned, and a 31-point talent pulled down into the playable tiers (Lava Burst). The verdicts above still describe 70425's 31+ data, but "never changed in a beta build" no longer holds for the deep tier as a whole.
 - Every class's sims are on 70338 values and need the 70425 deltas (the workers' and the Forever mechanics auditor's job). Talent strings may no longer fit the changed trees (Elemental, mage, priest, warlock). This report's sensitivities are percentages on 70338 data and will be re-run once the branches move to 70425.
 
+## Check 2026-10-16 08:55 UTC: sensitivities on master with the 70425 ports
+
+Master d511c09 has the 70425 racials (#50, #53, #56), raid hits (#55), the damage-taken Rage change (#57) and the warlock (#59), priest (#58, #60), warrior (#62), druid (#61, #64), hunter (#65) and rogue (#66) ports. Mage, paladin (#54) and shaman are still pending. No client build is newer than 70425.
+
+Re-run on the master request files (tools/dps_report/req, 20k iterations, same local patches):
+
+| Preset | Base | 31+ rescale | Change |
+|---|---|---|---|
+| Demonology, Bane of Doom coefficient 2.0 | 1099.2 | 1053.1 | −4.2% |
+| Destruction, Bane coefficient 2.0 | 980.7 | 941.4 | −4.0% |
+| Affliction, Bane coefficient 2.0 | 998.0 | 956.4 | −4.2% |
+| Destruction Fire, Bane coefficient 2.0 | 953.3 | 917.7 | −3.7% |
+| Smite, 31+ Smite ranks ×1.18 | 710.6 | 725.4 | +2.1% |
+| Feral, Rip 31+ ×1.13 | 713.7 | 726.3 | +1.8% |
+
+**What the Bane of Doom risk now means for the ranking:** dual-wield Fury on Orc is 1055.1 after #62. At coefficient 2.0, Demonology (1053.1) would fall just below Fury. Once the paladin's #54 lands (about −100 for twist and sub-Holy), Destruction and Affliction stay above Retribution even at coefficient 2.0. So the swing now decides first place (Demonology vs Fury), not warlocks vs Retribution.
+
+Still to re-run when their ports merge: Elemental (Lightning Bolt / Lava Burst on the new Lava Burst ranks), Retribution (Holy Strike / Consecration with Consecration's new 0.042 ticks), Balance Wrath.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
