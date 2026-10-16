@@ -28,7 +28,7 @@ Sources, all read-only:
 
 | Class | Assumptions | Keys |
 |---|---|---|
-| All classes | 2 | `flat_bonus_inside_pct`, `wf_totem_offhand` |
+| All classes | 1 | `wf_totem_offhand` (`flat_bonus_inside_pct` settled 2026-10-16) |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 4 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus` (one value, kept for reference) |
 | Paladin | 6 (+1 shared) | `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf` (+ `flat_bonus_inside_pct`) |
@@ -36,10 +36,10 @@ Sources, all read-only:
 | Hunter | 5 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` |
 | Shaman | 3 | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` |
-| Druid | 4 | `druid_ooc_rate` (one value, kept for reference), `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
-| Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
+| Druid | 4 | `druid_ooc_rate` (one value, kept for reference), `druid_rip_31plus`, `druid_wrath8_tuning` |
+| Rogue | 0 (+1 shared) | `wf_totem_offhand` |
 
-That makes 33 assumptions in `assumptions_def.py`. The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 33 assumptions in `assumptions_def.py` (fewer since the 2026-10-16 assumptions audit, orchestration/assumptions_audit.md, which settled `flat_bonus_inside_pct` and `druid_shred_flat` among others). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -53,7 +53,7 @@ That makes 33 assumptions in `assumptions_def.py`. The 2026-10-15 review removed
    - Pet speed: the beta's fast pets hit as hard as a 2.0 sec pet. The presets treat that as a bug and use Classic's speed-scaled hit (user ruling 2026-10-15, PR #22); the beta's rule would add 6.1% to Beast Mastery and 3.2% to Marksmanship (assumption sims, 180 s).
    - Pet scaling: Season of Discovery's 22% scaling instead of the measured 10% would add 41 / 23 / 18 to Beast Mastery / Marksmanship / Survival (PR).
 
-Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retribution, in opposite directions) and `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×1.12, assumption sims).
+Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×1.12, assumption sims).
 
 ---
 
@@ -61,35 +61,7 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `flat_bonus_inside_pct` | Flat bonus inside the weapon percent | Combat Daggers, Seal Fate Daggers, Subtlety (Ambush), Mutilate; Ret twist, sub Holy, Shock | inside (client effect order) | after the percent (tooltip read literally) | inside | = Expected | est. Backstab builds −3.7 to −4%, Mutilate +1.7%, Ret +3% (all at Low) |
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | yes | main hand only | yes | = Expected | est. −2 to −3% DW Fury and rogues, about −1.5% Survival (at Low) |
-
-### `flat_bonus_inside_pct`: flat bonus inside the weapon percent
-
-- **Builds:**
-  - Rogue: Combat Daggers, Seal Fate Daggers (Backstab), Subtlety (Ambush, about 2 a fight) and Mutilate.
-  - Paladin: Level 60 twist, sub Holy and Shock (Holy Strike).
-  - Shred follows the same rule but has its own tooltip question, so it is `druid_shred_flat`.
-- **Sim now:** these strikes add a flat amount to the weapon damage before the weapon percent, so the flat part gets multiplied too:
-  - Backstab rank 8 is 1.5 × (weapon + 140) = +210. `sim/rogue/backstab.go:14-16`, applied at `:68`.
-  - Ambush is the same at 2.5×. `sim/rogue/ambush.go:13-14`, `:59`.
-  - Mutilate is 0.75 × (weapon + 67) = +50.25 a hand. `sim/rogue/mutilate.go:15`, `:95-96`.
-  - Holy Strike rank 8 is 0.5 × (normalized weapon + 93 + 42.9% of spell power). `sim/paladin/holy_strike.go:51`, `:99`, `:102-103`.
-- **Source:** the Forever client (1.60.1.70338). Each spell is a normalized-weapon effect (121) carrying the flat part, followed by a weapon-percent effect (31). Backstab's effect data is identical to Era's, where the server adds the flat part before the percent (the rule that gives Era's Backstab 225 at rank 9).
-- **Why uncertain:** Forever's tooltips print the raw flat value as if it came after the percent: Backstab "plus 150" at rank 9 where Era's says 225, and Holy Strike "plus 93". No beta log has shown a Backstab or Holy Strike hit with known weapon damage (notes.md, Rogue and Paladin). If the server really applies the tooltip, the flat part moves outside the percent. That lowers Backstab and Ambush and raises Mutilate and Holy Strike (Holy Strike's spell power part is then no longer halved).
-- **Settings:**
-  - **Low, "after the percent".** Read the tooltip literally: Backstab 1.5 × weapon + 140, Mutilate 0.75 × weapon + 67, Holy Strike 0.5 × weapon + 93 + 42.9% of spell power. Forever's tooltip generator would then be the authority.
-  - **Expected, "inside" (Sim now).** The client's effect order, and Era's server rule on identical Backstab data.
-  - **High:** = Expected. No third reading exists.
-- **Sensitivity (est., at Low):**
-  - Backstab loses 70 base a hit: about 148 a landed Backstab after Opportunity, Aggression, Murder and its crits, or −26 DPS (−3.7%) on Combat Daggers and about −4% on Seal Fate Daggers.
-  - Subtlety loses under 0.5% (Ambush only).
-  - Mutilate gains about 33 base a cast, +1.7%.
-  - Holy Strike gains about 196 base a cast, about +30 DPS (+3%) on each Retribution build.
-- **Knob:** one key read in three places:
-  - `sim/rogue/backstab.go:68` and `sim/rogue/ambush.go:59`: when the key is 0, compute `weapon*mult + flat*mult/…`. Simplest: divide `flatDamageBonus` by the weapon multiplier (1.5, 2.5) up front.
-  - `sim/rogue/mutilate.go:96`: use `flat/0.75`.
-  - `sim/paladin/holy_strike.go:99,103`: take the flat part and its 0.429 coefficient out of the `rank.weaponPercent` product.
 
 ### `wf_totem_offhand`: Windfury Totem procs from off-hand hits
 
@@ -225,7 +197,7 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 | `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes | Physical only | yes | = Expected | Low −1.1% twist (PR) |
 | `pal_31plus_ranks` | Holy Strike and Consecration 31+ ranks | twist, sub Holy, Shock | client | held to the ≤30 trend | client | = Expected | Low −1.2% (PR) |
 
-Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4.2% at its Low, assumption sims).
+Retribution was also affected by `flat_bonus_inside_pct`, settled 2026-10-16 (Holy Strike; +3.6 to +4.2% at its Low, assumption sims).
 
 ### `pal_sor_sp_double`: Seal of Righteousness counts spell power twice
 
@@ -563,7 +535,6 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
 | `druid_ooc_rate` | Omen of Clarity proc rate | Feral, Balance, Balance Wrath | 2 PPM; spells 2 × cast / 60 | = Expected | 2 PPM | = Expected | one value, kept for reference |
-| `druid_shred_flat` | Shred's flat bonus | Feral | 80 inside the 155% (+124) | +80 | +124 | +180 | est. Low −3.5%, High +4.5% |
 | `druid_rip_31plus` | Rip's level 31+ ranks | Feral | client | = Expected | client | Era; ≤30 trend ×1.13 (Higher) | +1.2% Era, +1.6% ≤30 trend (assumption sims, 180 s) |
 | `druid_wrath8_tuning` | Wrath VIII tuning | Balance Wrath, Balance | ×1.085 | ×1.00 | ×1.085 | ×1.17 | −0.8% Balance Wrath, −0.2% Balance Low, +0.8% / +0.2% High (assumption sims, 180 s) |
 
@@ -583,19 +554,6 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - **Expected, the sim's rate (Sim now).** 1.12's 2 PPM, the version Forever's baseline passive was ported from. The only value, kept in the report as a reference row (user ruling 2026-10-15).
   - WotLK's flat 6% a spell and the later expansions' 3.5 PPM were dropped. In the last assumption sims they moved the three druid builds −0.06 to +0.17% (6% a spell) and +0.24 to +1.44% (3.5 PPM), at 180 s.
 - **Knob:** `sim/druid/talents.go:424` (PPM) and `:445` (the spell formula). Low needs a branch: `chance = 0.06` when the key says so.
-
-### `druid_shred_flat`: Shred's flat bonus
-
-- **Builds:** Feral (Shred 36% of the damage).
-- **Sim now:** (weapon damage + 80) × 1.55, so 124 extra at rank 5. `sim/druid/shred.go:14` (`ShredFlatDamage`), `:17` (1.55), applied at `:57` and `:71`.
-- **Source:** the client's effects (80, and 155% weapon damage), read with the same add-before-percent rule as Backstab (`flat_bonus_inside_pct`).
-- **Why uncertain:** the tooltip still says "plus 180", 1.12's 80 × 2.25, so either the tooltip is stale or the server keeps 180. A few Shreds against a target with known armor settle it on the beta (notes.md, Druid).
-- **Settings:**
-  - **Low, +80 after the 155%.** The client numbers read as tooltip-style, the Low reading of `flat_bonus_inside_pct`.
-  - **Expected, +124 (Sim now).** The client's effect order.
-  - **High, +180.** The Forever tooltip, if the server kept 1.12's flat amount.
-- **Sensitivity (est.):** at about 2000 cat attack power a Shred's base is about 431. Low is −44 (−10% Shred, about −3.5% Feral); High is +56 (+13% Shred, about +4.5% Feral).
-- **Knob:** `sim/druid/shred.go:57,71`. Add `Assume("druid_shred_extra", 124) - 80*1.55` after the multiplier (DamageMultiplier is 1.55, so divide that term by 1.55 when adding it inside).
 
 ### `druid_rip_31plus`: Rip's level 31+ ranks
 
@@ -628,13 +586,17 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 ## Rogue
 
 No assumptions of its own. The rogue's scenarios are the shared ones:
-- **`flat_bonus_inside_pct`:** Backstab, Ambush and Mutilate. Est. −3.7% Combat Daggers, about −4% Seal Fate Daggers, +1.7% Mutilate and under 0.5% Subtlety at its Low.
+- `flat_bonus_inside_pct` (Backstab, Ambush, Mutilate) was settled 2026-10-16 (see "Settled, not a scenario").
 - **`wf_totem_offhand`:** every build dual wields in the Windfury Totem group. Est. −2 to −3% at its Low.
 
 ---
 
 ## Settled, not a scenario
 
+- **Flat strike bonuses go inside the weapon percent** (was `flat_bonus_inside_pct` and `druid_shred_flat`, removed 2026-10-16 by the assumptions audit). Backstab, Ambush, Mutilate and Holy Strike carry their flat part on a normalized weapon damage effect (121), Shred and Claw on a weapon damage effect (58), each followed by a weapon percent effect (31); the server sums the flat part into the weapon damage and then takes the percent, which is what the sim does.
+  - Measured: forever-bugs #208 (https://github.com/ClassicWoWCommunity/forever-bugs/issues/208, 2 to 7 October). A level 22 druid's rank 1 Shred hit 56 to 65 next to white hits of 19 to 24 on the same level 22 mob. Shred rank 1 is 155% weapon damage plus 24 in client 70338 (22 in 70425): (white + 24 × armor) × 1.55 gives about 56 to 64 at the mob's ~28% armor reduction, while 1.55 × white + 24 × armor tops out at 54. AidanZMoon (Blizzard) answered "it's a tooltip bug for the flat damage".
+  - Blizzard's own text: Forever's Mutilate tooltip (1310707 and its ranks, unchanged in 70425) computes the flat part as `${$1310706m1*$1310706m2/100}`, the flat times the 75%. Client 70425 replaced Shred's stale "plus 180" (1.12's 80 × 2.25) with the raw `$s1`, and the 15 October notes call the Shred tooltip fix "just a visual bug. The damage is unchanged." So Forever's "plus N" tooltips print the flat part before the percent and aren't the damage rule.
+  - Removed settings: Backstab / Ambush / Mutilate / Holy Strike "added after (tooltip)", and Shred +80 after and +180. The +180 has no source left now that the tooltip reads 80.
 - **Windfury Totem's internal cooldown: 1.5 sec.**
   - User ruling 2026-10-13, standards 17; the sim already uses it (`sim/core/buffs.go:1827`).
   - The Forever client's 100 ms and Era's no cooldown are closed.
@@ -676,7 +638,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 ## Where no sensible range was found
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
-- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `warr_crit_rage`, `hunter_pet_speed` (no Low: Classic is Expected), `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_imbue_scrolls` and `druid_rip_31plus` (no Low: the client is Expected). `hunter_tsa_hm_rank` and `mage_ice_lance_coef` have two settings below Expected and none above. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
+- `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `warr_crit_rage`, `hunter_pet_speed` (no Low: Classic is Expected), `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_imbue_scrolls` and `druid_rip_31plus` (no Low: the client is Expected). `hunter_tsa_hm_rank` and `mage_ice_lance_coef` have two settings below Expected and none above. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
 
 Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM): no analogue below 10.
