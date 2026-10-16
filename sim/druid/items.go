@@ -45,13 +45,14 @@ func init() {
 		})
 	})
 
-	// Howling Idol, Forever. Equip: Reduces the cooldown of your Shifting Power ability by 1 sec
-	// (spell 1291059, a flat cooldown modifier of -1000 ms).
+	// Howling Idol, Forever. Equip: Reduces the cooldown of your Shifting Power ability by 0.5 sec
+	// (spell 1291059, a flat cooldown modifier of -500 ms since client 1.60.1.70425; -1000 ms
+	// in 70338).
 	core.NewItemEffect(HowlingIdol, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		druid.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.SpellCode == SpellCode_DruidShiftingPower {
-				spell.CD.Duration -= time.Second
+				spell.CD.Duration -= time.Millisecond * 500
 			}
 		})
 	})

@@ -11,6 +11,8 @@ Each assumption is written for a player who hasn't read our notes:
   from its id.
 status 'pending' = listed but not simulated yet; 'inert' = no longer applies.
 """
+import os
+
 
 ROGUE = ['combat-daggers', 'seal-fate-daggers', 'combat-swords', 'seal-fate-swords', 'mutilate', 'subtlety']
 R = lambda xs: [f'rogue__{x}' for x in xs] + [f'rogue__{x}-humanoid' for x in xs]
@@ -22,6 +24,9 @@ ENH = ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw', 'shaman__enh
 ELE = ['shaman__elemental-level60', 'shaman__elemental-level60-mana-tide']
 WARR = ['warrior__fury', 'warrior__fury_2h', 'warrior__arms', 'warrior__arms_dragonkin']
 MAGE = ['mage__frostfire', 'mage__fire', 'mage__frost', 'mage__arcane']
+# Every build that isn't a duty preset, from the req files.
+ALL_BASE = sorted(f[:-5] for f in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'req'))
+                  if f.endswith('.json') and not f.endswith('.meta.json') and '-duty-' not in f)
 
 
 def S(id_, label, value, why, env=None, edit=None):
@@ -271,20 +276,11 @@ A = [
                 S('expected', 'Halfway (+8%)', 'Earth Shock rank 7 ×1.08', 'A partial retune.'),
                 S('high', 'Full raise (+16%)', 'Earth Shock rank 7 ×1.16', "Kept at the level 24 rank's 0.66 of Era.", {'sham_es7_tuning': 1.16})],
       default='expected', expected='expected'),
- dict(key='sham_raid_hits', cls='Shaman', label='How often does raid damage hit the shaman?',
-      short="Each direct hit fires a Lightning Shield orb. With the boss on the tank, only raid damage hits the shaman.",
-      desc="The presets keep Lightning Shield up. Each direct hit an enemy lands on the shaman fires an orb at the target, at most one every 3.5 sec. The boss is on the tank, so the hits come from raid damage, at random times: 2 a minute for Enhancement in melee, 1 for Elemental at range. Nobody has measured it for a DPS shaman yet; the rates come from boss timers.",
+ dict(key='raid_hits', cls='All', label='How often does raid damage hit a DPS?',
+      short="A DPS takes only raid damage. Each hit can fire a shield, give Rage or push back a cast.",
+      desc="The boss is on the tank, so a DPS player only takes raid damage: raid-wide spells, cleaves and volleys. The presets give every DPS 2 direct hits a minute at random times, 1500 damage each, as spell hits from the boss. They take no health, but do what any hit taken does: a Lightning Shield orb (at most one every 3.5 sec) or a Water Shield globe, Rage and Enrage for a warrior (about 4.5 Rage a hit by Forever's damage-taken rule), and spell pushback on a cast. Nobody has measured it for a DPS yet; the rate and the damage come from boss timers.",
       src="Season of Discovery boss timers in the Deadly Boss Mods source (Ragnaros, Broodlord, Firemaw, Chromaggus, Huhuran, Kel'Thuzad, Sapphiron). Not measured in logs yet.",
-      builds=ELE + ENH,
-      settings=[S('low', 'None', '0 hits a minute', "Bosses whose damage only hits the tank or ticks, like Patchwerk.", None, 'raid_hits=0'),
-                S('expected', 'Now and then', 'melee 2 hits a minute, ranged 1', 'One or two raid-wide hits every 20 to 40 sec.'),
-                S('high', 'Heavy raid damage', '10 hits a minute', 'Raid-wide damage every few seconds: Firemaw, Vaelastrasz.', None, 'raid_hits=10')],
-      default='expected', expected='expected'),
- dict(key='war_raid_hits', cls='Warrior', label='How often does raid damage hit the warrior?',
-      short="Each hit gives Rage and can proc Enrage. With the boss on the tank, only raid damage hits the warrior.",
-      desc="Damage taken gives Rage: 2.5 times the damage over the boss's Rage conversion, about 15 Rage for a 1500 hit from the level 63 boss. Under Forever any damage taken can also proc Enrage on Fury builds. The boss is on the tank, so the hits come from raid damage, at random times: 2 a minute at 1500 damage, the same rate as a melee shaman. Nobody has measured it for a DPS warrior yet; the rate and the damage come from boss timers.",
-      src="Season of Discovery boss timers in the Deadly Boss Mods source (Ragnaros, Broodlord, Firemaw, Chromaggus, Huhuran, Kel'Thuzad, Sapphiron). Not measured in logs yet.",
-      builds=WARR,
+      builds=[b for b in ALL_BASE if not b.startswith('rogue__') and b != 'druid__feral-cat'],
       settings=[S('low', 'None', '0 hits a minute', "Bosses whose damage only hits the tank or ticks, like Patchwerk.", None, 'raid_hits=0'),
                 S('expected', 'Now and then', '2 hits a minute, 1500 damage each', 'One or two raid-wide hits every 20 to 40 sec.'),
                 S('high', 'Heavy raid damage', '10 hits a minute, 1500 damage each', 'Raid-wide damage every few seconds: Firemaw, Vaelastrasz.', None, 'raid_hits=10')],

@@ -112,7 +112,6 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 			}
 		},
 	})
-	shaman.shieldHitTaken[shaman.LightningShieldAuras[rank]] = hitTaken
 
 	shaman.LightningShield[rank] = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:  core.ActionID{SpellID: spellId},

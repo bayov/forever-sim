@@ -23,7 +23,7 @@ Talent tree changes against the BlizzCon data (and the hyjal.cc tree for build 6
 - Tiger's Fury is gone: "Tiger's Fury: (Removed.) This has been replaced with a new Feral-specific talent called Shifting Power." (Blizzard's class deep dive; the 1 October beta development notes list it as removed). The client (1.60.1.70338) still has spell 5217 (15% more Physical damage for 6 sec, 30 sec cooldown, free), but its SkillLineAbility row has AcquireMethod 3, like the talent-granted Berserk and Shifting Power, and no talent grants it, so no trainer teaches it. The sim leaves it out under Forever (24.9 DPS on the Feral preset). King of the Jungle's 60 Energy on it is gone with the talent.
 - Every rank of every talent is in the client now. The values the BlizzCon data guessed that were wrong: Moonglow 8 / 17 / 25% off every damage spell, Improved Moonfire 5 / 10% damage, periodic damage and crit, Nature's Majesty 2 / 4% crit, Moonfury 2% a point on all Arcane and Nature damage, Eclipse 0.17 / 0.33 / 0.5 sec off each of the next 2 Starfires a Wrath gives (4 charges at most, 15 sec), Feral Instinct 10 / 20 / 30% Swipe damage, Heart of the Wild 2% Intellect and Cat Form Strength a point, Reflection 17 / 33 / 50% regen while casting, Living Spirit 5% Spirit a point, Naturalist 1% damage a point.
 - Nature's Grace is now 10% cast speed and 10% off the Balance spells' global cooldown for 3 sec after a spell crit that is not periodic (1.12 took 0.5 sec off the next cast).
-- Moonkin Form costs 35% of base mana, gives the party 3% crit with spells and attacks (exclusive with Leader of the Pack), and makes Omen of Clarity proc twice as often with half its 10 sec cooldown. Omen of Clarity is a baseline passive from level 20 and procs from spells too. The chance is the server's, the client has none.
+- Moonkin Form costs 35% of base mana, gives the raid 3% spell crit (client 1.60.1.70425; in 70338 the party got 3% crit with spells and attacks, exclusive with Leader of the Pack), and makes Omen of Clarity proc twice as often with half its 10 sec cooldown. Omen of Clarity is a baseline passive from level 20 and procs from spells too. The chance is the server's, the client has none.
 
 Spell values at level 60 (1.12 in brackets):
 
@@ -349,7 +349,7 @@ Leap behind an enemy, Dazing them for 3 sec.
   - Rank 2: Increases the critical strike damage bonus of your melee abilities by 20%.
   - Note: Higher-rank values taken from the nikftw dataset.
 - **Leader of the Pack** (1 rank, column 2) [CHANGED]
-  - While in Cat Form, Bear Form, or Dire Bear Form, the Leader of the Pack increases the critical strike chance of all party members within 45 yards by 3%, exclusive with Moonkin Aura.
+  - While in Cat Form, Bear Form, or Dire Bear Form, the Leader of the Pack increases the critical strike chance of all party members within 45 yards by 3%, exclusive with Moonkin Aura. Client 1.60.1.70425 makes it a raid aura of 3% physical crit (aura 52), which stacks with Moonkin Aura's spell crit.
   - Classic: While in Cat, Bear or Dire Bear Form, the Leader of the Pack increases ranged and melee critical chance of all party members within 45 yards by 3%.
   - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
 - **King of the Jungle** (3 ranks, column 4) [NEW] [not in client 70338]

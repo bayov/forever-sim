@@ -49,8 +49,12 @@ func applyForeverRaceEffects(agent Agent) {
 		character.registerEureka()
 
 	case proto.Race_RaceOrc:
-		// Axe Specialization is crit now. Command (pet damage) is gone.
-		character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeAxe)
+		// Savage: 1% crit with all spells and abilities, whatever the weapon. In client 70338 it was
+		// Axe Specialization, the same 1% only with an axe or a two-handed axe equipped
+		// (SpellEquippedItems 255488, axes only); client 70425 renamed spell 20574 and dropped
+		// the weapon requirement. Command (pet damage) is gone.
+		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
+		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
 		character.registerForeverBloodFury()
 
 	case proto.Race_RaceUndead:

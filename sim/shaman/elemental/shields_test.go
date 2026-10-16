@@ -10,8 +10,8 @@ import (
 	"github.com/wowsims/classic/sim/core/simsignals"
 )
 
-// TestOrcShamanRaidDamageHits checks that Elemental's raid hits option reaches the shield, like
-// Enhancement's (enhancement TestOrcShamanRaidDamageHits has the numbers).
+// TestOrcShamanRaidDamageHits checks that the encounter's raid hits reach Elemental's shield,
+// like Enhancement's (enhancement TestOrcShamanRaidDamageHits has the numbers).
 //
 // We keep Lightning Shield at 3 orbs for 9 min. 15 random hits a minute fire about 8 orbs a
 // minute, and no hits fire none.
@@ -26,10 +26,11 @@ func TestOrcShamanRaidDamageHits(t *testing.T) {
 				Equipment: &proto.EquipmentSpec{},
 				Rotation:  &proto.APLRotation{},
 				Spec: &proto.Player_ElementalShaman{ElementalShaman: &proto.ElementalShaman{
-					Options: &proto.ElementalShaman_Options{RaidDamageHitsPerMinute: hitsPerMinute},
+					Options: &proto.ElementalShaman_Options{},
 				}},
 			}, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-			Encounter:  &proto.Encounter{Duration: minutes * 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+			Encounter: &proto.Encounter{Duration: minutes * 60, Targets: []*proto.Target{core.NewDefaultTarget()},
+				RaidDamageHitsPerMinute: hitsPerMinute, RaidDamagePerHit: 1500},
 			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 		}, simsignals.CreateSignals())
 		sim.Reset()

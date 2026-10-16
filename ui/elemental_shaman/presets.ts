@@ -164,7 +164,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
 // talent search with Mana Tide Totem pinned found it, and found it again on the standard gear.
 // Its Water Shield point does nothing in the sim: the rotation keeps Lightning Shield up instead
-// (see RaidDamageHitsLevel60). It is 667.7 / 666.9 / 656.7 at 120 / 180 / 300 sec
+// (see the Options note below). It is 667.7 / 666.9 / 656.7 at 120 / 180 / 300 sec
 // on the 1b set, 1.0% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
@@ -187,9 +187,9 @@ export const DefaultTalents = TalentsLevel60;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// The raid damage that hits the shaman in a level 60 raid fight: 1 direct hit a minute, at
-// random times, half of Enhancement's 2 (its RaidDamageHitsLevel60 has the sources), because a
-// caster at range is out of the cleaves and Blast Waves that reach the melee. Each hit fires a
+// Lightning Shield and the raid damage in the Level 60 encounter (PresetUtils.LEVEL_60_RAID_DAMAGE,
+// 2 direct hits a minute since 2026-10-16, when the raid hits moved to the encounter for every
+// spec; the numbers below were taken at Elemental's own rate of 1 a minute). Each hit fires a
 // Lightning Shield orb, so both Level 60 rotations keep the shield up. It goes before the pull at
 // -5.4 sec (casting it in the fight instead lost 6), and in the fight just ahead of the low rank
 // Lightning Bolt. At 180 sec Level 60 went from 690.6 to 694.0 and Mana Tide from 683.3 to 686.5
@@ -202,10 +202,7 @@ export const DefaultTalents = TalentsLevel60;
 // Dropping the recast was a little ahead at 1 a minute but 5.6 behind at 10. Mana Spring is not
 // recast with less than 20 sec left either. Level 60 is 699.0 / 695.3 / 679.7 at 120 / 180 / 300
 // sec (+1.4 / +1.3 / +3.0) and Mana Tide 692.3 / 688.1 / 673.7 (+1.4 / +1.7 / +1.7).
-export const RaidDamageHitsLevel60 = 1;
-
-export const DefaultOptions = ElementalShamanOptions.create({ raidDamageHitsPerMinute: RaidDamageHitsLevel60 });
-const PresetBuildOptionsLevel60 = { raidDamageHitsPerMinute: RaidDamageHitsLevel60 };
+export const DefaultOptions = ElementalShamanOptions.create({});
 
 // The level 60 consumables, Forever's Phase 1 ones (the shared consumables branch). On 2026-10-12
 // we tried each candidate in its slot on the Level 60 build, as the mean DPS at 120, 180 and 300
@@ -311,6 +308,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -356,7 +354,6 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60,
 });
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
@@ -369,5 +366,4 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60,
 });
