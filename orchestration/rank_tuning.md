@@ -244,6 +244,20 @@ wago.tools lists 1.60.1.70425. Unlike 70374 it changes a lot: 575 SpellEffect ro
 | Warlock tree: Malediction removed, Grim Reach added; Curse of Recklessness reworked (armor via a new aura) | – | warlock talent strings; the raid's CoR |
 | Ice Lance 300 → 200 at every rank; Shred rank 1 moved to L20 (24 → 22); Moonkin Aura effect changed; Righteous Fury 60 → 90 | – | Frost / Frostfire, Balance |
 
+Also changed in 70425, on proc / aura spells (found by the paladin, the druid and a second diff):
+
+| Change | Presets affected |
+|---|---|
+| Seal of Righteousness proc spells 25713–25742: coefficient 0.1 → 0 | Retribution (the paladin left the sim as is, pending a ruling) |
+| Consecration tick spells 1280345–1280353: coefficient 0.095 → 0.042 | Retribution |
+| Shaman Fire Nova damage 408423–408428: base about ×0.6, coefficient 0.214 → 0.143 | Enhancement |
+| Mana Tide restore 197 → 133 and 290 → 197 | Elemental + Mana Tide |
+| Strength of Earth, Grace of Air, Windfury Totem, Flametongue Totem, Trueshot Aura, Leader of the Pack: party area aura → raid area aura (Effect 35 → 65); Leader of the Pack is now 3% physical crit, Moonkin Aura 3% spell crit | shared raid layout |
+| Howling Idol's Shifting Power cooldown cut −1000 → −500 ms (1291059) | Feral (about −7.5 DPS) |
+| Wind Blessed (Skyborne) 1 → 3; Earth Fury (1259719) changed | racials |
+
+The class ports so far: paladin PR #54 (twist and sub-Holy about −102 DPS, Shock about −64; Shock now leads up to 180 sec) and druid PR #52.
+
 **What it means for this audit:**
 - The 31+ ranks I flagged as stale-shaped were **not** touched: Lightning Bolt, Smite, Wrath, Raptor Strike, Earth Shock, Rip, Holy Strike, Consecration and Bane of Doom's 4.0 coefficient are byte-identical. So are Shadow Bolt and the other tuned curves.
 - Blizzard now edits 31+ data, though: design changes at every rank (Arcane Blast, Judgements, Devouring Plague, Chain Lightning costs), a fix for one out-of-line 31+ rank (Holy Fire V), two 25-point talents retuned, and a 31-point talent pulled down into the playable tiers (Lava Burst). The verdicts above still describe 70425's 31+ data, but "never changed in a beta build" no longer holds for the deep tier as a whole.
