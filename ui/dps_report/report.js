@@ -2421,28 +2421,6 @@ export function startReport(dash, events) {
     });
   };
 
-  // ---------- hero ----------
-  const drawHero = () => {
-    const host = $('#hero');
-    const builds = genB(), m = iconMap();
-    if (!builds || !m) return;
-    const arts = later ? rowsOf('treeart') : null;
-    if (arts && !$('#top').dataset.art) {
-      const top = builds.reduce((p, q) => (+q.dps > +p.dps ? q : p));
-      const parts = String(top.talents).split('-').map((t) => [...t].reduce((x, c) => x + (+c || 0), 0));
-      const art = arts.find((a) => a.class === top.class && +a.tree === parts.indexOf(Math.max(...parts)));
-      if (art && art.bg) { $('#top').style.setProperty('--fv-hero-art', `url("${art.bg}")`); $('#top').dataset.art = '1'; }
-    }
-    host.replaceChildren(...CLASSES.map((c) => {
-      const b = builds.find((x) => x.class === c);
-      const img = iconImg((b && b.classIcon) || 'classicon_' + c.toLowerCase() + ':l', '');
-      if (img) { img.src = m.get('classicon_' + c.toLowerCase() + ':l') || img.src; img.style.setProperty('--ring', ccol(c)); img.alt = c; }
-      const bt = el('button', { 'aria-pressed': String(st.cls === c), 'aria-label': `Show ${c}`, 'data-tt': 'c:' + c }, img);
-      bt.addEventListener('click', () => { st.cls = st.cls === c ? 'All' : c; st.heatCls = st.cls; persist(); if (st.tab !== 'ranking' && st.tab !== 'races') showTab('ranking'); else render(); });
-      return bt;
-    }));
-  };
-
   // ---------- assumptions panel ----------
   // the picks live in st, this browser's saved view
   const SEG_NAME = { low: 'Low', mid: 'Mid', expected: 'Expected', high: 'High', higher: 'Higher' };
@@ -2609,7 +2587,6 @@ export function startReport(dash, events) {
       else (window.requestIdleCallback || setTimeout)(loadLater);
     }
     if (ttNode && !ttNode.isConnected) hideTT();
-    try { drawHero(); } catch (e) { console.error(e); }
     try {
       if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
       else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceRank, '#race-rank'], [drawRacialRank, '#racial-rank'], [drawHeat, '#heat'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }

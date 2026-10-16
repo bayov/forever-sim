@@ -126,68 +126,6 @@
 	}
 }
 
-.fv-summary .fv-take {
-	margin: 0;
-	color: var(--color-fg-muted);
-	font-size: var(--cds-font-size-body);
-	line-height: 1.5;
-}
-
-.fv-summary .fv-take b {
-	color: var(--color-fg);
-}
-
-.fv-summary .fv-take b:first-child {
-	color: var(--gold-soft);
-}
-
-.fv-hero {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.35rem;
-	padding: 0.2rem;
-}
-
-.fv-hero button {
-	flex: 0 0 2.25rem;
-	border: 0;
-	padding: 0;
-	background: none;
-	cursor: pointer;
-	border-radius: 50%;
-	line-height: 0;
-}
-
-.fv-hero img {
-	width: 100%;
-	height: auto;
-	aspect-ratio: 1;
-	border-radius: 50%;
-	box-shadow:
-		0 0 0 2px var(--ring),
-		0 2px 6px rgba(0, 0, 0, 0.55);
-	transition:
-		transform 0.18s,
-		box-shadow 0.18s;
-}
-
-.fv-hero button:hover img {
-	transform: translateY(-2px);
-}
-
-.fv-hero button[aria-pressed='true'] img {
-	transform: scale(1.12);
-	box-shadow:
-		0 0 0 2.5px var(--gold-soft),
-		0 0 12px rgba($gold, 0.55);
-}
-
-@include media-breakpoint-down(md) {
-	.fv-hero button {
-		flex-basis: 1.8rem;
-	}
-}
-
 /* ---------- tabs: the sim UI's header tabs ---------- */
 .fv-tab:focus-visible,
 .fv button:focus-visible,
