@@ -3174,7 +3174,6 @@ ol.fv-list li::marker {
 }
 
 #asm-card .fv-note .def,
-#method-asm-card .fv-note .def,
 .fv-asm-tbl .def {
 	color: var(--color-ok);
 }
@@ -3490,11 +3489,6 @@ ol.fv-list li::marker {
 	}
 }
 
-// In Method the heads are plain text.
-.fv-asm-tbl.ro thead th {
-	padding-bottom: 0.2rem;
-}
-
 // A spec's row head: its icon and short name.
 .fv-asm-tspec {
 	display: inline-flex;
@@ -3514,32 +3508,31 @@ ol.fv-list li::marker {
 	}
 }
 
-#method-asm h3 {
-	margin: 0.8rem 0 0.3rem;
-	font-size: var(--cds-font-size-heading);
-}
-
-#method-asm li {
-	margin-bottom: 0.45rem;
-}
-
-#method-asm li small {
+// The rest of an assumption, under its short text: the full description, each setting's value and reason, and the
+// source as a footnote.
+.fv-asm-more {
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
 	color: var(--color-fg-muted);
+
+	// Smaller than the report's other folds (.fv details > summary), with its arrow right after the words.
+	.fv & > summary {
+		width: fit-content;
+		justify-content: flex-start;
+		font-size: var(--cds-font-size-caption);
+		color: var(--fv-gold);
+		margin-bottom: 0;
+	}
+
+	> p {
+		margin: 0.3rem 0 0;
+	}
 }
 
-#method-asm .fv-asm-mdesc {
-	margin-top: 0.1rem;
-}
-
-#method-asm .fv-asm-cap {
-	margin-top: 0.4rem;
-}
-
-// Each setting's numbers, reason and effect on every preset, under the assumption; the source as a footnote.
-#method-asm .fv-asm-msets {
+.fv-asm-msets {
 	display: grid;
 	gap: 0.15rem;
-	margin-top: 0.2rem;
+	margin-top: 0.3rem;
 
 	b {
 		color: var(--color-fg);
@@ -3547,11 +3540,73 @@ ol.fv-list li::marker {
 	}
 }
 
-#method-asm .fv-asm-src {
+.fv-asm-src {
 	display: block;
-	margin-top: 0.2rem;
+	margin-top: 0.3rem;
 	font-size: 0.72rem;
 	font-style: italic;
+}
+
+.fv-asm-hd {
+	display: grid;
+	gap: 0.25rem;
+}
+
+// Method's caveats, a list per class. Each one has its text on the left and the presets it applies to on the right,
+// or under it on a narrow screen.
+.fv-cav-cls {
+	border-top: 1px solid var(--color-border-line);
+	padding-block: 0.5rem;
+
+	.fv & > summary {
+		font-size: var(--cds-font-size-body);
+	}
+}
+
+.fv-cav-cls-name {
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
+}
+
+.fv-cav-list {
+	list-style: none;
+	margin: 0.3rem 0 0;
+	padding: 0;
+}
+
+.fv-cav {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(8rem, 14rem);
+	gap: 0.15rem var(--spacer-4);
+	padding-block: 0.35rem;
+	border-top: 1px dashed var(--color-border-line);
+	line-height: 1.4;
+
+	&:first-child {
+		border-top: 0;
+	}
+
+	@media (max-width: 640px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.fv-cav-tag {
+	display: inline-block;
+	margin-right: 0.4rem;
+	padding: 0 0.4rem;
+	border-radius: 999px;
+	border: 1px solid var(--color-border-line);
+	font-size: 0.7rem;
+	line-height: 1.5;
+	color: var(--color-fg-muted);
+	vertical-align: 0.1em;
+}
+
+.fv-cav-on {
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
 }
 
 // Sort and the filters share a row when there's room. Each keeps its label with its controls when the row wraps.

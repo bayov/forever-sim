@@ -2441,11 +2441,21 @@ export function startReport(dash, events) {
     const builds = new Map(visB().map((b) => [b.id, b]));
     const cav = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.has(n.build));
     const byClass = d3.groups(cav, (n) => builds.get(n.build).class).sort((a, b) => CLASSES.indexOf(a[0]) - CLASSES.indexOf(b[0]));
+    // A caveat that starts with "Assumed:", "Open:", "Left out:" or "Unverified:" shows that word as a tag. The presets
+    // it applies to go in a column of their own, or "All presets" when it's every preset of the class.
+    const TAG = /^(Assumed|Open|Left out|Unverified):\s*/;
+    const cavItem = (t, bs, all) => {
+      const m = t.match(TAG), rest = m ? t.slice(m[0].length) : t, txt = rest.charAt(0).toUpperCase() + rest.slice(1);
+      return el('li', { class: 'fv-cav' },
+        el('span', { class: 'fv-cav-t' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.'),
+        el('span', { class: 'fv-cav-on', text: bs.length === all ? 'All presets' : bs.join(', ') }));
+    };
     host.replaceChildren(...byClass.map(([cls, ns]) => {
       const seen = new Map();
       for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(builds.get(n.build).build); }
-      return el('details', { style: 'border-top:1px solid var(--color-border-line);padding-block:0.5rem' }, el('summary', {}, el('span', { style: 'display:flex;gap:0.4rem;align-items:center;font-size:var(--cds-font-size-body)' }, el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }), `${cls} (${seen.size})`)),
-        el('ul', { class: 'fv-list' }, ...[...seen].map(([t, bs]) => el('li', {}, t, el('span', { class: 'fv-note', text: ` · ${bs.join(', ')}` })))));
+      const all = [...builds.values()].filter((b) => b.class === cls).length;
+      return el('details', { class: 'fv-cav-cls' }, el('summary', {}, el('span', { class: 'fv-cav-cls-name' }, el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }), `${cls} (${seen.size})`)),
+        el('ul', { class: 'fv-cav-list' }, ...[...seen].map(([t, bs]) => cavItem(t, bs, all))));
     }));
   };
 
@@ -2520,7 +2530,7 @@ export function startReport(dash, events) {
   // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
   // 180s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
   // and the DPS under it. The presets' column is the zero point ("–") whichever column is picked, so the numbers never
-  // shift. With onPick the column heads are the buttons that apply a setting; without (Method) they are plain heads.
+  // shift. The column heads are the buttons that apply a setting.
   const ASM_CAP = 'DPS change at 180s';
   const asmHead = (a, x, cur) => [
     el('b', { text: x.label }),
@@ -2531,9 +2541,8 @@ export function startReport(dash, events) {
     const live = a.status === 'live' && arr(a.sens).length > 0, sets = arr(a.settings);
     const dpsOf = (sid, ids) => arr(a.sens).filter((x) => x.setting === sid && ids.includes(x.build)).map((x) => +x.dps);
     const zero = () => el('span', { class: 'fv-asm-zero', title: 'Default: no change', text: '–' });
-    const col = (x) => [x.id === a.defaultSetting ? 'is-def' : '', onPick && x.id === cur ? 'is-cur' : ''].filter(Boolean).join(' ') || null;
+    const col = (x) => [x.id === a.defaultSetting ? 'is-def' : '', x.id === cur ? 'is-cur' : ''].filter(Boolean).join(' ') || null;
     const head = el('tr', {}, el('th', { class: 'fv-asm-corner', scope: 'col' }, live ? 'Spec' : ''), ...sets.map((x) => {
-      if (!onPick) return el('th', { scope: 'col', class: col(x) }, el('div', { class: 'fv-asm-col' }, ...asmHead(a, x)));
       const bt = el('button', { class: 'fv-asm-col', 'data-setting': x.id, 'aria-pressed': String(x.id === cur),
         'aria-label': `${x.label} (${SEG_NAME[x.id] || x.id})${x.id === a.defaultSetting ? ', default' : ''}` }, ...asmHead(a, x, cur));
       if (!live) bt.disabled = true;
@@ -2546,7 +2555,7 @@ export function startReport(dash, events) {
       el('th', { scope: 'row', title: `${g.cls} · ${g.spec}` }, el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), el('span', { text: g.short }))),
       ...sets.map((x) => (x.id === a.defaultSetting ? el('td', { class: col(x) }, zero())
         : el('td', { class: col(x) }, asmRange(asmPcts(a, x.id, g.ids)) || zero(), el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5)))))))) : null;
-    return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' + (onPick ? '' : ' ro') }, el('thead', {}, head), body));
+    return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' }, el('thead', {}, head), body));
   };
   // Pointing at an assumption shows where it comes from, and its full description when the panel shows a short one.
   // Each setting explains itself on its column head (or its line in a reference row), see asmSetTip.
@@ -2568,7 +2577,13 @@ export function startReport(dash, events) {
       showTip(card, nr.left - cr.left, nr.bottom - cr.top + 4, head, lines(), { hl: node, below: true, pinned, act: opts.act });
     }, { tap: opts.tap !== false });
   };
-  const openMethodAsm = () => { showTab('method'); requestAnimationFrame(() => $('#method-asm-card')?.scrollIntoView({ block: 'start' })); };
+  // Everything about an assumption the row leaves out, behind "More details": the full description, each setting's
+  // value and reason, and the source.
+  const asmMore = (a) => el('details', { class: 'fv-asm-more' }, el('summary', { text: 'More details' }),
+    a.description && a.description !== (a.short || a.description) ? el('p', { text: a.description }) : null,
+    el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
+      ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale || ''}`))),
+    a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
   const drawAsm = () => {
     const host = $('#asm-list'), custom = asmSel().length > 0;
     $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
@@ -2585,12 +2600,12 @@ export function startReport(dash, events) {
         const cur = st.asm?.[a.key] || a.defaultSetting, ref = asmRef(a), live = a.status === 'live' && !ref, imp = asmImpact(a);
         const [sz, szText] = ref ? ['ref', 'Reference'] : asmSize(imp);
         const picked = cur !== a.defaultSetting;
-        const txt = el('div', { class: 'fv-asm-txt' },
+        const hd = el('div', { class: 'fv-asm-hd' },
           el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Up to ${f1(imp)}% on a preset at 180s`, text: szText }) : null),
           el('p', { class: 'fv-asm-short', text: a.short || a.description }));
-        asmHover(txt, a.label, () => asmTip(a), { act: ['More in Method ›', openMethodAsm] });
+        asmHover(hd, a.label, () => asmTip(a));
         d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
-          txt,
+          el('div', { class: 'fv-asm-txt' }, hd, asmMore(a)),
           el('div', { class: 'fv-asm-body' }, ...(ref ? [...asmRefLine(a), el('p', { class: 'fv-asm-cap', text: REF_CAP })] : [
             live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s, vs the ranking without your pick' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),
@@ -2611,23 +2626,6 @@ export function startReport(dash, events) {
     const v = { topLabel: top.label, topDps: f1(top.dps), bottomLabel: bot.label, bottomDps: f1(bot.dps), median: f1(d3.median(s, (b) => b.dps)), count: String(s.length),
       classes: String(new Set(s.map((b) => b.class)).size), spreadPct: f1((top.dps / bot.dps - 1) * 100) };
     all.forEach((n) => { for (const a of ['data-source', 'data-field', 'data-row']) n.removeAttribute(a); n.textContent = v[n.dataset.asmF] ?? '—'; n.classList.remove('dash-skeleton'); });
-  };
-  const drawMethodAsm = () => {
-    const host = $('#method-asm');
-    if (!waitOr(host, ['assumptions', 'builds'])) return;
-    host.replaceChildren(...d3.groups(rowsOf('assumptions'), (a) => a.class).flatMap(([cls, as]) => [el('h3', { text: cls === 'All' ? 'All classes' : cls }),
-      el('ul', { class: 'fv-list' }, ...asmSort(as).map((a) => {
-        // The full text the panel leaves out: the description, the panel's table without its buttons, each setting's
-        // numbers and reason, and the source.
-        const live = a.status === 'live' && arr(a.sens).length > 0, ref = asmRef(a);
-        return el('li', {}, el('b', { text: a.label }),
-          el('div', { class: 'fv-asm-mdesc', text: `${a.description}${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : ''}` }),
-          live ? el('p', { class: 'fv-asm-cap', text: ASM_CAP }) : ref ? el('p', { class: 'fv-asm-cap', text: REF_CAP }) : null,
-          live ? asmMatrix(a, a.defaultSetting, null) : null,
-          el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
-            ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value ? x.value + '. ' : ''}${x.rationale}`))),
-          a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
-      }))]));
   };
 
   // ---------- render ----------
@@ -2653,7 +2651,7 @@ export function startReport(dash, events) {
       else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceRank, '#race-rank'], [drawRacialRank, '#racial-rank'], [drawHeat, '#heat'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
-      else if (st.tab === 'method') { drawMethod(); safeTop(drawMethodAsm, $('#method-asm')); }
+      else if (st.tab === 'method') { drawMethod(); }
     } catch (err) { console.error(err); throw err; }
   }
 
