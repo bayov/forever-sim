@@ -194,6 +194,12 @@ export class SimLog {
 
 	static async parseAll(result: RaidSimResult): Promise<SimLog[]> {
 		const lines = result.logs.split('\n');
+		const logs = await SimLog.parseLines(lines);
+		CastBeganLog.findCostResources(logs);
+		return logs;
+	}
+
+	private static parseLines(lines: string[]): Promise<SimLog[]> {
 		return Promise.all(
 			lines.map((line, lineIndex) => {
 				const params: SimLogParams = {
@@ -944,6 +950,9 @@ export class CastBeganLog extends SimLog {
 	readonly manaCost: number;
 	readonly castTime: number;
 	readonly effectiveTime: number;
+	// What the cost is paid in, from the cast's spend line, see findCostResources. Null when the
+	// cast spent nothing.
+	costResource: ResourceType | null = null;
 
 	constructor(params: SimLogParams, manaCost: number, castTime: number, effectiveTime: number) {
 		super(params);
@@ -955,10 +964,43 @@ export class CastBeganLog extends SimLog {
 	toHTML(includeTimestamp = true) {
 		return this.cacheOutput(includeTimestamp, () => (
 			<>
-				{this.toPrefix(includeTimestamp)} Casting {this.newActionIdLink(this.actionId!)} (Cast time: {this.castTime.toFixed(2)}s, Cost:{' '}
-				{this.manaCost.toFixed(1)} Mana).
+				{this.toPrefix(includeTimestamp)} Casting {this.newActionIdLink(this.actionId!)} (Cast time: {this.castTime.toFixed(2)}s, {this.costText()}).
 			</>
 		));
+	}
+
+	private costText(): string {
+		if (!this.manaCost) return 'no cost';
+		const resource = this.costResource === null ? '' : ` ${resourceNames.get(this.costResource)}`;
+		return `Cost: ${this.manaCost.toFixed(1)}${resource}`;
+	}
+
+	// The sim's cast line has the cost but not what it's paid in, so a warrior's Whirlwind would
+	// read "22.0 Mana". The spend comes in its own line ("Spent 22.0 rage from Whirlwind"), so we
+	// take the resource from there. An instant spends at the same moment, next to the cast line.
+	// A cast with a cast time spends when it finishes. A finisher also spends its combo points,
+	// and the cost is the energy.
+	static findCostResources(logs: SimLog[]) {
+		logs.forEach((log, i) => {
+			if (!log.isCastBegan() || !log.manaCost) return;
+			// The log rounds times to 0.01s.
+			const end = log.timestamp + Math.max(log.castTime, log.effectiveTime) + 0.011;
+			for (let j = Math.max(0, i - 8); j < logs.length && (j <= i || logs[j].timestamp <= end); j++) {
+				const other = logs[j];
+				if (
+					other.isResourceChanged() &&
+					other.isSpend &&
+					other.timestamp >= log.timestamp &&
+					other.resourceType != ResourceType.ResourceTypeComboPoints &&
+					!!log.source &&
+					!!other.source?.equals(log.source) &&
+					other.actionId?.equalsIgnoringTag(log.actionId!)
+				) {
+					log.costResource = other.resourceType;
+					return;
+				}
+			}
+		});
 	}
 
 	static parse(params: SimLogParams): Promise<CastBeganLog> | null {
