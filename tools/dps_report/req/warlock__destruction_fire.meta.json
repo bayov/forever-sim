@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 2,
   "race": "Undead",
-  "talents": "2525000003-0002-0050355003101351",
+  "talents": "25201020032-0002-0050355003101351",
   "treeNames": [
     "Affliction",
     "Demonology",
@@ -25,16 +25,16 @@
     "ok": true,
     "note": "+0.00 vs published"
   },
-  "summary": "Fire Destruction with Incinerate as the filler, Conflagrate, Fire and Brimstone, Shadow and Flame and Aftermath, plus Malediction and Pandemic, Succubus out and Firestone. Shipped as its own playstyle on Undead, 1.7% behind Shadow Bolt Destruction.",
+  "summary": "Fire Destruction with Incinerate as the filler, Conflagrate, Fire and Brimstone, Shadow and Flame and Aftermath, plus Pandemic and Malevolence, Succubus out and Firestone. Shipped as its own playstyle on Undead, 1.7% behind Shadow Bolt Destruction.",
   "keyTalents": [
     "Incinerate",
     "Conflagrate",
     "Fire and Brimstone",
     "Shadow and Flame",
     "Aftermath",
-    "Malediction",
     "Pandemic",
-    "Ruin"
+    "Ruin",
+    "Malevolence"
   ],
   "rotation": [
     "Pre-pull: Immolate at -1.5 s",

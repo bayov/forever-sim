@@ -197,26 +197,31 @@ export const TalentsLevel60Demonology = PresetUtils.makePresetTalents(
 );
 // The best build with 30 points in Destruction: Conflagrate, Fire and Brimstone and Shadow and
 // Flame, with Pandemic and Malevolence from Affliction. Incinerate and Bane of Havoc lost to two
-// points of Malevolence and Shadowburn to more Pandemic.
+// points of Malevolence and Shadowburn to more Pandemic. Under client 1.60.1.70425 Malediction's
+// point went to Nightfall (searched again 2026-10-16).
 export const TalentsLevel60Destruction = PresetUtils.makePresetTalents(
 	'Level 60 Destruction',
-	SavedTalents.create({ talentsString: '25510000035--055030500310035' }),
+	SavedTalents.create({ talentsString: '255000000351--055030500310035' }),
 	{ group: 'Level 60', tooltip: 'Conflagrate and Shadow and Flame, with Pandemic and Malevolence.' },
 );
 // The best build with 30 points in Affliction: Shadow Mastery, Pandemic, Malevolence and
-// Nightfall, with Improved Shadow Bolt, Ruin and Agonizing Flames. Wrack and Soul Siphon lost
+// Nightfall, with Improved Shadow Bolt, Ruin and Agonizing Flames. Under client 1.60.1.70425
+// Shadow Mastery is 10% and Malediction is gone: its 3 points went to Improved Bane of Agony and one
+// Soul Harvest point that only fills the 25 point gate (searched again 2026-10-16). Wrack and Soul Siphon lost
 // their points to Ruin, the drains being no match for Shadow Bolt. A damage over time variant with
 // Siphon Life, Soul Siphon and Wrack (25530000035001351--0550005003, the best build with both, on
 // the same Shadow Bolt rotation) is 55 behind, and casting its Wrack costs 34; its drain filler
 // versions lose 124 to 349. It played the same as this build, so it is not shipped as a spec.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	'Level 60 Affliction',
-	SavedTalents.create({ talentsString: '2553000003520005--0550305003' }),
+	SavedTalents.create({ talentsString: '2550102003520005--0550305003' }),
 	{ group: 'Level 60', tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.' },
 );
 
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
-// Aftermath, with Malediction and Pandemic and the Succubus out, and Firestone. Searched with
+// Aftermath, with Pandemic and the Succubus out, and Firestone. Under client 1.60.1.70425 the five
+// Malediction points went to Improved Bane of Agony (2), Malevolence (2) and one
+// Soul Harvest point that fills the Pandemic gate (searched again 2026-10-16). Searched with
 // Incinerate and Conflagrate kept (-require). Since the demons scale from the warlock's stats the
 // Succubus out beats the earlier build that sacrificed it for 15% Fire damage (950.8) by 25; the
 // Felhunter out is 25 behind, the Imp 35, and Spellstone in place of Firestone 24. Without the owner
@@ -224,8 +229,8 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // point does nothing in the sim (it is the one point left over).
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
-	SavedTalents.create({ talentsString: '2525000003-0002-0050355003101351' }),
-	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with Malediction and Pandemic and the Succubus out.' },
+	SavedTalents.create({ talentsString: '25201020032-0002-0050355003101351' }),
+	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with Pandemic and the Succubus out.' },
 );
 
 export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
