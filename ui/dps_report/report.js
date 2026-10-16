@@ -1760,11 +1760,12 @@ export function startReport(dash, events) {
       $('#sp-art').style.backgroundImage = art && art.bg ? `url("${art.bg}")` : '';
     }
     mark($('#sp-title'), 'builds', 'label', W).textContent = b.label;
-    $('#sp-meta').replaceChildren(
+    // replaceChildren writes a null as the text "null", so we leave out the encounter badge when there's none.
+    $('#sp-meta').replaceChildren(...[
       tt(el('span', {}, ringed('classicon_' + b.class.toLowerCase(), 'fv-ico ring', ccol(b.class)), ` ${b.spec}`), 'c:' + b.class),
       tt(el('span', {}, raceIco(b.raceIcon), ' ', mark(el('span', { text: b.race }), 'builds', 'race', W), ' ', iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon')), `r:${b.race}:${b.class}`, true, b.id),
       mark(el('span', { text: b.treePoints }), 'builds', 'treePoints', W),
-      isEnc(b) ? mark(encBadge(b), 'builds', 'encounter', W) : null);
+      isEnc(b) ? mark(encBadge(b), 'builds', 'encounter', W) : null].filter(Boolean));
     mark($('#sp-summary'), 'builds', 'summary', W).textContent = b.summary;
     const extra = b.petDps > 0 ? tile('Pet damage', f1(b.petShare), `${f1(b.petDps)} DPS from pets`, 'builds', 'petShare', W, '%')
       : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight on average', 'builds', 'oomSecs', W, ' s')
