@@ -2107,7 +2107,7 @@ export function startReport(dash, events) {
         while (pl[i + 1] && fold(pl[i + 1]) === why) run.push(pl[++i]);
         items.push(el('li', { class: 'fv-pr other', value: String(run[0].order) },
           el('span', { class: 'no', text: run.length > 1 ? `${run[0].order}–${run[run.length - 1].order}` : String(run[0].order) }),
-          el('div', { class: 'tx' }, el('div', { class: 'ics' }, ...run.map((q) => tt(ico(q, 'fv-ico'), `rot:priority:${q.order}`, true, b.id)), el('b', { text: run.map((q) => q.name).join(', ') })), el('span', { class: 'wh', text: why === 'race' ? `${[...new Set(run.map((q) => q.race))].join(', ')} racials: skipped on ${b.race}.` : `Off in this preset${run[0].notes ? ': ' + run[0].notes.replace(/^Never:\s*/i, '') : '.'}` }))));
+          el('div', { class: 'tx' }, el('div', { class: 'ics' }, ...run.map((q) => tt(ico(q, 'fv-ico'), `rot:priority:${q.order}`, true, b.id)), el('b', { text: run.map((q) => q.name).join(', ') })), el('span', { class: 'wh', text: why === 'race' ? `${[...new Set(run.map((q) => q.race))].join(', ')} racials.` : `Off in this preset${run[0].notes ? ': ' + run[0].notes.replace(/^Never:\s*/i, '') : '.'}` }))));
         continue;
       }
       items.push(tt(el('li', { class: 'fv-pr', value: String(r.order) },
