@@ -54,6 +54,7 @@ import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.
 import Level30p5BackstabGear from './gear_sets/level30p5_backstab.gear.json';
 import Level30p5SinisterStrikeGear from './gear_sets/level30p5_sinister_strike.gear.json';
 import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
+import Level60SyntheticCombatDaggersGear from './gear_sets/level60_phase1_synthetic_combat_daggers.gear.json';
 import Level60SyntheticMutilateGear from './gear_sets/level60_phase1_synthetic_mutilate.gear.json';
 import Level60SyntheticSealFateSwordsGear from './gear_sets/level60_phase1_synthetic_seal_fate_swords.gear.json';
 import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swords.gear.json';
@@ -142,12 +143,18 @@ export const GearLevel60SyntheticSwords = PresetUtils.makePresetGear('Level 60 S
 	group: 'Level 60',
 });
 export const GearLevel60SyntheticDaggers = PresetUtils.makePresetGear('Level 60 Synthetic Daggers', Level60SyntheticDaggersGear, {
-	tooltip: 'A guess at Phase 1 BiS under Forever for Backstab and Subtlety, made of synthetic items that are not in the game.',
+	tooltip: 'A guess at Phase 1 BiS under Forever for Seal Fate Backstab and Subtlety, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 // The swords set with a 1.6 sec dagger off hand, which Seal Fate sims best with.
 export const GearLevel60SyntheticSealFateSwords = PresetUtils.makePresetGear('Level 60 Synthetic Seal Fate Swords', Level60SyntheticSealFateSwordsGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for Seal Fate Sinister Strike, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+// The daggers set with a 2.5 sec mace off hand, which Combat Daggers sims best with since Windfury Totem
+// procs from the main hand only (a mace takes Hack and Slash's armor ignore).
+export const GearLevel60SyntheticCombatDaggers = PresetUtils.makePresetGear('Level 60 Synthetic Combat Daggers', Level60SyntheticCombatDaggersGear, {
+	tooltip: 'A guess at Phase 1 BiS under Forever for Combat Backstab, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 // The daggers set with a 1.7 sec dagger main hand and a 1.8 sec sword off hand, which Mutilate sims best
@@ -162,6 +169,7 @@ export const GearPresets = {
 		GearLevel60SyntheticSwords,
 		GearLevel60SyntheticDaggers,
 		GearLevel60SyntheticSealFateSwords,
+		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
@@ -174,6 +182,7 @@ export const GearPresets = {
 		GearLevel60SyntheticSwords,
 		GearLevel60SyntheticDaggers,
 		GearLevel60SyntheticSealFateSwords,
+		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
@@ -800,8 +809,8 @@ const level60Build = (
 	});
 export const PresetBuildLevel60CombatDaggers = level60Build(
 	'Level 60 Combat Daggers',
-	'Level 60 Undead Combat Backstab on the synthetic Phase 1 daggers.',
-	GearLevel60SyntheticDaggers,
+	'Level 60 Undead Combat Backstab on the synthetic Phase 1 dagger and a slow mace off hand.',
+	GearLevel60SyntheticCombatDaggers,
 	TalentsLevel60CombatDaggers,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 );
@@ -814,7 +823,7 @@ export const PresetBuildLevel60SealFateDaggers = level60Build(
 );
 export const PresetBuildLevel60CombatSwords = level60Build(
 	'Level 60 Combat Swords',
-	'Level 60 Orc Combat Sinister Strike on a slow and a fast synthetic Phase 1 axe, in a 3 minute raid fight.',
+	'Level 60 Orc Combat Sinister Strike on a slow synthetic Phase 1 axe and a mace off hand, in a 3 minute raid fight.',
 	GearLevel60SyntheticSwords,
 	TalentsLevel60CombatSwords,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
@@ -865,7 +874,7 @@ const humanoidBuild = (
 	);
 export const PresetBuildLevel60CombatDaggersHumanoid = humanoidBuild(
 	'Level 60 Combat Daggers',
-	GearLevel60SyntheticDaggers,
+	GearLevel60SyntheticCombatDaggers,
 	TalentsLevel60CombatDaggersHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 );

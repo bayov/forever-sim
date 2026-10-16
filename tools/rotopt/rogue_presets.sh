@@ -76,6 +76,6 @@ gen60() {
 	echo "wrote ui/rogue/apls/$name.apl.json ($knobs)"
 }
 gen60 rogue_combat level60_phase1_synthetic_swords rogue_ss level60_combat_swords 00530310501-32003311201515231 "arEnergy=39,bfPrepull=1"
-gen60 rogue_combat level60_phase1_synthetic_daggers rogue_bs level60_combat_daggers 00530310501-30230320201513231-002 "arEnergy=39,bfPrepull=1,bfSnd=0,bsAfterSwing=0.25,bsEnergy=100,evisCp=4,ghostly=0,vanishCp=3"
+gen60 rogue_combat level60_phase1_synthetic_combat_daggers rogue_bs level60_combat_daggers 00530310501-30230320201513231-002 "arEnergy=39,bfPrepull=1,bfSnd=0,bsAfterSwing=0.25,bsEnergy=100,evisCp=4,ghostly=0,vanishCp=3"
 gen60 rogue_assassination level60_phase1_synthetic_daggers rogue_mut level60_mutilate 0053031033150103-302303202015-002 "bsAfterSwing=0.75,sndRefresh=1,evisCp=4"
 gen60 rogue_subtlety level60_phase1_synthetic_daggers rogue_sub level60_subtlety 0053031035140004--3021203310113011 "bsAfterSwing=0.25,hemoFiller=1,ruptureCp=3,ruptureSnd=0,vanishCp=3,vanishPool=1"
