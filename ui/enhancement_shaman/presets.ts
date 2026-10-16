@@ -455,6 +455,14 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // gear round's set the search again only made mana tie-breaks inside the noise (792.0 against
 // 792.6), so the build stays: 813.5 / 801.8 / 781.6, and 813.8 / 801.6 / 782.3 once Rage of the Farseer
 // waits for the on-use trinket, and 824.5 / 813.9 / 794.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage.
+//
+// Client 1.60.1.70425 (2026-10-16) cut Fire Nova (coefficient 0.143 from 0.214, rank 5 232 to 259
+// base from 397 to 443) and moved the Elemental tree around. The search (Spirit Weapons pinned, as
+// the mean of 120, 180 and 300 sec, 2 raid hits a minute) dropped Elemental Focus and a point of
+// Improved Stormstrike for Tidal Focus 2 (Clearcasting Fire Novas are worth little now), and moved
+// Elemental Weapons' points to Ancestral Knowledge: +7.9 / +6.3 / -7.2 at 120 / 180 / 300 sec
+// paired against the old build (it runs lower on mana in long fights). With the raid's second
+// shaman's Grace of Air (standards 25) it is 835.5 / 825.3 / 809.1, from 865.7 / 852.9 / 834.8.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503002-055030011005112151-02' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
@@ -472,10 +480,18 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 810.4 / 797.7 / 778.7 at 120 / 180 / 300 sec on the 2026-10-13 gear round's set with Rage of the
 // Farseer waiting for the on-use trinket (820.9 / 809.4 / 790.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage),
 // 4.1 behind Level 60 at 180 (800.0 / 788.3 / 767.3 before).
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '053503102-054032001005112151-01' }), {
-	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
-	group: 'Level 60',
-});
+//
+// Under client 1.60.1.70425 the search with Improved Ghost Wolf and Spirit Weapons pinned (from the
+// Level 60 changes above) kept Elemental Focus and Ancestral Knowledge 4: 827.4 / 818.4 / 811.5 at
+// 120 / 180 / 300 sec (862.0 / 848.7 / 830.7 before), 6.9 behind Level 60 at 180.
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents(
+	'Level 60 + Imp GW',
+	SavedTalents.create({ talentsString: '053503102-054032001005112151-01' }),
+	{
+		tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
+		group: 'Level 60',
+	},
+);
 // The best build that takes Water Shield (-require spiritWeapons,waterShield), with the
 // Magma Totem rotation. Water Shield needs 10 Restoration points above it, and those go
 // to Tidal Focus 5 (+5% hit) and Totemic Focus 5 (cheaper totems). That leaves 9 points
@@ -501,6 +517,14 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // was 752.8 against 751.2, inside the noise, so it stays: 763.1 / 755.6 / 741.4, and 762.9 / 755.4 /
 // 742.3 with Rage of the Farseer waiting for the on-use trinket (772.0 / 765.5 / 753.2 with Elixir
 // of Cunning and Ferocity), 5.9% behind Level 60 at 180.
+//
+// Client 1.60.1.70425 moved Tidal Focus up to the first row and Totemic Focus down to the second,
+// so the old Restoration points (Tidal Focus 3, Mindfulness 2, Totemic Focus 5) no longer reach
+// Water Shield. The search (Water Shield and Spirit Weapons pinned) settled on Tidal Focus 5,
+// Mindfulness 3 and Totemic Focus 2, and one point from Elemental Weapons into Ancestral
+// Knowledge: 803.7 / 795.3 / 793.3 at 120 / 180 / 300 sec (813.8 / 804.2 / 792.4 before), 3.6%
+// behind Level 60 at 180. Casting Water Shield, whose globes now also come from our spell crits,
+// is still 3 to 11 behind Lightning Shield on this build and on Mana Tide.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
 	SavedTalents.create({ talentsString: '051003-054030021005112151-053020001' }),
@@ -523,6 +547,10 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // the search found nothing better: 739.7 / 733.0 / 727.4, and 739.9 / 733.4 / 728.4 with Rage of the
 // Farseer waiting for the on-use trinket (749.3 / 742.7 / 737.9 with Elixir of Cunning and Ferocity and Forever's oil and chili damage),
 // 8.7% behind Level 60 at 180.
+//
+// Under client 1.60.1.70425 the search (Mana Tide Totem and Spirit Weapons pinned) moved a point
+// from Improved Stormstrike to Concussion: 769.0 / 760.5 / 756.7 at 120 / 180 / 300 sec (790.3 /
+// 782.1 / 778.0 before, mostly the Fire Nova cut), 7.9% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
 	SavedTalents.create({ talentsString: '03-055030031005112051-053051001001' }),

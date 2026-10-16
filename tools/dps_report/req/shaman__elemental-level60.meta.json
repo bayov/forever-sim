@@ -5,7 +5,7 @@
   "build": "Level 60",
   "isDefault": true,
   "pr": 7,
-  "race": "Orc",
+  "race": "SkyborneWindshaper",
   "talents": "5501331003001351-055000101-053",
   "treeNames": [
     "Elemental",
@@ -15,30 +15,32 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 695.3,
-    "source": "Shaman PR (rotation audit pass 21: Searing Totem before the pull, gated Lightning Shield recast, no totem recasts in the last 20 s, 2026-10-16)"
+    "dps": 724.9,
+    "source": "Shaman PR (client 1.60.1.70425: new talent tree with Elemental Mastery, Fire Nova cut, Lava Burst and Mana Tide ranks, searched talents, 2026-10-16)"
   },
   "verify": {
-    "dps": 695.27,
+    "dps": 724.93,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "Deep Elemental caster on the synthetic Phase 1 staff set with Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus, from talent searches over seven seeds. It is the Elemental spec's default Level 60 preset.",
+  "summary": "Deep Elemental caster on the synthetic Phase 1 staff set with Elemental Mastery, Lava Burst, Eye of the Storm, Thundering Strikes and Tidal Focus, from the client 70425 talent search, as Windshaper Skyborne. It is the Elemental spec's default Level 60 preset.",
   "keyTalents": [
+    "Elemental Mastery",
     "Lava Burst",
     "Elemental Alacrity",
     "Elemental Fury",
     "Call of Flame",
     "Lightning Overload",
+    "Eye of the Storm",
     "Concussion",
     "Thundering Strikes",
     "Tidal Focus"
   ],
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4 s, Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
-    "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
+    "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
     "Mana Spring Totem when it is down and at least 20 s remain",
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
@@ -71,7 +73,8 @@
     "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking",
     "Elemental Focus proc rate on low ranks reduced on 7 Oct; exact amount open",
     "Searing Totem reach from a ranged shaman is not modelled",
-    "Raid damage hits on the shaman (1 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
+    "Raid damage hits on the shaman (1 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10",
+    "Call of Thunder is gone from the 70425 tree; Elemental Mastery took its point, and Eye of the Storm 3 keeps 70% of the casts from being pushed back by the 2 raid hits a minute"
   ],
-  "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself)."
+  "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste)."
 }

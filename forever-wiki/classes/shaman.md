@@ -8,6 +8,36 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Client 1.60.1.70425 (2026-10-16)
+
+From wago.tools, diffing every shaman spell-class spell, the talent tree (TraitNode, TraitNodeEntry, TraitDefinition, TraitCond, TraitEdge) and the trait curves between builds 70338 and 70425, with the 15 October development notes. The talent sections below are the BlizzCon transcription and predate this; `tools/forever_talents/client/shaman.json` and `ui/core/talents/trees/shaman.json` have the 70425 tree.
+
+- Elemental tree: Lava Burst moved from row 7 to row 5 (the 20-point gate) and Elemental Mastery (16166) is the new row 7 talent, needing Lava Burst. Call of Thunder is gone from the tree (its spell has no level row, so it is not baseline either). Elemental Alacrity moved to row 2, Elemental Warding to row 3, Earthbound to row 4, and the columns were rearranged. Lightning Overload now needs Elemental Alacrity and Elemental Fury needs Lightning Overload. Restoration: Tidal Focus and Totemic Focus swapped rows (Tidal Focus is row 1 now). Every talent string with Elemental or Restoration points changes; the old Enhancement Water Shield build is no longer legal.
+- Elemental Mastery: 15 sec, 3 min cooldown, off the global cooldown. Lightning Bolt and Lava Burst cast 0.5 sec faster and Chain Lightning has no cooldown.
+- Call of Flame also lengthens Flame Shock by 3 / 6 / 9 sec (one tick a point). Trial by Fire (the sim's Improved Fire Nova) adds 10 / 20 sec to Magma Totem. Elemental Reach lost Flame Shock's extra range and cuts Totemic Projection's cooldown by 10 / 20 sec.
+- Lava Burst: the three ranks moved ten levels down (30 / 40 / 50: 123 + 0.8, 164 + 0.9, 196 + 1.1 a level, 135 / 165 / 230 mana), and a new rank 4 (1326047) at 60 has what was rank 3 (220 + 1.3 a level, 265 mana). At 60 Lava Burst is unchanged under a new spell ID.
+- Mana Tide Totem: ranks at 1 / 38 / 48 / 58 (88 / 133 / 197 / 290 mana a tick, 10 / 20 / 30 / 60 cost), the new rank 4 (1325256) at 58 being the old rank 3. Unchanged at 60 under a new spell ID.
+- Fire Nova: coefficient 0.143 (was 0.214), base 33 / 55 / 130 / 179 / 239 plus 0.4 / 0.6 / 0.9 / 1.1 / 1.3 a level (was 50 / 102 / 183 / 284 / 403 plus 1.1 / 1.6 / 2.2 / 2.8 / 3.4), and cheaper (65 / 120 / 210 / 290 / 375 mana). Rank 5 hits 232 to 259 at 57 where it was 397 to 443.
+- Chain Lightning costs 35% less (145 / 200 / 250 / 315). Stormstrike costs 8% of base mana (121.6 at 60, was 125).
+- Stormstrike's mark is no longer used up by a spell that misses (development notes). Water Shield's globes also come from our damage spells' crits (ProcTypeMask 0x262a8 to 0x362a8).
+- Strength of Earth, Grace of Air, Windfury Totem and Flametongue Totem became raid auras (effect 35 to 65), and Grace of Air lost the exclusivity flag it shared with Windfury Totem, so the two stack (master #77, standards 25).
+- Unchanged and cosmetic: Eye of the Storm (23 / 47 / 70% not to lose cast time), Elemental Alacrity's and Elemental Warding's curves (the client swapped which definition holds them), Elemental Devastation (direct harmful spells), the shocks' new Attributes_6 bit 21 (mechanic shown as combat text), Restorative Totems' modifier (healing only).
+
+The presets after the port, with the searched talents (as the mean of 120, 180 and 300 sec, 2 raid hits a minute), 20000 iterations, master before the port to after, 120 / 180 / 300 sec:
+
+| Preset | Talents | 120 s | 180 s | 300 s |
+|---|---|---|---|---|
+| Elemental Level 60 (Windshaper Skyborne, was Orc) | `5501331003001351-055000101-053` | 691.6 → 732.3 | 684.9 → 724.9 | 671.5 → 715.3 |
+| Elemental Level 60 + Mana Tide (Windshaper Skyborne, was Orc) | `5501331003001351-04-053150001001` | 685.0 → 722.1 | 678.0 → 714.6 | 665.2 → 699.4 |
+| Enhancement Level 60 | `053503002-055030011005112151-02` | 865.7 → 835.5 | 852.9 → 825.3 | 834.8 → 809.1 |
+| Enhancement Level 60 + Imp GW | `053503102-054032001005112151-01` | 862.0 → 827.4 | 848.7 → 818.4 | 830.7 → 811.5 |
+| Enhancement Level 60 + Water Shield | `051003-054030021005112151-053020001` | 813.8 → 803.7 | 804.2 → 795.3 | 792.4 → 793.3 |
+| Enhancement Level 60 + Mana Tide | `03-055030031005112051-053051001001` | 790.3 → 769.0 | 782.1 → 760.5 | 778.0 → 756.7 |
+
+Elemental gains from Elemental Mastery (+22 as the mean of the three lengths), Eye of the Storm 3 in place of 3 Reverberation points (+8, now that raid hits push casts back) and Call of Flame's longer Flame Shock, against Call of Thunder's 3% crit. Enhancement loses mostly to the Fire Nova cut. Chain Lightning, even at the new cost and with no cooldown under Elemental Mastery, loses 15 to 55 on one target, so the Elemental rotations still leave it out.
+
+Races at 180 sec on the new builds: Elemental Windshaper Skyborne 724.9, Orc 721.4, Dwarf 719.3, Tauren 719.1, Troll 710.1 (Mana Tide 714.6 / 711.2 / 708.7 / 708.6 / 700.1); Enhancement Level 60 Orc 825.3, Windshaper Skyborne 822.6, Tauren 817.1, Dwarf 816.9, Troll 813.7 (the other Enhancement builds rank the same). Best overall and best Horde: Windshaper Skyborne for Elemental, Orc for Enhancement. Best Alliance: Dwarf (the only Alliance shaman).
+
 ## Client 1.60.1.70338 and the 7 October deep dive
 
 From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchanges.pro's 70338 talent calculator and the [Mage and Shaman class deep dive](https://worldofwarcraft.blizzard.com/en-us/news/24302097) of 7 October. The Elemental tree matches the sim rank for rank (shaman_audit.md 8.8 to 8.16).

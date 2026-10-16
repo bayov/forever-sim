@@ -14,6 +14,11 @@
 # The elemental rotations at the end are written the same way.
 set -e
 settings=$1
+# Client 1.60.1.70425 (2026-10-16): the Level 60 APLs in ui/*_shaman/apls carry hand edits on top
+# of what these templates write (Lightning Shield before the pull and its recast gates, the totem
+# recasts that stop 20 sec before the end, Searing Totem before the pull on Optimized), so they are
+# not regenerated from here. The templates pick each spell's top rank from the sim's tables, so the
+# new Lava Burst and Mana Tide Totem top ranks (1326047, 1325256) come out right.
 # Standards 23 (user ruling 2026-10-15): there is no shaman totem duty. Every shaman drops its own
 # party's totems, like a warrior's Sunder: Strength of Earth, Windfury and Mana Spring for the melee
 # party, Mana Spring for the caster party.

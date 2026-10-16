@@ -300,13 +300,14 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // The shaman is an engineer for the Goblin Sapper Charge and Goblin Land Mine (4.3 and 1.2)
-// and an alchemist. The race is Orc, the best race (673.9 at 180 sec, Windshaper Skyborne 1.6
-// behind), see the races under the builds.
+// and an alchemist. The race is Windshaper Skyborne, the best race since client 1.60.1.70425
+// gave Wind Blessed 3% haste (721.4 for the Orc at 180 sec before), see the races under the
+// builds.
 export const OtherDefaults = {
 	distanceFromTarget: 20,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceOrc,
+	race: Race.RaceSkyborneWindshaper,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -359,14 +360,20 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Best Alliance: Dwarf (the only Alliance shaman). On Mana Tide: Orc 666.9, Windshaper Skyborne 665.2,
 // Troll 662.0, Dwarf 659.8, Tauren 659.8 at 180 sec. The staff is the Era Phase 1 weapon type and no
 // race has a staff racial; Tauren's 1% hit is wasted at the hit cap.
+//
+// Client 1.60.1.70425 (2026-10-16, the 70425 talents, 2 raid hits a minute, 20000 iterations, 180
+// sec): Windshaper Skyborne 724.9 (Wind Blessed is 3% haste now), Orc 721.4 (Savage's 1% crit
+// counts with the staff now), Dwarf 719.3 and Tauren 719.1 (2% crit damage each), Troll 710.1.
+// Best overall and best Horde: Windshaper Skyborne. Best Alliance: Dwarf. On Mana Tide:
+// Windshaper Skyborne 714.6, Orc 711.2, Dwarf 708.7, Tauren 708.6, Troll 700.1.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Windshaper Skyborne on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceOrc,
+	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -378,7 +385,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	talents: TalentsLevel60ManaTide,
 	rotation: APLLevel60ManaTide,
 	encounter: EncounterLevel60,
-	race: Race.RaceOrc,
+	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
