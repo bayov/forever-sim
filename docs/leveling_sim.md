@@ -10,8 +10,8 @@ it.
 - **The pull and recovery policy:** how many mobs to pull, when to chain-pull another one, which
   spell and rank to pull with, and when to sit down to eat and drink or heal.
 - **Leveling stat weights** for a level band, measured on the leveling score, not DPS. Int,
-  Spirit, Stamina and armor are worth something here, unlike in the Level 60 weights. They
-  can be exported as a Pawn scale per band (10–20, 20–30, …) to judge upgrades while playing.
+  Spirit, Stamina and armor are worth something here, unlike in the Level 60 weights. The
+  BayovCore export takes them into BayovCore's Upgrades, to judge upgrades while playing.
 - **Talents:** the best no-respec route from 10 to 60 (which point to take at each level),
   plus the best build for each of 30–40, 40–50 and 50–60 with its gain over the no-respec route
   in that band. The sim doesn't decide whether a respec is worth its gold. It reports the gains
@@ -611,13 +611,25 @@ After the groundwork:
      at 2 under only adds half a mob (90.5 to 91.0: rest mana to 60% instead of 80%), so the
      preset keeps the knobs tuned at our level, and the default mob level stays ours.
 6. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
-7. **More optimizing:** leveling stat weights with a Pawn export, the talent route, other
-   classes' templates.
+7. **More optimizing:** leveling stat weights, the talent route, other classes' templates.
+   - Stat weights, done (2026-10-16). In Leveling mode a stat's weight is the mobs it adds to
+     a session per point (sim/core/statweight.go). The stats move by 10 there instead of 1,
+     and hit and crit by 1%. +1 attack power adds only 0.042 mobs, and with a step of 1 the
+     sessions drift apart on their own and the weights were mostly noise. Calculate weighs
+     Stamina and Armor too in Leveling mode.
+   - Enhancement's "Level 30 Leveling" stat weights are direct probes of the solo build (the
+     preset's comment has them). Next to the Level 30 fight's weights, Spirit is worth four
+     times as much (1.84) and MP5 three times (3.76), because they shorten the rests.
+     Stamina only shortens rests too (no deaths at our level). +10 is worth 0.85 a point,
+     and past +20 it adds nothing.
+   - The BayovCore export (it was Pawn EP) writes the Current EP for BayovCore's Upgrades
+     with its stat names, our level and talent tree, and Survival=own when the weights price
+     Stamina or Armor, so Upgrades keeps them instead of its survival slider.
 8. **Synthetic gear curves** from 10 to 60 and the talent route search.
 9. **UI**, done: "Leveling" is an Encounter Type next to PvP in the individual sims, with the
    session's options (the fight-only inputs hide). Results lead with mobs killed, XP an hour,
    deaths and mobs a pull, and the time split; the history and Compare tab compare mobs
-   killed; stat weights are off for now. Enhancement shaman has a "Leveling" preset group
+   killed; stat weights weigh mobs killed. Enhancement shaman has a "Leveling" preset group
    with the solo Level 30 build and this rotation (`apls/level30_leveling.apl.json`).
 
 10. **Every choice in the rotation.** Done (2026-10-15).

@@ -145,8 +145,10 @@ Optimizer notes:
      drinking), the run-in, the gaps between chain pulls, and pack sizes.
    - Drop gaps over about 60 s (AFK) and use the fast quartile as the default.
    - Then re-tune with the optimizer.
-2. **Leveling stat weights and a Pawn export** (mobs or XP an hour per stat), and turn the
-   UI's stat weights back on for Leveling mode.
+2. **Leveling stat weights**, done (2026-10-16): Calculate weighs mobs killed in Leveling
+   mode, enhancement has "Level 30 Leveling" stat weights, and the BayovCore export (it was
+   Pawn EP) feeds BayovCore's Upgrades. Other levels and classes get theirs with their
+   templates.
 3. **The talent route:** the talent to take at each level, scored by leveling speed.
 4. **Other classes.**
    - Each needs a `*_leveling` rotopt template (rest, pull, fight rules with knobs), a solo

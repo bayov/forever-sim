@@ -332,8 +332,8 @@ func (s *setup) save(path string) error {
 	return os.WriteFile(path, data, 0644)
 }
 
-// Stat weights on the current gear: DPS per point of each stat, and the same as
-// attack power equivalents. A stat mod of 1 point is tiny at low level, so this asks for
+// Stat weights on the current gear: DPS per point of each stat (mobs killed a session in a
+// leveling run), and the same as attack power equivalents. A stat mod of 1 point is tiny at low level, so this asks for
 // many iterations.
 //
 // The ± is the standard error of the mean. The core reports the spread of the per
@@ -358,6 +358,7 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 			proto.Stat_StatMeleeCrit, proto.Stat_StatMeleeHit, proto.Stat_StatStamina,
 			proto.Stat_StatIntellect, proto.Stat_StatSpellPower, proto.Stat_StatHolyPower,
 			proto.Stat_StatSpellCrit, proto.Stat_StatSpellHit, proto.Stat_StatMP5, proto.Stat_StatSpirit,
+			proto.Stat_StatArmor, proto.Stat_StatFirePower, proto.Stat_StatNaturePower,
 		},
 		PseudoStatsToWeigh: []proto.PseudoStat{proto.PseudoStat_PseudoStatMainHandDps, proto.PseudoStat_PseudoStatOffHandDps},
 		EpReferenceStat:    proto.Stat_StatAttackPower,
@@ -367,7 +368,7 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 	}
 	stderr := 1 / math.Sqrt(float64(iterations))
 	var sb strings.Builder
-	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina", "Intellect", "SpellPower", "HolyPower", "SpellCrit", "SpellHit", "MP5", "Spirit"}
+	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina", "Intellect", "SpellPower", "HolyPower", "SpellCrit", "SpellHit", "MP5", "Spirit", "Armor", "FirePower", "NaturePower"}
 	for _, name := range names {
 		i := proto.Stat_value["Stat"+name]
 		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.Stats[i], res.Dps.EpValues.Stats[i], res.Dps.EpValuesStdev.Stats[i]*stderr)

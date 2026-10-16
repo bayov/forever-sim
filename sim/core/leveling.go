@@ -112,6 +112,8 @@ type levelingSession struct {
 		pulls, pulled                    float64
 		combat, resting, searching, dead float64
 		foods, drinks, bandages          float64
+		// Each session's kills, kept only when the sim saves all values (stat weights).
+		allKills []float64
 	}
 }
 
@@ -639,6 +641,9 @@ func (s *levelingSession) doneIteration(sim *Simulation) {
 	a.n++
 	a.kills += kills
 	a.kills2 += kills * kills
+	if sim.Options.SaveAllValues {
+		a.allKills = append(a.allKills, kills)
+	}
 	a.xp += xp
 	a.deaths += float64(s.deaths)
 	a.pulls += float64(s.pulls)
@@ -672,6 +677,7 @@ func (s *levelingSession) metrics() *proto.LevelingMetrics {
 		Food:             a.foods / n,
 		Drinks:           a.drinks / n,
 		Bandages:         a.bandages / n,
+		AllKills:         a.allKills,
 	}
 	if a.pulls > 0 {
 		m.MobsPerPull = a.pulled / a.pulls

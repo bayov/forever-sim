@@ -415,6 +415,9 @@ message LevelingMetrics {
 	double food = 11;
 	double drinks = 12;
 	double bandages = 13;
+	// Each session's mobs killed, in iteration order, when SimOptions.save_all_values is on.
+	// Stat weights compare them session by session, the way they use the DPS's all_values.
+	repeated double all_kills = 14;
 }
 
 enum ErrorOutcomeType {
