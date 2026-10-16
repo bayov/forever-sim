@@ -4,7 +4,7 @@
   "spec": "Fire",
   "build": "Fire",
   "isDefault": false,
-  "pr": 6,
+  "pr": 89,
   "race": "Human",
   "talents": "0402005-23550030130135031-005",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_fire",
   "published": {
     "dps": 993.2,
-    "source": "PR (client 1.60.1.70425 port, 2026-10-16)"
+    "source": "PR #89 (client 1.60.1.70425 port, 2026-10-16)"
   },
   "verify": {
     "dps": 993.2,

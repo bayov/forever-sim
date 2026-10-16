@@ -4,7 +4,7 @@
   "spec": "Frost",
   "build": "Frost",
   "isDefault": false,
-  "pr": 6,
+  "pr": 89,
   "race": "SkyborneHighOrder",
   "talents": "05020050031001-03-0555100331001301201",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_frost",
   "published": {
     "dps": 827.3,
-    "source": "PR (client 1.60.1.70425 port, 2026-10-16)"
+    "source": "PR #89 (client 1.60.1.70425 port, 2026-10-16)"
   },
   "verify": {
     "dps": 827.3,

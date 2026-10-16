@@ -4,7 +4,7 @@
   "spec": "Frostfire",
   "build": "Frostfire",
   "isDefault": true,
-  "pr": 6,
+  "pr": 89,
   "race": "Human",
   "talents": "-0155003013012503-00550003310003002",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_frostfire",
   "published": {
     "dps": 1010.8,
-    "source": "PR (client 1.60.1.70425 port, 2026-10-16)"
+    "source": "PR #89 (client 1.60.1.70425 port, 2026-10-16)"
   },
   "verify": {
     "dps": 1010.8,
