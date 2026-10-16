@@ -4,9 +4,9 @@ Dashboard-only knobs read by run_assumptions.py: DASH_ASSUME="key=value,..." ove
 assumption scenarios vary (sim/core/assumptions.go). With the variable unset the sim is bit-identical.
 Each knob on a constant master sets (the rank scales, Ice Lance's coefficient, Rend's attack power share,
 the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's
-Mark ranks, the level partial resist, the damage taken Rage, Seal of Command's rate, the bleed tick crit, the Fire trap's attack power)
+Mark ranks, the damage taken Rage, Seal of Command's rate, the bleed tick crit, the Fire trap's attack power)
 defaults to that constant, so a run with no knob reproduces master. Made against master
-d9b3049aa with patches 0001 to 0003 applied.
+8d0710c31 with patches 0001 to 0003 applied.
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -79,10 +79,10 @@ index 000000000..8edf2869b
 +	return critMultiplier
 +}
 diff --git a/sim/core/buffs.go b/sim/core/buffs.go
-index c45bcd8c7..218488495 100644
+index ef92a67aa..bfc20ebfd 100644
 --- a/sim/core/buffs.go
 +++ b/sim/core/buffs.go
-@@ -1703,6 +1703,9 @@ func TrueshotAura(unit *Unit) *Aura {
+@@ -1727,6 +1727,9 @@ func TrueshotAura(unit *Unit) *Aura {
  	if unit.Env.IsForever() {
  		rangedAP = bestLearnedRank(unit.Level, foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:])
  		meleeAP = 0
@@ -107,7 +107,7 @@ index 83f346dbf..1be52fe51 100644
  		}
  	}
 diff --git a/sim/core/rage.go b/sim/core/rage.go
-index dd71a61ae..d3fff2dce 100644
+index a695b498a..8d5a83337 100644
 --- a/sim/core/rage.go
 +++ b/sim/core/rage.go
 @@ -67,7 +67,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
@@ -119,7 +119,7 @@ index dd71a61ae..d3fff2dce 100644
  }
  
  // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
-@@ -106,7 +106,8 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) floa
+@@ -107,7 +107,8 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) floa
  	}
  	level = max(1, min(level, 60))
  	assumedArmor := 0.2 + 0.2*float64(level-1)/59
@@ -129,7 +129,7 @@ index dd71a61ae..d3fff2dce 100644
  }
  
  // foreverRageDamage is the damage ForeverDamageTakenRage counts for a hit.
-@@ -126,7 +127,7 @@ func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
+@@ -127,7 +128,7 @@ func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
  	} else if result.DidCrush() {
  		damage *= 1.5
  	}
@@ -196,20 +196,6 @@ index 5acde3344..41b3f17fc 100644
  
  	result.Damage *= averageMultiplier
  }
-diff --git a/sim/core/spell_resistances.go b/sim/core/spell_resistances.go
-index 5e1b39f62..47b04a0ba 100644
---- a/sim/core/spell_resistances.go
-+++ b/sim/core/spell_resistances.go
-@@ -164,7 +164,8 @@ func (unit *Unit) resistCoeff(spell *Spell, attacker *Unit, binary bool, pureDot
- 	}
- 
- 	if !binary && unit.Type == EnemyUnit && unit.Level > attacker.Level {
--		avgMitigationAdded := AverageMagicPartialResistPerLevelMultiplier * float64(unit.Level-attacker.Level)
-+		// dashboard assumption level_partial_resist
-+		avgMitigationAdded := Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier) * float64(unit.Level-attacker.Level)
- 		// coef is scaled 0 to 1, not 0 to 0.75
- 		resistanceCoef += avgMitigationAdded * 1 / 0.75
- 	}
 diff --git a/sim/druid/rip.go b/sim/druid/rip.go
 index 4d285552c..0abb1d23f 100644
 --- a/sim/druid/rip.go
