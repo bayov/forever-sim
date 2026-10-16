@@ -89,7 +89,7 @@
               "blessingOfKings":  true,
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "30305013002-25053005112110501-2",
+            "talentsString":  "30305013002-25053005122010501-2",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -618,7 +618,7 @@
                               },
                               "rhs":  {
                                 "const":  {
-                                  "val":  "40"
+                                  "val":  "50"
                                 }
                               }
                             }
