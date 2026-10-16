@@ -78,9 +78,11 @@ interface PlacedTotem {
 	actionId: ActionId;
 	element: string;
 	start: number;
-	// When it stops standing here: it runs out or moves.
+	// When it stops standing here: it runs out, moves or the next totem of its element replaces it.
 	until: number;
-	// When it runs out, for its timer.
+	// When the next totem of its element replaced it, if that came before it ran out.
+	replaced: number | null;
+	// When it runs out on its own, for its timer.
 	expires: number;
 	x: number;
 	y: number;
@@ -231,7 +233,8 @@ export class ReplayMap {
 					element: slot.element,
 					start: j == 0 ? drop.start : place.t,
 					until: j + 1 < places.length ? places[j + 1].t : until,
-					expires: until,
+					replaced: until < drop.until ? until : null,
+					expires: drop.until,
 					x: place.x,
 					y: place.y,
 				}));
@@ -753,7 +756,8 @@ export class ReplayMap {
 		this.tip(elem, () =>
 			tipBox(totem.actionId.name, [
 				`${totem.element} totem, down at ${formatClock(totem.start, true)}`,
-				Number.isFinite(totem.until) ? `Gone at ${formatClock(totem.until, true)}` : '',
+				Number.isFinite(totem.expires) ? `Runs out at ${formatClock(totem.expires, true)}` : '',
+				totem.replaced != null ? `Replaced at ${formatClock(totem.replaced, true)}` : '',
 			]),
 		);
 		return elem;
