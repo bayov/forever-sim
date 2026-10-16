@@ -1081,14 +1081,14 @@ message LevelingOptions {
 	double chain_search_standing_min = 20;
 	double chain_search_standing_max = 21;
 	// How far the mob a running search finds stands, in whole yards between these (default
-	// 10 to 25). That's every search out of combat, and a chain search that runs. It waits
+	// 10 to 40). That's every search out of combat, and a chain search that runs. It waits
 	// there until we pull it: a harmful spell that lands on it, or walking into melee range of
 	// it (a face pull). Then it runs to us at its level's speed.
 	double found_min = 12;
 	double found_max = 18;
-	// How far the mob a standing chain search finds stands (default 10 to 40). We ran toward
-	// the mob a running search finds, but standing still we only spot what's around us, so it
-	// tends to be further away.
+	// How far the mob a standing chain search finds stands (default 20 to 60). Running around
+	// we come across mobs, but standing still we look out over the area and spot them further
+	// off.
 	double found_standing_min = 22;
 	double found_standing_max = 23;
 

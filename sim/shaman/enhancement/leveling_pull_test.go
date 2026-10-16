@@ -41,9 +41,9 @@ var (
 // notices us at once, one 20 to 30 yards away takes a bolt, and we walk up to one further
 // away until the shock reaches it or it notices us. The bolt's mob only notices us once the bolt hits
 // it, and then runs to us from where it stood. While we search we run, so the rotation
-// starts no hard cast. We find mobs out to 40 yards, so some need the walk.
+// starts no hard cast.
 func TestLevelingPulls(t *testing.T) {
-	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{FoundMax: 40}, 1), pullRotation)
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), pullRotation)
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
 
@@ -159,11 +159,10 @@ var lookingLine = regexp.MustCompile(`Leveling: looking for another mob, running
 // TestLevelingChainPulls: pulling two at a time (mobs a few levels below us, so the naked
 // shaman lives through them), we look for a second mob while fighting the first, running
 // with it following us, when no hard cast starts. The rotation bolts the second mob
-// from where it stands, mobs on us or not, and pulls stay two mobs. We find mobs out to 40
-// yards, so some are beyond shock range.
+// from where it stands, mobs on us or not, and pulls stay two mobs.
 func TestLevelingChainPulls(t *testing.T) {
 	rotation := strings.TrimSuffix(chainRotation, "\n]}") + ",\n" + strings.Join(packLines(2), ",\n") + "\n]}"
-	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -4, FoundMax: 40}, 1), rotation)
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -4}, 1), rotation)
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
 
@@ -214,15 +213,15 @@ func TestLevelingChainPulls(t *testing.T) {
 
 // TestLevelingChainSearchStanding: Look For Mob with Stand never runs, and its searches take
 // the standing time (0 to 5 sec by default) where running ones take 0 to 3. A standing search
-// finds its mob 10 to 40 yards away, where a running one, in combat or out, finds it 10 to 25
+// finds its mob 20 to 60 yards away, where a running one, in combat or out, finds it 10 to 40
 // yards away.
 func TestLevelingChainSearchStanding(t *testing.T) {
 	for _, c := range []struct {
-		stand        bool
-		lo, hi       float64
-		running      string
-		farthestFind int
-	}{{false, 0, 3, "true", 25}, {true, 0, 5, "false", 40}} {
+		stand         bool
+		lo, hi        float64
+		running       string
+		nearest, most int
+	}{{false, 0, 3, "true", 10, 40}, {true, 0, 5, "false", 20, 60}} {
 		lines := packLines(2)
 		if c.stand {
 			for i := range lines {
@@ -253,20 +252,20 @@ func TestLevelingChainSearchStanding(t *testing.T) {
 				lookedAt = -1
 			case foundLine.MatchString(line):
 				yards, _ := strconv.Atoi(foundLine.FindStringSubmatch(line)[2])
-				most := 25
+				nearest, most := 10, 40
 				if lookedAt >= 0 {
 					searches = append(searches, at-lookedAt)
-					most = c.farthestFind
+					nearest, most = c.nearest, c.most
 					farthest = max(farthest, yards)
 				}
-				if yards < 10 || yards > most {
-					t.Errorf("stand %v: at %.2f found a mob %d yards away, want 10 to %d", c.stand, at, yards, most)
+				if yards < nearest || yards > most {
+					t.Errorf("stand %v: at %.2f found a mob %d yards away, want %d to %d", c.stand, at, yards, nearest, most)
 				}
 				lookedAt = -1
 			}
 		}
-		if c.stand && farthest <= 25 {
-			t.Errorf("stand %v: the farthest mob a chain search found was %d yards away, want some beyond 25", c.stand, farthest)
+		if c.stand && farthest <= 40 {
+			t.Errorf("stand %v: the farthest mob a chain search found was %d yards away, want some beyond 40", c.stand, farthest)
 		}
 		if len(searches) < 5 {
 			t.Fatalf("stand %v: %d chain searches found a mob", c.stand, len(searches))
@@ -328,15 +327,14 @@ func TestLevelingLookForMob(t *testing.T) {
 }
 
 // TestLevelingWalkIntoBoltRange: the rotation walks up to a mob only until it's 30 yards
-// away, then bolts it, so every pull of a mob found further away comes from 30 yards. We
-// find mobs out to 40 yards for it.
+// away, then bolts it, so every pull of a mob found further away comes from 30 yards.
 func TestLevelingWalkIntoBoltRange(t *testing.T) {
 	rotation := `{"type":"TypeAPL","priorityList":[
 		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":8008}}}},
 		{"action":{"castSpell":{"spellId":{"spellId":403},"target":{"type":"PullTarget"}}}},
 		{"action":{"levelingWalkToPullTarget":{"within":{"const":{"val":"30"}}}}}
 	]}`
-	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{FoundMax: 40}, 1), rotation)
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), rotation)
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
 

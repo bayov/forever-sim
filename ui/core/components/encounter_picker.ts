@@ -918,8 +918,8 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		id: 'encounter-leveling-found-max',
 		label: 'Mob Distance Max (yd)',
 		labelTooltip: foundTooltip,
-		get: opts => Math.round(orDefault(opts.foundMax, 25)),
-		set: (opts, value) => (opts.foundMax = unlessDefault(value, 25)),
+		get: opts => Math.round(orDefault(opts.foundMax, 40)),
+		set: (opts, value) => (opts.foundMax = unlessDefault(value, 40)),
 	});
 
 	// The options we rarely change, folded away.
@@ -991,20 +991,20 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.chainSearchStandingMax = unlessDefault(value, 5)),
 	});
 	const standingFoundTooltip =
-		"How far away the mob we find on a chain search we stand for stands, in whole yards, at random between these. Standing still we only spot the mobs around us, so it's further than one we ran toward.";
+		'How far away the mob we find on a chain search we stand for stands, in whole yards, at random between these. Standing still we look out over the area, so we spot mobs further off than while running around.';
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-found-standing-min',
 		label: 'Standing Mob Distance Min (yd)',
 		labelTooltip: standingFoundTooltip,
-		get: opts => Math.round(orDefault(opts.foundStandingMin, 10)),
-		set: (opts, value) => (opts.foundStandingMin = unlessDefault(value, 10)),
+		get: opts => Math.round(orDefault(opts.foundStandingMin, 20)),
+		set: (opts, value) => (opts.foundStandingMin = unlessDefault(value, 20)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-found-standing-max',
 		label: 'Standing Mob Distance Max (yd)',
 		labelTooltip: standingFoundTooltip,
-		get: opts => Math.round(orDefault(opts.foundStandingMax, 40)),
-		set: (opts, value) => (opts.foundStandingMax = unlessDefault(value, 40)),
+		get: opts => Math.round(orDefault(opts.foundStandingMax, 60)),
+		set: (opts, value) => (opts.foundStandingMax = unlessDefault(value, 60)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-death-penalty',

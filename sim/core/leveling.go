@@ -24,7 +24,7 @@ import (
 //
 // One loop runs the session:
 //   - Searching: we run around for a random 0 to 10 sec (search_min / search_max), so we
-//     can't hard cast, and find a mob standing 10 to 25 yards away (found_min / found_max).
+//     can't hard cast, and find a mob standing 10 to 40 yards away (found_min / found_max).
 //     One that close to its aggro radius notices us at once.
 //   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A spell
 //     that attacks it pulls it when it lands, and spells only reach it within their range
@@ -168,9 +168,9 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		standingSearchMin: seconds(o.ChainSearchStandingMin, 0),
 		standingSearchMax: seconds(o.ChainSearchStandingMax, 5),
 		foundMin:          math.Round(or(o.FoundMin, 10)),
-		foundMax:          math.Round(or(o.FoundMax, 25)),
-		standingFoundMin:  math.Round(or(o.FoundStandingMin, 10)),
-		standingFoundMax:  math.Round(or(o.FoundStandingMax, 40)),
+		foundMax:          math.Round(or(o.FoundMax, 40)),
+		standingFoundMin:  math.Round(or(o.FoundStandingMin, 20)),
+		standingFoundMax:  math.Round(or(o.FoundStandingMax, 60)),
 		deathPenalty:      seconds(o.DeathPenalty, 180),
 		reviveFraction:    or(o.ReviveFraction, 0.5),
 	}
