@@ -226,3 +226,27 @@ Items not listed are still open with no new evidence. Verdict, then the evidence
 - **Q4, demon crit:** "Yes, as Blizzard intends", locked to one value. The warlock worker implements it and makes `lock_pet_crit` a single setting. Settled by ruling once that lands.
 - **Q5, Grace of Air with Windfury Totem:** "both totems". The update auditor has it.
 - **Q6, off-hand Rage:** "Use 0.5, and remove other assumption values (keep assumption but locked to one value, 0.5)". PR #75.
+
+## 7. Q1 research: partial resists under Forever (2026-10-16)
+The user believes "some kind of partial resists exists, lowering damage of spells". What the evidence shows:
+- **School-resistance partials exist, in 10% steps (narrowed).**
+  - Level 29 Elder Cloud Serpents (Nature 58 in the 1.12 / AzerothCore data) took 20% or 30% off all 15 Nature hits that landed: 9 orbs (4 at 20%, 5 at 30%) and 6 Earth Shocks (5 at 30%, 1 at 20%) (beta_results.txt:724-730, 961-962; shaman_audit.md:590).
+  - Classic's 0/25/50/75% table can't produce a 20% or 30% hit. WotLK's 11-bucket table (TrinityCore 3.3.5 `CalcSpellResistedDamage`) fits the steps, but predicts about 21% of hits at 40%, and none showed (p about 0.013). A model that picks the two steps around the average (28 to 29%) fits best.
+  - Both Classic's and WotLK's average agree here (29% and 28.6%), so 15 hits can't tell the formulas apart.
+- **Level-based partials on normal mobs: settled, none.**
+  - About 520 landed hits 3 to 5 levels up, all with resisted = 0: 257 + 56 + 38 in shaman_audit.md 5.2 and beta_results.txt:300, plus the 19:06-19:32 runs (crit tables at beta_results.txt:687-692, orbs at 704 and 827).
+  - Classic predicts 18 to 30% of them partly resisted, WotLK about 75%, so both are rejected at p < 1e-25.
+  - The method reads `resisted` (row[-7]) on SPELL_DAMAGE, and the hits came in at full base damage.
+- **Bosses and elites: open.** The repo has no dungeon, elite or boss logs.
+- **Binary spells (narrowed).** On the serpents, Earth Shock was fully resisted 3 of 9 times (RESIST, not MISS) and partly resisted when it landed. That looks like a full-resist roll followed by partials, while the orbs had 0 full resists in 9. Frost Shock and Frostbrand are untested.
+- **Blizzard and community: nothing on level or partial resists.**
+  - The dev notes only touch single spells: Improved Scorch, Winter's Chill, Setup, and Vampiric Embrace "can't be resisted".
+  - The deep dives turned resist-chance talents into hit talents (Elemental Precision, Shadow Focus).
+  - forever-bugs has no relevant issue.
+- **Client data:** no binary or no-partial attribute differs from Era (wago SpellMisc 70425 against 1.15.9 70003).
+- **Report row:** `level_partial_resist` stays pending. Low is relabelled "bosses keep it (6% at +3)", Expected is none, and the default stays Classic. No 10%-step setting: the steps change variance, not mean DPS.
+- **Settling tests:** in notes.md (All classes / Shaman "Beta: partial resists").
+  - Vishas and Thalnos in SM Graveyard: 50 or more landed hits each.
+  - 200 Nature hits and 60 Earth Shocks against 60 Lightning Bolts on Elder Cloud Serpents.
+  - 40 Frost Shocks on Alterac Yetis.
+- Lead for the raw log: AzerothCore gives Swirling Vortex (L33-34) 34 resistance in four schools, yet the 20:18-20:25 run reports no partials. If our spells hit it, Forever changed its resistance.
