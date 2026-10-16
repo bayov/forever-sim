@@ -10,10 +10,10 @@ func (paladin *Paladin) registerRighteousFury() {
 	}
 	actionID := core.ActionID{SpellID: 25780}
 
-	// Forever's Righteous Fury is 60% Holy threat, back to Classic's value after 90% in the
-	// earlier beta builds (the 2026-09-24 build). Improved Righteous Fury takes 2% per point
-	// off all damage taken instead of adding threat.
-	rfThreatMultiplier := 1.6
+	// Forever's Righteous Fury is 90% Holy threat again in client 70425 (spell 25780), after 60%
+	// in 70338. Improved Righteous Fury takes 2% per point off all damage taken instead of adding
+	// threat.
+	rfThreatMultiplier := 1.9
 	damageTaken := 1 - 0.02*float64(paladin.Talents.ImprovedRighteousFury)
 
 	paladin.OnSpellRegistered(func(spell *core.Spell) {

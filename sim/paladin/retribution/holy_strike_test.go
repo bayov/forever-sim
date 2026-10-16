@@ -10,6 +10,7 @@ import (
 )
 
 const arcaniteReaper = 12784 // 153 - 256, 3.8 speed, two-hand axe
+const thunderfury = 19019    // 44 - 115, 1.9 speed, one-hand sword
 
 // retSim starts a Forever sim of a level 60 Human paladin with talents, holding weapon,
 // against a level 60 target with no armor, and returns it before the first action.

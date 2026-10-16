@@ -9,6 +9,8 @@
 //     compute those from the full, merged data.
 // The dataset's `updated` time in ui/dps_report/datasets.json is set to now.
 //
+// The sample fights in <partial-dir>/events/ (events.py) replace the report's files of the same builds.
+//
 // Usage: node tools/dps_report/merge.mjs <partial-dir> [--by "<who>"]
 import fs from 'fs';
 import path from 'path';
@@ -21,6 +23,8 @@ const manifestPath = path.join(root, 'ui/dps_report/datasets.json');
 const KEYS = {
 	icons: ['icon'],
 	icons_more: ['icon'],
+	event_names: ['key'],
+	event_icons: ['icon'],
 	names: ['key'],
 	tooltips: ['key', 'kind'],
 	talenttrees: ['class', 'tree', 'idx'],
@@ -69,6 +73,14 @@ for (const file of fs.readdirSync(from).filter(f => f.endsWith('.json'))) {
 	fs.writeFileSync(target, JSON.stringify(merged));
 	manifest[id].updated = { at: new Date().toISOString(), by };
 	console.log(`${id}: ${how} (${merged.length} rows)`);
+}
+
+const eventsFrom = path.join(from, 'events');
+if (fs.existsSync(eventsFrom)) {
+	const files = fs.readdirSync(eventsFrom).filter(f => f.endsWith('.json.gz'));
+	fs.mkdirSync(path.join(dataDir, 'events'), { recursive: true });
+	for (const file of files) fs.copyFileSync(path.join(eventsFrom, file), path.join(dataDir, 'events', file));
+	console.log(`events: ${files.length} build(s) replaced`);
 }
 
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 1) + '\n');

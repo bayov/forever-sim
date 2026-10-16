@@ -246,3 +246,25 @@ func TestTwilightFocus(t *testing.T) {
 		}
 	}
 }
+
+// TestPowerInLight checks that Power in Light (5/5, 10%) counts the priest's Holy Fire or
+// Shadow Word: Pain on the target (15 October notes; client 70425 tooltip of 1309969).
+func TestPowerInLight(t *testing.T) {
+	for _, c := range []struct {
+		name  string
+		ranks func(sp *ShadowPriest) []*core.Spell
+	}{
+		{"Shadow Word: Pain", func(sp *ShadowPriest) []*core.Spell { return sp.ShadowWordPain }},
+		{"Holy Fire", func(sp *ShadowPriest) []*core.Spell { return sp.HolyFire }},
+	} {
+		sim, sp := newShadowPriestSim(t, "525035231030001001-30505110002-3")
+		target := sim.GetTargetUnit(0)
+		if got := sp.PowerInLightMultiplier(target); got != 1 {
+			t.Fatalf("Power in Light %.3f with nothing on the target, want 1", got)
+		}
+		topRank(t, c.name, c.ranks(sp)).Dot(target).Apply(sim)
+		if got, want := sp.PowerInLightMultiplier(target), 1.1; math.Abs(got-want) > 1e-9 {
+			t.Errorf("Power in Light %.3f with %s on the target, want %.3f", got, c.name, want)
+		}
+	}
+}
