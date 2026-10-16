@@ -508,7 +508,14 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // Elemental Weapons' points to Ancestral Knowledge: +7.9 / +6.3 / -7.2 at 120 / 180 / 300 sec
 // paired against the old build (it runs lower on mana in long fights). With the raid's second
 // shaman's Grace of Air (standards 25) it is 835.5 / 825.3 / 809.1, from 865.7 / 852.9 / 834.8.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503002-055030011005112151-02' }), {
+//
+// With the raid's Flametongue Totem and Lightning Bolt after the shocks (2026-10-16) the talent search
+// on two seed sets put Elemental Focus back in place of a Tidal Focus point. Presets are tuned at 180
+// sec, so it ships though it costs a little at 120: 905.0 / 892.2 / 871.8 at 120 / 180 / 300 sec
+// (-2.2 / +5.2 / +8.6, and -3.4 / +4.5 / +7.9 on the second seed set), paired at 20000 iterations.
+// Improved Stormstrike 2 as well was further ahead at 300 sec but behind at 180. The knob search on
+// the new talents kept the Optimized rotation.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503102-055030011005112151-01' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
 });
