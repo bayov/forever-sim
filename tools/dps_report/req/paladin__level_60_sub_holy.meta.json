@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "The twist build with its side points in Holy (Divine Intellect 5, Reverence, Purifying Power) instead of Protection's Precision. It is within 0.7% of the default at every length but a different talent split, so it ships as its own preset on the same rotation.",
+  "summary": "The twist build with its side points in Holy (Divine Intellect 5, Reverence, Purifying Power) instead of Protection's Precision. It is within 0.9% of the default at every length but a different talent split, so it ships as its own preset on the same rotation.",
   "keyTalents": [
     "Twist of Light",
     "Seal of Command",
@@ -68,7 +68,7 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "0.4% behind the default at 120 s and 0.7% at 300 s because it has no Precision",
+    "0.6% behind the default at 120 s and 0.9% at 300 s because it has no Precision",
     "Purifying Power does nothing on the generic boss (Exorcism and Holy Wrath are not cast); the vs Undead builds use it",
     "Would gain 1.4 DPS twisting down to 0% mana, but shares the twist rotation's 20% floor",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
