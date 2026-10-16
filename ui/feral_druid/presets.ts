@@ -66,8 +66,9 @@ export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 // of the same on-use as 165 Agility, 3.0 ahead of 335 attack power). Only the head and chest carry
 // Grovekeeper Ferocity, Forever's crafted Feral set, so only its 2 piece (1% attack speed) is
 // live, like every class's set; the 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec.
-// Howling Idol (1 sec off Shifting Power, a real Forever Phase 1 idol) is worth 12.5 (those two
-// and the enchant comparisons below measured on the set before the 5a rebudget). Enchants are the
+// Howling Idol (0.5 sec off Shifting Power since client 1.60.1.70425, 1 sec before; a real Forever
+// Phase 1 idol) is worth 4.8 at 180 sec (12.5 at 1 sec; the 5 piece and the enchant comparisons
+// below measured on the set before the 5a rebudget). Enchants are the
 // best Phase 1 ones a cat can get, nothing from a raid: Lesser Arcanum of Voracity (Agility) on
 // the head and legs, Forever's +5 Agility on the neck, Agility on the back, Greater Stats, +9
 // Strength on the wrist, Superior Strength on the gloves (3.2 ahead of Greater Agility), +7
@@ -116,8 +117,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
 // rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
-// it, and the duty's cost shows with both off: 6.3 / 5.2 / 4.2 DPS at 120 / 180 / 300 sec (723.3 /
-// 712.3 / 704.1, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own
+// it, and the duty's cost shows with both off: 6.2 / 5.0 / 4.3 DPS at 120 / 180 / 300 sec (715.9 /
+// 704.6 / 696.8, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own
 // hits get the armor. The knob search kept the rest of the rotation at 120, 180 and 300 sec.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
@@ -313,14 +314,15 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-// The Level 60 build, 729.5 / 717.2 / 708.1 at 120 / 180 / 300 sec. Every race a druid can be
-// under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
+// The Level 60 build, 722.0 / 709.7 / 701.2 at 120 / 180 / 300 sec (client 1.60.1.70425, where
+// Howling Idol takes 0.5 sec off Shifting Power instead of 1). Every race a druid can be under
+// Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             729.5    717.2    708.1   best overall and Alliance
-//	Windshaper Skyborne   723.9    713.7    704.0   best Horde
-//	High Order Skyborne   723.8    713.7    704.0
-//	Tauren                722.0    711.5    701.8
+//	Night Elf             722.0    709.7    701.2   best overall and Alliance
+//	Windshaper Skyborne   716.8    706.3    697.2   best Horde
+//	High Order Skyborne   716.7    706.2    697.1
+//	Tauren                714.4    704.1    694.9
 //
 // Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
 // nothing, and the ranking with weapon type racials off is the same.

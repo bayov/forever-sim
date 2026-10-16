@@ -542,12 +542,14 @@ Under Forever the cat swings its equipped weapon (its DPS at a 1.0 sec swing), u
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 729.5 | 717.2 | 708.1 | best overall and Alliance |
-| Windshaper Skyborne | 723.9 | 713.7 | 704.0 | best Horde |
-| High Order Skyborne | 723.8 | 713.7 | 704.0 | |
-| Tauren | 722.0 | 711.5 | 701.8 | |
+| Night Elf | 722.0 | 709.7 | 701.2 | best overall and Alliance |
+| Windshaper Skyborne | 716.8 | 706.3 | 697.2 | best Horde |
+| High Order Skyborne | 716.7 | 706.2 | 697.1 | |
+| Tauren | 714.4 | 704.1 | 694.9 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
+
+**Client 1.60.1.70425** (2026-10-16). Howling Idol takes 0.5 sec off Shifting Power, not 1 (spell 1291059, -500 ms): Feral 717.4 -> 709.6 at 180 sec (729.6 -> 722.1 and 708.3 -> 701.1 at 120 / 300 sec), the Faerie Fire duty 712.3 -> 704.6, about 7.5 at every length on two seed sets; the idol is now worth 4.8, and the knob search keeps the rotation. Moonkin Aura and Leader of the Pack split into 3% spell crit and 3% physical crit raid auras with the shared 70425 port (PR #50); each druid build brings its own, so neither moves. Shred rank 1 is level 20 with 22 (was 22 with 24). Faerie Fire's added effect is threat, and Bear and Dire Bear Form's stops Energy regeneration in those forms; neither is simulated. Balance doesn't move.
 
 ## Low levels
 
