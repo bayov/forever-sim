@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "mana_tide",
   "published": {
-    "dps": 760.5,
-    "source": "Shaman PR (client 1.60.1.70425: new talent tree with Elemental Mastery, Fire Nova cut, Lava Burst and Mana Tide ranks, searched talents, 2026-10-16)"
+    "dps": 781.7,
+    "source": "Shaman PR (rotation audit pass 23: Flame Shock 9 s end gate, Mana Tide at 10%, Magma Totem to 2 s; requests rebuilt with the prepull totems, 2026-10-16)"
   },
   "verify": {
-    "dps": 760.49,
+    "dps": 781.74,
     "stderr": 0.36,
     "iters": 20000,
     "ok": true,

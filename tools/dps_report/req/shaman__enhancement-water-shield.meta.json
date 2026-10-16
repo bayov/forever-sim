@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "magma",
   "published": {
-    "dps": 795.3,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 795.2)"
+    "dps": 819.3,
+    "source": "Shaman PR (rotation audit pass 23: Flame Shock 9 s end gate, Mana Tide at 10%, Magma Totem to 2 s; requests rebuilt with the prepull totems, 2026-10-16)"
   },
   "verify": {
-    "dps": 795.25,
-    "stderr": 0.35,
+    "dps": 819.27,
+    "stderr": 0.36,
     "iters": 20000,
     "ok": true,
     "note": "run_build.py main run, 180s, seed 1"

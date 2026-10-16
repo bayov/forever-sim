@@ -218,6 +218,12 @@ export const DefaultTalents = TalentsLevel60;
 // 729.0 / 719.6 / 711.5 recasting whenever the shield is down, 729.0 / 719.7 / 712.3 with only the
 // mana half, 731.4 / 720.7 / 711.1 with no recast in the fight. Mana Tide 721.3 / 711.2 / 697.4,
 // 718.8 / 709.4 / 695.6, 719.0 / 710.0 / 697.3 and 721.5 / 710.9 / 697.0.
+//
+// The rotation auditor's pass 23 (2026-10-16): no new Flame Shock with less than 9 sec left (a DoT
+// put up at the very end ticks too few times for its mana and GCD), and on Mana Tide the totem at
+// 10% mana instead of 20%. Paired at 20000 iterations on two seed sets: Level 60 781.6 / 771.8 /
+// 761.7 at 120 / 180 / 300 sec (+2.7 / +0.7 / +0.8), Mana Tide 770.8 / 761.4 / 744.3 (+2.6 / +1.1
+// / +0.3). 3, 4.5, 6 and 12 sec gates were +0.1 to +0.6 on Level 60.
 export const DefaultOptions = ElementalShamanOptions.create({});
 
 // The level 60 consumables, Forever's Phase 1 ones (the shared consumables branch). On 2026-10-12
