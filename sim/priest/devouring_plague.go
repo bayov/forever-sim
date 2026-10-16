@@ -9,9 +9,10 @@ import (
 
 const DevouringPlagueRanks = 6
 
-// Forever lets every race learn Devouring Plague and puts it on a 1 min cooldown (Classic
-// 3 min, Undead only). Damage per tick and the 10% a tick coefficient (80% over the 8
-// ticks) are from the client (1.60.1.70338, wago.tools): rank 6 deals 848 over 24 sec,
+// Forever lets every race learn Devouring Plague and puts it on a 24 sec category cooldown
+// (client 1.60.1.70425; 1 min in 70338, Classic 3 min, Undead only), as long as the damage
+// over time. Damage per tick and the 10% a tick coefficient (80% over the 8 ticks) are from
+// the client (1.60.1.70338, unchanged in 70425, wago.tools): rank 6 deals 848 over 24 sec,
 // Classic 904. The damage heals the priest, which the sim leaves out.
 var DevouringPlagueSpellId = [DevouringPlagueRanks + 1]int32{0, 2944, 19276, 19277, 19278, 19279, 19280}
 var DevouringPlagueTickDamage = [DevouringPlagueRanks + 1]float64{0, 16, 29, 43, 61, 82, 106}
@@ -19,7 +20,7 @@ var DevouringPlagueManaCost = [DevouringPlagueRanks + 1]float64{0, 215, 350, 495
 var DevouringPlagueLevel = [DevouringPlagueRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
 
 const DevouringPlagueTickCoef = 0.1
-const DevouringPlagueCooldown = time.Minute
+const DevouringPlagueCooldown = time.Second * 24
 
 func (priest *Priest) registerDevouringPlagueSpell() {
 	priest.DevouringPlague = make([]*core.Spell, DevouringPlagueRanks+1)

@@ -1,6 +1,7 @@
 package priest
 
 import (
+	"math"
 	"slices"
 	"time"
 
@@ -8,12 +9,11 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// The talents follow the Forever client (1.60.1.70338): the per-rank values are the
+// The talents follow the Forever client (1.60.1.70425): the per-rank values are the
 // TraitDefinitionEffectPoints curves and the spells each talent touches are its spell
 // class mask (SpellEffect), read on wago.tools. A few masks differ from the tooltips:
-// Twin Disciplines and Inner Focus's crit leave out Shadow Word: Death, Mental Agility
-// leaves out Mind Blast, Mind Flay and Shadow Word: Death, and Shadow Focus leaves out
-// Starshards.
+// Inner Focus's crit leaves out Shadow Word: Death, Mental Agility leaves out Mind Blast,
+// Mind Flay and Shadow Word: Death, and Shadow Focus leaves out Starshards.
 func (priest *Priest) ApplyTalents() {
 	// Discipline
 	priest.applyTwinDisciplines()
@@ -32,8 +32,9 @@ func (priest *Priest) ApplyTalents() {
 
 	priest.PseudoStats.SpiritRegenRateCasting = []float64{0.0, 0.17, 0.33, 0.5}[priest.Talents.Meditation]
 
+	// 2% Intellect a rank (70425; 3% in 70338).
 	if priest.Talents.MentalStrength > 0 {
-		priest.MultiplyStat(stats.Intellect, 1.0+0.03*float64(priest.Talents.MentalStrength))
+		priest.MultiplyStat(stats.Intellect, 1.0+0.02*float64(priest.Talents.MentalStrength))
 	}
 
 	// Holy
@@ -50,9 +51,8 @@ func (priest *Priest) ApplyTalents() {
 	// Shadow
 	priest.registerVampiricEmbraceSpell()
 	priest.registerShadowform()
-	priest.applyShadowAffinity()
 	priest.applyShadowFocus()
-	priest.applyImprovedMindFlay()
+	priest.registerDarkInspiration()
 	priest.applyShadowWeaving()
 	priest.applyDevouringContagion()
 	priest.applyDarkness()
@@ -63,9 +63,10 @@ func spellIn(spell *core.Spell, codes ...int32) bool {
 	return spell.Flags.Matches(SpellFlagPriest) && slices.Contains(codes, spell.SpellCode)
 }
 
-// Twin Disciplines: 1% a rank more damage on the instant priest spells in its class mask
-// (client 1225132). Of the damage spells the sim has that is Shadow Word: Pain (the periodic
-// mask) and Chastise. Devouring Plague's class bit (25) is in neither mask.
+// Twin Disciplines: 1% a rank more damage on the priest spells in its class masks (client
+// 1225132). 70425 widened both: the direct mask now has Shadow Word: Death, Chastise and
+// Penance's bolts, the periodic mask Shadow Word: Pain, Mind Flay and Starshards (70338:
+// Chastise, and Shadow Word: Pain).
 func (priest *Priest) applyTwinDisciplines() {
 	if priest.Talents.TwinDisciplines == 0 {
 		return
@@ -73,7 +74,8 @@ func (priest *Priest) applyTwinDisciplines() {
 
 	bonus := 0.01 * float64(priest.Talents.TwinDisciplines)
 	priest.OnSpellRegistered(func(spell *core.Spell) {
-		if spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestChastise) {
+		if spellIn(spell, SpellCode_PriestShadowWordDeath, SpellCode_PriestChastise, SpellCode_PriestPenance,
+			SpellCode_PriestShadowWordPain, SpellCode_PriestMindFlay, SpellCode_PriestStarshards) {
 			spell.DamageMultiplierAdditive += bonus
 		}
 	})
@@ -137,19 +139,6 @@ func (priest *Priest) applySearingLight() {
 	priest.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= []float64{1, 1.02, 1.05}[priest.Talents.SearingLight]
 }
 
-// Shadow Affinity: 10% a rank less threat from the Shadow spells.
-func (priest *Priest) applyShadowAffinity() {
-	if priest.Talents.ShadowAffinity == 0 {
-		return
-	}
-
-	priest.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.Flags.Matches(SpellFlagPriest) && spell.SpellSchool.Matches(core.SpellSchoolShadow) {
-			spell.ThreatMultiplier *= 1 - 0.1*float64(priest.Talents.ShadowAffinity)
-		}
-	})
-}
-
 // Shadow Focus: 1% hit a rank (Classic: 2% a rank) for the priest's Shadow spells.
 func (priest *Priest) applyShadowFocus() {
 	if priest.Talents.ShadowFocus == 0 {
@@ -164,18 +153,42 @@ func (priest *Priest) applyShadowFocus() {
 	})
 }
 
-// Improved Mind Flay: 10% a rank more Mind Flay damage. The range and the weaker slow
-// change nothing in the sim.
-func (priest *Priest) applyImprovedMindFlay() {
-	if priest.Talents.ImprovedMindFlay == 0 {
+// Improved Mind Flay (70425): each Mind Flay tick deals 10% a rank more than the tick
+// before it, read as compounding (1, 1.2, 1.44 at 2 points). 70338 had 10% a rank on every
+// tick, plus range and a slow. Applied per tick in mind_flay.go.
+func (priest *Priest) ImprovedMindFlayTickMultiplier(tick int32) float64 {
+	if priest.Talents.ImprovedMindFlay == 0 || tick <= 1 {
+		return 1
+	}
+	return math.Pow(1+0.1*float64(priest.Talents.ImprovedMindFlay), float64(tick-1))
+}
+
+// Dark Inspiration (new in 70425, client 1326159): Mind Blast and a fully channeled Mind
+// Flay give the priest and the party 3% Spirit a rank for 10 sec (1326168, aura 80). The
+// sim gives it to the priest, the only party member it models.
+func (priest *Priest) registerDarkInspiration() {
+	if priest.Talents.DarkInspiration == 0 {
 		return
 	}
 
-	priest.OnSpellRegistered(func(spell *core.Spell) {
-		if spellIn(spell, SpellCode_PriestMindFlay) {
-			spell.DamageMultiplierAdditive += 0.1 * float64(priest.Talents.ImprovedMindFlay)
-		}
+	spiritDep := priest.NewDynamicMultiplyStat(stats.Spirit, 1+0.03*float64(priest.Talents.DarkInspiration))
+	priest.DarkInspirationAura = priest.RegisterAura(core.Aura{
+		Label:    "Dark Inspiration",
+		ActionID: core.ActionID{SpellID: 1326168},
+		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			priest.EnableDynamicStatDep(sim, spiritDep)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			priest.DisableDynamicStatDep(sim, spiritDep)
+		},
 	})
+}
+
+func (priest *Priest) triggerDarkInspiration(sim *core.Simulation) {
+	if priest.DarkInspirationAura != nil {
+		priest.DarkInspirationAura.Activate(sim)
+	}
 }
 
 // Devouring Contagion: 25% a rank off Devouring Plague's mana cost. The jump on a kill
@@ -332,8 +345,8 @@ func (priest *Priest) registerInnerFocus() {
 
 // Shadowform under Forever: 10% more Shadow damage (Classic 15%), half the mana cost of
 // Shadow spells, double the crit bonus of the Shadow damage spells in its mask (Shadow
-// Word: Pain, Mind Blast, Mind Flay, Devouring Plague, so crits deal 200%, but not Shadow
-// Word: Death) and 15% less Physical damage taken. It costs 40% of base mana and blocks
+// Word: Pain, Mind Blast, Mind Flay, Devouring Plague and, since 70425, Shadow Word: Death,
+// so crits deal 200%) and 15% less Physical damage taken. It costs 40% of base mana and blocks
 // healing spells, not Smite or Holy Fire. The cost cut is a school power cost aura (72),
 // which multiplies with the talents' percent cost mods (Devouring Contagion, Mental
 // Agility) where those add up among themselves.
@@ -344,7 +357,7 @@ func (priest *Priest) registerShadowform() {
 
 	actionID := core.ActionID{SpellID: 15473}
 	critSpell := func(spell *core.Spell) bool {
-		return spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestMindBlast, SpellCode_PriestMindFlay, SpellCode_PriestDevouringPlague)
+		return spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestMindBlast, SpellCode_PriestMindFlay, SpellCode_PriestDevouringPlague, SpellCode_PriestShadowWordDeath)
 	}
 	costSpell := func(spell *core.Spell) bool {
 		return spell.Cost != nil && spell.Flags.Matches(SpellFlagPriest) && spell.SpellSchool.Matches(core.SpellSchoolShadow)
