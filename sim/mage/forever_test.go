@@ -352,3 +352,27 @@ func mageStat(player *proto.Player, stat stats.Stat) float64 {
 	sim.Reset()
 	return sim.Raid.Parties[0].Players[0].GetCharacter().GetStat(stat)
 }
+
+// Pushback protection from the client masks: Burning Soul on Fireball, Scorch, Pyroblast,
+// Flamestrike and Frostfire Bolt, Improved Channeling on Arcane Missiles, Arcane Blast and
+// Arcane Wrath.
+func TestMagePushbackProtection(t *testing.T) {
+	// Improved Channeling 5 with Arcane Wrath, and Burning Soul 3.
+	_, mage := newMageSim(t, "055200500310001-00000030")
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+		want  float64
+	}{
+		{"Arcane Missiles", topRank(t, "Arcane Missiles", mage.ArcaneMissiles), 1.0},
+		{"Arcane Blast", topRank(t, "Arcane Blast", mage.ArcaneBlast), 0.70},
+		{"Arcane Wrath", topRank(t, "Arcane Wrath", mage.ArcaneWrath), 0.70},
+		{"Fireball", topRank(t, "Fireball", mage.Fireball), 0.70},
+		{"Frostfire Bolt", topRank(t, "Frostfire Bolt", mage.FrostfireBolt), 0.70},
+		{"Frostbolt", topRank(t, "Frostbolt", mage.Frostbolt), 0},
+	} {
+		if math.Abs(c.spell.PushbackReduction-c.want) > 1e-9 {
+			t.Errorf("%s ignores pushback %.2f of the time, want %.2f", c.name, c.spell.PushbackReduction, c.want)
+		}
+	}
+}

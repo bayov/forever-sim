@@ -100,8 +100,7 @@
             70
           ]
         ],
-        "icon": "spell_nature_starfall",
-        "notSimulated": true
+        "icon": "spell_nature_starfall"
       },
       {
         "fieldName": "missileBarrage",

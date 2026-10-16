@@ -33,6 +33,21 @@ func (mage *Mage) applyArcaneTalents() {
 	mage.registerPresenceOfMindCD()
 	mage.registerArcanePowerCD()
 
+	// Improved Channeling: per point, a 20% chance for Arcane Missiles and 14% for Arcane Blast and
+	// Arcane Wrath not to lose time to a hit (11237: effect 0 masks Arcane Missiles, effect 1
+	// Arcane Blast and Arcane Wrath).
+	if mage.Talents.ImprovedChanneling > 0 {
+		points := float64(mage.Talents.ImprovedChanneling)
+		mage.OnSpellRegistered(func(spell *core.Spell) {
+			switch spell.SpellCode {
+			case SpellCode_MageArcaneMissiles:
+				spell.PushbackReduction += 0.20 * points
+			case SpellCode_MageArcaneBlast, SpellCode_MageArcaneWrath:
+				spell.PushbackReduction += 0.14 * points
+			}
+		})
+	}
+
 	// Arcane Subtlety: 8 / 15 less resistance to all the mage's spells, and 15 / 30% less
 	// threat from Arcane spells.
 	if mage.Talents.ArcaneSubtlety > 0 {
@@ -105,12 +120,20 @@ func (mage *Mage) applyFireTalents() {
 
 	mage.registerCombustionCD()
 
-	// Burning Soul: 10% less threat from Fire spells per point. Its pushback protection needs an
-	// enemy that hits the mage.
+	// Burning Soul: 10% less threat from Fire spells per point, and a 23 / 47 / 70% chance not to
+	// lose casting time to a hit (11083 effect 0, whose mask is Fireball, Scorch, Pyroblast,
+	// Flamestrike and Frostfire Bolt).
 	if mage.Talents.BurningSoul > 0 {
 		threatMultiplier := 1 - .10*float64(mage.Talents.BurningSoul)
 		mage.onMageSpellOfSchool(core.SpellSchoolFire, func(spell *core.Spell) {
 			spell.ThreatMultiplier *= threatMultiplier
+		})
+		pushback := []float64{0, 0.23, 0.47, 0.70}[mage.Talents.BurningSoul]
+		mage.OnSpellRegistered(func(spell *core.Spell) {
+			switch spell.SpellCode {
+			case SpellCode_MageFireball, SpellCode_MageScorch, SpellCode_MagePyroblast, SpellCode_MageFlamestrike, SpellCode_MageFrostfireBolt:
+				spell.PushbackReduction += pushback
+			}
 		})
 	}
 
