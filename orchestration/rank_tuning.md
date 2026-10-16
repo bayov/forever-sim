@@ -338,6 +338,40 @@ The other current bases are unchanged since the 11:00 check, apart from small mo
 Every rank-tuning sensitivity has now been re-run on master with the 70425 ports.
 
 
+## Check 2026-10-16 15:30 UTC: re-baseline on master ddb095a (no level-based partial resists)
+
+This section replaces the ranking effects in the 11:00 and 15:15 sections. Since then master has merged #102 (no level-based partial resist under Forever, a user ruling), #98 (Arcane), #99 (Survival), #100 (Ret) and #101 (Fury). I re-simmed all 66 presets' bases and every sensitivity on ddb095a: same local patches, 20k iterations, 180 s.
+
+| Preset | Base | 31+ rescale | Change | Place (of 66): before → after |
+|---|---|---|---|---|
+| Demonology, Bane coefficient 2.0 | 1176.3 | 1129.3 | −4.0% | 1 → 2, behind only its own duty-curse preset (1164.7) |
+| Affliction, Bane coefficient 2.0 | 1066.0 | 1021.7 | −4.2% | 7 → 12 |
+| Destruction, Bane coefficient 2.0 | 1047.4 | 1005.6 | −4.0% | 9 → 15 |
+| Destruction Fire, Bane coefficient 2.0 | 1018.5 | 982.2 | −3.6% | 13 → 18 |
+| Ret twist, Holy Strike ×0.52 and Consecration ×0.82 | 889.2 | 876.9 | −1.4% | 36 → 39 |
+| Ret Shock, same | 901.7 | 888.7 | −1.4% | 34 → 36 |
+| Ret sub-Holy, same | 883.1 | 871.1 | −1.4% | 37 → 41 |
+| Frost, Frostbolt 31+ ×1.08 | 843.3 | 855.6 | +1.5% | 42 → 42 |
+| Enhancement, Earth Shock 31+ ×1.16 | 841.4 | 850.5 | +1.1% | 43 → 42 |
+| Balance, Wrath 31+ ×1.17 | 872.8 | 876.6 | +0.4% | 41 → 40 |
+| Balance Wrath-only, Wrath 31+ ×1.17 | 825.9 | 840.5 | +1.8% | 46 → 44 |
+| Elemental, Lightning Bolt X ×1.12 | 771.1 | 787.6 | +2.1% | 50 → 49 |
+| Elemental, Lightning Bolt X ×1.38 | 771.1 | 823.3 | +6.8% | 50 → 47 |
+| Elemental, Lightning Bolt and Lava Burst ×1.38 | 771.1 | 835.8 | +8.4% | 50 → 45 |
+| Smite, 31+ ×1.18 | 765.4 | 786.3 | +2.7% | 51 → 49 |
+| Feral, Rip 31+ ×1.13 | 752.9 | 765.9 | +1.7% | 53 → 51 |
+
+**What changed:** #102 lifted the warlocks more than the hunters. Demonology is now 82 above Lone Wolf (1094.1), so Bane of Doom at coefficient 2.0 (1129.3) **no longer decides first place**. It still costs every Shadow Bolt warlock about 4%:
+- Affliction falls below Fire, Marksmanship and Destruction.
+- Destruction falls below Destruction Fire and Arms on dragonkin.
+- Destruction Fire falls below Fury.
+
+**Other specs:**
+- Ret's −1.4% puts sub-Holy just below Balance.
+- Elemental's biggest case (+8.4%) passes Water Shield Enhancement, Balance Wrath-only and Imp GW Enhancement. It stays below Balance with Faerie Fire duty.
+- Smite's +2.7% passes Elemental and Mana Tide Enhancement.
+- Balance (+0.4%), Frost and Enhancement move within noise.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
