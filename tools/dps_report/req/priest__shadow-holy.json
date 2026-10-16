@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceHuman",
             "class": "ClassPriest",
             "equipment": {
               "items": [
@@ -84,7 +84,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "-3025011323-500321501201302051",
+            "talentsString": "-3025011303-50052101231302251",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -160,7 +160,7 @@
                         },
                         "rhs": {
                           "const": {
-                            "val": "0.4"
+                            "val": "0.1"
                           }
                         }
                       }
@@ -259,6 +259,16 @@
                   }
                 },
                 {
+                  "notes": "Shadow Word: Death on cooldown.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1309636
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Inner Focus right before Mind Blast. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
@@ -318,16 +328,6 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 10947
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "Shadow Word: Death on cooldown.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1309636
                       }
                     }
                   }

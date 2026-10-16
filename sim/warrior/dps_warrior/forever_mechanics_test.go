@@ -142,17 +142,40 @@ func TestForeverWarriorNormalizedRageLevels(t *testing.T) {
 // TestForeverWarriorDamageTakenRage checks Forever's Rage from taking damage (standards 21):
 // 20 × (1 − 0.4) × damage / a level 60 normal mob's health (3993) at level 60, so 3.0 Rage for
 // 1000 damage, where Classic's damage × 2.5 / the conversion at the attacker's level gives 10.8.
-// The damage comes from a level 60 special attack, which gives no Rage for dealing it.
+// The damage is the attacker's, before anything of ours: our damage taken modifiers (Defensive
+// Stance, Shield Wall), a block and an absorb take no Rage away (report assumption
+// warr_dt_rage_mods, None). A crushing blow counts at 1.5. The damage comes from a level 60
+// special attack, which gives no Rage for dealing it.
 func TestForeverWarriorDamageTakenRage(t *testing.T) {
-	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
-	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
-	attack := war.Hamstring.Spell
-	result := attack.NewResult(&war.Unit)
-	result.Outcome = core.OutcomeHit
-	result.Damage = 1000
-	attack.DealDamage(sim, result)
-	if got, want := war.CurrentRage(), 20*0.6*1000/core.NormalMobStatsAt(60).Health; math.Abs(got-want) > 1e-6 {
-		t.Errorf("taking 1000 damage gave %.3f Rage, want %.3f", got, want)
+	perPoint := 20 * 0.6 / core.NormalMobStatsAt(60).Health
+	cases := []struct {
+		name       string
+		outcome    core.HitOutcome
+		taken      float64 // the damage after all of our mitigation
+		takenMulti float64 // our damage taken multiplier while the hit lands
+		want       float64 // Rage, for 1000 attacker damage
+	}{
+		{"a hit", core.OutcomeHit, 1000, 1, 1000 * perPoint},
+		{"a hit in Defensive Stance", core.OutcomeHit, 900, 0.9, 1000 * perPoint},
+		{"a hit under Shield Wall", core.OutcomeHit, 250, 0.25, 1000 * perPoint},
+		{"a hit fully absorbed", core.OutcomeHit, 0, 1, 1000 * perPoint},
+		{"a blocked hit", core.OutcomeBlock, 700, 1, 1000 * perPoint},
+		{"a crushing blow", core.OutcomeCrush, 1500, 1, 1500 * perPoint},
+		{"a dodge", core.OutcomeDodge, 0, 1, 0},
+	}
+	for _, c := range cases {
+		sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		war.PseudoStats.DamageTakenMultiplier *= c.takenMulti
+		attack := war.Hamstring.Spell
+		result := attack.NewResult(&war.Unit)
+		result.Outcome = c.outcome
+		result.AttackerDamage = 1000
+		result.Damage = c.taken
+		attack.DealDamage(sim, result)
+		if got := war.CurrentRage(); math.Abs(got-c.want) > 1e-6 {
+			t.Errorf("%s gave %.3f Rage, want %.3f", c.name, got, c.want)
+		}
 	}
 }
 

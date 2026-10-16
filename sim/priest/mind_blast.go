@@ -78,6 +78,7 @@ func (priest *Priest) getMindBlastBaseConfig(rank int, cdTimer *core.Timer) core
 				priest.AddShadowWeavingStack(sim, target)
 			}
 			spell.DealDamage(sim, result)
+			priest.triggerDarkInspiration(sim)
 		},
 
 		ExpectedInitialDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {

@@ -3,10 +3,12 @@ package shadow
 import (
 	"math"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/priest"
 )
 
@@ -44,7 +46,7 @@ func topRank(t *testing.T, name string, ranks []*core.Spell) *core.Spell {
 // Devouring Plague: 40% of the cost, then half of that), and which spells each one reaches.
 // Mental Agility leaves out Mind Blast, Mind Flay and Shadow Word: Death.
 func TestShadowformCosts(t *testing.T) {
-	sim, sp := newShadowPriestSim(t, "005030231305--500321501201302051")
+	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
 	sp.ShadowformAura.Activate(sim)
 
 	checks := []struct {
@@ -65,10 +67,10 @@ func TestShadowformCosts(t *testing.T) {
 	}
 }
 
-// TestShadowformCritBonus checks Shadowform's +100% crit bonus: Mind Blast crits for 200%,
-// Shadow Word: Death (not in its class mask) for 150%, and both go back after Shadowform.
+// TestShadowformCritBonus checks Shadowform's +100% crit bonus: Mind Blast and, since 70425,
+// Shadow Word: Death crit for 200%, and Mind Blast goes back after Shadowform.
 func TestShadowformCritBonus(t *testing.T) {
-	sim, sp := newShadowPriestSim(t, "005030231305--500321501201302051")
+	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
 	target := sp.CurrentTarget
 	at := sp.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
 	mindBlast := topRank(t, "Mind Blast", sp.MindBlast)
@@ -82,14 +84,14 @@ func TestShadowformCritBonus(t *testing.T) {
 	check("caster form", mindBlast, 1.5)
 	sp.ShadowformAura.Activate(sim)
 	check("Shadowform", mindBlast, 2.0)
-	check("Shadowform", death, 1.5)
+	check("Shadowform", death, 2.0)
 	sp.ShadowformAura.Deactivate(sim)
 	check("caster form again", mindBlast, 1.5)
 }
 
-// TestDevouringPlagueCooldown checks the 1 min cooldown every race has under Forever.
+// TestDevouringPlagueCooldown checks the 24 sec cooldown every race has under Forever (70425).
 func TestDevouringPlagueCooldown(t *testing.T) {
-	_, sp := newShadowPriestSim(t, "005030231305--500321501201302051")
+	_, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
 	if got := topRank(t, "Devouring Plague", sp.DevouringPlague).CD.Duration; got != priest.DevouringPlagueCooldown {
 		t.Errorf("Devouring Plague cooldown %s, want %s", got, priest.DevouringPlagueCooldown)
 	}
@@ -99,7 +101,7 @@ func TestDevouringPlagueCooldown(t *testing.T) {
 // it can be spent on but not to Shadow Word: Death or to spells that only tick (Shadow Word:
 // Pain, Devouring Plague, Mind Flay), whose ticks roll crit live under Forever.
 func TestInnerFocusCrit(t *testing.T) {
-	sim, sp := newShadowPriestSim(t, "005030211305--500321501201302051")
+	sim, sp := newShadowPriestSim(t, "00503521103--50052101231302051")
 	checks := []struct {
 		name  string
 		spell *core.Spell
@@ -124,19 +126,18 @@ func TestInnerFocusCrit(t *testing.T) {
 	}
 }
 
-// TestInnerFocusCost checks that Inner Focus makes Mind Blast free but not Devouring Plague,
-// which the free cast's class mask leaves out.
+// TestInnerFocusCost checks that Inner Focus makes Mind Blast and Devouring Plague free.
+// Devouring Plague is in the free cast's class mask through the fourth mask word.
 func TestInnerFocusCost(t *testing.T) {
-	sim, sp := newShadowPriestSim(t, "005030211305--500321501201302051")
+	sim, sp := newShadowPriestSim(t, "00503521103--50052101231302051")
 	mindBlast := topRank(t, "Mind Blast", sp.MindBlast)
 	plague := topRank(t, "Devouring Plague", sp.DevouringPlague)
-	plagueCost := plague.Cost.GetCurrentCost()
 	sp.InnerFocusAura.Activate(sim)
 	if got := mindBlast.Cost.GetCurrentCost(); got != 0 {
 		t.Errorf("Mind Blast costs %.2f under Inner Focus, want 0", got)
 	}
-	if got := plague.Cost.GetCurrentCost(); math.Abs(got-plagueCost) > 1e-9 {
-		t.Errorf("Devouring Plague costs %.2f under Inner Focus, want %.2f", got, plagueCost)
+	if got := plague.Cost.GetCurrentCost(); got != 0 {
+		t.Errorf("Devouring Plague costs %.2f under Inner Focus, want 0", got)
 	}
 }
 
@@ -144,7 +145,7 @@ func TestInnerFocusCost(t *testing.T) {
 // full spell power coefficient up to 17 levels below the caster and loses 5% of it for each
 // level past that (Smite rank 7 at 46 keeps it, rank 6 at 38 keeps 75%, rank 4 at 22 nothing).
 func TestDownrankCoefficient(t *testing.T) {
-	_, sp := newShadowPriestSim(t, "005030231305--500321501201302051")
+	_, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
 	checks := []struct {
 		rank int
 		want float64
@@ -176,6 +177,72 @@ func TestSmiteRankTuning(t *testing.T) {
 		low, high := priest.SmiteBaseDamageAt(c.rank, 60)
 		if math.Abs(low-c.low) > 1e-9 || math.Abs(high-c.high) > 1e-9 {
 			t.Errorf("Smite rank %d at 60: %.2f to %.2f, want %.2f to %.2f", c.rank, low, high, c.low, c.high)
+		}
+	}
+}
+
+// TestCooldowns70425 checks the cooldowns client 1.60.1.70425 changed: Devouring Plague 24
+// sec, Shadow Word: Death 18 sec, Vampiric Embrace 30 sec.
+func TestCooldowns70425(t *testing.T) {
+	_, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+		want  time.Duration
+	}{
+		{"Devouring Plague", topRank(t, "Devouring Plague", sp.DevouringPlague), 24 * time.Second},
+		{"Shadow Word: Death", topRank(t, "Shadow Word: Death", sp.ShadowWordDeath), 18 * time.Second},
+		{"Vampiric Embrace", sp.VampiricEmbrace, 30 * time.Second},
+	} {
+		if got := c.spell.CD.Duration; got != c.want {
+			t.Errorf("%s cooldown %s, want %s", c.name, got, c.want)
+		}
+	}
+}
+
+// TestImprovedMindFlay checks 70425's Improved Mind Flay: each tick deals 10% a rank more
+// than the one before it, compounding (1, 1.2, 1.44 at 2 points).
+func TestImprovedMindFlay(t *testing.T) {
+	_, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
+	for tick, want := range []float64{1, 1, 1.2, 1.44} {
+		if tick == 0 {
+			continue
+		}
+		if got := sp.ImprovedMindFlayTickMultiplier(int32(tick)); math.Abs(got-want) > 1e-9 {
+			t.Errorf("Improved Mind Flay tick %d multiplier %.4f, want %.4f", tick, got, want)
+		}
+	}
+}
+
+// TestDarkInspiration checks the 70425 talent's Spirit buff: 3% a rank for 10 sec.
+func TestDarkInspiration(t *testing.T) {
+	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
+	spirit := sp.GetStat(stats.Spirit)
+	sp.DarkInspirationAura.Activate(sim)
+	// Primary stats are floored, so within a point.
+	if got, want := sp.GetStat(stats.Spirit), spirit*1.09; math.Abs(got-want) > 1 {
+		t.Errorf("Spirit %.2f under Dark Inspiration 3/5, want %.2f", got, want)
+	}
+	if got := sp.DarkInspirationAura.Duration; got != 10*time.Second {
+		t.Errorf("Dark Inspiration lasts %s, want 10s", got)
+	}
+}
+
+// TestTwilightFocus checks the pushback protection: 70% at 3/3 on the cast and channelled
+// spells in Twilight Focus's mask, none on the instants.
+func TestTwilightFocus(t *testing.T) {
+	_, sp := newShadowPriestSim(t, "-3025011323-50052101231302051")
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+		want  float64
+	}{
+		{"Mind Blast", topRank(t, "Mind Blast", sp.MindBlast), 0.70},
+		{"Mind Flay", topRank(t, "Mind Flay", sp.MindFlay), 0.70},
+		{"Shadow Word: Pain", topRank(t, "Shadow Word: Pain", sp.ShadowWordPain), 0},
+	} {
+		if got := c.spell.PushbackReduction; math.Abs(got-c.want) > 1e-9 {
+			t.Errorf("%s ignores pushback %.2f of the time, want %.2f", c.name, got, c.want)
 		}
 	}
 }

@@ -51,16 +51,6 @@
       "reason": "audit 2026-09-13: reader error (WORD); corrected against data/review/priest/shadow-magic/devouring-contagion.png",
       "by": "data-audit",
       "at": "2026-09-13T00:00:00Z"
-    },
-    {
-      "talent": "improved-mind-flay",
-      "tree": "shadow-magic",
-      "set": {
-        "description": "Your Mind Flay now deals {0}% more damage, gains {1} yards increased range, but slows the target's movement speed by {2}%."
-      },
-      "reason": "audit 2026-09-13: reader error (CAP-I); corrected against data/review/priest/shadow-magic/improved-mind-flay.png",
-      "by": "data-audit",
-      "at": "2026-09-13T00:00:00Z"
     }
   ]
 }
