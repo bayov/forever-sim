@@ -902,8 +902,8 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Search Max (sec)',
 		labelTooltip: searchTooltip,
 		float: true,
-		get: opts => orDefault(opts.searchMax, 7),
-		set: (opts, value) => (opts.searchMax = unlessDefault(value, 7)),
+		get: opts => orDefault(opts.searchMax, 10),
+		set: (opts, value) => (opts.searchMax = unlessDefault(value, 10)),
 	});
 	const foundTooltip =
 		'How far away the mob we find stands, in whole yards, at random between Mob Distance Min and Mob Distance Max. It waits there until a harmful spell lands on it or we walk into melee range of it, then runs to us.';
@@ -969,8 +969,8 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Chain Search Max (sec)',
 		labelTooltip: chainSearchTooltip,
 		float: true,
-		get: opts => orDefault(opts.chainSearchMax, 4),
-		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 4)),
+		get: opts => orDefault(opts.chainSearchMax, 8),
+		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 8)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-chain-search-moving',

@@ -1069,8 +1069,8 @@ message LevelingOptions {
 	// another mob while fighting (Look For Mob), and how to pull it.
 	int32 max_pack_size = 7;
 
-	// Seconds to find the next mob out of combat (default 2 to 7), and to find one to
-	// chain pull while in combat (default 2 to 4). Searching out of combat we run around,
+	// Seconds to find the next mob out of combat (default 2 to 10), and to find one to
+	// chain pull while in combat (default 2 to 8). Searching out of combat we run around,
 	// so we can't hard cast. Searching in combat we run with the mobs on us following, the
 	// share of the time chain_search_moving says (default 0.75).
 	double search_min = 8;

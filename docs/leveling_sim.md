@@ -161,8 +161,8 @@ with them still load, and those values are ignored.
 
 | Setting | Default |
 |---|---|
-| Finding the next mob, out of combat | Random 2–7 s (4.5 s on average), running. From the logs (below), 5–11 s until 2026-10-16. |
-| Finding a mob to chain-pull, in combat | Random 2–4 s (3 s on average), running 3 times in 4 |
+| Finding the next mob, out of combat | Random 2–10 s (6 s on average), running. From the logs (below), 5–11 s until 2026-10-16. |
+| Finding a mob to chain-pull, in combat | Random 2–8 s (5 s on average), running 3 times in 4. 2–4 s until 2026-10-16. |
 | Where the mob we find stands | Random 10–40 yd in whole yards, in a random direction |
 | Searching | Running in a random direction at our run speed |
 | Our run speed | 7 yd/s |
@@ -505,6 +505,7 @@ After the groundwork:
      | Pass 4's rotation with Forever's mob health (2026-10-16) | 71.8 | 0.22 | - | 72 s | 381 s | 709 s | 2.37 |
      | + the 2 to 7 s search from the logs | 72.4 | 0.22 | 41,900 | 63 s | 386 s | 714 s | 2.37 |
      | Optimizer pass 5: look ahead above 60% health, rest health to full | 73.8 | 0.00 | 42,700 | 97 s | 390 s | 712 s | 2.33 |
+     | The user's 2 to 10 s search and 2 to 8 s chain search (pass 6 kept every knob) | 70.0 | 0.00 | 40,500 | 130 s | 365 s | 705 s | 2.08 |
 
      The rows down to pass 3 ran with Rockbiter Weapon and Windfury Weapon both on the main
      hand: the settings had Rockbiter in the consumes and Windfury in the class options, and
@@ -521,7 +522,9 @@ After the groundwork:
      above 60% health instead of 40%, and rest health to full instead of 90%. With mobs that
      take longer to kill, looking ahead at 40% to 60% health led into pulls that killed us
      (0.22 deaths a session). It's +1.3 mobs on seed 1 and on seed 1000001 (72.55 to 73.84),
-     almost all from the look ahead.
+     almost all from the look ahead. Then the user set the search to 2 to 10 s and the chain
+     search to 2 to 8 s. The slower chain search costs 3.8 mobs (73.8 to 70.0 on both seeds),
+     mostly because a pull takes fewer mobs (2.08 instead of 2.33). Pass 6 found no better knobs.
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their
@@ -620,9 +623,12 @@ numbers come from one stretch of 52 fights, with the whole archive next to them:
 What it changed:
 
 - **Search.** The sim's gap after a kill, when it had to search, was 8.5 s at the fast
-  quartile and 9.6 s at the median with the 5 to 11 s search. The default search is now 2 to
-  7 s, which gives 5.0 s and 6.4 s, about the 5.7 s fast quartile of focused play. The gap in
-  the log has looting in it, which the sim doesn't model, so the search time stands for both.
+  quartile and 9.6 s at the median with the 5 to 11 s search. The user picked 2 to 10 s as the
+  new default, which gives 5.3 s and 7.0 s, close to the 5.7 s and 7.7 s of focused play. The
+  gap in the log has looting in it, which the sim doesn't model, so the search time stands
+  for both.
+- **Chain search.** The user picked 2 to 8 s, from 2 to 4 s. The logs have too few chain pulls
+  to measure it (below), and the 4 we have joined 5 to 11 s after the mob before.
 
 What it didn't settle:
 
@@ -631,7 +637,7 @@ What it didn't settle:
   the sim's mob speed, so it stays.
 - **Chain search and pack sizes.** We took one mob a fight almost every time, and only 4 times
   in the normal stretch pulled a second mob while fighting (5 to 11 s after the one before).
-  That's too few to measure the 2 to 4 s chain search. The sim's best rotation takes 2.3 mobs a
+  That's too few to measure the chain search. The sim's best rotation takes 2.3 mobs a
   pull, so how fast we find a mob while fighting matters a lot, and it's still a guess.
 - **Found distance.** The log shows where we pulled from, not where we first saw the mob.
 - **Rests.** We never ate or drank, and healed with Healing Wave instead. The sim's rotation
