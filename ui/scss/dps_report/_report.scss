@@ -3528,8 +3528,20 @@ ol.fv-list li::marker {
 	align-items: center;
 }
 
-.fv-cav-group + .fv-cav-group {
-	margin-top: 0.6rem;
+// The groups sit in columns when there's room. Each is a small panel with its presets as a muted header and the
+// caveats as a light bulleted list, so the header and the lines don't read as one block.
+.fv-cav-groups {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+	gap: 0.6rem;
+	padding-top: 0.5rem;
+}
+
+.fv-cav-group {
+	padding: 0.55rem 0.75rem 0.6rem;
+	border: 1px solid var(--color-border-line);
+	border-radius: 6px;
+	background: var(--color-bg);
 }
 
 .fv-cav-preset {
@@ -3537,25 +3549,41 @@ ol.fv-list li::marker {
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.15rem 0.3rem;
-	margin: 0 0 0.15rem;
-	font-size: var(--cds-font-size-body);
+	margin: 0 0 0.35rem;
+	font-size: var(--cds-font-size-caption);
 	font-weight: 600;
-	color: var(--color-fg);
+	color: var(--color-fg-muted);
+
+	.fv-ico {
+		width: 1.1rem;
+		height: 1.1rem;
+	}
 }
 
 .fv-cav-list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	display: grid;
+	gap: 0.3rem;
 }
 
 .fv-cav {
-	padding: 0.3rem 0 0.3rem 0.75rem;
-	border-top: 1px dashed var(--color-border-line);
-	line-height: 1.4;
+	position: relative;
+	padding-left: 0.85rem;
+	font-size: 0.85rem;
+	line-height: 1.45;
+	color: var(--color-fg);
 
-	&:first-child {
-		border-top: 0;
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0.15rem;
+		top: 0.6em;
+		width: 0.3rem;
+		height: 0.3rem;
+		border-radius: 50%;
+		background: var(--color-fg-muted);
 	}
 }
 

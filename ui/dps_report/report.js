@@ -1879,12 +1879,15 @@ export function startReport(dash, events) {
     $('#sp-prev').onclick = () => openSpec(order[(i - 1 + order.length) % order.length].id);
     $('#sp-next').onclick = () => openSpec(order[(i + 1) % order.length].id);
 
-    // caveats
-    const notes = rowsOf('notes');
-    const nb = (notes || []).filter((n) => n.build === b.id);
-    $('#sp-caveats').dataset.build = notes ? b.id : '';
-    const cav = nb.filter((n) => n.kind === 'caveats');
-    $('#sp-caveats').replaceChildren(...(cav.length ? cav.map((n) => mark(el('li', { text: n.text }), 'notes', 'text', `build=${enc(b.id)}&kind=caveats&order=${n.order}`)) : notes ? [el('li', { class: 'fv-note', text: 'None recorded.' })] : []));
+    // caveats: the same groups as Method's, for this preset
+    const cavHost = $('#sp-caveats');
+    if (specWait(cavHost, ['notes', 'builds'], b)) {
+      const builds = new Map(visB().map((x) => [x.id, x]));
+      if (!builds.has(b.id)) builds.set(b.id, b);
+      const ns = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.get(n.build)?.class === b.class);
+      const groups = cavGroups(b.class, ns, builds, b.id);
+      cavHost.replaceChildren(groups.childElementCount ? groups : el('p', { class: 'fv-note', text: 'None recorded.' }));
+    }
 
     // a card that throws shows a failure note (never the previous preset's content)
     const safe = (fn, host, extras = []) => { try { fn(); } catch (err) { console.error(err); if (host) { fail(host); host.dataset.build = b.id; } for (const x of extras) if (x) x.replaceChildren(); } };
@@ -2475,27 +2478,33 @@ export function startReport(dash, events) {
     const builds = new Map(visB().map((b) => [b.id, b]));
     const cav = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.has(n.build));
     const byClass = d3.groups(cav, (n) => builds.get(n.build).class).sort((a, b) => CLASSES.indexOf(a[0]) - CLASSES.indexOf(b[0]));
-    // A caveat that starts with "Assumed:", "Open:", "Left out:" or "Unverified:" shows that word as a tag.
-    const TAG = /^(Assumed|Open|Left out|Unverified):\s*/;
-    const cavItem = (t) => {
-      const m = t.match(TAG), rest = m ? t.slice(m[0].length) : t, txt = rest.charAt(0).toUpperCase() + rest.slice(1);
-      return el('li', { class: 'fv-cav' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.');
-    };
-    // Within a class, the caveats go under the presets they apply to. The ones every preset of the class shares come
-    // first, then each preset's own, in the ranking's order. A caveat a few presets share goes under all their names.
-    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
     host.replaceChildren(...byClass.map(([cls, ns]) => {
-      const seen = new Map();
-      for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(n.build); }
-      const all = [...builds.values()].filter((b) => b.class === cls).length;
-      const groups = d3.groups([...seen], ([, ids]) => ids.join('|'))
-        .map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }))
-        .sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
-      const head = (ids) => el('h4', { class: 'fv-cav-preset' }, ...(ids.length === all && all > 1 ? [`All ${cls} presets`]
-        : ids.flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build])));
-      return el('details', { class: 'fv-cav-cls' }, el('summary', {}, el('span', { class: 'fv-cav-cls-name' }, el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }), `${cls} (${seen.size})`)),
-        ...groups.map((g) => el('section', { class: 'fv-cav-group' }, head(g.ids), el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem)))));
+      const groups = cavGroups(cls, ns, builds);
+      return el('details', { class: 'fv-cav-cls' }, el('summary', {}, el('span', { class: 'fv-cav-cls-name' }, el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }),
+        `${cls} (${new Set(ns.map((n) => n.text)).size})`)), groups);
     }));
+  };
+  // A caveat that starts with "Assumed:", "Open:", "Left out:" or "Unverified:" shows that word as a tag.
+  const CAV_TAG = /^(Assumed|Open|Left out|Unverified):\s*/;
+  const cavItem = (t) => {
+    const m = t.match(CAV_TAG), rest = m ? t.slice(m[0].length) : t, txt = rest.charAt(0).toUpperCase() + rest.slice(1);
+    return el('li', { class: 'fv-cav' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.');
+  };
+  // One class's caveats (ns), under the presets they apply to. The ones every preset of the class shares come first,
+  // then each preset's own, in the ranking's order. A caveat a few presets share goes under all their names. Method
+  // shows every class, and a preset's page only the groups with its preset in them (only).
+  const cavGroups = (cls, ns, builds, only) => {
+    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
+    const seen = new Map();
+    for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(n.build); }
+    const all = [...builds.values()].filter((b) => b.class === cls).length;
+    const groups = d3.groups([...seen], ([, ids]) => ids.join('|'))
+      .map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }))
+      .filter((g) => !only || g.ids.includes(only))
+      .sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
+    const head = (ids) => el('h4', { class: 'fv-cav-preset' }, ...(ids.length === all && all > 1 ? [`All ${cls} presets`]
+      : ids.flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build])));
+    return el('div', { class: 'fv-cav-groups' }, ...groups.map((g) => el('section', { class: 'fv-cav-group' }, head(g.ids), el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem)))));
   };
 
   // ---------- static placeholders (headline figures, method text) ----------
