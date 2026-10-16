@@ -343,6 +343,7 @@ export class Replay extends ResultComponent {
 		stage: HTMLElement;
 		message: HTMLElement;
 		flash: HTMLElement;
+		countdown: HTMLElement;
 		hudTime: HTMLElement;
 		hudDps: HTMLElement;
 		hudDamage: HTMLElement;
@@ -442,6 +443,7 @@ export class Replay extends ResultComponent {
 			stage: ref<HTMLDivElement>(),
 			message: ref<HTMLDivElement>(),
 			flash: ref<HTMLDivElement>(),
+			countdown: ref<HTMLDivElement>(),
 			hudTime: ref<HTMLSpanElement>(),
 			hudDps: ref<HTMLSpanElement>(),
 			hudDamage: ref<HTMLSpanElement>(),
@@ -520,6 +522,7 @@ export class Replay extends ResultComponent {
 						<div ref={refs.enemyCol} className="replay-col replay-col-enemies" />
 					</div>
 					<div ref={refs.message} className="replay-message hide" />
+					<div ref={refs.countdown} className="replay-countdown" />
 					<div className="replay-big-play">
 						<i className="fas fa-play" />
 					</div>
@@ -569,6 +572,7 @@ export class Replay extends ResultComponent {
 			stage: refs.stage.value!,
 			message: refs.message.value!,
 			flash: refs.flash.value!,
+			countdown: refs.countdown.value!,
 			hudTime: refs.hudTime.value!,
 			hudDps: refs.hudDps.value!,
 			hudDamage: refs.hudDamage.value!,
@@ -1596,6 +1600,7 @@ export class Replay extends ResultComponent {
 		this.drawMaintain(model, time);
 		this.drawHistory(model, time);
 		this.drawSct(model, time);
+		this.drawCountdown(model, time);
 		this.drawControls(model, time);
 		if (model.leveling) {
 			this.map.draw(time, playing ? this.speed : null);
@@ -1637,6 +1642,24 @@ export class Replay extends ResultComponent {
 			const kills = lastIndexAtOrBefore(this.killTimes, time) + 1;
 			setText(this.ui.hudKills, String(kills));
 		}
+	}
+
+	// The pull timer in the middle of the screen while we're in the prepull, like the game's
+	// countdown. Each number pops in big, shrinks to its size and fades out before the next one.
+	private drawCountdown(model: ReplayModel, time: number) {
+		const elem = this.ui.countdown;
+		if (model.leveling || time >= 0) {
+			elem.style.opacity = '0';
+			return;
+		}
+		const number = Math.ceil(-time);
+		// How far we are into this number's second, from 0 to 1.
+		const progress = number + time;
+		const scale = 1.6 - 0.6 * easeOut(Math.min(1, progress / 0.25));
+		const opacity = Math.min(1, progress / 0.1, (1 - progress) / 0.25);
+		setText(elem, String(number));
+		elem.style.opacity = String(opacity);
+		elem.style.transform = `translate(-50%, -50%) scale(${scale})`;
 	}
 
 	private drawPlayer(model: ReplayModel, time: number) {

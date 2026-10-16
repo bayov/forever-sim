@@ -951,6 +951,26 @@
 	}
 }
 
+// The pull timer while we're in the prepull, big gold numbers like the game's countdown.
+.replay-countdown {
+	position: absolute;
+	top: 42%;
+	left: 50%;
+	z-index: 5;
+	color: var(--replay-gold);
+	font-size: 8rem;
+	font-weight: 700;
+	line-height: 1;
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, -50%);
+	@include replay-outline;
+
+	.fullscreen & {
+		font-size: 12rem;
+	}
+}
+
 // The video player controls along the bottom.
 .replay-controls {
 	position: absolute;
