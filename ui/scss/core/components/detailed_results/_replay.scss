@@ -1321,3 +1321,136 @@
 		outline: 1px solid var(--replay-match);
 	}
 }
+
+// The game's own tooltip under ours, in the game's colors.
+//
+// Wowhead's markup already says which text the game draws in which color. The "q" class is the
+// game's yellow: a spell's description, and a buff's name and time left. Text with no class is
+// white, like a spell's cost, range and cast time, or a buff's description. The q0 to q7 classes
+// are the item qualities, q9 a spell link and q10 the red of an unmet requirement.
+//
+// We leave out what wowhead adds and the game doesn't show (item level, max stack, dropped by,
+// sell price).
+.replay-ingame-tooltip {
+	margin-top: 0.15rem;
+	padding: 0.45rem 0.55rem;
+	border: 1px solid #5b5b5b;
+	border-radius: 4px;
+	background: rgba(9, 9, 22, 0.92);
+	color: #fff;
+	font-size: 0.8125rem;
+	line-height: 1.35;
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	// The DPS Report styles its own tables (.fv th, .fv td) and the tooltip sits inside the
+	// report. So we name the table too, to win over those rules, and undo all they set.
+	table td,
+	table th {
+		position: static;
+		z-index: auto;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: inherit;
+		font-size: inherit;
+		font-weight: normal;
+		letter-spacing: inherit;
+		text-align: left;
+		vertical-align: top;
+		white-space: normal;
+	}
+
+	// The game puts the range, the cooldown and a buff's dispel type at the right of their line.
+	table th {
+		padding-left: 1rem;
+		text-align: right;
+		white-space: nowrap;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+		pointer-events: none;
+	}
+
+	b.whtt-name {
+		font-size: 0.9375rem;
+		font-weight: 600;
+	}
+
+	.indent {
+		padding-left: 0.75rem;
+	}
+
+	.whtt-extra,
+	.whtt-sellprice {
+		display: none;
+	}
+
+	.q {
+		color: #ffd100;
+	}
+	.q0 {
+		color: #9d9d9d;
+	}
+	.q1 {
+		color: #fff;
+	}
+	.q2 {
+		color: #1eff00;
+	}
+	.q3 {
+		color: #0070dd;
+	}
+	.q4 {
+		color: #a335ee;
+	}
+	.q5 {
+		color: #ff8000;
+	}
+	.q6 {
+		color: #e5cc80;
+	}
+	.q7 {
+		color: #00ccff;
+	}
+	.q9 {
+		color: #71d5ff;
+	}
+	.q10 {
+		color: #ff2020;
+	}
+
+	// Class names, like "Classes: Rogue" on a set piece.
+	.c1 {
+		color: #c79c6e;
+	}
+	.c2 {
+		color: #f58cba;
+	}
+	.c3 {
+		color: #abd473;
+	}
+	.c4 {
+		color: #fff569;
+	}
+	.c5 {
+		color: #fff;
+	}
+	.c7 {
+		color: #0070de;
+	}
+	.c8 {
+		color: #69ccf0;
+	}
+	.c9 {
+		color: #9482c9;
+	}
+	.c11 {
+		color: #ff7d0a;
+	}
+}
