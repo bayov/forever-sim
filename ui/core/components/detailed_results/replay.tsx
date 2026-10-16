@@ -325,6 +325,7 @@ export class Replay extends ResultComponent {
 		coreCooldowns: HTMLElement;
 		majorCooldowns: HTMLElement;
 		center: HTMLElement;
+		alert: HTMLElement;
 		resources: HTMLElement;
 		maintain: HTMLElement;
 		sctZone: HTMLElement;
@@ -419,6 +420,7 @@ export class Replay extends ResultComponent {
 			coreCooldowns: ref<HTMLDivElement>(),
 			majorCooldowns: ref<HTMLDivElement>(),
 			center: ref<HTMLDivElement>(),
+			alert: ref<HTMLDivElement>(),
 			resources: ref<HTMLDivElement>(),
 			maintain: ref<HTMLDivElement>(),
 			sctZone: ref<HTMLDivElement>(),
@@ -466,6 +468,10 @@ export class Replay extends ResultComponent {
 					<div className="replay-frames">
 						<div ref={refs.playerCol} className="replay-col replay-col-player" />
 						<div ref={refs.center} className="replay-center">
+							<div ref={refs.alert} className="replay-alert">
+								<div className="replay-alert-arc left" />
+								<div className="replay-alert-arc right" />
+							</div>
 							<div ref={refs.procs} className="replay-procs" />
 							<div ref={refs.maintain} className="replay-maintain" />
 							<div ref={refs.resources} className="replay-resources" />
@@ -536,6 +542,7 @@ export class Replay extends ResultComponent {
 			coreCooldowns: refs.coreCooldowns.value!,
 			majorCooldowns: refs.majorCooldowns.value!,
 			center: refs.center.value!,
+			alert: refs.alert.value!,
 			resources: refs.resources.value!,
 			maintain: refs.maintain.value!,
 			sctZone: refs.sctZone.value!,
@@ -1302,6 +1309,18 @@ export class Replay extends ResultComponent {
 		);
 		if (model.maelstrom) {
 			this.tip(pipRow, this.auraTip(model.maelstrom, 'us'));
+			const maelstromTip = this.auraTip(model.maelstrom, 'us');
+			this.tip(this.ui.alert, () => {
+				const tip = maelstromTip();
+				tip.insertBefore(
+					<div className="timeline-tooltip-meta">
+						These arcs light up at 5 stacks of Maelstrom Weapon, like a WeakAura spell alert. Each stack makes the next Lightning Bolt 4% faster and
+						cheaper for each talent point, so with 5 points it's instant and free.
+					</div>,
+					tip.children[1],
+				);
+				return tip;
+			});
 		} else if (model.comboPoints) {
 			this.tip(
 				pipRow,
@@ -1464,9 +1483,9 @@ export class Replay extends ResultComponent {
 		setWidth(resources.swingFill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
 		const pips = this.pipsAt(model, time);
 		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
-		// At five Maelstrom Weapon stacks the pack lights up around the middle, like the
+		// At five Maelstrom Weapon stacks arcs light up where our character would stand, like the
 		// PowerAuras textures of the user's WeakAura.
-		this.ui.center.classList.toggle('maelstrom-full', !!model.maelstrom && pips >= 5);
+		this.ui.alert.classList.toggle('on', !!model.maelstrom && pips >= 5);
 
 		// The procs and other buffs that come and go, in the middle above the cooldowns.
 		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time, model.end), 'proc', (elem, track) => {
