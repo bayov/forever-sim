@@ -22,6 +22,14 @@ type TooltipHandler = (dataPointIndex: number) => Element;
 
 const dpsColor = '#ed5653';
 const manaColor = '#2E93fA';
+// The resource the chart draws beside the DPS, the first of these the unit has. Rage is red in
+// the game, but a red line would read as the DPS line, so it's violet here.
+const chartResources = [ResourceType.ResourceTypeMana, ResourceType.ResourceTypeRage, ResourceType.ResourceTypeEnergy];
+const resourceChartColors: Partial<Record<ResourceType, string>> = {
+	[ResourceType.ResourceTypeMana]: manaColor,
+	[ResourceType.ResourceTypeRage]: '#b37bff',
+	[ResourceType.ResourceTypeEnergy]: '#ffd700',
+};
 const threatColor = '#b56d07';
 // The leveling chart's colors. Health and mana share the lower chart, and the pair passes the
 // dataviz palette checks on the dark card. Mobs killed is the only solid line of the upper chart,
@@ -32,7 +40,7 @@ const levelingHealthColor = '#3fa85a';
 const levelingManaColor = '#3d8ee0';
 
 // How the timeline shows the iteration. The rotation has a row per ability, aura and resource.
-// The chart draws DPS, mana and threat over time.
+// The chart draws DPS, the main resource and threat over time.
 export type TimelineMode = 'rotation' | 'chart';
 
 export interface TimelineConfig extends ResultComponentConfig {
@@ -778,7 +786,7 @@ export class Timeline extends ResultComponent {
 			this.addDpsYAxis(dpsData.maxDps, options);
 			tooltipHandlers.push(dpsData.tooltipHandler);
 			const continuousRegen = this.resultData!.result.request.simOptions?.ruleset != Ruleset.RulesetClassic;
-			tooltipHandlers.push(this.addManaSeries(player, options, continuousRegen));
+			tooltipHandlers.push(this.addResourceSeries(player, options, continuousRegen));
 			tooltipHandlers.push(this.addThreatSeries(player, options, ''));
 			tooltipHandlers = tooltipHandlers.filter(handler => handler != null);
 
@@ -1142,68 +1150,76 @@ export class Timeline extends ResultComponent {
 		};
 	}
 
-	// Returns a function for drawing the tooltip, or null if no series was added.
+	// Returns a function for drawing the tooltip, or null if no series was added. The resource is
+	// the unit's main one: mana, or rage or energy for a class without mana.
 	//
 	// A spend is a jump, so we draw a point after each change at a moment, like the regen up to
-	// it and then the cost of a cast. Under Forever, mana regenerates all the time and the sim
-	// adds the regen since the last event at every event, so a straight line between moments is
-	// right. Under Classic, mana only changes at the 2 sec ticks and the casts, so we also draw
-	// the value before the moment and the line stays flat until it.
-	private addManaSeries(unit: UnitMetrics, options: any, continuousRegen: boolean): TooltipHandler | null {
-		const allManaLogs = unit.groupedResourceLogs[ResourceType.ResourceTypeMana];
-		const manaLogs = allManaLogs.filter(log => log.timestamp >= 0);
-		if (manaLogs.length == 0) {
+	// it and then the cost of a cast. Under Forever, mana and energy regenerate all the time and
+	// the sim adds the regen since the last event at every event, so a straight line between
+	// moments is right. Under Classic, mana only changes at the 2 sec ticks and the casts, and
+	// rage only changes when we hit, get hit or spend it. Then we also draw the value before the
+	// moment, and the line stays flat until it.
+	private addResourceSeries(unit: UnitMetrics, options: any, continuousRegen: boolean): TooltipHandler | null {
+		const resourceType = chartResources.find(type => unit.groupedResourceLogs[type]?.some(log => log.timestamp >= 0));
+		if (resourceType === undefined) {
 			return null;
 		}
-		// The full pool is the mana before the first change, prepull included. The first change
-		// after the pull can come after prepull totems already spent some, and then regen would
-		// draw the line over the top of the axis.
-		const maxMana = Math.max(...allManaLogs.map(log => Math.max(log.valueBefore, log.valueAfter)));
+		const allLogs = unit.groupedResourceLogs[resourceType];
+		const logs = allLogs.filter(log => log.timestamp >= 0);
+		const name = resourceNames.get(resourceType)!;
+		const color = resourceChartColors[resourceType]!;
+		const isMana = resourceType == ResourceType.ResourceTypeMana;
+		const steps = !continuousRegen || resourceType == ResourceType.ResourceTypeRage;
+		// The full mana pool is the mana before the first change, prepull included. The first
+		// change after the pull can come after prepull totems already spent some, and then regen
+		// would draw the line over the top of the axis. Rage and energy top out at 100.
+		const highest = Math.max(...allLogs.map(log => Math.max(log.valueBefore, log.valueAfter)));
+		const maxValue = isMana ? highest : Math.max(100, highest);
 
 		const points: Array<{ value: number; log: ResourceChangedLogGroup }> = [];
-		manaLogs.forEach(log => {
-			if (!continuousRegen) points.push({ value: log.valueBefore, log });
+		logs.forEach(log => {
+			if (steps) points.push({ value: log.valueBefore, log });
 			log.logs.forEach(changedLog => points.push({ value: changedLog.valueAfter, log }));
 		});
 
-		options.colors.push(manaColor);
+		options.colors.push(color);
 		options.series.push({
-			name: 'Mana',
+			name,
 			type: 'line',
 			data: points.map(point => ({ x: point.log.timestamp, y: point.value })),
 		});
 		options.yaxis.push({
-			seriesName: 'Mana',
+			seriesName: name,
 			opposite: true, // Appear on right side
 			min: 0,
-			max: maxMana,
-			tickAmount: 10,
+			max: maxValue,
+			tickAmount: isMana ? 10 : 5,
 			title: {
-				text: 'Mana',
+				text: name,
 				style: {
-					color: manaColor,
+					color,
 				},
 			},
 			axisBorder: {
 				show: true,
-				color: manaColor,
+				color,
 			},
 			axisTicks: {
-				color: manaColor,
+				color,
 			},
 			labels: {
 				minWidth: 30,
 				style: {
-					colors: [manaColor],
+					colors: [color],
 				},
 				formatter: (val: string) => {
 					const v = parseFloat(val);
-					return `${v.toFixed(0)} (${((v / maxMana) * 100).toFixed(0)}%)`;
+					return isMana ? `${v.toFixed(0)} (${((v / maxValue) * 100).toFixed(0)}%)` : v.toFixed(0);
 				},
 			},
 		} as any);
 
-		return (dataPointIndex: number) => this.resourceTooltip(points[dataPointIndex].log, maxMana, true);
+		return (dataPointIndex: number) => this.resourceTooltip(points[dataPointIndex].log, maxValue, true);
 	}
 
 	// Returns a function for drawing the tooltip, or null if no series was added. Threat adds up
